@@ -52,42 +52,47 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 
 
-arrivePt     = ptAttribSceneobject(1,"arrive point")
-triggerRgn1 = ptAttribNamedActivator(2,"door 1 region sensor")
-triggerRgn2 = ptAttribActivator(3,"door 2 region sensor")
-door1OpenResponder = ptAttribNamedResponder(4,"door 1 open responder",netForce=1)
-door1CloseResponder = ptAttribNamedResponder(5,"door 1 close responder",netForce=1)
-door2OpenResponder = ptAttribResponder(6,"door 2 open responder",netForce=1)
-door2CloseResponder = ptAttribResponder(7,"door 2 close responder",netForce=1)
-behaviorWalkIn = ptAttribBehavior(8,"walk in behavior",netForce=1)
-behaviorWalkOut = ptAttribBehavior(9,"walk out behavior",netForce=1)
-subWorld = ptAttribSceneobject(10,"subworld")
-startCamera = ptAttribSceneobject(11,"enter door camera")
-endCamera = ptAttribSceneobject(12,"exit door camera")
+arrivePt = ptAttribSceneobject(1, "arrive point")
+triggerRgn1 = ptAttribNamedActivator(2, "door 1 region sensor")
+triggerRgn2 = ptAttribActivator(3, "door 2 region sensor")
+door1OpenResponder = ptAttribNamedResponder(4, "door 1 open responder", netForce=1)
+door1CloseResponder = ptAttribNamedResponder(5, "door 1 close responder", netForce=1)
+door2OpenResponder = ptAttribResponder(6, "door 2 open responder", netForce=1)
+door2CloseResponder = ptAttribResponder(7, "door 2 close responder", netForce=1)
+behaviorWalkIn = ptAttribBehavior(8, "walk in behavior", netForce=1)
+behaviorWalkOut = ptAttribBehavior(9, "walk out behavior", netForce=1)
+subWorld = ptAttribSceneobject(10, "subworld")
+startCamera = ptAttribSceneobject(11, "enter door camera")
+endCamera = ptAttribSceneobject(12, "exit door camera")
 
 avatarEntering = 0
-class grsnTrnCtrDoorExit(ptResponder):
 
+
+class grsnTrnCtrDoorExit(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 3277
         self.version = 1
-        PtDebugPrint("grsnTrnCtrDoorExit: Max version %d - minor version %d" % (self.version,2))
+        PtDebugPrint(
+            "grsnTrnCtrDoorExit: Max version %d - minor version %d" % (self.version, 2)
+        )
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global avatarEntering
-        
-        if (id == triggerRgn1.id):
-            if (PtFindAvatar(events) != PtGetLocalAvatar()):
+
+        if id == triggerRgn1.id:
+            if PtFindAvatar(events) != PtGetLocalAvatar():
                 return
             PtDebugPrint(" must have ki")
             kiLevel = PtGetLocalKILevel()
-            if (kiLevel < 2):
+            if kiLevel < 2:
                 return
             for event in events:
-                if (event[0]==1 and event[1]==1):
+                if event[0] == 1 and event[1] == 1:
                     avatarEntering = PtFindAvatar(events)
-                    PtDebugPrint("entered the region, disable this one and the other door's triggers")
+                    PtDebugPrint(
+                        "entered the region, disable this one and the other door's triggers"
+                    )
                     triggerRgn1.disable()
                     triggerRgn2.disable()
                     PtDebugPrint("stop this avatar")
@@ -96,59 +101,67 @@ class grsnTrnCtrDoorExit(ptResponder):
                     cam = ptCamera()
                     cam.disableFirstPersonOverride()
                     cam.undoFirstPerson()
-                    PtSendKIMessage(kDisableEntireYeeshaBook,0)
+                    PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                     PtDebugPrint("open the door")
-                    door1OpenResponder.run(self.key,avatar=PtGetLocalAvatar())
+                    door1OpenResponder.run(self.key, avatar=PtGetLocalAvatar())
                     PtDebugPrint("switch to the initial camera")
                     startCamera.value.pushCameraCut(PtGetLocalAvatar().getKey())
                     return
-        
-        if (id == door1OpenResponder.id):
-            if (avatarEntering != PtGetLocalAvatar()):
+
+        if id == door1OpenResponder.id:
+            if avatarEntering != PtGetLocalAvatar():
                 return
             PtDebugPrint(" door is open, walk in")
-            PtGetLocalAvatar().avatar.runBehaviorSetNotify(behaviorWalkIn.value,self.key,behaviorWalkIn.netForce)
+            PtGetLocalAvatar().avatar.runBehaviorSetNotify(
+                behaviorWalkIn.value, self.key, behaviorWalkIn.netForce
+            )
             return
-        
-        if (id == behaviorWalkIn.id):
-            if (avatarEntering != PtGetLocalAvatar()):
+
+        if id == behaviorWalkIn.id:
+            if avatarEntering != PtGetLocalAvatar():
                 return
             for event in events:
-                if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage: 
-                    PtDebugPrint(" Smart seek completed. Exit multistage, close exterior door")
-                    behaviorWalkIn.gotoStage(PtGetLocalAvatar(),-1)
-                    door1CloseResponder.run(self.key,avatar=PtGetLocalAvatar())
+                if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage:
+                    PtDebugPrint(
+                        " Smart seek completed. Exit multistage, close exterior door"
+                    )
+                    behaviorWalkIn.gotoStage(PtGetLocalAvatar(), -1)
+                    door1CloseResponder.run(self.key, avatar=PtGetLocalAvatar())
                     return
-        
-        if (id == door1CloseResponder.id):
-            if (avatarEntering != PtGetLocalAvatar()):
+
+        if id == door1CloseResponder.id:
+            if avatarEntering != PtGetLocalAvatar():
                 return
             PtDebugPrint("door closed, teleport and open other door")
             endCamera.value.pushCameraCut(PtGetLocalAvatar().getKey())
             PtGetLocalAvatar().avatar.enterSubWorld(subWorld.value)
             PtGetLocalAvatar().physics.warpObj(arrivePt.value.getKey())
-            door2OpenResponder.run(self.key,avatar=PtGetLocalAvatar())
+            door2OpenResponder.run(self.key, avatar=PtGetLocalAvatar())
             return
-            
-        if (id == door2OpenResponder.id):
-            if (avatarEntering != PtGetLocalAvatar()):
+
+        if id == door2OpenResponder.id:
+            if avatarEntering != PtGetLocalAvatar():
                 return
             PtDebugPrint("interior door open, walk out")
-            PtGetLocalAvatar().avatar.runBehaviorSetNotify(behaviorWalkOut.value,self.key,behaviorWalkOut.netForce)
+            PtGetLocalAvatar().avatar.runBehaviorSetNotify(
+                behaviorWalkOut.value, self.key, behaviorWalkOut.netForce
+            )
             return
-            
-        if (id == behaviorWalkOut.id):
-            if (avatarEntering != PtGetLocalAvatar()):
+
+        if id == behaviorWalkOut.id:
+            if avatarEntering != PtGetLocalAvatar():
                 return
             for event in events:
-                if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage: 
-                    PtDebugPrint(" Smart seek completed. Exit multistage, close interior door")
-                    door2CloseResponder.run(self.key,avatar=PtGetLocalAvatar())
-                    behaviorWalkOut.gotoStage(PtGetLocalAvatar(),-1)
+                if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage:
+                    PtDebugPrint(
+                        " Smart seek completed. Exit multistage, close interior door"
+                    )
+                    door2CloseResponder.run(self.key, avatar=PtGetLocalAvatar())
+                    behaviorWalkOut.gotoStage(PtGetLocalAvatar(), -1)
                     return
-        
-        if (id == door2CloseResponder.id):
-            if (avatarEntering != PtGetLocalAvatar()):
+
+        if id == door2CloseResponder.id:
+            if avatarEntering != PtGetLocalAvatar():
                 return
             PtDebugPrint(" process complete, re-enable detectors and free avatar ")
             triggerRgn1.enable()
@@ -156,6 +169,5 @@ class grsnTrnCtrDoorExit(ptResponder):
             PtEnableMovementKeys()
             cam = ptCamera()
             cam.enableFirstPersonOverride()
-            PtSendKIMessage(kEnableEntireYeeshaBook,0)
+            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             avatarEntering = 0
-

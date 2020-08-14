@@ -51,32 +51,31 @@ from Plasma import *
 from PlasmaTypes import *
 import random
 
-#globals
+# globals
 kMinNumItems = 1
 kMaxNumItems = 10
-kChanceOfYP = 0.5 # 0.0 = no chance. 1.0 = 100% chance
+kChanceOfYP = 0.5  # 0.0 = no chance. 1.0 = 100% chance
 
 AllItems = [
-    "grsnPrisonBones01vis", 
+    "grsnPrisonBones01vis",
     "grsnPrisonBones02vis",
     "grsnPrisonBowls01vis",
     "grsnPrisonBowls02vis",
     "grsnPrisonBowls03vis",
     "grsnPrisonBowls04vis",
     "grsnPrisonBowls05vis",
-    "grsnPrisonChains01vis", 
+    "grsnPrisonChains01vis",
     "grsnPrisonChains02vis",
     "grsnPrisonDirt01vis",
     "grsnPrisonDirt02vis",
     "grsnPrisonMattress01vis",
     "grsnPrisonMattress02vis",
     "grsnPrisonWindow01vis",
-    "grsnPrisonWindow02vis"
-    ]
-    
+    "grsnPrisonWindow02vis",
+]
+
 
 class grsnPrisonRandomSDLItems(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5205
@@ -88,90 +87,89 @@ class grsnPrisonRandomSDLItems(ptResponder):
 
     def OnServerInitComplete(self):
         global AllItems
-        
+
         return
-        
+
         ageSDL = PtGetAgeSDL()
-        
+
         # pick items to display
         ItemsToPick = random.randint(kMinNumItems, kMaxNumItems)
-        AlreadyPicked = [ ]
+        AlreadyPicked = []
 
         while len(AlreadyPicked) < ItemsToPick:
             randitem = random.choice(AllItems)
             if randitem not in AlreadyPicked:
-                AlreadyPicked.append (randitem)
-    
+                AlreadyPicked.append(randitem)
+
         for item in AlreadyPicked:
-            if (item == "grsnPrisonBones01vis"):
-                ageSDL["grsnPrisonBones01vis"]=(1,) 
-                
-            if (item == "grsnPrisonBones02vis"):
-                ageSDL["grsnPrisonBones02vis"]=(1,)
-                
-            if (item == "grsnPrisonBowls01vis"):
-                ageSDL["grsnPrisonBowls01vis"]=(1,)
-                
-            if (item == "grsnPrisonBowls02vis"):
-                ageSDL["grsnPrisonBowls02vis"]=(1,)
-                
-            if (item == "grsnPrisonBowls03vis"):
-                ageSDL["grsnPrisonBowls03vis"]=(1,)
-                
-            if (item == "grsnPrisonBowls04vis"):
-                ageSDL["grsnPrisonBowls04vis"]=(1,)
-                
-            if (item == "grsnPrisonBowls05vis"):
-                ageSDL["grsnPrisonBowls05vis"]=(1,)
-                
-            if (item == "grsnPrisonChains01vis"):
-                ageSDL["grsnPrisonChains01vis"]=(1,)
-                
-            if (item == "grsnPrisonChains02vis"):
-                ageSDL["grsnPrisonChains02vis"]=(1,)
-                
-            if (item == "grsnPrisonDirt01vis"):
-                ageSDL["grsnPrisonDirt01vis"]=(1,)
-                
-            if (item == "grsnPrisonDirt02vis"):
-                ageSDL["grsnPrisonDirt02vis"]=(1,)
-                
-            if (item == "grsnPrisonMattress01vis"):
-                ageSDL["grsnPrisonMattress01vis"]=(1,)
-                
-            if (item == "grsnPrisonMattress02vis"):
-                ageSDL["grsnPrisonMattress02vis"]=(1,)
-                
-            if (item == "grsnPrisonWindow01vis"):
-                ageSDL["grsnPrisonWindow01vis"]=(1,)
-                
-            if (item == "grsnPrisonWindow02vis"):
-                ageSDL["grsnPrisonWindow02vis"]=(1,)
-            
+            if item == "grsnPrisonBones01vis":
+                ageSDL["grsnPrisonBones01vis"] = (1,)
+
+            if item == "grsnPrisonBones02vis":
+                ageSDL["grsnPrisonBones02vis"] = (1,)
+
+            if item == "grsnPrisonBowls01vis":
+                ageSDL["grsnPrisonBowls01vis"] = (1,)
+
+            if item == "grsnPrisonBowls02vis":
+                ageSDL["grsnPrisonBowls02vis"] = (1,)
+
+            if item == "grsnPrisonBowls03vis":
+                ageSDL["grsnPrisonBowls03vis"] = (1,)
+
+            if item == "grsnPrisonBowls04vis":
+                ageSDL["grsnPrisonBowls04vis"] = (1,)
+
+            if item == "grsnPrisonBowls05vis":
+                ageSDL["grsnPrisonBowls05vis"] = (1,)
+
+            if item == "grsnPrisonChains01vis":
+                ageSDL["grsnPrisonChains01vis"] = (1,)
+
+            if item == "grsnPrisonChains02vis":
+                ageSDL["grsnPrisonChains02vis"] = (1,)
+
+            if item == "grsnPrisonDirt01vis":
+                ageSDL["grsnPrisonDirt01vis"] = (1,)
+
+            if item == "grsnPrisonDirt02vis":
+                ageSDL["grsnPrisonDirt02vis"] = (1,)
+
+            if item == "grsnPrisonMattress01vis":
+                ageSDL["grsnPrisonMattress01vis"] = (1,)
+
+            if item == "grsnPrisonMattress02vis":
+                ageSDL["grsnPrisonMattress02vis"] = (1,)
+
+            if item == "grsnPrisonWindow01vis":
+                ageSDL["grsnPrisonWindow01vis"] = (1,)
+
+            if item == "grsnPrisonWindow02vis":
+                ageSDL["grsnPrisonWindow02vis"] = (1,)
+
         self.IManageYeeshaPage()
 
     def IManageYeeshaPage(self):
         vault = ptVault()
-                
 
         entry = vault.findChronicleEntry("VisitedGrsnPrison")
-        
-        if entry is None: 
-            vault.addChronicleEntry("VisitedGrsnPrison",1,"yes")
-            PtDebugPrint ("grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle.")
-            
+
+        if entry is None:
+            vault.addChronicleEntry("VisitedGrsnPrison", 1, "yes")
+            PtDebugPrint(
+                "grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle."
+            )
+
         else:
-            PtDebugPrint ("grsnPrisonRandomItems: You've been to the Prison before.")
-            
+            PtDebugPrint("grsnPrisonRandomItems: You've been to the Prison before.")
+
             chance = random.random()
             ageSDL = PtGetAgeSDL()
-            if chance > (1-kChanceOfYP):
+            if chance > (1 - kChanceOfYP):
                 ageSDL["grsnYeeshaPage02Vis"] = (1,)
-                PtDebugPrint ("grsnPrisonRandomItems: A YP is here.")
+                PtDebugPrint("grsnPrisonRandomItems: A YP is here.")
             else:
                 ageSDL["grsnYeeshaPage02Vis"] = (0,)
-                PtDebugPrint ("grsnPrisonRandomItems: A YP is NOT here.")
-            
+                PtDebugPrint("grsnPrisonRandomItems: A YP is NOT here.")
+
             ageSDL.sendToClients("grsnYeeshaPage02Vis")
-
-

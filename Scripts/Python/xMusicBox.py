@@ -50,9 +50,9 @@ A music box type thing
 from Plasma import *
 from PlasmaTypes import *
 
-#=============================================================
+# =============================================================
 # define the attributes that will be entered in max
-#=============================================================
+# =============================================================
 actTrigger = ptAttribActivator(1, "Triggerer")
 respOneShot = ptAttribResponder(2, "Oneshot resp")
 respStart = ptAttribResponder(3, "Start responder")
@@ -70,10 +70,10 @@ NumFiles = 0
 IsPlaying = 0
 TriggeringAvatar = None
 
-#====================================
+# ====================================
+
 
 class xMusicBox(ptModifier):
-
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5329
@@ -107,7 +107,7 @@ class xMusicBox(ptModifier):
             newFolder = ptVaultFolderNode(0)
             newFolder.folderSetName("AgeData")
             ageInfoNode.addNode(newFolder)
-            
+
             newNode = ptVaultChronicleNode(0)
             newNode.chronicleSetName("MusicBoxSongs")
             newNode.chronicleSetValue(strInitialSong.value)
@@ -120,7 +120,10 @@ class xMusicBox(ptModifier):
             ageDataFolder.addNode(newNode)
 
         SoundObjIndex = soSoundObj.value.getSoundIndex(strSoundObj.value)
-        PtDebugPrint("xMusicBox.OnServerInitComplete: using sound object index:" + str(SoundObjIndex))
+        PtDebugPrint(
+            "xMusicBox.OnServerInitComplete: using sound object index:"
+            + str(SoundObjIndex)
+        )
 
         if sdlCurrentSongVar.value:
             ageSDL = PtGetAgeSDL()
@@ -134,28 +137,32 @@ class xMusicBox(ptModifier):
 
                 CurrentFile = (filename, iscompressed)
 
-                soSoundObj.value.setSoundFilename(SoundObjIndex, CurrentFile[0], CurrentFile[1])
+                soSoundObj.value.setSoundFilename(
+                    SoundObjIndex, CurrentFile[0], CurrentFile[1]
+                )
                 respStart.run(self.key)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global IsPlaying
         global CurrentFile
         global SoundObjIndex
         global TriggeringAvatar
-        
+
         if not state:
             return
 
         if id == actTrigger.id:
             TriggeringAvatar = PtFindAvatar(events)
-            respOneShot.run(self.key, events = events)
+            respOneShot.run(self.key, events=events)
 
         elif id == respOneShot.id:
             self.NextSong()
 
             respStop.run(self.key)
             if CurrentFile:
-                soSoundObj.value.setSoundFilename(SoundObjIndex, CurrentFile[0], CurrentFile[1])
+                soSoundObj.value.setSoundFilename(
+                    SoundObjIndex, CurrentFile[0], CurrentFile[1]
+                )
                 respStart.run(self.key)
 
                 currentSong = (CurrentFile[0],)
@@ -165,14 +172,14 @@ class xMusicBox(ptModifier):
             playerid = PtGetClientIDFromAvatarKey(TriggeringAvatar.getKey())
             localClient = PtGetLocalClientID()
 
-            islocalavatar = (playerid == localClient)
+            islocalavatar = playerid == localClient
             sdlvarisvalid = sdlCurrentSongVar.value
 
             if islocalavatar and sdlvarisvalid:
                 PtDebugPrint("Setting cur song var to: ", currentSong)
                 ageSDL = PtGetAgeSDL()
                 ageSDL[sdlCurrentSongVar.value] = currentSong
-                
+
     def NextSong(self):
         global CurrentFile
 
@@ -200,11 +207,14 @@ class xMusicBox(ptModifier):
 
             CurrentFile = (filename, iscompressed)
 
-        PtDebugPrint("xMusicBox.NextSong: Going to try to play: %s" % str(CurrentFile), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xMusicBox.NextSong: Going to try to play: %s" % str(CurrentFile),
+            level=kDebugDumpLevel,
+        )
 
     def GetMusicBoxSongList(self):
         songList = []
-        
+
         ageVault = ptAgeVault()
         ageInfoNode = ageVault.getAgeInfo()
 

@@ -56,19 +56,19 @@ boolWellBlocker = 0
 
 
 class Garrison(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5024
         self.version = 2
-
 
     def OnFirstUpdate(self):
         global IsPublic
 
         thisComponent = self.key.getName()
         if thisComponent != "VeryVerySpecialPythonFileMod":
-            PtDebugPrint("Garrison.OnFirstUpdate(): this isn't the right script instance, ignoring rest of script")
+            PtDebugPrint(
+                "Garrison.OnFirstUpdate(): this isn't the right script instance, ignoring rest of script"
+            )
             return
 
         parentname = None
@@ -81,52 +81,53 @@ class Garrison(ptResponder):
             parentname = parentinfo.getAgeFilename()
         except:
             pass
-    
+
         if parentname == "Neighborhood":
             IsPublic = 1
-            PtDebugPrint("Garrison.OnFirstUpdate(): this Garrison is the public instance, as its parent = ",parentname)
+            PtDebugPrint(
+                "Garrison.OnFirstUpdate(): this Garrison is the public instance, as its parent = ",
+                parentname,
+            )
         else:
-            PtDebugPrint("Garrison.OnFirstUpdate(): this Garrison is the regular aka Yeesha version, as its parent = ",parentname)
+            PtDebugPrint(
+                "Garrison.OnFirstUpdate(): this Garrison is the regular aka Yeesha version, as its parent = ",
+                parentname,
+            )
 
-
-    
     def OnServerInitComplete(self):
         thisComponent = self.key.getName()
         if thisComponent != "VeryVerySpecialPythonFileMod":
-            PtDebugPrint("Garrison.OnFirstUpdate(): this isn't the right script instance, ignoring rest of script")
+            PtDebugPrint(
+                "Garrison.OnFirstUpdate(): this isn't the right script instance, ignoring rest of script"
+            )
             return
 
         global boolWellBlocker
 
         ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags("grsnWellFirstFloorBlocker",1,1)
+        ageSDL.setFlags("grsnWellFirstFloorBlocker", 1, 1)
         ageSDL.sendToClients("grsnWellFirstFloorBlocker")
-        ageSDL.setNotify(self.key,"grsnWellFirstFloorBlocker",0.0)
+        ageSDL.setNotify(self.key, "grsnWellFirstFloorBlocker", 0.0)
 
         boolWellBlocker = ageSDL["grsnWellFirstFloorBlocker"][0]
         if IsPublic and not boolWellBlocker:
             ageSDL["grsnWellFirstFloorBlocker"] = (1,)
         elif not IsPublic and boolWellBlocker:
-            ageSDL["grsnWellFirstFloorBlocker"] = (0,)     
-
+            ageSDL["grsnWellFirstFloorBlocker"] = (0,)
 
     def Load(self):
         pass
 
-
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global boolWellBlocker
 
-#        if VARname == "grsnWellFirstFloorBlocker":
-#            ageSDL = PtGetAgeSDL()
-#            boolWellBlocker = ageSDL["grsnWellFirstFloorBlocker"][0]
-#            if IsPublic and not boolWellBlocker:
-#                ageSDL["grsnWellFirstFloorBlocker"] = (1,)
-#            elif not IsPublic and boolWellBlocker:
-#                ageSDL["grsnWellFirstFloorBlocker"] = (0,)
+    #        if VARname == "grsnWellFirstFloorBlocker":
+    #            ageSDL = PtGetAgeSDL()
+    #            boolWellBlocker = ageSDL["grsnWellFirstFloorBlocker"][0]
+    #            if IsPublic and not boolWellBlocker:
+    #                ageSDL["grsnWellFirstFloorBlocker"] = (1,)
+    #            elif not IsPublic and boolWellBlocker:
+    #                ageSDL["grsnWellFirstFloorBlocker"] = (0,)
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         pass
-
-

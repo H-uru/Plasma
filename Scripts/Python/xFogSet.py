@@ -52,18 +52,18 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-FogMode         = ptAttribDropDownList(1, "Fog Mode", ("Linear", "Exponential", "Exponential2"))
+FogMode = ptAttribDropDownList(1, "Fog Mode", ("Linear", "Exponential", "Exponential2"))
 
-PointA_RGB      = ptAttribString(2, "Color: Red,Green,Blue")
-PointA_Start    = ptAttribInt(3, "Start Distance", 0, (-10000,1000000))
-PointA_End      = ptAttribInt(4, "End Distance", 0, (-10000,1000000))
-PointA_Density  = ptAttribInt(5, "Density", 0, (0,10))
+PointA_RGB = ptAttribString(2, "Color: Red,Green,Blue")
+PointA_Start = ptAttribInt(3, "Start Distance", 0, (-10000, 1000000))
+PointA_End = ptAttribInt(4, "End Distance", 0, (-10000, 1000000))
+PointA_Density = ptAttribInt(5, "Density", 0, (0, 10))
 
-Region          = ptAttribActivator(6, "Region Sensor")
+Region = ptAttribActivator(6, "Region Sensor")
 
 # define global variables
 
-#====================================
+# ====================================
 class xFogSet(ptMultiModifier):
     ###########################
     def __init__(self):
@@ -71,7 +71,7 @@ class xFogSet(ptMultiModifier):
         self.id = 5348
         version = 1
         self.version = version
-        PtDebugPrint("__init__xFogSet v.", version)        
+        PtDebugPrint("__init__xFogSet v.", version)
 
         self.PointA_RGBList = []
 
@@ -82,11 +82,17 @@ class xFogSet(ptMultiModifier):
         self.PointA_RGBList[1] = float(self.PointA_RGBList[1])
         self.PointA_RGBList[2] = float(self.PointA_RGBList[2])
 
-        PtDebugPrint("xFogSet.OnFirstUpdate: PointA_RGB=(%s,%s,%s)" % (self.PointA_RGBList[0], self.PointA_RGBList[1], self.PointA_RGBList[2]))
-        PtDebugPrint("xFogSet.OnFirstUpdate: PointA_SED=(%s,%s,%s)" % (PointA_Start.value, PointA_End.value, PointA_Density.value))
-        
+        PtDebugPrint(
+            "xFogSet.OnFirstUpdate: PointA_RGB=(%s,%s,%s)"
+            % (self.PointA_RGBList[0], self.PointA_RGBList[1], self.PointA_RGBList[2])
+        )
+        PtDebugPrint(
+            "xFogSet.OnFirstUpdate: PointA_SED=(%s,%s,%s)"
+            % (PointA_Start.value, PointA_End.value, PointA_Density.value)
+        )
+
     ###########################
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         if id == Region.id and PtFindAvatar(events) == PtGetLocalAvatar():
             if events[0][1] == 1:
                 self.UpdateFog()
@@ -102,12 +108,18 @@ class xFogSet(ptMultiModifier):
             self.PointA_RGBList[1] = float(self.PointA_RGBList[1])
             self.PointA_RGBList[2] = float(self.PointA_RGBList[2])
 
-        newfogcolor = ptColor(red=self.PointA_RGBList[0], green=self.PointA_RGBList[1], blue=self.PointA_RGBList[2])
+        newfogcolor = ptColor(
+            red=self.PointA_RGBList[0],
+            green=self.PointA_RGBList[1],
+            blue=self.PointA_RGBList[2],
+        )
         PtFogSetDefColor(newfogcolor)
 
         if FogMode.value == "Linear":
             PtDebugPrint("xFogSet.UpdateFog: Using Linear Fog")
-            PtFogSetDefLinear(PointA_Start.value, PointA_End.value, PointA_Density.value)
+            PtFogSetDefLinear(
+                PointA_Start.value, PointA_End.value, PointA_Density.value
+            )
 
         elif FogMode.value == "Exponential":
             PtDebugPrint("xFogSet.UpdateFog: Using Exponential Fog")

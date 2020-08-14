@@ -44,24 +44,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # This assumes that this will be loaded into the module that we are trying to do
 # with an execfile('.\\python\\system\\glue.py') at the end of the module (after everything is defined)
 # SPECIAL WARNING(1): This glue code returns the attributes in reverse ID order!
-glue_cl = None       # the class of the modifier
-glue_inst = None     # instance of the class modifier
-glue_params = None   # parameters dictionary: mapped id to instance
-glue_paramKeys = None # this is the parameter ID list, that should be sorted
+glue_cl = None  # the class of the modifier
+glue_inst = None  # instance of the class modifier
+glue_params = None  # parameters dictionary: mapped id to instance
+glue_paramKeys = None  # this is the parameter ID list, that should be sorted
 try:
     x = glue_verbose
 except NameError:
     glue_verbose = 0
+
+
 def glue_getClass():
     global glue_cl
     if glue_cl == None:
         try:
             cl = globals()[glue_name]
-            if issubclass(cl,ptModifier):
+            if issubclass(cl, ptModifier):
                 glue_cl = cl
             else:
                 if glue_verbose:
-                    PtDebugPrint("Class %s is not derived from modifier" % (cl.__name__))
+                    PtDebugPrint(
+                        "Class %s is not derived from modifier" % (cl.__name__)
+                    )
         except:
             if glue_verbose:
                 try:
@@ -69,6 +73,8 @@ def glue_getClass():
                 except NameError:
                     PtDebugPrint("Filename/classname not set!")
     return glue_cl
+
+
 def glue_getInst():
     global glue_inst
     if glue_inst is None:
@@ -76,6 +82,8 @@ def glue_getInst():
         if cl != None:
             glue_inst = cl()
     return glue_inst
+
+
 def glue_delInst():
     global glue_inst
     global glue_cl
@@ -87,17 +95,24 @@ def glue_delInst():
     glue_cl = None
     glue_params = None
     glue_paramKeys = None
+
+
 def glue_getVersion():
     inst = glue_getInst()
     ver = inst.version
     glue_delInst()
     return ver
+
+
 def glue_findAndAddAttribs(obj, glue_params):
-    if isinstance(obj,ptAttribute):
+    if isinstance(obj, ptAttribute):
         if obj.id in glue_params:
             if glue_verbose:
                 PtDebugPrint("WARNING: Duplicate attribute ids!")
-                PtDebugPrint("%s has id %d which is already defined in %s" % (obj.name, obj.id, glue_params[obj.id].name))
+                PtDebugPrint(
+                    "%s has id %d which is already defined in %s"
+                    % (obj.name, obj.id, glue_params[obj.id].name)
+                )
         else:
             glue_params[obj.id] = obj
     elif isinstance(obj, list):
@@ -109,7 +124,8 @@ def glue_findAndAddAttribs(obj, glue_params):
     elif isinstance(obj, tuple):
         for o in obj:
             glue_findAndAddAttribs(o, glue_params)
-            
+
+
 def glue_getParamDict():
     global glue_params
     global glue_paramKeys
@@ -121,8 +137,10 @@ def glue_getParamDict():
         # rebuild the parameter sorted key list
         glue_paramKeys = list(glue_params.keys())
         glue_paramKeys.sort()
-        glue_paramKeys.reverse()    # reserve the order because PlasmaMax will ask for them in reverse order
+        glue_paramKeys.reverse()  # reserve the order because PlasmaMax will ask for them in reverse order
     return glue_params
+
+
 def glue_getClassName():
     cl = glue_getClass()
     if cl != None:
@@ -130,6 +148,8 @@ def glue_getClassName():
     if glue_verbose:
         PtDebugPrint("Class not found in %s.py" % (glue_name))
     return None
+
+
 def glue_getBlockID():
     inst = glue_getInst()
     if inst != None:
@@ -137,6 +157,8 @@ def glue_getBlockID():
     if glue_verbose:
         PtDebugPrint("Instance could not be created in %s.py" % (glue_name))
     return None
+
+
 def glue_getNumParams():
     pd = glue_getParamDict()
     if pd != None:
@@ -144,6 +166,8 @@ def glue_getNumParams():
     if glue_verbose:
         PtDebugPrint("No attributes found in %s.py" % (glue_name))
     return 0
+
+
 def glue_getParam(number):
     global glue_paramKeys
     pd = glue_getParamDict()
@@ -153,18 +177,25 @@ def glue_getParam(number):
             if number >= 0 and number < len(glue_paramKeys):
                 return pd[glue_paramKeys[number]].getdef()
             else:
-                PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
+                PtDebugPrint(
+                    "glue_getParam: Error! %d out of range of attribute list" % (number)
+                )
         else:
             pl = list(pd.values())
             if number >= 0 and number < len(pl):
                 return pl[number].getdef()
             else:
                 if glue_verbose:
-                    PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
+                    PtDebugPrint(
+                        "glue_getParam: Error! %d out of range of attribute list"
+                        % (number)
+                    )
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
     return None
-def glue_setParam(id,value):
+
+
+def glue_setParam(id, value):
     pd = glue_getParamDict()
     if pd != None:
         if id in pd:
@@ -172,37 +203,51 @@ def glue_setParam(id,value):
             try:
                 pd[id].__setvalue__(value)
             except AttributeError:
-                if isinstance(pd[id],ptAttributeList):
+                if isinstance(pd[id], ptAttributeList):
                     try:
                         if not isinstance(pd[id].value, list):
-                            pd[id].value = []   # make sure that the value starts as an empty list
+                            pd[
+                                id
+                            ].value = (
+                                []
+                            )  # make sure that the value starts as an empty list
                     except AttributeError:
-                        pd[id].value = []   # or if value hasn't been defined yet, then do it now
-                    pd[id].value.append(value)   # add in new value to list
+                        pd[
+                            id
+                        ].value = (
+                            []
+                        )  # or if value hasn't been defined yet, then do it now
+                    pd[id].value.append(value)  # add in new value to list
                 else:
                     pd[id].value = value
         else:
             if glue_verbose:
-                PtDebugPrint("setParam: can't find id=",id)
+                PtDebugPrint("setParam: can't find id=", id)
     else:
         PtDebugPrint("setParma: Something terribly has gone wrong. Head for the cover.")
+
+
 def glue_isNamedAttribute(id):
     pd = glue_getParamDict()
     if pd != None:
         try:
-            if isinstance(pd[id],ptAttribNamedActivator):
+            if isinstance(pd[id], ptAttribNamedActivator):
                 return 1
-            if isinstance(pd[id],ptAttribNamedResponder):
+            if isinstance(pd[id], ptAttribNamedResponder):
                 return 2
         except KeyError:
             if glue_verbose:
                 PtDebugPrint("Could not find id=%d attribute" % (id))
     return 0
+
+
 def glue_isMultiModifier():
     inst = glue_getInst()
-    if isinstance(inst,ptMultiModifier):
+    if isinstance(inst, ptMultiModifier):
         return 1
     return 0
+
+
 def glue_getVisInfo(number):
     global glue_paramKeys
     pd = glue_getParamDict()
@@ -212,14 +257,20 @@ def glue_getVisInfo(number):
             if number >= 0 and number < len(glue_paramKeys):
                 return pd[glue_paramKeys[number]].getVisInfo()
             else:
-                PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
+                PtDebugPrint(
+                    "glue_getVisInfo: Error! %d out of range of attribute list"
+                    % (number)
+                )
         else:
             pl = list(pd.values())
             if number >= 0 and number < len(pl):
                 return pl[number].getVisInfo()
             else:
                 if glue_verbose:
-                    PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
+                    PtDebugPrint(
+                        "glue_getVisInfo: Error! %d out of range of attribute list"
+                        % (number)
+                    )
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
     return None

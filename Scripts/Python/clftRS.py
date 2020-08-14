@@ -51,9 +51,9 @@ from PlasmaKITypes import *
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-Activate = ptAttribActivator(1, "Activate Telescope",netForce=1)
-Camera = ptAttribSceneobject(2,"Telescope camera")
-Vignette = ptAttribString(4,"Vignette dialog - by Name")
+Activate = ptAttribActivator(1, "Activate Telescope", netForce=1)
+Camera = ptAttribSceneobject(2, "Telescope camera")
+Vignette = ptAttribString(4, "Vignette dialog - by Name")
 
 # ---------
 # globals
@@ -62,15 +62,17 @@ Vignette = ptAttribString(4,"Vignette dialog - by Name")
 LocalAvatar = None
 Telescope = ptInputInterface()
 
+
 class clftRS(ptModifier):
     "Standard telescope modifier class"
+
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 150
         version = 4
         minorVersion = 1
         self.version = version
-        PtDebugPrint("__init__clftRS v%d.%d" % (version,minorVersion) )
+        PtDebugPrint("__init__clftRS v%d.%d" % (version, minorVersion))
 
     def OnFirstUpdate(self):
         pass
@@ -79,33 +81,44 @@ class clftRS(ptModifier):
         "unload the dialog that we loaded"
         PtUnloadDialog(Vignette.value)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Activated... start telescope"
         global LocalAvatar
-        PtDebugPrint("xTelescope:OnNotify  state=%f id=%d events=" % (state,id),events,level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xTelescope:OnNotify  state=%f id=%d events=" % (state, id),
+            events,
+            level=kDebugDumpLevel,
+        )
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
             self.IStartTelescope()
 
-
-    def OnGUINotify(self,id,control,event):
+    def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
-        PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel)
+        PtDebugPrint(
+            "GUI Notify id=%d, event=%d control=" % (id, event),
+            control,
+            level=kDebugDumpLevel,
+        )
         if event == kDialogLoaded:
             # if the dialog was just loaded then show it
             control.show()
 
-    def OnControlKeyEvent(self,controlKey,activeFlag):
+    def OnControlKeyEvent(self, controlKey, activeFlag):
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif (
+            controlKey == PlasmaControlKeys.kKeyMoveBackward
+            or controlKey == PlasmaControlKeys.kKeyRotateLeft
+            or controlKey == PlasmaControlKeys.kKeyRotateRight
+        ):
             self.IQuitTelescope()
- 
+
     def IStartTelescope(self):
         "Start the action of looking at the telescope"
         global LocalAvatar
         # disable the activator (only one in the telescope at a time)
-        PtSendKIMessage(kDisableKIandBB,0)
+        PtSendKIMessage(kDisableKIandBB, 0)
         self.IEngageTelescope()
 
     def IEngageTelescope(self):
@@ -121,8 +134,8 @@ class clftRS(ptModifier):
         virtCam.save(Camera.sceneobject.getKey())
         # show the cockpit
         if Vignette.value:
-            PtLoadDialog(Vignette.value,self.key)
-            if ( PtIsDialogLoaded(Vignette.value) ):
+            PtLoadDialog(Vignette.value, self.key)
+            if PtIsDialogLoaded(Vignette.value):
                 PtShowDialog(Vignette.value)
         # get control key events
         PtEnableControlKeyEvents(self.key)
@@ -139,14 +152,19 @@ class clftRS(ptModifier):
         virtCam = ptCamera()
         virtCam.restore(Camera.sceneobject.getKey())
         PtRecenterCamera()
-        #disable the Control key events
+        # disable the Control key events
         PtDisableControlKeyEvents(self.key)
-        #Re-enable first person camera
+        # Re-enable first person camera
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        PtAtTimeCallback(self.key,3,1) # wait for player to finish exit one-shot, then reenable clickable
-        PtDebugPrint("xTelescope.IQuitTelescope:\tdelaying clickable reenable",level=kDebugDumpLevel)
-        
-    def OnTimer(self,id):
-        if id==1:
-            PtSendKIMessage(kEnableKIandBB,0)
+        PtAtTimeCallback(
+            self.key, 3, 1
+        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtDebugPrint(
+            "xTelescope.IQuitTelescope:\tdelaying clickable reenable",
+            level=kDebugDumpLevel,
+        )
+
+    def OnTimer(self, id):
+        if id == 1:
+            PtSendKIMessage(kEnableKIandBB, 0)

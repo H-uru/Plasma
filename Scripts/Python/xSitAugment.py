@@ -53,16 +53,16 @@ from PlasmaTypes import *
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-SitAct = ptAttribActivator(1, " Sit Component ",netForce=1)
-Camera = ptAttribSceneobject(2," Sit Camera ")
-trig0 = ptAttribBoolean(3,"Trigger at Start Sit",0)
-trig1 = ptAttribBoolean(4,"Trigger at End Sit",1)
-trig2 = ptAttribBoolean(5,"Trigger at Start Stand",0)
-trig3 = ptAttribBoolean(6,"Trigger at End Stand",0)
-untrig0 = ptAttribBoolean(7,"Untrigger at Start Sit",0)
-untrig1 = ptAttribBoolean(8,"Untrigger at End Sit",0)
-untrig2 = ptAttribBoolean(9,"Untrigger at Start Stand",1)
-untrig3 = ptAttribBoolean(10,"Untrigger at End Stand",0)
+SitAct = ptAttribActivator(1, " Sit Component ", netForce=1)
+Camera = ptAttribSceneobject(2, " Sit Camera ")
+trig0 = ptAttribBoolean(3, "Trigger at Start Sit", 0)
+trig1 = ptAttribBoolean(4, "Trigger at End Sit", 1)
+trig2 = ptAttribBoolean(5, "Trigger at Start Stand", 0)
+trig3 = ptAttribBoolean(6, "Trigger at End Stand", 0)
+untrig0 = ptAttribBoolean(7, "Untrigger at Start Sit", 0)
+untrig1 = ptAttribBoolean(8, "Untrigger at End Sit", 0)
+untrig2 = ptAttribBoolean(9, "Untrigger at Start Stand", 1)
+untrig3 = ptAttribBoolean(10, "Untrigger at End Stand", 0)
 resp0 = ptAttribResponder(11, "optional responder @ start sit")
 resp1 = ptAttribResponder(12, "optional responder @ end sit")
 resp2 = ptAttribResponder(13, "opt. responder @ start stand")
@@ -73,11 +73,12 @@ resp3 = ptAttribResponder(14, "opt. responder @ end stand")
 
 LocalAvatar = None
 
+
 class xSitAugment(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5116
-        
+
         version = 1
         self.version = version
         PtDebugPrint("__init__xSitAugment v.", version)
@@ -85,51 +86,53 @@ class xSitAugment(ptModifier):
     def OnFirstUpdate(self):
         pass
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Activated... "
         global LocalAvatar
-        if state and id == SitAct.id:# and PtWasLocallyNotified(self.key):
-            #LocalAvatar = PtFindAvatar(events)
+        if state and id == SitAct.id:  # and PtWasLocallyNotified(self.key):
+            # LocalAvatar = PtFindAvatar(events)
 
-            callback=0 # which stage are we at.
-        
+            callback = 0  # which stage are we at.
+
             virtCam = ptCamera()
 
-            checktrig="trig%i" % callback
-            if checktrig.value: # checkbox is true, set camera
+            checktrig = "trig%i" % callback
+            if checktrig.value:  # checkbox is true, set camera
                 virtCam.save(Camera.sceneobject.getKey())
 
-            checkuntrig="untrig%i" % callback
-            if checkuntrig.value: # checkbox is true, unset camera
+            checkuntrig = "untrig%i" % callback
+            if checkuntrig.value:  # checkbox is true, unset camera
                 virtCam.restore(Camera.sceneobject.getKey())
 
-            checkresp="resp%i" % callback
-            if checkresp.value != None: # responder for this stage. Play it.
+            checkresp = "resp%i" % callback
+            if checkresp.value != None:  # responder for this stage. Play it.
                 checkresp.run(self.key)
 
-### below is scrap 
-    def OnGUINotify(self,id,control,event):
+    ### below is scrap
+    def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
-        PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control)
-        if control.getTagID() == kExit: #off
+        PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id, event), control)
+        if control.getTagID() == kExit:  # off
             self.IQuitDialog()
-        #elif event == kDialogLoaded:
+        # elif event == kDialogLoaded:
         #    # if the dialog was just loaded then show it
         #    control.show()
 
-
-    def OnControlKeyEvent(self,controlKey,activeFlag):
+    def OnControlKeyEvent(self, controlKey, activeFlag):
         "Control key events... anything we're interested in?"
-        PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag))
+        PtDebugPrint(
+            "Got controlKey event %d and its activeFlage is %d"
+            % (controlKey, activeFlag)
+        )
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitDialog()
 
     def IStartDialog(self):
         "Start the Dialog"
         global LocalAvatar
-        Activate.disable() # disable the activator
-        PtLoadDialog(Vignette.value,self.key)
-        if ( PtIsDialogLoaded(Vignette.value) ):
+        Activate.disable()  # disable the activator
+        PtLoadDialog(Vignette.value, self.key)
+        if PtIsDialogLoaded(Vignette.value):
             PtShowDialog(Vignette.value)
             PtDebugPrint("dialog: %s goes up" % Vignette.value)
         # get control key events
@@ -144,7 +147,7 @@ class xSitAugment(ptModifier):
             PtDebugPrint("Dialog: %s goes down" % Vignette.value)
         else:
             PtDebugPrint("WTH!!!")
-        #disable the Control key events
+        # disable the Control key events
         PtDisableControlKeyEvents(self.key)
         # re-enable the dialog for someone else to use
         Activate.enable()

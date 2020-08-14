@@ -67,36 +67,40 @@ import time
 
 
 # define the attributes that will be entered in max
-actClickableBook = ptAttribActivator(1,"Actvtr: Clickable small book")
+actClickableBook = ptAttribActivator(1, "Actvtr: Clickable small book")
 SeekBehavior = ptAttribBehavior(2, "Smart seek before GUI (optional)")
-respLinkResponder = ptAttribResponder(3,"Rspndr: Link out")
-TargetAge = ptAttribString(4, 'Name of Linking Panel', 'Teledahn')
+respLinkResponder = ptAttribResponder(3, "Rspndr: Link out")
+TargetAge = ptAttribString(4, "Name of Linking Panel", "Teledahn")
 
-actBookshelf = ptAttribActivator(5, "Bookshelf (Only used in PsnlAge)") #Leave blank unless it's a Personal Age Bookshelf
+actBookshelf = ptAttribActivator(
+    5, "Bookshelf (Only used in PsnlAge)"
+)  # Leave blank unless it's a Personal Age Bookshelf
 shareRegion = ptAttribActivator(6, "region in which the sharer must remain")
-shareBookSeek = ptAttribBehavior(7,"smart seek & use book for share acceptance") # different, because the offerer's client links the offeree in this case
+shareBookSeek = ptAttribBehavior(
+    7, "smart seek & use book for share acceptance"
+)  # different, because the offerer's client links the offeree in this case
 
-IsDRCStamped = ptAttribBoolean(10,"DRC Stamp",default=1)
+IsDRCStamped = ptAttribBoolean(10, "DRC Stamp", default=1)
 
-respLinkSphere01 = ptAttribResponder(11,"sphere 01 resp")
-respLinkSphere02 = ptAttribResponder(12,"sphere 02 resp")
-respLinkSphere03 = ptAttribResponder(13,"sphere 03 resp")
-respLinkSphere04 = ptAttribResponder(14,"sphere 04 resp")
+respLinkSphere01 = ptAttribResponder(11, "sphere 01 resp")
+respLinkSphere02 = ptAttribResponder(12, "sphere 02 resp")
+respLinkSphere03 = ptAttribResponder(13, "sphere 03 resp")
+respLinkSphere04 = ptAttribResponder(14, "sphere 04 resp")
 
 # globals
 LocalAvatar = None
 OfferedBookMode = False
 BookOfferer = None
 stringAgeRequested = None
-PageID_List  = []
+PageID_List = []
 SpawnPointName_Dict = {}
 SpawnPointTitle_Dict = {}
 
 OffereeWalking = False
 ClosedBookToShare = 0
 
-BookNumber = 0 # which book it is on the shelf. The Neighborhood book currently is 0. The Teledahn Book is currently 2.
-CurrentPage = 1 # The last page the book was opened to. Read from an SDL. 
+BookNumber = 0  # which book it is on the shelf. The Neighborhood book currently is 0. The Teledahn Book is currently 2.
+CurrentPage = 1  # The last page the book was opened to. Read from an SDL.
 
 # the global ptBook object.... there can only be one book displayed at one time, so only one global needed (hopefully)
 gLinkingBook = None
@@ -104,32 +108,34 @@ NoReenableBook = 0
 
 kGrsnTeamBook = 99
 
+
 class ahnyLinkBookGUIPopup(ptModifier):
     "The Linking Book GUI Popup python code"
+
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5343
         version = 27
         minor = 4
         self.version = version
-        PtDebugPrint("__init__ahnyLinkBookGUIPopup v%d.%d" % (version,minor))
+        PtDebugPrint("__init__ahnyLinkBookGUIPopup v%d.%d" % (version, minor))
 
     def OnServerInitComplete(self):
         # only in the personal age should actBookshelf be anything, so this should only happen in the personal age
         if actBookshelf:
             ageSDL = PtGetAgeSDL()
-            ageSDL.setFlags("CurrentPage", 1,1)
+            ageSDL.setFlags("CurrentPage", 1, 1)
             ageSDL.sendToClients("CurrentPage")
 
     def __del__(self):
         "destructor - get rid of any dialogs that we might have loaded"
         pass
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global LocalAvatar
         global OfferedBookMode
         global BookOfferer
-        global OffereeWalking 
+        global OffereeWalking
         global stringAgeRequested
         global CurrentPage
         global BookNumber
@@ -147,39 +153,54 @@ class ahnyLinkBookGUIPopup(ptModifier):
             PtToggleAvatarClickability(False)
             LocalAvatar = PtFindAvatar(events)
             SeekBehavior.run(LocalAvatar)
-            #self.IShowBookNoTreasure()
+            # self.IShowBookNoTreasure()
             OfferedBookMode = False
             BookOfferer = None
 
-        # is it the seek behavior because we clicked on a book ourself?    
+        # is it the seek behavior because we clicked on a book ourself?
         elif id == SeekBehavior.id and PtFindAvatar(events) == PtGetLocalAvatar():
             PtDebugPrint(events)
             for event in events:
-                if event[0] == kMultiStageEvent and event[2] == kEnterStage: # Smart seek completed. Exit multistage, and show GUI.
-                    SeekBehavior.gotoStage(LocalAvatar, -1) 
-                    PtDebugPrint("ahnyLinkBookGUIPopup: attempting to draw link panel gui")
+                if (
+                    event[0] == kMultiStageEvent and event[2] == kEnterStage
+                ):  # Smart seek completed. Exit multistage, and show GUI.
+                    SeekBehavior.gotoStage(LocalAvatar, -1)
+                    PtDebugPrint(
+                        "ahnyLinkBookGUIPopup: attempting to draw link panel gui"
+                    )
                     self.IShowBookNoTreasure()
                     OfferedBookMode = False
                     BookOfferer = None
-        
+
         else:
             for event in events:
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    PtDebugPrint("ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2]))
+                    PtDebugPrint(
+                        "ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d"
+                        % (event[1], event[2])
+                    )
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
-                        if event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
-                            PtDebugPrint("ahnyLinkBookGUIPopup:Book: hit linking panel %s" % (event[2]))
+                        if (
+                            event[2] >= xLinkingBookDefs.kFirstLinkPanelID
+                            or event[2] == xLinkingBookDefs.kBookMarkID
+                        ):
+                            PtDebugPrint(
+                                "ahnyLinkBookGUIPopup:Book: hit linking panel %s"
+                                % (event[2])
+                            )
                             self.HideBook(1)
-                            respLinkSphere01.run(self.key,avatar=PtGetLocalAvatar(),netPropagate=0)
-                            
-                            #assume this is a normal pedestal book, (i.e. not the psnlBookshelf) Run the responder indicated in Max
-                            
-                            #respNum = self.GetCurrentSphere()
+                            respLinkSphere01.run(
+                                self.key, avatar=PtGetLocalAvatar(), netPropagate=0
+                            )
 
-                            #PtDebugPrint("respNum:", respNum)
+                            # assume this is a normal pedestal book, (i.e. not the psnlBookshelf) Run the responder indicated in Max
 
-                            '''
+                            # respNum = self.GetCurrentSphere()
+
+                            # PtDebugPrint("respNum:", respNum)
+
+                            """
                             # check if we need to reset sdl
                             sdl = xPsnlVaultSDL()
                             resetSDL = sdl["AhnySphereDelete"][0]
@@ -225,35 +246,51 @@ class ahnyLinkBookGUIPopup(ptModifier):
                             else:
                                 PtDebugPrint("Whoa - invalid current sphere!")
                                 return
-                            '''
-        
+                            """
+
                     elif event[1] == PtBookEventTypes.kNotifyShow:
-                        PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyShow",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "ahnyLinkBookGUIPopup:Book: NotifyShow",
+                            level=kDebugDumpLevel,
+                        )
                         # re-allow KI and BB
-                        PtSendKIMessage(kEnableKIandBB,0)
+                        PtSendKIMessage(kEnableKIandBB, 0)
                         # should we be on a different page?
                         if CurrentPage > 1:
-                            PtDebugPrint("ahnyLinkBookGUIPopup: going to page %d (ptBook page %d)" % (CurrentPage,(CurrentPage-1)*2),level=kDebugDumpLevel)
-                            gLinkingBook.goToPage((CurrentPage-1)*2)
-                    
+                            PtDebugPrint(
+                                "ahnyLinkBookGUIPopup: going to page %d (ptBook page %d)"
+                                % (CurrentPage, (CurrentPage - 1) * 2),
+                                level=kDebugDumpLevel,
+                            )
+                            gLinkingBook.goToPage((CurrentPage - 1) * 2)
+
                     elif event[1] == PtBookEventTypes.kNotifyHide:
-                        PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "ahnyLinkBookGUIPopup:Book: NotifyHide",
+                            level=kDebugDumpLevel,
+                        )
                         if not ClosedBookToShare:
                             PtToggleAvatarClickability(True)
-                            if (OfferedBookMode and BookOfferer):
+                            if OfferedBookMode and BookOfferer:
                                 avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                                 PtNotifyOffererLinkRejected(avID)
-                                PtDebugPrint("ahnyLinkBookGUIPopup: rejected link, notifying offerer as such",level=kDebugDumpLevel)
+                                PtDebugPrint(
+                                    "ahnyLinkBookGUIPopup: rejected link, notifying offerer as such",
+                                    level=kDebugDumpLevel,
+                                )
                                 OfferedBookMode = False
                                 BookOfferer = None
-        
+
                         if not NoReenableBook:
                             actClickableBook.enable()
-        
+
                         ClosedBookToShare = 0
-        
+
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
-                        PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyCheckUncheck",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "ahnyLinkBookGUIPopup:Book: NotifyCheckUncheck",
+                            level=kDebugDumpLevel,
+                        )
                         pass
 
     def IShowBookNoTreasure(self):
@@ -261,29 +298,31 @@ class ahnyLinkBookGUIPopup(ptModifier):
         global SpawnPointName_Dict
         global SpawnPointTitle_Dict
         global kGrsnTeamBook
-        
+
         try:
             params = xLinkingBookDefs.xAgeLinkingBooks["Ahnonay"]
 
             if len(params) == 6:
-                sharable,width,height,stampdef,bookdef,gui = params
+                sharable, width, height, stampdef, bookdef, gui = params
             elif len(params) == 5:
-                sharable,width,height,stampdef,bookdef = params
+                sharable, width, height, stampdef, bookdef = params
                 gui = "BkBook"
             else:
                 return
 
             PtDebugPrint(bookdef)
-            PtSendKIMessage(kDisableKIandBB,0)
-            gLinkingBook = ptBook(bookdef,self.key)
-            gLinkingBook.setSize( width, height )
+            PtSendKIMessage(kDisableKIandBB, 0)
+            gLinkingBook = ptBook(bookdef, self.key)
+            gLinkingBook.setSize(width, height)
             gLinkingBook.setGUI(gui)
             gLinkingBook.show(1)
 
         except LookupError:
-            PtDebugPrint("ahnyLinkBookGUIPopup: could not find age Ahnonay's linking panel")
+            PtDebugPrint(
+                "ahnyLinkBookGUIPopup: could not find age Ahnonay's linking panel"
+            )
 
-        '''
+        """
         showOpen = 0
         #If this is a normal pedestal book, the panel is defined in the Max GUI. If this is the personal Age Bookshelf, the panel is passed in a note from psnlBookshelf. Determine the source here.
         if len(actBookshelf.value) == 0:
@@ -324,16 +363,16 @@ class ahnyLinkBookGUIPopup(ptModifier):
                 PtDebugPrint("ahnyLinkBookGUIPopup: could not find age %s's linking panel" % (agePanel),level=kErrorLevel)
         else:
             PtDebugPrint("ahnyLinkBookGUIPopup: no age link panel" % (agePanel),level=kErrorLevel)
-        '''
+        """
 
-    def IsThereACover(self,bookHtml):
+    def IsThereACover(self, bookHtml):
         # search the bookhtml string looking for a cover
-        idx = bookHtml.find('<cover')
+        idx = bookHtml.find("<cover")
         if idx > 0:
             return 1
         return 0
 
-    def HideBook(self, islinking = 0):
+    def HideBook(self, islinking=0):
         global gLinkingBook
         global NoReenableBook
 
@@ -341,11 +380,10 @@ class ahnyLinkBookGUIPopup(ptModifier):
             NoReenableBook = 1
         else:
             NoReenableBook = 0
-        
-        PtToggleAvatarClickability(True) # enable me as clickable
+
+        PtToggleAvatarClickability(True)  # enable me as clickable
         if gLinkingBook:
             gLinkingBook.hide()
-        
 
     #
     #
@@ -359,7 +397,11 @@ class ahnyLinkBookGUIPopup(ptModifier):
         try:
             name = xLinkingBookDefs.xLinkDestinations[TargetAge.value][0]
         except:
-            PtDebugPrint("IGetAgeFilename(): " + TargetAge.value + " is missing from the xLinkDestinations table, attempting to use it as the value")
+            PtDebugPrint(
+                "IGetAgeFilename(): "
+                + TargetAge.value
+                + " is missing from the xLinkDestinations table, attempting to use it as the value"
+            )
             name = TargetAge.value
         return name
 
@@ -367,7 +409,11 @@ class ahnyLinkBookGUIPopup(ptModifier):
         try:
             name = xLinkingBookDefs.xLinkDestinations[TargetAge.value][0]
         except:
-            PtDebugPrint("IGetAgeInstanceName(): " + TargetAge.value + " is missing from the xLinkDestinations table, attempting to use it as the value")
+            PtDebugPrint(
+                "IGetAgeInstanceName(): "
+                + TargetAge.value
+                + " is missing from the xLinkDestinations table, attempting to use it as the value"
+            )
             name = TargetAge.value
         return name
 
@@ -375,15 +421,21 @@ class ahnyLinkBookGUIPopup(ptModifier):
         try:
             name = xLinkingBookDefs.xLinkDestinations[TargetAge.value][1]
         except:
-            PtDebugPrint("IGetAgeSpawnPoint(): " + TargetAge.value + " is missing from the xLinkDestinations table, attempting to use an empty string as the value")
+            PtDebugPrint(
+                "IGetAgeSpawnPoint(): "
+                + TargetAge.value
+                + " is missing from the xLinkDestinations table, attempting to use an empty string as the value"
+            )
             name = ""
         return name
 
-    def OnTimer(self,id):
+    def OnTimer(self, id):
         global gLinkingBook
         global kGrsnTeamBook
         if id == kGrsnTeamBook:
-            PtDebugPrint("\nahnyLinkBookGUIPopup.OnTimer:Got timer callback. Removing popup for a grsn team book.")
+            PtDebugPrint(
+                "\nahnyLinkBookGUIPopup.OnTimer:Got timer callback. Removing popup for a grsn team book."
+            )
             gLinkingBook.hide()
 
     def GetCurrentSphere(self):
@@ -404,4 +456,3 @@ class ahnyLinkBookGUIPopup(ptModifier):
                 currentSphere = ahnyRecord.findVar("ahnyCurrentSphere")
                 curSphere = currentSphere.getInt(0)
                 return curSphere
-        

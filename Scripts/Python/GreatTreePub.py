@@ -52,7 +52,6 @@ from PlasmaTypes import *
 
 
 class GreatTreePub(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5323

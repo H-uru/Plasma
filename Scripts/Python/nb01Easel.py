@@ -52,32 +52,32 @@ from PlasmaTypes import *
 from PlasmaVaultConstants import *
 import xLocTools
 
-#=============================================================
+# =============================================================
 # define the attributes that will be entered in max
-#=============================================================
+# =============================================================
 dyna_map = ptAttribDynamicMap(1, "The Dynamic Texture Map")
-#dyna_string = ptAttribString(2, "Static text")
-#dyna_x = ptAttribFloat(3,"Start text at X",0.0,(-100,100))
-#dyna_y = ptAttribFloat(4,"Start text at Y",0.0,(-100,100))
-dyna_fontname = ptAttribString(5, "Font face","Sharper")
-dyna_fontsize = ptAttribInt(6, "Font size",28)
-dyna_fontcolorr = ptAttribFloat(7, "Font color - red",0.0)
-dyna_fontcolorg = ptAttribFloat(8, "Font color - green",0.0)
-dyna_fontcolorb = ptAttribFloat(9, "Font color - blue",0.0)
-dyna_fontcolora = ptAttribFloat(10, "Font color - alpha",1.0)
-#dyna_clearcolorr = ptAttribFloat(11, "Clear color - red",0.0)
-#dyna_clearcolorb = ptAttribFloat(12, "Clear color - blue",0.0)
-#dyna_clearcolorg = ptAttribFloat(13, "Clear color - green",0.0)
-#dyna_clearcolora = ptAttribFloat(14, "Clear color - alpha",1.0)
+# dyna_string = ptAttribString(2, "Static text")
+# dyna_x = ptAttribFloat(3,"Start text at X",0.0,(-100,100))
+# dyna_y = ptAttribFloat(4,"Start text at Y",0.0,(-100,100))
+dyna_fontname = ptAttribString(5, "Font face", "Sharper")
+dyna_fontsize = ptAttribInt(6, "Font size", 28)
+dyna_fontcolorr = ptAttribFloat(7, "Font color - red", 0.0)
+dyna_fontcolorg = ptAttribFloat(8, "Font color - green", 0.0)
+dyna_fontcolorb = ptAttribFloat(9, "Font color - blue", 0.0)
+dyna_fontcolora = ptAttribFloat(10, "Font color - alpha", 1.0)
+# dyna_clearcolorr = ptAttribFloat(11, "Clear color - red",0.0)
+# dyna_clearcolorb = ptAttribFloat(12, "Clear color - blue",0.0)
+# dyna_clearcolorg = ptAttribFloat(13, "Clear color - green",0.0)
+# dyna_clearcolora = ptAttribFloat(14, "Clear color - alpha",1.0)
 dyna_fontspacing = ptAttribInt(15, "Line spacing", 5)
 
-#----------
+# ----------
 # globals
-#----------
+# ----------
 
-#====================================
+# ====================================
 # This is the class where my code is
-#====================================
+# ====================================
 class nb01Easel(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
@@ -87,35 +87,49 @@ class nb01Easel(ptModifier):
     def OnFirstUpdate(self):
         self.IWriteHoodName()
 
-    def OnAgeVaultEvent(self,event,tupdata):
+    def OnAgeVaultEvent(self, event, tupdata):
         "An age vault event received"
-        if event == PtVaultCallbackTypes.kVaultNodeSaved or event == PtVaultCallbackTypes.kVaultNodeInitialized:
+        if (
+            event == PtVaultCallbackTypes.kVaultNodeSaved
+            or event == PtVaultCallbackTypes.kVaultNodeInitialized
+        ):
             if tupdata[0].getType() == PtVaultNodeTypes.kAgeInfoNode:
                 # hood name may have changed
                 self.IWriteHoodName()
 
     def IWriteHoodName(self):
-        fontcolor = ptColor(dyna_fontcolorr.value,dyna_fontcolorg.value,dyna_fontcolorb.value,dyna_fontcolora.value)
-        clearcolor = ptColor(0,0,0,0)
-        
+        fontcolor = ptColor(
+            dyna_fontcolorr.value,
+            dyna_fontcolorg.value,
+            dyna_fontcolorb.value,
+            dyna_fontcolora.value,
+        )
+        clearcolor = ptColor(0, 0, 0, 0)
+
         ageVault = ptAgeVault()
         try:
             ageInfoNode = ageVault.getAgeInfo()
-            hoodName = "%s %s" % (ageInfoNode.getAgeUserDefinedName(), ageInfoNode.getAgeInstanceName())
+            hoodName = "%s %s" % (
+                ageInfoNode.getAgeUserDefinedName(),
+                ageInfoNode.getAgeInstanceName(),
+            )
             PtDebugPrint("nb01Easel:\tinscribing %s" % hoodName)
         except:
             PtDebugPrint("nb01Easel:\tERROR age vault or hood node failure")
             return
         hoodName = xLocTools.LocalizeAgeName(hoodName)
         text = PtGetLocalizedString("Neighborhood.Messages.Welcome", [hoodName])
-        
-        dyna_map.textmap.netPropagate(False) # we don't want our text appearing on other machines, since we are going to be localized
+
+        dyna_map.textmap.netPropagate(
+            False
+        )  # we don't want our text appearing on other machines, since we are going to be localized
         dyna_map.textmap.clearToColor(clearcolor)
-        dyna_map.textmap.setTextColor(fontcolor,True)
-        dyna_map.textmap.setWrapping(dyna_map.textmap.getWidth(),dyna_map.textmap.getHeight())
+        dyna_map.textmap.setTextColor(fontcolor, True)
+        dyna_map.textmap.setWrapping(
+            dyna_map.textmap.getWidth(), dyna_map.textmap.getHeight()
+        )
         dyna_map.textmap.setFont(dyna_fontname.value, dyna_fontsize.value)
         dyna_map.textmap.setJustify(PtJustify.kCenter)
         dyna_map.textmap.setLineSpacing(dyna_fontspacing.value)
-        dyna_map.textmap.drawText(0,0,text)
+        dyna_map.textmap.drawText(0, 0, text)
         dyna_map.textmap.flush()
-

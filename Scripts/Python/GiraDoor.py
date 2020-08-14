@@ -51,55 +51,53 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 
-#globals
+# globals
 
-doorOpenInitResp = ptAttribResponder(1,"open on init")
-doorResp = ptAttribResponder(2,"normal responder",['Open','Close'])
+doorOpenInitResp = ptAttribResponder(1, "open on init")
+doorResp = ptAttribResponder(2, "normal responder", ["Open", "Close"])
 doorAct = ptAttribActivator(3, "door activator")
 
-class GiraDoor(ptResponder):
 
+class GiraDoor(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 53637
         self.version = 2
-    
 
     def OnServerInitComplete(self):
         self.ageSDL = PtGetAgeSDL()
-            
-        self.ageSDL.setFlags("giraDoorOpen",1,1)
+
+        self.ageSDL.setFlags("giraDoorOpen", 1, 1)
         self.ageSDL.sendToClients("giraDoorOpen")
 
         # register for notification of locked SDL var changes
-        self.ageSDL.setNotify(self.key,"giraDoorOpen",0.0)
-        
+        self.ageSDL.setNotify(self.key, "giraDoorOpen", 0.0)
+
         # get initial SDL state
         doorClosed = True
         try:
             doorOpen = self.ageSDL["giraDoorOpen"][0]
         except:
             doorOpen = True
-        
-        if (doorOpen):
+
+        if doorOpen:
             PtDebugPrint("gira door open")
-            doorOpenInitResp.run(self.key,avatar = PtGetLocalAvatar())
+            doorOpenInitResp.run(self.key, avatar=PtGetLocalAvatar())
         else:
             PtDebugPrint("gira door closed")
-            
-    #def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+
+    # def OnSDLNotify(self,VARname,SDLname,playerID,tag):
     def OnNotify(self, state, id, events):
         self.ageSDL = PtGetAgeSDL()
         if id == doorAct.id and state:
             doorOpen = self.ageSDL["giraDoorOpen"][0]
-            if (doorOpen):
+            if doorOpen:
                 self.ageSDL["giraDoorOpen"] = (0,)
                 doorAct.disable()
-                doorResp.run(self.key,state = 'Close',avatar = PtFindAvatar(events))
+                doorResp.run(self.key, state="Close", avatar=PtFindAvatar(events))
             else:
                 self.ageSDL["giraDoorOpen"] = (1,)
                 doorAct.disable()
-                doorResp.run(self.key,state = 'Open',avatar = PtFindAvatar(events))
+                doorResp.run(self.key, state="Open", avatar=PtFindAvatar(events))
         elif id == doorResp.id:
             doorAct.enable()
-

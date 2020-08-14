@@ -54,8 +54,8 @@ from xPsnlVaultSDL import *
 
 boolCavernObj = ptAttribBoolean(1, "Cavern object", 0)
 
-class bhroStarfieldOrCavern(ptMultiModifier):
 
+class bhroStarfieldOrCavern(ptMultiModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5318
@@ -65,10 +65,15 @@ class bhroStarfieldOrCavern(ptMultiModifier):
     def OnServerInitComplete(self):
         sdl = xPsnlVaultSDL()
 
-        if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
+        if (
+            sdl["TeledahnPoleState"][0] > 5
+            or sdl["KadishPoleState"][0] > 5
+            or sdl["GardenPoleState"][0] > 5
+            or sdl["GarrisonPoleState"][0] > 5
+        ):
             # we want to draw the cavern
             if boolCavernObj.value:
-                #self.EnableObject()
+                # self.EnableObject()
                 pass
             else:
                 self.DisableObject()
@@ -77,7 +82,7 @@ class bhroStarfieldOrCavern(ptMultiModifier):
             if boolCavernObj.value:
                 self.DisableObject()
             else:
-                #self.EnableObject()
+                # self.EnableObject()
                 pass
 
     def EnableObject(self):

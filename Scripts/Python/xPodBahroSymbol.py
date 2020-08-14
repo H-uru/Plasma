@@ -52,11 +52,13 @@ from PlasmaTypes import *
 import random
 
 # define the attributes that will be entered in max
-respBahroSymbol         = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning","middle","end"], netForce=1)
-SymbolAppears           = ptAttribInt(2, "Frame the Symbol Appears", 226, (0,5000))
-DayFrameSize            = ptAttribInt(3, "Frames in One Day", 2000, (0,5000))
-animMasterDayLight      = ptAttribAnimation(4, "Master Animation Object")
-respSFX                 = ptAttribResponder(5, "resp: Symbol SFX", ["stop","play"],netForce = 1)
+respBahroSymbol = ptAttribResponder(
+    1, "resp: Bahro Symbol", ["beginning", "middle", "end"], netForce=1
+)
+SymbolAppears = ptAttribInt(2, "Frame the Symbol Appears", 226, (0, 5000))
+DayFrameSize = ptAttribInt(3, "Frames in One Day", 2000, (0, 5000))
+animMasterDayLight = ptAttribAnimation(4, "Master Animation Object")
+respSFX = ptAttribResponder(5, "resp: Symbol SFX", ["stop", "play"], netForce=1)
 
 # define globals
 kDayLengthInSeconds = 56585.0
@@ -72,9 +74,12 @@ kDayAnimationSpeed = (DayFrameSize.value / kDayLengthInSeconds) / 30.0
 # is 11.3% (226 / 2000) into the day. 11.3% into a 56585 second
 # day is 6394.105 seconds (56585 * 0.113). That gives us our base
 # point for every other age that needs the Bahro symbol.
-kTimeWhenSymbolAppears = kDayLengthInSeconds * (float(SymbolAppears.value) / float(DayFrameSize.value))
+kTimeWhenSymbolAppears = kDayLengthInSeconds * (
+    float(SymbolAppears.value) / float(DayFrameSize.value)
+)
 
-#====================================
+# ====================================
+
 
 class xPodBahroSymbol(ptResponder):
     ###########################
@@ -83,7 +88,7 @@ class xPodBahroSymbol(ptResponder):
         self.id = 5240
         version = 1
         self.version = version
-        PtDebugPrint("__init__xPodBahroSymbol v.", version,".0")
+        PtDebugPrint("__init__xPodBahroSymbol v.", version, ".0")
         random.seed()
 
     ###########################
@@ -91,22 +96,29 @@ class xPodBahroSymbol(ptResponder):
         self.ISetTimers()
         respSFX.run(self.key, state="stop")
 
-        if animMasterDayLight.value is not None:        
-            timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (DayFrameSize.value / 30.0)
-            PtDebugPrint("xPodBahroSymbol.OnServerInitComplete: Master anim is skipping to %f seconds and playing at %f speed" % (timeIntoMasterAnim, kDayAnimationSpeed))
+        if animMasterDayLight.value is not None:
+            timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (
+                DayFrameSize.value / 30.0
+            )
+            PtDebugPrint(
+                "xPodBahroSymbol.OnServerInitComplete: Master anim is skipping to %f seconds and playing at %f speed"
+                % (timeIntoMasterAnim, kDayAnimationSpeed)
+            )
             animMasterDayLight.animation.skipToTime(timeIntoMasterAnim)
             animMasterDayLight.animation.speed(kDayAnimationSpeed)
             animMasterDayLight.animation.resume()
 
     ###########################
-    def OnNotify(self,state,id,events):
-        PtDebugPrint("xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state,id),events)
+    def OnNotify(self, state, id, events):
+        PtDebugPrint(
+            "xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state, id), events
+        )
 
         if id == respBahroSymbol.id:
             PtAtTimeCallback(self.key, 32, 3)
 
     ###########################
-    def OnTimer(self,TimerID):
+    def OnTimer(self, TimerID):
         PtDebugPrint("xPodBahroSymbol.OnTimer: callback id=%d" % (TimerID))
         if self.sceneobject.isLocallyOwned():
             if TimerID == 1:
@@ -120,18 +132,25 @@ class xPodBahroSymbol(ptResponder):
 
     ###########################
     def ISetTimers(self):
-        beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
+        beginningOfToday = PtGetDniTime() - int(
+            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
+        )
         timeWhenSymbolAppearsToday = beginningOfToday + kTimeWhenSymbolAppears
 
         if timeWhenSymbolAppearsToday > PtGetDniTime():
             timeTillSymbolAppears = timeWhenSymbolAppearsToday - PtGetDniTime()
             PtAtTimeCallback(self.key, timeTillSymbolAppears, 1)
-            PtDebugPrint("xGlobalDoor.key: %d%s" % (random.randint(0,100), hex(int(timeTillSymbolAppears + 1234))))
+            PtDebugPrint(
+                "xGlobalDoor.key: %d%s"
+                % (random.randint(0, 100), hex(int(timeTillSymbolAppears + 1234)))
+            )
         else:
             PtDebugPrint("xPodBahroSymbol: You missed the symbol for today.")
 
-        timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
-        timeLeftToday += 1 # because we want it to go off right AFTER the day flips
+        timeLeftToday = kDayLengthInSeconds - int(
+            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
+        )
+        timeLeftToday += 1  # because we want it to go off right AFTER the day flips
         PtAtTimeCallback(self.key, timeLeftToday, 2)
         PtDebugPrint("xPodBahroSymbol: Tomorrow starts in %d seconds" % (timeLeftToday))
 
@@ -142,4 +161,3 @@ class xPodBahroSymbol(ptResponder):
                 PtDebugPrint("xPodBahroSymbol.OnBackdoorMsg: Work!")
                 if param == "appear":
                     PtAtTimeCallback(self.key, 1, 1)
-

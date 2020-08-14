@@ -51,10 +51,12 @@ Sets an object to display only in either single player mode or multiplayer mode
 from Plasma import *
 from PlasmaTypes import *
 
-boolSinglePlayerDisable = ptAttribBoolean(1, "Disable in single player (else multiplayer)", 1)
+boolSinglePlayerDisable = ptAttribBoolean(
+    1, "Disable in single player (else multiplayer)", 1
+)
+
 
 class xDisableOnGameMode(ptMultiModifier):
-
     def __init__(self):
         ptMultiModifier.__init__(self)
         self.id = 5316
@@ -75,11 +77,17 @@ class xDisableOnGameMode(ptMultiModifier):
                 self.EnableObject()
 
     def EnableObject(self):
-        PtDebugPrint("DEBUG: xDisableOnGameMode.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
+        PtDebugPrint(
+            "DEBUG: xDisableOnGameMode.EnableObject:  Attempting to enable drawing and collision on %s..."
+            % self.sceneobject.getName()
+        )
         self.sceneobject.draw.enable()
         self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
-        PtDebugPrint("DEBUG: xDisableOnGameMode.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
+        PtDebugPrint(
+            "DEBUG: xDisableOnGameMode.DisableObject:  Attempting to disable drawing and collision on %s..."
+            % self.sceneobject.getName()
+        )
         self.sceneobject.draw.disable()
         self.sceneobject.physics.suppress(True)

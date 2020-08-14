@@ -53,71 +53,81 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 
 # define the attributes that will be entered in max
-#stringID = ptAttribString(1,"RoomID")
-actRegion  = ptAttribActivator(2,"Region")
-numID = ptAttribInt(3,"RoomID",0)
+# stringID = ptAttribString(1,"RoomID")
+actRegion = ptAttribActivator(2, "Region")
+numID = ptAttribInt(3, "RoomID", 0)
 
-doorVarName = ptAttribString(4,"Age SDL Door Var Name")
+doorVarName = ptAttribString(4, "Age SDL Door Var Name")
 
 
-#globals
+# globals
 
 AreWeInRoom = 0
 
-class xChatChannelRegion(ptResponder):
 
+class xChatChannelRegion(ptResponder):
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
         self.id = 5028
-        
+
         version = 3
         self.version = version
-        PtDebugPrint("__init__xChatChannelRegion v%d.%d" % (version,3),level=kWarningLevel)
+        PtDebugPrint(
+            "__init__xChatChannelRegion v%d.%d" % (version, 3), level=kWarningLevel
+        )
 
     def __del__(self):
         "the destructor"
         global AreWeInRoom
-        PtDebugPrint("xChatChannel.__del__:",level=kDebugDumpLevel)
+        PtDebugPrint("xChatChannel.__del__:", level=kDebugDumpLevel)
         if AreWeInRoom:
             try:
                 PtClearPrivateChatList(PtGetLocalAvatar().getKey())
                 self.IRemoveMember(PtGetLocalAvatar())
             except:
                 pass
-            PtDebugPrint("xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d" % (numID.value),level=kDebugDumpLevel)
+            PtDebugPrint(
+                "xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d"
+                % (numID.value),
+                level=kDebugDumpLevel,
+            )
             PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
             AreWeInRoom = 0
 
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            self.SDL.setDefault("intSDLChatMembers",(-1,-1,-1,-1,-1,-1,-1,-1))
+            self.SDL.setDefault("intSDLChatMembers", (-1, -1, -1, -1, -1, -1, -1, -1))
             if doorVarName.value:
-                ageSDL.setNotify(self.key,doorVarName.value,0.0)
+                ageSDL.setNotify(self.key, doorVarName.value, 0.0)
 
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
 
-    def OnPageLoad(self,what,room):
+    def OnPageLoad(self, what, room):
         "Check for page unload... then we must be leavin'"
         global AreWeInRoom
         # when we unloading the page, then we are no longer in this chat region
         if what == kUnloaded:
-            PtDebugPrint("xChatChannel.OnPageUnload:",level=kDebugDumpLevel)
+            PtDebugPrint("xChatChannel.OnPageUnload:", level=kDebugDumpLevel)
             if AreWeInRoom:
                 try:
                     PtClearPrivateChatList(PtGetLocalAvatar().getKey())
                     self.IRemoveMember(PtGetLocalAvatar())
                 except:
                     pass
-                PtDebugPrint("xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d" % (numID.value),level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d"
+                    % (numID.value),
+                    level=kDebugDumpLevel,
+                )
                 PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
                 AreWeInRoom = 0
 
     # in case someone other than me changes my var(s)
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         # is it a var we care about?
         if VARname != doorVarName.value:
             return
@@ -134,7 +144,7 @@ class xChatChannelRegion(ptResponder):
             PtDebugPrint("DEBUG: XChatChannel:OnSDLNotify:\topening door")
             self.IUnSendChatList()
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global AreWeInRoom
         # Collision event is  [ 1, enterflag, hitter, hittee ]  where hitter and hittee
         ###PtDebugPrint("xChatChannel.OnNotify: state=%d id=%d, events=" % (state,id),events,level=kDebugDumpLevel)
@@ -143,37 +153,47 @@ class xChatChannelRegion(ptResponder):
             # we are only interested in collision events... ignore the rest
             if event[0] != kCollisionEvent:
                 continue
-            if event[1]: # entry event
+            if event[1]:  # entry event
                 self.IAddMember(event[2])
             else:
                 self.IRemoveMember(event[2])
 
-
-    def IAddMember(self,member):
+    def IAddMember(self, member):
 
         memberKey = member.getKey()
         memberID = PtGetClientIDFromAvatarKey(memberKey)
         memberName = memberKey.getName()
-        
-        for count in [0,1,2,3,4,5,6,7]:
+
+        for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if self.SDL["intSDLChatMembers"][count] == memberID:
-                PtDebugPrint("xChatChannel: memberID=%d   already in list, aborting." % (memberID),level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "xChatChannel: memberID=%d   already in list, aborting."
+                    % (memberID),
+                    level=kDebugDumpLevel,
+                )
                 return
-        
-        for count in [0,1,2,3,4,5,6,7]:
+
+        for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if self.SDL["intSDLChatMembers"][count] == -1:
-                self.SDL.setIndex("intSDLChatMembers",count,memberID)
-                PtDebugPrint("xChatChannel: memberID=%d added to SDL." % (memberID),level=kDebugDumpLevel)
+                self.SDL.setIndex("intSDLChatMembers", count, memberID)
+                PtDebugPrint(
+                    "xChatChannel: memberID=%d added to SDL." % (memberID),
+                    level=kDebugDumpLevel,
+                )
                 return
 
-    def IRemoveMember(self,member):
+    def IRemoveMember(self, member):
         memberKey = member.getKey()
         memberID = PtGetClientIDFromAvatarKey(memberKey)
         memberName = memberKey.getName()
-        for count in [0,1,2,3,4,5,6,7]:
+        for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if self.SDL["intSDLChatMembers"][count] == memberID:
-                self.SDL.setIndex("intSDLChatMembers",count,-1)
-                PtDebugPrint("xChatChannel:removed %s  id # %d   from listen list" % (memberName,memberID),level=kDebugDumpLevel)
+                self.SDL.setIndex("intSDLChatMembers", count, -1)
+                PtDebugPrint(
+                    "xChatChannel:removed %s  id # %d   from listen list"
+                    % (memberName, memberID),
+                    level=kDebugDumpLevel,
+                )
 
     def ISendChatList(self):
         # missing global statement added so that it actually updates the global variable
@@ -182,18 +202,26 @@ class xChatChannelRegion(ptResponder):
         localPlayer = PtGetLocalPlayer()
         localID = localPlayer.getPlayerID()
         localIncluded = False
-        for count in [0,1,2,3,4,5,6,7]:
+        for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if not self.SDL["intSDLChatMembers"][count] == -1:
                 memberID = self.SDL["intSDLChatMembers"][count]
                 memberKey = PtGetAvatarKeyFromClientID(memberID)
                 memberName = memberKey.getName()
-                memberList.append( ptPlayer( memberName, memberID ) )
-                PtDebugPrint("xChatChannel: added %s   id # %d  to listen list" % (memberName,memberID),level=kDebugDumpLevel)
+                memberList.append(ptPlayer(memberName, memberID))
+                PtDebugPrint(
+                    "xChatChannel: added %s   id # %d  to listen list"
+                    % (memberName, memberID),
+                    level=kDebugDumpLevel,
+                )
                 if memberID == localID:
                     localIncluded = True
         if localIncluded:
             PtSendPrivateChatList(memberList)
-            PtDebugPrint("xChatChannel.OnNotify:\tadding you to private chat channel %d" % (numID.value),level=kDebugDumpLevel)
+            PtDebugPrint(
+                "xChatChannel.OnNotify:\tadding you to private chat channel %d"
+                % (numID.value),
+                level=kDebugDumpLevel,
+            )
             PtSendKIMessageInt(kSetPrivateChatChannel, numID.value)
             AreWeInRoom = 1
         return
@@ -204,13 +232,17 @@ class xChatChannelRegion(ptResponder):
         localPlayer = PtGetLocalPlayer()
         localID = localPlayer.getPlayerID()
         localIncluded = False
-        for count in [0,1,2,3,4,5,6,7]:
+        for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if self.SDL["intSDLChatMembers"][count] != -1:
                 memberID = self.SDL["intSDLChatMembers"][count]
                 if memberID == localID:
                     localIncluded = True
         if localIncluded:
             PtClearPrivateChatList(PtGetLocalAvatar().getKey())
-            PtDebugPrint("xChatChannel.OnNotify:\tremoving ourselves from private chat channel %d" % (numID.value),level=kDebugDumpLevel)
+            PtDebugPrint(
+                "xChatChannel.OnNotify:\tremoving ourselves from private chat channel %d"
+                % (numID.value),
+                level=kDebugDumpLevel,
+            )
             PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
             AreWeInRoom = 0

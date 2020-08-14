@@ -49,8 +49,8 @@ Date: June 2003
 from Plasma import *
 from PlasmaTypes import *
 
-class BahroCave(ptResponder):
 
+class BahroCave(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5314
@@ -58,9 +58,9 @@ class BahroCave(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        
+
     def Load(self):
-        pass        
-        
-    def OnNotify(self,state,id,events):
+        pass
+
+    def OnNotify(self, state, id, events):
         pass

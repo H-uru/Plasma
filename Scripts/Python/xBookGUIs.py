@@ -52,7 +52,8 @@ from Plasma import *
 from PlasmaTypes import *
 
 # Add your new GUIs in the list below, seperated by commas
-xBookGUIList = ("BkBook","bkNotebook","bkBahroRockBook")
+xBookGUIList = ("BkBook", "bkNotebook", "bkBahroRockBook")
+
 
 def LoadAllBookGUIs():
     global xBookGUIList

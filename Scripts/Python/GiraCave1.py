@@ -52,13 +52,13 @@ from PlasmaTypes import *
 from PlasmaConstants import *
 
 
-caveSolved = ptAttribActivator(2,"cave solved")
-sdlSolved = ptAttribString(4,"our sdl var")
+caveSolved = ptAttribActivator(2, "cave solved")
+sdlSolved = ptAttribString(4, "our sdl var")
 
-#globals
+# globals
+
 
 class GiraCave1(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5360224
@@ -67,22 +67,19 @@ class GiraCave1(ptResponder):
     def OnServerInitComplete(self):
         if sdlSolved.value:
             self.ageSDL = PtGetAgeSDL()
-            self.ageSDL.setFlags(sdlSolved.value,1,1)
+            self.ageSDL.setFlags(sdlSolved.value, 1, 1)
             self.ageSDL.sendToClients(sdlSolved.value)
         else:
-            PtDebugPrint("GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file")
-        
+            PtDebugPrint(
+                "GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file"
+            )
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
 
-        if (id == caveSolved.id):
-            if (state): # we entered the region, check for bugs
+        if id == caveSolved.id:
+            if state:  # we entered the region, check for bugs
                 avatar = PtFindAvatar(events)
                 bugs = PtGetNumParticles(avatar.getKey())
-                if (bugs > 0):
+                if bugs > 0:
                     self.ageSDL[sdlSolved.value] = (1,)
                     return
-            
-    
-    
-            

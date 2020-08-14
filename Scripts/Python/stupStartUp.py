@@ -54,7 +54,8 @@ from PlasmaTypes import *
 # define the attributes that will be entered in max
 Camera = ptAttribSceneobject(1, "Camera")
 
-#====================================
+# ====================================
+
 
 class stupStartUp(ptResponder):
     ###########################

@@ -48,30 +48,29 @@ from PlasmaTypes import *
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
 
-rockPillarCamTrigger = ptAttribActivator(1,"rock cam trigger")
-rockPillarCamera = ptAttribSceneobject(2,"rock pillar camera")
+rockPillarCamTrigger = ptAttribActivator(1, "rock cam trigger")
+rockPillarCamera = ptAttribSceneobject(2, "rock pillar camera")
 
 ##############################################################
-# grsnWellJump    
+# grsnWellJump
 ##############################################################
 class grsnWellJump(ptResponder):
     "subworld transition test"
-   
+
     # constants
-    
+
     def __init__(self):
         "construction"
         PtDebugPrint("grsnWellJump::init begin")
         ptResponder.__init__(self)
         self.id = 50118
         self.version = 1
-        PtDebugPrint("grsnWellJump::init end")        
+        PtDebugPrint("grsnWellJump::init end")
 
-        
-    def OnNotify(self,state,id,events):
-         
-         if state:
-             if id == rockPillarCamTrigger.id:
-                 PtDebugPrint("triggered camera change")
-                 #rockPillarCamera.value.pushCamera()
-                 return
+    def OnNotify(self, state, id, events):
+
+        if state:
+            if id == rockPillarCamTrigger.id:
+                PtDebugPrint("triggered camera change")
+                # rockPillarCamera.value.pushCamera()
+                return

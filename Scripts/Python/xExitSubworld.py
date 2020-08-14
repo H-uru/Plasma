@@ -49,16 +49,15 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 
-exitRgn = ptAttribActivator(1,"exit region")
-safetyRgn = ptAttribActivator(2,"safety region")
+exitRgn = ptAttribActivator(1, "exit region")
+safetyRgn = ptAttribActivator(2, "safety region")
 
-#globals
+# globals
 
 inSafetyRegion = False
 
 
 class xExitSubworld(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 53634
@@ -69,23 +68,21 @@ class xExitSubworld(ptResponder):
         # will fall through the exit region and panic link... bye-bye muzzafakka!
         exitRgn.volumeSensorNoArbitration()
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global inSafetyRegion
 
         local = PtGetLocalAvatar()
         avatar = PtFindAvatar(events)
-        if (avatar != local):
+        if avatar != local:
             return
 
         for event in events:
-            if (event[0] == kCollisionEvent):
+            if event[0] == kCollisionEvent:
                 entry = event[1]  # are we entering or exiting?
-                if (id == exitRgn.id and not inSafetyRegion and not entry):
+                if id == exitRgn.id and not inSafetyRegion and not entry:
                     avatar.avatar.exitSubWorld()
                     return
-                elif (id == safetyRgn.id):
-                    PtDebugPrint("in safety region = ",entry)
-                    inSafetyRegion  = entry
+                elif id == safetyRgn.id:
+                    PtDebugPrint("in safety region = ", entry)
+                    inSafetyRegion = entry
                     return
-        
-        

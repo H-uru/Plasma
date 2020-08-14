@@ -63,8 +63,21 @@ kGraphicsShadows = "Graphics.Shadow.Enable"
 kGraphicsVerticalSync = "Graphics.EnableVSync"
 kGraphicsShadowQuality = "Graphics.Shadow.VisibleDistance"
 
-CmdList = [kGraphicsWidth, kGraphicsHeight, kGraphicsColorDepth, kGraphicsWindowed, kGraphicsTextureQuality, kGraphicsAntiAliasLevel, kGraphicsAnisotropicLevel, kGraphicsQualityLevel, kGraphicsShadows, kGraphicsVerticalSync, kGraphicsShadowQuality]
+CmdList = [
+    kGraphicsWidth,
+    kGraphicsHeight,
+    kGraphicsColorDepth,
+    kGraphicsWindowed,
+    kGraphicsTextureQuality,
+    kGraphicsAntiAliasLevel,
+    kGraphicsAnisotropicLevel,
+    kGraphicsQualityLevel,
+    kGraphicsShadows,
+    kGraphicsVerticalSync,
+    kGraphicsShadowQuality,
+]
 DefaultsList = ["800", "600", "32", "false", "2", "0", "0", "2", "true", "false", "0"]
+
 
 def ConstructFilenameAndPath():
     global gFilenameAndPath
@@ -74,17 +87,27 @@ def ConstructFilenameAndPath():
             localNameAndPath = "init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                PtDebugPrint("xIniDisplay::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + "\" file")
+                PtDebugPrint(
+                    'xIniDisplay::ConstructFilenameAndPath(): Using internal "'
+                    + gFilenameAndPath
+                    + '" file'
+                )
                 return
         # otherwise, use the standard init path
         gFilenameAndPath = PtGetInitPath() + "/" + gFilename
-        PtDebugPrint("xIniDisplay::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + "\" file")
+        PtDebugPrint(
+            'xIniDisplay::ConstructFilenameAndPath(): Using user-level "'
+            + gFilenameAndPath
+            + '" file'
+        )
+
 
 def WriteIni():
     global gIniFile
     if gIniFile:
         ConstructFilenameAndPath()
         gIniFile.writeFile(gFilenameAndPath)
+
 
 def ReadIni():
     global gIniFile
@@ -111,7 +134,7 @@ def ReadIni():
         iniChanged = 0
         for idx in range(len(CmdList)):
             cmd = CmdList[idx]
-            entry,idx = gIniFile.findByCommand(cmd)
+            entry, idx = gIniFile.findByCommand(cmd)
             if not entry:
                 gIniFile.addEntry(cmd + " " + DefaultsList[idx])
                 iniChanged = 1
@@ -120,22 +143,48 @@ def ReadIni():
             ConstructFilenameAndPath()
             gIniFile.writeFile(gFilenameAndPath)
 
-def SetGraphicsOptions(width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual):
+
+def SetGraphicsOptions(
+    width,
+    heigth,
+    colordepth,
+    windowed,
+    texquality,
+    aaLevel,
+    anisoLevel,
+    qualityLevel,
+    useShadows,
+    vsync,
+    shadowqual,
+):
     if gIniFile:
-        paramList = [width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual]
+        paramList = [
+            width,
+            heigth,
+            colordepth,
+            windowed,
+            texquality,
+            aaLevel,
+            anisoLevel,
+            qualityLevel,
+            useShadows,
+            vsync,
+            shadowqual,
+        ]
         for idx in range(len(CmdList)):
-            entry,junk = gIniFile.findByCommand(CmdList[idx])
+            entry, junk = gIniFile.findByCommand(CmdList[idx])
             val = str(paramList[idx])
             if entry:
                 entry.setValue(0, val)
             else:
                 gIniFile.addEntry("%s %s" % (CmdList[idx], val))
-                
+
+
 def GetGraphicsOptions():
     optsList = {}
     if gIniFile:
         for cmd in CmdList:
-            entry,idx = gIniFile.findByCommand(cmd)
+            entry, idx = gIniFile.findByCommand(cmd)
             if entry:
                 value = entry.getValue(0)
                 if value:

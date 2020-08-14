@@ -55,18 +55,17 @@ from Plasma import *
 from PlasmaTypes import *
 import xRandom
 
-strVarName = ptAttribString(1,"Object SDL Var Name")
-strEnabledVar = ptAttribString(2,"Enabled SDL Var Name")
+strVarName = ptAttribString(1, "Object SDL Var Name")
+strEnabledVar = ptAttribString(2, "Enabled SDL Var Name")
 strChanceVar = ptAttribString(3, "Chance SDL Var Name")
 strProximityVar = ptAttribString(4, "Rgn Occupied SDL Var Name")
 rgnProximity = ptAttribActivator(5, "Proximity region sensor")
 boolEnable = ptAttribBoolean(6, "False when disabled", 1)
 soOwned = ptAttribSceneobject(7, "Scene object for ownership check")
-boolDefault = ptAttribBoolean(8,"Default setting for vis,enable,chance",0)
+boolDefault = ptAttribBoolean(8, "Default setting for vis,enable,chance", 0)
 
 
 class xRandomBoolChange(ptModifier):
-
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5321
@@ -74,48 +73,75 @@ class xRandomBoolChange(ptModifier):
 
     def OnFirstUpdate(self):
         if not strVarName.value:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDL var name on %s"
+                % self.sceneobject.getName()
+            )
         if not strEnabledVar.value:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLEnabledVar var name on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLEnabledVar var name on %s"
+                % self.sceneobject.getName()
+            )
         if not strChanceVar.value:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLChanceVar var name on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLChanceVar var name on %s"
+                % self.sceneobject.getName()
+            )
         if not strProximityVar.value:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLProximityVar var name on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLProximityVar var name on %s"
+                % self.sceneobject.getName()
+            )
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags(strVarName.value,1,1)
+        ageSDL.setFlags(strVarName.value, 1, 1)
         ageSDL.sendToClients(strVarName.value)
 
-        ageSDL.setFlags(strProximityVar.value,1,1)
+        ageSDL.setFlags(strProximityVar.value, 1, 1)
         ageSDL.sendToClients(strProximityVar.value)
 
         try:
-            ageSDL.setNotify(self.key,strEnabledVar.value,0.0)                
+            ageSDL.setNotify(self.key, strEnabledVar.value, 0.0)
         except:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing ageSDL on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing ageSDL on %s"
+                % self.sceneobject.getName()
+            )
             return
 
         try:
             visible = ageSDL[strVarName.value][0]
             enabled = ageSDL[strEnabledVar.value][0]
-            chance  = ageSDL[strChanceVar.value][0]
+            chance = ageSDL[strChanceVar.value][0]
         except:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing ageSDL on %s. Using default." % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing ageSDL on %s. Using default."
+                % self.sceneobject.getName()
+            )
             visible = boolDefault.value
             enabled = boolDefault.value
-            chance  = boolDefault.value
-        PtDebugPrint("xRandomBoolChange.OnServerInitComplete():\t attached to sceneobject: %s" % self.sceneobject.getName())
-        PtDebugPrint("xRandomBoolChange.OnServerInitComplete():\t SDL for proximity var: %s" % strProximityVar.value)
+            chance = boolDefault.value
+        PtDebugPrint(
+            "xRandomBoolChange.OnServerInitComplete():\t attached to sceneobject: %s"
+            % self.sceneobject.getName()
+        )
+        PtDebugPrint(
+            "xRandomBoolChange.OnServerInitComplete():\t SDL for proximity var: %s"
+            % strProximityVar.value
+        )
         try:
-            nearby  = ageSDL[strProximityVar.value][0]
-    
+            nearby = ageSDL[strProximityVar.value][0]
+
             # if I'm the only one in here then make sure the proximity setting is 0
             if len(PtGetPlayerList()) == 0 and nearby:
                 ageSDL[strProximityVar.value] = (0,)
                 nearby = 0
         except:
-            PtDebugPrint("ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing nearby ageSDL on %s. Using default." % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing nearby ageSDL on %s. Using default."
+                % self.sceneobject.getName()
+            )
             nearby = 0
 
         PtDebugPrint("RandomBoolChange script on object " + self.sceneobject.getName())
@@ -142,7 +168,7 @@ class xRandomBoolChange(ptModifier):
                 PtDebugPrint("Object not enabled, turning off")
                 ageSDL[strVarName.value] = (0,)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         if id == rgnProximity.id and state and soOwned.sceneobject.isLocallyOwned():
             for event in events:
                 if event[0] == kCollisionEvent:
@@ -152,20 +178,26 @@ class xRandomBoolChange(ptModifier):
                     if event[1]:  # someone entered
                         PtDebugPrint("Someone entered the bahro stone region")
                         if not currentlyOccupied:
-                            PtDebugPrint("Region var is set to unoccupied so setting to occupied")
+                            PtDebugPrint(
+                                "Region var is set to unoccupied so setting to occupied"
+                            )
                             sdl[strProximityVar.value] = (1,)
-                    else:         # everyone exited
+                    else:  # everyone exited
                         PtDebugPrint("No one is in the bahro stone region")
                         if currentlyOccupied:
-                            PtDebugPrint("Region var is set to occupied so setting to unoccupied")
+                            PtDebugPrint(
+                                "Region var is set to occupied so setting to unoccupied"
+                            )
                             sdl[strProximityVar.value] = (0,)
                     break
 
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if VARname == strEnabledVar.value:
             if soOwned.sceneobject.isLocallyOwned():
                 sdl = PtGetAgeSDL()
-                PtDebugPrint("Enabled var changed to: " + str(sdl[strEnabledVar.value][0]))
+                PtDebugPrint(
+                    "Enabled var changed to: " + str(sdl[strEnabledVar.value][0])
+                )
                 if not sdl[strEnabledVar.value][0]:
                     PtDebugPrint("Enabled var is no longer enabled")
                     if boolEnable.value:

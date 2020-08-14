@@ -52,14 +52,14 @@ from PlasmaTypes import *
 
 # define the attributes that will be entered in max
 act = ptAttribActivator(1, "activator")
-var = ptAttribString(2,"chronicle var")
+var = ptAttribString(2, "chronicle var")
 
 # global variables
 kChronicleVarType = 0  # not currently used
 kInitialValue = 1
 
-class xChronicleCounter(ptResponder):
 
+class xChronicleCounter(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5021
@@ -67,32 +67,41 @@ class xChronicleCounter(ptResponder):
 
     def OnFirstUpdate(self):
         pass
- 
+
     def Load(self):
         pass
-        
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         if not state:
             return
-            
+
         if not PtWasLocallyNotified(self.key):
             return
-        
+
         if id == act.id:
             if var.value is None:
-                PtDebugPrint("xChronicleCounter.py:\t-- ERROR: missing chronicle variable name, can't record --")
+                PtDebugPrint(
+                    "xChronicleCounter.py:\t-- ERROR: missing chronicle variable name, can't record --"
+                )
                 return
-            
+
             vault = ptVault()
             entry = vault.findChronicleEntry(var.value)
             if entry is None:
                 # not found... add current level chronicle
-                vault.addChronicleEntry(var.value,kChronicleVarType,"%d" %(kInitialValue))
-                PtDebugPrint("xChronicleCounter:\tentered new chronicle counter %s, count is %d" % (var.value,kInitialValue))
+                vault.addChronicleEntry(
+                    var.value, kChronicleVarType, "%d" % (kInitialValue)
+                )
+                PtDebugPrint(
+                    "xChronicleCounter:\tentered new chronicle counter %s, count is %d"
+                    % (var.value, kInitialValue)
+                )
             else:
                 count = int(entry.chronicleGetValue())
                 count = count + 1
                 entry.chronicleSetValue("%d" % (count))
                 entry.save()
-                PtDebugPrint("xChronicleCounter:\tyour current count for %s is %s" % (var.value,entry.chronicleGetValue()))
+                PtDebugPrint(
+                    "xChronicleCounter:\tyour current count for %s is %s"
+                    % (var.value, entry.chronicleGetValue())
+                )

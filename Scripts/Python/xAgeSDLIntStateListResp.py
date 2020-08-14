@@ -49,10 +49,10 @@ Author: Tye Hooley
 
 
 ##############################################
-#-------------------Notes---------------------
+# -------------------Notes---------------------
 # * States are entered as touples in the
 #   following format: (value, respState).
-#   Example:  (1,0)(2,2)(3,9) 
+#   Example:  (1,0)(2,2)(3,9)
 #   Spaces are allowed...
 ##############################################
 
@@ -65,7 +65,17 @@ from PlasmaTypes import *
 # moved into a module, or integrated into the base class
 # to help keep this file a bit more tidy.
 class ptAttribStateResponder(ptAttribResponder):
-    def run(self,key,state=None,events=None,avatar=None,objectName=None,netForce=0,netPropagate=1,fastforward=0):
+    def run(
+        self,
+        key,
+        state=None,
+        events=None,
+        avatar=None,
+        objectName=None,
+        netForce=0,
+        netPropagate=1,
+        fastforward=0,
+    ):
         # has the value been set?
         if self.value is not None:
             nt = ptNotify(key)
@@ -88,12 +98,12 @@ class ptAttribStateResponder(ptAttribResponder):
                 nt.addResponderState(state)
             else:
                 raise ptResponderStateError("State must be a positive integer")
-            
+
             # see if there are events to pass on
             if events is not None:
-                PtAddEvents(nt,events)
+                PtAddEvents(nt, events)
             if avatar is not None:
-                nt.addCollisionEvent(1,avatar.getKey(),avatar.getKey())
+                nt.addCollisionEvent(1, avatar.getKey(), avatar.getKey())
             if fastforward:
                 nt.setType(PtNotificationType.kResponderFF)
                 # if fast forwarding, then only do it on the local client
@@ -103,15 +113,14 @@ class ptAttribStateResponder(ptAttribResponder):
             nt.send()
 
 
-
 # define the attributes that will be entered in max
-strSDLVarName = ptAttribString(1,"SDL Variable")
-respEnterState = ptAttribStateResponder(2,"Enter State Responder")
-strStates = ptAttribString(3,"Value/State Pairs")
-boolStartFF = ptAttribBoolean(4,"F-Forward on start",0)
-boolVaultManagerFF = ptAttribBoolean(5,"F-Forward on VM notifications", 0)
-intDefault = ptAttribInt(6,"Default setting",0)
-boolFirstUpdate = ptAttribBoolean(7,"Eval On First Update?",0)
+strSDLVarName = ptAttribString(1, "SDL Variable")
+respEnterState = ptAttribStateResponder(2, "Enter State Responder")
+strStates = ptAttribString(3, "Value/State Pairs")
+boolStartFF = ptAttribBoolean(4, "F-Forward on start", 0)
+boolVaultManagerFF = ptAttribBoolean(5, "F-Forward on VM notifications", 0)
+intDefault = ptAttribInt(6, "Default setting", 0)
+boolFirstUpdate = ptAttribBoolean(7, "Eval On First Update?", 0)
 
 # Globals
 
@@ -124,10 +133,12 @@ class xAgeSDLIntStateListResp(ptResponder):
         self.version = version
         self.enabledStateList = []
         PtDebugPrint("__init__xAgeSDLIntStateListResp v", version)
-    
+
     def OnFirstUpdate(self):
         if not strSDLVarName.value:
-            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file")
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file"
+            )
 
         if boolFirstUpdate.value:
             self.Initialize()
@@ -139,15 +150,17 @@ class xAgeSDLIntStateListResp(ptResponder):
     def Initialize(self):
         # Setup SDL callback...
         ageSDL = PtGetAgeSDL()
-        ageSDL.setNotify(self.key,strSDLVarName.value,0.0)
+        ageSDL.setNotify(self.key, strSDLVarName.value, 0.0)
         try:
             SDLvalue = ageSDL[strSDLVarName.value][0]
         except:
-            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringVarName = %s" % (intDefault.value,stringVarName.value))
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringVarName = %s"
+                % (intDefault.value, stringVarName.value)
+            )
             SDLvalue = intDefault.value
 
-        
-        try:   # Decompose state list
+        try:  # Decompose state list
             self.dictStates = {}
             stateList = strStates.value.replace(" ", "")[1:-1].split(")(")
 
@@ -156,38 +169,48 @@ class xAgeSDLIntStateListResp(ptResponder):
                 self.dictStates[int(decState[0])] = int(decState[1])
 
         except:  # oops, something bad happened while decomposing the list
-            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tERROR: couldn't process state list")
-            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tPlease enter states in the format: (val,stateNum)(val,stateNum)")
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tERROR: couldn't process state list"
+            )
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tPlease enter states in the format: (val,stateNum)(val,stateNum)"
+            )
             """
             import sys
             PtDebugPrint("ERROR: Caught Exception: ", sys.exc_type, " --> ", sys.exc_value)
             """
             return
 
-            
-        PtDebugPrint("DEBUG: xAgeSDLIntStateListResp.OnServerInitComplete():\t Registered State List: %s " % self.dictStates)
-        
-        #Set to current state
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntStateListResp.OnServerInitComplete():\t Registered State List: %s "
+            % self.dictStates
+        )
+
+        # Set to current state
         self.UpdateState(SDLvalue, None, boolStartFF.value)
 
-
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         if VARname != strSDLVarName.value:
             return
-        
+
         # Grab SDL Variable
         ageSDL = PtGetAgeSDL()
         SDLvalue = ageSDL[strSDLVarName.value][0]
 
-        PtDebugPrint("DEBUG: xAgeSDLIntStateListResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue))
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify received: %s = %d"
+            % (VARname, SDLvalue)
+        )
 
         # is state change from player or vault manager?
-        if PlayerID: # non-zero means it's a player
+        if PlayerID:  # non-zero means it's a player
             objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(PlayerID), self.key)
             fastforward = 0
-        else:   # invalid player aka Vault Manager
+        else:  # invalid player aka Vault Manager
             objAvatar = None
-            fastforward = boolVaultManagerFF.value # we need to skip any vault manager updates
+            fastforward = (
+                boolVaultManagerFF.value
+            )  # we need to skip any vault manager updates
         if tag == "fastforward":
             objAvatar = None
             fastforward = 1
@@ -195,14 +218,20 @@ class xAgeSDLIntStateListResp(ptResponder):
         # Update State
         self.UpdateState(SDLvalue, objAvatar, fastforward)
 
-
-
     def UpdateState(self, SDLval, avatar, fastforward):
-        if  SDLval in self.dictStates:  #Run the responder only if we have the state
-            PtDebugPrint("DEBUG: xAgeSDLIntStateListResp.OnSDLNotify: running state responder: %s" % self.dictStates[SDLval])
-            respEnterState.run(self.key,state=self.dictStates[SDLval], avatar=avatar, fastforward=fastforward)
+        if SDLval in self.dictStates:  # Run the responder only if we have the state
+            PtDebugPrint(
+                "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify: running state responder: %s"
+                % self.dictStates[SDLval]
+            )
+            respEnterState.run(
+                self.key,
+                state=self.dictStates[SDLval],
+                avatar=avatar,
+                fastforward=fastforward,
+            )
         else:
-            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnSDLNotify: Couldn't find state: %d " % SDLval)
-
-        
-
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntStateListResp.OnSDLNotify: Couldn't find state: %d "
+                % SDLval
+            )

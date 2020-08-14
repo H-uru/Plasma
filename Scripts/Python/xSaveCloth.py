@@ -53,17 +53,17 @@ from PlasmaTypes import *
 
 
 # define the attributes that will be entered in max
-Activator = ptAttribActivator(1,"Activator: Cloth Clickable")
-OneShotResp = ptAttribResponder(2,"Resp: One Shot")
-AnimResp = ptAttribResponder(3,"Anim responder",netForce=1)
-soSpawnpoint = ptAttribSceneobject(4,"Spawn point scene object")
-numSC = ptAttribInt(5,"SaveCloth #:")
+Activator = ptAttribActivator(1, "Activator: Cloth Clickable")
+OneShotResp = ptAttribResponder(2, "Resp: One Shot")
+AnimResp = ptAttribResponder(3, "Anim responder", netForce=1)
+soSpawnpoint = ptAttribSceneobject(4, "Spawn point scene object")
+numSC = ptAttribInt(5, "SaveCloth #:")
 
 
 # globals
 CAM_DIVIDER = "~"
 sdlBase = "GotSaveCloth"
-#sdls = ["ercaGotSaveCloth1","ercaGotSaveCloth2","ercaGotSaveCloth3","ercaGotSaveCloth4",\
+# sdls = ["ercaGotSaveCloth1","ercaGotSaveCloth2","ercaGotSaveCloth3","ercaGotSaveCloth4",\
 #        "ercaGotSaveCloth5","ercaGotSaveCloth6","ercaGotSaveCloth7"]
 sdlSC = ""
 gotSC = 0
@@ -79,10 +79,8 @@ class xSaveCloth(ptModifier):
         self.version = 2
         PtDebugPrint("DEBUG: xSaveCloth.__init__: v.", self.version)
 
-
     def OnFirstUpdate(self):
         pass
-
 
     def OnServerInitComplete(self):
         global sdlSC
@@ -95,7 +93,12 @@ class xSaveCloth(ptModifier):
         spTitle = spawnPoint.getTitle()
         spName = spawnPoint.getName()
 
-        PtDebugPrint("spawned into", spName, ", this save cloth handles", soSpawnpoint.value.getName())
+        PtDebugPrint(
+            "spawned into",
+            spName,
+            ", this save cloth handles",
+            soSpawnpoint.value.getName(),
+        )
         if spTitle.endswith("SavePoint") and spName == soSpawnpoint.value.getName():
             PtDebugPrint("restoring camera stack for save point", spTitle, spName)
 
@@ -112,46 +115,54 @@ class xSaveCloth(ptModifier):
                     try:
                         PtRebuildCameraStack(x, age)
                     except:
-                        PtDebugPrint("ERROR: xSaveCloth.OnServerInitComplete: problem rebuilding camera stack...continuing")
+                        PtDebugPrint(
+                            "ERROR: xSaveCloth.OnServerInitComplete: problem rebuilding camera stack...continuing"
+                        )
             # Done restoring camera stack
 
-        
         # SaveCloth SDL stuff, for use with POTS symbols
         if not (numSC.value > 0 and numSC.value <= kMaxSC):
-            PtDebugPrint("xSaveCloth.OnServerInitComplete(): ERROR! invalid save cloth # of ",numSC.value,", specified in MAX component.  Please revise...")
+            PtDebugPrint(
+                "xSaveCloth.OnServerInitComplete(): ERROR! invalid save cloth # of ",
+                numSC.value,
+                ", specified in MAX component.  Please revise...",
+            )
             return
         ageName = PtGetAgeName()
         if ageName == "Ercana":
             sdlPre = "erca"
-#        UNCOMMENT THIS WHEN AHNONAY IS READY
-#        elif ageName == "Ahnonay":
-#            sdlPre = "ahny"
+        #        UNCOMMENT THIS WHEN AHNONAY IS READY
+        #        elif ageName == "Ahnonay":
+        #            sdlPre = "ahny"
         else:
-            PtDebugPrint("xSaveCloth.py not updated for this age's SDL.  Ignoring SaveCloth SDL stuff...")
+            PtDebugPrint(
+                "xSaveCloth.py not updated for this age's SDL.  Ignoring SaveCloth SDL stuff..."
+            )
             return
         sdlSC = sdlPre + sdlBase + str(numSC.value)
         try:
             ageSDL = PtGetAgeSDL()
-            ageSDL.setFlags(sdlSC,1,1)
+            ageSDL.setFlags(sdlSC, 1, 1)
             ageSDL.sendToClients(sdlSC)
-            ageSDL.setNotify(self.key,sdlSC,0.0)
+            ageSDL.setNotify(self.key, sdlSC, 0.0)
             gotSC = ageSDL[sdlSC][0]
-            #PtDebugPrint("xSaveCloth.OnServerInitComplete():\t found sdl: ",sdlSC,", which = ",gotSC)
+            # PtDebugPrint("xSaveCloth.OnServerInitComplete():\t found sdl: ",sdlSC,", which = ",gotSC)
         except:
-            PtDebugPrint("ERROR.  Couldn't find sdl: ",sdlSC,", defaulting to 0")
+            PtDebugPrint("ERROR.  Couldn't find sdl: ", sdlSC, ", defaulting to 0")
 
-
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global gotSC
 
         if VARname != sdlSC:
             return
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint("xSaveCloth.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d" % (VARname,SDLname,tag,ageSDL[sdlSC][0]))
+        PtDebugPrint(
+            "xSaveCloth.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d"
+            % (VARname, SDLname, tag, ageSDL[sdlSC][0])
+        )
         gotSC = ageSDL[sdlSC][0]
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global ClothInUse
         global CAM_DIVIDER
 
@@ -160,20 +171,22 @@ class xSaveCloth(ptModifier):
 
         if id == Activator.id:
             Activator.disable()
-            OneShotResp.run(self.key, events=events) # run the oneshot
+            OneShotResp.run(self.key, events=events)  # run the oneshot
             return
 
         elif id == OneShotResp.id:
             vault = ptVault()
             if vault.amOwnerOfCurrentAge() and PtWasLocallyNotified(self.key):
-                PtDebugPrint("DEBUG: xSaveCloth.OnNotify: am owner of current age, getting save point")
-                #if 1:
+                PtDebugPrint(
+                    "DEBUG: xSaveCloth.OnNotify: am owner of current age, getting save point"
+                )
+                # if 1:
                 try:
-                # Save the camera stack
+                    # Save the camera stack
                     camstack = ""
                     numcams = PtGetNumCameras()
                     for x in range(numcams):
-                        camstack += (PtGetCameraNumber(x+1) + CAM_DIVIDER)
+                        camstack += PtGetCameraNumber(x + 1) + CAM_DIVIDER
                     camstack = camstack[:-1]
 
                     PtDebugPrint("camera stack:", camstack)
@@ -195,15 +208,19 @@ class xSaveCloth(ptModifier):
 
                         if savepoint is not None:
                             agelink.removeSpawnPoint(savepoint.getName())
-                            
-                        savepoint = ptSpawnPointInfo("SCSavePoint", soSpawnpoint.value.getName())
+
+                        savepoint = ptSpawnPointInfo(
+                            "SCSavePoint", soSpawnpoint.value.getName()
+                        )
                         savepoint.setCameraStack(camstack)
 
                         agelink.addSpawnPoint(savepoint)
                         agelink.save()
                     # Done saving the camera stack
                 except:
-                    PtDebugPrint("ERROR: xSaveCloth.OnNotify: error occurred doing the whole save point thing")
+                    PtDebugPrint(
+                        "ERROR: xSaveCloth.OnNotify: error occurred doing the whole save point thing"
+                    )
 
             AnimResp.run(self.key, events=events)
 
@@ -214,8 +231,8 @@ class xSaveCloth(ptModifier):
 
         elif id == AnimResp.id:
             Activator.enable()
-            
+
         else:
-            PtDebugPrint("ERROR: xSaveCloth.OnNotify: Error trying to access the Vault.")
-
-
+            PtDebugPrint(
+                "ERROR: xSaveCloth.OnNotify: Error trying to access the Vault."
+            )

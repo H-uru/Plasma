@@ -52,12 +52,10 @@ from PlasmaTypes import *
 
 
 class Jalak(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 6000
         self.version = 1
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         pass

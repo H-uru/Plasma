@@ -50,13 +50,12 @@ AgeSDL hooks for Tetsonot
 from Plasma import *
 from PlasmaTypes import *
 
-class Tetsonot(ptResponder):
 
+class Tetsonot(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5256
         self.version = 1
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         pass
-        

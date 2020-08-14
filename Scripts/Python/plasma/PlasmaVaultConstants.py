@@ -40,8 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
+
+
 class PtVaultCallbackTypes:
     """(none)"""
+
     kVaultConnected = 1
     kVaultNodeSaved = 2
     kVaultNodeRefAdded = 3
@@ -52,8 +55,10 @@ class PtVaultCallbackTypes:
     kVaultNodeAdded = 8
     kVaultDisconnected = 9
 
+
 class PtVaultNodeTypes:
     """(none)"""
+
     kInvalidNode = 0
     kAgeInfoNode = 33
     kAgeInfoListNode = 34
@@ -69,8 +74,10 @@ class PtVaultNodeTypes:
     kChronicleNode = 29
     kPlayerInfoListNode = 30
 
+
 class PtVaultNotifyTypes:
     """(none)"""
+
     kRegisteredOwnedAge = 9
     kUnRegisteredOwnedAge = 10
     kRegisteredVisitAge = 11
@@ -78,8 +85,10 @@ class PtVaultNotifyTypes:
     kPublicAgeCreated = 13
     kPublicAgeRemoved = 14
 
+
 class PtVaultStandardNodes:
     """(none)"""
+
     kUserDefinedNode = 0
     kInboxFolder = 1
     kBuddyListFolder = 2
@@ -104,12 +113,15 @@ class PtVaultStandardNodes:
     kAvatarClosetFolder = 25
     kGlobalInboxFolder = 30
 
+
 class PtVaultTextNoteSubTypes:
     """(none)"""
+
     kGeneric = 0
+
 
 class PtVaultTextNoteTypes:
     """(none)"""
+
     kGeneric = 0
     kCCRPetition = 1
-

@@ -51,87 +51,96 @@ from PlasmaKITypes import *
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
 
-northPanelClick = ptAttribActivator(1,"North Panel Clickables")
-southPanelClick = ptAttribActivator(2,"South Panel Clickables")
+northPanelClick = ptAttribActivator(1, "North Panel Clickables")
+southPanelClick = ptAttribActivator(2, "South Panel Clickables")
 
-northPanel = ptAttribSceneobjectList(3,"North Panel Objects",byObject=1)
-southPanel = ptAttribSceneobjectList(4,"South Panel Objects",byObject=1)
+northPanel = ptAttribSceneobjectList(3, "North Panel Objects", byObject=1)
+southPanel = ptAttribSceneobjectList(4, "South Panel Objects", byObject=1)
 
 # if northWall = 5 and southWall = 6 then your control panel
 # controls the wall that YOU climb on (useful for debugging)
 # just remember to switch them back before going live...
-northWall = ptAttribSceneobjectList(5,"North Wall",byObject=1)
-southWall = ptAttribSceneobjectList(6,"South Wall",byObject=1)
+northWall = ptAttribSceneobjectList(5, "North Wall", byObject=1)
+southWall = ptAttribSceneobjectList(6, "South Wall", byObject=1)
 
-northChair = ptAttribActivator(7,"North Chair")
-southChair = ptAttribActivator(8,"South Chair")
+northChair = ptAttribActivator(7, "North Chair")
+southChair = ptAttribActivator(8, "South Chair")
 
-northLights = ptAttribSceneobjectList(9,"North Panel Lights",byObject=1)
-southLights = ptAttribSceneobjectList(10,"South Panel Lights",byObject=1)
+northLights = ptAttribSceneobjectList(9, "North Panel Lights", byObject=1)
+southLights = ptAttribSceneobjectList(10, "South Panel Lights", byObject=1)
 
-northCountLights = ptAttribSceneobjectList(11,"North Count Lights",byObject=1)
-southCountLights = ptAttribSceneobjectList(12,"South Count Lights",byObject=1)
+northCountLights = ptAttribSceneobjectList(11, "North Count Lights", byObject=1)
+southCountLights = ptAttribSceneobjectList(12, "South Count Lights", byObject=1)
 
-upButtonS    = ptAttribActivator(13, "S up count button")
-dnButtonS    = ptAttribActivator(14, "S down count button")
+upButtonS = ptAttribActivator(13, "S up count button")
+dnButtonS = ptAttribActivator(14, "S down count button")
 readyButtonS = ptAttribActivator(15, "S ready button")
 
-upButtonN    = ptAttribActivator(18, "N up count button")
-dnButtonN    = ptAttribActivator(19, "N down count button")
+upButtonN = ptAttribActivator(18, "N up count button")
+dnButtonN = ptAttribActivator(19, "N down count button")
 readyButtonN = ptAttribActivator(20, "N ready button")
 
-goButtonN = ptAttribActivator(21,"N Go Button activator")
-goButtonS = ptAttribActivator(22,"S Go Button activator")
+goButtonN = ptAttribActivator(21, "N Go Button activator")
+goButtonS = ptAttribActivator(22, "S Go Button activator")
 
-goBtnNObject = ptAttribSceneobject(23,"N Go Button object")
-goBtnSObject = ptAttribSceneobject(24,"S Go Button object")
+goBtnNObject = ptAttribSceneobject(23, "N Go Button object")
+goBtnSObject = ptAttribSceneobject(24, "S Go Button object")
 
-nChairSit = ptAttribActivator(25,"N sit component")
-sChairSit = ptAttribActivator(26,"S sit component")
+nChairSit = ptAttribActivator(25, "N sit component")
+sChairSit = ptAttribActivator(26, "S sit component")
 
-fiveBtnN = ptAttribActivator(27,"5 btn N")
-tenBtnN = ptAttribActivator(28,"10 btn N")
-fifteenBtnN = ptAttribActivator(29,"15 btn N")
+fiveBtnN = ptAttribActivator(27, "5 btn N")
+tenBtnN = ptAttribActivator(28, "10 btn N")
+fifteenBtnN = ptAttribActivator(29, "15 btn N")
 
-fiveBtnS = ptAttribActivator(30,"5 btn S")
-tenBtnS = ptAttribActivator(31,"10 btn S")
-fifteenBtnS = ptAttribActivator(32,"15 btn S")
+fiveBtnS = ptAttribActivator(30, "5 btn S")
+tenBtnS = ptAttribActivator(31, "10 btn S")
+fifteenBtnS = ptAttribActivator(32, "15 btn S")
 
-sTubeOpen = ptAttribNamedResponder(33,"S tube open",netForce=1)
-nTubeOpen = ptAttribNamedResponder(34,"N tube open",netForce=1)
+sTubeOpen = ptAttribNamedResponder(33, "S tube open", netForce=1)
+nTubeOpen = ptAttribNamedResponder(34, "N tube open", netForce=1)
 
-sTubeClose = ptAttribNamedResponder(35,"S tube close",netForce=1)
-nTubeClose = ptAttribNamedResponder(36,"N tube close",netForce=1)
+sTubeClose = ptAttribNamedResponder(35, "S tube close", netForce=1)
+nTubeClose = ptAttribNamedResponder(36, "N tube close", netForce=1)
 
-sTubeEntry = ptAttribNamedActivator(37,"S tube entry trigger")
-nTubeEntry = ptAttribNamedActivator(38,"N tube entry trigger")
+sTubeEntry = ptAttribNamedActivator(37, "S tube entry trigger")
+nTubeEntry = ptAttribNamedActivator(38, "N tube entry trigger")
 
-sTubeMulti = ptAttribBehavior(43,"s tube entry multi",netForce=0)
-nTubeMulti = ptAttribBehavior(44,"n tube entry multi",netForce=0)
+sTubeMulti = ptAttribBehavior(43, "s tube entry multi", netForce=0)
+nTubeMulti = ptAttribBehavior(44, "n tube entry multi", netForce=0)
 
-sTubeExclude = ptAttribExcludeRegion(45,"s tube exclude")
-nTubeExclude = ptAttribExcludeRegion(46,"n tube exclude")
+sTubeExclude = ptAttribExcludeRegion(45, "s tube exclude")
+nTubeExclude = ptAttribExcludeRegion(46, "n tube exclude")
 
-sTeamWarpPt = ptAttribSceneobject(47,"s team warp point")
-nTeamWarpPt = ptAttribSceneobject(48,"n team warp point")
+sTeamWarpPt = ptAttribSceneobject(47, "s team warp point")
+nTeamWarpPt = ptAttribSceneobject(48, "n team warp point")
 
-sTeamWin = ptAttribActivator(49,"s team win")
-nTeamWin = ptAttribActivator(50,"n team win")
+sTeamWin = ptAttribActivator(49, "s team win")
+nTeamWin = ptAttribActivator(50, "n team win")
 
-sTeamQuit = ptAttribActivator(51,"s team quit")
-nTeamQuit = ptAttribActivator(52,"n team quit")
+sTeamQuit = ptAttribActivator(51, "s team quit")
+nTeamQuit = ptAttribActivator(52, "n team quit")
 
-sTeamWinTeleport = ptAttribSceneobject(53,"s team win point")
-nTeamWinTeleport = ptAttribSceneobject(54,"n team win point")
+sTeamWinTeleport = ptAttribSceneobject(53, "s team win point")
+nTeamWinTeleport = ptAttribSceneobject(54, "n team win point")
 
-nQuitBehavior = ptAttribBehavior(55,"s quit behavior")
-sQuitBehavior = ptAttribBehavior(56,"n quit behavior")
+nQuitBehavior = ptAttribBehavior(55, "s quit behavior")
+sQuitBehavior = ptAttribBehavior(56, "n quit behavior")
 
 # sfx responders
 
-nPanelSound = ptAttribResponder(57,"n panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=1)
-sPanelSound = ptAttribResponder(58,"s panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=1)
-
+nPanelSound = ptAttribResponder(
+    57,
+    "n panel sound",
+    ["main", "up", "down", "select", "blockerOn", "blockerOff", "gameStart", "denied"],
+    netForce=1,
+)
+sPanelSound = ptAttribResponder(
+    58,
+    "s panel sound",
+    ["main", "up", "down", "select", "blockerOn", "blockerOff", "gameStart", "denied"],
+    netForce=1,
+)
 
 
 ##############################################################
@@ -155,9 +164,9 @@ kPulse = 2
 
 ## game states
 
-kWaiting    = 0
-kNorthSit   = 1
-kSouthSit   = 2
+kWaiting = 0
+kNorthSit = 1
+kSouthSit = 2
 kNorthSelect = 3
 kSouthSelect = 4
 kNorthReady = 5
@@ -178,20 +187,65 @@ NorthState = ptClimbingWallMsgState.kWaiting
 NorthCount = 0
 BlockerCountLimit = 0
 SouthCount = 0
-NorthWall = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-SouthWall = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+NorthWall = [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+]
+SouthWall = [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+]
 ReceiveInit = False
 
+
 class grsnWallPython(ptResponder):
-   
+
     # constants
-    
+
     def __init__(self):
         "construction"
         PtDebugPrint("grsnWallPython::init begin")
         ptResponder.__init__(self)
         self.id = 52392
         self.version = 3
+
+
 """
     def Load(self):
         PtDebugPrint("grsnWallPython::Load")        

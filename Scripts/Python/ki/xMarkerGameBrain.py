@@ -45,6 +45,7 @@ import abc
 
 from Plasma import *
 
+
 class MarkerGameBrain(abc.ABC):
     """ABC for marker games"""
 

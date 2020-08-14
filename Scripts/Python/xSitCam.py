@@ -47,6 +47,7 @@ from PlasmaTypes import *
 sitAct = ptAttribActivator(1, "SitBeh: Sitting Behavior Node")
 sitCam = ptAttribSceneobject(2, "SitCam: Sitting Canera")
 
+
 class xSitCam(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
@@ -57,11 +58,21 @@ class xSitCam(ptResponder):
 
     def OnNotify(self, state, id, events):
         if id == sitAct.id and PtWasLocallyNotified(self.key):
-            PtDebugPrint("xSitCam.OnNotify(): The SitBeh was notified!", level=kDebugDumpLevel)
+            PtDebugPrint(
+                "xSitCam.OnNotify(): The SitBeh was notified!", level=kDebugDumpLevel
+            )
             camKey = sitCam.sceneobject.getKey()
             if state:
-                PtDebugPrint("xSitCam.OnNotify(): Avatar sitting, pushing camera '%s'" % camKey.getName(), level=kWarningLevel)
+                PtDebugPrint(
+                    "xSitCam.OnNotify(): Avatar sitting, pushing camera '%s'"
+                    % camKey.getName(),
+                    level=kWarningLevel,
+                )
                 ptCamera().save(camKey)
             else:
-                PtDebugPrint("xSitCam.OnNotify(): Avatar standing, popping camera '%s'" % camKey.getName(), level=kWarningLevel)
+                PtDebugPrint(
+                    "xSitCam.OnNotify(): Avatar standing, popping camera '%s'"
+                    % camKey.getName(),
+                    level=kWarningLevel,
+                )
                 ptCamera().restore(camKey)

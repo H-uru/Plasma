@@ -49,6 +49,7 @@ from PlasmaTypes import *
 from .xMarkerBrainQuest import *
 from .xMarkerGameBrain import *
 
+
 class MarkerGameManager(object):
     def __init__(self):
         self._brain = None
@@ -128,7 +129,11 @@ class MarkerGameManager(object):
             return
 
         if not self.IsActive(node):
-            PtDebugPrint("xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName()))
+            PtDebugPrint(
+                "xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(
+                    node.getGameName()
+                )
+            )
             self._TeardownMarkerGame()
             ## FIXME: other game types
             self._BeginMarkerGame(UCQuestMarkerGame, node)
@@ -190,12 +195,19 @@ class MarkerGameManager(object):
 
     def _UpdateKIMarkerLights(self, getColor, toGetColor, numCaptured, totalMarkers):
         """Updates the circular marker status display around the Mini KI"""
-        value = "-1 {}:{} {}:{}".format(getColor, toGetColor, max(numCaptured, 0), max(totalMarkers, 0))
+        value = "-1 {}:{} {}:{}".format(
+            getColor, toGetColor, max(numCaptured, 0), max(totalMarkers, 0)
+        )
         PtSendKIMessage(kGZFlashUpdate, value)
 
     def _UpdateKIMarkerLightsFromBrain(self):
         if self._brain.playing:
             getColor, toGetColor = self._brain.marker_colors
-            self._UpdateKIMarkerLights(getColor, toGetColor, self._brain.num_markers_captured, self._brain.marker_total)
+            self._UpdateKIMarkerLights(
+                getColor,
+                toGetColor,
+                self._brain.num_markers_captured,
+                self._brain.marker_total,
+            )
         else:
             self._UpdateKIMarkerLights("off", "off", 0, 0)

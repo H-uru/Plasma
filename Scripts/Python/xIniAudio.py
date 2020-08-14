@@ -71,6 +71,7 @@ kNPCVoice = "NPCVoice"
 kBeTrue = "true"
 kBeFalse = "false"
 
+
 def ConstructFilenameAndPath():
     global gFilenameAndPath
     if gFilenameAndPath == "":
@@ -79,17 +80,27 @@ def ConstructFilenameAndPath():
             localNameAndPath = "init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                PtDebugPrint("xIniAudio::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + "\" file")
+                PtDebugPrint(
+                    'xIniAudio::ConstructFilenameAndPath(): Using internal "'
+                    + gFilenameAndPath
+                    + '" file'
+                )
                 return
         # otherwise, use the standard init path
         gFilenameAndPath = PtGetInitPath() + "/" + gFilename
-        PtDebugPrint("xIniAudio::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + "\" file")
+        PtDebugPrint(
+            'xIniAudio::ConstructFilenameAndPath(): Using user-level "'
+            + gFilenameAndPath
+            + '" file'
+        )
+
 
 def WriteIni():
     global gIniFile
     if gIniFile:
         ConstructFilenameAndPath()
         gIniFile.writeFile(gFilenameAndPath)
+
 
 def ReadIni():
     global gIniFile
@@ -100,193 +111,214 @@ def ReadIni():
         gIniFile.addEntry("# This is an auto-generated file.")
         gIniFile.addEntry("\n")
 
+
 def SetSoundFXVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kSoundFX)
+        entry, idx = gIniFile.findByFirstValue(kSoundFX)
         volstr = "%g" % volume
         if entry:
-            entry.setValue(1,volstr)
+            entry.setValue(1, volstr)
         else:
-            gIniFile.addEntry("%s %s %g" % (kVolCmd,kSoundFX,volume))
+            gIniFile.addEntry("%s %s %g" % (kVolCmd, kSoundFX, volume))
+
 
 def GetSoundFXVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kSoundFX)
+        entry, idx = gIniFile.findByFirstValue(kSoundFX)
         if entry:
             value = entry.getValue(1)
             if value:
                 return float(value)
         return 0.0
+
 
 def SetMusicVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kMusic)
+        entry, idx = gIniFile.findByFirstValue(kMusic)
         volstr = "%g" % volume
         if entry:
-            entry.setValue(1,volstr)
+            entry.setValue(1, volstr)
         else:
-            gIniFile.addEntry("%s %s %g" % (kVolCmd,kMusic,volume))
+            gIniFile.addEntry("%s %s %g" % (kVolCmd, kMusic, volume))
+
 
 def GetMusicVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kMusic)
+        entry, idx = gIniFile.findByFirstValue(kMusic)
         if entry:
             value = entry.getValue(1)
             if value:
                 return float(value)
         return 0.0
+
 
 def SetVoiceVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kVoice)
+        entry, idx = gIniFile.findByFirstValue(kVoice)
         volstr = "%g" % volume
         if entry:
-            entry.setValue(1,volstr)
+            entry.setValue(1, volstr)
         else:
-            gIniFile.addEntry("%s %s %g" % (kVolCmd,kVoice,volume))
+            gIniFile.addEntry("%s %s %g" % (kVolCmd, kVoice, volume))
+
 
 def GetVoiceVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kVoice)
+        entry, idx = gIniFile.findByFirstValue(kVoice)
         if entry:
             value = entry.getValue(1)
             if value:
                 return float(value)
         return 0.0
+
 
 def SetAmbienceVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kAmbience)
+        entry, idx = gIniFile.findByFirstValue(kAmbience)
         volstr = "%g" % volume
         if entry:
-            entry.setValue(1,volstr)
+            entry.setValue(1, volstr)
         else:
-            gIniFile.addEntry("%s %s %g" % (kVolCmd,kAmbience,volume))
+            gIniFile.addEntry("%s %s %g" % (kVolCmd, kAmbience, volume))
+
 
 def GetAmbienceVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kAmbience)
+        entry, idx = gIniFile.findByFirstValue(kAmbience)
         if entry:
             value = entry.getValue(1)
             if value:
                 return float(value)
         return 0.0
+
 
 def SetGUIVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kGUI)
+        entry, idx = gIniFile.findByFirstValue(kGUI)
         volstr = "%g" % volume
         if entry:
-            entry.setValue(1,volstr)
+            entry.setValue(1, volstr)
         else:
-            gIniFile.addEntry("%s %s %g" % (kVolCmd,kGUI,volume))
+            gIniFile.addEntry("%s %s %g" % (kVolCmd, kGUI, volume))
+
 
 def GetGUIVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kGUI)
+        entry, idx = gIniFile.findByFirstValue(kGUI)
         if entry:
             value = entry.getValue(1)
             if value:
                 return float(value)
         return 0.0
+
 
 def SetNPCVoiceVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kNPCVoice)
+        entry, idx = gIniFile.findByFirstValue(kNPCVoice)
         volstr = "%g" % volume
         if entry:
-            entry.setValue(1,volstr)
+            entry.setValue(1, volstr)
         else:
-            gIniFile.addEntry("%s %s %g" % (kVolCmd,kNPCVoice,volume))
+            gIniFile.addEntry("%s %s %g" % (kVolCmd, kNPCVoice, volume))
+
 
 def GetNPCVoiceVolume(volume):
     if gIniFile:
-        entry,idx = gIniFile.findByFirstValue(kNPCVoice)
+        entry, idx = gIniFile.findByFirstValue(kNPCVoice)
         if entry:
             value = entry.getValue(1)
             if value:
                 return float(value)
         return 0.0
 
+
 def SetMicLevel(level):
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kMicLevel)
+        entry, idx = gIniFile.findByCommand(kMicLevel)
         volstr = "%g" % level
         if entry:
-            entry.setValue(0,volstr)
+            entry.setValue(0, volstr)
         else:
-            gIniFile.addEntry("%s %g" % (kMicLevel,level))
+            gIniFile.addEntry("%s %g" % (kMicLevel, level))
+
 
 def GetMicLevel(level):
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kMicLevel)
+        entry, idx = gIniFile.findByCommand(kMicLevel)
         if entry:
             value = entry.getValue(0)
             if value:
                 return float(value)
         return 0.0
+
 
 def SetVoiceRecording(level):
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kVoiceRec)
+        entry, idx = gIniFile.findByCommand(kVoiceRec)
         volstr = "%g" % level
         if entry:
-            entry.setValue(0,volstr)
+            entry.setValue(0, volstr)
         else:
-            gIniFile.addEntry("%s %g" % (kVoiceRec,level))
+            gIniFile.addEntry("%s %g" % (kVoiceRec, level))
+
 
 def GetVoiceRecording(level):
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kVoiceRec)
+        entry, idx = gIniFile.findByCommand(kVoiceRec)
         if entry:
             value = entry.getValue(0)
             if value:
                 return float(value)
         return 0.0
 
+
 def SetSoundPriority(priority):
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kSoundPri)
+        entry, idx = gIniFile.findByCommand(kSoundPri)
         pristr = "%d" % priority
         if entry:
-            entry.setValue(0,pristr)
+            entry.setValue(0, pristr)
         else:
-            gIniFile.addEntry("%s %d" % (kSoundPri,priority))
+            gIniFile.addEntry("%s %d" % (kSoundPri, priority))
+
 
 def GetSoundPriority():
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kSoundPri)
+        entry, idx = gIniFile.findByCommand(kSoundPri)
         if entry:
             value = entry.getValue(0)
             if value:
                 return int(value)
         return 0
+
 
 def SetMute(mute):
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kMute)
+        entry, idx = gIniFile.findByCommand(kMute)
         mutestr = "%d" % mute
         if entry:
-            entry.setValue(0,mutestr)
+            entry.setValue(0, mutestr)
         else:
-            gIniFile.addEntry("%s %d" % (kMute,mute))
+            gIniFile.addEntry("%s %d" % (kMute, mute))
+
 
 def GetMute():
     if gIniFile:
-        entry,idx = gIniFile.findByCommand(kMute)
+        entry, idx = gIniFile.findByCommand(kMute)
         if entry:
             value = entry.getValue(0)
             if value:
                 return int(value)
         return 0
 
+
 def GetAudioMode():
     mode = None
-    
+
     if gIniFile:
-        entryInit,idxInit = gIniFile.findByCommand("Audio.Initialize")
-        entryHard,idxHard = gIniFile.findByCommand("Audio.UseHardware")
-        entryEAX,idxEAX = gIniFile.findByCommand("Audio.UseEAX")
+        entryInit, idxInit = gIniFile.findByCommand("Audio.Initialize")
+        entryHard, idxHard = gIniFile.findByCommand("Audio.UseHardware")
+        entryEAX, idxEAX = gIniFile.findByCommand("Audio.UseEAX")
 
         if entryEAX and entryEAX.getValue(0) == kBeTrue:
             mode = 3
@@ -303,13 +335,14 @@ def GetAudioMode():
 
     return mode
 
+
 def SetAudioMode(init, device, eax):
     global gIniFile
 
     if gIniFile:
-        entryInit,idxInit = gIniFile.findByCommand("Audio.Initialize")
-        entryDev,idxDev = gIniFile.findByCommand("Audio.SetDeviceName")
-        entryEAX,idxEAX = gIniFile.findByCommand("Audio.UseEAX")
+        entryInit, idxInit = gIniFile.findByCommand("Audio.Initialize")
+        entryDev, idxDev = gIniFile.findByCommand("Audio.SetDeviceName")
+        entryEAX, idxEAX = gIniFile.findByCommand("Audio.UseEAX")
 
         if init:
             val = kBeTrue

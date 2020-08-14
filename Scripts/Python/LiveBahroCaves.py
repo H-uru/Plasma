@@ -50,10 +50,10 @@ from Plasma import *
 from PlasmaTypes import *
 
 ## constants
-BlueSpiral = ["EderDelin","EderTsogal"]
-Pods = ["Negilahn","Dereno","Payiferen","Tetsonot"]
+BlueSpiral = ["EderDelin", "EderTsogal"]
+Pods = ["Negilahn", "Dereno", "Payiferen", "Tetsonot"]
 Live5 = ["Minkata"]
-Live6 = ["Ercana","Ahnonay"]
+Live6 = ["Ercana", "Ahnonay"]
 
 
 class LiveBahroCaves(ptResponder):
@@ -70,13 +70,15 @@ class LiveBahroCaves(ptResponder):
         if ageFrom in BlueSpiral:
             pages += ["BlueSpiralCave"]
         elif ageFrom in Pods:
-        	pages += ["PODcave"]
+            pages += ["PODcave"]
         elif ageFrom in Live5:
-        	pages += ["MINKcave"]
+            pages += ["MINKcave"]
         elif ageFrom in Live6:
-        	pages += ["POTScave"]
+            pages += ["POTScave"]
         else:
-            PtDebugPrint("LiveBahroCaves.__init__(): age not recognized, will page in BlueSpiralCave as default")
+            PtDebugPrint(
+                "LiveBahroCaves.__init__(): age not recognized, will page in BlueSpiralCave as default"
+            )
             pages += ["BlueSpiralCave"]
 
         PtDebugPrint("LiveBahroCaves.__init__(): paging in: %s" % (pages))
@@ -94,5 +96,3 @@ class LiveBahroCaves(ptResponder):
 #
 #    def OnNotify(self,state,id,events):
 #        pass
-
-

@@ -53,13 +53,13 @@ from PlasmaKITypes import *
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-Activate                = ptAttribActivator(1, " clickable ")
-Vignette                = ptAttribString(2, "Toggle dialog - by Name")
-respZoom                = ptAttribResponder(3, "resp: Zoom", ["in", "out"], netForce=0)
+Activate = ptAttribActivator(1, " clickable ")
+Vignette = ptAttribString(2, "Toggle dialog - by Name")
+respZoom = ptAttribResponder(3, "resp: Zoom", ["in", "out"], netForce=0)
 
 # define global variables
 LocalAvatar = None
-kExit=99
+kExit = 99
 kZoomButton = 100
 gToggle = 0
 KeyMap = {}
@@ -68,7 +68,7 @@ KeyMap[PlasmaControlKeys.kKeyMoveBackward] = PlasmaControlKeys.kKeyCamPanDown
 KeyMap[PlasmaControlKeys.kKeyRotateLeft] = PlasmaControlKeys.kKeyCamPanLeft
 KeyMap[PlasmaControlKeys.kKeyRotateRight] = PlasmaControlKeys.kKeyCamPanRight
 
-#====================================
+# ====================================
 class islmPodMap(ptResponder):
     ###########################
     def __init__(self):
@@ -84,11 +84,11 @@ class islmPodMap(ptResponder):
         if ageInfo is not None:
             return ageInfo.getAgeFilename()
         else:
-            return "GUI" # use default GUI age if we can't find the age name for some reason
+            return "GUI"  # use default GUI age if we can't find the age name for some reason
 
     ###########################
     def OnFirstUpdate(self):
-        PtLoadDialog(Vignette.value,self.key,self.IGetAgeFilename())
+        PtLoadDialog(Vignette.value, self.key, self.IGetAgeFilename())
 
     ###########################
     def __del__(self):
@@ -96,20 +96,20 @@ class islmPodMap(ptResponder):
         PtUnloadDialog(Vignette.value)
 
     ###########################
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Activated... "
         global LocalAvatar
         if state and id == Activate.id and PtFindAvatar(events) == PtGetLocalAvatar():
             LocalAvatar = PtFindAvatar(events)
-            self.IStartDialog()           
+            self.IStartDialog()
 
     ###########################
-    def OnGUINotify(self,id,control,event):
+    def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
         global gToggle
-        #PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control)
+        # PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control)
         if event == kAction:
-            if control.getTagID() == kExit: #off
+            if control.getTagID() == kExit:  # off
                 self.IQuitDialog()
             elif control.getTagID() == kZoomButton:
                 gToggle = not gToggle
@@ -121,9 +121,13 @@ class islmPodMap(ptResponder):
             self.IQuitDialog()
 
     ###########################
-    def OnControlKeyEvent(self,controlKey,activeFlag):
+    def OnControlKeyEvent(self, controlKey, activeFlag):
         "Control key events... anything we're interested in?"
-        PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "Got controlKey event %d and its activeFlage is %d"
+            % (controlKey, activeFlag),
+            level=kDebugDumpLevel,
+        )
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitDialog()
 
@@ -131,14 +135,14 @@ class islmPodMap(ptResponder):
     def IStartDialog(self):
         "Start the Dialog"
         global LocalAvatar
-        PtLoadDialog(Vignette.value,self.key,self.IGetAgeFilename())
+        PtLoadDialog(Vignette.value, self.key, self.IGetAgeFilename())
         if PtIsDialogLoaded(Vignette.value):
-            PtSendKIMessage(kDisableKIandBB,0)
+            PtSendKIMessage(kDisableKIandBB, 0)
             respZoom.run(self.key, state="out", netForce=0, netPropagate=0)
             PtShowDialog(Vignette.value)
             PtDebugPrint("dialog: %s goes up" % Vignette.value)
         # get control key events
-        PtGetControlEvents(True,self.key)
+        PtGetControlEvents(True, self.key)
 
     ###########################
     def IQuitDialog(self):
@@ -146,12 +150,10 @@ class islmPodMap(ptResponder):
         global LocalAvatar
         # exit every thing
         if Vignette.value:
-            PtSendKIMessage(kEnableKIandBB,0)
+            PtSendKIMessage(kEnableKIandBB, 0)
             PtHideDialog(Vignette.value)
             PtDebugPrint("Dialog: %s goes down" % Vignette.value)
         else:
             PtDebugPrint("WTH!!!")
-        #disable the Control key events
-        PtGetControlEvents(False,self.key)
-
-
+        # disable the Control key events
+        PtGetControlEvents(False, self.key)

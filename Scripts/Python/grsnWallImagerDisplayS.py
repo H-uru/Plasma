@@ -49,7 +49,7 @@ from PlasmaTypes import *
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
-southWall = ptAttribSceneobjectList(2,"South Wall",byObject=1)
+southWall = ptAttribSceneobjectList(2, "South Wall", byObject=1)
 ##############################################################
 # grsnWallImagerDisplayS
 ##############################################################
@@ -62,9 +62,9 @@ kTeamLightsOff = 1
 
 ## game states
 
-kWaiting    = 0
-kNorthSit   = 1
-kSouthSit   = 2
+kWaiting = 0
+kNorthSit = 1
+kSouthSit = 2
 kNorthSelect = 3
 kSouthSelect = 4
 kNorthReady = 5
@@ -79,16 +79,18 @@ kNorthQuit = 13
 
 
 class grsnWallImagerDisplayS(ptResponder):
-   
+
     # constants
-    
+
     def __init__(self):
         "construction"
         PtDebugPrint("grsnWallImagerDisplayS::init begin")
         ptResponder.__init__(self)
         self.id = 52397
         self.version = 1
-        PtDebugPrint("grsnWallImagerDisplayS::init end")        
+        PtDebugPrint("grsnWallImagerDisplayS::init end")
+
+
 """
     def OnServerInitComplete(self):
         global ReceiveInit

@@ -47,6 +47,7 @@ from PlasmaVaultConstants import *
 
 gMaxInviteCount = 20
 
+
 def SplitParams(params):
     # parse the string, splitting on whitespace, unless a part of a quoted string
     # make sure to handle \" and \\ correctly
@@ -55,9 +56,9 @@ def SplitParams(params):
     inQuotes = 0
     isEscaped = 0
     for i in range(len(params)):
-        if params[i] == '\\':
+        if params[i] == "\\":
             if isEscaped:
-                curArg += '\\'
+                curArg += "\\"
                 isEscaped = 0
             else:
                 isEscaped = 1
@@ -74,7 +75,12 @@ def SplitParams(params):
             if params[i] == '"':
                 inQuotes = 1
                 # curArg += '"'
-            elif params[i] == ' ' or params[i] == '\t' or params[i] == '\n' or params[i] == '\r':
+            elif (
+                params[i] == " "
+                or params[i] == "\t"
+                or params[i] == "\n"
+                or params[i] == "\r"
+            ):
                 if not curArg == "":
                     args.append(curArg)
                     curArg = ""
@@ -88,42 +94,50 @@ def SplitParams(params):
 
 def CreateInvitation(params=None):
     "create an invitation"
-    PtDebugPrint("xInvite: create invitation",level=kDebugDumpLevel)
+    PtDebugPrint("xInvite: create invitation", level=kDebugDumpLevel)
     passkey = params
     if isinstance(passkey, str):
         invites = ptVault().getInviteFolder()
         if invites is not None:
             if invites.getChildNodeCount() <= gMaxInviteCount:
                 # create the note
-                note = ptVaultTextNoteNode(PtVaultNodePermissionFlags.kDefaultPermissions)
+                note = ptVaultTextNoteNode(
+                    PtVaultNodePermissionFlags.kDefaultPermissions
+                )
                 note.noteSetTitle(passkey)
                 invites.addNode(note)
-                return PtGetLocalizedString("KI.Invitation.InviteKeyAdded", [str(passkey)])
+                return PtGetLocalizedString(
+                    "KI.Invitation.InviteKeyAdded", [str(passkey)]
+                )
             else:
-                return (1,PtGetLocalizedString("KI.Invitation.MaxInvites"))
+                return (1, PtGetLocalizedString("KI.Invitation.MaxInvites"))
         else:
-            return (1,PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
+            return (1, PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
     else:
-        return (1,PtGetLocalizedString("KI.Invitation.InviteUsage"))
+        return (1, PtGetLocalizedString("KI.Invitation.InviteUsage"))
+
 
 def AcceptInvitation(params=""):
     "accept an invitation"
-    PtDebugPrint("xInvite: accept invitation",level=kDebugDumpLevel)
+    PtDebugPrint("xInvite: accept invitation", level=kDebugDumpLevel)
     paramlist = SplitParams(params)
     if len(paramlist) == 2:
-        PtAcceptInviteInGame(paramlist[0],paramlist[1])
-        return PtGetLocalizedString("KI.Invitation.InviteAccepted", [str(paramlist[0]), str(paramlist[1])])
+        PtAcceptInviteInGame(paramlist[0], paramlist[1])
+        return PtGetLocalizedString(
+            "KI.Invitation.InviteAccepted", [str(paramlist[0]), str(paramlist[1])]
+        )
     else:
-        return (1,PtGetLocalizedString("KI.Invitation.AcceptUsage"))
+        return (1, PtGetLocalizedString("KI.Invitation.AcceptUsage"))
+
 
 def ShowInvitations(params=None):
     "show invitations"
-    PtDebugPrint("xInvite: show invitations",level=kDebugDumpLevel)
+    PtDebugPrint("xInvite: show invitations", level=kDebugDumpLevel)
     passkeys = ""
     invites = ptVault().getInviteFolder()
     if invites is not None:
         l = invites.getChildNodeRefList()
-        i = 0;
+        i = 0
         for ref in l:
             if i != 0:
                 passkeys += ", "
@@ -132,16 +146,19 @@ def ShowInvitations(params=None):
             if child is not None:
                 passkeys += child.noteGetTitle()
             else:
-                PtDebugPrint("xInvite: Couldn't cast list item to note",level=kErrorLevel)
+                PtDebugPrint(
+                    "xInvite: Couldn't cast list item to note", level=kErrorLevel
+                )
                 pass
             i += 1
     else:
-        return (1,PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
+        return (1, PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
     return PtGetLocalizedString("KI.Invitation.Keys") + str(passkeys)
+
 
 def DeleteInvitation(params=None):
     "delete invitation"
-    PtDebugPrint("xInvite: delete invitation",level=kDebugDumpLevel)
+    PtDebugPrint("xInvite: delete invitation", level=kDebugDumpLevel)
     passkey = params
     if isinstance(passkey, str):
         invites = ptVault().getInviteFolder()
@@ -156,23 +173,35 @@ def DeleteInvitation(params=None):
                         try:
                             invites.removeNode(child)
                         except:
-                            PtDebugPrint("xInvite: Remove Node Failed",level=kErrorLevel)
-                            return (1,PtGetLocalizedString("KI.Invitation.InviteNotFound"))
+                            PtDebugPrint(
+                                "xInvite: Remove Node Failed", level=kErrorLevel
+                            )
+                            return (
+                                1,
+                                PtGetLocalizedString("KI.Invitation.InviteNotFound"),
+                            )
                         removed = 1
                         break
                 else:
-                    PtDebugPrint("xInvite: Couldn't cast list item to note",level=kErrorLevel)
-                    return (1,PtGetLocalizedString("KI.Invitation.InviteNotFound"))
+                    PtDebugPrint(
+                        "xInvite: Couldn't cast list item to note", level=kErrorLevel
+                    )
+                    return (1, PtGetLocalizedString("KI.Invitation.InviteNotFound"))
             if removed == 0:
-                return (1,PtGetLocalizedString("KI.Invitation.InviteNotFound"))
+                return (1, PtGetLocalizedString("KI.Invitation.InviteNotFound"))
         else:
-            return (1,PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
+            return (1, PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
     else:
         return (1, PtGetLocalizedString("KI.Invitation.UninviteUsage"))
     return PtGetLocalizedString("KI.Invitation.DeletedInvitation") + str(passkey)
 
+
 def MeChat(params=None):
-    if (params == None):
-        PtDebugPrint('xChatExtend:MeCmd: If you have nothing to say, why say anything at all?')
-        return 
-    PtSendKIMessage(kKIChatStatusMsg, ('%s %s' % (PtGetLocalPlayer().getPlayerName(), params)))
+    if params == None:
+        PtDebugPrint(
+            "xChatExtend:MeCmd: If you have nothing to say, why say anything at all?"
+        )
+        return
+    PtSendKIMessage(
+        kKIChatStatusMsg, ("%s %s" % (PtGetLocalPlayer().getPlayerName(), params))
+    )

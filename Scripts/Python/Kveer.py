@@ -56,16 +56,11 @@ class Kveer(ptResponder):
         self.id = 5400
         self.version = 1
 
-
     def OnFirstUpdate(self):
         pass
 
-        
     def Load(self):
-        pass        
-
-
-    def OnNotify(self,state,id,events):
         pass
 
-
+    def OnNotify(self, state, id, events):
+        pass

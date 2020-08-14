@@ -52,8 +52,9 @@ from Plasma import *
 from PlasmaConstants import *
 import types
 
+
 class xPsnlVaultSDL:
-    def __init__(self, useAgeVault = 0):
+    def __init__(self, useAgeVault=0):
         if useAgeVault:
             self.useAgeVault = 1
             self.vault = ptAgeVault()
@@ -62,7 +63,7 @@ class xPsnlVaultSDL:
             self.vault = ptVault()
 
     def __getitem__(self, sub):
-        if 1:#try:
+        if 1:  # try:
             if self.useAgeVault:
                 sdl = self.vault.getAgeSDL()
             else:
@@ -70,9 +71,9 @@ class xPsnlVaultSDL:
 
             var = sdl.findVar(sub)
             retval = self.IGetVar(var)
-            
+
             return (retval,)
-        #except:
+        # except:
         #    PtDebugPrint("ERROR:xPsnlVaultSDL.__getitem__:\tError getting sdl & var")
         #    return None
 
@@ -82,22 +83,22 @@ class xPsnlVaultSDL:
             val = val[0]
         else:
             raise ValueError("Value must be tuple type")
-        
-        if 1:#try:
+
+        if 1:  # try:
             if self.useAgeVault:
                 sdl = self.vault.getAgeSDL()
             else:
                 sdl = self.vault.getPsnlAgeSDL()
-            
+
             var = sdl.findVar(sub)
             self.ISetVar(var, val)
-            
+
             if self.useAgeVault:
                 self.vault.updateAgeSDL(sdl)
             else:
                 self.vault.updatePsnlAgeSDL(sdl)
 
-        #except:
+        # except:
         #    PtDebugPrint("ERROR:xPsnlVaultSDL.__setitem__:\tError getting sdl & var")
 
     def IGetVar(self, var):
@@ -125,32 +126,32 @@ class xPsnlVaultSDL:
 
     def ISetVar(self, var, val):
         vartype = var.getType()
-        #PtDebugPrint("Attempting to set item %s to %s" % (sub, str(val)))
+        # PtDebugPrint("Attempting to set item %s to %s" % (sub, str(val)))
 
         if vartype == PtSDLVarType.kInt:
-            if isinstance(val,  int):
-                #PtDebugPrint("Set int")
+            if isinstance(val, int):
+                # PtDebugPrint("Set int")
                 var.setInt(val)
 
         elif vartype == PtSDLVarType.kFloat:
             if isinstance(val, (int, float)):
-                #PtDebugPrint("Set float")
+                # PtDebugPrint("Set float")
                 var.setFloat(val)
 
         elif vartype == PtSDLVarType.kDouble:
             if isinstance(val, (int, float)):
-                #PtDebugPrint("Set double")
+                # PtDebugPrint("Set double")
                 var.setDouble(val)
 
         elif vartype == PtSDLVarType.kBool:
-            #PtDebugPrint("Set bool")
+            # PtDebugPrint("Set bool")
             if val:
                 var.setBool(1)
             else:
                 var.setBool(0)
 
         elif vartype == PtSDLVarType.kString32:
-            #PtDebugPrint("Set string")
+            # PtDebugPrint("Set string")
             if isinstance(val, str):
                 var.setString(val)
             else:
@@ -158,27 +159,27 @@ class xPsnlVaultSDL:
 
         else:
             if isinstance(val, int):
-                #PtDebugPrint("Set int")
+                # PtDebugPrint("Set int")
                 var.setInt(val)
 
     def BatchGet(self, vars):
-        if 1:#try:
+        if 1:  # try:
             retval = {}
             if self.useAgeVault:
                 sdl = self.vault.getAgeSDL()
             else:
                 sdl = self.vault.getPsnlAgeSDL()
-            
+
             for sub in vars:
                 var = sdl.findVar(sub)
                 retval[sub] = self.IGetVar(var)
 
             return retval
-        #except:
+        # except:
         #    PtDebugPrint("ERROR:xPsnlVaultSDL.BatchGet:  problem doing a batch get")
 
     def BatchSet(self, vars):
-        if 1:#try:
+        if 1:  # try:
             if self.useAgeVault:
                 sdl = self.vault.getAgeSDL()
             else:
@@ -188,11 +189,11 @@ class xPsnlVaultSDL:
                 var = sdl.findVar(sub[0])
                 vallist = sub[1]
                 self.ISetVar(var, vallist[0])
-            
+
             if self.useAgeVault:
                 self.vault.updateAgeSDL(sdl)
             else:
                 self.vault.updatePsnlAgeSDL(sdl)
 
-        #except:
+        # except:
         #    PtDebugPrint("ERROR:xPsnlVaultSDL.BatchSet:  problem doing a batch set")

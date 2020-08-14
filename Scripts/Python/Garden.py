@@ -50,8 +50,8 @@ event manager hooks for the Garden
 from Plasma import *
 from PlasmaTypes import *
 
-class Garden(ptResponder):
 
+class Garden(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5023
@@ -78,10 +78,9 @@ class Garden(ptResponder):
         # else:
         #     PtDebugPrint("%s:\tERROR trying to access vault -- can't update %s variable in chronicle." % (kModuleName,kChronicleVarName))
         pass
-        
+
     def Load(self):
-        pass        
-        
-    def OnNotify(self,state,id,events):
         pass
-        
+
+    def OnNotify(self, state, id, events):
+        pass

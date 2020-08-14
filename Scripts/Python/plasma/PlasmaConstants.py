@@ -40,34 +40,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
+
+
 class Enum:
     """Enum base class"""
+
     def __init__(self):
         """None"""
         pass
+
 
 class EnumValue:
     """A basic enumeration value"""
+
     def __init__(self):
         """None"""
         pass
 
+
 class PtAIMsgType:
     """(none)"""
+
     kUnknown = 0
     kBrainCreated = 1
     kArrivedAtGoal = 2
 
+
 class PtAccountUpdateType:
     """(none)"""
+
     kCreatePlayer = 1
     kDeletePlayer = 2
     kUpgradePlayer = 3
     kActivePlayer = 4
     kChangePassword = 5
 
+
 class PtBehaviorTypes:
     """(none)"""
+
     kBehaviorTypeFall = 8192
     kBehaviorTypeIdle = 32
     kBehaviorTypeWalkingJump = 2
@@ -89,8 +100,10 @@ class PtBehaviorTypes:
     kBehaviorTypeMovingTurnRight = 32768
     kBehaviorTypeLinkOut = 131072
 
+
 class PtBookEventTypes:
     """(none)"""
+
     kNotifyImageLink = 0
     kNotifyShow = 1
     kNotifyHide = 2
@@ -99,8 +112,10 @@ class PtBookEventTypes:
     kNotifyCheckUnchecked = 5
     kNotifyClose = 6
 
+
 class PtBrainModes:
     """(none)"""
+
     kGeneric = 0
     kLadder = 1
     kSit = 2
@@ -108,14 +123,18 @@ class PtBrainModes:
     kAFK = 4
     kNonGeneric = 5
 
+
 class PtButtonNotifyTypes:
     """(none)"""
+
     kNotifyOnUp = 0
     kNotifyOnDown = 1
     kNotifyOnUpAndDown = 2
 
+
 class PtCCRPetitionType:
     """(none)"""
+
     kGeneralHelp = 0
     kBug = 1
     kFeedback = 2
@@ -124,8 +143,10 @@ class PtCCRPetitionType:
     kStuck = 5
     kTechnical = 6
 
+
 class PtEventType:
     """(none)"""
+
     kCollision = 1
     kPicked = 2
     kControlKey = 3
@@ -141,8 +162,10 @@ class PtEventType:
     kOfferLinkingBook = 14
     kBook = 15
 
+
 class PtGUIMultiLineDirection:
     """(none)"""
+
     kLineStart = 1
     kLineEnd = 2
     kBufferStart = 3
@@ -156,39 +179,51 @@ class PtGUIMultiLineDirection:
     kPageUp = 11
     kPageDown = 12
 
+
 class PtGameScoreTypes:
     """(none)"""
+
     kFixed = 0
     kAccumulative = 1
     kAccumAllowNegative = 2
 
+
 class PtJustify:
     """(none)"""
+
     kLeftJustify = 0
     kCenter = 1
     kRightJustify = 2
 
+
 class PtFontFlags:
     """(none)"""
+
     kFontBold = 1
     kFontItalic = 2
     kFontShadowed = 4
 
+
 class PtLOSObjectType:
     """(none)"""
+
     kClickables = 0
     kCameraBlockers = 1
     kCustom = 2
     kShootable = 3
 
+
 class PtLOSReportType:
     """(none)"""
+
     kReportHit = 0
     kReportMiss = 1
     kReportHitOrMiss = 2
 
+
 class PtLanguage:
     """(none)"""
+
     kEnglish = 0
     kFrench = 1
     kGerman = 2
@@ -197,45 +232,59 @@ class PtLanguage:
     kJapanese = 5
     kNumLanguages = 6
 
+
 class PtMarkerMsgType:
     """(none)"""
+
     kMarkerCaptured = 0
+
 
 class PtMovieEventReason:
     """(none)"""
+
     kMovieDone = 0
+
 
 class PtMultiStageEventType:
     """(none)"""
+
     kEnterStage = 1
     kBeginingOfLoop = 2
     kAdvanceNextStage = 3
     kRegressPrevStage = 4
 
+
 class PtNotificationType:
     """(none)"""
+
     kActivator = 0
     kVarNotification = 1
     kNotifySelf = 2
     kResponderFF = 3
     kResponderChangeState = 4
 
+
 class PtNotifyDataType:
     """(none)"""
+
     kFloat = 1
     kKey = 2
     kInt = 3
     kNull = 4
 
+
 class PtSDLReadWriteOptions:
     """(none)"""
+
     kTimeStampOnRead = 16
     kDirtyOnly = 1
     kSkipNotificationInfo = 2
     kBroadcast = 4
 
+
 class PtSDLVarType:
     """(none)"""
+
     kInt = 0
     kFloat = 1
     kBool = 2
@@ -254,20 +303,26 @@ class PtSDLVarType:
     kQuaternion = 54
     kNone = -1
 
+
 class PtScoreRankGroups:
     """(none)"""
+
     kIndividual = 0
     kNeighborhood = 1
 
+
 class PtScoreTimePeriods:
     """(none)"""
+
     kOverall = 0
     kYear = 1
     kMonth = 2
     kDay = 3
 
+
 class PtStatusLogFlags:
     """(none)"""
+
     kDebugOutput = 32
     kFilledBackground = 1
     kAppendToLast = 2
@@ -278,4 +333,3 @@ class PtStatusLogFlags:
     kTimeInSeconds = 256
     kAlignToTop = 16
     kTimeAsDouble = 512
-

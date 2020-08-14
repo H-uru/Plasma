@@ -63,9 +63,20 @@ kJalakBigBoxBtn = 1209
 kJalakLilBoxBtn = 1210
 kJalakRectangleBtn = 1211
 kJalakDestroyBtn = 1212
-JalakBtnStates = [   str(kJalakRandomBtn),str(kJalakExtremeBtn),str(kJalakWallToggleBtn),str(kJalakColumnsLowBtn),\
-                str(kJalakColumnsMedBtn),str(kJalakColumnsHighBtn),str(kJalakRampBtn),str(kJalakSphereBtn),\
-                str(kJalakBigBoxBtn),str(kJalakLilBoxBtn),str(kJalakRectangleBtn),str(kJalakDestroyBtn)]
+JalakBtnStates = [
+    str(kJalakRandomBtn),
+    str(kJalakExtremeBtn),
+    str(kJalakWallToggleBtn),
+    str(kJalakColumnsLowBtn),
+    str(kJalakColumnsMedBtn),
+    str(kJalakColumnsHighBtn),
+    str(kJalakRampBtn),
+    str(kJalakSphereBtn),
+    str(kJalakBigBoxBtn),
+    str(kJalakLilBoxBtn),
+    str(kJalakRectangleBtn),
+    str(kJalakDestroyBtn),
+]
 
 # Jalak GUI constants
 kSphere = "Sphere"

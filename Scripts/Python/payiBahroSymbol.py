@@ -51,13 +51,13 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-SymbolAppears           = ptAttribInt(1, "Frame the Symbol Appears", 226, (0,5000))
-DayFrameSize            = ptAttribInt(2, "Frames in One Day", 2000, (0,5000))
+SymbolAppears = ptAttribInt(1, "Frame the Symbol Appears", 226, (0, 5000))
+DayFrameSize = ptAttribInt(2, "Frames in One Day", 2000, (0, 5000))
 
-animSkyDome             = ptAttribMaterialAnimation(3, "Sky Dome Mat Anim")
-animLightBoards         = ptAttribMaterialAnimation(5, "Light BillBoard Mat Anim")
-animBahroStones         = ptAttribMaterialAnimation(6, "Bahro Stones Mat Anim")
-animLightFlares         = ptAttribMaterialAnimation(7, "Window Glow Mat Anim")
+animSkyDome = ptAttribMaterialAnimation(3, "Sky Dome Mat Anim")
+animLightBoards = ptAttribMaterialAnimation(5, "Light BillBoard Mat Anim")
+animBahroStones = ptAttribMaterialAnimation(6, "Bahro Stones Mat Anim")
+animLightFlares = ptAttribMaterialAnimation(7, "Window Glow Mat Anim")
 
 # define globals
 kDayLengthInSeconds = 56585.0
@@ -69,7 +69,8 @@ kDayLengthInSeconds = 56585.0
 # speed needs to be set to 0.0011781666 ((2000 / 56585) / 30)
 kDayAnimationSpeed = (DayFrameSize.value / kDayLengthInSeconds) / 30.0
 
-#====================================
+# ====================================
+
 
 class payiBahroSymbol(ptResponder):
     ###########################
@@ -78,12 +79,15 @@ class payiBahroSymbol(ptResponder):
         self.id = 5251
         version = 1
         self.version = version
-        PtDebugPrint("__init__payiBahroSymbol v.", version,".0")
+        PtDebugPrint("__init__payiBahroSymbol v.", version, ".0")
 
     ###########################
     def OnServerInitComplete(self):
         timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (DayFrameSize.value / 30.0)
-        PtDebugPrint("payiBahroSymbol.OnServerInitComplete: Anims skipping to %f seconds and playing at %f speed" % (timeIntoMasterAnim, kDayAnimationSpeed))
+        PtDebugPrint(
+            "payiBahroSymbol.OnServerInitComplete: Anims skipping to %f seconds and playing at %f speed"
+            % (timeIntoMasterAnim, kDayAnimationSpeed)
+        )
 
         animSkyDome.animation.skipToTime(timeIntoMasterAnim)
         animLightBoards.animation.skipToTime(timeIntoMasterAnim)

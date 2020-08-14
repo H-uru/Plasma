@@ -53,16 +53,16 @@ from PlasmaTypes import *
 
 
 # define the attributes that will be entered in max
-rgnTrees                    = ptAttribActivator(1, "act: Tree Detector")
-respTreeAnims               = ptAttribResponderList(2, "resp: Tree Anims", byObject=1)
-objTrees                    = ptAttribSceneobjectList(3, "obj: Tree Meshs")
-SDLTrees                    = ptAttribString(4, "str: SDL Trees (optional)")
+rgnTrees = ptAttribActivator(1, "act: Tree Detector")
+respTreeAnims = ptAttribResponderList(2, "resp: Tree Anims", byObject=1)
+objTrees = ptAttribSceneobjectList(3, "obj: Tree Meshs")
+SDLTrees = ptAttribString(4, "str: SDL Trees (optional)")
 
 # globals
-respTreeAnimsList           = []
-objTreeList                 = []
+respTreeAnimsList = []
+objTreeList = []
 
-#====================================
+# ====================================
 class ahnyTrees(ptModifier):
     ###########################
     def __init__(self):
@@ -81,12 +81,14 @@ class ahnyTrees(ptModifier):
             ageSDL = PtGetAgeSDL()
             ageSDL[SDLTrees.value][0]
         except:
-            PtDebugPrint("ahnyTrees.OnServerInitComplete(): ERROR --- Cannot find the Ahnonay Age SDL")
-            ageSDL[SDLTrees.value] = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+            PtDebugPrint(
+                "ahnyTrees.OnServerInitComplete(): ERROR --- Cannot find the Ahnonay Age SDL"
+            )
+            ageSDL[SDLTrees.value] = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
-        ageSDL.setFlags(SDLTrees.value,1,1)
+        ageSDL.setFlags(SDLTrees.value, 1, 1)
         ageSDL.sendToClients(SDLTrees.value)
-        ageSDL.setNotify(self.key,SDLTrees.value,0.0)
+        ageSDL.setNotify(self.key, SDLTrees.value, 0.0)
 
         for responder in respTreeAnims.value:
             thisResp = responder.getName()
@@ -100,18 +102,20 @@ class ahnyTrees(ptModifier):
         idx = 0
         for visible in ageSDL[SDLTrees.value]:
             if not visible:
-                respTreeAnims.run(self.key, objectName=respTreeAnimsList[idx], fastforward=1)
+                respTreeAnims.run(
+                    self.key, objectName=respTreeAnimsList[idx], fastforward=1
+                )
             idx += 1
 
     ###########################
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global respTreeAnimsList
         global objTreeList
         PtDebugPrint("ahnyTrees.OnNotify: state=%s id=%d events=" % (state, id), events)
 
         if id == rgnTrees.id:
             for event in events:
-                if event[0] == kCollisionEvent and self.sceneobject.isLocallyOwned() :
+                if event[0] == kCollisionEvent and self.sceneobject.isLocallyOwned():
                     region = event[3]
                     regName = region.getName()
                     for object in objTreeList:
@@ -120,8 +124,11 @@ class ahnyTrees(ptModifier):
                             treeSDL = list(ageSDL[SDLTrees.value])
                             index = objTreeList.index(object)
                             if treeSDL[index]:
-                                respTreeAnims.run(self.key, objectName=respTreeAnimsList[index], netForce = 1)
+                                respTreeAnims.run(
+                                    self.key,
+                                    objectName=respTreeAnimsList[index],
+                                    netForce=1,
+                                )
                                 treeSDL[index] = 0
                                 ageSDL[SDLTrees.value] = tuple(treeSDL)
                                 PtDebugPrint("ahnyTrees.OnNotify: Tree knocked down")
-

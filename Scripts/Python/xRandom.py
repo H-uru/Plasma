@@ -53,17 +53,19 @@ _MAX_ITERATIONS = 100
 _series_length = 0
 _lastvalue = None
 
-def seed(var = 0):
+
+def seed(var=0):
     if isinstance(var, int):
         random.seed(var)
     else:
         random.seed()
 
+
 def randint(start, stop):
     global _lastvalue
     global _series_length
     global _MAX_SERIES
-    
+
     newInt = random.randint(start, stop)
 
     if _lastvalue is not None and newInt == _lastvalue:
@@ -73,7 +75,9 @@ def randint(start, stop):
                 newInt = random.randint(start, stop)
                 iter = iter + 1
             if newInt == _lastvalue and iter >= _MAX_ITERATIONS:
-                raise RuntimeError("Problem with randomness: over max series length and can't find a new number")
+                raise RuntimeError(
+                    "Problem with randomness: over max series length and can't find a new number"
+                )
             _lastvalue = newInt
             _series_length = 1
         else:
@@ -84,11 +88,13 @@ def randint(start, stop):
 
     return _lastvalue
 
-def setmaxseries(var = 2):
+
+def setmaxseries(var=2):
     global _MAX_SERIES
-    
+
     if isinstance(var, int):
         _MAX_SERIES = var
+
 
 def shuffle(theList):
     if isinstance(theList, list):
@@ -106,8 +112,9 @@ def shuffle(theList):
 
             theList[idx1], theList[idx2] = theList[idx2], theList[idx1]
 
+
 class xRandom:
-    def __init__(self, seed = 0, maxseries = 2):
+    def __init__(self, seed=0, maxseries=2):
         if isinstance(maxseries, int):
             self._MAX_SERIES = maxseries
         else:
@@ -118,7 +125,7 @@ class xRandom:
         self._currentSequence = []
         self._range = None
 
-    def seed(self, var = 0):
+    def seed(self, var=0):
         random.seed(var)
 
     def randint(self, start, stop):
@@ -138,12 +145,12 @@ class xRandom:
 
         return _lastvalue
 
-    def setmaxseries(self, var = 2):
+    def setmaxseries(self, var=2):
         if isinstance(var, int):
             self._MAX_SERIES = var
 
     def setrange(self, rmin, rmax):
-        self._range = ( min(rmin, rmax), max(rmin, rmax) )
+        self._range = (min(rmin, rmax), max(rmin, rmax))
 
     def getUniqueInt(self):
         numTries = 0
@@ -166,4 +173,3 @@ class xRandom:
         else:
             PtDebugPrint("numTries:", numTries)
             return None
-            

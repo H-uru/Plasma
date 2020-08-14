@@ -49,6 +49,7 @@ import grtzMarkerGames
 from .xMarkerGameBrain import *
 from .xMarkerBrainUser import *
 
+
 class QuestMarkerBrain(object):
     def CaptureAllMarkers(self):
         mgr = ptMarkerMgr()
@@ -64,10 +65,19 @@ class QuestMarkerBrain(object):
                 desc = marker[3]
                 break
         else:
-            PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tMarker #{} does not exist. Are you drunk?".format(idx))
+            PtDebugPrint(
+                "QuestMarkerBrain.CaptureMarker():\tMarker #{} does not exist. Are you drunk?".format(
+                    idx
+                )
+            )
             return
 
-        PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc), level=kWarningLevel)
+        PtDebugPrint(
+            "QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(
+                idx, desc
+            ),
+            level=kWarningLevel,
+        )
         ptMarkerMgr().captureQuestMarker(idx, True)
         msg = PtGetLocalizedString("KI.MarkerGame.FoundMarker", [desc])
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
@@ -79,8 +89,10 @@ class QuestMarkerBrain(object):
 
     def _get_captures(self):
         return PtGetMarkerQuestCaptures(self.game_id)
+
     def _set_captures(self, value):
         PtSetMarkerQuestCaptures(self.game_id, value)
+
     _captures = property(_get_captures, _set_captures)
 
     def Cleanup(self):
@@ -171,6 +183,7 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
             chron = PtFindCreateMarkerChronicle("ActiveQuest")
             return chron.getValue() == self.game_id
         return False
+
     def _set_is_active(self, value):
         mg = PtGetMarkerGameChronicle()
         mg.setValue("quest" if value else "")
@@ -178,6 +191,7 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
         chron = PtFindCreateMarkerChronicle("ActiveQuest")
         chron.setValue(self.game_id if value else "-1")
         chron.save()
+
     _is_active = property(_get_is_active, _set_is_active)
 
     def CaptureMarker(self, id):
@@ -226,14 +240,25 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
         template.setID(gameID)
         gameNode = ptVault().findNode(template)
         if gameNode is None:
-            PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(gameID))
+            PtDebugPrint(
+                "UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(
+                    gameID
+                )
+            )
             return None
         gameNode = gameNode.upcastToMarkerGameNode()
         if gameNode is None:
-            PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(gameID))
+            PtDebugPrint(
+                "UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(
+                    gameID
+                )
+            )
             return None
 
-        PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tRestored game #{}".format(gameID), level=kWarningLevel)
+        PtDebugPrint(
+            "UCQuestMarkerGame.LoadFromVault():\tRestored game #{}".format(gameID),
+            level=kWarningLevel,
+        )
         brain = UCQuestMarkerGame(gameNode)
         # refresh markers now == KABLOOEY!
         brain.Play(refreshMarkers=False)
@@ -256,6 +281,7 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
     def Stop(self):
         UCMarkerGame.Stop(self)
         self._is_active = False
+
 
 # Register our ABC so it doesn't complain about all the mixins
 MarkerGameBrain.register(CGZMarkerGame)

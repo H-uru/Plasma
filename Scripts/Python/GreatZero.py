@@ -50,8 +50,8 @@ Event Manager hooks for GreatZero
 from Plasma import *
 from PlasmaTypes import *
 
-class GreatZero(ptResponder):
 
+class GreatZero(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 209

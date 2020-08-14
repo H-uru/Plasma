@@ -53,25 +53,33 @@ xRatedPG13 = 2
 xRatedR = 3
 xRatedX = 4
 
+
 class LanguageFilter:
     def __init__(self):
         pass
-    def test(self,sentence):
+
+    def test(self, sentence):
         "returns censored sentence"
         return xRatedG
-    def censor(self,sentence,censorLevel):
+
+    def censor(self, sentence, censorLevel):
         "returns censored sentence"
         return sentence
 
+
 class ExactMatchListFilter(LanguageFilter):
-    def __init__(self,wordlist):
+    def __init__(self, wordlist):
         self.wordlist = wordlist
-    def test(self,sentence):
+
+    def test(self, sentence):
         "return the rating of sentence in question"
-        rated = xRatedG     # assume rated lowest level
+        rated = xRatedG  # assume rated lowest level
         startidx = 0
         for endidx in range(len(sentence)):
-            if sentence[endidx] in string.whitespace or sentence[endidx] in string.punctuation:
+            if (
+                sentence[endidx] in string.whitespace
+                or sentence[endidx] in string.punctuation
+            ):
                 if startidx != endidx:
                     try:
                         # find and get rating and substitute
@@ -94,14 +102,17 @@ class ExactMatchListFilter(LanguageFilter):
                 # substitute into string
                 rated = rating.rating
         return rated
-        
-    def censor(self,sentence,censorLevel):
+
+    def censor(self, sentence, censorLevel):
         "censors a sentence to a rating"
         # break into words, but perserve original punctuation
         censored = ""
         startidx = 0
         for endidx in range(len(sentence)):
-            if sentence[endidx] in string.whitespace or sentence[endidx] in string.punctuation:
+            if (
+                sentence[endidx] in string.whitespace
+                or sentence[endidx] in string.punctuation
+            ):
                 if startidx != endidx:
                     try:
                         # find and get rating and substitute
@@ -132,26 +143,31 @@ class ExactMatchListFilter(LanguageFilter):
                 censored += sentence[startidx:]
         return censored
 
+
 class REFilter(LanguageFilter):
-    def __init__(self,regexp,rating):
-        self.compiledRE = re.compile(regexp, re.IGNORECASE | re.MULTILINE )
-        if not isinstance(rating,Rating):
+    def __init__(self, regexp, rating):
+        self.compiledRE = re.compile(regexp, re.IGNORECASE | re.MULTILINE)
+        if not isinstance(rating, Rating):
             PtDebugPrint("ptWordFilter: rating for %s not of type Rating" % (regexp))
         self.rating = rating
-    def test(self,sentence):
+
+    def test(self, sentence):
         "return the rating of sentence in question"
         if self.compiledRE.search(sentence) != None:
             return self.rating.rating
         return xRatedG
-    def censor(self,sentence,censorLevel):
+
+    def censor(self, sentence, censorLevel):
         "censors a sentence to a rating"
         if self.rating.rating > censorLevel:
             if self.compiledRE.search(sentence) != None:
-                return self.compiledRE.sub(self.rating.substitute,sentence)
+                return self.compiledRE.sub(self.rating.substitute, sentence)
         return sentence
+
 
 class Rating:
     "substitute can be string for exact substitute or number of splat replacement"
-    def __init__(self,rating,subtitute="*****"):
+
+    def __init__(self, rating, subtitute="*****"):
         self.rating = rating
         self.substitute = subtitute

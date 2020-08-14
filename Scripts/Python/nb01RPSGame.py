@@ -58,43 +58,77 @@ detSitting3 = ptAttribActivator(53, "Player4 Sit det", netForce=True)
 detSitting4 = ptAttribActivator(54, "Player5 Sit det", netForce=True)
 
 # Player 1 responders
-respRock0 = ptAttribResponder(70, "Rock1 round win/lose resp", ['lose','win'], netForce=True)
-respPaper0 = ptAttribResponder(71, "Paper1 round win/lose resp", ['lose','win'], netForce=True)
-respScissors0 = ptAttribResponder(72, "Scissors1 round win/lose resp", ['lose','win'], netForce=True)
+respRock0 = ptAttribResponder(
+    70, "Rock1 round win/lose resp", ["lose", "win"], netForce=True
+)
+respPaper0 = ptAttribResponder(
+    71, "Paper1 round win/lose resp", ["lose", "win"], netForce=True
+)
+respScissors0 = ptAttribResponder(
+    72, "Scissors1 round win/lose resp", ["lose", "win"], netForce=True
+)
 
 # Player 2 responders
-respRock1 = ptAttribResponder(90, "Rock2 round win/lose resp", ['lose','win'], netForce=True)
-respPaper1 = ptAttribResponder(91, "Paper2 round win/lose resp", ['lose','win'], netForce=True)
-respScissors1 = ptAttribResponder(92, "Scissors2 round win/lose resp", ['lose','win'], netForce=True)
+respRock1 = ptAttribResponder(
+    90, "Rock2 round win/lose resp", ["lose", "win"], netForce=True
+)
+respPaper1 = ptAttribResponder(
+    91, "Paper2 round win/lose resp", ["lose", "win"], netForce=True
+)
+respScissors1 = ptAttribResponder(
+    92, "Scissors2 round win/lose resp", ["lose", "win"], netForce=True
+)
 
 # Player 3 responders
-respRock2 = ptAttribResponder(110, "Rock3 round win/lose resp", ['lose','win'], netForce=True)
-respPaper2 = ptAttribResponder(111, "Paper3 round win/lose resp", ['lose','win'], netForce=True)
-respScissors2 = ptAttribResponder(112, "Scissors3 round win/lose resp", ['lose','win'], netForce=True)
+respRock2 = ptAttribResponder(
+    110, "Rock3 round win/lose resp", ["lose", "win"], netForce=True
+)
+respPaper2 = ptAttribResponder(
+    111, "Paper3 round win/lose resp", ["lose", "win"], netForce=True
+)
+respScissors2 = ptAttribResponder(
+    112, "Scissors3 round win/lose resp", ["lose", "win"], netForce=True
+)
 
 # Player 4 responders
-respRock3 = ptAttribResponder(130, "Rock4 round win/lose resp", ['lose','win'], netForce=True)
-respPaper3 = ptAttribResponder(131, "Paper4 round win/lose resp", ['lose','win'], netForce=True)
-respScissors3 = ptAttribResponder(132, "Scissors4 round win/lose resp", ['lose','win'], netForce=True)
+respRock3 = ptAttribResponder(
+    130, "Rock4 round win/lose resp", ["lose", "win"], netForce=True
+)
+respPaper3 = ptAttribResponder(
+    131, "Paper4 round win/lose resp", ["lose", "win"], netForce=True
+)
+respScissors3 = ptAttribResponder(
+    132, "Scissors4 round win/lose resp", ["lose", "win"], netForce=True
+)
 
 # Player 5 responders
-respRock4 = ptAttribResponder(150, "Rock5 round win/lose resp", ['lose','win'], netForce=True)
-respPaper4 = ptAttribResponder(151, "Paper5 round win/lose resp", ['lose','win'], netForce=True)
-respScissors4 = ptAttribResponder(152, "Scissors5 round win/lose resp", ['lose','win'], netForce=True)
+respRock4 = ptAttribResponder(
+    150, "Rock5 round win/lose resp", ["lose", "win"], netForce=True
+)
+respPaper4 = ptAttribResponder(
+    151, "Paper5 round win/lose resp", ["lose", "win"], netForce=True
+)
+respScissors4 = ptAttribResponder(
+    152, "Scissors5 round win/lose resp", ["lose", "win"], netForce=True
+)
 
 # Standing cam responder
-respStandCam = ptAttribResponder(170, "Standing cam resp", ['0','1','2','3','4'], netForce=True)
+respStandCam = ptAttribResponder(
+    170, "Standing cam resp", ["0", "1", "2", "3", "4"], netForce=True
+)
 
 # This is the main display responder...
-GAME_WIN_STATES = ['rock', 'paper', 'scissors', 'stop']
-respCountdown = ptAttribResponder(180, "Countdown Responder", ['countdown','stop','attractmode'], netForce=True)
+GAME_WIN_STATES = ["rock", "paper", "scissors", "stop"]
+respCountdown = ptAttribResponder(
+    180, "Countdown Responder", ["countdown", "stop", "attractmode"], netForce=True
+)
 respGame = ptAttribResponder(73, "Game win/lose resp", GAME_WIN_STATES, netForce=True)
 
 lightAnimsOn = ptAttribAnimation(200, "lights", byObject=True, netForce=True)
 clamshellAnim = ptAttribAnimation(201, "clamshells", byObject=True)
 
 # init
-initTable   = ptAttribResponder(202, "Init table responder")
+initTable = ptAttribResponder(202, "Init table responder")
 
 # cameras
 camera0 = ptAttribSceneobject(203, "seat 1 camera")
@@ -111,11 +145,21 @@ seatButton3 = ptAttribActivator(213, "Seat 4 clickable")
 seatButton4 = ptAttribActivator(214, "Seat 5 clickable")
 
 # light sounds (for win and turn on animations)
-respSeat0Sounds = ptAttribResponder(220, "Seat 1 sound resp", ['on','win'], netForce=True)
-respSeat1Sounds = ptAttribResponder(221, "Seat 2 sound resp", ['on','win'], netForce=True)
-respSeat2Sounds = ptAttribResponder(222, "Seat 3 sound resp", ['on','win'], netForce=True)
-respSeat3Sounds = ptAttribResponder(223, "Seat 4 sound resp", ['on','win'], netForce=True)
-respSeat4Sounds = ptAttribResponder(224, "Seat 5 sound resp", ['on','win'], netForce=True)
+respSeat0Sounds = ptAttribResponder(
+    220, "Seat 1 sound resp", ["on", "win"], netForce=True
+)
+respSeat1Sounds = ptAttribResponder(
+    221, "Seat 2 sound resp", ["on", "win"], netForce=True
+)
+respSeat2Sounds = ptAttribResponder(
+    222, "Seat 3 sound resp", ["on", "win"], netForce=True
+)
+respSeat3Sounds = ptAttribResponder(
+    223, "Seat 4 sound resp", ["on", "win"], netForce=True
+)
+respSeat4Sounds = ptAttribResponder(
+    224, "Seat 5 sound resp", ["on", "win"], netForce=True
+)
 
 # SDL Variable Konstants
 SDL_PLAYERS = "intSDLPlayers"
@@ -137,31 +181,16 @@ GAME_SHOW_MOVES = 3
 
 # Selections
 SEL_NONE = 0
-SEL_ROCK = 1 # Beetle
-SEL_PAPER = 2 # Book
-SEL_SCISSORS = 3 # Pen
+SEL_ROCK = 1  # Beetle
+SEL_PAPER = 2  # Book
+SEL_SCISSORS = 3  # Pen
 SEL_NUM = 4
 
 # Potential win/lose states
 ROUND_SCORES = {
-    SEL_ROCK: {
-        SEL_SCISSORS: 1,
-        SEL_NONE: 0,
-        SEL_ROCK: 0,
-        SEL_PAPER: -1,
-    },
-    SEL_PAPER: {
-        SEL_ROCK: 1,
-        SEL_NONE: 0,
-        SEL_PAPER: 0,
-        SEL_SCISSORS: -1,
-    },
-    SEL_SCISSORS: {
-        SEL_PAPER: 1,
-        SEL_NONE: 0,
-        SEL_SCISSORS: 0,
-        SEL_ROCK: -1,
-    },
+    SEL_ROCK: {SEL_SCISSORS: 1, SEL_NONE: 0, SEL_ROCK: 0, SEL_PAPER: -1,},
+    SEL_PAPER: {SEL_ROCK: 1, SEL_NONE: 0, SEL_PAPER: 0, SEL_SCISSORS: -1,},
+    SEL_SCISSORS: {SEL_PAPER: 1, SEL_NONE: 0, SEL_SCISSORS: 0, SEL_ROCK: -1,},
 }
 
 # Selection to round score
@@ -173,7 +202,7 @@ SCORE_VAR = {
 
 # The name of our Heek Score
 SCORE_NAME = "HeekPoints"
-SCORE_DEFAULT = 100 # we track wins as points
+SCORE_DEFAULT = 100  # we track wins as points
 SCORE_TYPE = PtGameScoreTypes.kAccumulative
 SCORE_OP_NONE = 0
 SCORE_OP_MINE = 1
@@ -181,7 +210,7 @@ SCORE_OP_HIGH = 2
 
 # Imager Note Schtuff
 # Unfortunately, there is no translation :(
-IMAGER_NAME = "D'ni  Imager Right" # [sic]
+IMAGER_NAME = "D'ni  Imager Right"  # [sic]
 IMAGER_NOTE_TITLE = "Neighborhood Heek Scores"
 IMAGER_NOTE_PREFIX = "Top 10 Heek Players:\n"
 MAX_NUM_HIGH_SCORES = 10
@@ -199,7 +228,7 @@ LEADERBOARD_TIME = 5.0
 CB_LEADERBOARD = 0
 
 # Ugh. This is the time at which the clamshell anims are "open"
-CLAMSHELL_OPEN = 25.0 / 30.0 # 25 frames
+CLAMSHELL_OPEN = 25.0 / 30.0  # 25 frames
 
 # Even more animation crap
 LIGHT_FLASH_START = 10.0
@@ -216,8 +245,10 @@ class nb01RPSGame(ptResponder, object):
             return self.SDL[SDL_GAME_STATE][0]
         except IndexError:
             return GAME_ATTRACT_PLAYERS
+
     def _set_game_state(self, value):
         self.SDL[SDL_GAME_STATE] = (value,)
+
     game_state = property(_get_game_state, _set_game_state)
 
     @property
@@ -257,23 +288,30 @@ class nb01RPSGame(ptResponder, object):
     @property
     def selections(self):
         """Gets a sequence of tuples (seat, selection)"""
-        return ((i, selection) for i, selection in enumerate(self.SDL[SDL_CUR_SELECTION]))
+        return (
+            (i, selection) for i, selection in enumerate(self.SDL[SDL_CUR_SELECTION])
+        )
 
     def _get_winning_selection(self):
         return self.SDL[SDL_WINNING_SELECTION][0]
+
     def _set_winning_selection(self, value):
         self.SDL[SDL_WINNING_SELECTION] = (value,)
+
     winning_selection = property(_get_winning_selection, _set_winning_selection)
 
-#########
+    #########
     def __init__(self):
         super(nb01RPSGame, self).__init__()
         self.id = 20000
         self.version = 10
-        PtDebugPrint("nb01RPSGame.__init__():\tversion={}".format(self.version), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "nb01RPSGame.__init__():\tversion={}".format(self.version),
+            level=kDebugDumpLevel,
+        )
 
         # This holds my Heek score. This prevents server-spamming.
-        self._score = None # will get it from a CB
+        self._score = None  # will get it from a CB
 
         # Because I designed the game score retrieval in a sucky way
         self._wantHighScores = False
@@ -312,6 +350,7 @@ class nb01RPSGame(ptResponder, object):
             sdl.sendToClients(key)
             sdl.setFlags(key, True, True)
             sdl.setNotify(self.key, key, 0.0)
+
         notify_me(self.SDL, SDL_GAME_STATE)
         notify_me(self.SDL, SDL_PLAYERS)
 
@@ -335,7 +374,7 @@ class nb01RPSGame(ptResponder, object):
                     self._ChangeButtonState(seat, ff=True)
                 respCountdown.run(self.key, "stop", fastforward=True)
 
-#########
+    #########
     def OnAvatarPage(self, avatar, loading, lastOut):
         if lastOut or loading:
             return
@@ -346,7 +385,12 @@ class nb01RPSGame(ptResponder, object):
                 seat = self.players.index(kinum)
             except ValueError:
                 return
-            PtDebugPrint("nb01RPSGame.OnAvatarPage():\tPlayer #{} is leaving during the game!".format(kinum), level=kWarningLevel)
+            PtDebugPrint(
+                "nb01RPSGame.OnAvatarPage():\tPlayer #{} is leaving during the game!".format(
+                    kinum
+                ),
+                level=kWarningLevel,
+            )
             self._CleanupPosition(seat)
             self.SDL.setIndex(SDL_PLAYERS, seat, 0)
 
@@ -365,10 +409,14 @@ class nb01RPSGame(ptResponder, object):
                 if scores:
                     self._GotHoodHeekScores(scores)
                 else:
-                    PtDebugPrint("nb01RPSGame.OnGameScoreMsg():\tProblem fetching leaderboard")
+                    PtDebugPrint(
+                        "nb01RPSGame.OnGameScoreMsg():\tProblem fetching leaderboard"
+                    )
                 self._wantHighScores = False
             else:
-                raise RuntimeError("Invalid score operation: {}".format(self._waitingOnScoreOp))
+                raise RuntimeError(
+                    "Invalid score operation: {}".format(self._waitingOnScoreOp)
+                )
             self._waitingOnScoreOp = SCORE_OP_NONE
             self._RequestGameScore()
         elif isinstance(msg, ptGameScoreUpdateMsg):
@@ -403,7 +451,9 @@ class nb01RPSGame(ptResponder, object):
             return
 
         # The choice animation finished... Time to reenable the junk.
-        if self._HandleNotify(state, id, events, self._allBoardResps, self._OnChoiceAnimFinished):
+        if self._HandleNotify(
+            state, id, events, self._allBoardResps, self._OnChoiceAnimFinished
+        ):
             return
 
         # Done spinning the victory. Let them rematch...
@@ -422,8 +472,7 @@ class nb01RPSGame(ptResponder, object):
         if id == CB_LEADERBOARD and self.sceneobject.isLocallyOwned():
             self._UpdateImager()
 
-
-#########
+    #########
     def _OnWantToSit(self, state, seat, events):
         """Someone wants to sit down"""
         self._seats[seat].disable()
@@ -434,7 +483,9 @@ class nb01RPSGame(ptResponder, object):
         # Adjust the cutscene camera as appropriate
         if PtWasLocallyNotified(self.key):
             if state:
-                self._cameras[seat].value.pushCutsceneCamera(1, PtGetLocalAvatar().getKey())
+                self._cameras[seat].value.pushCutsceneCamera(
+                    1, PtGetLocalAvatar().getKey()
+                )
             else:
                 self._cameras[seat].value.popCutsceneCamera(PtGetLocalAvatar().getKey())
 
@@ -470,8 +521,7 @@ class nb01RPSGame(ptResponder, object):
             else:
                 respGame.run(self.key, GAME_WIN_STATES[self.winning_selection - 1])
 
-
-#########
+    #########
     def _AdvanceGame(self, playerID):
         """Handles game state changes."""
 
@@ -506,7 +556,7 @@ class nb01RPSGame(ptResponder, object):
     def _FinishRound(self):
         """Determine round winners and display the round selections"""
         # Calculate round scores. Remember this can be 5 on 5, so special scoring abound...
-        scores = { i: 0 for i, selection in self.selections if selection != SEL_NONE }
+        scores = {i: 0 for i, selection in self.selections if selection != SEL_NONE}
         for seat in scores:
             my_selection = self.SDL[SDL_CUR_SELECTION][seat]
             for their_selection in self.SDL[SDL_CUR_SELECTION]:
@@ -520,14 +570,20 @@ class nb01RPSGame(ptResponder, object):
         else:
             winners, game_winners = [], []
 
-        PtDebugPrint("nb01RPSGame._FinishRound():\tGetting ready to show moves...", level=kWarningLevel)
+        PtDebugPrint(
+            "nb01RPSGame._FinishRound():\tGetting ready to show moves...",
+            level=kWarningLevel,
+        )
         for seat, selection in self.selections:
             if selection == SEL_NONE:
                 continue
 
             win = seat in winners
             state = "win" if win else "lose"
-            PtDebugPrint("nb01RPSGame._FinishRound():\t- Position {}: {}".format(seat, state), level=kWarningLevel)
+            PtDebugPrint(
+                "nb01RPSGame._FinishRound():\t- Position {}: {}".format(seat, state),
+                level=kWarningLevel,
+            )
             if win:
                 var = SCORE_VAR[selection]
                 old_score = self.SDL[var][seat]
@@ -536,7 +592,9 @@ class nb01RPSGame(ptResponder, object):
                 if won_game:
                     game_winners.append(seat)
                     self.winning_selection = selection
-                self._UpdateScoreLights(seat, selection, old_score, new_score, win=won_game)
+                self._UpdateScoreLights(
+                    seat, selection, old_score, new_score, win=won_game
+                )
                 self.SDL.setIndex(var, seat, new_score)
             self._boardResps[selection - 1][seat].run(self.key, state)
         PtDebugPrint("nb01RPSGame._FinishRound():\tAnd that's it!", level=kWarningLevel)
@@ -545,7 +603,7 @@ class nb01RPSGame(ptResponder, object):
         # fool around with their scores...
         if game_winners:
             win_points = len(list(self.seats_playing)) - len(game_winners)
-            notify = { "type": NOTIFY_SCORE_UPDATE }
+            notify = {"type": NOTIFY_SCORE_UPDATE}
             for seat, kinum in enumerate(self.players):
                 if kinum != 0:
                     notify[str(kinum)] = win_points if seat in game_winners else -1
@@ -557,7 +615,12 @@ class nb01RPSGame(ptResponder, object):
     def _IsTheGameAfoot(self, playerID):
         """Detects how many players are at the table and starts/kills the game as appropriate."""
         players = self.num_players
-        PtDebugPrint("nb01RPSGame._IsTheGameAfoot():\tThere are now {} player(s)".format(players), level=kWarningLevel)
+        PtDebugPrint(
+            "nb01RPSGame._IsTheGameAfoot():\tThere are now {} player(s)".format(
+                players
+            ),
+            level=kWarningLevel,
+        )
         if players < 2:
             # There's not enough players to continue playing, so we need to murder the game state.
             self._round_played = False
@@ -566,11 +629,13 @@ class nb01RPSGame(ptResponder, object):
         else:
             # We have enough folks to begin playing. If we were previously in attract mode, it's
             # time to enable the board. We'll do this per-player in their SDL callback.
-            if self.sceneobject.isLocallyOwned() and self.game_state == GAME_ATTRACT_PLAYERS:
+            if (
+                self.sceneobject.isLocallyOwned()
+                and self.game_state == GAME_ATTRACT_PLAYERS
+            ):
                 self.game_state = GAME_AWAIT_MOVES
 
-
-#########
+    #########
     def _CleanupPosition(self, seat):
         self._seats[seat].enable()
         if self.sceneobject.isLocallyOwned():
@@ -596,12 +661,19 @@ class nb01RPSGame(ptResponder, object):
     def _OnGameOver(self, **kwargs):
         """The game is over--update our score"""
         if not len(kwargs) > 1:
-            PtDebugPrint("nb01RPSGame._OnGameOver(): Received a suspicious game over message. Ignoring...")
+            PtDebugPrint(
+                "nb01RPSGame._OnGameOver(): Received a suspicious game over message. Ignoring..."
+            )
             return
 
         points = kwargs.get(str(PtGetLocalClientID()), None)
         if points is not None:
-            PtDebugPrint("nb01RPSGame._OnGameOver():\tAdding {} points to our Heek score".format(points), level=kWarningLevel)
+            PtDebugPrint(
+                "nb01RPSGame._OnGameOver():\tAdding {} points to our Heek score".format(
+                    points
+                ),
+                level=kWarningLevel,
+            )
             self._ChangeMyScore(points)
         self._round_played = False
 
@@ -628,7 +700,9 @@ class nb01RPSGame(ptResponder, object):
             points = max(0, score.getPoints())
             loc = "Heek.Messages.Rank" if points == 1 else "Heek.Messages.RankPlural"
             rank = self._GetRank(points)
-            self._SendLocalStatusMsg(PtGetLocalizedString(loc, [str(rank), str(points)]))
+            self._SendLocalStatusMsg(
+                PtGetLocalizedString(loc, [str(rank), str(points)])
+            )
 
     def _JoinTheGame(self, seat):
         """Joins the local player to the game"""
@@ -643,7 +717,9 @@ class nb01RPSGame(ptResponder, object):
             self._SendPyNotifyMsg(join)
 
             if self.num_players == 0:
-                self._SendLocalStatusMsg(PtGetLocalizedString("Heek.Messages.SinglePlayerWarn"))
+                self._SendLocalStatusMsg(
+                    PtGetLocalizedString("Heek.Messages.SinglePlayerWarn")
+                )
             elif self.num_players > 1 and self.game_state != GAME_ATTRACT_PLAYERS:
                 self._ChangeButtonState(seat, force=True)
             hello = {
@@ -666,6 +742,7 @@ class nb01RPSGame(ptResponder, object):
             def reset_sdl(sdl, name):
                 """Resets a player/seat SDL value to zero."""
                 sdl[name] = tuple([0] * NUM_SEATS)
+
             reset_sdl(self.SDL, SDL_ROCKS)
             reset_sdl(self.SDL, SDL_PAPERS)
             reset_sdl(self.SDL, SDL_SCISSORS)
@@ -684,7 +761,9 @@ class nb01RPSGame(ptResponder, object):
 
             # If we're actively playing, and we left before game over, then we deduct a point.
             if self.num_players > 1 and self._round_played:
-                PtDebugPrint("nb01RPSGame._LeaveTheGame():\tYou lose because you gave up!")
+                PtDebugPrint(
+                    "nb01RPSGame._LeaveTheGame():\tYou lose because you gave up!"
+                )
                 self._ChangeMyScore(-1)
             self._round_played = False
 
@@ -692,10 +771,16 @@ class nb01RPSGame(ptResponder, object):
         """We have a new player joining us!"""
 
         if self.playing:
-            loc = "Heek.Messages.Welcome" if points == 1 else "Heek.Messages.WelcomePlural"
+            loc = (
+                "Heek.Messages.Welcome"
+                if points == 1
+                else "Heek.Messages.WelcomePlural"
+            )
             rank = self._GetRank(points)
             player = PtGetClientName(PtGetAvatarKeyFromClientID(client))
-            self._SendLocalStatusMsg(PtGetLocalizedString(loc, [player, str(rank), str(points)]))
+            self._SendLocalStatusMsg(
+                PtGetLocalizedString(loc, [player, str(rank), str(points)])
+            )
 
     def _OnJoinLeave(self, seat, client, join):
         """Synchronizes access to the players SDL variable"""
@@ -710,8 +795,7 @@ class nb01RPSGame(ptResponder, object):
         """Sends a status chat message (purple text) to the local player's KI."""
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
-
-#########
+    #########
     def _ChangeButtonState(self, seat, enable=True, ff=False, force=False):
         clamshell = self._shutters[seat]
         if enable:
@@ -750,7 +834,12 @@ class nb01RPSGame(ptResponder, object):
             self._lights[seat][selection - 1][light].playRange(start, end)
 
     def _UpdateScoreLights(self, seat, selection, old_score, new_score, win):
-        PtDebugPrint("nb01RPSGame._UpdateScoreLights():\tOld: {}, New: {}".format(old_score, new_score), level=kWarningLevel)
+        PtDebugPrint(
+            "nb01RPSGame._UpdateScoreLights():\tOld: {}, New: {}".format(
+                old_score, new_score
+            ),
+            level=kWarningLevel,
+        )
         start = 0 if win else min(2, old_score)
         end = min(2, new_score)
         for i in range(start, end):
@@ -759,11 +848,12 @@ class nb01RPSGame(ptResponder, object):
         state = "win" if win else "on"
         self._sounds[seat].run(self.key, state)
 
-
-#########
+    #########
     def _ChangeMyScore(self, points):
         if self._score is None:
-            ptGameScore.createPlayerScore(SCORE_NAME, SCORE_TYPE, SCORE_DEFAULT + points, self.key)
+            ptGameScore.createPlayerScore(
+                SCORE_NAME, SCORE_TYPE, SCORE_DEFAULT + points, self.key
+            )
         else:
             self._score.addPoints(points, self.key)
 
@@ -781,7 +871,9 @@ class nb01RPSGame(ptResponder, object):
     def _FindCreateHeekScoreNote(self):
         vault = ptAgeVault()
         if vault is None:
-            PtDebugPrint("nb01RPSGame._FindCreateHeekScoreNote():\tAin't got no age vault!")
+            PtDebugPrint(
+                "nb01RPSGame._FindCreateHeekScoreNote():\tAin't got no age vault!"
+            )
             return None
         inbox = vault.getDeviceInbox(IMAGER_NAME)
         if inbox is None:
@@ -804,7 +896,9 @@ class nb01RPSGame(ptResponder, object):
         """Use this if the player is an age owner, but may not be in the age atm"""
         vault = ptAgeVault()
         if vault is None:
-            PtDebugPrint("nb01RPSGame._GetPlayerNameFromPlayerInfoID():\tAin't got no age vault!")
+            PtDebugPrint(
+                "nb01RPSGame._GetPlayerNameFromPlayerInfoID():\tAin't got no age vault!"
+            )
             return None
         owners = vault.getAgeInfo().getAgeOwnersFolder()
 
@@ -817,12 +911,18 @@ class nb01RPSGame(ptResponder, object):
             if infoID == info.getID():
                 return info.playerGetName()
         else:
-            PtDebugPrint("nb01RPSGame._GetPlayerNameFromPlayerInfoID():\tFailed to find PlayerInfo {}".format(infoID))
+            PtDebugPrint(
+                "nb01RPSGame._GetPlayerNameFromPlayerInfoID():\tFailed to find PlayerInfo {}".format(
+                    infoID
+                )
+            )
             return ""
 
     def _GotHoodHeekScores(self, scores):
         if not scores:
-            PtDebugPrint("nb01RPSGame._GotHoodHeekScores():\tHmmm... No scores. Oh well.")
+            PtDebugPrint(
+                "nb01RPSGame._GotHoodHeekScores():\tHmmm... No scores. Oh well."
+            )
             return
 
         note = self._FindCreateHeekScoreNote()
@@ -830,7 +930,9 @@ class nb01RPSGame(ptResponder, object):
             text = IMAGER_NOTE_PREFIX
             num = 1
             fixed_scores = self._FixupScores(scores)
-            for owner in sorted(fixed_scores, key=lambda x: fixed_scores[x], reverse=True):
+            for owner in sorted(
+                fixed_scores, key=lambda x: fixed_scores[x], reverse=True
+            ):
                 owner_name = self._GetPlayerNameFromPlayerInfoID(owner)
                 if not owner_name:
                     continue
@@ -857,19 +959,24 @@ class nb01RPSGame(ptResponder, object):
         if self._wantHighScores:
             if self._waitingOnScoreOp == SCORE_OP_NONE:
                 self._waitingOnScoreOp = SCORE_OP_HIGH
-                ptGameScore.findAgeHighScores(SCORE_NAME, MAX_NUM_HIGH_SCORES * 2, self.key)
+                ptGameScore.findAgeHighScores(
+                    SCORE_NAME, MAX_NUM_HIGH_SCORES * 2, self.key
+                )
 
     def _UpdateImager(self):
         """Begins the process of updating the Top 10 Heek Scores thingy"""
         self._RequestGameScore(high=True)
 
-
-#########
+    #########
     def _MakeAttribHelpers(self):
         # Let's make some tuples of logic objects. We'll use these to figure out which player did the deed.
-        self._sitting = self._MakeAttribTuple("detSitting") # you are done sitting down
+        self._sitting = self._MakeAttribTuple("detSitting")  # you are done sitting down
 
-        self._buttons = (detButtonRock, detButtonPaper, detButtonScissors) # offset -1 from the indices above
+        self._buttons = (
+            detButtonRock,
+            detButtonPaper,
+            detButtonScissors,
+        )  # offset -1 from the indices above
         self._rocks = self._MakeAttribTuple("respRock")
         self._papers = self._MakeAttribTuple("respPaper")
         self._scissors = self._MakeAttribTuple("respScissors")
@@ -877,7 +984,7 @@ class nb01RPSGame(ptResponder, object):
         self._allBoardResps = self._rocks + self._papers + self._scissors
 
         self._cameras = self._MakeAttribTuple("camera")
-        self._seats = self._MakeAttribTuple("seatButton") # you clicked to sit down
+        self._seats = self._MakeAttribTuple("seatButton")  # you clicked to sit down
         self._sounds = self._MakeAttribTuple("respSeat", "Sounds")
 
         # These are the various shutters that we have to (ugh) manually animate.
@@ -900,7 +1007,7 @@ class nb01RPSGame(ptResponder, object):
         for i in range(len(temp)):
             seat_shutters = [None] * 3
             for j in range(len(seat_shutters)):
-                name = "buttonshutter{0}{1}".format(i+1, j+1)
+                name = "buttonshutter{0}{1}".format(i + 1, j + 1)
                 seat_shutters[j] = anim.byObject[name]
             temp[i] = tuple(seat_shutters)
         return tuple(temp)
@@ -909,7 +1016,7 @@ class nb01RPSGame(ptResponder, object):
         temp = []
         for i in range(NUM_SEATS):
             seat_categories = []
-            cat_names = ('B', 'G', 'R')
+            cat_names = ("B", "G", "R")
             for j in range(SEL_NUM - 1):
                 category = []
                 for k in range(2):
@@ -920,8 +1027,7 @@ class nb01RPSGame(ptResponder, object):
             temp.append(seat_categories)
         return tuple(temp)
 
-
-#########
+    #########
     def _HandleNotify(self, state, id, events, attribs, call):
         """If a notify is in attribs, fire off call with the state, seat ID, events"""
         seat = self._WasAttribs(id, attribs)
@@ -945,12 +1051,20 @@ class nb01RPSGame(ptResponder, object):
         type = args["type"]
         del args["type"]
         if type not in self._event_handlers:
-            PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' doesn't have a handler!".format(type))
+            PtDebugPrint(
+                "nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' doesn't have a handler!".format(
+                    type
+                )
+            )
             return False
         try:
             self._event_handlers[type](**args)
         except TypeError:
-            PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' has bad kwargs".format(type))
+            PtDebugPrint(
+                "nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' has bad kwargs".format(
+                    type
+                )
+            )
         return True
 
     def _SendPyNotifyMsg(self, contents):
@@ -963,7 +1077,7 @@ class nb01RPSGame(ptResponder, object):
         notify.setActivate(True)
         for key, value in contents.items():
             notify.addVarNumber(key, value)
-        notify.send() # whoosh... off it goes
+        notify.send()  # whoosh... off it goes
 
     def _WasAttribs(self, id, attribs):
         for i in range(len(attribs)):

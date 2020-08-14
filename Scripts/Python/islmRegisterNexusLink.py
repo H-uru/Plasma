@@ -55,11 +55,11 @@ import PlasmaControlKeys
 
 
 # define the attributes that will be entered in max
-stationName = ptAttribString(1,"station name","foggy bottom")
-linkpointName = ptAttribString(2,"linkpoint object name","foo")
-actClick = ptAttribActivator(3,"Actvtr: click me")
-respClick = ptAttribResponder(4,"Rspndr: sans ki",netForce=1)
-respClickGlow = ptAttribResponder(5,"Rspndr: with ki",netForce=1)
+stationName = ptAttribString(1, "station name", "foggy bottom")
+linkpointName = ptAttribString(2, "linkpoint object name", "foo")
+actClick = ptAttribActivator(3, "Actvtr: click me")
+respClick = ptAttribResponder(4, "Rspndr: sans ki", netForce=1)
+respClickGlow = ptAttribResponder(5, "Rspndr: with ki", netForce=1)
 
 
 class islmRegisterNexusLink(ptModifier):
@@ -68,31 +68,32 @@ class islmRegisterNexusLink(ptModifier):
         self.id = 5019
         version = 2
         self.version = version
-        PtDebugPrint( "__init__islmRegisterNexusLink v.%d.3" % (version) )
+        PtDebugPrint("__init__islmRegisterNexusLink v.%d.3" % (version))
         self.avatar = 0
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         if not state:
             return
-            
-        if id==actClick.id:
+
+        if id == actClick.id:
             if PtFindAvatar(events) != PtGetLocalAvatar():
                 return
-                
+
             # does clicker have a normal KI or better?
             self.avatar = PtGetLocalAvatar()
             kiLevel = PtDetermineKILevel()
-            PtDebugPrint( "islmRegisterNexusLink.OnNotify:\tplayer ki level is %d" % (kiLevel) )
+            PtDebugPrint(
+                "islmRegisterNexusLink.OnNotify:\tplayer ki level is %d" % (kiLevel)
+            )
             if kiLevel < kNormalKI:
                 self.avatar = 0
-                respClick.run(self.key,events=events)
+                respClick.run(self.key, events=events)
                 # no ki with which to register link so return
                 return
-            respClickGlow.run(self.key,events=events)
-        
+            respClickGlow.run(self.key, events=events)
+
         elif id == respClickGlow.id and PtGetLocalAvatar() == self.avatar:
-            #Register Nexus Link
+            # Register Nexus Link
             vault = ptVault()
             # we'll use this Chronicle hack so the Nexus machine will know to include this non-city link in its Public city list
             if stationName.value == "Kveer":
@@ -103,21 +104,36 @@ class islmRegisterNexusLink(ptModifier):
                     if entryValue != "yes":
                         entry.chronicleSetValue("yes")
                         entry.save()
-                        PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' already added, setting to 'yes'")
+                        PtDebugPrint(
+                            "islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' already added, setting to 'yes'"
+                        )
                 else:
-                    vault.addChronicleEntry("GotLinkToKveerPublic",1,"yes")
-                    PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' not present, adding entry and setting to 'yes'")
-                    PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
+                    vault.addChronicleEntry("GotLinkToKveerPublic", 1, "yes")
+                    PtDebugPrint(
+                        "islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' not present, adding entry and setting to 'yes'"
+                    )
+                    PtSendKIMessage(
+                        kKILocalChatStatusMsg,
+                        PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
+                    )
             else:
                 # just business-as-usual here
                 self.avatar = 0
                 cityLink = vault.getLinkToCity()
                 if cityLink is not None:
                     if not cityLink.hasSpawnPoint(linkpointName.value):
-                        #Display link added message
-                        PtDebugPrint( "Nexus Link added message displayed %s,%s" % (stationName.value,linkpointName.value) )
-                        PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
+                        # Display link added message
+                        PtDebugPrint(
+                            "Nexus Link added message displayed %s,%s"
+                            % (stationName.value, linkpointName.value)
+                        )
+                        PtSendKIMessage(
+                            kKILocalChatStatusMsg,
+                            PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
+                        )
                 # will only register if not there already
-                vault.registerMTStation(stationName.value,linkpointName.value)
-                PtDebugPrint( "islmRegisterNexusLink.OnNotify:\tregistering MTStation %s,%s" % (stationName.value,linkpointName.value) )
-
+                vault.registerMTStation(stationName.value, linkpointName.value)
+                PtDebugPrint(
+                    "islmRegisterNexusLink.OnNotify:\tregistering MTStation %s,%s"
+                    % (stationName.value, linkpointName.value)
+                )

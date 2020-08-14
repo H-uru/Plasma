@@ -51,10 +51,11 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-stringSDLVarName = ptAttribString(1,"Age SDL Variable")
-actActivator = ptAttribActivator(2,"Activator")
-stringStartValues = ptAttribString(3,"Active state values")
-intDefault = ptAttribInt(4,"Default setting",0)
+stringSDLVarName = ptAttribString(1, "Age SDL Variable")
+actActivator = ptAttribActivator(2, "Activator")
+stringStartValues = ptAttribString(3, "Active state values")
+intDefault = ptAttribInt(4, "Default setting", 0)
+
 
 class xAgeSDLIntActEnabler(ptResponder):
     def __init__(self):
@@ -64,56 +65,78 @@ class xAgeSDLIntActEnabler(ptResponder):
         self.version = version
         self.enabledStateList = []
         PtDebugPrint("__init__xAgeSDLIntActEnabler v.", version)
-    
+
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:
-            PtDebugPrint("ERROR: xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: missing SDL var name in max file")
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: missing SDL var name in max file"
+            )
             pass
-    
+
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
 
-        PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tOn %s" % stringSDLVarName.value)
-        
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tOn %s"
+            % stringSDLVarName.value
+        )
+
         try:
             self.enabledStateList = stringStartValues.value.split(",")
             for i in range(len(self.enabledStateList)):
                 self.enabledStateList[i] = int(self.enabledStateList[i].strip())
         except:
-            PtDebugPrint("ERROR: xAgeSDLIntActEnabler.OnServerInitComplete():\tERROR: couldn't process start state list")
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntActEnabler.OnServerInitComplete():\tERROR: couldn't process start state list"
+            )
 
-        PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tSetting notify on %s" % stringSDLVarName.value)
-        
-        ageSDL.setNotify(self.key,stringSDLVarName.value,0.0)
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tSetting notify on %s"
+            % stringSDLVarName.value
+        )
+
+        ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
 
         try:
             SDLvalue = ageSDL[stringSDLVarName.value][0]
         except:
-            PtDebugPrint("ERROR: xAgeSDLIntActEnabler.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringSDLVarName = %s" % (intDefault.value,stringSDLVarName.value))
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntActEnabler.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringSDLVarName = %s"
+                % (intDefault.value, stringSDLVarName.value)
+            )
             SDLvalue = intDefault.value
 
-        PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tCurrent SDL value = %d" % SDLvalue)
-                
-        if  SDLvalue in self.enabledStateList:
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tCurrent SDL value = %d"
+            % SDLvalue
+        )
+
+        if SDLvalue in self.enabledStateList:
             actActivator.enable()
-            PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\t%s activator enabled" % stringSDLVarName.value)
+            PtDebugPrint(
+                "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\t%s activator enabled"
+                % stringSDLVarName.value
+            )
         else:
             actActivator.disable()
-            PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\t%s activator disabled" % stringSDLVarName.value)
-            
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+            PtDebugPrint(
+                "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\t%s activator disabled"
+                % stringSDLVarName.value
+            )
+
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         if VARname != stringSDLVarName.value:
             return
 
         ageSDL = PtGetAgeSDL()
         PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnSDLNotify received: %s" % VARname)
-        
+
         SDLvalue = ageSDL[stringSDLVarName.value][0]
-        
-        if  SDLvalue in self.enabledStateList:
+
+        if SDLvalue in self.enabledStateList:
             PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnSDLNotify: enabling activator")
             actActivator.enable()
-            
+
         else:
             PtDebugPrint("DEBUG: xAgeSDLIntActEnabler.OnSDLNotify: disabling activator")
             actActivator.disable()

@@ -70,6 +70,7 @@ def WriteIni():
     if gIniFile:
         gIniFile.writeFile(gFilename)
 
+
 def ReadIni():
     global gIniFile
     gIniFile = xIniHelper.iniFile(gFilename)
@@ -78,28 +79,32 @@ def ReadIni():
         gIniFile.addEntry("# This is an auto-generated file.")
         gIniFile.addEntry("")
 
-def SetControlKey(controlKey,primary="(unmapped),",secondary="(unmapped),"):
+
+def SetControlKey(controlKey, primary="(unmapped),", secondary="(unmapped),"):
     if gIniFile:
-        entry,idx = gIniFile.findByLastValue(controlKey)
+        entry, idx = gIniFile.findByLastValue(controlKey)
         if entry:
-            entry.setValue(0,primary)
-            entry.setValue(1,secondary)
+            entry.setValue(0, primary)
+            entry.setValue(1, secondary)
         else:
-            gIniFile.addEntry("%s %s %s %s" % (kBindCmd,primary,secondary,controlKey))
+            gIniFile.addEntry(
+                "%s %s %s %s" % (kBindCmd, primary, secondary, controlKey)
+            )
+
 
 def GetControlKey(controlKey):
     if gIniFile:
-        entry,idx = gIniFile.findByLastValue(controlKey)
+        entry, idx = gIniFile.findByLastValue(controlKey)
         if entry and entry.getValue(0) and entry.getValue(1):
-            return entry.getValue(0),entry.getValue(1)
+            return entry.getValue(0), entry.getValue(1)
         else:
-            return "(unmapped),","(unmapped),"
+            return "(unmapped),", "(unmapped),"
 
-def SetConsoleKey(consoleCommand,primary="(unmapped),"):
+
+def SetConsoleKey(consoleCommand, primary="(unmapped),"):
     if gIniFile:
-        entry,idx = gIniFile.findByLastValue(consoleCommand)
+        entry, idx = gIniFile.findByLastValue(consoleCommand)
         if entry:
-            entry.setValue(0,primary)
+            entry.setValue(0, primary)
         else:
-            gIniFile.addEntry("%s %s %s" % (kConsoleBind,primary,consoleCommand))
-
+            gIniFile.addEntry("%s %s %s" % (kConsoleBind, primary, consoleCommand))

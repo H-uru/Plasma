@@ -55,28 +55,34 @@ import xRandom
 # Shared xKI/jlakField constants
 from jlakConstants import *
 
-objColumns = ptAttribSceneobjectList(1,"obj: column phys")
-animColumn = ptAttribAnimation(2,"anim: columns",byObject=1)
-objSpheres = ptAttribSceneobjectList(3,"obj: spheres")
-objLilBoxes = ptAttribSceneobjectList(4,"obj: lil' boxes")
-objBigBoxes = ptAttribSceneobjectList(5,"obj: big boxes")
-objRamps = ptAttribSceneobjectList(6,"obj: ramps")
-objRects = ptAttribSceneobjectList(7,"obj: rectangles")
-warpSpheres = ptAttribSceneobjectList(8,"obj: sphere warps - home")
-warpLilBoxes = ptAttribSceneobjectList(9,"obj: lil' box warps - home")
-warpBigBoxes = ptAttribSceneobjectList(10,"obj: big box warps - home")
-warpRamps = ptAttribSceneobjectList(11,"obj: ramp warps - home")
-warpRects = ptAttribSceneobjectList(12,"obj: rectangle warps - home")
-warpWidgetsPlay = ptAttribSceneobjectList(13,"obj: widget warps - play")
-clkColumnUp = ptAttribActivatorList(14,"clk: column up")
-clkColumnDn = ptAttribActivatorList(15,"clk: column down")
-warpPlayers = ptAttribSceneobjectList(16,"obj: player warps")
-respWallToggle = ptAttribResponder(17,"resp: toggle wall",['on','off'],netForce=0)
-respGameOps = ptAttribResponder(18,"resp: game ops",['start','end','reset'],netForce=0)
-respSfxColumn = ptAttribResponderList(19,"resp: sfx column",statelist=['up','down','off'],byObject=1)
-rgnWallSensors = ptAttribActivatorList(20,"rgn sns: wall hit sensors")
-#rgnZeroPhysicals = ptAttribActivator(21,"rgn sns: zero out physicals")
-respBulkMoveSFX = ptAttribResponder(22, "resp: BulkMove SFX", statelist=['off', 'on', 'end'], netForce=0)
+objColumns = ptAttribSceneobjectList(1, "obj: column phys")
+animColumn = ptAttribAnimation(2, "anim: columns", byObject=1)
+objSpheres = ptAttribSceneobjectList(3, "obj: spheres")
+objLilBoxes = ptAttribSceneobjectList(4, "obj: lil' boxes")
+objBigBoxes = ptAttribSceneobjectList(5, "obj: big boxes")
+objRamps = ptAttribSceneobjectList(6, "obj: ramps")
+objRects = ptAttribSceneobjectList(7, "obj: rectangles")
+warpSpheres = ptAttribSceneobjectList(8, "obj: sphere warps - home")
+warpLilBoxes = ptAttribSceneobjectList(9, "obj: lil' box warps - home")
+warpBigBoxes = ptAttribSceneobjectList(10, "obj: big box warps - home")
+warpRamps = ptAttribSceneobjectList(11, "obj: ramp warps - home")
+warpRects = ptAttribSceneobjectList(12, "obj: rectangle warps - home")
+warpWidgetsPlay = ptAttribSceneobjectList(13, "obj: widget warps - play")
+clkColumnUp = ptAttribActivatorList(14, "clk: column up")
+clkColumnDn = ptAttribActivatorList(15, "clk: column down")
+warpPlayers = ptAttribSceneobjectList(16, "obj: player warps")
+respWallToggle = ptAttribResponder(17, "resp: toggle wall", ["on", "off"], netForce=0)
+respGameOps = ptAttribResponder(
+    18, "resp: game ops", ["start", "end", "reset"], netForce=0
+)
+respSfxColumn = ptAttribResponderList(
+    19, "resp: sfx column", statelist=["up", "down", "off"], byObject=1
+)
+rgnWallSensors = ptAttribActivatorList(20, "rgn sns: wall hit sensors")
+# rgnZeroPhysicals = ptAttribActivator(21,"rgn sns: zero out physicals")
+respBulkMoveSFX = ptAttribResponder(
+    22, "resp: BulkMove SFX", statelist=["off", "on", "end"], netForce=0
+)
 respCreateWidgetSFX = ptAttribResponder(23, "resp: Create Widget SFX", netForce=0)
 
 
@@ -90,7 +96,7 @@ byteColumns = []
 listSfxCols = []
 kMaxEachWidget = 4
 kEmoteTimerID = 500
-kSFXCompleteID= 501
+kSFXCompleteID = 501
 kEmoteTimer = 2.0
 kBulkMoveVar = "BulkMove"
 sdlStartPt = "jlakPlayerStartPt"
@@ -100,11 +106,33 @@ sdlLilBox = "jlakCurrentLilBox"
 sdlBigBox = "jlakCurrentBigBox"
 sdlRamp = "jlakCurrentRamp"
 sdlRect = "jlakCurrentRectangle"
-sdlColumns = [  "jlakColumn00","jlakColumn01","jlakColumn02","jlakColumn03","jlakColumn04",\
-                "jlakColumn05","jlakColumn06","jlakColumn07","jlakColumn08","jlakColumn09",\
-                "jlakColumn10","jlakColumn11","jlakColumn12","jlakColumn13","jlakColumn14",\
-                "jlakColumn15","jlakColumn16","jlakColumn17","jlakColumn18","jlakColumn19",\
-                "jlakColumn20","jlakColumn21","jlakColumn22","jlakColumn23","jlakColumn24"]
+sdlColumns = [
+    "jlakColumn00",
+    "jlakColumn01",
+    "jlakColumn02",
+    "jlakColumn03",
+    "jlakColumn04",
+    "jlakColumn05",
+    "jlakColumn06",
+    "jlakColumn07",
+    "jlakColumn08",
+    "jlakColumn09",
+    "jlakColumn10",
+    "jlakColumn11",
+    "jlakColumn12",
+    "jlakColumn13",
+    "jlakColumn14",
+    "jlakColumn15",
+    "jlakColumn16",
+    "jlakColumn17",
+    "jlakColumn18",
+    "jlakColumn19",
+    "jlakColumn20",
+    "jlakColumn21",
+    "jlakColumn22",
+    "jlakColumn23",
+    "jlakColumn24",
+]
 sdlGUILock = "jlakGUIButtonsLocked"
 byteStartPt = 0
 boolWall = 0
@@ -124,17 +152,14 @@ listWarpPlayers = []
 
 
 class jlakField(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
-        self.id       = 6005
-        self.version  = 10
+        self.id = 6005
+        self.version = 10
         self.bulkMove = 0
-
 
     def OnFirstUpdate(self):
         pass
-
 
     def OnServerInitComplete(self):
         global LocalAvatar
@@ -155,14 +180,14 @@ class jlakField(ptResponder):
         LocalAvatar = PtGetLocalAvatar()
 
         ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags(sdlStartPt,1,1)
-        ageSDL.setFlags(sdlWall,1,1)
-        ageSDL.setFlags(sdlSphere,1,1)
-        ageSDL.setFlags(sdlLilBox,1,1)
-        ageSDL.setFlags(sdlBigBox,1,1)
-        ageSDL.setFlags(sdlRamp,1,1)
-        ageSDL.setFlags(sdlRect,1,1)
-        ageSDL.setFlags(sdlGUILock,1,1)
+        ageSDL.setFlags(sdlStartPt, 1, 1)
+        ageSDL.setFlags(sdlWall, 1, 1)
+        ageSDL.setFlags(sdlSphere, 1, 1)
+        ageSDL.setFlags(sdlLilBox, 1, 1)
+        ageSDL.setFlags(sdlBigBox, 1, 1)
+        ageSDL.setFlags(sdlRamp, 1, 1)
+        ageSDL.setFlags(sdlRect, 1, 1)
+        ageSDL.setFlags(sdlGUILock, 1, 1)
         ageSDL.sendToClients(sdlStartPt)
         ageSDL.sendToClients(sdlWall)
         ageSDL.sendToClients(sdlSphere)
@@ -171,14 +196,14 @@ class jlakField(ptResponder):
         ageSDL.sendToClients(sdlRamp)
         ageSDL.sendToClients(sdlRect)
         ageSDL.sendToClients(sdlGUILock)
-        ageSDL.setNotify(self.key,sdlStartPt,0.0)
-        ageSDL.setNotify(self.key,sdlWall,0.0)
-        ageSDL.setNotify(self.key,sdlSphere,0.0)
-        ageSDL.setNotify(self.key,sdlLilBox,0.0)
-        ageSDL.setNotify(self.key,sdlBigBox,0.0)
-        ageSDL.setNotify(self.key,sdlRamp,0.0)
-        ageSDL.setNotify(self.key,sdlRect,0.0)
-        ageSDL.setNotify(self.key,sdlGUILock,0.0)
+        ageSDL.setNotify(self.key, sdlStartPt, 0.0)
+        ageSDL.setNotify(self.key, sdlWall, 0.0)
+        ageSDL.setNotify(self.key, sdlSphere, 0.0)
+        ageSDL.setNotify(self.key, sdlLilBox, 0.0)
+        ageSDL.setNotify(self.key, sdlBigBox, 0.0)
+        ageSDL.setNotify(self.key, sdlRamp, 0.0)
+        ageSDL.setNotify(self.key, sdlRect, 0.0)
+        ageSDL.setNotify(self.key, sdlGUILock, 0.0)
         byteStartPt = ageSDL[sdlStartPt][0]
         boolWall = ageSDL[sdlWall][0]
         byteSphere = ageSDL[sdlSphere][0]
@@ -186,59 +211,63 @@ class jlakField(ptResponder):
         byteBigBox = ageSDL[sdlBigBox][0]
         byteRamp = ageSDL[sdlRamp][0]
         byteRect = ageSDL[sdlRect][0]
-        
-        #If the last person links out while a bulk move is being performed the SDL gets stuck!
-        #So we'll reset it only if we're the first person entering the age....
+
+        # If the last person links out while a bulk move is being performed the SDL gets stuck!
+        # So we'll reset it only if we're the first person entering the age....
         if len(PtGetPlayerList()) == 0:
-            PtDebugPrint("jlakField.OnServerInitComplete():\tResetting GUI lock as we're the only ones here!")
+            PtDebugPrint(
+                "jlakField.OnServerInitComplete():\tResetting GUI lock as we're the only ones here!"
+            )
             ageSDL[sdlGUILock] = (0,)
             boolGUILock = 0
         else:
             boolGUILock = ageSDL[sdlGUILock][0]
 
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteStartPt = ",byteStartPt)
-        PtDebugPrint("jlakField.OnServerInitComplete():  boolWall = ",boolWall)
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteSphere = ",byteSphere)
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteLilBox = ",byteLilBox)
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteBigBox = ",byteBigBox)
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteRamp = ",byteRamp)
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteRect = ",byteRect)
-        PtDebugPrint("jlakField.OnServerInitComplete():  boolGUILock = ",boolGUILock)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteStartPt = ", byteStartPt)
+        PtDebugPrint("jlakField.OnServerInitComplete():  boolWall = ", boolWall)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteSphere = ", byteSphere)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteLilBox = ", byteLilBox)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteBigBox = ", byteBigBox)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteRamp = ", byteRamp)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteRect = ", byteRect)
+        PtDebugPrint("jlakField.OnServerInitComplete():  boolGUILock = ", boolGUILock)
         for sdl in sdlColumns:
-            ageSDL.setFlags(sdl,1,1)
+            ageSDL.setFlags(sdl, 1, 1)
             ageSDL.sendToClients(sdl)
-            ageSDL.setNotify(self.key,sdl,0.0)
+            ageSDL.setNotify(self.key, sdl, 0.0)
             val = ageSDL[sdl][0]
             byteColumns.append(val)
-        PtDebugPrint("jlakField.OnServerInitComplete():  byteColumns = ",byteColumns)
+        PtDebugPrint("jlakField.OnServerInitComplete():  byteColumns = ", byteColumns)
 
-        kZeroed = ptVector3(0,0,0)
-        
+        kZeroed = ptVector3(0, 0, 0)
+
         for objCol in objColumns.value:
             obj = objCol.getName()
             listObjCols.append(obj)
-        PtDebugPrint("listObjCols = ",listObjCols)
+        PtDebugPrint("listObjCols = ", listObjCols)
 
         if len(clkColumnUp.value) != len(listObjCols):
             PtDebugPrint("error!  not enough up clickables")
         elif len(clkColumnDn.value) != len(listObjCols):
             PtDebugPrint("error!  not enough down clickables")
-        
+
         for resp in respSfxColumn.value:
             aResp = resp.getName()
             listSfxCols.append(aResp)
-        #PtDebugPrint("listSfxCols = ",listSfxCols)
+        # PtDebugPrint("listSfxCols = ",listSfxCols)
 
         for warp in warpPlayers.value:
             pt = warp.getName()
             listWarpPlayers.append(pt)
-        #PtDebugPrint("listWarpPlayers = ",listWarpPlayers)
+        # PtDebugPrint("listWarpPlayers = ",listWarpPlayers)
 
         if not len(PtGetPlayerList()):
-            PtDebugPrint("jlakField.OnServerInitComplete(): on link-in, am only player here.  Will reset player start point")
+            PtDebugPrint(
+                "jlakField.OnServerInitComplete(): on link-in, am only player here.  Will reset player start point"
+            )
             newPoint = byteStartPt
             while newPoint == byteStartPt:
-                newPoint = xRandom.randint(0,len(listWarpPlayers)-1)
+                newPoint = xRandom.randint(0, len(listWarpPlayers) - 1)
             byteStartPt = newPoint
             # make sure any widgets that are supposed to be 'home' are really there
             if byteSphere == len(objSpheres.value):
@@ -252,14 +281,20 @@ class jlakField(ptResponder):
             if byteRect == len(objRects.value):
                 self.WarpWidgetsHome(4)
         elif len(PtGetPlayerList()) == 1:
-            PtDebugPrint("jlakField.OnServerInitComplete(): on link-in, 1 player already here.  Will warp 2 points away (across from previous point)")
-            byteStartPt = byteStartPt+2
+            PtDebugPrint(
+                "jlakField.OnServerInitComplete(): on link-in, 1 player already here.  Will warp 2 points away (across from previous point)"
+            )
+            byteStartPt = byteStartPt + 2
             if byteStartPt == 4:
                 byteStartPt = 0
-            elif byteStartPt >= 5:      # greater than 5 shouldn't be possible, but as a safety...
+            elif (
+                byteStartPt >= 5
+            ):  # greater than 5 shouldn't be possible, but as a safety...
                 byteStartPt = 1
         else:
-            PtDebugPrint("jlakField.OnServerInitComplete(): on link-in, 2 or more players already here.  Will warp to next point")
+            PtDebugPrint(
+                "jlakField.OnServerInitComplete(): on link-in, 2 or more players already here.  Will warp to next point"
+            )
             if byteStartPt == 0:
                 byteStartPt = 2
             elif byteStartPt == 1:
@@ -268,42 +303,44 @@ class jlakField(ptResponder):
                 byteStartPt = 3
             elif byteStartPt == 3:
                 byteStartPt = 1
-        PtDebugPrint("jlakField.OnServerInitComplete(): player start point = ",byteStartPt)
-        
+        PtDebugPrint(
+            "jlakField.OnServerInitComplete(): player start point = ", byteStartPt
+        )
+
         onInit = 1
         i = 0
         for pos in byteColumns:
             if pos != 0:
-                self.MoveColumn(i,pos,onInit)
+                self.MoveColumn(i, pos, onInit)
             i += 1
-        
+
         warpWidgets = warpWidgetsPlay.value[0].getKey()
-        
+
         warpPt = warpPlayers.value[byteStartPt].getKey()
         LocalAvatar.physics.warpObj(warpPt)
         ageSDL[sdlStartPt] = (byteStartPt,)
 
-#        vault = ptVault()
-#        if not vault.amOwnerOfCurrentAge():
-#            return
+        #        vault = ptVault()
+        #        if not vault.amOwnerOfCurrentAge():
+        #            return
 
         if boolWall:
-            respWallToggle.run(self.key,state="on",fastforward=1,netPropagate=0)
+            respWallToggle.run(self.key, state="on", fastforward=1, netPropagate=0)
             self.DoWallSensors(1)
         else:
-            respWallToggle.run(self.key,state="off",fastforward=1,netPropagate=0)
+            respWallToggle.run(self.key, state="off", fastforward=1, netPropagate=0)
             self.DoWallSensors(0)
-        
+
         if PtGetLocalKILevel() < 2:
-            PtDebugPrint("jlakField.OnServerInitComplete(): KI level too low, columns will not be clickable")
+            PtDebugPrint(
+                "jlakField.OnServerInitComplete(): KI level too low, columns will not be clickable"
+            )
             for up in clkColumnUp.value:
                 up.disable()
             for dn in clkColumnDn.value:
                 dn.disable()
 
-
-
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global byteStartPt
         global boolWall
         global byteColumns
@@ -314,44 +351,47 @@ class jlakField(ptResponder):
         global byteRect
         global boolGUILock
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint("jlakField.OnSDLNotify():\t VARname: %s, SDLname: %s, tag: %s, value: %d" % (VARname,SDLname,tag,ageSDL[VARname][0]))
-        
+        PtDebugPrint(
+            "jlakField.OnSDLNotify():\t VARname: %s, SDLname: %s, tag: %s, value: %d"
+            % (VARname, SDLname, tag, ageSDL[VARname][0])
+        )
+
         if VARname == sdlStartPt:
             byteStartPt = ageSDL[sdlStartPt][0]
-            PtDebugPrint("jlakField.OnSDLNotify(): byteStartPt = ",byteStartPt)
+            PtDebugPrint("jlakField.OnSDLNotify(): byteStartPt = ", byteStartPt)
         if VARname == sdlWall:
             boolWall = ageSDL[sdlWall][0]
-            PtDebugPrint("jlakField.OnSDLNotify(): boolWall = ",boolWall)
+            PtDebugPrint("jlakField.OnSDLNotify(): boolWall = ", boolWall)
             if boolWall:
-                respWallToggle.run(self.key,state="on",fastforward=0,netPropagate=0)
+                respWallToggle.run(self.key, state="on", fastforward=0, netPropagate=0)
                 self.DoWallSensors(1)
             else:
-                respWallToggle.run(self.key,state="off",fastforward=0,netPropagate=0)
+                respWallToggle.run(self.key, state="off", fastforward=0, netPropagate=0)
                 self.DoWallSensors(0)
         if VARname in sdlColumns:
             id = sdlColumns.index(VARname)
             col = listObjCols[id]
             oldPos = byteColumns[id]
             newPos = ageSDL[sdlColumns[id]][0]
-            diffPos = abs(newPos-oldPos)
-            #PtDebugPrint("oldPos = ",oldPos)
-            #PtDebugPrint("newPos = ",newPos)
-            #PtDebugPrint("diffPos = ",diffPos)
+            diffPos = abs(newPos - oldPos)
+            # PtDebugPrint("oldPos = ",oldPos)
+            # PtDebugPrint("newPos = ",newPos)
+            # PtDebugPrint("diffPos = ",diffPos)
             clkColumnUp.value[id].disable()
             clkColumnDn.value[id].disable()
             animColumn.byObject[col].playToTime(newPos)
             byteColumns[id] = newPos
-            PtDebugPrint("jlakField.OnSDLNotify(): byteColumns[%d] = %d" % (id,newPos))
+            PtDebugPrint("jlakField.OnSDLNotify(): byteColumns[%d] = %d" % (id, newPos))
             if newPos > oldPos:
                 dir = "up"
             else:
                 dir = "down"
             if not self.bulkMove:
-                respSfxColumn.run(self.key,state=(dir),objectName=listSfxCols[id])
-            PtAtTimeCallback(self.key,diffPos,id)
+                respSfxColumn.run(self.key, state=(dir), objectName=listSfxCols[id])
+            PtAtTimeCallback(self.key, diffPos, id)
         if VARname == sdlGUILock:
             boolGUILock = ageSDL[sdlGUILock][0]
-            PtDebugPrint("jlakField.OnSDLNotify(): boolGUILock = ",boolGUILock)
+            PtDebugPrint("jlakField.OnSDLNotify(): boolGUILock = ", boolGUILock)
         if VARname == sdlSphere:
             byteSphere = ageSDL[sdlSphere][0]
             if byteSphere == len(objSpheres.value):
@@ -365,8 +405,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ",widgetName)
-            PtDebugPrint("jlakField.OnSDLNotify(): byteSphere = ",byteSphere)
+                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ", widgetName)
+            PtDebugPrint("jlakField.OnSDLNotify(): byteSphere = ", byteSphere)
         if VARname == sdlLilBox:
             byteLilBox = ageSDL[sdlLilBox][0]
             if byteLilBox == len(objLilBoxes.value):
@@ -380,8 +420,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ",widgetName)
-            PtDebugPrint("jlakField.OnSDLNotify(): byteLilBox = ",byteLilBox)
+                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ", widgetName)
+            PtDebugPrint("jlakField.OnSDLNotify(): byteLilBox = ", byteLilBox)
         if VARname == sdlBigBox:
             byteBigBox = ageSDL[sdlBigBox][0]
             if byteBigBox == len(objBigBoxes.value):
@@ -394,9 +434,9 @@ class jlakField(ptResponder):
                 warpPt = warpWidgets
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
-                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ",widgetName)
+                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ", widgetName)
                 respCreateWidgetSFX.run(self.key)
-            PtDebugPrint("jlakField.OnSDLNotify(): byteBigBox = ",byteBigBox)
+            PtDebugPrint("jlakField.OnSDLNotify(): byteBigBox = ", byteBigBox)
         if VARname == sdlRamp:
             byteRamp = ageSDL[sdlRamp][0]
             if byteRamp == len(objRamps.value):
@@ -410,8 +450,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ",widgetName)                
-            PtDebugPrint("jlakField.OnSDLNotify(): byteRamp = ",byteRamp)
+                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ", widgetName)
+            PtDebugPrint("jlakField.OnSDLNotify(): byteRamp = ", byteRamp)
         if VARname == sdlRect:
             byteRect = ageSDL[sdlRect][0]
             if byteRect == len(objRects.value):
@@ -425,71 +465,78 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ",widgetName)
-            PtDebugPrint("jlakField.OnSDLNotify(): byteRect = ",byteRect)
+                PtDebugPrint("jlakField.OnSDLNotify(): dropping: ", widgetName)
+            PtDebugPrint("jlakField.OnSDLNotify(): byteRect = ", byteRect)
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         ageSDL = PtGetAgeSDL()
-        #PtDebugPrint("jlakField.OnNotify(): id = ",id)
-        #if not state:
-            #return
+        # PtDebugPrint("jlakField.OnNotify(): id = ",id)
+        # if not state:
+        # return
 
-        if ((id == clkColumnUp.id) or (id == clkColumnDn.id)) and state and LocalAvatar == PtFindAvatar(events) and PtGetLocalKILevel() >= 2:
+        if (
+            ((id == clkColumnUp.id) or (id == clkColumnDn.id))
+            and state
+            and LocalAvatar == PtFindAvatar(events)
+            and PtGetLocalKILevel() >= 2
+        ):
             for event in events:
                 if event[0] == kPickedEvent:
                     xEvent = event[3]
                     theClk = xEvent.getName()
-                    PtDebugPrint("jlakField.OnNotify(): pressed: ",theClk)
+                    PtDebugPrint("jlakField.OnNotify(): pressed: ", theClk)
                     if id == clkColumnUp.id:
                         direction = 1
                         numClk = int(theClk[6:])
                     else:
                         direction = 0
                         numClk = int(theClk[6:])
-                    #PtDebugPrint("numClk = ",numClk)
-                    self.CalcPos(numClk,direction)
+                    # PtDebugPrint("numClk = ",numClk)
+                    self.CalcPos(numClk, direction)
 
-#        elif id == rgnZeroPhysicals.id:
-#            PtDebugPrint("rgnZeroPhysicals")
-#            PtDebugPrint(state)
-#            for event in events:
-#                if event[0] == kCollisionEvent:
-#                    PtDebugPrint("collision event")
-#                    hitter = event[2]
+        #        elif id == rgnZeroPhysicals.id:
+        #            PtDebugPrint("rgnZeroPhysicals")
+        #            PtDebugPrint(state)
+        #            for event in events:
+        #                if event[0] == kCollisionEvent:
+        #                    PtDebugPrint("collision event")
+        #                    hitter = event[2]
         elif id == respBulkMoveSFX.id:
             if self.sceneobject.isLocallyOwned() and boolGUILock:
                 ageSDL[sdlGUILock] = (0,)
         elif id == (-1):
             if events[0][1] == kBulkMoveVar:
-                if events[0][3] > 0: #We'll only enable bulk SFX if we've got a good reason to!
-                    self.bulkMove = 1 #Disable individual Pillar SFX
+                if (
+                    events[0][3] > 0
+                ):  # We'll only enable bulk SFX if we've got a good reason to!
+                    self.bulkMove = 1  # Disable individual Pillar SFX
                     if self.sceneobject.isLocallyOwned() and not boolGUILock:
-                        PtDebugPrint("jlakField.OnNotify(): bulk-move requested, will ignore GUI bulk-move buttons until done")
+                        PtDebugPrint(
+                            "jlakField.OnNotify(): bulk-move requested, will ignore GUI bulk-move buttons until done"
+                        )
                         ageSDL[sdlGUILock] = (1,)
-                    respBulkMoveSFX.run(self.key, state='on', netPropagate=0)
-                    PtAtTimeCallback(self.key,events[0][3],kSFXCompleteID)
+                    respBulkMoveSFX.run(self.key, state="on", netPropagate=0)
+                    PtAtTimeCallback(self.key, events[0][3], kSFXCompleteID)
             else:
                 PtDebugPrint("incoming event: %s" % (events[0][1]))
                 code = events[0][1]
                 PtDebugPrint("playing command: %s" % (code))
                 self.ExecCode(code)
 
-
-    def CalcPos(self,id,dir):
-        #PtDebugPrint("jlakField.CalcPos()")
+    def CalcPos(self, id, dir):
+        # PtDebugPrint("jlakField.CalcPos()")
         global PendingCol
         global PendingPos
         global PendingDir
 
         PtForceCursorHidden()
         PtEmoteAvatar("KITap")
-        PtAtTimeCallback(self.key,kEmoteTimer,kEmoteTimerID)
+        PtAtTimeCallback(self.key, kEmoteTimer, kEmoteTimerID)
 
         oldPos = byteColumns[id]
         if dir:
             op = "up"
-            #PtDebugPrint("jlakField.CalcPos(): request for column: ",id,", to go: ",op)
+            # PtDebugPrint("jlakField.CalcPos(): request for column: ",id,", to go: ",op)
             if oldPos < kMaxPos:
                 newPos = oldPos + 1
             else:
@@ -497,7 +544,7 @@ class jlakField(ptResponder):
                 return
         else:
             op = "down"
-            #PtDebugPrint("jlakField.CalcPos(): request for column: ",id,", to go: ",op)
+            # PtDebugPrint("jlakField.CalcPos(): request for column: ",id,", to go: ",op)
             if oldPos > kMinPos:
                 newPos = oldPos - 1
             else:
@@ -507,26 +554,29 @@ class jlakField(ptResponder):
         PendingCol = id
         PendingPos = newPos
         PendingDir = op
-        PtAtTimeCallback(self.key,1.0,100)
+        PtAtTimeCallback(self.key, 1.0, 100)
 
-
-    def AutoColumns(self,mode,preset=None):
-        PtDebugPrint("jlakField.AutoColumns(): requested all columns move using mode: ",mode)
+    def AutoColumns(self, mode, preset=None):
+        PtDebugPrint(
+            "jlakField.AutoColumns(): requested all columns move using mode: ", mode
+        )
         if boolGUILock:
-            PtDebugPrint("jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!")
+            PtDebugPrint(
+                "jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!"
+            )
             return
         anythingMoved = 0
-        if mode == 0:           #lowest
+        if mode == 0:  # lowest
             newPos = kMinPos
-        elif mode == 1:         #mid
+        elif mode == 1:  # mid
             newPos = kInitPos
-        elif mode == 2:         #highest
+        elif mode == 2:  # highest
             newPos = kMaxPos
-        elif mode == 3:         #mild random
-            lowPos = kInitPos-5
-            highPos = kInitPos+5
+        elif mode == 3:  # mild random
+            lowPos = kInitPos - 5
+            highPos = kInitPos + 5
             anythingMoved = 1
-        elif mode == 4:         #extreme random
+        elif mode == 4:  # extreme random
             lowPos = kMinPos
             highPos = kMaxPos
             anythingMoved = 1
@@ -539,25 +589,25 @@ class jlakField(ptResponder):
                 PtDebugPrint("running preset...")
                 pass
 
-        #Tye's Note: had to make this code work in two phases for SFX.
-        #The first phase creates the movement, analyzes it in the process, and prepares the SFX accordingly.
-        #The second phase actually moves the columns.
-        #The problem is that the SFX needs to prepare for any bulk movments before the movements happen.
-        #Unfortunately this makes the code less efficient....  but I've tried to optimize where possible
-        
+        # Tye's Note: had to make this code work in two phases for SFX.
+        # The first phase creates the movement, analyzes it in the process, and prepares the SFX accordingly.
+        # The second phase actually moves the columns.
+        # The problem is that the SFX needs to prepare for any bulk movments before the movements happen.
+        # Unfortunately this makes the code less efficient....  but I've tried to optimize where possible
+
         i = 0
         maxDist = -1
         newColumns = []
         for col in listObjCols:
-            if mode in (0,1,2):
+            if mode in (0, 1, 2):
                 newColumns.append(newPos)
                 if byteColumns[i] != newPos:
                     maxDist = self.getMaxDist(maxDist, byteColumns[i], newPos)
                     anythingMoved = 1
-            elif mode in (3,4):
+            elif mode in (3, 4):
                 newPos = byteColumns[i]
                 while newPos == byteColumns[i]:
-                    newPos = xRandom.randint(lowPos,highPos)
+                    newPos = xRandom.randint(lowPos, highPos)
                 maxDist = self.getMaxDist(maxDist, byteColumns[i], newPos)
                 newColumns.append(newPos)
             elif mode == 5:
@@ -570,10 +620,9 @@ class jlakField(ptResponder):
                     anythingMoved = 1
             i += 1
 
-
-        #Determine what type of SFX to play (i.e. the note will disable individual SFX while enabling bulk SFX)
+        # Determine what type of SFX to play (i.e. the note will disable individual SFX while enabling bulk SFX)
         if anythingMoved and maxDist > 0:
-            #Send a note to start movement SFX!
+            # Send a note to start movement SFX!
             notify = ptNotify(self.key)
             notify.clearReceivers()
             notify.addReceiver(self.key)
@@ -583,14 +632,13 @@ class jlakField(ptResponder):
 
             notify.addVarNumber(kBulkMoveVar, maxDist)
             notify.send()
-            
-            #Now finally start the movement....
+
+            # Now finally start the movement....
             i = 0
             for col in listObjCols:
                 if newColumns[i] != byteColumns[i]:
-                    self.MoveColumn(i,newColumns[i])
+                    self.MoveColumn(i, newColumns[i])
                 i += 1
-            
 
     def getMaxDist(self, maxDist, oldPoint, newPoint):
         dist = abs(newPoint - oldPoint)
@@ -598,62 +646,66 @@ class jlakField(ptResponder):
             maxDist = dist
         return maxDist
 
-
-    def MoveColumn(self,id,pos,onInit=0):
+    def MoveColumn(self, id, pos, onInit=0):
         ageSDL = PtGetAgeSDL()
         oldPos = byteColumns[id]
         col = listObjCols[id]
-        #animColumn.byObject[col].speed(spd)    #ensure animation plays at normal speed
+        # animColumn.byObject[col].speed(spd)    #ensure animation plays at normal speed
         if onInit:
-            PtDebugPrint("jlakField.MoveColumn(): on init, fastforwarding column ",id," from position ",oldPos," to ",pos)
+            PtDebugPrint(
+                "jlakField.MoveColumn(): on init, fastforwarding column ",
+                id,
+                " from position ",
+                oldPos,
+                " to ",
+                pos,
+            )
             animColumn.byObject[col].skipToTime(pos)
         else:
             ageSDL[sdlColumns[id]] = (pos,)
 
-
-    def DropWidget(self,widget):
+    def DropWidget(self, widget):
         ageSDL = PtGetAgeSDL()
 
         if widget == kSphere:
             SphereCur = byteSphere
-            if SphereCur < (len(objSpheres.value)-1):
+            if SphereCur < (len(objSpheres.value) - 1):
                 SphereCur += 1
             else:
                 SphereCur = 0
             ageSDL[sdlSphere] = (SphereCur,)
         elif widget == kLilBox:
             LilBoxCur = byteLilBox
-            if LilBoxCur < (len(objLilBoxes.value)-1):
+            if LilBoxCur < (len(objLilBoxes.value) - 1):
                 LilBoxCur += 1
             else:
                 LilBoxCur = 0
             ageSDL[sdlLilBox] = (LilBoxCur,)
         elif widget == kBigBox:
             BigBoxCur = byteBigBox
-            if BigBoxCur < (len(objBigBoxes.value)-1):
+            if BigBoxCur < (len(objBigBoxes.value) - 1):
                 BigBoxCur += 1
             else:
                 BigBoxCur = 0
             ageSDL[sdlBigBox] = (BigBoxCur,)
         elif widget == kRamp:
             RampCur = byteRamp
-            if RampCur < (len(objRamps.value)-1):
+            if RampCur < (len(objRamps.value) - 1):
                 RampCur += 1
             else:
                 RampCur = 0
             ageSDL[sdlRamp] = (RampCur,)
         elif widget == kRect:
             RectCur = byteRect
-            if RectCur < (len(objRects.value)-1):
+            if RectCur < (len(objRects.value) - 1):
                 RectCur += 1
             else:
                 RectCur = 0
             ageSDL[sdlRect] = (RectCur,)
-        #PtDebugPrint("jlakField.DropWidget(): dropping widget: ",widgetName)
-
+        # PtDebugPrint("jlakField.DropWidget(): dropping widget: ",widgetName)
 
     def ResetWidgets(self):
-        #PtDebugPrint("jlakField.ResetWidgets()")
+        # PtDebugPrint("jlakField.ResetWidgets()")
         ageSDL = PtGetAgeSDL()
 
         ageSDL[sdlSphere] = (len(objSpheres.value),)
@@ -662,8 +714,7 @@ class jlakField(ptResponder):
         ageSDL[sdlRamp] = (len(objRamps.value),)
         ageSDL[sdlRect] = (len(objRects.value),)
 
-
-    def WarpWidgetsHome(self,widgetType):
+    def WarpWidgetsHome(self, widgetType):
         if widgetType == 0:
             a = 0
             for widget in objSpheres.value:
@@ -672,7 +723,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpSpheres.value[a].getKey()
                 widget.physics.warpObj(warpPt)
-                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
+                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ", widgetName)
                 a += 1
         elif widgetType == 1:
             b = 0
@@ -682,7 +733,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpLilBoxes.value[b].getKey()
                 widget.physics.warpObj(warpPt)
-                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
+                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ", widgetName)
                 b += 1
         elif widgetType == 2:
             c = 0
@@ -692,7 +743,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpBigBoxes.value[c].getKey()
                 widget.physics.warpObj(warpPt)
-                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
+                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ", widgetName)
                 c += 1
         elif widgetType == 3:
             d = 0
@@ -702,7 +753,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpRamps.value[d].getKey()
                 widget.physics.warpObj(warpPt)
-                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
+                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ", widgetName)
                 d += 1
         elif widgetType == 4:
             e = 0
@@ -712,9 +763,8 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpRects.value[e].getKey()
                 widget.physics.warpObj(warpPt)
-                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
+                PtDebugPrint("jlakField.WarpWidgetsHome(): resetting: ", widgetName)
                 e += 1
-
 
     def ToggleWall(self):
         PtDebugPrint("jlakField.ToggleWall()")
@@ -724,100 +774,113 @@ class jlakField(ptResponder):
         else:
             ageSDL[sdlWall] = (1,)
 
-
-    def DoWallSensors(self,state):
+    def DoWallSensors(self, state):
         PtDebugPrint("jlakField.DoWallSensors()")
         for rgn in rgnWallSensors.value:
             if state:
-                #PtDebugPrint("jlakField.DoWallSensors(): ",rgn.getName()," enabled")
+                # PtDebugPrint("jlakField.DoWallSensors(): ",rgn.getName()," enabled")
                 rgn.enable()
             else:
-                #PtDebugPrint("jlakField.DoWallSensors(): ",rgn.getName()," disabled")
+                # PtDebugPrint("jlakField.DoWallSensors(): ",rgn.getName()," disabled")
                 rgn.disable()
 
-
-    def OnTimer(self,id):
+    def OnTimer(self, id):
         global PendingCol
         global PendingPos
         global PendingDir
         ageSDL = PtGetAgeSDL()
 
         if id >= 0 and id <= 99:
-            #PtDebugPrint("jlakField.OnTimer(): reenabling up/down clickables for column: ",id)
-            respSfxColumn.run(self.key,state="off",objectName=listSfxCols[id])
+            # PtDebugPrint("jlakField.OnTimer(): reenabling up/down clickables for column: ",id)
+            respSfxColumn.run(self.key, state="off", objectName=listSfxCols[id])
             clkColumnUp.value[id].enable()
             clkColumnDn.value[id].enable()
         elif id == 100:
             if PendingCol != -1 and PendingPos != -1 and PendingDir != "":
-                self.MoveColumn(PendingCol,PendingPos,0)
+                self.MoveColumn(PendingCol, PendingPos, 0)
                 PendingCol = -1
                 PendingPos = -1
                 PendingDir = ""
             else:
-                PtDebugPrint("timer callback to do pending column move, but vars are bad...?")
+                PtDebugPrint(
+                    "timer callback to do pending column move, but vars are bad...?"
+                )
         elif id == kEmoteTimerID:
             PtForceCursorShown()
         elif id == kSFXCompleteID:
             self.bulkMove = 0
-            respBulkMoveSFX.run(self.key, state='end', netPropagate=0)
+            respBulkMoveSFX.run(self.key, state="end", netPropagate=0)
 
-
-    def SaveColumns(self,fName):
-        fWrite = file(fName,'w')
+    def SaveColumns(self, fName):
+        fWrite = file(fName, "w")
         PtDebugPrint("jlakField.SaveColumns(): writing to presets file '%s'" % (fName))
         i = 0
         for pos in byteColumns:
-            fWrite.write(str(pos)+"\n")
-            PtDebugPrint("jlakField.SaveColumns():  column: %d at position: %d" % (i,pos))
+            fWrite.write(str(pos) + "\n")
+            PtDebugPrint(
+                "jlakField.SaveColumns():  column: %d at position: %d" % (i, pos)
+            )
             i += 1
         fWrite.close()
 
-
-    def LoadColumns(self,fName):
+    def LoadColumns(self, fName):
         try:
-            fRead = file(fName,'r')
+            fRead = file(fName, "r")
         except:
-            PtDebugPrint("jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName))
-            #templist = [PtGetLocalPlayer()]
-            #PtSendRTChat(PtGetLocalPlayer(),templist,"doh!",1)
+            PtDebugPrint(
+                "jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled."
+                % (fName)
+            )
+            # templist = [PtGetLocalPlayer()]
+            # PtSendRTChat(PtGetLocalPlayer(),templist,"doh!",1)
             return
         preset = []
         i = 0
         for line in fRead:
             pos = int(line)
             if pos < 0 or pos > 19:
-                PtDebugPrint("jlakField.LoadColumns():  ERROR!  Column %d has an invalid position of %d, must be an integer between 0 and 19.  Load canceled." % (i,pos))
+                PtDebugPrint(
+                    "jlakField.LoadColumns():  ERROR!  Column %d has an invalid position of %d, must be an integer between 0 and 19.  Load canceled."
+                    % (i, pos)
+                )
                 fRead.close()
                 return
             else:
                 preset.append(pos)
             i += 1
         if len(preset) != 25:
-            PtDebugPrint("jlakField.LoadColumns():  ERROR!  File contains %d positions, must contain positions for 25 columns, only.  Load canceled." % (len(preset)))
+            PtDebugPrint(
+                "jlakField.LoadColumns():  ERROR!  File contains %d positions, must contain positions for 25 columns, only.  Load canceled."
+                % (len(preset))
+            )
         else:
             PtDebugPrint("jlakField.LoadColumns(): reading preset file '%s'" % (fName))
-            PtDebugPrint("this preset's columns = ",preset)
-            self.AutoColumns(5,preset)    	
+            PtDebugPrint("this preset's columns = ", preset)
+            self.AutoColumns(5, preset)
         fRead.close()
-
 
     def OnBackdoorMsg(self, target, param):
         PtDebugPrint("jlakField.OnBackdoorMsg()")
         if target == "height":
             param = int(param)
             if param < kMinPos or param > kMaxPos:
-                PtDebugPrint("invalid height parameter, must be a # between ",kMinPos," and ",kMaxPos)
+                PtDebugPrint(
+                    "invalid height parameter, must be a # between ",
+                    kMinPos,
+                    " and ",
+                    kMaxPos,
+                )
                 return
             newPos = param
             anythingMoved = 0
             i = 0
             for col in listObjCols:
                 if byteColumns[i] != newPos:
-                    self.MoveColumn(i,newPos,0)
+                    self.MoveColumn(i, newPos, 0)
                     anythingMoved = 1
                 i += 1
             if anythingMoved:
-                #respGameOps.run(self.key,state="reset")
+                # respGameOps.run(self.key,state="reset")
                 pass
         elif target == "reset":
             if param == "widgets":
@@ -855,11 +918,13 @@ class jlakField(ptResponder):
             else:
                 PtDebugPrint("jlakField.ExecCode(): ERROR! Invalid btnID %d." % (btnID))
         except:
-            cmd = code.split(';',1)
+            cmd = code.split(";", 1)
             if len(cmd) != 2:
-                PtDebugPrint("jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code))
+                PtDebugPrint(
+                    "jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code)
+                )
                 return
-            
+
             if cmd[0] == "SaveColumns":
                 self.SaveColumns(cmd[1])
             elif cmd[0] == "LoadColumns":
@@ -867,7 +932,8 @@ class jlakField(ptResponder):
             else:
                 PtDebugPrint("jlakField.ExecCode(): ERROR! Invalid code '%s'." % (code))
 
-#ColumnPos  AnimStart
+
+# ColumnPos  AnimStart
 #   19      570
 #   18      540
 #   17      510
@@ -889,5 +955,3 @@ class jlakField(ptResponder):
 #    2       60
 #    1       30
 #    0        0
-
-

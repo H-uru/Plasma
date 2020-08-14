@@ -56,8 +56,8 @@ stopRain = ptAttribActivator(3, "Stop rain drops")
 NoiseStartValue = 0
 TexAmpStartValue = 0
 
-class kemoStormWaterModifier(ptModifier):
 
+class kemoStormWaterModifier(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5330
@@ -66,29 +66,29 @@ class kemoStormWaterModifier(ptModifier):
     def OnFirstUpdate(self):
         global NoiseStartValue
         global TexAmpStartValue
-        
+
         NoiseStartValue = theWater.waveset.getSpecularNoise()
         TexAmpStartValue = theWater.waveset.getTexAmpOverLen()
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
 
         if not state:
             return
-        
+
         if id == startRain.id:
             PtDebugPrint("starting rain drops on water")
             rainlevel = 3.0
-            texamp  = 0.2
-            #PtDebugPrint("changing specular noise from %f to %f" % (theWater.waveset.getSpecularNoise(), rainlevel))
-            #PtDebugPrint("changing tex amplitude  from %f to %f" % (theWater.waveset.getTexAmpOverLen(), texamp))
+            texamp = 0.2
+            # PtDebugPrint("changing specular noise from %f to %f" % (theWater.waveset.getSpecularNoise(), rainlevel))
+            # PtDebugPrint("changing tex amplitude  from %f to %f" % (theWater.waveset.getTexAmpOverLen(), texamp))
             theWater.waveset.setSpecularNoise(rainlevel, 5)
             theWater.waveset.setTexAmpOverLen(texamp, 5)
         elif id == stopRain.id:
             PtDebugPrint("stoping raindrops on water")
             rainlevel = NoiseStartValue
             texamp = TexAmpStartValue
-            #PtDebugPrint("changing specular noise from %f to %f" % (theWater.waveset.getSpecularNoise(), rainlevel))
-            #PtDebugPrint("changing tex amplitude  from %f to %f" % (theWater.waveset.getTexAmpOverLen(), texamp))
+            # PtDebugPrint("changing specular noise from %f to %f" % (theWater.waveset.getSpecularNoise(), rainlevel))
+            # PtDebugPrint("changing tex amplitude  from %f to %f" % (theWater.waveset.getTexAmpOverLen(), texamp))
             theWater.waveset.setSpecularNoise(rainlevel, 5)
             theWater.waveset.setTexAmpOverLen(texamp, 5)
 
@@ -97,7 +97,7 @@ class kemoStormWaterModifier(ptModifier):
 
     def OnTimer(self, id):
         pass
-            
+
     def OnBackdoorMsg(self, target, param):
         if target == "watertest":
             wdir = dir(theWater.waveset)
@@ -105,14 +105,20 @@ class kemoStormWaterModifier(ptModifier):
             val = 1
             for x in wdir:
                 if x[:3] == "set":
-                    if x == "setWindDir" or x == "setWaterOffset" or x == "setDepthFalloff" or x == "setMaxAtten" or x == "setMinAtten":
-                        p = ptVector3(0,val,0)
+                    if (
+                        x == "setWindDir"
+                        or x == "setWaterOffset"
+                        or x == "setDepthFalloff"
+                        or x == "setMaxAtten"
+                        or x == "setMinAtten"
+                    ):
+                        p = ptVector3(0, val, 0)
                     elif x == "setWaterTint":
                         p = ptColor().red()
                     elif x == "setSpecularTint":
                         p = ptColor().green()
                     elif x == "setEnvCenter":
-                        p = ptPoint3(0,val,0)
+                        p = ptPoint3(0, val, 0)
                     else:
                         if x[3:] == "SpecularMute":
                             p = 0.5
@@ -124,24 +130,49 @@ class kemoStormWaterModifier(ptModifier):
                     startval = getattr(theWater.waveset, "get" + x[3:])()
 
                     if ifisinstance(p, ptColor):
-                        PtDebugPrint("\tstartval = " + str( (startval.getRed(), startval.getGreen(), startval.getBlue()) ))
-                        PtDebugPrint("\tsetting to " + str( (p.getRed(), p.getGreen(), p.getBlue()) ))
+                        PtDebugPrint(
+                            "\tstartval = "
+                            + str(
+                                (
+                                    startval.getRed(),
+                                    startval.getGreen(),
+                                    startval.getBlue(),
+                                )
+                            )
+                        )
+                        PtDebugPrint(
+                            "\tsetting to "
+                            + str((p.getRed(), p.getGreen(), p.getBlue()))
+                        )
                     elif isinstance(p, (ptPoint3, ptVector3)):
-                        PtDebugPrint("\tstartval = " + str( (startval.getX(), startval.getY(), startval.getZ()) ))
-                        PtDebugPrint("\tsetting to " + str( (p.getX(), p.getY(), p.getZ()) ))
+                        PtDebugPrint(
+                            "\tstartval = "
+                            + str((startval.getX(), startval.getY(), startval.getZ()))
+                        )
+                        PtDebugPrint(
+                            "\tsetting to " + str((p.getX(), p.getY(), p.getZ()))
+                        )
                     else:
                         PtDebugPrint("\tstartval = " + str(startval))
                         PtDebugPrint("\tsetting to " + str(p))
-                    
+
                     getattr(theWater.waveset, x)(p)
 
                     endval = getattr(theWater.waveset, "get" + x[3:])()
 
                     if ifisinstance(p, ptColor):
-                        PtDebugPrint("\tendval = " + str( (endval.getRed(), endval.getGreen(), endval.getBlue()) ))
+                        PtDebugPrint(
+                            "\tendval = "
+                            + str(
+                                (endval.getRed(), endval.getGreen(), endval.getBlue())
+                            )
+                        )
                     elif isinstance(p, (ptPoint3, ptVector3)):
-                        PtDebugPrint("\tendval = " + str( (endval.getX(), endval.getY(), endval.getZ()) ))
+                        PtDebugPrint(
+                            "\tendval = "
+                            + str((endval.getX(), endval.getY(), endval.getZ()))
+                        )
                     else:
                         PtDebugPrint("\tendval = " + str(endval))
-                    
+
                     val += 1

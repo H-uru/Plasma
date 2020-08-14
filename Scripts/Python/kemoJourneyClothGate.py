@@ -60,16 +60,18 @@ from PlasmaNetConstants import *
 # max wiring
 # ---------
 
-stringVarName = ptAttribString(1,"Gate SDL variable")
+stringVarName = ptAttribString(1, "Gate SDL variable")
 
-actTrigger = ptAttribActivator(2,"act: Hand clickable")
+actTrigger = ptAttribActivator(2, "act: Hand clickable")
 respOneShot = ptAttribResponder(3, "Resp: One Shot")
 
-PalmGlowWeak = ptAttribResponder(4, "Resp: PalmGlow Weak",netForce=1)
-PalmGlowStrong = ptAttribResponder(5, "Resp: PalmGlow Strong",netForce=1)
+PalmGlowWeak = ptAttribResponder(4, "Resp: PalmGlow Weak", netForce=1)
+PalmGlowStrong = ptAttribResponder(5, "Resp: PalmGlow Strong", netForce=1)
 
-rgnAutoClose = ptAttribActivator(6,"Autoclose region")
-stringInfo = ptAttribString(7,"Extra info to pass along") # string passed as hint to listeners if needed (e.g. which side of the door did the player click on?)
+rgnAutoClose = ptAttribActivator(6, "Autoclose region")
+stringInfo = ptAttribString(
+    7, "Extra info to pass along"
+)  # string passed as hint to listeners if needed (e.g. which side of the door did the player click on?)
 
 actBackofCave = ptAttribActivator(8, "Link Rgn at back of cave")
 respBackofCave = ptAttribResponder(9, "Resp: link to Cleft")
@@ -84,8 +86,8 @@ GateCurrentlyClosed = True
 
 AgeStartedIn = None
 
-class kemoJourneyClothGate(ptResponder):
 
+class kemoJourneyClothGate(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5227
@@ -94,96 +96,105 @@ class kemoJourneyClothGate(ptResponder):
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-            
+
     def OnServerInitComplete(self):
         global GateCurrentlyClosed
-        
+
         if AgeStartedIn == PtGetAgeName():
             if stringVarName.value:
                 ageSDL = PtGetAgeSDL()
-                ageSDL.setFlags(stringVarName.value,1,1)
+                ageSDL.setFlags(stringVarName.value, 1, 1)
                 ageSDL.sendToClients(stringVarName.value)
             else:
-                PtDebugPrint("kemoJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
+                PtDebugPrint(
+                    "kemoJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name"
+                )
 
             ageSDL = PtGetAgeSDL()
             if stringVarName.value:
-                ageSDL.setNotify(self.key,stringVarName.value,0.0)
+                ageSDL.setNotify(self.key, stringVarName.value, 0.0)
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
-                PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\t%s = %d" % (stringVarName.value,GateCurrentlyClosed) )
+                    PtDebugPrint(
+                        "kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
+                    )
+                PtDebugPrint(
+                    "kemoJourneyClothGate.OnServerInitComplete():\t%s = %d"
+                    % (stringVarName.value, GateCurrentlyClosed)
+                )
             else:
-                PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR: missing SDL var name")
-        
-    def OnNotify(self,state,id,events):
+                PtDebugPrint(
+                    "kemoJourneyClothGate.OnServerInitComplete():\tERROR: missing SDL var name"
+                )
+
+    def OnNotify(self, state, id, events):
         global GateCurrentlyClosed
         global GateInUse
-        
+
         if not state:
             return
-        
+
         PtDebugPrint("##")
-        
+
         if id == actTrigger.id:
-            
-            
+
             if AgeStartedIn == PtGetAgeName():
                 ageSDL = PtGetAgeSDL()
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
+                    PtDebugPrint(
+                        "kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
+                    )
                     GateCurrentlyClosed = False
-                
-                PtDebugPrint("OnNotify: GateCurrentlyClosed = " , GateCurrentlyClosed)
+
+                PtDebugPrint("OnNotify: GateCurrentlyClosed = ", GateCurrentlyClosed)
                 if not GateCurrentlyClosed:
-                    PtDebugPrint ("The gate is already open.")
+                    PtDebugPrint("The gate is already open.")
                     return
-                    
+
                 if GateInUse:
-                    PtDebugPrint ("Journey Cloth Gate has not yet reset.")
+                    PtDebugPrint("Journey Cloth Gate has not yet reset.")
                     return
                 GateInUse = 1
-                respOneShot.run(self.key, events=events) # run the oneshot
-                return        
-        
-        
+                respOneShot.run(self.key, events=events)  # run the oneshot
+                return
+
         if id == actBackofCave.id and PtWasLocallyNotified(self.key):
-            PtDebugPrint ("You're likely to be eaten by a grue...")
+            PtDebugPrint("You're likely to be eaten by a grue...")
             vault = ptVault()
             entry = vault.findChronicleEntry("JourneyClothProgress")
             if entry is not None:
                 FoundJCs = entry.chronicleGetValue()
                 length = len(FoundJCs)
-                PtDebugPrint ("Are you the one? You've found %s Cloths." % (length))
-                
+                PtDebugPrint("Are you the one? You've found %s Cloths." % (length))
+
                 if length == 10:
                     vault = ptVault()
                     entry = vault.findChronicleEntry("JourneyClothProgress")
                     FoundJCs = entry.chronicleGetValue()
                     FoundJCs = FoundJCs + "Z"
                     PtDebugPrint("Updating Chronicle entry to ", FoundJCs)
-                    entry.chronicleSetValue("%s" % (FoundJCs)) 
+                    entry.chronicleSetValue("%s" % (FoundJCs))
                     entry.save()
                     respBackofCave.run(self.key, events=events)
-            
+
             return
-            
+
         if id == rgnAutoClose.id:
             if GateCurrentlyClosed:
                 return
             else:
-                PtDebugPrint ("Autoclose Gate.")
+                PtDebugPrint("Autoclose Gate.")
                 self.ToggleSDL(stringInfo.value)
                 GateInUse = 1
-                PtAtTimeCallback(self.key,4,1)         
+                PtAtTimeCallback(self.key, 4, 1)
             return
-        
+
         # if you've gotten this far in the OnNotify, it means you've just reached the DoorButtonTouch marker of the oneshot
-        
-        PtAtTimeCallback(self.key,8,1)         
+
+        PtAtTimeCallback(self.key, 8, 1)
 
         if not PtWasLocallyNotified(self.key):
             PtDebugPrint("Somebody touched the Journey Cloth Gate")
@@ -191,79 +202,89 @@ class kemoJourneyClothGate(ptResponder):
 
         PtDebugPrint("You clicked on the Gate")
         vault = ptVault()
-            
+
         entry = vault.findChronicleEntry("JourneyClothProgress")
-        if entry is None: # is this the player's first Journey Cloth?
+        if entry is None:  # is this the player's first Journey Cloth?
             PtDebugPrint("No cloths have been found. Get to work!")
         else:
             FoundJCs = entry.chronicleGetValue()
             length = len(FoundJCs)
             all = len(AllCloths)
 
-            PtDebugPrint("You've found the following %d Journey Cloths: %s" % (length, FoundJCs))
-            
-            if length < 0 or length > 11: 
-                PtDebugPrint("xJourneyClothGate: ERROR: Unexpected length value received.")
+            PtDebugPrint(
+                "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
+            )
+
+            if length < 0 or length > 11:
+                PtDebugPrint(
+                    "xJourneyClothGate: ERROR: Unexpected length value received."
+                )
                 return
-                
+
             if "Z" in FoundJCs:
                 PtDebugPrint("You've been here before, traveller.")
-                PalmGlowStrong.run(self.key)                    
+                PalmGlowStrong.run(self.key)
                 self.ToggleSDL("fromOutside")
                 return
 
             for each in FoundJCs:
                 if each not in AllCloths:
-                    PtDebugPrint("Unexpected value among the 10 letters in the Chronicle:", each)
+                    PtDebugPrint(
+                        "Unexpected value among the 10 letters in the Chronicle:", each
+                    )
                     return
 
             if length < all:
                 PtDebugPrint("There are more Cloths out there. Get to work.")
                 PalmGlowWeak.run(self.key)
-                
+
             elif length == all:
                 PtDebugPrint("All expected Cloths were found. Opening Door.")
                 PalmGlowStrong.run(self.key)
                 self.ToggleSDL("fromOutside")
 
-            
-    def ToggleSDL(self,hint):
+    def ToggleSDL(self, hint):
         global GateCurrentlyClosed
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             try:
                 GateCurrentlyClosed = ageSDL[stringVarName.value][0]
             except:
-                PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
+                PtDebugPrint(
+                    "kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
+                )
                 GateCurrentlyClosed = False
-    
+
             PtDebugPrint("ToggleSDL: GateCurrentlyClosed = ", GateCurrentlyClosed)
-    
+
             # Toggle the sdl value
             if GateCurrentlyClosed:
                 GateCurrentlyClosed = False
-                ageSDL.setTagString(stringVarName.value,hint)
+                ageSDL.setTagString(stringVarName.value, hint)
             else:
                 GateCurrentlyClosed = True
-                ageSDL.setTagString(stringVarName.value,hint)
+                ageSDL.setTagString(stringVarName.value, hint)
             ageSDL[stringVarName.value] = (GateCurrentlyClosed,)
-            PtDebugPrint("kemoJourneyClothGate.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value,GateCurrentlyClosed) )
+            PtDebugPrint(
+                "kemoJourneyClothGate.OnNotify():\tset age SDL var %s to %d"
+                % (stringVarName.value, GateCurrentlyClosed)
+            )
 
-
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global GateCurrentlyClosed
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             if VARname == stringVarName.value:
-                PtDebugPrint("kemoJourneyClothGate.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d" % (VARname,SDLname,tag,ageSDL[stringVarName.value][0]))
+                PtDebugPrint(
+                    "kemoJourneyClothGate.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d"
+                    % (VARname, SDLname, tag, ageSDL[stringVarName.value][0])
+                )
                 GateCurrentlyClosed = ageSDL[stringVarName.value][0]
 
-    def OnTimer(self,id):
+    def OnTimer(self, id):
         global GateInUse
         PtDebugPrint("Gate reactivated.")
-        if id==1:
+        if id == 1:
             GateInUse = 0
-
-

@@ -51,11 +51,14 @@ from PlasmaTypes import *
 import PlasmaControlKeys
 
 
-
 # define the attributes that will be entered in max
 ActStart = ptAttribActivator(4, "Starts the climb")
 Climber = ptAttribBehavior(5, "The multistage behavior")
-respHatchOps = ptAttribResponder(6, "Rspndr: Hatch Ops",['lockedabove','openabove','lockedbelow','openbelow','close'])
+respHatchOps = ptAttribResponder(
+    6,
+    "Rspndr: Hatch Ops",
+    ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
+)
 
 # ---------
 # globals
@@ -68,31 +71,32 @@ kStringAgeSDLHatchLocked = "tldnHatchLocked"
 
 AgeStartedIn = None
 
+
 class tldnHatchLadderBottom(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
-        self.id = 7000       
+        self.id = 7000
         version = 6
         self.version = version
 
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-        
+
     def OnServerInitComplete(self):
         global hatchLocked
         global hatchOpen
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             # set flags on age SDL vars we'll be changing
-            ageSDL.setFlags(kStringAgeSDLHatchOpen,1,1)
+            ageSDL.setFlags(kStringAgeSDLHatchOpen, 1, 1)
             ageSDL.sendToClients(kStringAgeSDLHatchOpen)
 
             # register for notification of age SDL var changes
-            ageSDL.setNotify(self.key,kStringAgeSDLHatchOpen,0.0)
-            ageSDL.setNotify(self.key,kStringAgeSDLHatchLocked,0.0)
-            
+            ageSDL.setNotify(self.key, kStringAgeSDLHatchOpen, 0.0)
+            ageSDL.setNotify(self.key, kStringAgeSDLHatchLocked, 0.0)
+
             # get initial SDL state
             try:
                 hatchOpen = ageSDL[kStringAgeSDLHatchOpen][0]
@@ -100,31 +104,44 @@ class tldnHatchLadderBottom(ptModifier):
             except:
                 hatchOpen = False
                 hatchLocked = True
-                PtDebugPrint("tldnHatchLadderBottom.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:")
-            PtDebugPrint("tldnHatchLadderBottom.OnServerInitComplete():\t%s=%d, %s=%d" % (kStringAgeSDLHatchOpen,hatchOpen,kStringAgeSDLHatchLocked,hatchLocked) )
-                    
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+                PtDebugPrint(
+                    "tldnHatchLadderBottom.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:"
+                )
+            PtDebugPrint(
+                "tldnHatchLadderBottom.OnServerInitComplete():\t%s=%d, %s=%d"
+                % (
+                    kStringAgeSDLHatchOpen,
+                    hatchOpen,
+                    kStringAgeSDLHatchLocked,
+                    hatchLocked,
+                )
+            )
+
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global hatchLocked
         global hatchOpen
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint("tldnHatchLadderBottom.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d, playerID:%d" % (VARname,SDLname,tag,ageSDL[VARname][0],playerID))
-            
+            PtDebugPrint(
+                "tldnHatchLadderBottom.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d, playerID:%d"
+                % (VARname, SDLname, tag, ageSDL[VARname][0], playerID)
+            )
+
             if VARname == kStringAgeSDLHatchLocked:
                 hatchLocked = ageSDL[kStringAgeSDLHatchLocked][0]
             if VARname == kStringAgeSDLHatchOpen:
                 hatchOpen = ageSDL[kStringAgeSDLHatchOpen][0]
-            
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         global LocalAvatar
-        
+
         # PtDebugPrint("tldnHatchLadderBottom:OnNotify  state=%f id=%d events=" % (state,id),events)
         if state:
             if id == ActStart.id and PtWasLocallyNotified(self.key):
                 LocalAvatar = PtFindAvatar(events)
                 Climber.run(LocalAvatar)
-            
+
         # check if its an advance stage notify
         for event in events:
             # multistage callback from stage 2 send when advancing
@@ -134,22 +151,26 @@ class tldnHatchLadderBottom(ptModifier):
                 if PtFindAvatar(events) == LocalAvatar:
                     if event[2] == kAdvanceNextStage:
                         stageNum = event[1]
-                        PtDebugPrint("Got stage advance callback from stage %d" % stageNum)
+                        PtDebugPrint(
+                            "Got stage advance callback from stage %d" % stageNum
+                        )
                         if stageNum == 1:
                             PtDebugPrint("In stage 2, negotiating hatch.")
-                            self.INegotiateHatch();
+                            self.INegotiateHatch()
                         elif stageNum == 2:
                             # after the "it's locked" anim, return to the climb...
-                            Climber.gotoStage(LocalAvatar, 1,0,0)
+                            Climber.gotoStage(LocalAvatar, 1, 0, 0)
                         elif stageNum == 2 or stageNum == 3 or stageNum == 5:
-                            PtDebugPrint("Got through hatch: finishing & removing brain.")
+                            PtDebugPrint(
+                                "Got through hatch: finishing & removing brain."
+                            )
                             Climber.gotoStage(LocalAvatar, -1)
-    
+
     def INegotiateHatch(self):
-        "Figure out what to do about that hatch."       
+        "Figure out what to do about that hatch."
         global hatchOpen
         global hatchLocked
-        
+
         PtDebugPrint("Negotiating hatch")
         if hatchOpen:
             self.IHatchOpen()
@@ -163,22 +184,22 @@ class tldnHatchLadderBottom(ptModifier):
         "Hatch is locked; show the frustrated animation and return to previous stage"
         global LocalAvatar
         PtDebugPrint("Hatch is locked; Sending gotoStage(2)")
-        respHatchOps.run(self.key,state='lockedbelow')
-        Climber.gotoStage(LocalAvatar,2,0,1)
+        respHatchOps.run(self.key, state="lockedbelow")
+        Climber.gotoStage(LocalAvatar, 2, 0, 1)
 
     def IHatchUnlocked(self):
         "Hatch is unlocked; open it and pass through."
         global LocalAvatar
         PtDebugPrint("Hatch is unlocked; Sending gotoStage(3)")
-        respHatchOps.run(self.key,state='openbelow')
-        Climber.gotoStage(LocalAvatar,3,0,0)
+        respHatchOps.run(self.key, state="openbelow")
+        Climber.gotoStage(LocalAvatar, 3, 0, 0)
         hatchOpen = 1
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            ageSDL[kStringAgeSDLHatchOpen] = (1,)                
+            ageSDL[kStringAgeSDLHatchOpen] = (1,)
 
     def IHatchOpen(self):
         "Hatch is open; just climb through."
         global LocalAvatar
         PtDebugPrint("Hatch is open; Sending gotoStage(4)")
-        Climber.gotoStage(LocalAvatar,4,0,0)
+        Climber.gotoStage(LocalAvatar, 4, 0, 0)

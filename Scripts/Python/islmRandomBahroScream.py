@@ -55,17 +55,18 @@ import xRandom
 respScream = ptAttribResponder(1, "Scream responder")
 strChanceVar = ptAttribString(2, "Chance Variable")
 
-#globals
+# globals
 AgeStartedIn = ""
 ScreamChanceVar = "islmScreamChance"
 
 TimerID = Enum("TurnOn")
 
+
 class islmRandomBahroScream(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5320
-        
+
         self.version = 2
         PtDebugPrint("__init__islmRandomBahroScream v.", self.version)
 
@@ -75,11 +76,11 @@ class islmRandomBahroScream(ptModifier):
 
     def OnServerInitComplete(self):
         global ScreamChanceVar
-        
+
         if AgeStartedIn == PtGetAgeName():
             if strChanceVar.value:
                 ScreamChanceVar = strChanceVar.value
-            
+
             PtAtTimeCallback(self.key, 60, TimerID.TurnOn)
 
     def OnTimer(self, id):
@@ -89,12 +90,17 @@ class islmRandomBahroScream(ptModifier):
             try:
                 chanceval = ageSDL[ScreamChanceVar][0]
                 cur_chance = xRandom.randint(0, 100)
-                PtDebugPrint("RandomBahroScream: Chance val - %d, Cur Chance - %d" % (chanceval, cur_chance))
+                PtDebugPrint(
+                    "RandomBahroScream: Chance val - %d, Cur Chance - %d"
+                    % (chanceval, cur_chance)
+                )
                 if cur_chance <= chanceval:
                     # turn on
                     PtDebugPrint("RandomBahroScream: turning on")
                     respScream.run(self.key)
             except:
-                PtDebugPrint("RandomBahroScream: could not find SDL for %s in %s" % (ScreamChanceVar,AgeStartedIn))
+                PtDebugPrint(
+                    "RandomBahroScream: could not find SDL for %s in %s"
+                    % (ScreamChanceVar, AgeStartedIn)
+                )
             PtAtTimeCallback(self.key, 600, TimerID.TurnOn)
-        

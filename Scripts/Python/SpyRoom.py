@@ -50,8 +50,8 @@ from Plasma import *
 from PlasmaTypes import *
 import time
 
-class SpyRoom(ptResponder):
 
+class SpyRoom(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5331
@@ -59,11 +59,11 @@ class SpyRoom(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        
+
     def Load(self):
-        pass        
-        
-    def OnNotify(self,state,id,events):
+        pass
+
+    def OnNotify(self, state, id, events):
         pass
 
     def OnServerInitComplete(self):
@@ -73,7 +73,6 @@ class SpyRoom(ptResponder):
         entry = vault.findChronicleEntry("sjBevinVisted")
         if not entry:
             PtDebugPrint("spyroom: did not find the chron var")
-            vault.addChronicleEntry("sjBevinVisted", 0, str(int( time.time() )) )
+            vault.addChronicleEntry("sjBevinVisted", 0, str(int(time.time())))
         else:
             PtDebugPrint("spyroom: found the chron var")
-

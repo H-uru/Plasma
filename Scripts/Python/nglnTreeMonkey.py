@@ -54,15 +54,24 @@ from PlasmaTypes import *
 import random
 
 # define the attributes that will be entered in max
-respSpawnPt = ptAttribResponder(1, "resp: Spawn Point", ['0','1','2'], netForce=1)
-respMonkeyAct = ptAttribResponder(2, "resp: Monkey Actions", ['Alarmed','Up','Eat','Idle', 'Vocalize'])
-respMonkeySfx = ptAttribNamedResponder(3, "resp: Monkey SFX", ['Alarmed','Up','Eat','Idle','Off','Vocalize'], netForce=1)
+respSpawnPt = ptAttribResponder(1, "resp: Spawn Point", ["0", "1", "2"], netForce=1)
+respMonkeyAct = ptAttribResponder(
+    2, "resp: Monkey Actions", ["Alarmed", "Up", "Eat", "Idle", "Vocalize"]
+)
+respMonkeySfx = ptAttribNamedResponder(
+    3,
+    "resp: Monkey SFX",
+    ["Alarmed", "Up", "Eat", "Idle", "Off", "Vocalize"],
+    netForce=1,
+)
 respMonkeyOff = ptAttribResponder(4, "resp: Monkey Off")
 
 # define globals
-kDayLengthInSeconds = 56585 # Length of a Negilahn day in seconds Must match value in Negilahn.age file
-kMinimumTimeBetweenSpawns = 300 # 5 minutes
-kMaximumTimeBetweenSpawns = 18000 # 5 hours
+kDayLengthInSeconds = (
+    56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
+)
+kMinimumTimeBetweenSpawns = 300  # 5 minutes
+kMaximumTimeBetweenSpawns = 18000  # 5 hours
 
 # Chance in 100 that monkey will:
 IdlePct = 30
@@ -72,7 +81,8 @@ AlarmedPct = 10
 OffPct = 20
 stackList = []
 
-#====================================
+# ====================================
+
 
 class nglnTreeMonkey(ptResponder):
     ###########################
@@ -81,7 +91,7 @@ class nglnTreeMonkey(ptResponder):
         self.id = 5241
         version = 3
         self.version = version
-        PtDebugPrint("__init__nglnTreeMonkey v.", version,".0")
+        PtDebugPrint("__init__nglnTreeMonkey v.", version, ".0")
         random.seed()
 
     ###########################
@@ -103,24 +113,30 @@ class nglnTreeMonkey(ptResponder):
         lastDay = int(ageSDL["MonkeyLastUpdated"][0] / kDayLengthInSeconds)
 
         if (thisDay - lastDay) > 0:
-            PtDebugPrint("nglnTreeMonkey: It's been at least a day since the last update, running new numbers now.")
+            PtDebugPrint(
+                "nglnTreeMonkey: It's been at least a day since the last update, running new numbers now."
+            )
             self.InitNewSDLVars()
         else:
-            PtDebugPrint("nglnTreeMonkey: It's been less than a day since the last update, doing nothing")
+            PtDebugPrint(
+                "nglnTreeMonkey: It's been less than a day since the last update, doing nothing"
+            )
             self.SetMonkeyTimers()
 
         if not len(PtGetPlayerList()):
             respMonkeyOff.run(self.key, fastforward=1)
 
     ###########################
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if VARname == "MonkeySpawnTimes":
             self.SetMonkeyTimers()
 
     ###########################
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global stackList
-        PtDebugPrint("nglnTreeMonkey.OnNotify:  state=%f id=%d events=" % (state,id),events)
+        PtDebugPrint(
+            "nglnTreeMonkey.OnNotify:  state=%f id=%d events=" % (state, id), events
+        )
 
         if id == (-1):
             PtDebugPrint("Need to store event: %s" % (events[0][1]))
@@ -133,7 +149,9 @@ class nglnTreeMonkey(ptResponder):
                 self.ExecCode(code)
 
         elif id == respMonkeyAct.id and self.sceneobject.isLocallyOwned():
-            PtDebugPrint("Callback was from responder, and I own the age, so Logic Time")
+            PtDebugPrint(
+                "Callback was from responder, and I own the age, so Logic Time"
+            )
             old = stackList.pop(0)
             PtDebugPrint("Popping off: %s" % (old))
             self.RandomBehavior()
@@ -143,8 +161,12 @@ class nglnTreeMonkey(ptResponder):
             old = stackList.pop(0)
             PtDebugPrint("Popping off: %s" % (old))
 
-        elif (id == respMonkeyAct.id or id == respMonkeyOff.id) and not self.sceneobject.isLocallyOwned():
-            PtDebugPrint("Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list")
+        elif (
+            id == respMonkeyAct.id or id == respMonkeyOff.id
+        ) and not self.sceneobject.isLocallyOwned():
+            PtDebugPrint(
+                "Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list"
+            )
             old = stackList.pop(0)
             PtDebugPrint("Popping off: %s" % (old))
             if len(stackList):
@@ -159,55 +181,59 @@ class nglnTreeMonkey(ptResponder):
     ###########################
     def RandomBehavior(self):
         ageSDL = PtGetAgeSDL()
-        PickABehavior = random.randint(1,100)
+        PickABehavior = random.randint(1, 100)
         # PtDebugPrint("PickABehavior = ",PickABehavior)
         LightsOn = ageSDL["nglnPodLights"][0]
-        posMonkeyStates = ['Idle','Eat','Alarmed','Vocalize','Off']
+        posMonkeyStates = ["Idle", "Eat", "Alarmed", "Vocalize", "Off"]
         Cumulative = 0
 
         for MonkeyState in posMonkeyStates:
-            NewCumulative = eval( "Cumulative + " + MonkeyState + "Pct" )
+            NewCumulative = eval("Cumulative + " + MonkeyState + "Pct")
             if PickABehavior > Cumulative and PickABehavior <= NewCumulative:
                 if MonkeyState == "Off":
                     self.SendNote("respMonkeyOff")
                 else:
-                    respString = ("respMonkeyAct;%s" % (MonkeyState))
+                    respString = "respMonkeyAct;%s" % (MonkeyState)
                     self.SendNote(respString)
-                PtDebugPrint("nglnTreeMonkey: Attempting Tree Monkey Anim: %s" % (MonkeyState))
+                PtDebugPrint(
+                    "nglnTreeMonkey: Attempting Tree Monkey Anim: %s" % (MonkeyState)
+                )
                 if LightsOn:
                     respMonkeySfx.run(self.key, state=str(MonkeyState))
-                    PtDebugPrint("nglnTreeMonkey: Attempting Tree Monkey SFX: %s" % (MonkeyState))
+                    PtDebugPrint(
+                        "nglnTreeMonkey: Attempting Tree Monkey SFX: %s" % (MonkeyState)
+                    )
                 return
-            Cumulative = eval("Cumulative + " + MonkeyState +"Pct")
-            
+            Cumulative = eval("Cumulative + " + MonkeyState + "Pct")
+
     ###########################
     def SendNote(self, ExtraInfo):
-        #pythonBox = PtFindSceneobject("Dummy04", "Negilahn")
-        #pmlist = pythonBox.getPythonMods()
-        #for pm in pmlist:
+        # pythonBox = PtFindSceneobject("Dummy04", "Negilahn")
+        # pmlist = pythonBox.getPythonMods()
+        # for pm in pmlist:
         notify = ptNotify(self.key)
         notify.clearReceivers()
-        
-        #notify.addReceiver(pm)
+
+        # notify.addReceiver(pm)
         notify.addReceiver(self.key)
-        
+
         notify.netPropagate(1)
         notify.netForce(1)
         notify.setActivate(1.0)
 
-        notify.addVarNumber(str(ExtraInfo),1.0)
+        notify.addVarNumber(str(ExtraInfo), 1.0)
 
         notify.send()
 
     ###########################
     def MonkeyAppears(self):
-        whichtree = random.randint(0,2)
+        whichtree = random.randint(0, 2)
         respSpawnPt.run(self.key, state=str(whichtree))
         self.SendNote("respMonkeyAct;Up")
         PtDebugPrint("nglnTreeMonkey: Tree Monkey is climbing Tree: %d" % (whichtree))
 
     ###########################
-    def OnTimer(self,TimerID):
+    def OnTimer(self, TimerID):
         PtDebugPrint("nglnTreeMonkey.OnTimer: callback id=%d" % (TimerID))
         if self.sceneobject.isLocallyOwned():
             if TimerID == 1:
@@ -221,35 +247,47 @@ class nglnTreeMonkey(ptResponder):
 
         ageSDL["MonkeyLastUpdated"] = (PtGetDniTime(),)
 
-        beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
+        beginningOfToday = PtGetDniTime() - int(
+            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
+        )
         endOfToday = int(kDayLengthInSeconds / 2) + beginningOfToday
-        #PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
+        # PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
 
         # We need a random times in the first 5 hours of the day
         # which is in the first 31.8 percent of the day. So we're
         # generating a number from 0 to 318 and dividing by 1000 to get
         # something roughly in that timeframe.
-        randnum = float(random.randint(0,318))
+        randnum = float(random.randint(0, 318))
         firstTime = int((randnum / 1000.0) * kDayLengthInSeconds) + beginningOfToday
         PtDebugPrint("nglnTreeMonkey: Generated a valid spawn time: %d" % (firstTime))
         spawnTimes = [firstTime]
 
         while isinstance(spawnTimes[-1], int):
-            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
+            randnum = random.randint(
+                kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns
+            )
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
-                PtDebugPrint("nglnTreeMonkey: Generated a valid spawn time: %d" % (newTime))
+                PtDebugPrint(
+                    "nglnTreeMonkey: Generated a valid spawn time: %d" % (newTime)
+                )
                 spawnTimes.append(newTime)
             else:
-                PtDebugPrint("nglnTreeMonkey: Generated a spawn time after dusk, exiting loop: %d" % (newTime))
+                PtDebugPrint(
+                    "nglnTreeMonkey: Generated a spawn time after dusk, exiting loop: %d"
+                    % (newTime)
+                )
                 break
         else:
-            PtDebugPrint("nglnTreeMonkey:ERROR---Tried to add a spawn time that's not a number: " , spawnTimes)
+            PtDebugPrint(
+                "nglnTreeMonkey:ERROR---Tried to add a spawn time that's not a number: ",
+                spawnTimes,
+            )
             spawnTimes = [0]
 
         while len(spawnTimes) < 20:
             spawnTimes.append(0)
-        	
+
         ageSDL["MonkeySpawnTimes"] = tuple(spawnTimes)
 
     ###########################
@@ -260,15 +298,26 @@ class nglnTreeMonkey(ptResponder):
             for timer in ageSDL["MonkeySpawnTimes"]:
                 if timer:
                     timeTillSpawn = timer - PtGetDniTime()
-                    PtDebugPrint("timer: %d    time: %d    timeTillSpawn: %d" % (timer,PtGetDniTime(),timeTillSpawn))
+                    PtDebugPrint(
+                        "timer: %d    time: %d    timeTillSpawn: %d"
+                        % (timer, PtGetDniTime(), timeTillSpawn)
+                    )
                     if timeTillSpawn > 0:
-                        PtDebugPrint("nglnTreeMonkey: Setting timer for %d seconds" % (timeTillSpawn))
+                        PtDebugPrint(
+                            "nglnTreeMonkey: Setting timer for %d seconds"
+                            % (timeTillSpawn)
+                        )
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
             # precision error FTW!
-            timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
-            timeLeftToday += 1 # because we want it to go off right AFTER the day flips
-            PtDebugPrint("nglnTreeMonkey: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
+            timeLeftToday = kDayLengthInSeconds - int(
+                PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
+            )
+            timeLeftToday += 1  # because we want it to go off right AFTER the day flips
+            PtDebugPrint(
+                "nglnTreeMonkey: Setting EndOfDay timer for %d seconds"
+                % (timeLeftToday)
+            )
             PtAtTimeCallback(self.key, timeLeftToday, 2)
         else:
             PtDebugPrint("nglnTreeMonkey: Timer array was empty!")
@@ -288,12 +337,16 @@ class nglnTreeMonkey(ptResponder):
             respMonkeyOff.run(self.key)
         elif code.find("respMonkeyAct") != -1:
             try:
-                chunks = code.split(';')
+                chunks = code.split(";")
                 ecMonkeyState = chunks[1]
                 respMonkeyAct.run(self.key, state=ecMonkeyState)
             except:
-                PtDebugPrint("nglnTreeMonkey.ExecCode(): ERROR! Invalid code '%s'." % (code))
+                PtDebugPrint(
+                    "nglnTreeMonkey.ExecCode(): ERROR! Invalid code '%s'." % (code)
+                )
                 stackList.pop(0)
         else:
-            PtDebugPrint("nglnTreeMonkey.ExecCode(): ERROR! Invalid code '%s'." % (code))
+            PtDebugPrint(
+                "nglnTreeMonkey.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            )
             stackList.pop(0)

@@ -49,17 +49,59 @@ from PlasmaTypes import *
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
-northWall = ptAttribSceneobjectList(1,"North Wall Decals",byObject=1)
-southWall = ptAttribSceneobjectList(2,"South Wall Decals",byObject=1)
-northBlocker = ptAttribSceneobjectList(3,"North Wall Blockers",byObject=1)
-southBlocker = ptAttribSceneobjectList(4,"South Wall Blockers",byObject=1)
+northWall = ptAttribSceneobjectList(1, "North Wall Decals", byObject=1)
+southWall = ptAttribSceneobjectList(2, "South Wall Decals", byObject=1)
+northBlocker = ptAttribSceneobjectList(3, "North Wall Blockers", byObject=1)
+southBlocker = ptAttribSceneobjectList(4, "South Wall Blockers", byObject=1)
 ##############################################################
 # grsnMainWallPython
 ##############################################################
 
 ## keep track of what to draw
-NorthBlockers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-SouthBlockers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+NorthBlockers = [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+]
+SouthBlockers = [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+]
 
 ReceiveInit = False
 """
@@ -74,9 +116,9 @@ kTeamLightsBlink = 2
 
 ## game states
 
-kWaiting    = 0
-kNorthSit   = 1
-kSouthSit   = 2
+kWaiting = 0
+kNorthSit = 1
+kSouthSit = 2
 kNorthSelect = 3
 kSouthSelect = 4
 kNorthReady = 5
@@ -91,16 +133,18 @@ kNorthQuit = 13
 
 
 class grsnMainWallPython(ptResponder):
-   
+
     # constants
-    
+
     def __init__(self):
         "construction"
         PtDebugPrint("grsnMainWallPython::init begin")
         ptResponder.__init__(self)
         self.id = 52394
         self.version = 1
-        PtDebugPrint("grsnMainWallPython::init end")        
+        PtDebugPrint("grsnMainWallPython::init end")
+
+
 """    
     def OnServerInitComplete(self):
         global ReceiveInit

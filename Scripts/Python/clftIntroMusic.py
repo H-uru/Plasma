@@ -52,48 +52,43 @@ from Plasma import *
 from PlasmaTypes import *
 
 
-actStartMusic01 = ptAttribActivator(1,"Start Music Activator 01")
-actStartMusic02 = ptAttribActivator(2,"Start Music Activator 02")
-actStartMusic03 = ptAttribActivator(3,"Start Music Activator 03")
-respStartMusic = ptAttribResponder(4,"Start Music Repsonder")
-respStartRandomMusic = ptAttribResponder(5,"Start Random Music Responder")
+actStartMusic01 = ptAttribActivator(1, "Start Music Activator 01")
+actStartMusic02 = ptAttribActivator(2, "Start Music Activator 02")
+actStartMusic03 = ptAttribActivator(3, "Start Music Activator 03")
+respStartMusic = ptAttribResponder(4, "Start Music Repsonder")
+respStartRandomMusic = ptAttribResponder(5, "Start Random Music Responder")
 
-actStopMusic = ptAttribActivator(6,"Stop Music Activator")
-respStopInitialMusic = ptAttribResponder(7,"Stop Initial Music Responder")
-respStopRandomMusic = ptAttribResponder(8,"Stop Random Music Responder")
-
+actStopMusic = ptAttribActivator(6, "Stop Music Activator")
+respStopInitialMusic = ptAttribResponder(7, "Stop Initial Music Responder")
+respStopRandomMusic = ptAttribResponder(8, "Stop Random Music Responder")
 
 
 # globals
 
-#Music States
-kOff         = 0
+# Music States
+kOff = 0
 kInitialPlay = 1
-kRandomPlay  = 2
+kRandomPlay = 2
 
 musicState = kOff
 
 
-
 class clftIntroMusic(ptResponder):
-
     def __init__(self):
         global musicState
         ptResponder.__init__(self)
         self.id = 5249
         self.version = 1
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global musicState
-        
+
         if not state:
             return
 
+        # PtDebugPrint("clftIntroMusic: We've got notification from ID #:%s" %id)
 
-        #PtDebugPrint("clftIntroMusic: We've got notification from ID #:%s" %id)
-
-        #-----Activators-----
+        # -----Activators-----
         startMusicActIDs = (actStartMusic01.id, actStartMusic02.id, actStartMusic03.id)
         if id in startMusicActIDs:
             if musicState == kOff:
@@ -101,7 +96,7 @@ class clftIntroMusic(ptResponder):
                 musicState = kInitialPlay
                 respStartMusic.run(self.key)
             return
-        
+
         elif id == actStopMusic.id:
             if musicState == kInitialPlay:
                 PtDebugPrint("clftIntroMusic: ###Stopping Music###")
@@ -112,12 +107,10 @@ class clftIntroMusic(ptResponder):
             musicState = kOff
             return
 
-        #-----Responders-----
+        # -----Responders-----
         elif id == respStartMusic.id:
             if musicState == kInitialPlay:
                 PtDebugPrint("clftIntroMusic: ___Randomly Starting Music___")
                 musicState = kRandomPlay
                 respStartRandomMusic.run(self.key)
             return
-
-

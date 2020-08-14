@@ -51,8 +51,8 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaVaultConstants import *
 
-class Descent(ptResponder):
 
+class Descent(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5325
@@ -61,20 +61,28 @@ class Descent(ptResponder):
     def OnServerInitComplete(self):
         self.ICityBookLink()
 
-    def OnVaultNotify(self,type,tupdata):
+    def OnVaultNotify(self, type, tupdata):
         # was an owned age just added?
         if type == PtVaultNotifyTypes.kRegisteredOwnedAge:
             link = tupdata[0]
             name = link.getAgeInfo().getAgeFilename()
             if name == "Descent":
-                cityBookSP = ptSpawnPointInfo("dsntShaftFall","LinkInPointShaftFall")
+                cityBookSP = ptSpawnPointInfo("dsntShaftFall", "LinkInPointShaftFall")
                 link.addSpawnPoint(cityBookSP)
                 link.save()
-                PtDebugPrint("Descent - setting the spawnpoint for the city book - OnVaultNotify",level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "Descent - setting the spawnpoint for the city book - OnVaultNotify",
+                    level=kDebugDumpLevel,
+                )
             else:
-                PtDebugPrint("Descent - registering age '%s' (why is this not Descent?)"%(name))
+                PtDebugPrint(
+                    "Descent - registering age '%s' (why is this not Descent?)" % (name)
+                )
         else:
-            PtDebugPrint("Descent:OnVaultNotify - not what we want - type=%d"%(type),level=kDebugDumpLevel)
+            PtDebugPrint(
+                "Descent:OnVaultNotify - not what we want - type=%d" % (type),
+                level=kDebugDumpLevel,
+            )
 
     def ICityBookLink(self):
         vault = ptVault()
@@ -85,10 +93,15 @@ class Descent(ptResponder):
             link = link.upcastToAgeLinkNode()
             name = link.getAgeInfo().getAgeFilename()
             if name == "Descent":
-                cityBookSP = ptSpawnPointInfo("dsntShaftFall","LinkInPointShaftFall")
+                cityBookSP = ptSpawnPointInfo("dsntShaftFall", "LinkInPointShaftFall")
                 link.addSpawnPoint(cityBookSP)
                 link.save()
-                PtDebugPrint("Descent:OnServerInitComplete - setting the spawnpoint for the city book",level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "Descent:OnServerInitComplete - setting the spawnpoint for the city book",
+                    level=kDebugDumpLevel,
+                )
                 return
-        PtDebugPrint("Descent:OnServerInitComplete - error - Descent is not there... hopefully OnVaultNotify catches it")
+        PtDebugPrint(
+            "Descent:OnServerInitComplete - error - Descent is not there... hopefully OnVaultNotify catches it"
+        )
         return

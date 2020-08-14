@@ -47,8 +47,8 @@ from PlasmaTypes import *
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
-trigger = ptAttribActivator(1,"sound trigger")
-sound   = ptAttribResponder(2,"sound responder",['play'])
+trigger = ptAttribActivator(1, "sound trigger")
+sound = ptAttribResponder(2, "sound responder", ["play"])
 
 
 class grsnElevRespTrigger(ptResponder):
@@ -57,7 +57,7 @@ class grsnElevRespTrigger(ptResponder):
         self.id = 50224
         self.version = 1
         PtDebugPrint("Initialized: grsnElevRespTrigger", 4)
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         if id == trigger.id:
-            sound.run(self.key, state='play')   
+            sound.run(self.key, state="play")

@@ -54,13 +54,15 @@ from PlasmaTypes import *
 # max wiring
 # ---------
 
-actTrigger = ptAttribActivator(1,"Activator")
-stringVarName = ptAttribString(2,"Age SDL Var Name")
-intValue = ptAttribInt(7,"Set Var to:",rang=(0,1))
-stringInfo = ptAttribString(8,"Extra info to pass along") # string passed as hint to listeners if needed (e.g. which side of the door did the player click on?)
+actTrigger = ptAttribActivator(1, "Activator")
+stringVarName = ptAttribString(2, "Age SDL Var Name")
+intValue = ptAttribInt(7, "Set Var to:", rang=(0, 1))
+stringInfo = ptAttribString(
+    8, "Extra info to pass along"
+)  # string passed as hint to listeners if needed (e.g. which side of the door did the player click on?)
+
 
 class xAgeSDLBoolSet(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5029
@@ -68,14 +70,16 @@ class xAgeSDLBoolSet(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringVarName.value:
-            PtDebugPrint("ERROR: xAgeSDLBoolSet.OnFirstUpdate():\tERROR: missing SDL var name in max file")
-    
+            PtDebugPrint(
+                "ERROR: xAgeSDLBoolSet.OnFirstUpdate():\tERROR: missing SDL var name in max file"
+            )
+
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags(stringVarName.value,1,1)
+        ageSDL.setFlags(stringVarName.value, 1, 1)
         ageSDL.sendToClients(stringVarName.value)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         # is this notify something I should act on?
         if not state or id != actTrigger.id:
             return
@@ -83,17 +87,24 @@ class xAgeSDLBoolSet(ptResponder):
             return
         else:
             if actTrigger.value:
-                PtDebugPrint("DEBUG: xAgeSDLBoolSet.OnNotify():\t local player requesting %s change via %s" % (stringVarName.value,actTrigger.value[0].getName()) )
+                PtDebugPrint(
+                    "DEBUG: xAgeSDLBoolSet.OnNotify():\t local player requesting %s change via %s"
+                    % (stringVarName.value, actTrigger.value[0].getName())
+                )
                 pass
-                
+
         # error check
         if not stringVarName.value:
-            PtDebugPrint("ERROR: xAgeSDLBoolSet.OnNotify():\tERROR: missing SDL var name")
+            PtDebugPrint(
+                "ERROR: xAgeSDLBoolSet.OnNotify():\tERROR: missing SDL var name"
+            )
             return
-            
+
         ageSDL = PtGetAgeSDL()
         # Set the sdl value
-        ageSDL.setTagString(stringVarName.value,stringInfo.value)
+        ageSDL.setTagString(stringVarName.value, stringInfo.value)
         ageSDL[stringVarName.value] = (intValue.value,)
-        PtDebugPrint("DEBUG: xAgeSDLBoolSet.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value,intValue.value) )
-
+        PtDebugPrint(
+            "DEBUG: xAgeSDLBoolSet.OnNotify():\tset age SDL var %s to %d"
+            % (stringVarName.value, intValue.value)
+        )

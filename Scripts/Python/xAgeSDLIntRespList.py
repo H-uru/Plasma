@@ -53,18 +53,18 @@ import re
 
 # define the attributes that will be entered in max1
 
-#NOTE: The Responder name format string should be the name of the responder with a %d somewhere in there
+# NOTE: The Responder name format string should be the name of the responder with a %d somewhere in there
 #            that will specify which responder runs at the received state.  All of the responders
 #            must be named similarly (like below).
 #            I.E:  Three responders named Resp01, Resp02, Resp03 so the format string would be "Resp0%d"
 
-stringSDLVarName = ptAttribString(1,"Age SDL Variable")
-respList = ptAttribResponderList(2,"ResponderList",byObject=1)
-stringFormat = ptAttribString(3,"Responder name format string")
-intMaxState = ptAttribInt(4,"Max state value",2)
-boolStartFF = ptAttribBoolean(5,"F-Forward on start",0)
-boolVltMgrFF = ptAttribBoolean(6,"F-Forward on VM notify", 1)
-intDefault = ptAttribInt(7,"Default setting",0)
+stringSDLVarName = ptAttribString(1, "Age SDL Variable")
+respList = ptAttribResponderList(2, "ResponderList", byObject=1)
+stringFormat = ptAttribString(3, "Responder name format string")
+intMaxState = ptAttribInt(4, "Max state value", 2)
+boolStartFF = ptAttribBoolean(5, "F-Forward on start", 0)
+boolVltMgrFF = ptAttribBoolean(6, "F-Forward on VM notify", 1)
+intDefault = ptAttribInt(7, "Default setting", 0)
 
 
 class xAgeSDLIntRespList(ptResponder):
@@ -73,66 +73,95 @@ class xAgeSDLIntRespList(ptResponder):
         self.id = 5307
         self.version = 2
         PtDebugPrint("__init__xAgeSDLIntRespList v.", self.version)
-    
+
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:
-            PtDebugPrint("ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing SDL var name in max file")
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing SDL var name in max file"
+            )
             pass
-            
+
         elif not stringFormat.value:
-            PtDebugPrint("ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing responder name format string in max file")
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing responder name format string in max file"
+            )
             pass
-    
+
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnServerInitComplete:\tProcessing")
-        ageSDL.setNotify(self.key,stringSDLVarName.value,0.0)
+        ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
         try:
             SDLvalue = ageSDL[stringSDLVarName.value][0]
         except:
-            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringSDLVarName = %s" % (intDefault.value,stringSDLVarName.value))
+            PtDebugPrint(
+                "ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: age sdl read failed, SDLvalue = %d by default. stringSDLVarName = %s"
+                % (intDefault.value, stringSDLVarName.value)
+            )
             SDLvalue = intDefault.value
-        #regexp = re.compile(".*_%s" % (stringFormat.value % SDLvalue))
-        respName = (stringFormat.value % SDLvalue)
+        # regexp = re.compile(".*_%s" % (stringFormat.value % SDLvalue))
+        respName = stringFormat.value % SDLvalue
 
         if 0 <= SDLvalue <= intMaxState.value:
             for key in respList.byObject.keys():
-                #match = regexp.search(key)
-                if key == respName:#match:
-                    PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnServerInitComplete:\tRunning responder - %s" % (stringFormat.value % SDLvalue))
-                    #respList.run(self.key,avatar=None,objectName=match.group(),fastforward=boolStartFF.value)
-                    respList.run(self.key,avatar=None,objectName=respName,fastforward=boolStartFF.value)
+                # match = regexp.search(key)
+                if key == respName:  # match:
+                    PtDebugPrint(
+                        "DEBUG: xAgeSDLIntRespList.OnServerInitComplete:\tRunning responder - %s"
+                        % (stringFormat.value % SDLvalue)
+                    )
+                    # respList.run(self.key,avatar=None,objectName=match.group(),fastforward=boolStartFF.value)
+                    respList.run(
+                        self.key,
+                        avatar=None,
+                        objectName=respName,
+                        fastforward=boolStartFF.value,
+                    )
                     break
-            
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         if VARname != stringSDLVarName.value:
             return
-            
+
         ageSDL = PtGetAgeSDL()
         # is state change from player or vault manager?
-        if PlayerID: # non-zero means it's a player
-            objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(PlayerID),self.key)
+        if PlayerID:  # non-zero means it's a player
+            objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(PlayerID), self.key)
             fastforward = 0
-        else:   # invalid player aka Vault Manager
+        else:  # invalid player aka Vault Manager
             objAvatar = None
-            fastforward = boolVltMgrFF.value # we need to skip any one-shots
+            fastforward = boolVltMgrFF.value  # we need to skip any one-shots
         if tag == "fastforward":
             objAvatar = None
             fastforward = 1
-        PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnSDLNotify():\tnotification from PlayerID: %d" % (PlayerID))
-        
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntRespList.OnSDLNotify():\tnotification from PlayerID: %d"
+            % (PlayerID)
+        )
+
         SDLvalue = ageSDL[stringSDLVarName.value][0]
-        
-        PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnSDLNotify received: %s = %d" % (VARname, SDLvalue))
-        
-        #regexp = re.compile(".*_%s" % (stringFormat.value % SDLvalue))
-        respName = (stringFormat.value % SDLvalue)
+
+        PtDebugPrint(
+            "DEBUG: xAgeSDLIntRespList.OnSDLNotify received: %s = %d"
+            % (VARname, SDLvalue)
+        )
+
+        # regexp = re.compile(".*_%s" % (stringFormat.value % SDLvalue))
+        respName = stringFormat.value % SDLvalue
 
         if 0 <= SDLvalue <= intMaxState.value:
             for key in respList.byObject.keys():
-                #match = regexp.search(key)
-                if key == respName:#match:
-                    PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnSDLNotify:\tRunning responder - %s" % (stringFormat.value % SDLvalue))
-                    #respList.run(self.key,avatar=objAvatar,objectName=match.group(),fastforward=fastforward)
-                    respList.run(self.key,avatar=objAvatar,objectName=respName,fastforward=fastforward)
+                # match = regexp.search(key)
+                if key == respName:  # match:
+                    PtDebugPrint(
+                        "DEBUG: xAgeSDLIntRespList.OnSDLNotify:\tRunning responder - %s"
+                        % (stringFormat.value % SDLvalue)
+                    )
+                    # respList.run(self.key,avatar=objAvatar,objectName=match.group(),fastforward=fastforward)
+                    respList.run(
+                        self.key,
+                        avatar=objAvatar,
+                        objectName=respName,
+                        fastforward=fastforward,
+                    )
                     break

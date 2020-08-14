@@ -76,7 +76,11 @@ class xAgeSDLBoolRespond(ptResponder):
 
         ageSDL = PtGetAgeSDL()
         value = ageSDL[sdlName.value][0]
-        PtDebugPrint("xAgeSDLBoolRespond.OnSDLNotify():\tVARname:%s, SDLname:%s, value:%d, playerID:%d" % (VARname, SDLname, value, playerID), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xAgeSDLBoolRespond.OnSDLNotify():\tVARname:%s, SDLname:%s, value:%d, playerID:%d"
+            % (VARname, SDLname, value, playerID),
+            level=kDebugDumpLevel,
+        )
 
         # A playerID of zero indicates a vault mangler change
         if playerID:
@@ -96,7 +100,11 @@ class xAgeSDLBoolRespond(ptResponder):
 
     def _Execute(self, value, ff, avatar=None):
         resps = ("FALSE", "TRUE")
-        PtDebugPrint("xAgeSDLBoolRespond._Execute():\tRunning %s responder on %s ff=%d" % (resps[min(value, 1)], self.sceneobject.getName(), ff), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xAgeSDLBoolRespond._Execute():\tRunning %s responder on %s ff=%d"
+            % (resps[min(value, 1)], self.sceneobject.getName(), ff),
+            level=kDebugDumpLevel,
+        )
         if value:
             respTrue.run(self.key, avatar=avatar, fastforward=ff)
         else:
@@ -108,12 +116,18 @@ class xAgeSDLBoolRespond(ptResponder):
 
         # So, apparently, Cyan's artists like trailing whitespace...
         if sdlName.value.find(" ") != -1:
-            PtDebugPrint("xAgeSDLBoolRespond._Setup():\tWARNING: %s's SDL variable '%s' has whitespace. Removing!" % (self.sceneobject.getName(), sdlName.value))
+            PtDebugPrint(
+                "xAgeSDLBoolRespond._Setup():\tWARNING: %s's SDL variable '%s' has whitespace. Removing!"
+                % (self.sceneobject.getName(), sdlName.value)
+            )
             sdlName.value = sdlName.value.replace(" ", "")
 
         ageSDL = PtGetAgeSDL()
         if not ageSDL:
-            PtDebugPrint("xAgeSDLBoolRespond._Initialize():\tAgeSDL is None. Initing %s to its default" % self.sceneobject.getName())
+            PtDebugPrint(
+                "xAgeSDLBoolRespond._Initialize():\tAgeSDL is None. Initing %s to its default"
+                % self.sceneobject.getName()
+            )
             self._Execute(defaultValue.value, initFastFwd.value)
             return
 
@@ -126,5 +140,8 @@ class xAgeSDLBoolRespond(ptResponder):
         try:
             self._Execute(ageSDL[sdlName.value][0], initFastFwd.value)
         except LookupError:
-            PtDebugPrint("xAgeSDLBoolRespond._Setup():\tVariable '%s' is invalid on object '%s'" % (sdlName.value, self.sceneobject.getName()))
+            PtDebugPrint(
+                "xAgeSDLBoolRespond._Setup():\tVariable '%s' is invalid on object '%s'"
+                % (sdlName.value, self.sceneobject.getName())
+            )
             self._Execute(defaultValue.value, initFastFwd.value)

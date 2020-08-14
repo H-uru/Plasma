@@ -51,22 +51,24 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
-class PhilRelto(ptResponder):
 
+class PhilRelto(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5328
         self.version = 1
-        PtDebugPrint("PhilRelto: __init__ version %d.%d" % (self.version,1),level=kWarningLevel)
-    
+        PtDebugPrint(
+            "PhilRelto: __init__ version %d.%d" % (self.version, 1), level=kWarningLevel
+        )
+
     def OnServerInitComplete(self):
         pass
 
     def OnFirstUpdate(self):
         pass
-        
+
     def Load(self):
-        pass        
-        
-    def OnNotify(self,state,id,events):
+        pass
+
+    def OnNotify(self, state, id, events):
         pass

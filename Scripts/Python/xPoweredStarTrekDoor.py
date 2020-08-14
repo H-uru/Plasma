@@ -53,8 +53,8 @@ from PlasmaTypes import *
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-Activate = ptAttribActivator(1, "Region Sensor",netForce=1)
-respDoor = ptAttribResponder(2, "Door Responder",['open','close'])
+Activate = ptAttribActivator(1, "Region Sensor", netForce=1)
+respDoor = ptAttribResponder(2, "Door Responder", ["open", "close"])
 actPower = ptAttribNamedActivator(3, "Actvtr: Power Source")
 
 # globals
@@ -67,81 +67,82 @@ doorHistory = "close"
 
 class xPoweredStarTrekDoor(ptModifier):
     "Standard Star Trek Door"
+
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5216
-        
+
         version = 1
         self.version = version
         PtDebugPrint("__init__xPoweredStarTrekDoor v.", version)
 
     def OnServerInitComplete(self):
         if self.SDL == None:
-#            PtDebugPrint("xPoweredStarTrekDoor.OnFirstUpdate():\tERROR---missing SDL (%s)" % actPower.value)
+            #            PtDebugPrint("xPoweredStarTrekDoor.OnFirstUpdate():\tERROR---missing SDL (%s)" % actPower.value)
             return
-        self.SDL.setDefault("haspower",(0,))
+        self.SDL.setDefault("haspower", (0,))
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
 
         global doorCued
         global doorMoving
         global doorState
         PtDebugPrint("DoorMoving = ", doorMoving)
-        
-        if state and id==actPower.id:
+
+        if state and id == actPower.id:
             PtDebugPrint("message from GearActivated")
             for event in events:
                 PtDebugPrint(event)
                 if event[0] == 4:
-                    if event[3] == 1: # power on
+                    if event[3] == 1:  # power on
                         self.SDL["haspower"] = (1,)
 
-                elif event[3] == 0: #power off
+                elif event[3] == 0:  # power off
                     self.SDL["haspower"] = (0,)
-                
-                else: #unexpected value 
-                    PtDebugPrint("xPoweredStarTrekDoor.OnNotify:\t'%s' ERROR---got bogus msg - power = %d" % (Activate.value,self.SDL["enabled"][0]))
+
+                else:  # unexpected value
+                    PtDebugPrint(
+                        "xPoweredStarTrekDoor.OnNotify:\t'%s' ERROR---got bogus msg - power = %d"
+                        % (Activate.value, self.SDL["enabled"][0])
+                    )
                     return
-                    
-#                PtDebugPrint("xPoweredStarTrekDoor.OnNotify:\t'%s' got msg - power = %d" % (actPower.value,self.SDL["enabled"][0]))
 
+        #                PtDebugPrint("xPoweredStarTrekDoor.OnNotify:\t'%s' got msg - power = %d" % (actPower.value,self.SDL["enabled"][0]))
 
-#Pete's original code
+        # Pete's original code
 
-        
-#       if state and id == Activate.id: # and PtWasLocallyNotified(self.key): # region is activated.
+        #       if state and id == Activate.id: # and PtWasLocallyNotified(self.key): # region is activated.
 
-        if state and id == Activate.id and self.SDL["haspower"][0]==1: # and PtWasLocallyNotified(self.key): # region is activated.
+        if (
+            state and id == Activate.id and self.SDL["haspower"][0] == 1
+        ):  # and PtWasLocallyNotified(self.key): # region is activated.
 
-            
-            if doorState=="close": # keep track of what the freaking door should do next.
-                doorState="open"
+            if (
+                doorState == "close"
+            ):  # keep track of what the freaking door should do next.
+                doorState = "open"
             else:
-                doorState="close"
-            
+                doorState = "close"
+
             if not doorMoving:
                 self.doorAction()
                 PtDebugPrint("door played")
-            else: # got a command, but door is busy so cue it
-                doorCued=1
+            else:  # got a command, but door is busy so cue it
+                doorCued = 1
                 PtDebugPrint("door cued")
         elif state and id == respDoor.id:
             # Callback from door finishing movement
             PtDebugPrint("callbackfromdoor")
-            doorMoving=0
+            doorMoving = 0
             if doorCued:
-                doorCued=0
+                doorCued = 0
                 self.doorAction()
 
     def doorAction(self):
         global doorMoving
-        global doorHistory        
+        global doorHistory
         if doorHistory != doorState:
-            doorMoving=1
-            doorHistory=doorState
-            respDoor.run(self.key,state=doorState)
+            doorMoving = 1
+            doorHistory = doorState
+            respDoor.run(self.key, state=doorState)
             PtDebugPrint("Door Begin %s" % doorState)
-
-
-
-

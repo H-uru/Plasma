@@ -55,17 +55,19 @@ import time
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-ActImager = ptAttribActivator(1,"Imager button")
-AvatarOneshot = ptAttribResponder(2,"Rspdnr: Player avatar oneshot")
-ImagerOpen = ptAttribResponder(3,"Rspdnr: Imager Open")
-ImagerLoop = ptAttribResponder(4,"Rspdnr: Imager Loop")
-ImagerClose = ptAttribResponder(5,"Rspdnr: Imager Close")
-ClickForGUI = ptAttribActivator(6,"Clickable to get page")
+ActImager = ptAttribActivator(1, "Imager button")
+AvatarOneshot = ptAttribResponder(2, "Rspdnr: Player avatar oneshot")
+ImagerOpen = ptAttribResponder(3, "Rspdnr: Imager Open")
+ImagerLoop = ptAttribResponder(4, "Rspdnr: Imager Loop")
+ImagerClose = ptAttribResponder(5, "Rspdnr: Imager Close")
+ClickForGUI = ptAttribActivator(6, "Clickable to get page")
 
-GreenLightResp = ptAttribResponder(7,"Rspdnr: Green light", ["Solid", "Blinking", "Off"])
+GreenLightResp = ptAttribResponder(
+    7, "Rspdnr: Green light", ["Solid", "Blinking", "Off"]
+)
 
 # globals
-PlayFull = 0 # Determines whether full vision will play or not. 0 = partial, 1 = full
+PlayFull = 0  # Determines whether full vision will play or not. 0 = partial, 1 = full
 visionplaying = 0
 AgeStartedIn = None
 inTomahna = 0
@@ -75,7 +77,7 @@ class clftYeeshaPageImager(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5201
-        
+
         version = 5
         self.version = version
         PtDebugPrint("__init__clftYeeshaPageImager v.", version)
@@ -90,18 +92,16 @@ class clftYeeshaPageImager(ptModifier):
         PtUnloadDialog("YeeshaPageGUI")
         self.CloseImager(1)
 
-
     def __del__(self):
         PtUnloadDialog("YeeshaPageGUI")
-
 
     def OnServerInitComplete(self):
         global PlayFull
         global inTomahna
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            ageSDL.setNotify(self.key,"clftYeeshaPage08Vis",0.0)
+            ageSDL.setNotify(self.key, "clftYeeshaPage08Vis", 0.0)
             self.ImagerUsable = ageSDL["clftYeeshaPage08Vis"][0]
             PtDebugPrint("ServerInitComplete: ImagerUsable: %d" % self.ImagerUsable)
 
@@ -116,23 +116,22 @@ class clftYeeshaPageImager(ptModifier):
 
             if powerOn:
                 if inTomahna:
-                    GreenLightResp.run(self.key, state = "Blinking")
-                    #PtDebugPrint("starting blinking green light")
+                    GreenLightResp.run(self.key, state="Blinking")
+                    # PtDebugPrint("starting blinking green light")
                 else:
-                    GreenLightResp.run(self.key, state = "Solid")
-                    #PtDebugPrint("starting solid green light")
+                    GreenLightResp.run(self.key, state="Solid")
+                    # PtDebugPrint("starting solid green light")
             else:
-                GreenLightResp.run(self.key, state = "Off")
-                #PtDebugPrint("green light is off")
-        
+                GreenLightResp.run(self.key, state="Off")
+                # PtDebugPrint("green light is off")
+
         if inTomahna:
             PtLoadDialog("YeeshaPageGUI")
 
-
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
-        PtDebugPrint("clftYeeshaPageImager.OnSDLNotify():  var = ",VARname)
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
+        PtDebugPrint("clftYeeshaPageImager.OnSDLNotify():  var = ", VARname)
         global inTomahna
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             if VARname == "clftYeeshaPage08Vis":
@@ -141,18 +140,17 @@ class clftYeeshaPageImager(ptModifier):
                 powerOn = ageSDL["clftAgeSDLWindmillRunning"][0]
                 if powerOn:
                     if inTomahna:
-                        GreenLightResp.run(self.key, state = "Blinking")
-                        #PtDebugPrint("starting blinking green light")
+                        GreenLightResp.run(self.key, state="Blinking")
+                        # PtDebugPrint("starting blinking green light")
                     else:
-                        GreenLightResp.run(self.key, state = "Solid")
-                        #PtDebugPrint("starting solid green light")
+                        GreenLightResp.run(self.key, state="Solid")
+                        # PtDebugPrint("starting solid green light")
                 else:
-                    GreenLightResp.run(self.key, state = "Off")
-                    #PtDebugPrint("green light is off")
+                    GreenLightResp.run(self.key, state="Off")
+                    # PtDebugPrint("green light is off")
                     self.CloseImager()
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global PlayFull
         global visionplaying
 
@@ -161,47 +159,61 @@ class clftYeeshaPageImager(ptModifier):
 
         PtDebugPrint("clftYeeshaPageImager.OnNotify()")
         PtDebugPrint("ImagerUsable: %d" % self.ImagerUsable)
-        
+
         for event in events:
             # PtDebugPrint("YP events: ", event)
-            if event[0]==2 and event[1]==1 and id == ActImager.id: # play avatar oneshot, regardless of whether button is going on or off
-                PtDebugPrint("clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ", PlayFull)
+            if (
+                event[0] == 2 and event[1] == 1 and id == ActImager.id
+            ):  # play avatar oneshot, regardless of whether button is going on or off
+                PtDebugPrint(
+                    "clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ",
+                    PlayFull,
+                )
                 if PtWasLocallyNotified(self.key):
-                    #AvatarOneshot.run(self.key,events=events)
-                    AvatarOneshot.run(self.key,avatar=PtGetLocalAvatar())
+                    # AvatarOneshot.run(self.key,events=events)
+                    AvatarOneshot.run(self.key, avatar=PtGetLocalAvatar())
 
-            elif event[0]==8 and event[1]==1: # A "Notify triggerer" command was received from one of several responders. The id distinguishes which it is
+            elif (
+                event[0] == 8 and event[1] == 1
+            ):  # A "Notify triggerer" command was received from one of several responders. The id distinguishes which it is
                 if not self.ImagerUsable:
                     # imager not usable and event is something other than the oneshot
-                    PtDebugPrint("clftYeeshaPageImager.OnNotify(): imager should be not working right now")
+                    PtDebugPrint(
+                        "clftYeeshaPageImager.OnNotify(): imager should be not working right now"
+                    )
                     ActImager.enable()
                     return
 
-                if id == AvatarOneshot.id: # The marker TouchButton marker was reached in the avatar oneshot. Now turn it on or off.
+                if (
+                    id == AvatarOneshot.id
+                ):  # The marker TouchButton marker was reached in the avatar oneshot. Now turn it on or off.
                     if visionplaying == 0:
                         self.OpenImager()
                     elif visionplaying == 1:
                         self.CloseImager()
-                
-                elif id == ImagerOpen.id: #the Imager Open animation sequences completed. Determine if we should loop or auto shut off.
+
+                elif (
+                    id == ImagerOpen.id
+                ):  # the Imager Open animation sequences completed. Determine if we should loop or auto shut off.
                     if PlayFull != 1:
-#                        PtDebugPrint("Closing. Playfull = ", PlayFull)
+                        #                        PtDebugPrint("Closing. Playfull = ", PlayFull)
                         self.CloseImager()
                     else:
                         # imager is done opening and it is starting to loop so enable the clickable
                         ActImager.enable()
-#                        PtDebugPrint("Will loop indefinitely. Playfull = ", PlayFull)
+                        #                        PtDebugPrint("Will loop indefinitely. Playfull = ", PlayFull)
                         ImagerLoop.run(self.key)
 
-                elif id == ImagerClose.id: # imager close anim is complete, reenable clickable.
+                elif (
+                    id == ImagerClose.id
+                ):  # imager close anim is complete, reenable clickable.
                     pass
-                    #ActImager.enable() ## gets enabled in MAX
-
+                    # ActImager.enable() ## gets enabled in MAX
 
     def OpenImager(self):
         global visionplaying
         global PlayFull
-        
+
         PtDebugPrint("clftYeeshaPageImager: Turning on YP Imager")
 
         # disable imager clickable so it can't be turned off while opening
@@ -209,12 +221,11 @@ class clftYeeshaPageImager(ptModifier):
 
         ImagerOpen.run(self.key)
         visionplaying = 1
-        
+
         if PlayFull == 1:
             ClickForGUI.enable()
 
-        
-    def CloseImager(self,ff=0):
+    def CloseImager(self, ff=0):
         global visionplaying
         PtDebugPrint("clftYeeshaPageImager: Turning off YP Imager")
 
@@ -225,4 +236,3 @@ class clftYeeshaPageImager(ptModifier):
         visionplaying = 0
 
         ClickForGUI.disable()
-

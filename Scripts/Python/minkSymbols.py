@@ -51,36 +51,37 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-regCave01               = ptAttribActivator(1, "reg: Cave 01")
-regCave02               = ptAttribActivator(2, "reg: Cave 02")
-regCave03               = ptAttribActivator(3, "reg: Cave 03")
-regCave04               = ptAttribActivator(4, "reg: Cave 04")
-regCave05               = ptAttribActivator(5, "reg: Cave 05")
+regCave01 = ptAttribActivator(1, "reg: Cave 01")
+regCave02 = ptAttribActivator(2, "reg: Cave 02")
+regCave03 = ptAttribActivator(3, "reg: Cave 03")
+regCave04 = ptAttribActivator(4, "reg: Cave 04")
+regCave05 = ptAttribActivator(5, "reg: Cave 05")
 
-respCave01              = ptAttribResponder(6, "resp: Cave 01")
-respCave02              = ptAttribResponder(7, "resp: Cave 02")
-respCave03              = ptAttribResponder(8, "resp: Cave 03")
-respCave04              = ptAttribResponder(9, "resp: Cave 04")
-respCave05              = ptAttribResponder(10, "resp: Cave 05")
+respCave01 = ptAttribResponder(6, "resp: Cave 01")
+respCave02 = ptAttribResponder(7, "resp: Cave 02")
+respCave03 = ptAttribResponder(8, "resp: Cave 03")
+respCave04 = ptAttribResponder(9, "resp: Cave 04")
+respCave05 = ptAttribResponder(10, "resp: Cave 05")
 
-respDisableCave01       = ptAttribResponder(11, "resp: Disable Cave 01")
-respDisableCave02       = ptAttribResponder(12, "resp: Disable Cave 02")
-respDisableCave03       = ptAttribResponder(13, "resp: Disable Cave 03")
-respDisableCave04       = ptAttribResponder(14, "resp: Disable Cave 04")
-respDisableCave05       = ptAttribResponder(15, "resp: Disable Cave 05")
+respDisableCave01 = ptAttribResponder(11, "resp: Disable Cave 01")
+respDisableCave02 = ptAttribResponder(12, "resp: Disable Cave 02")
+respDisableCave03 = ptAttribResponder(13, "resp: Disable Cave 03")
+respDisableCave04 = ptAttribResponder(14, "resp: Disable Cave 04")
+respDisableCave05 = ptAttribResponder(15, "resp: Disable Cave 05")
 
-respMusic               = ptAttribResponder(16, "resp: Music")
+respMusic = ptAttribResponder(16, "resp: Music")
 
 # define globals
 RegionToResponder = {
-                    regCave01.id   : respCave01,
-                    regCave02.id   : respCave02,
-                    regCave03.id   : respCave03,
-                    regCave04.id   : respCave04,
-                    regCave05.id   : respCave05
-                   }
+    regCave01.id: respCave01,
+    regCave02.id: respCave02,
+    regCave03.id: respCave03,
+    regCave04.id: respCave04,
+    regCave05.id: respCave05,
+}
 
-#====================================
+# ====================================
+
 
 class minkSymbols(ptResponder):
     ###########################
@@ -89,7 +90,7 @@ class minkSymbols(ptResponder):
         self.id = 5260
         version = 1
         self.version = version
-        PtDebugPrint("__init__minkSymbols v.", version,".0")
+        PtDebugPrint("__init__minkSymbols v.", version, ".0")
 
     ###########################
     def OnFirstUpdate(self):
@@ -97,7 +98,9 @@ class minkSymbols(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint("minkSymbols.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL")
+            PtDebugPrint(
+                "minkSymbols.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL"
+            )
 
         ageSDL.setFlags("minkSymbolPart01", 1, 1)
         ageSDL.setFlags("minkSymbolPart02", 1, 1)
@@ -167,36 +170,47 @@ class minkSymbols(ptResponder):
             PtDebugPrint("minkSymbols.OnFirstUpdate(): You already found piece 5")
             respDisableCave05.run(self.key, netPropagate=0)
 
-
-        #If someone links in and someone else already activated the symbol, we need to try syncing them
+        # If someone links in and someone else already activated the symbol, we need to try syncing them
         if ageSDL["minkSymbolTouch01"][0]:
-            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 1 was touched this session.")
+            PtDebugPrint(
+                "minkSymbols.OnFirstUpdate(): Piece 1 was touched this session."
+            )
             respCave01.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch02"][0]:
-            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 2 was touched this session.")
+            PtDebugPrint(
+                "minkSymbols.OnFirstUpdate(): Piece 2 was touched this session."
+            )
             respCave02.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch03"][0]:
-            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 3 was touched this session.")
+            PtDebugPrint(
+                "minkSymbols.OnFirstUpdate(): Piece 3 was touched this session."
+            )
             respCave03.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch04"][0]:
-            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 4 was touched this session.")
+            PtDebugPrint(
+                "minkSymbols.OnFirstUpdate(): Piece 4 was touched this session."
+            )
             respCave04.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch05"][0]:
-            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 5 was touched this session.")
+            PtDebugPrint(
+                "minkSymbols.OnFirstUpdate(): Piece 5 was touched this session."
+            )
             respCave05.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
     ###########################
-    def OnNotify(self,state,id,events):
-        PtDebugPrint("minkSymbols.OnNotify(): state=%s id=%d events=" % (state, id), events)
+    def OnNotify(self, state, id, events):
+        PtDebugPrint(
+            "minkSymbols.OnNotify(): state=%s id=%d events=" % (state, id), events
+        )
 
         if id in RegionToResponder.keys():
             PtDebugPrint("minkSymbols.OnNotify(): Region %d triggered" % (id))

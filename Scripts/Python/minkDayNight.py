@@ -52,13 +52,14 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 
 # define the attributes that will be entered in max
-respLinkIn              = ptAttribResponder(1, "resp: Link In Sound")
-respExcludeRegion       = ptAttribResponder(2, "resp: Exclude Regions", ["Clear", "Release"])
+respLinkIn = ptAttribResponder(1, "resp: Link In Sound")
+respExcludeRegion = ptAttribResponder(2, "resp: Exclude Regions", ["Clear", "Release"])
 
 # define globals
 HackIt = 1
 
-#====================================
+# ====================================
+
 
 class minkDayNight(ptResponder):
     ###########################
@@ -67,7 +68,7 @@ class minkDayNight(ptResponder):
         self.id = 5258
         version = 1
         self.version = version
-        PtDebugPrint("__init__minkDayNight v.", version,".0")
+        PtDebugPrint("__init__minkDayNight v.", version, ".0")
 
     ###########################
     def OnServerInitComplete(self):
@@ -76,7 +77,9 @@ class minkDayNight(ptResponder):
             ageSDL = PtGetAgeSDL()
             ageSDL["minkIsDayTime"][0]
         except:
-            PtDebugPrint("minkDayNight.OnServerInitComplete(): ERROR --- Cannot find Minkata age SDL")
+            PtDebugPrint(
+                "minkDayNight.OnServerInitComplete(): ERROR --- Cannot find Minkata age SDL"
+            )
             ageSDL["minkIsDayTime"] = (1,)
 
         ageSDL.setFlags("minkIsDayTime", 1, 1)
@@ -87,21 +90,28 @@ class minkDayNight(ptResponder):
             ageSDL["minkIsDayTime"] = (1,)
 
         if ageSDL["minkIsDayTime"][0]:
-            PtDebugPrint("minkDayNight.OnServerInitComplete(): It's Day Time, Loading Day Page")
+            PtDebugPrint(
+                "minkDayNight.OnServerInitComplete(): It's Day Time, Loading Day Page"
+            )
             PtPageInNode("minkExteriorDay")
         else:
-            PtDebugPrint("minkDayNight.OnServerInitComplete(): It's Night Time, Loading Night Page")
+            PtDebugPrint(
+                "minkDayNight.OnServerInitComplete(): It's Night Time, Loading Night Page"
+            )
             PtPageInNode("minkExteriorNight")
-        
+
     ###########################
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint("minkDayNight.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d" % (VARname,SDLname,tag,ageSDL[VARname][0],playerID))
+        PtDebugPrint(
+            "minkDayNight.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d"
+            % (VARname, SDLname, tag, ageSDL[VARname][0], playerID)
+        )
 
         if VARname == "minkIsDayTime" and not HackIt:
             PtDebugPrint("minkDayNight.OnSDLNotify(): SDL Updated, Fading Screen")
             PtDisableMovementKeys()
-            PtSendKIMessage(kDisableKIandBB,0)
+            PtSendKIMessage(kDisableKIandBB, 0)
             PtFadeOut(1.5, 1)
             PtAtTimeCallback(self.key, 1.75, 3)
             PtAtTimeCallback(self.key, 2.0, 1)
@@ -118,37 +128,55 @@ class minkDayNight(ptResponder):
                 PtPageInNode("minkExteriorNight")
 
         elif id == 2:
-            PtDebugPrint("minkDayNight.OnTimer(): Finished faux link, Re-enable controls")
+            PtDebugPrint(
+                "minkDayNight.OnTimer(): Finished faux link, Re-enable controls"
+            )
             PtEnableMovementKeys()
-            PtSendKIMessage(kEnableKIandBB,0)
+            PtSendKIMessage(kEnableKIandBB, 0)
 
         elif id == 3:
             PtFadeOut(0.0, 1)
             respExcludeRegion.run(self.key, state="Clear")
 
     ###########################
-    def OnPageLoad(self,what,who):
+    def OnPageLoad(self, what, who):
         global HackIt
-        PtDebugPrint("minkDayNight.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "minkDayNight.OnPageLoad(): what={} who={}".format(what, who),
+            level=kDebugDumpLevel,
+        )
 
         if what == kLoaded:
             if who in {"Minkata_District_minkExteriorDay", "Minkata_minkExteriorDay"}:
                 if HackIt:
                     HackIt = 0
                     return
-                PtDebugPrint("minkDayNight.OnPageLoad(): Day Page loaded, unloading Night")
+                PtDebugPrint(
+                    "minkDayNight.OnPageLoad(): Day Page loaded, unloading Night"
+                )
                 PtPageOutNode("minkExteriorNight")
-            elif who in {"Minkata_District_minkExteriorNight", "Minkata_minkExteriorNight"}:
+            elif who in {
+                "Minkata_District_minkExteriorNight",
+                "Minkata_minkExteriorNight",
+            }:
                 if HackIt:
                     HackIt = 0
                     return
-                PtDebugPrint("minkDayNight.OnPageLoad(): Night Page loaded, unloading Day")
+                PtDebugPrint(
+                    "minkDayNight.OnPageLoad(): Night Page loaded, unloading Day"
+                )
                 PtPageOutNode("minkExteriorDay")
-                
+
         elif what == kUnloaded:
-            if who in {"Minkata_District_minkExteriorDay", "Minkata_District_minkExteriorNight",
-                       "Minkata_minkExteriorDay", "Minkata_minkExteriorNight"}:
-                PtDebugPrint("minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in")
+            if who in {
+                "Minkata_District_minkExteriorDay",
+                "Minkata_District_minkExteriorNight",
+                "Minkata_minkExteriorDay",
+                "Minkata_minkExteriorNight",
+            }:
+                PtDebugPrint(
+                    "minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in"
+                )
                 PtFadeIn(1.5, 1)
                 respExcludeRegion.run(self.key, state="Release")
                 PtAtTimeCallback(self.key, 2, 2)

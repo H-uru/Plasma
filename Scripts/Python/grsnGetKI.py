@@ -50,24 +50,24 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
-#=============================================================
+# =============================================================
 # define the attributes that will be entered in max
-#=============================================================
-clkDispensor = ptAttribActivator(1,"The clickable to get KI")
+# =============================================================
+clkDispensor = ptAttribActivator(1, "The clickable to get KI")
 rspDispensor = ptAttribResponder(2, "The responder to get KI")
 
-#----------
+# ----------
 # constants
-#----------
+# ----------
 
-#====================================
+# ====================================
 class grsnGetKI(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 50130
         self.version = 1
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         # PtDebugPrint("grsnGetKI: Notify event state=%f,id=%d,events=" % (state,id),events)
         # is this our activator notifying us?
         if state and id == clkDispensor.id:
@@ -75,4 +75,4 @@ class grsnGetKI(ptModifier):
                 rspDispensor.run(self.key, events=events, netForce=1)
         if state and id == rspDispensor.id:
             if PtWasLocallyNotified(self.key):
-                PtSendKIMessageInt(kUpgradeKILevel,kNormalKI)
+                PtSendKIMessageInt(kUpgradeKILevel, kNormalKI)

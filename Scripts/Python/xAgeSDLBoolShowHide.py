@@ -49,6 +49,7 @@ showOnTrue = ptAttribBoolean(2, "Show on true", default=True)
 defaultValue = ptAttribBoolean(3, "Default setting", default=False)
 evalOnFirstUpdate = ptAttribBoolean(4, "Eval On First Update?", default=False)
 
+
 class xAgeSDLBoolShowHide(ptMultiModifier, object):
     """Shows or hides attached SceneObjects based on the value of an SDL boolean variable"""
 
@@ -65,7 +66,10 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
                 elif param.lower() in {"off", "0", "false"}:
                     self._DisableObject()
                 else:
-                    PtDebugPrint("xAgeSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s" % self.sceneobject.getName())
+                    PtDebugPrint(
+                        "xAgeSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s"
+                        % self.sceneobject.getName()
+                    )
 
     def OnFirstUpdate(self):
         if evalOnFirstUpdate.value:
@@ -81,26 +85,39 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
             self._Setup()
 
     def _DisableObject(self):
-        PtDebugPrint("xAgeSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName(), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xAgeSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..."
+            % self.sceneobject.getName(),
+            level=kDebugDumpLevel,
+        )
         self.sceneobject.draw.disable()
         self.sceneobject.physics.suppress(True)
 
     def _EnableObject(self):
-        PtDebugPrint("xAgeSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName(), level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xAgeSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..."
+            % self.sceneobject.getName(),
+            level=kDebugDumpLevel,
+        )
         self.sceneobject.draw.enable()
         self.sceneobject.physics.suppress(False)
 
     def _Setup(self):
         ageSDL = PtGetAgeSDL()
         if not ageSDL:
-            PtDebugPrint("xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend.")
-            self.sdl_value = defaultValue.value # start at default
+            PtDebugPrint(
+                "xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend."
+            )
+            self.sdl_value = defaultValue.value  # start at default
             return None
 
         if sdlName.value:
             # So, apparently, Cyan's artists like trailing whitespace...
             if sdlName.value.find(" ") != -1:
-                PtDebugPrint("xAgeSDLBoolShowHide._Setup():\tWARNING: %s's SDL variable '%s' has whitespace. Removing!" % (self.sceneobject.getName(), sdlName.value))
+                PtDebugPrint(
+                    "xAgeSDLBoolShowHide._Setup():\tWARNING: %s's SDL variable '%s' has whitespace. Removing!"
+                    % (self.sceneobject.getName(), sdlName.value)
+                )
                 sdlName.value = sdlName.value.replace(" ", "")
 
             ageSDL.setFlags(sdlName.value, 1, 1)
@@ -111,10 +128,13 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
             try:
                 self.sdl_value = ageSDL[sdlName.value][0]
             except LookupError:
-                PtDebugPrint("xAgeSDLBoolShowHide._Setup():\tVariable '%s' is invalid on object '%s'" % (sdlName.value, self.sceneobject.getName()))
+                PtDebugPrint(
+                    "xAgeSDLBoolShowHide._Setup():\tVariable '%s' is invalid on object '%s'"
+                    % (sdlName.value, self.sceneobject.getName())
+                )
                 self.sdl_value = defaultValue.value
         else:
-            self.sdl_value = defaultValue.value # start at default
+            self.sdl_value = defaultValue.value  # start at default
             raise RuntimeError("You forgot to set the SDL Variable Name!")
 
     def _set_sdl_value(self, value):
@@ -122,4 +142,5 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
             self._DisableObject()
         else:
             self._EnableObject()
+
     sdl_value = property(fset=_set_sdl_value)

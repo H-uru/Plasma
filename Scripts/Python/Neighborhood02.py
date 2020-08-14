@@ -52,8 +52,8 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 import time
 
-class Neighborhood02(ptResponder):
 
+class Neighborhood02(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5700
@@ -61,7 +61,8 @@ class Neighborhood02(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         pass
 
     def OnServerInitComplete(self):
@@ -77,7 +78,7 @@ class Neighborhood02(ptResponder):
             deviceNode = None
             deviceInbox = None
             playerlist = None
-            
+
             # find the device
             avault = ptAgeVault()
             adevicesfolder = avault.getAgeDevicesFolder()
@@ -121,16 +122,26 @@ class Neighborhood02(ptResponder):
                         playername = PtGetLocalPlayer().getPlayerName()
                         thetext = playerlist.getText()
                         if (thetext.count("\n") + 1) > 15:
-                            thetext = thetext[:thetext.rfind("\n")]
-                        thetext = currenttimestr + (" " * (30 - len(currenttimestr))) + playername + "\n" + thetext
+                            thetext = thetext[: thetext.rfind("\n")]
+                        thetext = (
+                            currenttimestr
+                            + (" " * (30 - len(currenttimestr)))
+                            + playername
+                            + "\n"
+                            + thetext
+                        )
                         playerlist.setText(thetext)
                         playerlist.save()
                     else:
                         currenttime = time.gmtime(PtGetDniTime())
                         currenttimestr = time.strftime("%m/%d/%Y %I:%M %p", currenttime)
                         playername = PtGetLocalPlayer().getPlayerName()
-                        thetext = currenttimestr + (" " * (30 - len(currenttimestr))) + playername
-                        
+                        thetext = (
+                            currenttimestr
+                            + (" " * (30 - len(currenttimestr)))
+                            + playername
+                        )
+
                         playerlist = ptVaultTextNoteNode(0)
                         playerlist.setTitle("Visitors, Visiteurs, Besucher")
                         playerlist.setText(thetext)

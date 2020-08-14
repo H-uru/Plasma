@@ -50,15 +50,15 @@ Author: Mark DeForest
 from Plasma import *
 from PlasmaTypes import *
 
-EventName = ptAttribString(1,"Event name")
-PageNames = ptAttribString(2,"Page node name(s) - comma separated")
-Responder = ptAttribResponder(3,"Responder to trigger",statelist=["true","false"])
-RunFalse = ptAttribBoolean(4,"When zero run State 2 on responder")
+EventName = ptAttribString(1, "Event name")
+PageNames = ptAttribString(2, "Page node name(s) - comma separated")
+Responder = ptAttribResponder(3, "Responder to trigger", statelist=["true", "false"])
+RunFalse = ptAttribBoolean(4, "When zero run State 2 on responder")
 
 AgeStartedIn = None
 
-class xEventTrigger(ptResponder):
 
+class xEventTrigger(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 202
@@ -68,16 +68,19 @@ class xEventTrigger(ptResponder):
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-    
+
     def OnServerInitComplete(self):
         if EventName.value:
             ageSDL = PtGetAgeSDL()
-            ageSDL.setNotify(self.key,EventName.value,0.0)
-        
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+            ageSDL.setNotify(self.key, EventName.value, 0.0)
+
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint("xEventTrigger: SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
+            PtDebugPrint(
+                "xEventTrigger: SDLNotify - name = %s, SDLname = %s"
+                % (VARname, SDLname)
+            )
             if VARname == EventName.value:
                 PtDebugPrint("xEventTrigger: value is %f" % ageSDL[EventName.value])
                 if ageSDL[EventName.value][0]:
@@ -88,7 +91,7 @@ class xEventTrigger(ptResponder):
                         for name in names:
                             PtPageInNode(name)
                     if Responder.value is not None:
-                        Responder.run(self.key,state="true")
+                        Responder.run(self.key, state="true")
                 else:
                     # PtDebugPrint("Event %s is false!" % (VARname))
                     # are we paging things in?
@@ -97,4 +100,4 @@ class xEventTrigger(ptResponder):
                         for name in names:
                             PtPageOutNode(name)
                     if RunFalse.value and Responder.value is not None:
-                        Responder.run(self.key,state="false")
+                        Responder.run(self.key, state="false")

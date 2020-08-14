@@ -52,12 +52,10 @@ from PlasmaTypes import *
 
 
 class EderTsogal(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5360
         self.version = 1
 
-
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         pass

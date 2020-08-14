@@ -53,7 +53,7 @@ from PlasmaTypes import *
 # ---------
 # max wiring
 # ---------
-act = ptAttribActivator(1,"Activator")
+act = ptAttribActivator(1, "Activator")
 resp = ptAttribNamedResponder(2, "Name of Responder")
 
 # ---------
@@ -68,10 +68,9 @@ class xTriggerNamedResponder(ptResponder):
         self.version = 1
         PtDebugPrint("__init__xTriggerNamedResponder v. %d" % self.version)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         if not state:
             return
 
         if id == act.id:
             resp.run(self.key, events=events)
-

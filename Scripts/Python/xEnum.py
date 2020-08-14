@@ -46,24 +46,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 import types, string
 
+
 class EnumException(Exception):
     def __init__(self, value):
         Exception.__init__(self, value)
 
+
 class Enum:
     def __init__(self, enumStr):
-        lookup = { }
+        lookup = {}
         i = 0
-        uniqueNames = [ ]
-        uniqueValues = [ ]
+        uniqueNames = []
+        uniqueValues = []
         enumList = enumStr.split(",")
         for x in enumList:
             x = x.split("=")
             if len(x) == 2:
-                x = ( x[0].strip(), int(x[1].strip()) )
+                x = (x[0].strip(), int(x[1].strip()))
             else:
                 x = x[0].strip()
-                
+
             if isinstance(x, tuple):
                 x, i = x
             if not isinstance(x, str):
@@ -80,7 +82,6 @@ class Enum:
             i = i + 1
 
         self.lookup = lookup
-
 
     def __getattr__(self, attr):
         if attr not in self.lookup:
@@ -102,6 +103,7 @@ class Enum:
         for key in self.lookup.keys():
             if self.lookup[key] == x:
                 return key
+
 
 if __name__ == "__main__":
     animal = Enum("Cow, Pig, Dog = 5, Cat, Lizard")

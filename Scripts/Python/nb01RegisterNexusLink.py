@@ -50,14 +50,15 @@ Author: Bill Slease
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
+
 # from PlasmaVaultConstants import *
 # from PlasmaNetConstants import *
 
 
 # define the attributes that will be entered in max
-actClick = ptAttribActivator(1,"Actvtr: click me")
-respOneshot = ptAttribResponder(2,"Rspndr: one shot")
-respKIGlow =  ptAttribResponder(3,"Rspndr: ki glow",netForce=1)
+actClick = ptAttribActivator(1, "Actvtr: click me")
+respOneshot = ptAttribResponder(2, "Rspndr: one shot")
+respKIGlow = ptAttribResponder(3, "Rspndr: ki glow", netForce=1)
 
 # globals
 boolClickerIsMe = False
@@ -67,6 +68,7 @@ hoodMgr = None
 kInviteTitle = ""
 kInviteMsg = ""
 
+
 class nb01RegisterNexusLink(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
@@ -74,63 +76,65 @@ class nb01RegisterNexusLink(ptModifier):
         version = 1
         self.version = version
         PtDebugPrint("__init__nb01RegisterNexusLink v.", version)
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         global boolClickerIsMe
         global myID
         global hoodID
         global hoodMgr
-        
+
         #######################
         ##
-        ##  stick your hand in the slot 
+        ##  stick your hand in the slot
         ##
         #######################
-        
-        if id==actClick.id:
+
+        if id == actClick.id:
             if not state:
                 return
-            respOneshot.run(self.key,events=events)
+            respOneshot.run(self.key, events=events)
             if PtWasLocallyNotified(self.key):
                 boolClickerIsMe = True
                 objAvatar = PtFindAvatar(events)
                 myID = PtGetClientIDFromAvatarKey(objAvatar.getKey())
             return
-            
+
         ##################################
         ##
         ##  figure out what to do with the hand in the slot
         ##
         ##################################
         # Udpated to do nothing. -eap.
-        
+
         if id == respOneshot.id and boolClickerIsMe:
             if not state:
                 return
-            boolClickerIsMe = False # done with this var, reset it
-            
+            boolClickerIsMe = False  # done with this var, reset it
+
             kiLevel = PtDetermineKILevel()
-            PtDebugPrint("nb01RegisterNexusLink.OnNotify:\tplayer ki level is",kiLevel)
+            PtDebugPrint("nb01RegisterNexusLink.OnNotify:\tplayer ki level is", kiLevel)
 
             # case 1:  player has no KI
             # ki slot doesn't respond, just return
-            
+
             if kiLevel < kNormalKI:
                 return
+
+
 #            else:
 #                respKIGlow.run(self.key)
-#                
+#
 #            # case 2: player is in their own hood
 #            # take no further action
-#            
+#
 #            linkMgr = ptNetLinkingMgr()
 #            if ( linkMgr.inMyNeighborhoodAge() ):
 #                PtDebugPrint("nb01RegisterNexusLink:\tYou are already a member of this Neighborhood.")
 #                return
-#                
+#
 #            # case 3: player not a member, has a KI, but has not been invited to join
 #            # player should become registered visitor of this hood
-#            
+#
 #            hoodMgr = ptNeighborhoodMgr()
 #            if hoodMgr is None:
 #                PtDebugPrint("nb01RegisterNexusLink:\thood manager type is None")

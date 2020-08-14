@@ -50,31 +50,30 @@ Event Manager interface for Teledahn Phase 0 content
 from Plasma import *
 from PlasmaTypes import *
 
-#globals
+# globals
 variable = None
 
-BooleanVARs = [
-    "tldnPumpSwitchFunc"
-    ]
+BooleanVARs = ["tldnPumpSwitchFunc"]
 
 AgeStartedIn = None
 
 
-#This identifies the maximum valid value for INT Variables
-#The range is always from 00 to the value specified here
+# This identifies the maximum valid value for INT Variables
+# The range is always from 00 to the value specified here
+
 
 def OutOfRange(VARname, NewSDLValue, myMaxINT):
-   PtDebugPrint("nb01EmgrPhase0.OutOfRange:\tERROR: Variable %s expected range from  0 - %d. Received value of %d" % (VARname,myMaxINT,NewSDLValue))
+    PtDebugPrint(
+        "nb01EmgrPhase0.OutOfRange:\tERROR: Variable %s expected range from  0 - %d. Received value of %d"
+        % (VARname, myMaxINT, NewSDLValue)
+    )
+
 
 # the expected range of these intergers is defined in the list above. Convention is  "variablename" + "MaxINT"
-StateVARs = {
-}
-
-
+StateVARs = {}
 
 
 class tldnEmgrPhase0(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5230
@@ -92,48 +91,61 @@ class tldnEmgrPhase0(ptResponder):
             ageSDL = PtGetAgeSDL()
             for variable in BooleanVARs:
                 # PtDebugPrint("Tying together BOOL variable", variable)
-                ageSDL.setNotify(self.key,variable,0.0)
+                ageSDL.setNotify(self.key, variable, 0.0)
                 self.IManageBOOLs(variable, "")
-                
+
             for variable in StateVARs:
                 # PtDebugPrint("Tying together INT", variable)
-                ageSDL.setNotify(self.key,variable,0.0)   
+                ageSDL.setNotify(self.key, variable, 0.0)
                 StateVARs[variable](variable, ageSDL[variable][0])
-       
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         global variable
         global sdlvalue
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint("tldnEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
-            
+            PtDebugPrint(
+                "tldnEmgrPhase0.SDLNotify - name = %s, SDLname = %s"
+                % (VARname, SDLname)
+            )
+
             if VARname in BooleanVARs:
-                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
-                self.IManageBOOLs(VARname,SDLname)
-    
+                PtDebugPrint(
+                    "tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
+                )
+                self.IManageBOOLs(VARname, SDLname)
+
             elif VARname in StateVARs.keys():
                 ageSDL = PtGetAgeSDL()
-                NewSDLValue = ageSDL[VARname][0] 
-                
+                NewSDLValue = ageSDL[VARname][0]
+
                 StateVARs[VARname](VARname, NewSDLValue)
 
             else:
-                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tERROR: Variable %s was not recognized as a Boolean, Performance, or State Variable. " % (VARname))
+                PtDebugPrint(
+                    "tldnEmgrPhase0.OnSDLNotify:\tERROR: Variable %s was not recognized as a Boolean, Performance, or State Variable. "
+                    % (VARname)
+                )
                 pass
 
-
-    def IManageBOOLs(self,VARname,SDLname):
+    def IManageBOOLs(self, VARname, SDLname):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if ageSDL[VARname][0] == 1: # are we paging things in?
-                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tPaging in room %s" % (VARname))
+            if ageSDL[VARname][0] == 1:  # are we paging things in?
+                PtDebugPrint(
+                    "tldnEmgrPhase0.OnSDLNotify:\tPaging in room %s" % (VARname)
+                )
                 PtPageInNode(VARname)
-            elif ageSDL[VARname][0] == 0:  #are we paging things out?
+            elif ageSDL[VARname][0] == 0:  # are we paging things out?
                 PtDebugPrint("variable = ", VARname)
-                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tPaging out room %s" % (VARname))
+                PtDebugPrint(
+                    "tldnEmgrPhase0.OnSDLNotify:\tPaging out room %s" % (VARname)
+                )
                 PtPageOutNode(VARname)
             else:
                 sdlvalue = ageSDL[VARname][0]
-                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tERROR: Variable %s had unexpected SDL value of %s" % (VARname,sdlvalue))
-
+                PtDebugPrint(
+                    "tldnEmgrPhase0.OnSDLNotify:\tERROR: Variable %s had unexpected SDL value of %s"
+                    % (VARname, sdlvalue)
+                )

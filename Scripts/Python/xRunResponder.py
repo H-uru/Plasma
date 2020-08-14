@@ -53,24 +53,23 @@ from Plasma import *
 from PlasmaTypes import *
 
 
-
 # define the attributes that will be entered in max
-message = ptAttribNamedActivator(1, "Activator Sending Message",netForce=1)
-resp = ptAttribResponder(3,"Responder")
+message = ptAttribNamedActivator(1, "Activator Sending Message", netForce=1)
+resp = ptAttribResponder(3, "Responder")
+
 
 class xRunResponder(ptResponder):
-
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
         self.id = 5117
-         
+
         version = 1
         self.version = version
         PtDebugPrint("__init__xRunResponder v.", version)
-       
-    def OnNotify(self,state,id,events):
 
-        if state and id==message.id:
+    def OnNotify(self, state, id, events):
+
+        if state and id == message.id:
             resp.run(self.key)
             PtDebugPrint("I just ran a responder. I'm cool.")

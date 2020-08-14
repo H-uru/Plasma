@@ -54,12 +54,12 @@ from PlasmaKITypes import *
 from xPsnlVaultSDL import *
 
 # define the attributes that will be entered in max
-clickable       = ptAttribActivator(1, "clickable")
-respRing        = ptAttribResponder(2, "resp: Ring")
+clickable = ptAttribActivator(1, "clickable")
+respRing = ptAttribResponder(2, "resp: Ring")
 
 # define global variables
 
-#====================================
+# ====================================
 class bhroBahroMink(ptResponder):
     ###########################
     def __init__(self):
@@ -77,7 +77,7 @@ class bhroBahroMink(ptResponder):
         global gAgeStartedIn
 
         gAgeStartedIn = PtGetAgeName()
-        PtSendKIMessage(kDisableYeeshaBook,0)
+        PtSendKIMessage(kDisableYeeshaBook, 0)
 
     ###########################
     def OnServerInitComplete(self):
@@ -85,12 +85,14 @@ class bhroBahroMink(ptResponder):
         PtDebugPrint(psnlSDL["psnlBahroWedge11"][0])
 
         if psnlSDL["psnlBahroWedge11"][0]:
-            PtDebugPrint("bhroBahroMink.OnServerInitComplete: You have the Minkata wedge, no need to display it.")
+            PtDebugPrint(
+                "bhroBahroMink.OnServerInitComplete: You have the Minkata wedge, no need to display it."
+            )
             respRing.run(self.key, fastforward=1)
 
     ###########################
-    def OnNotify(self,state,id,events):
-        #PtDebugPrint("bhroBahroMink.OnNotify: state=%s id=%d events=" % (state, id), events)
+    def OnNotify(self, state, id, events):
+        # PtDebugPrint("bhroBahroMink.OnNotify: state=%s id=%d events=" % (state, id), events)
 
         if id == clickable.id and not state:
             PtDebugPrint("bhroBahroMink.OnNotify: clicked Minkata Spiral")
@@ -98,5 +100,7 @@ class bhroBahroMink(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge11"][0]
             if not sdlVal:
-                PtDebugPrint("bhroBahroMink.OnNotify:  Turning wedge SDL of psnlBahroWedge11 to On")
+                PtDebugPrint(
+                    "bhroBahroMink.OnNotify:  Turning wedge SDL of psnlBahroWedge11 to On"
+                )
                 psnlSDL["psnlBahroWedge11"] = (1,)

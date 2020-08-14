@@ -56,7 +56,6 @@ from .xKIConstants import *
 
 ## Helper class for autocompletion in the KI.
 class AutocompleteState:
-
     def __init__(self):
 
         self.prefix = ""
@@ -73,7 +72,7 @@ class AutocompleteState:
         names = set()
 
         for name in nameList:
-            nospace = self.space_match.sub('', name.lower())
+            nospace = self.space_match.sub("", name.lower())
             names.add((nospace, name))
 
         text_lower = text.lower()
@@ -84,8 +83,9 @@ class AutocompleteState:
         for (word_start, word_end) in words:
             suffix = text_lower[word_start:word_end] + suffix
 
-            self.candidates = [normal for (nospace, normal) in names
-                               if nospace.startswith(suffix)]
+            self.candidates = [
+                normal for (nospace, normal) in names if nospace.startswith(suffix)
+            ]
 
             if self.candidates:
                 self.candidates.sort()
@@ -111,12 +111,11 @@ class AutocompleteState:
 
 ## A device manager.
 class Device:
-
     def __init__(self, name):
 
         try:
             idx = name.index("/type=")
-            self.type = name[idx + len("/type="):]
+            self.type = name[idx + len("/type=") :]
             name = name[:idx]
         except (LookupError, ValueError):
             # Assume that the default device is an imager.
@@ -140,7 +139,6 @@ class Device:
 
 ## A folder type for devices like the imager.
 class DeviceFolder:
-
     def __init__(self, name):
 
         self.name = name
@@ -181,7 +179,6 @@ class DeviceFolder:
 
 ## A KI Folder holder.
 class KIFolder:
-
     def __init__(self, folderType):
 
         self.type = folderType
@@ -190,10 +187,10 @@ class KIFolder:
 
 ## A simple class for a separator folder.
 class SeparatorFolder:
-
     def __init__(self, name):
 
         self.name = name
+
 
 ## Helper function to prioritize online players in lists.
 def CMPplayerOnline(playerA, playerB):
@@ -223,6 +220,7 @@ def CMPNodeDate(nodeA, nodeB):
             return 1
     return 0
 
+
 ## Replace the Age's name as is appropriate.
 # It accepts as a parameter a name, unlike GetAgeName.
 def FilterAgeName(ageName):
@@ -244,7 +242,12 @@ def FilterAgeName(ageName):
     # Find the appropriate display name.
     if ageName == "???" or ageName == "BahroCave":
         sdl = xPsnlVaultSDL()
-        if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
+        if (
+            sdl["TeledahnPoleState"][0] > 5
+            or sdl["KadishPoleState"][0] > 5
+            or sdl["GardenPoleState"][0] > 5
+            or sdl["GarrisonPoleState"][0] > 5
+        ):
             ageName = "D'ni-Rudenna"
         else:
             ageName = "Unknown"
@@ -259,6 +262,7 @@ def FilterAgeName(ageName):
     ageName = ageName.replace("(null)", "").strip()
     return ageName
 
+
 def FilterPlayerInfoList(playerInfoList):
     """Removes yourself from a list of player info nodes"""
     myID = PtGetLocalPlayer().getPlayerID()
@@ -268,6 +272,7 @@ def FilterPlayerInfoList(playerInfoList):
             continue
         if playerInfo.playerGetID() == myID:
             del playerInfoList[i]
+
 
 ## Returns an Age's name the way a player should see it.
 # This display is used in the top-right corner of the BigKI.
@@ -282,7 +287,12 @@ def GetAgeName(ageInfo=None):
 
     if ageInfo.getAgeFilename() == "BahroCave":
         sdl = xPsnlVaultSDL()
-        if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
+        if (
+            sdl["TeledahnPoleState"][0] > 5
+            or sdl["KadishPoleState"][0] > 5
+            or sdl["GardenPoleState"][0] > 5
+            or sdl["GarrisonPoleState"][0] > 5
+        ):
             return "D'ni-Rudenna"
 
     if ageInfo.getAgeFilename() in kAges.Hide:
@@ -294,14 +304,19 @@ def GetAgeName(ageInfo=None):
     localizeName = ageInfo.getDisplayName()
     return FilterAgeName(xLocTools.LocalizeAgeName(localizeName))
 
+
 ## Find the player's neighborhood.
 def GetNeighborhood():
 
     try:
         return ptVault().getLinkToMyNeighborhood().getAgeInfo()
     except AttributeError:
-        PtDebugPrint("xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xKIHelpers.GetNeighborhood(): Neighborhood not found.",
+            level=kDebugDumpLevel,
+        )
         return None
+
 
 ## Find the player's neighbors.
 def GetNeighbors():
@@ -309,8 +324,12 @@ def GetNeighbors():
     try:
         return GetNeighborhood().getAgeOwnersFolder()
     except AttributeError:
-        PtDebugPrint("xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xKIHelpers.GetNeighbors(): List of neighbors not found.",
+            level=kDebugDumpLevel,
+        )
         return None
+
 
 ## Sends a notification message to a script.
 def SendNote(key, script, name, varValue=1.0, net=False):

@@ -54,23 +54,39 @@ from PlasmaTypes import *
 import random
 
 # define the attributes that will be entered in max
-UrwinMasterAnim         = ptAttribAnimation(1, "Urwin Master Anim", netForce=1)
+UrwinMasterAnim = ptAttribAnimation(1, "Urwin Master Anim", netForce=1)
 
-respUrwinVocalize       = ptAttribResponder(2, "resp: Urwin Vocalize")
-respUrwinIdle           = ptAttribResponder(3, "resp: Urwin Idles")
-respUrwinIdleToWalk     = ptAttribResponder(4, "resp: Urwin Idle To Walk")
-respUrwinWalkLoop       = ptAttribResponder(5, "resp: Urwin Walk Loop")
-respUrwinWalkToIdle     = ptAttribResponder(6, "resp: Urwin Walk To Idle")
-respUrwinEat            = ptAttribResponder(7, "resp: Urwin Eats")
+respUrwinVocalize = ptAttribResponder(2, "resp: Urwin Vocalize")
+respUrwinIdle = ptAttribResponder(3, "resp: Urwin Idles")
+respUrwinIdleToWalk = ptAttribResponder(4, "resp: Urwin Idle To Walk")
+respUrwinWalkLoop = ptAttribResponder(5, "resp: Urwin Walk Loop")
+respUrwinWalkToIdle = ptAttribResponder(6, "resp: Urwin Walk To Idle")
+respUrwinEat = ptAttribResponder(7, "resp: Urwin Eats")
 
-respUrwinSfx            = ptAttribNamedResponder(8, "resp: Urwin SFX", ['Eat','Idle','IdleToWalk','WalkLoop','WalkToIdle','Vocalize','Distance','Appear'], netForce=1)
+respUrwinSfx = ptAttribNamedResponder(
+    8,
+    "resp: Urwin SFX",
+    [
+        "Eat",
+        "Idle",
+        "IdleToWalk",
+        "WalkLoop",
+        "WalkToIdle",
+        "Vocalize",
+        "Distance",
+        "Appear",
+    ],
+    netForce=1,
+)
 
-actUrwinPathEnd         = ptAttribActivator(9, "act: Urwin Path End")
+actUrwinPathEnd = ptAttribActivator(9, "act: Urwin Path End")
 
 # define globals
-kDayLengthInSeconds = 56585 # Length of a Negilahn day in seconds Must match value in Negilahn.age file
-kMinimumTimeBetweenSpawns = 3600 # 1 hour
-kMaximumTimeBetweenSpawns = 25200 # 7 hours
+kDayLengthInSeconds = (
+    56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
+)
+kMinimumTimeBetweenSpawns = 3600  # 1 hour
+kMaximumTimeBetweenSpawns = 25200  # 7 hours
 # We need the first random spawn time in the first 5 hours of the day
 # which is in the first 44.5 percent of the day. So we're
 # generating a number from 0 to 445 and later we divide by 1000 to get
@@ -83,6 +99,7 @@ maxsteps = 10
 StepsToTake = 0
 stackList = []
 
+
 class nglnUrwinBrain(ptResponder):
     ############################
     def __init__(self):
@@ -90,7 +107,7 @@ class nglnUrwinBrain(ptResponder):
         self.id = 5244
         version = 4
         self.version = version
-        PtDebugPrint("__init__nglnUrwinBrain v.", version,".0")
+        PtDebugPrint("__init__nglnUrwinBrain v.", version, ".0")
         random.seed()
 
     ############################
@@ -117,33 +134,46 @@ class nglnUrwinBrain(ptResponder):
         lastDay = int(ageSDL["UrwinLastUpdated"][0] / kDayLengthInSeconds)
 
         if (thisDay - lastDay) > 0:
-            PtDebugPrint("nglnUrwinBrain: It's been at least a day since the last update, running new numbers now.")
+            PtDebugPrint(
+                "nglnUrwinBrain: It's been at least a day since the last update, running new numbers now."
+            )
             self.InitNewSDLVars()
         else:
-            PtDebugPrint("nglnUrwinBrain: It's been less than a day since the last update, doing nothing")
+            PtDebugPrint(
+                "nglnUrwinBrain: It's been less than a day since the last update, doing nothing"
+            )
             self.SetUrwinTimers()
 
         if not len(PtGetPlayerList()):
             UrwinMasterAnim.animation.skipToBegin()
- 
+
     ###########################
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if VARname == "UrwinSpawnTimes":
             self.SetUrwinTimers()
 
-        #Had to wire this to stop SFX if the lights go off....
+        # Had to wire this to stop SFX if the lights go off....
         elif VARname == "nglnPodLights":
             ageSDL = PtGetAgeSDL()
             if not ageSDL[VARname][0] and ageSDL["UrwinOnTheProwl"][0]:
                 respUrwinSfx.run(self.key, state="Idle")
 
-   ############################
-    def OnNotify(self,state,id,events):
+    ############################
+    def OnNotify(self, state, id, events):
         global StepsToTake
         global stackList
 
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint("nglnUrwinBrain.OnNotify:  state=%f id=%d owned=%s prowl=%s events=" % (state,id,str(self.sceneobject.isLocallyOwned()),str(ageSDL["UrwinOnTheProwl"][0])),events)
+        PtDebugPrint(
+            "nglnUrwinBrain.OnNotify:  state=%f id=%d owned=%s prowl=%s events="
+            % (
+                state,
+                id,
+                str(self.sceneobject.isLocallyOwned()),
+                str(ageSDL["UrwinOnTheProwl"][0]),
+            ),
+            events,
+        )
 
         if id == (-1):
             PtDebugPrint("Need to store event: %s" % (events[0][1]))
@@ -155,17 +185,23 @@ class nglnUrwinBrain(ptResponder):
                 PtDebugPrint("Playing command: %s" % (code))
                 self.ExecCode(code)
 
-        elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
+        elif (
+            state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]
+        ):
             if id == respUrwinSfx.id:
-                PtDebugPrint("Callback was from Appearance SFX, and I own the age, so start walking")
+                PtDebugPrint(
+                    "Callback was from Appearance SFX, and I own the age, so start walking"
+                )
                 self.StartToWalk()
 
             else:
-                PtDebugPrint("Callback was from responder, and I own the age, so Logic Time")
+                PtDebugPrint(
+                    "Callback was from responder, and I own the age, so Logic Time"
+                )
                 old = stackList.pop(0)
                 PtDebugPrint("Popping off: %s" % (old))
                 boolBatteryChargedAndOn = ageSDL["nglnPodLights"][0]
-                
+
                 if id == respUrwinIdleToWalk.id:
                     self.StartToWalk()
 
@@ -173,8 +209,10 @@ class nglnUrwinBrain(ptResponder):
                     StepsToTake = StepsToTake - 1
                     if StepsToTake:
                         # 90% chance of continuing walk loop
-                        if random.randint(0,9):
-                            PtDebugPrint("Urwin will take %d more steps..." % (StepsToTake))
+                        if random.randint(0, 9):
+                            PtDebugPrint(
+                                "Urwin will take %d more steps..." % (StepsToTake)
+                            )
                             self.SendNote("respUrwinWalkLoop")
                             if boolBatteryChargedAndOn:
                                 respUrwinSfx.run(self.key, state="WalkLoop")
@@ -202,7 +240,7 @@ class nglnUrwinBrain(ptResponder):
 
                 elif id == respUrwinIdle.id or id == respUrwinVocalize.id:
                     # 66% chance of picking another random behaviour
-                    if random.randint(0,2):
+                    if random.randint(0, 2):
                         self.RandomBehavior()
                     # 33% to go back to walking
                     else:
@@ -220,8 +258,10 @@ class nglnUrwinBrain(ptResponder):
                     if boolBatteryChargedAndOn:
                         respUrwinSfx.run(self.key, state="Distance")
 
-        elif id in range(2,8) and not self.sceneobject.isLocallyOwned():
-            PtDebugPrint("Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list")
+        elif id in range(2, 8) and not self.sceneobject.isLocallyOwned():
+            PtDebugPrint(
+                "Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list"
+            )
             old = stackList.pop(0)
             PtDebugPrint("Popping off: %s" % (old))
             if len(stackList):
@@ -240,7 +280,7 @@ class nglnUrwinBrain(ptResponder):
         boolBatteryChargedAndOn = ageSDL["nglnPodLights"][0]
 
         # 66% chance of idling
-        if random.randint(0,2):
+        if random.randint(0, 2):
             PtDebugPrint("Urwin is being lazy and just idling")
             self.SendNote("respUrwinIdle")
             if boolBatteryChargedAndOn:
@@ -268,7 +308,7 @@ class nglnUrwinBrain(ptResponder):
             respUrwinSfx.run(self.key, state="WalkLoop")
 
     ############################
-    def OnTimer(self,TimerID):
+    def OnTimer(self, TimerID):
         global UrwinOnTheProwl
 
         ageSDL = PtGetAgeSDL()
@@ -289,20 +329,20 @@ class nglnUrwinBrain(ptResponder):
 
     ###########################
     def SendNote(self, ExtraInfo):
-        #pythonBox = PtFindSceneobject("Dummy04", "Negilahn")
-        #pmlist = pythonBox.getPythonMods()
-        #for pm in pmlist:
+        # pythonBox = PtFindSceneobject("Dummy04", "Negilahn")
+        # pmlist = pythonBox.getPythonMods()
+        # for pm in pmlist:
         notify = ptNotify(self.key)
         notify.clearReceivers()
-        
-        #notify.addReceiver(pm)
+
+        # notify.addReceiver(pm)
         notify.addReceiver(self.key)
-        
+
         notify.netPropagate(1)
         notify.netForce(1)
         notify.setActivate(1.0)
 
-        notify.addVarNumber(str(ExtraInfo),1.0)
+        notify.addVarNumber(str(ExtraInfo), 1.0)
 
         notify.send()
 
@@ -312,35 +352,47 @@ class nglnUrwinBrain(ptResponder):
 
         ageSDL["UrwinLastUpdated"] = (PtGetDniTime(),)
 
-        beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
+        beginningOfToday = PtGetDniTime() - int(
+            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
+        )
         endOfToday = int(kDayLengthInSeconds / 2) + beginningOfToday
-        #PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
+        # PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
 
         # We need a random times in the first 5 hours of the day
         # which is in the first 44.5 percent of the day. So we're
         # generating a number from 0 to 445 and dividing by 1000 to get
         # something roughly in that timeframe.
-        randnum = float(random.randint(0,kFirstMorningSpawn))
+        randnum = float(random.randint(0, kFirstMorningSpawn))
         firstTime = int((randnum / 1000.0) * kDayLengthInSeconds) + beginningOfToday
         PtDebugPrint("nglnUrwinBrain: Generated a valid spawn time: %d" % (firstTime))
         spawnTimes = [firstTime]
 
         while isinstance(spawnTimes[-1], int):
-            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
+            randnum = random.randint(
+                kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns
+            )
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
-                PtDebugPrint("nglnUrwinBrain: Generated a valid spawn time: %d" % (newTime))
+                PtDebugPrint(
+                    "nglnUrwinBrain: Generated a valid spawn time: %d" % (newTime)
+                )
                 spawnTimes.append(newTime)
             else:
-                PtDebugPrint("nglnUrwinBrain: Generated a spawn time after dusk, exiting loop: %d" % (newTime))
+                PtDebugPrint(
+                    "nglnUrwinBrain: Generated a spawn time after dusk, exiting loop: %d"
+                    % (newTime)
+                )
                 break
         else:
-            PtDebugPrint("nglnUrwinBrain:ERROR---Tried to add a spawn time that's not a number: " , spawnTimes)
+            PtDebugPrint(
+                "nglnUrwinBrain:ERROR---Tried to add a spawn time that's not a number: ",
+                spawnTimes,
+            )
             spawnTimes = [0]
 
         while len(spawnTimes) < 20:
             spawnTimes.append(0)
-        	
+
         ageSDL["UrwinSpawnTimes"] = tuple(spawnTimes)
 
     ###########################
@@ -351,15 +403,26 @@ class nglnUrwinBrain(ptResponder):
             for timer in ageSDL["UrwinSpawnTimes"]:
                 if timer:
                     timeTillSpawn = timer - PtGetDniTime()
-                    PtDebugPrint("timer: %d    time: %d    timeTillSpawn: %d" % (timer,PtGetDniTime(),timeTillSpawn))
+                    PtDebugPrint(
+                        "timer: %d    time: %d    timeTillSpawn: %d"
+                        % (timer, PtGetDniTime(), timeTillSpawn)
+                    )
                     if timeTillSpawn > 0:
-                        PtDebugPrint("nglnUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn))
+                        PtDebugPrint(
+                            "nglnUrwinBrain: Setting timer for %d seconds"
+                            % (timeTillSpawn)
+                        )
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
             # precision error FTW!
-            timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
-            timeLeftToday += 1 # because we want it to go off right AFTER the day flips
-            PtDebugPrint("nglnUrwinBrain: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
+            timeLeftToday = kDayLengthInSeconds - int(
+                PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
+            )
+            timeLeftToday += 1  # because we want it to go off right AFTER the day flips
+            PtDebugPrint(
+                "nglnUrwinBrain: Setting EndOfDay timer for %d seconds"
+                % (timeLeftToday)
+            )
             PtAtTimeCallback(self.key, timeLeftToday, 2)
         else:
             PtDebugPrint("nglnUrwinBrain: Timer array was empty!")
@@ -375,15 +438,15 @@ class nglnUrwinBrain(ptResponder):
             if self.sceneobject.isLocallyOwned():
                 PtDebugPrint("nglnUrwinBrain.OnBackdoorMsg: Backdoor!")
                 if param == "walk":
-                    ageSDL["UrwinOnTheProwl"] = (1,)                    
+                    ageSDL["UrwinOnTheProwl"] = (1,)
                     if ageSDL["nglnPodLights"][0]:
                         PtAtTimeCallback(self.key, 1, 1)
                     else:
                         self.StartToWalk()
 
                 elif param == "restore":
-                    kMinimumTimeBetweenSpawns = 3600 # 1 hour
-                    kMaximumTimeBetweenSpawns = 25200 # 7 hours
+                    kMinimumTimeBetweenSpawns = 3600  # 1 hour
+                    kMaximumTimeBetweenSpawns = 25200  # 7 hours
                     kFirstMorningSpawn = 445
                     self.InitNewSDLVars()
 
@@ -409,5 +472,7 @@ class nglnUrwinBrain(ptResponder):
         elif code == "respUrwinVocalize":
             respUrwinVocalize.run(self.key)
         else:
-            PtDebugPrint("nglnUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code))
+            PtDebugPrint(
+                "nglnUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            )
             stackList.pop(0)

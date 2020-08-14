@@ -50,61 +50,67 @@ Event Manager interface for the City Phase 0 content
 from Plasma import *
 from PlasmaTypes import *
 
-#globals
+# globals
 variable = None
 
-BooleanVARs = [
-    ]
+BooleanVARs = []
 
 AgeStartedIn = None
 
 ###########################################
 # These functions deal with the specific "State" (i.e. Non-boolean) cases. Each is of type INT in the neighborhood.sdl file
 #
-#Note that the following functions have to be outside of the main class 
-#in order for the dictionary StateVARs (below) to point to the proper values
+# Note that the following functions have to be outside of the main class
+# in order for the dictionary StateVARs (below) to point to the proper values
 ###########################################
 
-#This identifies the maximum valid value for INT Variables
-#The range is always from 00 to the value specified here
+# This identifies the maximum valid value for INT Variables
+# The range is always from 00 to the value specified here
 islmDRCStageStateMaxINT = 2
 
 
 def OutOfRange(VARname, NewSDLValue, myMaxINT):
-   PtDebugPrint("islmEmgrPhase0.OutOfRange:\tERROR: Variable %s expected range from  0 - %d. Received value of %d" % (VARname,NewSDLValue,myMaxINT))
+    PtDebugPrint(
+        "islmEmgrPhase0.OutOfRange:\tERROR: Variable %s expected range from  0 - %d. Received value of %d"
+        % (VARname, NewSDLValue, myMaxINT)
+    )
 
 
 def DRCStageState(VARname, NewSDLValue):
-    
+
     if NewSDLValue > islmDRCStageStateMaxINT:
         OutOfRange(VARname, NewSDLValue, islmDRCStageStateMaxINT)
-        
+
     elif NewSDLValue == 0:
         PtDebugPrint("islmEmgrPhase0.DRCStageState: paging out DRC stage")
         PtPageOutNode("islmDRCStageState01")
         PtPageOutNode("islmDRCStageState02")
-        
+
     elif NewSDLValue == 1:
         PtDebugPrint("islmEmgrPhase0.DRCStageState: paging in DRC stage")
         PtPageOutNode("islmDRCStageState02")
         PtPageInNode("islmDRCStageState01")
-        
+
     elif NewSDLValue == 2:
         PtDebugPrint("islmEmgrPhase0.DRCStageState: paging in deco DRC stage")
         PtPageInNode("islmDRCStageState01")
         PtPageInNode("islmDRCStageState02")
-        
-    else:
-        PtDebugPrint("islmEmgrPhase0.DRCStageState: \tERROR: Unexpected value. VARname: %s NewSDLValue: %s" % (VARname, NewSDLValue))
 
-StateVARs = {'islmDRCStageState' : DRCStageState}
+    else:
+        PtDebugPrint(
+            "islmEmgrPhase0.DRCStageState: \tERROR: Unexpected value. VARname: %s NewSDLValue: %s"
+            % (VARname, NewSDLValue)
+        )
+
+
+StateVARs = {"islmDRCStageState": DRCStageState}
+
 
 class islmEmgrPhase0(ptResponder):
-
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5223
-        
+
         version = 2
         self.version = version
         PtDebugPrint("__init__islmEmgrPhase0 v.", version)
@@ -116,54 +122,63 @@ class islmEmgrPhase0(ptResponder):
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            
+
             for variable in BooleanVARs:
                 PtDebugPrint("tying together", variable)
-                ageSDL.setNotify(self.key,variable,0.0)
+                ageSDL.setNotify(self.key, variable, 0.0)
                 self.IManageBOOLs(variable, "")
-                
+
             for variable in StateVARs.keys():
                 PtDebugPrint("setting notify on %s" % variable)
-                ageSDL.setNotify(self.key,variable,0.0)
-                StateVARs[variable](variable,ageSDL[variable][0])
-            
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+                ageSDL.setNotify(self.key, variable, 0.0)
+                StateVARs[variable](variable, ageSDL[variable][0])
+
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         global variable
         global sdlvalue
-        
+
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint("islmEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
-            
+            PtDebugPrint(
+                "islmEmgrPhase0.SDLNotify - name = %s, SDLname = %s"
+                % (VARname, SDLname)
+            )
+
             if VARname in BooleanVARs:
-                PtDebugPrint("islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
-                self.IManageBOOLs(VARname,SDLname)
-                
+                PtDebugPrint(
+                    "islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
+                )
+                self.IManageBOOLs(VARname, SDLname)
+
             elif VARname in StateVARs.keys():
-                PtDebugPrint("islmEmgrPhas0.OnSDLNotify : %s is a STATE variable" % (VARname))
-                
+                PtDebugPrint(
+                    "islmEmgrPhas0.OnSDLNotify : %s is a STATE variable" % (VARname)
+                )
+
                 NewSDLValue = ageSDL[VARname][0]
-                
+
                 StateVARs[VARname](VARname, NewSDLValue)
-                
+
             else:
-                PtDebugPrint("islmEmgrPhase0.OnSDLNotify:\tERROR: Variable %s was not recognized as a Boolean, Performance, or State Variable. " % (VARname))
+                PtDebugPrint(
+                    "islmEmgrPhase0.OnSDLNotify:\tERROR: Variable %s was not recognized as a Boolean, Performance, or State Variable. "
+                    % (VARname)
+                )
                 pass
 
-
-    def IManageBOOLs(self,VARname,SDLname):
+    def IManageBOOLs(self, VARname, SDLname):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if ageSDL[VARname][0] == 1: # are we paging things in?
+            if ageSDL[VARname][0] == 1:  # are we paging things in?
                 PtDebugPrint("islmEmgrPhase0.OnSDLNotify:\tPaging in room ", VARname)
                 PtPageInNode(VARname)
-            elif ageSDL[VARname][0] == 0:  #are we paging things out?
+            elif ageSDL[VARname][0] == 0:  # are we paging things out?
                 PtDebugPrint("variable = ", VARname)
                 PtDebugPrint("islmEmgrPhase0.OnSDLNotify:\tPaging out room ", VARname)
                 PtPageOutNode(VARname)
             else:
                 sdlvalue = ageSDL[VARname][0]
-                PtDebugPrint("islmEmgrPhase0.OnSDLNotify:\tERROR: Variable %s had unexpected SDL value of %s" % (VARname,sdlvalue))
-
-
-
+                PtDebugPrint(
+                    "islmEmgrPhase0.OnSDLNotify:\tERROR: Variable %s had unexpected SDL value of %s"
+                    % (VARname, sdlvalue)
+                )

@@ -53,13 +53,13 @@ from Plasma import *
 from PlasmaTypes import *
 from xPsnlVaultSDL import *
 
-stringVarName = ptAttribString(1,"Psnl SDL Var Name")
-boolShowOnTrue = ptAttribBoolean(2,"Show on true",1)
-boolDefault = ptAttribBoolean(3,"Default setting",0)
-boolFirstUpdate = ptAttribBoolean(4,"Eval On First Update?",0)
+stringVarName = ptAttribString(1, "Psnl SDL Var Name")
+boolShowOnTrue = ptAttribBoolean(2, "Show on true", 1)
+boolDefault = ptAttribBoolean(3, "Default setting", 0)
+boolFirstUpdate = ptAttribBoolean(4, "Eval On First Update?", 0)
+
 
 class psnlVaultSDLBoolShowHide(ptMultiModifier):
-
     def __init__(self):
         ptMultiModifier.__init__(self)
         self.id = 5351
@@ -67,7 +67,10 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
 
     def OnFirstUpdate(self):
         if not stringVarName.value:
-            PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: psnlVaultSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name on %s"
+                % self.sceneobject.getName()
+            )
             pass
 
         if boolFirstUpdate.value:
@@ -79,7 +82,10 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
                     else:
                         self.DisableObject()
                 else:
-                    PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+                    PtDebugPrint(
+                        "ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s"
+                        % self.sceneobject.getName()
+                    )
                     self.runDefault()
             except:
                 self.runDefault()
@@ -94,7 +100,10 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
                     else:
                         self.DisableObject()
                 else:
-                    PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+                    PtDebugPrint(
+                        "ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s"
+                        % self.sceneobject.getName()
+                    )
                     self.runDefault()
             except:
                 self.runDefault()
@@ -106,27 +115,36 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
         else:
             self.DisableObject()
 
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):        
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if VARname != stringVarName.value:
             return
         ageSDL = xPsnlVaultSDL(1)
-        #PtDebugPrint("Received SDLNotify on %s" % self.sceneobject.getName())
+        # PtDebugPrint("Received SDLNotify on %s" % self.sceneobject.getName())
         try:
             if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                 self.EnableObject()
             else:
                 self.DisableObject()
         except:
-            PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR reading age SDL on %s" % self.sceneobject.getName())
+            PtDebugPrint(
+                "ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR reading age SDL on %s"
+                % self.sceneobject.getName()
+            )
             pass
 
     def EnableObject(self):
-        PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
+        PtDebugPrint(
+            "DEBUG: psnlVaultSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..."
+            % self.sceneobject.getName()
+        )
         self.sceneobject.draw.enable()
         self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
-        PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
+        PtDebugPrint(
+            "DEBUG: psnlVaultSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..."
+            % self.sceneobject.getName()
+        )
         self.sceneobject.draw.disable()
         self.sceneobject.physics.suppress(True)
 
@@ -138,5 +156,8 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
                 elif param.lower() in ("off", "0", "false"):
                     self.DisableObject()
                 else:
-                    PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s" % self.sceneobject.getName())
+                    PtDebugPrint(
+                        "DEBUG: psnlVaultSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s"
+                        % self.sceneobject.getName()
+                    )
                     pass

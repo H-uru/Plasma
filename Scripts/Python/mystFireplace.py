@@ -58,10 +58,12 @@ respPressButton = ptAttribResponder(2, "Fireplace button resp")
 respFPDoor = ptAttribResponder(3, "FP door open close", ["open", "close"])
 respFPRotate = ptAttribResponder(4, "FP rotate", ["back", "front"])
 
-respResetPanel = ptAttribResponder(5, "Reset panel", byObject = 1)
+respResetPanel = ptAttribResponder(5, "Reset panel", byObject=1)
 
-actPanelButtons = ptAttribActivator(6, "Panel buttons", byObject = 1)
-respMorphButtons = ptAttribResponder(7, "Morph button resp", ["press", "depress"], byObject = 1)
+actPanelButtons = ptAttribActivator(6, "Panel buttons", byObject=1)
+respMorphButtons = ptAttribResponder(
+    7, "Morph button resp", ["press", "depress"], byObject=1
+)
 
 strBookSDL = ptAttribString(8, "Book SDL Var")
 strYeeshaPageSDL = ptAttribString(9, "Yeesha page SDL Var")
@@ -83,22 +85,90 @@ camPanelView = ptAttribSceneobject(20, "Panel camera")
 respMovePanelEntry = ptAttribResponder(21, "Move panel entry", ["up", "down"])
 
 # globals
-#==============
+# ==============
 CheckedButtons = []
 InPanelView = 0
 IgnorePanelClick = []
 
-#YeeshaPageSolution = ["A02"]
-#EggSolution = ["A03"]
-#KveerSolution = ["A01"]
+# YeeshaPageSolution = ["A02"]
+# EggSolution = ["A03"]
+# KveerSolution = ["A01"]
 
-YeeshaPageSolution = ["A01", "A03", "A04", "A05", "A06", "B01", "B02", "B05", "B06", "C02", "C03", "C06", "D04", "D06", "E02", "E05", "E06", "F05", "G01", "G02", "G03", "G04", "G06", "H01", "H02", "H03", "H04"]
-EggSolution = ["A03", "A04", "B02", "B05", "C01", "C03", "C04", "C06", "D01", "D03", "D04", "D06", "E01", "E06", "F02", "F05", "G02", "G05", "H03", "H04"]
-KveerSolution = ["A01", "A05", "B02", "B05", "C01", "C04", "D03", "D06", "E03", "E05", "F01", "F03", "G01", "G03", "G05", "H02", "H05"]
+YeeshaPageSolution = [
+    "A01",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "B01",
+    "B02",
+    "B05",
+    "B06",
+    "C02",
+    "C03",
+    "C06",
+    "D04",
+    "D06",
+    "E02",
+    "E05",
+    "E06",
+    "F05",
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G06",
+    "H01",
+    "H02",
+    "H03",
+    "H04",
+]
+EggSolution = [
+    "A03",
+    "A04",
+    "B02",
+    "B05",
+    "C01",
+    "C03",
+    "C04",
+    "C06",
+    "D01",
+    "D03",
+    "D04",
+    "D06",
+    "E01",
+    "E06",
+    "F02",
+    "F05",
+    "G02",
+    "G05",
+    "H03",
+    "H04",
+]
+KveerSolution = [
+    "A01",
+    "A05",
+    "B02",
+    "B05",
+    "C01",
+    "C04",
+    "D03",
+    "D06",
+    "E03",
+    "E05",
+    "F01",
+    "F03",
+    "G01",
+    "G03",
+    "G05",
+    "H02",
+    "H05",
+]
 
 States = xEnum.Enum("DoorOpen, DoorClosed, Rotated")
 CurrentState = States.DoorClosed
-    
+
+
 class mystFireplace(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
@@ -113,43 +183,42 @@ class mystFireplace(ptModifier):
         if strBookSDL.value != "":
             ageSDL.setFlags(strBookSDL.value, 1, 1)
             ageSDL.sendToClients(strBookSDL.value)
-            #ageSDL.setNotify(self.key, strBookSDL.value, 0.0)
-            
+            # ageSDL.setNotify(self.key, strBookSDL.value, 0.0)
+
         if strYeeshaPageSDL.value != "":
             ageSDL.setFlags(strYeeshaPageSDL.value, 1, 1)
             ageSDL.sendToClients(strYeeshaPageSDL.value)
-            #ageSDL.setNotify(self.key, strYeeshaPageSDL.value, 0.0)
-            
+            # ageSDL.setNotify(self.key, strYeeshaPageSDL.value, 0.0)
+
         if strByronsEggsSDL.value != "":
             ageSDL.setFlags(strByronsEggsSDL.value, 1, 1)
             ageSDL.sendToClients(strByronsEggsSDL.value)
-            #ageSDL.setNotify(self.key, strByronsEggsSDL.value, 0.0)
+            # ageSDL.setNotify(self.key, strByronsEggsSDL.value, 0.0)
 
         ageSDL["KveerBookVis"] = (0,)
         ageSDL["YeeshaPageVis"] = (0,)
         ageSDL["ByronsEggsVis"] = (0,)
 
     def OnFirstUpdate(self):
-        #actPanelButtons.disable()
-        respFPDoor.run(self.key, state = "close", fastforward = 1)
+        # actPanelButtons.disable()
+        respFPDoor.run(self.key, state="close", fastforward=1)
 
-        #for key,value in actPanelButtons.byObject.viewitems():
-            #PtDebugPrint(key)
-            #p = value.getParentKey()
-            #if p:
-                #PtDebugPrint("\t", p.getName())
-            #actPanelButtons.enable(objectName=key)
+        # for key,value in actPanelButtons.byObject.viewitems():
+        # PtDebugPrint(key)
+        # p = value.getParentKey()
+        # if p:
+        # PtDebugPrint("\t", p.getName())
+        # actPanelButtons.enable(objectName=key)
 
-            
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global IgnorePanelClick
-        
+
         PtDebugPrint("onnotify: id -", id)
 
         if id == actButton.id and state:
-            #actPanelButtons.disable()
+            # actPanelButtons.disable()
             self.ExitPanelView(1)
-            respPressButton.run(self.key, events = events)
+            respPressButton.run(self.key, events=events)
 
         elif id == respPressButton.id:
             self.OnButtonPressed(events)
@@ -170,8 +239,8 @@ class mystFireplace(ptModifier):
             if len(IgnorePanelClick) > 0:
                 id = IgnorePanelClick[0]
                 del IgnorePanelClick[0]
-                
-                for rkey,rvalue in actPanelButtons.byObject.items():
+
+                for rkey, rvalue in actPanelButtons.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
@@ -185,16 +254,16 @@ class mystFireplace(ptModifier):
 
     def OnButtonPressed(self, events):
         global CurrentState
-        
+
         if CurrentState == States.DoorOpen:
             # close the door
-            respFPDoor.run(self.key, state = "close")
-            respMovePanelEntry.run(self.key, state = "down", fastforward = 1)
+            respFPDoor.run(self.key, state="close")
+            respMovePanelEntry.run(self.key, state="down", fastforward=1)
             CurrentState = States.DoorClosed
-            
+
         elif CurrentState == States.DoorClosed:
             actPanelView.disable()
-            
+
             ageSDL = PtGetAgeSDL()
             # check for solutions and do stuff
             if self.CheckForSolution(KveerSolution):
@@ -209,8 +278,8 @@ class mystFireplace(ptModifier):
                 ageSDL["KveerBookVis"] = (1,)
                 ageSDL["YeeshaPageVis"] = (0,)
                 ageSDL["ByronsEggsVis"] = (0,)
-                
-                respFPRotate.run(self.key, state = "back")
+
+                respFPRotate.run(self.key, state="back")
                 CurrentState = States.Rotated
 
             elif self.CheckForSolution(YeeshaPageSolution):
@@ -218,8 +287,8 @@ class mystFireplace(ptModifier):
                 ageSDL["KveerBookVis"] = (0,)
                 ageSDL["YeeshaPageVis"] = (1,)
                 ageSDL["ByronsEggsVis"] = (0,)
-                
-                respFPRotate.run(self.key, state = "back")
+
+                respFPRotate.run(self.key, state="back")
                 CurrentState = States.Rotated
 
             elif self.CheckForSolution(EggSolution):
@@ -227,22 +296,22 @@ class mystFireplace(ptModifier):
                 ageSDL["KveerBookVis"] = (0,)
                 ageSDL["YeeshaPageVis"] = (0,)
                 ageSDL["ByronsEggsVis"] = (1,)
-                
-                respFPRotate.run(self.key, state = "back")
+
+                respFPRotate.run(self.key, state="back")
                 CurrentState = States.Rotated
 
             else:
                 ageSDL["KveerBookVis"] = (0,)
                 ageSDL["YeeshaPageVis"] = (0,)
                 ageSDL["ByronsEggsVis"] = (0,)
-                
-                respFPDoor.run(self.key, state = "open")
-                respMovePanelEntry.run(self.key, state = "up", fastforward = 1)
+
+                respFPDoor.run(self.key, state="open")
+                respMovePanelEntry.run(self.key, state="up", fastforward=1)
                 CurrentState = States.DoorOpen
-                
+
         elif CurrentState == States.Rotated:
             # rotate the room back
-            respFPRotate.run(self.key, state = "front")
+            respFPRotate.run(self.key, state="front")
             CurrentState = States.DoorClosed
 
         self.ResetPanel()
@@ -250,31 +319,33 @@ class mystFireplace(ptModifier):
     def OnPanelClick(self, events):
         global CheckedButtons
         global IgnorePanelClick
-        
+
         for event in events:
-            if event[0]==kPickedEvent:
+            if event[0] == kPickedEvent:
                 panelPicked = event[3]
                 panelName = panelPicked.getName()
 
                 try:
-                    #id = int(panelName[-2:])
+                    # id = int(panelName[-2:])
                     id = panelName[-3:]
                 except:
-                    PtDebugPrint("mystFirePlace.OnPanelClick: Couldn't extract the panel id...not responding to click")
+                    PtDebugPrint(
+                        "mystFirePlace.OnPanelClick: Couldn't extract the panel id...not responding to click"
+                    )
                     return
 
                 if id in IgnorePanelClick:
                     return
                 else:
                     IgnorePanelClick.append(id)
-                    for rkey,rvalue in actPanelButtons.byObject.items():
+                    for rkey, rvalue in actPanelButtons.byObject.items():
                         parent = rvalue.getParentKey()
                         if parent:
                             pname = parent.getName()
                             if id == pname[-3:]:
                                 rvalue.disable()
                                 break
-                    
+
                 if id in CheckedButtons:
                     bstate = "depress"
                     CheckedButtons.remove(id)
@@ -284,26 +355,27 @@ class mystFireplace(ptModifier):
 
                 PtDebugPrint(panelName, bstate)
 
-                for rkey,rvalue in respMorphButtons.byObject.items():
+                for rkey, rvalue in respMorphButtons.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
-                        #pnum = 8*(int(pname[-2:]) - 1) + (ord(pname[-3]) - ord("A"))
-                        #PtDebugPrint(id, pnum)
-                        #if panelName == parent.getName():
+                        # pnum = 8*(int(pname[-2:]) - 1) + (ord(pname[-3]) - ord("A"))
+                        # PtDebugPrint(id, pnum)
+                        # if panelName == parent.getName():
                         if id == pname[-3:]:
-                            respMorphButtons.run(self.key,objectName=rkey, state = bstate)
+                            respMorphButtons.run(
+                                self.key, objectName=rkey, state=bstate
+                            )
                             break
-                
+
                 break
-        
 
     def EnterFireplace(self, events):
         cam = ptCamera()
         cam.undoFirstPerson()
         cam.disableFirstPersonOverride()
-        
-        respEnterFP.run(self.key, events = events)
+
+        respEnterFP.run(self.key, events=events)
 
     def ExitFireplace(self, events):
         cam = ptCamera()
@@ -311,9 +383,9 @@ class mystFireplace(ptModifier):
         cam.disableFirstPersonOverride()
 
         PtFadeLocalAvatar(0)
-        
+
         # run responder
-        respExitFP.run(self.key, events = events)
+        respExitFP.run(self.key, events=events)
 
     def EnterPanelView(self, events):
         global InPanelView
@@ -334,34 +406,34 @@ class mystFireplace(ptModifier):
         av.draw.disable()
 
         cam = ptCamera()
-        #cam.undoFirstPerson()
+        # cam.undoFirstPerson()
         cam.disableFirstPersonOverride()
-        #cam.save(camPanelView.sceneobject.getKey())
+        # cam.save(camPanelView.sceneobject.getKey())
 
-        #PtAtTimeCallback(self.key, .1, 1)
+        # PtAtTimeCallback(self.key, .1, 1)
 
-        respMovePanelEntry.run(self.key, state = "up", fastforward = 1)
+        respMovePanelEntry.run(self.key, state="up", fastforward=1)
 
         PtDisableMovementKeys()
-        PtGetControlEvents(1, self.key)        
+        PtGetControlEvents(1, self.key)
 
-    #def OnTimer(self, id):
-        #if id == 1:
-            #av = PtGetLocalAvatar()
-            #av.draw.disable()
+    # def OnTimer(self, id):
+    # if id == 1:
+    # av = PtGetLocalAvatar()
+    # av.draw.disable()
 
     def ExitPanelView(self, buttonClicked):
         global InPanelView
 
         if InPanelView:
-            respMovePanelEntry.run(self.key, state = "down", fastforward = 1)
-            
+            respMovePanelEntry.run(self.key, state="down", fastforward=1)
+
             av = PtGetLocalAvatar()
             av.draw.enable()
 
             cam = ptCamera()
             cam.enableFirstPersonOverride()
-            #cam.save(camThirdPerson.sceneobject.getKey())
+            # cam.save(camThirdPerson.sceneobject.getKey())
             camPanelView.sceneobject.popCutsceneCamera(av.getKey())
 
             PtEnableMovementKeys()
@@ -373,7 +445,7 @@ class mystFireplace(ptModifier):
             InPanelView = 0
 
     def CheckForSolution(self, solution):
-        global CheckedButtons        
+        global CheckedButtons
 
         CheckedButtons.sort()
         solution.sort()
@@ -387,37 +459,40 @@ class mystFireplace(ptModifier):
         global CheckedButtons
         global IgnorePanelClick
 
-        #respResetPanel.run(self.key, fastforward=1)
-        #for rkey,rvalue in respResetPanel.byObject.viewitems():
+        # respResetPanel.run(self.key, fastforward=1)
+        # for rkey,rvalue in respResetPanel.byObject.viewitems():
         #    respResetPanel.run(self.key,objectName=rkey, fastforward=0)
 
         for but in CheckedButtons:
             id = but[-3:]
-            for rkey,rvalue in respMorphButtons.byObject.items():
+            for rkey, rvalue in respMorphButtons.byObject.items():
                 parent = rvalue.getParentKey()
                 if parent:
                     pname = parent.getName()
                     if id == pname[-3:]:
-                        respMorphButtons.run(self.key,objectName=rkey, state = "depress")
+                        respMorphButtons.run(self.key, objectName=rkey, state="depress")
                         break
 
         CheckedButtons = []
         IgnorePanelClick = []
 
-    def OnControlKeyEvent(self,controlKey,activeFlag):
+    def OnControlKeyEvent(self, controlKey, activeFlag):
         global InPanelView
 
         if InPanelView:
-            if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward:
+            if (
+                controlKey == PlasmaControlKeys.kKeyExitMode
+                or controlKey == PlasmaControlKeys.kKeyMoveBackward
+            ):
                 self.ExitPanelView(0)
 
     def OnBackdoorMsg(self, target, param):
         global CurrentState
         global CheckedButtons
-        
+
         if target == "fp":
             if param == "dooropen":
-                respFPDoor.run(self.key, state = "open")
+                respFPDoor.run(self.key, state="open")
                 CurrentState = States.DoorOpen
 
             elif param == "kveer":
@@ -431,4 +506,3 @@ class mystFireplace(ptModifier):
 
             elif param == "open":
                 CheckedButtons = []
-                

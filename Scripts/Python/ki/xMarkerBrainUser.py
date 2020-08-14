@@ -44,12 +44,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 
+
 def _str2color(col):
-    r, g, b = col.strip().split(',', 3)
+    r, g, b = col.strip().split(",", 3)
     r = float(r.strip()) / 255.0
     g = float(g.strip()) / 255.0
     b = float(b.strip()) / 255.0
     return ptColor(r, g, b)
+
 
 class UCMarkerGame(object):
     def __init__(self, markerNode):
@@ -112,11 +114,16 @@ class UCMarkerGame(object):
         return self._node.getGameName()
 
     def _GiveReward(self):
-        for reward in self._node.getReward().split(';'):
-            things = reward.split(':')
+        for reward in self._node.getReward().split(";"):
+            things = reward.split(":")
             if things[0] == "chron":
                 value = things[2] if len(things) > 2 else "1"
-                PtDebugPrint("UCMarkerGame._GiveReward():\tSetting chronicle '{}' = '{}'".format(things[1], value), level=kWarningLevel)
+                PtDebugPrint(
+                    "UCMarkerGame._GiveReward():\tSetting chronicle '{}' = '{}'".format(
+                        things[1], value
+                    ),
+                    level=kWarningLevel,
+                )
                 # NOTE: searches for a matching entry before creating
                 ptVault().addChronicleEntry(things[1], 0, value)
             elif things[0] == "clothing":
@@ -124,9 +131,19 @@ class UCMarkerGame(object):
                 gender = "F" if av.getAvatarClothingGroup() else "M"
                 clothing = "{}{}".format(gender, things[1])
                 if clothing in av.getWardrobeClothingList():
-                    PtDebugPrint("UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(clothing), level=kWarningLevel)
+                    PtDebugPrint(
+                        "UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(
+                            clothing
+                        ),
+                        level=kWarningLevel,
+                    )
                 else:
-                    PtDebugPrint("UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing), level=kWarningLevel)
+                    PtDebugPrint(
+                        "UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(
+                            clothing
+                        ),
+                        level=kWarningLevel,
+                    )
                     try:
                         tint1 = _str2color(things[2])
                     except IndexError:
@@ -178,8 +195,10 @@ class UCMarkerGame(object):
 
     def _get_reward(self):
         return self._node.getReward()
+
     def _set_reward(self, value):
         self._node.setReward(value)
+
     reward = property(_get_reward, _set_reward)
 
     @property
@@ -193,8 +212,10 @@ class UCMarkerGame(object):
 
     def _get_selected_marker_id(self):
         return ptMarkerMgr().getSelectedMarker()
+
     def _set_selected_marker_id(self, value):
         ptMarkerMgr().setSelectedMarker(value)
+
     selected_marker_id = property(_get_selected_marker_id, _set_selected_marker_id)
 
     def _get_selected_marker_index(self):
@@ -203,24 +224,32 @@ class UCMarkerGame(object):
             if id == wantID:
                 return idx
         return -1
+
     def _set_selected_marker_index(self, value):
         for idx, (id, age, pos, desc) in enumerate(self._markers):
             if idx == value:
                 ptMarkerMgr().setSelectedMarker(id)
                 return
-    selected_marker_index = property(_get_selected_marker_index, _set_selected_marker_index)
+
+    selected_marker_index = property(
+        _get_selected_marker_index, _set_selected_marker_index
+    )
 
     def _get_selected_marker_name(self):
         marker = self.selected_marker
         if marker is not None:
             return marker[3]
         return "?UNKOWN MARKER?"
+
     def _set_selected_marker_name(self, value):
         idx = self.selected_marker_index
         if idx != -1:
             id, age, pos, desc = self._markers[idx]
             self._markers[idx] = (id, age, pos, value)
-    selected_marker_name = property(_get_selected_marker_name, _set_selected_marker_name)
+
+    selected_marker_name = property(
+        _get_selected_marker_name, _set_selected_marker_name
+    )
 
     def Stop(self):
         self._playing = False

@@ -50,8 +50,8 @@ vault manager hook for the nexus
 from Plasma import *
 from PlasmaTypes import *
 
-class Nexus(ptResponder):
 
+class Nexus(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5036
@@ -59,10 +59,9 @@ class Nexus(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        
+
     def Load(self):
-        pass        
-        
-    def OnNotify(self,state,id,events):
         pass
-        
+
+    def OnNotify(self, state, id, events):
+        pass

@@ -54,10 +54,10 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 import PlasmaControlKeys
 
-# If there were another way to have done this, believe me, I would have. 
+# If there were another way to have done this, believe me, I would have.
 # In the mean time, the following 122 items are dedicated to the memory of Pete Gage
 
-#Ring 01
+# Ring 01
 OuterRing01_01 = ptAttribAnimation(1, "anim: OuterRing01_01")
 OuterRing01_02 = ptAttribAnimation(2, "anim: OuterRing01_02")
 OuterRing01_03 = ptAttribAnimation(3, "anim: OuterRing01_03")
@@ -85,12 +85,12 @@ InnerRing01_06 = ptAttribAnimation(22, "anim: InnerRing01_06")
 InnerRing01_07 = ptAttribAnimation(23, "anim: InnerRing01_07")
 InnerRing01_08 = ptAttribAnimation(24, "anim: InnerRing01_08")
 
-#Ring 02
+# Ring 02
 OuterRing02_01 = ptAttribAnimation(25, "anim: OuterRing02_01")
 OuterRing02_02 = ptAttribAnimation(26, "anim: OuterRing02_02")
 OuterRing02_03 = ptAttribAnimation(27, "anim: OuterRing02_03")
 OuterRing02_04 = ptAttribAnimation(28, "anim: OuterRing02_04")
-OuterRing02_05 = ptAttribAnimation(29,"anim: OuterRing02_05")
+OuterRing02_05 = ptAttribAnimation(29, "anim: OuterRing02_05")
 OuterRing02_06 = ptAttribAnimation(30, "anim: OuterRing02_06")
 OuterRing02_07 = ptAttribAnimation(31, "anim: OuterRing02_07")
 OuterRing02_08 = ptAttribAnimation(32, "anim: OuterRing02_08")
@@ -114,7 +114,7 @@ InnerRing02_07 = ptAttribAnimation(47, "anim: InnerRing02_07")
 InnerRing02_08 = ptAttribAnimation(48, "anim: InnerRing02_08")
 
 
-#Ring 03
+# Ring 03
 OuterRing03_01 = ptAttribAnimation(49, "anim: OuterRing03_01")
 OuterRing03_02 = ptAttribAnimation(50, "anim: OuterRing03_02")
 OuterRing03_03 = ptAttribAnimation(51, "anim: OuterRing03_03")
@@ -142,7 +142,7 @@ InnerRing03_06 = ptAttribAnimation(70, "anim: InnerRing03_06")
 InnerRing03_07 = ptAttribAnimation(71, "anim: InnerRing03_07")
 InnerRing03_08 = ptAttribAnimation(72, "anim: InnerRing03_08")
 
-#"Fake" Ring 1 as seen in the GUI when looking through Scope #2
+# "Fake" Ring 1 as seen in the GUI when looking through Scope #2
 GUIOuter01_01 = ptAttribAnimation(73, "anim: GUIOuter01_01")
 GUIOuter01_02 = ptAttribAnimation(74, "anim: GUIOuter01_02")
 GUIOuter01_03 = ptAttribAnimation(75, "anim: GUIOuter01_03")
@@ -171,7 +171,7 @@ GUIInner01_07 = ptAttribAnimation(95, "anim: GUIInner01_07")
 GUIInner01_08 = ptAttribAnimation(96, "anim: GUIInner01_08")
 
 
-#"Fake" Ring 2 as seen in the GUI when looking through Scope #3
+# "Fake" Ring 2 as seen in the GUI when looking through Scope #3
 GUIOuter02_01 = ptAttribAnimation(97, "anim: GUIOuter02_01")
 GUIOuter02_02 = ptAttribAnimation(98, "anim: GUIOuter02_02")
 GUIOuter02_03 = ptAttribAnimation(99, "anim: GUIOuter02_03")
@@ -199,11 +199,11 @@ GUIInner02_06 = ptAttribAnimation(118, "anim: GUIInner02_06")
 GUIInner02_07 = ptAttribAnimation(119, "anim: GUIInner02_07")
 GUIInner02_08 = ptAttribAnimation(120, "anim: GUIInner02_08")
 
-actScope2 = ptAttribActivator(121, "Act: Scope2") 
-actScope3 = ptAttribActivator(122, "Act: Scope3") 
+actScope2 = ptAttribActivator(121, "Act: Scope2")
+actScope3 = ptAttribActivator(122, "Act: Scope3")
 
 # globals
-ScopeNumber  = 2
+ScopeNumber = 2
 Outerbearing = 1
 Middlebearing = 1
 Innerbearing = 1
@@ -211,33 +211,38 @@ Innerbearing = 1
 StillSolved = False
 kPatienceDelayToSolve = 2
 
+
 class kdshTreeRingsSolution(ptModifier):
     "Standard telescope modifier class"
+
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5233
-        
+
         version = 6
         self.version = version
-        PtDebugPrint("__init__kdshTreeRingsSolution v.", version,".2")
+        PtDebugPrint("__init__kdshTreeRingsSolution v.", version, ".2")
 
     def OnServerInitComplete(self):
-        ageSDL = PtGetAgeSDL()        
+        ageSDL = PtGetAgeSDL()
         if ageSDL == None:
-            PtDebugPrint("kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
+            PtDebugPrint(
+                "kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)"
+                % varstring.value
+            )
 
-        ageSDL.setNotify(self.key,"OuterRing01",0.0)
-        ageSDL.setNotify(self.key,"MiddleRing01",0.0)
-        ageSDL.setNotify(self.key,"InnerRing01",0.0)
+        ageSDL.setNotify(self.key, "OuterRing01", 0.0)
+        ageSDL.setNotify(self.key, "MiddleRing01", 0.0)
+        ageSDL.setNotify(self.key, "InnerRing01", 0.0)
 
-        ageSDL.setNotify(self.key,"OuterRing02",0.0)
-        ageSDL.setNotify(self.key,"MiddleRing02",0.0)
-        ageSDL.setNotify(self.key,"InnerRing02",0.0)
-  
-        ageSDL.setNotify(self.key,"OuterRing03",0.0)
-        ageSDL.setNotify(self.key,"MiddleRing03",0.0)
-        ageSDL.setNotify(self.key,"InnerRing03",0.0)
-    
+        ageSDL.setNotify(self.key, "OuterRing02", 0.0)
+        ageSDL.setNotify(self.key, "MiddleRing02", 0.0)
+        ageSDL.setNotify(self.key, "InnerRing02", 0.0)
+
+        ageSDL.setNotify(self.key, "OuterRing03", 0.0)
+        ageSDL.setNotify(self.key, "MiddleRing03", 0.0)
+        ageSDL.setNotify(self.key, "InnerRing03", 0.0)
+
         self.InitRings()
 
     def InitRings(self):
@@ -247,32 +252,39 @@ class kdshTreeRingsSolution(ptModifier):
         for i in ("Outer", "Middle", "Inner"):
             for j in ("1", "2", "3"):
                 ring = "{location}Ring0{idx}".format(location=i, idx=j)
-                ring_attrib = "{ring}_0{bearing}".format(ring=ring, bearing=ageSDL[ring][0])
+                ring_attrib = "{ring}_0{bearing}".format(
+                    ring=ring, bearing=ageSDL[ring][0]
+                )
                 globals()[ring_attrib].animation.skipToEnd()
-                PtDebugPrint("\t{} = {}".format(ring, ageSDL[ring][0]), level=kWarningLevel)
+                PtDebugPrint(
+                    "\t{} = {}".format(ring, ageSDL[ring][0]), level=kWarningLevel
+                )
 
-        
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global StillSolved
-        ageSDL = PtGetAgeSDL()             
+        ageSDL = PtGetAgeSDL()
         # PtDebugPrint("kdshTreeRingsSolution.OnSDLNotify():\t VARname:%s, playerID:%s, tag:%s" % (VARname,playerID,tag))
 
         StillSolved = False
         newbearing = ageSDL[VARname][0]
         # PtDebugPrint("VARname = ", VARname, "newbear = ", newbearing)
-        globals()["{id}_0{bearing}".format(id=VARname, bearing=newbearing)].animation.play()
-        
-        if "3" in VARname: 
+        globals()[
+            "{id}_0{bearing}".format(id=VARname, bearing=newbearing)
+        ].animation.play()
+
+        if "3" in VARname:
             # PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
             pass
         else:
             # this runs the animation on the "fake" ring in front of the GUI
-            animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
+            animname = "GUI{id}_0{bearing}".format(
+                id="".join(VARname.split("Ring")), bearing=newbearing
+            )
             globals()[animname].animation.play()
 
-###
-#Check to see if the Puzzle has been solved
-###
+        ###
+        # Check to see if the Puzzle has been solved
+        ###
 
         OuterRing01 = ageSDL["OuterRing01"][0]
         MiddleRing01 = ageSDL["MiddleRing01"][0]
@@ -283,32 +295,41 @@ class kdshTreeRingsSolution(ptModifier):
         OuterRing03 = ageSDL["OuterRing03"][0]
         MiddleRing03 = ageSDL["MiddleRing03"][0]
         InnerRing03 = ageSDL["InnerRing03"][0]
-            
-        PtDebugPrint("Current Scope Positions [Outer, Middle, Inner]:")
-        PtDebugPrint("\tRing #1: [", OuterRing01 ,", ",MiddleRing01,", ",InnerRing01," ]")
-        PtDebugPrint("\tRing #2: [", OuterRing02 ,", ",MiddleRing02,", ",InnerRing02," ]")
-        PtDebugPrint("\tRing #3: [", OuterRing03 ,", ",MiddleRing03,", ",InnerRing03," ]")
-        
-        if OuterRing01 ==   5 and\
-            MiddleRing01 == 6 and\
-            InnerRing01 ==  3 and\
-            OuterRing02 ==  1 and\
-            MiddleRing02 == 1 and\
-            InnerRing02 ==  4 and\
-            OuterRing03 == 4 and\
-            MiddleRing03 == 3 and\
-            InnerRing03 == 6:
-                PtDebugPrint("Tree Ring Puzzle solved. Opening Door.")
-                StillSolved = True
-                PtAtTimeCallback(self.key,kPatienceDelayToSolve,1) # Put in this delay to avoid people "speed clicking" past solution and opening door. 
 
-    def OnNotify(self,state,id,events):
+        PtDebugPrint("Current Scope Positions [Outer, Middle, Inner]:")
+        PtDebugPrint(
+            "\tRing #1: [", OuterRing01, ", ", MiddleRing01, ", ", InnerRing01, " ]"
+        )
+        PtDebugPrint(
+            "\tRing #2: [", OuterRing02, ", ", MiddleRing02, ", ", InnerRing02, " ]"
+        )
+        PtDebugPrint(
+            "\tRing #3: [", OuterRing03, ", ", MiddleRing03, ", ", InnerRing03, " ]"
+        )
+
+        if (
+            OuterRing01 == 5
+            and MiddleRing01 == 6
+            and InnerRing01 == 3
+            and OuterRing02 == 1
+            and MiddleRing02 == 1
+            and InnerRing02 == 4
+            and OuterRing03 == 4
+            and MiddleRing03 == 3
+            and InnerRing03 == 6
+        ):
+            PtDebugPrint("Tree Ring Puzzle solved. Opening Door.")
+            StillSolved = True
+            PtAtTimeCallback(
+                self.key, kPatienceDelayToSolve, 1
+            )  # Put in this delay to avoid people "speed clicking" past solution and opening door.
+
+    def OnNotify(self, state, id, events):
         global ScopeNumber
         global Outerbearing
         global Middlebearing
         global Innerbearing
-        
-        
+
         if id == actScope2.id:
             # PtDebugPrint("kdshTreeRingsSolution: Scope #2 occupied. Fast forwarding Scope 1 Rings in GUI")
             ScopeNumber = 2
@@ -319,29 +340,33 @@ class kdshTreeRingsSolution(ptModifier):
             PtDebugPrint("ERROR: Not sure who the notify came from.")
             PtDebugPrint("id = ", id)
             return
-            
-        ageSDL = PtGetAgeSDL()        
+
+        ageSDL = PtGetAgeSDL()
         if ageSDL == None:
-            PtDebugPrint("kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
+            PtDebugPrint(
+                "kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)"
+                % varstring.value
+            )
 
         for bearing in ("Outer", "Middle", "Inner"):
-            sdl_var = "{location}Ring0{idx}".format(location=bearing, idx=ScopeNumber-1)
-            attrib_name = "GUI{location}0{idx}_0{newbearing}".format(location=bearing,
-                                                                     idx=ScopeNumber-1,
-                                                                     newbearing=ageSDL[sdl_var][0])
+            sdl_var = "{location}Ring0{idx}".format(
+                location=bearing, idx=ScopeNumber - 1
+            )
+            attrib_name = "GUI{location}0{idx}_0{newbearing}".format(
+                location=bearing, idx=ScopeNumber - 1, newbearing=ageSDL[sdl_var][0]
+            )
             globals()[attrib_name].animation.skipToEnd()
 
         # this runs the animation on the "fake" ring in front of the GUI
         # animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
         # globals()[animname].animation.play()
 
-    def OnTimer(self,timer):
+    def OnTimer(self, timer):
         global StillSolved
-        ageSDL = PtGetAgeSDL()        
+        ageSDL = PtGetAgeSDL()
         if timer == 1:
             if StillSolved:
-                ageSDL.setTagString("TreeRingDoorClosed","fromOutside")                
+                ageSDL.setTagString("TreeRingDoorClosed", "fromOutside")
                 ageSDL["TreeRingDoorClosed"] = (0,)
             else:
                 PtDebugPrint("Patience, grasshopper.")
-            

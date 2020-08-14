@@ -54,10 +54,12 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
-aStringVarName = ptAttribString(1,"Age SDL Vis Name")
-aGZSerialNumber = ptAttribInt(2,"GZ a unique serial number (1 thru n)")
-aGZRegionVis = ptAttribActivator(3,"Region detector when marker is inRange")
-aGZSoundResponder = ptAttribResponder(4, "Sound responder for marker",statelist=["SoundOn","SoundOff"])
+aStringVarName = ptAttribString(1, "Age SDL Vis Name")
+aGZSerialNumber = ptAttribInt(2, "GZ a unique serial number (1 thru n)")
+aGZRegionVis = ptAttribActivator(3, "Region detector when marker is inRange")
+aGZSoundResponder = ptAttribResponder(
+    4, "Sound responder for marker", statelist=["SoundOn", "SoundOff"]
+)
 
 
 AgeStartedIn = None
@@ -69,18 +71,21 @@ gSoundRespWasCalled = 0
 
 
 class xGZMarker(ptMultiModifier):
-
     def __init__(self):
         ptMultiModifier.__init__(self)
         self.id = 205
         self.version = MaxVersionNumber
-        PtDebugPrint("__xGZMarker: Max version %d - minor version %d" % (MaxVersionNumber,MinorVersionNumber),level=kDebugDumpLevel)
+        PtDebugPrint(
+            "__xGZMarker: Max version %d - minor version %d"
+            % (MaxVersionNumber, MinorVersionNumber),
+            level=kDebugDumpLevel,
+        )
 
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
         # not much to do here
-            
+
     def OnServerInitComplete(self):
         # we are initially disabled
         self.DisableObject()
@@ -91,7 +96,10 @@ class xGZMarker(ptMultiModifier):
             return 0
         ageSDL = PtGetAgeSDL()
         try:
-            PtDebugPrint("xGZMarker: SDL is %d" % (ageSDL[aStringVarName.value][0]),level=kDebugDumpLevel)
+            PtDebugPrint(
+                "xGZMarker: SDL is %d" % (ageSDL[aStringVarName.value][0]),
+                level=kDebugDumpLevel,
+            )
             return ageSDL[aStringVarName.value][0]
         except:
             pass
@@ -108,28 +116,46 @@ class xGZMarker(ptMultiModifier):
             if markerIdx >= 0 and markerIdx < len(markers):
                 if markers[markerIdx] == kGZMarkerAvailable:
                     # we're active!
-                    PtDebugPrint("xGZMarker: marker %d available"%(aGZSerialNumber.value),level=kDebugDumpLevel)
+                    PtDebugPrint(
+                        "xGZMarker: marker %d available" % (aGZSerialNumber.value),
+                        level=kDebugDumpLevel,
+                    )
                     return 1
                 else:
-                    PtDebugPrint("xGZMarker: marker not available - at %d is a '%s'"%(aGZSerialNumber.value,markers[markerIdx]),level=kDebugDumpLevel)
+                    PtDebugPrint(
+                        "xGZMarker: marker not available - at %d is a '%s'"
+                        % (aGZSerialNumber.value, markers[markerIdx]),
+                        level=kDebugDumpLevel,
+                    )
             else:
-                PtDebugPrint("xGZMarker - ERROR marker serial number invalid (%d) " % (aGZSerialNumber.value))
+                PtDebugPrint(
+                    "xGZMarker - ERROR marker serial number invalid (%d) "
+                    % (aGZSerialNumber.value)
+                )
                 PtDebugPrint("xGZMarker - current markers are '%s'" % (markers))
         else:
             PtDebugPrint("xGZMarker - ERROR marker chronicle not found ")
         return 0
 
     def EnableObject(self):
-        PtDebugPrint("DEBUG: xGZMarker.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName(),level=kDebugDumpLevel)
+        PtDebugPrint(
+            "DEBUG: xGZMarker.EnableObject:  Attempting to enable drawing and collision on %s..."
+            % self.sceneobject.getName(),
+            level=kDebugDumpLevel,
+        )
         self.sceneobject.draw.enable()
         self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
-        PtDebugPrint("DEBUG: xGZMarker.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName(),level=kDebugDumpLevel)
+        PtDebugPrint(
+            "DEBUG: xGZMarker.DisableObject:  Attempting to disable drawing and collision on %s..."
+            % self.sceneobject.getName(),
+            level=kDebugDumpLevel,
+        )
         self.sceneobject.draw.disable()
         self.sceneobject.physics.suppress(True)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Notify from region sensor or from the KI"
         global gSoundRespWasCalled
 
@@ -139,26 +165,36 @@ class xGZMarker(ptMultiModifier):
                 if event[0] == kCollisionEvent:
                     if event[2] == PtGetLocalAvatar():
                         if event[1] == 1:
-                            PtDebugPrint("xGZMarker: enter region",level=kDebugDumpLevel)
+                            PtDebugPrint(
+                                "xGZMarker: enter region", level=kDebugDumpLevel
+                            )
                             if self.IsSDLEnabled():
                                 if self.IsMarkerAvailable():
                                     # make the marker visible
                                     self.EnableObject()
-                                    aGZSoundResponder.run(self.key, state="SoundOn",netPropagate=0)
+                                    aGZSoundResponder.run(
+                                        self.key, state="SoundOn", netPropagate=0
+                                    )
                                     gSoundRespWasCalled = 1
-                                    PtSendKIGZMarkerMsg(aGZSerialNumber.value,self.key)
+                                    PtSendKIGZMarkerMsg(aGZSerialNumber.value, self.key)
                         else:
-                            PtDebugPrint("xGZMarker: exit region",level=kDebugDumpLevel)
+                            PtDebugPrint(
+                                "xGZMarker: exit region", level=kDebugDumpLevel
+                            )
                             # just disable it
                             self.DisableObject()
                             if gSoundRespWasCalled:
-                                aGZSoundResponder.run(self.key, state="SoundOff",netPropagate=0)
+                                aGZSoundResponder.run(
+                                    self.key, state="SoundOff", netPropagate=0
+                                )
                                 gSoundRespWasCalled = 0
-                            PtSendKIMessage(kGZOutRange,0)
+                            PtSendKIMessage(kGZOutRange, 0)
         elif id == -1:
             for event in events:
                 if event[0] == kVariableEvent and event[1] == "Captured":
                     self.DisableObject()
                     if gSoundRespWasCalled:
-                        aGZSoundResponder.run(self.key, state="SoundOff",netPropagate=0)
+                        aGZSoundResponder.run(
+                            self.key, state="SoundOff", netPropagate=0
+                        )
                         gSoundRespWasCalled = 0

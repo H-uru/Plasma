@@ -50,8 +50,8 @@ event manager hooks for the Neighborhood
 from Plasma import *
 from PlasmaTypes import *
 
-class Neighborhood(ptResponder):
 
+class Neighborhood(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5014
@@ -78,6 +78,6 @@ class Neighborhood(ptResponder):
         # else:
         #     PtDebugPrint("%s:\tERROR trying to access vault -- can't update %s variable in chronicle." % (kModuleName,kChronicleVarName))
         pass
-            
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         pass

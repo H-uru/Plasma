@@ -52,28 +52,28 @@ from PlasmaTypes import *
 from xPsnlVaultSDL import *
 import PlasmaKITypes
 
-#=============================================================
+# =============================================================
 # define the attributes that will be entered in max
-#=============================================================
+# =============================================================
 actTrigger = ptAttribActivator(1, "Triggerer")
 respOneShot = ptAttribResponder(2, "Oneshot resp")
 strSoundFile = ptAttribString(3, "Sound file name")
 strAgeToAddTo = ptAttribString(4, "Music player age name (not this player)")
 
-#====================================
+# ====================================
 IClicked = 0
 
-class xMusicBoxAddSong(ptModifier):
 
+class xMusicBoxAddSong(ptModifier):
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5346
         self.version = 1
         PtDebugPrint("xMusicBoxAddSong: init  version = %d" % self.version)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global IClicked
-        
+
         if not state:
             return
 
@@ -82,7 +82,7 @@ class xMusicBoxAddSong(ptModifier):
                 IClicked = 1
             else:
                 IClicked = 0
-            respOneShot.run(self.key, events = events)
+            respOneShot.run(self.key, events=events)
 
         elif id == respOneShot.id:
             if IClicked and self.HasMusicBoxYeeshaPage():
@@ -108,14 +108,20 @@ class xMusicBoxAddSong(ptModifier):
                         if chron and chron.getName() == "MusicBoxSongs":
                             songs = chron.getValue()
                             if songs.find(strSoundFile.value) == -1:
-                                PtDebugPrint("xMusicBoxAddSong.AddSong: Adding file %s" % strSoundFile.value)
+                                PtDebugPrint(
+                                    "xMusicBoxAddSong.AddSong: Adding file %s"
+                                    % strSoundFile.value
+                                )
                                 chron.setValue(strSoundFile.value + ";" + songs)
-                                PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert,0)
-                                return #break
+                                PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert, 0)
+                                return  # break
                     break
-        PtDebugPrint("ERROR: xMusicBoxAddSong.AddSong():\tCould not add song: %s" % strSoundFile.value)
+        PtDebugPrint(
+            "ERROR: xMusicBoxAddSong.AddSong():\tCould not add song: %s"
+            % strSoundFile.value
+        )
 
     def HasMusicBoxYeeshaPage(self):
         sdl = xPsnlVaultSDL()
         curVal = sdl["YeeshaPage9"][0]
-        return (curVal > 0)
+        return curVal > 0

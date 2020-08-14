@@ -46,26 +46,24 @@ from Plasma import *
 from PlasmaTypes import *
 import PlasmaControlKeys
 
-activateAirstream = ptAttribActivator(1,"airstream activator")
-airstreamNode = ptAttribSceneobject(2,"airstream attach node")
+activateAirstream = ptAttribActivator(1, "airstream activator")
+airstreamNode = ptAttribSceneobject(2, "airstream attach node")
+
 
 class airstream(ptResponder):
-
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
         self.id = 50439
         self.version = 1
-        
+
         PtDebugPrint("__init__airstream v.")
 
-                        
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
 
-        if id==activateAirstream.id:
+        if id == activateAirstream.id:
             avatar = PtFindAvatar(events)
             avatar.draw.disable()
-#            avatar.physics.warpObj(airstreamNode.value.getKey())
-#            PtAttachObject(avatar.getKey(), airstreamNode.value.getKey())
+            #            avatar.physics.warpObj(airstreamNode.value.getKey())
+            #            PtAttachObject(avatar.getKey(), airstreamNode.value.getKey())
             avatar.physics.enable(0)
- 

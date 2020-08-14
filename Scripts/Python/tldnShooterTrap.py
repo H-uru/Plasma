@@ -52,28 +52,28 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-intSporeCount = ptAttribInt(1,"Initial Spore Count",10)
-act = ptAttribActivator(2,"Activator")
-respNorm = ptAttribResponder(3,"Responder: Non-Empty State")
+intSporeCount = ptAttribInt(1, "Initial Spore Count", 10)
+act = ptAttribActivator(2, "Activator")
+respNorm = ptAttribResponder(3, "Responder: Non-Empty State")
 # dead id: 4
-respEmpty = ptAttribResponder(5,"Responder: Empty State")
+respEmpty = ptAttribResponder(5, "Responder: Empty State")
+
 
 class tldnShooterTrap(ptResponder):
-
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
         self.id = 5000
-        
+
         version = 2
         self.version = version
         PtDebugPrint("__init__tldnShooterTrap v.", version)
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         if state:
             if intSporeCount.value:
-                respNorm.run(self.key,events=events)    
-                #intSporeCount.value = intSporeCount.value - 1
+                respNorm.run(self.key, events=events)
+                # intSporeCount.value = intSporeCount.value - 1
             else:
-                respEmpty.run(self.key,events=events)
-            #PtDebugPrint("tldnShooterTrap.OnNotify intSporeCount=%d" % intSporeCount.value)
+                respEmpty.run(self.key, events=events)
+            # PtDebugPrint("tldnShooterTrap.OnNotify intSporeCount=%d" % intSporeCount.value)

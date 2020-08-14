@@ -51,13 +51,18 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-regCageSymbol       = ptAttribActivator(1, "reg: Cage Symbol")
-respCageSymbol      = ptAttribResponder(15, "resp: Cage Symbol", ["1", "2", "3", "4", "5", "Link", "Hide"])
-respSymbolSFX       = ptAttribResponder(16, "resp: Symbol SFX", ["0", "1", "2", "3", "4", "5"])
+regCageSymbol = ptAttribActivator(1, "reg: Cage Symbol")
+respCageSymbol = ptAttribResponder(
+    15, "resp: Cage Symbol", ["1", "2", "3", "4", "5", "Link", "Hide"]
+)
+respSymbolSFX = ptAttribResponder(
+    16, "resp: Symbol SFX", ["0", "1", "2", "3", "4", "5"]
+)
 
 # define globals
 
-#====================================
+# ====================================
+
 
 class minkCage(ptResponder):
     ###########################
@@ -66,7 +71,7 @@ class minkCage(ptResponder):
         self.id = 5261
         version = 2
         self.version = version
-        PtDebugPrint("__init__minkCage v.", version,".0")
+        PtDebugPrint("__init__minkCage v.", version, ".0")
 
     ###########################
     def OnFirstUpdate(self):
@@ -74,7 +79,9 @@ class minkCage(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint("minkCage.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL")
+            PtDebugPrint(
+                "minkCage.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL"
+            )
 
         ageSDL.setFlags("minkSymbolPart01", 1, 1)
         ageSDL.setFlags("minkSymbolPart02", 1, 1)
@@ -125,17 +132,28 @@ class minkCage(ptResponder):
             symbolCount += 1
 
         # Run SFX
-        PtDebugPrint("DEBUG: minkCage.OnFirstUpdate():\tRunning SFX Level: %s" % symbolCount)
-        respSymbolSFX.run(self.key, state="%s"%symbolCount)
+        PtDebugPrint(
+            "DEBUG: minkCage.OnFirstUpdate():\tRunning SFX Level: %s" % symbolCount
+        )
+        respSymbolSFX.run(self.key, state="%s" % symbolCount)
 
-
-        if ageSDL["minkSymbolPart01"][0] and ageSDL["minkSymbolPart02"][0] and ageSDL["minkSymbolPart03"][0] and ageSDL["minkSymbolPart04"][0] and ageSDL["minkSymbolPart05"][0]:
-            PtDebugPrint("minkCage.OnFirstUpdate(): You've found all the Pieces, enabling link")
+        if (
+            ageSDL["minkSymbolPart01"][0]
+            and ageSDL["minkSymbolPart02"][0]
+            and ageSDL["minkSymbolPart03"][0]
+            and ageSDL["minkSymbolPart04"][0]
+            and ageSDL["minkSymbolPart05"][0]
+        ):
+            PtDebugPrint(
+                "minkCage.OnFirstUpdate(): You've found all the Pieces, enabling link"
+            )
             regCageSymbol.enable()
 
     ###########################
-    def OnNotify(self,state,id,events):
-        PtDebugPrint("minkCage.OnNotify(): state=%s id=%d events=" % (state, id), events)
+    def OnNotify(self, state, id, events):
+        PtDebugPrint(
+            "minkCage.OnNotify(): state=%s id=%d events=" % (state, id), events
+        )
 
         if id == regCageSymbol.id and PtFindAvatar(events) == PtGetLocalAvatar():
             PtDebugPrint("minkCage.OnNotify(): Linking to bahro cave.")
@@ -150,9 +168,11 @@ class minkCage(ptResponder):
             respCageSymbol.run(self.key, state="4")
             respCageSymbol.run(self.key, state="5")
             regCageSymbol.enable()
-            
+
         elif target.lower() == "resetsymbol":
-            PtDebugPrint("DEBUG: minkCage.OnBackdoorMsg(\'ResetSymbols\'):\tResetting Bahro Cave Symbols...")
+            PtDebugPrint(
+                "DEBUG: minkCage.OnBackdoorMsg('ResetSymbols'):\tResetting Bahro Cave Symbols..."
+            )
             respCageSymbol.run(self.key, state="Hide")
             ageSDL = PtGetAgeSDL()
             ageSDL["minkSymbolPart01"] = (0,)

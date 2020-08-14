@@ -41,21 +41,110 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 from PlasmaTypes import *
+
 #   "Text Name": ( font name, font size, color, margin, line spacing, locPath, justification )
 # font color is in format (red,green,blue,alpha) with the values between 0 and 1
 # text margin is in format (top,left,bottom,right) with the values being in pixels
 # line spacing is in pixels and can be positive or negative
 # justification is optional, but can be any of the following: PtJustify.kCenter, PtJustify.kLeftJustify, PtJustify.kRightJustify
-xTextObjects = {\
-    "Dummy":            ( "Arial",      12, (1,1,1,1),  (0,0,0,0), 0,  "Global.TextObjects.Dummy",                  PtJustify.kCenter ),
-    "nb01WelcomeToDni": ( "Sharper",    28, (0,0,0,1),  (0,0,0,0), 5,  "Neighborhood.TextObjects.WelcomeToDni",     PtJustify.kCenter ),
-    "nb01GoToGrsn":     ( "Sharper",    22, (0,0,0,1),  (0,0,0,0), 5,  "Neighborhood.TextObjects.GoToGahreesen",    PtJustify.kCenter ),
-    "nb01GrsnBook":     ( "Sharper",    22, (0,0,0,1),  (0,0,0,0), 5,  "Neighborhood.TextObjects.GahreesenBook",    PtJustify.kCenter ),
-    "grsnRetrieveKI":   ( "Sharper",    24, (0,0,0,1),  (0,0,0,0), 10, "Gahreesen.TextObjects.RetrieveKI",          PtJustify.kCenter ),
-    "nb01EaselWelcome": ( "Sharper",    28, (0,0,0,1),  (0,0,0,0), 5,  "Neighborhood.TextObjects.EaselWelcome",     PtJustify.kCenter ),
-    "bcoWrinkledNote":  ( "Michelle",   10, (0,0,0,1),  (0,0,0,0), 5,  "BaronCityOffice.TextObjects.WrinkledNote",  PtJustify.kLeftJustify ),
-    "WatsonLetter":     ( "Courier",    10, (0,0,0,1),  (0,0,0,0), 0,  "City.TextObjects.WatsonLetter",             PtJustify.kLeftJustify ),
-    "JCNote":           ( "Nick",       16, (0,0,0,1),  (0,0,0,0), 5,  "City.TextObjects.JCNote",                   PtJustify.kLeftJustify ),
-    "clftAtrusNote":    ( "Atrus",      16, (0,0,0,1),  (0,0,0,0), 0,  "Cleft.TextObjects.AtrusNote",               PtJustify.kLeftJustify ),
-    "islmNickNote":     ( "Nick",       18, (0,0,.3,1), (0,0,0,0), 1,  "City.TextObjects.NickNote",                 PtJustify.kLeftJustify ),
+xTextObjects = {
+    "Dummy": (
+        "Arial",
+        12,
+        (1, 1, 1, 1),
+        (0, 0, 0, 0),
+        0,
+        "Global.TextObjects.Dummy",
+        PtJustify.kCenter,
+    ),
+    "nb01WelcomeToDni": (
+        "Sharper",
+        28,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        5,
+        "Neighborhood.TextObjects.WelcomeToDni",
+        PtJustify.kCenter,
+    ),
+    "nb01GoToGrsn": (
+        "Sharper",
+        22,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        5,
+        "Neighborhood.TextObjects.GoToGahreesen",
+        PtJustify.kCenter,
+    ),
+    "nb01GrsnBook": (
+        "Sharper",
+        22,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        5,
+        "Neighborhood.TextObjects.GahreesenBook",
+        PtJustify.kCenter,
+    ),
+    "grsnRetrieveKI": (
+        "Sharper",
+        24,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        10,
+        "Gahreesen.TextObjects.RetrieveKI",
+        PtJustify.kCenter,
+    ),
+    "nb01EaselWelcome": (
+        "Sharper",
+        28,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        5,
+        "Neighborhood.TextObjects.EaselWelcome",
+        PtJustify.kCenter,
+    ),
+    "bcoWrinkledNote": (
+        "Michelle",
+        10,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        5,
+        "BaronCityOffice.TextObjects.WrinkledNote",
+        PtJustify.kLeftJustify,
+    ),
+    "WatsonLetter": (
+        "Courier",
+        10,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        0,
+        "City.TextObjects.WatsonLetter",
+        PtJustify.kLeftJustify,
+    ),
+    "JCNote": (
+        "Nick",
+        16,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        5,
+        "City.TextObjects.JCNote",
+        PtJustify.kLeftJustify,
+    ),
+    "clftAtrusNote": (
+        "Atrus",
+        16,
+        (0, 0, 0, 1),
+        (0, 0, 0, 0),
+        0,
+        "Cleft.TextObjects.AtrusNote",
+        PtJustify.kLeftJustify,
+    ),
+    "islmNickNote": (
+        "Nick",
+        18,
+        (0, 0, 0.3, 1),
+        (0, 0, 0, 0),
+        1,
+        "City.TextObjects.NickNote",
+        PtJustify.kLeftJustify,
+    ),
 }

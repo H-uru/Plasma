@@ -54,10 +54,10 @@ from PlasmaKITypes import *
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-Activate = ptAttribActivator(1, "Activate Telescope",netForce=1)
-Camera = ptAttribSceneobject(2,"Telescope camera")
-Behavior = ptAttribBehavior(3, "Telescope behavior (multistage)",netForce=1)
-Vignette = ptAttribString(4,"Vignette dialog - by Name")
+Activate = ptAttribActivator(1, "Activate Telescope", netForce=1)
+Camera = ptAttribSceneobject(2, "Telescope camera")
+Behavior = ptAttribBehavior(3, "Telescope behavior (multistage)", netForce=1)
+Vignette = ptAttribString(4, "Vignette dialog - by Name")
 
 # ---------
 # globals
@@ -68,23 +68,24 @@ boolScopeOperator = 0
 boolOperated = 0
 Telescope = ptInputInterface()
 
+
 class xTelescope(ptModifier):
     "Standard telescope modifier class"
+
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 201
-        
+
         version = 4
         minorVersion = 2
         self.version = version
-        PtDebugPrint("__init__xTelescope v%d.%d" % (version,minorVersion) )
+        PtDebugPrint("__init__xTelescope v%d.%d" % (version, minorVersion))
 
     def OnFirstUpdate(self):
-        self.SDL.setDefault("boolOperated",(0,))
-        self.SDL.setDefault("OperatorID",(-1,))
+        self.SDL.setDefault("boolOperated", (0,))
+        self.SDL.setDefault("OperatorID", (-1,))
         self.SDL.sendToClients("boolOperated")
         self.SDL.sendToClients("OperatorID")
-
 
     def Load(self):
         global boolScopeOperated
@@ -94,77 +95,107 @@ class xTelescope(ptModifier):
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:
             if solo:
-                PtDebugPrint("xTelescope.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated,level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "xTelescope.Load():\tboolOperated=%d but no one else here...correcting"
+                    % boolOperated,
+                    level=kDebugDumpLevel,
+                )
                 boolOperated = 0
                 self.SDL["boolOperated"] = (0,)
                 self.SDL["OperatorID"] = (-1,)
                 Activate.enable()
             else:
                 Activate.disable()
-                PtDebugPrint("xTelescope.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated,level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "xTelescope.Load():\tboolOperated=%d, disabling telescope clickable"
+                    % boolOperated,
+                    level=kDebugDumpLevel,
+                )
 
     def AvatarPage(self, avObj, pageIn, lastOut):
         "reset scope accessibility if scope user quits or crashes"
         global boolScopeOperated
-        
+
         if pageIn:
             return
-            
+
         avID = PtGetClientIDFromAvatarKey(avObj.getKey())
         if avID == self.SDL["OperatorID"][0]:
             Activate.enable()
             self.SDL["OperatorID"] = (-1,)
             self.SDL["boolOperated"] = (0,)
-            PtDebugPrint("xTelescope.AvatarPage(): telescope operator paged out, reenabled telescope.",level=kDebugDumpLevel)
+            PtDebugPrint(
+                "xTelescope.AvatarPage(): telescope operator paged out, reenabled telescope.",
+                level=kDebugDumpLevel,
+            )
         else:
             return
-            
+
     def __del__(self):
         "unload the dialog that we loaded"
         PtUnloadDialog(Vignette.value)
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Activated... start telescope"
         global LocalAvatar
         global boolScopeOperator
-        PtDebugPrint("xTelescope:OnNotify  state=%f id=%d events=" % (state,id),events,level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xTelescope:OnNotify  state=%f id=%d events=" % (state, id),
+            events,
+            level=kDebugDumpLevel,
+        )
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
             self.IStartTelescope()
         # check if its an advance stage notify
         for event in events:
-            if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
+            if (
+                event[0] == kMultiStageEvent
+                and event[1] == 0
+                and event[2] == kAdvanceNextStage
+            ):
                 if boolScopeOperator:
                     self.IEngageTelescope()
                     boolScopeOperator = 0
                 break
 
-
-    def OnGUINotify(self,id,control,event):
+    def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
-        PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel)
+        PtDebugPrint(
+            "GUI Notify id=%d, event=%d control=" % (id, event),
+            control,
+            level=kDebugDumpLevel,
+        )
         if event == kDialogLoaded:
             # if the dialog was just loaded then show it
             control.show()
 
-    def OnControlKeyEvent(self,controlKey,activeFlag):
+    def OnControlKeyEvent(self, controlKey, activeFlag):
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif (
+            controlKey == PlasmaControlKeys.kKeyMoveBackward
+            or controlKey == PlasmaControlKeys.kKeyRotateLeft
+            or controlKey == PlasmaControlKeys.kKeyRotateRight
+        ):
             self.IQuitTelescope()
- 
+
     def IStartTelescope(self):
         "Start the action of looking at the telescope"
         global LocalAvatar
         global boolScopeOperator
         # disable the activator (only one in the telescope at a time)
-        PtSendKIMessage(kDisableKIandBB,0)
+        PtSendKIMessage(kDisableKIandBB, 0)
         Activate.disable()
         boolScopeOperator = 1  # me! I'm the operator
         self.SDL["boolOperated"] = (1,)
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         self.SDL["OperatorID"] = (avID,)
-        PtDebugPrint("xTelescope.OnNotify:\twrote SDL - scope operator id = ", avID,level=kDebugDumpLevel)
+        PtDebugPrint(
+            "xTelescope.OnNotify:\twrote SDL - scope operator id = ",
+            avID,
+            level=kDebugDumpLevel,
+        )
         # start the behavior
         Behavior.run(LocalAvatar)
 
@@ -182,8 +213,8 @@ class xTelescope(ptModifier):
         virtCam.save(Camera.sceneobject.getKey())
         # show the cockpit
         if Vignette.value:
-            PtLoadDialog(Vignette.value,self.key)
-            if ( PtIsDialogLoaded(Vignette.value) ):
+            PtLoadDialog(Vignette.value, self.key)
+            if PtIsDialogLoaded(Vignette.value):
                 PtShowDialog(Vignette.value)
         # get control key events
         PtEnableControlKeyEvents(self.key)
@@ -203,23 +234,29 @@ class xTelescope(ptModifier):
         PtRecenterCamera()
         # exit behavior...which is in the next stage
         # ... but just gotoStage the last stage by number because of a bug in the SDL send state
-        Behavior.gotoStage(LocalAvatar,2)
-        #Behavior.nextStage(LocalAvatar)
-        #disable the Control key events
+        Behavior.gotoStage(LocalAvatar, 2)
+        # Behavior.nextStage(LocalAvatar)
+        # disable the Control key events
         PtDisableControlKeyEvents(self.key)
         # re-enable the telescope for someone else to use
         boolScopeOperator = 0
         self.SDL["boolOperated"] = (0,)
         self.SDL["OperatorID"] = (-1,)
-        #Re-enable first person camera
+        # Re-enable first person camera
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        PtAtTimeCallback(self.key,3,1) # wait for player to finish exit one-shot, then reenable clickable
-        PtDebugPrint("xTelescope.IQuitTelescope:\tdelaying clickable reenable",level=kDebugDumpLevel)
-        
-    def OnTimer(self,id):
-        if id==1:
-            Activate.enable()
-            PtDebugPrint("xTelescope.OnTimer:\tclickable reenabled",level=kDebugDumpLevel)
-            PtSendKIMessage(kEnableKIandBB,0)
+        PtAtTimeCallback(
+            self.key, 3, 1
+        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtDebugPrint(
+            "xTelescope.IQuitTelescope:\tdelaying clickable reenable",
+            level=kDebugDumpLevel,
+        )
 
+    def OnTimer(self, id):
+        if id == 1:
+            Activate.enable()
+            PtDebugPrint(
+                "xTelescope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel
+            )
+            PtSendKIMessage(kEnableKIandBB, 0)

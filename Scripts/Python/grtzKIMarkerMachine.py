@@ -56,18 +56,24 @@ from PlasmaKITypes import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 
-aKISlotAct = ptAttribActivator(1,"KI Slot activator")
-aKIAvatarResp = ptAttribResponder(2, "Avatar Behavior resp",statelist=["Short","Longer"])
+aKISlotAct = ptAttribActivator(1, "KI Slot activator")
+aKIAvatarResp = ptAttribResponder(
+    2, "Avatar Behavior resp", statelist=["Short", "Longer"]
+)
 aKILogoResp = ptAttribResponder(3, "Show KI Logo resp")
-aKILightsResp = ptAttribResponderList(4, "Light Responder List",statelist=["LightOn","LightOff"],byObject=1)
-aKISoundsResp = ptAttribResponder(5, "Sound responder",statelist=["UpLoadMarkers","DownLoadMarkers","ShowMarkers"])
+aKILightsResp = ptAttribResponderList(
+    4, "Light Responder List", statelist=["LightOn", "LightOff"], byObject=1
+)
+aKISoundsResp = ptAttribResponder(
+    5, "Sound responder", statelist=["UpLoadMarkers", "DownLoadMarkers", "ShowMarkers"]
+)
 
 gGZPlaying = 0
 gGZMarkerInRange = 0
 gGZMarkerInRangeRepy = None
 # what is the to get color
-gMarkerToGetColor = 'off'
-gMarkerGottenColor = 'off'
+gMarkerToGetColor = "off"
+gMarkerGottenColor = "off"
 gMarkerToGetNumber = 0
 gMarkerGottenNumber = 0
 
@@ -77,7 +83,7 @@ gAvatar = None
 
 gIsDownloadingLastGame = 0
 
-#--- -constants
+# --- -constants
 kLightShiftOnDelaySeconds = 0.1
 kLightShiftOnID = 100
 
@@ -93,28 +99,28 @@ kReEnableClickableSeconds = 8
 kReEnableClickableID = 500
 kNumGZMarkers = 40
 
-gLightRespNames = [\
-                "cRespKIMachLight01",\
-                "cRespKIMachLight02",\
-                "cRespKIMachLight03",\
-                "cRespKIMachLight04",\
-                "cRespKIMachLight05",\
-                "cRespKIMachLight06",\
-                "cRespKIMachLight07",\
-                "cRespKIMachLight08",\
-                "cRespKIMachLight09",\
-                "cRespKIMachLight10",\
-                "cRespKIMachLight11",\
-                "cRespKIMachLight12",\
-                "cRespKIMachLight13",\
-                "cRespKIMachLight14",\
-                "cRespKIMachLight15",\
-            ]
+gLightRespNames = [
+    "cRespKIMachLight01",
+    "cRespKIMachLight02",
+    "cRespKIMachLight03",
+    "cRespKIMachLight04",
+    "cRespKIMachLight05",
+    "cRespKIMachLight06",
+    "cRespKIMachLight07",
+    "cRespKIMachLight08",
+    "cRespKIMachLight09",
+    "cRespKIMachLight10",
+    "cRespKIMachLight11",
+    "cRespKIMachLight12",
+    "cRespKIMachLight13",
+    "cRespKIMachLight14",
+    "cRespKIMachLight15",
+]
 
-#Utility classes
+# Utility classes
 def ResetMarkerGame():
     "Resets marker game chronicle states"
-    #This is used for when the KI or the grtzKIMarkerMachine entcounters a corrupted vault
+    # This is used for when the KI or the grtzKIMarkerMachine entcounters a corrupted vault
     vault = ptVault()
 
     # First, reset the KI Marker Level
@@ -132,18 +138,27 @@ def ResetMarkerGame():
     if entry is not None:
         entry.chronicleSetValue(resetString)
 
-    #Who knows what state we were in so we'll reset the CGZs as well!!!
+    # Who knows what state we were in so we'll reset the CGZs as well!!!
     PtSendKIMessage(kMGStopCGZGame, 0)
 
     # Finally, update the KI display
-    PtSendKIMessage(kGZUpdated,0)
+    PtSendKIMessage(kGZUpdated, 0)
+
 
 def UpdateGZMarkers(markerStatus):
     "Stops the actual markers from being displayed in the game"
-    statusTypes = (kGZMarkerInactive, kGZMarkerAvailable, kGZMarkerCaptured, kGZMarkerUploaded)
+    statusTypes = (
+        kGZMarkerInactive,
+        kGZMarkerAvailable,
+        kGZMarkerCaptured,
+        kGZMarkerUploaded,
+    )
 
     if not markerStatus in statusTypes:
-        PtDebugPrint("ERROR: grtzKIMarkerMachine.UpdateGZMarkers(): Invalid markerStatus: %s" %markerStatus)
+        PtDebugPrint(
+            "ERROR: grtzKIMarkerMachine.UpdateGZMarkers(): Invalid markerStatus: %s"
+            % markerStatus
+        )
         return
 
     vault = ptVault()
@@ -155,22 +170,31 @@ def UpdateGZMarkers(markerStatus):
         entry.save()
     else:
         markers = markerStatus * kNumGZMarkers
-        vault.addChronicleEntry(kChronicleGZMarkersAquired,kChronicleGZMarkersAquiredType,markers)
+        vault.addChronicleEntry(
+            kChronicleGZMarkersAquired, kChronicleGZMarkersAquiredType, markers
+        )
+
 
 class grtzKIMarkerMachine(ptModifier):
-
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 206
         self.version = MaxVersionNumber
-        PtDebugPrint("grtzKIMarkerMachine: Max version %d - minor version %d.1" % (MaxVersionNumber,MinorVersionNumber),level=kDebugDumpLevel)
+        PtDebugPrint(
+            "grtzKIMarkerMachine: Max version %d - minor version %d.1"
+            % (MaxVersionNumber, MinorVersionNumber),
+            level=kDebugDumpLevel,
+        )
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Notify from region sensor or from the KI"
         global gAvatar
         global gIsDownloadingLastGame
         global kNumGZMarkers
-        PtDebugPrint("grtzKIMarkerMachine: Notify  state=%f, id=%d" % (state,id),level=kDebugDumpLevel)
+        PtDebugPrint(
+            "grtzKIMarkerMachine: Notify  state=%f, id=%d" % (state, id),
+            level=kDebugDumpLevel,
+        )
 
         # if this is from the region sensor, then determine if this
         if id == aKISlotAct.id:
@@ -182,11 +206,13 @@ class grtzKIMarkerMachine(ptModifier):
                 # the avatar responder ... the avatar's hand is in the KI slot
                 if PtDetermineKILevel() >= kNormalKI:
                     # Run the avatar behavior responder
-                    aKIAvatarResp.run(self.key,avatar=avatar,state='Longer')
+                    aKIAvatarResp.run(self.key, avatar=avatar, state="Longer")
                 else:
-                    aKIAvatarResp.run(self.key,avatar=avatar,state='Short')
+                    aKIAvatarResp.run(self.key, avatar=avatar, state="Short")
             if gAvatar != PtGetLocalAvatar():
-                PtAtTimeCallback(self.key, kReEnableClickableSeconds, kReEnableClickableID)
+                PtAtTimeCallback(
+                    self.key, kReEnableClickableSeconds, kReEnableClickableID
+                )
         if id == aKIAvatarResp.id:
             # make sure this is our avatar
             if gAvatar != PtGetLocalAvatar():
@@ -196,7 +222,7 @@ class grtzKIMarkerMachine(ptModifier):
                 # show the logo:
                 aKILogoResp.run(self.key)
                 # pop up their miniKI
-                PtSendKIMessage(kKIShowMiniKI,0)
+                PtSendKIMessage(kKIShowMiniKI, 0)
                 # determine where they are in the GZMarker thing
                 markerKILevel = PtDetermineKIMarkerLevel()
 
@@ -204,32 +230,41 @@ class grtzKIMarkerMachine(ptModifier):
                     PtDebugPrint("Making Sure Nexus Link Exists.")
                     self.IUpdateNexusLink()
 
-                #Don't try and get the game if we've got a normal KI marker level (i.e. finished with first two marker games)
-                #It will clobber any marker game progress if we try!
+                # Don't try and get the game if we've got a normal KI marker level (i.e. finished with first two marker games)
+                # It will clobber any marker game progress if we try!
                 if markerKILevel >= kKIMarkerNormalLevel:
                     # they are finished with this... nothing to do
-                    PtDebugPrint("grtzKIMarkerMachine: They're all done with this!",level=kDebugDumpLevel)
+                    PtDebugPrint(
+                        "grtzKIMarkerMachine: They're all done with this!",
+                        level=kDebugDumpLevel,
+                    )
                     aKISlotAct.enable()
                     return
-                
-                
+
                 self.IGetGZGame()
                 gIsDownloadingLastGame = 0
                 # is this the first time?
                 if markerKILevel == kKIMarkerNotUpgraded:
-                    PtDebugPrint("grtzKIMarkerMachine: Starting first GZ game",level=kDebugDumpLevel)
-                    PtSendKIMessageInt(kUpgradeKIMarkerLevel,kKIMarkerFirstLevel)
+                    PtDebugPrint(
+                        "grtzKIMarkerMachine: Starting first GZ game",
+                        level=kDebugDumpLevel,
+                    )
+                    PtSendKIMessageInt(kUpgradeKIMarkerLevel, kKIMarkerFirstLevel)
                     self.IUploadGame1()
                     PtSendKIMessageInt(kGZUpdated, kNumGZMarkers)
-                    #Ensure that the chronicle entry is setup correctly
-                    #The case we're most concerned with is a vault corruption issue where the chronicle entry exists, but is not initialized correctly
-                    #Since we're turning on for the first time, we'll enable each marker
+                    # Ensure that the chronicle entry is setup correctly
+                    # The case we're most concerned with is a vault corruption issue where the chronicle entry exists, but is not initialized correctly
+                    # Since we're turning on for the first time, we'll enable each marker
                     vault = ptVault()
                     entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
                     if entry is None:
                         # if there is none, then just add another entry - start off as active
                         markers = kGZMarkerAvailable * kNumGZMarkers
-                        vault.addChronicleEntry(kChronicleGZMarkersAquired,kChronicleGZMarkersAquiredType,markers)
+                        vault.addChronicleEntry(
+                            kChronicleGZMarkersAquired,
+                            kChronicleGZMarkersAquiredType,
+                            markers,
+                        )
                     else:
                         markers = kGZMarkerAvailable * kNumGZMarkers
                         entry.chronicleSetValue(markers)
@@ -239,31 +274,49 @@ class grtzKIMarkerMachine(ptModifier):
                 # are we working on the first game... is it done?
                 elif markerKILevel == kKIMarkerFirstLevel:
                     if gMarkerGottenNumber >= gMarkerToGetNumber:
-                        PtDebugPrint("grtzKIMarkerMachine: Done with first game",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "grtzKIMarkerMachine: Done with first game",
+                            level=kDebugDumpLevel,
+                        )
                         # they got them all... download them
-                        PtSendKIMessageInt(kUpgradeKIMarkerLevel,kKIMarkerSecondLevel)
+                        PtSendKIMessageInt(kUpgradeKIMarkerLevel, kKIMarkerSecondLevel)
                         self.IDownloadGame1()
                         # after fun with lights then the activator will be enabled
                     else:
-                        PtDebugPrint("grtzKIMarkerMachine: In the middle of the first game...",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "grtzKIMarkerMachine: In the middle of the first game...",
+                            level=kDebugDumpLevel,
+                        )
                         self.IShowCurrentGame()
                         aKISlotAct.enable()
                 elif markerKILevel == kKIMarkerSecondLevel:
-                    PtDebugPrint("grtzKIMarkerMachine: In the middle of the second game",level=kDebugDumpLevel)
+                    PtDebugPrint(
+                        "grtzKIMarkerMachine: In the middle of the second game",
+                        level=kDebugDumpLevel,
+                    )
                     if gMarkerGottenNumber >= gMarkerToGetNumber:
-                        PtDebugPrint("grtzKIMarkerMachine: Done with second game",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "grtzKIMarkerMachine: Done with second game",
+                            level=kDebugDumpLevel,
+                        )
                         gIsDownloadingLastGame = 1
                         self.IDownloadGame2()
                         UpdateGZMarkers(kGZMarkerUploaded)
-                        PtSendKIMessage(kGZUpdated,0)
+                        PtSendKIMessage(kGZUpdated, 0)
                         # after fun with lights then the activator will be enabled
                     else:
-                        PtDebugPrint("grtzKIMarkerMachine: In the middle of the second game...",level=kDebugDumpLevel)
+                        PtDebugPrint(
+                            "grtzKIMarkerMachine: In the middle of the second game...",
+                            level=kDebugDumpLevel,
+                        )
                         self.IShowCurrentGame()
                         aKISlotAct.enable()
             else:
                 # if they don't have a KI then do nothing...
-                PtDebugPrint("grtzKIMarkerMachine: KI level not high enough",level=kDebugDumpLevel)
+                PtDebugPrint(
+                    "grtzKIMarkerMachine: KI level not high enough",
+                    level=kDebugDumpLevel,
+                )
                 aKISlotAct.enable()
 
     def IGetGZGame(self):
@@ -279,12 +332,12 @@ class grtzKIMarkerMachine(ptModifier):
         if entry is not None:
             markerGameString = entry.chronicleGetValue()
             args = markerGameString.split()
-            
+
             if len(args) == 3:
                 try:
                     gGZPlaying = int(args[0])
-                    colors = args[1].split(':')
-                    outof = args[2].split(':')
+                    colors = args[1].split(":")
+                    outof = args[2].split(":")
                     if len(colors) != 2 or len(outof) != 2:
                         raise ValueError
 
@@ -294,28 +347,34 @@ class grtzKIMarkerMachine(ptModifier):
                     gMarkerToGetNumber = int(outof[1])
                     return
                 except:
-                    PtDebugPrint("grtzKIMarkerMachine - error trying to read GZGames Chronicle",level=kErrorLevel)
+                    PtDebugPrint(
+                        "grtzKIMarkerMachine - error trying to read GZGames Chronicle",
+                        level=kErrorLevel,
+                    )
                     error = 1
             else:
-                PtDebugPrint("grtzKIMarkerMachine - error GZGames string formation error",level=kErrorLevel)
+                PtDebugPrint(
+                    "grtzKIMarkerMachine - error GZGames string formation error",
+                    level=kErrorLevel,
+                )
                 error = 1
         gGZPlaying = 0
-        gMarkerGottenColor = 'off'
-        gMarkerToGetColor = 'off'
+        gMarkerGottenColor = "off"
+        gMarkerToGetColor = "off"
         gMarkerGottenNumber = 0
         gMarkerToGetNumber = 0
-        #We'll save the game now (this will help reduce vault corruption issues (i.e. the 1515 bug).
+        # We'll save the game now (this will help reduce vault corruption issues (i.e. the 1515 bug).
         self.ISetGZGame()
 
         if error:
             # This is a vault corruption issue...  yes, very bad
             # We're going to re-initialize the marker games to give the user a chance to go on
             # Although I'm sure they'll still be upset!
-            PtDebugPrint("grtzKIMarkerMachine - vault corruption error: RESETTING all Marker Game data!!!!", level=kErrorLevel)
+            PtDebugPrint(
+                "grtzKIMarkerMachine - vault corruption error: RESETTING all Marker Game data!!!!",
+                level=kErrorLevel,
+            )
             ResetMarkerGame()
-
-
-
 
     def IFlashGZGame(self):
         global gGZPlaying
@@ -324,8 +383,14 @@ class grtzKIMarkerMachine(ptModifier):
         global gMarkerGottenNumber
         global gMarkerToGetNumber
         # flash the markers in the miniKI
-        upstring = "%d %s:%s %d:%d" % (gGZPlaying,gMarkerGottenColor,gMarkerToGetColor,gMarkerGottenNumber,gMarkerToGetNumber)
-        PtSendKIMessage(kGZFlashUpdate,upstring)
+        upstring = "%d %s:%s %d:%d" % (
+            gGZPlaying,
+            gMarkerGottenColor,
+            gMarkerToGetColor,
+            gMarkerGottenNumber,
+            gMarkerToGetNumber,
+        )
+        PtSendKIMessage(kGZFlashUpdate, upstring)
 
     def ISetGZGame(self):
         global gGZPlaying
@@ -337,13 +402,19 @@ class grtzKIMarkerMachine(ptModifier):
         vault = ptVault()
         # is there a chronicle for the GZ games?
         entry = vault.findChronicleEntry(kChronicleGZGames)
-        upstring = "%d %s:%s %d:%d" % (gGZPlaying,gMarkerGottenColor,gMarkerToGetColor,gMarkerGottenNumber,gMarkerToGetNumber)
+        upstring = "%d %s:%s %d:%d" % (
+            gGZPlaying,
+            gMarkerGottenColor,
+            gMarkerToGetColor,
+            gMarkerGottenNumber,
+            gMarkerToGetNumber,
+        )
         if entry is not None:
             entry.chronicleSetValue(upstring)
             entry.save()
         else:
             # if there is none, then just add another entry
-            vault.addChronicleEntry(kChronicleGZGames,kChronicleGZGamesType,upstring)
+            vault.addChronicleEntry(kChronicleGZGames, kChronicleGZGamesType, upstring)
 
     def IUploadGame1(self):
         "Upload the first game of 15 GZMarkers"
@@ -353,11 +424,14 @@ class grtzKIMarkerMachine(ptModifier):
         global gMarkerGottenNumber
         global gMarkerToGetNumber
         global gMarkerTargetToGetNumber
-        PtDebugPrint("grtzKIMarkerMachine - uploading game 1 - shifting lights",level=kDebugDumpLevel)
-        aKISoundsResp.run(self.key,state='UpLoadMarkers')
+        PtDebugPrint(
+            "grtzKIMarkerMachine - uploading game 1 - shifting lights",
+            level=kDebugDumpLevel,
+        )
+        aKISoundsResp.run(self.key, state="UpLoadMarkers")
         gGZPlaying = 1
-        gMarkerGottenColor = 'green'
-        gMarkerToGetColor = 'greenlt'
+        gMarkerGottenColor = "green"
+        gMarkerToGetColor = "greenlt"
         gMarkerGottenNumber = 0
         gMarkerToGetNumber = 0
         gMarkerTargetToGetNumber = 15
@@ -368,23 +442,30 @@ class grtzKIMarkerMachine(ptModifier):
         global gMarkerToGetNumber
         global gMarkerTargetToGetNumber
         if gMarkerToGetNumber < gMarkerTargetToGetNumber:
-            PtDebugPrint("grtzKIMarkerMachine - lighting light %d"%(gMarkerToGetNumber+1),level=kDebugDumpLevel)
+            PtDebugPrint(
+                "grtzKIMarkerMachine - lighting light %d" % (gMarkerToGetNumber + 1),
+                level=kDebugDumpLevel,
+            )
             lidx = gMarkerToGetNumber
-            aKILightsResp.run(self.key,state='LightOn',objectName=gLightRespNames[lidx])
+            aKILightsResp.run(
+                self.key, state="LightOn", objectName=gLightRespNames[lidx]
+            )
             gMarkerToGetNumber += 1
             self.IFlashGZGame()
             PtAtTimeCallback(self.key, kLightShiftOnDelaySeconds, kLightShiftOnID)
         else:
-            PtDebugPrint("grtzKIMarkerMachine - all done shifting",level=kDebugDumpLevel)
+            PtDebugPrint(
+                "grtzKIMarkerMachine - all done shifting", level=kDebugDumpLevel
+            )
             gMarkerToGetNumber = gMarkerTargetToGetNumber
             self.ISetGZGame()
-            PtSendKIMessage(kGZUpdated,0)
+            PtSendKIMessage(kGZUpdated, 0)
             PtAtTimeCallback(self.key, kLightsOffSeconds, kLightsOffDelayID)
 
     def IDownloadGame1(self):
         "Download the first games GZMarkers"
-        aKISoundsResp.run(self.key,state='DownLoadMarkers')
-        aKILightsResp.run(self.key,state='LightOn')
+        aKISoundsResp.run(self.key, state="DownLoadMarkers")
+        aKILightsResp.run(self.key, state="LightOn")
         PtAtTimeCallback(self.key, kLightShiftOffDelaySeconds, kLightShiftOffID)
 
     def IRefreshNextLightOff(self):
@@ -395,7 +476,9 @@ class grtzKIMarkerMachine(ptModifier):
         if gMarkerToGetNumber > 0:
             gMarkerToGetNumber -= 1
             lidx = gMarkerToGetNumber
-            aKILightsResp.run(self.key,state='LightOff',objectName=gLightRespNames[lidx])
+            aKILightsResp.run(
+                self.key, state="LightOff", objectName=gLightRespNames[lidx]
+            )
             self.IFlashGZGame()
             PtAtTimeCallback(self.key, kLightShiftOffDelaySeconds, kLightShiftOffID)
         else:
@@ -412,7 +495,7 @@ class grtzKIMarkerMachine(ptModifier):
                     entry.chronicleSetValue("0")
                     entry.save()
                 # they've made it to the next level
-                PtSendKIMessageInt(kUpgradeKIMarkerLevel,kKIMarkerNormalLevel)
+                PtSendKIMessageInt(kUpgradeKIMarkerLevel, kKIMarkerNormalLevel)
                 # re-enable the activator
                 aKISlotAct.enable()
 
@@ -425,11 +508,14 @@ class grtzKIMarkerMachine(ptModifier):
         global gMarkerToGetNumber
         global gMarkerTargetToGetNumber
         self.IUpdateNexusLink()
-        PtDebugPrint("grtzKIMarkerMachine - uploading game 1 - shifting lights",level=kDebugDumpLevel)
-        aKISoundsResp.run(self.key,state='UpLoadMarkers')
+        PtDebugPrint(
+            "grtzKIMarkerMachine - uploading game 1 - shifting lights",
+            level=kDebugDumpLevel,
+        )
+        aKISoundsResp.run(self.key, state="UpLoadMarkers")
         gGZPlaying = 2
-        gMarkerGottenColor = 'red'
-        gMarkerToGetColor = 'redlt'
+        gMarkerGottenColor = "red"
+        gMarkerToGetColor = "redlt"
         gMarkerGottenNumber = 0
         gMarkerToGetNumber = 0
         gMarkerTargetToGetNumber = 15
@@ -437,20 +523,28 @@ class grtzKIMarkerMachine(ptModifier):
 
     def IDownloadGame2(self):
         "Download the second games GZMarkers"
-        aKILightsResp.run(self.key,state='LightOn')
+        aKILightsResp.run(self.key, state="LightOn")
         PtAtTimeCallback(self.key, kLightShiftOffDelaySeconds, kLightShiftOffID)
 
     def IShowCurrentGame(self):
         "display what they've gotten so far... sorta"
         if gMarkerGottenNumber == 0:
-            PtDebugPrint("grtzKIMarkerMachine - turn all the lights on",level=kDebugDumpLevel)
-            aKISoundsResp.run(self.key,state='ShowMarkers')
-            aKILightsResp.run(self.key,state='LightOn')
+            PtDebugPrint(
+                "grtzKIMarkerMachine - turn all the lights on", level=kDebugDumpLevel
+            )
+            aKISoundsResp.run(self.key, state="ShowMarkers")
+            aKILightsResp.run(self.key, state="LightOn")
         else:
-            PtDebugPrint("grtzKIMarkerMachine - turn only %d lights on" % (gMarkerToGetNumber-gMarkerGottenNumber),level=kDebugDumpLevel)
-            aKISoundsResp.run(self.key,state='ShowMarkers')
-            for idx in range(gMarkerGottenNumber,gMarkerToGetNumber):
-                aKILightsResp.run(self.key,state='LightOn',objectName=gLightRespNames[idx])
+            PtDebugPrint(
+                "grtzKIMarkerMachine - turn only %d lights on"
+                % (gMarkerToGetNumber - gMarkerGottenNumber),
+                level=kDebugDumpLevel,
+            )
+            aKISoundsResp.run(self.key, state="ShowMarkers")
+            for idx in range(gMarkerGottenNumber, gMarkerToGetNumber):
+                aKILightsResp.run(
+                    self.key, state="LightOn", objectName=gLightRespNames[idx]
+                )
         PtAtTimeCallback(self.key, kLightsOffSeconds, kLightsOffDelayID)
 
     def IGetHoodLinkNode(self):
@@ -462,12 +556,13 @@ class grtzKIMarkerMachine(ptModifier):
             link = link.upcastToAgeLinkNode()
             if link is not None:
                 info = link.getAgeInfo()
-            if not info: continue
+            if not info:
+                continue
             ageName = info.getAgeFilename()
             if ageName == "Neighborhood":
                 return link
         return None
-    
+
     def IGetHoodInfoNode(self):
         link = self.IGetHoodLinkNode()
         if link is None:
@@ -487,30 +582,47 @@ class grtzKIMarkerMachine(ptModifier):
                 for SpawnPoint in GZSpawnPoints:
                     title = SpawnPoint.getTitle().lower()
                     name = SpawnPoint.getName().lower()
-                    #PtDebugPrint("Title: %s\nName: %s" % (title,name))
+                    # PtDebugPrint("Title: %s\nName: %s" % (title,name))
                     if title == "great zero" and name == "bigroomlinkinpoint":
                         PtDebugPrint("grtzKIMarkerMachine: Nexus link already exists.")
                         return
-                #self.IDoCityLinksChron("BigRoomLinkInPoint")   # this will be used if we want to add this to the city book
-                outerRoomSP = ptSpawnPointInfo("Great Zero","BigRoomLinkInPoint")
-                #PtDebugPrint("NewSpawnPointInfo\nName: %s\nTitle: %s" % (outerRoomSP.getName(), outerRoomSP.getTitle()))
+                # self.IDoCityLinksChron("BigRoomLinkInPoint")   # this will be used if we want to add this to the city book
+                outerRoomSP = ptSpawnPointInfo("Great Zero", "BigRoomLinkInPoint")
+                # PtDebugPrint("NewSpawnPointInfo\nName: %s\nTitle: %s" % (outerRoomSP.getName(), outerRoomSP.getTitle()))
                 link.addSpawnPoint(outerRoomSP)
                 link.save()
                 PtDebugPrint("grtzKIMarkerMachine: Nexus link added.")
-                PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
-                PtDebugPrint("grtzKIMarkerMachine - setting new spawn point for GZ",level=kDebugDumpLevel)
+                PtSendKIMessage(
+                    kKILocalChatStatusMsg,
+                    PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
+                )
+                PtDebugPrint(
+                    "grtzKIMarkerMachine - setting new spawn point for GZ",
+                    level=kDebugDumpLevel,
+                )
                 return
-        PtDebugPrint("grtzKIMarkerMachine - error - could not find link to add spawnpoint to")
+        PtDebugPrint(
+            "grtzKIMarkerMachine - error - could not find link to add spawnpoint to"
+        )
 
-    def OnTimer(self,id):
+    def OnTimer(self, id):
         if id == kLightsOffDelayID:
             if gMarkerGottenNumber == 0:
-                PtDebugPrint("grtzKIMarkerMachine - turn all the lights off",level=kDebugDumpLevel)
-                aKILightsResp.run(self.key,state='LightOff')
+                PtDebugPrint(
+                    "grtzKIMarkerMachine - turn all the lights off",
+                    level=kDebugDumpLevel,
+                )
+                aKILightsResp.run(self.key, state="LightOff")
             else:
-                PtDebugPrint("grtzKIMarkerMachine - turn only %d lights off" % (gMarkerToGetNumber-gMarkerGottenNumber),level=kDebugDumpLevel)
-                for idx in range(gMarkerGottenNumber,gMarkerToGetNumber):
-                    aKILightsResp.run(self.key,state='LightOff',objectName=gLightRespNames[idx])
+                PtDebugPrint(
+                    "grtzKIMarkerMachine - turn only %d lights off"
+                    % (gMarkerToGetNumber - gMarkerGottenNumber),
+                    level=kDebugDumpLevel,
+                )
+                for idx in range(gMarkerGottenNumber, gMarkerToGetNumber):
+                    aKILightsResp.run(
+                        self.key, state="LightOff", objectName=gLightRespNames[idx]
+                    )
             aKISlotAct.enable()
         elif id == kLightShiftOnID:
             self.IRefreshNextLightOn()
@@ -519,32 +631,45 @@ class grtzKIMarkerMachine(ptModifier):
         elif id == kReEnableClickableID:
             aKISlotAct.enable()
 
-
-    def IDoCityLinksChron(self,agePanel):   # ganked from xLinkingBookGUIPopup.py
+    def IDoCityLinksChron(self, agePanel):  # ganked from xLinkingBookGUIPopup.py
         CityLinks = []
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
-            PtDebugPrint("valCityLinks = ",valCityLinks)
+            PtDebugPrint("valCityLinks = ", valCityLinks)
             CityLinks = valCityLinks.split(",")
-            PtDebugPrint("CityLinks = ",CityLinks)
+            PtDebugPrint("CityLinks = ", CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
                 entryCityLinks.chronicleSetValue(NewLinks)
                 entryCityLinks.save()
-                PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
+                PtDebugPrint(
+                    "grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ",
+                    agePanel,
+                )
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
-                PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  citylinks now = ",CityLinks)
+                PtDebugPrint(
+                    "grtzKIMarkerMachine.IDoCityLinksChron():  citylinks now = ",
+                    CityLinks,
+                )
             else:
-                PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",agePanel)
+                PtDebugPrint(
+                    "grtzKIMarkerMachine.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",
+                    agePanel,
+                )
         else:
-            vault.addChronicleEntry("CityBookLinks",0,agePanel)
-            PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  creating citylinks chron entry and adding: ",agePanel)
-        
+            vault.addChronicleEntry("CityBookLinks", 0, agePanel)
+            PtDebugPrint(
+                "grtzKIMarkerMachine.IDoCityLinksChron():  creating citylinks chron entry and adding: ",
+                agePanel,
+            )
+
         psnlSDL = xPsnlVaultSDL()
         GotBook = psnlSDL["psnlGotCityBook"][0]
         if not GotBook:
             psnlSDL["psnlGotCityBook"] = (1,)
-            PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  setting SDL for city book to 1")
+            PtDebugPrint(
+                "grtzKIMarkerMachine.IDoCityLinksChron():  setting SDL for city book to 1"
+            )

@@ -51,7 +51,7 @@ from PlasmaTypes import *
 
 # define the attributes that will be entered in 3dsMAX
 actSwitch01 = ptAttribActivator(1, "act: Podium Button")
-respButtonOneshot = ptAttribResponder(2,"resp: Push Podium oneshot")
+respButtonOneshot = ptAttribResponder(2, "resp: Push Podium oneshot")
 
 respSpeech01 = ptAttribResponder(3, "resp: Speech #1")
 
@@ -64,8 +64,7 @@ respSilence = ptAttribResponder(4, "resp: Shut all speeches off")
 # respSpeech05 = ptAttribResponder(7, "Speech #5 Responder")
 
 
-
-#globals
+# globals
 ElapsedTime = 0
 SecondsToCharge = 60
 baton = 0
@@ -74,7 +73,6 @@ Resetting = 0
 
 
 class krelPodium(ptResponder):
-
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
@@ -82,30 +80,31 @@ class krelPodium(ptResponder):
 
         version = 2
         self.version = version
-        PtDebugPrint("__init__krelPodium v.", version,".0")
-    
+        PtDebugPrint("__init__krelPodium v.", version, ".0")
+
     def OnServerInitComplete(self):
         try:
             ageSDL = PtGetAgeSDL()
         except:
             PtDebugPrint("krelPodium:\tERROR---Cannot find the Kirel Age SDL")
-            ageSDL["nb01CmnRmSpeech"] = (0, ) 
+            ageSDL["nb01CmnRmSpeech"] = (0,)
 
-        ageSDL.setNotify(self.key,"nb01CmnRmSpeech",0.0)        
+        ageSDL.setNotify(self.key, "nb01CmnRmSpeech", 0.0)
 
         ageSDL.sendToClients("nb01CmnRmSpeech")
-        
-        ageSDL.setFlags("nb01CmnRmSpeech",1,1)  
 
+        ageSDL.setFlags("nb01CmnRmSpeech", 1, 1)
 
         nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
-        
-        ageSDL["nb01CmnRmSpeech"] = (0, ) 
-        
-    def OnNotify(self,state,id,events):
-        ageSDL = PtGetAgeSDL()     
-        
-        PtDebugPrint("krelPodium.OnNotify:  state=%f id=%d events=" % (state,id),events)
+
+        ageSDL["nb01CmnRmSpeech"] = (0,)
+
+    def OnNotify(self, state, id, events):
+        ageSDL = PtGetAgeSDL()
+
+        PtDebugPrint(
+            "krelPodium.OnNotify:  state=%f id=%d events=" % (state, id), events
+        )
 
         if not state:
             return
@@ -113,23 +112,28 @@ class krelPodium(ptResponder):
         if id == actSwitch01.id:
             respButtonOneshot.run(self.key, events=events)
             return
-            
+
         elif id == respButtonOneshot.id and self.sceneobject.isLocallyOwned():
             PtDebugPrint("##")
-            nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0] 
-            
-            if nb01CmnRmSpeech == 0: # No speech was playing
-                PtDebugPrint("krelPodium: No speech was previously playing. Playing speech #1.")
+            nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
+
+            if nb01CmnRmSpeech == 0:  # No speech was playing
+                PtDebugPrint(
+                    "krelPodium: No speech was previously playing. Playing speech #1."
+                )
                 respSpeech01.run(self.key)
                 ageSDL["nb01CmnRmSpeech"] = (1,)
 
-            else: 
-                PtDebugPrint("krelPodium: Speech #1 was stopped manually by the avatar.")
+            else:
+                PtDebugPrint(
+                    "krelPodium: Speech #1 was stopped manually by the avatar."
+                )
                 respSilence.run(self.key)
                 ageSDL["nb01CmnRmSpeech"] = (0,)
-                
-                
+
         elif id == respSpeech01.id:
-            PtDebugPrint("krelPodium: Speech #1 was stopped automatically after it finished playing.")
+            PtDebugPrint(
+                "krelPodium: Speech #1 was stopped automatically after it finished playing."
+            )
             respSilence.run(self.key)
             ageSDL["nb01CmnRmSpeech"] = (0,)

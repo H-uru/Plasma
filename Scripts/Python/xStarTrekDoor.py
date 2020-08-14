@@ -53,8 +53,8 @@ from PlasmaTypes import *
 import PlasmaControlKeys
 
 # define the attributes that will be entered in max
-Activate = ptAttribActivator(1, "Region Sensor",netForce=1)
-respDoor = ptAttribResponder(2, "Door Responder",['open','close'])
+Activate = ptAttribActivator(1, "Region Sensor", netForce=1)
+respDoor = ptAttribResponder(2, "Door Responder", ["open", "close"])
 
 # globals
 
@@ -66,10 +66,11 @@ doorHistory = "close"
 
 class xStarTrekDoor(ptModifier):
     "Standard Star Trek Door"
+
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 5115
-        
+
         version = 2
         self.version = version
         PtDebugPrint("__init__xStarTrekDoor v.", version)
@@ -77,44 +78,42 @@ class xStarTrekDoor(ptModifier):
     def OnFirstUpdate(self):
         pass
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         "Activated... "
         global doorCued
         global doorMoving
         global doorState
         PtDebugPrint(doorMoving)
-        if state and id == Activate.id: # and PtWasLocallyNotified(self.key): # region is activated.
+        if (
+            state and id == Activate.id
+        ):  # and PtWasLocallyNotified(self.key): # region is activated.
 
             for event in events:
                 if event[0] == kCollisionEvent:
-                    if event[1]:  # someone entered   
-                        doorState="open"
-                    else:         # someone exited
-                        doorState="close"
-            
+                    if event[1]:  # someone entered
+                        doorState = "open"
+                    else:  # someone exited
+                        doorState = "close"
+
             if not doorMoving:
                 self.doorAction()
                 PtDebugPrint("door played")
-            else: # got a command, but door is busy so cue it
-                doorCued=1
+            else:  # got a command, but door is busy so cue it
+                doorCued = 1
                 PtDebugPrint("door cued")
         elif state and id == respDoor.id:
             # Callback from door finishing movement
             PtDebugPrint("callbackfromdoor")
-            doorMoving=0
+            doorMoving = 0
             if doorCued:
-                doorCued=0
+                doorCued = 0
                 self.doorAction()
 
     def doorAction(self):
         global doorMoving
-        global doorHistory        
+        global doorHistory
         if doorHistory != doorState:
-            doorMoving=1
-            doorHistory=doorState
-            respDoor.run(self.key,state=doorState)
+            doorMoving = 1
+            doorHistory = doorState
+            respDoor.run(self.key, state=doorState)
             PtDebugPrint("Door Begin %s" % doorState)
-
-
-
-

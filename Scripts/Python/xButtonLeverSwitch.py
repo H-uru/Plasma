@@ -52,12 +52,12 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-varstring = ptAttribString(1,"Name")
-act  = ptAttribActivator(2,"Activate Me")
-resp = ptAttribResponder(3,"Responder")
+varstring = ptAttribString(1, "Name")
+act = ptAttribActivator(2, "Activate Me")
+resp = ptAttribResponder(3, "Responder")
+
 
 class xButtonLeverSwitch(ptResponder):
-
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
@@ -65,16 +65,21 @@ class xButtonLeverSwitch(ptResponder):
         version = 1
         self.version = version
         PtDebugPrint("__init__xButtonLeverSwitch v.", version)
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         if state:
-            if id==act.id:
-                resp.run(self.key,events=events)
-            elif id==resp.id:
-                PtDebugPrint("xButtonLeverSwitch.OnNotify:\tsending msg '%s' clicked, pulled or otherwise activated." % varstring.value)
+            if id == act.id:
+                resp.run(self.key, events=events)
+            elif id == resp.id:
+                PtDebugPrint(
+                    "xButtonLeverSwitch.OnNotify:\tsending msg '%s' clicked, pulled or otherwise activated."
+                    % varstring.value
+                )
                 note = ptNotify(self.key)
                 note.setActivate(1.0)
-                note.addVarNumber(varstring.value,1.0)
+                note.addVarNumber(varstring.value, 1.0)
                 note.send()
             else:
-                PtDebugPrint("xButtonLeverSwitch.OnNotify:\tERROR: unanticipated message source.")
+                PtDebugPrint(
+                    "xButtonLeverSwitch.OnNotify:\tERROR: unanticipated message source."
+                )

@@ -51,23 +51,24 @@ run console command to create new instance of an age for testing purposes
 from Plasma import *
 from PlasmaTypes import *
 
-act = ptAttribActivator(2,"Activator")
-string  = ptAttribString(1,"Name of Age to Clear")
+act = ptAttribActivator(2, "Activator")
+string = ptAttribString(1, "Name of Age to Clear")
+
 
 class xClearAge(ptResponder):
-
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
         self.id = 5118
-        
+
         version = 1
         self.version = version
         PtDebugPrint("__init__xClearAge v.", version)
-        
-    def OnNotify(self,state,id,events):
+
+    def OnNotify(self, state, id, events):
         if state:
             PtConsole("Net.ClearAgeInstanceGuid %s" % string.value)
             PtDebugPrint("Clearing %s" % string.value)
-            
-#-------------
+
+
+# -------------

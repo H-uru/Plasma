@@ -49,7 +49,8 @@ from PlasmaTypes import *
 kLogTrackVarname = "SndLogTrack"
 kLogModeVarname = "VaporTrail"
 
-def LogTrack(currentState,nextState):
+
+def LogTrack(currentState, nextState):
     updated = 0
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogTrackVarname)
@@ -77,9 +78,10 @@ def LogTrack(currentState,nextState):
         if not updated:
             # ha, ha ...start over
             PtDebugPrint("not updated")
-#            entry.chronicleSetValue("15")
-#            entry.save()
+    #            entry.chronicleSetValue("15")
+    #            entry.save()
     return updated
+
 
 def InitLogTrack(nextState):
     vault = ptVault()
@@ -88,7 +90,8 @@ def InitLogTrack(nextState):
         entry.chronicleSetValue(nextState)
         entry.save()
     else:
-        vault.addChronicleEntry(kLogTrackVarname,1,nextState)
+        vault.addChronicleEntry(kLogTrackVarname, 1, nextState)
+
 
 def SetLogMode():
     vault = ptVault()
@@ -97,7 +100,8 @@ def SetLogMode():
         entry.chronicleSetValue("white")
         entry.save()
     else:
-        vault.addChronicleEntry(kLogModeVarname,1,"white")
+        vault.addChronicleEntry(kLogModeVarname, 1, "white")
+
 
 def UnsetLogMode():
     vault = ptVault()
@@ -105,6 +109,7 @@ def UnsetLogMode():
     if entry is not None:
         entry.chronicleSetValue("blue")
         entry.save()
+
 
 def IsLogMode():
     vault = ptVault()
@@ -114,6 +119,7 @@ def IsLogMode():
             return 1
     return 0
 
+
 def WhatIsLog():
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogTrackVarname)
@@ -122,6 +128,7 @@ def WhatIsLog():
     else:
         PtDebugPrint("not initialized")
 
+
 def GetTrack():
     avatar = PtGetLocalAvatar()
     currentgender = avatar.avatar.getAvatarClothingGroup()
@@ -129,4 +136,4 @@ def GetTrack():
         avatar.avatar.wearClothingItem("02_FTorso11_01")
     else:
         avatar.avatar.wearClothingItem("02_MTorso09_01")
-    avatar.avatar.saveClothing() # save any clothing changes
+    avatar.avatar.saveClothing()  # save any clothing changes
