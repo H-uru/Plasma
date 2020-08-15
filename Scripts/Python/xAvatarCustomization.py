@@ -374,7 +374,7 @@ def SaveAvatarToDisk():
     name = PtGetLocalPlayer().getPlayerName()
     
     # write them to a file on disk
-    saveFile = file(name+".avatar.ava",'w')
+    saveFile = open(name+".avatar.ava",'w')
     saveFile.write(str(len(clothingList))+'\n')
     for i in range(len(clothingList)):
         item = clothingList[i]
@@ -1109,7 +1109,7 @@ class xAvatarCustomization(ptModifier):
         # open the file and read in the settings
         name = PtGetLocalPlayer().getPlayerName()
         try:
-            saveFile = file(name+".avatar.ava",'r')
+            saveFile = open(name+".avatar.ava",'r')
             numClothingItems = int(saveFile.readline())
             clothingList = []
             color1 = []
