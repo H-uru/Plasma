@@ -8,6 +8,9 @@ set_package_properties(Qt5Core PROPERTIES
 
 
 if(PLASMA_BUILD_TOOLS)
+    add_subdirectory(SoundDecompress)
+    add_dependencies(tools SoundDecompress)
+
     if(Qt5_FOUND)
         add_subdirectory(plLocalizationEditor)
         add_subdirectory(plResBrowser)
