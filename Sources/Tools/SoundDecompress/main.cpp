@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAudioCore/plSoundBuffer.h"
 
-#ifdef HS_BUILD_FOR_WIN32
+#ifdef OUTPUT_WAV_FILES
 #include "plOldAudioFileReader.h"
 #endif
 
@@ -102,9 +102,6 @@ void PrintHelp()
     ST::printf("-s, --silent        Run silently, no output\n");
     ST::printf("-v, --verbose       Print each filename when decompressing\n");
     ST::printf("-f, --force         Force decompressing existing files\n");
-#ifdef HS_BUILD_FOR_WIN32
-    ST::printf("-w, --wav           Output WAV files instead of TMP files\n");
-#endif
 }
 
 SoundSet CollectSounds(plResManager* rm)
@@ -153,7 +150,7 @@ SoundSet CollectSounds(plResManager* rm)
 }
 
 
-void DecompressSounds(SoundSet& sounds, OutputStyle verbosity, bool overwrite, bool wav)
+void DecompressSounds(SoundSet& sounds, OutputStyle verbosity, bool overwrite)
 {
     uint32_t total = sounds.size();
     uint32_t curr  = 0;
@@ -180,19 +177,17 @@ void DecompressSounds(SoundSet& sounds, OutputStyle verbosity, bool overwrite, b
         }
 
         if (hsCheckBits(flags, plManifestFile::kSndFlagCacheSplit)) {
-#ifdef HS_BUILD_FOR_WIN32
-            if (wav)
-                plOldAudioFileReader::CacheFile(path, true, !overwrite);
-            else
-#endif
+#ifdef OUTPUT_WAV_FILES
+            plOldAudioFileReader::CacheFile(path, true, !overwrite);
+#else
             plAudioFileReader::CacheFile(path, true, !overwrite);
-        } else if (hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo)) {
-#ifdef HS_BUILD_FOR_WIN32
-            if (wav)
-                plOldAudioFileReader::CacheFile(path, false, !overwrite);
-            else
 #endif
+        } else if (hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo)) {
+#ifdef OUTPUT_WAV_FILES
+            plOldAudioFileReader::CacheFile(path, false, !overwrite);
+#else
             plAudioFileReader::CacheFile(path, false, !overwrite);
+#endif
         }
     }
 
@@ -211,25 +206,13 @@ int main(int argc, const char** argv)
 #endif
 
     bool overwrite = false;
-#ifdef OUTPUT_WAV_FILES
-    bool wav = true
-#else
-    bool wav = false;
-#endif
     OutputStyle verbosity = OutputStyle::kProgress;
 
-#ifdef HS_BUILD_FOR_WIN32
-    enum { kArgSilent, kArgVerbose, kArgForce, kArgHelp1, kArgHelp2, kArgWav };
-#else
     enum { kArgSilent, kArgVerbose, kArgForce, kArgHelp1, kArgHelp2 };
-#endif
     const plCmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeBool, "silent",  kArgSilent },
         { kCmdArgFlagged | kCmdTypeBool, "verbose", kArgVerbose },
         { kCmdArgFlagged | kCmdTypeBool, "force",   kArgForce },
-#ifdef HS_BUILD_FOR_WIN32
-        { kCmdArgFlagged | kCmdTypeBool, "wav",     kArgWav },
-#endif
         { kCmdArgFlagged | kCmdTypeBool, "help",    kArgHelp1 },
         { kCmdArgFlagged | kCmdTypeBool, "?",       kArgHelp2 }
     };
@@ -261,11 +244,6 @@ int main(int argc, const char** argv)
     if (cmdParser.GetBool(kArgForce))
         overwrite = true;
 
-#ifdef HS_BUILD_FOR_WIN32
-    if (cmdParser.GetBool(kArgWav))
-        wav = true;
-#endif
-
     // Init our special resMgr
     plResMgrSettings::Get().SetFilterNewerPageVersions(false);
     plResMgrSettings::Get().SetFilterOlderPageVersions(false);
@@ -276,7 +254,7 @@ int main(int argc, const char** argv)
     hsgResMgr::Init(rm);
 
     SoundSet sounds = CollectSounds(rm);
-    DecompressSounds(sounds, verbosity, overwrite, wav);
+    DecompressSounds(sounds, verbosity, overwrite);
 
     hsgResMgr::Shutdown();
 

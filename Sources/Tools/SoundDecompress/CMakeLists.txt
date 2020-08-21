@@ -21,18 +21,18 @@ set(SoundDecompress_SOURCES
 set(SoundDecompress_HEADERS
 )
 
-if(WIN32)
+if(SoundDecompress_MOULa_Mode)
     set(SoundDecompress_SOURCES plOldAudioFileReader.cpp ${SoundDecompress_SOURCES})
     set(SoundDecompress_HEADERS plOldAudioFileReader.h)
-endif(WIN32)
+endif()
 
 add_executable(SoundDecompress ${SoundDecompress_SOURCES})
 target_link_libraries(SoundDecompress CoreLib plResMgr plAudioCore)
 target_link_libraries(SoundDecompress ${STRING_THEORY_LIBRARIES})
 
-if(WIN32)
+if(SoundDecompress_MOULa_Mode)
     target_link_libraries(SoundDecompress ${DirectX_LIBRARIES})
-endif(WIN32)
+endif()
 
 if(USE_VLD)
     target_link_libraries(SoundDecompress ${VLD_LIBRARY})
