@@ -472,26 +472,8 @@ bool plAvBrainHuman::MsgReceive(plMessage * msg)
     plRideAnimatedPhysMsg *ride = plRideAnimatedPhysMsg::ConvertNoRef(msg);
     if(ride)
     {
-        if(ride->Entering())
-        {
-            // Switch to dynamic walking strategy
-            delete fWalkingStrategy;
-            plSceneObject* avObj = fArmature->GetTarget(0);
-            plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
-            plPhysicalControllerCore* controller = fAvMod->GetController();
-            fWalkingStrategy = new plRidingWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
-            controller->SetMovementStrategy(fWalkingStrategy);
-        }
-        else
-        {
-            // Restore default walking strategy
-            delete fWalkingStrategy;
-            plSceneObject* avObj = fArmature->GetTarget(0);
-            plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
-            plPhysicalControllerCore* controller = fAvMod->GetController();
-            fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
-            controller->SetMovementStrategy(fWalkingStrategy);
-        }
+        fWalkingStrategy->ToggleRiding(ride->Entering());
+        return true;
     }
 
     return plArmatureBrain::MsgReceive(msg);

@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 #include "plPhysical/plSimDefs.h"
+
+#include <optional>
 #include <vector>
 
 class plCoordinateInterface;
@@ -57,26 +59,18 @@ class plAGApplicator;
 class plSwimRegionInterface;
 class plSceneObject;
 
-#define kSlopeLimit (cosf(hsDegreesToRadians(45.f)))
-
-enum plControllerCollisionFlags
-{
-    kSides = 1,
-    kTop = (1 << 1),
-    kBottom = (1 << 2)
-};
-
-struct plControllerSweepRecord
+struct plControllerHitRecord
 {
     plPhysical* ObjHit;
     hsPoint3 Point;
     hsVector3 Normal;
+    float Displacement;
 
-    plControllerSweepRecord()
-        : ObjHit(), Point(), Normal()
+    plControllerHitRecord()
+        : ObjHit(), Point(), Normal(), Displacement()
     { }
-    plControllerSweepRecord(plPhysical* phys, hsPoint3 p, hsVector3 n)
-        : ObjHit(phys), Point(std::move(p)), Normal(std::move(n))
+    plControllerHitRecord(plPhysical* phys, hsPoint3 p, hsVector3 n, float d=0.f)
+        : ObjHit(phys), Point(std::move(p)), Normal(std::move(n)), Displacement(d)
     { }
 };
 
@@ -113,13 +107,66 @@ public:
 
     // Local sim position
     virtual void GetPositionSim(hsPoint3& pos) = 0;
+    virtual void SetPositionSim(const hsPoint3& pos) = 0;
 
-    // Move kinematic controller
-    virtual void Move(const hsVector3& displacement, unsigned int collideWith, unsigned int &collisionResults) = 0;
+    /** Sets the linear velocity in simulation space. */
+    virtual void SetLinearVelocitySim(const hsVector3& velocity) = 0;
 
-    // Sweep the controller path from startPos through endPos
-    virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, bool vsDynamics, bool vsStatics,
-        uint32_t& vsSimGroups, std::vector<plControllerSweepRecord>& hits) = 0;
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports all hits
+     * along the path.
+     * \param[in] startPos: Position from which the capsule sweep should begin.
+     * \param[in] endPos: Position from which the capsule sweep should end.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns All hits along the path of the sweep.
+     */
+    [[nodiscard]]
+    virtual std::vector<plControllerHitRecord> SweepMulti(const hsPoint3& startPos,
+                                                          const hsPoint3& endPos,
+                                                          plSimDefs::Group simGroups) const = 0;
+
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports all hits
+     * along the path.
+     * \param[in] origin Position from which the capsule sweep should begin.
+     * \param[in] dir Unit vector defining the direction of the capsule sweep.
+     * \param[in] distance Distance over which the capsule should be swept.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns All hits along the path of the sweep.
+     */
+    [[nodiscard]]
+    virtual std::vector<plControllerHitRecord> SweepMulti(const hsPoint3& origin,
+                                                          const hsVector3& dir,
+                                                          float distance,
+                                                          plSimDefs::Group simGroups) const = 0;
+
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports the first blocking
+     * hit along the path.
+     * \param[in] startPos: Position from which the capsule sweep should begin.
+     * \param[in] endPos: Position from which the capsule sweep should end.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns The first hit along the path of the sweep.
+     */
+    [[nodiscard]]
+    virtual std::optional<plControllerHitRecord> SweepSingle(const hsPoint3& startPos,
+                                                             const hsPoint3& endPos,
+                                                             plSimDefs::Group simGroups) const = 0;
+
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports the first blocking
+     * hit along the path.
+     * \param[in] origin Position from which the capsule sweep should begin.
+     * \param[in] dir Unit vector defining the direction of the capsule sweep.
+     * \param[in] distance Distance over which the capsule should be swept.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns The first hit along the path of the sweep.
+     */
+    [[nodiscard]]
+    virtual std::optional<plControllerHitRecord> SweepSingle(const hsPoint3& origin,
+                                                             const hsVector3& dir,
+                                                             float distance,
+                                                             plSimDefs::Group simGroups) const = 0;
 
     // any clean up for the controller should go here
     virtual void LeaveAge() = 0;
@@ -128,13 +175,19 @@ public:
     const hsQuat& GetLocalRotation() const { return fLocalRotation; }
     void IncrementAngle(float deltaAngle);
 
-    // Linear velocity
+    /** Sets the controller's desired linear velocity in character space. */
     void SetLinearVelocity(const hsVector3& linearVel) { fLinearVelocity = linearVel; }
+
+    /** Gets the controller's desired linear velocity in character space. */
     const hsVector3& GetLinearVelocity() const { return fLinearVelocity; }
 
-    // Acheived linear velocity
+    /** Gets the controller's simulated linear velocity in character space. */
     const hsVector3& GetAchievedLinearVelocity() const { return fAchievedLinearVelocity; }
+
+    /** Overrides the controller's simulated linear velocity in character space. */
     void OverrideAchievedLinearVelocity(const hsVector3& linearVel) { fAchievedLinearVelocity = linearVel; }
+
+    /** Resets the controller's simulated linear velocity. */
     void ResetAchievedLinearVelocity() { fAchievedLinearVelocity.Set(0.f, 0.f, 0.f); }
 
     // SceneObject
@@ -154,12 +207,12 @@ public:
     float GetRadius() const { return fRadius; }
     float GetHeight() const { return fHeight; }
 
+    float GetMass() const { return 100.f; }
+
     // Create a new controller instance - Implemented in the physics system
     static plPhysicalControllerCore* Create(plKey ownerSO, float height, float radius, bool human);
 
 protected:
-    virtual void IHandleEnableChanged() = 0;
-
     void IApply(float delSecs);
     void IUpdate(int numSubSteps, float alpha);
     void IUpdateNonPhysical(float alpha);
@@ -193,23 +246,19 @@ protected:
 
     bool fSeeking;
     bool fEnabled;
-    bool fEnableChanged;
 };
 
 class plMovementStrategy
 {
 public:
     plMovementStrategy(plPhysicalControllerCore* controller);
-    virtual ~plMovementStrategy() { }
+    virtual ~plMovementStrategy() = default;
 
     virtual void Apply(float delSecs) = 0;
     virtual void Update(float delSecs) { }
 
-    virtual void AddContactNormals(hsVector3& vec) { }
+    virtual void AddContact(plPhysical* phys, const hsPoint3& pos, const hsVector3& normal) { }
     virtual void Reset(bool newAge);
-
-    /** Returns if the CCT should attempt to ride objects it is on top of. */
-    virtual bool Ride() const { return false; }
 
 protected:
     plPhysicalControllerCore* fController;
@@ -219,7 +268,6 @@ class plAnimatedMovementStrategy : public plMovementStrategy
 {
 public:
     plAnimatedMovementStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
-    virtual ~plAnimatedMovementStrategy() { }
 
     virtual void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true);
     void SetTurnStrength(float val) { fTurnStr = val; }
@@ -237,19 +285,45 @@ private:
 
 class plWalkingStrategy : public plAnimatedMovementStrategy
 {
+protected:
+    std::optional<plControllerHitRecord> IFindGroundCandidate() const;
+
+    /**
+     * Checks the ground's steepness and trigger character falling, if needed.
+     */
+    void ICheckGroundSteepness(const plControllerHitRecord& ground);
+
+    /**
+     * Steps the character up due to poorly modelled collision, if needed.
+     */
+    void IStepUp(const plControllerHitRecord& ground, float delSecs);
+
+    float GetFallStopThreshold() const { return std::cos(hsDegreesToRadians(40.f)); }
+
+    float GetFallStartThreshold() const { return std::cos(hsDegreesToRadians(57.f)); }
+
 public:
     plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
-    virtual ~plWalkingStrategy() { }
 
-    virtual void Apply(float delSecs);
-    virtual void Update(float delSecs);
+    void Apply(float delSecs) override;
+    void Update(float delSecs) override;
 
-    virtual void Reset(bool newAge);
+    void Reset(bool newAge) override;
 
-    virtual void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true);
+    void AddContact(plPhysical* phys, const hsPoint3& pos, const hsVector3& normal) override;
 
-    bool HitGroundInThisAge() const { return fHitGroundInThisAge; }
-    bool IsOnGround() const { return fTimeInAir < kAirTimeThreshold || fGroundHit; }
+    void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true) override;
+
+    bool HitGroundInThisAge() const { return fFlags & kHitGroundInThisAge; }
+    bool IsOnGround() const
+    {
+        if ((fFlags & kGroundContact) && !(fFlags & kFallingNormal))
+            return true;
+        return fTimeInAir < kAirTimeThreshold;
+    }
+
+    /** Toggles the character's ability to ride on moving platforms. */
+    void ToggleRiding(bool status) { hsChangeBits(fFlags, kRidePlatform, status); }
 
     float GetAirTime() const { return fTimeInAir; }
     void ResetAirTime() { fTimeInAir = 0.0f; }
@@ -264,9 +338,32 @@ public:
     bool GetFacingPushingPhysical() const;
 
 protected:
+    enum
+    {
+        /** Indicates that the character is standing on a valid platform. */
+        kGroundContact = (1<<0),
+
+        /**
+         * Indicates that the character's platform is too steep to remain on and we should
+         * fall along it.
+         */
+        kFallingNormal = (1<<1),
+
+        kHitGroundInThisAge = (1<<2),
+        kClearImpact = (1<<3),
+
+        /**
+         * Indicates the character should inherit the X/Y velocity of any platform it stands on.
+         */
+        kRidePlatform = (1<<4),
+
+        kResetMask = kGroundContact,
+    };
+
     static const float kAirTimeThreshold;
     static const float kControlledFlightThreshold;
 
+    std::vector<plControllerHitRecord> fContacts;
     hsVector3 fImpactVelocity;
     float fImpactTime;
 
@@ -275,20 +372,20 @@ protected:
     float fControlledFlightTime;
     int fControlledFlight;
 
-    bool fGroundHit;
-    bool fHeadHit;
-
-    bool fClearImpact;
-    bool fHitGroundInThisAge;
+    uint32_t fFlags;
 };
 
 class plSwimStrategy : public plAnimatedMovementStrategy
 {
 public:
     plSwimStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
-    virtual ~plSwimStrategy() { }
 
-    virtual void Apply(float delSecs);
+    void Apply(float delSecs) override;
+
+    void AddContact(plPhysical* phys, const hsPoint3& pos, const hsVector3& normal) override
+    {
+        fHadContacts = true;
+    }
 
     void SetSurface(plSwimRegionInterface* region, float surfaceHeight);
 
@@ -304,14 +401,6 @@ protected:
     plSwimRegionInterface *fCurrentRegion;
 
     bool fHadContacts;
-};
-
-class plRidingWalkingStrategy : public plWalkingStrategy
-{
-public:
-    plRidingWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
-
-    bool Ride() const override { return true; }
 };
 
 #endif// PLPHYSICALCONTROLLERCORE_H

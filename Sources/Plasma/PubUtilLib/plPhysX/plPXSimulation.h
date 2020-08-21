@@ -127,23 +127,13 @@ class plPXSimulation
     friend class plSimulationMgr;
 
 protected:
-    struct Subworld
-    {
-        physx::PxScene* fScene;
-        physx::PxControllerManager* fMgr;
-
-        Subworld(physx::PxScene* s, physx::PxControllerManager* m)
-            : fScene(s), fMgr(m)
-        { }
-    };
-
     physx::PxFoundation* fPxFoundation;
     physx::PxPvd* fDebugger;
     physx::PxPvdTransport* fTransport;
     physx::PxPhysics* fPxPhysics;
     physx::PxCooking* fPxCooking;
     physx::PxDefaultCpuDispatcher* fPxCpuDispatcher;
-    std::map<plKey, Subworld> fWorlds;
+    std::map<plKey, physx::PxScene*> fWorlds;
     float fAccumulator;
 
 protected:
@@ -186,14 +176,14 @@ public:
 protected:
     /** Creates a scene/subworld. */
     [[nodiscard]]
-    Subworld InitSubworld(const plKey& world);
+    physx::PxScene* InitSubworld(const plKey& world);
 
     /** Releases and, if needed, frees a scene/subworld. */
     void ReleaseSubworld(const hsKeyedObject* world);
 
     /** Finds or creates a PhysX Material. */
     [[nodiscard]]
-    physx::PxMaterial* InitMaterial(float friction, float restitution);
+    physx::PxMaterial* InitMaterial(float uStatic, float uDynamic, float restitution);
 
 public:
     /** Cooks and inserts a convex mesh into the simulation. */
@@ -210,7 +200,7 @@ public:
     physx::PxRigidActor* CreateRigidActor(const physx::PxGeometry& geometry,
                                           const physx::PxTransform& globalPose,
                                           const physx::PxTransform& localPose,
-                                          float friction, float restitution,
+                                          float uStatic, float uDynamic, float restitution,
                                           plPXActorType type);
 
     /**
@@ -218,13 +208,6 @@ public:
      * The actor should have been already initialized eg with \sa CreateRigidActor().
      */
     void AddToWorld(physx::PxActor* actor, const plKey& world=nullptr);
-
-    /**
-     * Adds a PhysX Character Controller to a specific subworld.
-     */
-    [[nodiscard]]
-    physx::PxController* AddToWorld(physx::PxControllerDesc& desc,
-                                    const plKey& world=nullptr);
 
     /**
      * Finds the PhysX Scene corresponding to the requested subworld.
@@ -239,11 +222,6 @@ public:
      * geometry passed to the initialization function(s) such as \sa CreateRigidActor().
      */
     void RemoveFromWorld(physx::PxRigidActor* actor);
-
-    /**
-     * Removes a PhysX Character Controller from the simulation.
-     */
-    void RemoveFromWorld(physx::PxController* controller);
 
     /** Advances the simulation. */
     bool Advance(float delta);

@@ -4883,12 +4883,6 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
 
 PF_CONSOLE_GROUP( Physics )
 
-PF_CONSOLE_CMD(Physics, MaxPhysicalAvatars, "int max", "Set the maximum number of avatar physicals allowed. Default = 0 (meaning no limit)")
-{
-    int max = params[0];
-    plPXPhysicalControllerCore::SetMaxNumberOfControllers(max);
-}
-
 /*
 PF_CONSOLE_CMD( Physics, SetStepsPerSecond, "int steps", "Sets the number of physics substeps per second, regardless of rendering framerate.")
 {

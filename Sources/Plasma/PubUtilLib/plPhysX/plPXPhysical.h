@@ -246,10 +246,6 @@ public:
 
     void SendNewLocation(bool synchTransform = false, bool isSynchUpdate = false) override;
 
-    void SetHitForce(const hsVector3& force, const hsPoint3& pos) override { fWeWereHit=true; fHitForce = force; fHitPos = pos; }
-    void ApplyHitForce();
-    void ResetHitForce() { fWeWereHit=false; fHitForce.Set(0,0,0); fHitPos.Set(0,0,0); }
-
     void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV) override;
     void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) override;
     void ResetSyncState() override;
@@ -323,10 +319,6 @@ protected:
     plSDLModifier*  fSDLMod;
 
     plPhysicalSndGroup* fSndGroup;
-
-    bool        fWeWereHit;
-    hsVector3   fHitForce;
-    hsPoint3    fHitPos;
 
     std::unique_ptr<plPhysicalProxy> fProxyGen;             // visual proxy for debugging
 

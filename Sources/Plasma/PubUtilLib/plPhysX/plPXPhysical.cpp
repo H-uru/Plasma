@@ -212,7 +212,9 @@ bool plPXPhysical::InitActor()
         physx::PxBoxGeometry geometry(plPXConvert::Point(fRecipe.bDimensions));
         ISanityCheckGeometry(geometry);
         physx::PxTransform localPose(plPXConvert::Point(fRecipe.bOffset));
-        fActor = sim->CreateRigidActor(geometry, globalPose, localPose, fRecipe.friction, fRecipe.restitution, actorType);
+        fActor = sim->CreateRigidActor(geometry, globalPose, localPose,
+                                       fRecipe.friction, fRecipe.friction, fRecipe.restitution,
+                                       actorType);
     }
     break;
 
@@ -221,7 +223,9 @@ bool plPXPhysical::InitActor()
         physx::PxSphereGeometry geometry(fRecipe.radius);
         ISanityCheckGeometry(geometry);
         physx::PxTransform localPose(plPXConvert::Point(fRecipe.offset));
-        fActor = sim->CreateRigidActor(geometry, globalPose, localPose, fRecipe.friction, fRecipe.restitution, actorType);
+        fActor = sim->CreateRigidActor(geometry, globalPose, localPose,
+                                       fRecipe.friction, fRecipe.friction, fRecipe.restitution,
+                                       actorType);
     }
     break;
 
@@ -229,7 +233,9 @@ bool plPXPhysical::InitActor()
     {
         physx::PxConvexMeshGeometry geometry(fRecipe.convexMesh);
         physx::PxTransform localPose(physx::PxIdentity);
-        fActor = sim->CreateRigidActor(geometry, globalPose, localPose, fRecipe.friction, fRecipe.restitution, actorType);
+        fActor = sim->CreateRigidActor(geometry, globalPose, localPose,
+                                       fRecipe.friction, fRecipe.friction, fRecipe.restitution,
+                                       actorType);
     }
     break;
 
@@ -238,7 +244,9 @@ bool plPXPhysical::InitActor()
     {
         physx::PxTriangleMeshGeometry geometry(fRecipe.triMesh);
         physx::PxTransform localPose(physx::PxIdentity);
-        fActor = sim->CreateRigidActor(geometry, globalPose, localPose, fRecipe.friction, fRecipe.restitution, actorType);
+        fActor = sim->CreateRigidActor(geometry, globalPose, localPose,
+                                       fRecipe.friction, fRecipe.friction, fRecipe.restitution,
+                                       actorType);
     }
     break;
 
@@ -357,17 +365,6 @@ bool plPXPhysical::CanSynchPosition(bool isSynchUpdate) const
     if (auto dynamic = fActor->is<physx::PxRigidDynamic>())
         return !dynamic->isSleeping() || isSynchUpdate;
     return false;
-}
-
-void plPXPhysical::ApplyHitForce()
-{
-    if (IsDynamic() && fWeWereHit) {
-        plPXActorSimulationLock lock(fActor);
-        physx::PxRigidBodyExt::addForceAtPos(*(fActor->is<physx::PxRigidDynamic>()),
-                                             plPXConvert::Vector(fHitForce),
-                                             plPXConvert::Point(fHitPos));
-        fWeWereHit = false;
-    }
 }
 
 void plPXPhysical::ISetTransformGlobal(const hsMatrix44& l2w)

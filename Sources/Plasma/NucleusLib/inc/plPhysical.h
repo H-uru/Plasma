@@ -84,7 +84,6 @@ public:
     virtual bool GetAngularVelocitySim(hsVector3& vel) const = 0;
     virtual void SetAngularVelocitySim(const hsVector3& vel, bool wakeup=true) = 0;
 
-    virtual void SetHitForce(const hsVector3& force, const hsPoint3& pos)=0;
     /** Standard plasma transform interface, in global coordinates by convention.
     If you send in the same matrix that the physical last sent out in its correction message,
     it will be ignored as an "echo" -- UNLESS you set force to true, in which case the transform

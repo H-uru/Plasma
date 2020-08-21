@@ -260,7 +260,7 @@ const double plSimulationMgr::SynchRequest::kDefaultTime = -1000.0;
 
 void plSimulationMgr::ConsiderSynch(plPXPhysical* physical, plPXPhysical* other)
 {
-    if (physical->GetProperty(plSimulationInterface::kNoSynchronize) &&
+    if ((!physical || physical->GetProperty(plSimulationInterface::kNoSynchronize)) &&
         (!other || other->GetProperty(plSimulationInterface::kNoSynchronize)))
         return;
 

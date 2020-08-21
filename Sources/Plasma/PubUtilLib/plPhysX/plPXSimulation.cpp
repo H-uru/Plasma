@@ -148,6 +148,54 @@ public:
 
 class plPXSimulationEventHandler : public physx::PxSimulationEventCallback
 {
+    void IHandleControllerContacts(const physx::PxContactPair& pair) const
+    {
+        auto a1 = static_cast<plPXActorData*>(pair.shapes[0]->getActor()->userData);
+        auto a2 = static_cast<plPXActorData*>(pair.shapes[1]->getActor()->userData);
+        if (!a1 || !a2)
+            return;
+
+        auto controller = a1->GetController() ? a1->GetController() : a2->GetController();
+        auto phys = a1->GetPhysical() ? a1->GetPhysical() : a2->GetPhysical();
+        if (!controller || !phys)
+            return;
+
+        physx::PxContactPairPoint contactPoints[32];
+        physx::PxU32 nbContacts = pair.extractContacts(contactPoints, std::size(contactPoints));
+        for (physx::PxU32 i = 0; i < nbContacts; ++i) {
+            controller->AddContact(phys,
+                                   plPXConvert::Point(contactPoints[i].position),
+                                   plPXConvert::Vector(contactPoints[i].normal));
+        }
+    }
+
+    void IHandlePhysicalContacts(const physx::PxContactPair& pair) const
+    {
+        auto a1 = static_cast<plPXActorData*>(pair.shapes[0]->getActor()->userData);
+        auto a2 = static_cast<plPXActorData*>(pair.shapes[1]->getActor()->userData);
+        if (!a1 || !a2)
+            return;
+        // Normally, these are always valid because the avatar (who doesn't have
+        // a physical) will push other physicals away before they actually touch
+        // his actor.  However, if the avatar is warped to a new position he may
+        // collide with the object for a few frames.  We just ignore it.
+        if (!a1->GetPhysical() || !a2->GetPhysical())
+            return;
+
+        auto sim = plSimulationMgr::GetInstance();
+        sim->ConsiderSynch(a1->GetPhysical(), a2->GetPhysical());
+        if (a1->GetPhysical()->GetSoundGroup() && a2->GetPhysical()->GetSoundGroup()) {
+            // Just grab the first contact point and call it a day.
+            physx::PxContactPairPoint contactPoint;
+            physx::PxU32 nbContacts = pair.extractContacts(&contactPoint, 1);
+            if (nbContacts == 1) {
+                sim->AddContactSound(a1->GetPhysical(), a2->GetPhysical(),
+                                        plPXConvert::Point(contactPoint.position),
+                                        plPXConvert::Vector(contactPoint.normal));
+            }
+        }
+    }
+
 public:
     void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) override { }
     void onWake(physx::PxActor** actors, physx::PxU32 count) override { }
@@ -157,39 +205,10 @@ public:
                    physx::PxU32 nbPairs) override
     {
         plProfile_BeginTiming(ContactCallback);
-
-        plSimulationMgr* sim = plSimulationMgr::GetInstance();
-
-        // Dynamic collides with something so we need to make a loud ass-sound like
-        // cones scraping or logs rolling
         for (physx::PxU32 i = 0; i < nbPairs; ++i) {
-            const physx::PxContactPair& pair = pairs[i];
-            auto a1 = static_cast<plPXActorData*>(pair.shapes[0]->getActor()->userData);
-            auto a2 = static_cast<plPXActorData*>(pair.shapes[1]->getActor()->userData);
-            if (!a1 || !a2)
-                continue;
-
-            // Normally, these are always valid because the avatar (who doesn't have
-            // a physical) will push other physicals away before they actually touch
-            // his actor.  However, if the avatar is warped to a new position he may
-            // collide with the object for a few frames.  We just ignore it.
-            if (!a1->GetPhysical() || !a2->GetPhysical())
-                continue;
-
-            sim->ConsiderSynch(a1->GetPhysical(), a2->GetPhysical());
-
-            if (a1->GetPhysical()->GetSoundGroup() && a2->GetPhysical()->GetSoundGroup()) {
-                // Just grab the first contact point and call it a day.
-                physx::PxContactPairPoint contactPoint;
-                physx::PxU32 nbContacts = pair.extractContacts(&contactPoint, 1);
-                if (nbContacts == 1) {
-                    sim->AddContactSound(a1->GetPhysical(), a2->GetPhysical(),
-                                         plPXConvert::Point(contactPoint.position),
-                                         plPXConvert::Vector(contactPoint.normal));
-                }
-            }
+            IHandleControllerContacts(pairs[i]);
+            IHandlePhysicalContacts(pairs[i]);
         }
-
         plProfile_EndTiming(ContactCallback);
     }
 
@@ -296,12 +315,6 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
         std::make_tuple(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamicBlocker, "dynamic-blocker"),
         // So the fire marbles don't fly through the Relto hut door...
         std::make_tuple(plSimDefs::kGroupDynamic, plSimDefs::kGroupExcludeRegion, "dynamic-xrgn"),
-        // These rules do not actually do anything right now. By default, static-kinematic and
-        // kinematic-kinematic pairs are not reported to the filter shader. That's OK though,
-        // the weird controller code handles all that as scene queries. If you want to revamp
-        // all that and move the logic here, you can set the kineKine and staticKine filtering
-        // mode to eKEEP in the PxSceneDesc. Note that triggers come through regardless of all
-        // the preceeding claptrap.
         std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, "avatar-blocker"),
         std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, "avatar-static"),
         std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, "avatar-dynamic"),
@@ -335,10 +348,8 @@ plPXSimulation::plPXSimulation()
 plPXSimulation::~plPXSimulation()
 {
     // This should only run for the empty main world.
-    for (const auto& world : fWorlds) {
-        world.second.fMgr->release();
-        world.second.fScene->release();
-    }
+    for (const auto& world : fWorlds)
+        world.second->release();
     fWorlds.clear();
 
     if (fPxCooking)
@@ -529,7 +540,7 @@ physx::PxTriangleMesh* plPXSimulation::InsertTriangleMesh(const std::vector<uint
 physx::PxRigidActor* plPXSimulation::CreateRigidActor(const physx::PxGeometry& geometry,
                                                       const physx::PxTransform& globalPose,
                                                       const physx::PxTransform& localPose,
-                                                      float friction, float restitution,
+                                                      float uStatic, float uDynamic, float restitution,
                                                       plPXActorType type)
 {
     physx::PxRigidActor* actor;
@@ -550,7 +561,7 @@ physx::PxRigidActor* plPXSimulation::CreateRigidActor(const physx::PxGeometry& g
     DEFAULT_FATAL(type);
     }
 
-    physx::PxMaterial* material = InitMaterial(friction, restitution);
+    physx::PxMaterial* material = InitMaterial(uStatic, uDynamic, restitution);
     physx::PxShape* shape = fPxPhysics->createShape(geometry, *material, true);
     shape->setLocalPose(localPose);
     actor->attachShape(*shape);
@@ -559,7 +570,7 @@ physx::PxRigidActor* plPXSimulation::CreateRigidActor(const physx::PxGeometry& g
 
 // ==========================================================================
 
-plPXSimulation::Subworld plPXSimulation::InitSubworld(const plKey& world)
+physx::PxScene* plPXSimulation::InitSubworld(const plKey& world)
 {
     plStatusLog::AddLineSF("Simulation.log", plStatusLog::kGreen,
                            "Initializing world '{}'",
@@ -585,7 +596,10 @@ plPXSimulation::Subworld plPXSimulation::InitSubworld(const plKey& world)
     desc.gravity = gravity;
     desc.simulationEventCallback = &s_PxSimulationEvent;
     desc.filterShader = ISimulationFilterShader;
+    desc.frictionType = physx::PxFrictionType::eTWO_DIRECTIONAL;
     desc.solverType = physx::PxSolverType::eTGS;
+    desc.flags = physx::PxSceneFlag::eENABLE_PCM |
+                 physx::PxSceneFlag::eENABLE_AVERAGE_POINT;
     desc.cpuDispatcher = fPxCpuDispatcher;
     desc.userData = world ? world->ObjectIsLoaded() : nullptr;
 
@@ -597,8 +611,7 @@ plPXSimulation::Subworld plPXSimulation::InitSubworld(const plKey& world)
     }
 #endif
 
-    physx::PxControllerManager* mgr = PxCreateControllerManager(*scene);
-    auto it = fWorlds.try_emplace(world, scene, mgr);
+    auto it = fWorlds.try_emplace(world, scene);
     return it.first->second;
 }
 
@@ -612,15 +625,13 @@ void plPXSimulation::ReleaseSubworld(const hsKeyedObject* world)
     hsAssert(it != fWorlds.end(), "Releasing a nonextant subworld, eh?");
 
     if (it != fWorlds.end()) {
-        if (it->second.fScene->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC |
-                                           physx::PxActorTypeFlag::eRIGID_STATIC) == 0 &&
-            it->second.fMgr->getNbControllers() == 0) {
+        if (it->second->getNbActors(physx::PxActorTypeFlag::eRIGID_DYNAMIC |
+                                    physx::PxActorTypeFlag::eRIGID_STATIC) == 0) {
 
             plStatusLog::AddLineSF("Simulation.log", plStatusLog::kGreen,
                                    "Releasing world '{}'",
                                    world ? world->GetKey()->GetUoid().StringIze() : "(main world)");
-            it->second.fMgr->release();
-            it->second.fScene->release();
+            it->second->release();
             fWorlds.erase(it);
         }
     }
@@ -628,19 +639,21 @@ void plPXSimulation::ReleaseSubworld(const hsKeyedObject* world)
 
 // ==========================================================================
 
-physx::PxMaterial* plPXSimulation::InitMaterial(float friction, float restitution)
+physx::PxMaterial* plPXSimulation::InitMaterial(float uStatic, float uDynamic, float restitution)
 {
     physx::PxMaterial* materials[128];
     for (physx::PxU32 i = 0; i < fPxPhysics->getNbMaterials();) {
         physx::PxU32 count = fPxPhysics->getMaterials(materials, std::size(materials), i);
         for (physx::PxU32 j = 0; j < count; ++j) {
-            if (materials[j]->getDynamicFriction() == friction && materials[j]->getRestitution() == restitution)
+            if (materials[j]->getStaticFriction() == uStatic &&
+                materials[j]->getDynamicFriction() == uDynamic &&
+                materials[j]->getRestitution() == restitution)
                 return materials[j];
         }
         i += count;
     }
 
-    return fPxPhysics->createMaterial(friction, friction, restitution);
+    return fPxPhysics->createMaterial(uStatic, uDynamic, restitution);
 }
 
 // ==========================================================================
@@ -656,38 +669,19 @@ void plPXSimulation::AddToWorld(physx::PxActor* actor, const plKey& world)
     physx::PxScene* scene;
     auto it = fWorlds.find(world);
     if (it == fWorlds.end()) {
-        scene = InitSubworld(world).fScene;
+        scene = InitSubworld(world);
     } else {
-        scene = it->second.fScene;
+        scene = it->second;
     }
 
     scene->addActor(*actor);
-}
-
-physx::PxController* plPXSimulation::AddToWorld(physx::PxControllerDesc& desc, const plKey& world)
-{
-    if (!desc.material)
-        desc.material = InitMaterial(0.f, 0.f);
-
-    physx::PxController* controller = nullptr;
-    auto it = fWorlds.find(world);
-    if (it == fWorlds.end()) {
-        auto subworld = InitSubworld(world);
-        controller = subworld.fMgr->createController(desc);
-    } else {
-        controller = it->second.fMgr->createController(desc);
-    }
-
-    controller->getActor()->userData = desc.userData;
-    controller->getActor()->setName(static_cast<plPXActorData*>(desc.userData)->c_str());
-    return controller;
 }
 
 physx::PxScene* plPXSimulation::FindScene(const plKey& world)
 {
     auto it = fWorlds.find(world);
     if (it != fWorlds.end())
-        return it->second.fScene;
+        return it->second;
     return nullptr;
 }
 
@@ -701,13 +695,6 @@ void plPXSimulation::RemoveFromWorld(physx::PxRigidActor* actor)
 
     // Implicitly releases all actor shapes
     actor->release();
-}
-
-void plPXSimulation::RemoveFromWorld(physx::PxController* controller)
-{
-    hsKeyedObject* world = (hsKeyedObject*)controller->getScene()->userData;
-    controller->release();
-    ReleaseSubworld(world);
 }
 
 // ==========================================================================
@@ -742,11 +729,11 @@ bool plPXSimulation::Advance(float delta)
 
     plProfile_BeginTiming(Step);
     for (auto& it : fWorlds) {
-        it.second.fScene->simulate(delta);
-        it.second.fScene->fetchResults(true);
+        it.second->simulate(delta);
+        it.second->fetchResults(true);
 
         physx::PxSimulationStatistics stats;
-        it.second.fScene->getSimulationStatistics(stats);
+        it.second->getSimulationStatistics(stats);
         plProfile_IncCount(ActiveBodies, stats.nbActiveDynamicBodies + stats.nbActiveDynamicBodies);
         plProfile_IncCount(ActiveDynamics, stats.nbActiveDynamicBodies);
         plProfile_IncCount(ActiveKinematics, stats.nbActiveKinematicBodies);
