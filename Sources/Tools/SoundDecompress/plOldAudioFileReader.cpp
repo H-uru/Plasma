@@ -64,24 +64,21 @@ plAudioFileReader* plOldAudioFileReader::CreateReader(const plFileName& path, pl
 {
     ST::string ext = path.GetFileExt();
 
-    if (type == kStreamWAV)
-    {
+    if (type == kStreamWAV) {
         bool isWav = (ext.compare_i("wav") == 0);
         // We want to stream a wav off disk, but this is a compressed file.
         // Get the uncompressed path. Ignore the requested channel, since it 
         // will have already been split into two files if that is necessary.
-        if (!isWav)
-        {
+        if (!isWav) {
             plFileName cachedPath = IGetCachedPath(path, whichChan);
-            plAudioFileReader *r =  new plFastWAV(cachedPath, plAudioCore::kAll);
+            std::unique_ptr<plAudioFileReader> r = std::make_unique<plFastWAV>(cachedPath, plAudioCore::kAll);
             if (!r->IsValid()) {
                 // So we tried to play a cached file and it didn't exist
                 // Oops... we should cache it now
-                delete r;
                 ICacheFile(path, true, whichChan);
                 return new plFastWAV(cachedPath, plAudioCore::kAll);
             }
-            return r;
+            return r.release();
         }
 
         return new plFastWAV(path, whichChan);
@@ -128,46 +125,32 @@ plFileName plOldAudioFileReader::IGetCachedPath(const plFileName& path, plAudioC
 void plOldAudioFileReader::ICacheFile(const plFileName& path, bool noOverwrite, plAudioCore::ChannelSelect whichChan)
 {
     plFileName cachedPath = IGetCachedPath(path, whichChan);
-    if (!noOverwrite || !plFileInfo(cachedPath).Exists())
-    {
-        plAudioFileReader* reader = plAudioFileReader::CreateReader(path, whichChan, kStreamNative);
+    if (!noOverwrite || !plFileInfo(cachedPath).Exists()) {
+        std::unique_ptr<plAudioFileReader> reader(plAudioFileReader::CreateReader(path, whichChan, kStreamNative));
         if (!reader || !reader->IsValid())
-        {
-            delete reader;
             return;
-        }
-        plAudioFileReader* writer = CreateWriter(cachedPath, reader->GetHeader());
+
+        std::unique_ptr<plAudioFileReader> writer(CreateWriter(cachedPath, reader->GetHeader()));
         if (!writer || !writer->IsValid())
-        {
-            delete reader;
-            delete writer;
             return;
-        }
 
         uint8_t buffer[4096];
         uint32_t numLeft;
-        while ((numLeft = reader->NumBytesLeft()) > 0)
-        {
+        while ((numLeft = reader->NumBytesLeft()) > 0) {
             uint32_t toRead = (numLeft < sizeof(buffer)) ? numLeft : sizeof(buffer);
             reader->Read(toRead, buffer);
             writer->Write(toRead, buffer);
         }
         writer->Close();
-
-        delete writer;
-        delete reader;
     }
 }
 
 void plOldAudioFileReader::CacheFile(const plFileName& path, bool splitChannels, bool noOverwrite)
 {
-    if (splitChannels)
-    {
+    if (splitChannels) {
         ICacheFile(path, noOverwrite, plAudioCore::kLeft);
         ICacheFile(path, noOverwrite, plAudioCore::kRight);
-    }
-    else
-    {
+    } else {
         ICacheFile(path, noOverwrite, plAudioCore::kAll);
     }
 }
