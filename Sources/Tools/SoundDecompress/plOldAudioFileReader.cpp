@@ -82,11 +82,11 @@ plAudioFileReader* plOldAudioFileReader::CreateReader(const plFileName& path, pl
         }
 
         return new plFastWAV(path, whichChan);
-    }
-    else if (type == kStreamRAM)
+    } else if (type == kStreamRAM) {
         return new plBufferedFileReader(path, whichChan);
-    else if (type == kStreamNative)
+    } else if (type == kStreamNative) {
         return new plOGGCodec(path, whichChan);
+    }
 
     return nullptr;
 }
