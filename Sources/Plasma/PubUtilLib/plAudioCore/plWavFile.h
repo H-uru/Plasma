@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWavFile_H
 #define plWavFile_H
 
-#ifdef BUILDING_MAXPLUGIN
+#ifdef HS_BUILD_FOR_WIN32
 #define WAVEFILE_READ   1
 #define WAVEFILE_WRITE  2
 
@@ -128,6 +128,6 @@ protected:
     HRESULT WriteMMIO( WAVEFORMATEX *pwfxDest );
     HRESULT IClose();
 };
-#endif // BUILDING_MAXPLUGIN
+#endif // HS_BUILD_FOR_WIN32
 
 #endif // plWavFile_H

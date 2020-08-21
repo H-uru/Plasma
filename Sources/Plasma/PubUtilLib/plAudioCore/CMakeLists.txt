@@ -5,11 +5,10 @@ include_directories("../../PubUtilLib")
 
 include_directories(${Ogg_INCLUDE_DIR})
 include_directories(${Vorbis_INCLUDE_DIR})
-# We only need DirectX if we're building the Max plugin
-# TODO: Check if we actually need this at all
-if(3dsm_BUILD_PLUGIN)
+if(WIN32)
+    # Needed for WAV file support
     include_directories(${DirectX_INCLUDE_DIR})
-endif(3dsm_BUILD_PLUGIN)
+endif(WIN32)
 
 set(plAudioCore_SOURCES
     plAudioFileReader.cpp
@@ -38,6 +37,11 @@ set(plAudioCore_HEADERS
 add_library(plAudioCore STATIC ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
 target_link_libraries(plAudioCore ${Ogg_LIBRARIES})
 target_link_libraries(plAudioCore ${Vorbis_LIBRARIES})
+
+if(WIN32)
+    # Needed for WAV file support
+    target_link_libraries(plAudioCore ${DirectX_LIBRARIES})
+endif(WIN32)
 
 source_group("Source Files" FILES ${plAudioCore_SOURCES})
 source_group("Header Files" FILES ${plAudioCore_HEADERS})
