@@ -23,6 +23,10 @@ add_executable(SoundDecompress ${SoundDecompress_SOURCES})
 target_link_libraries(SoundDecompress CoreLib plResMgr plAudioCore)
 target_link_libraries(SoundDecompress ${STRING_THEORY_LIBRARIES})
 
+if(WIN32)
+    target_link_libraries(SoundDecompress ${DirectX_LIBRARIES})
+endif(WIN32)
+
 if(USE_VLD)
     target_link_libraries(SoundDecompress ${VLD_LIBRARY})
 endif()

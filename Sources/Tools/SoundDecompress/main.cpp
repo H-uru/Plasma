@@ -63,6 +63,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plOldAudioFileReader.h"
 #endif
 
+#ifdef USE_VLD
+#include <vld.h>
+#endif
+
 typedef std::set<std::tuple<ST::string, uint16_t>> SoundSet;
 
 enum class OutputStyle
@@ -211,9 +215,9 @@ int main(int argc, const char** argv)
     OutputStyle verbosity = OutputStyle::kProgress;
 
 #ifdef HS_BUILD_FOR_WIN32
-    enum { kArgSilent, kArgVerbose, kArgForce, kArgHelp1, kArgHelp2 };
-#else
     enum { kArgSilent, kArgVerbose, kArgForce, kArgHelp1, kArgHelp2, kArgWav };
+#else
+    enum { kArgSilent, kArgVerbose, kArgForce, kArgHelp1, kArgHelp2 };
 #endif
     const plCmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeBool, "silent",  kArgSilent },
