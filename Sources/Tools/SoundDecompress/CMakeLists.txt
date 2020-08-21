@@ -1,5 +1,5 @@
 if(WIN32)
-    option(SoundDecompress_MOULa_Mode "Enable legacy MOULa mode in SoundDecompress" OFF)
+    option(SoundDecompress_MOULa_Mode "Output wav files for MOULa" OFF)
     if(SoundDecompress_MOULa_Mode)
         set(OUTPUT_WAV_FILES ON)
     endif()
@@ -26,8 +26,8 @@ set(SoundDecompress_HEADERS
 )
 
 if(SoundDecompress_MOULa_Mode)
-    set(SoundDecompress_SOURCES plOldAudioFileReader.cpp ${SoundDecompress_SOURCES})
-    set(SoundDecompress_HEADERS plOldAudioFileReader.h)
+    list(APPEND SoundDecompress_SOURCES plOldAudioFileReader.cpp)
+    list(APPEND SoundDecompress_HEADERS plOldAudioFileReader.h)
 endif()
 
 add_executable(SoundDecompress ${SoundDecompress_SOURCES})
