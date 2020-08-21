@@ -1,3 +1,10 @@
+option(SoundDecompress_MOULa_Mode "Enable legacy MOULa mode in SoundDecompress" OFF)
+if(SoundDecompress_MOULa_Mode)
+  set(OUTPUT_WAV_FILES ON)
+endif()
+configure_file(config.h.in config.h @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 include_directories("../../Plasma/CoreLib")
 include_directories("../../Plasma/FeatureLib/inc")
 include_directories("../../Plasma/FeatureLib")

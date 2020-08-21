@@ -40,10 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-// IMPORTANT!
-// If you want to use this to generate files compatible with older clients that
-// expect cached sounds in WAV format, you *must* set this to 1.
-#define OUTPUT_WAV_FILES 0
+#include "config.h"
 
 #include <utility>
 #include <string_theory/stdio>
@@ -183,13 +180,13 @@ void DecompressSounds(SoundSet& sounds, bool overwrite, OutputStyle verbosity)
         }
 
         if (hsCheckBits(flags, plManifestFile::kSndFlagCacheSplit)) {
-#if OUTPUT_WAV_FILES
+#ifdef OUTPUT_WAV_FILES
             plOldAudioFileReader::CacheFile(path, true, !overwrite);
 #else
             plAudioFileReader::CacheFile(path, true, !overwrite);
 #endif
         } else if (hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo)) {
-#if OUTPUT_WAV_FILES
+#ifdef OUTPUT_WAV_FILES
             plOldAudioFileReader::CacheFile(path, false, !overwrite);
 #else
             plAudioFileReader::CacheFile(path, false, !overwrite);
