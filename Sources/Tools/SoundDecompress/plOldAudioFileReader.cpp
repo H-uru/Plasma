@@ -100,7 +100,7 @@ plAudioFileReader* plOldAudioFileReader::CreateWriter(const plFileName& path, pl
     static_assert(false, "WAV files can only be generated on Windows");
 #endif
 
-    plAudioFileReader* writer = new CWaveFile(path.AsString().c_str(), plAudioCore::kAll);
+    CWaveFile* writer = new CWaveFile(path.AsString().c_str(), plAudioCore::kAll);
     writer->OpenForWriting(path.AsString().c_str(), header);
     return writer;
 }
