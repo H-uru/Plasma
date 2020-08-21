@@ -57,6 +57,7 @@ install:
         git pull 2> $null
         bootstrap-vcpkg.bat
         vcpkg integrate install
+        vcpkg upgrade --no-dry-run
         vcpkg install curl[sspi] expat freetype libjpeg-turbo libogg libpng libtheora libvorbis libvpx openal-soft opus pcre speex string-theory zlib --triplet x86-windows-static-dyncrt 2> $null
         Write-Host "OK" -foregroundColor Green
 
