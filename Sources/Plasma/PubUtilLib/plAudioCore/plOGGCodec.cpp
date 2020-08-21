@@ -195,7 +195,8 @@ void    plOGGCodec::Close()
     {
         ov_clear( fOggFile );
         delete fOggFile;
-        fOggFile = nil;
+        fOggFile = nullptr;
+        fFileHandle = nullptr; // ov_clear closes this
     }
 
     if( fFileHandle != nil )

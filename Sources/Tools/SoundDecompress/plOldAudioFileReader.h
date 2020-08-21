@@ -39,26 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+//////////////////////////////////////////////////////////////////////////////
+//                                                                          //
+//  plOldAudioFileReader - Decodes MOULa-compatible WAV files               //
+//                                                                          //
+//////////////////////////////////////////////////////////////////////////////
 
-#include "plMaxWaveUtils.h"
-#include "plAudioCore/plWavFile.h"
-#include "plFileSystem.h"
+#ifndef _plOldAudioFileReader_h
+#define _plOldAudioFileReader_h
 
-SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
+#include "plAudioCore/plAudioFileReader.h"
+
+//// Class Definition ////////////////////////////////////////////////////////
+
+class plFileName;
+class plWAVHeader;
+
+class plOldAudioFileReader : public plAudioFileReader
 {
-    CWaveFile waveFile;
-    waveFile.Open(file, nil, WAVEFILE_READ);
-    int numMarkers = waveFile.GetNumMarkers();
-    if (numMarkers == 0)
-        return nil;
+public:
+    static plAudioFileReader* CreateReader(const plFileName& path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
+    static plAudioFileReader* CreateWriter(const plFileName& path, plWAVHeader& header);
 
-    SegmentMap *segMap = new SegmentMap();
+    // Decompresses a compressed file to the cache directory
+    static void CacheFile(const plFileName& path, bool splitChannels=false, bool noOverwrite=false);
 
-    for (int i = 0; i < waveFile.GetNumMarkers(); i++)
-    {
-        plSoundMarker *marker = waveFile.GetSoundMarker(i);
-        GetSegment(marker->fName, (float)(marker->fOffset), segMap, pErrMsg);
-    }
+protected:
+    static plFileName IGetCachedPath(const plFileName& path, plAudioCore::ChannelSelect whichChan);
+    static void ICacheFile(const plFileName& path, bool noOverwrite, plAudioCore::ChannelSelect whichChan);
+};
 
-    return segMap;
-}
+#endif //_plOldAudioFileReader_h

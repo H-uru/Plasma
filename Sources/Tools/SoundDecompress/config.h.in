@@ -40,25 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plMaxWaveUtils.h"
-#include "plAudioCore/plWavFile.h"
-#include "plFileSystem.h"
+#ifndef SoundDecompressConfigHDefined
+#define SoundDecompressConfigHDefined
 
-SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
-{
-    CWaveFile waveFile;
-    waveFile.Open(file, nil, WAVEFILE_READ);
-    int numMarkers = waveFile.GetNumMarkers();
-    if (numMarkers == 0)
-        return nil;
+#cmakedefine OUTPUT_WAV_FILES
 
-    SegmentMap *segMap = new SegmentMap();
-
-    for (int i = 0; i < waveFile.GetNumMarkers(); i++)
-    {
-        plSoundMarker *marker = waveFile.GetSoundMarker(i);
-        GetSegment(marker->fName, (float)(marker->fOffset), segMap, pErrMsg);
-    }
-
-    return segMap;
-}
+#endif

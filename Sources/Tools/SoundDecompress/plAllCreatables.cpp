@@ -39,26 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "HeadSpin.h"
 
-#include "plMaxWaveUtils.h"
-#include "plAudioCore/plWavFile.h"
-#include "plFileSystem.h"
+#include "pnFactory/plCreator.h"
 
-SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
-{
-    CWaveFile waveFile;
-    waveFile.Open(file, nil, WAVEFILE_READ);
-    int numMarkers = waveFile.GetNumMarkers();
-    if (numMarkers == 0)
-        return nil;
+#include "plAudible.h"
+REGISTER_NONCREATABLE(plAudible);
 
-    SegmentMap *segMap = new SegmentMap();
+#include "plDrawable.h"
+REGISTER_NONCREATABLE(plDrawable);
 
-    for (int i = 0; i < waveFile.GetNumMarkers(); i++)
-    {
-        plSoundMarker *marker = waveFile.GetSoundMarker(i);
-        GetSegment(marker->fName, (float)(marker->fOffset), segMap, pErrMsg);
-    }
+#include "plPhysical.h"
+REGISTER_NONCREATABLE(plPhysical);
 
-    return segMap;
-}
+#include "plgDispatch.h"
+REGISTER_NONCREATABLE(plDispatchBase);
+
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnTimerCreatable.h"
+
+#include "plResMgr/plResMgrCreatable.h"
+
+#include "plMessage/plResMgrHelperMsg.h"
+REGISTER_CREATABLE(plResMgrHelperMsg);
+
+#include "plAudioCore/plAudioCoreCreatable.h"
+
