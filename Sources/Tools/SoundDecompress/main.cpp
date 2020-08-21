@@ -153,7 +153,7 @@ SoundSet CollectSounds(plResManager* rm)
 }
 
 
-void DecompressSounds(SoundSet& sounds, bool overwrite, OutputStyle verbosity)
+void DecompressSounds(SoundSet& sounds, OutputStyle verbosity, bool overwrite, bool wav)
 {
     uint32_t total = sounds.size();
     uint32_t curr  = 0;
@@ -180,17 +180,19 @@ void DecompressSounds(SoundSet& sounds, bool overwrite, OutputStyle verbosity)
         }
 
         if (hsCheckBits(flags, plManifestFile::kSndFlagCacheSplit)) {
-#ifdef OUTPUT_WAV_FILES
-            plOldAudioFileReader::CacheFile(path, true, !overwrite);
-#else
+#ifdef HS_BUILD_FOR_WIN32
+            if (wav)
+                plOldAudioFileReader::CacheFile(path, true, !overwrite);
+            else
+#endif
             plAudioFileReader::CacheFile(path, true, !overwrite);
-#endif
         } else if (hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo)) {
-#ifdef OUTPUT_WAV_FILES
-            plOldAudioFileReader::CacheFile(path, false, !overwrite);
-#else
-            plAudioFileReader::CacheFile(path, false, !overwrite);
+#ifdef HS_BUILD_FOR_WIN32
+            if (wav)
+                plOldAudioFileReader::CacheFile(path, false, !overwrite);
+            else
 #endif
+            plAudioFileReader::CacheFile(path, false, !overwrite);
         }
     }
 
@@ -209,6 +211,11 @@ int main(int argc, const char** argv)
 #endif
 
     bool overwrite = false;
+#ifdef OUTPUT_WAV_FILES
+    bool wav = true
+#else
+    bool wav = false;
+#endif
     OutputStyle verbosity = OutputStyle::kProgress;
 
 #ifdef HS_BUILD_FOR_WIN32
@@ -220,11 +227,11 @@ int main(int argc, const char** argv)
         { kCmdArgFlagged | kCmdTypeBool, "silent",  kArgSilent },
         { kCmdArgFlagged | kCmdTypeBool, "verbose", kArgVerbose },
         { kCmdArgFlagged | kCmdTypeBool, "force",   kArgForce },
+#ifdef HS_BUILD_FOR_WIN32
+        { kCmdArgFlagged | kCmdTypeBool, "wav",     kArgWav },
+#endif
         { kCmdArgFlagged | kCmdTypeBool, "help",    kArgHelp1 },
         { kCmdArgFlagged | kCmdTypeBool, "?",       kArgHelp2 }
-#ifdef HS_BUILD_FOR_WIN32
-      , { kCmdArgFlagged | kCmdTypeBool, "wav",     kArgWav }
-#endif
     };
 
     std::vector<ST::string> args;
@@ -254,6 +261,11 @@ int main(int argc, const char** argv)
     if (cmdParser.GetBool(kArgForce))
         overwrite = true;
 
+#ifdef HS_BUILD_FOR_WIN32
+    if (cmdParser.GetBool(kArgWav))
+        wav = true;
+#endif
+
     // Init our special resMgr
     plResMgrSettings::Get().SetFilterNewerPageVersions(false);
     plResMgrSettings::Get().SetFilterOlderPageVersions(false);
@@ -264,7 +276,7 @@ int main(int argc, const char** argv)
     hsgResMgr::Init(rm);
 
     SoundSet sounds = CollectSounds(rm);
-    DecompressSounds(sounds, overwrite, verbosity);
+    DecompressSounds(sounds, verbosity, overwrite, wav);
 
     hsgResMgr::Shutdown();
 
