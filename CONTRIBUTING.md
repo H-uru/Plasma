@@ -26,6 +26,13 @@ Further, we have identified these non-goals:
 
 Information about specific tasks can be found on the [project roadmap](https://github.com/H-uru/Plasma/wiki/Roadmap).
 
+## Getting Involved
+Real-time discussion with team members and stakeholders is an excellent way to begin contributing. We welcome feedback and discussion of proposed changes. Active maintainers can be found on the Guild of Writers IRC channel:
+- Server: irc.guildofwriters.org:6667
+- Channel: #writers
+
+We also use the [Guild of Writers' forum](https://forum.guildofwriters.org/viewforum.php?f=114) for more permanent discussions. Further, many team members can also be found on the [OpenUru discord](https://discord.com/invite/tVknpHQ).
+
 ## Reporting Bugs and Requesting Features
 We use GitHub's [issue tracker](https://github.com/H-uru/Plasma/issues) to list bugs and feature requests. Good bug reports tend to have:
 - a summary or background
