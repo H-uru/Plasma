@@ -1,0 +1,76 @@
+STATEDESC GoMePubNew
+{
+    VERSION 1
+    
+#Game Variables
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 2
+    
+#Game Variables
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 3
+
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 4
+
+    VAR BOOL    BarDoorStat[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 5
+
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 6
+    
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 7
+    
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]    DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 8
+
+    VAR BOOL    BarDoorStat[1]    DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]    DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    XMasVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}

@@ -1,0 +1,25 @@
+#==============================================================
+# This VeryVerySpecial SDL File was automatically generated
+# by Korman. Have a nice day!
+#
+# READ: When modifying an SDL record, do *not* modify the
+#       existing record. You must copy and paste a new version
+#       below the current one and make your changes there.
+#==============================================================
+
+STATEDESC ChisoPreniv
+{
+    VERSION 1
+
+# Linking Book Visibility SDL Values
+    VAR BOOL    BookVis01[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis02[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis03[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis04[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis05[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis06[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis07[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis08[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis09[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+}
