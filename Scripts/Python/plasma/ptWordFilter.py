@@ -76,10 +76,7 @@ class ExactMatchListFilter(LanguageFilter):
         rated = xRatedG  # assume rated lowest level
         startidx = 0
         for endidx in range(len(sentence)):
-            if (
-                sentence[endidx] in string.whitespace
-                or sentence[endidx] in string.punctuation
-            ):
+            if sentence[endidx] in string.whitespace or sentence[endidx] in string.punctuation:
                 if startidx != endidx:
                     try:
                         # find and get rating and substitute
@@ -109,10 +106,7 @@ class ExactMatchListFilter(LanguageFilter):
         censored = ""
         startidx = 0
         for endidx in range(len(sentence)):
-            if (
-                sentence[endidx] in string.whitespace
-                or sentence[endidx] in string.punctuation
-            ):
+            if sentence[endidx] in string.whitespace or sentence[endidx] in string.punctuation:
                 if startidx != endidx:
                     try:
                         # find and get rating and substitute

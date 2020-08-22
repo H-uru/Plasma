@@ -136,11 +136,7 @@ class Neighborhood02(ptResponder):
                         currenttime = time.gmtime(PtGetDniTime())
                         currenttimestr = time.strftime("%m/%d/%Y %I:%M %p", currenttime)
                         playername = PtGetLocalPlayer().getPlayerName()
-                        thetext = (
-                            currenttimestr
-                            + (" " * (30 - len(currenttimestr)))
-                            + playername
-                        )
+                        thetext = currenttimestr + (" " * (30 - len(currenttimestr))) + playername
 
                         playerlist = ptVaultTextNoteNode(0)
                         playerlist.setTitle("Visitors, Visiteurs, Besucher")

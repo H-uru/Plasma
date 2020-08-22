@@ -117,9 +117,7 @@ class xPoweredStarTrekDoor(ptModifier):
             state and id == Activate.id and self.SDL["haspower"][0] == 1
         ):  # and PtWasLocallyNotified(self.key): # region is activated.
 
-            if (
-                doorState == "close"
-            ):  # keep track of what the freaking door should do next.
+            if doorState == "close":  # keep track of what the freaking door should do next.
                 doorState = "open"
             else:
                 doorState = "close"

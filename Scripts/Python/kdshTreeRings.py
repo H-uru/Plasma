@@ -253,11 +253,7 @@ class kdshTreeRings(ptModifier):
 
         # check if its an advance stage notify
         for event in events:
-            if (
-                event[0] == kMultiStageEvent
-                and event[1] == 0
-                and event[2] == kAdvanceNextStage
-            ):
+            if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                 if boolScopeOperator:
                     self.IEngageTelescope()
                     boolScopeOperator = 0
@@ -280,8 +276,7 @@ class kdshTreeRings(ptModifier):
             # control.show()
             PtShowDialog("kdshScope0" + str(ScopeNumber.value))
             PtDebugPrint(
-                "kdshTreeRings: Showing scope dialog ",
-                ("kdshScope0" + str(ScopeNumber.value)),
+                "kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)),
             )
 
         btnID = 0
@@ -306,11 +301,7 @@ class kdshTreeRings(ptModifier):
             ageSDL["MiddleRing0" + str(ScopeNumber.value)] = (newbearing,)
             # PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("MiddleRing0" + str (ScopeNumber.value)), newbearing))
 
-        if (
-            btnID == kGUIRingTurnRight
-            or btnID == kGUIRingTurnCenter
-            or btnID == kGUIRingTurnLeft
-        ):
+        if btnID == kGUIRingTurnRight or btnID == kGUIRingTurnCenter or btnID == kGUIRingTurnLeft:
 
             # No matter which of the three buttons is pushed, play the sound
             respSfxRings.run(self.key)

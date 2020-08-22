@@ -227,8 +227,7 @@ class kdshTreeRingsSolution(ptModifier):
         ageSDL = PtGetAgeSDL()
         if ageSDL == None:
             PtDebugPrint(
-                "kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)"
-                % varstring.value
+                "kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
             )
 
         ageSDL.setNotify(self.key, "OuterRing01", 0.0)
@@ -252,13 +251,9 @@ class kdshTreeRingsSolution(ptModifier):
         for i in ("Outer", "Middle", "Inner"):
             for j in ("1", "2", "3"):
                 ring = "{location}Ring0{idx}".format(location=i, idx=j)
-                ring_attrib = "{ring}_0{bearing}".format(
-                    ring=ring, bearing=ageSDL[ring][0]
-                )
+                ring_attrib = "{ring}_0{bearing}".format(ring=ring, bearing=ageSDL[ring][0])
                 globals()[ring_attrib].animation.skipToEnd()
-                PtDebugPrint(
-                    "\t{} = {}".format(ring, ageSDL[ring][0]), level=kWarningLevel
-                )
+                PtDebugPrint("\t{} = {}".format(ring, ageSDL[ring][0]), level=kWarningLevel)
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global StillSolved
@@ -268,9 +263,7 @@ class kdshTreeRingsSolution(ptModifier):
         StillSolved = False
         newbearing = ageSDL[VARname][0]
         # PtDebugPrint("VARname = ", VARname, "newbear = ", newbearing)
-        globals()[
-            "{id}_0{bearing}".format(id=VARname, bearing=newbearing)
-        ].animation.play()
+        globals()["{id}_0{bearing}".format(id=VARname, bearing=newbearing)].animation.play()
 
         if "3" in VARname:
             # PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
@@ -297,15 +290,9 @@ class kdshTreeRingsSolution(ptModifier):
         InnerRing03 = ageSDL["InnerRing03"][0]
 
         PtDebugPrint("Current Scope Positions [Outer, Middle, Inner]:")
-        PtDebugPrint(
-            "\tRing #1: [", OuterRing01, ", ", MiddleRing01, ", ", InnerRing01, " ]"
-        )
-        PtDebugPrint(
-            "\tRing #2: [", OuterRing02, ", ", MiddleRing02, ", ", InnerRing02, " ]"
-        )
-        PtDebugPrint(
-            "\tRing #3: [", OuterRing03, ", ", MiddleRing03, ", ", InnerRing03, " ]"
-        )
+        PtDebugPrint("\tRing #1: [", OuterRing01, ", ", MiddleRing01, ", ", InnerRing01, " ]")
+        PtDebugPrint("\tRing #2: [", OuterRing02, ", ", MiddleRing02, ", ", InnerRing02, " ]")
+        PtDebugPrint("\tRing #3: [", OuterRing03, ", ", MiddleRing03, ", ", InnerRing03, " ]")
 
         if (
             OuterRing01 == 5
@@ -344,14 +331,11 @@ class kdshTreeRingsSolution(ptModifier):
         ageSDL = PtGetAgeSDL()
         if ageSDL == None:
             PtDebugPrint(
-                "kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)"
-                % varstring.value
+                "kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
             )
 
         for bearing in ("Outer", "Middle", "Inner"):
-            sdl_var = "{location}Ring0{idx}".format(
-                location=bearing, idx=ScopeNumber - 1
-            )
+            sdl_var = "{location}Ring0{idx}".format(location=bearing, idx=ScopeNumber - 1)
             attrib_name = "GUI{location}0{idx}_0{newbearing}".format(
                 location=bearing, idx=ScopeNumber - 1, newbearing=ageSDL[sdl_var][0]
             )

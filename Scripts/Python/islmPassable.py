@@ -65,13 +65,9 @@ class islmPassable(ptResponder):
     def OnServerInitComplete(self):
         if PtDetermineKIMarkerLevel() >= kKIMarkerFirstLevel:
             PtDebugPrint("islmPassable: The Player has started the GZ marker game.")
-            PtDebugPrint(
-                "islmPassable: Disabling baracades at the bottom of the Great Stair."
-            )
+            PtDebugPrint("islmPassable: Disabling baracades at the bottom of the Great Stair.")
             respBoolTrue.run(self.key, fastforward=1)
         else:
             PtDebugPrint("islmPassable: The player has NOT started the GZ marker game.")
-            PtDebugPrint(
-                "islmPassable: Enabling baracades at the bottom of the Great Stair."
-            )
+            PtDebugPrint("islmPassable: Enabling baracades at the bottom of the Great Stair.")
             respBoolFalse.run(self.key, fastforward=1)

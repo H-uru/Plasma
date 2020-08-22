@@ -62,9 +62,7 @@ ImagerLoop = ptAttribResponder(4, "Rspdnr: Imager Loop")
 ImagerClose = ptAttribResponder(5, "Rspdnr: Imager Close")
 ClickForGUI = ptAttribActivator(6, "Clickable to get page")
 
-GreenLightResp = ptAttribResponder(
-    7, "Rspdnr: Green light", ["Solid", "Blinking", "Off"]
-)
+GreenLightResp = ptAttribResponder(7, "Rspdnr: Green light", ["Solid", "Blinking", "Off"])
 
 # globals
 PlayFull = 0  # Determines whether full vision will play or not. 0 = partial, 1 = full
@@ -166,8 +164,7 @@ class clftYeeshaPageImager(ptModifier):
                 event[0] == 2 and event[1] == 1 and id == ActImager.id
             ):  # play avatar oneshot, regardless of whether button is going on or off
                 PtDebugPrint(
-                    "clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ",
-                    PlayFull,
+                    "clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ", PlayFull,
                 )
                 if PtWasLocallyNotified(self.key):
                     # AvatarOneshot.run(self.key,events=events)
@@ -204,9 +201,7 @@ class clftYeeshaPageImager(ptModifier):
                         #                        PtDebugPrint("Will loop indefinitely. Playfull = ", PlayFull)
                         ImagerLoop.run(self.key)
 
-                elif (
-                    id == ImagerClose.id
-                ):  # imager close anim is complete, reenable clickable.
+                elif id == ImagerClose.id:  # imager close anim is complete, reenable clickable.
                     pass
                     # ActImager.enable() ## gets enabled in MAX
 

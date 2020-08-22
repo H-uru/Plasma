@@ -266,8 +266,7 @@ class ercaControlRoom(ptResponder):
                 ageSDL[SDLOvenBtn.value] = (0,)
             self.ImgrView(byteImgrOld, "exit")
             PtDebugPrint(
-                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d"
-                % (SDLImgrView.value, byteImgrNew)
+                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d" % (SDLImgrView.value, byteImgrNew)
             )
             if byteImgrOld == 0:
                 RespScrollBtnRt.run(self.key, state="off")
@@ -500,9 +499,7 @@ class ercaControlRoom(ptResponder):
                 valveNum = byteMixBtnNew - 1
                 valve = valveSDLs[valveNum]
                 if valve == "ercaPool1Valve":
-                    PtDebugPrint(
-                        "Tried to operate pool 1 valve, but it's stuck; request denied!"
-                    )
+                    PtDebugPrint("Tried to operate pool 1 valve, but it's stuck; request denied!")
                     return
                 # PtDebugPrint("valveNum = ",valveNum)
                 tunnel = TunnelsOccupied[valveNum]
@@ -526,8 +523,7 @@ class ercaControlRoom(ptResponder):
                     if ageSDL[empty][0] == 0:
                         ageSDL[empty] = (1,)
                         PtDebugPrint(
-                            "Pool wasn't drained before, so will set SDL for %s to %d"
-                            % (empty, 1)
+                            "Pool wasn't drained before, so will set SDL for %s to %d" % (empty, 1)
                         )
                 else:
                     ageSDL[valve] = (0,)
@@ -556,10 +552,7 @@ class ercaControlRoom(ptResponder):
                 return
 
         elif (
-            id == RgnTunnel1.id
-            or id == RgnTunnel2.id
-            or id == RgnTunnel3.id
-            or id == RgnTunnel4.id
+            id == RgnTunnel1.id or id == RgnTunnel2.id or id == RgnTunnel3.id or id == RgnTunnel4.id
         ):
             # PtDebugPrint("callback from rgn tunnel ID: ",id)
             for event in events:
@@ -608,10 +601,7 @@ class ercaControlRoom(ptResponder):
         PtDebugPrint("TunnelsOccupied = ", TunnelsOccupied)
 
     def ImgrView(self, view, mode, ff=0):
-        PtDebugPrint(
-            "DEBUG: ercaControlRoom.ImgrView():\tView = %d, and mode = %s"
-            % (view, mode)
-        )
+        PtDebugPrint("DEBUG: ercaControlRoom.ImgrView():\tView = %d, and mode = %s" % (view, mode))
         if view == 0:
             RespImgrView0.run(self.key, state="%s" % (mode), fastforward=ff)
         elif view == 1:
@@ -622,15 +612,11 @@ class ercaControlRoom(ptResponder):
             RespImgrView3.run(self.key, state="%s" % (mode), fastforward=ff)
 
     def MixerBtns(self, btn, mode, ff=0):
-        PtDebugPrint(
-            "DEBUG: ercaControlRoom.MixerBtns():\tBtn = %d, and mode = %s" % (btn, mode)
-        )
+        PtDebugPrint("DEBUG: ercaControlRoom.MixerBtns():\tBtn = %d, and mode = %s" % (btn, mode))
         if mode == "release":
             RespMixIcons.run(self.key, state="off")
         if btn == 0:
-            PtDebugPrint(
-                "DEBUG: ercaControlRoom.MixerBtns():\tOld btn is 0, do nothing."
-            )
+            PtDebugPrint("DEBUG: ercaControlRoom.MixerBtns():\tOld btn is 0, do nothing.")
         elif btn == 1:
             RespMixBtn1.run(self.key, state="%s" % (mode), fastforward=ff)
         elif btn == 2:
@@ -641,15 +627,11 @@ class ercaControlRoom(ptResponder):
             RespMixBtn4.run(self.key, state="%s" % (mode), fastforward=ff)
 
     def OvenBtns(self, btn, mode, ff=0):
-        PtDebugPrint(
-            "DEBUG: ercaControlRoom.OvenBtns():\tBtn = %d, and mode = %s" % (btn, mode)
-        )
+        PtDebugPrint("DEBUG: ercaControlRoom.OvenBtns():\tBtn = %d, and mode = %s" % (btn, mode))
         if mode == "release":
             RespOvenIcons.run(self.key, state="off")
         if btn == 0:
-            PtDebugPrint(
-                "DEBUG: ercaControlRoom.OvenBtns():\tOld btn is 0, do nothing."
-            )
+            PtDebugPrint("DEBUG: ercaControlRoom.OvenBtns():\tOld btn is 0, do nothing.")
         elif btn == 1:
             RespOvenBtn1.run(self.key, state="%s" % (mode), fastforward=ff)
         elif btn == 2:
@@ -677,6 +659,4 @@ class ercaControlRoom(ptResponder):
             ecPlayerID = int(chunks[2])
             self.UpdateTunnelRgn(ecRgn, ecState, ecPlayerID)
         except:
-            PtDebugPrint(
-                "ercaControlRoom.ExecCode(): ERROR! Invalid code '%s'." % (code)
-            )
+            PtDebugPrint("ercaControlRoom.ExecCode(): ERROR! Invalid code '%s'." % (code))

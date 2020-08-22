@@ -172,9 +172,7 @@ class nb01EmgrPhase0(ptResponder):
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         if not ageSDL:
-            PtDebugPrint(
-                "nb01EmgrPhase0.OnServerInitComplete:\tNo ageSDL. We're done here."
-            )
+            PtDebugPrint("nb01EmgrPhase0.OnServerInitComplete:\tNo ageSDL. We're done here.")
             return
 
         for sdlVar in self.PedestalSDL:
@@ -250,11 +248,7 @@ class nb01EmgrPhase0(ptResponder):
 
     def IManageLinkPedestal(self, position):
         """Manage Pedestal link books and stained glass"""
-        PtDebugPrint(
-            "nb01EmgrPhase0.IManageLinkPedestal(): PedestalPosition = {}".format(
-                position
-            )
-        )
+        PtDebugPrint("nb01EmgrPhase0.IManageLinkPedestal(): PedestalPosition = {}".format(position))
         if position in self.Pedestals:
             pedInfo = self.Pedestals[position]
             state = self._pedestalSDLValues[pedInfo["sdlState"]]
@@ -262,10 +256,7 @@ class nb01EmgrPhase0(ptResponder):
                 if state in pedInfo["Books"]:
                     # We have this book...
                     book = pedInfo["Books"][state]
-                    if (
-                        self._pedestalSDLValues[pedInfo["sdlGlass"]]
-                        not in book["Glasses"]
-                    ):
+                    if self._pedestalSDLValues[pedInfo["sdlGlass"]] not in book["Glasses"]:
                         # ...but the glass is wrong.
                         self.IPickPedestalGlass(position, book)
                 else:
@@ -284,9 +275,7 @@ class nb01EmgrPhase0(ptResponder):
     def IPickPedestalBook(self, position):
         if position in self.Pedestals:
             # Select a random book from this pedestal's list.
-            newBookChoice = random.choice(
-                list(self.Pedestals[position]["Books"].keys())
-            )
+            newBookChoice = random.choice(list(self.Pedestals[position]["Books"].keys()))
             self._UpdateVaultSDL(self.Pedestals[position]["sdlState"], newBookChoice)
 
             newBook = self.Pedestals[position]["Books"][newBookChoice]
@@ -310,9 +299,7 @@ class nb01EmgrPhase0(ptResponder):
             newGlass = 0
             if bookInfo:
                 # Select a random glass from this book's list.
-                newGlass = bookInfo["Glasses"][
-                    random.randint(0, len(bookInfo["Glasses"]) - 1)
-                ]
+                newGlass = bookInfo["Glasses"][random.randint(0, len(bookInfo["Glasses"]) - 1)]
                 PtDebugPrint(
                     "nb01EmgrPhase0.IPickPedestalGlass():\tSelecting stained glass #{} to match book for {}.".format(
                         newGlass, bookInfo["Name"]
@@ -341,23 +328,17 @@ class nb01EmgrPhase0(ptResponder):
             var = ageSDL.findVar(sdlName)
             if var is None:
                 PtDebugPrint(
-                    "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' not found!".format(
-                        sdlName
-                    )
+                    "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' not found!".format(sdlName)
                 )
                 return
         elif isinstance(ageSDL, ptSimpleStateVariable):
             var = ageSDL
         else:
-            raise TypeError(
-                "ageSDL must be a ptSDLStateDataRecord or a ptSimpleStateVariable"
-            )
+            raise TypeError("ageSDL must be a ptSDLStateDataRecord or a ptSimpleStateVariable")
 
         if not overwrite and var.isUsed():
             PtDebugPrint(
-                "nb01EmgrPhase0._UpdateSimpleStateVar(): Skipping update of '{}'".format(
-                    sdlName
-                ),
+                "nb01EmgrPhase0._UpdateSimpleStateVar(): Skipping update of '{}'".format(sdlName),
                 level=kDebugDumpLevel,
             )
             return
@@ -370,14 +351,10 @@ class nb01EmgrPhase0(ptResponder):
             var.setString(value)
         else:
             PtDebugPrint(
-                "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' has an unknown type!".format(
-                    sdlName
-                )
+                "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' has an unknown type!".format(sdlName)
             )
             return
-        PtDebugPrint(
-            "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' = {}".format(sdlName, value)
-        )
+        PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' = {}".format(sdlName, value))
         self._updateAgeSDL = True
 
     def _UpdateVaultSDL(self, sdlVar, value, overwrite=True):
@@ -397,9 +374,7 @@ class nb01EmgrPhase0(ptResponder):
     def _RandomizeNeighborhood(self):
         """Does initial state scrambling for the Neighborhood.
            This makes all hoods have a slightly different appearance (hopefully)"""
-        PtDebugPrint(
-            "nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---"
-        )
+        PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---")
         for name, values in self.HoodDecorations.items():
             self._UpdateVaultSDL(name, random.choice(values), overwrite=False)
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---SDL Randomized!---")
@@ -410,16 +385,12 @@ class nb01EmgrPhase0(ptResponder):
         try:
             if ageSDL[VARname][0] == 1:  # Are we paging things in?
                 PtDebugPrint(
-                    "DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging in {}".format(
-                        VARname
-                    )
+                    "DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging in {}".format(VARname)
                 )
                 PtPageInNode(VARname)
             elif ageSDL[VARname][0] == 0:  # Are we paging things out?
                 PtDebugPrint(
-                    "DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging out {}".format(
-                        VARname
-                    )
+                    "DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging out {}".format(VARname)
                 )
                 PtPageOutNode(VARname)
             else:

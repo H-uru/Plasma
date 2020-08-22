@@ -62,9 +62,7 @@ respShelveBook = ptAttribResponder(4, "Rspndr:ShelveBook")
 SeekBehavior = ptAttribBehavior(
     5, "Smart seek before GUI"
 )  # used to make user walk in front of shelf before using it
-ShelfCamera = ptAttribSceneobject(
-    6, "Bookshelf camera"
-)  # the camera used when engaging the shelf
+ShelfCamera = ptAttribSceneobject(6, "Bookshelf camera")  # the camera used when engaging the shelf
 HutCamera = ptAttribSceneobject(
     7, "Hut circle camera"
 )  # the camera which was used before engaging the shelf
@@ -95,10 +93,7 @@ class philBookshelf(ptModifier):
     def OnNotify(self, state, id, events):
         boolLinkerIsMe = PtWasLocallyNotified(self.key)
         PtDebugPrint(
-            (
-                "philBookshelf.OnNotify(): state = %d, id = %d, me = %s"
-                % (state, id, boolLinkerIsMe)
-            )
+            ("philBookshelf.OnNotify(): state = %d, id = %d, me = %s" % (state, id, boolLinkerIsMe))
         )
 
         if id == actBookshelfExit.id:
@@ -109,9 +104,7 @@ class philBookshelf(ptModifier):
             for event in events:
                 avatar = PtFindAvatar(events)
                 if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and LocalAvatar == avatar
+                    event[0] == kMultiStageEvent and event[1] == 0 and LocalAvatar == avatar
                 ):  # Smart seek completed. Exit multistage, and show GUI.
                     SeekBehavior.gotoStage(avatar, -1)
                     PtDebugPrint("philBookshelf.OnNotify():\tengaging bookshelf")
@@ -159,14 +152,11 @@ class philBookshelf(ptModifier):
             for event in events:
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint(
-                        "philBookshelf: BookNotify  event=%d, id=%d"
-                        % (event[1], event[2])
+                        "philBookshelf: BookNotify  event=%d, id=%d" % (event[1], event[2])
                     )
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] >= 0:
-                            PtDebugPrint(
-                                "philBookshelf:Book: hit linking panel %s" % (event[2])
-                            )
+                            PtDebugPrint("philBookshelf:Book: hit linking panel %s" % (event[2]))
                             theBook.hide()
                             # respShelveBook.run(self.key)
                             self.IDisengageShelf(boolLinkerIsMe)

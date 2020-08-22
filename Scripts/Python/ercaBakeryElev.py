@@ -284,9 +284,7 @@ class ercaBakeryElev(ptResponder):
             boolElevBusy = ageSDL[SDLElevBusy.value][0]
             if boolElevBusy:
                 if not AutoDown:
-                    objAvatar = ptSceneobject(
-                        PtGetAvatarKeyFromClientID(playerID), self.key
-                    )
+                    objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID), self.key)
                     RespElevClk.run(self.key, avatar=objAvatar)
 
     def OnNotify(self, state, id, events):

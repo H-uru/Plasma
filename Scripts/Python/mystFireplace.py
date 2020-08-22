@@ -61,9 +61,7 @@ respFPRotate = ptAttribResponder(4, "FP rotate", ["back", "front"])
 respResetPanel = ptAttribResponder(5, "Reset panel", byObject=1)
 
 actPanelButtons = ptAttribActivator(6, "Panel buttons", byObject=1)
-respMorphButtons = ptAttribResponder(
-    7, "Morph button resp", ["press", "depress"], byObject=1
-)
+respMorphButtons = ptAttribResponder(7, "Morph button resp", ["press", "depress"], byObject=1)
 
 strBookSDL = ptAttribString(8, "Book SDL Var")
 strYeeshaPageSDL = ptAttribString(9, "Yeesha page SDL Var")
@@ -363,9 +361,7 @@ class mystFireplace(ptModifier):
                         # PtDebugPrint(id, pnum)
                         # if panelName == parent.getName():
                         if id == pname[-3:]:
-                            respMorphButtons.run(
-                                self.key, objectName=rkey, state=bstate
-                            )
+                            respMorphButtons.run(self.key, objectName=rkey, state=bstate)
                             break
 
                 break

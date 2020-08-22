@@ -100,7 +100,5 @@ class bhroBahroMink(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge11"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroMink.OnNotify:  Turning wedge SDL of psnlBahroWedge11 to On"
-                )
+                PtDebugPrint("bhroBahroMink.OnNotify:  Turning wedge SDL of psnlBahroWedge11 to On")
                 psnlSDL["psnlBahroWedge11"] = (1,)

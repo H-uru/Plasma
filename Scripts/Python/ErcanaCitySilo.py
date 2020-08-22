@@ -82,18 +82,12 @@ RespScanMeter = ptAttribResponder(
     netForce=1,
 )
 RespPlayDud = ptAttribResponder(5, "resp: pellet dud", netForce=1)
-RespPlayBubbles = ptAttribResponder(
-    6, "resp: pellet bubbles", ["Hi", "Med", "Low"], netForce=1
-)
-RespPlaySteam = ptAttribResponder(
-    7, "resp: pellet steam", ["Hi", "Med", "Low"], netForce=1
-)
+RespPlayBubbles = ptAttribResponder(6, "resp: pellet bubbles", ["Hi", "Med", "Low"], netForce=1)
+RespPlaySteam = ptAttribResponder(7, "resp: pellet steam", ["Hi", "Med", "Low"], netForce=1)
 RespPlayOrangeGlow = ptAttribResponder(
     8, "resp: pellet orange glow", ["Hi", "Med", "Low"], netForce=1
 )
-RespPlayBoom = ptAttribResponder(
-    9, "resp: pellet explosion", ["Hi", "Med", "Low"], netForce=1
-)
+RespPlayBoom = ptAttribResponder(9, "resp: pellet explosion", ["Hi", "Med", "Low"], netForce=1)
 RespPlayWhiteGlow = ptAttribResponder(10, "resp: pellet white glow", netForce=1)
 
 kPlayerDropScore = "PelletDrop"
@@ -151,9 +145,7 @@ class ErcanaCitySilo(ptResponder):
             ageSDL[SDLGotPellet.value] = (gotPellet,)
 
         self._pellet = gotPellet - 300
-        PtDebugPrint(
-            "ErcanaCitySilo:OnServerInitComplete:  PELLET RECIPE = %d" % (self._pellet)
-        )
+        PtDebugPrint("ErcanaCitySilo:OnServerInitComplete:  PELLET RECIPE = %d" % (self._pellet))
 
     def OnBehaviorNotify(self, type, id, state):
         PtDebugPrint("ErcanaCitySilo.OnBehaviorNotify(): %d" % (type))
@@ -222,8 +214,7 @@ class ErcanaCitySilo(ptResponder):
             name = score.getName()
             if name == kGlobalScore:
                 PtDebugPrint(
-                    "ErcanaCitySilo.OnGameScoreMsg():\tAdded %i lake points"
-                    % self._lakePoints,
+                    "ErcanaCitySilo.OnGameScoreMsg():\tAdded %i lake points" % self._lakePoints,
                     level=kWarningLevel,
                 )
             else:
@@ -252,14 +243,9 @@ class ErcanaCitySilo(ptResponder):
                 else:
                     type = PtGameScoreTypes.kAccumulative
                     points = self._kiPoints
-                ptGameScore.createScore(
-                    msg.getOwnerID(), msg.getName(), type, points, self.key
-                )
+                ptGameScore.createScore(msg.getOwnerID(), msg.getName(), type, points, self.key)
         else:
-            PtDebugPrint(
-                "ErcanaCitySilo.OnGameScoreMsg():\tGot unexpected cb '%s'"
-                % msg.__name__
-            )
+            PtDebugPrint("ErcanaCitySilo.OnGameScoreMsg():\tGot unexpected cb '%s'" % msg.__name__)
 
     def IDoScores(self):
         if self._pellet < 0:
@@ -277,17 +263,13 @@ class ErcanaCitySilo(ptResponder):
         else:
             self._kiPoints = self._pellet
             self._lakePoints = self._pellet
-        self._kiPoints = int(
-            round(self._kiPoints * ((xRandom.randint(1, 25) / 100.0) + 4.75))
-        )
+        self._kiPoints = int(round(self._kiPoints * ((xRandom.randint(1, 25) / 100.0) + 4.75)))
         self._lakePoints = int(round(self._lakePoints))
         PtDebugPrint(
             "ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!"
             % (self._kiPoints)
         )
-        PtDebugPrint(
-            "ErcanaCitySilo.IDoScores():  and %d lake points!" % (self._lakePoints)
-        )
+        PtDebugPrint("ErcanaCitySilo.IDoScores():  and %d lake points!" % (self._lakePoints))
 
         #  Try to find the needed scores...
         #  The magic will happen in OnGameScoreMsg()
@@ -383,9 +365,7 @@ class ErcanaCitySilo(ptResponder):
                 PtDebugPrint("explosion - HIGH")
                 RespPlayBoom.run(self.key, state="Hi")
         else:
-            PtDebugPrint(
-                "ErcanaCitySilo.IPlayPellet():  ERROR.  Level must be greater than 0"
-            )
+            PtDebugPrint("ErcanaCitySilo.IPlayPellet():  ERROR.  Level must be greater than 0")
 
     def OnBackdoorMsg(self, target, param):
         if target == "pelletfx":

@@ -61,9 +61,7 @@ class Personal(ptResponder):
         ptResponder.__init__(self)
         self.id = 5022
         self.version = 5
-        PtDebugPrint(
-            "Personal: __init__ version %d.%d" % (self.version, 1), level=kWarningLevel
-        )
+        PtDebugPrint("Personal: __init__ version %d.%d" % (self.version, 1), level=kWarningLevel)
 
     def gotPublicAgeList(self, ages):
         # got a list of cities, now we save our var!
@@ -149,9 +147,7 @@ class Personal(ptResponder):
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint(
-            "Personal.OnServerInitComplete(): Grabbing first week clothing item boolean"
-        )
+        PtDebugPrint("Personal.OnServerInitComplete(): Grabbing first week clothing item boolean")
         try:
             firstWeekClothing = ageSDL["FirstWeekClothing"][0]
         except:
@@ -170,23 +166,17 @@ class Personal(ptResponder):
             clothingList = avatar.avatar.getWardrobeClothingList()
             if clothingName not in clothingList:
                 PtDebugPrint(
-                    "Adding "
-                    + clothingName
-                    + " clothing item to your closet! Aren't you lucky?"
+                    "Adding " + clothingName + " clothing item to your closet! Aren't you lucky?"
                 )
                 avatar.avatar.addWardrobeClothingItem(
                     clothingName, ptColor().white(), ptColor().white()
                 )
             else:
                 PtDebugPrint(
-                    "You already have "
-                    + clothingName
-                    + " so I'm not going to add it again."
+                    "You already have " + clothingName + " so I'm not going to add it again."
                 )
         else:
-            PtDebugPrint(
-                "I guess you're too late, you don't get the first week clothing item"
-            )
+            PtDebugPrint("I guess you're too late, you don't get the first week clothing item")
 
         PtDebugPrint(
             "Personal.OnServerInitComplete(): Checking to see if we need to add reward clothing to your closet"
@@ -229,9 +219,7 @@ class Personal(ptResponder):
                 )
             else:
                 PtDebugPrint(
-                    "You already have "
-                    + clothingName
-                    + " so I'm not going to add it again."
+                    "You already have " + clothingName + " so I'm not going to add it again."
                 )
         if rewardList != "":
             ageSDL["RewardClothing"] = ("",)

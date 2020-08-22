@@ -125,9 +125,7 @@ class nb01Easel(ptModifier):
         )  # we don't want our text appearing on other machines, since we are going to be localized
         dyna_map.textmap.clearToColor(clearcolor)
         dyna_map.textmap.setTextColor(fontcolor, True)
-        dyna_map.textmap.setWrapping(
-            dyna_map.textmap.getWidth(), dyna_map.textmap.getHeight()
-        )
+        dyna_map.textmap.setWrapping(dyna_map.textmap.getWidth(), dyna_map.textmap.getHeight())
         dyna_map.textmap.setFont(dyna_fontname.value, dyna_fontsize.value)
         dyna_map.textmap.setJustify(PtJustify.kCenter)
         dyna_map.textmap.setLineSpacing(dyna_fontspacing.value)

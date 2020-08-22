@@ -160,16 +160,12 @@ class clftNpcZandi(ptModifier):
                 return
 
             for event in events:
-                if (
-                    event[0] == 1 and event[1] == 1
-                ):  # avatar physically approached Zandi
+                if event[0] == 1 and event[1] == 1:  # avatar physically approached Zandi
                     self.NearZandi = 1
                     if not (self.IsTalking or self.IsIgnoring):
                         self.ZandiSpeaks()
 
-                elif (
-                    event[0] == 1 and event[1] == 0
-                ):  # avatar physically stepped away from Zandi
+                elif event[0] == 1 and event[1] == 0:  # avatar physically stepped away from Zandi
                     # PtDebugPrint("Stepped away")
                     self.NearZandi = 0
                     self.PlayWelcome2 = 0
@@ -224,9 +220,7 @@ class clftNpcZandi(ptModifier):
             if not self.DoingBehavior:
                 PtDebugPrint("do turn page")
                 self.DoingBehavior = 1
-                MultiStage01.gotoStage(
-                    self.NpcName, 2, dirFlag=1, isForward=1
-                )  # turn page
+                MultiStage01.gotoStage(self.NpcName, 2, dirFlag=1, isForward=1)  # turn page
                 PtAtTimeCallback(self.key, PageTurnInterval, TimerID.TurnPage)
 
         elif id == TimerID.IgnoreFinished:

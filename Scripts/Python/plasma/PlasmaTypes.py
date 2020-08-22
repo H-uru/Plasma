@@ -52,9 +52,7 @@ from PlasmaConstants import *
 ####################################
 
 # OnNotify Event enums
-kCollisionEvent = (
-    PtEventType.kCollision
-)  # [1]=enter flag, [2]=hitter(probably avatar), [3]=hittee
+kCollisionEvent = PtEventType.kCollision  # [1]=enter flag, [2]=hitter(probably avatar), [3]=hittee
 kPickedEvent = (
     PtEventType.kPicked
 )  # [1]=enter flag, [2]=picker(probably avatar), [3]=pickee, [4]=hitpoint(world) [5]=hitpoint(local)
@@ -69,14 +67,10 @@ kContainedEvent = (
 kActivateEvent = PtEventType.kActivate  # [1]=active flag, [2]=activate flag
 kCallbackEvent = PtEventType.kCallback  # [1]=callback id
 kResponderStateEvent = PtEventType.kResponderState  # [1]=state id
-kMultiStageEvent = (
-    PtEventType.kMultiStage
-)  # [1]=what stage, [2]=event(see below), [3]=avatar
+kMultiStageEvent = PtEventType.kMultiStage  # [1]=what stage, [2]=event(see below), [3]=avatar
 kSpawnedEvent = PtEventType.kSpawned  # [1]=spawner, [2]=spawnee (usually avatar)
 kClickDragEvent = PtEventType.kClickDrag  # not used yet
-kOfferLinkingBook = (
-    PtEventType.kOfferLinkingBook
-)  # [1]=offerer, [2]=link panel ID of age offered
+kOfferLinkingBook = PtEventType.kOfferLinkingBook  # [1]=offerer, [2]=link panel ID of age offered
 
 
 # OnNotify Var Event Data Types
@@ -121,13 +115,9 @@ kFontShadowed = 4
 # OnGUINotify Event Types
 kShowHide = 1  # show or hide change (only on kDialog)
 kAction = 2  # kButton clicked, kListBox item clicked on, kEditBox hit enter
-kValueChanged = (
-    3  # value changed in control (could be from kUpDownPair,kKnob,kCheckBox,kRadioGroup
-)
+kValueChanged = 3  # value changed in control (could be from kUpDownPair,kKnob,kCheckBox,kRadioGroup
 kDialogLoaded = 4  # the dialog has just been loaded
-kFocusChange = (
-    5  # the focus changed from one control to another, or none, within the dialog
-)
+kFocusChange = 5  # the focus changed from one control to another, or none, within the dialog
 kExitMode = 6  # Modal dialog received an exit mode command
 kInterestingEvent = 7  # an interesting event happened
 kSpecialAction = 8  # special action ( kEditBox tab press)
@@ -547,9 +537,7 @@ class ptAttribActivatorList(ptAttributeKeyList):
 
 # Responder attribute (pick responder types box)
 class ptAttribResponder(ptAttributeKeyList):
-    def __init__(
-        self, id, name=None, statelist=None, byObject=0, netForce=0, netPropagate=1
-    ):
+    def __init__(self, id, name=None, statelist=None, byObject=0, netForce=0, netPropagate=1):
         ptAttributeKeyList.__init__(self, id, name, byObject, netForce)
         self.state_list = statelist
         self.netPropagate = netPropagate
@@ -588,18 +576,14 @@ class ptAttribResponder(ptAttributeKeyList):
                 nt.netForce(1)
             # see if the state is specified
             if isinstance(state, int):
-                raise ptResponderStateError(
-                    "Specifying state as a number is no longer supported"
-                )
+                raise ptResponderStateError("Specifying state as a number is no longer supported")
             elif isinstance(state, str):
                 if self.state_list is not None:
                     try:
                         idx = self.state_list.index(state)
                         nt.addResponderState(idx)
                     except ValueError:
-                        raise ptResponderStateError(
-                            "There is no state called '%s'" % (state)
-                        )
+                        raise ptResponderStateError("There is no state called '%s'" % (state))
                 else:
                     raise ptResponderStateError("There is no state list provided")
             # see if there are events to pass on
@@ -636,18 +620,14 @@ class ptAttribResponder(ptAttributeKeyList):
                 nt.netForce(1)
             # see if the state is specified
             if isinstance(state, int):
-                raise ptResponderStateError(
-                    "Specifying state as a number is no longer supported"
-                )
+                raise ptResponderStateError("Specifying state as a number is no longer supported")
             elif isinstance(state, str):
                 if self.state_list is not None:
                     try:
                         idx = self.state_list.index(state)
                         nt.addResponderState(idx)
                     except ValueError:
-                        raise ptResponderStateError(
-                            "There is no state called '%s'" % (state)
-                        )
+                        raise ptResponderStateError("There is no state called '%s'" % (state))
                 else:
                     raise ptResponderStateError("There is no state list provided")
             # see if there are events to pass on
@@ -921,13 +901,7 @@ class ptAttribBehavior(ptAttribute):
             avatar.avatar.runBehavior(self.value, self.netForce, self.netProp)
 
     def nextStage(
-        self,
-        avatar,
-        transitionTime=1.0,
-        setTimeFlag=1,
-        newTime=0.0,
-        dirFlag=0,
-        isForward=1,
+        self, avatar, transitionTime=1.0, setTimeFlag=1, newTime=0.0, dirFlag=0, isForward=1,
     ):
         "This will go to the next stage in a multi-stage behavior"
         if self.value is not None:
@@ -935,23 +909,11 @@ class ptAttribBehavior(ptAttribute):
                 self.value.netForce(1)
                 avatar.avatar.netForce(1)
             avatar.avatar.nextStage(
-                self.value,
-                transitionTime,
-                setTimeFlag,
-                newTime,
-                dirFlag,
-                isForward,
-                self.netForce,
+                self.value, transitionTime, setTimeFlag, newTime, dirFlag, isForward, self.netForce,
             )
 
     def previousStage(
-        self,
-        avatar,
-        transitionTime=1.0,
-        setTimeFlag=1,
-        newTime=0.0,
-        dirFlag=0,
-        isForward=1,
+        self, avatar, transitionTime=1.0, setTimeFlag=1, newTime=0.0, dirFlag=0, isForward=1,
     ):
         "This will go to the next stage in a multi-stage behavior"
         if self.value is not None:
@@ -959,24 +921,11 @@ class ptAttribBehavior(ptAttribute):
                 self.value.netForce(1)
                 avatar.avatar.netForce(1)
             avatar.avatar.previousStage(
-                self.value,
-                transitionTime,
-                setTimeFlag,
-                newTime,
-                dirFlag,
-                isForward,
-                self.netForce,
+                self.value, transitionTime, setTimeFlag, newTime, dirFlag, isForward, self.netForce,
             )
 
     def gotoStage(
-        self,
-        avatar,
-        stage,
-        transitionTime=1.0,
-        setTimeFlag=1,
-        newTime=0.0,
-        dirFlag=0,
-        isForward=1,
+        self, avatar, stage, transitionTime=1.0, setTimeFlag=1, newTime=0.0, dirFlag=0, isForward=1,
     ):
         "This will go to the next stage in a multi-stage behavior"
         if self.value is not None:

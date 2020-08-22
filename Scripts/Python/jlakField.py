@@ -72,9 +72,7 @@ clkColumnUp = ptAttribActivatorList(14, "clk: column up")
 clkColumnDn = ptAttribActivatorList(15, "clk: column down")
 warpPlayers = ptAttribSceneobjectList(16, "obj: player warps")
 respWallToggle = ptAttribResponder(17, "resp: toggle wall", ["on", "off"], netForce=0)
-respGameOps = ptAttribResponder(
-    18, "resp: game ops", ["start", "end", "reset"], netForce=0
-)
+respGameOps = ptAttribResponder(18, "resp: game ops", ["start", "end", "reset"], netForce=0)
 respSfxColumn = ptAttribResponderList(
     19, "resp: sfx column", statelist=["up", "down", "off"], byObject=1
 )
@@ -287,9 +285,7 @@ class jlakField(ptResponder):
             byteStartPt = byteStartPt + 2
             if byteStartPt == 4:
                 byteStartPt = 0
-            elif (
-                byteStartPt >= 5
-            ):  # greater than 5 shouldn't be possible, but as a safety...
+            elif byteStartPt >= 5:  # greater than 5 shouldn't be possible, but as a safety...
                 byteStartPt = 1
         else:
             PtDebugPrint(
@@ -303,9 +299,7 @@ class jlakField(ptResponder):
                 byteStartPt = 3
             elif byteStartPt == 3:
                 byteStartPt = 1
-        PtDebugPrint(
-            "jlakField.OnServerInitComplete(): player start point = ", byteStartPt
-        )
+        PtDebugPrint("jlakField.OnServerInitComplete(): player start point = ", byteStartPt)
 
         onInit = 1
         i = 0
@@ -506,9 +500,7 @@ class jlakField(ptResponder):
                 ageSDL[sdlGUILock] = (0,)
         elif id == (-1):
             if events[0][1] == kBulkMoveVar:
-                if (
-                    events[0][3] > 0
-                ):  # We'll only enable bulk SFX if we've got a good reason to!
+                if events[0][3] > 0:  # We'll only enable bulk SFX if we've got a good reason to!
                     self.bulkMove = 1  # Disable individual Pillar SFX
                     if self.sceneobject.isLocallyOwned() and not boolGUILock:
                         PtDebugPrint(
@@ -557,9 +549,7 @@ class jlakField(ptResponder):
         PtAtTimeCallback(self.key, 1.0, 100)
 
     def AutoColumns(self, mode, preset=None):
-        PtDebugPrint(
-            "jlakField.AutoColumns(): requested all columns move using mode: ", mode
-        )
+        PtDebugPrint("jlakField.AutoColumns(): requested all columns move using mode: ", mode)
         if boolGUILock:
             PtDebugPrint(
                 "jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!"
@@ -802,9 +792,7 @@ class jlakField(ptResponder):
                 PendingPos = -1
                 PendingDir = ""
             else:
-                PtDebugPrint(
-                    "timer callback to do pending column move, but vars are bad...?"
-                )
+                PtDebugPrint("timer callback to do pending column move, but vars are bad...?")
         elif id == kEmoteTimerID:
             PtForceCursorShown()
         elif id == kSFXCompleteID:
@@ -817,9 +805,7 @@ class jlakField(ptResponder):
         i = 0
         for pos in byteColumns:
             fWrite.write(str(pos) + "\n")
-            PtDebugPrint(
-                "jlakField.SaveColumns():  column: %d at position: %d" % (i, pos)
-            )
+            PtDebugPrint("jlakField.SaveColumns():  column: %d at position: %d" % (i, pos))
             i += 1
         fWrite.close()
 
@@ -828,8 +814,7 @@ class jlakField(ptResponder):
             fRead = file(fName, "r")
         except:
             PtDebugPrint(
-                "jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled."
-                % (fName)
+                "jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName)
             )
             # templist = [PtGetLocalPlayer()]
             # PtSendRTChat(PtGetLocalPlayer(),templist,"doh!",1)
@@ -865,10 +850,7 @@ class jlakField(ptResponder):
             param = int(param)
             if param < kMinPos or param > kMaxPos:
                 PtDebugPrint(
-                    "invalid height parameter, must be a # between ",
-                    kMinPos,
-                    " and ",
-                    kMaxPos,
+                    "invalid height parameter, must be a # between ", kMinPos, " and ", kMaxPos,
                 )
                 return
             newPos = param
@@ -920,9 +902,7 @@ class jlakField(ptResponder):
         except:
             cmd = code.split(";", 1)
             if len(cmd) != 2:
-                PtDebugPrint(
-                    "jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code)
-                )
+                PtDebugPrint("jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code))
                 return
 
             if cmd[0] == "SaveColumns":

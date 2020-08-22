@@ -73,9 +73,7 @@ class xChatChannelRegion(ptResponder):
 
         version = 3
         self.version = version
-        PtDebugPrint(
-            "__init__xChatChannelRegion v%d.%d" % (version, 3), level=kWarningLevel
-        )
+        PtDebugPrint("__init__xChatChannelRegion v%d.%d" % (version, 3), level=kWarningLevel)
 
     def __del__(self):
         "the destructor"
@@ -167,8 +165,7 @@ class xChatChannelRegion(ptResponder):
         for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if self.SDL["intSDLChatMembers"][count] == memberID:
                 PtDebugPrint(
-                    "xChatChannel: memberID=%d   already in list, aborting."
-                    % (memberID),
+                    "xChatChannel: memberID=%d   already in list, aborting." % (memberID),
                     level=kDebugDumpLevel,
                 )
                 return
@@ -177,8 +174,7 @@ class xChatChannelRegion(ptResponder):
             if self.SDL["intSDLChatMembers"][count] == -1:
                 self.SDL.setIndex("intSDLChatMembers", count, memberID)
                 PtDebugPrint(
-                    "xChatChannel: memberID=%d added to SDL." % (memberID),
-                    level=kDebugDumpLevel,
+                    "xChatChannel: memberID=%d added to SDL." % (memberID), level=kDebugDumpLevel,
                 )
                 return
 
@@ -190,8 +186,7 @@ class xChatChannelRegion(ptResponder):
             if self.SDL["intSDLChatMembers"][count] == memberID:
                 self.SDL.setIndex("intSDLChatMembers", count, -1)
                 PtDebugPrint(
-                    "xChatChannel:removed %s  id # %d   from listen list"
-                    % (memberName, memberID),
+                    "xChatChannel:removed %s  id # %d   from listen list" % (memberName, memberID),
                     level=kDebugDumpLevel,
                 )
 
@@ -209,8 +204,7 @@ class xChatChannelRegion(ptResponder):
                 memberName = memberKey.getName()
                 memberList.append(ptPlayer(memberName, memberID))
                 PtDebugPrint(
-                    "xChatChannel: added %s   id # %d  to listen list"
-                    % (memberName, memberID),
+                    "xChatChannel: added %s   id # %d  to listen list" % (memberName, memberID),
                     level=kDebugDumpLevel,
                 )
                 if memberID == localID:
@@ -218,8 +212,7 @@ class xChatChannelRegion(ptResponder):
         if localIncluded:
             PtSendPrivateChatList(memberList)
             PtDebugPrint(
-                "xChatChannel.OnNotify:\tadding you to private chat channel %d"
-                % (numID.value),
+                "xChatChannel.OnNotify:\tadding you to private chat channel %d" % (numID.value),
                 level=kDebugDumpLevel,
             )
             PtSendKIMessageInt(kSetPrivateChatChannel, numID.value)

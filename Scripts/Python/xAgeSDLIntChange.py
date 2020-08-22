@@ -130,9 +130,7 @@ class xAgeSDLIntChange(ptResponder):
 
         # error check
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntChange.OnNotify():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntChange.OnNotify():\tERROR: missing SDL var name")
             return
 
         ageSDL = PtGetAgeSDL()

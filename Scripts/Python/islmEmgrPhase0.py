@@ -139,21 +139,14 @@ class islmEmgrPhase0(ptResponder):
 
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint(
-                "islmEmgrPhase0.SDLNotify - name = %s, SDLname = %s"
-                % (VARname, SDLname)
-            )
+            PtDebugPrint("islmEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname))
 
             if VARname in BooleanVARs:
-                PtDebugPrint(
-                    "islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
-                )
+                PtDebugPrint("islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
                 self.IManageBOOLs(VARname, SDLname)
 
             elif VARname in StateVARs.keys():
-                PtDebugPrint(
-                    "islmEmgrPhas0.OnSDLNotify : %s is a STATE variable" % (VARname)
-                )
+                PtDebugPrint("islmEmgrPhas0.OnSDLNotify : %s is a STATE variable" % (VARname))
 
                 NewSDLValue = ageSDL[VARname][0]
 

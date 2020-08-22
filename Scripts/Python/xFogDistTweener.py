@@ -132,15 +132,9 @@ class xFogDistTweener(ptMultiModifier):
     def OnNotify(self, state, id, events):
         global Enabled
 
-        PtDebugPrint(
-            "xFogDistTweener.OnNotify: state=%s id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("xFogDistTweener.OnNotify: state=%s id=%d events=" % (state, id), events)
 
-        if (
-            id == Region.id
-            and OnlyInRegion.value
-            and PtFindAvatar(events) == PtGetLocalAvatar()
-        ):
+        if id == Region.id and OnlyInRegion.value and PtFindAvatar(events) == PtGetLocalAvatar():
             PtDebugPrint("xFogDistTweener.OnNotify: Region with fog settings triggered")
             if events[0][1] == 1:
                 PtDebugPrint("xFogDistTweener.OnNotify: Entered")
@@ -188,13 +182,9 @@ class xFogDistTweener(ptMultiModifier):
             (self.PointB_RGBList[2] - self.PointA_RGBList[2]) * TweenPct
         )
 
-        NewS = PointA_Start.value + (
-            (PointB_Start.value - PointA_Start.value) * TweenPct
-        )
+        NewS = PointA_Start.value + ((PointB_Start.value - PointA_Start.value) * TweenPct)
         NewE = PointA_End.value + ((PointB_End.value - PointA_End.value) * TweenPct)
-        NewD = PointA_Density.value + (
-            (PointB_Density.value - PointA_Density.value) * TweenPct
-        )
+        NewD = PointA_Density.value + ((PointB_Density.value - PointA_Density.value) * TweenPct)
 
         # PtDebugPrint("xFogDistTweener.UpdateFog: The new fog RGB is (%.3f, %.3f, %.3f)" % (NewR, NewG, NewB))
         # PtDebugPrint("xFogDistTweener.UpdateFog: The new fog Density is (%.3f, %.3f, %.3f)" % (NewS, NewE, NewD))
@@ -287,11 +277,7 @@ class xFogDistTweener(ptMultiModifier):
             Pm_Z = A_Z - P1_Z
 
             # The distance between A and the plane P1 is on, is the dot product of the normalized point and (A - P1)
-            Distance = (
-                (Normalized_PnX * Pm_X)
-                + (Normalized_PnY * Pm_Y)
-                + (Normalized_PnZ * Pm_Z)
-            )
+            Distance = (Normalized_PnX * Pm_X) + (Normalized_PnY * Pm_Y) + (Normalized_PnZ * Pm_Z)
 
         elif FogStyle.value == "Radial":
             # PtDebugPrint("xFogDistTweener.CalculateDistanceBetweenPoints: Using Radial Math")

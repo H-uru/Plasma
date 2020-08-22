@@ -67,24 +67,16 @@ imagerLockW = ptAttribActivator(6, "imager lock W")
 imagerCam = ptAttribSceneobject(7, "imager camera")
 # imager animation responders:
 imagerRespN = ptAttribResponder(
-    8,
-    "N Responder",
-    ["State 1", "State 2", "State 3", "State 4", "SOLVED", "State 6", "State 7"],
+    8, "N Responder", ["State 1", "State 2", "State 3", "State 4", "SOLVED", "State 6", "State 7"],
 )
 imagerRespS = ptAttribResponder(
-    9,
-    "S Responder",
-    ["State 1", "State 2", "State 3", "State 4", "State 5", "State 6", "SOLVED"],
+    9, "S Responder", ["State 1", "State 2", "State 3", "State 4", "State 5", "State 6", "SOLVED"],
 )
 imagerRespW = ptAttribResponder(
-    10,
-    "W Responder",
-    ["State 1", "SOLVED", "State 3", "State 4", "State 5", "State 6", "State 7"],
+    10, "W Responder", ["State 1", "SOLVED", "State 3", "State 4", "State 5", "State 6", "State 7"],
 )
 imagerRespE = ptAttribResponder(
-    11,
-    "E Responder",
-    ["State 1", "State 2", "State 3", "SOLVED", "State 5", "State 6", "State 7"],
+    11, "E Responder", ["State 1", "State 2", "State 3", "SOLVED", "State 5", "State 6", "State 7"],
 )
 # NPC speech responders and stuff
 ImagerOneshot = ptAttribResponder(12, "Resp: Player avatar oneshot")
@@ -489,9 +481,7 @@ class clftImager(ptResponder):
                 if (
                     event[0] == 2 and event[1] == 1
                 ):  # play avatar oneshot, regardless of whether button is going on or off
-                    ImagerOneshot.run(
-                        self.key, events=events, avatar=PtGetLocalAvatar()
-                    )
+                    ImagerOneshot.run(self.key, events=events, avatar=PtGetLocalAvatar())
                     return
 
         if id == ImagerOneshot.id:
@@ -524,8 +514,7 @@ class clftImager(ptResponder):
                             elif PlayFinal == 0 and PlayFull == 0 and PlayTPOT == 0:
                                 stopvision = random.randint(minstoptime, maxstoptime)
                                 PtDebugPrint(
-                                    "\tImager will autoshut off in %d seconds"
-                                    % (stopvision)
+                                    "\tImager will autoshut off in %d seconds" % (stopvision)
                                 )
                                 PtAtTimeCallback(self.key, stopvision, kVision)
                             elif PlayFull == 1:
@@ -547,9 +536,7 @@ class clftImager(ptResponder):
                 clothingName = "02_MTorso09_01"
             clothingList = avatar.avatar.getWardrobeClothingList()
             if clothingName not in clothingList:
-                PtDebugPrint(
-                    "adding Yeesha reward clothing %s to wardrobe" % (clothingName)
-                )
+                PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
                 avatar.avatar.addWardrobeClothingItem(
                     clothingName, ptColor().white(), ptColor().black()
                 )
@@ -569,9 +556,7 @@ class clftImager(ptResponder):
             self.StopVision()
 
         if id == YeeshaSceneTimerDoorClose.id and state and PlayScene == 1:
-            PtDebugPrint(
-                "clftImager.OnNotify(): Yeesha's leaving, now shutting Office Door"
-            )
+            PtDebugPrint("clftImager.OnNotify(): Yeesha's leaving, now shutting Office Door")
             self.ageSDL = PtGetAgeSDL()
             SDLVarOfficeDoor = "clftOfficeDoorClosed"
             xtraInfo = "fromOutside"
@@ -709,9 +694,7 @@ class clftImager(ptResponder):
             currentStateList[x] = (currentStateList[x] + 6) % 7
 
         PtDebugPrint("clftImager.EndgameSolved(): solution list: " + str(solutionList))
-        PtDebugPrint(
-            "clftImager.EndgameSolved(): currentState list: " + str(currentStateList)
-        )
+        PtDebugPrint("clftImager.EndgameSolved(): currentState list: " + str(currentStateList))
 
         if self.AreListsEquiv(solutionList, currentStateList):
             return True
@@ -794,9 +777,7 @@ class clftImager(ptResponder):
         #     imagerLockW.disableActivator()
         #     imagerLockE.disableActivator()
         elif id == imagerBrokenBtn.id:
-            PtDebugPrint(
-                "\nclftImager.Ontimer:Got timer callback. Setting up Imager button...."
-            )
+            PtDebugPrint("\nclftImager.Ontimer:Got timer callback. Setting up Imager button....")
             imagerBtn.disableActivator()
             ImagerBtnInvisible.run(self.key)
             imagerBrokenBtn.enableActivator()
@@ -807,9 +788,7 @@ class clftImager(ptResponder):
             PtSendKIMessage(kDisableEntireYeeshaBook, 0)
             PtDisableForwardMovement()
         elif id == imagerBtn.id:
-            PtDebugPrint(
-                "\nclftImager.Ontimer:Got timer callback. Setting up Imager dummy...."
-            )
+            PtDebugPrint("\nclftImager.Ontimer:Got timer callback. Setting up Imager dummy....")
             imagerBrokenBtn.disableActivator()
             imagerLockN.disableActivator()
             imagerLockS.disableActivator()
@@ -961,8 +940,7 @@ class clftImager(ptResponder):
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
                 PtDebugPrint(
-                    "xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ",
-                    CityLinks,
+                    "xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ", CityLinks,
                 )
             else:
                 PtDebugPrint(

@@ -106,9 +106,7 @@ class kemoJourneyClothGate(ptResponder):
                 ageSDL.setFlags(stringVarName.value, 1, 1)
                 ageSDL.sendToClients(stringVarName.value)
             else:
-                PtDebugPrint(
-                    "kemoJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("kemoJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
 
             ageSDL = PtGetAgeSDL()
             if stringVarName.value:
@@ -211,14 +209,10 @@ class kemoJourneyClothGate(ptResponder):
             length = len(FoundJCs)
             all = len(AllCloths)
 
-            PtDebugPrint(
-                "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
-            )
+            PtDebugPrint("You've found the following %d Journey Cloths: %s" % (length, FoundJCs))
 
             if length < 0 or length > 11:
-                PtDebugPrint(
-                    "xJourneyClothGate: ERROR: Unexpected length value received."
-                )
+                PtDebugPrint("xJourneyClothGate: ERROR: Unexpected length value received.")
                 return
 
             if "Z" in FoundJCs:
@@ -229,9 +223,7 @@ class kemoJourneyClothGate(ptResponder):
 
             for each in FoundJCs:
                 if each not in AllCloths:
-                    PtDebugPrint(
-                        "Unexpected value among the 10 letters in the Chronicle:", each
-                    )
+                    PtDebugPrint("Unexpected value among the 10 letters in the Chronicle:", each)
                     return
 
             if length < all:
@@ -251,9 +243,7 @@ class kemoJourneyClothGate(ptResponder):
             try:
                 GateCurrentlyClosed = ageSDL[stringVarName.value][0]
             except:
-                PtDebugPrint(
-                    "kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
-                )
+                PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
                 GateCurrentlyClosed = False
 
             PtDebugPrint("ToggleSDL: GateCurrentlyClosed = ", GateCurrentlyClosed)

@@ -75,9 +75,7 @@ class Descent(ptResponder):
                     level=kDebugDumpLevel,
                 )
             else:
-                PtDebugPrint(
-                    "Descent - registering age '%s' (why is this not Descent?)" % (name)
-                )
+                PtDebugPrint("Descent - registering age '%s' (why is this not Descent?)" % (name))
         else:
             PtDebugPrint(
                 "Descent:OnVaultNotify - not what we want - type=%d" % (type),

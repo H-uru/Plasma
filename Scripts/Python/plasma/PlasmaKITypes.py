@@ -48,24 +48,18 @@ interfacing with the KI subsytem
 # OnKIMsg and PtSendKIMessage command types
 kEnterChatMode = 1  # start chat mode on KI, 'value' doesn't matter
 kSetChatFadeDelay = 2  # set the chat fade time, 'value' is the delay in seconds
-kSetTextChatAdminMode = (
-    3  # set self to be admin mode, 'value' is 1 to go into Admin mode, 0 remove
-)
+kSetTextChatAdminMode = 3  # set self to be admin mode, 'value' is 1 to go into Admin mode, 0 remove
 kDisableKIandBB = 4  # disable the KI and the blackbar, 'value' doesn't matter
 kEnableKIandBB = 5  # enable the KI and the blackbar, 'value' doesn't matter
 kYesNoDialog = 6  # request that the KI put up a yes/no dialog for someone else
-kAddPlayerDevice = (
-    7  # add player interactive device to list of devices, 'value' is device name
+kAddPlayerDevice = 7  # add player interactive device to list of devices, 'value' is device name
+kRemovePlayerDevice = 8  # remove player interactive device from list, 'value' is device name
+kUpgradeKILevel = (
+    9  # upgrade new level of KI (if already at that level, nevermind), 'value' is the new level
 )
-kRemovePlayerDevice = (
-    8  # remove player interactive device from list, 'value' is device name
-)
-kUpgradeKILevel = 9  # upgrade new level of KI (if already at that level, nevermind), 'value' is the new level
 kDowngradeKILevel = 10  # remove (drop) the KI level (if not at that level, nevermind), 'value' is the level to remove
 kRateIt = 11  # request for the KI to ask the user to Rate something
-kSetPrivateChatChannel = (
-    12  # sets the private chat channel to number, for private rooms
-)
+kSetPrivateChatChannel = 12  # sets the private chat channel to number, for private rooms
 kUnsetPrivateChatChannel = 13  # undoes the the private chat channel.
 kStartBookAlert = 14  # start the book alert
 kMiniBigKIToggle = 15  # shortcut to toggling the miniKI/bigKI
@@ -86,9 +80,7 @@ kKIOpenYeehsaBook = 29  # open the Yeehsa book, if not already open
 kKIOpenKI = 30  # open the KI a little at a time
 kKIShowOptionsMenu = 31  # show the options menu dialog
 kKICreateMarker = 32  # create a marker
-kKICreateMarkerFolder = (
-    33  # create a marker folder(node) game in the current Age's journal folder
-)
+kKICreateMarkerFolder = 33  # create a marker folder(node) game in the current Age's journal folder
 kKILocalChatErrorMsg = 34  # display an error message (local only) in the chat window
 kKIPhasedAllOn = 35  # turn on all the phased KI functionality
 kKIPhasedAllOff = 36  # turn off all the phased KI functionality
@@ -130,12 +122,8 @@ kHighestKILevel = kNormalKI
 
 # Upgrade levels for the KI marker
 kKIMarkerNotUpgraded = 0
-kKIMarkerFirstLevel = (
-    1  # can play marker tag, but no GPS, can play first set of GZMarkers
-)
-kKIMarkerSecondLevel = (
-    2  # can get to back room in GreatZero and play second set of GZmarkers
-)
+kKIMarkerFirstLevel = 1  # can play marker tag, but no GPS, can play first set of GZMarkers
+kKIMarkerSecondLevel = 2  # can get to back room in GreatZero and play second set of GZmarkers
 kKIMarkerNormalLevel = 3  # complete both GZmarker trials - has GPS
 
 # GZ Marker and Calibration GZ Marker status

@@ -80,14 +80,10 @@ ActSpitPellet = ptAttribActivator(11, "clk: spit next pellet")
 SDLChamber = ptAttribString(12, "SDL: pellet machine chamber")
 RespUseSpitBtn = ptAttribResponder(13, "resp: use spit pellet btn", ["allow", "deny"])
 RespRotateChamber = ptAttribResponder(
-    14,
-    "resp: rotate pellet chamber",
-    ["Chamber1", "Chamber2", "Chamber3", "Chamber4", "Chamber5"],
+    14, "resp: rotate pellet chamber", ["Chamber1", "Chamber2", "Chamber3", "Chamber4", "Chamber5"],
 )
 RespSpitPellet = ptAttribResponder(
-    15,
-    "resp: spit out the pellet",
-    ["Chamber1", "Chamber2", "Chamber3", "Chamber4", "Chamber5"],
+    15, "resp: spit out the pellet", ["Chamber1", "Chamber2", "Chamber3", "Chamber4", "Chamber5"],
 )
 RespDropPellet = ptAttribResponder(16, "resp: drop the pellet", ["normal", "taken"])
 RespShowAllPellets = ptAttribResponder(17, "resp: show all pellets")
@@ -105,9 +101,7 @@ RespFlushAPellet = ptAttribResponder(
 )
 ActPelletToSilo = ptAttribActivator(26, "clk: link to silo w/pellet")
 ActPelletToCave = ptAttribActivator(27, "clk: link to cave w/pellet")
-RespLinkPellet = ptAttribResponder(
-    28, "resp: link w/pellet", ["CitySilo", "PelletCave"]
-)
+RespLinkPellet = ptAttribResponder(28, "resp: link w/pellet", ["CitySilo", "PelletCave"])
 MltStgLinkPellet = ptAttribBehavior(29, "mlt stg: link w/pellet")
 # RespUseMachineOneShot   = ptAttribResponder(30, "resp: use machine one shot")
 
@@ -221,9 +215,7 @@ class ercaPelletRoom(ptResponder):
         boolFlush = ageSDL[SDLFlush.value][0]
         if not boolMachine and byteChamber:
             PtDebugPrint(
-                "machine is closed, but chamber = ",
-                byteChamber,
-                ". Resetting chamber to 0",
+                "machine is closed, but chamber = ", byteChamber, ". Resetting chamber to 0",
             )
             ageSDL[SDLChamber.value] = (0,)
             byteChamber = 0
@@ -311,9 +303,7 @@ class ercaPelletRoom(ptResponder):
             RespMachineEnable.run(self.key, state="Disable", fastforward=1)
             MayFlush = 0
             if boolMachine:
-                PtDebugPrint(
-                    "We shouldn't get here.  Just in case some states got hosed."
-                )
+                PtDebugPrint("We shouldn't get here.  Just in case some states got hosed.")
                 RespMachineMode.run(self.key, state="Close", fastforward=1)
                 if not len(PtGetPlayerList()):
                     ageSDL[SDLMachine.value] = (0,)
@@ -367,18 +357,13 @@ class ercaPelletRoom(ptResponder):
         if VARname == SDLMachine.value:
             boolMachine = ageSDL[SDLMachine.value][0]
             PtDebugPrint(
-                "ercaPelletRoom:OnSDLNotify:  SDL for BigMachine is now %d"
-                % (boolMachine)
+                "ercaPelletRoom:OnSDLNotify:  SDL for BigMachine is now %d" % (boolMachine)
             )
             pelletUpdate = 0
             if boolMachine:
                 RespShowAllPellets.run(self.key)
-                objAvatar = ptSceneobject(
-                    PtGetAvatarKeyFromClientID(playerID), self.key
-                )
-                PtDebugPrint(
-                    "Got boolMachine SDL = 1 notify, will now run RespUseMachine"
-                )
+                objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID), self.key)
+                PtDebugPrint("Got boolMachine SDL = 1 notify, will now run RespUseMachine")
                 RespUseMachine.run(self.key, avatar=objAvatar)
             else:
                 MayFlush = 0
@@ -390,28 +375,18 @@ class ercaPelletRoom(ptResponder):
         if VARname == SDLChamber.value:
             byteChamber = ageSDL[SDLChamber.value][0]
             PtDebugPrint(
-                "ercaPelletRoom:OnSDLNotify:  SDL for machine chamber is now %d"
-                % (byteChamber)
+                "ercaPelletRoom:OnSDLNotify:  SDL for machine chamber is now %d" % (byteChamber)
             )
             if byteChamber != 0:
                 pelletUpdate = 0
-                objAvatar = ptSceneobject(
-                    PtGetAvatarKeyFromClientID(playerID), self.key
-                )
+                objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID), self.key)
                 RespUseSpitBtn.run(self.key, avatar=objAvatar, state="allow")
         if VARname == SDLFlush.value:
             boolFlush = ageSDL[SDLFlush.value][0]
-            PtDebugPrint(
-                "ercaPelletRoom:OnSDLNotify:  SDL for flush lever is now %d"
-                % (boolFlush)
-            )
+            PtDebugPrint("ercaPelletRoom:OnSDLNotify:  SDL for flush lever is now %d" % (boolFlush))
             if boolFlush:
-                objAvatar = ptSceneobject(
-                    PtGetAvatarKeyFromClientID(playerID), self.key
-                )
-                PtDebugPrint(
-                    "Got boolFlush SDL = 1 notify, will now run RespFlushOneShot"
-                )
+                objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID), self.key)
+                PtDebugPrint("Got boolFlush SDL = 1 notify, will now run RespFlushOneShot")
                 RespFlushOneShot.run(self.key, avatar=objAvatar)
             else:
                 pass
@@ -693,9 +668,7 @@ class ercaPelletRoom(ptResponder):
                 self.SendNote("0")
                 # ActTakePellet.enableActivator()
                 PtDisableControlKeyEvents(self.key)
-                MltStgLinkPellet.gotoStage(
-                    Toucher, 0, newTime=1.2, dirFlag=1, isForward=0
-                )
+                MltStgLinkPellet.gotoStage(Toucher, 0, newTime=1.2, dirFlag=1, isForward=0)
                 PtAtTimeCallback(self.key, 0.8, 5)
         elif (
             controlKey == PlasmaControlKeys.kKeyMoveBackward
@@ -708,9 +681,7 @@ class ercaPelletRoom(ptResponder):
                 self.SendNote("0")
                 # ActTakePellet.enableActivator()
                 PtDisableControlKeyEvents(self.key)
-                MltStgLinkPellet.gotoStage(
-                    Toucher, 0, newTime=1.2, dirFlag=1, isForward=0
-                )
+                MltStgLinkPellet.gotoStage(Toucher, 0, newTime=1.2, dirFlag=1, isForward=0)
                 PtAtTimeCallback(self.key, 0.8, 5)
 
     def OnTimer(self, id):
@@ -737,9 +708,7 @@ class ercaPelletRoom(ptResponder):
                     self.SendNote("0")
                     PtDebugPrint("onTimer, TakePellet = 1")
                     if Toucher:
-                        MltStgLinkPellet.gotoStage(
-                            Toucher, 0, newTime=1.2, dirFlag=1, isForward=0
-                        )
+                        MltStgLinkPellet.gotoStage(Toucher, 0, newTime=1.2, dirFlag=1, isForward=0)
                     PtAtTimeCallback(self.key, 0.8, 5)
         elif id == 2:
             PtDebugPrint("OnTimer.Is taking a pellet reseting it's SDL to O???")
@@ -850,6 +819,4 @@ class ercaPelletRoom(ptResponder):
             if takePellet >= 0 and takePellet <= 2:
                 self.UpdateTakePellet(takePellet)
         except:
-            PtDebugPrint(
-                "ercaPelletRoom.ExecCode(): ERROR! Invalid code '%s'." % (code)
-            )
+            PtDebugPrint("ercaPelletRoom.ExecCode(): ERROR! Invalid code '%s'." % (code))

@@ -154,18 +154,14 @@ class grsnGearRide(ptResponder):
         if id == crackCloseEvent.id:
             PtDebugPrint("grsnGearRide.OnNotify():\tCrack closed", level=kWarningLevel)
             self._ClearExcludeRegions()
-            self._canChangeSubworld = (
-                False  # You can't change subworlds while the niche is closed
-            )
+            self._canChangeSubworld = False  # You can't change subworlds while the niche is closed
             gearEnterRegion.disable()
             gearExitCrackRegion.disable()
             return
 
         # Process the exit (power room <-> niche) open/close event
         if id == exitOpenEvent.id:
-            PtDebugPrint(
-                "grsnGearRide.OnNotify():\tPower room exit opened", level=kWarningLevel
-            )
+            PtDebugPrint("grsnGearRide.OnNotify():\tPower room exit opened", level=kWarningLevel)
             if self._inNiche:  # bad things happen without this
                 self._ReleaseExcludeRegions()
             self._canChangeSubworld = True
@@ -173,13 +169,9 @@ class grsnGearRide(ptResponder):
             gearExitRegion.enable()
             return
         if id == exitCloseEvent.id:
-            PtDebugPrint(
-                "grsnGearRide.OnNotify():\tPower room exit closed", level=kWarningLevel
-            )
+            PtDebugPrint("grsnGearRide.OnNotify():\tPower room exit closed", level=kWarningLevel)
             self._ClearExcludeRegions()
-            self._canChangeSubworld = (
-                False  # You can't change subworlds while the niche is closed
-            )
+            self._canChangeSubworld = False  # You can't change subworlds while the niche is closed
             gearExitRegion.disable()
             gearEnterRegion.disable()
             return
@@ -235,8 +227,7 @@ class grsnGearRide(ptResponder):
             self._inNiche = False
 
             PtDebugPrint(
-                "grsnGearRide.OnNotify():\t%i exited niche subworld into the power room"
-                % kiNum,
+                "grsnGearRide.OnNotify():\t%i exited niche subworld into the power room" % kiNum,
                 level=kWarningLevel,
             )
             ptCamera().enableFirstPersonOverride()
@@ -247,12 +238,7 @@ class grsnGearRide(ptResponder):
             return
 
         # Trying to enter the niche
-        if id in (
-            safetyRegion1.id,
-            safetyRegion2.id,
-            safetyRegion3.id,
-            gearEnterRegion.id,
-        ):
+        if id in (safetyRegion1.id, safetyRegion2.id, safetyRegion3.id, gearEnterRegion.id,):
             if not self._canChangeSubworld:
                 PtDebugPrint(
                     "grsnGearRide.OnNotify():\tTossing region race condition",
@@ -263,8 +249,7 @@ class grsnGearRide(ptResponder):
             self._inNiche = True
 
             PtDebugPrint(
-                "grsnGearRide.OnNotify():\t%i entered niche subworld" % kiNum,
-                level=kWarningLevel,
+                "grsnGearRide.OnNotify():\t%i entered niche subworld" % kiNum, level=kWarningLevel,
             )
             avatar.avatar.enterSubWorld(gearSubWorld.value)
             avatar.physics.warpObj(enterSafePoint.value.getKey())
@@ -282,6 +267,4 @@ class grsnGearRide(ptResponder):
             return
 
         # Debug output for anyone who cares (not me)
-        PtDebugPrint(
-            "grsnGearRide.OnNotify():\tid %i unhandled" % id, level=kDebugDumpLevel
-        )
+        PtDebugPrint("grsnGearRide.OnNotify():\tid %i unhandled" % id, level=kDebugDumpLevel)

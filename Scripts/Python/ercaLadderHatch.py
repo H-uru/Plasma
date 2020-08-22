@@ -61,9 +61,7 @@ SDLEmpty = ptAttribString(2, "SDL: pool empty")
 ActLddr = ptAttribActivator(3, "rgn snsr: ladder hatch")
 MltStgLddr = ptAttribBehavior(4, "mlt stg: use hatch/climb ladder")
 RespHatchOps = ptAttribResponder(
-    5,
-    "resp: hatch ops",
-    ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
+    5, "resp: hatch ops", ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
 )
 StrDirection = ptAttribString(6, "Direction: Going up or down?", "up")
 RespHatchLocked = ptAttribResponder(7, "resp: hatch locked - only at top")
@@ -143,12 +141,7 @@ class ercaLadderHatch(ptResponder):
         ageSDL = PtGetAgeSDL()
 
         if (StrDirection.value) == "down":
-            if (
-                id == ActLddr.id
-                and state
-                and PtWasLocallyNotified(self.key)
-                and not iamclimber
-            ):
+            if id == ActLddr.id and state and PtWasLocallyNotified(self.key) and not iamclimber:
                 LocalAvatar = PtFindAvatar(events)
                 if boolHatch:
                     MltStgLddr.run(LocalAvatar)
@@ -175,8 +168,7 @@ class ercaLadderHatch(ptResponder):
                         if event[2] == kAdvanceNextStage:
                             stageNum = event[1]
                             PtDebugPrint(
-                                "Going up.  Got stage advance callback from stage %d"
-                                % stageNum
+                                "Going up.  Got stage advance callback from stage %d" % stageNum
                             )
                             if stageNum == 1:
                                 PtDebugPrint("In stage 2, negotiating hatch.")
@@ -185,44 +177,30 @@ class ercaLadderHatch(ptResponder):
                                 # after the "it's locked" anim, return to the climb...
                                 MltStgLddr.gotoStage(LocalAvatar, 1, 0, 0)
                             elif stageNum == 2 or stageNum == 3 or stageNum == 5:
-                                PtDebugPrint(
-                                    "Got through hatch: finishing & removing brain."
-                                )
+                                PtDebugPrint("Got through hatch: finishing & removing brain.")
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
 
                     elif (StrDirection.value) == "down":
                         stageNum = event[1]
-                        PtDebugPrint(
-                            "Going down.  Message from multistage %i" % stageNum
-                        )
+                        PtDebugPrint("Going down.  Message from multistage %i" % stageNum)
                         if event[2] == kRegressPrevStage:  # and stageNum == 2:
-                            PtDebugPrint(
-                                "Got stage Regress callback from stage %d" % stageNum
-                            )
+                            PtDebugPrint("Got stage Regress callback from stage %d" % stageNum)
                             self.INegotiateHatch()
                         elif event[2] == kAdvanceNextStage:
-                            if (
-                                stageNum == 1
-                            ):  # finished getting on, now find out if water is up
+                            if stageNum == 1:  # finished getting on, now find out if water is up
                                 PtDebugPrint("checking drained")
                                 if boolEmpty == 0:
                                     MltStgLddr.gotoStage(LocalAvatar, 7, 0, 0)
                                     PtDebugPrint("water not drained")
                             if stageNum == 4:
                                 if boolEmpty == 0:
-                                    MltStgLddr.gotoStage(
-                                        LocalAvatar, 7, dirFlag=1, isForward=1
-                                    )
+                                    MltStgLddr.gotoStage(LocalAvatar, 7, dirFlag=1, isForward=1)
                                     # after the "it's locked" anim, return to the climb...
                                 else:
-                                    MltStgLddr.gotoStage(
-                                        LocalAvatar, 2, dirFlag=1, isForward=1
-                                    )
+                                    MltStgLddr.gotoStage(LocalAvatar, 2, dirFlag=1, isForward=1)
                                 PtDebugPrint("now stage 3/7 again")
                             elif stageNum == 6:
-                                PtDebugPrint(
-                                    "Got through hatch: finishing & removing brain."
-                                )
+                                PtDebugPrint("Got through hatch: finishing & removing brain.")
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
                                 iamclimber = False
                                 # ActStart.enable()
@@ -251,9 +229,7 @@ class ercaLadderHatch(ptResponder):
             MltStgLddr.gotoStage(LocalAvatar, 2, 0, 1)
         elif (StrDirection.value) == "down":
             PtDebugPrint("Going down.  Hatch is locked; Sending gotoStage(4)")
-            MltStgLddr.gotoStage(
-                LocalAvatar, 4, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0
-            )
+            MltStgLddr.gotoStage(LocalAvatar, 4, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0)
             RespHatchOps.run(self.key, state="lockedbelow")
 
     def IHatchUnlocked(self):
@@ -266,8 +242,6 @@ class ercaLadderHatch(ptResponder):
             MltStgLddr.gotoStage(LocalAvatar, 4, 0, 0)
         elif (StrDirection.value) == "down":
             PtDebugPrint("Going down.  Hatch is unlocked; Sending gotoStage(5)")
-            MltStgLddr.gotoStage(
-                LocalAvatar, 5, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0
-            )
+            MltStgLddr.gotoStage(LocalAvatar, 5, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0)
             # RespHatchOps.run(self.key,state='openbelow')
             iamclimber = False

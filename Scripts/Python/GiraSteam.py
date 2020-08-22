@@ -270,34 +270,22 @@ fumerolSteamEmit06 = ptAttribResponder(77, "fumerol 6 steam emitter", ["On", "Of
 fumerolJCClickable = ptAttribActivator(78, "fumerol JC clickable")
 
 fumerol01SteamSfx = ptAttribResponder(
-    79,
-    "fumerol 1 sfx responder",
-    ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    79, "fumerol 1 sfx responder", ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol02SteamSfx = ptAttribResponder(
-    80,
-    "fumerol 2 sfx responder",
-    ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    80, "fumerol 2 sfx responder", ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol03SteamSfx = ptAttribResponder(
-    81,
-    "fumerol 3 sfx responder",
-    ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    81, "fumerol 3 sfx responder", ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol04SteamSfx = ptAttribResponder(
-    82,
-    "fumerol 4 sfx responder",
-    ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    82, "fumerol 4 sfx responder", ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol05SteamSfx = ptAttribResponder(
-    83,
-    "fumerol 5 sfx responder",
-    ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    83, "fumerol 5 sfx responder", ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol06SteamSfx = ptAttribResponder(
-    84,
-    "fumerol 6 sfx responder",
-    ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    84, "fumerol 6 sfx responder", ["Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 
 fumerol01topAct = ptAttribActivator(85, "fumerol 1 on top rgn")
@@ -336,9 +324,7 @@ class GiraSteam(ptResponder):
 
         for x in range(6):
             var = "giraSteamvent0" + str(x + 1) + "Open"
-            PtDebugPrint(
-                "GiraSteam.OnServerInitComplete():\tsetting up for SDL var: ", var
-            )
+            PtDebugPrint("GiraSteam.OnServerInitComplete():\tsetting up for SDL var: ", var)
             ageSDL.setFlags(var, 1, 1)
             ageSDL.sendToClients(var)
 
@@ -535,74 +521,50 @@ class GiraSteam(ptResponder):
             if not open:
                 fumerol1Resp.run(self.key, state="BlastOpen", avatar=PtGetLocalAvatar())
                 ageSDL["giraSteamvent01Open"] = (1,)
-                fumerol1BlastResp.run(
-                    self.key, state="Blast2", avatar=PtGetLocalAvatar()
-                )
+                fumerol1BlastResp.run(self.key, state="Blast2", avatar=PtGetLocalAvatar())
             open = ageSDL["giraSteamvent02Open"][0]
             if not open:
                 fumerol2Resp.run(self.key, state="BlastOpen", avatar=PtGetLocalAvatar())
                 ageSDL["giraSteamvent02Open"] = (1,)
-                fumerol2BlastResp.run(
-                    self.key, state="Blast2", avatar=PtGetLocalAvatar()
-                )
+                fumerol2BlastResp.run(self.key, state="Blast2", avatar=PtGetLocalAvatar())
             open = ageSDL["giraSteamvent03Open"][0]
             if not open:
                 fumerol3Resp.run(self.key, state="BlastOpen", avatar=PtGetLocalAvatar())
                 ageSDL["giraSteamvent03Open"] = (1,)
-                fumerol3BlastResp.run(
-                    self.key, state="Blast2", avatar=PtGetLocalAvatar()
-                )
+                fumerol3BlastResp.run(self.key, state="Blast2", avatar=PtGetLocalAvatar())
             open = ageSDL["giraSteamvent04Open"][0]
             if not open:
                 fumerol4Resp.run(self.key, state="BlastOpen", avatar=PtGetLocalAvatar())
                 ageSDL["giraSteamvent04Open"] = (1,)
-                fumerol4BlastResp.run(
-                    self.key, state="Blast2", avatar=PtGetLocalAvatar()
-                )
+                fumerol4BlastResp.run(self.key, state="Blast2", avatar=PtGetLocalAvatar())
             open = ageSDL["giraSteamvent05Open"][0]
             if not open:
                 fumerol5Resp.run(self.key, state="BlastOpen", avatar=PtGetLocalAvatar())
                 ageSDL["giraSteamvent05Open"] = (1,)
-                fumerol5BlastResp.run(
-                    self.key, state="Blast2", avatar=PtGetLocalAvatar()
-                )
+                fumerol5BlastResp.run(self.key, state="Blast2", avatar=PtGetLocalAvatar())
             open = ageSDL["giraSteamvent06Open"][0]
             if not open:
                 fumerol6Resp.run(self.key, state="BlastOpen", avatar=PtGetLocalAvatar())
                 ageSDL["giraSteamvent06Open"] = (1,)
-                fumerol6BlastResp.run(
-                    self.key, state="Blast2", avatar=PtGetLocalAvatar()
-                )
+                fumerol6BlastResp.run(self.key, state="Blast2", avatar=PtGetLocalAvatar())
 
             if onFumerol1:
-                fumerol01JumpResp.run(
-                    self.key, state="Level4", avatar=PtGetLocalAvatar()
-                )
+                fumerol01JumpResp.run(self.key, state="Level4", avatar=PtGetLocalAvatar())
                 onFumerol1 = 0
             elif onFumerol2:
-                fumerol02JumpResp.run(
-                    self.key, state="Level4", avatar=PtGetLocalAvatar()
-                )
+                fumerol02JumpResp.run(self.key, state="Level4", avatar=PtGetLocalAvatar())
                 onFumerol2 = 0
             elif onFumerol3:
-                fumerol03JumpResp.run(
-                    self.key, state="Level4", avatar=PtGetLocalAvatar()
-                )
+                fumerol03JumpResp.run(self.key, state="Level4", avatar=PtGetLocalAvatar())
                 onFumerol3 = 0
             elif onFumerol4:
-                fumerol04JumpResp.run(
-                    self.key, state="Level4", avatar=PtGetLocalAvatar()
-                )
+                fumerol04JumpResp.run(self.key, state="Level4", avatar=PtGetLocalAvatar())
                 onFumerol4 = 0
             elif onFumerol5:
-                fumerol05JumpResp.run(
-                    self.key, state="Level4", avatar=PtGetLocalAvatar()
-                )
+                fumerol05JumpResp.run(self.key, state="Level4", avatar=PtGetLocalAvatar())
                 onFumerol5 = 0
             elif onFumerol6:
-                fumerol06JumpResp.run(
-                    self.key, state="Level4", avatar=PtGetLocalAvatar()
-                )
+                fumerol06JumpResp.run(self.key, state="Level4", avatar=PtGetLocalAvatar())
                 onFumerol6 = 0
 
             fumerol1Act.enable()
@@ -786,9 +748,7 @@ class GiraSteam(ptResponder):
         elif id == fumerol5Act.id and state:
             fumerol5Act.disable()
             open = ageSDL["giraSteamvent05Open"][0]
-            PtDebugPrint(
-                "GiraSteam.OnNotify():\tNotify from fumerol05Act; open = %d" % (open)
-            )
+            PtDebugPrint("GiraSteam.OnNotify():\tNotify from fumerol05Act; open = %d" % (open))
             if open:
                 ageSDL["giraSteamvent05Open"] = (0,)
                 fumerol5Resp.run(self.key, state="Closing", avatar=avatar)
@@ -802,9 +762,7 @@ class GiraSteam(ptResponder):
         elif id == fumerol6Act.id and state:
             fumerol6Act.disable()
             open = ageSDL["giraSteamvent06Open"][0]
-            PtDebugPrint(
-                "GiraSteam.OnNotify():\tNotify from fumerol06Act; open = %d" % (open)
-            )
+            PtDebugPrint("GiraSteam.OnNotify():\tNotify from fumerol06Act; open = %d" % (open))
             if open:
                 ageSDL["giraSteamvent06Open"] = (0,)
                 fumerol6Resp.run(self.key, state="Closing", avatar=avatar)
@@ -841,33 +799,21 @@ class GiraSteam(ptResponder):
 
         elif id == rockJumpBeh.id:
             for event in events:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     # rockPuzBlast.run(self.key,avatar=avatar)
                     pass
                 elif (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
+                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
                 ):
                     fumerol1Det.enable()
 
         elif id == clothJumpBeh.id:
             for event in events:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     # clothPuzBlast.run(self.key,avatar=avatar)
                     pass
                 elif (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
+                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
                 ):
                     # fumerolJCClickable.enable()
                     PtAtTimeCallback(self.key, 1, 99)
@@ -941,9 +887,7 @@ class GiraSteam(ptResponder):
         ) and state:
             self.PlayBlastSfx(fumerol05SteamSfx, avatar)
             if id == fumerol05SteamTrig01.id:
-                PtDebugPrint(
-                    "notify from fumerol05SteamTrig01; inFumerol5 = ", inFumerol5
-                )
+                PtDebugPrint("notify from fumerol05SteamTrig01; inFumerol5 = ", inFumerol5)
             if inFumerol5:
                 # inFumerol5 = False
                 self.JumpAvatar(fumerol05JumpResp, avatar)
@@ -958,9 +902,7 @@ class GiraSteam(ptResponder):
         ) and state:
             self.PlayBlastSfx(fumerol06SteamSfx, avatar)
             if id == fumerol06SteamTrig01.id:
-                PtDebugPrint(
-                    "notify from fumerol06SteamTrig01; inFumerol6 = ", inFumerol6
-                )
+                PtDebugPrint("notify from fumerol06SteamTrig01; inFumerol6 = ", inFumerol6)
             if inFumerol6:
                 # inFumerol6=False
                 if numClosed < 5:

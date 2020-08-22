@@ -109,16 +109,14 @@ class xMusicBoxAddSong(ptModifier):
                             songs = chron.getValue()
                             if songs.find(strSoundFile.value) == -1:
                                 PtDebugPrint(
-                                    "xMusicBoxAddSong.AddSong: Adding file %s"
-                                    % strSoundFile.value
+                                    "xMusicBoxAddSong.AddSong: Adding file %s" % strSoundFile.value
                                 )
                                 chron.setValue(strSoundFile.value + ";" + songs)
                                 PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert, 0)
                                 return  # break
                     break
         PtDebugPrint(
-            "ERROR: xMusicBoxAddSong.AddSong():\tCould not add song: %s"
-            % strSoundFile.value
+            "ERROR: xMusicBoxAddSong.AddSong():\tCould not add song: %s" % strSoundFile.value
         )
 
     def HasMusicBoxYeeshaPage(self):

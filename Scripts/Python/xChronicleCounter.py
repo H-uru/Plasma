@@ -89,9 +89,7 @@ class xChronicleCounter(ptResponder):
             entry = vault.findChronicleEntry(var.value)
             if entry is None:
                 # not found... add current level chronicle
-                vault.addChronicleEntry(
-                    var.value, kChronicleVarType, "%d" % (kInitialValue)
-                )
+                vault.addChronicleEntry(var.value, kChronicleVarType, "%d" % (kInitialValue))
                 PtDebugPrint(
                     "xChronicleCounter:\tentered new chronicle counter %s, count is %d"
                     % (var.value, kInitialValue)

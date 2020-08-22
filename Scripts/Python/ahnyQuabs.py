@@ -84,9 +84,7 @@ class ahnyQuabs(ptModifier, object):
         ageSDL = PtGetAgeSDL()
         return ageSDL[kLastQuabUpdate][0]
 
-    last_update = property(
-        _last_update_get, doc="Gets the last time a quab was killed/born"
-    )
+    last_update = property(_last_update_get, doc="Gets the last time a quab was killed/born")
 
     def _quabs_get(self):
         ageSDL = PtGetAgeSDL()
@@ -100,12 +98,9 @@ class ahnyQuabs(ptModifier, object):
     quabs = property(_quabs_get, _quabs_set, doc="Gets the number of quabs alive")
 
     def OnServerInitComplete(self):
+        PtDebugPrint("ahnyQuabs.OnServerInitComplete():\tWhen I got here...", level=kWarningLevel)
         PtDebugPrint(
-            "ahnyQuabs.OnServerInitComplete():\tWhen I got here...", level=kWarningLevel
-        )
-        PtDebugPrint(
-            "ahnyQuabs.OnServerInitComplete():\t... there were already %i quabs"
-            % self.quabs,
+            "ahnyQuabs.OnServerInitComplete():\t... there were already %i quabs" % self.quabs,
             level=kWarningLevel,
         )
         self.brains = PtGetAIAvatarsByModelName(kQuabAvatarName)
@@ -128,15 +123,13 @@ class ahnyQuabs(ptModifier, object):
             toSpawn = int(math.floor(delta / kQuabGestationTime))
             if toSpawn:
                 PtDebugPrint(
-                    "ahnyQuabs.OnServerInitComplete():\t... and I need to spawn %i more"
-                    % toSpawn,
+                    "ahnyQuabs.OnServerInitComplete():\t... and I need to spawn %i more" % toSpawn,
                     level=kWarningLevel,
                 )
                 self.quabs += toSpawn
             if self.quabs > kMaxNumQuabs:
                 PtDebugPrint(
-                    "ahnyQuabs.OnServerInitComplete():\t... woah, %i quabs?!"
-                    % self.quabs,
+                    "ahnyQuabs.OnServerInitComplete():\t... woah, %i quabs?!" % self.quabs,
                     level=kWarningLevel,
                 )
                 self.quabs = kMaxNumQuabs
@@ -155,9 +148,7 @@ class ahnyQuabs(ptModifier, object):
     def OnAIMsg(self, brain, msgType, userStr, args):
         if msgType == PtAIMsgType.kBrainCreated:
             # Init the brain and push it into our collection
-            PtDebugPrint(
-                "ahnyQuabs.OnAIMsg():\t%s created" % userStr, level=kDebugDumpLevel
-            )
+            PtDebugPrint("ahnyQuabs.OnAIMsg():\t%s created" % userStr, level=kDebugDumpLevel)
             self._PrepCritterBrain(brain)
             self.brains.append((brain, userStr,))
             return
@@ -165,8 +156,7 @@ class ahnyQuabs(ptModifier, object):
         if msgType == PtAIMsgType.kArrivedAtGoal:
             # Not really important, but useful for debugging
             PtDebugPrint(
-                "ahnyQuabs.OnAIMsg():\t%s arrived at goal" % userStr,
-                level=kDebugDumpLevel,
+                "ahnyQuabs.OnAIMsg():\t%s arrived at goal" % userStr, level=kDebugDumpLevel,
             )
             return
 
@@ -179,8 +169,7 @@ class ahnyQuabs(ptModifier, object):
             if colso.isAvatar() and not colso.isHuman():
                 self.quabs -= 1
                 PtDebugPrint(
-                    "ahnyQuabs.OnNotify():\tQuabs remaining: %i" % self.quabs,
-                    level=kWarningLevel,
+                    "ahnyQuabs.OnNotify():\tQuabs remaining: %i" % self.quabs, level=kWarningLevel,
                 )
                 return
 
@@ -203,9 +192,7 @@ class ahnyQuabs(ptModifier, object):
         monsters = brain.playersICanHear()
         if len(monsters) == 0:
             if running:
-                PtDebugPrint(
-                    "ahnyQuabs._Think():\t%s is now safe." % name, level=kDebugDumpLevel
-                )
+                PtDebugPrint("ahnyQuabs._Think():\t%s is now safe." % name, level=kDebugDumpLevel)
                 self._RunAway(brain, False)
             return
         runaway = None
@@ -229,8 +216,7 @@ class ahnyQuabs(ptModifier, object):
             # Note: low level brain will make the quab play the run behavior
             #       no need to court a race condition by playing it here
             PtDebugPrint(
-                "ahnyQuabs._Think():\tTime for %s to run away!" % name,
-                level=kDebugDumpLevel,
+                "ahnyQuabs._Think():\tTime for %s to run away!" % name, level=kDebugDumpLevel,
             )
         brain.goToGoal(endPos)
 
@@ -247,9 +233,7 @@ class ahnyQuabs(ptModifier, object):
             return True
         if brain.runningBehavior(brain.idleBehaviorName()):
             return False
-        raise RuntimeError(
-            "Quab brain running neither the idle nor the run behavior. WTF?"
-        )
+        raise RuntimeError("Quab brain running neither the idle nor the run behavior. WTF?")
 
     def _RunAway(self, brain, runAway=True):
         """Quick helper because I'm lazy and the behavior apis are really stupid"""

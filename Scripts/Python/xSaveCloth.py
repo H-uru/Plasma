@@ -94,10 +94,7 @@ class xSaveCloth(ptModifier):
         spName = spawnPoint.getName()
 
         PtDebugPrint(
-            "spawned into",
-            spName,
-            ", this save cloth handles",
-            soSpawnpoint.value.getName(),
+            "spawned into", spName, ", this save cloth handles", soSpawnpoint.value.getName(),
         )
         if spTitle.endswith("SavePoint") and spName == soSpawnpoint.value.getName():
             PtDebugPrint("restoring camera stack for save point", spTitle, spName)
@@ -209,9 +206,7 @@ class xSaveCloth(ptModifier):
                         if savepoint is not None:
                             agelink.removeSpawnPoint(savepoint.getName())
 
-                        savepoint = ptSpawnPointInfo(
-                            "SCSavePoint", soSpawnpoint.value.getName()
-                        )
+                        savepoint = ptSpawnPointInfo("SCSavePoint", soSpawnpoint.value.getName())
                         savepoint.setCameraStack(camstack)
 
                         agelink.addSpawnPoint(savepoint)
@@ -233,6 +228,4 @@ class xSaveCloth(ptModifier):
             Activator.enable()
 
         else:
-            PtDebugPrint(
-                "ERROR: xSaveCloth.OnNotify: Error trying to access the Vault."
-            )
+            PtDebugPrint("ERROR: xSaveCloth.OnNotify: Error trying to access the Vault.")

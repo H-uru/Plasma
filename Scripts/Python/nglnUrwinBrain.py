@@ -66,16 +66,7 @@ respUrwinEat = ptAttribResponder(7, "resp: Urwin Eats")
 respUrwinSfx = ptAttribNamedResponder(
     8,
     "resp: Urwin SFX",
-    [
-        "Eat",
-        "Idle",
-        "IdleToWalk",
-        "WalkLoop",
-        "WalkToIdle",
-        "Vocalize",
-        "Distance",
-        "Appear",
-    ],
+    ["Eat", "Idle", "IdleToWalk", "WalkLoop", "WalkToIdle", "Vocalize", "Distance", "Appear",],
     netForce=1,
 )
 
@@ -185,9 +176,7 @@ class nglnUrwinBrain(ptResponder):
                 PtDebugPrint("Playing command: %s" % (code))
                 self.ExecCode(code)
 
-        elif (
-            state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]
-        ):
+        elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
             if id == respUrwinSfx.id:
                 PtDebugPrint(
                     "Callback was from Appearance SFX, and I own the age, so start walking"
@@ -195,9 +184,7 @@ class nglnUrwinBrain(ptResponder):
                 self.StartToWalk()
 
             else:
-                PtDebugPrint(
-                    "Callback was from responder, and I own the age, so Logic Time"
-                )
+                PtDebugPrint("Callback was from responder, and I own the age, so Logic Time")
                 old = stackList.pop(0)
                 PtDebugPrint("Popping off: %s" % (old))
                 boolBatteryChargedAndOn = ageSDL["nglnPodLights"][0]
@@ -210,9 +197,7 @@ class nglnUrwinBrain(ptResponder):
                     if StepsToTake:
                         # 90% chance of continuing walk loop
                         if random.randint(0, 9):
-                            PtDebugPrint(
-                                "Urwin will take %d more steps..." % (StepsToTake)
-                            )
+                            PtDebugPrint("Urwin will take %d more steps..." % (StepsToTake))
                             self.SendNote("respUrwinWalkLoop")
                             if boolBatteryChargedAndOn:
                                 respUrwinSfx.run(self.key, state="WalkLoop")
@@ -352,9 +337,7 @@ class nglnUrwinBrain(ptResponder):
 
         ageSDL["UrwinLastUpdated"] = (PtGetDniTime(),)
 
-        beginningOfToday = PtGetDniTime() - int(
-            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
-        )
+        beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
         endOfToday = int(kDayLengthInSeconds / 2) + beginningOfToday
         # PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
 
@@ -368,14 +351,10 @@ class nglnUrwinBrain(ptResponder):
         spawnTimes = [firstTime]
 
         while isinstance(spawnTimes[-1], int):
-            randnum = random.randint(
-                kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns
-            )
+            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
-                PtDebugPrint(
-                    "nglnUrwinBrain: Generated a valid spawn time: %d" % (newTime)
-                )
+                PtDebugPrint("nglnUrwinBrain: Generated a valid spawn time: %d" % (newTime))
                 spawnTimes.append(newTime)
             else:
                 PtDebugPrint(
@@ -409,8 +388,7 @@ class nglnUrwinBrain(ptResponder):
                     )
                     if timeTillSpawn > 0:
                         PtDebugPrint(
-                            "nglnUrwinBrain: Setting timer for %d seconds"
-                            % (timeTillSpawn)
+                            "nglnUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn)
                         )
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
@@ -419,10 +397,7 @@ class nglnUrwinBrain(ptResponder):
                 PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
             )
             timeLeftToday += 1  # because we want it to go off right AFTER the day flips
-            PtDebugPrint(
-                "nglnUrwinBrain: Setting EndOfDay timer for %d seconds"
-                % (timeLeftToday)
-            )
+            PtDebugPrint("nglnUrwinBrain: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
             PtAtTimeCallback(self.key, timeLeftToday, 2)
         else:
             PtDebugPrint("nglnUrwinBrain: Timer array was empty!")
@@ -472,7 +447,5 @@ class nglnUrwinBrain(ptResponder):
         elif code == "respUrwinVocalize":
             respUrwinVocalize.run(self.key)
         else:
-            PtDebugPrint(
-                "nglnUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
-            )
+            PtDebugPrint("nglnUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code))
             stackList.pop(0)

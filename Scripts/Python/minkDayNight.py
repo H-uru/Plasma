@@ -90,14 +90,10 @@ class minkDayNight(ptResponder):
             ageSDL["minkIsDayTime"] = (1,)
 
         if ageSDL["minkIsDayTime"][0]:
-            PtDebugPrint(
-                "minkDayNight.OnServerInitComplete(): It's Day Time, Loading Day Page"
-            )
+            PtDebugPrint("minkDayNight.OnServerInitComplete(): It's Day Time, Loading Day Page")
             PtPageInNode("minkExteriorDay")
         else:
-            PtDebugPrint(
-                "minkDayNight.OnServerInitComplete(): It's Night Time, Loading Night Page"
-            )
+            PtDebugPrint("minkDayNight.OnServerInitComplete(): It's Night Time, Loading Night Page")
             PtPageInNode("minkExteriorNight")
 
     ###########################
@@ -128,9 +124,7 @@ class minkDayNight(ptResponder):
                 PtPageInNode("minkExteriorNight")
 
         elif id == 2:
-            PtDebugPrint(
-                "minkDayNight.OnTimer(): Finished faux link, Re-enable controls"
-            )
+            PtDebugPrint("minkDayNight.OnTimer(): Finished faux link, Re-enable controls")
             PtEnableMovementKeys()
             PtSendKIMessage(kEnableKIandBB, 0)
 
@@ -142,8 +136,7 @@ class minkDayNight(ptResponder):
     def OnPageLoad(self, what, who):
         global HackIt
         PtDebugPrint(
-            "minkDayNight.OnPageLoad(): what={} who={}".format(what, who),
-            level=kDebugDumpLevel,
+            "minkDayNight.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel,
         )
 
         if what == kLoaded:
@@ -151,9 +144,7 @@ class minkDayNight(ptResponder):
                 if HackIt:
                     HackIt = 0
                     return
-                PtDebugPrint(
-                    "minkDayNight.OnPageLoad(): Day Page loaded, unloading Night"
-                )
+                PtDebugPrint("minkDayNight.OnPageLoad(): Day Page loaded, unloading Night")
                 PtPageOutNode("minkExteriorNight")
             elif who in {
                 "Minkata_District_minkExteriorNight",
@@ -162,9 +153,7 @@ class minkDayNight(ptResponder):
                 if HackIt:
                     HackIt = 0
                     return
-                PtDebugPrint(
-                    "minkDayNight.OnPageLoad(): Night Page loaded, unloading Day"
-                )
+                PtDebugPrint("minkDayNight.OnPageLoad(): Night Page loaded, unloading Day")
                 PtPageOutNode("minkExteriorDay")
 
         elif what == kUnloaded:
@@ -174,9 +163,7 @@ class minkDayNight(ptResponder):
                 "Minkata_minkExteriorDay",
                 "Minkata_minkExteriorNight",
             }:
-                PtDebugPrint(
-                    "minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in"
-                )
+                PtDebugPrint("minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in")
                 PtFadeIn(1.5, 1)
                 respExcludeRegion.run(self.key, state="Release")
                 PtAtTimeCallback(self.key, 2, 2)

@@ -170,9 +170,7 @@ class xYeeshaPages(ptModifier):
             btnID = control.getTagID()
 
         if event == 2 and btnID in YeeshaPageIDList:
-            PtDebugPrint(
-                "xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value
-            )
+            PtDebugPrint("xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value)
             #            PtUnloadDialog(DialogName)
             PtHideDialog(DialogName)
 
@@ -196,8 +194,7 @@ class xYeeshaPages(ptModifier):
 
                 else:
                     PtDebugPrint(
-                        "xYeeshaPages.py: Yeesha Page #%s is new to you."
-                        % (PageNumber.value)
+                        "xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value)
                     )
 
                     PtDebugPrint(
@@ -218,8 +215,7 @@ class xYeeshaPages(ptModifier):
                         vault = ptVault()
                         vault.addChronicleEntry("CleftSolved", 1, "yes")
                         PtDebugPrint(
-                            "Chronicle updated with variable 'CleftSolved'.",
-                            level=kDebugDumpLevel,
+                            "Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel,
                         )
                         # PtAtTimeCallback(self.key,kWaitFadeoutSecs,kStartFadeoutID)
 

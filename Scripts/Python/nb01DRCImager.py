@@ -65,9 +65,7 @@ def doneSettingDeviceInbox(node, nodeRef, resultCode):
 
     # Update the inbox reference in the class
     nb01DRCImager.Instance.ChangeInbox()
-    PtAtTimeCallback(
-        nb01DRCImager.Instance.key, 0, nb01DRCImager.Instance.current_state
-    )
+    PtAtTimeCallback(nb01DRCImager.Instance.key, 0, nb01DRCImager.Instance.current_state)
 
 
 def doneAddingDevice(node, nodeRef, resultCode):
@@ -140,8 +138,7 @@ class nb01DRCImager(ptModifier):
                     if image.getID() == id:
                         image = image.upcastToImageNode()
                         PtDebugPrint(
-                            "nb01DRCImager: now showing image %s"
-                            % (image.imageGetTitle())
+                            "nb01DRCImager: now showing image %s" % (image.imageGetTitle())
                         )
                         try:
                             ImagerMap.textmap.drawImage(0, 0, image.imageGetImage(), 0)
@@ -171,9 +168,7 @@ class nb01DRCImager(ptModifier):
                 % ("DRCImagerState%d" % self.current_state)
             )
             ptAgeVault().setDeviceInbox(
-                "DRCImager",
-                "DRCImagerState%d" % self.current_state,
-                doneSettingDeviceInbox,
+                "DRCImager", "DRCImagerState%d" % self.current_state, doneSettingDeviceInbox,
             )
 
     def OnTimer(self, id):
@@ -234,7 +229,5 @@ class nb01DRCImager(ptModifier):
                 ImagerMap.textmap.flush()
 
                 ptAgeVault().setDeviceInbox(
-                    "DRCImager",
-                    "DRCImagerState%d" % self.current_state,
-                    doneSettingDeviceInbox,
+                    "DRCImager", "DRCImagerState%d" % self.current_state, doneSettingDeviceInbox,
                 )

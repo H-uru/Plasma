@@ -108,23 +108,17 @@ class grtzAccessDoors(ptResponder):
                 self.grtzDoorState == doorSDLstates["open"]
                 or self.grtzDoorState == doorSDLstates["opening"]
             ):
-                doorResponder.run(
-                    self.key, state="OpenTheDoor", fastforward=1, netPropagate=0
-                )
+                doorResponder.run(self.key, state="OpenTheDoor", fastforward=1, netPropagate=0)
                 PtDebugPrint("grtzAccessDoors: Door is open.")
                 PtDebugPrint("grtzAccessDoors: Door State = %d" % self.grtzDoorState)
 
             elif self.grtzDoorState == doorSDLstates["closing"]:
-                doorResponder.run(
-                    self.key, state="CloseTheDoor", fastforward=1, netPropagate=0
-                )
+                doorResponder.run(self.key, state="CloseTheDoor", fastforward=1, netPropagate=0)
                 PtDebugPrint("grtzAccessDoors: Door is closed.")
                 PtDebugPrint("grtzAccessDoors: Door State = %d" % self.grtzDoorState)
 
             else:
-                PtDebugPrint(
-                    "grtzAccessDoors: Exception. Door State = %d" % self.grtzDoorState
-                )
+                PtDebugPrint("grtzAccessDoors: Exception. Door State = %d" % self.grtzDoorState)
 
             if (
                 self.grtzDoorState == doorSDLstates["opening"]
@@ -153,17 +147,13 @@ class grtzAccessDoors(ptResponder):
                 )
 
             elif self.grtzDoorState == doorSDLstates["open"]:
-                doorResponder.run(
-                    self.key, state="OpenTheDoor", fastforward=1, netPropagate=0
-                )
+                doorResponder.run(self.key, state="OpenTheDoor", fastforward=1, netPropagate=0)
 
         elif len(PtGetPlayerList()) < 1:
             # the door is really shut, someone left it open
             self.SDL["DoorOpen"] = (doorSDLstates["closed"],)
             self.grtzDoorState = self.SDL["DoorOpen"][0]
-            PtDebugPrint(
-                "grtzAccessDoors: Nobody is here, setting door states to closed."
-            )
+            PtDebugPrint("grtzAccessDoors: Nobody is here, setting door states to closed.")
 
         self.init = 1
 
@@ -175,14 +165,8 @@ class grtzAccessDoors(ptResponder):
         ageSDL = PtGetAgeSDL()
         # Notify Section
         if id == (-1):
-            PtDebugPrint(
-                "grtzAccessDoors: Recieved Notify... Contents Are %s"
-                % str(events[0][1])
-            )
-            if (
-                events[0][1].find("rgnTriggerEnter") != -1
-                and self.sceneobject.isLocallyOwned()
-            ):
+            PtDebugPrint("grtzAccessDoors: Recieved Notify... Contents Are %s" % str(events[0][1]))
+            if events[0][1].find("rgnTriggerEnter") != -1 and self.sceneobject.isLocallyOwned():
                 if self.grtzDoorState == doorSDLstates["closed"]:
                     self.UpdateDoorState(doorSDLstates["opening"])
                     PtDebugPrint(
@@ -205,10 +189,7 @@ class grtzAccessDoors(ptResponder):
                         "grtzAccessDoors: I triggered the region and I'm changing the sdl to movingopen."
                     )
 
-            elif (
-                events[0][1].find("rgnTriggerExit") != -1
-                and self.sceneobject.isLocallyOwned()
-            ):
+            elif events[0][1].find("rgnTriggerExit") != -1 and self.sceneobject.isLocallyOwned():
                 if self.grtzDoorState == doorSDLstates["open"]:
                     self.UpdateDoorState(doorSDLstates["closing"])
                     PtDebugPrint(
@@ -230,10 +211,7 @@ class grtzAccessDoors(ptResponder):
                         "grtzAccessDoors: I triggered the region and I'm changing the sdl to movingclosed."
                     )
 
-            elif (
-                events[0][1].find("rgnTriggerFail") != -1
-                and self.sceneobject.isLocallyOwned()
-            ):
+            elif events[0][1].find("rgnTriggerFail") != -1 and self.sceneobject.isLocallyOwned():
                 if self.grtzDoorState == doorSDLstates["closed"]:
                     self.UpdateDoorState(doorSDLstates["closedfail"])
 
@@ -243,9 +221,7 @@ class grtzAccessDoors(ptResponder):
                 and events[0][1].find("rgnTriggerExit") == -1
             ):
                 self.grtzDoorStack.append(events[0][1])
-                PtDebugPrint(
-                    "grtzAccessDoors: New list is: %s" % (str(self.grtzDoorStack))
-                )
+                PtDebugPrint("grtzAccessDoors: New list is: %s" % (str(self.grtzDoorStack)))
 
                 if len(self.grtzDoorStack) == 1:
                     PtDebugPrint(
@@ -266,16 +242,11 @@ class grtzAccessDoors(ptResponder):
 
                 curState = int(events[0][1].lstrip("DoorState="))
                 PtDebugPrint("grtzAccessDoors: Door State Updated to %d" % curState)
-                PtDebugPrint(
-                    "grtzAccessDoors: Door State SDL Set to %d"
-                    % self.SDL["DoorOpen"][0]
-                )
+                PtDebugPrint("grtzAccessDoors: Door State SDL Set to %d" % self.SDL["DoorOpen"][0])
 
                 if curState != self.grtzDoorState:
                     self.grtzDoorState = curState
-                    PtDebugPrint(
-                        "grtzAccessDoors: Door state is now %d" % self.grtzDoorState
-                    )
+                    PtDebugPrint("grtzAccessDoors: Door state is now %d" % self.grtzDoorState)
                 return
 
             #####################################################################################
@@ -285,11 +256,7 @@ class grtzAccessDoors(ptResponder):
             for event in events:
                 # true when you enter the region
 
-                if (
-                    event[0] == 1
-                    and event[1] == 1
-                    and PtFindAvatar(events) == PtGetLocalAvatar()
-                ):
+                if event[0] == 1 and event[1] == 1 and PtFindAvatar(events) == PtGetLocalAvatar():
                     if doorKiNeededBool.value == 0:
                         self.SendNote("rgnTriggerEnter")
                         return
@@ -303,20 +270,14 @@ class grtzAccessDoors(ptResponder):
                         PtDebugPrint("grtzAccessDoors: I triggered the region")
 
                         if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
-                            PtDebugPrint(
-                                "grtzAccessDoors: KiLevel too low, cannot open door"
-                            )
+                            PtDebugPrint("grtzAccessDoors: KiLevel too low, cannot open door")
                             self.SendNote("rgnTriggerFail")
                             return
                         else:
                             self.SendNote("rgnTriggerEnter")
 
                 # true when you leave the region
-                elif (
-                    event[0] == 1
-                    and event[1] == 0
-                    and self.sceneobject.isLocallyOwned()
-                ):
+                elif event[0] == 1 and event[1] == 0 and self.sceneobject.isLocallyOwned():
 
                     self.SendNote("rgnTriggerExit")
 
@@ -379,21 +340,15 @@ class grtzAccessDoors(ptResponder):
 
             if self.grtzDoorState == doorSDLstates["opening"]:
                 self.SendNote("doorResponderOpen")
-                PtDebugPrint(
-                    "grtzAccessDoors: Notifying Clients to play Open Door Responder"
-                )
+                PtDebugPrint("grtzAccessDoors: Notifying Clients to play Open Door Responder")
 
             elif self.grtzDoorState == doorSDLstates["closing"]:
                 self.SendNote("doorResponderClose")
-                PtDebugPrint(
-                    "grtzAccessDoors: Notifying Clients to play Close Door Responder"
-                )
+                PtDebugPrint("grtzAccessDoors: Notifying Clients to play Close Door Responder")
 
             elif self.grtzDoorState == doorSDLstates["closedfail"]:
                 self.SendNote("doorResponderNoAccess")
-                PtDebugPrint(
-                    "grtzAccessDoors: Notifying Clients to play Failed Door Responder"
-                )
+                PtDebugPrint("grtzAccessDoors: Notifying Clients to play Failed Door Responder")
 
     def ExecCode(self, code):
         if code == "doorResponderOpen":
@@ -403,7 +358,5 @@ class grtzAccessDoors(ptResponder):
         elif code == "doorResponderNoAccess":
             doorResponder.run(self.key, state="NoAccess", netPropagate=0)
         else:
-            PtDebugPrint(
-                "grtzAccessDoors.ExecCode(): ERROR! Invalid code '%s'." % (code)
-            )
+            PtDebugPrint("grtzAccessDoors.ExecCode(): ERROR! Invalid code '%s'." % (code))
             self.grtzDoorStack.pop(0)

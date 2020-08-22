@@ -102,9 +102,7 @@ class ahnyTrees(ptModifier):
         idx = 0
         for visible in ageSDL[SDLTrees.value]:
             if not visible:
-                respTreeAnims.run(
-                    self.key, objectName=respTreeAnimsList[idx], fastforward=1
-                )
+                respTreeAnims.run(self.key, objectName=respTreeAnimsList[idx], fastforward=1)
             idx += 1
 
     ###########################
@@ -125,9 +123,7 @@ class ahnyTrees(ptModifier):
                             index = objTreeList.index(object)
                             if treeSDL[index]:
                                 respTreeAnims.run(
-                                    self.key,
-                                    objectName=respTreeAnimsList[index],
-                                    netForce=1,
+                                    self.key, objectName=respTreeAnimsList[index], netForce=1,
                                 )
                                 treeSDL[index] = 0
                                 ageSDL[SDLTrees.value] = tuple(treeSDL)

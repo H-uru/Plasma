@@ -111,18 +111,14 @@ class xStateToggler(ptResponder):
             return
 
         if varState:
-            PtDebugPrint(
-                "xStateToggler:%s running state true responder" % stringName.value
-            )
+            PtDebugPrint("xStateToggler:%s running state true responder" % stringName.value)
             respTrue.run(self.key)
             # hack - remove when clickable state manipulation via responder is persistentified
             actClick1.enable()
             actClick2.enable()
             self.SDL["enabled"] = (1,)
         else:
-            PtDebugPrint(
-                "xStateToggler:%s running state false responder" % stringName.value
-            )
+            PtDebugPrint("xStateToggler:%s running state false responder" % stringName.value)
             respFalse.run(self.key)
             # hack - remove when clickable state manipulation via responder is persistentified
             actClick1.disable()

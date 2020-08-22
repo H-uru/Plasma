@@ -86,9 +86,7 @@ class xAgeSDLVarSet(ptResponder):
         ageSDL.setFlags(stringSDLVarToSet.value, 1, 1)
         ageSDL.sendToClients(stringSDLVarToSet.value)
 
-        PtDebugPrint(
-            "DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tOn %s" % stringSDLVarName.value
-        )
+        PtDebugPrint("DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tOn %s" % stringSDLVarName.value)
 
         # Parse out the state, value pairs and add them to the dictionary
         try:
@@ -122,8 +120,7 @@ class xAgeSDLVarSet(ptResponder):
             SDLvalue = intDefault.value
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tCurrent SDL value = %d"
-            % SDLvalue
+            "DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tCurrent SDL value = %d" % SDLvalue
         )
 
         # Check if the current SDL value represents a state in the dictionary and set the other SDL value to the value in the dictionary (yay for values!)

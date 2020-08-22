@@ -44,55 +44,29 @@ from Plasma import *
 from PlasmaVaultConstants import *
 
 xFolderIDToFolderName = {
-    PtVaultStandardNodes.kUserDefinedNode: PtGetLocalizedString(
-        "Global.FolderNames.UserDefined"
-    ),
+    PtVaultStandardNodes.kUserDefinedNode: PtGetLocalizedString("Global.FolderNames.UserDefined"),
     PtVaultStandardNodes.kInboxFolder: PtGetLocalizedString("Global.FolderNames.Inbox"),
-    PtVaultStandardNodes.kBuddyListFolder: PtGetLocalizedString(
-        "Global.FolderNames.BuddyList"
-    ),
-    PtVaultStandardNodes.kIgnoreListFolder: PtGetLocalizedString(
-        "Global.FolderNames.IgnoreList"
-    ),
+    PtVaultStandardNodes.kBuddyListFolder: PtGetLocalizedString("Global.FolderNames.BuddyList"),
+    PtVaultStandardNodes.kIgnoreListFolder: PtGetLocalizedString("Global.FolderNames.IgnoreList"),
     PtVaultStandardNodes.kPeopleIKnowAboutFolder: PtGetLocalizedString(
         "Global.FolderNames.PeopleIKnowAbout"
     ),
-    PtVaultStandardNodes.kChronicleFolder: PtGetLocalizedString(
-        "Global.FolderNames.Chronicle"
-    ),
+    PtVaultStandardNodes.kChronicleFolder: PtGetLocalizedString("Global.FolderNames.Chronicle"),
     PtVaultStandardNodes.kAvatarOutfitFolder: PtGetLocalizedString(
         "Global.FolderNames.AvatarOutfit"
     ),
     PtVaultStandardNodes.kAgeTypeJournalFolder: PtGetLocalizedString(
         "Global.FolderNames.AgeTypeJournal"
     ),
-    PtVaultStandardNodes.kSubAgesFolder: PtGetLocalizedString(
-        "Global.FolderNames.SubAges"
-    ),
-    PtVaultStandardNodes.kHoodMembersFolder: PtGetLocalizedString(
-        "Global.FolderNames.HoodMembers"
-    ),
-    PtVaultStandardNodes.kAllPlayersFolder: PtGetLocalizedString(
-        "Global.FolderNames.AllPlayers"
-    ),
-    PtVaultStandardNodes.kAgeMembersFolder: PtGetLocalizedString(
-        "Global.FolderNames.AgeMembers"
-    ),
-    PtVaultStandardNodes.kAgeJournalsFolder: PtGetLocalizedString(
-        "Global.FolderNames.AgeJournals"
-    ),
-    PtVaultStandardNodes.kCanVisitFolder: PtGetLocalizedString(
-        "Global.FolderNames.CanVisit"
-    ),
-    PtVaultStandardNodes.kAgeOwnersFolder: PtGetLocalizedString(
-        "Global.FolderNames.AgeOwners"
-    ),
-    PtVaultStandardNodes.kPublicAgesFolder: PtGetLocalizedString(
-        "Global.FolderNames.PublicAges"
-    ),
-    PtVaultStandardNodes.kAgesIOwnFolder: PtGetLocalizedString(
-        "Global.FolderNames.AgesIOwn"
-    ),
+    PtVaultStandardNodes.kSubAgesFolder: PtGetLocalizedString("Global.FolderNames.SubAges"),
+    PtVaultStandardNodes.kHoodMembersFolder: PtGetLocalizedString("Global.FolderNames.HoodMembers"),
+    PtVaultStandardNodes.kAllPlayersFolder: PtGetLocalizedString("Global.FolderNames.AllPlayers"),
+    PtVaultStandardNodes.kAgeMembersFolder: PtGetLocalizedString("Global.FolderNames.AgeMembers"),
+    PtVaultStandardNodes.kAgeJournalsFolder: PtGetLocalizedString("Global.FolderNames.AgeJournals"),
+    PtVaultStandardNodes.kCanVisitFolder: PtGetLocalizedString("Global.FolderNames.CanVisit"),
+    PtVaultStandardNodes.kAgeOwnersFolder: PtGetLocalizedString("Global.FolderNames.AgeOwners"),
+    PtVaultStandardNodes.kPublicAgesFolder: PtGetLocalizedString("Global.FolderNames.PublicAges"),
+    PtVaultStandardNodes.kAgesIOwnFolder: PtGetLocalizedString("Global.FolderNames.AgesIOwn"),
     PtVaultStandardNodes.kAgesICanVisitFolder: PtGetLocalizedString(
         "Global.FolderNames.AgesICanVisit"
     ),
@@ -169,9 +143,7 @@ def LocalizeAgeName(displayName):
             else:
                 localizedName = "???"
         except:
-            localizedName = (
-                "???"  # default to unknown if we can't access the SDL for some reason
-            )
+            localizedName = "???"  # default to unknown if we can't access the SDL for some reason
     elif localizedName == "Ae'gura":
         localizedName = "D'ni-Ae'gura"
     elif localizedName == "GreatZero":
@@ -199,15 +171,12 @@ def LocalizeAgeName(displayName):
         if apostropheLoc + 3 >= len(localizedName):
             return SafeEncode(localizedName)
         if not (
-            localizedName[apostropheLoc + 1] == "s"
-            and localizedName[apostropheLoc + 2] == " "
+            localizedName[apostropheLoc + 1] == "s" and localizedName[apostropheLoc + 2] == " "
         ):
             return SafeEncode(localizedName)
 
         # we are possesive, translate it
         userName = localizedName[:apostropheLoc]
         ageName = localizedName[apostropheLoc + 3 :]
-        localizedName = PtGetLocalizedString(
-            "Global.Formats.Possesive", [userName, ageName]
-        )
+        localizedName = PtGetLocalizedString("Global.Formats.Possesive", [userName, ageName])
     return localizedName

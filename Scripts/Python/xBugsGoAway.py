@@ -83,16 +83,12 @@ class xBugsGoAway(ptResponder):
         try:
             avatar = PtGetLocalAvatar()
         except:
-            PtDebugPrint(
-                "xBugsGoAway.OnServerInitComplete() - failed to get local avatar"
-            )
+            PtDebugPrint("xBugsGoAway.OnServerInitComplete() - failed to get local avatar")
             return
 
         self.bugCount = self.IGetBugCount()
         PtDebugPrint(
-            "xBugsGoAway.OnServerInitComplete() - Linking in with "
-            + str(self.bugCount)
-            + " bugs"
+            "xBugsGoAway.OnServerInitComplete() - Linking in with " + str(self.bugCount) + " bugs"
         )
 
         if self.bugCount != 0:

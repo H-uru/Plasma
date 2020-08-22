@@ -83,14 +83,10 @@ class grsnEmgrPhase0(ptResponder):
         global variable
         global sdlvalue
 
-        PtDebugPrint(
-            "grsnEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname)
-        )
+        PtDebugPrint("grsnEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname))
 
         if VARname in BooleanVARs:
-            PtDebugPrint(
-                "grsnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
-            )
+            PtDebugPrint("grsnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
             self.IManageBOOLs(VARname, SDLname)
 
         else:

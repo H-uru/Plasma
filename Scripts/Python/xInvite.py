@@ -75,12 +75,7 @@ def SplitParams(params):
             if params[i] == '"':
                 inQuotes = 1
                 # curArg += '"'
-            elif (
-                params[i] == " "
-                or params[i] == "\t"
-                or params[i] == "\n"
-                or params[i] == "\r"
-            ):
+            elif params[i] == " " or params[i] == "\t" or params[i] == "\n" or params[i] == "\r":
                 if not curArg == "":
                     args.append(curArg)
                     curArg = ""
@@ -101,14 +96,10 @@ def CreateInvitation(params=None):
         if invites is not None:
             if invites.getChildNodeCount() <= gMaxInviteCount:
                 # create the note
-                note = ptVaultTextNoteNode(
-                    PtVaultNodePermissionFlags.kDefaultPermissions
-                )
+                note = ptVaultTextNoteNode(PtVaultNodePermissionFlags.kDefaultPermissions)
                 note.noteSetTitle(passkey)
                 invites.addNode(note)
-                return PtGetLocalizedString(
-                    "KI.Invitation.InviteKeyAdded", [str(passkey)]
-                )
+                return PtGetLocalizedString("KI.Invitation.InviteKeyAdded", [str(passkey)])
             else:
                 return (1, PtGetLocalizedString("KI.Invitation.MaxInvites"))
         else:
@@ -146,9 +137,7 @@ def ShowInvitations(params=None):
             if child is not None:
                 passkeys += child.noteGetTitle()
             else:
-                PtDebugPrint(
-                    "xInvite: Couldn't cast list item to note", level=kErrorLevel
-                )
+                PtDebugPrint("xInvite: Couldn't cast list item to note", level=kErrorLevel)
                 pass
             i += 1
     else:
@@ -173,9 +162,7 @@ def DeleteInvitation(params=None):
                         try:
                             invites.removeNode(child)
                         except:
-                            PtDebugPrint(
-                                "xInvite: Remove Node Failed", level=kErrorLevel
-                            )
+                            PtDebugPrint("xInvite: Remove Node Failed", level=kErrorLevel)
                             return (
                                 1,
                                 PtGetLocalizedString("KI.Invitation.InviteNotFound"),
@@ -183,9 +170,7 @@ def DeleteInvitation(params=None):
                         removed = 1
                         break
                 else:
-                    PtDebugPrint(
-                        "xInvite: Couldn't cast list item to note", level=kErrorLevel
-                    )
+                    PtDebugPrint("xInvite: Couldn't cast list item to note", level=kErrorLevel)
                     return (1, PtGetLocalizedString("KI.Invitation.InviteNotFound"))
             if removed == 0:
                 return (1, PtGetLocalizedString("KI.Invitation.InviteNotFound"))
@@ -198,10 +183,6 @@ def DeleteInvitation(params=None):
 
 def MeChat(params=None):
     if params == None:
-        PtDebugPrint(
-            "xChatExtend:MeCmd: If you have nothing to say, why say anything at all?"
-        )
+        PtDebugPrint("xChatExtend:MeCmd: If you have nothing to say, why say anything at all?")
         return
-    PtSendKIMessage(
-        kKIChatStatusMsg, ("%s %s" % (PtGetLocalPlayer().getPlayerName(), params))
-    )
+    PtSendKIMessage(kKIChatStatusMsg, ("%s %s" % (PtGetLocalPlayer().getPlayerName(), params)))

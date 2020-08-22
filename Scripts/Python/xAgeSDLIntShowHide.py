@@ -67,9 +67,7 @@ class xAgeSDLIntShowHide(ptMultiModifier):
 
     def OnFirstUpdate(self):
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntShowHide.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
         if boolFirstUpdate.value:

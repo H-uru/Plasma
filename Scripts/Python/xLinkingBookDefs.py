@@ -212,9 +212,7 @@ DRCPos1 = "pos=125,120 blend=alpha>"
 DRCStamp2 = '<img src="xDRCBookRubberStamp2*1#0.hsm" '
 DRCPos2 = "pos=190,60 blend=alpha>"
 DRCPos3 = "pos=220,240 blend=alpha>"
-YeeshaStamp = (
-    '<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>'
-)
+YeeshaStamp = '<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>'
 
 
 kBookMarkID = 0
@@ -233,10 +231,7 @@ kShareBookLinkID = 1
 NoShare = "<pb>"
 ShareHolder = "%s<pb>"
 ShareBook = '<img src="xBookSharePage512*1#0.hsm" pos=0,0 link=%d>' % kShareBookLinkID
-BahroShare = (
-    '<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link=%d>'
-    % kShareBookLinkID
-)
+BahroShare = '<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link=%d>' % kShareBookLinkID
 BahroNoShare = ""
 
 LinkStart = '<img src="'
@@ -259,36 +254,21 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             DRCStamp2 + DRCPos1,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelBevinDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelBevinDefault" + LinkEnd,
         ),
         "EderKemo": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGardenDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGardenDefault" + LinkEnd,
         ),
         "EderTsogal": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPaneltsoGarden"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPaneltsoGarden" + LinkEnd,
         ),
         "EderDelin": (
             0,
@@ -319,12 +299,7 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             DRCStamp1 + DRCPos2,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelUpperShroom"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelUpperShroom" + LinkEnd,
         ),
         "Garrison": (
             0,
@@ -355,36 +330,21 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             DRCStamp2 + DRCPos3,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGarrisonNexus"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGarrisonNexus" + LinkEnd,
         ),
         "Nexus": (
             0,
             1.0,
             1.0,
             DRCStamp2 + DRCPos3,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelNexusDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelNexusDefault" + LinkEnd,
         ),
         "NexusShare": (
             0,
             1.0,
             1.0,
             DRCStamp2 + DRCPos3,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelNexusDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelNexusDefault" + LinkEnd,
         ),
         "Teledahn": (
             0,
@@ -407,12 +367,7 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             DRCStamp2 + DRCPos1,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelKadishGallery"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelKadishGallery" + LinkEnd,
         ),
         "KadishFromGallery": (
             0,
@@ -431,12 +386,7 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             DRCStamp1 + DRCPos2,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelKadishDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelKadishDefault" + LinkEnd,
         ),
         "kdshGlowRmBalcony": ("xLinkPanelKadishGlowBalc"),
         "Kveer": (
@@ -457,48 +407,28 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelErcanaSilo"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelErcanaSilo" + LinkEnd,
         ),
         "YeeshaVault": (
             0,
             1.0,
             1.0,
             DRCStamp1 + DRCPos2,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelYeeshaVault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelYeeshaVault" + LinkEnd,
         ),
         "Gira": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGiraDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGiraDefault" + LinkEnd,
         ),
         "GiraFromKemo": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGiraFromKemo"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGiraFromKemo" + LinkEnd,
         ),
         "nb01BevinBalcony": ("xLinkPanelBevinBalc01"),
         "nb01BevinBalcony02": ("xLinkPanelBevinBalc02"),
@@ -510,12 +440,7 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGardenDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGardenDefault" + LinkEnd,
         ),
         "Spyroom": ("xLinkPanelSpyRoom"),
         "Cleft": (
@@ -523,12 +448,7 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelCleftDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelCleftDesert" + LinkEnd,
         ),
         "CleftWithTomahna": (
             0,
@@ -550,36 +470,21 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelTomahnaDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelTomahnaDesert" + LinkEnd,
         ),
         "grsnTeamRmPurple": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelCleftDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelCleftDesert" + LinkEnd,
         ),
         "grsnTeamRmYellow": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelTomahnaDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelTomahnaDesert" + LinkEnd,
         ),
         "NotPossible": (
             0,
@@ -598,24 +503,14 @@ if PtIsSinglePlayerMode():
             1.0,
             1.0,
             DRCStamp1 + DRCPos2,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelErcanaDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelErcanaDefault" + LinkEnd,
         ),
         "Ahnonay": (
             0,
             1.0,
             1.0,
             DRCStamp2 + DRCPos1,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelAhnonayVortex"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelAhnonayVortex" + LinkEnd,
         ),
     }
 else:
@@ -625,12 +520,7 @@ else:
             1.0,
             1.0,
             DRCStamp2 + DRCPos1,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelBevinDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelBevinDefault" + LinkEnd,
         ),
         "EderKemo": (
             1,
@@ -650,12 +540,7 @@ else:
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPaneltsoGarden"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPaneltsoGarden" + LinkEnd,
         ),
         "EderDelin": (
             0,
@@ -725,24 +610,14 @@ else:
             1.0,
             1.0,
             DRCStamp2 + DRCPos3,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGarrisonNexus"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGarrisonNexus" + LinkEnd,
         ),
         "Nexus": (
             0,
             1.0,
             1.0,
             DRCStamp2 + DRCPos3,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelNexusDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelNexusDefault" + LinkEnd,
         ),
         "NexusShare": (
             1,
@@ -822,12 +697,7 @@ else:
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelErcanaSilo"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelErcanaSilo" + LinkEnd,
         ),
         "ercaPelletRoom": (
             0,
@@ -846,12 +716,7 @@ else:
             1.0,
             1.0,
             DRCStamp2 + DRCPos1,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelMystLibrary"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelMystLibrary" + LinkEnd,
         ),
         "YeeshaVault": (
             1,
@@ -901,12 +766,7 @@ else:
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelGardenDefault"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelGardenDefault" + LinkEnd,
         ),
         "Spyroom": ("xLinkPanelSpyRoom"),
         "Cleft": (
@@ -914,12 +774,7 @@ else:
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelCleftDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelCleftDesert" + LinkEnd,
         ),
         "CleftWithTomahna": (
             0,
@@ -941,36 +796,21 @@ else:
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelTomahnaDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelTomahnaDesert" + LinkEnd,
         ),
         "grsnTeamRmPurple": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelCleftDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelCleftDesert" + LinkEnd,
         ),
         "grsnTeamRmYellow": (
             0,
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelTomahnaDesert"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelTomahnaDesert" + LinkEnd,
         ),
         "grtzGrtZeroLinkRm": (
             0,
@@ -1167,12 +1007,7 @@ else:
             1.0,
             1.0,
             NoDRCStamp,
-            BookStart1
-            + DRCStampHolder
-            + NoShare
-            + LinkStart
-            + "xLinkPanelPhilsRelto"
-            + LinkEnd,
+            BookStart1 + DRCStampHolder + NoShare + LinkStart + "xLinkPanelPhilsRelto" + LinkEnd,
         ),
         "Tetsonot": (
             1,
@@ -1242,15 +1077,9 @@ xLinkDestinations = {
     "kdshGlowRmBalcony": ("Kadish", "LinkInPointGlowRmBalcony"),
     "Kveer": ("Kveer", "LinkInPointDefault"),
     # "Kveer":                    ( PageStart + NoShare + LinkStart + 'xLinkPanelKveerGreatHall' + LinkEndPage),
-    "dsntShaftFall": (
-        "Descent",
-        "LinkInPointShaftFall",
-    ),  # This age name may not be correct
+    "dsntShaftFall": ("Descent", "LinkInPointShaftFall",),  # This age name may not be correct
     "ercaSilo": ("Ercana", "LinkInPointErcanaSilo"),  # This age name may not be correct
-    "ercaPelletRoom": (
-        "Ercana",
-        "LinkInPointPelletRoom",
-    ),  # This age name may not be correct
+    "ercaPelletRoom": ("Ercana", "LinkInPointPelletRoom",),  # This age name may not be correct
     "MystLibrary": ("", ""),
     "YeeshaVault": ("", ""),
     "Gira": ("Gira", "LinkInPointDefault"),
@@ -1294,21 +1123,13 @@ xLinkDestinations = {
 #  ( pageHTML )
 #
 xLinkingPages = {
-    "nb01BevinBalcony": (
-        PageStart + NoShare + LinkStart + "xLinkPanelBevinBalc01" + LinkEndPage
-    ),
-    "nb01BevinBalcony02": (
-        PageStart + NoShare + LinkStart + "xLinkPanelBevinBalc02" + LinkEndPage
-    ),
-    "grsnPrison": (
-        PageStart + NoShare + LinkStart + "xLinkPanelGarrisonPrison" + LinkEndPage
-    ),
+    "nb01BevinBalcony": (PageStart + NoShare + LinkStart + "xLinkPanelBevinBalc01" + LinkEndPage),
+    "nb01BevinBalcony02": (PageStart + NoShare + LinkStart + "xLinkPanelBevinBalc02" + LinkEndPage),
+    "grsnPrison": (PageStart + NoShare + LinkStart + "xLinkPanelGarrisonPrison" + LinkEndPage),
     "tldnChoppedShroom": (
         PageStart + NoShare + LinkStart + "xLinkPanelTeledahnChopShroom" + LinkEndPage
     ),
-    "tldnLagoonDock": (
-        PageStart + NoShare + LinkStart + "xLinkPanelTeledahnDock" + LinkEndPage
-    ),
+    "tldnLagoonDock": (PageStart + NoShare + LinkStart + "xLinkPanelTeledahnDock" + LinkEndPage),
     "kdshGlowRmBalcony": (
         PageStart + NoShare + LinkStart + "xLinkPanelKadishGlowBalc" + LinkEndPage
     ),
@@ -1318,40 +1139,24 @@ xLinkingPages = {
     "islmPalaceBalcony03": (
         PageStart + NoShare + LinkStart + "xLinkPanelPalaceBalc03" + LinkEndPage
     ),
-    "islmDakotahRoof": (
-        PageStart + NoShare + LinkStart + "xLinkPanelDokotahRoof" + LinkEndPage
-    ),
+    "islmDakotahRoof": (PageStart + NoShare + LinkStart + "xLinkPanelDokotahRoof" + LinkEndPage),
     "islmConcertHallFoyer": (
         PageStart + NoShare + LinkStart + "xLinkPanelConcertHallFoyer" + LinkEndPage
     ),
-    "KadishGallery": (
-        PageStart + NoShare + LinkStart + "xLinkPanelKadishGallery" + LinkEndPage
-    ),
+    "KadishGallery": (PageStart + NoShare + LinkStart + "xLinkPanelKadishGallery" + LinkEndPage),
     "BaronCityOffice": (
         PageStart + NoShare + LinkStart + "xLinkPanelBaronCityOffice" + LinkEndPage
     ),
-    "dsntShaftFall": (
-        PageStart + NoShare + LinkStart + "xLinkPanelDescentShaftFall" + LinkEndPage
-    ),
+    "dsntShaftFall": (PageStart + NoShare + LinkStart + "xLinkPanelDescentShaftFall" + LinkEndPage),
     "Spyroom": (PageStart + NoShare + LinkStart + "xLinkPanelSpyRoom" + LinkEndPage),
-    "Kveer": (
-        PageStart + NoShare + LinkStart + "xLinkPanelKveerGreatHall" + LinkEndPage
-    ),
-    "YeeshaVault": (
-        PageStart + NoShare + LinkStart + "xLinkPanelYeeshaVault" + LinkEndPage
-    ),
+    "Kveer": (PageStart + NoShare + LinkStart + "xLinkPanelKveerGreatHall" + LinkEndPage),
+    "YeeshaVault": (PageStart + NoShare + LinkStart + "xLinkPanelYeeshaVault" + LinkEndPage),
     "grtzGrtZeroLinkRm": (
         PageStart + NoShare + LinkStart + "xLinkPanelGrtZeroLinkRm" + LinkEndPage
     ),
-    "islmGreatTree": (
-        PageStart + NoShare + LinkStart + "xLinkPanelCityGreatTree" + LinkEndPage
-    ),
-    "BahroCaveUpper": (
-        PageStart + NoShare + LinkStart + "xLinkPanelBahroCaveUpper" + LinkEndPage
-    ),
-    "BahroCaveLower": (
-        PageStart + NoShare + LinkStart + "xLinkPanelBahroCaveLower" + LinkEndPage
-    ),
+    "islmGreatTree": (PageStart + NoShare + LinkStart + "xLinkPanelCityGreatTree" + LinkEndPage),
+    "BahroCaveUpper": (PageStart + NoShare + LinkStart + "xLinkPanelBahroCaveUpper" + LinkEndPage),
+    "BahroCaveLower": (PageStart + NoShare + LinkStart + "xLinkPanelBahroCaveLower" + LinkEndPage),
 }
 
 CityBookLinks = [

@@ -81,14 +81,10 @@ class AhnonayCathedral(ptResponder):
                             owner = chron
                     break
         if owner == None and vault.amOwnerOfCurrentAge():
-            PtDebugPrint(
-                "I own this Cathedral, but I haven't set myself as Ahnonay owner yet."
-            )
+            PtDebugPrint("I own this Cathedral, but I haven't set myself as Ahnonay owner yet.")
             newNode = ptVaultChronicleNode(0)
             newNode.chronicleSetName("AhnonayOwner")
-            newNode.chronicleSetValue(
-                str(PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey()))
-            )
+            newNode.chronicleSetValue(str(PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey())))
             ageDataFolder.addNode(newNode)
 
     def OnNotify(self, state, id, events):

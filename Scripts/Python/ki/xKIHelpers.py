@@ -83,9 +83,7 @@ class AutocompleteState:
         for (word_start, word_end) in words:
             suffix = text_lower[word_start:word_end] + suffix
 
-            self.candidates = [
-                normal for (nospace, normal) in names if nospace.startswith(suffix)
-            ]
+            self.candidates = [normal for (nospace, normal) in names if nospace.startswith(suffix)]
 
             if self.candidates:
                 self.candidates.sort()
@@ -312,8 +310,7 @@ def GetNeighborhood():
         return ptVault().getLinkToMyNeighborhood().getAgeInfo()
     except AttributeError:
         PtDebugPrint(
-            "xKIHelpers.GetNeighborhood(): Neighborhood not found.",
-            level=kDebugDumpLevel,
+            "xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel,
         )
         return None
 
@@ -325,8 +322,7 @@ def GetNeighbors():
         return GetNeighborhood().getAgeOwnersFolder()
     except AttributeError:
         PtDebugPrint(
-            "xKIHelpers.GetNeighbors(): List of neighbors not found.",
-            level=kDebugDumpLevel,
+            "xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel,
         )
         return None
 

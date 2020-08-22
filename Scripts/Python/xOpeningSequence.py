@@ -183,9 +183,7 @@ class xOpeningSequence(ptModifier):
 
     def __del__(self):
         "the destructor - dialogs unload somewhere else... in IStartGame()"
-        PtDebugPrint(
-            "xOpeningSequence::destructor... we're gone!", level=kDebugDumpLevel
-        )
+        PtDebugPrint("xOpeningSequence::destructor... we're gone!", level=kDebugDumpLevel)
 
     def AvatarPage(self, sobj, unload, lastout):
         pass
@@ -240,9 +238,7 @@ class xOpeningSequence(ptModifier):
                     PtEnableRenderScene()
                     PtGUICursorOn()
                     OrientationDlg.dialog.show()
-                    PtDebugPrint(
-                        "xOpeningSequence - no intro movie!!!", level=kDebugDumpLevel
-                    )
+                    PtDebugPrint("xOpeningSequence - no intro movie!!!", level=kDebugDumpLevel)
             elif event == kAction or event == kValueChanged:
                 orientationID = control.getTagID()
                 if orientationID == kFirstHelpOkBtn:
@@ -252,110 +248,63 @@ class xOpeningSequence(ptModifier):
         elif id == FirstHelpDlg.id:
             if event == kDialogLoaded:
                 PtDebugPrint(
-                    "xOpeningSequence - quiet sounds and show background",
-                    level=kDebugDumpLevel,
+                    "xOpeningSequence - quiet sounds and show background", level=kDebugDumpLevel,
                 )
                 # this SHOULD be in the max file, but since someone has the KI max file tied up, it will have to go here
                 # set the text localized strings
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kHelpTitle)
-                )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Title")
-                )
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kWalkText)
-                )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Walk")
-                )
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kRunText)
-                )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Run")
-                )
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kHelpTitle))
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Title"))
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kWalkText))
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Walk"))
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kRunText))
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Run"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kTurnLeftText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.TurnLeft")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.TurnLeft"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kBackwardsText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kTurnRightText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.TurnRight")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.TurnRight"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kToggleViewText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.ToggleView")
-                )
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kJumpText)
-                )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.KeyCommands.Jump")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.ToggleView"))
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kJumpText))
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.Jump"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kMouseWalkText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Walk")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Walk"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kMouseRunText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Run")
-                )
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kSelectText)
-                )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Select")
-                )
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kMousePanCam)
-                )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.MousePanCam")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Run"))
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kSelectText))
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Select"))
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMousePanCam))
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.MousePanCam"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kMouseBackwards)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kMousePresetsTitle)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.MousePresets")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.MousePresets"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kMouseNormalText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Normal")
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Normal"))
                 textField = ptGUIControlTextBox(
                     FirstHelpDlg.dialog.getControlFromTag(kMouseNoviceText)
                 )
-                textField.setStringW(
-                    PtGetLocalizedString("OptionsMenu.StartupHelp.Novice")
-                )
-                textField = ptGUIControlTextBox(
-                    FirstHelpDlg.dialog.getControlFromTag(kOkButton)
-                )
+                textField.setStringW(PtGetLocalizedString("OptionsMenu.StartupHelp.Novice"))
+                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kOkButton))
                 textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Ok"))
                 # hide the ok button until they agree to the terms... or pick normal or novice
                 ##textField.setString(" ")
@@ -437,9 +386,7 @@ class xOpeningSequence(ptModifier):
                 gIntroMovie.resume()
                 PtDebugPrint("xOpeningSequence - playing movie", level=kDebugDumpLevel)
             else:
-                PtDebugPrint(
-                    "xOpeningSequence - movie already playing", level=kDebugDumpLevel
-                )
+                PtDebugPrint("xOpeningSequence - movie already playing", level=kDebugDumpLevel)
             gIntroStarted = 1
 
     def IStartOrientation(self):
@@ -519,12 +466,8 @@ class xOpeningSequence(ptModifier):
             # and finally - unload ouselves...
             PtUnloadDialog("StartupHelpGUI")
             PtUnloadDialog("OrientationGUI")
-            PtUnloadDialog(
-                "IntroMovieGUI"
-            )  # ... we may have to have some else unload us(?)
+            PtUnloadDialog("IntroMovieGUI")  # ... we may have to have some else unload us(?)
         else:
-            audio.setAmbienceVolume(
-                gOriginalAmbientVolume * (gCurrentTick / gTotalTickTime)
-            )
+            audio.setAmbienceVolume(gOriginalAmbientVolume * (gCurrentTick / gTotalTickTime))
             audio.setSoundFXVolume(gOriginalSFXVolume * (gCurrentTick / gTotalTickTime))
             PtAtTimeCallback(self.key, kSoundTickTime, kSoundFadeInID)

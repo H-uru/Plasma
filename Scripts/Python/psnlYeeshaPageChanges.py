@@ -75,9 +75,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         self.id = 5232
         version = 7
         self.version = version
-        PtDebugPrint(
-            "__init__psnlYeeshaPageChanges v%d.%d" % (version, 1), level=kWarningLevel
-        )
+        PtDebugPrint("__init__psnlYeeshaPageChanges v%d.%d" % (version, 1), level=kWarningLevel)
 
     # Yeesha Pages available:
     #
@@ -165,15 +163,12 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                         else:
                             sizechanged = 0
 
-                        newstate = self.UpdateState(
-                            state, size, SDLVar, AgeVault, sizechanged
-                        )
+                        newstate = self.UpdateState(state, size, SDLVar, AgeVault, sizechanged)
                     else:
                         newstate = state
 
                     PtDebugPrint(
-                        "CurrentValue: %d, size: %d, state %d"
-                        % (CurrentValue, size, state)
+                        "CurrentValue: %d, size: %d, state %d" % (CurrentValue, size, state)
                     )
                     self.EnableDisable((size * 10) + newstate)
 
@@ -221,9 +216,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                                 )
 
                     if len(PtGetPlayerList()) == 0:
-                        newstate = self.UpdateState(
-                            CurrentValue, 0, SDLVar, AgeVault, 0
-                        )
+                        newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, 0)
                     else:
                         newstate = CurrentValue
 
@@ -231,9 +224,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
                 # There is only one object in Yeesha Page 5 with a value of 0, so I'm temporarily nestling my print statement here...
                 if PageNumber.value == 5 and stringShowStates.value == "0":
-                    PtDebugPrint(
-                        "psnlYeeshaPageChanges: You've found the following Yeesha Pages:"
-                    )
+                    PtDebugPrint("psnlYeeshaPageChanges: You've found the following Yeesha Pages:")
                     for thispage in range(1, TotalPossibleYeeshaPages + 1):
                         FoundValue = self.ageSDL.findVar("YeeshaPage" + str(thispage))
                         PtDebugPrint(

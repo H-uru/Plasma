@@ -168,13 +168,9 @@ def showattribs():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist, PlasmaTypes.ptAttribute):
             if __selattr == ist.id:
-                print(
-                    "*(%d) %s(%s) =" % (ist.id, name, ist.__class__.__name__), ist.value
-                )
+                print("*(%d) %s(%s) =" % (ist.id, name, ist.__class__.__name__), ist.value)
             else:
-                print(
-                    " (%d) %s(%s) =" % (ist.id, name, ist.__class__.__name__), ist.value
-                )
+                print(" (%d) %s(%s) =" % (ist.id, name, ist.__class__.__name__), ist.value)
 
 
 def selattrib(id=None):

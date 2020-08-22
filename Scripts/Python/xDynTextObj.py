@@ -75,15 +75,7 @@ class xDynTextObj(ptModifier):
             PtDebugPrint("Missing " + index + " table entry")
             return
         if len(textObj) == 7:
-            (
-                fontName,
-                fontSize,
-                fontColor,
-                marginSize,
-                spacing,
-                locPath,
-                justify,
-            ) = textObj
+            (fontName, fontSize, fontColor, marginSize, spacing, locPath, justify,) = textObj
         else:
             fontName, fontSize, fontColor, marginSize, spacing, locPath = textObj
             justify = PtJustify.kLeftJustify

@@ -926,9 +926,7 @@ def PtSetGlobalClickability(enable):
     pass
 
 
-def PtSetGraphicsOptions(
-    width, height, colordepth, windowed, numAAsamples, numAnisoSamples, VSync
-):
+def PtSetGraphicsOptions(width, height, colordepth, windowed, numAAsamples, numAnisoSamples, VSync):
     """Set the graphics options"""
     pass
 
@@ -1778,13 +1776,7 @@ Such as a game master, only running on the client that owns a particular object"
         pass
 
     def oneShot(
-        self,
-        seekKey,
-        duration,
-        usePhysicsFlag,
-        animationName,
-        drivableFlag,
-        reversibleFlag,
+        self, seekKey, duration, usePhysicsFlag, animationName, drivableFlag, reversibleFlag,
     ):
         """Plays a one-shot animation on the avatar"""
         pass
@@ -1822,9 +1814,7 @@ Such as a game master, only running on the client that owns a particular object"
         """Same as runBehavior, except send notifications to specified keyed object"""
         pass
 
-    def runCoopAnim(
-        self, targetKey, activeAvatarAnim, targetAvatarAnim, range=6, dist=3, move=1
-    ):
+    def runCoopAnim(self, targetKey, activeAvatarAnim, targetAvatarAnim, range=6, dist=3, move=1):
         """Seek near another avatar and run animations on both."""
         pass
 
@@ -2299,13 +2289,7 @@ class ptCritterBrain:
         pass
 
     def addBehavior(
-        self,
-        animName,
-        behaviorName,
-        loop=1,
-        randomStartPos=1,
-        fadeInLen=2.0,
-        fadeOutLen=2.0,
+        self, animName, behaviorName, loop=1, randomStartPos=1, fadeInLen=2.0, fadeOutLen=2.0,
     ):
         """Adds a new animation to the brain as a behavior with the specified name and parameters. If multiple animations are assigned to the same behavior, they will be randomly picked from when started."""
         pass

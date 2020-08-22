@@ -62,9 +62,7 @@ clkBSCloth05 = ptAttribActivator(6, "clk: BS Cloth 05")
 clkBSCloth06 = ptAttribActivator(7, "clk: BS Cloth 06")
 clkBSCloth07 = ptAttribActivator(8, "clk: BS Cloth 07")
 
-respBSDoor = ptAttribResponder(
-    9, "resp: BS Door", ["0", "1", "2", "3", "4", "5", "6"], netForce=1
-)
+respBSDoor = ptAttribResponder(9, "resp: BS Door", ["0", "1", "2", "3", "4", "5", "6"], netForce=1)
 respBSCloth01 = ptAttribResponder(10, "resp: BS Cloth 01")
 respBSCloth02 = ptAttribResponder(11, "resp: BS Cloth 02")
 respBSCloth03 = ptAttribResponder(12, "resp: BS Cloth 03")
@@ -73,20 +71,11 @@ respBSCloth05 = ptAttribResponder(14, "resp: BS Cloth 05")
 respBSCloth06 = ptAttribResponder(15, "resp: BS Cloth 06")
 respBSCloth07 = ptAttribResponder(16, "resp: BS Cloth 07")
 respBSClothDoor = ptAttribResponder(17, "resp: BS Cloth Door")
-respBSFastDoor = ptAttribResponder(
-    18, "resp: BS Fast Door", ["0", "1", "2", "3", "4", "5", "6"]
-)
-respBSTicMarks = ptAttribResponder(
-    19, "resp: BS Tic Marks", ["1", "2", "3", "4", "5", "6", "7"]
-)
-respBSDoorOps = ptAttribResponder(
-    20, "resp: BS Door Ops", ["open", "close"], netPropagate=0
-)
+respBSFastDoor = ptAttribResponder(18, "resp: BS Fast Door", ["0", "1", "2", "3", "4", "5", "6"])
+respBSTicMarks = ptAttribResponder(19, "resp: BS Tic Marks", ["1", "2", "3", "4", "5", "6", "7"])
+respBSDoorOps = ptAttribResponder(20, "resp: BS Door Ops", ["open", "close"], netPropagate=0)
 respBSSymbolSpin = ptAttribResponder(
-    21,
-    "resp: BS Symbol Spin",
-    ["fwdstart", "fwdstop", "bkdstart", "bkdstop"],
-    netPropagate=0,
+    21, "resp: BS Symbol Spin", ["fwdstart", "fwdstop", "bkdstart", "bkdstop"], netPropagate=0,
 )
 
 animBlueSpiral = ptAttribAnimation(22, "anim: Blue Spiral")
@@ -219,14 +208,12 @@ class xBlueSpiral(ptResponder, object):
         if not SDLBSSolution.value:
             SDLBSSolution.value = prefix + kSolutionVarName
             PtDebugPrint(
-                "xBlueSpiral.OnFirstUpdate():\t" + SDLBSSolution.value,
-                level=kDebugDumpLevel,
+                "xBlueSpiral.OnFirstUpdate():\t" + SDLBSSolution.value, level=kDebugDumpLevel,
             )
         if not SDLBSRunning.value:
             SDLBSRunning.value = prefix + kRunningVarName
             PtDebugPrint(
-                "xBlueSpiral.OnFirstUpdate():\t" + SDLBSRunning.value,
-                level=kDebugDumpLevel,
+                "xBlueSpiral.OnFirstUpdate():\t" + SDLBSRunning.value, level=kDebugDumpLevel,
             )
 
     def OnServerInitComplete(self):
@@ -245,8 +232,7 @@ class xBlueSpiral(ptResponder, object):
         # Nobody here? Close the door and reset everything.
         # Somebody here? Set everything to SDL state
         PtDebugPrint(
-            "xBlueSpiral.OnServerInitComplete():\tWhen I got here...",
-            level=kDebugDumpLevel,
+            "xBlueSpiral.OnServerInitComplete():\tWhen I got here...", level=kDebugDumpLevel,
         )
         if len(PtGetPlayerList()):
             if self.running:
@@ -267,16 +253,14 @@ class xBlueSpiral(ptResponder, object):
                 PtAtTimeCallback(self.key, kDoorOpenTime, kCloseTheDoor)
                 self._ToggleClothState(False)
             PtDebugPrint(
-                "xBlueSpiral.OnServerInitComplete():\t... and that's it",
-                level=kDebugDumpLevel,
+                "xBlueSpiral.OnServerInitComplete():\t... and that's it", level=kDebugDumpLevel,
             )
         else:
             if self.running:  # no you're not
                 self.running = False
             self._spinning = False
             PtDebugPrint(
-                "xBlueSpiral.OnServerInitComplete():\t... no one was here",
-                level=kDebugDumpLevel,
+                "xBlueSpiral.OnServerInitComplete():\t... no one was here", level=kDebugDumpLevel,
             )
 
         # There is a bug in the Tsogal door... It starts in a weird state where it makes that annoying
@@ -334,15 +318,12 @@ class xBlueSpiral(ptResponder, object):
         if VARname == SDLBSRunning.value:
             if self.running:
                 PtDebugPrint(
-                    "xBlueSpiral.OnSDLNotify():\tThe game is afoot...",
-                    level=kWarningLevel,
+                    "xBlueSpiral.OnSDLNotify():\tThe game is afoot...", level=kWarningLevel,
                 )
                 if self.sceneobject.isLocallyOwned():
                     self.solution = self._GenerateClothSeq()
             else:
-                PtDebugPrint(
-                    "xBlueSpiral.OnSDLNotify():\tGame Over.", level=kWarningLevel
-                )
+                PtDebugPrint("xBlueSpiral.OnSDLNotify():\tGame Over.", level=kWarningLevel)
                 respBSSymbolSpin.run(self.key, state="fwdstop")
                 PtClearTimerCallbacks(self.key)
                 if self.hits != kNumCloths:
@@ -371,8 +352,7 @@ class xBlueSpiral(ptResponder, object):
         if VARname == SDLBSConsecutive.value:
             if self.running:
                 PtDebugPrint(
-                    "xBlueSpiral.OnSDLNotify():\tAwesome! We have %i sucessful hits"
-                    % self.hits,
+                    "xBlueSpiral.OnSDLNotify():\tAwesome! We have %i sucessful hits" % self.hits,
                     level=kWarningLevel,
                 )
                 respBSTicMarks.run(self.key, state=str(self.hits))
@@ -383,9 +363,7 @@ class xBlueSpiral(ptResponder, object):
                     )
                     PtClearTimerCallbacks(self.key)
                     PtAtTimeCallback(self.key, kDoorOpenTime, kCloseTheDoor)
-                    respBSDoorOps.run(
-                        self.key, state="open", fastforward=0
-                    )  # force it to animate
+                    respBSDoorOps.run(self.key, state="open", fastforward=0)  # force it to animate
                     respBSSymbolSpin.run(self.key, state="fwdstop")
                     self._ToggleClothState(False)
             else:
@@ -425,8 +403,7 @@ class xBlueSpiral(ptResponder, object):
             # should be happening after the cloth responder runs... but they
             # don't call us back because Cyan sucks
             PtDebugPrint(
-                "xBlueSpiral.OnNotify():\tCloth number %i pressed"
-                % (self.clothmap[clothId] + 1),
+                "xBlueSpiral.OnNotify():\tCloth number %i pressed" % (self.clothmap[clothId] + 1),
                 level=kWarningLevel,
             )
             if self.hits >= kNumCloths:
@@ -446,8 +423,7 @@ class xBlueSpiral(ptResponder, object):
                         self.hits += 1
                     else:  # you killed kenny
                         PtDebugPrint(
-                            "xBlueSpiral.OnNotify():\tBad move, old chap.",
-                            level=kWarningLevel,
+                            "xBlueSpiral.OnNotify():\tBad move, old chap.", level=kWarningLevel,
                         )
                         self.running = False
                 else:
@@ -491,9 +467,7 @@ class xBlueSpiral(ptResponder, object):
             # If not, reset the current solution display to 0.
             if self.running:
                 strClothId = str(self.clothmap[self.solution[self._symbolEval]])
-                respBSFastDoor.run(
-                    self.key, state=strClothId, netPropagate=0
-                )  # local only
+                respBSFastDoor.run(self.key, state=strClothId, netPropagate=0)  # local only
                 intClothId = int(strClothId) + 1
                 PtDebugPrint(
                     "xBlueSpiral.OnTimer():\tShowing solution #%i, cloth #%i"

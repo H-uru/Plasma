@@ -688,18 +688,14 @@ class kLoc:
         "SDL Desc Problem": PtGetLocalizedString("KI.Errors.SDLDescProblem"),  # 16
         "Unspecified error": PtGetLocalizedString("KI.Errors.UnspecifiedError"),  # 17
         "Failed to send msg": PtGetLocalizedString("KI.Errors.FailedToSendMsg"),  # 18
-        "Authentication timed out": PtGetLocalizedString(
-            "KI.Errors.AuthenticationTimedOut"
-        ),  # 19
+        "Authentication timed out": PtGetLocalizedString("KI.Errors.AuthenticationTimedOut"),  # 19
         "Peer timed out": PtGetLocalizedString("KI.Errors.PeerTimedOut"),  # 20
         "Server silence": PtGetLocalizedString("KI.Errors.ServerSilence2"),  # 21
         "Protocol version mismatch": PtGetLocalizedString(
             "KI.Errors.ProtocolVersionMismatch"
         ),  # 22
         "Auth failed": PtGetLocalizedString("KI.Errors.AuthFailed2"),  # 23
-        "Failed to create player": PtGetLocalizedString(
-            "KI.Errors.FailedToCreatePlayer"
-        ),  # 24
+        "Failed to create player": PtGetLocalizedString("KI.Errors.FailedToCreatePlayer"),  # 24
         "Invalid error code": PtGetLocalizedString("KI.Errors.InvalidErrorCode"),  # 25
         "linking banned": PtGetLocalizedString("KI.Errors.LinkingBanned"),  # 26
         "linking restored": PtGetLocalizedString("KI.Errors.LinkingRestored"),  # 27

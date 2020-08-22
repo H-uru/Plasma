@@ -113,10 +113,7 @@ def GetAgeJourneyCloths(args):
     if ageName == "Gira" or ageName == "Garden":
         ageName = "Eder"
     elif (
-        ageName == "Teledahn"
-        or ageName == "Garrison"
-        or ageName == "Kadish"
-        or ageName == "Cleft"
+        ageName == "Teledahn" or ageName == "Garrison" or ageName == "Kadish" or ageName == "Cleft"
     ):
         pass
     else:
@@ -346,10 +343,7 @@ def GZGetMarkers(args):
                     newgotten = markerGottenNumber + markersToGet
                     if newgotten > markerToGetNumber:
                         newgotten = markerToGetNumber
-                    print(
-                        "Updating markers gotten to %d from %d"
-                        % (newgotten, markerToGetNumber)
-                    )
+                    print("Updating markers gotten to %d from %d" % (newgotten, markerToGetNumber))
                     upstring = "%d %s:%s %d:%d" % (
                         markerGame,
                         markerGottenColor,
@@ -361,9 +355,7 @@ def GZGetMarkers(args):
                     entry.save()
                     # just pick some marker to have gotten
                     # is there a chronicle for the GZ games?
-                    entry = vault.findChronicleEntry(
-                        PlasmaKITypes.kChronicleGZMarkersAquired
-                    )
+                    entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZMarkersAquired)
                     if entry is not None:
                         markers = entry.chronicleGetValue()
                         for mnum in range(markersToGet):
@@ -377,10 +369,7 @@ def GZGetMarkers(args):
                                         + markers[-(len(markers) - (markerIdx + 1)) :]
                                     )
                                 else:
-                                    markers = (
-                                        markers[:markerIdx]
-                                        + PlasmaKITypes.kGZMarkerCaptured
-                                    )
+                                    markers = markers[:markerIdx] + PlasmaKITypes.kGZMarkerCaptured
                                 print(
                                     "Update marker #%d - out string is '%s'"
                                     % (markerIdx + 1, markers)
@@ -391,15 +380,9 @@ def GZGetMarkers(args):
                     Plasma.PtSendKIMessage(PlasmaKITypes.kGZUpdated, 0)
                     return
                 except ValueError:
-                    print(
-                        "xKI:GZ - error trying to read GZGames Chronicle '%s'"
-                        % (gameString)
-                    )
+                    print("xKI:GZ - error trying to read GZGames Chronicle '%s'" % (gameString))
             else:
-                print(
-                    "xKI:GZ - error GZGames string formation error (len=%d)"
-                    % (len(gargs))
-                )
+                print("xKI:GZ - error GZGames string formation error (len=%d)" % (len(gargs)))
         else:
             # if there is none, then error
             print("Error - there is no GZMarker game going!")
@@ -626,11 +609,7 @@ def _DumpEm(f, markerfolder, mfNumber):
             f.write('"%s", ' % (marker.markerGetAge()))
             f.write(
                 "%d, %d, %d ],\\\n"
-                % (
-                    marker.markerGetTorans(),
-                    marker.markerGetHSpans(),
-                    marker.markerGetVSpans(),
-                )
+                % (marker.markerGetTorans(), marker.markerGetHSpans(), marker.markerGetVSpans(),)
             )
             lines += 1
             numMarkers += 1
@@ -646,9 +625,7 @@ def DumpMarkers(args):
 
     arglist = args.split()
     if len(arglist) < 2:
-        print(
-            'ERROR - not enough arguments - DumpMarkers "filename foldername [markername]")'
-        )
+        print('ERROR - not enough arguments - DumpMarkers "filename foldername [markername]")')
         return
     filename = arglist[0]
     dfile = open(filename, "w+")
@@ -888,25 +865,15 @@ def GetSDL(varName):
                     val = ""
                 else:
                     val = ageSDL[var][0]
-                print(
-                    (
-                        "xCheat.GetSDL(): {:>{width}}  =  {}".format(
-                            var, val, width=maxlen
-                        )
-                    )
-                )
+                print(("xCheat.GetSDL(): {:>{width}}  =  {}".format(var, val, width=maxlen)))
             except:
                 print(("xCheat.GetSDL(): Error retrieving value for '{}'.".format(var)))
     else:
         try:
             if len(ageSDL[varName]) == 0:
-                print(
-                    ("xCheat.GetSDL():  SDL variable '{}' is not set.".format(varName))
-                )
+                print(("xCheat.GetSDL():  SDL variable '{}' is not set.".format(varName)))
             else:
-                print(
-                    ("xCheat.GetSDL(): {}  =  {}".format(varName, ageSDL[varName][0]))
-                )
+                print(("xCheat.GetSDL(): {}  =  {}".format(varName, ageSDL[varName][0])))
         except:
             print(("xCheat.GetSDL(): SDL variable '{}' not found.".format(varName)))
             return
@@ -956,13 +923,7 @@ def SetSDL(varNameAndVal):
         return
 
     if newval == oldval:
-        print(
-            (
-                "xCheat.SetSDL(): Not changing value, '{}' is already {}.".format(
-                    varName, newval
-                )
-            )
-        )
+        print(("xCheat.SetSDL(): Not changing value, '{}' is already {}.".format(varName, newval)))
         return
 
     if ageName == "Personal":
@@ -976,13 +937,7 @@ def SetSDL(varNameAndVal):
         ageSDL.sendToClients(varName)
         ageSDL[varName] = (newval,)
 
-    print(
-        (
-            "xCheat.SetSDL(): Setting '{}' to {} (was {}).".format(
-                varName, newval, oldval
-            )
-        )
-    )
+    print(("xCheat.SetSDL(): Setting '{}' to {} (was {}).".format(varName, newval, oldval)))
 
 
 def InstaPellets(args):
@@ -992,9 +947,7 @@ def InstaPellets(args):
     if ageName == "Ercana":
         sdl = Plasma.PtGetAgeSDL()
         if args == "":
-            print(
-                "xCheat.InstantPellets: ERROR.  Must specify a recipe value as argument."
-            )
+            print("xCheat.InstantPellets: ERROR.  Must specify a recipe value as argument.")
         else:
             PelletsPresent = sdl["ercaPelletMachine"][0]
             if PelletsPresent:
@@ -1008,10 +961,7 @@ def InstaPellets(args):
                 recipeSDL = iarg + 300
                 if recipeSDL < 1:
                     recipeSDL = 1
-                print(
-                    "xCheat.InstantPellets: 5 pellets now created with Recipe of %d."
-                    % (iarg)
-                )
+                print("xCheat.InstantPellets: 5 pellets now created with Recipe of %d." % (iarg))
                 sdl["ercaPellet1"] = (recipeSDL,)
                 sdl["ercaPellet2"] = (recipeSDL,)
                 sdl["ercaPellet3"] = (recipeSDL,)
@@ -1040,9 +990,7 @@ def CheckRecipe(args):
             recipe = recipeSDL - 300
             print("xCheat.CheckRecipe: Recipe of current pellet(s) = %d." % (recipe))
         else:
-            print(
-                "xCheat.CheckRecipe: No pellets currently exist, therefore no recipe."
-            )
+            print("xCheat.CheckRecipe: No pellets currently exist, therefore no recipe.")
 
 
 def GetPlayerID(self):

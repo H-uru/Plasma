@@ -120,10 +120,7 @@ class xSitAugment(ptModifier):
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
         "Control key events... anything we're interested in?"
-        PtDebugPrint(
-            "Got controlKey event %d and its activeFlage is %d"
-            % (controlKey, activeFlag)
-        )
+        PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey, activeFlag))
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitDialog()
 

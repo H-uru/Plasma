@@ -101,9 +101,7 @@ class minkDayClicks(ptResponder):
         ageSDL = PtGetAgeSDL()
 
         if not len(PtGetPlayerList()) and ageSDL["minkIsDayTime"][0]:
-            PtDebugPrint(
-                "minkDayClicks.OnFirstUpdate(): Resetting Show and Touch vars."
-            )
+            PtDebugPrint("minkDayClicks.OnFirstUpdate(): Resetting Show and Touch vars.")
             ageSDL["minkSymbolShow01"] = (0,)
             ageSDL["minkSymbolShow02"] = (0,)
             ageSDL["minkSymbolShow03"] = (0,)
@@ -118,15 +116,9 @@ class minkDayClicks(ptResponder):
 
     ###########################
     def OnNotify(self, state, id, events):
-        PtDebugPrint(
-            "minkDayClicks.OnNotify(): state=%s id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("minkDayClicks.OnNotify(): state=%s id=%d events=" % (state, id), events)
 
-        if (
-            id in ClickToResponder.keys()
-            and state
-            and PtFindAvatar(events) == PtGetLocalAvatar()
-        ):
+        if id in ClickToResponder.keys() and state and PtFindAvatar(events) == PtGetLocalAvatar():
             PtDebugPrint(
                 "minkDayClicks.OnNotify(): Clicked on %d, running %d"
                 % (id, ClickToResponder[id].id)

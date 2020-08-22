@@ -99,9 +99,7 @@ class xPotsSymbol(ptResponder):
         ]
 
         if not all(listSDL):
-            PtDebugPrint(
-                "ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name"
-            )
+            PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
 
         PtDebugPrint("xPotsSymbol.OnFirstUpdate(): listSDL = ", listSDL)
 
@@ -118,8 +116,7 @@ class xPotsSymbol(ptResponder):
                 ageSDL = PtGetAgeSDL()
                 for sc in listSDL:
                     PtDebugPrint(
-                        "xPotsSymbol.OnServerInitComplete():\t sdl: %s = %d"
-                        % (sc, ageSDL[sc][0])
+                        "xPotsSymbol.OnServerInitComplete():\t sdl: %s = %d" % (sc, ageSDL[sc][0])
                     )
                     ageSDL.setFlags(sc, 1, 1)
                     ageSDL.sendToClients(sc)

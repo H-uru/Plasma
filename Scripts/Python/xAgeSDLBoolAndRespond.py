@@ -159,8 +159,7 @@ class xAgeSDLBoolAndRespond(ptResponder):
             )
             return
         PtDebugPrint(
-            "DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\t state changed to %d"
-            % (boolCurrentState)
+            "DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\t state changed to %d" % (boolCurrentState)
         )
 
         # run the appropriate responder!

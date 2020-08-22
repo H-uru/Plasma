@@ -104,20 +104,14 @@ class xJourneyClothGate(ptResponder):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
 
         if ClothsComplete.value:
             AllCloths = ClothsComplete.value
-            PtDebugPrint(
-                "DEBUG: xJourneyClothGate.OnFirstUpdate:\tUsing Max specified all cloths"
-            )
+            PtDebugPrint("DEBUG: xJourneyClothGate.OnFirstUpdate:\tUsing Max specified all cloths")
         else:
             AllCloths = "abcdefg"
-            PtDebugPrint(
-                "DEBUG: xJourneyClothGate.OnFirstUpdate:\tUsing default all cloths"
-            )
+            PtDebugPrint("DEBUG: xJourneyClothGate.OnFirstUpdate:\tUsing default all cloths")
 
     def OnServerInitComplete(self):
         global GateCurrentlyClosed
@@ -162,9 +156,7 @@ class xJourneyClothGate(ptResponder):
             FoundJCs = ""
             entry = vault.findChronicleEntry("JourneyClothProgress")
             if entry is None:
-                PtDebugPrint(
-                    "DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle"
-                )
+                PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
                 pass
             else:
                 entry = self.GetCurrentAgeChronicle(entry)
@@ -248,9 +240,7 @@ class xJourneyClothGate(ptResponder):
 
         entry = vault.findChronicleEntry("JourneyClothProgress")
         if entry is None:
-            PtDebugPrint(
-                "DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle"
-            )
+            PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
             pass
         else:
             entry = self.GetCurrentAgeChronicle(entry)
@@ -263,14 +253,10 @@ class xJourneyClothGate(ptResponder):
             length = len(FoundJCs)
             all = len(AllCloths)
 
-            PtDebugPrint(
-                "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
-            )
+            PtDebugPrint("You've found the following %d Journey Cloths: %s" % (length, FoundJCs))
 
             if length < 0 or length > all:
-                PtDebugPrint(
-                    "xJourneyClothGate: ERROR: Unexpected length value received."
-                )
+                PtDebugPrint("xJourneyClothGate: ERROR: Unexpected length value received.")
                 return
 
             for each in FoundJCs:
@@ -308,9 +294,7 @@ class xJourneyClothGate(ptResponder):
             try:
                 GateCurrentlyClosed = ageSDL[stringVarName.value][0]
             except:
-                PtDebugPrint(
-                    "ERROR: xJourneyClothGate.ToggleSDL():\tERROR reading age SDL"
-                )
+                PtDebugPrint("ERROR: xJourneyClothGate.ToggleSDL():\tERROR reading age SDL")
                 GateCurrentlyClosed = False
 
             PtDebugPrint("ToggleSDL: GateCurrentlyClosed = ", GateCurrentlyClosed)

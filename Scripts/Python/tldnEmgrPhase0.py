@@ -105,15 +105,10 @@ class tldnEmgrPhase0(ptResponder):
 
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint(
-                "tldnEmgrPhase0.SDLNotify - name = %s, SDLname = %s"
-                % (VARname, SDLname)
-            )
+            PtDebugPrint("tldnEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname))
 
             if VARname in BooleanVARs:
-                PtDebugPrint(
-                    "tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
-                )
+                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
                 self.IManageBOOLs(VARname, SDLname)
 
             elif VARname in StateVARs.keys():
@@ -133,15 +128,11 @@ class tldnEmgrPhase0(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             if ageSDL[VARname][0] == 1:  # are we paging things in?
-                PtDebugPrint(
-                    "tldnEmgrPhase0.OnSDLNotify:\tPaging in room %s" % (VARname)
-                )
+                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tPaging in room %s" % (VARname))
                 PtPageInNode(VARname)
             elif ageSDL[VARname][0] == 0:  # are we paging things out?
                 PtDebugPrint("variable = ", VARname)
-                PtDebugPrint(
-                    "tldnEmgrPhase0.OnSDLNotify:\tPaging out room %s" % (VARname)
-                )
+                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tPaging out room %s" % (VARname))
                 PtPageOutNode(VARname)
             else:
                 sdlvalue = ageSDL[VARname][0]

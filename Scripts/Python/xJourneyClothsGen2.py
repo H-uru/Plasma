@@ -137,9 +137,7 @@ class xJourneyClothsGen2(ptModifier):
         spTitle = spawnPoint.getTitle()
         spName = spawnPoint.getName()
 
-        PtDebugPrint(
-            "spawned into", spName, ", this JC handles", soSpawnpoint.value.getName()
-        )
+        PtDebugPrint("spawned into", spName, ", this JC handles", soSpawnpoint.value.getName())
         if spTitle.endswith("SavePoint") and spName == soSpawnpoint.value.getName():
             PtDebugPrint("restoring camera stack for save point", spTitle, spName)
 
@@ -170,9 +168,7 @@ class xJourneyClothsGen2(ptModifier):
 
         if id == Activator.id:
             if ClothInUse:
-                PtDebugPrint(
-                    "Journey Cloth %s has not yet reset." % (ClothLetter.value)
-                )
+                PtDebugPrint("Journey Cloth %s has not yet reset." % (ClothLetter.value))
                 return
             ClothInUse = 1
             Activator.disable()
@@ -226,9 +222,7 @@ class xJourneyClothsGen2(ptModifier):
                         if savepoint is not None:
                             agelink.removeSpawnPoint(savepoint.getName())
 
-                        savepoint = ptSpawnPointInfo(
-                            "JCSavePoint", soSpawnpoint.value.getName()
-                        )
+                        savepoint = ptSpawnPointInfo("JCSavePoint", soSpawnpoint.value.getName())
                         savepoint.setCameraStack(camstack)
 
                         agelink.addSpawnPoint(savepoint)
@@ -378,9 +372,7 @@ class xJourneyClothsGen2(ptModifier):
 
             entry = vault.findChronicleEntry("JourneyClothProgress")
             if entry is None:  # is this the player's first Journey Cloth?
-                PtDebugPrint(
-                    "No JourneyClothProgress chronicle entry found, I'll add it."
-                )
+                PtDebugPrint("No JourneyClothProgress chronicle entry found, I'll add it.")
                 PtDebugPrint("You're going to have to press the button again.")
                 vault.addChronicleEntry("JourneyClothProgress", 0, "")
 
@@ -388,9 +380,7 @@ class xJourneyClothsGen2(ptModifier):
                 currentAgeChron = self.GetCurrentAgeChronicle(entry)
 
                 if currentAgeChron is None:
-                    PtDebugPrint(
-                        "You haven't found a JC in this age before, adding it now"
-                    )
+                    PtDebugPrint("You haven't found a JC in this age before, adding it now")
 
                     currentAgeChron = self.AddNodeWithCurrentValue(entry)
                     FoundJCs = ClothLetter.value
@@ -405,9 +395,7 @@ class xJourneyClothsGen2(ptModifier):
                         PtDebugPrint("This is a new cloth to you")
 
                         FoundJCs = FoundJCs + ClothLetter.value
-                        PtDebugPrint(
-                            "trying to update JourneyClothProgress to ", FoundJCs
-                        )
+                        PtDebugPrint("trying to update JourneyClothProgress to ", FoundJCs)
 
                         currentAgeChron.chronicleSetValue("%s" % (FoundJCs))
                         currentAgeChron.save()

@@ -118,18 +118,14 @@ class ahnySaveCloth(ptModifier):
                 else:
                     offset = str(ageSDL["ahnyCurrentOffset"][0])
                     PtDebugPrint(
-                        "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s"
-                        % (sphere, offset)
+                        "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
                     )
                     whereAmI = (int(sphere) - int(offset)) % 4
                     if whereAmI == 0:
                         whereAmI = 4
             else:
                 whereAmI = sphere
-            PtDebugPrint(
-                "ahnySaveCloth.OnServerInitComplete(): I am age owner in %d"
-                % (whereAmI)
-            )
+            PtDebugPrint("ahnySaveCloth.OnServerInitComplete(): I am age owner in %d" % (whereAmI))
 
         # SaveCloth SDL stuff, for use with POTS symbols
         sdlSC = "ahnyGotSaveCloth" + clothID.value
@@ -140,10 +136,7 @@ class ahnySaveCloth(ptModifier):
             ageSDL.setNotify(self.key, sdlSC, 0.0)
             gotSC = ageSDL[sdlSC][0]
             PtDebugPrint(
-                "ahnySaveCloth.OnServerInitComplete():\t found sdl: ",
-                sdlSC,
-                ", which = ",
-                gotSC,
+                "ahnySaveCloth.OnServerInitComplete():\t found sdl: ", sdlSC, ", which = ", gotSC,
             )
         except:
             PtDebugPrint("ERROR.  Couldn't find sdl: ", sdlSC, ", defaulting to 0")
@@ -233,9 +226,7 @@ class ahnySaveCloth(ptModifier):
                                         ageSDL[sdlSC] = (1,)
                                     return
 
-                PtDebugPrint(
-                    "ahnySaveCloth.OnNotify(): ERROR: couldn't find chron node"
-                )
+                PtDebugPrint("ahnySaveCloth.OnNotify(): ERROR: couldn't find chron node")
 
             else:
                 PtDebugPrint("I'm not the age owner, so I don't do anything.")
@@ -287,6 +278,4 @@ class ahnySaveCloth(ptModifier):
             """
 
         else:
-            PtDebugPrint(
-                "ERROR: ahnySaveCloth.OnNotify: Error trying to access the Vault."
-            )
+            PtDebugPrint("ERROR: ahnySaveCloth.OnNotify: Error trying to access the Vault.")

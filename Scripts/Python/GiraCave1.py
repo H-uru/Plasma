@@ -70,9 +70,7 @@ class GiraCave1(ptResponder):
             self.ageSDL.setFlags(sdlSolved.value, 1, 1)
             self.ageSDL.sendToClients(sdlSolved.value)
         else:
-            PtDebugPrint(
-                "GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file"
-            )
+            PtDebugPrint("GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file")
 
     def OnNotify(self, state, id, events):
 

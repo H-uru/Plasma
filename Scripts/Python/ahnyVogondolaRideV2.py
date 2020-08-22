@@ -53,14 +53,7 @@ from PlasmaTypes import *
 GroupSelector = ptAttribDropDownList(
     1,
     "Group Selector",
-    (
-        "Hub",
-        "Eng Hut",
-        "Vogondola",
-        "Vogondola Throttle",
-        "Vogondola Reverse",
-        "Call buttons",
-    ),
+    ("Hub", "Eng Hut", "Vogondola", "Vogondola Throttle", "Vogondola Reverse", "Call buttons",),
 )
 
 actHubChairClick = ptAttribActivator(2, "Hub chair clickable")
@@ -130,15 +123,7 @@ respEngHutCallbutton = ptAttribNamedResponder(44, "Eng hut call button resp")
 respSounds = ptAttribResponder(
     45,
     "Sound responder",
-    [
-        "hubtubeout",
-        "hubtubein",
-        "sailtohub",
-        "sailtohut",
-        "huttubeout",
-        "huttubein",
-        "stop",
-    ],
+    ["hubtubeout", "hubtubein", "sailtohub", "sailtohut", "huttubeout", "huttubein", "stop",],
 )
 
 actStopVogSoundForward = ptAttribActivator(46, "Vog snd stop forward act")
@@ -273,18 +258,12 @@ class InHubBrain:
 
         elif id == behHubChairClimb.id:
             for event in events:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     respHubChairLower.run(self.parent.key, events=events, state="lower")
                     PtDebugPrint(self.name + ": finished smart-seek")
 
                 elif (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
+                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
                 ):
                     theAvatar = PtGetLocalAvatar()
                     theAvatar.avatar.enterSubWorld(soVogSubworld.value)
@@ -327,9 +306,7 @@ class InHubBrain:
             respVogRideStart.run(self.parent.key)
 
         elif id == respVogRideStart.id:
-            PtDebugPrint(
-                "running respSounds: state - hubtubeout loc - hub brain respvogridestart"
-            )
+            PtDebugPrint("running respSounds: state - hubtubeout loc - hub brain respvogridestart")
             respSounds.run(self.parent.key, state="hubtubeout")
 
         elif id == actTubeEndFromHub.id:
@@ -348,9 +325,7 @@ class InHubBrain:
 
             self.parent.currentBrain = None
             PtEnableMovementKeys()
-            PtDebugPrint(
-                "ejecting finished in vog at hub...setting current brain to none"
-            )
+            PtDebugPrint("ejecting finished in vog at hub...setting current brain to none")
 
 
 class HubSailTubeTransitionBrain:
@@ -474,15 +449,11 @@ class SailingBrain:
             # respSounds.run(self.parent.key, state = "sailtohub")
 
         elif id == respVogRideStart.id:
-            PtDebugPrint(
-                "running respSounds: state - sailtohut loc - sail brain vogridestart"
-            )
+            PtDebugPrint("running respSounds: state - sailtohut loc - sail brain vogridestart")
             respSounds.run(self.parent.key, state="sailtohut")
 
         elif id == respVogRideStartRev.id:
-            PtDebugPrint(
-                "running respSounds: state - sailtohub loc - sail brain vogridestartrev"
-            )
+            PtDebugPrint("running respSounds: state - sailtohub loc - sail brain vogridestartrev")
             respSounds.run(self.parent.key, state="sailtohub")
 
         elif id == actSailEndToEngHut.id and self.parent.direction == 1:
@@ -549,9 +520,7 @@ class EngHutSailTubeTransitionBrain:
             respVogRideStart.run(self.parent.key)
 
         elif id == respVogRideStart.id:
-            PtDebugPrint(
-                "running respSounds: state - huttubein loc - hut transition vogridestart"
-            )
+            PtDebugPrint("running respSounds: state - huttubein loc - hut transition vogridestart")
             respSounds.run(self.parent.key, state="huttubein")
 
         elif id == actEngHutRideEnd.id:
@@ -589,20 +558,12 @@ class InEngHutBrain:
 
         elif id == behEngHutChairClimb.id:
             for event in events:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
-                    respEngHutChairLower.run(
-                        self.parent.key, events=events, state="lower"
-                    )
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
+                    respEngHutChairLower.run(self.parent.key, events=events, state="lower")
                     PtDebugPrint(self.name + ": finished smart-seek")
 
                 elif (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
+                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
                 ):
                     theAvatar = PtGetLocalAvatar()
                     theAvatar.avatar.enterSubWorld(soVogSubworld.value)
@@ -648,9 +609,7 @@ class InEngHutBrain:
             # respSounds.run(self.parent.key, state = "huttubeout")
 
         elif id == respVogRideStartRev.id:
-            PtDebugPrint(
-                "running respSounds: huttubeout - stop loc - hut brain vogridestartrev"
-            )
+            PtDebugPrint("running respSounds: huttubeout - stop loc - hut brain vogridestartrev")
             respSounds.run(self.parent.key, state="huttubeout")
 
         elif id == actTubeEndFromEngHut.id:
@@ -669,9 +628,7 @@ class InEngHutBrain:
             self.parent.currentBrain = None
             PtEnableMovementKeys()
             # theAvatar.draw.enable()
-            PtDebugPrint(
-                "ejecting finished in vog at eng hut...setting current brain to none"
-            )
+            PtDebugPrint("ejecting finished in vog at eng hut...setting current brain to none")
 
 
 # main class
@@ -873,15 +830,11 @@ class ahnyVogondolaRideV2(ptResponder):
             PtDebugPrint("Hut Chair came up, Hub call enabled")
             actCallbuttonHub.enable()
 
-        elif (
-            id == actStopVogSoundForward.id or id == actStopVogSoundBackward.id
-        ) and state:
+        elif (id == actStopVogSoundForward.id or id == actStopVogSoundBackward.id) and state:
             # DisableVogControls()
             actStopVogSoundForward.disable()
             actStopVogSoundBackward.disable()
-            PtDebugPrint(
-                "running respSounds: state - stop loc - anim event det", id, state
-            )
+            PtDebugPrint("running respSounds: state - stop loc - anim event det", id, state)
             respSounds.run(self.key, state="stop")
 
         else:

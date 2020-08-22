@@ -320,8 +320,7 @@ class ercaOvenScope(ptModifier):
         if VARname == "ercaMayBake":
             boolMayBake = ageSDL["ercaMayBake"][0]
             PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for ercaMayBake now set to %d"
-                % (boolMayBake)
+                "ercaOvenScope:OnSDLNotify:  SDL for ercaMayBake now set to %d" % (boolMayBake)
             )
             if boolMayBake:
                 RespMayBake.run(self.key, state="yes")
@@ -348,8 +347,7 @@ class ercaOvenScope(ptModifier):
             byteTimeOld = byteTime
             byteTime = ageSDL[timeSDL][0]
             PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d"
-                % (timeSDL, byteTime)
+                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (timeSDL, byteTime)
             )
             RespSoundTest.run(self.key)
             if byteTime == 0 and byteTimeOld > 0:
@@ -365,8 +363,7 @@ class ercaOvenScope(ptModifier):
             byteAmountOld = byteAmount
             byteAmount = ageSDL[amountSDL][0]
             PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d"
-                % (amountSDL, byteAmount)
+                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (amountSDL, byteAmount)
             )
             RespSoundTest.run(self.key)
             if byteAmount == 0 and byteAmountOld > 0:
@@ -382,8 +379,7 @@ class ercaOvenScope(ptModifier):
             byteTempOld = byteTemp
             byteTemp = ageSDL[tempSDL][0]
             PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d"
-                % (tempSDL, byteTemp)
+                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (tempSDL, byteTemp)
             )
             RespSoundTest.run(self.key)
             if byteTemp == 0 and byteTempOld > 0:
@@ -435,11 +431,7 @@ class ercaOvenScope(ptModifier):
             self.IStartTelescope()
         # check if its an advance stage notify
         for event in events:
-            if (
-                event[0] == kMultiStageEvent
-                and event[1] == 0
-                and event[2] == kAdvanceNextStage
-            ):
+            if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                 if boolScopeOperator:
                     self.IEngageTelescope()
                     boolScopeOperator = 0
@@ -467,9 +459,7 @@ class ercaOvenScope(ptModifier):
         global setTempWheel
         "Notifications from the vignette"
         PtDebugPrint(
-            "GUI Notify id=%d, event=%d control=" % (id, event),
-            control,
-            level=kDebugDumpLevel,
+            "GUI Notify id=%d, event=%d control=" % (id, event), control, level=kDebugDumpLevel,
         )
         ageSDL = PtGetAgeSDL()
 
@@ -488,22 +478,12 @@ class ercaOvenScope(ptModifier):
                 return
             if control.isEnabled():
                 control.show()
-                PtDebugPrint(
-                    "ercaOvenScope:OnGUINotify:  SDL %s is %d" % (timeSDL, byteTime)
-                )
-                PtDebugPrint(
-                    "ercaOvenScope:OnGUINotify:  SDL %s is %d" % (amountSDL, byteAmount)
-                )
-                PtDebugPrint(
-                    "ercaOvenScope:OnGUINotify:  SDL %s is %d" % (tempSDL, byteTemp)
-                )
+                PtDebugPrint("ercaOvenScope:OnGUINotify:  SDL %s is %d" % (timeSDL, byteTime))
+                PtDebugPrint("ercaOvenScope:OnGUINotify:  SDL %s is %d" % (amountSDL, byteAmount))
+                PtDebugPrint("ercaOvenScope:OnGUINotify:  SDL %s is %d" % (tempSDL, byteTemp))
                 if IsBaking != 0:
-                    PtDebugPrint(
-                        "OnGUINotfiy.ShowHide: will now set timerWheel to: ", byteTime
-                    )
-                    PtDebugPrint(
-                        "OInGUINotfiy.ShowHide: will now set tempWheel to: ", byteTemp
-                    )
+                    PtDebugPrint("OnGUINotfiy.ShowHide: will now set timerWheel to: ", byteTime)
+                    PtDebugPrint("OInGUINotfiy.ShowHide: will now set tempWheel to: ", byteTemp)
                     if setTempWheel:
                         tempWheel.setValue(byteTemp)
                     self.IDoTimerWheel()
@@ -539,18 +519,13 @@ class ercaOvenScope(ptModifier):
             if control is not None:
                 btnID = control.getTagID()
                 if btnID == kBakeBtn:
-                    if (
-                        isinstance(control, ptGUIControlButton)
-                        and control.isButtonDown()
-                    ):
+                    if isinstance(control, ptGUIControlButton) and control.isButtonDown():
                         PtDebugPrint(
-                            "ercaOvenScope:GUINotify Bake button down",
-                            level=kDebugDumpLevel,
+                            "ercaOvenScope:GUINotify Bake button down", level=kDebugDumpLevel,
                         )
                     else:
                         PtDebugPrint(
-                            "ercaOvenScope:GUINotify Bake button up",
-                            level=kDebugDumpLevel,
+                            "ercaOvenScope:GUINotify Bake button up", level=kDebugDumpLevel,
                         )
                         if boolMayBake == 1 and IsBaking == 0:
                             timerPercent = byteTime * 0.01
@@ -697,17 +672,14 @@ class ercaOvenScope(ptModifier):
             self.key, 3, 1
         )  # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint(
-            "ercaOvenScope.IQuitTelescope:\tdelaying clickable reenable",
-            level=kDebugDumpLevel,
+            "ercaOvenScope.IQuitTelescope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )
 
     def OnTimer(self, id):
         global exitScope
         if id == 1:
             Activate.enable()
-            PtDebugPrint(
-                "ercaOvenScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel
-            )
+            PtDebugPrint("ercaOvenScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel)
             PtSendKIMessage(kEnableKIandBB, 0)
         if id == 2:
             if not exitScope:
@@ -749,9 +721,7 @@ class ercaOvenScope(ptModifier):
                         tempPercent = byteTemp * 0.01
                         tempWheel.animateToPercent(tempPercent)
                         PtDebugPrint("animating Temp Wheel, byteTemp = ", byteTemp)
-                        PtDebugPrint(
-                            "animating Temp Wheel, tempPercent = ", tempPercent
-                        )
+                        PtDebugPrint("animating Temp Wheel, tempPercent = ", tempPercent)
                         setTempWheel = 1
             # PtDebugPrint("StartTime = ",StartTime)
             if StartTime < CurTime:

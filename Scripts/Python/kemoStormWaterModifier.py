@@ -132,26 +132,15 @@ class kemoStormWaterModifier(ptModifier):
                     if ifisinstance(p, ptColor):
                         PtDebugPrint(
                             "\tstartval = "
-                            + str(
-                                (
-                                    startval.getRed(),
-                                    startval.getGreen(),
-                                    startval.getBlue(),
-                                )
-                            )
+                            + str((startval.getRed(), startval.getGreen(), startval.getBlue(),))
                         )
-                        PtDebugPrint(
-                            "\tsetting to "
-                            + str((p.getRed(), p.getGreen(), p.getBlue()))
-                        )
+                        PtDebugPrint("\tsetting to " + str((p.getRed(), p.getGreen(), p.getBlue())))
                     elif isinstance(p, (ptPoint3, ptVector3)):
                         PtDebugPrint(
                             "\tstartval = "
                             + str((startval.getX(), startval.getY(), startval.getZ()))
                         )
-                        PtDebugPrint(
-                            "\tsetting to " + str((p.getX(), p.getY(), p.getZ()))
-                        )
+                        PtDebugPrint("\tsetting to " + str((p.getX(), p.getY(), p.getZ())))
                     else:
                         PtDebugPrint("\tstartval = " + str(startval))
                         PtDebugPrint("\tsetting to " + str(p))
@@ -163,14 +152,11 @@ class kemoStormWaterModifier(ptModifier):
                     if ifisinstance(p, ptColor):
                         PtDebugPrint(
                             "\tendval = "
-                            + str(
-                                (endval.getRed(), endval.getGreen(), endval.getBlue())
-                            )
+                            + str((endval.getRed(), endval.getGreen(), endval.getBlue()))
                         )
                     elif isinstance(p, (ptPoint3, ptVector3)):
                         PtDebugPrint(
-                            "\tendval = "
-                            + str((endval.getX(), endval.getY(), endval.getZ()))
+                            "\tendval = " + str((endval.getX(), endval.getY(), endval.getZ()))
                         )
                     else:
                         PtDebugPrint("\tendval = " + str(endval))

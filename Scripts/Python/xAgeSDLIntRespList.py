@@ -112,10 +112,7 @@ class xAgeSDLIntRespList(ptResponder):
                     )
                     # respList.run(self.key,avatar=None,objectName=match.group(),fastforward=boolStartFF.value)
                     respList.run(
-                        self.key,
-                        avatar=None,
-                        objectName=respName,
-                        fastforward=boolStartFF.value,
+                        self.key, avatar=None, objectName=respName, fastforward=boolStartFF.value,
                     )
                     break
 
@@ -135,15 +132,13 @@ class xAgeSDLIntRespList(ptResponder):
             objAvatar = None
             fastforward = 1
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntRespList.OnSDLNotify():\tnotification from PlayerID: %d"
-            % (PlayerID)
+            "DEBUG: xAgeSDLIntRespList.OnSDLNotify():\tnotification from PlayerID: %d" % (PlayerID)
         )
 
         SDLvalue = ageSDL[stringSDLVarName.value][0]
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntRespList.OnSDLNotify received: %s = %d"
-            % (VARname, SDLvalue)
+            "DEBUG: xAgeSDLIntRespList.OnSDLNotify received: %s = %d" % (VARname, SDLvalue)
         )
 
         # regexp = re.compile(".*_%s" % (stringFormat.value % SDLvalue))
@@ -159,9 +154,6 @@ class xAgeSDLIntRespList(ptResponder):
                     )
                     # respList.run(self.key,avatar=objAvatar,objectName=match.group(),fastforward=fastforward)
                     respList.run(
-                        self.key,
-                        avatar=objAvatar,
-                        objectName=respName,
-                        fastforward=fastforward,
+                        self.key, avatar=objAvatar, objectName=respName, fastforward=fastforward,
                     )
                     break

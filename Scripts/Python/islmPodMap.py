@@ -124,8 +124,7 @@ class islmPodMap(ptResponder):
     def OnControlKeyEvent(self, controlKey, activeFlag):
         "Control key events... anything we're interested in?"
         PtDebugPrint(
-            "Got controlKey event %d and its activeFlage is %d"
-            % (controlKey, activeFlag),
+            "Got controlKey event %d and its activeFlage is %d" % (controlKey, activeFlag),
             level=kDebugDumpLevel,
         )
         if controlKey == PlasmaControlKeys.kKeyExitMode:

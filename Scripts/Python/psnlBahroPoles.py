@@ -121,9 +121,7 @@ respFissureStage2 = ptAttribResponder(30, "Fissure stage 2")
 respFissureStage3 = ptAttribResponder(31, "Fissure stage 3")
 respFissureStage4 = ptAttribResponder(32, "Fissure stage 4")
 
-respFissureLinkOut = ptAttribResponder(
-    34, "Fissure link out resp", ["cleft", "personal"]
-)
+respFissureLinkOut = ptAttribResponder(34, "Fissure link out resp", ["cleft", "personal"])
 rgnFissureLink = ptAttribActivator(35, "Fissure link region")
 
 respTeledahnLinkOut = ptAttribResponder(36, "Teledahn link out", netForce=1)
@@ -146,9 +144,7 @@ rgnFissureCam = ptAttribActivator(47, "Fissure cam region")
 
 actCleftTotem = ptAttribActivator(48, "clk: Cleft totem")
 respTouchCleftTotem = ptAttribResponder(49, "resp: touch Cleft totem", netForce=1)
-respChangeCleftTotem = ptAttribResponder(
-    50, "resp: change Cleft totem", ["open", "close"]
-)
+respChangeCleftTotem = ptAttribResponder(50, "resp: change Cleft totem", ["open", "close"])
 sdlCleftTotem = ptAttribString(51, "sdl: Cleft totem")
 respCleftHandGlow = ptAttribResponder(
     52, "resp: Cleft hand glow", ["1", "2", "3", "4", "5", "6", "7"], netForce=1
@@ -273,9 +269,7 @@ class psnlBahroPoles(ptModifier):
         global boolCleftSolved
         global HidingPoles
 
-        PtDebugPrint(
-            "DEBUG: psnlBahroPoles.OnServerInitComplete():\tEverything ok so far"
-        )
+        PtDebugPrint("DEBUG: psnlBahroPoles.OnServerInitComplete():\tEverything ok so far")
 
         ageVault = ptAgeVault()
         if ageVault is not None:  # is the Vault online?
@@ -317,8 +311,7 @@ class psnlBahroPoles(ptModifier):
         try:
             boolCleftSolved = ageSDL["psnlCleftSolved"][0]
             PtDebugPrint(
-                "psnlBahroPoles.OnServerInitComplete(): boolCleftSolved = ",
-                boolCleftSolved,
+                "psnlBahroPoles.OnServerInitComplete(): boolCleftSolved = ", boolCleftSolved,
             )
         except:
             PtDebugPrint(
@@ -554,9 +547,7 @@ class psnlBahroPoles(ptModifier):
             elif sdlVal != 4 and sdlVal != 5 and sdlVal > 1:
                 if sdlVal != 7 and sdlVal != 8 and sdlVal > 2:
                     if not HidingPoles:
-                        self.Poles[age]["Smoker"].value.particle.setParticlesPerSecond(
-                            6
-                        )
+                        self.Poles[age]["Smoker"].value.particle.setParticlesPerSecond(6)
                 else:
                     self.Poles[age]["Smoker"].value.particle.setParticlesPerSecond(0)
                 if sdlVal == 3:
@@ -803,9 +794,7 @@ class psnlBahroPoles(ptModifier):
         if id < 0:
             id *= -1
             if not HidingPoles:
-                self.Poles[self.PoleIDMap[id]][
-                    "Smoker"
-                ].value.particle.setParticlesPerSecond(6)
+                self.Poles[self.PoleIDMap[id]]["Smoker"].value.particle.setParticlesPerSecond(6)
         elif id >= 0 and id < 10:
             self.Poles[self.PoleIDMap[id]]["HandClick"].enable()
         else:
@@ -853,13 +842,9 @@ class psnlBahroPoles(ptModifier):
         )
 
         if HidingPoles:
-            self.Poles[age]["PoleResponder"].run(
-                self.key, state="0", fastforward=fforward
-            )
+            self.Poles[age]["PoleResponder"].run(self.key, state="0", fastforward=fforward)
         else:
-            self.Poles[age]["PoleResponder"].run(
-                self.key, state=str(state), fastforward=fforward
-            )
+            self.Poles[age]["PoleResponder"].run(self.key, state=str(state), fastforward=fforward)
 
     def SetCurrentState(self, age, state):
         PtDebugPrint("psnlBahroPoles.SetCurrentState()")
@@ -1018,8 +1003,7 @@ class psnlBahroPoles(ptModifier):
                 state8 = state8 + 1
 
         PtDebugPrint(
-            "DEBUG: psnlBahroPoles.ShowFissure():\tstate7 = %d, state8 = %d"
-            % (state7, state8)
+            "DEBUG: psnlBahroPoles.ShowFissure():\tstate7 = %d, state8 = %d" % (state7, state8)
         )
 
         if init:
@@ -1133,9 +1117,7 @@ class psnlBahroPoles(ptModifier):
                     if spawnPoint.getName().lower() == "linkinpointdefault":
                         PtDebugPrint("book is there for age %s" % age)
                         return 0
-        PtDebugPrint(
-            "oops, book somehow is gone but state is 2 or larger for age %s" % age
-        )
+        PtDebugPrint("oops, book somehow is gone but state is 2 or larger for age %s" % age)
         return 1
 
     def ResetSheath(self, age, fforward=1):
@@ -1145,9 +1127,7 @@ class psnlBahroPoles(ptModifier):
 
         if self.PoleCurrentState[age] == "":
             self.PoleCurrentState[age] = "Reset"
-            self.Poles[age]["HandGlow"].run(
-                self.key, state="ResetSheath", fastforward=fforward
-            )
+            self.Poles[age]["HandGlow"].run(self.key, state="ResetSheath", fastforward=fforward)
         else:
             self.PoleFinalState[age] = "Reset"
 
@@ -1180,9 +1160,7 @@ class psnlBahroPoles(ptModifier):
 
             if fforward:
                 if self.Poles[age]["State"] in (3, 4):
-                    self.Poles[age]["PoleResponder"].run(
-                        self.key, state="5", fastforward=fforward
-                    )
+                    self.Poles[age]["PoleResponder"].run(self.key, state="5", fastforward=fforward)
                     self.Poles[age]["HandGlow"].run(
                         self.key, state="DropSheath", fastforward=fforward
                     )
@@ -1193,13 +1171,9 @@ class psnlBahroPoles(ptModifier):
             else:
                 self.PoleCurrentState[age] = "Open"
                 if self.Poles[age]["State"] in (3, 4):
-                    self.Poles[age]["PoleResponder"].run(
-                        self.key, state="5", fastforward=0
-                    )
+                    self.Poles[age]["PoleResponder"].run(self.key, state="5", fastforward=0)
                 else:
-                    self.Poles[age]["HandGlow"].run(
-                        self.key, state="DropSheath", fastforward=0
-                    )
+                    self.Poles[age]["HandGlow"].run(self.key, state="DropSheath", fastforward=0)
         else:
             self.PoleFinalState[age] = "Open"
 
@@ -1224,27 +1198,19 @@ class psnlBahroPoles(ptModifier):
         ):
             if self.Poles["Teledahn"]["State"] < 6:
                 self.SetCurrentState("Teledahn", 6)
-                PtDebugPrint(
-                    "DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad teledahn state"
-                )
+                PtDebugPrint("DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad teledahn state")
 
             if self.Poles["Garrison"]["State"] < 6:
                 self.SetCurrentState("Garrison", 6)
-                PtDebugPrint(
-                    "DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad garrison state"
-                )
+                PtDebugPrint("DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad garrison state")
 
             if self.Poles["Garden"]["State"] < 6:
                 self.SetCurrentState("Garden", 6)
-                PtDebugPrint(
-                    "DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad garden state"
-                )
+                PtDebugPrint("DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad garden state")
 
             if self.Poles["Kadish"]["State"] < 6:
                 self.SetCurrentState("Kadish", 6)
-                PtDebugPrint(
-                    "DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad kadish state"
-                )
+                PtDebugPrint("DEBUG:psnlBahroPoles.ValidityCheck:  fixed bad kadish state")
         elif freq[4] == 4 or freq[5] == 4:
             sdl = xPsnlVaultSDL(1)
             sdl.BatchSet(
@@ -1398,9 +1364,7 @@ class psnlBahroPoles(ptModifier):
                             pelletSolution = []
                             for sol in chronString:
                                 pelletSolution.append(int(sol))
-                            PtDebugPrint(
-                                "found pellet cave solution: ", chron.getValue()
-                            )
+                            PtDebugPrint("found pellet cave solution: ", chron.getValue())
                             break
                     break
 
@@ -1430,9 +1394,7 @@ class psnlBahroPoles(ptModifier):
             ageDataFolder.addNode(newNode)
 
     def CreatePelletCaveSolution(self):
-        PtDebugPrint(
-            "psnlBahroPoles.CreatePelletCaveSolution():  creating pellet cave solution..."
-        )
+        PtDebugPrint("psnlBahroPoles.CreatePelletCaveSolution():  creating pellet cave solution...")
         bahroSolList = self.GetBahroCaveSolution()
         cleftSolList = [3, 2, 5, 0]
         pelletSolList = [3, 2, 5, 0]

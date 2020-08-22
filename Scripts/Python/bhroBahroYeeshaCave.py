@@ -177,9 +177,7 @@ class bhroBahroYeeshaCave(ptModifier):
         self.IsStarfield = 1
 
     def OnFirstUpdate(self):
-        PtDebugPrint(
-            "DEBUG: bhroBahroYeeshaCave.OnFirstUpdate():\tEverything ok so far"
-        )
+        PtDebugPrint("DEBUG: bhroBahroYeeshaCave.OnFirstUpdate():\tEverything ok so far")
         xRandom.seed()
         xRandom.setmaxseries(1)
 
@@ -258,8 +256,7 @@ class bhroBahroYeeshaCave(ptModifier):
             self.ageFrom = "Garrison"
 
         PtDebugPrint(
-            "DEBUG: bhroBahroYeeshaCave.OnServerInitComplete():\tCame from: %s"
-            % self.ageFrom
+            "DEBUG: bhroBahroYeeshaCave.OnServerInitComplete():\tCame from: %s" % self.ageFrom
         )
 
         # check if a cleft yeesha imager solution has already been created, otherwise create it
@@ -288,17 +285,11 @@ class bhroBahroYeeshaCave(ptModifier):
                     self.IncrementAutoStartLevel()
                 PtDebugPrint("GetAutoStartLevel = ", self.GetAutoStartLevel())
         else:
-            PtDebugPrint(
-                "bhroBahroYeeshaCave.OnServerInitComplete(): useYeeshaSpeech = None"
-            )
+            PtDebugPrint("bhroBahroYeeshaCave.OnServerInitComplete(): useYeeshaSpeech = None")
 
         UseYS = self.UseYeeshaSpeech
-        PtDebugPrint(
-            "bhroBahroYeeshaCave.OnServerInitComplete(): useYeeshaSpeech = ", UseYS
-        )
-        PtDebugPrint(
-            "bhroBahroYeeshaCave.OnServerInitComplete(): autostart = ", autostart
-        )
+        PtDebugPrint("bhroBahroYeeshaCave.OnServerInitComplete(): useYeeshaSpeech = ", UseYS)
+        PtDebugPrint("bhroBahroYeeshaCave.OnServerInitComplete(): autostart = ", autostart)
 
         journeyComplete = 0
         # vault = ptVault()
@@ -465,12 +456,7 @@ class bhroBahroYeeshaCave(ptModifier):
         psnlSDL = xPsnlVaultSDL()
 
         sdllist = psnlSDL.BatchGet(
-            [
-                "TeledahnPoleState",
-                "GardenPoleState",
-                "GarrisonPoleState",
-                "KadishPoleState",
-            ]
+            ["TeledahnPoleState", "GardenPoleState", "GarrisonPoleState", "KadishPoleState",]
         )
         for var in ["Teledahn", "Garrison", "Garden", "Kadish"]:
             self.ageDict[var]["State"] = sdllist[var + "PoleState"]
@@ -575,9 +561,7 @@ class bhroBahroYeeshaCave(ptModifier):
 
     def DisablePole(self, age, fforward=0):
         # PtDebugPrint("Disableing %s pole" % age)
-        self.ageDict[age]["PoleRemove"].run(
-            self.key, state="Remove", fastforward=fforward
-        )
+        self.ageDict[age]["PoleRemove"].run(self.key, state="Remove", fastforward=fforward)
         self.ageDict[age]["PoleCollider"].value.physics.suppress(1)
         if not fforward:
             vault = ptVault()
@@ -594,9 +578,7 @@ class bhroBahroYeeshaCave(ptModifier):
                         self.DoWedge()
 
     def EnablePole(self, age, fforward=0):
-        self.ageDict[age]["PoleRemove"].run(
-            self.key, state="PutBack", fastforward=fforward
-        )
+        self.ageDict[age]["PoleRemove"].run(self.key, state="PutBack", fastforward=fforward)
         self.ageDict[age]["PoleCollider"].value.physics.suppress(0)
 
     def JCClickHandle(self, age):
@@ -680,10 +662,7 @@ class bhroBahroYeeshaCave(ptModifier):
                 self.AgePlaying = ""
                 return
 
-        if (
-            not int(self.GetAgeVariable(age, "YeeshaSymbolTouched"))
-            and not autotriggered
-        ):
+        if not int(self.GetAgeVariable(age, "YeeshaSymbolTouched")) and not autotriggered:
             PtDebugPrint(
                 "DEBUG: bhroBahroYeeshaCave.PostYSOneShot:\tFirst time touching the symbol"
             )
@@ -753,9 +732,7 @@ class bhroBahroYeeshaCave(ptModifier):
                 updateAgeList.append((agevar, (5,)))
             elif sdlval == 3 and age == self.ageFrom:
                 if int(self.GetAgeVariable(self.ageFrom, "YeeshaSpeech")) == 0:
-                    self.SetAgeVariable(
-                        self.ageFrom, "YeeshaSpeech", self.UseYeeshaSpeech
-                    )
+                    self.SetAgeVariable(self.ageFrom, "YeeshaSpeech", self.UseYeeshaSpeech)
 
         if polesInPsnl == 3 and psnlSDL[self.ageFrom + "PoleState"][0] == 3:
             psnlSDL.BatchSet(updateAgeList)
@@ -852,13 +829,10 @@ class bhroBahroYeeshaCave(ptModifier):
             bc.chronicleSetValue(str(val + 1))
             bc.save()
             PtDebugPrint(
-                "bhroBahroYeeshaCave.IncrementAutoStartLevel(): setting BC chron = ",
-                str(val + 1),
+                "bhroBahroYeeshaCave.IncrementAutoStartLevel(): setting BC chron = ", str(val + 1),
             )
         else:
-            PtDebugPrint(
-                "bhroBahroYeeshaCave.IncrementAutoStartLevel(): no BC chron found"
-            )
+            PtDebugPrint("bhroBahroYeeshaCave.IncrementAutoStartLevel(): no BC chron found")
 
     def OnBackdoorMsg(self, target, param):
         if target == "kill":

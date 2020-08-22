@@ -107,11 +107,7 @@ class grsnNexusBookMachine(ptResponder):
         if id == fakeLinkBehavior.id:
             PtDebugPrint("notified of link behavior, yellow book ", yellowLink)
             for event in events:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     PtDebugPrint("started touching book, set warp out timer")
                     PtAtTimeCallback(self.key, 1.0, 0)
                     return

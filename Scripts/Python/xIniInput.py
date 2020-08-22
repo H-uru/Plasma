@@ -87,9 +87,7 @@ def SetControlKey(controlKey, primary="(unmapped),", secondary="(unmapped),"):
             entry.setValue(0, primary)
             entry.setValue(1, secondary)
         else:
-            gIniFile.addEntry(
-                "%s %s %s %s" % (kBindCmd, primary, secondary, controlKey)
-            )
+            gIniFile.addEntry("%s %s %s %s" % (kBindCmd, primary, secondary, controlKey))
 
 
 def GetControlKey(controlKey):

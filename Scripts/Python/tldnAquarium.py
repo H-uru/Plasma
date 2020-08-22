@@ -151,12 +151,7 @@ class tldnAquarium(ptResponder):
                 )
             PtDebugPrint(
                 "tldnAquarium.OnServerInitComplete(): %s = %d, %s = %d"
-                % (
-                    kStringAgeSDLAquariumOpen,
-                    tankOpen,
-                    kStringAgeSDLAquariumLightOn,
-                    tankLightOn,
-                )
+                % (kStringAgeSDLAquariumOpen, tankOpen, kStringAgeSDLAquariumLightOn, tankLightOn,)
             )
 
             # init whatnots
@@ -209,18 +204,12 @@ class tldnAquarium(ptResponder):
         global gFirstPersonOverriden
         global gAllowClick
 
-        PtDebugPrint(
-            "-------------------------------------------------------------------------"
-        )
-        PtDebugPrint(
-            "tldnAquarium: OnNotify - id=%d state=%d events=" % (id, state), events
-        )
+        PtDebugPrint("-------------------------------------------------------------------------")
+        PtDebugPrint("tldnAquarium: OnNotify - id=%d state=%d events=" % (id, state), events)
 
         if id == actBookClick.id:
             # only know about this activator to handle enabling/disabling it
-            PtDebugPrint(
-                "tldnAquarium: actBookClick state=%d events=" % (state), events
-            )
+            PtDebugPrint("tldnAquarium: actBookClick state=%d events=" % (state), events)
 
         elif id == rgnAquarium.id:
             for event in events:
@@ -232,31 +221,23 @@ class tldnAquarium(ptResponder):
                                 ptCamera().undoFirstPerson()
                                 ptCamera().disableFirstPersonOverride()
                                 gFirstPersonOverriden = 1
-                                PtGetLocalAvatar().avatar.registerForBehaviorNotify(
-                                    self.key
-                                )
+                                PtGetLocalAvatar().avatar.registerForBehaviorNotify(self.key)
                             else:
                                 PtDebugPrint("tldnAquarium: exit region")
                                 ptCamera().enableFirstPersonOverride()
-                                PtGetLocalAvatar().avatar.unRegisterForBehaviorNotify(
-                                    self.key
-                                )
+                                PtGetLocalAvatar().avatar.unRegisterForBehaviorNotify(self.key)
                                 gFirstPersonOverriden = 0
                         else:
                             PtDebugPrint("tldnAquarium: region: not local avatar")
                     except NameError:
-                        PtDebugPrint(
-                            "tldnAquarium: no more local avatar to see if in region"
-                        )
+                        PtDebugPrint("tldnAquarium: no more local avatar to see if in region")
 
         elif id == actButton.id:
             for event in events:
                 if event[0] == 2 and event[1] == 1:
                     # true as button pressed
                     if gMouseDown == 1:
-                        PtDebugPrint(
-                            "tldnAquarium: The Tim factor! - two down presses... ignoring"
-                        )
+                        PtDebugPrint("tldnAquarium: The Tim factor! - two down presses... ignoring")
                     elif gAllowClick:
                         PtDebugPrint("tldnAquarium: Button pressed")
                         gAllowClick = 0
@@ -292,9 +273,7 @@ class tldnAquarium(ptResponder):
                         Behavior.gotoStage(gLocalAvatar, 1)
 
         else:
-            PtDebugPrint(
-                "tldnAquarium: something else triggered a callback (id=%d)" % (id)
-            )
+            PtDebugPrint("tldnAquarium: something else triggered a callback (id=%d)" % (id))
 
     ###########################
     def IButtonPress(self):

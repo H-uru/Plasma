@@ -178,16 +178,12 @@ class xRandomBoolChange(ptModifier):
                     if event[1]:  # someone entered
                         PtDebugPrint("Someone entered the bahro stone region")
                         if not currentlyOccupied:
-                            PtDebugPrint(
-                                "Region var is set to unoccupied so setting to occupied"
-                            )
+                            PtDebugPrint("Region var is set to unoccupied so setting to occupied")
                             sdl[strProximityVar.value] = (1,)
                     else:  # everyone exited
                         PtDebugPrint("No one is in the bahro stone region")
                         if currentlyOccupied:
-                            PtDebugPrint(
-                                "Region var is set to occupied so setting to unoccupied"
-                            )
+                            PtDebugPrint("Region var is set to occupied so setting to unoccupied")
                             sdl[strProximityVar.value] = (0,)
                     break
 
@@ -195,9 +191,7 @@ class xRandomBoolChange(ptModifier):
         if VARname == strEnabledVar.value:
             if soOwned.sceneobject.isLocallyOwned():
                 sdl = PtGetAgeSDL()
-                PtDebugPrint(
-                    "Enabled var changed to: " + str(sdl[strEnabledVar.value][0])
-                )
+                PtDebugPrint("Enabled var changed to: " + str(sdl[strEnabledVar.value][0]))
                 if not sdl[strEnabledVar.value][0]:
                     PtDebugPrint("Enabled var is no longer enabled")
                     if boolEnable.value:

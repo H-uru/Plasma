@@ -95,9 +95,7 @@ class xAgeSDLBoolSet(ptResponder):
 
         # error check
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolSet.OnNotify():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolSet.OnNotify():\tERROR: missing SDL var name")
             return
 
         ageSDL = PtGetAgeSDL()

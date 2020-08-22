@@ -94,17 +94,13 @@ class ercaCallCar(ptResponder):
                 ageSDL.setFlags(SDLCarPos.value, 1, 1)
                 ageSDL.sendToClients(SDLCarPos.value)
             else:
-                PtDebugPrint(
-                    "ERROR: ercaCallCar.OnFirstUpdate():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("ERROR: ercaCallCar.OnFirstUpdate():\tERROR: missing SDL var name")
             if SDLCarLev.value:
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setFlags(SDLCarLev.value, 1, 1)
                 ageSDL.sendToClients(SDLCarLev.value)
             else:
-                PtDebugPrint(
-                    "ERROR: ercaCallCar.OnFirstUpdate():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("ERROR: ercaCallCar.OnFirstUpdate():\tERROR: missing SDL var name")
                 pass
 
             ageSDL = PtGetAgeSDL()
@@ -113,9 +109,7 @@ class ercaCallCar(ptResponder):
             try:
                 byteCarPos = ageSDL[SDLCarPos.value][0]
             except:
-                PtDebugPrint(
-                    "ERROR: ercaCallCar.OnServerInitComplete():\tERROR reading age SDL"
-                )
+                PtDebugPrint("ERROR: ercaCallCar.OnServerInitComplete():\tERROR reading age SDL")
                 pass
             PtDebugPrint(
                 "DEBUG: ercaCallCar.OnServerInitComplete():\t%s = %d"
@@ -124,9 +118,7 @@ class ercaCallCar(ptResponder):
             try:
                 boolCarLev = ageSDL[SDLCarLev.value][0]
             except:
-                PtDebugPrint(
-                    "ERROR: ercaCallCar.OnServerInitComplete():\tERROR reading age SDL"
-                )
+                PtDebugPrint("ERROR: ercaCallCar.OnServerInitComplete():\tERROR reading age SDL")
                 pass
             PtDebugPrint(
                 "DEBUG: ercaCallCar.OnServerInitComplete():\t%s = %d"

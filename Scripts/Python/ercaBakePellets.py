@@ -242,29 +242,19 @@ class ercaBakePellets(ptResponder):
                     Oven4On = 0
         if VARname == SDLPellet1.value:
             Pellet1 = ageSDL[SDLPellet1.value][0]
-            PtDebugPrint(
-                "ercaBakePellets:OnSDLNotify:  SDL for Pellet1 is now %d" % (Pellet1)
-            )
+            PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for Pellet1 is now %d" % (Pellet1))
         if VARname == SDLPellet2.value:
             Pellet2 = ageSDL[SDLPellet2.value][0]
-            PtDebugPrint(
-                "ercaBakePellets:OnSDLNotify:  SDL for Pellet2 is now %d" % (Pellet2)
-            )
+            PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for Pellet2 is now %d" % (Pellet2))
         if VARname == SDLPellet3.value:
             Pellet3 = ageSDL[SDLPellet3.value][0]
-            PtDebugPrint(
-                "ercaBakePellets:OnSDLNotify:  SDL for Pellet3 is now %d" % (Pellet3)
-            )
+            PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for Pellet3 is now %d" % (Pellet3))
         if VARname == SDLPellet4.value:
             Pellet4 = ageSDL[SDLPellet4.value][0]
-            PtDebugPrint(
-                "ercaBakePellets:OnSDLNotify:  SDL for Pellet4 is now %d" % (Pellet4)
-            )
+            PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for Pellet4 is now %d" % (Pellet4))
         if VARname == SDLPellet5.value:
             Pellet5 = ageSDL[SDLPellet5.value][0]
-            PtDebugPrint(
-                "ercaBakePellets:OnSDLNotify:  SDL for Pellet5 is now %d" % (Pellet5)
-            )
+            PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for Pellet5 is now %d" % (Pellet5))
 
     def OnNotify(self, state, id, events):
         global byteFinishTime
@@ -538,14 +528,7 @@ class ercaBakePellets(ptResponder):
             temp4_val = temp4_val - (temp4_val - temp4_opt)
 
         # Formulas
-        z1 = (
-            0.15
-            * amt1_val
-            * 0.75
-            * time1_val
-            * sin(time1_val)
-            * sin(time1_val * (temp1_val))
-        )
+        z1 = 0.15 * amt1_val * 0.75 * time1_val * sin(time1_val) * sin(time1_val * (temp1_val))
         z2 = (
             0.081
             * amt2_val

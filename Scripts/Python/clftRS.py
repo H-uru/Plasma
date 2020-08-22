@@ -96,9 +96,7 @@ class clftRS(ptModifier):
     def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
         PtDebugPrint(
-            "GUI Notify id=%d, event=%d control=" % (id, event),
-            control,
-            level=kDebugDumpLevel,
+            "GUI Notify id=%d, event=%d control=" % (id, event), control, level=kDebugDumpLevel,
         )
         if event == kDialogLoaded:
             # if the dialog was just loaded then show it
@@ -161,8 +159,7 @@ class clftRS(ptModifier):
             self.key, 3, 1
         )  # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint(
-            "xTelescope.IQuitTelescope:\tdelaying clickable reenable",
-            level=kDebugDumpLevel,
+            "xTelescope.IQuitTelescope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )
 
     def OnTimer(self, id):

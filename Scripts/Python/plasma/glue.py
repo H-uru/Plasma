@@ -63,9 +63,7 @@ def glue_getClass():
                 glue_cl = cl
             else:
                 if glue_verbose:
-                    PtDebugPrint(
-                        "Class %s is not derived from modifier" % (cl.__name__)
-                    )
+                    PtDebugPrint("Class %s is not derived from modifier" % (cl.__name__))
         except:
             if glue_verbose:
                 try:
@@ -177,9 +175,7 @@ def glue_getParam(number):
             if number >= 0 and number < len(glue_paramKeys):
                 return pd[glue_paramKeys[number]].getdef()
             else:
-                PtDebugPrint(
-                    "glue_getParam: Error! %d out of range of attribute list" % (number)
-                )
+                PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
         else:
             pl = list(pd.values())
             if number >= 0 and number < len(pl):
@@ -187,8 +183,7 @@ def glue_getParam(number):
             else:
                 if glue_verbose:
                     PtDebugPrint(
-                        "glue_getParam: Error! %d out of range of attribute list"
-                        % (number)
+                        "glue_getParam: Error! %d out of range of attribute list" % (number)
                     )
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
@@ -206,17 +201,9 @@ def glue_setParam(id, value):
                 if isinstance(pd[id], ptAttributeList):
                     try:
                         if not isinstance(pd[id].value, list):
-                            pd[
-                                id
-                            ].value = (
-                                []
-                            )  # make sure that the value starts as an empty list
+                            pd[id].value = []  # make sure that the value starts as an empty list
                     except AttributeError:
-                        pd[
-                            id
-                        ].value = (
-                            []
-                        )  # or if value hasn't been defined yet, then do it now
+                        pd[id].value = []  # or if value hasn't been defined yet, then do it now
                     pd[id].value.append(value)  # add in new value to list
                 else:
                     pd[id].value = value
@@ -257,10 +244,7 @@ def glue_getVisInfo(number):
             if number >= 0 and number < len(glue_paramKeys):
                 return pd[glue_paramKeys[number]].getVisInfo()
             else:
-                PtDebugPrint(
-                    "glue_getVisInfo: Error! %d out of range of attribute list"
-                    % (number)
-                )
+                PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
         else:
             pl = list(pd.values())
             if number >= 0 and number < len(pl):
@@ -268,8 +252,7 @@ def glue_getVisInfo(number):
             else:
                 if glue_verbose:
                     PtDebugPrint(
-                        "glue_getVisInfo: Error! %d out of range of attribute list"
-                        % (number)
+                        "glue_getVisInfo: Error! %d out of range of attribute list" % (number)
                     )
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")

@@ -86,14 +86,10 @@ class kemoEmgrPhase0(ptResponder):
         global variable
         global sdlvalue
 
-        PtDebugPrint(
-            "kemoEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname)
-        )
+        PtDebugPrint("kemoEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname))
 
         if VARname in BooleanVARs:
-            PtDebugPrint(
-                "kemoEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
-            )
+            PtDebugPrint("kemoEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
             self.IManageBOOLs(VARname, SDLname)
 
         else:

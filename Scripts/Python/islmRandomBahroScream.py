@@ -91,8 +91,7 @@ class islmRandomBahroScream(ptModifier):
                 chanceval = ageSDL[ScreamChanceVar][0]
                 cur_chance = xRandom.randint(0, 100)
                 PtDebugPrint(
-                    "RandomBahroScream: Chance val - %d, Cur Chance - %d"
-                    % (chanceval, cur_chance)
+                    "RandomBahroScream: Chance val - %d, Cur Chance - %d" % (chanceval, cur_chance)
                 )
                 if cur_chance <= chanceval:
                     # turn on

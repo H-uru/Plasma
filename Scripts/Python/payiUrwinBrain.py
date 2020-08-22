@@ -215,9 +215,7 @@ class payiUrwinBrain(ptResponder):
                 PtDebugPrint("Playing command: %s" % (code))
                 self.ExecCode(code)
 
-        elif (
-            state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]
-        ):
+        elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
             if id == respUrwinSfx.id:
                 PtDebugPrint(
                     "Callback was from Appearance SFX, and I own the age, so start walking"
@@ -225,9 +223,7 @@ class payiUrwinBrain(ptResponder):
                 self.StartToWalk()
 
             else:
-                PtDebugPrint(
-                    "Callback was from responder, and I own the age, so Logic Time"
-                )
+                PtDebugPrint("Callback was from responder, and I own the age, so Logic Time")
                 old = stackList.pop(0)
                 PtDebugPrint("Popping off: %s" % (old))
                 boolBatteryChargedAndOn = ageSDL["payiPodLights"][0]
@@ -249,9 +245,7 @@ class payiUrwinBrain(ptResponder):
                     StepsToTake = StepsToTake - 1
                     if StepsToTake:
                         if random.randint(0, 9):  # 90% chance of continuing walk loop
-                            PtDebugPrint(
-                                "Urwin will take %d more steps..." % (StepsToTake)
-                            )
+                            PtDebugPrint("Urwin will take %d more steps..." % (StepsToTake))
                             if random.randint(0, 2):
                                 PtDebugPrint("Urwin walks one way.")
                                 self.SendNote("respUrwin_Walk_Loop01")
@@ -300,9 +294,7 @@ class payiUrwinBrain(ptResponder):
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff2Walk")
 
-                elif (
-                    id == respUrwin_WalkSniff_ToEat.id or id == respUrwin_Idle_ToEat.id
-                ):
+                elif id == respUrwin_WalkSniff_ToEat.id or id == respUrwin_Idle_ToEat.id:
                     UrwinMasterAnim.animation.stop()
                     pct = random.randint(0, 2)
                     if pct == 2:
@@ -492,9 +484,7 @@ class payiUrwinBrain(ptResponder):
 
         ageSDL["UrwinLastUpdated"] = (PtGetDniTime(),)
 
-        beginningOfToday = PtGetDniTime() - int(
-            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
-        )
+        beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
         endOfToday = int(kDayLengthInSeconds / 2) + beginningOfToday
         # PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
 
@@ -508,14 +498,10 @@ class payiUrwinBrain(ptResponder):
         spawnTimes = [firstTime]
 
         while isinstance(spawnTimes[-1], int):
-            randnum = random.randint(
-                kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns
-            )
+            randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
-                PtDebugPrint(
-                    "payiUrwinBrain: Generated a valid spawn time: %d" % (newTime)
-                )
+                PtDebugPrint("payiUrwinBrain: Generated a valid spawn time: %d" % (newTime))
                 spawnTimes.append(newTime)
             else:
                 PtDebugPrint(
@@ -549,8 +535,7 @@ class payiUrwinBrain(ptResponder):
                     )
                     if timeTillSpawn > 0:
                         PtDebugPrint(
-                            "payiUrwinBrain: Setting timer for %d seconds"
-                            % (timeTillSpawn)
+                            "payiUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn)
                         )
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
@@ -559,10 +544,7 @@ class payiUrwinBrain(ptResponder):
                 PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
             )
             timeLeftToday += 1  # because we want it to go off right AFTER the day flips
-            PtDebugPrint(
-                "payiUrwinBrain: Setting EndOfDay timer for %d seconds"
-                % (timeLeftToday)
-            )
+            PtDebugPrint("payiUrwinBrain: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
             PtAtTimeCallback(self.key, timeLeftToday, 2)
         else:
             PtDebugPrint("payiUrwinBrain: Timer array was empty!")
@@ -620,8 +602,7 @@ class payiUrwinBrain(ptResponder):
                         respUrwin_Idle_ToWalk.run(self.key)
                     else:
                         PtDebugPrint(
-                            "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'."
-                            % (ecAction)
+                            "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
                         )
                         stackList.pop(0)
                 elif ecState == "Walk":
@@ -635,8 +616,7 @@ class payiUrwinBrain(ptResponder):
                         respUrwin_Walk_ToIdle.run(self.key)
                     else:
                         PtDebugPrint(
-                            "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'."
-                            % (ecAction)
+                            "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
                         )
                         stackList.pop(0)
                 elif ecState == "WalkSniff":
@@ -659,23 +639,17 @@ class payiUrwinBrain(ptResponder):
                         respUrwin_Eat_Swallow.run(self.key)
                     else:
                         PtDebugPrint(
-                            "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'."
-                            % (ecAction)
+                            "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
                         )
                         stackList.pop(0)
                 else:
                     PtDebugPrint(
-                        "payiUrwinBrain.ExecCode(): ERROR! Invalid ecState '%s'."
-                        % (ecState)
+                        "payiUrwinBrain.ExecCode(): ERROR! Invalid ecState '%s'." % (ecState)
                     )
                     stackList.pop(0)
             else:
-                PtDebugPrint(
-                    "payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
-                )
+                PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code))
                 stackList.pop(0)
         except:
-            PtDebugPrint(
-                "payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
-            )
+            PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code))
             stackList.pop(0)

@@ -69,48 +69,24 @@ symbolStates = [
 ]
 
 SDLGotPellet = ptAttribString(1, "SDL: got pellet")
-RespDropPellet = ptAttribResponder(
-    2, "resp: got pellet", ["upper", "lower"], netForce=1
-)
+RespDropPellet = ptAttribResponder(2, "resp: got pellet", ["upper", "lower"], netForce=1)
 RespFadeInPellet = ptAttribResponder(3, "resp: fade-in pellet", netForce=1)
 RespPlayDud = ptAttribResponder(4, "resp: pellet dud", netForce=1)
-RespPlayBubbles = ptAttribResponder(
-    5, "resp: pellet bubbles", ["Hi", "Med", "Low"], netForce=1
-)
-RespPlaySteam = ptAttribResponder(
-    6, "resp: pellet steam", ["Hi", "Med", "Low"], netForce=1
-)
+RespPlayBubbles = ptAttribResponder(5, "resp: pellet bubbles", ["Hi", "Med", "Low"], netForce=1)
+RespPlaySteam = ptAttribResponder(6, "resp: pellet steam", ["Hi", "Med", "Low"], netForce=1)
 RespPlayOrangeGlow = ptAttribResponder(
     7, "resp: pellet orange glow", ["Hi", "Med", "Low"], netForce=1
 )
-RespPlayBoom = ptAttribResponder(
-    8, "resp: pellet explosion", ["Hi", "Med", "Low"], netForce=1
-)
+RespPlayBoom = ptAttribResponder(8, "resp: pellet explosion", ["Hi", "Med", "Low"], netForce=1)
 RespPlayWhiteGlow = ptAttribResponder(9, "resp: pellet white glow", netForce=1)
-RespSymbolOnN = ptAttribResponder(
-    10, "resp: N symbol on", statelist=symbolStates, netForce=1
-)
-RespSymbolOffN = ptAttribResponder(
-    11, "resp: N symbol off", statelist=symbolStates, netForce=1
-)
-RespSymbolOnE = ptAttribResponder(
-    12, "resp: E symbol on", statelist=symbolStates, netForce=1
-)
-RespSymbolOffE = ptAttribResponder(
-    13, "resp: E symbol off", statelist=symbolStates, netForce=1
-)
-RespSymbolOnS = ptAttribResponder(
-    14, "resp: S symbol on", statelist=symbolStates, netForce=1
-)
-RespSymbolOffS = ptAttribResponder(
-    15, "resp: S symbol off", statelist=symbolStates, netForce=1
-)
-RespSymbolOnW = ptAttribResponder(
-    16, "resp: W symbol on", statelist=symbolStates, netForce=1
-)
-RespSymbolOffW = ptAttribResponder(
-    17, "resp: W symbol off", statelist=symbolStates, netForce=1
-)
+RespSymbolOnN = ptAttribResponder(10, "resp: N symbol on", statelist=symbolStates, netForce=1)
+RespSymbolOffN = ptAttribResponder(11, "resp: N symbol off", statelist=symbolStates, netForce=1)
+RespSymbolOnE = ptAttribResponder(12, "resp: E symbol on", statelist=symbolStates, netForce=1)
+RespSymbolOffE = ptAttribResponder(13, "resp: E symbol off", statelist=symbolStates, netForce=1)
+RespSymbolOnS = ptAttribResponder(14, "resp: S symbol on", statelist=symbolStates, netForce=1)
+RespSymbolOffS = ptAttribResponder(15, "resp: S symbol off", statelist=symbolStates, netForce=1)
+RespSymbolOnW = ptAttribResponder(16, "resp: W symbol on", statelist=symbolStates, netForce=1)
+RespSymbolOffW = ptAttribResponder(17, "resp: W symbol off", statelist=symbolStates, netForce=1)
 
 respListSymbolsOn = [RespSymbolOnN, RespSymbolOnE, RespSymbolOnS, RespSymbolOnW]
 respListSymbolsOff = [RespSymbolOffN, RespSymbolOffE, RespSymbolOffS, RespSymbolOffW]
@@ -169,9 +145,7 @@ class PelletBahroCave(ptResponder):
             if self.sceneobject.isLocallyOwned():
                 self.ShowSymbols()
         except:
-            PtDebugPrint(
-                "ERROR!  Couldn't get the solution information, symbols won't appear"
-            )
+            PtDebugPrint("ERROR!  Couldn't get the solution information, symbols won't appear")
 
         linkmgr = ptNetLinkingMgr()
         link = linkmgr.getCurrAgeLink()
@@ -221,8 +195,7 @@ class PelletBahroCave(ptResponder):
                 ageSDL[SDLGotPellet.value] = (gotPellet,)
 
             PtDebugPrint(
-                "PelletBahroCave:OnServerInitComplete:  SDL for pellet is now %d"
-                % (gotPellet)
+                "PelletBahroCave:OnServerInitComplete:  SDL for pellet is now %d" % (gotPellet)
             )
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
@@ -266,9 +239,7 @@ class PelletBahroCave(ptResponder):
             self.IDropUpper(gotPellet)
 
         if id == RespDropPellet.id and gotPellet:
-            PtDebugPrint(
-                "PelletBahroCave.OnNotify: RespDropPellet callback, will now play FX"
-            )
+            PtDebugPrint("PelletBahroCave.OnNotify: RespDropPellet callback, will now play FX")
             pellet = gotPellet - 300
             if pellet <= 0:
                 if pellet <= -250:

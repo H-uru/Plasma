@@ -107,12 +107,8 @@ class xJournalBookGUIPopup(ptModifier):
         if id == actClickableBook.id:
             if PtWasLocallyNotified(self.key) and state:
                 PtToggleAvatarClickability(False)
-                if (
-                    SeekBehavior.value is not None
-                ):  # remember, smart seek before GUI is optional.
-                    PtDebugPrint(
-                        "xJournalBookGUIPopup: Smart seek used", level=kDebugDumpLevel
-                    )
+                if SeekBehavior.value is not None:  # remember, smart seek before GUI is optional.
+                    PtDebugPrint("xJournalBookGUIPopup: Smart seek used", level=kDebugDumpLevel)
                     LocalAvatar = PtFindAvatar(events)
                     SeekBehavior.run(LocalAvatar)
                     return
@@ -139,21 +135,18 @@ class xJournalBookGUIPopup(ptModifier):
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint(
-                        "xJournalBookGUIPopup: BookNotify  event=%d, id=%d"
-                        % (event[1], event[2]),
+                        "xJournalBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1], event[2]),
                         level=kDebugDumpLevel,
                     )
                     if event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint(
-                            "xJournalBookGUIPopup:Book: NotifyShow",
-                            level=kDebugDumpLevel,
+                            "xJournalBookGUIPopup:Book: NotifyShow", level=kDebugDumpLevel,
                         )
                         # disable the KI
                         PtSendKIMessage(kDisableKIandBB, 0)
                     if event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint(
-                            "xJournalBookGUIPopup:Book: NotifyHide",
-                            level=kDebugDumpLevel,
+                            "xJournalBookGUIPopup:Book: NotifyHide", level=kDebugDumpLevel,
                         )
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB, 0)
@@ -161,18 +154,15 @@ class xJournalBookGUIPopup(ptModifier):
                         PtToggleAvatarClickability(True)
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         PtDebugPrint(
-                            "xJournalBookGUIPopup:Book: NotifyNextPage",
-                            level=kDebugDumpLevel,
+                            "xJournalBookGUIPopup:Book: NotifyNextPage", level=kDebugDumpLevel,
                         )
                     elif event[1] == PtBookEventTypes.kNotifyPreviousPage:
                         PtDebugPrint(
-                            "xJournalBookGUIPopup:Book: NotifyPreviousPage",
-                            level=kDebugDumpLevel,
+                            "xJournalBookGUIPopup:Book: NotifyPreviousPage", level=kDebugDumpLevel,
                         )
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
                         PtDebugPrint(
-                            "xJournalBookGUIPopup:Book: NotifyCheckUncheck",
-                            level=kDebugDumpLevel,
+                            "xJournalBookGUIPopup:Book: NotifyCheckUncheck", level=kDebugDumpLevel,
                         )
                         pass
 
@@ -190,12 +180,7 @@ class xJournalBookGUIPopup(ptModifier):
                 params = xJournalBookDefs.xJournalBooks[JournalName.value]
                 JournalIdent = JournalName.value
                 if len(params) == 4:
-                    (
-                        BookWidth.value,
-                        BookHeight.value,
-                        LocPath.value,
-                        GUIType.value,
-                    ) = params
+                    (BookWidth.value, BookHeight.value, LocPath.value, GUIType.value,) = params
                 else:
                     BookWidth.value, BookHeight.value, LocPath.value = params
             except LookupError:
@@ -214,15 +199,13 @@ class xJournalBookGUIPopup(ptModifier):
             inboxChildList = inbox.getChildNodeRefList()
             for child in inboxChildList:
                 PtDebugPrint(
-                    "xJournalBookGUIPopupDyn: looking at node " + str(child),
-                    level=kDebugDumpLevel,
+                    "xJournalBookGUIPopupDyn: looking at node " + str(child), level=kDebugDumpLevel,
                 )
                 node = child.getChild()
                 folderNode = node.upcastToFolderNode()
                 if folderNode:
                     PtDebugPrint(
-                        "xJournalBookGUIPopupDyn: node is named %s"
-                        % (folderNode.getFolderName()),
+                        "xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderName()),
                         level=kDebugDumpLevel,
                     )
                     if folderNode.getFolderName() == "Journals":

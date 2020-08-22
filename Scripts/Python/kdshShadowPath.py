@@ -186,15 +186,11 @@ class kdshShadowPath(ptResponder):
         global gameStarted
         ageSDL = PtGetAgeSDL()
 
-        PtDebugPrint(
-            "kdshShadowPath:OnNotify  state=%f id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("kdshShadowPath:OnNotify  state=%f id=%d events=" % (state, id), events)
 
         if id == FloorZone.id:
             if events[0][1] == 1:
-                PtDebugPrint(
-                    "kdshShadowPath.OnNotify: More than one person on the floor!"
-                )
+                PtDebugPrint("kdshShadowPath.OnNotify: More than one person on the floor!")
                 regZoneStart.disable()
                 gameStarted = 0
             elif events[0][1] == 0:
@@ -203,14 +199,10 @@ class kdshShadowPath(ptResponder):
 
         elif id == regZoneReset.id:
             if events[0][1] == 1:
-                PtDebugPrint(
-                    "kdshShadowPath.OnNotify: Someone in the stairwell, reset disabled."
-                )
+                PtDebugPrint("kdshShadowPath.OnNotify: Someone in the stairwell, reset disabled.")
                 actResetBtn.disable()
             elif events[0][1] == 0:
-                PtDebugPrint(
-                    "kdshShadowPath.OnNotify: No one's in the stairwell, reset enabled."
-                )
+                PtDebugPrint("kdshShadowPath.OnNotify: No one's in the stairwell, reset enabled.")
                 actResetBtn.enable()
 
         elif id in [1, 2, 3, 4, 5]:  # true if one of the five switches clicked
@@ -239,9 +231,7 @@ class kdshShadowPath(ptResponder):
             PtDebugPrint("Light ", id - 25, " actually touched by avatar.")
             oldstate = ageSDL["ShadowPathLight0" + str(id - 25)][0]
             newstate = abs(oldstate - 1)  # toggle value of switch state
-            ageSDL["ShadowPathLight0" + str(id - 25)] = (
-                newstate,
-            )  # write new state value to SDL
+            ageSDL["ShadowPathLight0" + str(id - 25)] = (newstate,)  # write new state value to SDL
             return
 
         elif id in [
@@ -305,9 +295,7 @@ class kdshShadowPath(ptResponder):
                 ConcealStairs.run(self.key)
 
         elif VARname[:15] == "ShadowPathLight":
-            light = int(
-                VARname[-2:]
-            )  # get the last two digits, which is the light number
+            light = int(VARname[-2:])  # get the last two digits, which is the light number
 
             # PtDebugPrint("OnSDLNotify: Light ", light," SDL updated.")
 

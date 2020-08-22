@@ -186,9 +186,7 @@ class psnlMyCloset(ptModifier):
             if tag == "ignore":
                 return
             else:
-                PtDebugPrint(
-                    "psnlClosetDoor.OnSDLNotify():\ttag not ignore, ignoring anyway :P"
-                )
+                PtDebugPrint("psnlClosetDoor.OnSDLNotify():\ttag not ignore, ignoring anyway :P")
                 return
 
     def OnNotify(self, state, id, events):

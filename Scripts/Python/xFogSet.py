@@ -109,17 +109,13 @@ class xFogSet(ptMultiModifier):
             self.PointA_RGBList[2] = float(self.PointA_RGBList[2])
 
         newfogcolor = ptColor(
-            red=self.PointA_RGBList[0],
-            green=self.PointA_RGBList[1],
-            blue=self.PointA_RGBList[2],
+            red=self.PointA_RGBList[0], green=self.PointA_RGBList[1], blue=self.PointA_RGBList[2],
         )
         PtFogSetDefColor(newfogcolor)
 
         if FogMode.value == "Linear":
             PtDebugPrint("xFogSet.UpdateFog: Using Linear Fog")
-            PtFogSetDefLinear(
-                PointA_Start.value, PointA_End.value, PointA_Density.value
-            )
+            PtFogSetDefLinear(PointA_Start.value, PointA_End.value, PointA_Density.value)
 
         elif FogMode.value == "Exponential":
             PtDebugPrint("xFogSet.UpdateFog: Using Exponential Fog")

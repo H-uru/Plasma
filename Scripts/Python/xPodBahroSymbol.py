@@ -97,9 +97,7 @@ class xPodBahroSymbol(ptResponder):
         respSFX.run(self.key, state="stop")
 
         if animMasterDayLight.value is not None:
-            timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (
-                DayFrameSize.value / 30.0
-            )
+            timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (DayFrameSize.value / 30.0)
             PtDebugPrint(
                 "xPodBahroSymbol.OnServerInitComplete: Master anim is skipping to %f seconds and playing at %f speed"
                 % (timeIntoMasterAnim, kDayAnimationSpeed)
@@ -110,9 +108,7 @@ class xPodBahroSymbol(ptResponder):
 
     ###########################
     def OnNotify(self, state, id, events):
-        PtDebugPrint(
-            "xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state, id), events)
 
         if id == respBahroSymbol.id:
             PtAtTimeCallback(self.key, 32, 3)
@@ -132,9 +128,7 @@ class xPodBahroSymbol(ptResponder):
 
     ###########################
     def ISetTimers(self):
-        beginningOfToday = PtGetDniTime() - int(
-            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
-        )
+        beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
         timeWhenSymbolAppearsToday = beginningOfToday + kTimeWhenSymbolAppears
 
         if timeWhenSymbolAppearsToday > PtGetDniTime():
@@ -147,9 +141,7 @@ class xPodBahroSymbol(ptResponder):
         else:
             PtDebugPrint("xPodBahroSymbol: You missed the symbol for today.")
 
-        timeLeftToday = kDayLengthInSeconds - int(
-            PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
-        )
+        timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
         timeLeftToday += 1  # because we want it to go off right AFTER the day flips
         PtAtTimeCallback(self.key, timeLeftToday, 2)
         PtDebugPrint("xPodBahroSymbol: Tomorrow starts in %d seconds" % (timeLeftToday))

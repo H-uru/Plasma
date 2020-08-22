@@ -102,9 +102,7 @@ class krelPodium(ptResponder):
     def OnNotify(self, state, id, events):
         ageSDL = PtGetAgeSDL()
 
-        PtDebugPrint(
-            "krelPodium.OnNotify:  state=%f id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("krelPodium.OnNotify:  state=%f id=%d events=" % (state, id), events)
 
         if not state:
             return
@@ -118,16 +116,12 @@ class krelPodium(ptResponder):
             nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
 
             if nb01CmnRmSpeech == 0:  # No speech was playing
-                PtDebugPrint(
-                    "krelPodium: No speech was previously playing. Playing speech #1."
-                )
+                PtDebugPrint("krelPodium: No speech was previously playing. Playing speech #1.")
                 respSpeech01.run(self.key)
                 ageSDL["nb01CmnRmSpeech"] = (1,)
 
             else:
-                PtDebugPrint(
-                    "krelPodium: Speech #1 was stopped manually by the avatar."
-                )
+                PtDebugPrint("krelPodium: Speech #1 was stopped manually by the avatar.")
                 respSilence.run(self.key)
                 ageSDL["nb01CmnRmSpeech"] = (0,)
 

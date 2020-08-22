@@ -215,16 +215,12 @@ class xPodBattery(ptResponder):
                     "xPodBattery: This is your first time here. The Battery has never been updated."
                 )
             else:
-                self.SimulateDrainDuringVacancy(
-                    CurrentTime, BatteryLastUpdated, BatteryCharge
-                )
+                self.SimulateDrainDuringVacancy(CurrentTime, BatteryLastUpdated, BatteryCharge)
 
         PtAtTimeCallback(self.key, kTimeIncrement, 1)
 
     ###########################
-    def SimulateDrainDuringVacancy(
-        self, CurrentTime, BatteryLastUpdated, BatteryCharge
-    ):
+    def SimulateDrainDuringVacancy(self, CurrentTime, BatteryLastUpdated, BatteryCharge):
         TimeSinceUpdate = CurrentTime - BatteryLastUpdated
         WholeDaysVacated = int(TimeSinceUpdate / kDayLengthInSeconds)
         FractionalDaysVacated = TimeSinceUpdate % kDayLengthInSeconds
@@ -242,9 +238,7 @@ class xPodBattery(ptResponder):
         PtDebugPrint(
             "\tTimeSinceUpdate: %d" % (TimeSinceUpdate)
         )  # total seconds the pod was vacated
-        PtDebugPrint(
-            "\tWholeDaysVacated: %d" % (WholeDaysVacated)
-        )  # days the pod was vacated
+        PtDebugPrint("\tWholeDaysVacated: %d" % (WholeDaysVacated))  # days the pod was vacated
         PtDebugPrint(
             "\tFractionalDaysVacated: %d" % (FractionalDaysVacated)
         )  # seconds the pod was vacated minus whole days
@@ -252,14 +246,11 @@ class xPodBattery(ptResponder):
             "\tAgeTimeOfDayPercent: %.2f%%" % (AgeTimeOfDayPercent * 100)
         )  # percentage through the Negilahn day
         PtDebugPrint(
-            "\tCurrentAgeTimeOfDay: %.2f of %d"
-            % (CurrentAgeTimeOfDay, kDayLengthInSeconds)
+            "\tCurrentAgeTimeOfDay: %.2f of %d" % (CurrentAgeTimeOfDay, kDayLengthInSeconds)
         )  # seconds into the Negilahn day
 
         if FractionalDaysVacated > CurrentAgeTimeOfDay:
-            TimeOfDayVacated = kDayLengthInSeconds - (
-                FractionalDaysVacated - CurrentAgeTimeOfDay
-            )
+            TimeOfDayVacated = kDayLengthInSeconds - (FractionalDaysVacated - CurrentAgeTimeOfDay)
             PtDebugPrint("\tThe pod was vacated at a time of day later than it is now.")
 
             if TimeOfDayVacated < kDayLengthInSeconds * fSunset.value:
@@ -274,9 +265,7 @@ class xPodBattery(ptResponder):
 
         elif FractionalDaysVacated < CurrentAgeTimeOfDay:
             TimeOfDayVacated = CurrentAgeTimeOfDay - FractionalDaysVacated
-            PtDebugPrint(
-                "\tThe Pod was vacated at a time of day earlier than it is now."
-            )
+            PtDebugPrint("\tThe Pod was vacated at a time of day earlier than it is now.")
 
             if TimeOfDayVacated < kDayLengthInSeconds * fSunset.value:
                 if CurrentAgeTimeOfDay <= kDayLengthInSeconds * fSunset.value:
@@ -310,12 +299,8 @@ class xPodBattery(ptResponder):
         CumulativeRecharge = (UnoccupiedDaylightSeconds / 3600.0) * kSunRechargeRate
         CumulativeDrain = (TimeSinceUpdate / 10.0) * CostThisCycle
 
-        PtDebugPrint(
-            "\tCumulativeRecharge: %.2f" % (CumulativeRecharge)
-        )  # units of rechange
-        PtDebugPrint(
-            "\tCumulativeDrain: %.2f" % (CumulativeDrain)
-        )  # units of discharge
+        PtDebugPrint("\tCumulativeRecharge: %.2f" % (CumulativeRecharge))  # units of rechange
+        PtDebugPrint("\tCumulativeDrain: %.2f" % (CumulativeDrain))  # units of discharge
 
         BatteryCharge += CumulativeRecharge - CumulativeDrain
         self.UpdateBatteryChargeSDL(BatteryCharge)
@@ -385,10 +370,7 @@ class xPodBattery(ptResponder):
         AgeTimeOfDayPercent = PtGetAgeTimeOfDayPercent()
 
         # If it's currently day, include recharge effect of the Sun
-        if (
-            AgeTimeOfDayPercent >= fSunrise.value
-            and AgeTimeOfDayPercent <= fSunset.value
-        ):
+        if AgeTimeOfDayPercent >= fSunrise.value and AgeTimeOfDayPercent <= fSunset.value:
             RechargeFromSun = kSunRechargeRate * (kTimeIncrement / 3600.0)
             PtDebugPrint(
                 "xPodBattery.CalculatePowerDrain: The time is %.1f%% through the daytime, adding %.4f units to the battery."
@@ -437,9 +419,7 @@ class xPodBattery(ptResponder):
         global Avvie
         ageSDL = PtGetAgeSDL()
 
-        PtDebugPrint(
-            "xPodBattery.OnNotify: state=%s id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("xPodBattery.OnNotify: state=%s id=%d events=" % (state, id), events)
 
         if id == actPodLights.id and state:
             Avvie = PtFindAvatar(events)
@@ -519,9 +499,7 @@ class xPodBattery(ptResponder):
             if VARname == SDLPodLights.value:
                 respPodLights.run(self.key, state=str(ageSDL[SDLPodLights.value][0]))
                 if not ageSDL[SDLPodLights.value][0]:
-                    PtDebugPrint(
-                        "xPodBattery.OnSDLNotify(): Tripping all SDLs to negative"
-                    )
+                    PtDebugPrint("xPodBattery.OnSDLNotify(): Tripping all SDLs to negative")
                     respPodLightsTripped.run(self.key)
                     ageSDL[SDLSpeaker01.value] = (0,)
                     ageSDL[SDLSpeaker02.value] = (0,)

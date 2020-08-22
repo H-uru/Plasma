@@ -131,9 +131,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
             else:
                 currenttime = time.gmtime(PtGetDniTime())
                 currenttimestr = time.strftime("%m/%d/%Y %I:%M %p", currenttime)
-                thetext = (
-                    currenttimestr + (" " * (30 - len(currenttimestr))) + playername
-                )
+                thetext = currenttimestr + (" " * (30 - len(currenttimestr))) + playername
 
                 playerlist = ptVaultTextNoteNode(0)
                 playerlist.setTitle("Visitors, Visiteurs, Besucher")
@@ -265,9 +263,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
                 PtDebugPrint("Sending notify to update node: ", pelletscores.getID())
                 self.ISendNotify(HoodInfoImagerScript.value, sname, 1.0)
             else:
-                PtDebugPrint(
-                    "Not sending notify because we don't have a valid pelletscore node"
-                )
+                PtDebugPrint("Not sending notify because we don't have a valid pelletscore node")
 
             self.IUpdateHoodImager()
 
@@ -313,13 +309,9 @@ class nb01UpdateHoodInfoImager(ptResponder):
                     if event[1][:5] == "Join=":
                         playername = event[1][5:]
                         self.IUpdatePlayerList(playername)
-                        PtDebugPrint(
-                            "nb01UpdateHoodInfoImager.OnNotify: Updated player list"
-                        )
+                        PtDebugPrint("nb01UpdateHoodInfoImager.OnNotify: Updated player list")
                     elif event[1][:6] == "Score=":
                         playername = event[1][6:]
                         score = int(event[3])
                         self.IUpdatePelletScores(playername, score)
-                        PtDebugPrint(
-                            "nb01UpdateHoodInfoImager.OnNotify: Updated pellet scores"
-                        )
+                        PtDebugPrint("nb01UpdateHoodInfoImager.OnNotify: Updated pellet scores")

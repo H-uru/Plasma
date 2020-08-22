@@ -161,9 +161,7 @@ class xConcentration(ptModifier):
                         pick = (int(ySquare - 1) * matrix.value) + int(
                             xSquare
                         )  # pick is the array location
-                        PtDebugPrint(
-                            "Pick=", whichpick, " Square:", pick, "value=", puz[pick]
-                        )
+                        PtDebugPrint("Pick=", whichpick, " Square:", pick, "value=", puz[pick])
 
                         # Now do something with the pick
                         texX = 512
@@ -178,9 +176,7 @@ class xConcentration(ptModifier):
                         imageSquare = puz[
                             pick
                         ]  # this is the value of the spot you picked, and tell what square to draw here
-                        imageSquareY = round(
-                            (float(imageSquare / matrix.value)) - 0.49
-                        )  # rows
+                        imageSquareY = round((float(imageSquare / matrix.value)) - 0.49)  # rows
                         imageSquareX = imageSquare % matrix.value  # columns
 
                         getFromX = texXBox * (imageSquareX)
@@ -208,9 +204,7 @@ class xConcentration(ptModifier):
                             dtext.textmap.drawText(drawAtX, drawAtY, str(puz[pick]))
 
                         elif whichpick == 1:  # second pick
-                            if (
-                                puz[pick1] == pick
-                            ):  # You actually picked the right spot!
+                            if puz[pick1] == pick:  # You actually picked the right spot!
                                 puz[pick1] = puz[pick]
                                 puz[pick] = pick  # swap numbers
                                 self.SDL["puz"] = tuple(puz)  # writes it
@@ -225,11 +219,7 @@ class xConcentration(ptModifier):
                             whichpick = 0
                             # dtext.textmap.drawImageClipped(drawAtX, drawAtY, image, getFromX, getFromY, texXBox, texYBox,0)
                             dtext.textmap.fillRect(
-                                drawAtX,
-                                drawAtY,
-                                drawAtX + texXBox,
-                                drawAtY + texYBox,
-                                yellow,
+                                drawAtX, drawAtY, drawAtX + texXBox, drawAtY + texYBox, yellow,
                             )
                             dtext.textmap.drawText(drawAtX, drawAtY, str(puz[pick]))
                         dtext.textmap.flush()

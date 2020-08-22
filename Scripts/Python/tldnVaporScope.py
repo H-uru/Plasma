@@ -200,9 +200,7 @@ class tldnVaporScope(ptModifier):
             self.SDL["scopeAtTop"] = (1,)
             return
         if state and id == actStopAtBottom.id:
-            PtDebugPrint(
-                "tldnVaporScope: got event - near bottom", level=kDebugDumpLevel
-            )
+            PtDebugPrint("tldnVaporScope: got event - near bottom", level=kDebugDumpLevel)
             boolScopeAtBottom = 1
             self.SDL["scopeAtBottom"] = (1,)
             return
@@ -212,11 +210,7 @@ class tldnVaporScope(ptModifier):
             self.IStartTelescope()
         # check if its an advance stage notify
         for event in events:
-            if (
-                event[0] == kMultiStageEvent
-                and event[1] == 0
-                and event[2] == kAdvanceNextStage
-            ):
+            if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                 if boolScopeOperator:
                     self.IEngageTelescope()
                     boolScopeOperator = 0
@@ -263,76 +257,56 @@ class tldnVaporScope(ptModifier):
             if control is not None:
                 btnID = control.getTagID()
                 if btnID == kLeftScopeBtn:
-                    if (
-                        isinstance(control, ptGUIControlButton)
-                        and control.isButtonDown()
-                    ):
+                    if isinstance(control, ptGUIControlButton) and control.isButtonDown():
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Left button down",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Left button down", level=kDebugDumpLevel,
                         )
                         animVaporTurret.value.backwards(0)
                         animVaporTurret.value.resume()
                     else:
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Left button up",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Left button up", level=kDebugDumpLevel,
                         )
                         animVaporTurret.value.stop()
                 elif btnID == kRightScopeBtn:
-                    if (
-                        isinstance(control, ptGUIControlButton)
-                        and control.isButtonDown()
-                    ):
+                    if isinstance(control, ptGUIControlButton) and control.isButtonDown():
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Right button down",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Right button down", level=kDebugDumpLevel,
                         )
                         animVaporTurret.value.backwards(1)
                         animVaporTurret.value.resume()
                     else:
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Right button up",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Right button up", level=kDebugDumpLevel,
                         )
                         animVaporTurret.value.stop()
                 elif btnID == kUpScopeBtn:
-                    if (
-                        isinstance(control, ptGUIControlButton)
-                        and control.isButtonDown()
-                    ):
+                    if isinstance(control, ptGUIControlButton) and control.isButtonDown():
                         if not boolScopeAtTop:
                             PtDebugPrint(
-                                "tldnVaporScope:GUINotify Up button down",
-                                level=kDebugDumpLevel,
+                                "tldnVaporScope:GUINotify Up button down", level=kDebugDumpLevel,
                             )
                             animVaporPitch.value.backwards(0)
                             animVaporPitch.value.resume()
                     else:
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Up button up",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Up button up", level=kDebugDumpLevel,
                         )
                         animVaporPitch.value.stop()
                     if boolScopeAtBottom:
                         boolScopeAtBottom = 0
                         self.SDL["scopeAtBottom"] = (0,)
                 elif btnID == kDownScopeBtn:
-                    if (
-                        isinstance(control, ptGUIControlButton)
-                        and control.isButtonDown()
-                    ):
+                    if isinstance(control, ptGUIControlButton) and control.isButtonDown():
                         if not boolScopeAtBottom:
                             PtDebugPrint(
-                                "tldnVaporScope:GUINotify Down button down",
-                                level=kDebugDumpLevel,
+                                "tldnVaporScope:GUINotify Down button down", level=kDebugDumpLevel,
                             )
                             animVaporPitch.value.backwards(1)
                             animVaporPitch.value.resume()
                     else:
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Down button up",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Down button up", level=kDebugDumpLevel,
                         )
                         animVaporPitch.value.stop()
                     if boolScopeAtTop:
@@ -341,8 +315,7 @@ class tldnVaporScope(ptModifier):
                 elif btnID == kFireScopeBtn:
                     if not gThrottleShooting:
                         PtDebugPrint(
-                            "tldnVaporScope:GUINotify Shoot vapor",
-                            level=kDebugDumpLevel,
+                            "tldnVaporScope:GUINotify Shoot vapor", level=kDebugDumpLevel,
                         )
                         respShootGun.run(self.key)
                         ####-# reset the slider back to initialFOV, cause the animation of the scope will set it back
@@ -383,9 +356,7 @@ class tldnVaporScope(ptModifier):
                             self.key, kTimerThrottleTime, kTimerThrottleFiring
                         )  # wait for player to finish exit one-shot, then reenable clickable
                     else:
-                        PtDebugPrint(
-                            "tldnVaporScope:GUINotify Throttling", level=kDebugDumpLevel
-                        )
+                        PtDebugPrint("tldnVaporScope:GUINotify Throttling", level=kDebugDumpLevel)
                 elif btnID == kExitButton:
                     self.IQuitTelescope()
 
@@ -409,27 +380,19 @@ class tldnVaporScope(ptModifier):
         if sceneobject:
             PtDebugPrint(
                 "tldnVaporScope:LOSNotify: ===>hit object %s at point(%g,%g,%g)"
-                % (
-                    sceneobject.getName(),
-                    hitPoint.getX(),
-                    hitPoint.getY(),
-                    hitPoint.getZ(),
-                ),
+                % (sceneobject.getName(), hitPoint.getX(), hitPoint.getY(), hitPoint.getZ(),),
                 level=kDebugDumpLevel,
             )
             # first look for a python file guy (before responders)
             pmlist = sceneobject.getPythonMods()
             if len(pmlist) > 0:
                 PtDebugPrint(
-                    "tldnVaporScope:LOSNotify:  ...python mod list:",
-                    level=kDebugDumpLevel,
+                    "tldnVaporScope:LOSNotify:  ...python mod list:", level=kDebugDumpLevel,
                 )
                 for pm in pmlist:
                     PtDebugPrint("       %s" % (pm.getName()), level=kDebugDumpLevel)
                     if pm.getName().lower().startswith("vaporminerhitme"):
-                        PtDebugPrint(
-                            "tldnVaporScope:LOS: VaporMiner HIT!", level=kDebugDumpLevel
-                        )
+                        PtDebugPrint("tldnVaporScope:LOS: VaporMiner HIT!", level=kDebugDumpLevel)
                         notify = ptNotify(self.key)
                         notify.clearReceivers()
                         notify.addReceiver(pm)
@@ -437,34 +400,28 @@ class tldnVaporScope(ptModifier):
                         notify.send()
             else:
                 PtDebugPrint(
-                    "tldnVaporScope:LOSNotify: ...no python mods found",
-                    level=kDebugDumpLevel,
+                    "tldnVaporScope:LOSNotify: ...no python mods found", level=kDebugDumpLevel,
                 )
             # next look for responders attached
             resplist = sceneobject.getResponders()
             if len(resplist) > 0:
                 PtDebugPrint(
-                    "tldnVaporScope:LOSNotify:  ...responder list:",
-                    level=kDebugDumpLevel,
+                    "tldnVaporScope:LOSNotify:  ...responder list:", level=kDebugDumpLevel,
                 )
                 for resp in resplist:
                     PtDebugPrint("       %s" % (resp.getName()), level=kDebugDumpLevel)
                     if resp.getName().lower().startswith("vaporminerhitme"):
-                        PtDebugPrint(
-                            "tldnVaporScope:LOS: VaporMiner HIT!", level=kDebugDumpLevel
-                        )
+                        PtDebugPrint("tldnVaporScope:LOS: VaporMiner HIT!", level=kDebugDumpLevel)
                         atResp = ptAttribResponder(42)
                         atResp.__setvalue__(resp)
                         atResp.run(self.key)
             else:
                 PtDebugPrint(
-                    "tldnVaporScope:LOSNotify: ...no responders found",
-                    level=kDebugDumpLevel,
+                    "tldnVaporScope:LOSNotify: ...no responders found", level=kDebugDumpLevel,
                 )
         else:
             PtDebugPrint(
-                "tldnVaporScope:LOSNotify: No sceneobject found...",
-                level=kDebugDumpLevel,
+                "tldnVaporScope:LOSNotify: No sceneobject found...", level=kDebugDumpLevel,
             )
 
     def IStartTelescope(self):
@@ -535,9 +492,7 @@ class tldnVaporScope(ptModifier):
         if id == kTimerDisengage:
             Activate.enable()
             PtSendKIMessage(kEnableKIandBB, 0)
-            PtDebugPrint(
-                "tldnVaporScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel
-            )
+            PtDebugPrint("tldnVaporScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel)
         elif id == kTimerThrottleFiring:
             # we can not let firing happen... again
             gThrottleShooting = 0
@@ -546,9 +501,7 @@ class tldnVaporScope(ptModifier):
                     scopeDlg = PtGetDialogFromString(Vignette.value)
                     if scopeDlg:
                         try:
-                            fireBtn = ptGUIControlButton(
-                                scopeDlg.getControlFromTag(kFireScopeBtn)
-                            )
+                            fireBtn = ptGUIControlButton(scopeDlg.getControlFromTag(kFireScopeBtn))
                             fireBtn.enable()
                         except KeyError:
                             PtDebugPrint(
@@ -557,6 +510,5 @@ class tldnVaporScope(ptModifier):
                             )
             except KeyError:
                 PtDebugPrint(
-                    "tldnVaporScope:Timer can't find VaporScope dialog",
-                    level=kDebugDumpLevel,
+                    "tldnVaporScope:Timer can't find VaporScope dialog", level=kDebugDumpLevel,
                 )

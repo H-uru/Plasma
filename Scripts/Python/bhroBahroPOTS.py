@@ -110,9 +110,7 @@ class bhroBahroPOTS(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge12"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroPOTS.OnNotify:  Turning wedge SDL of psnlBahroWedge12 to On"
-                )
+                PtDebugPrint("bhroBahroPOTS.OnNotify:  Turning wedge SDL of psnlBahroWedge12 to On")
                 psnlSDL["psnlBahroWedge12"] = (1,)
 
         elif id == clkAhnonay.id and state:
@@ -121,7 +119,5 @@ class bhroBahroPOTS(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge13"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroPOTS.OnNotify:  Turning wedge SDL of psnlBahroWedge13 to On"
-                )
+                PtDebugPrint("bhroBahroPOTS.OnNotify:  Turning wedge SDL of psnlBahroWedge13 to On")
                 psnlSDL["psnlBahroWedge13"] = (1,)

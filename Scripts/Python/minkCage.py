@@ -55,9 +55,7 @@ regCageSymbol = ptAttribActivator(1, "reg: Cage Symbol")
 respCageSymbol = ptAttribResponder(
     15, "resp: Cage Symbol", ["1", "2", "3", "4", "5", "Link", "Hide"]
 )
-respSymbolSFX = ptAttribResponder(
-    16, "resp: Symbol SFX", ["0", "1", "2", "3", "4", "5"]
-)
+respSymbolSFX = ptAttribResponder(16, "resp: Symbol SFX", ["0", "1", "2", "3", "4", "5"])
 
 # define globals
 
@@ -79,9 +77,7 @@ class minkCage(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint(
-                "minkCage.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL"
-            )
+            PtDebugPrint("minkCage.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL")
 
         ageSDL.setFlags("minkSymbolPart01", 1, 1)
         ageSDL.setFlags("minkSymbolPart02", 1, 1)
@@ -132,9 +128,7 @@ class minkCage(ptResponder):
             symbolCount += 1
 
         # Run SFX
-        PtDebugPrint(
-            "DEBUG: minkCage.OnFirstUpdate():\tRunning SFX Level: %s" % symbolCount
-        )
+        PtDebugPrint("DEBUG: minkCage.OnFirstUpdate():\tRunning SFX Level: %s" % symbolCount)
         respSymbolSFX.run(self.key, state="%s" % symbolCount)
 
         if (
@@ -144,16 +138,12 @@ class minkCage(ptResponder):
             and ageSDL["minkSymbolPart04"][0]
             and ageSDL["minkSymbolPart05"][0]
         ):
-            PtDebugPrint(
-                "minkCage.OnFirstUpdate(): You've found all the Pieces, enabling link"
-            )
+            PtDebugPrint("minkCage.OnFirstUpdate(): You've found all the Pieces, enabling link")
             regCageSymbol.enable()
 
     ###########################
     def OnNotify(self, state, id, events):
-        PtDebugPrint(
-            "minkCage.OnNotify(): state=%s id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("minkCage.OnNotify(): state=%s id=%d events=" % (state, id), events)
 
         if id == regCageSymbol.id and PtFindAvatar(events) == PtGetLocalAvatar():
             PtDebugPrint("minkCage.OnNotify(): Linking to bahro cave.")

@@ -221,9 +221,7 @@ class city(ptResponder):
             self.ILoadS1FinaleBahro(id, val)
 
     def ILoadS1FinaleBahro(self, bahro, state):
-        PtDebugPrint(
-            "city.ILoadS1FinaleBahro(): bahro = %d, load = %d" % (bahro, state)
-        )
+        PtDebugPrint("city.ILoadS1FinaleBahro(): bahro = %d, load = %d" % (bahro, state))
         #        if not self.sceneobject.isLocallyOwned():
         #            return
         if state:

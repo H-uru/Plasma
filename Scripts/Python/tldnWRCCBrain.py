@@ -63,29 +63,21 @@ kOff = "off"
 actPwr = ptAttribNamedActivator(1, "Actvtr: Power")
 
 actDrainLvr = ptAttribActivator(2, "Actvtr: Drain Lever")
-respDrainLvr = ptAttribResponder(
-    3, "Rspndr: Drain Lever", ["drain", "pull", "off", "reset"]
-)
+respDrainLvr = ptAttribResponder(3, "Rspndr: Drain Lever", ["drain", "pull", "off", "reset"])
 respCabinDrain = ptAttribNamedResponder(4, "Rspndr: Cabin Drain", ["drain", "reset"])
 
 actLockSwitch = ptAttribActivator(5, "Actvtr: Hatch Lock Switch")
 respLockSwitch = ptAttribResponder(
     6, "Rspndr: Hatch Lock Switch", ["unlock", "lock", "lockfail", "unlockfail"]
 )
-respHatchLock = ptAttribNamedResponder(
-    7, "Rspndr: Hatch Lock", ["on", "off", "flash", "stopflash"]
-)
+respHatchLock = ptAttribNamedResponder(7, "Rspndr: Hatch Lock", ["on", "off", "flash", "stopflash"])
 
 actOpenHatchAbv = ptAttribNamedActivator(8, "Actvtr: Open Hatch from Abv")
 actCloseHatch = ptAttribNamedActivator(10, "Actvtr: Close Hatch")
 respHatchOps = ptAttribNamedResponder(
-    11,
-    "Rspndr: Hatch Ops",
-    ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
+    11, "Rspndr: Hatch Ops", ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
 )
-respHatchLadder = ptAttribNamedResponder(
-    12, "Rspndr: Hatch Ladder", ["enable", "disable"]
-)
+respHatchLadder = ptAttribNamedResponder(12, "Rspndr: Hatch Ladder", ["enable", "disable"])
 
 respHatchGlare = ptAttribResponder(13, "HatchPanelToggle", ["on", "off"])
 
@@ -150,9 +142,7 @@ class tldnWRCCBrain(ptResponder):
             self.SDL["OperatorID"] = (-1,)
             self.SDL["boolOperated"] = (0,)
             # respWRCCMaster.run(self.key,state='off')
-            PtDebugPrint(
-                "tldnWRCCBrain.AvatarPage(): WRCC operator paged out, reenabled WRCC."
-            )
+            PtDebugPrint("tldnWRCCBrain.AvatarPage(): WRCC operator paged out, reenabled WRCC.")
         else:
             return
 
@@ -231,12 +221,7 @@ class tldnWRCCBrain(ptResponder):
             )
             PtDebugPrint(
                 "tldnWRCCBrain.OnServerInitComplete():\t%s = %d, %s=%d"
-                % (
-                    kStringAgeSDLHatchOpen,
-                    hatchOpen,
-                    kStringAgeSDLHatchLocked,
-                    hatchLocked,
-                )
+                % (kStringAgeSDLHatchOpen, hatchOpen, kStringAgeSDLHatchLocked, hatchLocked,)
             )
 
             # init cabin drained
@@ -419,18 +404,14 @@ class tldnWRCCBrain(ptResponder):
             return
 
         if id == actSitClickable.id:
-            PtDebugPrint(
-                "tldnWRCCBrain.OnNotify():\tWRCC occupied, disabling WRCC sit clickable."
-            )
+            PtDebugPrint("tldnWRCCBrain.OnNotify():\tWRCC occupied, disabling WRCC sit clickable.")
             actSitClickable.disable()
             self.SDL["boolOperated"] = (1,)
 
             LocalAvatar = PtFindAvatar(events)
             avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
             self.SDL["OperatorID"] = (avID,)
-            PtDebugPrint(
-                "tldnWRCCBrain.OnNotify:\twrote SDL - scope operator id = ", avID
-            )
+            PtDebugPrint("tldnWRCCBrain.OnNotify:\twrote SDL - scope operator id = ", avID)
 
             if PtWasLocallyNotified(self.key):
                 PtDisableMouseMovement()

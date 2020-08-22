@@ -84,9 +84,7 @@ class ercaSDLIntShowHide(ptMultiModifier):
                 )
                 pass
         else:
-            PtDebugPrint(
-                "ERROR: ercaSDLIntShowHide.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: ercaSDLIntShowHide.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
         if AgeStartedIn == PtGetAgeName():

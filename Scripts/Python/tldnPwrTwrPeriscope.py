@@ -100,7 +100,9 @@ boolScopeOperator = 0
 LocalAvatar = None
 
 # Teledahn.sdl vars
-kStringAgeSDLPumpCount = "tldnPwrTwrPumpCount"  # will be used to determine if tower is up or down (3=up, all else down)
+kStringAgeSDLPumpCount = (
+    "tldnPwrTwrPumpCount"  # will be used to determine if tower is up or down (3=up, all else down)
+)
 kStringAgeSDLMainPowerOn = "tldnMainPowerOn"
 
 AgeStartedIn = None
@@ -199,8 +201,7 @@ class tldnPwrTwrPeriscope(ptResponder):
             try:
                 boolPwrMain = ageSDL[kStringAgeSDLMainPowerOn][0]
                 PtDebugPrint(
-                    "tldnPwrTwrPeriscope.OnServerInitComplete():\tPwrMain=%d"
-                    % (boolPwrMain)
+                    "tldnPwrTwrPeriscope.OnServerInitComplete():\tPwrMain=%d" % (boolPwrMain)
                 )
             except:
                 PtDebugPrint(
@@ -244,9 +245,7 @@ class tldnPwrTwrPeriscope(ptResponder):
             return
 
         avID = PtGetClientIDFromAvatarKey(avObj.getKey())
-        PtDebugPrint(
-            "tldnPwrTwrPeriscope.AvatarPage(): Client ID %d paging out" % (avID)
-        )
+        PtDebugPrint("tldnPwrTwrPeriscope.AvatarPage(): Client ID %d paging out" % (avID))
         PtDebugPrint(
             "tldnPwrTwrPeriscope.AvatarPage(): Periscope operator is client id %d"
             % (self.SDL["OperatorID"][0])
@@ -334,9 +333,7 @@ class tldnPwrTwrPeriscope(ptResponder):
                         )
                         GUICbxBlocker.setChecked(kScopeBlocked)
                         GUIDialog.refreshAllControls()
-                    if (
-                        boolPwrMain and not boolTwrRaised
-                    ):  # power on, tower being lowered
+                    if boolPwrMain and not boolTwrRaised:  # power on, tower being lowered
                         PtDebugPrint(
                             "tldnPwrTwrPeriscope.OnSDLNotify():\tturning off main power because being lowered"
                         )
@@ -435,17 +432,13 @@ class tldnPwrTwrPeriscope(ptResponder):
                             PtDebugPrint(
                                 "tldnPwrTwrPeriscope.OnNotify():\tturning on main power because dish is lined up"
                             )
-                            ageSDL.setTagString(
-                                kStringAgeSDLMainPowerOn, "towerAligned"
-                            )
+                            ageSDL.setTagString(kStringAgeSDLMainPowerOn, "towerAligned")
                             ageSDL[kStringAgeSDLMainPowerOn] = (1,)
                         else:
                             PtDebugPrint(
                                 "tldnPwrTwrPeriscope.OnNotify():\tturning off main power because dish is not lined up"
                             )
-                            ageSDL.setTagString(
-                                kStringAgeSDLMainPowerOn, "towerMisaligned"
-                            )
+                            ageSDL.setTagString(kStringAgeSDLMainPowerOn, "towerMisaligned")
                             ageSDL[kStringAgeSDLMainPowerOn] = (0,)
                         break
             return
@@ -464,17 +457,13 @@ class tldnPwrTwrPeriscope(ptResponder):
                 avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
                 self.SDL["OperatorID"] = (avID,)
                 PtDebugPrint(
-                    "tldnPwrTwrPeriscope.OnNotify:\twrote SDL - scope operator id = %d"
-                    % (avID)
+                    "tldnPwrTwrPeriscope.OnNotify:\twrote SDL - scope operator id = %d" % (avID)
                 )
                 PtDebugPrint(
-                    "tldnPwrTwrPeriscope.OnNotify:\tSDL OperatorID = %d"
-                    % (self.SDL["OperatorID"])
+                    "tldnPwrTwrPeriscope.OnNotify:\tSDL OperatorID = %d" % (self.SDL["OperatorID"])
                 )
                 GUIDialog = PtGetDialogFromString(Vignette.value)
-                GUICbxBlocker = ptGUIControlCheckBox(
-                    GUIDialog.getControlFromTag(kGUIBlocker)
-                )
+                GUICbxBlocker = ptGUIControlCheckBox(GUIDialog.getControlFromTag(kGUIBlocker))
                 if boolTwrRaised:
                     GUICbxBlocker.setChecked(kScopeClear)
                 else:
@@ -485,11 +474,7 @@ class tldnPwrTwrPeriscope(ptResponder):
         # if it's an advance stage notify pop up GUI if I'm the guy at the scope
         if PtWasLocallyNotified(self.key):
             for event in events:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     if boolScopeOperator:
                         self.IEngageTelescope()
                     break

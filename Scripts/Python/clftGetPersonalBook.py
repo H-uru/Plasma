@@ -88,8 +88,7 @@ class clftGetPersonalBook(ptResponder):
         self.id = 5219
         self.version = 10
         PtDebugPrint(
-            "__init__clftGetPersonalBook v%d.%d" % (self.version, 2),
-            level=kWarningLevel,
+            "__init__clftGetPersonalBook v%d.%d" % (self.version, 2), level=kWarningLevel,
         )
 
     def OnFirstUpdate(self):
@@ -124,8 +123,7 @@ class clftGetPersonalBook(ptResponder):
                 # is it from the YeeshaBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint(
-                        "clftGetPersonalBook: BookNotify  event=%d, id=%d"
-                        % (event[1], event[2]),
+                        "clftGetPersonalBook: BookNotify  event=%d, id=%d" % (event[1], event[2]),
                         level=kDebugDumpLevel,
                     )
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
@@ -141,8 +139,7 @@ class clftGetPersonalBook(ptResponder):
                         pass
                     elif event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint(
-                            "clftGetPersonalBook:Book: NotifyHide",
-                            level=kDebugDumpLevel,
+                            "clftGetPersonalBook:Book: NotifyHide", level=kDebugDumpLevel,
                         )
                         # don't really care if they close the book, but re-enable the clickable for them
                         if not gAreWeLinkingOut:
@@ -175,9 +172,7 @@ class clftGetPersonalBook(ptResponder):
                     # if smart seek completed. Exit multistage, and show GUI.
                     if event[0] == kMultiStageEvent and event[2] == kEnterStage:
                         SmartSeek.gotoStage(LocalAvatar, -1)
-                        YeeshaBook = ptBook(
-                            xLinkingBookDefs.xYeeshaBookNoShare, self.key
-                        )
+                        YeeshaBook = ptBook(xLinkingBookDefs.xYeeshaBookNoShare, self.key)
                         YeeshaBook.setSize(
                             xLinkingBookDefs.YeeshaBookSizeWidth,
                             xLinkingBookDefs.YeeshaBookSizeHeight,
@@ -219,9 +214,7 @@ class clftGetPersonalBook(ptResponder):
         if not PtIsDemoMode():
             vault = ptVault()
             vault.addChronicleEntry("CleftSolved", 1, "yes")
-            PtDebugPrint(
-                "Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel
-            )
+            PtDebugPrint("Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel)
 
     def OnTimer(self, id):
         global gDemoMovie

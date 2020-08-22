@@ -85,9 +85,7 @@ class xCalendarStar(ptResponder):
 
         AgeStartedIn = PtGetAgeName()
         if not sdlCalStar.value:
-            PtDebugPrint(
-                "ERROR: xCalendarStar.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xCalendarStar.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
         if boolFirstUpdate.value:
@@ -96,9 +94,7 @@ class xCalendarStar(ptResponder):
                 try:
                     boolCalStar = psnlSDL[sdlCalStar.value][0]
                 except:
-                    PtDebugPrint(
-                        "ERROR: xCalendarStar.OnFirstUpdate():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("ERROR: xCalendarStar.OnFirstUpdate():\tERROR reading age SDL")
                     pass
                 PtDebugPrint(
                     "DEBUG: xCalendarStar.OnFirstUpdate():\t%s = %d"
@@ -147,24 +143,19 @@ class xCalendarStar(ptResponder):
             )
             return
         else:
-            PtDebugPrint(
-                "xCalendarStar.OnNotify():  have YeeshaPage20 (the Calendar Pinnacle)"
-            )
+            PtDebugPrint("xCalendarStar.OnNotify():  have YeeshaPage20 (the Calendar Pinnacle)")
 
             if AgeStartedIn == PtGetAgeName():
                 psnlSDL = xPsnlVaultSDL()
             if not boolCalStar:
-                PtDebugPrint(
-                    "xCalendarStar.OnNotify(): getting star's stone: ", sdlCalStar.value
-                )
+                PtDebugPrint("xCalendarStar.OnNotify(): getting star's stone: ", sdlCalStar.value)
                 psnlSDL[sdlCalStar.value] = (1,)
                 respCalStar.run(self.key)
                 boolCalStar = 1
                 PtSendKIMessageInt(kStartBookAlert, 0)
             else:
                 PtDebugPrint(
-                    "xCalendarStar.OnNotify(): already have the stone: ",
-                    sdlCalStar.value,
+                    "xCalendarStar.OnNotify(): already have the stone: ", sdlCalStar.value,
                 )
 
     def GotPage(self):

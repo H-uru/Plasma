@@ -95,9 +95,7 @@ class xAgeSDLBoolAndSet(ptResponder):
                 % (stringResult.value, result)
             )
         except:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndSet.OnServerInitComplete:\tcan't access age sdl"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnServerInitComplete:\tcan't access age sdl")
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         # is it a var we care about?
@@ -114,10 +112,7 @@ class xAgeSDLBoolAndSet(ptResponder):
             result = ageSDL[stringOpA.value][0] and ageSDL[stringOpB.value][0]
             ageSDL[stringResult.value] = (result,)
             PtDebugPrint(
-                "DEBUG: xAgeSDLBoolAndSet.OnSDLNotify:\tset %s=%d"
-                % (stringResult.value, result)
+                "DEBUG: xAgeSDLBoolAndSet.OnSDLNotify:\tset %s=%d" % (stringResult.value, result)
             )
         except:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndSet.OnServerInitComplete:\tcan't access age sdl"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnServerInitComplete:\tcan't access age sdl")

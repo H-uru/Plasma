@@ -121,8 +121,7 @@ class xMusicBox(ptModifier):
 
         SoundObjIndex = soSoundObj.value.getSoundIndex(strSoundObj.value)
         PtDebugPrint(
-            "xMusicBox.OnServerInitComplete: using sound object index:"
-            + str(SoundObjIndex)
+            "xMusicBox.OnServerInitComplete: using sound object index:" + str(SoundObjIndex)
         )
 
         if sdlCurrentSongVar.value:
@@ -137,9 +136,7 @@ class xMusicBox(ptModifier):
 
                 CurrentFile = (filename, iscompressed)
 
-                soSoundObj.value.setSoundFilename(
-                    SoundObjIndex, CurrentFile[0], CurrentFile[1]
-                )
+                soSoundObj.value.setSoundFilename(SoundObjIndex, CurrentFile[0], CurrentFile[1])
                 respStart.run(self.key)
 
     def OnNotify(self, state, id, events):
@@ -160,9 +157,7 @@ class xMusicBox(ptModifier):
 
             respStop.run(self.key)
             if CurrentFile:
-                soSoundObj.value.setSoundFilename(
-                    SoundObjIndex, CurrentFile[0], CurrentFile[1]
-                )
+                soSoundObj.value.setSoundFilename(SoundObjIndex, CurrentFile[0], CurrentFile[1])
                 respStart.run(self.key)
 
                 currentSong = (CurrentFile[0],)

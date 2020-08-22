@@ -75,9 +75,7 @@ class xAgeSDLBoolToggle(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolToggle.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolToggle.OnFirstUpdate():\tERROR: missing SDL var name")
 
     def OnServerInitComplete(self):
         global boolCurrentValue
@@ -117,9 +115,7 @@ class xAgeSDLBoolToggle(ptResponder):
 
         # error check
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolToggle.OnNotify():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolToggle.OnNotify():\tERROR: missing SDL var name")
             return
 
         ageSDL = PtGetAgeSDL()

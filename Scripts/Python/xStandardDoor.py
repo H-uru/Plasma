@@ -118,9 +118,7 @@ class xStandardDoor(ptResponder):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
         if not stringSDLVarClosed.value:
-            PtDebugPrint(
-                "xStandardDoor.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("xStandardDoor.OnFirstUpdate():\tERROR: missing SDL var name in max file")
 
     def OnServerInitComplete(self):
         global boolEnableOK
@@ -185,9 +183,7 @@ class xStandardDoor(ptResponder):
                     PtDebugPrint("xStandardDoor.OnServerInitComplete():\tWelcome Home!")
                     boolEnableOK = True
                 else:
-                    PtDebugPrint(
-                        "xStandardDoor.OnServerInitComplete():\tWelcome Visitor."
-                    )
+                    PtDebugPrint("xStandardDoor.OnServerInitComplete():\tWelcome Visitor.")
                     boolEnableOK = False
             if not doorEnabled:
                 boolEnableOK = False
@@ -240,13 +236,7 @@ class xStandardDoor(ptResponder):
             if VARname == stringSDLVarEnabled.value:
                 PtDebugPrint(
                     "xStandardDoor.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d, playerID:%d"
-                    % (
-                        VARname,
-                        SDLname,
-                        tag,
-                        ageSDL[stringSDLVarEnabled.value][0],
-                        playerID,
-                    )
+                    % (VARname, SDLname, tag, ageSDL[stringSDLVarEnabled.value][0], playerID,)
                 )
                 doorEnabled = ageSDL[stringSDLVarEnabled.value][0]
 
@@ -266,9 +256,7 @@ class xStandardDoor(ptResponder):
                 else:
                     vault = ptVault()
                     if vault.amOwnerOfCurrentAge():
-                        PtDebugPrint(
-                            "xStandardDoor.OnSDLNotify():\tOwners-Only Door Enabled"
-                        )
+                        PtDebugPrint("xStandardDoor.OnSDLNotify():\tOwners-Only Door Enabled")
                         boolEnableOK = True
                         actExterior.enable()
                         actInterior.enable()
@@ -281,13 +269,7 @@ class xStandardDoor(ptResponder):
             if VARname == stringSDLVarClosed.value:
                 PtDebugPrint(
                     "xStandardDoor.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d, playerID:%d"
-                    % (
-                        VARname,
-                        SDLname,
-                        tag,
-                        ageSDL[stringSDLVarClosed.value][0],
-                        playerID,
-                    )
+                    % (VARname, SDLname, tag, ageSDL[stringSDLVarClosed.value][0], playerID,)
                 )
 
                 if tag == "ignore":
@@ -295,16 +277,15 @@ class xStandardDoor(ptResponder):
 
                 # is door state change from player or vault manager?
                 if playerID:
-                    objAvatar = ptSceneobject(
-                        PtGetAvatarKeyFromClientID(playerID), self.key
-                    )
+                    objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID), self.key)
                     fastforward = 0
                 else:  # playerID == 0 --> invalid player aka Vault Manager
                     objAvatar = None
-                    fastforward = 1  # pop door to it's new state (skip one-shots that require valid player)
+                    fastforward = (
+                        1  # pop door to it's new state (skip one-shots that require valid player)
+                    )
                 PtDebugPrint(
-                    "xStandardDoor.OnSDLNotify():\tnotification from playerID: %d"
-                    % (playerID)
+                    "xStandardDoor.OnSDLNotify():\tnotification from playerID: %d" % (playerID)
                 )
 
                 # if tag == "fastforward":
@@ -322,9 +303,7 @@ class xStandardDoor(ptResponder):
                             "fastforward",
                         ]
                         if tag in OkTags:
-                            self.SendNote(
-                                "%s;%d;%d;true" % (tag, playerID, fastforward), playerID
-                            )
+                            self.SendNote("%s;%d;%d;true" % (tag, playerID, fastforward), playerID)
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tClosing ", tag)
                         else:
                             PtDebugPrint(
@@ -358,8 +337,7 @@ class xStandardDoor(ptResponder):
                         OkTags = ["fromOutside", "fromInside"]
                         if tag in OkTags:
                             self.SendNote(
-                                "%s;%d;%d;false" % (tag, playerID, fastforward),
-                                playerID,
+                                "%s;%d;%d;false" % (tag, playerID, fastforward), playerID,
                             )
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tOpening ", tag)
                         else:
@@ -392,9 +370,7 @@ class xStandardDoor(ptResponder):
             PtDebugPrint("xStandardDoor: New list is: %s" % (str(self.DoorStack)))
 
             if len(self.DoorStack) == 1:
-                PtDebugPrint(
-                    "xStandardDoor: List is only one command long, so I'm playing it"
-                )
+                PtDebugPrint("xStandardDoor: List is only one command long, so I'm playing it")
                 code = self.DoorStack[0]
                 PtDebugPrint("xStandardDoor: Playing command: %s" % (code))
                 self.ExecCode(code)
@@ -424,10 +400,7 @@ class xStandardDoor(ptResponder):
             notify.addVarNumber(str(ExtraInfo), 1.0)
             notify.send()
 
-        elif (
-            ptSceneobject(PtGetAvatarKeyFromClientID(avatar), self.key)
-            == PtGetLocalAvatar()
-        ):
+        elif ptSceneobject(PtGetAvatarKeyFromClientID(avatar), self.key) == PtGetLocalAvatar():
             notify = ptNotify(self.key)
             notify.clearReceivers()
             notify.addReceiver(self.key)
@@ -454,24 +427,18 @@ class xStandardDoor(ptResponder):
             playerId = int(chunks[1])
             fastForward = int(chunks[2])
             doorClosed = chunks[3]
-            if (
-                doorClosed == "true"
-            ):  # no easy way to convert strings to bools in python
+            if doorClosed == "true":  # no easy way to convert strings to bools in python
                 if tag == "fromOutside":
                     respCloseExt.run(
                         self.key,
-                        avatar=ptSceneobject(
-                            PtGetAvatarKeyFromClientID(playerId), self.key
-                        ),
+                        avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId), self.key),
                         fastforward=fastForward,
                         netPropagate=0,
                     )
                 elif tag == "fromInside":
                     respCloseInt.run(
                         self.key,
-                        avatar=ptSceneobject(
-                            PtGetAvatarKeyFromClientID(playerId), self.key
-                        ),
+                        avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId), self.key),
                         fastforward=fastForward,
                         netPropagate=0,
                     )
@@ -480,40 +447,30 @@ class xStandardDoor(ptResponder):
                 elif tag == "fastforward":
                     respCloseExt.run(
                         self.key,
-                        avatar=ptSceneobject(
-                            PtGetAvatarKeyFromClientID(playerId), self.key
-                        ),
+                        avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId), self.key),
                         fastforward=1,
                         netPropagate=0,
                     )
                 else:
-                    PtDebugPrint(
-                        "xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
-                    )
+                    PtDebugPrint("xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag))
                     self.DoorStack.pop(0)
             else:
                 if tag == "fromOutside":
                     respOpenExt.run(
                         self.key,
-                        avatar=ptSceneobject(
-                            PtGetAvatarKeyFromClientID(playerId), self.key
-                        ),
+                        avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId), self.key),
                         fastforward=fastForward,
                         netPropagate=0,
                     )
                 elif tag == "fromInside" or playerId == 0:
                     respOpenInt.run(
                         self.key,
-                        avatar=ptSceneobject(
-                            PtGetAvatarKeyFromClientID(playerId), self.key
-                        ),
+                        avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId), self.key),
                         fastforward=fastForward,
                         netPropagate=0,
                     )
                 else:
-                    PtDebugPrint(
-                        "xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
-                    )
+                    PtDebugPrint("xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag))
                     self.DoorStack.pop(0)
         except:
             PtDebugPrint("xStandardDoor.ExecCode(): ERROR! Invalid code '%s'." % (code))

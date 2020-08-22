@@ -139,9 +139,7 @@ class UCMarkerGame(object):
                     )
                 else:
                     PtDebugPrint(
-                        "UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(
-                            clothing
-                        ),
+                        "UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing),
                         level=kWarningLevel,
                     )
                     try:
@@ -231,9 +229,7 @@ class UCMarkerGame(object):
                 ptMarkerMgr().setSelectedMarker(id)
                 return
 
-    selected_marker_index = property(
-        _get_selected_marker_index, _set_selected_marker_index
-    )
+    selected_marker_index = property(_get_selected_marker_index, _set_selected_marker_index)
 
     def _get_selected_marker_name(self):
         marker = self.selected_marker
@@ -247,9 +243,7 @@ class UCMarkerGame(object):
             id, age, pos, desc = self._markers[idx]
             self._markers[idx] = (id, age, pos, value)
 
-    selected_marker_name = property(
-        _get_selected_marker_name, _set_selected_marker_name
-    )
+    selected_marker_name = property(_get_selected_marker_name, _set_selected_marker_name)
 
     def Stop(self):
         self._playing = False

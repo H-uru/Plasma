@@ -103,36 +103,20 @@ class grsn1stFloorClimb(ptResponder):
             # execute climb behaviors
 
             if id == climbBehavior.id:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     climbSoundAnim.animation.play()
                     PtDebugPrint("starting to climb")
                     return
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     PtDebugPrint("finshed climb")
                     return
 
             if id == descendBehavior.id:
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kEnterStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     descendSoundAnim.animation.play()
                     PtDebugPrint("starting to descend")
                     return
-                if (
-                    event[0] == kMultiStageEvent
-                    and event[1] == 0
-                    and event[2] == kAdvanceNextStage
-                ):
+                if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     # temporary hack here
                     climber.physics.warp(ptPoint3(116.787, -478.983, -263.936))
                     # end temporary hack
@@ -141,24 +125,18 @@ class grsn1stFloorClimb(ptResponder):
 
             # initiate climbing or descending
 
-            if (
-                id == climbTrigger.id and event[0] == 1 and event[1] == 1
-            ):  # someone is entering
+            if id == climbTrigger.id and event[0] == 1 and event[1] == 1:  # someone is entering
                 if (
-                    self.SDL["intSDLClimber"][0] == -1
-                    and self.SDL["intSDLDescender"][0] == -1
+                    self.SDL["intSDLClimber"][0] == -1 and self.SDL["intSDLDescender"][0] == -1
                 ):  # nobody currently climbing up/down
                     PtDebugPrint("initiated climbing avatar # " + repr(climberID))
                     self.SDL["intSDLClimber"] = (climberID,)
                     climbBehavior.run(climber)
                 return
 
-            if (
-                id == descendTrigger.id and event[0] == 1 and event[1] == 1
-            ):  # someone is entering
+            if id == descendTrigger.id and event[0] == 1 and event[1] == 1:  # someone is entering
                 if (
-                    self.SDL["intSDLClimber"][0] == -1
-                    and self.SDL["intSDLDescender"][0] == -1
+                    self.SDL["intSDLClimber"][0] == -1 and self.SDL["intSDLDescender"][0] == -1
                 ):  # no one currently climbing / descending
                     PtDebugPrint("initiated descent")
                     self.SDL["intSDLDescender"] = (climberID,)
@@ -171,9 +149,7 @@ class grsn1stFloorClimb(ptResponder):
 
             # reset the climb regions
 
-            if (
-                id == climbTopReset.id and event[0] == 1 and event[1] == 0
-            ):  # someone is exiting
+            if id == climbTopReset.id and event[0] == 1 and event[1] == 0:  # someone is exiting
                 if (
                     self.SDL["intSDLClimber"][0] == climberID
                     and self.SDL["intSDLDescender"][0] == -1
@@ -182,9 +158,7 @@ class grsn1stFloorClimb(ptResponder):
                     self.SDL["intSDLClimber"] = (-1,)
                 return
 
-            if (
-                id == climbBottomReset.id and event[0] == 1 and event[1] == 0
-            ):  # someone is exiting
+            if id == climbBottomReset.id and event[0] == 1 and event[1] == 0:  # someone is exiting
                 if (
                     self.SDL["intSDLClimber"][0] == -1
                     and self.SDL["intSDLDescender"][0] == climberID

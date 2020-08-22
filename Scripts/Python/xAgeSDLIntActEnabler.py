@@ -77,8 +77,7 @@ class xAgeSDLIntActEnabler(ptResponder):
         ageSDL = PtGetAgeSDL()
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tOn %s"
-            % stringSDLVarName.value
+            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tOn %s" % stringSDLVarName.value
         )
 
         try:
@@ -107,8 +106,7 @@ class xAgeSDLIntActEnabler(ptResponder):
             SDLvalue = intDefault.value
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tCurrent SDL value = %d"
-            % SDLvalue
+            "DEBUG: xAgeSDLIntActEnabler.OnServerInitComplete:\tCurrent SDL value = %d" % SDLvalue
         )
 
         if SDLvalue in self.enabledStateList:

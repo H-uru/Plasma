@@ -279,9 +279,7 @@ class kdshVault(ptResponder):
             # append the pushed button to the list of those already clicked
             ButtonsPushed = ageSDL["ButtonsPushed"][0]
             ButtonsPushed = str(ButtonsPushed)
-            PtDebugPrint(
-                "kdshVault.OnNotify: Before, ButtonsPushed was ", ButtonsPushed
-            )
+            PtDebugPrint("kdshVault.OnNotify: Before, ButtonsPushed was ", ButtonsPushed)
 
             ButtonsPushed = int(ButtonsPushed + (str(id)))
             PtDebugPrint("kdshVault.OnNotify: Now, ButtonsPushed = ", ButtonsPushed)
@@ -303,9 +301,7 @@ class kdshVault(ptResponder):
                 PtDebugPrint("Button has no effect. The Vault Door is already moving.")
                 return
 
-            PtDebugPrint(
-                "kdshVault.OnNotify: Reset Button Pushed. Toggling Vault Door state."
-            )
+            PtDebugPrint("kdshVault.OnNotify: Reset Button Pushed. Toggling Vault Door state.")
 
             vaultclosed = ageSDL["VaultClosed"][0]
             if vaultclosed == 1:
@@ -346,9 +342,7 @@ class kdshVault(ptResponder):
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         ageSDL = PtGetAgeSDL()
 
-        PtDebugPrint(
-            "kdshVault.OnSDLNotify:\tVARname=", VARname, " value=", ageSDL[VARname][0]
-        )
+        PtDebugPrint("kdshVault.OnSDLNotify:\tVARname=", VARname, " value=", ageSDL[VARname][0])
 
         if VARname == "ButtonsPushed":
 

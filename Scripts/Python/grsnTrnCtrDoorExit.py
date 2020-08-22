@@ -73,9 +73,7 @@ class grsnTrnCtrDoorExit(ptResponder):
         ptResponder.__init__(self)
         self.id = 3277
         self.version = 1
-        PtDebugPrint(
-            "grsnTrnCtrDoorExit: Max version %d - minor version %d" % (self.version, 2)
-        )
+        PtDebugPrint("grsnTrnCtrDoorExit: Max version %d - minor version %d" % (self.version, 2))
 
     def OnNotify(self, state, id, events):
         global avatarEntering
@@ -122,9 +120,7 @@ class grsnTrnCtrDoorExit(ptResponder):
                 return
             for event in events:
                 if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage:
-                    PtDebugPrint(
-                        " Smart seek completed. Exit multistage, close exterior door"
-                    )
+                    PtDebugPrint(" Smart seek completed. Exit multistage, close exterior door")
                     behaviorWalkIn.gotoStage(PtGetLocalAvatar(), -1)
                     door1CloseResponder.run(self.key, avatar=PtGetLocalAvatar())
                     return
@@ -153,9 +149,7 @@ class grsnTrnCtrDoorExit(ptResponder):
                 return
             for event in events:
                 if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage:
-                    PtDebugPrint(
-                        " Smart seek completed. Exit multistage, close interior door"
-                    )
+                    PtDebugPrint(" Smart seek completed. Exit multistage, close interior door")
                     door2CloseResponder.run(self.key, avatar=PtGetLocalAvatar())
                     behaviorWalkOut.gotoStage(PtGetLocalAvatar(), -1)
                     return

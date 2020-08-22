@@ -111,17 +111,13 @@ class grtzMarkerScopeGUI(ptModifier):
             if isinstance(score, ptGameScore):
                 score.setPoints(int(param), self.key)
             else:
-                PtDebugPrint(
-                    "grtzMarkerScopeGUI.OnBackdoorMsg():\tDon't have the GameScore yet!"
-                )
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tDon't have the GameScore yet!")
 
         elif target == "cgztime":
             try:
                 time = int(param)
             except:
-                PtDebugPrint(
-                    "grtzMarkerScopeGUI.OnBackdoorMsg():\tcgztime wants an integer"
-                )
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tcgztime wants an integer")
             else:
                 time = PtGetServerTime() - time
                 PtDebugPrint(
@@ -227,9 +223,7 @@ class grtzMarkerScopeGUI(ptModifier):
             points = score.getPoints()
             self._scores[mission] = points
             PtDebugPrint(
-                "grtzMarkerScopeGUI.OnGameScoreMsg():\tUpdated CGZ #{} = {}".format(
-                    mission, points
-                )
+                "grtzMarkerScopeGUI.OnGameScoreMsg():\tUpdated CGZ #{} = {}".format(mission, points)
             )
 
             if self._lookingAtGUI:
@@ -240,9 +234,7 @@ class grtzMarkerScopeGUI(ptModifier):
             self._CheckForGPSCalibration()
 
     def _GrantGPS(self, enable=True):
-        PtDebugPrint(
-            "grtzMarkerScopeGUI._GrantGPS():\tYou have GPS...", level=kWarningLevel
-        )
+        PtDebugPrint("grtzMarkerScopeGUI._GrantGPS():\tYou have GPS...", level=kWarningLevel)
 
         vault = ptVault()
         psnlSDL = vault.getPsnlAgeSDL()
@@ -253,8 +245,7 @@ class grtzMarkerScopeGUI(ptModifier):
                 vault.updatePsnlAgeSDL(psnlSDL)
                 act = "Enabled" if enable else "Disabled"
                 PtDebugPrint(
-                    "grtzMarkerScopeGUI._GrantGPS():\t{} GPS!".format(act),
-                    level=kWarningLevel,
+                    "grtzMarkerScopeGUI._GrantGPS():\t{} GPS!".format(act), level=kWarningLevel,
                 )
 
     def OnGUINotify(self, id, control, event):
@@ -361,9 +352,7 @@ class grtzMarkerScopeGUI(ptModifier):
             if mission != -1:
                 if PtIsCGZMComplete():
                     PtDebugPrint(
-                        "grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: complete!".format(
-                            mission
-                        ),
+                        "grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: complete!".format(mission),
                         level=kWarningLevel,
                     )
                     self._StopCGZM(win=True)
@@ -416,11 +405,7 @@ class grtzMarkerScopeGUI(ptModifier):
         # Update this marker mission
         if score is None:
             prevScore = self._scores[mission]
-            prev = (
-                prevScore.getPoints()
-                if isinstance(prevScore, ptGameScore)
-                else prevScore
-            )
+            prev = prevScore.getPoints() if isinstance(prevScore, ptGameScore) else prevScore
             if quitting:
                 span = prev
             else:

@@ -149,11 +149,7 @@ class xTelescope(ptModifier):
             self.IStartTelescope()
         # check if its an advance stage notify
         for event in events:
-            if (
-                event[0] == kMultiStageEvent
-                and event[1] == 0
-                and event[2] == kAdvanceNextStage
-            ):
+            if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                 if boolScopeOperator:
                     self.IEngageTelescope()
                     boolScopeOperator = 0
@@ -162,9 +158,7 @@ class xTelescope(ptModifier):
     def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
         PtDebugPrint(
-            "GUI Notify id=%d, event=%d control=" % (id, event),
-            control,
-            level=kDebugDumpLevel,
+            "GUI Notify id=%d, event=%d control=" % (id, event), control, level=kDebugDumpLevel,
         )
         if event == kDialogLoaded:
             # if the dialog was just loaded then show it
@@ -192,9 +186,7 @@ class xTelescope(ptModifier):
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         self.SDL["OperatorID"] = (avID,)
         PtDebugPrint(
-            "xTelescope.OnNotify:\twrote SDL - scope operator id = ",
-            avID,
-            level=kDebugDumpLevel,
+            "xTelescope.OnNotify:\twrote SDL - scope operator id = ", avID, level=kDebugDumpLevel,
         )
         # start the behavior
         Behavior.run(LocalAvatar)
@@ -249,14 +241,11 @@ class xTelescope(ptModifier):
             self.key, 3, 1
         )  # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint(
-            "xTelescope.IQuitTelescope:\tdelaying clickable reenable",
-            level=kDebugDumpLevel,
+            "xTelescope.IQuitTelescope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )
 
     def OnTimer(self, id):
         if id == 1:
             Activate.enable()
-            PtDebugPrint(
-                "xTelescope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel
-            )
+            PtDebugPrint("xTelescope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel)
             PtSendKIMessage(kEnableKIandBB, 0)

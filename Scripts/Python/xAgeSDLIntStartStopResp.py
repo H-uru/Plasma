@@ -121,17 +121,12 @@ class xAgeSDLIntStartStopResp(ptResponder):
         SDLvalue = ageSDL[stringSDLVarName.value][0]
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify received: %s = %d"
-            % (VARname, SDLvalue)
+            "DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue)
         )
 
         if SDLvalue in self.enabledStateList:
-            PtDebugPrint(
-                "DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running start responder"
-            )
+            PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running start responder")
             respStart.run(self.key, avatar=None, fastforward=boolStartFF.value)
         else:
-            PtDebugPrint(
-                "DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running stop responder"
-            )
+            PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running stop responder")
             respStop.run(self.key, avatar=None, fastforward=boolStopFF.value)

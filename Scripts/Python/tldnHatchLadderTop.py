@@ -165,9 +165,7 @@ class tldnHatchLadderTop(ptModifier):
             "-------------------------------------------------------------------------------------------"
         )
         PtDebugPrint(" ")
-        PtDebugPrint(
-            "tldnHatchLadderTop:OnNotify  state=%d id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("tldnHatchLadderTop:OnNotify  state=%d id=%d events=" % (state, id), events)
 
         if id == ActStart.id and state:
             ClimbingAvatar = PtFindAvatar(events)
@@ -198,12 +196,8 @@ class tldnHatchLadderTop(ptModifier):
                         return
                     if PtFindAvatar(events) == ClimbingAvatar:
                         stageNum = event[1]
-                        PtDebugPrint(
-                            "tldnHatchLadderTop: message from multistage %i" % stageNum
-                        )
-                        if event[2] == kRegressPrevStage and (
-                            stageNum == 2 or stageNum == 6
-                        ):
+                        PtDebugPrint("tldnHatchLadderTop: message from multistage %i" % stageNum)
+                        if event[2] == kRegressPrevStage and (stageNum == 2 or stageNum == 6):
                             PtDebugPrint(
                                 "tldnHatchLadderTop: Got stage Regress callback from stage %d"
                                 % stageNum
@@ -214,18 +208,12 @@ class tldnHatchLadderTop(ptModifier):
                                 PtDebugPrint("tldnHatchLadderTop: checking drained")
                                 if not cabinDrained:
                                     Climber.gotoStage(ClimbingAvatar, 6, 0, 0)
-                                    PtDebugPrint(
-                                        "tldnHatchLadderTop: water not drained"
-                                    )
+                                    PtDebugPrint("tldnHatchLadderTop: water not drained")
                             if stageNum == 4:
                                 if not cabinDrained:
-                                    Climber.gotoStage(
-                                        ClimbingAvatar, 6, dirFlag=1, isForward=1
-                                    )
+                                    Climber.gotoStage(ClimbingAvatar, 6, dirFlag=1, isForward=1)
                                 else:
-                                    Climber.gotoStage(
-                                        ClimbingAvatar, 2, dirFlag=1, isForward=1
-                                    )
+                                    Climber.gotoStage(ClimbingAvatar, 2, dirFlag=1, isForward=1)
                                 PtDebugPrint("tldnHatchLadderTop: now stage 2/6 again")
                             elif stageNum == 5:
                                 PtDebugPrint(
@@ -254,9 +242,7 @@ class tldnHatchLadderTop(ptModifier):
         global ClimbingAvatar
 
         PtDebugPrint("tldnHatchLadderTop: Hatch is locked; Sending gotoStage(4)")
-        Climber.gotoStage(
-            ClimbingAvatar, 4, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0
-        )
+        Climber.gotoStage(ClimbingAvatar, 4, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0)
         respHatchOps.run(self.key, state="lockedbelow")
 
     def IHatchUnlocked(self):
@@ -264,9 +250,7 @@ class tldnHatchLadderTop(ptModifier):
         global hatchOpen
 
         PtDebugPrint("tldnHatchLadderTop: Hatch is unlocked; Sending gotoStage(5)")
-        Climber.gotoStage(
-            ClimbingAvatar, 5, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0
-        )
+        Climber.gotoStage(ClimbingAvatar, 5, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0)
         respHatchOps.run(self.key, state="openbelow")
         hatchOpen = 1
         if AgeStartedIn == PtGetAgeName():

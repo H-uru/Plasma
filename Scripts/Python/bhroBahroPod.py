@@ -154,9 +154,7 @@ class bhroBahroPod(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge07"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge07 to On"
-                )
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge07 to On")
                 psnlSDL["psnlBahroWedge07"] = (1,)
 
         elif id == clkDereno.id and not state:
@@ -165,9 +163,7 @@ class bhroBahroPod(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge08"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge08 to On"
-                )
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge08 to On")
                 psnlSDL["psnlBahroWedge08"] = (1,)
 
         elif id == clkPayiferen.id and not state:
@@ -176,9 +172,7 @@ class bhroBahroPod(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge09"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge09 to On"
-                )
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge09 to On")
                 psnlSDL["psnlBahroWedge09"] = (1,)
 
         elif id == clkTetsonot.id and not state:
@@ -187,7 +181,5 @@ class bhroBahroPod(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge10"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge10 to On"
-                )
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge10 to On")
                 psnlSDL["psnlBahroWedge10"] = (1,)

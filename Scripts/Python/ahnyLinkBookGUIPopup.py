@@ -165,9 +165,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
                     event[0] == kMultiStageEvent and event[2] == kEnterStage
                 ):  # Smart seek completed. Exit multistage, and show GUI.
                     SeekBehavior.gotoStage(LocalAvatar, -1)
-                    PtDebugPrint(
-                        "ahnyLinkBookGUIPopup: attempting to draw link panel gui"
-                    )
+                    PtDebugPrint("ahnyLinkBookGUIPopup: attempting to draw link panel gui")
                     self.IShowBookNoTreasure()
                     OfferedBookMode = False
                     BookOfferer = None
@@ -177,8 +175,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint(
-                        "ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d"
-                        % (event[1], event[2])
+                        "ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1], event[2])
                     )
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if (
@@ -186,8 +183,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
                             or event[2] == xLinkingBookDefs.kBookMarkID
                         ):
                             PtDebugPrint(
-                                "ahnyLinkBookGUIPopup:Book: hit linking panel %s"
-                                % (event[2])
+                                "ahnyLinkBookGUIPopup:Book: hit linking panel %s" % (event[2])
                             )
                             self.HideBook(1)
                             respLinkSphere01.run(
@@ -250,8 +246,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
 
                     elif event[1] == PtBookEventTypes.kNotifyShow:
                         PtDebugPrint(
-                            "ahnyLinkBookGUIPopup:Book: NotifyShow",
-                            level=kDebugDumpLevel,
+                            "ahnyLinkBookGUIPopup:Book: NotifyShow", level=kDebugDumpLevel,
                         )
                         # re-allow KI and BB
                         PtSendKIMessage(kEnableKIandBB, 0)
@@ -266,8 +261,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
 
                     elif event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint(
-                            "ahnyLinkBookGUIPopup:Book: NotifyHide",
-                            level=kDebugDumpLevel,
+                            "ahnyLinkBookGUIPopup:Book: NotifyHide", level=kDebugDumpLevel,
                         )
                         if not ClosedBookToShare:
                             PtToggleAvatarClickability(True)
@@ -288,8 +282,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
 
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
                         PtDebugPrint(
-                            "ahnyLinkBookGUIPopup:Book: NotifyCheckUncheck",
-                            level=kDebugDumpLevel,
+                            "ahnyLinkBookGUIPopup:Book: NotifyCheckUncheck", level=kDebugDumpLevel,
                         )
                         pass
 
@@ -318,9 +311,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
             gLinkingBook.show(1)
 
         except LookupError:
-            PtDebugPrint(
-                "ahnyLinkBookGUIPopup: could not find age Ahnonay's linking panel"
-            )
+            PtDebugPrint("ahnyLinkBookGUIPopup: could not find age Ahnonay's linking panel")
 
         """
         showOpen = 0

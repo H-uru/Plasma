@@ -55,9 +55,7 @@ import PlasmaControlKeys
 ActStart = ptAttribActivator(4, "Starts the climb")
 Climber = ptAttribBehavior(5, "The multistage behavior")
 respHatchOps = ptAttribResponder(
-    6,
-    "Rspndr: Hatch Ops",
-    ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
+    6, "Rspndr: Hatch Ops", ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
 )
 
 # ---------
@@ -109,12 +107,7 @@ class tldnHatchLadderBottom(ptModifier):
                 )
             PtDebugPrint(
                 "tldnHatchLadderBottom.OnServerInitComplete():\t%s=%d, %s=%d"
-                % (
-                    kStringAgeSDLHatchOpen,
-                    hatchOpen,
-                    kStringAgeSDLHatchLocked,
-                    hatchLocked,
-                )
+                % (kStringAgeSDLHatchOpen, hatchOpen, kStringAgeSDLHatchLocked, hatchLocked,)
             )
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
@@ -151,9 +144,7 @@ class tldnHatchLadderBottom(ptModifier):
                 if PtFindAvatar(events) == LocalAvatar:
                     if event[2] == kAdvanceNextStage:
                         stageNum = event[1]
-                        PtDebugPrint(
-                            "Got stage advance callback from stage %d" % stageNum
-                        )
+                        PtDebugPrint("Got stage advance callback from stage %d" % stageNum)
                         if stageNum == 1:
                             PtDebugPrint("In stage 2, negotiating hatch.")
                             self.INegotiateHatch()
@@ -161,9 +152,7 @@ class tldnHatchLadderBottom(ptModifier):
                             # after the "it's locked" anim, return to the climb...
                             Climber.gotoStage(LocalAvatar, 1, 0, 0)
                         elif stageNum == 2 or stageNum == 3 or stageNum == 5:
-                            PtDebugPrint(
-                                "Got through hatch: finishing & removing brain."
-                            )
+                            PtDebugPrint("Got through hatch: finishing & removing brain.")
                             Climber.gotoStage(LocalAvatar, -1)
 
     def INegotiateHatch(self):

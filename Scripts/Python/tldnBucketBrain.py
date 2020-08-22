@@ -119,13 +119,9 @@ respCountdownStop = ptAttribResponder(42, "Resp: SFX Countdown Stop")
 
 SensorAtEntry = ptAttribSceneobject(43, "SensorAtEntry")
 
-actEnteredBucketByRail = ptAttribActivator(
-    44, "act: Entered Bucket By Rail"
-)  # Not used!
+actEnteredBucketByRail = ptAttribActivator(44, "act: Entered Bucket By Rail")  # Not used!
 actExitedBucketByRail = ptAttribActivator(45, "act: Exited Bucket By Rail")  # Not used!
-respAnimSensorAtEntry = ptAttribResponder(
-    46, "resp: Animate SensorAtEntry"
-)  # Not used!
+respAnimSensorAtEntry = ptAttribResponder(46, "resp: Animate SensorAtEntry")  # Not used!
 
 # Camera Control Max Attributes
 Camera01 = ptAttribSceneobject(47, "Bucket Cam 1")
@@ -136,9 +132,7 @@ rgnSensor02 = ptAttribActivator(51, "Bucket Cam 2 Region")
 rgnSensor03 = ptAttribActivator(52, "Bucket Dump Cam 3 Region")
 
 # global variables
-AgeStartedIn = (
-    None  # The age this script started in...  (do we even need this anymore???)
-)
+AgeStartedIn = None  # The age this script started in...  (do we even need this anymore???)
 buckets = ()  # The bucket objects
 scriptInitialized = 0  # If the script has finished initializing...
 avaIDAtEntry = 0
@@ -474,8 +468,7 @@ class tldnBucketBrain(ptResponder):
         ageSDL.setIndex(kStringAgeSDLRiders, index, -1)
 
         PtDebugPrint(
-            "tldnBucketBrain.AvatarPage():\tPruned rider: %s from bucket: %s"
-            % (avaID, index),
+            "tldnBucketBrain.AvatarPage():\tPruned rider: %s from bucket: %s" % (avaID, index),
             level=kDebugDumpLevel,
         )
         return
@@ -485,8 +478,7 @@ class tldnBucketBrain(ptResponder):
         ageSDL = PtGetAgeSDL()
 
         PtDebugPrint(
-            "****> RECEIVED: SDL UPDATE: var= %s  <****" % VARname,
-            level=kDebugDumpLevel,
+            "****> RECEIVED: SDL UPDATE: var= %s  <****" % VARname, level=kDebugDumpLevel,
         )
 
         # ------------------------------------------------
@@ -500,17 +492,13 @@ class tldnBucketBrain(ptResponder):
                     "tldnBucketBrain.OnSDLNotify():\t The power is turned on and will start the buckets",
                     level=kDebugDumpLevel,
                 )
-                self.UpdateBucketState(
-                    kBucketInputs.Power, ageSDL[kStringAgeSDLPowerOn][0]
-                )
+                self.UpdateBucketState(kBucketInputs.Power, ageSDL[kStringAgeSDLPowerOn][0])
             elif not powerOn:
                 PtDebugPrint(
                     "tldnBucketBrain.OnSDLNotify()\t The power has been turned off",
                     level=kDebugDumpLevel,
                 )
-                self.UpdateBucketState(
-                    kBucketInputs.Power, ageSDL[kStringAgeSDLPowerOn][0]
-                )
+                self.UpdateBucketState(kBucketInputs.Power, ageSDL[kStringAgeSDLPowerOn][0])
             else:
                 PtDebugPrint(
                     "tldnBucketBrain.OnSDLNotify()\t The power has been turned on, but awaiting the lever pull to start buckets",
@@ -672,9 +660,7 @@ class tldnBucketBrain(ptResponder):
                 # Preferably this would be in RunBucketState(),
                 # but this must happen even if we get a Fastforward
                 # So it's here out of convenience
-                respCountdownStop.run(
-                    self.key
-                )  # Stop the countdown timer (if started)!
+                respCountdownStop.run(self.key)  # Stop the countdown timer (if started)!
                 self.UpdateBucketState(kBucketInputs.Power, 0)
             return
 
@@ -1026,8 +1012,7 @@ class tldnBucketBrain(ptResponder):
             ageSDL[kStringAgeSDLBucketAtDump] = (-1,)
             self.UpdateBucketState(kBucketInputs.DumpCB)
             PtDebugPrint(
-                "tldnBucketBrain.OnNotify():\tRemoved rider from bucket #%d"
-                % bucketAtDump,
+                "tldnBucketBrain.OnNotify():\tRemoved rider from bucket #%d" % bucketAtDump,
                 level=kDebugDumpLevel,
             )
 
@@ -1158,11 +1143,7 @@ class tldnBucketBrain(ptResponder):
 
         PtDebugPrint(
             "tldnBucketBrain.UpdateBucketState():-->Incomming state change request: state (%s), parameter (%s), value (%s)"
-            % (
-                kBucketStates.ToString(curBucketState),
-                kBucketInputs.ToString(param),
-                val,
-            ),
+            % (kBucketStates.ToString(curBucketState), kBucketInputs.ToString(param), val,),
             level=kDebugDumpLevel,
         )
 
@@ -1348,8 +1329,7 @@ class tldnBucketBrain(ptResponder):
         else:
             # Need to cut out here; if we try to enter error reporting below, then we'll crash the script!
             PtDebugPrint(
-                "ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown input: %s"
-                % param,
+                "ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown input: %s" % param,
                 level=kErrorLevel,
             )
             return
@@ -1359,11 +1339,7 @@ class tldnBucketBrain(ptResponder):
         if error:
             PtDebugPrint(
                 "ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown state (%s), parameter (%s), and value (%s) combo"
-                % (
-                    kBucketStates.ToString(curBucketState),
-                    kBucketInputs.ToString(param),
-                    val,
-                ),
+                % (kBucketStates.ToString(curBucketState), kBucketInputs.ToString(param), val,),
                 level=kErrorLevel,
             )
         else:
@@ -1434,9 +1410,7 @@ class tldnBucketBrain(ptResponder):
                 # Tye: Error message would be appropriate here!
                 return
 
-            avaIDAtEntry = (
-                avaID  # This is a cheap hack to setup the avatar for exiting the bucket
-            )
+            avaIDAtEntry = avaID  # This is a cheap hack to setup the avatar for exiting the bucket
 
             avaKey = PtGetAvatarKeyFromClientID(avaID)
             avaObj = avaKey.getSceneObject()

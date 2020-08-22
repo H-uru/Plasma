@@ -88,14 +88,10 @@ class islmGZBeamBrain(ptResponder):
             return
 
         if boolGZBeamVis:
-            PtDebugPrint(
-                "islmGZBeamBrain.OnServerInitComplete: The Great Zero beam IS active."
-            )
+            PtDebugPrint("islmGZBeamBrain.OnServerInitComplete: The Great Zero beam IS active.")
             self.TurnBeamOn()
         else:
-            PtDebugPrint(
-                "islmGZBeamBrain.OnServerInitComplete: The Great Zero beam is NOT active."
-            )
+            PtDebugPrint("islmGZBeamBrain.OnServerInitComplete: The Great Zero beam is NOT active.")
             self.TurnBeamOff()
 
     def TurnBeamOn(self):

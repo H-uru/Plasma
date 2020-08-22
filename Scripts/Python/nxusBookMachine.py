@@ -180,9 +180,7 @@ colorPresented = AgenGoldLt
 colorDisabled = AgenGoldDkSoft
 
 kNumDisplayFields = 8
-kMaxDisplayableChars = (
-    24  # the avg number of chars to display before tacking on an ellipsis: "..."
-)
+kMaxDisplayableChars = 24  # the avg number of chars to display before tacking on an ellipsis: "..."
 
 # special named link panels (other then 'LinkPanel_' + Age Filename)
 kLinkPanels = {
@@ -263,26 +261,11 @@ kPublicAgesDescription = {
     "city": ("Nexus.Messages.CityFull", "Nexus.Messages.CityPopulation"),
     "GreatTreePub": ("Nexus.Messages.PubFull", "Nexus.Messages.PubPopulation"),
     "Neighborhood02": ("Nexus.Messages.KirelFull", "Nexus.Messages.KirelPopulation"),
-    "GuildPub-Cartographers": (
-        "Nexus.Messages.GuildPubFull",
-        "Nexus.Messages.GuildPubPopulation",
-    ),
-    "GuildPub-Greeters": (
-        "Nexus.Messages.GuildPubFull",
-        "Nexus.Messages.GuildPubPopulation",
-    ),
-    "GuildPub-Maintainers": (
-        "Nexus.Messages.GuildPubFull",
-        "Nexus.Messages.GuildPubPopulation",
-    ),
-    "GuildPub-Messengers": (
-        "Nexus.Messages.GuildPubFull",
-        "Nexus.Messages.GuildPubPopulation",
-    ),
-    "GuildPub-Writers": (
-        "Nexus.Messages.GuildPubFull",
-        "Nexus.Messages.GuildPubPopulation",
-    ),
+    "GuildPub-Cartographers": ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation",),
+    "GuildPub-Greeters": ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation",),
+    "GuildPub-Maintainers": ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation",),
+    "GuildPub-Messengers": ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation",),
+    "GuildPub-Writers": ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation",),
 }
 
 # hood sorting vars
@@ -324,9 +307,7 @@ class AgeData:
 
 
 class LinkListEntry:
-    def __init__(
-        self, displayName, displayInfo, description="", canDelete=False, isEnabled=True
-    ):
+    def __init__(self, displayName, displayInfo, description="", canDelete=False, isEnabled=True):
         self.untranslatedName = displayName
         self.displayName = xLocTools.LocalizeAgeName(displayName)
         self.displayInfo = displayInfo
@@ -335,9 +316,7 @@ class LinkListEntry:
         self.isEnabled = isEnabled
         self.als = None
 
-    def setLinkStruct(
-        self, ageInfo, spawnPoint=None, linkRule=PtLinkingRules.kBasicLink
-    ):
+    def setLinkStruct(self, ageInfo, spawnPoint=None, linkRule=PtLinkingRules.kBasicLink):
         if isinstance(ageInfo, ptVaultAgeInfoNode):
             ageInfo = ageInfo.asAgeInfoStruct()
 
@@ -383,9 +362,7 @@ class nxusBookMachine(ptModifier):
 
         self.deleteCandidateId = None  # id for hood to delete
 
-        self.controlIdToAgeEntry = (
-            dict()
-        )  # list of LinkListEntry entries assigned to control
+        self.controlIdToAgeEntry = dict()  # list of LinkListEntry entries assigned to control
 
         self.idCategorySelected = kIDBtnLinkCategory01
         self.idLinkSelected = None
@@ -398,9 +375,7 @@ class nxusBookMachine(ptModifier):
         self.neighborhoodEntry = None
         self.publicAges = {
             "city": AgeData(ageFilename="city", defaultMaxPop=20, linkVisible=1),
-            "GreatTreePub": AgeData(
-                ageFilename="GreatTreePub", defaultMaxPop=100, linkVisible=0
-            ),
+            "GreatTreePub": AgeData(ageFilename="GreatTreePub", defaultMaxPop=100, linkVisible=0),
             "guildPub": AgeData(ageFilename="", defaultMaxPop=0, linkVisible=0),
             "Neighborhood02": AgeData(
                 ageFilename="Neighborhood02", defaultMaxPop=100, linkVisible=0
@@ -440,8 +415,7 @@ class nxusBookMachine(ptModifier):
             # updating maximum population
             if maxPopVar is not None:
                 PtDebugPrint(
-                    "nxusBookMachine.OnServerInitComplete(): Grabbing variable '%s'"
-                    % maxPopVar
+                    "nxusBookMachine.OnServerInitComplete(): Grabbing variable '%s'" % maxPopVar
                 )
                 try:
                     pop = ageSDL[maxPopVar][0]
@@ -470,21 +444,15 @@ class nxusBookMachine(ptModifier):
         # special cases
 
         # GZ
-        PtDebugPrint(
-            "nxusBookMachine.OnServerInitComplete(): Grabbing the show great zero toggle"
-        )
+        PtDebugPrint("nxusBookMachine.OnServerInitComplete(): Grabbing the show great zero toggle")
         try:
             self.showGreatZero = ageSDL["nxusShowGZ"][0]
         except (KeyError, IndexError):
-            PtDebugPrint(
-                "Unable to get show great zero toggle from SDL, defaulting to false"
-            )
+            PtDebugPrint("Unable to get show great zero toggle from SDL, defaulting to false")
             self.showGreatZero = False
 
         # Guild Pub
-        PtDebugPrint(
-            "nxusBookMachine.OnServerInitComplete(): Grabbing the show GuildPub var"
-        )
+        PtDebugPrint("nxusBookMachine.OnServerInitComplete(): Grabbing the show GuildPub var")
         guildPubEntry = self.publicAges["guildPub"]
 
         psnlSDL = xPsnlVaultSDL()
@@ -497,15 +465,13 @@ class nxusBookMachine(ptModifier):
                     data.guild = guild  # for name formatting
                     self.publicAges[filename] = data
                     PtDebugPrint(
-                        "nxusBookMachine.OnServerInitComplete() - showing guild pub: %s"
-                        % guild
+                        "nxusBookMachine.OnServerInitComplete() - showing guild pub: %s" % guild
                     )
             else:
                 guild = kGuildPubs[showGuildPub - 1]
                 filename = "GuildPub-" + guild
                 PtDebugPrint(
-                    "nxusBookMachine.OnServerInitComplete() - member of guild: %s"
-                    % (guild)
+                    "nxusBookMachine.OnServerInitComplete() - member of guild: %s" % (guild)
                 )
                 guildPubEntry.linkVisible = 1
                 guildPubEntry.guild = guild
@@ -536,9 +502,7 @@ class nxusBookMachine(ptModifier):
     def ICanCreateHood(self):
         hoodLink = self.IGetHoodLinkNode()
         if not hoodLink.getVolatile():
-            return (
-                False  # only let the player create a new hood if their book is volatile
-            )
+            return False  # only let the player create a new hood if their book is volatile
         if PtIsInternalRelease():
             return True  # we don't have the 1 day limitation on internal clients
         vault = ptVault()
@@ -591,8 +555,7 @@ class nxusBookMachine(ptModifier):
             for (ageFilename, instances) in tempInstances.items():
                 try:
                     self.publicAges[ageFilename].instances = sorted(
-                        instances,
-                        key=lambda entry: entry.ageInfo.getAgeSequenceNumber(),
+                        instances, key=lambda entry: entry.ageInfo.getAgeSequenceNumber(),
                     )
                 except KeyError:
                     PtDebugPrint(
@@ -620,14 +583,10 @@ class nxusBookMachine(ptModifier):
         reverse = hoodSort in (kSortNameDesc, kSortPopDesc)
         if hoodSort in (kSortNameAsc, kSortNameDesc):
             return sorted(
-                hoodsToSort,
-                key=lambda hood: hood.ageInfo.getDisplayName(),
-                reverse=reverse,
+                hoodsToSort, key=lambda hood: hood.ageInfo.getDisplayName(), reverse=reverse,
             )
         else:
-            return sorted(
-                hoodsToSort, key=lambda hood: hood.population, reverse=reverse
-            )
+            return sorted(hoodsToSort, key=lambda hood: hood.population, reverse=reverse)
 
     def IFindAgeLinkInFolder(self, folder, ageName):
         ageName = ageName.lower()
@@ -696,18 +655,14 @@ class nxusBookMachine(ptModifier):
         PtGetPublicAgeList(ageName, self)
 
     def IHoodCreated(self, ageInfo):
-        PtDebugPrint(
-            "OnVaultNotify: Setting the new hood's language to %d " % PtGetLanguage()
-        )
+        PtDebugPrint("OnVaultNotify: Setting the new hood's language to %d " % PtGetLanguage())
         ageInfo.setAgeLanguage(PtGetLanguage())
         # save our creation time to the vault to prevent people from making too many hoods
         vault = ptVault()
         entry = vault.findChronicleEntry("LastHoodCreationTime")
         if entry is None:
             # not found... add current level chronicle
-            vault.addChronicleEntry(
-                "LastHoodCreationTime", kChronicleVarType, str(PtGetDniTime())
-            )
+            vault.addChronicleEntry("LastHoodCreationTime", kChronicleVarType, str(PtGetDniTime()))
         else:
             entry.chronicleSetValue(str(PtGetDniTime()))
             entry.save()
@@ -759,9 +714,7 @@ class nxusBookMachine(ptModifier):
                     self.IBookRetract()
 
             if self.getBookBtnUp and self.idLinkSelected is not None:
-                selectedInfo = self.controlIdToAgeEntry[
-                    self.idLinkSelected
-                ].als.getAgeInfo()
+                selectedInfo = self.controlIdToAgeEntry[self.idLinkSelected].als.getAgeInfo()
                 if ageInfo.getAgeInstanceGuid() == selectedInfo.getAgeInstanceGuid():
                     PtDebugPrint(
                         "OnVaultNotify: The currently selected link was deleted, pushing button"
@@ -975,11 +928,7 @@ class nxusBookMachine(ptModifier):
             PlasmaControlKeys.kKeyRotateLeft,
             PlasmaControlKeys.kKeyRotateRight,
         ):
-            if (
-                self.guiState == kGUIActivated
-                and self.controlsEnabled
-                and self.animCount == 0
-            ):
+            if self.guiState == kGUIActivated and self.controlsEnabled and self.animCount == 0:
                 actGetBook.disable()
                 respGUIOff.run(self.key)
 
@@ -1070,9 +1019,7 @@ class nxusBookMachine(ptModifier):
 
             elif ctrlID == kIDBtnNeighborhoodCreate:
                 self.deleteCandidateId = None
-                PtYesNoDialog(
-                    self.key, PtGetLocalizedString("Nexus.Messages.HoodCreate")
-                )
+                PtYesNoDialog(self.key, PtGetLocalizedString("Nexus.Messages.HoodCreate"))
 
             elif ctrlID == kIDBtnNeighborhoodPublic:
                 if self.IIsMyHoodPublic():
@@ -1108,11 +1055,7 @@ class nxusBookMachine(ptModifier):
                     self.publicHoodSort = kSortNameAsc
                 self.IUpdateLinks()
 
-            elif (
-                ctrlID == kIDPopHeaderBtn
-                or ctrlID == kIDPopAscArrow
-                or ctrlID == kIDPopDescArrow
-            ):
+            elif ctrlID == kIDPopHeaderBtn or ctrlID == kIDPopAscArrow or ctrlID == kIDPopDescArrow:
                 if self.publicHoodSort == kSortPopAsc:
                     self.publicHoodSort = kSortPopDesc
                 else:
@@ -1126,9 +1069,7 @@ class nxusBookMachine(ptModifier):
             elif ctrlID in kLanguageControls:
                 try:
                     language = kLanguageControls[ctrlID]
-                    self.showHoodLanguages[language] = not self.showHoodLanguages[
-                        language
-                    ]
+                    self.showHoodLanguages[language] = not self.showHoodLanguages[language]
                     self.IUpdateLinks()
                 except KeyError:
                     pass
@@ -1156,9 +1097,7 @@ class nxusBookMachine(ptModifier):
         btn.disable()
 
     def ISetDescriptionText(self, description, permanent=True):
-        descrTxt = ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription)
-        )
+        descrTxt = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription))
         descrTxt.setStringW(description)
         if permanent:
             self.currentStatusBarText = description
@@ -1169,17 +1108,13 @@ class nxusBookMachine(ptModifier):
             btnId = oldSelection
             txtId = oldSelection + 1
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(btnId)).enable()
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(
-                colorNormal
-            )
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(colorNormal)
 
         # disable and highlight new entry
         btnId = newSelection
         txtId = newSelection + 1
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(btnId)).disable()
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(
-            colorSelected
-        )
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(colorSelected)
 
         self.ISetDescriptionText(description)
 
@@ -1192,10 +1127,7 @@ class nxusBookMachine(ptModifier):
         # update links with entries from new category
         self.IUpdateLinks()
 
-        if (
-            self.presentedBookAls is not None
-            and self.idLinkSelected != kIDBtnNeighborhoodSelect
-        ):
+        if self.presentedBookAls is not None and self.idLinkSelected != kIDBtnNeighborhoodSelect:
             self.IBookRetract()
 
     def IChangeSelectedLink(self, newSelection):
@@ -1277,15 +1209,9 @@ class nxusBookMachine(ptModifier):
 
     def IClearGUI(self):
         # clear header titles and disable their buttons
-        ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)
-        ).setString("")
-        ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)
-        ).setString("")
-        ptGUIControlButton(
-            NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)
-        ).disable()
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString("")
+        ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).disable()
 
         self.IDisableLanguageControls()
@@ -1293,19 +1219,13 @@ class nxusBookMachine(ptModifier):
         self.IToggleSortControls(False)
 
         # hide create hood button
-        ptGUIControlButton(
-            NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodCreate)
-        ).hide()
+        ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodCreate)).hide()
 
-        ptGUIControlButton(
-            NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)
-        ).disable()
-        ptGUIControlButton(
-            NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)
-        ).hide()
-        ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)
-        ).setString("")
+        ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)).disable()
+        ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)).hide()
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setString(
+            ""
+        )
         ptGUIControlTextBox(
             NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodSelect)
         ).setNotifyOnInteresting(1)
@@ -1321,18 +1241,13 @@ class nxusBookMachine(ptModifier):
             else:
                 color = colorNormal
                 btn.enable()
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(
-                color
-            )
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtId)).setForeColor(color)
 
     def IClearEntryList(self):
         # reset scrolling
         self.indexDisplayStart = 0
 
-        if (
-            self.idLinkSelected is not None
-            and self.idLinkSelected != kIDBtnNeighborhoodSelect
-        ):
+        if self.idLinkSelected is not None and self.idLinkSelected != kIDBtnNeighborhoodSelect:
             self.ICancelLinkChoice()
         self.IHideDisableButton(kIDBtnScrollUp)
         self.IHideDisableButton(kIDBtnScrollDn)
@@ -1342,12 +1257,8 @@ class nxusBookMachine(ptModifier):
                 del self.controlIdToAgeEntry[btnSelectId]
             except KeyError:
                 pass
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtNameId)).setString(
-                ""
-            )
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtInfoId)).setString(
-                ""
-            )
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtNameId)).setString("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtInfoId)).setString("")
 
             ptGUIControlTextBox(
                 NexusGUI.dialog.getControlFromTag(btnSelectId)
@@ -1384,8 +1295,7 @@ class nxusBookMachine(ptModifier):
         if ageInfo.getAgeFilename() == "city":
             spawnPoint = linkInfo.getSpawnPoint()
             PtDebugPrint(
-                "Deleting city link to %s:%s"
-                % (spawnPoint.getName(), spawnPoint.getTitle())
+                "Deleting city link to %s:%s" % (spawnPoint.getName(), spawnPoint.getTitle())
             )
             cityLink.removeSpawnPoint(spawnPoint)
             cityLink.save()
@@ -1396,13 +1306,10 @@ class nxusBookMachine(ptModifier):
                 self.IUpdateLinks(kCategoryCity)
 
             if self.presentedBookAls is not None:
-                presentedAgeGuid = (
-                    self.presentedBookAls.getAgeInfo().getAgeInstanceGuid()
-                )
+                presentedAgeGuid = self.presentedBookAls.getAgeInfo().getAgeInstanceGuid()
                 presentedAgeSpawnName = self.presentedBookAls.getSpawnPoint().getName()
                 PtDebugPrint(
-                    "Trying to delete city link (%s,%s)"
-                    % (presentedAgeGuid, presentedAgeSpawnName)
+                    "Trying to delete city link (%s,%s)" % (presentedAgeGuid, presentedAgeSpawnName)
                 )
                 if (
                     presentedAgeGuid == ageInfo.getAgeInstanceGuid()
@@ -1449,9 +1356,7 @@ class nxusBookMachine(ptModifier):
         vault = ptVault()
 
         playerCityLink = vault.getLinkToCity()  # link saved in player's vault
-        publicCityData = self.publicAges[
-            "city"
-        ].selected  # selected info for public city (AgeData)
+        publicCityData = self.publicAges["city"].selected  # selected info for public city (AgeData)
 
         stringLinkInfo = self.IFormatGZCreateCoords(playerCityLink)
 
@@ -1490,13 +1395,10 @@ class nxusBookMachine(ptModifier):
 
                 # try to find translated description
                 try:
-                    (textFull, textPopulation) = kPublicAgesDescription[
-                        ageData.ageFilename
-                    ]
+                    (textFull, textPopulation) = kPublicAgesDescription[ageData.ageFilename]
                     if entryEnabled:
                         description = PtGetLocalizedString(
-                            textPopulation,
-                            [str(ageData.selected.population), str(ageData.maxPop)],
+                            textPopulation, [str(ageData.selected.population), str(ageData.maxPop)],
                         )
                     else:
                         description = PtGetLocalizedString(textFull)
@@ -1533,17 +1435,9 @@ class nxusBookMachine(ptModifier):
                 displayName = ageData.ageFilename
 
             # normal cases: just add link with default link spot
-            stringLinkInfo = "%05d%   04d%   04d" % (
-                0,
-                0,
-                0,
-            )  # temporary consistency hack. fixme
-            newEntry = LinkListEntry(
-                displayName, stringLinkInfo, description, False, entryEnabled
-            )
-            newEntry.setLinkStruct(
-                selectedInfo
-            )  # create link to instance, use default spawnPoint
+            stringLinkInfo = "%05d%   04d%   04d" % (0, 0, 0,)  # temporary consistency hack. fixme
+            newEntry = LinkListEntry(displayName, stringLinkInfo, description, False, entryEnabled)
+            newEntry.setLinkStruct(selectedInfo)  # create link to instance, use default spawnPoint
             cityLinks.append(newEntry)
 
         self.categoryLinksList[kCategoryCity] = cityLinks
@@ -1558,9 +1452,7 @@ class nxusBookMachine(ptModifier):
             description = hood.ageInfo.getAgeDescription()
 
             newEntry = LinkListEntry(displayName, stringLinkInfo, description)
-            newEntry.setLinkStruct(
-                hood.ageInfo
-            )  # create link to instance, use default spawnPoint
+            newEntry.setLinkStruct(hood.ageInfo)  # create link to instance, use default spawnPoint
             hoodLinks.append(newEntry)
 
         self.categoryLinksList[kCategoryPublic] = hoodLinks
@@ -1589,22 +1481,15 @@ class nxusBookMachine(ptModifier):
             PtDebugPrint(
                 "nxusBookMachine.IGetGZLinks:\tCouldn't find GZ link node, preventing it from showing"
             )
-        elif (
-            self.showGreatZero
-        ):  # even if the link exists, don't show it if the vault says no
+        elif self.showGreatZero:  # even if the link exists, don't show it if the vault says no
             GZSpawnpoints = GZLinkNode.getSpawnPoints()
 
             for (
                 spawnPoint
-            ) in (
-                GZSpawnpoints
-            ):  # [:] makes a copy of the list, so we can modify the original
+            ) in GZSpawnpoints:  # [:] makes a copy of the list, so we can modify the original
                 displayName = spawnPoint.getTitle()
                 stringLinkInfo = self.IFormatGZCreateCoords(GZLinkNode)
-                if (
-                    "default" in displayName.lower()
-                    or "default" in spawnPoint.getName().lower()
-                ):
+                if "default" in displayName.lower() or "default" in spawnPoint.getName().lower():
                     continue  # we hide the default spawn point, since they don't want it showing in our list
                 else:
                     entry = LinkListEntry(displayName, stringLinkInfo)
@@ -1646,9 +1531,7 @@ class nxusBookMachine(ptModifier):
                 info = link.upcastToAgeInfoNode()
 
             if info is None:
-                PtDebugPrint(
-                    "nxusBookMachine: Can't find ageInfo from link", level=kErrorLevel
-                )
+                PtDebugPrint("nxusBookMachine: Can't find ageInfo from link", level=kErrorLevel)
                 continue
 
             if isinstance(link, ptVaultAgeLinkNode) and link.getVolatile():
@@ -1658,9 +1541,7 @@ class nxusBookMachine(ptModifier):
 
             # remove hidden entries
             if name in hidden:
-                PtDebugPrint(
-                    "Removing link for " + name + " since it's in our hidden list"
-                )
+                PtDebugPrint("Removing link for " + name + " since it's in our hidden list")
                 continue
 
             # check, if default spawnPoint exists
@@ -1679,9 +1560,7 @@ class nxusBookMachine(ptModifier):
 
             entry = LinkListEntry(displayName, stringLinkInfo, canDelete=private)
             if private:
-                entry.setLinkStruct(
-                    info, spawnPoint=None, linkRule=PtLinkingRules.kVisitBook
-                )
+                entry.setLinkStruct(info, spawnPoint=None, linkRule=PtLinkingRules.kVisitBook)
             else:
                 # if (thisAge == "Ercana" or thisAge == "AhnonayCathedral" or thisAge == "Ahnonay") #do some crazy stuff
                 entry.setLinkStruct(
@@ -1702,12 +1581,8 @@ class nxusBookMachine(ptModifier):
         self.IHideDisableButton(kIDBtnNeighborhoodPublic)
         self.IHideDisableButton(kIDBtnNeighborhoodSelect)
 
-        ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodName)
-        ).setString("")
-        ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodInfo)
-        ).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodName)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodInfo)).setString("")
         self.ISetDescriptionText("")
 
     def IUpdateHoodLink(self):
@@ -1744,30 +1619,26 @@ class nxusBookMachine(ptModifier):
             hoodPubPriv = PtGetLocalizedString("Nexus.Neighborhood.MakePrivate")
         else:
             hoodPubPriv = PtGetLocalizedString("Nexus.Neighborhood.MakePublic")
-        ptGUIControlTextBox(
-            NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)
-        ).setStringW(hoodPubPriv)
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setStringW(
+            hoodPubPriv
+        )
 
     def IUpdateGUILinkList(self):
         if self.idCategorySelected == kCategoryPublic:
-            ptGUIControlTextBox(
-                NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)
-            ).setStringW(PtGetLocalizedString("Nexus.Headers.Name"))
-            ptGUIControlTextBox(
-                NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)
-            ).setStringW(PtGetLocalizedString("Nexus.Headers.Population"))
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW(
+                PtGetLocalizedString("Nexus.Headers.Name")
+            )
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW(
+                PtGetLocalizedString("Nexus.Headers.Population")
+            )
             # show our header sorting buttons
             self.IShowEnableButton(kIDNameHeaderBtn)
             self.IShowEnableButton(kIDPopHeaderBtn)
             # show current sort direction
             self.IToggleSortControls(True)
         else:
-            ptGUIControlTextBox(
-                NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)
-            ).setStringW("")
-            ptGUIControlTextBox(
-                NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)
-            ).setStringW("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW("")
             self.IToggleSortControls(False)
 
         ageList = self.categoryLinksList[self.idCategorySelected]
@@ -1827,8 +1698,7 @@ class nxusBookMachine(ptModifier):
     def IGetLinkPanelName(self, als):
         filename = als.getAgeInfo().getAgeFilename()
         PtDebugPrint(
-            "nxusBookMachine.getLinkPanelName(): Looking for link panel for '%s'"
-            % filename
+            "nxusBookMachine.getLinkPanelName(): Looking for link panel for '%s'" % filename
         )
         try:
             panels = kLinkPanels[filename]
@@ -1841,15 +1711,11 @@ class nxusBookMachine(ptModifier):
                 return panels[linkName]
             except KeyError:
                 panel = panels[""]
-                PtDebugPrint(
-                    "nxusBookMachine.getLinkPanelName(): Defaulting to '%s'" % panel
-                )
+                PtDebugPrint("nxusBookMachine.getLinkPanelName(): Defaulting to '%s'" % panel)
                 return panel
         except KeyError:
             panel = "LinkPanel_" + filename
-            PtDebugPrint(
-                "nxusBookMachine.getLinkPanelName(): Defaulting to '%s'" % panel
-            )
+            PtDebugPrint("nxusBookMachine.getLinkPanelName(): Defaulting to '%s'" % panel)
             return panel
 
     def IDoLink(self):
@@ -1863,9 +1729,7 @@ class nxusBookMachine(ptModifier):
 
     # TODO: Not revised. I'm not sure about this stuff... Is it needed?
     def DoErcanaAndAhnonayStuff(self, panel):
-        PtDebugPrint(
-            "nxusBookMachine.DoErcanaAndAhnonayStuff(): this age panel = ", panel
-        )
+        PtDebugPrint("nxusBookMachine.DoErcanaAndAhnonayStuff(): this age panel = ", panel)
         if panel == "Ercana":
             ageFileName = "Ercana"
             ageInstanceName = "Er'cana"

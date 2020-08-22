@@ -80,6 +80,4 @@ class xButtonLeverSwitch(ptResponder):
                 note.addVarNumber(varstring.value, 1.0)
                 note.send()
             else:
-                PtDebugPrint(
-                    "xButtonLeverSwitch.OnNotify:\tERROR: unanticipated message source."
-                )
+                PtDebugPrint("xButtonLeverSwitch.OnNotify:\tERROR: unanticipated message source.")

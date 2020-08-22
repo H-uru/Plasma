@@ -190,9 +190,7 @@ class xTakableClothing(ptModifier):
                 PtAtTimeCallback(self.key, 1, kDisableClothingTimer)
                 pass
 
-            if (
-                self.useChance and not self.shown
-            ):  # only attempt to show if it's currently hidden
+            if self.useChance and not self.shown:  # only attempt to show if it's currently hidden
                 try:
                     self.chanceAppearing = int(ageSDL[stringChanceSDLName.value][0])
                     PtDebugPrint(
@@ -278,8 +276,7 @@ class xTakableClothing(ptModifier):
             type = item[1]
             if type == kHairClothingItem:
                 PtDebugPrint(
-                    "DEBUG: xTakableClothing.IGetHairColor():  Found current hair item: "
-                    + name
+                    "DEBUG: xTakableClothing.IGetHairColor():  Found current hair item: " + name
                 )
                 color = avatar.avatar.getTintClothingItem(name, 1)
                 PtDebugPrint(
@@ -306,15 +303,7 @@ class xTakableClothing(ptModifier):
         green = float(green) / float(255.0)
         blue = float(blue) / float(255.0)
         PtDebugPrint(
-            "Tint "
-            + str(oneOrTwo)
-            + " is ("
-            + str(red)
-            + ","
-            + str(green)
-            + ","
-            + str(blue)
-            + ")"
+            "Tint " + str(oneOrTwo) + " is (" + str(red) + "," + str(green) + "," + str(blue) + ")"
         )
         return ptColor(red, green, blue, 1)
 
@@ -351,10 +340,7 @@ class xTakableClothing(ptModifier):
 
     def IRemoveOtherGuildShirt(self):
         playerCNode = ptVault().getAvatarClosetFolder()
-        PtDebugPrint(
-            "xTakableClothing: getAvatarClosetFolder Type = "
-            + str(playerCNode.getType())
-        )
+        PtDebugPrint("xTakableClothing: getAvatarClosetFolder Type = " + str(playerCNode.getType()))
         PtDebugPrint(
             "xTakableClothing: getAvatarClosetFolder Child Node Count = "
             + str(playerCNode.getChildNodeCount())
@@ -383,9 +369,7 @@ class xTakableClothing(ptModifier):
                                 if varnode.getType() == 4:
                                     varKey = varnode.getKey()
                                     varName = varKey.getName()
-                                    PtDebugPrint(
-                                        "xTakableClothing: VarNode.getName(): ", varName
-                                    )
+                                    PtDebugPrint("xTakableClothing: VarNode.getName(): ", varName)
                                     if (
                                         varName.find("Torso_GuildBlue") != -1
                                         or varName.find("Torso_GuildGreen") != -1
@@ -397,13 +381,9 @@ class xTakableClothing(ptModifier):
                                             "xTakableClothing: Found Other Guild Shirt. Deleting Old Guild Shirt."
                                         )
                                         if playerCNode.removeNode(childNode):
-                                            PtDebugPrint(
-                                                "xTakableClothing: Delete was a success."
-                                            )
+                                            PtDebugPrint("xTakableClothing: Delete was a success.")
                                         else:
-                                            PtDebugPrint(
-                                                "xTakableClothing: Delete failed."
-                                            )
+                                            PtDebugPrint("xTakableClothing: Delete failed.")
                                         return
 
     def IRemoveWornSet(self, setName):
@@ -411,9 +391,7 @@ class xTakableClothing(ptModifier):
         if setName == "":
             return
         if setName in removedSets:
-            PtDebugPrint(
-                "xTakableClothing: Set " + setName + " already removed, skipping"
-            )
+            PtDebugPrint("xTakableClothing: Set " + setName + " already removed, skipping")
             return
         PtDebugPrint("xTakableClothing: Removing worn set " + setName)
         removedSets.append(setName)  # add this set to our list of removed sets
@@ -425,9 +403,7 @@ class xTakableClothing(ptModifier):
             tempItem = ClothingItem(item)
             if tempItem.isClothingSet and tempItem.clothingSet == setName:
                 if not (tempItem.accessoryType == -1):
-                    avatar.avatar.removeClothingItem(
-                        tempItem.name
-                    )  # remove any set accessories
+                    avatar.avatar.removeClothingItem(tempItem.name)  # remove any set accessories
                 else:
                     typesToReplace.append(tempItem.type)
 
@@ -477,19 +453,12 @@ class xTakableClothing(ptModifier):
                     self.IRemoveOtherGuildShirt()
                     psnlSDL = xPsnlVaultSDL()
                     psnlSDL["guildAlliance"] = (guildSDLValues[base],)
-                    PtDebugPrint(
-                        "xTakableClothing: Guild set to:", guildSDLValues[base]
-                    )
-                avatar.avatar.addWardrobeClothingItem(
-                    base, ptColor().white(), ptColor().white()
-                )
+                    PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
+                avatar.avatar.addWardrobeClothingItem(base, ptColor().white(), ptColor().white())
                 acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
                 accnamelist = []
                 for accessory in acclist:
-                    if (
-                        accessory[0][4:14] == "AccGlasses"
-                        or accessory[0][1:] == "Reward_Goggles"
-                    ):
+                    if accessory[0][4:14] == "AccGlasses" or accessory[0][1:] == "Reward_Goggles":
                         accnamelist.append(accessory[0])
                 worn = avatar.avatar.getAvatarClothingList()
                 wornnamelist = []
@@ -519,9 +488,7 @@ class xTakableClothing(ptModifier):
                                 matchingItem[0], ptColor().orange(), 2, 1
                             )
                         else:
-                            avatar.avatar.tintClothingItemLayer(
-                                matchingItem[0], color2, 2, 1
-                            )
+                            avatar.avatar.tintClothingItemLayer(matchingItem[0], color2, 2, 1)
                         # END-->Hard Hat color fix
                     avatar.avatar.saveClothing()
             else:
@@ -566,16 +533,16 @@ class ClothingItem:
         self.wornwith = []
         self.donotwear = 0
         self.coloredAsHair = 0
-        self.isClothingSet = 0  # are we part of a set of clothing? (clothing that is worn and unworn as a group)
+        self.isClothingSet = (
+            0  # are we part of a set of clothing? (clothing that is worn and unworn as a group)
+        )
         self.clothingSet = ""  # the set of clothing we belong to
         try:
             self.name = clothing[0]
             self.type = clothing[1]
             try:
                 if clothing[2] != "":
-                    self.description = PtGetLocalizedString(
-                        xACAItems.xClothesXRef[clothing[2]]
-                    )
+                    self.description = PtGetLocalizedString(xACAItems.xClothesXRef[clothing[2]])
             except:
                 self.description = "*" + clothing[2] + "*"
             self.thumbnail = clothing[3]
@@ -608,9 +575,7 @@ class ClothingItem:
                         elif rs == "feet":
                             self.groupwith = kRightFootClothingItem
                         else:
-                            PtDebugPrint(
-                                "xTakableClothing: Unknown ClothingType %s" % (rs)
-                            )
+                            PtDebugPrint("xTakableClothing: Unknown ClothingType %s" % (rs))
                     elif ls == "accessorytype":
                         self.accessoryType = 0
                     elif ls == "accessory":
@@ -629,6 +594,4 @@ class ClothingItem:
                     else:
                         pass
         except (TypeError, LookupError):
-            PtDebugPrint(
-                "xTakableClothing: some kind of error on clothing " + str(clothing)
-            )
+            PtDebugPrint("xTakableClothing: some kind of error on clothing " + str(clothing))

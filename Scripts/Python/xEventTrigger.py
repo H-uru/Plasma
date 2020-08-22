@@ -77,10 +77,7 @@ class xEventTrigger(ptResponder):
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint(
-                "xEventTrigger: SDLNotify - name = %s, SDLname = %s"
-                % (VARname, SDLname)
-            )
+            PtDebugPrint("xEventTrigger: SDLNotify - name = %s, SDLname = %s" % (VARname, SDLname))
             if VARname == EventName.value:
                 PtDebugPrint("xEventTrigger: value is %f" % ageSDL[EventName.value])
                 if ageSDL[EventName.value][0]:

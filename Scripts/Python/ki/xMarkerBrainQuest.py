@@ -73,9 +73,7 @@ class QuestMarkerBrain(object):
             return
 
         PtDebugPrint(
-            "QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(
-                idx, desc
-            ),
+            "QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc),
             level=kWarningLevel,
         )
         ptMarkerMgr().captureQuestMarker(idx, True)
@@ -241,17 +239,13 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
         gameNode = ptVault().findNode(template)
         if gameNode is None:
             PtDebugPrint(
-                "UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(
-                    gameID
-                )
+                "UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(gameID)
             )
             return None
         gameNode = gameNode.upcastToMarkerGameNode()
         if gameNode is None:
             PtDebugPrint(
-                "UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(
-                    gameID
-                )
+                "UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(gameID)
             )
             return None
 

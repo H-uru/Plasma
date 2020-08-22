@@ -232,8 +232,7 @@ class grtzMarkerScopes(ptResponder):
         self.SDL["boolOperated"] = (0,)
         self.SDL["OperatorID"] = (-1,)
         PtDebugPrint(
-            "grtzMarkerScope.IQuitMarkerScope:\tdelaying clickable reenable",
-            level=kDebugDumpLevel,
+            "grtzMarkerScope.IQuitMarkerScope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )
 
     def OnTimer(self, id):
@@ -247,7 +246,5 @@ class grtzMarkerScopes(ptResponder):
             )  # wait for player to finish exit one-shot, then reenable clickable
         if id == 2:
             aTrigger.enable()
-            PtDebugPrint(
-                "grtzMarkerScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel
-            )
+            PtDebugPrint("grtzMarkerScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel)
             PtSendKIMessage(kEnableKIandBB, 0)

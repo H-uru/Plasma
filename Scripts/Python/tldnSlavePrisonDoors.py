@@ -65,25 +65,15 @@ respPlate1 = ptAttribResponder(7, "Responder Plate01", statelist=["State 1", "St
 actPlate2 = ptAttribActivator(8, "Activator Plate02")
 respPlate2 = ptAttribResponder(9, "Responder Plate02", statelist=["State 1", "State 2"])
 actPlate3 = ptAttribActivator(10, "Activator Plate03")
-respPlate3 = ptAttribResponder(
-    11, "Responder Plate03", statelist=["State 1", "State 2"]
-)
+respPlate3 = ptAttribResponder(11, "Responder Plate03", statelist=["State 1", "State 2"])
 actPlate4 = ptAttribActivator(12, "Activator Plate04")
-respPlate4 = ptAttribResponder(
-    13, "Responder Plate04", statelist=["State 1", "State 2"]
-)
+respPlate4 = ptAttribResponder(13, "Responder Plate04", statelist=["State 1", "State 2"])
 actPlate5 = ptAttribActivator(14, "Activator Plate05")
-respPlate5 = ptAttribResponder(
-    15, "Responder Plate05", statelist=["State 1", "State 2"]
-)
+respPlate5 = ptAttribResponder(15, "Responder Plate05", statelist=["State 1", "State 2"])
 actPlate6 = ptAttribActivator(16, "Activator Plate06")
-respPlate6 = ptAttribResponder(
-    17, "Responder Plate06", statelist=["State 1", "State 2"]
-)
+respPlate6 = ptAttribResponder(17, "Responder Plate06", statelist=["State 1", "State 2"])
 actPlate7 = ptAttribActivator(18, "Activator Plate07")
-respPlate7 = ptAttribResponder(
-    19, "Responder Plate07", statelist=["State 1", "State 2"]
-)
+respPlate7 = ptAttribResponder(19, "Responder Plate07", statelist=["State 1", "State 2"])
 
 respSecretDoor = ptAttribResponder(20, "resp: secret door", ["open", "close"])
 
@@ -151,8 +141,7 @@ class tldnSlavePrisonDoors(ptResponder):
         self.id = 4000
         self.version = 2
         PtDebugPrint(
-            "tldSlavePrisonDoors.__init__: version %d,%d" % (self.version, 2),
-            level=kWarningLevel,
+            "tldSlavePrisonDoors.__init__: version %d,%d" % (self.version, 2), level=kWarningLevel,
         )
 
     def OnFirstUpdate(self):
@@ -174,9 +163,7 @@ class tldnSlavePrisonDoors(ptResponder):
                 for platesdl, actid in PlateSDLs:
                     boolCurrentValue = ageSDL[platesdl][0]
                     if boolCurrentValue:
-                        activatorToResp[actid].run(
-                            self.key, state="State 1", fastforward=1
-                        )
+                        activatorToResp[actid].run(self.key, state="State 1", fastforward=1)
                     # if its false then there is no need to animate the plate up (should already be in the that state)
             for PadSDL in respToPadSDL.keys():
                 ageSDL.setNotify(self.key, PadSDL, 0.0)
@@ -241,8 +228,7 @@ class tldnSlavePrisonDoors(ptResponder):
             except LookupError:
                 theyMatch = 0
                 PtDebugPrint(
-                    "tldSlavePrisonDoors.IEvalPlateAndPaddles: error on SDL %s"
-                    % (PadSDL),
+                    "tldSlavePrisonDoors.IEvalPlateAndPaddles: error on SDL %s" % (PadSDL),
                     level=kErrorLevel,
                 )
                 break
@@ -313,9 +299,7 @@ class tldnSlavePrisonDoors(ptResponder):
                 respOuterDoor.run(self.key, state="down", fastforward=fastforward)
 
             ageSDL["tldnSlaveCaveSecretDoorOpen"] = (1,)
-            PtDebugPrint(
-                "tldnSlavePrisonDoors: The exp1 secret panel should now be open."
-            )
+            PtDebugPrint("tldnSlavePrisonDoors: The exp1 secret panel should now be open.")
 
         else:
             # raise the outer doors and shut the inner doors
@@ -331,9 +315,7 @@ class tldnSlavePrisonDoors(ptResponder):
                 respOuterDoor.run(self.key, state="up", fastforward=fastforward)
 
             ageSDL["tldnSlaveCaveSecretDoorOpen"] = (0,)
-            PtDebugPrint(
-                "tldnSlavePrisonDoors: The exp1 secret panel should now be closed."
-            )
+            PtDebugPrint("tldnSlavePrisonDoors: The exp1 secret panel should now be closed.")
 
     def OnBackdoorMsg(self, target, param):
         if target == "spyroombook":

@@ -132,36 +132,28 @@ class Ahnonay(ptResponder):
             PtDebugPrint("I am not the age owner, and I don't have my own Ahnonay")
         elif owner.getValue() == myID:
             if linkid == None:
-                PtDebugPrint(
-                    "Ahnonay.OnServerInitComplete(): Link Chron not found, creating"
-                )
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Link Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonayLink")
                 newNode.chronicleSetValue(guid)
                 ageDataFolder.addNode(newNode)
 
             if locked == None:
-                PtDebugPrint(
-                    "Ahnonay.OnServerInitComplete(): Locked Chron not found, creating"
-                )
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Locked Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonayLocked")
                 newNode.chronicleSetValue("1")
                 ageDataFolder.addNode(newNode)
 
             if volatile == None:
-                PtDebugPrint(
-                    "Ahnonay.OnServerInitComplete(): Volatile Chron not found, creating"
-                )
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Volatile Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonayVolatile")
                 newNode.chronicleSetValue("0")
                 ageDataFolder.addNode(newNode)
 
             if spawn == None:
-                PtDebugPrint(
-                    "Ahnonay.OnServerInitComplete(): Spawn Chron not found, creating"
-                )
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Spawn Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonaySpawnPoints")
                 newNode.chronicleSetValue("Default,LinkInPointDefault")
@@ -200,8 +192,7 @@ class Ahnonay(ptResponder):
             else:
                 offset = str(ageSDL["ahnyCurrentOffset"][0])
                 PtDebugPrint(
-                    "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s"
-                    % (sphere, offset)
+                    "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
                 )
                 newSphere = (int(sphere) - int(offset)) % 4
                 if newSphere == 0:
@@ -230,8 +221,7 @@ class Ahnonay(ptResponder):
     def OnPageLoad(self, what, who):
         global spherePages
         PtDebugPrint(
-            "Ahnonay.OnPageLoad(): what={} who={}".format(what, who),
-            level=kDebugDumpLevel,
+            "Ahnonay.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel,
         )
 
         if what == kLoaded:
@@ -240,9 +230,7 @@ class Ahnonay(ptResponder):
                 sphere = str(ageSDL["ahnyCurrentSphere"][0])
                 offset = str(ageSDL["ahnyCurrentOffset"][0])
                 PtDebugPrint(
-                    "Ahnonay.OnPageLoad(): Sphere0{} loaded with offset:{}".format(
-                        sphere, offset
-                    ),
+                    "Ahnonay.OnPageLoad(): Sphere0{} loaded with offset:{}".format(sphere, offset),
                     level=kWarningLevel,
                 )
 

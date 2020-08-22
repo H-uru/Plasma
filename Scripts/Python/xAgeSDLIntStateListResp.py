@@ -198,8 +198,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         SDLvalue = ageSDL[strSDLVarName.value][0]
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify received: %s = %d"
-            % (VARname, SDLvalue)
+            "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue)
         )
 
         # is state change from player or vault manager?
@@ -208,9 +207,7 @@ class xAgeSDLIntStateListResp(ptResponder):
             fastforward = 0
         else:  # invalid player aka Vault Manager
             objAvatar = None
-            fastforward = (
-                boolVaultManagerFF.value
-            )  # we need to skip any vault manager updates
+            fastforward = boolVaultManagerFF.value  # we need to skip any vault manager updates
         if tag == "fastforward":
             objAvatar = None
             fastforward = 1
@@ -225,13 +222,9 @@ class xAgeSDLIntStateListResp(ptResponder):
                 % self.dictStates[SDLval]
             )
             respEnterState.run(
-                self.key,
-                state=self.dictStates[SDLval],
-                avatar=avatar,
-                fastforward=fastforward,
+                self.key, state=self.dictStates[SDLval], avatar=avatar, fastforward=fastforward,
             )
         else:
             PtDebugPrint(
-                "ERROR: xAgeSDLIntStateListResp.OnSDLNotify: Couldn't find state: %d "
-                % SDLval
+                "ERROR: xAgeSDLIntStateListResp.OnSDLNotify: Couldn't find state: %d " % SDLval
             )

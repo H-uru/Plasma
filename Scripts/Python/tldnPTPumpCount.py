@@ -140,9 +140,7 @@ class tldnPTPumpCount(ptResponder):
 
         # error check
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: tldnPTPumpCount.OnNotify():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: tldnPTPumpCount.OnNotify():\tERROR: missing SDL var name")
             return
 
         if AgeStartedIn == PtGetAgeName():

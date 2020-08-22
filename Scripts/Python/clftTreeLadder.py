@@ -86,14 +86,10 @@ class clftTreeLadder(ptModifier):
             if event[0] == 1:
                 MultiStage01.run(LocalAvatar)
 
-            elif (
-                event[0] == 10 and event[1] == 1 and (direction.value) == "up"
-            ):  # going up
+            elif event[0] == 10 and event[1] == 1 and (direction.value) == "up":  # going up
                 audioresponder.run(self.key)
                 PtDebugPrint("Playing sfx for climbing out of the tree")
 
-            elif (
-                event[0] == 10 and event[1] == 0 and (direction.value) == "down"
-            ):  # going down
+            elif event[0] == 10 and event[1] == 0 and (direction.value) == "down":  # going down
                 audioresponder.run(self.key)
                 PtDebugPrint("Playing sfx for climbing into the tree")

@@ -309,8 +309,7 @@ class nglnFogTweener(ptMultiModifier):
 
             TweenPct = (AgeTimeOfDayPercent - kNoonPct) / (kSunsetPct - kNoonPct)
             PtDebugPrint(
-                "\tIt's after Noon and before Sunset. (%.2f%% this quadrant)"
-                % (TweenPct * 100)
+                "\tIt's after Noon and before Sunset. (%.2f%% this quadrant)" % (TweenPct * 100)
             )
 
         elif AgeTimeOfDayPercent > kSunsetPct and AgeTimeOfDayPercent < kMidnightPct:
@@ -330,8 +329,7 @@ class nglnFogTweener(ptMultiModifier):
 
             TweenPct = (AgeTimeOfDayPercent - kSunsetPct) / (kMidnightPct - kSunsetPct)
             PtDebugPrint(
-                "\tIt's after Sunset and before Midnight. (%.2f%% this quadrant)"
-                % (TweenPct * 100)
+                "\tIt's after Sunset and before Midnight. (%.2f%% this quadrant)" % (TweenPct * 100)
             )
 
         elif AgeTimeOfDayPercent > kMidnightPct and AgeTimeOfDayPercent < 1:
@@ -410,12 +408,8 @@ class nglnFogTweener(ptMultiModifier):
         NewE = StartE + ((EndE - StartE) * TweenPct)
         NewD = StartD + ((EndD - StartD) * TweenPct)
 
-        PtDebugPrint(
-            "UpdateFog: The new fog RGB is (%.3f, %.3f, %.3f)" % (NewR, NewG, NewB)
-        )
-        PtDebugPrint(
-            "UpdateFog: The new fog Density is (%.3f, %.3f, %.3f)" % (NewS, NewE, NewD)
-        )
+        PtDebugPrint("UpdateFog: The new fog RGB is (%.3f, %.3f, %.3f)" % (NewR, NewG, NewB))
+        PtDebugPrint("UpdateFog: The new fog Density is (%.3f, %.3f, %.3f)" % (NewS, NewE, NewD))
 
         newfogcolor = ptColor(red=NewR, green=NewG, blue=NewB)
 

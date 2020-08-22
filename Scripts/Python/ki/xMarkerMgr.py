@@ -130,9 +130,7 @@ class MarkerGameManager(object):
 
         if not self.IsActive(node):
             PtDebugPrint(
-                "xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(
-                    node.getGameName()
-                )
+                "xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName())
             )
             self._TeardownMarkerGame()
             ## FIXME: other game types
@@ -204,10 +202,7 @@ class MarkerGameManager(object):
         if self._brain.playing:
             getColor, toGetColor = self._brain.marker_colors
             self._UpdateKIMarkerLights(
-                getColor,
-                toGetColor,
-                self._brain.num_markers_captured,
-                self._brain.marker_total,
+                getColor, toGetColor, self._brain.num_markers_captured, self._brain.marker_total,
             )
         else:
             self._UpdateKIMarkerLights("off", "off", 0, 0)

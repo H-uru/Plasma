@@ -65,9 +65,7 @@ SDLOccupied = ptAttribString(4, "str: SDL Occupied Zones")
 SDLTrees = ptAttribString(5, "str: SDL Trees (optional)")
 bookClickable = ptAttribActivator(6, "act: Book Clickable")
 SeekBehavior = ptAttribBehavior(7, "beh: Smart Seek To Book")
-Sphere = ptAttribDropDownList(
-    8, "Which Sphere?", ("Sphere01", "Sphere02", "Sphere03", "Sphere04")
-)
+Sphere = ptAttribDropDownList(8, "Which Sphere?", ("Sphere01", "Sphere02", "Sphere03", "Sphere04"))
 respLinkResponder = ptAttribResponder(9, "resp: Link To Cathedral")
 respSphereRotate = ptAttribResponder(10, "resp: Sphere Rotation SFX")
 
@@ -178,9 +176,7 @@ class ahnyPressurePlates(ptModifier):
             idx = 0
             for occupants in ageSDL[SDLOccupied.value]:
                 if occupants:
-                    respClockLights.run(
-                        self.key, state="on", objectName=respLightList[idx]
-                    )
+                    respClockLights.run(self.key, state="on", objectName=respLightList[idx])
                 idx += 1
         if Sphere.value == "Sphere02":
             try:
@@ -198,15 +194,9 @@ class ahnyPressurePlates(ptModifier):
             occupiedZones = list(ageSDL[SDLOccupied.value])
             occupiedTrees = list(ageSDL[SDLTrees.value])
             for index in treeToZoneKey:
-                if (
-                    occupiedZones[index] == 0
-                    and occupiedTrees[treeToZoneKey.index(index)] == 1
-                ):
+                if occupiedZones[index] == 0 and occupiedTrees[treeToZoneKey.index(index)] == 1:
                     respClockLights.run(
-                        self.key,
-                        state="on",
-                        objectName=respLightList[index],
-                        netForce=1,
+                        self.key, state="on", objectName=respLightList[index], netForce=1,
                     )
             ageSDL[SDLOccupied.value] = tuple(occupiedZones)
 
@@ -253,22 +243,15 @@ class ahnyPressurePlates(ptModifier):
                                         objectName=respLightList[index],
                                         netForce=1,
                                     )
-                                PtDebugPrint(
-                                    "%s - enter %s" % (str(occupiedZones), str(index))
-                                )
+                                PtDebugPrint("%s - enter %s" % (str(occupiedZones), str(index)))
                             else:  # this should be exiting
                                 if (
                                     occupiedZones[index] != 0
                                 ):  # only subtract if we are not zero don't want to overflow
                                     occupiedZones[index] = occupiedZones[index] - 1
-                                if (
-                                    Sphere.value == "Sphere02"
-                                    and index in treeToZoneKey
-                                ):
+                                if Sphere.value == "Sphere02" and index in treeToZoneKey:
                                     if (
-                                        not ageSDL[SDLTrees.value][
-                                            treeToZoneKey.index(index)
-                                        ]
+                                        not ageSDL[SDLTrees.value][treeToZoneKey.index(index)]
                                     ) and (occupiedZones[index] == 0):
                                         if respLightList != []:
                                             respClockLights.run(
@@ -279,27 +262,19 @@ class ahnyPressurePlates(ptModifier):
                                             )
                                 else:
 
-                                    if (respLightList != []) and (
-                                        occupiedZones[index] == 0
-                                    ):  #
+                                    if (respLightList != []) and (occupiedZones[index] == 0):  #
                                         respClockLights.run(
                                             self.key,
                                             state="off",
                                             objectName=respLightList[index],
                                             netForce=1,
                                         )
-                                PtDebugPrint(
-                                    "%s - exit %s" % (str(occupiedZones), str(index))
-                                )
+                                PtDebugPrint("%s - exit %s" % (str(occupiedZones), str(index)))
                             ageSDL[SDLOccupied.value] = tuple(occupiedZones)
                             # PtDebugPrint("Occupied: %s" % (str(occupiedZones)))
 
         # is it a clickable book on a pedestal?
-        elif (
-            id == bookClickable.id
-            and PtFindAvatar(events) == PtGetLocalAvatar()
-            and state
-        ):
+        elif id == bookClickable.id and PtFindAvatar(events) == PtGetLocalAvatar() and state:
             PtToggleAvatarClickability(False)
             bookClickable.disable()
             LocalAvatar = PtFindAvatar(events)
@@ -319,8 +294,7 @@ class ahnyPressurePlates(ptModifier):
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
                     PtDebugPrint(
-                        "ahnyPressurePlates: BookNotify  event=%d, id=%d"
-                        % (event[1], event[2])
+                        "ahnyPressurePlates: BookNotify  event=%d, id=%d" % (event[1], event[2])
                     )
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if (
@@ -328,8 +302,7 @@ class ahnyPressurePlates(ptModifier):
                             or event[2] == xLinkingBookDefs.kBookMarkID
                         ):
                             PtDebugPrint(
-                                "ahnyPressurePlates:Book: hit linking panel %s"
-                                % (event[2])
+                                "ahnyPressurePlates:Book: hit linking panel %s" % (event[2])
                             )
                             self.HideBook(1)
 

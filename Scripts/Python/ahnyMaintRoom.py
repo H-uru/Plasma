@@ -85,9 +85,7 @@ class ahnyMaintRoom(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint(
-                "ahnyMaintRoom.OnTimer():\tERROR---Cannot find the Ahnonay Age SDL"
-            )
+            PtDebugPrint("ahnyMaintRoom.OnTimer():\tERROR---Cannot find the Ahnonay Age SDL")
 
         ageSDL.setFlags("ahnyHubDoor", 1, 1)
         ageSDL.sendToClients("ahnyHubDoor")
@@ -136,9 +134,7 @@ class ahnyMaintRoom(ptResponder):
                     "advanced from sphere %d with maintainence button"
                     % (ageSDL["ahnyCurrentSphere"][0])
                 )
-                PtDebugPrint(
-                    "sphere %d will now be the active sphere" % (SphereNum.value)
-                )
+                PtDebugPrint("sphere %d will now be the active sphere" % (SphereNum.value))
                 if SphereNum.value == 4:
                     ageSDL["ahnyImagerSphere"] = (SphereNum.value,)
                     boolHubDoor = ageSDL["ahnyHubDoor"][0]
@@ -213,9 +209,7 @@ class ahnyMaintRoom(ptResponder):
                     RespAdvanceUse.run(self.key, state="down3")
                     PtAtTimeCallback(self.key, 21, 1)
                 else:
-                    PtDebugPrint(
-                        "ahnyMaintRoom.py: ERROR.  Sphere advancement# not possible??"
-                    )
+                    PtDebugPrint("ahnyMaintRoom.py: ERROR.  Sphere advancement# not possible??")
 
     def SphereDifference(self):
         global diffsphere

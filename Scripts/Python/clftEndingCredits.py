@@ -203,9 +203,7 @@ class clftEndingCredits(ptResponder):
         elif id == kFadeInToGameID:  # 6
             PtFadeIn(kFadeInToGameSeconds, 1)
             PtDebugPrint(
-                "clftEndingCredits.OnTimer(): FadeIn over",
-                kFadeInToGameSeconds,
-                " seconds",
+                "clftEndingCredits.OnTimer(): FadeIn over", kFadeInToGameSeconds, " seconds",
             )
             cam = ptCamera()
             cam.enableFirstPersonOverride()

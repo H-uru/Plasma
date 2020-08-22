@@ -117,9 +117,7 @@ class tldnLagoonBridge(ptResponder):
         # if not PtWasLocallyNotified(self.key):
         #     return
 
-        PtDebugPrint(
-            "tldnLagoonBridge.OnNotify:  state=%f id=%d events=" % (state, id), events
-        )
+        PtDebugPrint("tldnLagoonBridge.OnNotify:  state=%f id=%d events=" % (state, id), events)
 
         if id == actLever.id:
             PtDebugPrint("The lever was clicked.")
@@ -155,9 +153,7 @@ class tldnLagoonBridge(ptResponder):
             tldnLagoonBridgeStuck = ageSDL["tldnLagoonBridgeStuck"][0]
 
             if tldnLagoonBridgeStuck == 0:
-                PtDebugPrint(
-                    "tldnLagoonBridge.OnSDLNotify: The Lagoon bridge was just bumped."
-                )
+                PtDebugPrint("tldnLagoonBridge.OnSDLNotify: The Lagoon bridge was just bumped.")
                 respStucktoRaised.run(self.key)
                 return
             else:
@@ -178,6 +174,4 @@ class tldnLagoonBridge(ptResponder):
                     PtDebugPrint("tldnLagoonBridge.OnSDLNotify: Raising Lagoon bridge.")
                 elif tldnLagoonBridgeRaised == 0:
                     respRaisedtoLowered.run(self.key)
-                    PtDebugPrint(
-                        "tldnLagoonBridge.OnSDLNotify: Lowering Lagoon bridge."
-                    )
+                    PtDebugPrint("tldnLagoonBridge.OnSDLNotify: Lowering Lagoon bridge.")

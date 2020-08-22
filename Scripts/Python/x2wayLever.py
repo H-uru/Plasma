@@ -71,10 +71,7 @@ class x2wayLever(ptResponder):
 
     def OnFirstUpdate(self):
         if self.SDL == None:
-            PtDebugPrint(
-                "x2wayLever.OnFirstUpdate():\tERROR---missing SDL (%s)"
-                % varstring.value
-            )
+            PtDebugPrint("x2wayLever.OnFirstUpdate():\tERROR---missing SDL (%s)" % varstring.value)
             return
 
         self.SDL.setDefault(
@@ -128,7 +125,5 @@ class x2wayLever(ptResponder):
                     % (self.SDL["LvrPos"][0], varstring.value)
                 )
             else:
-                PtDebugPrint(
-                    "x2wayLever.OnNotify:\tERROR: unanticipated message source."
-                )
+                PtDebugPrint("x2wayLever.OnNotify:\tERROR: unanticipated message source.")
             return

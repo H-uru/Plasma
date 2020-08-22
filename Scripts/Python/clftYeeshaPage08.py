@@ -148,9 +148,7 @@ class clftYeeshaPage08(ptModifier):
                 # control.show()
                 if self.GotPage():
                     mydialog = PtGetDialogFromString(DialogName)
-                    ptGUIControlButton(
-                        mydialog.getControlFromTag(kYeeshaPage08)
-                    ).disable()
+                    ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).disable()
 
         elif event == kAction and btnID == kYeeshaPage08:
             PtDebugPrint("DEBUG: clftYeeshaPage08.OnGUINotify():\tPicked up page")
@@ -166,9 +164,7 @@ class clftYeeshaPage08(ptModifier):
                 )
                 return
             else:
-                PtDebugPrint(
-                    "DEBUG: clftYeeshaPage08.py: Yeesha Page #8 is new to you."
-                )
+                PtDebugPrint("DEBUG: clftYeeshaPage08.py: Yeesha Page #8 is new to you.")
                 PtDebugPrint(
                     "DEBUG: clftYeeshaPage08.py: Trying to update the value of the SDL variable %s to 1"
                     % ("YeeshaPage8")
@@ -180,9 +176,7 @@ class clftYeeshaPage08(ptModifier):
                     YeeshaPageVar.setInt(1)
                     vault.updatePsnlAgeSDL(psnlSDL)
                     mydialog = PtGetDialogFromString(DialogName)
-                    ptGUIControlButton(
-                        mydialog.getControlFromTag(kYeeshaPage08)
-                    ).disable()
+                    ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).disable()
                     PtSendKIMessageInt(kStartBookAlert, 0)
 
         elif event == kAction and btnID == kYeeshaPageCancel:

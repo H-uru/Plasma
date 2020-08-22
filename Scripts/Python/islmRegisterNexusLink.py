@@ -82,9 +82,7 @@ class islmRegisterNexusLink(ptModifier):
             # does clicker have a normal KI or better?
             self.avatar = PtGetLocalAvatar()
             kiLevel = PtDetermineKILevel()
-            PtDebugPrint(
-                "islmRegisterNexusLink.OnNotify:\tplayer ki level is %d" % (kiLevel)
-            )
+            PtDebugPrint("islmRegisterNexusLink.OnNotify:\tplayer ki level is %d" % (kiLevel))
             if kiLevel < kNormalKI:
                 self.avatar = 0
                 respClick.run(self.key, events=events)
@@ -113,8 +111,7 @@ class islmRegisterNexusLink(ptModifier):
                         "islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' not present, adding entry and setting to 'yes'"
                     )
                     PtSendKIMessage(
-                        kKILocalChatStatusMsg,
-                        PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
+                        kKILocalChatStatusMsg, PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
                     )
             else:
                 # just business-as-usual here

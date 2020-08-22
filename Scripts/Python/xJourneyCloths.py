@@ -112,9 +112,7 @@ class xJourneyCloths(ptModifier):
 
         if id == Activator.id:
             if ClothInUse:
-                PtDebugPrint(
-                    "Journey Cloth %s has not yet reset." % (ClothLetter.value)
-                )
+                PtDebugPrint("Journey Cloth %s has not yet reset." % (ClothLetter.value))
                 return
             ClothInUse = 1
             OneShotResp.run(self.key, events=events)  # run the oneshot
@@ -135,13 +133,9 @@ class xJourneyCloths(ptModifier):
         if entry is None:  # is this the player's first Journey Cloth?
             PtDebugPrint("First cloth found.")
 
-            PtDebugPrint(
-                "trying to update JourneyClothProgress to: ", ClothLetter.value
-            )
+            PtDebugPrint("trying to update JourneyClothProgress to: ", ClothLetter.value)
             vault = ptVault()
-            vault.addChronicleEntry(
-                "JourneyClothProgress", 0, "%s" % (ClothLetter.value)
-            )
+            vault.addChronicleEntry("JourneyClothProgress", 0, "%s" % (ClothLetter.value))
             self.IPlayHandAnim(1)
 
         else:
@@ -253,7 +247,5 @@ class xJourneyCloths(ptModifier):
     def OnTimer(self, id):
         global ClothInUse
         if id == 1:
-            PtDebugPrint(
-                "xJourneyCloths:\tJourneyCloth %s has reset." % (ClothLetter.value)
-            )
+            PtDebugPrint("xJourneyCloths:\tJourneyCloth %s has reset." % (ClothLetter.value))
             ClothInUse = 0

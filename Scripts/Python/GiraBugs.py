@@ -133,9 +133,7 @@ class GiraBugs(ptResponder):
         try:
             local = PtGetLocalAvatar()
         except:
-            PtDebugPrint(
-                "ERROR: GiraBugs.BeginAgeUnload()-->\tFailed to get local avatar!"
-            )
+            PtDebugPrint("ERROR: GiraBugs.BeginAgeUnload()-->\tFailed to get local avatar!")
             return
         if local == avObj:
             PtDebugPrint("GiraBugs.BeginAgeUnload():\tavatar page out")
@@ -143,9 +141,7 @@ class GiraBugs(ptResponder):
 
             # update with the number currently on the avatar and save it to the chronicle
             self.bugCount = PtGetNumParticles(local.getKey())
-            PtDebugPrint(
-                "GiraBugs.BeginAgeUnload():\tparticles at age unload ", self.bugCount
-            )
+            PtDebugPrint("GiraBugs.BeginAgeUnload():\tparticles at age unload ", self.bugCount)
             self.ISaveBugCount(self.bugCount)
 
             # help ensure all bugs are dead
@@ -184,9 +180,7 @@ class GiraBugs(ptResponder):
                 PtKillParticles(0, percentToKill, avatar.getKey())
             elif particlesToTransfer != 0:
                 # add some particles
-                PtDebugPrint(
-                    "GiraBugs.OnTimer() - Particles to add: " + str(particlesToTransfer)
-                )
+                PtDebugPrint("GiraBugs.OnTimer() - Particles to add: " + str(particlesToTransfer))
                 PtTransferParticlesToObject(
                     particleSystem.value.getKey(), avatar.getKey(), particlesToTransfer
                 )
@@ -294,9 +288,7 @@ class GiraBugs(ptResponder):
 
             if behavior == PtBehaviorTypes.kBehaviorTypeRun:
                 # kill some of them and set a timer
-                PtDebugPrint(
-                    "GiraBugs.OnBehaviorNotify():\tstarted running, kill some bugs"
-                )
+                PtDebugPrint("GiraBugs.OnBehaviorNotify():\tstarted running, kill some bugs")
                 PtSetParticleDissentPoint(0, 0, 10000, avatar.getKey())
                 PtKillParticles(3.0, 0.1, avatar.getKey())
                 PtAtTimeCallback(self.key, 0.25, PtBehaviorTypes.kBehaviorTypeRun)

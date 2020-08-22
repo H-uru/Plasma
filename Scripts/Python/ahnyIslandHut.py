@@ -65,9 +65,7 @@ WaterCurrent1 = ptAttribSwimCurrent(6, "water current 1")
 WaterCurrent2 = ptAttribSwimCurrent(7, "water current 2")
 WaterCurrent3 = ptAttribSwimCurrent(8, "water current 3")
 WaterCurrent4 = ptAttribSwimCurrent(9, "water current 4")
-RespCurrentChange = ptAttribResponder(
-    10, "resp: change the water current", ["on", "off"]
-)
+RespCurrentChange = ptAttribResponder(10, "resp: change the water current", ["on", "off"])
 RespRotateSpheres = ptAttribResponder(11, "resp: rotate the spheres")
 SDLHutDoor = ptAttribString(12, "SDL: hut door")
 ActHutDoor = ptAttribActivator(13, "clk: hut door switch")

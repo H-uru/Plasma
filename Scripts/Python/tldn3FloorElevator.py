@@ -263,9 +263,7 @@ class tldn3FloorElevator(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
         else:
-            PtDebugPrint(
-                "tldn3FloorElevator.OnNotify():\tERROR -- not in the age we started in?"
-            )
+            PtDebugPrint("tldn3FloorElevator.OnNotify():\tERROR -- not in the age we started in?")
             return
 
         ##################
@@ -290,9 +288,7 @@ class tldn3FloorElevator(ptResponder):
             ):
                 return
             else:
-                PtDebugPrint(
-                    "tldn3FloorElevator.ProcessRequests:\tlocked, cannot respond."
-                )
+                PtDebugPrint("tldn3FloorElevator.ProcessRequests:\tlocked, cannot respond.")
                 respStrain.run(self.key)
                 return
 
