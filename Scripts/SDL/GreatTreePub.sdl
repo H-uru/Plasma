@@ -47,10 +47,10 @@ STATEDESC GreatTreePub
 	VERSION 1
 
 ## Age Mechanics ##
-    	VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
 
 }
 
@@ -59,11 +59,11 @@ STATEDESC GreatTreePub
 	VERSION 2
 
 ## Age Mechanics ##
-    	VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL islmGZBeamVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL islmGZBeamVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
 
 }
 
@@ -72,13 +72,13 @@ STATEDESC GreatTreePub
 	VERSION 3
 
 ## Age Mechanics ##
-    	VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL islmGZBeamVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL grtpBallHallDoorVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	VAR BOOL grtpDeadBahroVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL islmGZBeamVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpBallHallDoorVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDeadBahroVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
 
 }
 
@@ -87,15 +87,15 @@ STATEDESC GreatTreePub
 	VERSION 4
 
 ## Age Mechanics ##
-    	VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL islmGZBeamVis[1] 			        DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL grtpBallHallDoorVis[1] 		    DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL grtpDeadBahroVis[1] 			    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL islmGZBeamVis[1] 			        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpBallHallDoorVis[1] 		    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDeadBahroVis[1] 			    DEFAULT=0 DEFAULTOPTION=VAULT
 ## Fan Additions ##
-        VAR BOOL grtpChisoBookVis[1]                DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpChisoBookVis[1]                DEFAULT=0 DEFAULTOPTION=VAULT
 }
 
 STATEDESC GreatTreePub
@@ -103,15 +103,15 @@ STATEDESC GreatTreePub
 	VERSION 5
 
 ## Age Mechanics ##
-    	VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    	VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL islmGZBeamVis[1] 			        DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL grtpBallHallDoorVis[1] 		    DEFAULT=0 DEFAULTOPTION=VAULT
-	    VAR BOOL grtpDeadBahroVis[1] 			    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL islmGZBeamVis[1] 			        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpBallHallDoorVis[1] 		    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDeadBahroVis[1] 			    DEFAULT=0 DEFAULTOPTION=VAULT
 ## Fan Additions ##
-        VAR BOOL grtpChisoBookVis[1]                DEFAULT=1 DEFAULTOPTION=VAULT # Reveal/Hide Chiso Book
-        VAR BOOL grtpBookRoom02CrtnVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT # Remove/Replace Curtain/Blocker
-        VAR BOOL grtpBookRoomBarrierVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT # Remove/Replace Barriers/Blocker02
+    VAR BOOL grtpChisoBookVis[1]                DEFAULT=1 DEFAULTOPTION=VAULT # Reveal/Hide Chiso Book
+    VAR BOOL grtpBookRoom02CrtnVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT # Remove/Replace Curtain/Blocker
+    VAR BOOL grtpBookRoomBarrierVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT # Remove/Replace Barriers/Blocker02
 }
