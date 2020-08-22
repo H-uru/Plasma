@@ -36,7 +36,7 @@ if (!(Test-Path -PathType Container devlibs)) {
 
 if (Get-ChildItem Env:PATH | Where-Object {$_.Value -match "CMake"}) {
     Write-Host "Running CMake to configure build system... "
-    cmake -DCMAKE_INSTALL_PREFIX=devlibs;devlibs/debug -DPython3_FIND_REGISTRY=LAST `
+    cmake -DCMAKE_INSTALL_PREFIX="$path/devlibs;$path/devlibs/debug" -DPython3_FIND_REGISTRY=LAST `
           -DPython3_LIBRARY=$path/devlibs/lib/python38.lib -DPython3_INCLUDE_DIR=$path/devlibs/include `
           -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF `
           -A Win32 -G "Visual Studio 15 2017" $source_path
