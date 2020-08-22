@@ -198,16 +198,14 @@ class grsnGearRide(ptResponder):
         if id == gearExitCrackRegion.id:
             if not self._canChangeSubworld:
                 PtDebugPrint(
-                    "grsnGearRide.OnNotify():\tTossing region race condition",
-                    level=kDebugDumpLevel,
+                    "grsnGearRide.OnNotify():\tTossing region race condition", level=kDebugDumpLevel,
                 )
                 return
             self._canChangeSubworld = False
             self._inNiche = False
 
             PtDebugPrint(
-                "grsnGearRide.OnNotify():\t%i exited niche subworld into the 2nd floor hall"
-                % kiNum,
+                "grsnGearRide.OnNotify():\t%i exited niche subworld into the 2nd floor hall" % kiNum,
                 level=kWarningLevel,
             )
             avatar.avatar.exitSubWorld()
@@ -219,16 +217,14 @@ class grsnGearRide(ptResponder):
         if id == gearExitRegion.id:
             if not self._canChangeSubworld:
                 PtDebugPrint(
-                    "grsnGearRide.OnNotify():\tTossing region race condition",
-                    level=kDebugDumpLevel,
+                    "grsnGearRide.OnNotify():\tTossing region race condition", level=kDebugDumpLevel,
                 )
                 return
             self._canChangeSubworld = False
             self._inNiche = False
 
             PtDebugPrint(
-                "grsnGearRide.OnNotify():\t%i exited niche subworld into the power room" % kiNum,
-                level=kWarningLevel,
+                "grsnGearRide.OnNotify():\t%i exited niche subworld into the power room" % kiNum, level=kWarningLevel,
             )
             ptCamera().enableFirstPersonOverride()
             gearExitCamera.value.pushCamera(avatar.getKey())
@@ -241,8 +237,7 @@ class grsnGearRide(ptResponder):
         if id in (safetyRegion1.id, safetyRegion2.id, safetyRegion3.id, gearEnterRegion.id,):
             if not self._canChangeSubworld:
                 PtDebugPrint(
-                    "grsnGearRide.OnNotify():\tTossing region race condition",
-                    level=kDebugDumpLevel,
+                    "grsnGearRide.OnNotify():\tTossing region race condition", level=kDebugDumpLevel,
                 )
                 return
             self._canChangeSubworld = False

@@ -82,9 +82,7 @@ class xAgeSDLIntChange(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntChange.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntChange.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
 
     def OnServerInitComplete(self):
@@ -98,18 +96,13 @@ class xAgeSDLIntChange(ptResponder):
             try:
                 intCurrentValue = ageSDL[stringVarName.value][0]
             except:
-                PtDebugPrint(
-                    "ERROR: xAgeSDLIntChange.OnServerInitComplete():\tERROR reading age SDL"
-                )
+                PtDebugPrint("ERROR: xAgeSDLIntChange.OnServerInitComplete():\tERROR reading age SDL")
                 pass
             PtDebugPrint(
-                "DEBUG: xAgeSDLIntChange.OnServerInitComplete():\t%s = %d"
-                % (stringVarName.value, intCurrentValue)
+                "DEBUG: xAgeSDLIntChange.OnServerInitComplete():\t%s = %d" % (stringVarName.value, intCurrentValue)
             )
         else:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntChange.OnServerInitComplete():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntChange.OnServerInitComplete():\tERROR: missing SDL var name")
             pass
 
     def OnNotify(self, state, id, events):

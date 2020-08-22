@@ -52,9 +52,7 @@ from PlasmaTypes import *
 
 # define the attributes that will be entered in max
 regCageSymbol = ptAttribActivator(1, "reg: Cage Symbol")
-respCageSymbol = ptAttribResponder(
-    15, "resp: Cage Symbol", ["1", "2", "3", "4", "5", "Link", "Hide"]
-)
+respCageSymbol = ptAttribResponder(15, "resp: Cage Symbol", ["1", "2", "3", "4", "5", "Link", "Hide"])
 respSymbolSFX = ptAttribResponder(16, "resp: Symbol SFX", ["0", "1", "2", "3", "4", "5"])
 
 # define globals
@@ -160,9 +158,7 @@ class minkCage(ptResponder):
             regCageSymbol.enable()
 
         elif target.lower() == "resetsymbol":
-            PtDebugPrint(
-                "DEBUG: minkCage.OnBackdoorMsg('ResetSymbols'):\tResetting Bahro Cave Symbols..."
-            )
+            PtDebugPrint("DEBUG: minkCage.OnBackdoorMsg('ResetSymbols'):\tResetting Bahro Cave Symbols...")
             respCageSymbol.run(self.key, state="Hide")
             ageSDL = PtGetAgeSDL()
             ageSDL["minkSymbolPart01"] = (0,)

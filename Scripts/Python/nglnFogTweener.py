@@ -267,10 +267,7 @@ class nglnFogTweener(ptMultiModifier):
 
         AgeTimeOfDayPercent = PtGetAgeTimeOfDayPercent()
 
-        PtDebugPrint(
-            "nglnFogTweener: The day is %.2f%% through its complete cycle."
-            % (AgeTimeOfDayPercent * 100)
-        )
+        PtDebugPrint("nglnFogTweener: The day is %.2f%% through its complete cycle." % (AgeTimeOfDayPercent * 100))
         if AgeTimeOfDayPercent > kSunrisePct and AgeTimeOfDayPercent < kNoonPct:
             StartR = SunriseR
             EndR = NoonR
@@ -287,10 +284,7 @@ class nglnFogTweener(ptMultiModifier):
 
             TweenPct = (AgeTimeOfDayPercent - kSunrisePct) / (kNoonPct - kSunrisePct)
 
-            PtDebugPrint(
-                "\tIt's after Sunrise and before Noon. (%.2f%% through this quadrant)"
-                % (TweenPct * 100)
-            )
+            PtDebugPrint("\tIt's after Sunrise and before Noon. (%.2f%% through this quadrant)" % (TweenPct * 100))
 
         elif AgeTimeOfDayPercent > kNoonPct and AgeTimeOfDayPercent < kSunsetPct:
             StartR = NoonR
@@ -308,9 +302,7 @@ class nglnFogTweener(ptMultiModifier):
             EndD = SunsetD
 
             TweenPct = (AgeTimeOfDayPercent - kNoonPct) / (kSunsetPct - kNoonPct)
-            PtDebugPrint(
-                "\tIt's after Noon and before Sunset. (%.2f%% this quadrant)" % (TweenPct * 100)
-            )
+            PtDebugPrint("\tIt's after Noon and before Sunset. (%.2f%% this quadrant)" % (TweenPct * 100))
 
         elif AgeTimeOfDayPercent > kSunsetPct and AgeTimeOfDayPercent < kMidnightPct:
             StartR = SunsetR
@@ -328,9 +320,7 @@ class nglnFogTweener(ptMultiModifier):
             EndD = MidnightD
 
             TweenPct = (AgeTimeOfDayPercent - kSunsetPct) / (kMidnightPct - kSunsetPct)
-            PtDebugPrint(
-                "\tIt's after Sunset and before Midnight. (%.2f%% this quadrant)" % (TweenPct * 100)
-            )
+            PtDebugPrint("\tIt's after Sunset and before Midnight. (%.2f%% this quadrant)" % (TweenPct * 100))
 
         elif AgeTimeOfDayPercent > kMidnightPct and AgeTimeOfDayPercent < 1:
             StartR = MidnightR
@@ -348,10 +338,7 @@ class nglnFogTweener(ptMultiModifier):
             EndD = SunriseD
 
             TweenPct = (AgeTimeOfDayPercent - kMidnightPct) / (1 - kMidnightPct)
-            PtDebugPrint(
-                "\tIt's after Midnight and before Sunrise. (%.2f%% this quadrant)"
-                % (TweenPct * 100)
-            )
+            PtDebugPrint("\tIt's after Midnight and before Sunrise. (%.2f%% this quadrant)" % (TweenPct * 100))
 
         else:
             PtDebugPrint("ERROR: I can't tell what time it is.")
@@ -359,36 +346,11 @@ class nglnFogTweener(ptMultiModifier):
         # PtDebugPrint("OnSDLNotify: StartR=%s, EndR=%s, StartG=%s, EndG==%s, StartB=%s, EndB=%s" % (StartR, EndR, StartG, EndG, StartB, EndB))
 
         self.UpdateFog(
-            StartR,
-            EndR,
-            StartG,
-            EndG,
-            StartB,
-            EndB,
-            StartS,
-            EndS,
-            StartE,
-            EndE,
-            StartD,
-            EndD,
-            TweenPct,
+            StartR, EndR, StartG, EndG, StartB, EndB, StartS, EndS, StartE, EndE, StartD, EndD, TweenPct,
         )
 
     def UpdateFog(
-        self,
-        StartR,
-        EndR,
-        StartG,
-        EndG,
-        StartB,
-        EndB,
-        StartS,
-        EndS,
-        StartE,
-        EndE,
-        StartD,
-        EndD,
-        TweenPct,
+        self, StartR, EndR, StartG, EndG, StartB, EndB, StartS, EndS, StartE, EndE, StartD, EndD, TweenPct,
     ):
         # PtDebugPrint("TweenPct = ", TweenPct)
         PtDebugPrint(

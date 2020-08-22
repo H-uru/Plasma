@@ -124,9 +124,7 @@ class xAgeSDLIntShowHide(ptMultiModifier):
                 )
                 self.runDefault()
         else:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR: missing SDL var name")
             self.runDefault()
 
     def runDefault(self):

@@ -77,9 +77,7 @@ class minkDayNight(ptResponder):
             ageSDL = PtGetAgeSDL()
             ageSDL["minkIsDayTime"][0]
         except:
-            PtDebugPrint(
-                "minkDayNight.OnServerInitComplete(): ERROR --- Cannot find Minkata age SDL"
-            )
+            PtDebugPrint("minkDayNight.OnServerInitComplete(): ERROR --- Cannot find Minkata age SDL")
             ageSDL["minkIsDayTime"] = (1,)
 
         ageSDL.setFlags("minkIsDayTime", 1, 1)

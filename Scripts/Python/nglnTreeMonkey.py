@@ -55,18 +55,14 @@ import random
 
 # define the attributes that will be entered in max
 respSpawnPt = ptAttribResponder(1, "resp: Spawn Point", ["0", "1", "2"], netForce=1)
-respMonkeyAct = ptAttribResponder(
-    2, "resp: Monkey Actions", ["Alarmed", "Up", "Eat", "Idle", "Vocalize"]
-)
+respMonkeyAct = ptAttribResponder(2, "resp: Monkey Actions", ["Alarmed", "Up", "Eat", "Idle", "Vocalize"])
 respMonkeySfx = ptAttribNamedResponder(
     3, "resp: Monkey SFX", ["Alarmed", "Up", "Eat", "Idle", "Off", "Vocalize"], netForce=1,
 )
 respMonkeyOff = ptAttribResponder(4, "resp: Monkey Off")
 
 # define globals
-kDayLengthInSeconds = (
-    56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
-)
+kDayLengthInSeconds = 56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
 kMinimumTimeBetweenSpawns = 300  # 5 minutes
 kMaximumTimeBetweenSpawns = 18000  # 5 hours
 
@@ -110,14 +106,10 @@ class nglnTreeMonkey(ptResponder):
         lastDay = int(ageSDL["MonkeyLastUpdated"][0] / kDayLengthInSeconds)
 
         if (thisDay - lastDay) > 0:
-            PtDebugPrint(
-                "nglnTreeMonkey: It's been at least a day since the last update, running new numbers now."
-            )
+            PtDebugPrint("nglnTreeMonkey: It's been at least a day since the last update, running new numbers now.")
             self.InitNewSDLVars()
         else:
-            PtDebugPrint(
-                "nglnTreeMonkey: It's been less than a day since the last update, doing nothing"
-            )
+            PtDebugPrint("nglnTreeMonkey: It's been less than a day since the last update, doing nothing")
             self.SetMonkeyTimers()
 
         if not len(PtGetPlayerList()):
@@ -154,9 +146,7 @@ class nglnTreeMonkey(ptResponder):
             old = stackList.pop(0)
             PtDebugPrint("Popping off: %s" % (old))
 
-        elif (
-            id == respMonkeyAct.id or id == respMonkeyOff.id
-        ) and not self.sceneobject.isLocallyOwned():
+        elif (id == respMonkeyAct.id or id == respMonkeyOff.id) and not self.sceneobject.isLocallyOwned():
             PtDebugPrint(
                 "Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list"
             )
@@ -256,15 +246,11 @@ class nglnTreeMonkey(ptResponder):
                 PtDebugPrint("nglnTreeMonkey: Generated a valid spawn time: %d" % (newTime))
                 spawnTimes.append(newTime)
             else:
-                PtDebugPrint(
-                    "nglnTreeMonkey: Generated a spawn time after dusk, exiting loop: %d"
-                    % (newTime)
-                )
+                PtDebugPrint("nglnTreeMonkey: Generated a spawn time after dusk, exiting loop: %d" % (newTime))
                 break
         else:
             PtDebugPrint(
-                "nglnTreeMonkey:ERROR---Tried to add a spawn time that's not a number: ",
-                spawnTimes,
+                "nglnTreeMonkey:ERROR---Tried to add a spawn time that's not a number: ", spawnTimes,
             )
             spawnTimes = [0]
 
@@ -281,20 +267,13 @@ class nglnTreeMonkey(ptResponder):
             for timer in ageSDL["MonkeySpawnTimes"]:
                 if timer:
                     timeTillSpawn = timer - PtGetDniTime()
-                    PtDebugPrint(
-                        "timer: %d    time: %d    timeTillSpawn: %d"
-                        % (timer, PtGetDniTime(), timeTillSpawn)
-                    )
+                    PtDebugPrint("timer: %d    time: %d    timeTillSpawn: %d" % (timer, PtGetDniTime(), timeTillSpawn))
                     if timeTillSpawn > 0:
-                        PtDebugPrint(
-                            "nglnTreeMonkey: Setting timer for %d seconds" % (timeTillSpawn)
-                        )
+                        PtDebugPrint("nglnTreeMonkey: Setting timer for %d seconds" % (timeTillSpawn))
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
             # precision error FTW!
-            timeLeftToday = kDayLengthInSeconds - int(
-                PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
-            )
+            timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
             timeLeftToday += 1  # because we want it to go off right AFTER the day flips
             PtDebugPrint("nglnTreeMonkey: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
             PtAtTimeCallback(self.key, timeLeftToday, 2)

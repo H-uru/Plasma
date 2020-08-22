@@ -51,12 +51,8 @@ import xEnum
 # #############################################################
 
 
-firstFloorDoors = ptAttribNamedResponder(
-    1, "first floor doors On", ["TurnOn", "TurnOff"], netForce=1
-)
-secondFloorDoors = ptAttribNamedResponder(
-    2, "second floor doors On", ["TurnOn", "TurnOff"], netForce=1
-)
+firstFloorDoors = ptAttribNamedResponder(1, "first floor doors On", ["TurnOn", "TurnOff"], netForce=1)
+secondFloorDoors = ptAttribNamedResponder(2, "second floor doors On", ["TurnOn", "TurnOff"], netForce=1)
 
 gearSwitch = ptAttribActivator(6, "gear switch")
 upElevSwitch = ptAttribActivator(7, "up elevator switch")
@@ -65,32 +61,19 @@ mainSwitch = ptAttribActivator(9, "main switch")
 gearBrake01 = ptAttribActivator(11, "gear switch")
 gearBrake02 = ptAttribActivator(12, "gear switch")
 
-gearBrake01Resp = ptAttribResponder(
-    13, "gear brake 01", ["Unlock", "Trip", "Lock", "AutoReturn"], netForce=1
-)
-gearBrake02Resp = ptAttribResponder(
-    14, "gear brake 02", ["Unlock", "Trip", "Lock", "AutoReturn"], netForce=1
-)
+gearBrake01Resp = ptAttribResponder(13, "gear brake 01", ["Unlock", "Trip", "Lock", "AutoReturn"], netForce=1)
+gearBrake02Resp = ptAttribResponder(14, "gear brake 02", ["Unlock", "Trip", "Lock", "AutoReturn"], netForce=1)
 mainSwitchResp = ptAttribResponder(
-    15,
-    "main switch responder",
-    ["TurnOn", "TurnOff", "Trip", "Break", "PrimerExpired"],
-    netForce=1,
+    15, "main switch responder", ["TurnOn", "TurnOff", "Trip", "Break", "PrimerExpired"], netForce=1,
 )
 gearSwitchResp = ptAttribResponder(
     16, "gear switch responder", ["TurnOn", "TurnOff", "Trip", "Break", "TripEngaged"], netForce=1,
 )
 upElevSwitchResp = ptAttribResponder(
-    18,
-    "upElev switch responder",
-    ["TurnOn", "TurnOff", "Trip", "Break", "TripEngaged"],
-    netForce=1,
+    18, "upElev switch responder", ["TurnOn", "TurnOff", "Trip", "Break", "TripEngaged"], netForce=1,
 )
 dnElevSwitchResp = ptAttribResponder(
-    19,
-    "dnElev switch responder",
-    ["TurnOn", "TurnOff", "Trip", "Break", "TripEngaged"],
-    netForce=1,
+    19, "dnElev switch responder", ["TurnOn", "TurnOff", "Trip", "Break", "TripEngaged"], netForce=1,
 )
 
 mainSwitchSDL = ptAttribString(20, "main switch SDL")
@@ -112,9 +95,7 @@ weightMedUp = ptAttribActivator(33, "weight Med up event")
 weightLowUp = ptAttribActivator(34, "weight Low up event")
 weightLowestUp = ptAttribActivator(35, "weight Lowest up event")
 
-flashingLightsResponder = ptAttribResponder(
-    36, "button and floor lights", ["Off", "Blink", "On"], netForce=1
-)
+flashingLightsResponder = ptAttribResponder(36, "button and floor lights", ["Off", "Blink", "On"], netForce=1)
 switchGlowResponder = ptAttribResponder(37, "main switch glow indicator", ["On", "Off"], netForce=1)
 gearGlowResponder = ptAttribResponder(38, "gear switch glow indicator", ["On", "Off"], netForce=1)
 upElevGlowResponder = ptAttribResponder(39, "up switch glow indicator", ["On", "Off"], netForce=1)
@@ -262,15 +243,9 @@ class grsnPowerOn(ptResponder):
                     self.key, state="TurnOn", avatar=PtGetLocalAvatar(), fastforward=True,
                 )
                 mainPowerOnResponder.run(self.key, avatar=PtGetLocalAvatar(), fastforward=True)
-                flashingLightsResponder.run(
-                    self.key, state="On", avatar=PtGetLocalAvatar(), fastforward=True
-                )
-                switchGlowResponder.run(
-                    self.key, state="On", avatar=PtGetLocalAvatar(), fastforward=True
-                )
-                gearGlowResponder.run(
-                    self.key, state="On", avatar=PtGetLocalAvatar(), fastforward=True
-                )
+                flashingLightsResponder.run(self.key, state="On", avatar=PtGetLocalAvatar(), fastforward=True)
+                switchGlowResponder.run(self.key, state="On", avatar=PtGetLocalAvatar(), fastforward=True)
+                gearGlowResponder.run(self.key, state="On", avatar=PtGetLocalAvatar(), fastforward=True)
                 gearRoomDoors.run(
                     self.key, state="TurnOn", avatar=PtGetLocalAvatar(), fastforward=True,
                 )
@@ -320,15 +295,9 @@ class grsnPowerOn(ptResponder):
                 gearSwitchResp.run(
                     self.key, state="TurnOff", avatar=PtGetLocalAvatar(), fastforward=True,
                 )
-                flashingLightsResponder.run(
-                    self.key, state="Off", avatar=PtGetLocalAvatar(), fastforward=True
-                )
-                switchGlowResponder.run(
-                    self.key, state="Off", avatar=PtGetLocalAvatar(), fastforward=True
-                )
-                gearGlowResponder.run(
-                    self.key, state="Off", avatar=PtGetLocalAvatar(), fastforward=True
-                )
+                flashingLightsResponder.run(self.key, state="Off", avatar=PtGetLocalAvatar(), fastforward=True)
+                switchGlowResponder.run(self.key, state="Off", avatar=PtGetLocalAvatar(), fastforward=True)
+                gearGlowResponder.run(self.key, state="Off", avatar=PtGetLocalAvatar(), fastforward=True)
                 gearBrake01Resp.run(
                     self.key, state="AutoReturn", avatar=PtGetLocalAvatar(), fastforward=True,
                 )
@@ -564,14 +533,10 @@ class grsnPowerOn(ptResponder):
                 # gear is finished moving partway down, okay to start second half
                 gearStartingDown = False
                 if not gearStopping:
-                    PtDebugPrint(
-                        "main power responder callback - gear also stopped, begin final descent"
-                    )
+                    PtDebugPrint("main power responder callback - gear also stopped, begin final descent")
                     mainPowerOffResponder.run(self.key, state="GearDown", avatar=PtGetLocalAvatar())
                 else:
-                    PtDebugPrint(
-                        "main power responder callback - gear still turning, wait for it to stop"
-                    )
+                    PtDebugPrint("main power responder callback - gear still turning, wait for it to stop")
                 return
             if not gearStopping and not gearStartingDown:
                 PtDebugPrint("main power responder callback - reengage locks")

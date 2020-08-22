@@ -82,10 +82,7 @@ kEasterEggs = {
         "exits": "NorthWest and South.",
     },
     "Personal": {"see": "You see a small hut... looks deserted.", "exits": None},
-    "Teledahn": {
-        "see": "You see 'shrooms everywhere! Big ones, small ones. Are they edible?",
-        "exits": "East.",
-    },
+    "Teledahn": {"see": "You see 'shrooms everywhere! Big ones, small ones. Are they edible?", "exits": "East.",},
     "Nexus": {"see": "You see a jukebox-like machine.", "exits": None},
     "Garden": {"see": "You see bugs. BUGS! I hate bugs.", "exits": "North and South."},
     "EderTsogal": {
@@ -664,18 +661,12 @@ class kLoc:
         "TERMINATED: Server LogOff. Reason: Logged In Elsewhere": PtGetLocalizedString(
             "KI.Errors.LoggedInElsewhere"
         ),  # 02
-        "TERMINATED: Server LogOff. Reason: Timed Out": PtGetLocalizedString(
-            "KI.Errors.TimedOut"
-        ),  # 03
+        "TERMINATED: Server LogOff. Reason: Timed Out": PtGetLocalizedString("KI.Errors.TimedOut"),  # 03
         "TERMINATED: Server LogOff. Reason: Not Authenticated": PtGetLocalizedString(
             "KI.Errors.NotAuthenticated"
         ),  # 04
-        "TERMINATED: Server LogOff. Reason: Kicked Off": PtGetLocalizedString(
-            "KI.Errors.KickedOff"
-        ),  # 05
-        "TERMINATED: Server LogOff. Reason: Unknown Reason": PtGetLocalizedString(
-            "KI.Errors.UnknownReason"
-        ),  # 06
+        "TERMINATED: Server LogOff. Reason: Kicked Off": PtGetLocalizedString("KI.Errors.KickedOff"),  # 05
+        "TERMINATED: Server LogOff. Reason: Unknown Reason": PtGetLocalizedString("KI.Errors.UnknownReason"),  # 06
         "TERMINATED: Server LogOff. Reason: UNKNOWN REASON CODE": PtGetLocalizedString(
             "KI.Errors.UnknownReason2"
         ),  # 09
@@ -691,9 +682,7 @@ class kLoc:
         "Authentication timed out": PtGetLocalizedString("KI.Errors.AuthenticationTimedOut"),  # 19
         "Peer timed out": PtGetLocalizedString("KI.Errors.PeerTimedOut"),  # 20
         "Server silence": PtGetLocalizedString("KI.Errors.ServerSilence2"),  # 21
-        "Protocol version mismatch": PtGetLocalizedString(
-            "KI.Errors.ProtocolVersionMismatch"
-        ),  # 22
+        "Protocol version mismatch": PtGetLocalizedString("KI.Errors.ProtocolVersionMismatch"),  # 22
         "Auth failed": PtGetLocalizedString("KI.Errors.AuthFailed2"),  # 23
         "Failed to create player": PtGetLocalizedString("KI.Errors.FailedToCreatePlayer"),  # 24
         "Invalid error code": PtGetLocalizedString("KI.Errors.InvalidErrorCode"),  # 25

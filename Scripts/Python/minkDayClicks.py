@@ -119,10 +119,7 @@ class minkDayClicks(ptResponder):
         PtDebugPrint("minkDayClicks.OnNotify(): state=%s id=%d events=" % (state, id), events)
 
         if id in ClickToResponder.keys() and state and PtFindAvatar(events) == PtGetLocalAvatar():
-            PtDebugPrint(
-                "minkDayClicks.OnNotify(): Clicked on %d, running %d"
-                % (id, ClickToResponder[id].id)
-            )
+            PtDebugPrint("minkDayClicks.OnNotify(): Clicked on %d, running %d" % (id, ClickToResponder[id].id))
             LocalAvatar = PtFindAvatar(events)
             clkCave01.disable()
             clkCave02.disable()

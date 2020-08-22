@@ -75,9 +75,7 @@ class xAgeSDLVarSet(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLVarSet.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLVarSet.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
 
     def OnServerInitComplete(self):
@@ -98,15 +96,10 @@ class xAgeSDLVarSet(ptResponder):
                 vals = tup.split(",")
                 self.enabledStateDict[int(vals[0])] = int(vals[1])
         except:
-            PtDebugPrint(
-                "ERROR: xAgeSDLVarSet.OnServerInitComplete():\tERROR: couldn't process start state list"
-            )
+            PtDebugPrint("ERROR: xAgeSDLVarSet.OnServerInitComplete():\tERROR: couldn't process start state list")
             pass
 
-        PtDebugPrint(
-            "DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tSetting notify on %s"
-            % stringSDLVarName.value
-        )
+        PtDebugPrint("DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tSetting notify on %s" % stringSDLVarName.value)
 
         ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
 
@@ -119,9 +112,7 @@ class xAgeSDLVarSet(ptResponder):
             )
             SDLvalue = intDefault.value
 
-        PtDebugPrint(
-            "DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tCurrent SDL value = %d" % SDLvalue
-        )
+        PtDebugPrint("DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tCurrent SDL value = %d" % SDLvalue)
 
         # Check if the current SDL value represents a state in the dictionary and set the other SDL value to the value in the dictionary (yay for values!)
         if int(SDLvalue) in self.enabledStateDict:
@@ -130,11 +121,7 @@ class xAgeSDLVarSet(ptResponder):
                 ageSDL.setTagString(stringSDLVarToSet.value, stringTag.value)
             PtDebugPrint(
                 "DEBUG: xAgeSDLVarSet.OnServerInitComplete:\t%s setting %s to %d"
-                % (
-                    stringSDLVarName.value,
-                    stringSDLVarToSet.value,
-                    self.enabledStateDict[int(SDLvalue)],
-                )
+                % (stringSDLVarName.value, stringSDLVarToSet.value, self.enabledStateDict[int(SDLvalue)],)
             )
 
         # If the value is not in the dictionary then just set the state to 0

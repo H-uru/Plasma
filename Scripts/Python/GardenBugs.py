@@ -163,9 +163,7 @@ class GardenBugs(ptResponder):
             elif particlesToTransfer != 0:
                 # add some particles
                 PtDebugPrint("GardenBugs.OnTimer() - Particles to add: " + str(particlesToTransfer))
-                PtTransferParticlesToObject(
-                    bugEmitter.value.getKey(), avatar.getKey(), particlesToTransfer
-                )
+                PtTransferParticlesToObject(bugEmitter.value.getKey(), avatar.getKey(), particlesToTransfer)
             PtSetParticleDissentPoint(0, 0, 10000, avatar.getKey())
             return
 
@@ -268,13 +266,7 @@ class GardenBugs(ptResponder):
             xSndLogTracks.LogTrack("277", "421")
             return
 
-        if (
-            (id == tunnel1.id)
-            or (id == tunnel2.id)
-            or (id == tunnel3.id)
-            or (id == gazebo1.id)
-            or (id == gazebo2.id)
-        ):
+        if (id == tunnel1.id) or (id == tunnel2.id) or (id == tunnel3.id) or (id == gazebo1.id) or (id == gazebo2.id):
             for event in events:
                 if event[0] == 1 and event[1] == 1:
                     localInTunnel = True

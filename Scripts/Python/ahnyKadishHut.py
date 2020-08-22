@@ -91,9 +91,7 @@ class ahnyKadishHut(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint(
-                "ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL"
-            )
+            PtDebugPrint("ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL")
             ageSDL[SDLWindows.value] = (0,)
             # ageSDL[SDLDniTimer.value] = (0,)
 

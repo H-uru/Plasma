@@ -85,9 +85,7 @@ class bhroBahroMink(ptResponder):
         PtDebugPrint(psnlSDL["psnlBahroWedge11"][0])
 
         if psnlSDL["psnlBahroWedge11"][0]:
-            PtDebugPrint(
-                "bhroBahroMink.OnServerInitComplete: You have the Minkata wedge, no need to display it."
-            )
+            PtDebugPrint("bhroBahroMink.OnServerInitComplete: You have the Minkata wedge, no need to display it.")
             respRing.run(self.key, fastforward=1)
 
     ###########################

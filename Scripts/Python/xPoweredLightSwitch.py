@@ -72,10 +72,7 @@ class xPoweredLightSwitch(ptResponder):
 
     def OnServerInitComplete(self):
         if self.SDL == None:
-            PtDebugPrint(
-                "xPoweredLightSwitch.OnServerInitComplete():\tERROR---missing SDL (%s)"
-                % varstring.value
-            )
+            PtDebugPrint("xPoweredLightSwitch.OnServerInitComplete():\tERROR---missing SDL (%s)" % varstring.value)
             return
         self.SDL.setDefault("source", (0,))
         self.SDL.setDefault("switch", (0,))

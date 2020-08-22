@@ -135,8 +135,7 @@ class tldnVaporScope(ptModifier):
         if boolOperated:
             if solo:
                 PtDebugPrint(
-                    "tldnVaporScope.Load():\tboolOperated=%d but no one else here...correcting"
-                    % boolOperated,
+                    "tldnVaporScope.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated,
                     level=kDebugDumpLevel,
                 )
                 boolOperated = 0
@@ -146,8 +145,7 @@ class tldnVaporScope(ptModifier):
             else:
                 Activate.disable()
                 PtDebugPrint(
-                    "tldnVaporScope.Load():\tboolOperated=%d, disabling telescope clickable"
-                    % boolOperated,
+                    "tldnVaporScope.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated,
                     level=kDebugDumpLevel,
                 )
 
@@ -186,9 +184,7 @@ class tldnVaporScope(ptModifier):
         global boolScopeAtTop
         global boolScopeAtBottom
         PtDebugPrint(
-            "tldnVaporScope:OnNotify  state=%f id=%d events=" % (state, id),
-            events,
-            level=kDebugDumpLevel,
+            "tldnVaporScope:OnNotify  state=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel,
         )
 
         #####################################
@@ -250,8 +246,7 @@ class tldnVaporScope(ptModifier):
                     curCam = ptCamera()
                     curCam.setFOV(newFOV, 0.5)
                     PtDebugPrint(
-                        "tldnVaporScope:ValueChange:  slider=%f and setting FOV to %f"
-                        % (control.getValue(), newFOV)
+                        "tldnVaporScope:ValueChange:  slider=%f and setting FOV to %f" % (control.getValue(), newFOV)
                     )
         elif event == kAction:
             if control is not None:
@@ -324,13 +319,7 @@ class tldnVaporScope(ptModifier):
                         ####-zoomSlider.setValue(zsliderValue)
                         # need to see if we hit anything and run their responder
                         PtRequestLOSScreen(
-                            self.key,
-                            42,
-                            0.5,
-                            0.5,
-                            10000,
-                            PtLOSObjectType.kShootable,
-                            PtLOSReportType.kReportHitOrMiss,
+                            self.key, 42, 0.5, 0.5, 10000, PtLOSObjectType.kShootable, PtLOSReportType.kReportHitOrMiss,
                         )
                         gThrottleShooting = 1
                         try:
@@ -338,9 +327,7 @@ class tldnVaporScope(ptModifier):
                                 scopeDlg = PtGetDialogFromString(Vignette.value)
                                 if scopeDlg:
                                     try:
-                                        fireBtn = ptGUIControlButton(
-                                            scopeDlg.getControlFromTag(kFireScopeBtn)
-                                        )
+                                        fireBtn = ptGUIControlButton(scopeDlg.getControlFromTag(kFireScopeBtn))
                                         fireBtn.disable()
                                     except KeyError:
                                         PtDebugPrint(
@@ -349,8 +336,7 @@ class tldnVaporScope(ptModifier):
                                         )
                         except KeyError:
                             PtDebugPrint(
-                                "tldnVaporScope:GUINotify can't find VaporScope dialog",
-                                level=kDebugDumpLevel,
+                                "tldnVaporScope:GUINotify can't find VaporScope dialog", level=kDebugDumpLevel,
                             )
                         PtAtTimeCallback(
                             self.key, kTimerThrottleTime, kTimerThrottleFiring
@@ -372,8 +358,7 @@ class tldnVaporScope(ptModifier):
 
     def OnLOSNotify(self, ID, noHitFlag, sceneobject, hitPoint, distance):
         PtDebugPrint(
-            "tldnVaporScope:LOSNotify:  ID=%d  noHitFlag=%d at a distance of %g"
-            % (ID, noHitFlag, distance),
+            "tldnVaporScope:LOSNotify:  ID=%d  noHitFlag=%d at a distance of %g" % (ID, noHitFlag, distance),
             level=kDebugDumpLevel,
         )
         PtShootBulletFromScreen(self.key, 0.5, 0.5, 1.0, 10000)
@@ -436,9 +421,7 @@ class tldnVaporScope(ptModifier):
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         self.SDL["OperatorID"] = (avID,)
         PtDebugPrint(
-            "tldnVaporScope.OnNotify:\twrote SDL - scope operator id = ",
-            avID,
-            level=kDebugDumpLevel,
+            "tldnVaporScope.OnNotify:\twrote SDL - scope operator id = ", avID, level=kDebugDumpLevel,
         )
         # start the behavior
         Behavior.run(LocalAvatar)
@@ -505,8 +488,7 @@ class tldnVaporScope(ptModifier):
                             fireBtn.enable()
                         except KeyError:
                             PtDebugPrint(
-                                "tldnVaporScope:Timer can't find the fire button",
-                                level=kDebugDumpLevel,
+                                "tldnVaporScope:Timer can't find the fire button", level=kDebugDumpLevel,
                             )
             except KeyError:
                 PtDebugPrint(

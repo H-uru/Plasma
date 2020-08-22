@@ -108,9 +108,7 @@ class clftWindmill(ptResponder):
             self.ageSDL.setFlags(stringSDLVarRunning.value, 1, 1)
             self.ageSDL.sendToClients(stringSDLVarRunning.value)
         else:
-            PtDebugPrint(
-                "clftWindmill.OnFirstUpdate():\tERROR: missing SDL var running in max file"
-            )
+            PtDebugPrint("clftWindmill.OnFirstUpdate():\tERROR: missing SDL var running in max file")
 
         respLightsOnOff.run(self.key, state="Off")
         respImagerButtonLight.run(self.key, state="Off")
@@ -120,9 +118,7 @@ class clftWindmill(ptResponder):
             self.ageSDL.setFlags(stringSDLVarUnstuck.value, 1, 1)
             self.ageSDL.sendToClients(stringSDLVarUnstuck.value)
         else:
-            PtDebugPrint(
-                "clftWindmill.OnFirstUpdate():\tERROR: missing SDL var unstuck in max file"
-            )
+            PtDebugPrint("clftWindmill.OnFirstUpdate():\tERROR: missing SDL var unstuck in max file")
 
         # self.ResetImager()
         self.ageSDL = PtGetAgeSDL()
@@ -204,9 +200,7 @@ class clftWindmill(ptResponder):
             if windmillLocked == 1 and windmillRunning == 0:
                 respBrakeOn.run(self.key, avatar=player)
             if windmillLocked == 1 and windmillRunning == 1:
-                PtDebugPrint(
-                    "clftWindmill.OnSDLNotify: Both running and locked are 1, so stop windmill."
-                )
+                PtDebugPrint("clftWindmill.OnSDLNotify: Both running and locked are 1, so stop windmill.")
                 stopGrinder = 1
                 respBrakeOn.run(self.key, avatar=player)
                 # respStop.run(self.key,state='Stop',avatar=PtGetLocalAvatar())
@@ -216,9 +210,7 @@ class clftWindmill(ptResponder):
                 # self.ageSDL[stringSDLVarRunning.value] = (windmillRunning,)
             elif windmillLocked == 0 and windmillUnstuck == 1:
                 respBrakeOff.run(self.key, avatar=player)
-                PtDebugPrint(
-                    "clftWindmill.OnSDLNotify: Locked is 0 and windmillUnstuck is 1, run StartAtLoad."
-                )
+                PtDebugPrint("clftWindmill.OnSDLNotify: Locked is 0 and windmillUnstuck is 1, run StartAtLoad.")
                 # respStartAtLoad.run(self.key,avatar=PtGetLocalAvatar())
                 # respLightsOnOff.run(self.key,state='On',avatar=PtGetLocalAvatar())
                 windmillRunning = 1

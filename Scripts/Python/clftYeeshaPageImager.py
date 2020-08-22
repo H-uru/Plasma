@@ -175,9 +175,7 @@ class clftYeeshaPageImager(ptModifier):
             ):  # A "Notify triggerer" command was received from one of several responders. The id distinguishes which it is
                 if not self.ImagerUsable:
                     # imager not usable and event is something other than the oneshot
-                    PtDebugPrint(
-                        "clftYeeshaPageImager.OnNotify(): imager should be not working right now"
-                    )
+                    PtDebugPrint("clftYeeshaPageImager.OnNotify(): imager should be not working right now")
                     ActImager.enable()
                     return
 

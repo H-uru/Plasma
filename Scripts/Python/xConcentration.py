@@ -144,23 +144,13 @@ class xConcentration(ptModifier):
                         ySquare = round(ySquarepicked + 0.5)
 
                         PtDebugPrint(
-                            TruePickx,
-                            "Truepickx=xSquarepicked",
-                            xSquarepicked,
-                            "Rounded:",
-                            xSquare,
+                            TruePickx, "Truepickx=xSquarepicked", xSquarepicked, "Rounded:", xSquare,
                         )
                         PtDebugPrint(
-                            TruePicky,
-                            "Truepicky=ySquarepicked",
-                            ySquarepicked,
-                            "Rounded:",
-                            ySquare,
+                            TruePicky, "Truepicky=ySquarepicked", ySquarepicked, "Rounded:", ySquare,
                         )
 
-                        pick = (int(ySquare - 1) * matrix.value) + int(
-                            xSquare
-                        )  # pick is the array location
+                        pick = (int(ySquare - 1) * matrix.value) + int(xSquare)  # pick is the array location
                         PtDebugPrint("Pick=", whichpick, " Square:", pick, "value=", puz[pick])
 
                         # Now do something with the pick
@@ -195,11 +185,7 @@ class xConcentration(ptModifier):
                             # do graphics here on spot!!!!
                             # dtext.textmap.drawImageClipped(drawAtX, drawAtY, image, getFromX, getFromY, texXBox, texYBox,0)
                             dtext.textmap.fillRect(
-                                drawAtX,
-                                drawAtY,
-                                drawAtX + texXBox,
-                                drawAtY + texYBox,
-                                ptColor(1, 0, 0, 1),
+                                drawAtX, drawAtY, drawAtX + texXBox, drawAtY + texYBox, ptColor(1, 0, 0, 1),
                             )
                             dtext.textmap.drawText(drawAtX, drawAtY, str(puz[pick]))
 

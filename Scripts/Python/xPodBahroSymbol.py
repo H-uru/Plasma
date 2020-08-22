@@ -52,9 +52,7 @@ from PlasmaTypes import *
 import random
 
 # define the attributes that will be entered in max
-respBahroSymbol = ptAttribResponder(
-    1, "resp: Bahro Symbol", ["beginning", "middle", "end"], netForce=1
-)
+respBahroSymbol = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning", "middle", "end"], netForce=1)
 SymbolAppears = ptAttribInt(2, "Frame the Symbol Appears", 226, (0, 5000))
 DayFrameSize = ptAttribInt(3, "Frames in One Day", 2000, (0, 5000))
 animMasterDayLight = ptAttribAnimation(4, "Master Animation Object")
@@ -74,9 +72,7 @@ kDayAnimationSpeed = (DayFrameSize.value / kDayLengthInSeconds) / 30.0
 # is 11.3% (226 / 2000) into the day. 11.3% into a 56585 second
 # day is 6394.105 seconds (56585 * 0.113). That gives us our base
 # point for every other age that needs the Bahro symbol.
-kTimeWhenSymbolAppears = kDayLengthInSeconds * (
-    float(SymbolAppears.value) / float(DayFrameSize.value)
-)
+kTimeWhenSymbolAppears = kDayLengthInSeconds * (float(SymbolAppears.value) / float(DayFrameSize.value))
 
 # ====================================
 
@@ -134,10 +130,7 @@ class xPodBahroSymbol(ptResponder):
         if timeWhenSymbolAppearsToday > PtGetDniTime():
             timeTillSymbolAppears = timeWhenSymbolAppearsToday - PtGetDniTime()
             PtAtTimeCallback(self.key, timeTillSymbolAppears, 1)
-            PtDebugPrint(
-                "xGlobalDoor.key: %d%s"
-                % (random.randint(0, 100), hex(int(timeTillSymbolAppears + 1234)))
-            )
+            PtDebugPrint("xGlobalDoor.key: %d%s" % (random.randint(0, 100), hex(int(timeTillSymbolAppears + 1234))))
         else:
             PtDebugPrint("xPodBahroSymbol: You missed the symbol for today.")
 

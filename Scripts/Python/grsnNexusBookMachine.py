@@ -129,13 +129,9 @@ class grsnNexusBookMachine(ptResponder):
         if id == bookPurpleClickable.id:
             PtDebugPrint("touched purple team room book")
             yellowLink = False
-            avatar.avatar.runBehaviorSetNotify(
-                fakeLinkBehavior.value, self.key, fakeLinkBehavior.netForce
-            )
+            avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value, self.key, fakeLinkBehavior.netForce)
 
         if id == bookYellowClickable.id:
             PtDebugPrint("touched yellow team room book")
             yellowLink = True
-            avatar.avatar.runBehaviorSetNotify(
-                fakeLinkBehavior.value, self.key, fakeLinkBehavior.netForce
-            )
+            avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value, self.key, fakeLinkBehavior.netForce)

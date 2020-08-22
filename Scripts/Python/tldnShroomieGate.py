@@ -74,9 +74,7 @@ class tldnShroomieGate(ptResponder):
 
         elif id == respLeverPull.id:
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint(
-                "tldnShroomieGate:\t---Shroomie Gate Up SDL: %d" % (ageSDL["tldnShroomieGateUp"][0])
-            )
+            PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Up SDL: %d" % (ageSDL["tldnShroomieGateUp"][0]))
             if ageSDL["tldnShroomieGatePowerOn"][0] and self.sceneobject.isLocallyOwned():
                 if ageSDL["tldnShroomieGateUp"][0]:
                     respGateDown.run(self.key)

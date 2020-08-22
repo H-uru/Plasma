@@ -70,9 +70,7 @@ class xStateToggler(ptResponder):
 
     # hack - remove when clickable state manipulation via responder is persistentified
     def OnFirstUpdate(self):
-        self.SDL.setDefault(
-            "enabled", (0,)
-        )  # local only: set default state, Load() will rectify if necessary
+        self.SDL.setDefault("enabled", (0,))  # local only: set default state, Load() will rectify if necessary
 
     # hack - remove when clickable state manipulation via responder is persistentified
     def Load(self):

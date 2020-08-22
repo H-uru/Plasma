@@ -123,13 +123,9 @@ class xRandomBoolChange(ptModifier):
             enabled = boolDefault.value
             chance = boolDefault.value
         PtDebugPrint(
-            "xRandomBoolChange.OnServerInitComplete():\t attached to sceneobject: %s"
-            % self.sceneobject.getName()
+            "xRandomBoolChange.OnServerInitComplete():\t attached to sceneobject: %s" % self.sceneobject.getName()
         )
-        PtDebugPrint(
-            "xRandomBoolChange.OnServerInitComplete():\t SDL for proximity var: %s"
-            % strProximityVar.value
-        )
+        PtDebugPrint("xRandomBoolChange.OnServerInitComplete():\t SDL for proximity var: %s" % strProximityVar.value)
         try:
             nearby = ageSDL[strProximityVar.value][0]
 

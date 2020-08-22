@@ -54,9 +54,7 @@ kEnableKIandBB = 5  # enable the KI and the blackbar, 'value' doesn't matter
 kYesNoDialog = 6  # request that the KI put up a yes/no dialog for someone else
 kAddPlayerDevice = 7  # add player interactive device to list of devices, 'value' is device name
 kRemovePlayerDevice = 8  # remove player interactive device from list, 'value' is device name
-kUpgradeKILevel = (
-    9  # upgrade new level of KI (if already at that level, nevermind), 'value' is the new level
-)
+kUpgradeKILevel = 9  # upgrade new level of KI (if already at that level, nevermind), 'value' is the new level
 kDowngradeKILevel = 10  # remove (drop) the KI level (if not at that level, nevermind), 'value' is the level to remove
 kRateIt = 11  # request for the KI to ask the user to Rate something
 kSetPrivateChatChannel = 12  # sets the private chat channel to number, for private rooms
@@ -90,9 +88,7 @@ kEnableYeeshaBook = 39  # re-allow linking with the Yeesha book
 kQuitDialog = 40  # put up Quit dialog
 kTempDisableKIandBB = 41  # temp disable KI and blackbar (done by av system)
 kTempEnableKIandBB = 42  # temp re-enable the KI and blackbar (done by av system)
-kDisableEntireYeeshaBook = (
-    43  # disable the entire Yeeshabook, not for gameplay, but prevent linking
-)
+kDisableEntireYeeshaBook = 43  # disable the entire Yeeshabook, not for gameplay, but prevent linking
 kEnableEntireYeeshaBook = 44  # enable the entire Yeeshabook, not for gameplay
 kKIOKDialogNoQuit = 45  # display OK dialog in the KI without quiting afterwards
 kGZUpdated = 46  # the GZ game was updated

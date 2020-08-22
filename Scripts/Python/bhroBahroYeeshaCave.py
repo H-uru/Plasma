@@ -67,18 +67,10 @@ soGarrisonPoleCollider = ptAttribSceneobject(6, "Grsn pole collider")
 soGardenPoleCollider = ptAttribSceneobject(7, "Grdn pole collider")
 soKadishPoleCollider = ptAttribSceneobject(8, "Kdsh pole collider")
 
-respTeledahnPoleRemove = ptAttribResponder(
-    9, "Tldn remove pole resp", ["Remove", "PutBack", "Reject"]
-)
-respGarrisonPoleRemove = ptAttribResponder(
-    10, "Grsn remove pole resp", ["Remove", "PutBack", "Reject"]
-)
-respGardenPoleRemove = ptAttribResponder(
-    11, "Grdn remove pole resp", ["Remove", "PutBack", "Reject"]
-)
-respKadishPoleRemove = ptAttribResponder(
-    12, "Kdsh remove pole resp", ["Remove", "PutBack", "Reject"]
-)
+respTeledahnPoleRemove = ptAttribResponder(9, "Tldn remove pole resp", ["Remove", "PutBack", "Reject"])
+respGarrisonPoleRemove = ptAttribResponder(10, "Grsn remove pole resp", ["Remove", "PutBack", "Reject"])
+respGardenPoleRemove = ptAttribResponder(11, "Grdn remove pole resp", ["Remove", "PutBack", "Reject"])
+respKadishPoleRemove = ptAttribResponder(12, "Kdsh remove pole resp", ["Remove", "PutBack", "Reject"])
 
 respTeledahnJCDisable = ptAttribResponder(13, "Tldn JC disable resp")
 respGarrisonJCDisable = ptAttribResponder(14, "Grsn JC disable resp")
@@ -90,18 +82,10 @@ clickGarrisonJC = ptAttribActivator(18, "Grsn JC clickable")
 clickGardenJC = ptAttribActivator(19, "Grdn JC clickable")
 clickKadishJC = ptAttribActivator(20, "Kdsh JC clickable")
 
-respTeledahnSolutionSymbols = ptAttribResponder(
-    21, "Tldn solution symbols", ["0", "1", "2", "3", "4", "5", "6"]
-)
-respGarrisonSolutionSymbols = ptAttribResponder(
-    22, "Grsn solution symbols", ["0", "1", "2", "3", "4", "5", "6"]
-)
-respGardenSolutionSymbols = ptAttribResponder(
-    23, "Grdn solution symbols", ["0", "1", "2", "3", "4", "5", "6"]
-)
-respKadishSolutionSymbols = ptAttribResponder(
-    24, "Kdsh solution symbols", ["0", "1", "2", "3", "4", "5", "6"]
-)
+respTeledahnSolutionSymbols = ptAttribResponder(21, "Tldn solution symbols", ["0", "1", "2", "3", "4", "5", "6"])
+respGarrisonSolutionSymbols = ptAttribResponder(22, "Grsn solution symbols", ["0", "1", "2", "3", "4", "5", "6"])
+respGardenSolutionSymbols = ptAttribResponder(23, "Grdn solution symbols", ["0", "1", "2", "3", "4", "5", "6"])
+respKadishSolutionSymbols = ptAttribResponder(24, "Kdsh solution symbols", ["0", "1", "2", "3", "4", "5", "6"])
 
 clickTeledahnYS = ptAttribActivator(25, "Tldn YS clickable")
 clickGarrisonYS = ptAttribActivator(26, "Grsn YS clickable")
@@ -118,22 +102,12 @@ respGarrisonJCOneShot = ptAttribResponder(34, "Grsn JC one shot resp")
 respGardenJCOneShot = ptAttribResponder(35, "Grdn JC one shot resp")
 respKadishJCOneShot = ptAttribResponder(36, "Kdsh JC one shot resp")
 
-respTeledahnYSOneShot = ptAttribResponder(
-    37, "Tldn YS one shot resp", ["trigger", "glowstart", "glowend"]
-)
-respGarrisonYSOneShot = ptAttribResponder(
-    38, "Grsn YS one shot resp", ["trigger", "glowstart", "glowend"]
-)
-respGardenYSOneShot = ptAttribResponder(
-    39, "Grdn YS one shot resp", ["trigger", "glowstart", "glowend"]
-)
-respKadishYSOneShot = ptAttribResponder(
-    40, "Kdsh YS one shot resp", ["trigger", "glowstart", "glowend"]
-)
+respTeledahnYSOneShot = ptAttribResponder(37, "Tldn YS one shot resp", ["trigger", "glowstart", "glowend"])
+respGarrisonYSOneShot = ptAttribResponder(38, "Grsn YS one shot resp", ["trigger", "glowstart", "glowend"])
+respGardenYSOneShot = ptAttribResponder(39, "Grdn YS one shot resp", ["trigger", "glowstart", "glowend"])
+respKadishYSOneShot = ptAttribResponder(40, "Kdsh YS one shot resp", ["trigger", "glowstart", "glowend"])
 
-respSequentialYS = ptAttribResponder(
-    41, "Sequential yeesha speeches", ["1a", "1b", "2a", "2b", "3a", "3b", "4a", "4b"]
-)
+respSequentialYS = ptAttribResponder(41, "Sequential yeesha speeches", ["1a", "1b", "2a", "2b", "3a", "3b", "4a", "4b"])
 
 rgnLinkOut = ptAttribActivator(42, "Link out region")
 respLinkOut = ptAttribResponder(43, "Link out responder", ["starfield", "cavern"])
@@ -188,9 +162,7 @@ class bhroBahroYeeshaCave(ptModifier):
         entry = vault.findChronicleEntry("BahroCave")
 
         if entry is None:
-            PtDebugPrint(
-                "DEBUG: bhroBahroYeeshaCave.OnFirstUpdate: Did not find BahroCave chronicle...creating"
-            )
+            PtDebugPrint("DEBUG: bhroBahroYeeshaCave.OnFirstUpdate: Did not find BahroCave chronicle...creating")
             vault.addChronicleEntry("BahroCave", 0, "0")
 
         self.varMap = {"YeeshaSymbolTouched": 0, "SolutionSymbol": 1, "YeeshaSpeech": 2}
@@ -255,9 +227,7 @@ class bhroBahroYeeshaCave(ptModifier):
         if self.ageFrom == "":
             self.ageFrom = "Garrison"
 
-        PtDebugPrint(
-            "DEBUG: bhroBahroYeeshaCave.OnServerInitComplete():\tCame from: %s" % self.ageFrom
-        )
+        PtDebugPrint("DEBUG: bhroBahroYeeshaCave.OnServerInitComplete():\tCame from: %s" % self.ageFrom)
 
         # check if a cleft yeesha imager solution has already been created, otherwise create it
         if not self.CheckForSolution():
@@ -273,8 +243,7 @@ class bhroBahroYeeshaCave(ptModifier):
         self.UseYeeshaSpeech = self.GetAgeVariable(self.ageFrom, "YeeshaSpeech")
         if self.UseYeeshaSpeech != None:
             PtDebugPrint(
-                "bhroBahroYeeshaCave.OnServerInitComplete(): useYeeshaSpeech = ",
-                self.UseYeeshaSpeech,
+                "bhroBahroYeeshaCave.OnServerInitComplete(): useYeeshaSpeech = ", self.UseYeeshaSpeech,
             )
             if int(self.UseYeeshaSpeech) == 0:
                 serieslen = self.GetNumYSSet()
@@ -455,9 +424,7 @@ class bhroBahroYeeshaCave(ptModifier):
     def UpdatePoleStates(self):
         psnlSDL = xPsnlVaultSDL()
 
-        sdllist = psnlSDL.BatchGet(
-            ["TeledahnPoleState", "GardenPoleState", "GarrisonPoleState", "KadishPoleState",]
-        )
+        sdllist = psnlSDL.BatchGet(["TeledahnPoleState", "GardenPoleState", "GarrisonPoleState", "KadishPoleState",])
         for var in ["Teledahn", "Garrison", "Garden", "Kadish"]:
             self.ageDict[var]["State"] = sdllist[var + "PoleState"]
 
@@ -663,9 +630,7 @@ class bhroBahroYeeshaCave(ptModifier):
                 return
 
         if not int(self.GetAgeVariable(age, "YeeshaSymbolTouched")) and not autotriggered:
-            PtDebugPrint(
-                "DEBUG: bhroBahroYeeshaCave.PostYSOneShot:\tFirst time touching the symbol"
-            )
+            PtDebugPrint("DEBUG: bhroBahroYeeshaCave.PostYSOneShot:\tFirst time touching the symbol")
             self.SetAgeVariable(age, "YeeshaSymbolTouched", 1)
 
         self.PlayYeeshaSpeech(age)
@@ -791,12 +756,7 @@ class bhroBahroYeeshaCave(ptModifier):
             if ageName == "Gira":
                 ageName = "Garden"
 
-            if (
-                ageName == "Teledahn"
-                or ageName == "Garrison"
-                or ageName == "Garden"
-                or ageName == "Kadish"
-            ):
+            if ageName == "Teledahn" or ageName == "Garrison" or ageName == "Garden" or ageName == "Kadish":
                 for spawnPoint in spawnPoints:
                     if spawnPoint.getName() == "LinkInPointDefault":
                         if self.ageDict[ageName]["State"] == 1:

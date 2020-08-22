@@ -112,8 +112,7 @@ class ercaCallCar(ptResponder):
                 PtDebugPrint("ERROR: ercaCallCar.OnServerInitComplete():\tERROR reading age SDL")
                 pass
             PtDebugPrint(
-                "DEBUG: ercaCallCar.OnServerInitComplete():\t%s = %d"
-                % (SDLCarPos.value, ageSDL[SDLCarPos.value][0])
+                "DEBUG: ercaCallCar.OnServerInitComplete():\t%s = %d" % (SDLCarPos.value, ageSDL[SDLCarPos.value][0])
             )
             try:
                 boolCarLev = ageSDL[SDLCarLev.value][0]
@@ -121,8 +120,7 @@ class ercaCallCar(ptResponder):
                 PtDebugPrint("ERROR: ercaCallCar.OnServerInitComplete():\tERROR reading age SDL")
                 pass
             PtDebugPrint(
-                "DEBUG: ercaCallCar.OnServerInitComplete():\t%s = %d"
-                % (SDLCarLev.value, ageSDL[SDLCarLev.value][0])
+                "DEBUG: ercaCallCar.OnServerInitComplete():\t%s = %d" % (SDLCarLev.value, ageSDL[SDLCarLev.value][0])
             )
 
             if byteCarPos == 2 or byteCarPos == 3:
@@ -144,14 +142,12 @@ class ercaCallCar(ptResponder):
         if id == clkCallCarBtn.id and state:
             if byteCarPos == 1:
                 PtDebugPrint(
-                    "DEBUG: ercaCallCar.OnNotify:\tRunning true responder on %s"
-                    % (self.sceneobject.getName())
+                    "DEBUG: ercaCallCar.OnNotify:\tRunning true responder on %s" % (self.sceneobject.getName())
                 )
                 respCallCarYes.run(self.key, avatar=PtFindAvatar(events))
             else:
                 PtDebugPrint(
-                    "DEBUG: ercaCallCar.OnNotify:\tRunning false responder on %s"
-                    % (self.sceneobject.getName())
+                    "DEBUG: ercaCallCar.OnNotify:\tRunning false responder on %s" % (self.sceneobject.getName())
                 )
                 respCallCarNo.run(self.key, avatar=PtFindAvatar(events))
 

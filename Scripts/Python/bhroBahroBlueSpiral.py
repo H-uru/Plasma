@@ -87,8 +87,7 @@ class bhroBahroBlueSpiral(ptResponder):
         # if the age is not the one that I'm from then run the responder to make it back off
         ageFrom = PtGetPrevAgeName()
         PtDebugPrint(
-            "bhroBahroBlueSpiral.OnServerInitComplete: Came from %s, running opposite responder state"
-            % (ageFrom)
+            "bhroBahroBlueSpiral.OnServerInitComplete: Came from %s, running opposite responder state" % (ageFrom)
         )
         if ageFrom == "EderTsogal":
             respWedges.run(self.key, state="Delin", fastforward=1)
@@ -112,9 +111,7 @@ class bhroBahroBlueSpiral(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge06"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroBlueSpiral.OnNotify:  Tturning wedge SDL of psnlBahroWedge06 to On"
-                )
+                PtDebugPrint("bhroBahroBlueSpiral.OnNotify:  Tturning wedge SDL of psnlBahroWedge06 to On")
                 psnlSDL["psnlBahroWedge06"] = (1,)
 
         elif id == clkBSDelin.id and not state:
@@ -123,7 +120,5 @@ class bhroBahroBlueSpiral(ptResponder):
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge05"][0]
             if not sdlVal:
-                PtDebugPrint(
-                    "bhroBahroBlueSpiral.OnNotify:  Tturning wedge SDL of psnlBahroWedge05 to On"
-                )
+                PtDebugPrint("bhroBahroBlueSpiral.OnNotify:  Tturning wedge SDL of psnlBahroWedge05 to On")
                 psnlSDL["psnlBahroWedge05"] = (1,)

@@ -201,84 +201,61 @@ class ercaHrvstr(ptResponder):
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolPwr = 1
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrPwr.value, boolPwr)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrPwr.value, boolPwr))
         try:
             boolRev = ageSDL[SDLHrvstrRev.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolRev = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrRev.value, boolRev)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrRev.value, boolRev))
         try:
             bytePos = ageSDL[SDLHrvstrPos.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             bytePos = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrPos.value, bytePos)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrPos.value, bytePos))
         try:
             boolDrvLev = ageSDL[SDLHrvstrDrvLev.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolDrvLev = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d"
-            % (SDLHrvstrDrvLev.value, boolDrvLev)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrDrvLev.value, boolDrvLev))
         try:
             boolWngOk = ageSDL[SDLHrvstrWngOk.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolWngOk = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrWngOk.value, boolWngOk)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrWngOk.value, boolWngOk))
         try:
             boolWngLev = ageSDL[SDLHrvstrWngLev.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolWngLev = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d"
-            % (SDLHrvstrWngLev.value, boolWngLev)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrWngLev.value, boolWngLev))
         try:
             byteCarPos = ageSDL[SDLCarPos.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             byteCarPos = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLCarPos.value, byteCarPos)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLCarPos.value, byteCarPos))
         try:
             boolCarLev = ageSDL[SDLCarLev.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolCarLev = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLCarLev.value, boolCarLev)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLCarLev.value, boolCarLev))
         try:
             boolMoving = ageSDL[SDLHrvstrMoving.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolMoving = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d"
-            % (SDLHrvstrMoving.value, boolMoving)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLHrvstrMoving.value, boolMoving))
         try:
             boolGate = ageSDL[SDLDockGate.value][0]
         except:
             PtDebugPrint("ERROR: ercaHrvstr.OnServerInitComplete():\tERROR reading age SDL")
             boolGate = 0
-        PtDebugPrint(
-            "DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLDockGate.value, boolGate)
-        )
+        PtDebugPrint("DEBUG: ercaHrvstr.OnServerInitComplete():\t%s = %d" % (SDLDockGate.value, boolGate))
 
         if boolRev:
             RespRevKnobDwn.run(self.key, fastforward=1)
@@ -420,9 +397,7 @@ class ercaHrvstr(ptResponder):
                     PtDebugPrint("onSDLnotify for drvlev, if callHrvstr true will DriveHrvstr")
                     self.DriveHrvstr()
                 else:
-                    PtDebugPrint(
-                        "onSDLnotify for drvlev, says callHrvstr is false and will runRespLadderGoUp"
-                    )
+                    PtDebugPrint("onSDLnotify for drvlev, says callHrvstr is false and will runRespLadderGoUp")
                     if bytePos == 0 and byteCarPos == 0:
                         RespRampsGoUp.run(self.key)
                     elif bytePos == 4 and byteCarPos == 1:
@@ -578,9 +553,7 @@ class ercaHrvstr(ptResponder):
                     PtDebugPrint("DEBUG: ercaHrvstr.OnNotify:\tWngs lev is moving down.")
                     RespWngLevDwn.run(self.key, avatar=PtFindAvatar(events))
             else:
-                PtDebugPrint(
-                    "DEBUG: ercaHrvstr.OnNotify:\tWng lev has no power or not OK to use now."
-                )
+                PtDebugPrint("DEBUG: ercaHrvstr.OnNotify:\tWng lev has no power or not OK to use now.")
                 RespWngLevOff.run(self.key, avatar=PtFindAvatar(events))
 
         if (id == RespWngLevUp.id) and self.sceneobject.isLocallyOwned():

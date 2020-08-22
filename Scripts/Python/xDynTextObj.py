@@ -90,12 +90,7 @@ class xDynTextObj(ptModifier):
 
         PtDebugPrint(
             "Displaying text in the following rectangle: (%d,%d,%d,%d)"
-            % (
-                marginSize[1],
-                marginSize[0],
-                theMap.getWidth() - marginSize[3],
-                theMap.getHeight() - marginSize[2],
-            )
+            % (marginSize[1], marginSize[0], theMap.getWidth() - marginSize[3], theMap.getHeight() - marginSize[2],)
         )
         PtDebugPrint('Rendering "' + locPath + '" on the target dynamic text object')
 

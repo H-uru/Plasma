@@ -88,17 +88,12 @@ class xAgeSDLBoolToggle(ptResponder):
             try:
                 boolCurrentValue = ageSDL[stringVarName.value][0]
             except:
-                PtDebugPrint(
-                    "ERROR: xAgeSDLBoolToggle.OnServerInitComplete():\tERROR reading age SDL"
-                )
+                PtDebugPrint("ERROR: xAgeSDLBoolToggle.OnServerInitComplete():\tERROR reading age SDL")
             PtDebugPrint(
-                "DEBUG: xAgeSDLBoolToggle.OnServerInitComplete():\t%s = %d"
-                % (stringVarName.value, boolCurrentValue)
+                "DEBUG: xAgeSDLBoolToggle.OnServerInitComplete():\t%s = %d" % (stringVarName.value, boolCurrentValue)
             )
         else:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolToggle.OnServerInitComplete():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolToggle.OnServerInitComplete():\tERROR: missing SDL var name")
 
     def OnNotify(self, state, id, events):
         global boolCurrentValue
@@ -128,8 +123,7 @@ class xAgeSDLBoolToggle(ptResponder):
             ageSDL.setTagString(stringVarName.value, stringInfo.value)
         ageSDL[stringVarName.value] = (boolCurrentValue,)
         PtDebugPrint(
-            "DEBUG: xAgeSDLBoolToggle.OnNotify():\tset age SDL var %s to %d"
-            % (stringVarName.value, boolCurrentValue)
+            "DEBUG: xAgeSDLBoolToggle.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value, boolCurrentValue)
         )
 
     # in case someone other than me changes my var(s)

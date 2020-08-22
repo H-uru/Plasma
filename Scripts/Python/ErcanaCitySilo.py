@@ -66,27 +66,13 @@ RespFadeInPellet = ptAttribResponder(3, "resp: fade-in pellet", netForce=1)
 RespScanMeter = ptAttribResponder(
     4,
     "resp: scan pellet meter",
-    [
-        "Level1",
-        "Level2",
-        "Level3",
-        "Level4",
-        "Level5",
-        "Level6",
-        "Level7",
-        "Level8",
-        "Level9",
-        "Level10",
-        "NoLevel",
-    ],
+    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6", "Level7", "Level8", "Level9", "Level10", "NoLevel",],
     netForce=1,
 )
 RespPlayDud = ptAttribResponder(5, "resp: pellet dud", netForce=1)
 RespPlayBubbles = ptAttribResponder(6, "resp: pellet bubbles", ["Hi", "Med", "Low"], netForce=1)
 RespPlaySteam = ptAttribResponder(7, "resp: pellet steam", ["Hi", "Med", "Low"], netForce=1)
-RespPlayOrangeGlow = ptAttribResponder(
-    8, "resp: pellet orange glow", ["Hi", "Med", "Low"], netForce=1
-)
+RespPlayOrangeGlow = ptAttribResponder(8, "resp: pellet orange glow", ["Hi", "Med", "Low"], netForce=1)
 RespPlayBoom = ptAttribResponder(9, "resp: pellet explosion", ["Hi", "Med", "Low"], netForce=1)
 RespPlayWhiteGlow = ptAttribResponder(10, "resp: pellet white glow", netForce=1)
 
@@ -133,9 +119,7 @@ class ErcanaCitySilo(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint(
-                "ErcanaCitySilo.OnServerInitComplete():\tERROR---Cannot find the ErcanaCitySilo Age SDL"
-            )
+            PtDebugPrint("ErcanaCitySilo.OnServerInitComplete():\tERROR---Cannot find the ErcanaCitySilo Age SDL")
             ageSDL[SDLGotPellet.value] = (0,)
 
         ageSDL.setNotify(self.key, SDLGotPellet.value, 0.0)
@@ -161,9 +145,7 @@ class ErcanaCitySilo(ptResponder):
                 PtDebugPrint("ErcanaCitySilo.OnBehaviorNotify: Will now call IDoMeter.")
                 self.IDoMeter()
             else:
-                PtDebugPrint(
-                    "Says we don't have a turd.  Shouldn't be possible, I'm in OnBehaviorNotify."
-                )
+                PtDebugPrint("Says we don't have a turd.  Shouldn't be possible, I'm in OnBehaviorNotify.")
             avatar = PtGetLocalAvatar()
             avatar.avatar.unRegisterForBehaviorNotify(self.key)
 
@@ -214,13 +196,11 @@ class ErcanaCitySilo(ptResponder):
             name = score.getName()
             if name == kGlobalScore:
                 PtDebugPrint(
-                    "ErcanaCitySilo.OnGameScoreMsg():\tAdded %i lake points" % self._lakePoints,
-                    level=kWarningLevel,
+                    "ErcanaCitySilo.OnGameScoreMsg():\tAdded %i lake points" % self._lakePoints, level=kWarningLevel,
                 )
             else:
                 PtDebugPrint(
-                    "ErcanaCitySilo.OnGameScoreMsg():\tAdded %i '%s' points"
-                    % (self._kiPoints, name),
+                    "ErcanaCitySilo.OnGameScoreMsg():\tAdded %i '%s' points" % (self._kiPoints, name),
                     level=kWarningLevel,
                 )
                 if name == kPlayerDropScore:
@@ -265,10 +245,7 @@ class ErcanaCitySilo(ptResponder):
             self._lakePoints = self._pellet
         self._kiPoints = int(round(self._kiPoints * ((xRandom.randint(1, 25) / 100.0) + 4.75)))
         self._lakePoints = int(round(self._lakePoints))
-        PtDebugPrint(
-            "ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!"
-            % (self._kiPoints)
-        )
+        PtDebugPrint("ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!" % (self._kiPoints))
         PtDebugPrint("ErcanaCitySilo.IDoScores():  and %d lake points!" % (self._lakePoints))
 
         #  Try to find the needed scores...
@@ -279,9 +256,7 @@ class ErcanaCitySilo(ptResponder):
 
     def OnNotify(self, state, id, events):
         if id == RespScanMeter.id and self._gotTurd:
-            PtDebugPrint(
-                "ErcanaCitySilo.OnNotify: Received callback from RespScanMeter, will now call IDropPellet."
-            )
+            PtDebugPrint("ErcanaCitySilo.OnNotify: Received callback from RespScanMeter, will now call IDropPellet.")
             self.IDropPellet()
 
         elif id == RespDropPellet.id and self._gotTurd:

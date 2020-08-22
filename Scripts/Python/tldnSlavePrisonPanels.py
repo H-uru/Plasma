@@ -88,33 +88,26 @@ class tldnSlavePrisonPanels(ptResponder):
             ageSDL.setFlags(stringVarName.value, 1, 1)
             ageSDL.sendToClients(stringVarName.value)
         else:
-            PtDebugPrint(
-                "ERROR: tldnSlavePrisonPanels.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: tldnSlavePrisonPanels.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
         try:
             boolCurrentValue = ageSDL[stringVarName.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: tldnSlavePrisonPanels.OnServerInitComplete():\tERROR reading age SDL"
-            )
+            PtDebugPrint("ERROR: tldnSlavePrisonPanels.OnServerInitComplete():\tERROR reading age SDL")
             pass
         PtDebugPrint(
-            "DEBUG: tldnSlavePrisonPanels.OnServerInitComplete():\t%s = %d"
-            % (stringVarName.value, boolCurrentValue)
+            "DEBUG: tldnSlavePrisonPanels.OnServerInitComplete():\t%s = %d" % (stringVarName.value, boolCurrentValue)
         )
 
         if ageSDL[stringVarName.value][0]:
             PtDebugPrint(
-                "tldnSlavePrisonPanels.OnServerInitComplete:\tLowering Paddle %s"
-                % (self.sceneobject.getName())
+                "tldnSlavePrisonPanels.OnServerInitComplete:\tLowering Paddle %s" % (self.sceneobject.getName())
             )
             respLeverDown.run(self.key, fastforward=1)
         else:
             PtDebugPrint(
-                "tldnSlavePrisonPanels.OnServerInitComplete:\tRaising Paddle %s"
-                % (self.sceneobject.getName())
+                "tldnSlavePrisonPanels.OnServerInitComplete:\tRaising Paddle %s" % (self.sceneobject.getName())
             )
             respLeverUp.run(self.key, fastforward=1)
 
@@ -139,17 +132,13 @@ class tldnSlavePrisonPanels(ptResponder):
 
         elif id == respLeverUp.id and self.sceneobject.isLocallyOwned():
             PtDebugPrint(
-                "tldnSlavePrisonPanels: Lever now completely up. Updating SDL",
-                stringVarName.value,
-                " to 0",
+                "tldnSlavePrisonPanels: Lever now completely up. Updating SDL", stringVarName.value, " to 0",
             )
             ageSDL[stringVarName.value] = (0,)
 
         elif id == respLeverDown.id and self.sceneobject.isLocallyOwned():
             PtDebugPrint(
-                "tldnSlavePrisonPanels: Lever now completely down. Updating SDL",
-                stringVarName.value,
-                " to 1",
+                "tldnSlavePrisonPanels: Lever now completely down. Updating SDL", stringVarName.value, " to 1",
             )
             ageSDL[stringVarName.value] = (1,)
 

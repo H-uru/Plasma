@@ -102,24 +102,18 @@ class ercaLadderHatch(ptResponder):
         try:
             boolHatch = ageSDL[SDLHatch.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaLadderHatch.OnServerInitComplete():\tERROR reading SDL name for pool empty"
-            )
+            PtDebugPrint("ERROR: ercaLadderHatch.OnServerInitComplete():\tERROR reading SDL name for pool empty")
             boolHatch = 0
         PtDebugPrint(
-            "DEBUG: ercaLadderHatch.OnServerInitComplete():\t%s = %d"
-            % (SDLHatch.value, ageSDL[SDLHatch.value][0])
+            "DEBUG: ercaLadderHatch.OnServerInitComplete():\t%s = %d" % (SDLHatch.value, ageSDL[SDLHatch.value][0])
         )
         try:
             boolEmpty = ageSDL[SDLEmpty.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaLadderHatch.OnServerInitComplete():\tERROR reading SDL name for pool empty"
-            )
+            PtDebugPrint("ERROR: ercaLadderHatch.OnServerInitComplete():\tERROR reading SDL name for pool empty")
             boolEmpty = 0
         PtDebugPrint(
-            "DEBUG: ercaLadderHatch.OnServerInitComplete():\t%s = %d"
-            % (SDLEmpty.value, ageSDL[SDLEmpty.value][0])
+            "DEBUG: ercaLadderHatch.OnServerInitComplete():\t%s = %d" % (SDLEmpty.value, ageSDL[SDLEmpty.value][0])
         )
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
@@ -167,9 +161,7 @@ class ercaLadderHatch(ptResponder):
                     if (StrDirection.value) == "up":
                         if event[2] == kAdvanceNextStage:
                             stageNum = event[1]
-                            PtDebugPrint(
-                                "Going up.  Got stage advance callback from stage %d" % stageNum
-                            )
+                            PtDebugPrint("Going up.  Got stage advance callback from stage %d" % stageNum)
                             if stageNum == 1:
                                 PtDebugPrint("In stage 2, negotiating hatch.")
                                 self.INegotiateHatch()

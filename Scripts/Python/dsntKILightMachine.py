@@ -87,10 +87,7 @@ class dsntKILightMachine(ptModifier):
         ptModifier.__init__(self)
         self.id = 5670
         self.version = 3
-        PtDebugPrint(
-            "DEBUG: dsntKILightMachine.__init__():\tInitalizing dsntKILightMachine v.%s"
-            % self.version
-        )
+        PtDebugPrint("DEBUG: dsntKILightMachine.__init__():\tInitalizing dsntKILightMachine v.%s" % self.version)
 
     def OnServerInitComplete(self):
         # PtDebugPrint("DEBUG: dsntKILightMachine.OnServerInitComplete()")
@@ -104,9 +101,7 @@ class dsntKILightMachine(ptModifier):
         try:
             byteKILightFunc = ageSDL[sdlKILightFunc.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: dsntKILightMachine.OnServerInitComplete():\tERROR reading SDL name for KI light func"
-            )
+            PtDebugPrint("ERROR: dsntKILightMachine.OnServerInitComplete():\tERROR reading SDL name for KI light func")
             byteKILightFunc = 0
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
@@ -139,9 +134,7 @@ class dsntKILightMachine(ptModifier):
                 PtDebugPrint("dsntKILightMachine.OnNotify(): you've got your KI, proceeding...")
                 respGotKI.run(self.key)
             else:
-                PtDebugPrint(
-                    "dsntKILightMachine.OnNotify(): you don't have your KI yet, machine won't respond"
-                )
+                PtDebugPrint("dsntKILightMachine.OnNotify(): you don't have your KI yet, machine won't respond")
 
         elif id == respGotKI.id:
             if IsAvatarLocal:
@@ -168,10 +161,7 @@ class dsntKILightMachine(ptModifier):
 
         timeRemaining = lightStop - lightStart
         PtDebugPrint(
-            "timer set, light will shut off in ",
-            timeRemaining,
-            " seconds; lightStop = ",
-            lightStop,
+            "timer set, light will shut off in ", timeRemaining, " seconds; lightStop = ", lightStop,
         )
         self.SetKILightChron(0)
 
@@ -194,9 +184,7 @@ class dsntKILightMachine(ptModifier):
             entry.save()
         else:
             vault.addChronicleEntry("KILightStop", 1, "%d" % (remaining))
-            PtDebugPrint(
-                "Chronicle entry KILight not present, adding entry and setting time to shutoff"
-            )
+            PtDebugPrint("Chronicle entry KILight not present, adding entry and setting time to shutoff")
 
     def OnTimer(self, id):
         # PtDebugPrint("dsntKILightMachine.OnTimer(): id = ",id)
@@ -237,15 +225,11 @@ class dsntKILightMachine(ptModifier):
                     if state:
                         PtAtTimeCallback(self.key, remaining, kLightStopID)
                         PtDebugPrint(
-                            "dsntKILightMachine.DoKILight(): turning light on for ",
-                            remaining,
-                            " seconds",
+                            "dsntKILightMachine.DoKILight(): turning light on for ", remaining, " seconds",
                         )
                         lightOn = 1
                     else:
-                        PtDebugPrint(
-                            "dsntKILightMachine.DoKILight(): light is shut off, updating chron if it needs it"
-                        )
+                        PtDebugPrint("dsntKILightMachine.DoKILight(): light is shut off, updating chron if it needs it")
                         self.SetKILightChron(remaining)
                         lightOn = 0
                         PtSetLightAnimStart(avatarKey, KILightObjectName, False)

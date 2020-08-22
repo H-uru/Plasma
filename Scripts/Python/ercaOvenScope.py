@@ -188,9 +188,7 @@ class ercaOvenScope(ptModifier):
         try:
             boolBakeryPwr = ageSDL[SDLBakeryPwr.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for bakery power"
-            )
+            PtDebugPrint("ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for bakery power")
             boolBakeryPwr = 0
         PtDebugPrint(
             "DEBUG: ercaOvenScope.OnServerInitComplete():\t%s = %d"
@@ -199,35 +197,24 @@ class ercaOvenScope(ptModifier):
         try:
             boolScopePwr = ageSDL[SDLScopePwr.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for scope power"
-            )
+            PtDebugPrint("ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for scope power")
             boolScopePwr = 0
         PtDebugPrint(
-            "DEBUG: ercaOvenScope.OnServerInitComplete():\t%s = %d"
-            % (SDLScopePwr.value, ageSDL[SDLScopePwr.value][0])
+            "DEBUG: ercaOvenScope.OnServerInitComplete():\t%s = %d" % (SDLScopePwr.value, ageSDL[SDLScopePwr.value][0])
         )
         try:
             boolMayBake = ageSDL["ercaMayBake"][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for ercaMayBake"
-            )
+            PtDebugPrint("ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for ercaMayBake")
             boolMayBake = 0
-        PtDebugPrint(
-            "DEBUG: ercaOvenScope.OnServerInitComplete():\tercaMayBake = %d"
-            % (ageSDL["ercaMayBake"][0])
-        )
+        PtDebugPrint("DEBUG: ercaOvenScope.OnServerInitComplete():\tercaMayBake = %d" % (ageSDL["ercaMayBake"][0]))
         try:
             IsBaking = ageSDL["ercaBakeFinishTime"][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for ercaBakeFinishTime"
-            )
+            PtDebugPrint("ERROR: ercaOvenScope.OnServerInitComplete():\tERROR reading SDL name for ercaBakeFinishTime")
             IsBaking = 0
         PtDebugPrint(
-            "DEBUG: ercaOvenScope.OnServerInitComplete():\tercaBakeFinishTime = %d"
-            % (ageSDL["ercaBakeFinishTime"][0])
+            "DEBUG: ercaOvenScope.OnServerInitComplete():\tercaBakeFinishTime = %d" % (ageSDL["ercaBakeFinishTime"][0])
         )
 
         byteTime = ageSDL[timeSDL][0]
@@ -246,8 +233,7 @@ class ercaOvenScope(ptModifier):
         if boolOperated:
             if solo:
                 PtDebugPrint(
-                    "ercaOvenScope.Load():\tboolOperated=%d but no one else here...correcting"
-                    % boolOperated,
+                    "ercaOvenScope.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated,
                     level=kDebugDumpLevel,
                 )
                 boolOperated = 0
@@ -257,8 +243,7 @@ class ercaOvenScope(ptModifier):
             else:
                 Activate.disable()
                 PtDebugPrint(
-                    "ercaOvenScope.Load():\tboolOperated=%d, disabling telescope clickable"
-                    % boolOperated,
+                    "ercaOvenScope.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated,
                     level=kDebugDumpLevel,
                 )
 
@@ -275,8 +260,7 @@ class ercaOvenScope(ptModifier):
             self.SDL["OperatorID"] = (-1,)
             self.SDL["boolOperated"] = (0,)
             PtDebugPrint(
-                "ercaOvenScope.AvatarPage(): telescope operator paged out, reenabled telescope.",
-                level=kDebugDumpLevel,
+                "ercaOvenScope.AvatarPage(): telescope operator paged out, reenabled telescope.", level=kDebugDumpLevel,
             )
         else:
             return
@@ -319,9 +303,7 @@ class ercaOvenScope(ptModifier):
 
         if VARname == "ercaMayBake":
             boolMayBake = ageSDL["ercaMayBake"][0]
-            PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for ercaMayBake now set to %d" % (boolMayBake)
-            )
+            PtDebugPrint("ercaOvenScope:OnSDLNotify:  SDL for ercaMayBake now set to %d" % (boolMayBake))
             if boolMayBake:
                 RespMayBake.run(self.key, state="yes")
             else:
@@ -346,9 +328,7 @@ class ercaOvenScope(ptModifier):
         if VARname == timeSDL:
             byteTimeOld = byteTime
             byteTime = ageSDL[timeSDL][0]
-            PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (timeSDL, byteTime)
-            )
+            PtDebugPrint("ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (timeSDL, byteTime))
             RespSoundTest.run(self.key)
             if byteTime == 0 and byteTimeOld > 0:
                 RespTimeSlider.run(self.key, state="off")
@@ -362,9 +342,7 @@ class ercaOvenScope(ptModifier):
         if VARname == amountSDL:
             byteAmountOld = byteAmount
             byteAmount = ageSDL[amountSDL][0]
-            PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (amountSDL, byteAmount)
-            )
+            PtDebugPrint("ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (amountSDL, byteAmount))
             RespSoundTest.run(self.key)
             if byteAmount == 0 and byteAmountOld > 0:
                 RespAmountSlider.run(self.key, state="off")
@@ -378,9 +356,7 @@ class ercaOvenScope(ptModifier):
         if VARname == tempSDL:
             byteTempOld = byteTemp
             byteTemp = ageSDL[tempSDL][0]
-            PtDebugPrint(
-                "ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (tempSDL, byteTemp)
-            )
+            PtDebugPrint("ercaOvenScope:OnSDLNotify:  SDL for %s now set to %d" % (tempSDL, byteTemp))
             RespSoundTest.run(self.key)
             if byteTemp == 0 and byteTempOld > 0:
                 RespTempSlider.run(self.key, state="off")
@@ -422,9 +398,7 @@ class ercaOvenScope(ptModifier):
         global LocalAvatar
         global boolScopeOperator
         PtDebugPrint(
-            "ercaOvenScope:OnNotify  state=%d id=%d events=" % (state, id),
-            events,
-            level=kDebugDumpLevel,
+            "ercaOvenScope:OnNotify  state=%d id=%d events=" % (state, id), events, level=kDebugDumpLevel,
         )
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
@@ -556,9 +530,7 @@ class ercaOvenScope(ptModifier):
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         self.SDL["OperatorID"] = (avID,)
         PtDebugPrint(
-            "ercaOvenScope.OnNotify:\twrote SDL - scope operator id = ",
-            avID,
-            level=kDebugDumpLevel,
+            "ercaOvenScope.OnNotify:\twrote SDL - scope operator id = ", avID, level=kDebugDumpLevel,
         )
         # start the behavior
         Behavior.run(LocalAvatar)
@@ -668,9 +640,7 @@ class ercaOvenScope(ptModifier):
         # Re-enable first person camera
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        PtAtTimeCallback(
-            self.key, 3, 1
-        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtAtTimeCallback(self.key, 3, 1)  # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint(
             "ercaOvenScope.IQuitTelescope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )

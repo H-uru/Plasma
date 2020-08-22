@@ -90,16 +90,11 @@ class islmRandomBahroScream(ptModifier):
             try:
                 chanceval = ageSDL[ScreamChanceVar][0]
                 cur_chance = xRandom.randint(0, 100)
-                PtDebugPrint(
-                    "RandomBahroScream: Chance val - %d, Cur Chance - %d" % (chanceval, cur_chance)
-                )
+                PtDebugPrint("RandomBahroScream: Chance val - %d, Cur Chance - %d" % (chanceval, cur_chance))
                 if cur_chance <= chanceval:
                     # turn on
                     PtDebugPrint("RandomBahroScream: turning on")
                     respScream.run(self.key)
             except:
-                PtDebugPrint(
-                    "RandomBahroScream: could not find SDL for %s in %s"
-                    % (ScreamChanceVar, AgeStartedIn)
-                )
+                PtDebugPrint("RandomBahroScream: could not find SDL for %s in %s" % (ScreamChanceVar, AgeStartedIn))
             PtAtTimeCallback(self.key, 600, TimerID.TurnOn)

@@ -327,9 +327,7 @@ class mystFireplace(ptModifier):
                     # id = int(panelName[-2:])
                     id = panelName[-3:]
                 except:
-                    PtDebugPrint(
-                        "mystFirePlace.OnPanelClick: Couldn't extract the panel id...not responding to click"
-                    )
+                    PtDebugPrint("mystFirePlace.OnPanelClick: Couldn't extract the panel id...not responding to click")
                     return
 
                 if id in IgnorePanelClick:
@@ -476,10 +474,7 @@ class mystFireplace(ptModifier):
         global InPanelView
 
         if InPanelView:
-            if (
-                controlKey == PlasmaControlKeys.kKeyExitMode
-                or controlKey == PlasmaControlKeys.kKeyMoveBackward
-            ):
+            if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward:
                 self.ExitPanelView(0)
 
     def OnBackdoorMsg(self, target, param):

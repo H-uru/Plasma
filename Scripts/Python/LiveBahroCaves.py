@@ -76,9 +76,7 @@ class LiveBahroCaves(ptResponder):
         elif ageFrom in Live6:
             pages += ["POTScave"]
         else:
-            PtDebugPrint(
-                "LiveBahroCaves.__init__(): age not recognized, will page in BlueSpiralCave as default"
-            )
+            PtDebugPrint("LiveBahroCaves.__init__(): age not recognized, will page in BlueSpiralCave as default")
             pages += ["BlueSpiralCave"]
 
         PtDebugPrint("LiveBahroCaves.__init__(): paging in: %s" % (pages))

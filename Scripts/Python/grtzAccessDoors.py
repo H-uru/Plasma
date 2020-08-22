@@ -54,9 +54,7 @@ from PlasmaKITypes import *
 
 
 triggerRgn = ptAttribActivator(1, "region sensor")
-doorResponder = ptAttribResponder(
-    2, "door responder", ["OpenTheDoor", "CloseTheDoor", "NoAccess"], netForce=0
-)
+doorResponder = ptAttribResponder(2, "door responder", ["OpenTheDoor", "CloseTheDoor", "NoAccess"], netForce=0)
 doorKiNeededBool = ptAttribBoolean(3, "Require Ki?", 0)
 
 doorSDLstates = {
@@ -100,14 +98,9 @@ class grtzAccessDoors(ptResponder):
 
         if len(PtGetPlayerList()) > 0:
 
-            PtDebugPrint(
-                "grtzAccessDoors: Somebody is already in the age. Attempting to sync states."
-            )
+            PtDebugPrint("grtzAccessDoors: Somebody is already in the age. Attempting to sync states.")
 
-            if (
-                self.grtzDoorState == doorSDLstates["open"]
-                or self.grtzDoorState == doorSDLstates["opening"]
-            ):
+            if self.grtzDoorState == doorSDLstates["open"] or self.grtzDoorState == doorSDLstates["opening"]:
                 doorResponder.run(self.key, state="OpenTheDoor", fastforward=1, netPropagate=0)
                 PtDebugPrint("grtzAccessDoors: Door is open.")
                 PtDebugPrint("grtzAccessDoors: Door State = %d" % self.grtzDoorState)
@@ -126,9 +119,7 @@ class grtzAccessDoors(ptResponder):
                 or self.grtzDoorState == doorSDLstates["opentoclose"]
             ):
                 doorResponder.run(self.key, state="OpenTheDoor", netPropagate=0)
-                self.grtzDoorStack.append(
-                    "doorResponder.run(self.key,state='OpenTheDoor',netPropagate=0)"
-                )
+                self.grtzDoorStack.append("doorResponder.run(self.key,state='OpenTheDoor',netPropagate=0)")
 
             elif (
                 self.grtzDoorState == doorSDLstates["closing"]
@@ -136,15 +127,11 @@ class grtzAccessDoors(ptResponder):
                 or self.grtzDoorState == doorSDLstates["closetoopen"]
             ):
                 doorResponder.run(self.key, state="CloseTheDoor", netPropagate=0)
-                self.grtzDoorStack.append(
-                    "doorResponder.run(self.key,state='CloseTheDoor',netPropagate=0)"
-                )
+                self.grtzDoorStack.append("doorResponder.run(self.key,state='CloseTheDoor',netPropagate=0)")
 
             elif self.grtzDoorState == doorSDLstates["closedfail"]:
                 doorResponder.run(self.key, state="NoAccess", netPropagate=0)
-                self.grtzDoorStack.append(
-                    "doorResponder.run(self.key,state='NoAccess',netPropagate=0)"
-                )
+                self.grtzDoorStack.append("doorResponder.run(self.key,state='NoAccess',netPropagate=0)")
 
             elif self.grtzDoorState == doorSDLstates["open"]:
                 doorResponder.run(self.key, state="OpenTheDoor", fastforward=1, netPropagate=0)
@@ -169,9 +156,7 @@ class grtzAccessDoors(ptResponder):
             if events[0][1].find("rgnTriggerEnter") != -1 and self.sceneobject.isLocallyOwned():
                 if self.grtzDoorState == doorSDLstates["closed"]:
                     self.UpdateDoorState(doorSDLstates["opening"])
-                    PtDebugPrint(
-                        "grtzAccessDoors: I triggered the region and I'm changing the sdl to opening."
-                    )
+                    PtDebugPrint("grtzAccessDoors: I triggered the region and I'm changing the sdl to opening.")
 
                 elif (
                     self.grtzDoorState == doorSDLstates["movingclosed"]
@@ -179,37 +164,26 @@ class grtzAccessDoors(ptResponder):
                     or self.grtzDoorState == doorSDLstates["closedfail"]
                 ):
                     self.UpdateDoorState(doorSDLstates["closetoopen"])
-                    PtDebugPrint(
-                        "grtzAccessDoors: I triggered the region and I'm changing the sdl to closetoopen."
-                    )
+                    PtDebugPrint("grtzAccessDoors: I triggered the region and I'm changing the sdl to closetoopen.")
 
                 elif self.grtzDoorState == doorSDLstates["opentoclose"]:
                     self.UpdateDoorState(doorSDLstates["movingopen"])
-                    PtDebugPrint(
-                        "grtzAccessDoors: I triggered the region and I'm changing the sdl to movingopen."
-                    )
+                    PtDebugPrint("grtzAccessDoors: I triggered the region and I'm changing the sdl to movingopen.")
 
             elif events[0][1].find("rgnTriggerExit") != -1 and self.sceneobject.isLocallyOwned():
                 if self.grtzDoorState == doorSDLstates["open"]:
                     self.UpdateDoorState(doorSDLstates["closing"])
-                    PtDebugPrint(
-                        "grtzAccessDoors: I triggered the region and I'm changing the sdl to closing."
-                    )
+                    PtDebugPrint("grtzAccessDoors: I triggered the region and I'm changing the sdl to closing.")
 
                 elif (
-                    self.grtzDoorState == doorSDLstates["movingopen"]
-                    or self.grtzDoorState == doorSDLstates["opening"]
+                    self.grtzDoorState == doorSDLstates["movingopen"] or self.grtzDoorState == doorSDLstates["opening"]
                 ):
                     self.UpdateDoorState(doorSDLstates["opentoclose"])
-                    PtDebugPrint(
-                        "grtzAccessDoors: I triggered the region and I'm changing the sdl to opentoclose."
-                    )
+                    PtDebugPrint("grtzAccessDoors: I triggered the region and I'm changing the sdl to opentoclose.")
 
                 elif self.grtzDoorState == doorSDLstates["closetoopen"]:
                     self.UpdateDoorState(doorSDLstates["movingclosed"])
-                    PtDebugPrint(
-                        "grtzAccessDoors: I triggered the region and I'm changing the sdl to movingclosed."
-                    )
+                    PtDebugPrint("grtzAccessDoors: I triggered the region and I'm changing the sdl to movingclosed.")
 
             elif events[0][1].find("rgnTriggerFail") != -1 and self.sceneobject.isLocallyOwned():
                 if self.grtzDoorState == doorSDLstates["closed"]:
@@ -224,9 +198,7 @@ class grtzAccessDoors(ptResponder):
                 PtDebugPrint("grtzAccessDoors: New list is: %s" % (str(self.grtzDoorStack)))
 
                 if len(self.grtzDoorStack) == 1:
-                    PtDebugPrint(
-                        "grtzAccessDoors: List is only one command long, so I'm playing it"
-                    )
+                    PtDebugPrint("grtzAccessDoors: List is only one command long, so I'm playing it")
                     code = self.grtzDoorStack[0]
                     PtDebugPrint("grtzAccessDoors: Playing command: %s" % (code))
                     self.ExecCode(code)
@@ -290,8 +262,7 @@ class grtzAccessDoors(ptResponder):
                     self.UpdateDoorState(doorSDLstates["closing"])
 
                 elif (
-                    self.grtzDoorState == doorSDLstates["movingopen"]
-                    or self.grtzDoorState == doorSDLstates["opening"]
+                    self.grtzDoorState == doorSDLstates["movingopen"] or self.grtzDoorState == doorSDLstates["opening"]
                 ):
                     self.UpdateDoorState(doorSDLstates["open"])
 

@@ -121,8 +121,7 @@ class giraAgeSDLBoolRespondLightpost(ptResponder):
             objAvatar = None
             fastforward = boolVltMgrFastForward.value  # we need to skip any one-shots
         PtDebugPrint(
-            "DEBUG: giraAgeSDLBoolRespondLightpost.OnSDLNotify():\tnotification from playerID: %d"
-            % (playerID)
+            "DEBUG: giraAgeSDLBoolRespondLightpost.OnSDLNotify():\tnotification from playerID: %d" % (playerID)
         )
 
         # run the appropriate responder!

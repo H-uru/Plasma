@@ -126,8 +126,6 @@ class krelPodium(ptResponder):
                 ageSDL["nb01CmnRmSpeech"] = (0,)
 
         elif id == respSpeech01.id:
-            PtDebugPrint(
-                "krelPodium: Speech #1 was stopped automatically after it finished playing."
-            )
+            PtDebugPrint("krelPodium: Speech #1 was stopped automatically after it finished playing.")
             respSilence.run(self.key)
             ageSDL["nb01CmnRmSpeech"] = (0,)

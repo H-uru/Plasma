@@ -294,12 +294,8 @@ def SetDefaultSettings():
     worn = avatar.avatar.getAvatarClothingList()
     DefaultClothing = []
     for item in worn:
-        (colortype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(
-            item[0], item[1]
-        )
-        DefaultClothing.append(
-            ClothingItem(item, colortype, saturation, inCloset, inClosClr1, inClosClr2)
-        )
+        (colortype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(item[0], item[1])
+        DefaultClothing.append(ClothingItem(item, colortype, saturation, inCloset, inClosClr1, inClosClr2))
         DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0], 1))
         DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0], 2))
 
@@ -385,31 +381,10 @@ def SaveAvatarToDisk():
     saveFile.write(str(len(clothingList)) + "\n")
     for i in range(len(clothingList)):
         item = clothingList[i]
-        item += (
-            " "
-            + str(color1[i].getRed())
-            + " "
-            + str(color1[i].getGreen())
-            + " "
-            + str(color1[i].getBlue())
-        )
-        item += (
-            " "
-            + str(color2[i].getRed())
-            + " "
-            + str(color2[i].getGreen())
-            + " "
-            + str(color2[i].getBlue())
-        )
+        item += " " + str(color1[i].getRed()) + " " + str(color1[i].getGreen()) + " " + str(color1[i].getBlue())
+        item += " " + str(color2[i].getRed()) + " " + str(color2[i].getGreen()) + " " + str(color2[i].getBlue())
         saveFile.write(item + "\n")
-    saveFile.write(
-        str(skinColor.getRed())
-        + " "
-        + str(skinColor.getGreen())
-        + " "
-        + str(skinColor.getBlue())
-        + "\n"
-    )
+    saveFile.write(str(skinColor.getRed()) + " " + str(skinColor.getGreen()) + " " + str(skinColor.getBlue()) + "\n")
     saveFile.write(str(len(geomMorphs)) + "\n")
     for i in range(len(geomMorphs)):
         saveFile.write(str(geomMorphs[i]) + "\n")
@@ -428,9 +403,7 @@ def GetClothingWorn():
     worn = avatar.avatar.getAvatarClothingList()
     WornList = []
     for item in worn:
-        (colortype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(
-            item[0], item[1]
-        )
+        (colortype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(item[0], item[1])
         WornList.append(ClothingItem(item, colortype, saturation, inCloset, inClosClr1, inClosClr2))
 
 
@@ -490,9 +463,7 @@ def CanShowSeasonal(clothingItem):
             return True  # it's in our closet, so we can show this
         showTime = clothingItem.seasonTime
         if PtIsInternalRelease():
-            curTime = time.localtime(
-                time.time()
-            )  # use the client's clock if we're an internal build
+            curTime = time.localtime(time.time())  # use the client's clock if we're an internal build
         else:
             curTime = time.localtime(PtGetServerTime())  # otherwise, use the server's clock
         # PtDebugPrint("CanShowSeasonal(): Checking if we can show " + clothingItem.name)
@@ -508,18 +479,12 @@ def CanShowClothingItem(clothingItem):
 
     # make sure we're not supposed to hide the item
     if (clothingItem.internalOnly and PtIsInternalRelease()) or not clothingItem.internalOnly:
-        if (
-            clothingItem.nonStandardItem and ItemInWardrobe(clothingItem)
-        ) or not clothingItem.nonStandardItem:
+        if (clothingItem.nonStandardItem and ItemInWardrobe(clothingItem)) or not clothingItem.nonStandardItem:
             if (PtIsSinglePlayerMode() and clothingItem.singlePlayer) or not PtIsSinglePlayerMode():
                 if CanShowSeasonal(clothingItem):
                     return True
                 else:
-                    PtDebugPrint(
-                        "CanShowClothingItem(): Hiding item "
-                        + clothingItem.name
-                        + " because it is seasonal"
-                    )
+                    PtDebugPrint("CanShowClothingItem(): Hiding item " + clothingItem.name + " because it is seasonal")
             else:
                 PtDebugPrint(
                     "CanShowClothingItem(): Hiding item "
@@ -534,9 +499,7 @@ def CanShowClothingItem(clothingItem):
             )
     else:
         PtDebugPrint(
-            "CanShowClothingItem(): Hiding item "
-            + clothingItem.name
-            + " because it is an internal-only option"
+            "CanShowClothingItem(): Hiding item " + clothingItem.name + " because it is an internal-only option"
         )
     return False
 
@@ -545,9 +508,7 @@ def ItemInWardrobe(clothingItem):
     avatar = PtGetLocalAvatar()
     clothingList = avatar.avatar.getWardrobeClothingList()
     for item in clothingList:
-        ctype, saturation, inCloset, inClosClr1, inClosClr2 = FindSaturationAndCloset(
-            item[0], item[1]
-        )
+        ctype, saturation, inCloset, inClosClr1, inClosClr2 = FindSaturationAndCloset(item[0], item[1])
         closetItem = ClothingItem(item, ctype, saturation, inCloset, inClosClr1, inClosClr2)
         # hopefully name is enough to determine if it's in the closet, but we can be more accurate if necessary
         if clothingItem.name == closetItem.name:
@@ -568,9 +529,7 @@ def GetAllWithSameGroup(name):
         clothingType = CLxref[idx][0]
         clothinglist = avatar.avatar.getClosetClothingList(clothingType)
         for item in clothinglist:
-            (ctype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(
-                item[0], item[1]
-            )
+            (ctype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(item[0], item[1])
             newitem = ClothingItem(item, ctype, saturation, inCloset, inClosClr1, inClosClr2)
             if newitem.name == name:
                 targetGroup = newitem.groupName
@@ -579,9 +538,7 @@ def GetAllWithSameGroup(name):
         if groupFound:
             break
     for item in clothinglist:
-        ctype, saturation, inCloset, inClosClr1, inClosClr2 = FindSaturationAndCloset(
-            item[0], item[1]
-        )
+        ctype, saturation, inCloset, inClosClr1, inClosClr2 = FindSaturationAndCloset(item[0], item[1])
         newitem = ClothingItem(item, ctype, saturation, inCloset, inClosClr1, inClosClr2)
         if newitem.groupName == targetGroup and not newitem.meshicon:
             if CanShowClothingItem(newitem):
@@ -770,20 +727,14 @@ class xAvatarCustomization(ptModifier):
                             selectedItem = listboxDict[tagID].GetSelectedItem()
                             # setup the "accessory" listbox with our texture options
                             texGroup = TextureGroup(clothing_group.clothingType, selectedItem.name)
-                            listboxDict[tagID + kAccessoryLBOffset].SetClothingList(
-                                texGroup.clothingItems
-                            )
-                            listboxDict[tagID + kAccessoryLBOffset].SelectItem(
-                                0
-                            )  # select the first texture option
+                            listboxDict[tagID + kAccessoryLBOffset].SetClothingList(texGroup.clothingItems)
+                            listboxDict[tagID + kAccessoryLBOffset].SelectItem(0)  # select the first texture option
                             listboxDict[tagID + kAccessoryLBOffset].UpdateScrollArrows()
                             listboxDict[tagID + kAccessoryLBOffset].UpdateListbox()
                             listbox = ptGUIControlListBox(
                                 AvCustGUI.dialog.getControlFromTag(tagID + kAccessoryLBOffset)
                             )
-                            self.OnGUINotify(
-                                AvCustGUI.id, listbox, kValueChanged
-                            )  # fake a mouse down
+                            self.OnGUINotify(AvCustGUI.id, listbox, kValueChanged)  # fake a mouse down
                     elif clothing_group is not None:
                         # found list box
                         itemselect = control.getSelection()
@@ -810,9 +761,7 @@ class xAvatarCustomization(ptModifier):
                                 if isinstance(matchingItem, list):
                                     avatar.avatar.wearClothingItem(matchingItem[0], 0)
                                     avatar.avatar.tintClothingItem(matchingItem[0], lastcolor1, 0)
-                                    avatar.avatar.tintClothingItemLayer(
-                                        matchingItem[0], lastcolor2, 2, 0
-                                    )
+                                    avatar.avatar.tintClothingItemLayer(matchingItem[0], lastcolor2, 2, 0)
                             # tint and wear the chosen item
                             avatar.avatar.wearClothingItem(newitem.name, 0)
                             avatar.avatar.tintClothingItem(newitem.name, lastcolor1, 0)
@@ -821,14 +770,10 @@ class xAvatarCustomization(ptModifier):
                                 kWeightKnob, newitem.name
                             )  # propigate the weight morph to the new clothing item
                             # then set the description box
-                            descbox = ptGUIControlTextBox(
-                                AvCustGUI.dialog.getControlFromTag(kClothingDesc)
-                            )
+                            descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
                             descbox.setStringW(newitem.description)
                             # set up the color pickers
-                            colorbar1 = ptGUIControlTextBox(
-                                AvCustGUI.dialog.getControlFromTag(kColorbarName1)
-                            )
+                            colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
                             if newitem.colorlabel1 == "":
                                 self.IHideColorPicker(kColor1ClickMap)
                             else:
@@ -838,9 +783,7 @@ class xAvatarCustomization(ptModifier):
                                     self.IDrawPickerThingy(kHairClickMap, lastcolor1)
                                 else:
                                     self.IDrawPickerThingy(kColor1ClickMap, lastcolor1)
-                            colorbar2 = ptGUIControlTextBox(
-                                AvCustGUI.dialog.getControlFromTag(kColorbarName2)
-                            )
+                            colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
                             if newitem.colorlabel2 == "":
                                 self.IHideColorPicker(kColor2ClickMap)
                             else:
@@ -873,12 +816,8 @@ class xAvatarCustomization(ptModifier):
                                     lastitem = FindWornItem(clothing_group.clothingType)
                                     if lastitem is not None:
                                         # just get the color straight from the item
-                                        lastcolor1 = avatar.avatar.getTintClothingItem(
-                                            lastitem.name, 1
-                                        )
-                                        lastcolor2 = avatar.avatar.getTintClothingItem(
-                                            lastitem.name, 2
-                                        )
+                                        lastcolor1 = avatar.avatar.getTintClothingItem(lastitem.name, 1)
+                                        lastcolor2 = avatar.avatar.getTintClothingItem(lastitem.name, 2)
                                     else:
                                         lastcolor1 = ptColor().white()
                                         lastcolor2 = ptColor().white()
@@ -890,23 +829,17 @@ class xAvatarCustomization(ptModifier):
                                         kWeightKnob, newitem.name
                                     )  # propigate the weight morph to the new clothing item
                                     # then set the description box
-                                    descbox = ptGUIControlTextBox(
-                                        AvCustGUI.dialog.getControlFromTag(kClothingDesc)
-                                    )
+                                    descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
                                     descbox.setStringW(newitem.description)
                                     # set up the color pickers
-                                    colorbar1 = ptGUIControlTextBox(
-                                        AvCustGUI.dialog.getControlFromTag(kColorbarName1)
-                                    )
+                                    colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
                                     if newitem.colorlabel1 == "":
                                         self.IHideColorPicker(kColor1ClickMap)
                                     else:
                                         self.IShowColorPicker(kColor1ClickMap)
                                         colorbar1.setStringW(newitem.colorlabel1)
                                         self.IDrawPickerThingy(kColor1ClickMap, lastcolor1)
-                                    colorbar2 = ptGUIControlTextBox(
-                                        AvCustGUI.dialog.getControlFromTag(kColorbarName2)
-                                    )
+                                    colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
                                     if newitem.colorlabel2 == "":
                                         self.IHideColorPicker(kColor2ClickMap)
                                     else:
@@ -942,18 +875,14 @@ class xAvatarCustomization(ptModifier):
                                         # else just wear the thing
                                         avatar.avatar.wearClothingItem(newitem.name)
                                         # if this is a head accessory, we can tint it, so restore last tint
-                                        if tagID == kHeadAccLB and not (
-                                            newitem.name in untintableHeadAcc
-                                        ):
+                                        if tagID == kHeadAccLB and not (newitem.name in untintableHeadAcc):
                                             self.IShowColorPicker(kColor2ClickMap)
                                             colorbar2 = ptGUIControlTextBox(
                                                 AvCustGUI.dialog.getControlFromTag(kColorbarName2)
                                             )
                                             colorbar2.setStringW(GetItemName("Glasses"))
                                             if not lastitem == "":
-                                                lastcolor = avatar.avatar.getTintClothingItem(
-                                                    lastitem, 1
-                                                )
+                                                lastcolor = avatar.avatar.getTintClothingItem(lastitem, 1)
                                             else:
                                                 lastcolor = ptColor(1, 1, 1, 1)
                                             avatar.avatar.tintClothingItem(newitem.name, lastcolor)
@@ -970,33 +899,23 @@ class xAvatarCustomization(ptModifier):
                                         self.IHideColorPicker(kColor2ClickMap)
                 elif isinstance(control, ptGUIControlRadioGroup):
                     if tagID == kPanelsRGID:
-                        panelRG = ptGUIControlRadioGroup(
-                            AvCustGUI.dialog.getControlFromTag(kPanelsRGID)
-                        )
+                        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
                         rgVal = panelRG.getValue()
-                        zoomBtn = ptGUIControlCheckBox(
-                            AvCustGUI.dialog.getControlFromTag(kZoomButton)
-                        )
+                        zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(kZoomButton))
                         if rgVal == 1:
                             ZoomResponder.run(self.key, state="ZoomIn")
-                            ptGUIControlButton(
-                                AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)
-                            ).enable()
+                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).enable()
                             # enable the zoom button
                             zoomBtn.show()
                             # zoom in on face automatically
                             zoomBtn.setChecked(True)
-                            ZoomCamera.sceneobject.pushCutsceneCamera(
-                                1, PtGetLocalAvatar().getKey()
-                            )
+                            ZoomCamera.sceneobject.pushCutsceneCamera(1, PtGetLocalAvatar().getKey())
                             panelRG.hide()
                             self.SetupCamera()
                         else:
                             zoomBtn.hide()
                         # unset the description box
-                        descbox = ptGUIControlTextBox(
-                            AvCustGUI.dialog.getControlFromTag(kClothingDesc)
-                        )
+                        descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
                         descbox.setString("")
                         self.ISetStandardControls()
                 elif isinstance(control, ptGUIControlButton):
@@ -1103,9 +1022,7 @@ class xAvatarCustomization(ptModifier):
                         # and ask if they want to quit (KI will quit if they answer yes)
                         PtSendKIMessage(kQuitDialog, 0)
                     elif IsAccArrow(btnID):
-                        panelRG = ptGUIControlRadioGroup(
-                            AvCustGUI.dialog.getControlFromTag(kPanelsRGID)
-                        )
+                        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
                         rgVal = panelRG.getValue()
                         listboxID = panelAccListboxOffset + rgVal
                         if IsLeftArrow(btnID):
@@ -1115,9 +1032,7 @@ class xAvatarCustomization(ptModifier):
                         listboxDict[listboxID].UpdateScrollArrows()
                         listboxDict[listboxID].UpdateListbox()
                     elif IsOptArrow(btnID):
-                        panelRG = ptGUIControlRadioGroup(
-                            AvCustGUI.dialog.getControlFromTag(kPanelsRGID)
-                        )
+                        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
                         rgVal = panelRG.getValue()
                         listboxID = panelOptListboxOffset + rgVal
                         if IsLeftArrow(btnID):
@@ -1133,9 +1048,7 @@ class xAvatarCustomization(ptModifier):
                         if PtIsInternalRelease():
                             self.IRestoreAvatarFromDisk()
                             self.dirty = 1  # we are changing the avatar, so show the reset button
-                            ptGUIControlButton(
-                                AvCustGUI.dialog.getControlFromTag(kAvatarResetID)
-                            ).show()
+                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show()
                     elif btnID == kAvatarSaveID:
                         if PtIsInternalRelease():
                             SaveAvatarToDisk()
@@ -1159,24 +1072,16 @@ class xAvatarCustomization(ptModifier):
                     chkBoxID = control.getTagID()
                     if chkBoxID == kZoomButton:
                         zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(chkBoxID))
-                        radioGroup = ptGUIControlRadioGroup(
-                            AvCustGUI.dialog.getControlFromTag(kPanelsRGID)
-                        )
+                        radioGroup = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
                         if zoomBtn.isChecked():
                             ZoomResponder.run(self.key, state="ZoomIn")
-                            ptGUIControlButton(
-                                AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)
-                            ).enable()
-                            ZoomCamera.sceneobject.pushCutsceneCamera(
-                                1, PtGetLocalAvatar().getKey()
-                            )
+                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).enable()
+                            ZoomCamera.sceneobject.pushCutsceneCamera(1, PtGetLocalAvatar().getKey())
                             radioGroup.hide()
                             self.SetupCamera()
                         else:
                             ZoomResponder.run(self.key, state="ZoomOut")
-                            ptGUIControlButton(
-                                AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)
-                            ).disable()
+                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).disable()
                             ZoomCamera.sceneobject.popCutsceneCamera(PtGetLocalAvatar().getKey())
                             radioGroup.show()
                             self.SetupCamera()
@@ -1329,13 +1234,9 @@ class xAvatarCustomization(ptModifier):
     def ISaveSeasonalToCloset(self):
         for item in WornList:
             if item.seasonal and not ItemInWardrobe(item):
-                PtDebugPrint(
-                    "Adding seasonal item " + item.name + " to your closet since you are wearing it"
-                )
+                PtDebugPrint("Adding seasonal item " + item.name + " to your closet since you are wearing it")
                 avatar = PtGetLocalAvatar()
-                avatar.avatar.addWardrobeClothingItem(
-                    item.name, ptColor().white(), ptColor().white()
-                )
+                avatar.avatar.addWardrobeClothingItem(item.name, ptColor().white(), ptColor().white())
 
     def ILinkToCloset(self):
         linkmgr = ptNetLinkingMgr()
@@ -1379,9 +1280,7 @@ class xAvatarCustomization(ptModifier):
             clothingList = avatar.avatar.getWardrobeClothingList()
             if clothingName not in clothingList:
                 PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
-                avatar.avatar.addWardrobeClothingItem(
-                    clothingName, ptColor().white(), ptColor().black()
-                )
+                avatar.avatar.addWardrobeClothingItem(clothingName, ptColor().white(), ptColor().black())
             else:
                 PtDebugPrint("player already has Yeesha reward clothing, doing nothing")
             folder = vault.getChronicleFolder()
@@ -1501,9 +1400,7 @@ class xAvatarCustomization(ptModifier):
                 listboxDict[listboxID].SetListboxID(listboxID)
             if not (listboxID + kAccessoryLBOffset in listboxDict):
                 listboxDict[listboxID + kAccessoryLBOffset] = ScrollingListBox()
-                listboxDict[listboxID + kAccessoryLBOffset].SetListboxID(
-                    listboxID + kAccessoryLBOffset
-                )
+                listboxDict[listboxID + kAccessoryLBOffset].SetListboxID(listboxID + kAccessoryLBOffset)
             # set up and display our list box
             listboxDict[listboxID].SetClothingList(group.clothingItems)
             listboxDict[listboxID].UpdateScrollArrows()
@@ -1564,9 +1461,7 @@ class xAvatarCustomization(ptModifier):
                 # if the saturation is zero then don't allow tiniting
                 if controlID == kColor1ClickMap or controlID == kColor2ClickMap:
                     # Make sure that we're not zoomed in (changing eye color)
-                    panelRG = ptGUIControlRadioGroup(
-                        AvCustGUI.dialog.getControlFromTag(kPanelsRGID)
-                    )
+                    panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
                     rgVal = panelRG.getValue()
 
                     # get the color
@@ -1713,13 +1608,9 @@ class xAvatarCustomization(ptModifier):
     def ISetStandardControls(self):
         "Set the color knobs depending on the color of the clothing item panel showing"
         if self.dirty:  # has the clothing changed at all?
-            ptGUIControlButton(
-                AvCustGUI.dialog.getControlFromTag(kAvatarResetID)
-            ).show()  # then show the reset button
+            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show()  # then show the reset button
         else:
-            ptGUIControlButton(
-                AvCustGUI.dialog.getControlFromTag(kAvatarResetID)
-            ).hide()  # otherwise, hide it
+            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).hide()  # otherwise, hide it
 
         if PtIsInternalRelease():
             ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarReadID)).show()
@@ -2070,10 +1961,7 @@ class ClothingItem:
                         elif rs == "no":
                             self.inCloset = 0
                         else:
-                            PtDebugPrint(
-                                "AvaCusta: Unknown inCloset type of %s on clothing item %s"
-                                % (rs, self.name)
-                            )
+                            PtDebugPrint("AvaCusta: Unknown inCloset type of %s on clothing item %s" % (rs, self.name))
                     elif ls == "inclosetcolor1":
                         rs = rs.lower()
                         if rs == "yes":
@@ -2082,8 +1970,7 @@ class ClothingItem:
                             self.inClosetColor1 = 0
                         else:
                             PtDebugPrint(
-                                "AvaCusta: Unknown inClosetColor1 type of %s on clothing item %s"
-                                % (rs, self.name)
+                                "AvaCusta: Unknown inClosetColor1 type of %s on clothing item %s" % (rs, self.name)
                             )
                     elif ls == "inclosetcolor2":
                         rs = rs.lower()
@@ -2093,8 +1980,7 @@ class ClothingItem:
                             self.inClosetColor2 = 0
                         else:
                             PtDebugPrint(
-                                "AvaCusta: Unknown inClosetColor2 type of %s on clothing item %s"
-                                % (rs, self.name)
+                                "AvaCusta: Unknown inClosetColor2 type of %s on clothing item %s" % (rs, self.name)
                             )
                     elif ls == "nonstandard":
                         self.nonStandardItem = 1
@@ -2144,9 +2030,7 @@ class ClothingItem:
                                     startDate = [int(item) for item in startDate]
                                     if len(startDate) > 2:
                                         if startDate[2] < 2000:
-                                            startDate[2] = (
-                                                startDate[2] + 2000
-                                            )  # convert to 4 digits
+                                            startDate[2] = startDate[2] + 2000  # convert to 4 digits
                                     else:
                                         startDate.append(0)  # any year (wasn't specified)
 
@@ -2180,20 +2064,15 @@ class ClothingItem:
                                             if not (len(tempRange) == len(tempRange) / 2 * 2):
                                                 tempRange.append([date for date in startDate])
                                             if startDate[0] >= 12:  # end of the year
-                                                startDate[
-                                                    0
-                                                ] = 1  # reset to Jan 1st of the next year
+                                                startDate[0] = 1  # reset to Jan 1st of the next year
                                                 startDate[1] = 1
                                                 startDate[2] = startDate[2] + 1
                                             else:
-                                                startDate[0] = (
-                                                    startDate[0] + 1
-                                                )  # reset to the first of the next month
+                                                startDate[0] = startDate[0] + 1  # reset to the first of the next month
                                                 startDate[1] = 1
                                         else:
                                             if (
-                                                startDate[0] == endDate[0]
-                                                and startDate[2] == endDate[2]
+                                                startDate[0] == endDate[0] and startDate[2] == endDate[2]
                                             ):  # we have the right month and year, so set to the right day
                                                 startDate[1] = endDate[1]
                                             else:  # otherwise, advance the day to the end of the month
@@ -2216,9 +2095,7 @@ class ClothingItem:
                                             monthRange = [startMonth, startMonth]
                                             dayRange = [startDay, startDay]
                                             yearRange = [startYear, startYear]
-                                            self.seasonTime.append(
-                                                [monthRange, dayRange, yearRange]
-                                            )
+                                            self.seasonTime.append([monthRange, dayRange, yearRange])
                                         # otherwise it was the last in our list, which has already been accounted for
                                     else:
                                         endMonth = tempRange[i + 1][0]
@@ -2230,19 +2107,11 @@ class ClothingItem:
                                         self.seasonTime.append([monthRange, dayRange, yearRange])
                             # PtDebugPrint("AvaCusta: The date string "+rs+" was decoded to the following tuple: "+str(self.seasonTime))
                         except:
-                            PtDebugPrint(
-                                "AvaCusta: Malformed date string "
-                                + rs
-                                + " on clothing "
-                                + self.name
-                            )
+                            PtDebugPrint("AvaCusta: Malformed date string " + rs + " on clothing " + self.name)
                             self.seasonal = 0
                     else:
                         if ls != "":
-                            PtDebugPrint(
-                                "AvaCusta: Unknown keyword type (%s) on clothing %s"
-                                % (ls, self.name)
-                            )
+                            PtDebugPrint("AvaCusta: Unknown keyword type (%s) on clothing %s" % (ls, self.name))
         except (TypeError, LookupError):
             PtDebugPrint("AvaCusta: some kind of error on clothing " + str(clothing))
 
@@ -2257,9 +2126,7 @@ class TextureGroup:
         clothinglist = GetAllWithSameGroup(meshName)
         self.clothingItems = []
         for item in clothinglist:
-            (ctype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(
-                item[0], item[1]
-            )
+            (ctype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(item[0], item[1])
             newitem = ClothingItem(item, ctype, saturation, inCloset, inClosClr1, inClosClr2)
             # make sure we're not supposed to hide the item
             if CanShowClothingItem(newitem):
@@ -2317,9 +2184,7 @@ class ClothingGroup:
         # build the list of clothing items
         self.clothingItems = []
         for item in clothinglist:
-            (ctype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(
-                item[0], item[1]
-            )
+            (ctype, saturation, inCloset, inClosClr1, inClosClr2,) = FindSaturationAndCloset(item[0], item[1])
             newitem = ClothingItem(item, ctype, saturation, inCloset, inClosClr1, inClosClr2)
             # make sure we're not supposed to hide the item
             if CanShowClothingItem(newitem):
@@ -2414,9 +2279,7 @@ class ClothingCloset:
                 if group.accessories[idx].name == itemName:
                     return group.accessories[idx]
         # didn't find it? search its texture group
-        texGroup = TextureGroup(
-            kShirtClothingItem, itemName
-        )  # clothing type doesn't matter since we don't use it here
+        texGroup = TextureGroup(kShirtClothingItem, itemName)  # clothing type doesn't matter since we don't use it here
         for idx in range(len(texGroup)):
             if texGroup[idx].name == itemName:
                 return texGroup[idx]
@@ -2438,9 +2301,7 @@ class ScrollingListBox:
         self.offset = 0  # our current offset
         self.selection = 0  # our current selection (index in our clothing list)
         self.columns = 0  # the number of columns required to show our items
-        self.rows = (
-            2  # the number of rows in our listbox (all except for the face accessories have 2 rows)
-        )
+        self.rows = 2  # the number of rows in our listbox (all except for the face accessories have 2 rows)
         self.clothingList = []  # the list of clothing we are managing
         self.listboxID = 0  # the listbox we are managing
 
@@ -2512,9 +2373,7 @@ class ScrollingListBox:
         if self.rows == 1:
             self.columns = len(self.clothingList)
         else:
-            self.columns = int(
-                round(float(len(self.clothingList)) / 2.0)
-            )  # half of the number of items, rounded up
+            self.columns = int(round(float(len(self.clothingList)) / 2.0))  # half of the number of items, rounded up
         self.offset = 0
         self.selection = 0
 
@@ -2536,21 +2395,13 @@ class ScrollingListBox:
 
     def UpdateScrollArrows(self):
         if self.listboxID >= kHairAccLB and self.listboxID <= kAccessAccLB:
-            leftArrow = ptGUIControlButton(
-                AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnLeftAccOffset)
-            )
-            rightArrow = ptGUIControlButton(
-                AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnRightAccOffset)
-            )
+            leftArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnLeftAccOffset))
+            rightArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnRightAccOffset))
         else:
             if self.listboxID == kHeadOptionsLB:
                 return  # there aren't any head options, just accessories
-            leftArrow = ptGUIControlButton(
-                AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnLeftOptOffset)
-            )
-            rightArrow = ptGUIControlButton(
-                AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnRightOptOffset)
-            )
+            leftArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnLeftOptOffset))
+            rightArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID + kIDBtnRightOptOffset))
         if self.IShowLeftArrow():
             leftArrow.show()
         else:
@@ -2584,15 +2435,11 @@ class ScrollingListBox:
             displayItems = self.clothingList
         else:
             for i in range(4):
-                displayItems.append(
-                    self.clothingList[i + self.offset]
-                )  # add the first row of items to display
+                displayItems.append(self.clothingList[i + self.offset])  # add the first row of items to display
             if self.rows == 2:
                 for i in range(4):
                     try:
-                        displayItems.append(
-                            self.clothingList[i + self.offset + self.columns]
-                        )  # add the second row
+                        displayItems.append(self.clothingList[i + self.offset + self.columns])  # add the second row
                     except:
                         pass  # we probably went to far, so just don't add the non-existant item
         # displayItems now has the correct 8 (or 4) items to show
@@ -2605,15 +2452,11 @@ class ScrollingListBox:
                 listbox.addStringInBox(item.name, kCLBMinWidth, kCLBMinHeight)
         # now select the correct one (if in view)
         LBIndex = -1
-        if (self.rows == 1 and len(self.clothingList) <= 4) or (
-            self.rows == 2 and len(self.clothingList) <= 8
-        ):
+        if (self.rows == 1 and len(self.clothingList) <= 4) or (self.rows == 2 and len(self.clothingList) <= 8):
             # looks like we fit without scrolling, so columns is probably wrong, and we can just use the selection number directly!
             LBIndex = self.selection
         else:
-            if (
-                self.selection >= self.offset and self.selection <= self.offset + 3
-            ):  # on the top row
+            if self.selection >= self.offset and self.selection <= self.offset + 3:  # on the top row
                 LBIndex = self.selection - self.offset
             elif (
                 self.rows == 2

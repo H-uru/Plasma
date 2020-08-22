@@ -121,12 +121,10 @@ class islmRegisterNexusLink(ptModifier):
                     if not cityLink.hasSpawnPoint(linkpointName.value):
                         # Display link added message
                         PtDebugPrint(
-                            "Nexus Link added message displayed %s,%s"
-                            % (stationName.value, linkpointName.value)
+                            "Nexus Link added message displayed %s,%s" % (stationName.value, linkpointName.value)
                         )
                         PtSendKIMessage(
-                            kKILocalChatStatusMsg,
-                            PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
+                            kKILocalChatStatusMsg, PtGetLocalizedString("KI.Messages.NexusLinkAdded"),
                         )
                 # will only register if not there already
                 vault.registerMTStation(stationName.value, linkpointName.value)

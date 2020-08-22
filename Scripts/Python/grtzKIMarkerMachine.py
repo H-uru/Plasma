@@ -59,12 +59,8 @@ from xPsnlVaultSDL import *
 aKISlotAct = ptAttribActivator(1, "KI Slot activator")
 aKIAvatarResp = ptAttribResponder(2, "Avatar Behavior resp", statelist=["Short", "Longer"])
 aKILogoResp = ptAttribResponder(3, "Show KI Logo resp")
-aKILightsResp = ptAttribResponderList(
-    4, "Light Responder List", statelist=["LightOn", "LightOff"], byObject=1
-)
-aKISoundsResp = ptAttribResponder(
-    5, "Sound responder", statelist=["UpLoadMarkers", "DownLoadMarkers", "ShowMarkers"]
-)
+aKILightsResp = ptAttribResponderList(4, "Light Responder List", statelist=["LightOn", "LightOff"], byObject=1)
+aKISoundsResp = ptAttribResponder(5, "Sound responder", statelist=["UpLoadMarkers", "DownLoadMarkers", "ShowMarkers"])
 
 gGZPlaying = 0
 gGZMarkerInRange = 0
@@ -153,9 +149,7 @@ def UpdateGZMarkers(markerStatus):
     )
 
     if not markerStatus in statusTypes:
-        PtDebugPrint(
-            "ERROR: grtzKIMarkerMachine.UpdateGZMarkers(): Invalid markerStatus: %s" % markerStatus
-        )
+        PtDebugPrint("ERROR: grtzKIMarkerMachine.UpdateGZMarkers(): Invalid markerStatus: %s" % markerStatus)
         return
 
     vault = ptVault()
@@ -176,8 +170,7 @@ class grtzKIMarkerMachine(ptModifier):
         self.id = 206
         self.version = MaxVersionNumber
         PtDebugPrint(
-            "grtzKIMarkerMachine: Max version %d - minor version %d.1"
-            % (MaxVersionNumber, MinorVersionNumber),
+            "grtzKIMarkerMachine: Max version %d - minor version %d.1" % (MaxVersionNumber, MinorVersionNumber),
             level=kDebugDumpLevel,
         )
 
@@ -271,15 +264,13 @@ class grtzKIMarkerMachine(ptModifier):
                         # after fun with lights then the activator will be enabled
                     else:
                         PtDebugPrint(
-                            "grtzKIMarkerMachine: In the middle of the first game...",
-                            level=kDebugDumpLevel,
+                            "grtzKIMarkerMachine: In the middle of the first game...", level=kDebugDumpLevel,
                         )
                         self.IShowCurrentGame()
                         aKISlotAct.enable()
                 elif markerKILevel == kKIMarkerSecondLevel:
                     PtDebugPrint(
-                        "grtzKIMarkerMachine: In the middle of the second game",
-                        level=kDebugDumpLevel,
+                        "grtzKIMarkerMachine: In the middle of the second game", level=kDebugDumpLevel,
                     )
                     if gMarkerGottenNumber >= gMarkerToGetNumber:
                         PtDebugPrint(
@@ -292,8 +283,7 @@ class grtzKIMarkerMachine(ptModifier):
                         # after fun with lights then the activator will be enabled
                     else:
                         PtDebugPrint(
-                            "grtzKIMarkerMachine: In the middle of the second game...",
-                            level=kDebugDumpLevel,
+                            "grtzKIMarkerMachine: In the middle of the second game...", level=kDebugDumpLevel,
                         )
                         self.IShowCurrentGame()
                         aKISlotAct.enable()
@@ -333,8 +323,7 @@ class grtzKIMarkerMachine(ptModifier):
                     return
                 except:
                     PtDebugPrint(
-                        "grtzKIMarkerMachine - error trying to read GZGames Chronicle",
-                        level=kErrorLevel,
+                        "grtzKIMarkerMachine - error trying to read GZGames Chronicle", level=kErrorLevel,
                     )
                     error = 1
             else:
@@ -355,8 +344,7 @@ class grtzKIMarkerMachine(ptModifier):
             # We're going to re-initialize the marker games to give the user a chance to go on
             # Although I'm sure they'll still be upset!
             PtDebugPrint(
-                "grtzKIMarkerMachine - vault corruption error: RESETTING all Marker Game data!!!!",
-                level=kErrorLevel,
+                "grtzKIMarkerMachine - vault corruption error: RESETTING all Marker Game data!!!!", level=kErrorLevel,
             )
             ResetMarkerGame()
 
@@ -426,8 +414,7 @@ class grtzKIMarkerMachine(ptModifier):
         global gMarkerTargetToGetNumber
         if gMarkerToGetNumber < gMarkerTargetToGetNumber:
             PtDebugPrint(
-                "grtzKIMarkerMachine - lighting light %d" % (gMarkerToGetNumber + 1),
-                level=kDebugDumpLevel,
+                "grtzKIMarkerMachine - lighting light %d" % (gMarkerToGetNumber + 1), level=kDebugDumpLevel,
             )
             lidx = gMarkerToGetNumber
             aKILightsResp.run(self.key, state="LightOn", objectName=gLightRespNames[lidx])
@@ -510,8 +497,7 @@ class grtzKIMarkerMachine(ptModifier):
             aKILightsResp.run(self.key, state="LightOn")
         else:
             PtDebugPrint(
-                "grtzKIMarkerMachine - turn only %d lights on"
-                % (gMarkerToGetNumber - gMarkerGottenNumber),
+                "grtzKIMarkerMachine - turn only %d lights on" % (gMarkerToGetNumber - gMarkerGottenNumber),
                 level=kDebugDumpLevel,
             )
             aKISoundsResp.run(self.key, state="ShowMarkers")
@@ -582,8 +568,7 @@ class grtzKIMarkerMachine(ptModifier):
                 aKILightsResp.run(self.key, state="LightOff")
             else:
                 PtDebugPrint(
-                    "grtzKIMarkerMachine - turn only %d lights off"
-                    % (gMarkerToGetNumber - gMarkerGottenNumber),
+                    "grtzKIMarkerMachine - turn only %d lights off" % (gMarkerToGetNumber - gMarkerGottenNumber),
                     level=kDebugDumpLevel,
                 )
                 for idx in range(gMarkerGottenNumber, gMarkerToGetNumber):
@@ -610,8 +595,7 @@ class grtzKIMarkerMachine(ptModifier):
                 entryCityLinks.chronicleSetValue(NewLinks)
                 entryCityLinks.save()
                 PtDebugPrint(
-                    "grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ",
-                    agePanel,
+                    "grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ", agePanel,
                 )
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
@@ -626,8 +610,7 @@ class grtzKIMarkerMachine(ptModifier):
         else:
             vault.addChronicleEntry("CityBookLinks", 0, agePanel)
             PtDebugPrint(
-                "grtzKIMarkerMachine.IDoCityLinksChron():  creating citylinks chron entry and adding: ",
-                agePanel,
+                "grtzKIMarkerMachine.IDoCityLinksChron():  creating citylinks chron entry and adding: ", agePanel,
             )
 
         psnlSDL = xPsnlVaultSDL()

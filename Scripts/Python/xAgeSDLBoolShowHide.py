@@ -105,9 +105,7 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
     def _Setup(self):
         ageSDL = PtGetAgeSDL()
         if not ageSDL:
-            PtDebugPrint(
-                "xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend."
-            )
+            PtDebugPrint("xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend.")
             self.sdl_value = defaultValue.value  # start at default
             return None
 

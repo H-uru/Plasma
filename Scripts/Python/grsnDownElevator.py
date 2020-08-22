@@ -194,8 +194,7 @@ class grsnDownElevator(ptResponder):
         global avatarInElevator
 
         PtDebugPrint(
-            "grsnDownElevator.OnNotify: state=%s id=%d events=%s %s"
-            % (state, id, str(events[0][1]), str(events[0][2]))
+            "grsnDownElevator.OnNotify: state=%s id=%d events=%s %s" % (state, id, str(events[0][1]), str(events[0][2]))
         )
 
         if id == downBehavior.id:
@@ -231,9 +230,7 @@ class grsnDownElevator(ptResponder):
                     PtAtTimeCallback(self.key, 1.66, kOpenDownElevatorBottom)
                     return
 
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     PtDebugPrint("grsnDownElevator: other player warp")
                     avatarInElevator.avatar.exitSubWorld()
                     avatarInElevator.physics.warpObj(downElevWarpPoint.value.getKey())
@@ -256,9 +253,7 @@ class grsnDownElevator(ptResponder):
                     PtSendKIMessage(kEnableEntireYeeshaBook, 0)
                     return
 
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 1 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 1 and event[2] == kAdvanceNextStage:
                     PtDebugPrint("grsnDownElevator: enable trigger")
                     downElevTrigger.enable()
                     return
@@ -294,9 +289,7 @@ class grsnDownElevator(ptResponder):
                     PtAtTimeCallback(self.key, 1.66, kOpenUpElevatorTop)
                     return
 
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     PtDebugPrint("grsnDownElevator: other player warp")
                     avatarInElevator.avatar.enterSubWorld(subworld.value)
                     avatarInElevator.physics.warpObj(upElevWarpPoint.value.getKey())
@@ -318,9 +311,7 @@ class grsnDownElevator(ptResponder):
                     PtSendKIMessage(kEnableEntireYeeshaBook, 0)
                     return
 
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 1 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 1 and event[2] == kAdvanceNextStage:
                     PtDebugPrint("grsnDownElevator: enable trigger")
                     upElevatorBottomTrigger.enable()
                     return

@@ -159,9 +159,7 @@ class clftYeeshaPage08(ptModifier):
             self.SetStdGUIVisibility(1)
 
             if self.GotPage():
-                PtDebugPrint(
-                    "DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along."
-                )
+                PtDebugPrint("DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along.")
                 return
             else:
                 PtDebugPrint("DEBUG: clftYeeshaPage08.py: Yeesha Page #8 is new to you.")
@@ -195,16 +193,13 @@ class clftYeeshaPage08(ptModifier):
                 % ("YeeshaPage8", YeeshaPageVar.getInt())
             )
             if YeeshaPageVar.getInt() != 0:
-                PtDebugPrint(
-                    "DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along."
-                )
+                PtDebugPrint("DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along.")
                 return 1
             else:
                 return 0
         else:
             PtDebugPrint(
-                "ERROR: clftYeeshaPage08: Error trying to access the Chronicle psnlSDL. psnlSDL = %s"
-                % (psnlSDL)
+                "ERROR: clftYeeshaPage08: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % (psnlSDL)
             )
             return 0
 

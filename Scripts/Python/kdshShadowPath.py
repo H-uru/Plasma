@@ -209,9 +209,7 @@ class kdshShadowPath(ptResponder):
             if not state:
                 return
             if PtFindAvatar(events) == localAvatar:
-                lightClickedByAvatar = (
-                    localAvatar  # this should only happen from the local triggerer
-                )
+                lightClickedByAvatar = localAvatar  # this should only happen from the local triggerer
             else:
                 lightClickedByAvatar = None
                 return
@@ -220,9 +218,7 @@ class kdshShadowPath(ptResponder):
             globals()["respBtnPush0{}".format(id)].run(self.key, events=events)
 
         elif id in [26, 27, 28, 29, 30]:
-            if (
-                lightClickedByAvatar != localAvatar
-            ):  # Make sure we don't have any rogue avatars reporting...
+            if lightClickedByAvatar != localAvatar:  # Make sure we don't have any rogue avatars reporting...
                 lightClickedByAvatar = None
                 return
 
@@ -304,24 +300,16 @@ class kdshShadowPath(ptResponder):
             resp = globals()["respSwitch0{}".format(light)]
             if newstate == 0:  # true if that switch is now off
                 PtDebugPrint(
-                    "kdshShadowPath.OnSDLNotify: Light",
-                    light,
-                    " was on. Turning it off.",
-                    level=kWarningLevel,
+                    "kdshShadowPath.OnSDLNotify: Light", light, " was on. Turning it off.", level=kWarningLevel,
                 )
                 resp.run(self.key, state="off")
             elif newstate == 1:  # true if that switch is now on
                 PtDebugPrint(
-                    "kdshShadowPath.OnSDLNotify: Light",
-                    light,
-                    " was off. Turning it on.",
-                    level=kWarningLevel,
+                    "kdshShadowPath.OnSDLNotify: Light", light, " was off. Turning it on.", level=kWarningLevel,
                 )
                 resp.run(self.key, state="on")
             else:
-                PtDebugPrint(
-                    "kdshShadowPath.OnSDLNotify: Error. Not sure what the light thought it was."
-                )
+                PtDebugPrint("kdshShadowPath.OnSDLNotify: Error. Not sure what the light thought it was.")
 
 
 """

@@ -89,30 +89,19 @@ class nb01Easel(ptModifier):
 
     def OnAgeVaultEvent(self, event, tupdata):
         "An age vault event received"
-        if (
-            event == PtVaultCallbackTypes.kVaultNodeSaved
-            or event == PtVaultCallbackTypes.kVaultNodeInitialized
-        ):
+        if event == PtVaultCallbackTypes.kVaultNodeSaved or event == PtVaultCallbackTypes.kVaultNodeInitialized:
             if tupdata[0].getType() == PtVaultNodeTypes.kAgeInfoNode:
                 # hood name may have changed
                 self.IWriteHoodName()
 
     def IWriteHoodName(self):
-        fontcolor = ptColor(
-            dyna_fontcolorr.value,
-            dyna_fontcolorg.value,
-            dyna_fontcolorb.value,
-            dyna_fontcolora.value,
-        )
+        fontcolor = ptColor(dyna_fontcolorr.value, dyna_fontcolorg.value, dyna_fontcolorb.value, dyna_fontcolora.value,)
         clearcolor = ptColor(0, 0, 0, 0)
 
         ageVault = ptAgeVault()
         try:
             ageInfoNode = ageVault.getAgeInfo()
-            hoodName = "%s %s" % (
-                ageInfoNode.getAgeUserDefinedName(),
-                ageInfoNode.getAgeInstanceName(),
-            )
+            hoodName = "%s %s" % (ageInfoNode.getAgeUserDefinedName(), ageInfoNode.getAgeInstanceName(),)
             PtDebugPrint("nb01Easel:\tinscribing %s" % hoodName)
         except:
             PtDebugPrint("nb01Easel:\tERROR age vault or hood node failure")

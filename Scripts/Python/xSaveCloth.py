@@ -132,9 +132,7 @@ class xSaveCloth(ptModifier):
         #        elif ageName == "Ahnonay":
         #            sdlPre = "ahny"
         else:
-            PtDebugPrint(
-                "xSaveCloth.py not updated for this age's SDL.  Ignoring SaveCloth SDL stuff..."
-            )
+            PtDebugPrint("xSaveCloth.py not updated for this age's SDL.  Ignoring SaveCloth SDL stuff...")
             return
         sdlSC = sdlPre + sdlBase + str(numSC.value)
         try:
@@ -174,9 +172,7 @@ class xSaveCloth(ptModifier):
         elif id == OneShotResp.id:
             vault = ptVault()
             if vault.amOwnerOfCurrentAge() and PtWasLocallyNotified(self.key):
-                PtDebugPrint(
-                    "DEBUG: xSaveCloth.OnNotify: am owner of current age, getting save point"
-                )
+                PtDebugPrint("DEBUG: xSaveCloth.OnNotify: am owner of current age, getting save point")
                 # if 1:
                 try:
                     # Save the camera stack
@@ -213,9 +209,7 @@ class xSaveCloth(ptModifier):
                         agelink.save()
                     # Done saving the camera stack
                 except:
-                    PtDebugPrint(
-                        "ERROR: xSaveCloth.OnNotify: error occurred doing the whole save point thing"
-                    )
+                    PtDebugPrint("ERROR: xSaveCloth.OnNotify: error occurred doing the whole save point thing")
 
             AnimResp.run(self.key, events=events)
 

@@ -170,20 +170,14 @@ class kdshTreeRings(ptModifier):
         boolOperated = ageSDL["boolOperatedScope0" + str(ScopeNumber.value)][0]
         if boolOperated:
             if solo:
-                PtDebugPrint(
-                    "kdshTreeRings.Load():\tboolOperated=%d but no one else here...correcting"
-                    % boolOperated
-                )
+                PtDebugPrint("kdshTreeRings.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated)
                 boolOperated = 0
                 ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (0,)
                 ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (-1,)
                 Activate.enable()
             else:
                 Activate.disable()
-                PtDebugPrint(
-                    "kdshTreeRings.Load():\tboolOperated=%d, disabling telescope clickable"
-                    % boolOperated
-                )
+                PtDebugPrint("kdshTreeRings.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated)
         # START-->multiplayer fix
         ageSDL.sendToClients(("boolOperatedScope0" + str(ScopeNumber.value)))
         ageSDL.setFlags(("boolOperatedScope0" + str(ScopeNumber.value)), 1, 1)
@@ -215,9 +209,7 @@ class kdshTreeRings(ptModifier):
             Activate.enable()
             ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (-1,)
             ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (0,)
-            PtDebugPrint(
-                "kdshTreeRings.AvatarPage(): telescope operator paged out, reenabled telescope."
-            )
+            PtDebugPrint("kdshTreeRings.AvatarPage(): telescope operator paged out, reenabled telescope.")
         else:
             return
 
@@ -396,9 +388,7 @@ class kdshTreeRings(ptModifier):
         # Re-enable first person camera
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        PtAtTimeCallback(
-            self.key, 3, 1
-        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtAtTimeCallback(self.key, 3, 1)  # wait for player to finish exit one-shot, then reenable clickable
         # PtDebugPrint("kdshTreeRings.IQuitTelescope:\tdelaying clickable reenable")
 
     def OnTimer(self, id):

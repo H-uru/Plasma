@@ -114,17 +114,12 @@ class kemoJourneyClothGate(ptResponder):
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint(
-                        "kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
                 PtDebugPrint(
-                    "kemoJourneyClothGate.OnServerInitComplete():\t%s = %d"
-                    % (stringVarName.value, GateCurrentlyClosed)
+                    "kemoJourneyClothGate.OnServerInitComplete():\t%s = %d" % (stringVarName.value, GateCurrentlyClosed)
                 )
             else:
-                PtDebugPrint(
-                    "kemoJourneyClothGate.OnServerInitComplete():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR: missing SDL var name")
 
     def OnNotify(self, state, id, events):
         global GateCurrentlyClosed
@@ -142,9 +137,7 @@ class kemoJourneyClothGate(ptResponder):
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint(
-                        "kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
                     GateCurrentlyClosed = False
 
                 PtDebugPrint("OnNotify: GateCurrentlyClosed = ", GateCurrentlyClosed)

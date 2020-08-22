@@ -54,9 +54,7 @@ import PlasmaControlKeys
 # VCP = Vault Control Panel
 
 # define the attributes that will be entered in 3dsMAX
-actButton1 = ptAttribActivator(
-    1, "Act: Button 01"
-)  # Buttons are numbered from left to right in the Max file
+actButton1 = ptAttribActivator(1, "Act: Button 01")  # Buttons are numbered from left to right in the Max file
 actButton2 = ptAttribActivator(2, "Act: Button 02")
 actButton3 = ptAttribActivator(3, "Act: Button 03")
 actButton4 = ptAttribActivator(4, "Act: Button 04")
@@ -182,8 +180,7 @@ class kdshVault(ptResponder):
         if VCPboolOperated:
             if solo:
                 PtDebugPrint(
-                    "kdshVault.Load():\tVCPboolOperated=%d but no one else here...correcting"
-                    % VCPboolOperated
+                    "kdshVault.Load():\tVCPboolOperated=%d but no one else here...correcting" % VCPboolOperated
                 )
                 VCPboolOperated = 0
                 ageSDL["VCPboolOperated"] = (0,)
@@ -192,8 +189,7 @@ class kdshVault(ptResponder):
             else:
                 Activate.disable()
                 PtDebugPrint(
-                    "kdshVault.Load():\tVCPboolOperated=%d, disabling Vault Control Panel clickable"
-                    % VCPboolOperated
+                    "kdshVault.Load():\tVCPboolOperated=%d, disabling Vault Control Panel clickable" % VCPboolOperated
                 )
 
     def AvatarPage(self, avObj, pageIn, lastOut):
@@ -211,9 +207,7 @@ class kdshVault(ptResponder):
             ageSDL["VCPOperatorID"] = (-1,)
             ageSDL["VCPboolOperated"] = (0,)
             LowerVCPClickable.run(self.key)
-            PtDebugPrint(
-                "kdshVault.AvatarPage(): Vault Control Panel operator paged out, reenabled VCP clickable."
-            )
+            PtDebugPrint("kdshVault.AvatarPage(): Vault Control Panel operator paged out, reenabled VCP clickable.")
         else:
             return
 

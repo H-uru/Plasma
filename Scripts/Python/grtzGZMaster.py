@@ -81,14 +81,9 @@ class grtzGZMaster(ptResponder):
         try:
             boolGZActive = ageSDL[sdlGZActive.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: grtzGZMaster.OnServerInitComplete():\tERROR reading SDL name for GZActive"
-            )
+            PtDebugPrint("ERROR: grtzGZMaster.OnServerInitComplete():\tERROR reading SDL name for GZActive")
             boolGZActive = 0
-        PtDebugPrint(
-            "DEBUG: grtzGZMaster.OnServerInitComplete():\t grtzGZActive = %d"
-            % (ageSDL[sdlGZActive.value][0])
-        )
+        PtDebugPrint("DEBUG: grtzGZMaster.OnServerInitComplete():\t grtzGZActive = %d" % (ageSDL[sdlGZActive.value][0]))
 
         if boolGZActive:
             respGZActiveAtStart.run(self.key, state="On")
@@ -121,9 +116,7 @@ class grtzGZMaster(ptResponder):
 
     def OnNotify(self, state, id, events):
         PtDebugPrint(
-            "grtzGZMaster:OnNotify(): state=%f id=%d events=" % (state, id),
-            events,
-            level=kDebugDumpLevel,
+            "grtzGZMaster:OnNotify(): state=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel,
         )
 
         if not (state and PtWasLocallyNotified(self.key)):

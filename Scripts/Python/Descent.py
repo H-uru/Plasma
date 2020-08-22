@@ -71,15 +71,13 @@ class Descent(ptResponder):
                 link.addSpawnPoint(cityBookSP)
                 link.save()
                 PtDebugPrint(
-                    "Descent - setting the spawnpoint for the city book - OnVaultNotify",
-                    level=kDebugDumpLevel,
+                    "Descent - setting the spawnpoint for the city book - OnVaultNotify", level=kDebugDumpLevel,
                 )
             else:
                 PtDebugPrint("Descent - registering age '%s' (why is this not Descent?)" % (name))
         else:
             PtDebugPrint(
-                "Descent:OnVaultNotify - not what we want - type=%d" % (type),
-                level=kDebugDumpLevel,
+                "Descent:OnVaultNotify - not what we want - type=%d" % (type), level=kDebugDumpLevel,
             )
 
     def ICityBookLink(self):
@@ -95,8 +93,7 @@ class Descent(ptResponder):
                 link.addSpawnPoint(cityBookSP)
                 link.save()
                 PtDebugPrint(
-                    "Descent:OnServerInitComplete - setting the spawnpoint for the city book",
-                    level=kDebugDumpLevel,
+                    "Descent:OnServerInitComplete - setting the spawnpoint for the city book", level=kDebugDumpLevel,
                 )
                 return
         PtDebugPrint(

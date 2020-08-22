@@ -119,9 +119,7 @@ class UCMarkerGame(object):
             if things[0] == "chron":
                 value = things[2] if len(things) > 2 else "1"
                 PtDebugPrint(
-                    "UCMarkerGame._GiveReward():\tSetting chronicle '{}' = '{}'".format(
-                        things[1], value
-                    ),
+                    "UCMarkerGame._GiveReward():\tSetting chronicle '{}' = '{}'".format(things[1], value),
                     level=kWarningLevel,
                 )
                 # NOTE: searches for a matching entry before creating
@@ -132,15 +130,12 @@ class UCMarkerGame(object):
                 clothing = "{}{}".format(gender, things[1])
                 if clothing in av.getWardrobeClothingList():
                     PtDebugPrint(
-                        "UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(
-                            clothing
-                        ),
+                        "UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(clothing),
                         level=kWarningLevel,
                     )
                 else:
                     PtDebugPrint(
-                        "UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing),
-                        level=kWarningLevel,
+                        "UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing), level=kWarningLevel,
                     )
                     try:
                         tint1 = _str2color(things[2])

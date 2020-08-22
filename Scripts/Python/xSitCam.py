@@ -62,13 +62,11 @@ class xSitCam(ptResponder):
             camKey = sitCam.sceneobject.getKey()
             if state:
                 PtDebugPrint(
-                    "xSitCam.OnNotify(): Avatar sitting, pushing camera '%s'" % camKey.getName(),
-                    level=kWarningLevel,
+                    "xSitCam.OnNotify(): Avatar sitting, pushing camera '%s'" % camKey.getName(), level=kWarningLevel,
                 )
                 ptCamera().save(camKey)
             else:
                 PtDebugPrint(
-                    "xSitCam.OnNotify(): Avatar standing, popping camera '%s'" % camKey.getName(),
-                    level=kWarningLevel,
+                    "xSitCam.OnNotify(): Avatar standing, popping camera '%s'" % camKey.getName(), level=kWarningLevel,
                 )
                 ptCamera().restore(camKey)

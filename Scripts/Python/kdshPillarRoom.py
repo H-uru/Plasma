@@ -52,17 +52,13 @@ from PlasmaTypes import *
 
 
 # define the attributes that will be entered in 3dsMAX
-actLever01 = ptAttribActivator(
-    1, "Actvr: Lever 01"
-)  # Lever are numbered from left to right in the Max file
+actLever01 = ptAttribActivator(1, "Actvr: Lever 01")  # Lever are numbered from left to right in the Max file
 actLever02 = ptAttribActivator(2, "Actvr: Lever 02")
 actLever03 = ptAttribActivator(3, "Actvr: Lever 03")
 actLever04 = ptAttribActivator(4, "Actvr: Lever 04")
 actLever05 = ptAttribActivator(5, "Actvr: Reset Ring")  # Reset lever
 
-respLever01 = ptAttribResponder(
-    6, "Rspndr: Lever 01"
-)  # responders which animate the motion of the levers themselves
+respLever01 = ptAttribResponder(6, "Rspndr: Lever 01")  # responders which animate the motion of the levers themselves
 respLever02 = ptAttribResponder(7, "Rspndr: Lever 02")
 respLever03 = ptAttribResponder(8, "Rspndr: Lever 03")
 respLever04 = ptAttribResponder(9, "Rspndr: Lever 04")
@@ -243,9 +239,7 @@ class kdshPillarRoom(ptResponder):
                 PtDebugPrint("Lever pull ignored because the puzzle is still resetting.")
                 return
 
-            if self.PillarIsSafeToMove(
-                id
-            ):  # check to see if a climber is in the way of this pillar being rased
+            if self.PillarIsSafeToMove(id):  # check to see if a climber is in the way of this pillar being rased
 
                 if ageSDL["budget"][0] == 0:  # true if 8 "raises" have already happened
                     PtDebugPrint("Counterweight expired.\n")
@@ -379,9 +373,7 @@ class kdshPillarRoom(ptResponder):
                 PtDebugPrint("The highest pillar when you reset was ", highest, " notches high.")
 
                 if highest != 0:
-                    PtAtTimeCallback(
-                        self.key, 5 * highest, 6
-                    )  # disable everything until all the pillars are down
+                    PtAtTimeCallback(self.key, 5 * highest, 6)  # disable everything until all the pillars are down
                     globals()["respSfxResetFromHeight{}".format(highest)].run(self.key)
 
                 # if the counterweights have been lowered at all, this loop resets them
@@ -398,9 +390,7 @@ class kdshPillarRoom(ptResponder):
                     ageSDL["budget"] = (8,)
 
                 for count in [1, 2, 3, 4]:  # this loop resets the pillars
-                    if (
-                        ageSDL["pheight0" + str(count)][0] != 0
-                    ):  # true for any pillar currently raised
+                    if ageSDL["pheight0" + str(count)][0] != 0:  # true for any pillar currently raised
                         PillarAnim.byObject["pillar0" + str(count)].backwards(1)
                         PillarAnim.byObject["pillar0" + str(count)].speed(
                             2
@@ -413,15 +403,11 @@ class kdshPillarRoom(ptResponder):
                         # PillarCamBlocker.byObject["pillar0" + str(count) + "Collision"].playRange(0, rangestart)
 
                     ageSDL["pheight0" + str(count)] = (0,)
-                    PtDebugPrint(
-                        "Pillar0%d height is now: %d" % (count, ageSDL["pheight0" + str(count)][0])
-                    )
+                    PtDebugPrint("Pillar0%d height is now: %d" % (count, ageSDL["pheight0" + str(count)][0]))
 
             return
 
-        elif (
-            not Resetting
-        ):  # Any other SDL VARname that would come through would have to do with raising a pillar.
+        elif not Resetting:  # Any other SDL VARname that would come through would have to do with raising a pillar.
             id = int(VARname[-1:])
 
             newpheight = ageSDL["pheight0" + str(id)][0]
@@ -436,9 +422,7 @@ class kdshPillarRoom(ptResponder):
             self.CheckSolution(playerID)
             self.DisableAppropriateLadders(id)
 
-            PtAtTimeCallback(
-                self.key, 10, id
-            )  # This will enable the appropriate ladders 10 seconds later
+            PtAtTimeCallback(self.key, 10, id)  # This will enable the appropriate ladders 10 seconds later
 
     def CleanUpLaddersIfImAlone(self):
         ageSDL = PtGetAgeSDL()
@@ -447,9 +431,7 @@ class kdshPillarRoom(ptResponder):
             ageSDL["PillarsOccupied"] = (0,)
             ageSDL["PillarsResetting"] = (0,)
         else:
-            PtDebugPrint(
-                "kdshPillar.Load: I'm not alone in Kadish. Leaving Ladder SDLs as they previously were."
-            )
+            PtDebugPrint("kdshPillar.Load: I'm not alone in Kadish. Leaving Ladder SDLs as they previously were.")
 
     def PillarIsSafeToMove(self, id):
         ageSDL = PtGetAgeSDL()
@@ -486,9 +468,7 @@ class kdshPillarRoom(ptResponder):
 
         PullsInProgress = PullsInProgress + 1
 
-        CounterAnim.value.speed(
-            PullsInProgress
-        )  # lower counterweights faster, because two pillars are in motion.
+        CounterAnim.value.speed(PullsInProgress)  # lower counterweights faster, because two pillars are in motion.
         # PtDebugPrint("\tCounterweight lowering at speed of ", PullsInProgress,"x")
 
         rangeend = (8 - ageSDL["budget"][0]) * 10

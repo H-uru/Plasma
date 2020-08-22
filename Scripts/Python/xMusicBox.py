@@ -120,9 +120,7 @@ class xMusicBox(ptModifier):
             ageDataFolder.addNode(newNode)
 
         SoundObjIndex = soSoundObj.value.getSoundIndex(strSoundObj.value)
-        PtDebugPrint(
-            "xMusicBox.OnServerInitComplete: using sound object index:" + str(SoundObjIndex)
-        )
+        PtDebugPrint("xMusicBox.OnServerInitComplete: using sound object index:" + str(SoundObjIndex))
 
         if sdlCurrentSongVar.value:
             ageSDL = PtGetAgeSDL()
@@ -203,8 +201,7 @@ class xMusicBox(ptModifier):
             CurrentFile = (filename, iscompressed)
 
         PtDebugPrint(
-            "xMusicBox.NextSong: Going to try to play: %s" % str(CurrentFile),
-            level=kDebugDumpLevel,
+            "xMusicBox.NextSong: Going to try to play: %s" % str(CurrentFile), level=kDebugDumpLevel,
         )
 
     def GetMusicBoxSongList(self):

@@ -219,18 +219,14 @@ class kdshGlowInTheDark(ptResponder):
 
         elif id == respElevDown.id:
             PtDebugPrint("kdshGlowInTheDark: The elevator has reached the bottom.")
-            PtAtTimeCallback(
-                self.key, ElevatorDelay, 1
-            )  # wait 10 seconds, then raise elevator again
+            PtAtTimeCallback(self.key, ElevatorDelay, 1)  # wait 10 seconds, then raise elevator again
             xRgnBottom.releaseNow(self.key)
             rgnEnterSubBtm.enable()
             return
 
         elif id == respElevUp.id:
             PtDebugPrint("kdshGlowInTheDark: The elevator has reached the top.")
-            PtAtTimeCallback(
-                self.key, ElevatorDelay, 3
-            )  # wait 10 seconds, then lower elevator again
+            PtAtTimeCallback(self.key, ElevatorDelay, 3)  # wait 10 seconds, then lower elevator again
             xRgnTop.releaseNow(self.key)
             rgnEnterSubTop.enable()
             # rgnExitSubTop.enable()
@@ -273,16 +269,12 @@ class kdshGlowInTheDark(ptResponder):
         elif PtGetLocalAvatar() == PtFindAvatar(events):
             me = PtGetLocalAvatar()
             if id == rgnExitSubTop.id:
-                PtDebugPrint(
-                    "kdshGlowInTheDark: You stepped off the elevator at the top. Removing from Subworld"
-                )
+                PtDebugPrint("kdshGlowInTheDark: You stepped off the elevator at the top. Removing from Subworld")
                 me.avatar.exitSubWorld()
                 return
 
             elif id == rgnExitSubBtm.id:
-                PtDebugPrint(
-                    "kdshGlowInTheDark: You stepped off the elevator at the btm. Removing from Subworld"
-                )
+                PtDebugPrint("kdshGlowInTheDark: You stepped off the elevator at the btm. Removing from Subworld")
                 me.avatar.exitSubWorld()
                 return
 
@@ -311,9 +303,7 @@ class kdshGlowInTheDark(ptResponder):
                     rgnExitSubBtm.disable()
 
                     if not self.sceneobject.isLocallyOwned():
-                        PtDebugPrint(
-                            "\tI'm not the owner, so I'll let another client netforce raise the elevator."
-                        )
+                        PtDebugPrint("\tI'm not the owner, so I'll let another client netforce raise the elevator.")
                         return
                     else:
                         respElevUp.run(self.key)
@@ -335,9 +325,7 @@ class kdshGlowInTheDark(ptResponder):
 
                         rgnExitSubBtm.enable()
                         if not self.sceneobject.isLocallyOwned():
-                            PtDebugPrint(
-                                "\tI'm not the owner, so I'll let another client netforce lower the elevator."
-                            )
+                            PtDebugPrint("\tI'm not the owner, so I'll let another client netforce lower the elevator.")
                             return
                         else:
                             respElevDown.run(self.key)
@@ -434,9 +422,7 @@ class kdshGlowInTheDark(ptResponder):
 
             if event[1] == 1:  # Player enters a zone
                 PtDebugPrint("kdshGlowInTheDark: Entered Zone:", id - 5)
-                if (
-                    id == 6
-                ):  # true as player enters start of Glow Path, effectively resetting baton setting
+                if id == 6:  # true as player enters start of Glow Path, effectively resetting baton setting
                     baton = 1
                 elif (
                     id == baton + 6
@@ -466,9 +452,7 @@ class kdshGlowInTheDark(ptResponder):
                         return
 
                     if PtWasLocallyNotified(self.key):
-                        PtDebugPrint(
-                            "kdshGlowInTheDark: Since you solved the puzzle, putting your avatar on elevator"
-                        )
+                        PtDebugPrint("kdshGlowInTheDark: Since you solved the puzzle, putting your avatar on elevator")
                         avatarInElevator = PtFindAvatar(events)
                         avatarInElevator.avatar.enterSubWorld(elevatorsubworld.value)
 
@@ -501,9 +485,7 @@ class kdshGlowInTheDark(ptResponder):
         if id == 2:
 
             if not self.sceneobject.isLocallyOwned():
-                PtDebugPrint(
-                    "\tI'm not the owner, so I'll let another client tell all clients to clear top Xrgn."
-                )
+                PtDebugPrint("\tI'm not the owner, so I'll let another client tell all clients to clear top Xrgn.")
                 return
             else:
                 note = ptNotify(self.key)

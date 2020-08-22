@@ -78,13 +78,9 @@ class xAgeSDLBoolAndRespond(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringVar1Name.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndRespond.OnFirstUpdate():\tERROR: missing SDL var1 name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndRespond.OnFirstUpdate():\tERROR: missing SDL var1 name in max file")
         if not stringVar2Name.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndRespond.OnFirstUpdate():\tERROR: missing SDL var2 name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndRespond.OnFirstUpdate():\tERROR: missing SDL var2 name in max file")
 
     def OnServerInitComplete(self):
         global boolCurrentState
@@ -138,19 +134,12 @@ class xAgeSDLBoolAndRespond(ptResponder):
         else:  # invalid player aka Vault Manager
             objAvatar = None
             fastforward = boolVltMgrFastForward.value  # we need to skip any one-shots
-        PtDebugPrint(
-            "DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\tnotification from playerID: %d"
-            % (playerID)
-        )
+        PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\tnotification from playerID: %d" % (playerID))
 
         # does the change change our current state?
-        if not boolCurrentState and (
-            ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]
-        ):
+        if not boolCurrentState and (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
             boolCurrentState = True
-        elif boolCurrentState and not (
-            ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]
-        ):
+        elif boolCurrentState and not (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
             boolCurrentState = False
         else:
             PtDebugPrint(
@@ -158,9 +147,7 @@ class xAgeSDLBoolAndRespond(ptResponder):
                 % (self.sceneobject.getName())
             )
             return
-        PtDebugPrint(
-            "DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\t state changed to %d" % (boolCurrentState)
-        )
+        PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\t state changed to %d" % (boolCurrentState))
 
         # run the appropriate responder!
         if boolCurrentState:

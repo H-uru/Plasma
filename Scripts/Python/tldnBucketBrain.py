@@ -181,8 +181,7 @@ class tldnBucketBrain(ptResponder):
 
         # Disable the buckets until we are ready to initialize them
         PtDebugPrint(
-            "tldnBucketBrain.OnServerInitComplete():\tBucket enter/exit detectors DISABLED",
-            level=kDebugDumpLevel,
+            "tldnBucketBrain.OnServerInitComplete():\tBucket enter/exit detectors DISABLED", level=kDebugDumpLevel,
         )
         actBktEnter1.disable()
         actBktEnter2.disable()
@@ -239,19 +238,14 @@ class tldnBucketBrain(ptResponder):
             # enable the bucket enter activators
             if bucketAtEntry > -1:
                 PtDebugPrint(
-                    "tldnBucketBrain.OnServerInit():\tEnabling the bucket enter activators!",
-                    level=kDebugDumpLevel,
+                    "tldnBucketBrain.OnServerInit():\tEnabling the bucket enter activators!", level=kDebugDumpLevel,
                 )
                 actBktEnter1.enable()
                 actBktEnter2.enable()
 
             # Since no one was in the age, we'll skip all other states and go to either a running or stopped state
             state = 0
-            if (
-                ageSDL[kStringAgeSDLPowerOn][0] == 1
-                and ageSDL[kStringAgeSDLLeverPulled][0] == 1
-                and bucketMode == 1
-            ):
+            if ageSDL[kStringAgeSDLPowerOn][0] == 1 and ageSDL[kStringAgeSDLLeverPulled][0] == 1 and bucketMode == 1:
                 state = kBucketStates.Run
                 ageSDL[kStringAgeSDLLoopMode] = (1,)
                 respWRCCLED.run(self.key, kOn, fastforward=1)
@@ -276,9 +270,7 @@ class tldnBucketBrain(ptResponder):
 
             riders = ageSDL[kStringAgeSDLRiders]
             PtDebugPrint(
-                "tldnBucketBrain.OnServerInitComplete()\t Current bucket rider list: ",
-                riders,
-                level=kDebugDumpLevel,
+                "tldnBucketBrain.OnServerInitComplete()\t Current bucket rider list: ", riders, level=kDebugDumpLevel,
             )
             index = 0
             for rider in riders:
@@ -311,8 +303,7 @@ class tldnBucketBrain(ptResponder):
 
                 # Enable the enter activators
                 PtDebugPrint(
-                    "tldnBucketBrain.OnServerInit():\tEnabling the bucket enter activators!",
-                    level=kDebugDumpLevel,
+                    "tldnBucketBrain.OnServerInit():\tEnabling the bucket enter activators!", level=kDebugDumpLevel,
                 )
                 actBktEnter1.enable()
                 actBktEnter2.enable()
@@ -407,8 +398,7 @@ class tldnBucketBrain(ptResponder):
 
         avaID = PtGetClientIDFromAvatarKey(avaObj.getKey())
         PtDebugPrint(
-            "tldnBucketBrain.AvatarPage():\tAvatar %s is trying to page out" % avaID,
-            level=kDebugDumpLevel,
+            "tldnBucketBrain.AvatarPage():\tAvatar %s is trying to page out" % avaID, level=kDebugDumpLevel,
         )
 
         riders = ageSDL[kStringAgeSDLRiders]
@@ -468,8 +458,7 @@ class tldnBucketBrain(ptResponder):
         ageSDL.setIndex(kStringAgeSDLRiders, index, -1)
 
         PtDebugPrint(
-            "tldnBucketBrain.AvatarPage():\tPruned rider: %s from bucket: %s" % (avaID, index),
-            level=kDebugDumpLevel,
+            "tldnBucketBrain.AvatarPage():\tPruned rider: %s from bucket: %s" % (avaID, index), level=kDebugDumpLevel,
         )
         return
 
@@ -495,8 +484,7 @@ class tldnBucketBrain(ptResponder):
                 self.UpdateBucketState(kBucketInputs.Power, ageSDL[kStringAgeSDLPowerOn][0])
             elif not powerOn:
                 PtDebugPrint(
-                    "tldnBucketBrain.OnSDLNotify()\t The power has been turned off",
-                    level=kDebugDumpLevel,
+                    "tldnBucketBrain.OnSDLNotify()\t The power has been turned off", level=kDebugDumpLevel,
                 )
                 self.UpdateBucketState(kBucketInputs.Power, ageSDL[kStringAgeSDLPowerOn][0])
             else:
@@ -563,9 +551,7 @@ class tldnBucketBrain(ptResponder):
                     avaID = PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey())
                     index = 0
                     for bucket in buckets:
-                        if (
-                            bucket == objTrigger and riders[index] == avaID
-                        ):  # if local avatar is in the bucket
+                        if bucket == objTrigger and riders[index] == avaID:  # if local avatar is in the bucket
                             if id == rgnSensor01.id:
                                 cam = ptCamera()
                                 cam.save(Camera01.sceneobject.getKey())
@@ -581,8 +567,7 @@ class tldnBucketBrain(ptResponder):
                         index = index + 1
                 else:
                     PtDebugPrint(
-                        "ERROR: tldnBucketBrain.OnNotify():\t Encountered unknown camera event.",
-                        level=kErrorLevel,
+                        "ERROR: tldnBucketBrain.OnNotify():\t Encountered unknown camera event.", level=kErrorLevel,
                     )
                     return
             PtDebugPrint(
@@ -626,8 +611,7 @@ class tldnBucketBrain(ptResponder):
         # lever pull/push activator
         if id == actGo1.id:
             PtDebugPrint(
-                "tldnBucketBrain.OnNotify():\tEncountered the lever pull/push",
-                level=kDebugDumpLevel,
+                "tldnBucketBrain.OnNotify():\tEncountered the lever pull/push", level=kDebugDumpLevel,
             )
 
             leverPulled = ageSDL[kStringAgeSDLLeverPulled][0]
@@ -788,10 +772,7 @@ class tldnBucketBrain(ptResponder):
             # Setup avatar for callbacks
             avaIDAtEntry = PtGetClientIDFromAvatarKey(avatar.getKey())
 
-            if (
-                ageSDL[kStringAgeSDLBucketState][0] == kBucketStates.Dump
-                and avaIDAtDump == avaIDAtEntry
-            ):
+            if ageSDL[kStringAgeSDLBucketState][0] == kBucketStates.Dump and avaIDAtDump == avaIDAtEntry:
                 PtDebugPrint(
                     "ERROR: tldnBucketBrain.OnNotify():\tPHYSICS ERROR--->the avatar being dumped cannot enter a bucket!!!",
                     level=kErrorLevel,
@@ -934,20 +915,14 @@ class tldnBucketBrain(ptResponder):
                 return
 
             PtDebugPrint(
-                "tldnBucketBrain.OnNotify():\tBucket #%s reached the bucket dump dump point"
-                % bucketAtDump,
+                "tldnBucketBrain.OnNotify():\tBucket #%s reached the bucket dump dump point" % bucketAtDump,
                 level=kDebugDumpLevel,
             )
             ageSDL[kStringAgeSDLBucketAtDump] = (bucketAtDump,)
             self.UpdateBucketState(kBucketInputs.Dump)
 
         # Start the avatar and spores falling animations
-        if (
-            id == respBktOpen01.id
-            or id == respBktOpen02.id
-            or id == respBktOpen03.id
-            or id == respBktOpen04.id
-        ):
+        if id == respBktOpen01.id or id == respBktOpen02.id or id == respBktOpen03.id or id == respBktOpen04.id:
             bucketAtDump = ageSDL[kStringAgeSDLBucketAtDump][0]
 
             # Get Avatar!
@@ -1012,8 +987,7 @@ class tldnBucketBrain(ptResponder):
             ageSDL[kStringAgeSDLBucketAtDump] = (-1,)
             self.UpdateBucketState(kBucketInputs.DumpCB)
             PtDebugPrint(
-                "tldnBucketBrain.OnNotify():\tRemoved rider from bucket #%d" % bucketAtDump,
-                level=kDebugDumpLevel,
+                "tldnBucketBrain.OnNotify():\tRemoved rider from bucket #%d" % bucketAtDump, level=kDebugDumpLevel,
             )
 
         # -----------------------------------#
@@ -1037,10 +1011,7 @@ class tldnBucketBrain(ptResponder):
                 # Tye: we need some error output here!
                 return
 
-            if (
-                bucketAtDump != ageSDL[kStringAgeSDLBucketAtDump]
-                and SensorAtEntry.sceneobject.isLocallyOwned()
-            ):
+            if bucketAtDump != ageSDL[kStringAgeSDLBucketAtDump] and SensorAtEntry.sceneobject.isLocallyOwned():
                 # This should never happen, but just in case, we'll add it in....
                 ageSDL[kStringAgeSDLBucketAtDump] = (bucketAtDump,)
 
@@ -1231,9 +1202,7 @@ class tldnBucketBrain(ptResponder):
 
         ############[ BoardCB ]#############
         elif param == kBucketInputs.BoardCB:
-            riderInBucket = (
-                self.RiderInDockedBucket()
-            )  # Tye might not be necessary to put this here...
+            riderInBucket = self.RiderInDockedBucket()  # Tye might not be necessary to put this here...
 
             # --------------[ BoardCB-->QBoard ]---------------
             if curBucketState == kBucketStates.QBoard:
@@ -1329,8 +1298,7 @@ class tldnBucketBrain(ptResponder):
         else:
             # Need to cut out here; if we try to enter error reporting below, then we'll crash the script!
             PtDebugPrint(
-                "ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown input: %s" % param,
-                level=kErrorLevel,
+                "ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown input: %s" % param, level=kErrorLevel,
             )
             return
 
@@ -1464,8 +1432,7 @@ class tldnBucketBrain(ptResponder):
             pass
         else:
             PtDebugPrint(
-                "ERROR: tldnBucketBrain.RealizeBucketState():-->Received Unknown State: %s"
-                % (curBucketState),
+                "ERROR: tldnBucketBrain.RealizeBucketState():-->Received Unknown State: %s" % (curBucketState),
                 level=kErrorLevel,
             )
 

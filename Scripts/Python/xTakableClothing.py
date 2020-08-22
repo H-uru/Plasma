@@ -275,9 +275,7 @@ class xTakableClothing(ptModifier):
             name = item[0]
             type = item[1]
             if type == kHairClothingItem:
-                PtDebugPrint(
-                    "DEBUG: xTakableClothing.IGetHairColor():  Found current hair item: " + name
-                )
+                PtDebugPrint("DEBUG: xTakableClothing.IGetHairColor():  Found current hair item: " + name)
                 color = avatar.avatar.getTintClothingItem(name, 1)
                 PtDebugPrint(
                     "DEBUG: xTakableClothing.IGetHairColor():  Hair color (r,g,b) = (%d,%d,%d)"
@@ -302,9 +300,7 @@ class xTakableClothing(ptModifier):
         red = float(red) / float(255)
         green = float(green) / float(255.0)
         blue = float(blue) / float(255.0)
-        PtDebugPrint(
-            "Tint " + str(oneOrTwo) + " is (" + str(red) + "," + str(green) + "," + str(blue) + ")"
-        )
+        PtDebugPrint("Tint " + str(oneOrTwo) + " is (" + str(red) + "," + str(green) + "," + str(blue) + ")")
         return ptColor(red, green, blue, 1)
 
     def IGetItem(self, name):
@@ -342,15 +338,13 @@ class xTakableClothing(ptModifier):
         playerCNode = ptVault().getAvatarClosetFolder()
         PtDebugPrint("xTakableClothing: getAvatarClosetFolder Type = " + str(playerCNode.getType()))
         PtDebugPrint(
-            "xTakableClothing: getAvatarClosetFolder Child Node Count = "
-            + str(playerCNode.getChildNodeCount())
+            "xTakableClothing: getAvatarClosetFolder Child Node Count = " + str(playerCNode.getChildNodeCount())
         )
         if playerCNode.getChildNodeCount() > 0:
             playerCNodeList = playerCNode.getChildNodeRefList()
             for folderChild in playerCNodeList:
                 PtDebugPrint(
-                    "xTakableClothing: looking at child node " + str(folderChild),
-                    level=kDebugDumpLevel,
+                    "xTakableClothing: looking at child node " + str(folderChild), level=kDebugDumpLevel,
                 )
                 childNode = folderChild.getChild()
                 if childNode != type(None):
@@ -358,10 +352,7 @@ class xTakableClothing(ptModifier):
                     SDLNode = childNode.upcastToSDLNode()
                     if SDLNode is not None:
                         rec = SDLNode.getStateDataRecord()
-                        PtDebugPrint(
-                            "xTakableClothing: getStateDataRecord().getName(): "
-                            + str(rec.getName())
-                        )
+                        PtDebugPrint("xTakableClothing: getStateDataRecord().getName(): " + str(rec.getName()))
                         SDLVarList = rec.getVarList()
                         for var in SDLVarList:
                             varnode = rec.findVar(var)
@@ -417,9 +408,7 @@ class xTakableClothing(ptModifier):
             return
 
         if not PtWasLocallyNotified(self.key):
-            PtDebugPrint(
-                "DEBUG: xTakableClothing.OnNotify(): Message didn't come from our player, ignoring"
-            )
+            PtDebugPrint("DEBUG: xTakableClothing.OnNotify(): Message didn't come from our player, ignoring")
             return
 
         if id == actClickable.id:
@@ -481,12 +470,8 @@ class xTakableClothing(ptModifier):
                         avatar.avatar.tintClothingItem(matchingItem[0], color1, 0)
 
                         # START-->Hard Hat color fix
-                        if (matchingItem[0] == "MReward_HardHat") or (
-                            matchingItem[0] == "FRewardHardHat"
-                        ):
-                            avatar.avatar.tintClothingItem(
-                                matchingItem[0], ptColor().orange(), 2, 1
-                            )
+                        if (matchingItem[0] == "MReward_HardHat") or (matchingItem[0] == "FRewardHardHat"):
+                            avatar.avatar.tintClothingItem(matchingItem[0], ptColor().orange(), 2, 1)
                         else:
                             avatar.avatar.tintClothingItemLayer(matchingItem[0], color2, 2, 1)
                         # END-->Hard Hat color fix
@@ -509,15 +494,13 @@ class xTakableClothing(ptModifier):
                 actClickable.disable()  # don't let them take it again if they already have it
         else:
             PtDebugPrint(
-                "DEBUG: xTakableClothing.IEnableClothing():  Enabling clickable on %s..."
-                % self.sceneobject.getName()
+                "DEBUG: xTakableClothing.IEnableClothing():  Enabling clickable on %s..." % self.sceneobject.getName()
             )
             actClickable.enable()
 
     def IDisableClothing(self):
         PtDebugPrint(
-            "DEBUG: xTakableClothing.IDisableClothing():  Disabling clickable on %s..."
-            % self.sceneobject.getName()
+            "DEBUG: xTakableClothing.IDisableClothing():  Disabling clickable on %s..." % self.sceneobject.getName()
         )
         actClickable.disable()
 
@@ -533,9 +516,7 @@ class ClothingItem:
         self.wornwith = []
         self.donotwear = 0
         self.coloredAsHair = 0
-        self.isClothingSet = (
-            0  # are we part of a set of clothing? (clothing that is worn and unworn as a group)
-        )
+        self.isClothingSet = 0  # are we part of a set of clothing? (clothing that is worn and unworn as a group)
         self.clothingSet = ""  # the set of clothing we belong to
         try:
             self.name = clothing[0]

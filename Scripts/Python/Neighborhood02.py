@@ -123,13 +123,7 @@ class Neighborhood02(ptResponder):
                         thetext = playerlist.getText()
                         if (thetext.count("\n") + 1) > 15:
                             thetext = thetext[: thetext.rfind("\n")]
-                        thetext = (
-                            currenttimestr
-                            + (" " * (30 - len(currenttimestr)))
-                            + playername
-                            + "\n"
-                            + thetext
-                        )
+                        thetext = currenttimestr + (" " * (30 - len(currenttimestr))) + playername + "\n" + thetext
                         playerlist.setText(thetext)
                         playerlist.save()
                     else:

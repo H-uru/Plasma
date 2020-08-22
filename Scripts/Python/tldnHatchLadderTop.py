@@ -55,10 +55,7 @@ import PlasmaControlKeys
 ActStart = ptAttribActivator(4, "Starts the climb")
 Climber = ptAttribBehavior(5, "The multistage behavior")
 respHatchOps = ptAttribResponder(
-    6,
-    "Rspndr: Hatch Ops",
-    ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"],
-    netForce=1,
+    6, "Rspndr: Hatch Ops", ["lockedabove", "openabove", "lockedbelow", "openbelow", "close"], netForce=1,
 )
 
 # ---------
@@ -111,9 +108,7 @@ class tldnHatchLadderTop(ptModifier):
                 cabinDrained = False
                 hatchOpen = False
                 hatchLocked = True
-                PtDebugPrint(
-                    "tldnHatchLadderTop.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:"
-                )
+                PtDebugPrint("tldnHatchLadderTop.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:")
             PtDebugPrint(
                 "tldnHatchLadderTop.OnServerInitComplete():\t%s=%d, %s=%d, %s=%d"
                 % (
@@ -161,9 +156,7 @@ class tldnHatchLadderTop(ptModifier):
         global cabinDrained
 
         PtDebugPrint(" ")
-        PtDebugPrint(
-            "-------------------------------------------------------------------------------------------"
-        )
+        PtDebugPrint("-------------------------------------------------------------------------------------------")
         PtDebugPrint(" ")
         PtDebugPrint("tldnHatchLadderTop:OnNotify  state=%d id=%d events=" % (state, id), events)
 
@@ -184,11 +177,7 @@ class tldnHatchLadderTop(ptModifier):
         # stage6 - ladderdown
         ###################
 
-        if (
-            id == Climber.id
-            and PtWasLocallyNotified(self.key)
-            and ClimbingAvatar == PtGetLocalAvatar()
-        ):
+        if id == Climber.id and PtWasLocallyNotified(self.key) and ClimbingAvatar == PtGetLocalAvatar():
             for event in events:
                 # multistage callback from stage 2 send when advancing
                 if event[0] == kMultiStageEvent:
@@ -198,10 +187,7 @@ class tldnHatchLadderTop(ptModifier):
                         stageNum = event[1]
                         PtDebugPrint("tldnHatchLadderTop: message from multistage %i" % stageNum)
                         if event[2] == kRegressPrevStage and (stageNum == 2 or stageNum == 6):
-                            PtDebugPrint(
-                                "tldnHatchLadderTop: Got stage Regress callback from stage %d"
-                                % stageNum
-                            )
+                            PtDebugPrint("tldnHatchLadderTop: Got stage Regress callback from stage %d" % stageNum)
                             self.INegotiateHatch()
                         elif event[2] == kAdvanceNextStage:
                             if stageNum == 1:
@@ -216,9 +202,7 @@ class tldnHatchLadderTop(ptModifier):
                                     Climber.gotoStage(ClimbingAvatar, 2, dirFlag=1, isForward=1)
                                 PtDebugPrint("tldnHatchLadderTop: now stage 2/6 again")
                             elif stageNum == 5:
-                                PtDebugPrint(
-                                    "tldnHatchLadderTop: Got through hatch: finishing & removing brain."
-                                )
+                                PtDebugPrint("tldnHatchLadderTop: Got through hatch: finishing & removing brain.")
                                 Climber.gotoStage(ClimbingAvatar, -1)
                                 # ActStart.enable()
                             elif stageNum == 3:

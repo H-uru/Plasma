@@ -73,8 +73,7 @@ class grtzMarkerScopes(ptResponder):
         self.id = 212
         self.version = MaxVersionNumber
         PtDebugPrint(
-            "grtzMarkerScope: Max version %d - minor version %d"
-            % (MaxVersionNumber, MinorVersionNumber),
+            "grtzMarkerScope: Max version %d - minor version %d" % (MaxVersionNumber, MinorVersionNumber),
             level=kDebugDumpLevel,
         )
         self.pendingClose = 0
@@ -94,8 +93,7 @@ class grtzMarkerScopes(ptResponder):
         if boolOperated:
             if solo:
                 PtDebugPrint(
-                    "grtzMarkerScope.Load():\tboolOperated=%d but no one else here...correcting"
-                    % boolOperated,
+                    "grtzMarkerScope.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated,
                     level=kDebugDumpLevel,
                 )
                 boolOperated = 0
@@ -105,8 +103,7 @@ class grtzMarkerScopes(ptResponder):
             else:
                 aTrigger.disable()
                 PtDebugPrint(
-                    "grtzMarkerScope.Load():\tboolOperated=%d, disabling telescope clickable"
-                    % boolOperated,
+                    "grtzMarkerScope.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated,
                     level=kDebugDumpLevel,
                 )
 
@@ -138,9 +135,7 @@ class grtzMarkerScopes(ptResponder):
         global LocalAvatar
         global boolScopeOperator
         PtDebugPrint(
-            "grtzMarkerScope:OnNotify  state=%f id=%d events=" % (state, id),
-            events,
-            level=kDebugDumpLevel,
+            "grtzMarkerScope:OnNotify  state=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel,
         )
 
         if id == (-1):
@@ -153,11 +148,7 @@ class grtzMarkerScopes(ptResponder):
             self.IStartTelescope()
         # check if its an advance stage notify
         for event in events:
-            if (
-                event[0] == kMultiStageEvent
-                and (event[1] == 0 or event[1] == 1)
-                and event[2] == kAdvanceNextStage
-            ):
+            if event[0] == kMultiStageEvent and (event[1] == 0 or event[1] == 1) and event[2] == kAdvanceNextStage:
                 if boolScopeOperator:
                     self.IEngageTelescope()
                     boolScopeOperator = 0
@@ -166,9 +157,7 @@ class grtzMarkerScopes(ptResponder):
     def OnGUINotify(self, id, control, event):
         "Notifications from the vignette"
         PtDebugPrint(
-            "grtzMarkerScope.GUI Notify id=%d, event=%d control=" % (id, event),
-            control,
-            level=kDebugDumpLevel,
+            "grtzMarkerScope.GUI Notify id=%d, event=%d control=" % (id, event), control, level=kDebugDumpLevel,
         )
         if event == kDialogLoaded:
             # if the dialog was just loaded then show it
@@ -189,9 +178,7 @@ class grtzMarkerScopes(ptResponder):
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         self.SDL["OperatorID"] = (avID,)
         PtDebugPrint(
-            "grtzMarkerScope.OnNotify:\twrote SDL - scope operator id = ",
-            avID,
-            level=kDebugDumpLevel,
+            "grtzMarkerScope.OnNotify:\twrote SDL - scope operator id = ", avID, level=kDebugDumpLevel,
         )
         # start the behavior
         aBehavior.run(LocalAvatar)
@@ -222,9 +209,7 @@ class grtzMarkerScopes(ptResponder):
         note.netForce(0)
         note.send()
         # exit behavior...which is in the next stage
-        PtAtTimeCallback(
-            self.key, 0.5, 1
-        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtAtTimeCallback(self.key, 0.5, 1)  # wait for player to finish exit one-shot, then reenable clickable
         # disable the Control key events
         PtDisableControlKeyEvents(self.key)
         # re-enable the telescope for someone else to use
@@ -241,9 +226,7 @@ class grtzMarkerScopes(ptResponder):
             # just use gotoStage the last stage by number because of a bug in the SDL send state
             # aBehavior.nextStage(LocalAvatar)
             aBehavior.gotoStage(LocalAvatar, 3)
-            PtAtTimeCallback(
-                self.key, 3, 2
-            )  # wait for player to finish exit one-shot, then reenable clickable
+            PtAtTimeCallback(self.key, 3, 2)  # wait for player to finish exit one-shot, then reenable clickable
         if id == 2:
             aTrigger.enable()
             PtDebugPrint("grtzMarkerScope.OnTimer:\tclickable reenabled", level=kDebugDumpLevel)

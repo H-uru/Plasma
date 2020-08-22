@@ -98,9 +98,7 @@ class AhnyVogondolaRide(ptResponder):
                 if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     lower.run(self.key, avatar=PtGetLocalAvatar())
                     PtDebugPrint("finished smart-seek")
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     theAvatar = PtGetLocalAvatar()
                     theAvatar.physics.warpObj(dummy.value.getKey())
                     PtAttachObject(theAvatar.getKey(), dummy.value.getKey())

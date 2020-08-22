@@ -80,9 +80,7 @@ respNoDoorJC = ptAttribResponder(19, "No door JC", ["1", "2"])
 respDoorNotOpen = ptAttribResponder(20, "Tree door not opened", ["1", "2"])
 
 respZandiSayings = ptAttribResponder(
-    21,
-    "Zandi sayings",
-    ["welcome", "dryheat", "pizza", "keepexploring", "interrupt", "steak", "welcome2"],
+    21, "Zandi sayings", ["welcome", "dryheat", "pizza", "keepexploring", "interrupt", "steak", "welcome2"],
 )
 actZandiClick = ptAttribActivator(22, "Zandi clickable")
 
@@ -173,9 +171,7 @@ class clftNpcZandi(ptModifier):
         elif id == MultiStage01.id:
             PtDebugPrint("notified by behavior")
             for event in events:
-                if (
-                    event[0] == 10 and event[2] == 3
-                ):  # A Zandi behavior just finished. Returning to idle animation.
+                if event[0] == 10 and event[2] == 3:  # A Zandi behavior just finished. Returning to idle animation.
                     PtDebugPrint("zandi is done doing a behavior")
                     self.DoingBehavior = 0
                     break
@@ -285,9 +281,7 @@ class clftNpcZandi(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("YeeshaVisionViewed")
         if entry is None:
-            PtDebugPrint(
-                "ERROR: clftNpcZandi.HaventSeenImagerMessage: cannot find YeeshaVisionViewed chronicle entry"
-            )
+            PtDebugPrint("ERROR: clftNpcZandi.HaventSeenImagerMessage: cannot find YeeshaVisionViewed chronicle entry")
             return 1
 
         if entry.chronicleGetValue() == "1":

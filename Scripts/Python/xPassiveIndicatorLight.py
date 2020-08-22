@@ -71,10 +71,7 @@ class xPassiveIndicatorLight(ptResponder):
 
     def OnServerInitComoplete(self):
         if self.SDL == None:
-            PtDebugPrint(
-                "xPassiveIndicatorLight.OnServerInitComplete():\tERROR---missing SDL (%s)"
-                % varstring.value
-            )
+            PtDebugPrint("xPassiveIndicatorLight.OnServerInitComplete():\tERROR---missing SDL (%s)" % varstring.value)
             return
         self.SDL.setDefault("enabled", (0,))
 

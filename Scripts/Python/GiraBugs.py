@@ -152,9 +152,7 @@ class GiraBugs(ptResponder):
         global running
 
         avatar = PtGetLocalAvatar()
-        self.bugCount = PtGetNumParticles(
-            avatar.getKey()
-        )  # update with the number currently on the avatar
+        self.bugCount = PtGetNumParticles(avatar.getKey())  # update with the number currently on the avatar
         if self.bugCount < 0:
             self.bugCount = 0  # PtGetNumParticles had an error, probably don't have any
 
@@ -181,9 +179,7 @@ class GiraBugs(ptResponder):
             elif particlesToTransfer != 0:
                 # add some particles
                 PtDebugPrint("GiraBugs.OnTimer() - Particles to add: " + str(particlesToTransfer))
-                PtTransferParticlesToObject(
-                    particleSystem.value.getKey(), avatar.getKey(), particlesToTransfer
-                )
+                PtTransferParticlesToObject(particleSystem.value.getKey(), avatar.getKey(), particlesToTransfer)
             PtSetParticleDissentPoint(0, 0, 10000, avatar.getKey())
             return
 

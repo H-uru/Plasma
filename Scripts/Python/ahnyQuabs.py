@@ -100,8 +100,7 @@ class ahnyQuabs(ptModifier, object):
     def OnServerInitComplete(self):
         PtDebugPrint("ahnyQuabs.OnServerInitComplete():\tWhen I got here...", level=kWarningLevel)
         PtDebugPrint(
-            "ahnyQuabs.OnServerInitComplete():\t... there were already %i quabs" % self.quabs,
-            level=kWarningLevel,
+            "ahnyQuabs.OnServerInitComplete():\t... there were already %i quabs" % self.quabs, level=kWarningLevel,
         )
         self.brains = PtGetAIAvatarsByModelName(kQuabAvatarName)
 
@@ -111,8 +110,7 @@ class ahnyQuabs(ptModifier, object):
         #               to spawn another 20 or so dupe avatar clones.
         if len(self.brains) != 0:
             PtDebugPrint(
-                "ahnyQuabs.OnServerInitComplete():\t... and they were already spawned!",
-                level=kWarningLevel,
+                "ahnyQuabs.OnServerInitComplete():\t... and they were already spawned!", level=kWarningLevel,
             )
             for brain in self.brains:
                 self._PrepCritterBrain(brain[0])
@@ -123,14 +121,12 @@ class ahnyQuabs(ptModifier, object):
             toSpawn = int(math.floor(delta / kQuabGestationTime))
             if toSpawn:
                 PtDebugPrint(
-                    "ahnyQuabs.OnServerInitComplete():\t... and I need to spawn %i more" % toSpawn,
-                    level=kWarningLevel,
+                    "ahnyQuabs.OnServerInitComplete():\t... and I need to spawn %i more" % toSpawn, level=kWarningLevel,
                 )
                 self.quabs += toSpawn
             if self.quabs > kMaxNumQuabs:
                 PtDebugPrint(
-                    "ahnyQuabs.OnServerInitComplete():\t... woah, %i quabs?!" % self.quabs,
-                    level=kWarningLevel,
+                    "ahnyQuabs.OnServerInitComplete():\t... woah, %i quabs?!" % self.quabs, level=kWarningLevel,
                 )
                 self.quabs = kMaxNumQuabs
 
@@ -206,9 +202,7 @@ class ahnyQuabs(ptModifier, object):
         runaway = runaway.scale(100)  # so we don't just move a centimeter away
         curPos = brain.getSceneObject().position()
         endPos = ptPoint3(
-            curPos.getX() + runaway.getX(),
-            curPos.getY() + runaway.getY(),
-            curPos.getZ() + runaway.getZ(),
+            curPos.getX() + runaway.getX(), curPos.getY() + runaway.getY(), curPos.getZ() + runaway.getZ(),
         )
 
         # Now, actually make the quab run away

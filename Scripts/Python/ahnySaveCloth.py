@@ -117,9 +117,7 @@ class ahnySaveCloth(ptModifier):
                     whereAmI = 4
                 else:
                     offset = str(ageSDL["ahnyCurrentOffset"][0])
-                    PtDebugPrint(
-                        "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
-                    )
+                    PtDebugPrint("Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset))
                     whereAmI = (int(sphere) - int(offset)) % 4
                     if whereAmI == 0:
                         whereAmI = 4
@@ -215,10 +213,7 @@ class ahnySaveCloth(ptModifier):
                                 chron = ageDataChild.upcastToChronicleNode()
                                 if chron and chron.getName() == "AhnonaySpawnPoints":
                                     spawn = chron.getValue().split(";")
-                                    newSpawn = "%s;SCSavePoint,SaveClothPoint%s" % (
-                                        spawn[0],
-                                        clothID.value,
-                                    )
+                                    newSpawn = "%s;SCSavePoint,SaveClothPoint%s" % (spawn[0], clothID.value,)
                                     PtDebugPrint(newSpawn)
                                     chron.setValue(newSpawn)
                                     if not gotSC:

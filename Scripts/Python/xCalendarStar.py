@@ -96,10 +96,7 @@ class xCalendarStar(ptResponder):
                 except:
                     PtDebugPrint("ERROR: xCalendarStar.OnFirstUpdate():\tERROR reading age SDL")
                     pass
-                PtDebugPrint(
-                    "DEBUG: xCalendarStar.OnFirstUpdate():\t%s = %d"
-                    % (sdlCalStar.value, boolCalStar)
-                )
+                PtDebugPrint("DEBUG: xCalendarStar.OnFirstUpdate():\t%s = %d" % (sdlCalStar.value, boolCalStar))
 
     def OnServerInitComplete(self):
         global boolCalStar
@@ -110,14 +107,9 @@ class xCalendarStar(ptResponder):
                 try:
                     boolCalStar = psnlSDL[sdlCalStar.value][0]
                 except:
-                    PtDebugPrint(
-                        "ERROR: xCalendarStar.OnServerInitComplete():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("ERROR: xCalendarStar.OnServerInitComplete():\tERROR reading age SDL")
                     pass
-                PtDebugPrint(
-                    "DEBUG: xCalendarStar.OnServerInitComplete():\t%s = %d"
-                    % (sdlCalStar.value, boolCalStar)
-                )
+                PtDebugPrint("DEBUG: xCalendarStar.OnServerInitComplete():\t%s = %d" % (sdlCalStar.value, boolCalStar))
 
     def OnNotify(self, state, id, events):
         PtDebugPrint("xCalendarStar.OnNotify(): state = %d, id = %d" % (state, id))
@@ -127,9 +119,7 @@ class xCalendarStar(ptResponder):
             return
         # if not PtWasLocallyNotified(self.key):
         if PtFindAvatar(events) != PtGetLocalAvatar():
-            PtDebugPrint(
-                "DEBUG: xCalendarStar.OnNotify():\t received notify from non-local player, ignoring..."
-            )
+            PtDebugPrint("DEBUG: xCalendarStar.OnNotify():\t received notify from non-local player, ignoring...")
             return
         else:
             PtDebugPrint(
@@ -138,9 +128,7 @@ class xCalendarStar(ptResponder):
             )
 
         if not self.GotPage():
-            PtDebugPrint(
-                "xCalendarStar.OnNotify(): do NOT have YeeshaPage20 (the Calendar Pinnacle) yet"
-            )
+            PtDebugPrint("xCalendarStar.OnNotify(): do NOT have YeeshaPage20 (the Calendar Pinnacle) yet")
             return
         else:
             PtDebugPrint("xCalendarStar.OnNotify():  have YeeshaPage20 (the Calendar Pinnacle)")

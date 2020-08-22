@@ -70,9 +70,7 @@ class xAgeSDLBoolSet(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolSet.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolSet.OnFirstUpdate():\tERROR: missing SDL var name in max file")
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -103,6 +101,5 @@ class xAgeSDLBoolSet(ptResponder):
         ageSDL.setTagString(stringVarName.value, stringInfo.value)
         ageSDL[stringVarName.value] = (intValue.value,)
         PtDebugPrint(
-            "DEBUG: xAgeSDLBoolSet.OnNotify():\tset age SDL var %s to %d"
-            % (stringVarName.value, intValue.value)
+            "DEBUG: xAgeSDLBoolSet.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value, intValue.value)
         )

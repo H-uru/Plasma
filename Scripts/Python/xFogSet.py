@@ -108,9 +108,7 @@ class xFogSet(ptMultiModifier):
             self.PointA_RGBList[1] = float(self.PointA_RGBList[1])
             self.PointA_RGBList[2] = float(self.PointA_RGBList[2])
 
-        newfogcolor = ptColor(
-            red=self.PointA_RGBList[0], green=self.PointA_RGBList[1], blue=self.PointA_RGBList[2],
-        )
+        newfogcolor = ptColor(red=self.PointA_RGBList[0], green=self.PointA_RGBList[1], blue=self.PointA_RGBList[2],)
         PtFogSetDefColor(newfogcolor)
 
         if FogMode.value == "Linear":

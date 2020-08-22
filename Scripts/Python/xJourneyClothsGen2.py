@@ -189,9 +189,7 @@ class xJourneyClothsGen2(ptModifier):
             #                return
 
             if vault.amOwnerOfCurrentAge() and PtWasLocallyNotified(self.key):
-                PtDebugPrint(
-                    "DEBUG: xJourneyClothsGen2.OnNotify: am owner of current age, getting save point"
-                )
+                PtDebugPrint("DEBUG: xJourneyClothsGen2.OnNotify: am owner of current age, getting save point")
                 # if 1:
                 try:
                     # Save the camera stack
@@ -231,9 +229,7 @@ class xJourneyClothsGen2(ptModifier):
                     # Done saving the camera stack
 
                 except:
-                    PtDebugPrint(
-                        "ERROR: xJourneyClothsGen2.OnNotify: error occurred doing the whole save point thing"
-                    )
+                    PtDebugPrint("ERROR: xJourneyClothsGen2.OnNotify: error occurred doing the whole save point thing")
             ##            else:
             ##                PtDebugPrint("DEBUG: xJourneyClothsGen2.OnNotify: not the owner of the age, get journey cloth now")
             ##                self.OnTimer(TimerID.AddSavePoint)
@@ -269,9 +265,7 @@ class xJourneyClothsGen2(ptModifier):
         PtDebugPrint("You've found %s JourneyCloths" % (length))
 
         if length < 0 or length > 7:
-            PtDebugPrint(
-                "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
-            )
+            PtDebugPrint("xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow.")
 
         if length == 1:
             HandAnim01.run(self.key)
@@ -302,9 +296,7 @@ class xJourneyClothsGen2(ptModifier):
             HandGlowFullAudio.run(self.key)
 
         else:
-            PtDebugPrint(
-                "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
-            )
+            PtDebugPrint("xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow.")
 
     def RandomBahroSounds(self):
         whichsound = xRandom.random.randint(1, 4)
@@ -347,10 +339,7 @@ class xJourneyClothsGen2(ptModifier):
     def OnTimer(self, id):
         global ClothInUse
         if id == TimerID.AddJCProgress:
-            PtDebugPrint(
-                "DEBUG: xJourneyClothsGen2.OnTimer:\tJourneyCloth %s has reset."
-                % (ClothLetter.value)
-            )
+            PtDebugPrint("DEBUG: xJourneyClothsGen2.OnTimer:\tJourneyCloth %s has reset." % (ClothLetter.value))
             ClothInUse = 0
             Activator.enable()
 

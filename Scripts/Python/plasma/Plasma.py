@@ -1739,15 +1739,7 @@ The color will be a ptColor object."""
         pass
 
     def gotoStage(
-        self,
-        behaviorKey,
-        stage,
-        transitionTime,
-        setTimeFlag,
-        newTime,
-        SetDirectionFlag,
-        isForward,
-        netForce,
+        self, behaviorKey, stage, transitionTime, setTimeFlag, newTime, SetDirectionFlag, isForward, netForce,
     ):
         """Tells a multistage behavior to go to a particular stage"""
         pass
@@ -1763,14 +1755,7 @@ Such as a game master, only running on the client that owns a particular object"
         pass
 
     def nextStage(
-        self,
-        behaviorKey,
-        transitionTime,
-        setTimeFlag,
-        newTime,
-        SetDirectionFlag,
-        isForward,
-        netForce,
+        self, behaviorKey, transitionTime, setTimeFlag, newTime, SetDirectionFlag, isForward, netForce,
     ):
         """Tells a multistage behavior to go to the next stage (Why does Matt like so many parameters?)"""
         pass
@@ -1786,14 +1771,7 @@ Such as a game master, only running on the client that owns a particular object"
         pass
 
     def previousStage(
-        self,
-        behaviorKey,
-        transitionTime,
-        setTimeFlag,
-        newTime,
-        SetDirectionFlag,
-        isForward,
-        netForce,
+        self, behaviorKey, transitionTime, setTimeFlag, newTime, SetDirectionFlag, isForward, netForce,
     ):
         """Tells a multistage behavior to go to the previous stage"""
         pass
@@ -4202,9 +4180,7 @@ class ptGUIControlListBox(ptGUIControl):
         """Appends an image item to the listbox"""
         pass
 
-    def addImageAndSwatchesInBox(
-        self, image, x, y, width, height, respectAlpha, primary, secondary
-    ):
+    def addImageAndSwatchesInBox(self, image, x, y, width, height, respectAlpha, primary, secondary):
         """Add the image and color swatches to the list"""
         pass
 

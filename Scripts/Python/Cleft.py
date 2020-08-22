@@ -244,9 +244,7 @@ class Cleft(ptResponder):
         if loadTomahna:
             SDLVarName = "clftTomahnaActive"
             ageSDL[SDLVarName] = (1,)
-            PtDebugPrint(
-                "Cleft.OnServerInitComplete: loadTomahna is 1, setting clftTomahnaActive SDL to 1"
-            )
+            PtDebugPrint("Cleft.OnServerInitComplete: loadTomahna is 1, setting clftTomahnaActive SDL to 1")
             # PtFogSetDefLinear(start, end, density)
             PtFogSetDefLinear(0, 0, 0)
             PtSetClearColor(0.4, 0.4, 0.5)
@@ -259,9 +257,7 @@ class Cleft(ptResponder):
                 )
                 PtPageInNode("clftSceneBahro")
             else:
-                PtDebugPrint(
-                    "Cleft.OnServerInitComplete: SDL says SceneBahro already played, will NOT page in"
-                )
+                PtDebugPrint("Cleft.OnServerInitComplete: SDL says SceneBahro already played, will NOT page in")
 
             ageSDL.setNotify(self.key, SDLVarSceneBahro, 0.0)
 
@@ -278,16 +274,12 @@ class Cleft(ptResponder):
                     )
                     ageSDL[SDLVarOfficeDoor] = (0,)
             else:
-                PtDebugPrint(
-                    "Cleft.OnServerInitComplete: SDL says SceneYeesha already played, will NOT page in"
-                )
+                PtDebugPrint("Cleft.OnServerInitComplete: SDL says SceneYeesha already played, will NOT page in")
 
         else:
             SDLVarName = "clftTomahnaActive"
             ageSDL[SDLVarName] = (0,)
-            PtDebugPrint(
-                "Cleft.OnServerInitComplete: loadTomahna is 0, setting clftTomahnaActive SDL set to 0"
-            )
+            PtDebugPrint("Cleft.OnServerInitComplete: loadTomahna is 0, setting clftTomahnaActive SDL set to 0")
             PtFogSetDefLinear(0, 0, 0)
             PtSetClearColor(0, 0, 0)
 
@@ -329,9 +321,7 @@ class Cleft(ptResponder):
         boolOfficeDoor = ageSDL[SDLVarOfficeDoor][0]
 
         if boolKitchenDoor and boolOfficeDoor:
-            PtDebugPrint(
-                "Cleft.OnLoad: both Kitchen and Office doors are closed... setting Kitchen door SDL to open"
-            )
+            PtDebugPrint("Cleft.OnLoad: both Kitchen and Office doors are closed... setting Kitchen door SDL to open")
             ageSDL[SDLVarKitchenDoor] = (0,)
         else:
             PtDebugPrint(

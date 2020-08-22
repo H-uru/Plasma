@@ -76,9 +76,7 @@ class xAgeSDLIntRespList(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
 
         elif not stringFormat.value:
@@ -131,15 +129,11 @@ class xAgeSDLIntRespList(ptResponder):
         if tag == "fastforward":
             objAvatar = None
             fastforward = 1
-        PtDebugPrint(
-            "DEBUG: xAgeSDLIntRespList.OnSDLNotify():\tnotification from PlayerID: %d" % (PlayerID)
-        )
+        PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnSDLNotify():\tnotification from PlayerID: %d" % (PlayerID))
 
         SDLvalue = ageSDL[stringSDLVarName.value][0]
 
-        PtDebugPrint(
-            "DEBUG: xAgeSDLIntRespList.OnSDLNotify received: %s = %d" % (VARname, SDLvalue)
-        )
+        PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnSDLNotify received: %s = %d" % (VARname, SDLvalue))
 
         # regexp = re.compile(".*_%s" % (stringFormat.value % SDLvalue))
         respName = stringFormat.value % SDLvalue

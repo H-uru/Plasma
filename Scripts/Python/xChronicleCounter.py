@@ -80,9 +80,7 @@ class xChronicleCounter(ptResponder):
 
         if id == act.id:
             if var.value is None:
-                PtDebugPrint(
-                    "xChronicleCounter.py:\t-- ERROR: missing chronicle variable name, can't record --"
-                )
+                PtDebugPrint("xChronicleCounter.py:\t-- ERROR: missing chronicle variable name, can't record --")
                 return
 
             vault = ptVault()
@@ -91,8 +89,7 @@ class xChronicleCounter(ptResponder):
                 # not found... add current level chronicle
                 vault.addChronicleEntry(var.value, kChronicleVarType, "%d" % (kInitialValue))
                 PtDebugPrint(
-                    "xChronicleCounter:\tentered new chronicle counter %s, count is %d"
-                    % (var.value, kInitialValue)
+                    "xChronicleCounter:\tentered new chronicle counter %s, count is %d" % (var.value, kInitialValue)
                 )
             else:
                 count = int(entry.chronicleGetValue())
@@ -100,6 +97,5 @@ class xChronicleCounter(ptResponder):
                 entry.chronicleSetValue("%d" % (count))
                 entry.save()
                 PtDebugPrint(
-                    "xChronicleCounter:\tyour current count for %s is %s"
-                    % (var.value, entry.chronicleGetValue())
+                    "xChronicleCounter:\tyour current count for %s is %s" % (var.value, entry.chronicleGetValue())
                 )

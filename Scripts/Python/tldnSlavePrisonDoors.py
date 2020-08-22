@@ -156,8 +156,7 @@ class tldnSlavePrisonDoors(ptResponder):
             players = PtGetPlayerList()
             if len(players) > 0:
                 PtDebugPrint(
-                    "   - and the number of players is %d, so get plate states from SDL"
-                    % (len(players)),
+                    "   - and the number of players is %d, so get plate states from SDL" % (len(players)),
                     level=kDebugDumpLevel,
                 )
                 for platesdl, actid in PlateSDLs:
@@ -228,8 +227,7 @@ class tldnSlavePrisonDoors(ptResponder):
             except LookupError:
                 theyMatch = 0
                 PtDebugPrint(
-                    "tldSlavePrisonDoors.IEvalPlateAndPaddles: error on SDL %s" % (PadSDL),
-                    level=kErrorLevel,
+                    "tldSlavePrisonDoors.IEvalPlateAndPaddles: error on SDL %s" % (PadSDL), level=kErrorLevel,
                 )
                 break
             # paddle == 0 is down, paddle == 1 is up
@@ -248,8 +246,7 @@ class tldnSlavePrisonDoors(ptResponder):
                 except LookupError:
                     theyMatch = 0
                     PtDebugPrint(
-                        "tldSlavePrisonDoors.IEvalPlateAndPaddles: error on SDL %s"
-                        % (padSDLToplateSDL[PadSDL]),
+                        "tldSlavePrisonDoors.IEvalPlateAndPaddles: error on SDL %s" % (padSDLToplateSDL[PadSDL]),
                         level=kErrorLevel,
                     )
                     break
@@ -275,8 +272,7 @@ class tldnSlavePrisonDoors(ptResponder):
                             plate = 0
             if plate == -1:
                 PtDebugPrint(
-                    "tldSlavePrisonDoors.IEvalPlateAndPaddles: can't find responder for SDLvar %s"
-                    % (PadSDL),
+                    "tldSlavePrisonDoors.IEvalPlateAndPaddles: can't find responder for SDLvar %s" % (PadSDL),
                     level=kErrorLevel,
                 )
                 theyMatch = 0
@@ -288,8 +284,7 @@ class tldnSlavePrisonDoors(ptResponder):
         if theyMatch:
             # raise the inner doors and shut the outer door
             PtDebugPrint(
-                "tldSlavePrisonDoors.IEvalPlateAndPaddles: inner doors up, outer down",
-                level=kDebugDumpLevel,
+                "tldSlavePrisonDoors.IEvalPlateAndPaddles: inner doors up, outer down", level=kDebugDumpLevel,
             )
             if fastforward or respInnerDoor1.getState() != "up":
                 respInnerDoor1.run(self.key, state="up", fastforward=fastforward)
@@ -304,8 +299,7 @@ class tldnSlavePrisonDoors(ptResponder):
         else:
             # raise the outer doors and shut the inner doors
             PtDebugPrint(
-                "tldSlavePrisonDoors.IEvalPlateAndPaddles: inner doors down, outer up",
-                level=kDebugDumpLevel,
+                "tldSlavePrisonDoors.IEvalPlateAndPaddles: inner doors down, outer up", level=kDebugDumpLevel,
             )
             if fastforward or respInnerDoor1.getState() != "down":
                 respInnerDoor1.run(self.key, state="down", fastforward=fastforward)

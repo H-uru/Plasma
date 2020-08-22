@@ -121,9 +121,7 @@ class xDialogClothingBB(ptModifier):
                     if colorIdx >= 0 and colorIdx < len(Tints):
                         self.IColorShirt(Tints[colorIdx])
                 else:
-                    PtDebugPrint(
-                        "xDialogClothingBB: Can't find which radiogroup was hit  rgID=%d" % (rgID)
-                    )
+                    PtDebugPrint("xDialogClothingBB: Can't find which radiogroup was hit  rgID=%d" % (rgID))
 
     def OnClothingUpdate(self):
         "Avatars clothing has changed"
@@ -271,10 +269,7 @@ class xDialogClothingBB(ptModifier):
                 if pantsWornIdx < kPantNumChBoxes:
                     psRG.setValue(pantsWornIdx)
                 else:
-                    PtDebugPrint(
-                        "xDialogClothingBB: currently wearing unknown pants %s"
-                        % (PantNames[pantsWornIdx])
-                    )
+                    PtDebugPrint("xDialogClothingBB: currently wearing unknown pants %s" % (PantNames[pantsWornIdx]))
                     psRG.setValue(-1)  # there is nothing that is selected for nopant wearers
         # set the pants radio group
         ssRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kShirtRadioGroupID))
@@ -286,10 +281,7 @@ class xDialogClothingBB(ptModifier):
                 if shirtWornIdx < kShirtNumChBoxes:
                     ssRG.setValue(shirtWornIdx)
                 else:
-                    PtDebugPrint(
-                        "xDialogClothingBB: currently wearing unknown shirt %s"
-                        % (ShirtNames[shirtWornIdx])
-                    )
+                    PtDebugPrint("xDialogClothingBB: currently wearing unknown shirt %s" % (ShirtNames[shirtWornIdx]))
                     ssRG.setValue(-1)  # there is nothing that is selected for barechested
         # get current color
         scRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kTintRadioGroupID))

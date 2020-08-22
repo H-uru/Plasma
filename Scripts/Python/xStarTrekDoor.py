@@ -84,9 +84,7 @@ class xStarTrekDoor(ptModifier):
         global doorMoving
         global doorState
         PtDebugPrint(doorMoving)
-        if (
-            state and id == Activate.id
-        ):  # and PtWasLocallyNotified(self.key): # region is activated.
+        if state and id == Activate.id:  # and PtWasLocallyNotified(self.key): # region is activated.
 
             for event in events:
                 if event[0] == kCollisionEvent:

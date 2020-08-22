@@ -65,16 +65,11 @@ class QuestMarkerBrain(object):
                 desc = marker[3]
                 break
         else:
-            PtDebugPrint(
-                "QuestMarkerBrain.CaptureMarker():\tMarker #{} does not exist. Are you drunk?".format(
-                    idx
-                )
-            )
+            PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tMarker #{} does not exist. Are you drunk?".format(idx))
             return
 
         PtDebugPrint(
-            "QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc),
-            level=kWarningLevel,
+            "QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc), level=kWarningLevel,
         )
         ptMarkerMgr().captureQuestMarker(idx, True)
         msg = PtGetLocalizedString("KI.MarkerGame.FoundMarker", [desc])
@@ -238,20 +233,15 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
         template.setID(gameID)
         gameNode = ptVault().findNode(template)
         if gameNode is None:
-            PtDebugPrint(
-                "UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(gameID)
-            )
+            PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(gameID))
             return None
         gameNode = gameNode.upcastToMarkerGameNode()
         if gameNode is None:
-            PtDebugPrint(
-                "UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(gameID)
-            )
+            PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(gameID))
             return None
 
         PtDebugPrint(
-            "UCQuestMarkerGame.LoadFromVault():\tRestored game #{}".format(gameID),
-            level=kWarningLevel,
+            "UCQuestMarkerGame.LoadFromVault():\tRestored game #{}".format(gameID), level=kWarningLevel,
         )
         brain = UCQuestMarkerGame(gameNode)
         # refresh markers now == KABLOOEY!

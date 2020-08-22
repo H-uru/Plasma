@@ -172,15 +172,9 @@ class xFogDistTweener(ptMultiModifier):
             self.PointB_RGBList[1] = float(self.PointB_RGBList[1])
             self.PointB_RGBList[2] = float(self.PointB_RGBList[2])
 
-        NewR = self.PointA_RGBList[0] + (
-            (self.PointB_RGBList[0] - self.PointA_RGBList[0]) * TweenPct
-        )
-        NewG = self.PointA_RGBList[1] + (
-            (self.PointB_RGBList[1] - self.PointA_RGBList[1]) * TweenPct
-        )
-        NewB = self.PointA_RGBList[2] + (
-            (self.PointB_RGBList[2] - self.PointA_RGBList[2]) * TweenPct
-        )
+        NewR = self.PointA_RGBList[0] + ((self.PointB_RGBList[0] - self.PointA_RGBList[0]) * TweenPct)
+        NewG = self.PointA_RGBList[1] + ((self.PointB_RGBList[1] - self.PointA_RGBList[1]) * TweenPct)
+        NewB = self.PointA_RGBList[2] + ((self.PointB_RGBList[2] - self.PointA_RGBList[2]) * TweenPct)
 
         NewS = PointA_Start.value + ((PointB_Start.value - PointA_Start.value) * TweenPct)
         NewE = PointA_End.value + ((PointB_End.value - PointA_End.value) * TweenPct)
@@ -240,9 +234,7 @@ class xFogDistTweener(ptMultiModifier):
             Temp_Avatar = ptPoint3(0, 0, AvatarPos.getZ())
 
         else:
-            PtDebugPrint(
-                "xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Dimension Specified!"
-            )
+            PtDebugPrint("xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Dimension Specified!")
 
         if FogStyle.value == "Linear":
             # PtDebugPrint("xFogDistTweener.CalculateDistanceBetweenPoints: Using Linear Math")
@@ -284,9 +276,7 @@ class xFogDistTweener(ptMultiModifier):
             Distance = Temp_A.distance(Temp_Avatar)
 
         else:
-            PtDebugPrint(
-                "xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Fog Style Specified!"
-            )
+            PtDebugPrint("xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Fog Style Specified!")
             Distance = 0
 
         totalDist = Temp_A.distance(Temp_B)

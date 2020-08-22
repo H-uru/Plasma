@@ -54,86 +54,32 @@ from PlasmaConstants import *
 fumerol1Resp = ptAttribResponder(
     1,
     "fumerol 1 responder",
-    [
-        "Opening",
-        "Closing",
-        "Rumble1",
-        "Rumble2",
-        "Rumble3",
-        "Rumble4",
-        "BlastOpen",
-        "MuffledBlastOnly",
-    ],
+    ["Opening", "Closing", "Rumble1", "Rumble2", "Rumble3", "Rumble4", "BlastOpen", "MuffledBlastOnly",],
 )
 fumerol2Resp = ptAttribResponder(
     2,
     "fumerol 2 responder",
-    [
-        "Opening",
-        "Closing",
-        "Rumble1",
-        "Rumble2",
-        "Rumble3",
-        "Rumble4",
-        "BlastOpen",
-        "MuffledBlastOnly",
-    ],
+    ["Opening", "Closing", "Rumble1", "Rumble2", "Rumble3", "Rumble4", "BlastOpen", "MuffledBlastOnly",],
 )
 fumerol3Resp = ptAttribResponder(
     3,
     "fumerol 3 responder",
-    [
-        "Opening",
-        "Closing",
-        "Rumble1",
-        "Rumble2",
-        "Rumble3",
-        "Rumble4",
-        "BlastOpen",
-        "MuffledBlastOnly",
-    ],
+    ["Opening", "Closing", "Rumble1", "Rumble2", "Rumble3", "Rumble4", "BlastOpen", "MuffledBlastOnly",],
 )
 fumerol4Resp = ptAttribResponder(
     4,
     "fumerol 4 responder",
-    [
-        "Opening",
-        "Closing",
-        "Rumble1",
-        "Rumble2",
-        "Rumble3",
-        "Rumble4",
-        "BlastOpen",
-        "MuffledBlastOnly",
-    ],
+    ["Opening", "Closing", "Rumble1", "Rumble2", "Rumble3", "Rumble4", "BlastOpen", "MuffledBlastOnly",],
 )
 fumerol5Resp = ptAttribResponder(
     5,
     "fumerol 5 responder",
-    [
-        "Opening",
-        "Closing",
-        "Rumble1",
-        "Rumble2",
-        "Rumble3",
-        "Rumble4",
-        "BlastOpen",
-        "MuffledBlastOnly",
-    ],
+    ["Opening", "Closing", "Rumble1", "Rumble2", "Rumble3", "Rumble4", "BlastOpen", "MuffledBlastOnly",],
 )
 fumerol6Resp = ptAttribResponder(
     6,
     "fumerol 6 responder",
-    [
-        "Opening",
-        "Closing",
-        "Rumble1",
-        "Rumble2",
-        "Rumble3",
-        "Rumble4",
-        "BlastOpen",
-        "MuffledBlastOnly",
-    ],
+    ["Opening", "Closing", "Rumble1", "Rumble2", "Rumble3", "Rumble4", "BlastOpen", "MuffledBlastOnly",],
 )
 fumerol1Det = ptAttribActivator(7, "detector fumerol 1")
 fumerol2Det = ptAttribActivator(8, "detector fumerol 2")
@@ -142,34 +88,22 @@ fumerol4Det = ptAttribActivator(10, "detector fumerol 4")
 fumerol5Det = ptAttribActivator(11, "detector fumerol 5")
 fumerol6Det = ptAttribActivator(12, "detector fumerol 6")
 fumerol1BlastResp = ptAttribResponder(
-    13,
-    "fumerol 1 Blast responder",
-    ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    13, "fumerol 1 Blast responder", ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol2BlastResp = ptAttribResponder(
-    14,
-    "fumerol 2 Blast responder",
-    ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    14, "fumerol 2 Blast responder", ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol3BlastResp = ptAttribResponder(
-    15,
-    "fumerol 3 Blast responder",
-    ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    15, "fumerol 3 Blast responder", ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol4BlastResp = ptAttribResponder(
-    16,
-    "fumerol 4 Blast responder",
-    ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    16, "fumerol 4 Blast responder", ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol5BlastResp = ptAttribResponder(
-    17,
-    "fumerol 5 Blast responder",
-    ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    17, "fumerol 5 Blast responder", ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 fumerol6BlastResp = ptAttribResponder(
-    18,
-    "fumerol 6 Blast responder",
-    ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
+    18, "fumerol 6 Blast responder", ["Smoke", "Blast1", "Blast2", "Blast3", "Blast4", "Blast5", "Blast6"],
 )
 rockPuzBlast = ptAttribResponder(19, "fumerol 1 blast special", netForce=1)
 clothPuzBlast = ptAttribResponder(20, "fumerol 6 blast special", netForce=1)
@@ -182,40 +116,22 @@ fumerol4Act = ptAttribActivator(27, "Activator fumerol 4")
 fumerol5Act = ptAttribActivator(28, "Activator fumerol 5")
 fumerol6Act = ptAttribActivator(29, "Activator fumerol 6")
 fumerol01JumpResp = ptAttribResponder(
-    30,
-    "fumerol 1 avatar resp",
-    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"],
-    netForce=1,
+    30, "fumerol 1 avatar resp", ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"], netForce=1,
 )
 fumerol02JumpResp = ptAttribResponder(
-    31,
-    "fumerol 2 avatar resp",
-    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"],
-    netForce=1,
+    31, "fumerol 2 avatar resp", ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"], netForce=1,
 )
 fumerol03JumpResp = ptAttribResponder(
-    32,
-    "fumerol 3 avatar resp",
-    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"],
-    netForce=1,
+    32, "fumerol 3 avatar resp", ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"], netForce=1,
 )
 fumerol04JumpResp = ptAttribResponder(
-    33,
-    "fumerol 4 avatar resp",
-    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"],
-    netForce=1,
+    33, "fumerol 4 avatar resp", ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"], netForce=1,
 )
 fumerol05JumpResp = ptAttribResponder(
-    34,
-    "fumerol 5 avatar resp",
-    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"],
-    netForce=1,
+    34, "fumerol 5 avatar resp", ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"], netForce=1,
 )
 fumerol06JumpResp = ptAttribResponder(
-    35,
-    "fumerol 6 avatar resp",
-    ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"],
-    netForce=1,
+    35, "fumerol 6 avatar resp", ["Level1", "Level2", "Level3", "Level4", "Level5", "Level6"], netForce=1,
 )
 
 fumerol01SteamTrig01 = ptAttribActivator(36, "fumerol 1 trigger 1")
@@ -802,9 +718,7 @@ class GiraSteam(ptResponder):
                 if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     # rockPuzBlast.run(self.key,avatar=avatar)
                     pass
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     fumerol1Det.enable()
 
         elif id == clothJumpBeh.id:
@@ -812,9 +726,7 @@ class GiraSteam(ptResponder):
                 if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     # clothPuzBlast.run(self.key,avatar=avatar)
                     pass
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     # fumerolJCClickable.enable()
                     PtAtTimeCallback(self.key, 1, 99)
                     fumerol6Det.enable()

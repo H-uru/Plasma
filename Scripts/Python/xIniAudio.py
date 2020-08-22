@@ -80,19 +80,11 @@ def ConstructFilenameAndPath():
             localNameAndPath = "init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                PtDebugPrint(
-                    'xIniAudio::ConstructFilenameAndPath(): Using internal "'
-                    + gFilenameAndPath
-                    + '" file'
-                )
+                PtDebugPrint('xIniAudio::ConstructFilenameAndPath(): Using internal "' + gFilenameAndPath + '" file')
                 return
         # otherwise, use the standard init path
         gFilenameAndPath = PtGetInitPath() + "/" + gFilename
-        PtDebugPrint(
-            'xIniAudio::ConstructFilenameAndPath(): Using user-level "'
-            + gFilenameAndPath
-            + '" file'
-        )
+        PtDebugPrint('xIniAudio::ConstructFilenameAndPath(): Using user-level "' + gFilenameAndPath + '" file')
 
 
 def WriteIni():

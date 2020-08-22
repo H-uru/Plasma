@@ -48,9 +48,7 @@ import random
 # These are helper functions for the special state variables that need custom code.
 def Ayhoheek5Man1State(VARname, NewSDLValue):
     PtDebugPrint(
-        "nb01EmgrPhase0.Ayhoheek5Man1State(): Attempting to set '{}' to a value of {}".format(
-            VARname, NewSDLValue
-        )
+        "nb01EmgrPhase0.Ayhoheek5Man1State(): Attempting to set '{}' to a value of {}".format(VARname, NewSDLValue)
     )
 
     nb01Ayhoheek5Man1StateMaxINT = 2
@@ -64,23 +62,17 @@ def Ayhoheek5Man1State(VARname, NewSDLValue):
         return
 
     elif NewSDLValue == 0:
-        PtDebugPrint(
-            "DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging out 5 Man Heek table completely."
-        )
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging out 5 Man Heek table completely.")
         PtPageOutNode("nb01Ayhoheek5Man1State")
         PtPageOutNode("nb01Ayhoheek5Man1Dead")
 
     elif NewSDLValue == 1:
-        PtDebugPrint(
-            "DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in broken 5 Man Heek table."
-        )
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in broken 5 Man Heek table.")
         PtPageInNode("nb01Ayhoheek5Man1Dead")
         PtPageOutNode("nb01Ayhoheek5Man1State")
 
     elif NewSDLValue == 2:
-        PtDebugPrint(
-            "DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in functional 5 Man Heek table."
-        )
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in functional 5 Man Heek table.")
         PtPageInNode("nb01Ayhoheek5Man1State")
         PtPageOutNode("nb01Ayhoheek5Man1Dead")
 
@@ -232,18 +224,10 @@ class nb01EmgrPhase0(ptResponder):
 
         elif VARname in self.PedestalSDL:
             self._pedestalSDLValues[VARname] = ageSDL[VARname][0]
-            PtDebugPrint(
-                "nb01EmgrPhase0.OnSDLNotify():\t{} = {}".format(
-                    VARname, self._pedestalSDLValues[VARname]
-                )
-            )
+            PtDebugPrint("nb01EmgrPhase0.OnSDLNotify():\t{} = {}".format(VARname, self._pedestalSDLValues[VARname]))
 
         else:
-            PtDebugPrint(
-                "ERROR: nb01EmgrPhase0.OnSDLNotify():\tVariable '{}' was not recognized.".format(
-                    VARname
-                )
-            )
+            PtDebugPrint("ERROR: nb01EmgrPhase0.OnSDLNotify():\tVariable '{}' was not recognized.".format(VARname))
             return
 
     def IManageLinkPedestal(self, position):
@@ -266,11 +250,7 @@ class nb01EmgrPhase0(ptResponder):
                 # No book, clear the glass if it's set.
                 self.IPickPedestalGlass(position, 0)
         else:
-            PtDebugPrint(
-                "nb01EmgrPhase0.IManageLinkPedestal(): No pedestal named '{}'.  Ignoring.".format(
-                    position
-                )
-            )
+            PtDebugPrint("nb01EmgrPhase0.IManageLinkPedestal(): No pedestal named '{}'.  Ignoring.".format(position))
 
     def IPickPedestalBook(self, position):
         if position in self.Pedestals:
@@ -280,19 +260,13 @@ class nb01EmgrPhase0(ptResponder):
 
             newBook = self.Pedestals[position]["Books"][newBookChoice]
             PtDebugPrint(
-                "nb01EmgrPhase0.IPickPedestalBook():\tSelecting {} as new book for pedestal.".format(
-                    newBook["Name"]
-                )
+                "nb01EmgrPhase0.IPickPedestalBook():\tSelecting {} as new book for pedestal.".format(newBook["Name"])
             )
 
             # Update the stained glass to match.
             self.IPickPedestalGlass(position, newBook)
         else:
-            PtDebugPrint(
-                "nb01EmgrPhase0.IPickPedestalBook(): No pedestal named '{}'.  Ignoring.".format(
-                    position
-                )
-            )
+            PtDebugPrint("nb01EmgrPhase0.IPickPedestalBook(): No pedestal named '{}'.  Ignoring.".format(position))
 
     def IPickPedestalGlass(self, position, bookInfo):
         if position in self.Pedestals:
@@ -306,16 +280,10 @@ class nb01EmgrPhase0(ptResponder):
                     )
                 )
             else:
-                PtDebugPrint(
-                    "nb01EmgrPhase0.IPickPedestalGlass():\tNo book.  Clearing stained glass."
-                )
+                PtDebugPrint("nb01EmgrPhase0.IPickPedestalGlass():\tNo book.  Clearing stained glass.")
             self._UpdateVaultSDL(self.Pedestals[position]["sdlGlass"], newGlass)
         else:
-            PtDebugPrint(
-                "nb01EmgrPhase0.IPickPedestalGlass(): No pedestal named '{}'.  Ignoring.".format(
-                    position
-                )
-            )
+            PtDebugPrint("nb01EmgrPhase0.IPickPedestalGlass(): No pedestal named '{}'.  Ignoring.".format(position))
 
     def _SaveSDL(self):
         if self._updateAgeSDL:
@@ -327,9 +295,7 @@ class nb01EmgrPhase0(ptResponder):
         if isinstance(ageSDL, ptSDLStateDataRecord):
             var = ageSDL.findVar(sdlName)
             if var is None:
-                PtDebugPrint(
-                    "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' not found!".format(sdlName)
-                )
+                PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' not found!".format(sdlName))
                 return
         elif isinstance(ageSDL, ptSimpleStateVariable):
             var = ageSDL
@@ -350,9 +316,7 @@ class nb01EmgrPhase0(ptResponder):
         elif var.getType() == PtSDLVarType.kString32:
             var.setString(value)
         else:
-            PtDebugPrint(
-                "nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' has an unknown type!".format(sdlName)
-            )
+            PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' has an unknown type!".format(sdlName))
             return
         PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' = {}".format(sdlName, value))
         self._updateAgeSDL = True
@@ -384,14 +348,10 @@ class nb01EmgrPhase0(ptResponder):
         ageSDL = PtGetAgeSDL()
         try:
             if ageSDL[VARname][0] == 1:  # Are we paging things in?
-                PtDebugPrint(
-                    "DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging in {}".format(VARname)
-                )
+                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging in {}".format(VARname))
                 PtPageInNode(VARname)
             elif ageSDL[VARname][0] == 0:  # Are we paging things out?
-                PtDebugPrint(
-                    "DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging out {}".format(VARname)
-                )
+                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging out {}".format(VARname))
                 PtPageOutNode(VARname)
             else:
                 PtDebugPrint(
@@ -400,9 +360,5 @@ class nb01EmgrPhase0(ptResponder):
                     )
                 )
         except:
-            PtDebugPrint(
-                "ERROR: nb01EmgrPhase0.IManageSimplePagingVar:\tError managing variable '{}'".format(
-                    VARname
-                )
-            )
+            PtDebugPrint("ERROR: nb01EmgrPhase0.IManageSimplePagingVar:\tError managing variable '{}'".format(VARname))
             return

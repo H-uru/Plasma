@@ -114,9 +114,7 @@ def AcceptInvitation(params=""):
     paramlist = SplitParams(params)
     if len(paramlist) == 2:
         PtAcceptInviteInGame(paramlist[0], paramlist[1])
-        return PtGetLocalizedString(
-            "KI.Invitation.InviteAccepted", [str(paramlist[0]), str(paramlist[1])]
-        )
+        return PtGetLocalizedString("KI.Invitation.InviteAccepted", [str(paramlist[0]), str(paramlist[1])])
     else:
         return (1, PtGetLocalizedString("KI.Invitation.AcceptUsage"))
 

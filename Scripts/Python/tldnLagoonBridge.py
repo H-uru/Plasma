@@ -129,9 +129,7 @@ class tldnLagoonBridge(ptResponder):
             tldnLagoonBridgeStuck = ageSDL["tldnLagoonBridgeStuck"][0]
 
             if tldnLagoonBridgeStuck:
-                PtDebugPrint(
-                    "The Lagoon Bridge is stuck, so pulling this lever did absolutely nothing."
-                )
+                PtDebugPrint("The Lagoon Bridge is stuck, so pulling this lever did absolutely nothing.")
                 return
 
             else:
@@ -158,8 +156,7 @@ class tldnLagoonBridge(ptResponder):
                 return
             else:
                 PtDebugPrint(
-                    "tldnLagoonBridge.OnSDLNotify: Hmmm... LagoonBridgeStuck = ",
-                    tldnLagoonBridgeStuck,
+                    "tldnLagoonBridge.OnSDLNotify: Hmmm... LagoonBridgeStuck = ", tldnLagoonBridgeStuck,
                 )
 
         elif VARname == "tldnLagoonBridgeRaised":

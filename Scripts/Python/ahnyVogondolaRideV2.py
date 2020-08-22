@@ -51,16 +51,12 @@ from Plasma import *
 from PlasmaTypes import *
 
 GroupSelector = ptAttribDropDownList(
-    1,
-    "Group Selector",
-    ("Hub", "Eng Hut", "Vogondola", "Vogondola Throttle", "Vogondola Reverse", "Call buttons",),
+    1, "Group Selector", ("Hub", "Eng Hut", "Vogondola", "Vogondola Throttle", "Vogondola Reverse", "Call buttons",),
 )
 
 actHubChairClick = ptAttribActivator(2, "Hub chair clickable")
 behHubChairClimb = ptAttribBehavior(3, "Hub chair climb beh")
-respHubChairLower = ptAttribNamedResponder(
-    4, "Hub chair lower resp", ["lower", "raise"], netForce=1
-)
+respHubChairLower = ptAttribNamedResponder(4, "Hub chair lower resp", ["lower", "raise"], netForce=1)
 
 actVogEjectFront = ptAttribActivator(5, "Vog eject front click")
 actVogEjectRear = ptAttribActivator(6, "Vog eject rear click")
@@ -77,21 +73,15 @@ respVogChairLower = ptAttribResponder(13, "Vog chair lower resp")
 respVogRotate = ptAttribResponder(14, "Vog rotate resp", ["back", "front"])
 respVogThrottle = ptAttribResponder(15, "Vog throttle resp", ["start", "stop"])
 respVogThrottleRev = ptAttribResponder(16, "Vog throttle rev resp", ["start", "stop"])
-respVogEjectHub = ptAttribResponder(
-    17, "Vog eject hub resp", ["norotate", "rotate", "oneshot"], netForce=1
-)
-respVogEjectEngHut = ptAttribResponder(
-    18, "Vog eject eng hut resp", ["norotate", "rotate", "oneshot"], netForce=1
-)
+respVogEjectHub = ptAttribResponder(17, "Vog eject hub resp", ["norotate", "rotate", "oneshot"], netForce=1)
+respVogEjectEngHut = ptAttribResponder(18, "Vog eject eng hut resp", ["norotate", "rotate", "oneshot"], netForce=1)
 
 soVogDummy = ptAttribSceneobject(19, "Vog avatar dummy")
 soVogSubworld = ptAttribSceneobject(20, "Vog subworld")
 
 actEngHutChairClick = ptAttribActivator(21, "Eng Hut chair clickable")
 behEngHutChairClimb = ptAttribBehavior(22, "Eng Hut chair climb beh")
-respEngHutChairLower = ptAttribNamedResponder(
-    23, "Eng Hut chair lower resp", ["lower", "raise"], netForce=1
-)
+respEngHutChairLower = ptAttribNamedResponder(23, "Eng Hut chair lower resp", ["lower", "raise"], netForce=1)
 
 actTubeEndFromHub = ptAttribActivator(24, "Tube end from hub act")
 actTubeEndFromEngHut = ptAttribActivator(25, "Tube end from eng hut act")
@@ -121,9 +111,7 @@ respHubCallbutton = ptAttribNamedResponder(43, "Hub call button resp")
 respEngHutCallbutton = ptAttribNamedResponder(44, "Eng hut call button resp")
 
 respSounds = ptAttribResponder(
-    45,
-    "Sound responder",
-    ["hubtubeout", "hubtubein", "sailtohub", "sailtohut", "huttubeout", "huttubein", "stop",],
+    45, "Sound responder", ["hubtubeout", "hubtubein", "sailtohub", "sailtohut", "huttubeout", "huttubein", "stop",],
 )
 
 actStopVogSoundForward = ptAttribActivator(46, "Vog snd stop forward act")
@@ -206,9 +194,7 @@ def DisableVogControls(enabledControlList):
 
 def VogondolaIsOccupied(occupant):
     if occupant:
-        PtDebugPrint(
-            "ahnyVogondolaRideV2.VogondolaIsOccupied(): Someone got in the Vog, disabling all access points"
-        )
+        PtDebugPrint("ahnyVogondolaRideV2.VogondolaIsOccupied(): Someone got in the Vog, disabling all access points")
 
         actHubChairClick.disable()
         actEngHutChairClick.disable()
@@ -262,9 +248,7 @@ class InHubBrain:
                     respHubChairLower.run(self.parent.key, events=events, state="lower")
                     PtDebugPrint(self.name + ": finished smart-seek")
 
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     theAvatar = PtGetLocalAvatar()
                     theAvatar.avatar.enterSubWorld(soVogSubworld.value)
                     theAvatar.physics.warpObj(soVogDummy.value.getKey())
@@ -374,9 +358,7 @@ class HubSailTubeTransitionBrain:
             respVogRideStartRev.run(self.parent.key)
 
         elif id == respVogRideStartRev.id:
-            PtDebugPrint(
-                "running respSounds: state - hubtubein loc - hubtransistion respvogridestartrev"
-            )
+            PtDebugPrint("running respSounds: state - hubtubein loc - hubtransistion respvogridestartrev")
             respSounds.run(self.parent.key, state="hubtubein")
 
         # elif (id == respVogRideStop.id or id == respVogRideStopRev.id) and self.parent.direction == -1:
@@ -562,9 +544,7 @@ class InEngHutBrain:
                     respEngHutChairLower.run(self.parent.key, events=events, state="lower")
                     PtDebugPrint(self.name + ": finished smart-seek")
 
-                elif (
-                    event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage
-                ):
+                elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     theAvatar = PtGetLocalAvatar()
                     theAvatar.avatar.enterSubWorld(soVogSubworld.value)
                     theAvatar.physics.warpObj(soVogDummy.value.getKey())

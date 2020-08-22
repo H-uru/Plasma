@@ -110,9 +110,7 @@ class clftEndingCredits(ptResponder):
             PtDebugPrint("OnSDL launched the credits.")
             boolSceneBahro = ageSDL[SDLVarSceneBahro][0]
             if boolSceneBahro == 0:
-                PtDebugPrint(
-                    "clftEndingCredits.OnSDLNotify(): we're no longer showing the credits here"
-                )
+                PtDebugPrint("clftEndingCredits.OnSDLNotify(): we're no longer showing the credits here")
                 cam = ptCamera()
                 cam.enableFirstPersonOverride()
                 PtEnableMovementKeys()
@@ -163,9 +161,7 @@ class clftEndingCredits(ptResponder):
                     AlreadyClosed = True
                     PtFadeOut(kFadeOutToGameSeconds, 1)
                     PtDebugPrint(
-                        "clftEndingCredits.OnNotify(): Book hidden. FadeOut over",
-                        kFadeOutToGameSeconds,
-                        " seconds",
+                        "clftEndingCredits.OnNotify(): Book hidden. FadeOut over", kFadeOutToGameSeconds, " seconds",
                     )
 
                     # The book is already hidden, so just go ahead and fade back in on the game
@@ -175,9 +171,7 @@ class clftEndingCredits(ptResponder):
                     AlreadyClosed = True
                     PtFadeOut(kFadeOutToGameSeconds, 1)
                     PtDebugPrint(
-                        "clftEndingCredits.OnNotify(): Book closed. FadeOut over",
-                        kFadeOutToGameSeconds,
-                        " seconds",
+                        "clftEndingCredits.OnNotify(): Book closed. FadeOut over", kFadeOutToGameSeconds, " seconds",
                     )
 
                     # We have to hide the book first before we fade back in on the game
@@ -213,9 +207,7 @@ class clftEndingCredits(ptResponder):
     def IFadeOutToCredits(self):
         PtFadeOut(kFadeOutToCreditsSeconds, 1)
         PtDebugPrint(
-            "clftEndingCredits.IFadeOutToCredits(): FadeOut over",
-            kFadeOutToCreditsSeconds,
-            " seconds.",
+            "clftEndingCredits.IFadeOutToCredits(): FadeOut over", kFadeOutToCreditsSeconds, " seconds.",
         )
         PtAtTimeCallback(self.key, 4, kShowCreditsID)
 
@@ -244,9 +236,7 @@ class clftEndingCredits(ptResponder):
 
         PtFadeIn(kFadeInToCreditsSeconds, 1)
         PtDebugPrint(
-            "clftEndingCredits.IFadeInToCredits(): FadeIn over",
-            kFadeInToCreditsSeconds,
-            " seconds",
+            "clftEndingCredits.IFadeInToCredits(): FadeIn over", kFadeInToCreditsSeconds, " seconds",
         )
 
     def IFadeOutToGame(self):

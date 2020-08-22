@@ -58,12 +58,8 @@ kPickedEvent = (
 )  # [1]=enter flag, [2]=picker(probably avatar), [3]=pickee, [4]=hitpoint(world) [5]=hitpoint(local)
 kControlKeyEvent = PtEventType.kControlKey  # [1]=key id, [2]=down flag
 kVariableEvent = PtEventType.kVariable  # [1]=name, [2]=data type, [3]=data
-kFacingEvent = (
-    PtEventType.kFacing
-)  # [1]=enabled flag, [2]=facer(probably avatar), [3]=facee, [4]=dot product
-kContainedEvent = (
-    PtEventType.kContained
-)  # [1]=entering flag, [2]=contained(probably avatar), [3]=container
+kFacingEvent = PtEventType.kFacing  # [1]=enabled flag, [2]=facer(probably avatar), [3]=facee, [4]=dot product
+kContainedEvent = PtEventType.kContained  # [1]=entering flag, [2]=contained(probably avatar), [3]=container
 kActivateEvent = PtEventType.kActivate  # [1]=active flag, [2]=activate flag
 kCallbackEvent = PtEventType.kCallback  # [1]=callback id
 kResponderStateEvent = PtEventType.kResponderState  # [1]=state id
@@ -303,11 +299,7 @@ If seed is None, the system time is used."""
     fColor = kRandomSkinColors[a]
     a = random.randint(0, len(kRandomPantColors) - 1)
     pColor = kRandomPantColors[a]
-    sColor = ptColor(
-        random.randint(0, 255) / 255.0,
-        random.randint(0, 255) / 255.0,
-        random.randint(0, 255) / 255.0,
-    )
+    sColor = ptColor(random.randint(0, 255) / 255.0, random.randint(0, 255) / 255.0, random.randint(0, 255) / 255.0,)
 
     avatar.avatar.tintSkin(fColor)
     avatar.avatar.tintClothingItem(hItem, hColor)
@@ -546,15 +538,7 @@ class ptAttribResponder(ptAttributeKeyList):
         return (self.id, self.name, 9)
 
     def run(
-        self,
-        key,
-        state=None,
-        events=None,
-        avatar=None,
-        objectName=None,
-        netForce=0,
-        netPropagate=None,
-        fastforward=0,
+        self, key, state=None, events=None, avatar=None, objectName=None, netForce=0, netPropagate=None, fastforward=0,
     ):
         # has the value been set?
         if self.value is not None:
@@ -933,14 +917,7 @@ class ptAttribBehavior(ptAttribute):
                 self.value.netForce(1)
                 avatar.avatar.netForce(1)
             avatar.avatar.gotoStage(
-                self.value,
-                stage,
-                transitionTime,
-                setTimeFlag,
-                newTime,
-                dirFlag,
-                isForward,
-                self.netForce,
+                self.value, stage, transitionTime, setTimeFlag, newTime, dirFlag, isForward, self.netForce,
             )
 
     def setLoopCount(self, stage, loopCount):

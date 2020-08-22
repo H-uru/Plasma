@@ -71,9 +71,7 @@ class xAgeSDLBoolCondResp(ptResponder):
 
     def OnFirstUpdate(self):
         if not strSDLVar.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolCondResp.OnFirstUpdate():\tCannot bind to SDL variable, invalid string"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolCondResp.OnFirstUpdate():\tCannot bind to SDL variable, invalid string")
             self.invalidVarName = 1
         else:
             self.invalidVarName = 0
@@ -111,8 +109,5 @@ class xAgeSDLBoolCondResp(ptResponder):
         curVal = ageSDL[strSDLVar.value][0]
 
         if id == actTrigger.id and curVal == boolOnTrue.value:
-            PtDebugPrint(
-                "DEBUG: xAgeSDLBoolCondResp.OnNotify():\tRunning repsonder on %s"
-                % self.sceneobject.getName()
-            )
+            PtDebugPrint("DEBUG: xAgeSDLBoolCondResp.OnNotify():\tRunning repsonder on %s" % self.sceneobject.getName())
             respResponder.run(self.key)

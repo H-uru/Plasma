@@ -298,11 +298,7 @@ class xDialogStartUp(ptResponder):
                         PtShowDialog("GUIDialog06")
 
                 elif (
-                    tagID == k4aPlayer02
-                    or tagID == k4aPlayer03
-                    or k4aPlayer04
-                    or k4aPlayer05
-                    or k4aPlayer06
+                    tagID == k4aPlayer02 or tagID == k4aPlayer03 or k4aPlayer04 or k4aPlayer05 or k4aPlayer06
                 ):  ## Shortcut Skip to Create Visitor ##
                     gClickedWrongSlot = 1
                     PtHideDialog("GUIDialog04a")
@@ -338,9 +334,7 @@ class xDialogStartUp(ptResponder):
                             + str(gPlayerList[gSelectedSlot - gMinusExplorer][0])
                             + "?"
                         )
-                        ptGUIControlTextBox(
-                            GUIDiag4c.dialog.getControlFromTag(k4cStaticID)
-                        ).setStringW(deleteString)
+                        ptGUIControlTextBox(GUIDiag4c.dialog.getControlFromTag(k4cStaticID)).setStringW(deleteString)
                         self.PlayerListNotify(GUIDiag4b, gExp_HotSpot, 0)
                         PtShowDialog("GUIDialog04c")
                     ## Or Else?? ##
@@ -401,42 +395,30 @@ class xDialogStartUp(ptResponder):
                         playerName == playerNameW
                     except:
                         errorString = "Error, invalid Name. Please enter another."
-                        ptGUIControlTextBox(
-                            GUIDiag4d.dialog.getControlFromTag(k4dTextID)
-                        ).setString(errorString)
+                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                         return
 
                     playerGender = ""
-                    if ptGUIControlCheckBox(
-                        GUIDiag6.dialog.getControlFromTag(k6MaleID)
-                    ).isChecked():
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
                         playerGender = "male"
-                    if ptGUIControlCheckBox(
-                        GUIDiag6.dialog.getControlFromTag(k6FemaleID)
-                    ).isChecked():
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
                         playerGender = "female"
 
                     if playerName == "" or playerName == "":
                         errorString = "Error, you must enter a Name."
-                        ptGUIControlTextBox(
-                            GUIDiag4d.dialog.getControlFromTag(k4dTextID)
-                        ).setString(errorString)
+                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     elif playerGender == "":
                         errorString = "Error, you must select a gender."
-                        ptGUIControlTextBox(
-                            GUIDiag4d.dialog.getControlFromTag(k4dTextID)
-                        ).setString(errorString)
+                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     else:
                         fixedPlayerName = playerName.strip()
-                        (fixedPlayerName, whitespacefixedcount) = re.subn(
-                            "\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName
-                        )
+                        (fixedPlayerName, whitespacefixedcount) = re.subn("\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName)
 
                         (fixedPlayerName, RogueCount,) = re.subn("[\x00-\x1f]", "", fixedPlayerName)
                         if RogueCount > 0 or whitespacefixedcount > 0:
@@ -444,40 +426,26 @@ class xDialogStartUp(ptResponder):
                                 errorString = "Warning, you entered invalid characters in your player name.  The invalid characters have been removed, please make sure your player name is still what you want."
                             else:
                                 errorString = "Warning, your player name has some incorrect formatting.  The formatting has been corrected, please make sure your player name is still what you want."
-                            ptGUIControlTextBox(
-                                GUIDiag4d.dialog.getControlFromTag(k4dTextID)
-                            ).setString(errorString)
+                            ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                             PtShowDialog("GUIDialog04d")
                             self.ToggleColor(GUIDiag4b, k4bPlayer03)
 
-                            ptGUIControlEditBox(
-                                GUIDiag6.dialog.getControlFromTag(k6NameID)
-                            ).setString(fixedPlayerName)
+                            ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).setString(fixedPlayerName)
                         else:
                             PtDebugPrint("Creating Player")
                             PtShowDialog("GUIDialog06a")
-                            ptGUIControlButton(
-                                GUIDiag6.dialog.getControlFromTag(k6PlayID)
-                            ).disable()
+                            ptGUIControlButton(GUIDiag6.dialog.getControlFromTag(k6PlayID)).disable()
                             PtCreatePlayer(
                                 fixedPlayerName, playerGender, ""
                             )  #                                                  <---
 
                 elif tagID == k6MaleID:  ## Gender Male ##
-                    if ptGUIControlCheckBox(
-                        GUIDiag6.dialog.getControlFromTag(k6FemaleID)
-                    ).isChecked():
-                        ptGUIControlCheckBox(
-                            GUIDiag6.dialog.getControlFromTag(k6FemaleID)
-                        ).setChecked(0)
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
+                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).setChecked(0)
 
                 elif tagID == k6FemaleID:  ## Gender Female ##
-                    if ptGUIControlCheckBox(
-                        GUIDiag6.dialog.getControlFromTag(k6MaleID)
-                    ).isChecked():
-                        ptGUIControlCheckBox(
-                            GUIDiag6.dialog.getControlFromTag(k6MaleID)
-                        ).setChecked(0)
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
+                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).setChecked(0)
 
     ###########################
     def OnAccountUpdate(self, opType, result, playerInt):
@@ -494,21 +462,19 @@ class xDialogStartUp(ptResponder):
 
             if result == 12:
                 errorString = "Error, this player name already exists."
-                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(
-                    errorString
-                )
+                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             elif result == 28:
-                errorString = "Invalid name. The name chosen is either reserved, illegal, or shorter than three characters."
-                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(
-                    errorString
+                errorString = (
+                    "Invalid name. The name chosen is either reserved, illegal, or shorter than three characters."
                 )
+                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             else:
-                errorString = "There has been a Network error. Please try again. If problem persists, please contact support."
-                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(
-                    errorString
+                errorString = (
+                    "There has been a Network error. Please try again. If problem persists, please contact support."
                 )
+                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             return
 
@@ -568,8 +534,7 @@ class xDialogStartUp(ptResponder):
 
         else:
             PtDebugPrint(
-                "AccountUpdate - Unknown: optype = %d, result = %d, playerInt = %d"
-                % (opType, result, playerInt)
+                "AccountUpdate - Unknown: optype = %d, result = %d, playerInt = %d" % (opType, result, playerInt)
             )
 
     ###########################
@@ -579,9 +544,7 @@ class xDialogStartUp(ptResponder):
         global gExp_HotSpot
         global gExp_HiLite
 
-        currentColor = ptGUIControlTextBox(
-            dlgObj.dialog.getControlFromTag(tagID + 10)
-        ).getForeColor()
+        currentColor = ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID + 10)).getForeColor()
 
         idx = gExp_HotSpot.index(tagID)
         respToRun = gExp_HiLite[idx]
@@ -592,36 +555,23 @@ class xDialogStartUp(ptResponder):
             respToRun.run(self.key, state="out")
         else:
             # PtDebugPrint("toggle tagID(%d) on" % (tagID))
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID + 10)).setForeColor(
-                gBlueColor
-            )
+            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID + 10)).setForeColor(gBlueColor)
             respToRun.run(self.key, state="in")
 
     ###########################
     def SelectSlot(self, dlgObj, tagID):
         global gSelectedSlot
 
-        if (
-            tagID and tagID != gSelectedSlot
-        ):  ## If there's a currently selected slot, return it to normal ##
-            PtDebugPrint(
-                "xDialogStartUp.SelectSlot: tagID = %d   gSelectedSlot = %d"
-                % (tagID, gSelectedSlot)
-            )
+        if tagID and tagID != gSelectedSlot:  ## If there's a currently selected slot, return it to normal ##
+            PtDebugPrint("xDialogStartUp.SelectSlot: tagID = %d   gSelectedSlot = %d" % (tagID, gSelectedSlot))
             if gSelectedSlot:
                 self.ToggleColor(dlgObj, gSelectedSlot)
-                ptGUIControlButton(
-                    dlgObj.dialog.getControlFromTag(gSelectedSlot)
-                ).setNotifyOnInteresting(1)
+                ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(1)
                 PtDebugPrint("xDialogStartUp.SelectSlot: Setting old slot to Interesting")
 
             gSelectedSlot = tagID
-            ptGUIControlButton(
-                dlgObj.dialog.getControlFromTag(gSelectedSlot)
-            ).setNotifyOnInteresting(0)
-            PtDebugPrint(
-                "xDialogStartUp.SelectSlot: Setting gSelectedSlot to new val and removing Interesting"
-            )
+            ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(0)
+            PtDebugPrint("xDialogStartUp.SelectSlot: Setting gSelectedSlot to new val and removing Interesting")
         elif tagID == 0:
             PtDebugPrint("xDialogStartUp.SelectSlot: Setting gSelectedSlot to %d" % (tagID))
             gSelectedSlot = tagID
@@ -665,9 +615,7 @@ class xDialogStartUp(ptResponder):
 
         for idx in range(1, len(gPlayerList[1:]) + 1):  ## Setup The Explorer Slots ##
             player = gPlayerList[idx]
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(listTxtBox[idx])).setStringW(
-                str(player[0])
-            )
+            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(listTxtBox[idx])).setStringW(str(player[0]))
             try:
                 filename = basePath + str(player[1]) + ".jpg"
                 PtDebugPrint('xDialogStartUp: Trying to load "' + filename + '"')
@@ -675,9 +623,7 @@ class xDialogStartUp(ptResponder):
                 TextMaps[idx].textmap.drawImage(0, 0, theImage, 0)
                 TextMaps[idx].textmap.flush()
             except:
-                PtDebugPrint(
-                    "xDialogStartUp: Load failed. This avatar probably doesn't have a snapshot"
-                )
+                PtDebugPrint("xDialogStartUp: Load failed. This avatar probably doesn't have a snapshot")
 
         try:
             gPlayerList[0]
@@ -696,22 +642,14 @@ class xDialogStartUp(ptResponder):
         global gSelectedSlot
 
         for tagID in listHotSpot:
-            PtDebugPrint(
-                "xDialogStartUp.PlayerListNotify: setting tagID (%d) to Interesting = %d"
-                % (tagID, toggle)
-            )
-            ptGUIControlButton(dlgObj.dialog.getControlFromTag(tagID)).setNotifyOnInteresting(
-                toggle
-            )
+            PtDebugPrint("xDialogStartUp.PlayerListNotify: setting tagID (%d) to Interesting = %d" % (tagID, toggle))
+            ptGUIControlButton(dlgObj.dialog.getControlFromTag(tagID)).setNotifyOnInteresting(toggle)
 
         if toggle and gSelectedSlot:
             PtDebugPrint(
-                "xDialogStartUp.PlayerListNotify: setting gSelectedSlot (%d) to not Interesting"
-                % (gSelectedSlot)
+                "xDialogStartUp.PlayerListNotify: setting gSelectedSlot (%d) to not Interesting" % (gSelectedSlot)
             )
-            ptGUIControlButton(
-                dlgObj.dialog.getControlFromTag(gSelectedSlot)
-            ).setNotifyOnInteresting(0)
+            ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(0)
 
         # Everyone is an explorer, so disable the button for visiting.
         btn = ptGUIControlButton(dlgObj.dialog.getControlFromTag(listHotSpot[0])).disable()

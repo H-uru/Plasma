@@ -115,16 +115,12 @@ class xPotsSymbol(ptResponder):
             try:
                 ageSDL = PtGetAgeSDL()
                 for sc in listSDL:
-                    PtDebugPrint(
-                        "xPotsSymbol.OnServerInitComplete():\t sdl: %s = %d" % (sc, ageSDL[sc][0])
-                    )
+                    PtDebugPrint("xPotsSymbol.OnServerInitComplete():\t sdl: %s = %d" % (sc, ageSDL[sc][0]))
                     ageSDL.setFlags(sc, 1, 1)
                     ageSDL.sendToClients(sc)
                     ageSDL.setNotify(self.key, sc, 0.0)
             except:
-                PtDebugPrint(
-                    "ERROR: xPotsSymbol.OnServerInitComplete():\tERROR reading age SDL, ignoring script"
-                )
+                PtDebugPrint("ERROR: xPotsSymbol.OnServerInitComplete():\tERROR reading age SDL, ignoring script")
                 return
 
             self.IUpdateIcon()

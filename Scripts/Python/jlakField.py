@@ -73,14 +73,10 @@ clkColumnDn = ptAttribActivatorList(15, "clk: column down")
 warpPlayers = ptAttribSceneobjectList(16, "obj: player warps")
 respWallToggle = ptAttribResponder(17, "resp: toggle wall", ["on", "off"], netForce=0)
 respGameOps = ptAttribResponder(18, "resp: game ops", ["start", "end", "reset"], netForce=0)
-respSfxColumn = ptAttribResponderList(
-    19, "resp: sfx column", statelist=["up", "down", "off"], byObject=1
-)
+respSfxColumn = ptAttribResponderList(19, "resp: sfx column", statelist=["up", "down", "off"], byObject=1)
 rgnWallSensors = ptAttribActivatorList(20, "rgn sns: wall hit sensors")
 # rgnZeroPhysicals = ptAttribActivator(21,"rgn sns: zero out physicals")
-respBulkMoveSFX = ptAttribResponder(
-    22, "resp: BulkMove SFX", statelist=["off", "on", "end"], netForce=0
-)
+respBulkMoveSFX = ptAttribResponder(22, "resp: BulkMove SFX", statelist=["off", "on", "end"], netForce=0)
 respCreateWidgetSFX = ptAttribResponder(23, "resp: Create Widget SFX", netForce=0)
 
 
@@ -213,9 +209,7 @@ class jlakField(ptResponder):
         # If the last person links out while a bulk move is being performed the SDL gets stuck!
         # So we'll reset it only if we're the first person entering the age....
         if len(PtGetPlayerList()) == 0:
-            PtDebugPrint(
-                "jlakField.OnServerInitComplete():\tResetting GUI lock as we're the only ones here!"
-            )
+            PtDebugPrint("jlakField.OnServerInitComplete():\tResetting GUI lock as we're the only ones here!")
             ageSDL[sdlGUILock] = (0,)
             boolGUILock = 0
         else:
@@ -326,9 +320,7 @@ class jlakField(ptResponder):
             self.DoWallSensors(0)
 
         if PtGetLocalKILevel() < 2:
-            PtDebugPrint(
-                "jlakField.OnServerInitComplete(): KI level too low, columns will not be clickable"
-            )
+            PtDebugPrint("jlakField.OnServerInitComplete(): KI level too low, columns will not be clickable")
             for up in clkColumnUp.value:
                 up.disable()
             for dn in clkColumnDn.value:
@@ -551,9 +543,7 @@ class jlakField(ptResponder):
     def AutoColumns(self, mode, preset=None):
         PtDebugPrint("jlakField.AutoColumns(): requested all columns move using mode: ", mode)
         if boolGUILock:
-            PtDebugPrint(
-                "jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!"
-            )
+            PtDebugPrint("jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!")
             return
         anythingMoved = 0
         if mode == 0:  # lowest
@@ -643,12 +633,7 @@ class jlakField(ptResponder):
         # animColumn.byObject[col].speed(spd)    #ensure animation plays at normal speed
         if onInit:
             PtDebugPrint(
-                "jlakField.MoveColumn(): on init, fastforwarding column ",
-                id,
-                " from position ",
-                oldPos,
-                " to ",
-                pos,
+                "jlakField.MoveColumn(): on init, fastforwarding column ", id, " from position ", oldPos, " to ", pos,
             )
             animColumn.byObject[col].skipToTime(pos)
         else:
@@ -813,9 +798,7 @@ class jlakField(ptResponder):
         try:
             fRead = file(fName, "r")
         except:
-            PtDebugPrint(
-                "jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName)
-            )
+            PtDebugPrint("jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName))
             # templist = [PtGetLocalPlayer()]
             # PtSendRTChat(PtGetLocalPlayer(),templist,"doh!",1)
             return

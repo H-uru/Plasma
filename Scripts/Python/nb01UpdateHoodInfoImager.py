@@ -118,13 +118,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
                 thetext = playerlist.getText()
                 if (thetext.count("\n") + 1) > 15:
                     thetext = thetext[: thetext.rfind("\n")]
-                thetext = (
-                    currenttimestr
-                    + (" " * (30 - len(currenttimestr)))
-                    + playername
-                    + "\n"
-                    + thetext
-                )
+                thetext = currenttimestr + (" " * (30 - len(currenttimestr))) + playername + "\n" + thetext
 
                 playerlist.setText(thetext)
                 playerlist.forceSave()
@@ -295,17 +289,13 @@ class nb01UpdateHoodInfoImager(ptResponder):
             sname = "Join=%s" % (PtGetLocalPlayer().getPlayerName())
             self.ISendNotify(self.key, sname, 1.0)
 
-            PtDebugPrint(
-                "nb01UpdateHoodInfoImager.OnServerInitComplete: Sent player join update notify"
-            )
+            PtDebugPrint("nb01UpdateHoodInfoImager.OnServerInitComplete: Sent player join update notify")
 
     def OnNotify(self, state, id, events):
         for event in events:
             if event[0] == kVariableEvent:
                 if self.sceneobject.isLocallyOwned():
-                    PtDebugPrint(
-                        "nb01UpdateHoodInfoImager.OnNotify: I am owner so I'll update the imager"
-                    )
+                    PtDebugPrint("nb01UpdateHoodInfoImager.OnNotify: I am owner so I'll update the imager")
                     if event[1][:5] == "Join=":
                         playername = event[1][5:]
                         self.IUpdatePlayerList(playername)

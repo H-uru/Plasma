@@ -48,16 +48,10 @@ xFolderIDToFolderName = {
     PtVaultStandardNodes.kInboxFolder: PtGetLocalizedString("Global.FolderNames.Inbox"),
     PtVaultStandardNodes.kBuddyListFolder: PtGetLocalizedString("Global.FolderNames.BuddyList"),
     PtVaultStandardNodes.kIgnoreListFolder: PtGetLocalizedString("Global.FolderNames.IgnoreList"),
-    PtVaultStandardNodes.kPeopleIKnowAboutFolder: PtGetLocalizedString(
-        "Global.FolderNames.PeopleIKnowAbout"
-    ),
+    PtVaultStandardNodes.kPeopleIKnowAboutFolder: PtGetLocalizedString("Global.FolderNames.PeopleIKnowAbout"),
     PtVaultStandardNodes.kChronicleFolder: PtGetLocalizedString("Global.FolderNames.Chronicle"),
-    PtVaultStandardNodes.kAvatarOutfitFolder: PtGetLocalizedString(
-        "Global.FolderNames.AvatarOutfit"
-    ),
-    PtVaultStandardNodes.kAgeTypeJournalFolder: PtGetLocalizedString(
-        "Global.FolderNames.AgeTypeJournal"
-    ),
+    PtVaultStandardNodes.kAvatarOutfitFolder: PtGetLocalizedString("Global.FolderNames.AvatarOutfit"),
+    PtVaultStandardNodes.kAgeTypeJournalFolder: PtGetLocalizedString("Global.FolderNames.AgeTypeJournal"),
     PtVaultStandardNodes.kSubAgesFolder: PtGetLocalizedString("Global.FolderNames.SubAges"),
     PtVaultStandardNodes.kHoodMembersFolder: PtGetLocalizedString("Global.FolderNames.HoodMembers"),
     PtVaultStandardNodes.kAllPlayersFolder: PtGetLocalizedString("Global.FolderNames.AllPlayers"),
@@ -67,12 +61,8 @@ xFolderIDToFolderName = {
     PtVaultStandardNodes.kAgeOwnersFolder: PtGetLocalizedString("Global.FolderNames.AgeOwners"),
     PtVaultStandardNodes.kPublicAgesFolder: PtGetLocalizedString("Global.FolderNames.PublicAges"),
     PtVaultStandardNodes.kAgesIOwnFolder: PtGetLocalizedString("Global.FolderNames.AgesIOwn"),
-    PtVaultStandardNodes.kAgesICanVisitFolder: PtGetLocalizedString(
-        "Global.FolderNames.AgesICanVisit"
-    ),
-    PtVaultStandardNodes.kAvatarClosetFolder: PtGetLocalizedString(
-        "Global.FolderNames.AvatarCloset"
-    ),
+    PtVaultStandardNodes.kAgesICanVisitFolder: PtGetLocalizedString("Global.FolderNames.AgesICanVisit"),
+    PtVaultStandardNodes.kAvatarClosetFolder: PtGetLocalizedString("Global.FolderNames.AvatarCloset"),
 }
 
 
@@ -154,9 +144,7 @@ def LocalizeAgeName(displayName):
         if localizedName[len(localizedName) - 12 :] == "Neighborhood":
             # chop off the neighborhood part and tack on the localized version of that word
             localizedName = SafeEncode(localizedName[: len(localizedName) - 12])
-            localizedName = localizedName + PtGetLocalizedString(
-                xTranslatedAgeNames["Neighborhood"]
-            )
+            localizedName = localizedName + PtGetLocalizedString(xTranslatedAgeNames["Neighborhood"])
             return localizedName
         # we are either a possesive name or a city link, check for city link first
         try:
@@ -170,9 +158,7 @@ def LocalizeAgeName(displayName):
             return SafeEncode(localizedName)
         if apostropheLoc + 3 >= len(localizedName):
             return SafeEncode(localizedName)
-        if not (
-            localizedName[apostropheLoc + 1] == "s" and localizedName[apostropheLoc + 2] == " "
-        ):
+        if not (localizedName[apostropheLoc + 1] == "s" and localizedName[apostropheLoc + 2] == " "):
             return SafeEncode(localizedName)
 
         # we are possesive, translate it

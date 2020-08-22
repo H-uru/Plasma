@@ -73,8 +73,7 @@ class xButtonLeverSwitchPowered(ptResponder):
     def OnServerInitComplete(self):
         if self.SDL == None:
             PtDebugPrint(
-                "xButtonLeverSwitchPowered.OnServerInitComplete():\tERROR---missing SDL (%s)"
-                % varstring.value
+                "xButtonLeverSwitchPowered.OnServerInitComplete():\tERROR---missing SDL (%s)" % varstring.value
             )
             return
         if enabled.value:
@@ -111,16 +110,10 @@ class xButtonLeverSwitchPowered(ptResponder):
             if id == actClick.id:
                 if self.SDL["enabled"][0]:
                     respOn.run(self.key, events=events)
-                    PtDebugPrint(
-                        "xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (powered)"
-                        % varstring.value
-                    )
+                    PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (powered)" % varstring.value)
                 else:
                     respOff.run(self.key, events=events)
-                    PtDebugPrint(
-                        "xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (not powered)"
-                        % varstring.value
-                    )
+                    PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (not powered)" % varstring.value)
                 return
 
             if id == respOn.id:

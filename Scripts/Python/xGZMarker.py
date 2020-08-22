@@ -57,9 +57,7 @@ from PlasmaKITypes import *
 aStringVarName = ptAttribString(1, "Age SDL Vis Name")
 aGZSerialNumber = ptAttribInt(2, "GZ a unique serial number (1 thru n)")
 aGZRegionVis = ptAttribActivator(3, "Region detector when marker is inRange")
-aGZSoundResponder = ptAttribResponder(
-    4, "Sound responder for marker", statelist=["SoundOn", "SoundOff"]
-)
+aGZSoundResponder = ptAttribResponder(4, "Sound responder for marker", statelist=["SoundOn", "SoundOff"])
 
 
 AgeStartedIn = None
@@ -76,8 +74,7 @@ class xGZMarker(ptMultiModifier):
         self.id = 205
         self.version = MaxVersionNumber
         PtDebugPrint(
-            "__xGZMarker: Max version %d - minor version %d"
-            % (MaxVersionNumber, MinorVersionNumber),
+            "__xGZMarker: Max version %d - minor version %d" % (MaxVersionNumber, MinorVersionNumber),
             level=kDebugDumpLevel,
         )
 
@@ -116,8 +113,7 @@ class xGZMarker(ptMultiModifier):
                 if markers[markerIdx] == kGZMarkerAvailable:
                     # we're active!
                     PtDebugPrint(
-                        "xGZMarker: marker %d available" % (aGZSerialNumber.value),
-                        level=kDebugDumpLevel,
+                        "xGZMarker: marker %d available" % (aGZSerialNumber.value), level=kDebugDumpLevel,
                     )
                     return 1
                 else:
@@ -127,9 +123,7 @@ class xGZMarker(ptMultiModifier):
                         level=kDebugDumpLevel,
                     )
             else:
-                PtDebugPrint(
-                    "xGZMarker - ERROR marker serial number invalid (%d) " % (aGZSerialNumber.value)
-                )
+                PtDebugPrint("xGZMarker - ERROR marker serial number invalid (%d) " % (aGZSerialNumber.value))
                 PtDebugPrint("xGZMarker - current markers are '%s'" % (markers))
         else:
             PtDebugPrint("xGZMarker - ERROR marker chronicle not found ")

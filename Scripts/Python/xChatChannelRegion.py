@@ -86,8 +86,7 @@ class xChatChannelRegion(ptResponder):
             except:
                 pass
             PtDebugPrint(
-                "xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d"
-                % (numID.value),
+                "xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d" % (numID.value),
                 level=kDebugDumpLevel,
             )
             PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
@@ -117,8 +116,7 @@ class xChatChannelRegion(ptResponder):
                 except:
                     pass
                 PtDebugPrint(
-                    "xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d"
-                    % (numID.value),
+                    "xChatChannel.OnPageUnload:\tremoving ourselves from private chat channel %d" % (numID.value),
                     level=kDebugDumpLevel,
                 )
                 PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
@@ -165,8 +163,7 @@ class xChatChannelRegion(ptResponder):
         for count in [0, 1, 2, 3, 4, 5, 6, 7]:
             if self.SDL["intSDLChatMembers"][count] == memberID:
                 PtDebugPrint(
-                    "xChatChannel: memberID=%d   already in list, aborting." % (memberID),
-                    level=kDebugDumpLevel,
+                    "xChatChannel: memberID=%d   already in list, aborting." % (memberID), level=kDebugDumpLevel,
                 )
                 return
 
@@ -204,16 +201,14 @@ class xChatChannelRegion(ptResponder):
                 memberName = memberKey.getName()
                 memberList.append(ptPlayer(memberName, memberID))
                 PtDebugPrint(
-                    "xChatChannel: added %s   id # %d  to listen list" % (memberName, memberID),
-                    level=kDebugDumpLevel,
+                    "xChatChannel: added %s   id # %d  to listen list" % (memberName, memberID), level=kDebugDumpLevel,
                 )
                 if memberID == localID:
                     localIncluded = True
         if localIncluded:
             PtSendPrivateChatList(memberList)
             PtDebugPrint(
-                "xChatChannel.OnNotify:\tadding you to private chat channel %d" % (numID.value),
-                level=kDebugDumpLevel,
+                "xChatChannel.OnNotify:\tadding you to private chat channel %d" % (numID.value), level=kDebugDumpLevel,
             )
             PtSendKIMessageInt(kSetPrivateChatChannel, numID.value)
             AreWeInRoom = 1
@@ -233,8 +228,7 @@ class xChatChannelRegion(ptResponder):
         if localIncluded:
             PtClearPrivateChatList(PtGetLocalAvatar().getKey())
             PtDebugPrint(
-                "xChatChannel.OnNotify:\tremoving ourselves from private chat channel %d"
-                % (numID.value),
+                "xChatChannel.OnNotify:\tremoving ourselves from private chat channel %d" % (numID.value),
                 level=kDebugDumpLevel,
             )
             PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)

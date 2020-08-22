@@ -109,9 +109,7 @@ class tldn3FloorElevator(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
         else:
-            PtDebugPrint(
-                "tldn3FloorElevator.OnServerInitComplete():\tERROR -- not in the age we started in?"
-            )
+            PtDebugPrint("tldn3FloorElevator.OnServerInitComplete():\tERROR -- not in the age we started in?")
             return
 
         # set flags on age SDL vars we'll be changing
@@ -134,9 +132,7 @@ class tldn3FloorElevator(ptResponder):
             elevLocked = True
             elevCurrFloor = 2
             elevIdle = 1
-            PtDebugPrint(
-                "tldn3FloorElevator.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:"
-            )
+            PtDebugPrint("tldn3FloorElevator.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:")
         PtDebugPrint(
             "tldn3FloorElevator.OnServerInitComplete():\t%s=%d, %s=%d"
             % (kStringAgeSDLPwrOn, elevPwrOn, kStringAgeSDLElvLocked, elevLocked)
@@ -148,9 +144,7 @@ class tldn3FloorElevator(ptResponder):
 
         # correct state if necessary - workaround for elev subworld seeming to fastforward itself and break itself...hopefully removable in future
         if len(PtGetPlayerList()) == 0:  # I'm the only person here
-            PtDebugPrint(
-                "tldn3FloorElevator.OnServerInitComplete():\tsolo player... initializing elevator state"
-            )
+            PtDebugPrint("tldn3FloorElevator.OnServerInitComplete():\tsolo player... initializing elevator state")
             if not elevIdle:
                 PtDebugPrint("\tmaking elevator idle")
                 ageSDL[kStringAgeSDLElvIdle] = (1,)
@@ -195,9 +189,7 @@ class tldn3FloorElevator(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
         else:
-            PtDebugPrint(
-                "tldn3FloorElevator.OnSDLNotify():\tERROR -- not in the age we started in?"
-            )
+            PtDebugPrint("tldn3FloorElevator.OnSDLNotify():\tERROR -- not in the age we started in?")
             return
 
         PtDebugPrint(
@@ -233,9 +225,7 @@ class tldn3FloorElevator(ptResponder):
                     xrgnDoor3.releaseNow(self.key)
             return
 
-        if (
-            VARname == kStringAgeSDLElvCurrFloor
-        ):  # set by anim event detectors on elevator (elev overrides high sdl)
+        if VARname == kStringAgeSDLElvCurrFloor:  # set by anim event detectors on elevator (elev overrides high sdl)
             elevCurrFloor = ageSDL[kStringAgeSDLElvCurrFloor][0]
             ageSDL[kStringAgeSDLElvIdle] = (1,)
             return
@@ -271,11 +261,7 @@ class tldn3FloorElevator(ptResponder):
         ##################
 
         if not (
-            id == actCall1.id
-            or id == actCall2.id
-            or id == actCall3.id
-            or id == actSendUp.id
-            or id == actSendDn.id
+            id == actCall1.id or id == actCall2.id or id == actCall3.id or id == actSendUp.id or id == actSendDn.id
         ):
             return
         if not elevIdle or not elevPwrOn:

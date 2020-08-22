@@ -142,9 +142,7 @@ class ahnyKadishDoor(ptResponder):
                     event[0] == kMultiStageEvent and event[2] == kEnterStage
                 ):  # Smart seek completed. Exit multistage, and show GUI.
                     MltStgSeek.gotoStage(actingAvatar, -1)
-                    PtDebugPrint(
-                        "ahnyKadishDoor.onNotify: enter puzzle view mode now that seek is done"
-                    )
+                    PtDebugPrint("ahnyKadishDoor.onNotify: enter puzzle view mode now that seek is done")
                     actingAvatar.draw.disable()
                     # PtFadeLocalAvatar(1)
                     # Disable First Person Camera
@@ -266,9 +264,7 @@ class ahnyKadishDoor(ptResponder):
             try:
                 ageSDL = PtGetAgeSDL()
             except:
-                PtDebugPrint(
-                    "ahnyKadishDoor.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL"
-                )
+                PtDebugPrint("ahnyKadishDoor.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL")
                 ageSDL[SDLDoor.value] = (0,)
             boolDoor = ageSDL[SDLDoor.value][0]
             if boolDoor:

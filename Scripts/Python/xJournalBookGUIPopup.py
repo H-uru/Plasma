@@ -76,9 +76,7 @@ StartOpen = ptAttribBoolean(10, "Start Opened?", default=0)
 
 BookWidth = ptAttribFloat(11, "Book Width Scaling", default=1.0)
 BookHeight = ptAttribFloat(12, "Book Height Scaling", default=1.0)
-LocPath = ptAttribString(
-    13, "Localization Path for Journal Contents", default="Global.Journals.Empty"
-)
+LocPath = ptAttribString(13, "Localization Path for Journal Contents", default="Global.Journals.Empty")
 GUIType = ptAttribString(14, "Book GUI Type", default="bkBook")
 
 # globals
@@ -124,8 +122,7 @@ class xJournalBookGUIPopup(ptModifier):
                     ):  # Smart seek completed. Exit multistage, and show GUI.
                         SeekBehavior.gotoStage(LocalAvatar, -1)
                         PtDebugPrint(
-                            "xJournalBookGUIPopup: attempting to draw link panel gui",
-                            level=kDebugDumpLevel,
+                            "xJournalBookGUIPopup: attempting to draw link panel gui", level=kDebugDumpLevel,
                         )
                         self.IShowBook()
 
@@ -172,8 +169,7 @@ class xJournalBookGUIPopup(ptModifier):
         # This lookup should be removed once all PFMs are converted to specify their details
         if JournalName.value:
             PtDebugPrint(
-                "xJournalBookGUIPopup: deprecated journal format, using name '%s'"
-                % (JournalName.value),
+                "xJournalBookGUIPopup: deprecated journal format, using name '%s'" % (JournalName.value),
                 level=kErrorLevel,
             )
             try:
@@ -185,8 +181,7 @@ class xJournalBookGUIPopup(ptModifier):
                     BookWidth.value, BookHeight.value, LocPath.value = params
             except LookupError:
                 PtDebugPrint(
-                    "xJournalBookGUIPopup: could not find journal parameters for '%s'"
-                    % (JournalName.value),
+                    "xJournalBookGUIPopup: could not find journal parameters for '%s'" % (JournalName.value),
                     level=kErrorLevel,
                 )
                 return
@@ -212,16 +207,14 @@ class xJournalBookGUIPopup(ptModifier):
                         folderNodeChildList = folderNode.getChildNodeRefList()
                         for folderChild in folderNodeChildList:
                             PtDebugPrint(
-                                "xJournalBookGUIPopupDyn: looking at child node "
-                                + str(folderChild),
+                                "xJournalBookGUIPopupDyn: looking at child node " + str(folderChild),
                                 level=kDebugDumpLevel,
                             )
                             childNode = folderChild.getChild()
                             textNode = childNode.upcastToTextNoteNode()
                             if textNode:
                                 PtDebugPrint(
-                                    "xJournalBookGUIPopupDyn: child node is named %s"
-                                    % (textNode.getTitle()),
+                                    "xJournalBookGUIPopupDyn: child node is named %s" % (textNode.getTitle()),
                                     level=kDebugDumpLevel,
                                 )
                                 # TODO: Convert this to use LocPath.value and migrate node values in DB if necessary once all PFMs
@@ -229,8 +222,7 @@ class xJournalBookGUIPopup(ptModifier):
                                 if textNode.getTitle() == JournalIdent:
                                     journalContents = textNode.getText()
                                     PtDebugPrint(
-                                        "xJournalBookGUIPopupDyn: journal contents are '%s'"
-                                        % (journalContents),
+                                        "xJournalBookGUIPopupDyn: journal contents are '%s'" % (journalContents),
                                         level=kDebugDumpLevel,
                                     )
         else:
@@ -238,8 +230,7 @@ class xJournalBookGUIPopup(ptModifier):
 
         if not journalContents:
             PtDebugPrint(
-                "WARNING - EMPTY JOURNAL: JournalName.value = '%s' LocPath = '%s'"
-                % (JournalName.value, LocPath.value),
+                "WARNING - EMPTY JOURNAL: JournalName.value = '%s' LocPath = '%s'" % (JournalName.value, LocPath.value),
                 level=kDebugDumpLevel,
             )
 

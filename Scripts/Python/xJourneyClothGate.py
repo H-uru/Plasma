@@ -126,9 +126,7 @@ class xJourneyClothGate(ptResponder):
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint(
-                        "ERROR: xJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("ERROR: xJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
                 PtDebugPrint(
                     "DEBUG: xJourneyClothGate.OnServerInitComplete():\t%s = %d"
                     % (stringVarName.value, GateCurrentlyClosed)
@@ -137,9 +135,7 @@ class xJourneyClothGate(ptResponder):
                 if not GateCurrentlyClosed:
                     actTrigger.disable()
             else:
-                PtDebugPrint(
-                    "ERROR: xJourneyClothGate.OnServerInitComplete():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("ERROR: xJourneyClothGate.OnServerInitComplete():\tERROR: missing SDL var name")
 
     def OnNotify(self, state, id, events):
         global GateCurrentlyClosed
@@ -185,9 +181,7 @@ class xJourneyClothGate(ptResponder):
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint(
-                        "ERROR: xJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("ERROR: xJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
 
             PtDebugPrint("OnNotify: GateCurrentlyClosed = ", GateCurrentlyClosed)
             if not GateCurrentlyClosed:
@@ -308,8 +302,7 @@ class xJourneyClothGate(ptResponder):
                 ageSDL.setTagString(stringVarName.value, hint)
             ageSDL[stringVarName.value] = (GateCurrentlyClosed,)
             PtDebugPrint(
-                "xJourneyClothGate.OnNotify():\tset age SDL var %s to %d"
-                % (stringVarName.value, GateCurrentlyClosed)
+                "xJourneyClothGate.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value, GateCurrentlyClosed)
             )
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):

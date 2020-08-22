@@ -87,19 +87,11 @@ def ConstructFilenameAndPath():
             localNameAndPath = "init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                PtDebugPrint(
-                    'xIniDisplay::ConstructFilenameAndPath(): Using internal "'
-                    + gFilenameAndPath
-                    + '" file'
-                )
+                PtDebugPrint('xIniDisplay::ConstructFilenameAndPath(): Using internal "' + gFilenameAndPath + '" file')
                 return
         # otherwise, use the standard init path
         gFilenameAndPath = PtGetInitPath() + "/" + gFilename
-        PtDebugPrint(
-            'xIniDisplay::ConstructFilenameAndPath(): Using user-level "'
-            + gFilenameAndPath
-            + '" file'
-        )
+        PtDebugPrint('xIniDisplay::ConstructFilenameAndPath(): Using user-level "' + gFilenameAndPath + '" file')
 
 
 def WriteIni():
@@ -145,17 +137,7 @@ def ReadIni():
 
 
 def SetGraphicsOptions(
-    width,
-    heigth,
-    colordepth,
-    windowed,
-    texquality,
-    aaLevel,
-    anisoLevel,
-    qualityLevel,
-    useShadows,
-    vsync,
-    shadowqual,
+    width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual,
 ):
     if gIniFile:
         paramList = [

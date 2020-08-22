@@ -96,9 +96,7 @@ class ahnyIslandHut(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint(
-                "ahnySphere1MaintBtn.OnServerInitComplete():\tERROR---Cannot find the Ahnonay Age SDL"
-            )
+            PtDebugPrint("ahnySphere1MaintBtn.OnServerInitComplete():\tERROR---Cannot find the Ahnonay Age SDL")
             ageSDL[SDLWaterCurrent.value] = (0,)
             ageSDL[SDLHutDoor.value] = (0,)
 

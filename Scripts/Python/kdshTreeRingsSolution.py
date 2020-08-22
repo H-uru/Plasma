@@ -226,9 +226,7 @@ class kdshTreeRingsSolution(ptModifier):
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         if ageSDL == None:
-            PtDebugPrint(
-                "kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
-            )
+            PtDebugPrint("kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
 
         ageSDL.setNotify(self.key, "OuterRing01", 0.0)
         ageSDL.setNotify(self.key, "MiddleRing01", 0.0)
@@ -270,9 +268,7 @@ class kdshTreeRingsSolution(ptModifier):
             pass
         else:
             # this runs the animation on the "fake" ring in front of the GUI
-            animname = "GUI{id}_0{bearing}".format(
-                id="".join(VARname.split("Ring")), bearing=newbearing
-            )
+            animname = "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
             globals()[animname].animation.play()
 
         ###
@@ -330,9 +326,7 @@ class kdshTreeRingsSolution(ptModifier):
 
         ageSDL = PtGetAgeSDL()
         if ageSDL == None:
-            PtDebugPrint(
-                "kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
-            )
+            PtDebugPrint("kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
 
         for bearing in ("Outer", "Middle", "Inner"):
             sdl_var = "{location}Ring0{idx}".format(location=bearing, idx=ScopeNumber - 1)

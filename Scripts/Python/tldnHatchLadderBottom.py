@@ -102,9 +102,7 @@ class tldnHatchLadderBottom(ptModifier):
             except:
                 hatchOpen = False
                 hatchLocked = True
-                PtDebugPrint(
-                    "tldnHatchLadderBottom.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:"
-                )
+                PtDebugPrint("tldnHatchLadderBottom.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:")
             PtDebugPrint(
                 "tldnHatchLadderBottom.OnServerInitComplete():\t%s=%d, %s=%d"
                 % (kStringAgeSDLHatchOpen, hatchOpen, kStringAgeSDLHatchLocked, hatchLocked,)

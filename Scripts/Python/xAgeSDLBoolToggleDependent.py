@@ -77,13 +77,9 @@ class xAgeSDLBoolToggleDependent(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringVarEnabler.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDLEnabler var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDLEnabler var name")
         if not stringVarTarget.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDLTarget var name"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDLTarget var name")
 
     def OnServerInitComplete(self):
         global boolCurrentValue
@@ -95,18 +91,11 @@ class xAgeSDLBoolToggleDependent(ptResponder):
         try:
             boolCurrentValue = ageSDL[stringVarTarget.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolToggleDependent.OnServerInitComplete():\tERROR reading age SDL"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolToggleDependent.OnServerInitComplete():\tERROR reading age SDL")
             pass
         PtDebugPrint(
             "DEBUG: xAgeSDLBoolToggleDependent.OnServerInitComplete():\t%s = %d, %s = %d"
-            % (
-                stringVarEnabler.value,
-                ageSDL[stringVarEnabler.value][0],
-                stringVarTarget.value,
-                boolCurrentValue,
-            )
+            % (stringVarEnabler.value, ageSDL[stringVarEnabler.value][0], stringVarTarget.value, boolCurrentValue,)
         )
 
     def OnNotify(self, state, id, events):

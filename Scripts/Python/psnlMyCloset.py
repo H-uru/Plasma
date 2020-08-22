@@ -122,15 +122,9 @@ class psnlMyCloset(ptModifier):
                 if not closetClosed:
                     # just close the door for now!
                     # self.ICloseCloset(1)
-                    PtDebugPrint(
-                        "psnlCloset.OnServerInitComplete():\tCloset is open, so setting a timer to close it"
-                    )
-                    self.IOpenCloset(
-                        1
-                    )  # fast forward it open (in case it starts closed for some reason)
-                    PtAtTimeCallback(
-                        self.key, 2, kCloseClosetTimer
-                    )  # we will close it in two seconds
+                    PtDebugPrint("psnlCloset.OnServerInitComplete():\tCloset is open, so setting a timer to close it")
+                    self.IOpenCloset(1)  # fast forward it open (in case it starts closed for some reason)
+                    PtAtTimeCallback(self.key, 2, kCloseClosetTimer)  # we will close it in two seconds
                 else:
                     PtDebugPrint(
                         "psnlCloset.OnServerInitComplete():\tCloset is closed, making sure the geometry matches"
@@ -144,9 +138,7 @@ class psnlMyCloset(ptModifier):
                 try:
                     closetClosed = ageSDL[kSDLClosetClosed][0]
                 except:
-                    PtDebugPrint(
-                        "psnlCloset.OnServerInitComplete():\tERROR reading SDL from vault, defaulting closed"
-                    )
+                    PtDebugPrint("psnlCloset.OnServerInitComplete():\tERROR reading SDL from vault, defaulting closed")
                     closetClosed = True
                 if not closetClosed:  # assume closet is in use by owner
                     self.IOpenCloset(1)  # fastforward the closet open

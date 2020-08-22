@@ -60,46 +60,34 @@ detSitting4 = ptAttribActivator(54, "Player5 Sit det", netForce=True)
 # Player 1 responders
 respRock0 = ptAttribResponder(70, "Rock1 round win/lose resp", ["lose", "win"], netForce=True)
 respPaper0 = ptAttribResponder(71, "Paper1 round win/lose resp", ["lose", "win"], netForce=True)
-respScissors0 = ptAttribResponder(
-    72, "Scissors1 round win/lose resp", ["lose", "win"], netForce=True
-)
+respScissors0 = ptAttribResponder(72, "Scissors1 round win/lose resp", ["lose", "win"], netForce=True)
 
 # Player 2 responders
 respRock1 = ptAttribResponder(90, "Rock2 round win/lose resp", ["lose", "win"], netForce=True)
 respPaper1 = ptAttribResponder(91, "Paper2 round win/lose resp", ["lose", "win"], netForce=True)
-respScissors1 = ptAttribResponder(
-    92, "Scissors2 round win/lose resp", ["lose", "win"], netForce=True
-)
+respScissors1 = ptAttribResponder(92, "Scissors2 round win/lose resp", ["lose", "win"], netForce=True)
 
 # Player 3 responders
 respRock2 = ptAttribResponder(110, "Rock3 round win/lose resp", ["lose", "win"], netForce=True)
 respPaper2 = ptAttribResponder(111, "Paper3 round win/lose resp", ["lose", "win"], netForce=True)
-respScissors2 = ptAttribResponder(
-    112, "Scissors3 round win/lose resp", ["lose", "win"], netForce=True
-)
+respScissors2 = ptAttribResponder(112, "Scissors3 round win/lose resp", ["lose", "win"], netForce=True)
 
 # Player 4 responders
 respRock3 = ptAttribResponder(130, "Rock4 round win/lose resp", ["lose", "win"], netForce=True)
 respPaper3 = ptAttribResponder(131, "Paper4 round win/lose resp", ["lose", "win"], netForce=True)
-respScissors3 = ptAttribResponder(
-    132, "Scissors4 round win/lose resp", ["lose", "win"], netForce=True
-)
+respScissors3 = ptAttribResponder(132, "Scissors4 round win/lose resp", ["lose", "win"], netForce=True)
 
 # Player 5 responders
 respRock4 = ptAttribResponder(150, "Rock5 round win/lose resp", ["lose", "win"], netForce=True)
 respPaper4 = ptAttribResponder(151, "Paper5 round win/lose resp", ["lose", "win"], netForce=True)
-respScissors4 = ptAttribResponder(
-    152, "Scissors5 round win/lose resp", ["lose", "win"], netForce=True
-)
+respScissors4 = ptAttribResponder(152, "Scissors5 round win/lose resp", ["lose", "win"], netForce=True)
 
 # Standing cam responder
 respStandCam = ptAttribResponder(170, "Standing cam resp", ["0", "1", "2", "3", "4"], netForce=True)
 
 # This is the main display responder...
 GAME_WIN_STATES = ["rock", "paper", "scissors", "stop"]
-respCountdown = ptAttribResponder(
-    180, "Countdown Responder", ["countdown", "stop", "attractmode"], netForce=True
-)
+respCountdown = ptAttribResponder(180, "Countdown Responder", ["countdown", "stop", "attractmode"], netForce=True)
 respGame = ptAttribResponder(73, "Game win/lose resp", GAME_WIN_STATES, netForce=True)
 
 lightAnimsOn = ptAttribAnimation(200, "lights", byObject=True, netForce=True)
@@ -535,8 +523,7 @@ class nb01RPSGame(ptResponder, object):
             win = seat in winners
             state = "win" if win else "lose"
             PtDebugPrint(
-                "nb01RPSGame._FinishRound():\t- Position {}: {}".format(seat, state),
-                level=kWarningLevel,
+                "nb01RPSGame._FinishRound():\t- Position {}: {}".format(seat, state), level=kWarningLevel,
             )
             if win:
                 var = SCORE_VAR[selection]
@@ -568,8 +555,7 @@ class nb01RPSGame(ptResponder, object):
         """Detects how many players are at the table and starts/kills the game as appropriate."""
         players = self.num_players
         PtDebugPrint(
-            "nb01RPSGame._IsTheGameAfoot():\tThere are now {} player(s)".format(players),
-            level=kWarningLevel,
+            "nb01RPSGame._IsTheGameAfoot():\tThere are now {} player(s)".format(players), level=kWarningLevel,
         )
         if players < 2:
             # There's not enough players to continue playing, so we need to murder the game state.
@@ -608,16 +594,13 @@ class nb01RPSGame(ptResponder, object):
     def _OnGameOver(self, **kwargs):
         """The game is over--update our score"""
         if not len(kwargs) > 1:
-            PtDebugPrint(
-                "nb01RPSGame._OnGameOver(): Received a suspicious game over message. Ignoring..."
-            )
+            PtDebugPrint("nb01RPSGame._OnGameOver(): Received a suspicious game over message. Ignoring...")
             return
 
         points = kwargs.get(str(PtGetLocalClientID()), None)
         if points is not None:
             PtDebugPrint(
-                "nb01RPSGame._OnGameOver():\tAdding {} points to our Heek score".format(points),
-                level=kWarningLevel,
+                "nb01RPSGame._OnGameOver():\tAdding {} points to our Heek score".format(points), level=kWarningLevel,
             )
             self._ChangeMyScore(points)
         self._round_played = False
@@ -768,8 +751,7 @@ class nb01RPSGame(ptResponder, object):
 
     def _UpdateScoreLights(self, seat, selection, old_score, new_score, win):
         PtDebugPrint(
-            "nb01RPSGame._UpdateScoreLights():\tOld: {}, New: {}".format(old_score, new_score),
-            level=kWarningLevel,
+            "nb01RPSGame._UpdateScoreLights():\tOld: {}, New: {}".format(old_score, new_score), level=kWarningLevel,
         )
         start = 0 if win else min(2, old_score)
         end = min(2, new_score)
@@ -836,11 +818,7 @@ class nb01RPSGame(ptResponder, object):
             if infoID == info.getID():
                 return info.playerGetName()
         else:
-            PtDebugPrint(
-                "nb01RPSGame._GetPlayerNameFromPlayerInfoID():\tFailed to find PlayerInfo {}".format(
-                    infoID
-                )
-            )
+            PtDebugPrint("nb01RPSGame._GetPlayerNameFromPlayerInfoID():\tFailed to find PlayerInfo {}".format(infoID))
             return ""
 
     def _GotHoodHeekScores(self, scores):
@@ -970,18 +948,12 @@ class nb01RPSGame(ptResponder, object):
         type = args["type"]
         del args["type"]
         if type not in self._event_handlers:
-            PtDebugPrint(
-                "nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' doesn't have a handler!".format(
-                    type
-                )
-            )
+            PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' doesn't have a handler!".format(type))
             return False
         try:
             self._event_handlers[type](**args)
         except TypeError:
-            PtDebugPrint(
-                "nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' has bad kwargs".format(type)
-            )
+            PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' has bad kwargs".format(type))
         return True
 
     def _SendPyNotifyMsg(self, contents):

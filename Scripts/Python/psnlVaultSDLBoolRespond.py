@@ -75,13 +75,10 @@ class psnlVaultSDLBoolRespond(ptResponder):
 
     def OnFirstUpdate(self):
         PtDebugPrint(
-            "psnlVaultSDLBoolRespond.OnFirstUpdate():\t attached to sceneobject: %s"
-            % self.sceneobject.getName()
+            "psnlVaultSDLBoolRespond.OnFirstUpdate():\t attached to sceneobject: %s" % self.sceneobject.getName()
         )
         if not stringVarName.value:
-            PtDebugPrint(
-                "ERROR: psnlVaultSDLBoolRespond.OnFirstUpdate():\tERROR: missing SDL var name"
-            )
+            PtDebugPrint("ERROR: psnlVaultSDLBoolRespond.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
         if boolFirstUpdate.value == 1:
@@ -108,9 +105,7 @@ class psnlVaultSDLBoolRespond(ptResponder):
                     )
                     respBoolFalse.run(self.key, fastforward=boolFFOnInit.value)
             else:
-                PtDebugPrint(
-                    "ERROR: psnlVaultSDLBoolRespond.IFinishInit():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("ERROR: psnlVaultSDLBoolRespond.IFinishInit():\tERROR: missing SDL var name")
                 self.runDefault()
                 pass
         except:
@@ -142,10 +137,7 @@ class psnlVaultSDLBoolRespond(ptResponder):
         else:  # invalid player aka Vault Manager
             objAvatar = None
             fastforward = boolVltMgrFastForward.value  # we need to skip any one-shots
-        PtDebugPrint(
-            "DEBUG: psnlVaultSDLBoolRespond.OnSDLNotify():\tnotification from playerID: %d"
-            % (playerID)
-        )
+        PtDebugPrint("DEBUG: psnlVaultSDLBoolRespond.OnSDLNotify():\tnotification from playerID: %d" % (playerID))
 
         # run the appropriate responder!
         if ageSDL[stringVarName.value][0]:

@@ -79,9 +79,7 @@ class ercaSDLIntShowHide(ptMultiModifier):
                 for i in range(len(self.enabledStateList)):
                     self.enabledStateList[i] = int(self.enabledStateList[i].strip())
             except:
-                PtDebugPrint(
-                    "ERROR: ercaSDLIntShowHide.OnFirstUpdate():\tERROR: couldn't process start state list"
-                )
+                PtDebugPrint("ERROR: ercaSDLIntShowHide.OnFirstUpdate():\tERROR: couldn't process start state list")
                 pass
         else:
             PtDebugPrint("ERROR: ercaSDLIntShowHide.OnFirstUpdate():\tERROR: missing SDL var name")
@@ -123,9 +121,7 @@ class ercaSDLIntShowHide(ptMultiModifier):
                     )
                     pass
             else:
-                PtDebugPrint(
-                    "ERROR: ercaSDLIntShowHide.OnServerInitComplete():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("ERROR: ercaSDLIntShowHide.OnServerInitComplete():\tERROR: missing SDL var name")
                 pass
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):

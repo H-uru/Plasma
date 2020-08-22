@@ -185,9 +185,7 @@ class tldnShroomieBrain(ptResponder):
         ShroomieTimeLastSeen = ageSDL["ShroomieTimeLastSeen"][0]
 
         PtDebugPrint(
-            "tldnShroomieBrain: Shroomie was last seen",
-            CurrentTime - ShroomieTimeLastSeen,
-            " seconds ago.",
+            "tldnShroomieBrain: Shroomie was last seen", CurrentTime - ShroomieTimeLastSeen, " seconds ago.",
         )
 
         if (CurrentTime - ShroomieTimeLastSeen) > 240:
@@ -225,9 +223,7 @@ class tldnShroomieBrain(ptResponder):
                 NearOrFar = "Far"
 
             else:  # Determine how far out Shroomie will be seen. Added 12/12/2004
-                PtDebugPrint(
-                    "tldnShroomieBrain: The Power Tower is down, so Shroomie isn't scared by the noise."
-                )
+                PtDebugPrint("tldnShroomieBrain: The Power Tower is down, so Shroomie isn't scared by the noise.")
 
                 howclose = random.randint(1, 100)
                 if howclose == 1:
@@ -247,9 +243,7 @@ class tldnShroomieBrain(ptResponder):
 
         whichspawnpoint = random.randint(1, 5)
 
-        target = globals()[
-            "Spawn{NearOrFar}0{SpawnPoint}".format(NearOrFar=NearOrFar, SpawnPoint=whichspawnpoint)
-        ]
+        target = globals()["Spawn{NearOrFar}0{SpawnPoint}".format(NearOrFar=NearOrFar, SpawnPoint=whichspawnpoint)]
         ShroomieMaster.sceneobject.physics.warpObj(target.sceneobject.getKey())
         globals()["respTrick0{}".format(whichbehavior)].run(self.key)
 

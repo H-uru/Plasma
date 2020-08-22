@@ -103,14 +103,12 @@ class Ahnonay(ptResponder):
                         if chron and chron.getName() == "AhnonayLink":
                             linkid = chron
                             PtDebugPrint(
-                                "Ahnonay.OnServerInitComplete(): Link Chron already exists: %s"
-                                % (linkid.getValue())
+                                "Ahnonay.OnServerInitComplete(): Link Chron already exists: %s" % (linkid.getValue())
                             )
                         elif chron and chron.getName() == "AhnonayLocked":
                             locked = chron
                             PtDebugPrint(
-                                "Ahnonay.OnServerInitComplete(): Locked Chron already exists: %s"
-                                % (locked.getValue())
+                                "Ahnonay.OnServerInitComplete(): Locked Chron already exists: %s" % (locked.getValue())
                             )
                         elif chron and chron.getName() == "AhnonayVolatile":
                             volatile = chron
@@ -121,8 +119,7 @@ class Ahnonay(ptResponder):
                         elif chron and chron.getName() == "AhnonaySpawnPoints":
                             spawn = chron
                             PtDebugPrint(
-                                "Ahnonay.OnServerInitComplete(): Spawn Chron already exists: %s"
-                                % (spawn.getValue())
+                                "Ahnonay.OnServerInitComplete(): Spawn Chron already exists: %s" % (spawn.getValue())
                             )
                         elif chron and chron.getName() == "AhnonayOwner":
                             owner = chron
@@ -161,9 +158,7 @@ class Ahnonay(ptResponder):
 
             if volatile and linkid:
                 if volatile.getValue() == "1" and guid != linkid.getValue():
-                    PtDebugPrint(
-                        "Ahnonay.OnServerInitComplete(): In a new instance of Ahnonay so setting new vars"
-                    )
+                    PtDebugPrint("Ahnonay.OnServerInitComplete(): In a new instance of Ahnonay so setting new vars")
                     linkid.setValue(guid)
                     locked.setValue("1")
                     volatile.setValue("0")
@@ -191,9 +186,7 @@ class Ahnonay(ptResponder):
                 newSphere = 4
             else:
                 offset = str(ageSDL["ahnyCurrentOffset"][0])
-                PtDebugPrint(
-                    "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
-                )
+                PtDebugPrint("Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset))
                 newSphere = (int(sphere) - int(offset)) % 4
                 if newSphere == 0:
                     newSphere = 4
@@ -230,8 +223,7 @@ class Ahnonay(ptResponder):
                 sphere = str(ageSDL["ahnyCurrentSphere"][0])
                 offset = str(ageSDL["ahnyCurrentOffset"][0])
                 PtDebugPrint(
-                    "Ahnonay.OnPageLoad(): Sphere0{} loaded with offset:{}".format(sphere, offset),
-                    level=kWarningLevel,
+                    "Ahnonay.OnPageLoad(): Sphere0{} loaded with offset:{}".format(sphere, offset), level=kWarningLevel,
                 )
 
                 linkmgr = ptNetLinkingMgr()
@@ -250,14 +242,10 @@ class Ahnonay(ptResponder):
                         if newSphere == 0:
                             newSphere = 4
                     spawnPoint = spName + str(newSphere)
-                    PtGetLocalAvatar().physics.warpObj(
-                        PtFindSceneobject(spawnPoint, "Ahnonay").getKey()
-                    )
+                    PtGetLocalAvatar().physics.warpObj(PtFindSceneobject(spawnPoint, "Ahnonay").getKey())
                 else:
                     defaultLink = "LinkInPointSphere0%s" % (sphere)
-                    PtGetLocalAvatar().physics.warpObj(
-                        PtFindSceneobject(defaultLink, "Ahnonay").getKey()
-                    )
+                    PtGetLocalAvatar().physics.warpObj(PtFindSceneobject(defaultLink, "Ahnonay").getKey())
 
     ###########################
     def OnNotify(self, state, id, events):

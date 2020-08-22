@@ -227,14 +227,10 @@ class clftImager(ptResponder):
         boolTomahnaActive = self.ageSDL[SDLVarTomahnaActive][0]
 
         if boolTomahnaActive:
-            PtDebugPrint(
-                "clftImager.OnServerInitComplete: SDL says Tomahna is active, will set Imager to break..."
-            )
+            PtDebugPrint("clftImager.OnServerInitComplete: SDL says Tomahna is active, will set Imager to break...")
             imagerBusted = 1
         else:
-            PtDebugPrint(
-                "clftImager.OnServerInitComplete: SDL says Tomahna is NOT active, will set Imager to work..."
-            )
+            PtDebugPrint("clftImager.OnServerInitComplete: SDL says Tomahna is NOT active, will set Imager to work...")
             imagerBusted = 0
 
         if boolTomahnaActive and boolSceneYeesha:
@@ -418,9 +414,7 @@ class clftImager(ptResponder):
                     ):  # Smart seek completed. Exit multistage, and show GUI.
                         avatar = PtFindAvatar(events)
                         SeekBehavior.gotoStage(avatar, -1)
-                        PtDebugPrint(
-                            "clftImager.onNotify: enter puzzle view mode now that seek is done"
-                        )
+                        PtDebugPrint("clftImager.onNotify: enter puzzle view mode now that seek is done")
                         avatar.draw.disable()
                         # PtFadeLocalAvatar(1)
                         imagerCam.value.pushCutsceneCamera(0, avatar.getKey())
@@ -513,9 +507,7 @@ class clftImager(ptResponder):
                                 # PtAtTimeCallback(self.key, 204.2, kFinished)
                             elif PlayFinal == 0 and PlayFull == 0 and PlayTPOT == 0:
                                 stopvision = random.randint(minstoptime, maxstoptime)
-                                PtDebugPrint(
-                                    "\tImager will autoshut off in %d seconds" % (stopvision)
-                                )
+                                PtDebugPrint("\tImager will autoshut off in %d seconds" % (stopvision))
                                 PtAtTimeCallback(self.key, stopvision, kVision)
                             elif PlayFull == 1:
                                 PtDebugPrint("nothing")
@@ -537,9 +529,7 @@ class clftImager(ptResponder):
             clothingList = avatar.avatar.getWardrobeClothingList()
             if clothingName not in clothingList:
                 PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
-                avatar.avatar.addWardrobeClothingItem(
-                    clothingName, ptColor().white(), ptColor().black()
-                )
+                avatar.avatar.addWardrobeClothingItem(clothingName, ptColor().white(), ptColor().black())
             else:
                 PtDebugPrint("player already has Yeesha reward clothing, doing nothing")
 
@@ -568,9 +558,7 @@ class clftImager(ptResponder):
                 PtDebugPrint("what's wrong with the door?")
 
         if id == YeeshaSceneTimerDone.id and state and PlayScene == 1:
-            PtDebugPrint(
-                "clftImager.OnNotify(): Yeesha timer is done.  Getting rid of Yeesha and setting SDL."
-            )
+            PtDebugPrint("clftImager.OnNotify(): Yeesha timer is done.  Getting rid of Yeesha and setting SDL.")
             self.ageSDL = PtGetAgeSDL()
             YeeshaName.draw.disable()
             YeeshaName.physics.warpObj(YeeshaWarpHid.value.getKey())
@@ -758,9 +746,7 @@ class clftImager(ptResponder):
         global speechKilled
 
         if visionplaying == 1 and id == kVision:
-            PtDebugPrint(
-                "\nclftImager.Ontimer:Got kVision timer callback. Automatically stopping vision."
-            )
+            PtDebugPrint("\nclftImager.Ontimer:Got kVision timer callback. Automatically stopping vision.")
             self.StopVision()
             imagerBrokenBtn.disableActivator()
             imagerLockN.disableActivator()
@@ -828,9 +814,7 @@ class clftImager(ptResponder):
             visionplaying = 1
             VisionID = "final"
             YeeshaSpeech2.run(self.key, state="on")
-            PtDebugPrint(
-                "clftImager.StartVision: play final Yeesha speech 01, then enable Tomahna book..."
-            )
+            PtDebugPrint("clftImager.StartVision: play final Yeesha speech 01, then enable Tomahna book...")
             PtAtTimeCallback(self.key, 1, imagerBtn.id)
         elif PlayFinal == 0 and PlayFull == 1:
             vault = ptVault()
@@ -934,8 +918,7 @@ class clftImager(ptResponder):
                 entryCityLinks.chronicleSetValue(NewLinks)
                 entryCityLinks.save()
                 PtDebugPrint(
-                    "xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ",
-                    agePanel,
+                    "xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ", agePanel,
                 )
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
@@ -950,17 +933,14 @@ class clftImager(ptResponder):
         else:
             vault.addChronicleEntry("CityBookLinks", 0, agePanel)
             PtDebugPrint(
-                "xLinkingBookGUIPopup.IDoCityLinksChron():  creating citylinks chron entry and adding: ",
-                agePanel,
+                "xLinkingBookGUIPopup.IDoCityLinksChron():  creating citylinks chron entry and adding: ", agePanel,
             )
 
         psnlSDL = xPsnlVaultSDL()
         GotBook = psnlSDL["psnlGotCityBook"][0]
         if not GotBook:
             psnlSDL["psnlGotCityBook"] = (1,)
-            PtDebugPrint(
-                "xLinkingBookGUIPopup.IDoCityLinksChron():  setting SDL for city book to 1"
-            )
+            PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  setting SDL for city book to 1")
 
     def OnBackdoorMsg(self, target, param):
         if target == "yeesha1" or target == "yeesha2" or target == "yeesha3":

@@ -87,9 +87,7 @@ boolForceClose = ptAttribBoolean(25, "Force Close if Age Empty")
 
 boolOwnedDoor = ptAttribBoolean(26, "Only Owners Can Use", default=False)
 
-stringSDLVarEnabled = ptAttribString(
-    27, "SDL Bool Enabled (Optional)"
-)  # for lockable or powerable doors etc.
+stringSDLVarEnabled = ptAttribString(27, "SDL Bool Enabled (Optional)")  # for lockable or powerable doors etc.
 
 # ---------
 # globals
@@ -111,8 +109,7 @@ class xStandardDoor(ptResponder):
 
     def OnFirstUpdate(self):
         PtDebugPrint(
-            "xStandardDoor: Located in age %s, Max Object %s"
-            % (str(PtGetAgeName()), str(self.sceneobject.getName()))
+            "xStandardDoor: Located in age %s, Max Object %s" % (str(PtGetAgeName()), str(self.sceneobject.getName()))
         )
         # get the age we started in
         global AgeStartedIn
@@ -142,8 +139,7 @@ class xStandardDoor(ptResponder):
                     "xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door closed value"
                 )
             PtDebugPrint(
-                "xStandardDoor.OnServerInitComplete():\tageSDL[%s] = %d"
-                % (stringSDLVarClosed.value, doorClosed)
+                "xStandardDoor.OnServerInitComplete():\tageSDL[%s] = %d" % (stringSDLVarClosed.value, doorClosed)
             )
 
             try:
@@ -261,9 +257,7 @@ class xStandardDoor(ptResponder):
                         actExterior.enable()
                         actInterior.enable()
                         return
-                    PtDebugPrint(
-                        "xStandardDoor.OnSDLNotify():\tOwners-Only Door Enabled...but I'm not an owner"
-                    )
+                    PtDebugPrint("xStandardDoor.OnSDLNotify():\tOwners-Only Door Enabled...but I'm not an owner")
                     return
 
             if VARname == stringSDLVarClosed.value:
@@ -281,12 +275,8 @@ class xStandardDoor(ptResponder):
                     fastforward = 0
                 else:  # playerID == 0 --> invalid player aka Vault Manager
                     objAvatar = None
-                    fastforward = (
-                        1  # pop door to it's new state (skip one-shots that require valid player)
-                    )
-                PtDebugPrint(
-                    "xStandardDoor.OnSDLNotify():\tnotification from playerID: %d" % (playerID)
-                )
+                    fastforward = 1  # pop door to it's new state (skip one-shots that require valid player)
+                PtDebugPrint("xStandardDoor.OnSDLNotify():\tnotification from playerID: %d" % (playerID))
 
                 # if tag == "fastforward":
                 #    fastforward = 1
@@ -307,8 +297,7 @@ class xStandardDoor(ptResponder):
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tClosing ", tag)
                         else:
                             PtDebugPrint(
-                                "xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s"
-                                % (tag)
+                                "xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag)
                             )  # ok if from vaultmanager
                             fastforward = 1
                             if boolCanManualClose.value:
@@ -321,8 +310,7 @@ class xStandardDoor(ptResponder):
                                 )
                     except:
                         PtDebugPrint(
-                            "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s"
-                            % (VARname, tag)
+                            "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname, tag)
                         )
                     if (
                         fastforward
@@ -342,15 +330,13 @@ class xStandardDoor(ptResponder):
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tOpening ", tag)
                         else:
                             PtDebugPrint(
-                                "xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s"
-                                % (tag)
+                                "xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag)
                             )
                             fastforward = 1
                             respOpenExt.run(self.key, fastforward=fastforward)
                     except:
                         PtDebugPrint(
-                            "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s"
-                            % (VARname, tag)
+                            "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname, tag)
                         )
                         fastforward = 1
                         respOpenExt.run(self.key, fastforward=fastforward)

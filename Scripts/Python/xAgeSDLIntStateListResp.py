@@ -66,15 +66,7 @@ from PlasmaTypes import *
 # to help keep this file a bit more tidy.
 class ptAttribStateResponder(ptAttribResponder):
     def run(
-        self,
-        key,
-        state=None,
-        events=None,
-        avatar=None,
-        objectName=None,
-        netForce=0,
-        netPropagate=1,
-        fastforward=0,
+        self, key, state=None, events=None, avatar=None, objectName=None, netForce=0, netPropagate=1, fastforward=0,
     ):
         # has the value been set?
         if self.value is not None:
@@ -136,9 +128,7 @@ class xAgeSDLIntStateListResp(ptResponder):
 
     def OnFirstUpdate(self):
         if not strSDLVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file")
 
         if boolFirstUpdate.value:
             self.Initialize()
@@ -169,9 +159,7 @@ class xAgeSDLIntStateListResp(ptResponder):
                 self.dictStates[int(decState[0])] = int(decState[1])
 
         except:  # oops, something bad happened while decomposing the list
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tERROR: couldn't process state list"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tERROR: couldn't process state list")
             PtDebugPrint(
                 "ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tPlease enter states in the format: (val,stateNum)(val,stateNum)"
             )
@@ -182,8 +170,7 @@ class xAgeSDLIntStateListResp(ptResponder):
             return
 
         PtDebugPrint(
-            "DEBUG: xAgeSDLIntStateListResp.OnServerInitComplete():\t Registered State List: %s "
-            % self.dictStates
+            "DEBUG: xAgeSDLIntStateListResp.OnServerInitComplete():\t Registered State List: %s " % self.dictStates
         )
 
         # Set to current state
@@ -197,9 +184,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         ageSDL = PtGetAgeSDL()
         SDLvalue = ageSDL[strSDLVarName.value][0]
 
-        PtDebugPrint(
-            "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue)
-        )
+        PtDebugPrint("DEBUG: xAgeSDLIntStateListResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue))
 
         # is state change from player or vault manager?
         if PlayerID:  # non-zero means it's a player
@@ -218,13 +203,10 @@ class xAgeSDLIntStateListResp(ptResponder):
     def UpdateState(self, SDLval, avatar, fastforward):
         if SDLval in self.dictStates:  # Run the responder only if we have the state
             PtDebugPrint(
-                "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify: running state responder: %s"
-                % self.dictStates[SDLval]
+                "DEBUG: xAgeSDLIntStateListResp.OnSDLNotify: running state responder: %s" % self.dictStates[SDLval]
             )
             respEnterState.run(
                 self.key, state=self.dictStates[SDLval], avatar=avatar, fastforward=fastforward,
             )
         else:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntStateListResp.OnSDLNotify: Couldn't find state: %d " % SDLval
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnSDLNotify: Couldn't find state: %d " % SDLval)

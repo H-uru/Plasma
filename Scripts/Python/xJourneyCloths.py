@@ -165,9 +165,7 @@ class xJourneyCloths(ptModifier):
         PtDebugPrint("You've found %s JourneyCloths" % (length))
 
         if length < 0 or length > 11:
-            PtDebugPrint(
-                "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
-            )
+            PtDebugPrint("xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow.")
 
         if length == 1:
             HandAnim01.run(self.key)
@@ -203,9 +201,7 @@ class xJourneyCloths(ptModifier):
             HandAnim10.run(self.key)
 
         else:
-            PtDebugPrint(
-                "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
-            )
+            PtDebugPrint("xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow.")
 
     def RandomBahroSounds(self):
         whichsound = random.randint(1, 4)

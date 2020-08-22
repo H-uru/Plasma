@@ -59,12 +59,8 @@ from PlasmaTypes import *
 SDLImgrView = ptAttribString(1, "SDL: Control Imager view")
 ActScrollLeft = ptAttribActivator(2, "clk: imager btn left")
 ActScrollRight = ptAttribActivator(3, "clk: imager btn right")
-RespScrollLeft = ptAttribResponder(
-    4, "resp: scroll imager left", ["From3to2", "From2to1", "From1to0", "At3"]
-)
-RespScrollRight = ptAttribResponder(
-    5, "resp: scroll imager right", ["From0to1", "From1to2", "From2to3", "At0"]
-)
+RespScrollLeft = ptAttribResponder(4, "resp: scroll imager left", ["From3to2", "From2to1", "From1to0", "At3"])
+RespScrollRight = ptAttribResponder(5, "resp: scroll imager right", ["From0to1", "From1to2", "From2to3", "At0"])
 RespImgrView0 = ptAttribResponder(6, "resp: imager view 0", ["exit", "enter"])
 RespImgrView1 = ptAttribResponder(7, "resp: imager view 1", ["exit", "enter"])
 RespImgrView2 = ptAttribResponder(8, "resp: imager view 2", ["exit", "enter"])
@@ -174,9 +170,7 @@ class ercaControlRoom(ptResponder):
         try:
             byteImgrNew = ageSDL[SDLImgrView.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for imager view"
-            )
+            PtDebugPrint("ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for imager view")
             byteImgrNew = 3
         PtDebugPrint(
             "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d"
@@ -185,44 +179,32 @@ class ercaControlRoom(ptResponder):
         try:
             byteMixBtnNew = ageSDL[SDLMixBtn.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for mixer btn"
-            )
+            PtDebugPrint("ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for mixer btn")
             byteMixBtnNew = 0
         PtDebugPrint(
-            "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d"
-            % (SDLMixBtn.value, ageSDL[SDLMixBtn.value][0])
+            "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d" % (SDLMixBtn.value, ageSDL[SDLMixBtn.value][0])
         )
         try:
             byteOvenBtnNew = ageSDL[SDLOvenBtn.value][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for oven btn"
-            )
+            PtDebugPrint("ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for oven btn")
             byteOvenBtnNew = 0
         PtDebugPrint(
-            "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d"
-            % (SDLOvenBtn.value, ageSDL[SDLOvenBtn.value][0])
+            "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d" % (SDLOvenBtn.value, ageSDL[SDLOvenBtn.value][0])
         )
         try:
             byteAmBaking = ageSDL["ercaBakeFinishTime"][0]
         except:
-            PtDebugPrint(
-                "ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for oven btn"
-            )
+            PtDebugPrint("ERROR: ercaControlRoom.OnServerInitComplete():\tERROR reading SDL name for oven btn")
             byteAmBaking = 0
         PtDebugPrint(
-            "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d"
-            % (byteAmBaking, ageSDL["ercaBakeFinishTime"][0])
+            "DEBUG: ercaControlRoom.OnServerInitComplete():\t%s = %d" % (byteAmBaking, ageSDL["ercaBakeFinishTime"][0])
         )
 
         OnInit = 1
         imageR = statesR[byteImgrNew]
         RespScrollRight.run(self.key, state="%s" % (imageR), fastforward=1)
-        PtDebugPrint(
-            "ercaControlRoom.OnServerInitComplete():\tRespScrollRight just run... imageR = %s"
-            % (imageR)
-        )
+        PtDebugPrint("ercaControlRoom.OnServerInitComplete():\tRespScrollRight just run... imageR = %s" % (imageR))
         self.ImgrView(byteImgrNew, "enter", 1)
         if byteImgrNew == 0:
             RespScrollBtns.run(self.key, state="off", fastforward=1)
@@ -265,9 +247,7 @@ class ercaControlRoom(ptResponder):
                 PtDebugPrint("setting SDLOvenBtn to 0")
                 ageSDL[SDLOvenBtn.value] = (0,)
             self.ImgrView(byteImgrOld, "exit")
-            PtDebugPrint(
-                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d" % (SDLImgrView.value, byteImgrNew)
-            )
+            PtDebugPrint("DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d" % (SDLImgrView.value, byteImgrNew))
             if byteImgrOld == 0:
                 RespScrollBtnRt.run(self.key, state="off")
             elif byteImgrOld == 3:
@@ -300,8 +280,7 @@ class ercaControlRoom(ptResponder):
                 self.MixerBtns(byteMixBtnOld, "release")
                 self.MixerBtns(byteMixBtnNew, "press")
             PtDebugPrint(
-                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d"
-                % (SDLMixBtn.value, ageSDL[SDLMixBtn.value][0])
+                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d" % (SDLMixBtn.value, ageSDL[SDLMixBtn.value][0])
             )
 
         elif VARname == SDLOvenBtn.value:
@@ -316,8 +295,7 @@ class ercaControlRoom(ptResponder):
                 self.OvenBtns(byteOvenBtnOld, "release")
                 self.OvenBtns(byteOvenBtnNew, "press")
             PtDebugPrint(
-                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d"
-                % (SDLOvenBtn.value, ageSDL[SDLOvenBtn.value][0])
+                "DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d" % (SDLOvenBtn.value, ageSDL[SDLOvenBtn.value][0])
             )
 
         elif VARname == "ercaBakeFinishTime":
@@ -339,9 +317,7 @@ class ercaControlRoom(ptResponder):
                 tempVal = byteImgrNew - 1
                 ageSDL[SDLImgrView.value] = (tempVal,)
             else:
-                PtDebugPrint(
-                    "DEBUG: ercaControlRoom.OnNotify():\tCan't scroll any further to the left."
-                )
+                PtDebugPrint("DEBUG: ercaControlRoom.OnNotify():\tCan't scroll any further to the left.")
 
         elif id == ActScrollRight.id and state and LocalAvatar == PtFindAvatar(events):
             PtDebugPrint("ActScrollRight callback")
@@ -350,19 +326,14 @@ class ercaControlRoom(ptResponder):
                 tempVal = byteImgrNew + 1
                 ageSDL[SDLImgrView.value] = (tempVal,)
             else:
-                PtDebugPrint(
-                    "DEBUG: ercaControlRoom.OnNotify():\tCan't scroll any further to the right."
-                )
+                PtDebugPrint("DEBUG: ercaControlRoom.OnNotify():\tCan't scroll any further to the right.")
 
         elif (id == RespScrollLeft.id) or (id == RespScrollRight.id):
             PtDebugPrint("RespScrollX callback")
             self.ImgrView(byteImgrNew, "enter")
 
         elif (
-            (id == RespImgrView0.id)
-            or (id == RespImgrView1.id)
-            or (id == RespImgrView2.id)
-            or (id == RespImgrView3.id)
+            (id == RespImgrView0.id) or (id == RespImgrView1.id) or (id == RespImgrView2.id) or (id == RespImgrView3.id)
         ):
             PtDebugPrint("RespImgrView# callback")
             if id == RespImgrView0.id:
@@ -380,9 +351,7 @@ class ercaControlRoom(ptResponder):
                 OnInit = 0
                 if byteImgrNew == 1:
                     if byteMixBtnNew != 0:
-                        PtDebugPrint(
-                            "DEBUG: ercaControlRoom.OnServerInitComplete():\tMixer btn SDL is not 0."
-                        )
+                        PtDebugPrint("DEBUG: ercaControlRoom.OnServerInitComplete():\tMixer btn SDL is not 0.")
                         RespMixIcons.run(self.key, state="on", fastforward=0)
                         if byteMixBtnNew == 1:
                             RespMixBtn1.run(self.key, state="press", fastforward=1)
@@ -405,9 +374,7 @@ class ercaControlRoom(ptResponder):
 
                 if byteImgrNew == 0:
                     if byteOvenBtnNew != 0:
-                        PtDebugPrint(
-                            "DEBUG: ercaControlRoom.OnServerInitComplete():\tOven btn SDL is not 0."
-                        )
+                        PtDebugPrint("DEBUG: ercaControlRoom.OnServerInitComplete():\tOven btn SDL is not 0.")
                         RespOvenIcons.run(self.key, state="on", fastforward=0)
                         if byteOvenBtnNew == 1:
                             RespOvenBtn1.run(self.key, state="press", fastforward=1)
@@ -423,26 +390,14 @@ class ercaControlRoom(ptResponder):
                         )
                         RespOvenIcons.run(self.key, state="off", fastforward=0)
                 else:
-                    PtDebugPrint(
-                        "DEBUG: ercaControlRoom.OnServerInitComplete():\tNot on Oven view, so no oven icons."
-                    )
+                    PtDebugPrint("DEBUG: ercaControlRoom.OnServerInitComplete():\tNot on Oven view, so no oven icons.")
                     RespOvenIcons.run(self.key, state="off", fastforward=0)
 
-        elif (
-            (id == RespMixBtn1.id)
-            or (id == RespMixBtn2.id)
-            or (id == RespMixBtn3.id)
-            or (id == RespMixBtn4.id)
-        ):
+        elif (id == RespMixBtn1.id) or (id == RespMixBtn2.id) or (id == RespMixBtn3.id) or (id == RespMixBtn4.id):
             PtDebugPrint("RespMixBtn notify... id = %s, and state = %s" % (id, state))
             RespMixIcons.run(self.key, state="on")
 
-        elif (
-            (id == RespOvenBtn1.id)
-            or (id == RespOvenBtn2.id)
-            or (id == RespOvenBtn3.id)
-            or (id == RespOvenBtn4.id)
-        ):
+        elif (id == RespOvenBtn1.id) or (id == RespOvenBtn2.id) or (id == RespOvenBtn3.id) or (id == RespOvenBtn4.id):
             PtDebugPrint("RespOvenBtn notify... id = %s, and state = %s" % (id, state))
             RespOvenIcons.run(self.key, state="on")
 
@@ -474,14 +429,10 @@ class ercaControlRoom(ptResponder):
                 hatch = hatchSDLs[hatchNum]
                 blade = bladesSDLs[hatchNum]
                 if hatch == "ercaPool1Hatch":
-                    PtDebugPrint(
-                        "Tried to operate pool 1 hatch, but it's can't be drained, and so access is denied!"
-                    )
+                    PtDebugPrint("Tried to operate pool 1 hatch, but it's can't be drained, and so access is denied!")
                     return
                 if ageSDL[blade][0] == 1:
-                    PtDebugPrint(
-                        "Tried to unlock hatch, but blades are spinning so request denied!"
-                    )
+                    PtDebugPrint("Tried to unlock hatch, but blades are spinning so request denied!")
                     return
                 if ageSDL[hatch][0] == 0:
                     ageSDL[hatch] = (1,)
@@ -505,10 +456,7 @@ class ercaControlRoom(ptResponder):
                 tunnel = TunnelsOccupied[valveNum]
                 # PtDebugPrint("tunnel = ",tunnel)
                 if tunnel != []:
-                    PtDebugPrint(
-                        "tried to operate valve %d, but the tunnel is occupied; denied!"
-                        % (valveNum)
-                    )
+                    PtDebugPrint("tried to operate valve %d, but the tunnel is occupied; denied!" % (valveNum))
                     PtDebugPrint("players in this tunnel:")
                     for player in tunnel:
                         PtDebugPrint(player)
@@ -522,9 +470,7 @@ class ercaControlRoom(ptResponder):
                     empty = emptySDLs[valveNum]
                     if ageSDL[empty][0] == 0:
                         ageSDL[empty] = (1,)
-                        PtDebugPrint(
-                            "Pool wasn't drained before, so will set SDL for %s to %d" % (empty, 1)
-                        )
+                        PtDebugPrint("Pool wasn't drained before, so will set SDL for %s to %d" % (empty, 1))
                 else:
                     ageSDL[valve] = (0,)
                     PtDebugPrint("now setting SDL for %s to %d" % (valve, 0))
@@ -551,9 +497,7 @@ class ercaControlRoom(ptResponder):
                 PtDebugPrint("Btn is 0, no SDL to set")
                 return
 
-        elif (
-            id == RgnTunnel1.id or id == RgnTunnel2.id or id == RgnTunnel3.id or id == RgnTunnel4.id
-        ):
+        elif id == RgnTunnel1.id or id == RgnTunnel2.id or id == RgnTunnel3.id or id == RgnTunnel4.id:
             # PtDebugPrint("callback from rgn tunnel ID: ",id)
             for event in events:
                 if event[0] == kCollisionEvent:

@@ -174,21 +174,12 @@ class ahnyLinkBookGUIPopup(ptModifier):
             for event in events:
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    PtDebugPrint(
-                        "ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1], event[2])
-                    )
+                    PtDebugPrint("ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1], event[2]))
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
-                        if (
-                            event[2] >= xLinkingBookDefs.kFirstLinkPanelID
-                            or event[2] == xLinkingBookDefs.kBookMarkID
-                        ):
-                            PtDebugPrint(
-                                "ahnyLinkBookGUIPopup:Book: hit linking panel %s" % (event[2])
-                            )
+                        if event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
+                            PtDebugPrint("ahnyLinkBookGUIPopup:Book: hit linking panel %s" % (event[2]))
                             self.HideBook(1)
-                            respLinkSphere01.run(
-                                self.key, avatar=PtGetLocalAvatar(), netPropagate=0
-                            )
+                            respLinkSphere01.run(self.key, avatar=PtGetLocalAvatar(), netPropagate=0)
 
                             # assume this is a normal pedestal book, (i.e. not the psnlBookshelf) Run the responder indicated in Max
 
@@ -424,9 +415,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
         global gLinkingBook
         global kGrsnTeamBook
         if id == kGrsnTeamBook:
-            PtDebugPrint(
-                "\nahnyLinkBookGUIPopup.OnTimer:Got timer callback. Removing popup for a grsn team book."
-            )
+            PtDebugPrint("\nahnyLinkBookGUIPopup.OnTimer:Got timer callback. Removing popup for a grsn team book.")
             gLinkingBook.hide()
 
     def GetCurrentSphere(self):

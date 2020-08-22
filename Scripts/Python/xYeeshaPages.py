@@ -193,9 +193,7 @@ class xYeeshaPages(ptModifier):
                     return
 
                 else:
-                    PtDebugPrint(
-                        "xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value)
-                    )
+                    PtDebugPrint("xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value))
 
                     PtDebugPrint(
                         "xYeeshaPages.py: Trying to update the value of the SDL variable %s to 1"
@@ -220,10 +218,7 @@ class xYeeshaPages(ptModifier):
                         # PtAtTimeCallback(self.key,kWaitFadeoutSecs,kStartFadeoutID)
 
             else:
-                PtDebugPrint(
-                    "xYeeshaPages: Error trying to access the Chronicle psnlSDL. psnlSDL = %s"
-                    % (psnlSDL)
-                )
+                PtDebugPrint("xYeeshaPages: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % (psnlSDL))
 
         elif event == 2 and btnID == kYeeshaPageCancel:
             PtHideDialog(DialogName)
@@ -311,8 +306,7 @@ class xYeeshaPages(ptModifier):
 
         else:
             PtDebugPrint(
-                "xYeeshaPages.IDrawLinkPanel():\tERROR: couldn't find page named ",
-                PageNumber.value,
+                "xYeeshaPages.IDrawLinkPanel():\tERROR: couldn't find page named ", PageNumber.value,
             )
         return
 

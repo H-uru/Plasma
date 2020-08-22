@@ -68,17 +68,11 @@ class xAgeSDLBoolAndSet(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringOpA.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLOpA var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLOpA var name in max file")
         if not stringOpB.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLOpB var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLOpB var name in max file")
         if not stringResult.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLResult var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLResult var name in max file")
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -90,10 +84,7 @@ class xAgeSDLBoolAndSet(ptResponder):
         try:
             result = ageSDL[stringOpA.value][0] and ageSDL[stringOpB.value][0]
             ageSDL[stringResult.value] = (result,)
-            PtDebugPrint(
-                "DEBUG: xAgeSDLBoolAndSet.OnServerInitComplete:\tset %s=%d"
-                % (stringResult.value, result)
-            )
+            PtDebugPrint("DEBUG: xAgeSDLBoolAndSet.OnServerInitComplete:\tset %s=%d" % (stringResult.value, result))
         except:
             PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnServerInitComplete:\tcan't access age sdl")
 
@@ -111,8 +102,6 @@ class xAgeSDLBoolAndSet(ptResponder):
         try:
             result = ageSDL[stringOpA.value][0] and ageSDL[stringOpB.value][0]
             ageSDL[stringResult.value] = (result,)
-            PtDebugPrint(
-                "DEBUG: xAgeSDLBoolAndSet.OnSDLNotify:\tset %s=%d" % (stringResult.value, result)
-            )
+            PtDebugPrint("DEBUG: xAgeSDLBoolAndSet.OnSDLNotify:\tset %s=%d" % (stringResult.value, result))
         except:
             PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnServerInitComplete:\tcan't access age sdl")

@@ -73,9 +73,7 @@ respUrwinSfx = ptAttribNamedResponder(
 actUrwinPathEnd = ptAttribActivator(9, "act: Urwin Path End")
 
 # define globals
-kDayLengthInSeconds = (
-    56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
-)
+kDayLengthInSeconds = 56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
 kMinimumTimeBetweenSpawns = 3600  # 1 hour
 kMaximumTimeBetweenSpawns = 25200  # 7 hours
 # We need the first random spawn time in the first 5 hours of the day
@@ -125,14 +123,10 @@ class nglnUrwinBrain(ptResponder):
         lastDay = int(ageSDL["UrwinLastUpdated"][0] / kDayLengthInSeconds)
 
         if (thisDay - lastDay) > 0:
-            PtDebugPrint(
-                "nglnUrwinBrain: It's been at least a day since the last update, running new numbers now."
-            )
+            PtDebugPrint("nglnUrwinBrain: It's been at least a day since the last update, running new numbers now.")
             self.InitNewSDLVars()
         else:
-            PtDebugPrint(
-                "nglnUrwinBrain: It's been less than a day since the last update, doing nothing"
-            )
+            PtDebugPrint("nglnUrwinBrain: It's been less than a day since the last update, doing nothing")
             self.SetUrwinTimers()
 
         if not len(PtGetPlayerList()):
@@ -157,12 +151,7 @@ class nglnUrwinBrain(ptResponder):
         ageSDL = PtGetAgeSDL()
         PtDebugPrint(
             "nglnUrwinBrain.OnNotify:  state=%f id=%d owned=%s prowl=%s events="
-            % (
-                state,
-                id,
-                str(self.sceneobject.isLocallyOwned()),
-                str(ageSDL["UrwinOnTheProwl"][0]),
-            ),
+            % (state, id, str(self.sceneobject.isLocallyOwned()), str(ageSDL["UrwinOnTheProwl"][0]),),
             events,
         )
 
@@ -178,9 +167,7 @@ class nglnUrwinBrain(ptResponder):
 
         elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
             if id == respUrwinSfx.id:
-                PtDebugPrint(
-                    "Callback was from Appearance SFX, and I own the age, so start walking"
-                )
+                PtDebugPrint("Callback was from Appearance SFX, and I own the age, so start walking")
                 self.StartToWalk()
 
             else:
@@ -357,15 +344,11 @@ class nglnUrwinBrain(ptResponder):
                 PtDebugPrint("nglnUrwinBrain: Generated a valid spawn time: %d" % (newTime))
                 spawnTimes.append(newTime)
             else:
-                PtDebugPrint(
-                    "nglnUrwinBrain: Generated a spawn time after dusk, exiting loop: %d"
-                    % (newTime)
-                )
+                PtDebugPrint("nglnUrwinBrain: Generated a spawn time after dusk, exiting loop: %d" % (newTime))
                 break
         else:
             PtDebugPrint(
-                "nglnUrwinBrain:ERROR---Tried to add a spawn time that's not a number: ",
-                spawnTimes,
+                "nglnUrwinBrain:ERROR---Tried to add a spawn time that's not a number: ", spawnTimes,
             )
             spawnTimes = [0]
 
@@ -382,20 +365,13 @@ class nglnUrwinBrain(ptResponder):
             for timer in ageSDL["UrwinSpawnTimes"]:
                 if timer:
                     timeTillSpawn = timer - PtGetDniTime()
-                    PtDebugPrint(
-                        "timer: %d    time: %d    timeTillSpawn: %d"
-                        % (timer, PtGetDniTime(), timeTillSpawn)
-                    )
+                    PtDebugPrint("timer: %d    time: %d    timeTillSpawn: %d" % (timer, PtGetDniTime(), timeTillSpawn))
                     if timeTillSpawn > 0:
-                        PtDebugPrint(
-                            "nglnUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn)
-                        )
+                        PtDebugPrint("nglnUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn))
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
             # precision error FTW!
-            timeLeftToday = kDayLengthInSeconds - int(
-                PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds
-            )
+            timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
             timeLeftToday += 1  # because we want it to go off right AFTER the day flips
             PtDebugPrint("nglnUrwinBrain: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
             PtAtTimeCallback(self.key, timeLeftToday, 2)

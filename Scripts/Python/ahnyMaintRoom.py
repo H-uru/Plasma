@@ -58,9 +58,7 @@ import time
 SphereNum = ptAttribInt(1, "sphere #")
 ActAdvanceSwitch = ptAttribActivator(2, "clk: advance spheres switch")
 RespAdvanceBeh = ptAttribResponder(3, "resp: advance spheres beh")
-RespAdvanceUse = ptAttribResponder(
-    4, "resp: advance spheres use", ["down0", "up", "down1", "down2", "down3"]
-)
+RespAdvanceUse = ptAttribResponder(4, "resp: advance spheres use", ["down0", "up", "down1", "down2", "down3"])
 RespHubDoor = ptAttribResponder(5, "resp: hub door (sphere 4 only!)", ["close", "open"])
 
 
@@ -130,10 +128,7 @@ class ahnyMaintRoom(ptResponder):
             if actingAvatar == PtGetLocalAvatar():
                 ageSDL = PtGetAgeSDL()
                 ageSDL["ahnyCurrentSphere"] = (SphereNum.value,)
-                PtDebugPrint(
-                    "advanced from sphere %d with maintainence button"
-                    % (ageSDL["ahnyCurrentSphere"][0])
-                )
+                PtDebugPrint("advanced from sphere %d with maintainence button" % (ageSDL["ahnyCurrentSphere"][0]))
                 PtDebugPrint("sphere %d will now be the active sphere" % (SphereNum.value))
                 if SphereNum.value == 4:
                     ageSDL["ahnyImagerSphere"] = (SphereNum.value,)
@@ -219,6 +214,5 @@ class ahnyMaintRoom(ptResponder):
         currentSphere = SphereNum.value
         diffsphere = (activeSphere - currentSphere) % 4
         PtDebugPrint(
-            "ahnyMaintRoom.SphereDifference(): Setting sphere difference for Maint Room switch to %d"
-            % (diffsphere)
+            "ahnyMaintRoom.SphereDifference(): Setting sphere difference for Maint Room switch to %d" % (diffsphere)
         )

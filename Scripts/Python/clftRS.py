@@ -85,9 +85,7 @@ class clftRS(ptModifier):
         "Activated... start telescope"
         global LocalAvatar
         PtDebugPrint(
-            "xTelescope:OnNotify  state=%f id=%d events=" % (state, id),
-            events,
-            level=kDebugDumpLevel,
+            "xTelescope:OnNotify  state=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel,
         )
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
@@ -155,9 +153,7 @@ class clftRS(ptModifier):
         # Re-enable first person camera
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        PtAtTimeCallback(
-            self.key, 3, 1
-        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtAtTimeCallback(self.key, 3, 1)  # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint(
             "xTelescope.IQuitTelescope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )

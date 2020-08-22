@@ -221,13 +221,9 @@ def showglobals():
         ist = __pmods[__sel][1].__dict__[name]
         # make sure that its not something we already know about
         if not hasattr(Plasma, name) and not hasattr(PlasmaTypes, name):
-            if not isinstance(ist, PlasmaTypes.ptAttribute) and not isinstance(
-                ist, PlasmaTypes.ptModifier
-            ):
+            if not isinstance(ist, PlasmaTypes.ptAttribute) and not isinstance(ist, PlasmaTypes.ptModifier):
                 if name[:2] != "__" and name[:4] != "glue":
-                    if not isinstance(ist, type(sys)) and not isinstance(
-                        ist, type(PlasmaTypes.ptAttribute)
-                    ):
+                    if not isinstance(ist, type(sys)) and not isinstance(ist, type(PlasmaTypes.ptAttribute)):
                         print("  %s =" % (name), ist)
 
 
@@ -257,10 +253,7 @@ def showinst():
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist, PlasmaTypes.ptModifier):
-            print(
-                "Instance of %s in module %s:"
-                % (ist.__class__.__name__, __pmods[__sel][1].__name__[:-13])
-            )
+            print("Instance of %s in module %s:" % (ist.__class__.__name__, __pmods[__sel][1].__name__[:-13]))
             print("  Doc: ", ist.__doc__)
             showvars(ist)
             showmethods(ist)

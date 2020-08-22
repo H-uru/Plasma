@@ -156,9 +156,7 @@ class grsnPrisonRandomSDLItems(ptResponder):
 
         if entry is None:
             vault.addChronicleEntry("VisitedGrsnPrison", 1, "yes")
-            PtDebugPrint(
-                "grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle."
-            )
+            PtDebugPrint("grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle.")
 
         else:
             PtDebugPrint("grsnPrisonRandomItems: You've been to the Prison before.")

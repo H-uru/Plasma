@@ -129,8 +129,7 @@ class clftGetPersonalBook(ptResponder):
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] == xLinkingBookDefs.kYeeshaBookLinkID:
                             PtDebugPrint(
-                                "clftGetPersonalBook:Book: hit linking panel",
-                                level=kDebugDumpLevel,
+                                "clftGetPersonalBook:Book: hit linking panel", level=kDebugDumpLevel,
                             )
                             gAreWeLinkingOut = 1
                             YeeshaBook.hide()
@@ -174,8 +173,7 @@ class clftGetPersonalBook(ptResponder):
                         SmartSeek.gotoStage(LocalAvatar, -1)
                         YeeshaBook = ptBook(xLinkingBookDefs.xYeeshaBookNoShare, self.key)
                         YeeshaBook.setSize(
-                            xLinkingBookDefs.YeeshaBookSizeWidth,
-                            xLinkingBookDefs.YeeshaBookSizeHeight,
+                            xLinkingBookDefs.YeeshaBookSizeWidth, xLinkingBookDefs.YeeshaBookSizeHeight,
                         )
                         YeeshaBook.show(1)
 
@@ -196,8 +194,7 @@ class clftGetPersonalBook(ptResponder):
                             BookAnimMale.animation.play()
                         else:
                             PtDebugPrint(
-                                "clftGetPersonalBook: unreadable gender or special character.",
-                                level=kErrorLevel,
+                                "clftGetPersonalBook: unreadable gender or special character.", level=kErrorLevel,
                             )
                             BookAnimMale.animation.play()
 
@@ -265,8 +262,7 @@ class clftGetPersonalBook(ptResponder):
 
     def OnMovieEvent(self, movieName, reason):
         PtDebugPrint(
-            "xLiveTrailer: got movie done event on %s, reason=%d" % (movieName, reason),
-            level=kDebugDumpLevel,
+            "xLiveTrailer: got movie done event on %s, reason=%d" % (movieName, reason), level=kDebugDumpLevel,
         )
         if gDemoMovie:
             # PtFadeOut(kTrailerFadeOutSeconds, kTrailerDoneID)

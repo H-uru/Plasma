@@ -72,9 +72,7 @@ class xAgeSDLIntStartStopResp(ptResponder):
 
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:
-            PtDebugPrint(
-                "ERROR: xAgeSDLIntStartStopResp.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-            )
+            PtDebugPrint("ERROR: xAgeSDLIntStartStopResp.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
 
     def OnServerInitComplete(self):
@@ -101,15 +99,11 @@ class xAgeSDLIntStartStopResp(ptResponder):
             SDLvalue = intDefault.value
 
         if SDLvalue in self.enabledStateList:
-            PtDebugPrint(
-                "DEBUG: xAgeSDLIntStartStopResp.OnServerInitComplete:\tRunning start responder"
-            )
+            PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnServerInitComplete:\tRunning start responder")
             fastforward = boolStartFF.value | boolFFOnInit.value
             respStart.run(self.key, avatar=None, fastforward=fastforward)
         else:
-            PtDebugPrint(
-                "DEBUG: xAgeSDLIntStartStopResp.OnServerInitComplete:\tRunning stop responder"
-            )
+            PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnServerInitComplete:\tRunning stop responder")
             fastforward = boolStopFF.value | boolFFOnInit.value
             respStop.run(self.key, avatar=None, fastforward=fastforward)
 
@@ -120,9 +114,7 @@ class xAgeSDLIntStartStopResp(ptResponder):
         ageSDL = PtGetAgeSDL()
         SDLvalue = ageSDL[stringSDLVarName.value][0]
 
-        PtDebugPrint(
-            "DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue)
-        )
+        PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify received: %s = %d" % (VARname, SDLvalue))
 
         if SDLvalue in self.enabledStateList:
             PtDebugPrint("DEBUG: xAgeSDLIntStartStopResp.OnSDLNotify: running start responder")

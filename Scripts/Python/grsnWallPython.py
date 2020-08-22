@@ -130,16 +130,10 @@ sQuitBehavior = ptAttribBehavior(56, "n quit behavior")
 # sfx responders
 
 nPanelSound = ptAttribResponder(
-    57,
-    "n panel sound",
-    ["main", "up", "down", "select", "blockerOn", "blockerOff", "gameStart", "denied"],
-    netForce=1,
+    57, "n panel sound", ["main", "up", "down", "select", "blockerOn", "blockerOff", "gameStart", "denied"], netForce=1,
 )
 sPanelSound = ptAttribResponder(
-    58,
-    "s panel sound",
-    ["main", "up", "down", "select", "blockerOn", "blockerOff", "gameStart", "denied"],
-    netForce=1,
+    58, "s panel sound", ["main", "up", "down", "select", "blockerOn", "blockerOff", "gameStart", "denied"], netForce=1,
 )
 
 

@@ -57,9 +57,7 @@ import xRandom
 
 # define the attributes that will be entered in max
 zones = ptAttribActivator(1, "act: Zone Detectors")
-respClockLights = ptAttribResponderList(
-    2, "resp: Clock Lights", statelist=["on", "off"], byObject=1
-)
+respClockLights = ptAttribResponderList(2, "resp: Clock Lights", statelist=["on", "off"], byObject=1)
 zoneObjects = ptAttribSceneobjectList(3, "obj: Zones")
 SDLOccupied = ptAttribString(4, "str: SDL Occupied Zones")
 SDLTrees = ptAttribString(5, "str: SDL Trees (optional)")
@@ -96,9 +94,7 @@ class ahnyPressurePlates(ptModifier):
             ageSDL = PtGetAgeSDL()
             ageSDL[SDLOccupied.value][0]
         except:
-            PtDebugPrint(
-                "ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL"
-            )
+            PtDebugPrint("ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL")
             ageSDL[SDLOccupied.value] = (
                 0,
                 0,
@@ -182,9 +178,7 @@ class ahnyPressurePlates(ptModifier):
             try:
                 ageSDL[SDLTrees.value][0]
             except:
-                PtDebugPrint(
-                    "ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL"
-                )
+                PtDebugPrint("ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL")
                 ageSDL[SDLTrees.value] = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
             ageSDL.setFlags(SDLTrees.value, 1, 1)
@@ -238,36 +232,25 @@ class ahnyPressurePlates(ptModifier):
                                     respLightList != [] and occupiedZones[index] == 1
                                 ):  # if we are now equal to one run the responder
                                     respClockLights.run(
-                                        self.key,
-                                        state="on",
-                                        objectName=respLightList[index],
-                                        netForce=1,
+                                        self.key, state="on", objectName=respLightList[index], netForce=1,
                                     )
                                 PtDebugPrint("%s - enter %s" % (str(occupiedZones), str(index)))
                             else:  # this should be exiting
-                                if (
-                                    occupiedZones[index] != 0
-                                ):  # only subtract if we are not zero don't want to overflow
+                                if occupiedZones[index] != 0:  # only subtract if we are not zero don't want to overflow
                                     occupiedZones[index] = occupiedZones[index] - 1
                                 if Sphere.value == "Sphere02" and index in treeToZoneKey:
-                                    if (
-                                        not ageSDL[SDLTrees.value][treeToZoneKey.index(index)]
-                                    ) and (occupiedZones[index] == 0):
+                                    if (not ageSDL[SDLTrees.value][treeToZoneKey.index(index)]) and (
+                                        occupiedZones[index] == 0
+                                    ):
                                         if respLightList != []:
                                             respClockLights.run(
-                                                self.key,
-                                                state="off",
-                                                objectName=respLightList[index],
-                                                netForce=1,
+                                                self.key, state="off", objectName=respLightList[index], netForce=1,
                                             )
                                 else:
 
                                     if (respLightList != []) and (occupiedZones[index] == 0):  #
                                         respClockLights.run(
-                                            self.key,
-                                            state="off",
-                                            objectName=respLightList[index],
-                                            netForce=1,
+                                            self.key, state="off", objectName=respLightList[index], netForce=1,
                                         )
                                 PtDebugPrint("%s - exit %s" % (str(occupiedZones), str(index)))
                             ageSDL[SDLOccupied.value] = tuple(occupiedZones)
@@ -293,17 +276,10 @@ class ahnyPressurePlates(ptModifier):
             for event in events:
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    PtDebugPrint(
-                        "ahnyPressurePlates: BookNotify  event=%d, id=%d" % (event[1], event[2])
-                    )
+                    PtDebugPrint("ahnyPressurePlates: BookNotify  event=%d, id=%d" % (event[1], event[2]))
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
-                        if (
-                            event[2] >= xLinkingBookDefs.kFirstLinkPanelID
-                            or event[2] == xLinkingBookDefs.kBookMarkID
-                        ):
-                            PtDebugPrint(
-                                "ahnyPressurePlates:Book: hit linking panel %s" % (event[2])
-                            )
+                        if event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
+                            PtDebugPrint("ahnyPressurePlates:Book: hit linking panel %s" % (event[2]))
                             self.HideBook(1)
 
                             ageSDL = PtGetAgeSDL()
@@ -319,9 +295,7 @@ class ahnyPressurePlates(ptModifier):
                             else:
                                 PtDebugPrint("Sphere staying put")
 
-                            respLinkResponder.run(
-                                self.key, avatar=PtGetLocalAvatar(), netPropagate=0
-                            )
+                            respLinkResponder.run(self.key, avatar=PtGetLocalAvatar(), netPropagate=0)
 
                             """
                             vault = ptVault()
@@ -416,9 +390,7 @@ class ahnyPressurePlates(ptModifier):
             gLinkingBook.show(1)
 
         except LookupError:
-            PtDebugPrint(
-                "ahnyLinkBookGUIPopup: could not find age AhnonayCathedral's linking panel"
-            )
+            PtDebugPrint("ahnyLinkBookGUIPopup: could not find age AhnonayCathedral's linking panel")
 
     ###########################
     def HideBook(self, islinking=0):

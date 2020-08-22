@@ -72,9 +72,7 @@ SDLPellet5 = ptAttribString(5, "SDL: pellet 5")
 SDLMachine = ptAttribString(6, "SDL: big ol' pellet machine")
 ActUseMachine = ptAttribActivator(7, "clk: use big machine btn")
 RespUseMachine = ptAttribResponder(8, "resp: use machine btn")
-RespMachineEnable = ptAttribResponder(
-    9, "resp: machine enable/disable", ["Enable", "Disable", "IfOpening"]
-)
+RespMachineEnable = ptAttribResponder(9, "resp: machine enable/disable", ["Enable", "Disable", "IfOpening"])
 RespMachineMode = ptAttribResponder(10, "resp: machine open/close", ["Open", "Close"])
 ActSpitPellet = ptAttribActivator(11, "clk: spit next pellet")
 SDLChamber = ptAttribString(12, "SDL: pellet machine chamber")
@@ -87,18 +85,14 @@ RespSpitPellet = ptAttribResponder(
 )
 RespDropPellet = ptAttribResponder(16, "resp: drop the pellet", ["normal", "taken"])
 RespShowAllPellets = ptAttribResponder(17, "resp: show all pellets")
-RespHidePellet = ptAttribResponder(
-    18, "resp: hide pellet", ["pellet1", "pellet2", "pellet3", "pellet4", "pellet5"]
-)
+RespHidePellet = ptAttribResponder(18, "resp: hide pellet", ["pellet1", "pellet2", "pellet3", "pellet4", "pellet5"])
 ActTakePellet = ptAttribActivator(19, "clk: take a pellet")
 RespTouchPellet = ptAttribResponder(20, "resp: touch pellet", ["Touch", "Untouch"])
 ActFlushLever = ptAttribActivator(21, "clk: flush lever")
 RespFlushOneShot = ptAttribResponder(22, "resp: flush lever oneshot")
 RespFlushLever = ptAttribResponder(23, "resp: use flush lever")
 SDLFlush = ptAttribString(24, "SDL: flush lever")
-RespFlushAPellet = ptAttribResponder(
-    25, "resp: flush a pellet", ["flush1", "flush2", "flush3", "flush4", "flush5"]
-)
+RespFlushAPellet = ptAttribResponder(25, "resp: flush a pellet", ["flush1", "flush2", "flush3", "flush4", "flush5"])
 ActPelletToSilo = ptAttribActivator(26, "clk: link to silo w/pellet")
 ActPelletToCave = ptAttribActivator(27, "clk: link to cave w/pellet")
 RespLinkPellet = ptAttribResponder(28, "resp: link w/pellet", ["CitySilo", "PelletCave"])
@@ -196,9 +190,7 @@ class ercaPelletRoom(ptResponder):
             ageSDL.sendToClients(SDLFlush.value)
             ageSDL.setNotify(self.key, SDLFlush.value, 0.0)
         except:
-            PtDebugPrint(
-                "ercaPelletRoom.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL"
-            )
+            PtDebugPrint("ercaPelletRoom.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL")
             ageSDL[SDLPellet1.value] = (0,)
             ageSDL[SDLPellet2.value] = (0,)
             ageSDL[SDLPellet3.value] = (0,)
@@ -227,9 +219,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet1:
                 Pellet1 = 0
                 ageSDL[SDLPellet1.value] = (0,)
-                PtDebugPrint(
-                    "must've left age before pellet1 dropped and no other players were there, correcting..."
-                )
+                PtDebugPrint("must've left age before pellet1 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet2 = ageSDL[SDLPellet2.value][0]
         if not Pellet2 or (Pellet2 and byteChamber == 2):
@@ -237,9 +227,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet2:
                 Pellet2 = 0
                 ageSDL[SDLPellet2.value] = (0,)
-                PtDebugPrint(
-                    "must've left age before pellet2 dropped and no other players were there, correcting..."
-                )
+                PtDebugPrint("must've left age before pellet2 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet3 = ageSDL[SDLPellet3.value][0]
         if not Pellet3 or (Pellet3 and byteChamber == 3):
@@ -247,9 +235,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet3:
                 Pellet3 = 0
                 ageSDL[SDLPellet3.value] = (0,)
-                PtDebugPrint(
-                    "must've left age before pellet3 dropped and no other players were there, correcting..."
-                )
+                PtDebugPrint("must've left age before pellet3 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet4 = ageSDL[SDLPellet4.value][0]
         if not Pellet4 or (Pellet4 and byteChamber == 4):
@@ -257,9 +243,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet4:
                 Pellet4 = 0
                 ageSDL[SDLPellet4.value] = (0,)
-                PtDebugPrint(
-                    "must've left age before pellet4 dropped and no other players were there, correcting..."
-                )
+                PtDebugPrint("must've left age before pellet4 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet5 = ageSDL[SDLPellet5.value][0]
         if not Pellet5 or (Pellet5 and byteChamber == 5):
@@ -267,9 +251,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet5:
                 Pellet5 = 0
                 ageSDL[SDLPellet5.value] = (0,)
-                PtDebugPrint(
-                    "must've left age before pellet5 dropped and no other players were there, correcting..."
-                )
+                PtDebugPrint("must've left age before pellet5 dropped and no other players were there, correcting...")
                 InitCorrection = 1
 
         pelletList = [Pellet1, Pellet2, Pellet3, Pellet4, Pellet5]
@@ -356,9 +338,7 @@ class ercaPelletRoom(ptResponder):
             pelletUpdate = 1
         if VARname == SDLMachine.value:
             boolMachine = ageSDL[SDLMachine.value][0]
-            PtDebugPrint(
-                "ercaPelletRoom:OnSDLNotify:  SDL for BigMachine is now %d" % (boolMachine)
-            )
+            PtDebugPrint("ercaPelletRoom:OnSDLNotify:  SDL for BigMachine is now %d" % (boolMachine))
             pelletUpdate = 0
             if boolMachine:
                 RespShowAllPellets.run(self.key)
@@ -374,9 +354,7 @@ class ercaPelletRoom(ptResponder):
                 #     ageSDL[SDLChamber.value] = (0,)
         if VARname == SDLChamber.value:
             byteChamber = ageSDL[SDLChamber.value][0]
-            PtDebugPrint(
-                "ercaPelletRoom:OnSDLNotify:  SDL for machine chamber is now %d" % (byteChamber)
-            )
+            PtDebugPrint("ercaPelletRoom:OnSDLNotify:  SDL for machine chamber is now %d" % (byteChamber))
             if byteChamber != 0:
                 pelletUpdate = 0
                 objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID), self.key)
@@ -529,9 +507,7 @@ class ercaPelletRoom(ptResponder):
 
         elif id == RespTouchPellet.id:
             if Toucher:
-                PtDebugPrint(
-                    "RespTouchPellet callback for Untouch, will now try to kill multistage"
-                )
+                PtDebugPrint("RespTouchPellet callback for Untouch, will now try to kill multistage")
                 MltStgLinkPellet.gotoStage(Toucher, -1)
                 cam = ptCamera()
                 cam.enableFirstPersonOverride()
@@ -582,15 +558,11 @@ class ercaPelletRoom(ptResponder):
             if entry is not None:
                 entry.chronicleSetValue("%d" % (Recipe))
                 entry.save()
-                PtDebugPrint(
-                    "Chronicle entry GotPellet already added, setting to Recipe value of %d"
-                    % (Recipe)
-                )
+                PtDebugPrint("Chronicle entry GotPellet already added, setting to Recipe value of %d" % (Recipe))
             else:
                 vault.addChronicleEntry("GotPellet", 1, "%d" % (Recipe))
                 PtDebugPrint(
-                    "Chronicle entry GotPellet not present, adding entry and setting to Recipe value of %d"
-                    % (Recipe)
+                    "Chronicle entry GotPellet not present, adding entry and setting to Recipe value of %d" % (Recipe)
                 )
 
             thisState = RespLinkPellet.getState()

@@ -112,9 +112,7 @@ kSunRechargeRate = 6.6
 BatteryCharge = 100
 BatteryCapacity = 100
 
-kDayLengthInSeconds = (
-    56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
-)
+kDayLengthInSeconds = 56585  # Length of a Negilahn day in seconds Must match value in Negilahn.age file
 
 # ====================================
 
@@ -202,18 +200,13 @@ class xPodBattery(ptResponder):
         # if ageSDL[SDLSpotlight03.value][0]:
         #    respSpotlight03.run(self.key, state="1", fastforward=1)
 
-        PtDebugPrint(
-            "xPodBattery: The Pod Battery has %s of a possible %s units."
-            % (BatteryCharge, BatteryCapacity)
-        )
+        PtDebugPrint("xPodBattery: The Pod Battery has %s of a possible %s units." % (BatteryCharge, BatteryCapacity))
         CurrentTime = PtGetDniTime()
 
         if len(PtGetPlayerList()) == 0:
             if BatteryLastUpdated == 0:
                 ageSDL[SDLBatteryLastUpdated.value] = (CurrentTime,)
-                PtDebugPrint(
-                    "xPodBattery: This is your first time here. The Battery has never been updated."
-                )
+                PtDebugPrint("xPodBattery: This is your first time here. The Battery has never been updated.")
             else:
                 self.SimulateDrainDuringVacancy(CurrentTime, BatteryLastUpdated, BatteryCharge)
 
@@ -229,15 +222,11 @@ class xPodBattery(ptResponder):
         UnoccupiedDaylightSeconds = 0
 
         PtDebugPrint("xPodBattery.SimulateDrainDuringVacancy:")
-        PtDebugPrint(
-            "\tCurrentTime: %d" % (CurrentTime)
-        )  # current time in seconds since epoch Mountain time
+        PtDebugPrint("\tCurrentTime: %d" % (CurrentTime))  # current time in seconds since epoch Mountain time
         PtDebugPrint(
             "\tBatteryLastUpdated: %d" % (BatteryLastUpdated)
         )  # last update in seconds since the epoch Mountain time
-        PtDebugPrint(
-            "\tTimeSinceUpdate: %d" % (TimeSinceUpdate)
-        )  # total seconds the pod was vacated
+        PtDebugPrint("\tTimeSinceUpdate: %d" % (TimeSinceUpdate))  # total seconds the pod was vacated
         PtDebugPrint("\tWholeDaysVacated: %d" % (WholeDaysVacated))  # days the pod was vacated
         PtDebugPrint(
             "\tFractionalDaysVacated: %d" % (FractionalDaysVacated)
@@ -271,9 +260,7 @@ class xPodBattery(ptResponder):
                 if CurrentAgeTimeOfDay <= kDayLengthInSeconds * fSunset.value:
                     UnoccupiedDaylightSeconds = FractionalDaysVacated
                 else:
-                    UnoccupiedDaylightSeconds = (
-                        kDayLengthInSeconds * fSunset.value
-                    ) - TimeOfDayVacated
+                    UnoccupiedDaylightSeconds = (kDayLengthInSeconds * fSunset.value) - TimeOfDayVacated
 
         else:
             TimeOfDayVacated = CurrentAgeTimeOfDay
@@ -292,8 +279,7 @@ class xPodBattery(ptResponder):
         )
         self.CalculateCostPerCycle()
         PtDebugPrint(
-            "xPodBattery.SimulateDrainDuringVacancy: SimulateDrainDuringVacancy: CostThisCycle: %.4f"
-            % (CostThisCycle)
+            "xPodBattery.SimulateDrainDuringVacancy: SimulateDrainDuringVacancy: CostThisCycle: %.4f" % (CostThisCycle)
         )
 
         CumulativeRecharge = (UnoccupiedDaylightSeconds / 3600.0) * kSunRechargeRate
@@ -354,9 +340,7 @@ class xPodBattery(ptResponder):
     def CalculatePowerDrain(self):
         global CostThisCycle
 
-        PtDebugPrint(
-            "xPodBattery.CalculatePowerDrain: The following gadgets are currently turned on:"
-        )
+        PtDebugPrint("xPodBattery.CalculatePowerDrain: The following gadgets are currently turned on:")
         self.CalculateCostPerCycle()
         PtDebugPrint(
             "xPodBattery.CalculatePowerDrain: Over the last %s seconds, you drained the battery %.4f units."
@@ -399,10 +383,7 @@ class xPodBattery(ptResponder):
                 BatteryCharge = BatteryCapacity
 
         ageSDL[SDLBatteryCharge.value] = (BatteryCharge,)
-        PtDebugPrint(
-            "xPodBattery.UpdateBatteryChargeSDL: The Pod Battery now has %.4f units."
-            % (BatteryCharge)
-        )
+        PtDebugPrint("xPodBattery.UpdateBatteryChargeSDL: The Pod Battery now has %.4f units." % (BatteryCharge))
 
         CurrentTime = PtGetDniTime()
         ageSDL[SDLBatteryLastUpdated.value] = (CurrentTime,)

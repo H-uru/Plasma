@@ -96,8 +96,7 @@ class xTelescope(ptModifier):
         if boolOperated:
             if solo:
                 PtDebugPrint(
-                    "xTelescope.Load():\tboolOperated=%d but no one else here...correcting"
-                    % boolOperated,
+                    "xTelescope.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated,
                     level=kDebugDumpLevel,
                 )
                 boolOperated = 0
@@ -107,8 +106,7 @@ class xTelescope(ptModifier):
             else:
                 Activate.disable()
                 PtDebugPrint(
-                    "xTelescope.Load():\tboolOperated=%d, disabling telescope clickable"
-                    % boolOperated,
+                    "xTelescope.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated,
                     level=kDebugDumpLevel,
                 )
 
@@ -125,8 +123,7 @@ class xTelescope(ptModifier):
             self.SDL["OperatorID"] = (-1,)
             self.SDL["boolOperated"] = (0,)
             PtDebugPrint(
-                "xTelescope.AvatarPage(): telescope operator paged out, reenabled telescope.",
-                level=kDebugDumpLevel,
+                "xTelescope.AvatarPage(): telescope operator paged out, reenabled telescope.", level=kDebugDumpLevel,
             )
         else:
             return
@@ -140,9 +137,7 @@ class xTelescope(ptModifier):
         global LocalAvatar
         global boolScopeOperator
         PtDebugPrint(
-            "xTelescope:OnNotify  state=%f id=%d events=" % (state, id),
-            events,
-            level=kDebugDumpLevel,
+            "xTelescope:OnNotify  state=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel,
         )
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
@@ -237,9 +232,7 @@ class xTelescope(ptModifier):
         # Re-enable first person camera
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        PtAtTimeCallback(
-            self.key, 3, 1
-        )  # wait for player to finish exit one-shot, then reenable clickable
+        PtAtTimeCallback(self.key, 3, 1)  # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint(
             "xTelescope.IQuitTelescope:\tdelaying clickable reenable", level=kDebugDumpLevel,
         )

@@ -99,27 +99,20 @@ class tldnPTPumpCount(ptResponder):
                 ageSDL.setFlags(stringVarName.value, 1, 1)
                 ageSDL.sendToClients(stringVarName.value)
             else:
-                PtDebugPrint(
-                    "ERROR: tldnPTPumpCount.OnFirstUpdate():\tERROR: missing SDL var name in max file"
-                )
+                PtDebugPrint("ERROR: tldnPTPumpCount.OnFirstUpdate():\tERROR: missing SDL var name in max file")
                 pass
             if stringVarName.value:
                 ageSDL.setNotify(self.key, stringVarName.value, 0.0)
                 try:
                     intCurrentValue = ageSDL[stringVarName.value][0]
                 except:
-                    PtDebugPrint(
-                        "ERROR: tldnPTPumpCount.OnServerInitComplete():\tERROR reading age SDL"
-                    )
+                    PtDebugPrint("ERROR: tldnPTPumpCount.OnServerInitComplete():\tERROR reading age SDL")
                     pass
                 PtDebugPrint(
-                    "DEBUG: tldnPTPumpCount.OnServerInitComplete():\t%s = %d"
-                    % (stringVarName.value, intCurrentValue)
+                    "DEBUG: tldnPTPumpCount.OnServerInitComplete():\t%s = %d" % (stringVarName.value, intCurrentValue)
                 )
             else:
-                PtDebugPrint(
-                    "ERROR: tldnPTPumpCount.OnServerInitComplete():\tERROR: missing SDL var name"
-                )
+                PtDebugPrint("ERROR: tldnPTPumpCount.OnServerInitComplete():\tERROR: missing SDL var name")
                 pass
 
     def OnNotify(self, state, id, events):
@@ -159,9 +152,7 @@ class tldnPTPumpCount(ptResponder):
                         cam = ptCamera()
                         cam.undoFirstPerson()
                         cam.disableFirstPersonOverride()
-                        PtAtTimeCallback(
-                            self.key, 15, 1
-                        )  # Re-enable 1P cam after scope is fully raised
+                        PtAtTimeCallback(self.key, 15, 1)  # Re-enable 1P cam after scope is fully raised
 
                         RaiseTowerCam.run(self.key)
 

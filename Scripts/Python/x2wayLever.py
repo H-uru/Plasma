@@ -74,9 +74,7 @@ class x2wayLever(ptResponder):
             PtDebugPrint("x2wayLever.OnFirstUpdate():\tERROR---missing SDL (%s)" % varstring.value)
             return
 
-        self.SDL.setDefault(
-            "LvrPos", (0,)
-        )  # local only: set default lever position, Load() will correct if necessary
+        self.SDL.setDefault("LvrPos", (0,))  # local only: set default lever position, Load() will correct if necessary
         actTo1.disable()  # set default activator state, Load() will correct if necessary
         # PtDebugPrint("x2wayLever.OnFirstUpdate():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value))
 
@@ -89,10 +87,7 @@ class x2wayLever(ptResponder):
         else:  # lever in position no.2
             actTo1.enable()
             actTo2.disable()
-        PtDebugPrint(
-            "x2wayLever.Load():\tself.SDL[LvrPos]=%d (%s)"
-            % (self.SDL["LvrPos"][0], varstring.value)
-        )
+        PtDebugPrint("x2wayLever.Load():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0], varstring.value))
 
     def OnNotify(self, state, id, events):
 
@@ -101,28 +96,22 @@ class x2wayLever(ptResponder):
             if id == actTo2.id or id == actTo1.id:
                 if leverPos:
                     actTo1.disable()
-                    respTo1.run(
-                        self.key, events=events
-                    )  # play one-shot, lever anim and sound, enable pos 1 detector
+                    respTo1.run(self.key, events=events)  # play one-shot, lever anim and sound, enable pos 1 detector
                 else:
                     actTo2.disable()
-                    respTo2.run(
-                        self.key, events=events
-                    )  # play one-shot, lever anim and sound, enable pos 2 detector
+                    respTo2.run(self.key, events=events)  # play one-shot, lever anim and sound, enable pos 2 detector
             elif id == respTo2.id or id == respTo1.id:
                 leverPos = -(leverPos - 1)
                 self.SDL["LvrPos"] = (leverPos,)
                 PtDebugPrint(
-                    "x2wayLever.OnNotify:\tsending notify: '%s' moving to position %d"
-                    % (varstring.value, leverPos + 1)
+                    "x2wayLever.OnNotify:\tsending notify: '%s' moving to position %d" % (varstring.value, leverPos + 1)
                 )
                 note = ptNotify(self.key)
                 note.setActivate(1.0)
                 note.addVarNumber(varstring.value, leverPos)
                 note.send()
                 PtDebugPrint(
-                    "x2wayLever.OnNotify():\tself.SDL[LvrPos]=%d (%s)"
-                    % (self.SDL["LvrPos"][0], varstring.value)
+                    "x2wayLever.OnNotify():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0], varstring.value)
                 )
             else:
                 PtDebugPrint("x2wayLever.OnNotify:\tERROR: unanticipated message source.")

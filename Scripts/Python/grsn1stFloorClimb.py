@@ -151,8 +151,7 @@ class grsn1stFloorClimb(ptResponder):
 
             if id == climbTopReset.id and event[0] == 1 and event[1] == 0:  # someone is exiting
                 if (
-                    self.SDL["intSDLClimber"][0] == climberID
-                    and self.SDL["intSDLDescender"][0] == -1
+                    self.SDL["intSDLClimber"][0] == climberID and self.SDL["intSDLDescender"][0] == -1
                 ):  # it's our recent climber
                     PtDebugPrint("reset climb / descend regions")
                     self.SDL["intSDLClimber"] = (-1,)
@@ -160,8 +159,7 @@ class grsn1stFloorClimb(ptResponder):
 
             if id == climbBottomReset.id and event[0] == 1 and event[1] == 0:  # someone is exiting
                 if (
-                    self.SDL["intSDLClimber"][0] == -1
-                    and self.SDL["intSDLDescender"][0] == climberID
+                    self.SDL["intSDLClimber"][0] == -1 and self.SDL["intSDLDescender"][0] == climberID
                 ):  # it's our recent descender
                     PtDebugPrint("reset climb / descend regions")
                     self.SDL["intSDLDescender"] = (-1,)

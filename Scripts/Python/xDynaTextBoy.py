@@ -84,18 +84,10 @@ class xDynaTextBoy(ptModifier):
     def OnFirstUpdate(self):
         "On the first update, do some initialization"
         dyna_map.textmap.setFont(dyna_fontname.value, dyna_fontsize.value)
-        fontcolor = ptColor(
-            dyna_fontcolorr.value,
-            dyna_fontcolorb.value,
-            dyna_fontcolorg.value,
-            dyna_fontcolora.value,
-        )
+        fontcolor = ptColor(dyna_fontcolorr.value, dyna_fontcolorb.value, dyna_fontcolorg.value, dyna_fontcolora.value,)
         dyna_map.textmap.setTextColor(fontcolor)
         clearcolor = ptColor(
-            dyna_clearcolorr.value,
-            dyna_clearcolorb.value,
-            dyna_clearcolorg.value,
-            dyna_clearcolora.value,
+            dyna_clearcolorr.value, dyna_clearcolorb.value, dyna_clearcolorg.value, dyna_clearcolora.value,
         )
         dyna_map.textmap.clearToColor(clearcolor)
         if dyna_string != "":

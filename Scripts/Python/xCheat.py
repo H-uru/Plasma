@@ -112,9 +112,7 @@ def GetAgeJourneyCloths(args):
     ageName = Plasma.PtGetAgeName()
     if ageName == "Gira" or ageName == "Garden":
         ageName = "Eder"
-    elif (
-        ageName == "Teledahn" or ageName == "Garrison" or ageName == "Kadish" or ageName == "Cleft"
-    ):
+    elif ageName == "Teledahn" or ageName == "Garrison" or ageName == "Kadish" or ageName == "Cleft":
         pass
     else:
         return
@@ -301,9 +299,7 @@ def GZSetGame(args):
         entry.save()
     else:
         # if there is none, then just add another entry
-        vault.addChronicleEntry(
-            PlasmaKITypes.kChronicleGZGames, PlasmaKITypes.kChronicleGZGamesType, args
-        )
+        vault.addChronicleEntry(PlasmaKITypes.kChronicleGZGames, PlasmaKITypes.kChronicleGZGamesType, args)
     Plasma.PtSendKIMessageInt(PlasmaKITypes.kUpgradeKIMarkerLevel, level)
     # update the
     Plasma.PtSendKIMessageInt(PlasmaKITypes.kGZUpdated, 30)
@@ -370,10 +366,7 @@ def GZGetMarkers(args):
                                     )
                                 else:
                                     markers = markers[:markerIdx] + PlasmaKITypes.kGZMarkerCaptured
-                                print(
-                                    "Update marker #%d - out string is '%s'"
-                                    % (markerIdx + 1, markers)
-                                )
+                                print("Update marker #%d - out string is '%s'" % (markerIdx + 1, markers))
                                 entry.chronicleSetValue(markers)
                                 entry.save()
                     # update the
@@ -392,18 +385,14 @@ def GiveMeMarkerTag(args):
     import Plasma
     import PlasmaKITypes
 
-    Plasma.PtSendKIMessageInt(
-        PlasmaKITypes.kUpgradeKIMarkerLevel, PlasmaKITypes.kKIMarkerFirstLevel
-    )
+    Plasma.PtSendKIMessageInt(PlasmaKITypes.kUpgradeKIMarkerLevel, PlasmaKITypes.kKIMarkerFirstLevel)
 
 
 def GZGiveMeFullAccess(args):
     import Plasma
     import PlasmaKITypes
 
-    Plasma.PtSendKIMessageInt(
-        PlasmaKITypes.kUpgradeKIMarkerLevel, PlasmaKITypes.kKIMarkerNormalLevel
-    )
+    Plasma.PtSendKIMessageInt(PlasmaKITypes.kUpgradeKIMarkerLevel, PlasmaKITypes.kKIMarkerNormalLevel)
 
     # Make sure to update the markers too, as we don't want them to display!!!
     import grtzKIMarkerMachine
@@ -608,8 +597,7 @@ def _DumpEm(f, markerfolder, mfNumber):
             f.write("%g, %g, %g, " % (pos.getX(), pos.getY(), (pos.getZ())))
             f.write('"%s", ' % (marker.markerGetAge()))
             f.write(
-                "%d, %d, %d ],\\\n"
-                % (marker.markerGetTorans(), marker.markerGetHSpans(), marker.markerGetVSpans(),)
+                "%d, %d, %d ],\\\n" % (marker.markerGetTorans(), marker.markerGetHSpans(), marker.markerGetVSpans(),)
             )
             lines += 1
             numMarkers += 1
@@ -887,9 +875,7 @@ def SetSDL(varNameAndVal):
     import Plasma
 
     if not varNameAndVal:
-        print(
-            "xCheat.SetSDL(): SetSDL takes two arguments: SDL variable name and new value are required."
-        )
+        print("xCheat.SetSDL(): SetSDL takes two arguments: SDL variable name and new value are required.")
         return
 
     varNameAndValList = varNameAndVal.split("_")
@@ -901,11 +887,7 @@ def SetSDL(varNameAndVal):
         newval = int(varNameAndValList[1])
     except ValueError:
         print(
-            (
-                "xCheat.SetSDL(): Can't use '{}'. Only numerical SDL values are supported.".format(
-                    varNameAndValList[1]
-                )
-            )
+            ("xCheat.SetSDL(): Can't use '{}'. Only numerical SDL values are supported.".format(varNameAndValList[1]))
         )
         return
 
@@ -951,9 +933,7 @@ def InstaPellets(args):
         else:
             PelletsPresent = sdl["ercaPelletMachine"][0]
             if PelletsPresent:
-                print(
-                    "xCheat.InstantPellets: ERROR.  Must flush current pellets before using this cheat."
-                )
+                print("xCheat.InstantPellets: ERROR.  Must flush current pellets before using this cheat.")
             else:
                 iarg = int(args)
                 if iarg == 0:

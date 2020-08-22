@@ -108,8 +108,7 @@ def glue_findAndAddAttribs(obj, glue_params):
             if glue_verbose:
                 PtDebugPrint("WARNING: Duplicate attribute ids!")
                 PtDebugPrint(
-                    "%s has id %d which is already defined in %s"
-                    % (obj.name, obj.id, glue_params[obj.id].name)
+                    "%s has id %d which is already defined in %s" % (obj.name, obj.id, glue_params[obj.id].name)
                 )
         else:
             glue_params[obj.id] = obj
@@ -182,9 +181,7 @@ def glue_getParam(number):
                 return pl[number].getdef()
             else:
                 if glue_verbose:
-                    PtDebugPrint(
-                        "glue_getParam: Error! %d out of range of attribute list" % (number)
-                    )
+                    PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
     return None
@@ -251,9 +248,7 @@ def glue_getVisInfo(number):
                 return pl[number].getVisInfo()
             else:
                 if glue_verbose:
-                    PtDebugPrint(
-                        "glue_getVisInfo: Error! %d out of range of attribute list" % (number)
-                    )
+                    PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
     if glue_verbose:
         PtDebugPrint("GLUE: Attribute list error")
     return None

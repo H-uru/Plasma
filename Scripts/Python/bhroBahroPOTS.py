@@ -77,10 +77,7 @@ class bhroBahroPOTS(ptResponder):
     def OnServerInitComplete(self):
         # if the age is not the one that I'm from then run the responder to make it back off
         ageFrom = PtGetPrevAgeName()
-        PtDebugPrint(
-            "bhroBahroPOTS.OnServerInitComplete: Came from %s, running opposite responder state"
-            % (ageFrom)
-        )
+        PtDebugPrint("bhroBahroPOTS.OnServerInitComplete: Came from %s, running opposite responder state" % (ageFrom))
         if ageFrom == "Ercana":
             respWedges.run(self.key, state="Ahnonay", fastforward=1)
         elif ageFrom == "Ahnonay":
@@ -91,14 +88,10 @@ class bhroBahroPOTS(ptResponder):
         PtDebugPrint(psnlSDL["psnlBahroWedge13"][0])
 
         if psnlSDL["psnlBahroWedge12"][0]:
-            PtDebugPrint(
-                "bhroBahroPOTS.OnServerInitComplete: You have the Ercana wedge, no need to display it."
-            )
+            PtDebugPrint("bhroBahroPOTS.OnServerInitComplete: You have the Ercana wedge, no need to display it.")
             respErcanaRing.run(self.key, fastforward=1)
         if psnlSDL["psnlBahroWedge13"][0]:
-            PtDebugPrint(
-                "bhroBahroPOTS.OnServerInitComplete: You have the Ahnonay wedge, no need to display it."
-            )
+            PtDebugPrint("bhroBahroPOTS.OnServerInitComplete: You have the Ahnonay wedge, no need to display it.")
             respAhnonayRing.run(self.key, fastforward=1)
 
     def OnNotify(self, state, id, events):

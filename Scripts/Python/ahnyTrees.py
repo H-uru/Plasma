@@ -81,9 +81,7 @@ class ahnyTrees(ptModifier):
             ageSDL = PtGetAgeSDL()
             ageSDL[SDLTrees.value][0]
         except:
-            PtDebugPrint(
-                "ahnyTrees.OnServerInitComplete(): ERROR --- Cannot find the Ahnonay Age SDL"
-            )
+            PtDebugPrint("ahnyTrees.OnServerInitComplete(): ERROR --- Cannot find the Ahnonay Age SDL")
             ageSDL[SDLTrees.value] = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
         ageSDL.setFlags(SDLTrees.value, 1, 1)

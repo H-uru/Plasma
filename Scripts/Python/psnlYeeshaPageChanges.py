@@ -119,9 +119,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             for i in range(len(self.enabledStateList)):
                 self.enabledStateList[i] = int(self.enabledStateList[i].strip())
         except:
-            PtDebugPrint(
-                "xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn't process start state list"
-            )
+            PtDebugPrint("xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn't process start state list")
 
     def OnServerInitComplete(self):
         "PlayerBook - determine what Yeesha pages are found"
@@ -140,9 +138,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     CurrentValue = SDLVar.getInt()
                     # PtDebugPrint("psnlYeeshaPageChanges.OnServerInitComplete:\tYeeshaPage%d = %d" % (PageNumber.value, SDLVar.getInt()))
                 except:
-                    PtDebugPrint(
-                        "psnlYeeshaPageChanges:\tERROR reading age SDLVar. Assuming CurrentValue = 0"
-                    )
+                    PtDebugPrint("psnlYeeshaPageChanges:\tERROR reading age SDLVar. Assuming CurrentValue = 0")
                     CurrentValue = 0
 
                 if PageNumber.value == 10:
@@ -167,9 +163,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     else:
                         newstate = state
 
-                    PtDebugPrint(
-                        "CurrentValue: %d, size: %d, state %d" % (CurrentValue, size, state)
-                    )
+                    PtDebugPrint("CurrentValue: %d, size: %d, state %d" % (CurrentValue, size, state))
                     self.EnableDisable((size * 10) + newstate)
 
                 else:
@@ -232,10 +226,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                             % ("YeeshaPage" + str(thispage), FoundValue.getInt())
                         )
                         if FoundValue is not None and FoundValue.getInt() != 0:
-                            PtDebugPrint(
-                                "psnlYeeshaPageChanges: You have found Yeesha Page # %s."
-                                % (thispage)
-                            )
+                            PtDebugPrint("psnlYeeshaPageChanges: You have found Yeesha Page # %s." % (thispage))
 
             else:
                 PtDebugPrint(

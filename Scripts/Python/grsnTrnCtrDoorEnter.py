@@ -80,9 +80,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             for event in events:
                 if event[0] == 1 and event[1] == 1:
                     avatarEntering = PtFindAvatar(events)
-                    PtDebugPrint(
-                        "entered the region, disable this one and the other door's triggers"
-                    )
+                    PtDebugPrint("entered the region, disable this one and the other door's triggers")
                     triggerRgn1.disable()
                     triggerRgn2.disable()
                     if avatarEntering == PtGetLocalAvatar():
@@ -102,9 +100,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
                 return
 
             PtDebugPrint(" door is open, walk in")
-            avatarEntering.avatar.runBehaviorSetNotify(
-                behaviorWalkIn.value, self.key, behaviorWalkIn.netForce
-            )
+            avatarEntering.avatar.runBehaviorSetNotify(behaviorWalkIn.value, self.key, behaviorWalkIn.netForce)
             return
 
         if id == behaviorWalkIn.id:
@@ -135,9 +131,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
                 return
 
             PtDebugPrint("interior door open, walk out")
-            avatarEntering.avatar.runBehaviorSetNotify(
-                behaviorWalkOut.value, self.key, behaviorWalkOut.netForce
-            )
+            avatarEntering.avatar.runBehaviorSetNotify(behaviorWalkOut.value, self.key, behaviorWalkOut.netForce)
             return
 
         if id == behaviorWalkOut.id:

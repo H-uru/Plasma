@@ -58,9 +58,7 @@ import PlasmaControlKeys
 Detector01 = ptAttribActivator(1, "Detector at top", netForce=1)
 MultiStage01 = ptAttribBehavior(2, "The multistage behavior", netForce=1)
 audioresponder = ptAttribResponder(3, "Audio responder")
-direction = ptAttribString(
-    4, "Direction: Going up or down?", "down"
-)  # thank your local sound guy for this hack
+direction = ptAttribString(4, "Direction: Going up or down?", "down")  # thank your local sound guy for this hack
 
 LocalAvatar = None
 

@@ -155,9 +155,7 @@ class ercaBakePellets(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            PtDebugPrint(
-                "ercaBakePellet.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL"
-            )
+            PtDebugPrint("ercaBakePellet.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL")
             if self.sceneobject.isLocallyOwned():
                 ageSDL[SDLFinishTime.value] = (0,)
                 ageSDL[SDLPellet1.value] = (0,)
@@ -218,10 +216,7 @@ class ercaBakePellets(ptResponder):
             boolPelletMachine = ageSDL["ercaPelletMachine"][0]
         if VARname == SDLFinishTime.value:
             byteFinishTime = ageSDL[SDLFinishTime.value][0]
-            PtDebugPrint(
-                "ercaBakePellets:OnSDLNotify:  SDL for ercaBakeFinishTime is now %d"
-                % (byteFinishTime)
-            )
+            PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for ercaBakeFinishTime is now %d" % (byteFinishTime))
             if byteFinishTime == 1:
                 PtDebugPrint("ONLY CALL GetRecipe ONCE")
                 fastforward = 0
@@ -290,16 +285,13 @@ class ercaBakePellets(ptResponder):
         temp4 = ageSDL[TempSDLs[3]][0]
 
         PtDebugPrint(
-            "ercaBakePellets:IGetRecipe:  time1 = %d, time2 = %d, time3 = %d, time4 = %d"
-            % (time1, time2, time3, time4)
+            "ercaBakePellets:IGetRecipe:  time1 = %d, time2 = %d, time3 = %d, time4 = %d" % (time1, time2, time3, time4)
         )
         PtDebugPrint(
-            "ercaBakePellets:IGetRecipe:  amt1 = %d, amt2 = %d, amt3 = %d, amt4 = %d"
-            % (amt1, amt2, amt3, amt4)
+            "ercaBakePellets:IGetRecipe:  amt1 = %d, amt2 = %d, amt3 = %d, amt4 = %d" % (amt1, amt2, amt3, amt4)
         )
         PtDebugPrint(
-            "ercaBakePellets:IGetRecipe:  temp1 = %d, temp2 = %d, temp3 = %d, temp4 = %d"
-            % (temp1, temp2, temp3, temp4)
+            "ercaBakePellets:IGetRecipe:  temp1 = %d, temp2 = %d, temp3 = %d, temp4 = %d" % (temp1, temp2, temp3, temp4)
         )
 
         timeList = [time1, time2, time3, time4]
@@ -353,14 +345,8 @@ class ercaBakePellets(ptResponder):
             #     if start == CurTime:
             #         PtDebugPrint("%s start baking." % (start))
             if fastforward == 0:
-                if (
-                    boolPelletMachine
-                    and ((CurTime + 7) >= byteFinishTime)
-                    and self.sceneobject.isLocallyOwned()
-                ):
-                    PtDebugPrint(
-                        "7 seconds or less until baking is done, and the machine is open, so CLOSING..."
-                    )
+                if boolPelletMachine and ((CurTime + 7) >= byteFinishTime) and self.sceneobject.isLocallyOwned():
+                    PtDebugPrint("7 seconds or less until baking is done, and the machine is open, so CLOSING...")
                     ageSDL[SDLPellet1.value] = (0,)
                     ageSDL[SDLPellet2.value] = (0,)
                     ageSDL[SDLPellet3.value] = (0,)
@@ -415,9 +401,7 @@ class ercaBakePellets(ptResponder):
                 fastforward = 0
                 self.IUpdateOvens(fastforward)
             else:
-                PtDebugPrint(
-                    "OnTimer callback, but baking was either finished or cancelled.  Doing nothing."
-                )
+                PtDebugPrint("OnTimer callback, but baking was either finished or cancelled.  Doing nothing.")
         elif id == 2:
             if self.sceneobject.isLocallyOwned():
                 PtDebugPrint("Timer done, Pellets now created with Recipe of: ", Recipe)
@@ -529,33 +513,12 @@ class ercaBakePellets(ptResponder):
 
         # Formulas
         z1 = 0.15 * amt1_val * 0.75 * time1_val * sin(time1_val) * sin(time1_val * (temp1_val))
-        z2 = (
-            0.081
-            * amt2_val
-            * time2_val
-            * temp2_val
-            * sin(0.7 * time2_val)
-            * sin(1.38 * time2_val * temp2_val)
-        )
-        z3 = (
-            0.07425
-            * amt3_val
-            * time3_val
-            * temp3_val
-            * sin(0.6 * time3_val)
-            * sin(1.44 * time3_val * temp3_val)
-        )
+        z2 = 0.081 * amt2_val * time2_val * temp2_val * sin(0.7 * time2_val) * sin(1.38 * time2_val * temp2_val)
+        z3 = 0.07425 * amt3_val * time3_val * temp3_val * sin(0.6 * time3_val) * sin(1.44 * time3_val * temp3_val)
         if (time4_val * temp4_val) > 3.1:
             z4 = 0
         else:
-            z4 = (
-                0.0864
-                * amt4_val
-                * time4_val
-                * temp4_val
-                * sin(0.7 * time4_val)
-                * sin(1.38 * time4_val * temp4_val)
-            )
+            z4 = 0.0864 * amt4_val * time4_val * temp4_val * sin(0.7 * time4_val) * sin(1.38 * time4_val * temp4_val)
 
         # Final recipe
         z = z1 + z2 + z3 + z4

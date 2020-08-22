@@ -74,9 +74,7 @@ RespFadeInPellet = ptAttribResponder(3, "resp: fade-in pellet", netForce=1)
 RespPlayDud = ptAttribResponder(4, "resp: pellet dud", netForce=1)
 RespPlayBubbles = ptAttribResponder(5, "resp: pellet bubbles", ["Hi", "Med", "Low"], netForce=1)
 RespPlaySteam = ptAttribResponder(6, "resp: pellet steam", ["Hi", "Med", "Low"], netForce=1)
-RespPlayOrangeGlow = ptAttribResponder(
-    7, "resp: pellet orange glow", ["Hi", "Med", "Low"], netForce=1
-)
+RespPlayOrangeGlow = ptAttribResponder(7, "resp: pellet orange glow", ["Hi", "Med", "Low"], netForce=1)
 RespPlayBoom = ptAttribResponder(8, "resp: pellet explosion", ["Hi", "Med", "Low"], netForce=1)
 RespPlayWhiteGlow = ptAttribResponder(9, "resp: pellet white glow", netForce=1)
 RespSymbolOnN = ptAttribResponder(10, "resp: N symbol on", statelist=symbolStates, netForce=1)
@@ -183,9 +181,7 @@ class PelletBahroCave(ptResponder):
             try:
                 ageSDL = PtGetAgeSDL()
             except:
-                PtDebugPrint(
-                    "PelletBahroCave.OnServerInitComplete():\tERROR---Cannot find the PelletBahroCave Age SDL"
-                )
+                PtDebugPrint("PelletBahroCave.OnServerInitComplete():\tERROR---Cannot find the PelletBahroCave Age SDL")
                 ageSDL[SDLGotPellet.value] = (0,)
 
             ageSDL.setNotify(self.key, SDLGotPellet.value, 0.0)
@@ -194,9 +190,7 @@ class PelletBahroCave(ptResponder):
             if pelletSDL != gotPellet:
                 ageSDL[SDLGotPellet.value] = (gotPellet,)
 
-            PtDebugPrint(
-                "PelletBahroCave:OnServerInitComplete:  SDL for pellet is now %d" % (gotPellet)
-            )
+            PtDebugPrint("PelletBahroCave:OnServerInitComplete:  SDL for pellet is now %d" % (gotPellet))
 
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         global sdlSolutions
@@ -206,10 +200,7 @@ class PelletBahroCave(ptResponder):
             ageSDL = PtGetAgeSDL()
             sdlSolutions[id] = ageSDL[sdlSolutionNames[id]][0]
             PtDebugPrint(
-                "PelletBahroCave.OnSDLNotify(): ",
-                sdlSolutionNames[id],
-                " now = ",
-                sdlSolutions[id],
+                "PelletBahroCave.OnSDLNotify(): ", sdlSolutionNames[id], " now = ", sdlSolutions[id],
             )
 
     def OnBehaviorNotify(self, type, id, state):

@@ -129,9 +129,7 @@ class MarkerGameManager(object):
             return
 
         if not self.IsActive(node):
-            PtDebugPrint(
-                "xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName())
-            )
+            PtDebugPrint("xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName()))
             self._TeardownMarkerGame()
             ## FIXME: other game types
             self._BeginMarkerGame(UCQuestMarkerGame, node)
@@ -193,9 +191,7 @@ class MarkerGameManager(object):
 
     def _UpdateKIMarkerLights(self, getColor, toGetColor, numCaptured, totalMarkers):
         """Updates the circular marker status display around the Mini KI"""
-        value = "-1 {}:{} {}:{}".format(
-            getColor, toGetColor, max(numCaptured, 0), max(totalMarkers, 0)
-        )
+        value = "-1 {}:{} {}:{}".format(getColor, toGetColor, max(numCaptured, 0), max(totalMarkers, 0))
         PtSendKIMessage(kGZFlashUpdate, value)
 
     def _UpdateKIMarkerLightsFromBrain(self):

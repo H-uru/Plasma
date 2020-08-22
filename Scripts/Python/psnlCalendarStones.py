@@ -109,9 +109,7 @@ class psnlCalendarStones(ptResponder):
         global fireworks
         ageSDL = ptAgeVault().getAgeSDL()
         if not ageSDL:
-            PtDebugPrint(
-                "psnlCalendarStones.OnServerInitComplete():\tAgeVaultSDL nil. Bad things have happened!"
-            )
+            PtDebugPrint("psnlCalendarStones.OnServerInitComplete():\tAgeVaultSDL nil. Bad things have happened!")
             respCalStoneFire.run(self.key, state="off", fastforward=1)
             return
 

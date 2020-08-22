@@ -133,10 +133,7 @@ class islmMemorialImager(ptModifier):
         kFontColor = FontColor.value.split(",")
         # PtDebugPrint("islmMemorialImager: Font Color: R:%s,G:%s,B:%s,A:%s" % (float(kFontColor[0]),float(kFontColor[1]),float(kFontColor[2]),float(kFontColor[3])))
         kFontColor = ptColor(
-            red=float(kFontColor[0]),
-            green=float(kFontColor[1]),
-            blue=float(kFontColor[2]),
-            alpha=float(kFontColor[3]),
+            red=float(kFontColor[0]), green=float(kFontColor[1]), blue=float(kFontColor[2]), alpha=float(kFontColor[3]),
         )
         self.UpdateMarqueeMessage()
         kLastUpdate = PtGetDniTime()
@@ -215,9 +212,7 @@ class islmMemorialImager(ptModifier):
         global CurrentMessage
         for i in range(len(imgMessage)):
             (kTextWidth[x], z) = ImagerMap1.textmap.calcTextExtents(CurrentMessage[x])
-            if (
-                ((kTextXPos[x] - kTextXStart) + kTextWidth[x]) + kNextChar[x]
-            ) > ImagerMap1.textmap.getWidth():
+            if (((kTextXPos[x] - kTextXStart) + kTextWidth[x]) + kNextChar[x]) > ImagerMap1.textmap.getWidth():
                 break
 
             # PtDebugPrint("islmMemorialImager: Value of offset plus the nextChar width", ((kTextXPos[x] - kTextXStart[x]) + kTextWidth[x]))
@@ -234,9 +229,7 @@ class islmMemorialImager(ptModifier):
             if kCursorStart[x] < kCursorEnd[x]:
                 CurrentMessage[x] = imgMessage[kCursorStart[x] : kCursorEnd[x]]
             if kCursorStart[x] > kCursorEnd[x]:
-                CurrentMessage[x] = (
-                    imgMessage[kCursorStart[x] : len(imgMessage)] + kMessage[0 : kCursorEnd[x]]
-                )
+                CurrentMessage[x] = imgMessage[kCursorStart[x] : len(imgMessage)] + kMessage[0 : kCursorEnd[x]]
 
     ############################
     def UpdateMarqueeOffset(self, x, movedSince):
@@ -244,9 +237,7 @@ class islmMemorialImager(ptModifier):
         global kNewChar
 
         if kTextXPos[x] <= (kTextXStart - kFirstChar[x]) + movedSince:
-            kTextXPos[x] = kTextXStart - (
-                ((kTextXStart - kFirstChar[x]) + movedSince) - kTextXPos[x]
-            )
+            kTextXPos[x] = kTextXStart - (((kTextXStart - kFirstChar[x]) + movedSince) - kTextXPos[x])
             kNewChar = 1
         else:
             kTextXPos[x] = kTextXPos[x] - movedSince
@@ -268,22 +259,19 @@ class islmMemorialImager(ptModifier):
             folderNode = node.upcastToFolderNode()
             if folderNode is not None:
                 PtDebugPrint(
-                    "islmMemorialImager: node is named %s" % (folderNode.getFolderName()),
-                    level=kDebugDumpLevel,
+                    "islmMemorialImager: node is named %s" % (folderNode.getFolderName()), level=kDebugDumpLevel,
                 )
                 if folderNode.getFolderName() == "MemorialImager":
                     folderNodeChildList = folderNode.getChildNodeRefList()
                     for folderChild in folderNodeChildList:
                         PtDebugPrint(
-                            "islmMemorialImager: looking at child node " + str(folderChild),
-                            level=kDebugDumpLevel,
+                            "islmMemorialImager: looking at child node " + str(folderChild), level=kDebugDumpLevel,
                         )
                         childNode = folderChild.getChild()
                         textNode = childNode.upcastToTextNoteNode()
                         if textNode is not None:
                             PtDebugPrint(
-                                "islmMemorialImager: child node is named %s"
-                                % (textNode.getTitle()),
+                                "islmMemorialImager: child node is named %s" % (textNode.getTitle()),
                                 level=kDebugDumpLevel,
                             )
                             if textNode.getTitle() == "MemorialImager":
@@ -304,8 +292,7 @@ class islmMemorialImager(ptModifier):
                                         kLastUpdate = PtGetDniTime()
                                         self.setTimerCallback(kUpdateTime)
                                 PtDebugPrint(
-                                    "islmMemorialImager: Marquee contents are '%s'" % (kMessage),
-                                    level=kDebugDumpLevel,
+                                    "islmMemorialImager: Marquee contents are '%s'" % (kMessage), level=kDebugDumpLevel,
                                 )
                                 return
         self.setTimerCallback(30)
@@ -368,8 +355,7 @@ class islmMemorialImager(ptModifier):
                     testmessage = kMessage[StartCursor:i]
                 elif i < StartCursor:
                     testmessage = (
-                        kMessage[StartCursor : len(kMessage)]
-                        + kMessage[0 : i - (len(kMessage) * (i / len(kMessage)))]
+                        kMessage[StartCursor : len(kMessage)] + kMessage[0 : i - (len(kMessage) * (i / len(kMessage)))]
                     )
 
                 (textWidth, z) = ImagerMap1.textmap.calcTextExtents(testmessage)

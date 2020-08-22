@@ -146,9 +146,7 @@ class tldnAquarium(ptResponder):
             except:
                 tankOpen = False
                 tankLightOn = False
-                PtDebugPrint(
-                    "tldnAquarium.OnServerInitComplete(): ERROR: age sdl read failed, defaulting:"
-                )
+                PtDebugPrint("tldnAquarium.OnServerInitComplete(): ERROR: age sdl read failed, defaulting:")
             PtDebugPrint(
                 "tldnAquarium.OnServerInitComplete(): %s = %d, %s = %d"
                 % (kStringAgeSDLAquariumOpen, tankOpen, kStringAgeSDLAquariumLightOn, tankLightOn,)
