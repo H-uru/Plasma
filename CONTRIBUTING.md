@@ -1,5 +1,5 @@
 # Contributing
-We are glad that you are interested in contributing to the Plasma Engine! We are happy to accept contributions, including:
+We are glad that you are interested in contributing to the Plasma Engine! We happily accept contributions, including:
 - bug reports
 - bug fixes
 - feature requests
@@ -17,17 +17,19 @@ The goal of the H-uru Plasma project is to improve on the open source release of
 - improving accessibility for fan Age creation and testing
 - improving testing coverage by adding unit tests and continuous integration
 - improving the player experience
-- avoiding nontrivial breaks in compatibility with the official Myst Online: Uru Live (again) game run by Cyan Worlds, Inc.
+- avoiding nontrivial breaks in compatibility with the official **Myst Online: Uru Live (again)** game run by Cyan Worlds, Inc.
+
+Information about specific tasks can be found on the [project roadmap](https://github.com/H-uru/Plasma/wiki/Roadmap).
 
 Further, we have identified these non-goals:
 - maintaining a game engine to be used outside of the context of Myst Online: Uru Live
 - supporting legacy platforms, such as Windows 2000, Windows XP, Playstation 2, and XBox
 - supporting exploit-based gameplay
 
-Information about specific tasks can be found on the [project roadmap](https://github.com/H-uru/Plasma/wiki/Roadmap).
+These are tasks that run contrary to the project's priorities stated above, and as such are not likely to be accepted if submitted for inclusion. Any changes implementing these are best maintained on an independent fork.
 
 ## Getting Involved
-Real-time discussion with team members and stakeholders is an excellent way to begin contributing. We welcome feedback and discussion of proposed changes. Active maintainers can be found on the Guild of Writers IRC channel:
+Real-time discussion with team members and other contributors is an excellent way to begin contributing. We welcome feedback and discussion of proposed changes. Active maintainers can be found on the Guild of Writers IRC channel:
 - Server: irc.guildofwriters.org:6667
 - Channel: #writers
 
