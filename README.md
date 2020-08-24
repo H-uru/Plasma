@@ -78,9 +78,8 @@ Currently, compilation only targets Windows systems and requires Visual Studio
    aforementioned location called *build*.
 4. Check the **Grouped** and **Advanced** options.
 5. Press **Configure**. Select *Visual Studio 15 2017* as the generator.
-6. Set the *CMAKE_INSTALL_PREFIX* option under CMAKE to the *cwe-prefix* folder
-   that you extracted from the [development libraries
-   bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip).
+6. Set the *CMAKE_INSTALL_PREFIX* option under CMAKE to the location where you
+   extracted the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip).
 7. Press **Configure** again.
 8. Press **Generate**. You will now have a Visual Studio solution file (.sln)
    in the folder that you specified to build the binaries in.
@@ -97,7 +96,7 @@ fully-patched installation of MOULa provided by Cyan Worlds.
 1. Copy the **files from your existing MOULa installation** to a new folder, or
    install fresh if you do not already have it installed. This folder will be
    referred to as *MOUL-OS* for the remainder of these instructions.
-2. Copy the **Python and SDL** folders from Scripts into the *MOUL-OS*
+2. Copy the **Python and SDL** folders from `<build_dir>\bin` into the *MOUL-OS*
    folder, as well as the **files in dat** into the existing dat folder.
 3. Copy the example_server.ini file from the root of the Plasma repository into
    your *MOUL-OS* folder, and rename it as **server.ini**. If you are running
