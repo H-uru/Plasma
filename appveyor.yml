@@ -47,7 +47,7 @@ install:
         Write-Host "OK" -foregroundColor Green
 
         Write-Host "Installing library dependencies... "
-        Set-Location C:\tools\vcpkg
+        Set-Location C:\Tools\vcpkg
         git pull 2> $null
         bootstrap-vcpkg.bat
         vcpkg upgrade --no-dry-run
@@ -67,7 +67,7 @@ before_build:
 - ps: |
     Set-Location build
 
-    cmake -Wno-dev -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows-static-md `
+    cmake -Wno-dev -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows-static-md `
     -DCMAKE_INSTALL_PREFIX=devlibs -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin -DPHYSX_SDK_PATH=devlibs\PhysX -DQt5_DIR=C:\Qt\$Env:QT_VER\msvc2017\lib\cmake\Qt5 `
     -DPLASMA_EXTERNAL_RELEASE="$Env:PLASMA_EXTERNAL_RELEASE" -DPLASMA_BUILD_TESTS=ON -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
 build:
