@@ -93,7 +93,6 @@ target_link_libraries(MaxMain MaxExport)
 target_link_libraries(MaxMain MaxPlasmaMtls)
 target_link_libraries(MaxMain ${3dsm_LIBRARIES})
 
-target_link_libraries(MaxMain ${EXPAT_LIBRARY})
 target_link_libraries(MaxMain ${DirectX_LIBRARIES})
 target_link_libraries(MaxMain ${JPEG_LIBRARY})
 target_link_libraries(MaxMain ${PNG_LIBRARY})

@@ -95,7 +95,6 @@ target_link_libraries(test_pfPython pnUtils)
 target_link_libraries(test_pfPython pnUUID)
 
 target_link_libraries(test_pfPython ${OPENSSL_LIBRARIES})
-target_link_libraries(test_pfPython ${EXPAT_LIBRARY})
 target_link_libraries(test_pfPython ${JPEG_LIBRARY})
 target_link_libraries(test_pfPython ${PNG_LIBRARY})
 target_link_libraries(test_pfPython ${PHYSX_LIBRARIES})
