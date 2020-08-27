@@ -70,13 +70,6 @@ set_package_properties(Python3 PROPERTIES
     TYPE REQUIRED
 )
 
-find_package(EXPAT REQUIRED)
-set_package_properties(EXPAT PROPERTIES
-    URL "http://expat.sourceforge.net/"
-    DESCRIPTION "Expat XML Parser for C"
-    TYPE REQUIRED
-)
-
 find_package(ZLIB REQUIRED)
 set_package_properties(ZLIB PROPERTIES
     URL "http://www.zlib.net"
