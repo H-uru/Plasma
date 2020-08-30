@@ -736,7 +736,7 @@ public:
         delete [] strData;
     }
 
-    void ExceptHook(PyObject* except, PyObject* val, PyObject* tb)
+    void UncaughtHook(PyObject* except, PyObject* val, PyObject* tb)
     {
         PyErr_Display(except, val, tb);
 
@@ -747,6 +747,15 @@ public:
 
         if (fLog)
             fData.clear();
+    }
+
+    void UnraisableHook(PyObject* except)
+    {
+        pyObjectRef type = PyObject_GetAttrString(except, "exc_type");
+        pyObjectRef value = PyObject_GetAttrString(except, "exc_value");
+        pyObjectRef tb = PyObject_GetAttrString(except, "exc_traceback");
+        UncaughtHook(type.Get(), value.Get(), tb.Get());
+        PyErr_Clear();
     }
 };
 
@@ -791,7 +800,18 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, excepthook, args)
     if (!PyArg_ParseTuple(args, "OOO", &exc, &value, &tb))
         PYTHON_RETURN_ERROR;
 
-    self->fThis->ExceptHook(exc, value, tb);
+    self->fThis->UncaughtHook(exc, value, tb);
+
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptErrorRedirector, unraisablehook, args)
+{
+    PyObject* exc;
+    if (!PyArg_ParseTuple(args, "O", &exc))
+        PYTHON_RETURN_ERROR;
+
+    self->fThis->UnraisableHook(exc);
 
     PYTHON_RETURN_NONE;
 }
@@ -804,7 +824,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptErrorRedirector, flush)
 
 PYTHON_START_METHODS_TABLE(ptErrorRedirector)
     PYTHON_METHOD(ptErrorRedirector, write, "Adds text to the output object"),
-    PYTHON_METHOD(ptErrorRedirector, excepthook, "Handles exceptions"),
+    PYTHON_METHOD(ptErrorRedirector, excepthook, "Handles uncaught exceptions"),
+    PYTHON_METHOD(ptErrorRedirector, unraisablehook, "Handles unraisable exceptions"),
     PYTHON_METHOD_NOARGS(ptErrorRedirector, flush, "no-op"),
 PYTHON_END_METHODS_TABLE;
 
@@ -1090,6 +1111,16 @@ void PythonInterface::initPython()
             } else {
                 dbgLog->AddLine(plStatusLog::kRed, "Could not find stdErr excepthook, Python error output will not get to the log server");
                 dontLog = true;
+            }
+
+            // Find the unraisable hook
+            pyObjectRef stdErrUnraisableHook = PyObject_GetAttrString(stdErr, "unraisablehook");
+            if (stdErrUnraisableHook) {
+                if (!PyCallable_Check(stdErrUnraisableHook.Get()) || PySys_SetObject("unraisablehook", stdErrUnraisableHook.Get()) != 0) {
+                    dbgLog->AddLine(plStatusLog::kRed, "Could not redirect stdErr unraisablehook, Python error output may be incomplete");
+                }
+            } else {
+                dbgLog->AddLine(plStatusLog::kRed, "Could not find stdErr unraisablehook, Python error output may be incomplete");
             }
 
             if (dontLog && pyErrorRedirector::Check(stdErr)) {
