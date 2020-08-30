@@ -53,8 +53,11 @@ ST::string PyUnicode_AsSTString(PyObject* obj);
 int PyUnicode_STStringConverter(PyObject* obj, void* str);
 int PyUnicode_PlFileNameDecoder(PyObject* obj, void* str);
 
-PyObject* PyUnicode_FromSTString(const ST::string& str);
+#ifdef HS_DEBUGGING
+PyObject* PyUnicode_FromSTString(const ST::string& x);
+#else
 #define PyUnicode_FromSTString(x) PyUnicode_FromStringAndSize((x).c_str(), (x).size())
+#endif
 #define PyUnicode_FromStdString(x) PyUnicode_FromStringAndSize((x).c_str(), (x).size())
 
 // Python 2.7 uses non-const "char *" in many places where a string literal

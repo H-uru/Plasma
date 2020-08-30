@@ -83,3 +83,12 @@ int PyUnicode_PlFileNameDecoder(PyObject* obj, void* fn)
     }
     return 0;
 }
+
+#ifdef HS_DEBUGGING
+PyObject* PyUnicode_FromSTString(const ST::string& x)
+{
+    auto nulpos = x.find('\0');
+    hsAssert(nulpos != -1, "null byte at index %u in PyUnicode_FromSTString", nulpos);
+    return PyUnicode_FromStringAndSize(x.c_str(), x.size());
+}
+#endif
