@@ -658,8 +658,15 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     PYTHON_RETURN_ERROR;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptOutputRedirector, flush)
+{
+    // no-op
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptOutputRedirector)
     PYTHON_METHOD(ptOutputRedirector, write, "Adds text to the output object"),
+    PYTHON_METHOD_NOARGS(ptOutputRedirector, flush, "no-op"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -789,9 +796,16 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, excepthook, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptErrorRedirector, flush)
+{
+    // no-op
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptErrorRedirector)
     PYTHON_METHOD(ptErrorRedirector, write, "Adds text to the output object"),
     PYTHON_METHOD(ptErrorRedirector, excepthook, "Handles exceptions"),
+    PYTHON_METHOD_NOARGS(ptErrorRedirector, flush, "no-op"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
