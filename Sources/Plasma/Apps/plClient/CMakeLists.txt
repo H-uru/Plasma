@@ -153,6 +153,7 @@ target_link_libraries(plClient pnUtils)
 target_link_libraries(plClient pnUUID)
 
 target_link_libraries(plClient ${OPENSSL_LIBRARIES})
+target_link_libraries(plClient ${EXPAT_LIBRARY})
 target_link_libraries(plClient ${JPEG_LIBRARY})
 target_link_libraries(plClient ${PNG_LIBRARY})
 target_link_libraries(plClient ${PHYSX_LIBRARIES})
