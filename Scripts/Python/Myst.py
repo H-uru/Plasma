@@ -46,8 +46,7 @@ Age: Myst
 Date: March 2004
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class Myst(ptResponder):
 

@@ -48,11 +48,10 @@ Author: Doug McBride
 Controls Zandi for Phase0 dialog
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 import time
-import PlasmaControlKeys
+import plasma
 import enum
 
 # define the attributes that will be entered in max

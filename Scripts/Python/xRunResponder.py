@@ -49,8 +49,7 @@ All this thing does is runs the selected responder if it receives a message from
 named activator (from another file).
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 

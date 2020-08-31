@@ -40,10 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 gMaxInviteCount = 20
 

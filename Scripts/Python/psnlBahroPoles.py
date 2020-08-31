@@ -48,9 +48,7 @@ Author: Adam Van Ornum
 Controls the state of the bahro poles
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 import enum
 import xRandom
 import copy

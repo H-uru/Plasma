@@ -48,8 +48,7 @@ Author: Pete Gage
 run console command to create new instance of an age for testing purposes
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 act = ptAttribActivator(2,"Activator")
 string  = ptAttribString(1,"Name of Age to Clear")

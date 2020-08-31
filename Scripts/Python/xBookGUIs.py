@@ -48,8 +48,7 @@ Author: Jeff Lundin
 Stores the list of book GUIs to load
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # Add your new GUIs in the list below, seperated by commas
 xBookGUIList = ("BkBook","bkNotebook","bkBahroRockBook")

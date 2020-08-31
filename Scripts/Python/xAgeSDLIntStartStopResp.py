@@ -47,8 +47,7 @@ Date: March, 2003
 Author: Adam Van Ornum
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 stringSDLVarName = ptAttribString(1,"Age SDL Variable")

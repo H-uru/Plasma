@@ -48,8 +48,7 @@ Author: Adam Van Ornum
 Tracks the number of times an activator is used
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 actTrack = ptAttribActivator(1, "Activator to track")
 strChronVar = ptAttribString(2, "Chronicle var")

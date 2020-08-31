@@ -47,11 +47,10 @@ Date: June 2002
 Author: Pete Gage
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from random import *
 
-import PlasmaControlKeys
+import plasma
 
 
 # define the attributes that will be entered in max

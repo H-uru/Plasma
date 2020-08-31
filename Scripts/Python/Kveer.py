@@ -46,8 +46,7 @@ Age: Kveer
 Date: September 2007
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 class Kveer(ptResponder):

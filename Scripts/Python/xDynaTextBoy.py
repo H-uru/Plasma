@@ -47,8 +47,7 @@ Date: Sept. 9, 2002
 This is to set a Dynamic Text material to a specific font, color and text string.
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 #=============================================================
 # define the attributes that will be entered in max

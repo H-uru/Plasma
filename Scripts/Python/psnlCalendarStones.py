@@ -47,8 +47,7 @@ Date: October 2007
 stuff for the calendar stones from the Yeesha page
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import xRandom
 
 

@@ -47,14 +47,11 @@ Date: October 2002
 event manager hooks for the clftImager
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
+from plasma import *
 import random
 import time
 import copy
-import PlasmaControlKeys
+import plasma
 from xPsnlVaultSDL import *
 
 
@@ -308,10 +305,10 @@ class clftImager(ptResponder):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         global PuzzleView
         
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             if PuzzleView:
                 self.IQuitImager()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             if PuzzleView:
                 self.IQuitImager()
 

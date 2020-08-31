@@ -47,8 +47,7 @@ Date: July 2003
 Operates the Lagoon Bridge
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in 3dsMAX
 actLever = ptAttribActivator(1, "act: Lever")

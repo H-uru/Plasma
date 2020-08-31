@@ -48,10 +48,8 @@ Author: Adam Van Ornum
 This handles the bookshelf in phil's personal age...only the neighborhood book does anything
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 actBookshelf = ptAttribActivator(1, "Actvtr:Bookshelf")
 
@@ -181,7 +179,7 @@ class philBookshelf(ptModifier):
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward:
+        if controlKey == plasma.kKeyExitMode or controlKey == plasma.kKeyMoveBackward:
             self.IDisengageShelf(True)
 
 

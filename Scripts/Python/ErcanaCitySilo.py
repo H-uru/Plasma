@@ -47,10 +47,7 @@ Date: February 2003
 Event Manager hooks for ErcanaCitySilo
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 import time
 import xRandom

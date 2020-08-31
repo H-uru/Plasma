@@ -50,9 +50,7 @@ This is what is put on the GZ markers for the player to capture to calibrate the
 MaxVersionNumber = 2
 MinorVersionNumber = 1
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 aStringVarName = ptAttribString(1,"Age SDL Vis Name")
 aGZSerialNumber = ptAttribInt(2,"GZ a unique serial number (1 thru n)")

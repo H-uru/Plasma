@@ -47,9 +47,7 @@ Date: Octoboer 2002
 event manager hooks for the personal age
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 
 kEmptyGuid = '0000000000000000'

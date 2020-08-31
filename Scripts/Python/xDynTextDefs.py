@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-from PlasmaTypes import *
+from plasma import *
 #   "Text Name": ( font name, font size, color, margin, line spacing, locPath, justification )
 # font color is in format (red,green,blue,alpha) with the values between 0 and 1
 # text margin is in format (top,left,bottom,right) with the values being in pixels

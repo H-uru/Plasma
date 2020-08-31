@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 sitAct = ptAttribActivator(1, "SitBeh: Sitting Behavior Node")
 sitCam = ptAttribSceneobject(2, "SitCam: Sitting Canera")

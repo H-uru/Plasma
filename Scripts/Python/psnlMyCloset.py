@@ -49,11 +49,8 @@ Author: Bill Slease
 Updated in July 03 to link to ACA instead of showing GUI
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaNetConstants import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # ---------
 # max wiring
@@ -193,7 +190,7 @@ class psnlMyCloset(ptModifier):
     
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "exit closet"
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IExitCloset(False)
             return
 

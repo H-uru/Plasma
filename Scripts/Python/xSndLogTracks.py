@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 """
 This module does the sound log tracks stuff
 """
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 kLogTrackVarname = "SndLogTrack"
 kLogModeVarname = "VaporTrail"

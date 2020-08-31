@@ -40,8 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-from Plasma import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 xFolderIDToFolderName = {
     PtVaultStandardNodes.kUserDefinedNode:          PtGetLocalizedString("Global.FolderNames.UserDefined"),

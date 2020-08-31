@@ -51,10 +51,7 @@ Sets SDL, which is being listened to by xStandardDoor, and handles the door open
 Handles the link out to the Cleft at the back of the cave
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 
 # ---------
 # max wiring

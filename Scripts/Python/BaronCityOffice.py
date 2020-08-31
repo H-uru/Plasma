@@ -47,8 +47,7 @@ Date: February 2003
 Event Manager hooks for BaronCityOffice
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class BaronCityOffice(ptResponder):
 

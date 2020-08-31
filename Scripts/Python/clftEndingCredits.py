@@ -47,13 +47,10 @@ Date: September 2003
 Do credits at endgame
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
+from plasma import *
 import time
 import copy
-import PlasmaControlKeys
+import plasma
 import xJournalBookDefs
 
 

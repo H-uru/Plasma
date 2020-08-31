@@ -56,8 +56,7 @@ Author: Tye Hooley
 #   Spaces are allowed...
 ##############################################
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 # Need this to override the ptAttribResponder as it does

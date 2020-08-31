@@ -45,9 +45,7 @@ Module: psnlBugs.py
 Age: Relto
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 bugEmitter = ptAttribSceneobject(1,"bug emitter obj")

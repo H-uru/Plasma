@@ -46,8 +46,7 @@ Author: Adam Van Ornum
 Date: March 2003
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 #=============================================================
 # define the attributes that will be entered in max

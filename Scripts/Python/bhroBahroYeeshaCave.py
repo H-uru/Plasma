@@ -48,9 +48,7 @@ Author: Adam Van Ornum
 Controls the bahro cave side of the bahro pole stuff
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import xRandom
 from xPsnlVaultSDL import *
 import copy

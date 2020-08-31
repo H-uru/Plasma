@@ -46,9 +46,7 @@ Author: Doug McBride, January 2004
 Modified by: Chris Doyle, Jan '07
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 Beamlight = ptAttribSceneobject (1,"GZBeam RT Light")
 respRotateBeam = ptAttribResponder (2,"resp: Rotate GZBeam")

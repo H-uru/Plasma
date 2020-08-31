@@ -48,9 +48,8 @@ Author: Chris Doyle
 toggles an age sdl bool only if another age sdl bool is True
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 from math import *
 
 

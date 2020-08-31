@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 def _str2color(col):
     r, g, b = col.strip().split(',', 3)

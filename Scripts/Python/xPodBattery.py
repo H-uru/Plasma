@@ -47,8 +47,7 @@ Date: December 2003
 Manages the charging and draining of the Pod Battery.
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 fSunrise                = ptAttribFloat(1, "Percent the sun rises", 0.0, (0.0, 1.0))

@@ -45,9 +45,7 @@ for cleanly exiting a subworld without worrying
 about pogoing between enter and exit regions
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
+from plasma import *
 
 exitRgn = ptAttribActivator(1,"exit region")
 safetyRgn = ptAttribActivator(2,"safety region")

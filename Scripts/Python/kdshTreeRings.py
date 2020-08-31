@@ -48,10 +48,8 @@ Author: Doug McBride
 As players engage and use the GUI, this sets the proper SDL values in the Kadish.sdl file
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, "Activate Telescope", netForce=1)
@@ -306,9 +304,9 @@ class kdshTreeRings(ptModifier):
             #~ PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("InnerRing0" + str (ScopeNumber.value)), newbearing))
             
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             self.IQuitTelescope()
 
 

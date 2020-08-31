@@ -47,8 +47,7 @@ Date: January 2004
 A music box type thing
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 #=============================================================
 # define the attributes that will be entered in max

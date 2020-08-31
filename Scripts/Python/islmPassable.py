@@ -44,9 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 Module: islmPassable
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 # ---------
 # max wiring

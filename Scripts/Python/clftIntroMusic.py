@@ -48,8 +48,7 @@ Author: Tye Hooley
 Controls the Intro Music
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 actStartMusic01 = ptAttribActivator(1,"Start Music Activator 01")

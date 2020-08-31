@@ -48,8 +48,7 @@ Author: Bill Slease
 detects changes in two age sdl bools and sets a third...A and B => C
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

@@ -47,9 +47,7 @@ Date: January 2004
 event manager hooks for Neighborhood02, aka Kirel
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import time
 
 class Neighborhood02(ptResponder):

@@ -47,8 +47,7 @@ Date: Novemeber 2002
 Author: Mark DeForest
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 EventName = ptAttribString(1,"Event name")
 PageNames = ptAttribString(2,"Page node name(s) - comma separated")

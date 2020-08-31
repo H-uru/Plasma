@@ -58,10 +58,7 @@ Major change over to using ptBook instead of LinkBooksGUI dialog
 First phase - keep hi level structure, only replace the bring up of books
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaNetConstants import *
+from plasma import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 import time

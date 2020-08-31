@@ -160,8 +160,8 @@ kChronicleCalGZMarkersAquiredType = 1
 def PtDetermineKILevel():
     "Get the KILevel"
     # assume that they have none...
-    import Plasma
-    vault = Plasma.ptVault()
+    import plasma
+    vault = plasma.ptVault()
     entry = vault.findChronicleEntry(kChronicleKILevel)
     if entry is not None:
         level = int(entry.chronicleGetValue())
@@ -174,8 +174,8 @@ def PtDetermineKILevel():
 def PtDetermineCensorLevel():
     "Get the KILevel"
     # assume that they have none...
-    import Plasma
-    vault = Plasma.ptVault()
+    import plasma
+    vault = plasma.ptVault()
     entry = vault.findChronicleEntry(kChronicleCensorLevel)
     if entry is not None:
         level = int(entry.chronicleGetValue())
@@ -186,8 +186,8 @@ def PtDetermineCensorLevel():
 def PtDetermineKIMarkerLevel():
     "Get the KIMarkerLevel"
     # assume that they have none...
-    import Plasma
-    vault = Plasma.ptVault()
+    import plasma
+    vault = plasma.ptVault()
     entry = vault.findChronicleEntry(kChronicleKIMarkerLevel)
     if entry is not None:
         level = int(entry.chronicleGetValue())
@@ -203,7 +203,7 @@ def PtAmPlayingCGZM():
     return chron.getValue() == "cgz"
 
 def PtFindCreateMarkerChronicle(name, subchron=None, default=None):
-    import Plasma
+    import plasma
     def _GetChron(needle, haystack):
         for i in haystack.getChildNodeRefList():
             child = i.getChild().upcastToChronicleNode()
@@ -212,7 +212,7 @@ def PtFindCreateMarkerChronicle(name, subchron=None, default=None):
             if child.getName() == needle:
                 return child
         else:
-            chron = Plasma.ptVaultChronicleNode()
+            chron = plasma.ptVaultChronicleNode()
             chron.setName(needle)
             if default is not None:
                 chron.setValue(str(default))
@@ -247,8 +247,8 @@ def PtGetMarkerQuestCaptures(name):
         return {}
 
 def PtGetMarkerGameChronicle():
-    import Plasma
-    vault = Plasma.ptVault()
+    import plasma
+    vault = plasma.ptVault()
     chron = vault.findChronicleEntry("MarkerBrain")
     if chron is None:
         vault.addChronicleEntry("MarkerBrain", 0, "")
@@ -256,8 +256,8 @@ def PtGetMarkerGameChronicle():
     return chron
 
 def PtGetTimePlayingCGZ():
-    import Plasma
-    return Plasma.PtGetServerTime() - PtGetCGZStartTime()
+    import plasma
+    return plasma.PtGetServerTime() - PtGetCGZStartTime()
 
 def PtIsCGZMComplete():
     if PtAmPlayingCGZM():
@@ -291,8 +291,8 @@ def PtSetMarkerQuestCaptures(name, captures):
 def PtUpdateCGZStartTime(time=None):
     chron = PtFindCreateMarkerChronicle("CGZ-StartTime")
     if time is None:
-        import Plasma
-        time = Plasma.PtGetServerTime()
+        import plasma
+        time = plasma.PtGetServerTime()
     chron.setValue(str(time))
     chron.save()
 

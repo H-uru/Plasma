@@ -45,9 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # Upgrades a player's KI to emit light for a duration
 # April 2007
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 
 #=============================================================

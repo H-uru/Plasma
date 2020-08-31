@@ -48,11 +48,7 @@ Author: Doug McBride
 Manages and records the finding of Yeesha Pages
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 
 
 # define the attributes that will be entered in max

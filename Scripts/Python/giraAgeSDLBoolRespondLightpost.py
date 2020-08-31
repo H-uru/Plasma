@@ -49,8 +49,7 @@ Detects age SDL bool type variable change and runs
 one of two responders depending on new state
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

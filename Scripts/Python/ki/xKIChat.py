@@ -46,12 +46,7 @@ import time
 import random
 
 # Plasma Engine.
-from Plasma import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
-from PlasmaNetConstants import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 import xCensor
 import xLocTools

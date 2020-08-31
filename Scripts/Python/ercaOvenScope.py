@@ -48,10 +48,8 @@ Author: Chris Doyle, based on xTelescope.py by Mark DeForest, Bill Slease, Doug 
 This is the handler for Ercana's bakery oven-scopes
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 from math import *
 
 
@@ -480,9 +478,9 @@ class ercaOvenScope(ptModifier):
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             self.IQuitTelescope()
 
 

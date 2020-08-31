@@ -46,8 +46,7 @@ Age: Ahnonay
 Date: June 2003
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 import time
 

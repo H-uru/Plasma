@@ -49,10 +49,8 @@ As SDL values are updated in the Kadish.sdl file, this file animates and updates
 Also checks for the solution.
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # If there were another way to have done this, believe me, I would have. 
 # In the mean time, the following 122 items are dedicated to the memory of Pete Gage

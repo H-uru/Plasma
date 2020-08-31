@@ -49,8 +49,7 @@ originally built for use with the event manager
 gets a message and runs one of two responders depending on state
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 actStateChange = ptAttribActivator(1,"actvtr:python file")
 respFalse = ptAttribResponder(2,"rspndr:state false")

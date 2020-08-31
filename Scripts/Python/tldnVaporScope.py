@@ -49,10 +49,8 @@ This is the handler for the Vapor miner scope thingy that shoots wharks and rock
 - Needed to solve the "get up in the second floor of the warshroom"
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, "Activator for VaporScope",netForce=1)
@@ -304,9 +302,9 @@ class tldnVaporScope(ptModifier):
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             self.IQuitTelescope()
 
     def OnLOSNotify(self,ID,noHitFlag,sceneobject,hitPoint,distance):

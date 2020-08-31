@@ -48,8 +48,7 @@ Author: Derek Odell
 littlebigworld?
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import math
 
 # define the attributes that will be entered in max

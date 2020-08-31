@@ -48,8 +48,7 @@ Author: Bill Slease
 increments, decrements or sets an age SDL integer with options for min value, max value, and loop or not
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

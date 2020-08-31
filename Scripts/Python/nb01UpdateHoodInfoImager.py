@@ -47,8 +47,7 @@ Date: October 2007
 Script to manage updating the player list on the hood info imager
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import time
 
 HoodInfoImagerScript = ptAttribActivator(1, "Hood Info imager script")

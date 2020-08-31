@@ -50,10 +50,7 @@ Communicates with the Chronicle to determine the amount of JCs found by the pers
 Sets SDL, which is being listened to by xStandardDoor, and handles the door opening/closing/persistence
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 import enum
 
 # ---------

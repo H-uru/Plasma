@@ -49,12 +49,9 @@ This is the python handler for the Opening Sequence in the Cleft
 MaxVersionNumber = 1
 MinorVersionNumber = 5
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaConstants import *
+from plasma import *
 
-import PlasmaControlKeys
+import plasma
 import os
 
 import xIniDisplay

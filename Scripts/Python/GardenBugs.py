@@ -45,9 +45,7 @@ Module: GardenBugs.py
 Age: Garden
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
+from plasma import *
 
 bugRgn = ptAttribActivator(1,"region bug transfer")
 bugEmitter = ptAttribSceneobject(2,"bug emitter obj")

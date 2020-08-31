@@ -47,8 +47,7 @@ Date: March 2007
 AgeSDLHook for GreatTreePub
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 class GreatTreePub(ptResponder):

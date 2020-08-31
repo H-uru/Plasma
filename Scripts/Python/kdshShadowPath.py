@@ -47,8 +47,7 @@ Date: July 2002
 Operates the Shadow Path puzzle.
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in 3dsMAX
 actSwitch01 = ptAttribActivator(1, "Actvr: Switch 01") # Switches are numbered left to right in a counterclockwise fashion

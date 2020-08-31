@@ -47,8 +47,7 @@ Date: March 13, 2002
 This is the temporary clothing dialog handler, that resides on the Blackbar
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 KIBlackbar = ptAttribGUIDialog(1,"The Blackbar dialog")

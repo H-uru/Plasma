@@ -48,10 +48,8 @@ Date: Nov. 12, 2003
 MaxVersionNumber = 1
 MinorVersionNumber = 2
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 
 aTrigger  = ptAttribActivator(1,"Activate the scope", netForce=1)

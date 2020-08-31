@@ -48,8 +48,7 @@ event manager hooks for the grsnTrnCtrDoors
 Karl
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 triggerRgn                = ptAttribActivator(1, "region sensor")

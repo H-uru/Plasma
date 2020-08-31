@@ -46,8 +46,7 @@ Age: Ahnonay Spheres 1-4
 Date: April 2004
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 import time
 

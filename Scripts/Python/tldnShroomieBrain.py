@@ -48,8 +48,7 @@ Author: Doug McBride
 Controls the appearance and behavior of Shroomie
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 
 # define the attributes that will be entered in max

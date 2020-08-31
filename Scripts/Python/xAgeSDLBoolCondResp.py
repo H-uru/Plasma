@@ -49,8 +49,7 @@ Triggers a responder only when the SDL var is set to specified value
     It's particularly useful for triggering SFX
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 actTrigger      = ptAttribActivator(1,"Activator:")
 strSDLVar       = ptAttribString(2,"Age SDL Var Name:")

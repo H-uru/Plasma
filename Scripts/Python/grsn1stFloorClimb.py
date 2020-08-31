@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 # Include Plasma code
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene

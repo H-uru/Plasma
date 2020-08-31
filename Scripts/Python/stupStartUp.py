@@ -48,8 +48,7 @@ Author: Derek Odell
 launch start up sequence
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 Camera = ptAttribSceneobject(1, "Camera")

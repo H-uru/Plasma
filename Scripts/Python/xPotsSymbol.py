@@ -48,8 +48,7 @@ Author: Chris Doyle
 wiring for the 7-stage POTS symbol/icon link-a-ma-jig
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 iconStates = ['first','second','third','fourth','fifth','sixth','seventh']
 

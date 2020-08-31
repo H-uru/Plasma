@@ -48,8 +48,7 @@ Author: Chris Doyle
 wiring for items inside Kadish's hut
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 #import time
 
 

@@ -46,8 +46,7 @@ Age: BahroCave
 Date: June 2003
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class BahroCave(ptResponder):
 

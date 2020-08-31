@@ -47,8 +47,7 @@ Date: January 2003
 vault manager hook for the nexus
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class Nexus(ptResponder):
 

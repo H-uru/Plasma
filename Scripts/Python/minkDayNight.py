@@ -47,9 +47,7 @@ Date: April 2007
 Author: Derek Odell
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 respLinkIn              = ptAttribResponder(1, "resp: Link In Sound")

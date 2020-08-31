@@ -48,9 +48,7 @@ Author: Chris Doyle, shameless plagarized off of Derek Odell's bhroBahroPod.py s
 POTS Bahro Cave
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 

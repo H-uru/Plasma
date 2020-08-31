@@ -48,13 +48,8 @@ Author: Derek Odell
 Start Up dialog logic
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 import re
 import webbrowser

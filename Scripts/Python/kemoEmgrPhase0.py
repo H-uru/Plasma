@@ -47,8 +47,7 @@ Date: January 2002
 Event Manager interface for the Garden Phase 0 content 
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 #globals
 variable = None

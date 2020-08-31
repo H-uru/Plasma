@@ -48,10 +48,7 @@ Author: Doug McBride
 Customizes a player's Personal Age based on which Yeesha Pages he's found
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 PageNumber = ptAttribInt(1, "Yeesha Page Number")

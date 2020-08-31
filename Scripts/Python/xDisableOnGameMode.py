@@ -48,8 +48,7 @@ Author: Adam Van Ornum
 Sets an object to display only in either single player mode or multiplayer mode
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 boolSinglePlayerDisable = ptAttribBoolean(1, "Disable in single player (else multiplayer)", 1)
 

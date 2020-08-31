@@ -47,8 +47,7 @@ Date: March, 2003
 Author: Adam Van Ornum
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import re
 
 # define the attributes that will be entered in max1

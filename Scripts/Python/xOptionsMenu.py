@@ -57,10 +57,8 @@ MinorVersionNumber = 4
 import functools
 import os
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 import xJournalBookDefs
 import xIniAudio
@@ -250,67 +248,67 @@ kKMNextPreviousText = 830
 #                  None if not mapped (mostly on second key on console)
 #
 gKM1ControlCodesRow1 = {
-                        kKMEditLine1Row1 : (PlasmaControlKeys.kKeyMoveForward,1,1) ,\
-                        kKMEditLine2Row1 : (PlasmaControlKeys.kKeyMoveBackward,1,1) ,\
-                        kKMEditLine3Row1 : (PlasmaControlKeys.kKeyRotateLeft,1,1) ,\
-                        kKMEditLine4Row1 : (PlasmaControlKeys.kKeyRotateRight,1,1) ,\
-                        kKMEditLine5Row1 : (PlasmaControlKeys.kKeyJump,1,1) ,\
-                        kKMEditLine6Row1 : (PlasmaControlKeys.kKeyStrafeLeft,1,1) ,\
-                        kKMEditLine7Row1 : (PlasmaControlKeys.kKeyStrafeRight,1,1) ,\
-                        kKMEditLine8Row1 : (PlasmaControlKeys.kKeyExitMode,1,1) ,\
-                        kKMEditLine9Row1 : (PlasmaControlKeys.kKeySetFirstPersonMode,1,1) ,\
+                        kKMEditLine1Row1 : (plasma.kKeyMoveForward,1,1) ,\
+                        kKMEditLine2Row1 : (plasma.kKeyMoveBackward,1,1) ,\
+                        kKMEditLine3Row1 : (plasma.kKeyRotateLeft,1,1) ,\
+                        kKMEditLine4Row1 : (plasma.kKeyRotateRight,1,1) ,\
+                        kKMEditLine5Row1 : (plasma.kKeyJump,1,1) ,\
+                        kKMEditLine6Row1 : (plasma.kKeyStrafeLeft,1,1) ,\
+                        kKMEditLine7Row1 : (plasma.kKeyStrafeRight,1,1) ,\
+                        kKMEditLine8Row1 : (plasma.kKeyExitMode,1,1) ,\
+                        kKMEditLine9Row1 : (plasma.kKeySetFirstPersonMode,1,1) ,\
                         kKMEditLine10Row1 : ("Game.KIOpenYeeshaBook",1,1),\
                         kKMEditLine11Row1 : ("Game.KIHelp",1,1) ,\
                         kKMEditLine12Row1 : ("Game.KIOpenKI",0,1) ,\
                         kKMEditLine13Row1 : ("Game.KITakePicture",0,1),\
                         kKMEditLine14Row1 : ("Game.KICreateJournal",0,1),\
-                        kKMEditLine15Row1 : (PlasmaControlKeys.kKeyPushToTalk,0,1) ,\
+                        kKMEditLine15Row1 : (plasma.kKeyPushToTalk,0,1) ,\
                         kKMEditLine16Row1 : ("Game.EnterChatMode",0,1) ,\
                         kKMEditLine17Row1 : ("Game.KICreateMarkerFolder",0,1) ,\
                         kKMEditLine18Row1 : ("Game.KICreateMarker",0,1) ,\
                     }
 gKM1ControlCodesRow2 = {
-                        kKMEditLine1Row2 : (PlasmaControlKeys.kKeyMoveForward,1,1) ,\
-                        kKMEditLine2Row2 : (PlasmaControlKeys.kKeyMoveBackward,1,1) ,\
-                        kKMEditLine3Row2 : (PlasmaControlKeys.kKeyRotateLeft,1,1) ,\
-                        kKMEditLine4Row2 : (PlasmaControlKeys.kKeyRotateRight,1,1) ,\
-                        kKMEditLine5Row2 : (PlasmaControlKeys.kKeyJump,1,1) ,\
-                        kKMEditLine6Row2 : (PlasmaControlKeys.kKeyStrafeLeft,1,1) ,\
-                        kKMEditLine7Row2 : (PlasmaControlKeys.kKeyStrafeRight,1,1) ,\
-                        kKMEditLine8Row2 : (PlasmaControlKeys.kKeyExitMode,1,1) ,\
-                        kKMEditLine9Row2 : (PlasmaControlKeys.kKeySetFirstPersonMode,1,1) ,\
+                        kKMEditLine1Row2 : (plasma.kKeyMoveForward,1,1) ,\
+                        kKMEditLine2Row2 : (plasma.kKeyMoveBackward,1,1) ,\
+                        kKMEditLine3Row2 : (plasma.kKeyRotateLeft,1,1) ,\
+                        kKMEditLine4Row2 : (plasma.kKeyRotateRight,1,1) ,\
+                        kKMEditLine5Row2 : (plasma.kKeyJump,1,1) ,\
+                        kKMEditLine6Row2 : (plasma.kKeyStrafeLeft,1,1) ,\
+                        kKMEditLine7Row2 : (plasma.kKeyStrafeRight,1,1) ,\
+                        kKMEditLine8Row2 : (plasma.kKeyExitMode,1,1) ,\
+                        kKMEditLine9Row2 : (plasma.kKeySetFirstPersonMode,1,1) ,\
                         kKMEditLine10Row2 : (None,0,0),\
                         kKMEditLine11Row2 : (None,0,0) ,\
                         kKMEditLine12Row2 : (None,0,0),\
                         kKMEditLine13Row2 : (None,0,0) ,\
                         kKMEditLine14Row2 : (None,0,0) ,\
-                        kKMEditLine15Row2 : (PlasmaControlKeys.kKeyPushToTalk,0,1) ,\
+                        kKMEditLine15Row2 : (plasma.kKeyPushToTalk,0,1) ,\
                         kKMEditLine16Row2 : (None,0,0) ,\
                         kKMEditLine17Row2 : (None,0,0) ,\
                         kKMEditLine18Row2 : (None,0,0) ,\
                     }
 
-defaultControlCodeBinds = { PlasmaControlKeys.kKeyMoveForward : ( "UpArrow","(unmapped)" ) ,\
-                            PlasmaControlKeys.kKeyMoveBackward : ( "DownArrow","(unmapped)" ),\
-                            PlasmaControlKeys.kKeyRotateLeft : ( "LeftArrow","(unmapped)" ) ,\
-                            PlasmaControlKeys.kKeyRotateRight : ( "RightArrow","(unmapped)" ) ,\
-                            PlasmaControlKeys.kKeyJump : ( "SpaceBar","(unmapped)" ),\
-                            PlasmaControlKeys.kKeyStrafeLeft : ( "Comma","(unmapped)" ) ,\
-                            PlasmaControlKeys.kKeyStrafeRight : ( "Period","(unmapped)" ) ,\
-                            PlasmaControlKeys.kKeyExitMode : ( "Backspace","Esc" ) ,\
-                            PlasmaControlKeys.kKeySetFirstPersonMode : ( "F1","F_C" ) ,\
+defaultControlCodeBinds = { plasma.kKeyMoveForward : ( "UpArrow","(unmapped)" ) ,\
+                            plasma.kKeyMoveBackward : ( "DownArrow","(unmapped)" ),\
+                            plasma.kKeyRotateLeft : ( "LeftArrow","(unmapped)" ) ,\
+                            plasma.kKeyRotateRight : ( "RightArrow","(unmapped)" ) ,\
+                            plasma.kKeyJump : ( "SpaceBar","(unmapped)" ),\
+                            plasma.kKeyStrafeLeft : ( "Comma","(unmapped)" ) ,\
+                            plasma.kKeyStrafeRight : ( "Period","(unmapped)" ) ,\
+                            plasma.kKeyExitMode : ( "Backspace","Esc" ) ,\
+                            plasma.kKeySetFirstPersonMode : ( "F1","F_C" ) ,\
                             "Game.KIOpenYeeshaBook" : ("F3","(unmapped)"),\
                             "Game.KIHelp" : ("F4","(unmapped)"),\
                             "Game.KIOpenKI" : ("F2","(unmapped)"),\
                             "Game.KITakePicture" : ("F5","(unmapped)"),\
                             "Game.KICreateJournal" : ("F6","(unmapped)"),\
-                            PlasmaControlKeys.kKeyPushToTalk : ( "Tab","(unmapped)" ) ,\
+                            plasma.kKeyPushToTalk : ( "Tab","(unmapped)" ) ,\
                             "Game.EnterChatMode" : ("(unmapped)","(unmapped)"),\
                             "Game.KICreateMarkerFolder" : ("F8","(unmapped)"),\
                             "Game.KICreateMarker" : ("F7","(unmapped)"),\
                         }
 
-defaultControlCodeBindsOrdered = [  PlasmaControlKeys.kKeyMoveForward, PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyJump, PlasmaControlKeys.kKeyStrafeLeft, PlasmaControlKeys.kKeyStrafeRight, PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeySetFirstPersonMode, "Game.KIOpenYeeshaBook", "Game.KIHelp", "Game.KIOpenKI", "Game.KITakePicture", "Game.KICreateJournal", PlasmaControlKeys.kKeyPushToTalk, "Game.EnterChatMode", "Game.KICreateMarkerFolder", "Game.KICreateMarker"]
+defaultControlCodeBindsOrdered = [  plasma.kKeyMoveForward, plasma.kKeyMoveBackward, plasma.kKeyRotateLeft, plasma.kKeyRotateRight, plasma.kKeyJump, plasma.kKeyStrafeLeft, plasma.kKeyStrafeRight, plasma.kKeyExitMode, plasma.kKeySetFirstPersonMode, "Game.KIOpenYeeshaBook", "Game.KIHelp", "Game.KIOpenKI", "Game.KITakePicture", "Game.KICreateJournal", plasma.kKeyPushToTalk, "Game.EnterChatMode", "Game.KICreateMarkerFolder", "Game.KICreateMarker"]
 
 kVideoQuality = ["Low", "Medium", "High", "Ultra"]
 kVideoTextureQuality = ["Low", "Medium", "High"]

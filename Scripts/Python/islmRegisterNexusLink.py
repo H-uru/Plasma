@@ -48,10 +48,8 @@ Author: Bill Slease
 Adds a backlink to player's KI folder for use in the Nexus machine
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 
 # define the attributes that will be entered in max

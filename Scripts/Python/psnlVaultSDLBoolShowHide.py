@@ -49,8 +49,7 @@ Detects Psnl Vault SDL bool type variable change and shows (on True) or hides (o
 Use only in the Personal age
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 stringVarName = ptAttribString(1,"Psnl SDL Var Name")

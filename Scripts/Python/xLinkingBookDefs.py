@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-from Plasma import *
+from plasma import *
 
 """
 This module contains the definition strings for all the linking books

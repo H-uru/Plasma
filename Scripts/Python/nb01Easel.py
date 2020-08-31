@@ -47,9 +47,7 @@ Date: October 2002
 puts the name of a neighborhood instance on a dynamic text map - adpated from xDynaTextBoy
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 import xLocTools
 
 #=============================================================

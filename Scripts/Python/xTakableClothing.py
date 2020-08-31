@@ -49,9 +49,7 @@ Allows you to click on a clothing object, have it removed from the scene and add
 also wears the piece of clothing you just picked up
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 from xPsnlVaultSDL import *
 import xACAItems
 import xRandom

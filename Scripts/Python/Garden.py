@@ -47,8 +47,7 @@ Date: October 2002
 event manager hooks for the Garden
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class Garden(ptResponder):
 

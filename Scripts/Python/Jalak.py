@@ -47,8 +47,7 @@ Date: April 2007
 AgeSDL hook for Jalak
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 class Jalak(ptResponder):

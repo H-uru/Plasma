@@ -45,9 +45,7 @@ Module: GiraBugs.py
 Age: Gira
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
+from plasma import *
 
 water01 = ptAttribActivator(1,"water 01")
 water02 = ptAttribActivator(2,"water 02")

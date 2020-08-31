@@ -46,8 +46,7 @@ Age: Ahnonay
 Date: June 2003
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 click = ptAttribActivator(1,"chair clickable")
 climb = ptAttribBehavior(2,"climb behavior")

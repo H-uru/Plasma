@@ -47,8 +47,7 @@ Date: October 2002
 event manager hooks for the Garrison
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 IsPublic = 0

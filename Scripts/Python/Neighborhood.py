@@ -47,8 +47,7 @@ Date: August 2002
 event manager hooks for the Neighborhood
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class Neighborhood(ptResponder):
 

@@ -42,8 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 # Plasma Engine.
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 ## Number of items to scroll through in content list.
 kContentListScrollSize = 5

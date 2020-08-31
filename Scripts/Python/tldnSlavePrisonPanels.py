@@ -47,8 +47,7 @@ Date: August 2003
 Author: Doug McBride
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

@@ -47,9 +47,7 @@ Date: October 2002
 event manager hooks for the GarrisonTrnCtrExtTrans
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 
 arrivePt     = ptAttribSceneobject(1,"arrive point")

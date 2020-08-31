@@ -41,14 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaConstants import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import time
 
 import grtzMarkerGames
-import PlasmaControlKeys
+import plasma
 
 # define the attributes that will be entered in max
 MarkerGameDlg = ptAttribGUIDialog(1, "The MarkerGame GUI")
@@ -134,8 +131,8 @@ class grtzMarkerScopeGUI(ptModifier):
         self._GrantGPS()
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
-        if controlKey in (PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeyMoveBackward,
-                          PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight):
+        if controlKey in (plasma.kKeyExitMode, plasma.kKeyMoveBackward,
+                          plasma.kKeyRotateLeft, plasma.kKeyRotateRight):
             self._PopTelescope()
 
     def OnFirstUpdate(self):

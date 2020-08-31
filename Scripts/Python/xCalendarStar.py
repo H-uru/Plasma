@@ -48,9 +48,7 @@ Author: Chris Doyle
 wiring for calendar stars which appear in various ages (aka "blue sparky")
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 

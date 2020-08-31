@@ -48,8 +48,7 @@ Author: Bill Slease
 reusable 2-position lever
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 varstring = ptAttribString(1,"Lever Name")

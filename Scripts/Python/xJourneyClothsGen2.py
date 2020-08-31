@@ -49,10 +49,7 @@ Manages the Journey Cloths in each age
 July 8 2003 - Added save game capability
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 import xRandom
 import enum
 from xPsnlVaultSDL import *

@@ -48,9 +48,8 @@ Author: Doug McBride
 Manages ladder in the tree of the Cleft.
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 
 # define the attributes that will be entered in max

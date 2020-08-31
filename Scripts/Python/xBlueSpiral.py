@@ -48,8 +48,7 @@ Author: Derek Odell
 Blue Spiral Puzzle
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 
 # define the attributes that will be entered in max

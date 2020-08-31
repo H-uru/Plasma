@@ -46,8 +46,7 @@ Age: LiveBahroCaves
 Date: May 2007
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 ## constants
 BlueSpiral = ["EderDelin","EderTsogal"]

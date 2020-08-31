@@ -47,8 +47,7 @@ Date: October 2003
 AgeSDL hooks for Ercana
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 class Ercana(ptResponder):

@@ -47,8 +47,7 @@ Date: December 2002
 Author: Bill Slease
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

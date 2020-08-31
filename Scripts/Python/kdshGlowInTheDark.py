@@ -47,9 +47,7 @@ Date: July 2002
 Operates the Glow in the Dark puzzle.
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import xSndLogTracks
 
 # define the attributes that will be entered in 3dsMAX

@@ -51,8 +51,7 @@ Enables/Disables a SDL variable based on the contents of another var:
 3) Is anyone nearby
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import xRandom
 
 strVarName = ptAttribString(1,"Object SDL Var Name")

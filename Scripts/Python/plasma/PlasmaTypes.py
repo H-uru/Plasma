@@ -44,8 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module is contains the datatypes and constants for
 interfacing with the Plasma 2.0 engine.
 """
-from Plasma import *
-from PlasmaConstants import *
+from .PlasmaLoader import *
 
 ####################################
 # Utility functions

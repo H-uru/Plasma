@@ -47,8 +47,7 @@ Date: October 2006
 Author: Tye Hooley 
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

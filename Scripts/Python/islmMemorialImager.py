@@ -45,10 +45,7 @@ Author: Karl Johnson
 Date: April 16, 2007
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 #=============================================================
 # define the attributes that will be entered in max

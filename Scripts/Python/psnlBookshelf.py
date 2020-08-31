@@ -49,11 +49,8 @@ This is the handler for the standard personal age bookshelf
 Interfaces with xLinkingBookGUIPopup.py
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 
@@ -1812,7 +1809,7 @@ class psnlBookshelf(ptModifier):
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward:
+        if controlKey == plasma.kKeyExitMode or controlKey == plasma.kKeyMoveBackward:
             self.IDisengageShelf()
 
 

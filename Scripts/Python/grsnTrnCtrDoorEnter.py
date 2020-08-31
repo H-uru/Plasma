@@ -41,9 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 arrivePt     = ptAttribSceneobject(1,"arrive point")
 triggerRgn1 = ptAttribActivator(2,"door 1 region sensor")

@@ -48,9 +48,8 @@ Author: Doug McBride, (modifying Pete's "xStarTrekDoor.py" code)
 When powered, auto-open, auto-close door
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, "Region Sensor",netForce=1)

@@ -48,9 +48,7 @@ Author: Derek Odell
 Pod Bahro Cave
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 # define the attributes that will be entered in max

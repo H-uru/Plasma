@@ -49,8 +49,7 @@ Detects changes of 2 age SDL bools, ANDs them and runs
 one of two responders depending on True/false
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

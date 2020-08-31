@@ -46,8 +46,7 @@ Age: spyroom
 Date: January 2004
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import time
 
 class SpyRoom(ptResponder):

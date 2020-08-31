@@ -49,8 +49,7 @@ HaX0r3d: Derek Odell
 Controls the appearance and behavior of the Payiferen Urwin Bird
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 
 # define the attributes that will be entered in max

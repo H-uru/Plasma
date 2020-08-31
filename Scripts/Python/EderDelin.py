@@ -47,8 +47,7 @@ Date: September 2006
 AgeSDL hook for EderDelin
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 class EderDelin(ptResponder):

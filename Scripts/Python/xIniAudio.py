@@ -45,8 +45,7 @@ This module contains the routines to read and write the Volume.ini file
 """
 
 import xIniHelper
-from PlasmaConstants import *
-from Plasma import *
+from plasma import *
 
 gIniFile = None
 gFilename = "audio.ini"

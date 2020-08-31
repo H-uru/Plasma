@@ -47,10 +47,8 @@ Date: January 2007
 Author: Derek Odell
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate                = ptAttribActivator(1, " clickable ")
@@ -63,10 +61,10 @@ kExit=99
 kZoomButton = 100
 gToggle = 0
 KeyMap = {}
-KeyMap[PlasmaControlKeys.kKeyMoveForward] = PlasmaControlKeys.kKeyCamPanUp
-KeyMap[PlasmaControlKeys.kKeyMoveBackward] = PlasmaControlKeys.kKeyCamPanDown
-KeyMap[PlasmaControlKeys.kKeyRotateLeft] = PlasmaControlKeys.kKeyCamPanLeft
-KeyMap[PlasmaControlKeys.kKeyRotateRight] = PlasmaControlKeys.kKeyCamPanRight
+KeyMap[plasma.kKeyMoveForward] = plasma.kKeyCamPanUp
+KeyMap[plasma.kKeyMoveBackward] = plasma.kKeyCamPanDown
+KeyMap[plasma.kKeyRotateLeft] = plasma.kKeyCamPanLeft
+KeyMap[plasma.kKeyRotateRight] = plasma.kKeyCamPanRight
 
 #====================================
 class islmPodMap(ptResponder):
@@ -124,7 +122,7 @@ class islmPodMap(ptResponder):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "Control key events... anything we're interested in?"
         PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag), level=kDebugDumpLevel)
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitDialog()
 
     ###########################

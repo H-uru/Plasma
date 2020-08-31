@@ -54,9 +54,8 @@ Author: Pete Gage
 reusable handler for a pop-up GUI item like a note on a desk
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, " clickable ",netForce=1)
@@ -69,12 +68,12 @@ Vignette = ptAttribString(4,"Toggle dialog - by Name")
 
 # Key mapping from control input to what the camera wants
 KeyMap = {}
-KeyMap[PlasmaControlKeys.kKeyMoveForward] = PlasmaControlKeys.kKeyCamPanUp
-KeyMap[PlasmaControlKeys.kKeyMoveBackward] = PlasmaControlKeys.kKeyCamPanDown
-KeyMap[PlasmaControlKeys.kKeyRotateLeft] = PlasmaControlKeys.kKeyCamPanLeft
-KeyMap[PlasmaControlKeys.kKeyRotateRight] = PlasmaControlKeys.kKeyCamPanRight
-#KeyMap[PlasmaControlKeys.kKeyCamZoomIn] = PlasmaControlKeys.kKeyCamZoomIn
-#KeyMap[PlasmaControlKeys.kKeyCamZoomOut] = PlasmaControlKeys.kKeyCamZoomOut
+KeyMap[plasma.kKeyMoveForward] = plasma.kKeyCamPanUp
+KeyMap[plasma.kKeyMoveBackward] = plasma.kKeyCamPanDown
+KeyMap[plasma.kKeyRotateLeft] = plasma.kKeyCamPanLeft
+KeyMap[plasma.kKeyRotateRight] = plasma.kKeyCamPanRight
+#KeyMap[plasma.kKeyCamZoomIn] = plasma.kKeyCamZoomIn
+#KeyMap[plasma.kKeyCamZoomOut] = plasma.kKeyCamZoomOut
 
 LocalAvatar = None
 kExit=99
@@ -127,7 +126,7 @@ class xDialogToggle(ptModifier):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "Control key events... anything we're interested in?"
         PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag), level=kDebugDumpLevel)
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitDialog()
 
     def IStartDialog(self):

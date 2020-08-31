@@ -47,8 +47,7 @@ Date: September 2006
 AgeSDL hook for EderTsogal
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 class EderTsogal(ptResponder):

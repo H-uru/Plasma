@@ -48,11 +48,10 @@ Author: Doug McBride
 Controls Imager which currently displays Yeesha Page #8
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 import time
-import PlasmaControlKeys
+import plasma
 
 # define the attributes that will be entered in max
 ActImager = ptAttribActivator(1,"Imager button")

@@ -44,8 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 import re
 
 # Plasma engine.
-from Plasma import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 import xLocTools
 from xPsnlVaultSDL import *

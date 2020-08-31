@@ -48,8 +48,7 @@ This is an example module based of a ptModifier.
 To be used with Plasma20, Python File Component
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import cPickle
 
 #=============================================================

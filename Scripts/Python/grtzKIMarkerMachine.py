@@ -50,9 +50,7 @@ This for the KI marker machine in the GreatZero near the link area
 MaxVersionNumber = 2
 MinorVersionNumber = 4
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 

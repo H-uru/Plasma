@@ -49,9 +49,7 @@ Plays appropriate book animation, based on player's gender
 Sets Chronical Entry to ensure that players who have "solved" the cleft can't return.
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import xLinkingBookDefs
 import os
 

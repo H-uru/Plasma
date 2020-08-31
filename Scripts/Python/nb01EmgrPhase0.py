@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 
 # These are helper functions for the special state variables that need custom code.

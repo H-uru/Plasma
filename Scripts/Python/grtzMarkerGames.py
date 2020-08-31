@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
+from plasma import *
 
 MG01 = (
     ("city", ptPoint3(0.113123, -156.593, 221.15), "3, 53, -80"),

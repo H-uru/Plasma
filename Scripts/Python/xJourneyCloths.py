@@ -48,11 +48,9 @@ Author: Doug McBride
 Manages the 10 Journey Cloths in Phase 0
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 
 
 # define the attributes that will be entered in max

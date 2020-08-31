@@ -47,9 +47,7 @@ Date: January 2003
 event manager hooks for phil's personal age
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 class PhilRelto(ptResponder):
 

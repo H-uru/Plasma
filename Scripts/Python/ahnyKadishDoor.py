@@ -48,12 +48,10 @@ Author: Chris Doyle
 wiring for Kadish's engineer hut door
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import copy
 import time
-import PlasmaControlKeys
+import plasma
 
 
 # ---------
@@ -229,9 +227,9 @@ class ahnyKadishDoor(ptResponder):
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IExitConsole()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             self.IExitConsole()
 
 

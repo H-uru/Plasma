@@ -47,8 +47,7 @@ Date: October 2002
 event manager hooks for the clftWindmill
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 clickLever          = ptAttribActivator(4,"lever clickable")

@@ -48,16 +48,12 @@ Author: Bill Slease
 Handler for the nexus book machine.
 """
 
-from Plasma import *
-from PlasmaKITypes import *
-from PlasmaNetConstants import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 import xLocTools
 
-import PlasmaControlKeys
+import plasma
 import datetime
 import random
 
@@ -841,7 +837,7 @@ class nxusBookMachine(ptModifier):
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
         "exit machine op mode"
-        if controlKey in (PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight):
+        if controlKey in (plasma.kKeyExitMode, plasma.kKeyMoveBackward, plasma.kKeyRotateLeft, plasma.kKeyRotateRight):
             if self.guiState == kGUIActivated and self.controlsEnabled and self.animCount == 0:
                 actGetBook.disable()
                 respGUIOff.run(self.key)

@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module contains the routines to read and write an .ini file
 """
 
-from Plasma import *
+from plasma import *
 
 import os
 

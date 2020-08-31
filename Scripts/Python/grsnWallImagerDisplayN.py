@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 # Include Plasma code
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 ## COMMENTED OUT by Jeff due to the re-write in the garrison wall
 

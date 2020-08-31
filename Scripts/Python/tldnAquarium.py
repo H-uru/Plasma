@@ -47,9 +47,8 @@ Author: Doug McBride, Bill Slease
 Handles the gameplay associated with the fish tank in tldnUpperShroom.max
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 actButton           = ptAttribActivator(1, "Aquarium button")

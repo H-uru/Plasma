@@ -49,8 +49,7 @@ Detects age SDL variable change and shows (on unspecified states) or hides (on u
 Enter in the states you wish the item to be visible in as a comma separated list
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 stringVarName = ptAttribString(1,"Age SDL Var Name")
 stringShowStates = ptAttribString(2,"States in which shown")

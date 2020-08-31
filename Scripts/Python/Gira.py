@@ -46,8 +46,7 @@ Age: Gira
 Date: May 2003
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class Gira(ptResponder):
 

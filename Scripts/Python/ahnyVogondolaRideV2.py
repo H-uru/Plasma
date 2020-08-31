@@ -47,8 +47,7 @@ Date: April 2004
 Author: Adam Van Ornum (based on original work by Chris Purvis)
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 GroupSelector = ptAttribDropDownList(1, "Group Selector", ("Hub", "Eng Hut", "Vogondola", "Vogondola Throttle", "Vogondola Reverse", "Call buttons") )
 

@@ -47,9 +47,7 @@ Date: January 2004
 Event Manager hooks for Descent
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 class Descent(ptResponder):
 

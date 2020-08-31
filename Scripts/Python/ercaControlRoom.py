@@ -49,8 +49,7 @@ Author: Chris Doyle
 wiring for the Ercana Control Room
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

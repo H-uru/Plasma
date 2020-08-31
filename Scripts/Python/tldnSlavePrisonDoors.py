@@ -48,8 +48,7 @@ Author: Mark DeForest
 This is the brain for the prison/pressure plate puzzle
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import xSndLogTracks
 
 # ---------

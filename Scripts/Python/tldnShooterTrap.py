@@ -48,8 +48,7 @@ Author: Bill Slease
 overkill if there's no spore capacity to keep track of but...
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 intSporeCount = ptAttribInt(1,"Initial Spore Count",10)

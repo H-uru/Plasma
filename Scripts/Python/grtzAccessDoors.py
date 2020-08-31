@@ -48,9 +48,7 @@ event manager hooks for the grtzAccessDoors
 Karl
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 
 triggerRgn                = ptAttribActivator(1, "region sensor")

@@ -47,10 +47,9 @@ Date: Feb 2007
 Add songs to the music box
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from xPsnlVaultSDL import *
-import PlasmaKITypes
+import plasma
 
 #=============================================================
 # define the attributes that will be entered in max
@@ -110,7 +109,7 @@ class xMusicBoxAddSong(ptModifier):
                             if songs.find(strSoundFile.value) == -1:
                                 PtDebugPrint("xMusicBoxAddSong.AddSong: Adding file %s" % strSoundFile.value)
                                 chron.setValue(strSoundFile.value + ";" + songs)
-                                PtSendKIMessageInt(PlasmaKITypes.kStartBookAlert,0)
+                                PtSendKIMessageInt(plasma.kStartBookAlert,0)
                                 return #break
                     break
         PtDebugPrint("ERROR: xMusicBoxAddSong.AddSong():\tCould not add song: %s" % strSoundFile.value)

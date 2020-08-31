@@ -47,10 +47,7 @@ Date: February 2003
 Event Manager hooks for Cleft
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
+from plasma import *
 
 
 #rgnSnsrFissureDrop = ptAttribActivator(1, "rgn snsr: fissure drop spawn")

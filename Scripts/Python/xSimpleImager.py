@@ -49,10 +49,7 @@ version 1.6
 March 2003 - Bill - added ability to post text notes to imagers
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
+from plasma import *
 
 import xCensor
 

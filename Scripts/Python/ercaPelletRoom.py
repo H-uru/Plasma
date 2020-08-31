@@ -49,14 +49,12 @@ Author: Chris Doyle
 wiring for the Ercana pellet room, including the pellet dispensing machine and linking-out with/without a pellet
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 from math import *
 from xPsnlVaultSDL import *
 import time
-from PlasmaNetConstants import *
+from plasma import *
 
 
 # ---------
@@ -626,7 +624,7 @@ class ercaPelletRoom(ptResponder):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         global TakePellet
         global Toucher
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             if TakePellet == 1:
                 PtDebugPrint("ercaPelletRoom.OnControlKeyEvent(): hit exit key")
                 #TakePellet = 0
@@ -635,7 +633,7 @@ class ercaPelletRoom(ptResponder):
                 PtDisableControlKeyEvents(self.key)
                 MltStgLinkPellet.gotoStage(Toucher, 0,newTime=1.2,dirFlag=1,isForward=0)
                 PtAtTimeCallback(self.key,0.8,5)
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             if TakePellet == 1:
                 PtDebugPrint("ercaPelletRoom.OnControlKeyEvent(): hit movement key")
                 #TakePellet = 0

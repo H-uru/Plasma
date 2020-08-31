@@ -45,9 +45,7 @@ Module: xBugsGoAway.py
 Age: Any, where you want any bugs attached to the avatar to go away
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 chronicleEntryName = "BugsOnAvatar"

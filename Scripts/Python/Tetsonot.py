@@ -47,8 +47,7 @@ Date: October 2003
 AgeSDL hooks for Tetsonot
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 class Tetsonot(ptResponder):
 

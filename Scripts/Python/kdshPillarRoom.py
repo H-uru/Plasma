@@ -47,8 +47,7 @@ Date: June 2002, May 2003
 Operates the Pillar Room puzzle.
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 # define the attributes that will be entered in 3dsMAX

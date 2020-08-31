@@ -48,8 +48,7 @@ Author: Adam Van Ornum
 Saves a screen capture started elsewhere
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 strFileName = ptAttribString(1, "File name")
 intQuality = ptAttribInt(2,"JPEG Quality", default=75)

@@ -47,8 +47,7 @@ Date: March 2007
 Karl
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 strDoorClosedVar =  ptAttribString(1, "Door Closed SDL Var")

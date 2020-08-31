@@ -47,9 +47,8 @@ Date: February 2004
 Author: Adam Van Ornum
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 import enum
 
 actButton = ptAttribActivator(1, "Fireplace button")
@@ -412,7 +411,7 @@ class mystFireplace(ptModifier):
         global InPanelView
 
         if InPanelView:
-            if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward:
+            if controlKey == plasma.kKeyExitMode or controlKey == plasma.kKeyMoveBackward:
                 self.ExitPanelView(0)
 
     def OnBackdoorMsg(self, target, param):

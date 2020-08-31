@@ -49,9 +49,8 @@ Date: April 2002
 Handles all aspects of teledahn's bucket system operations
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 import enum
 
 #These variables are global but are necessary for the max inputs:
@@ -1009,7 +1008,7 @@ class tldnBucketBrain(ptResponder):
             PtDebugPrint("tldnBucketBrain.OnControlKeyEvent()\tCannot exit buckets while they are not in the Boarded State",level=kDebugDumpLevel)
             return
 
-        if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight or controlKey == PlasmaControlKeys.kKeyMoveForward:
+        if controlKey == plasma.kKeyExitMode or controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight or controlKey == plasma.kKeyMoveForward:
             PtDisableControlKeyEvents(self.key)                    
             
             #Since OnControlKeyEvents won't be received by the clients who didn't push ESC, send a notify so all client immediately draw.enable the exiting avatar

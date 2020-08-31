@@ -48,9 +48,8 @@ Author: Pete Gage
 auto-open, auto-close door
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, "Region Sensor",netForce=1)

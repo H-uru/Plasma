@@ -40,47 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""
-Module: Garden.py
-Age: Garden
-Date: October 2002
-event manager hooks for the Garden
-"""
-
-from plasma import *
-
-
-caveSolved = ptAttribActivator(2,"cave solved")
-sdlSolved = ptAttribString(4,"our sdl var")
-
-#globals
-
-class GiraCave1(ptResponder):
-
-    def __init__(self):
-        ptResponder.__init__(self)
-        self.id = 5360224
-        self.version = 1
-
-    def OnServerInitComplete(self):
-        if sdlSolved.value:
-            self.ageSDL = PtGetAgeSDL()
-            self.ageSDL.setFlags(sdlSolved.value,1,1)
-            self.ageSDL.sendToClients(sdlSolved.value)
-        else:
-            PtDebugPrint("GiraCave.OnFirstUpdate():\tERROR: missing SDL var in max file")
-        
-
-    def OnNotify(self,state,id,events):
-
-        if (id == caveSolved.id):
-            if (state): # we entered the region, check for bugs
-                avatar = PtFindAvatar(events)
-                bugs = PtGetNumParticles(avatar.getKey())
-                if (bugs > 0):
-                    self.ageSDL[sdlSolved.value] = (1,)
-                    return
-            
-    
-    
-            
+try:
+    # builtins exist if if we are in the engine
+    from Plasma import *
+    from PlasmaConstants import *
+    from PlasmaNetConstants import *
+    from PlasmaVaultConstants import *
+except ImportError:
+    # fallback to stubs for code analysis
+    from .Plasma import *
+    from .PlasmaConstants import *
+    from .PlasmaNetConstants import *
+    from .PlasmaVaultConstants import *

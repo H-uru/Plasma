@@ -47,8 +47,7 @@ Date: February 2002
 Randomizes contents of the Garrison Prison Cell
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import random
 
 #globals

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 import abc
 
-from Plasma import *
+from plasma import *
 
 class MarkerGameBrain(abc.ABC):
     """ABC for marker games"""

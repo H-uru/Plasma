@@ -49,11 +49,7 @@ Manages and records the finding of Yeesha Pages
 !!! NOTE: This file only applies to the cleft but is only used in the global xYeeshaPagesGUI.max file. !!!
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 
 
 # define the attributes that will be entered in max

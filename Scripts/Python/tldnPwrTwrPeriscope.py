@@ -46,10 +46,8 @@ Age: Teledahn
 This is the handler for the power tower periscope
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(11, "Activate Telescope",netForce=1)
@@ -522,9 +520,9 @@ class tldnPwrTwrPeriscope(ptResponder):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "Control key events... anything we're interested in?"
         #PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag))
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        elif controlKey == plasma.kKeyMoveBackward or controlKey == plasma.kKeyRotateLeft or controlKey == plasma.kKeyRotateRight:
             self.IQuitTelescope()
 
 #    def IStartTelescope(self):

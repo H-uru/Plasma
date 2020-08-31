@@ -50,8 +50,7 @@ one of two responders depending on new state
 Use only in the Personal age
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 # ---------

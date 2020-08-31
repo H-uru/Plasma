@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 """ pch - Plasma Console Helper
 This module aids in the using the plasma console to debug PythonFileComponents.
 """
-# plasma console helper
-import Plasma
-import PlasmaTypes
 import sys
+
+# plasma console helper
+import plasma
 
 # globals for the outside and inside to grab
 __pmods = []
@@ -80,20 +80,24 @@ def help():
     print("  setvar(name,value) - sets instance variable 'name' to 'value' in the")
     print("                       selected module")
     print("  getvar(name) - returns the instance variable object (in selected module)")
+
+
 # modules
 def getmods():
     "get all the PythonFileComponent modules"
-    global __pmods,__sel
+    global __pmods, __sel
     __pmods = []  # wipe the module list clean
     print("Plasma modules:")
     for modname in sys.modules.keys():
         mod = sys.modules[modname]
-        if hasattr(mod,"glue_inst"):
+        if hasattr(mod, "glue_inst"):
             if __sel == len(__pmods):
-                print("*%d. %s" % (len(__pmods),modname[:-13]))
+                print("*%d. %s" % (len(__pmods), modname[:-13]))
             else:
-                print(" %d. %s" % (len(__pmods),modname[:-13]))
-            __pmods.append([modname,mod])
+                print(" %d. %s" % (len(__pmods), modname[:-13]))
+            __pmods.append([modname, mod])
+
+
 def showmods():
     "show all the PythonFileComponent modules"
     global __pmods
@@ -102,10 +106,12 @@ def showmods():
     print("Plasma modules:")
     for mod in __pmods:
         if idx == __sel:
-            print("*%d. %s" % (idx,mod[0][:-13]))
+            print("*%d. %s" % (idx, mod[0][:-13]))
         else:
-            print(" %d. %s" % (idx,mod[0][:-13]))
+            print(" %d. %s" % (idx, mod[0][:-13]))
         idx += 1
+
+
 def selmod(idx=None):
     "select a module from the list"
     global __pmods
@@ -130,6 +136,8 @@ def selmod(idx=None):
         return __pmods[__sel][1]
     else:
         print("Error: index not valid. There are %d modules" % (len(__pmods)))
+
+
 # find attributes
 def showmod():
     "show details of the selected module"
@@ -140,12 +148,16 @@ def showmod():
     showattribs()
     showglobals()
     showinst()
+
+
 def showdoc():
     "show the doc of the module selected"
     global __pmods
     global __sel
     print("Doc:")
     print(__pmods[__sel][1].__doc__)
+
+
 def showattribs():
     "show the plasma attributes of the module selected"
     global __pmods
@@ -154,11 +166,17 @@ def showattribs():
     print("Attributes in %s:" % (__pmods[__sel][0][:-13]))
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptAttribute):
+        if isinstance(ist, plasma.ptAttribute):
             if __selattr == ist.id:
-                print("*(%d) %s(%s) =" % (ist.id,name,ist.__class__.__name__),ist.value)
+                print(
+                    "*(%d) %s(%s) =" % (ist.id, name, ist.__class__.__name__), ist.value
+                )
             else:
-                print(" (%d) %s(%s) =" % (ist.id,name,ist.__class__.__name__),ist.value)
+                print(
+                    " (%d) %s(%s) =" % (ist.id, name, ist.__class__.__name__), ist.value
+                )
+
+
 def selattrib(id=None):
     "select a plasma attribute by id in the selected module"
     global __pmods
@@ -168,12 +186,14 @@ def selattrib(id=None):
         id = __selattr
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptAttribute):
+        if isinstance(ist, plasma.ptAttribute):
             if id == ist.id:
                 __selattr = ist.id
-                print("%s(%s) =" % (name,ist.__class__.__name__),ist.value)
+                print("%s(%s) =" % (name, ist.__class__.__name__), ist.value)
                 return ist
     print("Error: Attribute ID %d not found" % (id))
+
+
 def setattrib(value):
     "set the value of the selected plasma attribute in the selected module"
     global __pmods
@@ -181,7 +201,7 @@ def setattrib(value):
     global __selattr
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptAttribute):
+        if isinstance(ist, plasma.ptAttribute):
             if __selattr == ist.id:
                 if ist.value is None or isinstance(ist.value, type(value)):
                     # see if there is a __setvalue__ method
@@ -193,6 +213,8 @@ def setattrib(value):
                     print("Error: value is not same type as attribute")
                 return
     print("Error: Attribute ID %d not found" % (id))
+
+
 # find globals
 def showglobals():
     "show the global variables of the selected module"
@@ -202,12 +224,18 @@ def showglobals():
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         # make sure that its not something we already know about
-        if not hasattr(Plasma,name) and not hasattr(PlasmaTypes,name):
-            if not isinstance(ist,PlasmaTypes.ptAttribute) and not isinstance(ist,PlasmaTypes.ptModifier):
-                if name[:2] != '__' and name[:4] != 'glue':
-                    if not isinstance(ist, type(sys)) and not isinstance(ist, type(PlasmaTypes.ptAttribute)):
-                        print("  %s =" % (name),ist)
-def setglobal(name,value):
+        if not hasattr(plasma, name) and not hasattr(plasma, name):
+            if not isinstance(ist, plasma.ptAttribute) and not isinstance(
+                ist, plasma.ptModifier
+            ):
+                if name[:2] != "__" and name[:4] != "glue":
+                    if not isinstance(ist, type(sys)) and not isinstance(
+                        ist, type(plasma.ptAttribute)
+                    ):
+                        print("  %s =" % (name), ist)
+
+
+def setglobal(name, value):
     "set a global variable to a value with in the selected module"
     global __pmods
     global __sel
@@ -215,12 +243,16 @@ def setglobal(name,value):
     if name not in __pmods[__sel][1].__dict__:
         print("Warning: creating new global!")
     __pmods[__sel][1].__dict__[name] = value
-    print("%s = " % (name),__pmods[__sel][1].__dict__[name])
+    print("%s = " % (name), __pmods[__sel][1].__dict__[name])
+
+
 def getglobal(name):
     "get a global variable with in the selected module"
     global __pmods
     global __sel
     return __pmods[__sel][1].__dict__[name]
+
+
 # find instance
 def showinst():
     "show details of the instance of the ptModifier class in the selected module"
@@ -228,76 +260,92 @@ def showinst():
     global __sel
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptModifier):
-            print("Instance of %s in module %s:" % (ist.__class__.__name__,__pmods[__sel][1].__name__[:-13]))
-            print("  Doc: ",ist.__doc__)
+        if isinstance(ist, plasma.ptModifier):
+            print(
+                "Instance of %s in module %s:"
+                % (ist.__class__.__name__, __pmods[__sel][1].__name__[:-13])
+            )
+            print("  Doc: ", ist.__doc__)
             showvars(ist)
             showmethods(ist)
+
+
 def getinst():
     "gets the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptModifier):
+        if isinstance(ist, plasma.ptModifier):
             return ist
+
+
 def showvars(instance):
     "shows the variables of the instance"
     print("  Variables:")
     if len(instance.__dict__) > 0:
         for vname in instance.__dict__.keys():
-            print("    %s =" % (vname),instance.__dict__[vname])
+            print("    %s =" % (vname), instance.__dict__[vname])
     else:
         print("    (none)")
+
+
 def showmethods(instance):
     "shows the methods of the instance"
     print("  Methods:")
     for mname in instance.__class__.__dict__.keys():
         mist = instance.__class__.__dict__[mname]
         # is it a function... see if it has code
-        if hasattr(mist,'func_code'):
+        if hasattr(mist, "func_code"):
             # gather arguments
             args = "("
             for i in range(mist.__code__.co_argcount):
                 args += mist.__code__.co_varnames[i]
-                if i+1 < mist.__code__.co_argcount:
+                if i + 1 < mist.__code__.co_argcount:
                     args += ","
             args += ")"
-            print("    %s%s" % (mist.__name__,args))
+            print("    %s%s" % (mist.__name__, args))
             print("      Doc:", mist.__doc__)
+
+
 def showfunc(f):
     "decompiles function"
     import decompyle
-    if hasattr(f,'func_code'):
+
+    if hasattr(f, "func_code"):
         # create the argument list
         argstr = "("
         argcount = 0
-        for arg in f.__code__.co_varnames[:f.__code__.co_argcount]:
+        for arg in f.__code__.co_varnames[: f.__code__.co_argcount]:
             argstr += arg
             argcount += 1
             if argcount < f.__code__.co_argcount:
                 argstr += ","
         argstr += ")"
-        print("%s%s" % (f.__name__,argstr))
-        print("    Doc:",f.__doc__)
+        print("%s%s" % (f.__name__, argstr))
+        print("    Doc:", f.__doc__)
         decompyle.decompyle(f.__code__)
-def setvar(vname,value):
+
+
+def setvar(vname, value):
     "set a variable within the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptModifier):
+        if isinstance(ist, plasma.ptModifier):
             # first see if there is already a glabal by that name
             if vname not in ist.__dict__:
                 print("Warning: creating new class variable!")
             ist.__dict__[vname] = value
-            print("%s = " % (vname),ist.__dict__[vname])
+            print("%s = " % (vname), ist.__dict__[vname])
+
+
 def getvar(vname):
     "get the variable in the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
-        if isinstance(ist,PlasmaTypes.ptModifier):
+        if isinstance(ist, plasma.ptModifier):
             return ist.__dict__[vname]

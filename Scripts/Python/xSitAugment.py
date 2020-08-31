@@ -48,9 +48,8 @@ Author: Pete Gage
 allows user to select what sit component messages get passed on to another script
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 # define the attributes that will be entered in max
 SitAct = ptAttribActivator(1, " Sit Component ",netForce=1)
@@ -121,7 +120,7 @@ class xSitAugment(ptModifier):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "Control key events... anything we're interested in?"
         PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag))
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
+        if controlKey == plasma.kKeyExitMode:
             self.IQuitDialog()
 
     def IStartDialog(self):

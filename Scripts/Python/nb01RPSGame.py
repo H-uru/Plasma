@@ -41,10 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
-from PlasmaTypes import *
+from plasma import *
 
 # detectors
 detButtonRock = ptAttribActivatorList(1, "Rock ButtonClick det", netForce=True)

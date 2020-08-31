@@ -46,8 +46,7 @@ Author: Doug McBride
 Date: January 2004
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in 3dsMAX
 actSwitch01 = ptAttribActivator(1, "act: Podium Button")

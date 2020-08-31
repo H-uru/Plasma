@@ -45,12 +45,7 @@ MaxVersionNumber = 58
 MinorVersionNumber = 52
 
 # Plasma engine.
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaConstants import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 
 import time
 import xCensor

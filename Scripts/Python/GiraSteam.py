@@ -47,9 +47,7 @@ Date: October 2002
 event manager hooks for the Garden
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
+from plasma import *
 
 fumerol1Resp = ptAttribResponder(1, "fumerol 1 responder",['Opening','Closing','Rumble1','Rumble2','Rumble3','Rumble4','BlastOpen', 'MuffledBlastOnly'])
 fumerol2Resp = ptAttribResponder(2, "fumerol 2 responder",['Opening','Closing','Rumble1','Rumble2','Rumble3','Rumble4','BlastOpen', 'MuffledBlastOnly'])

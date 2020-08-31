@@ -48,9 +48,7 @@ Author: Bill Slease
 Handles adding/removing players from a private chat channel as they enter/leave a region
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 #stringID = ptAttribString(1,"RoomID")

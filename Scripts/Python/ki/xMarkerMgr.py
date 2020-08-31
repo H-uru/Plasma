@@ -41,10 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
-from PlasmaTypes import *
+from plasma import *
 
 from .xMarkerBrainQuest import *
 from .xMarkerGameBrain import *

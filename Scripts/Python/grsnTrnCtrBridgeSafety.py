@@ -47,8 +47,7 @@ Date: October 2002
 event manager hooks for the GarrisonTrnCtrExtTrans
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 arrivePt     = ptAttribSceneobject(1,"warp point")
 triggerRgn1 = ptAttribActivator(2,"upper box")

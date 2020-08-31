@@ -47,8 +47,7 @@ Date: Feburary 2007
 Author: Karl Johnson
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 clkLever = ptAttribActivator(1,"clk: Activator for Shroomie Gate")

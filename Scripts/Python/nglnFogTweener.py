@@ -48,8 +48,7 @@ Author: Doug McBride
 Animates the Fog RGB and Density troughout the Negilahn Day cycle
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 stringVarName = ptAttribString(1,"Battery Updated SDL")
 

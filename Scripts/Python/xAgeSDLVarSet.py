@@ -47,8 +47,7 @@ Date: March, 2003
 Author: Adam Van Ornum
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 # NOTE:  The state value tuples string should be a string of value pairs

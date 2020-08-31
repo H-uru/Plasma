@@ -48,8 +48,7 @@ Author: Chris Doyle
 all-powerful script for all things Harvester
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import time
 
 # ---------

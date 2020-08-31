@@ -42,9 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 activateAirstream = ptAttribActivator(1,"airstream activator")
 airstreamNode = ptAttribSceneobject(2,"airstream attach node")

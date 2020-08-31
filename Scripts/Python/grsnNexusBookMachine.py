@@ -42,10 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
+from plasma import *
 
 purpleResp = ptAttribResponder(1,"purple responder")
 yellowResp = ptAttribResponder(2,"yellow responder")

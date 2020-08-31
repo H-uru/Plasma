@@ -46,8 +46,7 @@ Age: Garden
 Date: January 2004
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 theWater = ptAttribWaveSet(1, "Wave set")
 startRain = ptAttribActivator(2, "Start rain drops")

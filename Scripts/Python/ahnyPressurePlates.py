@@ -48,9 +48,7 @@ Author: Derek Odell
 Ahnonay Quab control
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 import xLinkingBookDefs
 import xRandom
 

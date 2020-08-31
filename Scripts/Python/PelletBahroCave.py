@@ -46,10 +46,7 @@ Age: PelletBahroCave #----->Formerly BahroCave02
 Date: March 2004
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaConstants import *
-from PlasmaKITypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 import time
 

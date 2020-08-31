@@ -48,8 +48,7 @@ Author: Adam Van Ornum
 Allows ptSDL-like access to Psnl Age SDL from anywhere
 """
 
-from Plasma import *
-from PlasmaConstants import *
+from plasma import *
 import types
 
 class xPsnlVaultSDL:

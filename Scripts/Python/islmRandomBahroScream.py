@@ -47,8 +47,7 @@ Date: November 2003
 Randomly plays Bahro scream based on SDL value
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import enum
 import xRandom
 

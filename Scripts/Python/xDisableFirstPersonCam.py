@@ -47,8 +47,7 @@ Author: Doug McBride
 Lets you disable and re-enable ability for players to enter First Person camera by hitting F1
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 sitnode = ptAttribActivator(1, "No FPC Region node:")

@@ -46,9 +46,8 @@ Age: Teledahn
 handler for cabin hatch ladder climbers who get on the ladder at the top (in the cabin)
 """
 
-from Plasma import *
-from PlasmaTypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 
 
 

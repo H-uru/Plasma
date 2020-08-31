@@ -47,11 +47,9 @@ Date: October, 2002
 Author: Bill Slease
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-#~ from PlasmaVaultConstants import *
-#~ from PlasmaNetConstants import *
+from plasma import *
+#~ from plasma import *
+#~ from plasma import *
 
 
 # define the attributes that will be entered in max

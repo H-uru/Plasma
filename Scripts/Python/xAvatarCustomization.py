@@ -48,13 +48,9 @@ Date: April 18, 2002
 This is the python handler for the avatar customization area and GUIs
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
+from plasma import *
 from colorsys import *
-import PlasmaControlKeys
+import plasma
 import time
 import os   #used for saving pictures locally
 

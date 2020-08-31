@@ -47,8 +47,7 @@ Date: June 2007
 wiring for Jalak playing field, the REAL version
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 import xRandom
 
 

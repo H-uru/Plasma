@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 sdlName = ptAttribString(1, "Age SDL Var Name")
 respTrue = ptAttribResponder(2, "Run if bool true:")

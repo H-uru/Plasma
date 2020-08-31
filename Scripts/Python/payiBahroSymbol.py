@@ -47,8 +47,7 @@ Date: January 2007
 Author: Derek Odell
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # define the attributes that will be entered in max
 SymbolAppears           = ptAttribInt(1, "Frame the Symbol Appears", 226, (0,5000))

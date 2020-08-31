@@ -48,8 +48,7 @@ Author: Adam Van Ornum
 Controls whether the starfield or the cavern shows up
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 boolCavernObj = ptAttribBoolean(1, "Cavern object", 0)

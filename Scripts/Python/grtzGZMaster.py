@@ -46,10 +46,8 @@ Age: Great Zero
 Date: December 2006
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
-import PlasmaControlKeys
+from plasma import *
+import plasma
 import time
 
 

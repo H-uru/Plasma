@@ -47,8 +47,7 @@ Date: December 2006
 manages page loading for public vs. non-public Garrisons
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 
 IsPublic = 0

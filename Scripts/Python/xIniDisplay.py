@@ -45,7 +45,7 @@ This module contains the routines to read and write the Graphics.ini file
 """
 
 import xIniHelper
-from Plasma import *
+from plasma import *
 
 gIniFile = None
 gFilename = "graphics.ini"

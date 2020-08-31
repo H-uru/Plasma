@@ -46,9 +46,7 @@ Age: Ahnonay
 Date: June 2003
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaNetConstants import *
+from plasma import *
 from xPsnlVaultSDL import *
 
 spherePages  = ["Ahnonay_District_ahnySphere01",

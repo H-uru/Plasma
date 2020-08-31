@@ -47,8 +47,7 @@ Date: June 2003
 A helper file for automatic rendering of localized text on dynamic text objects
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 import xDynTextDefs
 

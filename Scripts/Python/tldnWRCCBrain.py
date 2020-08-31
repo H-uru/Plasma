@@ -50,8 +50,7 @@ Author: Bill Slease
 -- bucket controls NOT here for multiplayer timing reasons: see tldnBucketBrain
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 #Globals for Responder States
 kOn  = "on"

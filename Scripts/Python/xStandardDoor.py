@@ -56,8 +56,7 @@ VALID HINT STRINGS:
     fastforward
 """
 
-from Plasma import *
-from PlasmaTypes import *
+from plasma import *
 
 # ---------
 # max wiring

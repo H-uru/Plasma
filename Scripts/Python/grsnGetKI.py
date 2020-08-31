@@ -46,9 +46,7 @@ Allows player to get the normal KI
 version 1.1
 """
 
-from Plasma import *
-from PlasmaTypes import *
-from PlasmaKITypes import *
+from plasma import *
 
 #=============================================================
 # define the attributes that will be entered in max
