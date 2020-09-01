@@ -64,21 +64,20 @@ static float AngleRad2d(float x1, float y1, float x3, float y3);
 // plPhysicalControllerCore
 plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, float height, float radius)
     : fOwner(OwnerSceneObject),
-    fWorldKey(nil),
+    fWorldKey(),
     fHeight(height),
     fRadius(radius),
     fLOSDB(plSimDefs::kLOSDBNone),
-    fMovementStrategy(nil),
-    fSimLength(0.0f),
+    fMovementStrategy(),
+    fSimLength(),
+    fFlags(),
     fLocalRotation(0.0f, 0.0f, 0.0f, 1.0f),
     fLocalPosition(0.0f, 0.0f, -2000.0f),
     fLastLocalPosition(0.0f, 0.0f, 0.0f),
     fLinearVelocity(0.0f, 0.0f, 0.0f),
     fAchievedLinearVelocity(0.0f, 0.0f, 0.0f),
-    fPushingPhysical(nil),
-    fFacingPushingPhysical(false),
-    fSeeking(false),
-    fEnabled(false)
+    fPushingPhysical(),
+    fFacingPushingPhysical()
 {
     fLastGlobalLoc.Reset();
     fPrevSubworldW2L.Reset();
@@ -130,7 +129,7 @@ void plPhysicalControllerCore::IApply(float delSecs)
     if (!fLastGlobalLoc.Compare(l2w, 0.0001f))
         SetGlobalLoc(l2w);
 
-    if (fEnabled)
+    if (IsEnabled())
     {
         // Convert velocity from avatar to world space
         if (!fLinearVelocity.IsEmpty())
@@ -147,7 +146,7 @@ void plPhysicalControllerCore::IApply(float delSecs)
 }
 void plPhysicalControllerCore::IUpdate(int numSubSteps, float alpha)
 {
-    if (fEnabled)
+    if (IsEnabled())
     {
         // Update local position and acheived velocity
         fLastLocalPosition = fLocalPosition;
@@ -197,7 +196,7 @@ void plPhysicalControllerCore::IUpdateNonPhysical(float alpha)
     const hsMatrix44& l2w = so->GetCoordinateInterface()->GetLocalToWorld();
     if (fLastGlobalLoc.Compare(l2w, 0.0001f))
     {
-        if (fEnabled)
+        if (IsEnabled())
         {
             hsVector3 displacement = (hsVector3)(fLocalPosition - fLastLocalPosition);
             hsPoint3 interpLocalPos = fLastLocalPosition + (displacement * alpha);

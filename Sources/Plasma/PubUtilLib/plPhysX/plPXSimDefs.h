@@ -85,6 +85,16 @@ public:
         word2 = (physx::PxU32)losDBs;
     }
 
+    /**
+     * Sets the generic flag bitfield.
+     * Generic flags are an implementation detail and should only be relied on by either
+     * the main simulation or the owner of the actor. Here be dragons.
+     */
+    void SetFlags(uint32_t flag)
+    {
+        word3 = flag;
+    }
+
     bool TestGroup(plSimDefs::Group group) const
     {
         return (word0 & (1 << (physx::PxU32)group));
@@ -93,6 +103,16 @@ public:
     bool TestReportOn(plSimDefs::Group reportOn) const
     {
         return (word1 & (1 << (physx::PxU32)reportOn));
+    }
+
+    /**
+     * Tests a generic flag bit.
+     * Generic flags are an implementation detail and should only be relied on by either
+     * the main simulation or the owner of the actor. Here be dragons.
+     */
+    bool TestFlag(uint32_t flag) const
+    {
+        return (word3 & flag);
     }
 
     /** Toggles all member/collision groups on or off. */
@@ -131,6 +151,16 @@ public:
         IToggleWord(word2, db, on);
     }
 
+    /**
+     * Toggles a generic flag bit.
+     * Generic flags are an implementation detail and should only be relied on by either
+     * the main simulation or the owner of the actor. Here be dragons.
+     */
+    void ToggleFlag(uint32_t flag, bool on=true)
+    {
+        IToggleWord(word3, flag, on);
+    }
+
 public:
     /** Changes the query and simulation group of a single actor. */
     static void SetActorGroup(physx::PxRigidActor* actor, plSimDefs::Group group)
@@ -150,15 +180,38 @@ public:
     }
 
     /**
+     * Changes the query and simulation generic flags of a single actor.
+     * Generic flags are an implementation detail and should only be relied on by either
+     * the main simulation or the owner of the actor. Here be dragons.
+     */
+    static void SetActorFlags(physx::PxRigidActor* actor, uint32_t flags)
+    {
+        physx::PxShape* shape;
+        actor->getShapes(&shape, 1);
+        {
+            plPXFilterData filter = shape->getSimulationFilterData();
+            filter.SetFlags(flags);
+            shape->setSimulationFilterData(filter);
+        }
+        {
+            plPXFilterData filter = shape->getQueryFilterData();
+            filter.SetFlags(flags);
+            shape->setQueryFilterData(filter);
+        }
+    }
+
+    /**
      * Initializes the filter data for a single actor.
      */
     static void Initialize(physx::PxRigidActor* actor, plSimDefs::Group collideGroup,
-                           physx::PxU32 reportOnMask, plSimDefs::plLOSDB losDBs)
+                           physx::PxU32 reportOnMask, plSimDefs::plLOSDB losDBs,
+                           uint32_t flags=0)
     {
         plPXFilterData data;
         data.ToggleGroup(collideGroup);
         data.SetReportOn(reportOnMask);
         data.SetLOSDBs(losDBs);
+        data.SetFlags(flags);
 
         physx::PxShape* shape;
         actor->getShapes(&shape, 1);

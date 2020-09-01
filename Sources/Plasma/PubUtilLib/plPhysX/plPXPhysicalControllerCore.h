@@ -66,7 +66,7 @@ class plCollideMsg;
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
 public:
-    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius, bool human);
+    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius);
     ~plPXPhysicalControllerCore();
 
     // An ArmatureMod has its own idea about when physics should be enabled/disabled.
@@ -254,7 +254,6 @@ protected:
     physx::PxRigidDynamic* fActor;
 
     plPhysicalProxy* fProxyGen;
-    bool fHuman;
 };
 
 #endif

@@ -48,9 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXSubWorld.h"
 #include "plSimulationMgr.h"
 
-#include <array>
-#include <tuple>
-
 #include "plProfile.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSimulationInterface.h"
@@ -239,25 +236,6 @@ public:
 
 // ==========================================================================
 
-//#define FILTER_LOG
-#ifdef FILTER_LOG
-static void FilterLog(const char* msg)
-{
-    plSimulationMgr::Log(msg);
-}
-
-template<typename... Args>
-static void FilterLog(const char* fmt, Args&&... args)
-{
-    plSimulationMgr::Log(fmt, std::forward<Args>(args)...);
-}
-#else
-static void FilterLog(const char* msg) { }
-
-template<typename... Args>
-static void FilterLog(const char* fmt, Args&&... args) { }
-#endif
-
 static inline plPXFilterData& IConvertFilterData(physx::PxFilterData& pxFilterData)
 {
     return *((plPXFilterData*)&pxFilterData);
@@ -268,6 +246,18 @@ static inline bool ITestGroupPair(const plPXFilterData& f1, const plPXFilterData
 {
     if ((f1.TestGroup(g1) && f2.TestGroup(g2)) || (f1.TestGroup(g2) && f2.TestGroup(g1)))
         return true;
+    return false;
+}
+
+template<plSimDefs::Group _Group1, plSimDefs::Group _Group2>
+static inline bool IFilter(const plPXFilterData& f1, const plPXFilterData& f2,
+                           physx::PxPairFlags::InternalType reqPairFlags,
+                           physx::PxPairFlags& finalPairFlags)
+{
+    if (ITestGroupPair(f1, f2, _Group1, _Group2)) {
+        finalPairFlags = (physx::PxPairFlag::Enum)reqPairFlags;
+        return true;
+    }
     return false;
 }
 
@@ -290,50 +280,47 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
         plPXFilterData& otherData = obj0trigger ? filterHelper1 : filterHelper0;
 
         // Simplified testing: only avatars and dynamics can trigger
-        constexpr std::array<std::tuple<plSimDefs::Group, plSimDefs::Group, const char*>, 2> rpgroups = {
-            std::make_tuple(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamic, "dynamic reports on dynamic"),
-            std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatar, "avatar reports on avatar"),
-        };
-
-        for (const auto& reportpair : rpgroups) {
-            if (triggerData.TestReportOn(std::get<0>(reportpair)) && otherData.TestGroup(std::get<1>(reportpair))) {
-                FilterLog("FilterShader: Detector trigger {}", std::get<2>(reportpair));
-                pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
-                return physx::PxFilterFlag::eDEFAULT;
-            }
+        if ((triggerData.TestReportOn(plSimDefs::kGroupDynamic) && otherData.TestGroup(plSimDefs::kGroupDynamic)) ||
+            (triggerData.TestReportOn(plSimDefs::kGroupAvatar) && otherData.TestGroup(plSimDefs::kGroupAvatar))) {
+            pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+            return physx::PxFilterFlag::eDEFAULT;
         }
 
-        FilterLog("FilterShader: Trigger suppressed [report mask: {x}] [hitter: {x}]",
-                  triggerData.GetReportOn(), otherData.GetGroupMask());
         return physx::PxFilterFlag::eSUPPRESS;
     }
 
-    // Derived from the old rules in plSimulationMgr::GetScene()
-    constexpr std::array<std::tuple<plSimDefs::Group, plSimDefs::Group, const char*>, 8> colgroups = {
-        std::make_tuple(plSimDefs::kGroupStatic, plSimDefs::kGroupDynamic, "static-dynamic"),
-        std::make_tuple(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamic, "dynamic-dynamic"),
-        std::make_tuple(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamicBlocker, "dynamic-blocker"),
-        // So the fire marbles don't fly through the Relto hut door...
-        std::make_tuple(plSimDefs::kGroupDynamic, plSimDefs::kGroupExcludeRegion, "dynamic-xrgn"),
-        std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, "avatar-blocker"),
-        std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, "avatar-static"),
-        std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, "avatar-dynamic"),
-        std::make_tuple(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, "avatar-xrgn"),
-    };
-    for (const auto& colpair : colgroups) {
-        if (ITestGroupPair(filterHelper0, filterHelper1, std::get<0>(colpair), std::get<1>(colpair))) {
-            FilterLog("FilterShader: Using eDEFAULT for pair {}", std::get<2>(colpair));
-            pairFlags |= physx::PxPairFlag::eCONTACT_DEFAULT |
-                         // for physics sounds
-                         physx::PxPairFlag::eNOTIFY_TOUCH_FOUND |
-                         physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS |
-                         physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
-            return physx::PxFilterFlag::eDEFAULT;
-        }
+    const physx::PxPairFlags::InternalType defFlags = physx::PxPairFlag::eCONTACT_DEFAULT |
+                                                     // for physics sounds
+                                                     physx::PxPairFlag::eNOTIFY_TOUCH_FOUND |
+                                                     physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS |
+                                                     physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+    const physx::PxFilterFlags defResult = physx::PxFilterFlag::eDEFAULT;
+    const physx::PxFilterFlags cbResult = physx::PxFilterFlag::eCALLBACK;
+
+#define FILTER(g1, g2, f, r) \
+    if (IFilter<g1, g2>(filterHelper0, filterHelper1, f, pairFlags)) \
+        return r;
+
+    FILTER(plSimDefs::kGroupStatic, plSimDefs::kGroupDynamic, defFlags, defResult);
+    FILTER(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamic, defFlags, defResult);
+    FILTER(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamicBlocker, defFlags, defResult);
+
+    // So the fire marbles don't fly through the Relto hut door...
+    FILTER(plSimDefs::kGroupDynamic, plSimDefs::kGroupExcludeRegion, defFlags, defResult);
+
+    // Avatars should not collide if they are disabled...
+    if (filterHelper0.TestGroup(plSimDefs::kGroupAvatar) || filterHelper1.TestGroup(plSimDefs::kGroupAvatar)) {
+        if ((filterHelper0.TestGroup(plSimDefs::kGroupAvatar) && filterHelper0.TestFlag(plPhysicalControllerCore::kDisableCollision)) ||
+             (filterHelper1.TestGroup(plSimDefs::kGroupAvatar) && filterHelper1.TestFlag(plPhysicalControllerCore::kDisableCollision)))
+             return physx::PxFilterFlag::eSUPPRESS;
+
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, defFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, defFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, defFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, defFlags, cbResult);
     }
 
-    FilterLog("FilterShader: Suppressing unhandled pair {x}<->{x}",
-              filterHelper0.GetGroupMask(), filterHelper1.GetGroupMask());
+#undef FILTER
     return physx::PxFilterFlag::eSUPPRESS;
 }
 

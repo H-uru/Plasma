@@ -77,13 +77,32 @@ struct plControllerHitRecord
 class plPhysicalControllerCore
 {
 public:
+    enum
+    {
+        /**
+         * Disable rigid body collision.
+         * This disables collision with simulation shapes such as static colliders and kickables.
+         * Trigger shapes (detectors) are unaffected by this flag.
+         */
+        kDisableCollision = (1<<0),
+
+        /**
+         * The character is seeking.
+         * The character's brain is seeking or otherwise moving on autopilot to a specific point.
+         */
+        kSeeking = (1<<1),
+    };
+
+public:
     plPhysicalControllerCore(plKey ownerSceneObject, float height, float radius);
     virtual ~plPhysicalControllerCore() { }
 
     // An ArmatureMod has its own idea about when physics should be enabled/disabled.
     // Use plArmatureModBase::EnablePhysics() instead.
     virtual void Enable(bool enable) = 0;
-    virtual bool IsEnabled() { return fEnabled; }
+
+    [[nodiscard]]
+    bool IsEnabled() const { return !(fFlags & kDisableCollision); }
 
     // Subworld
     virtual plKey GetSubworld() { return fWorldKey; }
@@ -194,8 +213,8 @@ public:
     plKey GetOwner() { return fOwner; }
 
     // When seeking no longer want to interact with exclude regions
-    void SetSeek(bool seek) { fSeeking = seek; }
-    bool IsSeeking() const { return fSeeking; }
+    void SetSeek(bool seek) { hsChangeBits(fFlags, kSeeking, seek); }
+    bool IsSeeking() const { return fFlags & kSeeking; }
 
     // Pushing physical
     plPhysical* GetPushingPhysical() const { return fPushingPhysical; }
@@ -210,7 +229,7 @@ public:
     float GetMass() const { return 100.f; }
 
     // Create a new controller instance - Implemented in the physics system
-    static plPhysicalControllerCore* Create(plKey ownerSO, float height, float radius, bool human);
+    static plPhysicalControllerCore* Create(plKey ownerSO, float height, float radius);
 
 protected:
     void IApply(float delSecs);
@@ -230,6 +249,7 @@ protected:
     plMovementStrategy* fMovementStrategy;
 
     float fSimLength;
+    uint32_t fFlags;
 
     hsQuat fLocalRotation;
     hsPoint3 fLocalPosition;
@@ -243,9 +263,6 @@ protected:
 
     plPhysical* fPushingPhysical;
     bool fFacingPushingPhysical;
-
-    bool fSeeking;
-    bool fEnabled;
 };
 
 class plMovementStrategy

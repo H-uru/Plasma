@@ -101,17 +101,16 @@ public:
 
 // ==========================================================================
 
-plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width, bool human)
+plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width)
 {
     float radius = width / 2.0f;
     float realHeight = height - width;
-    return new plPXPhysicalControllerCore(ownerSO, realHeight, radius, human);
+    return new plPXPhysicalControllerCore(ownerSO, realHeight, radius);
 }
 
-plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius, bool human)
+plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius)
     : fActor(),
       fProxyGen(),
-      fHuman(human),
       plPhysicalControllerCore(ownerSO, height, radius)
 {
     ICreateController(fLocalPosition);
@@ -128,11 +127,10 @@ plPXPhysicalControllerCore::~plPXPhysicalControllerCore()
 
 void plPXPhysicalControllerCore::Enable(bool enable)
 {
-    if (fEnabled != enable) {
-        fEnabled = enable;
-
-        // Clear any random linear velocity accumulated here
-        fActor->setLinearVelocity({ 0.f, 0.f, 0.f }, false);
+    if (IsEnabled() != enable) {
+        fActor->setLinearVelocity({ 0.f, 0.f, 0.f });
+        hsChangeBits(fFlags, kDisableCollision, !enable);
+        plPXFilterData::SetActorFlags(fActor, fFlags);
     }
 }
 
@@ -181,7 +179,7 @@ void plPXPhysicalControllerCore::SetSubworld(const plKey& world)
         plSimulationMgr::GetInstance()->GetPhysX()->AddToWorld(fActor, world);
         physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(fLocalPosition)),
                                       physx::PxIdentity);
-        fActor->setGlobalPose(globalPose, false);
+        fActor->setGlobalPose(globalPose);
     }
 }
 
@@ -259,7 +257,7 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
 
     physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(fLocalPosition)),
                                   physx::PxIdentity);
-    fActor->setGlobalPose(globalPose, false);
+    fActor->setGlobalPose(globalPose);
 }
 
 void plPXPhysicalControllerCore::GetPositionSim(hsPoint3& pos)
@@ -271,13 +269,12 @@ void plPXPhysicalControllerCore::SetPositionSim(const hsPoint3& pos)
 {
     physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(pos)),
                                   physx::PxIdentity);
-    fActor->setGlobalPose(globalPose, false);
+    fActor->setGlobalPose(globalPose);
 }
 
 void plPXPhysicalControllerCore::SetLinearVelocitySim(const hsVector3& velocity)
 {
-    if (fEnabled)
-        fActor->setLinearVelocity(plPXConvert::Vector(velocity));
+    fActor->setLinearVelocity(plPXConvert::Vector(velocity));
 }
 
 // ==========================================================================
@@ -560,8 +557,7 @@ void plPXPhysicalControllerCore::ICreateController(hsPoint3 pos)
                                      physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z);
 
     sim->AddToWorld(fActor, fWorldKey);
-
-    fSeeking = false;
+    fFlags &= ~kSeeking;
 
     // Create proxy for the debug display
     /* FIXME
@@ -629,7 +625,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
                              controllerIdx + 1,
                              playerName.empty() ? controller->fOwner->GetName() : playerName,
                              controller->fWorldKey ? controller->fWorldKey->GetName() : "(main world)",
-                             fEnabled);
+                             IsEnabled());
     debugTxt.DrawString(x, y, debugString);
     y += lineHeight;
 
