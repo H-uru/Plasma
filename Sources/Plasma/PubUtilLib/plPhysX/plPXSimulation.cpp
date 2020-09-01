@@ -58,8 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /** if the step is greater than .15 seconds, clamp to that */
 constexpr float kDefaultMaxDelta = 0.15f;
 
-/** default simulation freqency is 60hz */
-constexpr float kDefaultStepSize = 1.f / 60.f;
+/** default simulation freqency is 120hz */
+constexpr float kDefaultStepSize = 1.f / 120.f;
 
 /** Approximate size of objects in the simulation */
 constexpr float kToleranceScaleLength = 6.f;
