@@ -7684,10 +7684,9 @@ bool  plDXPipeline::IProcessMipmapLevels( plMipmap *mipmap, uint32_t &numLevels,
             if( mipmap->IsCompressed() || !( fSettings.fD3DCaps & kCapsDoesSmallTextures ) )
             {
                 mipmap->SetCurrLevel( maxLevel );
-                while( ( mipmap->GetCurrWidth() | mipmap->GetCurrHeight() ) & sizeMask )
+                while (maxLevel && (mipmap->GetCurrWidth() | mipmap->GetCurrHeight()) & sizeMask)
                 {
                     maxLevel--;
-                    hsAssert( maxLevel >= 0, "How was this ever compressed?" );
                     mipmap->SetCurrLevel( maxLevel );
                 }
             }
