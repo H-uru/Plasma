@@ -68,11 +68,6 @@ private:
     static bool FirstTimeInit;
     static bool IsInShutdown; // whether we are _really_ in shutdown mode
 
-    static PyMethodDef* plasmaMethods;
-    static PyObject* plasmaMod; // python object that holds the Plasma module
-    static PyObject* plasmaConstantsMod; // python object that holds the PlasmaConstants module
-    static PyObject* plasmaNetConstantsMod; // python object that holds the PlasmaNetConstants module
-    static PyObject* plasmaVaultConstantsMod; // python object that holds the PlasmaVaultConstants module
     static PyObject* stdOut;    // python object of the stdout file
     static PyObject* stdErr;    // python object of the err file
 
@@ -88,10 +83,10 @@ private:
     static plCyDebServer debugServer;
 #endif
 
-    static PyObject* initPlasmaModule();
-    static PyObject* initPlasmaConstantsModule();
-    static PyObject* initPlasmaNetConstantsModule();
-    static PyObject* initPlasmaVaultConstantsModule();
+    static void initPlasmaModule();
+    static void initPlasmaConstantsModule();
+    static void initPlasmaNetConstantsModule();
+    static void initPlasmaVaultConstantsModule();
 
 public:
 
@@ -105,17 +100,17 @@ public:
     static void initPyPackHook();
 
     // Initialize the Plasma module
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
-    static void AddPlasmaClasses();
+    static void AddPlasmaMethods(PyObject* m);
+    static void AddPlasmaClasses(PyObject* m);
 
     // Initialize the PlasmaConstants module
-    static void AddPlasmaConstantsClasses();
+    static void AddPlasmaConstantsClasses(PyObject* m);
 
     // Initialize the PlasmaNetConstants module;
-    static void AddPlasmaNetConstantsClasses();
+    static void AddPlasmaNetConstantsClasses(PyObject* m);
 
     // Initialize the PlasmaVaultConstants module;
-    static void AddPlasmaVaultConstantsClasses();
+    static void AddPlasmaVaultConstantsClasses(PyObject* m);
 
     // Initialize the Python to Plasma 
     static void initDebugInterface();
@@ -146,10 +141,6 @@ public:
 
     // create a new module with built-ins
     static PyObject* CreateModule(const char* module);
-
-    // checks to see if a specific function is defined in this module
-    // get an item (probably a function) from the Plasma module
-    static PyObject* GetPlasmaItem(const char* item);
 
     // Determine if the module name is unique
     static bool IsModuleNameUnique(const ST::string& module);

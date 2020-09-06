@@ -76,7 +76,7 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGUIDialog); // converts a PyObject to a pyGUIDialog (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
 
     static bool IsGUIDialog(pyKey& gckey);
 

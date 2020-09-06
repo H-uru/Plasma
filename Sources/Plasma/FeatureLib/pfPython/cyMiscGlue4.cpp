@@ -761,74 +761,76 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtVaultDownload, args, "Params: nodeId\nDownload
 // AddPlasmaMethods - the python method definitions
 //
 
-void cyMisc::AddPlasmaMethods4(std::vector<PyMethodDef> &methods)
+void cyMisc::AddPlasmaMethods4(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtRequestLOSScreen);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtKillParticles);
-    PYTHON_GLOBAL_METHOD(methods, PtGetNumParticles);
-    PYTHON_GLOBAL_METHOD(methods, PtSetParticleOffset);
+    PYTHON_START_GLOBAL_METHOD_TABLE(cyMisc4)
+        PYTHON_GLOBAL_METHOD(PtRequestLOSScreen)
 
-    PYTHON_GLOBAL_METHOD(methods, PtSetLightValue);
-    PYTHON_GLOBAL_METHOD(methods, PtSetLightAnimStart);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsSinglePlayerMode);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsDemoMode);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsInternalRelease);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsEnterChatModeKeyBound);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtShootBulletFromScreen);
-    PYTHON_GLOBAL_METHOD(methods, PtShootBulletFromObject);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtGetPublicAgeList);
-    PYTHON_GLOBAL_METHOD(methods, PtCreatePublicAge);
-    PYTHON_GLOBAL_METHOD(methods, PtRemovePublicAge);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtSetClearColor);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLocalKILevel);
-    
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearCameraStack);
-    PYTHON_GLOBAL_METHOD(methods, PtGetCameraNumber);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetNumCameras);
-    PYTHON_GLOBAL_METHOD(methods, PtRebuildCameraStack);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtRecenterCamera);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtFirstPerson);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtFadeIn);
-    PYTHON_GLOBAL_METHOD(methods, PtFadeOut);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtSetGlobalClickability);
-    PYTHON_GLOBAL_METHOD(methods, PtDebugAssert);
-    PYTHON_GLOBAL_METHOD(methods, PtDebugPrint);
-    PYTHON_GLOBAL_METHOD(methods, PtSetAlarm);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtSaveScreenShot);
-    PYTHON_GLOBAL_METHOD(methods, PtStartScreenCapture);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtSendKIGZMarkerMsg);
-    PYTHON_GLOBAL_METHOD(methods, PtSendKIRegisterImagerMsg);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtWearMaintainerSuit);
-    PYTHON_GLOBAL_METHOD(methods, PtWearDefaultClothing);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeTimeOfDayPercent);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtCheckVisLOS);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtCheckVisLOSFromCursor);
+        PYTHON_GLOBAL_METHOD(PtKillParticles)
+        PYTHON_GLOBAL_METHOD(PtGetNumParticles)
+        PYTHON_GLOBAL_METHOD(PtSetParticleOffset)
 
-    PYTHON_GLOBAL_METHOD(methods, PtEnablePlanarReflections);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetSupportedDisplayModes);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDesktopWidth);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDesktopHeight);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDesktopColorDepth);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDefaultDisplayParams);
-    PYTHON_GLOBAL_METHOD(methods, PtSetGraphicsOptions);
+        PYTHON_GLOBAL_METHOD(PtSetLightValue)
+        PYTHON_GLOBAL_METHOD(PtSetLightAnimStart)
 
-    PYTHON_GLOBAL_METHOD(methods, PtSetBehaviorNetFlags);
-    PYTHON_GLOBAL_METHOD(methods, PtSendFriendInvite);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGuidGenerate);
-    PYTHON_GLOBAL_METHOD(methods, PtGetAIAvatarsByModelName);
-    PYTHON_GLOBAL_METHOD(methods, PtForceVaultNodeUpdate);
-    PYTHON_GLOBAL_METHOD(methods, PtVaultDownload);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsSinglePlayerMode)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsDemoMode)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsInternalRelease)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsEnterChatModeKeyBound)
+
+        PYTHON_GLOBAL_METHOD(PtShootBulletFromScreen)
+        PYTHON_GLOBAL_METHOD(PtShootBulletFromObject)
+
+        PYTHON_GLOBAL_METHOD(PtGetPublicAgeList)
+        PYTHON_GLOBAL_METHOD(PtCreatePublicAge)
+        PYTHON_GLOBAL_METHOD(PtRemovePublicAge)
+
+        PYTHON_GLOBAL_METHOD(PtSetClearColor)
+
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLocalKILevel)
+
+        PYTHON_BASIC_GLOBAL_METHOD(PtClearCameraStack)
+        PYTHON_GLOBAL_METHOD(PtGetCameraNumber)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetNumCameras)
+        PYTHON_GLOBAL_METHOD(PtRebuildCameraStack)
+        PYTHON_BASIC_GLOBAL_METHOD(PtRecenterCamera)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtFirstPerson)
+
+        PYTHON_GLOBAL_METHOD(PtFadeIn)
+        PYTHON_GLOBAL_METHOD(PtFadeOut)
+
+        PYTHON_GLOBAL_METHOD(PtSetGlobalClickability)
+        PYTHON_GLOBAL_METHOD(PtDebugAssert)
+        PYTHON_GLOBAL_METHOD(PtDebugPrint)
+        PYTHON_GLOBAL_METHOD(PtSetAlarm)
+
+        PYTHON_GLOBAL_METHOD(PtSaveScreenShot)
+        PYTHON_GLOBAL_METHOD(PtStartScreenCapture)
+
+        PYTHON_GLOBAL_METHOD(PtSendKIGZMarkerMsg)
+        PYTHON_GLOBAL_METHOD(PtSendKIRegisterImagerMsg)
+
+        PYTHON_GLOBAL_METHOD(PtWearMaintainerSuit)
+        PYTHON_GLOBAL_METHOD(PtWearDefaultClothing)
+
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeTimeOfDayPercent)
+
+        PYTHON_GLOBAL_METHOD(PtCheckVisLOS)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtCheckVisLOSFromCursor)
+
+        PYTHON_GLOBAL_METHOD(PtEnablePlanarReflections)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetSupportedDisplayModes)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopWidth)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopHeight)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopColorDepth)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDefaultDisplayParams)
+        PYTHON_GLOBAL_METHOD(PtSetGraphicsOptions)
+
+        PYTHON_GLOBAL_METHOD(PtSetBehaviorNetFlags)
+        PYTHON_GLOBAL_METHOD(PtSendFriendInvite)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGuidGenerate)
+        PYTHON_GLOBAL_METHOD(PtGetAIAvatarsByModelName)
+        PYTHON_GLOBAL_METHOD(PtForceVaultNodeUpdate)
+        PYTHON_GLOBAL_METHOD(PtVaultDownload)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, cyMisc4)
 }

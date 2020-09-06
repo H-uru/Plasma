@@ -87,10 +87,10 @@ public:
     static void Update( double secs );
 
     // the python definitions
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
-    static void AddPlasmaMethods2(std::vector<PyMethodDef> &methods);
-    static void AddPlasmaMethods3(std::vector<PyMethodDef> &methods);
-    static void AddPlasmaMethods4(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
+    static void AddPlasmaMethods2(PyObject* m);
+    static void AddPlasmaMethods3(PyObject* m);
+    static void AddPlasmaMethods4(PyObject* m);
 
     static void AddPlasmaConstantsClasses(PyObject *m);
 

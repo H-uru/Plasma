@@ -118,15 +118,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePassword, args, "Params: password\nChang
     PYTHON_RETURN_NONE;
 }
 
-void cyAccountManagement::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void cyAccountManagement::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAccountPlayerList);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAccountName);
-    PYTHON_GLOBAL_METHOD(methods, PtCreatePlayer);
-    PYTHON_GLOBAL_METHOD(methods, PtDeletePlayer);
-    PYTHON_GLOBAL_METHOD(methods, PtSetActivePlayer);
-    PYTHON_GLOBAL_METHOD(methods, PtIsActivePlayerSet);
-    PYTHON_GLOBAL_METHOD(methods, PtChangePassword);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptAccountManagement)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAccountPlayerList)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAccountName)
+        PYTHON_GLOBAL_METHOD(PtCreatePlayer)
+        PYTHON_GLOBAL_METHOD(PtDeletePlayer)
+        PYTHON_GLOBAL_METHOD(PtSetActivePlayer)
+        PYTHON_GLOBAL_METHOD(PtIsActivePlayerSet)
+        PYTHON_GLOBAL_METHOD(PtChangePassword)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptAccountManagement)
 }
 
 void cyAccountManagement::AddPlasmaConstantsClasses(PyObject *m)

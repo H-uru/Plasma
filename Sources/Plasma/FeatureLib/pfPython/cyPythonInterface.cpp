@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //       only be one instance of this interface. 
 //
 
+#include <functional>
+
 #include <Python.h>
 #include <marshal.h>
 #include "pyGeometry3.h"
@@ -169,11 +171,6 @@ int32_t PythonInterface::initialized = 0;                 // only need to initia
 bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
 
-PyMethodDef* PythonInterface::plasmaMethods = nil;      // the Plasma module's methods
-PyObject* PythonInterface::plasmaMod = nil;             // pointer to the Plasma module
-PyObject* PythonInterface::plasmaConstantsMod = nil;    // pointer to the PlasmaConstants module
-PyObject* PythonInterface::plasmaNetConstantsMod = nil; // pointer to the PlasmaNetConstants module
-PyObject* PythonInterface::plasmaVaultConstantsMod = nil; // pointer to the PlasmaVaultConstants module
 PyObject* PythonInterface::stdOut = nil;                // python object of the stdout file
 PyObject* PythonInterface::stdErr = nil;                // python object of the err file
 
@@ -869,99 +866,38 @@ static PyModuleDef s_PlasmaVaultConstantsModuleDef = {
     nullptr,                       /* m_free */
 };
 
-PyObject* PythonInterface::initPlasmaModule()
+static void IInitBuiltinModule(const char* modName, const char* docstring, plStatusLog* dbgLog,
+                               const std::function<void(PyObject*)>& classFunc=nullptr,
+                               const std::function<void(PyObject*)>& methodFunc=nullptr)
 {
-    std::vector<PyMethodDef> methods; // this is temporary, for easy addition of new methods
-    AddPlasmaMethods(methods);
-    methods.emplace_back(); // add the terminator
-
-    // now copy the data to our real method definition structure
-    s_PlasmaModuleDef.m_methods = new PyMethodDef[methods.size() + 1];
-    for (size_t curMethod = 0; curMethod < methods.size(); curMethod++)
-        s_PlasmaModuleDef.m_methods[curMethod] = methods[curMethod];
-
-    // now set up the module with the method data
-    plasmaMod = PyModule_Create(&s_PlasmaModuleDef);
-    if (!plasmaMod) {
-        dbgLog->AddLine("Could not setup the Plasma module\n");
-        return nullptr;
-    } else if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while setting up Plasma:\n");
-        getOutputAndReset();
+    // Steals a reference from the modules dict--not a memory leak!
+    PyObject* m = PyImport_AddModule(modName);
+    if (!m) {
+        dbgLog->AddLineF("Could not create the '{}' module.", modName);
+        return;
     }
 
-    // now add the classes to the module
-    AddPlasmaClasses();
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while adding classes to Plasma:\n");
-        getOutputAndReset();
+    if (PyModule_SetDocString(m, docstring) != 0) {
+        dbgLog->AddLineF("Error setting the docstring for the '{}' module.", modName);
+        return;
     }
 
-    return plasmaMod;
-}
-
-PyObject* PythonInterface::initPlasmaConstantsModule()
-{
-    plasmaConstantsMod = PyModule_Create(&s_PlasmaConstantsModuleDef);
-    if (!plasmaConstantsMod) {
-        dbgLog->AddLine("Could not setup the PlasmaConstants module\n");
-        return nullptr;
-    }
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while setting up PlasmaConstants:\n");
-        getOutputAndReset();
+    if (methodFunc) {
+        methodFunc(m);
+        if (PyErr_Occurred()) {
+            dbgLog->AddLineF("Python error while adding methods to {}:", modName);
+            PythonInterface::getOutputAndReset();
+            return;
+        }
     }
 
-    AddPlasmaConstantsClasses();
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while adding classes to PlasmaConstants:\n");
-        getOutputAndReset();
+    if (classFunc) {
+        classFunc(m);
+        if (PyErr_Occurred()) {
+            dbgLog->AddLineF("Python error while adding classes to {}:", modName);
+            PythonInterface::getOutputAndReset();
+        }
     }
-    return plasmaConstantsMod;
-}
-
-PyObject* PythonInterface::initPlasmaNetConstantsModule()
-{
-    plasmaNetConstantsMod = PyModule_Create(&s_PlasmaNetConstantsModuleDef);
-    if (!plasmaNetConstantsMod) {
-        dbgLog->AddLine("Could not setup the PlasmaNetConstants module\n");
-        return nullptr;
-    }
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while setting up PlasmaNetConstants:\n");
-        std::string error;
-        getOutputAndReset(&error);
-    }
-
-    AddPlasmaNetConstantsClasses();
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while adding classes to PlasmaNetConstants:\n");
-        std::string error;
-        getOutputAndReset(&error);
-    }
-    return plasmaNetConstantsMod;
-}
-
-PyObject* PythonInterface::initPlasmaVaultConstantsModule()
-{
-    plasmaVaultConstantsMod = PyModule_Create(&s_PlasmaVaultConstantsModuleDef);
-    if (!plasmaVaultConstantsMod) {
-        dbgLog->AddLine("Could not setup the PlasmaVaultConstants module\n");
-        return nullptr;
-    }
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while setting up PlasmaVaultConstants:\n");
-        std::string error;
-        getOutputAndReset(&error);
-    }
-
-    AddPlasmaVaultConstantsClasses();
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while adding classes to PlasmaVaultConstants:\n");
-        std::string error;
-        getOutputAndReset(&error);
-    }
-    return plasmaVaultConstantsMod;
 }
 
 template<typename _ConfigT, PyStatus(*_FuncT)(const _ConfigT*)>
@@ -993,12 +929,6 @@ void PythonInterface::initPython()
     }
 
     FirstTimeInit = false;
-
-    // Lazy-init most Plasma Python modules at import time.
-    PyImport_AppendInittab(s_PlasmaModuleDef.m_name, initPlasmaModule);
-    PyImport_AppendInittab(s_PlasmaConstantsModuleDef.m_name, initPlasmaConstantsModule);
-    PyImport_AppendInittab(s_PlasmaNetConstantsModuleDef.m_name, initPlasmaNetConstantsModule);
-    PyImport_AppendInittab(s_PlasmaVaultConstantsModuleDef.m_name, initPlasmaVaultConstantsModule);
 
     // In Python 2, we could rely on a single PEP 302 hook class installed into sys.path_hooks to
     // handle importing modules from python.pak -- this could be initialized after Python. In Python 3,
@@ -1038,6 +968,13 @@ void PythonInterface::initPython()
     config._init_main = 1;
     if (!ICheckedInit<PyConfig, Py_InitializeFromConfig>(config, dbgLog, "Main init failed!"))
         return;
+
+    // Initialize built-in Plasma modules. For some reason, when using the append-inittab thingy,
+    // we get complaints about these modules being leaked :(
+    IInitBuiltinModule("Plasma", "Plasma 2.0 Game Library", dbgLog, AddPlasmaClasses, AddPlasmaMethods);
+    IInitBuiltinModule("PlasmaConstants", "Plasma 2.0 Constants", dbgLog, AddPlasmaConstantsClasses);
+    IInitBuiltinModule("PlasmaNetConstants", "Plasma 2.0 Net Constants", dbgLog, AddPlasmaNetConstantsClasses);
+    IInitBuiltinModule("PlasmaVaultConstants", "Plasma 2.0 Vault Constants", dbgLog, AddPlasmaVaultConstantsClasses);
 
     // Woo, we now have a functional Python 3 interpreter...
     dbgLog->AddLineF("Python {} interpreter is now alive!", PY_VERSION);
@@ -1125,18 +1062,21 @@ void PythonInterface::initDebugInterface()
 //
 //  PURPOSE    : Add global methods to the Plasma module
 //
-void PythonInterface::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void PythonInterface::AddPlasmaMethods(PyObject* m)
 {
-    cyMisc::AddPlasmaMethods(methods);
-    cyAvatar::AddPlasmaMethods(methods);
-    cyAccountManagement::AddPlasmaMethods(methods);
+    cyMisc::AddPlasmaMethods(m);
+    cyMisc::AddPlasmaMethods2(m);
+    cyMisc::AddPlasmaMethods3(m);
+    cyMisc::AddPlasmaMethods4(m);
+    cyAvatar::AddPlasmaMethods(m);
+    cyAccountManagement::AddPlasmaMethods(m);
 
-    pyDrawControl::AddPlasmaMethods(methods);
-    pyGUIDialog::AddPlasmaMethods(methods);
-    pyImage::AddPlasmaMethods(methods);
-    pyJournalBook::AddPlasmaMethods(methods);
-    pySDLModifier::AddPlasmaMethods(methods);
-    pySpawnPointInfo::AddPlasmaMethods(methods);
+    pyDrawControl::AddPlasmaMethods(m);
+    pyGUIDialog::AddPlasmaMethods(m);
+    pyImage::AddPlasmaMethods(m);
+    pyJournalBook::AddPlasmaMethods(m);
+    pySDLModifier::AddPlasmaMethods(m);
+    pySpawnPointInfo::AddPlasmaMethods(m);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1146,7 +1086,7 @@ void PythonInterface::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
 //
 //  PURPOSE    : Add classes to the Plasma module
 //
-void PythonInterface::AddPlasmaClasses()
+void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
 {
     pyKey::AddPlasmaClasses(plasmaMod);
     pySceneObject::AddPlasmaClasses(plasmaMod);
@@ -1259,7 +1199,7 @@ void PythonInterface::AddPlasmaClasses()
 //
 //  PURPOSE    : Initialize the PlasmaConstants module
 //
-void PythonInterface::AddPlasmaConstantsClasses()
+void PythonInterface::AddPlasmaConstantsClasses(PyObject* plasmaConstantsMod)
 {
     pyEnum::AddPlasmaConstantsClasses(plasmaConstantsMod);
 
@@ -1294,7 +1234,7 @@ void PythonInterface::AddPlasmaConstantsClasses()
 //
 //  PURPOSE    : Initialize the PlasmaNetConstants module
 //
-void PythonInterface::AddPlasmaNetConstantsClasses()
+void PythonInterface::AddPlasmaNetConstantsClasses(PyObject* plasmaNetConstantsMod)
 {
     pyNetLinkingMgr::AddPlasmaConstantsClasses(plasmaNetConstantsMod);
 }
@@ -1307,7 +1247,7 @@ void PythonInterface::AddPlasmaNetConstantsClasses()
 //
 //  PURPOSE    : Initialize the PlasmaVaultConstants module
 //
-void PythonInterface::AddPlasmaVaultConstantsClasses()
+void PythonInterface::AddPlasmaVaultConstantsClasses(PyObject* plasmaVaultConstantsMod)
 {
     pyVault::AddPlasmaConstantsClasses(plasmaVaultConstantsMod);
 }
@@ -1329,57 +1269,9 @@ void PythonInterface::finiPython()
         if (usePythonDebugger)
             debugServer.Disconnect();
 #endif
-        // remove debug module if used
-        if ( dbgMod )
-        {
-            Py_DECREF(dbgMod);
-            dbgMod = nil;
-        }
-
-        if ( stdOut )
-        {
-            Py_DECREF(stdOut);
-            stdOut = nil;
-        }
-
-        if ( stdErr )
-        {
-            Py_DECREF(stdErr);
-            stdErr = nil;
-        }
-
-        if ( plasmaMod )
-        {
-            Py_DECREF(plasmaMod);   // get rid of our reference
-            plasmaMod = nil;
-        }
-
-        if ( plasmaConstantsMod )
-        {
-            Py_DECREF(plasmaConstantsMod);
-            plasmaConstantsMod = nil;
-        }
-
-        if ( plasmaNetConstantsMod )
-        {
-            Py_DECREF(plasmaNetConstantsMod);
-            plasmaNetConstantsMod = nil;
-        }
-
-        if ( plasmaVaultConstantsMod )
-        {
-            Py_DECREF(plasmaVaultConstantsMod);
-            plasmaVaultConstantsMod = nil;
-        }
-
         // let Python clean up after itself
-        Py_Finalize();
-
-        if (plasmaMethods)
-        {
-            delete [] plasmaMethods;
-            plasmaMethods = nil;
-        }
+        if (Py_FinalizeEx() != 0)
+            dbgLog->AddLine("Hmm... Errors during Python shutdown.");
 
         // close done the log file, if we created one
         if ( dbgLog != nil )
@@ -1590,23 +1482,6 @@ PyObject* PythonInterface::CreateModule(const char* module)
         Py_DECREF(bimod);
     }
     return m;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : GetPlasmaItem
-//  PARAMETERS : item    - what item in the plasma module to get
-//
-//  PURPOSE    : get an item (probably a function) from the Plasma module
-//
-PyObject* PythonInterface::GetPlasmaItem(const char* item)
-{
-    if ( plasmaMod )
-    {
-        PyObject* d = PyModule_GetDict(plasmaMod);
-        return PyDict_GetItemString(d, item);
-    }
-    return nil;
 }
 
 

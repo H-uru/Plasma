@@ -58,7 +58,7 @@ namespace ST { class string; }
 class cyAccountManagement
 {
 public:
-    static void         AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void         AddPlasmaMethods(PyObject* m);
     static void         AddPlasmaConstantsClasses(PyObject *m);
 
     static PyObject*    GetPlayerList();
