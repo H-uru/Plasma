@@ -321,14 +321,28 @@ class xSimpleImager(ptModifier):
                             self.IShowCurrentContent()
                         if newID == CurrentDisplayedElementID:
                             self.IShowCurrentContent()
+                    elif event[1][:9] == "Uploaded=":
+                        newID = int(event[1][9:])
+                        if newID == CurrentDisplayedElementID:
+                            self.IShowCurrentContent()
                     elif event[1][:7] == "Upload=":
                         deviceName = event[1][7:]
                         nodeId = int(event[3])
                         if deviceName == ImagerName.value:
                             ageVault = ptAgeVault()
                             folder = ageVault.getDeviceInbox(ImagerName.value)
-                            if folder:
+                            if folder and PtWasLocallyNotified(self.key):
                                 folder.linkToNode(nodeId)
+
+                                selfnotify = ptNotify(self.key)
+                                selfnotify.clearReceivers()
+                                selfnotify.addReceiver(self.key)
+                                selfnotify.netPropagate(True)
+                                selfnotify.netForce(True)
+                                selfnotify.setActivate(1.0)
+                                sname = f"Uploaded={nodeId}"
+                                selfnotify.addVarNumber(sname, 1.0)
+                                selfnotify.send()
 
 
     def IRefreshImagerFolder(self):
