@@ -119,6 +119,8 @@ DRCStamp2 = '<img src="xDRCBookRubberStamp2*1#0.hsm" '
 DRCPos2 = 'pos=190,60 blend=alpha>'
 DRCPos3 = 'pos=220,240 blend=alpha>'
 YeeshaStamp = '<img src="xYeeshaBookStampVSquish*1#0.hsm" pos=140,255 resize=no blend=alpha>'
+# Fan Stamp
+FanAgeStamp = '<img src="xFanAgeStamp02*1#0.hsm" pos=0,0 resize=no blend=alpha>'
 
 
 kBookMarkID = 0
@@ -257,6 +259,14 @@ else:
         "BahroCaveUpper":     ( 'xLinkPanelBahroCaveUpper' ),
         "BahroCaveLower":     ( 'xLinkPanelBahroCaveLower' ),
         "islmGreatTree":        ( 'xLinkPanelCityGreatTree' ),
+# Begin Fan Ages
+        "Trebivdil":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpaneltrebivdil' + LinkEnd ),
+        "FehnirHouse":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelfehnirhouse' + LinkEnd ),
+        "GoMePubNew":           ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelgomepubnew' + LinkEnd ),
+        "VeeTsah":              ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelsheten' + LinkEnd ),
+        "Vothol":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelvothol' + LinkEnd ),
+        "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
+        "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
 }
 
 # cross-references the book name with the age and spawn point it links to
@@ -324,6 +334,13 @@ xLinkDestinations = {\
     "islmGreatTree":      	  ( "city", "LinkInPointGreatTree" ),
     "BahroCaveUpper":           ( "PelletBahroCave", "LinkInPointDefault" ),
     "BahroCaveLower":           ( "PelletBahroCave", "LinkInPointLower" ),
+# Begin Fan Ages
+    "Trevibdil":              ( "Trebivdil", "LinkInPointDefault" ),
+    "FehnirHouse":            ( "FehnirHouse", "LinkInPointDefault" ),
+    "GoMePubNew":             ( "GoMePubNew", "LinkInPointDefault" ),
+    "VeeTsah":                ( "VeeTsah", "LinkInPointDefault" ),
+    "Vothol":                 ( "Vothol", "LinkInPointDefault" ),
+    "ChisoPreniv":            ( "ChisoPreniv", "LinkInPointDefault" ),
 }
 
 #
