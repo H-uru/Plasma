@@ -58,6 +58,7 @@ import functools
 import os
 
 from Plasma import *
+from PlasmaConstants import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import PlasmaControlKeys
@@ -427,7 +428,6 @@ kOptionFadeInSeconds = 0.5
 gOriginalAmbientVolume = 1.0
 gOriginalSFXVolume = 1.0
 gOriginalMusicVolume = 1.0
-gFirstReltoVisit = True
 
 gMouseSensitivity = "150"
 gSmoothCam = "0"
@@ -448,6 +448,7 @@ class xOptionsMenu(ptModifier):
         
         self.restartWarn = False
         self.goingToCalibration = 0
+        self.refreshBindings = True
 
     def OnFirstUpdate(self):
         global WebLaunchCmd
@@ -499,11 +500,9 @@ class xOptionsMenu(ptModifier):
         if gJournalBook:
             gJournalBook.hide()
 
-    def OnPageLoad(self,what,room):
-        global gFirstReltoVisit
-
-        if room in {"Personal_psnlMYSTII", "Personal_District_psnlMYSTII"} and gFirstReltoVisit:
-            gFirstReltoVisit = False
+    def OnServerInitComplete(self):
+        if self.refreshBindings:
+            self.refreshBindings = False
 
             vault = ptVault()
             entry = vault.findChronicleEntry("KeyMap")
@@ -519,14 +518,18 @@ class xOptionsMenu(ptModifier):
             else:
                 PtAtTimeCallback (self.key, 5, 999)
 
+    def OnAccountUpdate(self, notify, result, playerID):
+        # If a new player is set, we'll want to reload the key bindings from their vault.
+        if notify == PtAccountUpdateType.kActivePlayer and playerID:
+            self.refreshBindings = True
+
     def OnNotify(self,state,id,events):
-        global gFirstReltoVisit
         "Notify - should only be needed for credits book"
         PtDebugPrint("xOptionsMenu: Notify  state=%f, id=%d" % (state,id),level=kDebugDumpLevel)
 
         if id == -1:
             PtDebugPrint("Options Menu got notify, resetting First Visit status")
-            gFirstReltoVisit = True
+            self.refreshBindings = True
             return
 
         # is it a notification from the scene input interface or PlayerBook?
@@ -1872,10 +1875,13 @@ class xOptionsMenu(ptModifier):
     def LoadKeyMap(self):
         km = ptKeyMap()
         KeyMapString = self.getChronicleVar("KeyMap")
+        if not KeyMapString:
+            PtDebugPrint("xOptionsMenu.LoadKeyMap():\tHmm... Empty chronicle...")
+            return
+
         KeyMapArray = KeyMapString.split()
-        counter = 0
         # set the key binds back to the saved
-        for control_code in defaultControlCodeBindsOrdered:
+        for counter, control_code in enumerate(defaultControlCodeBindsOrdered):
             if isinstance(control_code, str):
                 key1 = KeyMapArray[counter]
                 PtDebugPrint("Binding " + key1 + " to " + control_code)
@@ -1887,7 +1893,6 @@ class xOptionsMenu(ptModifier):
                 key2 = SubArray[1]
                 PtDebugPrint("Binding " + key1 + " & " + key2 + " to " + controlStr)
                 km.bindKey(key1,key2,controlStr)
-            counter += 1
 
     def IsThereACover(self,bookHtml):
         # search the bookhtml string looking for a cover
