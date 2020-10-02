@@ -1,3 +1,11 @@
+file(GLOB_RECURSE GameScripts "${CMAKE_CURRENT_SOURCE_DIR}/Python/*.py")
+file(GLOB_RECURSE GameSDL "${CMAKE_CURRENT_SOURCE_DIR}/SDL/*.sdl")
+file(GLOB_RECURSE GameData "${CMAKE_CURRENT_SOURCE_DIR}/dat/*.age" "${CMAKE_CURRENT_SOURCE_DIR}/dat/*.fni")
+
+source_group("Python" FILES ${GameScripts})
+source_group("SDL" FILES ${GameSDL})
+source_group("Ages" FILES ${GameData})
+
 add_custom_target(Scripts ALL
                   COMMENT "Copying engine scripts..."
 
@@ -5,6 +13,8 @@ add_custom_target(Scripts ALL
                   COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/dat" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dat"
                   COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/Python" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/python"
                   COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/SDL" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SDL"
+
+                  SOURCES ${GameScripts} ${GameSDL} ${GameData}
 )
 
 # These Python stdlib modules should be EXCLUDED from the copy due to either practical or
