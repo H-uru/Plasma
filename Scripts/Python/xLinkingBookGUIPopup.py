@@ -331,7 +331,7 @@ class xLinkingBookGUIPopup(ptModifier):
                                         #PtDebugPrint("agePanel = ",agePanel)
                                         if agePanel in xLinkingBookDefs.CityBookLinks:
                                             self.IDoCityLinksChron(agePanel)
-                                        respLinkResponder.run(self.key,avatar=PtGetLocalAvatar(),netPropagate=0)
+                                        respLinkResponder.run(self.key,avatar=PtGetLocalAvatar())
 
                                 else:  #Bookshelf Book
                                     if ptVault().amOwnerOfCurrentAge():
