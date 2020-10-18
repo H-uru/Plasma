@@ -335,7 +335,7 @@ class islmMemorialImager(ptModifier):
                 if i >= StartCursor:
                     testmessage = kMessage[StartCursor:i]
                 elif i < StartCursor:
-                    testmessage = kMessage[StartCursor:len(kMessage)] + kMessage[0:i-(len(kMessage) * (i / len(kMessage)))]
+                    testmessage = kMessage[StartCursor:len(kMessage)] + kMessage[0:i-(len(kMessage) * (i // len(kMessage)))]
                 
                 (textWidth,z) = ImagerMap1.textmap.calcTextExtents(testmessage)
                 if textWidth > ImagerMap1.textmap.getWidth(): break
@@ -351,13 +351,13 @@ class islmMemorialImager(ptModifier):
                 return
             testmessage = testmessage[0:len(testmessage) - 1]
             CurrentMessage[x] = testmessage
-            kCursorEnd[x] = (len(testmessage) + i)-(len(kMessage) * (i / len(kMessage)))
+            kCursorEnd[x] = (len(testmessage) + i)-(len(kMessage) * (i // len(kMessage)))
             (kFirstChar[x], z) = ImagerMap1.textmap.calcTextExtents(testmessage[0])
             (kTextWidth[x],z) = ImagerMap1.textmap.calcTextExtents(testmessage)
-            (kNextChar[x], z) = ImagerMap1.textmap.calcTextExtents(kMessage[i-(len(kMessage) + 1 * (i / len(kMessage))) + 1])
+            (kNextChar[x], z) = ImagerMap1.textmap.calcTextExtents(kMessage[i-(len(kMessage) + 1 * (i // len(kMessage))) + 1])
 
             if x < 3:
-                kCursorStart[x+1] = int(StartCursor + startposdistance) - (len(kMessage) * ((StartCursor + startposdistance) / len(kMessage)))
+                kCursorStart[x+1] = int(StartCursor + startposdistance) - (len(kMessage) * ((StartCursor + startposdistance) // len(kMessage)))
             kTextXPos[x] = kTextXStart
 
     ############################
