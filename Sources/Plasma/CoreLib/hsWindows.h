@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _hsWindows_inc_
 #define _hsWindows_inc_
 
+#include <string_theory/format>
+
 /** \file hsWindows.h
  *  \brief Pulls in Windows core headers
  *
@@ -83,6 +85,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   endif // USE_VLD
 
     const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion();
+
+    /** COM Result holder used for formatting to log. */
+    struct hsCOMError
+    {
+        HRESULT fResult;
+
+        hsCOMError() = delete;
+        hsCOMError(HRESULT r) : fResult(r) { }
+        hsCOMError& operator =(const hsCOMError&) = delete;
+        hsCOMError& operator =(HRESULT r) { fResult = r; return *this; }
+        operator HRESULT() const { return fResult; }
+    };
+
+    inline void format_type(const ST::format_spec& format, ST::format_writer& output, const hsCOMError& hr)
+    {
+        wchar_t* msg = nullptr;
+        auto result = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                     nullptr, hr.fResult, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&msg, 0, nullptr);
+        if (result && msg) {
+            ST::char_buffer utf8 = ST::string::from_wchar(msg, result, ST::assume_valid).to_utf8();
+            output.append(utf8.data(), utf8.size());
+            LocalFree(msg);
+        } else {
+            output.append("unknown HRRESULT 0x");
+            ST::format_type(format, output, hr.fResult);
+        }
+    }
 #endif // HS_BUILD_FOR_WIN32
 
 #endif // _hsWindows_inc_

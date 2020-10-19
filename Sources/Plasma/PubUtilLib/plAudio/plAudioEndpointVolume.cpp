@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAudioEndpointVolume.h"
 #include "plStatusLog/plStatusLog.h"
-#include <system_error>
 
 extern ST::string kDefaultDeviceMagic;
 
@@ -111,11 +110,11 @@ IAudioEndpointVolume* plWinCoreAudioEndpointVolume::GetVolumeCtrl() const
         return nullptr;
 
     IAudioEndpointVolume* volume = nullptr;
-    HRESULT hr = fDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_ALL, nullptr, (void**)& volume);
+    hsCOMError hr = fDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_ALL, nullptr, (void**)& volume);
     if (FAILED(hr)) {
         plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                "WinCoreAudioEndpointVolume::GetVolumeCtrl(): Failed to open volume control, {}",
-                               std::system_category().message(hr));
+                               hr);
         return nullptr;
     }
 
@@ -127,12 +126,12 @@ float plWinCoreAudioEndpointVolume::GetVolume() const
     float pct = 0.f;
     auto volume = GetVolumeCtrl();
     if (volume) {
-        HRESULT hr = volume->GetMasterVolumeLevelScalar(&pct);
+        hsCOMError hr = volume->GetMasterVolumeLevelScalar(&pct);
         volume->Release();
         if (FAILED(hr)) {
             plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                    "WinCoreAudioEndpointVolume::GetVolume(): Failed to get master level, {}",
-                                    std::system_category().message(hr));
+                                   hr);
         }
     }
     return pct;
@@ -143,12 +142,12 @@ bool plWinCoreAudioEndpointVolume::SetDefaultDevice(plAudioEndpointType endpoint
     ICOMRelease(fDevice);
 
     IMMDeviceEnumerator* enumerator = nullptr;
-    HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
-                                  __uuidof(IMMDeviceEnumerator), (void**)&enumerator);
+    hsCOMError hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
+                                     __uuidof(IMMDeviceEnumerator), (void**)&enumerator);
     if (FAILED(hr)) {
         plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                "WinCoreAudioEndpointVolume::SetDefaultDevice(): Failed to get enumerator, {}",
-                               std::system_category().message(hr));
+                               hr);
         return false;
     }
 
@@ -157,7 +156,7 @@ bool plWinCoreAudioEndpointVolume::SetDefaultDevice(plAudioEndpointType endpoint
     if (FAILED(hr)) {
         plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                "WinCoreAudioEndpointVolume::SetDefaultDevice(): Failed to get default device, {}",
-                               std::system_category().message(hr));
+                               hr);
         return false;
     }
 
@@ -182,12 +181,12 @@ bool plWinCoreAudioEndpointVolume::SetDevice(plAudioEndpointType endpoint, const
     do {
         // Windows Core Audio was added in Windows Vista. My hope is that on Windows XP, this will
         // just return a failure.
-        HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
-                                      __uuidof(IMMDeviceEnumerator), (void**)& enumerator);
+        hsCOMError hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL,
+                                         __uuidof(IMMDeviceEnumerator), (void**)& enumerator);
         if (FAILED(hr)) {
             plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                    "WinCoreAudioEndpointVolume::SetDevice(): Failed to get enumerator, {}",
-                                   std::system_category().message(hr));
+                                   hr);
             break;
         }
 
@@ -199,7 +198,7 @@ bool plWinCoreAudioEndpointVolume::SetDevice(plAudioEndpointType endpoint, const
         if (FAILED(hr)) {
             plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                    "WinCoreAudioEndpointVolume::SetDevice(): Failed to get device collection, {}",
-                                   std::system_category().message(hr));
+                                   hr);
             break;
         }
 
@@ -216,7 +215,7 @@ bool plWinCoreAudioEndpointVolume::SetDevice(plAudioEndpointType endpoint, const
             if (FAILED(hr)) {
                 plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                        "WinCoreAudioEndpointVolume::SetDevice(): Failed to open device #{}, {}",
-                                       i, std::system_category().message(hr));
+                                       i, hr);
                 continue;
             }
 
@@ -225,7 +224,7 @@ bool plWinCoreAudioEndpointVolume::SetDevice(plAudioEndpointType endpoint, const
             if (FAILED(hr)) {
                 plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                       "WinCoreAudioEndpointVolume::SetDevice(): Failed get device #{} properties, %{}",
-                                      i, std::system_category().message(hr));
+                                      i, hr);
                 continue;
             }
 
@@ -233,7 +232,7 @@ bool plWinCoreAudioEndpointVolume::SetDevice(plAudioEndpointType endpoint, const
             if (FAILED(hr)) {
                 plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                        "WinCoreAudioEndpointVolume::SetDevice(): Failed get device #%u friendly name, %s",
-                                       i, std::system_category().message(hr));
+                                       i, hr);
                 continue;
             }
 
@@ -271,12 +270,12 @@ bool plWinCoreAudioEndpointVolume::SetVolume(float pct)
     if (volume) {
         pct = std::clamp(pct, 0.f, 1.f);
 
-        HRESULT hr = volume->SetMasterVolumeLevelScalar(pct, nullptr);
+        hsCOMError hr = volume->SetMasterVolumeLevelScalar(pct, nullptr);
         volume->Release();
         if (FAILED(hr)) {
             plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                    "WinCoreAudioEndpointVolume::SetVolume(): Failed to set master volume, {}",
-                                   std::system_category().message(hr));
+                                   hr);
             return false;
         }
         return true;
@@ -291,11 +290,11 @@ bool plWinCoreAudioEndpointVolume::Supported() const
         return false;
 
     DWORD state;
-    HRESULT hr = fDevice->GetState(&state);
+    hsCOMError hr = fDevice->GetState(&state);
     if (FAILED(hr)) {
         plStatusLog::AddLineSF("audio.log", plStatusLog::kRed,
                                "WinCoreAudioEndpointVolume::Supported(): Failed get device state, {}",
-                               std::system_category().message(hr));
+                               hr);
         return false;
     }
 
