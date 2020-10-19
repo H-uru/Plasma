@@ -448,51 +448,49 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindClones, args, "Params: key\nFinds all clon
 // AddPlasmaMethods - the python method definitions
 //
 
-void cyMisc::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void cyMisc::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtFlashWindow);
+    PYTHON_START_GLOBAL_METHOD_TABLE(cyMisc)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtFlashWindow)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeName);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeInfo);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeTime);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetPrevAgeName); 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetPrevAgeInfo);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDniTime);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetServerTime);
-    PYTHON_GLOBAL_METHOD(methods, PtGMTtoDniTime);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeName)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeInfo)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeTime)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetPrevAgeName) 
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetPrevAgeInfo)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDniTime)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetServerTime)
+        PYTHON_GLOBAL_METHOD(PtGMTtoDniTime)
+
+        PYTHON_GLOBAL_METHOD(PtGetClientName)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLocalAvatar)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLocalPlayer)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetPlayerList)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetPlayerListDistanceSorted)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtMaxListenListSize)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtMaxListenDistSq)
+        PYTHON_GLOBAL_METHOD(PtGetAvatarKeyFromClientID)
+        PYTHON_GLOBAL_METHOD(PtGetClientIDFromAvatarKey)
+        PYTHON_GLOBAL_METHOD(PtGetNPCByID)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetNPCCount)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetNumRemotePlayers)
+
+        PYTHON_GLOBAL_METHOD(PtValidateKey)
+
+        PYTHON_GLOBAL_METHOD(PtSendRTChat)
+        PYTHON_GLOBAL_METHOD(PtSendKIMessage)
+        PYTHON_GLOBAL_METHOD(PtSendKIMessageInt)
     
-    PYTHON_GLOBAL_METHOD(methods, PtGetClientName);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLocalAvatar);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLocalPlayer);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetPlayerList);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetPlayerListDistanceSorted);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtMaxListenListSize);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtMaxListenDistSq);
-    PYTHON_GLOBAL_METHOD(methods, PtGetAvatarKeyFromClientID);
-    PYTHON_GLOBAL_METHOD(methods, PtGetClientIDFromAvatarKey);
-    PYTHON_GLOBAL_METHOD(methods, PtGetNPCByID);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetNPCCount);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetNumRemotePlayers);
+        PYTHON_GLOBAL_METHOD(PtLoadAvatarModel)
+        PYTHON_GLOBAL_METHOD(PtUnLoadAvatarModel)
 
-    PYTHON_GLOBAL_METHOD(methods, PtValidateKey);
+        PYTHON_BASIC_GLOBAL_METHOD(PtForceCursorHidden)
+        PYTHON_BASIC_GLOBAL_METHOD(PtForceCursorShown)
 
-    PYTHON_GLOBAL_METHOD(methods, PtSendRTChat);
-    PYTHON_GLOBAL_METHOD(methods, PtSendKIMessage);
-    PYTHON_GLOBAL_METHOD(methods, PtSendKIMessageInt);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtLoadAvatarModel);
-    PYTHON_GLOBAL_METHOD(methods, PtUnLoadAvatarModel);
+        PYTHON_GLOBAL_METHOD(PtGetLocalizedString)
 
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtForceCursorHidden);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtForceCursorShown);
-
-    PYTHON_GLOBAL_METHOD(methods, PtGetLocalizedString);
-
-    PYTHON_GLOBAL_METHOD(methods, PtDumpLogs);
-    PYTHON_GLOBAL_METHOD(methods, PtCloneKey);
-    PYTHON_GLOBAL_METHOD(methods, PtFindClones);
-
-    AddPlasmaMethods2(methods);
-    AddPlasmaMethods3(methods);
-    AddPlasmaMethods4(methods);
+        PYTHON_GLOBAL_METHOD(PtDumpLogs)
+        PYTHON_GLOBAL_METHOD(PtCloneKey)
+        PYTHON_GLOBAL_METHOD(PtFindClones)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, cyMisc)
 }

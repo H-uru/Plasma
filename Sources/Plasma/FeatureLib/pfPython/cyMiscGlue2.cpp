@@ -439,41 +439,43 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtClearPrivateChatList, args, "Params: memberKey
 // AddPlasmaMethods - the python method definitions
 //
 
-void cyMisc::AddPlasmaMethods2(std::vector<PyMethodDef> &methods)
+void cyMisc::AddPlasmaMethods2(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtYesNoDialog);
-    PYTHON_GLOBAL_METHOD(methods, PtRateIt);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtExcludeRegionSet);
-    PYTHON_GLOBAL_METHOD(methods, PtExcludeRegionSetNow);
+    PYTHON_START_GLOBAL_METHOD_TABLE(cyMisc2)
+        PYTHON_GLOBAL_METHOD(PtYesNoDialog)
+        PYTHON_GLOBAL_METHOD(PtRateIt)
 
-    PYTHON_GLOBAL_METHOD(methods, PtAcceptInviteInGame);
+        PYTHON_GLOBAL_METHOD(PtExcludeRegionSet)
+        PYTHON_GLOBAL_METHOD(PtExcludeRegionSetNow)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetTime);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetGameTime);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetFrameDeltaTime);
+        PYTHON_GLOBAL_METHOD(PtAcceptInviteInGame)
 
-    PYTHON_GLOBAL_METHOD(methods, PtPageInNode);
-    PYTHON_GLOBAL_METHOD(methods, PtPageOutNode);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtLimitAvatarLOD);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetTime)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetGameTime)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetFrameDeltaTime)
 
-    PYTHON_GLOBAL_METHOD(methods, PtFogSetDefColor);
-    PYTHON_GLOBAL_METHOD(methods, PtFogSetDefLinear);
-    PYTHON_GLOBAL_METHOD(methods, PtFogSetDefExp);
-    PYTHON_GLOBAL_METHOD(methods, PtFogSetDefExp2);
+        PYTHON_GLOBAL_METHOD(PtPageInNode)
+        PYTHON_GLOBAL_METHOD(PtPageOutNode)
 
-    PYTHON_GLOBAL_METHOD(methods, PtLoadDialog);
-    PYTHON_GLOBAL_METHOD(methods, PtUnloadDialog);
-    PYTHON_GLOBAL_METHOD(methods, PtIsDialogLoaded);
-    PYTHON_GLOBAL_METHOD(methods, PtShowDialog);
-    PYTHON_GLOBAL_METHOD(methods, PtHideDialog);
-    PYTHON_GLOBAL_METHOD(methods, PtGetDialogFromTagID);
-    PYTHON_GLOBAL_METHOD(methods, PtGetDialogFromString);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsGUIModal);
+        PYTHON_GLOBAL_METHOD(PtLimitAvatarLOD)
 
-    PYTHON_GLOBAL_METHOD(methods, PtSendPrivateChatList);
-    PYTHON_GLOBAL_METHOD(methods, PtClearPrivateChatList);
+        PYTHON_GLOBAL_METHOD(PtFogSetDefColor)
+        PYTHON_GLOBAL_METHOD(PtFogSetDefLinear)
+        PYTHON_GLOBAL_METHOD(PtFogSetDefExp)
+        PYTHON_GLOBAL_METHOD(PtFogSetDefExp2)
+
+        PYTHON_GLOBAL_METHOD(PtLoadDialog)
+        PYTHON_GLOBAL_METHOD(PtUnloadDialog)
+        PYTHON_GLOBAL_METHOD(PtIsDialogLoaded)
+        PYTHON_GLOBAL_METHOD(PtShowDialog)
+        PYTHON_GLOBAL_METHOD(PtHideDialog)
+        PYTHON_GLOBAL_METHOD(PtGetDialogFromTagID)
+        PYTHON_GLOBAL_METHOD(PtGetDialogFromString)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsGUIModal)
+
+        PYTHON_GLOBAL_METHOD(PtSendPrivateChatList)
+        PYTHON_GLOBAL_METHOD(PtClearPrivateChatList)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, cyMisc2)
 }
 
 void cyMisc::AddPlasmaConstantsClasses(PyObject *m)

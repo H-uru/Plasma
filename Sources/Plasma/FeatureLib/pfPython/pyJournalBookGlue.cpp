@@ -344,11 +344,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtUnloadBookGUI, args, "Params: guiName\nUnloads
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtUnloadAllBookGUIs, pyJournalBook::UnloadAllGUIs, "Unloads all loaded guis except for the default one")
 
-void pyJournalBook::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pyJournalBook::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtLoadBookGUI);
-    PYTHON_GLOBAL_METHOD(methods, PtUnloadBookGUI);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtUnloadAllBookGUIs);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptJournalBook)
+        PYTHON_GLOBAL_METHOD(PtLoadBookGUI)
+        PYTHON_GLOBAL_METHOD(PtUnloadBookGUI)
+        PYTHON_BASIC_GLOBAL_METHOD(PtUnloadAllBookGUIs)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptJournalBook)
 }
 
 void pyJournalBook::AddPlasmaConstantsClasses(PyObject *m)

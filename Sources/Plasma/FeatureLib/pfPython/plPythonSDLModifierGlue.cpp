@@ -256,7 +256,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeSDL, "Returns the global ptSDL fo
     return pySDLModifier::GetAgeSDL();
 }
 
-void pySDLModifier::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pySDLModifier::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAgeSDL);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptSDL)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetAgeSDL)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptSDL)
 }

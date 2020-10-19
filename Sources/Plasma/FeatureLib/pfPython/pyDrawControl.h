@@ -58,7 +58,7 @@ protected:
     pyDrawControl() {};
 
 public:
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
     //static void AddPlasmaConstantsClasses(PyObject* m);
 
     // static python functions

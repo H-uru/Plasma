@@ -275,10 +275,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadPNGFromDisk, args, "Params: filename,width
 }
 #endif
 
-void pyImage::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pyImage::AddPlasmaMethods(PyObject* m)
 {
 #ifndef BUILDING_PYPLASMA
-    PYTHON_GLOBAL_METHOD(methods, PtLoadJPEGFromDisk);
-    PYTHON_GLOBAL_METHOD(methods, PtLoadPNGFromDisk);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptImage)
+        PYTHON_GLOBAL_METHOD(PtLoadJPEGFromDisk)
+        PYTHON_GLOBAL_METHOD(PtLoadPNGFromDisk)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptImage)
 #endif
 }

@@ -376,10 +376,12 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorOff, pyGUIDialog::GUICursorOff,
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorOn, pyGUIDialog::GUICursorOn, "Turns the GUI cursor on")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorDimmed, pyGUIDialog::GUICursorDimmed, "Dimms the GUI cursor")
 
-void pyGUIDialog::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pyGUIDialog::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtWhatGUIControlType);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtGUICursorOff);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtGUICursorOn);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtGUICursorDimmed);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptGUIDialog)
+        PYTHON_GLOBAL_METHOD(PtWhatGUIControlType)
+        PYTHON_BASIC_GLOBAL_METHOD(PtGUICursorOff)
+        PYTHON_BASIC_GLOBAL_METHOD(PtGUICursorOn)
+        PYTHON_BASIC_GLOBAL_METHOD(PtGUICursorDimmed)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptGUIDialog)
 }

@@ -675,76 +675,78 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path 
 // AddPlasmaMethods - the python method definitions
 //
 
-void cyMisc::AddPlasmaMethods3(std::vector<PyMethodDef> &methods)
+void cyMisc::AddPlasmaMethods3(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD(methods, PtSendPetitionToCCR);
-    PYTHON_GLOBAL_METHOD(methods, PtSendChatToCCR);
+    PYTHON_START_GLOBAL_METHOD_TABLE(cyMisc3)
+        PYTHON_GLOBAL_METHOD(PtSendPetitionToCCR)
+        PYTHON_GLOBAL_METHOD(PtSendChatToCCR)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetPythonLoggingLevel);
-    PYTHON_GLOBAL_METHOD(methods, PtSetPythonLoggingLevel);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetPythonLoggingLevel)
+        PYTHON_GLOBAL_METHOD(PtSetPythonLoggingLevel)
 
-    PYTHON_GLOBAL_METHOD(methods, PtConsole);
-    PYTHON_GLOBAL_METHOD(methods, PtConsoleNet);
+        PYTHON_GLOBAL_METHOD(PtConsole)
+        PYTHON_GLOBAL_METHOD(PtConsoleNet)
 
 #if 1
-    // TEMP
-    PYTHON_GLOBAL_METHOD(methods, PtPrintToScreen);
+        // TEMP
+        PYTHON_GLOBAL_METHOD(PtPrintToScreen)
 #endif
 
-    PYTHON_GLOBAL_METHOD(methods, PtAtTimeCallback);
-    PYTHON_GLOBAL_METHOD(methods, PtClearTimerCallbacks);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtFindSceneobject);
-    PYTHON_GLOBAL_METHOD(methods, PtFindSceneobjects);
-    PYTHON_GLOBAL_METHOD(methods, PtFindActivator);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearCameraStack);
-    PYTHON_GLOBAL_METHOD(methods, PtWasLocallyNotified);
+        PYTHON_GLOBAL_METHOD(PtAtTimeCallback)
+        PYTHON_GLOBAL_METHOD(PtClearTimerCallbacks)
 
-    PYTHON_GLOBAL_METHOD(methods, PtAttachObject);
-    PYTHON_GLOBAL_METHOD(methods, PtDetachObject);
-    
-    //PYTHON_GLOBAL_METHOD(methods, PtLinkToAge);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtDirtySynchState);
-    PYTHON_GLOBAL_METHOD(methods, PtDirtySynchClients);
+        PYTHON_GLOBAL_METHOD(PtFindSceneobject)
+        PYTHON_GLOBAL_METHOD(PtFindSceneobjects)
+        PYTHON_GLOBAL_METHOD(PtFindActivator)
+        PYTHON_BASIC_GLOBAL_METHOD(PtClearCameraStack)
+        PYTHON_GLOBAL_METHOD(PtWasLocallyNotified)
 
-    PYTHON_GLOBAL_METHOD(methods, PtEnableControlKeyEvents);
-    PYTHON_GLOBAL_METHOD(methods, PtDisableControlKeyEvents);
+        PYTHON_GLOBAL_METHOD(PtAttachObject)
+        PYTHON_GLOBAL_METHOD(PtDetachObject)
 
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableAvatarCursorFade);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableAvatarCursorFade);
-    PYTHON_GLOBAL_METHOD(methods, PtFadeLocalAvatar);
+        //PYTHON_GLOBAL_METHOD(PtLinkToAge)
 
-    PYTHON_GLOBAL_METHOD(methods, PtSetOfferBookMode);
-    PYTHON_GLOBAL_METHOD(methods, PtSetShareSpawnPoint);
-    PYTHON_GLOBAL_METHOD(methods, PtSetShareAgeInstanceGuid);
-    PYTHON_GLOBAL_METHOD(methods, PtNotifyOffererLinkAccepted);
-    PYTHON_GLOBAL_METHOD(methods, PtNotifyOffererLinkRejected);
-    PYTHON_GLOBAL_METHOD(methods, PtNotifyOffererLinkCompleted);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearOfferBookMode);
+        PYTHON_GLOBAL_METHOD(PtDirtySynchState)
+        PYTHON_GLOBAL_METHOD(PtDirtySynchClients)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLocalClientID);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsCCRAway);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAmCCR);
+        PYTHON_GLOBAL_METHOD(PtEnableControlKeyEvents)
+        PYTHON_GLOBAL_METHOD(PtDisableControlKeyEvents)
 
-    PYTHON_GLOBAL_METHOD(methods, PtToggleAvatarClickability);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtTransferParticlesToObject);
-    PYTHON_GLOBAL_METHOD(methods, PtSetParticleDissentPoint);
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableAvatarCursorFade)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableAvatarCursorFade)
+        PYTHON_GLOBAL_METHOD(PtFadeLocalAvatar)
 
-    PYTHON_GLOBAL_METHOD(methods, PtGetControlEvents);
-    
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetLanguage);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtUsingUnicode);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtFakeLinkAvatarToObject);
-    
-    PYTHON_GLOBAL_METHOD(methods, PtWearDefaultClothingType);
+        PYTHON_GLOBAL_METHOD(PtSetOfferBookMode)
+        PYTHON_GLOBAL_METHOD(PtSetShareSpawnPoint)
+        PYTHON_GLOBAL_METHOD(PtSetShareAgeInstanceGuid)
+        PYTHON_GLOBAL_METHOD(PtNotifyOffererLinkAccepted)
+        PYTHON_GLOBAL_METHOD(PtNotifyOffererLinkRejected)
+        PYTHON_GLOBAL_METHOD(PtNotifyOffererLinkCompleted)
+        PYTHON_BASIC_GLOBAL_METHOD(PtClearOfferBookMode)
 
-    PYTHON_GLOBAL_METHOD(methods, PtFileExists);
-    PYTHON_GLOBAL_METHOD(methods, PtCreateDir);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLocalClientID)
 
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetUserPath);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetInitPath);
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsCCRAway)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAmCCR)
+
+        PYTHON_GLOBAL_METHOD(PtToggleAvatarClickability)
+
+        PYTHON_GLOBAL_METHOD(PtTransferParticlesToObject)
+        PYTHON_GLOBAL_METHOD(PtSetParticleDissentPoint)
+
+        PYTHON_GLOBAL_METHOD(PtGetControlEvents)
+
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetLanguage)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtUsingUnicode)
+
+        PYTHON_GLOBAL_METHOD(PtFakeLinkAvatarToObject)
+
+        PYTHON_GLOBAL_METHOD(PtWearDefaultClothingType)
+
+        PYTHON_GLOBAL_METHOD(PtFileExists)
+        PYTHON_GLOBAL_METHOD(PtCreateDir)
+
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetUserPath)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetInitPath)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, cyMisc3)
 }

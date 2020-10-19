@@ -70,7 +70,7 @@ public:
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pySpawnPointInfo); // converts a PyObject to a pySpawnPointInfo (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
-    static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
+    static void AddPlasmaMethods(PyObject* m);
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
     void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }

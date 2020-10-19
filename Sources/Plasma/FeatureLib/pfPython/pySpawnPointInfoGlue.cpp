@@ -176,9 +176,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDefaultSpawnPoint, "Returns the defa
     return pySpawnPointInfo::GetDefaultSpawnPoint();
 }
 
-void pySpawnPointInfo::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void pySpawnPointInfo::AddPlasmaMethods(PyObject* m)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetDefaultSpawnPoint);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptSpawnPointInfo)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetDefaultSpawnPoint)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptSpawnPointInfo)
 }
 
 // glue functions

@@ -888,37 +888,39 @@ void cyAvatar::AddPlasmaClasses(PyObject *m)
 //
 // AddPlasmaMethods - the python method definitions
 //
-void cyAvatar::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
+void cyAvatar::AddPlasmaMethods(PyObject* m)
 {
-    // static/global functions (to the local avatar)
-    PYTHON_GLOBAL_METHOD(methods, PtSetBehaviorLoopCount);
-    PYTHON_GLOBAL_METHOD(methods, PtChangeAvatar);
-    PYTHON_GLOBAL_METHOD(methods, PtChangePlayerName);
-    PYTHON_GLOBAL_METHOD(methods, PtEmoteAvatar);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarSitOnGround);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarEnterLookingAtKI);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitLookingAtKI);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarEnterUsePersBook);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitUsePersBook);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarEnterAFK);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitAFK);
-    PYTHON_GLOBAL_METHOD(methods, PtAvatarEnterAnimMode);
+    PYTHON_START_GLOBAL_METHOD_TABLE(ptAvatar)
+        // static/global functions (to the local avatar)
+        PYTHON_GLOBAL_METHOD(PtSetBehaviorLoopCount)
+        PYTHON_GLOBAL_METHOD(PtChangeAvatar)
+        PYTHON_GLOBAL_METHOD(PtChangePlayerName)
+        PYTHON_GLOBAL_METHOD(PtEmoteAvatar)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarSitOnGround)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarEnterLookingAtKI)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarExitLookingAtKI)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarEnterUsePersBook)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarExitUsePersBook)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarEnterAFK)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtAvatarExitAFK)
+        PYTHON_GLOBAL_METHOD(PtAvatarEnterAnimMode)
 
-    // Suspend avatar input
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableMovementKeys);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableMovementKeys);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableMouseMovement);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableMouseMovement);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableAvatarJump);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableAvatarJump);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableForwardMovement);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtEnableForwardMovement);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtLocalAvatarRunKeyDown);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtLocalAvatarIsMoving);
-    PYTHON_GLOBAL_METHOD(methods, PtSetMouseTurnSensitivity);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetMouseTurnSensitivity);
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsCurrentBrainHuman);
-    PYTHON_BASIC_GLOBAL_METHOD(methods, PtAvatarSpawnNext);
+        // Suspend avatar input
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableMovementKeys)
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableMovementKeys)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableMouseMovement)
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableMouseMovement)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableAvatarJump)
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableAvatarJump)
+        PYTHON_BASIC_GLOBAL_METHOD(PtDisableForwardMovement)
+        PYTHON_BASIC_GLOBAL_METHOD(PtEnableForwardMovement)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtLocalAvatarRunKeyDown)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtLocalAvatarIsMoving)
+        PYTHON_GLOBAL_METHOD(PtSetMouseTurnSensitivity)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtGetMouseTurnSensitivity)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtIsCurrentBrainHuman)
+        PYTHON_BASIC_GLOBAL_METHOD(PtAvatarSpawnNext)
+    PYTHON_END_GLOBAL_METHOD_TABLE(m, ptAvatar)
 }
 
 ///////////////////////////////////////////////////////////////////////////

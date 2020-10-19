@@ -566,17 +566,28 @@ static PyObject *methodName(PyObject *self) /* and now for the actual function *
     PYTHON_RETURN_NONE; \
 }
 
+#define PYTHON_START_GLOBAL_METHOD_TABLE(name) \
+    { \
+        static PyMethodDef name##_globalMethods[] = {
+
 // this goes in the definition function
-#define PYTHON_GLOBAL_METHOD(vectorVarName, methodName) vectorVarName.push_back(methodName##_method)
+#define PYTHON_GLOBAL_METHOD(methodName) methodName##_method,
 
 // not necessary, but for continuity with the NOARGS function definition above
-#define PYTHON_GLOBAL_METHOD_NOARGS(vectorVarName, methodName) vectorVarName.push_back(methodName##_method);
+#define PYTHON_GLOBAL_METHOD_NOARGS(methodName) methodName##_method,
 
 // not necessary, but for continuity with the WKEY function definition above
-#define PYTHON_GLOBAL_METHOD_WKEY(vectorVarName, methodName) vectorVarName.push_back(methodName##_method)
+#define PYTHON_GLOBAL_METHOD_WKEY(methodName) methodName##_method,
 
 // not necessary, but for continuity with the BASIC function definition above
-#define PYTHON_BASIC_GLOBAL_METHOD(vectorVarName, methodName) vectorVarName.push_back(methodName##_method)
+#define PYTHON_BASIC_GLOBAL_METHOD(methodName) methodName##_method,
+
+#define PYTHON_END_GLOBAL_METHOD_TABLE(moduleVarName, name) \
+            { nullptr, nullptr, 0, nullptr } \
+        }; \
+        if (PyModule_AddFunctions(moduleVarName, name##_globalMethods) < 0) \
+            return; \
+    }
 
 /////////////////////////////////////////////////////////////////////
 // Enum glue (these should all be inside a function)
