@@ -128,12 +128,9 @@ PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitleW, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* title = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, title, strLen);
-        title[strLen] = L'\0';
+        wchar_t* title = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Image_SetTitleW(title);
-        delete [] title;
+        PyMem_Free(title);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");

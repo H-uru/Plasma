@@ -112,13 +112,9 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     // convert the sourcecode object
     if (PyUnicode_Check(sourceObj))
     {
-        int len = PyUnicode_GetSize(sourceObj);
-        wchar_t* temp = new wchar_t[len + 1];
-        PyUnicode_AsWideChar(sourceObj, temp, len);
-        temp[len] = L'\0';
-
+        wchar_t* temp = PyUnicode_AsWideCharString(sourceObj, nullptr);
         std::wstring source = temp;
-        delete [] temp;
+        PyMem_Free(temp);
 
         self->fThis->MakeBook(source, coverKey, callbackKey, guiNameStr);
         PYTHON_RETURN_INIT_OK;

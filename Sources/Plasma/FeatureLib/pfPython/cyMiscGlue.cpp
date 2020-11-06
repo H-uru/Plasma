@@ -283,12 +283,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nS
     }
     if (PyUnicode_Check(val))
     {
-        int len = PyUnicode_GetSize(val);
-        wchar_t* buffer = new wchar_t[len + 1];
-        PyUnicode_AsWideChar(val, buffer, len);
-        buffer[len] = L'\0';
+        wchar_t* buffer = PyUnicode_AsWideCharString(val, nullptr);
         cyMisc::SendKIMessageS(command, buffer);
-        delete [] buffer;
+        PyMem_Free(buffer);
     }
     else if (PyFloat_Check(val))
     {

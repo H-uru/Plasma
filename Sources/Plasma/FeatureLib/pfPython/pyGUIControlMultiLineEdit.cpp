@@ -203,9 +203,12 @@ void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
         if ( pbmod )
         {
             // something to do here... later
-            uint8_t* daBuffer = nil;
-            Py_ssize_t length;
-            PyObject_AsReadBuffer( buffer_object, (const void**)&daBuffer, &length);
+            Py_buffer view;
+            PyObject_GetBuffer(buffer_object, &view, PyBUF_SIMPLE);
+            uint8_t* daBuffer = (uint8_t*)view.buf;
+            Py_ssize_t length = view.len;
+            PyBuffer_Release(&view);
+
             if ( daBuffer != nil )
             {
                 // don't alter the user's buffer... but into a copy of our own
@@ -239,9 +242,12 @@ void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
         if ( pbmod )
         {
             // something to do here... later
-            uint16_t* daBuffer = nil;
-            Py_ssize_t length;
-            PyObject_AsReadBuffer( buffer_object, (const void**)&daBuffer, &length);
+            Py_buffer view;
+            PyObject_GetBuffer(buffer_object, &view, PyBUF_SIMPLE);
+            uint16_t* daBuffer = (uint16_t*)view.buf;
+            Py_ssize_t length = view.len;
+            PyBuffer_Release(&view);
+
             if ( daBuffer != nil )
             {
                 // don't alter the user's buffer... but into a copy of our own
