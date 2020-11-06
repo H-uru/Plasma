@@ -1616,7 +1616,7 @@ void plPickMaterialAnimationButtonParam::CreateKeyArray(IParamBlock2* pb)
 
     Mtl* mtl = (Mtl*)pb->GetReferenceTarget(fID);
 
-    int bob = GetMatAnimModKey(mtl, nil, ST::null, fKeys);
+    int bob = GetMatAnimModKey(mtl, nil, ST::string(), fKeys);
 }
 
 void plPickMaterialAnimationButtonParam::DestroyKeyArray()

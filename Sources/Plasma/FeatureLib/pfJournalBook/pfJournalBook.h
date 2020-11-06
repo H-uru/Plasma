@@ -213,7 +213,7 @@ public:
         kTurnBackPage
     };
     
-    pfBookData(const ST::string &guiName = ST::null);
+    pfBookData(const ST::string &guiName = {});
     virtual ~pfBookData();
 
     void LoadGUI(); // need this seperate because the plKey isn't setup until the constructor is done
@@ -364,8 +364,8 @@ class pfJournalBook : public hsKeyedObject
         // The constructor takes in the esHTML source for the journal, along with
         // the name of the mipmap to use as the cover of the book. The callback
         // key is the keyed object to send event messages to (see <img> tag).
-        pfJournalBook( const char *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = ST::null );
-        pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = ST::null );
+        pfJournalBook(const char *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = {});
+        pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = {});
 
         virtual ~pfJournalBook();
 

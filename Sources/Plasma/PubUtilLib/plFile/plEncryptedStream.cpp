@@ -185,7 +185,7 @@ bool plEncryptedStream::Close()
         fRAMStream = nil;
     }
 
-    fWriteFileName = ST::null;
+    fWriteFileName = ST::string();
     fActualFileSize = 0;
     fBufferedStream = false;
     fOpenMode = kOpenFail;

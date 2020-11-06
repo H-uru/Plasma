@@ -223,7 +223,7 @@ ST::string pySceneObject::GetName()
 {
     if ( fSceneObjects.Count() > 0 )
         return fSceneObjects[0]->GetName();
-    return ST::null;
+    return ST::string();
 }
 
 PyObject* pySceneObject::findObj(const ST::string& name)

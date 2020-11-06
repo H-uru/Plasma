@@ -641,7 +641,7 @@ ST::string cyMisc::GetPrevAgeName()
         if (als)
             return als->GetAgeInfo()->GetAgeFilename();
     }
-    return ST::null;
+    return ST::string();
 }
 
 PyObject* cyMisc::GetPrevAgeInfo()

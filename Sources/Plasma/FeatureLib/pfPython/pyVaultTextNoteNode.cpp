@@ -96,7 +96,7 @@ ST::string pyVaultTextNoteNode::Note_GetTitle() const
         VaultTextNoteNode note(fNode);
         return note.GetNoteTitle();
     }
-    return ST::null;
+    return ST::string();
 }
 
 void pyVaultTextNoteNode::Note_SetText(const char * text)
@@ -122,7 +122,7 @@ ST::string pyVaultTextNoteNode::Note_GetText() const
         VaultTextNoteNode note(fNode);
         return note.GetNoteText();
     }
-    return ST::null;
+    return ST::string();
 }
 
 void pyVaultTextNoteNode::Note_SetType( int32_t type )

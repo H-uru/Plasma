@@ -103,7 +103,7 @@ ST::string pyVaultPlayerInfoNode::Player_GetPlayerName() const
         VaultPlayerInfoNode playerInfo(fNode);
         return playerInfo.GetPlayerName();
     }
-    return ST::null;
+    return ST::string();
 }
 
 // age the player is currently in, if any.
@@ -121,7 +121,7 @@ ST::string pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
         VaultPlayerInfoNode playerInfo(fNode);
         return playerInfo.GetAgeInstName();
     }
-    return ST::null;
+    return ST::string();
 }
 
 void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)

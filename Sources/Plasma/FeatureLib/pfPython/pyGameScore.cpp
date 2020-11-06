@@ -87,7 +87,7 @@ ST::string pyGameScore::GetGameName() const
 {
     if (fScore)
         return fScore->GetGameName();
-    return ST::null;
+    return ST::string();
 }
 
 void pyGameScore::AddPoints(int32_t numPoints, pyKey& rcvr)

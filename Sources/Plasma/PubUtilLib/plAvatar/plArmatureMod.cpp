@@ -658,12 +658,12 @@ void plArmatureMod::IInitDefaults()
     fPhysHeight = 0.f;
     fPhysWidth = 0.f;
     fUpdateMsg = nil;
-    fRootName = ST::null;
+    fRootName = ST::string();
     fDontPanicLink = false;
     fBodyAgeName = "GlobalAvatars";
     fBodyFootstepSoundPage = "Audio";
     fAnimationPrefix = "Male";
-    fUserStr = ST::null;
+    fUserStr = ST::string();
 }
 
 plArmatureMod::plArmatureMod() : plArmatureModBase()
@@ -1790,7 +1790,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             {
                 // So it exists... but FindKey won't properly create our clone. So we do.
                 SOUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fFootSoundSOKey = mgr->ReRegister(ST::null, SOUoid);
+                fFootSoundSOKey = mgr->ReRegister(ST::string(), SOUoid);
             }
 
             // Add the effect to our effects manager
@@ -1799,7 +1799,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             if (effectKey)
             {
                 effectUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                effectKey = mgr->ReRegister(ST::null, effectUoid);
+                effectKey = mgr->ReRegister(ST::string(), effectUoid);
             }
             if (effectKey != nil)
                 mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
@@ -1810,7 +1810,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             if (fLinkSoundSOKey)
             {
                 LinkUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fLinkSoundSOKey = mgr->ReRegister(ST::null, LinkUoid);
+                fLinkSoundSOKey = mgr->ReRegister(ST::string(), LinkUoid);
             }
         }
     }

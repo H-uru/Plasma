@@ -233,7 +233,7 @@ void FindSubDirs(std::vector<plFileName> &dirnames, const plFileName &path)
     }
 }
 
-void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const ST::string& parent_package=ST::null)
+void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const ST::string& parent_package={})
 {
     std::vector<plFileName> packages;
     FindSubDirs(packages, path);

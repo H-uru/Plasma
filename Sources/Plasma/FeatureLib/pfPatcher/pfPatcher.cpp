@@ -148,7 +148,7 @@ struct pfPatcherWorker : public hsThread
 
     void OnQuit() override;
 
-    void EndPatch(ENetError result, const ST::string& msg=ST::null);
+    void EndPatch(ENetError result, const ST::string& msg={});
     bool IssueRequest();
     void Run() override;
     void ProcessFile();
@@ -317,8 +317,8 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wc
         // so, we need to ask the AuthSrv about our game code
         {
             hsLockGuard(patcher->fRequestMut);
-            patcher->fRequests.emplace_back(ST::null, pfPatcherWorker::Request::kPythonList);
-            patcher->fRequests.emplace_back(ST::null, pfPatcherWorker::Request::kSdlList);
+            patcher->fRequests.emplace_back(ST::string(), pfPatcherWorker::Request::kPythonList);
+            patcher->fRequests.emplace_back(ST::string(), pfPatcherWorker::Request::kSdlList);
         }
 
         // continue pumping requests

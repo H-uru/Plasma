@@ -164,7 +164,7 @@ void    plDynamicTextMap::Reset()
     delete [] fInitBuffer;
     fInitBuffer = nil;
 
-    fFontFace = ST::null;
+    fFontFace = ST::string();
 
     // Destroy the old texture ref, since we're no longer using it
     SetDeviceRef( nil );

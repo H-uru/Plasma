@@ -290,7 +290,7 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
         if (!thisAge.empty())
         {
-            key = plKeyFinder::Instance().StupidSearch(thisAge, ST::null, type, name, subString);
+            key = plKeyFinder::Instance().StupidSearch(thisAge, ST::string(), type, name, subString);
             if (key != nil)
             {
                 if (statusStr)
@@ -300,7 +300,7 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
         }
     }
     // Fallback
-    key = plKeyFinder::Instance().StupidSearch(ageName, ST::null, type, name, subString);
+    key = plKeyFinder::Instance().StupidSearch(ageName, ST::string(), type, name, subString);
 
     if (!key)
     {
@@ -5719,7 +5719,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
 {
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     msg->SetCmd(plAnimCmdMsg::kContinue);
-    msg->SetAnimName(ST::null);
+    msg->SetAnimName(ST::string());
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(ST::string::from_utf8(params[0]), msg);
 }
@@ -5731,7 +5731,7 @@ PF_CONSOLE_CMD( Animation,                          // Group name
 {
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     msg->SetCmd(plAnimCmdMsg::kStop);
-    msg->SetAnimName(ST::null);
+    msg->SetAnimName(ST::string());
     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
     SendAnimCmdMsg(ST::string::from_utf8(params[0]), msg);
 }

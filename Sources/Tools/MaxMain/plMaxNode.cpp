@@ -168,7 +168,7 @@ static ST::string GetAnimCompAnimName(plComponentBase *comp)
 {
     if (comp->ClassID() == ANIM_COMP_CID || comp->ClassID() == ANIM_GROUP_COMP_CID)
         return ((plAnimComponentBase*)comp)->GetAnimName();
-    return ST::null;
+    return ST::string();
 }
 
 static plKey GetAnimCompModKey(plComponentBase *comp, plMaxNodeBase *node)

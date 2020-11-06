@@ -126,8 +126,8 @@ public:
 
     // Fun debugging exclude commands (to prevent certain pages from loading)
     void    ClearPageExcludeList();
-    void    AddExcludedPage( const ST::string& pageName, const ST::string& ageName = ST::null );
-    bool    IsPageExcluded( const plAgePage *page, const ST::string& ageName = ST::null );
+    void    AddExcludedPage(const ST::string& pageName, const ST::string& ageName = {});
+    bool    IsPageExcluded(const plAgePage *page, const ST::string& ageName = {});
 
     const plAgeDescription  &GetCurrAgeDesc() const { return fCurAgeDescription; }
 

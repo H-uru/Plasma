@@ -55,7 +55,13 @@ protected:
     ST::string fLoopName;
 
 private:
-    void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=ST::null;}
+    void IInit()
+    {
+        fBegin = fEnd = fLoopBegin = fLoopEnd = fSpeed = fSpeedChangeRate = fTime = 0;
+        fAnimName = ST::string();
+        fLoopName = ST::string();
+    }
+
 public:
     plAnimCmdMsg()
         : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
@@ -135,8 +141,12 @@ protected:
     ST::string fAnimName;
 
 private:
-    void IInit() { fBlend = fAmp = 0;
-                   fAnimName=ST::null;}
+    void IInit()
+    {
+        fBlend = fAmp = 0;
+        fAnimName = ST::string();
+    }
+
 public:
     plAGCmdMsg()
         : plMessage(nil, nil, nil) { IInit(); }

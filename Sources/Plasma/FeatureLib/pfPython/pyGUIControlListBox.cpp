@@ -81,12 +81,12 @@ class pfColorListElement : public pfGUIListText
             if ( string1 )
             {
                 fString1 = hsStringToWString(string1);
-                fText = ST::null;
+                fText = ST::string();
             }
             else
             {
                 fString1 = nil;
-                fText = ST::null;
+                fText = ST::string();
             }
             fTextColor1 = color1;
             if (string2)
@@ -105,12 +105,12 @@ class pfColorListElement : public pfGUIListText
             {
                 fString1 = new wchar_t[wcslen(string1)+1];
                 wcscpy(fString1,string1);
-                fText = ST::null;
+                fText = ST::string();
             }
             else
             {
                 fString1 = nil;
-                fText = ST::null;
+                fText = ST::string();
             }
             fTextColor1 = color1;
             if (string2)
@@ -132,7 +132,7 @@ class pfColorListElement : public pfGUIListText
             {
                 delete [] fString1;
                 fString1 = nil;
-                fText = ST::null;
+                fText = ST::string();
             }
             if ( fString2 )
                 delete [] fString2;

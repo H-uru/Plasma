@@ -84,7 +84,7 @@ public:
         */
     plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
                     bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask,
-                    const ST::string &userStr = ST::null);
+                    const ST::string &userStr = {});
 
     /** Use this form if you're sending a message about an existing clone -- either
         to propagate it to other machines or to tell them to unload it.
@@ -98,7 +98,7 @@ public:
         \param userStr - a string that the user can set
         */
     plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, uint32_t userData,
-                    bool isPlayer, bool isLoading, const ST::string &userStr = ST::null);
+                    bool isPlayer, bool isLoading, const ST::string &userStr = {});
 
     void SetIsPlayer(bool is) { fIsPlayer = is; }
     bool GetIsPlayer() { return fIsPlayer; }

@@ -1089,7 +1089,7 @@ void plConfigAggregateValue::AddItem(plConfigValueBase * item)
 plWWWAuthenticateConfigSource::plWWWAuthenticateConfigSource(const ST::string& auth)
 :   fAuth(auth)
 {
-    fEffectiveSection = fCurrSection = ST::null;
+    fEffectiveSection = fCurrSection = ST::string();
 }
 
 bool plWWWAuthenticateConfigSource::ReadInto(plConfigInfo & configInfo, KAddValueMode mode)
