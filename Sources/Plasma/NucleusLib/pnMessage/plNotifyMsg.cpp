@@ -1315,12 +1315,12 @@ void proControlKeyEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 
 void proVariableEventData::IInit()
 {
-    fName = ST::null;
+    fName = ST::string();
 }
 
 void proVariableEventData::IDestruct()
 {
-    fName = ST::null;
+    fName = ST::string();
 }
 
 void proVariableEventData::IReadNumber(hsStream * stream) {

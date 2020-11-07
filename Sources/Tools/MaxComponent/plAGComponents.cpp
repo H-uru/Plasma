@@ -270,7 +270,7 @@ bool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *
 {
     // Check for a suppression marker
     plNotetrackAnim noteAnim(node, pErrMsg);
-    plAnimInfo info = noteAnim.GetAnimInfo(ST::null);
+    plAnimInfo info = noteAnim.GetAnimInfo(ST::string());
     bool suppressed = info.IsSuppressed(mod->GetName());
 
     // Get the affine parts and the TM Controller

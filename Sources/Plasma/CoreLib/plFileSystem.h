@@ -65,9 +65,6 @@ public:
     /** Construct an empty filename. */
     plFileName() { }
 
-    /** Construct an empty filename. */
-    plFileName(const ST::null_t &) { }
-
     /** Construct a filename from the UTF-8 character data in \a cstr. */
     plFileName(const char *cstr) : fName(cstr) { }
 
@@ -77,17 +74,13 @@ public:
     /** Copy constructor. */
     plFileName(const plFileName &copy) : fName(copy.fName) { }
 
+    /** Move constructor. */
+    plFileName(plFileName &&move) : fName(std::move(move.fName)) { }
+
     /** Assignment operator.  Same as plFileName(const char *). */
     plFileName &operator=(const char *cstr)
     {
         fName.operator=(cstr);
-        return *this;
-    }
-
-    /** Assignment operator.  Same as plFileName(const ST::null_t &). */
-    plFileName &operator=(const ST::null_t &)
-    {
-        fName.operator=(ST::null);
         return *this;
     }
 
@@ -102,6 +95,13 @@ public:
     plFileName &operator=(const plFileName &copy)
     {
         fName.operator=(copy.fName);
+        return *this;
+    }
+
+    /** Assignment operator.  Same as plFileName(plFileName &&). */
+    plFileName &operator=(plFileName &&move)
+    {
+        fName.operator=(std::move(move.fName));
         return *this;
     }
 

@@ -118,7 +118,7 @@ public:
     plKey LoadPlayer(const ST::string &name, const ST::string &account, const ST::string &linkName);
     plKey LoadPlayerFromFile(const ST::string &name, const ST::string &account, const plFileName &clothingFile);
     plKey LoadAvatar(ST::string name, const ST::string &accountName, bool isPlayer, plKey spawnPoint, plAvTask *initialTask,
-                     const ST::string &userStr = ST::null, const plFileName &clothingFile = ST::null);
+                     const ST::string &userStr = {}, const plFileName &clothingFile = {});
 
     /**
      * Unload an avatar clone

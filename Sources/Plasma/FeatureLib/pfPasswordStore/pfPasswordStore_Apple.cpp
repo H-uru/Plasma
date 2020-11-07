@@ -67,7 +67,7 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
                                        &passwd,
                                        nullptr) != errSecSuccess)
     {
-        return ST::null;
+        return ST::string();
     }
 
     ST::string ret(reinterpret_cast<const char*>(passwd), size_t(passwd_len));

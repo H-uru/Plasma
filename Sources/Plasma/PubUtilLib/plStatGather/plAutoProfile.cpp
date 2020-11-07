@@ -224,7 +224,7 @@ void plAutoProfileImp::INextProfile()
                 plJPEG::Instance().WriteToFile(fileName.c_str(), &mipmap);
             }
 
-            fLastSpawnPointName = ST::null;
+            fLastSpawnPointName = ST::string();
         }
 
         // Try to go to the next spawn point
@@ -302,7 +302,7 @@ bool plAutoProfileImp::INextSpawnPoint()
 
     if (!foundGood)
     {
-        fLastSpawnPointName = ST::null;
+        fLastSpawnPointName = ST::string();
         fStatusMessage = "No profile spawn point found";
         return false;
     }

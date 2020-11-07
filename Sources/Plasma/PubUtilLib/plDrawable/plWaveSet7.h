@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "pnEncryption/plRandom.h"
 #include "hsBounds.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "plFixedWaterState7.h"
 

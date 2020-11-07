@@ -1356,7 +1356,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     auto pRLNMsg = IScriptWantsMsg<plRoomLoadNotifyMsg>(kfunc_PageLoad, msg);
     if (pRLNMsg) {
         ICallScriptMethod(kfunc_PageLoad, pRLNMsg->GetWhatHappen(),
-                          pRLNMsg->GetRoom() ? pRLNMsg->GetRoom()->GetName() : ST::null);
+                          pRLNMsg->GetRoom() ? pRLNMsg->GetRoom()->GetName() : ST::string());
         return true;
     }
 

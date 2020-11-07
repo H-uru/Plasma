@@ -190,7 +190,7 @@ public:
     // tors
     plAvSeekMsg();
     plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
-                plAvAlignment align = kAlignHandle, const ST::string& animName = ST::null, bool noSeek = false,
+                plAvAlignment align = kAlignHandle, const ST::string& animName = {}, bool noSeek = false,
                 uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
     
     // plasma protocol

@@ -133,7 +133,7 @@ plCmdParserImpl::plCmdParserImpl(const plCmdArgDef* defs, size_t defCount)
         // Store the argument data
         plCmdArgData& arg = fArgArray[loop];
         arg.def           = def;
-        arg.buffer        = ST::null;
+        arg.buffer        = ST::string();
         arg.nameChars     = def.name.size();
         arg.isSpecified   = false;
 
@@ -348,7 +348,7 @@ bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const ST::string& st
 
         // Process values for boolean arguments
         if (isBool) {
-            result = ProcessValue(state, lastIndex, ST::null);
+            result = ProcessValue(state, lastIndex, ST::string());
             continue;
         }
 

@@ -77,8 +77,8 @@ class pfKIMsg : public plMessage
         void IInit()
         {
             fCommand = kNoCommand;
-            fString = ST::null;
-            fUser = ST::null;
+            fString = ST::string();
+            fUser = ST::string();
             fPlayerID = 0;
             fFlags = 0;
             fDelay = 0.0;

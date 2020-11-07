@@ -221,7 +221,7 @@ ST::string plAudioSystem::GetDefaultPlaybackDevice() const
         return ST::string::from_utf8(alcGetString(nullptr, ALC_DEVICE_SPECIFIER));
     } else {
         plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: Unable to fetch the default playback device name.");
-        return ST::null;
+        return ST::string();
     }
 }
 

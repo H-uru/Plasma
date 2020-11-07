@@ -56,7 +56,7 @@ ST::string pfWin32PasswordStore::GetPassword(const ST::string& username)
 {
     PCREDENTIALW credential;
     ST::string target = ST::format("{}__{}", GetServerDisplayName(), username);
-    ST::string password = ST::null;
+    ST::string password;
 
     if (!CredReadW(target.to_wchar().data(), CRED_TYPE_GENERIC, 0, &credential)) {
         return password;

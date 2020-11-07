@@ -149,7 +149,7 @@ ST::string ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
 {
     const char* point = waitPB->GetStr(kWaitPoint);
     if (point && *point == '\0')
-        return ST::null;
+        return ST::string();
     return ST::string::from_utf8(point);
 }
 

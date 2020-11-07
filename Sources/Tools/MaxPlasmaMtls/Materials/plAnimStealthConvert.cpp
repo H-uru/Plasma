@@ -85,7 +85,7 @@ static void ISearchLayerRecur( plLayerInterface *layer, const ST::string &segNam
 
 static int ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, hsTArray<plKey>& keys)
 {
-    ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::null : segName;
+    ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::string() : segName;
     int i;
     for( i = 0; i < mat->GetNumLayers(); i++ )
         ISearchLayerRecur(mat->GetLayer(i), name, keys);

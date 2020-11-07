@@ -281,7 +281,7 @@ ST::string pyVaultNode::GetCreateAgeName() const
 {
     if (fNode)
         return fNode->GetCreateAgeName();
-    return ST::null;
+    return ST::string();
 }
 
 plUUID pyVaultNode::GetCreateAgeGuid() const

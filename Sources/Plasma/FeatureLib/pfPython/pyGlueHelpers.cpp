@@ -56,7 +56,7 @@ ST::string PyUnicode_AsSTString(PyObject* obj)
             return ST::string::from_utf8(str, size, ST::assume_valid);
     }
 
-    return ST::null;
+    return ST::string();
 }
 
 int PyUnicode_STStringConverter(PyObject* obj, void* str)

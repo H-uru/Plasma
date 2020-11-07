@@ -130,5 +130,5 @@ ST::string plLocTreeView::CurrentPath() const
 {
     return (currentItem() != nullptr)
         ? ST::string(currentItem()->data(0, kLocPathRole).toString().toUtf8().constData())
-        : ST::null;
+        : ST::string();
 }

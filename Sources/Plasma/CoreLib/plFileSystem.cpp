@@ -91,7 +91,7 @@ ST::string plFileName::GetFileExt() const
     if (dot > end)
         return fName.substr(dot + 1);
 
-    return ST::null;
+    return ST::string();
 }
 
 ST::string plFileName::GetFileNameNoExt() const
