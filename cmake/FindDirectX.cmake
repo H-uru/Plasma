@@ -22,17 +22,12 @@ find_library(DirectX_d3dx9 NAMES d3dx9
              PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
 )
 
-find_library(DirectX_dxguid NAMES dxguid
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
 set(DirectX_LIBRARIES
     ${DirectX_d3d9}
     ${DirectX_d3dx9}
-    ${DirectX_dxguid}
 )
 
-if(DirectX_INCLUDE_DIR AND DirectX_d3d9 AND DirectX_d3dx9 AND DirectX_dxguid)
+if(DirectX_INCLUDE_DIR AND DirectX_d3d9 AND DirectX_d3dx9)
     set(DirectX_FOUND TRUE)
 endif()
 
