@@ -177,9 +177,14 @@ int pythonClassName##___init__(pythonClassName *self, PyObject *args, PyObject *
 #define PYTHON_DEFAULT_METHODS_TABLE(pythonClassName) pythonClassName##_methods
 
 // tp_print moved to the end, and two new vectorcall fields inserted in Python 3.8...
-#if (PY_MAJOR_VERSION >= 4) || ((PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION >= 8))
+// tp_print gone in Python 3.9...
+#if PY_VERSION_HEX >= 0x03080000
 #   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(tp_print) 0
-#   define PYTHON_TP_VECTORCALL_PRINT(tp_print) 0, tp_print,
+#   if PY_VERSION_HEX >= 0x03090000
+#       define PYTHON_TP_VECTORCALL_PRINT(tp_print) 0,
+#   else
+#       define PYTHON_TP_VECTORCALL_PRINT(tp_print) 0, tp_print,
+#   endif
 #else
 #   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(tp_print) tp_print
 #   define PYTHON_TP_VECTORCALL_PRINT(tp_print)
