@@ -58,17 +58,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCmdIfaceModMsg.h"
 #include "pnMessage/plPlayerPageMsg.h"
 
-#ifdef HS_BUILD_FOR_WIN32
-#   include "plDInputManager.h"
-#endif
-
-bool plInputManager::fUseDInput = false;
 uint8_t plInputManager::bRecenterMouse = 0;
 hsWindowHndl plInputManager::fhWnd = nullptr;
 plInputManager* plInputManager::fInstance = nullptr;
 
 plInputManager::plInputManager(hsWindowHndl hWnd) :
-    fDInputMgr(nullptr),
     fInterfaceMgr(nullptr),
     localeC("C")
 {
@@ -80,7 +74,6 @@ plInputManager::plInputManager(hsWindowHndl hWnd) :
 }
 
 plInputManager::plInputManager() :
-    fDInputMgr(nullptr),
     fInterfaceMgr(nullptr)
 {
     fInstance = this;
@@ -99,11 +92,6 @@ plInputManager::~plInputManager()
         fInputDevices[i]->Shutdown();
         delete(fInputDevices[i]);
     }
-
-#ifdef HS_BUILD_FOR_WIN32
-    if (fDInputMgr)
-        delete fDInputMgr;
-#endif
 }
 
 //static
@@ -135,37 +123,17 @@ void plInputManager::CreateInterfaceMod(plPipeline* p)
     fInterfaceMgr->Init();
 }
 
-void plInputManager::InitDInput(hsWindowInst hInst, hsWindowHndl hWnd)
-{
-#ifdef HS_BUILD_FOR_WIN32
-    if (fUseDInput)
-    {
-        fDInputMgr = new plDInputMgr;
-        fDInputMgr->Init(hInst, hWnd);
-    }
-#endif
-}
-
 bool plInputManager::MsgReceive(plMessage* msg)
 {
     for (int i=0; i<fInputDevices.Count(); i++)
         if (fInputDevices[i]->MsgReceive(msg))
             return true;
 
-#ifdef HS_BUILD_FOR_WIN32
-    if (fDInputMgr)
-        return fDInputMgr->MsgReceive(msg);
-#endif
-
     return hsKeyedObject::MsgReceive(msg);
 }
 
 void plInputManager::Update()
 {
-#ifdef HS_BUILD_FOR_WIN32
-    if (fDInputMgr)
-        fDInputMgr->Update();
-#endif
 }
 
 void plInputManager::SetMouseScale(float s)

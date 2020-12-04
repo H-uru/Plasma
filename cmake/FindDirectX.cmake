@@ -29,10 +29,6 @@ find_library(DirectX_d3dx9 NAMES d3dx9
              PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
 )
 
-find_library(DirectX_dinput8 NAMES dinput8
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
 find_library(DirectX_dsound NAMES dsound
              PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
 )
@@ -54,7 +50,6 @@ endif(DirectX_OLD_SDK)
 set(DirectX_LIBRARIES
     ${DirectX_d3d9}
     ${DirectX_d3dx9}
-    ${DirectX_dinput8}
     ${DirectX_dsound}
     ${DirectX_dxguid}
 )
