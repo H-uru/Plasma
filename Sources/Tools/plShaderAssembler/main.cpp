@@ -5,7 +5,7 @@
 #include "plFileSystem.h"
 
 #include <d3d9.h>
-#include <d3dx9core.h>
+#include <d3dx9shader.h>
 #include <string_theory/format>
 #include <string_theory/stdio>
 

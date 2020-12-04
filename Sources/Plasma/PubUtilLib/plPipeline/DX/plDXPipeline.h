@@ -87,7 +87,8 @@ class plCullTree;
 class plShadowSlave;
 class plShadowCaster;
 
-struct D3DXMATRIX;
+struct _D3DMATRIX;
+typedef _D3DMATRIX D3DMATRIX;
 
 #ifdef HS_DEBUGGING
 #define HS_CHECK_RELEASE
@@ -461,7 +462,7 @@ protected:
     void        ISetAnisotropy(bool on);
 
     // Transforms
-    D3DXMATRIX&     IMatrix44ToD3DMatrix( D3DXMATRIX& dst, const hsMatrix44& src );
+    D3DMATRIX&     IMatrix44ToD3DMatrix( D3DMATRIX& dst, const hsMatrix44& src );
     void            ISetCullMode(bool flip=false);
     bool inline   IIsViewLeftHanded();
     bool            IGetClearViewPort(D3DRECT& r);

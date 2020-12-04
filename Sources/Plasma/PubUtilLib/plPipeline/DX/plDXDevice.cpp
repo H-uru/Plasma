@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXPipeline.h"
 
 #include <d3d9.h>
-#include <d3dx9math.h>
 
 #include "plPipeline/plRenderTarget.h"
 
@@ -66,39 +65,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WEAK_ERROR_CHECK( cond )    cond
 #endif
 
-static D3DXMATRIX d3dIdentityMatrix(1.0f, 0.0f, 0.0f, 0.0f,
+static D3DMATRIX d3dIdentityMatrix{
+    1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f);
+    0.0f, 0.0f, 0.0f, 1.0f
+};
 
 
-D3DXMATRIX& IMatrix44ToD3DMatrix(D3DXMATRIX& dst, const hsMatrix44& src)
+D3DMATRIX& IMatrix44ToD3DMatrix(D3DMATRIX& dst, const hsMatrix44& src)
 {
-    if (src.fFlags & hsMatrix44::kIsIdent)
-    {
+    if (src.fFlags & hsMatrix44::kIsIdent) {
         dst = d3dIdentityMatrix;
-    }
-    else
-    {
-        dst(0,0) = src.fMap[0][0];
-        dst(1,0) = src.fMap[0][1];
-        dst(2,0) = src.fMap[0][2];
-        dst(3,0) = src.fMap[0][3];
+    } else {
+        dst.m[0][0] = src.fMap[0][0];
+        dst.m[1][0] = src.fMap[0][1];
+        dst.m[2][0] = src.fMap[0][2];
+        dst.m[3][0] = src.fMap[0][3];
 
-        dst(0,1) = src.fMap[1][0];
-        dst(1,1) = src.fMap[1][1];
-        dst(2,1) = src.fMap[1][2];
-        dst(3,1) = src.fMap[1][3];
+        dst.m[0][1] = src.fMap[1][0];
+        dst.m[1][1] = src.fMap[1][1];
+        dst.m[2][1] = src.fMap[1][2];
+        dst.m[3][1] = src.fMap[1][3];
 
-        dst(0,2) = src.fMap[2][0];
-        dst(1,2) = src.fMap[2][1];
-        dst(2,2) = src.fMap[2][2];
-        dst(3,2) = src.fMap[2][3];
+        dst.m[0][2] = src.fMap[2][0];
+        dst.m[1][2] = src.fMap[2][1];
+        dst.m[2][2] = src.fMap[2][2];
+        dst.m[3][2] = src.fMap[2][3];
 
-        dst(0,3) = src.fMap[3][0];
-        dst(1,3) = src.fMap[3][1];
-        dst(2,3) = src.fMap[3][2];
-        dst(3,3) = src.fMap[3][3];
+        dst.m[0][3] = src.fMap[3][0];
+        dst.m[1][3] = src.fMap[3][1];
+        dst.m[2][3] = src.fMap[3][2];
+        dst.m[3][3] = src.fMap[3][3];
     }
 
     return dst;
@@ -168,7 +166,7 @@ void plDXDevice::SetViewport()
 
 void plDXDevice::SetProjectionMatrix(const hsMatrix44& src)
 {
-    D3DXMATRIX mat;
+    D3DMATRIX mat;
 
     IMatrix44ToD3DMatrix(mat, src);
 
@@ -177,7 +175,7 @@ void plDXDevice::SetProjectionMatrix(const hsMatrix44& src)
 
 void plDXDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
 {
-    D3DXMATRIX mat;
+    D3DMATRIX mat;
 
     IMatrix44ToD3DMatrix(mat, src);
 
@@ -186,7 +184,7 @@ void plDXDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
 
 void plDXDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
 {
-    D3DXMATRIX mat;
+    D3DMATRIX mat;
 
     IMatrix44ToD3DMatrix(mat, src);
 
