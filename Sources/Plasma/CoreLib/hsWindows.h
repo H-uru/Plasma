@@ -91,11 +91,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     {
         HRESULT fResult;
 
-        hsCOMError() = delete;
+        hsCOMError() : fResult() { }
         hsCOMError(HRESULT r) : fResult(r) { }
         hsCOMError& operator =(const hsCOMError&) = delete;
         hsCOMError& operator =(HRESULT r) { fResult = r; return *this; }
         operator HRESULT() const { return fResult; }
+
+        ST::string ToString() const
+        {
+            wchar_t* msg = nullptr;
+            auto result = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                         nullptr, fResult, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&msg, 0, nullptr);
+            if (result && msg) {
+                ST::char_buffer utf8 = ST::string::from_wchar(msg, result, ST::assume_valid).to_utf8();
+                LocalFree(msg);
+                return utf8;
+            } else {
+                return ST::format("unknown HRESULT 0x{8X}", fResult);
+            }
+        }
     };
 
     inline void format_type(const ST::format_spec& format, ST::format_writer& output, const hsCOMError& hr)

@@ -43,20 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
-#ifdef DX_OLD_SDK
-    #include <dxerr9.h>
-#else
-    #include <dxerr.h>
-#endif
-
 #include <dsound.h>
 
 #include "plFileSystem.h"
 
 #pragma comment(lib, "winmm.lib")
-#ifdef PATCHER
-#define DXTRACE_ERR(str,hr) hr      // I'm not linking in directx stuff to the just for this
-#endif
+
+static inline HRESULT DXTrace(const TCHAR* msg, const char* file, int line, HRESULT hr)
+{
+    ST::string error = ST::format("Error Calling: {}\n{}", msg, (hsCOMError)hr);
+    ErrorAssert(line, file, error.c_str());
+    return hr;
+}
+
+#define DXTRACE_ERR(msg, hr) DXTrace(msg, __FILE__, __LINE__, hr)
 
 // if it looks like I lifted this class directly from Microsoft it's because that
 // is exactly what I did.  It's okay, though.  Microsoft tells you to go ahead

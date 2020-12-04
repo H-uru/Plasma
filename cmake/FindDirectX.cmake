@@ -57,7 +57,6 @@ set(DirectX_LIBRARIES
     ${DirectX_dinput8}
     ${DirectX_dsound}
     ${DirectX_dxguid}
-    ${DirectX_dxerr}
 )
 
 if(MSVC AND NOT (MSVC_VERSION LESS 1900))
