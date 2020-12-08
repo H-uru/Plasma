@@ -109,15 +109,15 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     int i;
     for( i = 0; i < quadLen-1; i++ )
     {
-        ST::printf(fp, "\t{#x},", *codes++);
-        ST::printf(fp, "\t{#x},", *codes++);
-        ST::printf(fp, "\t{#x},", *codes++);
-        ST::printf(fp, "\t{#x},\n", *codes++);
+        ST::printf(fp, "\t0x{x},", *codes++);
+        ST::printf(fp, "\t0x{x},", *codes++);
+        ST::printf(fp, "\t0x{x},", *codes++);
+        ST::printf(fp, "\t0x{x},\n", *codes++);
     }
-    ST::printf(fp, "\t{#x},", *codes++);
-    ST::printf(fp, "\t{#x},", *codes++);
-    ST::printf(fp, "\t{#x},", *codes++);
-    ST::printf(fp, "\t{#x}\n", *codes++);
+    ST::printf(fp, "\t0x{x},", *codes++);
+    ST::printf(fp, "\t0x{x},", *codes++);
+    ST::printf(fp, "\t0x{x},", *codes++);
+    ST::printf(fp, "\t0x{x}\n", *codes++);
     fputs("\t};", fp);
     fputs("\n\n", fp);
 
