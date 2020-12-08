@@ -19,7 +19,7 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     unsigned char* codes = (unsigned char*)shader->GetBufferPointer();
 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
-    ST::printf(fp, "static const uint8_t {}Codes[] = {\n", varName);
+    ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
 
     int i;
     for( i = 0; i < quadLen-1; i++ )
