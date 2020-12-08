@@ -5,10 +5,6 @@ include_directories("../../PubUtilLib")
 
 include_directories(${Ogg_INCLUDE_DIR})
 include_directories(${Vorbis_INCLUDE_DIR})
-if(WIN32)
-    # Needed for WAV file support
-    include_directories(${DirectX_INCLUDE_DIR})
-endif(WIN32)
 
 set(plAudioCore_SOURCES
     plAudioFileReader.cpp

@@ -35,10 +35,6 @@ set_package_properties(OpenAL PROPERTIES
     TYPE REQUIRED
 )
 
-if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
-endif(WIN32)
-
 if(PLASMA_USE_OPUS)
     include_directories(${Opus_INCLUDE_DIR})
 endif()
