@@ -138,12 +138,9 @@ PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderNameW, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* name = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, name, strLen);
-        name[strLen] = L'\0';
+        wchar_t* name = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Folder_SetNameW(name);
-        delete [] name;
+        PyMem_Free(name);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setFolderNameW expects a unicode string");

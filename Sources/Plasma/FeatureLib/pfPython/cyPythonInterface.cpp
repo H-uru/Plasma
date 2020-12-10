@@ -643,12 +643,9 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, text, strLen);
-        text[strLen] = L'\0';
+        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Write(text);
-        delete [] text;
+        PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
@@ -763,12 +760,9 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, text, strLen);
-        text[strLen] = L'\0';
+        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Write(text);
-        delete [] text;
+        PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
@@ -947,7 +941,7 @@ void PythonInterface::initPython()
     PyConfig config;
     PyConfig_InitIsolatedConfig(&config);
     config.site_import = 0;
-    config.program_name = L"plasma";
+    PyConfig_SetString(&config, &config.program_name, L"plasma");
     config._init_main = 0;
 
     // Allow importing from the local python directory if and only if this is an internal client.

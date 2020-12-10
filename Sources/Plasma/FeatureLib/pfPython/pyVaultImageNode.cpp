@@ -194,9 +194,12 @@ void pyVaultImageNode::SetImageFromBuf( PyObject * pybuf )
         fMipmap = nil;
     }
 
-    uint8_t * buffer = nil;
-    Py_ssize_t bytes;
-    PyObject_AsReadBuffer(pybuf, (const void **)&buffer, &bytes);
+    Py_buffer view;
+    PyObject_GetBuffer(pybuf, &view, PyBUF_SIMPLE);
+    uint8_t* buffer = (uint8_t*)view.buf;
+    Py_ssize_t bytes = view.len;
+    PyBuffer_Release(&view);
+
     if (buffer) {
         VaultImageNode access(fNode);
         access.SetImageData(buffer, bytes);
