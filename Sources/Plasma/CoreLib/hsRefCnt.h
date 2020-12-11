@@ -146,4 +146,49 @@ private:
     _Ref *fObj;
 };
 
+template <class _Ref>
+class hsWeakRef
+{
+public:
+    hsWeakRef() : fObj(nullptr) { }
+    hsWeakRef(std::nullptr_t) : fObj(nullptr) { }
+    hsWeakRef(_Ref *obj) : fObj(obj) { }
+
+    template <class _OtherRef>
+    hsWeakRef(const hsWeakRef<_OtherRef> &copy) : fObj(copy.Get()) { }
+
+    template <class _OtherRef>
+    hsWeakRef(const hsRef<_OtherRef> &copy) : fObj(copy.Get()) { }
+
+    hsWeakRef<_Ref> &operator=(_Ref *obj)
+    {
+        fObj = obj.Get();
+        return *this;
+    }
+
+    template <class _OtherRef>
+    hsWeakRef<_Ref> &operator=(const hsWeakRef<_OtherRef> &obj)
+    {
+        fObj = obj.Get();
+        return *this;
+    }
+
+    template <class _OtherRef>
+    hsWeakRef<_Ref> &operator=(const hsRef<_OtherRef> &obj)
+    {
+        fObj = obj.Get();
+        return *this;
+    }
+
+    _Ref &operator*() const { return *fObj; }
+    _Ref *operator->() const { return fObj; }
+    _Ref *Get() const { return fObj; }
+
+    operator bool() const { return fObj != nullptr; }
+    bool operator!() const { return fObj == nullptr; }
+
+private:
+    _Ref *fObj;
+};
+
 #endif
