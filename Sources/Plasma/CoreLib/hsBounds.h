@@ -201,7 +201,7 @@ private:
     hsPlane3    *fPlanes;
     uint32_t    fNumPlanes;
 public:
-    hsBoundsOriented() : fPlanes(nil),fNumPlanes(0),fCenterValid(false) {}
+    hsBoundsOriented() : fCenterValid(), fPlanes(), fNumPlanes() {}
     virtual ~hsBoundsOriented() {   if (fPlanes) delete [] fPlanes; }
 
     // Center is not computed by the class, it must be set by the creator of the class.
@@ -335,7 +335,7 @@ public:
     hsHitInfoExt(const hsPoint3 *ctr, const hsVector3& offset) { fRootCenter=ctr; fDelPos=offset; };
 
     void Set(const hsBounds3Ext *m, const hsVector3* n, float d)
-    { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nil; }
+    { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nullptr; }
     void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, float d)
     { fDepth = d; fBoxBnd = m, fOtherBoxBnd = o; fNormal = norm; }
 };

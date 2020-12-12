@@ -536,6 +536,7 @@ plFileName plFileSystem::GetCurrentAppPath()
         return appPath;
 
     FATAL("Your OS doesn't make life easy, does it?");
+    return ".";
 #endif
 }
 

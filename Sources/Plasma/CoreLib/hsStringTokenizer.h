@@ -63,7 +63,7 @@ private:
     bool fInQuote;
     bool fCheckAlphaNum;
 public:
-    hsStringTokenizer(const char *string=nil, const char *seps=nil);
+    hsStringTokenizer(const char *string=nullptr, const char *seps=nullptr);
     ~hsStringTokenizer();
     char *next();
     bool Next( char *token, uint32_t maxTokLen );
@@ -94,7 +94,7 @@ private:
     bool fInQuote;
     bool fCheckAlphaNum;
 public:
-    hsWStringTokenizer(const wchar_t *string=nil, const wchar_t *seps=nil);
+    hsWStringTokenizer(const wchar_t *string=nullptr, const wchar_t *seps=nullptr);
     ~hsWStringTokenizer();
     wchar_t *next();
     bool Next( wchar_t *token, uint32_t maxTokLen );

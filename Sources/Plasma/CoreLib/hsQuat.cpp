@@ -317,7 +317,7 @@ void hsQuat::SetFromSlerp(const hsQuat &a, const hsQuat &b, float alpha, int spi
     {               /* normal case */
 //      hsAssert((cos_t >= -1) && (cos_t <= 1), "Invalid acos argument");
         theta   = acos(cos_t);
-        phi     = theta + spin * M_PI;
+        phi     = theta + spin * float(M_PI);
         sin_t   = sin(theta);
         hsAssert(sin_t != 0.0, "Invalid sin value in quat slerp");
         beta    = sin(theta - alpha*phi) / sin_t;
@@ -391,7 +391,7 @@ hsQuat hsQuat::QuatFromMatrix44(const hsMatrix44& mat)
     const int X = 0;
     const int Y = 1;
     const int Z = 2;
-    const int W = 3;
+
     tr = mat.fMap[X][X] + mat.fMap[Y][Y]+ mat.fMap[Z][Z];
     if (tr >= 0.0) {
         s = float(sqrt(tr + 1.f));

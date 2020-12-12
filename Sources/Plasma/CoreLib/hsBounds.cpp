@@ -2422,8 +2422,8 @@ bool hsBounds3Ext::ISectLine(const hsPoint3* from, const hsPoint3* at) const
         IMakeSphere();
 
     hsPoint3 onLine;
-    float z = ClosestPointToLine(&fCenter, from, at, &onLine);
-    
+    (void)ClosestPointToLine(&fCenter, from, at, &onLine);
+
     float distSq = hsVector3(&onLine, &fCenter).MagnitudeSquared();
     if( distSq >= fRadius*fRadius )
         return false;

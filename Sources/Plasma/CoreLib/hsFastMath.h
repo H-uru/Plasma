@@ -107,7 +107,6 @@ public:
 inline float hsFastMath::InvSqrtAppr(float x)
 {
     unsigned long a = *(long*)&x;
-    float arg = x;
     union {
         long    i;
         float   f;
@@ -121,6 +120,7 @@ inline float hsFastMath::InvSqrtAppr(float x)
     r = seed.f;
 
 #if NUM_ITER > 0
+    float arg = x;
     r = (3.0f - r * r * arg) * r * 0.5f;
 
 #if NUM_ITER > 1
