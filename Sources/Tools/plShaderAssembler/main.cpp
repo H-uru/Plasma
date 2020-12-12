@@ -24,8 +24,8 @@ public:
     { }
 
     template<typename... _Args>
-    plDXShaderError(const char* fmt, _Args... args)
-        : fError(ST::format(fmt, args...))
+    plDXShaderError(const char* fmt, _Args&&... args)
+        : fError(ST::format(fmt, std::forward<_Args>(args)...))
     { }
 
     operator ST::string() const { return fError; }
