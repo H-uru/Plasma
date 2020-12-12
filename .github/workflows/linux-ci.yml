@@ -3,26 +3,47 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: Linux ${{ matrix.architecture.id }}-bit build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        architecture:
+          - id: 32
+            suffix: i386
+            pythonarch: x86
+          - id: 64
+            suffix: amd64
+            pythonarch: x64
+
+    env:
+      CFLAGS: "-m${{ matrix.architecture.id }}"
+      CXXFLAGS: "-m${{ matrix.architecture.id }}"
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup Python ${{ matrix.python-version }}
+    - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+        #architecture: ${{ matrix.architecture.pythonarch }}
 
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake libcurl4-openssl-dev libopenal-dev libssl-dev \
-          libogg-dev libopus-dev libspeex-dev uuid-dev libvpx-dev \
-          libvorbis-dev qtbase5-dev
+        sudo apt-get install -y cmake gcc-multilib \
+          libcurl4-openssl:${{matrix.architecture.suffix}} libcurl4-openssl-dev \
+          libopenal:${{matrix.architecture.suffix}} libopenal-dev \
+          libssl:${{matrix.architecture.suffix}} libssl-dev \
+          libogg:${{matrix.architecture.suffix}} libogg-dev \
+          libopus:${{matrix.architecture.suffix}} libopus-dev \
+          libspeex:${{matrix.architecture.suffix}} libspeex-dev \
+          uuid:${{matrix.architecture.suffix}} uuid-dev \
+          libvpx:${{ matrix.architecture.suffix }} libvpx-dev \
+          libvorbis:${{ matrix.architecture.suffix }} libvorbis-dev \
+          qtbase5:${{ matrix.architecture.suffix }} qtbase5-dev
         sudo pip install -r ${GITHUB_WORKSPACE}/requirements.txt
+
     - name: Build string_theory
       run: |
         mkdir -p build_deps && cd build_deps
@@ -31,6 +52,7 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Debug -DST_BUILD_TESTS=OFF \
               -DCMAKE_INSTALL_PREFIX="${GITHUB_WORKSPACE}/build_deps/prefix" ..
         make -j2 && make install
+
     - name: Build Plasma
       run: |
         cd ${GITHUB_WORKSPACE}
@@ -39,4 +61,8 @@ jobs:
           -DPython_ADDITIONAL_VERSIONS=2.7 -DPLASMA_BUILD_TESTS=ON \
           -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
         make -j2
+
+    - name: Plasma Tests
+      run: |
+        cd ${GITHUB_WORKSPACE}/build
         make check
