@@ -342,16 +342,19 @@ struct plEvaluate
     plClass * fTarget;
     bool (plClass::*fEvaluate)();
     bool (plClass::*fEvaluateConst)() const;
+
     plEvaluate( plClass * target=nil, TEvaluate evaluate=nil )
     : fTarget(target)
     , fEvaluate(evaluate)
     , fEvaluateConst(nil)
     {}
+
     plEvaluate( plClass * target, TEvaluateConst evaluate )
     : fTarget(target)
-    , fEvaluateConst(evaluate)
     , fEvaluate(nil)
+    , fEvaluateConst(evaluate)
     {}
+
     bool operator()() 
     { 
         if (fEvaluate)
