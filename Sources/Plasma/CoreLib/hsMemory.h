@@ -47,22 +47,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class HSMemory {
 public:
-    static void BlockMove(const void* src, void* dst, uint32_t length);
-    static void Clear(void *m, uint32_t byteLen);
-    static void ClearMemory(void *m, uint32_t byteLen) { HSMemory::Clear(m, byteLen); }
+    static void BlockMove(const void* src, void* dst, size_t length);
+    static void Clear(void *m, size_t byteLen);
+    static void ClearMemory(void *m, size_t byteLen) { HSMemory::Clear(m, byteLen); }
 
-    static bool EqualBlocks(const void* block1, const void* block2, uint32_t length);
+    static bool EqualBlocks(const void* block1, const void* block2, size_t length);
 
-    static void* New(uint32_t size);
+    static void* New(size_t size);
     static void  Delete(void* block);
-    static void* Copy(uint32_t length, const void* source);
+    static void* Copy(size_t length, const void* source);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 class hsAllocator {
 public:
-    virtual void*   Alloc(uint32_t size) = 0;
+    virtual void*   Alloc(size_t size) = 0;
     virtual void    Free(void* addr) = 0;
 };
 
@@ -108,52 +108,53 @@ public:
 
     void        Reset();
     void        SetChunkSize(uint32_t size);
-    void*   Allocate(uint32_t size, const void* data = nil);
+    void*   Allocate(uint32_t size, const void* data = nullptr);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 class hsAppender {
-    struct hsAppenderHead*  fFirstBlock, *fLastBlock;
-    uint32_t              fElemSize, fElemCount, fCount;
-    
+    struct hsAppenderHead* fFirstBlock;
+    struct hsAppenderHead* fLastBlock;
+    size_t fElemSize, fElemCount, fCount;
+
     friend class hsAppenderIterator;
 public:
-            hsAppender(uint32_t elemSize, uint32_t minCount = 16);
-            ~hsAppender();
+    hsAppender(size_t elemSize, size_t minCount = 16);
+    ~hsAppender();
 
-    uint32_t  ElemSize() const { return fElemSize; }
-    uint32_t  Count() const { return fCount; }
-    bool      IsEmpty() const { return fCount == 0; }
-    void      Reset();
+    size_t ElemSize() const { return fElemSize; }
+    size_t Count() const { return fCount; }
+    bool IsEmpty() const { return fCount == 0; }
+    void Reset();
 
-    uint32_t  CopyInto(void* data = nil) const;   // return size of data array in bytes
+    size_t CopyInto(void* data = nullptr) const;   // return size of data array in bytes
 
-    void*     PushHead();
-    void      PushHead(const void* data);
-    void*     PushTail();
-    void      PushTail(const void* data);
-    void      PushTail(int count, const void* data);  // data[] = count * fElemSize
-    void*     PeekHead() const;
-    void*     PeekTail() const;
-    bool      PopHead(void* data = nil);
-    int       PopHead(int count, void* data = nil);       // data[] = count * fElemSize
-    bool      PopTail(void* data = nil);
+    void* PushHead();
+    void PushHead(const void* data);
+    void* PushTail();
+    void PushTail(const void* data);
+    void PushTail(size_t count, const void* data);  // data[] = count * fElemSize
+    void* PeekHead() const;
+    void* PeekTail() const;
+    bool PopHead(void* data = nullptr);
+    size_t PopHead(size_t count, void* data = nullptr);       // data[] = count * fElemSize
+    bool PopTail(void* data = nullptr);
 
     //  Alternate interfaces
 
-    void*   Prepend() { return this->PushHead(); }
-    void*   Append() { return this->PushTail(); }
+    void* Prepend() { return this->PushHead(); }
+    void* Append() { return this->PushTail(); }
 
-    void*   Push() { return this->PushHead(); }
-    void    Push(const void* data) { this->PushHead(data); }
-    bool    Pop(void* data = nil) { return this->PopHead(data); }
+    void* Push() { return this->PushHead(); }
+    void Push(const void* data) { this->PushHead(data); }
+    bool Pop(void* data = nullptr) { return this->PopHead(data); }
 
-    void*   Enqueue() { return this->PushTail(); };
-    void    Enqueue(const void* data) { this->PushTail(data); }
-    void    Enqueue(int count, const void* data) { this->PushTail(count, data); }
-    bool    Dequeue(void* data = nil) { return this->PopHead(data); }
-    int     Dequeue(int count, void* data = nil) { return this->PopHead(count, data); }
+    void* Enqueue() { return this->PushTail(); };
+    void Enqueue(const void* data) { this->PushTail(data); }
+    void Enqueue(size_t count, const void* data) { this->PushTail(count, data); }
+    bool Dequeue(void* data = nullptr) { return this->PopHead(data); }
+    size_t Dequeue(size_t count, void* data = nullptr) { return this->PopHead(count, data); }
 };
 
 class hsAppenderIterator {
@@ -161,10 +162,10 @@ class hsAppenderIterator {
     const struct hsAppenderHead*    fCurrBlock;
     void*                   fCurrItem;
 public:
-            hsAppenderIterator(const hsAppender* list = nil);
+            hsAppenderIterator(const hsAppender* list = nullptr);
             
-    void    ResetToHead(const hsAppender* list = nil);
-    void    ResetToTail(const hsAppender* list = nil);
+    void    ResetToHead(const hsAppender* list = nullptr);
+    void    ResetToTail(const hsAppender* list = nullptr);
     void*   Next();
     bool    Next(void* data);
     int     Next(int count, void* data);
@@ -173,7 +174,7 @@ public:
 
     //  Obsolete interface
 
-    void    Reset(const hsAppender* list = nil) { this->ResetToHead(list); }
+    void    Reset(const hsAppender* list = nullptr) { this->ResetToHead(list); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -199,9 +200,9 @@ public:
     void    PushTail(int count, const T item[]) { this->hsAppender::PushTail(count, item); };
     T*      PeekHead() const { return (T*)hsAppender::PeekHead(); }
     T*      PeekTail() const { return (T*)hsAppender::PeekTail(); }
-    bool    PopHead(T* item = nil) { return hsAppender::PopHead(item); }
-    int     PopHead(int count, T item[] = nil) { return hsAppender::PopHead(count, item); }
-    bool    PopTail(T* item = nil) { return hsAppender::PopTail(item); }
+    bool    PopHead(T* item = nullptr) { return hsAppender::PopHead(item); }
+    int     PopHead(int count, T item[] = nullptr) { return hsAppender::PopHead(count, item); }
+    bool    PopTail(T* item = nullptr) { return hsAppender::PopTail(item); }
 
     //  Alternate intefaces
 
@@ -212,13 +213,13 @@ public:
 
     T*      Push() { return this->PushHead(); }
     void    Push(const T& item) { this->PushHead(item); }
-    bool    Pop(T* item = nil) { return this->PopHead(item); }
+    bool    Pop(T* item = nullptr) { return this->PopHead(item); }
 
     T*      Enqueue() { return this->PushTail(); };
     void    Enqueue(const T& item) { this->PushTail(item); }
     void    Enqueue(int count, const T item[]) { this->PushTail(count, item); }
-    bool    Dequeue(T* item = nil) { return this->PopHead(item); }
-    int     Dequeue(int count, T item[] = nil) { return this->PopHead(count, item); }
+    bool    Dequeue(T* item = nullptr) { return this->PopHead(item); }
+    int     Dequeue(int count, T item[] = nullptr) { return this->PopHead(count, item); }
 };
 
 template <class T> class hsTAppenderIterator : hsAppenderIterator {
@@ -226,9 +227,9 @@ public:
             hsTAppenderIterator() : hsAppenderIterator() {}
             hsTAppenderIterator(const hsTAppender<T>* list) : hsAppenderIterator(list->GetAppender()) {}
 
-    void    ResetToHead() { hsAppenderIterator::ResetToHead(nil); }
+    void    ResetToHead() { hsAppenderIterator::ResetToHead(nullptr); }
     void    ResetToHead(const hsTAppender<T>* list) { hsAppenderIterator::ResetToHead(list->GetAppender()); }
-    void    ResetToTail() { hsAppenderIterator::ResetToTail(nil); }
+    void    ResetToTail() { hsAppenderIterator::ResetToTail(nullptr); }
     void    ResetToTail(const hsTAppender<T>* list) { hsAppenderIterator::ResetToTail(list->GetAppender()); }
     T*      Next() { return (T*)hsAppenderIterator::Next(); }
     int     Next(T* item) { return hsAppenderIterator::Next(item); }
