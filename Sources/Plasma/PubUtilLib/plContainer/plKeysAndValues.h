@@ -109,7 +109,7 @@ public:
     void Read(hsStream * s);
     void Write(hsStream * s);
     // TODO:
-    uint32_t GetStreamSize() { return 0;}
+    size_t GetStreamSize() override { return 0;}
 };
 
 

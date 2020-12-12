@@ -41,32 +41,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsSTLStream.h"
 
-hsVectorStream::hsVectorStream() : fEnd(0)
-{
-}
+hsVectorStream::hsVectorStream() : fEnd() { }
 
-hsVectorStream::hsVectorStream(uint32_t chunkSize)
-{   
+hsVectorStream::hsVectorStream(size_t chunkSize)
+{
     fVector.reserve(chunkSize);
 }
 
-hsVectorStream::~hsVectorStream()
-{
-}
+hsVectorStream::~hsVectorStream() { }
 
 bool hsVectorStream::AtEnd()
 {
     return (fBytesRead >= fEnd);
 }
 
-uint32_t hsVectorStream::Read(uint32_t byteCount, void *buffer)
+size_t hsVectorStream::Read(size_t byteCount, void *buffer)
 {
     if (fBytesRead + byteCount > fEnd)
     {
 //      hsStatusMessageF("Reading past end of hsVectorStream (read %u of %u requested bytes)", fEnd-fBytesRead, byteCount);
         byteCount = fEnd - fBytesRead;
     }
-    
+
     memcpy(buffer, &fVector[fBytesRead], byteCount);
 
     fBytesRead += byteCount;
@@ -75,7 +71,7 @@ uint32_t hsVectorStream::Read(uint32_t byteCount, void *buffer)
     return byteCount;
 }
 
-uint32_t hsVectorStream::Write(uint32_t byteCount, const void* buffer)
+size_t hsVectorStream::Write(size_t byteCount, const void* buffer)
 {
     // If we are at the end of the vector, we can just do a block insert of the data
     if (fPosition == fVector.size())
@@ -85,7 +81,7 @@ uint32_t hsVectorStream::Write(uint32_t byteCount, const void* buffer)
     else
     {
         fVector.reserve(fPosition+byteCount);
-        for (uint32_t i = 0; i < byteCount; i++)
+        for (size_t i = 0; i < byteCount; i++)
             fVector[fPosition+i] = ((uint8_t*)buffer)[i];
     }
 
@@ -97,7 +93,7 @@ uint32_t hsVectorStream::Write(uint32_t byteCount, const void* buffer)
     return byteCount;
 }
 
-void hsVectorStream::Skip(uint32_t deltaByteCount)
+void hsVectorStream::Skip(size_t deltaByteCount)
 {
     fBytesRead += deltaByteCount;
     fPosition += deltaByteCount;
@@ -120,7 +116,7 @@ void hsVectorStream::Truncate()
     fEnd = fPosition-1;
 }
 
-uint32_t hsVectorStream::GetEOF()
+size_t hsVectorStream::GetEOF()
 {
     return fEnd;
 }
@@ -130,7 +126,7 @@ void hsVectorStream::CopyToMem(void* mem)
     memcpy(mem, &fVector[0], fEnd);
 }
 
-void hsVectorStream::Erase(uint32_t bytes)
+void hsVectorStream::Erase(size_t bytes)
 {
     hsAssert(fPosition+bytes <= fEnd, "Erasing past end of stream");
 
@@ -151,5 +147,5 @@ const void *hsVectorStream::GetData()
     if (fVector.size() > 0)
         return &fVector[0];
     else
-        return nil;
+        return nullptr;
 }

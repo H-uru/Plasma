@@ -52,7 +52,7 @@ void ZlibFree(voidpf opaque, voidpf address)
     free(address);
 }
 
-plZlibStream::plZlibStream() : fOutput(nil), fZStream(nil), fHeader(kNeedMoreData), fDecompressedOk(false)
+plZlibStream::plZlibStream() : fOutput(), fZStream(), fDecompressedOk(), fHeader(kNeedMoreData)
 {
 }
 
@@ -89,7 +89,7 @@ bool plZlibStream::Close()
     return true;
 }
 
-uint32_t plZlibStream::Write(uint32_t byteCount, const void* buffer)
+size_t plZlibStream::Write(size_t byteCount, const void* buffer)
 {
     uint8_t* byteBuf = (uint8_t*)buffer;
 
@@ -115,7 +115,7 @@ uint32_t plZlibStream::Write(uint32_t byteCount, const void* buffer)
         ASSERT(fOutput);
         ASSERT(fZStream);
         z_streamp zstream = (z_streamp)fZStream;
-        zstream->avail_in = byteCount;
+        zstream->avail_in = (unsigned int)byteCount;
         zstream->next_in = byteBuf;
 
         char outBuf[2048];
@@ -153,7 +153,7 @@ uint32_t plZlibStream::Write(uint32_t byteCount, const void* buffer)
     return byteCount;
 }
 
-int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
+int plZlibStream::IValidateGzHeader(size_t byteCount, const void* buffer)
 {
     // Ripped from gzio.cpp
     #define HEAD_CRC     0x02
@@ -165,15 +165,13 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     
     #define CheckForEnd() if (s.AtEnd()) { fHeader = kNeedMoreData; return 0; }
 
-    int i;
-
-    int initCacheSize = fHeaderCache.size();
-    for (i = 0; i < byteCount; i++)
+    size_t initCacheSize = fHeaderCache.size();
+    for (size_t i = 0; i < byteCount; i++)
         fHeaderCache.push_back(((uint8_t*)buffer)[i]);
     hsReadOnlyStream s(fHeaderCache.size(), &fHeaderCache[0]);
     
     // Check the gzip magic header
-    for (i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++)
     {
         uint8_t c = s.ReadByte();
         if (c != gz_magic[i])
@@ -194,7 +192,7 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     }
     
     // Discard time, xflags and OS code:
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
         s.ReadByte();
     CheckForEnd();
     
@@ -234,19 +232,19 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
         s.ReadLE16();
         CheckForEnd();
     }
-    
+
     CheckForEnd();
-    
-    uint32_t headerSize = s.GetPosition();
+
+    uint32_t headerSize = uint32_t(s.GetPosition());
     uint32_t clipBuffer = headerSize - initCacheSize;
-    
+
     // Initialize the zlib stream
     z_streamp zstream = new z_stream_s;
     memset(zstream, 0, sizeof(z_stream_s));
     zstream->zalloc = ZlibAlloc;
     zstream->zfree = ZlibFree;
-    zstream->opaque = nil;
-    zstream->avail_in = byteCount - clipBuffer;
+    zstream->opaque = nullptr;
+    zstream->avail_in = (unsigned int)(byteCount - clipBuffer);
     zstream->next_in = (uint8_t*)&fHeaderCache[clipBuffer];
     // Gotta use inflateInit2, because there's no header for zlib to look at.
     // The -15 tells it to not try and find a header
@@ -273,13 +271,13 @@ bool plZlibStream::AtEnd()
     return true;
 }
 
-uint32_t plZlibStream::Read(uint32_t byteCount, void* buffer)
+size_t plZlibStream::Read(size_t byteCount, void* buffer)
 {
     hsAssert(0, "Read not supported");
     return 0;
 }
 
-void plZlibStream::Skip(uint32_t deltaByteCount)
+void plZlibStream::Skip(size_t deltaByteCount)
 {
     hsAssert(0, "Skip not supported");
 }
@@ -298,7 +296,7 @@ void plZlibStream::FastFwd()
     hsAssert(0, "FastFwd not supported");
 }
 
-uint32_t plZlibStream::GetEOF()
+size_t plZlibStream::GetEOF()
 {
     hsAssert(0, "GetEOF not supported");
     return 0;

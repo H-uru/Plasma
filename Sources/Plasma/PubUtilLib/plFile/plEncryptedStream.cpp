@@ -47,6 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <wchar.h>
 #include <algorithm>
 
+#ifdef _WIN64
+#define fseek _fseeki64
+#define ftell _ftelli64
+#endif
+
 static const uint32_t kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
 static const int kEncryptChunkSize = 8;
 
@@ -193,19 +198,17 @@ bool plEncryptedStream::Close()
     return rtn;
 }
 
-uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
+size_t plEncryptedStream::IRead(size_t bytes, void* buffer)
 {
     if (!fRef)
         return 0;
-    int numItems = (int)(::fread(buffer, 1 /*size*/, bytes /*count*/, fRef));
+    size_t numItems = fread(buffer, 1, bytes, fRef);
     fBytesRead += numItems;
     fPosition += numItems;
-    if ((unsigned)numItems < bytes) {
+    if (numItems < bytes) {
         if (feof(fRef)) {
             // EOF ocurred
-            char str[128];
-            sprintf(str, "Hit EOF on UNIX Read, only read %d out of requested %d bytes\n", numItems, bytes);
-            hsDebugMessage(str, 0);
+            hsDebugMessage(ST::format("Hit EOF on UNIX Read, only read {} out of requested {} bytes\n", numItems, bytes).c_str(), 0);
         }
         else {
             hsDebugMessage("Error on UNIX Read", ferror(fRef));
@@ -220,7 +223,7 @@ void plEncryptedStream::IBufferFile()
     char buf[1024];
     while (!AtEnd())
     {
-        uint32_t numRead = Read(1024, buf);
+        size_t numRead = Read(1024, buf);
         fRAMStream->Write(numRead, buf);
     }
     fRAMStream->Rewind();
@@ -239,7 +242,7 @@ bool plEncryptedStream::AtEnd()
         return (GetPosition() == fActualFileSize);
 }
 
-void plEncryptedStream::Skip(uint32_t delta)
+void plEncryptedStream::Skip(size_t delta)
 {
     if (fBufferedStream)
     {
@@ -283,31 +286,31 @@ void plEncryptedStream::FastFwd()
     }
 }
 
-uint32_t plEncryptedStream::GetEOF()
+size_t plEncryptedStream::GetEOF()
 {
     return fActualFileSize;
 }
 
-uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
+size_t plEncryptedStream::Read(size_t bytes, void* buffer)
 {
     if (fBufferedStream)
     {
-        uint32_t numRead = fRAMStream->Read(bytes, buffer);
+        size_t numRead = fRAMStream->Read(bytes, buffer);
         fPosition = fRAMStream->GetPosition();
         return numRead;
     }
 
-    uint32_t startPos = fPosition;
+    size_t startPos = fPosition;
 
     // Offset into the first buffer (0 if we are aligned on a chunk, which means no extra block read)
-    uint32_t startChunkPos = startPos % kEncryptChunkSize;
+    size_t startChunkPos = startPos % kEncryptChunkSize;
     // Amount of data in the partial first chunk (0 if we're aligned)
-    uint32_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
+    size_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
 
-    uint32_t totalNumRead = IRead(bytes, buffer);
+    size_t totalNumRead = IRead(bytes, buffer);
 
-    uint32_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
-    uint32_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
+    size_t numMidChunks = (totalNumRead - startAmt) / kEncryptChunkSize;
+    size_t endAmt = (totalNumRead - startAmt) % kEncryptChunkSize;
 
     // If the start position is in the middle of a chunk we need to rewind and
     // read that whole chunk in and decrypt it.
@@ -318,7 +321,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
 
         // Read in the chunk and decrypt it
         char buf[kEncryptChunkSize];
-        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        IRead(kEncryptChunkSize, &buf);
         IDecipher((uint32_t*)&buf);
 
         // Copy the relevant portion to the output buffer
@@ -330,7 +333,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
     if (numMidChunks != 0)
     {
         uint32_t* bufferPos = (uint32_t*)(((char*)buffer)+startAmt);
-        for (int i = 0; i < numMidChunks; i++)
+        for (size_t i = 0; i < numMidChunks; i++)
         {
             // Decrypt chunk
             IDecipher(bufferPos);
@@ -343,11 +346,11 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
         // Read in the final chunk and decrypt it
         char buf[kEncryptChunkSize];
         SetPosition(startPos + startAmt + numMidChunks*kEncryptChunkSize);
-        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        IRead(kEncryptChunkSize, &buf);
         IDecipher((uint32_t*)&buf);
 
         memcpy(((char*)buffer)+totalNumRead-endAmt, &buf, endAmt);
-        
+
         SetPosition(startPos+totalNumRead);
     }
 
@@ -361,7 +364,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
     return totalNumRead;
 }
 
-uint32_t plEncryptedStream::Write(uint32_t bytes, const void* buffer)
+size_t plEncryptedStream::Write(size_t bytes, const void* buffer)
 {
     if (fOpenMode != kOpenWrite)
     {
@@ -386,7 +389,7 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
 
     // Write out all the full size encrypted blocks we can
     char buf[kEncryptChunkSize];
-    uint32_t amtRead;
+    size_t amtRead;
     while ((amtRead = sourceStream->Read(kEncryptChunkSize, &buf)) == kEncryptChunkSize)
     {
         IEncipher((uint32_t*)&buf);
@@ -403,7 +406,7 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
             srand((unsigned int)time(nil));
         }
 
-        for (int i = amtRead; i < kEncryptChunkSize; i++)
+        for (size_t i = amtRead; i < kEncryptChunkSize; i++)
             buf[i] = rand();
 
         IEncipher((uint32_t*)&buf);
@@ -412,10 +415,10 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
     }
 
     // Write the original file size at the start
-    uint32_t actualSize = sourceStream->GetPosition();
+    size_t actualSize = sourceStream->GetPosition();
     outputStream.Rewind();
     outputStream.Skip(kMagicStringLen);
-    outputStream.WriteLE32(actualSize);
+    outputStream.WriteLE32(uint32_t(actualSize));
 
     outputStream.Close();
 
@@ -468,7 +471,7 @@ bool plEncryptedStream::FileDecrypt(const plFileName& fileName)
 
     while (!sIn.AtEnd())
     {
-        uint32_t numRead = sIn.Read(sizeof(buf), buf);
+        size_t numRead = sIn.Read(sizeof(buf), buf);
         sOut.Write(numRead, buf);
     }
 

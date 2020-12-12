@@ -53,36 +53,36 @@ class hsVectorStream : public hsStream
 {
 protected:
     std::vector<uint8_t> fVector;
-    uint32_t fEnd;    // End of file (one past the last byte)
+    size_t fEnd;    // End of file (one past the last byte)
 
 public:
     hsVectorStream();
-    hsVectorStream(uint32_t chunkSize);
+    hsVectorStream(size_t chunkSize);
     virtual ~hsVectorStream();
 
-    virtual bool      Open(const plFileName &, const char *) { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
-    virtual bool      Close()             { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
-    
-    virtual bool      AtEnd();
-    virtual uint32_t  Read(uint32_t byteCount, void * buffer);
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void      Skip(uint32_t deltaByteCount);
-    virtual void      Rewind();
-    virtual void      FastFwd();
-    virtual void      Truncate();
+    bool Open(const plFileName &, const char *) override { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
+    bool Close() override { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
 
-    virtual uint32_t  GetEOF();
-    virtual void    CopyToMem(void* mem);
+    bool AtEnd() override;
+    size_t Read(size_t byteCount, void * buffer) override;
+    size_t Write(size_t byteCount, const void* buffer) override;
+    void Skip(size_t deltaByteCount) override;
+    void Rewind() override;
+    void FastFwd() override;
+    void Truncate() override;
 
-    virtual void    Reset();        // clears the buffers
+    size_t GetEOF() override;
+    void CopyToMem(void* mem) override;
+
+    virtual void Reset();        // clears the buffers
 
     // Erase number of bytes at the current position
-    virtual void    Erase(uint32_t bytes);
+    virtual void Erase(size_t bytes);
     // A pointer to the beginning of the data in the stream.  This is only valid
     // until someone modifies the stream.
-    const void      *GetData();
+    const void* GetData();
     // In case you want to try and be efficient with your memory allocations
-    void Reserve(uint32_t bytes) { fVector.reserve(bytes); }
+    void Reserve(size_t bytes) { fVector.reserve(bytes); }
 };
 
 #endif // _hsSTLStream_h_inc_

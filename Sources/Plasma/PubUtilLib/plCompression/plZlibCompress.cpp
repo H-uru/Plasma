@@ -149,7 +149,7 @@ bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *de
                     worked = true;
                     break;
                 }
-                if( fwrite( buffer, 1, length, outFile ) != length )
+                if (fwrite( buffer, 1, size_t(length), outFile ) != size_t(length))
                     break;
             }
             if( gzclose( inFile ) != Z_OK )
@@ -180,7 +180,7 @@ bool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *de
         {
             for( ;; )
             {
-                length = fread( buffer, 1, sizeof( buffer ), inFile );
+                length = int(fread(buffer, 1, sizeof(buffer), inFile));
                 if( ferror( inFile ) )
                     break;
 
@@ -256,8 +256,8 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
     {
         for( ;; )
         {
-            int avail = s->GetEOF()-s->GetPosition();
-            int n = ( avail>sizeof( buffer ) ) ? sizeof( buffer ) : avail;
+            size_t avail = s->GetEOF() - s->GetPosition();
+            size_t n = ( avail>sizeof( buffer ) ) ? sizeof( buffer ) : avail;
 
             if( n == 0 )
             {
@@ -265,7 +265,7 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
                 break;
             }
 
-            length = s->Read( n, buffer );
+            length = int(s->Read(n, buffer));
 
             if( length == 0 )
             {

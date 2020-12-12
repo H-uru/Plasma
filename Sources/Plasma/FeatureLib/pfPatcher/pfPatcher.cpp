@@ -218,7 +218,7 @@ public:
         return retVal;
     }
 
-    uint32_t Write(uint32_t count, const void* buf) override
+    size_t Write(size_t count, const void* buf) override
     {
         // tick whatever progress bar we have
         IUpdateProgress(count);
@@ -231,12 +231,12 @@ public:
     }
 
     bool AtEnd() override { return fOutput->AtEnd(); }
-    uint32_t GetEOF() override { return fOutput->GetEOF(); }
-    uint32_t GetPosition() const override { return fOutput->GetPosition(); }
-    uint32_t Read(uint32_t count, void* buf) override { return fOutput->Read(count, buf); }
+    size_t GetEOF() override { return fOutput->GetEOF(); }
+    size_t GetPosition() const override { return fOutput->GetPosition(); }
+    size_t Read(size_t count, void* buf) override { return fOutput->Read(count, buf); }
     void Rewind() override { fOutput->Rewind(); }
-    void SetPosition(uint32_t pos) override { fOutput->SetPosition(pos); }
-    void Skip(uint32_t deltaByteCount) override { fOutput->Skip(deltaByteCount); }
+    void SetPosition(size_t pos) override { fOutput->SetPosition(pos); }
+    void Skip(size_t deltaByteCount) override { fOutput->Skip(deltaByteCount); }
 
     plFileName GetFileName() const { return fFilename; }
     bool IsRedistUpdate() const { return hsCheckBits(fFlags, pfPatcherWorker::kRedistUpdate); }

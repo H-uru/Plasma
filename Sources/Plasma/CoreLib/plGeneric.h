@@ -86,8 +86,8 @@ public:
     operator double() const {return fFloatVal;}
     operator ST::string() const {return fStringVal;}
 
-    int Write(hsStream* stream);
-    int Read(hsStream* stream);
+    size_t Write(hsStream* stream);
+    size_t Read(hsStream* stream);
 };
 
 #endif // __PLGENERIC_H__

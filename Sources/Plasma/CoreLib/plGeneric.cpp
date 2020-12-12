@@ -94,7 +94,7 @@ plGeneric& plGeneric::operator=(const ST::string& val)
     return *this;
 }
 
-int plGeneric::Write(hsStream* stream)
+size_t plGeneric::Write(hsStream* stream)
 {
     stream->WriteByte((uint8_t)fType);
 
@@ -122,7 +122,7 @@ int plGeneric::Write(hsStream* stream)
     return stream->GetPosition();
 }
 
-int plGeneric::Read(hsStream* stream)
+size_t plGeneric::Read(hsStream* stream)
 {
     IReset();
     fType = (GenericType)stream->ReadByte();

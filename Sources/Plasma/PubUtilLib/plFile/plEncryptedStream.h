@@ -55,7 +55,7 @@ protected:
     FILE* fRef;
     uint32_t fKey[4];
 
-    uint32_t fActualFileSize;
+    size_t fActualFileSize;
 
     bool fBufferedStream;
 
@@ -68,7 +68,7 @@ protected:
 
     void IBufferFile();
 
-    uint32_t IRead(uint32_t bytes, void* buffer);
+    size_t IRead(size_t bytes, void* buffer);
 
     void IEncipher(uint32_t* const v);
     void IDecipher(uint32_t* const v);
@@ -82,18 +82,18 @@ public:
     plEncryptedStream(uint32_t* key=nil);
     ~plEncryptedStream();
 
-    virtual bool    Open(const plFileName& name, const char* mode = "rb");
-    virtual bool    Close();
+    bool    Open(const plFileName& name, const char* mode = "rb") override;
+    bool    Close() override;
 
-    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual bool    AtEnd();
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual uint32_t  GetEOF();
+    size_t  Read(size_t byteCount, void* buffer) override;
+    size_t  Write(size_t byteCount, const void* buffer) override;
+    bool    AtEnd() override;
+    void    Skip(size_t deltaByteCount) override;
+    void    Rewind() override;
+    void    FastFwd() override;
+    size_t  GetEOF() override;
 
-    uint32_t GetActualFileSize() const { return fActualFileSize;}
+    size_t  GetActualFileSize() const { return fActualFileSize; }
 
     static bool FileEncrypt(const plFileName& fileName);
     static bool FileDecrypt(const plFileName& fileName);
