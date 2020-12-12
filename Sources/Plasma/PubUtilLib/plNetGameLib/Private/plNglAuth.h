@@ -350,7 +350,7 @@ void NetCliAuthAgeRequest (
 //============================================================================
 void NetCliAuthGetEncryptionKey (
     uint32_t      key[],
-    unsigned    size
+    size_t        size
 );
 
 //============================================================================
