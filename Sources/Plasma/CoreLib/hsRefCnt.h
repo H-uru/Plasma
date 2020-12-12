@@ -78,6 +78,8 @@ public:
             dst = src;                  \
         } while (0)
 
+struct hsStealRef_Type {};
+constexpr hsStealRef_Type hsStealRef;
 
 template <class _Ref>
 class hsRef
@@ -86,6 +88,7 @@ public:
     hsRef() : fObj(nullptr) { }
     hsRef(std::nullptr_t) : fObj(nullptr) { }
     hsRef(_Ref *obj) : fObj(obj) { if (fObj) fObj->Ref(); }
+    hsRef(_Ref *obj, hsStealRef_Type) : fObj(obj) { }
     hsRef(const hsRef<_Ref> &copy) : fObj(copy.fObj) { if (fObj) fObj->Ref(); }
     hsRef(hsRef<_Ref> &&move) : fObj(move.fObj) { move.fObj = nullptr; }
 
@@ -132,13 +135,11 @@ public:
     _Ref *operator->() const { return fObj; }
     operator _Ref *() const { return fObj; }
 
-    /** Creates a new object of type _Ref. Use this instead of operator new. */
-    template<typename... _Args>
-    static hsRef<_Ref> New(_Args&&... args)
+    void Steal(_Ref *obj)
     {
-        hsRef<_Ref> obj;
-        obj.fObj = new _Ref(std::forward<_Args>(args)...);
-        return obj;
+        if (fObj)
+            fObj->UnRef();
+        fObj = obj;
     }
 
 private:

@@ -157,7 +157,7 @@ hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
 }
 
 pyVaultNode::pyVaultNode()
-    : fNode(decltype(fNode)::New())
+    : fNode(new RelVaultNode, hsStealRef)
 {
 }
 

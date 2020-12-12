@@ -83,7 +83,7 @@ struct RelVaultNodeLink : THashKeyVal<unsigned> {
     bool                        seen;
 
     RelVaultNodeLink(bool seen, unsigned ownerId, unsigned nodeId)
-        : THashKeyVal<unsigned>(nodeId), node(hsRef<RelVaultNode>::New()), ownerId(ownerId), seen(seen)
+        : THashKeyVal<unsigned>(nodeId), node(new RelVaultNode, hsStealRef), ownerId(ownerId), seen(seen)
     { }
 
     RelVaultNodeLink (bool seen, unsigned ownerId, unsigned nodeId, RelVaultNode * node)
