@@ -147,8 +147,8 @@ public:
     static void PushSynchDisabled(bool b) { fSynchStateStack.push_back(b); }
     static bool PopSynchDisabled();
     static plSynchedObject* GetStaticSynchedObject() { return fStaticSynchedObj; }
-    static int32_t GetNumDirtyStates() { return fDirtyStates.size(); }
-    static plSynchedObject::StateDefn* GetDirtyState(int32_t i) { return &fDirtyStates[i]; }
+    static size_t GetNumDirtyStates() { return fDirtyStates.size(); }
+    static plSynchedObject::StateDefn* GetDirtyState(size_t i) { return &fDirtyStates[i]; }
     static void ClearDirtyState(std::vector<StateDefn>& carryOver) { fDirtyStates=carryOver; } 
 
     // IO 

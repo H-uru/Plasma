@@ -541,8 +541,8 @@ bool hsBoundsOriented::IsInside(const hsPoint3* pos) const
         return false;
     if(fType == kBoundsFull)
         return true;
-    int i;
-    for( i = 0; i < fNumPlanes; i++ )
+
+    for (uint32_t i = 0; i < fNumPlanes; i++)
     {
         float dis = fPlanes[i].fN.InnerProduct(pos);
         dis += fPlanes[i].fD;
@@ -567,8 +567,7 @@ void hsBoundsOriented::SetPlane(uint32_t i, hsPlane3 *pln)
         hsPlane3 *newPlanes = new hsPlane3[i+1];
         if( fPlanes )
         {
-            int k;
-            for( k = 0; k < fNumPlanes; k++ )
+            for (uint32_t k = 0; k < fNumPlanes; k++)
                 *newPlanes++ = *fPlanes++;
             delete [] fPlanes;
         }
@@ -620,8 +619,8 @@ void hsBoundsOriented::Write(hsStream *stream)
     fCenter.Write(stream);
     stream->WriteLE32(fCenterValid);
     stream->WriteLE32(fNumPlanes);
-    int i;
-    for( i = 0; i < fNumPlanes; i++ )
+
+    for (uint32_t i = 0; i < fNumPlanes; i++)
     {
         fPlanes[i].Write(stream);
     }
@@ -636,8 +635,8 @@ void hsBoundsOriented::Read(hsStream *stream)
     if (fPlanes)
         delete [] fPlanes;
     fPlanes = new hsPlane3[fNumPlanes];
-    int i;
-    for( i = 0; i < fNumPlanes; i++ )
+
+    for (uint32_t i = 0; i < fNumPlanes; i++)
     {
         fPlanes[i].Read(stream);
     }

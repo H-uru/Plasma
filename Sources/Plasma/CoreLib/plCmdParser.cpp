@@ -84,9 +84,9 @@ class plCmdParserImpl
 protected:
     ST::string                  fProgramName;
     std::vector<plCmdArgData>   fArgArray;
-    std::vector<uint32_t>       fLookupArray;
-    std::vector<uint32_t>       fUnflaggedArray;
-    uint32_t                    fRequiredCount;
+    std::vector<size_t>         fLookupArray;
+    std::vector<size_t>         fUnflaggedArray;
+    size_t                      fRequiredCount;
     CmdError                    fError;
 
     void SetDefaultValue(plCmdArgData& arg);

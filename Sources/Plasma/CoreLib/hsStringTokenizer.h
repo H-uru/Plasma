@@ -58,7 +58,7 @@ private:
     char *fLastTerminator;
     char fLastRep;
 
-    int32_t fNumSeps;
+    size_t fNumSeps;
     bool fQAsTok;
     bool fInQuote;
     bool fCheckAlphaNum;
@@ -89,7 +89,7 @@ private:
     wchar_t *fLastTerminator;
     wchar_t fLastRep;
 
-    int32_t fNumSeps;
+    size_t fNumSeps;
     bool fQAsTok;
     bool fInQuote;
     bool fCheckAlphaNum;

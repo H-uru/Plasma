@@ -72,7 +72,7 @@ inline bool hsStringTokenizer::IsSep(char c)
     {
         if ( fCheckAlphaNum || !isalnum(c) )
         {
-            for (int32_t i=0; i<fNumSeps; i++) 
+            for (size_t i = 0; i < fNumSeps; i++)
             {
                 if (fSeps[i] == c) 
                     return true;
@@ -142,7 +142,7 @@ void hsStringTokenizer::Reset(const char *string, const char *seps)
     fSeps = seps ? hsStrcpy(seps) : nil;
     fNumSeps = fSeps ? strlen(fSeps) : 0;
     fCheckAlphaNum = false;
-    for (int32_t i=0; i<fNumSeps; i++)
+    for (size_t i = 0; i < fNumSeps; i++)
     {
         if (isalnum(fSeps[i]))
         {
@@ -196,7 +196,7 @@ inline bool hsWStringTokenizer::IsSep(wchar_t c)
     {
         if ( fCheckAlphaNum || !iswalnum(c) )
         {
-            for (int32_t i=0; i<fNumSeps; i++) 
+            for (size_t i = 0; i < fNumSeps; i++)
             {
                 if (fSeps[i] == c) 
                     return true;
@@ -262,7 +262,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
         delete[] fString;
     if (string)
     {
-        int count = wcslen(string);
+        size_t count = wcslen(string);
         fString = new wchar_t[count + 1];
         wcscpy(fString, string);
         fString[count] = L'\0';
@@ -274,7 +274,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
         delete[] fSeps;
     if (seps)
     {
-        int count = wcslen(seps);
+        size_t count = wcslen(seps);
         fSeps = new wchar_t[count + 1];
         wcscpy(fSeps, seps);
         fSeps[count] = L'\0';
@@ -284,7 +284,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
 
     fNumSeps = fSeps ? wcslen(fSeps) : 0;
     fCheckAlphaNum = false;
-    for (int32_t i=0; i<fNumSeps; i++)
+    for (size_t i = 0; i < fNumSeps; i++)
     {
         if (iswalnum(fSeps[i]))
         {

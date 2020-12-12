@@ -59,13 +59,13 @@ protected:
     friend      class hsBitIterator;
 public:
     hsBitVector(const hsBitVector& other);
-    hsBitVector(uint32_t which) : fBitVectors(nil), fNumBitVectors(0) { SetBit(which); }
+    hsBitVector(uint32_t which) : fBitVectors(), fNumBitVectors() { SetBit(which); }
     hsBitVector(int b, ...); // list of one or more integer bits to set. -1 (or any negative) terminates the list (e.g. hsBitVector(0,1,4,-1);
     hsBitVector(const hsTArray<int16_t>& list); // sets bit for each int in list
-    hsBitVector() : fBitVectors(nil), fNumBitVectors(0) {}
+    hsBitVector() : fBitVectors(), fNumBitVectors() {}
     virtual ~hsBitVector() { Reset(); }
 
-    hsBitVector& Reset() { delete [] fBitVectors; fBitVectors = nil; fNumBitVectors = 0; return *this; }
+    hsBitVector& Reset() { delete [] fBitVectors; fBitVectors = nullptr; fNumBitVectors = 0; return *this; }
     hsBitVector& Clear(); // everyone clear, but no dealloc
     hsBitVector& Set(int upToBit=-1); // WARNING - see comments at function
 
@@ -355,22 +355,22 @@ class hsBitIterator
 protected:
     const hsBitVector&  fBits;
 
-    int                 fCurrent;
+    int32_t             fCurrent;
 
-    int                 fCurrVec;
-    int                 fCurrBit;
+    int32_t             fCurrVec;
+    int32_t             fCurrBit;
 
-    int                 IAdvanceBit();
-    int                 IAdvanceVec();
+    bool                IAdvanceBit();
+    bool                IAdvanceVec();
 
 public:
     // Must call begin after instanciating.
     hsBitIterator(const hsBitVector& bits) : fBits(bits) {}
 
-    int                 Begin();
-    int                 Current() const { return fCurrent; }
-    int                 Advance();
-    int                 End() const { return fCurrVec < 0; }
+    int32_t             Begin();
+    int32_t             Current() const { return fCurrent; }
+    int32_t             Advance();
+    bool                End() const { return fCurrVec < 0; }
 };
 
 

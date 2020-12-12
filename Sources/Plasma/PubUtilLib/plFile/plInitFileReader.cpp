@@ -168,10 +168,8 @@ bool    plInitFileReader::Parse( uint32_t userData )
             if( end != nil )
                 *end = 0;
 
-            uint32_t      i;
-
             bool foundSection = false;
-            for( i = 0; i < fSections.GetCount(); i++ )
+            for(int i = 0; i < fSections.GetCount(); i++ )
             {
                 if( stricmp( fSections[ i ]->GetSectionName(), &fCurrLine[ 1 ] ) == 0 )
                 {

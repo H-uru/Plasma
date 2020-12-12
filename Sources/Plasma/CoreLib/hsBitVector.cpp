@@ -48,8 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 hsBitVector::hsBitVector(int b, ...)
-:   fBitVectors(nil),
-    fNumBitVectors(0)
+    : fBitVectors(), fNumBitVectors()
 {
     va_list vl;
 
@@ -63,8 +62,7 @@ hsBitVector::hsBitVector(int b, ...)
 }
 
 hsBitVector::hsBitVector(const hsTArray<int16_t>& src)
-:   fBitVectors(nil),
-    fNumBitVectors(0)
+    : fBitVectors(), fNumBitVectors()
 {
     FromList(src);
 }
@@ -74,7 +72,7 @@ void hsBitVector::IGrow(uint32_t newNumBitVectors)
     hsAssert(newNumBitVectors > fNumBitVectors, "Growing smaller");
     uint32_t *old = fBitVectors;
     fBitVectors = new uint32_t[newNumBitVectors];
-    int i;
+    uint32_t i;
     for( i = 0; i < fNumBitVectors; i++ )
         fBitVectors[i] = old[i];
     for( ; i < newNumBitVectors; i++ )
@@ -91,14 +89,14 @@ hsBitVector& hsBitVector::Compact()
     if( fBitVectors[fNumBitVectors-1] )
         return *this;
 
-    int hiVec = 0;
+    int32_t hiVec = 0;
     for( hiVec = fNumBitVectors-1; (hiVec >= 0)&& !fBitVectors[hiVec]; --hiVec );
     if( hiVec >= 0 )
     {
         uint32_t *old = fBitVectors;
         fBitVectors = new uint32_t[++hiVec];
-        int i;
-        for( i = 0; i < hiVec; i++ )
+
+        for (int32_t i = 0; i < hiVec; i++)
             fBitVectors[i] = old[i];
         fNumBitVectors = hiVec;
         delete [] old;
@@ -120,8 +118,8 @@ void hsBitVector::Read(hsStream* s)
     {
         delete [] fBitVectors;
         fBitVectors = new uint32_t[fNumBitVectors];
-        int i;
-        for( i = 0; i < fNumBitVectors; i++ )
+
+        for (uint32_t i = 0; i < fNumBitVectors; i++)
             s->LogReadLE(&fBitVectors[i],"BitVector");
     }
 }
@@ -130,8 +128,7 @@ void hsBitVector::Write(hsStream* s) const
 {
     s->WriteLE32(fNumBitVectors);
 
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
+    for (uint32_t i = 0; i < fNumBitVectors; i++)
         s->WriteLE32(fBitVectors[i]);
 }
 
@@ -159,55 +156,49 @@ hsBitVector& hsBitVector::FromList(const hsTArray<int16_t>& src)
 
 //////////////////////////////////////////////////////////////////////////
 
-int hsBitIterator::IAdvanceVec()
+bool hsBitIterator::IAdvanceVec()
 {
     hsAssert((fCurrVec >= 0) && (fCurrVec < fBits.fNumBitVectors), "Invalid state to advance from");
 
-    while( (++fCurrVec < fBits.fNumBitVectors) && !fBits.fBitVectors[fCurrVec] );
+    while ((uint32_t(++fCurrVec) < fBits.fNumBitVectors) && !fBits.fBitVectors[fCurrVec])
+        ;
 
-    return fCurrVec < fBits.fNumBitVectors;
+    return uint32_t(fCurrVec) < fBits.fNumBitVectors;
 }
 
-int hsBitIterator::IAdvanceBit()
+bool hsBitIterator::IAdvanceBit()
 {
-    do 
-    {
-        if( ++fCurrBit > 31 )
-        {
-            if( !IAdvanceVec() )
+    do {
+        if (++fCurrBit > 31) {
+            if (!IAdvanceVec())
                 return false;
             fCurrBit = 0;
         }
-    } while( !(fBits.fBitVectors[fCurrVec] & (1 << fCurrBit)) );
+    } while (!(fBits.fBitVectors[fCurrVec] & (1 << fCurrBit)));
 
     return true;
 }
 
-int hsBitIterator::Advance()
+int32_t hsBitIterator::Advance()
 {
-    if( End() )
+    if (End())
         return -1;
 
-    if( !IAdvanceBit() )
+    if (!IAdvanceBit())
         return fCurrVec = -1;
 
     return fCurrent = (fCurrVec << 5) + fCurrBit;
 }
 
-int hsBitIterator::Begin()
+int32_t hsBitIterator::Begin()
 {
     fCurrent = -1;
     fCurrVec = -1;
-    int i;
-    for( i = 0; i < fBits.fNumBitVectors; i++ )
-    {
-        if( fBits.fBitVectors[i] )
-        {
-            int j;
-            for( j = 0; j < 32; j++ )
-            {
-                if( fBits.fBitVectors[i] & (1 << j) )
-                {
+
+    for (uint32_t i = 0; i < fBits.fNumBitVectors; i++) {
+        if (fBits.fBitVectors[i]) {
+            for(int j = 0; j < 32; j++ ) {
+                if (fBits.fBitVectors[i] & (1 << j)) {
                     fCurrVec = i;
                     fCurrBit = j;
 
@@ -216,6 +207,7 @@ int hsBitIterator::Begin()
             }
         }
     }
+
     return fCurrent;
 }
 
