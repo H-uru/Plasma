@@ -49,24 +49,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //      plTimerShare to keep time synchronized across spaces.
 //
 plTimerShare::plTimerShare()
-:   fFirstTime(true),
-    fSysSeconds(0),
-    fRealSeconds(0),
-    fDelSysSeconds(0),
-    fFrameTimeInc(0.03f),
-    fSysTimeScale(1.f),
-    fTimeClampSecs(0.1f),
-    fSmoothingClampSecs(-1.0f),
-    fRunningFrameTime(false),
-    fClamping(false),
-    fResetSmooth(true),
-    fCurrSlot(0)
-{
-}
+    : fFirstTime(true), fResetSmooth(true), fCurrSlot(), fSysTimeScale(1.f),
+      fRealSeconds(), fSysSeconds(), fDelSysSeconds(), fFrameTimeInc(0.03f),
+      fRunningFrameTime(), fTimeClampSecs(0.1f), fSmoothingClampSecs(-1.0f),
+      fClamping()
+{ }
 
-plTimerShare::~plTimerShare()
-{
-}
+plTimerShare::~plTimerShare() { }
 
 uint64_t plTimerShare::GetTicks() const
 {
