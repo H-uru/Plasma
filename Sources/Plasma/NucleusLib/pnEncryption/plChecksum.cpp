@@ -193,8 +193,7 @@ void plMD5Checksum::Start()
     const EVP_MD* md = EVP_get_digestbyname("md5");
     hsAssert(md, "This OpenSSL has no support for MD5");
 
-    size_t out_size = EVP_MD_size(md);
-    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for MD5");
+    hsAssert(EVP_MD_size(md) == sizeof(fChecksum), "Incorrect output size for MD5");
 
     fContext = EVP_MD_CTX_create();
     EVP_DigestInit_ex(fContext, md, nullptr);
@@ -221,7 +220,7 @@ const char* plMD5Checksum::GetAsHexString() const
     const int   kHexStringSize = (2 * MD5_DIGEST_LENGTH) + 1;
     static char tempString[kHexStringSize];
 
-    int     i;
+    size_t  i;
     char    *ptr;
 
 
@@ -238,7 +237,7 @@ const char* plMD5Checksum::GetAsHexString() const
 void plMD5Checksum::SetFromHexString(const char* string)
 {
     const char  *ptr;
-    int         i;
+    size_t      i;
 
 
     hsAssert(strlen(string) == 2 * MD5_DIGEST_LENGTH, "Invalid string in MD5Checksum Set()");
@@ -336,8 +335,7 @@ void plSHAChecksum::Start()
 {
     const EVP_MD* md = EVP_get_digestbyname("sha");
     if (md) {
-        size_t out_size = EVP_MD_size(md);
-        hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA0");
+        hsAssert(EVP_MD_size(md) == sizeof(fChecksum), "Incorrect output size for SHA0");
 
         fOpenSSLContext = EVP_MD_CTX_create();
         EVP_DigestInit_ex(fOpenSSLContext, md, nullptr);
@@ -375,7 +373,7 @@ const char* plSHAChecksum::GetAsHexString() const
     const int kHexStringSize = (2 * SHA_DIGEST_LENGTH) + 1;
     static char tempString[kHexStringSize];
 
-    int i;
+    size_t i;
     char* ptr;
 
     hsAssert(fValid, "Trying to get string version of invalid checksum");
@@ -391,7 +389,7 @@ const char* plSHAChecksum::GetAsHexString() const
 void plSHAChecksum::SetFromHexString(const char* string)
 {
     const char* ptr;
-    int         i;
+    size_t      i;
 
     hsAssert(strlen(string) == (2 * SHA_DIGEST_LENGTH), "Invalid string in SHAChecksum Set()");
 
@@ -490,8 +488,7 @@ void plSHA1Checksum::Start()
     const EVP_MD* md = EVP_get_digestbyname("sha1");
     hsAssert(md, "This OpenSSL has no support for SHA1");
 
-    size_t out_size = EVP_MD_size(md);
-    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA1");
+    hsAssert(EVP_MD_size(md) == sizeof(fChecksum), "Incorrect output size for SHA1");
 
     fContext = EVP_MD_CTX_create();
     EVP_DigestInit_ex(fContext, md, nullptr);
@@ -518,7 +515,7 @@ const char* plSHA1Checksum::GetAsHexString() const
     const int kHexStringSize = (2 * SHA_DIGEST_LENGTH) + 1;
     static char tempString[kHexStringSize];
 
-    int i;
+    size_t i;
     char* ptr;
 
     hsAssert(fValid, "Trying to get string version of invalid checksum");
@@ -534,7 +531,7 @@ const char* plSHA1Checksum::GetAsHexString() const
 void plSHA1Checksum::SetFromHexString(const char* string)
 {
     const char* ptr;
-    int         i;
+    size_t      i;
 
     hsAssert(strlen(string) == (2 * SHA_DIGEST_LENGTH), "Invalid string in SHA1Checksum Set()");
 
