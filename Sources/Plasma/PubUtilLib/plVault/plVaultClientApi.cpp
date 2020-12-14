@@ -86,14 +86,14 @@ struct RelVaultNodeLink : THashKeyVal<unsigned> {
         : THashKeyVal<unsigned>(nodeId), node(new RelVaultNode, hsStealRef), ownerId(ownerId), seen(seen)
     { }
 
-    RelVaultNodeLink (bool seen, unsigned ownerId, unsigned nodeId, RelVaultNode * node)
-        : THashKeyVal<unsigned>(nodeId), node(node), ownerId(ownerId), seen(seen)
+    RelVaultNodeLink (bool seen, unsigned ownerId, unsigned nodeId, hsRef<RelVaultNode> node)
+        : THashKeyVal<unsigned>(nodeId), node(std::move(node)), ownerId(ownerId), seen(seen)
     { }
 };
 
 
 struct IRelVaultNode {
-    RelVaultNode * node;        // MUST be a weak ref!
+    hsWeakRef<RelVaultNode> node;
     
     HASHTABLEDECL(
         RelVaultNodeLink,
@@ -107,14 +107,14 @@ struct IRelVaultNode {
         link
     ) children;
 
-    IRelVaultNode (RelVaultNode * node);
+    IRelVaultNode(hsWeakRef<RelVaultNode> node);
     ~IRelVaultNode ();
 
     // Unlink our node from all our parent and children
     void UnlinkFromRelatives ();
     
     // Unlink the node from our parent and children lists
-    void Unlink (RelVaultNode * other);
+    void Unlink(hsWeakRef<RelVaultNode> other);
 };
 
 
@@ -1014,10 +1014,9 @@ void AddChildNodeFetchTrans::VaultNodeFetched (
 ***/
 
 //============================================================================
-IRelVaultNode::IRelVaultNode (RelVaultNode * node)
-:   node(node)
-{
-}
+IRelVaultNode::IRelVaultNode(hsWeakRef<RelVaultNode> node)
+    : node(std::move(node))
+{ }
 
 //============================================================================
 IRelVaultNode::~IRelVaultNode () {
@@ -1049,7 +1048,7 @@ void IRelVaultNode::UnlinkFromRelatives () {
 
 
 //============================================================================
-void IRelVaultNode::Unlink (RelVaultNode * other) {
+void IRelVaultNode::Unlink(hsWeakRef<RelVaultNode> other) {
     ASSERT(other != node);
     
     RelVaultNodeLink * link;

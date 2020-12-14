@@ -69,17 +69,17 @@ struct VaultCallback {
     virtual ~VaultCallback() { }
 
     virtual void AddedChildNode (
-        RelVaultNode *  parent,
-        RelVaultNode *  child
+        const hsRef<RelVaultNode>& parent,
+        const hsRef<RelVaultNode>& child
     ) = 0;
 
     virtual void RemovingChildNode (
-        RelVaultNode *  parent,
-        RelVaultNode *  child
+        const hsRef<RelVaultNode>& parent,
+        const hsRef<RelVaultNode>& child
     ) = 0;
 
     virtual void ChangedNode (
-        RelVaultNode * changedNode
+        const hsRef<RelVaultNode>& changedNode
     ) = 0;
 };
 

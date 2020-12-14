@@ -94,7 +94,7 @@ public:
         void VaultOperationComplete(uint32_t context, int resultCode);
         void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
         
-        void SetNode (RelVaultNode * rvn);
+        void SetNode(hsRef<RelVaultNode> rvn);
         hsRef<RelVaultNode> GetNode() const;
     };
 

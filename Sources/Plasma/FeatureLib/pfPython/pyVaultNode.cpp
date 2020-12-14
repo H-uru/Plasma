@@ -148,8 +148,8 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t
     delete this;  // commit hara-kiri
 }
 
-void pyVaultNode::pyVaultNodeOperationCallback::SetNode (RelVaultNode * rvn) {
-    fNode = rvn;
+void pyVaultNode::pyVaultNodeOperationCallback::SetNode(hsRef<RelVaultNode> rvn) {
+    fNode = std::move(rvn);
 }
 
 hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
@@ -592,9 +592,9 @@ PyObject * pyVaultNode::GetNode2( uint32_t nodeID ) const
     PyObject * result = nil;
     if ( fNode )
     {
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
-        templateNode->SetNodeId(nodeID);
-        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1))
+        RelVaultNode templateNode;
+        templateNode.SetNodeId(nodeID);
+        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(&templateNode, 1))
             result = pyVaultNodeRef::New(fNode, rvn);
     }
     

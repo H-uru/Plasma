@@ -61,15 +61,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 // should only be created from C++ side
-pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
-: fParent(parent)
-, fChild(child)
-{
-}
+pyVaultNodeRef::pyVaultNodeRef(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child)
+    : fParent(std::move(parent)), fChild(std::move(child))
+{ }
 
-pyVaultNodeRef::pyVaultNodeRef(int)
-{
-}
+pyVaultNodeRef::pyVaultNodeRef(std::nullptr_t)
+{ }
 
 hsRef<RelVaultNode> pyVaultNodeRef::GetParentNode() const
 {
