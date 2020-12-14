@@ -10,4 +10,9 @@ if(USE_VLD)
     target_link_libraries(plFileSecure ${VLD_LIBRARY})
 endif()
 
+install(
+    TARGETS plFileSecure
+    DESTINATION tools_cli
+)
+
 source_group("Source Files" FILES ${plFileSecure_SOURCES})

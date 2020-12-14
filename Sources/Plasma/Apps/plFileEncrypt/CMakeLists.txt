@@ -10,4 +10,9 @@ if(USE_VLD)
     target_link_libraries(plFileEncrypt ${VLD_LIBRARY})
 endif()
 
+install(
+    TARGETS plFileEncrypt
+    DESTINATION tools_cli
+)
+
 source_group("Source Files" FILES ${plFileEncrypt_SOURCES})

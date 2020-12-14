@@ -64,6 +64,11 @@ if(WIN32)
     target_link_libraries(plUruLauncher wldap32)
 endif()
 
+install(
+    TARGETS plUruLauncher
+    DESTINATION client
+)
+
 source_group("Source Files" FILES ${plUruLauncher_SOURCES})
 source_group("Header Files" FILES ${plUruLauncher_HEADERS})
 source_group("Resource Files" FILES ${plUruLauncher_RESOURCES})

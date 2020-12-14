@@ -34,6 +34,11 @@ if(USE_VLD)
     target_link_libraries(SoundDecompress ${VLD_LIBRARY})
 endif()
 
+install(
+    TARGETS SoundDecompress
+    DESTINATION tools_cli
+)
+
 source_group("Source Files" FILES ${SoundDecompress_SOURCES})
 source_group("Header Files" FILES ${SoundDecompress_HEADERS})
 

@@ -11,4 +11,9 @@ if(USE_VLD)
     target_link_libraries(plPageInfo ${VLD_LIBRARY})
 endif()
 
+install(
+    TARGETS plPageInfo
+    DESTINATION tools_cli
+)
+
 source_group("Source Files" FILES ${plPageInfo_SOURCES})

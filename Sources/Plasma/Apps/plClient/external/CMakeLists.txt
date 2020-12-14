@@ -46,6 +46,10 @@ add_custom_target(externalResources
     SOURCES ${external_SOURCES} ${external_SCRIPTS} 
     DEPENDS resource.dat
 )
+install(
+    FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource.dat"
+    DESTINATION client
+)
 
 source_group("Source Files" FILES ${external_SOURCES})
 source_group("Script Files" FILES ${external_SCRIPTS})
