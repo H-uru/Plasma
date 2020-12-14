@@ -49,21 +49,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /* Get the pfPasswordStore instance */
 pfPasswordStore* pfPasswordStore::Instance()
 {
-    static pfPasswordStore* store = nullptr;
-
-    if (store == nullptr) {
 #if defined(HS_BUILD_FOR_WIN32)
-        store = new pfWin32PasswordStore();
+    static pfWin32PasswordStore store;
 #elif defined(HS_BUILD_FOR_APPLE)
-        store = new pfApplePasswordStore();
+    static pfApplePasswordStore store;
 #elif defined(HAVE_LIBSECRET)
-        store = new pfUnixPasswordStore();
+    static pfUnixPasswordStore store;
 #else
-        store = new pfFilePasswordStore();
+    static pfFilePasswordStore store;
 #endif
-    }
 
-    return store;
+    return &store;
 }
 
 

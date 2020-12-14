@@ -157,23 +157,22 @@ hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
 }
 
 pyVaultNode::pyVaultNode()
+    : fNode(new RelVaultNode, hsStealRef)
 {
 }
 
-// should only be created from C++ side
-pyVaultNode::pyVaultNode( RelVaultNode* nfsNode )
-:   fNode(nfsNode)
+pyVaultNode::pyVaultNode(std::nullptr_t)
 {
 }
 
-pyVaultNode::~pyVaultNode() {}
-
+pyVaultNode::~pyVaultNode()
+{
+}
 
 hsRef<RelVaultNode> pyVaultNode::GetNode() const
 {
     return fNode;
 }
-
 
 // override the equals to operator
 bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
@@ -243,21 +242,16 @@ uint32_t pyVaultNode::GetCreatorNodeID()
 
 PyObject* pyVaultNode::GetCreatorNode()
 {
-    PyObject * result = nil;
-    if (fNode)
-    {
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
-        templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-        VaultPlayerInfoNode plrInfo(templateNode);
+    if (fNode) {
+        RelVaultNode templateNode;
+        templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
+        VaultPlayerInfoNode plrInfo(&templateNode);
         plrInfo.SetPlayerId(fNode->GetCreatorId());
         
-        if (hsRef<RelVaultNode> rvn = VaultGetNode(templateNode))
-            result = pyVaultPlayerInfoNode::New(rvn);
+        if (hsRef<RelVaultNode> rvn = VaultGetNode(&templateNode))
+            return pyVaultPlayerInfoNode::New(rvn);
     }
-    
-    if (result)
-        return result;
-        
+
     // just return a None object
     PYTHON_RETURN_NONE;
 }

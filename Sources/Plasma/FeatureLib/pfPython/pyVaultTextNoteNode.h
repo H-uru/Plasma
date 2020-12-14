@@ -58,17 +58,13 @@ class pyVaultAgeLinkNode;
 class pyVaultTextNoteNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultTextNoteNode(RelVaultNode* nfsNode);
-
     //create from the Python side
     pyVaultTextNoteNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultTextNoteNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode* nfsNode);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultTextNoteNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultTextNoteNode); // converts a PyObject to a pyVaultTextNoteNode (throws error if not correct type)
 

@@ -67,17 +67,13 @@ private:
     mutable plAgeLinkStruct     fAgeLinkStruct; // for use with AsAgeLinkStruct()
 
 protected:
-    // should only be created from C++ side
-    pyVaultAgeLinkNode(RelVaultNode* nfsNode);
-
     //create from the Python side
-    pyVaultAgeLinkNode(int n=0);
+    pyVaultAgeLinkNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultAgeLinkNode);
-    static PyObject *New(RelVaultNode* nfsNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeLinkNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeLinkNode); // converts a PyObject to a pyVaultAgeLinkNode (throws error if not correct type)
 

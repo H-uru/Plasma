@@ -316,14 +316,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultPlayerNode, pyVaultNode, "Plasma vault player node");
 
 // required functions for PyObject interoperability
-PYTHON_CLASS_NEW_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
-
-PyObject *pyVaultPlayerNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultPlayerNode *newObj = (ptVaultPlayerNode*)ptVaultPlayerNode_type.tp_new(&ptVaultPlayerNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)

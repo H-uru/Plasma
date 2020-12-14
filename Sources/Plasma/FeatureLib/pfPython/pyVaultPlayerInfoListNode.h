@@ -59,17 +59,13 @@ class pyVaultPlayerInfoNode;
 class pyVaultPlayerInfoListNode : public pyVaultFolderNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultPlayerInfoListNode(RelVaultNode* nfsNode);
-
     //create from the Python side
-    pyVaultPlayerInfoListNode(int n=0);
+    pyVaultPlayerInfoListNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoListNode);
-    static PyObject *New(RelVaultNode* nfsNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultPlayerInfoListNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultPlayerInfoListNode); // converts a PyObject to a pyVaultPlayerInfoListNode (throws error if not correct type)
 

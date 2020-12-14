@@ -750,12 +750,11 @@ struct VaultFetchNodeTrans : NetAuthTrans {
 //============================================================================
 struct VaultFindNodeTrans : NetAuthTrans {
 
+    TArray<uint8_t>             m_buffer;
     TArray<unsigned>            m_nodeIds;
     FNetCliAuthVaultNodeFind    m_callback;
     void *                      m_param;
-    
-    hsRef<NetVaultNode>         m_node;
-    
+
     VaultFindNodeTrans (
         NetVaultNode *              templateNode,
         FNetCliAuthVaultNodeFind    callback,
@@ -776,12 +775,11 @@ struct VaultFindNodeTrans : NetAuthTrans {
 //============================================================================
 struct VaultCreateNodeTrans : NetAuthTrans {
 
-    hsRef<NetVaultNode>             m_templateNode;
+    TArray<uint8_t>                 m_buffer;
     FNetCliAuthVaultNodeCreated     m_callback;
     void *                          m_param;
-    
     unsigned                        m_nodeId;
-    
+
     VaultCreateNodeTrans (
         NetVaultNode *                  templateNode,
         FNetCliAuthVaultNodeCreated     callback,
@@ -3978,7 +3976,7 @@ bool VaultFetchNodeTrans::Recv (
     const Auth2Cli_VaultNodeFetched & reply = *(const Auth2Cli_VaultNodeFetched *) msg;
     
     if (IS_NET_SUCCESS(reply.result)) {
-        m_node = new NetVaultNode;
+        m_node.Steal(new NetVaultNode);
         m_node->Read(reply.nodeBuffer, reply.nodeBytes);
     }
 
@@ -4003,27 +4001,22 @@ VaultFindNodeTrans::VaultFindNodeTrans (
 ) : NetAuthTrans(kVaultFindNodeTrans)
 ,   m_callback(callback)
 ,   m_param(param)
-,   m_node(templateNode)
 {
+    templateNode->Write(&m_buffer, 0);
 }
 
 //============================================================================
 bool VaultFindNodeTrans::Send () {
     if (!AcquireConn())
         return false;
-        
-    TArray<uint8_t> buffer;
-    m_node->Write(&buffer);
 
     const uintptr_t msg[] = {
-        kCli2Auth_VaultNodeFind,
-                        m_transId,
-                        buffer.Count(),
-        (uintptr_t)  buffer.Ptr(),
+            kCli2Auth_VaultNodeFind,
+            m_transId,
+            m_buffer.Count(),
+            (uintptr_t)m_buffer.Ptr(),
     };
-            
     m_conn->Send(msg, std::size(msg));
-    
     return true;
 }
 
@@ -4068,30 +4061,25 @@ VaultCreateNodeTrans::VaultCreateNodeTrans (
     FNetCliAuthVaultNodeCreated     callback,
     void *                          param
 ) : NetAuthTrans(kVaultCreateNodeTrans)
-,   m_templateNode(templateNode)
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_nodeId(0)
 {
+    templateNode->Write(&m_buffer, 0);
 }
 
 //============================================================================
 bool VaultCreateNodeTrans::Send () {
     if (!AcquireConn())
         return false;
-        
-    TArray<uint8_t> buffer;
-    m_templateNode->Write(&buffer, 0);
 
     const uintptr_t msg[] = {
-        kCli2Auth_VaultNodeCreate,
-                        m_transId,
-                        buffer.Count(),
-        (uintptr_t)  buffer.Ptr()
+            kCli2Auth_VaultNodeCreate,
+            m_transId,
+            m_buffer.Count(),
+            (uintptr_t)m_buffer.Ptr()
     };
-            
     m_conn->Send(msg, std::size(msg));
-    
     return true;
 }
 

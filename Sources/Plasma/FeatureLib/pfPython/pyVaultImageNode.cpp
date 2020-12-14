@@ -85,19 +85,9 @@ static plKey CreateAndRefImageKey (unsigned nodeId, plMipmap * mipmap) {
     return key;
 }
 
-// should only be created from C++ side
-pyVaultImageNode::pyVaultImageNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-, fMipmapKey(nil)
-, fMipmap(nil)
-{
-}
-
 //create from the Python side
-pyVaultImageNode::pyVaultImageNode(int n)
-: pyVaultNode(new RelVaultNode)
-, fMipmapKey(nil)
-, fMipmap(nil)
+pyVaultImageNode::pyVaultImageNode()
+    : fMipmap(), pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_Image);
 }

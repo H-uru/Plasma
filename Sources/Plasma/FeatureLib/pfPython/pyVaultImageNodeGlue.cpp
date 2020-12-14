@@ -206,19 +206,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultImageNode, pyVaultNode, "Params: n=0\nPlasma vault image node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultImageNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultImageNode *newObj = (ptVaultImageNode*)ptVaultImageNode_type.tp_new(&ptVaultImageNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultImageNode::New(int n /* =0 */)
-{
-    ptVaultImageNode *newObj = (ptVaultImageNode*)ptVaultImageNode_type.tp_new(&ptVaultImageNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultImageNode, pyVaultImageNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultImageNode, pyVaultImageNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultImageNode, pyVaultImageNode)

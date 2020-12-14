@@ -62,15 +62,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUUID/pnUUID.h"
 #include "plVault/plVault.h"
 
-// should only be created from C++ side
-pyVaultAgeInfoNode::pyVaultAgeInfoNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
-
-//create from the Python side
-pyVaultAgeInfoNode::pyVaultAgeInfoNode(int n)
-: pyVaultNode(new RelVaultNode)
+pyVaultAgeInfoNode::pyVaultAgeInfoNode()
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_AgeInfo);
 }

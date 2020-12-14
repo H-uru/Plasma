@@ -61,17 +61,13 @@ class plUUID;
 class pyVaultMarkerGameNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultMarkerGameNode(RelVaultNode* vaultNode);
-
     //create from the Python side
-    pyVaultMarkerGameNode(int n=0);
+    pyVaultMarkerGameNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultMarkerGameNode);
-    static PyObject *New(RelVaultNode* vaultNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultMarkerGameNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultMarkerGameNode); // converts a PyObject to a pyVaultMarkerGameNode (throws error if not correct type)
 

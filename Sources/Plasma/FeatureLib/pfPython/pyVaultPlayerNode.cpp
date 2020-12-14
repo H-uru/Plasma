@@ -64,23 +64,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //============================================================================
 static PyObject * GetPlayerVaultFolder (unsigned folderType) {
-    PyObject * result = nil;
     if (hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode()) {
         if (hsRef<RelVaultNode> rvnFldr = rvnPlr->GetChildFolderNode(folderType, 1))
-            result = pyVaultFolderNode::New(rvnFldr);
+            return pyVaultFolderNode::New(rvnFldr);
     }
-    
-    return result;
-}
-
-pyVaultPlayerNode::pyVaultPlayerNode(RelVaultNode *nfsNode)
-: pyVaultNode(nfsNode)
-{
+    return nullptr;
 }
 
 //create from the Python side
 pyVaultPlayerNode::pyVaultPlayerNode()
-: pyVaultNode(nil)  // may not create player nodes from python
+    : pyVaultNode(nullptr)
 {
 }
 

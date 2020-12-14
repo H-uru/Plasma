@@ -80,6 +80,9 @@ struct pythonClassName \
 // This makes sure that our python new function can access our constructors
 #define PYTHON_CLASS_NEW_FRIEND(pythonClassName) friend PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *args, PyObject *keywords)
 
+#define PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION \
+    static PyObject* New(hsRef<RelVaultNode> vaultNode=nullptr);
+
 // This defines the basic new function for a class
 #define PYTHON_CLASS_NEW_DEFINITION static PyObject *New()
 
@@ -87,6 +90,15 @@ struct pythonClassName \
 PyObject *glueClassName::New() \
 { \
     pythonClassName *newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, NULL, NULL); \
+    return (PyObject*)newObj; \
+}
+
+#define PYTHON_CLASS_VAULT_NODE_NEW_IMPL(pythonClassName, glueClassName) \
+PyObject* glueClassName::New(hsRef<RelVaultNode> nfsNode) \
+{ \
+    pythonClassName* newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
+    if (nfsNode) \
+        newObj->fThis->fNode = std::move(nfsNode); \
     return (PyObject*)newObj; \
 }
 

@@ -193,22 +193,10 @@ PYTHON_START_METHODS_TABLE(ptVaultAgeLinkNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeLinkNode, pyVaultNode, "Params: n=0\nPlasma vault age link node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeLinkNode, pyVaultNode, "Plasma vault age link node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultAgeLinkNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultAgeLinkNode *newObj = (ptVaultAgeLinkNode*)ptVaultAgeLinkNode_type.tp_new(&ptVaultAgeLinkNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultAgeLinkNode::New(int n /* =0 */)
-{
-    ptVaultAgeLinkNode *newObj = (ptVaultAgeLinkNode*)ptVaultAgeLinkNode_type.tp_new(&ptVaultAgeLinkNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultAgeLinkNode, pyVaultAgeLinkNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultAgeLinkNode, pyVaultAgeLinkNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultAgeLinkNode, pyVaultAgeLinkNode)
