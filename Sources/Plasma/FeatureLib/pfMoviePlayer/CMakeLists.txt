@@ -1,8 +1,3 @@
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib/inc)
-include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
-
 if(PLASMA_USE_WEBM)
     include_directories(${VPX_INCLUDE_DIR})
     include_directories(${Opus_INCLUDE_DIR})

@@ -1,8 +1,3 @@
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/FeatureLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
-include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
-
 set(pfConsoleCore_SOURCES
     pfConsoleCmd.cpp
     pfConsoleCommandsCore.cpp

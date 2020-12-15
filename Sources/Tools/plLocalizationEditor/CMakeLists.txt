@@ -1,9 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
-include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
-include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
-
 add_definitions("-DUNICODE")
 
 set(plLocalizationEditor_HEADERS

@@ -1,8 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
-include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
-include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
-
 set(plAgeDescription_SOURCES
     plAgeDescription.cpp
     plAgeManifest.cpp

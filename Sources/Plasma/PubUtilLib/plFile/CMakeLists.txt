@@ -1,7 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
-include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
-
 include_directories(${ZLIB_INCLUDE_DIR})
 
 set(plFile_SOURCES

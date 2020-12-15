@@ -1,6 +1,3 @@
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
-
 set(pnAsyncCoreExe_SOURCES
     pnAceCore.cpp
     pnAceIo.cpp

@@ -1,7 +1,3 @@
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib/inc)
-include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
-
 include_directories(${EXPAT_INCLUDE_DIR})
 
 if(WIN32)

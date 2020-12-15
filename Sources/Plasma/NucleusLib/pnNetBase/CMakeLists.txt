@@ -1,6 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
-
 set(pnNetBase_HEADERS
     pnNbConst.h
     pnNbError.h

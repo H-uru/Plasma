@@ -1,7 +1,3 @@
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
-include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
-
 set(pfCrashHandler_HEADERS
     plCrashCli.h
     plCrashBase.h

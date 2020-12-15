@@ -1,5 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
-
 set(plContainer_SOURCES
     hsStringTable.cpp
     plConfigInfo.cpp

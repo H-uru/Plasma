@@ -1,6 +1,3 @@
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
-
 include_directories(${PYTHON_INCLUDE_DIR})
 
 set(plPythonPack_SOURCES

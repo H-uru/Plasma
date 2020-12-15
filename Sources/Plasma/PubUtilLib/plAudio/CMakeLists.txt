@@ -1,8 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
-include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
-
 # Skip CMake's built in FindOpenAL module and use OpenAL-Soft's config instead, if possible
 find_package(OpenAL CONFIG QUIET)
 if(NOT TARGET OpenAL::OpenAL)

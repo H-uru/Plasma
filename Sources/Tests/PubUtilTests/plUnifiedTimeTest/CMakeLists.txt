@@ -1,9 +1,3 @@
-include_directories(${GTEST_INCLUDE_DIR})
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
-include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
-include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
-
 set(plUnifiedTimeTest_SOURCES
     test_plUnifiedTime.cpp
     )
