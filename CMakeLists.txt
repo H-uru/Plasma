@@ -171,7 +171,8 @@ add_subdirectory(Sources/Tools)
 
 if(PLASMA_BUILD_TESTS)
     enable_testing()
-    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION>)
+    list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} ${CMAKE_CTEST_ARGUMENTS} -C $<CONFIGURATION>)
     add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
 endif(PLASMA_BUILD_TESTS)
 
