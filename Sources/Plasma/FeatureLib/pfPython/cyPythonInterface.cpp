@@ -904,7 +904,7 @@ static bool ICheckedInit(_ConfigT& config, plStatusLog* dbgLog, const char* errm
             dbgLog->AddLineF(plStatusLog::kRed, "{}: {}", status.func, status.err_msg);
         else
             dbgLog->AddLine(plStatusLog::kRed, status.err_msg);
-        if (_ClearT != nullptr)
+        if constexpr (_ClearT != nullptr)
             _ClearT(&config);
         return false;
     }
