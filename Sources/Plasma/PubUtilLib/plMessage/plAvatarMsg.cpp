@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
 
 #include "hsResMgr.h"
 #pragma hdrstop
@@ -538,6 +537,3 @@ void plAvatarStealthModeMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
-
-
-#endif // ndef NO_AV_MSGS

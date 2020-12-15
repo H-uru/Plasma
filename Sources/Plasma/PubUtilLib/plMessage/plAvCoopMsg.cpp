@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
 
 #include "hsStream.h"
 #include "hsResMgr.h"
@@ -122,5 +121,3 @@ void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteLE16(fCommand);
 }
-
-#endif // ndef NO_AV_MSGS

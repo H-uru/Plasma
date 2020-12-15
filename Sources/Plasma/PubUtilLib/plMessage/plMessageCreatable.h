@@ -69,25 +69,23 @@ REGISTER_CREATABLE(plAnimCmdMsg);
 #include "plAvatarFootMsg.h"
 REGISTER_CREATABLE(plAvatarFootMsg);
 
-#ifndef NO_AV_MSGS
-    #include "plAvatarMsg.h"
-    REGISTER_CREATABLE(plArmatureUpdateMsg);
-    REGISTER_CREATABLE(plAvatarBehaviorNotifyMsg);
-    REGISTER_CREATABLE(plAvatarOpacityCallbackMsg);
-    REGISTER_CREATABLE(plAvatarMsg);
-    REGISTER_CREATABLE(plAvatarPhysicsEnableCallbackMsg);
-    REGISTER_CREATABLE(plAvatarSetTypeMsg);
-    REGISTER_CREATABLE(plAvatarSpawnNotifyMsg);
-    REGISTER_CREATABLE(plAvatarStealthModeMsg);
-    REGISTER_CREATABLE(plAvBrainGenericMsg);
-    REGISTER_CREATABLE(plAvOneShotMsg);
-    REGISTER_CREATABLE(plAvSeekMsg);
-    REGISTER_CREATABLE(plAvTaskMsg);
-    REGISTER_CREATABLE(plAvTaskSeekDoneMsg);
+#include "plAvatarMsg.h"
+REGISTER_CREATABLE(plArmatureUpdateMsg);
+REGISTER_CREATABLE(plAvatarBehaviorNotifyMsg);
+REGISTER_CREATABLE(plAvatarOpacityCallbackMsg);
+REGISTER_CREATABLE(plAvatarMsg);
+REGISTER_CREATABLE(plAvatarPhysicsEnableCallbackMsg);
+REGISTER_CREATABLE(plAvatarSetTypeMsg);
+REGISTER_CREATABLE(plAvatarSpawnNotifyMsg);
+REGISTER_CREATABLE(plAvatarStealthModeMsg);
+REGISTER_CREATABLE(plAvBrainGenericMsg);
+REGISTER_CREATABLE(plAvOneShotMsg);
+REGISTER_CREATABLE(plAvSeekMsg);
+REGISTER_CREATABLE(plAvTaskMsg);
+REGISTER_CREATABLE(plAvTaskSeekDoneMsg);
 
-    REGISTER_CREATABLE(plAvPopBrainMsg);
-    REGISTER_CREATABLE(plAvPushBrainMsg);
-#endif // ndef NO_AV_MSGS
+REGISTER_CREATABLE(plAvPopBrainMsg);
+REGISTER_CREATABLE(plAvPushBrainMsg);
 
 #include "plBulletMsg.h"
 REGISTER_CREATABLE(plBulletMsg);
@@ -305,25 +303,21 @@ REGISTER_CREATABLE(plTriggerMsg);
 #include "plVaultNotifyMsg.h"
 REGISTER_CREATABLE(plVaultNotifyMsg);
 
-#ifndef NO_AV_MSGS
-    #include "plAIMsg.h"
-    REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
-    REGISTER_CREATABLE(plAIBrainCreatedMsg);
-    REGISTER_CREATABLE(plAIMsg);
-#endif // NO_AV_MSGS
+#include "plAIMsg.h"
+REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
+REGISTER_CREATABLE(plAIBrainCreatedMsg);
+REGISTER_CREATABLE(plAIMsg);
 
-#ifndef NO_AV_MSGS
-    #include "plAvCoopMsg.h"
-    REGISTER_CREATABLE(plAvCoopMsg);
+#include "plAvCoopMsg.h"
+REGISTER_CREATABLE(plAvCoopMsg);
 
-    #include "plLoadAvatarMsg.h"
-    REGISTER_CREATABLE(plLoadAvatarMsg);
+#include "plLoadAvatarMsg.h"
+REGISTER_CREATABLE(plLoadAvatarMsg);
 
-    #include "plLoadCloneMsg.h"
-    REGISTER_CREATABLE(plLoadCloneMsg);
+#include "plLoadCloneMsg.h"
+REGISTER_CREATABLE(plLoadCloneMsg);
 
-    #include "plLoadClothingMsg.h"
-    REGISTER_CREATABLE(plLoadClothingMsg);
-#endif // ndef NO_AV_MSGS
+#include "plLoadClothingMsg.h"
+REGISTER_CREATABLE(plLoadClothingMsg);
 
 #endif // plMessageCreatable_inc

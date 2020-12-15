@@ -204,10 +204,6 @@ set(PLASMA_TARGETS "Client"
 set_property(CACHE PLASMA_TARGETS PROPERTY STRINGS
              "Client" "Server" "Patcher" "Ethereal" "NoAvMsgs")
 
-if(PLASMA_TARGETS STREQUAL "NoAvMsgs")
-    add_definitions(-DNO_AV_MSGS)
-endif(PLASMA_TARGETS STREQUAL "NoAvMsgs")
-
 if(PLASMA_TARGETS STREQUAL "Ethereal")
     add_definitions(-DSTREAM_LOGGER)
 endif(PLASMA_TARGETS STREQUAL "Ethereal")
