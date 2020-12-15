@@ -6,6 +6,8 @@ set_package_properties(Qt5Core PROPERTIES
     PURPOSE "Required for building GUI tools for Plasma"
 )
 
+include(${CMAKE_MODULE_PATH}/DeployQt5.cmake)
+
 include_directories("${PLASMA_TOOLS_ROOT}")
 include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
 include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")

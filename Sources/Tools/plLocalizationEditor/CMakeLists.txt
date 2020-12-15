@@ -55,8 +55,8 @@ if(USE_VLD)
     target_link_libraries(plLocalizationEditor ${VLD_LIBRARY})
 endif()
 
-install(
-    TARGETS plLocalizationEditor
+plasma_deploy_qt(
+    TARGET plLocalizationEditor
     DESTINATION tools_gui
 )
 

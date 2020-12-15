@@ -60,8 +60,8 @@ if(USE_VLD)
     target_link_libraries(plFontConverter ${VLD_LIBRARY})
 endif()
 
-install(
-    TARGETS plFontConverter
+plasma_deploy_qt(
+    TARGET plFontConverter
     DESTINATION tools_gui
 )
 

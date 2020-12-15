@@ -51,8 +51,8 @@ if(USE_VLD)
     target_link_libraries(plResBrowser ${VLD_LIBRARY})
 endif()
 
-install(
-    TARGETS plResBrowser
+plasma_deploy_qt(
+    TARGET plResBrowser
     DESTINATION tools_gui
 )
 
