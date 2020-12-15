@@ -56,9 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVaultConstants.h"
 #include "plVaultNodeAccess.h"
 
-#ifdef CLIENT
 #include "plVaultClientApi.h"
-#endif
 
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULT_H

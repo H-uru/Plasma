@@ -271,7 +271,6 @@ void hsStatusMessageF(const char * fmt, ...)
 
 class hsMinimizeClientGuard
 {
-#ifdef CLIENT
     hsWindowHndl fWnd;
 
 public:
@@ -291,7 +290,6 @@ public:
         ShowWindow(fWnd, SW_RESTORE);
 #endif // HS_BUILD_FOR_WIN32
     }
-#endif // CLIENT
 };
 
 bool hsMessageBox_SuppressPrompts = false;

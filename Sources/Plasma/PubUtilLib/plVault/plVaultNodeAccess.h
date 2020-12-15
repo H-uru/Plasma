@@ -62,9 +62,7 @@ class plAgeInfoStruct;
 class plAgeLinkStruct;
 struct plSpawnPointInfo;
 
-#ifdef CLIENT
 typedef std::vector<plSpawnPointInfo>   plSpawnPointVec;
-#endif
 
 //============================================================================
 // NetVaultNodeAccess
@@ -170,11 +168,9 @@ struct VaultSDLNode : NetVaultNodeAccess {
 
     VaultSDLNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     bool GetStateDataRecord (class plStateDataRecord * out, unsigned readOptions = 0);
     void SetStateDataRecord (const class plStateDataRecord * rec, unsigned writeOptions = 0);
     void InitStateDataRecord (const ST::string& sdlRecName, unsigned writeOptions = 0);
-#endif // def CLIENT
 };
 
 //============================================================================
@@ -187,7 +183,6 @@ struct VaultAgeLinkNode : NetVaultNodeAccess {
 
     VaultAgeLinkNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     bool CopyTo (plAgeLinkStruct * link);
     void AddSpawnPoint (const plSpawnPointInfo & point); // will only add if not there already.
     void RemoveSpawnPoint (const ST::string & spawnPtName);
@@ -195,7 +190,6 @@ struct VaultAgeLinkNode : NetVaultNodeAccess {
     bool HasSpawnPoint (const plSpawnPointInfo & point) const;  // compares spawn name only, not title.
     void GetSpawnPoints (plSpawnPointVec * out) const;
     void SetSpawnPoints (const plSpawnPointVec & in);
-#endif
 };
 
 //============================================================================
@@ -210,22 +204,18 @@ struct VaultImageNode : NetVaultNodeAccess {
 
     VaultImageNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     void StuffImage (class plMipmap * src, int dstType=kJPEG);
     bool ExtractImage (class plMipmap ** dst);
-#endif
 };
 
 //============================================================================
 // VaultCliImageNode
 //============================================================================
-#ifdef CLIENT
 struct VaultCliImageNode : VaultImageNode {
     class plMipmap * fMipmap;
 
     VaultCliImageNode (NetVaultNode * node) : VaultImageNode(node) { }
 };
-#endif // def CLIENT
 
 //============================================================================
 // VaultTextNoteNode
@@ -238,11 +228,9 @@ struct VaultTextNoteNode : NetVaultNodeAccess {
 
     VaultTextNoteNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     // for kNoteType_Visit/UnVisit
     void SetVisitInfo (const plAgeInfoStruct & info);
     bool GetVisitInfo (plAgeInfoStruct * info);
-#endif
 };
 
 //============================================================================
@@ -277,11 +265,9 @@ struct VaultAgeInfoNode : NetVaultNodeAccess {
 
     VaultAgeInfoNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
 
-#ifdef CLIENT
     const class plUnifiedTime * GetAgeTime () const;
     void CopyFrom (const plAgeInfoStruct * info);
     void CopyTo (plAgeInfoStruct * info) const;
-#endif // def CLIENT
 };
 
 //============================================================================

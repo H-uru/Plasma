@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Pch.h"
 #pragma hdrstop
 
-#ifdef CLIENT
 
 /*****************************************************************************
 *
@@ -4671,5 +4670,3 @@ hsRef<RelVaultNode> VaultGetGlobalInbox () {
     }
     return result;
 }
-
-#endif // def CLIENT
