@@ -199,16 +199,6 @@ if(PLASMA_EXTERNAL_RELEASE)
     add_definitions(-DPLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
 
-set(PLASMA_TARGETS "Client"
-    CACHE STRING "Which set of plasma targets to build and use")
-set_property(CACHE PLASMA_TARGETS PROPERTY STRINGS
-             "Client" "Server" "Patcher" "Ethereal" "NoAvMsgs")
-
-if(PLASMA_TARGETS STREQUAL "Ethereal")
-    add_definitions(-DSTREAM_LOGGER)
-endif(PLASMA_TARGETS STREQUAL "Ethereal")
-
-
 if(WIN32)
     set(PLASMA_PIPELINE "DirectX"
                         CACHE STRING "Which graphics backend to use")
