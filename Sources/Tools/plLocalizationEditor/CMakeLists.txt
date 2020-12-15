@@ -1,8 +1,8 @@
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/FeatureLib")
+include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 add_definitions("-DUNICODE")
 

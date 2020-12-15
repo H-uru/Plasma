@@ -1,11 +1,11 @@
-include_directories("../../Plasma/Apps")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories("../../Plasma/PubUtilLib")
+include_directories("${PLASMA_SOURCE_ROOT}/Apps")
+include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 set(plResBrowser_HEADERS
     plResBrowser.h

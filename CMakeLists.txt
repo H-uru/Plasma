@@ -280,6 +280,9 @@ endif(MSVC)
 #TODO: Make the OpenSSL includes less promiscuous so this isn't needed
 include_directories(${OPENSSL_INCLUDE_DIR})
 
+set(PLASMA_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Plasma")
+set(PLASMA_TOOLS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Tools")
+
 add_subdirectory(Scripts)
 add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)

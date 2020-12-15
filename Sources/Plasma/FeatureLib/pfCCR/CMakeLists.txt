@@ -1,6 +1,6 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
+include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
+include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
+include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib/inc)
 
 set(pfCCR_SOURCES
     plCCRMgr.cpp

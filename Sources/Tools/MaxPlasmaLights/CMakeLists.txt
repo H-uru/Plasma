@@ -1,9 +1,9 @@
-include_directories("../")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/PubUtilLib/inc")
+include_directories("${PLASMA_TOOLS_ROOT}")
+include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib/inc")
 include_directories(${3dsm_INCLUDE_DIR})
 
 set(MaxPlasmaLights_HEADERS

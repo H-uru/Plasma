@@ -1,4 +1,4 @@
-include_directories("../../Plasma/CoreLib")
+include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
 
 set(plShaderAssembler_SOURCES
     main.cpp

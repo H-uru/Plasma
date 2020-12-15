@@ -1,8 +1,8 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
+include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
+include_directories(${PLASMA_SOURCE_ROOT}/FeatureLib)
+include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib)
+include_directories(${PLASMA_SOURCE_ROOT}/NucleusLib/inc)
+include_directories(${PLASMA_SOURCE_ROOT}/PubUtilLib)
 
 set(pfGameGUIMgr_SOURCES
     pfGameGUIMgr.cpp
