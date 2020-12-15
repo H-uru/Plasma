@@ -54,9 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 
 #pragma comment(lib, "winmm.lib")
-#ifdef PATCHER
-#define DXTRACE_ERR(str,hr) hr      // I'm not linking in directx stuff to the just for this
-#endif
 
 // if it looks like I lifted this class directly from Microsoft it's because that
 // is exactly what I did.  It's okay, though.  Microsoft tells you to go ahead

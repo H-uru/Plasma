@@ -56,8 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 namespace pnNetCommon
 {
 
-#ifndef SERVER
-
 // NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
 ST::string GetTextAddr(uint32_t binAddr)
 {
@@ -93,8 +91,6 @@ uint32_t GetBinAddr(const ST::string& textAddr)
 
     return addr;
 }
-
-#endif
 
 } // pnNetCommon namespace
 

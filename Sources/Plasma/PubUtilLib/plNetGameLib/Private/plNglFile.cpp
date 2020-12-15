@@ -323,13 +323,11 @@ static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
     // Cancel all transactions in progress on this connection.
     NetTransCancelByConnId(conn->seq, kNetErrTimeout);
     
-#ifndef SERVER
     // Client apps fail if unable to connect for a time
     if (++conn->numFailedConnects >= kMaxFailedConnects) {
         ReportNetError(kNetProtocolCli2File, kNetErrConnectFailed);
     }
     else
-#endif // ndef SERVER
     {
         // start reconnect, if we are doing that
         if (s_running && conn->AutoReconnectEnabled())
@@ -358,14 +356,6 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
 
     bool notify = false;
 
-#ifdef SERVER
-    {
-        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs > kMinValidConnectionMs)
-            conn->reconnectStartMs = 0;
-        else
-            conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
-    }
-#else
     {
     #ifndef LOAD_BALANCER_HARDWARE
         // If the connection to the remote server was open for longer than
@@ -401,7 +391,6 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
         }
     #endif  // LOAD_BALANCER
     }
-#endif // ndef SERVER
 
     if (notify) {
         ReportNetError(kNetProtocolCli2File, kNetErrDisconnected);

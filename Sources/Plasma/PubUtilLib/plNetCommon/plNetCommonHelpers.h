@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ////////////////////////////////////////////////////////////////////
 
-#ifndef SERVER
 class plNetCoreStatsSummary : public plCreatable
 {
     static const uint8_t StreamVersion;
@@ -77,7 +76,6 @@ public:
     float GetDLPeakPktsPS() const { return fDLPeakPktsPS; }
     uint32_t GetDLDroppedPackets() const { return fDLDroppedPackets; }
 };
-#endif // SERVER
 
 
 ////////////////////////////////////////////////////////////////////
