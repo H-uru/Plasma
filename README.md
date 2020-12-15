@@ -80,8 +80,9 @@ Currently, compilation only targets Windows systems and requires Visual Studio
 7. Press **Configure** again.
 8. Press **Generate**. You will now have a Visual Studio solution file (.sln)
    in the folder that you specified to build the binaries in.
-9. Open the solution in Visual Studio. You can compile CyanWorlds.com Engine by
-   pressing *Build -> Build Solution*. This will take some time.
+9. Open the solution in Visual Studio. To build CyanWorlds.com Engine, find the
+   project labelled **INSTALL** in the *Solution Explorer*. Right click on this
+   project, and click **Build**.
 
 
 Running Instructions
@@ -93,8 +94,8 @@ fully-patched installation of MOULa provided by Cyan Worlds.
 1. Copy the **files from your existing MOULa installation** to a new folder, or
    install fresh if you do not already have it installed. This folder will be
    referred to as *MOUL-OS* for the remainder of these instructions.
-2. Copy the **Python and SDL** folders from `<build_dir>\bin` into the *MOUL-OS*
-   folder, as well as the **files in dat** into the existing dat folder.
+2. Copy the **client** folders from `<build_dir>\install` into the *MOUL-OS*
+   folder.
 3. Copy the example_server.ini file from the root of the Plasma repository into
    your *MOUL-OS* folder, and rename it as **server.ini**. If you are running
    your own dirtsand server or are connecting to one run by someone else, use
@@ -102,9 +103,8 @@ fully-patched installation of MOULa provided by Cyan Worlds.
 4. Copy the **DLLs** from the development libraries bundle, as well as the DLLs
    PhysXLoader.dll, NxExtensions.dll, NxCooking.dll, and NxCharacter.dll from
    your PhysX SDK installation into the *MOUL-OS* folder.
-5. Copy the **resource.dat** file from `<build_dir>\bin` to the *MOUL-OS* folder,
-   or from http://www.guildofwriters.org/tools/resource.dat if you did not build
-   your own.
+5. Download and copy http://www.guildofwriters.org/tools/resource.dat into
+   your *MOUL-OS* folder.
 6. Create a **shortcut** in the *MOUL-OS* folder to the compiled plClient.exe.
 7. Edit the shortcut's **properties**, and after the final quotation mark in the
    *Target* field, add `/LocalData`. Also, change the *Start in* field to the
