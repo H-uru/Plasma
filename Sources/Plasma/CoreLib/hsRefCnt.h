@@ -82,28 +82,29 @@ struct hsStealRef_Type {};
 constexpr hsStealRef_Type hsStealRef;
 
 template <class _Ref>
+class hsWeakRef;
+
+template <class _Ref>
 class hsRef
 {
 public:
-    hsRef() : fObj(nullptr) { }
-    hsRef(std::nullptr_t) : fObj(nullptr) { }
-    hsRef(_Ref *obj) : fObj(obj) { if (fObj) fObj->Ref(); }
+    hsRef() : fObj() { }
+    hsRef(std::nullptr_t) : fObj() { }
     hsRef(_Ref *obj, hsStealRef_Type) : fObj(obj) { }
     hsRef(const hsRef<_Ref> &copy) : fObj(copy.fObj) { if (fObj) fObj->Ref(); }
     hsRef(hsRef<_Ref> &&move) : fObj(move.fObj) { move.fObj = nullptr; }
 
     ~hsRef() { if (fObj) fObj->UnRef(); }
 
-    hsRef<_Ref> &operator=(_Ref *obj)
+    hsRef<_Ref> &operator=(const hsRef<_Ref> &copy)
     {
-        if (obj)
-            obj->Ref();
+        if (copy.fObj)
+            copy.fObj->Ref();
         if (fObj)
             fObj->UnRef();
-        fObj = obj;
+        fObj = copy.fObj;
         return *this;
     }
-    hsRef<_Ref> &operator=(const hsRef<_Ref> &copy) { return operator=(copy.fObj); }
 
     hsRef<_Ref> &operator=(hsRef<_Ref> &&move)
     {
@@ -122,18 +123,26 @@ public:
         return *this;
     }
 
+    inline hsRef(const hsWeakRef<_Ref> &weak);
+    inline hsRef<_Ref> &operator=(const hsWeakRef<_Ref> &weak);
+
     bool operator==(const hsRef<_Ref> &other) const { return fObj == other.fObj; }
     bool operator!=(const hsRef<_Ref> &other) const { return fObj != other.fObj; }
     bool operator> (const hsRef<_Ref> &other) const { return fObj >  other.fObj; }
     bool operator< (const hsRef<_Ref> &other) const { return fObj <  other.fObj; }
     bool operator>=(const hsRef<_Ref> &other) const { return fObj >= other.fObj; }
     bool operator<=(const hsRef<_Ref> &other) const { return fObj <= other.fObj; }
+    inline bool operator==(const hsWeakRef<_Ref> &other) const;
+    inline bool operator!=(const hsWeakRef<_Ref> &other) const;
     bool operator==(_Ref *other) const { return fObj == other; }
     bool operator!=(_Ref *other) const { return fObj != other; }
 
     _Ref &operator*() const { return *fObj; }
     _Ref *operator->() const { return fObj; }
-    operator _Ref *() const { return fObj; }
+    _Ref *Get() const { return fObj; }
+
+    operator bool() const { return fObj != nullptr; }
+    bool operator!() const { return fObj == nullptr; }
 
     void Steal(_Ref *obj)
     {
@@ -145,5 +154,88 @@ public:
 private:
     _Ref *fObj;
 };
+
+template <class _Ref>
+class hsWeakRef
+{
+public:
+    hsWeakRef() : fObj() { }
+    hsWeakRef(std::nullptr_t) : fObj() { }
+    hsWeakRef(_Ref *obj) : fObj(obj) { }
+
+    template <class _OtherRef>
+    hsWeakRef(const hsWeakRef<_OtherRef> &copy) : fObj(copy.Get()) { }
+
+    template <class _OtherRef>
+    hsWeakRef(const hsRef<_OtherRef> &copy) : fObj(copy.Get()) { }
+
+    hsWeakRef<_Ref> &operator=(_Ref *obj)
+    {
+        fObj = obj.Get();
+        return *this;
+    }
+
+    template <class _OtherRef>
+    hsWeakRef<_Ref> &operator=(const hsWeakRef<_OtherRef> &obj)
+    {
+        fObj = obj.Get();
+        return *this;
+    }
+
+    template <class _OtherRef>
+    hsWeakRef<_Ref> &operator=(const hsRef<_OtherRef> &obj)
+    {
+        fObj = obj.Get();
+        return *this;
+    }
+
+    bool operator==(const hsWeakRef<_Ref> &other) const { return fObj == other.fObj; }
+    bool operator!=(const hsWeakRef<_Ref> &other) const { return fObj != other.fObj; }
+    bool operator==(const hsRef<_Ref> &other) const { return fObj == other.Get(); }
+    bool operator!=(const hsRef<_Ref> &other) const { return fObj != other.Get(); }
+    bool operator==(_Ref *other) const { return fObj == other; }
+    bool operator!=(_Ref *other) const { return fObj != other; }
+
+    _Ref &operator*() const { return *fObj; }
+    _Ref *operator->() const { return fObj; }
+    _Ref *Get() const { return fObj; }
+
+    operator bool() const { return fObj != nullptr; }
+    bool operator!() const { return fObj == nullptr; }
+
+private:
+    _Ref *fObj;
+};
+
+template <class _Ref>
+hsRef<_Ref>::hsRef(const hsWeakRef<_Ref> &weak) : fObj(weak.Get())
+{
+    if (fObj)
+        fObj->Ref();
+}
+
+template <class _Ref>
+hsRef<_Ref> &hsRef<_Ref>::operator=(const hsWeakRef<_Ref> &weak)
+{
+    _Ref* weakObj = weak.Get();
+    if (weakObj)
+        weakObj->Ref();
+    if (fObj)
+        fObj->UnRef();
+    fObj = weakObj;
+    return *this;
+}
+
+template <class _Ref>
+bool hsRef<_Ref>::operator==(const hsWeakRef<_Ref> &other) const
+{
+    return fObj == other.Get();
+}
+
+template <class _Ref>
+bool hsRef<_Ref>::operator!=(const hsWeakRef<_Ref> &other) const
+{
+    return fObj != other.Get();
+}
 
 #endif

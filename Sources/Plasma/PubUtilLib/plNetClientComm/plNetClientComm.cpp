@@ -1073,7 +1073,7 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
             VaultPlayerInfoNode pInfo(rvn);
             pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
-            NetCliAuthVaultNodeSave(rvn, nil, nil);
+            NetCliAuthVaultNodeSave(rvn.Get(), nil, nil);
         }
 
         VaultCull(s_player->playerInt);

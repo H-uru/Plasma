@@ -86,7 +86,7 @@ bool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
 
 static void IAddPlayer_NodesFound(ENetError result, void* param, unsigned nodeIdCount, const unsigned nodeIds[])
 {
-    hsRef<NetVaultNode> parent = static_cast<NetVaultNode*>(param);
+    hsWeakRef<NetVaultNode> parent = static_cast<NetVaultNode*>(param);
     if (nodeIdCount)
         VaultAddChildNode(parent->GetNodeId(), nodeIds[0], VaultGetPlayerId(), nullptr, nullptr);
 }
@@ -108,7 +108,7 @@ void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
     if (nodeIds.Count())
         VaultAddChildNode(fNode->GetNodeId(), nodeIds[0], VaultGetPlayerId(), nullptr, nullptr);
     else
-        VaultFindNodes(&templateNode, IAddPlayer_NodesFound, (NetVaultNode *)fNode);
+        VaultFindNodes(&templateNode, IAddPlayer_NodesFound, fNode.Get());
 }
 
 void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )

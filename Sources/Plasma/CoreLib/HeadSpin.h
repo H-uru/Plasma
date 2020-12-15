@@ -393,10 +393,10 @@ void DebugMsg(const char* fmt, ...);
     
     void    hsDebugMessage(const char* message, long refcon);
     #define hsDebugCode(code)                   code
-    #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
-    #define hsAssert(expr, ...)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
-    #define ASSERT(expr)                        (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
-    #define ASSERTMSG(expr, ...)                (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define hsIfDebugMessage(expr, msg, ref)    (void)( (!!(expr)) || (hsDebugMessage(msg, ref), 0) )
+    #define hsAssert(expr, ...)                 (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define ASSERT(expr)                        (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
+    #define ASSERTMSG(expr, ...)                (void)( (!!(expr)) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
     #define FATAL(...)                          ErrorAssert(__LINE__, __FILE__, __VA_ARGS__)
     #define DEBUG_MSG                           DebugMsg
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     DebugBreakIfDebuggerPresent

@@ -206,7 +206,8 @@ public:
     {
     }
 
-    void AddedChildNode(RelVaultNode* parentNode, RelVaultNode* childNode)
+    void AddedChildNode(const hsRef<RelVaultNode>& parentNode,
+                        const hsRef<RelVaultNode>& childNode) override
     {
         if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
             PyObject* ptuple = PyTuple_New(1);
@@ -215,7 +216,8 @@ public:
         }
     }
 
-    void RemovingChildNode(RelVaultNode* parentNode, RelVaultNode* childNode)
+    void RemovingChildNode(const hsRef<RelVaultNode>& parentNode,
+                           const hsRef<RelVaultNode>& childNode) override
     {
         if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
             PyObject* ptuple = PyTuple_New(1);
@@ -224,7 +226,7 @@ public:
         }
     }
 
-    void ChangedNode(RelVaultNode* changedNode)
+    void ChangedNode(const hsRef<RelVaultNode>& changedNode) override
     {
         if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
             PyObject* ptuple = PyTuple_New(1);

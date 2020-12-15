@@ -123,11 +123,11 @@ PLASMA_CUSTOM_TYPE(ptVaultNodeRef, "Vault node relationship pseudo class");
 PYTHON_EXPOSE_TYPE_DEFINITION(ptVaultNodeRef, pyVaultNodeRef);
 
 // required functions for PyObject interoperability
-PyObject *pyVaultNodeRef::New(RelVaultNode * parent, RelVaultNode * child)
+PyObject *pyVaultNodeRef::New(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child)
 {
     ptVaultNodeRef *newObj = (ptVaultNodeRef*)ptVaultNodeRef_type.tp_new(&ptVaultNodeRef_type, NULL, NULL);
-    newObj->fThis->fParent = parent;
-    newObj->fThis->fChild = child;
+    newObj->fThis->fParent = std::move(parent);
+    newObj->fThis->fChild = std::move(child);
     return (PyObject*)newObj;
 }
 
