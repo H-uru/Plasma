@@ -3964,7 +3964,7 @@ void VaultFetchNodeTrans::Post () {
     m_callback(
         m_result,
         m_param,
-        m_node
+        m_node.Get()
     );
 }
 

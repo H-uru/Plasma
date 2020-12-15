@@ -505,7 +505,7 @@ void pyVault::UnRegisterVisitAge( const char * guidstr )
 }
 
 //============================================================================
-void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
+void _InvitePlayerToAge(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
 {
     if (result == kNetSuccess)
         VaultSendNode(node, (uint32_t)((uintptr_t)param));
@@ -522,7 +522,7 @@ void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID
 }
 
 //============================================================================
-void _UninvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode* node)
+void _UninvitePlayerToAge(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
 {
     if (result == kNetSuccess)
         VaultSendNode(node, (uint32_t)((uintptr_t)param));
@@ -619,12 +619,13 @@ PyObject* pyVault::GetGlobalInbox()
 PyObject* pyVault::FindNode( pyVaultNode* templateNode ) const
 {
     // See if we already have a matching node locally
-    if (hsRef<RelVaultNode> rvn = VaultGetNode(templateNode->GetNode()))
+    hsWeakRef<NetVaultNode> node(templateNode->GetNode());
+    if (hsRef<RelVaultNode> rvn = VaultGetNode(node))
         return pyVaultNode::New(rvn);
     
     // See if a matching node exists on the server
     TArray<unsigned> nodeIds;
-    VaultFindNodesAndWait(templateNode->GetNode(), &nodeIds);
+    VaultFindNodesAndWait(node, &nodeIds);
     
     if (nodeIds.Count()) {
         // Only fetch the first matching node since this function returns a single node

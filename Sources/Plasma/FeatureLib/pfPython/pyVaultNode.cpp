@@ -185,7 +185,7 @@ bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
         return false;
     if (ours->GetNodeId() == theirs->GetNodeId())
         return true;
-    return ours->Matches(theirs);
+    return ours->Matches(theirs.Get());
 }
 
 // public getters
@@ -609,7 +609,8 @@ PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode )
     PyObject * result = nil;
     if ( fNode && templateNode->fNode )
     {
-        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode->fNode, 1))
+        hsWeakRef<NetVaultNode> node(templateNode->fNode);
+        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(node, 1))
             result = pyVaultNode::New(rvn);
     }
     

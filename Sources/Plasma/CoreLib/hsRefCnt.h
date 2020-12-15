@@ -132,13 +132,17 @@ public:
     bool operator< (const hsRef<_Ref> &other) const { return fObj <  other.fObj; }
     bool operator>=(const hsRef<_Ref> &other) const { return fObj >= other.fObj; }
     bool operator<=(const hsRef<_Ref> &other) const { return fObj <= other.fObj; }
+    inline bool operator==(const hsWeakRef<_Ref> &other) const;
+    inline bool operator!=(const hsWeakRef<_Ref> &other) const;
     bool operator==(_Ref *other) const { return fObj == other; }
     bool operator!=(_Ref *other) const { return fObj != other; }
 
     _Ref &operator*() const { return *fObj; }
     _Ref *operator->() const { return fObj; }
-    operator _Ref *() const { return fObj; }
     _Ref *Get() const { return fObj; }
+
+    operator bool() const { return fObj != nullptr; }
+    bool operator!() const { return fObj == nullptr; }
 
     void Steal(_Ref *obj)
     {
@@ -220,6 +224,18 @@ hsRef<_Ref> &hsRef<_Ref>::operator=(const hsWeakRef<_Ref> &weak)
         fObj->UnRef();
     fObj = weakObj;
     return *this;
+}
+
+template <class _Ref>
+bool hsRef<_Ref>::operator==(const hsWeakRef<_Ref> &other) const
+{
+    return fObj == other.Get();
+}
+
+template <class _Ref>
+bool hsRef<_Ref>::operator!=(const hsWeakRef<_Ref> &other) const
+{
+    return fObj != other.Get();
 }
 
 #endif
