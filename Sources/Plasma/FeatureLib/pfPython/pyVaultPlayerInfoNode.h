@@ -56,9 +56,6 @@ class plUUID;
 class pyVaultPlayerInfoNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultPlayerInfoNode(RelVaultNode * node);
-
     //create from the Python side
     pyVaultPlayerInfoNode();
 
@@ -67,8 +64,7 @@ public:
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoNode);
-    PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(RelVaultNode * node);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultPlayerInfoNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultPlayerInfoNode); // converts a PyObject to a pyVaultPlayerInfoNode (throws error if not correct type)
 

@@ -79,7 +79,7 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         config.optimization_level = 2;
         config.write_bytecode = 0;
         config.user_site_directory = 0;
-        config.program_name = L"plasma";
+        PyConfig_SetString(&config, &config.program_name, L"plasma");
 
         // Explicit module search paths so no build-env specific stuff gets in.
         IAddWideString(config.module_search_paths, rootDir);
@@ -93,8 +93,10 @@ void PythonInterface::initPython(const plFileName& rootDir, const std::vector<pl
         status = Py_InitializeFromConfig(&config);
         if (PyStatus_Exception(status)) {
             ST::printf(stderr, "Python {} init failed: {}", PY_VERSION, status.err_msg);
+            PyConfig_Clear(&config);
             return;
         }
+        PyConfig_Clear(&config);
 
         if (stdOut)
             PySys_SetObject("stdout", stdOut);

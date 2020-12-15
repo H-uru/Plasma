@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef SERVER
 
 #include "plNetAddress.h"
 #include "pnNetCommon.h"
@@ -150,6 +149,3 @@ void plNetAddress::Write(hsStream * s)
     s->WriteLE(fAddr.sin_port);
     s->WriteLE(fAddr.sin_family);
 }
-
-
-#endif

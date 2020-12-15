@@ -85,19 +85,9 @@ static plKey CreateAndRefImageKey (unsigned nodeId, plMipmap * mipmap) {
     return key;
 }
 
-// should only be created from C++ side
-pyVaultImageNode::pyVaultImageNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-, fMipmapKey(nil)
-, fMipmap(nil)
-{
-}
-
 //create from the Python side
-pyVaultImageNode::pyVaultImageNode(int n)
-: pyVaultNode(new RelVaultNode)
-, fMipmapKey(nil)
-, fMipmap(nil)
+pyVaultImageNode::pyVaultImageNode()
+    : fMipmap(), pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_Image);
 }
@@ -194,9 +184,12 @@ void pyVaultImageNode::SetImageFromBuf( PyObject * pybuf )
         fMipmap = nil;
     }
 
-    uint8_t * buffer = nil;
-    Py_ssize_t bytes;
-    PyObject_AsReadBuffer(pybuf, (const void **)&buffer, &bytes);
+    Py_buffer view;
+    PyObject_GetBuffer(pybuf, &view, PyBUF_SIMPLE);
+    uint8_t* buffer = (uint8_t*)view.buf;
+    Py_ssize_t bytes = view.len;
+    PyBuffer_Release(&view);
+
     if (buffer) {
         VaultImageNode access(fNode);
         access.SetImageData(buffer, bytes);

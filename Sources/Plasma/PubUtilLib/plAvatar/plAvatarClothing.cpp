@@ -925,7 +925,7 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
                 nodes.pop_front();
             }
             else {
-                node = new RelVaultNode;
+                node.Steal(new RelVaultNode);
                 node->SetNodeType(plVault::kNodeType_SDL);
                 templates.push_back(node);
             }
@@ -1630,7 +1630,7 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
         plStateDataRecord rec(plClothingSDLModifier::GetClothingItemSDRName());
         plClothingSDLModifier::PutSingleItemIntoSDR(&items[i], &rec);
         
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
+        hsRef<RelVaultNode> templateNode(new RelVaultNode, hsStealRef);
         templateNode->SetNodeType(plVault::kNodeType_SDL);
         
         VaultSDLNode sdl(templateNode);

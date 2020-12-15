@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 
-#ifdef CLIENT
 ///////////////////////////////////////////////////////////////////
 
 const uint8_t plDniCoordinateInfo::StreamVersion = 1;
@@ -96,4 +95,3 @@ ST::string plDniCoordinateInfo::AsString( int level ) const
     ST::string space = ST::string::fill( level, ' ' );
     return ST::format("{}DniCoords[{},{},{}]", space, fHSpans, fVSpans, fTorans);
 }
-#endif // def CLIENT

@@ -148,8 +148,8 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t
     delete this;  // commit hara-kiri
 }
 
-void pyVaultNode::pyVaultNodeOperationCallback::SetNode (RelVaultNode * rvn) {
-    fNode = rvn;
+void pyVaultNode::pyVaultNodeOperationCallback::SetNode(hsRef<RelVaultNode> rvn) {
+    fNode = std::move(rvn);
 }
 
 hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
@@ -157,23 +157,22 @@ hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
 }
 
 pyVaultNode::pyVaultNode()
+    : fNode(new RelVaultNode, hsStealRef)
 {
 }
 
-// should only be created from C++ side
-pyVaultNode::pyVaultNode( RelVaultNode* nfsNode )
-:   fNode(nfsNode)
+pyVaultNode::pyVaultNode(std::nullptr_t)
 {
 }
 
-pyVaultNode::~pyVaultNode() {}
-
+pyVaultNode::~pyVaultNode()
+{
+}
 
 hsRef<RelVaultNode> pyVaultNode::GetNode() const
 {
     return fNode;
 }
-
 
 // override the equals to operator
 bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
@@ -186,7 +185,7 @@ bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
         return false;
     if (ours->GetNodeId() == theirs->GetNodeId())
         return true;
-    return ours->Matches(theirs);
+    return ours->Matches(theirs.Get());
 }
 
 // public getters
@@ -243,21 +242,16 @@ uint32_t pyVaultNode::GetCreatorNodeID()
 
 PyObject* pyVaultNode::GetCreatorNode()
 {
-    PyObject * result = nil;
-    if (fNode)
-    {
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
-        templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-        VaultPlayerInfoNode plrInfo(templateNode);
+    if (fNode) {
+        RelVaultNode templateNode;
+        templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
+        VaultPlayerInfoNode plrInfo(&templateNode);
         plrInfo.SetPlayerId(fNode->GetCreatorId());
         
-        if (hsRef<RelVaultNode> rvn = VaultGetNode(templateNode))
-            result = pyVaultPlayerInfoNode::New(rvn);
+        if (hsRef<RelVaultNode> rvn = VaultGetNode(&templateNode))
+            return pyVaultPlayerInfoNode::New(rvn);
     }
-    
-    if (result)
-        return result;
-        
+
     // just return a None object
     PYTHON_RETURN_NONE;
 }
@@ -598,9 +592,9 @@ PyObject * pyVaultNode::GetNode2( uint32_t nodeID ) const
     PyObject * result = nil;
     if ( fNode )
     {
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
-        templateNode->SetNodeId(nodeID);
-        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1))
+        RelVaultNode templateNode;
+        templateNode.SetNodeId(nodeID);
+        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(&templateNode, 1))
             result = pyVaultNodeRef::New(fNode, rvn);
     }
     
@@ -615,7 +609,8 @@ PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode )
     PyObject * result = nil;
     if ( fNode && templateNode->fNode )
     {
-        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode->fNode, 1))
+        hsWeakRef<NetVaultNode> node(templateNode->fNode);
+        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(node, 1))
             result = pyVaultNode::New(rvn);
     }
     

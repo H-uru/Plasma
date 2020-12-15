@@ -56,9 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault.h"
 #pragma warning(pop)
 
-
-#ifdef CLIENT
-
 // 'Old' system is full of compiler warnings at /W4, so just hide them
 #pragma warning(push, 0)
 #include <algorithm>
@@ -88,8 +85,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma warning(pop)
 
 #include "plNetGameLib/plNetGameLib.h"
-
-#endif  // def CLIENT
 
 #include "Intern.h"
 

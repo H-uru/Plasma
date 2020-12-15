@@ -53,15 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 #include "pnUUID/pnUUID.h"
 
-// should only be created from C++ side
-pyVaultMarkerGameNode::pyVaultMarkerGameNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
-
 //create from the Python side
-pyVaultMarkerGameNode::pyVaultMarkerGameNode(int n)
-: pyVaultNode(new RelVaultNode)
+pyVaultMarkerGameNode::pyVaultMarkerGameNode()
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_MarkerGame);
 }

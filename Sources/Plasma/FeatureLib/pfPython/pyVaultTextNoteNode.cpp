@@ -56,15 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include "pyVault.h"
 #endif
 
-// should only be created from C++ side
-pyVaultTextNoteNode::pyVaultTextNoteNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
-
 //create from the Python side
 pyVaultTextNoteNode::pyVaultTextNoteNode()
-: pyVaultNode(new RelVaultNode)
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_TextNote);
 }

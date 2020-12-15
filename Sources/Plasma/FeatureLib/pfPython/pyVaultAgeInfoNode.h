@@ -62,17 +62,13 @@ class plUUID;
 class pyVaultAgeInfoNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultAgeInfoNode(RelVaultNode* vaultNode);
-
     //create from the Python side
-    pyVaultAgeInfoNode(int n=0);
+    pyVaultAgeInfoNode();
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultAgeInfoNode);
-    static PyObject *New(RelVaultNode* vaultNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeInfoNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeInfoNode); // converts a PyObject to a pyVaultAgeInfoNode (throws error if not correct type)
 

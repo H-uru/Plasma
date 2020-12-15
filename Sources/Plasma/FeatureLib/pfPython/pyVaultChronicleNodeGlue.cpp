@@ -184,22 +184,10 @@ PYTHON_START_METHODS_TABLE(ptVaultChronicleNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultChronicleNode, pyVaultNode, "Params: n=0\nPlasma vault chronicle node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultChronicleNode, pyVaultNode, "Plasma vault chronicle node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultChronicleNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultChronicleNode *newObj = (ptVaultChronicleNode*)ptVaultChronicleNode_type.tp_new(&ptVaultChronicleNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultChronicleNode::New(int n /* =0 */)
-{
-    ptVaultChronicleNode *newObj = (ptVaultChronicleNode*)ptVaultChronicleNode_type.tp_new(&ptVaultChronicleNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultChronicleNode, pyVaultChronicleNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultChronicleNode, pyVaultChronicleNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultChronicleNode, pyVaultChronicleNode)

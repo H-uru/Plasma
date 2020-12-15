@@ -42,9 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAIMsg_inc
 #define plAIMsg_inc
 
-#ifndef SERVER // we use stuff the server doesn't link with
-#ifndef NO_AV_MSGS
-
 #include "hsGeometry3.h"
 #include "pnMessage/plMessage.h"
 
@@ -113,8 +110,5 @@ public:
 private:
     hsPoint3 fGoal;
 };
-
-#endif // NO_AV_MSGS
-#endif // SERVER
 
 #endif // plAIMsg_inc

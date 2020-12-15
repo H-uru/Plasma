@@ -49,14 +49,10 @@ REGISTER_CREATABLE(plClientGuid);
 
 #include "plNetCommonHelpers.h"
 REGISTER_CREATABLE(plCreatableListHelper);
-#ifndef SERVER
-    REGISTER_CREATABLE(plNetCoreStatsSummary);
-#endif // SERVER
+REGISTER_CREATABLE(plNetCoreStatsSummary);
 
-#ifndef SERVER
-    #include "plNetMember.h"
-    REGISTER_NONCREATABLE(plNetMember);
-#endif // SERVER
+#include "plNetMember.h"
+REGISTER_NONCREATABLE(plNetMember);
 
 #include "plNetServerSessionInfo.h"
 REGISTER_CREATABLE(plAgeInfoStruct);

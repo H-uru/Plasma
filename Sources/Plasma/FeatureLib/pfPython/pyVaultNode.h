@@ -94,17 +94,16 @@ public:
         void VaultOperationComplete(uint32_t context, int resultCode);
         void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
         
-        void SetNode (RelVaultNode * rvn);
+        void SetNode(hsRef<RelVaultNode> rvn);
         hsRef<RelVaultNode> GetNode() const;
     };
 
     hsRef<RelVaultNode> fNode;
 
 protected:
-    // only for python glue, do NOT call
     pyVaultNode();
-    // should only be created from C++ side
-    pyVaultNode( RelVaultNode* node );
+
+    pyVaultNode(std::nullptr_t);
 
 public:
     virtual ~pyVaultNode();
@@ -112,7 +111,7 @@ public:
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass
     PYTHON_CLASS_NEW_FRIEND(ptVaultNode);
-    static PyObject *New(RelVaultNode* node);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultNode); // converts a PyObject to a pyVaultNode (throws error if not correct type)
 

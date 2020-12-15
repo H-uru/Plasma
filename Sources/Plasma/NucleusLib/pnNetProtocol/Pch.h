@@ -57,10 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCli/pnNetCli.h"
 #include "pnUUID/pnUUID.h"
 
-#ifdef SERVER
-#include "psUtils/psUtils.h"   // for SrvMsgHeader, ugh
-#endif
-
 #include "Private/pnNpAllIncludes.h"
 #include "Intern.h"
 

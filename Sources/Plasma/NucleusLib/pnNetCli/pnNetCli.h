@@ -381,25 +381,6 @@ NetCli * NetCliConnectAccept (
     void *              encryptParam    // optional
 );
 
-#ifdef SERVER
-NetCli * NetCliListenAccept (
-    AsyncSocket         sock,
-    unsigned            protocol,
-    bool                unbuffered,
-    FNetCliEncrypt      encryptFcn,
-    unsigned            seedBytes,      // optional
-    const uint8_t          seedData[],     // optional
-    void *              encryptParam    // optional
-);
-#endif
-
-#ifdef SERVER
-void NetCliListenReject (
-    AsyncSocket     sock,
-    ENetError       error
-);
-#endif
-
 void NetCliClearSocket (
     NetCli *        cli
 );

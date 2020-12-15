@@ -264,7 +264,8 @@ void pyAgeVault::UpdateAgeSDL( pySDLStateDataRecord & pyrec )
 PyObject* pyAgeVault::FindNode( pyVaultNode* templateNode ) const
 {
     if (hsRef<RelVaultNode> rvn = VaultGetAgeNode()) {
-        hsRef<RelVaultNode> find = rvn->GetChildNode(templateNode->fNode, 1);
+        hsWeakRef<NetVaultNode> node(templateNode->fNode);
+        hsRef<RelVaultNode> find = rvn->GetChildNode(node, 1);
         if (find)
             return pyVaultNode::New(find);
     }

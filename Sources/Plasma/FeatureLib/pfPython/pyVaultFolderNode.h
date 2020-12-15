@@ -57,20 +57,14 @@ struct RelVaultNode;
 class pyVaultFolderNode : public pyVaultNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultFolderNode(RelVaultNode* nfsNode);
-
     //create from the Python side
-    pyVaultFolderNode(int n=0);
+    pyVaultFolderNode();
 
 public:
-    ~pyVaultFolderNode();
-
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass
     PYTHON_CLASS_NEW_FRIEND(ptVaultFolderNode);
-    static PyObject *New(RelVaultNode* nfsNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultFolderNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultFolderNode); // converts a PyObject to a pyVaultFolderNode (throws error if not correct type)
 

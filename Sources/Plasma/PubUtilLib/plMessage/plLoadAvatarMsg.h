@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef NO_AV_MSGS
-#ifndef SERVER
 
 #ifndef plLoadAvatarMsg_INC
 #define plLoadAvatarMsg_INC
@@ -130,7 +128,3 @@ protected:
 
 
 #endif  // plLoadAvatarMsg_INC
-
-
-#endif // ndef SERVER
-#endif // ndef NO_AV_MSGS

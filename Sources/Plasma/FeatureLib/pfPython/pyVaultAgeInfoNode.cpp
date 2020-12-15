@@ -62,15 +62,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUUID/pnUUID.h"
 #include "plVault/plVault.h"
 
-// should only be created from C++ side
-pyVaultAgeInfoNode::pyVaultAgeInfoNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
-
-//create from the Python side
-pyVaultAgeInfoNode::pyVaultAgeInfoNode(int n)
-: pyVaultNode(new RelVaultNode)
+pyVaultAgeInfoNode::pyVaultAgeInfoNode()
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_AgeInfo);
 }
@@ -88,7 +81,7 @@ static PyObject * GetChildFolder (RelVaultNode * node, unsigned type) {
 */
 
 //============================================================================
-static PyObject * GetChildPlayerInfoList (RelVaultNode * node, unsigned type) {
+static PyObject * GetChildPlayerInfoList(hsWeakRef<RelVaultNode> node, unsigned type) {
     PyObject * result = nil;
     if (hsRef<RelVaultNode> rvn = node->GetChildPlayerInfoListNode(type, 1))
         result = pyVaultPlayerInfoListNode::New(rvn);
@@ -96,7 +89,7 @@ static PyObject * GetChildPlayerInfoList (RelVaultNode * node, unsigned type) {
 }
 
 //============================================================================
-static PyObject * GetChildAgeInfoList (RelVaultNode * node, unsigned type) {
+static PyObject * GetChildAgeInfoList(hsWeakRef<RelVaultNode> node, unsigned type) {
     PyObject * result = nil;
     if (hsRef<RelVaultNode> rvn = node->GetChildAgeInfoListNode(type, 1))
         result = pyVaultAgeInfoListNode::New(rvn);

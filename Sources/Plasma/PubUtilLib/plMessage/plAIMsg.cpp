@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef SERVER // we use stuff the server doesn't link with
-#ifndef NO_AV_MSGS
 
 #include "hsStream.h"
 #pragma hdrstop
@@ -89,6 +87,3 @@ void plAIArrivedAtGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
     plAIMsg::Write(stream, mgr);
     fGoal.Write(stream);
 }
-
-#endif // NO_AV_MSGS
-#endif // SERVER

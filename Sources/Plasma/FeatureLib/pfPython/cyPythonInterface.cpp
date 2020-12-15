@@ -643,12 +643,9 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, text, strLen);
-        text[strLen] = L'\0';
+        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Write(text);
-        delete [] text;
+        PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
@@ -763,12 +760,9 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, text, strLen);
-        text[strLen] = L'\0';
+        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Write(text);
-        delete [] text;
+        PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
@@ -900,8 +894,8 @@ static void IInitBuiltinModule(const char* modName, const char* docstring, plSta
     }
 }
 
-template<typename _ConfigT, PyStatus(*_FuncT)(const _ConfigT*)>
-static bool ICheckedInit(const _ConfigT& config, plStatusLog* dbgLog, const char* errmsg)
+template<typename _ConfigT, PyStatus(*_FuncT)(const _ConfigT*), void(*_ClearT)(_ConfigT*) = nullptr>
+static bool ICheckedInit(_ConfigT& config, plStatusLog* dbgLog, const char* errmsg)
 {
     PyStatus status = _FuncT(&config);
     if (PyStatus_Exception(status)) {
@@ -910,6 +904,8 @@ static bool ICheckedInit(const _ConfigT& config, plStatusLog* dbgLog, const char
             dbgLog->AddLineF(plStatusLog::kRed, "{}: {}", status.func, status.err_msg);
         else
             dbgLog->AddLine(plStatusLog::kRed, status.err_msg);
+        if constexpr (_ClearT != nullptr)
+            _ClearT(&config);
         return false;
     }
     return true;
@@ -947,7 +943,7 @@ void PythonInterface::initPython()
     PyConfig config;
     PyConfig_InitIsolatedConfig(&config);
     config.site_import = 0;
-    config.program_name = L"plasma";
+    PyConfig_SetString(&config, &config.program_name, L"plasma");
     config._init_main = 0;
 
     // Allow importing from the local python directory if and only if this is an internal client.
@@ -958,7 +954,7 @@ void PythonInterface::initPython()
     config.module_search_paths_set = 1;
 #endif
 
-    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig>(config, dbgLog, "Core init failed!"))
+    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Core init failed!"))
         return;
 
     // We now have enough Python to insert our PEP 451 import machinery.
@@ -966,7 +962,7 @@ void PythonInterface::initPython()
 
     // Now, init the interpreter.
     config._init_main = 1;
-    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig>(config, dbgLog, "Main init failed!"))
+    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig, PyConfig_Clear>(config, dbgLog, "Main init failed!"))
         return;
 
     // Initialize built-in Plasma modules. For some reason, when using the append-inittab thingy,
@@ -1026,6 +1022,7 @@ void PythonInterface::initPython()
         dbgLog->AddLine(plStatusLog::kRed, "Could not create python redirector, Python error output will not appear in the log");
     }
 
+    PyConfig_Clear(&config);
     initialized++;
 }
 

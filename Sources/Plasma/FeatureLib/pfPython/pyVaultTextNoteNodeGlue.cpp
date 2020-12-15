@@ -147,12 +147,9 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* title = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, title, strLen);
-        title[strLen] = L'\0';
+        wchar_t* title = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Note_SetTitleW(title);
-        delete [] title;
+        PyMem_Free(title);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");
@@ -191,12 +188,9 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
     }
     if (PyUnicode_Check(textObj))
     {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar(textObj, text, strLen);
-        text[strLen] = L'\0';
+        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
         self->fThis->Note_SetTextW(text);
-        delete [] text;
+        PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setTextW expects a unicode string");
@@ -297,14 +291,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultTextNoteNode, pyVaultNode, "Plasma vault text note node");
 
 // required functions for PyObject interoperability
-PYTHON_CLASS_NEW_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)
-
-PyObject *pyVaultTextNoteNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultTextNoteNode *newObj = (ptVaultTextNoteNode*)ptVaultTextNoteNode_type.tp_new(&ptVaultTextNoteNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)

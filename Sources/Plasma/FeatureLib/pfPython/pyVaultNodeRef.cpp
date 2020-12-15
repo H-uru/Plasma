@@ -61,15 +61,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 // should only be created from C++ side
-pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
-: fParent(parent)
-, fChild(child)
-{
-}
+pyVaultNodeRef::pyVaultNodeRef(hsRef<RelVaultNode> parent, hsRef<RelVaultNode> child)
+    : fParent(std::move(parent)), fChild(std::move(child))
+{ }
 
-pyVaultNodeRef::pyVaultNodeRef(int)
-{
-}
+pyVaultNodeRef::pyVaultNodeRef(std::nullptr_t)
+{ }
 
 hsRef<RelVaultNode> pyVaultNodeRef::GetParentNode() const
 {
@@ -124,15 +121,15 @@ PyObject * pyVaultNodeRef::GetSaver () {
     if (hsRef<RelVaultNode> child = VaultGetNode(fChild->GetNodeId())) {
         if (unsigned saverId = child->GetRefOwnerId(fParent->GetNodeId())) {
             // Find the player info node representing the saver
-            hsRef<NetVaultNode> templateNode = new NetVaultNode;
-            templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-            VaultPlayerInfoNode access(templateNode);
+            NetVaultNode templateNode;
+            templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
+            VaultPlayerInfoNode access(&templateNode);
             access.SetPlayerId(saverId);
-            saver = VaultGetNode(templateNode);
+            saver = VaultGetNode(&templateNode);
 
             if (!saver) {
                 TArray<unsigned> nodeIds;
-                VaultFindNodesAndWait(templateNode, &nodeIds);
+                VaultFindNodesAndWait(&templateNode, &nodeIds);
                 if (nodeIds.Count() > 0) {
                     VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());
                     saver = VaultGetNode(nodeIds[0]);
