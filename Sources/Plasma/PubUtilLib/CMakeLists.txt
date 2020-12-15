@@ -1,5 +1,3 @@
-add_definitions(-D_LIB)
-
 add_subdirectory(plAgeDescription)
 add_subdirectory(plAgeLoader)
 add_subdirectory(plAnimation)

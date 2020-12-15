@@ -1,5 +1,3 @@
-add_definitions(-D_LIB)
-
 add_subdirectory(inc)
 add_subdirectory(pnAsyncCore)
 if(WIN32)

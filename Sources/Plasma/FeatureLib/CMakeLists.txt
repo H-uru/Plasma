@@ -1,5 +1,3 @@
-add_definitions(-D_LIB)
-
 add_subdirectory(pfAnimation)
 add_subdirectory(pfAudio)
 add_subdirectory(pfCCR)
