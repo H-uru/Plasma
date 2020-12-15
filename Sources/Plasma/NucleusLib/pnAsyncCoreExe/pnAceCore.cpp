@@ -94,18 +94,7 @@ static void IAsyncInitUseUnix () {
 }
 
 //===========================================================================
-static void IAsyncInitForClient () {
-#ifdef HS_BUILD_FOR_WIN32
-    IAsyncInitUseNt();
-#elif HS_BUILD_FOR_UNIX
-    IAsyncInitUseUnix();
-#else
-    ErrorAssert("AsyncCore: No default implementation for this platform");
-#endif    
-}
-
-//===========================================================================
-static void IAsyncInitForServer () {
+static void IAsyncInit () {
 #ifdef HS_BUILD_FOR_WIN32
     IAsyncInitUseNt();
 #elif HS_BUILD_FOR_UNIX
@@ -160,14 +149,8 @@ void AsyncCoreInitialize () {
         ErrorAssert(__LINE__, __FILE__, "WSA version failed");
 #endif
 
-#ifdef CLIENT
-    IAsyncInitForClient();
-#elif SERVER
-    IAsyncInitForServer();
-#else
-# error "Neither CLIENT nor SERVER defined. Cannot configure AsyncCore for target"
-#endif
-    
+    IAsyncInit();
+
     ASSERT(g_api.initialize);
     g_api.initialize();
 }

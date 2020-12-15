@@ -77,12 +77,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace pnNetCommon
 {
-#ifndef SERVER
-
     uint32_t GetBinAddr(const ST::string& textAddr);
     ST::string GetTextAddr(uint32_t binAddr);
-
-#endif // SERVER
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -105,8 +101,6 @@ public:
 ///////////////////////////////////////////////////////////////////
 // hsTempRef is incomplete. This type fills in some of the gaps
 // (like symmetrical ref/unref and correct self-assign)
-
-#ifndef SERVER
 
 template <class T>
 class plSafePtr
@@ -137,8 +131,6 @@ public:
     }
     void Detach() { fPtr=nil;}
 };
-
-#endif // SERVER
 
 
 #endif // pnNetCommon_h_inc

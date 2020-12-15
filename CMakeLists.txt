@@ -212,10 +212,6 @@ if(PLASMA_TARGETS STREQUAL "Patcher")
     add_definitions(-DPATCHER)
 endif(PLASMA_TARGETS STREQUAL "Patcher")
 
-if(PLASMA_TARGETS STREQUAL "Server")
-    add_definitions(-DSERVER)
-endif(PLASMA_TARGETS STREQUAL "Server")
-
 if(PLASMA_TARGETS STREQUAL "NoAvMsgs")
     add_definitions(-DNO_AV_MSGS)
 endif(PLASMA_TARGETS STREQUAL "NoAvMsgs")

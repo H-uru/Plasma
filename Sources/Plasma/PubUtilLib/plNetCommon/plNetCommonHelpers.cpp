@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 ////////////////////////////////////////////////////////////////////
-#ifndef SERVER
 const uint8_t plNetCoreStatsSummary::StreamVersion = 1;
 
 plNetCoreStatsSummary::plNetCoreStatsSummary()
@@ -89,7 +88,6 @@ void plNetCoreStatsSummary::Write(hsStream* s, hsResMgr*)
     s->WriteLE(fDLPeakPktsPS);
     s->WriteLE(fDLDroppedPackets);
 }
-#endif // SERVER
 
 ////////////////////////////////////////////////////////////////////
 

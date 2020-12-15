@@ -833,33 +833,11 @@ typedef bool (* FNetCliPacket)(
     const NetCli_PacketHeader & pkt
 );
 
-#if 0
-
-#ifdef SERVER
-static const FNetCliPacket s_recvTbl[kNumNetCliMsgs] = {
-    ServerRecvConnect,
-    nil,
-    nil,
-};
-#endif
-
-#ifdef CLIENT
-static const FNetCliPacket s_recvTbl[kNumNetCliMsgs] = {
-    nil,
-    ClientRecvEncrypt,
-    ClientRecvError,
-};
-#endif
-
-#else // 0
-
 static const FNetCliPacket s_recvTbl[kNumNetCliMsgs] = {
     ServerRecvConnect,
     ClientRecvEncrypt,
     ClientRecvError,
 };
-
-#endif // 0
 
 //===========================================================================
 static unsigned DispatchPacket (
@@ -1001,45 +979,6 @@ NetCli * NetCliConnectAccept (
 }
 
 //============================================================================
-#ifdef SERVER
-NetCli * NetCliListenAccept (
-    AsyncSocket         sock,
-    unsigned            protocol,
-    bool                unbuffered,
-    FNetCliEncrypt      encryptFcn,
-    unsigned            seedBytes,
-    const uint8_t          seedData[],
-    void *              encryptParam
-) {
-    // Create connection
-    NetCli * cli = ConnCreate(sock, protocol, kNetCliModeServerStart);
-    if (cli) {
-        AsyncSocketEnableNagling(sock, !unbuffered);
-        cli->encryptFcn     = encryptFcn;
-        cli->encryptParam   = encryptParam;
-        SetConnSeed(cli, seedBytes, seedData);
-    }
-    return cli;
-}
-#endif
-
-//============================================================================
-#ifdef SERVER
-void NetCliListenReject (
-    AsyncSocket     sock,
-    ENetError       error
-) {
-    if (sock) {
-        Connect::NetCli_Srv2Cli_Error response;
-        response.message    = Connect::kNetCliSrv2CliError;
-        response.length     = sizeof(response);
-        response.error      = error;
-        AsyncSocketSend(sock, &response, sizeof(response));
-    }
-}
-#endif
-
-//============================================================================
 void NetCliClearSocket (NetCli * cli) {
     cli->sock = nil;
 }
@@ -1150,10 +1089,6 @@ bool NetCliDispatch (
             }
 #endif // PLASMA_EXTERNAL_RELEASE
 
-#ifdef SERVER
-            cli->recvDispatch = result;
-#endif
-            
             // free heap buffer (if any)
             free(temp);
 

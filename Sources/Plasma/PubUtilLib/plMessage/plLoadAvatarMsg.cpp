@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #ifndef NO_AV_MSGS
-#ifndef SERVER
 
 #include "hsResMgr.h"
 #include "hsStream.h"
@@ -156,5 +155,4 @@ void plLoadAvatarMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)
     stream->WriteSafeString(fUserStr);
 }
 
-#endif // ndef SERVER
 #endif // ndef NO_AV_MSGS

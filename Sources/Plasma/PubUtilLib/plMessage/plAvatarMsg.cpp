@@ -49,9 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plOneShotCallbacks.h"
 #include "pnSceneObject/plSceneObject.h"
 
-#ifndef SERVER
-#   include "plAvatar/plAvBrain.h"
-#endif
+
+#include "plAvatar/plAvBrain.h"
 
 
 //////////////////////
@@ -486,8 +485,6 @@ void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 //
 ///////////////////
 
-#ifndef SERVER
-
 // default ctor
 plAvPushBrainMsg::plAvPushBrainMsg()
 : fBrain(nil)
@@ -516,8 +513,6 @@ void plAvPushBrainMsg::Write(hsStream *stream, hsResMgr *mgr)
     plAvTaskMsg::Write(stream, mgr);
     mgr->WriteCreatable(stream, fBrain);
 }
-
-#endif // SERVER
 
 
 

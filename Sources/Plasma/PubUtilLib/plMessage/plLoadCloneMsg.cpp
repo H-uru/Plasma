@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #ifndef NO_AV_MSGS
-#ifndef SERVER
 
 #include "HeadSpin.h"
 #include "hsResMgr.h"
@@ -267,5 +266,4 @@ plMessage *plLoadCloneMsg::GetTriggerMsg()
     return fTriggerMsg;
 }
 
-#endif // ndef SERVER
 #endif // ndef NO_AV_MSGS

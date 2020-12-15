@@ -339,7 +339,6 @@ public:
 //
 ///////////////////
 
-#ifndef SERVER
 class plAvPushBrainMsg : public plAvTaskMsg
 {
 public:
@@ -372,8 +371,6 @@ public:
     CLASSNAME_REGISTER( plAvPopBrainMsg );
     GETINTERFACE_ANY( plAvPopBrainMsg, plAvTaskMsg);
 };
-
-#endif // SERVER
 
 
 // For entering/exiting "stealth mode"

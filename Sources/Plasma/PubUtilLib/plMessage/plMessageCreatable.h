@@ -85,10 +85,8 @@ REGISTER_CREATABLE(plAvatarFootMsg);
     REGISTER_CREATABLE(plAvTaskMsg);
     REGISTER_CREATABLE(plAvTaskSeekDoneMsg);
 
-    #ifndef SERVER
-        REGISTER_CREATABLE(plAvPopBrainMsg);
-        REGISTER_CREATABLE(plAvPushBrainMsg);
-    #endif // ndef SERVER
+    REGISTER_CREATABLE(plAvPopBrainMsg);
+    REGISTER_CREATABLE(plAvPushBrainMsg);
 #endif // ndef NO_AV_MSGS
 
 #include "plBulletMsg.h"
@@ -307,35 +305,25 @@ REGISTER_CREATABLE(plTriggerMsg);
 #include "plVaultNotifyMsg.h"
 REGISTER_CREATABLE(plVaultNotifyMsg);
 
-#ifndef SERVER
-    #ifndef NO_AV_MSGS
-        #include "plAIMsg.h"
-        REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
-        REGISTER_CREATABLE(plAIBrainCreatedMsg);
-        REGISTER_CREATABLE(plAIMsg);
-    #endif // NO_AV_MSGS
-#endif // SERVER
-
-/*****************************************************************************
-*
-*   Messages excluded from SERVER build, and the NoAvMsgs build configurations
-*
-***/
+#ifndef NO_AV_MSGS
+    #include "plAIMsg.h"
+    REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
+    REGISTER_CREATABLE(plAIBrainCreatedMsg);
+    REGISTER_CREATABLE(plAIMsg);
+#endif // NO_AV_MSGS
 
 #ifndef NO_AV_MSGS
-    #ifndef SERVER
-        #include "plAvCoopMsg.h"
-        REGISTER_CREATABLE(plAvCoopMsg);
+    #include "plAvCoopMsg.h"
+    REGISTER_CREATABLE(plAvCoopMsg);
 
-        #include "plLoadAvatarMsg.h"
-        REGISTER_CREATABLE(plLoadAvatarMsg);
+    #include "plLoadAvatarMsg.h"
+    REGISTER_CREATABLE(plLoadAvatarMsg);
 
-        #include "plLoadCloneMsg.h"
-        REGISTER_CREATABLE(plLoadCloneMsg);
+    #include "plLoadCloneMsg.h"
+    REGISTER_CREATABLE(plLoadCloneMsg);
 
-        #include "plLoadClothingMsg.h"
-        REGISTER_CREATABLE(plLoadClothingMsg);
-    #endif // ndef SERVER
+    #include "plLoadClothingMsg.h"
+    REGISTER_CREATABLE(plLoadClothingMsg);
 #endif // ndef NO_AV_MSGS
 
 #endif // plMessageCreatable_inc
