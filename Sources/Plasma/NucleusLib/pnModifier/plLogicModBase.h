@@ -104,7 +104,7 @@ public:
     virtual void Reset(bool bCounterReset);
 
     void SetDisabled(bool disabled) { fDisabled = disabled; }
-    bool Disabled() { return fDisabled; }
+    bool Disabled() const { return fDisabled; }
 
     plNotifyMsg* GetNotify() { return fNotify; }
 

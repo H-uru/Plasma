@@ -53,6 +53,12 @@ public:
     bool fEntering;       // otherwise it's leaving
 
     plCollideMsg() { SetBCastFlag(plMessage::kPropagateToModifiers); }
+    plCollideMsg(const plKey& s, const plKey& r, plKey other, bool entering)
+        : fOtherKey(std::move(other)), fEntering(entering), plMessage(s, r, 0)
+    {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
+
     ~plCollideMsg() {}
 
     CLASSNAME_REGISTER( plCollideMsg );

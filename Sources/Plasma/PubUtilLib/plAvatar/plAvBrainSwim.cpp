@@ -242,6 +242,7 @@ plAvBrainSwim::plAvBrainSwim() :
     fSurfaceProbeMsg->SetRequestType(plSimDefs::kLOSDBSwimRegion);
     fSurfaceProbeMsg->SetTestType(plLOSRequestMsg::kTestAny);
     fSurfaceProbeMsg->SetRequestID(plArmatureMod::kAvatarLOSSwimSurface);
+    fSurfaceProbeMsg->SetRequestName(ST_LITERAL("Swim Brain: Surface Probe"));
 }
     
 plAvBrainSwim::~plAvBrainSwim()

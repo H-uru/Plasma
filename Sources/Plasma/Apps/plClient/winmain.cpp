@@ -67,6 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
+#include "plPhysX/plPXSimulation.h"
 
 #include "res/resource.h"
 
@@ -97,6 +98,7 @@ enum
     kArgSkipPreload,
     kArgPlayerId,
     kArgStartUpAgeName,
+    kArgPvdFile,
 };
 
 static const plCmdArgDef s_cmdLineArgs[] = {
@@ -106,6 +108,7 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       "SkipPreload",     kArgSkipPreload },
     { kCmdArgFlagged  | kCmdTypeInt,        "PlayerId",        kArgPlayerId },
     { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
+    { kCmdArgFlagged  | kCmdTypeString,     "PvdFile",         kArgPvdFile },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -1028,6 +1031,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         NetCommSetIniPlayerId(cmdParser.GetInt(kArgPlayerId));
     if (cmdParser.IsSpecified(kArgStartUpAgeName))
         NetCommSetIniStartUpAge(cmdParser.GetString(kArgStartUpAgeName));
+    if (cmdParser.IsSpecified(kArgPvdFile))
+        plPXSimulation::SetDefaultDebuggerEndpoint(cmdParser.GetString(kArgPvdFile));
 #endif
 
     plFileName serverIni = "server.ini";

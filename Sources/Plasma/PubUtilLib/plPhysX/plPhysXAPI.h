@@ -40,38 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plLOSHitMsg_inc
-#define plLOSHitMsg_inc
+/**
+ * \file plPhysXAPI.h
+ * Private include file to bring in the PhysX API.
+ * Include this to bring in the entire NVIDIA PhysX SDK. Do NOT include PxPhysicsAPI.h manually!
+ * This file ensures that the SDK is included such that no linker errors are generated when
+ * using a static PhysX SDK.
+ */
 
-#include "pnMessage/plMessage.h"
-#include "hsGeometry3.h"
+#ifndef plPhysXAPI_H
+#define plPhysXAPI_H
 
-class plLOSHitMsg : public plMessage
-{
-public:
-    plKey               fObj;
-    hsPoint3            fHitPoint;
-    bool                fNoHit;
-    uint32_t            fRequestID;
-    uint32_t            fHitFlags;
-    hsVector3           fNormal;
-    float               fDistance;
+#include <PxConfig.h>
+#include <PxPhysicsAPI.h>
 
-    plLOSHitMsg() : fHitFlags(0) { SetBCastFlag(plMessage::kPropagateToModifiers); }
-
-    plLOSHitMsg(const plKey& s, const plKey& r, uint32_t id)
-        : fNoHit(), fRequestID(id), fHitFlags(), fDistance(), plMessage(s, r, nullptr)
-    {
-        SetBCastFlag(plMessage::kPropagateToModifiers);
-    }
-
-    CLASSNAME_REGISTER( plLOSHitMsg );
-    GETINTERFACE_ANY( plLOSHitMsg, plMessage );
-
-    // IO
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
-};
-
-
-#endif // plLOSHitMsg_inc
+#endif

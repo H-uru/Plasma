@@ -39,12 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef plPXPhysicalControllerCore_H
+#define plPXPhysicalControllerCore_H
+
+#include <set>
+#include <tuple>
+
 #include "plAvatar/plPhysicalControllerCore.h"
 
-class NxCapsuleController;
-class NxActor;
-class NxCapsule;
-class PXControllerHitReport;
+namespace physx
+{
+    class PxActor;
+    class PxCapsuleGeometry;
+    class PxRigidDynamic;
+    class PxTransform;
+    class PxVec3;
+};
+
 class plPhysicalProxy;
 class plDrawableSpans;
 class hsGMaterial;
@@ -52,63 +63,123 @@ class plSceneObject;
 class plPXPhysical;
 class plCollideMsg;
 
-#ifndef PLASMA_EXTERNAL_RELEASE
-class plDbgCollisionInfo
-{
-public:
-    plSceneObject *fSO;
-    hsVector3 fNormal;
-    bool fOverlap;
-};
-#endif // PLASMA_EXTERNAL_RELEASE
-
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
 public:
-    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius, bool human);
+    plPXPhysicalControllerCore(plKey ownerSO, float height, float radius);
     ~plPXPhysicalControllerCore();
 
     // An ArmatureMod has its own idea about when physics should be enabled/disabled.
     // Use plArmatureModBase::EnablePhysics() instead.
-    virtual void Enable(bool enable);
+    void Enable(bool enable) override;
 
     // Subworld
-    virtual void SetSubworld(plKey world);
+    void SetSubworld(const plKey& world) override;
 
     // For the avatar SDL only
-    virtual void GetState(hsPoint3& pos, float& zRot);
-    virtual void SetState(const hsPoint3& pos, float zRot);
+    void GetState(hsPoint3& pos, float& zRot) override;
+    void SetState(const hsPoint3& pos, float zRot) override;
+
+    // The LOS DB this avatar is in (only one)
+    void SetLOSDB(plSimDefs::plLOSDB losDB) override;
 
     // Movement strategy
-    virtual void SetMovementStrategy(plMovementStrategy* strategy);
+    void SetMovementStrategy(plMovementStrategy* strategy) override;
 
     // Global location
-    virtual void SetGlobalLoc(const hsMatrix44& l2w);
+    void SetGlobalLoc(const hsMatrix44& l2w) override;
 
     // Local Sim Position
-    virtual void GetPositionSim(hsPoint3& pos);
+    void GetPositionSim(hsPoint3& pos) override;
+    void SetPositionSim(const hsPoint3& pos) override;
 
-    // Move kinematic controller
-    virtual void Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults);
+    /** Sets the linear velocity in simulation space. */
+    void SetLinearVelocitySim(const hsVector3& velocity) override;
 
-    // Set linear velocity on dynamic controller
-    virtual void SetLinearVelocitySim(const hsVector3& linearVel);
+protected:
+    [[nodiscard]]
+    std::vector<plControllerHitRecord> ISweepMulti(const hsPoint3& origin,
+                                                   const hsVector3& dir,
+                                                   float distance,
+                                                   plSimDefs::Group simGroups) const;
 
-    // Sweep the controller path from startPos through endPos
-    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics,
-        bool vsStatics, uint32_t& vsSimGroups, std::vector<plControllerSweepRecord>& hits);
+    [[nodiscard]]
+    std::optional<plControllerHitRecord> ISweepSingle(const hsPoint3& origin,
+                                                      const hsVector3& dir,
+                                                      float distance,
+                                                      plSimDefs::Group simGroups) const;
+
+public:
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports all hits
+     * along the path.
+     * \param[in] startPos: Position from which the capsule sweep should begin.
+     * \param[in] endPos: Position from which the capsule sweep should end.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns All hits along the path of the sweep.
+     */
+    [[nodiscard]]
+    std::vector<plControllerHitRecord> SweepMulti(const hsPoint3& startPos,
+                                                  const hsPoint3& endPos,
+                                                  plSimDefs::Group simGroups) const override;
+
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports all hits
+     * along the path.
+     * \param[in] origin Position from which the capsule sweep should begin.
+     * \param[in] dir Unit vector defining the direction of the capsule sweep.
+     * \param[in] distance Distance over which the capsule should be swept.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns All hits along the path of the sweep.
+     */
+    [[nodiscard]]
+    std::vector<plControllerHitRecord> SweepMulti(const hsPoint3& origin,
+                                                  const hsVector3& dir,
+                                                  float distance,
+                                                  plSimDefs::Group simGroups) const override
+    {
+        return ISweepMulti(origin, dir, distance, simGroups);
+    }
+
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports the first blocking
+     * hit along the path.
+     * \param[in] startPos: Position from which the capsule sweep should begin.
+     * \param[in] endPos: Position from which the capsule sweep should end.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns The first hit along the path of the sweep.
+     */
+    [[nodiscard]]
+    std::optional<plControllerHitRecord> SweepSingle(const hsPoint3& startPos,
+                                                     const hsPoint3& endPos,
+                                                     plSimDefs::Group simGroups) const override;
+
+    /**
+     * Sweeps the character's capsule from startPos through endPos and reports the first blocking
+     * hit along the path.
+     * \param[in] origin Position from which the capsule sweep should begin.
+     * \param[in] dir Unit vector defining the direction of the capsule sweep.
+     * \param[in] distance Distance over which the capsule should be swept.
+     * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \returns The first hit along the path of the sweep.
+     */
+    [[nodiscard]]
+    std::optional<plControllerHitRecord> SweepSingle(const hsPoint3& origin,
+                                                     const hsVector3& dir,
+                                                     float distance,
+                                                     plSimDefs::Group simGroups) const override
+    {
+        return ISweepSingle(origin, dir, distance, simGroups);
+    }
 
     // any clean up for the controller should go here
-    virtual void LeaveAge();
-
-    // Capsule
-    void GetWorldSpaceCapsule(NxCapsule& cap) const;
+    void LeaveAge() override;
 
     // Create Proxy for debug rendering
     plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
 
-    // Dynamic hits
-    void AddDynamicHit(plPXPhysical* phys);
+    /** Handles contacts generated by the simulation. */
+    void AddContact(plPXPhysical* phys, const hsPoint3& pos, const hsVector3& normal);
 
 //////////////////////////////////////////
 //Static Helper Functions
@@ -123,51 +194,66 @@ public:
     // Update controllers when not performing a physics step
     static void UpdateNonPhysical(float alpha);
 
-    // Rebuild the controller cache, required when a static actor in the scene has changed.
-    static void RebuildCache();
-
-    // Returns the plPXPhysicalControllerCore associated with the given NxActor
-    static plPXPhysicalControllerCore* GetController(NxActor& actor);
-
-    // Subworld controller queries
-    static bool AnyControllersInThisWorld(plKey world);
-    static int GetNumberOfControllersInThisSubWorld(plKey world);
-    static int GetControllersInThisSubWorld(plKey world, int maxToReturn, plPXPhysicalControllerCore** bufferout);
-
-    // Controller count
-    static int NumControllers();
-    static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
-    static int fPXControllersMax;
-
 #ifndef PLASMA_EXTERNAL_RELEASE
     static bool fDebugDisplay;
 #endif
 
 protected:
-    friend class PXControllerHitReport;
+    /**
+     * Gets the physics position of the character's capsule.
+     * \remarks Plasma stores the position of avatars from their "foot" position while PhysX
+     *          uses the center of the capsule shape as its center. This returns the current position
+     *          to be used for PhysX.
+     * \param[in] footPos The simulation space position of the character's foot.
+     * \param[in] upDir A unit vector defining the simulation space direction considered "up."
+     * \returns The simulation position of the character's capsule actor.
+     */
+    hsPoint3 IGetCapsulePos(const hsPoint3& footPos, const hsVector3& upDir=hsVector3(0.f, 0.f, 1.f)) const;
 
-    virtual void IHandleEnableChanged();
+    /**
+     * Gets the Plasma position of the character.
+     * \remarks Plasma stores the position of avatars from their "foot" position while PhysX
+     *          uses the center of the capsule shape as its center. This returns the current position
+     *          to be used for PhysX.
+     * \param[in] capPos The simulation space position of the character's capsule.
+     * \param[in] upDir A unit vector defining the simulation space direction considered "up."
+     * \returns The simulation space position of the character.
+     */
+    hsPoint3 IGetCapsuleFoot(const hsPoint3& capPos,  const hsVector3& upDir=hsVector3(0.f, 0.f, 1.f)) const;
 
-    void IInformDetectors(bool entering);
+    /**
+     * Gets the dimensions of the character's capsule.
+     * \returns An std::tuple of (halfHeight, radius)
+     */
+    std::tuple<float, float> IGetCapsuleDimensions() const;
 
-    void ICreateController(const hsPoint3& pos);
+    /**
+     * Gets the local pose of the character's capsule.
+     * \remarks PhysX capsules by default are not "upright" - this returns a transform that stands
+     *          the capsule upright.
+     * \param[in] upDir A unit vector defining the simulation space direction considered "up."
+     * \returns The local space transform of the capsule shape.
+     */
+    physx::PxTransform IGetCapsulePose(const hsVector3& upDir=hsVector3(0.f, 0.f, 1.f)) const;
+
+protected:
+    friend class plPXControllerBehaviorCallback;
+    friend class plPXControllerHitReport;
+
+    void IChangePhysicalOwnership();
+
+    void ICreateController(hsPoint3 pos);
     void IDeleteController();
-
-    void IDispatchQueuedMsgs();
-    void IProcessDynamicHits();
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     void IDrawDebugDisplay(int controllerIdx);
-    hsTArray<plDbgCollisionInfo> fDbgCollisionInfo;
+    std::vector<plControllerHitRecord> fDbgCollisionInfo;
 #endif
 
-    std::vector<plCollideMsg*> fQueuedCollideMsgs;
-    std::vector<plPXPhysical*> fDynamicHits;
-
-    NxCapsuleController* fController;
-    NxActor* fActor;
+    std::set<plKey> fHitObjects;
+    physx::PxRigidDynamic* fActor;
 
     plPhysicalProxy* fProxyGen;
-    bool fKinematicCCT;
-    bool fHuman;
 };
+
+#endif

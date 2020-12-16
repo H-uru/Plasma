@@ -52,7 +52,8 @@ plLOSRequestMsg::plLOSRequestMsg()
     fTestType(kTestAny),
     fReportType(kReportHit),
     fCullDB(plSimDefs::kLOSDBNone),
-    fWorldKey(nil)
+    fWorldKey(nil),
+    fRequestName(ST_LITERAL("(unnamed)"))
 {
     AddReceiver(hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY));
     SetBCastFlag(plMessage::kPropagateToModifiers);
@@ -67,7 +68,8 @@ plLOSRequestMsg::plLOSRequestMsg(const plKey& sender, hsPoint3& fromPoint, hsPoi
     fTestType(test),
     fReportType(report),
     fCullDB(plSimDefs::kLOSDBNone),
-    fWorldKey(nil)
+    fWorldKey(nil),
+    fRequestName(ST_LITERAL("(unnamed)"))
 {
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }

@@ -59,6 +59,7 @@ protected:
     {
         kBlockCameras,  
     };
+
     std::vector<plKey> fSafePoints; // Safe positions to move avatars to
     hsTArray<plKey> fContainedAvatars;      // Avatars inside our volume
     plExcludeRegionSDLModifier  *fSDLModifier;
@@ -69,7 +70,6 @@ protected:
     void ISetPhysicalState(bool cleared);
 
     int IFindClosestSafePoint(plKey avatar);
-    bool ICheckSubworlds(plKey avatar);
     void IMoveAvatars();
 
     friend class plExcludeRegionSDLModifier;

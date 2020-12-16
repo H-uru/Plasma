@@ -78,6 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnSceneObject/plSceneObject.h"
 #include "plScene/plSceneNode.h"
+#include "plPhysX/plPXCooking.h"
 #include "plPhysX/plPXPhysical.h"
 #include "plDrawable/plInstanceDrawInterface.h"
 #include "plDrawable/plSharedMesh.h"
@@ -614,8 +615,6 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 }
 
 #include "plMaxMeshExtractor.h"
-#include "plPhysXCooking.h"
-#include "plPhysX/plPXStream.h"
 #include "plPhysX/plSimulationMgr.h"
 
 bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
@@ -687,10 +686,8 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     plMaxMeshExtractor::NeutralMesh mesh;
     plMaxMeshExtractor::Extract(mesh, proxyNode, bounds == plSimDefs::kBoxBounds, this);
 
-    if (subworld)
-        recipe.l2s = subworld->GetWorldToLocal44() * mesh.fL2W;
-    else
-        recipe.l2s = mesh.fL2W;
+    hsMatrix44 l2s = subworld ? (subworld->GetWorldToLocal44() * mesh.fL2W) : mesh.fL2W;
+    l2s.DecompRigid(recipe.l2sP, recipe.l2sQ);
 
     switch (bounds)
     {
@@ -714,55 +711,17 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     case plSimDefs::kProxyBounds:
     case plSimDefs::kExplicitBounds:
         {
-            // if this is a detector then try to convert to a convex hull first... if that doesn't succeed then do it as an exact
-            if ( group == plSimDefs::kGroupDetector )
-            {
-                // try converting to a convex hull mesh
-                recipe.meshStream = plPhysXCooking::CookHull(mesh.fNumVerts, mesh.fVerts,false);
-                if (recipe.meshStream)
-                {
-                    plPXStream pxs(recipe.meshStream);
-                    recipe.convexMesh = plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
-                    recipe.bounds = plSimDefs::kHullBounds;
-                    // then test to see if the original mesh was convex (unless they said to skip 'em)
-#ifdef WARNINGS_ON_CONCAVE_PHYSX_WORKAROUND
-                    if ( !plPhysXCooking::fSkipErrors )
-                    {
-                        if ( !plPhysXCooking::TestIfConvex(recipe.convexMesh, mesh.fNumVerts, mesh.fVerts) )
-                        {
-                            int retStatus = pErrMsg->Set(true, "Physics Warning: PhysX workaround", "Detector region that is marked as exact and is concave but switching to convex hull for PhysX: %s", GetName()).CheckAskOrCancel();
-                            pErrMsg->Set();
-                            if ( retStatus == 1 )  // cancel?
-                                plPhysXCooking::fSkipErrors = true;
-                        }
-                    }
-#endif  // WARNINGS_ON_CONCAVE_PHYSX_WORKAROUND
-                }
-                if (!recipe.meshStream)
-                {
-                    if ( !pErrMsg->Set(true, "Physics Warning", "Detector region exact failed to be made a Hull, trying trimesh: %s", GetName()).Show() )
-                        pErrMsg->Set();
-                    recipe.meshStream = plPhysXCooking::CookTrimesh(mesh.fNumVerts, mesh.fVerts, mesh.fNumFaces, mesh.fFaces);
-                    if (!recipe.meshStream)
-                    {
-                        pErrMsg->Set(true, "Physics Error", "Trimesh creation failed for physical %s", GetName()).Show();
-                        return false;
-                    }
-                    plPXStream pxs(recipe.meshStream);
-                    recipe.triMesh = plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
-                }
+            recipe.meshStream = std::make_unique<hsVectorStream>();
+            plPXCooking::WriteTriMesh(recipe.meshStream.get(), mesh.fNumFaces, mesh.fFaces,
+                                      mesh.fNumVerts, mesh.fVerts);
+            recipe.meshStream->Rewind();
+
+            // Attempt to cook the physical
+            if (!(recipe.triMesh = physical->ICookTriMesh(recipe.meshStream.get()))) {
+                pErrMsg->Set("Physics Error", "Failed to cook triangle mesh %s", GetName()).Show();
+                return false;
             }
-            else
-            {
-                recipe.meshStream = plPhysXCooking::CookTrimesh(mesh.fNumVerts, mesh.fVerts, mesh.fNumFaces, mesh.fFaces);
-                if (!recipe.meshStream)
-                {
-                    pErrMsg->Set(true, "Physics Error", "Trimesh creation failed for physical %s", GetName()).Show();
-                    return false;
-                }
-                plPXStream pxs(recipe.meshStream);
-                recipe.triMesh = plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
-            }
+            recipe.meshStream->Rewind();
         }
         break;
     case plSimDefs::kSphereBounds:
@@ -785,26 +744,16 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
         break;
     case plSimDefs::kHullBounds:
         {
-            if ( group == plSimDefs::kGroupDynamic )
-            {
-                recipe.meshStream = plPhysXCooking::IMakePolytope(mesh);
-                if (!recipe.meshStream)
-                {
-                    pErrMsg->Set(true, "Physics Error", "polyTope-convexhull failed for physical %s", GetName()).Show();
-                    return false;
-                }
+            recipe.meshStream = std::make_unique<hsVectorStream>();
+            plPXCooking::WriteConvexHull(recipe.meshStream.get(), mesh.fNumVerts, mesh.fVerts);
+            recipe.meshStream->Rewind();
+
+            // Attempt to cook the physical
+            if (!(recipe.convexMesh = physical->ICookHull(recipe.meshStream.get()))) {
+                pErrMsg->Set("Physics Error", "Failed to cook convex hull %s", GetName()).Show();
+                return false;
             }
-            else
-            {
-                recipe.meshStream = plPhysXCooking::CookHull(mesh.fNumVerts, mesh.fVerts,false);
-                if(!recipe.meshStream)
-                {
-                    pErrMsg->Set(true, "Physics Error", "Convex hull creation failed for physical %s", GetName()).Show();
-                    return false;
-                }
-            }
-            plPXStream pxs(recipe.meshStream);
-            recipe.convexMesh = plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
+            recipe.meshStream->Rewind();
         }
         break;
     }
@@ -817,10 +766,8 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     ST::string objName = GetKey()->GetName();
     plKey physKey = hsgResMgr::ResMgr()->NewKey(objName, physical, nodeLoc, GetLoadMask());
 
-    //
-    // Create the physical
-    //
-    if (!physical->Init())
+    // Sanity check creating the physical actor
+    if (!physical->InitActor())
     {
         pErrMsg->Set(true, "Physics Error", "Physical creation failed for object %s", GetName()).Show();
         physKey->RefObject();

@@ -40,272 +40,162 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plLOSDispatch.h"
-#include "plSimulationMgr.h"
 #include "plgDispatch.h"
 #include "plMessage/plLOSRequestMsg.h"
 #include "plMessage/plLOSHitMsg.h"
+#include "plMessage/plRenderMsg.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plModifier/plLogicModifier.h"
-#include "plPXPhysical.h"
-#include "plPXPhysicalControllerCore.h"
-#include "plPXConvert.h"
 
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
-
-#include <NxPhysics.h>
+#include "plAvatar/plPhysicalControllerCore.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "plProfile.h"
-plProfile_Extern(LineOfSight);
-
-class myRaycastReport : public NxUserRaycastReport
-{
-public:
-    void InitCast(plSimDefs::plLOSDB db, plLOSRequestMsg::TestType type)
-    {
-        fDB = db;
-        fType = type;
-        fHitObj = nil;
-        fNormal.Set(0, 0, 0);
-        fPoint.Set(0, 0, 0);
-        fDist = FLT_MAX;
-    }
-
-    bool GotHit() { return fDist != FLT_MAX; }
-    plKey GetObj() { return fHitObj; }
-    float GetDistance() { return fDist; }
-    const hsVector3& GetNormal() { return fNormal; }
-    const hsPoint3& GetPoint() { return fPoint; }
-    void ResetHitObj(){fHitObj=nil;}
-private:
-    virtual bool onHit(const NxRaycastHit& hit)
-    {
-        NxActor& hitActor = hit.shape->getActor();
-        plPXPhysical* phys = (plPXPhysical*)hitActor.userData;
-
-        plKey objKey = nil;
-        uint16_t objDB = plSimDefs::kLOSDBNone;
-
-        if (phys)
-        {
-            objKey = phys->GetObjectKey();
-            objDB = phys->GetAllLOSDBs();
-        }
-        else
-        {
-            plPXPhysicalControllerCore* controller = plPXPhysicalControllerCore::GetController(hitActor);
-            if (controller)
-            {
-                objKey = controller->GetOwner();
-                objDB = controller->GetLOSDB();
-            }
-        }
-
-        // is the object's physic enabled and is it in the database that we are looking for?
-        if ( !phys || !phys->GetProperty(plSimulationInterface::kDisable) )
-        {
-            if ( (fDB & objDB) != 0)
-            {
-                if (fType == plLOSRequestMsg::kTestAny || hit.distance < fDist)
-                {
-                    // need one more test... if it is a clickable need to see if it is enabled
-                    bool disabled = false;
-                    if ( objKey )
-                    {
-                        plSceneObject* so = plSceneObject::ConvertNoRef( objKey->GetObjectPtr() );
-                        if (so)
-                        {
-                            int i;
-                            for ( i=0; i < so->GetNumModifiers(); i++)
-                            {
-                                plLogicModifier* lo = (plLogicModifier*)plLogicModifier::ConvertNoRef(so->GetModifier(i) );
-                                if (lo)
-                                {
-                                    disabled = lo->Disabled();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (!disabled)
-                    {
-                        fHitObj = objKey;
-                        fNormal.Set(hit.worldNormal.x, hit.worldNormal.y, hit.worldNormal.z);
-                        fPoint.Set(hit.worldImpact.x, hit.worldImpact.y, hit.worldImpact.z);
-                        fDist = hit.distance;
-
-                        if (fType == plLOSRequestMsg::kTestAny)
-                            return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    plSimDefs::plLOSDB fDB;
-    plLOSRequestMsg::TestType fType;
-
-    plKey fHitObj;
-    hsVector3 fNormal;
-    hsPoint3 fPoint;
-    float fDist;
-} gMyReport;
+plProfile_CreateTimer("LineOfSight", "Simulation", LineOfSight);
 
 plLOSDispatch::plLOSDispatch()
+    : fDebugDisplay()
 {
     RegisterAs(kLOSObject_KEY);
     plgDispatch::Dispatch()->RegisterForExactType(plLOSRequestMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
 }
 
 plLOSDispatch::~plLOSDispatch()
 {
     plgDispatch::Dispatch()->UnRegisterForExactType(plLOSRequestMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
 }
 
 bool plLOSDispatch::MsgReceive(plMessage* msg)
 {
-
     plLOSRequestMsg* requestMsg = plLOSRequestMsg::ConvertNoRef(msg);
-    if (requestMsg)
-    {
+    if (requestMsg) {
         plProfile_BeginTiming(LineOfSight);
 
-        plSimulationMgr* sim = plSimulationMgr::GetInstance();
-
         plKey worldKey = requestMsg->fWorldKey;
-        if (!worldKey)
-        {
+        if (!worldKey) {
             plArmatureMod* av = plAvatarMgr::GetInstance()->GetLocalAvatar();
-            if ( av && av->GetController() )
+            if (av && av->GetController())
                 worldKey = av->GetController()->GetSubworld();
         }
 
-        hsPoint3 from = requestMsg->fFrom;
-        hsPoint3 at = requestMsg->fTo;
-
-        // requests are always sent in world space, but they might
-        // need to be converted to subworld space
-        hsMatrix44 l2w, w2l;
-        if (worldKey)
-        {
-            plSceneObject* so = plSceneObject::ConvertNoRef(worldKey->ObjectIsLoaded());
-            if (so)
-            {
-                l2w = so->GetLocalToWorld();
-                w2l = so->GetWorldToLocal();
-                from = w2l * from;
-                at = w2l * at;
-            }
-        }
-        else
-        {
-            l2w.Reset();
-            w2l.Reset();
-        }
-
-        NxScene* scene = sim->GetScene(worldKey);
-
-        gMyReport.InitCast(requestMsg->GetRequestType(), requestMsg->GetTestType());
-
-        hsVector3 norm = hsVector3(at - from);
-        float dist = norm.Magnitude();
-        norm.Normalize();
-
-        NxRay worldRay;
-        worldRay.dir = plPXConvert::Vector(norm);
-        worldRay.orig = plPXConvert::Point(from);
-        //PhysX will complain to log if ray distance is less than or equal to Zero, besides shouldn't  bother throwing 
-        // a point, and if we have negative we have some serious problems
-        if(dist>0.0f)
-        {
-            scene->raycastAllShapes(worldRay, gMyReport, NX_ALL_SHAPES, 0xffffffff, dist, NX_RAYCAST_DISTANCE | NX_RAYCAST_IMPACT | NX_RAYCAST_NORMAL);
-        }
-        else{
-            SimLog("%s sent out a LOS request with a ray length of %d.", requestMsg->GetSender()->GetName().c_str(), dist);
-        }
-        if (gMyReport.GotHit())
-        {
-            // We got a hit, save off the info
-            plMessage* hitMsg = ICreateHitMsg(requestMsg, l2w);
-
-            if (requestMsg->GetCullDB() != plSimDefs::kLOSDBNone)
-            {
-                // If we have a cull db, adjust the length of the raycast to be from the
-                // original point to the object we hit.  If we find anything from the cull
-                // db in there, the cast fails.
-                float dist = gMyReport.GetDistance();
-                if(dist!=0.0)
-                {
-                    gMyReport.InitCast(requestMsg->GetCullDB(), plLOSRequestMsg::kTestAny);
-                    scene->raycastAllShapes(worldRay, gMyReport, NX_ALL_SHAPES, 0xffffffff, dist, NX_RAYCAST_DISTANCE | NX_RAYCAST_IMPACT | NX_RAYCAST_NORMAL);
-
-                    if (gMyReport.GotHit())
-                    {
-                        delete hitMsg;
-                        hitMsg = nil;
-
-                        if (requestMsg->GetReportType() == plLOSRequestMsg::kReportMiss ||
-                            requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss)
-                        {
-                            ICreateMissMsg(requestMsg)->Send();
-                        }
+        auto hitMsg = std::make_unique<plLOSHitMsg>(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
+        hitMsg->fNoHit = !IRaycast(requestMsg->fFrom, requestMsg->fTo, worldKey, requestMsg->fRequestType,
+                                   requestMsg->GetTestType() == plLOSRequestMsg::kTestClosest,
+                                   hitMsg->fObj, hitMsg->fHitPoint, hitMsg->fNormal, hitMsg->fDistance);
+        if (!hitMsg->fNoHit) {
+            // If we have a cull db, adjust the length of the raycast to be from the
+            // original point to the object we hit.  If we find anything from the cull
+            // db in there, the cast fails.
+            if (requestMsg->GetCullDB() != plSimDefs::kLOSDBNone) {
+                plKey cullObj;
+                hsPoint3 cullPoint;
+                hsVector3 cullNormal;
+                float cullDistance;
+                bool cullHit = IRaycast(requestMsg->fFrom,
+                                        hitMsg->fHitPoint,
+                                        worldKey,
+                                        requestMsg->fCullDB,
+                                        requestMsg->GetTestType() == plLOSRequestMsg::kTestClosest,
+                                        cullObj,
+                                        cullPoint,
+                                        cullNormal,
+                                        cullDistance);
+                if (cullHit) {
+                    fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(),
+                                           LOSResult::kCull, hitMsg->fObj, cullObj);
+                    if (requestMsg->GetReportType() == plLOSRequestMsg::kReportMiss ||
+                        requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss) {
+                        hitMsg = std::make_unique<plLOSHitMsg>(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
+                        hitMsg->fNoHit = true;
+                    } else {
+                        hitMsg.reset();
                     }
+                } else {
+                    fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(),
+                                           LOSResult::kHit, hitMsg->fObj);
                 }
-                else// we are right on top of the object I assume that means we hit it
-                {// since PhysX would have complained we will log it anyways. Just so we have a better idea, where this
-                    //was happening previously
-                    SimLog("%s sent out a LOS request. The second cast for culling was of length 0. ABORTING and assuming hit.", requestMsg->GetSender()->GetName().c_str());
-                }
-
+            } else {
+                fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(),
+                                       LOSResult::kHit, hitMsg->fObj);
             }
 
-            if (hitMsg &&
-                (requestMsg->GetReportType() == plLOSRequestMsg::kReportHit ||
-                requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss))
-                hitMsg->Send();
-        }
-        else
-        {
+            if (hitMsg && (requestMsg->GetReportType() == plLOSRequestMsg::kReportHit ||
+                           requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss))
+                hitMsg.release()->Send();
+
+        } else {
+            fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(), LOSResult::kMiss);
             if (requestMsg->GetReportType() == plLOSRequestMsg::kReportMiss ||
-                requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss)
-            {
-                ICreateMissMsg(requestMsg)->Send();
+                requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss) {
+                plLOSHitMsg* missMsg = new plLOSHitMsg(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
+                missMsg->fNoHit = true;
+                missMsg->Send();
             }
         }
 
         plProfile_EndTiming(LineOfSight);
-        gMyReport.ResetHitObj();
+        return true;
+    }
+
+    if (plRenderMsg::ConvertNoRef(msg)) {
+        if (!fDebugDisplay) {
+            fDebugDisplay = plStatusLogMgr::GetInstance().CreateStatusLog(32, "Line of Sight",
+                                                                          plStatusLog::kDontWriteFile |
+                                                                          plStatusLog::kDeleteForMe |
+                                                                          plStatusLog::kFilledBackground);
+        }
+
+        fDebugDisplay->Clear();
+        fDebugDisplay->AddLineF("Num LOS Requests: {}", fRequests.size());
+        fDebugDisplay->AddLine(plStatusLog::kGreen, "Hits");
+        fDebugDisplay->AddLine(plStatusLog::kYellow, "Culled Hits");
+        fDebugDisplay->AddLine(plStatusLog::kRed, "Misses");
+        fDebugDisplay->AddLine("--------------------");
+        fDebugDisplay->AddLine("\n");
+        for (const auto& i : fRequests) {
+            uint32_t color = plStatusLog::kWhite;
+            switch (i.fResult) {
+            case LOSResult::kHit:
+                color = plStatusLog::kGreen;
+                break;
+            case LOSResult::kCull:
+                color = plStatusLog::kYellow;
+                break;
+            case LOSResult::kMiss:
+                color = plStatusLog::kRed;
+                break;
+            }
+
+            fDebugDisplay->AddLine(color, i.fName);
+
+            ST::string_stream ss;
+            if (i.fHit)
+                ss << "Hit: [" << i.fHit->GetName() << "] ";
+            if (i.fCull)
+                ss << "Cull: [" << i.fCull->GetName() << "] ";
+            if (ss.size())
+                fDebugDisplay->AddLineF(color, "    {}", ss.to_string());
+        }
+
+        fRequests.clear();
         return true;
     }
 
     return hsKeyedObject::MsgReceive(msg);
 }
 
-plMessage* plLOSDispatch::ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44& l2w)
+bool plLOSDispatch::ITestHit(const plSceneObject* so) const
 {
-    plKey ourKey = GetKey();
-    plKey rcvKey = requestMsg->GetSender();
-    plLOSHitMsg* hitMsg = new plLOSHitMsg(ourKey, rcvKey, nil);
-    hitMsg->fNoHit = false;
-    hitMsg->fObj = gMyReport.GetObj();
-    hitMsg->fDistance = gMyReport.GetDistance();
-    hitMsg->fNormal = l2w * gMyReport.GetNormal();
-    hitMsg->fHitPoint = l2w * gMyReport.GetPoint();
-    hitMsg->fRequestID = requestMsg->GetRequestID();
-    return hitMsg;
-}
-
-plMessage* plLOSDispatch::ICreateMissMsg(plLOSRequestMsg* requestMsg)
-{
-    plKey ourKey = GetKey();
-    plKey rcvKey = requestMsg->GetSender();
-    plLOSHitMsg* missMsg = new plLOSHitMsg(ourKey, rcvKey, nil);
-    missMsg->fNoHit = true;
-    missMsg->fObj = nil;
-    missMsg->fRequestID = requestMsg->GetRequestID();
-    return missMsg;
+    for (size_t i = 0; i < so->GetNumModifiers(); ++i) {
+        if (const plLogicModifier* logicmod = plLogicModifier::ConvertNoRef(so->GetModifier(i))) {
+            if (logicmod->Disabled())
+                return false;
+        }
+    }
+    return true;
 }

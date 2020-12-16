@@ -1178,12 +1178,15 @@ void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID 
     
     if(ID == ID_FIND_CLICKABLE) {
         pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
+        pMsg->SetRequestName(ST_LITERAL("Scene Input Interface: Find Clickable"));
         pMsg->SetCullDB(plSimDefs::kLOSDBUIBlockers);
     } else if(ID == ID_FIND_WALKABLE_GROUND) {
         pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBAvatarWalkable, plLOSRequestMsg::kTestClosest);
-    } else
+        pMsg->SetRequestName(ST_LITERAL("Scene Input Interface: Find Terrain"));
+    } else {
         pMsg = new plLOSRequestMsg( fManager->GetKey(), startPos, endPos, plSimDefs::kLOSDBLocalAvatar, plLOSRequestMsg::kTestClosest);
-    
+        pMsg->SetRequestName(ST_LITERAL("Scene Input Interface: Find Local Avatar"));
+    }
     pMsg->SetReportType( plLOSRequestMsg::kReportHitOrMiss );
 
     pMsg->SetRequestID( ID );

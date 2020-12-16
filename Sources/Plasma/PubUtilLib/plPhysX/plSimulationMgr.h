@@ -43,22 +43,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSimulationMgr_H
 
 #include <map>
+#include <memory>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plStatusLog/plStatusLog.h"
 #include "hsTemplates.h"
 
+class plPhysical;
 class plPXPhysical;
 class plLOSDispatch;
+class plSceneObject;
 class plStatusLog;
 class plPhysicsSoundMgr;
-class NxPhysicsSDK;
-class NxScene;
 class plCollideMsg;
 struct hsPoint3;
+struct hsVector3;
 
 class plSimulationMgr : public hsKeyedObject
 {
 public:
+    enum RefType
+    {
+        kPhysical,
+    };
+
+public:
+    plSimulationMgr();
+    ~plSimulationMgr();
+
     CLASSNAME_REGISTER(plSimulationMgr);
     GETINTERFACE_ANY(plSimulationMgr, hsKeyedObject);
 
@@ -67,11 +79,8 @@ public:
     static void Shutdown();
 
     static bool fExtraProfile;
-    static bool fSubworldOptimization;
-    static bool fDoClampingOnStep;
 
-    // initialiation of the PhysX simulation
-    virtual bool InitSimulation();
+    bool MsgReceive(plMessage* msg) override;
 
     // Advance the simulation by the given number of seconds
     void Advance(float delSecs);
@@ -87,36 +96,24 @@ public:
     // physicals over the network.
     void ConsiderSynch(plPXPhysical *physical, plPXPhysical *other);
 
-    NxPhysicsSDK* GetSDK() const { return fSDK; }
-    NxScene* GetScene(plKey world);
-    // Called when an actor is removed from a scene, checks if it's time to delete
-    // the scene
-    void ReleaseScene(plKey world);
-
-    int GetMaterialIdx(NxScene* scene, float friction, float restitution);
-
-    uint32_t GetStepCount() const { return fStepCount; }
+    class plPXSimulation* GetPhysX() const { return fSimulation.get(); }
 
     //Fix to Move collision messages and their handling out of the simulation step
     void AddCollisionMsg(plKey hitee, plKey hitter, bool entering);
     void AddCollisionMsg(plCollideMsg* msg);
 
-#ifndef PLASMA_EXTERNAL_RELEASE
-    static bool fDisplayAwakeActors;
-#endif //PLASMA_EXTERNAL_RELEASE
+    void AddContactSound(plPhysical* phys1, plPhysical* phys2,
+                         const hsPoint3& point, const hsVector3& normal);
+
+    void ResetKickables();
 
 protected:
-    friend class ContactReport;
-
     void ISendUpdates();
-
-    plSimulationMgr();
-    virtual ~plSimulationMgr();
 
     // Walk through the synchronization requests and send them as appropriate.
     void IProcessSynchs();
 
-    NxPhysicsSDK* fSDK;
+    std::unique_ptr<class plPXSimulation> fSimulation;
 
     plPhysicsSoundMgr* fSoundMgr;
 
@@ -124,20 +121,13 @@ protected:
     typedef std::vector<plCollideMsg*> CollisionVec;
     CollisionVec fCollideMsgs;
 
-    // A mapping from a key to a PhysX scene.  The key is either the
-    // SimulationMgr key, for the main world, or a SceneObject key if it's a
-    // subworld.
-    typedef std::map<plKey, NxScene*> SceneMap;
-    SceneMap fScenes;
+    std::vector<plPXPhysical*> fPhysicals;
 
     plLOSDispatch* fLOSDispatch;
 
     // Is the entire physics world suspended? If so, the clock can still advance
     // but nothing will move.
     bool fSuspended;
-
-    float fAccumulator;
-    uint32_t fStepCount;
 
     // A utility class to keep track of a request for a physical synchronization.
     // These requests must pass a certain criteria (see the code for the latest)
@@ -169,6 +159,22 @@ public:
     {
         if (GetInstance() && GetInstance()->fLog) {
             GetInstance()->fLog->AddLineF(formatStr, std::forward<_Args>(args)...);
+        }
+    }
+
+    template<typename... _Args>
+    static void LogYellow(const char* formatStr, _Args&&... args)
+    {
+        if (GetInstance() && GetInstance()->fLog) {
+            GetInstance()->fLog->AddLineF(plStatusLog::kYellow, formatStr, std::forward<_Args>(args)...);
+        }
+    }
+
+    template<typename... _Args>
+    static void LogRed(const char* formatStr, _Args&&... args)
+    {
+        if (GetInstance() && GetInstance()->fLog) {
+            GetInstance()->fLog->AddLineF(plStatusLog::kRed, formatStr, std::forward<_Args>(args)...);
         }
     }
 };
