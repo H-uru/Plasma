@@ -58,8 +58,6 @@ class plPipeline;
 
 class plInputManager :public hsKeyedObject
 {
-private:
-    static bool fUseDInput;
 public:
     plInputManager();
     plInputManager( hsWindowHndl hWnd );
@@ -70,9 +68,7 @@ public:
 
 
     void AddInputDevice(plInputDevice* pDev);
-    void InitDInput(hsWindowInst hInst, hsWindowHndl hWnd);
 
-    static void UseDInput(bool b) { fUseDInput = b; }
     void Update();
     static plInputManager*  GetInstance() { return fInstance; }
     static plInputManager*  fInstance;
@@ -94,7 +90,6 @@ public:
 protected:
     
     hsTArray<plInputDevice*>    fInputDevices;
-    plDInputMgr*                fDInputMgr;
     plInputInterfaceMgr         *fInterfaceMgr;
     bool                        fActive, fFirstActivated;       
 

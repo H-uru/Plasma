@@ -4,10 +4,6 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-if(PLASMA_PIPELINE STREQUAL "DirectX")
-    include_directories(${DirectX_INCLUDE_DIR})
-endif(PLASMA_PIPELINE STREQUAL "DirectX")
-
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
     pl3DPipeline.cpp

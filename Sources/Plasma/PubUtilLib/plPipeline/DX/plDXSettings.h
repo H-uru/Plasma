@@ -102,7 +102,7 @@ class plDXGeneralSettings
         IDirect3DPixelShader9           *fCurrPixelShader;
         DWORD                           fCurrFVFFormat;
 
-        HRESULT                 fDXError;
+        hsCOMError              fDXError;
         char                    fErrorStr[ 256 ];
 
         void    Reset();

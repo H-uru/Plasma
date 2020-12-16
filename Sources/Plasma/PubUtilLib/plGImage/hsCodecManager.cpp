@@ -43,10 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMipmap.h"
 #include "hsDXTSoftwareCodec.h"
 
-#if HS_BUILD_FOR_WIN32
-#include "hsDXTDirectXCodec.h"
-#endif
-
 hsCodecManager& hsCodecManager::Instance()
 {
     static hsCodecManager the_instance;
@@ -56,10 +52,6 @@ hsCodecManager& hsCodecManager::Instance()
     {
         initialized = true;
         hsDXTSoftwareCodec::Init();
-
-#if HS_BUILD_FOR_WIN32
-        hsDXTDirectXCodec::Init();
-#endif
     }
 
     return the_instance;

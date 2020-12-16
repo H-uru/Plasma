@@ -26,20 +26,6 @@ set(plInputCore_HEADERS
     plTelescopeInputInterface.h
 )
 
-if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
-
-    set(plInputCore_HEADERS ${plInputCore_HEADERS}
-        plDInputDevice.h
-        plDInputManager.h
-    )
-
-    set(plInputCore_SOURCES ${plInputCore_SOURCES}
-        plDInputDevice.cpp
-        plDInputManager.cpp
-    )
-endif(WIN32)
-
 add_library(plInputCore STATIC ${plInputCore_SOURCES} ${plInputCore_HEADERS})
 
 target_link_libraries(plInputCore CoreLib)

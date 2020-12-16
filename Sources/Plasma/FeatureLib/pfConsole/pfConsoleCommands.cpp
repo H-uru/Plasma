@@ -3091,36 +3091,6 @@ PF_CONSOLE_CMD(Logic,
 #endif // LIMIT_CONSOLE_COMMANDS
 
 
-
-
-////////////////////////////////////////////////////////////////////////
-//// Input System Group Commands ///////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-#ifndef LIMIT_CONSOLE_COMMANDS
-
-PF_CONSOLE_GROUP( DInput )
-
-PF_CONSOLE_CMD( DInput, UseDInput, "bool on", "Turns off DirectInput")
-{
-    bool on = params[0];
-    plInputManager::UseDInput(on);
-}
-
-
-PF_CONSOLE_CMD( DInput, Config, "", "Launch DInput configuration screen")
-{
-    plgAudioSys::Activate(false);
-    plInputEventMsg* pMsg = new plInputEventMsg;
-    pMsg->fEvent = plInputEventMsg::kConfigure;
-    pMsg->AddReceiver( plInputManager::GetInstance()->GetKey() );
-    pMsg->SetBCastFlag(plMessage::kBCastByType, false);
-    plgDispatch::MsgSend(pMsg);
-}
-
-#endif // LIMIT_CONSOLE_COMMANDS
-
-
 //////////////////////////////////////////////////////////////////////////////
 //// Keyboard Remapping Group Commands ///////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <d3d9.h>
 #include <ddraw.h>
-#include <d3dx9mesh.h>
 
 #include "plPipeline/hsWinRef.h"
 #include "plDXTextFont.h"
@@ -67,10 +66,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static const long PLD3D_FONTFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE 
                                 | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
-static D3DXMATRIX d3dIdentityMatrix( 1.0f, 0.0f, 0.0f, 0.0f,
-                                     0.0f, 1.0f, 0.0f, 0.0f,
-                                     0.0f, 0.0f, 1.0f, 0.0f,
-                                     0.0f, 0.0f, 0.0f, 1.0f );
+static D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
+                                    0.0f, 1.0f, 0.0f, 0.0f,
+                                    0.0f, 0.0f, 1.0f, 0.0f,
+                                    0.0f, 0.0f, 0.0f, 1.0f };
 
 // Following number needs to be at least: 64 chars max in plTextFont drawn at any one time
 //                                      * 4 primitives per char max (for bold text)
@@ -297,12 +296,12 @@ void    plDXTextFont::SaveStates()
     /// Set up the transform matrices so that the vertices can range (0-screenWidth,0-screenHeight)
     fDevice->SetTransform( D3DTS_WORLD, &d3dIdentityMatrix );
     fDevice->SetTransform( D3DTS_VIEW, &d3dIdentityMatrix );
-    D3DXMATRIX  mat;
+    D3DMATRIX  mat;
     mat = d3dIdentityMatrix;
-    mat(0,0) = 2.0f / (float)fPipe->Width();
-    mat(1,1) = -2.0f / (float)fPipe->Height();
-    mat(3,0) = -1.0;
-    mat(3,1) = 1.0;
+    mat.m[0][0] = 2.0f / (float)fPipe->Width();
+    mat.m[1][1] = -2.0f / (float)fPipe->Height();
+    mat.m[3][0] = -1.0;
+    mat.m[3][1] = 1.0;
     fDevice->SetTransform( D3DTS_PROJECTION, &mat );
 }
 

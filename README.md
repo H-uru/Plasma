@@ -22,8 +22,6 @@ Library Dependencies
 
 Plasma currently requires the following third-party libraries:
 
-- NVIDIA PhysX 4.1 - https://github.com/NVIDIAGameWorks/PhysX
-- Microsoft DirectX SDK - https://www.microsoft.com/en-us/download/details.aspx?id=6812
 - Python 3.8 (or higher) - https://www.python.org/downloads/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
@@ -48,8 +46,8 @@ The following libraries are optional:
 Reducing the use of proprietary libraries is a focus of development and should
 be expected to change.
 
-DirectX SDK will need to be acquired through the above link.
-All other required libraries are available as precompiled binaries and
+>>>>>>> origin/master
+All required libraries are available as precompiled binaries and
 associated files in the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip)
 or can be built using their individual build instructions.
 

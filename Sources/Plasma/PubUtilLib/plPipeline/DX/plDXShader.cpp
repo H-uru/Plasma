@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsWindows.h"
 #include <d3d9.h>
-#include <d3dx9core.h>
 
 #include "plDXShader.h"
 

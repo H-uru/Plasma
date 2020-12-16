@@ -8,7 +8,6 @@ include_directories(${PNG_INCLUDE_DIR})
 
 set(plGImage_SOURCES
     hsCodecManager.cpp
-    hsDXTDirectXCodec.cpp
     hsDXTSoftwareCodec.cpp
     plAVIWriter.cpp
     plBitmap.cpp
@@ -27,7 +26,6 @@ set(plGImage_SOURCES
 set(plGImage_HEADERS
     hsCodec.h
     hsCodecManager.h
-    hsDXTDirectXCodec.h
     hsDXTSoftwareCodec.h
     plAVIWriter.h
     plBitmap.h
