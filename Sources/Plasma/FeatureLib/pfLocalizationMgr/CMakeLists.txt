@@ -1,7 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 include_directories(${EXPAT_INCLUDE_DIR})
 
 if(WIN32)

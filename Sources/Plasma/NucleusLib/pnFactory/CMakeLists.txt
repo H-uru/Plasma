@@ -1,7 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-
 set(pnFactory_SOURCES
     plFactory.cpp
 )

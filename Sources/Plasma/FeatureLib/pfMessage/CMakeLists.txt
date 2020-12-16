@@ -1,9 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-include_directories(../../FeatureLib)
-
 set(pfMessage_SOURCES
     pfKIMsg.cpp
     pfMarkerMsg.cpp

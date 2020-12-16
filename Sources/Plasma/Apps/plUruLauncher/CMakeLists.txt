@@ -1,10 +1,3 @@
-include_directories("../../Apps")
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${CURL_INCLUDE_DIR})
 

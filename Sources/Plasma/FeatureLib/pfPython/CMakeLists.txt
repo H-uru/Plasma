@@ -1,9 +1,4 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-include_directories(../../)
+include_directories(${PLASMA_SOURCE_ROOT})
 
 include_directories(${PYTHON_INCLUDE_DIR})
 

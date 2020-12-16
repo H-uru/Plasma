@@ -1,5 +1,3 @@
-include_directories("../../Plasma/CoreLib")
-
 set(plShaderAssembler_SOURCES
     main.cpp
 )

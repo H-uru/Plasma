@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plVault_SOURCES
     plDniCoordinateInfo.cpp
     plVaultClientApi.cpp
@@ -24,6 +18,8 @@ set(plVault_HEADERS
 )
 
 add_library(plVault STATIC ${plVault_SOURCES} ${plVault_HEADERS})
+
+target_include_directories(plVault PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plVault_SOURCES})
 source_group("Header Files" FILES ${plVault_HEADERS})

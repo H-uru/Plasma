@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plModifier_SOURCES
     plAGMasterSDLModifier.cpp
     plAnimEventModifier.cpp
@@ -52,6 +46,8 @@ set(plModifier_HEADERS
 )
 
 add_library(plModifier STATIC ${plModifier_SOURCES} ${plModifier_HEADERS})
+
+target_include_directories(plModifier PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plModifier_SOURCES})
 source_group("Header Files" FILES ${plModifier_HEADERS})

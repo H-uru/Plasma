@@ -1,6 +1,4 @@
-include_directories(${GTEST_INCLUDE_DIR})
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(../../Plasma/CoreLib)
+include_directories(${PLASMA_SOURCE_ROOT}/CoreLib)
 
 SET(CoreLibTest_SOURCES
     test_plCmdParser.cpp

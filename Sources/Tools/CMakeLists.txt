@@ -6,6 +6,14 @@ set_package_properties(Qt5Core PROPERTIES
     PURPOSE "Required for building GUI tools for Plasma"
 )
 
+include_directories("${PLASMA_TOOLS_ROOT}")
+include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib/inc")
 
 if(PLASMA_BUILD_TOOLS)
     add_subdirectory(SoundDecompress)

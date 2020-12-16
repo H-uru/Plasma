@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
     pl3DPipeline.cpp
@@ -103,6 +97,8 @@ if(PLASMA_PIPELINE STREQUAL "OpenGL")
     target_link_libraries(plPipeline EGL)
     target_link_libraries(plPipeline GLESv2)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
+
+target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})

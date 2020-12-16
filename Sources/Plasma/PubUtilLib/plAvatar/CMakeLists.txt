@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plAvatar_SOURCES
     plAnimStage.cpp
     plArmatureEffects.cpp
@@ -75,7 +69,8 @@ set(plAvatar_HEADERS
 
 add_library(plAvatar STATIC ${plAvatar_SOURCES} ${plAvatar_HEADERS})
 
-target_link_libraries(plAvatar plAnimation)
+target_include_directories(plAvatar PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+target_link_libraries(plAvatar PUBLIC plAnimation)
 
 source_group("Source Files" FILES ${plAvatar_SOURCES})
 source_group("Header Files" FILES ${plAvatar_HEADERS})

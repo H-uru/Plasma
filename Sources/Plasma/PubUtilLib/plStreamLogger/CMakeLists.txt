@@ -1,7 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plStreamLogger_SOURCES
     plStreamLogger.cpp
 )

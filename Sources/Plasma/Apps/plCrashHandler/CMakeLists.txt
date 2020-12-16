@@ -1,7 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../FeatureLib")
-
 set(plCrashHandler_SOURCES
     main.cpp
 )

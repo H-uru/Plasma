@@ -1,9 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 include_directories(${PYTHON_INCLUDE_DIR})
 
 set(pfConsole_SOURCES

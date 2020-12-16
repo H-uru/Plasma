@@ -9,14 +9,6 @@ endif(WIN32)
 configure_file(config.h.in config.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-
 set(SoundDecompress_SOURCES
     plAllCreatables.cpp
     main.cpp

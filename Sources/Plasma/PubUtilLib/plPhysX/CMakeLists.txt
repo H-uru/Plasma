@@ -6,11 +6,6 @@ set_package_properties(PhysX PROPERTIES
 )
 
 
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 include_directories(${PHYSX_INCLUDE_DIRS})
 
 set(plPhysX_SOURCES

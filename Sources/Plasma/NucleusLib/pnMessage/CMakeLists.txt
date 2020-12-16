@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(pnMessage_HEADERS
     plAttachMsg.h
     plAudioSysMsg.h
@@ -61,7 +56,9 @@ set(pnMessage_SOURCES
 )
 
 add_library(pnMessage STATIC ${pnMessage_HEADERS} ${pnMessage_SOURCES})
-target_link_libraries(pnMessage CoreLib pnNetCommon)
+
+target_include_directories(pnMessage PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
+target_link_libraries(pnMessage PUBLIC CoreLib pnNetCommon plSDL)
 
 source_group("Header Files" FILES ${pnMessage_HEADERS})
 source_group("Source Files" FILES ${pnMessage_SOURCES})

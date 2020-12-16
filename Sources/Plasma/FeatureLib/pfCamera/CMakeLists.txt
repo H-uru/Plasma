@@ -1,9 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 set(pfCamera_SOURCES
     pfCameraProxy.cpp
     plCameraBrain.cpp

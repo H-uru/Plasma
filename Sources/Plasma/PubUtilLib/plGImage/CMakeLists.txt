@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 include_directories(${JPEG_INCLUDE_DIR})
 include_directories(${PNG_INCLUDE_DIR})
 

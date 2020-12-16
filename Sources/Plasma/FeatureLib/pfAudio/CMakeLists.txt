@@ -1,10 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-#include_directories(../../PubUtilLib/inc)
-
 set(pfAudio_SOURCES
     plListener.cpp
     plRandomSoundMod.cpp

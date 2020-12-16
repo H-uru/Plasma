@@ -1,8 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 if(WIN32)
     add_definitions(-DWIN32)
 endif(WIN32)

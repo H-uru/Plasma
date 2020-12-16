@@ -1,9 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../FeatureLib)
-include_directories(../../NucleusLib)
-include_directories(../../NucleusLib/inc)
-include_directories(../../PubUtilLib)
-
 set(pfJournalBook_SOURCES
     pfJournalBook.cpp
 )

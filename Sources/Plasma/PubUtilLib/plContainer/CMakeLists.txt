@@ -1,5 +1,3 @@
-include_directories("../../CoreLib")
-
 set(plContainer_SOURCES
     hsStringTable.cpp
     plConfigInfo.cpp

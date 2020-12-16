@@ -1,4 +1,8 @@
-add_definitions(-D_LIB)
+include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 add_subdirectory(pfAnimation)
 add_subdirectory(pfAudio)

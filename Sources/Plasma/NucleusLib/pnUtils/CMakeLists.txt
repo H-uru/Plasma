@@ -1,6 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-
 set(pnUtils_HEADERS
     Pch.h
     pnUtils.h

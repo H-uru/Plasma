@@ -1,5 +1,3 @@
-add_definitions(-D_LIB)
-
 add_definitions(-DPRODUCT_BRANCH_ID=${PRODUCT_BRANCH_ID})
 add_definitions(-DPRODUCT_BUILD_ID=${PRODUCT_BUILD_ID})
 add_definitions(-DPRODUCT_BUILD_TYPE=${PRODUCT_BUILD_TYPE})

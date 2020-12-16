@@ -1,7 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(pnInputCore_HEADERS
     plControlDefinition.h
     plControlEventCodes.h
@@ -15,6 +11,8 @@ set(pnInputCore_SOURCES
 )
 
 add_library(pnInputCore STATIC ${pnInputCore_HEADERS} ${pnInputCore_SOURCES})
+
+target_include_directories(pnInputCore PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 source_group("Header Files" FILES ${pnInputCore_HEADERS})
 source_group("Source Files" FILES ${pnInputCore_SOURCES})

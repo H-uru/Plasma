@@ -1,11 +1,4 @@
-include_directories("../../Plasma/Apps")
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/FeatureLib/inc")
-include_directories("../../Plasma/FeatureLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/PubUtilLib/inc")
-include_directories("../../Plasma/PubUtilLib")
+include_directories("${PLASMA_SOURCE_ROOT}/Apps")
 
 set(plResBrowser_HEADERS
     plResBrowser.h

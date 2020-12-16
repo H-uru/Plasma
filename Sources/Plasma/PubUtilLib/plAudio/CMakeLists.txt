@@ -1,8 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 # Skip CMake's built in FindOpenAL module and use OpenAL-Soft's config instead, if possible
 find_package(OpenAL CONFIG QUIET)
 if(NOT TARGET OpenAL::OpenAL)

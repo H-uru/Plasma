@@ -1,6 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../PubUtilLib)
-
 include_directories(${PYTHON_INCLUDE_DIR})
 
 set(plPythonPack_SOURCES

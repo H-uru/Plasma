@@ -1,9 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../FeatureLib")
-include_directories("../../NucleusLib/inc")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plAnimation_SOURCES
     plAGAnim.cpp
     plAGAnimInstance.cpp

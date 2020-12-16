@@ -1,8 +1,3 @@
-include_directories(${GTEST_INCLUDE_DIR})
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(../../../Plasma/CoreLib)
-include_directories(../../../Plasma/NucleusLib)
-
 set(pnEncryptionTest_SOURCES
     test_plMD5Checksum.cpp
     test_plSHAChecksum.cpp

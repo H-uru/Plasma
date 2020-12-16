@@ -1,6 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-
 set(pnNetProtocol_HEADERS
     Intern.h
     Pch.h

@@ -1,7 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 set(plSockets_SOURCES
     plBufferedSocketReader.cpp
     plBufferedSocketWriter.cpp

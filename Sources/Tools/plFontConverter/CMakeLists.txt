@@ -1,7 +1,3 @@
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
 set(plFontConverter_HEADERS

@@ -1,13 +1,3 @@
-include_directories(${GTEST_INCLUDE_DIR})
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(../../../Plasma/CoreLib)
-include_directories(../../../Plasma/NucleusLib)
-include_directories(../../../Plasma/NucleusLib/inc)
-include_directories(../../../Plasma/PubUtilLib)
-include_directories(../../../Plasma/PubUtilLib/inc)
-include_directories(../../../Plasma/FeatureLib)
-include_directories(../../../Plasma/FeatureLib/inc)
-
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(pfPythonTest_SOURCES

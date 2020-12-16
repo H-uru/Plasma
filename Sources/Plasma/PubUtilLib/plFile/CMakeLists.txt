@@ -1,7 +1,3 @@
-include_directories("../../CoreLib")
-include_directories("../../NucleusLib")
-include_directories("../../PubUtilLib")
-
 include_directories(${ZLIB_INCLUDE_DIR})
 
 set(plFile_SOURCES

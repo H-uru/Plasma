@@ -1,9 +1,3 @@
-include_directories("../../Plasma/CoreLib")
-include_directories("../../Plasma/NucleusLib")
-include_directories("../../Plasma/NucleusLib/inc")
-include_directories("../../Plasma/PubUtilLib")
-include_directories("../../Plasma/FeatureLib")
-
 add_definitions("-DUNICODE")
 
 set(plLocalizationEditor_HEADERS

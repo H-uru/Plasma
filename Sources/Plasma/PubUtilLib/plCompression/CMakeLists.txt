@@ -1,5 +1,3 @@
-include_directories("../../CoreLib")
-
 include_directories(${ZLIB_INCLUDE_DIR})
 
 set(plCompression_SOURCES

@@ -1,6 +1,3 @@
-include_directories(../../CoreLib)
-include_directories(../../NucleusLib)
-
 set(pnAsyncCoreExe_SOURCES
     pnAceCore.cpp
     pnAceIo.cpp
