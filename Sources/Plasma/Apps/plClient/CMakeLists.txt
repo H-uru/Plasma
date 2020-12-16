@@ -37,7 +37,7 @@ set(plClient_SOURCES
 )
 
 set(plClient_TEXT
-    ../../../../Docs/ReleaseNotes/ReleaseNotes.txt
+    ${Plasma_SOURCE_DIR}/Docs/ReleaseNotes/ReleaseNotes.txt
 )
 
 set(plClient_RESOURCES
