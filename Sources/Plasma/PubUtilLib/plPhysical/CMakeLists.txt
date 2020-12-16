@@ -21,5 +21,7 @@ set(plPhysical_HEADERS
 
 add_library(plPhysical STATIC ${plPhysical_SOURCES} ${plPhysical_HEADERS})
 
+target_include_directories(plPhysical PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+
 source_group("Source Files" FILES ${plPhysical_SOURCES})
 source_group("Header Files" FILES ${plPhysical_HEADERS})

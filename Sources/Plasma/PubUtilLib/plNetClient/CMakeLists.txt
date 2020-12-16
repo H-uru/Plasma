@@ -31,5 +31,7 @@ set(plNetClient_HEADERS
 
 add_library(plNetClient STATIC ${plNetClient_SOURCES} ${plNetClient_HEADERS})
 
+target_include_directories(plNetClient PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+
 source_group("Source Files" FILES ${plNetClient_SOURCES})
 source_group("Header Files" FILES ${plNetClient_HEADERS})

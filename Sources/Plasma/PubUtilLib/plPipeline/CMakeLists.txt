@@ -98,6 +98,8 @@ if(PLASMA_PIPELINE STREQUAL "OpenGL")
     target_link_libraries(plPipeline GLESv2)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
+target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})
 

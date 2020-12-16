@@ -3,7 +3,6 @@ include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
 include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
 include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
 include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
-#include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib/inc")
 
 add_subdirectory(pfAnimation)
 add_subdirectory(pfAudio)
