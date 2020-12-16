@@ -3,7 +3,7 @@
 
 param([string]$builddir='build')
 
-$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/2020.07.14/devlibs.zip"
+$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/2020.09.10/devlibs.zip"
 $source_path = (Get-Location).Path
 
 if (!(Test-Path -PathType Container $builddir)) {

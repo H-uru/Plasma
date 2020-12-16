@@ -2113,16 +2113,20 @@ bool cyMisc::RequestLOSScreen(pyKey &selfkey, int32_t ID, float xPos, float yPos
         {
             case kClickables:
                 pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBUIItems, plLOSRequestMsg::kTestClosest );
+                pMsg->SetRequestName(ST::format("Python [{}]: Clickables", selfkey.getName()));
                 pMsg->SetCullDB(plSimDefs::kLOSDBUIBlockers);
                 break;
             case kCameraBlockers:
                 pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBCameraBlockers, plLOSRequestMsg::kTestClosest );
+                pMsg->SetRequestName(ST::format("Python [{}]: Camera Blockers", selfkey.getName()));
                 break;
             case kCustom:
                 pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestClosest );
+                pMsg->SetRequestName(ST::format("Python [{}]: Custom", selfkey.getName()));
                 break;
             case kShootable:
                 pMsg = new plLOSRequestMsg( selfkey.getKey(), startPos, endPos, plSimDefs::kLOSDBShootableItems, plLOSRequestMsg::kTestClosest );
+                pMsg->SetRequestName(ST::format("Python [{}]: Shootables", selfkey.getName()));
                 break;
         }
 

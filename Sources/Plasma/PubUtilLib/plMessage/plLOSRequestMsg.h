@@ -89,6 +89,10 @@ public:
     void SetRequestID(uint32_t id) { fRequestID = id; }
     uint32_t GetRequestID() { return fRequestID; }
 
+    /** A name invented by the caller for debugging purposes (not identification) */
+    void SetRequestName(ST::string name) { fRequestName = std::move(name); }
+    ST::string GetRequestName() const { return fRequestName; }
+
     /** If we get a hit on the first pass, we'll then double-check the remaining
         segment (start->first hit) against the "cull db". If *any* hit is found,
         the entire test fails. */
@@ -111,7 +115,8 @@ private:
     plSimDefs::plLOSDB      fCullDB;            // if we find a hit, see if anything in this DB blocks it.
     TestType                fTestType;          // testing closest hit or just any?
     ReportType              fReportType;        // reporting hits, misses, or both?
-    uint32_t                  fRequestID;
+    ST::string              fRequestName;       // internal name for debugging purposes
+    uint32_t                fRequestID;
 };
 
 #endif // plLOSRequestMsg_inc

@@ -33,7 +33,6 @@ set(MaxMain_HEADERS
     plMtlCollector.h
     plNodeLock.h
     plPhysicalProps.h
-    plPhysXCooking.h
     plPlasmaRefMsgs.h
     plPluginResManager.h
     plPythonMgr.h
@@ -71,7 +70,6 @@ set(MaxMain_SOURCES
     plMtlCollector.cpp
     plNodeLock.cpp
     plPhysicalProps.cpp
-    plPhysXCooking.cpp
     plPluginResManager.cpp
     plPythonMgr.cpp
     plResCollector.cpp

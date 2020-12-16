@@ -232,6 +232,30 @@ hsVector3 hsMatrix44::operator*(const hsVector3& p) const
     return rVal;
 }
 
+bool hsMatrix44::Compare(const hsMatrix44& rhs, float tolerance) const
+{
+    return
+        (fabs(fMap[0][0] - rhs.fMap[0][0]) < tolerance) &&
+        (fabs(fMap[0][1] - rhs.fMap[0][1]) < tolerance) &&
+        (fabs(fMap[0][2] - rhs.fMap[0][2]) < tolerance) &&
+        (fabs(fMap[0][3] - rhs.fMap[0][3]) < tolerance) &&
+
+        (fabs(fMap[1][0] - rhs.fMap[1][0]) < tolerance) &&
+        (fabs(fMap[1][1] - rhs.fMap[1][1]) < tolerance) &&
+        (fabs(fMap[1][2] - rhs.fMap[1][2]) < tolerance) &&
+        (fabs(fMap[1][3] - rhs.fMap[1][3]) < tolerance) &&
+
+        (fabs(fMap[2][0] - rhs.fMap[2][0]) < tolerance) &&
+        (fabs(fMap[2][1] - rhs.fMap[2][1]) < tolerance) &&
+        (fabs(fMap[2][2] - rhs.fMap[2][2]) < tolerance) &&
+        (fabs(fMap[2][3] - rhs.fMap[2][3]) < tolerance) &&
+
+        (fabs(fMap[3][0] - rhs.fMap[3][0]) < tolerance) &&
+        (fabs(fMap[3][1] - rhs.fMap[3][1]) < tolerance) &&
+        (fabs(fMap[3][2] - rhs.fMap[3][2]) < tolerance) &&
+        (fabs(fMap[3][3] - rhs.fMap[3][3]) < tolerance);
+}
+
 bool hsMatrix44::operator==(const hsMatrix44& ss) const
 {
     if( ss.fFlags & fFlags & hsMatrix44::kIsIdent )

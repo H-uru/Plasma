@@ -39,41 +39,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plPhysXCooking_h_inc
-#define plPhysXCooking_h_inc
+#ifndef plPXCooking_h_inc
+#define plPXCooking_h_inc
 
-class NxConvexMesh;
-struct hsPlane3;
-struct hsPoint3;
+#include <string_theory/string>
+#include <tuple>
+#include <vector>
+
 class hsStream;
-class NxMat33;
-class NxUtilLib;
-class NxVec3;
-class hsVectorStream;
+struct hsPoint3;
 
-class plPhysXCooking
+class plPXCookingException : public std::runtime_error
 {
 public:
-    static void Init();
-    static void Shutdown();
+    plPXCookingException(const ST::string& e)
+        : std::runtime_error(e.c_str())
+    { }
 
-    static hsVectorStream* CookTrimesh(int nVerts, hsPoint3* verts, int nFaces, uint16_t* faces);
-    static bool TestIfConvex(NxConvexMesh* convexMesh, int nVerts, hsPoint3* verts);
-    static hsVectorStream* CookHull(int nVerts, hsPoint3* verts,bool inflate);
-    static bool IsPointInsideHull(hsPlane3* hull, int nPlanes, const hsPoint3& pos);
-    static inline bool ITestPlane(const hsPoint3 &pos, const hsPlane3 &plane)
-    {
-        float dis = plane.fN.InnerProduct(pos);
-        dis += plane.fD;
-        if( dis > 0.f ) 
-            return false;   
-
-        return true;
-    };
-    static void PCA(const NxVec3* points,int numPoints, NxMat33& out);
-    static NxUtilLib* fUtilLib;
-    static bool fSkipErrors;
-    static hsVectorStream* IMakePolytope(const plMaxMeshExtractor::NeutralMesh& inMesh);
+    plPXCookingException(const char* e)
+        : std::runtime_error(e)
+    { }
 };
 
-#endif // plPhysXCooking_h_inc
+class plPXCooking
+{
+public:
+    /**
+     * Determines if the stream contains cooked PhysX data.
+     * \note This will advance the stream.
+     */
+    static bool IsCooked(hsStream* s);
+
+    /** Uncooks a PhysX 2.6 convex hull. */
+    static void ReadConvexHull26(hsStream* s, std::vector<uint32_t>& tris, std::vector<hsPoint3>& verts);
+
+    /** Uncooks a PhysX 2.6 triangle mesh. */
+    static void ReadTriMesh26(hsStream* s, std::vector<uint32_t>& tris, std::vector<hsPoint3>& verts);
+
+    /** Writes an uncooked convex hull. */
+    static void WriteConvexHull(hsStream* s, uint32_t nverts, const hsPoint3* const verts);
+
+    /** Writes an uncooked triangle mesh. */
+    static void WriteTriMesh(hsStream* s, uint32_t nfaces, const uint32_t* const tris,
+                             uint32_t nverts, const hsPoint3* const verts);
+
+    /** Writes an uncooked triangle mesh. */
+    static void WriteTriMesh(hsStream* s, uint32_t nfaces, const uint16_t* const tris,
+                             uint32_t nverts, const hsPoint3* const verts);
+};
+
+#endif

@@ -39,10 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef plLOSDispatch_H
+#define plLOSDispatch_H
+
 #include "pnKeyedObject/hsKeyedObject.h"
+#include "plPhysical/plSimDefs.h"
+#include <vector>
 
 class plLOSRequestMsg;
 struct hsMatrix44;
+struct hsPoint3;
+class plSceneObject;
+class plStatusLog;
+struct hsVector3;
 
 /** \class plLOSDispatch
     Line-of-sight requests are sent to this guy, who then hands them
@@ -52,16 +61,44 @@ struct hsMatrix44;
     "search all subworlds," etc.  */
 class plLOSDispatch : public hsKeyedObject
 {
+    friend class plPXRaycastQueryFilter;
+
+    enum class LOSResult
+    {
+        kHit,
+        kCull,
+        kMiss,
+    };
+
+    struct LOSRequest
+    {
+        ST::string fName;
+        uint32_t fID;
+        LOSResult fResult;
+        plKey fHit;
+        plKey fCull;
+
+        LOSRequest(ST::string name, uint32_t id, LOSResult result, plKey hit=nullptr, plKey cull=nullptr)
+            : fName(std::move(name)), fID(id), fResult(result), fHit(std::move(hit)), fCull(std::move(cull))
+        { }
+    };
+
+    plStatusLog* fDebugDisplay;
+    std::vector<LOSRequest> fRequests;
+
 public:
     plLOSDispatch();
     ~plLOSDispatch();
 
     CLASSNAME_REGISTER(plLOSDispatch);
     GETINTERFACE_ANY(plLOSDispatch, hsKeyedObject);
-    
-    virtual bool MsgReceive(plMessage* msg);
+
+    bool MsgReceive(plMessage* msg) override;
 
 protected:
-    plMessage* ICreateHitMsg(plLOSRequestMsg* requestMsg, hsMatrix44& l2w);
-    plMessage* ICreateMissMsg(plLOSRequestMsg* requestMsg);
+    bool ITestHit(const plSceneObject* obj) const;
+    bool IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey& world, plSimDefs::plLOSDB db,
+                  bool closest, plKey& hitObj, hsPoint3& hitPos, hsVector3& hitNormal, float& distance);
 };
+
+#endif

@@ -83,7 +83,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPhysX/plSimulationMgr.h"
 #include "MaxMain/plMaxMeshExtractor.h"
-#include "MaxMain/plPhysXCooking.h"
 #include "MaxExport/plExportProgressBar.h"
 
 
@@ -161,9 +160,7 @@ bool plConvert::Convert()
     if(IOK())
     {
         bar.Start("Make Physical");
-        plPhysXCooking::Init();
         retVal = pNode->DoRecur( &plMaxNode::MakePhysical, fpErrorMsg, fSettings, &bar );
-        plPhysXCooking::Shutdown();
     }
     if(IOK())
     {
