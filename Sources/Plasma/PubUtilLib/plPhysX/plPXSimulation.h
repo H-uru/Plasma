@@ -154,7 +154,7 @@ public:
      * Sets the default endpoint for the PhysX Visual Debugger.
      * This sets the location that the Pvd module should connect to by default
      * when it is created. To connect to the PhysX Visual Debugger over TCP to localhost,
-     * pass in a null string. Note that once the simulation is initialized, changing this valus
+     * pass in a null string. Note that once the simulation is initialized, changing this value
      * will have no effect.
      */
     static void SetDefaultDebuggerEndpoint(plFileName endpoint={});
