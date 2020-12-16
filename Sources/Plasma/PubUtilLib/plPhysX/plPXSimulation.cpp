@@ -129,7 +129,7 @@ public:
                           message, file, line);
             break;
         case physx::PxErrorCode::eDEBUG_INFO:
-            log->AddLineF(plStatusLog::kYellow, "PhysX WARNING: '{}' File: {} Line: {}",
+            log->AddLineF(plStatusLog::kYellow, "PhysX INFO: '{}' File: {} Line: {}",
                           message, file, line);
             break;
         case physx::PxErrorCode::eDEBUG_WARNING:
@@ -395,7 +395,7 @@ bool plPXSimulation::Init()
     }
 
     if (!PxInitExtensions(*fPxPhysics, fDebugger)) {
-        plStatusLog::AddLineS("Simulation.log", plStatusLog::kRed, "PhysX Extension to initialize!");
+        plStatusLog::AddLineS("Simulation.log", plStatusLog::kRed, "PhysX Extension failed to initialize!");
         return false;
     }
 

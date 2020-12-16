@@ -368,7 +368,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
         fRecipe.triMesh = ICookTriMesh(stream);
     }
 
-    // If we do not have a world, specified, we go ahead and init into the main world...
+    // If we do not have a world specified, we go ahead and init into the main world...
     // This will been done in MsgReceive otherwise
     if (!fRecipe.worldKey)
         InitActor();
@@ -495,7 +495,7 @@ void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
                 {
                     SimLog("Physical {} fell to {.1f} ({.1f} is the max).  Suppressing.", GetKeyName(), fCachedLocal2World.GetTranslate().fZ, kMaxNegativeZPos);
                     // Since this has probably been falling for a while, and thus not getting any syncs,
-                    // make sure to save it's current pos so we'll know to reset it later
+                    // make sure to save its current pos so we'll know to reset it later
                     DirtySynchState(kSDLPhysical, plSynchedObject::kBCastToClients);
                     IEnable(false);
                 }
@@ -515,7 +515,7 @@ void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
 void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force)
 {
     //  make sure there is some difference between the matrices...
-    // ... but not when a subworld... because the subworld maybe animating and if the object is still then it is actually moving within the subworld
+    // ... but not when a subworld... because the subworld may be animating and if the object is still then it is actually moving within the subworld
     if (force || (!IsStatic() && (fWorldKey || !l2w.Compare(fCachedLocal2World, .0001f)))) {
         ISetTransformGlobal(l2w);
         plProfile_Inc(SetTransforms);

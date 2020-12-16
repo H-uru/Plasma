@@ -214,7 +214,7 @@ protected:
      * Gets the Plasma position of the character.
      * \remarks Plasma stores the position of avatars from their "foot" position while PhysX
      *          uses the center of the capsule shape as its center. This returns the current position
-     *          to be used for PhysX.
+     *          to be used for Plasma.
      * \param[in] capPos The simulation space position of the character's capsule.
      * \param[in] upDir A unit vector defining the simulation space direction considered "up."
      * \returns The simulation space position of the character.
