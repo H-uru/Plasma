@@ -53,7 +53,8 @@ if __name__ == '__main__':
 	parser.add_option("-q", "--quiet", dest="verbose", default=True, action="store_false", help="Don't print status messages")
 	parser.add_option("-r", "--render", dest="render", default=False, action="store_true", help="Perform SVG Render to images")
 	parser.add_option("-p", "--package", dest="package", default=False, action="store_true", help="Perform packaging into resource container")
-	parser.add_option("-z", "--optimize", dest="optimize", default=False, action="store_true", help="Perform PNGCrush optimization on PNG resources")
+	parser.add_option("-z", "--pngcrush", dest="pngcrush", type="string", help="Perform PNGCrush optimization on PNG resources")
+	parser.add_option("-b", "--brute", dest="brute", default=False, action="store_true", help="Allow brute-force optimization")
 	parser.add_option("-w", "--workpath", dest="workpath", default=".", help="Sets working output path for image renders")
 	parser.add_option("-o", "--outpath", dest="outpath", default=".", help="Sets output path for resource container")
 	parser.add_option("-i", "--inpath", dest="inpath", default=".", help="Sets input path for files to add to resource file")
@@ -72,16 +73,18 @@ if __name__ == '__main__':
 
 	## Do the work!
 	if options.render:
-		ret = subprocess.call(["python", os.path.join(inpath, "render_svg.py"), "-i", inpath, "-o", os.path.join(workpath, "render")], stdout=sys.stdout, stderr=sys.stderr)
+		ret = subprocess.call([sys.executable, os.path.join(inpath, "render_svg.py"), "-i", inpath, "-o", os.path.join(workpath, "render")], stdout=sys.stdout, stderr=sys.stderr)
 		if ret != 0:
 			print("An error has occurred.  Aborting.")
 			exit(1)
 
-	if options.optimize:
+	if options.pngcrush:
 		print("Optimizing PNGs with pngcrush...")
+		crush_args = [options.pngcrush, "-q", "-l", "9"]
+		if options.brute:
+			crush_args.append("-brute")
 		for png in glob.glob(os.path.join(workpath, "render", "*.png")):
-			#print("pngcrushing - {0}".format(png))
-			ret = subprocess.call(["pngcrush", "-q", "-l", "9", "-brute", png, "temp.png"], stdout=sys.stdout, stderr=sys.stderr)
+			ret = subprocess.call(crush_args + [png, "temp.png"], stdout=sys.stdout, stderr=sys.stderr)
 			if ret != 0:
 				print("An error has occurred.  Aborting.")
 				exit(1)
@@ -89,7 +92,7 @@ if __name__ == '__main__':
 			os.rename("temp.png", png)
 
 	if options.package:
-		ret = subprocess.call(["python", os.path.join(inpath, "create_resource_dat.py"), "-i", os.path.join(workpath, "render"), "-o", os.path.join(outpath, "resource.dat")], stdout=sys.stdout, stderr=sys.stderr)
+		ret = subprocess.call([sys.executable, os.path.join(inpath, "create_resource_dat.py"), "-i", os.path.join(workpath, "render"), "-o", os.path.join(outpath, "resource.dat")], stdout=sys.stdout, stderr=sys.stderr)
 		if ret != 0:
 			print("An error has occurred.  Aborting.")
 			exit(1)
