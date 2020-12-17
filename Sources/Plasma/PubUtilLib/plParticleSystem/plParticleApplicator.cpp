@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plParticleUpdateMsg.h"
 #include "pnSceneObject/plSceneObject.h"
 
-#define PI 3.14159
-
 plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
 {
     uint32_t numMods = so->GetNumModifiers();
@@ -88,7 +86,7 @@ void plParticleAngleApplicator::IApply(const plAGModifier *mod, double time)
 {
     plScalarChannel *chan = plScalarChannel::ConvertNoRef(fChannel);
     IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamInitPitchRange,
-                                                    (float)(chan->Value(time) * PI / 180.f));
+                                                    chan->Value(time) * hsConstants::pi<float> / 180.f);
 }
 
 void plParticleVelMinApplicator::IApply(const plAGModifier *mod, double time)

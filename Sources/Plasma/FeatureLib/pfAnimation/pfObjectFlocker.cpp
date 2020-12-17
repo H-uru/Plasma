@@ -61,14 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfObjectFlocker.h"
 
-#define PI        3.14159f
-#define HALF_PI   (PI/2)
-#define GRAVITY   9.806650f  // meters/second
-#ifdef INFINITY
-#undef INFINITY
-#endif
-#define INFINITY  999999.0f
-
 #define RAND() (float) (rand()/(RAND_MAX * 1.0))
 #define SIGN(x) (((x) < 0) ? -1 : 1)
 

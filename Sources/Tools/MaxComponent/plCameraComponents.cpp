@@ -851,7 +851,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
     // radians
     FOVvalue = theCam->GetFOV(Now);
     // convert
-    FOVvalue = FOVvalue*(180/3.141592);
+    FOVvalue *= 180.f / hsConstants::pi<float>;
     int FOVType = theCam->GetFOVType();
     float wDeg, hDeg;
     switch(FOVType)
