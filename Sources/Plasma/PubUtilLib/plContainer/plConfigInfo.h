@@ -199,8 +199,8 @@ protected:
     virtual bool WriteOutOf(plConfigInfo & configInfo);
 
 public:
-    plConfigSource() {}
-    virtual ~plConfigSource() {}
+    plConfigSource() : fAddMode(kAlwaysAdd), fConfigInfo() { }
+    virtual ~plConfigSource() { }
 
     friend class plConfigInfo;
 };

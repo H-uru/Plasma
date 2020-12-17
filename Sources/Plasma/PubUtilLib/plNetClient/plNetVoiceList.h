@@ -78,15 +78,15 @@ private:
     double fLastUpdateTime;
     int fNumUpdates;
 public:
-    plNetListenList() : fNumUpdates(0) {}
-    ~plNetListenList() {}
+    plNetListenList() : fNumUpdates(), fLastUpdateTime() { }
+    ~plNetListenList() { }
 
     static float kUpdateInterval;
     static int kMaxListenListSize;
     static float kMaxListenDistSq;
     
-    void SetLastUpdateTime(double t) { fLastUpdateTime=t; fNumUpdates++;    }
-    double GetLastUpdateTime() { return fLastUpdateTime;    }
+    void SetLastUpdateTime(double t) { fLastUpdateTime = t; fNumUpdates++; }
+    double GetLastUpdateTime() { return fLastUpdateTime; }
 
     bool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
 

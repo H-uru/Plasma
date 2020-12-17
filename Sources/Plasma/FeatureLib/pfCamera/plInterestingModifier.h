@@ -70,7 +70,7 @@ protected:
     virtual bool IEval(double secs, float del, uint32_t dirty);
     
 public:
-    plInterestingModifier(){ fType = kTypeInteresting;}
+    plInterestingModifier() : fType(kTypeInteresting), fView() { }
     virtual ~plInterestingModifier() { }
     
     virtual bool MsgReceive(plMessage* msg) {return false;}

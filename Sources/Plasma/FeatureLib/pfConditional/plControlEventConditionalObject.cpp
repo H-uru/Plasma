@@ -45,10 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnModifier/plLogicModBase.h"
 #include "plMessage/plInputEventMsg.h"
 
-plControlEventConditionalObject::plControlEventConditionalObject()
-{
-    
-}
 
 bool plControlEventConditionalObject::MsgReceive(plMessage* msg)
 {

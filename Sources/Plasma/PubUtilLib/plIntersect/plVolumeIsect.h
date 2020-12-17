@@ -84,7 +84,7 @@ protected:
     hsPoint3            fMaxs;
 public:
     plSphereIsect();
-    virtual ~plSphereIsect();
+    virtual ~plSphereIsect() { }
 
     CLASSNAME_REGISTER( plSphereIsect );
     GETINTERFACE_ANY( plSphereIsect, plVolumeIsect );
@@ -124,7 +124,7 @@ protected:
 public:
 
     plConeIsect();
-    virtual ~plConeIsect();
+    virtual ~plConeIsect() { }
 
     CLASSNAME_REGISTER( plConeIsect );
     GETINTERFACE_ANY( plConeIsect, plVolumeIsect );
@@ -160,8 +160,8 @@ protected:
     void ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, float radius);
 
 public:
-    plCylinderIsect();
-    virtual ~plCylinderIsect();
+    plCylinderIsect() : fRadius(), fLength(), fMin(), fMax() { }
+    virtual ~plCylinderIsect() { }
 
     CLASSNAME_REGISTER( plCylinderIsect );
     GETINTERFACE_ANY( plCylinderIsect, plVolumeIsect );
@@ -194,8 +194,8 @@ protected:
     hsTArray<ParPlane>      fPlanes;
 
 public:
-    plParallelIsect();
-    virtual ~plParallelIsect();
+    plParallelIsect() { }
+    virtual ~plParallelIsect() { }
 
     CLASSNAME_REGISTER( plParallelIsect );
     GETINTERFACE_ANY( plParallelIsect, plVolumeIsect );
@@ -231,8 +231,8 @@ protected:
     hsTArray<SinglePlane>   fPlanes;
 
 public:
-    plConvexIsect();
-    virtual ~plConvexIsect();
+    plConvexIsect() { }
+    virtual ~plConvexIsect() { }
 
     CLASSNAME_REGISTER( plConvexIsect );
     GETINTERFACE_ANY( plConvexIsect, plVolumeIsect );
@@ -257,8 +257,8 @@ protected:
     hsBounds3Ext        fLocalBounds;
     hsBounds3Ext        fWorldBounds;
 public:
-    plBoundsIsect();
-    virtual ~plBoundsIsect();
+    plBoundsIsect() { }
+    virtual ~plBoundsIsect() { }
 
     CLASSNAME_REGISTER( plBoundsIsect );
     GETINTERFACE_ANY( plBoundsIsect, plVolumeIsect );
@@ -280,7 +280,7 @@ protected:
     hsTArray<plVolumeIsect*>        fVolumes;
 
 public:
-    plComplexIsect();
+    plComplexIsect() { }
     virtual ~plComplexIsect();
 
     CLASSNAME_REGISTER( plComplexIsect );
@@ -298,8 +298,8 @@ public:
 class plUnionIsect : public plComplexIsect
 {
 public:
-    plUnionIsect();
-    ~plUnionIsect();
+    plUnionIsect() { }
+    ~plUnionIsect() { }
 
     CLASSNAME_REGISTER( plUnionIsect );
     GETINTERFACE_ANY( plUnionIsect, plComplexIsect );
@@ -311,8 +311,8 @@ public:
 class plIntersectionIsect : public plComplexIsect
 {
 public:
-    plIntersectionIsect();
-    ~plIntersectionIsect();
+    plIntersectionIsect() { }
+    ~plIntersectionIsect() { }
 
     CLASSNAME_REGISTER( plIntersectionIsect );
     GETINTERFACE_ANY( plIntersectionIsect, plComplexIsect );

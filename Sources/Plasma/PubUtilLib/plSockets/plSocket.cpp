@@ -47,20 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /////////////////////////////////////////////////
 
-plSocket::plSocket()
-{
-    fCloseOnDestroy = false;
-    fCloseBeforeSet = false;
-    fTimeoutsSet = 0;
-    fSocket = kBadSocket;
-}
-
-
 plSocket::plSocket(SOCKET sck)
+    : plSocket()
 {
-    fCloseOnDestroy = false;
-    fCloseBeforeSet = false;
-    fTimeoutsSet = 0;
     SetSocket(sck);
 }
 

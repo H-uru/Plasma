@@ -168,30 +168,16 @@ plClient* plClient::fInstance=nil;
 static hsTArray<HMODULE>        fLoadedDLLs;
 
 plClient::plClient()
-: fPipeline(nil),
-    fDone(false),
-    fQuitIntro(false),
-    fWindowHndl(nil),
-    fInputManager(nil),
-    fConsole(nil),
-    fCurrentNode(nil),
-    fNewCamera(nil),
-    fpAuxInitDir(nil),
-    fTransitionMgr(nil),
-    fLinkEffectsMgr(nil),
-    fProgressBar(nil),
-    fGameGUIMgr(nil),
-    fWindowActive(false),
-    fAnimDebugList(nil),
-    fClampCap(-1),
-    fQuality(0),
-    fPageMgr(nil),
-    fFontCache(nil),
-    fHoldLoadRequests(false),
-    fNumLoadingRooms(0),
-    fNumPostLoadMsgs(0),
-    fPostLoadMsgInc(0.f)
+    : fPipeline(), fDone(), fQuitIntro(), fWindowHndl(),
+      fInputManager(), fConsole(), fCurrentNode(), fNewCamera(),
+      fpAuxInitDir(), fTransitionMgr(), fLinkEffectsMgr(),
+      fProgressBar(), fGameGUIMgr(), fWindowActive(), fAnimDebugList(),
+      fClampCap(-1), fQuality(), fPageMgr(), fFontCache(),
+      fHoldLoadRequests(), fNumLoadingRooms(), fNumPostLoadMsgs(), fPostLoadMsgInc(),
+      fLastProgressUpdate(), fMessagePumpProc()
 {
+    fClearColor.Set(0.f, 0.f, 0.f, 1.f);
+
 #ifndef PLASMA_EXTERNAL_RELEASE
     bPythonDebugConnected = false;
 #endif

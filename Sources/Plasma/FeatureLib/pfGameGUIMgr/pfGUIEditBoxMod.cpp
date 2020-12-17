@@ -69,14 +69,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIEditBoxMod::pfGUIEditBoxMod()
+    : fEscapedFlag(), fFirstHalfExitKeyPushed(), fSpecialCaptureKeyEventMode(),
+      fBuffer(), fSavedKey(), fSavedModifiers()
 {
-    SetFlag( kWantsInterest );
-    SetFlag( kTakesSpecialKeys );
-    fEscapedFlag = false;
-    fFirstHalfExitKeyPushed = false;
-    fSpecialCaptureKeyEventMode = false;
-    fBuffer = 0;
-    SetBufferSize( 128 );
+    SetFlag(kWantsInterest);
+    SetFlag(kTakesSpecialKeys);
+    SetBufferSize(128);
 }
 
 pfGUIEditBoxMod::~pfGUIEditBoxMod()

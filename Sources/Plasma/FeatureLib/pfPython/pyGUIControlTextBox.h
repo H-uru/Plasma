@@ -62,7 +62,7 @@ private:
     pfGUIColorScheme*       fOriginalColorScheme;
 
 protected:
-    pyGUIControlTextBox(): pyGUIControl() {} // for python glue only, do NOT call
+    pyGUIControlTextBox() : pyGUIControl(), fOriginalColorScheme() { } // for python glue only, do NOT call
     pyGUIControlTextBox(pyKey& gckey);
     pyGUIControlTextBox(plKey objkey);
 

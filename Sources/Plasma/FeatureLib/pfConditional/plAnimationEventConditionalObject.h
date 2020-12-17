@@ -56,8 +56,8 @@ protected:
 public:
     
     
-    plAnimationEventConditionalObject() { }
-    plAnimationEventConditionalObject(plKey pTargetModifier);
+    plAnimationEventConditionalObject() : fAction(), fTarget() { }
+    plAnimationEventConditionalObject(plKey pTargetModifier) : fTarget(pTargetModifier), fAction(kEventEnd) { }
     ~plAnimationEventConditionalObject() { }
     
     CLASSNAME_REGISTER( plAnimationEventConditionalObject );

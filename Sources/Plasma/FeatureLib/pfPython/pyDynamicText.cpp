@@ -59,30 +59,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 pyDynamicText::pyDynamicText()
-{
-    IInit();
-}
+    : fClipLeft(), fClipTop(), fClipRight(), fClipBottom(), fWrapWidth(), fWrapHeight(),
+      fSenderKey(), fNetPropagate(), fNetForce(), fWrap(), fClip()
+{ }
 
-pyDynamicText::pyDynamicText(pyKey& key) 
+pyDynamicText::pyDynamicText(pyKey& key)
+    : fClipLeft(), fClipTop(), fClipRight(), fClipBottom(), fWrapWidth(), fWrapHeight(),
+      fSenderKey(), fNetPropagate(), fNetForce(), fWrap(), fClip()
 {
-    IInit();
     fReceivers.Append(key.getKey());
 }
 
-pyDynamicText::pyDynamicText(plKey key) 
+pyDynamicText::pyDynamicText(plKey key)
+    : fClipLeft(), fClipTop(), fClipRight(), fClipBottom(), fWrapWidth(), fWrapHeight(),
+      fSenderKey(), fNetPropagate(), fNetForce(), fWrap(), fClip()
 {
-    IInit();
     fReceivers.Append(key);
-}
-
-
-void pyDynamicText::IInit()
-{
-    fSenderKey = nil;
-    fNetPropagate = false;
-    fNetForce = false;
-    fWrap = false;
-    fClip = false;
 }
 
 

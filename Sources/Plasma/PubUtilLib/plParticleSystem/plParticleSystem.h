@@ -121,7 +121,14 @@ protected:
     void IPreSim();
 
 public:
-    plParticleSystem();
+    plParticleSystem()
+        : fParticleSDLMod(), fAttachedToAvatar(), fTarget(), fTexture(),
+          fXTiles(), fYTiles(), fCurrTime(), fLastTime(), fPreSim(), fDrag(),
+          fWindMult(), fMaxTotalParticles(), fMaxTotalParticlesLeft(),
+          fNumValidEmitters(), fMaxEmitters(), fNextEmitterToGo(), fEmitters(),
+          fContext(), fAmbientCtl(), fDiffuseCtl(), fOpacityCtl(),
+          fWidthCtl(), fHeightCtl(), fMiscFlags()      
+    { }
     virtual ~plParticleSystem();
     void Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalParticles, uint32_t numEmitters, 
               plController *ambientCtl, plController *diffuseCtl, plController *opacityCtl, 

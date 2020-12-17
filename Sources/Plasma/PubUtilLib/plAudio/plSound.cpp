@@ -79,53 +79,23 @@ bool            plSound::fLoadOnDemandFlag = true;
 bool            plSound::fLoadFromDiskOnDemand = true;
 unsigned        plSound::fIncidentalsPlaying = 0;
 
-plSound::plSound() :
-fPlaying(false),
-fActive(false),
-fTime(0),
-fMaxFalloff(0),
-fMinFalloff(0),
-fCurrVolume(0.f),
-fOuterVol(0),
-fOuterCone(360),
-fInnerCone(360),
-fLength(0.0f),
-fDesiredVol(0.f),
-fFading(false),
-fRegisteredForTime(false),
-fMuted(true),
-fFadedVolume(0.f),
-fSoftRegion(nil),
-fSoftOcclusionRegion(nil),
-fSoftVolume(0.f),
-fCurrFadeParams(nil),
-fRegistered(false),
-fDistAttenuation(0.f),
-fProperties(0),
-fNotHighEnoughPriority(false),
-fVirtualStartTime(0),
-fOwningSceneObject(nil),
-fPriority(0),
-fType(plSound::kSoundFX),
-fQueued(false),
-fLoading(false),
-fSynchedStartTimeSec(0),
-fMaxVolume(0),
-fFreeData(false)
+plSound::plSound()
+    : fPlaying(), fActive(), fTime(), fMaxFalloff(), fMinFalloff(), fCurrVolume(),
+      fOuterVol(), fOuterCone(360), fInnerCone(360), fLength(), fDesiredVol(), fFading(),
+      fRegisteredForTime(), fMuted(true), fFadedVolume(), fSoftRegion(), fSoftOcclusionRegion(),
+      fSoftVolume(), fCurrFadeParams(), fRegistered(), fDistAttenuation(), fProperties(),
+      fNotHighEnoughPriority(), fVirtualStartTime(), fOwningSceneObject(), fPriority(),
+      fType(plSound::kSoundFX), fQueued(), fLoading(), fSynchedStartTimeSec(), fMaxVolume(),
+      fFreeData(), fDataBuffer(), fDataBufferKey(), fPlayOnReactivate(), fDataBufferLoaded(),
+      f3DPosition(0.f, 0.f, 0.f), f3DVelocity(0.f, 0.f, 0.f), fPlayWhenLoaded(), fDistToListenerSquared()
 {
-    plProfile_Inc( SoundNumLoaded );
-    f3DPosition.Set( 0.f, 0.f, 0.f );
-    f3DVelocity.Set( 0.f, 0.f, 0.f );
-    fDataBuffer = nil;
-    fDataBufferKey = nil;
-    fPlayOnReactivate = false;
-    fDataBufferLoaded = false;
+    plProfile_Inc(SoundNumLoaded);
 }
 
 plSound::~plSound()
 {
-    IStopFade( true );
-    plProfile_Dec( SoundNumLoaded );
+    IStopFade(true);
+    plProfile_Dec(SoundNumLoaded);
 }
 
 void plSound::IPrintDbgMessage( const char *msg, bool isError )

@@ -106,11 +106,13 @@ bool plSceneInputInterface::fShowLOS = false;
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plSceneInputInterface::plSceneInputInterface()
+    : fPipe(), fCurrentCursor(), fButtonState(), fClickability(),
+      fCurrClickIsAvatar(), fLastClickIsAvatar(), fFadedLocalAvatar(),
+      fPendingLink(), fBookMode(), fOffereeID()
 {
-    fPipe = nil;
     fAgeInstanceGuid.Clear();
     fInstance = this;
-    SetEnabled( true );         // Always enabled
+    SetEnabled(true);         // Always enabled
 }
 
 plSceneInputInterface::~plSceneInputInterface()

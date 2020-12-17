@@ -41,19 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsSTLStream.h"
 
-hsVectorStream::hsVectorStream() : fEnd(0)
-{
-}
-
-hsVectorStream::hsVectorStream(uint32_t chunkSize)
-{   
-    fVector.reserve(chunkSize);
-}
-
-hsVectorStream::~hsVectorStream()
-{
-}
-
 bool hsVectorStream::AtEnd()
 {
     return (fBytesRead >= fEnd);

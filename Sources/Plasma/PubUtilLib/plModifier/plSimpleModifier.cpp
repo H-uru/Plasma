@@ -53,8 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAnimCmdMsg.h"
 
 plSimpleModifier::plSimpleModifier()
-: 
-    fTarget(nil)
+    : fTarget(), fLastTime(), fCurrentTime()
 {
     fTimeConvert.SetOwner(this);
 }

@@ -69,16 +69,6 @@ plProfile_Extern( StaticSwizzleTime );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-plWin32GroupedSound::plWin32GroupedSound()
-{
-    fCurrentSound = 0;
-}
-
-plWin32GroupedSound::~plWin32GroupedSound()
-{
-    DeActivate();
-}
-
 void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray )
 {
     uint16_t  i;

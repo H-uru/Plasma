@@ -54,7 +54,7 @@ class plLayerOr : public plLayerInterface
 
     public:
         plLayerOr();
-        virtual ~plLayerOr();
+        virtual ~plLayerOr() { }
 
         CLASSNAME_REGISTER( plLayerOr );
         GETINTERFACE_ANY( plLayerOr, plLayerInterface );

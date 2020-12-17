@@ -367,21 +367,6 @@ void plParticleFadeVolumeEffect::Write(hsStream *s, hsResMgr *mgr)
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // Particle wind - Base class first
-plParticleWindEffect::plParticleWindEffect()
-:   fWindVec(0,0,0),
-    fDir(1.f,0,0),
-    fSwirl(0.1f),
-    fConstancy(0),
-    fHorizontal(0),
-    fLastDirSecs(-1.f),
-    fRefDir(0.f,0.f,0.f),
-    fRandDir(1.f,0.f,0.f)
-{
-}
-
-plParticleWindEffect::~plParticleWindEffect()
-{
-}
 
 void plParticleWindEffect::Read(hsStream *s, hsResMgr *mgr)
 {

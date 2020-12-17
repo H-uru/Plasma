@@ -5223,12 +5223,6 @@ void    plDXPipeline::ICalcLighting( const plLayerInterface *currLayer, const pl
 //// plDXLightSettings Functions /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-plDXLightSettings::plDXLightSettings()
-:   fActiveList(nil),
-    fRefList(nil),
-    fPipeline(nil)
-{
-}
 
 //// Reset ////////////////////////////////////////////////////////////////////
 //  Sets member variables to initial states. 

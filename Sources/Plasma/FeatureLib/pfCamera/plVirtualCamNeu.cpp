@@ -139,34 +139,23 @@ void plVirtualCam1::Deactivate()
 }
 
 
-plVirtualCam1::plVirtualCam1() 
+plVirtualCam1::plVirtualCam1()
+    : fPythonOverride(), fFirstPersonOverride(), fThirdPersonCam(),
+      fTransPos(POS_TRANS_OFF), fPrevCam(), fTransitionCamera(new plCameraModifier1),
+      fOutputPos(100.f, 100.f, 100.f), fOutputPOA(0.f, 0.f, 0.f),
+      fFreezeCounter(), fFadeCounter(), fX(0.5f), fY(0.5f), fXPanLimit(), fZPanLimit(),
+      fRetainedFY(0.5f), fDriveCamera(new plCameraModifier1), fForceCutOnce(), foutLog(),
+      fPipe(), fXUnPanRate(), fZUnPanRate(), fUnPanEndTime()
 {
     fFlags.Clear();
-    fPythonOverride = nil;
-    fFirstPersonOverride = nil;
-    fThirdPersonCam = nil;
-    fTransPos = POS_TRANS_OFF;
-    fPrevCam = nil;
-    fTransitionCamera = new plCameraModifier1;
     fTransitionCamera->RegisterAs(kTransitionCamera_KEY);
-    // set initial view position
-    fOutputPos.Set(100,100,100);
-    fOutputPOA.Set(0,0,0);
-    fFreezeCounter = 0;
-    fFadeCounter = 0;
-    fX = fY = 0.5f;
-    fXPanLimit = 0;
-    fZPanLimit = 0;
-    fRetainedFY = 0.5f;
     // create built-in drive mode camera
     fCameraDriveInterface = plDebugInputInterface::GetInstance();
-    hsRefCnt_SafeRef( fCameraDriveInterface );
+    hsRefCnt_SafeRef(fCameraDriveInterface);
 
-    fDriveCamera = new plCameraModifier1;
     plCameraBrain1* pDriveBrain = new plCameraBrain1_Drive(fDriveCamera);
 
     PushCamera(fDriveCamera);
-    fForceCutOnce=false;
 
     // static accessor hack
     plVirtualCam1::fInstance = this;
@@ -177,7 +166,6 @@ plVirtualCam1::plVirtualCam1()
 //      camLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "Camera", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
     #endif
 
-    foutLog = nil;
 #ifndef PLASMA_EXTERNAL_RELEASE
     // only open log file if logging is on
     if ( !plStatusLog::fLoggingOff )

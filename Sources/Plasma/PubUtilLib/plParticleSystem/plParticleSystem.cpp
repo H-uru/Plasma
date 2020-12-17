@@ -69,10 +69,6 @@ plProfile_CreateCounter("Num Particles", "Particles", NumParticles);
 
 const float plParticleSystem::GRAVITY_ACCEL_FEET_PER_SEC2 = 32.0f;
 
-plParticleSystem::plParticleSystem() : fParticleSDLMod(nil), fAttachedToAvatar(false)
-{
-}
-
 plParticleSystem::~plParticleSystem()
 {
     int i;

@@ -128,7 +128,7 @@ protected:
 
     const plShaderDecl*             fTable[plShaderID::kNumShaders];
 
-    plShaderTableInst();
+    plShaderTableInst() : fFlags(), fTable() { }
 
     bool LoadFromFile() const { return 0 != (fFlags & kLoadFromFile); }
     void SetLoadFromFile(bool on) { if(on) fFlags |= kLoadFromFile; else fFlags &= ~kLoadFromFile; }
@@ -140,7 +140,7 @@ protected:
     bool IsRegistered(plShaderID::ID id) const { return (id == 0) || ((id < plShaderID::kNumShaders) && fTable[id]); }
 
 public:
-    virtual ~plShaderTableInst();
+    virtual ~plShaderTableInst() { }
 
     friend class plShaderTable;
 };

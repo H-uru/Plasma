@@ -78,24 +78,6 @@ const uint8_t plNetMessage::kVerMinor = PLASMA2_NETMSG_MINOR_VERSION;
 ////////////////////////////////////////////////////////
 // plNetMessage
 ////////////////////////////////////////////////////////
-plNetMessage::plNetMessage() :
-fTimeRecvd(0),
-fBytesRead(0),
-fNetCoreMsg(nil),
-fContext(0),
-fPeekStatus(0),
-fTransactionID(0),
-fPlayerID(kInvalidPlayerID),
-fFlags(0),
-fProtocolVerMajor(0),
-fProtocolVerMinor(0)
-{
-}
-
-plNetMessage::~plNetMessage()
-{
-    
-}
 
 void plNetMessage::Read(hsStream* s, hsResMgr* mgr)
 {

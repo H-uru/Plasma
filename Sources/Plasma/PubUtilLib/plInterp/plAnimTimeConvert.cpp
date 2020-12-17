@@ -58,27 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCreatableIndex.h"
 
 
-plAnimTimeConvert::plAnimTimeConvert()
-:   fCurrentAnimTime(0),
-    fLastEvalWorldTime(0),
-    fBegin(0),
-    fEnd(0),
-    fLoopEnd(0),
-    fLoopBegin(0),
-    fSpeed(1.f),
-    fFlags(0),
-    fOwner(nil),
-    fEaseInCurve(nil),
-    fEaseOutCurve(nil),
-    fSpeedEaseCurve(nil),
-    fCurrentEaseCurve(nil),
-    fInitialBegin(0),
-    fInitialEnd(0),
-    fWrapTime(0)
-    //fDirtyNotifier(nil)
-{
-}
-
 plAnimTimeConvert::~plAnimTimeConvert()
 {
     int i;
@@ -88,7 +67,6 @@ plAnimTimeConvert::~plAnimTimeConvert()
     delete fEaseInCurve;
     delete fEaseOutCurve;
     delete fSpeedEaseCurve;
-    //delete fDirtyNotifier;
 
     IClearAllStates();
 }

@@ -365,7 +365,7 @@ protected:
 
 public:
     // Must call begin after instanciating.
-    hsBitIterator(const hsBitVector& bits) : fBits(bits) {}
+    hsBitIterator(const hsBitVector& bits) : fBits(bits), fCurrBit(), fCurrVec(), fCurrent() { }
 
     int                 Begin();
     int                 Current() const { return fCurrent; }

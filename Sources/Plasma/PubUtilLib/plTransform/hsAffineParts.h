@@ -53,7 +53,7 @@ class hsAffineParts
 public:
     // Constructors
     hsAffineParts(gemAffineParts *);    // Convert from Gems struct for now
-    hsAffineParts();
+    hsAffineParts() : fF() { }
 
     void Reset();
 

@@ -58,8 +58,8 @@ protected:
     virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
 
 public:
-    plDecalEnableMod();
-    virtual ~plDecalEnableMod();
+    plDecalEnableMod() : fWetLength() { }
+    virtual ~plDecalEnableMod() { }
 
     CLASSNAME_REGISTER( plDecalEnableMod );
     GETINTERFACE_ANY( plDecalEnableMod, plSingleModifier );

@@ -67,13 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-//// Constructor/Destructor //////////////////////////////////////////////////
-
-pfGUIProgressCtrl::pfGUIProgressCtrl() : fStopSoundTimer(99)
-{
-    fAnimTimesCalced = false;
-    fPlaySound = true;
-}
 
 //// IEval ///////////////////////////////////////////////////////////////////
 

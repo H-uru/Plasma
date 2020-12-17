@@ -71,7 +71,9 @@ public:
 
     plMessage*                      fMsg;
 
-    plMsgWrap(plMessage* msg) : fMsg(msg) { hsRefCnt_SafeRef(msg); }
+    plMsgWrap(plMessage* msg)
+        : fMsg(msg), fNext(), fBack()
+    { hsRefCnt_SafeRef(msg); }
     virtual ~plMsgWrap() { hsRefCnt_SafeUnRef(fMsg); }
 
     plMsgWrap&                      ClearReceivers() { fReceivers.SetCount(0); return *this; }

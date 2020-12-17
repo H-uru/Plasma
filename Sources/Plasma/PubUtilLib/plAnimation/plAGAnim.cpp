@@ -72,22 +72,6 @@ plAGAnim::plAnimMap plAGAnim::fAllAnims;
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// ctor ------------
-// -----
-plAGAnim::plAGAnim()
-: plSynchedObject()
-{
-}
-
-// ctor ------------------------------------------------------
-// -----
-plAGAnim::plAGAnim(const ST::string &name, double start, double end)
-: fStart((float)start),
-  fEnd((float)end),
-  fName(name)
-{
-}
-
 // dtor -------------
 // -----
 plAGAnim::~plAGAnim()
@@ -355,29 +339,28 @@ bool plAGAnim::SharesPinsWith(const plAGAnim *anim) const
 // ctor --------------
 // -----
 plATCAnim::plATCAnim()
-: plAGAnim()
-{
-}
+    : plAGAnim(),
+      fInitial(-1), fAutoStart(true),
+      fLoopStart(), fLoopEnd(), fLoop(),
+      fEaseInType(plAnimEaseTypes::kNoEase),
+      fEaseOutType(plAnimEaseTypes::kNoEase),
+      fEaseInLength(), fEaseOutLength(),
+      fEaseInMin(), fEaseInMax(),
+      fEaseOutMin(), fEaseOutMax()
+{ }
 
 // ctor --------------------------------------------------------
 // -----
 plATCAnim::plATCAnim(const ST::string &name, double start, double end)
-: plAGAnim(name, start, end),
-  fInitial(-1),
-  fAutoStart(true),
-  fLoopStart((float)start),
-  fLoopEnd((float)end),
-  fLoop(false),
-  fEaseInType(plAnimEaseTypes::kNoEase),
-  fEaseOutType(plAnimEaseTypes::kNoEase),
-  fEaseInLength(0),
-  fEaseOutLength(0),
-  fEaseInMin(0.f),
-  fEaseInMax(0.f),
-  fEaseOutMin(0.f),
-  fEaseOutMax(0.f)
-{
-}
+    : plAGAnim(name, start, end),
+      fInitial(-1), fAutoStart(true),
+      fLoopStart((float)start), fLoopEnd((float)end), fLoop(),
+      fEaseInType(plAnimEaseTypes::kNoEase),
+      fEaseOutType(plAnimEaseTypes::kNoEase),
+      fEaseInLength(), fEaseOutLength(),
+      fEaseInMin(), fEaseInMax(),
+      fEaseOutMin(), fEaseOutMax()
+{ }
 
 // dtor ---------------
 // -----
@@ -596,7 +579,7 @@ float plATCAnim::GetStopPoint(uint32_t i)
 // ctor ------------------
 // -----
 plEmoteAnim::plEmoteAnim()
-: fBodyUsage(kBodyFull)
+    : fBodyUsage(kBodyFull), fFadeIn(), fFadeOut()
 {
 }
 

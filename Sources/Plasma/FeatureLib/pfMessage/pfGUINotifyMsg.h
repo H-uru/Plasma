@@ -62,13 +62,12 @@ class pfGUINotifyMsg : public plMessage
 {
 protected:
     plKey       fControlKey;        // who start this mess
-    uint32_t      fEvent;             // what was the event that happened
+    uint32_t    fEvent;             // what was the event that happened
 
 public:
-    pfGUINotifyMsg() : plMessage() {}
-    pfGUINotifyMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t) : plMessage(s, r, t) {}
+    pfGUINotifyMsg() : plMessage(), fEvent() { }
+    pfGUINotifyMsg(const plKey &s, const plKey &r, const double* t)
+        : plMessage(s, r, t), fEvent() { }
     ~pfGUINotifyMsg() {}
 
     CLASSNAME_REGISTER( pfGUINotifyMsg );

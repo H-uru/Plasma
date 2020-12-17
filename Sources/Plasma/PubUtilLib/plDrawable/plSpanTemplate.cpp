@@ -48,16 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 
 
-
-plSpanTemplate::plSpanTemplate()
-:   fNumVerts(0),
-    fFormat(0),
-    fData(nil),
-    fNumTris(0),
-    fIndices(nil)
-{
-}
-
 uint32_t plSpanTemplate::CalcStride() 
 {
     fStride = 0;

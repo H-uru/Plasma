@@ -93,7 +93,8 @@ protected:
 
 public:
     plResDlgLoader(plResTreeView *tree, bool filter)
-        : fFilter(filter), fTree(tree)
+        : fFilter(filter), fTree(tree), fCurrItem(), fCurrTypeItem(),
+          fCurrType(), fCurrPage()
     {
         static_cast<plResManager *>(hsgResMgr::ResMgr())->IterateAllPages(this);
     }

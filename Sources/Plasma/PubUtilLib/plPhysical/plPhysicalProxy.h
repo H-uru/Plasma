@@ -52,9 +52,14 @@ class plPXPhysicalControllerCore;
 class plPhysicalProxy : public plProxyGen
 {
 public:
-    plPhysicalProxy();
-    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac);
-    virtual ~plPhysicalProxy();
+    plPhysicalProxy()
+        : plProxyGen(hsColorRGBA().Set(0.f, 0.f, 0.f, 1.f), hsColorRGBA().Set(1.f, 0.8f, 0.2f, 1.f), 0.5f),
+          fOwner(), fController()
+    { }
+    plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
+        : plProxyGen(amb, dif, opac), fOwner(), fController()
+    { }
+    virtual ~plPhysicalProxy() { }
 
     bool Init(plPhysical* phys);
     bool Init(plPXPhysicalControllerCore* controller);

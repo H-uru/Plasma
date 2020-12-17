@@ -109,7 +109,7 @@ public:
     const plPageInfo* GetLocationInfo(const plLocation& loc) const;
 
 protected:
-    plKeyFinder() {}
+    plKeyFinder() : fLastError(kOk) { }
 
     void IGetNames(std::vector<ST::string>& names, const ST::string& name, int index);
     plKey IFindSceneNodeKey(plRegistryPageNode* page) const;

@@ -253,7 +253,7 @@ protected:
     void IMakeDists() const;
     void IMakeMinsMaxs();
 public:
-    hsBounds3Ext() : fExtFlags(kAxisAligned) {};
+    hsBounds3Ext() : fDists(), fRadius(), fExtFlags(kAxisAligned) {};
 
     hsBounds3Ext(const hsBounds3 &b);
     hsBounds3Ext &operator=(const hsBounds3 &b);

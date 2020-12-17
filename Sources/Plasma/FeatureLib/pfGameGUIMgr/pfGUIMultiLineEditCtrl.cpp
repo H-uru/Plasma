@@ -85,6 +85,7 @@ class plStringSlicer
         plStringSlicer( hsTArray<wchar_t> &string, uint32_t start, uint32_t end )
         {
             fString = string.AcquireArray();
+            fTempChar = 0L;
             fStart = start;
             if( end < string.GetCount() )
                 fEnd = end;
@@ -143,37 +144,18 @@ uint32_t  pfGUIMultiLineEditCtrl::fStyleCodeSize = (wchar_t)3;
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIMultiLineEditCtrl::pfGUIMultiLineEditCtrl()
+    : fCursorPos(), fLastCursorLine(), fBufferLimit(-1),
+      fScrollControl(), fScrollProc(), fScrollPos(), fReadyToRender(),
+      fLastKeyModifiers(), fLastKeyPressed(), fLockCount(),
+      fNextCtrl(), fPrevCtrl(), fEventProc(),
+      fTopMargin(), fLeftMargin(), fBottomMargin(), fRightMargin(),
+      fFontFace(L""), fFontSize(), fFontStyle(), fFontFlagsSet(), fCanUpdate(true),
+      fLineHeight(), fCurrCursorX(), fCurrCursorY(), fCalcedFontSize()
 {
-    SetFlag( kWantsInterest );
-    SetFlag( kTakesSpecialKeys );
-    fCursorPos = 0;
-    fLastCursorLine = 0;
-    fBuffer.Append( 0L );
-    fBufferLimit = -1;
-    fScrollControl = nil;
-    fScrollProc = nil;
-    fScrollPos = 0;
-    fReadyToRender = false;
-
-
-    fLastKeyModifiers = 0;
-    fLastKeyPressed = 0;
-    fLockCount = 0;
-
-    fNextCtrl = nil;
-    fPrevCtrl = nil;
-
-    fEventProc = nil;
-
-    fTopMargin = fLeftMargin = 0;
-    fBottomMargin = fRightMargin = 0;
-
-    fFontFace = "";
+    SetFlag(kWantsInterest);
+    SetFlag(kTakesSpecialKeys);
+    fBuffer.Append(0L);
     fFontColor.FromARGB32(0xFF000000);
-    fFontSize = 0;
-    fFontStyle = 0;
-    fFontFlagsSet = 0;
-    fCanUpdate = true;
 }
 
 pfGUIMultiLineEditCtrl::~pfGUIMultiLineEditCtrl()

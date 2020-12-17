@@ -75,7 +75,9 @@ class plNetLinkingMgr
     static void ExecNextOp ();
 
 
-    plNetLinkingMgr();
+    plNetLinkingMgr()
+        : fLinkingEnabled(true), fLinkedIn(), fDeferredLink()
+    { }
     plNetLinkingMgr(const plNetLinkingMgr &) { }
     ~plNetLinkingMgr();
 

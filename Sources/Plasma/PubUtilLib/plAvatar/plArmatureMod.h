@@ -376,7 +376,6 @@ public:
     ST::string GetUserStr() const { return fUserStr; }
 
 protected:
-    void IInitDefaults();
     virtual void IFinalize();   
     virtual void ICustomizeApplicator();
     virtual void ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc);

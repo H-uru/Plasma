@@ -123,6 +123,7 @@ class pfGroupProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIRadioGroupCtrl::pfGUIRadioGroupCtrl()
+    : fValue(), fDefaultValue()
 {
     fButtonProc = new pfGroupProc( this );
     fButtonProc->IncRef();

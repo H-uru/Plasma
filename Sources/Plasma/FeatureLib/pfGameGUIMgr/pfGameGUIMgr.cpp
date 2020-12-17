@@ -126,18 +126,11 @@ pfGameGUIMgr    *pfGameGUIMgr::fInstance = nil;
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 pfGameGUIMgr::pfGameGUIMgr()
+    : fActivated(), fInputCtlIndex(), fActiveDialogs(), fInputConfig(),
+      fDefaultCursor(plInputInterface::kCursorUp), fCursorOpacity(1.f), fAspectRatio(),
+      fActiveDlgCount()
 {
-    fActivated = false;
-    fInputCtlIndex = 0;
-    fActiveDialogs = nil;
-
-    fInputConfig = nil;
-
     fInstance = this;
-    
-    fDefaultCursor = plInputInterface::kCursorUp;
-    fCursorOpacity = 1.f;
-    fAspectRatio = 0;
 }
 
 pfGameGUIMgr::~pfGameGUIMgr()

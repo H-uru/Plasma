@@ -82,7 +82,7 @@ enum ENlmOp {
 struct NlmOp {
     ENlmOp  opcode;
     NlmOp (const ENlmOp & op)
-    : opcode(op)
+        : opcode(op)
     { }
 
     virtual ~NlmOp() = default;
@@ -90,13 +90,13 @@ struct NlmOp {
 
 struct NlmNoOpOp : NlmOp {
     NlmNoOpOp ()
-    : NlmOp(kNlmOpNoOp)
+        : NlmOp(kNlmOpNoOp)
     { }
 };
 
 struct NlmOpWaitOp : NlmOp {
     NlmOpWaitOp ()
-    : NlmOp(kNlmOpWaitOp)
+        : NlmOp(kNlmOpWaitOp)
     { }
 };
 
@@ -104,7 +104,7 @@ struct NlmJoinAgeOp : NlmOp {
     NetCommAge  age;
     bool muteSfx;
     NlmJoinAgeOp ()
-    : NlmOp(kNlmOpJoinAgeOp)
+        : NlmOp(kNlmOpJoinAgeOp), muteSfx()
     { }
 };
 
@@ -112,7 +112,7 @@ struct NlmLeaveAgeOp : NlmOp {
     bool    quitting;
     bool    muteSfx;
     NlmLeaveAgeOp ()
-    : NlmOp(kNlmOpLeaveAgeOp), quitting(false)
+        : NlmOp(kNlmOpLeaveAgeOp), quitting(), muteSfx()
     { }
 };
 
@@ -280,12 +280,6 @@ void plNetLinkingMgr::ExecNextOp () {
 
 
 ////////////////////////////////////////////////////////////////////
-
-plNetLinkingMgr::plNetLinkingMgr()
-:   fLinkingEnabled(true)
-,   fLinkedIn (false)
-{
-}
 
 plNetLinkingMgr::~plNetLinkingMgr()
 {

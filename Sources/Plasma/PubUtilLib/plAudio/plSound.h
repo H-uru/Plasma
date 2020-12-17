@@ -394,8 +394,8 @@ protected:
 class plSoundVolumeApplicator : public plAGApplicator
 {
 public:
-    plSoundVolumeApplicator() { }
-    plSoundVolumeApplicator( uint32_t index ) { fIndex = index; }
+    plSoundVolumeApplicator() : fIndex() { }
+    plSoundVolumeApplicator(uint32_t index) : fIndex(index) { }
 
     CLASSNAME_REGISTER( plSoundVolumeApplicator );
     GETINTERFACE_ANY( plSoundVolumeApplicator, plAGApplicator );

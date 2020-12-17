@@ -154,7 +154,7 @@ public:
     std::deque<plFileName> fRedistQueue;
 
     plRedistUpdater()
-        : fSuccess(true)
+        : fParent(), fSuccess(true)
     { }
 
     ~plRedistUpdater()

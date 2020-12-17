@@ -102,18 +102,6 @@ void plResponderEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 
-plResponderModifier::plResponderModifier() : 
-    fCurState(0), 
-    fCurCommand(-1), 
-    fEnabled(true), 
-    fFlags(0), 
-    fEnter(false),
-    fResponderSDLMod(nil), 
-    fGotFirstLoad(false),
-    fNotifyMsgFlags(0)
-{
-}
-
 plResponderModifier::~plResponderModifier()
 {
     delete fResponderSDLMod;

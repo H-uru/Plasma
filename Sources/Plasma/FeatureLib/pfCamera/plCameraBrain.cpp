@@ -87,59 +87,29 @@ float plCameraBrain1::fFallPOAVelocity   = 50.0f;
 
 // the avatar and drive cameras are subclasses of the basic brain.
 
-plCameraBrain1::plCameraBrain1() :
-fCurCamSpeed(0.0f),
-fCurViewSpeed(0.0f),
-fVelocity(30.0f),
-fAccel(30.0f),
-fDecel(30.0f),  
-fPOAVelocity(30.0f),
-fPOAAccel(30.0f),
-fPOADecel(30.0f),
-fSubjectKey(nil),
-fRail(nil),
-fXPanLimit(0.0f),
-fZPanLimit(0.0f),
-fPanSpeed(0.5f),
-fZoomMin(0.0f),
-fZoomMax(0.0f),
-fZoomRate(0.0f),
-fOffsetLength(0.0f),
-fOffsetPct(1.0f)
-{
-}
+plCameraBrain1::plCameraBrain1()
+    : fCurCamSpeed(), fCurViewSpeed(), fVelocity(30.f), fAccel(30.f), fDecel(30.f),
+      fPOAVelocity(30.f), fPOAAccel(30.f), fPOADecel(30.f), fSubjectKey(), fRail(),
+      fXPanLimit(), fZPanLimit(), fPanSpeed(0.5f), fZoomMin(), fZoomMax(), fZoomRate(),
+      fOffsetLength(), fOffsetPct(1.f), fCamera(), fGoal(1.f, 1.f, 1.f),
+      fPOAGoal(0.f, 0.f, 0.f), fPOAOffset(0.f, 0.f, 0.f), fLastTime(),
+      fFOVwGoal(), fFOVhGoal(), fFOVStartTime(), fFOVEndTime(),
+      fFOVwAnimRate(), fFOVhAnimRate(), fFallTimer()
+{ }
 
-plCameraBrain1::plCameraBrain1(plCameraModifier1* pMod) :
-fCurCamSpeed(0.0f),
-fCurViewSpeed(0.0f),
-fVelocity(30.0f),
-fAccel(30.0f),
-fDecel(30.0f),  
-fPOAVelocity(30.0f),
-fPOAAccel(30.0f),
-fPOADecel(30.0f),
-fSubjectKey(nil),
-fRail(nil),
-fXPanLimit(0.0f),
-fZPanLimit(0.0f),
-fZoomMin(0.0f),
-fZoomMax(0.0f),
-fZoomRate(0.0f),
-fOffsetLength(0.0f),
-fOffsetPct(1.0f)
+plCameraBrain1::plCameraBrain1(plCameraModifier1* pMod)
+    : fCurCamSpeed(), fCurViewSpeed(), fVelocity(30.f), fAccel(30.f), fDecel(30.f),
+      fPOAVelocity(30.f), fPOAAccel(30.f), fPOADecel(30.f), fSubjectKey(), fRail(),
+      fXPanLimit(), fZPanLimit(), fPanSpeed(0.5f), fZoomMin(), fZoomMax(), fZoomRate(),
+      fOffsetLength(), fOffsetPct(1.f), fCamera(pMod), fGoal(1.f, 1.f, 1.f),
+      fPOAGoal(0.f, 0.f, 0.f), fPOAOffset(0.f, 0.f, 0.f), fLastTime(),
+      fFOVwGoal(), fFOVhGoal(), fFOVStartTime(), fFOVEndTime(),
+      fFOVwAnimRate(), fFOVhAnimRate(), fFallTimer()
 {
-    fCamera = pMod;
     pMod->SetBrain(this);
-    fPOAGoal.Set(0,0,0);
-    fGoal.Set(1,1,1);
-    fPOAOffset.Set(0,0,0);
     hsVector3 up(0, 0, 1);
     fTargetMatrix.Make(&fGoal, &fPOAGoal, &up);
     fFlags.Clear();
-}
-
-plCameraBrain1::~plCameraBrain1()
-{
 }
 
 void plCameraBrain1::AddTarget()
@@ -750,31 +720,27 @@ float plCameraBrain1_Drive::fMaxVelocity = 100.0f;
 
 
 // constructor
-plCameraBrain1_Drive::plCameraBrain1_Drive() : plCameraBrain1()
+plCameraBrain1_Drive::plCameraBrain1_Drive()
+    : plCameraBrain1(), fUp(0.f, 0.f, 1.f), bUseDesiredFacing(),
+      deltaX(), deltaY(), bDisregardX(), bDisregardY()
 {
     fGoal.Set(100,100,100);
     fPOAGoal.Set(0,0,0);
-    fUp.Set(0,0,1);
     fCamera->SetTargetPos(fGoal);
     fCamera->SetTargetPOA(fPOAGoal);
     fLastTime = 0.f;
 }
 
-plCameraBrain1_Drive::plCameraBrain1_Drive(plCameraModifier1* pMod) : plCameraBrain1(pMod)
+plCameraBrain1_Drive::plCameraBrain1_Drive(plCameraModifier1* pMod)
+    : plCameraBrain1(pMod), fUp(0.f, 0.f, 1.f), bUseDesiredFacing(),
+      deltaX(), deltaY(), bDisregardX(), bDisregardY()
 {   
     fGoal.Set(100,100,100);
     fPOAGoal.Set(0,0,0);
-    fUp.Set(0,0,1);
     fCamera->SetTargetPos(fGoal);
     fCamera->SetTargetPOA(fPOAGoal);
     fLastTime = 0.f;
 }
-
-// destructor
-plCameraBrain1_Drive::~plCameraBrain1_Drive()
-{
-}
-
 
 void plCameraBrain1_Drive::Push(bool recenter)
 {
@@ -981,20 +947,16 @@ bool plCameraBrain1_Drive::MsgReceive(plMessage* msg)
 // new simplified avatar camera
 
 // constructor
-plCameraBrain1_Avatar::plCameraBrain1_Avatar() : plCameraBrain1()
+plCameraBrain1_Avatar::plCameraBrain1_Avatar()
+    : plCameraBrain1(), bObscured(), fOffset(0.f, 0.f, 0.f), fFaded(), fObstacle()
 {
-    bObscured = false;
-    fOffset.Set(0,0,0);
     fPOAOffset.Set(0,0,0);
-    fFaded = false;
 }
 
-plCameraBrain1_Avatar::plCameraBrain1_Avatar(plCameraModifier1* pMod) : plCameraBrain1(pMod)
+plCameraBrain1_Avatar::plCameraBrain1_Avatar(plCameraModifier1* pMod)
+    : plCameraBrain1(pMod), bObscured(), fOffset(0.f, 0.f, 0.f), fFaded(), fObstacle()
 {
-    bObscured = false;
-    fOffset.Set(0,0,0);
     fPOAOffset.Set(0,0,0);
-    fFaded = false;
 }
     
 
@@ -1315,20 +1277,6 @@ void plCameraBrain1_Avatar::Write(hsStream* stream, hsResMgr* mgr)
 // only difference is push() & pop() fade avatar in/out
 //
 
-plCameraBrain1_FirstPerson::plCameraBrain1_FirstPerson() : plCameraBrain1_Avatar()
-{
-    fPosNode = nil;
-}
-
-plCameraBrain1_FirstPerson::plCameraBrain1_FirstPerson(plCameraModifier1* pMod) : plCameraBrain1_Avatar(pMod)
-{
-}   
-
-// destructor
-plCameraBrain1_FirstPerson::~plCameraBrain1_FirstPerson()
-{
-}
-
 bool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
 {
 
@@ -1617,29 +1565,6 @@ bool plCameraBrain1_Fixed::MsgReceive(plMessage* msg)
 //
 //
 // circle camera crap
-
-plCameraBrain1_Circle::plCameraBrain1_Circle() : plCameraBrain1_Fixed()
-{ 
-    fCircleFlags = 0;
-    fCenterObject = nil;
-    fCenter.Set(0,0,0);
-    fCurRad = fGoalRad = 1;
-    fPOAObj = nil;
-    fCirPerSec = 0.25f;
-}
-plCameraBrain1_Circle::plCameraBrain1_Circle(plCameraModifier1* pMod) : plCameraBrain1_Fixed(pMod)
-{ 
-    fCircleFlags = 0;
-    fCenterObject = nil;
-    fCenter.Set(0,0,0);
-    fCurRad = fGoalRad = 1;
-    fPOAObj = nil;
-    fCirPerSec = 0.25f;
-}
-
-plCameraBrain1_Circle::~plCameraBrain1_Circle() 
-{ 
-}
 
 //
 //

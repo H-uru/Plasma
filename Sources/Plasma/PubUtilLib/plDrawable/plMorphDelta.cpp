@@ -55,30 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static const float kMinWeight = 1.e-2f;
 
-plMorphSpan::plMorphSpan()
-:   fUVWs(nil),
-    fNumUVWChans(0)
-{
-}
-
-plMorphSpan::~plMorphSpan()
-{
-    delete [] fUVWs;
-}
-
-plMorphDelta::plMorphDelta()
-:   fWeight(0)
-{
-}
-
-plMorphDelta::~plMorphDelta()
-{
-}
-
-plMorphDelta::plMorphDelta(const plMorphDelta& src)
-{
-    *this = src;
-}
 
 plMorphDelta& plMorphDelta::operator=(const plMorphDelta& src)
 {

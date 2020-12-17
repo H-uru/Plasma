@@ -267,9 +267,8 @@ public:
 
 //===========================================================================
 template<class T>
-TBaseHashTable<T>::TBaseHashTable () {
-    m_slotMask     = 0;
-    m_slotMaxCount = kDefaultSlotMaxCount;
+TBaseHashTable<T>::TBaseHashTable ()
+    : m_slotMask(), m_slotMaxCount(kDefaultSlotMaxCount), m_linkOffset() {
     // more initialization done during call to SetLinkOffset()
 }
 

@@ -132,8 +132,6 @@ protected:
     // plSoundBuffers can be two ways--they can either have a filename and no
     // data, in which case they reference a file in the sfx folder, or they
     // can store the data directly
-    
-    void            IInitBuffer();
 
     bool            IGrabHeaderInfo();
     void            IAddBuffers( void *base, void *toAdd, uint32_t lengthInBytes, uint8_t bitsPerSample );

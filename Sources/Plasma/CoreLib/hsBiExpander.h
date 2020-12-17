@@ -138,6 +138,7 @@ void hsExpander<T>::IExpand(int newSize)
 
 template <class T>
 hsExpander<T>::hsExpander(int32_t minSize, int32_t growBy)
+    : fCurrent(), fNumPost()
 {
     hsThrowIfBadParam(minSize < 0);
     hsThrowIfBadParam(growBy < 0);
@@ -147,8 +148,6 @@ hsExpander<T>::hsExpander(int32_t minSize, int32_t growBy)
     
     fArray  = new T[fMinSize];
     fNumPostAlloc = fMinSize;
-    
-    fNumPost = 0;
 }
 
 template <class T>

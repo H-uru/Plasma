@@ -55,10 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 
 plViewFaceModifier::plViewFaceModifier()
-:   fFacePoint(0,0,0),
-    fLastDirY(0,1.f,0),
-    fScale(1.f,1.f,1.f),
-    fOffset(0,0,0)
+    : fFacePoint(0,0,0), fLastDirY(0,1.f,0), fScale(1.f,1.f,1.f), fOffset(0,0,0),
+      fFaceObj()
 {
     fOrigLocalToParent.Reset();
     fOrigParentToLocal.Reset();

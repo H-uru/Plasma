@@ -70,8 +70,9 @@ class pfGameGUIMsg : public plMessage
             kLoadDialog
         };
 
-        pfGameGUIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
-        pfGameGUIMsg(plKey &receiver, uint8_t command) : plMessage(nil, nil, nil) { AddReceiver(receiver); fCommand = command; }
+        pfGameGUIMsg() : plMessage(nullptr, nullptr, nullptr), fCommand() { SetBCastFlag(kBCastByExactType); }
+        pfGameGUIMsg(plKey &receiver, uint8_t command)
+            : plMessage(nullptr, nullptr, nullptr), fCommand(command) { AddReceiver(receiver); }
 
         CLASSNAME_REGISTER( pfGameGUIMsg );
         GETINTERFACE_ANY( pfGameGUIMsg, plMessage );

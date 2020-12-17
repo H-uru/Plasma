@@ -167,18 +167,11 @@ void    pfGUIListText::SetJustify( JustifyTypes justify )
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIListPicture::pfGUIListPicture() : pfGUIListElement( kPicture )
-{
-    fBorderSize = 2;
-    fMipmapKey = nil;
-}
 
-pfGUIListPicture::pfGUIListPicture( plKey mipKey, bool respectAlpha ) : pfGUIListElement( kPicture )
-{
-    fBorderSize = 2;
-    fMipmapKey = mipKey;
-    fRespectAlpha = respectAlpha;
 
+pfGUIListPicture::pfGUIListPicture(plKey mipKey, bool respectAlpha)
+    : pfGUIListElement(kPicture), fRespectAlpha(respectAlpha), fBorderSize(2), fMipmapKey(mipKey)
+{
     plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
     if( mip != nil && mip->IsCompressed() )
     {
@@ -255,18 +248,6 @@ int     pfGUIListPicture::CompareTo( pfGUIListElement *rightSide )
 //////////////////////////////////////////////////////////////////////////////
 //// pfGUIListTreeRoot ///////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
-//// Constructor/Destructor //////////////////////////////////////////////////
-
-pfGUIListTreeRoot::pfGUIListTreeRoot()
-    : pfGUIListElement(kTreeRoot), fShowChildren(true)
-{
-}
-
-pfGUIListTreeRoot::pfGUIListTreeRoot( const ST::string &text )
-    : pfGUIListElement(kTreeRoot), fText(text)
-{
-}
 
 //// Virtuals ////////////////////////////////////////////////////////////////
 

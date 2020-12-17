@@ -159,7 +159,10 @@ class plDXLightSettings
         uint32_t                          fNextShadowLight;
         hsTArray<plDXLightRef*>     fShadowLights;
 
-        plDXLightSettings();
+        plDXLightSettings()
+            : fActiveList(), fRefList(), fPipeline(),
+              fNextIndex(), fLastIndex(), fTime(), fNextShadowLight()
+        { }
 
         // Sets member variables to initial states. Does NOT release anything.
         void    Reset( plDXPipeline *pipe );

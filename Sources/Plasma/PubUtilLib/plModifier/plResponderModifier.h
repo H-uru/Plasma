@@ -124,7 +124,11 @@ protected:
     friend class plResponderWait;
 
 public:
-    plResponderModifier();
+    plResponderModifier()
+        : fCurState(), fCurCommand(-1), fNetRequest(),
+          fEnabled(true), fEnter(), fGotFirstLoad(),
+          fResponderSDLMod(), fNotifyMsgFlags(), fFlags() 
+    { }
     ~plResponderModifier();
 
     CLASSNAME_REGISTER( plResponderModifier );

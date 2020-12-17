@@ -67,7 +67,7 @@ protected:
     int IValidateGzHeader(uint32_t byteCount, const void* buffer);
 
 public:
-    plZlibStream();
+    plZlibStream() : fOutput(), fZStream(), fHeader(kNeedMoreData), fDecompressedOk(), fMode() { }
     virtual ~plZlibStream();
 
     bool     Open(const plFileName& filename, const char* mode) override;

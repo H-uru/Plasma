@@ -114,7 +114,12 @@ protected:
     plAnimTimeConvert& SetFlag(uint8_t f, bool on) { if(on)fFlags |= f; else fFlags &= ~f; return *this; }
 
 public:
-    plAnimTimeConvert();
+    plAnimTimeConvert()
+        : fCurrentAnimTime(), fLastEvalWorldTime(), fLastStateChange(),
+          fBegin(), fEnd(), fLoopBegin(), fLoopEnd(), fSpeed(1.f), fFlags(),
+          fOwner(), fEaseInCurve(), fEaseOutCurve(), fSpeedEaseCurve(),
+          fCurrentEaseCurve(), fInitialBegin(), fInitialEnd(), fWrapTime()
+    { }
     virtual ~plAnimTimeConvert();
 
     CLASSNAME_REGISTER( plAnimTimeConvert );
@@ -301,7 +306,10 @@ public:
 class plATCState
 {
 public:
-    plATCState() : fEaseCurve(nil) {}
+    plATCState()
+        : fEaseCurve(), fStartWorldTime(), fStartAnimTime(), fFlags(),
+          fBegin(), fEnd(), fLoopBegin(), fLoopEnd(), fSpeed(), fWrapTime()
+    { }
     ~plATCState() { delete fEaseCurve; }
 
     void Read(hsStream *s, hsResMgr *mgr);

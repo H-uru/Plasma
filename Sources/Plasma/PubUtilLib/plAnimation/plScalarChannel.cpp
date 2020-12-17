@@ -65,19 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// ctor --------------------------
-// -----
-plScalarChannel::plScalarChannel()
-: plAGChannel()
-{
-}
-
-// dtor ---------------------------
-// -----
-plScalarChannel::~plScalarChannel()
-{
-}
-
 // value --------------------------------------------------------
 // ------
 const float & plScalarChannel::Value(double time, bool peek)

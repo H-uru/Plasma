@@ -586,7 +586,10 @@ struct RcvdFileDownloadChunkTrans : NetNotifyTrans {
     uint8_t *   data;
     hsStream *  writer;
 
-    RcvdFileDownloadChunkTrans () : NetNotifyTrans(kRcvdFileDownloadChunkTrans) {}
+    RcvdFileDownloadChunkTrans ()
+        : NetNotifyTrans(kRcvdFileDownloadChunkTrans),
+          bytes(), offset(), data(), writer()
+    { }
     ~RcvdFileDownloadChunkTrans ();
     void Post ();
 };
@@ -601,7 +604,10 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
     unsigned        bufferBytes;
     uint8_t *          bufferData;
 
-    RcvdPropagatedBufferTrans () : NetNotifyTrans(kRcvdPropagatedBufferTrans) {}
+    RcvdPropagatedBufferTrans()
+        : NetNotifyTrans(kRcvdPropagatedBufferTrans),
+          bufferType(), bufferBytes(), bufferData()
+    { }
     ~RcvdPropagatedBufferTrans ();
     void Post ();
 };
@@ -614,7 +620,9 @@ struct VaultNodeChangedTrans : NetNotifyTrans {
     unsigned        m_nodeId;
     plUUID          m_revId;
 
-    VaultNodeChangedTrans () : NetNotifyTrans(kVaultNodeChangedTrans) {}
+    VaultNodeChangedTrans ()
+        : NetNotifyTrans(kVaultNodeChangedTrans), m_nodeId()
+    { }
     void Post ();
 };
 
@@ -627,7 +635,10 @@ struct VaultNodeAddedTrans : NetNotifyTrans {
     unsigned        m_childId;
     unsigned        m_ownerId;
 
-    VaultNodeAddedTrans () : NetNotifyTrans(kVaultNodeAddedTrans) {}
+    VaultNodeAddedTrans ()
+        : NetNotifyTrans(kVaultNodeAddedTrans),
+          m_parentId(), m_childId(), m_ownerId()
+    { }
     void Post ();
 };
 
@@ -639,7 +650,9 @@ struct VaultNodeRemovedTrans : NetNotifyTrans {
     unsigned        m_parentId;
     unsigned        m_childId;
 
-    VaultNodeRemovedTrans () : NetNotifyTrans(kVaultNodeRemovedTrans) {}
+    VaultNodeRemovedTrans ()
+        : NetNotifyTrans(kVaultNodeRemovedTrans), m_parentId(), m_childId()
+    { }
     void Post ();
 };
 
@@ -650,7 +663,9 @@ struct VaultNodeDeletedTrans : NetNotifyTrans {
 
     unsigned        m_nodeId;
 
-    VaultNodeDeletedTrans () : NetNotifyTrans(kVaultNodeDeletedTrans) {}
+    VaultNodeDeletedTrans ()
+        : NetNotifyTrans(kVaultNodeDeletedTrans), m_nodeId()
+    { }
     void Post ();
 };
 
@@ -2554,13 +2569,11 @@ bool PingRequestTrans::Recv (
 ***/
 
 //============================================================================
-AccountExistsRequestTrans::AccountExistsRequestTrans (
-    FNetCliAuthAccountExistsRequestCallback callback,
-    void *                          param,
-    const wchar_t                     accountName[]
-) : NetAuthTrans(kPingRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
+AccountExistsRequestTrans::AccountExistsRequestTrans(
+        FNetCliAuthAccountExistsRequestCallback callback,
+        void* param, const wchar_t accountName[])
+    : NetAuthTrans(kPingRequestTrans), m_callback(callback), m_param(param),
+    m_exists()
 {
     StrCopy(m_accountName, accountName, kMaxAccountNameLength);
 }
@@ -2614,15 +2627,10 @@ bool AccountExistsRequestTrans::Recv (
 ***/
 
 //============================================================================
-LoginRequestTrans::LoginRequestTrans (
-    FNetCliAuthLoginRequestCallback callback,
-    void *                          param
-) : NetAuthTrans(kLoginRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
-,   m_accountId(kNilUuid)
-,   m_accountFlags(0)
-,   m_playerCount(0)
+LoginRequestTrans::LoginRequestTrans(
+        FNetCliAuthLoginRequestCallback callback, void* param)
+    : NetAuthTrans(kLoginRequestTrans), m_callback(callback), m_param(param),
+      m_accountId(kNilUuid), m_accountFlags(), m_playerCount(), m_billingType()
 {
     memset(&m_players, 0, sizeof(m_players));
 }
@@ -2742,18 +2750,13 @@ bool LoginRequestTrans::Recv (
 ***/
 
 //============================================================================
-AgeRequestTrans::AgeRequestTrans (
-    const ST::string&                   ageName,
-    const plUUID&                       ageInstId,
-    FNetCliAuthAgeRequestCallback       callback,
-    void *                              param
-) : NetAuthTrans(kAgeRequestTrans)
-,   m_ageName(ageName)
-,   m_ageInstId(ageInstId)
-,   m_callback(callback)
-,   m_param(param)
-{
-}
+AgeRequestTrans::AgeRequestTrans(
+        const ST::string& ageName, const plUUID& ageInstId,
+        FNetCliAuthAgeRequestCallback callback, void* param)
+    : NetAuthTrans(kAgeRequestTrans), m_ageName(ageName), m_ageInstId(ageInstId),
+      m_callback(callback), m_param(param), m_ageMcpId(), m_ageVaultId(),
+      m_gameSrvNode()
+{ }
 
 //============================================================================
 AgeRequestTrans::~AgeRequestTrans () {
@@ -4909,30 +4912,16 @@ bool ScoreSetPointsTrans::Recv (
 ***/
 
 //============================================================================
-ScoreGetRanksTrans::ScoreGetRanksTrans (
-    unsigned                    ownerId,
-    unsigned                    scoreGroup,
-    unsigned                    parentFolderId,
-    const ST::string&           gameName,
-    unsigned                    timePeriod,
-    unsigned                    numResults,
-    unsigned                    pageNumber,
-    bool                        sortDesc,
-    FNetCliAuthGetRanksCallback callback,
-    void *                      param
-) : NetAuthTrans(kScoreGetRanksTrans)
-,   m_callback(callback)
-,   m_param(param)
-,   m_ownerId(ownerId)
-,   m_scoreGroup(scoreGroup)
-,   m_parentFolderId(parentFolderId)
-,   m_gameName(gameName)
-,   m_timePeriod(timePeriod)
-,   m_numResults(numResults)
-,   m_pageNumber(pageNumber)
-,   m_sortDesc(sortDesc)
-{
-}
+ScoreGetRanksTrans::ScoreGetRanksTrans(
+        unsigned ownerId, unsigned scoreGroup, unsigned parentFolderId,
+        const ST::string& gameName, unsigned timePeriod, unsigned numResults,
+        unsigned pageNumber, bool sortDesc, FNetCliAuthGetRanksCallback callback,
+        void* param)
+    : NetAuthTrans(kScoreGetRanksTrans), m_callback(callback), m_param(param),
+      m_ownerId(ownerId),  m_scoreGroup(scoreGroup), m_parentFolderId(parentFolderId),
+      m_gameName(gameName), m_timePeriod(timePeriod), m_numResults(numResults),
+      m_pageNumber(pageNumber), m_sortDesc(sortDesc), m_ranks(), m_rankCount()
+{ }
 
 //============================================================================
 bool ScoreGetRanksTrans::Send () {

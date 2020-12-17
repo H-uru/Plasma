@@ -649,6 +649,7 @@ void hsBoundsOriented::Read(hsStream *stream)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 hsBounds3Ext::hsBounds3Ext(const hsBounds3 &b)
+    : fDists(), fRadius()
 {
     Reset(&b);
 }

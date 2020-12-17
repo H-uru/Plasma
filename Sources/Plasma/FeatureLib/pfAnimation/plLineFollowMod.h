@@ -116,8 +116,13 @@ protected:
 
 public:
 
-    plLineFollowMod();
-    ~plLineFollowMod();
+    plLineFollowMod()
+        : fPath(), fPathParent(), fRefObj(),
+          fFollowMode(kFollowListener), fFollowFlags(kNone),
+          fOffset(), fOffsetClamp(), fTanOffset(),
+          fSpeedClamp(), fSearchPos(0.f, 0.f, 0.f)
+    { }
+    ~plLineFollowMod() { delete fPath; }
 
     CLASSNAME_REGISTER( plLineFollowMod );
     GETINTERFACE_ANY( plLineFollowMod, plMultiModifier );

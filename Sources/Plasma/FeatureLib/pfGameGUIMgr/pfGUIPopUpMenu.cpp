@@ -85,14 +85,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfPopUpKeyGenerator
 {
     public:
-        char        fPrefix[ 128 ];
-        uint32_t      fKeyCount;
+        char        fPrefix[128];
+        uint32_t    fKeyCount;
         plLocation  fLoc;
 
-        pfPopUpKeyGenerator( const char *p, const plLocation &loc )
+        pfPopUpKeyGenerator(const char *p, const plLocation &loc)
+            : fKeyCount(0), fLoc(loc)
         {
-            strcpy( fPrefix, p );
-            fLoc = loc;
+            strcpy(fPrefix, p);
         }
 
         plKey   CreateKey( hsKeyedObject *ko )
@@ -845,14 +845,14 @@ void    pfGUIPopUpMenu::SetSkin( pfGUISkin *skin )
 //////////////////////////////////////////////////////////////////////////////
 
 pfGUISkin::pfGUISkin()
+    : fTexture(), fItemMargin(), fBorderMargin()
 {
-    fTexture = nil;
     memset( fElements, 0, sizeof( pfSRect ) * kNumElements );
 }
 
-pfGUISkin::pfGUISkin( plMipmap *texture )
+pfGUISkin::pfGUISkin(plMipmap* texture)
+    : fTexture(texture), fItemMargin(), fBorderMargin()
 {
-    fTexture = texture;
     if( fTexture != nil )
     {
         hsAssert( fTexture->GetKey() != nil, "Creating a GUI skin via a mipmap with no key!" );

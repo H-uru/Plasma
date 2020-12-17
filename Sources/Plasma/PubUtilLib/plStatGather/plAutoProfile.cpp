@@ -98,7 +98,9 @@ protected:
     void IShutdown();
 
 public:
-    plAutoProfileImp();
+    plAutoProfileImp()
+        : fNextAge(), fNextSpawnPoint(), fLinkedToSingleAge(), fJustLinkToAges(), fLinkTime()
+    { }
 
     virtual void StartProfile(const char* ageName);
     virtual void LinkToAllAges();
@@ -113,10 +115,6 @@ plAutoProfile* plAutoProfile::Instance()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-plAutoProfileImp::plAutoProfileImp() : fNextAge(0), fNextSpawnPoint(0), fLinkedToSingleAge(false), fJustLinkToAges(false)
-{
-}
 
 void plAutoProfileImp::StartProfile(const char* ageName)
 {

@@ -69,16 +69,10 @@ static inline HRESULT DXTrace(const TCHAR* msg, const char* file, int line, HRES
 //       will close the file.  
 //-----------------------------------------------------------------------------
 CWaveFile::CWaveFile()
-{
-    m_pwfx    = NULL;
-    m_hmmio   = NULL;
-    m_dwSize  = 0;
-    m_bIsReadingFromMemory = FALSE;
-    fSecsPerSample = 0;
-
-}
-
-
+    : m_pwfx(), m_hmmio(), m_dwSize(), m_ckRiff(),
+      m_bIsReadingFromMemory(), fSecsPerSample(), m_mmioinfoOut(), m_dwFlags(),
+      m_pbData(), m_pbDataCur(), m_ulDataSize(), fHeader()
+{ }
 
 
 //-----------------------------------------------------------------------------
@@ -268,12 +262,14 @@ public:
   DWORD   dwSampleOffset;
 
 public:
-    CuePoint(DWORD id, DWORD pos, FOURCC chk, DWORD ckSt, DWORD BkSt, DWORD SO) : 
-      dwIdentifier(id), dwPosition(pos), fccChunk(chk), dwChunkStart(ckSt), dwBlockStart(BkSt), dwSampleOffset(SO)
-      {}
-    CuePoint(){}
-    
-
+    CuePoint(DWORD id, DWORD pos, FOURCC chk, DWORD ckSt, DWORD BkSt, DWORD SO)
+        : dwIdentifier(id), dwPosition(pos), fccChunk(chk),
+          dwChunkStart(ckSt), dwBlockStart(BkSt), dwSampleOffset(SO)
+        { }
+    CuePoint()
+        : dwIdentifier(), dwPosition(), fccChunk(),
+          dwChunkStart(), dwBlockStart(), dwSampleOffset()
+        { }
 };
 
 
@@ -910,13 +906,10 @@ HRESULT CWaveFile::Write( UINT nSizeToWrite, BYTE* pbSrcData, UINT* pnSizeWrote 
 
 // Overloads for plAudioFileReader (we only support writing for CWaveFile for now)
 CWaveFile::CWaveFile(const plFileName &path, plAudioCore::ChannelSelect whichChan)
+    : m_pwfx(), m_hmmio(), m_dwSize(), m_ckRiff(),
+      m_bIsReadingFromMemory(), fSecsPerSample(), m_mmioinfoOut(), m_dwFlags(),
+      m_pbData(), m_pbDataCur(), m_ulDataSize(), fHeader()
 {
-    m_pwfx    = NULL;
-    m_hmmio   = NULL;
-    m_dwSize  = 0;
-    m_bIsReadingFromMemory = FALSE;
-    fSecsPerSample = 0;
-
     // Just a stub--do nothing
 }
 

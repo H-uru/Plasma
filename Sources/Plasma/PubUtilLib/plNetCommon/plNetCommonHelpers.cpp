@@ -242,7 +242,7 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
         s->LogSubStreamPushDesc("Compressed Data");
         s->Read( zBufSz, (void*)zBuf.data() );
         plZlibCompress compressor;
-        uint32_t tmp;
+        uint32_t tmp = bufSz;
         bool ans = compressor.Uncompress( (uint8_t*)buf.data(), &tmp, (uint8_t*)zBuf.data(), zBufSz );
         hsAssert( ans!=0, "plCreatableListHelper: Failed to uncompress buffer." );
         hsAssert( tmp==bufSz, "compression size mismatch" );

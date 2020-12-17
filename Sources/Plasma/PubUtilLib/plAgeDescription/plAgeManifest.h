@@ -88,7 +88,7 @@ public:
 
     plManifestFile(const plFileName& name, const plFileName& serverPath, const plMD5Checksum& check,
                    uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now = true);
-    virtual ~plManifestFile();
+    virtual ~plManifestFile() { }
 
     const plFileName &GetName() const { return fName; }
     const plFileName &GetServerPath() const { return fServerPath; }

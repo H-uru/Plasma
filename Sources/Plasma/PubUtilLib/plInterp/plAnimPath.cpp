@@ -54,8 +54,10 @@ const float kTerminateDelTime = 1.e-3f;
 const float kTerminateDelDistSq = .1f;
 
 plAnimPath::plAnimPath()
-: fController(nil), fLength(0), fMinDistSq(0), 
-    fAnimPathFlags(0)
+    : fController(), fLength(), fRadius(), 
+      fMinDistSq(), fAnimPathFlags(), fDelTime(),
+      fLastDistSq(), fThisDistSq(), fNextDistSq(),
+      fLastTime(), fThisTime(), fNextTime()
 {
     fLocalToWorld.Reset();
     fWorldToLocal.Reset();

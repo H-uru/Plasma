@@ -56,7 +56,7 @@ public:
     float fX,fY,fZ,fW;   
 
     // Constructors
-    hsQuat(){}
+    hsQuat() : fX(), fY(), fZ(), fW() { }
     hsQuat(float X, float Y, float Z, float W) : 
         fX(X), fY(Y), fZ(Z), fW(W) {}
     hsQuat(const hsQuat& a) = default;

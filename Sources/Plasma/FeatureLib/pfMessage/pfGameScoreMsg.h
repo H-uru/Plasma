@@ -56,10 +56,8 @@ class pfGameScoreMsg : public plMessage
     ENetError fResult;
 
 public:
-    pfGameScoreMsg() { }
-    pfGameScoreMsg(ENetError result)
-        : fResult(result)
-    { }
+    pfGameScoreMsg() : fResult() { }
+    pfGameScoreMsg(ENetError result) : fResult(result) { }
 
     CLASSNAME_REGISTER(pfGameScoreMsg);
     GETINTERFACE_ANY(pfGameScoreMsg, plMessage);
@@ -77,7 +75,7 @@ class pfGameScoreListMsg : public pfGameScoreMsg
     ST::string fName;
 
 public:
-    pfGameScoreListMsg() { }
+    pfGameScoreListMsg() : fOwnerId() { }
     pfGameScoreListMsg(ENetError result, uint32_t ownerId, const ST::string& name)
         : pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
     { }
@@ -106,7 +104,7 @@ class pfGameScoreTransferMsg : public pfGameScoreMsg
     pfGameScore* fDestination;
 
 public:
-    pfGameScoreTransferMsg() { }
+    pfGameScoreTransferMsg() : fSource(), fDestination() { }
     pfGameScoreTransferMsg(ENetError result, pfGameScore* to, pfGameScore* from, int32_t points)
         : fSource(from), fDestination(to), pfGameScoreMsg(result)
     {
@@ -135,7 +133,7 @@ class pfGameScoreUpdateMsg : public pfGameScoreMsg
     pfGameScore* fScore;
 
 public:
-    pfGameScoreUpdateMsg() { }
+    pfGameScoreUpdateMsg() : fScore() { }
     pfGameScoreUpdateMsg(ENetError result, pfGameScore* s, int32_t points)
         : fScore(s), pfGameScoreMsg(result)
     {

@@ -60,22 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plManifestFile::plManifestFile(const plFileName& name, const plFileName& serverPath,
                                const plMD5Checksum& check, uint32_t size, uint32_t zippedSize,
                                uint32_t flags, bool md5Now) :
-    fName(name),
-    fServerPath(serverPath),
-    fChecksum(check),
-    fSize(size),
-    fZippedSize(zippedSize),
-    fFlags(flags),
-    fMd5Checked(md5Now)
+    fName(name), fServerPath(serverPath), fChecksum(check), fSize(size), fZippedSize(zippedSize),
+    fFlags(flags), fMd5Checked(md5Now), fIsLocalUpToDate(false), fLocalExists()
 {
     if (md5Now)
     {
         DoMd5Check();
     }
-}
-
-plManifestFile::~plManifestFile()
-{
 }
 
 void plManifestFile::DoMd5Check()

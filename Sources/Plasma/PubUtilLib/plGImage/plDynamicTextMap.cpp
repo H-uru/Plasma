@@ -77,8 +77,8 @@ plProfile_Extern(MemMipmaps);
 
 plDynamicTextMap::plDynamicTextMap()
     : fVisWidth(0), fVisHeight(0), fHasAlpha(false), fPremultipliedAlpha(false), fJustify(kLeftJustify),
-      fInitBuffer(nullptr), fFontSize(0), fFontFlags(0),
-      fFontAntiAliasRGB(false), fFontBlockRGB(false), fHasCreateBeenCalled(false)
+      fInitBuffer(), fFontSize(), fFontFlags(), fShadowed(), fLineSpacing(),
+      fCurrFont(), fFontAntiAliasRGB(), fFontBlockRGB(), fHasCreateBeenCalled()
 {
     fFontColor.Set(0, 0, 0, 1);
 }

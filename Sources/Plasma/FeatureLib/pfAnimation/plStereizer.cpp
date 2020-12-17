@@ -60,13 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "hsStream.h"
 
-plStereizer::plStereizer()
-:   fInitPos(0,0,0),
-    fListPos(0,0,0),
-    fListDirection(0,1.f,0),
-    fListUp(0,0,1.f)
-{
-}
 
 plStereizer::~plStereizer()
 {

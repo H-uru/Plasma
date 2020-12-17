@@ -68,20 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plProfile_CreateMemCounter("Sounds", "Memory", MemSounds);
 plProfile_Extern(SoundPlaying);
 
-plWin32Sound::plWin32Sound() :
-fFailed(false),
-fPositionInited(false),
-fAwaitingPosition(false),
-fTotalBytes(0),
-fReallyPlaying(false),
-fChannelSelect(0),
-fDSoundBuffer(nil)
-{
-}
-
-plWin32Sound::~plWin32Sound()
-{
-}
 
 void plWin32Sound::Activate( bool forcePlay )
 {

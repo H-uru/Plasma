@@ -58,7 +58,7 @@ class plClientLoader : private hsThread
     virtual void Run() override;
 
 public:
-    plClientLoader() : fClient(nullptr) { }
+    plClientLoader() : fClient(), fWindow() { }
 
     /**
      * Initializes the client asyncrhonouslynn including: loading the localization, 

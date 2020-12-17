@@ -117,7 +117,7 @@ protected:
     void IHandleTranslationTag(const tagInfo & parentTag, const tagInfo & thisTag);
 
 public:
-    LocalizationXMLFile() : fWeExploded(false) { }
+    LocalizationXMLFile() : fWeExploded(), fParser(), fSkipDepth(), fIgnoreContents() { }
 
     bool Parse(const plFileName & fileName); // returns false on failure
     void AddError(const ST::string & errorText);

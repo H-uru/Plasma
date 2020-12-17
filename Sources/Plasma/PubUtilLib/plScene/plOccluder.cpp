@@ -56,9 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVisMgr.h"
 
 plOccluder::plOccluder()
-:   fSceneNode(nil)
+    : fSceneNode(), fProxyGen(new plOccluderProxy), fPriority()
 {
-    fProxyGen = new plOccluderProxy;
     fProxyGen->Init(this);
 
     fVisSet.SetBit(0);

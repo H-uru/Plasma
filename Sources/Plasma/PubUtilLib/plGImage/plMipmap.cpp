@@ -68,9 +68,12 @@ plProfile_CreateMemCounter("Mipmaps", "Memory", MemMipmaps);
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
-plMipmap::plMipmap() : fImage( nil ), fLevelSizes( nil ), fCurrLevelPtr( nil ), fCurrLevel( 0 ), fTotalSize( 0 )
+plMipmap::plMipmap()
+    : fImage(), fLevelSizes(), fCurrLevelPtr(),
+      fCurrLevel(), fTotalSize(), fWidth(), fHeight(), fRowBytes(),
+      fNumLevels(), fCurrLevelWidth(), fCurrLevelHeight(), fCurrLevelRowBytes()
 {
-    SetConfig( kARGB32Config );
+    SetConfig(kARGB32Config);
     fCompressionType = kUncompressed;
     fUncompressedInfo.fType = UncompressedInfo::kRGB8888;
 
@@ -90,9 +93,9 @@ plMipmap::~plMipmap()
 #endif
 }
 
-plMipmap::plMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, uint8_t compType, uint8_t format )
+plMipmap::plMipmap(uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, uint8_t compType, uint8_t format)
 {
-    Create( width, height, config, numLevels, compType, format );
+    Create(width, height, config, numLevels, compType, format);
 
 #ifdef MEMORY_LEAK_TRACER
     fNumMipmaps++;
@@ -919,9 +922,10 @@ plFilterMask::~plFilterMask()
 plMipmap::plMipmap( plMipmap *bm, float sig, uint32_t createFlags, 
         float detailDropoffStart, float detailDropoffStop, 
         float detailMax, float detailMin)
+    : fCurrLevelPtr(), fCurrLevelWidth(), fCurrLevelHeight(), fCurrLevelRowBytes(),
+      fImage(), fLevelSizes(), fTotalSize(), fCurrLevel()
 {
-    int     i;
-
+    int i;
 
     hsAssert(bm->GetHeight() && bm->GetWidth(), "Degenerate Bitmap into Mipmap");
 
@@ -932,21 +936,17 @@ plMipmap::plMipmap( plMipmap *bm, float sig, uint32_t createFlags,
     fWidth = bm->GetWidth();
     fRowBytes = bm->GetRowBytes();
     fPixelSize = bm->GetPixelSize();
-    fImage = nil;
     fFlags = bm->GetFlags();
 
     uint32_t minDim = fHeight < fWidth ? fHeight : fWidth;
     for( fNumLevels = 0; (minDim >> fNumLevels); fNumLevels++ ) /* empty */;
 
-    fLevelSizes = nil;
     fCompressionType = kUncompressed;
     fUncompressedInfo.fType = bm->fUncompressedInfo.fType;
     IBuildLevelSizes();
 
-    fTotalSize = 0;
     for( i = 0; i < fNumLevels; i++ )
         fTotalSize += fLevelSizes[ i ];
-    fCurrLevel = 0;
 
     fImage = (void *)new uint8_t[ fTotalSize ];
     memset(fImage, 0, fTotalSize);

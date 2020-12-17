@@ -68,18 +68,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIKnobCtrl::pfGUIKnobCtrl() :
-    fDragStart(0.f, 0.f, 0.f),
-    fDragging(false),
-    fAnimStartPos(0.f, 0.f, 0.f),
-    fAnimEndPos(0.f, 0.f, 0.f),
-    fDragRangeMin(0.f),
-    fDragRangeMax(0.f),
-    fAnimBegin(0.f),
-    fAnimEnd(0.f),
-    fAnimTimesCalced(false)
+pfGUIKnobCtrl::pfGUIKnobCtrl()
+    : fDragStart(0.f, 0.f, 0.f), fDragging(), fDragValue(),
+      fDragRangeMin(), fDragRangeMax(), fAnimTimesCalced(),
+      fAnimStartPos(0.f, 0.f, 0.f), fAnimEndPos(0.f, 0.f, 0.f),
+      fAnimBegin(), fAnimEnd()
 {
-    SetFlag( kWantsInterest );
+    SetFlag(kWantsInterest);
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////

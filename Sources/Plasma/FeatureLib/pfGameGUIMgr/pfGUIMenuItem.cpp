@@ -64,11 +64,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIMenuItem::pfGUIMenuItem()
+    : fName(), fReportingHover(), fSkinBuffersUpdated(true), fHowToSkin()
 {
-    fName = nil;
-    fSkin = nil;
-    fReportingHover = false;
-    fSkinBuffersUpdated = true;
+    fSkin = nullptr;
 }
 
 pfGUIMenuItem::~pfGUIMenuItem()

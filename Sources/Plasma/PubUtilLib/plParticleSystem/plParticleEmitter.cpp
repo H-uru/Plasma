@@ -60,12 +60,11 @@ plProfile_CreateTimer("Update", "Particles", ParticleUpdate);
 plProfile_CreateTimer("Generate", "Particles", ParticleGenerate);
 
 plParticleEmitter::plParticleEmitter()
+    : fParticleCores(), fParticleExts(), fGenerator(),
+      fTimeToLive(), fSystem(), fSpanIndex(), fNumValidParticles(),
+      fMaxParticles(), fTargetInfo(), fColor(), fMiscFlags()
 {
-    fParticleCores = nil;
-    fParticleExts = nil;
-    fGenerator = nil;
     fLocalToWorld.Reset();
-    fTimeToLive = 0;
 }
 
 void plParticleEmitter::Init(plParticleSystem *system, uint32_t maxParticles, uint32_t spanIndex, uint32_t miscFlags,

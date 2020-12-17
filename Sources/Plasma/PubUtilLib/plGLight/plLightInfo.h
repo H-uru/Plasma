@@ -282,8 +282,10 @@ protected:
     virtual void                IRefresh();
 
 public:
-    plLimitedDirLightInfo();
-    virtual ~plLimitedDirLightInfo();
+    plLimitedDirLightInfo()
+        : fParPlanes(), fWidth(), fHeight(), fDepth()
+    { }
+    virtual ~plLimitedDirLightInfo() { delete fParPlanes; }
 
     CLASSNAME_REGISTER( plLimitedDirLightInfo );
     GETINTERFACE_ANY( plLimitedDirLightInfo, plDirectionalLightInfo );
@@ -375,8 +377,13 @@ protected:
     virtual void                IRefresh();
 
 public:
-    plSpotLightInfo();
-    virtual ~plSpotLightInfo();
+    plSpotLightInfo()
+        : fFalloff(1.f),
+          fSpotInner(hsConstants::pi<float> * 0.125f),
+          fSpotOuter(hsConstants::pi<float> * 0.25f),
+          fCone(), fEffectiveFOV()
+    { }
+    virtual ~plSpotLightInfo() { delete fCone; }
 
     CLASSNAME_REGISTER( plSpotLightInfo );
     GETINTERFACE_ANY( plSpotLightInfo, plOmniLightInfo );

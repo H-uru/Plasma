@@ -73,7 +73,9 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
 
     public:
 
-        pfGUIProgressCtrl();
+        pfGUIProgressCtrl()
+            : fStopSoundTimer(99), fAnimTimesCalced(), fPlaySound(true),
+              fAnimBegin(), fAnimEnd() { };
 
         CLASSNAME_REGISTER( pfGUIProgressCtrl );
         GETINTERFACE_ANY( pfGUIProgressCtrl, pfGUIValueCtrl );

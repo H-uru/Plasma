@@ -77,8 +77,8 @@ protected:
 // XX   static bool IExitTopmostGenericMode();
 
 protected:
-    cyAvatar() {}
-    cyAvatar(plKey sender,plKey recvr=nil);
+    cyAvatar() : fNetForce() { }
+    cyAvatar(plKey sender, plKey recvr=nullptr);
 
 public:
     virtual ~cyAvatar() { }

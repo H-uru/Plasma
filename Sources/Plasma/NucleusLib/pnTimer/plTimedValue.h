@@ -60,7 +60,7 @@ protected:
     float    fInvSecs;
 
 public:
-    plTimedValue() {}
+    plTimedValue() : fGoal(), fInit(), fStart(), fInvSecs() { }
     plTimedValue(const plTimedValue<T>& o) { Set(o, 0.f); }
     plTimedValue(const T& v) { Set(v, 0.f); }
 

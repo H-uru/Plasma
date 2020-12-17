@@ -186,8 +186,12 @@ protected:
     double      fLastDirSecs;
 public:
 
-    plParticleWindEffect();
-    ~plParticleWindEffect();
+    plParticleWindEffect()
+        : fWindVec(0.f, 0.f, 0.f), fDir(1.f, 0.f, 0.f), fSwirl(0.1f), fConstancy(),
+          fHorizontal(), fLastDirSecs(-1.f), fRefDir(0.f, 0.f, 0.f),
+          fRandDir(1.f, 0.f, 0.f), fStrength()
+    { }
+    ~plParticleWindEffect() { }
 
     CLASSNAME_REGISTER( plParticleWindEffect );
     GETINTERFACE_ANY( plParticleWindEffect, plParticleEffect );

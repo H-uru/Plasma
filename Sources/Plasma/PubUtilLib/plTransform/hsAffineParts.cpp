@@ -90,14 +90,6 @@ hsAffineParts::hsAffineParts(gemAffineParts *ap)
 //
 //
 //
-hsAffineParts::hsAffineParts()
-{
-
-}
-
-//
-//
-//
 void hsAffineParts::Reset()
 {
     fT.Set(0,0,0);

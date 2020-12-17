@@ -142,49 +142,49 @@ plUnifiedTime::plUnifiedTime(plUnifiedTime_CtorNow,int mode)
 
 
 plUnifiedTime::plUnifiedTime(const timeval & tv)
-:   fMode(kGmt)
+    : fMode(kGmt)
 {
     *this = tv;
 }
 
 plUnifiedTime::plUnifiedTime(int mode, const struct tm & src)
-:   fMode((Mode)mode)
+    : fMode((Mode)mode), fMicros()
 {
     *this = src;
 }
 
 plUnifiedTime::plUnifiedTime(time_t t)
-:   fMode(kGmt)
+    : fMode(kGmt)
 {
     *this = t;
 }
 
 plUnifiedTime::plUnifiedTime(unsigned long t)
-:   fMode(kGmt)
+    : fMode(kGmt)
 {
     *this = t;
 }
 
 plUnifiedTime::plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec, int dst)
-:   fMode(kGmt)
+    : fMode(kGmt), fMicros()
 {
     SetTime(year,month,day,hour,min,sec,usec,dst);
 }
 
 plUnifiedTime::plUnifiedTime(int mode, const char * buf, const char * fmt)
-:   fMode((Mode)mode)
+    : fMode((Mode)mode), fMicros()
 {
     FromString(buf,fmt);
 }
 
 plUnifiedTime::plUnifiedTime(const plUnifiedTime & src)
-:   fMode(src.fMode)
+    : fMode(src.fMode)
 {
     *this = src;
 }
 
 plUnifiedTime::plUnifiedTime(const plUnifiedTime * src)
-:   fMode(src->fMode)
+    : fMode(src->fMode)
 {
     *this = *src;
 }

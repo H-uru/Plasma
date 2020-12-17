@@ -89,7 +89,7 @@ struct hsScalarTriple
 //  float& fY;
 //  float& fZ;
 protected:
-    hsScalarTriple() {}
+    hsScalarTriple() : fX(), fY(), fZ() { }
     hsScalarTriple(float x, float y, float z) : fX(x), fY(y), fZ(z) {}
 public:
     float    fX, fY, fZ;
@@ -239,7 +239,7 @@ struct hsVector3 : public hsScalarTriple {
 
 struct hsPoint4 {   
     float    fX, fY, fZ, fW;
-    hsPoint4() {}
+    hsPoint4() : fX(), fY(), fZ(), fW() { }
     hsPoint4(float x, float y, float z, float w) :  fX(x), fY(y), fZ(z), fW(w) {}
     float&       operator[](int i); 
     float        operator[](int i) const;
@@ -381,7 +381,7 @@ struct hsPlane3 {
     hsVector3 fN;
     float fD;
 
-    hsPlane3() { }
+    hsPlane3() : fD() { }
     hsPlane3(const hsVector3* nrml, float d) 
     { fN = *nrml; fD=d; }
     hsPlane3(const hsPoint3* pt, const hsVector3* nrml)

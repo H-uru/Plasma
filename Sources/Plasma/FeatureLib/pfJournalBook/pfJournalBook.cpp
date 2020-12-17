@@ -178,99 +178,62 @@ class pfEsHTMLChunk
 
         // Paragraph constructor
         pfEsHTMLChunk( const wchar_t *text )
+            : fType(kParagraph), fFlags(kLeft), fText(text ? text : L""),
+              fFontSize(), fImageKey(), fEventID(), fSFXTime(),
+              fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
+              fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
+              fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
+
         {
-            fType = kParagraph;
-            if (text)
-                fText = text;
-            else
-                fText = L"";
-            fFlags = kLeft;
-            fFontSize = 0;
-            fImageKey = nil;
-            fEventID = 0;
-            fColor.Set( 0.f, 0.f, 0.f, 1.f );
-            fAbsoluteX = fAbsoluteY = 0;
-            fCurrOpacity = 1.f;
-            fMinOpacity = 0.f;
-            fMaxOpacity = 1.f;
-            fNoResizeImg = false;
-            fLineSpacing = 0;
-            fTintDecal = false;
-            fLoopMovie = true;
-            fOnCover = false;
-            fMovieIndex = -1;
+            fColor.Set(0.f, 0.f, 0.f, 1.f);
+            fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOffColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOnColor.Set(0.f, 0.f, 0.f, 1.f);
         }
 
         // Image constructor (used for decals and movies too)
         pfEsHTMLChunk( plKey imageKey, uint32_t alignFlags )
+            : fType(kImage), fFlags(alignFlags), fText(L""),
+              fFontSize(), fImageKey(imageKey), fEventID(), fSFXTime(),
+              fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
+              fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
+              fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
         {
-            fType = kImage;
-            fText = L"";
-            fFlags = alignFlags;
-            fFontSize = 0;
-            fImageKey = imageKey;
-            fEventID = 0;
-            fColor.Set( 0.f, 0.f, 0.f, 1.f );
-            fAbsoluteX = fAbsoluteY = 0;
-            fCurrOpacity = 1.f;
-            fMinOpacity = 0.f;
-            fMaxOpacity = 1.f;
-            fNoResizeImg = false;
-            fLineSpacing = 0;
-            fTintDecal = false;
-            fLoopMovie = true;
-            fOnCover = false;
-            fMovieIndex = -1;
+            fColor.Set(0.f, 0.f, 0.f, 1.f);
+            fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOffColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOnColor.Set(0.f, 0.f, 0.f, 1.f);
         }
 
         // Page break constructor
         pfEsHTMLChunk()
+            : fType(kPageBreak), fFlags(), fText(L""),
+              fFontSize(), fImageKey(), fEventID(), fSFXTime(),
+              fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
+              fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
+              fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
         {
-            fType = kPageBreak;
-            fText = L"";
-            fImageKey = nil;
-            fFontSize = 0;
-            fFlags = 0;
-            fEventID = 0;
-            fColor.Set( 0.f, 0.f, 0.f, 1.f );
-            fAbsoluteX = fAbsoluteY = 0;
-            fCurrOpacity = 1.f;
-            fMinOpacity = 0.f;
-            fMaxOpacity = 1.f;
-            fNoResizeImg = false;
-            fLineSpacing = 0;
-            fTintDecal = false;
-            fLoopMovie = true;
-            fOnCover = false;
-            fMovieIndex = -1;
+            fColor.Set(0.f, 0.f, 0.f, 1.f);
+            fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOffColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOnColor.Set(0.f, 0.f, 0.f, 1.f);
         }
 
         // Font change constructor
         pfEsHTMLChunk( const wchar_t *face, uint8_t size, uint32_t fontFlags )
+            : fType(kFontChange), fFlags(fontFlags), fText(face ? face : L""),
+              fFontSize(size), fImageKey(), fEventID(), fSFXTime(),
+              fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
+              fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
+              fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
         {
-            fType = kFontChange;
-            if (face)
-                fText = face;
-            else
-                fText = L"";
-            fFontSize = size;
-            fFlags = fontFlags;
-            fImageKey = nil;
-            fEventID = 0;
-            fColor.Set( 0.f, 0.f, 0.f, 1.f );
-            fAbsoluteX = fAbsoluteY = 0;
-            fCurrOpacity = 1.f;
-            fMinOpacity = 0.f;
-            fMaxOpacity = 1.f;
-            fNoResizeImg = false;
-            fLineSpacing = 0;
-            fTintDecal = false;
-            fLoopMovie = true;
-            fOnCover = false;
-            fMovieIndex = -1;
+            fColor.Set(0.f, 0.f, 0.f, 1.f);
+            fCurrColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOffColor.Set(0.f, 0.f, 0.f, 1.f);
+            fOnColor.Set(0.f, 0.f, 0.f, 1.f);
         }
 
-        ~pfEsHTMLChunk() {}
+        ~pfEsHTMLChunk() { }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -443,41 +406,6 @@ public:
 };
 
 //// Book data class /////////////////////////////////////////////////////////
-
-pfBookData::pfBookData(const ST::string &guiName /* = nil */)
-{
-    fCurrBook = nil;
-    fDialog = nil;
-    fCoverButton = fTurnPageButton = nil;
-    fLeftPageMap = fRightPageMap = nil;
-    fCoverLayer = nil;
-    fCoverMaterial = nil;
-    uint16_t i;
-    for (i=0; i<4; i++)
-        fPageMaterials[i] = nil;
-    fLeftCorner = fRightCorner = nil;
-    fWidthCtrl = fHeightCtrl = nil;
-    fCurrSFXPages = kNoSides;
-    fBaseSFXTime = 0.f;
-    fResetSFXFlag = false;
-    fSFXUpdateFlip = false;
-    fCurrentlyTurning = false;
-
-    fRightEditCtrl = fLeftEditCtrl = nil;
-    fTurnFrontEditCtrl = fTurnBackEditCtrl = nil;
-    fEditable = false;
-    fAdjustCursorTo = -1;
-    
-    if (!guiName.empty())
-        fGUIName = guiName;
-    else
-        fGUIName = ST_LITERAL("BkBook");
-}
-
-pfBookData::~pfBookData()
-{
-    RegisterForSFX( kNoSides );
-}
 
 void pfBookData::LoadGUI()
 {

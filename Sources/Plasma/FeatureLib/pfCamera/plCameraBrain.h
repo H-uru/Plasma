@@ -85,9 +85,9 @@ public:
         kFallingStopped,
         kBeginFalling,
     };
-    plCameraBrain1(plCameraModifier1* pMod);
     plCameraBrain1();
-    ~plCameraBrain1();
+    plCameraBrain1(plCameraModifier1* pMod);
+    ~plCameraBrain1() { }
     
     CLASSNAME_REGISTER( plCameraBrain1 );
     GETINTERFACE_ANY( plCameraBrain1, hsKeyedObject );
@@ -237,7 +237,7 @@ public:
 
     plCameraBrain1_Drive();
     plCameraBrain1_Drive(plCameraModifier1* pMod);
-    ~plCameraBrain1_Drive();
+    ~plCameraBrain1_Drive() { }
 
     static void SetSensitivity(float f) { fTurnRate = f; }
     
@@ -299,10 +299,10 @@ protected:
 class plCameraBrain1_FirstPerson : public plCameraBrain1_Avatar
 {
 public:
-    
-    plCameraBrain1_FirstPerson();
-    plCameraBrain1_FirstPerson(plCameraModifier1* pMod);
-    ~plCameraBrain1_FirstPerson();
+
+    plCameraBrain1_FirstPerson() : plCameraBrain1_Avatar(), fPosNode(nullptr) { }
+    plCameraBrain1_FirstPerson(plCameraModifier1* pMod) : plCameraBrain1_Avatar(pMod), fPosNode(nullptr) { }
+    ~plCameraBrain1_FirstPerson() { }
     
     CLASSNAME_REGISTER( plCameraBrain1_FirstPerson );
     GETINTERFACE_ANY( plCameraBrain1_FirstPerson, plCameraBrain1_Avatar );
@@ -373,9 +373,15 @@ protected:
 
     hsPoint3    IGetClosestPointOnCircle(const hsPoint3* toThisPt);
 public:
-    plCameraBrain1_Circle(); 
-    plCameraBrain1_Circle(plCameraModifier1* pMod); 
-    ~plCameraBrain1_Circle();
+    plCameraBrain1_Circle()
+        : plCameraBrain1_Fixed(), fCircleFlags(), fCenterObject(), fCenter(0.f, 0.f, 0.f),
+          fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr), fCirPerSec(0.25f), fRadius()
+    { }
+    plCameraBrain1_Circle(plCameraModifier1* pMod)
+        : plCameraBrain1_Fixed(pMod), fCircleFlags(), fCenterObject(), fCenter(0.f, 0.f, 0.f),
+          fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr), fCirPerSec(0.25f), fRadius()
+    { }
+    ~plCameraBrain1_Circle() { }
 
     CLASSNAME_REGISTER( plCameraBrain1_Circle );
     GETINTERFACE_ANY( plCameraBrain1_Circle, plCameraBrain1_Fixed );

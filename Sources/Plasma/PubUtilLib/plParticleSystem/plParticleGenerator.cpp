@@ -89,9 +89,6 @@ void plParticleGenerator::ComputePitchYaw(float &pitch, float &yaw, const hsVect
         yaw = hsConstants::pi<float> - yaw;
 }
 
-plSimpleParticleGenerator::plSimpleParticleGenerator()
-{
-}
 
 plSimpleParticleGenerator::~plSimpleParticleGenerator()
 {
@@ -352,10 +349,6 @@ void plSimpleParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-plOneTimeParticleGenerator::plOneTimeParticleGenerator()
-{
-}
 
 plOneTimeParticleGenerator::~plOneTimeParticleGenerator()
 {

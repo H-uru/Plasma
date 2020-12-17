@@ -59,8 +59,8 @@ class plVisMgr;
 class plDrawSpanPair
 {
 public:
-    plDrawSpanPair() {}
-    plDrawSpanPair(uint16_t d, uint16_t s) : fDrawable(d), fSpan(s) {}
+    plDrawSpanPair() : fDrawable(), fSpan() { }
+    plDrawSpanPair(uint16_t d, uint16_t s) : fDrawable(d), fSpan(s) { }
     uint16_t      fDrawable;
     uint16_t      fSpan;
 };

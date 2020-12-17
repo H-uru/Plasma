@@ -177,7 +177,8 @@ protected:
     virtual void IHandleEval(plEvalMsg*);
 public:
     plCameraRegionDetector()
-        : plObjectInVolumeDetector(), fIsInside(false) { }
+        : plObjectInVolumeDetector(), fIsInside(), fEntering()
+    { }
     ~plCameraRegionDetector();
 
     virtual bool MsgReceive(plMessage* msg);

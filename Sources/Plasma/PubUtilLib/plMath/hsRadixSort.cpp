@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMemory.h"
 #include "hsRadixSort.h"
 
-hsRadixSort::hsRadixSort()
+hsRadixSort::hsRadixSort() : fList(nullptr)
 {
     HSMemory::Clear(fHeads, 256*sizeof(Elem*));
     HSMemory::Clear(fTails, 256*sizeof(Elem*));

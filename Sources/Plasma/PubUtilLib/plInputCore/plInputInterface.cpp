@@ -63,10 +63,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plInputInterface::plInputInterface()
-{
-    fEnabled = false;
-    fControlMap = new plKeyMap;
-}
+    : fEnabled(), fControlMap(new plKeyMap),
+      fManager(), fMessageQueue()
+{ }
 
 plInputInterface::~plInputInterface()
 {

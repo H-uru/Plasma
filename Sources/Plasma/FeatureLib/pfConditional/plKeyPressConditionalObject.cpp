@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plInputEventMsg.h"
 
 plKeyPressConditionalObject::plKeyPressConditionalObject()
+    : fKeyEvent()
 {
     SetFlag(kLocalElement);     // since it relies on user input    
 }
