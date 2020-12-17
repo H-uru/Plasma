@@ -608,9 +608,8 @@ void plParticleUniformWind::PrepareEffect(const plEffectTargetInfo& target)
     {
         static plRandom random;
 
-        const double kTwoPi = M_PI * 2.0;
         double t0 = fFreqCurr * fLastFreqSecs + fCurrPhase;
-        float t1 = (float)fmod(t0, kTwoPi);
+        float t1 = (float)std::fmod(t0, hsConstants::two_pi<double>);
         fCurrPhase -= t0 - t1;
 
         fFreqCurr += fFreqRate * target.fContext.fDelSecs * random.RandZeroToOne();

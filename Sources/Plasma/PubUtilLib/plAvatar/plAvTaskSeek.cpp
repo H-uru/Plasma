@@ -201,7 +201,7 @@ void plAvTaskSeek::SetTarget(hsPoint3 &pos, hsPoint3 &lookAt)
 {
     fSeekPos = pos;
     hsVector3 up(0.f, 0.f, 1.f);
-    float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
+    float angle = std::atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + hsConstants::half_pi<float>;
     fSeekRot.SetAngleAxis(angle, up);
 }
 

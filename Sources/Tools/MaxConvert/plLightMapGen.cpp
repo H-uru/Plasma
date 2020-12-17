@@ -195,7 +195,7 @@ bool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         vp.yon = 30.f;
         vp.distance = 1.f;
         vp.zoom = 1.f;
-        vp.fov = M_PI / 4.f;
+        vp.fov = hsConstants::pi<float> / 4.f;
         vp.nearRange = 1.f;
         vp.farRange = 30.f;
 
@@ -947,7 +947,7 @@ bool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liObj,
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
     float coneRad[2];
-    coneRad[0] = (float)(ls.fallsize * M_PI / 180.f);
+    coneRad[0] = ls.fallsize * hsConstants::pi<float> / 180.f;
     coneRad[1] = coneRad[0];
     if( ls.shape == RECT_LIGHT )
         coneRad[1] /= ls.aspect;

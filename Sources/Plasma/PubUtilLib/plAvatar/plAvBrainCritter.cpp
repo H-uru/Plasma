@@ -131,7 +131,7 @@ plAvBrainCritter::plAvBrainCritter(): fWalkingStrategy(nil), fCurMode(kIdle), fN
     fAvoidingAvatars(false), fFinalGoalPos(0, 0, 0), fImmediateGoalPos(0, 0, 0), fDotGoal(0),
     fAngRight(0)
 {
-    SightCone(M_PI/2); // 90deg
+    SightCone(hsConstants::half_pi<float>); // 90deg
     StopDistance(1);
     SightDistance(10);
     HearingDistance(10);

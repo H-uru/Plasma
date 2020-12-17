@@ -292,11 +292,11 @@ void hsBounds3::MakeTriMeshSphere(hsGTriMesh* tMesh, hsPoint3* cornersIn) const
     {
         for( j = 0; j < nLati; j++ )
         {
-            float theta = (float(i) / nLong) * 2.f * M_PI;
+            float theta = (float(i) / nLong) * hsConstants::two_pi<float>;
             float cosTheta = cos(theta);
             float sinTheta = sin(theta);
 
-            float phi = (float(j+1) / (nLati+1)) * M_PI;
+            float phi = (float(j+1) / (nLati+1)) * hsConstants::pi<float>;
             float cosPhi = cos(phi);
             float sinPhi = sin(phi);
 

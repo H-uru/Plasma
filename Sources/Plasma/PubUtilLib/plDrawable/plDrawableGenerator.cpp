@@ -313,13 +313,13 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
     /// Generate points
     for( i = 0; i <= numDivisions; i++ )
     {
-        angle = (float)i * ( M_PI ) / (float)numDivisions;
+        angle = float(i) * hsConstants::pi<float> / float(numDivisions);
         hsFastMath::SinCosInRange( angle, internRad, z );
         internRad *= radius;
                 
         for( j = 0; j < numDivisions; j++ )
         {
-            angle = (float)j * ( 2 * M_PI ) / (float)numDivisions;
+            angle = float(j) * hsConstants::two_pi<float> / float(numDivisions);
             hsFastMath::SinCosInRange( angle, x, y );
 
             point.Set( pos.fX + x * internRad, pos.fY + y * internRad, pos.fZ + z * radius );
@@ -603,7 +603,7 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsPoint3 &ape
     normals.Append( -direction );
     for( i = 0; i < numDivisions; i++ )
     {
-        angle = (float)i * ( M_PI * 2.f ) / (float)numDivisions;
+        angle = float(i) * hsConstants::two_pi<float> / float(numDivisions);
         hsFastMath::SinCosInRange( angle, x, y );
 
         points.Append( baseCenter + ( xVec * x * radius ) + ( yVec * y * radius ) );

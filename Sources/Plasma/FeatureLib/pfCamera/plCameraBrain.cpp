@@ -1617,7 +1617,6 @@ bool plCameraBrain1_Fixed::MsgReceive(plMessage* msg)
 //
 //
 // circle camera crap
-static const float kTwoPI    = 2.0f*M_PI;
 
 plCameraBrain1_Circle::plCameraBrain1_Circle() : plCameraBrain1_Fixed()
 { 
@@ -1692,18 +1691,18 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
     {
         float dist = fabs(fGoalRad-fCurRad);
     
-        hsAssert(dist>=0 && dist<=kTwoPI, "illegal radian diff");
-        bool mustWrap = (dist > M_PI);  // go opposite direction for shortcut and wrap
+        hsAssert(dist >= 0.f && dist <= hsConstants::two_pi<float>, "illegal radian diff");
+        bool mustWrap = (dist > hsConstants::pi<float>);  // go opposite direction for shortcut and wrap
 
         // compute speed
         float speed; 
         if (warp)
-            speed = (float)(kTwoPI * 100 * secs);
+            speed = (float)(hsConstants::two_pi<float> * 100 * secs);
         else
-            speed = (float)(kTwoPI * fCirPerSec * secs);
+            speed = (float)(hsConstants::two_pi<float> * fCirPerSec * secs);
 
         // move towards goalRad
-        hsAssert(fCurRad>=0 && fCurRad<=kTwoPI, "illegal radian value");
+        hsAssert(fCurRad >= 0.f && fCurRad <= hsConstants::two_pi<float>, "illegal radian value");
 
         if (fCurRad<fGoalRad)
         {
@@ -1714,7 +1713,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
                 while(fCurRad<0)
                 {
                     didWrap=true;
-                    fCurRad+=kTwoPI;
+                    fCurRad += hsConstants::two_pi<float>;
                 }
                 if (fCurRad<fGoalRad && didWrap)
                     fCurRad=fGoalRad;
@@ -1732,10 +1731,10 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
             {
                 fCurRad+=speed;
                 bool didWrap=false;
-                while(fCurRad>kTwoPI)
+                while (fCurRad > hsConstants::two_pi<float>)
                 {
                     didWrap=true;
-                    fCurRad-=kTwoPI;
+                    fCurRad -= hsConstants::two_pi<float>;
                 }
                 if (fCurRad>fGoalRad && didWrap)
                     fCurRad=fGoalRad;
@@ -1748,7 +1747,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
             }
         }
     }
-    hsAssert(fCurRad>=0 && fCurRad<=kTwoPI, "illegal radian value");
+    hsAssert(fCurRad >= 0.f && fCurRad <= hsConstants::two_pi<float>, "illegal radian value");
     
     hsPoint3 x;
     x = GetCenterPoint() + hsVector3((float)cos(fCurRad)*fRadius, (float)sin(fCurRad)*fRadius, 0.0f);
@@ -1772,10 +1771,11 @@ hsPoint3 plCameraBrain1_Circle::IGetClosestPointOnCircle(const hsPoint3* toThis)
     }
     v.Normalize();
     fGoalRad = (float)atan2(v.fY, v.fX); // -pi to pi
-    hsAssert(fGoalRad>=-M_PI && fGoalRad<=M_PI, "Illegal atan2 val");
+    hsAssert(fGoalRad >= -hsConstants::pi<float> && fGoalRad <= hsConstants::pi<float>,
+             "Illegal atan2 val");
     if (fGoalRad<0)
-        fGoalRad = kTwoPI + fGoalRad;   // 0 to 2pi
-    hsAssert(fGoalRad>=0 && fGoalRad<=kTwoPI, "Illegal atan2 val");
+        fGoalRad = hsConstants::two_pi<float> + fGoalRad;   // 0 to 2pi
+    hsAssert(fGoalRad >= 0.f && fGoalRad <= hsConstants::two_pi<float>, "Illegal atan2 val");
     v = v * fRadius;
     center = center + v;
     center.fZ = fCamera->GetTargetPos().fZ;

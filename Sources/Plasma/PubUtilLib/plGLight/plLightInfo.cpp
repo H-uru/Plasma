@@ -887,8 +887,8 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
 // Spot
 plSpotLightInfo::plSpotLightInfo()
 :   fFalloff(1.f),
-    fSpotInner(M_PI * 0.125f),
-    fSpotOuter(M_PI * 0.25f),
+    fSpotInner(hsConstants::pi<float> * 0.125f),
+    fSpotOuter(hsConstants::pi<float> * 0.25f),
     fCone(nil)
 {
 }

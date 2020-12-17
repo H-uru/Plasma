@@ -561,24 +561,24 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
     switch( i ) 
     {
         case kTopFace:
-            m.RotateX( -M_PI );   
+            m.RotateX( -hsConstants::pi<float> );
             break;
         case kBottomFace:
             break;
         case kLeftFace:
-            m.RotateX( -.5f * M_PI ); 
-            m.RotateY( -.5f * M_PI );
+            m.RotateX( -hsConstants::half_pi<float> );
+            m.RotateY( -hsConstants::half_pi<float> );
             break;
         case kRightFace:
-            m.RotateX( -.5f * M_PI ); 
-            m.RotateY( +.5f * M_PI );
+            m.RotateX( -hsConstants::half_pi<float> );
+            m.RotateY( +hsConstants::half_pi<float> );
             break;
         case kFrontFace:
-            m.RotateX( -.5f * M_PI ); 
-            m.RotateY( M_PI );
+            m.RotateX( -hsConstants::half_pi<float> );
+            m.RotateY( hsConstants::pi<float> );
             break;
         case kBackFace:
-            m.RotateX( -.5f * M_PI ); 
+            m.RotateX( -hsConstants::half_pi<float> );
             break;
     }
     return m;
@@ -652,7 +652,7 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
     vp.projType = PROJ_PERSPECTIVE;
     vp.hither = .001f;
     vp.yon = 1.0e30f;
-    vp.fov = M_PI/2.0f;
+    vp.fov = hsConstants::half_pi<float>;
     if( fBitmapPB->GetInt( kBmpUseMAXAtmosphere ) )
     {
         vp.nearRange = 0;

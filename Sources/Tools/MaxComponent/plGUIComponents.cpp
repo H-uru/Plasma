@@ -1298,8 +1298,8 @@ bool plGUIDialogComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         break;
     }
-    fovX *= 180.f / M_PI;
-    fovY *= 180.f / M_PI;
+    fovX *= 180.f / hsConstants::pi<float>;
+    fovY *= 180.f / hsConstants::pi<float>;
     mod->SetFovX(fovX);
     mod->SetFovY(fovY);
 
@@ -4983,8 +4983,8 @@ bool plGUIMenuComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     float fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / M_PI );
-    renderMod->SetFovY( fovY * 180.f / M_PI );
+    renderMod->SetFovX( fovX * 180.f / hsConstants::pi<float> );
+    renderMod->SetFovY( fovY * 180.f / hsConstants::pi<float> );
 
 
     hsgResMgr::ResMgr()->AddViaNotify( renderMod->GetKey(), new plNodeRefMsg( fConvertedNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric ), plRefFlags::kActiveRef );

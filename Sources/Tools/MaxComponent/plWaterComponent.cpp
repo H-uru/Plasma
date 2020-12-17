@@ -73,8 +73,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plScene/plVisRegion.h"
 
-static const float kPercentToFrac(1.e-2f);
-static const float kDegreeToRad(M_PI/180.f);
+static constexpr float kPercentToFrac(1.e-2f);
+static constexpr float kDegreeToRad(hsConstants::pi<float> / 180.f);
 
 
 // Preliminary setup bookkeeping

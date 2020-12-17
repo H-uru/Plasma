@@ -487,7 +487,7 @@ void plSpaceTreeMaker::TestTree()
     tree->SetViewPos(*hsPoint3().Set(0,0,0));
 
     plConeIsect cone;
-    cone.SetAngle(M_PI*0.25f);
+    cone.SetAngle(hsConstants::pi<float> * 0.25f);
     cone.SetTransform(liX, invLiX);
 
     StartTimer(kHarvestCone);
@@ -498,7 +498,7 @@ void plSpaceTreeMaker::TestTree()
     StopTimer(kHarvestCone);
 
     plConeIsect capped;
-    capped.SetAngle(M_PI*0.25f);
+    capped.SetAngle(hsConstants::pi<float> * 0.25f);
     capped.SetLength(0.5f);
     capped.SetTransform(liX, invLiX);
 

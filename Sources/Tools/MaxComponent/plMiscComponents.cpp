@@ -1400,8 +1400,8 @@ bool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         break;
     }
-    fovX *= 180.f / M_PI;
-    fovY *= 180.f / M_PI;
+    fovX *= 180.f / hsConstants::pi<float>;
+    fovY *= 180.f / hsConstants::pi<float>;
     mod->SetFovX(fovX);
     mod->SetFovY(fovY);
 

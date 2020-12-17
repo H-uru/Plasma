@@ -1301,7 +1301,7 @@ void Push::Process(double time, float elapsed)
     hsPoint3 lookAt;
     fHuBrain->fWalkingStrategy->GetPushingPhysical()->GetPositionSim(lookAt);
     hsVector3 up(0.f, 0.f, 1.f);
-    float angle = atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + M_PI / 2;
+    float angle = std::atan2(lookAt.fY - pos.fY, lookAt.fX - pos.fX) + hsConstants::half_pi<float>;
     hsQuat targRot(angle, &up);
     
     const float kTurnSpeed = 3.f;

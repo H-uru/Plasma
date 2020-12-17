@@ -3972,22 +3972,22 @@ static BMM_Color_64 ICubeSample(plErrorMsg* const msg, Bitmap *bitmap[6], double
     }
     else
     {
-        if( (theta <= (M_PI / 2.0 - M_PI/4.0))
-            ||(theta >= (M_PI * 2.0 - M_PI/4.0)) )
+        if( (theta <= (hsConstants::half_pi<double> - hsConstants::pi<double>/4.0))
+            ||(theta >= (hsConstants::two_pi<double> - hsConstants::pi<double>/4.0)) )
         {
             map = bitmap[VIEW_FR];
             xMap = x / y;
             yMap = -z / y;
         }
         else
-        if( theta <= (M_PI - M_PI/4.0) )
+        if( theta <= (hsConstants::pi<double> - hsConstants::pi<double>/4.0) )
         {
             map = bitmap[VIEW_LF];
             xMap = -y / x;
             yMap = -z / x;
         }
         else
-        if( theta <= (M_PI * 3.0/2.0 - M_PI/4.0) )
+        if( theta <= (hsConstants::pi<double> * 3.0/2.0 - hsConstants::pi<double>/4.0) )
         {
             map = bitmap[VIEW_BK];
             xMap = x / y;

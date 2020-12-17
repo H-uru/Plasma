@@ -190,7 +190,7 @@ void plPXPhysicalControllerCore::GetState(hsPoint3& pos, float& zRot)
     fLocalRotation.GetAngleAxis(&zRot, (hsVector3*)&pos);
 
     if (pos.fZ < 0)
-        zRot = (2 * float(M_PI)) - zRot; // axis is backwards, so reverse the angle too
+        zRot = hsConstants::two_pi<float> - zRot; // axis is backwards, so reverse the angle too
 
     pos = fLocalPosition;
 }

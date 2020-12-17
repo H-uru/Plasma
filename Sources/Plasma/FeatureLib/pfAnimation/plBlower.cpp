@@ -218,8 +218,8 @@ void plBlower::IInitOscillators()
     for( i = 0; i < fOscillators.GetCount(); i++ )
     {
         float fi = float(i+1);
-        fOscillators[i].fFrequency = fi / M_PI * fRandom.RandRangeF(0.75f, 1.25f);
-//      fOscillators[i].fFrequency = 1.f / M_PI * fRandom.RandRangeF(0.5f, 1.5f);
+        fOscillators[i].fFrequency = fi / hsConstants::pi<float> * fRandom.RandRangeF(0.75f, 1.25f);
+//      fOscillators[i].fFrequency = 1.f / hsConstants::pi<float> * fRandom.RandRangeF(0.5f, 1.5f);
         fOscillators[i].fPhase = fRandom.RandZeroToOne();
         fOscillators[i].fPower = kBasePower * fRandom.RandRangeF(0.75f, 1.25f);
     }

@@ -1276,7 +1276,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
     for( i = 0; i < 256; i++ )
     {
         float t = float(i) / 255.f;
-        float sinT = sin(t * M_PI / 2.f);
+        float sinT = std::sin(t * hsConstants::pi<float> / 2.f);
 
         float remap = t + (sinT - t) * g;
         if( remap < 0 )

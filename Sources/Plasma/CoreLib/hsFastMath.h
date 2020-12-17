@@ -51,10 +51,6 @@ protected:
     static const hsPoint2* fCosSinTable;
 
 public:
-    static const float kSqrtTwo;
-    static const float kInvSqrtTwo;
-    static const float kTwoPI;
-
     static float IATan2OverTwoPi(float y, float x);
 
     static inline float InvSqrtAppr(float x);
@@ -157,16 +153,16 @@ inline float hsFastMath::InvSqrt(float x)
 
 inline void hsFastMath::SinCosAppr(float rads, float& sinRads, float& cosRads)
 {
-    rads = fmodf(rads, kTwoPI);
+    rads = fmodf(rads, hsConstants::two_pi<float>);
     if( rads < 0 )
-        rads += kTwoPI;
+        rads += hsConstants::two_pi<float>;
     SinCosInRangeAppr(rads, sinRads, cosRads);
 }
 
 inline void hsFastMath::SinCosInRangeAppr(float rads, float& sinRads, float& cosRads)
 {
-    const int kNumSinCosEntries = 8;
-    const float kNumEntriesOverTwoPI = kNumSinCosEntries * 0.5f / M_PI;
+    constexpr int kNumSinCosEntries = 8;
+    constexpr float kNumEntriesOverTwoPI = kNumSinCosEntries * 0.5f / hsConstants::pi<float>;
     float t = rads * kNumEntriesOverTwoPI;
     int iLo = (int)t;
     t -= iLo;
@@ -186,18 +182,18 @@ inline void hsFastMath::SinCosInRangeAppr(float rads, float& sinRads, float& cos
 
 inline float hsFastMath::Sin(float rads)
 {
-    rads = fmodf(rads, kTwoPI);
+    rads = fmodf(rads, hsConstants::two_pi<float>);
     if( rads < 0 )
-        rads += kTwoPI;
+        rads += hsConstants::two_pi<float>;
 
     return SinInRange(rads);
 }
 
 inline float hsFastMath::Cos(float rads)
 {
-    rads = fmodf(rads, kTwoPI);
+    rads = fmodf(rads, hsConstants::two_pi<float>);
     if( rads < 0 )
-        rads += kTwoPI;
+        rads += hsConstants::two_pi<float>;
 
     return CosInRange(rads);
 }
@@ -206,9 +202,9 @@ inline float hsFastMath::SinInRange(float ang)
 {
     float sgn = 1.f;
 
-    if(ang >= (0.75f * kTwoPI))
-        ang -= kTwoPI;
-    else if(ang >= (0.25f * kTwoPI))
+    if (ang >= (0.75f * hsConstants::two_pi<float>))
+        ang -= hsConstants::two_pi<float>;
+    else if (ang >= (0.25f * hsConstants::two_pi<float>))
     {
         ang -= 3.141592654f;
         sgn = -1.0f;
@@ -221,9 +217,9 @@ inline float hsFastMath::CosInRange(float ang)
 {
     float sgn = 1.f;
     
-    if(ang >= (0.75f * kTwoPI))
-        ang -= kTwoPI;
-    else if(ang >= (0.25f * kTwoPI))
+    if (ang >= (0.75f * hsConstants::two_pi<float>))
+        ang -= hsConstants::two_pi<float>;
+    else if (ang >= (0.25f * hsConstants::two_pi<float>))
     {
         ang -= 3.141592654f;
         sgn = -1.0f;
@@ -234,9 +230,9 @@ inline float hsFastMath::CosInRange(float ang)
 
 inline void hsFastMath::SinCos(float rads, float& sinRads, float& cosRads)
 {
-    rads = fmodf(rads, kTwoPI);
+    rads = fmodf(rads, hsConstants::two_pi<float>);
     if( rads < 0 )
-        rads += kTwoPI;
+        rads += hsConstants::two_pi<float>;
     SinCosInRange(rads, sinRads, cosRads);
 }
 
@@ -244,9 +240,9 @@ inline void hsFastMath::SinCosInRange(float ang, float& sinRads, float& cosRads)
 {
     float sgn = 1.f;
     
-    if(ang >= (0.75f * kTwoPI))
-        ang -= kTwoPI;
-    else if(ang >= (0.25f * kTwoPI))
+    if (ang >= (0.75f * hsConstants::two_pi<float>))
+        ang -= hsConstants::two_pi<float>;
+    else if (ang >= (0.25f * hsConstants::two_pi<float>))
     {
         ang -= 3.141592654f;
         sgn = -1.0f;
