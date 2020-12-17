@@ -116,8 +116,8 @@ using namespace plShaderID;
 
 static constexpr float kGravConst = 30.f;
 
-static constexpr float FreqToLen(float f) { return 2.f * hsConstants::pi<float> / f; }
-static constexpr float LenToFreq(float l) { return 2.f * hsConstants::pi<float> / l; }
+static constexpr float FreqToLen(float f) { return hsConstants::two_pi<float> / f; }
+static constexpr float LenToFreq(float l) { return hsConstants::two_pi<float> / l; }
 
 static constexpr float MPH2FPS(float f) { return f * 5280.f / 3600.f; }
 static constexpr float FPS2MPH(float f) { return f / 5280.f * 3600.f; }
@@ -4416,5 +4416,4 @@ void plWaveSet7::IUpdateGraphShaders(plPipeline* pipe, float dt)
         }
     }
 }
-
 

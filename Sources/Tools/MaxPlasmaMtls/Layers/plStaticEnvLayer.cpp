@@ -561,24 +561,24 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
     switch( i ) 
     {
         case kTopFace:
-            m.RotateX( -hsConstants::pi<float> );
+            m.RotateX(-hsConstants::pi<float>);
             break;
         case kBottomFace:
             break;
         case kLeftFace:
-            m.RotateX( -hsConstants::half_pi<float> );
-            m.RotateY( -hsConstants::half_pi<float> );
+            m.RotateX(-hsConstants::half_pi<float>);
+            m.RotateY(-hsConstants::half_pi<float>);
             break;
         case kRightFace:
-            m.RotateX( -hsConstants::half_pi<float> );
-            m.RotateY( +hsConstants::half_pi<float> );
+            m.RotateX(-hsConstants::half_pi<float>);
+            m.RotateY(hsConstants::half_pi<float>);
             break;
         case kFrontFace:
-            m.RotateX( -hsConstants::half_pi<float> );
-            m.RotateY( hsConstants::pi<float> );
+            m.RotateX(-hsConstants::half_pi<float>);
+            m.RotateY(hsConstants::pi<float>);
             break;
         case kBackFace:
-            m.RotateX( -hsConstants::half_pi<float> );
+            m.RotateX(-hsConstants::half_pi<float>);
             break;
     }
     return m;

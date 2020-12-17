@@ -793,7 +793,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         {
             // Get key
             ikeys->GetKey(i, key.get());
-            constexpr float kMaxRads = hsConstants::pi<float> * 0.5f;
+            constexpr float kMaxRads = hsConstants::half_pi<float>;
             Tab<TimeValue> kTimes;
             kTimes.ZeroCount();
             if( rotation )
