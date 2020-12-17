@@ -92,7 +92,7 @@ if __name__ == '__main__':
 			os.rename("temp.png", png)
 
 	if options.package:
-		ret = subprocess.call(["python", os.path.join(inpath, "create_resource_dat.py"), "-i", os.path.join(workpath, "render"), "-o", os.path.join(outpath, "resource.dat")], stdout=sys.stdout, stderr=sys.stderr)
+		ret = subprocess.call([sys.executable, os.path.join(inpath, "create_resource_dat.py"), "-i", os.path.join(workpath, "render"), "-o", os.path.join(outpath, "resource.dat")], stdout=sys.stdout, stderr=sys.stderr)
 		if ret != 0:
 			print("An error has occurred.  Aborting.")
 			exit(1)
