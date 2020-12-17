@@ -215,7 +215,7 @@ void hsBounds3::InscribeSphere()
     if( fType != kBoundsNormal )
         return;
 
-    const float ooSix = hsInvert(2.f * 3.f);
+    constexpr float ooSix = hsInvert(2.f * 3.f);
     float a = GetMaxDim() * ooSix;
     hsPoint3 p = GetCenter();
     p.fX += a;

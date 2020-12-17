@@ -379,7 +379,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 // Useful floating point utilities
 constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<float> / 180.f); }
 constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstants::pi<float>); }
-#define hsInvert(a) (1 / (a))
+constexpr float hsInvert(float a) { return 1.f / a; }
 
 #ifdef _MSC_VER
 #   define ALIGN(n) __declspec(align(n))
