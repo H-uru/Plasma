@@ -46,7 +46,6 @@ The following libraries are optional:
 Reducing the use of proprietary libraries is a focus of development and should
 be expected to change.
 
->>>>>>> origin/master
 All required libraries are available as precompiled binaries and
 associated files in the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip)
 or can be built using their individual build instructions.
