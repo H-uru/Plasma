@@ -10,6 +10,9 @@ include(FeatureSummary)
 if(POLICY CMP0054)
     cmake_policy(SET CMP0054 NEW)
 endif()
+if(POLICY CMP0087)
+    cmake_policy(SET CMP0087 NEW)
+endif()
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
