@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSDLModifierMsg.h"
-#include "plSDL/plSDL.h"    // ugh.
 
 plSDLModifierMsg::plSDLModifierMsg(const ST::string& sdlName, Action a) :
     fSDLName(sdlName),
