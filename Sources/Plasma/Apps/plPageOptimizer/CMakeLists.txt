@@ -19,5 +19,10 @@ if(USE_VLD)
     target_link_libraries(plPageOptimizer ${VLD_LIBRARY})
 endif()
 
+install(
+    TARGETS plPageOptimizer
+    DESTINATION tools_cli
+)
+
 source_group("Source Files" FILES ${plPageOptimizer_SOURCES})
 source_group("Header Files" FILES ${plPageOptimizer_HEADERS})

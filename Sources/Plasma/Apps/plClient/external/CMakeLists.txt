@@ -17,7 +17,6 @@ find_program(
     DOC "Path to pngcrush"
 )
 
-include(CMakeDependentOption)
 cmake_dependent_option(RESOURCE_OPTIMIZE "Optimize the images in resource.dat" ON PNGCRUSH_EXECUTABLE OFF)
 cmake_dependent_option(RESOURCE_BRUTE "Allow pngcrush brute-force optimization" OFF PNGCRUSH_EXECUTABLE OFF)
 
@@ -45,6 +44,10 @@ add_custom_command(
 add_custom_target(externalResources 
     SOURCES ${external_SOURCES} ${external_SCRIPTS} 
     DEPENDS resource.dat
+)
+install(
+    FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource.dat"
+    DESTINATION client
 )
 
 source_group("Source Files" FILES ${external_SOURCES})

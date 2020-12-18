@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 project(Plasma)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(CMakeDependentOption)
 include(FeatureSummary)
-
-if(POLICY CMP0054)
-    cmake_policy(SET CMP0054 NEW)
-endif()
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
@@ -45,7 +42,6 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # End HeadSpin Configuration
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 
 # Find all 3rd-party libraries that are required
 find_package(string_theory 2.0 REQUIRED)

@@ -19,3 +19,8 @@ endif()
 if(WIN32)
     target_link_libraries(plCrashHandler Dbghelp)
 endif(WIN32)
+
+install(
+    TARGETS plCrashHandler
+    DESTINATION client
+)

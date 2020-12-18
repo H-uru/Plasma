@@ -179,6 +179,11 @@ if (WIN32)
     target_link_libraries(plClient wldap32)
 endif(WIN32)
 
+install(
+    TARGETS plClient
+    DESTINATION client
+)
+
 source_group("Source Files" FILES ${plClient_SOURCES})
 source_group("Header Files" FILES ${plClient_HEADERS})
 source_group("Text" FILES ${plClient_TEXT})

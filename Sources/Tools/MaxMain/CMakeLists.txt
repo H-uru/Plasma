@@ -196,6 +196,11 @@ if(USE_VLD)
     target_link_libraries(MaxMain ${VLD_LIBRARY})
 endif()
 
+install(
+    TARGETS MaxMain
+    DESTINATION 3dsmax
+)
+
 source_group("Header Files" FILES ${MaxMain_HEADERS})
 source_group("Resource Files" FILES ${MaxMain_RESOURCES})
 source_group("Source Files" FILES ${MaxMain_SOURCES})
