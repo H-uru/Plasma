@@ -51,11 +51,6 @@ if(USE_VLD)
     target_link_libraries(plResBrowser ${VLD_LIBRARY})
 endif()
 
-plasma_deploy_qt(
-    TARGET plResBrowser
-    DESTINATION tools_gui
-)
-
 source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})
 source_group("Header Files" FILES ${plResBrowser_HEADERS})
 source_group("Resource Files" FILES ${plResBrowser_RCC_SOURCES} ${plResBrowser_RCC}

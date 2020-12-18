@@ -55,11 +55,6 @@ if(USE_VLD)
     target_link_libraries(plLocalizationEditor ${VLD_LIBRARY})
 endif()
 
-plasma_deploy_qt(
-    TARGET plLocalizationEditor
-    DESTINATION tools_gui
-)
-
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_MOC})
 source_group("Header Files" FILES ${plLocalizationEditor_HEADERS})
 source_group("Resource Files" FILES ${plLocalizationEditor_RCC_SOURCES} ${plLocalizationEditor_RCC}

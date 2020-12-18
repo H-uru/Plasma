@@ -17,7 +17,6 @@ find_program(
     DOC "Path to pngcrush"
 )
 
-include(CMakeDependentOption)
 cmake_dependent_option(RESOURCE_OPTIMIZE "Optimize the images in resource.dat" ON PNGCRUSH_EXECUTABLE OFF)
 cmake_dependent_option(RESOURCE_BRUTE "Allow pngcrush brute-force optimization" OFF PNGCRUSH_EXECUTABLE OFF)
 

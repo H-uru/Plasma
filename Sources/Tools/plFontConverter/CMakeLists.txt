@@ -60,11 +60,6 @@ if(USE_VLD)
     target_link_libraries(plFontConverter ${VLD_LIBRARY})
 endif()
 
-plasma_deploy_qt(
-    TARGET plFontConverter
-    DESTINATION tools_gui
-)
-
 source_group("Source Files" FILES ${plFontConverter_SOURCES} ${plFontConverter_MOC})
 source_group("Header Files" FILES ${plFontConverter_HEADERS})
 source_group("Resource Files" FILES ${plFontConverter_RCC_SOURCES} ${plFontConverter_RCC}

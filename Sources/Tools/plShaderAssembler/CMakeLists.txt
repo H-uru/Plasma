@@ -10,9 +10,4 @@ if(USE_VLD)
     target_link_libraries(plShaderAssembler ${VLD_LIBRARIES})
 endif()
 
-install(
-    TARGETS plShaderAssembler
-    DESTINATION tools_cli
-)
-
 source_group("Source Files" FILES ${plShaderAssembler_SOURCES})
