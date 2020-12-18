@@ -278,7 +278,7 @@ void MetalShader::Illum(ShadeContext &sc, SIllumParams &ip) {
                 
                 // Beckman distribution  (from Cook-Torrance paper)
                 sec2 = 1.0f/(NH*NH);  // 1/sqr(cos) 
-                float D = (.5f/PI)*sec2*sec2*m2inv*(float)exp((1.0f-sec2)*m2inv);                   
+                float D = (.5f/hsConstants::pi<float>)*sec2*sec2*m2inv*(float)exp((1.0f-sec2)*m2inv);
                 if (G>1.0f) G = 1.0f;
                 float Rs = ip.sh_str*D*G/(NV+.05f); 
                 ip.specIllum += fcol*Rs*lightCol;
@@ -297,8 +297,8 @@ void MetalShader::SetShininess(float shininess, float shineStr) {
 }
 
 float MetalShader::EvalHilite(float x) {
-    float c = (float)cos(x*PI);
+    float c = (float)cos(x*hsConstants::pi<float>);
     float sec2 = 1.0f/(c*c);      /* 1/sqr(cos) */
-    return fshin_str*(.5f/PI)*sec2*sec2*fm2inv*(float)exp((1.0f-sec2)*fm2inv);                      
+    return fshin_str*(.5f/hsConstants::pi<float>)*sec2*sec2*fm2inv*(float)exp((1.0f-sec2)*fm2inv);
 }
 

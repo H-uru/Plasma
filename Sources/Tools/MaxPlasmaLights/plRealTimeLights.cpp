@@ -235,12 +235,12 @@ static Point3 MapToDir(Point3 p, int k) {
 static void GetMatrixForDir(Matrix3 &origm, Matrix3 &tm, int k ) {
     tm = origm;
     switch(k) {
-        case 0: tm.PreRotateY(-HALFPI); break;  // Map 0: +X axis   
-        case 1: tm.PreRotateY( HALFPI); break;  // Map 1: -X axis   
-        case 2: tm.PreRotateX( HALFPI); break;  // Map 2: +Y axis   
-        case 3: tm.PreRotateX(-HALFPI); break;  // Map 3: -Y axis   
-        case 4: tm.PreRotateY(   PI  ); break;  // Map 4: +Z axis   
-        case 5:                         break;  // Map 5: -Z axis   
+        case 0: tm.PreRotateY(-hsConstants::half_pi<float>); break;  // Map 0: +X axis
+        case 1: tm.PreRotateY( hsConstants::half_pi<float>); break;  // Map 1: -X axis
+        case 2: tm.PreRotateX( hsConstants::half_pi<float>); break;  // Map 2: +Y axis
+        case 3: tm.PreRotateX(-hsConstants::half_pi<float>); break;  // Map 3: -Y axis
+        case 4: tm.PreRotateY( hsConstants::pi<float>);      break;  // Map 4: +Z axis
+        case 5:                                              break;  // Map 5: -Z axis
         }
     }
 
