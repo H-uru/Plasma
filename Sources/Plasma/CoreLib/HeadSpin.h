@@ -70,10 +70,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     // 4503: 'identifier' : decorated name length exceeded, name was truncated
     // 4018: signed/unsigned mismatch
     // 4786: 255 character debug limit
-    // 4284: STL template defined operator-> for a class it doesn't make sense for (int, etc)
     // 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
 #   ifdef _MSC_VER
-#      pragma warning( disable : 4305 4503 4018 4786 4284 4800)
+#      pragma warning(disable : 4305 4503 4018 4786 4800)
 #   endif // _MSC_VER
 
     // Kind of nasty looking forward declarations, but this is Win32.... it'll never change!

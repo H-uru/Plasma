@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetCommon/plSynchedObject.h"
 
-#pragma warning(disable: 4284)
 #include <deque>
 
 class plArmatureModBase;
