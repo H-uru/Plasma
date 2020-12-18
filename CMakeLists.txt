@@ -7,9 +7,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FeatureSummary)
 
-if(POLICY CMP0054)
-    cmake_policy(SET CMP0054 NEW)
-endif()
 if(POLICY CMP0087)
     cmake_policy(SET CMP0087 NEW)
 endif()
