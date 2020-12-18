@@ -37,7 +37,7 @@ function(plasma_deploy_qt)
             TARGET ${_pdqt_TARGET} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:${_pdqt_TARGET}>/qt"
             COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-            COMMAND Qt5::windeployqt --dir "$<TARGET_FILE_DIR:${_pdqt_TARGET}>/qt" "$<TARGET_FILE:${_pdqt_TARGET}>"
+            COMMAND Qt5::windeployqt --no-translations --no-angle --no-opengl-sw --dir "$<TARGET_FILE_DIR:${_pdqt_TARGET}>/qt" "$<TARGET_FILE:${_pdqt_TARGET}>"
         )
 
         # Install Qt5 DLLs for the final distribution
