@@ -954,8 +954,7 @@ void plAvatarMgr::PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret)
                 float dotView = retVec * zeroVec;
                 float dotRight = retVec * zeroRight;
 
-                float deg = acosf(dotView);
-                deg *= (180.f / hsConstants::pi<float>);
+                float deg = hsRadiansToDegrees(acosf(dotView));
                 // account for being > 180
                 if (dotRight < 0.0f) 
                 {

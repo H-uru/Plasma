@@ -947,7 +947,7 @@ bool plLightMapGen::ISpotAffectsNode(plLightMapInfo* liInfo, LightObject* liObj,
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
 
     float coneRad[2];
-    coneRad[0] = ls.fallsize * hsConstants::pi<float> / 180.f;
+    coneRad[0] = hsDegreesToRadians(ls.fallsize);
     coneRad[1] = coneRad[0];
     if( ls.shape == RECT_LIGHT )
         coneRad[1] /= ls.aspect;

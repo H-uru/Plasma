@@ -86,7 +86,7 @@ void plParticleAngleApplicator::IApply(const plAGModifier *mod, double time)
 {
     plScalarChannel *chan = plScalarChannel::ConvertNoRef(fChannel);
     IGetParticleGen(mod->GetTarget(0))->UpdateParam(plParticleUpdateMsg::kParamInitPitchRange,
-                                                    chan->Value(time) * hsConstants::pi<float> / 180.f);
+                                                    hsDegreesToRadians(chan->Value(time)));
 }
 
 void plParticleVelMinApplicator::IApply(const plAGModifier *mod, double time)

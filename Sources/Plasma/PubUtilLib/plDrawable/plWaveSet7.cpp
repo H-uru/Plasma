@@ -1228,13 +1228,13 @@ void plWaveSet7::IInitState()
     plConst(float) kGeoMinLen(3.f);
     plConst(float) kGeoMaxLen(8.f);
     plConst(float) kGeoAmpOverLen(0.1f);
-    plConst(float) kGeoAngleDev(30.f * hsConstants::pi<float> / 180.f);
+    plConst(float) kGeoAngleDev(hsDegreesToRadians(30.f));
     plConst(float) kGeoChop(1.f);
 
     plConst(float) kTexMinLen(4.f);
     plConst(float) kTexMaxLen(30.f);
     plConst(float) kTexAmpOverLen(0.1f);
-    plConst(float) kTexAngleDev(30.f * hsConstants::pi<float> / 180.f);
+    plConst(float) kTexAngleDev(hsDegreesToRadians(30.f));
     plConst(float) kTexChop(1.f);
 
     plFixedWaterState7 state;

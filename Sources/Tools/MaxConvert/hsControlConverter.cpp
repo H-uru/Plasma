@@ -266,7 +266,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
     CompositeKeyTimes(vAngCtl, kTimes);
     CompositeKeyTimes(wAngCtl, kTimes);
 
-    constexpr float kMaxRads = 30.f * hsConstants::pi<float> / 180.f;
+    constexpr float kMaxRads = hsDegreesToRadians(30.f);
     MaxSampleAngles(nodeName, uAngCtl, kTimes, kMaxRads);
     MaxSampleAngles(nodeName, vAngCtl, kTimes, kMaxRads);
     MaxSampleAngles(nodeName, wAngCtl, kTimes, kMaxRads);
@@ -2107,8 +2107,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     {
         TimeValue t = TimeValue(GetTicksPerFrame() * (kfArray[0][i].fFrame));
         theCam = (GenCamera *) obj->ConvertToType(t, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
-        float FOVvalue= theCam->GetFOV(t); // in radians
-        FOVvalue *= 180.f / hsConstants::pi<float>; // to degrees
+        float FOVvalue = hsRadiansToDegrees(theCam->GetFOV(t));
         int FOVType = theCam->GetFOVType();
         float wDeg, hDeg;
         switch(FOVType)

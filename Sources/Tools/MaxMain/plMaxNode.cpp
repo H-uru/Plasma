@@ -2070,7 +2070,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 //          mnMesh.MakeConvexPolyMesh();
             mnMesh.MakePolyMesh();
             mnMesh.MakeConvex();
-//          mnMesh.MakePlanar(1.f * hsConstants::pi<float> / 180.f); // Completely ineffective. Winding up with majorly non-planar polys.
+//          mnMesh.MakePlanar(hsDegreesToRadians(1.f)); // Completely ineffective. Winding up with majorly non-planar polys.
 
             mnMesh.Transform(maxV2L);
 
