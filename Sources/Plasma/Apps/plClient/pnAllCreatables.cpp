@@ -40,6 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #ifdef _MSC_VER
-#   pragma warning(disable : 4305 4503 4018 4786)
+#   pragma warning(disable : 4305 4018)
 #endif
 #include "pnAllCreatables.h"
