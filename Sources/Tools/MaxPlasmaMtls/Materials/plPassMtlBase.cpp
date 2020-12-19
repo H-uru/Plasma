@@ -531,8 +531,6 @@ void    plPassMtlBase::PostLoadAnimPBFixup()
         plAnimStealthNode *myNew = IFindStealth( ST::string::from_utf8( oldSel ) );
         if( myNew != nil )
         {
-#pragma warning( push ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
-#pragma warning( disable:4800 ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
                             ST::string::from_utf8( (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
@@ -544,7 +542,6 @@ void    plPassMtlBase::PostLoadAnimPBFixup()
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutLength ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMin ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseOutMax ) );
-#pragma warning( pop )
         }               
     }
 #endif // MCN_UPGRADE_OLD_ANIM_BLOCKS

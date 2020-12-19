@@ -7,7 +7,6 @@ set(pnUtils_HEADERS
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
-    pnUtPragma.h
     pnUtPriQ.h
     pnUtSort.h
     pnUtStr.h

@@ -65,14 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Winblows Hacks
 //======================================
 #ifdef HS_BUILD_FOR_WIN32
-    // 4244: Conversion
-    // 4305: Truncation
-    // 4018: signed/unsigned mismatch
-    // 4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-#   ifdef _MSC_VER
-#      pragma warning(disable : 4305 4018 4800)
-#   endif // _MSC_VER
-
     // Kind of nasty looking forward declarations, but this is Win32.... it'll never change!
     // If you want to argue: would you rather pull in the entire Windows.h? Windows 8 makes it
     // even more bloated than before!
