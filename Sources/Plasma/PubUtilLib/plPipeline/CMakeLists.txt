@@ -88,17 +88,28 @@ set(plGLPipeline_HEADERS
 if(PLASMA_PIPELINE STREQUAL "DirectX")
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
 
-    target_link_libraries(plPipeline ${DirectX_LIBRARIES})
+    target_link_libraries(plPipeline PUBLIC ${DirectX_LIBRARIES})
 endif(PLASMA_PIPELINE STREQUAL "DirectX")
 
 if(PLASMA_PIPELINE STREQUAL "OpenGL")
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plGLPipeline_SOURCES} ${plPipeline_HEADERS} ${plGLPipeline_HEADERS})
 
-    target_link_libraries(plPipeline EGL)
-    target_link_libraries(plPipeline GLESv2)
+    target_link_libraries(plPipeline PUBLIC EGL GLESv2)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
 target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+target_link_libraries(plPipeline
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNucleusInc
+        pnSceneObject
+        plClientResMgr
+        plDrawable
+        plGLight
+        plScene
+        plSurface
+)
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})

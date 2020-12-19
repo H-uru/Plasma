@@ -1,5 +1,3 @@
-include_directories(${EXPAT_INCLUDE_DIR})
-
 if(WIN32)
     add_definitions(-DWIN32)
 
@@ -21,6 +19,13 @@ set(pfLocalizationMgr_HEADERS
 )
 
 add_library(pfLocalizationMgr STATIC ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
+
+target_include_directories(pfLocalizationMgr PRIVATE ${EXPAT_INCLUDE_DIR})
+target_link_libraries(pfLocalizationMgr
+    PUBLIC
+        ${EXPAT_LIBRARY}
+        CoreLib
+)
 
 source_group("Source Files" FILES ${pfLocalizationMgr_SOURCES})
 source_group("Header Files" FILES ${pfLocalizationMgr_HEADERS})

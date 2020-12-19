@@ -22,5 +22,13 @@ set(plIntersect_HEADERS
 
 add_library(plIntersect STATIC ${plIntersect_SOURCES} ${plIntersect_HEADERS})
 
+target_link_libraries(plIntersect
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnSceneObject
+        plMessage
+)
+
 source_group("Source Files" FILES ${plIntersect_SOURCES})
 source_group("Header Files" FILES ${plIntersect_HEADERS})

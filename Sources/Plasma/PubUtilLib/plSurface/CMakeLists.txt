@@ -71,6 +71,15 @@ set(plSurface_SHADERS
 
 add_library(plSurface STATIC ${plSurface_SOURCES} ${plSurface_HEADERS} ${plSurface_SHADERS})
 
+target_link_libraries(plSurface
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        plGImage
+        plInterp
+        plMessage
+)
+
 source_group("Source Files" FILES ${plSurface_SOURCES})
 source_group("Header Files" FILES ${plSurface_HEADERS})
 source_group("Shaders" FILES ${plSurface_SHADERS})

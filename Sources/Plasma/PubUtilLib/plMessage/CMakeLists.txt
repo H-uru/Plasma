@@ -116,5 +116,12 @@ set(plMessage_HEADERS
 use_precompiled_header(Pch.h Pch.cpp plMessage_HEADERS plMessage_SOURCES)
 add_library(plMessage STATIC ${plMessage_SOURCES} ${plMessage_HEADERS})
 
+target_link_libraries(plMessage
+    PUBLIC
+        CoreLib
+        pnMessage
+        plNetCommon
+)
+
 source_group("Source Files" FILES ${plMessage_SOURCES})
 source_group("Header Files" FILES ${plMessage_HEADERS})
