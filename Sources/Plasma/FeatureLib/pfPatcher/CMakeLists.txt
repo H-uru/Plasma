@@ -10,5 +10,11 @@ set(pfPatcher_HEADERS
 
 add_library(pfPatcher STATIC ${pfPatcher_SOURCES} ${pfPatcher_HEADERS})
 
+target_link_libraries(pfPatcher
+    PUBLIC
+        CoreLib
+        pnEncryption
+)
+
 source_group("Source Files" FILES ${pfPatcher_SOURCES})
 source_group("Header Files" FILES ${pfPatcher_HEADERS})

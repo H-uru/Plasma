@@ -22,6 +22,12 @@ set(pfMoviePlayer_WEBM
 
 add_library(pfMoviePlayer STATIC ${pfMoviePlayer_SOURCES} ${pfMoviePlayer_HEADERS} ${pfMoviePlayer_WEBM})
 
+target_link_libraries(pfMoviePlayer
+    PUBLIC
+        CoreLib
+        plAudio
+)
+
 source_group("Source Files" FILES ${pfMoviePlayer_SOURCES})
 source_group("Header Files" FILES ${pfMoviePlayer_HEADERS})
 source_group("WebM" FILES ${pfMoviePlayer_WEBM})

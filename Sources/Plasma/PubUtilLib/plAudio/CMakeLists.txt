@@ -75,7 +75,15 @@ set(plAudio_HEADERS
 )
 
 add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})
-target_link_libraries(plAudio OpenAL::OpenAL)
+
+target_link_libraries(plAudio
+    PUBLIC
+        OpenAL::OpenAL
+        CoreLib
+        plAnimation
+        plAudioCore
+        plMessage
+)
 
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})

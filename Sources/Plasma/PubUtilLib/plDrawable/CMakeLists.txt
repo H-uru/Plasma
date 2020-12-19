@@ -102,5 +102,17 @@ set(plDrawable_HEADERS
 
 add_library(plDrawable STATIC ${plDrawable_SOURCES} ${plDrawable_HEADERS})
 
+target_link_libraries(plDrawable
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        plMath
+        plGLight
+        plMessage
+        plScene
+        plSDL
+        plSurface
+)
+
 source_group("Source Files" FILES ${plDrawable_SOURCES})
 source_group("Header Files" FILES ${plDrawable_HEADERS})

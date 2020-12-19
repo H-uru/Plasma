@@ -39,5 +39,15 @@ set(plGImage_HEADERS
 
 add_library(plGImage STATIC ${plGImage_SOURCES} ${plGImage_HEADERS})
 
+target_link_libraries(plGImage
+    PUBLIC
+        ${JPEG_LIBRARY}
+        ${PNG_LIBRARY}
+        CoreLib
+        pnKeyedObject
+        plMessage
+        plResMgr
+)
+
 source_group("Source Files" FILES ${plGImage_SOURCES})
 source_group("Header Files" FILES ${plGImage_HEADERS})
