@@ -4078,8 +4078,8 @@ namespace plWaveCmd {
 
 typedef void PrintFunk(const char* str);
 
-static constexpr float FracToPercent(float f) { return 1.e2f * f; }
-static constexpr float PercentToFrac(float f) { return 1.e-2f * f; }
+static constexpr float FracToPercent(float f) { return 100.f * f; }
+static constexpr float PercentToFrac(float f) { return f / 100.f; }
 
 static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
 {
