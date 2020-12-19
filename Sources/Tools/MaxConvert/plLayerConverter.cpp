@@ -907,10 +907,10 @@ plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *la
     }
     plAngleAttenLayer* aaLay = (plAngleAttenLayer*)layer;
     Box3 fade = aaLay->GetFade();
-    float tr0 = cosf(DegToRad(180.f - fade.Min().x));
-    float op0 = cosf(DegToRad(180.f - fade.Min().y));
-    float tr1 = cosf(DegToRad(180.f - fade.Max().x));
-    float op1 = cosf(DegToRad(180.f - fade.Max().y));
+    float tr0 = cosf(hsDegreesToRadians(180.f - fade.Min().x));
+    float op0 = cosf(hsDegreesToRadians(180.f - fade.Min().y));
+    float tr1 = cosf(hsDegreesToRadians(180.f - fade.Max().x));
+    float op1 = cosf(hsDegreesToRadians(180.f - fade.Max().y));
 
     int loClamp = aaLay->GetLoClamp();
     int hiClamp = aaLay->GetHiClamp();

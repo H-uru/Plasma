@@ -303,14 +303,13 @@ float plSplineEaseCurve::TimeGivenVelocity(float velocity) const
     if (D >= 0) 
     {   
         // 3 roots, find the one in the range [0, 1]
-        const float pi = 3.14159;
         double theta = acos(R / sqrt(Q3));
         double sqrtQ = sqrt(Q);
 
-        root = (float)(-2 * sqrtQ * cos((theta + 4 * pi) / 3) - c / 3); // Middle root, most likely to match
+        root = (float)(-2 * sqrtQ * cos((theta + 4 * hsConstants::pi<float>) / 3) - c / 3); // Middle root, most likely to match
         if (root < 0.f || root > 1.f)
         {
-            root = (float)(-2 * sqrtQ * cos((theta + 2 * pi) / 3) - c / 3); // Lower root
+            root = (float)(-2 * sqrtQ * cos((theta + 2 * hsConstants::pi<float>) / 3) - c / 3); // Lower root
             if (root < 0.f || root > 1.f)
             {
                 root = (float)(-2 * sqrtQ * cos(theta / 3) - c / 3); // Upper root

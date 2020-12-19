@@ -276,8 +276,8 @@ static bool     CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
         
         // If the angle is < 180, then it's a good angle and we can advance all our points by 1...
         // Note: we have a tolerance so that we don't get points that form edges that are pretty darned close...
-        const float tolerance = M_PI / 90.f;
-        if( angle > tolerance && angle < M_PI - tolerance )
+        constexpr float tolerance = hsConstants::pi<float> / 90.f;
+        if (angle > tolerance && angle < hsConstants::pi<float> - tolerance)
         {
             pointA++;
             pointB++;

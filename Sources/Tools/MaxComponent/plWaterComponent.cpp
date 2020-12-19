@@ -73,8 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plScene/plVisRegion.h"
 
-static const float kPercentToFrac(1.e-2f);
-static const float kDegreeToRad(M_PI/180.f);
+static constexpr float kPercentToFrac(1.e-2f);
 
 
 // Preliminary setup bookkeeping
@@ -635,14 +634,14 @@ bool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
     geoState.fMinLength = fCompPB->GetFloat(kGeoMinLen);
     geoState.fAmpOverLen = fCompPB->GetFloat(kGeoAmpOverLen) * kPercentToFrac;
     geoState.fChop = fCompPB->GetFloat(kGeoChop) * kPercentToFrac;
-    geoState.fAngleDev = fCompPB->GetFloat(kGeoAngleDev) * kDegreeToRad;
+    geoState.fAngleDev = hsDegreesToRadians(fCompPB->GetFloat(kGeoAngleDev));
 
     plFixedWaterState7::WaveState& texState = ws.fTexState;
     texState.fMaxLength = fCompPB->GetFloat(kTexMaxLen);
     texState.fMinLength = fCompPB->GetFloat(kTexMinLen);
     texState.fAmpOverLen = fCompPB->GetFloat(kTexAmpOverLen) * kPercentToFrac;
     texState.fChop = fCompPB->GetFloat(kTexChop) * kPercentToFrac;
-    texState.fAngleDev = fCompPB->GetFloat(kTexAngleDev) * kDegreeToRad;
+    texState.fAngleDev = hsDegreesToRadians(fCompPB->GetFloat(kTexAngleDev));
 
     hsVector3 specVec;
     specVec[ws.kNoise] = fCompPB->GetFloat(kNoise) * kPercentToFrac;

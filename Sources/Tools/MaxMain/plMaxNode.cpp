@@ -2046,11 +2046,11 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
             Mesh mesh(meshObj->mesh);
             
-            const float kNormThresh = M_PI / 20.f;
-            const float kEdgeThresh = M_PI / 20.f;
-            const float kBias = 0.1f;
-            const float kMaxEdge = -1.f;
-            const DWORD kOptFlags = OPTIMIZE_SAVESMOOTHBOUNDRIES; 
+            constexpr float kNormThresh = hsConstants::pi<float> / 20.f;
+            constexpr float kEdgeThresh = hsConstants::pi<float> / 20.f;
+            constexpr float kBias = 0.1f;
+            constexpr float kMaxEdge = -1.f;
+            constexpr DWORD kOptFlags = OPTIMIZE_SAVESMOOTHBOUNDRIES;
 
             mesh.Optimize(
                 kNormThresh, // threshold of normal differences to preserve
@@ -2070,7 +2070,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 //          mnMesh.MakeConvexPolyMesh();
             mnMesh.MakePolyMesh();
             mnMesh.MakeConvex();
-//          mnMesh.MakePlanar(1.f * M_PI / 180.f); // Completely ineffective. Winding up with majorly non-planar polys.
+//          mnMesh.MakePlanar(hsDegreesToRadians(1.f)); // Completely ineffective. Winding up with majorly non-planar polys.
 
             mnMesh.Transform(maxV2L);
 

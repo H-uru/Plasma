@@ -205,9 +205,9 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float partLifeMin, partLifeMax;
     float pps            = fUserInput.fPPS; 
     hsPoint3 pos(0, 0, 0);
-    float pitch          = PI;
+    float pitch          = hsConstants::pi<float>;
     float yaw            = 0; 
-    float angleRange     = fUserInput.fConeAngle * PI / 180.f;
+    float angleRange     = hsDegreesToRadians(fUserInput.fConeAngle);
     float velMin         = fUserInput.fVelocityMin;
     float velMax         = fUserInput.fVelocityMax;
     float xSize          = fUserInput.fHSize;
@@ -218,7 +218,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float drag           = fUserInput.fDrag / 100.f;
     float windMult       = fUserInput.fWindMult / 100.f;
     float massRange      = fUserInput.fMassRange;
-    float rotRange       = fUserInput.fRotRange * PI / 180.f;
+    float rotRange       = hsDegreesToRadians(fUserInput.fRotRange);
 
     uint32_t xTiles = fUserInput.fXTiles; 
     uint32_t yTiles = fUserInput.fYTiles; 

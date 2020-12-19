@@ -3932,10 +3932,10 @@ static BMM_Color_64 ICubeSample(plErrorMsg* const msg, Bitmap *bitmap[6], double
 {
     hsGuardBegin("hsMaterialConverter::ICubeSample");
 
-    theta = fmod(theta, (double)TWOPI);
-    if( theta < 0 )theta += TWOPI;
-    if( phi < 0 )phi = 0;
-    else if( phi > PI )phi = PI;
+    theta = fmod(theta, hsConstants::two_pi<double>);
+    if (theta < 0)
+        theta += hsConstants::two_pi<double>;
+    phi = std::clamp(phi, 0, hsConstants::pi<double>);
 
     Bitmap *map = nil;
 
@@ -3972,22 +3972,22 @@ static BMM_Color_64 ICubeSample(plErrorMsg* const msg, Bitmap *bitmap[6], double
     }
     else
     {
-        if( (theta <= (M_PI / 2.0 - M_PI/4.0))
-            ||(theta >= (M_PI * 2.0 - M_PI/4.0)) )
+        if( (theta <= (hsConstants::half_pi<double> - hsConstants::pi<double>/4.0))
+            ||(theta >= (hsConstants::two_pi<double> - hsConstants::pi<double>/4.0)) )
         {
             map = bitmap[VIEW_FR];
             xMap = x / y;
             yMap = -z / y;
         }
         else
-        if( theta <= (M_PI - M_PI/4.0) )
+        if( theta <= (hsConstants::pi<double> - hsConstants::pi<double>/4.0) )
         {
             map = bitmap[VIEW_LF];
             xMap = -y / x;
             yMap = -z / x;
         }
         else
-        if( theta <= (M_PI * 3.0/2.0 - M_PI/4.0) )
+        if( theta <= (hsConstants::pi<double> * 3.0/2.0 - hsConstants::pi<double>/4.0) )
         {
             map = bitmap[VIEW_BK];
             xMap = x / y;
@@ -4021,8 +4021,8 @@ void hsMaterialConverter::IBuildSphereMap(Bitmap *bitmap[6], Bitmap *bm)
     hsGuardBegin("hsMaterialConverter::IBuildSphereMap");
 
     int i, j;
-    double delPhi = PI / bm->Height();
-    double delThe = TWOPI / bm->Width();
+    double delPhi = hsConstants::pi<double> / bm->Height();
+    double delThe = hsConstants::two_pi<double> / bm->Width();
     PixelBuf l64(bm->Width());
     BMM_Color_64 *pb=l64.Ptr();
     for( j = 0; j < bm->Height(); j++ )
@@ -4032,7 +4032,7 @@ void hsMaterialConverter::IBuildSphereMap(Bitmap *bitmap[6], Bitmap *bm)
             double phi, theta; // phi is up/down
 
             phi = (0.5 + j) * delPhi;
-            theta = PI - (0.5 + i) * delThe;
+            theta = hsConstants::pi<double> - (0.5 + i) * delThe;
 
             pb[i] = ICubeSample(fErrorMsg, bitmap, phi, theta);
         }

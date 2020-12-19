@@ -58,7 +58,7 @@ public:
     plNilView() 
     {       
         projType = 1;
-        fov = M_PI * 0.25f;
+        fov = hsConstants::pi<float> * 0.25f;
         pixelSize = 1.f;
         affineTM.IdentityMatrix();
         worldToView.IdentityMatrix();

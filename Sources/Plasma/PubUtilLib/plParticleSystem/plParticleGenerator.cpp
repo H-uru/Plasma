@@ -72,7 +72,6 @@ void plParticleGenerator::ComputeDirection(float pitch, float yaw, hsVector3 &di
 // pitch and yaw (angles for the unit Z vector) to get there.
 void plParticleGenerator::ComputePitchYaw(float &pitch, float &yaw, const hsVector3 &dir)
 {
-    const float PI = 3.14159f;
     pitch = asin(dir.fY);
     float cos_pitch = cos(pitch);
     if (cos_pitch == 0)
@@ -87,7 +86,7 @@ void plParticleGenerator::ComputePitchYaw(float &pitch, float &yaw, const hsVect
         inv = -1.0f;
     yaw = asin(inv);
     if (dir.fZ < 0)
-        yaw = PI - yaw;
+        yaw = hsConstants::pi<float> - yaw;
 }
 
 plSimpleParticleGenerator::plSimpleParticleGenerator()

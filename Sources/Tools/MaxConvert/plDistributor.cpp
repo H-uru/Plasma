@@ -144,7 +144,7 @@ void plDistributor::IClear()
 
     fPolarRange = 0;
     fTanPolarRange = 0;
-    fAzimuthRange = M_PI;
+    fAzimuthRange = hsConstants::pi<float>;
 
     fOverallProb = 1.f;
 
@@ -236,8 +236,8 @@ void plDistributor::ISetAngProbCosines() const
     if( transAng > (maxAng - minAng) * 0.5f )
         transAng = (maxAng - minAng) * 0.5f;
 
-    float transAngMax = maxAng < M_PI ? transAng : 0;
-    float transAngMin = minAng > 0 ? transAng : 0;
+    float transAngMax = maxAng < hsConstants::pi<float> ? transAng : 0.f;
+    float transAngMin = minAng > 0.f ? transAng : 0.f;
 
     fCosAngProbHi = cos(minAng);
     fCosAngProbLo = cos(maxAng);
@@ -746,7 +746,7 @@ Matrix3 plDistributor::IGenerateTransform(int iRepNode, int iFace, const Point3&
     Point3 out = dir ^ norm;
     if( out.LengthSquared() < kMinVecLengthSq )
     {
-        if( fAzimuthRange < M_PI * 0.5f )
+        if (fAzimuthRange < hsConstants::half_pi<float>)
         {
             l2w.IdentityMatrix();
             return l2w;

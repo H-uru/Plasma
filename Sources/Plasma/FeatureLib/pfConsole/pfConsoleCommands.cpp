@@ -1276,7 +1276,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
     for( i = 0; i < 256; i++ )
     {
         float t = float(i) / 255.f;
-        float sinT = sin(t * M_PI / 2.f);
+        float sinT = std::sin(t * hsConstants::pi<float> / 2.f);
 
         float remap = t + (sinT - t) * g;
         if( remap < 0 )
@@ -4078,11 +4078,8 @@ namespace plWaveCmd {
 
 typedef void PrintFunk(const char* str);
 
-static inline float FracToPercent(float f) { return (float)(1.e2 * f); }
-static inline float PercentToFrac(float f) { return (float)(1.e-2 * f); }
-
-static inline float RadToDeg(float r) { return r * 180.f / M_PI; }
-static inline float DegToRad(float d) { return d * M_PI / 180.f; }
+static constexpr float FracToPercent(float f) { return 100.f * f; }
+static constexpr float PercentToFrac(float f) { return f / 100.f; }
 
 static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::Cmd cmd)
 {
@@ -4110,7 +4107,7 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
         msg = ST::format("Geo Wave Amplitude to Length Ratio (%) = {f}", FracToPercent(wave->GetGeoAmpOverLen()));
         break;
     case kGeoAngle:
-        msg = ST::format("Geo Spread of waves about Wind Dir = {f} degrees", RadToDeg(wave->GetGeoAngleDev()));
+        msg = ST::format("Geo Spread of waves about Wind Dir = {f} degrees", hsRadiansToDegrees(wave->GetGeoAngleDev()));
         break;
 
     case kTexLen:
@@ -4123,7 +4120,7 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
         msg = ST::format("Tex Wave Amplitude to Length Ratio = {f}%", FracToPercent(wave->GetTexAmpOverLen()));
         break;
     case kTexAngle:
-        msg = ST::format("Tex Spread of waves about Wind Dir = {f} degrees", RadToDeg(wave->GetTexAngleDev()));
+        msg = ST::format("Tex Spread of waves about Wind Dir = {f} degrees", hsRadiansToDegrees(wave->GetTexAngleDev()));
         break;
     
     case kNoise:
@@ -4263,7 +4260,7 @@ static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int
         wave->SetGeoAmpOverLen(PercentToFrac(val), secs);
         break;
     case kGeoAngle:
-        wave->SetGeoAngleDev(DegToRad(val), secs);
+        wave->SetGeoAngleDev(hsDegreesToRadians(val), secs);
         break;
 
     case kTexChop:
@@ -4273,7 +4270,7 @@ static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int
         wave->SetTexAmpOverLen(PercentToFrac(val), secs);
         break;
     case kTexAngle:
-        wave->SetTexAngleDev(DegToRad(val), secs);
+        wave->SetTexAngleDev(hsDegreesToRadians(val), secs);
         break;
 
     case kNoise:

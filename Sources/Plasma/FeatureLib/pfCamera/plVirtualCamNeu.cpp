@@ -680,15 +680,15 @@ void plVirtualCam1::AdjustForInput()
 
     float scaledX;
     if (fFirstPersonOverride)
-        scaledX = 3.14159;
+        scaledX = hsConstants::pi<float>;
     else
-        scaledX = (float)(3.14159 - (fXPanLimit * ( (fX - 0.5f) / 0.5f)));
+        scaledX = hsConstants::pi<float> - (fXPanLimit * ( (fX - 0.5f) / 0.5f));
 
     float scaledZ; 
     if (fFirstPersonOverride)
-        scaledZ = (float)(3.14159 - (0.872f * ( (fY - 0.5f) / 0.5f)));
+        scaledZ = hsConstants::pi<float> - (0.872f * ( (fY - 0.5f) / 0.5f));
     else
-        scaledZ = (float)(3.14159 - (fZPanLimit * ( (fY - 0.5f) / 0.5f)));
+        scaledZ = hsConstants::pi<float> - (fZPanLimit * ( (fY - 0.5f) / 0.5f));
 
     hsMatrix44 mX;
     hsMatrix44 mZ;

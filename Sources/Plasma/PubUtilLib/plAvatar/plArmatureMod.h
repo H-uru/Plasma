@@ -483,6 +483,4 @@ protected:
     BoneMapImp *fImp;       // the thing that actually holds our map
 };
 
-#define TWO_PI (M_PI * 2)
-
 #endif //plArmatureMod_inc

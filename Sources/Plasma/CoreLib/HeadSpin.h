@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cctype>
 #include <cstdarg>
 #include <cstdint>
+#include <type_traits>
 
 //======================================
 // Winblows Hacks
@@ -105,9 +106,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define kPosInfinity32      (0x7fffffff)
 #define kNegInfinity32      (0x80000000)
 
-#ifndef M_PI
-#   define M_PI       3.14159265358979323846
-#endif
+// Based on std::numbers from C++20
+namespace hsConstants
+{
+    template <typename T>
+    inline constexpr T pi =
+        std::enable_if_t<std::is_floating_point_v<T>, T>(3.141592653589793238462643383279502884L);
+
+    template <typename T>
+    inline constexpr T half_pi = pi<T> / T(2.0);
+
+    template <typename T>
+    inline constexpr T two_pi = pi<T> * T(2.0);
+
+    template <typename T>
+    inline constexpr T sqrt2 =
+        std::enable_if_t<std::is_floating_point_v<T>, T>(1.414213562373095048801688724209698079L);
+
+    template <typename T>
+    inline constexpr T inv_sqrt2 = T(1.0) / hsConstants::sqrt2<T>;
+}
 
 #ifndef nil
 #   define nil (nullptr)
@@ -359,9 +377,9 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 #define MAX_EXT     (256)
 
 // Useful floating point utilities
-inline float hsDegreesToRadians(float deg) { return float(deg * (M_PI / 180)); }
-inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
-#define hsInvert(a) (1 / (a))
+constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<float> / 180.f); }
+constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstants::pi<float>); }
+constexpr float hsInvert(float a) { return 1.f / a; }
 
 #ifdef _MSC_VER
 #   define ALIGN(n) __declspec(align(n))

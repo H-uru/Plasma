@@ -64,8 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plPostEffectMod::plPostEffectMod()
 :   fHither(1.f),
     fYon(100.f),
-    fFovX(M_PI * 0.25f),
-    fFovY(M_PI * 0.25f * 0.75f),
+    fFovX(hsConstants::pi<float> * 0.25f),
+    fFovY(hsConstants::pi<float> * 0.25f * 0.75f),
     fPageMgr(nil),
     fRenderTarget(nil),
     fRenderRequest(nil)

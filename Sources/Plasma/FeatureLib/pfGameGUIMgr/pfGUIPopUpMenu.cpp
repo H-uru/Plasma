@@ -777,8 +777,8 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     fovX = atan( scrnWidth / ( 2.f * 100.f ) ) * 2.f;
     fovY = fovX;// * 3.f / 4.f;
 
-    renderMod->SetFovX( fovX * 180.f / M_PI );
-    renderMod->SetFovY( fovY * 180.f / M_PI );
+    renderMod->SetFovX(hsRadiansToDegrees(fovX));
+    renderMod->SetFovY(hsRadiansToDegrees(fovY));
 
     // Create the sceneNode to go with it
     menu->fParentNode= new plSceneNode;

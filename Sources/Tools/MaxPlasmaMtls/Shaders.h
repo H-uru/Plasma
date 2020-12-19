@@ -97,7 +97,7 @@ public:
         shin_str = shineStr;
     }
     float EvalHilite(float x) {
-        return shin_str*(float)pow((double)cos(x*M_PI),(double)fs);  
+        return shin_str*(float)pow(std::cos(x*hsConstants::pi<double>),(double)fs);
     }
 };
 
@@ -116,7 +116,7 @@ public:
         shin_str = shineStr;
     }
     float EvalHilite(float x) {
-        return shin_str*(float)pow((double)cos(x*M_PI),(double)fs); 
+        return shin_str*(float)pow(std::cos(x*hsConstants::pi<double>),(double)fs);
     }
 };
 
@@ -148,7 +148,7 @@ public:
         shin_str = shineStr;
     }
     float EvalHilite(float x) {
-        return shin_str*(float)pow((double)cos(x*M_PI),(double)fs);  
+        return shin_str*(float)pow(std::cos(x*hsConstants::pi<double>),(double)fs);
     }
 };
 

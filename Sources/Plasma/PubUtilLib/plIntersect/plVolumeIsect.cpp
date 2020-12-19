@@ -171,7 +171,7 @@ void plSphereIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 
 plConeIsect::plConeIsect()
-:   fLength(kDefLength), fRadAngle(M_PI*0.25f), fCapped(false)
+:   fLength(kDefLength), fRadAngle(hsConstants::pi<float> * 0.25f), fCapped(false)
 {
     ISetup();
 }

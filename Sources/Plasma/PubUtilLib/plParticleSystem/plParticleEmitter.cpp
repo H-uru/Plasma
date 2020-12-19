@@ -418,7 +418,7 @@ void plParticleEmitter::IUpdateParticles(float delta)
         else if( fParticleExts[i].fRadsPerSec != 0 )
         {
             float sinX, cosX;
-            hsFastMath::SinCos(fParticleExts[i].fLife * fParticleExts[i].fRadsPerSec * 2.f * M_PI, sinX, cosX);
+            hsFastMath::SinCos(fParticleExts[i].fLife * fParticleExts[i].fRadsPerSec * hsConstants::two_pi<float>, sinX, cosX);
             fParticleCores[i].fOrientation.Set(sinX, -cosX, 0);
         }
 

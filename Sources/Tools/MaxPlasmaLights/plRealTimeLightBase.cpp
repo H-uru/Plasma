@@ -317,7 +317,7 @@ void plRTLightBase::BuildSpotMesh(float coneSize)
     int nfaces = 8;
     spotMesh.setNumVerts(nverts);
     spotMesh.setNumFaces(nfaces);
-    double radang = 3.1415926 * coneSize / 360.0;
+    double radang = hsConstants::pi<double> * coneSize / 360.0;
     float h = 20.0f;                    // hypotenuse
     float d = -h * (float)cos(radang);  // dist from origin to cone circle
     float r = h * (float)sin(radang);   // radius of cone circle
@@ -727,7 +727,7 @@ void plRTLightBase::GetAttenPoints(TimeValue t, float rad, Point3 *q)
     float sn, cs;
     for(int i = 0; i < NUM_CIRC_PTS; i++) 
     {
-        a = (double)i * 2.0 * 3.1415926 / (double)NUM_CIRC_PTS;
+        a = double(i) * hsConstants::two_pi<double> / double(NUM_CIRC_PTS);
         sn = rad * (float)sin(a);
         cs = rad * (float)cos(a);
         q[i+0*NUM_CIRC_PTS] = Point3(sn, cs, 0.0f);
@@ -1051,7 +1051,7 @@ void plRTLightBase::GetConePoints(TimeValue t, float aspect, float angle, float 
             rad = angle;
         int i;
         for(i = 0; i < NUM_CIRC_PTS; i++) {
-            a = (double)i * 2.0 * 3.1415926 / (double)NUM_CIRC_PTS;
+            a = double(i) * hsConstants::two_pi<double> / double(NUM_CIRC_PTS);
             q[i] = Point3(rad*(float)sin(a), rad*(float)cos(a), -dist);
             }
         q[i] = q[0] + Point3(0.0f, 15.0f, 0.0f);

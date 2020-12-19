@@ -104,15 +104,15 @@ void plPhysicalControllerCore::IncrementAngle(float deltaAngle)
     fLocalRotation.NormalizeIfNeeded();
     fLocalRotation.GetAngleAxis(&angle, &axis);
     if (axis.fZ < 0)
-        angle = (2.0f * float(M_PI)) - angle; // axis is backwards, so reverse the angle too
+        angle = hsConstants::two_pi<float> - angle; // axis is backwards, so reverse the angle too
 
     angle += deltaAngle;
 
     // make sure we wrap around
     if (angle < 0.0f)
-        angle = (2.0f * float(M_PI)) + angle; // angle is -, so this works like a subtract
-    if (angle >= (2.0f * float(M_PI)))
-        angle = angle - (2.0f * float(M_PI));
+        angle += hsConstants::two_pi<float>; // angle is -, so this works like a subtract
+    if (angle >= hsConstants::two_pi<float>)
+        angle -= hsConstants::two_pi<float>;
 
     // set the new angle
     axis.Set(0.0f, 0.0f, 1.0f);
@@ -344,14 +344,14 @@ void plAnimatedMovementStrategy::IRecalcAngularVelocity(float elapsed, hsMatrix4
 
     float angleSincePrev = AngleRad2d(curForward.fX, curForward.fY, prevForward.fX, prevForward.fY);
     bool sincePrevSign = angleSincePrev > 0.0f;
-    if (angleSincePrev > float(M_PI))
-        angleSincePrev = angleSincePrev - TWO_PI;
+    if (angleSincePrev > hsConstants::pi<float>)
+        angleSincePrev -= hsConstants::two_pi<float>;
 
     const hsVector3 startForward = hsVector3(0.0f, -1.0f, 0.0f);    // the Y orientation of a "resting" armature....
     float angleSinceStart = AngleRad2d(curForward.fX, curForward.fY, startForward.fX, startForward.fY);
     bool sinceStartSign = angleSinceStart > 0.0f;
-    if (angleSinceStart > float(M_PI))
-        angleSinceStart = angleSinceStart - TWO_PI;
+    if (angleSinceStart > hsConstants::pi<float>)
+        angleSinceStart -= hsConstants::two_pi<float>;
 
     // HANDLING ANIMATION WRAPPING:
     // under normal conditions, the angle from rest to the current frame will have the same
@@ -776,18 +776,15 @@ static float AngleRad2d( float x1, float y1, float x3, float y3 )
     x = ( x1 ) * ( x3 ) + ( y1 ) * ( y3 );
     y = ( x1 ) * ( y3 ) - ( y1 ) * ( x3 );
 
-    if ( x == 0.0 && y == 0.0 ) {
-        value = 0.0;
+    if (x == 0.f && y == 0.f) {
+        value = 0.f;
     }
     else
     {
         value = atan2 ( y, x );
 
-        if ( value < 0.0 )
-        {
-            value = (float)(value + TWO_PI);
-        }
+        if (value < 0.f)
+            value += hsConstants::two_pi<float>;
     }
     return value;
 }
-
