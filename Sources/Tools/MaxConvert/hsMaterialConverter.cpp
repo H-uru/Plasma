@@ -3935,10 +3935,7 @@ static BMM_Color_64 ICubeSample(plErrorMsg* const msg, Bitmap *bitmap[6], double
     theta = fmod(theta, hsConstants::two_pi<double>);
     if (theta < 0)
         theta += hsConstants::two_pi<double>;
-    if (phi < 0)
-        phi = 0;
-    else if (phi > hsConstants::pi<double>)
-        phi = hsConstants::pi<double>;
+    phi = std::clamp(phi, 0, hsConstants::pi<double>);
 
     Bitmap *map = nil;
 
