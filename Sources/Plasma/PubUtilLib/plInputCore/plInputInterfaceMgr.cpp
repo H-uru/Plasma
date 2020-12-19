@@ -765,7 +765,8 @@ void    plInputInterfaceMgr::WriteKeyMap()
 #ifdef PLASMA_EXTERNAL_RELEASE
     return;
 #endif
-    FILE* gKeyFile = fopen("init\\keyboard.fni", "wt");
+    plFileName fname = plFileName::Join("init", "keyboard.fni");
+    FILE* gKeyFile = plFileSystem::Open(fname, "wt");
 
     if (gKeyFile)
     {

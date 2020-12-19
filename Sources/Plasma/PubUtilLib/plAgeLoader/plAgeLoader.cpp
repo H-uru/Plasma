@@ -227,8 +227,8 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 
     /// Step 2: Load the keys for this age, so we can find sceneNodes for them
     // exec age .fni file when data is done loading
-    fPendingAgeFniFiles.emplace_back(ST::format("dat\\{}.fni", fAgeName));
-    fPendingAgeCsvFiles.emplace_back(ST::format("dat\\{}.csv", fAgeName));
+    fPendingAgeFniFiles.emplace_back(plFileName::Join("dat", ST::format("{}.fni", fAgeName)));
+    fPendingAgeCsvFiles.emplace_back(plFileName::Join("dat", ST::format("{}.csv", fAgeName)));
 
     plSynchEnabler p( false );  // turn off dirty tracking while in this function   
 
@@ -439,7 +439,7 @@ hsStream* plAgeLoader::GetAgeDescFileStream(const ST::string& ageName)
     if (ageName.empty())
         return nullptr;
 
-    plFileName ageDescFileName = ST::format("dat\\{}.age", ageName);
+    plFileName ageDescFileName = plFileName::Join("dat", ST::format("{}.age", ageName));
 
     hsStream* stream = plEncryptedStream::OpenEncryptedFile(ageDescFileName);
     if (!stream)
