@@ -132,7 +132,7 @@ glueClassName *glueClassName::ConvertFrom(PyObject *obj) \
 // This starts off the type definition (however most of the data still needs to be filled in by hand
 #define PYTHON_TYPE_START(pythonClassName) \
 static PyTypeObject pythonClassName##_type = { \
-    PyObject_HEAD_INIT(NULL)
+    PyVarObject_HEAD_INIT(nullptr, 0)
 
 // and easy terminator to make things look pretty
 #define PYTHON_TYPE_END }
