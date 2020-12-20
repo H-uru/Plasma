@@ -12,6 +12,8 @@ environment:
   - CLIENT_TYPE: External
 install:
 - ps: |
+    git submodule update --init --recursive
+
     If ($Env:CLIENT_TYPE -eq "External") {
       $Env:PLASMA_EXTERNAL_RELEASE = "ON"
     }
