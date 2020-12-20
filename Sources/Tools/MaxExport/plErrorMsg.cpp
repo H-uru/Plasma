@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptions.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "plErrorMsg.h"
 

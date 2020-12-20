@@ -55,7 +55,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamm2.h>
 #include <string>
 #include <vector>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "plNotetrackAnim.h"
 

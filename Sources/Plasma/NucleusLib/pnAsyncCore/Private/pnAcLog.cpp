@@ -47,7 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 #include "plStatusLog/plStatusLog.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 /*****************************************************************************
 *

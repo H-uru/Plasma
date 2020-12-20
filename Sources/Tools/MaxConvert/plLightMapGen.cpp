@@ -50,7 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <dummy.h>
 #include <notify.h>
 #include <vector>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "plLightMapGen.h"
 #include "plGImage/plMipmap.h"

@@ -45,7 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <bmmlib.h>
 #include <iparamb2.h>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 /** Stubbed out BitmapIO instance for deprecated bink layers **/
 class plBinkBitmapIO : public BitmapIO

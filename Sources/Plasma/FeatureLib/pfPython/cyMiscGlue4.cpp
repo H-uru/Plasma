@@ -44,7 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGeometry3.h"
 #include "pyKey.h"
 #include "plPipeline.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "cyMisc.h"
 #include "pyGlueHelpers.h"

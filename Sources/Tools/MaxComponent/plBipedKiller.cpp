@@ -53,7 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include <vector>
 #include "resource.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "BipedKiller.h"
 #include "plTransform/hsAffineParts.h"

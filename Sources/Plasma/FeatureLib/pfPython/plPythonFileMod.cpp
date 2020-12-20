@@ -56,7 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyObjectRef.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "plPythonFileMod.h"
 

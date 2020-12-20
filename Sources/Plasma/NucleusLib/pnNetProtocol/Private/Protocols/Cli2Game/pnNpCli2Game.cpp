@@ -47,7 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define USES_PROTOCOL_CLI2GAME
 #include "../../../Pch.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 
 namespace Cli2Game {

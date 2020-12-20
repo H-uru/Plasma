@@ -45,7 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////
 
 #include "pyKey.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "pfGameGUIMgr/pfGUIDragBarCtrl.h"
 #include "pyGUIControlDragBar.h"

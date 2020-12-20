@@ -46,7 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamm2.h>
 #include <maxicon.h>
 #include <stdmat.h>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "plMultipassMtl.h"
 #include "plMultipassMtlPB.h"

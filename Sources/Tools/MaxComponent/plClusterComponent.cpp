@@ -58,7 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "resource.h"
 #include <vector>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "MaxExport/plExportProgressBar.h"

@@ -43,7 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // rebuilt unless completely necessary -Colin
 
 #include "HeadSpin.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "pnNucleusCreatables.h"
 #include "plAllCreatables.h"

@@ -51,7 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsStream.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "plTextureExportLog.h"
 #include "plGImage/plCubicEnvironmap.h"

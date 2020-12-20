@@ -60,7 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 #include <set>
 #include <vector>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 // To support the new Plasma Light Objs, the classes are included below
 #include "MaxPlasmaLights/plRealTimeLightBase.h"

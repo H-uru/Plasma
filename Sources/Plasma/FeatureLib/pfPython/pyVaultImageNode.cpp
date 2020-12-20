@@ -48,7 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "plPipeline.h"
 #include "hsResMgr.h"
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "pyVaultImageNode.h"
 #ifndef BUILDING_PYPLASMA

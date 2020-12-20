@@ -54,7 +54,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // "TEMP" -- who's gonna rewrite that now? >.<
 #include <CustAttrib.h>
 #include <ICustAttribContainer.h>
-#pragma hdrstop
+#ifdef _MSC_VER
+#   pragma hdrstop
+#endif
 
 #include "MaxExport/SimpleExport.h"
 #include "MaxPlasmaMtls/plMtlImport.h"
