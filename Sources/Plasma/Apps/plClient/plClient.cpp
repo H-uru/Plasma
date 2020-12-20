@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#pragma warning(disable: 4284)
 #include "HeadSpin.h"
 #include "hsWindows.h"
 #include "plClient.h"

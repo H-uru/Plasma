@@ -50,8 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
-#pragma warning(disable: 4284)
-
 class hsResMgr;
 class plMessage;
 class plKey;

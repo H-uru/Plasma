@@ -126,7 +126,6 @@ plNetClientMgr::PendingLoad::~PendingLoad()
 //
 // CONSTRUCT
 //
-#pragma warning(disable:4355)   // this used in initializer list
 plNetClientMgr::plNetClientMgr() : 
         fLocalPlayerKey(nil),
         fMsgHandler(this),
@@ -154,7 +153,6 @@ plNetClientMgr::plNetClientMgr() :
 //  fPlayerVault.SetPlayerName("SinglePlayer"); // in a MP game, this will be replaced with a player name like 'Atrus'
     fTransport.SetNumChannels(kNetNumChannels); 
 }
-#pragma warning(default:4355)
 
 //
 // DESTRUCT

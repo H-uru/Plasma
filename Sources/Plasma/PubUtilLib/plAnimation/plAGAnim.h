@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     \ingroup Avatar
     \ingroup AniGraph
 */
-#pragma warning(disable: 4786)      // don't care if mangled names are longer than 255 characters
 
 #include <map>
 #include "pnNetCommon/plSynchedObject.h"

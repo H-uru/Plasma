@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "pnNetCommon/plSynchedValue.h"
 
-#pragma warning (disable: 4284) 
-
 class plSynchedObject;
 class plAnimCmdMsg;
 class plEventCallbackMsg;

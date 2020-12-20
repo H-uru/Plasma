@@ -892,8 +892,6 @@ ST::string plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
 
 //// Parameter Access Functions //////////////////////////////////////////////
 
-#pragma warning( push ) 
-#pragma warning( disable:4800 ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
 bool    plAnimStealthNode::GetAutoStart() const   { return (bool)fParamBlock->GetInt( (ParamID)kPBAutoStart ); }
 void    plAnimStealthNode::SetAutoStart( bool b )       { fParamBlock->SetValue( (ParamID)kPBAutoStart, 0, (int)b ); };
 
@@ -928,7 +926,6 @@ void        plAnimStealthNode::SetEaseOut( uint8_t type, float length, float min
     fParamBlock->SetValue( (ParamID)kPBEaseOutMin, 0, (float)min );
     fParamBlock->SetValue( (ParamID)kPBEaseOutMax, 0, (float)max );
 }
-#pragma warning( pop )  // Forcing value to bool true or false (go figure, i'm even explicitly casting)
 
 //// Parent Accessor Functions ///////////////////////////////////////////////
 

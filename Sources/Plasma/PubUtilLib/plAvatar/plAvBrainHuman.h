@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBehaviors.h"
 #include "plAnimation/plAGAnim.h"
 
-#pragma warning(disable: 4284)
 #include <deque>
 #include "hsTemplates.h"
 

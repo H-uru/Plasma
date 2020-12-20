@@ -49,10 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAGANIMINSTANCE_INC
 #define PLAGANIMINSTANCE_INC
 
-// disable warning C4503: dcorated name length exceeded, name was truncated
-// disable warning C4786: symbol greater than 255 characters,
-#pragma warning(disable: 4503 4786)
-
 #include "HeadSpin.h"
 #include <map>
 

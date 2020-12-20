@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLCOMPONENT_PROC_BASE_H__
 #define __PLCOMPONENT_PROC_BASE_H__
 
-#pragma warning(disable: 4786)
-
 #include <string>
 #include <vector>
 

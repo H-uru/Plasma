@@ -613,9 +613,7 @@ static void ListenPrepareListeners (fd_set * readfds) {
 
         // add port to listen list
         ASSERT(port->hSocket != INVALID_SOCKET);
-        #pragma warning(disable:4127) // ignore "do { } while (0)" warning
         FD_SET(port->hSocket, readfds);
-        #pragma warning(default:4127)
     }
 }
 
@@ -701,9 +699,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
         }
 
         // add socket to fdset
-        #pragma warning(disable:4127) // ignore "do { } while (0)" warning
         FD_SET(op->hSocket, writefds);
-        #pragma warning(default:4127)
     }
 }
 

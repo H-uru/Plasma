@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
-#pragma warning(disable:4284)
-
 enum KAddValueMode
 {
     kAlwaysAdd,         // Add another value if key already exists
