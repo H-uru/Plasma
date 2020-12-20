@@ -98,21 +98,6 @@ static void EnumValue_dealloc(EnumValue *self)
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
-static int EnumValue_print(PyObject *self, FILE *fp, int flags)
-{
-    // convert this object to a string
-    PyObject *strObject = (flags & Py_PRINT_RAW) ? Py_TYPE(self)->tp_str(self) : Py_TYPE(self)->tp_repr(self);
-    if (strObject == NULL)
-        return -1; // failure
-
-    const char* text = PyUnicode_AsUTF8(strObject);
-    if (text == NULL)
-        return -1;
-
-    fprintf(fp, "%s", text); // and print it to the file
-    return 0;
-}
-
 static PyObject *EnumValue_repr(PyObject *self)
 {
     EnumValue *obj = (EnumValue*)self;
@@ -372,7 +357,7 @@ PYTHON_TYPE_START(EnumValue)
     sizeof(EnumValue),                  /* tp_basicsize */
     0,                                  /* tp_itemsize */
     (destructor)EnumValue_dealloc,      /* tp_dealloc */
-    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(EnumValue_print),
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET,
     0,                                  /* tp_getattr */
     0,                                  /* tp_setattr */
     0,                                  /* tp_as_async */
@@ -416,7 +401,7 @@ PYTHON_TYPE_START(EnumValue)
     0,                                  /* tp_del */
     0,                                  /* tp_version_tag */
     0,                                  /* tp_finalize */
-    PYTHON_TP_VECTORCALL_PRINT(EnumValue_print)
+    PYTHON_TP_VECTORCALL_PRINT
 PYTHON_TYPE_END;
 
 bool IsEnumValue(PyObject *obj)
@@ -583,7 +568,7 @@ PYTHON_TYPE_START(Enum)
     sizeof(Enum),                       /* tp_basicsize */
     0,                                  /* tp_itemsize */
     (destructor)Enum_dealloc,           /* tp_dealloc */
-    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(0),
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET,
     0,                                  /* tp_getattr */
     0,                                  /* tp_setattr */
     0,                                  /* tp_compare */
@@ -628,7 +613,7 @@ PYTHON_TYPE_START(Enum)
     0,                                  /* tp_del */
     0,                                  /* tp_version_tag */
     0,                                  /* tp_finalize */
-    PYTHON_TP_VECTORCALL_PRINT(0)
+    PYTHON_TP_VECTORCALL_PRINT
 PYTHON_TYPE_END;
 
 // creates and sets up the enum base class
