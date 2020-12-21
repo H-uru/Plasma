@@ -168,6 +168,7 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 include(PrecompiledHeader)    #Precompiled Header helper macros
+include(PythonUtils)
 
 if(WIN32)
     # libCurl isn't smart enough to detect this for us, so we have to configure it ourselves
@@ -210,7 +211,6 @@ if(PLASMA_PIPELINE STREQUAL "OpenGL")
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
 #Allow us to disable certain parts of the build
-option(PLASMA_BUILD_RESOURCE_DAT "Do we want to build resource.dat?" ON)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
