@@ -1,30 +1,15 @@
-if(Ogg_INCLUDE_DIR AND Ogg_LIBRARY)
-    set(Ogg_FIND_QUIETLY TRUE)
-endif()
-
+include(FindPackageHandleStandardArgs)
 
 find_path(Ogg_INCLUDE_DIR ogg/ogg.h
-          /usr/local/include
-          /usr/include
+          PATHS /usr/local/include /usr/include
 )
 
-find_library(Ogg_LIBRARY NAMES ogg libogg libogg_static
-             PATHS /usr/local/lib /usr/lib
+find_library(Ogg_LIBRARY
+            NAMES ogg libogg libogg_static
+            PATHS /usr/local/lib /usr/lib
 )
 
+find_package_handle_standard_args(Ogg REQUIRED_VARS Ogg_INCLUDE_DIR Ogg_LIBRARY)
+
+set(Ogg_INCLUDE_DIRS ${Ogg_INCLUDE_DIR})
 set(Ogg_LIBRARIES ${Ogg_LIBRARY})
-
-
-if(Ogg_INCLUDE_DIR AND Ogg_LIBRARY)
-    set(Ogg_FOUND TRUE)
-endif()
-
-if (Ogg_FOUND)
-    if(NOT Ogg_FIND_QUIETLY)
-        message(STATUS "Found libogg: ${Ogg_INCLUDE_DIR}")
-    endif()
-else()
-    if(Ogg_FIND_REQUIRED)
-        message(FATAL_ERROR "Could not find libogg")
-    endif()
-endif()
