@@ -56,7 +56,7 @@ if(PLASMA_BUILD_RESOURCE_DAT)
     )
 
     install(
-        FILES "${CMAKE_CURRENT_BINARY_DIR}/resource.dat"
+        FILES "${external_DAT}"
         DESTINATION client
     )
 endif()
