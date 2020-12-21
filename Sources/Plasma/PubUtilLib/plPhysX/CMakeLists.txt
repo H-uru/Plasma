@@ -36,7 +36,13 @@ set(plPhysX_HEADERS
 )
 
 add_library(plPhysX STATIC ${plPhysX_SOURCES} ${plPhysX_HEADERS})
-target_link_libraries(plPhysX ${PHYSX_LIBRARIES})
+
+target_link_libraries(plPhysX
+    PUBLIC
+        ${PHYSX_LIBRARIES}
+        CoreLib
+        plPhysical
+)
 
 source_group("Source Files" FILES ${plPhysX_SOURCES})
 source_group("Header Files" FILES ${plPhysX_HEADERS})
