@@ -46,7 +46,7 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # Find all 3rd-party libraries that are required
 find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
-find_package(Freetype)
+find_package(freetype)
 find_package(JPEG REQUIRED)
 find_package(LIBSECRET)
 find_package(Ogg REQUIRED)

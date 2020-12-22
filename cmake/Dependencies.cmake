@@ -24,7 +24,7 @@ set_package_properties(
     TYPE REQUIRED
 )
 set_package_properties(
-    Freetype PROPERTIES
+    freetype PROPERTIES
     URL "http://www.freetype.org/"
     DESCRIPTION "Library for rendering fonts"
     PURPOSE "Used to convert vector fonts to raster assets"

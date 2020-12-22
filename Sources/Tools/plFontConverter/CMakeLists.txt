@@ -45,7 +45,7 @@ target_link_libraries(plFontConverter pnSceneObject)
 target_link_libraries(plFontConverter plGImage)
 target_link_libraries(plFontConverter plPipeline)
 target_link_libraries(plFontConverter plResMgr)
-target_link_libraries(plFontConverter Freetype::Freetype)
+target_link_libraries(plFontConverter freetype)
 target_link_libraries(plFontConverter ${STRING_THEORY_LIBRARIES})
 target_link_libraries(plFontConverter Qt5::Widgets)
 
