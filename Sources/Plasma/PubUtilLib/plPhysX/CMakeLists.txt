@@ -1,7 +1,3 @@
-find_package(PhysX REQUIRED)
-
-include_directories(${PHYSX_INCLUDE_DIRS})
-
 set(plPhysX_SOURCES
     plGenericPhysical.cpp
     plLOSDispatch.cpp
@@ -33,8 +29,8 @@ add_library(plPhysX STATIC ${plPhysX_SOURCES} ${plPhysX_HEADERS})
 
 target_link_libraries(plPhysX
     PUBLIC
-        ${PHYSX_LIBRARIES}
         CoreLib
+        PhysX::PhysX
         plPhysical
 )
 
