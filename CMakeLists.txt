@@ -50,11 +50,11 @@ find_package(string_theory 2.0 REQUIRED)
 include_directories(${STRING_THEORY_INCLUDE_DIRS})
 find_package(OpenSSL REQUIRED)
 find_package(Python3 3.8 REQUIRED Interpreter Development)
-find_package(CURL REQUIRED)
 find_package(Freetype)
 find_package(BZip2)
 
 # modernized
+find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(LIBSECRET)

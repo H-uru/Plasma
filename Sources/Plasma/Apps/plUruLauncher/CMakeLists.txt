@@ -1,5 +1,4 @@
 include_directories(${OPENSSL_INCLUDE_DIR})
-include_directories(${CURL_INCLUDE_DIR})
 
 set(plUruLauncher_HEADERS
     plClientLauncher.h
@@ -47,7 +46,7 @@ target_link_libraries(plUruLauncher pnUUID)
 
 target_link_libraries(plUruLauncher ${DirectX_LIBRARIES})
 target_link_libraries(plUruLauncher ${OPENSSL_LIBRARIES})
-target_link_libraries(plUruLauncher ${CURL_LIBRARY})
+target_link_libraries(plUruLauncher CURL::libcurl)
 target_link_libraries(plUruLauncher ${STRING_THEORY_LIBRARIES})
 
 if(USE_VLD)

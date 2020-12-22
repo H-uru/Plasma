@@ -1,6 +1,5 @@
 include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
-include_directories(${CURL_INCLUDE_DIR})
 
 find_program(
     PNGCRUSH_EXECUTABLE pngcrush
@@ -167,7 +166,7 @@ target_link_libraries(plClient pnUUID)
 target_link_libraries(plClient ${OPENSSL_LIBRARIES})
 target_link_libraries(plClient ${PHYSX_LIBRARIES})
 target_link_libraries(plClient ${DirectX_LIBRARIES})
-target_link_libraries(plClient ${CURL_LIBRARY})
+target_link_libraries(plClient CURL::libcurl)
 target_link_libraries(plClient ${STRING_THEORY_LIBRARIES})
 
 if(USE_VLD)

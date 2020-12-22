@@ -85,7 +85,6 @@ target_link_libraries(test_pfPython pnUUID)
 target_link_libraries(test_pfPython ${OPENSSL_LIBRARIES})
 target_link_libraries(test_pfPython ${PHYSX_LIBRARIES})
 target_link_libraries(test_pfPython ${DirectX_LIBRARIES})
-target_link_libraries(test_pfPython ${CURL_LIBRARY})
 target_link_libraries(test_pfPython ${STRING_THEORY_LIBRARIES})
 
 if (WIN32)
