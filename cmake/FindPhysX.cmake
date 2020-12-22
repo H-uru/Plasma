@@ -156,6 +156,12 @@ macro(_find_physx_library SUFFIX)
 
     if(${VAR_NAME}_LIBRARY AND NOT TARGET ${TARGET})
         add_library(${TARGET} UNKNOWN IMPORTED)
+        set_target_properties(
+            ${TARGET} PROPERTIES
+            MAP_IMPORTED_CONFIG_MINSIZEREL Release
+            MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+        )
+
         if(DEFINED _fpl_FOUNDATION_INCLUDE AND EXISTS "${PHYSX_FOUNDATION_INCLUDE_DIR}")
             set_property(
                 TARGET ${TARGET} APPEND PROPERTY

@@ -18,3 +18,13 @@ if(NOT TARGET OpenAL::OpenAL)
         message(FATAL_ERROR "Could NOT find OpenAL")
     endif()
 endif()
+
+# Upstream neglects to do this -- vcpkg masks it for us, but you are in trouble if you are
+# not using the vcpkg toolchain.
+if(TARGET OpenAL::OpenAL)
+    set_target_properties(
+        OpenAL::OpenAL PROPERTIES
+        MAP_IMPORTED_CONFIG_MINSIZEREL Release
+        MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+    )
+endif()

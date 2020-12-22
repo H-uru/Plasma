@@ -22,16 +22,18 @@ if(VPX_FOUNS AND NOT TARGET VPX::VPX)
         VPX::VPX PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES ${VPX_INCLUDE_DIR}
     )
-    if(EXISTS ${VPX_LIBRARY_DEBUG})
+    if(EXISTS "${VPX_LIBRARY_DEBUG}" AND EXISTS "${VPX_LIBRARY_RELEASE}")
         set_target_properties(
             VPX::VPX PROPERTIES
             IMPORTED_LOCATION_DEBUG ${VPX_LIBRARY_DEBUG}
+            IMPORTED_LOCATION_RELEASE ${VPX_LIBRARY_RELEASE}
+            MAP_IMPORTED_CONFIG_MINSIZEREL Release
+            MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
         )
-    endif()
-    if(EXISTS ${VPX_LIBRARY_RELEASE})
+    else()
         set_target_properties(
             VPX::VPX PROPERTIES
-            IMPORTED_LOCATION_RELEASE ${VPX_LIBRARY_RELEASE}
+            IMPORTED_LOCATION ${VPX_LIBRARY}
         )
     endif()
 endif()

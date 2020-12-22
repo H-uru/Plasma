@@ -22,16 +22,18 @@ if(Speex_FOUND AND NOT TARGET Speex::speex)
         Speex::speex PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES ${Speex_INCLUDE_DIR}
     )
-    if(EXISTS ${Speex_LIBRARY_DEBUG})
+    if(EXISTS "${Speex_LIBRARY_DEBUG}" AND EXISTS "${Speex_LIBRARY_RELEASE}")
         set_target_properties(
             Speex::speex PROPERTIES
             IMPORTED_LOCATION_DEBUG ${Speex_LIBRARY_DEBUG}
+            IMPORTED_LOCATION_RELEASE ${Speex_LIBRARY_RELEASE}
+            MAP_IMPORTED_CONFIG_MINSIZEREL Release
+            MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
         )
-    endif()
-    if(EXISTS ${Speex_LIBRARY_RELEASE})
+    else()
         set_target_properties(
             Speex::speex PROPERTIES
-            IMPORTED_LOCATION_RELEASE ${Speex_LIBRARY_RELEASE}
+            IMPORTED_LOCATION ${Speex_LIBRARY}
         )
     endif()
 endif()
