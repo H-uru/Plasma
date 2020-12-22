@@ -19,7 +19,7 @@ find_package_handle_standard_args(Vorbis
                                                 Vorbis_LIBRARY VorbisFile_LIBRARY
 )
 
-if(NOT TARGET Vorbis::vorbis)
+if(Vorbis_FOUND AND NOT TARGET Vorbis::vorbis)
     add_library(Vorbis::vorbis UNKNOWN IMPORTED)
     set_target_properties(
         Vorbis::vorbis PROPERTIES
@@ -28,7 +28,7 @@ if(NOT TARGET Vorbis::vorbis)
     )
 endif()
 
-if(NOT TARGET Vorbis::vorbisfile)
+if(Vorbis_FOUND AND NOT TARGET Vorbis::vorbisfile)
     add_library(Vorbis::vorbisfile UNKNOWN IMPORTED)
     set_target_properties(
         Vorbis::vorbisfile PROPERTIES

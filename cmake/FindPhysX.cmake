@@ -154,7 +154,7 @@ macro(_find_physx_library SUFFIX)
     )
     select_library_configurations(${VAR_NAME})
 
-    if(NOT TARGET ${TARGET})
+    if(${VAR_NAME}_LIBRARY AND NOT TARGET ${TARGET})
         add_library(${TARGET} UNKNOWN IMPORTED)
         if(DEFINED _fpl_FOUNDATION_INCLUDE AND EXISTS "${PHYSX_FOUNDATION_INCLUDE_DIR}")
             set_property(
@@ -216,7 +216,7 @@ find_package_handle_standard_args(PhysX
                                   REASON_FAILURE_MESSAGE "Be sure that PhysX 4.1 is available."
 )
 
-if(NOT TARGET PhysX::PhysX)
+if(PhysX_FOUND AND NOT TARGET PhysX::PhysX)
     add_library(PhysX::PhysX INTERFACE IMPORTED)
     set_property(
         TARGET PhysX::PhysX APPEND PROPERTY

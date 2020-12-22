@@ -16,7 +16,7 @@ find_library(Speex_LIBRARY_DEBUG NAMES speexd libspeexd
 select_library_configurations(Speex)
 find_package_handle_standard_args(Speex REQUIRED_VARS Speex_INCLUDE_DIR Speex_LIBRARY)
 
-if(NOT TARGET Speex::speex)
+if(Speex_FOUND AND NOT TARGET Speex::speex)
     add_library(Speex::speex UNKNOWN IMPORTED)
     set_target_properties(
         Speex::speex PROPERTIES

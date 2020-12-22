@@ -11,7 +11,7 @@ find_library(Ogg_LIBRARY
 
 find_package_handle_standard_args(Ogg REQUIRED_VARS Ogg_INCLUDE_DIR Ogg_LIBRARY)
 
-if(NOT TARGET Ogg::ogg)
+if(Ogg_FOUND AND NOT TARGET Ogg::ogg)
     add_library(Ogg::ogg UNKNOWN IMPORTED)
     set_target_properties(
         Ogg::ogg PROPERTIES

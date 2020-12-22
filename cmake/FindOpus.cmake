@@ -15,7 +15,7 @@ find_library(Silk_LIBRARY NAMES silk_common
 
 find_package_handle_standard_args(Opus REQUIRED_VARS Opus_INCLUDE_DIR Opus_LIBRARY)
 
-if(NOT TARGET Opus::opus)
+if(Opus_FOUND AND NOT TARGET Opus::opus)
     add_library(Opus::opus UNKNOWN IMPORTED)
     set_target_properties(
         Opus::opus PROPERTIES
