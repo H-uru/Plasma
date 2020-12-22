@@ -45,11 +45,6 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # End HeadSpin Configuration
 
 # Find all 3rd-party libraries that are required
-# TODO: fix these to not suck
-find_package(string_theory 2.0 REQUIRED)
-include_directories(${STRING_THEORY_INCLUDE_DIRS})
-
-# modernized
 find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
 find_package(Freetype)
@@ -64,6 +59,8 @@ find_package(PNG REQUIRED)
 find_package(Python3 3.8 REQUIRED Interpreter Development)
 find_package(Security)
 find_package(Speex)
+find_package(string_theory 2.0 REQUIRED)
+include_directories(${STRING_THEORY_INCLUDE_DIRS}) # FIXME: make this less promiscuous
 find_package(Vorbis REQUIRED)
 find_package(VPX)
 find_package(ZLIB REQUIRED)
