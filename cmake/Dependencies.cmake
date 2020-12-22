@@ -44,6 +44,13 @@ set_package_properties(
     TYPE REQUIRED
 )
 set_package_properties(
+    LIBSECRET PROPERTIES
+    URL "https://wiki.gnome.org/Projects/Libsecret"
+    DESCRIPTION "Library for storing and retrieving passwords and other secrets"
+    PURPOSE "Used to store credentials on many Unix-like platforms"
+    TYPE RECOMMENDED
+)
+set_package_properties(
     Ogg PROPERTIES
     URL "https://xiph.org/ogg/"
     DESCRIPTION "Ogg multimedia container library for various audio and video codecs"
@@ -92,6 +99,13 @@ set_package_properties(Qt5Core PROPERTIES
     DESCRIPTION "Cross-platform GUI framework for C++"
     PURPOSE "Required for building GUI tools for Plasma"
     TYPE OPTIONAL
+)
+set_package_properties(
+    Security PROPERTIES
+    URL "https://developer.apple.com/documentation/security"
+    DESCRIPTION "Secure the data your app manages, and control access to your app"
+    PURPOSE "Used to secure login credentials on Apple platforms"
+    TYPE RECOMMENDED
 )
 set_package_properties(
     Speex PROPERTIES

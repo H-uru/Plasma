@@ -89,7 +89,7 @@ public:
 };
 #endif // HAVE_LIBSECRET
 
-#ifdef HS_BUILD_FOR_APPLE
+#ifdef HAVE_SECURITY
 /**
  * An Apple Keychain password storage mechanism.
  */
@@ -101,6 +101,6 @@ public:
     ST::string GetPassword(const ST::string& username) override;
     bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
-#endif //HS_BUILD_FOR_APPLE
+#endif // HAVE_SECURITY
 
 #endif //pfPasswordStore_impl_inc

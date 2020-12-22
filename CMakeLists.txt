@@ -57,23 +57,16 @@ find_package(BZip2)
 # modernized
 find_package(expat REQUIRED)
 find_package(JPEG REQUIRED)
+find_package(LIBSECRET)
 find_package(Ogg REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(Opus)
 find_package(PNG REQUIRED)
+find_package(Security)
 find_package(Speex)
 find_package(Vorbis REQUIRED)
 find_package(VPX)
 find_package(ZLIB REQUIRED)
-
-# TODO: Move to find module
-if(UNIX AND NOT APPLE)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LIBSECRET libsecret-1)
-    if(LIBSECRET_FOUND)
-        set(HAVE_LIBSECRET TRUE)
-    endif(LIBSECRET_FOUND)
-endif(UNIX AND NOT APPLE)
 
 include(PrecompiledHeader)    #Precompiled Header helper macros
 include(PythonUtils)
