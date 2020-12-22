@@ -7,13 +7,6 @@ set_package_properties(
     TYPE OPTIONAL
 )
 set_package_properties(
-    BZip2 PROPERTIES
-    URL "https://www.sourceware.org/bzip2/"
-    DESCRIPTION "Data compression library"
-    PURPOSE "Required only if FreeType is built statically against bzip2"
-    TYPE OPTIONAL
-)
-set_package_properties(
     CURL PROPERTIES
     URL "http://curl.haxx.se/libcurl/"
     DESCRIPTION "Multi-protocol file transfer library"

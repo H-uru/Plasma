@@ -48,12 +48,11 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # TODO: fix these to not suck
 find_package(string_theory 2.0 REQUIRED)
 include_directories(${STRING_THEORY_INCLUDE_DIRS})
-find_package(Freetype)
-find_package(BZip2)
 
 # modernized
 find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
+find_package(Freetype)
 find_package(JPEG REQUIRED)
 find_package(LIBSECRET)
 find_package(Ogg REQUIRED)
