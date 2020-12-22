@@ -559,7 +559,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                 if (pMS->fAvatar == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
                 {
                     // do something else
-                    if (fBookMode = kNotOffering && fPendingLink == false) // we just linked out
+                    if (fBookMode == kNotOffering && fPendingLink == false) // we just linked out
                     {
                         // make me clickable again
                         ISendAvatarDisabledNotification(true);
