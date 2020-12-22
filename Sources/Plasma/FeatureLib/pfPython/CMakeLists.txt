@@ -1,7 +1,4 @@
 include_directories(${PLASMA_SOURCE_ROOT})
-
-include_directories(${PYTHON_INCLUDE_DIR})
-
 set(pfPython_SOURCES
     cyAccountManagement.cpp
     cyAnimation.cpp

@@ -1,7 +1,6 @@
 include_directories(${3dsm_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${PHYSX_INCLUDE_DIRS})
-include_directories(${PYTHON_INCLUDE_DIR})
 
 set(MaxMain_HEADERS
     GlobalUtility.h

@@ -1,5 +1,3 @@
-include_directories(${PYTHON_INCLUDE_DIR})
-
 find_program(
     PNGCRUSH_EXECUTABLE pngcrush
     DOC "Path to pngcrush"
