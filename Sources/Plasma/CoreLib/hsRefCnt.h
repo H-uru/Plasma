@@ -171,7 +171,7 @@ public:
 
     hsWeakRef<_Ref> &operator=(_Ref *obj)
     {
-        fObj = obj.Get();
+        fObj = obj;
         return *this;
     }
 
