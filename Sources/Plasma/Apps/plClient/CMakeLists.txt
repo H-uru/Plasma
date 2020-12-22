@@ -2,25 +2,6 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
 include_directories(${CURL_INCLUDE_DIR})
 
-if(MOVIE_AVAILABLE)
-    include_directories(${VPX_INCLUDE_DIR})
-    include_directories(${Opus_INCLUDE_DIR})
-endif()
-
-set(external_SCRIPTS
-    external/create_resource_dat.py
-    external/makeres.py
-    external/render_svg.py
-    external/scalergba.py
-)
-
-set(external_SOURCES
-    external/Cursor_Base.svg
-    external/Linking_Book.svg
-    external/Loading_Text_rasterfont.svg
-    external/Voice_Chat.svg
-)
-
 find_program(
     PNGCRUSH_EXECUTABLE pngcrush
     DOC "Path to pngcrush"
@@ -188,24 +169,12 @@ target_link_libraries(plClient ${EXPAT_LIBRARY})
 target_link_libraries(plClient ${JPEG_LIBRARY})
 target_link_libraries(plClient ${PNG_LIBRARY})
 target_link_libraries(plClient ${PHYSX_LIBRARIES})
-target_link_libraries(plClient ${Ogg_LIBRARIES})
-target_link_libraries(plClient ${Vorbis_LIBRARIES})
 target_link_libraries(plClient ${DirectX_LIBRARIES})
 target_link_libraries(plClient ${CURL_LIBRARY})
 target_link_libraries(plClient ${STRING_THEORY_LIBRARIES})
 
 if(USE_VLD)
     target_link_libraries(plClient ${VLD_LIBRARY})
-endif()
-
-if(PLASMA_USE_OPUS)
-    target_link_libraries(plClient ${Opus_LIBRARIES})
-endif()
-if(PLASMA_USE_SPEEX)
-    target_link_libraries(plClient ${Speex_LIBRARY})
-endif()
-if(PLASMA_USE_VPX)
-    target_link_libraries(plClient ${VPX_LIBRARY})
 endif()
 
 if (WIN32)

@@ -15,6 +15,27 @@ find_library(Silk_LIBRARY NAMES silk_common
 
 find_package_handle_standard_args(Opus REQUIRED_VARS Opus_INCLUDE_DIR Opus_LIBRARY)
 
+if(NOT TARGET Opus::opus)
+    add_library(Opus::opus UNKNOWN IMPORTED)
+    set_target_properties(
+        Opus::opus PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${Opus_INCLUDE_DIR}
+        IMPORTED_LOCATION ${Opus_LIBRARY}
+    )
+    if(EXISTS ${Celt_LIBRARY})
+        set_property(
+            TARGET Opus::opus APPEND PROPERTY
+            INTERFACE_LINK_LIBRARIES ${Celt_LIBRARY}
+        )
+    endif()
+    if(EXISTS ${Silk_LIBRARY})
+        set_property(
+            TARGET Opus::opus APPEND PROPERTY
+            INTERFACE_LINK_LIBRARIES ${Silk_LIBRARY}
+        )
+    endif()
+endif()
+
 set(Opus_INCLUDE_DIRS ${Opus_INCLUDE_DIR})
 set(Opus_LIBRARIES ${Opus_LIBRARY})
 if(Celt_LIBRARY)

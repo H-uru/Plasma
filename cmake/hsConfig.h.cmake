@@ -47,9 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine HAVE_CPUID
 
 /* External library usage */
-#cmakedefine PLASMA_USE_SPEEX
-#cmakedefine PLASMA_USE_OPUS
-#cmakedefine PLASMA_USE_VPX
-#cmakedefine PLASMA_USE_WEBM
+#cmakedefine USE_SPEEX
+#cmakedefine USE_OPUS
+#cmakedefine USE_VPX
+#cmakedefine USE_WEBM
 
 #endif

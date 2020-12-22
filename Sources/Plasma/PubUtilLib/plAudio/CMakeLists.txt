@@ -1,12 +1,3 @@
-plasma_find_dependency(OpenAL FIXUP_TARGET OpenAL::OpenAL REQUIRED)
-
-if(PLASMA_USE_OPUS)
-    include_directories(${Opus_INCLUDE_DIR})
-endif()
-if(PLASMA_USE_SPEEX)
-    include_directories(${Speex_INCLUDE_DIR})
-endif()
-
 set(plAudio_SOURCES
     plAudioEndpointVolume.cpp
     plAudioSystem.cpp
@@ -48,13 +39,19 @@ add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})
 
 target_link_libraries(plAudio
     PUBLIC
+        OpenAL::OpenAL
         CoreLib
         plAnimation
         plAudioCore
         plMessage
-
-        OpenAL::OpenAL
 )
+
+if(USE_OPUS)
+    target_link_libraries(plAudio PRIVATE Opus::opus)
+endif()
+if(USE_SPEEX)
+    target_link_libraries(plAudio PRIVATE Speex::speex)
+endif()
 
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})

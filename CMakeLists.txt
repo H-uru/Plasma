@@ -54,16 +54,18 @@ find_package(EXPAT REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-#TODO: Not required if we aren't building the client
-find_package(Ogg REQUIRED)
-#TODO: Not required if we aren't building the client
-find_package(Vorbis REQUIRED)
-find_package(Speex)
-find_package(VPX)
 find_package(Opus)
 find_package(CURL REQUIRED)
 find_package(Freetype)
 find_package(BZip2)
+
+# modernized
+find_package(Ogg REQUIRED)
+find_package(OpenAL REQUIRED)
+find_package(Opus)
+find_package(Speex)
+find_package(Vorbis REQUIRED)
+find_package(VPX)
 
 # TODO: Move to find module
 if(UNIX AND NOT APPLE)
@@ -118,6 +120,11 @@ option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 
+cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus::opus" OFF)
+cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)
+cmake_dependent_option(USE_VPX "Use VPX for movie support" ON "TARGET VPX::VPX" OFF)
+cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "USE_OPUS AND USE_VPX" OFF)
+
 if(WIN32)
     find_package(3dsm)
 
@@ -142,7 +149,6 @@ endif()
 
 # Configure compile-time compiler-specific flags and other config files
 include(cmake/CompilerChecks.cmake)
-include(cmake/Config.cmake)
 
 configure_file("${PROJECT_SOURCE_DIR}/cmake/hsConfig.h.cmake" "${PROJECT_BINARY_DIR}/hsConfig.h")
 include_directories(${PROJECT_BINARY_DIR})

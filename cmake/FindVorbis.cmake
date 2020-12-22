@@ -19,5 +19,23 @@ find_package_handle_standard_args(Vorbis
                                                 Vorbis_LIBRARY VorbisFile_LIBRARY
 )
 
+if(NOT TARGET Vorbis::vorbis)
+    add_library(Vorbis::vorbis UNKNOWN IMPORTED)
+    set_target_properties(
+        Vorbis::vorbis PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${Vorbis_INCLUDE_DIR}
+        IMPORTED_LOCATION ${Vorbis_LIBRARY}
+    )
+endif()
+
+if(NOT TARGET Vorbis::vorbisfile)
+    add_library(Vorbis::vorbisfile UNKNOWN IMPORTED)
+    set_target_properties(
+        Vorbis::vorbisfile PROPERTIES
+        IMPORTED_INCLUDE_DIRECTORIES ${Vorbis_INCLUDE_DIR}
+        IMPORTED_LOCATION ${VorbisFile_LIBRARY}
+    )
+endif()
+
 set(Vorbis_INCLUDE_DIRS ${Vorbis_INCLUDE_DIR})
 set(Vorbis_LIBRARIES ${Vorbis_LIBRARY} ${VorbisFile_LIBRARY})

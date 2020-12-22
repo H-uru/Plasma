@@ -1,6 +1,3 @@
-include_directories(${Ogg_INCLUDE_DIR})
-include_directories(${Vorbis_INCLUDE_DIR})
-
 set(plAudioCore_SOURCES
     plAudioFileReader.cpp
     plBufferedFileReader.cpp
@@ -26,12 +23,27 @@ set(plAudioCore_HEADERS
 )
 
 add_library(plAudioCore STATIC ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
-target_link_libraries(plAudioCore ${Ogg_LIBRARIES})
-target_link_libraries(plAudioCore ${Vorbis_LIBRARIES})
+target_link_libraries(
+    plAudioCore
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plStatusLog
+        plUnifiedTime
+
+        Ogg::ogg
+        Vorbis::vorbis
+        Vorbis::vorbisfile
+)
 
 if(WIN32)
     # Needed for WAV file support
-    target_link_libraries(plAudioCore ${DirectX_LIBRARIES})
+    target_link_libraries(plAudioCore PRIVATE ${DirectX_LIBRARIES})
 endif(WIN32)
 
 source_group("Source Files" FILES ${plAudioCore_SOURCES})

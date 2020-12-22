@@ -57,7 +57,7 @@ static const int kOpusDecoderSampleRate = 48000;
 *
 ***/
 
-#ifdef PLASMA_USE_SPEEX
+#ifdef USE_SPEEX
 
 #include <speex/speex.h>
 #include <speex/speex_bits.h>
@@ -305,7 +305,7 @@ plVoiceEncoder* plVoiceEncoder::GetSpeex()
     return nullptr;
 }
 
-#endif // PLASMA_USE_SPEEX
+#endif // USE_SPEEX
 
 /*****************************************************************************
 *
@@ -313,7 +313,7 @@ plVoiceEncoder* plVoiceEncoder::GetSpeex()
 *
 ***/
 
-#ifdef PLASMA_USE_OPUS
+#ifdef USE_OPUS
 
 #include <opus.h>
 
@@ -516,4 +516,4 @@ plVoiceEncoder* plVoiceEncoder::GetOpus()
     return nullptr;
 }
 
-#endif  // PLASMA_USE_OPUS
+#endif  // USE_OPUS

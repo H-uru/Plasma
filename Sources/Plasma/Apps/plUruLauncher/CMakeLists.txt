@@ -47,8 +47,6 @@ target_link_libraries(plUruLauncher pnUUID)
 
 target_link_libraries(plUruLauncher ${DirectX_LIBRARIES})
 target_link_libraries(plUruLauncher ${OPENSSL_LIBRARIES})
-target_link_libraries(plUruLauncher ${Ogg_LIBRARIES})
-target_link_libraries(plUruLauncher ${Vorbis_LIBRARIES})
 target_link_libraries(plUruLauncher ${CURL_LIBRARY})
 target_link_libraries(plUruLauncher ${STRING_THEORY_LIBRARIES})
 
