@@ -87,7 +87,8 @@ set_package_properties(
     DESCRIPTION "Python Scripting language C bindings"
     TYPE REQUIRED
 )
-set_package_properties(Qt5Core PROPERTIES
+set_package_properties(
+    Qt5 PROPERTIES
     URL "http://www.qt.io/"
     DESCRIPTION "Cross-platform GUI framework for C++"
     PURPOSE "Required for building GUI tools for Plasma"
