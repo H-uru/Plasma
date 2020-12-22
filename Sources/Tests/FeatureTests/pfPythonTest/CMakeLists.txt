@@ -82,7 +82,6 @@ target_link_libraries(test_pfPython pnTimer)
 target_link_libraries(test_pfPython pnUtils)
 target_link_libraries(test_pfPython pnUUID)
 
-target_link_libraries(test_pfPython ${OPENSSL_LIBRARIES})
 target_link_libraries(test_pfPython ${PHYSX_LIBRARIES})
 target_link_libraries(test_pfPython ${DirectX_LIBRARIES})
 target_link_libraries(test_pfPython ${STRING_THEORY_LIBRARIES})

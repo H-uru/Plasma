@@ -1,5 +1,3 @@
-include_directories(${OPENSSL_INCLUDE_DIR})
-
 set(pnEncryption_SOURCES
     plBigNum.cpp
     plChallengeHash.cpp
@@ -16,8 +14,15 @@ set(pnEncryption_HEADERS
 )
 
 add_library(pnEncryption STATIC ${pnEncryption_SOURCES} ${pnEncryption_HEADERS})
-target_link_libraries(pnEncryption CoreLib)
-target_link_libraries(pnEncryption ${OPENSSL_LIBRARIES})
+target_link_libraries(
+    pnEncryption
+    PUBLIC
+        CoreLib
+        OpenSSL::Crypto
+
+    PRIVATE
+        string_theory
+)
 
 source_group("Source Files" FILES ${pnEncryption_SOURCES})
 source_group("Header Files" FILES ${pnEncryption_HEADERS})

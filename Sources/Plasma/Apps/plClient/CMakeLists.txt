@@ -1,4 +1,3 @@
-include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
 
 find_program(
@@ -163,7 +162,6 @@ target_link_libraries(plClient pnTimer)
 target_link_libraries(plClient pnUtils)
 target_link_libraries(plClient pnUUID)
 
-target_link_libraries(plClient ${OPENSSL_LIBRARIES})
 target_link_libraries(plClient ${PHYSX_LIBRARIES})
 target_link_libraries(plClient ${DirectX_LIBRARIES})
 target_link_libraries(plClient CURL::libcurl)

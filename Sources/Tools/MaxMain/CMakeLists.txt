@@ -84,7 +84,6 @@ target_link_libraries(MaxMain MaxPlasmaMtls)
 target_link_libraries(MaxMain ${3dsm_LIBRARIES})
 
 target_link_libraries(MaxMain ${DirectX_LIBRARIES})
-target_link_libraries(MaxMain ${OPENSSL_LIBRARIES})
 target_link_libraries(MaxMain ${PHYSX_LIBRARIES})
 target_link_libraries(MaxMain ${STRING_THEORY_LIBRARIES})
 
