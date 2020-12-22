@@ -1,10 +1,4 @@
 find_package(PhysX REQUIRED)
-set_package_properties(PhysX PROPERTIES
-    URL "https://developer.nvidia.com/physx-sdk"
-    DESCRIPTION "Scalable multi-platform physics solution"
-    TYPE REQUIRED
-)
-
 
 include_directories(${PHYSX_INCLUDE_DIRS})
 

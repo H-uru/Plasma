@@ -4,9 +4,12 @@ project(Plasma)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CMakeDependentOption)
 include(FeatureSummary)
+include(Dependencies)
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
@@ -41,124 +44,28 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # End HeadSpin Configuration
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
 # Find all 3rd-party libraries that are required
+# TODO: move closer to the point of use.
 find_package(string_theory 2.0 REQUIRED)
-set_package_properties(string_theory PROPERTIES
-    URL "http://github.com/zrax/string_theory"
-    DESCRIPTION "Flexible C++11 string library and type-safe formatter"
-    TYPE REQUIRED
-)
 include_directories(${STRING_THEORY_INCLUDE_DIRS})
-
 find_package(OpenSSL REQUIRED)
-set_package_properties(OpenSSL PROPERTIES
-    URL "https://www.openssl.org/"
-    DESCRIPTION "OpenSSL libraries for SSL/TLS"
-    TYPE REQUIRED
-)
-
 find_package(Python3 3.8 REQUIRED Interpreter Development)
-set_package_properties(Python3 PROPERTIES
-    URL "http://www.python.org"
-    DESCRIPTION "Python Scripting language C bindings"
-    TYPE REQUIRED
-)
-
 find_package(EXPAT REQUIRED)
-set_package_properties(EXPAT PROPERTIES
-    URL "http://expat.sourceforge.net/"
-    DESCRIPTION "Expat XML Parser for C"
-    TYPE REQUIRED
-)
-
 find_package(ZLIB REQUIRED)
-set_package_properties(ZLIB PROPERTIES
-    URL "http://www.zlib.net"
-    DESCRIPTION "Fast (de)compression library"
-    TYPE REQUIRED
-)
-
 find_package(JPEG REQUIRED)
-set_package_properties(JPEG PROPERTIES
-    URL "http://libjpeg-turbo.virtualgl.org/"
-    DESCRIPTION "JPEG encoding and decoding library.  libjpeg-turbo is recommended for better performance"
-    TYPE REQUIRED
-)
-
 find_package(PNG REQUIRED)
-set_package_properties(PNG PROPERTIES
-    URL "http://www.libpng.org/pub/png/libpng.html"
-    DESCRIPTION "Efficient lossless image library"
-    TYPE REQUIRED
-)
-
 #TODO: Not required if we aren't building the client
 find_package(Ogg REQUIRED)
-set_package_properties(Ogg PROPERTIES
-    URL "https://xiph.org/ogg/"
-    DESCRIPTION "Ogg multimedia container library for various audio and video codecs"
-    TYPE REQUIRED
-    PURPOSE "Required for audio support in the client"
-)
-
 #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED)
-set_package_properties(Vorbis PROPERTIES
-    URL "https://xiph.org/vorbis/"
-    DESCRIPTION "Free and open audio codec for mid-to-high quality audio"
-    TYPE REQUIRED
-    PURPOSE "Required for audio support in the client"
-)
-
 find_package(Speex)
-set_package_properties(Speex PROPERTIES
-    URL "http://www.speex.org/"
-    DESCRIPTION "Free and open audio codec specifically designed for speech"
-    TYPE OPTIONAL
-    PURPOSE "Required for legacy in-game voice chat in the client"
-)
-
 find_package(VPX)
-set_package_properties(VPX PROPERTIES
-    URL "http://www.webmproject.org/"
-    DESCRIPTION "VP8 and VP9 video codec"
-    TYPE OPTIONAL
-    PURPOSE "Required for in-game video playback support"
-)
-
 find_package(Opus)
-set_package_properties(Opus PROPERTIES
-    URL "https://www.opus-codec.org/"
-    DESCRIPTION "Versatile free and open audio codec"
-    TYPE OPTIONAL
-    PURPOSE "Required for in-game video playback and voice chat support"
-)
-
 find_package(CURL REQUIRED)
-set_package_properties(CURL PROPERTIES
-    URL "http://curl.haxx.se/libcurl/"
-    DESCRIPTION "Multi-protocol file transfer library"
-    TYPE REQUIRED
-)
-
 find_package(Freetype)
-set_package_properties(Freetype PROPERTIES
-    URL "http://www.freetype.org/"
-    DESCRIPTION "Library for rendering fonts"
-    TYPE OPTIONAL
-    PURPOSE "Required in order to build the plFontConverter tool"
-)
-
 find_package(BZip2)
-set_package_properties(BZip2 PROPERTIES
-    URL "https://www.sourceware.org/bzip2/"
-    DESCRIPTION "Data compression library"
-    TYPE OPTIONAL
-    PURPOSE "Required only if FreeType is built statically against bzip2"
-)
 
+# TODO: Move to find module
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBSECRET libsecret-1)
@@ -197,10 +104,6 @@ set_property(CACHE PLASMA_PIPELINE PROPERTY STRINGS "DirectX" "OpenGL")
 
 if(PLASMA_PIPELINE STREQUAL "DirectX")
     find_package(DirectX REQUIRED)
-    set_package_properties(DirectX PROPERTIES
-        DESCRIPTION "Framework for hardware-accelerated 3D graphics on Microsoft platforms"
-        TYPE REQUIRED
-    )
 
     add_definitions(-DPLASMA_PIPELINE_DX)
 endif(PLASMA_PIPELINE STREQUAL "DirectX")
@@ -217,12 +120,6 @@ option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 
 if(WIN32)
     find_package(3dsm)
-    set_package_properties(3dsm PROPERTIES
-        URL "http://www.autodesk.com/"
-        DESCRIPTION "SDK for integrating with the 3DS Max modelling software"
-        TYPE OPTIONAL
-        PURPOSE "Required for building the Plasma plugins for 3DS Max"
-    )
 
     option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
     if (3dsm_BUILD_PLUGIN AND 3dsm_FOUND)
@@ -234,12 +131,7 @@ endif()
 
 if(WIN32)
     find_package(VLD)
-    set_package_properties(VLD PROPERTIES
-        URL "https://vld.codeplex.com/"
-        DESCRIPTION "Visual Leak Debugger for software compiled with Microsoft Visual C++"
-        TYPE OPTIONAL
-        PURPOSE "Useful for detecting memory leaks (MSVC only)"
-    )
+
 
     option(USE_VLD "Build and link with Visual Leak Detector" OFF)
     if(USE_VLD AND VLD_FOUND)
