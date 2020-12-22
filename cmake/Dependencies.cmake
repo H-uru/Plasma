@@ -25,7 +25,7 @@ set_package_properties(
     TYPE REQUIRED
 )
 set_package_properties(
-    EXPAT PROPERTIES
+    expat PROPERTIES
     URL "https://libexpat.github.io/"
     DESCRIPTION "Expat XML Parser for C"
     TYPE REQUIRED

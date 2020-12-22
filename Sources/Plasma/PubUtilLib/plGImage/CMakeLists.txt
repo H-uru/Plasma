@@ -1,6 +1,3 @@
-include_directories(${JPEG_INCLUDE_DIR})
-include_directories(${PNG_INCLUDE_DIR})
-
 set(plGImage_SOURCES
     hsCodecManager.cpp
     hsDXTSoftwareCodec.cpp
@@ -39,14 +36,16 @@ set(plGImage_HEADERS
 
 add_library(plGImage STATIC ${plGImage_SOURCES} ${plGImage_HEADERS})
 
-target_link_libraries(plGImage
+target_link_libraries(
+    plGImage
     PUBLIC
-        ${JPEG_LIBRARY}
-        ${PNG_LIBRARY}
         CoreLib
         pnKeyedObject
         plMessage
         plResMgr
+    PRIVATE
+        JPEG::JPEG
+        PNG::PNG
 )
 
 source_group("Source Files" FILES ${plGImage_SOURCES})
