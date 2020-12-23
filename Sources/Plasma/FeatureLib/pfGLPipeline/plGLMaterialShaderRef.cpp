@@ -60,8 +60,152 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
+#define USE_NEW_SHADERS 1
+
 // From plGLDevice.cpp
 extern GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst);
+
+const char* VERTEX_SHADER_STRING = R"(#version 300 es
+precision lowp int;
+
+struct lightSource {
+    vec4 position;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    float constAtten;
+    float linAtten;
+    float quadAtten;
+    float scale;
+};
+
+
+// Input Attributes
+layout(location =  0) in vec3 aVtxPosition;
+layout(location =  1) in vec3 aVtxNormal;
+layout(location =  2) in vec4 aVtxColor;
+layout(location =  3) in vec3 aVtxUVWSrc[8];
+
+uniform mat4 uMatrixL2W;
+uniform mat4 uMatrixW2L;
+uniform mat4 uMatrixW2C;
+uniform mat4 uMatrixProj;
+
+uniform vec4 uGlobalAmb;
+uniform vec4 uAmbientCol;
+uniform float uAmbientSrc;
+uniform vec4 uDiffuseCol;
+uniform float uDiffuseSrc;
+uniform vec4 uEmissiveCol;
+uniform float uEmissiveSrc;
+uniform vec4 uSpecularCol;
+uniform float uSpecularSrc;
+
+uniform float uInvertVtxAlpha; // Effectively boolean, 0.0 or 1.0
+
+uniform lightSource uLampSources[8];
+
+// Varying outputs
+out vec4 vCamPosition;
+out vec4 vCamNormal;
+out vec4 vVtxColor;
+out vec3 vVtxUVWSrc[8];
+
+void main() {
+    vec4 MAmbient = mix(aVtxColor.bgra, uAmbientCol, uAmbientSrc);
+    vec4 MDiffuse = mix(aVtxColor.bgra, uDiffuseCol, uDiffuseSrc);
+    vec4 MEmissive = mix(aVtxColor.bgra, uEmissiveCol, uEmissiveSrc);
+    vec4 MSpecular = mix(aVtxColor.bgra, uSpecularCol, uSpecularSrc);
+
+    vec4 LAmbient = vec4(0.0, 0.0, 0.0, 0.0);
+    vec4 LDiffuse = vec4(0.0, 0.0, 0.0, 0.0);
+
+    vec3 Ndirection = normalize(mat3(uMatrixW2L) * aVtxNormal);
+
+    for (int i = 0; i < 8; i++) {
+        vVtxUVWSrc[i] = aVtxUVWSrc[i];
+
+        vec3 v2l = vec3(uLampSources[i].position - (uMatrixL2W * vec4(aVtxPosition, 1.0)) * uLampSources[i].position.w);
+        float distance = length(v2l);
+        vec3 direction = normalize(v2l);
+
+        float attenuation = mix(1.0, 1.0 / (uLampSources[i].constAtten + uLampSources[i].linAtten * distance + uLampSources[i].quadAtten * distance * distance), uLampSources[i].position.w);
+
+        LAmbient.rgb = LAmbient.rgb + attenuation * (uLampSources[i].ambient.rgb * uLampSources[i].scale);
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (uLampSources[i].diffuse.rgb * uLampSources[i].scale) * max(0.0, dot(Ndirection, direction)) * attenuation;
+    }
+
+    vec4 ambient = clamp(MAmbient * (uGlobalAmb + LAmbient), 0.0, 1.0);
+    vec4 diffuse = clamp(LDiffuse, 0.0, 1.0);
+    vec4 material = clamp(ambient + diffuse + MEmissive, 0.0, 1.0);
+
+    vVtxColor = vec4(material.rgb, abs(uInvertVtxAlpha - MDiffuse.a));
+
+    vCamPosition = uMatrixW2C * (uMatrixL2W * vec4(aVtxPosition, 1.0));
+    vCamNormal = uMatrixW2C * (uMatrixL2W * vec4(aVtxNormal, 0.0));
+
+    gl_Position = uMatrixProj * vCamPosition;
+})";
+
+
+const char* FRAGMENT_SHADER_STRING = R"(#version 300 es
+precision mediump float;
+precision lowp int;
+
+uniform mat4 uLayerMat0;
+
+uniform mat4 uLayerMat[8];
+uniform int uLayerUVWSrc[8];
+uniform int uStartingLayer;
+uniform int uLayersAtOnce;
+
+uniform sampler2D uTexture0;
+
+uniform float uAlphaThreshold;
+uniform int uFogExponential;
+uniform vec2 uFogValues;
+uniform vec3 uFogColor;
+
+// Varying inputs
+in vec4 vCamPosition;
+in vec4 vCamNormal;
+in vec4 vVtxColor;
+in highp vec3 vVtxUVWSrc[8];
+
+// Rendered outputs
+out vec4 fragColor;
+
+void main() {
+    float baseAlpha;
+    vec4 coords0;
+    vec4 image0;
+    float currAlpha;
+    vec3 currColor;
+
+    baseAlpha = vVtxColor.a;
+    coords0 = uLayerMat0 * vec4(vVtxUVWSrc[0], 1.0);
+    image0 = texture(uTexture0, coords0.xy);
+    currColor = image0.rgb;
+    currAlpha = image0.a * baseAlpha;
+    currColor = vVtxColor.rgb * currColor;
+
+    if (currAlpha < uAlphaThreshold) { discard; };
+
+    float fogFactor = 1.0;
+    if (uFogExponential > 0) {
+        fogFactor = exp(-pow(uFogValues.y * length(vCamPosition.xyz), uFogValues.x));
+    } else {
+        if (uFogValues.y > 0.0) {
+            float start = uFogValues.x;
+            float end = uFogValues.y;
+            fogFactor = (end - length(vCamPosition.xyz)) / (end - start);
+        }
+    }
+
+    currColor = mix(currColor, uFogColor, 1.0 - clamp(fogFactor, 0.0, 1.0));
+
+    fragColor = vec4(currColor, currAlpha);
+})";
 
 plGLMaterialShaderRef::plGLMaterialShaderRef(hsGMaterial* mat, plPipeline* pipe)
     : plGLDeviceRef(), fMaterial(mat), fPipeline(pipe), fVertShaderRef(0), fFragShaderRef(0)
@@ -179,11 +323,16 @@ void plGLMaterialShaderRef::ICompile()
         LOG_GL_ERROR_CHECK(ST::format("Check Texture Ref on layer \"{}\" failed", layer->GetKeyName()));
     }
 
+#ifndef USE_NEW_SHADERS
     ST::string vtx = fVertexShader->Render();
     ST::string frg = fFragmentShader->Render();
 
     const char* vs_code = vtx.c_str();
     const char* fs_code = frg.c_str();
+#else
+    const char* vs_code = VERTEX_SHADER_STRING;
+    const char* fs_code = FRAGMENT_SHADER_STRING;
+#endif
 
     fVertShaderRef = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(fVertShaderRef, 1, &vs_code, nullptr);
@@ -248,6 +397,7 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
     fVertexShader   = std::make_shared<plShaderContext>(kVertex, kShaderVersion);
     fFragmentShader = std::make_shared<plShaderContext>(kFragment, kShaderVersion);
 
+#ifndef USE_NEW_SHADERS
     // Helper function to invert colour
     auto invColor = std::make_shared<plShaderFunction>("invColor", "vec3");
     auto argColor = std::make_shared<plArgumentNode>("color", "vec3", 0);
@@ -275,35 +425,26 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
 
     fVertexShader->PushStruct(lightSource);
     fFragmentShader->PushStruct(lightSource);
+#endif
 }
 
 
 void plGLMaterialShaderRef::ISetShaderVariableLocs()
 {
+#ifndef USE_NEW_SHADERS
     // Assign and bind the attribute locations for later
     glBindAttribLocation(fRef, kVtxPosition, "aVtxPosition");
     glBindAttribLocation(fRef, kVtxNormal, "aVtxNormal");
     glBindAttribLocation(fRef, kVtxColor, "aVtxColor");
-
-    glBindAttribLocation(fRef, kVtxUVWSrc0,  "aVtxUVWSrc0");
-    glBindAttribLocation(fRef, kVtxUVWSrc1,  "aVtxUVWSrc1");
-    glBindAttribLocation(fRef, kVtxUVWSrc2,  "aVtxUVWSrc2");
-    glBindAttribLocation(fRef, kVtxUVWSrc3,  "aVtxUVWSrc3");
-    glBindAttribLocation(fRef, kVtxUVWSrc4,  "aVtxUVWSrc4");
-    glBindAttribLocation(fRef, kVtxUVWSrc5,  "aVtxUVWSrc5");
-    glBindAttribLocation(fRef, kVtxUVWSrc6,  "aVtxUVWSrc6");
-    glBindAttribLocation(fRef, kVtxUVWSrc7,  "aVtxUVWSrc7");
-    glBindAttribLocation(fRef, kVtxUVWSrc8,  "aVtxUVWSrc8");
-    glBindAttribLocation(fRef, kVtxUVWSrc9,  "aVtxUVWSrc9");
-    glBindAttribLocation(fRef, kVtxUVWSrc10, "aVtxUVWSrc10");
-    glBindAttribLocation(fRef, kVtxUVWSrc11, "aVtxUVWSrc11");
-    glBindAttribLocation(fRef, kVtxUVWSrc12, "aVtxUVWSrc12");
+    glBindAttribLocation(fRef, kVtxUVWSrc,  "aVtxUVWSrc");
+#endif
 
     glLinkProgram(fRef);
     LOG_GL_ERROR_CHECK("Program Link failed");
 
     uPassNumber       = glGetUniformLocation(fRef, "uPassNumber");
     uAlphaThreshold   = glGetUniformLocation(fRef, "uAlphaThreshold");
+    uInvertVtxAlpha   = glGetUniformLocation(fRef, "uInvertVtxAlpha");
 
     // Material inputs
     uGlobalAmbient  = glGetUniformLocation(fRef, "uGlobalAmb");
@@ -315,6 +456,11 @@ void plGLMaterialShaderRef::ISetShaderVariableLocs()
     uMatEmissiveSrc = glGetUniformLocation(fRef, "uEmissiveSrc");
     uMatSpecularCol = glGetUniformLocation(fRef, "uSpecularCol");
     uMatSpecularSrc = glGetUniformLocation(fRef, "uSpecularSrc");
+
+    // Fog inputs
+    uFogExponential = glGetUniformLocation(fRef, "uFogExponential");
+    uFogValues      = glGetUniformLocation(fRef, "uFogValues");
+    uFogColor       = glGetUniformLocation(fRef, "uFogColor");
 
     size_t layerCount = fMaterial->GetNumLayers();
 
@@ -364,7 +510,7 @@ void plGLMaterialShaderRef::ILoopOverLayers()
     vertMain->PushOp(ASSIGN(pos, MUL(mW2C, pos)));
 
     vertMain->PushOp(ASSIGN(vCamPos, pos));
-    vertMain->PushOp(ASSIGN(vCamNor, MUL(mW2C, MUL(mL2W, CALL("vec4", anor, CONSTANT("0.0"))))));
+    vertMain->PushOp(ASSIGN(vCamNor, MUL(mW2C, MUL(mL2W, CALL("vec4", anor, CONSTANT("1.0"))))));
 
     vertMain->PushOp(ASSIGN(pos, MUL(mProj, pos)));
     vertMain->PushOp(ASSIGN(OUTPUT("gl_Position"), pos));
@@ -549,7 +695,7 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     // Handle High Alpha Threshold
     std::shared_ptr<plUniformNode> alphaThreshold = IFindVariable<plUniformNode>("uAlphaThreshold", "float");
 
-    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LEQ(sb.fCurrAlpha, alphaThreshold));
+    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LESS(sb.fCurrAlpha, alphaThreshold));
     alphaTest->PushOp(CONSTANT("discard"));
 
     // if (final.a < alphaThreshold) { discard; }
@@ -686,7 +832,8 @@ std::shared_ptr<plTempVariableNode> plGLMaterialShaderRef::ICalcLighting(std::sh
     fn->PushOp(ASSIGN(LAmbient, CONSTANT("vec4(0.0, 0.0, 0.0, 0.0)")));
     fn->PushOp(ASSIGN(LDiffuse, CONSTANT("vec4(0.0, 0.0, 0.0, 0.0)")));
 
-    fn->PushOp(ASSIGN(Ndirection, CALL("normalize", CALL("vec3", MUL(mW2L, CALL("vec4", anor, CONSTANT("1.0")))))));
+    //fn->PushOp(ASSIGN(Ndirection, CALL("normalize", CALL("vec3", MUL(mW2L, CALL("vec4", anor, CONSTANT("1.0")))))));
+    fn->PushOp(ASSIGN(Ndirection, CALL("normalize", MUL(CALL("mat3", mW2L), anor))));
 
     for (size_t i = 0; i < 8; i++) {
         auto lamp = SUBVAL(uLampSources, ST::format("{}", i));
@@ -839,7 +986,7 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
             uvwSrc &= plGBufferGroup::kUVCountMask;
 
             ST::string uvwName = ST::format("vVtxUVWSrc{}", uvwSrc);
-            std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>(uvwName, "vec3");
+            std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>(uvwName, "highp vec3");
 
             sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", layUVW, CONSTANT("1.0")))));
         }
@@ -868,16 +1015,16 @@ void plGLMaterialShaderRef::IBuildLayerTexture(uint32_t idx, plLayerInterface* l
             ST::string samplerName = ST::format("uTexture{}", idx);
             std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "sampler2D");
 
-            // image = texture2D(sampler, coords.xy)
-            sb->fFunction->PushOp(ASSIGN(img, CALL("texture2D", sampler, PROP(sb->fCurrCoord, "xy"))));
+            // image = texture(sampler, coords.xy)
+            sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xy"))));
         }
 
         if ((cube = plCubicEnvironmap::ConvertNoRef(texture)) != nullptr) {
             ST::string samplerName = ST::format("uTexture{}", idx);
             std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "samplerCube");
 
-            // image = texture3D(sampler, coords.xyz)
-            sb->fFunction->PushOp(ASSIGN(img, CALL("textureCube", sampler, PROP(sb->fCurrCoord, "xyz"))));
+            // image = texture(sampler, coords.xyz)
+            sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xyz"))));
         }
     }
 }
@@ -1018,8 +1165,9 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
 
             case hsGMatState::kBlendDot3:
             {
-                hsStatusMessage("Blend DOT3");
                 // color = (color.r * prev.r + color.g * prev.g + color.b * prev.b)
+                sb->fFunction->PushOp(ASSIGN(PROP(col, "r"), ASSIGN(PROP(col, "g"), ASSIGN(PROP(col, "b"), CALL("dot", PROP(col, "rgb"), PROP(sb->fPrevColor, "rgb"))))));
+                sb->fCurrColor = col;
 
                 // alpha = prev
                 sb->fCurrAlpha = sb->fPrevAlpha;
@@ -1039,8 +1187,10 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
 
             case hsGMatState::kBlendAddSigned2X:
             {
-                hsStatusMessage("Blend AddSigned2X");
                 // color = (color + prev - 0.5) << 1
+                // Note: using CALL here for multiplication to ensure parentheses
+                sb->fFunction->PushOp(ASSIGN(col, CALL("2 *", SUB(ADD(texCol, sb->fPrevColor), CONSTANT("0.5")))));
+                sb->fCurrColor = col;
 
                 // alpha = prev
                 sb->fCurrAlpha = sb->fPrevAlpha;
