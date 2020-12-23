@@ -275,8 +275,9 @@ void plGLPipeline::ClearRenderTarget(const hsColorRGBA* col, const float* depth)
         if (fView.fRenderState & kRenderClearDepth)
             masks |= GL_DEPTH_BUFFER_BIT;
 
+        glDepthMask(GL_TRUE);
         glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-        glClearDepth(clearDepth);
+        glClearDepth(1.0);
 
         glClear(masks);
     }
@@ -301,8 +302,7 @@ bool plGLPipeline::BeginRender()
         hsColorRGBA clearColor = GetClearColor();
 
         glDepthMask(GL_TRUE);
-        //glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-        glClearColor(0.f, 0.f, 0.5f, 1.f);
+        glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
         glClearDepth(1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
