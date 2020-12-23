@@ -1,7 +1,12 @@
 # Another mismatch... Upstream is freetype but CMake is Freetype::Freetype
-plasma_forward_find_package(freetype CONFIG)
+find_package(freetype CONFIG QUIET)
+
+
 if(NOT TARGET freetype)
-    plasma_forward_find_package(Freetype ONLY_CMAKE_FIND_ROOT_PATH)
+    unset(CMAKE_MODULE_PATH)
+    find_package(Freetype MODULE)
+    set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+
     if(FREETYPE_FOUND)
         if(NOT TARGET freetype)
             add_library(freetype ALIAS Freetype::Freetype)

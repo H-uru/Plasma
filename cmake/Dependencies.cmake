@@ -141,19 +141,3 @@ set_package_properties(
     DESCRIPTION "Fast (de)compression library"
     TYPE REQUIRED
 )
-
-macro(plasma_forward_find_package PACKAGE)
-    # NOTE: REQUIRED is intentionally omitted. Handle that yourself. KTHXBAI.
-    if(${PACAGE}_FIND_VERSION)
-        list(APPEND _FIND_ARGS ${${PACAGE}_FIND_VERSION})
-    endif()
-    if(${PACKAGE}_FIND_QUIETLY)
-        list(APPEND _FIND_ARGS QUIET)
-    endif()
-    if(${PACKAGE}_FIND_COMPONENTS)
-        list(APPEND _FIND_ARGS COMPONENTS ${${PACKAGE}_FIND_COMPONENTS})
-    endif()
-
-    find_package(${PACKAGE} ${_FIND_ARGS} ${ARGN})
-    unset(_FIND_ARGS)
-endmacro()

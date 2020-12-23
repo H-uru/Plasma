@@ -1,9 +1,11 @@
 # First, try to load OpenAL-Soft from its Cmake config.
-plasma_forward_find_package(OpenAL CONFIG)
+find_package(OpenAL CONFIG QUIET)
 
 # If that didn't work, fall back to the CMake find module
 if(NOT TARGET OpenAL::OpenAL)
-    plasma_forward_find_package(OpenAL ONLY_CMAKE_FIND_ROOT_PATH)
+    unset(CMAKE_MODULE_PATH)
+    find_package(OpenAL MODULE)
+    set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
     if(OPENAL_FOUND)
         if(NOT TARGET OpenAL::OpenAL)
