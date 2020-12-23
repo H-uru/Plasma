@@ -33,8 +33,8 @@ install:
     bootstrap-vcpkg.bat
     vcpkg upgrade --no-dry-run
     vcpkg install --recurse curl[sspi] expat freetype libjpeg-turbo libogg `
-            libpng libtheora libvorbis libvpx openal-soft opus pcre physx speex `
-            string-theory zlib --triplet x86-windows-static-md
+            libpng libtheora libvorbis libvpx openal-soft openssl opus pcre physx `
+            speex string-theory zlib --triplet x86-windows-static-md
     vcpkg integrate install
     Write-Host "OK" -foregroundColor Green
 
