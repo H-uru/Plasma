@@ -218,7 +218,8 @@ ST::string plShaderContext::Render()
 
     ST::string_stream out;
 
-    out << ST::format("#version {}\n", this->version);
+    //out << ST::format("#version {}\n", this->version);
+    out << "#version 300 es\n";
 
     if (this->type == kFragment)
         out << "precision mediump float;\n";
