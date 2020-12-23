@@ -100,17 +100,17 @@ void plGLPlateManager::ICreateGeometry()
         glEnableVertexArrayAttrib(vao, kVtxPosition);
         glEnableVertexArrayAttrib(vao, kVtxNormal);
         glEnableVertexArrayAttrib(vao, kVtxColor);
-        glEnableVertexArrayAttrib(vao, kVtxUVWSrc0);
+        glEnableVertexArrayAttrib(vao, kVtxUVWSrc);
 
         glVertexArrayAttribFormat(vao, kVtxPosition, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fPoint));
         glVertexArrayAttribFormat(vao, kVtxNormal, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fNormal));
         glVertexArrayAttribFormat(vao, kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, offsetof(plPlateVertex, fColor));
-        glVertexArrayAttribFormat(vao, kVtxUVWSrc0, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fUV));
+        glVertexArrayAttribFormat(vao, kVtxUVWSrc, 3, GL_FLOAT, GL_FALSE, offsetof(plPlateVertex, fUV));
 
         glVertexArrayAttribBinding(vao, kVtxPosition, 0);
         glVertexArrayAttribBinding(vao, kVtxNormal, 0);
         glVertexArrayAttribBinding(vao, kVtxColor, 0);
-        glVertexArrayAttribBinding(vao, kVtxUVWSrc0, 0);
+        glVertexArrayAttribBinding(vao, kVtxUVWSrc, 0);
     } else {
         if (epoxy_gl_version() >= 30) {
             glGenVertexArrays(1, &vao);
@@ -135,8 +135,8 @@ void plGLPlateManager::ICreateGeometry()
             glEnableVertexAttribArray(kVtxColor);
             glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3 * 2));
 
-            glEnableVertexAttribArray(kVtxUVWSrc0);
-            glVertexAttribPointer(kVtxUVWSrc0, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)((sizeof(float) * 3 * 2) + sizeof(uint32_t)));
+            glEnableVertexAttribArray(kVtxUVWSrc);
+            glVertexAttribPointer(kVtxUVWSrc, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)((sizeof(float) * 3 * 2) + sizeof(uint32_t)));
 
             glBindVertexArray(0);
         }
@@ -152,7 +152,7 @@ void plGLPlateManager::IReleaseGeometry()
             glDisableVertexArrayAttrib(fBuffers.ARef, kVtxPosition);
             glDisableVertexArrayAttrib(fBuffers.ARef, kVtxNormal);
             glDisableVertexArrayAttrib(fBuffers.ARef, kVtxColor);
-            glDisableVertexArrayAttrib(fBuffers.ARef, kVtxUVWSrc0);
+            glDisableVertexArrayAttrib(fBuffers.ARef, kVtxUVWSrc);
         }
 
         glDeleteVertexArrays(1, &fBuffers.ARef);
@@ -201,8 +201,8 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
         glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3 * 2));
         glEnableVertexAttribArray(kVtxColor);
 
-        glVertexAttribPointer(kVtxUVWSrc0, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)((sizeof(float) * 3 * 2) + sizeof(uint32_t)));
-        glEnableVertexAttribArray(kVtxUVWSrc0);
+        glVertexAttribPointer(kVtxUVWSrc, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)((sizeof(float) * 3 * 2) + sizeof(uint32_t)));
+        glEnableVertexAttribArray(kVtxUVWSrc);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fBuffers.IRef);
     }

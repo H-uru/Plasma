@@ -627,8 +627,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     int numUVs = vRef->fOwner->GetNumUVs();
     for (int i = 0; i < numUVs; i++) {
-        glEnableVertexAttribArray(kVtxUVWSrc0 + i);
-        glVertexAttribPointer(kVtxUVWSrc0 + i, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
+        glEnableVertexAttribArray(kVtxUVWSrc + i);
+        glVertexAttribPointer(kVtxUVWSrc + i, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
     }
 
     LOG_GL_ERROR_CHECK("Vertex Attributes failed")
@@ -647,6 +647,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         // Set uniform to pass
         if (mRef->uPassNumber != -1)
             glUniform1i(mRef->uPassNumber, pass);
+
+        glUniform1f(mRef->uInvertVtxAlpha, 0.f);
 
         plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
 
@@ -667,9 +669,9 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
             // some transparency falloff, but quit drawing before it gets so
             // transparent that draw order problems (halos) become apparent.
             if (s.fBlendFlags & hsGMatState::kBlendAlphaTestHigh)
-                glUniform1f(mRef->uAlphaThreshold, 40.f/255.f);
+                glUniform1f(mRef->uAlphaThreshold, 64.f/255.f);
             else
-                glUniform1f(mRef->uAlphaThreshold, 1.f/255.f);
+                glUniform1f(mRef->uAlphaThreshold, 0.f);
         } else {
             glUniform1f(mRef->uAlphaThreshold, 0.f);
         }
@@ -725,9 +727,11 @@ void plGLPipeline::IHandleZMode(hsGMatState flags)
         int32_t int_value = 8;
         float value = *(float*)(&int_value);
 
-        glPolygonOffset(0.f, value);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(-1.f, 1.f);
     } else {
         glPolygonOffset(0.f, 0.f);
+        glDisable(GL_POLYGON_OFFSET_FILL);
     }
 }
 
@@ -942,6 +946,50 @@ void plGLPipeline::ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInter
             glUniform1f(mRef->uMatSpecularSrc, 1.0);
             break;
         }
+    }
+
+    // Piggy-back some temporary fog stuff on the lighting...
+    const plFogEnvironment* fog = (currSpan ? (currSpan->fFogEnvironment ? currSpan->fFogEnvironment : &fView.GetDefaultFog()) : nullptr);
+    uint8_t type = fog ? fog->GetType() : plFogEnvironment::kNoFog;
+    hsColorRGBA color;
+
+    switch (type) {
+        case plFogEnvironment::kLinearFog:
+        {
+            float start, end;
+            fog->GetPipelineParams(&start, &end, &color);
+
+            if (mRef->uFogExponential != -1)
+                glUniform1i(mRef->uFogExponential, 0);
+            if (mRef->uFogValues != -1)
+                glUniform2f(mRef->uFogValues, start, end);
+            if (mRef->uFogColor != -1)
+                glUniform3f(mRef->uFogColor, color.r, color.g, color.b);
+            break;
+        }
+        case plFogEnvironment::kExpFog:
+        case plFogEnvironment::kExp2Fog:
+        {
+            float density;
+            float power = (type == plFogEnvironment::kExp2Fog) ? 2.0f : 1.0f;
+            fog->GetPipelineParams(&density, &color);
+
+            if (mRef->uFogExponential != -1)
+                glUniform1i(mRef->uFogExponential, 1);
+            if (mRef->uFogValues != -1)
+                glUniform2f(mRef->uFogValues, power, density);
+            if (mRef->uFogColor != -1)
+                glUniform3f(mRef->uFogColor, color.r, color.g, color.b);
+            break;
+        }
+        default:
+            if (mRef->uFogExponential != -1)
+                glUniform1i(mRef->uFogExponential, 0);
+            if (mRef->uFogValues != -1)
+                glUniform2f(mRef->uFogValues, 0.0, 0.0);
+            if (mRef->uFogColor != -1)
+                glUniform3f(mRef->uFogColor, 0.0, 0.0, 0.0);
+            break;
     }
 }
 
