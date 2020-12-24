@@ -522,6 +522,8 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
                                 material,
                                 tempIce.fVStartIdx, tempIce.fVLength,   // These are used as our accumulated range
                                 tempIce.fIPackedIdx, tempIce.fILength );
+
+            glDeleteVertexArrays(1, &vao);
         }
 
         // Restart our search...
