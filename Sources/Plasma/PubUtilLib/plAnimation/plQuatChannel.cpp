@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plQuatChannel::plQuatChannel()
 : plAGChannel()
 {
-    fResult.Identity();
 }
 
 // DTOR
