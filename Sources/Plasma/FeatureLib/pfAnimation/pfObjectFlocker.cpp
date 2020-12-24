@@ -426,8 +426,8 @@ hsPoint3 pfBoidGoal::PredictFuturePosition(const float predictionTime)
 // pfBoid functions
 ///////////////////////////////////////////////////////////////////////////////
 
-pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key)
-    : fProximityToken(), fFlockerPtr(flocker), fObjKey(key), fWanderSide(), fWanderUp()
+pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey key)
+    : fProximityToken(), fFlockerPtr(flocker), fObjKey(std::move(key)), fWanderSide(), fWanderUp()
 {
     // allocate a token for this boid in the proximity database
     ISetupToken(pd);
@@ -439,8 +439,8 @@ pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key)
     fProximityToken->UpdateWithNewPosition(Position());
 }
 
-pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos)
-    : fProximityToken(), fFlockerPtr(flocker), fObjKey(key), fWanderSide(), fWanderUp()
+pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey key, const hsPoint3& pos)
+    : fProximityToken(), fFlockerPtr(flocker), fObjKey(std::move(key)), fWanderSide(), fWanderUp()
 {
     // allocate a token for this boid in the proximity database
     ISetupToken(pd);
@@ -454,8 +454,8 @@ pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key, hs
     fProximityToken->UpdateWithNewPosition(Position());
 }
 
-pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos, float speed, hsVector3 &forward, hsVector3 &side, hsVector3 &up)
-    : fProximityToken(), fFlockerPtr(flocker), fObjKey(key), fWanderSide(), fWanderUp()
+pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey key, const hsPoint3 &pos, float speed, const hsVector3 &forward, const hsVector3 &side, const hsVector3 &up)
+    : fProximityToken(), fFlockerPtr(flocker), fObjKey(std::move(key)), fWanderSide(), fWanderUp()
 {
     // allocate a token for this boid in the proximity database
     ISetupToken(pd);

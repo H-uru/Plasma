@@ -57,7 +57,7 @@ public:
     
     
     plAnimationEventConditionalObject() : fAction(), fTarget() { }
-    plAnimationEventConditionalObject(plKey pTargetModifier) : fTarget(pTargetModifier), fAction(kEventEnd) { }
+    plAnimationEventConditionalObject(plKey pTargetModifier) : fTarget(std::move(pTargetModifier)), fAction(kEventEnd) { }
     ~plAnimationEventConditionalObject() { }
     
     CLASSNAME_REGISTER( plAnimationEventConditionalObject );

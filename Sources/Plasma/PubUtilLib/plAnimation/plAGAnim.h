@@ -90,8 +90,8 @@ public:
     plAGAnim() : plSynchedObject(), fBlend(), fStart(), fEnd() { }
     /** Construct with name, start time, and end time (within the max note track)
      */
-    plAGAnim(const ST::string &name, double start, double end)
-        : fStart((float)start), fEnd((float)end), fName(name), fBlend() { }
+    plAGAnim(ST::string name, double start, double end)
+        : fStart((float)start), fEnd((float)end), fName(std::move(name)), fBlend() { }
     /** Destruct, freeing the underlying animation data. */
     virtual ~plAGAnim();
 

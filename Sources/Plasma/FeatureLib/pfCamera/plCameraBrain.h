@@ -299,9 +299,8 @@ class plCameraBrain1_FirstPerson : public plCameraBrain1_Avatar
 {
 public:
 
-    plCameraBrain1_FirstPerson() : plCameraBrain1_Avatar(), fPosNode(nullptr) { }
-    plCameraBrain1_FirstPerson(plCameraModifier1* pMod) : plCameraBrain1_Avatar(pMod), fPosNode(nullptr) { }
-    ~plCameraBrain1_FirstPerson() { }
+    plCameraBrain1_FirstPerson() : plCameraBrain1_Avatar(), fPosNode() { }
+    plCameraBrain1_FirstPerson(plCameraModifier1* pMod) : plCameraBrain1_Avatar(pMod), fPosNode() { }
     
     CLASSNAME_REGISTER( plCameraBrain1_FirstPerson );
     GETINTERFACE_ANY( plCameraBrain1_FirstPerson, plCameraBrain1_Avatar );

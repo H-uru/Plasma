@@ -170,7 +170,7 @@ void    pfGUIListText::SetJustify( JustifyTypes justify )
 
 
 pfGUIListPicture::pfGUIListPicture(plKey mipKey, bool respectAlpha)
-    : pfGUIListElement(kPicture), fRespectAlpha(respectAlpha), fBorderSize(2), fMipmapKey(mipKey)
+    : pfGUIListElement(kPicture), fRespectAlpha(respectAlpha), fBorderSize(2), fMipmapKey(std::move(mipKey))
 {
     plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
     if( mip != nil && mip->IsCompressed() )

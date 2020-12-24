@@ -317,9 +317,9 @@ private:
 public:
     pfObjectFlocker *fFlockerPtr;
 
-    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey &key);
-    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos);
-    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos, float speed, hsVector3 &forward, hsVector3 &side, hsVector3 &up);
+    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey key);
+    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey key, const hsPoint3 &pos);
+    pfBoid(pfProximityDatabase &pd, pfObjectFlocker *flocker, plKey key, const hsPoint3 &pos, float speed, const hsVector3 &forward, const hsVector3 &side, const hsVector3 &up);
     virtual ~pfBoid();
 
     // Get/set functions
