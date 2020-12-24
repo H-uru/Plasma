@@ -122,7 +122,7 @@ public:
           fOffset(), fOffsetClamp(), fTanOffset(),
           fSpeedClamp(), fSearchPos(0.f, 0.f, 0.f)
     { }
-    ~plLineFollowMod() { delete fPath; }
+    ~plLineFollowMod();
 
     CLASSNAME_REGISTER( plLineFollowMod );
     GETINTERFACE_ANY( plLineFollowMod, plMultiModifier );

@@ -61,6 +61,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMgr.h"
 #include "hsTimer.h"
 
+plLineFollowMod::~plLineFollowMod()
+{
+    delete fPath;
+}
 
 void plLineFollowMod::SetSpeedClamp(float fps)
 {
