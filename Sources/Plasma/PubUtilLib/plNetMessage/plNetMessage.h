@@ -193,7 +193,6 @@ public:
           fNetProtocol(), fProtocolVerMajor(), fProtocolVerMinor(),
           fFlags(0)
     { }
-    virtual ~plNetMessage() { }
 
     static plNetMessage* CreateAndRead(const plNetCommonMessage*, plStreamLogger::EventList* el = nil);
     static plNetMessage* Create(const plNetCommonMessage*);
@@ -995,5 +994,4 @@ public:
 #endif  // plNetMessage_h_inc
 ////////////////////////////////////////////////////////////////////
 // End.
-
 

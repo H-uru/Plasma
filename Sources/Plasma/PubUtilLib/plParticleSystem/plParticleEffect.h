@@ -191,7 +191,6 @@ public:
           fHorizontal(), fLastDirSecs(-1.f), fRefDir(0.f, 0.f, 0.f),
           fRandDir(1.f, 0.f, 0.f), fStrength()
     { }
-    ~plParticleWindEffect() { }
 
     CLASSNAME_REGISTER( plParticleWindEffect );
     GETINTERFACE_ANY( plParticleWindEffect, plParticleEffect );

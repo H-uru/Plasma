@@ -78,7 +78,6 @@ protected:
 
 public:
     plScalarChannel() : plAGChannel(), fResult() { }
-    virtual ~plScalarChannel() { }
 
     // AG PROTOCOL
     virtual const float & Value(double time, bool peek = false);

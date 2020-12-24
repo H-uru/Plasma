@@ -237,7 +237,6 @@ public:
 
     plCameraBrain1_Drive();
     plCameraBrain1_Drive(plCameraModifier1* pMod);
-    ~plCameraBrain1_Drive() { }
 
     static void SetSensitivity(float f) { fTurnRate = f; }
     
@@ -381,7 +380,6 @@ public:
         : plCameraBrain1_Fixed(pMod), fCircleFlags(), fCenterObject(), fCenter(0.f, 0.f, 0.f),
           fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr), fCirPerSec(0.25f), fRadius()
     { }
-    ~plCameraBrain1_Circle() { }
 
     CLASSNAME_REGISTER( plCameraBrain1_Circle );
     GETINTERFACE_ANY( plCameraBrain1_Circle, plCameraBrain1_Fixed );

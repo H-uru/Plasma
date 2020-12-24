@@ -59,7 +59,6 @@ protected:
 
 public:
     plDecalEnableMod() : fWetLength() { }
-    virtual ~plDecalEnableMod() { }
 
     CLASSNAME_REGISTER( plDecalEnableMod );
     GETINTERFACE_ANY( plDecalEnableMod, plSingleModifier );

@@ -59,7 +59,6 @@ public:
     plPhysicalProxy(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
         : plProxyGen(amb, dif, opac), fOwner(), fController()
     { }
-    virtual ~plPhysicalProxy() { }
 
     bool Init(plPhysical* phys);
     bool Init(plPXPhysicalControllerCore* controller);

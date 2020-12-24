@@ -78,7 +78,6 @@ protected:
     float                fWeight;
 public:
     plMorphDelta() : fWeight() { }
-    virtual ~plMorphDelta() { }
 
     plMorphDelta(const plMorphDelta& src) : fWeight() { *this = src; }
     plMorphDelta& operator=(const plMorphDelta& src);

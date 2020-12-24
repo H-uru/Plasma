@@ -2573,7 +2573,7 @@ AccountExistsRequestTrans::AccountExistsRequestTrans(
         FNetCliAuthAccountExistsRequestCallback callback,
         void* param, const wchar_t accountName[])
     : NetAuthTrans(kPingRequestTrans), m_callback(callback), m_param(param),
-    m_exists()
+      m_exists()
 {
     StrCopy(m_accountName, accountName, kMaxAccountNameLength);
 }

@@ -285,7 +285,7 @@ public:
     plLimitedDirLightInfo()
         : fParPlanes(), fWidth(), fHeight(), fDepth()
     { }
-    virtual ~plLimitedDirLightInfo() { delete fParPlanes; }
+    ~plLimitedDirLightInfo() { delete fParPlanes; }
 
     CLASSNAME_REGISTER( plLimitedDirLightInfo );
     GETINTERFACE_ANY( plLimitedDirLightInfo, plDirectionalLightInfo );
@@ -383,7 +383,7 @@ public:
           fSpotOuter(hsConstants::pi<float> * 0.25f),
           fCone(), fEffectiveFOV()
     { }
-    virtual ~plSpotLightInfo() { delete fCone; }
+    ~plSpotLightInfo() { delete fCone; }
 
     CLASSNAME_REGISTER( plSpotLightInfo );
     GETINTERFACE_ANY( plSpotLightInfo, plOmniLightInfo );

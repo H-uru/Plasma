@@ -140,7 +140,7 @@ protected:
     bool IsRegistered(plShaderID::ID id) const { return (id == 0) || ((id < plShaderID::kNumShaders) && fTable[id]); }
 
 public:
-    virtual ~plShaderTableInst() { }
+    virtual ~plShaderTableInst() = default;
 
     friend class plShaderTable;
 };

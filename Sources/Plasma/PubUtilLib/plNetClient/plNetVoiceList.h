@@ -79,7 +79,6 @@ private:
     int fNumUpdates;
 public:
     plNetListenList() : fNumUpdates(), fLastUpdateTime() { }
-    ~plNetListenList() { }
 
     static float kUpdateInterval;
     static int kMaxListenListSize;

@@ -84,7 +84,6 @@ protected:
     hsPoint3            fMaxs;
 public:
     plSphereIsect();
-    virtual ~plSphereIsect() { }
 
     CLASSNAME_REGISTER( plSphereIsect );
     GETINTERFACE_ANY( plSphereIsect, plVolumeIsect );
@@ -124,7 +123,6 @@ protected:
 public:
 
     plConeIsect();
-    virtual ~plConeIsect() { }
 
     CLASSNAME_REGISTER( plConeIsect );
     GETINTERFACE_ANY( plConeIsect, plVolumeIsect );
@@ -161,7 +159,6 @@ protected:
 
 public:
     plCylinderIsect() : fRadius(), fLength(), fMin(), fMax() { }
-    virtual ~plCylinderIsect() { }
 
     CLASSNAME_REGISTER( plCylinderIsect );
     GETINTERFACE_ANY( plCylinderIsect, plVolumeIsect );
@@ -195,7 +192,6 @@ protected:
 
 public:
     plParallelIsect() { }
-    virtual ~plParallelIsect() { }
 
     CLASSNAME_REGISTER( plParallelIsect );
     GETINTERFACE_ANY( plParallelIsect, plVolumeIsect );
@@ -232,7 +228,6 @@ protected:
 
 public:
     plConvexIsect() { }
-    virtual ~plConvexIsect() { }
 
     CLASSNAME_REGISTER( plConvexIsect );
     GETINTERFACE_ANY( plConvexIsect, plVolumeIsect );
@@ -258,7 +253,6 @@ protected:
     hsBounds3Ext        fWorldBounds;
 public:
     plBoundsIsect() { }
-    virtual ~plBoundsIsect() { }
 
     CLASSNAME_REGISTER( plBoundsIsect );
     GETINTERFACE_ANY( plBoundsIsect, plVolumeIsect );
@@ -280,7 +274,6 @@ protected:
     hsTArray<plVolumeIsect*>        fVolumes;
 
 public:
-    plComplexIsect() { }
     virtual ~plComplexIsect();
 
     CLASSNAME_REGISTER( plComplexIsect );
@@ -298,8 +291,6 @@ public:
 class plUnionIsect : public plComplexIsect
 {
 public:
-    plUnionIsect() { }
-    ~plUnionIsect() { }
 
     CLASSNAME_REGISTER( plUnionIsect );
     GETINTERFACE_ANY( plUnionIsect, plComplexIsect );
@@ -311,8 +302,6 @@ public:
 class plIntersectionIsect : public plComplexIsect
 {
 public:
-    plIntersectionIsect() { }
-    ~plIntersectionIsect() { }
 
     CLASSNAME_REGISTER( plIntersectionIsect );
     GETINTERFACE_ANY( plIntersectionIsect, plComplexIsect );
