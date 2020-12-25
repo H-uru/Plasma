@@ -69,10 +69,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIKnobCtrl::pfGUIKnobCtrl()
-    : fDragStart(0.f, 0.f, 0.f), fDragging(), fDragValue(),
-      fDragRangeMin(), fDragRangeMax(), fAnimTimesCalced(),
-      fAnimStartPos(0.f, 0.f, 0.f), fAnimEndPos(0.f, 0.f, 0.f),
-      fAnimBegin(), fAnimEnd()
+    : fDragging(), fDragValue(),
+      fDragRangeMin(), fDragRangeMax(),
+      fAnimTimesCalced(), fAnimBegin(),
+      fAnimEnd()
 {
     SetFlag(kWantsInterest);
 }
@@ -142,14 +142,12 @@ void    pfGUIKnobCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 
     if( HasFlag( kMapToAnimationRange ) )
     {
-        hsPoint3    scrnStart, scrnEnd;
-
         // At mouse-down, we take our local-space start and end points and
         // translate them by our parent object's local-to-world to get the
         // right points in world-space. We do this now because our parent
         // might be animated, which could complicate matters a tad.
-        scrnStart = fAnimStartPos;
-        scrnEnd = fAnimEndPos;
+        hsPoint3 scrnStart = fAnimStartPos;
+        hsPoint3 scrnEnd = fAnimEndPos;
 
         plSceneObject *target = GetTarget();
         if( target != nil )

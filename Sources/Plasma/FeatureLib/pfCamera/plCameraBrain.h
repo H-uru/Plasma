@@ -372,12 +372,14 @@ protected:
     hsPoint3    IGetClosestPointOnCircle(const hsPoint3* toThisPt);
 public:
     plCameraBrain1_Circle()
-        : plCameraBrain1_Fixed(), fCircleFlags(), fCenterObject(), fCenter(0.f, 0.f, 0.f),
-          fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr), fCirPerSec(0.25f), fRadius()
+        : plCameraBrain1_Fixed(), fCircleFlags(), fCenterObject(),
+          fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr),
+          fCirPerSec(0.25f), fRadius()
     { }
     plCameraBrain1_Circle(plCameraModifier1* pMod)
-        : plCameraBrain1_Fixed(pMod), fCircleFlags(), fCenterObject(), fCenter(0.f, 0.f, 0.f),
-          fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr), fCirPerSec(0.25f), fRadius()
+        : plCameraBrain1_Fixed(pMod), fCircleFlags(), fCenterObject(),
+          fCurRad(1.f), fGoalRad(1.f), fPOAObj(nullptr),
+          fCirPerSec(0.25f), fRadius()
     { }
 
     CLASSNAME_REGISTER( plCameraBrain1_Circle );

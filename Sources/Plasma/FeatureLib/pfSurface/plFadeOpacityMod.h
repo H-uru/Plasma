@@ -105,7 +105,6 @@ protected:
 
 public:
     plFadeOpacityMod();
-    virtual ~plFadeOpacityMod();
 
     CLASSNAME_REGISTER( plFadeOpacityMod );
     GETINTERFACE_ANY( plFadeOpacityMod, plSingleModifier );

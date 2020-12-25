@@ -422,7 +422,7 @@ PyObject* pySceneObject::GetWorldPosition()
         {
             const plCoordinateInterface* ci = obj->GetCoordinateInterface();
             if ( ci )
-                return pyPoint3::New((hsPoint3)ci->GetWorldPos());
+                return pyPoint3::New(ci->GetWorldPos());
             else
             {
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
@@ -433,7 +433,7 @@ PyObject* pySceneObject::GetWorldPosition()
         }
     }
     // if we couldn't find any sceneobject or a coordinate interface
-    return pyPoint3::New(hsPoint3(0,0,0));
+    return pyPoint3::New();
 }
 
 //
@@ -462,7 +462,7 @@ PyObject* pySceneObject::GetViewVector()
         }
     }
     // if we couldn't find any sceneobject or a coordinate interface
-    return pyVector3::New(hsVector3(0,0,0));
+    return pyVector3::New();
 }
 
 //
@@ -491,7 +491,7 @@ PyObject* pySceneObject::GetUpVector()
         }
     }
     // if we couldn't find any sceneobject or a coordinate interface
-    return pyVector3::New(hsVector3(0,0,0));
+    return pyVector3::New();
 }
 
 //
@@ -520,7 +520,7 @@ PyObject* pySceneObject::GetRightVector()
         }
     }
     // if we couldn't find any sceneobject or a coordinate interface
-    return pyVector3::New(hsVector3(0,0,0));
+    return pyVector3::New();
 }
 
 //
@@ -585,7 +585,7 @@ PyObject* pySceneObject::GetAvatarVelocity()
     }
 
     // if we couldn't find any sceneobject that had an avatar mod then this ain't an avatar
-    return pyVector3::New(hsVector3(0,0,0));
+    return pyVector3::New();
 }
 
 

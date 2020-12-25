@@ -268,7 +268,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, bool netForce, bool netProp)
             // need to recreate all the events in the new message by Adding them
             if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
             {
-                pNMsg->AddPickEvent( (plKey)fRecvr[0], nil, true, hsPoint3(0,0,0) );
+                pNMsg->AddPickEvent((plKey)fRecvr[0], nil, true, {});
             }
 
             // add receivers
@@ -322,7 +322,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
         // need to recreate all the events in the new message by Adding them
         if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
         {
-            pNMsg->AddPickEvent( (plKey)fRecvr[0], nil, true, hsPoint3(0,0,0) );
+            pNMsg->AddPickEvent((plKey)fRecvr[0], nil, true, {});
         }
 
         // add receivers

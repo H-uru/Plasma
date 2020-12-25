@@ -80,31 +80,6 @@ enum NotifyType
     kNotifyAvatarOnLadder,
 };
 
-// CTOR default
-plAvLadderMod::plAvLadderMod()
-: fGoingUp(true),
-  fType(kBig),
-  fLoops(0),
-  fEnabled(true),
-  fAvatarInBox(false),
-  fLadderView(0,0,0),
-  fAvatarMounting(false)
-{
-    fTarget = nil;
-}
-
-// CTOR goingUp, type, loops
-plAvLadderMod::plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hsVector3& ladderView)
-: fGoingUp(goingUp),
-  fType(type),
-  fLoops(loops),
-  fEnabled(enabled),
-  fAvatarInBox(false),
-  fLadderView(ladderView)
-{
-    fTarget = nil;
-}
-
 // Must be facing within 45 degrees of the ladder
 static const float kTolerance = cos(hsDegreesToRadians(45));
 

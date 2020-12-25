@@ -79,7 +79,7 @@ class plSphereIsect : public plVolumeIsect
 protected:
     hsPoint3            fCenter;
     hsPoint3            fWorldCenter;
-    float            fRadius;
+    float               fRadius;
     hsPoint3            fMins;
     hsPoint3            fMaxs;
 public:

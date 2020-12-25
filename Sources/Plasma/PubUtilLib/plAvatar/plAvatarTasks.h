@@ -132,7 +132,7 @@ public:
     plAvSeekTask(plKey target);
     /** Constructor form for calculated seek points: uses aligment type and (optionally) animation
         The animation is used if we're trying to align some future pose with a seek target. */
-    plAvSeekTask(plKey target, plAvAlignment alignType, const ST::string& animName);
+    plAvSeekTask(plKey target, plAvAlignment alignType, ST::string animName);
 
     // task protocol
     virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);

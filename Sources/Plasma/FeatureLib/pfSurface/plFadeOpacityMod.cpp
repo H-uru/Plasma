@@ -90,14 +90,9 @@ plFadeOpacityMod::plFadeOpacityMod()
 :   fFadeUp(kDefFadeUp),
     fFadeDown(kDefFadeDown),
     fOpCurrent(1.f),
-    fStart(0),
+    fStart(),
     fFade(kImmediate),
-    fLastEye(0.f, 0.f, 0.f),
-    fSetup(false)
-{
-}
-
-plFadeOpacityMod::~plFadeOpacityMod()
+    fSetup()
 {
 }
 

@@ -380,7 +380,7 @@ bool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, fl
     hsPoint3 currStart;
     hsPoint3 orientation;
     hsVector3 initDirection;
-    hsVector3 zeroVel(0.f, 0.f, 0.f);
+    hsVector3 zeroVel;
     float radsPerSec = 0;
 
     int i;

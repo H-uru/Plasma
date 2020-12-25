@@ -790,10 +790,8 @@ void    plDynamicTextMap::FlushToHost()
 hsMatrix44  plDynamicTextMap::GetLayerTransform()
 {
     hsMatrix44  xform;
-    hsVector3   scale;
-
-    scale.Set( (float)GetVisibleWidth() / (float)GetWidth(), 
-               (float)GetVisibleHeight() / (float)GetHeight(), 1.f );
+    hsVector3   scale((float)GetVisibleWidth() / (float)GetWidth(),
+                      (float)GetVisibleHeight() / (float)GetHeight(), 1.f);
 
     xform.MakeScaleMat( &scale );
     return xform;

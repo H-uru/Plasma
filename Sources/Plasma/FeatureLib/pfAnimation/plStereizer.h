@@ -96,10 +96,10 @@ protected:
 
 public:
     plStereizer()
-        : fInitPos(0, 0, 0), fListPos(0, 0, 0), fListDirection(0, 1.f, 0), fListUp(0, 0, 1.f),
+        : fListDirection(0.f, 1.f, 0.f), fListUp(0.f, 0.f, 1.f),
           fAmbientDist(), fTransition(), fMaxSepDist(), fMinSepDist(), fTanAng()
     { }
-    virtual ~plStereizer();
+    ~plStereizer();
 
     CLASSNAME_REGISTER( plStereizer );
     GETINTERFACE_ANY( plStereizer, plSingleModifier );

@@ -120,7 +120,7 @@ public:
         : fPath(), fPathParent(), fRefObj(),
           fFollowMode(kFollowListener), fFollowFlags(kNone),
           fOffset(), fOffsetClamp(), fTanOffset(),
-          fSpeedClamp(), fSearchPos(0.f, 0.f, 0.f)
+          fSpeedClamp()
     { }
     ~plLineFollowMod();
 

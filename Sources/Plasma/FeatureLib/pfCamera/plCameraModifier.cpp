@@ -69,20 +69,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // new stuff
 
-plCameraModifier1::plCameraModifier1() :
-fBrain(nil),
-fSubObj(nil),
-fFOVw(45.0f),
-fFOVh(33.75f),
-fAnimated(false),
-fStartAnimOnPush(false),
-fStopAnimOnPop(false),
-fResetAnimOnPop(false),
-fInSubLastUpdate(false),
-fUpdateBrainTarget(false)
+plCameraModifier1::plCameraModifier1()
+    : fBrain(), fSubObj(), fFOVw(45.0f), fFOVh(33.75f),
+      fAnimated(), fStartAnimOnPush(), fStopAnimOnPop(),
+      fResetAnimOnPop(), fInSubLastUpdate(), fUpdateBrainTarget()
 {
-    fFrom.Set(0,0,0);
-    fAt.Set(0,1,0);
 }
 
 
@@ -499,7 +490,7 @@ void plCameraModifier1::SetTransform(hsPoint3 at)
         return;
     hsMatrix44 l2w;
     hsMatrix44 w2l;
-    hsVector3 up(0,0,1);
+    hsVector3 up(0.f, 0.f, 1.f);
     l2w.Make(&fFrom, &at, &up);
     l2w.GetInverse(&w2l);
     IGetTargetCoordinateInterface(0)->SetTransform( l2w, w2l );

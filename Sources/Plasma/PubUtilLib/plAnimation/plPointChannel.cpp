@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // CTOR
 plPointChannel::plPointChannel()
-: plAGChannel(), fResult(0, 0, 0)
+: plAGChannel()
 {
 }
 

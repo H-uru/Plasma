@@ -103,15 +103,15 @@ public:
 
     void SetCmdString(const char* cs)       { delete [] fCmd; fCmd=hsStrcpy(cs); }
     void SetControlCode(ControlEventCode c) { fControlCode = c; }
-    void SetControlActivated(bool b)      { fControlActivated = b; }
-    void SetTurnToPt(hsPoint3 pt)           { fTurnToPt = pt; }
-    void SetControlPct(float p)          { fControlPct = p; }
+    void SetControlActivated(bool b)        { fControlActivated = b; }
+    void SetTurnToPt(const hsPoint3& pt)    { fTurnToPt = pt; }
+    void SetControlPct(float p)             { fControlPct = p; }
 
     ControlEventCode    GetControlCode()    const { return fControlCode; }
-    bool                ControlActivated()  { return fControlActivated; }
-    hsPoint3            GetTurnToPt()       { return fTurnToPt; }
-    float            GetPct()            { return fControlPct; }
-    char*               GetCmdString()      { return fCmd; }
+    bool                ControlActivated()  const { return fControlActivated; }
+    hsPoint3            GetTurnToPt()       const { return fTurnToPt; }
+    float               GetPct()            const { return fControlPct; }
+    char*               GetCmdString()      const { return fCmd; }
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr);

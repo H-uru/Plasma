@@ -96,7 +96,6 @@ protected:
 
 public:
     plViewFaceModifier();
-    virtual ~plViewFaceModifier();
 
     CLASSNAME_REGISTER( plViewFaceModifier );
     GETINTERFACE_ANY( plViewFaceModifier, plSingleModifier );

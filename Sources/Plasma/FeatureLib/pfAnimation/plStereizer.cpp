@@ -207,7 +207,7 @@ hsPoint3 plStereizer::IGetLocalizedPos(const hsVector3& posToList, float distToL
 {
     hsPoint3 pos = IGetUnStereoPos();
 
-    hsVector3 axOut(-posToList.fY, posToList.fX, 0);
+    hsVector3 axOut(-posToList.fY, posToList.fX, 0.f);
     hsFastMath::NormalizeAppr(axOut);
 
     float distOut = distToList * fTanAng;

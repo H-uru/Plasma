@@ -73,11 +73,11 @@ public:
     };
 
     plAvTaskSeek();
-    plAvTaskSeek(plKey target);
+    plAvTaskSeek(const plKey& target);
     plAvTaskSeek(plAvSeekMsg *msg);
-    plAvTaskSeek(plKey target, plAvAlignment align, const ST::string& animName, bool moving);
+    plAvTaskSeek(const plKey& target, plAvAlignment align, ST::string animName, bool moving);
 
-    void SetTarget(plKey target);
+    void SetTarget(const plKey& target);
     void SetTarget(hsPoint3 &pos, hsPoint3 &lookAt);
 
     /** Initiate the task; make sure we're running on the right type of brain, save off

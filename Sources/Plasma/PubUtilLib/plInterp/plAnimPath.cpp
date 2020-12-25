@@ -515,8 +515,7 @@ void plAnimPath::IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
                               hsPoint3& p1, hsPoint3& p2)
 {
     hsVector3 del(&p2, &p1);
-    hsVector3 up;
-    up.Set(0,0,1.f);
+    hsVector3 up(0.f, 0.f, 1.f);
 
     const float kOutLength = 0.25f;
 

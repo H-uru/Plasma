@@ -336,7 +336,7 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
     fTargetInfo.fContext = fSystem->fContext;
     fTargetInfo.fNumValidParticles = fNumValidParticles;
-    const hsVector3 up(0, 0, 1.0f);
+    const hsVector3 up(0.f, 0.f, 1.0f);
     hsVector3 currDirection;
     hsPoint3 *currPos;
     hsVector3 *currVelocity;

@@ -753,7 +753,7 @@ void plCutter::ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutou
 
         // Not sure about this, whether the constant water height should be world space or local.
         // We'll leave it in local for now.
-        const hsVector3 up(0, 0, 1.f);
+        const hsVector3 up(0.f, 0.f, 1.f);
         hsPoint3 vPos[3];
         vPos[0] = l2w * hsPoint3(tri.Position(0).fX, tri.Position(0).fY, src.GetWaterHeight());
         vPos[1] = l2w * hsPoint3(tri.Position(1).fX, tri.Position(1).fY, src.GetWaterHeight());
@@ -827,7 +827,7 @@ void plCutter::ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst
         static hsTArray<plCutoutVtx> poly;
         poly.SetCount(3);
 
-        const hsVector3 up(0, 0, 1.f);
+        const hsVector3 up(0.f, 0.f, 1.f);
 
         hsPoint3 vPos[3];
         vPos[0].Set(tri.Position(0).fX, tri.Position(0).fY, src.GetWaterHeight());
@@ -1027,8 +1027,8 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
 
     cutter.SetLength(size);
 
-    static hsVector3 dir(0, 1.f, 0);
-    static hsVector3 up(0, 0, 1.f);
+    static hsVector3 dir(0.f, 1.f, 0.f);
+    static hsVector3 up(0.f, 0.f, 1.f);
 
     cutter.Set(pos, dir, up);
 
@@ -1232,8 +1232,8 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
 
     cutter.SetLength(size);
 
-    static hsVector3 dir(0, 1.f, 0);
-    static hsVector3 up(0, 0, 1.f);
+    static hsVector3 dir(0.f, 1.f, 0.f);
+    static hsVector3 up(0.f, 0.f, 1.f);
 
     cutter.Set(pos, dir, up, flip);
 

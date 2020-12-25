@@ -193,12 +193,12 @@ void plSceneInputInterface::IHalfFadeAvatar(bool out)
 
 void plSceneInputInterface::ResetClickableState()
 {
-    if( fLastClicked != nil )
-        ISetLastClicked( nil, hsPoint3(0,0,0) );
-    
+    if (fLastClicked != nullptr)
+        ISetLastClicked(nullptr, {});
+
     ClearClickableMap();
-    fCurrentClickable = nil;
-    fCurrentClickableLogicMod = nil;
+    fCurrentClickable = nullptr;
+    fCurrentClickableLogicMod = nullptr;
     fCurrentCursor = SetCurrentCursorID(kNullCursor);
     fCurrClickIsAvatar = false;
     
@@ -1065,7 +1065,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             if( fLastClicked != nil )
             {
                 fButtonState &= ~kLeftButtonDown;
-                ISetLastClicked( nil, hsPoint3(0,0,0) );
+                ISetLastClicked(nullptr, {});
                 
                 return true;
             }

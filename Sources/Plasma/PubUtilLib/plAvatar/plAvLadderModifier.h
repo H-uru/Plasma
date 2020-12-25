@@ -51,9 +51,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAvLadderMod :  public plSingleModifier
 {
 public:
-    plAvLadderMod();
-    plAvLadderMod(bool goingUp, int type, int loops, bool enabled, hsVector3& ladderView);
-    virtual ~plAvLadderMod() {};
+    plAvLadderMod()
+        : plSingleModifier(),
+          fGoingUp(true),
+          fType(kBig),
+          fLoops(),
+          fEnabled(true),
+          fAvatarInBox(),
+          fAvatarMounting()
+    { }
+
+    plAvLadderMod(bool goingUp, int type, int loops, bool enabled, const hsVector3& ladderView)
+        : plSingleModifier(),
+          fGoingUp(goingUp),
+          fType(type),
+          fLoops(loops),
+          fEnabled(enabled),
+          fAvatarInBox(),
+          fLadderView(ladderView)
+    { }
 
     void EmitCommand(const plKey receiver);
 

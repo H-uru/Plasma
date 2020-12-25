@@ -295,8 +295,6 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
     hsTArray<hsVector3>     normals;
     hsTArray<uint16_t>        indices;
     hsTArray<hsColorRGBA>   colors;
-    hsPoint3                point;
-    hsVector3               normal;
 
     int                 i, j, numDivisions, start;
     float               angle, z, x, y, internRad;
@@ -322,8 +320,8 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
             angle = float(j) * hsConstants::two_pi<float> / float(numDivisions);
             hsFastMath::SinCosInRange( angle, x, y );
 
-            point.Set( pos.fX + x * internRad, pos.fY + y * internRad, pos.fZ + z * radius );
-            normal.Set( x * internRad, y * internRad, z * radius );
+            hsPoint3 point(pos.fX + x * internRad, pos.fY + y * internRad, pos.fZ + z * radius);
+            hsVector3 normal(x * internRad, y * internRad, z * radius);
             normal.Normalize();
 
             points.Append( point );
@@ -371,15 +369,10 @@ plDrawableSpans     *plDrawableGenerator::GenerateBoxDrawable( float width, floa
                                                                 const hsColorRGBA* multColor,
                                                                 hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo )
 {
-    hsVector3       xVec, yVec, zVec;
-    hsPoint3        pt;
-
-
-    xVec.Set( width, 0, 0 );
-    yVec.Set( 0, height, 0 );
-    zVec.Set( 0, 0, depth );
-
-    pt.Set( -width / 2.f, -height / 2.f, -depth / 2.f );
+    hsVector3 xVec(width, 0.f, 0.f);
+    hsVector3 yVec(0.f, height, 0.f);
+    hsVector3 zVec(0.f, 0.f, depth);
+    hsPoint3 pt(-width / 2.f, -height / 2.f, -depth / 2.f);
 
     return GenerateBoxDrawable( pt, xVec, yVec, zVec, material, localToWorld, blended, multColor, retIndex, toAddTo );
 }
@@ -481,8 +474,6 @@ plDrawableSpans     *plDrawableGenerator::GenerateBoundsDrawable( hsBounds3Ext *
     hsTArray<hsVector3>     normals;
     hsTArray<uint16_t>        indices;
     hsTArray<hsColorRGBA>   colors;
-    hsPoint3                point;
-    hsVector3               normal;
 
     int                 i;
     plDrawableSpans     *drawable;
@@ -541,14 +532,10 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( float radius,
                                                                     const hsColorRGBA* multColor,
                                                                     hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo )
 {
-    hsVector3   direction;
-
-
-    direction.Set( 0, 0, height );
-
-    hsPoint3 zero(0, 0, 0);
+    hsVector3 direction(0.f, 0.f, height);
+    hsPoint3 zero;
     return GenerateConicalDrawable(zero, direction, radius, material, localToWorld, blended,
-                                    multColor, retIndex, toAddTo );
+                                   multColor, retIndex, toAddTo);
 }
 
 
@@ -563,8 +550,6 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsPoint3 &ape
     hsTArray<hsVector3>     normals;
     hsTArray<uint16_t>        indices;
     hsTArray<hsColorRGBA>   colors;
-    hsPoint3                point;
-    hsVector3               normal;
 
     int                 i, numDivisions;
     float               angle, x, y;
@@ -722,7 +707,6 @@ plDrawableSpans     *plDrawableGenerator::GeneratePlanarDrawable( const hsPoint3
     hsTArray<uint16_t>        indices;
     hsTArray<hsColorRGBA>   colors;
     hsTArray<hsPoint3>      uvws;
-    hsPoint3                point;
 
     plDrawableSpans     *drawable;
 
@@ -731,10 +715,10 @@ plDrawableSpans     *plDrawableGenerator::GeneratePlanarDrawable( const hsPoint3
     points.Expand( 4 );
     normals.Expand( 4 );
 
-    point = corner;                 points.Append( point );
-    point += xVec;                  points.Append( point );
-    point += yVec;                  points.Append( point );
-    point = corner + yVec;          points.Append( point );
+    points.Append(corner);
+    points.Append(corner + xVec);
+    points.Append(corner + xVec + yVec);
+    points.Append(corner + yVec);
 
     CALC_PNORMAL( normals, xVec, yVec );
     CALC_PNORMAL( normals, xVec, yVec );

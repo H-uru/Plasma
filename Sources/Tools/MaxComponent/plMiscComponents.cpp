@@ -1123,8 +1123,7 @@ bool plViewFacingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         pMod->SetFlag(plViewFaceModifier::kScale);
         
-        hsVector3 scale;
-        scale.Set(1.f, 1.f, 1.f);
+        hsVector3 scale(1.f, 1.f, 1.f);
         scale.fX = fCompPB->GetFloat(kViewFaceScaleX);
         scale.fY = fCompPB->GetFloat(kViewFaceScaleY);
         scale.fZ = fCompPB->GetFloat(kViewFaceScaleZ);

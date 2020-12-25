@@ -51,9 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static const float kDefLength = 5.f;
 
 plSphereIsect::plSphereIsect()
-:   fRadius(1.f)
+    : fRadius(1.f)
 {
-    fCenter.Set(0,0,0);
     int i;
     for( i = 0; i < 3; i++ )
     {

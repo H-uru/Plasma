@@ -802,19 +802,13 @@ void    plGeometrySpan::AddTriIndices( uint16_t index1, uint16_t index2, uint16_
 
 void    plGeometrySpan::AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, uint32_t color )
 {
-    hsVector3       twoTo1, twoTo3, normal;
-    hsPoint3        normalPt;
-
-
     hsAssert( fCreating, "Calling AddTriangle() on a non-creating plGeometrySpan!" );
 
-    twoTo1.Set( vert1, vert2 );
-    twoTo3.Set( vert3, vert2 );
+    hsVector3 twoTo1(vert1, vert2);
+    hsVector3 twoTo3(vert3, vert2);
 
-    normal = twoTo1 % twoTo3;
-    normalPt.fX = normal.fX;
-    normalPt.fY = normal.fY;
-    normalPt.fZ = normal.fZ;
+    hsVector3 normal = twoTo1 % twoTo3;
+    hsPoint3 normalPt(normal);
 
     AddIndex( AddVertex( vert1, &normalPt, color, 0 ) );
     AddIndex( AddVertex( vert2, &normalPt, color, 0 ) );

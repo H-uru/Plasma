@@ -69,8 +69,6 @@ public:
                 const plKey &r,
                 const double* t) : plMessage(s, r, t) { SetBCastFlag(kNetPropagate | kBCastByType, true); }
 
-    ~plBulletMsg() {}
-    
     CLASSNAME_REGISTER( plBulletMsg );
     GETINTERFACE_ANY( plBulletMsg, plMessage );
 

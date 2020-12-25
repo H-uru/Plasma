@@ -157,38 +157,38 @@ void plAvTask::IUndoLimitPlayersInput(plArmatureMod *avatar)
 
 // CTOR default
 plAvSeekTask::plAvSeekTask()
-: fAlign(kAlignHandle),
-  fDuration(0.25),
-  fTarget(nil),
-  fAnimInstance(nil),
-  fTargetTime(0),
-  fPhysicalAtStart(false),
-  fCleanup(false)
+    : fAlign(kAlignHandle),
+      fDuration(0.25f),
+      fTarget(),
+      fAnimInstance(),
+      fTargetTime(),
+      fPhysicalAtStart(),
+      fCleanup()
 {
 }
 
 // CTOR target, align, animName
-plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, const ST::string& animName)
-: fAnimName(animName),
-  fAlign(align),
-  fDuration(0.25),
-  fTarget(target),
-  fAnimInstance(nil),
-  fTargetTime(0),
-  fPhysicalAtStart(false),
-  fCleanup(false)
+plAvSeekTask::plAvSeekTask(plKey target, plAvAlignment align, ST::string animName)
+    : fAnimName(std::move(animName)),
+      fAlign(align),
+      fDuration(0.25f),
+      fTarget(std::move(target)),
+      fAnimInstance(),
+      fTargetTime(),
+      fPhysicalAtStart(),
+      fCleanup()
 {
 }
 
 // CTOR target
 plAvSeekTask::plAvSeekTask(plKey target)
-: fAlign(kAlignHandle),
-  fDuration(0.25),
-  fTarget(target),
-  fAnimInstance(nil),
-  fTargetTime(0),
-  fPhysicalAtStart(false),
-  fCleanup(false)
+    : fAlign(kAlignHandle),
+      fDuration(0.25f),
+      fTarget(std::move(target)),
+      fAnimInstance(),
+      fTargetTime(),
+      fPhysicalAtStart(),
+      fCleanup()
 {
 }
 

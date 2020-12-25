@@ -356,8 +356,7 @@ bool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
     float t2sLen = tgt2src.Magnitude();
     hsFastMath::NormalizeAppr(tgt2src);
 
-    hsVector3 out;
-    out.Set(-tgt2src.fY, tgt2src.fX, 0); // (0,0,1) X (tgt2src)
+    hsVector3 out(-tgt2src.fY, tgt2src.fX, 0.f); // (0,0,1) X (tgt2src)
 
     if( fFollowFlags & kOffsetAng )
     {
@@ -376,12 +375,11 @@ bool plLineFollowMod::IOffsetTargetTransform(hsMatrix44& tgtXfm)
         out *= fOffset;
     }
     else
-        out.Set(0,0,0);
+        out.Set(0.f, 0.f, 0.f);
 
     if( fFollowFlags & kForceToLine )
     {
-        hsPoint3 newSearch = tgtPos;
-        newSearch += out;
+        hsPoint3 newSearch = tgtPos + out;
         IGetTargetTransform(newSearch, tgtXfm);
     }
     else

@@ -71,11 +71,7 @@ plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, float
     fMovementStrategy(),
     fSimLength(),
     fFlags(),
-    fLocalRotation(0.0f, 0.0f, 0.0f, 1.0f),
     fLocalPosition(0.0f, 0.0f, -2000.0f),
-    fLastLocalPosition(0.0f, 0.0f, 0.0f),
-    fLinearVelocity(0.0f, 0.0f, 0.0f),
-    fAchievedLinearVelocity(0.0f, 0.0f, 0.0f),
     fPushingPhysical(),
     fFacingPushingPhysical()
 {
@@ -290,7 +286,7 @@ void plAnimatedMovementStrategy::RecalcVelocity(double timeNow, float elapsed, b
 
 void plAnimatedMovementStrategy::IRecalcLinearVelocity(float elapsed, hsMatrix44 &prevMat, hsMatrix44 &curMat)
 {
-    hsPoint3 startPos(0.0f, 0.0f, 0.0f);                    // default position (at start of anim)
+    hsPoint3 startPos;                                      // default position (at start of anim)
     hsPoint3 prevPos = prevMat.GetTranslate();              // position previous frame
     hsPoint3 nowPos = curMat.GetTranslate();                // position current frame
 
@@ -430,7 +426,7 @@ void plWalkingStrategy::Apply(float delSecs)
             if (velNorm.MagnitudeSquared() > 0.0f)
                 velNorm.Normalize();
 
-            hsVector3 offset(0.0f, 0.0f, 0.0f);
+            hsVector3 offset;
             for (const auto& collision : fContacts) {
                 offset += collision.Normal;
                 if (velNorm * collision.Normal < 0.f) {
@@ -568,7 +564,7 @@ void plWalkingStrategy::Update(float delSecs)
         fTimeInAir += delSecs;
     }
 
-    hsVector3 zeroVelocity(0.f, 0.f, 0.f);
+    hsVector3 zeroVelocity;
     fController->SetLinearVelocity(zeroVelocity);
 
     if (fFlags & kClearImpact) {
@@ -673,7 +669,7 @@ void plSwimStrategy::Apply(float delSecs)
     if (fCurrentRegion != nil)
     {
         float angCurrent = 0.0f;
-        hsVector3 linCurrent(0.0f, 0.0f, 0.0f);
+        hsVector3 linCurrent;
         fCurrentRegion->GetCurrent(fController, linCurrent, angCurrent, delSecs);
 
         if (fabs(angCurrent) > 0.0001f)

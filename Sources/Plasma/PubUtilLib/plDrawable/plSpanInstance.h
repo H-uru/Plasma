@@ -262,13 +262,11 @@ public:
         case plSpanEncoding::kPos008:
             return hsVector3(0,0, *fPos888 * fEncoding.fPosScale);
         }
-        return hsVector3(0,0,0);
+        return {};
     };
     hsPoint3 Position(const hsPoint3& p) const
     {
-        hsPoint3 pos(p);
-        pos += DelPos();
-        return pos;
+        return p + DelPos();
     };
     uint32_t      Color(uint32_t c) const 
     { 

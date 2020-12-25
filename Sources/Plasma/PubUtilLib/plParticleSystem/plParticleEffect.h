@@ -187,8 +187,8 @@ protected:
 public:
 
     plParticleWindEffect()
-        : fWindVec(0.f, 0.f, 0.f), fDir(1.f, 0.f, 0.f), fSwirl(0.1f), fConstancy(),
-          fHorizontal(), fLastDirSecs(-1.f), fRefDir(0.f, 0.f, 0.f),
+        : fWindVec(), fDir(1.f, 0.f, 0.f), fSwirl(0.1f), fConstancy(),
+          fHorizontal(), fLastDirSecs(-1.f), fRefDir(),
           fRandDir(1.f, 0.f, 0.f), fStrength()
     { }
 
@@ -221,15 +221,20 @@ class plParticleLocalWind : public plParticleWindEffect
 {
 protected:
     hsVector3   fScale;
-    float    fSpeed;
+    float       fSpeed;
 
     hsVector3   fPhase;
     hsVector3   fInvScale;
     double      fLastPhaseSecs;
     
 public:
-    plParticleLocalWind();
-    ~plParticleLocalWind();
+    plParticleLocalWind()
+        : fScale(),
+          fSpeed(),
+          fPhase(),
+          fInvScale(),
+          fLastPhaseSecs(-1.f)
+    { }
 
     CLASSNAME_REGISTER( plParticleLocalWind );
     GETINTERFACE_ANY( plParticleLocalWind, plParticleWindEffect );
@@ -311,7 +316,22 @@ protected:
     void IUpdateInfluences(const plEffectTargetInfo &target);
 
 public:
-    plParticleFlockEffect();
+    plParticleFlockEffect()
+        : fInfAvgRadSq(1.f),
+          fInfRepRadSq(1.f),
+          fAvgVelStr(1.f),
+          fRepDirStr(1.f),
+          fGoalOrbitStr(1.f),
+          fGoalChaseStr(1.f),
+          fGoalDistSq(1.f),
+          fFullChaseDistSq(1.f),
+          fMaxOrbitSpeed(1.f),
+          fMaxChaseSpeed(1.f),
+          fMaxParticles(),
+          fDistSq(),
+          fInfluences()
+    { }
+
     ~plParticleFlockEffect();
 
     CLASSNAME_REGISTER( plParticleFlockEffect );

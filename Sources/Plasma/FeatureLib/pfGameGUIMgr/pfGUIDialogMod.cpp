@@ -356,10 +356,7 @@ plKey   pfGUIDialogMod::GetSceneNodeKey()
 void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset )
 {
     int         i;
-    hsPoint3    mousePoint;
-
-
-    mousePoint.Set( mouseX, mouseY, 0.f );
+    hsPoint3    mousePoint(mouseX, mouseY, 0.f);
 
     for( i = 0; i < fControls.GetCount(); i++ )
     {

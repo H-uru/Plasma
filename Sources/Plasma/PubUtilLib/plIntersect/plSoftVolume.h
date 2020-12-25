@@ -82,8 +82,12 @@ private:
     virtual float        IGetStrength(const hsPoint3& pos) const = 0;
 
 public:
-    plSoftVolume();
-    virtual ~plSoftVolume();
+    plSoftVolume()
+        : fListenState(),
+          fListenStrength(),
+          fInsideStrength(1.f),
+          fOutsideStrength()
+    { }
 
     CLASSNAME_REGISTER( plSoftVolume );
     GETINTERFACE_ANY( plSoftVolume, plRegionBase );

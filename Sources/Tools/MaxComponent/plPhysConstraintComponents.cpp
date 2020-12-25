@@ -445,8 +445,7 @@ bool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMs
 
         //Grab the pivot point from the child translate
         hsPoint3 PP = node->GetLocalToWorld44().GetTranslate();
-        hsVector3 PPVector;
-        PPVector.Set(PP.fX, PP.fY, PP.fZ);
+        hsVector3 PPVector(PP.fX, PP.fY, PP.fZ);
         HMod->SetPP(PPVector);
 
 
@@ -707,8 +706,7 @@ bool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
 
     // Grab the pivot point from the child translate
     hsPoint3 pivot = node->GetLocalToWorld44().GetTranslate();
-    hsVector3 pivotVec;
-    pivotVec.Set(pivot.fX, pivot.fY, pivot.fZ);
+    hsVector3 pivotVec(pivot.fX, pivot.fY, pivot.fZ);
     mod->SetPP(pivotVec);
 
     // Cut'n'Paste

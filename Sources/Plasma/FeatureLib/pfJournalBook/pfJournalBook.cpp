@@ -2911,7 +2911,8 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
             yScale *= 1/0.7; // adjust because the book isn't square
         }
 
-        hsVector3 scaleVec(xScale,yScale,1), translateVec(-(xRel*xScale),-(yRel*yScale),0);
+        hsVector3 scaleVec(xScale, yScale, 1.f);
+        hsVector3 translateVec(-(xRel*xScale), -(yRel*yScale), 0.f);
         hsMatrix44 scaleMat, translateMat;
         scaleMat.MakeScaleMat(&scaleVec);
         translateMat.MakeTranslateMat(&translateVec);
@@ -2919,7 +2920,8 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         hsMatrix44 flipMat;
         if (chunk->fOnCover) // cover movies need to be y flipped
         {
-            hsVector3 yTransVec(0,-1,0), invertYVec(1,-1,1);
+            hsVector3 yTransVec(0.f, -1.f, 0.f);
+            hsVector3 invertYVec(1.f, -1.f, 1.f);
             hsMatrix44 invertY, transY;
             invertY.MakeScaleMat(&invertYVec);
             transY.MakeTranslateMat(&yTransVec);
@@ -2929,7 +2931,8 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         {
             if ((whichDTMap == pfJournalDlgProc::kTagLeftDTMap) || (whichDTMap == pfJournalDlgProc::kTagTurnBackDTMap))
             {
-                hsVector3 xTransVec(-1,0,0), invertXVec(-1,1,1);
+                hsVector3 xTransVec(-1.f, 0.f, 0.f);
+                hsVector3 invertXVec(-1.f, 1.f, 1.f);
                 hsMatrix44 invertX, transX;
                 invertX.MakeScaleMat(&invertXVec);
                 transX.MakeTranslateMat(&xTransVec);
@@ -3007,7 +3010,8 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
     layer->SetUVWSrc(0);
 
     // Set up the transform.
-    hsVector3 yTransVec(0,-1,0), invertYVec(1,-1,1);
+    hsVector3 yTransVec(0.f, -1.f, 0.f);
+    hsVector3 invertYVec(1.f, -1.f, 1.f);
     hsMatrix44 xfm, invertY, transY, flipY;
     invertY.MakeScaleMat(&invertYVec);
     transY.MakeTranslateMat(&yTransVec);
@@ -3090,7 +3094,10 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
         yScale *= 1/0.7; // adjust because the book isn't square
     }
 
-    hsVector3 scaleVec(xScale,yScale,1), translateVec(-(xRel*xScale),-(yRel*yScale),0), yTransVec(0,-1,0), invertYVec(1,-1,1);
+    hsVector3 scaleVec(xScale, yScale, 1.f);
+    hsVector3 translateVec(-(xRel*xScale), -(yRel*yScale), 0.f);
+    hsVector3 yTransVec(0.f, -1.f, 0.f);
+    hsVector3 invertYVec(1.f, -1.f, 1.f);
     hsMatrix44 scaleMat, translateMat, invertY, transY;
     scaleMat.MakeScaleMat(&scaleVec);
     translateMat.MakeTranslateMat(&translateVec);

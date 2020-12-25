@@ -56,15 +56,13 @@ protected:
     hsVector3       fVel;
 
 public:
-    plListenerMsg() : plMessage(nil, nil, nil),
-                        fPos(0,0,0),
-                        fDir(0,1.f,0),
-                        fUp(0,0,1.f),
-                        fVel(0,0,0)
-            { SetBCastFlag(kBCastByExactType); }
+    plListenerMsg()
+        : plMessage(nullptr, nullptr, nullptr),
+          fDir(0.f ,1.f, 0.f), fUp(0.f, 0.f, 1.f)
+    {
+        SetBCastFlag(kBCastByExactType);
+    }
 
-    ~plListenerMsg() {}
-    
     CLASSNAME_REGISTER( plListenerMsg );
     GETINTERFACE_ANY( plListenerMsg, plMessage );
 

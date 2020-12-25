@@ -204,7 +204,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     float genLife        = -1;
     float partLifeMin, partLifeMax;
     float pps            = fUserInput.fPPS; 
-    hsPoint3 pos(0, 0, 0);
+    hsPoint3 pos;
     float pitch          = hsConstants::pi<float>;
     float yaw            = 0; 
     float angleRange     = hsDegreesToRadians(fUserInput.fConeAngle);

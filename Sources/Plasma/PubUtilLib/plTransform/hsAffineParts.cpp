@@ -143,8 +143,7 @@ void hsAffineParts::ComposeMatrix(hsMatrix44 *out) const
     hsMatrix44 F;
     if (fF==-1.0)
     {
-        hsVector3 s;
-        s.Set(-1,-1,-1);
+        hsVector3 s(-1.f, -1.f, -1.f);
         F.MakeScaleMat(&s);
     }
     else

@@ -187,8 +187,7 @@ hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>&
     length = 0;
     for( i = 0; i < nodes.GetCount(); i++ )
     {
-        hsVector3 sep;
-        sep.Set(&bnd.GetCenter(), &nodes[i]->fWorldBounds.GetCenter());
+        hsVector3 sep(&bnd.GetCenter(), &nodes[i]->fWorldBounds.GetCenter());
         float len = sep.MagnitudeSquared();
         if( len > length )
         {
@@ -422,7 +421,7 @@ int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, bool disable)
     leaf->fWorldBounds = worldBnd;
     if( leaf->fWorldBounds.GetType() != kBoundsNormal )
     {
-        static const hsPoint3 zero(0.f, 0.f, 0.f);
+        static const hsPoint3 zero;
         leaf->fWorldBounds.Reset(&zero);
     }
 
@@ -477,14 +476,14 @@ void plSpaceTreeMaker::TestTree()
 
     hsMatrix44 liX;
     hsMatrix44 invLiX;
-    liX.MakeTranslateMat(&hsVector3(0.5f, 0.5f, 0));
+    liX.MakeTranslateMat(&hsVector3(0.5f, 0.5f, 0.f));
     liX.GetInverse(&invLiX);
 
     plSphereIsect sphere;
     sphere.SetRadius(0.2);
     sphere.SetTransform(liX, invLiX);
     
-    tree->SetViewPos(*hsPoint3().Set(0,0,0));
+    tree->SetViewPos(*hsPoint3());
 
     plConeIsect cone;
     cone.SetAngle(hsConstants::pi<float> * 0.25f);
@@ -551,7 +550,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
     plSpaceTree* tree = new plSpaceTree;
 
     tree->fTree.SetCount(1);
-    hsPoint3 zero(0, 0, 0);
+    hsPoint3 zero;
     tree->fTree[0].fWorldBounds.Reset(&zero);
     tree->fTree[0].fFlags = plSpaceTreeNode::kEmpty;
     tree->fRoot = 0;

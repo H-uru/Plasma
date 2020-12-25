@@ -211,10 +211,9 @@ hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const
     if (fFlags & hsMatrix44::kIsIdent)
         return p;
 
-    hsPoint3 rVal;
-    rVal.fX = (p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3];
-    rVal.fY = (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2]) + fMap[1][3];
-    rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]) + fMap[2][3];
+    hsPoint3 rVal((p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3],
+                  (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2]) + fMap[1][3],
+                  (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]) + fMap[2][3]);
     return rVal;
 }
 
@@ -531,16 +530,15 @@ hsMatrix44& hsMatrix44::MakeCamera(const hsPoint3* from, const hsPoint3* at,
 {
     hsVector3 dirZ(at, from);
     hsVector3 trans( -from->fX, -from->fY, -from->fZ );
-    hsVector3 dirY, dirX;
     hsMatrix44 rmat;
-    
-    dirX = (*up) % dirZ; // Stop passing in down!!! // mf_flip_up - mf
+
+    hsVector3 dirX = (*up) % dirZ; // Stop passing in down!!! // mf_flip_up - mf
     if (dirX.MagnitudeSquared())
         dirX.Normalize();
 
     if (dirZ.MagnitudeSquared())
         dirZ.Normalize();
-    dirY = dirZ % dirX;
+    hsVector3 dirY = dirZ % dirX;
     if (dirY.MagnitudeSquared())
         dirY.Normalize();
 
@@ -593,17 +591,17 @@ void hsMatrix44::MakeCameraMatrices(const hsPoint3& from, const hsPoint3& at, co
 
 void hsMatrix44::MakeEnvMapMatrices(const hsPoint3& pos, hsMatrix44* worldToCameras, hsMatrix44* cameraToWorlds)
 {
-    MakeCameraMatrices(pos, hsPoint3(pos.fX - 1.f, pos.fY, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[0], cameraToWorlds[0]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX - 1.f, pos.fY, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[0], cameraToWorlds[0]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX + 1.f, pos.fY, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[1], cameraToWorlds[1]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX + 1.f, pos.fY, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[1], cameraToWorlds[1]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY + 1.f, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[2], cameraToWorlds[2]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY + 1.f, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[2], cameraToWorlds[2]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY - 1.f, pos.fZ), hsVector3(0, 0, 1.f), worldToCameras[3], cameraToWorlds[3]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY - 1.f, pos.fZ), hsVector3(0.f, 0.f, 1.f), worldToCameras[3], cameraToWorlds[3]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ + 1.f), hsVector3(0, -1.f, 0), worldToCameras[4], cameraToWorlds[4]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ + 1.f), hsVector3(0.f, -1.f, 0.f), worldToCameras[4], cameraToWorlds[4]);
 
-    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ - 1.f), hsVector3(0, 1.f, 0), worldToCameras[5], cameraToWorlds[5]);
+    MakeCameraMatrices(pos, hsPoint3(pos.fX, pos.fY, pos.fZ - 1.f), hsVector3(0.f, 1.f, 0.f), worldToCameras[5], cameraToWorlds[5]);
 }
 
 //
@@ -628,10 +626,9 @@ hsMatrix44& hsMatrix44::MakeCameraUpPreserving(const hsPoint3* from, const hsPoi
     hsVector3 dirZ(at, from);
     hsVector3 trans( -from->fX, -from->fY, -from->fZ );
     hsVector3 dirY( up->fX, up->fY, up->fZ );
-    hsVector3 dirX;
     hsMatrix44 rmat;
-    
-    dirX =   dirY % dirZ;
+
+    hsVector3 dirX =   dirY % dirZ;
     dirX.Normalize();
 
     dirY.Normalize();
@@ -815,16 +812,6 @@ hsVector3* hsMatrix44::GetTranslate(hsVector3 *pt) const
     for (int i =0; i < 3; i++)
     {
         (*pt)[i] = fMap[i][3];
-    }
-    return pt;
-}
-
-const hsPoint3 hsMatrix44::GetTranslate() const
-{
-    hsPoint3 pt;
-    for (int i =0; i < 3; i++)
-    {
-        (pt)[i] = fMap[i][3];
     }
     return pt;
 }

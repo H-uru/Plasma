@@ -47,29 +47,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLOSRequestMsg.h"
 
 plLOSRequestMsg::plLOSRequestMsg()
-    : fRequestID(0),
-    fRequestType(plSimDefs::kLOSDBNone),
-    fTestType(kTestAny),
-    fReportType(kReportHit),
-    fCullDB(plSimDefs::kLOSDBNone),
-    fWorldKey(nil),
-    fRequestName(ST_LITERAL("(unnamed)"))
+    : fRequestID(),
+      fRequestType(plSimDefs::kLOSDBNone),
+      fTestType(kTestAny),
+      fReportType(kReportHit),
+      fCullDB(plSimDefs::kLOSDBNone),
+      fWorldKey(),
+      fRequestName(ST_LITERAL("(unnamed)"))
 {
     AddReceiver(hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY));
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
-plLOSRequestMsg::plLOSRequestMsg(const plKey& sender, hsPoint3& fromPoint, hsPoint3& toPoint, plSimDefs::plLOSDB db, TestType test, ReportType report)
+plLOSRequestMsg::plLOSRequestMsg(const plKey& sender, const hsPoint3& fromPoint, const hsPoint3& toPoint, plSimDefs::plLOSDB db, TestType test, ReportType report)
     : plMessage(sender, hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY), nil),
-    fFrom(fromPoint),
-    fTo(toPoint),
-    fRequestID(0),
-    fRequestType(db),
-    fTestType(test),
-    fReportType(report),
-    fCullDB(plSimDefs::kLOSDBNone),
-    fWorldKey(nil),
-    fRequestName(ST_LITERAL("(unnamed)"))
+      fFrom(fromPoint),
+      fTo(toPoint),
+      fRequestID(),
+      fRequestType(db),
+      fTestType(test),
+      fReportType(report),
+      fCullDB(plSimDefs::kLOSDBNone),
+      fWorldKey(),
+      fRequestName(ST_LITERAL("(unnamed)"))
 {
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }

@@ -258,8 +258,10 @@ private:
     float       fSpeed; // in meters/sec
     bool        fHasLastPos; // does the last position make sense?
 public:
-    pfBoidGoal();
-    ~pfBoidGoal() {}
+    pfBoidGoal()
+        : fSpeed(0), fHasLastPos()
+    { }
+    virtual ~pfBoidGoal() = default;
 
     void Update(plSceneObject *goal, float deltaTime);
 

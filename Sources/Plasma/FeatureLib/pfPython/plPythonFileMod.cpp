@@ -1062,7 +1062,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 4, pyPoint3::New(eventData->fHitPoint));
 
                         // make it in the local space
-                        hsPoint3 tolocal{ 0.f, 0.f, 0.f };
+                        hsPoint3 tolocal;
                         if (eventData->fPicked){
                             plSceneObject* obj = plSceneObject::ConvertNoRef(eventData->fPicked->ObjectIsLoaded());
                             if (obj) {

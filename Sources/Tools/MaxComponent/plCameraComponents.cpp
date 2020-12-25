@@ -844,9 +844,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
 
     
     obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
-    
-    hsVector3 pt;   
-    
+
     float FOVvalue = hsRadiansToDegrees(theCam->GetFOV(Now));
     int FOVType = theCam->GetFOVType();
     float wDeg, hDeg;
@@ -1018,10 +1016,9 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
                 pBrain->SetFlags(plCameraBrain1::kCutPOA);
                 pBrain->SetFlags(plCameraBrain1::kCutPos);
             }
-            hsVector3 pt;
-            pt.fX = pBlk->GetFloat(kPOAObjOffsetX);
-            pt.fY = pBlk->GetFloat(kPOAObjOffsetY);
-            pt.fZ = pBlk->GetFloat(kPOAObjOffsetZ);
+            hsVector3 pt(pBlk->GetFloat(kPOAObjOffsetX),
+                         pBlk->GetFloat(kPOAObjOffsetY),
+                         pBlk->GetFloat(kPOAObjOffsetZ));
             pBrain->SetPOAOffset(pt);
             if (pBlk->GetInt(kPOAObjWorldspace))
                 pBrain->SetFlags(plCameraBrain1::kWorldspacePOA);
@@ -1044,10 +1041,9 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         if (!pBlk)
             return false;
 
-        hsVector3 pt;
-        pt.fX = pBlk->GetFloat(kAvPOAOffX);
-        pt.fY = pBlk->GetFloat(kAvPOAOffY);
-        pt.fZ = pBlk->GetFloat(kAvPOAOffZ);
+        hsVector3 pt(pBlk->GetFloat(kAvPOAOffX),
+                     pBlk->GetFloat(kAvPOAOffY),
+                     pBlk->GetFloat(kAvPOAOffZ));
         if (pBlk->GetInt(kAvPOAWorldspace))
             pBrain->SetFlags(plCameraBrain1::kWorldspacePOA);
         pBrain->SetPOAOffset(pt);
@@ -1350,8 +1346,7 @@ bool plAutoCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
-    hsVector3 pt;
-    pt.Set(fCompPB->GetFloat(kAutoCamOffX),fCompPB->GetFloat(kAutoCamOffY),fCompPB->GetFloat(kAutoCamOffZ));
+    hsVector3 pt(fCompPB->GetFloat(kAutoCamOffX),fCompPB->GetFloat(kAutoCamOffY),fCompPB->GetFloat(kAutoCamOffZ));
     pBrain->SetOffset(pt);
     pt.Set(fCompPB->GetFloat(kAutoPOAOffX),fCompPB->GetFloat(kAutoPOAOffY),fCompPB->GetFloat(kAutoPOAOffZ));
     pBrain->SetPOAOffset(pt);
@@ -1513,8 +1508,7 @@ bool plFPCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     pMsg2->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg2);
 
-    hsVector3 pt;
-    pt.Set(fCompPB->GetFloat(kFPCamOffX),fCompPB->GetFloat(kFPCamOffY),fCompPB->GetFloat(kFPCamOffZ));
+    hsVector3 pt(fCompPB->GetFloat(kFPCamOffX),fCompPB->GetFloat(kFPCamOffY),fCompPB->GetFloat(kFPCamOffZ));
     pBrain->SetOffset(pt);
     pt.Set(fCompPB->GetFloat(kFPCamPOAOffX),fCompPB->GetFloat(kFPCamPOAOffY),fCompPB->GetFloat(kFPCamPOAOffZ));
     pBrain->SetPOAOffset(pt);
@@ -1953,7 +1947,7 @@ bool plCircleCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
     point2.fY = ReturnVal.y;    
     point2.fZ = ReturnVal.z;    
     
-    hsVector3 vec(point - point2);
+    hsVector3 vec(&point, &point2);
     pBrain->SetRadius(vec.Magnitude());
     pBrain->SetCenter(&point);
 
@@ -2304,8 +2298,7 @@ bool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plGenRefMsg* pMsg = new plGenRefMsg(pMod->GetKey(), plRefMsg::kOnCreate, -1, 0);
     pMsg->SetRef( (hsKeyedObject*)pBrain );
     plConvert::Instance().AddMessageToQueue(pMsg);
-    hsVector3 pt;
-    pt.Set(fCompPB->GetFloat(kFollowCamOffX),fCompPB->GetFloat(kFollowCamOffY),fCompPB->GetFloat(kFollowCamOffZ));
+    hsVector3 pt(fCompPB->GetFloat(kFollowCamOffX),fCompPB->GetFloat(kFollowCamOffY),fCompPB->GetFloat(kFollowCamOffZ));
     pBrain->SetOffset(pt);
     pt.Set(fCompPB->GetFloat(kFollowPOAOffX),fCompPB->GetFloat(kFollowPOAOffY),fCompPB->GetFloat(kFollowPOAOffZ));
     pBrain->SetPOAOffset(pt);

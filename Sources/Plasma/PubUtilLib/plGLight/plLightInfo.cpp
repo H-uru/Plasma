@@ -874,10 +874,9 @@ void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& streng
 
     // Volume - Want to base this on the closest point on the bounds, instead of just the center.
     const hsPoint3& pos = bnd.GetCenter();
-    
-    hsVector3 del;
+
     hsPoint3 wpos = GetWorldPosition();
-    del.Set(&pos, &wpos);
+    hsVector3 del(&pos, &wpos);
     float invDist = del.MagnitudeSquared();
     invDist = hsFastMath::InvSqrtAppr(invDist);
 
