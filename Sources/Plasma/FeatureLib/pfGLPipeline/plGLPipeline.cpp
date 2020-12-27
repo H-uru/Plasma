@@ -619,16 +619,39 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     glEnableVertexAttribArray(kVtxPosition);
     glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
 
+    size_t weight_offset = 0;
+    switch (vRef->fFormat & plGBufferGroup::kSkinWeightMask)
+    {
+        case plGBufferGroup::kSkinNoWeights:
+            break;
+        case plGBufferGroup::kSkin1Weight:
+            weight_offset += sizeof(float);
+            break;
+        case plGBufferGroup::kSkin2Weights:
+            weight_offset += sizeof(float) * 2;
+            break;
+        case plGBufferGroup::kSkin3Weights:
+            weight_offset += sizeof(float) * 3;
+            break;
+        default:
+            hsAssert( false, "Bad skin weight value in GBufferGroup" );
+    }
+
+    if (vRef->fFormat & plGBufferGroup::kSkinIndices) {
+        hsAssert(false, "Indexed skinning not supported");
+        weight_offset += sizeof(uint32_t);
+    }
+
     glEnableVertexAttribArray(kVtxNormal);
-    glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3) + weight_offset));
 
     glEnableVertexAttribArray(kVtxColor);
-    glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
+    glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + weight_offset));
 
     int numUVs = vRef->fOwner->GetNumUVs();
     for (int i = 0; i < numUVs; i++) {
         glEnableVertexAttribArray(kVtxUVWSrc + i);
-        glVertexAttribPointer(kVtxUVWSrc + i, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
+        glVertexAttribPointer(kVtxUVWSrc + i, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i) + weight_offset));
     }
 
     LOG_GL_ERROR_CHECK("Vertex Attributes failed")
