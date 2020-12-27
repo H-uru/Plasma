@@ -1,3 +1,4 @@
+ @@ -1,45 +1,3 @@
 # /*==LICENSE==*
 #
 # CyanWorlds.com Engine - MMOG client, server and tools
@@ -43,7 +44,7 @@
 STATEDESC GoMePubNew
 {
     VERSION 1
-
+    
 #Game Variables
     VAR BOOL    islmGZBeamVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
 
@@ -114,5 +115,39 @@ STATEDESC GoMePubNew
     VAR BOOL    SinkStat[1]    DEFAULT=0
     VAR BOOL    ChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BOOL    XMasVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
+
+STATEDESC GoMePubNew
+{
+    VERSION 9
+
+    VAR BOOL    BarDoorStat[1]                   DEFAULT=1
+    VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    SinkStat[1]                      DEFAULT=0
+    VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
+# Christmas/Hanukkah Decor
+    VAR BOOL    XMasVis[1]                       DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT
+# Pride Decor
+    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Halloween Deco
+    VAR BOOL    gmpnHalloweenVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Fall/Thanksgiving
+    VAR BOOL    gmpnFallThanksVis[1]             DEFAULT=0    DEFAULTOPTION=VAULT
+# New Year Deco
+    VAR BOOL    gmpnNewYearVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
+# St Patricks Day Deco
+    VAR BOOL    gmpnStPatsDayVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+# Tiki Deco for GreyDragon
+    VAR BOOL    gmpnTikiDecoVis[1]               DEFAULT=0    DEFAULTOPTION=VAULT
 
 }
