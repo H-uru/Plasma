@@ -480,12 +480,11 @@ void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, Verte
     // will have indices, but we strip them out for the D3D buffer.
     if (format & plGBufferGroup::kSkinIndices) {
         hsStatusMessage("Have to deal with skinning :(");
-#if 0
+
         format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
         format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
         vRef->SetSkinned(true);
         vRef->SetVolatile(true);
-#endif
     }
 
 
@@ -599,7 +598,35 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
 
 void plGLDevice::FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
 {
-    hsStatusMessage("Trying to fill volatile vertex buffer ref!");
+    uint8_t* dst = ref->fData;
+    uint8_t* src = group->GetVertBufferData(idx);
+
+    size_t uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(float) * 3;
+    uint8_t numWeights = (group->GetVertexFormat() & plGBufferGroup::kSkinWeightMask) >> 4;
+
+    for (uint32_t i = 0; i < ref->fCount; ++i) {
+        memcpy(dst, src, sizeof(hsPoint3)); // pre-pos
+        dst += sizeof(hsPoint3);
+        src += sizeof(hsPoint3);
+
+        src += numWeights * sizeof(float); // weights
+
+        if (group->GetVertexFormat() & plGBufferGroup::kSkinIndices)
+            src += sizeof(uint32_t); // indices
+
+        memcpy(dst, src, sizeof(hsVector3)); // pre-normal
+        dst += sizeof(hsVector3);
+        src += sizeof(hsVector3);
+
+        memcpy(dst, src, sizeof(uint32_t) * 2); // diffuse & specular
+        dst += sizeof(uint32_t) * 2;
+        src += sizeof(uint32_t) * 2;
+
+        // UVWs
+        memcpy(dst, src, uvChanSize);
+        src += uvChanSize;
+        dst += uvChanSize;
+    }
 }
 
 void plGLDevice::SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef)
