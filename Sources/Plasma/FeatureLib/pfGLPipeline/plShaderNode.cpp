@@ -92,6 +92,16 @@ ST::string plShaderContext::RenderNode(std::shared_ptr<plShaderNode> node, std::
         }
         break;
 
+        case kOutputVariable:
+        {
+            std::shared_ptr<plOutputVariableNode> var = static_pointer_cast<plOutputVariableNode>(node);
+
+            this->outputVariables.insert(var);
+
+            return var->name;
+        }
+        break;
+
         case kTempVar:
         {
             std::shared_ptr<plTempVariableNode> tmp = static_pointer_cast<plTempVariableNode>(node);
@@ -219,7 +229,7 @@ ST::string plShaderContext::Render()
     ST::string_stream out;
 
     //out << ST::format("#version {}\n", this->version);
-    out << "#version 300 es\n";
+    out << "#version 330\n";
 
     if (this->type == kFragment)
         out << "precision mediump float;\n";
@@ -252,10 +262,27 @@ ST::string plShaderContext::Render()
     }
 
     for (std::shared_ptr<plVaryingNode> node : this->varyings) {
-        if (node->count > 1)
-            out << ST::format("varying {} {}[{}];\n", node->type, node->name, node->count);
-        else
-            out << ST::format("varying {} {};\n", node->type, node->name);
+        if (node->count > 1) {
+            if (this->type == kVertex) {
+                out << ST::format("out {} {}[{}];\n", node->type, node->name, node->count);
+            } else {
+                out << ST::format("in {} {}[{}];\n", node->type, node->name, node->count);
+            }
+        } else {
+            if (this->type == kVertex) {
+                out << ST::format("out {} {};\n", node->type, node->name);
+            } else {
+                out << ST::format("in {} {};\n", node->type, node->name);
+            }
+        }
+    }
+
+    for (std::shared_ptr<plOutputVariableNode> node : this->outputVariables) {
+        if (node->count > 1) {
+            out << ST::format("out {} {}[{}];\n", node->type, node->name, node->count);
+        } else {
+            out << ST::format("out {} {};\n", node->type, node->name);
+        }
     }
 
 

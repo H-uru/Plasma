@@ -60,6 +60,7 @@ enum NodeType {
     kAttribute,
     kVarying,
     kUniform,
+    kOutputVariable,
     kTempVar,
     kArgument,
     kFnCall,
@@ -139,6 +140,11 @@ public:
       : plGlobalVariableNode(kVarying, name, type, n) { }
 };
 
+class plOutputVariableNode : public plGlobalVariableNode {
+public:
+    plOutputVariableNode(ST::string name, ST::string type, size_t n = 1)
+      : plGlobalVariableNode(kOutputVariable, name, type, n) { }
+};
 
 class plTempVariableNode : public plVariableNode {
 public:
@@ -294,6 +300,7 @@ class plShaderContext : public std::enable_shared_from_this<plShaderContext>
     std::set<std::shared_ptr<plAttributeNode>> attributes;
     std::set<std::shared_ptr<plUniformNode>> uniforms;
     std::set<std::shared_ptr<plVaryingNode>> varyings;
+    std::set<std::shared_ptr<plOutputVariableNode>> outputVariables;
 
 public:
     plShaderContext(CtxType type, int32_t version) : type(type), version(version) { }
