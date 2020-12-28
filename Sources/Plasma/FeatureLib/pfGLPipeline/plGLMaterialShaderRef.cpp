@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // From plGLDevice.cpp
 extern GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst);
 
-const char* VERTEX_SHADER_STRING = R"(#version 300 es
+const char* VERTEX_SHADER_STRING = R"(#version 330
 precision lowp int;
 
 struct lightSource {
@@ -168,7 +168,7 @@ void main() {
 })";
 
 
-const char* FRAGMENT_SHADER_STRING = R"(#version 300 es
+const char* FRAGMENT_SHADER_STRING = R"(#version 330
 precision mediump float;
 precision lowp int;
 
@@ -547,7 +547,7 @@ void plGLMaterialShaderRef::ILoopOverLayers()
     for (j = 0; j < fMaterial->GetNumLayers(); )
     {
         size_t iCurrMat = j;
-        std::shared_ptr<plShaderFunction> fragPass = std::make_shared<plShaderFunction>(ST::format("pass{}", pass), "void");
+        std::shared_ptr<plShaderFunction> fragPass = std::make_shared<plShaderFunction>(ST::format("pass{}", pass), "vec4");
         std::shared_ptr<plShaderFunction> vertPass = std::make_shared<plShaderFunction>(ST::format("pass{}", pass), "void");
 
         j = IHandleMaterial(iCurrMat, vertPass, fragPass);
@@ -559,7 +559,9 @@ void plGLMaterialShaderRef::ILoopOverLayers()
         fFragmentShader->PushFunction(fragPass);
 
         std::shared_ptr<plConditionNode> passCond = COND(IS_EQ(uPass, CONSTANT(ST::format("{}", pass))));
-        passCond->PushOp(CALL(fragPass->name));
+
+        std::shared_ptr<plOutputVariableNode> output = IFindVariable<plOutputVariableNode>("fragColor", "vec4");
+        passCond->PushOp(ASSIGN(output, CALL(fragPass->name)));
 
         // if (uPassNumber == curpass) { curpass(); }
         fragMain->PushOp(passCond);
@@ -732,7 +734,7 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
         finalColor = PROP(vVtxColor, "rgb");
     }
 
-    sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragColor"), CALL("vec4", finalColor, sb.fCurrAlpha)));
+    sb.fFunction->PushOp(RETURN(CALL("vec4", finalColor, sb.fCurrAlpha)));
 
     return layer + currNumLayers;
 }
