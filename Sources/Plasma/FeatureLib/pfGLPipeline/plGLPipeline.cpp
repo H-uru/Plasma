@@ -299,6 +299,8 @@ bool plGLPipeline::BeginRender()
     if (fInSceneDepth++ == 0) {
         fDevice.BeginRender();
 
+        fVtxRefTime++;
+
         hsColorRGBA clearColor = GetClearColor();
 
         glDepthMask(GL_TRUE);
@@ -507,9 +509,9 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             plProfile_EndTiming(SpanTransforms);
 
             // Check that the underlying buffers are ready to go.
-            //plProfile_BeginTiming(CheckDyn);
-            //ICheckDynBuffers(drawable, drawable->GetBufferGroup(tempIce.fGroupIdx), &tempIce);
-            //plProfile_EndTiming(CheckDyn);
+            plProfile_BeginTiming(CheckDyn);
+            ICheckDynBuffers(ice, ice->GetBufferGroup(tempIce.fGroupIdx), &tempIce);
+            plProfile_EndTiming(CheckDyn);
 
             plProfile_BeginTiming(CheckStat);
             plGBufferGroup* grp = ice->GetBufferGroup(tempIce.fGroupIdx);
@@ -710,6 +712,65 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     }
 
     LOG_GL_ERROR_CHECK("Render failed")
+}
+
+bool plGLPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* spanBase)
+{
+    if (!(spanBase->fTypeMask & plSpan::kVertexSpan))
+        return false;
+
+    // If we arent' an trilist, we're toast.
+    if (!(spanBase->fTypeMask & plSpan::kIcicleSpan))
+        return false;
+
+    plIcicle* span = (plIcicle*)spanBase;
+
+    DeviceType::VertexBufferRef* vRef = (DeviceType::VertexBufferRef*)group->GetVertexBufferRef(span->fVBufferIdx);
+    if (!vRef)
+        return true;
+
+    DeviceType::IndexBufferRef* iRef = (DeviceType::IndexBufferRef*)group->GetIndexBufferRef(span->fIBufferIdx);
+    if (!iRef)
+        return true;
+
+    // If our vertex buffer ref is volatile and the timestamp is off
+    // then it needs to be refilled
+    if (vRef->Expired(fVtxRefTime))
+        IRefreshDynVertices(group, vRef);
+
+    if (iRef->IsDirty()) {
+        fDevice.FillIndexBufferRef(iRef, group, span->fIBufferIdx);
+        iRef->SetRebuiltSinceUsed(true);
+    }
+
+    return false; // No error
+}
+
+bool plGLPipeline::IRefreshDynVertices(plGBufferGroup* group, plGLVertexBufferRef* vRef)
+{
+    ptrdiff_t size = (group->GetVertBufferEnd(vRef->fIndex) - group->GetVertBufferStart(vRef->fIndex)) * vRef->fVertexSize;
+    if (!size)
+        return false; // No error, just nothing to do.
+
+    hsAssert(size > 0, "Bad start and end counts in a group");
+
+    if (!vRef->fRef)
+        glGenBuffers(1, &vRef->fRef);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
+
+    uint8_t* vData;
+    if (vRef->fData)
+        vData = vRef->fData;
+    else
+        vData = group->GetVertBufferData(vRef->fIndex) + group->GetVertBufferStart(vRef->fIndex) * vRef->fVertexSize;
+
+    glBufferData(GL_ARRAY_BUFFER, size, vData, GL_DYNAMIC_DRAW);
+
+    vRef->fRefTime = fVtxRefTime;
+    vRef->SetDirty(false);
+
+    return false;
 }
 
 void plGLPipeline::IHandleZMode(hsGMatState flags)

@@ -479,8 +479,6 @@ void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, Verte
     // All indexed skinning is currently done on CPU, so the source data
     // will have indices, but we strip them out for the D3D buffer.
     if (format & plGBufferGroup::kSkinIndices) {
-        hsStatusMessage("Have to deal with skinning :(");
-
         format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
         format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
         vRef->SetSkinned(true);
