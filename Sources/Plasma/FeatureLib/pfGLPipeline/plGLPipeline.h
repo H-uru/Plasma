@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plIcicle;
 class plGLMaterialShaderRef;
+class plGLVertexBufferRef;
 class plPlate;
 
 class plGLEnumerate
@@ -111,6 +112,20 @@ public:
 protected:
     void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
     void IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb, hsGDeviceRef* ib, hsGMaterial* material, uint32_t vStart, uint32_t vLength, uint32_t iStart, uint32_t iLength);
+
+    /**
+     * Only software skinned objects, dynamic decals, and particle systems
+     * currently use the dynamic vertex buffer.
+     */
+    bool IRefreshDynVertices(plGBufferGroup* group, plGLVertexBufferRef* vRef);
+
+    /**
+     * Make sure the buffers underlying this span are ready to be rendered.
+     * Meaning that the underlying GL buffers are in sync with the plasma
+     * buffers.
+     */
+    bool ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* span);
+
     void IHandleZMode(hsGMatState flags);
     void IHandleBlendMode(hsGMatState flags);
     void ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
