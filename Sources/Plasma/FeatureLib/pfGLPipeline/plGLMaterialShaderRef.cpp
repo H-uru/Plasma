@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
-#define USE_NEW_SHADERS 1
+//#define USE_NEW_SHADERS 1
 
 // From plGLDevice.cpp
 extern GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst);
@@ -345,14 +345,15 @@ void plGLMaterialShaderRef::ICompile()
         LOG_GL_ERROR_CHECK(ST::format("Check Texture Ref on layer \"{}\" failed", layer->GetKeyName()));
     }
 
+    const char* vs_code = VERTEX_SHADER_STRING;
+
 #ifndef USE_NEW_SHADERS
-    ST::string vtx = fVertexShader->Render();
+    //ST::string vtx = fVertexShader->Render();
     ST::string frg = fFragmentShader->Render();
 
-    const char* vs_code = vtx.c_str();
+    //const char* vs_code = vtx.c_str();
     const char* fs_code = frg.c_str();
 #else
-    const char* vs_code = VERTEX_SHADER_STRING;
     const char* fs_code = FRAGMENT_SHADER_STRING;
 #endif
 
@@ -448,7 +449,6 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
     lightSource->AddField(STRUCTVAR("float", "scale"));
 
     fVertexShader->PushStruct(lightSource);
-    fFragmentShader->PushStruct(lightSource);
 #endif
 }
 
@@ -1009,10 +1009,8 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
         {
             uvwSrc &= plGBufferGroup::kUVCountMask;
 
-            ST::string uvwName = ST::format("vVtxUVWSrc{}", uvwSrc);
-            std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>(uvwName, "highp vec3");
-
-            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", layUVW, CONSTANT("1.0")))));
+            std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>("vVtxUVWSrc", "highp vec3", 8);
+            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", SUBVAL(layUVW, ST::format("{}", uvwSrc)), CONSTANT("1.0")))));
         }
         break;
     }
