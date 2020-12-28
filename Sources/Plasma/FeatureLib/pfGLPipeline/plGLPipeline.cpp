@@ -1075,6 +1075,8 @@ void plGLPipeline::IEnableLight(size_t i, plLightInfo* light)
     GLuint ambient      = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].ambient", i).c_str());
     GLuint diffuse      = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].diffuse", i).c_str());
     GLuint specular     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].specular", i).c_str());
+    GLuint direction    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].direction", i).c_str());
+    GLuint spotProps    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].spotProps", i).c_str());
     GLuint constAtten   = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].constAtten", i).c_str());
     GLuint linAtten     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].linAtten", i).c_str());
     GLuint quadAtten    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].quadAtten", i).c_str());
@@ -1091,11 +1093,13 @@ void plGLPipeline::IEnableLight(size_t i, plLightInfo* light)
 
     plDirectionalLightInfo* dirLight = nullptr;
     plOmniLightInfo* omniLight = nullptr;
+    plSpotLightInfo* spotLight = nullptr;
 
     if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr)
     {
-        hsVector3 direction = dirLight->GetWorldDirection();
-        glUniform4f(position, direction.fX, direction.fY, direction.fZ, 0.0);
+        hsVector3 lightDir = dirLight->GetWorldDirection();
+        glUniform4f(position, lightDir.fX, lightDir.fY, lightDir.fZ, 0.0);
+        glUniform3f(direction, lightDir.fX, lightDir.fY, lightDir.fZ);
 
         glUniform1f(constAtten, 1.0f);
         glUniform1f(linAtten, 0.0f);
@@ -1111,6 +1115,19 @@ void plGLPipeline::IEnableLight(size_t i, plLightInfo* light)
         glUniform1f(constAtten, omniLight->GetConstantAttenuation());
         glUniform1f(linAtten, omniLight->GetLinearAttenuation());
         glUniform1f(quadAtten, omniLight->GetQuadraticAttenuation());
+
+        if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
+            hsVector3 lightDir = spotLight->GetWorldDirection();
+            glUniform3f(direction, lightDir.fX, lightDir.fY, lightDir.fZ);
+
+            float falloff = spotLight->GetFalloff();
+            float theta = cosf(spotLight->GetSpotInner());
+            float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
+
+            glUniform3f(spotProps, falloff, theta, phi);
+        } else {
+            glUniform3f(spotProps, 0.0, 0.0, 0.0);
+        }
     }
     else {
         IDisableLight(i);
@@ -1140,6 +1157,8 @@ void plGLPipeline::IDisableLight(size_t i)
 
 void plGLPipeline::IScaleLight(size_t i, float scale)
 {
+    scale = int(scale * 1.e1f) * 1.e-1f;
+
     GLuint uniform = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].scale", i).c_str());
     if (uniform != -1) glUniform1f(uniform, scale);
 }
