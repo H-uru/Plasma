@@ -73,6 +73,8 @@ struct lightSource {
     vec4 ambient;
     vec4 diffuse;
     vec4 specular;
+    vec3 direction;
+    vec3 spotProps; // (falloff, theta, phi)
     float constAtten;
     float linAtten;
     float quadAtten;
@@ -125,11 +127,31 @@ void main() {
     for (int i = 0; i < 8; i++) {
         vVtxUVWSrc[i] = aVtxUVWSrc[i];
 
-        vec3 v2l = vec3(uLampSources[i].position - (uMatrixL2W * vec4(aVtxPosition, 1.0)) * uLampSources[i].position.w);
-        float distance = length(v2l);
-        vec3 direction = normalize(v2l);
+        float attenuation;
+        vec3 direction;
 
-        float attenuation = mix(1.0, 1.0 / (uLampSources[i].constAtten + uLampSources[i].linAtten * distance + uLampSources[i].quadAtten * distance * distance), uLampSources[i].position.w);
+        if (uLampSources[i].position.w == 0.0) {
+            // Directional Light with no attenuation
+            direction = normalize(uLampSources[i].direction);
+            attenuation = 1.0;
+        } else {
+            // Omni Light in all directions
+            vec3 v2l = uLampSources[i].position.xyz - vec3(uMatrixL2W * vec4(aVtxPosition, 1.0));
+            float distance = length(v2l);
+            direction = normalize(v2l);
+
+            attenuation = 1.0 / (uLampSources[i].constAtten + uLampSources[i].linAtten * distance + uLampSources[i].quadAtten * pow(distance, 2.0));
+
+            if (uLampSources[i].spotProps.x > 0.0) {
+                // Spot Light with cone falloff
+                float a = dot(direction, normalize(-uLampSources[i].direction));
+                float theta = uLampSources[i].spotProps.y;
+                float phi = uLampSources[i].spotProps.z;
+                float i = pow((a - phi) / (theta - phi), uLampSources[i].spotProps.x);
+
+                attenuation *= clamp(i, 0.0, 1.0);
+            }
+        }
 
         LAmbient.rgb = LAmbient.rgb + attenuation * (uLampSources[i].ambient.rgb * uLampSources[i].scale);
         LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (uLampSources[i].diffuse.rgb * uLampSources[i].scale) * max(0.0, dot(Ndirection, direction)) * attenuation;
@@ -163,12 +185,12 @@ uniform sampler2D uTexture0;
 
 uniform float uAlphaThreshold;
 uniform int uFogExponential;
-uniform vec2 uFogValues;
+uniform highp vec2 uFogValues;
 uniform vec3 uFogColor;
 
 // Varying inputs
-in vec4 vCamPosition;
-in vec4 vCamNormal;
+in highp vec4 vCamPosition;
+in highp vec4 vCamNormal;
 in vec4 vVtxColor;
 in highp vec3 vVtxUVWSrc[8];
 
@@ -191,13 +213,13 @@ void main() {
 
     if (currAlpha < uAlphaThreshold) { discard; };
 
-    float fogFactor = 1.0;
+    highp float fogFactor = 1.0;
     if (uFogExponential > 0) {
         fogFactor = exp(-pow(uFogValues.y * length(vCamPosition.xyz), uFogValues.x));
     } else {
         if (uFogValues.y > 0.0) {
-            float start = uFogValues.x;
-            float end = uFogValues.y;
+            highp float start = uFogValues.x;
+            highp float end = uFogValues.y;
             fogFactor = (end - length(vCamPosition.xyz)) / (end - start);
         }
     }
@@ -418,6 +440,8 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
     lightSource->AddField(STRUCTVAR("vec4", "ambient"));
     lightSource->AddField(STRUCTVAR("vec4", "diffuse"));
     lightSource->AddField(STRUCTVAR("vec4", "specular"));
+    lightSource->AddField(STRUCTVAR("vec3", "direction"));
+    lightSource->AddField(STRUCTVAR("vec3", "spotProps"));
     lightSource->AddField(STRUCTVAR("float", "constAtten"));
     lightSource->AddField(STRUCTVAR("float", "linAtten"));
     lightSource->AddField(STRUCTVAR("float", "quadAtten"));
@@ -838,7 +862,7 @@ std::shared_ptr<plTempVariableNode> plGLMaterialShaderRef::ICalcLighting(std::sh
     for (size_t i = 0; i < 8; i++) {
         auto lamp = SUBVAL(uLampSources, ST::format("{}", i));
 
-        fn->PushOp(ASSIGN(v2l, CALL("vec3", SUB(PROP(lamp, "position"), MUL(mL2W, MUL(CALL("vec4", apos, CONSTANT("1.0")), PROP(PROP(lamp, "position"), "w")))))));
+        fn->PushOp(ASSIGN(v2l, SUB(CALL("vec3", PROP(lamp, "position")), CALL("vec3", MUL(mL2W, CALL("vec4", apos, CONSTANT("1.0")))))));
         fn->PushOp(ASSIGN(distance, CALL("length", v2l)));
         fn->PushOp(ASSIGN(direction, CALL("normalize", v2l)));
 
