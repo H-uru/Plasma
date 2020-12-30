@@ -144,8 +144,8 @@ bool plAvBrainDrive::Apply(double timeNow, float elapsed)
     hsPoint3 desiredPosition = playerPos;
     // calculate rotation matrix
 
-    hsVector3 rotUp(0,0,1);
-    hsVector3 rotRight(1,0,0);
+    hsVector3 rotUp(0.f, 0.f, 1.f);
+    hsVector3 rotRight(1.f, 0.f, 0.f);
     hsMatrix44 rot;
     float angle = 0;
 
@@ -155,7 +155,7 @@ bool plAvBrainDrive::Apply(double timeNow, float elapsed)
     }
 
     hsMatrix44 justRot(targetMatrix);
-    hsPoint3 zero(0,0,0);
+    hsPoint3 zero;
     justRot.SetTranslate(&zero);
 
     if( angle ) {

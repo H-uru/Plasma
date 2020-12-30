@@ -53,13 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-plDecalEnableMod::plDecalEnableMod()
-{
-}
-
-plDecalEnableMod::~plDecalEnableMod()
-{
-}
 
 bool plDecalEnableMod::MsgReceive(plMessage* msg)
 {

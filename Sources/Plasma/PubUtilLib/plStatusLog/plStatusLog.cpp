@@ -265,13 +265,9 @@ bool plStatusLogMgr::DumpLogs( const plFileName &newFolderName )
 uint32_t plStatusLog::fLoggingOff = false;
 
 plStatusLog::plStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags )
+    : fFileHandle(), fSema(), fSize(), fForceLog(), fMaxNumLines(numDisplayLines),
+      fDisplayPointer()
 {
-    fFileHandle = nil;
-    fSema = nil;
-    fSize = 0;
-    fForceLog = false;
-
-    fMaxNumLines = numDisplayLines;
     if (filename.IsValid())
     {
         fFilename = filename;

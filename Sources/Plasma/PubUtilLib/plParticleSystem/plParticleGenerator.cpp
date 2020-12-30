@@ -89,9 +89,6 @@ void plParticleGenerator::ComputePitchYaw(float &pitch, float &yaw, const hsVect
         yaw = hsConstants::pi<float> - yaw;
 }
 
-plSimpleParticleGenerator::plSimpleParticleGenerator()
-{
-}
 
 plSimpleParticleGenerator::~plSimpleParticleGenerator()
 {
@@ -353,10 +350,6 @@ void plSimpleParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-plOneTimeParticleGenerator::plOneTimeParticleGenerator()
-{
-}
-
 plOneTimeParticleGenerator::~plOneTimeParticleGenerator()
 {
     delete [] fPosition;
@@ -387,7 +380,7 @@ bool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, fl
     hsPoint3 currStart;
     hsPoint3 orientation;
     hsVector3 initDirection;
-    hsVector3 zeroVel(0.f, 0.f, 0.f);
+    hsVector3 zeroVel;
     float radsPerSec = 0;
 
     int i;

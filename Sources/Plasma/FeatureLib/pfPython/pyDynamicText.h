@@ -79,7 +79,6 @@ private:
     uint16_t          fWrapHeight;
 
     plDynamicTextMsg* ICreateDTMsg();
-    void IInit();
 
 protected:
     pyDynamicText();

@@ -204,7 +204,10 @@ struct RcvdFileDownloadChunkTrans : NetNotifyTrans {
     uint8_t *      data;
     hsStream *  writer;
 
-    RcvdFileDownloadChunkTrans () : NetNotifyTrans (kFileRcvdFileDownloadChunkTrans) {}
+    RcvdFileDownloadChunkTrans()
+        : NetNotifyTrans(kFileRcvdFileDownloadChunkTrans),
+          bytes(), data(), writer()
+    { }
     ~RcvdFileDownloadChunkTrans ();
     void Post ();
 };
@@ -805,13 +808,11 @@ bool CliFileConn::Recv_FileDownloadReply (
 ***/
 
 //============================================================================
-BuildIdRequestTrans::BuildIdRequestTrans (
-    FNetCliFileBuildIdRequestCallback   callback,
-    void *                              param
-) : NetFileTrans(kBuildIdRequestTrans)
-,   m_callback(callback)
-,   m_param(param)
-{}
+BuildIdRequestTrans::BuildIdRequestTrans(
+        FNetCliFileBuildIdRequestCallback callback, void* param)
+    : NetFileTrans(kBuildIdRequestTrans),
+      m_callback(callback), m_param(param), m_buildId()
+{ }
 
 //============================================================================
 bool BuildIdRequestTrans::Send () {

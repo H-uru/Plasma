@@ -599,8 +599,7 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
 
 float plCullNode::IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const
 {
-    hsVector3 oneToOh;
-    oneToOh.Set(&p0, &p1);
+    hsVector3 oneToOh(&p0, &p1);
 
     float t = -(fNorm.InnerProduct(p1) + fDist) / fNorm.InnerProduct(oneToOh);
     if( t >= 1.f )
@@ -763,10 +762,8 @@ int16_t plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
 {
     int16_t retINode = fNodeList.GetCount();
     plCullNode* nextNode = fNodeList.Push();
-    hsVector3 a;
-    hsVector3 b;
-    a.Set(&poly.fVerts[i0], &fViewPos);
-    b.Set(&poly.fVerts[i1], &fViewPos);
+    hsVector3 a(&poly.fVerts[i0], &fViewPos);
+    hsVector3 b(&poly.fVerts[i1], &fViewPos);
     hsVector3 n = a % b;
     float d = -n.InnerProduct(fViewPos);
 

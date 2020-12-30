@@ -65,7 +65,7 @@ protected:
     virtual void IBeginRender();
 
 public:
-    plPointShadowMaster();
+    plPointShadowMaster() { }
     virtual ~plPointShadowMaster();
 
     CLASSNAME_REGISTER( plPointShadowMaster );

@@ -109,7 +109,9 @@ class plRIFFHeader
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plFastWAV::plFastWAV( const plFileName &path, plAudioCore::ChannelSelect whichChan ) : fFileHandle( nil )
+plFastWAV::plFastWAV(const plFileName &path, plAudioCore::ChannelSelect whichChan)
+    : fFileHandle(), fHeader(), fFakeHeader(), fDataStartPos(), fDataSize(),
+      fCurrDataPos(), fChunkStart(), fChannelAdjust(), fChannelOffset()
 {
     hsAssert(path.IsValid(), "Invalid path specified in plFastWAV reader");
 

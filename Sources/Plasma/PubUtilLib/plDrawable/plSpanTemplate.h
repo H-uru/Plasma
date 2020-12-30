@@ -121,7 +121,10 @@ protected:
 
     friend class plClusterUtil;
 public:
-    plSpanTemplate();
+    plSpanTemplate()
+        : fNumVerts(), fNumTris(), fFormat(), fStride(),
+          fData(), fIndices()
+    { }
     virtual ~plSpanTemplate() { DeAlloc(); }
 
     const uint8_t*    VertData() const { return fData; }

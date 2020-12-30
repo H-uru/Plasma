@@ -62,8 +62,10 @@ class plEventCallbackMsg;
 class plWin32GroupedSound : public plWin32StaticSound
 {
 public:
-    plWin32GroupedSound();
-    ~plWin32GroupedSound();
+    plWin32GroupedSound()
+        : fCurrentSound(), fCurrentSoundLength(), fNumDestChannels(), fNumDestBytesPerSample()
+    { }
+    ~plWin32GroupedSound() { DeActivate(); }
 
     CLASSNAME_REGISTER( plWin32GroupedSound );
     GETINTERFACE_ANY( plWin32GroupedSound, plWin32StaticSound );

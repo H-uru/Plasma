@@ -368,10 +368,10 @@ void plPerspDirSlave::IComputeCamNDCToLight(const hsPoint3& from, const hsPoint3
     atToFrom *= hsFastMath::InvSqrtAppr(distSq);
 
     const float kMinMag = 0.5f;
-    hsVector3 up(0,0,1.f);
+    hsVector3 up(0.f, 0.f, 1.f);
     if( CrossProd(up, (at - from)).MagnitudeSquared() < kMinMag )
     {
-        up.Set(0, 1.f, 0);
+        up.Set(0.f, 1.f, 0.f);
     }
     hsMatrix44 w2light;
     w2light.MakeCamera(&from, &at, &up);

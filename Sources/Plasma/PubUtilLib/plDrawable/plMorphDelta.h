@@ -61,8 +61,8 @@ public:
 class plMorphSpan
 {
 public:
-    plMorphSpan();
-    virtual ~plMorphSpan();
+    plMorphSpan() : fUVWs(), fNumUVWChans() { }
+    virtual ~plMorphSpan() { delete [] fUVWs; }
 
     hsTArray<plVertDelta>   fDeltas;
 
@@ -77,10 +77,9 @@ protected:
 
     float                fWeight;
 public:
-    plMorphDelta();
-    virtual ~plMorphDelta();
+    plMorphDelta() : fWeight() { }
 
-    plMorphDelta(const plMorphDelta& src);
+    plMorphDelta(const plMorphDelta& src) : fWeight() { *this = src; }
     plMorphDelta& operator=(const plMorphDelta& src);
 
     CLASSNAME_REGISTER( plMorphDelta );

@@ -367,21 +367,6 @@ void plParticleFadeVolumeEffect::Write(hsStream *s, hsResMgr *mgr)
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // Particle wind - Base class first
-plParticleWindEffect::plParticleWindEffect()
-:   fWindVec(0,0,0),
-    fDir(1.f,0,0),
-    fSwirl(0.1f),
-    fConstancy(0),
-    fHorizontal(0),
-    fLastDirSecs(-1.f),
-    fRefDir(0.f,0.f,0.f),
-    fRandDir(1.f,0.f,0.f)
-{
-}
-
-plParticleWindEffect::~plParticleWindEffect()
-{
-}
 
 void plParticleWindEffect::Read(hsStream *s, hsResMgr *mgr)
 {
@@ -440,19 +425,6 @@ void plParticleWindEffect::PrepareEffect(const plEffectTargetInfo& target)
 
 ////////////////////////////////////////////////////////////////////////
 // Localized wind (how much wind you're getting depends on where you are
-plParticleLocalWind::plParticleLocalWind()
-:   fScale(0, 0, 0),
-    fSpeed(0),
-    fPhase(0,0,0),
-    fInvScale(0,0,0),
-    fLastPhaseSecs(-1.f)
-{
-}
-
-plParticleLocalWind::~plParticleLocalWind()
-{
-}
-
 void plParticleLocalWind::Read(hsStream *s, hsResMgr *mgr)
 {
     plParticleWindEffect::Read(s, mgr);
@@ -656,25 +628,6 @@ bool plParticleUniformWind::ApplyEffect(const plEffectTargetInfo& target, int32_
 ////////////////////////////////////////////////////////////////////////
 // Simplified flocking.
 
-plParticleFlockEffect::plParticleFlockEffect() :
-    fInfAvgRadSq(1),
-    fInfRepRadSq(1),
-    fAvgVelStr(1),
-    fRepDirStr(1),
-    fGoalOrbitStr(1),
-    fGoalChaseStr(1),
-    fGoalDistSq(1),
-    fFullChaseDistSq(1),
-    fMaxOrbitSpeed(1),
-    fMaxChaseSpeed(1),
-    fMaxParticles(0),
-    fDistSq(nil),
-    fInfluences(nil)
-{
-    fTargetOffset.Set(0.f, 0.f, 0.f);
-    fDissenterTarget.Set(0.f, 0.f, 0.f);
-}
-
 plParticleFlockEffect::~plParticleFlockEffect()
 {
     SetMaxParticles(0);
@@ -757,9 +710,7 @@ bool plParticleFlockEffect::ApplyEffect(const plEffectTargetInfo& target, int32_
     else
         goal = fDissenterTarget;
     
-    hsVector3 goalDir;
-    hsPoint3 tmp = goal - pos;
-    goalDir.Set(&tmp);
+    hsVector3 goalDir(&goal, &pos);
     float distSq = goalDir.MagnitudeSquared();
     
     goalDir.Normalize();

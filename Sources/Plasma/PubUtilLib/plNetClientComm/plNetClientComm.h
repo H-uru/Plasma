@@ -76,7 +76,7 @@ struct NetCommPlayer {
     ST::string  avatarDatasetName;
     unsigned    explorer;
 
-    NetCommPlayer() { }
+    NetCommPlayer() : playerInt(), explorer() { }
     NetCommPlayer(unsigned id, const ST::string& name, const ST::string& shape, unsigned ex)
         : playerInt(id), playerName(name), avatarDatasetName(shape), explorer(ex)
     { }

@@ -46,13 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plNetMember
 ////////////////////////////////////////////////////////
 plNetMember::plNetMember(plNetApp* na)
+    : fPeerID()
 {
     Reset();
     fNetApp=(na);
 }
 
 plNetMember::plNetMember()
-: fNetApp(nil)
+    : fNetApp(), fPeerID()
 { 
     Reset(); 
 }

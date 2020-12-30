@@ -630,45 +630,19 @@ const char *plArmatureMod::BoneStrings[] = {"Male", "Female", "Critter", "Actor"
 float plArmatureMod::fMouseTurnSensitivity = 1.f;
 bool plArmatureMod::fClickToTurn = true;
 
-void plArmatureMod::IInitDefaults()
+plArmatureMod::plArmatureMod() 
+    : plArmatureModBase(),
+      fBoneRootAnimator(), fRootAGMod(), fFootSoundSOKey(), fLinkSoundSOKey(),
+      fBodyType(kBoneBaseMale), fClothingOutfit(), fClothingSDLMod(), fAvatarSDLMod(),
+      fAvatarPhysicalSDLMod(), fEffects(), fDebugOn(), fBoneMap(),
+      fStealthMode(plAvatarStealthModeMsg::kStealthVisible), fStealthLevel(),
+      fMouseFrameTurnStrength(), fSuspendInputCount(), fIsLinkedIn(), fMidLink(),
+      fAlreadyPanicLinking(), fReverseFBOnIdle(), fFollowerParticleSystemSO(),
+      fPendingSynch(), fOpaque(true), fPhysHeight(), fPhysWidth(), fUpdateMsg(),
+      fRootName(), fDontPanicLink(), fBodyAgeName("GlobalAvatars"),
+      fBodyFootstepSoundPage("Audio"), fAnimationPrefix("Male"), fUserStr(),
+      fUnconsumedJump(), fLastSynch()
 {
-    fBoneRootAnimator = nil;
-    fRootAGMod = nil;
-    fFootSoundSOKey = nil;
-    fLinkSoundSOKey = nil;
-    fBodyType = kBoneBaseMale;
-    fClothingOutfit = nil;
-    fClothingSDLMod = nil;
-    fAvatarSDLMod = nil;
-    fAvatarPhysicalSDLMod = nil;
-    fEffects = nil;
-    fDebugOn = false;
-    fBoneMap = nil;
-    fStealthMode = plAvatarStealthModeMsg::kStealthVisible;
-    fStealthLevel = 0;
-    fMouseFrameTurnStrength = 0.f;
-    fSuspendInputCount = 0;
-    fIsLinkedIn = false;
-    fMidLink = false;
-    fAlreadyPanicLinking = false;
-    fReverseFBOnIdle = false;
-    fFollowerParticleSystemSO = nil;
-    fPendingSynch = false;
-    fOpaque = true;
-    fPhysHeight = 0.f;
-    fPhysWidth = 0.f;
-    fUpdateMsg = nil;
-    fRootName = ST::string();
-    fDontPanicLink = false;
-    fBodyAgeName = "GlobalAvatars";
-    fBodyFootstepSoundPage = "Audio";
-    fAnimationPrefix = "Male";
-    fUserStr = ST::string();
-}
-
-plArmatureMod::plArmatureMod() : plArmatureModBase()
-{
-    IInitDefaults();
     fWaitFlags |= kNeedAudio | kNeedCamera | kNeedSpawn;
 }
 

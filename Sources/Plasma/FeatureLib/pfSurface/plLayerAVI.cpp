@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAVIFileInfo
 {
 public:
-    plAVIFileInfo() : fAVIStream(nil), fGetFrame(0) {}
+    plAVIFileInfo() : fAVIStream(), fGetFrame(), fAVIStreamInfo() { }
     IAVIStream*                 fAVIStream;
     AVISTREAMINFO               fAVIStreamInfo;
     PGETFRAME                   fGetFrame;      // Where in the stream to get the next frame

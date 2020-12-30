@@ -134,4 +134,8 @@ void plSharedMesh::Write(hsStream* s, hsResMgr* mgr)
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-plSharedMeshBCMsg::plSharedMeshBCMsg() : plMessage(), fMesh(nil), fIsAdding(true) { SetBCastFlag(plMessage::kBCastByExactType); }
+plSharedMeshBCMsg::plSharedMeshBCMsg()
+    : plMessage(), fMesh(), fDraw(), fIsAdding(true)
+{
+    SetBCastFlag(plMessage::kBCastByExactType);
+}

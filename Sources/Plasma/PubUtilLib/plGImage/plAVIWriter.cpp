@@ -125,12 +125,9 @@ plAVIWriter& plAVIWriter::Instance()
 ////////////////////////////////////////////////////////////////////////////////
 
 #if HS_BUILD_FOR_WIN32
-plAVIWriterImp::plAVIWriterImp() :
-    fStartTime(0),
-    fOldRealTime(false),
-    fStreamHandle(nil),
-    fCompressedHandle(nil),
-    fFileHandle(nil)
+plAVIWriterImp::plAVIWriterImp()
+    : fStartTime(), fOldRealTime(), fBitmapInfo(), fOldFrameTimeInc(),
+      fStreamHandle(), fCompressedHandle(), fFileHandle()
 {
     AVIFileInit();
 }
@@ -138,9 +135,7 @@ plAVIWriterImp::plAVIWriterImp() :
 plAVIWriterImp::plAVIWriterImp() { }
 #endif
 
-plAVIWriterImp::~plAVIWriterImp()
-{
-}
+plAVIWriterImp::~plAVIWriterImp() { }
 
 void plAVIWriterImp::Shutdown()
 {

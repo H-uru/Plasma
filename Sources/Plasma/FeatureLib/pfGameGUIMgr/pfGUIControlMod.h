@@ -158,7 +158,12 @@ class pfGUIControlMod : public plSingleModifier
 
     public:
 
-        pfGUIControlMod();
+        pfGUIControlMod()
+            : fEnabled(true), fDialog(), fBoundsValid(), fCenterValid(),
+              fFocused(), fInteresting(), fVisible(true), fHandler(),
+              fTagID(), fDropTargetHdlr(), fDynTextMap(), fProxy(),
+              fColorScheme(), fSkin(), fNotifyOnInteresting(),
+              fScreenMinZ(), fDynTextLayer() { }
         virtual ~pfGUIControlMod();
 
         CLASSNAME_REGISTER( pfGUIControlMod );

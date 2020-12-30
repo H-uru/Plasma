@@ -145,9 +145,9 @@ public:
     bool    HasMovementFlag(int f) { return fMoveFlags.IsBitSet(f); }
     void    SetMovementFlag(int f, bool on = true) { fMoveFlags.SetBit(f, on);} 
         
-    hsPoint3 GetCameraPos() { return fOutputPos; }
-    hsPoint3 GetCameraPOA() { return fOutputPOA; }
-    hsVector3 GetCameraUp() { return fOutputUp; }
+    hsPoint3 GetCameraPos() const { return fOutputPos; }
+    hsPoint3 GetCameraPOA() const { return fOutputPOA; }
+    hsVector3 GetCameraUp() const { return fOutputUp; }
     void    SetCutNextTrans(); // used when player warps into a new camera region
 
     const hsMatrix44 GetCurrentMatrix() { return fMatrix; }

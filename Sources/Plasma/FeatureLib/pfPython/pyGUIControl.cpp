@@ -252,7 +252,7 @@ PyObject* pyGUIControl::GetObjectCenter()
         if ( pbmod )
             return pyPoint3::New(pbmod->GetObjectCenter());
     }
-    return pyPoint3::New(hsPoint3(0,0,0));
+    return pyPoint3::New();
 }
 
 

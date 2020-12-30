@@ -166,8 +166,8 @@ public:
     };
 public:
 
-    plPipeConst() {}
-    plPipeConst(Type t, uint16_t r) : fType(t), fReg(r) {}
+    plPipeConst() : fType(), fReg() { }
+    plPipeConst(Type t, uint16_t r) : fType(t), fReg(r) { }
 
     Type        fType;
     uint16_t              fReg;

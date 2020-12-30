@@ -159,16 +159,19 @@ void plSoundBuffer::Shutdown()
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plSoundBuffer::plSoundBuffer() 
-{   
-    IInitBuffer();
-}
+plSoundBuffer::plSoundBuffer()
+    : fAsyncLoadLength(), fStreamType(plAudioFileReader::StreamType::kStreamRAM),
+      fError(), fValid(), fFileName(), fData(), fDataLength(),
+      fFlags(), fDataRead(), fReader(), fLoaded(), fLoading(),
+      fHeader()
+{ }
 
-plSoundBuffer::plSoundBuffer( const plFileName &fileName, uint32_t flags )
+plSoundBuffer::plSoundBuffer(const plFileName &fileName, uint32_t flags)
+    : fAsyncLoadLength(), fStreamType(plAudioFileReader::StreamType::kStreamRAM),
+      fError(), fValid(), fFileName(fileName), fData(), fDataLength(),
+      fFlags(flags), fDataRead(), fReader(), fLoaded(), fLoading(),
+      fHeader()
 {
-    IInitBuffer();
-    SetFileName( fileName );
-    fFlags = flags;
     fValid = IGrabHeaderInfo();
 }
 
@@ -185,26 +188,6 @@ plSoundBuffer::~plSoundBuffer()
     }
 
     UnLoad();
-}
-
-void plSoundBuffer::IInitBuffer()
-{
-    fError = false;
-    fValid = false;
-    fFileName = "";
-    fData = nil;
-    fDataLength = 0;
-    fFlags = 0;
-    fDataRead = 0;
-    fReader = nil;
-    fLoaded = 0;
-    fLoading = false;
-    fHeader.fFormatTag = 0;
-    fHeader.fNumChannels = 0;
-    fHeader.fNumSamplesPerSec = 0;
-    fHeader.fAvgBytesPerSec = 0;
-    fHeader.fBlockAlign = 0;
-    fHeader.fBitsPerSample = 0;
 }
 
 //// GetDataLengthInSecs /////////////////////////////////////////////////////

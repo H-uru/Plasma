@@ -52,7 +52,7 @@ class plListener : public plSingleModifier
 {
 public:
 
-    plListener() :  fVCam(nil), fInitMe(true) { }
+    plListener() : fVCam(), fInitMe(true), fPosRatio(), fFacingRatio(), fVelRatio() { }
     ~plListener() { }
 
     CLASSNAME_REGISTER( plListener );

@@ -132,7 +132,7 @@ void plAnimEventModifier::ISendNotify(bool triggered)
     
     // Setup the event data in case this is a OneShot responder that needs it
     plKey playerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
-    notify->AddPickEvent(playerKey, nil, true, hsPoint3(0,0,0) );
+    notify->AddPickEvent(playerKey, nullptr, true, {});
 
     notify->SetSender(GetKey());
     notify->AddReceivers(fReceivers);

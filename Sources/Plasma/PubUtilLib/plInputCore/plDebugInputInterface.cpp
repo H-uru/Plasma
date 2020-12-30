@@ -67,6 +67,7 @@ plDebugInputInterface   *plDebugInputInterface::fInstance = nil;
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 plDebugInputInterface::plDebugInputInterface()
+    : fButtonState()
 {
     fInstance = this;
 

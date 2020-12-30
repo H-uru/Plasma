@@ -119,7 +119,10 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
     unsigned        bufferBytes;
     uint8_t *          bufferData;
 
-    RcvdPropagatedBufferTrans () : NetNotifyTrans(kGmRcvdPropagatedBufferTrans) {}
+    RcvdPropagatedBufferTrans ()
+        : NetNotifyTrans(kGmRcvdPropagatedBufferTrans),
+          bufferType(), bufferBytes(), bufferData()
+    { }
     ~RcvdPropagatedBufferTrans ();
     void Post ();
 };

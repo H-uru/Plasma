@@ -95,8 +95,8 @@ public:
 class plAIArrivedAtGoalMsg : public plAIMsg
 {
 public:
-    plAIArrivedAtGoalMsg(): plAIMsg(), fGoal(0, 0, 0) {}
-    plAIArrivedAtGoalMsg(const plKey& sender, const plKey& receiver): plAIMsg(sender, receiver), fGoal(0, 0, 0) {}
+    plAIArrivedAtGoalMsg(): plAIMsg() {}
+    plAIArrivedAtGoalMsg(const plKey& sender, const plKey& receiver): plAIMsg(sender, receiver) {}
 
     CLASSNAME_REGISTER(plAIArrivedAtGoalMsg);
     GETINTERFACE_ANY(plAIArrivedAtGoalMsg, plAIMsg);
@@ -104,7 +104,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void Goal(hsPoint3 goal) {fGoal = goal;}
+    void Goal(const hsPoint3& goal) {fGoal = goal;}
     hsPoint3 Goal() const {return fGoal;}
 
 private:

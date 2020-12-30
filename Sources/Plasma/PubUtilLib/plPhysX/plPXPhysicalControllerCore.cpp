@@ -630,7 +630,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     y += lineHeight;
 
     for (const auto& i : fDbgCollisionInfo) {
-        float angle = hsRadiansToDegrees(acos(i.Normal * hsVector3(0, 0, 1)));
+        float angle = hsRadiansToDegrees(acos(i.Normal * hsVector3(0.f, 0.f, 1.f)));
         debugString = ST::format("\tCollision: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f})",
                 i.ObjHit->GetKeyName(),
                 i.Normal.fX, i.Normal.fY, i.Normal.fZ, angle);

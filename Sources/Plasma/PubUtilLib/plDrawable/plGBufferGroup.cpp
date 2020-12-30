@@ -111,8 +111,8 @@ void    plGBufferCell::Write( hsStream *s )
 //// Constructor //////////////////////////////////////////////////////////////
 
 plGBufferGroup::plGBufferGroup(uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD)
-    : fNumVerts(0), fNumIndices(0), fFormat(format), fVertsVolatile(vertsVolatile),
-      fIdxVolatile(idxVolatile), fLOD(LOD)
+    : fNumVerts(), fNumIndices(), fNumSkinWeights(), fFormat(format),
+      fVertsVolatile(vertsVolatile), fIdxVolatile(idxVolatile), fLOD(LOD)
 {
     fStride = ICalcVertexSize(fLiteStride);
 }

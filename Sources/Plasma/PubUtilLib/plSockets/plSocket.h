@@ -59,7 +59,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSocket
 {
 public:
-    plSocket();
+    plSocket()
+        : fCloseOnDestroy(), fCloseBeforeSet(),
+          fTimeoutsSet(), fSocket(kBadSocket),
+          fSendTimeOut(), fRecvTimeOut()
+    { }
     plSocket(SOCKET sck);
     virtual ~plSocket();
     bool operator==(const plSocket & rhs);

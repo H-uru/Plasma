@@ -954,7 +954,6 @@ float plWaveSet7::EvalPoint(hsPoint3& pos, hsVector3& norm)
     hsPoint3 accumPos;
     hsVector3 accumNorm;
     accumPos.Set(pos.fX, pos.fY, State().fWaterHeight);
-    accumNorm.Set(0,0,0);
 
     int i;
     for( i = 0; i < kNumWaves; i++ )
@@ -1040,12 +1039,12 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
 
     plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
 
-//  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0, 0, 1.f) * forceMag * dt);
+//  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0.f, 0.f, 1.f) * forceMag * dt);
 //  iMsg->Send();
 
 #if 0
     plCONST(float) kRotScale(1.f);
-    hsVector3 rotAx = hsVector3(0, 0, 1.f) % surfNorm;
+    hsVector3 rotAx = hsVector3(0.f, 0.f, 1.f) % surfNorm;
     rotAx *= kRotScale * dt * volume;
 
     plAngularImpulseMsg* aMsg = new plAngularImpulseMsg(GetKey(), physKey, rotAx);
@@ -1137,8 +1136,7 @@ void plWaveSet7::ICheckTargetMaterials()
         
         plConst(float) kMaxWaveHeight(5.f);
 
-        hsPoint3 p;
-        p = targBnd.GetMins();
+        hsPoint3 p = targBnd.GetMins();
         p.fZ = GetHeight() - kMaxWaveHeight;
         fTargBnds[0].Reset(&p);
         p = targBnd.GetMaxs();
@@ -1239,7 +1237,7 @@ void plWaveSet7::IInitState()
 
     plFixedWaterState7 state;
 
-    state.fWindDir = hsVector3(0, 1.f, 0);
+    state.fWindDir = hsVector3(0.f, 1.f, 0.f);
 
     state.fGeoState.fMaxLength = kGeoMaxLen;
     state.fGeoState.fMinLength = kGeoMinLen;
@@ -1284,7 +1282,7 @@ void plWaveSet7::IInitState()
     state.fWaterTint = hsColorRGBA().Set(0.1f, 0.2f, 0.2f, 1.f);
     state.fSpecularTint = hsColorRGBA().Set(1.f, 1.f, 1.f, 1.f);
 
-    state.fEnvCenter = hsPoint3(0,0,0);
+    state.fEnvCenter = hsPoint3();
     state.fEnvRadius = 500.f;
     state.fEnvRefresh = 0.f;
 
@@ -2235,7 +2233,7 @@ void plWaveSet7::ICreateFixedMat(hsGMaterial* mat, const int numUVWs)
         plDynamicEnvMap* env = new plDynamicEnvMap((uint16_t)fEnvSize, (uint16_t)fEnvSize, 32);
         hsgResMgr::ResMgr()->NewKey(GetKey()->GetName(), env, GetKey()->GetUoid().GetLocation());
         fEnvMap = env;
-        env->SetPosition(hsPoint3(0, 0, 50.f));
+        env->SetPosition(hsPoint3(0.f, 0.f, 50.f));
         env->SetPosition(State().fEnvCenter);
         env->SetYon(10000.f);
         env->SetRefreshRate(State().fEnvRefresh);

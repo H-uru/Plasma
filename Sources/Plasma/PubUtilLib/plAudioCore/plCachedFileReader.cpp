@@ -57,7 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCachedFileReader::plCachedFileReader(const plFileName &path,
                                        plAudioCore::ChannelSelect whichChan)
-        : fFilename(path), fFileHandle(nil), fCurPosition(0)
+    : fFilename(path), fFileHandle(), fCurPosition(), fHeader(),
+      fDataLength()       
 {
     hsAssert(path.IsValid(), "Invalid path specified in plCachedFileReader");
 

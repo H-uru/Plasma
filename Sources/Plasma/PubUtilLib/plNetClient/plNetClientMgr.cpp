@@ -126,23 +126,12 @@ plNetClientMgr::PendingLoad::~PendingLoad()
 //
 // CONSTRUCT
 //
-plNetClientMgr::plNetClientMgr() : 
-        fLocalPlayerKey(nil),
-        fMsgHandler(this),
-        fJoinOrder(0),
-        fTaskProgBar(nullptr),
-        fMsgRecorder(nil),
-        fServerTimeOffset(0),
-        fTimeSamples(0),
-        fLastTimeUpdate(0),
-        fListenListMode(kListenList_Distance),
-        fAgeSDLObjectKey(nil),
-        fExperimentalLevel(0),
-        fOverrideAgeTimeOfDayPercent(-1.f),
-        fNumInitialSDLStates(0),
-        fRequiredNumInitialSDLStates(0),
-        fDisableMsg(nil),
-        fIsOwner(true)
+plNetClientMgr::plNetClientMgr()
+    : fLocalPlayerKey(), fMsgHandler(this), fJoinOrder(), fTaskProgBar(),
+      fMsgRecorder(), fServerTimeOffset(), fTimeSamples(), fLastTimeUpdate(),
+      fListenListMode(kListenList_Distance), fAgeSDLObjectKey(), fExperimentalLevel(),
+      fOverrideAgeTimeOfDayPercent(-1.f), fNumInitialSDLStates(), fRequiredNumInitialSDLStates(),
+      fDisableMsg(), fIsOwner(true), fIniPlayerID(), fPingServerType()
 {   
 #ifndef HS_DEBUGGING
     // release code will timeout inactive players on servers by default

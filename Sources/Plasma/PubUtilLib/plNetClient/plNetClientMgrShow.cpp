@@ -312,8 +312,8 @@ void plNetClientMgr::IShowAvatars()
     x=startX;
     y=startY-yOff*3;
     plSceneObject *player = plSceneObject::ConvertNoRef(GetLocalPlayer());
-    hsPoint3 pos = (player ? player->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-    hsVector3 ori = (player ? player->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
+    hsPoint3 pos = (player ? player->GetLocalToWorld() * hsPoint3() : hsPoint3());
+    hsVector3 ori = (player ? player->GetLocalToWorld() * hsVector3(0.f, -1.f, 0.f) : hsVector3());
     sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
             GetPlayerName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
     txt.DrawString(x,y,str,255,255,255,255);
@@ -330,8 +330,8 @@ void plNetClientMgr::IShowAvatars()
             {
                 y+=yOff;
                 y+=yOff;
-                hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-                hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
+                hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3() : hsPoint3());
+                hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0.f, -1.f, 0.f) : hsVector3());
                 sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
                         pObj->GetKeyName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
                 txt.DrawString(x,y,str,255,255,255,255);
@@ -354,8 +354,8 @@ void plNetClientMgr::IShowAvatars()
             continue;
 
         player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nil);
-        pos = (player ? player->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-        ori = (player ? player->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
+        pos = (player ? player->GetLocalToWorld() * hsPoint3() : hsPoint3());
+        ori = (player ? player->GetLocalToWorld() * hsVector3(0.f, -1.f, 0.f) : hsVector3());
 
         sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
                 mbr->AsString().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
@@ -373,8 +373,8 @@ void plNetClientMgr::IShowAvatars()
                 {
                     y+=yOff;
                     y+=yOff;
-                    hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-                    hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0, -1, 0) : hsVector3(0, 0, 0));
+                    hsPoint3 pos = (pObj ? pObj->GetLocalToWorld() * hsPoint3() : hsPoint3());
+                    hsVector3 ori = (pObj ? pObj->GetLocalToWorld() * hsVector3(0.f, -1.f, 0.f) : hsVector3());
                     sprintf(str, "%s: pos(%.2f, %.2f, %.2f) ori(%.2f, %.2f, %.2f)",
                             pObj->GetKeyName().c_str(), pos.fX, pos.fY, pos.fZ, ori.fX, ori.fY, ori.fZ);
                     txt.DrawString(x,y,str,255,255,255,255);

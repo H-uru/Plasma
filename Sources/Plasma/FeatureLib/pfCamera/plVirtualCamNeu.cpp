@@ -139,34 +139,23 @@ void plVirtualCam1::Deactivate()
 }
 
 
-plVirtualCam1::plVirtualCam1() 
+plVirtualCam1::plVirtualCam1()
+    : fPythonOverride(), fFirstPersonOverride(), fThirdPersonCam(),
+      fTransPos(POS_TRANS_OFF), fPrevCam(), fTransitionCamera(new plCameraModifier1),
+      fOutputPos(100.f, 100.f, 100.f), fFreezeCounter(), fFadeCounter(),
+      fX(0.5f), fY(0.5f), fXPanLimit(), fZPanLimit(),
+      fRetainedFY(0.5f), fDriveCamera(new plCameraModifier1), fForceCutOnce(), foutLog(),
+      fPipe(), fXUnPanRate(), fZUnPanRate(), fUnPanEndTime()
 {
     fFlags.Clear();
-    fPythonOverride = nil;
-    fFirstPersonOverride = nil;
-    fThirdPersonCam = nil;
-    fTransPos = POS_TRANS_OFF;
-    fPrevCam = nil;
-    fTransitionCamera = new plCameraModifier1;
     fTransitionCamera->RegisterAs(kTransitionCamera_KEY);
-    // set initial view position
-    fOutputPos.Set(100,100,100);
-    fOutputPOA.Set(0,0,0);
-    fFreezeCounter = 0;
-    fFadeCounter = 0;
-    fX = fY = 0.5f;
-    fXPanLimit = 0;
-    fZPanLimit = 0;
-    fRetainedFY = 0.5f;
     // create built-in drive mode camera
     fCameraDriveInterface = plDebugInputInterface::GetInstance();
-    hsRefCnt_SafeRef( fCameraDriveInterface );
+    hsRefCnt_SafeRef(fCameraDriveInterface);
 
-    fDriveCamera = new plCameraModifier1;
     plCameraBrain1* pDriveBrain = new plCameraBrain1_Drive(fDriveCamera);
 
     PushCamera(fDriveCamera);
-    fForceCutOnce=false;
 
     // static accessor hack
     plVirtualCam1::fInstance = this;
@@ -177,7 +166,6 @@ plVirtualCam1::plVirtualCam1()
 //      camLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "Camera", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
     #endif
 
-    foutLog = nil;
 #ifndef PLASMA_EXTERNAL_RELEASE
     // only open log file if logging is on
     if ( !plStatusLog::fLoggingOff )
@@ -669,7 +657,7 @@ void plVirtualCam1::AdjustForInput()
     hsMatrix44 m;
     
     hsVector3 v1(fOutputPOA - fOutputPos);
-    hsVector3 v2(0,0,1);
+    hsVector3 v2(0.f, 0.f, 1.f);
     v1.Normalize();
     hsVector3 up = (v2 % v1) % v1;
 
@@ -1397,9 +1385,9 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         pMod->SetFOVw(90.0f);
         pMod->SetFOVh(66.7f);
         // set up the brain and to be first-person 
-        hsVector3 pt(0,0.0f,5.5);
+        hsVector3 pt(0.f, 0.0f, 5.5f);
         pBrain->SetOffset(pt);
-        pt.Set(0,-10,5.5);
+        pt.Set(0.f, -10.f, 5.5f);
         pBrain->SetPOAOffset(pt);
         pBrain->SetZPanLimit(0.872f); //radians, == 50 degrees as Decreed By Rand!
         pBrain->SetXPanLimit(0.872f);
@@ -1435,9 +1423,9 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         pModx->SetFOVw(90.0f);
         pModx->SetFOVh(66.7f);
         // set up the brain and to be third-person 
-        hsVector3 ptx(0, 15, 10);
+        hsVector3 ptx(0.f, 15.f, 10.f);
         pBrainx->SetOffset(ptx);
-        ptx.Set(0,0,5.5);
+        ptx.Set(0.f, 0.f, 5.5f);
         pBrainx->SetPOAOffset(ptx);
         pBrainx->SetZPanLimit(0.872f);
         pBrainx->SetXPanLimit(0.872f);

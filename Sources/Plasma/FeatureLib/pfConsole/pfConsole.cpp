@@ -175,11 +175,12 @@ class pfConsoleInputInterface : public plInputInterface
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 pfConsole::pfConsole()
+    : fNumDisplayLines(32), fDisplayBuffer(), fFXEnabled(true), fEffectCounter(), fLastTime(),
+      fHelpTimer(), fMode(), fInited(), fHelpMode(), fCursorTicks(), fMsgTimeoutTimer(),
+      fPythonMode(), fPythonFirstTime(true), fPythonMultiLines(), fHistory(), fWorkingCursor(),
+      fInputInterface(), fEngine()
 {
-    fNumDisplayLines = 32;
-    fDisplayBuffer = nil;
     fTheConsole = this;
-    fFXEnabled = true;
 }
 
 pfConsole::~pfConsole()

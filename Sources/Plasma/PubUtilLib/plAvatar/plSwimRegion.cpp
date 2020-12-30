@@ -137,9 +137,7 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
         return;
     }
 
-    hsPoint3 center, pos;
-    hsScalarTriple xlate = fCurrentSO->GetLocalToWorld().GetTranslate();
-    center.Set(&xlate);
+    hsPoint3 center = fCurrentSO->GetLocalToWorld().GetTranslate();
 
     plKey worldKey = physical->GetSubworld();
     if (worldKey)
@@ -150,6 +148,7 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
 
     center.fZ = 0.f; // Just doing 2D
 
+    hsPoint3 pos;
     physical->GetPositionSim(pos);
     
     hsVector3 pos2Center(center.fX - pos.fX, center.fY - pos.fY, 0.f);
@@ -254,10 +253,9 @@ void plSwimStraightCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
         return;
     }
 
-    hsPoint3 center, pos;
+    hsPoint3 pos;
     hsVector3 current = fCurrentSO->GetLocalToWorld() * hsVector3(0.f, 1.f, 0.f);
-    hsScalarTriple xlate = fCurrentSO->GetLocalToWorld().GetTranslate();
-    center.Set(&xlate);
+    hsPoint3 center = fCurrentSO->GetLocalToWorld().GetTranslate();;
     physical->GetPositionSim(pos);
 
     plKey worldKey = physical->GetSubworld();

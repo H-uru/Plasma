@@ -88,7 +88,6 @@ protected:
     
     virtual bool IEval(double secs, float del, uint32_t dirty);
 public:
-    ~plBlower();
     plBlower();
 
     CLASSNAME_REGISTER( plBlower );

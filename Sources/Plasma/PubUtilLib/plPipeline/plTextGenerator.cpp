@@ -582,10 +582,8 @@ uint16_t  plTextGenerator::GetTextHeight()
 hsMatrix44  plTextGenerator::GetLayerTransform()
 {
     hsMatrix44  xform;
-    hsVector3   scale;
-
-    scale.Set( (float)GetWidth() / (float)GetTextWidth(), 
-               (float)GetHeight() / (float)GetTextHeight(), 1.f );
+    hsVector3   scale((float)GetWidth() / (float)GetTextWidth(),
+                      (float)GetHeight() / (float)GetTextHeight(), 1.f);
 
     xform.MakeScaleMat( &scale );
     return xform;

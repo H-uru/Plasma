@@ -137,28 +137,7 @@ void    pfGUIColorScheme::Write( hsStream *s )
     s->WriteLE( fFontFlags );
 }
 
-//// Constructor/Destructor //////////////////////////////////////////////////
-
-pfGUIControlMod::pfGUIControlMod()
-{
-    fEnabled = true;
-    fDialog = nil;
-    fBoundsValid = false;
-    fCenterValid = false;
-    fFocused = false;
-    fInteresting = false;
-    fVisible = true;
-    fHandler = nil;
-    fTagID = 0;
-    fDropTargetHdlr = nil;
-    fDynTextMap = nil;
-    fProxy = nil;
-
-    fColorScheme = nil;
-    fSkin = nil;
-    
-    fNotifyOnInteresting = false;
-}
+//// Destructor //////////////////////////////////////////////////
 
 pfGUIControlMod::~pfGUIControlMod()
 {

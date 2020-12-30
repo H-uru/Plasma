@@ -48,19 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plMessage/plListenerMsg.h"
 
-plSoftVolume::plSoftVolume() 
-:   fListenState(0),
-    fListenStrength(0),
-    fInsideStrength(1.f),
-    fOutsideStrength(0)
-{
-    fListenPos.Set(0,0,0);
-}
-
-plSoftVolume::~plSoftVolume()
-{
-}
-
 void plSoftVolume::Read(hsStream* s, hsResMgr* mgr)
 {
     plRegionBase::Read(s, mgr);

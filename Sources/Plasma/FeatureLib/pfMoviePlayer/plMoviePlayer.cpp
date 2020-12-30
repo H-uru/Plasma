@@ -82,11 +82,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class VPX
 {
-    VPX() { }
 
 #ifdef PLASMA_USE_WEBM
 public:
     vpx_codec_ctx_t codec;
+
+    VPX() : codec() { }
 
     ~VPX()
     {
@@ -118,6 +119,8 @@ public:
         // if this proves false, move decoder function into IProcessVideoFrame
         return vpx_codec_get_frame(&codec, &iter);
     }
+#else
+    VPX() { }
 #endif
 };
 

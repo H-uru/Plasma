@@ -79,13 +79,9 @@ class plDXLightRef : public plDXDeviceRef
         plDXLightRef    *GetNext() { return (plDXLightRef *)fNext; }
 
         plDXLightRef()
-        {
-            fOwner = nil;
-            fParentSettings = nil;
-            fD3DDevice = nil;
-            fD3DIndex = -1;
-            fScale = 1.f;
-        }
+            : fOwner(), fParentSettings(), fD3DDevice(),
+              fD3DIndex(-1), fScale(1.f), fD3DInfo()
+        { }
 
         virtual ~plDXLightRef();
         void    Release();

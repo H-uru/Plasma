@@ -61,18 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plSDLNotificationMsg.h"
 #include "plMessage/plAvatarMsg.h"
 
-plLayerAnimationBase::plLayerAnimationBase()
-: 
-    fPreshadeColorCtl(nil), 
-    fRuntimeColorCtl(nil),
-    fAmbientColorCtl(nil), 
-    fSpecularColorCtl(nil),
-    fOpacityCtl(nil), 
-    fTransformCtl(nil),
-    fEvalTime(-1.0),
-    fCurrentTime(-1.f)
-{
-}
 
 plLayerAnimationBase::~plLayerAnimationBase()
 {

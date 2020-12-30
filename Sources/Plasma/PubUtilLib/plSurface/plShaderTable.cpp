@@ -91,15 +91,6 @@ using namespace plShaderID;
 #include "ps_GrassShader.h"
 
 
-plShaderTableInst::plShaderTableInst()
-:   fFlags(0)
-{
-}
-
-plShaderTableInst::~plShaderTableInst()
-{
-}
-
 void plShaderTableInst::Register(const plShaderDecl* decl)
 {
     hsAssert(decl->GetID() && (decl->GetID() < plShaderID::kNumShaders), "Unexpected registration");

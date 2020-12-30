@@ -95,8 +95,11 @@ protected:
     void        ISetHasMaster(bool on) { if(on)SetFlag(kHasMaster); else ClearFlag(kHasMaster); }
 
 public:
-    plStereizer();
-    virtual ~plStereizer();
+    plStereizer()
+        : fListDirection(0.f, 1.f, 0.f), fListUp(0.f, 0.f, 1.f),
+          fAmbientDist(), fTransition(), fMaxSepDist(), fMinSepDist(), fTanAng()
+    { }
+    ~plStereizer();
 
     CLASSNAME_REGISTER( plStereizer );
     GETINTERFACE_ANY( plStereizer, plSingleModifier );

@@ -2098,10 +2098,10 @@ bool cyMisc::RequestLOSScreen(pyKey &selfkey, int32_t ID, float xPos, float yPos
         int32_t x=(int32_t) ( xPos * pipe->Width() );
         int32_t y=(int32_t) ( yPos * pipe->Height() );
 
-        hsPoint3 endPos, startPos;
+        hsPoint3 endPos;
         
         pipe->ScreenToWorldPoint( 1,0, &x, &y, distance, 0, &endPos );
-        startPos = pipe->GetViewPositionWorld();
+        hsPoint3 startPos = pipe->GetViewPositionWorld();
 
         // move the start pos out a little to avoid backing up against physical objects...
         hsVector3 view(endPos - startPos);
@@ -2253,10 +2253,10 @@ void cyMisc::ShootBulletFromScreen(pyKey &selfkey, float xPos, float yPos, float
         int32_t x=(int32_t) ( xPos * pipe->Width() );
         int32_t y=(int32_t) ( yPos * pipe->Height() );
 
-        hsPoint3 endPos, startPos;
+        hsPoint3 endPos;
         
         pipe->ScreenToWorldPoint( 1,0, &x, &y, range, 0, &endPos );
-        startPos = pipe->GetViewPositionWorld();
+        hsPoint3 startPos = pipe->GetViewPositionWorld();
 
         // move the start pos out a little to avoid backing up against physical objects...
         hsVector3 view(endPos - startPos);

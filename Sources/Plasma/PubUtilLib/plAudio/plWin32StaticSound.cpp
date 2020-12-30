@@ -62,10 +62,6 @@ plProfile_Extern(MemSounds);
 plProfile_CreateAsynchTimer( "Static Shove Time", "Sound", StaticSndShoveTime );
 plProfile_CreateAsynchTimer( "Static Swizzle Time", "Sound", StaticSwizzleTime );
 
-plWin32StaticSound::plWin32StaticSound()
-{
-}
-
 plWin32StaticSound::~plWin32StaticSound()
 {
     DeActivate();

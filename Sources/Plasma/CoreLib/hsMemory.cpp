@@ -266,16 +266,6 @@ struct hsAppenderHead {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-hsAppender::hsAppender(uint32_t elemSize, uint32_t elemCount)
-        : fFirstBlock(nil), fElemSize(elemSize), fElemCount(elemCount), fCount(0)
-{
-}
-
-hsAppender::~hsAppender()
-{
-    this->Reset();
-}
-
 uint32_t hsAppender::CopyInto(void* data) const
 {
     if (data)
@@ -472,6 +462,7 @@ bool hsAppender::PopTail(void* data)
 //////////////////////////////////////////////////////////////////////////
 
 hsAppenderIterator::hsAppenderIterator(const hsAppender* list)
+    : fCurrItem()
 {
     this->ResetToHead(list);
 }

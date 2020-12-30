@@ -164,7 +164,7 @@ plAvTaskSeek::plAvTaskSeek(plAvSeekMsg *msg)
 
 // plAvTaskSeek ------------------------
 // -------------
-plAvTaskSeek::plAvTaskSeek(plKey target)
+plAvTaskSeek::plAvTaskSeek(const plKey& target)
 {
     IInitDefaults();
 
@@ -173,30 +173,26 @@ plAvTaskSeek::plAvTaskSeek(plKey target)
 
 // plAvTaskSeek -------------------------------------------------------------------------------------------
 // -------------
-plAvTaskSeek::plAvTaskSeek(plKey target, plAvAlignment align, const ST::string& animName, bool moving)
+plAvTaskSeek::plAvTaskSeek(const plKey& target, plAvAlignment align, ST::string animName, bool moving)
 {
     IInitDefaults();
 
     fMovingTarget = moving;
     fAlign = align;
-    fAnimName = animName;
+    fAnimName = std::move(animName);
 
     SetTarget(target);
 }
 
-void plAvTaskSeek::SetTarget(plKey target)
+void plAvTaskSeek::SetTarget(const plKey& target)
 {
     hsAssert(target, "Bad key to seek task");
     if(target)
-    {
         fSeekObject = plSceneObject::ConvertNoRef(target->ObjectIsLoaded());
-    }
     else
-    {
-        fSeekObject = nil;
-    }
+        fSeekObject = nullptr;
 }
-    
+
 void plAvTaskSeek::SetTarget(hsPoint3 &pos, hsPoint3 &lookAt)
 {
     fSeekPos = pos;

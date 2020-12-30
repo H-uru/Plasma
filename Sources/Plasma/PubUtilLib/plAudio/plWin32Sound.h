@@ -62,8 +62,10 @@ class plWin32Sound : public plSound
 {
 public:
 
-    plWin32Sound();
-    virtual ~plWin32Sound();
+    plWin32Sound()
+        : fFailed(), fPositionInited(), fAwaitingPosition(), fTotalBytes(),
+          fReallyPlaying(), fChannelSelect(), fDSoundBuffer(), fWasPlaying()
+    { }
 
     CLASSNAME_REGISTER( plWin32Sound );
     GETINTERFACE_ANY( plWin32Sound, plSound );

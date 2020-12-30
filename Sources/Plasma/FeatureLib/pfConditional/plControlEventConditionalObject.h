@@ -54,7 +54,7 @@ protected:
 
 public:
     
-    plControlEventConditionalObject();
+    plControlEventConditionalObject() : fControlEvent() { }
     ~plControlEventConditionalObject() { }
     
     CLASSNAME_REGISTER( plControlEventConditionalObject );

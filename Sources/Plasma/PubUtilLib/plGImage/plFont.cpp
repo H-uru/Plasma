@@ -103,8 +103,9 @@ void    plFont::plCharacter::Write( hsStream *s )
 //// Constructor/Read/Write/Destructor/etc ////////////////////////////////////
 
 plFont::plFont()
+    : fFontAscent(), fFontDescent()
 {
-    IClear( true );
+    IClear(true);
 }
 
 plFont::~plFont()
@@ -1689,7 +1690,10 @@ class plBDFCharsParser : public plBDFSectParser
     public:
         static uint32_t       fResolution;
 
-        plBDFCharsParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ), fDoingData( false ) {}
+        plBDFCharsParser(plFont& myFont, plBDFConvertCallback* callback)
+            : plBDFSectParser(myFont, callback), fDoingData(), fWhichChar(),
+              fRowsLeft(), fCharacter(), fBitmap(), fBytesWide(), fBMapStride()
+        { }
 
         virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
         {

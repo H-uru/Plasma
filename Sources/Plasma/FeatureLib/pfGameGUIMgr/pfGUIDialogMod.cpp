@@ -72,24 +72,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIDialogMod::pfGUIDialogMod() : fRenderMod( nil ), fNext( nil ), fPrevPtr( nil )
-{
-    memset( fName, 0, sizeof( fName ) );
-    fEnabled = false;
-    fControlOfInterest = nil;
-    fFocusCtrl = nil;
-    fMousedCtrl = nil;
-    fTagID = 0;
-    fHandler = nil;
-    fVersion = 0;
-
-    fDragMode = false;
-    fDragReceptive = false;
-    fDragTarget = nil;
-    fProcReceiver = nil;
-
-    fColorScheme = new pfGUIColorScheme();
-}
+pfGUIDialogMod::pfGUIDialogMod()
+    : fRenderMod(), fNext(), fPrevPtr(), fEnabled(),
+      fControlOfInterest(), fFocusCtrl(), fMousedCtrl(),
+      fTagID(), fHandler(), fVersion(), fProcReceiver(),
+      fDragMode(), fDragReceptive(), fDragTarget(),
+      fDragSource(), fColorScheme(new pfGUIColorScheme()), fName()
+{ }
 
 pfGUIDialogMod::~pfGUIDialogMod()
 {
@@ -367,10 +356,7 @@ plKey   pfGUIDialogMod::GetSceneNodeKey()
 void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset )
 {
     int         i;
-    hsPoint3    mousePoint;
-
-
-    mousePoint.Set( mouseX, mouseY, 0.f );
+    hsPoint3    mousePoint(mouseX, mouseY, 0.f);
 
     for( i = 0; i < fControls.GetCount(); i++ )
     {

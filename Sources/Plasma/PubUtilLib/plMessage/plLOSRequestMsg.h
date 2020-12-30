@@ -62,7 +62,7 @@ public:
     };
 
     plLOSRequestMsg();
-    plLOSRequestMsg(const plKey& sender, hsPoint3& fromPoint, hsPoint3& toPoint, plSimDefs::plLOSDB db,
+    plLOSRequestMsg(const plKey& sender, const hsPoint3& fromPoint, const hsPoint3& toPoint, plSimDefs::plLOSDB db,
         TestType test = kTestAny, ReportType report = kReportHit);
 
     void SetFrom(const hsPoint3& from) { fFrom = from; }

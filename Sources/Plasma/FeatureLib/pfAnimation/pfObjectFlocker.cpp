@@ -283,7 +283,7 @@ void pfVehicle::RegenerateLocalSpaceForBanking(const hsVector3 &newVelocity, con
 {
     // the length of this global-upward-pointing vector controls the vehicle's
     // tendency to right itself as it is rolled over from turning acceleration
-    const hsVector3 globalUp(0, 0, 0.2f);
+    const hsVector3 globalUp(0.f, 0.f, 0.2f);
 
     // acceleration points toward the center of local path curvature, the
     // length determines how much the vehicle will roll while turning
@@ -383,14 +383,6 @@ hsPoint3 pfVehicle::PredictFuturePosition(const float predictionTime)
 // pfBoidGoal functions
 ///////////////////////////////////////////////////////////////////////////////
 
-pfBoidGoal::pfBoidGoal()
-{
-    fLastPos.Set(0, 0, 0);
-    fCurPos.Set(0, 0, 0);
-    fSpeed = 0;
-    fHasLastPos = false; // our last pos doesn't make sense yet
-}
-
 void pfBoidGoal::Update(plSceneObject *goal, float deltaTime)
 {
     if (!fHasLastPos) // the last pos is invalid, so we need to init now
@@ -426,32 +418,26 @@ hsPoint3 pfBoidGoal::PredictFuturePosition(const float predictionTime)
 // pfBoid functions
 ///////////////////////////////////////////////////////////////////////////////
 
-pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key)
+pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey key)
+    : fProximityToken(), fFlockerPtr(flocker), fObjKey(std::move(key)), fWanderSide(), fWanderUp()
 {
     // allocate a token for this boid in the proximity database
-    fProximityToken = NULL;
     ISetupToken(pd);
 
     Reset();
-
-    fFlockerPtr = flocker;
-    fObjKey = key;
 
     IFlockDefaults();
 
     fProximityToken->UpdateWithNewPosition(Position());
 }
 
-pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos)
+pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey key, const hsPoint3& pos)
+    : fProximityToken(), fFlockerPtr(flocker), fObjKey(std::move(key)), fWanderSide(), fWanderUp()
 {
     // allocate a token for this boid in the proximity database
-    fProximityToken = NULL;
     ISetupToken(pd);
 
     Reset();
-
-    fFlockerPtr = flocker;
-    fObjKey = key;
 
     SetPosition(pos);
 
@@ -460,16 +446,13 @@ pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key, hs
     fProximityToken->UpdateWithNewPosition(Position());
 }
 
-pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey &key, hsPoint3 &pos, float speed, hsVector3 &forward, hsVector3 &side, hsVector3 &up)
+pfBoid::pfBoid(pfProximityDatabase& pd, pfObjectFlocker *flocker, plKey key, const hsPoint3 &pos, float speed, const hsVector3 &forward, const hsVector3 &side, const hsVector3 &up)
+    : fProximityToken(), fFlockerPtr(flocker), fObjKey(std::move(key)), fWanderSide(), fWanderUp()
 {
     // allocate a token for this boid in the proximity database
-    fProximityToken = NULL;
     ISetupToken(pd);
 
     Reset();
-
-    fFlockerPtr = flocker;
-    fObjKey = key;
 
     SetPosition(pos);
     SetSpeed(speed);
@@ -581,8 +564,8 @@ hsVector3 pfBoid::ISteerToGoal(pfBoidGoal &goal, float maxPredictionTime)
     hsPoint3 pos = Position();
     const hsVector3 offset(&gpos, &pos);
     const float distance = offset.Magnitude();
-    if (distance == 0) // nowhere to go
-        return hsVector3(0, 0, 0);
+    if (distance == 0.f) // nowhere to go
+        return {};
     const hsVector3 unitOffset = offset / distance;
 
     // how parallel are the paths of "this" and the goal
@@ -665,7 +648,7 @@ hsVector3 pfBoid::ISteerToGoal(pfBoidGoal &goal, float maxPredictionTime)
 hsVector3 pfBoid::ISteerForSeparation(const float maxDistance, const float cosMaxAngle, const std::vector<pfVehicle*> &flock)
 {
     // steering accumulator and count of neighbors, both initially zero
-    hsVector3 steering(0, 0, 0);
+    hsVector3 steering;
     int neighbors = 0;
 
     // for each of the other vehicles...
@@ -705,7 +688,7 @@ hsVector3 pfBoid::ISteerForSeparation(const float maxDistance, const float cosMa
 hsVector3 pfBoid::ISteerForCohesion(const float maxDistance, const float cosMaxAngle, const std::vector<pfVehicle*> &flock)
 {
     // steering accumulator and count of neighbors, both initially zero
-    hsVector3 steering(0, 0, 0);
+    hsVector3 steering;
     int neighbors = 0;
 
     // for each of the other vehicles...
@@ -726,7 +709,7 @@ hsVector3 pfBoid::ISteerForCohesion(const float maxDistance, const float cosMaxA
     if (neighbors > 0)
     {
         hsPoint3 pos = Position();
-        hsPoint3 zero(0, 0, 0);
+        hsPoint3 zero;
         hsVector3 posVector(&pos, &zero); // quick hack to turn a point into a vector
         steering = ((steering / (float)neighbors) - posVector);
         steering.Normalize();

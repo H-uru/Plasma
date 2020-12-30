@@ -348,7 +348,7 @@ class plMyBDFCallback : public plBDFConvertCallback
     uint16_t  fPoint;
 
 public:
-    plMyBDFCallback(QWidget *parent) : fProgress(parent) { }
+    plMyBDFCallback(QWidget *parent) : fProgress(parent), fPoint() { }
 
     void NumChars(uint16_t chars) override
     {

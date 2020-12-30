@@ -119,8 +119,9 @@ class hsAppender {
     
     friend class hsAppenderIterator;
 public:
-            hsAppender(uint32_t elemSize, uint32_t minCount = 16);
-            ~hsAppender();
+            hsAppender(uint32_t elemSize, uint32_t elemCount = 16)
+                : fFirstBlock(), fLastBlock(), fElemSize(elemSize), fElemCount(elemCount), fCount() { }
+            ~hsAppender() { this->Reset(); };
 
     uint32_t  ElemSize() const { return fElemSize; }
     uint32_t  Count() const { return fCount; }

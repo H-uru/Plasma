@@ -102,9 +102,6 @@ plPlate::~plPlate()
 
 void    plPlate::SetPosition( float x, float y, float z )
 {
-    hsVector3   triple;
-
-
     if( z != -1.0f )
     {
         /// Gotta resort--let the manager do it
@@ -114,10 +111,8 @@ void    plPlate::SetPosition( float x, float y, float z )
 
     x *= fDepth / 1.0f;
     y *= fDepth / 1.0f;
-    triple.fX = x;
-    triple.fY = y;
-    triple.fZ = fDepth;
 
+    hsVector3 triple(x, y, fDepth);
     fXformMatrix.SetTranslate( &triple );
 }
 
@@ -125,15 +120,11 @@ void    plPlate::SetPosition( float x, float y, float z )
 
 void    plPlate::SetSize( float width, float height, bool adjustByAspectRatio )
 {
-    hsVector3   size;
-
     width *= fDepth / 1.0f;
     height *= fDepth / 1.0f;
 
-    size.fX = adjustByAspectRatio ? (width * ((float)plPlateManager::Instance().GetPipeHeight() / (float)plPlateManager::Instance().GetPipeWidth())) : width;
-    size.fY = height;
-    size.fZ = 1.0f;
-
+    hsVector3 size(adjustByAspectRatio ? (width * ((float)plPlateManager::Instance().GetPipeHeight() / (float)plPlateManager::Instance().GetPipeWidth())) : width,
+                   height, 1.f);
     fXformMatrix.SetScale( &size );
 }
 

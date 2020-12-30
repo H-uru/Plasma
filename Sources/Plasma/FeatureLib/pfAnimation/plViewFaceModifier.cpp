@@ -55,19 +55,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 
 plViewFaceModifier::plViewFaceModifier()
-:   fFacePoint(0,0,0),
-    fLastDirY(0,1.f,0),
-    fScale(1.f,1.f,1.f),
-    fOffset(0,0,0)
+    : fLastDirY(0.f, 1.f, 0.f),
+      fScale(1.f, 1.f, 1.f),
+      fFaceObj()
 {
     fOrigLocalToParent.Reset();
     fOrigParentToLocal.Reset();
 
     SetFlag(kFaceCam); // default
-}
-
-plViewFaceModifier::~plViewFaceModifier()
-{
 }
 
 void plViewFaceModifier::SetOrigTransform(const hsMatrix44& l2p, const hsMatrix44& p2l)
@@ -162,9 +157,9 @@ bool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
         return false;
     len = -hsFastMath::InvSqrtAppr(len);
     
-    hsVector3 dirX, dirY, dirZ;
-    dirZ.Set(localAt.fX * len, localAt.fY * len, localAt.fZ * len);
-    
+    hsVector3 dirX, dirY;
+    hsVector3 dirZ(localAt.fX * len, localAt.fY * len, localAt.fZ * len);
+
     if( HasFlag(kPivotFace) )
     {
         dirY.Set(0.f, 0.f, 1.f);

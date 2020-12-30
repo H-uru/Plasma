@@ -52,10 +52,8 @@ plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
 
     hsAssert(fVerts.GetCount() > 2, "Initializing from degenerate poly");
 
-    hsVector3 a;
-    hsVector3 b;
-    a.Set(&fVerts[1], &fVerts[0]);
-    b.Set(&fVerts[2], &fVerts[0]);
+    hsVector3 a(&fVerts[1], &fVerts[0]);
+    hsVector3 b(&fVerts[2], &fVerts[0]);
     fNorm = a % b;
     hsFastMath::Normalize(fNorm);
     fDist = -(fNorm.InnerProduct(fVerts[0]));

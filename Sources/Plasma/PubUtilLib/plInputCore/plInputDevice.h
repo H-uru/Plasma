@@ -68,7 +68,9 @@ protected:
     uint32_t fFlags;
 public:
     
-    plInputDevice() { }
+    plInputDevice()
+        : fFlags()
+    { }
     virtual ~plInputDevice() { }
 
     virtual const char* GetInputName() = 0;

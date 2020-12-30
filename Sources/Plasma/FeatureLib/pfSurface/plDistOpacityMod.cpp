@@ -72,8 +72,6 @@ plDistOpacityMod::plDistOpacityMod()
     fDists[kNearOpaq] = 0;
     fDists[kFarOpaq] = 0;
     fDists[kFarTrans] = 0;
-
-    fRefPos.Set(0, 0, 0);
 }
 
 plDistOpacityMod::~plDistOpacityMod()

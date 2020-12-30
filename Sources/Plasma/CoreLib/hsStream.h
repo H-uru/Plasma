@@ -386,7 +386,7 @@ protected:
     char*   fStop;
 public:
     hsReadOnlyStream(int size, const void* data) { Init(size, data); }
-    hsReadOnlyStream() {}
+    hsReadOnlyStream() : fStart(), fStop(), fData() { }
 
     virtual void      Init(int size, const void* data) { fStart=((char*)data); fData=((char*)data); fStop=((char*)data + size); }
     virtual bool      Open(const plFileName &, const char *) { hsAssert(0, "hsReadOnlyStream::Open  NotImplemented"); return false; }

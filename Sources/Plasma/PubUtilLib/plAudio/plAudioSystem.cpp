@@ -179,8 +179,8 @@ plAudioSystem::plAudioSystem()
       fEAXSupported(),
       fLastUpdateTimeMs()
 {
-    fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
-    fLastPos.Set(100, 100, 100);
+    fCurrListenerPos.Set(-1.e30f, -1.e30f, -1.e30f);
+    fLastPos.Set(100.f, 100.f, 100.f);
 }
 
 std::vector<ST::string> plAudioSystem::GetPlaybackDevices() const
@@ -1119,7 +1119,7 @@ hsPoint3 plgAudioSys::GetCurrListenerPos()
 {
     if (fSys)
         return fSys->fCurrListenerPos;
-    return hsPoint3(0.f, 0.f, 0.f);
+    return {};
 }
 
 void plgAudioSys::SetListenerPos(const hsPoint3& pos)

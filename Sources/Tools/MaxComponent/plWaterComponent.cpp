@@ -543,7 +543,7 @@ bool plWaterComponent::IReadRefObject(plMaxNodeBase* node, plFixedWaterState7& w
     ws.fWaterHeight = xfm.GetTrans().z;
 
     Point3 y = xfm.GetRow(1);
-    hsVector3 dir(-y.x, -y.y, 0);
+    hsVector3 dir(-y.x, -y.y, 0.f);
     dir.Normalize();
     ws.fWindDir = dir;
 
@@ -657,7 +657,7 @@ bool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
     ws.fDepthFalloff = hsVector3(fCompPB->GetFloat(kDepthOpac), fCompPB->GetFloat(kDepthRefl), fCompPB->GetFloat(kDepthWave));
     ws. fWaterOffset = hsVector3(-fCompPB->GetFloat(kZeroOpac), -fCompPB->GetFloat(kZeroRefl), -fCompPB->GetFloat(kZeroWave));
     ws.fMaxAtten = hsVector3(1.f, 1.f, 1.f);
-    ws.fMinAtten = hsVector3(0, 0, 0);
+    ws.fMinAtten = {};
 
     IReadEnvObject(node, pErrMsg, ws);
 

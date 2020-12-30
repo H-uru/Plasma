@@ -462,7 +462,7 @@ void plPXPhysical::SetLinearVelocitySim(const hsVector3& vel, bool wakeup)
 
 void plPXPhysical::ClearLinearVelocity()
 {
-    SetLinearVelocitySim(hsVector3(0, 0, 0));
+    SetLinearVelocitySim({});
 }
 
 bool plPXPhysical::GetAngularVelocitySim(hsVector3& vel) const

@@ -51,19 +51,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static const float kDefLength = 5.f;
 
 plSphereIsect::plSphereIsect()
-:   fRadius(1.f)
+    : fRadius(1.f)
 {
-    fCenter.Set(0,0,0);
     int i;
     for( i = 0; i < 3; i++ )
     {
         fMins[i] = -fRadius;
         fMaxs[i] =  fRadius;
     }
-}
-
-plSphereIsect::~plSphereIsect()
-{
 }
 
 void plSphereIsect::SetCenter(const hsPoint3& c)
@@ -171,13 +166,9 @@ void plSphereIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 
 plConeIsect::plConeIsect()
-:   fLength(kDefLength), fRadAngle(hsConstants::pi<float> * 0.25f), fCapped(false)
+    : fLength(kDefLength), fRadAngle(hsConstants::pi<float> * 0.25f), fCapped()
 {
     ISetup();
-}
-
-plConeIsect::~plConeIsect()
-{
 }
 
 void plConeIsect::SetAngle(float rads)
@@ -378,14 +369,6 @@ void plConeIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-plCylinderIsect::plCylinderIsect()
-{
-}
-
-plCylinderIsect::~plCylinderIsect()
-{
-}
-
 void plCylinderIsect::ISetupCyl(const hsPoint3& wTop, const hsPoint3& wBot, float radius)
 {
     fWorldNorm.Set(&wTop, &wBot);
@@ -540,14 +523,6 @@ void plCylinderIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-plParallelIsect::plParallelIsect()
-{
-}
-
-plParallelIsect::~plParallelIsect()
-{
-}
-
 void plParallelIsect::SetNumPlanes(int n)
 {
     fPlanes.SetCount(n);
@@ -667,14 +642,6 @@ void plParallelIsect::Write(hsStream* s, hsResMgr* mgr)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-
-plConvexIsect::plConvexIsect()
-{
-}
-
-plConvexIsect::~plConvexIsect()
-{
-}
 
 void plConvexIsect::AddPlaneUnchecked(const hsVector3& n, float dist)
 {
@@ -810,13 +777,6 @@ void plConvexIsect::Write(hsStream* s, hsResMgr* mgr)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-plBoundsIsect::plBoundsIsect()
-{
-}
-
-plBoundsIsect::~plBoundsIsect()
-{
-}
 
 void plBoundsIsect::SetBounds(const hsBounds3Ext& bnd) 
 { 
@@ -864,10 +824,6 @@ void plBoundsIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-plComplexIsect::plComplexIsect()
-{
-}
-
 plComplexIsect::~plComplexIsect()
 {
     int i;
@@ -912,14 +868,6 @@ void plComplexIsect::Write(hsStream* s, hsResMgr* mgr)
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-plUnionIsect::plUnionIsect()
-{
-}
-
-plUnionIsect::~plUnionIsect()
-{
-}
-
 plVolumeCullResult plUnionIsect::Test(const hsBounds3Ext& bnd) const
 {
     plVolumeCullResult retVal = kVolumeCulled;
@@ -959,14 +907,6 @@ float plUnionIsect::Test(const hsPoint3& pos) const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-
-plIntersectionIsect::plIntersectionIsect()
-{
-}
-
-plIntersectionIsect::~plIntersectionIsect()
-{
-}
 
 plVolumeCullResult plIntersectionIsect::Test(const hsBounds3Ext& bnd) const
 {

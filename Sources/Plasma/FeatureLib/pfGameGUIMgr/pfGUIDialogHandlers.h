@@ -70,7 +70,7 @@ class pfGUIDialogProc : public pfGUICtrlProcObject
 
     public:
 
-        pfGUIDialogProc() { }
+        pfGUIDialogProc() : fDialog() { }
         virtual ~pfGUIDialogProc() { }
 
         // Called by the mgr--don't call yourself!

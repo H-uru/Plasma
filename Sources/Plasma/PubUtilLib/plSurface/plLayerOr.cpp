@@ -44,15 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerOr.h"
 
 plLayerOr::plLayerOr()
+    : fDirty()
 {
     fState = new hsGMatState;
     fState->Reset();
 
     fOwnedChannels = kState;
-}
-
-plLayerOr::~plLayerOr()
-{
 }
 
 void    plLayerOr::SetState( const hsGMatState& state )

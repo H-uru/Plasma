@@ -212,9 +212,18 @@ public:
         kTurnFrontPage,
         kTurnBackPage
     };
-    
-    pfBookData(const ST::string &guiName = {});
-    virtual ~pfBookData();
+
+    pfBookData(const ST::string& guiName = {})
+        : fCurrBook(), fDialog(), fCoverButton(), fTurnPageButton(),
+        fLeftPageMap(), fRightPageMap(), fCoverLayer(), fCoverMaterial(),
+        fLeftCorner(), fRightCorner(), fWidthCtrl(), fHeightCtrl(),
+        fRightEditCtrl(), fLeftEditCtrl(), fTurnFrontEditCtrl(), fTurnBackEditCtrl(),
+        fDefaultCover(), fCurrentlyOpen(), fStartedOpen(),
+        fResetSFXFlag(), fSFXUpdateFlip(), fCurrentlyTurning(), fEditable(),
+        fCurrSFXPages(kNoSides), fBaseSFXTime(), fAdjustCursorTo(-1), fPageMaterials(),
+        fGUIName(!guiName.empty() ? guiName : ST_LITERAL("BkBook"))
+    { }
+    virtual ~pfBookData() { RegisterForSFX(kNoSides); }
 
     void LoadGUI(); // need this seperate because the plKey isn't setup until the constructor is done
 

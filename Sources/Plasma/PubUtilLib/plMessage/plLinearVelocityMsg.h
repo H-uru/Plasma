@@ -41,18 +41,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "pnMessage/plSimulationMsg.h"
 #include "hsGeometry3.h"
-class plLinearVelocityMsg :  public plSimulationMsg 
+
+class plLinearVelocityMsg :  public plSimulationMsg
 {
 public:
     // pass-through constructors
-    plLinearVelocityMsg() : plSimulationMsg() {};
-    plLinearVelocityMsg(const plKey &sender, const plKey &receiver, const double *time) 
-        : plSimulationMsg(sender,receiver, time), fVelocity(0.0f,0.0f,0.0f)  {};
-    CLASSNAME_REGISTER( plLinearVelocityMsg );
+    plLinearVelocityMsg()
+        : plSimulationMsg()
+    { }
+    plLinearVelocityMsg(const plKey& sender, const plKey& receiver, const double* time)
+        : plSimulationMsg(sender, receiver, time)
+    {}
+
+    CLASSNAME_REGISTER(plLinearVelocityMsg);
     GETINTERFACE_ANY( plLinearVelocityMsg, plSimulationMsg);
-    void Velocity(hsVector3& vel){fVelocity=vel;}
-    const hsVector3& Velocity(){return fVelocity;}
+
+    void Velocity(const hsVector3& vel) { fVelocity = vel; }
+    hsVector3 Velocity() const { return fVelocity; }
+
 protected:
     hsVector3 fVelocity;
-
 };

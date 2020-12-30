@@ -70,18 +70,11 @@ plProfile_CreateAsynchTimer( "Stream Shove Time", "Sound", StreamSndShoveTime );
 plProfile_CreateAsynchTimer( "Stream Swizzle Time", "Sound", StreamSwizzleTime );
 plProfile_Extern( SoundLoadTime );
 
-plWin32StreamingSound::plWin32StreamingSound() :
-fDataStream(nil),
-fBlankBufferFillCounter(0),
-fDeswizzler(nil),
-fStreamType(kNoStream),
-fLastStreamingUpdate(0),
-fStopping(false),
-fPlayWhenStopped(false),
-fStartPos(0)
-{
-    fBufferLengthInSecs = plgAudioSys::GetStreamingBufferSize();
-}
+plWin32StreamingSound::plWin32StreamingSound()
+    : fDataStream(), fBlankBufferFillCounter(), fDeswizzler(), fStreamType(kNoStream),
+      fLastStreamingUpdate(), fStopping(), fPlayWhenStopped(), fStartPos(),
+      fTimeAtBufferStart(), fIsCompressed(), fBufferLengthInSecs(plgAudioSys::GetStreamingBufferSize())
+{ }
 
 plWin32StreamingSound::~plWin32StreamingSound()
 {

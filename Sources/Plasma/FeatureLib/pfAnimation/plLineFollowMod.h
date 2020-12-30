@@ -116,7 +116,12 @@ protected:
 
 public:
 
-    plLineFollowMod();
+    plLineFollowMod()
+        : fPath(), fPathParent(), fRefObj(),
+          fFollowMode(kFollowListener), fFollowFlags(kNone),
+          fOffset(), fOffsetClamp(), fTanOffset(),
+          fSpeedClamp()
+    { }
     ~plLineFollowMod();
 
     CLASSNAME_REGISTER( plLineFollowMod );

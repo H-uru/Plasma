@@ -52,10 +52,6 @@ void ZlibFree(voidpf opaque, voidpf address)
     free(address);
 }
 
-plZlibStream::plZlibStream() : fOutput(nil), fZStream(nil), fHeader(kNeedMoreData), fDecompressedOk(false)
-{
-}
-
 plZlibStream::~plZlibStream()
 {
     hsAssert(!fOutput && !fZStream, "plZlibStream not closed");

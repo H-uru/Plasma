@@ -187,8 +187,12 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr);
 
     // ctor
-    plNetMessage();
-    virtual ~plNetMessage();
+    plNetMessage()
+        : fTimeRecvd(), fBytesRead(), fNetCoreMsg(), fContext(),
+          fPeekStatus(), fTransactionID(), fPlayerID(kInvalidPlayerID),
+          fNetProtocol(), fProtocolVerMajor(), fProtocolVerMinor(),
+          fFlags(0)
+    { }
 
     static plNetMessage* CreateAndRead(const plNetCommonMessage*, plStreamLogger::EventList* el = nil);
     static plNetMessage* Create(const plNetCommonMessage*);
@@ -990,5 +994,4 @@ public:
 #endif  // plNetMessage_h_inc
 ////////////////////////////////////////////////////////////////////
 // End.
-
 

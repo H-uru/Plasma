@@ -62,7 +62,9 @@ protected:
     friend class pfMarkerInfoOwned;
 
 public:
-    plGameMarkerModifier() {}
+    plGameMarkerModifier()
+        : fPlaceSndIdx(), fHitSndIdx()
+    { }
 
     CLASSNAME_REGISTER(plGameMarkerModifier);
     GETINTERFACE_ANY(plGameMarkerModifier, plSingleModifier);

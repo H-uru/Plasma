@@ -82,11 +82,9 @@ static float kMinHither = 1.f;
 #include "plDrawable/plDrawableGenerator.h"
 
 plLightInfo::plLightInfo()
-:   fSceneNode(nil),
-    fDeviceRef(nil),
-    fVolFlags(0),
-    fProjection(nil),
-    fSoftVolume(nil)
+    : fSceneNode(), fDeviceRef(), fProjection(), fSoftVolume(),
+      fVolFlags(), fNextDevPtr(), fPrevDevPtr(), fProxyGen(new plLightProxy),
+      fRegisteredForRenderMsg(), fAmbient(), fDiffuse(), fSpecular(), fMaxStrength()
 {
     fLightToWorld.Reset();
     fWorldToLight.Reset();
@@ -99,13 +97,7 @@ plLightInfo::plLightInfo()
 
     fWorldToProj.Reset();
 
-    fNextDevPtr = nil;
-    fPrevDevPtr = nil;
-
-    fProxyGen = new plLightProxy;
     fProxyGen->Init(this);
-
-    fRegisteredForRenderMsg = false;
 
     fVisSet.SetBit(plVisMgr::kNormal);
 }
@@ -615,15 +607,6 @@ hsVector3 plDirectionalLightInfo::GetWorldDirection() const
 
 //////////////////////////////////////////////////////////////////////////
 // Limited Directional
-plLimitedDirLightInfo::plLimitedDirLightInfo()
-:   fParPlanes(nil)
-{
-}
-
-plLimitedDirLightInfo::~plLimitedDirLightInfo()
-{
-    delete fParPlanes;
-}
 
 void plLimitedDirLightInfo::IRefresh()
 {
@@ -885,29 +868,15 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
 
 //////////////////////////////////////////////////////////////////////////
 // Spot
-plSpotLightInfo::plSpotLightInfo()
-:   fFalloff(1.f),
-    fSpotInner(hsConstants::pi<float> * 0.125f),
-    fSpotOuter(hsConstants::pi<float> * 0.25f),
-    fCone(nil)
-{
-}
-
-plSpotLightInfo::~plSpotLightInfo()
-{
-    delete fCone;
-}
-
 void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plOmniLightInfo::GetStrengthAndScale(bnd, strength, scale);
 
     // Volume - Want to base this on the closest point on the bounds, instead of just the center.
     const hsPoint3& pos = bnd.GetCenter();
-    
-    hsVector3 del;
+
     hsPoint3 wpos = GetWorldPosition();
-    del.Set(&pos, &wpos);
+    hsVector3 del(&pos, &wpos);
     float invDist = del.MagnitudeSquared();
     invDist = hsFastMath::InvSqrtAppr(invDist);
 

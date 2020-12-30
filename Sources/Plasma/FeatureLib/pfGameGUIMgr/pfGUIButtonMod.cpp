@@ -149,14 +149,10 @@ void    pfGUIButtonMod::StartDragging()
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIButtonMod::pfGUIButtonMod()
+    : fDraggable(), fOrigHandler(), fClicking(), fTriggering(),
+      fNotifyType(kNotifyOnUp), fOrigReportedDrag()
 {
-    fDraggable = nil;
-    fOrigHandler = nil;
-
-    fClicking = false;
-    fTriggering = false;
-    fNotifyType = kNotifyOnUp;
-    SetFlag( kWantsInterest );
+    SetFlag(kWantsInterest);
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////

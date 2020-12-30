@@ -187,7 +187,7 @@ plSpaceTree* plSceneNode::IBuildSpaceTree()
     maker.Reset();
     
     hsBounds3Ext bnd;
-    hsPoint3 zero(0, 0, 0);
+    hsPoint3 zero;
     bnd.Reset(&zero);
     
     int i;

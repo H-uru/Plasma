@@ -87,10 +87,11 @@ public:
         kForceSize = 0xff
     };
 
-    plAGAnim();
+    plAGAnim() : plSynchedObject(), fBlend(), fStart(), fEnd() { }
     /** Construct with name, start time, and end time (within the max note track)
      */
-    plAGAnim(const ST::string &name, double begin, double end);
+    plAGAnim(ST::string name, double start, double end)
+        : fStart((float)start), fEnd((float)end), fName(std::move(name)), fBlend() { }
     /** Destruct, freeing the underlying animation data. */
     virtual ~plAGAnim();
 

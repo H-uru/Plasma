@@ -75,8 +75,10 @@ class pfGUIListElement
             kTreeRoot
         };
 
-        pfGUIListElement( uint8_t type ) : fType( type ), fSelected( false ), fCollapsed( false ), fIndentLevel( 0 ) {}
-        virtual ~pfGUIListElement() {}
+        pfGUIListElement( uint8_t type )
+            : fType(type), fSelected(), fCollapsed(), fIndentLevel(),
+              fColors(), fSkin() { }
+        virtual ~pfGUIListElement() { }
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -146,12 +148,12 @@ class pfGUIListPicture : public pfGUIListElement
     protected:
 
         plKey   fMipmapKey;
-        uint8_t   fBorderSize;    // Defaults to 2
+        uint8_t fBorderSize;    // Defaults to 2
         bool    fRespectAlpha;
 
     public:
 
-        pfGUIListPicture();
+        pfGUIListPicture() : pfGUIListElement(kPicture), fRespectAlpha(), fBorderSize(2), fMipmapKey() { }
         pfGUIListPicture( plKey mipKey, bool respectAlpha );
         virtual ~pfGUIListPicture(); 
         
@@ -180,8 +182,8 @@ class pfGUIListTreeRoot : public pfGUIListElement
 
     public:
 
-        pfGUIListTreeRoot();
-        pfGUIListTreeRoot( const ST::string &text );
+        pfGUIListTreeRoot() : pfGUIListElement(kTreeRoot), fShowChildren(true) { }
+        pfGUIListTreeRoot(const ST::string &text) : pfGUIListElement(kTreeRoot), fShowChildren(true), fText(text) { }
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );

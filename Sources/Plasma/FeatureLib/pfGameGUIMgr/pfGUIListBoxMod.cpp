@@ -113,21 +113,12 @@ class pfScrollProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIListBoxMod::pfGUIListBoxMod()
+    : fMinSel(), fMaxSel(), fCurrClick(-1), fCurrHover(-1), fModsAtDragTime(),
+      fScrollControl(), fCheckScroll(), fSingleSelElement(-1),
+      fScrollRangeUpdateDeferred(), fScrollPos(), fLocked(),
+      fReadyToRoll(), fClicking(), fScrollProc()
 {
-    SetFlag( kWantsInterest );
-    fCurrClick = -1;
-    fCurrHover = -1;
-    fModsAtDragTime = 0;
-    fScrollControl = nil;
-    fCheckScroll = false;
-    fSingleSelElement = -1;
-    fScrollRangeUpdateDeferred = false;
-    fScrollPos = 0;
-    fLocked = false;
-    fReadyToRoll = false;
-    fClicking = false;
-
-    fScrollProc = nil;
+    SetFlag(kWantsInterest);
 }
 
 pfGUIListBoxMod::~pfGUIListBoxMod()

@@ -460,7 +460,7 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
 void plPXPhysical::ResetSyncState()
 {
     if (fSDLMod) {
-        hsVector3 zero(0.f, 0.f, 0.f);
+        hsVector3 zero;
         bool wakeup = GetProperty(plSimulationInterface::kStartInactive);
 
         ISetPoseSim(&fRecipe.l2sP, &fRecipe.l2sQ, wakeup);

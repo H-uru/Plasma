@@ -48,11 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plMessage/plAnimCmdMsg.h"
 
-plAnimationEventConditionalObject::plAnimationEventConditionalObject(plKey pTargetModifier) :
-fTarget(pTargetModifier),
-fAction(kEventEnd)
-{
-}
 
 bool plAnimationEventConditionalObject::MsgReceive(plMessage* msg)
 {

@@ -69,25 +69,11 @@ plProfile_CreateCounterNoReset( "Allocated", "Sound", NumAllocated );
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plDSoundBuffer::plDSoundBuffer( uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool isLooping, bool tryStatic, bool streaming )
-{ 
-    fLooping = isLooping;
-    fValid = false;
-    fBufferDesc = nil;
-
-    fLockPtr = nil;
-    fLockLength = 0;
-
-    fStreaming = streaming;
-
-    buffer = 0;
-    source = 0; 
-    for(int i = 0; i < STREAMING_BUFFERS; ++i)
-    {
-        streamingBuffers[i] = 0;
-    }
-
-    IAllocate( size, bufferDesc, enable3D, tryStatic );
+plDSoundBuffer::plDSoundBuffer(uint32_t size, plWAVHeader &bufferDesc, bool enable3D, bool isLooping, bool tryStatic, bool streaming)
+    : fLooping(isLooping), fValid(), fBufferDesc(), fLockPtr(), fLockLength(), fStreaming(streaming),
+      buffer(), source(), streamingBuffers(), fType(kStatic), fStreamingBufferSize(), fNumQueuedBuffers(), fPrevVolume()
+{
+    IAllocate(size, bufferDesc, enable3D, tryStatic);
     fNumBuffers++;
 }
 
@@ -95,7 +81,6 @@ plDSoundBuffer::~plDSoundBuffer()
 {
     IRelease();
     fNumBuffers--;
-    
 }
 
 //// IAllocate ///////////////////////////////////////////////////////////////

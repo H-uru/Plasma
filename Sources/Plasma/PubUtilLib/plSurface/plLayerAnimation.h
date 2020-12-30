@@ -76,7 +76,11 @@ protected:
     void IEvalConvertedTime(float secs, uint32_t passChans, uint32_t evalChans, uint32_t &dirty);
 
 public:
-    plLayerAnimationBase();
+    plLayerAnimationBase()
+        : fPreshadeColorCtl(), fRuntimeColorCtl(), fAmbientColorCtl(), 
+          fSpecularColorCtl(), fOpacityCtl(), fTransformCtl(),
+          fEvalTime(-1.0), fCurrentTime(-1.f), fLength()
+    { }
     virtual ~plLayerAnimationBase();
 
     CLASSNAME_REGISTER( plLayerAnimationBase );

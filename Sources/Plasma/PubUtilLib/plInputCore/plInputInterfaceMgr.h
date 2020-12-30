@@ -161,7 +161,10 @@ class plCtrlCmd
         plInputInterface    *fSource;
 
     public:
-        plCtrlCmd( plInputInterface *source ) : fCmd(nil),fPct(1.0f), fSource(source) { }
+        plCtrlCmd(plInputInterface* source)
+            : fCmd(), fPct(1.f), fSource(source),
+              fControlCode(), fControlActivated(), fNetPropagateToPlayers()
+        { }
         ~plCtrlCmd() { delete [] fCmd; }
 
         const char* GetCmdString()          { return fCmd; }

@@ -904,8 +904,7 @@ bool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
                 toker.Reset(sdata, hsConverterUtils::fTagSeps);
                 int nGot = 0;
                 char* token;
-                hsVector3 scale;
-                scale.Set(1.f,1.f,1.f);
+                hsVector3 scale(1.f, 1.f, 1.f);
                 while( (nGot < 3) && (token = toker.next()) )
                 {
                     switch( nGot )
