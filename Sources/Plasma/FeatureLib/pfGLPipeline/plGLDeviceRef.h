@@ -61,8 +61,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define LOG_GL_ERROR_CHECK(message)
 #endif
 
-class plGBufferGroup;
 class plBitmap;
+class plGBufferGroup;
+class plRenderTarget;
 
 class plGLDeviceRef : public hsGDeviceRef
 {
@@ -193,6 +194,24 @@ public:
 
     virtual ~plGLTextureRef();
     void Release() override;
+};
+
+
+class plGLRenderTargetRef: public plGLTextureRef
+{
+public:
+    // fRef is the texture ref, so we can keep using this like a normal texture
+    GLuint          fFrameBuffer;
+    GLuint          fDepthBuffer;
+
+    void                    Link(plGLRenderTargetRef**back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
+    plGLRenderTargetRef*    GetNext() { return (plGLRenderTargetRef*)fNext; }
+
+    virtual ~plGLRenderTargetRef();
+
+    void Release();
+
+    virtual void SetOwner(plRenderTarget* targ) { fOwner = (plBitmap*)targ; }
 };
 
 

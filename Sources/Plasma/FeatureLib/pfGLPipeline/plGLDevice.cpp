@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plMipmap.h"
 #include "plGImage/plCubicEnvironmap.h"
+#include "plPipeline/plRenderTarget.h"
 #include "plStatusLog/plStatusLog.h"
 
 #pragma region EGL_Init
@@ -410,6 +411,22 @@ void plGLDevice::Shutdown()
 
 void plGLDevice::SetRenderTarget(plRenderTarget* target)
 {
+    plGLRenderTargetRef* ref = nullptr;
+
+    if (target != nullptr) {
+        ref = static_cast<plGLRenderTargetRef*>(target->GetDeviceRef());
+
+        if (ref == nullptr || ref->IsDirty())
+            ref = static_cast<plGLRenderTargetRef*>(fPipeline->MakeRenderTargetRef(target));
+    }
+
+    if (ref == nullptr)
+        /// Set to main screen
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    else
+        /// Set to this target
+        glBindFramebuffer(GL_FRAMEBUFFER, ref->fFrameBuffer);
+
     SetViewport();
 }
 
