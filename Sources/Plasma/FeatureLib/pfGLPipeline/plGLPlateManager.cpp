@@ -220,4 +220,7 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
 
     if (cull)
         glEnable(GL_CULL_FACE);
+
+    if (plGLVersion() >= 30)
+        glBindVertexArray(0);
 }
