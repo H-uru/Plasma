@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "plQuality.h"
 
 #include "plGLMaterialShaderRef.h"
 #include "plGLPipeline.h"
@@ -282,12 +283,10 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
     GLuint depthBuffer = -1;
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
-#if 1
     if (plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner)) {
-        //if ((plQuality::GetCapability() > plQuality::kPS_2) && fSettings.fD3DCaps & kCapsNpotTextures)
+        if (plQuality::GetCapability() > plQuality::kPS_2)
             camMap->ResizeViewport(IGetViewTransform());
     }
-#endif
 
     /// Check--is this renderTarget really a child of a cubicRenderTarget?
     if (owner->GetParent()) {
