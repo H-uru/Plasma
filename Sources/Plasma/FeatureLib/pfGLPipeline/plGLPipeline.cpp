@@ -655,7 +655,7 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     plProfile_EndTiming(RenderBuff);
 
     // Turn on this spans lights and turn off the rest.
-    ISelectLights(&span);
+    ISelectLights(&span, mRef);
 
     for (size_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         // Set uniform to pass
@@ -1066,7 +1066,7 @@ void plGLPipeline::ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInter
     }
 }
 
-void plGLPipeline::ISelectLights(const plSpan* span, bool proj)
+void plGLPipeline::ISelectLights(const plSpan* span, plGLMaterialShaderRef* mRef, bool proj)
 {
     const size_t numLights = 8;
     size_t i = 0;
@@ -1082,7 +1082,7 @@ void plGLPipeline::ISelectLights(const plSpan* span, bool proj)
         std::vector<plLightInfo*>& spanLights = span->GetLightList(proj);
 
         for (i = 0; i < spanLights.size() && i < numLights; i++) {
-            IEnableLight(i, spanLights[i]);
+            IEnableLight(mRef, i, spanLights[i]);
         }
         startScale = i;
 
@@ -1102,7 +1102,7 @@ void plGLPipeline::ISelectLights(const plSpan* span, bool proj)
             for (; i > 0 && span->GetLightStrength(i, proj) < overHold; i--) {
                 scale = (overHold - span->GetLightStrength(i, proj)) / (overHold - threshhold);
 
-                IScaleLight(i, (1 - scale) * span->GetLightScale(i, proj));
+                IScaleLight(mRef, i, (1 - scale) * span->GetLightScale(i, proj));
             }
             startScale = i + 1;
         }
@@ -1110,36 +1110,25 @@ void plGLPipeline::ISelectLights(const plSpan* span, bool proj)
 
         /// Make sure those lights that aren't scaled....aren't
         for (i = 0; i < startScale; i++) {
-            IScaleLight(i, span->GetLightScale(i, proj));
+            IScaleLight(mRef, i, span->GetLightScale(i, proj));
         }
     }
 
     for (; i < numLights; i++) {
-        IDisableLight(i);
+        IDisableLight(mRef, i);
     }
 }
 
-void plGLPipeline::IEnableLight(size_t i, plLightInfo* light)
+void plGLPipeline::IEnableLight(plGLMaterialShaderRef* mRef, size_t i, plLightInfo* light)
 {
-    GLuint position     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].position", i).c_str());
-    GLuint ambient      = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].ambient", i).c_str());
-    GLuint diffuse      = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].diffuse", i).c_str());
-    GLuint specular     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].specular", i).c_str());
-    GLuint direction    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].direction", i).c_str());
-    GLuint spotProps    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].spotProps", i).c_str());
-    GLuint constAtten   = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].constAtten", i).c_str());
-    GLuint linAtten     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].linAtten", i).c_str());
-    GLuint quadAtten    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].quadAtten", i).c_str());
-    GLuint scale        = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].scale", i).c_str());
-
     hsColorRGBA amb = light->GetAmbient();
-    glUniform4f(ambient, amb.r, amb.g, amb.b, amb.a);
+    glUniform4f(mRef->uLampSources[i].ambient, amb.r, amb.g, amb.b, amb.a);
 
     hsColorRGBA diff = light->GetDiffuse();
-    glUniform4f(diffuse, diff.r, diff.g, diff.b, diff.a);
+    glUniform4f(mRef->uLampSources[i].diffuse, diff.r, diff.g, diff.b, diff.a);
 
     hsColorRGBA spec = light->GetSpecular();
-    glUniform4f(specular, spec.r, spec.g, spec.b, spec.a);
+    glUniform4f(mRef->uLampSources[i].specular, spec.r, spec.g, spec.b, spec.a);
 
     plDirectionalLightInfo* dirLight = nullptr;
     plOmniLightInfo* omniLight = nullptr;
@@ -1148,69 +1137,58 @@ void plGLPipeline::IEnableLight(size_t i, plLightInfo* light)
     if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr)
     {
         hsVector3 lightDir = dirLight->GetWorldDirection();
-        glUniform4f(position, lightDir.fX, lightDir.fY, lightDir.fZ, 0.0);
-        glUniform3f(direction, lightDir.fX, lightDir.fY, lightDir.fZ);
+        glUniform4f(mRef->uLampSources[i].position, lightDir.fX, lightDir.fY, lightDir.fZ, 0.0);
+        glUniform3f(mRef->uLampSources[i].direction, lightDir.fX, lightDir.fY, lightDir.fZ);
 
-        glUniform1f(constAtten, 1.0f);
-        glUniform1f(linAtten, 0.0f);
-        glUniform1f(quadAtten, 0.0f);
+        glUniform1f(mRef->uLampSources[i].constAtten, 1.0f);
+        glUniform1f(mRef->uLampSources[i].linAtten, 0.0f);
+        glUniform1f(mRef->uLampSources[i].quadAtten, 0.0f);
     }
     else if ((omniLight = plOmniLightInfo::ConvertNoRef(light)) != nullptr)
     {
         hsPoint3 pos = omniLight->GetWorldPosition();
-        glUniform4f(position, pos.fX, pos.fY, pos.fZ, 1.0);
+        glUniform4f(mRef->uLampSources[i].position, pos.fX, pos.fY, pos.fZ, 1.0);
 
         // TODO: Maximum Range
 
-        glUniform1f(constAtten, omniLight->GetConstantAttenuation());
-        glUniform1f(linAtten, omniLight->GetLinearAttenuation());
-        glUniform1f(quadAtten, omniLight->GetQuadraticAttenuation());
+        glUniform1f(mRef->uLampSources[i].constAtten, omniLight->GetConstantAttenuation());
+        glUniform1f(mRef->uLampSources[i].linAtten, omniLight->GetLinearAttenuation());
+        glUniform1f(mRef->uLampSources[i].quadAtten, omniLight->GetQuadraticAttenuation());
 
         if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
             hsVector3 lightDir = spotLight->GetWorldDirection();
-            glUniform3f(direction, lightDir.fX, lightDir.fY, lightDir.fZ);
+            glUniform3f(mRef->uLampSources[i].direction, lightDir.fX, lightDir.fY, lightDir.fZ);
 
             float falloff = spotLight->GetFalloff();
             float theta = cosf(spotLight->GetSpotInner());
             float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
 
-            glUniform3f(spotProps, falloff, theta, phi);
+            glUniform3f(mRef->uLampSources[i].spotProps, falloff, theta, phi);
         } else {
-            glUniform3f(spotProps, 0.0, 0.0, 0.0);
+            glUniform3f(mRef->uLampSources[i].spotProps, 0.0, 0.0, 0.0);
         }
     }
     else {
-        IDisableLight(i);
+        IDisableLight(mRef, i);
     }
 }
 
-void plGLPipeline::IDisableLight(size_t i)
+void plGLPipeline::IDisableLight(plGLMaterialShaderRef* mRef, size_t i)
 {
-    GLuint position     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].position", i).c_str());
-    GLuint ambient      = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].ambient", i).c_str());
-    GLuint diffuse      = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].diffuse", i).c_str());
-    GLuint specular     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].specular", i).c_str());
-    GLuint constAtten   = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].constAtten", i).c_str());
-    GLuint linAtten     = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].linAtten", i).c_str());
-    GLuint quadAtten    = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].quadAtten", i).c_str());
-    GLuint scale        = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].scale", i).c_str());
-
-    if (position != -1)     glUniform4f(position, 0.0f, 0.0f, 0.0f, 0.0f);
-    if (ambient != -1)      glUniform4f(ambient, 0.0f, 0.0f, 0.0f, 0.0f);
-    if (diffuse != -1)      glUniform4f(diffuse, 0.0f, 0.0f, 0.0f, 0.0f);
-    if (specular != -1)     glUniform4f(specular, 0.0f, 0.0f, 0.0f, 0.0f);
-    if (constAtten != -1)   glUniform1f(constAtten, 1.0f);
-    if (linAtten != -1)     glUniform1f(linAtten, 0.0f);
-    if (quadAtten != -1)    glUniform1f(quadAtten, 0.0f);
-    if (scale != -1)        glUniform1f(scale, 0.0f);
+    glUniform4f(mRef->uLampSources[i].position, 0.0f, 0.0f, 0.0f, 0.0f);
+    glUniform4f(mRef->uLampSources[i].ambient, 0.0f, 0.0f, 0.0f, 0.0f);
+    glUniform4f(mRef->uLampSources[i].diffuse, 0.0f, 0.0f, 0.0f, 0.0f);
+    glUniform4f(mRef->uLampSources[i].specular, 0.0f, 0.0f, 0.0f, 0.0f);
+    glUniform1f(mRef->uLampSources[i].constAtten, 1.0f);
+    glUniform1f(mRef->uLampSources[i].linAtten, 0.0f);
+    glUniform1f(mRef->uLampSources[i].quadAtten, 0.0f);
+    glUniform1f(mRef->uLampSources[i].scale, 0.0f);
 }
 
-void plGLPipeline::IScaleLight(size_t i, float scale)
+void plGLPipeline::IScaleLight(plGLMaterialShaderRef* mRef, size_t i, float scale)
 {
     scale = int(scale * 1.e1f) * 1.e-1f;
-
-    GLuint uniform = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].scale", i).c_str());
-    if (uniform != -1) glUniform1f(uniform, scale);
+    glUniform1f(mRef->uLampSources[i].scale, scale);
 }
 
 void plGLPipeline::IDrawPlate(plPlate* plate)
