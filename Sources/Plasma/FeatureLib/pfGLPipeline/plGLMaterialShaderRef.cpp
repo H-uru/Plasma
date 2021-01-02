@@ -57,6 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
+#include "plPipeline/plCubicRenderTarget.h"
+#include "plPipeline/plRenderTarget.h"
+#include "plStatusLog/plStatusLog.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
@@ -1047,29 +1050,24 @@ void plGLMaterialShaderRef::IBuildLayerTexture(uint32_t idx, plLayerInterface* l
     plBitmap* texture = layer->GetTexture();
 
     if (texture != nullptr && sb->fCurrCoord) {
-        plMipmap* mip;
-        plCubicEnvironmap* cube;
-
         // Local variable to store the mesh uvw * layer matrix
         ST::string imgName = ST::format("image{}", idx);
         std::shared_ptr<plTempVariableNode> img = std::make_shared<plTempVariableNode>(imgName, "vec4");
 
         sb->fCurrImage = img;
 
-        if ((mip = plMipmap::ConvertNoRef(texture)) != nullptr) {
-            ST::string samplerName = ST::format("uTexture{}", idx);
-            std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "sampler2D");
-
-            // image = texture(sampler, coords.xy)
-            sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xy"))));
-        }
-
-        if ((cube = plCubicEnvironmap::ConvertNoRef(texture)) != nullptr) {
+        if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
             ST::string samplerName = ST::format("uTexture{}", idx);
             std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "samplerCube");
 
             // image = texture(sampler, coords.xyz)
             sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xyz"))));
+        } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
+            ST::string samplerName = ST::format("uTexture{}", idx);
+            std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "sampler2D");
+
+            // image = texture(sampler, coords.xy)
+            sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xy"))));
         }
     }
 }
@@ -1080,7 +1078,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
     hsGMatState state = ICompositeLayerState(layer);
 
     if (!sb->fCurrImage) {
-        hsStatusMessage("Got a layer with no image");
+        plStatusLog::AddLineSF("pipeline.log", "Got a layer with no image: {}", layer->GetKeyName());
         sb->fCurrColor = sb->fPrevColor;
         sb->fCurrAlpha = sb->fPrevAlpha;
         return;
