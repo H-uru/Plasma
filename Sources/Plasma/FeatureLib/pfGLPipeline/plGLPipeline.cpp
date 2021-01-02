@@ -505,7 +505,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             // What do we change?
 
             plProfile_BeginTiming(SpanTransforms);
-            ISetupTransforms(ice, tempIce, lastL2W);
+            ISetupTransforms(ice, tempIce, mRef, lastL2W);
             plProfile_EndTiming(SpanTransforms);
 
             // Check that the underlying buffers are ready to go.
@@ -540,7 +540,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
 }
 
 
-void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W)
+void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, plGLMaterialShaderRef* mRef, hsMatrix44& lastL2W)
 {
     if (span.fNumMatrices) {
         if (span.fNumMatrices <= 2) {
@@ -569,26 +569,15 @@ void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& spa
     }
 #endif
 
-    if (fDevice.fCurrentProgram) {
+    if (mRef) {
         /* Push the matrices into the GLSL shader now */
-        GLint uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixProj");
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixProj);
+        glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, fDevice.fMatrixProj);
+        glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.fMatrixW2C);
+        glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, fDevice.fMatrixL2W);
+        glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.fMatrixW2L);
 
-        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2C");
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
-
-        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixC2W");
-        if (uniform != -1) {
-            glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixC2W);
-        }
-
-        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixL2W");
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
-
-        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2L");
-        if (uniform != -1) {
-            glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2L);
-        }
+        if (mRef->uMatrixC2W != -1)
+            glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, fDevice.fMatrixC2W);
     }
 }
 
@@ -1258,22 +1247,13 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
     mRef->SetupTextureRefs();
 
     /* Push the matrices into the GLSL shader now */
-    GLint uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixProj");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, projMat);
+    glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, projMat);
+    glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.fMatrixW2C);
+    glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, fDevice.fMatrixC2W);
+    glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, fDevice.fMatrixL2W);
 
-    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2C");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
-
-    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixC2W");
-    if (uniform != -1)
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixC2W);
-
-    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixL2W");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
-
-    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2L");
-    if (uniform != -1)
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2L);
+    if (mRef->uMatrixW2L != -1)
+        glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.fMatrixW2L);
 
     glUniform4f(mRef->uGlobalAmbient,  1.0, 1.0, 1.0, 1.0);
 
