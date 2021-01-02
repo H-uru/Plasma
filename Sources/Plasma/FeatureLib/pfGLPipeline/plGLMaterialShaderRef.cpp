@@ -990,9 +990,44 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
             // mat[2][2] = -mat[2][2];
             sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "2"), "2"))));
         }
-
-#if 0
     } else if (state.fMiscFlags & hsGMatState::kMiscCam2Screen) {
+        // cam2Screen will also have the kMiscPerspProjection flag set, so this
+        // needs to go before the regular kMiscProjection check.
+        std::shared_ptr<plUniformNode> mNDC = IFindVariable<plUniformNode>("uMatrixProj", "mat4");
+
+        ST::string matName = ST::format("LayerMat{}", idx);
+        matrix = std::make_shared<plTempVariableNode>(matName, "mat4");
+
+        // mat.Reset();
+        sb->fFunction->PushOp(ASSIGN(matrix, CALL("mat4", CONSTANT("1.0"))));
+
+        // mat.MakeScaleMat(hsVector3 camScale(0.5f, -0.5f, 1.f));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "0"), CONSTANT("0.5")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "1"), CONSTANT("-0.5")));
+
+        // hsVector3 camTrans(0.5f, 0.5f, 0.f);
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "3"), CONSTANT("0.5")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "3"), CONSTANT("0.5")));
+
+        // The scale and trans move us from NDC to Screen space. We need to swap
+        // the Z and W coordinates so that the texture projection will divide by W
+        // and give us projected 2D coordinates.
+        ST::string tempName = ST::format("t{}", idx);
+        std::shared_ptr<plTempVariableNode> temp = std::make_shared<plTempVariableNode>(tempName, "float");
+
+        // swap mat[2][2] and mat[3][2]
+        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "2"), "2")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), SUBVAL(SUBVAL(matrix, "3"), "2")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "3"), "2"), temp));
+
+        // swap mat[2][3] and mat[3][3]
+        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "2"), "3")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "3"), SUBVAL(SUBVAL(matrix, "3"), "3")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "3"), "3"), temp));
+
+        // Multiply by the projection matrix
+        sb->fFunction->PushOp(ASSIGN(matrix, MUL(matrix, mNDC)));
+#if 0
     } else if (state.fMiscFlags & hsGMatState::kMiscProjection) {
         ST::string matName = ST::format("uLayerMat{}", idx);
         std::shared_ptr<plUniformNode> layMat = IFindVariable<plUniformNode>(matName, "mat4");
@@ -1039,6 +1074,11 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
             sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", SUBVAL(layUVW, ST::format("{}", uvwSrc)), CONSTANT("1.0")))));
         }
         break;
+    }
+
+    if (state.fMiscFlags & hsGMatState::kMiscPerspProjection) {
+        sb->fFunction->PushOp(ASSIGN(PROP(coords, "x"), DIV(PROP(coords, "x"), PROP(coords, "z"))));
+        sb->fFunction->PushOp(ASSIGN(PROP(coords, "y"), DIV(PROP(coords, "y"), PROP(coords, "z"))));
     }
 
     sb->fCurrCoord = coords;
