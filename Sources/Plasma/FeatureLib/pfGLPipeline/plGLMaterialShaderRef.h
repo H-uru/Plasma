@@ -105,6 +105,11 @@ public:
     std::vector<GLuint>         aVtxUVWSrc; // These are indexed by UV chan
     std::vector<GLuint>         uLayerMat;  // These are indexed by layer
     std::vector<GLuint>         uTexture;   // These are indexed by layer
+    GLuint                      uMatrixProj;
+    GLuint                      uMatrixC2W;
+    GLuint                      uMatrixW2C;
+    GLuint                      uMatrixL2W;
+    GLuint                      uMatrixW2L;
     GLuint                      uGlobalAmbient;
     GLuint                      uMatAmbientCol;
     GLuint                      uMatAmbientSrc;
