@@ -522,7 +522,11 @@ void plGLDevice::CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* 
     hsAssert(!vRef->Volatile(), "Creating a managed vertex buffer for a volatile buffer ref");
 
     if (!vRef->fRef) {
-        glGenBuffers(1, &vRef->fRef);
+        if (epoxy_gl_version() >= 45) {
+            glCreateBuffers(1, &vRef->fRef);
+        } else {
+            glGenBuffers(1, &vRef->fRef);
+        }
 
         // Fill in the vertex data.
         FillStaticVertexBufferRef(vRef, owner, idx);
@@ -545,10 +549,14 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
     if (!size)
         return;
 
-    glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
 
     if (ref->fData) {
-        glBufferData(GL_ARRAY_BUFFER, size, ref->fData + vertStart, GL_STATIC_DRAW);
+        if (epoxy_gl_version() >= 45) {
+            glNamedBufferData(ref->fRef, size, ref->fData + vertStart, GL_STATIC_DRAW);
+        } else {
+            glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
+            glBufferData(GL_ARRAY_BUFFER, size, ref->fData + vertStart, GL_STATIC_DRAW);
+        }
     } else {
         hsAssert(0 == vertStart, "Offsets on non-interleaved data not supported");
         hsAssert(group->GetVertBufferCount(idx) * vertSize == size, "Trailing dead space on non-interleaved data not supported");
@@ -594,7 +602,12 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
         }
 
         hsAssert((ptr - buffer) == size, "Didn't fill the buffer?");
-        glBufferData(GL_ARRAY_BUFFER, size, buffer, GL_STATIC_DRAW);
+        if (epoxy_gl_version() >= 45) {
+            glNamedBufferData(ref->fRef, size, buffer, GL_STATIC_DRAW);
+        } else {
+            glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
+            glBufferData(GL_ARRAY_BUFFER, size, buffer, GL_STATIC_DRAW);
+        }
 
         delete[] buffer;
     }
@@ -659,7 +672,11 @@ void plGLDevice::CheckIndexBuffer(IndexBufferRef* iRef)
     if (!iRef->fRef && iRef->fCount) {
         iRef->SetVolatile(false);
 
-        glGenBuffers(1, &iRef->fRef);
+        if (epoxy_gl_version() >= 45) {
+            glCreateBuffers(1, &iRef->fRef);
+        } else {
+            glGenBuffers(1, &iRef->fRef);
+        }
 
         iRef->SetDirty(true);
         iRef->SetRebuiltSinceUsed(true);
@@ -674,8 +691,12 @@ void plGLDevice::FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner,
     if (!size)
         return;
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, owner->GetIndexBufferData(idx) + startIdx, GL_STATIC_DRAW);
+    if (epoxy_gl_version() >= 45) {
+        glNamedBufferData(iRef->fRef, size, owner->GetIndexBufferData(idx) + startIdx, GL_STATIC_DRAW);
+    } else {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, owner->GetIndexBufferData(idx) + startIdx, GL_STATIC_DRAW);
+    }
 
     iRef->SetDirty(false);
 }
