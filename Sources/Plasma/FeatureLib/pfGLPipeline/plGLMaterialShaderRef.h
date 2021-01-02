@@ -85,6 +85,19 @@ class plGLMaterialShaderRef : public plGLDeviceRef
         std::shared_ptr<plVariableNode>     fCurrImage;
     };
 
+    struct uniformLightSource {
+        GLuint position;
+        GLuint ambient;
+        GLuint diffuse;
+        GLuint specular;
+        GLuint direction;
+        GLuint spotProps;
+        GLuint constAtten;
+        GLuint linAtten;
+        GLuint quadAtten;
+        GLuint scale;
+    };
+
 protected:
     hsGMaterial*                        fMaterial;
     plPipeline*                         fPipeline;
@@ -125,6 +138,7 @@ public:
     GLuint                      uFogExponential;
     GLuint                      uFogValues;
     GLuint                      uFogColor;
+    uniformLightSource          uLampSources[8];
 
     void                    Link(plGLMaterialShaderRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
     plGLMaterialShaderRef*  GetNext() { return (plGLMaterialShaderRef*)fNext; }

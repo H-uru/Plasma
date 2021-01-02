@@ -129,10 +129,10 @@ protected:
     void IHandleZMode(hsGMatState flags);
     void IHandleBlendMode(hsGMatState flags);
     void ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
-    void ISelectLights(const plSpan* span, bool proj = false);
-    void IEnableLight(size_t i, plLightInfo* light);
-    void IDisableLight(size_t i);
-    void IScaleLight(size_t i, float scale);
+    void ISelectLights(const plSpan* span, plGLMaterialShaderRef* mRef, bool proj = false);
+    void IEnableLight(plGLMaterialShaderRef* mRef, size_t i, plLightInfo* light);
+    void IDisableLight(plGLMaterialShaderRef* mRef, size_t i);
+    void IScaleLight(plGLMaterialShaderRef* mRef, size_t i, float scale);
     void IDrawPlate(plPlate* plate);
 
 private:
