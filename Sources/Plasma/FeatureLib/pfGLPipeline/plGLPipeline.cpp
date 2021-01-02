@@ -218,19 +218,6 @@ void plGLPipeline::PushRenderRequest(plRenderRequest* req)
     float depth = req->GetClearDepth();
     fView.SetClear(&req->GetClearColor(), &depth);
 
-#if 0
-    if (req->GetFogStart() < 0)
-    {
-        fView.SetDefaultFog(defFog);
-    }
-    else
-    {
-        defFog.Set(req->GetYon() * (1.f - req->GetFogStart()), req->GetYon(), 1.f, &req->GetClearColor());
-        fView.SetDefaultFog(defFog);
-        fCurrFog.fEnvPtr = nullptr;
-    }
-#endif
-
     if (req->GetOverrideMat())
         PushOverrideMaterial(req->GetOverrideMat());
 
@@ -254,12 +241,6 @@ void plGLPipeline::PopRenderRequest(plRenderRequest* req)
     hsRefCnt_SafeUnRef(fView.fRenderRequest);
     fView = fViewStack.top();
     fViewStack.pop();
-
-#if 0
-    // Force the next thing drawn to update the fog settings.
-    fD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
-    fCurrFog.fEnvPtr = nullptr;
-#endif
 
     PopRenderTarget();
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
@@ -999,20 +980,14 @@ void plGLPipeline::IHandleBlendMode(hsGMatState flags)
                 {
                     hsAssert(false, "Too many blend modes specified in material");
 
-#if 0
                     plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
-                    if( lay )
-                    {
-                        if( lay->GetBlendFlags() & hsGMatState::kBlendAlpha )
-                        {
+                    if (lay) {
+                        if (lay->GetBlendFlags() & hsGMatState::kBlendAlpha) {
                             lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAlpha);
-                        }
-                        else
-                        {
+                        } else {
                             lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
                         }
                     }
-#endif
                 }
                 break;
         }
