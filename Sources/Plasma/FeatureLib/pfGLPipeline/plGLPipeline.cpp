@@ -903,11 +903,8 @@ void plGLPipeline::IHandleZMode(hsGMatState flags)
     }
 
     if (flags.fZFlags & hsGMatState::kZIncLayer) {
-        int32_t int_value = 8;
-        float value = *(float*)(&int_value);
-
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(-1.f, 1.f);
+        glPolygonOffset(-1.f, -1.f);
     } else {
         glPolygonOffset(0.f, 0.f);
         glDisable(GL_POLYGON_OFFSET_FILL);
@@ -1324,6 +1321,13 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
 
     mRef->SetupTextureRefs();
 
+    plLayerInterface* lay = material->GetLayer(0);
+    hsGMatState s;
+    s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
+
+    IHandleZMode(s);
+    IHandleBlendMode(s);
+
     /* Push the matrices into the GLSL shader now */
     glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, projMat);
     glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.fMatrixW2C);
@@ -1332,6 +1336,9 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
 
     if (mRef->uMatrixW2L != -1)
         glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.fMatrixW2L);
+
+    glUniform1f(mRef->uInvertVtxAlpha, 0.f);
+    glUniform1f(mRef->uAlphaThreshold, 0.f);
 
     glUniform4f(mRef->uGlobalAmbient,  1.0, 1.0, 1.0, 1.0);
 
