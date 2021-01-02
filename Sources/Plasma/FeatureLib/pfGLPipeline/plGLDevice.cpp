@@ -476,16 +476,6 @@ void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, Verte
 {
     uint8_t format = owner->GetVertexFormat();
 
-    // All indexed skinning is currently done on CPU, so the source data
-    // will have indices, but we strip them out for the D3D buffer.
-    if (format & plGBufferGroup::kSkinIndices) {
-        format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
-        format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
-        vRef->SetSkinned(true);
-        vRef->SetVolatile(true);
-    }
-
-
     uint32_t vertSize = owner->GetVertexSize(); //IGetBufferFormatSize(format); // vertex stride
     uint32_t numVerts = owner->GetVertBufferCount(idx);
 
@@ -498,6 +488,9 @@ void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, Verte
     vRef->SetDirty(true);
     vRef->SetRebuiltSinceUsed(true);
     vRef->fData = nullptr;
+
+    if (format & plGBufferGroup::kSkinIndices)
+        vRef->SetSkinned(true);
 
     vRef->SetVolatile(vRef->Volatile() || owner->AreVertsVolatile());
 
