@@ -106,7 +106,6 @@ protected:
 
     std::vector<size_t>                 fPassIndices;
 
-    std::shared_ptr<plShaderContext>    fVertexShader;
     std::shared_ptr<plShaderContext>    fFragmentShader;
     plShaderVarLookup                   fVariables;
 
@@ -180,11 +179,9 @@ protected:
     // fMatOverOff overrides to clear a state bit whether it is set in the layer or not.
     const hsGMatState ICompositeLayerState(plLayerInterface* layer);
 
-    uint32_t IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> vfn, std::shared_ptr<plShaderFunction> ffn);
+    uint32_t IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> ffn);
     uint32_t ILayersAtOnce(uint32_t which);
     bool ICanEatLayer(plLayerInterface* lay);
-    std::shared_ptr<plTempVariableNode> ICalcLighting(std::shared_ptr<plShaderFunction> fn);
-    std::shared_ptr<plTempVariableNode> IBuildBaseAlpha(plLayerInterface* layer, std::shared_ptr<plShaderFunction> fn);
     void IBuildLayerTransform(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
     void IBuildLayerTexture(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
     void IBuildLayerBlend(plLayerInterface* layer, ShaderBuilder* sb);
