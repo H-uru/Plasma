@@ -362,7 +362,6 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t
         // Hack the callbacks until vault notification is in place
         cb->VaultOperationStarted(cbContext);
 
-        int hsResult = hsOK;
         if ( !pynode->GetID() )
         {
             // Block here until node is created and fetched =(
@@ -375,8 +374,6 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t
             
             if (newNode)
                 pynode->fNode = newNode;
-            else
-                hsResult = hsFail;
         }
 
         PyObject* nodeRef = cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode->fNode);

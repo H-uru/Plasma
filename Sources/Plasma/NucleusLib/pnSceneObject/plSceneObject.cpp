@@ -232,13 +232,10 @@ void plSceneObject::ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
                 // if we were transformed by anything but physics, let physics know
                 // otherwise we're not even going to tell physics
                 fSimulationInterface->SetTransform(l2w, w2l);
-            } else {
-                int moreSunshine = 10;
             }
             fCoordinateInterface->ClearReasons();
         } else {
-            int somethingToBreakOn = 10;
-            // if there's not coordinate interface, there's no reason to move the simulation interface
+            // if there's no coordinate interface, there's no reason to move the simulation interface
         }
     }
     plProfile_EndTiming(SOSITrans);

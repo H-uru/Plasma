@@ -720,7 +720,6 @@ void plDynaDecalMgr::InitAuxSpans()
 
 void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx)
 {
-    int iGrp = fGroups.GetCount();
     plGBufferGroup* grp = new plGBufferGroup(kDecalVtxFormat, true, false);
     fGroups.Append(grp);
 

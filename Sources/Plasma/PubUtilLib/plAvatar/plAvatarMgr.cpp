@@ -534,8 +534,6 @@ void plAvatarMgr::ISendDeferredInit(plKey avatarSOKey)
     if(armature)
     {
         DeferredInits::iterator i = fDeferredInits.find(avatarSOKey);
-        bool found = (i != fDeferredInits.end());
-
         if(i != fDeferredInits.end())
         {
             plMessage * initMsg = (*i).second;

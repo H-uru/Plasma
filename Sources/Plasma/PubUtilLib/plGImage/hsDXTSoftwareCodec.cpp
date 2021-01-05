@@ -1928,7 +1928,6 @@ uint8_t   hsDXTSoftwareCodec::IMixEqualInten( uint8_t color1, uint8_t color2 )
 void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *compressed )
 {
     uint32_t *compressedImage = (uint32_t *)compressed->GetCurrLevelPtr();
-    uint32_t *uncompressedImage = (uint32_t *)uncompressed->GetCurrLevelPtr();
     int32_t x, y;
     int32_t xMax = uncompressed->GetCurrWidth() >> 2;
     int32_t yMax = uncompressed->GetCurrHeight() >> 2;
@@ -2166,7 +2165,6 @@ void hsDXTSoftwareCodec::CompressMipmapLevel( plMipmap *uncompressed, plMipmap *
                         }
                     }
                     
-                    uint32_t colorShift = 2 * (4 * yy + xx);
                     uint32_t colorIndex = 0;
                     uint32_t colorDistance = ColorDistanceARGBSquared(*pixel, color[0]);
                     

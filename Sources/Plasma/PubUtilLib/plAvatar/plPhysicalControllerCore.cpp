@@ -300,9 +300,6 @@ void plAnimatedMovementStrategy::IRecalcLinearVelocity(float elapsed, hsMatrix44
     {
         hsVector3 start2Now = (hsVector3)(nowPos - startPos);    // start-to-frame delta
 
-        float prev2NowMagSqr = prev2Now.MagnitudeSquared();
-        float start2NowMagSqr = start2Now.MagnitudeSquared();
-
         float dot = prev2Now.InnerProduct(start2Now);
 
         // HANDLING ANIMATION WRAPPING:
@@ -684,9 +681,6 @@ void plSwimStrategy::Apply(float delSecs)
     if (velocity.fZ < kTerminalVelocity)
         velocity.fZ = kTerminalVelocity;
 
-    // Convert to displacement vector
-    hsVector3 displacement = velocity * delSecs;
-
     // Reset vars and move controller //
     fController->SetPushingPhysical(nil);
     fController->SetFacingPushingPhysical(false);
@@ -705,10 +699,6 @@ void plSwimStrategy::IAdjustBuoyancy()
     // "surface depth" refers to the depth our handle object should be below
     // the surface for the avatar to be "at the surface"
     static const float surfaceDepth = 4.0f;
-    // 1.0 = neutral buoyancy
-    // 0 = no buoyancy (normal gravity)
-    // 2.0 = opposite of gravity, floating upwards
-    static const float buoyancyAtSurface = 1.0f;
 
     if (fCurrentRegion == nil)
     {

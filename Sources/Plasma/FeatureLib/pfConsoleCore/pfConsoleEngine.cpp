@@ -455,12 +455,11 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
 {
     pfConsoleCmd        *cmd = nil;
     pfConsoleCmdGroup   *group, *subGrp;
-    bool                foundMore = false;
 
     static const char           *ptr = nil;
     static char                 *insertLoc = nil;
     static pfConsoleCmd         *lastCmd = nil;
-    static pfConsoleCmdGroup    *lastGroup = nil, *lastParentGroup = nil;
+    static pfConsoleCmdGroup    *lastGroup = nil;
     static char                 newStr[ 256 ];
     static char                 *originalLine = line;
 
@@ -480,7 +479,7 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
     insertLoc = newStr;
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
-    lastParentGroup = group = pfConsoleCmdGroup::GetBaseGroup();
+    group = pfConsoleCmdGroup::GetBaseGroup();
     ptr = console_strtok( line, false );
     while( ptr != nil )
     {
@@ -488,7 +487,6 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
         if( ( subGrp = group->FindSubGroupNoCase( ptr, 0/*pfConsoleCmdGroup::kFindPartial*/
             , /*lastGroup*/nil ) ) != nil )
         {
-            lastParentGroup = group;
             group = subGrp;
             strcat( newStr, group->GetName() );
             insertLoc += strlen( group->GetName() );
@@ -507,7 +505,6 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
         // a partial group or a partial command
         if( ( subGrp = group->FindSubGroupNoCase( ptr, pfConsoleCmdGroup::kFindPartial, lastGroup ) ) != nil )
         {
-            lastParentGroup = group;
             lastGroup = group = subGrp;
             strcat( newStr, group->GetName() );
             strcat( newStr, "." );

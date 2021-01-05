@@ -960,7 +960,6 @@ float plSound::GetVolumeRank()
     {
         float minDistSquared = (float)( GetMin() * GetMin() );
         float maxDistSquared = (float) (GetMax() * GetMax());
-        hsPoint3 listenerPos = plgAudioSys::GetCurrListenerPos();
         if( fDistToListenerSquared > minDistSquared )
         {
             float diff = maxDistSquared - minDistSquared;

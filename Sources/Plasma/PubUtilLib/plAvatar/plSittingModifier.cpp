@@ -307,7 +307,6 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
     plArmatureMod *avatar = plArmatureMod::ConvertNoRef(avModKey->ObjectIsLoaded());
     plSceneObject *seekObj = plSceneObject::ConvertNoRef(seekKey->ObjectIsLoaded());
     float closestDist = 0.0f;
-    uint8_t closestApproach = 0;
     const char* sitAnimName = nullptr;
     const char* standAnimName = "StandUpFront";      // always prefer to stand facing front
 
@@ -321,7 +320,6 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 
         if(fMiscFlags & kApproachLeft && IIsClosestAnim("SitLeft", sitGoal, closestDist, curPosition, avatar))
         {
-            closestApproach = kApproachLeft;
             sitAnimName = "SitLeft";
             if(!frontClear)
                 standAnimName = "StandUpLeft";
@@ -329,7 +327,6 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 
         if(fMiscFlags & kApproachRight && IIsClosestAnim("SitRight", sitGoal, closestDist, curPosition, avatar))
         {
-            closestApproach = kApproachRight;
             sitAnimName = "SitRight";
             if(!frontClear)
                 standAnimName = "StandUpRight";
@@ -339,7 +336,6 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
         {
             sitAnimName = "SitFront";
             standAnimName = "StandUpFront";
-            closestApproach = kApproachFront;
         }
 
         if(sitAnimName)

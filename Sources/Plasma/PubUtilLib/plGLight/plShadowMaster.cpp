@@ -525,8 +525,8 @@ void plShadowMaster::IComputeLUT(plShadowCastMsg* castMsg, plShadowSlave* slave)
     // least 0.5f/256.f to compensate for quantization.
 
     plConst(float) kSelfBias = 2.f / 256.f;
-    plConst(float) kOtherBias = -0.5 / 256.f;
 #if 0 // MF_NOSELF
+    plConst(float) kOtherBias = -0.5 / 256.f;
     lightToLut.fMap[0][3] += slave->HasFlag(plShadowSlave::kSelfShadow) ? kSelfBias : kOtherBias;
 #else // MF_NOSELF
     lightToLut.fMap[0][3] += kSelfBias;

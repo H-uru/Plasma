@@ -108,7 +108,7 @@ public:
 
 void plStateVarNotificationInfo::Read(hsStream* s, uint32_t readOptions)
 {
-    uint8_t saveFlags=s->ReadByte();  // unused
+    (void)s->ReadByte();  // unused: saveFlags
     ST::string hint=s->ReadSafeString();
     if (!hint.empty() && !(readOptions & plSDL::kSkipNotificationInfo))
         fHintString = hint;
@@ -491,7 +491,6 @@ ST::string plSimpleStateVariable::GetAsString(int idx) const
     default:
         {   
             // handles value in the form "(i,j,k)" for things like vectors
-            int i=idx*fVar.GetAtomicCount();
             for(j=0;j<fVar.GetAtomicCount();j++)
             {
                 str << "other";

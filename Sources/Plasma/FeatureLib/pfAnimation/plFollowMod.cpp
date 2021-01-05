@@ -175,8 +175,6 @@ void plFollowMod::IMoveTarget()
         invMove.Reset();
 
         hsPoint3 newPos = fLeaderL2W.GetTranslate();
-        hsPoint3 newInvPos = fLeaderW2L.GetTranslate();
-
         hsPoint3 oldPos = l2w.GetTranslate();
 
         // l2w = newPosMat * -oldPosMat * l2w

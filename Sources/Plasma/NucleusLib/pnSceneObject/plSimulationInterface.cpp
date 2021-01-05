@@ -97,7 +97,7 @@ void plSimulationInterface::Read(hsStream* s, hsResMgr* mgr)
     // avoid breaking the format
     fProps.Read(s);
     // Also unnecessary
-    int poop = s->ReadLE32();
+    (void)s->ReadLE32();
 
     plIntRefMsg* refMsg = new plIntRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kPhysical, 0);
     mgr->ReadKeyNotifyMe(s, refMsg, plRefFlags::kActiveRef);

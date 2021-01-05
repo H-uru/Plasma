@@ -315,7 +315,6 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
         plFileName properFileName = fileNames[i].StripFileExt();
         uint32_t initialPos = s.GetPosition();
         WritePythonFile(properFileName, pathNames[i], &s);
-        uint32_t endPos = s.GetPosition();
 
         filePositions[i] = initialPos;
     }

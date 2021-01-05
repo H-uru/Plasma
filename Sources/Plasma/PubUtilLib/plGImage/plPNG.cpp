@@ -213,7 +213,6 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST
 
         //  Assign delegate function for writing to hsStream
         png_set_write_fn(png_ptr, (png_voidp)outStream, pngWriteDelegate, NULL);
-        uint8_t psize = source->GetPixelSize();
         png_set_IHDR(png_ptr, info_ptr, source->GetWidth(), source->GetHeight(), 8, PNG_COLOR_TYPE_RGB_ALPHA,
                      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
         // Invert color byte-order as used by plMipmap for DirectX

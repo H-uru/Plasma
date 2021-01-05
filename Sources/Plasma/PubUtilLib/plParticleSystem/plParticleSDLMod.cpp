@@ -55,8 +55,6 @@ void plParticleSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
     if (!sobj)
         return;
 
-    uint32_t flags = sobj->GetKey()->GetUoid().GetLocation().GetFlags();
-
     const plParticleSystem *sys = plParticleSystem::ConvertNoRef(sobj->GetModifierByType(plParticleSystem::Index()));
     if (!sys)
         return;

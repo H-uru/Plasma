@@ -724,7 +724,7 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint3
                                     hsPoint3 **uvPtrArray, float weight1, float weight2, float weight3, uint32_t indices )
 {
     TempVertex      vert;
-    int             i, numWeights;
+    int             i;
 
 
     hsAssert( fCreating, "Calling AddVertex() on a non-creating plGeometrySpan!" );
@@ -746,26 +746,22 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint3
     switch( fFormat & kSkinWeightMask )
     {
     case kSkin3Weights:
-        numWeights = 3;
         vert.fWeights[ 0 ] = weight1;
         vert.fWeights[ 1 ] = weight2;
         vert.fWeights[ 2 ] = weight3;
         vert.fIndices = indices;
         break;
     case kSkin2Weights:
-        numWeights = 2;
         vert.fWeights[ 0 ] = weight1;
         vert.fWeights[ 1 ] = weight2;
         vert.fIndices = indices;
         break;
     case kSkin1Weight:
-        numWeights = 1;
         vert.fWeights[ 0 ] = weight1;
         vert.fIndices = indices;
         break;
     default:
     case kSkinNoWeights:
-        numWeights = 0;
         break;
     }
 

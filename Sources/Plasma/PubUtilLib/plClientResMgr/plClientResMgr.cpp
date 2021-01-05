@@ -76,7 +76,7 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
     hsUNIXStream in;
 
     if (in.Open(resfile, "rb")) {
-        uint32_t header = in.ReadLE32();
+        (void)in.ReadLE32();        // header
         uint32_t version = in.ReadLE32();
         uint32_t num_resources = 0;
 

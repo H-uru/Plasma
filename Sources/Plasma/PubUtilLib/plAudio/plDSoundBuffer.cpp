@@ -751,7 +751,6 @@ unsigned plDSoundBuffer::GetByteOffset()
 {
     ALint bytes;
     alGetSourcei(source, AL_BYTE_OFFSET, &bytes);
-    ALenum error = alGetError();
     return bytes;
 }
 
@@ -759,18 +758,15 @@ float plDSoundBuffer::GetTimeOffsetSec()
 {
     float time;
     alGetSourcef(source, AL_SEC_OFFSET, &time);
-    ALenum error = alGetError();
     return time;
 }
 
 void plDSoundBuffer::SetTimeOffsetSec(float seconds)
 {
     alSourcef(source, AL_SEC_OFFSET, seconds);
-    ALenum error = alGetError();
 }
 
 void plDSoundBuffer::SetTimeOffsetBytes(unsigned bytes)
 {
     alSourcei(source, AL_BYTE_OFFSET, bytes);
-    ALenum error = alGetError();
 }

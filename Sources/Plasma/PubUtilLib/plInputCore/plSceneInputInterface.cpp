@@ -259,7 +259,6 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     {
         if( pLOSMsg->fRequestID == ID_FIND_CLICKABLE )
         {
-            bool clearCursor = false;
             if (!fClickability)
                 return true;
             if( pLOSMsg->fObj )

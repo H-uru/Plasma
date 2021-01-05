@@ -395,9 +395,6 @@ plDrawableSpans     *plDrawableGenerator::GenerateBoxDrawable( const hsPoint3 &c
     hsPoint3                point;
 
     plDrawableSpans     *drawable;
-    float               mults[ 8 ][ 3 ] = { { -1, -1, -1 }, { 1, -1, -1 }, { 1, 1, -1 }, { -1, 1, -1 },
-                                            { -1, -1,  1 }, { 1, -1,  1 }, { 1, 1,  1 }, { -1, 1,  1 } };
-
 
 
     /// Generate points and normals

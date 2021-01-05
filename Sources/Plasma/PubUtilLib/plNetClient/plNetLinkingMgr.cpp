@@ -763,8 +763,6 @@ void plNetLinkingMgr::IPostProcessLink()
     plAgeInfoStruct* info = link->GetAgeInfo();
 
     bool city = (info->GetAgeFilename().compare_i(kCityAgeFilename) == 0);
-    bool hood = (info->GetAgeFilename().compare_i(kNeighborhoodAgeFilename) == 0);
-    bool psnl = (info->GetAgeFilename().compare_i(kPersonalAgeFilename) == 0);
 
     // Update our online status 
     if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {

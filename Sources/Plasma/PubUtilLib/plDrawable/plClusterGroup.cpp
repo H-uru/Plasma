@@ -251,7 +251,6 @@ bool plClusterGroup::IOnReceive(plGenRefMsg* ref)
 
 bool plClusterGroup::IOnRemove(plGenRefMsg* ref)
 {
-    int idx = -1;
     switch( ref->fType )
     {
     case kRefMaterial:

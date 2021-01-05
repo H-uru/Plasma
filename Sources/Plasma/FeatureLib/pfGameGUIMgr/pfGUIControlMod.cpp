@@ -497,7 +497,7 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 void    pfGUIControlMod::SetObjectCenter( float x, float y )
 {
     hsMatrix44  xformMatrix, l2p, p2l;
-    hsPoint3    center, corners[ 8 ];
+    hsPoint3    center;
 
 
     if( x > 1.f )

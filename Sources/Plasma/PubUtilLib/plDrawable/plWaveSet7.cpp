@@ -1003,7 +1003,6 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
 {
     // Compute force based on world bounds
     hsBounds3Ext wBnd = so->GetDrawInterface()->GetWorldBounds();
-    hsBounds3Ext lBnd = so->GetDrawInterface()->GetLocalBounds();
 
     hsPoint3 pos(wBnd.GetCenter());
     hsPoint3 surfPos(pos);
@@ -1641,7 +1640,6 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
         int i;
         for( i = 0; i < sizeU; i++ )
         {
-            float y = float(i);
             float dist = float(i) / float(sizeU-1) * hsConstants::two_pi<float>;
             float c = cos(dist);
             float s = sin(dist);
@@ -2817,7 +2815,6 @@ void plWaveSet7::IUpdateBumpPShader(plPipeline* pipe, const hsMatrix44& l2w, con
             float scale = 1.f / (float(kNumBumpShaders) + specVec[State().kNoise]);
 
             float maxLen = TexState().fMaxLength * kCompositeSize / State().fRippleScale;
-            float rescale = fTexWaves[iTex].fLen / maxLen;
 
             float bias = 0.5f * scale;
             fBumpPShader[i]->SetVector(plBumpPS::kHalfOne, scale, scale, 1.f, 1.f);
@@ -3618,7 +3615,6 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     uint16_t* idx = idxArr.AcquireArray();
 
-    int iBase = 0;
     for( i = 0; i < nTris; i += 2 )
     {
         *idx++ = i;
@@ -3849,8 +3845,7 @@ plMipmap* plWaveSet7::ICreateBubbleShoreTex(int width, int height)
     // If we haven't already made one...
     if( !fBubbleShoreTex )
     {
-        plMipmap* mipMap = ICreateBlankTex("Bubble", width, height, kRefBubbleShoreTex);
-
+        (void)ICreateBlankTex("Bubble", width, height, kRefBubbleShoreTex);
         IRefillBubbleShoreTex();
     }
 
@@ -3934,8 +3929,7 @@ plMipmap* plWaveSet7::ICreateEdgeShoreTex(int width, int height)
     // If we haven't already made one...
     if( !fEdgeShoreTex )
     {
-        plMipmap* mipMap = ICreateBlankTex("Edge", width, height, kRefEdgeShoreTex);
-
+        (void)ICreateBlankTex("Edge", width, height, kRefEdgeShoreTex);
         IRefillEdgeShoreTex();
     }
 

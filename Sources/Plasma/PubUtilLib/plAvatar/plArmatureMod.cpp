@@ -1033,8 +1033,6 @@ void plArmatureMod::PersonalLink()
 
 bool plArmatureMod::MsgReceive(plMessage* msg)
 {   
-    bool result = false;
-    
     plArmatureBrain *curBrain = nil;
     if (fBrains.size() > 0)
     {

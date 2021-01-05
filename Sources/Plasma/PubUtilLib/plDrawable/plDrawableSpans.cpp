@@ -3707,7 +3707,6 @@ uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
 {
     int             i;
     uint32_t          spanIdx;
-    plSpan          *span;
     hsBounds3Ext    bounds;
     plDISpanIndex   *spanLookup;
 
@@ -3729,7 +3728,6 @@ uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
         hsAssert( ( spanIdx & kSpanTypeMask ) == kSpanTypeIcicle, "Mismatch in span formats" );
         plIcicle *icicle = &fIcicles[ spanIdx & kSpanIDMask ];
         IUpdateIcicleFromGeoSpan( geoSpan, icicle );
-        span = (plSpan *)icicle;
         if( fProps & kPropSortFaces )
         {
             // Should add sort data too...
@@ -3755,7 +3753,6 @@ uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
 uint32_t  plDrawableSpans::RefreshSpan( uint32_t index )
 {
     uint32_t          spanIdx;
-    plSpan          *span;
     hsBounds3Ext    bounds;
 
 //  hsAssert( fProps & kPropVolatile, "Trying to add spans on a non-volatile drawable" );
@@ -3771,7 +3768,6 @@ uint32_t  plDrawableSpans::RefreshSpan( uint32_t index )
     hsAssert( ( spanIdx & kSpanTypeMask ) == kSpanTypeIcicle, "Mismatch in span formats" );
     plIcicle *icicle = &fIcicles[ spanIdx & kSpanIDMask ];
     IUpdateIcicleFromGeoSpan( geoSpan, icicle );
-    span = (plSpan *)icicle;
     if( fProps & kPropSortFaces )
     {
         // Should add sort data too...

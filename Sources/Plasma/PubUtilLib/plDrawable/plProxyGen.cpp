@@ -129,7 +129,6 @@ uint32_t plProxyGen::IGetProxyIndex() const
     uint32_t drawType = IGetDrawableType();
 
     int firstNil = -1;
-    int firstMatch = -1;
     int i;
     for( i = 0; i < fProxyDrawables.GetCount(); i++ )
     {
@@ -226,8 +225,6 @@ void plProxyGen::IGenerateProxy()
 
     hsGMaterial* mat = IGetProxyMaterial();
     hsAssert(mat, "Failed to create proxy material");
-
-    bool onCreate = !fProxyDrawables[idx];
 
     fProxyIndex.SetCount(0);
     fProxyDrawables[idx] = ICreateProxy(mat, fProxyIndex, fProxyDrawables[idx]);

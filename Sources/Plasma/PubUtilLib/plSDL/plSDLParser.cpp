@@ -186,7 +186,7 @@ bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, ch
     {
         hsAssert(strstr(token, "[") != nullptr && strstr(token, "]") != nullptr,
                  ST::format("invalid var syntax, missing [x], fileName={}", fileName).c_str());
-        char* ptr = strtok( token, seps );  // skip [
+        (void)strtok( token, seps );  // skip [
         
         hsAssert(curVar, ST::format("Missing current var.  Syntax problem with .sdl file, fileName={}", fileName).c_str());
         curVar->SetName(token);

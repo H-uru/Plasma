@@ -162,7 +162,6 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         }
         
         fSrcFilename = buffer->GetFileName();
-        bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
 
         delete fDataStream;
         fDataStream = buffer->GetAudioReader();

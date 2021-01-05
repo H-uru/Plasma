@@ -354,8 +354,6 @@ bool plVisLOSMgr::ICheckBound(const hsBounds3Ext& bnd, float& closest)
     hsPoint3 corn[8];
     bnd.GetCorners(corn);
 
-    bool retVal = false;
-
     const hsPoint3& currFrom = fCurrFrom;
     const hsPoint3& currTarg = fCurrTarg;
 

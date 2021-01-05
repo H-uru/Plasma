@@ -190,9 +190,6 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
     }
     
     
-    plSceneObject *avSO = fAvMod->GetTarget(0);
-    bool isLocal = avSO->IsLocallyOwned();
-    
     if (fAvMod->GetClothingOutfit() && fAvMod->GetClothingOutfit()->fGroup != plClothingMgr::kClothingBaseNoOptions)
     {
         if (fAvMod->IsLocalAvatar())
@@ -1241,8 +1238,6 @@ GroundImpact::GroundImpact() : fDuration(0.0f) {}
 
 bool GroundImpact::PreCondition(double time, float elapsed)
 {
-    
-    bool result = false;
     if (fDuration > 0.0f)
         fDuration = fDuration - elapsed;
     else if (fHuBrain->fWalkingStrategy->IsOnGround() && fHuBrain->fWalkingStrategy->GetImpactTime() > kMinAirTime) 
@@ -1447,8 +1442,6 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
         emote && !alreadyActive && avatar->IsPhysicsEnabled())
     {
         plKey avKey = avatar->GetKey();
-        float fadeIn = emote->GetFadeIn();
-        float fadeOut = emote->GetFadeOut();
         plAnimStage *s1 = new plAnimStage(emoteName,
                                           0,
                                           plAnimStage::kForwardAuto,

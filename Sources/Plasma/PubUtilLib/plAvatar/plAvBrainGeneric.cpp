@@ -408,8 +408,6 @@ bool plAvBrainGeneric::IProcessFadeIn(double time, float elapsed)
 
     if(fMode != kFadingIn)
     {
-        bool needFade = fFadeIn != 0.0f;
-
         if(fFadeIn == 0.0f)
         {
             IEnterMoveMode(time);   // if fadeIn's not zero, we have to wait until fade's done

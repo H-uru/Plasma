@@ -400,8 +400,6 @@ bool plSceneNode::IOnRemove(plNodeRefMsg* refMsg)
 
 bool plSceneNode::IOnAdd(plNodeRefMsg* refMsg)
 {
-    int which = refMsg->fWhich;
-
     switch( refMsg->fType )
     {
     case plNodeRefMsg::kDrawable:

@@ -83,16 +83,6 @@ plPostEffectMod::~plPostEffectMod()
 
 void plPostEffectMod::ISetupRenderRequest()
 {
-    uint32_t rtFlags = 0;
-
-    // If we go to rendering to sub-window, we'll want to explicitly set width and height
-    uint32_t width = 0;
-    uint32_t height = 0;
-
-    uint32_t colorDepth = 0;
-    uint32_t zDepth = 0;
-    uint32_t stencilDepth = 0;
-
     fRenderRequest = new plRenderRequest;
     uint32_t renderState = plPipeline::kRenderNormal
         | plPipeline::kRenderNoProjection

@@ -318,7 +318,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
 
         // Read in the chunk and decrypt it
         char buf[kEncryptChunkSize];
-        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        (void)IRead(kEncryptChunkSize, &buf);   // numRead
         IDecipher((uint32_t*)&buf);
 
         // Copy the relevant portion to the output buffer
@@ -343,7 +343,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
         // Read in the final chunk and decrypt it
         char buf[kEncryptChunkSize];
         SetPosition(startPos + startAmt + numMidChunks*kEncryptChunkSize);
-        uint32_t numRead = IRead(kEncryptChunkSize, &buf);
+        (void)IRead(kEncryptChunkSize, &buf);   // numRead
         IDecipher((uint32_t*)&buf);
 
         memcpy(((char*)buffer)+totalNumRead-endAmt, &buf, endAmt);
