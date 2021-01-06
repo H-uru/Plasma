@@ -317,7 +317,6 @@ void plNetTransport::DumpState()
         int j;
         for(j=0; j<mList->size();j++)
         {
-            plNetTransportMember * mbr = (*mList)[j];
             hsLogEntry( nc->DebugMsg("\t\tMbr {}\n",(*mList)[j]->AsString()) );
         }
     }

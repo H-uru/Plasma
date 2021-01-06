@@ -182,7 +182,6 @@ void plSDLModifier::SendState(uint32_t sendFlags)
             plNetObjectDebugger::GetInstance()->IsDebugObject(GetStateOwnerKey()->ObjectIsLoaded()));
     
     bool force = (sendFlags & plSynchedObject::kForceFullSend) != 0;
-    bool broadcast = (sendFlags & plSynchedObject::kBCastToClients) != 0;
 
     // record current state
     plStateDataRecord* curState = new plStateDataRecord(GetSDLName());

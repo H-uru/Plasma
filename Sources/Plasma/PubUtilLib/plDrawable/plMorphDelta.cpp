@@ -163,8 +163,6 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hs
         plAccPosNormUVWIterator movedIter(&movedAcc.AccessVtx());
 
 
-        plMorphSpan& dst = fSpans[iSpan];
-
         const uint16_t numUVWs = baseAcc.AccessVtx().NumUVWs();
 
         hsTArray<plVertDelta> deltas;

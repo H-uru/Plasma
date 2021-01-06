@@ -2584,9 +2584,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     if (movieLayer)
                     {
                         // adjust the starting height of the movie if we are keeping it inline with the text
-                        uint32_t movieHeight = 0, movieWidth = 0;
-                        movieHeight = movieLayer->GetHeight();
-                        movieWidth = movieLayer->GetWidth();
+                        uint32_t movieHeight = movieLayer->GetHeight();
                         if(!(chunk->fFlags & pfEsHTMLChunk::kFloating ))
                         {
                             if( y + movieHeight >= 512 - fPageBMargin )

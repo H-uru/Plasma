@@ -226,7 +226,9 @@ void    plTextGenerator::Detach()
     // Destroy the old texture ref, since we're no longer using it
     fHost->SetDeviceRef( nil );
 
+#ifdef MCN_DO_REFS
     plMipmap    *oldHost = fHost;
+#endif
 
     fHost = nil;
 

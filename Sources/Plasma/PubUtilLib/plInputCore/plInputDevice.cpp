@@ -165,7 +165,6 @@ void plKeyboardDevice::Shutdown()
 void plKeyboardDevice::HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c)
 {
     // update the internal keyboard state
-    unsigned int keyCode = (unsigned int)key;
     if (key < 256 && key > 0)
         fKeyboardState[key] = bKeyDown;
 

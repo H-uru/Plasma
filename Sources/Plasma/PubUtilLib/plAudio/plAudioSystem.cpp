@@ -430,7 +430,6 @@ void plAudioSystem::SetDistanceModel(int i)
 // Set the number of active sounds the audio system is allowed to play, based on the priority cutoff
 void plAudioSystem::SetMaxNumberOfActiveSounds()
 {
-    uint16_t priorityCutoff = plgAudioSys::GetPriorityCutoff();
     int maxNumSounds = 24;
 
     // Keep this to a reasonable amount based on the users hardware, since we want the sounds to be played in hardware

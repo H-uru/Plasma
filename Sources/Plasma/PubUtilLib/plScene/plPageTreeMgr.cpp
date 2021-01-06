@@ -309,7 +309,6 @@ int plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawV
         && drawVis[iDraw].fDrawable->GetNativeProperty(plDrawable::kPropSortSpans);
         iDraw++ )
     {
-        plDrawable* drawable = drawVis[iDraw].fDrawable;
         hsTArray<int16_t>& visList = drawVis[iDraw].fVisList;
         for( i = 0; i < visList.GetCount(); i++ )
         {

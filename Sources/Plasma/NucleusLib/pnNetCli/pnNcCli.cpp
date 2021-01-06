@@ -1071,7 +1071,7 @@ bool NetCliDispatch (
 
             // Add data to accumulator and dispatch
             cli->input.Add(bytes, data);
-            bool result = DispatchData(cli, param);
+            DispatchData(cli, param);
 
 #if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
             // Write to the netlog

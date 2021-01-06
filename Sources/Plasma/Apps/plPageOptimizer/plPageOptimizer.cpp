@@ -240,7 +240,6 @@ void plPageOptimizer::IRewritePage()
                 IWriteKeyData(&oldPage, &newPage, fAllKeys[i]);
         }
 
-        uint32_t newKeyStart = newPage.GetPosition();
         uint32_t oldKeyStart = pageInfo.GetIndexStart();
         oldPage.SetPosition(oldKeyStart);
 

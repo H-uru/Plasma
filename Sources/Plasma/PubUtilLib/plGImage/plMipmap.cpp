@@ -1148,8 +1148,6 @@ void plMipmap::ICarryZeroAlpha(uint8_t iDst)
         uint8_t *dst = (uint8_t *)GetLevelPtr(iDst);
 
         uint32_t srcRowBytes = fCurrLevelRowBytes << 1;
-        uint32_t srcHeight = fCurrLevelHeight << 1;
-        uint32_t srcWidth = fCurrLevelWidth << 1;
 
         const uint8_t alphaOff = 3;
         for( i = 0; i < fCurrLevelHeight; i++ )
@@ -1187,7 +1185,6 @@ void plMipmap::ICarryColor(uint8_t iDst, uint32_t col)
         uint32_t srcHeight = fCurrLevelHeight << 1;
         uint32_t srcWidth = fCurrLevelWidth << 1;
 
-        const uint8_t alphaOff = 3;
         for( i = 0; i < fCurrLevelHeight; i++ )
         {
             for( j = 0; j < fCurrLevelWidth; j++ )
@@ -1924,7 +1921,7 @@ void    plMipmap::Composite( plMipmap *source, uint16_t x, uint16_t y, plMipmap:
 
 void    plMipmap::Colorize()
 {
-    uint32_t      currColor, width, height;
+    uint32_t      currColor;
     uint8_t       currLevel;
 
 
@@ -1945,8 +1942,6 @@ void    plMipmap::Colorize()
     /// First handle compressed levels, if any
     currLevel = 0;
     currColor = 0;
-    width = fWidth;
-    height = fHeight;
     if( fCompressionType == kDirectXCompression )
     {
         for( ; currLevel < fNumLevels; currLevel++ )

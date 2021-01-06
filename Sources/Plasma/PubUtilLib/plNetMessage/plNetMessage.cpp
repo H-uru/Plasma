@@ -838,7 +838,6 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
         int i, numRooms;
         stream->LogReadLE(&numRooms,"RoomList NumRooms");
         fRooms.resize(numRooms);
-        int oldSize = fRoomNames.size();
         fRoomNames.resize(numRooms);
         for(i=0;i<numRooms;i++)
         {
@@ -1191,7 +1190,7 @@ const char *plNetMsgVoice::GetVoiceData() const
 ////////////////////////////////////////////////////////
 int plNetMsgListenListUpdate::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
 {
-    int bytes=plNetMessage::IPokeBuffer(stream, peekOptions);
+    plNetMessage::IPokeBuffer(stream, peekOptions);
     stream->WriteLE(fAdding);
     fReceivers.Poke(stream, peekOptions);
     return stream->GetPosition();

@@ -359,7 +359,6 @@ int32_t   pfGUIMultiLineEditCtrl::ICalcNumVisibleLines() const
 void    pfGUIMultiLineEditCtrl::IUpdate( int32_t startLine, int32_t endLine )
 {
     hsColorRGBA c;
-    static int  testingFlip = 0;
     bool        clearEachLine = true;
     uint32_t      line, x, y = 0;
     int32_t       numVisibleLines, lastVisibleLine;
@@ -751,12 +750,9 @@ inline  int32_t   pfGUIMultiLineEditCtrl::IOffsetToNextCharFromPos( int32_t posi
 int32_t   pfGUIMultiLineEditCtrl::IRecalcLineStarts( int32_t startingLine, bool force, bool dontUpdate )
 {
     uint16_t      wrapWidth, widthCounter;
-    uint32_t      charPos = 0, nextPos, startPos, lastStartPos;
+    uint32_t      charPos = 0, nextPos, startPos;
     int32_t       currLine, realStartingLine;
-    bool        firstLine;
     wchar_t     *buffer;
-    const wchar_t   wordBreaks[] = L" \t,.";
-    const wchar_t   wordSeparators[] = L" \t,.\n";
 
     if( fPrevCtrl )
         IUpdateBuffer(); // make sure our buffer is correct if we are linked
@@ -794,8 +790,6 @@ int32_t   pfGUIMultiLineEditCtrl::IRecalcLineStarts( int32_t startingLine, bool 
     // Precalculate some helper values
     wrapWidth = fDynTextMap->GetVisibleWidth() - fRightMargin;
     buffer = fBuffer.AcquireArray();
-    firstLine = true;
-    lastStartPos = (uint32_t)-1;
 
     for( ; charPos < fBuffer.GetCount(); currLine++ )
     {
@@ -818,8 +812,6 @@ int32_t   pfGUIMultiLineEditCtrl::IRecalcLineStarts( int32_t startingLine, bool 
                 realStartingLine++;
             }
         }
-
-        firstLine = false;
 
         //// We do a walk where we find the start of the next uint16_t (i.e. the end of this uint16_t plus
         //// any "white space"), and then see if we can fit everything up to that point. If we can,

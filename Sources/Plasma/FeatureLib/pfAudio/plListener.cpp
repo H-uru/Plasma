@@ -252,8 +252,6 @@ bool plListener::MsgReceive(plMessage* msg)
     plSetListenerMsg *setMsg = plSetListenerMsg::ConvertNoRef( msg );
     if( setMsg != nil )
     {
-        bool useVCam;
-
         if( setMsg->GetType() & plSetListenerMsg::kVCam )
         {
             // Reset any ratios
@@ -270,8 +268,6 @@ bool plListener::MsgReceive(plMessage* msg)
         }
         else
         {
-            useVCam = setMsg->IsBinding();
-            
             if( setMsg->GetType() & plSetListenerMsg::kPosition )
                 fPosRatio = 1.f;
 

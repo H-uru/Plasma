@@ -274,7 +274,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             }
         }
     }
-    catch (std::exception &e)
+    catch (const std::exception &e)
     {
         hsAssert(false,
             ST::format("Something bad happened ({}) while reading simple var data, desc:{}",
@@ -315,7 +315,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             }
         }
     }
-    catch (std::exception &e)
+    catch (const std::exception &e)
     {
         hsAssert(false,
             ST::format("Something bad happened ({}) while reading nested var data, desc:{}",

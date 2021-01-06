@@ -86,8 +86,6 @@ bool plLogicModifier::VerifyConditions(plMessage* msg)
 
 bool plLogicModifier::MsgReceive(plMessage* msg)
 {
-    bool retVal = false;
-    
     // read messages:
     plCondRefMsg* pCondMsg = plCondRefMsg::ConvertNoRef(msg);
     if (pCondMsg)
@@ -104,7 +102,6 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
             if (pCond->HasFlag(plConditionalObject::kLocalElement))
                 SetFlag(kLocalElement);
         }
-        retVal = true;
     }
     plTimerCallbackMsg* pTMsg = plTimerCallbackMsg::ConvertNoRef(msg);
     if (pTMsg)

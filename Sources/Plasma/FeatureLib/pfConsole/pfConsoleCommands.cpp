@@ -4094,7 +4094,6 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
     hsVector3 vec;
     hsColorRGBA col;
 
-    plFixedWaterState7 state = wave->State();
     switch( cmd )
     {
     case kGeoLen:
@@ -4329,7 +4328,6 @@ static bool ISendWaveCmd2f(PrintFunk PrintString, pfConsoleCmdParam* params, int
     float secs = ( numParams > 3 ) ? params[3] : 0.f;
 
     hsVector3 vec;
-    plFixedWaterState7 state = wave->State();
     switch( cmd )
     {
     case kWindDir:

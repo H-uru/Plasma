@@ -279,8 +279,8 @@ bool plNetMsgStreamHelper::Compress(int offset)
         SetCompressionType( plNetMessage::kCompressionZlib );
         SetStreamLen(bufLen);
         SetStreamBuf(buf);
-        int32_t diff = uncompressedSize-bufLen;
 #if 0
+        int32_t diff = uncompressedSize-bufLen;
         plNetApp::StaticDebugMsg( "\tCompressed stream: {}->{} bytes, ({} {} bytes, {.1f}%)",
             uncompressedSize, bufLen, (diff>=0)?"shrunk":"GREW?!?", diff, (diff/(float)uncompressedSize)*100 );
 #endif
@@ -308,8 +308,8 @@ bool plNetMsgStreamHelper::Uncompress(int offset)
         SetCompressionType( plNetMessage::kCompressionNone );
         SetStreamLen(bufLen);
         SetStreamBuf(buf);
-        int32_t diff = bufLen-origLen;
 #if 0
+        int32_t diff = bufLen-origLen;
         plNetApp::StaticDebugMsg( "\tUncompressed stream: {}->{} bytes, ({} {} bytes, {.1f}%)",
             origLen, bufLen, (diff>=0)?"grew":"SHRUNK?!?", diff, (diff/(float)bufLen)*100 );
 #endif

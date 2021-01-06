@@ -363,8 +363,6 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::Stream
 // destroys loaded, and frees data
 void    plSoundBuffer::UnLoad()
 {
-    if(fLoaded)
-        int i = 0;
     if(fLoading) 
         return;
 

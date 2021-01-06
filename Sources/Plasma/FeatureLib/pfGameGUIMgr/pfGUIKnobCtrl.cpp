@@ -197,7 +197,7 @@ void    pfGUIKnobCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 
 void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    float oldValue = fValue, newValue = fDragValue;
+    float newValue = fDragValue;
 
     if( fDragRangeMin != -1 )
     {

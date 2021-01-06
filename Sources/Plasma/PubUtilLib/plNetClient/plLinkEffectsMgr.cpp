@@ -63,9 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plWarpMsg.h"
 #include "pnKeyedObject/plFixedKey.h"
 
-// chronicle var
-#define kCleftSolved                    "CleftSolved"
-
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarTasks.h"
 #include "plAnimation/plAGAnim.h"
@@ -380,8 +377,6 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
                 bool linkToStartup = ageName.compare_i(kStartUpAgeFilename) == 0;      // To Startup
                 bool linkFromStartup = prevAgeName.compare_i(kStartUpAgeFilename) == 0;   // Leaving Startup
 
-                bool cleftSolved = VaultHasChronicleEntry( kCleftSolved );
-
                 bool linkToACA = ageName.compare_i(kAvCustomizationFilename) == 0;
                 bool linkFromACA = prevAgeName.compare_i(kAvCustomizationFilename) == 0;
 
@@ -453,7 +448,6 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         plNetApp::GetInstance()->DebugMsg("Received pLinkCallbackMsg, localmsg={}\n",
             !msg->HasBCastFlag(plMessage::kNetNonLocal));
 
-        static char str[ 128 ];
         plLinkEffectsTriggerMsg *pTriggerMsg = IFindLinkTriggerMsg(pLinkCallbackMsg->fLinkKey);
         if (pTriggerMsg == nil)
         {

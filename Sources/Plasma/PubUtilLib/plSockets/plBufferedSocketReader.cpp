@@ -160,7 +160,6 @@ bool plBufferedSocketReader::GetBlock(char * buf, int buflen)
     if (maxRead==0)
         return false;
     
-    char * wrk = FastGetBufferStart();
     memcpy(buf,FastGetBufferStart(),maxRead);
 
     return true;

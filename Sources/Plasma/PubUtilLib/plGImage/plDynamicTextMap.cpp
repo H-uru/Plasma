@@ -361,7 +361,6 @@ void    plDynamicTextMap::IClearFromBuffer( uint32_t *clearBuffer )
 {
     int         y;
     uint32_t      *data = (uint32_t *)fImage, *srcData = clearBuffer;
-    uint8_t       *destAlpha = nil;
 
 
     if( !IIsValid() )

@@ -526,7 +526,6 @@ bool plAvBrainSwim::IInitAnimations()
     plAGAnim *treadWaterLeft = fAvMod->FindCustomAnim("TreadWaterTurnLeft");
     plAGAnim *treadWaterRight = fAvMod->FindCustomAnim("TreadWaterTurnRight");  
 
-    static const float defaultFade = 2.0f;
     fBehaviors.SetCountAndZero(kSwimBehaviorMax);
     plSwimBehavior *behavior;
     fBehaviors[kTreadWater] = behavior = new TreadWater;

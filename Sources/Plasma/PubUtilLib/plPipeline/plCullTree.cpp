@@ -415,7 +415,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depth
             if( outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
             {
                 hsPoint3 interp;
-                float t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
+                (void)IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
                 onVerts.SetBit(outPoly.fVerts.GetCount());
                 if( poly.fClipped.IsBitSet(i-1) )
@@ -429,7 +429,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depth
             if( inVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
             {
                 hsPoint3 interp;
-                float t = IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
+                (void)IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
                 onVerts.SetBit(outPoly.fVerts.GetCount());
                 if( poly.fClipped.IsBitSet(i-1) )
@@ -451,7 +451,7 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depth
         ||(outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) && inVerts.IsBitSet(0)) )
     {
         hsPoint3 interp;
-        float t = IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
+        (void)IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
         onVerts.SetBit(outPoly.fVerts.GetCount());
         if( poly.fClipped.IsBitSet(poly.fVerts.GetCount()-1) )
             outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
@@ -520,7 +520,6 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
 
     bool someInner = false;
     bool someOuter = false;
-    bool someOn = false;
     int i;
     for( i = 0; i < poly.fVerts.GetCount(); i++ )
     {
@@ -531,7 +530,6 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
             someOuter = true;
         else 
         {
-            someOn = true;
             onVerts.SetBit(i);
         }
     }
@@ -866,8 +864,6 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
         color.Set(0.2f, 0.2f, 0.2f, 1.f);
     else
         color.Set(1.f, 1.f, 1.f, 1.f);
-
-    hsVector3 norm = dark ? -poly.fNorm : poly.fNorm;
 
     for( i = 0; i < poly.fVerts.GetCount(); i++ )
     {

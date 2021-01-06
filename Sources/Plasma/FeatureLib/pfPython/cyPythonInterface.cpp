@@ -812,54 +812,6 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptErrorRedirector, pyErrorRedirector)
 //  PURPOSE    : Initialize the Python dll
 //
 
-static PyModuleDef s_PlasmaModuleDef = {
-    PyModuleDef_HEAD_INIT,         /* m_base */
-    "Plasma",                      /* m_name */
-    "Plasma 2.0 Game Library",     /* m_doc */
-    0,                             /* m_size */
-    nullptr,                       /* m_methods */
-    nullptr,                       /* m_reload */
-    nullptr,                       /* m_traverse */
-    nullptr,                       /* m_clear */
-    nullptr,                       /* m_free */
-};
-
-static PyModuleDef s_PlasmaConstantsModuleDef = {
-    PyModuleDef_HEAD_INIT,         /* m_base */
-    "PlasmaConstants",             /* m_name */
-    "Plasma 2.0 Constants",        /* m_doc */
-    0,                             /* m_size */
-    nullptr,                       /* m_methods */
-    nullptr,                       /* m_reload */
-    nullptr,                       /* m_traverse */
-    nullptr,                       /* m_clear */
-    nullptr,                       /* m_free */
-};
-
-static PyModuleDef s_PlasmaNetConstantsModuleDef = {
-    PyModuleDef_HEAD_INIT,         /* m_base */
-    "PlasmaNetConstants",          /* m_name */
-    "Plasma 2.0 Net Constants",    /* m_doc */
-    0,                             /* m_size */
-    nullptr,                       /* m_methods */
-    nullptr,                       /* m_reload */
-    nullptr,                       /* m_traverse */
-    nullptr,                       /* m_clear */
-    nullptr,                       /* m_free */
-};
-
-static PyModuleDef s_PlasmaVaultConstantsModuleDef = {
-    PyModuleDef_HEAD_INIT,         /* m_base */
-    "PlasmaVaultConstants",        /* m_name */
-    "Plasma 2.0 Vault Constants",  /* m_doc */
-    0,                             /* m_size */
-    nullptr,                       /* m_methods */
-    nullptr,                       /* m_reload */
-    nullptr,                       /* m_traverse */
-    nullptr,                       /* m_clear */
-    nullptr,                       /* m_free */
-};
-
 static void IInitBuiltinModule(const char* modName, const char* docstring, plStatusLog* dbgLog,
                                const std::function<void(PyObject*)>& classFunc=nullptr,
                                const std::function<void(PyObject*)>& methodFunc=nullptr)
@@ -904,7 +856,11 @@ static bool ICheckedInit(_ConfigT& config, plStatusLog* dbgLog, const char* errm
             dbgLog->AddLineF(plStatusLog::kRed, "{}: {}", status.func, status.err_msg);
         else
             dbgLog->AddLine(plStatusLog::kRed, status.err_msg);
-        if constexpr (_ClearT != nullptr)
+
+        // Dammit GCC (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94554)
+        using ClearT_Null = std::integral_constant<decltype(_ClearT), nullptr>;
+        using ClearT_Param = std::integral_constant<decltype(_ClearT), _ClearT>;
+        if constexpr (!std::is_same_v<ClearT_Null, ClearT_Param>)
             _ClearT(&config);
         return false;
     }

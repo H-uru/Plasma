@@ -669,6 +669,7 @@ bool    plEAXSource::IsValid() const
 
 void    plEAXSource::SetFrom( plEAXSourceSettings *settings, unsigned source, bool force )
 {
+#if EAX_SDK_AVAILABLE
     uint32_t dirtyParams;
     if(source == 0 || !fInit) 
         return;
@@ -679,7 +680,6 @@ void    plEAXSource::SetFrom( plEAXSourceSettings *settings, unsigned source, bo
         dirtyParams = settings->fDirtyParams;
     
     // Do the params
-#ifdef EAX_SDK_AVAILABLE
     if( dirtyParams & plEAXSourceSettings::kRoom )
     {
         SetSourceEAXProperty(source, DSPROPSETID_EAX_BufferProperties, DSPROPERTY_EAXBUFFER_ROOM, &settings->fRoom, sizeof(settings->fRoom));

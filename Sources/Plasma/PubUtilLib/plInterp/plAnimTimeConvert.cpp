@@ -236,8 +236,6 @@ void plAnimTimeConvert::ISendCallback(int i)
     if (!fCallbackMsgs[i]->HasBCastFlag(plMessage::kNetPropagate) ||
         !fOwner || fOwner->IsLocallyOwned()==plSynchedObject::kYes)
     {
-        plEventCallbackMsg *temp = fCallbackMsgs[i];
-
         fCallbackMsgs[i]->SetSender(fOwner ? fOwner->GetKey() : nil);
 
         hsRefCnt_SafeRef(fCallbackMsgs[i]);
@@ -400,8 +398,6 @@ bool plAnimTimeConvert::IsStoppedAt(double wSecs) const
 float plAnimTimeConvert::WorldToAnimTime(double wSecs)
 {
     //hsAssert(wSecs >= fLastEvalWorldTime, "Tried to eval a time that's earlier than the last eval time.");
-    double d = wSecs - fLastEvalWorldTime;
-    float f = fCurrentAnimTime;
 
     if (wSecs < fLastStateChange)
     {
@@ -434,7 +430,6 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
         
         return fCurrentAnimTime;
     }
-    float note = fCurrentAnimTime - f;
     float secs = 0, delSecs = 0;
 
     if (fCurrentEaseCurve != nil)
@@ -1218,7 +1213,6 @@ bool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
     {
         if (fCurrentAnimTime == fEnd)
             return true;
-        double currTime = hsTimer::GetSysSeconds();
         float newTime = fCurrentAnimTime + hsTimer::GetDelSysSeconds();
         if (newTime > fEnd)
         {
@@ -1231,7 +1225,6 @@ bool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
     {
         if (fCurrentAnimTime == fBegin)
             return true;
-        double currTime = hsTimer::GetSysSeconds();
         float newTime = fCurrentAnimTime - hsTimer::GetDelSysSeconds();
         if (newTime < fBegin)
         {

@@ -336,14 +336,14 @@ uint8_t   plGBufferGroup::ICalcVertexSize( uint8_t &liteStride )
 
 void    plGBufferGroup::Read( hsStream *s ) 
 {
-    uint32_t          totalDynSize, i, count, temp = 0, j;
+    uint32_t          i, count, temp = 0, j;
     uint8_t           *vData;
     uint16_t          *iData;
     plGBufferColor  *cData;
 
 
     s->ReadLE( &fFormat );
-    totalDynSize = s->ReadLE32();
+    (void)s->ReadLE32();    // totalDynSize
     fStride = ICalcVertexSize( fLiteStride );
 
     fVertBuffSizes.clear();

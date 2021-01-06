@@ -218,8 +218,6 @@ void plKeyImp::Write(hsStream* s)
     fUoid.Write(s);
     s->WriteLE(fStartPos);
     s->WriteLE(fDataLen);
-    if (fStartPos == (uint32_t)-1)
-        int foo = 0;
 }
 
 //// WriteObject /////////////////////////////////////////////////////////////

@@ -54,8 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
 
-static const char* kPackFilePath = ".\\Python\\";
-
 struct plPackOffsetInfo
 {
     uint32_t fOffset;
@@ -179,8 +177,6 @@ void plPythonPack::Close()
     int i;
     for (i=0; i<fPackStreams.size(); i++)
     {
-        hsStream* fPackStream = fPackStreams[i];
-
         // do NOT close or delete the streams, the preloader will do that for us
         fPackStreams[i] = nil;
     }

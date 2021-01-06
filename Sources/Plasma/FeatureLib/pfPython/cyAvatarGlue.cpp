@@ -859,17 +859,6 @@ PLASMA_DEFAULT_TYPE(ptAvatar, "Plasma avatar class");
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptAvatar, cyAvatar)
 
-static PyObject* New(PyObject* sender, PyObject* recvr = nil)
-{
-    ptAvatar* newObj = (ptAvatar*)ptAvatar_type.tp_new(&ptAvatar_type, NULL, NULL);
-    plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
-    plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
-    newObj->fThis->SetSender(senderKey);
-    newObj->fThis->AddRecvr(recvrKey);
-    newObj->fThis->SetNetForce(false);
-    return (PyObject*) newObj;
-}
-
 PYTHON_CLASS_CHECK_IMPL(ptAvatar, cyAvatar)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptAvatar, cyAvatar)
 

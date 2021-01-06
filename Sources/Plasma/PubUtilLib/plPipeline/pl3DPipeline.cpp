@@ -137,7 +137,6 @@ pl3DPipeline::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
 
 
     // Get the requested mode and setup
-    const hsG3DDeviceRecord *devRec = devModeRec->GetDevice();
     const hsG3DDeviceMode *devMode = devModeRec->GetMode();
 
     if(!fInitialPipeParams.Windowed)
@@ -1012,8 +1011,6 @@ void pl3DPipeline::ISetLocalToWorld(const hsMatrix44& l2w, const hsMatrix44& w2l
 
 void pl3DPipeline::ITransformsToDevice()
 {
-    bool resetCullMode = fView.fXformResetFlags & (fView.kResetCamera | fView.kResetL2W);
-
     if (fView.fXformResetFlags & fView.kResetCamera)
         IWorldToCameraToDevice();
 

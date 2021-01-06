@@ -671,13 +671,9 @@ template <class T> void hsTArray<T>::SetCountAndZero(int count)
     static_assert(std::is_trivially_copyable<T>::value,
                   "Cannot use SetCountAndZero on non-trivially copyable types");
 
-    if( fTotalCount <= count )
-    {
-        int n = fTotalCount;
+    if (fTotalCount <= count)
         Expand(count);
-    }
-    int i;
-    for( i = 0; i < fTotalCount; i++ )
+    for (int i = 0; i < fTotalCount; i++)
         fArray[i] = 0;
     fUseCount = count;
 }

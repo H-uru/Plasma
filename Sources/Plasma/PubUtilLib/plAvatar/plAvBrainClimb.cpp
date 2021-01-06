@@ -875,7 +875,6 @@ void plAvBrainClimb::LoadFromSDL(const plStateDataRecord *sdl)
     {
         Mode exitStageMode; // the exit stage, in mode form
         sdl->FindVar(plAvatarSDLModifier::ClimbBrainVarNames::kStrExitStage)->Get((int *)&exitStageMode);   
-        plAnimStage *exitStage = this->IGetStageFromMode(exitStageMode);
         sdl->FindVar(plAvatarSDLModifier::ClimbBrainVarNames::kStrExitStageTime)->Get((int *)&fNextMode);
         sdl->FindVar(plAvatarSDLModifier::ClimbBrainVarNames::kStrExitStageStrength)->Get((int *)&fNextMode);
     }

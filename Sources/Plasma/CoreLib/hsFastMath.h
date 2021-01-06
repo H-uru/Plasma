@@ -103,7 +103,9 @@ public:
 inline float hsFastMath::InvSqrtAppr(float x)
 {
     unsigned long a = *(long*)&x;
+#if NUM_ITER > 0
     float arg = x;
+#endif
     union {
         long    i;
         float   f;

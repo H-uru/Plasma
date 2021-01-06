@@ -105,12 +105,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         uint16_t        glyphChars[ kMaxGlyphs ];
         FT_Vector       ftAdvances[ kMaxGlyphs ];
         FT_BBox         ftGlyphBox, ftFontBox;
-        FT_UInt         previous = 0;
-        bool            useKerning = false;
 
-
-        if( options->fUseKerning )
-            useKerning = FT_HAS_KERNING( ftFace );
 
         ftFontBox.xMin = ftFontBox.yMin = 32000;
         ftFontBox.xMax = ftFontBox.yMax = -32000;

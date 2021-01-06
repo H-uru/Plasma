@@ -1536,9 +1536,6 @@ class plLineParser
             if( *fCursor == 0 )
                 return;
 
-            // This is the start of our token
-            const char *start = fCursor;
-
             // Put a stopper here
             fRestore = *fCursor;
             *fCursor = 0;

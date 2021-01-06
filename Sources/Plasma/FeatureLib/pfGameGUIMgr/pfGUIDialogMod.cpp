@@ -397,7 +397,6 @@ bool        pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, flo
     hsPoint3    mousePoint;
     uint32_t      i;
 
-    pfGUIControlMod *oldInterestingCtrl = nil;
     float        smallestZ;
 
 #ifdef HS_DEBUGGING  // Debugging bounds rects
@@ -454,7 +453,6 @@ static bool     showBounds = false;
         return true;        // We ALWAYS handle events if we're in drag mode
     }
 
-    oldInterestingCtrl = fMousedCtrl;
     if( fControlOfInterest != nil )
     {
         // A particular control already has interest--pass messages directly to it no matter what

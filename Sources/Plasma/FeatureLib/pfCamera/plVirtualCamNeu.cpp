@@ -153,7 +153,7 @@ plVirtualCam1::plVirtualCam1()
     fCameraDriveInterface = plDebugInputInterface::GetInstance();
     hsRefCnt_SafeRef(fCameraDriveInterface);
 
-    plCameraBrain1* pDriveBrain = new plCameraBrain1_Drive(fDriveCamera);
+    new plCameraBrain1_Drive(fDriveCamera); // fDriveCamera takes ownership
 
     PushCamera(fDriveCamera);
 

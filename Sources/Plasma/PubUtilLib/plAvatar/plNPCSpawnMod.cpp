@@ -170,7 +170,6 @@ void plNPCSpawnMod::ISendNotify(plKey &avatarKey)
         fNotify->ClearEvents();
         fNotify->AddEvent(event);
         delete event; // fNotify->AddEvent makes a copy
-        int i = fNotify->GetEventCount();
         fNotify->Ref();     // so we still hold onto it after it is delivered
         fNotify->Send();
     } else {
