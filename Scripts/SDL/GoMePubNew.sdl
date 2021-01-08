@@ -43,7 +43,6 @@
 STATEDESC GoMePubNew
 {
     VERSION 1
-    
 #Game Variables
     VAR BOOL    islmGZBeamVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
 
