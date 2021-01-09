@@ -1,0 +1,40 @@
+name: Windows-CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        platform:
+          - { generator: Visual Studio 16 2019, arch: Win32, str: windows-x86 }
+        cfg:
+          - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithDebInfo, str: external-release }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Build
+        run: |
+          New-Item -ItemType Directory build | Out-Null
+          Set-Location build
+          cmake `
+            -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
+            -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
+            -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+            -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" `
+            -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
+            -DPLASMA_VCPKG_NUGET_RW=TRUE `
+            ..
+          cmake --build . --target INSTALL --config "${{ matrix.cfg.type }}"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+          path: build/install

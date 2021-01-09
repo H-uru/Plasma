@@ -1,6 +1,4 @@
-# TODO: Eventually, we want to automatically turn on this auto-pip install functionality. That
-# should only be done when we KNOW that we are in an isolated configuration of Python.
-option(ENABLE_PIP_INSTALL "Allow automatic installation of Python dependency modules." OFF)
+option(ENABLE_PIP_INSTALL "Allow automatic installation of Python dependency modules." ${USE_VCPKG})
 
 function(python_test_modules)
     cmake_parse_arguments(_ptm "DONT_INSTALL;REQUIRED" "REQUIREMENTS_FILE" "MODULES" ${ARGN})
