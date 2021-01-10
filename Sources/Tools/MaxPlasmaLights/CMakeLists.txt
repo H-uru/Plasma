@@ -25,8 +25,8 @@ set(MaxPlasmaLights_SOURCES
 )
 
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
-use_precompiled_header(Pch.h Pch.cpp MaxPlasmaLights_HEADERS MaxPlasmaLights_SOURCES)
 add_library(MaxPlasmaLights SHARED ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES})
+use_precompiled_header(MaxPlasmaLights Pch.h)
 set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 
 

@@ -171,13 +171,13 @@ set(MaxComponent_SOURCES
     plXImposter.cpp
 )
 
-use_precompiled_header(Pch.h Pch.cpp MaxComponent_HEADERS MaxComponent_SOURCES)
 add_library(MaxComponent
             STATIC
             ${MaxComponent_HEADERS}
             ${MaxComponent_RESOURCES}
             ${MaxComponent_SOURCES}
 )
+use_precompiled_header(MaxComponent Pch.h)
 
 source_group("Header Files" FILES ${MaxComponent_HEADERS})
 source_group("Resource Files" FILES ${MaxComponent_RESOURCES})

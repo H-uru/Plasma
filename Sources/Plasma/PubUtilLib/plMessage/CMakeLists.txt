@@ -113,8 +113,8 @@ set(plMessage_HEADERS
     plVaultNotifyMsg.h
 )
 
-use_precompiled_header(Pch.h Pch.cpp plMessage_HEADERS plMessage_SOURCES)
 add_library(plMessage STATIC ${plMessage_SOURCES} ${plMessage_HEADERS})
+use_precompiled_header(plMessage Pch.h)
 
 target_link_libraries(plMessage
     PUBLIC
