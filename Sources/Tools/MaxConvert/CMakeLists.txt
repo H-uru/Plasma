@@ -41,7 +41,7 @@ set(MaxConvert_SOURCES
 )
 
 add_library(MaxConvert STATIC ${MaxConvert_HEADERS} ${MaxConvert_SOURCES})
-use_precompiled_header(MaxConvert Pch.h)
+plasma_optimize_target(MaxConvert PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxConvert_HEADERS})
 source_group("Source Files" FILES ${MaxConvert_SOURCES})

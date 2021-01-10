@@ -21,7 +21,7 @@ set(MaxExport_SOURCES
 )
 
 add_library(MaxExport STATIC ${MaxExport_HEADERS} ${MaxExport_SOURCES})
-use_precompiled_header(MaxExport Pch.h)
+plasma_optimize_target(MaxExport PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxExport_HEADERS})
 source_group("Source Files" FILES ${MaxExport_SOURCES})

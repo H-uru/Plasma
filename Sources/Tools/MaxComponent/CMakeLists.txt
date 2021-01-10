@@ -177,7 +177,7 @@ add_library(MaxComponent
             ${MaxComponent_RESOURCES}
             ${MaxComponent_SOURCES}
 )
-use_precompiled_header(MaxComponent Pch.h)
+plasma_optimize_target(MaxComponent PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxComponent_HEADERS})
 source_group("Resource Files" FILES ${MaxComponent_RESOURCES})

@@ -114,7 +114,7 @@ set(plMessage_HEADERS
 )
 
 add_library(plMessage STATIC ${plMessage_SOURCES} ${plMessage_HEADERS})
-use_precompiled_header(plMessage Pch.h)
+plasma_optimize_target(plMessage PRECOMPILED_HEADERS Pch.h)
 
 target_link_libraries(plMessage
     PUBLIC

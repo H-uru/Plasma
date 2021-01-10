@@ -86,7 +86,7 @@ set(CoreLib_HEADERS
 )
 
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
-use_precompiled_header(CoreLib _CoreLibPch.h)
+plasma_optimize_target(CoreLib PRECOMPILED_HEADERS _CoreLibPch.h)
 
 if(UNIX)
     target_link_libraries(CoreLib pthread)

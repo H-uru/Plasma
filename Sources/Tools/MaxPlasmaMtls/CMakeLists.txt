@@ -116,7 +116,7 @@ add_library(MaxPlasmaMtls
             ${MaxPlasmaMtls_SOURCES_Layers}
             ${MaxPlasmaMtls_SOURCES_Materials}
 )
-use_precompiled_header(MaxPlasmaMtls Pch.h)
+plasma_optimize_target(MaxPlasmaMtls PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxPlasmaMtls_HEADERS})
 source_group("Header Files\\Layers" FILES ${MaxPlasmaMtls_HEADERS_Layers})

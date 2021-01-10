@@ -73,7 +73,7 @@ set(MaxMain_SOURCES
 
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 add_library(MaxMain SHARED ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES})
-use_precompiled_header(MaxMain Pch.h)
+plasma_optimize_target(MaxMain PRECOMPILED_HEADERS Pch.h)
 set_target_properties(MaxMain PROPERTIES OUTPUT_NAME "PlasmaMax")
 set_target_properties(MaxMain PROPERTIES SUFFIX ".gup")
 

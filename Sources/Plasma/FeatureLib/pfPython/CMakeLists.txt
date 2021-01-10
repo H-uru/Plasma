@@ -259,7 +259,7 @@ set(pfPython_GLUE
 )
 
 add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE})
-use_precompiled_header(pfPython Pch.h)
+plasma_optimize_target(pfPython PRECOMPILED_HEADERS Pch.h)
 target_link_libraries(pfPython Python3::Python)
 
 source_group("Source Files" FILES ${pfPython_SOURCES})

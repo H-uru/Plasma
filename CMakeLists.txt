@@ -167,7 +167,7 @@ if(UNIX AND NOT APPLE)
     endif(LIBSECRET_FOUND)
 endif(UNIX AND NOT APPLE)
 
-include(PrecompiledHeader)    #Precompiled Header helper macros
+include(BuildOptimizations)
 include(PythonUtils)
 
 if(WIN32)
