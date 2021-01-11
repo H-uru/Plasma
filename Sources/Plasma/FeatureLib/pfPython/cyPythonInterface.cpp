@@ -857,7 +857,11 @@ static bool ICheckedInit(_ConfigT& config, plStatusLog* dbgLog, const char* errm
         else
             dbgLog->AddLine(plStatusLog::kRed, status.err_msg);
 
-        if constexpr (_ClearT != nullptr)
+        // Dammit GCC (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94554)
+        typedef void (*ClearT_Type)(_ConfigT*);
+        using ClearT_Null = std::integral_constant<ClearT_Type, nullptr>;
+        using ClearT_Param = std::integral_constant<ClearT_Type, _ClearT>;
+        if constexpr (!std::is_same_v<ClearT_Null, ClearT_Param>)
             _ClearT(&config);
         return false;
     }
