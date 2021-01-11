@@ -25,16 +25,21 @@ jobs:
           Set-Location build
           cmake `
             -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
+            -DPLASMA_BUILD_TESTS=ON `
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
             -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
             -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" `
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
             -DPLASMA_VCPKG_NUGET_RW=TRUE `
             ..
-          cmake --build . --target INSTALL --config "${{ matrix.cfg.type }}"
+          cmake --build . --config "${{ matrix.cfg.type }}" -j 2
+          cmake --install . --config "${{ matrix.cfg.type }}"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
+
+      - name: Run Tests
+        run: cmake --build build --target check --config "${{ matrix.cfg.type }}"
