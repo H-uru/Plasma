@@ -85,8 +85,8 @@ set(CoreLib_HEADERS
     plViewTransform.h
 )
 
-use_precompiled_header(_CoreLibPch.h Pch.cpp CoreLib_HEADERS CoreLib_SOURCES)
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
+plasma_optimize_target(CoreLib PRECOMPILED_HEADERS _CoreLibPch.h)
 
 if(UNIX)
     target_link_libraries(CoreLib pthread)

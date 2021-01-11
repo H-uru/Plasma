@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plResponderWait_inc
+#define plResponderWait_inc
+
 #include <map>
 
 class ClassDesc2;
@@ -66,3 +69,5 @@ namespace ResponderWait
     int         GetWaitingOn(IParamBlock2* waitPB);
     ST::string  GetWaitPoint(IParamBlock2* waitPB);
 }
+
+#endif

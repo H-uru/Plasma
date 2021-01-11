@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plAutoUIComp_inc
+#define plAutoUIComp_inc
+
 #include "plAutoUIBase.h"
 
 #include "plComponentBase.h"
@@ -117,3 +121,5 @@ void ReleaseGlobals();
 // Categories
 //
 #define COMP_TYPE_KAHLO "Kahlo"
+
+#endif

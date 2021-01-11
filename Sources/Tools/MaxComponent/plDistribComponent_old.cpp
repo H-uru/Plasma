@@ -66,15 +66,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDistribComponent_old.h"
 
-static const int kNumColorChanOptions = 13;
-
 struct plProbChanStringValPair
 {
     plDistributor::ColorChan        fValue;
     const char*                     fString;
 };
 
-static plProbChanStringValPair kProbColorChanStrings[kNumColorChanOptions] =
+static plProbChanStringValPair kProbColorChanStrings[] =
 {
     { plDistributor::kRed, "Red" },
     { plDistributor::kGreen, "Green" },
@@ -151,11 +149,8 @@ public:
 
         case WM_INITDIALOG:
             cbox = GetDlgItem(hWnd, IDC_COMP_DISTRIB_PROBCOLORCHAN);
-            int i;
-            for( i = 0; i < kNumColorChanOptions; i++ )
-            {
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)kProbColorChanStrings[i].fString);
-            }
+            for (const auto& i : kProbColorChanStrings)
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)i.fString);
             SendMessage(cbox, CB_SETCURSEL, map->GetParamBlock()->GetInt(plDistribComponent_old::kProbColorChan), 0);
 
             ISetupScaleLock(map, true);

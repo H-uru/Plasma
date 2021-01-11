@@ -1118,10 +1118,10 @@ void plClothingOutfit::RemoveMaintainerOutfit()
     fVaultSaveEnabled = true;
 }
 
-static plRandom sRandom;
-
 void plClothingOutfit::WearRandomOutfit()
 {
+    static plRandom sRandom;
+
     plClothingMgr *cMgr = plClothingMgr::GetClothingMgr();
     hsTArray<plClothingItem *>items;
 

@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plResponderLink_inc
+#define plResponderLink_inc
+
 #include "plResponderCmd.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -255,3 +258,5 @@ public:
 
     virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
+
+#endif

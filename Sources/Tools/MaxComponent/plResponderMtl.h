@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plResponderMtl_inc
+#define plResponderMtl_inc
+
 #include "plResponderCmd.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -76,3 +80,5 @@ public:
 };
 
 int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys);
+
+#endif

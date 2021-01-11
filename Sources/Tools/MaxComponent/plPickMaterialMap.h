@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plPickMaterialMap_inc
+#define plPickMaterialMap_inc
+
 class Mtl;
 class IParamBlock2;
 
@@ -54,3 +57,5 @@ struct plPickMaterialInfo
     Mtl *fMtl;
     unsigned int fFlags;
 };
+
+#endif

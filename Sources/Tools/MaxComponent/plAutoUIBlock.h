@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef plAutoUIBlock_inc
+#define plAutoUIBlock_inc
+
 #include "plAutoUIBase.h"
 
 class plComponentClassDesc;
@@ -64,3 +68,5 @@ public:
 
     bool IsMultiModifier() { return fIsMultiModifier; }
 };
+
+#endif

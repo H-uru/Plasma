@@ -57,6 +57,7 @@ set(pfGameGUIMgr_HEADERS
 )
 
 add_library(pfGameGUIMgr STATIC ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS})
+plasma_optimize_target(pfGameGUIMgr UNITY_BUILD)
 
 target_link_libraries(pfGameGUIMgr
     PUBLIC

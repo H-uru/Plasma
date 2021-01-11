@@ -258,8 +258,8 @@ set(pfPython_GLUE
     pyWaveSetGlue.cpp
 )
 
-use_precompiled_header(Pch.h Pch.cpp pfPython_HEADERS pfPython_SOURCES)
 add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE})
+plasma_optimize_target(pfPython UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 target_link_libraries(pfPython Python3::Python)
 
 source_group("Source Files" FILES ${pfPython_SOURCES})

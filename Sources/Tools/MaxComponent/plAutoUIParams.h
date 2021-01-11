@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plAutoUIParams_inc
+#define plAutoUIParams_inc
+
 #include "hsTemplates.h"
 #include <vector>
 
@@ -419,3 +422,5 @@ public:
     int GetParamType();
     plComponentBase *GetComponent(IParamBlock2 *pb, int idx=0);
 };
+
+#endif

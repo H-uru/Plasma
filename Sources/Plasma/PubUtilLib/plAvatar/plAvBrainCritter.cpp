@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static plRandom sRandom; // random number generator
+plRandom plAvBrainCritter::sRandom; // random number generator
 
 const char kDefaultIdleAnimName[] = "Idle";
 const char kDefaultIdleBehName[] = "Idle";

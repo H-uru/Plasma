@@ -84,6 +84,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #       include <vld.h>
 #   endif // USE_VLD
 
+    // Conflicts with plDynamicTextMap
+#   ifdef DrawText
+#       undef DrawText
+#   endif
+
     const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion();
 
     /** COM Result holder used for formatting to log. */

@@ -68,6 +68,7 @@ set(plAvatar_HEADERS
 )
 
 add_library(plAvatar STATIC ${plAvatar_SOURCES} ${plAvatar_HEADERS})
+plasma_optimize_target(plAvatar UNITY_BUILD)
 
 target_include_directories(plAvatar PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 target_link_libraries(plAvatar PUBLIC plAnimation)

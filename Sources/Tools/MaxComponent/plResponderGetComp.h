@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plResponderGetComp_inc
+#define plResponderGetComp_inc
+
 #include <set>
 #include <vector>
 
@@ -124,3 +127,5 @@ public:
 
     bool GetCompAndNode(plComponentBase*& comp, plMaxNodeBase*& node);
 };
+
+#endif

@@ -972,9 +972,10 @@ void plHBehavior::IStop()
     fStopMsgSent = true; // we just sent a stop message
 }
 
-static plRandom sRandom;
 void Idle::IStart()
 {
+    static plRandom sRandom;
+
     plHBehavior::IStart();
     if (fAnim)
     {       

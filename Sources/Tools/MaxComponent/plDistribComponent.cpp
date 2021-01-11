@@ -110,8 +110,7 @@ struct plColorChanStringValPair
     const char*                     fString;
 };
 
-static const int kNumColorChanOptions = 13;
-static plColorChanStringValPair kProbColorChanStrings[kNumColorChanOptions] =
+static plColorChanStringValPair kColorChanStrings[] =
 {
     { plDistributor::kRed, "Red" },
     { plDistributor::kGreen, "Green" },
@@ -433,11 +432,8 @@ public:
             PostMessage(hWnd, WM_ROLLOUT_OPEN, 0, 0);
 
             cbox = GetDlgItem(hWnd, IDC_COMP_DISTRIB_PROBCOLORCHAN);
-            int i;
-            for( i = 0; i < kNumColorChanOptions; i++ )
-            {
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)kProbColorChanStrings[i].fString);
-            }
+            for (const auto& i : kColorChanStrings)
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)i.fString);
             SendMessage(cbox, CB_SETCURSEL, map->GetParamBlock()->GetInt(plDistribComponent::kProbColorChan), 0);
             return TRUE;
 
@@ -1095,7 +1091,7 @@ float plDistribComponent::GetIsoPriority() const
 
 plDistributor::ColorChan plDistribComponent::GetProbabilityChan() const
 {
-    return kProbColorChanStrings[fCompPB->GetInt(kProbColorChan)].fValue;
+    return kColorChanStrings[fCompPB->GetInt(kProbColorChan)].fValue;
 }
 
 plDistributor::ConformType plDistribComponent::GetConformity() const

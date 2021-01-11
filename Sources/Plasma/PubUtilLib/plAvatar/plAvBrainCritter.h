@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plArmatureMod;
 class plWalkingStrategy;
 class plAIMsg;
+class plRandom;
 
 class plAvBrainCritter : public plArmatureBrain
 {
@@ -183,6 +184,9 @@ protected:
     std::map<std::string, std::vector<int> > fUserBehaviors; // string is behavior name, internal vector is the list of behaviors that are randomly picked from
 
     std::vector<plKey> fReceivers; // list of people that want messages from us
+
+private:
+    static plRandom sRandom;
 };
 
 #endif // PL_AV_BRAIN_CRITTER_H

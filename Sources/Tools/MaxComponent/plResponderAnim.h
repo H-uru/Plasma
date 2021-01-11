@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plResponderAnim_inc
+#define plResponderAnim_inc
+
 #include "plResponderCmd.h"
 
 class plComponentBase;
@@ -73,3 +76,4 @@ protected:
     plMessage *ICreateSndMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb);
 };
 
+#endif

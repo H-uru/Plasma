@@ -920,13 +920,13 @@ BOOL plGUIColorSchemeProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UI
                 blendedColor2 = blackColor * fgAlpha + ( blendedColor * ( 1.f - fgAlpha ) );
                 ::SetTextColor( paintInfo.hdc, MAXTOCOLORREF( blendedColor2 ) );
                 ::OffsetRect( &r, 1, 1 );
-                ::DrawText( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
+                ::DrawTextA( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
                 ::OffsetRect( &r, -1, -1 );
             }
 
             blendedColor = fgColor * fgAlpha + ( blendedColor * ( 1.f - fgAlpha ) );
             ::SetTextColor( paintInfo.hdc, MAXTOCOLORREF( blendedColor ) );
-            ::DrawText( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
+            ::DrawTextA( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
             
             ::DeleteObject( bgPattBrush );
 
@@ -945,12 +945,12 @@ BOOL plGUIColorSchemeProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UI
                 blendedColor2 = blackColor * selFgAlpha + ( blendedColor * ( 1.f - selFgAlpha ) );
                 ::SetTextColor( paintInfo.hdc, MAXTOCOLORREF( blendedColor2 ) );
                 ::OffsetRect( &r, 1, 1 );
-                ::DrawText( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
+                ::DrawTextA( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
                 ::OffsetRect( &r, -1, -1 );
             }
             blendedColor = selFgColor * selFgAlpha + ( blendedColor * ( 1.f - selFgAlpha ) );
             ::SetTextColor( paintInfo.hdc, MAXTOCOLORREF( blendedColor ) );
-            ::DrawText( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
+            ::DrawTextA( paintInfo.hdc, previewString, strlen( previewString ), &r, DT_CENTER | DT_VCENTER );
             
             ::DeleteObject( bgPattBrush );
 
