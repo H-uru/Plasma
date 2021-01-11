@@ -683,6 +683,8 @@ void    plAudioSystem::IUpdateSoftSounds(const hsPoint3 &newPosition)
             case plSound::kStreamCompressed:
                 color = plStatusLog::kRed;
                 break;
+            case plSound::kNoStream:
+                break;
         }
 
         if(sound->GetType() == plgAudioSys::kVoice)

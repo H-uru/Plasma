@@ -326,6 +326,11 @@ static bool SocketNotifyCallback (
             conn = (CliGmConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
+
+        case kNotifySocketListenSuccess:
+        case kNotifySocketWrite:
+            // No action
+        break;
     }
     
     return result;

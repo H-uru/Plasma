@@ -471,6 +471,11 @@ static bool SocketNotifyCallback (
             conn = (CliFileConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
+
+        case kNotifySocketListenSuccess:
+        case kNotifySocketWrite:
+            // No action
+        break;
     }
 
     return result;

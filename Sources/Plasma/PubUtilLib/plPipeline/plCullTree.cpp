@@ -255,6 +255,7 @@ plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t
                 retVal = kPureSplit;
             }
         }
+        break;
     }
     return retVal;
 }

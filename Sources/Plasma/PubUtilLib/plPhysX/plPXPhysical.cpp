@@ -181,6 +181,9 @@ void plPXPhysical::ISanityCheckBounds()
             fBounds = plSimDefs::kHullBounds;
         }
         break;
+
+    default:
+        break;
     }
 }
 
