@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 // Define this if the file servers are running behind load-balancing hardware.
 // It changes the logic by which the decision to attempt a reconnect is made.

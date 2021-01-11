@@ -47,9 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plPythonPack.h"
 

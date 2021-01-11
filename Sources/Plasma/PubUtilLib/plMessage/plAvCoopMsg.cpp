@@ -42,9 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "hsResMgr.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 // singular
 #include "plAvCoopMsg.h"

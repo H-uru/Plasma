@@ -54,9 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamm2.h>
 #include <windowsx.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 
 #include "pnSceneObject/plSceneObject.h"

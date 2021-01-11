@@ -41,9 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pyKey.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"

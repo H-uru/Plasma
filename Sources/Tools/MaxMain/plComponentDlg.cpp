@@ -53,9 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <utilapi.h>
 #include <notify.h>
 #include <vector>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plComponentDlg.h"
 #include "plComponentPanel.h"

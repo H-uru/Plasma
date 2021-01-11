@@ -63,9 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <istdplug.h>
 #include <dummy.h>
 #include <notetrck.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "MaxMain/plMaxNode.h"
 #include "plSurface/hsGMaterial.h"

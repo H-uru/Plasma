@@ -52,9 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRealTimeLights.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"

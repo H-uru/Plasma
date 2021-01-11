@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Max.h>
 #include <commdlg.h>
 #include <bmmlib.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plGImage/plMipmap.h"
 #include "hsExceptionStack.h"

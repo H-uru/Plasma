@@ -40,9 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #ifdef BUILDING_PYPLASMA
 # error "pyNetLinkingMgr is not compatible with pyPlasma.pyd. Use BUILDING_PYPLASMA macro to ifdef out unwanted headers."

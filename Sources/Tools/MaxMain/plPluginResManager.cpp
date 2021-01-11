@@ -43,9 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 // For our common object libs
 #include "plCommonObjLib.h"

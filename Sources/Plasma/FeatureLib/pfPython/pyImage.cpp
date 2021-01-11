@@ -43,9 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "pyKey.h"
 #include "hsResMgr.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "pyImage.h"
 #include "pyGeometry3.h"

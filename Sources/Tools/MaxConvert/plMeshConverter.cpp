@@ -63,9 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ISkin.h>
 #include <meshdlib.h> 
 #include <stdmat.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plMeshConverter.h"
 #include "MaxMain/plMaxNode.h"

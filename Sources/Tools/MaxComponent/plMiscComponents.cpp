@@ -53,9 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamm2.h>
 #include <memory>
 #include <notify.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #ifdef MAXASS_AVAILABLE
 #   include "../../AssetMan/PublicInterface/MaxAssInterface.h"

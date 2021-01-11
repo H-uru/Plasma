@@ -48,9 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalComponents.h"
 
 #include <iparamm2.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plPickNode.h"
 

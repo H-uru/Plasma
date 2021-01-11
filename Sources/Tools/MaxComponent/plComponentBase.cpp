@@ -49,9 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamm2.h>
 #include <notify.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "plAutoUIComp.h"

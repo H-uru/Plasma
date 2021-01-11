@@ -52,9 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if MAX_VERSION_MAJOR >= 13
 #   include <INamedSelectionSetManager.h>
 #endif
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "hsConverterUtils.h"
 #include "MaxMain/MaxCompat.h"

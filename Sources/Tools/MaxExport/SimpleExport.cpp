@@ -50,9 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <bitmap.h>
 #include <notify.h>
 #include <max.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "SimpleExport.h"
 #include "plExportErrorMsg.h"

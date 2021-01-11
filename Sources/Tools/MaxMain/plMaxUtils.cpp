@@ -49,9 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <max.h>
 #include <set>
 #include <utilapi.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plMaxUtils.h"
 #include "plResMgr/plPageInfo.h"

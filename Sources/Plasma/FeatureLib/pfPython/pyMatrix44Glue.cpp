@@ -44,9 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGeometry3.h"
 #include "pyMatrix44.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMatrix44, pyMatrix44);

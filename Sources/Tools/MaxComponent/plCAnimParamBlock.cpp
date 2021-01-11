@@ -59,9 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimComponent.h"
 
 #include "resource.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "plInterp/plAnimEaseTypes.h"
 

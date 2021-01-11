@@ -47,9 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <memory>
 #include <Python.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #ifdef BUILDING_PYPLASMA
 # error "pyVault is not compatible with pyPlasma.pyd. Use BUILDING_PYPLASMA macro to ifdef out unwanted headers."

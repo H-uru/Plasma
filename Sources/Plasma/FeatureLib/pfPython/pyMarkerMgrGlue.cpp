@@ -41,9 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 #include "pyMarkerMgr.h"
 #include "pfMessage/pfMarkerMsg.h"

@@ -50,9 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <mutex>
 #include "hsRefCnt.h"
 #include "hsLockGuard.h"
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 
 
 namespace pnNetCli {

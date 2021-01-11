@@ -40,9 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifdef _MSC_VER
-#   pragma hdrstop
-#endif
 #include "pyColor.h"
 
 pyColor::pyColor(float r, float g, float b, float a)
