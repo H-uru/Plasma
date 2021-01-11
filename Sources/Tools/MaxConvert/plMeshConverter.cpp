@@ -263,7 +263,7 @@ plMeshConverter::plMeshConverter() :
     hsGuardEnd;
 }
 
-plMeshConverter::~plMeshConverter()
+plMeshConverter::~plMeshConverter() noexcept(false)
 {
     hsGuardBegin("plMeshConverter::~plMeshConverter");
     hsGuardEnd;

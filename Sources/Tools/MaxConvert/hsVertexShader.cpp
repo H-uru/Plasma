@@ -106,7 +106,7 @@ hsVertexShader::hsVertexShader() :
     hsGuardEnd;
 }
 
-hsVertexShader::~hsVertexShader()
+hsVertexShader::~hsVertexShader() noexcept(false)
 {
     hsGuardBegin("hsVertexShader::~hsVertexShader");
     hsGuardEnd;

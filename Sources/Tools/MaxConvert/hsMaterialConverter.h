@@ -99,7 +99,7 @@ private:
     hsMaterialConverter();
 
 public:
-    ~hsMaterialConverter();
+    ~hsMaterialConverter() noexcept(false);
     static hsMaterialConverter& Instance();
 
     void Init(bool save, plErrorMsg *msg);

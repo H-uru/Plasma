@@ -192,7 +192,7 @@ fChangedTimes(false)
     hsGuardEnd;
 }
 
-hsMaterialConverter::~hsMaterialConverter()
+hsMaterialConverter::~hsMaterialConverter() noexcept(false)
 {
     hsGuardBegin("hsMaterialConverter::~hsMaterialConverter");
     hsAssert(fDoneMaterials.Count() == 0, "FreeMaterialCache not called");
