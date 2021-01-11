@@ -20,7 +20,6 @@ set(MaxComponent_HEADERS
     plAvatarComponent.h
     plBehavioralComponents.h
     plBlowComponent.h
-    plCameraComponent.h
     plCameraComponents.h
     plCAnimParamBlock.h
     plClickableComponent.h
@@ -107,7 +106,6 @@ set(MaxComponent_SOURCES
     plBehavioralComponents.cpp
     plBipedKiller.cpp
     plBlowComponent.cpp
-    plCameraComponent.cpp
     plCameraComponents.cpp
     plCAnimParamBlock.cpp
     plClickableComponent.cpp
@@ -177,7 +175,7 @@ add_library(MaxComponent
             ${MaxComponent_RESOURCES}
             ${MaxComponent_SOURCES}
 )
-plasma_optimize_target(MaxComponent PRECOMPILED_HEADERS Pch.h)
+plasma_optimize_target(MaxComponent UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxComponent_HEADERS})
 source_group("Resource Files" FILES ${MaxComponent_RESOURCES})

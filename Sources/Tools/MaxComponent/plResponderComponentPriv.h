@@ -45,6 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  * Private header for the responder component.  Anyone else should include plResponderComponent.h
  */
 
+#ifndef plResponderComponentPriv_inc
+#define plResponderComponentPriv_inc
+
 #include "plResponderComponent.h"
 #include "plComponent.h"
 #include "pnKeyedObject/plKey.h"
@@ -138,3 +141,5 @@ enum
     kResponderCameraForceBlk,
     kResponderSubWorldBlk,
 };
+
+#endif

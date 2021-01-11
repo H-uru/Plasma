@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plNPCSpawnComp_inc
+#define plNPCSpawnComp_inc
+
 class plComponentBase;
 class plKey;
 class plMaxNodeBase;
@@ -47,3 +50,5 @@ class plMaxNodeBase;
 #define NPC_SPAWN_CLASS_ID Class_ID(0x784e3345, 0x2ed0288c)
 
 plKey GetNPCSpawnModKey(plComponentBase *npcSpawnComp, plMaxNodeBase *target);
+
+#endif

@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plMultistageStage_inc
+#define plMultistageStage_inc
+
 #include <string_theory/string>
 
 class plAnimStage;
@@ -131,3 +134,4 @@ public:
     plBaseStage* Clone();
 };
 
+#endif

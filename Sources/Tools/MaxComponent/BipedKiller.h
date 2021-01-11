@@ -39,7 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef BipedKiller_inc
+#define BipedKiller_inc
+
 class INode;
 class Interface;
 
 void RemoveBiped(INode *bipRoot, Interface *theInterface);
+
+#endif

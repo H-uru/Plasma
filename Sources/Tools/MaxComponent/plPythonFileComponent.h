@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plPythonFileComponent_inc
+#define plPythonFileComponent_inc
+
 class plAutoUIBlock;
 class plComponentClassDesc;
 
@@ -50,3 +53,5 @@ namespace PythonFile
     plComponentClassDesc *GetClassDesc();
     void AddAutoUIBlock(plAutoUIBlock *block);
 }
+
+#endif

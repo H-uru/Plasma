@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plDistribComponent_inc
-#define plDistribComponent_inc
+#ifndef plDistribComponent_old_inc
+#define plDistribComponent_old_inc
 
 const Class_ID DISTRIBUTOR_COMP_CID_OLD(0x490b247f, 0x56f60a0e);
 
