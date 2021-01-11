@@ -39,6 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef _cyPythonInterface_h_
+#define _cyPythonInterface_h_
+
 //////////////////////////////////////////////////////////////////////
 //
 // PythonInterface   - The Python interface to the Python dll
@@ -241,3 +245,5 @@ public:
     static void DebuggerRequestedExit(bool reqExit) {requestedExit = reqExit;}
 #endif
 };
+
+#endif

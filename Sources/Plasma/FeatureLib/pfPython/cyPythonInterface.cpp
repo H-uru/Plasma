@@ -186,9 +186,6 @@ plCyDebServer PythonInterface::debugServer;
 bool PythonInterface::requestedExit = false;
 #endif
 
-// stupid Windows.h  and who started including that!
-#undef DrawText
-
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 // Special includes for debugging
 #include <frameobject.h>

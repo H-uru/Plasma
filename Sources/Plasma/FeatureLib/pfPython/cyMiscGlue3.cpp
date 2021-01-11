@@ -215,8 +215,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will 
     return cyMisc::FindActivator(ST::string::from_utf8(name));
 }
 
-PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearCameraStack, cyMisc::ClearCameraStack, "Clears the camera stack")
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtWasLocallyNotified, args, "Params: selfKey\nReturns 1 if the last notify was local or 0 if the notify originated on the network")
 {
     PyObject* keyObj = NULL;
@@ -698,7 +696,6 @@ void cyMisc::AddPlasmaMethods3(PyObject* m)
         PYTHON_GLOBAL_METHOD(PtFindSceneobject)
         PYTHON_GLOBAL_METHOD(PtFindSceneobjects)
         PYTHON_GLOBAL_METHOD(PtFindActivator)
-        PYTHON_BASIC_GLOBAL_METHOD(PtClearCameraStack)
         PYTHON_GLOBAL_METHOD(PtWasLocallyNotified)
 
         PYTHON_GLOBAL_METHOD(PtAttachObject)
