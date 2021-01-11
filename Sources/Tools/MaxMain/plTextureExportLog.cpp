@@ -251,7 +251,7 @@ void    plTextureExportLog::Write()
     fFileName = nil;
 }
 
-void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int8_t numTabs )
+void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int numTabs )
 {
     static char tabs[ 64 ];
     int         i;

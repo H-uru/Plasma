@@ -93,7 +93,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 float plAvBrainHuman::fWalkTimeToMaxTurn = .3f;
 float plAvBrainHuman::fRunTimeToMaxTurn = .1f;
 float plAvBrainHuman::fWalkMaxTurnSpeed = 2.0f;
-float plAvBrainHuman::fRunMaxTurnSpeed = 1.7;
+float plAvBrainHuman::fRunMaxTurnSpeed = 1.7f;
 plAvBrainHuman::TurnCurve plAvBrainHuman::fWalkTurnCurve = plAvBrainHuman::kTurnExponential;
 plAvBrainHuman::TurnCurve plAvBrainHuman::fRunTurnCurve = plAvBrainHuman::kTurnExponential;
 

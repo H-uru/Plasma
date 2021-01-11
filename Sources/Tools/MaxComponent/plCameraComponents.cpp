@@ -919,7 +919,7 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
         float max = pBlk->GetFloat(kZoomMaxDeg);
         float min = pBlk->GetFloat(kZoomMinDeg);
         float rate = pBlk->GetFloat(kZoomRate);
-        pBrain->SetZoomParams(max / 1.33333333, min / 1.33333333, rate);
+        pBrain->SetZoomParams(max / 1.33333333f, min / 1.33333333f, rate);
     }
 }
 

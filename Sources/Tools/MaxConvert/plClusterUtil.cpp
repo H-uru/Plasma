@@ -582,7 +582,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
     else if( hasAlpha )
         code |= plSpanEncoding::kColA8;
 
-    plConst(float) kPosQuantum(0.5 / 12.f); // 1/2 inch.
+    plConst(float) kPosQuantum(0.5f / 12.f); // 1/2 inch.
     float maxLen = sqrt(maxLenSq);
     if( maxLen > kPosQuantum )
     {

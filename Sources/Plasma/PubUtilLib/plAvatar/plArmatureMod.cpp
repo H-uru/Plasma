@@ -509,7 +509,8 @@ int plArmatureModBase::AppendBoneVec(plKeyVector *boneVec)
 
 uint8_t plArmatureModBase::GetNumLOD() const
 {
-    return fMeshKeys.size();
+    hsAssert(fMeshKeys.size() < std::numeric_limits<uint8_t>::max(), "Too many mesh keys");
+    return (uint8_t)fMeshKeys.size();
 }
 
 void plArmatureModBase::EnablePhysics(bool status, uint16_t reason /* = kDisableReasonUnknown */)

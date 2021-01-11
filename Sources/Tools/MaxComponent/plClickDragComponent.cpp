@@ -591,7 +591,7 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     int deg = fCompPB->GetInt(kClickDragDegrees);
     if (deg > 180)
         deg = 180;
-    float rad = hsDegreesToRadians(deg);
+    float rad = hsDegreesToRadians(float(deg));
     facingCond->SetTolerance(cos(rad));
     plKey facingKey = hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), facingCond, loc);
     

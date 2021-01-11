@@ -111,7 +111,7 @@ void PhongShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         if (l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) {
             // diffuse
@@ -150,7 +150,7 @@ void hsMaxShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         if (l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) {
             // diffuse
@@ -184,7 +184,7 @@ void BlinnShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     double ph_exp = double(ip.ph_exp)*4.0; // This is to make the hilite compatible with normal phong
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         if (l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) {
             // diffuse
@@ -237,7 +237,7 @@ void MetalShader::Illum(ShadeContext &sc, SIllumParams &ip) {
     
     for (int i=0; i<sc.nLights; i++) {
         l = sc.Light(i);
-        register float NL, diffCoef;
+        float NL, diffCoef;
         Point3 L;
         
         if (!l->Illuminate(sc,ip.N,lightCol,L,NL,diffCoef)) 

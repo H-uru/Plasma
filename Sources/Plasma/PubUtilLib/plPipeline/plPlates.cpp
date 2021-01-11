@@ -639,7 +639,7 @@ void    plGraphPlate::IDrawDigit( char digit, uint32_t *dataPtr, uint32_t stride
           0,0,9 } };
 
     
-    char    *digData = digits[ digit ];
+    char    *digData = digits[uint8_t(digit)];
     int     i, j;
 
 

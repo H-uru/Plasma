@@ -1360,7 +1360,7 @@ uint32_t  plMeshConverter::ICreateHexColor( float r, float g, float b )
 
 uint32_t  plMeshConverter::ISetHexAlpha( uint32_t color, float alpha)
 {
-    uint32_t alphaBits = alpha * 255;
+    uint32_t alphaBits = uint32_t(alpha * 255);
     alphaBits <<= 24;
     return color & 0x00ffffff | alphaBits;
 }

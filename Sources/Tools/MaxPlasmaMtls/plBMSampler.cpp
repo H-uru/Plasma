@@ -70,7 +70,7 @@ plBMSampler::plBMSampler(plPlasmaMAXLayer *layer, Bitmap *bm) : fBM(bm), fInitia
         clipy = int(fData.fClipV*fbmh);
         fclipw = fData.fClipW*fbmw;
         fcliph = fData.fClipH*fbmh;
-        cliph = fcliph;
+        cliph = int(fcliph);
 
         fInitialized = true;
     }

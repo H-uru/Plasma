@@ -169,7 +169,7 @@ class pfPatcherStream : public plZlibStream
     ST::string IMakeStatusMsg() const
     {
         float secs = hsTimer::GetSeconds<float>() - fDLStartTime;
-        float bytesPerSec = fBytesWritten / secs;
+        auto bytesPerSec = uint64_t(fBytesWritten / secs);
         return plFileSystem::ConvertFileSize(bytesPerSec) + "/s";
     }
 

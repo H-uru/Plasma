@@ -2484,7 +2484,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
             ripConsts.fLife,
             1.f / (ripConsts.fLife - ripConsts.fDecay));
 
-        plConst(float) kRipBias(0.1);
+        plConst(float) kRipBias(0.1f);
         vShader->SetVector(plRipVS::kRampBias,
             ripConsts.fRamp,
             1.f / ripConsts.fRamp,
@@ -2617,7 +2617,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
             0.f
             );
 
-        plConst(float) kBias(0.1);
+        plConst(float) kBias(0.1f);
         vShader->SetVector(plWaveDecVS::kBias,
             kBias,
             0,

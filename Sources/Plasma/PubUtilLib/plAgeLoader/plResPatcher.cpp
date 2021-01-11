@@ -120,8 +120,8 @@ bool plResPatcher::OnGameCodeDiscovered(const plFileName& file, hsStream* stream
 void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const ST::string& msg)
 {
     if (dl && total) {
-        fProgress->SetLength(total);
-        fProgress->SetHowMuch(dl);
+        fProgress->SetLength(float(total));
+        fProgress->SetHowMuch(float(dl));
     }
 
     ST::string status = ST::format("{} / {}",

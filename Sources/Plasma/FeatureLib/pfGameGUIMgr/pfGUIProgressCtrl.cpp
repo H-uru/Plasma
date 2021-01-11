@@ -143,7 +143,7 @@ bool    pfGUIProgressCtrl::ICalcAnimTimes()
     if( fAnimTimesCalced )
         return true;
 
-    float tBegin = 1e30, tEnd = -1e30;
+    float tBegin = 1e30f, tEnd = -1e30f;
     bool     foundOne = false;
 
     for( int i = 0; i < fAnimationKeys.GetCount(); i++ )

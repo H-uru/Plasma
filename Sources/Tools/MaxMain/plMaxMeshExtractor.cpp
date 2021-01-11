@@ -126,9 +126,9 @@ static bool MakeNormalMesh(plMaxNode *node, plMaxMeshExtractor::NeutralMesh& mes
         Face* pFace = &pMesh->faces[i];
         uint16_t* pNFace = &mesh.fFaces[i * 3];
 
-        pNFace[0] = pFace->v[ parity ? 2 : 0 ]; // reverse winding if parity backwards
-        pNFace[1] = pFace->v[1];
-        pNFace[2] = pFace->v[ parity ? 0 : 2 ]; // ''
+        pNFace[0] = (uint16_t)pFace->v[ parity ? 2 : 0 ]; // reverse winding if parity backwards
+        pNFace[1] = (uint16_t)pFace->v[1];
+        pNFace[2] = (uint16_t)pFace->v[ parity ? 0 : 2 ]; // ''
     }
 
     if (pDeleteMe)

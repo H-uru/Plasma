@@ -692,7 +692,8 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             for( i = strlen( fWorkingLine ) + 1; i > fWorkingCursor; i-- )
                 fWorkingLine[ i ] = fWorkingLine[ i - 1 ];
 
-            fWorkingLine[ fWorkingCursor++ ] = key;
+            // TODO: What about keys outside of `char` range?
+            fWorkingLine[fWorkingCursor++] = char(key);
 
             findAgain = false;
             findCounter = 0;

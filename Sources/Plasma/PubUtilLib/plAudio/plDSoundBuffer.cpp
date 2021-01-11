@@ -194,7 +194,7 @@ bool plDSoundBuffer::FillBuffer(void *data, unsigned bytes, plWAVHeader *header)
     // Just make it quiet for now
     SetScalarVolume(0);
     
-    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
+    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     alGetError();
     if( error != AL_NO_ERROR )
     {
@@ -267,7 +267,7 @@ bool plDSoundBuffer::SetupStreamingSource(plAudioFileReader *stream)
     SetScalarVolume(0);
     
     
-    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
+    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     error = alGetError();
     if( error != AL_NO_ERROR )
     {
@@ -332,7 +332,7 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
     alSourcei(source, AL_BUFFER, 0);
     SetScalarVolume(0);
     
-    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
+    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     error = alGetError();
     if( error != AL_NO_ERROR )
     {
@@ -490,7 +490,7 @@ bool plDSoundBuffer::SetupVoiceSource()
 
     SetScalarVolume(0);
     
-    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
+    alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048f);
     error = alGetError();
     if( error != AL_NO_ERROR )
     {

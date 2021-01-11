@@ -361,7 +361,7 @@ hsVector3 pfVehicle::AdjustRawSteeringForce(const hsVector3 &force, const float 
     else
     {
         const float range = Speed() / maxAdjustedSpeed; // make sure they don't turn too much if below 20% of max speed
-        const float cosine = Interpolate(pow(range, 20), 1.0f, -1.0f);
+        const float cosine = Interpolate(powf(range, 20), 1.0f, -1.0f);
         return LimitMaxDeviationAngle(force, cosine, Forward());
     }
 }
@@ -578,7 +578,7 @@ hsVector3 pfBoid::ISteerToGoal(pfBoidGoal &goal, float maxPredictionTime)
 
     float speed = Speed();
     if (speed == 0)
-        speed = 0.00001; // make it really small in case we start out not moving
+        speed = 0.00001f; // make it really small in case we start out not moving
     const float directTravelTime = distance / speed;
     const int f = IntervalComparison(forwardness,  -0.707f, 0.707f); // -1 if below -0.707f, 0 if between, and +1 if above 0.707f)
     const int p = IntervalComparison(parallelness, -0.707f, 0.707f); // 0.707 is basically cos(45deg) (45deg = PI/4)

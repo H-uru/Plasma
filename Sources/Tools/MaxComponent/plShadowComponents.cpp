@@ -69,7 +69,7 @@ void DummyCodeIncludeFuncShadow()
 {
 }
 
-static uint16_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
+static uint8_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
 
 #define WM_ROLLOUT_OPEN WM_USER+1
 static const int kNumQualities = 4;

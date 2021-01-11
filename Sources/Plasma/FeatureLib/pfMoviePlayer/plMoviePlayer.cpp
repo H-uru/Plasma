@@ -251,7 +251,7 @@ bool plMoviePlayer::ILoadAudio()
     const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
     plWAVHeader header;
     header.fFormatTag = plWAVHeader::kPCMFormatTag;
-    header.fNumChannels = audio->GetChannels();
+    header.fNumChannels = (uint16_t)audio->GetChannels();
     header.fBitsPerSample = audio->GetBitDepth() == 8 ? 8 : 16;
     header.fNumSamplesPerSec = 48000; // OPUS specs say we shall always decode at 48kHz
     header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
@@ -264,7 +264,7 @@ bool plMoviePlayer::ILoadAudio()
         return false;
     }
     int error;
-    OpusDecoder* opus = opus_decoder_create(48000, audio->GetChannels(), &error);
+    OpusDecoder* opus = opus_decoder_create(48000, (int)audio->GetChannels(), &error);
     if (error != OPUS_OK)
         hsAssert(false, "Error occured initalizing opus");
 
@@ -273,9 +273,9 @@ bool plMoviePlayer::ILoadAudio()
     fAudioTrack->GetFrames(fReader, fSegment->GetDuration(), frames);
     static const int maxFrameSize = 5760; // for max packet duration at 48kHz
     std::vector<int16_t> decoded;
-    decoded.reserve(frames.size() * audio->GetChannels() * maxFrameSize);
+    decoded.reserve(frames.size() * (size_t)audio->GetChannels() * maxFrameSize);
 
-    int16_t* frameData = new int16_t[maxFrameSize * audio->GetChannels()];
+    int16_t* frameData = new int16_t[maxFrameSize * (size_t)audio->GetChannels()];
     for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         int32_t size = std::get<1>(frame);
@@ -384,7 +384,7 @@ void plMoviePlayer::IInitPlate(uint32_t width, uint32_t height)
         plateHeight *= scale;
     }
     plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, 0, 0);
-    plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
+    plateMgr.SetPlatePixelSize(fPlate, (uint32_t)plateWidth, (uint32_t)plateHeight);
     fTexture = fPlate->CreateMaterial(width, height, false);
 }
 

@@ -239,9 +239,11 @@ void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteBool(fWaitingForClick);
 
-    stream->WriteLE16(fRecipients.size());
-    for (unsigned i = 0; i < fRecipients.size(); i++)
-        mgr->WriteKey(stream, fRecipients[i]);
+    size_t numRecipients = fRecipients.size();
+    hsAssert(numRecipients < std::numeric_limits<uint16_t>::max(), "Too many recipients");
+    stream->WriteLE16(uint16_t(numRecipients));
+    for (const plKey& recipient : fRecipients)
+        mgr->WriteKey(stream, recipient);
 }
 
 plKey plAvBrainCoop::GetRecipient()

@@ -154,10 +154,10 @@ void plDXDevice::SetRenderTarget(plRenderTarget* target)
 
 void plDXDevice::SetViewport()
 {
-    D3DVIEWPORT9 vp = { fPipeline->GetViewTransform().GetViewPortLeft(),
-                        fPipeline->GetViewTransform().GetViewPortTop(),
-                        fPipeline->GetViewTransform().GetViewPortWidth(),
-                        fPipeline->GetViewTransform().GetViewPortHeight(),
+    D3DVIEWPORT9 vp = { (DWORD)fPipeline->GetViewTransform().GetViewPortLeft(),
+                        (DWORD)fPipeline->GetViewTransform().GetViewPortTop(),
+                        (DWORD)fPipeline->GetViewTransform().GetViewPortWidth(),
+                        (DWORD)fPipeline->GetViewTransform().GetViewPortHeight(),
                         0.f, 1.f };
 
     WEAK_ERROR_CHECK(fD3DDevice->SetViewport(&vp));

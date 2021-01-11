@@ -146,12 +146,13 @@ int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
     if (dl==nil)
         dl=&fDescriptors;
 
-    uint16_t num=dl->size();
-    s->WriteLE(num);
+    size_t num = dl->size();
+    hsAssert(num < std::numeric_limits<uint16_t>::max(), "Too many descriptors");
+    s->WriteLE(uint16_t(num));
 
     plSDL::DescriptorList::const_iterator it;
-    for(it=dl->begin(); it!= dl->end(); it++)
-        (*it)->Write(s);    
+    for (const plStateDescriptor* desc : *dl)
+        desc->Write(s);
 
     int bytes=s->GetPosition()-pos;
     if (fNetApp)

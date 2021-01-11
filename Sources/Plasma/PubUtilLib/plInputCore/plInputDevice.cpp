@@ -478,10 +478,10 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         fXMsg = pMsg;
         
         if (pXMsg->fX == 999)
-            fXPos += 0.01;
+            fXPos += 0.01f;
         else
         if (pXMsg->fX == -999)
-            fXPos -= 0.01;
+            fXPos -= 0.01f;
         else
             fXPos = pXMsg->fX;
 
@@ -516,10 +516,10 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         fYMsg = pMsg;
         
         if (pYMsg->fY == 999)
-            fYPos += 0.01;
+            fYPos += 0.01f;
         else
         if (pYMsg->fY == -999)
-            fYPos -= 0.01;
+            fYPos -= 0.01f;
         else
             fYPos = pYMsg->fY;
 

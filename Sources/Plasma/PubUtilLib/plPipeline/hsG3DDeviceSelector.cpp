@@ -520,9 +520,9 @@ namespace
         float    fFogExp2KneeVal;
     } FogTweakTable;
 
-    FogTweakTable   dsDefaultFogVals =  { 0,    0,      254.0 / 255.0,  0.5f, 0.15f, 0.5f, 0.15f };
-    FogTweakTable   dsi810FogVals =     { 0,    0,      254.0 / 255.0,  0.6f, 0.15f, 0.4f, 0.15f };
-    FogTweakTable   dsRadeonFogVals =   { 0,    0,      254.0 / 255.0,  0.7f, 0.15f, 0.5f, 0.2f };
+    FogTweakTable   dsDefaultFogVals =  { 0,    0,      254.f / 255.f,  0.5f, 0.15f, 0.5f, 0.15f };
+    FogTweakTable   dsi810FogVals =     { 0,    0,      254.f / 255.f,  0.6f, 0.15f, 0.4f, 0.15f };
+    FogTweakTable   dsRadeonFogVals =   { 0,    0,      254.f / 255.f,  0.7f, 0.15f, 0.5f, 0.2f };
 
 
     typedef struct {

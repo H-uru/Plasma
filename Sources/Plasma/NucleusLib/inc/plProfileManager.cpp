@@ -183,12 +183,12 @@ uint64_t plProfileBase::GetValue()
 }
 
 // Stolen from plMemTracker.cpp
-static  const char  *insertCommas(unsigned int value)
+static  const char  *insertCommas(unsigned long long value)
 {
     static char str[30];
     memset(str, 0, sizeof(str));
 
-    sprintf(str, "%u", value);
+    snprintf(str, std::size(str), "%llu", value);
     if (strlen(str) > 3)
     {
         memmove(&str[strlen(str)-3], &str[strlen(str)-4], 4);
@@ -218,7 +218,7 @@ void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
             strcpy(buf, valueStr);
         }
         else
-            sprintf(buf, "%llu", value);
+            sprintf(buf, "%llu", static_cast<unsigned long long>(value));
     }
     else if (hsCheckBits(fDisplayFlags, kDisplayFPS))
     {
@@ -237,12 +237,12 @@ void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
             if (value > (1024*1000))
                 sprintf(buf, "%.2f MB", float(value) / (1024.f * 1024.f));
             else if (value > 1024)
-                sprintf(buf, "%llu KB", value / 1024);
+                sprintf(buf, "%llu KB", static_cast<unsigned long long>(value / 1024));
             else
-                sprintf(buf, "%llu b", value);
+                sprintf(buf, "%llu b", static_cast<unsigned long long>(value));
         }
         else
-            sprintf(buf, "%llu", value);
+            sprintf(buf, "%llu", static_cast<unsigned long long>(value));
     }
 }
 

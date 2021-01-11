@@ -213,7 +213,8 @@ plSpaceTree* plSceneNode::ITrashSpaceTree()
 
 void plSceneNode::IDirtySpaceTree()
 {
-    for (size_t i = 0; i < fDrawPool.size(); ++i)
+    hsAssert(fDrawPool.size() < std::numeric_limits<uint16_t>::max(), "Too many nodes");
+    for (uint16_t i = 0; i < fDrawPool.size(); ++i)
     {
         plDrawable* drawable = fDrawPool[i];
         if (drawable && drawable->GetSpaceTree()->IsDirty() )
