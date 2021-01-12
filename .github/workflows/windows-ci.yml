@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { generator: Visual Studio 16 2019, arch: Win32, str: windows-x86 }
+          - { generator: Visual Studio 16 2019, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -19,6 +19,21 @@ jobs:
         with:
           submodules: true
 
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/qt
+          key: qt-${{ matrix.platform.qt-version }} ${{ matrix.platform.qt-arch }}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: ${{ matrix.platform.qt-version }}
+          arch: ${{ matrix.platform.qt-arch }}
+          dir: ${{ github.workspace }}/qt
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
       - name: Build
         run: |
           New-Item -ItemType Directory build | Out-Null
@@ -26,6 +41,7 @@ jobs:
           cmake `
             -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
             -DPLASMA_BUILD_TESTS=ON `
+            -DPLASMA_BUILD_TOOLS=ON `
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
             -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
             -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" `
