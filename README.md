@@ -43,46 +43,34 @@ The following libraries are optional:
 - (for video and voice chat) Opus - http://www.opus-codec.org/
 - (for legacy voice chat) speex - http://www.speex.org/downloads/
 
-Reducing the use of proprietary libraries is a focus of development and should
-be expected to change.
-
-All required libraries are available as precompiled binaries and
-associated files in the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2021.01.18/devlibs.zip)
-or can be built using their individual build instructions.
+All required libraries are available as [vcpkg](https://github.com/microsoft/vcpkg)
+ports or can be built using their individual build instructions.
 
 
 Compiling Instructions
 ----------------------
 
 Currently, compilation only targets Windows systems and requires Visual Studio
-2017 (including Visual Studio 2017 Community).
+2019 (including Visual Studio 2019 Community).
 
-**Quick-start instructions:**
-
-1. Run the `prepare_env.bat` script included in the repository.
-2. You should now have a *build* folder with a Visual Studio solution file
-   (.sln) inside.
-3. Open the solution in Visual Studio. You can compile CyanWorlds.com Engine by
-   pressing *Build -> Build Solution*. This will take some time.
-
-
-**To configure manually with CMake and build:**
-
-1. Start **CMake-GUI**.
-2. Set the *Where is the source code* option to the location where you cloned
-   the repository.
-3. Set the *Where to build the binaries* option to a subfolder of the
-   aforementioned location called *build*.
-4. Check the **Grouped** and **Advanced** options.
-5. Press **Configure**. Select *Visual Studio 15 2017* as the generator.
-6. Set the *CMAKE_INSTALL_PREFIX* option under CMAKE to the location where you
-   extracted the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip).
-7. Press **Configure** again.
-8. Press **Generate**. You will now have a Visual Studio solution file (.sln)
-   in the folder that you specified to build the binaries in.
-9. Open the solution in Visual Studio. To build CyanWorlds.com Engine, find the
-   project labelled **INSTALL** in the *Solution Explorer*. Right click on this
-   project, and click **Build**.
+1. Clone the repository, including all submodules, in a git client or by
+   executing the following at the command line:
+   ```
+   git clone --recurse-submodules https://github.com/H-uru/Plasma.git
+   ```
+2. Open **Microsoft Visual Studio 2019**.
+3. Select **Open a local folder** and choose the folder where you cloned the
+   repository.
+4. Open the CMake Settings by chosing **Project > CMake Settings for Plasma**
+   from the Visual Studio menu bar.
+5. Add a new configuration in CMakeSettings.json by clicking the **green +**
+   button.
+6. Select **x86-Release** in the window that pops up.
+7. Compile the client by using **Build > Install Plasma** from the Visual
+   Studio menu bar.
+8. The client will be built and installed into the *out\install\x86-Release*
+   subfolder of where you cloned the repository. This will be referred to as
+   the *MOUL-OS* folder.
 
 
 Running Instructions
@@ -91,35 +79,29 @@ Running Instructions
 To run the Internal Client for testing with MOULa content, you will need the a
 fully-patched installation of MOULa provided by Cyan Worlds.
 
-1. Copy the **files from your existing MOULa installation** to a new folder, or
-   install fresh if you do not already have it installed. This folder will be
-   referred to as *MOUL-OS* for the remainder of these instructions.
-2. Copy the **client** folders from `<build_dir>\install` into the *MOUL-OS*
-   folder.
-3. Copy the example_server.ini file from the root of the Plasma repository into
+1. Copy the folders *avi*, *dat*, and *sfx* **from your existing MOULa installation**
+   to the *MOUL-OS* folder.
+2. Copy the example_server.ini file from the root of the Plasma repository into
    your *MOUL-OS* folder, and rename it as **server.ini**. If you are running
    your own dirtsand server or are connecting to one run by someone else, use
    the server.ini generated from that.
-4. Copy the **DLLs** from the development libraries bundle, as well as the DLLs
-   PhysXLoader.dll, NxExtensions.dll, NxCooking.dll, and NxCharacter.dll from
-   your PhysX SDK installation into the *MOUL-OS* folder.
-5. Download and copy http://www.guildofwriters.org/tools/resource.dat into
-   your *MOUL-OS* folder.
-6. Create a **shortcut** in the *MOUL-OS* folder to the compiled plClient.exe.
-7. Edit the shortcut's **properties**, and after the final quotation mark in the
+3. Create a **shortcut** in the *MOUL-OS* folder to the compiled plClient.exe.
+4. Edit the shortcut's **properties**, and after the final quotation mark in the
    *Target* field, add `/LocalData`. Also, change the *Start in* field to the
    path of your *MOUL-OS* folder.
-8. Double-click the shortcut to **connect** to your server and test!
+5. Double-click the shortcut to **connect** to your server and test!
 
 Alternatively, if you wish to be able to debug using a single content folder
-from inside Visual Studio, you will need to do the following for each
-Configuration (Debug, Release, etc.) you have:
+from inside Visual Studio:
 
-1. Open the Plasma Solution in Visual Studio.
-2. Right-click on the plClient project in the Solution Explorer.
-3. Select *Configuration Properties->Debugging*.
-4. Enter `/LocalData` in the *Command Arguments* field.
-5. Enter your *MOUL-OS* folder path in the *Working Directory* field.
+1. Open the Plasma folder in Visual Studio.
+2. Switch to *CMake Targets View* in the Solution Explorer.
+3. Right-click on the *plClient (executable)* target in the Solution Explorer.
+4. Select *Debug and Launch Settings > plClient.exe (Install)*.
+5. Add the following to the *configurations*:
+   ```json
+   "args": "/LocalData"
+   ```
 
 
 Additional Information
@@ -129,6 +111,7 @@ Additional Information
 - For more information on this fork and more in-depth building instructions,
   see the [Guild of Writers wiki](http://guildofwriters.org/wiki/Development:CyanWorlds.com_Engine).
 - This code was forked from the initial release repository at [OpenUru.org](http://openuru.org/).
+
 
 About Non-Free Libraries
 ------------------------
@@ -141,6 +124,7 @@ libraries. Further introduction of non-free libraries likely would require a
 revised license and thus permission from all contributors to the codebase.
 That being problematic, any additional non-free libraries are unlikely to be
 accepted by Cyan Worlds or the development community.
+
 
 Acknowledgements
 ----------------
