@@ -16,7 +16,7 @@ find_library(VPX_LIBRARY_DEBUG NAMES vpxmtd vpxmdd vpxd
 select_library_configurations(VPX)
 find_package_handle_standard_args(VPX REQUIRED_VARS VPX_INCLUDE_DIR VPX_LIBRARY)
 
-if(VPX_FOUNS AND NOT TARGET VPX::VPX)
+if(VPX_FOUND AND NOT TARGET VPX::VPX)
     add_library(VPX::VPX UNKNOWN IMPORTED)
     set_target_properties(
         VPX::VPX PROPERTIES
