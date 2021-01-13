@@ -184,6 +184,12 @@ install(
     DESTINATION client
 )
 
+install(
+    FILES $<TARGET_PDB_FILE:plClient>
+    DESTINATION client
+    OPTIONAL
+)
+
 if(PLASMA_BUILD_RESOURCE_DAT)
     source_group("Client Resource Scripts" FILES ${external_SCRIPTS})
     source_group("Client Resource Images" FILES ${external_SOURCES})
