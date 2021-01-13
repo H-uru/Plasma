@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#pragma once
 #ifndef plClient_inc
 #define plClient_inc
 

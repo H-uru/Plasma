@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <cmath>
-#pragma hdrstop
 
 #include "hsGeometry3.h"
 #include "hsStream.h"

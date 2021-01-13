@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "resource.h"
 #include <windowsx.h>
-#pragma hdrstop
 
 #include "plAvatarComponent.h"
 #include "plMaxAnimUtils.h"

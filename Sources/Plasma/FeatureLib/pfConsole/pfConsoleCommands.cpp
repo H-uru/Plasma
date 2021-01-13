@@ -5891,7 +5891,7 @@ PF_CONSOLE_CMD( Clothing,
             plPlateManager::Instance().CreatePlate( &avatarTargetTexturePlate );
             avatarTargetTexturePlate->SetMaterial(avMod->GetClothingOutfit()->fMaterial);
             avatarTargetTexturePlate->SetPosition(0,0);
-            avatarTargetTexturePlate->SetSize(1.9, 1.9);
+            avatarTargetTexturePlate->SetSize(1.9f, 1.9f);
             avatarTargetTexturePlate->SetVisible(true);
         }
     }

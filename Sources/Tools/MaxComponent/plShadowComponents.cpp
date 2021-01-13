@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include <iparamm2.h>
-#pragma hdrstop
 
 #include "MaxExport/plExportProgressBar.h"
 
@@ -67,7 +66,7 @@ void DummyCodeIncludeFuncShadow()
 {
 }
 
-static uint16_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
+static uint8_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
 
 #define WM_ROLLOUT_OPEN WM_USER+1
 static const int kNumQualities = 4;

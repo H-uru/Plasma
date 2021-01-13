@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
 
 #include "pyMarkerMgr.h"
 #include "pfCharacter/pfMarkerMgr.h"

@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdmat.h>
 
 #include <vector>
-#pragma hdrstop
 
 #include "plConvert.h"
 

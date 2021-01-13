@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
-#pragma hdrstop
 
 #include "plInputEventMsg.h"
 

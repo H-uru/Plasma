@@ -598,6 +598,9 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
             }
             break;
     */
+
+        default:
+            break;
     } 
 
     return false;

@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <istdplug.h>
 #include <pbbitmap.h>
 #include <stdmat.h>
-#pragma hdrstop
 
 #include "hsMaterialConverter.h"
 #include "plLayerConverter.h"
@@ -190,7 +189,7 @@ fChangedTimes(false)
     hsGuardEnd;
 }
 
-hsMaterialConverter::~hsMaterialConverter()
+hsMaterialConverter::~hsMaterialConverter() noexcept(false)
 {
     hsGuardBegin("hsMaterialConverter::~hsMaterialConverter");
     hsAssert(fDoneMaterials.Count() == 0, "FreeMaterialCache not called");

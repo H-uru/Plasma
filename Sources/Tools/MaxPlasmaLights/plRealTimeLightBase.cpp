@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <decomp.h>
 #include <hsv.h>
-#pragma hdrstop
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
@@ -595,7 +594,7 @@ void plRTLightBase::BoxLight(TimeValue t, INode *inode, Box3& box, Matrix3 *tm)
             float rad = MaxF(GetHotspot(t), GetFallsize(t));
             if (IsDir()) 
                 BoxCircle(t,rad,0.0f,box,1,tm);
-            BoxCircle(t,rad,2.82841*GetFallsize(t),box,1,tm);   //hack, hack.  Do 2root2 at corners...
+            BoxCircle(t,rad,2.82841f*GetFallsize(t),box,1,tm);   //hack, hack.  Do 2root2 at corners...
         }
     BOOL dispAtten = false;
     BOOL dispAttenNear = false;
@@ -1547,7 +1546,7 @@ float plRTLightBase::GetHotspot(TimeValue t, Interval& valid)
         f = 20.0;
 
     if(GetFallsize(t, iv) < f )
-        return GetFallsize(t, iv) - 2.0;
+        return GetFallsize(t, iv) - 2.f;
     return f;
 }
 

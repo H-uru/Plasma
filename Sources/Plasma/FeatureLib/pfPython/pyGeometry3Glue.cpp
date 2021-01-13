@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "pyGeometry3.h"
-#pragma hdrstop
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptPoint3, pyPoint3);

@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <max.h>
 #include "resource.h"
 #include <vector>
-#pragma hdrstop
 
 #include "plPickLocalizationDlg.h"
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"

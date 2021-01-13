@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamm2.h>
 
-#pragma hdrstop
 
 #include "plInventoryObjComponent.h"
 

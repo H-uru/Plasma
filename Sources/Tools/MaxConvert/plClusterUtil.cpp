@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamm2.h>
 #include <meshdlib.h>
 #include <vector>
-#pragma hdrstop
 
 #include "MaxMain/plMaxNode.h"
 #include "MaxComponent/plLightGrpComponent.h"
@@ -580,7 +579,7 @@ plSpanEncoding plClusterUtil::ISelectEncoding(plPoint3TabTab& delPosTab, plColor
     else if( hasAlpha )
         code |= plSpanEncoding::kColA8;
 
-    plConst(float) kPosQuantum(0.5 / 12.f); // 1/2 inch.
+    plConst(float) kPosQuantum(0.5f / 12.f); // 1/2 inch.
     float maxLen = sqrt(maxLenSq);
     if( maxLen > kPosQuantum )
     {

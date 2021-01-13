@@ -62,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "plDetailCurveCtrl.h"
 

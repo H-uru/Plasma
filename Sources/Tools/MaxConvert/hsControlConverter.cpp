@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamb2.h>
 #include <modstack.h>
 #include <keyreduc.h>
-#pragma hdrstop
 
 #include "MaxMain/plMaxNode.h"
 
@@ -677,8 +676,8 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
 
 void hsControlConverter::ISetSegRange(float start, float end)
 {
-    fSegStart = (start >= 0 ? fTicksPerSec * start : fInterface->GetAnimRange().Start());
-    fSegEnd = (end >= 0 ? fTicksPerSec * end : fInterface->GetAnimRange().End());
+    fSegStart = (start >= 0 ? int(fTicksPerSec * start) : fInterface->GetAnimRange().Start());
+    fSegEnd = (end >= 0 ? int(fTicksPerSec * end) : fInterface->GetAnimRange().End());
 }
 
 
@@ -998,7 +997,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         {
             // Get key
             ikeys->GetKey(i, key.get());
-            float frameTime = key->time / GetTicksPerSec();
+            float frameTime = float(key->time) / GetTicksPerSec();
             int frameNum = key->time / GetTicksPerFrame();
             hsAssert(frameNum <= hsKeyFrame::kMaxFrameNumber, "Anim is too long.");
 

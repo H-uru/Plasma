@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define USES_PROTOCOL_CLI2GATEKEEPER
 #include "../../../Pch.h"
-#pragma hdrstop
 
 
 namespace Cli2GateKeeper {

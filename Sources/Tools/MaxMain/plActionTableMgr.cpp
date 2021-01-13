@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <max.h>
 #include <notify.h>
 #include <vector>
-#pragma hdrstop
 
 #include "plActionTableMgr.h"
 

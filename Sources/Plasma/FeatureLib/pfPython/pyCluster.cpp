@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pyKey.h"
-#pragma hdrstop
 
 #include "pyCluster.h"
 #include "plDrawable/plClusterGroup.h"

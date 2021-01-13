@@ -430,7 +430,7 @@ plObjectInVolumeAndFacingDetector::~plObjectInVolumeAndFacingDetector()
 
 void plObjectInVolumeAndFacingDetector::SetFacingTolerance(int degrees)
 {
-    fFacingTolerance = cos(hsDegreesToRadians(degrees));
+    fFacingTolerance = cos(hsDegreesToRadians(float(degrees)));
 }
 
 void plObjectInVolumeAndFacingDetector::ICheckForTrigger()

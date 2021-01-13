@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/MaxCompat.h"
 #include "MaxMain/plMaxNodeBase.h"
 #include "resource.h"
-#pragma hdrstop
 
 #include "pfGUISkinComp.h"
 #include "plGUICompClassIDs.h"

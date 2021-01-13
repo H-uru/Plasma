@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 #include "pnNetCommon/plNetApp.h"
-#pragma hdrstop
 
 #include "plLoadAvatarMsg.h"
 

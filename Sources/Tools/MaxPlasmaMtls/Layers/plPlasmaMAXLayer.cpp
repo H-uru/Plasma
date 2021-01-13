@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamm2.h>
 #include <istdplug.h>
 #include <stdmat.h>
-#pragma hdrstop
 
 #include "plPlasmaMAXLayer.h"
 

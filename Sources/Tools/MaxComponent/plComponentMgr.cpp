@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plComponentMgr.h"
 #include "plComponentReg.h"
-#pragma hdrstop
 
 /////////
 class ComponentMgrClassDesc : public ClassDesc

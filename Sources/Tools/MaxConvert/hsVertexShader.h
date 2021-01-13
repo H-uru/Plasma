@@ -55,7 +55,7 @@ class hsVertexShader
 private:
     hsVertexShader();
 public:
-    virtual ~hsVertexShader();
+    virtual ~hsVertexShader() noexcept(false);
 
     static hsVertexShader& Instance();
 

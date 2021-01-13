@@ -1778,7 +1778,9 @@ ST::string plSimpleStateVariable::GetKeyName(int idx) const
     return "(nil)";
 }
 
-#pragma optimize( "g", off )    // disable float optimizations
+#ifdef _MSC_VER
+#   pragma optimize( "g", off )    // disable float optimizations
+#endif
 bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, uint32_t writeOptions) const
 {
 #ifdef HS_DEBUGGING
@@ -1947,7 +1949,9 @@ bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, u
     
     return true;
 }
-#pragma optimize( "", on )  // restore optimizations to their defaults
+#ifdef _MSC_VER
+#   pragma optimize( "", on )  // restore optimizations to their defaults
+#endif
 
 bool plSimpleStateVariable::WriteData(hsStream* s, float timeConvert, uint32_t writeOptions) const
 {

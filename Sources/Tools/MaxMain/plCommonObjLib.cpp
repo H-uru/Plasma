@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsTemplates.h"
-#pragma hdrstop
 
 #include "plCommonObjLib.h"
 #include "pnKeyedObject/hsKeyedObject.h"

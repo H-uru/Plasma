@@ -122,7 +122,7 @@ void    plTransitionMgr::ICreatePlate()
     fEffectPlate = nil;
 
     // +0.01 to deal with the half-pixel antialiasing stuff
-    plPlateManager::Instance().CreatePlate( &fEffectPlate, 0, 0, 2.01, 2.01 );
+    plPlateManager::Instance().CreatePlate(&fEffectPlate, 0, 0, 2.01f, 2.01f);
     fEffectPlate->SetDepth(2);
 
     // hack for now--create a black layer that we will animate the opacity on

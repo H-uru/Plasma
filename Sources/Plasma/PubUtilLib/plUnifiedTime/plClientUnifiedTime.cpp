@@ -67,7 +67,9 @@ void plClientUnifiedTime::SetSysTime()
 //
 // convert from game clock to unified time
 //
-#pragma optimize( "g", off )    // disable global optimizations
+#ifdef _MSC_VER
+#   pragma optimize( "g", off )    // disable global optimizations
+#endif
 void plClientUnifiedTime::SetFromGameTime(double gameTime, double curGameSecs)
 {
     //double gameTimeOff = curGameSecs-gameTime;    // when did this happen relative to our currrent sysTime
@@ -114,7 +116,9 @@ void plClientUnifiedTime::ConvertToGameTime(double* gameTimeOut, double curGameS
     }
 #endif
 }
-#pragma optimize( "", on )  // restore optimizations to their defaults
+#ifdef _MSC_VER
+#   pragma optimize( "", on )  // restore optimizations to their defaults
+#endif
 
 const plClientUnifiedTime & plClientUnifiedTime::operator=(const plUnifiedTime & src) 
 { 

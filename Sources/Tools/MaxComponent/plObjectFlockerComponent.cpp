@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include <iparamm2.h>
-#pragma hdrstop
 
 #include "pnEncryption/plRandom.h"
 #include "plObjectFlockerComponent.h"

@@ -43,7 +43,6 @@ Mead, WA   99021
 #include "HeadSpin.h"
 
 #include <max.h>
-#pragma hdrstop
 
 #include <iterator>
 

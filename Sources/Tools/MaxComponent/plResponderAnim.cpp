@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamm2.h>
 #include <vector>
-#pragma hdrstop
 
 #include "plResponderAnim.h"
 #include "plResponderComponentPriv.h"

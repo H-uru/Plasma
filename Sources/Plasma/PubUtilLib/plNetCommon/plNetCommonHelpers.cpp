@@ -282,12 +282,12 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
     {
         // write items to ram stream
         hsRAMStream ram;
-        uint16_t nItems = fItems.size();
-        ram.WriteLE( nItems );
-        for ( std::map<uint16_t,plCreatable*>::iterator ii=fItems.begin(); ii!=fItems.end(); ++ii )
-        {
-            uint16_t id = ii->first;
-            plCreatable * item = ii->second;
+        size_t nItems = fItems.size();
+        hsAssert(nItems < std::numeric_limits<uint16_t>::max(), "Too many items");
+        ram.WriteLE(uint16_t(nItems));
+        for (const auto& ii : fItems) {
+            uint16_t id = ii.first;
+            plCreatable* item = ii.second;
             uint16_t classIdx = item->ClassIndex();
             ram.WriteLE( id );
             ram.WriteLE( classIdx );

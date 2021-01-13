@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <max.h>
 #include <notetrck.h>
 #include <notify.h>
-#pragma hdrstop
 
 #include "plPassMtlBase.h"
 #include "plPassBaseParamIDs.h"

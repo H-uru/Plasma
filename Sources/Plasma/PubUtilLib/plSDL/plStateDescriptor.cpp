@@ -131,15 +131,15 @@ void plStateDescriptor::Write(hsStream* s) const
     uint16_t version=fVersion;
     s->WriteLE(version);
 
-    uint16_t numVars=fVarsList.size();
-    s->WriteLE(numVars);
+    size_t numVars = fVarsList.size();
+    hsAssert(numVars < std::numeric_limits<uint16_t>::max(), "Too many variables");
+    s->WriteLE(uint16_t(numVars));
 
     VarsList::const_iterator it;
-    for(it=fVarsList.begin(); it!=fVarsList.end(); it++)
-    {
-        uint8_t SDVar = ((*it)->GetAsSDVarDescriptor() != nil);
+    for (const plVarDescriptor* desc : fVarsList) {
+        auto SDVar = (uint8_t)(desc->GetAsSDVarDescriptor() != nil);
         s->WriteByte(SDVar);
-        (*it)->Write(s);
+        desc->Write(s);
     }
 }
 

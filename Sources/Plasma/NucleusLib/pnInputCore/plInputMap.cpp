@@ -536,7 +536,8 @@ const char* plKeyMap::ConvertVKeyToChar( uint32_t vk )
 //          break;
 
         // default is English
-
+        default:
+            break;
     }
     for (int i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
     {
@@ -566,7 +567,8 @@ plKeyDef plKeyMap::ConvertCharToVKey( const char *c )
 //          break;
 
         // default is English
-
+        default:
+            break;
     }
     for (int i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
     {
@@ -646,7 +648,8 @@ const char* plKeyMap::GetStringCtrl()
             break;
 */
         // default is English
-
+        default:
+            break;
     }
     return "Ctrl+";
 }
@@ -669,7 +672,8 @@ const char* plKeyMap::GetStringShift()
             break;
 */
         // default is English
-
+        default:
+            break;
     }
     return "Shift+";
 }
@@ -692,7 +696,8 @@ const char* plKeyMap::GetStringUnmapped()
             break;
 */
         // default is English
-
+        default:
+            break;
     }
     return "(unmapped)";
 }

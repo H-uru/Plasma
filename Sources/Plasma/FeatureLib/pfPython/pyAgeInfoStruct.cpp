@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include <string>
-#pragma hdrstop
 
 #include "pyAgeInfoStruct.h"
 #include "pnUtils/pnUtCrypt.h"

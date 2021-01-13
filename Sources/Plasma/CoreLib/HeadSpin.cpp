@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <crtdbg.h>
 #endif
 
-#pragma hdrstop
-
 #if defined(HS_BUILD_FOR_UNIX)
 #   include <cstring>
 #   include <sys/stat.h>

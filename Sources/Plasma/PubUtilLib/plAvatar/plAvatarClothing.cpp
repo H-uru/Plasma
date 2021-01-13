@@ -418,7 +418,7 @@ plClothingOutfit::plClothingOutfit() :
     fTargetLayer(nullptr), fBase(nullptr), fGroup(0), fAvatar(nullptr), fSynchClients(false), fMaterial(nullptr),
     fVaultSaveEnabled(true), fMorphsInitDone(false)
 {
-    fSkinTint.Set(1.f, 0.84, 0.71, 1.f);
+    fSkinTint.Set(1.f, 0.84f, 0.71f, 1.f);
     fItems.Reset();
     int i;
     for (i = 0; i < plClothingLayout::kMaxTileset; i++)
@@ -1003,7 +1003,7 @@ void plClothingOutfit::WearDefaultClothing()
                 if (i == plClothingMgr::kTypeHair || i == plClothingMgr::kTypeFace)
                 {   
                     // Hair tint color
-                    TintItem(items[j], 0.5, 0.3, 0.2, false, false);
+                    TintItem(items[j], 0.5f, 0.3f, 0.2f, false, false);
                 }
                 else
                 {
@@ -1035,7 +1035,7 @@ void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType)
             if (clothingType == plClothingMgr::kTypeHair || clothingType == plClothingMgr::kTypeFace)
             {
                 // Hair tint color
-                TintItem(items[i], 0.5, 0.3, 0.2, false, false);
+                TintItem(items[i], 0.5f, 0.3f, 0.2f, false, false);
             }
             else
             {

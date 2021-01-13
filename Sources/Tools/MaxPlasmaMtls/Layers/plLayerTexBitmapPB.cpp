@@ -373,7 +373,7 @@ public:
                 aspect = (float)realWidth / (float)realHeight;
             
             int value = newVal;
-            value *= aspect;
+            value = int(value * aspect);
             
             if( value < 4 )
             {
@@ -381,7 +381,7 @@ public:
                 value = 4;
                 pblock->SetValue( otherNew, t, value );
                 pblock->SetValue( otherOld, t, value );
-                value = value / aspect;
+                value = int(value / aspect);
                 pblock->SetValue( clampNew, t, value );
                 pblock->SetValue( clampOld, t, value );
             }

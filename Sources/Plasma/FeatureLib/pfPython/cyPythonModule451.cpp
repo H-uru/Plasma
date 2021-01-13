@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyObjectRef.h"
 #include <string_theory/string>
 #include <string_theory/format>
-#pragma hdrstop
 
 #include "cyPythonInterface.h"
 #include "plPythonPack.h"

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "plgDispatch.h"
-#pragma hdrstop
 
 #include "cyInputInterface.h"
 #include "plMessage/plInputIfaceMgrMsg.h"

@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include <notify.h>
-#pragma hdrstop
 
 #include "plComponentPanel.h"
 #include "plComponentDlg.h"
@@ -353,7 +352,7 @@ void plComponentUtil::IAddRollups(plComponentBase* comp)
 
     // Put the number of targets in the text box
     char buf[12];
-    itoa(numTargs, buf, 10);
+    snprintf(buf, sizeof(buf), "%u", numTargs);
     SetWindowText(GetDlgItem(fhPanel, IDC_NUM_TARGS), buf);
 
     // Enable the forward/back buttons if there are multiple targets

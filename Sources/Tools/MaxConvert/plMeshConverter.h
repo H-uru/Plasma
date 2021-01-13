@@ -88,7 +88,7 @@ private:
     static char     fTooManyFacesMsg[];
 
 public:
-    ~plMeshConverter();
+    ~plMeshConverter() noexcept(false);
     static plMeshConverter& Instance();
 
     void    Init( bool save, plErrorMsg *msg );

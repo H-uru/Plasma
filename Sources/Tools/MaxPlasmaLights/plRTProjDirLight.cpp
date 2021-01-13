@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRealTimeLights.h"
-#pragma hdrstop
 
 #include "plRTProjDirLight.h"
 #include "plRTProjDirLightClassDesc.h"

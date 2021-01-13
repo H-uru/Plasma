@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamm2.h>
 #include <stdmat.h>
-#pragma hdrstop
 
 #include "plDynamicTextLayer.h"
 
@@ -507,7 +506,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
                 if( fBitmapPB->GetInt( kBmpUseInitImage ) && fInitBitmap != nil )
                     fInitBitmap->GetLinearPixels( x, y, 1, p64 );
                 else
-                    p64->r = p64->g = p64->b = 0.f;
+                    p64->r = p64->g = p64->b = 0;
             }
             else
             {

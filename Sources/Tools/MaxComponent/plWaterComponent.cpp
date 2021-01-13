@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <dummy.h>
 #include <iparamm2.h>
 #include <meshdlib.h> 
-#pragma hdrstop
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 

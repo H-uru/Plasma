@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "pnNetCommon/plNetApp.h"
-#pragma hdrstop
 
 #include "plLoadAvatarMsg.h"
 #include "plAvatar/plAvatarTasks.h"

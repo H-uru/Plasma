@@ -2690,7 +2690,7 @@ void    pfJournalBook::IDrawMipmap( pfEsHTMLChunk *chunk, uint16_t x, uint16_t y
         // calc new size based on how the book has been skewed
         float xScale = (fWidthScale == 0) ? 1 : 1/(1-fWidthScale);
         float yScale = (fHeightScale == 0) ? 1 : 1/(1-fHeightScale);
-        yScale *= 0.7; // adjust because the book isn't square
+        yScale *= 0.7f; // adjust because the book isn't square
         uint32_t width = (uint32_t)(mip->GetWidth()*xScale);
         uint32_t height = (uint32_t)(mip->GetHeight()*yScale);
         uint16_t xShift;
@@ -2906,7 +2906,7 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
             // calc new size based on how the book has been skewed
             xScale *= (fWidthScale == 0) ? 1 : (1-fWidthScale);
             yScale *= (fHeightScale == 0) ? 1 : (1-fHeightScale);
-            yScale *= 1/0.7; // adjust because the book isn't square
+            yScale *= 1.f/0.7f; // adjust because the book isn't square
         }
 
         hsVector3 scaleVec(xScale, yScale, 1.f);
@@ -3089,7 +3089,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
         // calc new size based on how the book has been skewed
         xScale *= (fWidthScale == 0) ? 1 : (1-fWidthScale);
         yScale *= (fHeightScale == 0) ? 1 : (1-fHeightScale);
-        yScale *= 1/0.7; // adjust because the book isn't square
+        yScale *= 1.f/0.7f; // adjust because the book isn't square
     }
 
     hsVector3 scaleVec(xScale, yScale, 1.f);

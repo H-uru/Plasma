@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plComponentBase.h"
 #include "plNoteTrackDlgComp.h"
-#pragma hdrstop
 
 
 void plComponentNoteTrackDlg::ICacheNoteTrack()

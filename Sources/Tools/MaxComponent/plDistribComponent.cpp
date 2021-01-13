@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdmat.h>
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "MaxMain/plPlasmaRefMsgs.h"
 

@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyMatrix44.h"
 #include "pyObjectRef.h"
-#pragma hdrstop
 
 // CPython specific init stuff
 #include <cpython/initconfig.h>

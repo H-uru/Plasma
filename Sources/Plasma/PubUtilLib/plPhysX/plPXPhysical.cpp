@@ -181,6 +181,9 @@ void plPXPhysical::ISanityCheckBounds()
             fBounds = plSimDefs::kHullBounds;
         }
         break;
+
+    default:
+        break;
     }
 }
 
@@ -599,7 +602,8 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
                 } while (ptr < end);
                 center /= polygon.mNbVerts;
 
-                uint16_t centerIdx = verts.size();
+                hsAssert(verts.size() < std::numeric_limits<uint16_t>::max(), "Too many verts");
+                uint16_t centerIdx = (uint16_t)verts.size();
                 verts.push_back(plPXConvert::Point(center));
 
                 ptr = indices;
@@ -635,7 +639,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
                                        const physx::PxTriangleMeshGeometry& geometry,
                                        const hsMatrix44& l2w, hsGMaterial* mat, bool blended)
 {
-    uint16_t idxCount = std::min(geometry.triangleMesh->getNbTriangles() * 3, (physx::PxU32)UINT16_MAX);
+    uint16_t idxCount = (uint16_t)std::min(geometry.triangleMesh->getNbTriangles() * 3, (physx::PxU32)UINT16_MAX);
     std::vector<uint16_t> tris(idxCount);
     if (geometry.triangleMesh->getTriangleMeshFlags().isSet(physx::PxTriangleMeshFlag::e16_BIT_INDICES)) {
         memcpy(tris.data(), geometry.triangleMesh->getTriangles(), sizeof(physx::PxU16) * idxCount);

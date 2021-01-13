@@ -63,7 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ISkin.h>
 #include <meshdlib.h> 
 #include <stdmat.h>
-#pragma hdrstop
 
 #include "plMeshConverter.h"
 #include "MaxMain/plMaxNode.h"
@@ -261,7 +260,7 @@ plMeshConverter::plMeshConverter() :
     hsGuardEnd;
 }
 
-plMeshConverter::~plMeshConverter()
+plMeshConverter::~plMeshConverter() noexcept(false)
 {
     hsGuardBegin("plMeshConverter::~plMeshConverter");
     hsGuardEnd;
@@ -1358,7 +1357,7 @@ uint32_t  plMeshConverter::ICreateHexColor( float r, float g, float b )
 
 uint32_t  plMeshConverter::ISetHexAlpha( uint32_t color, float alpha)
 {
-    uint32_t alphaBits = alpha * 255;
+    uint32_t alphaBits = uint32_t(alpha * 255);
     alphaBits <<= 24;
     return color & 0x00ffffff | alphaBits;
 }

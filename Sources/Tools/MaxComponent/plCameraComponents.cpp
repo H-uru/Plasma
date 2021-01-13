@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "pnSceneObject/plSceneObject.h"        //  Ibid
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -917,7 +916,7 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
         float max = pBlk->GetFloat(kZoomMaxDeg);
         float min = pBlk->GetFloat(kZoomMinDeg);
         float rate = pBlk->GetFloat(kZoomRate);
-        pBrain->SetZoomParams(max / 1.33333333, min / 1.33333333, rate);
+        pBrain->SetZoomParams(max / 1.33333333f, min / 1.33333333f, rate);
     }
 }
 

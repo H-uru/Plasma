@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iskin.h>
 #include <mnmath.h>
 #include <utilapi.h>
-#pragma hdrstop
 
 #include "GlobalUtility.h"
 #include "plPluginResManager.h"
@@ -2948,7 +2947,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                         if (key)
                         {
                             float attenEnd = key->fValue;
-                            TimeValue tv = key->fFrame * MAX_TICKS_PER_FRAME;
+                            TimeValue tv = (TimeValue)(key->fFrame * MAX_TICKS_PER_FRAME);
                             float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                             float newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
                             if( distSq )
@@ -2960,7 +2959,7 @@ void plMaxNode::GetRTLightAttenAnim(IParamBlock2* ProperPB, plAGAnim *anim)
                         if (bezKey)
                         {
                             float attenEnd = bezKey->fValue;
-                            TimeValue tv = bezKey->fFrame * MAX_TICKS_PER_FRAME;
+                            TimeValue tv = (TimeValue)(bezKey->fFrame * MAX_TICKS_PER_FRAME);
                             float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                             float newVal = (intens * plSillyLightKonstants::GetFarPowerKonst() - 1.f) / attenEnd;
                             if( distSq )
@@ -3022,14 +3021,14 @@ void plMaxNode::IAdjustRTColorByIntensity(plController* ctl, IParamBlock2* Prope
             hsPoint3Key* key = simp->GetPoint3Key(i);
             if (key)
             {
-                TimeValue tv = key->fFrame * MAX_TICKS_PER_FRAME;
+                TimeValue tv = (TimeValue)(key->fFrame * MAX_TICKS_PER_FRAME);
                 float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                 key->fValue *= intens;
             }
             hsBezPoint3Key* bezKey = simp->GetBezPoint3Key(i);
             if (bezKey)
             {
-                TimeValue tv = bezKey->fFrame * MAX_TICKS_PER_FRAME;
+                TimeValue tv = (TimeValue)(bezKey->fFrame * MAX_TICKS_PER_FRAME);
                 float intens = ProperPB->GetFloat(plRTLightBase::kIntensity, tv);
                 bezKey->fInTan *= intens;
                 bezKey->fOutTan *= intens;

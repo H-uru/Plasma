@@ -617,7 +617,7 @@ float QuatAngleDiff(const hsQuat &a, const hsQuat &b)
     } 
 
     // Calling acos on 1.0 is returning an undefined value. Need to check for it.
-    float epsilon = 0.00001;
+    float epsilon = 0.00001f;
     if (fabs(cos_t - 1.f) < epsilon)
         return 0;
 

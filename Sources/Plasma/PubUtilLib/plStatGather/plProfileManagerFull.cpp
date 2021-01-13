@@ -357,7 +357,7 @@ void plProfileManagerFull::Update()
         if (var)
         {
             graph->SetPosition(xPos, yPos);
-            graph->AddData(var->GetValue());
+            graph->AddData((int32_t)var->GetValue());
             graph->SetVisible(true);
 
             yPos += size;
@@ -366,7 +366,7 @@ void plProfileManagerFull::Update()
 
     UpdateStandardGraphs(xPos, yPos);
 
-    float detailSize = 0.9;
+    float detailSize = 0.9f;
     float detailX = 1 - detailSize / 2;
     float detailY = 1 - detailSize / 2;
     if (fDetailGraph)
@@ -579,7 +579,7 @@ void plProfileManagerFull::ShowDetailGraph()
         ResetDefaultDetailVars();
     
     plPlateManager::Instance().CreateGraphPlate(&fDetailGraph);
-    fDetailGraph->SetSize(0.9,0.9);
+    fDetailGraph->SetSize(0.9f, 0.9f);
     fDetailGraph->SetDataRange(0,500,500);
     fDetailGraph->SetDataLabels(0,100); // should be relatively simple to cast everything to a 0-100 range
     fDetailGraph->SetTitle("Detail");

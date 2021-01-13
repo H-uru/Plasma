@@ -265,8 +265,8 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
             // make sure its a character we will display
             if ( DisplayableChar(c) )
             {
-                width = fCharInfo[ c ].fW + 1;
-                height = fCharInfo[ c ].fH + 1;
+                width = fCharInfo[uint8_t(c)].fW + 1;
+                height = fCharInfo[uint8_t(c)].fH + 1;
 
                 if( rightEdge > 0 && x + width + italOffset >= rightEdge )
                 {
@@ -277,31 +277,31 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
 
                 verts[ j ].fPoint.fX = x + italOffset;
                 verts[ j ].fPoint.fY = (float)sY;
-                verts[ j ].fUV = fCharInfo[ c ].fUVs[ 0 ];
+                verts[ j ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
 
                 verts[ j + 1 ].fPoint.fX = x + width + italOffset;
                 verts[ j + 1 ].fPoint.fY = (float)sY;
-                verts[ j + 1 ].fUV = fCharInfo[ c ].fUVs[ 0 ];
-                verts[ j + 1 ].fUV.fX = fCharInfo[ c ].fUVs[ 1 ].fX;
+                verts[ j + 1 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
+                verts[ j + 1 ].fUV.fX = fCharInfo[uint8_t(c)].fUVs[ 1 ].fX;
 
                 verts[ j + 2 ].fPoint.fX = x;
                 verts[ j + 2 ].fPoint.fY = (float)sY + height;
-                verts[ j + 2 ].fUV = fCharInfo[ c ].fUVs[ 0 ];
-                verts[ j + 2 ].fUV.fY = fCharInfo[ c ].fUVs[ 1 ].fY;
+                verts[ j + 2 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
+                verts[ j + 2 ].fUV.fY = fCharInfo[uint8_t(c)].fUVs[ 1 ].fY;
 
                 verts[ j + 3 ].fPoint.fX = x;
                 verts[ j + 3 ].fPoint.fY = (float)sY + height;
-                verts[ j + 3 ].fUV = fCharInfo[ c ].fUVs[ 0 ];
-                verts[ j + 3 ].fUV.fY = fCharInfo[ c ].fUVs[ 1 ].fY;
+                verts[ j + 3 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
+                verts[ j + 3 ].fUV.fY = fCharInfo[uint8_t(c)].fUVs[ 1 ].fY;
 
                 verts[ j + 4 ].fPoint.fX = x + width + italOffset;
                 verts[ j + 4 ].fPoint.fY = (float)sY;
-                verts[ j + 4 ].fUV = fCharInfo[ c ].fUVs[ 0 ];
-                verts[ j + 4 ].fUV.fX = fCharInfo[ c ].fUVs[ 1 ].fX;
+                verts[ j + 4 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
+                verts[ j + 4 ].fUV.fX = fCharInfo[uint8_t(c)].fUVs[ 1 ].fX;
 
                 verts[ j + 5 ].fPoint.fX = x + width;
                 verts[ j + 5 ].fPoint.fY = (float)sY + height;
-                verts[ j + 5 ].fUV = fCharInfo[ c ].fUVs[ 1 ];
+                verts[ j + 5 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 1 ];
 
                 x += width + 1;
             }
@@ -372,7 +372,7 @@ uint32_t  plTextFont::CalcStringWidth( const char *string )
     {
         // make sure its a character we will display
         if ( DisplayableChar(string[i]) )
-            width += fCharInfo[ string[ i ] ].fW + 2;
+            width += fCharInfo[uint8_t(string[i])].fW + 2;
     }
 
     return width;

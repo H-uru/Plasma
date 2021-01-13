@@ -4786,7 +4786,7 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
     static hsBitVector  newFlags;   
     static hsTArray<plLightInfo*>   onLights;
     plDXLightRef        *ref;
-    float               threshhold, overHold = 0.3, scale;
+    float               threshhold, overHold = 0.3f, scale;
 
     /// Build new flags
 

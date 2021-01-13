@@ -838,6 +838,8 @@ void    plInputInterfaceMgr::WriteKeyMap()
             //  keyConvert = &plKeyMap::fKeyConversionItalian[0];
             //  break;
             // default is English
+            default:
+                break;
         }
         for (i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
         {   

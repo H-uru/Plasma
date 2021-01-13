@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <IMtlEdit.h>
 #include <max.h>
 #include <pbbitmap.h>
-#pragma hdrstop
 
 #include "plTextureSearch.h"
 

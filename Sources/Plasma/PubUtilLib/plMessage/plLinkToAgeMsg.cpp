@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#pragma hdrstop
 
 #include "plLinkToAgeMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"

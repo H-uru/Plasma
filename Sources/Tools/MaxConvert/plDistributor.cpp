@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <bmmlib.h>
 #include <iparamb2.h>
 #include <meshdlib.h> 
-#pragma hdrstop
 
 #include "MaxExport/plExportProgressBar.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"

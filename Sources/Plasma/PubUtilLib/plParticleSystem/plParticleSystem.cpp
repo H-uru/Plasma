@@ -143,7 +143,7 @@ plParticleEmitter* plParticleSystem::GetAvailEmitter()
     if( !fNumValidEmitters ) // got to start with at least one.
         return nil;
 
-    float minTTL = 1.e33;
+    float minTTL = 1.e33f;
     int iMinTTL = -1;
     int i;
     for( i = 0; i < fNumValidEmitters; i++ )

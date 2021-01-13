@@ -76,7 +76,7 @@ class plTextureExportLog
 
 
         void    IAddBMapNode( uint32_t rank, plBitmap *bMap );
-        void    IWriteTabbedString( hsStream *stream, const char *string, int8_t numTabs );
+        void    IWriteTabbedString( hsStream *stream, const char *string, int numTabs );
 
     public: 
 

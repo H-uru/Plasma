@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#pragma hdrstop
 
 #include "pySpawnPointInfo.h"
 

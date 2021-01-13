@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 
 #include <max.h>
-#pragma hdrstop
 
 #include "plMaxCFGFile.h"
 #include "plFile/plBrowseFolder.h"

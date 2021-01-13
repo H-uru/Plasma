@@ -688,12 +688,13 @@ void plResponderModifier::Write(hsStream* stream, hsResMgr* mgr)
             stream->WriteByte(cmd.fWaitOn);
         }
 
-        int8_t mapSize = state.fWaitToCmd.size();
-        stream->WriteByte(mapSize);
-        for (WaitToCmd::iterator it = state.fWaitToCmd.begin(); it != state.fWaitToCmd.end(); it++)
+        size_t mapSize = state.fWaitToCmd.size();
+        hsAssert(mapSize < std::numeric_limits<uint8_t>::max(), "WaitToCmd map too large");
+        stream->WriteByte(uint8_t(mapSize));
+        for (auto it : state.fWaitToCmd)
         {
-            stream->WriteByte(it->first);
-            stream->WriteByte(it->second);
+            stream->WriteByte(it.first);
+            stream->WriteByte(it.second);
         }
     }
 

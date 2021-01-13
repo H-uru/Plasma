@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 
 #include "resource.h"
-#pragma hdrstop
 
 #include "plPickNode.h"
 

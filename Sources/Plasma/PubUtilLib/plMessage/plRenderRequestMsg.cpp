@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plUoid.h"
-#pragma hdrstop
 
 #include "plRenderRequestMsg.h"
 

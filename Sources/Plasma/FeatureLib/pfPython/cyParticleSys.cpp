@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plgDispatch.h"
-#pragma hdrstop
 
 #include "cyParticleSys.h"
 #include "pnMessage/plMessage.h"

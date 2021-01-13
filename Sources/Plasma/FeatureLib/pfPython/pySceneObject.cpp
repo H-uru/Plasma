@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyMatrix44.h"
 #include "plPhysical.h"
-#pragma hdrstop
 
 #include "pySceneObject.h"
 #include "plResMgr/plResManager.h"

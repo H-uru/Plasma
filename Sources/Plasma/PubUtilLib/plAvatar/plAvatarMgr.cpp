@@ -957,7 +957,7 @@ void plAvatarMgr::PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret)
                     deg = 360.f - deg;
                 }
                 // convert it to dni radians (torans)
-                deg*=173.61;
+                deg *= 173.61f;
                 ret->SetTorans((int)deg);
             }
             break;

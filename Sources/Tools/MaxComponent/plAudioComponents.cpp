@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include <shlwapi.h>
-#pragma hdrstop
 
 
 #include "plInterp/plAnimEaseTypes.h"
@@ -3054,7 +3053,7 @@ void    plEAXListenerComponent::SetCustFile( const char *path )
 
         // Read the next line, with our value
         presetFile.ReadLn( line, sizeof( line ) );
-        float value = atof( line );
+        float value = strtof(line, nullptr);
         if( myMap[ i ].fType == 0 )
             fCompPB->SetValue( myMap[ i ].fParamID, 0, (int)value );
         else

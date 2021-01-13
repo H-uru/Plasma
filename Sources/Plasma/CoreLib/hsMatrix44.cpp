@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cmath>
 #include "HeadSpin.h"
-#pragma hdrstop
 
 #include "hsGeometry3.h"
 #include "hsQuat.h"

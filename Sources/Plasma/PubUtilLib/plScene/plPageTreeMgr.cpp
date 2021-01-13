@@ -489,7 +489,8 @@ bool plPageTreeMgr::IBuildSpaceTree()
 
 bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
 {
-    for (size_t i = 0; i < fNodes.size(); ++i)
+    hsAssert(fNodes.size() < std::numeric_limits<uint16_t>::max(), "Too many nodes");
+    for (uint16_t i = 0; i < fNodes.size(); ++i)
     {
         plSceneNode* node = fNodes[i];
         if (node->GetSpaceTree()->IsDirty())

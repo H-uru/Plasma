@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <guplib.h>
 #include <notify.h>
-#pragma hdrstop
 
 #include "GlobalUtility.h"
 

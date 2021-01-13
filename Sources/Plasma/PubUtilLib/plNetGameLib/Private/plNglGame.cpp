@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
-#pragma hdrstop
 
 namespace Ngl { namespace Game {
 /*****************************************************************************
@@ -323,6 +322,11 @@ static bool SocketNotifyCallback (
         case kNotifySocketRead:
             conn = (CliGmConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        break;
+
+        case kNotifySocketListenSuccess:
+        case kNotifySocketWrite:
+            // No action
         break;
     }
     

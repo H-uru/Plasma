@@ -150,7 +150,7 @@ bool hsQuatKey::CompareValue(hsQuatKey *key)
 
 //////////////////////////////////////////////////////////////////////////////
 
-const float hsCompressedQuatKey32::kOneOverRootTwo = 0.70710678;
+const float hsCompressedQuatKey32::kOneOverRootTwo = 0.70710678f;
 const float hsCompressedQuatKey32::k10BitScaleRange = 1023 / (2 * kOneOverRootTwo);
 
 void hsCompressedQuatKey32::Read(hsStream *stream)
@@ -290,7 +290,7 @@ void hsCompressedQuatKey32::GetQuat(hsQuat &q)
 
 /////////////////////////////////////////////////////////////////////////////
 
-const float hsCompressedQuatKey64::kOneOverRootTwo = 0.70710678;
+const float hsCompressedQuatKey64::kOneOverRootTwo = 0.70710678f;
 const float hsCompressedQuatKey64::k20BitScaleRange = 1048575 / (2 * kOneOverRootTwo);
 const float hsCompressedQuatKey64::k21BitScaleRange = 2097151 / (2 * kOneOverRootTwo);
 

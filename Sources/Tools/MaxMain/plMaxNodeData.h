@@ -177,7 +177,7 @@ public:
         fBoneMap(nil),
         fAnimCompression(1), // Should be plAnimCompressComp::kCompressionLow,
                              // but I don't want to include the entire header.
-        fKeyReduceThreshold(0.0002)
+        fKeyReduceThreshold(0.0002f)
     { }
     ~plMaxNodeData() 
     { 

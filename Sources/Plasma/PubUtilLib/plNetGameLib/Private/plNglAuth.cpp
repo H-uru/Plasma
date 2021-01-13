@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
-#pragma hdrstop
 
 #include <regex>
 #include "pnEncryption/plChallengeHash.h"
@@ -1506,6 +1505,11 @@ static bool SocketNotifyCallback (
         case kNotifySocketRead:
             conn = (CliAuConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        break;
+
+        case kNotifySocketListenSuccess:
+        case kNotifySocketWrite:
+            // No action
         break;
     }
     

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "pyGeometry3.h"
 #include "pyMatrix44.h"
-#pragma hdrstop
 
 PyObject* pyMatrix44::operator*(const pyVector3& p) const
 {

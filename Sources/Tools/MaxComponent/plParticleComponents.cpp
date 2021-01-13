@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamm2.h>
 #include <windowsx.h>
-#pragma hdrstop
 
 
 #include "plParticleComponents.h"
@@ -235,7 +234,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         float frameDelta = (1.f / MAX_FRAMES_PER_SEC); 
         float avgLife = (partLifeMax + partLifeMin) / 2;
         uint32_t count = node->NumAttachedComponents();
-        uint32_t lifeTicks = avgLife / frameDelta;
+        uint32_t lifeTicks = uint32_t(avgLife / frameDelta);
         float *birth = new float[lifeTicks];
 
         // Find any anim components attached to the same node.
@@ -275,11 +274,10 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     if (loopLength == 0) // It's the default "(Entire Animation)"
                         loopLength = ppsCtl->GetLength();
 
-                    uint32_t loopTicks = loopLength * MAX_FRAMES_PER_SEC;
+                    uint32_t loopTicks = uint32_t(loopLength * MAX_FRAMES_PER_SEC);
 
-                    uint32_t startTick = loopStart * MAX_FRAMES_PER_SEC;
-                    uint32_t tick;
-                    for (tick = 0; tick < loopTicks + lifeTicks; tick++)
+                    uint32_t startTick = uint32_t(loopStart * MAX_FRAMES_PER_SEC);
+                    for (uint32_t tick = 0; tick < loopTicks + lifeTicks; tick++)
                     {
                         curAnimParticles -= birth[tick % lifeTicks] * frameDelta;
                         float birthStart = 0.f;
@@ -321,7 +319,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        maxTotalParticles = pps * (partLifeMax - (partLifeMax - partLifeMin) / 2);
+        maxTotalParticles = uint32_t(pps * (partLifeMax - (partLifeMax - partLifeMin) / 2));
     }
     maxTotalParticles *=  maxEmitters;
 
@@ -411,7 +409,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
 
         plOneTimeParticleGenerator *gen = new plOneTimeParticleGenerator();
-        gen->Init(sources, pointArray, dirArray, xSize, ySize, scaleMin, scaleMax, rotRange);
+        gen->Init(float(sources), pointArray, dirArray, xSize, ySize, scaleMin, scaleMax, rotRange);
         generator = gen;
         maxTotalParticles = sources;
         gravity = 0.f;
@@ -911,14 +909,14 @@ bool plParticleComponent::GetParamVals(plMaxNode *pNode)
     fUserInput.fLifeMax         = fCompPB->GetFloat(kLifeMax);
     fUserInput.fImmortal        = fCompPB->GetInt(kImmortal);
     fUserInput.fPPS             = fCompPB->GetFloat(kPPS);
-    fUserInput.fScaleMin        = fCompPB->GetInt(kScaleMin);
-    fUserInput.fScaleMax        = fCompPB->GetInt(kScaleMax);
+    fUserInput.fScaleMin        = (float)fCompPB->GetInt(kScaleMin);
+    fUserInput.fScaleMax        = (float)fCompPB->GetInt(kScaleMax);
 
-    fUserInput.fGravity         = fCompPB->GetInt(kGravity);
-    fUserInput.fDrag            = fCompPB->GetInt(kDrag);
-    fUserInput.fWindMult        = fCompPB->GetInt(kWindMult);
+    fUserInput.fGravity         = (float)fCompPB->GetInt(kGravity);
+    fUserInput.fDrag            = (float)fCompPB->GetInt(kDrag);
+    fUserInput.fWindMult        = (float)fCompPB->GetInt(kWindMult);
     fUserInput.fMassRange       = fCompPB->GetFloat(kMassRange);
-    fUserInput.fPreSim          = fCompPB->GetInt(kPreSim);
+    fUserInput.fPreSim          = (float)fCompPB->GetInt(kPreSim);
     fUserInput.fRotRange        = fCompPB->GetFloat(kRotRange);
 
     return true;

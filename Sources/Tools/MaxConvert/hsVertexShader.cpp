@@ -63,7 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <istdplug.h>
 #include <dummy.h>
 #include <notetrck.h>
-#pragma hdrstop
 
 #include "MaxMain/plMaxNode.h"
 #include "plSurface/hsGMaterial.h"
@@ -104,7 +103,7 @@ hsVertexShader::hsVertexShader() :
     hsGuardEnd;
 }
 
-hsVertexShader::~hsVertexShader()
+hsVertexShader::~hsVertexShader() noexcept(false)
 {
     hsGuardBegin("hsVertexShader::~hsVertexShader");
     hsGuardEnd;

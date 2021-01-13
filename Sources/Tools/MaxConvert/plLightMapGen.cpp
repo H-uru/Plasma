@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <dummy.h>
 #include <notify.h>
 #include <vector>
-#pragma hdrstop
 
 #include "plLightMapGen.h"
 #include "plGImage/plMipmap.h"
@@ -1557,7 +1556,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
     {
         fWidth = kMinSize;
     }
-    fWidth *= fScale;
+    fWidth = int(fWidth * fScale);
     fWidth = IPowerOfTwo(fWidth);
     
     if( dvDr > 0 )
@@ -1573,7 +1572,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
     {
         fHeight = kMinSize;
     }
-    fHeight *= fScale;
+    fHeight = int(fHeight * fScale);
     fHeight = IPowerOfTwo(fHeight);
 
     if( fHeight / fWidth > kMaxAspect )

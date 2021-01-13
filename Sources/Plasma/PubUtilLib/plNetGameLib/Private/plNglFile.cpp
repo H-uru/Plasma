@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
-#pragma hdrstop
 
 // Define this if the file servers are running behind load-balancing hardware.
 // It changes the logic by which the decision to attempt a reconnect is made.
@@ -468,6 +467,11 @@ static bool SocketNotifyCallback (
         case kNotifySocketRead:
             conn = (CliFileConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        break;
+
+        case kNotifySocketListenSuccess:
+        case kNotifySocketWrite:
+            // No action
         break;
     }
 

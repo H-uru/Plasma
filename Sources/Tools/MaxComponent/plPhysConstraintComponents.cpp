@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plComponent.h"
 #include "plComponentReg.h"
-#pragma hdrstop
 
 void DummyCodeIncludeFuncPhysConst()
 {

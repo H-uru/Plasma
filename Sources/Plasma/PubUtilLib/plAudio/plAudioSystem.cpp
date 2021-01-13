@@ -389,7 +389,7 @@ void plAudioSystem::Shutdown()
 
     fStartTime = 0;
     fUsingEAX = false;
-    fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
+    fCurrListenerPos.Set(-1.e30f, -1.e30f, -1.e30f);
 
     if (fRestartOnDestruct) {
         fRestartOnDestruct = false;
@@ -682,6 +682,8 @@ void    plAudioSystem::IUpdateSoftSounds(const hsPoint3 &newPosition)
                 break;
             case plSound::kStreamCompressed:
                 color = plStatusLog::kRed;
+                break;
+            case plSound::kNoStream:
                 break;
         }
 
