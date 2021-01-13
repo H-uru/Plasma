@@ -106,19 +106,23 @@ void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
     SetClearDepth(1);
 
     // render all GUI items
+    pfGameGUIMgr::GetInstance()->SetAspectRatio((float)fRenderTarget->GetWidth() / (float)fRenderTarget->GetHeight());
     std::vector<plPostEffectMod*> guiRenderMods = pfGameGUIMgr::GetInstance()->GetDlgRenderMods();
     for (int i = (int)guiRenderMods.size() - 1; i >= 0; i--) // render in reverse, so dialogs on the bottom get rendered first
     {
         plPageTreeMgr* dlgPageMgr = guiRenderMods[i]->GetPageMgr();
         if (dlgPageMgr)
         {
-            SetViewTransform(guiRenderMods[i]->GetViewTransform());
+            auto dlgVt = guiRenderMods[i]->GetViewTransform();
+            dlgVt.SetViewPort(0, 0, fRenderTarget->GetWidth(), fRenderTarget->GetHeight());
+            SetViewTransform(dlgVt);
             pipe->PushRenderRequest(this);
             pipe->ClearRenderTarget();
             dlgPageMgr->Render(pipe);
             pipe->PopRenderRequest(this);
         }
     }
+    pfGameGUIMgr::GetInstance()->SetAspectRatio((float)pipe->Width() / (float)pipe->Height());
 
     // Callback on plCaptureRender to process the render target into a mipmap
     // and send it back to the requester.
