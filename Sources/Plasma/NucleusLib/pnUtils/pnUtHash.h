@@ -227,7 +227,7 @@ private:
 
     LIST(T)            m_fullList;
     int                m_linkOffset;
-    TFArray<LIST(T)>   m_slotListArray;
+    std::vector<LIST(T)> m_slotListArray;
     unsigned           m_slotMask;  // always set to a power of two minus one
     unsigned           m_slotMaxCount;
 
@@ -419,7 +419,7 @@ const T * TBaseHashTable<T>::Prev (const T * object) const {
 template<class T>
 void TBaseHashTable<T>::SetLinkOffset (int linkOffset, unsigned maxSize) {
     ASSERT(!m_fullList.Head());
-    ASSERT(!m_slotListArray.Count());
+    ASSERT(m_slotListArray.empty());
     ASSERT(!m_slotMask);
 
     m_linkOffset = linkOffset;
@@ -445,8 +445,8 @@ void TBaseHashTable<T>::SetSlotCount (unsigned count) {
         return;
     m_slotMask = count - 1;
 
-    m_slotListArray.ZeroCount();
-    m_slotListArray.SetCount(count);
+    m_slotListArray.clear();
+    m_slotListArray.resize(count);
     for (unsigned loop = 0; loop < count; ++loop)
         m_slotListArray[loop].SetLinkOffset(m_linkOffset + offsetof(THashLink<T>, m_linkToSlot));
 

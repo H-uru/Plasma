@@ -91,7 +91,7 @@ public:
 
 class plNetCommFileListMsg : public plNetCommReplyMsg {
 public:
-    TFArray<NetCliAuthFileInfo>  fileInfoArr;
+    std::vector<NetCliAuthFileInfo>  fileInfoArr;
 
     CLASSNAME_REGISTER(plNetCommFileListMsg);
     GETINTERFACE_ANY(plNetCommFileListMsg, plMessage);
