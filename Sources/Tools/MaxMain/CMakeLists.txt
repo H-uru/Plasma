@@ -1,7 +1,5 @@
 include_directories(${3dsm_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${PHYSX_INCLUDE_DIRS})
-include_directories(${PYTHON_INCLUDE_DIR})
 
 set(MaxMain_HEADERS
     GlobalUtility.h
@@ -83,22 +81,8 @@ target_link_libraries(MaxMain MaxExport)
 target_link_libraries(MaxMain MaxPlasmaMtls)
 target_link_libraries(MaxMain ${3dsm_LIBRARIES})
 
-target_link_libraries(MaxMain ${EXPAT_LIBRARY})
 target_link_libraries(MaxMain ${DirectX_LIBRARIES})
-target_link_libraries(MaxMain ${JPEG_LIBRARY})
-target_link_libraries(MaxMain ${PNG_LIBRARY})
-target_link_libraries(MaxMain ${Ogg_LIBRARIES})
-target_link_libraries(MaxMain ${OPENSSL_LIBRARIES})
-target_link_libraries(MaxMain ${PHYSX_LIBRARIES})
-target_link_libraries(MaxMain ${Vorbis_LIBRARIES})
 target_link_libraries(MaxMain ${STRING_THEORY_LIBRARIES})
-
-if(PLASMA_USE_OPUS)
-    target_link_libraries(MaxMain ${Opus_LIBRARIES})
-endif()
-if(PLASMA_USE_SPEEX)
-    target_link_libraries(MaxMain ${Speex_LIBRARY})
-endif()
 
 # Carbon copy from plClient
 # TODO: Maybe see if some of these can be removed?

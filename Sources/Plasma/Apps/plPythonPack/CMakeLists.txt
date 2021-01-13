@@ -1,5 +1,3 @@
-include_directories(${PYTHON_INCLUDE_DIR})
-
 set(plPythonPack_SOURCES
     main.cpp
     PythonInterface.cpp
@@ -10,12 +8,19 @@ set(plPythonPack_HEADERS
 )
 
 add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
-target_link_libraries(plPythonPack CoreLib plFile)
-target_link_libraries(plPythonPack Python3::Python)
-target_link_libraries(plPythonPack ${STRING_THEORY_LIBRARIES})
+target_link_libraries(
+    plPythonPack
+    PUBLIC
+        CoreLib
+        Python3::Python
+
+    PRIVATE
+        plFile
+        string_theory
+)
 
 if(USE_VLD)
-    target_link_libraries(plPythonPack ${VLD_LIBRARY})
+    target_link_libraries(plPythonPack PRIVATE ${VLD_LIBRARY})
 endif()
 
 install(

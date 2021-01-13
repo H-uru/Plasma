@@ -1,5 +1,3 @@
-include_directories(${OPENAL_INCLUDE_DIR})
-
 set(pfPythonTest_SOURCES
     test_cyMisc.cpp
     )
@@ -84,23 +82,8 @@ target_link_libraries(test_pfPython pnTimer)
 target_link_libraries(test_pfPython pnUtils)
 target_link_libraries(test_pfPython pnUUID)
 
-target_link_libraries(test_pfPython ${OPENSSL_LIBRARIES})
-target_link_libraries(test_pfPython ${EXPAT_LIBRARY})
-target_link_libraries(test_pfPython ${JPEG_LIBRARY})
-target_link_libraries(test_pfPython ${PNG_LIBRARY})
-target_link_libraries(test_pfPython ${PHYSX_LIBRARIES})
-target_link_libraries(test_pfPython ${Ogg_LIBRARIES})
-target_link_libraries(test_pfPython ${Vorbis_LIBRARIES})
 target_link_libraries(test_pfPython ${DirectX_LIBRARIES})
-target_link_libraries(test_pfPython ${CURL_LIBRARY})
 target_link_libraries(test_pfPython ${STRING_THEORY_LIBRARIES})
-
-if(PLASMA_USE_OPUS)
-    target_link_libraries(test_pfPython ${Opus_LIBRARIES})
-endif()
-if(PLASMA_USE_SPEEX)
-    target_link_libraries(test_pfPython ${Speex_LIBRARY})
-endif()
 
 if (WIN32)
     target_link_libraries(test_pfPython Rpcrt4)

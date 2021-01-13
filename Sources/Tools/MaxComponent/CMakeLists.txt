@@ -1,6 +1,5 @@
 include_directories(${3dsm_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIR})
 
 set(MaxComponent_HEADERS
     BipedKiller.h

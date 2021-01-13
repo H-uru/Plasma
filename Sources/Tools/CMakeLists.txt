@@ -1,10 +1,4 @@
 find_package(Qt5 COMPONENTS Core Widgets)
-set_package_properties(Qt5Core PROPERTIES
-    URL "http://www.qt.io/"
-    DESCRIPTION "Cross-platform GUI framework for C++"
-    TYPE OPTIONAL
-    PURPOSE "Required for building GUI tools for Plasma"
-)
 
 # Based on https://stackoverflow.com/a/41199492 for easily deploying Qt DLLs on Windows.
 if(WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)

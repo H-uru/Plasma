@@ -20,11 +20,16 @@ set(pfLocalizationMgr_HEADERS
 
 add_library(pfLocalizationMgr STATIC ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
 
-target_include_directories(pfLocalizationMgr PRIVATE ${EXPAT_INCLUDE_DIR})
-target_link_libraries(pfLocalizationMgr
+target_link_libraries(
+    pfLocalizationMgr
     PUBLIC
-        ${EXPAT_LIBRARY}
         CoreLib
+    PRIVATE
+        plFile
+        plResMgr
+        plStatusLog
+
+        expat::expat
 )
 
 source_group("Source Files" FILES ${pfLocalizationMgr_SOURCES})

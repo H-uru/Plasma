@@ -47,7 +47,6 @@ target_link_libraries(plLocalizationEditor pnUUID)
 target_link_libraries(plLocalizationEditor plResMgr)
 target_link_libraries(plLocalizationEditor pfLocalizationMgr)
 target_link_libraries(plLocalizationEditor plAgeDescription)
-target_link_libraries(plLocalizationEditor ${EXPAT_LIBRARY})
 target_link_libraries(plLocalizationEditor ${STRING_THEORY_LIBRARIES})
 target_link_libraries(plLocalizationEditor Qt5::Widgets)
 

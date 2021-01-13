@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMoviePlayer.h"
 
 #include "hsConfig.h"
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
 #   include <vpx/vp8dx.h>
@@ -83,7 +83,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class VPX
 {
 
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
 public:
     vpx_codec_ctx_t codec;
 
@@ -188,7 +188,7 @@ plMoviePlayer::~plMoviePlayer()
     if (fPlate)
         // The plPlate owns the Mipmap Texture, so it destroys it for us
         plPlateManager::Instance().DestroyPlate(fPlate);
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
     if (fReader) {
         fReader->Close();
         delete fReader;
@@ -198,7 +198,7 @@ plMoviePlayer::~plMoviePlayer()
 
 bool plMoviePlayer::IOpenMovie()
 {
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
     if (!plFileInfo(fMoviePath).Exists()) {
         plStatusLog::AddLineSF("movie.log", "{}: Tried to play a movie that doesn't exist.", fMoviePath);
         return false;
@@ -244,7 +244,7 @@ bool plMoviePlayer::IOpenMovie()
 
 bool plMoviePlayer::ILoadAudio()
 {
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
     // Fetch audio track information
     if (!fAudioTrack)
         return false;
@@ -306,7 +306,7 @@ bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 {
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
     vpx_image_t* img = nullptr;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
@@ -342,7 +342,7 @@ bool plMoviePlayer::Start()
     if (fPlaying)
         return false;
 
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
     if (!IOpenMovie())
         return false;
     hsAssert(fVideoTrack, "nil video track -- expect bad things to happen!");
@@ -400,7 +400,7 @@ bool plMoviePlayer::NextFrame()
     if (fPaused)
         return true;
 
-#ifdef PLASMA_USE_WEBM
+#ifdef USE_WEBM
     // Get our current timecode
     fMovieTime += frameTimeDelta;
 

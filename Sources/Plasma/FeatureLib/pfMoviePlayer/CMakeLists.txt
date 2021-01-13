@@ -1,8 +1,3 @@
-if(PLASMA_USE_WEBM)
-    include_directories(${VPX_INCLUDE_DIR})
-    include_directories(${Opus_INCLUDE_DIR})
-endif()
-
 set(pfMoviePlayer_SOURCES
     plMoviePlayer.cpp
     plPlanarImage.cpp
@@ -27,6 +22,15 @@ target_link_libraries(pfMoviePlayer
         CoreLib
         plAudio
 )
+
+if(USE_WEBM)
+    target_link_libraries(
+        pfMoviePlayer
+        PRIVATE
+            Opus::opus
+            VPX::VPX
+    )
+endif()
 
 source_group("Source Files" FILES ${pfMoviePlayer_SOURCES})
 source_group("Header Files" FILES ${pfMoviePlayer_HEADERS})

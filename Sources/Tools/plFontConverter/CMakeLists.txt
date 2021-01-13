@@ -1,5 +1,3 @@
-include_directories(${FREETYPE_INCLUDE_DIRS})
-
 set(plFontConverter_HEADERS
     plFontConverter.h
     plFontFreeType.h
@@ -47,12 +45,7 @@ target_link_libraries(plFontConverter pnSceneObject)
 target_link_libraries(plFontConverter plGImage)
 target_link_libraries(plFontConverter plPipeline)
 target_link_libraries(plFontConverter plResMgr)
-target_link_libraries(plFontConverter ${JPEG_LIBRARY})
-target_link_libraries(plFontConverter ${PNG_LIBRARY})
-target_link_libraries(plFontConverter ${FREETYPE_LIBRARIES})
-if(BZIP2_FOUND)
-    target_link_libraries(plFontConverter ${BZIP2_LIBRARIES})
-endif()
+target_link_libraries(plFontConverter freetype)
 target_link_libraries(plFontConverter ${STRING_THEORY_LIBRARIES})
 target_link_libraries(plFontConverter Qt5::Widgets)
 

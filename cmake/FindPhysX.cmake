@@ -51,7 +51,7 @@ set(_PHYSX_PVD_LIBRARY_NAMES
 )
 
 # Stoopid vcpkg build debug and optimized libraries with the same name but in different directories.
-foreach(prefix_path ${CMAKE_PREFIX_PATH})
+foreach(prefix_path IN LISTS CMAKE_PREFIX_PATH)
     if(${prefix_path} MATCHES "[Dd][Ee][Bb][Uu][Gg]\/?$")
         list(APPEND _PHYSX_DEBUG_PATHS ${prefix_path})
     else()
@@ -111,30 +111,6 @@ elseif(NOT VCPKG_TOOLCHAIN)
     set(_PHYSX_RELEASE_PATHS ${CMAKE_PREFIX_PATH})
 endif()
 
-macro(_find_physx_library VAR_NAME)
-    find_library(${VAR_NAME}_LIBRARY_RELEASE
-                 NAMES ${_${VAR_NAME}_LIBRARY_NAMES}
-                 PATHS ${_PHYSX_RELEASE_PATHS}
-                 PATH_SUFFIXES lib
-                 NO_CMAKE_PATH
-    )
-    find_library(${VAR_NAME}_LIBRARY_DEBUG
-                 NAMES ${_${VAR_NAME}_LIBRARY_NAMES}
-                 PATHS ${_PHYSX_DEBUG_PATHS}
-                 PATH_SUFFIXES lib
-                 NO_CMAKE_PATH
-    )
-    select_library_configurations(${VAR_NAME})
-endmacro()
-
-_find_physx_library(PHYSX_COMMON)
-_find_physx_library(PHYSX_PHYSICS)
-_find_physx_library(PHYSX_FOUNDATION)
-_find_physx_library(PHYSX_COOKING)
-_find_physx_library(PHYSX_EXTENSIONS)
-_find_physx_library(PHYSX_CHARACTER)
-_find_physx_library(PHYSX_PVD)
-
 find_path(PHYSX_INCLUDE_DIR NAMES PxPhysicsAPI.h
           PATHS ${_PHYSX_PREFIX}
           PATH_SUFFIXES include/physx include
@@ -157,6 +133,84 @@ if(PHYSX_INCLUDE_DIR)
     endif()
 endif()
 
+macro(_find_physx_library SUFFIX)
+    cmake_parse_arguments(_fpl "FOUNDATION_INCLUDE" "" "INTERFACE_LIBS" ${ARGN})
+
+    string(TOUPPER ${SUFFIX} _SUFFIX_UPPER)
+    set(VAR_NAME "PHYSX_${_SUFFIX_UPPER}")
+    set(TARGET "PhysX::${SUFFIX}")
+
+    find_library(${VAR_NAME}_LIBRARY_RELEASE
+                 NAMES ${_${VAR_NAME}_LIBRARY_NAMES}
+                 PATHS ${_PHYSX_RELEASE_PATHS}
+                 PATH_SUFFIXES lib
+                 NO_CMAKE_PATH
+    )
+    find_library(${VAR_NAME}_LIBRARY_DEBUG
+                 NAMES ${_${VAR_NAME}_LIBRARY_NAMES}
+                 PATHS ${_PHYSX_DEBUG_PATHS}
+                 PATH_SUFFIXES lib
+                 NO_CMAKE_PATH
+    )
+    select_library_configurations(${VAR_NAME})
+
+    if(${VAR_NAME}_LIBRARY AND NOT TARGET ${TARGET})
+        add_library(${TARGET} UNKNOWN IMPORTED)
+
+        if(DEFINED _fpl_FOUNDATION_INCLUDE AND EXISTS "${PHYSX_FOUNDATION_INCLUDE_DIR}")
+            set_property(
+                TARGET ${TARGET} APPEND PROPERTY
+                INTERFACE_INCLUDE_DIRECTORIES ${PHYSX_FOUNDATION_INCLUDE_DIR}
+            )
+        endif()
+
+        if(EXISTS "${PHYSX_INCLUDE_DIR}")
+            set_property(
+                TARGET ${TARGET} APPEND PROPERTY
+                INTERFACE_INCLUDE_DIRECTORIES ${PHYSX_INCLUDE_DIR}
+            )
+        else()
+            message(FATAL_ERROR "PhysX include directory missing: ${PHYSX_INCLUDE_DIR}")
+        endif()
+
+        if(EXISTS "${${VAR_NAME}_LIBRARY_DEBUG}" AND EXISTS "${${VAR_NAME}_LIBRARY_RELEASE}")
+            set_target_properties(
+                ${TARGET} PROPERTIES
+                IMPORTED_LOCATION_DEBUG ${${VAR_NAME}_LIBRARY_DEBUG}
+                IMPORTED_LOCATION_RELEASE ${${VAR_NAME}_LIBRARY_RELEASE}
+                MAP_IMPORTED_CONFIG_MINSIZEREL Release
+                MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+            )
+        elseif(EXISTS "${${VAR_NAME}_LIBRARY}")
+            set_target_properties(
+                ${TARGET} PROPERTIES
+                IMPORTED_LOCATION ${${VAR_NAME}_LIBRARY}
+            )
+        else()
+            message(FATAL_ERROR "PhysX ${SUFFIX} library missing: ${${VAR_NAME}_LIBRARY}")
+        endif()
+
+        if(DEFINED _fpl_INTERFACE_LIBS)
+            set_property(
+                TARGET ${TARGET} APPEND PROPERTY
+                INTERFACE_LINK_LIBRARIES ${_fpl_INTERFACE_LIBS}
+            )
+        endif()
+    endif()
+
+    unset(TARGET)
+    unset(VAR_NAME)
+    unset(_SUFFIX_UPPER)
+endmacro()
+
+_find_physx_library(Common)
+_find_physx_library(Physics INTERFACE_LIBS ${CMAKE_DL_LIBS})
+_find_physx_library(Foundation FOUNDATION_INCLUDE)
+_find_physx_library(Cooking)
+_find_physx_library(Extensions)
+_find_physx_library(Character)
+_find_physx_library(PVD)
+
 find_package_handle_standard_args(PhysX
                                   REQUIRED_VARS PHYSX_COMMON_LIBRARY
                                                 PHYSX_PHYSICS_LIBRARY
@@ -169,6 +223,15 @@ find_package_handle_standard_args(PhysX
                                                 PHYSX_FOUNDATION_INCLUDE_DIR
                                   REASON_FAILURE_MESSAGE "Be sure that PhysX 4.1 is available."
 )
+
+if(PhysX_FOUND AND NOT TARGET PhysX::PhysX)
+    add_library(PhysX::PhysX INTERFACE IMPORTED)
+    set_property(
+        TARGET PhysX::PhysX APPEND PROPERTY
+        INTERFACE_LINK_LIBRARIES PhysX::Character PhysX::Extensions PhysX::Physics
+                                 PhysX::PVD PhysX::Cooking PhysX::Common PhysX::Foundation
+    )
+endif()
 
 set(PHYSX_LIBRARIES
     ${PHYSX_CHARACTER_LIBRARY}
@@ -184,4 +247,3 @@ set(PHYSX_INCLUDE_DIRS
     ${PHYSX_INCLUDE_DIR}
     ${PHYSX_FOUNDATION_INCLUDE_DIR}
 )
-
