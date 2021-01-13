@@ -21,12 +21,16 @@ if(NOT TARGET OpenAL::OpenAL)
     endif()
 endif()
 
-# Upstream neglects to do this -- vcpkg masks it for us, but you are in trouble if you are
-# not using the vcpkg toolchain.
+# Vcpkg helpfully maps RelWithDebInfo and MinSizeRel for us. If we're not using the toolchain,
+# though, we need to do that manually. But only if a Release configuration of OpenAL is available,
+# otherwise we may simply break the whole target.
 if(TARGET OpenAL::OpenAL)
-    set_target_properties(
-        OpenAL::OpenAL PROPERTIES
-        MAP_IMPORTED_CONFIG_MINSIZEREL Release
-        MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-    )
+    get_target_property(_IMPORTED_CONFIGS OpenAL::OpenAL IMPORTED_CONFIGURATIONS)
+    if("RELEASE" IN_LIST _IMPORTED_CONFIGS)
+        set_target_properties(
+            OpenAL::OpenAL PROPERTIES
+            MAP_IMPORTED_CONFIG_MINSIZEREL Release
+            MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+        )
+    endif()
 endif()

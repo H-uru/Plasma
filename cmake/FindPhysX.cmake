@@ -156,11 +156,6 @@ macro(_find_physx_library SUFFIX)
 
     if(${VAR_NAME}_LIBRARY AND NOT TARGET ${TARGET})
         add_library(${TARGET} UNKNOWN IMPORTED)
-        set_target_properties(
-            ${TARGET} PROPERTIES
-            MAP_IMPORTED_CONFIG_MINSIZEREL Release
-            MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-        )
 
         if(DEFINED _fpl_FOUNDATION_INCLUDE AND EXISTS "${PHYSX_FOUNDATION_INCLUDE_DIR}")
             set_property(
@@ -168,11 +163,14 @@ macro(_find_physx_library SUFFIX)
                 INTERFACE_INCLUDE_DIRECTORIES ${PHYSX_FOUNDATION_INCLUDE_DIR}
             )
         endif()
+
         if(EXISTS "${PHYSX_INCLUDE_DIR}")
             set_property(
                 TARGET ${TARGET} APPEND PROPERTY
                 INTERFACE_INCLUDE_DIRECTORIES ${PHYSX_INCLUDE_DIR}
             )
+        else()
+            message(FATAL_ERROR "PhysX include directory missing: ${PHYSX_INCLUDE_DIR}")
         endif()
 
         if(EXISTS "${${VAR_NAME}_LIBRARY_DEBUG}" AND EXISTS "${${VAR_NAME}_LIBRARY_RELEASE}")
@@ -180,12 +178,16 @@ macro(_find_physx_library SUFFIX)
                 ${TARGET} PROPERTIES
                 IMPORTED_LOCATION_DEBUG ${${VAR_NAME}_LIBRARY_DEBUG}
                 IMPORTED_LOCATION_RELEASE ${${VAR_NAME}_LIBRARY_RELEASE}
+                MAP_IMPORTED_CONFIG_MINSIZEREL Release
+                MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
             )
         elseif(EXISTS "${${VAR_NAME}_LIBRARY}")
             set_target_properties(
                 ${TARGET} PROPERTIES
                 IMPORTED_LOCATION ${${VAR_NAME}_LIBRARY}
             )
+        else()
+            message(FATAL_ERROR "PhysX ${SUFFIX} library missing: ${${VAR_NAME}_LIBRARY}")
         endif()
 
         if(DEFINED _fpl_INTERFACE_LIBS)

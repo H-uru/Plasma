@@ -1,7 +1,6 @@
 # Another mismatch... Upstream is freetype but CMake is Freetype::Freetype
 find_package(freetype CONFIG QUIET)
 
-
 if(NOT TARGET freetype)
     unset(CMAKE_MODULE_PATH)
     find_package(Freetype MODULE)
@@ -11,7 +10,7 @@ if(NOT TARGET freetype)
         if(NOT TARGET freetype)
             add_library(freetype ALIAS Freetype::Freetype)
         endif()
-    elseif(Freetype_FIND_REQUIRED)
+    elseif(freetype_FIND_REQUIRED)
         message(FATAL_ERROR "Could NOT find freetype")
     endif()
 endif()
