@@ -175,7 +175,7 @@ void plPXPhysical::ISanityCheckBounds()
     case plSimDefs::kProxyBounds:
     case plSimDefs::kExplicitBounds:
         if (IsDynamic()) {
-            plSimulationMgr::LogYellow("WARNING: '{}' is a dyanmic triangle mesh; this is not "
+            plSimulationMgr::LogYellow("WARNING: '{}' is a dynamic triangle mesh; this is not "
                                        "supported in PhysX 4... forcing to convex hull, sorry.",
                                        GetKeyName());
             fBounds = plSimDefs::kHullBounds;
