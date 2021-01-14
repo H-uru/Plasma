@@ -259,8 +259,8 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, unsetWrapping, UnsetWrapping)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawText, args)
 {
     short x, y;
-    char* text = nullptr;
-    if (!PyArg_ParseTuple(args, "hhet", &x, &y, "utf8", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "hhO&", &x, &y, PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "drawText expects two short ints and a string");
         PYTHON_RETURN_ERROR;
@@ -322,8 +322,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptDynamicMap, getHeight)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, calcTextExtents, args)
 {
-    char* text = nullptr;
-    if (!PyArg_ParseTuple(args, "et", "utf8", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "calcTextExtents expects a string");
         PYTHON_RETURN_ERROR;
