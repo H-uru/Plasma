@@ -73,9 +73,6 @@ unsigned StrPrintf (wchar_t * dest, unsigned count, const wchar_t format[], ...)
 unsigned StrPrintfV (char * dest, unsigned count, const char format[], va_list args);
 unsigned StrPrintfV (wchar_t * dest, unsigned count, const wchar_t format[], va_list args);
 
-unsigned StrLen (const char str[]);
-unsigned StrLen (const wchar_t str[]);
-
 char * StrDup (const char str[]);
 wchar_t * StrDup (const wchar_t str[]);
 

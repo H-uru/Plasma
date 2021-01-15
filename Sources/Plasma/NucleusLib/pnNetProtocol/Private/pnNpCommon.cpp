@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #include "pnUUID/pnUUID.h"
 
-
+#include <string>
 
 namespace pnNpCommon {
 
@@ -122,7 +122,7 @@ inline void IWriteArray (const T buf[], unsigned elems, TArray<uint8_t> * buffer
 //============================================================================
 template <typename T>
 inline void IWriteString (const T str[], TArray<uint8_t> * buffer) {
-    IWriteArray(str, StrLen(str) + 1, buffer);
+    IWriteArray(str, std::char_traits<T>::length(str) + 1, buffer);
 }
 
 

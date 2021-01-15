@@ -356,7 +356,7 @@ static void BufferedSendData (
             case kNetMsgFieldString: {
                 // Use less-than instead of less-or-equal because
                 // we reserve one space for the NULL terminator
-                const uint16_t length = (uint16_t) StrLen((const wchar_t *) *msg);
+                const uint16_t length = (uint16_t) wcslen((const wchar_t *) *msg);
                 ASSERT_MSG_VALID(length < cmd->count);
                 // Write actual string length
                 uint16_t size = hsToLE16(length);

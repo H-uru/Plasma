@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnUtStr.h"
 
+#include <string>
 
 /*****************************************************************************
 *
@@ -69,14 +70,6 @@ static uint32_t s_hashValue[] = {
 *   Internal functions
 *
 ***/
-//===========================================================================
-template<class chartype>
-static unsigned IStrLen (const chartype str[]) {
-    unsigned chars = 0;
-    for (; *str++; ++chars)
-        NULL_STMT;
-    return chars;
-}
 
 //===========================================================================
 template<class chartype>
@@ -92,7 +85,7 @@ static void IStrCopy (chartype * dest, const chartype source[], unsigned chars) 
 //===========================================================================
 template<class chartype>
 static chartype * IStrDup (const chartype str[]) {
-    unsigned chars = IStrLen(str) + 1;
+    size_t chars = std::char_traits<chartype>::length(str) + 1;
     chartype * buffer = (chartype *)malloc(chars * sizeof(chartype));
     IStrCopy(buffer, str, chars);
     return buffer;
@@ -245,16 +238,6 @@ void StrCopy (char * dest, const char source[], unsigned chars) {
 //===========================================================================
 void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars) {
     IStrCopy(dest, source, chars);
-}
-
-//===========================================================================
-unsigned StrLen (const char str[]) {
-    return IStrLen(str);
-}
-
-//===========================================================================
-unsigned StrLen (const wchar_t str[]) {
-    return IStrLen(str);
 }
 
 //===========================================================================
