@@ -68,7 +68,7 @@ Currently, compilation only targets Windows systems and requires Visual Studio
 6. Select **x86-Release** in the window that pops up.
 7. Compile the client by using **Build > Install Plasma** from the Visual
    Studio menu bar.
-8. The client will be built and installed into the *out\install\x86-Release*
+8. The client will be built and installed into the `out\install\x86-Release`
    subfolder of where you cloned the repository. This will be referred to as
    the *MOUL-OS* folder.
 
