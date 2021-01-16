@@ -2,10 +2,10 @@
 # unless you're doing something really special. Note that GitHub's package server requires an
 # access token with scope package:read for this to work... To make matters worse, if GitHub sees
 # the token in-repo, it will automatically revoke it... Grrr...
-set(_NUGET_SOURCE "https://nuget.pkg.github.com/Hoikas/index.json")
-set(_NUGET_OWNER "Hoikas")
+set(_NUGET_SOURCE "https://nuget.pkg.github.com/H-uru/index.json")
+set(_NUGET_OWNER "H-uruMachineUser")
 # Python: print(*(ord(i) for i in token), sep=";")
-set(_NUGET_TOKEN_ASCII 55;50;102;97;56;51;57;98;52;50;56;99;97;99;98;97;99;57;53;99;50;98;48;50;49;98;56;56;57;102;53;54;102;55;57;101;48;51;52;99)
+set(_NUGET_TOKEN_ASCII 99;48;53;54;49;55;52;54;102;48;52;101;101;50;55;102;56;52;57;102;100;97;52;100;100;100;54;50;55;102;101;50;100;101;102;57;100;57;97;57)
 string(ASCII ${_NUGET_TOKEN_ASCII} _NUGET_TOKEN)
 
 # You're not crazy. This is so we can read from the main package source and write to another one.
