@@ -125,62 +125,6 @@ inline void IWriteString (const T str[], TArray<uint8_t> * buffer) {
     IWriteArray(str, StrLen(str) + 1, buffer);
 }
 
-//============================================================================
-template <typename T>
-inline bool ICompareValue (const T & lhs, const T & rhs) {
-    return lhs == rhs;
-}
-
-//============================================================================
-template <typename T>
-inline bool ICompareString (const T lhs[], const T rhs[]) {
-    if (!lhs && !rhs)
-        return true;
-    if (!lhs || !rhs)
-        return false;
-    return 0 == StrCmp(lhs, rhs);
-}
-
-//============================================================================
-template <typename T>
-inline bool ICompareStringI (const T lhs[], const T rhs[]) {
-    if (!lhs && !rhs)
-        return true;
-    if (!lhs || !rhs)
-        return false;
-    return 0 == StrCmpI(lhs, rhs);
-}
-
-//============================================================================
-static inline bool ICompareArray (const uint8_t lhs[], const uint8_t rhs[]) {
-    return false;
-}
-
-//============================================================================
-template <typename T>
-inline void ICopyValue (T * plhs, const T & rhs) {
-    *plhs = rhs;
-}
-
-//============================================================================
-template <typename T>
-inline void ICopyString (T ** plhs, const T rhs[]) {
-    free(*plhs);
-    if (rhs)
-        *plhs = StrDup(rhs);
-    else
-        *plhs = StrDup("");
-}
-
-//============================================================================
-static inline void ICopyString (wchar_t ** plhs, const wchar_t rhs[]) {
-    free(*plhs);
-    if (rhs)
-        *plhs = StrDup(rhs);
-    else
-        *plhs = StrDup(L"");
-}
-
 
 } using namespace pnNpCommon;
 
