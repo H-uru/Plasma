@@ -67,12 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 inline char  CharLowerFast (char  ch) { return ((ch >=  'A') && (ch <=  'Z')) ? (char )(ch +  'a' -  'A') : ch; }
 inline wchar_t CharLowerFast (wchar_t ch) { return ((ch >= L'A') && (ch <= L'Z')) ? (wchar_t)(ch + L'a' - L'A') : ch; }
 
-unsigned StrPrintf (char * dest, unsigned count, const char format[], ...);
-unsigned StrPrintf (wchar_t * dest, unsigned count, const wchar_t format[], ...);
-
-unsigned StrPrintfV (char * dest, unsigned count, const char format[], va_list args);
-unsigned StrPrintfV (wchar_t * dest, unsigned count, const wchar_t format[], va_list args);
-
 char * StrDup (const char str[]);
 wchar_t * StrDup (const wchar_t str[]);
 

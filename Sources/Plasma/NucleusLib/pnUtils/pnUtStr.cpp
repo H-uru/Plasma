@@ -93,20 +93,6 @@ static chartype * IStrDup (const chartype str[]) {
 
 
 //===========================================================================
-template<typename chartype>
-static unsigned IStrPrintfValidate (chartype * dest, unsigned count, int result) {
-    if (!count)
-        return 0;
-    ASSERT(result <= (int)count);
-    if ((result < 0) || (result == (int)count)) {
-        dest[count - 1] = 0;
-        return count - 1;
-    }
-    else
-        return (unsigned)result;
-}
-
-//===========================================================================
 template<class chartype>
 static int IStrCmp (const chartype str1[], const chartype str2[], unsigned chars) {
     for (; chars--; ++str1, ++str2) {
@@ -178,36 +164,6 @@ char * StrDup (const char str[]) {
 //===========================================================================
 wchar_t * StrDup (const wchar_t str[]) {
     return IStrDup(str);
-}
-
-//===========================================================================
-unsigned StrPrintf (char * dest, unsigned count, const char format[], ...) {
-    va_list argList;
-    va_start(argList, format);
-    int result = hsVsnprintf((char *)dest, count, (const char *)format, argList);
-    va_end(argList);
-    return IStrPrintfValidate(dest, count, result);
-}
-
-//===========================================================================
-unsigned StrPrintf (wchar_t * dest, unsigned count, const wchar_t format[], ...) {
-    va_list argList;
-    va_start(argList, format);
-    int result = hsVsnwprintf(dest, count, format, argList);
-    va_end(argList);
-    return IStrPrintfValidate(dest, count, result);
-}
-
-//===========================================================================
-unsigned StrPrintfV (char * dest, unsigned count, const char format[], va_list args) {
-    int result = hsVsnprintf(dest, count, format, args);
-    return IStrPrintfValidate(dest, count, result);
-}
-
-//===========================================================================
-unsigned StrPrintfV (wchar_t * dest, unsigned count, const wchar_t format[], va_list args) {
-    int result = hsVsnwprintf(dest, count, format, args);
-    return IStrPrintfValidate(dest, count, result);
 }
 
 //===========================================================================
