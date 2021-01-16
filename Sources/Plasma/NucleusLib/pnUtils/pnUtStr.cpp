@@ -71,6 +71,9 @@ static uint32_t s_hashValue[] = {
 *
 ***/
 
+inline char  CharLowerFast (char  ch) { return ((ch >=  'A') && (ch <=  'Z')) ? (char )(ch +  'a' -  'A') : ch; }
+inline wchar_t CharLowerFast (wchar_t ch) { return ((ch >= L'A') && (ch <= L'Z')) ? (wchar_t)(ch + L'a' - L'A') : ch; }
+
 //===========================================================================
 template<class chartype>
 static void IStrCopy (chartype * dest, const chartype source[], unsigned chars) {
