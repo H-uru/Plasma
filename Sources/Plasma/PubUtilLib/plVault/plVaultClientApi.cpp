@@ -3751,9 +3751,7 @@ hsRef<RelVaultNode> VaultAgeGetDeviceInbox (const ST::string& deviceName) {
 
     if (it != s_ageDeviceInboxes.end()) {
         hsRef<RelVaultNode> parentNode;
-        const wchar_t * inboxName = nil;
 
-        //if (StrCmp(devInbox->inboxName, DEFAULT_DEVICE_INBOX) == 0) {
         if (it->second == DEFAULT_DEVICE_INBOX)
             parentNode = VaultAgeGetDevice(deviceName);
         else
