@@ -419,7 +419,7 @@ static void FetchRefOwners (
             if (unsigned ownerId = refs[i].ownerId)
                 ownerIds.Add(ownerId);
     }
-    QSORT(unsigned, ownerIds.Ptr(), ownerIds.Count(), elem1 < elem2);
+    std::sort(ownerIds.Ptr(), ownerIds.Term());
     NetVaultNode templateNode;
     templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
     {   unsigned prevId = 0;
@@ -462,7 +462,7 @@ static void FetchNodesFromRefs (
     TArray<unsigned> nodeIds;
     nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
     nodeIds.Add(existingNodeIds.Ptr(), existingNodeIds.Count());
-    QSORT(unsigned, nodeIds.Ptr(), nodeIds.Count(), elem1 < elem2);
+    std::sort(nodeIds.Ptr(), nodeIds.Term());
 
     // Fetch the nodes that do not yet have a nodetype
     unsigned prevId = 0;
@@ -608,7 +608,7 @@ static void VaultNodeAdded (
     TArray<unsigned> nodeIds;
     nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
     nodeIds.Add(existingNodeIds.Ptr(), existingNodeIds.Count());
-    QSORT(unsigned, nodeIds.Ptr(), nodeIds.Count(), elem1 < elem2);
+    std::sort(nodeIds.Ptr(), nodeIds.Term());
 
     // Fetch the nodes that do not yet have a nodetype
     unsigned prevId = 0;

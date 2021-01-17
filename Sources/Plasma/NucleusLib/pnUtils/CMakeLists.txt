@@ -8,7 +8,6 @@ set(pnUtils_HEADERS
     pnUtHash.h
     pnUtList.h
     pnUtPriQ.h
-    pnUtSort.h
     pnUtStr.h
     pnUtTime.h
 )
