@@ -337,14 +337,9 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 
 #if HS_BUILD_FOR_WIN32
      // This is for Windows
-#    define hsVsnprintf     _vsnprintf
-#    define hsVsnwprintf    _vsnwprintf
-#    define hsSnprintf      _snprintf
-#    define hsSnwprintf     _snwprintf
-
 #    define snprintf        _snprintf
-#    define snwprintf       _snwprintf
 #    define swprintf        _snwprintf
+#    define vsnprintf       _vsnprintf
 
 #    ifndef fileno
 #        define fileno(__F)       _fileno(__F)
@@ -353,11 +348,6 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 #   define hsWFopen(name, mode)     _wfopen(name, mode)
 #else
      // This is for Unix, Linux, OSX, etc.
-#    define hsVsnprintf     vsnprintf
-#    define hsVsnwprintf    vswprintf
-#    define hsSnprintf      snprintf
-#    define hsSnwprintf     swprintf
-
 #   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
 
 #   include <limits.h>

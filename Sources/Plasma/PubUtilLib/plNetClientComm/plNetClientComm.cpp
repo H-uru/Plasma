@@ -167,17 +167,13 @@ static void INetErrorCallback (
     switch (error)
     {
     case kNetErrKickedByCCR:
-        StrPrintf(
-            msg->str,
-            std::size(msg->str),
-            "You have been kicked by a CCR."
-        );
+        strncpy(msg->str, "You have been kicked by a CCR.", std::size(msg->str));
         break;
 
     default:
         // Until we get some real error handling, this'll ensure no errors
         // fall thru the cracks and we hang forever wondering what's up.
-        StrPrintf(
+        snprintf(
             // buf
             msg->str,
             std::size(msg->str),
@@ -185,7 +181,7 @@ static void INetErrorCallback (
             "Network error %u, %S.\n"
             "protocol: %S\n"
             ,// values
-            error,
+            static_cast<unsigned>(error),
             NetErrorToString(error),
             NetProtocolToString(protocol)
         );

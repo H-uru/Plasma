@@ -3550,7 +3550,7 @@ bool FileListRequestTrans::Recv (
             StrCopy(filename, curChar, std::size(filename));
             filename[std::size(filename) - 1] = L'\0'; // make sure it's terminated
 
-            unsigned filenameLen = StrLen(filename);
+            unsigned filenameLen = wcslen(filename);
             curChar += filenameLen; // advance the pointer
             wchar_tCount -= filenameLen; // keep track of the amount remaining
             if ((*curChar != L'\0') || (wchar_tCount <= 0))
