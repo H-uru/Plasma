@@ -73,7 +73,7 @@ protected:
     
     int32_t                           fRoot;
 
-    hsLargeArray<plDistNode>        fNodes;
+    hsTArray<plDistNode>            fNodes;
 
     int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
 

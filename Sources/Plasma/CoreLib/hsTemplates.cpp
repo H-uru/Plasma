@@ -168,65 +168,11 @@ void TArrayStats()
 
 }
 
-void LargeArrayStats()
-{
-
-    char    *GetTypeName();
-    char    *GetSizeOf();
-
-    hsDlistNode * pNode = hsDlistNode::fpFirst;
-    char fnm[512];
-    snprintf(fnm, std::size(fnm), "Reports\\%s.txt", "TArray");
-    FILE * DumpLogFile = fopen( fnm, "w" );
-    if (!DumpLogFile) return;
-    int i=0;
-    int totWaste=0;
-    int totUse =0;
-    fprintf(DumpLogFile,"TArray Stats, Total Created: %d,  Currently Used %d\n-----------------------\n", hsDlistNode::fcreated , hsDlistNode::fcreated - hsDlistNode::fdestroyed);
-    int notUsed =0;
-    int used = 0;
-    int totCount=0;
-    while (pNode)
-    {
-        i++;
-        if (pNode->fpThing)
-        {
-            if (((hsLargeArrayBase *)(pNode->fpThing))->fTotalCount)
-            {
-                used++;
-                totCount += ((hsLargeArrayBase *)(pNode->fpThing))->fUseCount;
-                int siz = ((hsLargeArrayBase *)(pNode->fpThing))->GetSizeOf();
-                int use = ((hsLargeArrayBase *)(pNode->fpThing))->fUseCount;
-                int tot = ((hsLargeArrayBase *)(pNode->fpThing))->fTotalCount;
-                
-                int waste =0;
-
-                waste = (tot - use) * siz;
-                totUse += (use * siz);
-                totWaste += waste;
-                fprintf(DumpLogFile,"[%d] SizeObject %d, Uses %d, Allocs %d, Waste %d\n", i, siz, use, tot, waste);
-            }
-            else
-                notUsed++;
-
-        }
-        pNode = pNode->GetNext();
-//      if (pNode ==hsDlistNode::fpFirst) // dont loop
-    }
-    fprintf(DumpLogFile,"TOTAL use %d,   waste %d\n", totUse,totWaste);
-    fprintf(DumpLogFile,"Empty Ones %d,   waste %d\n", notUsed, notUsed * 12 ); // 12 aprox size of TArray
-    if (used)
-        fprintf(DumpLogFile,"Average Use %d\n", totCount / used);
-
-    fclose(DumpLogFile);
-
-}
-
 char * hsTArrayBase::GetTypeName() { return ""; }
 
 int   hsTArrayBase::GetSizeOf() { return 0; }
 
-hsTArrayBase::hsTArrayBase():fUseCount(0), fTotalCount(0)
+hsTArrayBase::hsTArrayBase() : fUseCount(), fTotalCount()
 {
     self = new hsDlistNode(this);
 }
@@ -241,41 +187,19 @@ hsTArrayBase::~hsTArrayBase()
         RemoveNode(this);           // Self got clobbered find it the hard way
 }
 
-char * hsLargeArrayBase::GetTypeName() { return ""; }
-
-int   hsLargeArrayBase::GetSizeOf() { return 0; }
-
-hsLargeArrayBase::hsLargeArrayBase():fUseCount(0), fTotalCount(0)
-{
-    self = new hsDlistNode(this);
-}
-
-hsLargeArrayBase::~hsLargeArrayBase()
-{
-    if (self)
-    {   self->RemoveNode();
-        delete self;
-    }
-    else
-        RemoveNode(this);           // Self got clobbered find it the hard way
-}
-
 #else
 
 void TArrayStats() {}
-void LargeArrayStats() {}
 
 #endif //HS_DEBUGTARRAY
 
 
 
-void hsTArrayBase::GrowArraySize(uint16_t newCount)
+void hsTArrayBase::GrowArraySize(uint32_t newCount)
 {
 #if 1   
     if (newCount < 8)
         fTotalCount = newCount; // Hey its small don't loose sleep over the copy time
-    else if( newCount & 0x8000 ) // Hey, its huge, give it half way to maxed out
-        fTotalCount = newCount + ((0xffff - newCount) >> 1);
     else
         fTotalCount = newCount + (newCount /2); // Give it Half again as much
 #endif
@@ -287,17 +211,4 @@ void hsTArrayBase::GrowArraySize(uint16_t newCount)
 
 #endif
 }
-
-void hsLargeArrayBase::GrowArraySize(uint32_t newCount)
-{
-#if 1   
-    if (newCount < 8)
-        fTotalCount = newCount; // Hey its small don't loose sleep over the copy time
-    else
-        fTotalCount = newCount + (newCount >> 1);   // Give it Half again as much
-#endif
-
-}
-
-
 

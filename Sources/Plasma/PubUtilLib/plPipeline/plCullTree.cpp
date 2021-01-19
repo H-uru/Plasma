@@ -210,7 +210,7 @@ plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, float ra
 }
 
 // For this Cull Node, recur down the space hierarchy pruning out who to test for the next Cull Node.
-plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsLargeArray<int16_t>& clear, hsLargeArray<int16_t>& split, hsLargeArray<int16_t>& culled) const
+plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsTArray<int16_t>& clear, hsTArray<int16_t>& split, hsTArray<int16_t>& culled) const
 {
     if( space->IsDisabled(who) || (space->GetNode(who).fWorldBounds.GetType() != kBoundsNormal) )
     {
