@@ -194,7 +194,7 @@ void hsGMaterial::InsertLayer(plLayerInterface* layer, int32_t which, bool piggy
 {
     hsTArray<plLayerInterface*>& layers = piggyBack ? fPiggyBacks : fLayers;
     hsAssert(which <= layers.GetCount(), "Material layers Exceeding test depth");
-    layers.InsertAtIndex(which, layer);
+    layers.Insert(which, layer);
 }
 
 void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, bool insert, bool piggyBack)

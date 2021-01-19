@@ -319,7 +319,6 @@ public:
     void    Push(const T& item) {   DirtyIfNecessary(); return fValueList.Push(item);   }
     T   Pop()   {   DirtyIfNecessary(); return fValueList.Pop();    }
     const T&    Peek() const { return fValue.Peek(); }
-    T*      DetachArray()   {   DirtyIfNecessary(); return fValueList.DetachArray();    }
     T*      AcquireArray()  {   DirtyIfNecessary(); return fValueList.AcquireArray();   }
 };
 

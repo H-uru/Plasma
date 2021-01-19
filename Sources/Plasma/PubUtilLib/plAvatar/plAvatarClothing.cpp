@@ -1874,7 +1874,7 @@ void plClothingMgr::IAddItem(plClothingItem *item)
             if (fItems[i]->fSortOrder >= item->fSortOrder)
                 break;
         }
-        fItems.InsertAtIndex(i, item);
+        fItems.Insert(i, item);
     }
     else
         hsAssert(false, "Couldn't match all elements of added clothing item.");

@@ -144,9 +144,6 @@ public:
     const T&    Get(int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
     T&      operator[](int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
 
-    T*      FirstIter() { return &fArray[0]; }
-    T*      StopIter() { return &fArray[fUseCount]; }
-
     int     Count() const { return fUseCount; }
     int     GetCount() const { return fUseCount; }
     inline void SetCount(int count);
@@ -177,8 +174,6 @@ public:
                     hsTArray_CopyForward(item, &fArray[index], count);
                 }
             }
-    // This guy is a duplicate for compatibility with the older hsDynamicArray<>
-    void        InsertAtIndex(int index, const T& item) { this->Insert(index, item); }
 
     void        Remove(int index)
             {
@@ -216,17 +211,7 @@ public:
         kMissingIndex    = -1
     };
     int     Find(const T& item) const;  // returns kMissingIndex if not found
-    inline T*   ForEach(int32_t (*proc)(T&));
-    inline T*   ForEach(int32_t (*proc)(T&, void* p1), void* p1);
-    inline T*   ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 
-    T*      DetachArray()
-            {
-                T* array = fArray;
-                fUseCount = fTotalCount = 0;
-                fArray = nil;
-                return array;
-            }
     T*      AcquireArray() { return fArray; }
 };
 
@@ -445,30 +430,6 @@ template <class T> void hsTArray<T>::DecCount(int index, int count)
     {   hsTArray_CopyForward(&fArray[index + count], &fArray[index], fUseCount - index - count);
         fUseCount -= count;
     }
-}
-
-template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&))
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i]))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void* p1)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i], p1))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i], p1, p2))
-            return &fArray[i];
-    return nil;
 }
 
 #endif
