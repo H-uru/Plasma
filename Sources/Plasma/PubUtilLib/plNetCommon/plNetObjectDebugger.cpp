@@ -179,9 +179,7 @@ bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageNa
     if (!objName)
         return false;
 
-    int size=strlen(objName)+1;
-    hsTempArray<char> tmpObjName(size);
-    memset(tmpObjName, 0, size);
+    std::string tmpObjName(strlen(objName), char(0));
 
     //
     // set string matching flags
@@ -193,25 +191,25 @@ bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageNa
         if (objName[len-1]=='*')
         {
             flags = kSubStringMatch;    // *foo*
-            strncpy(tmpObjName, objName+1, strlen(objName)-2);
+            strncpy(tmpObjName.data(), objName+1, strlen(objName)-2);
         }
         else
         {
             flags = kEndStringMatch;    // *foo
-            strncpy(tmpObjName, objName+1, strlen(objName)-1);
+            strncpy(tmpObjName.data(), objName+1, strlen(objName)-1);
         }
     }
 
     if (!flags && objName[len-1]=='*')
     {
         flags = kStartStringMatch;      // foo*
-        strncpy(tmpObjName, objName, strlen(objName)-1);
+        strncpy(tmpObjName.data(), objName, strlen(objName)-1);
     }
 
     if (!flags)
     {
         flags = kExactStringMatch;
-        strcpy(tmpObjName, objName);
+        strcpy(tmpObjName.data(), objName);
     }
 
     //
@@ -224,7 +222,7 @@ bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageNa
         flags |= kPageMatch;
     }
 
-    fDebugObjects.push_back(new DebugObject(tmpObjName, loc, flags));
+    fDebugObjects.push_back(new DebugObject(tmpObjName.c_str(), loc, flags));
 
     ICreateStatusLog();
 

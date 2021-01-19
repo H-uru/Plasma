@@ -76,91 +76,6 @@ public:
 
 #endif  
 
-// Use this for a pointer to a single object of class T allocated with new
-template <class T> class hsTempObject {
-    T*  fObject;
-public:
-    hsTempObject(): fObject(nil){}
-    hsTempObject(T* p) : fObject(p) {}
-    hsTempObject(const hsTempObject & that)
-    {*this=that;}
-    ~hsTempObject() { delete fObject; }
-    hsTempObject & operator=(const hsTempObject & src)
-    {
-        if (fObject!=src.fObject)
-        {
-            delete fObject;
-            fObject=src.fObject;
-        }
-        return *this;
-    }
-    hsTempObject & operator=(T * ptr)
-    {
-        if (fObject!=ptr)
-        {
-            delete fObject;
-            fObject=ptr;
-        }
-        return *this;
-    }
-    operator T*() const { return fObject; }
-    operator T*&() { return fObject; }
-    operator const T&() const { return *fObject; }
-    operator bool() const { return fObject!=nil;}
-    T * operator->() const { return fObject; }
-    T * operator *() const { return fObject; }
-};
-
-// Use this for subclasses of hsRefCnt, where UnRef should be called at the end
-template <class T> class hsTempRef {
-    T*  fObject;
-public:
-        hsTempRef(T* object = nil) : fObject(object) {}
-        ~hsTempRef() { if (fObject) fObject->UnRef(); }
-
-        operator T*() const { return fObject; }
-    T*  operator->() const { return fObject; }
-    
-    T*  operator=(T* src) { hsRefCnt_SafeUnRef(fObject); fObject = src; return fObject; }
-};
-
-// Use this for an array of objects of class T allocated with new[]
-template <class T> class hsTempArray {
-    T*      fArray;
-    uint32_t  fCount;
-    hsTempArray<T>& operator=(const hsTempArray<T>&);
-public:
-    hsTempArray(long count) : fArray(new T[count]), fCount(count)
-    {
-    }
-    hsTempArray(long count, T initValue) : fArray(new T[count]), fCount(count)
-    {
-        for (int i = 0; i < count; i++)
-            fArray[i] = initValue;
-    }
-    hsTempArray(T* p) : fArray(p), fCount(1)
-    {
-    }
-    hsTempArray() : fArray(nil), fCount(0)
-    {
-    }
-    ~hsTempArray()
-    {
-        delete[] fArray;
-    }
-
-    operator T*() const { return fArray; }
-    T* GetArray() const { return fArray; }
-    void Accomodate(uint32_t count)
-    {
-        if (count > fCount)
-        {   delete[] fArray;
-            fCount = count;
-            fArray = new T[count];
-        }
-    }
-};
-
 //////////////////////////////////////////////////////////////////////////////
 
 template <class T> class hsDynamicArray {
@@ -199,20 +114,6 @@ public:
     T*            ForEach(int32_t (*proc)(T&, void* p1), void* p1);
     T*            ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 };
-
-// Use this for block of memory allocated with HSMemory::New()
-template <class T> class hsDynamicArrayAccess {
-    T*  fArray;
-    hsDynamicArray<T> *fArrayObj;
-    hsDynamicArrayAccess<T>& operator=(const hsDynamicArrayAccess<T>&);
-public:
-    hsDynamicArrayAccess(hsDynamicArray<T> *array) : fArrayObj(array) { fArray = array->AcquireArray();}
-    ~hsDynamicArrayAccess() { fArrayObj->ReleaseArray(fArray); }
-        
-        operator T*() const { return fArray; }
-    T*  operator->() const { return fArray; }
-};
-
 
 template <class T>
     hsDynamicArray<T>::hsDynamicArray(int32_t count)
