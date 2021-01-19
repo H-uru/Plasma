@@ -78,16 +78,6 @@ bool plUUID::IsNull() const
     return ( uuid_is_null( g )!=0 );
 }
 
-void plUUID::CopyFrom(const plUUID* v)
-{
-    memcpy((void*)fData, (const void*)v->fData, sizeof(fData));
-}
-
-void plUUID::CopyFrom(const plUUID& v)
-{
-    memcpy((void*)fData, (const void*)v.fData, sizeof(fData));
-}
-
 int plUUID::CompareTo( const plUUID * v ) const
 {
     uuid_t ga, gb;

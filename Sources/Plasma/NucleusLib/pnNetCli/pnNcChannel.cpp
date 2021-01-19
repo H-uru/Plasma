@@ -89,8 +89,8 @@ struct NetMsgChannel : hsRefCnt {
 
     // Message definitions
     uint32_t                m_largestRecv;
-    TArray<NetMsgInitSend>  m_sendMsgs;
-    TArray<NetMsgInitRecv>  m_recvMsgs;
+    std::vector<NetMsgInitSend>  m_sendMsgs;
+    std::vector<NetMsgInitRecv>  m_recvMsgs;
 
     // Diffie-Hellman constants
     uint32_t                m_dh_g;
@@ -216,7 +216,9 @@ static void AddSendMsgs_CS (
     const NetMsgInitSend    src[],
     unsigned                count
 ) {
-    channel->m_sendMsgs.GrowToFit(MaxMsgId(src, count), true);
+    const size_t reqSize = MaxMsgId(src, count) + 1;
+    if (channel->m_sendMsgs.size() < reqSize)
+        channel->m_sendMsgs.resize(reqSize);
 
     for (const NetMsgInitSend * term = src + count; src < term; ++src) {
         NetMsgInitSend * const dst = &channel->m_sendMsgs[src[0].msg->messageId];
@@ -235,7 +237,9 @@ static void AddRecvMsgs_CS (
     const NetMsgInitRecv    src[],
     unsigned                count
 ) {
-    channel->m_recvMsgs.GrowToFit(MaxMsgId(src, count), true);
+    const size_t reqSize = MaxMsgId(src, count) + 1;
+    if (channel->m_recvMsgs.size() < reqSize)
+        channel->m_recvMsgs.resize(reqSize);
 
     for (const NetMsgInitRecv * term = src + count; src < term; ++src) {
         ASSERT(src->recv);
@@ -327,7 +331,7 @@ const NetMsgInitRecv * NetMsgChannelFindRecvMessage (
     unsigned        messageId
 ) {
     // Is message in range?
-    if (messageId >= channel->m_recvMsgs.Count())
+    if (messageId >= channel->m_recvMsgs.size())
         return nil;
 
     // Is message defined?
@@ -345,7 +349,7 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
     unsigned        messageId
 ) {
     // Is message in range?
-    ASSERT(messageId < channel->m_sendMsgs.Count());
+    ASSERT(messageId < channel->m_sendMsgs.size());
 
     // Is message defined?
     const NetMsgInitSend * sendMsg = &channel->m_sendMsgs[messageId];

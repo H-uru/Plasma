@@ -105,23 +105,29 @@ inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-inline void IWriteValue (const T & value, TArray<uint8_t> * buffer) {
-    T * ptr = (T *) buffer->New(sizeof(T));
-    *ptr = value;
+inline void IWriteValue (const T & value, std::vector<uint8_t> * buffer) {
+    static_assert(std::is_trivially_copyable_v<T>,
+                  "IWriteValue can only be used on trivially copyable types");
+    const size_t endPos = buffer->size();
+    buffer->resize(endPos + sizeof(T));
+    memcpy(buffer->data() + endPos, &value, sizeof(T));
 }
 
 //============================================================================
 template <typename T>
-inline void IWriteArray (const T buf[], unsigned elems, TArray<uint8_t> * buffer) {
+inline void IWriteArray (const T buf[], unsigned elems, std::vector<uint8_t> * buffer) {
+    static_assert(std::is_trivially_copyable_v<T>,
+                  "IWriteArray can only be used on trivially copyable types");
     unsigned bytes = elems * sizeof(T);
     IWriteValue(bytes, buffer);
-    T * dst = (T *) buffer->New(bytes);
-    memcpy(dst, buf, bytes);
+    const size_t endPos = buffer->size();
+    buffer->resize(endPos + bytes);
+    memcpy(buffer->data() + endPos, buf, bytes);
 }
 
 //============================================================================
 template <typename T>
-inline void IWriteString (const T str[], TArray<uint8_t> * buffer) {
+inline void IWriteString (const T str[], std::vector<uint8_t> * buffer) {
     IWriteArray(str, std::char_traits<T>::length(str) + 1, buffer);
 }
 
@@ -160,9 +166,9 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
 }
 
 //============================================================================
-unsigned NetGameScore::Write(TArray<uint8_t> * buffer) const {
+unsigned NetGameScore::Write(std::vector<uint8_t> * buffer) const {
 
-    unsigned pos = buffer->Count();
+    const size_t pos = buffer->size();
 
     IWriteValue(scoreId, buffer);
     IWriteValue(ownerId, buffer);
@@ -171,7 +177,7 @@ unsigned NetGameScore::Write(TArray<uint8_t> * buffer) const {
     IWriteValue(value, buffer);
     IWriteString(gameName.to_wchar().data(), buffer);
 
-    return buffer->Count() - pos;
+    return buffer->size() - pos;
 }
 
 //============================================================================
@@ -212,15 +218,15 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
 }
 
 //============================================================================
-unsigned NetGameRank::Write(TArray<uint8_t> * buffer) const {
+unsigned NetGameRank::Write(std::vector<uint8_t> * buffer) const {
 
-    unsigned pos = buffer->Count();
+    const size_t pos = buffer->size();
 
     IWriteValue(rank, buffer);
     IWriteValue(score, buffer);
     IWriteString(name, buffer);
 
-    return buffer->Count() - pos;
+    return buffer->size() - pos;
 }
 
 //============================================================================
@@ -505,35 +511,40 @@ void NetVaultNode::Read(const uint8_t* buf, size_t size)
 
 //============================================================================
 template<typename T>
-inline void IWrite(TArray<uint8_t>* buffer, const T& value)
+inline void IWrite(std::vector<uint8_t>* buffer, const T& value)
 {
-    uint8_t* ptr = buffer->New(sizeof(T));
-    memcpy(ptr, &value, sizeof(T));
+    static_assert(std::is_trivially_copyable_v<T>,
+                  "IWrite can only be used on trivially copyable types");
+    const size_t oldSize = buffer->size();
+    buffer->resize(oldSize + sizeof(T));
+    memcpy(buffer->data() + oldSize, &value, sizeof(T));
 }
 
 template<>
-inline void IWrite<ST::string>(TArray<uint8_t>* buffer, const ST::string& value)
+inline void IWrite<ST::string>(std::vector<uint8_t>* buffer, const ST::string& value)
 {
     ST::utf16_buffer utf16 = value.to_utf16();
     uint32_t strsz = (utf16.size() + 1) * sizeof(char16_t);
     IWrite(buffer, strsz);
 
-    uint8_t* ptr = buffer->New(strsz);
-    memcpy(ptr, utf16.data(), strsz);
+    const size_t oldSize = buffer->size();
+    buffer->resize(oldSize + strsz);
+    memcpy(buffer->data() + oldSize, utf16.data(), strsz);
 }
 
 template<>
-inline void IWrite<NetVaultNode::Blob>(TArray<uint8_t>* buffer, const NetVaultNode::Blob& blob)
+inline void IWrite<NetVaultNode::Blob>(std::vector<uint8_t>* buffer, const NetVaultNode::Blob& blob)
 {
     IWrite(buffer, static_cast<uint32_t>(blob.size));
 
     if (blob.size > 0) {
-        uint8_t* ptr = buffer->New(blob.size);
-        memcpy(ptr, blob.buffer, blob.size);
+        const size_t oldSize = buffer->size();
+        buffer->resize(oldSize + blob.size);
+        memcpy(buffer->data() + oldSize, blob.buffer, blob.size);
     }
 }
 
-void NetVaultNode::Write(TArray<uint8_t>* buf, uint32_t ioFlags)
+void NetVaultNode::Write(std::vector<uint8_t>* buf, uint32_t ioFlags)
 {
     uint64_t flags = fUsedFields;
     if (ioFlags & kDirtyNodeType)

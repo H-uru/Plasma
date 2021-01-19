@@ -64,9 +64,9 @@ public:
     plUUID();
     plUUID(const char* s);
     plUUID(const ST::string& s);
-    plUUID(const plUUID& other);
+    plUUID(const plUUID&) = default;
 
-    plUUID& operator=(const plUUID& other);
+    plUUID& operator=(const plUUID&) = default;
 
     void     Clear();
     bool     IsNull() const;

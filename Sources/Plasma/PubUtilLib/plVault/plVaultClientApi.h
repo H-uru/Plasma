@@ -105,16 +105,16 @@ struct RelVaultNode : NetVaultNode {
     bool IsParentOf (unsigned nodeId, unsigned maxDepth);
     bool IsChildOf (unsigned nodeId, unsigned maxDepth);
     
-    void GetRootIds (TArray<unsigned> * nodeIds);
+    void GetRootIds (std::vector<unsigned> * nodeIds);
     
     unsigned RemoveChildNodes (unsigned maxDepth);  // returns # of nodes removed
 
     void GetChildNodeIds (
-        TArray<unsigned> *  nodeIds,
+        std::vector<unsigned> * nodeIds,
         unsigned            maxDepth
     );
     void GetParentNodeIds (
-        TArray<unsigned> *  nodeIds,
+        std::vector<unsigned> * nodeIds,
         unsigned            maxDepth
     );
 
@@ -286,11 +286,11 @@ void VaultFindNodes (
 );
 void VaultFindNodesAndWait (
     hsWeakRef<NetVaultNode> templateNode,
-    TArray<unsigned> *      nodeIds
+    std::vector<unsigned> * nodeIds
 );
 void VaultLocalFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
-    TArray<unsigned> *      nodeIds
+    std::vector<unsigned> * nodeIds
 );
 void VaultFetchNodesAndWait (   // Use VaultGetNode to access the fetched nodes
     const unsigned          nodeIds[],

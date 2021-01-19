@@ -834,7 +834,7 @@ static void HardCloseSocket (SOCKET sock) {
 
 //===========================================================================
 static unsigned SocketCloseTimerCallback (void *) {
-    TArray<SOCKET> sockets;
+    std::vector<SOCKET> sockets;
 
     unsigned sleepMs;
     unsigned currTimeMs = TimeGetMs();
@@ -863,7 +863,7 @@ static unsigned SocketCloseTimerCallback (void *) {
                 sock->handle = INVALID_HANDLE_VALUE;
             }
             if (handle != INVALID_HANDLE_VALUE)
-                sockets.Push((SOCKET) handle);
+                sockets.emplace_back((SOCKET) handle);
 
             // To avoid a race condition, this unlink must occur
             // after the socket handle has been cleared
@@ -872,10 +872,8 @@ static unsigned SocketCloseTimerCallback (void *) {
     }
 
     // Abortive close all open sockets; any unsent data is lost
-    SOCKET * cur = sockets.Ptr();
-    SOCKET * end = sockets.Term();
-    for (; cur < end; ++cur)
-        HardCloseSocket(*cur);
+    for (SOCKET cur : sockets)
+        HardCloseSocket(cur);
 
     // Don't run too frequently
     return std::max(sleepMs, 2000u);

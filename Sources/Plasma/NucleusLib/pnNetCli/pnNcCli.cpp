@@ -122,7 +122,7 @@ struct NetCli {
     NetMsgChannel *         channel;
     bool                    server;
 
-    // message queue    
+    // message queue
     LINK(NetCli)            link;
     NetCliQueue *           queue;
 
@@ -144,16 +144,14 @@ struct NetCli {
 
     // Message buffers
     uint8_t                    sendBuffer[kAsyncSocketBufferSize];
-    TArray<uint8_t>            recvBuffer;
+    std::vector<uint8_t>       recvBuffer;
 
     NetCli()
-        : sock(nil), protocol((ENetProtocol)0), channel(nil), server(false)
-        , queue(nil), recvMsg(nil), recvField(nil), recvFieldBytes(0)
-        , recvDispatch(false), sendCurr(nil), mode((ENetCliMode)0)
-        , encryptFcn(nil), cryptIn(nil), cryptOut(nil), encryptParam(nil)
+        : sock(), protocol(), channel(), server(), queue(), recvMsg()
+        , recvField(), recvFieldBytes(), recvDispatch(), sendCurr(), mode()
+        , encryptFcn(), seed(), cryptIn(), cryptOut(), encryptParam()
+        , sendBuffer()
     {
-        memset(seed, 0, sizeof(seed));
-        memset(sendBuffer, 0, sizeof(sendBuffer));
     }
 };
 
@@ -430,12 +428,15 @@ static bool DispatchData (NetCli * cli, void * param) {
             ASSERT(!cli->recvField);
             ASSERT(!cli->recvFieldBytes);
             cli->recvField = cli->recvMsg->msg->fields;
-            cli->recvBuffer.ZeroCount();
-            cli->recvBuffer.Reserve(kAsyncSocketBufferSize);
+            cli->recvBuffer.clear();
+            cli->recvBuffer.reserve(kAsyncSocketBufferSize);
 
             // store the message id as uint32_t into the destination buffer
-            uint32_t * recvMsgId = (uint32_t *) cli->recvBuffer.New(sizeof(uint32_t));
-            *recvMsgId = msgId;
+            cli->recvBuffer.insert(cli->recvBuffer.end(), {
+                (uint8_t)((msgId     ) & 0xFF),
+                (uint8_t)((msgId >> 8) & 0xFF),
+                0, 0
+            });
         }
 
         for (
@@ -452,9 +453,11 @@ static bool DispatchData (NetCli * cli, void * param) {
 
                     // Get integer values
                     const unsigned bytes = count * cli->recvField->size;
-                    uint8_t * data = cli->recvBuffer.New(bytes);
+                    const size_t oldSize = cli->recvBuffer.size();
+                    cli->recvBuffer.resize(oldSize + bytes);
+                    uint8_t * data = cli->recvBuffer.data() + oldSize;
                     if (!cli->input.Get(bytes, data)) {
-                        cli->recvBuffer.ShrinkBy(bytes);
+                        cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
                     }
 
@@ -482,9 +485,11 @@ static bool DispatchData (NetCli * cli, void * param) {
 
                     // Get float values
                     const unsigned bytes = count * cli->recvField->size;
-                    uint8_t * data = cli->recvBuffer.New(bytes);
+                    const size_t oldSize = cli->recvBuffer.size();
+                    cli->recvBuffer.resize(oldSize + bytes);
+                    uint8_t * data = cli->recvBuffer.data() + oldSize;
                     if (!cli->input.Get(bytes, data)) {
-                        cli->recvBuffer.ShrinkBy(bytes);
+                        cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
                     }
 
@@ -496,9 +501,11 @@ static bool DispatchData (NetCli * cli, void * param) {
                 case kNetMsgFieldRawData: {
                     // Read fixed-length data into destination buffer
                     const unsigned bytes = cli->recvField->count * cli->recvField->size;
-                    uint8_t * data = cli->recvBuffer.New(bytes);
+                    const size_t oldSize = cli->recvBuffer.size();
+                    cli->recvBuffer.resize(oldSize + bytes);
+                    uint8_t * data = cli->recvBuffer.data() + oldSize;
                     if (!cli->input.Get(bytes, data)) {
-                        cli->recvBuffer.ShrinkBy(bytes);
+                        cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
                     }
 
@@ -509,9 +516,11 @@ static bool DispatchData (NetCli * cli, void * param) {
                 case kNetMsgFieldVarCount: {
                     // Read var count field into destination buffer
                     const unsigned bytes = sizeof(uint32_t);
-                    uint8_t * data = cli->recvBuffer.New(bytes);
+                    const size_t oldSize = cli->recvBuffer.size();
+                    cli->recvBuffer.resize(oldSize + bytes);
+                    uint8_t * data = cli->recvBuffer.data() + oldSize;
                     if (!cli->input.Get(bytes, data)) {
-                        cli->recvBuffer.ShrinkBy(bytes);
+                        cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
                     }
 
@@ -529,9 +538,11 @@ static bool DispatchData (NetCli * cli, void * param) {
                 case kNetMsgFieldRawVarPtr: {
                     // Read var-length data into destination buffer
                     const unsigned bytes = cli->recvFieldBytes;
-                    uint8_t * data = cli->recvBuffer.New(bytes);
+                    const size_t oldSize = cli->recvBuffer.size();
+                    cli->recvBuffer.resize(oldSize + bytes);
+                    uint8_t * data = cli->recvBuffer.data() + oldSize;
                     if (!cli->input.Get(bytes, data)) {
-                        cli->recvBuffer.ShrinkBy(bytes);
+                        cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
                     }
 
@@ -554,10 +565,12 @@ static bool DispatchData (NetCli * cli, void * param) {
                     }
 
                     const unsigned bytes = cli->recvField->count * cli->recvField->size;
-                    uint8_t * data = cli->recvBuffer.New(bytes);
+                    const size_t oldSize = cli->recvBuffer.size();
+                    cli->recvBuffer.resize(oldSize + bytes);
+                    uint8_t * data = cli->recvBuffer.data() + oldSize;
                     // Read compressed string data (less than full field length)
                     if (!cli->input.Get(cli->recvFieldBytes, data)) {
-                        cli->recvBuffer.ShrinkBy(bytes);
+                        cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
                     }
 
@@ -575,7 +588,7 @@ static bool DispatchData (NetCli * cli, void * param) {
 
         // dispatch message to handler function
         NCCLI_LOG(kLogPerf, "pnNetCli: Dispatching. msg: {}. cli: {#x}", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", (uintptr_t)cli);
-        if (!cli->recvMsg->recv(cli->recvBuffer.Ptr(), cli->recvBuffer.Count(), param))
+        if (!cli->recvMsg->recv(cli->recvBuffer.data(), cli->recvBuffer.size(), param))
             goto ERR_DISPATCH_FAILED;
         
         // prepare to start next message
@@ -584,8 +597,8 @@ static bool DispatchData (NetCli * cli, void * param) {
         cli->recvFieldBytes = 0;
 
         // Release oversize message buffer
-        if (cli->recvBuffer.Count() > kAsyncSocketBufferSize)
-            cli->recvBuffer.Clear();
+        if (cli->recvBuffer.size() > kAsyncSocketBufferSize)
+            cli->recvBuffer.clear();
     }
 
     return true;
@@ -881,7 +894,7 @@ static void ResetSendRecv (NetCli * cli) {
     cli->recvFieldBytes     = 0;
     cli->recvDispatch       = true;
     cli->sendCurr           = cli->sendBuffer;
-    cli->recvBuffer.Clear();
+    cli->recvBuffer.clear();
     cli->input.Clear();
 }
 
@@ -1023,7 +1036,7 @@ void NetCliDelete (
         CryptKeyClose(cli->cryptOut);
 
     cli->input.Clear();
-    cli->recvBuffer.Clear();
+    cli->recvBuffer.clear();
 
     delete cli;
 }

@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTSTR_H
 
 #include "Pch.h"
-#include "pnUtArray.h"
 #include <wchar.h>
 
 

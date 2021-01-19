@@ -109,7 +109,7 @@ private:
     enum { LINK_OFFSET_UNINIT = 0xdddddddd };
 
     int m_linkOffset;
-    TArray<C *> m_array;
+    std::vector<C *> m_array;
 
     friend class TBasePriority<C,P>;
 };
@@ -141,13 +141,13 @@ inline void TPriorityQueue<C,P>::Clear () {
     while (C * head = Dequeue())
         delete head;
 
-    m_array.Clear();
+    m_array.clear();
 }
 
 //===========================================================================
 template<class C, class P>
 inline unsigned TPriorityQueue<C,P>::Count () const {
-    return m_array.Count();
+    return m_array.size();
 }
 
 //===========================================================================
@@ -173,9 +173,9 @@ C * TPriorityQueue<C,P>::Delete (C * object) {
 //===========================================================================
 template<class C, class P>
 C * TPriorityQueue<C,P>::Dequeue () {
-    if (!m_array.Count())
-        return nil;
-    C * value = m_array[0];
+    if (m_array.empty())
+        return nullptr;
+    C * value = m_array.front();
     Remove(0);
     return value;
 }
@@ -192,7 +192,8 @@ void TPriorityQueue<C,P>::Enqueue (C * object) {
     // already enqueued, we now simply assert that.
     ASSERT(!priority->IsLinked());
 
-    unsigned index  = m_array.Add(object);
+    unsigned index = m_array.size();
+    m_array.emplace_back(object);
     unsigned parent = IndexParent(index);
 
     // shift value toward root
@@ -243,7 +244,7 @@ inline P const * TPriorityQueue<C,P>::Priority (C const * object) const {
 //===========================================================================
 template<class C, class P>
 inline C * const * TPriorityQueue<C,P>::Ptr () const {
-    return m_array.Ptr();
+    return m_array.data();
 }
 
 //===========================================================================
@@ -254,10 +255,11 @@ void TPriorityQueue<C,P>::Remove (unsigned index) {
     Unlink(index);
 
     // save the terminal leaf node
-    C * value    = m_array.Pop();
+    C * value    = m_array.back();
+    m_array.pop_back();
     P * priority = Priority(value);
 
-    const unsigned count = m_array.Count();
+    const size_t count = m_array.size();
     if (count == index)
         return;
 
@@ -304,7 +306,7 @@ void TPriorityQueue<C,P>::Remove (unsigned index) {
 //===========================================================================
 template<class C, class P>
 inline C * TPriorityQueue<C,P>::Root () const {
-    return m_array.Count() ? m_array[0] : nil;
+    return m_array.empty() ? nullptr : m_array.front();
 }
 
 //===========================================================================
@@ -317,7 +319,7 @@ inline void TPriorityQueue<C,P>::SetLinkOffset (int offset) {
 //===========================================================================
 template<class C, class P>
 inline C * const * TPriorityQueue<C,P>::Term () const {
-    return m_array.Term();
+    return &*m_array.end();
 }
 
 //===========================================================================
@@ -329,9 +331,9 @@ inline void TPriorityQueue<C,P>::Unlink (unsigned index) {
 //===========================================================================
 template<class C, class P>
 inline void TPriorityQueue<C,P>::UnlinkAll () {
-    for (unsigned loop = m_array.Count(); loop--; )
+    for (size_t loop = m_array.size(); loop--; )
         Unlink(loop);
-    m_array.ZeroCount();
+    m_array.clear();
 }
 
 

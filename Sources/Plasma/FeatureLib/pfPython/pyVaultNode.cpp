@@ -464,10 +464,10 @@ void pyVaultNode::RemoveAllNodes()
     if (!fNode)
         return;
         
-    TArray<unsigned> nodeIds;
+    std::vector<unsigned> nodeIds;
     fNode->GetChildNodeIds(&nodeIds, 1);
-    for (unsigned i = 0; i < nodeIds.Count(); ++i)
-        VaultRemoveChildNode(fNode->GetNodeId(), nodeIds[i], nil, nil);
+    for (unsigned id : nodeIds)
+        VaultRemoveChildNode(fNode->GetNodeId(), id, nil, nil);
 }
 
 // Add/Save this node to vault
@@ -562,10 +562,10 @@ int pyVaultNode::GetChildNodeCount()
     if (!fNode)
         return 0;
         
-    TArray<unsigned> nodeIds;
+    std::vector<unsigned> nodeIds;
     fNode->GetChildNodeIds(&nodeIds, 1);
     
-    return nodeIds.Count();
+    return int(nodeIds.size());
 }
 
 // Get the client ID from my Vault client.

@@ -141,7 +141,7 @@ public:
     CLASSNAME_REGISTER(plNetCommPublicAgeListMsg);
     GETINTERFACE_ANY(plNetCommPublicAgeListMsg, plMessage);
     
-    TArray<NetAgeInfo>    ages;
+    std::vector<NetAgeInfo>    ages;
 };
 
 class plNetCommPublicAgeMsg : public plNetCommReplyMsg {

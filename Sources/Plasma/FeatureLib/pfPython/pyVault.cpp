@@ -623,10 +623,10 @@ PyObject* pyVault::FindNode( pyVaultNode* templateNode ) const
         return pyVaultNode::New(rvn);
     
     // See if a matching node exists on the server
-    TArray<unsigned> nodeIds;
+    std::vector<unsigned> nodeIds;
     VaultFindNodesAndWait(node, &nodeIds);
     
-    if (nodeIds.Count()) {
+    if (!nodeIds.empty()) {
         // Only fetch the first matching node since this function returns a single node
         VaultFetchNodesAndWait(&nodeIds[0], 1);
         // If we fetched it successfully then it'll be in our local node cache now

@@ -66,7 +66,7 @@ struct CliFileConn : hsRefCnt {
     ST::string          name;
     plNetAddress        addr;
     unsigned            seq;
-    TArray<uint8_t>     recvBuffer;
+    std::vector<uint8_t> recvBuffer;
     AsyncCancelId       cancelId;
     bool                abandoned;
     unsigned            buildId;
@@ -147,7 +147,7 @@ struct ManifestRequestTrans : NetFileTrans {
     wchar_t                             m_group[MAX_PATH];
     unsigned                            m_buildId;
 
-    TArray<NetCliFileManifestEntry>     m_manifest;
+    std::vector<NetCliFileManifestEntry>  m_manifest;
     unsigned                            m_numEntriesReceived;
 
     ManifestRequestTrans (
@@ -412,22 +412,21 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
 //============================================================================
 static bool NotifyConnSocketRead (CliFileConn * conn, AsyncNotifySocketRead * read) {
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    conn->recvBuffer.Add(read->buffer, read->bytes);
+    conn->recvBuffer.insert(conn->recvBuffer.end(), read->buffer, read->buffer + read->bytes);
     read->bytesProcessed += read->bytes;
 
     for (;;) {
-        if (conn->recvBuffer.Count() < sizeof(uint32_t))
+        if (conn->recvBuffer.size() < sizeof(uint32_t))
             return true;
 
-        uint32_t msgSize = *(uint32_t *)conn->recvBuffer.Ptr();
-        if (conn->recvBuffer.Count() < msgSize)
+        uint32_t msgSize = *(uint32_t *)conn->recvBuffer.data();
+        if (conn->recvBuffer.size() < msgSize)
             return true;
 
-        const Cli2File_MsgHeader * msg = (const Cli2File_MsgHeader *) conn->recvBuffer.Ptr();
+        const Cli2File_MsgHeader * msg = (const Cli2File_MsgHeader *) conn->recvBuffer.data();
         conn->Dispatch(msg);
 
-        conn->recvBuffer.Move(0, msgSize, conn->recvBuffer.Count() - msgSize);
-        conn->recvBuffer.ShrinkBy(msgSize);
+        conn->recvBuffer.erase(conn->recvBuffer.begin(), conn->recvBuffer.begin() + msgSize);
     }
 }
 
@@ -734,7 +733,7 @@ void CliFileConn::Destroy () {
 
     if (oldSock)
         AsyncSocketDelete(oldSock);
-    recvBuffer.Clear();
+    recvBuffer.clear();
 }
 
 //============================================================================
@@ -905,7 +904,7 @@ bool ManifestRequestTrans::Send () {
 
 //============================================================================
 void ManifestRequestTrans::Post () {
-    m_callback(m_result, m_param, m_group, m_manifest.Ptr(), m_manifest.Count());
+    m_callback(m_result, m_param, m_group, m_manifest.data(), m_manifest.size());
 }
 
 //============================================================================
@@ -954,8 +953,8 @@ bool ManifestRequestTrans::Recv (
         return true;
     }
 
-    if (numFiles > m_manifest.Count())
-        m_manifest.SetCount(numFiles); // reserve the space ahead of time
+    if (numFiles > m_manifest.size())
+        m_manifest.resize(numFiles); // reserve the space ahead of time
 
     // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
     bool done = false;

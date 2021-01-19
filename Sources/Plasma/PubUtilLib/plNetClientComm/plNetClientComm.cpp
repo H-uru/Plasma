@@ -522,7 +522,7 @@ static void INetCliAuthChangePasswordCallback (
 static void INetCliAuthGetPublicAgeListCallback (
     ENetError                   result,
     void *                      param,
-    const TArray<NetAgeInfo> &  ages
+    std::vector<NetAgeInfo>     ages
 ) {
     NetCommParam * cp = (NetCommParam *) param;
     
@@ -530,7 +530,7 @@ static void INetCliAuthGetPublicAgeListCallback (
     msg->result     = result;
     msg->param      = cp->param;
     msg->ptype      = cp->type;
-    msg->ages.Set(ages.Ptr(), ages.Count());
+    msg->ages       = std::move(ages);
     msg->Send();
     
     delete cp;
