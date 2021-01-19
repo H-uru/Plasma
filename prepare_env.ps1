@@ -9,7 +9,7 @@ param(
     [string]$installdir = "$builddir/install"
 )
 
-$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/2020.09.10/devlibs.zip"
+$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/2021.01.18/devlibs.zip"
 $source_path = (Get-Location).Path
 
 if (!(Test-Path -PathType Container $builddir)) {
@@ -44,7 +44,7 @@ if (Get-ChildItem Env:PATH | Where-Object {$_.Value -match "CMake"}) {
     Write-Host "Running CMake to configure build system... "
     cmake -DCMAKE_PREFIX_PATH="$path/devlibs;$path/devlibs/debug" `
           -DCMAKE_INSTALL_PREFIX="$installdir" -DPython3_FIND_REGISTRY=LAST `
-          -DPython3_LIBRARY=$path/devlibs/lib/python38.lib -DPython3_INCLUDE_DIR=$path/devlibs/include `
+          -DPython3_LIBRARY=$path/devlibs/lib/python39.lib -DPython3_INCLUDE_DIR=$path/devlibs/include `
           -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF `
           -A Win32 -G "Visual Studio 15 2017" $source_path
     if ($lastExitCode -Ne 0) { throw "Failed to configure build system!" }
