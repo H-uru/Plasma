@@ -357,8 +357,8 @@ plLocation plPluginResManager::ICreateLocation(const ST::string& age, const ST::
 
     // If we have an age description file for the age we're creating a location
     // for, grab some extra flags from it
-    plAgeDescription* ageDesc = plPageInfoUtils::GetAgeDesc(age.c_str());
-    plAgePage* agePage = ageDesc ? ageDesc->FindPage(page.c_str()) : nil;
+    plAgeDescription* ageDesc = plPageInfoUtils::GetAgeDesc(age);
+    const plAgePage* agePage = ageDesc ? ageDesc->FindPage(page) : nullptr;
     if (agePage)
     {
         if (agePage->GetFlags() & plAgePage::kIsLocalOnly)

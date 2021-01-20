@@ -107,7 +107,8 @@ public:
     void        Reset() { fFlags = kNone; fIndices.Reset(); }
     void        SetCountAndZero(int c) { fIndices.SetCountAndZero(c); }
     uint32_t      GetCount() const { return fIndices.GetCount(); }
-    uint32_t&     operator[](int i) const { return fIndices[i]; }
+    uint32_t&     operator[](int i) { return fIndices[i]; }
+    uint32_t      operator[](int i) const { return fIndices[i]; }
 };
 
 struct hsColorRGBA;

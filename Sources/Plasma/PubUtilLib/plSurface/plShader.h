@@ -100,6 +100,7 @@ public:
     };
     
     float& operator[](int i) { return fArray[i]; }
+    float operator[](int i) const { return fArray[i]; }
 
     void Read(hsStream* s);
     void Write(hsStream* s);
@@ -257,7 +258,7 @@ public:
     hsGDeviceRef*           GetDeviceRef() const { return fDeviceRef; }
     void                    SetDeviceRef(hsGDeviceRef* ref) const;
 
-    void*                   GetConstBasePtr() const { return fConsts.GetCount() ? &fConsts[0] : nil; }
+    const void*             GetConstBasePtr() const { return fConsts.GetCount() ? &fConsts[0] : nil; }
 
     void                    CopyConsts(const plShader* src) { fConsts = src->fConsts; }
 

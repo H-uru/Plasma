@@ -311,7 +311,7 @@ void plOccluder::Write(hsStream* s, hsResMgr* mgr)
     fWorldBounds.Write(s);
     s->WriteLEScalar(fPriority);
 
-    const hsTArray<plCullPoly>& localPolys = IGetLocalPolyList();
+    hsTArray<plCullPoly>& localPolys = IGetLocalPolyList();
     s->WriteLE16(localPolys.GetCount());
     int i;
     for( i = 0; i < localPolys.GetCount(); i++ )

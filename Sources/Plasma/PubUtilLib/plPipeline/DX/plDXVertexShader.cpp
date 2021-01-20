@@ -122,7 +122,7 @@ HRESULT plDXVertexShader::ISetConstants(plDXPipeline* pipe)
     if( fOwner->GetNumConsts() )
     {
         HRESULT hr = pipe->GetD3DDevice()->SetVertexShaderConstantF(0,
-                                        (float*)fOwner->GetConstBasePtr(),
+                                        (const float*)fOwner->GetConstBasePtr(),
                                         fOwner->GetNumConsts());
         if( FAILED(hr) )
             return IOnError(hr, "Failure setting vertex shader constants");

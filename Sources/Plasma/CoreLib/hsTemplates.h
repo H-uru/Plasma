@@ -142,7 +142,8 @@ public:
 
     void    Set(int index, const T& item)   { hsTArray_ValidateIndex(index); fArray[index]=item; }
     const T&    Get(int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
-    T&      operator[](int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
+    T&       operator[](int index) { hsTArray_ValidateIndex(index); return fArray[index]; }
+    const T& operator[](int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
 
     int     Count() const { return fUseCount; }
     int     GetCount() const { return fUseCount; }

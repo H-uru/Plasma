@@ -150,7 +150,7 @@ public:
     void        SeekFirstPage();
     plAgePage   *GetNextPage();
     int         GetNumPages() const { return fPages.GetCount(); }
-    plAgePage   *FindPage( const ST::string &name ) const;
+    const plAgePage   *FindPage(const ST::string &name) const;
     bool FindLocation(const plLocation& loc) const;
     plLocation  CalcPageLocation( const ST::string &page ) const;
 

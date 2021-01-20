@@ -104,7 +104,7 @@ const char          *pfConsoleContext::GetVarName( uint32_t idx ) const
     return fVarNames[ idx ];
 }
 
-pfConsoleCmdParam   &pfConsoleContext::GetVarValue( uint32_t idx ) const
+const pfConsoleCmdParam &pfConsoleContext::GetVarValue(uint32_t idx) const
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
     hsAssert( idx < fVarValues.GetCount(), "GetVarValue() index out of range for console context" );

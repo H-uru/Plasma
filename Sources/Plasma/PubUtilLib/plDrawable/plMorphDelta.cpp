@@ -82,7 +82,7 @@ void plMorphDelta::Apply(hsTArray<plAccessSpan>& dst, float weight /* = -1.f */)
     {
         plAccessVtxSpan& vtxDst = dst[iSpan].AccessVtx();
 
-        plMorphSpan& span = fSpans[iSpan];
+        const plMorphSpan& span = fSpans[iSpan];
 
         // For each vertDelta
         const hsPoint3* uvwDel = span.fUVWs;
