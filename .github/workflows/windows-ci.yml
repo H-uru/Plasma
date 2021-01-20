@@ -27,6 +27,7 @@ jobs:
           key: qt-${{ matrix.platform.qt-version }} ${{ matrix.platform.qt-arch }}
 
       - name: Install Qt
+        continue-on-error: true
         uses: jurplel/install-qt-action@v2
         with:
           version: ${{ matrix.platform.qt-version }}
