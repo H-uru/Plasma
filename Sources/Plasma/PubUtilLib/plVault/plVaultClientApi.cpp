@@ -336,31 +336,31 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
 static void BuildNodeTree (
     const NetVaultNodeRef   refs[],
     unsigned                refCount,
-    TArray<unsigned> *      newNodeIds,
-    TArray<unsigned> *      existingNodeIds,
+    std::vector<unsigned> * newNodeIds,
+    std::vector<unsigned> * existingNodeIds,
     bool                    notifyNow = true
 ) {
     for (unsigned i = 0; i < refCount; ++i) {
         // Find/Create global links
         RelVaultNodeLink * parentLink = s_nodes.Find(refs[i].parentId);
         if (!parentLink) {
-            newNodeIds->Add(refs[i].parentId);
+            newNodeIds->emplace_back(refs[i].parentId);
             parentLink = new RelVaultNodeLink(false, 0, refs[i].parentId);
             parentLink->node->SetNodeId_NoDirty(refs[i].parentId);
             s_nodes.Add(parentLink);
         }
         else {
-            existingNodeIds->Add(refs[i].parentId);
+            existingNodeIds->emplace_back(refs[i].parentId);
         }
         RelVaultNodeLink * childLink = s_nodes.Find(refs[i].childId);
         if (!childLink) {
-            newNodeIds->Add(refs[i].childId);
+            newNodeIds->emplace_back(refs[i].childId);
             childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, refs[i].childId);
             childLink->node->SetNodeId_NoDirty(refs[i].childId);
             s_nodes.Add(childLink);
         }
         else {
-            existingNodeIds->Add(refs[i].childId);
+            existingNodeIds->emplace_back(refs[i].childId);
             if (unsigned ownerId = refs[i].ownerId)
                 childLink->ownerId = ownerId;
         }
@@ -414,16 +414,17 @@ static void FetchRefOwners (
     NetVaultNodeRef *           refs,
     unsigned                    refCount
 ) {
-    TArray<unsigned> ownerIds;
-    {   for (unsigned i = 0; i < refCount; ++i)
-            if (unsigned ownerId = refs[i].ownerId)
-                ownerIds.Add(ownerId);
+    std::vector<unsigned> ownerIds;
+    for (unsigned i = 0; i < refCount; ++i) {
+        if (unsigned ownerId = refs[i].ownerId)
+            ownerIds.emplace_back(ownerId);
     }
-    std::sort(ownerIds.Ptr(), ownerIds.Term());
+    std::sort(ownerIds.begin(), ownerIds.end());
     NetVaultNode templateNode;
     templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
-    {   unsigned prevId = 0;
-        for (unsigned i = 0; i < ownerIds.Count(); ++i) {
+    {
+        unsigned prevId = 0;
+        for (size_t i = 0; i < ownerIds.size(); ++i) {
             if (ownerIds[i] != prevId) {
                 prevId = ownerIds[i];
                 VaultPlayerInfoNode access(&templateNode);
@@ -454,20 +455,20 @@ static void FetchNodesFromRefs (
 
     *fetchCount = 0;
     
-    TArray<unsigned> newNodeIds;
-    TArray<unsigned> existingNodeIds;
+    std::vector<unsigned> newNodeIds;
+    std::vector<unsigned> existingNodeIds;
     
     BuildNodeTree(refs, refCount, &newNodeIds, &existingNodeIds);
 
-    TArray<unsigned> nodeIds;
-    nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
-    nodeIds.Add(existingNodeIds.Ptr(), existingNodeIds.Count());
-    std::sort(nodeIds.Ptr(), nodeIds.Term());
+    std::vector<unsigned> nodeIds;
+    nodeIds.insert(nodeIds.end(), newNodeIds.begin(), newNodeIds.end());
+    nodeIds.insert(nodeIds.end(), existingNodeIds.begin(), existingNodeIds.end());
+    std::sort(nodeIds.begin(), nodeIds.end());
 
     // Fetch the nodes that do not yet have a nodetype
     unsigned prevId = 0;
-    for (unsigned i = 0; i < nodeIds.Count(); ++i) {
-        RelVaultNodeLink * link = s_nodes.Find(nodeIds[i]);
+    for (unsigned nodeId : nodeIds) {
+        RelVaultNodeLink * link = s_nodes.Find(nodeId);
         if (link->node->GetNodeType() != 0)
             continue;
         // filter duplicates
@@ -475,7 +476,7 @@ static void FetchNodesFromRefs (
             continue;
         prevId = link->node->GetNodeId();
         NetCliAuthVaultNodeFetch(
-            nodeIds[i],
+            nodeId,
             fetchCallback,
             fetchParam
         );
@@ -600,20 +601,20 @@ static void VaultNodeAdded (
     NetVaultNodeRef refs[] = {
         { parentId, childId, ownerId }
     };
-    TArray<unsigned> newNodeIds;
-    TArray<unsigned> existingNodeIds;
+    std::vector<unsigned> newNodeIds;
+    std::vector<unsigned> existingNodeIds;
     
     BuildNodeTree(refs, std::size(refs), &newNodeIds, &existingNodeIds, false);
 
-    TArray<unsigned> nodeIds;
-    nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
-    nodeIds.Add(existingNodeIds.Ptr(), existingNodeIds.Count());
-    std::sort(nodeIds.Ptr(), nodeIds.Term());
+    std::vector<unsigned> nodeIds;
+    nodeIds.insert(nodeIds.end(), newNodeIds.begin(), newNodeIds.end());
+    nodeIds.insert(nodeIds.end(), existingNodeIds.begin(), existingNodeIds.end());
+    std::sort(nodeIds.begin(), nodeIds.end());
 
     // Fetch the nodes that do not yet have a nodetype
     unsigned prevId = 0;
     unsigned i = 0;
-    for (; i < nodeIds.Count(); ++i) {
+    for (; i < nodeIds.size(); ++i) {
         RelVaultNodeLink * link = s_nodes.Find(nodeIds[i]);
         if (link->node->GetNodeType() != 0)
             continue;
@@ -1113,10 +1114,10 @@ bool RelVaultNode::IsChildOf (unsigned parentId, unsigned maxDepth) {
 }
 
 //============================================================================
-void RelVaultNode::GetRootIds (TArray<unsigned> * nodeIds) {
+void RelVaultNode::GetRootIds (std::vector<unsigned> * nodeIds) {
     RelVaultNodeLink * link = state->parents.Head();
     if (!link) {
-        nodeIds->Add(GetNodeId());
+        nodeIds->emplace_back(GetNodeId());
     }
     else {
         for (; link; link = state->parents.Next(link))
@@ -1132,28 +1133,28 @@ unsigned RelVaultNode::RemoveChildNodes (unsigned maxDepth) {
 
 //============================================================================
 void RelVaultNode::GetChildNodeIds (
-    TArray<unsigned> *  nodeIds,
+    std::vector<unsigned> * nodeIds,
     unsigned            maxDepth
 ) {
     if (!maxDepth)
         return;
     RelVaultNodeLink * link = state->children.Head();
     for (; link; link = state->children.Next(link)) {
-        nodeIds->Add(link->node->GetNodeId());
+        nodeIds->emplace_back(link->node->GetNodeId());
         link->node->GetChildNodeIds(nodeIds, maxDepth-1);
     }
 }
 
 //============================================================================
 void RelVaultNode::GetParentNodeIds (
-    TArray<unsigned> *  nodeIds,
+    std::vector<unsigned> * nodeIds,
     unsigned            maxDepth
 ) {
     if (!maxDepth)
         return;
     RelVaultNodeLink * link = state->parents.Head();
     for (; link; link = state->parents.Next(link)) {
-        nodeIds->Add(link->node->GetNodeId());
+        nodeIds->emplace_back(link->node->GetNodeId());
         link->node->GetParentNodeIds(nodeIds, maxDepth-1);
     }
 }
@@ -1598,8 +1599,8 @@ void VaultAddChildNode (
                 { parentId, childId, ownerId }
             };
 
-            TArray<unsigned> newNodeIds;
-            TArray<unsigned> existingNodeIds;
+            std::vector<unsigned> newNodeIds;
+            std::vector<unsigned> existingNodeIds;
 
             BuildNodeTree(refs, std::size(refs), &newNodeIds, &existingNodeIds);
         
@@ -1952,7 +1953,7 @@ void VaultFindNodes (
 //============================================================================
 namespace _VaultFindNodesAndWait {
     struct _FindNodeParam {
-        TArray<unsigned>    nodeIds;
+        std::vector<unsigned> nodeIds;
         ENetError           result;
         bool                complete;
 
@@ -1967,7 +1968,7 @@ namespace _VaultFindNodesAndWait {
         const unsigned      nodeIds[]
     ) {
         _FindNodeParam * param = (_FindNodeParam *)vparam;
-        param->nodeIds.Set(nodeIds, nodeIdCount);
+        param->nodeIds.assign(nodeIds, nodeIds + nodeIdCount);
         param->result   = result;
         param->complete = true;
     }
@@ -1976,7 +1977,7 @@ namespace _VaultFindNodesAndWait {
 
 void VaultFindNodesAndWait (
     hsWeakRef<NetVaultNode> templateNode,
-    TArray<unsigned> *      nodeIds
+    std::vector<unsigned> * nodeIds
 ) {
     using namespace _VaultFindNodesAndWait;
 
@@ -1994,17 +1995,17 @@ void VaultFindNodesAndWait (
     }
 
     if (IS_NET_SUCCESS(param.result))
-        nodeIds->Add(param.nodeIds.Ptr(), param.nodeIds.Count());
+        nodeIds->insert(nodeIds->end(), param.nodeIds.begin(), param.nodeIds.end());
 }
 
 //============================================================================
 void VaultLocalFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
-    TArray<unsigned> *      nodeIds
+    std::vector<unsigned> * nodeIds
 ) {
     for (RelVaultNodeLink * link = s_nodes.Head(); link != nil; link = s_nodes.Next(link)) {
         if (link->node->Matches(templateNode.Get()))
-            nodeIds->Add(link->node->GetNodeId());
+            nodeIds->emplace_back(link->node->GetNodeId());
     }
 }
 
@@ -2312,7 +2313,7 @@ bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo
         if (!fldr)
             break;
 
-        TArray<unsigned> nodeIds;
+        std::vector<unsigned> nodeIds;
         fldr->GetChildNodeIds(&nodeIds, 1);
 
         NetVaultNode templateNode;
@@ -2320,8 +2321,8 @@ bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo
         VaultAgeInfoNode access(&templateNode);
         access.SetAgeInstanceGuid(ageInstId);
         
-        for (unsigned i = 0; i < nodeIds.Count(); ++i) {
-            link = VaultGetNode(nodeIds[i]);
+        for (unsigned nodeId : nodeIds) {
+            link = VaultGetNode(nodeId);
             if (!link)
                 continue;
             if (link->GetChildNode(&templateNode, 1)) {
@@ -4617,11 +4618,11 @@ void VaultCull (unsigned vaultId) {
         if (link->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && link->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh)
             continue;
 
-        TArray<unsigned> nodeIds;
+        std::vector<unsigned> nodeIds;
         link->node->GetRootIds(&nodeIds);
         bool foundRoot = false;
-        for (unsigned i = 0; i < nodeIds.Count(); ++i) {
-            RelVaultNodeLink * root = s_nodes.Find(nodeIds[i]);
+        for (unsigned nodeId : nodeIds) {
+            RelVaultNodeLink * root = s_nodes.Find(nodeId);
             if (root && root->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && root->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
                 foundRoot = true;
                 break;

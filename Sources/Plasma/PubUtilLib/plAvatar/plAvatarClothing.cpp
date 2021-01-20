@@ -859,22 +859,22 @@ void plClothingOutfit::WriteToVault()
     if (!rvn)
         return;
 
-    TArray<plStateDataRecord*> SDRs;
+    std::vector<plStateDataRecord*> SDRs;
     
     plStateDataRecord clothingSDR(kSDLClothing);
     fAvatar->GetClothingSDLMod()->PutCurrentStateIn(&clothingSDR);
     plSDStateVariable * clothesStateDesc = clothingSDR.FindSDVar(plClothingSDLModifier::kStrWardrobe);
 
     for (unsigned i = 0; i < clothesStateDesc->GetCount(); ++i)
-        SDRs.Add(clothesStateDesc->GetStateDataRecord(i));
+        SDRs.emplace_back(clothesStateDesc->GetStateDataRecord(i));
 
     plSDStateVariable * appearanceStateDesc = clothingSDR.FindSDVar(plClothingSDLModifier::kStrAppearance); // for skin tint
-    SDRs.Add(appearanceStateDesc->GetStateDataRecord(0));
+    SDRs.emplace_back(appearanceStateDesc->GetStateDataRecord(0));
     
     WriteToVault(SDRs);
 }
 
-void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
+void plClothingOutfit::WriteToVault(const std::vector<plStateDataRecord*> & SDRs)
 {
     // We'll hit this case when the server asks us to save state for NPCs.
     if (fAvatar->GetTarget(0) != plNetClientApp::GetInstance()->GetLocalPlayer())
@@ -884,7 +884,7 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
     if (!rvn)
         return;
         
-    TArray<plStateDataRecord*>   morphs;
+    std::vector<plStateDataRecord*>   morphs;
 
     // Gather morph SDRs    
     hsTArray<const plMorphSequence*> morphsSDRs;
@@ -898,7 +898,7 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
                     lodVar->Set((int)j);
 
                 morphsSDRs[i]->GetSDLMod()->PutCurrentStateIn(morphSDR);
-                morphs.Add(morphSDR);
+                morphs.emplace_back(morphSDR);
             }
         }
     }
@@ -910,15 +910,13 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
     // Get all existing clothing SDRs
     rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);    // REF: Find
 
-    const TArray<plStateDataRecord*> * arrs[] = {
+    const std::vector<plStateDataRecord*> * arrs[] = {
         &SDRs,
         &morphs,
     };
-    for (unsigned arrIdx = 0; arrIdx < std::size(arrs); ++arrIdx) {
-        const TArray<plStateDataRecord*> * arr = arrs[arrIdx];
-        
+    for (const auto * arr : arrs) {
         // Write all SDL to to the outfit folder, reusing existing nodes and creating new ones as necessary
-        for (unsigned i = 0; i < arr->Count(); ++i) {
+        for (plStateDataRecord * rec : *arr) {
             hsRef<RelVaultNode> node;
             if (!nodes.empty()) {
                 node = nodes.front();
@@ -931,7 +929,7 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
             }
 
             VaultSDLNode sdl(node);
-            sdl.SetStateDataRecord((*arr)[i], 0);
+            sdl.SetStateDataRecord(rec, 0);
         }
     }
 
@@ -951,9 +949,8 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
         VaultAddChildNodeAndWait(rvn->GetNodeId(), act->GetNodeId(), NetCommGetPlayer()->playerInt);
 
     // Cleanup morph SDRs
-    for (unsigned i = 0; i < morphs.Count(); ++i) {
-        delete morphs[i];
-    }
+    for (plStateDataRecord *morph : morphs)
+        delete morph;
 }
 
 // XXX HACK. DON'T USE (this function exists for the temp console command Clothing.SwapClothTexHACK)

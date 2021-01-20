@@ -56,44 +56,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //============================================================================
 CInputAccumulator::CInputAccumulator () {
-    buffer.Reserve(1);
-    curr = buffer.Ptr();
+    buffer.reserve(1);
+    curr = buffer.begin();
 }
 
 //============================================================================
 void CInputAccumulator::Add (unsigned count, const uint8_t * data) {
 //  LogMsg(kLogPerf, "Adding {} bytes to accumulator {#x}", count, (uintptr_t)this);
-    unsigned offset =  curr - buffer.Ptr();
-    buffer.Add(data, count);
-    curr = buffer.Ptr() + offset;
+    ptrdiff_t offset = curr - buffer.begin();
+    buffer.insert(buffer.end(), data, data + count);
+    curr = buffer.begin() + offset;
 }
 
 //============================================================================
 bool CInputAccumulator::Get (unsigned count, void * dest) {
-    if (curr + count > buffer.Term())
+    if (curr + count > buffer.end())
         return false;
 //  LogMsg(kLogPerf, "Removing {} bytes from accumulator {#x}", count, (uintptr_t)this);
-    memcpy(dest, curr, count);
+    memcpy(dest, &*curr, count);
     curr += count;
     return true;
 }
 
 //============================================================================
 bool CInputAccumulator::Eof () const {
-    return curr >= buffer.Ptr() + buffer.Count();
+    return curr >= buffer.end();
 }
 
 //============================================================================
 void CInputAccumulator::Clear () {
-    buffer.SetCount(0);
-    curr = buffer.Ptr();
+    buffer.clear();
+    curr = buffer.begin();
 }
 
 //============================================================================
 void CInputAccumulator::Compact () {
-    unsigned diff = curr - buffer.Ptr();
-    unsigned newCount = buffer.Count() - diff;
-    buffer.Move(0, diff, newCount);
-    buffer.SetCount(newCount);
-    curr = buffer.Ptr();
+    buffer.erase(buffer.begin(), curr);
+    curr = buffer.begin();
 }

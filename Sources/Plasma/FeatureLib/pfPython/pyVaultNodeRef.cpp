@@ -127,10 +127,10 @@ PyObject * pyVaultNodeRef::GetSaver () {
             saver = VaultGetNode(&templateNode);
 
             if (!saver) {
-                TArray<unsigned> nodeIds;
+                std::vector<unsigned> nodeIds;
                 VaultFindNodesAndWait(&templateNode, &nodeIds);
-                if (nodeIds.Count() > 0) {
-                    VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());
+                if (!nodeIds.empty()) {
+                    VaultFetchNodesAndWait(nodeIds.data(), nodeIds.size());
                     saver = VaultGetNode(nodeIds[0]);
                 }
             }

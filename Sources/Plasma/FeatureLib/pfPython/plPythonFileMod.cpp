@@ -1675,8 +1675,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 
     auto pPubAgeMsg = IScriptWantsMsg<plNetCommPublicAgeListMsg>(kfunc_gotPublicAgeList, msg);
     if (pPubAgeMsg) {
-        PyObject* pyEL = PyTuple_New(pPubAgeMsg->ages.Count());
-        for (unsigned i = 0; i < pPubAgeMsg->ages.Count(); ++i) {
+        PyObject* pyEL = PyTuple_New(pPubAgeMsg->ages.size());
+        for (size_t i = 0; i < pPubAgeMsg->ages.size(); ++i) {
             plAgeInfoStruct ageInfo;
             ageInfo.CopyFrom(pPubAgeMsg->ages[i]);
             unsigned nPlayers = pPubAgeMsg->ages[i].currentPopulation;

@@ -109,7 +109,7 @@ struct PingRequestTrans : NetAuthTrans {
     void *                          m_param;
     unsigned                        m_pingAtMs;
     unsigned                        m_replyAtMs;
-    TArray<uint8_t>                 m_payload;
+    std::vector<uint8_t>            m_payload;
     
     PingRequestTrans (
         FNetCliAuthPingRequestCallback  callback,
@@ -431,7 +431,7 @@ struct GetPublicAgeListTrans : NetAuthTrans {
     ST::string                              m_ageName;
 
     // recv
-    TArray<NetAgeInfo>                      m_ages;
+    std::vector<NetAgeInfo>                 m_ages;
     
     GetPublicAgeListTrans (
         const ST::string&                   ageName,
@@ -533,7 +533,7 @@ struct FileListRequestTrans : NetAuthTrans {
     wchar_t                               m_directory[MAX_PATH];
     wchar_t                               m_ext[MAX_EXT];
 
-    TArray<NetCliAuthFileInfo>          m_fileInfoArray;
+    std::vector<NetCliAuthFileInfo>       m_fileInfoArray;
 
     FileListRequestTrans (
         FNetCliAuthFileListRequestCallback  callback,
@@ -677,7 +677,7 @@ struct VaultFetchNodeRefsTrans : NetAuthTrans {
     FNetCliAuthVaultNodeRefsFetched m_callback;
     void *                          m_param;
 
-    TArray<NetVaultNodeRef>         m_refs;
+    std::vector<NetVaultNodeRef>    m_refs;
 
     VaultFetchNodeRefsTrans (
         unsigned                        nodeId,
@@ -764,8 +764,8 @@ struct VaultFetchNodeTrans : NetAuthTrans {
 //============================================================================
 struct VaultFindNodeTrans : NetAuthTrans {
 
-    TArray<uint8_t>             m_buffer;
-    TArray<unsigned>            m_nodeIds;
+    std::vector<uint8_t>        m_buffer;
+    std::vector<unsigned>       m_nodeIds;
     FNetCliAuthVaultNodeFind    m_callback;
     void *                      m_param;
 
@@ -789,7 +789,7 @@ struct VaultFindNodeTrans : NetAuthTrans {
 //============================================================================
 struct VaultCreateNodeTrans : NetAuthTrans {
 
-    TArray<uint8_t>                 m_buffer;
+    std::vector<uint8_t>            m_buffer;
     FNetCliAuthVaultNodeCreated     m_callback;
     void *                          m_param;
     unsigned                        m_nodeId;
@@ -815,7 +815,7 @@ struct VaultSaveNodeTrans : NetAuthTrans {
 
     unsigned                            m_nodeId;
     plUUID                              m_revisionId;
-    TArray<uint8_t>                     m_buffer;
+    std::vector<uint8_t>                m_buffer;
     FNetCliAuthVaultNodeSaveCallback    m_callback;
     void *                              m_param;
 
@@ -2514,8 +2514,8 @@ PingRequestTrans::PingRequestTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_pingAtMs(pingAtMs)
+,   m_payload((const uint8_t *)payload, (const uint8_t *)payload + payloadBytes)
 {
-    m_payload.Set((const uint8_t *)payload, payloadBytes);
 }
 
 //============================================================================
@@ -2528,8 +2528,8 @@ bool PingRequestTrans::Send () {
         kCli2Auth_PingRequest,
                         m_pingAtMs,
                         m_transId,
-                        m_payload.Count(),
-        (uintptr_t)  m_payload.Ptr(),
+                        m_payload.size(),
+        (uintptr_t)  m_payload.data(),
     };
     
     m_conn->Send(msg, std::size(msg));
@@ -2545,8 +2545,8 @@ void PingRequestTrans::Post () {
         m_param,
         m_pingAtMs,
         m_replyAtMs,
-        m_payload.Count(),
-        m_payload.Ptr()
+        m_payload.size(),
+        m_payload.data()
     );
 }
 
@@ -2557,7 +2557,7 @@ bool PingRequestTrans::Recv (
 ) {
     const Auth2Cli_PingReply & reply = *(const Auth2Cli_PingReply *)msg;
 
-    m_payload.Set(reply.payload, reply.payloadBytes);
+    m_payload.assign(reply.payload, reply.payload + reply.payloadBytes);
     m_replyAtMs     = hsTimer::GetMilliSeconds<uint32_t>();
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
@@ -3303,7 +3303,7 @@ bool GetPublicAgeListTrans::Recv (
     const Auth2Cli_PublicAgeList & reply = *(const Auth2Cli_PublicAgeList *) msg;
     
     if (IS_NET_SUCCESS(reply.result))
-        m_ages.Set(reply.ages, reply.ageCount);
+        m_ages.assign(reply.ages, reply.ages + reply.ageCount);
 
     m_result    = reply.result;
     m_state     = kTransStateComplete;
@@ -3518,7 +3518,7 @@ bool FileListRequestTrans::Send () {
 
 //============================================================================
 void FileListRequestTrans::Post () {
-    m_callback(m_result, m_param, m_fileInfoArray.Ptr(), m_fileInfoArray.Count());
+    m_callback(m_result, m_param, m_fileInfoArray.data(), m_fileInfoArray.size());
 }
 
 //============================================================================
@@ -3533,7 +3533,7 @@ bool FileListRequestTrans::Recv (
     // if wchar_tCount is 2, the data only contains the terminator "\0\0" and we
     // don't need to convert anything
     if (wchar_tCount == 2)
-        m_fileInfoArray.Clear();
+        m_fileInfoArray.clear();
     else
     {
         // fileData format: "filename\0size\0filename\0size\0...\0\0"
@@ -3567,9 +3567,9 @@ bool FileListRequestTrans::Recv (
                 return false; // screwy data
 
             // save the data in our array
-            NetCliAuthFileInfo* info = m_fileInfoArray.New();
-            StrCopy(info->filename, filename, std::size(info->filename));
-            info->filesize = size;
+            NetCliAuthFileInfo& info = m_fileInfoArray.emplace_back();
+            StrCopy(info.filename, filename, std::size(info.filename));
+            info.filesize = size;
 
             // point it at either the second part of the terminator, or the next filename
             curChar++;
@@ -3815,8 +3815,8 @@ void VaultFetchNodeRefsTrans::Post () {
         m_callback(
             m_result,
             m_param,
-            m_refs.Ptr(),
-            m_refs.Count()
+            m_refs.data(),
+            m_refs.size()
         );
 }
 
@@ -3828,7 +3828,7 @@ bool VaultFetchNodeRefsTrans::Recv (
     const Auth2Cli_VaultNodeRefsFetched & reply = *(const Auth2Cli_VaultNodeRefsFetched *) msg;
 
     if (IS_NET_SUCCESS(reply.result))
-        m_refs.Set(reply.refs, reply.refCount); 
+        m_refs.assign(reply.refs, reply.refs + reply.refCount);
 
     m_result = reply.result;
     m_state  = kTransStateComplete;
@@ -4020,8 +4020,8 @@ bool VaultFindNodeTrans::Send () {
     const uintptr_t msg[] = {
             kCli2Auth_VaultNodeFind,
             m_transId,
-            m_buffer.Count(),
-            (uintptr_t)m_buffer.Ptr(),
+            m_buffer.size(),
+            (uintptr_t)m_buffer.data(),
     };
     m_conn->Send(msg, std::size(msg));
     return true;
@@ -4032,8 +4032,8 @@ void VaultFindNodeTrans::Post () {
     m_callback(
         m_result,
         m_param,
-        m_nodeIds.Count(),
-        m_nodeIds.Ptr()
+        m_nodeIds.size(),
+        m_nodeIds.data()
     );
 }
 
@@ -4046,7 +4046,7 @@ bool VaultFindNodeTrans::Recv (
 
     if (IS_NET_SUCCESS(reply.result)) {
         static_assert(sizeof(unsigned) == sizeof(uint32_t), "unsigned is not the same size as uint32_t");
-        m_nodeIds.Set((unsigned *)reply.nodeIds, reply.nodeIdCount);
+        m_nodeIds.assign((unsigned *)reply.nodeIds, (unsigned *)reply.nodeIds + reply.nodeIdCount);
     }
 
     m_result = reply.result;
@@ -4083,8 +4083,8 @@ bool VaultCreateNodeTrans::Send () {
     const uintptr_t msg[] = {
             kCli2Auth_VaultNodeCreate,
             m_transId,
-            m_buffer.Count(),
-            (uintptr_t)m_buffer.Ptr()
+            m_buffer.size(),
+            (uintptr_t)m_buffer.data()
     };
     m_conn->Send(msg, std::size(msg));
     return true;
@@ -4132,10 +4132,10 @@ VaultSaveNodeTrans::VaultSaveNodeTrans (
 ) : NetAuthTrans(kVaultSaveNodeTrans)
 ,   m_nodeId(nodeId)
 ,   m_revisionId(revisionId)
+,   m_buffer((const uint8_t *)data, (const uint8_t *)data + dataCount)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    m_buffer.Set((const uint8_t *)data, dataCount);
 }
 
 //============================================================================
@@ -4148,8 +4148,8 @@ bool VaultSaveNodeTrans::Send () {
                         m_transId,
                         m_nodeId,
         (uintptr_t)  &m_revisionId,
-                        m_buffer.Count(),
-        (uintptr_t)  m_buffer.Ptr(),
+                        m_buffer.size(),
+        (uintptr_t)  m_buffer.data(),
     };
             
     m_conn->Send(msg, std::size(msg));
@@ -5712,19 +5712,19 @@ unsigned NetCliAuthVaultNodeSave (
         ioFlags |= NetVaultNode::kDirtyString64_1;
     ioFlags |= NetVaultNode::kDirtyNodeType;
 
-    TArray<uint8_t> buffer;
+    std::vector<uint8_t> buffer;
     node->Write(&buffer, ioFlags);
 
     VaultSaveNodeTrans * trans = new VaultSaveNodeTrans(
         node->GetNodeId(),
         node->GetRevision(),
-        buffer.Count(),
-        buffer.Ptr(),
+        buffer.size(),
+        buffer.data(),
         callback,
         param
     );
     NetTransSend(trans);
-    return buffer.Count();
+    return buffer.size();
 }
 
 //============================================================================

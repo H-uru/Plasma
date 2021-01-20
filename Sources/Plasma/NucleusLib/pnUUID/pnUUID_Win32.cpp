@@ -70,17 +70,6 @@ bool plUUID::IsNull() const
     return 1 == UuidIsNil( (GUID *)this, &s );
 }
 
-void plUUID::CopyFrom( const plUUID * v ) {
-    if (!v)
-        Clear();
-    else
-        CopyFrom(*v);
-}
-
-void plUUID::CopyFrom( const plUUID & v ) {
-    memcpy(fData, v.fData, sizeof(fData));
-}
-
 bool plUUID::FromString( const char * str )
 {
     Clear();

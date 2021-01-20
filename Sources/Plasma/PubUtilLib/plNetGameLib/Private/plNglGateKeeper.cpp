@@ -106,7 +106,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
     void *                                  m_param;
     unsigned                                m_pingAtMs;
     unsigned                                m_replyAtMs;
-    TArray<uint8_t>                         m_payload;
+    std::vector<uint8_t>                    m_payload;
     
     PingRequestTrans (
         FNetCliGateKeeperPingRequestCallback    callback,
@@ -731,8 +731,8 @@ PingRequestTrans::PingRequestTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_pingAtMs(pingAtMs)
+,   m_payload((const uint8_t *)payload, (const uint8_t *)payload + payloadBytes)
 {
-    m_payload.Set((const uint8_t *)payload, payloadBytes);
 }
 
 //============================================================================
@@ -745,8 +745,8 @@ bool PingRequestTrans::Send () {
         kCli2GateKeeper_PingRequest,
                         m_pingAtMs,
                         m_transId,
-                        m_payload.Count(),
-        (uintptr_t)  m_payload.Ptr(),
+                        m_payload.size(),
+        (uintptr_t)  m_payload.data(),
     };
     
     m_conn->Send(msg, std::size(msg));
@@ -762,8 +762,8 @@ void PingRequestTrans::Post () {
         m_param,
         m_pingAtMs,
         m_replyAtMs,
-        m_payload.Count(),
-        m_payload.Ptr()
+        m_payload.size(),
+        m_payload.data()
     );
 }
 
@@ -774,7 +774,7 @@ bool PingRequestTrans::Recv (
 ) {
     const GateKeeper2Cli_PingReply & reply = *(const GateKeeper2Cli_PingReply *)msg;
 
-    m_payload.Set(reply.payload, reply.payloadBytes);
+    m_payload.assign(reply.payload, reply.payload + reply.payloadBytes);
     m_replyAtMs     = hsTimer::GetMilliSeconds<uint32_t>();
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;

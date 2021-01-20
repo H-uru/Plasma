@@ -220,7 +220,7 @@ public:
     bool ReadClothing();
 
     void WriteToVault();
-    void WriteToVault(const TArray<plStateDataRecord*> & SDRs);
+    void WriteToVault(const std::vector<plStateDataRecord*> & SDRs);
 
     /** Write the avatar clothing to a file */
     bool WriteToFile(const plFileName &filename);

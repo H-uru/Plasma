@@ -114,8 +114,8 @@ void NetMsgCryptServerConnect (
 ***/
 
 class CInputAccumulator {
-    TArray<uint8_t> buffer;
-    uint8_t *       curr;
+    std::vector<uint8_t> buffer;
+    std::vector<uint8_t>::iterator curr;
 
 public:
     CInputAccumulator ();
