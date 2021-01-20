@@ -19,6 +19,7 @@ install_manifest.txt
 build/
 build-*/
 Docs/Doxygen/
+out/
 .vs/
 
 *.aps

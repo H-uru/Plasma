@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 3.14)
-project(Plasma)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CMakeDependentOption)
 include(FeatureSummary)
 include(Dependencies)
+include(VcpkgToolchain)
+
+project(Plasma)
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
