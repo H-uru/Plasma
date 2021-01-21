@@ -57,7 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfLocalizationDataMgr.h"
 
 #include <expat.h>
+
 #include <stack>
+#include <unordered_set>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -527,16 +529,15 @@ LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile
 
 void LocalizationDatabase::IMergeData()
 {
-    for (int i = 0; i < fFiles.size(); i++)
+    for (const auto& file : fFiles)
     {
-        const auto& fileData = fFiles[i].fData;
-        for (const auto& curAge : fileData)
+        for (const auto& curAge : file.fData)
         {
             // if the age doesn't exist in the current merged database, just add it with no more checking
             if (fData.find(curAge.first) == fData.end())
                 fData[curAge.first] = curAge.second;
             else // otherwise, merge the data in
-                fData[curAge.first] = IMergeAgeData(fData[curAge.first], curAge.second, fFiles[i].fFilename, curAge.first);
+                fData[curAge.first] = IMergeAgeData(fData[curAge.first], curAge.second, file.fFilename, curAge.first);
         }
     }
 }
@@ -545,16 +546,15 @@ void LocalizationDatabase::IMergeData()
 
 void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::string &setName, LocalizationXMLFile::set::iterator& curElement)
 {
-    std::vector<ST::string> languageNames;
-    ST::string defaultLanguage;
+    std::unordered_set<ST::string, ST::hash> languageNames;
+    ST::string defaultLanguage = plLocalization::GetLanguageName((plLocalization::Language)0);
 
     int numLocales = plLocalization::GetNumLocales();
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
         ST::string name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        languageNames.emplace_back(std::move(name));
+        languageNames.emplace(std::move(name));
     }
-    defaultLanguage = languageNames[0];
 
     ST::string elementName = curElement->first;
     LocalizationXMLFile::element& theElement = curElement->second;
@@ -563,17 +563,9 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
     while (curTranslation != theElement.end())
     {
         // Make sure this language exists!
-        bool languageExists = false;
-        for (int i = 0; i < languageNames.size(); i++)
-        {
-            if (languageNames[i] == curTranslation->first)
-            {
-                languageExists = true;
-                break;
-            }
-        }
+        auto languageIt = languageNames.find(curTranslation->first);
 
-        if (!languageExists)
+        if (languageIt == languageNames.end())
         {
             pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: The language {} used by {}.{}.{} is not supported. Discarding translation.",
                 curTranslation->first, ageName, setName, elementName);
@@ -583,12 +575,12 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
             curTranslation++;
     }
 
-    for (int i = 1; i < languageNames.size(); i++)
+    for (const auto& language : languageNames)
     {
-        if (theElement.find(languageNames[i]) == theElement.end())
+        if (theElement.find(language) == theElement.end())
         {
             pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Language {} is missing from the translations in element {}.{}.{}. You'll want to get translations for that!",
-                languageNames[i], ageName, setName, elementName);
+                language, ageName, setName, elementName);
         }
     }
 }
@@ -941,17 +933,17 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::st
     fileData << "\t<age name=\"" << ageName << "\">\n";
 
     std::vector<ST::string> setNames = GetSetList(ageName);
-    for (int curSet = 0; curSet < setNames.size(); curSet++)
+    for (const auto& setName : setNames)
     {
         setEmpty = true; // so far, this set is empty
         ST::string_stream setCode;
-        setCode << "\t\t<set name=\"" << setNames[curSet] << "\">\n";
+        setCode << "\t\t<set name=\"" << setName << "\">\n";
 
-        std::vector<ST::string> elementNames = GetElementList(ageName, setNames[curSet]);
-        for (int curElement = 0; curElement < elementNames.size(); curElement++)
+        std::vector<ST::string> elementNames = GetElementList(ageName, setName);
+        for (const auto& elementName : elementNames)
         {
-            setCode << "\t\t\t<element name=\"" << elementNames[curElement] << "\">\n";
-            ST::string key = ST::format("{}.{}.{}", ageName, setNames[curSet], elementNames[curElement]);
+            setCode << "\t\t\t<element name=\"" << elementName << "\">\n";
+            ST::string key = ST::format("{}.{}.{}", ageName, setName, elementName);
 
             if (fLocalizedElements[key].find(languageName) != fLocalizedElements[key].end())
             {
@@ -1191,13 +1183,13 @@ void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path)
 {
     std::vector<ST::string> ageNames = GetAgeList();
     std::vector<ST::string> languageNames = IGetAllLanguageNames();
-    for (int curAge = 0; curAge < ageNames.size(); curAge++)
+    for (const auto& curAge : ageNames)
     {
-        for (int curLanguage = 0; curLanguage < languageNames.size(); curLanguage++)
+        for (const auto& curLanguage : languageNames)
         {
             plFileName locPath = plFileName::Join(path, ST::format("{}{}.loc",
-                                    ageNames[curAge], languageNames[curLanguage]));
-            IWriteText(locPath, ageNames[curAge], languageNames[curLanguage]);
+                                    curAge, curLanguage));
+            IWriteText(locPath, curAge, curLanguage);
         }
     }
 }
