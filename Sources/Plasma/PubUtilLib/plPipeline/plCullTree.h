@@ -73,10 +73,10 @@ protected:
     mutable hsTArray<uint16_t>                fVisTris;
     mutable float                        fVisYon;
 
-    mutable hsTArray<plCullPoly>        fScratchPolys;
-    mutable hsLargeArray<int16_t>     fScratchClear;
-    mutable hsLargeArray<int16_t>     fScratchSplit;
-    mutable hsLargeArray<int16_t>     fScratchCulled;
+    mutable hsTArray<plCullPoly>    fScratchPolys;
+    mutable hsTArray<int16_t>       fScratchClear;
+    mutable hsTArray<int16_t>       fScratchSplit;
+    mutable hsTArray<int16_t>       fScratchCulled;
     mutable hsBitVector             fScratchBitVec;
     mutable hsBitVector             fScratchTotVec;
 
@@ -102,9 +102,9 @@ protected:
 
     // Some scratch areas for the nodes use when building the tree etc.
     hsTArray<plCullPoly>&           ScratchPolys() const { return fScratchPolys; }
-    hsLargeArray<int16_t>&            ScratchClear() const { return fScratchClear; }
-    hsLargeArray<int16_t>&            ScratchSplit() const { return fScratchSplit; }
-    hsLargeArray<int16_t>&            ScratchCulled() const { return fScratchCulled; }
+    hsTArray<int16_t>&              ScratchClear() const { return fScratchClear; }
+    hsTArray<int16_t>&              ScratchSplit() const { return fScratchSplit; }
+    hsTArray<int16_t>&              ScratchCulled() const { return fScratchCulled; }
     hsBitVector&                    ScratchBitVec() const { return fScratchBitVec; }
     hsBitVector&                    ScratchTotVec() const { return fScratchTotVec; }
 
@@ -175,7 +175,7 @@ protected:
     plCullNode::plCullStatus    ITestSphereRecur(const hsPoint3& center, float rad) const;
 
     // Using the nodes
-    plCullNode::plCullStatus    ITestNode(const plSpaceTree* space, int16_t who, hsLargeArray<int16_t>& clear, hsLargeArray<int16_t>& split, hsLargeArray<int16_t>& culled) const;
+    plCullNode::plCullStatus    ITestNode(const plSpaceTree* space, int16_t who, hsTArray<int16_t>& clear, hsTArray<int16_t>& split, hsTArray<int16_t>& culled) const;
     void                        ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& totList, hsBitVector& outList) const;
     void                        IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const;
 
@@ -194,9 +194,9 @@ protected:
                                     plCullPoly& srcPoly) const;
 
     hsTArray<plCullPoly>&           ScratchPolys() const { return fTree->ScratchPolys(); }
-    hsLargeArray<int16_t>&            ScratchClear() const { return fTree->ScratchClear(); }
-    hsLargeArray<int16_t>&            ScratchSplit() const { return fTree->ScratchSplit(); }
-    hsLargeArray<int16_t>&            ScratchCulled() const { return fTree->ScratchCulled(); }
+    hsTArray<int16_t>&              ScratchClear() const { return fTree->ScratchClear(); }
+    hsTArray<int16_t>&              ScratchSplit() const { return fTree->ScratchSplit(); }
+    hsTArray<int16_t>&              ScratchCulled() const { return fTree->ScratchCulled(); }
     hsBitVector&                    ScratchBitVec() const { return fTree->ScratchBitVec(); }
     hsBitVector&                    ScratchTotVec() const { return fTree->ScratchTotVec(); }
 

@@ -236,7 +236,7 @@ public:
 
     hsTArray<hsG3DDeviceMode>& GetModes() { return fModes; }
 
-    hsG3DDeviceMode* GetMode(int i) const { return &fModes[i]; }
+    const hsG3DDeviceMode* GetMode(int i) const { return &fModes[i]; }
 
     void ClearModes();
     void Clear();

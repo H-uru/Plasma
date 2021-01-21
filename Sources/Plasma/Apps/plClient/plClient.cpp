@@ -438,7 +438,7 @@ bool plClient::InitPipeline()
         // find our resolution if we're not in windowed mode
         for ( int i = 0; i < rec->GetModes().GetCount(); i++ )
         {
-            hsG3DDeviceMode *mode = rec->GetMode(i);
+            const hsG3DDeviceMode *mode = rec->GetMode(i);
             if ((mode->GetWidth() == plPipeline::fInitialPipeParams.Width) &&
                 (mode->GetHeight() == plPipeline::fInitialPipeParams.Height) &&
                 (mode->GetColorDepth() == plPipeline::fInitialPipeParams.ColorDepth))

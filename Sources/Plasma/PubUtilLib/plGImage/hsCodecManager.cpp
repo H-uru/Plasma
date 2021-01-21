@@ -153,7 +153,7 @@ bool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, float 
                 ++j;
 
             hsCodecEntry tempCodecEntry(priority, codec);
-            fCodecTable[i].fCodecList.InsertAtIndex(j, tempCodecEntry);
+            fCodecTable[i].fCodecList.Insert(j, tempCodecEntry);
 
             return true;
         }

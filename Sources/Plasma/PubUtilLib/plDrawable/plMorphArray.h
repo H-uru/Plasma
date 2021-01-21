@@ -62,7 +62,7 @@ public:
     void AddDelta(const plMorphDelta& delta);
 
     int GetNumDeltas() const { return fDeltas.GetCount(); }
-    float GetWeight(int iDel) { return fDeltas[iDel].GetWeight(); }
+    float GetWeight(int iDel) const { return fDeltas[iDel].GetWeight(); }
     void SetWeight(int iDel, float w) { if( iDel < fDeltas.GetCount() )fDeltas[iDel].SetWeight(w); }
 };
 

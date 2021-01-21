@@ -243,7 +243,7 @@ void plAgeDescription::RemovePage( const ST::string &page )
     }
 }
 
-plAgePage *plAgeDescription::FindPage( const ST::string &name ) const
+const plAgePage *plAgeDescription::FindPage(const ST::string &name) const
 {
     for (int i = 0; i < fPages.GetCount(); i++)
     {
@@ -256,7 +256,7 @@ plAgePage *plAgeDescription::FindPage( const ST::string &name ) const
 
 plLocation  plAgeDescription::CalcPageLocation( const ST::string &page ) const
 {
-    plAgePage *ap = FindPage( page );
+    const plAgePage *ap = FindPage(page);
     if( ap != nil )
     {
         // Combine our sequence # together

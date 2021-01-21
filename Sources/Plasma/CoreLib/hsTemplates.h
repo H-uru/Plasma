@@ -76,379 +76,15 @@ public:
 
 #endif  
 
-// Use this for a pointer to a single object of class T allocated with new
-template <class T> class hsTempObject {
-    T*  fObject;
-public:
-    hsTempObject(): fObject(nil){}
-    hsTempObject(T* p) : fObject(p) {}
-    hsTempObject(const hsTempObject & that)
-    {*this=that;}
-    ~hsTempObject() { delete fObject; }
-    hsTempObject & operator=(const hsTempObject & src)
-    {
-        if (fObject!=src.fObject)
-        {
-            delete fObject;
-            fObject=src.fObject;
-        }
-        return *this;
-    }
-    hsTempObject & operator=(T * ptr)
-    {
-        if (fObject!=ptr)
-        {
-            delete fObject;
-            fObject=ptr;
-        }
-        return *this;
-    }
-    operator T*() const { return fObject; }
-    operator T*&() { return fObject; }
-    operator const T&() const { return *fObject; }
-    operator bool() const { return fObject!=nil;}
-    T * operator->() const { return fObject; }
-    T * operator *() const { return fObject; }
-};
-
-// Use this for subclasses of hsRefCnt, where UnRef should be called at the end
-template <class T> class hsTempRef {
-    T*  fObject;
-public:
-        hsTempRef(T* object = nil) : fObject(object) {}
-        ~hsTempRef() { if (fObject) fObject->UnRef(); }
-
-        operator T*() const { return fObject; }
-    T*  operator->() const { return fObject; }
-    
-    T*  operator=(T* src) { hsRefCnt_SafeUnRef(fObject); fObject = src; return fObject; }
-};
-
-// Use this for an array of objects of class T allocated with new[]
-template <class T> class hsTempArray {
-    T*      fArray;
-    uint32_t  fCount;
-    hsTempArray<T>& operator=(const hsTempArray<T>&);
-public:
-    hsTempArray(long count) : fArray(new T[count]), fCount(count)
-    {
-    }
-    hsTempArray(long count, T initValue) : fArray(new T[count]), fCount(count)
-    {
-        for (int i = 0; i < count; i++)
-            fArray[i] = initValue;
-    }
-    hsTempArray(T* p) : fArray(p), fCount(1)
-    {
-    }
-    hsTempArray() : fArray(nil), fCount(0)
-    {
-    }
-    ~hsTempArray()
-    {
-        delete[] fArray;
-    }
-
-    operator T*() const { return fArray; }
-    T* GetArray() const { return fArray; }
-    void Accomodate(uint32_t count)
-    {
-        if (count > fCount)
-        {   delete[] fArray;
-            fCount = count;
-            fArray = new T[count];
-        }
-    }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-
-template <class T> class hsDynamicArray {
-private:
-    int32_t     fCount;
-    T*          fArray; 
-
-    hsDynamicArray<T>&  operator=(const hsDynamicArray<T>&);        // don't allow assignment
-public:
-    enum { kMissingIndex = -1 };
-
-                hsDynamicArray(int32_t count = 0);
-    virtual     ~hsDynamicArray();
-
-    int32_t       GetCount() const { return fCount; }
-    bool          IsEmpty() const { return fCount == 0; }
-    const T&      Get(int32_t index) const;
-    int32_t       Get(int32_t index, int32_t count, T data[]) const;
-    int32_t       Find(const T&) const;   // returns kMissingIndex if not found
-
-    void          SetCount(int32_t count);
-    T&            operator[]( int32_t index );
-    int32_t       Append(const T&);
-    int32_t       InsertAtIndex(uint32_t index, const T& obj);
-    int32_t       Push(const T&);
-    int32_t       Pop(T*);
-    void          Remove(int32_t);
-    void          Reset();    // clears out everything
-
-    T*                 AcquireArray() { return fArray; }
-    T*                 DetachArray() { T* t = fArray; fCount = 0; fArray = nil; return t;  }
-    void               ReleaseArray(T*) {}
-    hsDynamicArray<T>* Copy(hsDynamicArray<T>* dst = nil) const;
-
-    T*            ForEach(int32_t (*proc)(T&));
-    T*            ForEach(int32_t (*proc)(T&, void* p1), void* p1);
-    T*            ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
-};
-
-// Use this for block of memory allocated with HSMemory::New()
-template <class T> class hsDynamicArrayAccess {
-    T*  fArray;
-    hsDynamicArray<T> *fArrayObj;
-    hsDynamicArrayAccess<T>& operator=(const hsDynamicArrayAccess<T>&);
-public:
-    hsDynamicArrayAccess(hsDynamicArray<T> *array) : fArrayObj(array) { fArray = array->AcquireArray();}
-    ~hsDynamicArrayAccess() { fArrayObj->ReleaseArray(fArray); }
-        
-        operator T*() const { return fArray; }
-    T*  operator->() const { return fArray; }
-};
-
-
-template <class T>
-    hsDynamicArray<T>::hsDynamicArray(int32_t count)
-{
-    fCount  = count;
-    fArray  = nil;
-    if (count)
-        fArray = new T[ count ];
-}
-
-template <class T>
-hsDynamicArray<T>::~hsDynamicArray()
-{
-    this->Reset();
-}
-
-template <class T>
-void hsDynamicArray<T>::SetCount(int32_t count)
-{
-    if (fCount != count)
-    {   if (count == 0)
-            this->Reset();
-        else
-        {   T*  newArray = new T[count];
-            
-            if (fArray)
-            {   int copyCount = std::min(count, fCount);
-
-                for (int i = 0; i < copyCount; i++)
-                    newArray[i] = fArray[i];
-                delete[] fArray;
-            }
-            fCount = count;
-            fArray = newArray;
-        }
-    }
-}
-
-template <class T> T& hsDynamicArray<T>::operator[]( int32_t index )
-{
-    hsDebugCode(hsThrowIfBadParam((uint32_t)index >= (uint32_t)fCount);)
-
-    return fArray[index];
-}
-
-template <class T> const T& hsDynamicArray<T>::Get( int32_t index ) const
-{
-    hsDebugCode(hsThrowIfBadParam((uint32_t)index >= (uint32_t)fCount);)
-
-    return fArray[index];
-}
-
-template <class T>
-int32_t hsDynamicArray<T>::Get(int32_t index, int32_t count, T data[]) const
-{
-    if (count > 0)
-    {   hsThrowIfNilParam(data);
-        hsThrowIfBadParam((uint32_t)index >= fCount);
-
-        if (index + count > fCount)
-            count = fCount - index;
-        for (int i = 0; i < count; i++)
-            data[i] = fArray[i + index];
-    }
-    return count;
-}
-
-template <class T>
-int32_t hsDynamicArray<T>::Find(const T& obj) const
-{
-    for (int i = 0; i < fCount; i++)
-        if (fArray[i] == obj)
-            return i;
-    return kMissingIndex;
-}
-
-template <class T>
-void hsDynamicArray<T>::Remove(int32_t index)
-{
-    hsThrowIfBadParam((uint32_t)index >= (uint32_t)fCount);
-    
-    T rVal = fArray[index];
-
-    if (--fCount > 0)
-    {   
-        int i;
-        T* newList = new T[fCount];
-        for(i = 0 ; i < index;i++)
-            newList[i] = fArray[i];
-        for (i = index; i < fCount; i++)
-            newList[i] = fArray[i + 1];
-        delete [] fArray;
-        fArray = newList;
-    }
-    else
-    {   delete[] fArray;
-        fArray = nil;
-    }
-}
-
-template <class T>
-int32_t hsDynamicArray<T>::Pop(T *obj)
-{
-    hsThrowIfBadParam(this->IsEmpty());
-
-    *obj = fArray[0];
-    Remove(0);
-    return fCount;
-}
-
-
-template <class T>
-int32_t hsDynamicArray<T>::Push(const T& obj)
-{
-    if (fArray)
-    {
-        T* newList = new T[fCount+1];
-        for(int i = 0 ; i < fCount; i++)
-            newList[i+1] = fArray[i];
-        newList[0] = obj;
-        delete [] fArray;
-        fArray = newList;
-    }
-    else
-    {   hsAssert(fCount == 0, "mismatch");
-        fArray = new T[1];
-        fArray[0] = obj;
-    }
-    return ++fCount;
-}
-
-template <class T>
-int32_t hsDynamicArray<T>::Append(const T& obj)
-{
-    if (fArray)
-    {   T* newList = new T[fCount + 1];
-
-        for (int i = 0; i < fCount; i++)
-            newList[i] = fArray[i];
-        newList[fCount] = obj;
-        delete [] fArray;
-        fArray = newList;
-    }
-    else
-    {   hsAssert(fCount == 0, "mismatch");
-        fArray = new T[1];
-        fArray[0] = obj;
-    }
-    return ++fCount;
-}
-
-
-template <class T>
-int32_t hsDynamicArray<T>::InsertAtIndex(uint32_t index, const T& obj)
-{
-    if (fArray)
-    {   
-        hsAssert(uint32_t(fCount) >= index, "Index too large for array");
-        T* newList = new T[fCount + 1];
-        unsigned i;
-        for ( i = 0; i < index; i++)
-            newList[i] = fArray[i];
-        newList[index] = obj;
-        for ( i = index; i < uint32_t(fCount); i++)
-            newList[i+1] = fArray[i];
-    
-        delete [] fArray;
-        fArray = newList;
-    }
-    else
-    {   
-        hsAssert(fCount == 0, "mismatch");
-        hsAssert(index ==0,"Can't insert at non zero index in empty array");
-        fArray = new T[1];
-        fArray[0] = obj;
-    }
-    return ++fCount;
-}
-
-template <class T> void hsDynamicArray<T>::Reset()
-{
-    if (fArray)
-    {   delete[] fArray;
-        fArray = nil;
-        fCount = 0;
-    }
-}
-
-template <class T>
-hsDynamicArray<T>* hsDynamicArray<T>::Copy(hsDynamicArray<T>* dst) const
-{
-    if (dst == nil)
-        dst = new hsDynamicArray<T>;
-    else
-        dst->Reset();
-
-    dst->SetCount(this->fCount);
-    for (int i = 0; i < this->fCount; i++)
-        dst->fArray[i] = this->fArray[i];
-
-    return dst;
-}
-
-template <class T> T* hsDynamicArray<T>::ForEach(int32_t (*proc)(T&))
-{
-    for (int i = 0; i < fCount; i++)
-        if (proc(fArray[i]))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsDynamicArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void * p1)
-{
-    for (int i = 0; i < fCount; i++)
-        if (proc(fArray[i], p1))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsDynamicArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void *p1, void *p2)
-{
-    for (int i = 0; i < fCount; i++)
-        if (proc(fArray[i], p1, p2))
-            return &fArray[i];
-    return nil;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 class hsTArrayBase 
 {
 protected:
-    uint16_t      fUseCount;
-    uint16_t      fTotalCount;
+    uint32_t      fUseCount;
+    uint32_t      fTotalCount;
 
-    void GrowArraySize(uint16_t nSize);
+    void GrowArraySize(uint32_t nSize);
 
 #ifdef HS_DEBUGTARRAY
     hsTArrayBase();
@@ -458,14 +94,15 @@ protected:
     friend void TArrayStats();
     virtual ~hsTArrayBase();
 #else
-    hsTArrayBase():fUseCount(0), fTotalCount(0){}
+    hsTArrayBase() : fUseCount(), fTotalCount() { }
 #endif
 
 public:
-    uint16_t GetNumAlloc() const { return fTotalCount; }
+    uint32_t GetNumAlloc() const { return fTotalCount; }
 };
 
 template <class T> void hsTArray_CopyForward(const T src[], T dst[], int count);
+template <class T> void hsTArray_CopyBackward(const T src[], T dst[], int count);
 
 template <class T> class hsTArray : public hsTArrayBase 
 {
@@ -475,7 +112,7 @@ template <class T> class hsTArray : public hsTArrayBase
     inline void DecCount(int index, int count);
 
 #ifdef HS_DEBUGGING
-    #define hsTArray_ValidateCount(count)       hsAssert(((count) >= 0)&&((count) <= 0xffffL), "bad count")
+    #define hsTArray_ValidateCount(count)       hsAssert((count) >= 0, "bad count")
     #define hsTArray_ValidateIndex(index)       hsAssert(unsigned(index) < fUseCount, "bad index")
     #define hsTArray_ValidateInsertIndex(index) hsAssert(unsigned(index) <= fUseCount, "bad index")
     #define hsTArray_Validate(condition)        hsAssert(condition, "oops")
@@ -505,10 +142,8 @@ public:
 
     void    Set(int index, const T& item)   { hsTArray_ValidateIndex(index); fArray[index]=item; }
     const T&    Get(int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
-    T&      operator[](int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
-
-    T*      FirstIter() { return &fArray[0]; }
-    T*      StopIter() { return &fArray[fUseCount]; }
+    T&       operator[](int index) { hsTArray_ValidateIndex(index); return fArray[index]; }
+    const T& operator[](int index) const { hsTArray_ValidateIndex(index); return fArray[index]; }
 
     int     Count() const { return fUseCount; }
     int     GetCount() const { return fUseCount; }
@@ -540,8 +175,6 @@ public:
                     hsTArray_CopyForward(item, &fArray[index], count);
                 }
             }
-    // This guy is a duplicate for compatibility with the older hsDynamicArray<>
-    void        InsertAtIndex(int index, const T& item) { this->Insert(index, item); }
 
     void        Remove(int index)
             {
@@ -579,17 +212,7 @@ public:
         kMissingIndex    = -1
     };
     int     Find(const T& item) const;  // returns kMissingIndex if not found
-    inline T*   ForEach(int32_t (*proc)(T&));
-    inline T*   ForEach(int32_t (*proc)(T&, void* p1), void* p1);
-    inline T*   ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
 
-    T*      DetachArray()
-            {
-                T* array = fArray;
-                fUseCount = fTotalCount = 0;
-                fArray = nil;
-                return array;
-            }
     T*      AcquireArray() { return fArray; }
 };
 
@@ -649,7 +272,7 @@ bool hsTArray<T>::operator==(const hsTArray<T>& src) const
 
 template <class T> void hsTArray<T>::Swap( hsTArray<T>& src )
 {
-    uint16_t      use, tot;
+    uint32_t    use, tot;
     T           *array;
 
 
@@ -673,8 +296,7 @@ template <class T> void hsTArray<T>::SetCountAndZero(int count)
 
     if (fTotalCount <= count)
         Expand(count);
-    for (int i = 0; i < fTotalCount; i++)
-        fArray[i] = 0;
+    HSMemory::Clear(fArray, fTotalCount * sizeof(T));
     fUseCount = count;
 }
 
@@ -687,9 +309,7 @@ template <class T> void hsTArray<T>::ExpandAndZero(int count)
     {
         int n = fTotalCount;
         Expand(count);
-        int i;
-        for( i = n; i < count; i++ )
-            fArray[i] = 0;
+        HSMemory::Clear(fArray + n, (count - n) * sizeof(T));
     }
     if( fUseCount < count )
         fUseCount = count;
@@ -812,407 +432,6 @@ template <class T> void hsTArray<T>::DecCount(int index, int count)
         fUseCount -= count;
     }
 }
-
-template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&))
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i]))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void* p1)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i], p1))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsTArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i], p1, p2))
-            return &fArray[i];
-    return nil;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// hsTArray's big brother. Only to be used when expecting more than 64K of elements. The
-// only difference between hsTArray and hsLargeArray is LargeArray uses 32 bit counters,
-// vs 16 bit counters for hsTArray.
-
-class hsLargeArrayBase 
-{
-protected:
-    uint32_t      fUseCount;
-    uint32_t      fTotalCount;
-
-    void GrowArraySize(uint32_t nSize);
-
-#ifdef HS_DEBUGTARRAY
-    hsLargeArrayBase();
-    virtual char    *GetTypeName();
-    virtual int      GetSizeOf();
-    hsDlistNode *self;
-    friend void LargeArrayStats();
-    virtual ~hsLargeArrayBase();
-#else
-    hsLargeArrayBase():fUseCount(0), fTotalCount(0){}
-#endif
-
-public:
-    uint32_t GetNumAlloc() const { return fTotalCount; }
-};
-
-
-template <class T> void hsLargeArray_CopyForward(const T src[], T dst[], int count)
-{
-    for (int i = 0; i < count; i++)
-        dst[i] = src[i];
-}
-
-template <class T> void hsLargeArray_CopyBackward(const T src[], T dst[], int count)
-{
-    for (int i = count - 1; i >= 0; --i)
-        dst[i] = src[i];
-}
-
-template <class T> class hsLargeArray : public hsLargeArrayBase 
-{
-    T*      fArray;
-    
-    inline void IncCount(int index, int count);
-    inline void DecCount(int index, int count);
-
-#ifdef HS_DEBUGGING
-    #define hsLargeArray_ValidateCount(count)       hsAssert((count) >= 0, "bad count")
-    #define hsLargeArray_ValidateIndex(index)       hsAssert(unsigned(index) < fUseCount, "bad index")
-    #define hsLargeArray_ValidateInsertIndex(index) hsAssert(unsigned(index) <= fUseCount, "bad index")
-    #define hsLargeArray_Validate(condition)        hsAssert(condition, "oops")
-
-    #ifdef HS_DEBUGTARRAY
-        virtual int      GetSizeOf() { return sizeof(T); }
-    #endif
-#else
-    #define hsLargeArray_ValidateCount(count)
-    #define hsLargeArray_ValidateIndex(index)
-    #define hsLargeArray_ValidateInsertIndex(index)
-    #define hsLargeArray_Validate(condition)
-#endif
-public:
-    hsLargeArray() : fArray(nil) {}
-    inline  hsLargeArray(int count);
-    inline  hsLargeArray(const hsLargeArray<T>& src);
-            ~hsLargeArray() { if (fArray) delete[] fArray; 
-            }
-    inline void Expand(int NewTotal);
-
-    inline hsLargeArray<T>& operator=(const hsLargeArray<T>& src);
-
-    // Swaps the internal data (including the fArray POINTER) with the data from the array given
-    void    Swap( hsLargeArray<T>& src );
-
-    void    Set(int index, const T& item)   { hsLargeArray_ValidateIndex(index); fArray[index]=item; }
-    const T&    Get(int index) const { hsLargeArray_ValidateIndex(index); return fArray[index]; }
-    T&      operator[](int index) const { hsLargeArray_ValidateIndex(index); return fArray[index]; }
-
-    T*      FirstIter() { return &fArray[0]; }
-    T*      StopIter() { return &fArray[fUseCount]; }
-
-    int     Count() const { return fUseCount; }
-    int     GetCount() const { return fUseCount; }
-    inline void SetCount(int count);
-    
-    inline void SetCountAndZero(int count); // does block clear, don't use for types with vtbl
-    inline void ExpandAndZero(int count);   // Same as set count and zero except won't decrease
-                                            // usecount
-    inline void Reset();
-
-    T*      Insert(int index)
-            {
-                hsLargeArray_ValidateInsertIndex(index);
-                this->IncCount(index, 1);
-                return &fArray[index];
-            }
-    void        Insert(int index, const T& item)
-            {
-                hsLargeArray_ValidateInsertIndex(index);
-                this->IncCount(index, 1);
-                fArray[index] = item;
-            }
-    void        Insert(int index, int count, T item[])
-            {
-                hsLargeArray_ValidateCount(count);
-                if (count > 0)
-                {   hsLargeArray_ValidateInsertIndex(index);
-                    this->IncCount(index, count);
-                    hsLargeArray_CopyForward(item, &fArray[index], count);
-                }
-            }
-    // This guy is a duplicate for compatibility with the older hsDynamicArray<>
-    void        InsertAtIndex(int index, const T& item) { this->Insert(index, item); }
-
-    void        Remove(int index)
-            {
-                hsLargeArray_ValidateIndex(index);
-                this->DecCount(index, 1);
-            }
-    void        Remove(int index, int count)
-            {
-                hsLargeArray_ValidateCount(count);
-                hsLargeArray_ValidateIndex(index);
-                hsLargeArray_ValidateIndex(index + count - 1);
-                this->DecCount(index, count);
-            }
-    bool    RemoveItem(const T& item);
-
-    T*      Push()
-            {
-                this->IncCount(fUseCount, 1);
-                return &fArray[fUseCount - 1];
-            }
-    void        Push(const T& item)
-            {
-                this->IncCount(fUseCount, 1);
-                fArray[fUseCount - 1] = item;
-            }
-    void        Append(const T& item)
-            {
-                this->IncCount(fUseCount, 1);
-                fArray[fUseCount - 1] = item;
-            }
-    inline T    Pop();
-    inline const T& Peek() const;
-
-    enum {
-        kMissingIndex    = -1
-    };
-    int     Find(const T& item) const;  // returns kMissingIndex if not found
-    inline T*   ForEach(int32_t (*proc)(T&));
-    inline T*   ForEach(int32_t (*proc)(T&, void* p1), void* p1);
-    inline T*   ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2);
-
-    T*      DetachArray()
-            {
-                T* array = fArray;
-                fUseCount = fTotalCount = 0;
-                fArray = nil;
-                return array;
-            }
-    T*      AcquireArray() { return fArray; }
-};
-
-//////////////  Public hsLargeArray methods
-
-template <class T> hsLargeArray<T>::hsLargeArray(int count) : fArray(nil)
-{
-    hsLargeArray_ValidateCount(count);
-    fUseCount = fTotalCount = count;
-    if (count > 0)
-        fArray = new T[count];
-}
-
-template <class T> hsLargeArray<T>::hsLargeArray(const hsLargeArray<T>& src) : fArray(nil)
-{
-    int count = src.Count();
-    fUseCount = fTotalCount = count;
-
-    if (count > 0)
-    {   
-        fArray = new T[count];
-        hsLargeArray_CopyForward(src.fArray, fArray, count);
-    }
-}
-
-template <class T> hsLargeArray<T>& hsLargeArray<T>::operator=(const hsLargeArray<T>& src)
-{
-    if (this->Count() != src.Count())
-        this->SetCount(src.Count());
-    hsLargeArray_CopyForward(src.fArray, fArray, src.Count());
-    return *this;
-}
-
-template <class T> void hsLargeArray<T>::Swap( hsLargeArray<T>& src )
-{
-    uint32_t      use, tot;
-    T           *array;
-
-
-    use = fUseCount;
-    tot = fTotalCount;
-    array = fArray;
-
-    fUseCount = src.fUseCount;
-    fTotalCount = src.fTotalCount;
-    fArray = src.fArray;
-
-    src.fUseCount = use;
-    src.fTotalCount = tot;
-    src.fArray = array;
-}
-
-template <class T> void hsLargeArray<T>::SetCountAndZero(int count)
-{
-    static_assert(std::is_trivially_copyable<T>::value,
-                  "Cannot use SetCountAndZero on non-trivially copyable types");
-
-    if( fTotalCount <= count )
-    {
-        int n = fTotalCount;
-        Expand(count);
-    }
-    HSMemory::Clear(fArray, fTotalCount * sizeof( T ));
-    fUseCount = count;
-}
-
-template <class T> void hsLargeArray<T>::ExpandAndZero(int count)
-{
-    static_assert(std::is_trivially_copyable<T>::value,
-                  "Cannot use ExpandAndZero on non-trivially copyable types");
-
-    if( fTotalCount <= count )
-    {
-        int n = fTotalCount;
-        Expand(count);
-        HSMemory::Clear(fArray+n, (count - n) * sizeof( T ));
-    }
-    if( fUseCount < count )
-        fUseCount = count;
-}
-
-template <class T> void hsLargeArray<T>::SetCount(int count)
-{
-    hsLargeArray_ValidateCount(count);
-    if (count > fTotalCount)
-    {   
-        if (fArray)
-            delete[] fArray;
-        fArray = new T[count];
-        fUseCount = fTotalCount = count;
-    }
-    fUseCount = count;
-}
-
-template <class T> void hsLargeArray<T>::Expand(int NewCount) // New Count is Absolute not additional
-{
-    hsLargeArray_ValidateCount(NewCount);
-    if (NewCount > fTotalCount)         // This is Expand not Shrink
-    {   
-        T*  newArray = new T[NewCount];
-
-        if (fArray != nil)
-        {   hsLargeArray_CopyForward(fArray, newArray, fUseCount);
-//          hsLargeArray_CopyForward(&fArray[index], &newArray[index + count], fUseCount - index);
-            delete[] fArray;
-        }
-        fArray = newArray;
-        fTotalCount = NewCount;
-    }
-}
-
-template <class T> void hsLargeArray<T>::Reset()
-{
-    if (fArray)
-    {   
-        delete[] fArray;
-        fArray = nil;
-        fUseCount = fTotalCount = 0;
-    }
-}
-
-template <class T> T hsLargeArray<T>::Pop()
-{
-    hsLargeArray_Validate(fUseCount > 0);
-    fUseCount -= 1;
-    return fArray[fUseCount];
-}
-
-template <class T> const T& hsLargeArray<T>::Peek() const
-{
-    hsLargeArray_Validate(fUseCount > 0);
-    return fArray[fUseCount-1];
-}
-
-template <class T> int hsLargeArray<T>::Find(const T& item) const
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (fArray[i] == item)
-            return i;
-    return kMissingIndex;
-}
-
-template <class T> bool hsLargeArray<T>::RemoveItem(const T& item)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (fArray[i] == item)
-        {   this->DecCount(i, 1);
-            return true;
-        }
-    return false;
-}
-
-//////////  These are the private methods for hsLargeArray
-
-template <class T> void hsLargeArray<T>::IncCount(int index, int count)
-{
-    int newCount = fUseCount + count;
-
-    if (newCount > fTotalCount)
-    {   if (fTotalCount == 0)
-            fTotalCount = newCount;
-
-        GrowArraySize(newCount);    // Sets new fTotalCount
-        T*  newArray = new T[fTotalCount];
-
-        if (fArray != nil)
-        {   hsLargeArray_CopyForward(fArray, newArray, index);
-            hsLargeArray_CopyForward(&fArray[index], &newArray[index + count], fUseCount - index);
-            delete[] fArray;
-        }
-        fArray = newArray;
-    }
-    else
-        hsLargeArray_CopyBackward(&fArray[index], &fArray[index + count], fUseCount - index);
-    fUseCount = newCount;
-}
-
-template <class T> void hsLargeArray<T>::DecCount(int index, int count)
-{
-    if (fUseCount == count)
-        this->Reset();
-    else
-    {   hsLargeArray_CopyForward(&fArray[index + count], &fArray[index], fUseCount - index - count);
-        fUseCount -= count;
-    }
-}
-
-template <class T> T* hsLargeArray<T>::ForEach(int32_t (*proc)(T&))
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i]))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsLargeArray<T>::ForEach(int32_t (*proc)(T&, void* p1), void* p1)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i], p1))
-            return &fArray[i];
-    return nil;
-}
-
-template <class T> T* hsLargeArray<T>::ForEach(int32_t (*proc)(T&, void* p1, void* p2), void* p1, void* p2)
-{
-    for (int i = 0; i < fUseCount; i++)
-        if (proc(fArray[i], p1, p2))
-            return &fArray[i];
-    return nil;
-}
-
-
 
 #endif
 

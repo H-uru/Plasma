@@ -1629,8 +1629,8 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
         return;
 
 
-    static hsLargeArray<hsRadixSort::Elem>  sortScratch;
-    static hsLargeArray<uint16_t>         triList;
+    static hsTArray<hsRadixSort::Elem>    sortScratch;
+    static hsTArray<uint16_t>             triList;
     static hsTArray<int32_t>              counters;
     static hsTArray<uint32_t>             startIndex;
     
@@ -2066,7 +2066,7 @@ void plDrawableSpans::SortVisibleSpansUnit(const hsTArray<int16_t>& visList, plP
 
     plProfile_BeginTiming(FaceSort);
 
-    static hsLargeArray<uint16_t>         triList;
+    static hsTArray<uint16_t>         triList;
     
     int i;
     
@@ -2109,7 +2109,7 @@ void plDrawableSpans::SortVisibleSpansUnit(const hsTArray<int16_t>& visList, plP
         uint16_t      fIndex2;
         float    fDist;
     };
-    static hsLargeArray<sortFace>   sortList;
+    static hsTArray<sortFace>   sortList;
 
     struct SelectCloserFace
     {

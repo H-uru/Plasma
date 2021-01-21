@@ -36,7 +36,6 @@ set(plGLPipeline_SOURCES
 )
 
 set(plPipeline_HEADERS
-    hsFogControl.h
     hsG3DDeviceSelector.h
     hsWinRef.h
     pl3DPipeline.h

@@ -120,7 +120,7 @@ HRESULT plDXPixelShader::ISetConstants(plDXPipeline* pipe)
     if( fOwner->GetNumConsts() )
     {
         HRESULT hr = pipe->GetD3DDevice()->SetPixelShaderConstantF(0,
-                        (float*)fOwner->GetConstBasePtr(),
+                        (const float*)fOwner->GetConstBasePtr(),
                         fOwner->GetNumConsts());
         if( FAILED(hr) )
             return IOnError(hr, "Error setting constants");

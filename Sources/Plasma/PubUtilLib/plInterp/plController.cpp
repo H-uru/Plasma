@@ -385,7 +385,7 @@ void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
         if (cTime < kTime)
         {
-            keyTimes.InsertAtIndex(kIdx, cTime);
+            keyTimes.Insert(kIdx, cTime);
             cIdx++;
             kIdx++;
         }

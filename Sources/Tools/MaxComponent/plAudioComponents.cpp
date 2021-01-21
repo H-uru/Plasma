@@ -2221,7 +2221,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     // setting for each sound in the group
     hsTArray<uint32_t>        startPoses;
     hsTArray<float>      volumes;
-    hsLargeArray<uint8_t>     mergedData;
+    hsTArray<uint8_t>       mergedData;
     int                     i;
     plWAVHeader             mergedHeader;
 

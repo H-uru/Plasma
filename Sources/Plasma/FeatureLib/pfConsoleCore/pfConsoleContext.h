@@ -78,7 +78,7 @@ class pfConsoleContext
 
         uint32_t              GetNumVars() const;
         const char          *GetVarName( uint32_t idx ) const;
-        pfConsoleCmdParam   &GetVarValue( uint32_t idx ) const;
+        const pfConsoleCmdParam   &GetVarValue(uint32_t idx) const;
 
         int32_t   FindVar( const char *name ) const;
         void    RemoveVar( uint32_t idx );
