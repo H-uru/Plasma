@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMemory.h"
 #include "hsStream.h"
 
+#include <memory>
+
 bool plZlibCompress::Uncompress(uint8_t* bufOut, uint32_t* bufLenOut, const uint8_t* bufIn, uint32_t bufLenIn)
 {
     unsigned long buflen_out = *bufLenOut;
@@ -117,7 +119,9 @@ bool plZlibCompress::Uncompress(uint8_t** bufIn, uint32_t* bufLenIn, uint32_t bu
 
 //// .gz File Versions ///////////////////////////////////////////////////////
 
-#define kGzBufferSize   64 * 1024
+constexpr size_t kGzBufferSize = 64 * 1024; // 64 KiB
+static_assert(UINT32_MAX >= kGzBufferSize, "GZ Buffer size should be 32-bits");
+
 #if 1
 
 bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *destPath )
@@ -127,8 +131,7 @@ bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *de
     bool    worked = false;
     int     length, err;
 
-    uint8_t   buffer[ kGzBufferSize ];
-
+    auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
     outFile = fopen( destPath, "wb" );
     if( outFile != nil )
@@ -138,7 +141,7 @@ bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *de
         {
             for( ;; )
             {
-                length = gzread( inFile, buffer, sizeof( buffer ) );
+                length = gzread( inFile, buffer.get(), kGzBufferSize );
                 if( length < 0 )
                 {
                     gzerror( inFile, &err );
@@ -149,7 +152,7 @@ bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *de
                     worked = true;
                     break;
                 }
-                if( fwrite( buffer, 1, length, outFile ) != length )
+                if( fwrite( buffer.get(), 1, (unsigned int)length, outFile ) != length )
                     break;
             }
             if( gzclose( inFile ) != Z_OK )
@@ -167,9 +170,9 @@ bool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *de
     FILE    *inFile;
     gzFile  outFile;
     bool    worked = false;
-    int     length, err;
+    int     err;
 
-    uint8_t   buffer[ kGzBufferSize ];
+    auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
 
     inFile = fopen( uncompressedPath, "rb" );
@@ -180,7 +183,7 @@ bool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *de
         {
             for( ;; )
             {
-                length = fread( buffer, 1, sizeof( buffer ), inFile );
+                size_t length = fread( buffer.get(), 1, kGzBufferSize, inFile );
                 if( ferror( inFile ) )
                     break;
 
@@ -189,7 +192,7 @@ bool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *de
                     worked = true;
                     break;
                 }
-                if( gzwrite( outFile, buffer, (unsigned)length ) != length )
+                if( gzwrite( outFile, buffer.get(), (unsigned int)length ) != length )
                 {
                     gzerror( outFile, &err );
                     break;
@@ -213,15 +216,14 @@ bool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s )
     bool    worked = false;
     int     length, err;
 
-    uint8_t   buffer[ kGzBufferSize ];
-
+    auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
     inFile = gzopen( filename, "rb" );
     if( inFile != nil )
     {
         for( ;; )
         {
-            length = gzread( inFile, buffer, sizeof( buffer ) );
+            length = gzread( inFile, buffer.get(), kGzBufferSize );
             if( length < 0 )
             {
                 gzerror( inFile, &err );
@@ -232,7 +234,7 @@ bool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s )
                 worked = true;
                 break;
             }
-            s->Write( length, buffer );
+            s->Write( length, buffer.get() );
         }
         if( gzclose( inFile ) != Z_OK )
             worked = false;
@@ -246,18 +248,17 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
 {
     gzFile  outFile;
     bool    worked = false;
-    int     length, err;
+    int     err;
 
-    uint8_t   buffer[ kGzBufferSize ];
-
+    auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
     outFile = gzopen( filename, "wb" );
     if( outFile != nil )
     {
         for( ;; )
         {
-            int avail = s->GetEOF()-s->GetPosition();
-            int n = ( avail>sizeof( buffer ) ) ? sizeof( buffer ) : avail;
+            uint32_t avail = s->GetEOF() - s->GetPosition();
+            uint32_t n = ( avail > kGzBufferSize ) ? kGzBufferSize : avail;
 
             if( n == 0 )
             {
@@ -265,7 +266,7 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
                 break;
             }
 
-            length = s->Read( n, buffer );
+            uint32_t length = s->Read( n, buffer.get() );
 
             if( length == 0 )
             {
@@ -273,7 +274,7 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
                 break;
             }
 
-            if( gzwrite( outFile, buffer, (unsigned)length ) != length )
+            if( gzwrite( outFile, buffer.get(), length ) != length )
             {
                 gzerror( outFile, &err );
                 break;
