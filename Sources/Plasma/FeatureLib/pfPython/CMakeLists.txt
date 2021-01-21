@@ -57,7 +57,6 @@ set(pfPython_SOURCES
     pyMatrix44.cpp
     pyMoviePlayer.cpp
     pyNetLinkingMgr.cpp
-    pyNetServerSessionInfo.cpp
     pyNotify.cpp
     pyPlayer.cpp
     pySceneObject.cpp
@@ -144,7 +143,6 @@ set(pfPython_HEADERS
     pyMatrix44.h
     pyMoviePlayer.h
     pyNetLinkingMgr.h
-    pyNetServerSessionInfo.h
     pyNotify.h
     pyObjectRef.h
     pyPlayer.h
@@ -227,7 +225,6 @@ set(pfPython_GLUE
     pyMatrix44Glue.cpp
     pyMoviePlayerGlue.cpp
     pyNetLinkingMgrGlue.cpp
-    pyNetServerSessionInfoGlue.cpp
     pyNotifyGlue.cpp
     pyPlayerGlue.cpp
     pySceneObjectGlue.cpp

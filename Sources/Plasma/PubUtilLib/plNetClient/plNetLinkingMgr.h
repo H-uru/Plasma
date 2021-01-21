@@ -163,11 +163,6 @@ public:
     plAgeLinkStruct * GetAgeLink() { return &fAgeLink; }
     plAgeLinkStruct * GetPrevAgeLink() { return &fPrevAgeLink; }
 
-    // lobby info
-    void SetLobbyAddr( const char * ipaddr ) { fLobbyInfo.SetServerAddr( ipaddr );}
-    void SetLobbyPort( int port ) { fLobbyInfo.SetServerPort( port );}
-    const plNetServerSessionInfo * GetLobbyServerInfo() const { return &fLobbyInfo;}
-
     // helpers
     static ST::string GetProperAgeName( const ST::string & ageName );    // attempt to fix wrong case age name.
 
@@ -180,9 +175,6 @@ private:
 
     // The age we just left.
     plAgeLinkStruct     fPrevAgeLink;
-
-    // The lobby we want to talk to.
-    plNetServerSessionInfo  fLobbyInfo;
 };
 
 

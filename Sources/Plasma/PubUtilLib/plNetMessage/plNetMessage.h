@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 #include "plGeneric.h"
-#include "pnNetCommon/plNetServers.h"
 #include "pnNetCommon/plNetGroup.h"
 #include "pnFactory/plCreatable.h"
 #include "pnFactory/plFactory.h"
