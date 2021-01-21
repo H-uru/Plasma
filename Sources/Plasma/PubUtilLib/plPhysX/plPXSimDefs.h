@@ -177,6 +177,10 @@ public:
             filter.SetGroups(1 << group);
             shape->setQueryFilterData(filter);
         }
+
+        // Per the PhysX documentation, there can only be 32 dominance groups.
+        static_assert(plSimDefs::kGroupMax < 32, "Too many groups -- need to refactor dominance.");
+        actor->setDominanceGroup(group);
     }
 
     /**
@@ -217,6 +221,8 @@ public:
         actor->getShapes(&shape, 1);
         shape->setSimulationFilterData(data);
         shape->setQueryFilterData(data);
+
+        actor->setDominanceGroup(collideGroup);
     }
 };
 

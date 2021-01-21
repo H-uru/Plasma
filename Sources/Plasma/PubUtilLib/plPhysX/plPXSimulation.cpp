@@ -598,6 +598,8 @@ physx::PxScene* plPXSimulation::InitSubworld(const plKey& world)
     }
 #endif
 
+    scene->setDominanceGroupPair(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, { 0, 1 });
+
     auto it = fWorlds.try_emplace(world, scene);
     return it.first->second;
 }
