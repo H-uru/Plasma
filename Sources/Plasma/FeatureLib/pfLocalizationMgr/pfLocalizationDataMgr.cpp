@@ -180,20 +180,16 @@ XML_Memory_Handling_Suite gHeapAllocator = {
 
 void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *element, const XML_Char **attributes)
 {
-    ST::string wElement = element;
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
-    std::map<ST::string, ST::string> wAttributes;
 
-    for (int i = 0; attributes[i]; i += 2)
-        wAttributes[attributes[i]] = attributes[i+1];
+    LocalizationXMLFile::tagInfo newTag;
+    newTag.fTag = element;
+    for (size_t i = 0; attributes[i]; i += 2)
+        newTag.fAttributes[attributes[i]] = attributes[i+1];
 
     LocalizationXMLFile::tagInfo parentTag;
     if (!file->fTagStack.empty())
         parentTag = file->fTagStack.top();
-
-    LocalizationXMLFile::tagInfo newTag;
-    newTag.fTag = wElement;
-    newTag.fAttributes = wAttributes;
 
     file->fTagStack.push(newTag);
 
@@ -201,18 +197,18 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
         return;
 
     // now we handle this tag
-    if (wElement == "localizations")
+    if (newTag.fTag == "localizations")
         file->IHandleLocalizationsTag(parentTag, newTag);
-    else if (wElement == "age")
+    else if (newTag.fTag == "age")
         file->IHandleAgeTag(parentTag, newTag);
-    else if (wElement == "set")
+    else if (newTag.fTag == "set")
         file->IHandleSetTag(parentTag, newTag);
-    else if (wElement == "element")
+    else if (newTag.fTag == "element")
         file->IHandleElementTag(parentTag, newTag);
-    else if (wElement == "translation")
+    else if (newTag.fTag == "translation")
         file->IHandleTranslationTag(parentTag, newTag);
     else
-        file->AddError(ST::format("Unknown tag {} found", wElement));
+        file->AddError(ST::format("Unknown tag {} found", newTag.fTag));
 }
 
 void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element)
