@@ -257,7 +257,7 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
     {
         for( ;; )
         {
-            uint32_t avail = s->GetEOF()-s->GetPosition();
+            uint32_t avail = s->GetEOF() - s->GetPosition();
             uint32_t n = ( avail > kGzBufferSize ) ? kGzBufferSize : avail;
 
             if( n == 0 )
