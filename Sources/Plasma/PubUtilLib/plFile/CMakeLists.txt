@@ -15,7 +15,11 @@ set(plFile_HEADERS
 )
 
 add_library(plFile STATIC ${plFile_SOURCES} ${plFile_HEADERS})
-target_link_libraries(plFile CoreLib plUnifiedTime)
+target_link_libraries(
+    plFile
+    PUBLIC
+        CoreLib
+)
 
 source_group("Source Files" FILES ${plFile_SOURCES})
 source_group("Header Files" FILES ${plFile_HEADERS})

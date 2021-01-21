@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // other
 #include "plInterp/plAnimEaseTypes.h"
 #include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plSDLNotificationMsg.h"
 #include "pnMessage/plTimeMsg.h"

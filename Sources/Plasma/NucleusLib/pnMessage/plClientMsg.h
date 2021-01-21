@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClientMsg_inc
 #define plClientMsg_inc
 
-#include "pnMessage/plMessage.h"
-#include "pnMessage/plRefMsg.h"
+#include "plMessage.h"
+#include "plRefMsg.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
 

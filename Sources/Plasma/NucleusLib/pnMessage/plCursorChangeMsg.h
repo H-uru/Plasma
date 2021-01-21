@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCursorChangeMsg_inc
 #define plCursorChangeMsg_inc
 
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 #include "hsBitVector.h"
 
 class hsStream;

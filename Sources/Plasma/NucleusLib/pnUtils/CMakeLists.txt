@@ -20,8 +20,14 @@ set(pnUtils_SOURCES
 )
 
 add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES})
-
-target_link_libraries(pnUtils CoreLib)
+target_link_libraries(
+    pnUtils
+    PUBLIC
+        CoreLib
+        pnEncryption
+    PRIVATE
+        OpenSSL::Crypto
+)
 
 source_group("Header Files" FILES ${pnUtils_HEADERS})
 source_group("Source Files" FILES ${pnUtils_SOURCES})

@@ -58,7 +58,17 @@ set(pnMessage_SOURCES
 add_library(pnMessage STATIC ${pnMessage_HEADERS} ${pnMessage_SOURCES})
 
 target_include_directories(pnMessage PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
-target_link_libraries(pnMessage PUBLIC CoreLib pnNetCommon)
+target_link_libraries(
+    pnMessage
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+        pnNucleusInc
+    PRIVATE
+        plSDL # :(
+)
 
 source_group("Header Files" FILES ${pnMessage_HEADERS})
 source_group("Source Files" FILES ${pnMessage_SOURCES})

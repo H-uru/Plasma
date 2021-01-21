@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerInterface.h"
 
 #include "plMessage/plDynaDecalEnableMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "plMessage/plRippleShapeMsg.h"
 
 #include "plMessage/plAvatarMsg.h"

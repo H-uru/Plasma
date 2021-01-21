@@ -158,6 +158,8 @@ static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
 
 #ifdef HS_BUILD_FOR_WIN32
+#include "hsWindows.h"
+#include <Shlobj.h>
 extern ITaskbarList3* gTaskbarList;
 #endif
 

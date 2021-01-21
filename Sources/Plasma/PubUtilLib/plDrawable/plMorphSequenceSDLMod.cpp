@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSharedMesh.h"
 #include "hsResMgr.h"
 #include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "plSDL/plSDL.h"
 

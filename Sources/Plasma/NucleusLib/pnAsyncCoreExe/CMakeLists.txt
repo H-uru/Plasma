@@ -40,6 +40,18 @@ add_library(pnAsyncCoreExe STATIC
             ${pnAsyncCoreExe_PRIVATE} ${pnAysncCoreExe_PRIVATE_NT}
             ${pnAsyncCoreExe_PRIVATE_UNIX} ${pnAsyncCoreExe_PRIVATE_WIN32})
 
+target_link_libraries(
+    pnAsyncCoreExe
+    PUBLIC
+        CoreLib
+        pnAsyncCore
+        pnNetBase
+        pnUtils
+)
+if(USE_VLD)
+    target_link_libraries(pnAsyncCoreExe PRIVATE ${VLD_LIBRARY})
+endif()
+
 source_group("Source Files" FILES ${pnAsyncCoreExe_SOURCES})
 source_group("Header Files" FILES ${pnAsyncCoreExe_HEADERS})
 source_group("Private" FILES ${pnAsyncCoreExe_PRIVATE})

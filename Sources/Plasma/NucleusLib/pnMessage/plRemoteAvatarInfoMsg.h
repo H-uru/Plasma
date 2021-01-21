@@ -46,11 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // this message is to fake out a gadget to see if it would potentially trigger...
 //
-#include "pnMessage/plMessage.h"
-
-class hsStream;
-class hsResMgr;
-class plKey;
+#include "plMessage.h"
 
 class plRemoteAvatarInfoMsg : public plMessage
 {

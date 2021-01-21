@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSatisfiedMsg_inc
 #define plSatisfiedMsg_inc
 
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 
 class plSatisfiedMsg : public plMessage
 {

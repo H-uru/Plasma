@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "plPipeline.h"
 
+#include "pnMessage/plRefMsg.h"
 #include "plMessage/plRenderMsg.h"
 #include "plMessage/plListenerMsg.h"
 #include "plMessage/plAvatarMsg.h"

@@ -10,7 +10,17 @@ set(pnDispatch_HEADERS
 )
 
 add_library(pnDispatch STATIC ${pnDispatch_SOURCES} ${pnDispatch_HEADERS})
-target_link_libraries(pnDispatch pnNucleusInc)
+target_link_libraries(
+    pnDispatch
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNucleusInc
+    PRIVATE
+        pnMessage
+        pnNetCommon
+)
 
 source_group("Source Files" FILES ${pnDispatch_SOURCES})
 source_group("Header Files" FILES ${pnDispatch_HEADERS})

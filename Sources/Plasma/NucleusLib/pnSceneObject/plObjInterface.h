@@ -44,11 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plInterface_inc
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnMessage/plRefMsg.h"
 #include "plSceneObject.h"
 #include "hsStream.h"
 #include "pnNetCommon/plSynchedObject.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "hsBitVector.h"
 
 class hsResMgr;

@@ -39,26 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plConditionalObject.h"
-#include "plLogicModBase.h"
 
-plConditionalObject::plConditionalObject() :
-bSatisfied(false),
-fToggle(false),
-fLogicMod(nil),
-fReset(false)
+#include "hsStream.h"
+
+plConditionalObject::plConditionalObject()
+    : bSatisfied(),
+      fToggle(),
+      fLogicMod(),
+      fReset()
 {
-
 }
 
 plConditionalObject::~plConditionalObject()
 {
-
 }
 
+void plConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
+{
+    hsKeyedObject::Read(stream, mgr);
+    bSatisfied = stream->ReadBool();
+    fToggle = stream->ReadBool();
+}
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-
-
+void plConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
+{
+    hsKeyedObject::Write(stream, mgr);
+    stream->WriteBool(bSatisfied);
+    stream->WriteBool(fToggle);
+}

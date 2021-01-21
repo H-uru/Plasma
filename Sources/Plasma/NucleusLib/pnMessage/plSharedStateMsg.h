@@ -45,9 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage.h"
 #include "pnNetCommon/plNetSharedState.h"
 
-class hsStream;
-class hsResMgr;
-
 //
 // Msg from server containing generic sharedState
 //
