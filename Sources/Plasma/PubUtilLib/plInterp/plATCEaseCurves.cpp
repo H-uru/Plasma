@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
 
+#include "hsStream.h"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, float minLength, float maxLength, float length, 

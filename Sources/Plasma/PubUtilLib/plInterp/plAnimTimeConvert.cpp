@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAnimCmdMsg.h"
 
 #include "pnNetCommon/plSDLTypes.h"
+#include "pnNetCommon/plSynchedObject.h"
 
 #include "hsResMgr.h"
 #include "plgDispatch.h"

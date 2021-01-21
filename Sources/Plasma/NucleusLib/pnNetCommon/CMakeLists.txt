@@ -7,7 +7,6 @@ set(pnNetCommon_HEADERS
     plNetSharedState.h
     plSDLTypes.h
     plSynchedObject.h
-    plSynchedValue.h
     pnNetCommon.h
     pnNetCommonCreatable.h
 )
@@ -20,7 +19,6 @@ set(pnNetCommon_SOURCES
     plNetSharedState.cpp
     plSDLTypes.cpp
     plSynchedObject.cpp
-    plSynchedValue.cpp
     pnNetCommon.cpp
 )
 

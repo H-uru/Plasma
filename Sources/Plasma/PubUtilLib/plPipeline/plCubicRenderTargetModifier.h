@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plCubicRenderTargetModifier_h
 
 #include "pnModifier/plModifier.h"
-#include "pnNetCommon/plSynchedValue.h"
 
 
 class plCubicRenderTarget;

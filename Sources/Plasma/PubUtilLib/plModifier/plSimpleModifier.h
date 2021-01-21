@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSimpleModifier_inc
 
 #include "pnModifier/plModifier.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "plInterp/plAnimTimeConvert.h"
 
 class plSceneObject;

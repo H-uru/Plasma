@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plSynchedObject.h"
-#include "plSynchedValue.h"
 #include "plNetApp.h"
 #include "plNetGroup.h"
 #include "hsResMgr.h"
@@ -57,12 +56,6 @@ std::vector<bool> plSynchedObject::fSynchStateStack;
 
 plSynchedObject::plSynchedObject() : 
     fSynchFlags(0),
-#ifdef USE_SYNCHED_VALUES
-    fSynchedValueAddrOffsets(nil),
-    fNumSynchedValues(0),
-    fSynchedValueFriends(nil),
-    fNumSynchedValueFriends(0),
-#endif
     fNetGroup(plNetGroup::kNetGroupUnknown)
 { 
     fStaticSynchedObj=this; 
@@ -70,10 +63,6 @@ plSynchedObject::plSynchedObject() :
 
 plSynchedObject::~plSynchedObject()
 {
-#ifdef USE_SYNCHED_VALUES
-    delete [] fSynchedValueAddrOffsets;
-    delete [] fSynchedValueFriends;
-#endif
 }
 
 bool plSynchedObject::MsgReceive(plMessage* msg)
@@ -87,104 +76,6 @@ bool plSynchedObject::MsgReceive(plMessage* msg)
 
     return hsKeyedObject::MsgReceive(msg);
 }
-
-#ifdef USE_SYNCHED_VALUES
-plSynchedValueBase* plSynchedObject::GetSynchedValue(int i) const
-{ 
-    if (i<fNumSynchedValues)
-        return IGetSynchedValue((NumSynchedValuesType)i);
-    return IGetSynchedValueFriend((NumSynchedValuesType)(i-fNumSynchedValues));
-}
-
-// realloc and add 
-void plSynchedObject::IAppendSynchedValueAddrOffset(AddrOffsetType synchedValueAddrOffset)
-{
-    // copy to new larger array
-    AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues+1];
-    int32_t i;
-    for(i=0;i<fNumSynchedValues;i++)
-        tmp[i] = fSynchedValueAddrOffsets[i];
-
-    // delete old one
-    delete [] fSynchedValueAddrOffsets;
-
-    // point to new array and append value
-    fSynchedValueAddrOffsets=tmp;
-    tmp[fNumSynchedValues++]=synchedValueAddrOffset;
-}
-
-void plSynchedObject::IAppendSynchedValueFriend(plSynchedValueBase* v)
-{
-    // copy to new larger array
-    plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends+1];
-    int32_t i;
-    for(i=0;i<fNumSynchedValueFriends;i++)
-        tmp[i] = fSynchedValueFriends[i];
-
-    // delete old one
-    delete [] fSynchedValueFriends;
-
-    // point to new array and append value
-    fSynchedValueFriends=tmp;
-    tmp[fNumSynchedValueFriends++]=v;
-}
-
-// adds synchedValue and returns index
-uint8_t plSynchedObject::RegisterSynchedValue(plSynchedValueBase* v) 
-{ 
-    int32_t addrOff = ((int32_t)v - (int32_t)this)>>2;    
-    hsAssert(abs(addrOff) < (uint32_t)(1<<(sizeof(AddrOffsetType)<<3)), "address offset overflow");
-    IAppendSynchedValueAddrOffset((AddrOffsetType)addrOff); 
-    int32_t idx = fNumSynchedValues-1; 
-    hsAssert(idx<256, "index too big");
-    return (uint8_t)idx;
-}
-
-bool plSynchedObject::RemoveSynchedValue(plSynchedValueBase* v) 
-{
-    int i;
-    for(i=0;i<GetNumSynchedValues(); i++)
-        if (GetSynchedValue(i)==v)
-            break;
-    
-    // couldn't find it
-    if (i==GetNumSynchedValues())
-        return false;
-
-    int idx=i;
-    if (idx<fNumSynchedValues)
-    {
-        AddrOffsetType* tmp = new AddrOffsetType[fNumSynchedValues-1];      
-        for(i=0;i<idx;i++)
-            tmp[i] = fSynchedValueAddrOffsets[i];
-        for(i=idx+1;i<fNumSynchedValues;i++)
-            tmp[i-1] = fSynchedValueAddrOffsets[i];
-        delete [] fSynchedValueAddrOffsets;
-        fSynchedValueAddrOffsets=tmp;       
-        fNumSynchedValues--;
-    }
-    else
-    {
-        idx -= fNumSynchedValues;
-        plSynchedValueBase** tmp = new plSynchedValueBase*[fNumSynchedValueFriends-1];      
-        for(i=0;i<idx;i++)
-            tmp[i] = fSynchedValueFriends[i];
-        for(i=idx+1;i<fNumSynchedValueFriends;i++)
-            tmp[i-1] = fSynchedValueFriends[i];
-        delete [] fSynchedValueFriends;
-        fSynchedValueFriends=tmp;       
-        fNumSynchedValueFriends--;
-    }
-
-    return true;
-}
-
-// adds synchedValueFriend
-void plSynchedObject::RegisterSynchedValueFriend(plSynchedValueBase* v) 
-{ 
-    IAppendSynchedValueFriend(v);
-}
-#endif
 
 //
 // send sdl state msg immediately
