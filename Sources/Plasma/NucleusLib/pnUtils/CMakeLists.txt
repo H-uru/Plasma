@@ -20,6 +20,7 @@ set(pnUtils_SOURCES
 )
 
 add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES})
+plasma_optimize_target(pnUtils PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
 target_link_libraries(
     pnUtils
     PUBLIC
