@@ -2398,11 +2398,7 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
         else if( !doNotAddToSource )
         {
             if( fSourceSpans.GetCount() < fSpans.GetCount() )
-            {
-                fSourceSpans.Expand( fSpans.GetCount() );
-                // Since that does not change the use count, we still have to do that ourselves. ARGH!
-                fSourceSpans.SetCount( fSpans.GetCount() );
-            }
+                fSourceSpans.Resize(fSpans.GetCount());
 
             fSourceSpans[ spans[ i ]->fSpanRefIndex ] = spans[ i ];
         }

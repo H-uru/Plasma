@@ -326,11 +326,5 @@ void plShader::SetDecl(plShaderID::ID id)
 
 void plShader::SetNumPipeConsts(int n)
 {
-    int nOld = fPipeConsts.GetCount();
-    if( n > nOld )
-    {
-        // This will copy forward any existing entries.
-        fPipeConsts.Expand(n);
-    }
-    fPipeConsts.SetCount(n);
+    fPipeConsts.Resize(n);
 }

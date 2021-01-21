@@ -148,6 +148,13 @@ public:
     int     Count() const { return fUseCount; }
     int     GetCount() const { return fUseCount; }
     inline void SetCount(int count);
+
+    /** WARNING: By design (sigh), the new elements are not (re)initialized... */
+    void Resize(int count)
+    {
+        Expand(count);
+        SetCount(count);
+    }
     
     inline void SetCountAndZero(int count); // does block clear, don't use for types with vtbl
     inline void ExpandAndZero(int count);   // Same as set count and zero except won't decrease
