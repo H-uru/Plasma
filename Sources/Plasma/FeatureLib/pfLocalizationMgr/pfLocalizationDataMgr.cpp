@@ -117,6 +117,17 @@ protected:
 
 public:
     LocalizationXMLFile() : fWeExploded(), fParser(), fSkipDepth(), fIgnoreContents() { }
+    LocalizationXMLFile(LocalizationXMLFile&& move)
+        : fWeExploded(move.fWeExploded), fFilename(std::move(move.fFilename)),
+          fParser(move.fParser), fTagStack(std::move(move.fTagStack)),
+          fSkipDepth(move.fSkipDepth), fIgnoreContents(move.fIgnoreContents),
+          fCurrentAge(std::move(move.fCurrentAge)), fCurrentSet(std::move(move.fCurrentSet)),
+          fCurrentElement(std::move(move.fCurrentElement)),
+          fCurrentTranslation(std::move(move.fCurrentTranslation)),
+          fData(std::move(move.fData))
+    {
+        move.fParser = nullptr;
+    }
 
     bool Parse(const plFileName & fileName); // returns false on failure
     void AddError(const ST::string & errorText);
@@ -643,15 +654,15 @@ void LocalizationDatabase::Parse(const plFileName & directory)
     fFiles.clear();
 
     std::vector<plFileName> locFiles = plFileSystem::ListDir(directory, "*.loc");
-    for (auto iter = locFiles.begin(); iter != locFiles.end(); ++iter)
+    for (const auto& file : locFiles)
     {
         LocalizationXMLFile newFile;
-        bool retVal = newFile.Parse(*iter);
+        bool retVal = newFile.Parse(file);
         if (!retVal)
-            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Errors in file {}", iter->GetFileName());
+            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Errors in file {}", file.GetFileName());
 
-        fFiles.push_back(newFile);
-        pfLocalizationDataMgr::GetLog()->AddLineF("File {} parsed and added to database", iter->GetFileName());
+        fFiles.emplace_back(std::move(newFile));
+        pfLocalizationDataMgr::GetLog()->AddLineF("File {} parsed and added to database", file.GetFileName());
     }
 
     IMergeData();
