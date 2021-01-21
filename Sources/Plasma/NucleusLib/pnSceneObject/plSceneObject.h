@@ -45,11 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBitVector.h"
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnMessage/plRefMsg.h"
 #include "pnNetCommon/plSynchedObject.h"
-#include "pnNetCommon/plSynchedValue.h"
-#include "pnModifier/plModifier.h"
 #include "hsStream.h"
+#include "hsTemplates.h"
 
 class plObjInterface;
 class plDrawInterface;
@@ -62,6 +60,7 @@ class hsResMgr;
 class plMessage;
 class plDispatchBase;
 struct hsMatrix44;
+class plModifier;
 
 // The following two aren't dragging the Conversion side into the runtime.
 // They are just to let the converter do things we don't want done at runtime.
@@ -70,8 +69,6 @@ class plMaxNode;
 class plMaxNodeBase;
 
 class plSceneObject : public plSynchedObject {
-    friend class plSynchedValueBase;
-private:
     plDrawInterface*            GetVolatileDrawInterface() { return fDrawInterface; }
     plSimulationInterface*      GetVolatileSimulationInterface() { return fSimulationInterface; }
     plCoordinateInterface*      GetVolatileCoordinateInterface() { return fCoordinateInterface; }

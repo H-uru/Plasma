@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <process.h>
 #include <shellapi.h>   // ShellExecuteA
+#include <Shlobj.h>
 #include <algorithm>
 #include <regex>
 

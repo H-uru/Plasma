@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtils/pnUtils.h"
 #include "plProduct.h"
 #include "pnNetCommon/plSynchedObject.h"
-#include "pnNetCommon/plNetServers.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"

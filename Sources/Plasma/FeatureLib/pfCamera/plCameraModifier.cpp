@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
+#include "pnMessage/plRefMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "pnMessage/plTimeMsg.h"

@@ -45,9 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage.h"
 
-class hsStream;
-class hsResMgr;
-
 
 //
 // Sent by server to confirm/deny a sharedState lock attempt.

@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // camera message class
 //
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 

@@ -46,10 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage.h"
 #include "hsBitVector.h"
 
-class hsStream;
-class hsResMgr;
-
-
 class plSingleModMsg : public plMessage
 {
 public:

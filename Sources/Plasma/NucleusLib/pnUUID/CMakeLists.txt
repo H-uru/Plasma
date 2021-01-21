@@ -25,13 +25,15 @@ set(pnUUID_HEADERS
 )
 
 add_library(pnUUID STATIC ${pnUUID_SOURCES} ${pnUUID_HEADERS})
-target_link_libraries(pnUUID CoreLib)
-if(WIN32)
-    target_link_libraries(pnUUID pnUtils)
-    target_link_libraries(pnUUID rpcrt4)
-elseif(NOT APPLE)
-    target_link_libraries(pnUUID ${Uuid_LIBRARIES})
-endif(WIN32)
+target_link_libraries(
+    pnUUID
+    PUBLIC
+        CoreLib
+        string_theory
+    PRIVATE
+        $<$<PLATFORM_ID:Linux>:${Uuid_LIBRARIES}>
+        $<$<PLATFORM_ID:Windows>:rpcrt4>
+)
 
 source_group("Source Files" FILES ${pnUUID_SOURCES})
 source_group("Header Files" FILES ${pnUUID_HEADERS})

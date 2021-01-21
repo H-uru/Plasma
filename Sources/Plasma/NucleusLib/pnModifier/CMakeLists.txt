@@ -16,6 +16,19 @@ set(pnModifier_SOURCES
 )
 
 add_library(pnModifier STATIC ${pnModifier_HEADERS} ${pnModifier_SOURCES})
+target_link_libraries(
+    pnModifier
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+    PRIVATE
+        pnMessage
+        plNetMessage
+        pnNucleusInc
+        pnSceneObject
+)
 
 target_include_directories(pnModifier PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 

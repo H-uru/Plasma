@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier.h"
 #include "hsBitVector.h"
-#include "pnNetCommon/plSynchedValue.h"
 #include "hsTemplates.h"
 
 class plSceneObject;

@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSwimRegion.h"
 #include "plArmatureMod.h"
 
+#include "pnMessage/plRefMsg.h"
+
 void plSwimRegionInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);

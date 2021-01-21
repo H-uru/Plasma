@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plRandom.h"
 #include "plParticleSystem.h"
 #include "plMessage/plParticleUpdateMsg.h"
+#include "pnMessage/plRefMsg.h"
 
 #include <algorithm>
 

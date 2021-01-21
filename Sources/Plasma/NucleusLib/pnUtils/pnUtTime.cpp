@@ -39,6 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "Pch.h"
 #include "pnUtTime.h"
 
 #if HS_BUILD_FOR_UNIX

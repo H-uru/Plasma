@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawableSpans.h"
 #include "plMorphSequence.h"
 
+#include "pnMessage/plRefMsg.h"
+
 plSharedMesh::plSharedMesh() : fMorphSet(nil), fFlags(0)
 {
 }

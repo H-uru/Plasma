@@ -11,7 +11,15 @@ set(pnTimer_SOURCES
 )
 
 add_library(pnTimer STATIC ${pnTimer_HEADERS} ${pnTimer_SOURCES})
-target_link_libraries(pnTimer CoreLib)
+target_link_libraries(
+    pnTimer
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnKeyedObject
+        pnMessage
+        pnNucleusInc
+)
 
 source_group("Header Files" FILES ${pnTimer_HEADERS})
 source_group("Source Files" FILES ${pnTimer_SOURCES})

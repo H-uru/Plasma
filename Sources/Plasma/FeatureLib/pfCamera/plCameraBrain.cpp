@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plLOSRequestMsg.h"
 #include "plMessage/plLOSHitMsg.h"
 #include "plMessage/plAvatarMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnKeyedObject/plKey.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputManager.h"

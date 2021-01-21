@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <list>
 #include "pnFactory/plCreatable.h"
 #include "hsTemplates.h"
-#include "pnNetCommon/plSynchedValue.h"
 
 class plSynchedObject;
 class plAnimCmdMsg;

@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSpanTemplate.h"
 #include "plCluster.h"
 
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
 
 #include "plScene/plVisMgr.h"

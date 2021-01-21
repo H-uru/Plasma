@@ -9,7 +9,12 @@ set(pnFactory_HEADERS
 )
 
 add_library(pnFactory STATIC ${pnFactory_SOURCES} ${pnFactory_HEADERS})
-target_link_libraries(pnFactory CoreLib)
+target_link_libraries(
+    pnFactory
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+)
 
 source_group("Source Files" FILES ${pnFactory_SOURCES})
 source_group("Header Files" FILES ${pnFactory_HEADERS})

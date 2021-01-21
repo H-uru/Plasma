@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plReplaceGeometryMsg_inc
 
 #include "pnMessage/plMessage.h"
+#include "pnMessage/plRefMsg.h"
 
 class plSharedMesh;
 class hsGMaterial;

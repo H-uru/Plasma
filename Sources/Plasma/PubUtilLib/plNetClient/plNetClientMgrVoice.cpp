@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 
 #include "plNetMessage/plNetMessage.h"
-#include "pnNetCommon/plNetServers.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnKeyedObject/plKey.h"

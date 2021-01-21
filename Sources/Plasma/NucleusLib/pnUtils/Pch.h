@@ -56,11 +56,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <malloc.h>
 #endif
 
-#ifdef HS_BUILD_FOR_WIN32
-#include <ws2tcpip.h>
-#define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <iphlpapi.h>
-#include <shlobj.h> // for SHGetSpecialFolderPath
-#endif
-
 #endif

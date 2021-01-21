@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTIME_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTTIME_H
 
-#include "Pch.h"
-
 /*****************************************************************************
 *
 *   Time query functions

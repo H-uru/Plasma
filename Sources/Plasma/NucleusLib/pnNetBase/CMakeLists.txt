@@ -15,6 +15,13 @@ set(pnNetBase_SOURCES
 )
 
 add_library(pnNetBase STATIC ${pnNetBase_HEADERS} ${pnNetBase_SOURCES})
+target_link_libraries(
+    pnNetBase
+    PUBLIC
+        CoreLib
+    PRIVATE
+        string_theory
+)
 
 source_group("Header Files" FILES ${pnNetBase_HEADERS})
 source_group("Source Files" FILES ${pnNetBase_SOURCES})

@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFixedKey.h"
 #include "plCreatableIndex.h"
-#include "pnKeyedObject/plKey.h"
+#include "plKey.h"
 #include "pnFactory/plCreator.h"
 
 //// plKeySeed ///////////////////////////////////////////////////////////////

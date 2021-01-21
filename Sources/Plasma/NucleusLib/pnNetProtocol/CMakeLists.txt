@@ -33,6 +33,17 @@ add_library(pnNetProtocol STATIC ${pnNetProtocol_HEADERS} ${pnNetProtocol_PRIVAT
                           ${pnNetProtocol_PROTO_CLI2AUTH} ${pnNetProtocol_PROTO_CLI2FILE}
                           ${pnNetProtocol_PROTO_CLI2GAME} ${pnNetProtocol_PROTO_CLI2GK}
 )
+target_link_libraries(
+    pnNetProtocol
+    PUBLIC
+        CoreLib
+        pnUUID
+    PRIVATE
+        pnAsyncCore
+        pnNetBase
+        pnNetCli
+        pnUtils
+)
 
 source_group("Header Files" FILES ${pnNetProtocol_HEADERS})
 source_group("Private" FILES ${pnNetProtocol_PRIVATE})

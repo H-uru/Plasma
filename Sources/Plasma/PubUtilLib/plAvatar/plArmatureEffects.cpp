@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/plArmatureEffectMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plAvatarMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "plArmatureMod.h"
 #include "pnSceneObject/plAudioInterface.h"
 #include "plAudio/plSound.h"

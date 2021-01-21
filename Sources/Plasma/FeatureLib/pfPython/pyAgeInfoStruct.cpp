@@ -41,10 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
-#include <string>
+#include <string_theory/format>
+#include <string_theory/string_stream>
 
 #include "pyAgeInfoStruct.h"
-#include "pnUtils/pnUtCrypt.h"
 #include "pnEncryption/plChecksum.h"
 
 

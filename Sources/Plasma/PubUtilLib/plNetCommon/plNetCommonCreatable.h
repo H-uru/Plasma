@@ -57,7 +57,6 @@ REGISTER_NONCREATABLE(plNetMember);
 #include "plNetServerSessionInfo.h"
 REGISTER_CREATABLE(plAgeInfoStruct);
 REGISTER_CREATABLE(plAgeLinkStruct);
-REGISTER_CREATABLE(plNetServerSessionInfo);
 
 #endif // plNetCommonCreatable_inc
 

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMsgHelpers.h"
 #include "plNetMessage.h"
 #include "plCompression/plZlibCompress.h"
-#include "pnNetCommon/plNetServers.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plMessage.h"

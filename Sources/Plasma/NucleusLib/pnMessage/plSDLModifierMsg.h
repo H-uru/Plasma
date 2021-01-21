@@ -42,14 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSDLModifierMsg_INC
 #define plSDLModifierMsg_INC
 
-#include "pnMessage/plMessage.h"
+#include "plMessage.h"
 
 
 //
 // A msg sent to an SDL modifier to tell it send or recv state.
 //
-class hsStream;
-class hsResMgr;
 class plStateDataRecord;
 class plSDLModifierMsg : public plMessage
 {

@@ -520,7 +520,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plNetServerMsgFindProcess),
     CLASS_INDEX(plNetServerMsgProcessFound),
     CLASS_INDEX(plNetMsgRoutingInfo),
-    CLASS_INDEX(plNetServerSessionInfo),
+    CLASS_INDEX(UNUSED_plNetServerSessionInfo),
     CLASS_INDEX(plSimulationMsg),
     CLASS_INDEX(plSimulationSynchMsg),
     CLASS_INDEX(plHKSimulationSynchMsg),

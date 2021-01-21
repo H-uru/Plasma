@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plListener.h"
 #include "plgDispatch.h"
 #include "plAudio/plAudioSystem.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "pnKeyedObject/plKey.h"

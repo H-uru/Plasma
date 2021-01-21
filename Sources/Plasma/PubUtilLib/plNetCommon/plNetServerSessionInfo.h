@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "pnFactory/plCreatable.h"
-#include "pnNetCommon/plNetServers.h"
 #include "plNetCommon/plSpawnPointInfo.h"
 #include "pnUUID/pnUUID.h"
 
@@ -218,86 +217,6 @@ public:
     void    Write( hsStream * s, hsResMgr* );
 
     ST::string AsString() const;
-};
-
-
-////////////////////////////////////////////////////////////////////
-// Holds info that describes a server session
-//
-
-class plNetServerSessionInfo : public plCreatable
-{
-    uint8_t     fFlags;
-    ST::string  fServerName;
-    uint8_t     fServerType;
-    ST::string  fServerAddr;
-    uint16_t    fServerPort;
-    plUUID      fServerGuid;
-
-    enum
-    {
-        kHasServerName  = 1<<0,
-        kHasServerType  = 1<<1,
-        kHasServerAddr  = 1<<2,
-        kHasServerPort  = 1<<3,
-        kHasServerGuid  = 1<<4,
-    };
-
-    void    SetFlag( uint8_t bit ) { fFlags|=bit;}
-    void    ClearFlag( uint8_t bit ) { fFlags&=~bit;}
-    bool    IsFlagSet( uint8_t bit ) const { return (fFlags&bit)!=0;}
-
-public:
-    plNetServerSessionInfo()
-    : fServerType(plNetServerConstants::kInvalidLo)
-    , fServerPort(0)
-    , fFlags(0)
-    {}
-    CLASSNAME_REGISTER( plNetServerSessionInfo );
-    GETINTERFACE_ANY( plNetServerSessionInfo, plCreatable );
-
-    void SetServerName(const ST::string & val);
-    void SetServerType(uint8_t val);
-    void SetServerAddr(const ST::string & val);
-    void SetServerPort(uint16_t val);
-    void SetServerGuid(const plUUID * val);
-    void CopyServerGuid(const plUUID & val);
-
-    ST::string  GetServerName() const { return fServerName; }
-    uint8_t     GetServerType() const { return fServerType; }
-    ST::string  GetServerAddr() const { return fServerAddr; }
-    uint16_t    GetServerPort() const { return fServerPort; }
-    const plUUID *GetServerGuid() const { return &fServerGuid; }
-    plUUID *    GetServerGuid() { return &fServerGuid; }
-
-    bool HasServerName() const { return IsFlagSet(kHasServerName);}
-    bool HasServerType() const { return IsFlagSet(kHasServerType);}
-    bool HasServerAddr() const { return IsFlagSet(kHasServerAddr);}
-    bool HasServerPort() const { return IsFlagSet(kHasServerPort);}
-    bool HasServerGuid() const { return IsFlagSet(kHasServerGuid);}
-    bool IsFullyQualified() const
-    {
-        return
-            IsFlagSet(kHasServerName)&&
-            IsFlagSet(kHasServerType)&&
-            IsFlagSet(kHasServerAddr)&&
-            IsFlagSet(kHasServerPort)&&
-            IsFlagSet(kHasServerGuid);
-    }
-
-    void Clear();
-    void CopyFrom(const plNetServerSessionInfo * other);
-    bool IsEqualTo(const plNetServerSessionInfo * other) const;
-    virtual ST::string AsString() const;
-    virtual ST::string AsLogString() const;
-
-    void Read(hsStream* s, hsResMgr* mgr=nil);
-    void Write(hsStream* s, hsResMgr* mgr=nil);
-
-    // WriteVersion writes the current version of this creatable and ReadVersion will read in
-    // any previous version.
-    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
 };
 
 #endif // plNetServerSessionInfo_h_inc
