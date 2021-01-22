@@ -48,15 +48,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIEditBoxMod_h
 #define _pfGUIEditBoxMod_h
 
+#include "HeadSpin.h"
+
+#include <string>
+
 #include "pfGUIControlMod.h"
+
 #include "pnInputCore/plKeyDef.h"
 
-#include "plInputCore/plInputDevice.h"
-
-class plMessage;
 class hsGMaterial;
+class plMessage;
 class plTextGenerator;
-
 
 class pfGUIEditBoxMod : public pfGUIControlMod
 {
@@ -123,7 +125,7 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         uint8_t       GetLastModifiersCaptured() { return fSavedModifiers; }
         void        SetLastKeyCapture(uint32_t key, uint8_t modifiers);
 
-        void        SetChatMode(bool state) { plKeyboardDevice::IgnoreCapsLock(state); }
+        void        SetChatMode(bool state);
 
         // Extended event types
         enum ExtendedEvents

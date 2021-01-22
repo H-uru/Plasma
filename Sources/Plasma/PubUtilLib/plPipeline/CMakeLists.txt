@@ -84,31 +84,56 @@ set(plGLPipeline_HEADERS
     GL/plGLPipeline.h
 )
 
-if(PLASMA_PIPELINE STREQUAL "DirectX")
-    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
+set(plPipeline_ALL_FILES
+    ${plPipeline_SOURCES}
+    ${plPipeline_HEADERS}
+)
 
-    target_link_libraries(plPipeline PUBLIC ${DirectX_LIBRARIES})
+if(PLASMA_PIPELINE STREQUAL "DirectX")
+    list(APPEND plPipeline_ALL_FILES ${plDXPipeline_SOURCES} ${plDXPipeline_HEADERS})
 endif(PLASMA_PIPELINE STREQUAL "DirectX")
 
 if(PLASMA_PIPELINE STREQUAL "OpenGL")
-    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plGLPipeline_SOURCES} ${plPipeline_HEADERS} ${plGLPipeline_HEADERS})
-
-    target_link_libraries(plPipeline PUBLIC EGL GLESv2)
+    list(APPEND plPipeline_ALL_FILES ${plGLPipeline_SOURCES} ${plGLPipeline_HEADERS})
+    # FIXME: should use a find module to find these libraries
+    set(OpenGL_LIBRARIES EGL GLESv2)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
-target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
+add_library(plPipeline STATIC ${plPipeline_ALL_FILES})
 target_link_libraries(plPipeline
     PUBLIC
         CoreLib
         pnKeyedObject
+        pnModifier
         pnNucleusInc
+        plGImage
+        plProgressMgr
+        plScene
+        plStatusLog
+        string_theory
+    PRIVATE
+        pnMessage
+        pnNetCommon
         pnSceneObject
+        plAudio
+        plAvatar
         plClientResMgr
         plDrawable
         plGLight
-        plScene
+        plIntersect
+        plMessage
+        plNetClient
+        plResMgr
         plSurface
+        pfCamera # plCaptureRender, plDynamicEnvMap, plDXPipeline
+        pfGameGUIMgr # plCaptureRender
+        $<$<STREQUAL:${PLASMA_PIPELINE},DirectX>:${DirectX_LIBRARIES}>
+        $<$<STREQUAL:${PLASMA_PIPELINE},OpenGL>:${OpenGL_LIBRARIES}>
+    INTERFACE
+        pnFactory
 )
+
+target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})

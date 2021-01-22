@@ -42,46 +42,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatarMgr.h"
 
 // local
-#include "plArmatureMod.h"
-#include "plSeekPointMod.h"
-#include "plOneShotMod.h"
-#include "plArmatureMod.h"
-#include "plAnimation/plAGModifier.h"
 #include "plAnimStage.h"
-#include "plCoopCoordinator.h"
+#include "plArmatureMod.h"
 #include "plAvBrainCoop.h"
+#include "plCoopCoordinator.h"
+#include "plOneShotMod.h"
+#include "plSeekPointMod.h"
 
 // global
-#include "hsResMgr.h"
-#include "pnNetCommon/plNetApp.h"
 #include "plgDispatch.h"
+#include "hsResMgr.h"
 #include "hsTimer.h"
 
 // other
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plResMgr/plKeyFinder.h"
-#include "pfCCR/plCCRMgr.h" // Only included for defined constants. 
-#include "plNetTransport/plNetTransport.h"
-#include "plNetTransport/plNetTransportMember.h"
-#include "plModifier/plSpawnModifier.h"
-#include "plModifier/plMaintainersMarkerModifier.h"
-#include "plVault/plDniCoordinateInfo.h"
 #include "pnEncryption/plRandom.h"
-
-#include "pnMessage/plPlayerPageMsg.h"
-#include "pnMessage/plWarpMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plMessage/plMemberUpdateMsg.h"
+#include "plAnimation/plAGModifier.h"
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plLoadClothingMsg.h"
-#include "pnMessage/plTimeMsg.h"
+#include "plMessage/plMemberUpdateMsg.h"
+#include "plModifier/plMaintainersMarkerModifier.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetTransport/plNetTransport.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plStatusLog/plStatusLog.h"
+#include "plVault/plDniCoordinateInfo.h"
+
+#include "pfCCR/plCCRMgr.h" // Only included for defined constants. 
 
 #include <algorithm>
 #include <cmath>
@@ -178,7 +178,7 @@ plKey plAvatarMgr::LoadAvatar(ST::string name, const ST::string &accountName, bo
     // *** be able to use a customization account
     plKey result = nullptr;
     plKey requestor = GetKey(); // avatar manager is always the requestor for avatar loads
-    plNetClientMgr *netMgr = plNetClientMgr::GetInstance();
+    plNetClientApp *netMgr = plNetClientApp::GetInstance();
 
     if(netMgr)      // can't clone without the net manager
     {

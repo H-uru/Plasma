@@ -42,15 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAudioSystem_h
 #define plAudioSystem_h
 
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
-#include "pnKeyedObject/hsKeyedObject.h"
+#include <string_theory/string>
+#include <vector>
 
+// VC++ doesn't like these being forward-declared here
+#include "hsGeometry3.h"
+
+class plgAudioSys;
+class plEAXListenerMod;
+class plKey;
 class plSound;
 class plSoftSoundNode;
-class plgAudioSys;
 class plStatusLog;
-class plEAXListenerMod;
 
 class plgAudioSys
 {

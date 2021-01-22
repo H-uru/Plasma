@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Getting at the destination data
 #include "pnSceneObject/plDrawInterface.h"
-#include "plDrawable/plDrawableSpans.h"
+#include "plDrawableSpans.h"
 #include "plGBufferGroup.h"
 
 // For shading
@@ -60,6 +60,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Getting at the source data
 #include "plParticleSystem/plParticleEmitter.h"
 #include "plParticleSystem/plParticle.h"
+
+// Profiling
+#include "hsTimer.h"
+#include "plProfile.h"
+plProfile_CreateTimer("Fill Polys", "Particles", ParticleFillPoly);
 
 static float sInvDelSecs;
 
@@ -630,10 +635,6 @@ void inline IIPL_0UV_OExp_NExp( const uint32_t &numParticles, const plParticleCo
 
 //// IFillParticlePolys ///////////////////////////////////////////////////////
 //  Takes a list of particles and makes the polys for them.
-#include "hsTimer.h"
-#include "plProfile.h"
-plProfile_CreateTimer("Fill Polys", "Particles", ParticleFillPoly);
-
 void plParticleFiller::FillParticles(plPipeline* pipe, plDrawableSpans* drawable, plParticleSpan* span)
 {
     if (!span->fSource || span->fNumParticles <= 0)

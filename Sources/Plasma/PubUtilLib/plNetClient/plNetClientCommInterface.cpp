@@ -39,14 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTimer.h"
+
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
+
+#include "plgDispatch.h"
+#include "hsTimer.h"
 
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetMessage/plNetMessage.h"
 
-#include "plgDispatch.h"
 
 //
 // Code for interfacing with plNetClientComm library, which in turn

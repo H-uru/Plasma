@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetGroup_h
 #define plNetGroup_h
 
-#include <string>
 #include "pnKeyedObject/plUoid.h"
-#include "hsStream.h"
+
+#include <string_theory/string>
+
+class hsStream;
 
 class plNetGroupId
 {
@@ -77,8 +79,8 @@ public:
    bool operator<(const plNetGroupId& netGroup) const { return fId < netGroup.fId; }
    
    // read and write to hsStream
-   void Write(hsStream *s) const { fId.Write(s); s->WriteLE(fFlags); }
-   void Read(hsStream *s) { fId.Read(s); s->LogReadLE(&fFlags,"GroupId Flags"); }
+   void Write(hsStream* s) const;
+   void Read(hsStream* s);
 };
 
 namespace plNetGroup

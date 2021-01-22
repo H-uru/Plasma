@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plVisLOSMgr_inc
 
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 class plSpaceTreeNode;
 class plSpaceTree;
@@ -54,6 +53,9 @@ class plSceneNode;
 class plPageTreeMgr;
 class plPipeline;
 class hsBounds3Ext;
+
+template<typename T>
+class hsTArray;
 
 class plVisHit
 {

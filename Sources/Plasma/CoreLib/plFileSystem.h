@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plFileSystem_Defined
 
 #include <string_theory/formatter>
-#include <cstdio>
 #include <cstddef>
 
 #if HS_BUILD_FOR_WIN32

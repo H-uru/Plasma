@@ -12,6 +12,27 @@ set(plStatGather_HEADERS
 )
 
 add_library(plStatGather STATIC ${plStatGather_SOURCES} ${plStatGather_HEADERS})
+target_link_libraries(
+    plStatGather
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        string_theory
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        plAvatar
+        plGImage
+        plMessage
+        plModifier
+        plNetClient
+        plPipeline
+        plStatusLog
+        plUnifiedTime
+        plVault
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plStatGather_SOURCES})
 source_group("Header Files" FILES ${plStatGather_HEADERS})

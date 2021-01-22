@@ -43,6 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderInstance_inc
 #define plRenderInstance_inc
 
+#include "hsTemplates.h"
+
+#include <render.h>
+
 class plRenderInstance : public RenderInstance
 {
 protected:

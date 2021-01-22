@@ -40,9 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
-#include "hsGeometry3.h"
 #include "hsFastMath.h"
 
 hsPoint2 statCosSinTable[9] = // must match length in inline

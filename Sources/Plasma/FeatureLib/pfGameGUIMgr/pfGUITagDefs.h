@@ -49,8 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUITagDefs_h
 #define _pfGUITagDefs_h
 
-#include "pfGameGUIMgr.h"
-
 //// Tag List ////////////////////////////////////////////////////////////////
 //  Here's the actual list of tags. It's basically a list of konstants, but
 //  they get translated into two things:

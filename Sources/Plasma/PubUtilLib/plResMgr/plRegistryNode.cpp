@@ -39,15 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plRegistryNode.h"
-#include "plRegistryKeyList.h"
+
 #include "plRegistryHelpers.h"
-
-#include "pnKeyedObject/plKeyImp.h"
-#include "plStatusLog/plStatusLog.h"
-#include "pnFactory/plFactory.h"
-
+#include "plRegistryKeyList.h"
 #include "plVersion.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 plRegistryPageNode::plRegistryPageNode(const plFileName& path)
     : fValid(kPageCorrupt)

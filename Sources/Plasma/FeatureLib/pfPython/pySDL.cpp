@@ -40,9 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pySDL.h"
+
 #include <Python.h>
 
-#include "pySDL.h"
+#include "pnKeyedObject/plKey.h"
+
 #include "plSDL/plSDL.h"
 
 ///////////////////////////////////////////////////////////////////////////

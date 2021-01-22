@@ -40,11 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plCullPoly.h"
+
+#include "HeadSpin.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
-#include "hsFastMath.h"
 
 plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
 {

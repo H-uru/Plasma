@@ -68,7 +68,7 @@ public:
     void SetFrom(const hsPoint3& from) { fFrom = from; }
     void SetTo(const hsPoint3& to) { fTo = to; }
 
-    void SetWorldKey(plKey world) { fWorldKey = world; }
+    void SetWorldKey(plKey world) { fWorldKey = std::move(world); }
 
     /** Determines which database we're testing against.
         See plSimDefs::plLOSDB for a list of valid databases. */

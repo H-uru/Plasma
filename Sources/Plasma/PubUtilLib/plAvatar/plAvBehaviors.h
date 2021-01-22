@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AV_BEHAVIORS_H
 
 #include "HeadSpin.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnTimer/plTimedValue.h"
 

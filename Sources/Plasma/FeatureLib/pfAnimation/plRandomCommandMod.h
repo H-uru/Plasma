@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRandomCommandMod_inc
 #define plRandomCommandMod_inc
 
-#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
+
+#include "pnModifier/plSingleModifier.h"
 
 class plRandomCommandMod : public plSingleModifier
 {

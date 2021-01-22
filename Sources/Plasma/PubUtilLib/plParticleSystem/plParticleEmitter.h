@@ -46,6 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 #include "hsColorRGBA.h"
 
+#include "plEffectTargetInfo.h"
+
+#include "pnFactory/plCreatable.h"
+
 class hsBounds3Ext;
 class plParticleSystem;
 class plParticleCore;
@@ -53,8 +57,6 @@ class plParticleExt;
 class plParticleGenerator;
 class plSimpleParticleGenerator;
 class hsResMgr;
-
-#include "plEffectTargetInfo.h"
 
 // This just holds a bunch of parameters for an emission location. A particle system can have several of these
 

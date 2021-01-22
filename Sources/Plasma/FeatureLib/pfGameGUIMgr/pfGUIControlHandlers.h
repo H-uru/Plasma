@@ -48,7 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIControlHandlers_h
 #define _pfGUIControlHandlers_h
 
-#include "hsStream.h"
+#include "HeadSpin.h"
+
+class pfGUIControlMod;
+class hsStream;
 
 //// pfGUICtrlProcObject Definition //////////////////////////////////////////
 //  Any control which "does something" (buttons, edit boxes on Enter/Return, 
@@ -76,7 +79,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //  Dialogs will use a similar functionality, but with more functions available.
 
-class pfGUIControlMod;
 class pfGUICtrlProcObject
 {
     protected:

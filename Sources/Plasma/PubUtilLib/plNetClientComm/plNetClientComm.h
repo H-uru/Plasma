@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   $/Plasma20/Sources/Plasma/PubUtilLib/plNetClientComm/plNetClientComm.h
 *
 *   This module is the translation layer between simple network types
-*   such as uint8_t arrays, and higher-level Plasma-specific types such
+*   such as byte arrays, and higher-level Plasma-specific types such
 *   as the plFactory-managed types.
 *   
 ***/
@@ -54,11 +54,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "plNetCommon/plNetServerSessionInfo.h"
-#include "plNetCommon/plNetCommonHelpers.h"
+
+#include "pnEncryption/plChecksum.h"
+#include "pnNetBase/pnNbError.h"
+#include "pnUUID/pnUUID.h"
+
 #include "plMessage/plNetCommMsgs.h"
+#include "plNetCommon/plNetCommonHelpers.h"
+
+#include <string_theory/string>
+#include <vector>
 
 
 class plNetMessage;
@@ -298,17 +303,6 @@ void NetCommSendFriendInvite (
 ***/
 #ifndef plNetClientComm_h_inc
 #define plNetClientComm_h_inc
-
-
-////////////////////////////////////////////////////////////////////
-
-class plCreatable;
-class plStatusLog;
-class plAgeLinkStruct;
-class plNetClientCommTask;
-class plNetMessage;
-class   plNetMsgTerminated;
-class plPlayerMigrationPkg;
 
 ////////////////////////////////////////////////////////////////////
 // plNetClientComm

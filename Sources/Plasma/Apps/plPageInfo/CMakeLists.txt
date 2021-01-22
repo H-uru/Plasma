@@ -4,12 +4,22 @@ set(plPageInfo_SOURCES
 )
 
 add_executable(plPageInfo ${plPageInfo_SOURCES})
-target_link_libraries(plPageInfo CoreLib plResMgr plAudioCore pnUUID)
-target_link_libraries(plPageInfo ${STRING_THEORY_LIBRARIES})
-
-if(USE_VLD)
-    target_link_libraries(plPageInfo ${VLD_LIBRARY})
-endif()
+target_link_libraries(
+    plPageInfo
+    PRIVATE
+        CoreLib
+        pnDispatch
+        pnFactory
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        plAgeDescription
+        plAudioCore
+        plMessage
+        plResMgr
+)
 
 install(
     TARGETS plPageInfo

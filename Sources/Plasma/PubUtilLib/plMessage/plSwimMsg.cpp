@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plSwimMsg.h"
+
 #include "hsResMgr.h"
 #include "hsStream.h"
-
-#include "plSwimMsg.h"
 
 
 // ctor default ------

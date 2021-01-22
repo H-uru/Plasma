@@ -69,25 +69,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // local
 #include "plAnimStage.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimation/plAGAnimInstance.h"
 #include "plArmatureMod.h"
-#include "plAnimation/plMatrixChannel.h"
 #include "plAvBrainHuman.h"
+#include "plAvatarSDLModifier.h"
 
 // global
 #include "hsTimer.h"
 
 // other
-#include "plPipeline/plDebugText.h"
-#include "plMessage/plSimStateMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plMatrixChannel.h"
+#include "plMessage/plClimbEventMsg.h"
 #include "plMessage/plLOSHitMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
-#include "plMessage/plClimbEventMsg.h"
-#include "pnNetCommon/plSDLTypes.h"
-
+#include "plPipeline/plDebugText.h"
 #include "plSDL/plSDL.h"
-#include "plAvatarSDLModifier.h"
+
 
 /////////////////////////////////////////////////////////////////
 //

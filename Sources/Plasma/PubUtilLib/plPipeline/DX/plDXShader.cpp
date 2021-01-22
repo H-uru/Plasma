@@ -39,16 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-
-#include "hsWindows.h"
-#include <d3d9.h>
 
 #include "plDXShader.h"
 
-#include "plSurface/plShader.h"
+#include "HeadSpin.h"
+#include "hsWindows.h"
+#include <d3d9.h>
 
 #include "plDXPipeline.h"
+
+#include "plSurface/plShader.h"
 
 plDXShader::plDXShader(plShader* owner)
 :   fOwner(owner),

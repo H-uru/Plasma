@@ -9,6 +9,17 @@ set(plNetTransport_HEADERS
 )
 
 add_library(plNetTransport STATIC ${plNetTransport_SOURCES} ${plNetTransport_HEADERS})
+target_link_libraries(
+    plNetTransport
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        plNetCommon
+        string_theory
+    PRIVATE
+        plNetClient
+        plNetMessage
+)
 
 source_group("Source Files" FILES ${plNetTransport_SOURCES})
 source_group("Header Files" FILES ${plNetTransport_HEADERS})

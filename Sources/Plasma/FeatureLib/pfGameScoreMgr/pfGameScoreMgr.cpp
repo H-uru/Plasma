@@ -39,10 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "pfGameScoreMgr.h"
-#include "pfMessage/pfGameScoreMsg.h"
-#include "plNetGameLib/plNetGameLib.h"
+
+#include <string_theory/string>
+
 #include "pnNetProtocol/pnNetProtocol.h"
+
+#include "plNetGameLib/plNetGameLib.h"
+
+#include "pfMessage/pfGameScoreMsg.h"
+
+
 
 struct ScoreFindParam
 {

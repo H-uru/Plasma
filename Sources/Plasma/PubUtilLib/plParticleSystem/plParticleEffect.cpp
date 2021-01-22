@@ -39,20 +39,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
-#include "plParticle.h"
+
 #include "plParticleEffect.h"
-#include "plEffectTargetInfo.h"
-#include "plConvexVolume.h"
+
 #include "plBoundInterface.h"
-#include "hsResMgr.h"
-#include "plPipeline.h"
-#include "hsFastMath.h"
-#include "pnEncryption/plRandom.h"
+#include "plConvexVolume.h"
+#include "plEffectTargetInfo.h"
+#include "plParticle.h"
 #include "plParticleSystem.h"
-#include "plMessage/plParticleUpdateMsg.h"
+
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+
+#include "pnEncryption/plRandom.h"
 #include "pnMessage/plRefMsg.h"
+
+#include "plMessage/plParticleUpdateMsg.h"
 
 #include <algorithm>
 

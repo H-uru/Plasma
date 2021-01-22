@@ -81,21 +81,9 @@ public:
     void SetCmd (uint32_t cmd) { fCmd = cmd; }
     void SetString (const char str[]) { free(fString); fString = hsStrcpy(str); }
 
-    void Read(hsStream* s, hsResMgr* mgr) override
-    { 
-        plMessage::IMsgRead(s, mgr); 
-        s->ReadLE(&fCmd);
-        // read string
-        plMsgCStringHelper::Peek(fString, s);               
-    }
-    
-    void Write(hsStream* s, hsResMgr* mgr) override
-    { 
-        plMessage::IMsgWrite(s, mgr);
-        s->WriteLE(fCmd);
-        // write cmd/string
-        plMsgCStringHelper::Poke(fString, s);       
-    }
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
+
 };
 
 #endif // plConsole_inc

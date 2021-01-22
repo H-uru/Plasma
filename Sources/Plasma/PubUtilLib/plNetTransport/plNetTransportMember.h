@@ -46,6 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon/plNetMember.h"
 #include "pnKeyedObject/plKey.h"
 
+#include <string_theory/string>
+#include <vector>
+
 //
 // This represents a participant in the game, ie. another 
 // remote user.

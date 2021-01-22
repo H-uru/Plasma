@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plWin32VideoSound.h"
 
+#include <string_theory/format>
+
 #include "hsResMgr.h"
 #include "plDSoundBuffer.h"
 

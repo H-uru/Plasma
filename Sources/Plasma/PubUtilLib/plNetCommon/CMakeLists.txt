@@ -29,7 +29,21 @@ target_include_directories(plNetCommon PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib
 target_link_libraries(plNetCommon
     PUBLIC
         CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNetCommon
+        pnNetProtocol
+        pnUUID
+        string_theory
+    PRIVATE
+        pnMessage
+        pnNucleusInc
         plCompression
+        plMessage
+        plNetClientComm
+        plResMgr
+        plStatusLog
+        pfMessage # pfKIMsg in plNetMsgScreener
 )
 
 source_group("Source Files" FILES ${plNetCommon_SOURCES})

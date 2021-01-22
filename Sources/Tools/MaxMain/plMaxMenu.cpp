@@ -42,12 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
 #include "plFileSystem.h"
 
-#include <iMenuMan.h>
-#include <max.h>
-#include <notify.h>
+#include "MaxAPI.h"
 #include "resource.h"
 #include <vector>
 

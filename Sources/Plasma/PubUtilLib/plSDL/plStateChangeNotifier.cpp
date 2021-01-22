@@ -39,8 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plSDL.h"
+
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plSDLNotificationMsg.h"
+
 #include <algorithm>
 
 // static 
@@ -55,14 +59,18 @@ fDelta(0)
 plStateChangeNotifier::plStateChangeNotifier(float i, plKey k)
 {
     SetValue(i);
-    IAddKey(k);
+    IAddKey(std::move(k));
+}
+
+plStateChangeNotifier::~plStateChangeNotifier()
+{
 }
 
 void plStateChangeNotifier::IAddKey(plKey k)
 {
     KeyList::iterator it = std::find(fKeys.begin(), fKeys.end(), k);
     if (it==fKeys.end())
-        fKeys.push_back(k);
+        fKeys.emplace_back(std::move(k));
 }
 
 int plStateChangeNotifier::IRemoveKey(plKey k)
@@ -76,7 +84,7 @@ int plStateChangeNotifier::IRemoveKey(plKey k)
 //
 // returns number of keys left after removal
 //
-int plStateChangeNotifier::RemoveNotificationKey(plKey k)
+int plStateChangeNotifier::RemoveNotificationKey(const plKey& k)
 {
     return IRemoveKey(k);
 }
@@ -91,6 +99,11 @@ int plStateChangeNotifier::RemoveNotificationKeys(KeyList keys)
         IRemoveKey(*it);
 
     return fKeys.size();
+}
+
+void plStateChangeNotifier::AddNotificationKey(plKey key)
+{
+    IAddKey(std::move(key));
 }
 
 void plStateChangeNotifier::AddNotificationKeys(KeyList keys)

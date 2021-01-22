@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSoundSDLModifier_inc
 #define plSoundSDLModifier_inc
 
-#include "plModifier/plSDLModifier.h"
+#include "plSDLModifier.h"
+
+#include "pnNetCommon/plSDLTypes.h"
 
 //
 // This modifier is responsible for sending and recving 

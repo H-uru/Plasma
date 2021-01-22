@@ -49,10 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGameGUIMsg_h
 
 #include "HeadSpin.h"
-#include "hsStream.h"
-#include "pnMessage/plMessage.h"
 
-#define GAME_GUI_MSG_STRING_SIZE (128)
+#include <string_theory/string>
+
+#include "pnMessage/plMessage.h"
 
 class pfGameGUIMsg : public plMessage
 {
@@ -77,26 +77,8 @@ class pfGameGUIMsg : public plMessage
         CLASSNAME_REGISTER( pfGameGUIMsg );
         GETINTERFACE_ANY( pfGameGUIMsg, plMessage );
 
-        void Read(hsStream* s, hsResMgr* mgr) override
-        { 
-            plMessage::IMsgRead( s, mgr ); 
-            s->ReadLE( &fCommand );
-            char buffer[GAME_GUI_MSG_STRING_SIZE];
-            s->Read(sizeof(buffer), buffer);
-            buffer[GAME_GUI_MSG_STRING_SIZE - 1] = 0;
-            fString = buffer;
-            fAge = s->ReadSafeString();
-        }
-        
-        void Write(hsStream* s, hsResMgr* mgr) override
-        { 
-            plMessage::IMsgWrite( s, mgr ); 
-            s->WriteLE( fCommand );
-            char buffer[GAME_GUI_MSG_STRING_SIZE];
-            strncpy(buffer, fString.c_str(), GAME_GUI_MSG_STRING_SIZE);
-            s->Write(sizeof(buffer), buffer);
-            s->WriteSafeString( fAge );
-        }
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         uint8_t     GetCommand() const { return fCommand; }
 

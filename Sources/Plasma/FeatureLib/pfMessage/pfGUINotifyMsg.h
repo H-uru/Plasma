@@ -42,12 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUINotifyMsg_h_
 #define _pfGUINotifyMsg_h_
 
-#include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
-#include "pnModifier/plSingleModifier.h"
 #include "HeadSpin.h"
 
-
+#include "pnMessage/plMessage.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -117,9 +114,9 @@ public:
 // kTextBox
 // kDragBar
 
-    void SetEvent( plKey &key, uint32_t event)
+    void SetEvent(plKey key, uint32_t event)
     {
-        fControlKey = key;
+        fControlKey = std::move(key);
         fEvent = event;
     }
 
@@ -127,19 +124,8 @@ public:
     uint32_t GetEvent() { return fEvent; }
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fControlKey = mgr->ReadKey(stream);
-        fEvent = stream->ReadLE32();
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fControlKey);
-        stream->WriteLE32(fEvent);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

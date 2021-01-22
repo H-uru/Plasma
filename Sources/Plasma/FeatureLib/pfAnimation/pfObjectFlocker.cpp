@@ -39,27 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsMatrix44.h"
+
+#include "pfObjectFlocker.h"
+
 #include "hsGeometry3.h"
 #include "plgDispatch.h"
+#include "hsMatrix44.h"
 #include "hsResMgr.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "pnSceneObject/plSceneObject.h"
 #include "hsTimer.h"
-#include "pnEncryption/plRandom.h"
+
 #include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plLoadCloneMsg.h"
 
-//#include "../plPipeline/plDebugGeometry.h"
-
 #include <cmath>
-#include <algorithm>
-
-#include "pfObjectFlocker.h"
 
 #define RAND() (float) (rand()/(RAND_MAX * 1.0))
 #define SIGN(x) (((x) < 0) ? -1 : 1)

@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMorphSequenceSDLMod_inc
 #define plMorphSequenceSDLMod_inc
 
-#include "plModifier/plSDLModifier.h"
-
 #include "HeadSpin.h"
+
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving 

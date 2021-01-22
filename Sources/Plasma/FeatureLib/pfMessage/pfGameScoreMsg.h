@@ -44,9 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGameScoreMsg_h_
 
 #include "HeadSpin.h"
-#include "pfGameScoreMgr/pfGameScoreMgr.h"
+
 #include "pnMessage/plMessage.h"
 #include "pnNetBase/pnNetBase.h"
+
+#include <string_theory/string>
 #include <vector>
 
 class pfGameScore;
@@ -83,11 +85,7 @@ public:
         : fScores(vec), pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
     { }
 
-    ~pfGameScoreListMsg()
-    {
-        for (std::vector<pfGameScore*>::iterator it = fScores.begin(); it != fScores.end(); ++it)
-            (*it)->UnRef();
-    }
+    ~pfGameScoreListMsg();
 
     CLASSNAME_REGISTER(pfGameScoreListMsg);
     GETINTERFACE_ANY(pfGameScoreListMsg, pfGameScoreMsg);
@@ -105,21 +103,9 @@ class pfGameScoreTransferMsg : public pfGameScoreMsg
 
 public:
     pfGameScoreTransferMsg() : fSource(), fDestination() { }
-    pfGameScoreTransferMsg(ENetError result, pfGameScore* to, pfGameScore* from, int32_t points)
-        : fSource(from), fDestination(to), pfGameScoreMsg(result)
-    {
-        if (result == kNetSuccess)
-        {
-            from->fValue -= points;
-            to->fValue   += points;
-        }
-    }
+    pfGameScoreTransferMsg(ENetError result, pfGameScore* to, pfGameScore* from, int32_t points);
 
-    ~pfGameScoreTransferMsg()
-    {
-        fSource->UnRef();
-        fDestination->UnRef();
-    }
+    ~pfGameScoreTransferMsg();
 
     CLASSNAME_REGISTER(pfGameScoreTransferMsg);
     GETINTERFACE_ANY(pfGameScoreTransferMsg, pfGameScoreMsg);
@@ -134,17 +120,9 @@ class pfGameScoreUpdateMsg : public pfGameScoreMsg
 
 public:
     pfGameScoreUpdateMsg() : fScore() { }
-    pfGameScoreUpdateMsg(ENetError result, pfGameScore* s, int32_t points)
-        : fScore(s), pfGameScoreMsg(result)
-    {
-        if (result == kNetSuccess)
-            s->fValue = points;
-    }
+    pfGameScoreUpdateMsg(ENetError result, pfGameScore* s, int32_t points);
 
-    ~pfGameScoreUpdateMsg()
-    {
-        fScore->UnRef();
-    }
+    ~pfGameScoreUpdateMsg();
 
     CLASSNAME_REGISTER(pfGameScoreUpdateMsg);
     GETINTERFACE_ANY(pfGameScoreUpdateMsg, pfGameScoreMsg);

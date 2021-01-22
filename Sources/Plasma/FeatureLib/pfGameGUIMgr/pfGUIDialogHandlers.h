@@ -48,8 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDialogHandlers_h
 #define _pfGUIDialogHandlers_h
 
-#include "hsStream.h"
+#include "HeadSpin.h"
+
 #include "pfGUIControlHandlers.h"
+
+class pfGUIDialogMod;
 
 //// pfGUIDialogProc Definition //////////////////////////////////////////////
 //  This works very much like the control proc objects. The idea is, if you
@@ -60,8 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  both your dialog and your control procs. (DoSomething() is overloaded here
 //  so that it's no longer pure virtual, so you can use it for only handling
 //  dialogs if you prefer).
-
-class pfGUIDialogMod;
 class pfGUIDialogProc : public pfGUICtrlProcObject
 {
     protected:

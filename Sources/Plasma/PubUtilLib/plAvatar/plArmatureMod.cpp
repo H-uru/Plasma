@@ -42,85 +42,76 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plArmatureMod.h"
 
 // local
-#include "plAvBrain.h"
-#include "plAvatarMgr.h"
-#include "plAnimation/plAGModifier.h"
-#include "plAvatarClothing.h"
-#include "plClothingSDLModifier.h"
-#include "plAvatarSDLModifier.h"
-#include "plAnimation/plAGAnim.h"
 #include "plArmatureEffects.h"
-#include "plAvBrainHuman.h"
-#include "plAnimation/plMatrixChannel.h"
+#include "plAvatarClothing.h"
+#include "plAvatarMgr.h"
+#include "plAvatarSDLModifier.h"
 #include "plAvatarTasks.h"
-#include "plPhysicalControllerCore.h"
+#include "plAvBrain.h"
 #include "plAvBrainCritter.h"
+#include "plAvBrainHuman.h"
+#include "plClothingSDLModifier.h"
+#include "plPhysicalControllerCore.h"
 
 // global
 #include "plgDispatch.h"
 #include "hsQuat.h"
 #include "hsTimer.h"
-
-// other
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plAudioInterface.h"
-#include "plInterp/plAnimTimeConvert.h"
-
-#include "pnMessage/plEnableMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "pnMessage/plAttachMsg.h"
-#include "pnMessage/plWarpMsg.h"
-#include "pnMessage/plCorrectionMsg.h"
-#include "pnMessage/plCameraMsg.h"
-#include "pnMessage/plPipeResMakeMsg.h"
-
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plAvatarFootMsg.h"
-#include "plMessage/plInputEventMsg.h"
-#include "plMessage/plLoadAgeMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plListenerMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
-#include "plMessage/plLoadClothingMsg.h"
-
-#include "plParticleSystem/plParticleSystem.h"
-#include "plParticleSystem/plParticleSDLMod.h"
-
-#include "pfMessage/plArmatureEffectMsg.h"
-#include "pfMessage/pfKIMsg.h"
-#include "plVault/plVault.h"
-
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plKeyImp.h" 
-
-#include "plDrawable/plInstanceDrawInterface.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plSurface/plLayerAnimation.h"
-#include "plSurface/hsGMaterial.h"
-
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"         // for CCR stuff..
-#include "plNetClient/plNetLinkingMgr.h"
-#include "plModifier/plSpawnModifier.h"
-#include "plPipeline/plDebugText.h"
-#include "plResMgr/plKeyFinder.h"
-#include "plAudio/plWin32StaticSound.h"
-#include "plAudio/plAudioSystem.h"
-#include "plNetMessage/plNetMessage.h"
-#include "plInputCore/plAvatarInputInterface.h"
-#include "plInputCore/plSceneInputInterface.h"
-#include "plInputCore/plInputDevice.h"
-#include "pfCamera/plVirtualCamNeu.h"
-#include "plScene/plRelevanceMgr.h"
-#include "plMessage/plSimStateMsg.h"
-
-#include "plGImage/plLODMipmap.h"
 #include "plPipeline.h"
 #include "plTweak.h"
+
+// other
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnMessage/plAttachMsg.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plCorrectionMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGModifier.h"
+#include "plAnimation/plMatrixChannel.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plInstanceDrawInterface.h"
 #include "plDrawable/plVisLOSMgr.h"
+#include "plInputCore/plAvatarInputInterface.h"
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plSceneInputInterface.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAvatarFootMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plListenerMsg.h"
+#include "plMessage/plLoadAgeMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plLoadClothingMsg.h"
+#include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plSimStateMsg.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plParticleSystem/plParticleSDLMod.h"
+#include "plParticleSystem/plParticleSystem.h"
+#include "plPipeline/plDebugText.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plScene/plRelevanceMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerAnimation.h"
+
+#include "pfCamera/plVirtualCamNeu.h"
+#include "pfMessage/pfKIMsg.h"
+#include "pfMessage/plArmatureEffectMsg.h"
 
 static const ST::string kPersonalLinkAnimName = ST_LITERAL("PersonalLink");
 
@@ -1444,7 +1435,7 @@ bool plArmatureMod::IHandleControlMsg(plControlEventMsg* pMsg)
                 if (moveCode == B_CONTROL_JUMP)
                     SetInputFlag(B_CONTROL_CONSUMABLE_JUMP, true);
                 
-                if(plNetClientMgr::GetInstance()->AmCCR())
+                if(plNetClientApp::GetInstance()->AmCCR())
                 {
                     // special case for clipping: synch every key change
                     SynchIfLocal( hsTimer::GetSysSeconds(), false);
@@ -1480,7 +1471,7 @@ void plArmatureMod::IHandleInputStateMsg(plAvatarInputStateMsg *msg)
     
 }
 
-void plArmatureMod::SynchInputState(uint32_t rcvID /* = kInvalidPlayerID */)
+void plArmatureMod::SynchInputState() const
 {
     if (plAvatarMgr::GetInstance()->GetLocalAvatar() != this)
         return;
@@ -1498,15 +1489,12 @@ void plArmatureMod::SynchInputState(uint32_t rcvID /* = kInvalidPlayerID */)
     msg->SetBCastFlag(plMessage::kNetUseRelevanceRegions);
     msg->SetBCastFlag(plMessage::kLocalPropagate, false);
     msg->SetBCastFlag(plMessage::kNetSendUnreliable, true);
-    if (rcvID != kInvalidPlayerID)
-        msg->AddNetReceiver(rcvID);
-    
     msg->Send();
 }
 
 void plArmatureMod::ILinkToPersonalAge()
 {
-    plNetClientMgr * nc = plNetClientMgr::GetInstance();
+    plNetClientApp * nc = plNetClientApp::GetInstance();
     
     plAgeLinkStruct link;
     link.GetAgeInfo()->SetAgeFilename( kPersonalAgeFilename );
@@ -2509,19 +2497,6 @@ void plArmatureMod::ISetTransparentDrawOrder(bool val)
             spans->SetRenderLevel(plRenderLevel(0, plRenderLevel::kAvatarRendMinorLevel));          
         }
     }
-}
-
-bool plArmatureMod::IsKILowestLevel()
-{
-    if ( GetKILevel() == pfKIMsg::kNanoKI )
-        return true;
-    else
-        return false;
-}
-
-int  plArmatureMod::GetKILevel()
-{
-    return VaultGetKILevel();
 }
 
 void plArmatureMod::SetLinkInAnim(const ST::string &animName)

@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage.h"
 #include "hsBitVector.h"
 
-class hsStream;
-class hsResMgr;
-
 class plCursorChangeMsg : public plMessage
 {
 protected:
@@ -85,16 +82,8 @@ public:
 
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        fType = stream->ReadLE32();
-        fPriority = stream->ReadLE32();
-    }
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE32(fType);
-        stream->WriteLE32(fPriority);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plCursorChangeMsg_inc

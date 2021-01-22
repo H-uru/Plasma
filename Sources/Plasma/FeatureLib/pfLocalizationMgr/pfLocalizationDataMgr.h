@@ -50,10 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfLocalizationDataMgr_h
 
 #include "HeadSpin.h"
+#include "plFileSystem.h"
+
 #include <map>
+#include <vector>
 
 #include "pfLocalizedString.h"
-#include "plFileSystem.h"
+
 
 class plStatusLog;
 

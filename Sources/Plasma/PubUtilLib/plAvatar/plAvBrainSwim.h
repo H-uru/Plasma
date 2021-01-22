@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AV_BRAIN_SWIM_H
 
 #include "plAvBrain.h"
-#include "pnKeyedObject/plKey.h"
 
 class plArmatureMod;
 class plAntiGravAction;

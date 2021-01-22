@@ -46,27 +46,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include <cmath>
-
 // singular
 #include "plAvTaskSeek.h"
 
+#include "hsTimer.h"
+#include "plgDispatch.h"
+
+#include <cmath>
+
 // local
-#include "plAvBrainHuman.h"
-#include "plAnimation/plAGAnim.h"
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
+#include "plAvBrainHuman.h"
 #include "plPhysicalControllerCore.h"
 
 // other
-#include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plCameraMsg.h"
 #include "pnInputCore/plControlEventCodes.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plMessage/plAvatarMsg.h"
 #include "plPipeline/plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "hsTimer.h"
-#include "plgDispatch.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

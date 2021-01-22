@@ -48,10 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimComponent.h"
 #include "plPhysicalComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
 
 #include <map>
-#include <notify.h>
 #include <set>
 #include <string>
 #include <vector>
@@ -76,7 +77,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plWaveSetBase.h"
 #include "plClusterComponent.h"
 #include "plDrawable/plClusterGroup.h"
-//#include "plHavok1/plHKPhysical.h"
 #include "plAvatar/plSwimRegion.h"
 #include "plSurface/plGrassShaderMod.h"
 #include "plGrassComponent.h"

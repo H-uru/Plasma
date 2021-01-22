@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLAVBRAINGENERIC_H
 
 #include "plAvBrainGeneric.h"
+#include <vector>
 
 /** \class plAvBrainCoop
     This is currently no different whatsoever from plAvBrainGeneric,

@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLoadCloneMsgMsg_INC
 #define plLoadCloneMsgMsg_INC
 
-
 #include "pnMessage/plMessage.h"
-// 
-#include "pnKeyedObject/plUoid.h"
+
+class plKey;
+class plUoid;
 
 /** \class plLoadCloneMsg
     Tell the net client manager to allocate a new object based on copying an

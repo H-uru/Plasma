@@ -43,12 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerAnimation_inc
 #define plLayerAnimation_inc
 
+#include <string_theory/string>
+
 #include "plLayerInterface.h"
+
 #include "plInterp/plAnimTimeConvert.h"
 
-class plMessage;
 class plController;
 class plLayerSDLModifier;
+class plMessage;
 class plSimpleStateVariable;
 
 // LayerAnimations take advantage of the simplifying

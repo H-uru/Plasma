@@ -8,6 +8,26 @@ set(plNetClientComm_HEADERS
 )
 
 add_library(plNetClientComm STATIC ${plNetClientComm_SOURCES} ${plNetClientComm_HEADERS})
+target_link_libraries(
+    plNetClientComm
+    PUBLIC
+        CoreLib
+        pnEncryption
+        pnNetBase
+        pnUUID
+        plMessage
+        plNetCommon
+        string_theory
+    PRIVATE
+        pnAsyncCore
+        pnNetCli
+        pnNetCommon
+        pnNucleusInc
+        plFile
+        plNetGameLib
+        plNetMessage
+        plVault
+)
 
 target_include_directories(plNetClientComm PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 

@@ -56,15 +56,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsTemplates.h"
+
 #include "pnInputCore/plKeyDef.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/hsKeyedObject.h"
+
 #include <vector>
 
-class plPipeline;
-class plMessage;
+class pfGameUIInputInterface;
 class pfGUIDialogMod;
 class pfGUIControlMod;
-class pfGameUIInputInterface;
+class plMessage;
+class plPipeline;
 class plPostEffectMod;
 
 //// Tag Definitions /////////////////////////////////////////////////////////

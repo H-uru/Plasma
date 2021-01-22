@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plConditionalObject.h"
 
-class plKey;
-
 class plPickedConditionalObject : public plConditionalObject
 {
 protected:

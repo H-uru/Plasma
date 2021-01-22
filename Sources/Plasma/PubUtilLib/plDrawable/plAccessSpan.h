@@ -46,14 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAccessVtxSpan.h"
 #include "plAccessTriSpan.h"
 #include "plAccessPartySpan.h"
-
-#include "plSpanTypes.h"
-#include "plGeometrySpan.h"
-
-class plGeometrySpan;
-class plSpan;
+#include "hsBounds.h"
 
 class hsGMaterial;
+class plGeometrySpan;
+class plSpan;
 
 class plAccessSpan
 {

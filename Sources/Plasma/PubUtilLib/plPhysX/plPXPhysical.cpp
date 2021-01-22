@@ -53,11 +53,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsQuat.h"
 
-#include "plDrawable/plDrawableGenerator.h"
 #include "pnMessage/plNodeRefMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "pnSceneObject/plSimulationInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plDrawable/plDrawableGenerator.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
 

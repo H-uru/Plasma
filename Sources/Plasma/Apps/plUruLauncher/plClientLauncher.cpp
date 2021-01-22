@@ -40,16 +40,17 @@ Mead, WA   99021
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plClientLauncher.h"
+
+#include "HeadSpin.h"
+#include "plCmdParser.h"
 #include "plFileSystem.h"
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
-#include "plCmdParser.h"
 
-#include "pnUtils/pnUtils.h"
 #include "pnAsyncCore/pnAsyncCore.h"
+
 #include "plNetGameLib/plNetGameLib.h"
 #include "plStatusLog/plStatusLog.h"
 

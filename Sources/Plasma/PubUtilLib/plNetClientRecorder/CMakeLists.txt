@@ -9,6 +9,19 @@ set(plNetClientRecorder_HEADERS
 )
 
 add_library(plNetClientRecorder STATIC ${plNetClientRecorder_SOURCES} ${plNetClientRecorder_HEADERS})
+target_link_libraries(
+    plNetClientRecorder
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plMessage
+        plNetMessage
+        plSDL
+        plStatusLog
+)
 
 source_group("Source Files" FILES ${plNetClientRecorder_SOURCES})
 source_group("Header Files" FILES ${plNetClientRecorder_HEADERS})

@@ -44,8 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsMatrix44.h"
 
+#include "MaxAPI.h"
 #include "plMaxNode.h"
-#include <dummy.h>
 
 #include "plMaxMeshExtractor.h"
 

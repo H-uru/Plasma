@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
-#include "hsResMgr.h"
 
 class plInterestingModMsg : public plMessage
 {
@@ -68,25 +67,9 @@ public:
     uint8_t       fType;
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-        stream->ReadLE(&fWeight);
-        stream->ReadLE(&fRadius);
-        stream->ReadLE(&fSize);
-        fPos.Read(stream);
-        fObj = mgr->ReadKey(stream);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE(fWeight);
-        stream->WriteLE(fRadius);
-        stream->WriteLE(fSize);
-        fPos.Write(stream);
-        mgr->WriteKey(stream, fObj);
-    }
 };
 
 class plInterestingPing : public plMessage

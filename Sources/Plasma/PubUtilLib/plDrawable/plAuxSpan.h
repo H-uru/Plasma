@@ -45,13 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsTemplates.h"
-#include "plSpanTypes.h"
 #include "plGBufferGroup.h"
 
+class plDecalVtxFormat;
 class plDrawableSpans;
 class hsGMaterial;
-class plGBufferGroup;
-class plDecalVtxFormat;
 
 class plAuxSpan
 {

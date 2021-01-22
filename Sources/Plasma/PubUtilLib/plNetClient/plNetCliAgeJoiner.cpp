@@ -50,31 +50,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCliAgeJoiner.h"
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
-#include "plNetCommon/plNetObjectDebugger.h"
 
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnDispatch/plDispatch.h"
 #include "pnMessage/plPlayerPageMsg.h"
-#include "pnMessage/plTimeMsg.h"
 
-#include "plNetClientComm/plNetClientComm.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plVault/plVault.h"
-
-#include "plNetMessage/plNetMessage.h"
-
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plNetClientMgrMsg.h"
 #include "plMessage/plResPatcherMsg.h"
-
+#include "plNetClientComm/plNetClientComm.h"
+#include "plNetCommon/plNetObjectDebugger.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plProgressMgr/plProgressMgr.h"
-#include "pnDispatch/plDispatch.h"
 #include "plResMgr/plResManager.h"
+#include "plVault/plVault.h"
 
 
 /*****************************************************************************

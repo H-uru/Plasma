@@ -46,10 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 
-class hsStream;
-class hsResMgr;
-
-
 class plActivatorMsg : public plMessage
 {
 public:
@@ -63,20 +59,9 @@ public:
     CLASSNAME_REGISTER( plActivatorMsg );
     GETINTERFACE_ANY( plActivatorMsg, plMessage );
     
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fTriggerType = stream->ReadLE32();
-        fHitPoint.Read(stream);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE32( fTriggerType );
-        fHitPoint.Write(stream);
-    }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     bool TriggerType() { return fTriggerType; }
     void SetTriggerType(int n) { fTriggerType = n; }

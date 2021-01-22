@@ -42,13 +42,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSVERTEXSHADER_H
 #define __HSVERTEXSHADER_H
 
-class hsConverterUtils;
-class hsBitVector;
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
 
-class plMaxLightContext;
-class plGeometrySpan;
+class hsBitVector;
 struct hsColorRGBA;
+class hsConverterUtils;
+class plGeometrySpan;
 class plLightMapGen;
+class hsGMaterial;
+class plMaxLightContext;
+template<typename T> class hsTArray;
+
+class INode;
+class Interface;
 
 class hsVertexShader 
 {

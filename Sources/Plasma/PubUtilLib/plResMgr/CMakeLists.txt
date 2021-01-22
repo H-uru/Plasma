@@ -25,18 +25,35 @@ set(plResMgr_HEADERS
 )
 
 add_library(plResMgr STATIC ${plResMgr_SOURCES} ${plResMgr_HEADERS})
-
-target_link_libraries(plResMgr
+target_link_libraries(
+    plResMgr
     PUBLIC
         CoreLib
-        pnDispatch
-        pnFactory
         pnKeyedObject
+        pnNucleusInc
+        string_theory
+    PRIVATE
+        pnDispatch
         pnMessage
-        pnTimer
-        plAgeDescription
-        plFile
+        pnNetCommon
+        plMessage
         plStatusLog
+    INTERFACE
+        pnFactory
+)
+
+# Good luck with this...
+option(PLASMA_RESMGR_DEBUGGING "Use mcn's ResManager debug console" OFF)
+target_compile_definitions(
+    plResMgr
+    PUBLIC # This is used in headers and sources, sadly...
+        $<$<BOOL:${PLASMA_RESMGR_DEBUGGING}>:MCN_RESMGR_DEBUGGING>
+)
+target_link_libraries(
+    plResMgr
+    PRIVATE
+        $<$<BOOL:${PLASMA_RESMGR_DEBUGGING}>:pnInputCore>
+        $<$<BOOL:${PLASMA_RESMGR_DEBUGGING}>:plInputCore>
 )
 
 source_group("Source Files" FILES ${plResMgr_SOURCES})

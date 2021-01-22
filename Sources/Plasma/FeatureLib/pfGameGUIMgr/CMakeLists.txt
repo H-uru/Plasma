@@ -57,13 +57,36 @@ set(pfGameGUIMgr_HEADERS
 )
 
 add_library(pfGameGUIMgr STATIC ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS})
-plasma_optimize_target(pfGameGUIMgr UNITY_BUILD)
-
-target_link_libraries(pfGameGUIMgr
+target_link_libraries(
+    pfGameGUIMgr
     PUBLIC
         CoreLib
+        pnInputCore
+        pnKeyedObject
+        pnModifier
+        string_theory
+    PRIVATE
+        pnNucleusInc
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plAnimation
         plClipboard
+        plGImage
+        plInputCore
+        plInterp
+        plMessage
+        plPipeline
+        plResMgr
+        plScene
+        plSurface
+        pfLocalizationMgr
+        pfMessage
+    INTERFACE
+        pnFactory
 )
+
+plasma_optimize_target(pfGameGUIMgr UNITY_BUILD)
 
 source_group("Source Files" FILES ${pfGameGUIMgr_SOURCES})
 source_group("Header Files" FILES ${pfGameGUIMgr_HEADERS})

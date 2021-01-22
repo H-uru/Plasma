@@ -43,10 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_COMPONENT_BASE_H
 
 #include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
-
-#include <max.h>
-#include <iparamb2.h>
+#include "MaxMain/MaxAPI.h"
 
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;

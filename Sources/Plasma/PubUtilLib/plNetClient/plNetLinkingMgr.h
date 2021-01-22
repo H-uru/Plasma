@@ -49,9 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plLinkToAgeMsg.h"
 
 class plMessage;
-class plVaultNotifyMsg;
 struct plNCAgeJoiner;
 struct plNCAgeLeaver;
+class plVaultNotifyMsg;
+
+namespace ST { class string; }
 
 class plNetLinkingMgr
 {

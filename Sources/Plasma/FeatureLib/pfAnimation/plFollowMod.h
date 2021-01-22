@@ -46,10 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "pnModifier/plSingleModifier.h"
 
-class plSceneObject;
 class plMessage;
-class hsStream;
 class hsResMgr;
+class plSceneObject;
+class hsStream;
 
 class plFollowMod : public plSingleModifier
 {

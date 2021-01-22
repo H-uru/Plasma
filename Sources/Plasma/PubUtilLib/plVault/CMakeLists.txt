@@ -18,6 +18,31 @@ set(plVault_HEADERS
 )
 
 add_library(plVault STATIC ${plVault_SOURCES} ${plVault_HEADERS})
+target_link_libraries(
+    plVault
+    PUBLIC
+        CoreLib
+        pnNetBase
+        pnNetProtocol # plVaultNodeAccess
+        string_theory
+    PRIVATE
+        pnAsyncCore
+        pnDispatch
+        pnNucleusInc
+        pnUtils
+        plGImage
+        plMessage
+        plNetCommon
+        plNetGameLib
+        plSDL
+        plStatusLog
+        plUnifiedTime
+        pfMessage # For pfKIMsg
+    INTERFACE
+        pnFactory
+)
+
+plasma_optimize_target(plVault PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
 
 target_include_directories(plVault PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 

@@ -43,19 +43,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerMovie_inc
 #define plLayerMovie_inc
 
+#include "plFileSystem.h"
+
 #include "plSurface/plLayerAnimation.h"
-#include "plInterp/plAnimTimeConvert.h"
 
 class plMessage;
-class hsStream;
 class hsResMgr;
+class hsStream;
 
 class plLayerMovie : public plLayerAnimation
 {
 protected:
     plFileName                  fMovieName;
-
-//  plAnimTimeConvert           fTimeConvert;
 
     int32_t                     fCurrentFrame;
     float                       fLength;

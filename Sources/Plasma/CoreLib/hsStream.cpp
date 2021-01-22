@@ -40,15 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "hsStream.h"
+
+#include "hsExceptions.h"
+#include "hsMemory.h"
+
 #include <cctype>
 #if HS_BUILD_FOR_WIN32
 #   include <io.h>
 #endif
 #include <algorithm>
-
-#include "hsStream.h"
-#include "hsMemory.h"
-#include "hsExceptions.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>

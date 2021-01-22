@@ -16,21 +16,20 @@ set(pfMoviePlayer_WEBM
 )
 
 add_library(pfMoviePlayer STATIC ${pfMoviePlayer_SOURCES} ${pfMoviePlayer_HEADERS} ${pfMoviePlayer_WEBM})
-
-target_link_libraries(pfMoviePlayer
+target_link_libraries(
+    pfMoviePlayer
     PUBLIC
         CoreLib
+    PRIVATE
         plAudio
+        plGImage
+        plMessage
+        plPipeline
+        plResMgr
+        plStatusLog
+        $<$<BOOL:${USE_WEBM}>:Opus::opus>
+        $<$<BOOL:${USE_WEBM}>:VPX::VPX>
 )
-
-if(USE_WEBM)
-    target_link_libraries(
-        pfMoviePlayer
-        PRIVATE
-            Opus::opus
-            VPX::VPX
-    )
-endif()
 
 source_group("Source Files" FILES ${pfMoviePlayer_SOURCES})
 source_group("Header Files" FILES ${pfMoviePlayer_HEADERS})

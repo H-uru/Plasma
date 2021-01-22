@@ -39,17 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plCreatableIndex.h"
+
 #include "plNetClientMsgScreener.h"
+#include "plCreatableIndex.h"
 #include "plNetLinkingMgr.h"
 
-#include "pfMessage/pfKIMsg.h"
-#include "pnNetCommon/plNetApp.h"
 #include "pnMessage/plMessage.h"
+#include "pnNetCommon/plNetApp.h"
 
-#include "plStatusLog/plStatusLog.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
+#include "plStatusLog/plStatusLog.h"
+
+#include "pfMessage/pfKIMsg.h"
 
 ///////////////////////////////////////////////////////////////
 // CLIENT Version

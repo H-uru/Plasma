@@ -8,6 +8,27 @@ set(pfJournalBook_HEADERS
 )
 
 add_library(pfJournalBook STATIC ${pfJournalBook_SOURCES} ${pfJournalBook_HEADERS})
+target_link_libraries(
+    pfJournalBook
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        string_theory
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plAgeLoader
+        plGImage
+        plMessage
+        plResMgr
+        plSurface
+        pfGameGUIMgr
+        pfMessage
+        pfSurface
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfJournalBook_SOURCES})
 source_group("Header Files" FILES ${pfJournalBook_HEADERS})

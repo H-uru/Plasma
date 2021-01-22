@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plInputIfaceMgrMsg_h
 
 #include "HeadSpin.h"
-#include "hsStream.h"
 #include "pnMessage/plMessage.h"
 #include "pnUUID/pnUUID.h"
 

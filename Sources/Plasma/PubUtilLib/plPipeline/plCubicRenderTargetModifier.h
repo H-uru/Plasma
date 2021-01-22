@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plCubicRenderTarget;
 class plRenderRequest;
+class plSceneObject;
 
 //// Class Definition /////////////////////////////////////////////////////////
 

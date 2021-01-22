@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "resource.h"
 
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "pnEncryption/plRandom.h"
 #include "plObjectFlockerComponent.h"

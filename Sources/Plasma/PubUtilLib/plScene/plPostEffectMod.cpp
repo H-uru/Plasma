@@ -40,26 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plPostEffectMod.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "plDrawable.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+
 #include "plPageTreeMgr.h"
 #include "plSceneNode.h"
 #include "plRenderRequest.h"
 
-#include "plPipeline/plRenderTarget.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plMessage/plRenderRequestMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plRenderMsg.h"
+#include "plPipeline/plRenderTarget.h"
 
-#include "pnMessage/plRefMsg.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "plDrawable.h"
-#include "plPipeline.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
+plProfile_CreateTimer("PostEffect", "RenderSetup", PostEffect);
 
 plPostEffectMod::plPostEffectMod()
 :   fHither(1.f),
@@ -208,8 +210,6 @@ void    plPostEffectMod::GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c
 void plPostEffectMod::ISubmitRequest()
 {
     hsAssert(fState.IsBitSet(kEnabled), "Submitting request when not active");
-    // No target is now valid...
-//  hsAssert(GetTarget(), "Submitting request without target loaded");
 
     IUpdateRenderRequest();
 
@@ -226,9 +226,6 @@ void plPostEffectMod::IRemoveFromPageMgr(plSceneNode* node)
 {
     fPageMgr->RemoveNode(node);
 }
-
-#include "plProfile.h"
-plProfile_CreateTimer("PostEffect", "RenderSetup", PostEffect);
 
 bool plPostEffectMod::MsgReceive(plMessage* msg)
 {

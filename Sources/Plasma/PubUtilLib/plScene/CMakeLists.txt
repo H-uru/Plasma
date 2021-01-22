@@ -28,6 +28,28 @@ set(plScene_HEADERS
 )
 
 add_library(plScene STATIC ${plScene_SOURCES} ${plScene_HEADERS})
+target_link_libraries(
+    plScene
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnModifier
+        pnSceneObject
+        plDrawable
+        plMessage
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plDrawable
+        plGLight
+        plIntersect
+        plMath
+        plPipeline
+        plSurface
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plScene_SOURCES})
 source_group("Header Files" FILES ${plScene_HEADERS})

@@ -39,8 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plClientMsg.h"
-#include "HeadSpin.h"
+
+#include "hsStream.h"
 
 void plClientMsg::IReset()
 { 
@@ -64,4 +66,18 @@ void plClientMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plClientMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     hsAssert(0, "Shouldn't write a plClientMsg");
+}
+
+void plClientRefMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Read(stream, mgr);
+    stream->ReadLE(&fType);
+    stream->ReadLE(&fWhich);
+}
+
+void plClientRefMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Write(stream, mgr);
+    stream->WriteLE(fType);
+    stream->WriteLE(fWhich);
 }

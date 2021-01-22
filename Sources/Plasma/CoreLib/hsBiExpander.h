@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsBiExpander_inc
 #define hsBiExpander_inc
 
+#include "hsExceptions.h"
 #include "hsMemory.h"
 #include "hsExceptions.h"
 

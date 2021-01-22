@@ -39,9 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plResponderSDLModifier.h"
-#include "plSDL/plSDL.h"
 #include "plResponderModifier.h"
+
+#include "plSDL/plSDL.h"
 
 // static vars
 char plResponderSDLModifier::kStrCurState[]="curState";

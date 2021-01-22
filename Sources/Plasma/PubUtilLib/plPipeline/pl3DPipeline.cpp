@@ -41,29 +41,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pl3DPipeline.h"
-#include "plPipeDebugFlags.h"
-
-#include "plProfile.h"
-
-#include "hsGMatState.inl"
 
 #include "hsGDeviceRef.h"
+#include "hsGMatState.inl"
+#include "plPipeDebugFlags.h"
+#include "plProfile.h"
+#include "plTweak.h"
+
 #include "plRenderTarget.h"
 #include "plCubicRenderTarget.h"
 
-#include "plTweak.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plSurface/hsGMaterial.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plSpaceTree.h"
 #include "plDrawable/plSpanTypes.h"
 #include "plGLight/plLightInfo.h"
 #include "plGLight/plShadowSlave.h"
 #include "plGLight/plShadowCaster.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "plIntersect/plVolumeIsect.h"
 #include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 plProfile_CreateTimer("RenderScene",            "PipeT", RenderScene);
 plProfile_CreateTimer("VisEval",                "PipeT", VisEval);

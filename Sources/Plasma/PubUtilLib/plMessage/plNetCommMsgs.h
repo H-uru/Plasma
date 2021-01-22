@@ -49,11 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetCommMsgs_inc
 
 
-#include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNbError.h"
-#include "pnNetProtocol/pnNetProtocol.h"
 #include "pnMessage/plMessage.h"
-#include "plNetGameLib/plNetGameLib.h"
+
+struct NetAgeInfo;
+struct NetCliAuthFileInfo;
 
 class plNetCommReplyMsg : public plMessage {
 public:
@@ -95,15 +95,12 @@ public:
 
     CLASSNAME_REGISTER(plNetCommFileListMsg);
     GETINTERFACE_ANY(plNetCommFileListMsg, plMessage);
-};
 
-class plNetCommFileDownloadMsg : public plNetCommReplyMsg {
-public:
-    wchar_t       filename[MAX_PATH];
-    hsStream *  writer;
+    plNetCommFileListMsg();
+    plNetCommFileListMsg(const plNetCommFileListMsg&) = delete;
+    plNetCommFileListMsg(plNetCommFileListMsg&&) = delete;
 
-    CLASSNAME_REGISTER(plNetCommFileDownloadMsg);
-    GETINTERFACE_ANY(plNetCommFileDownloadMsg, plMessage);
+    ~plNetCommFileListMsg();
 };
 
 class plNetCommLinkToAgeMsg : public plNetCommReplyMsg {
@@ -142,6 +139,12 @@ public:
     GETINTERFACE_ANY(plNetCommPublicAgeListMsg, plMessage);
     
     std::vector<NetAgeInfo>    ages;
+
+    plNetCommPublicAgeListMsg();
+    plNetCommPublicAgeListMsg(const plNetCommPublicAgeListMsg&) = delete;
+    plNetCommPublicAgeListMsg(plNetCommPublicAgeListMsg&&) = delete;
+
+    ~plNetCommPublicAgeListMsg();
 };
 
 class plNetCommPublicAgeMsg : public plNetCommReplyMsg {

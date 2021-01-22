@@ -68,25 +68,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
-
-#include "pfConsoleCore/pfConsoleCmd.h"
-#include "pfConsole.h"
-
 #include "plgDispatch.h"
 #include "plPipeline.h"
-#include "hsResMgr.h"
+
+#include "pfConsole.h"
+
+#include "pnKeyedObject/plFixedKey.h"
 
 #include "plAvatar/plAnimStage.h"
 #include "plAvatar/plAvBrainGeneric.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plGImage/plMipmap.h"
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
-#include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plAvatarMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
 #include "plPipeline/plCaptureRender.h"
 
+#include "pfConsoleCore/pfConsoleCmd.h"
+#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "pfMessage/pfKIMsg.h"
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
@@ -183,8 +183,6 @@ PF_CONSOLE_CMD( Game, SwitchDialog, "string olddlgName, string newdlgName", "Hid
 
 PF_CONSOLE_SUBGROUP( Game, GUI )
 
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
-
 static hsColorRGBA  sDynCtrlColor = hsColorRGBA().Set( 1, 1, 1, 1 ), sDynCtrlTextColor = hsColorRGBA().Set( 0, 0, 0, 1 );
 
 PF_CONSOLE_CMD( Game_GUI, SetDynamicCtrlColor, "float bgRed, float bgGreen, float bgBlue, float textRed, float textGreen, float textBlue", "" )
@@ -221,10 +219,6 @@ PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
 
 
 #endif
-
-
-//#include "../pfKI/pfKI.h"
-#include "pfMessage/pfKIMsg.h"
 
 PF_CONSOLE_CMD( Game, EnterChatMode, "", "Enters in-game chat mode" )
 {
@@ -336,7 +330,6 @@ PF_CONSOLE_CMD( Game, KICreateMarkerFolder, "", "Create marker folder in current
 
 PF_CONSOLE_CMD( Game, SetChatFadeDelay, "float delayInSecs", "Sets the time in seconds before the chat text disappears" )
 {
-//  pfKI::GetInstance()->SetChatFadeDelay( params[ 0 ] );
     pfKIMsg* msg = new pfKIMsg(pfKIMsg::kSetChatFadeDelay);
     msg->SetDelay( params[0] );
     plgDispatch::MsgSend( msg );
@@ -400,7 +393,6 @@ PF_CONSOLE_CMD( Game_Emote, Sit, "", "")
 #ifndef PLASMA_EXTERNAL_RELEASE
 PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages from this client appear as admin messages" )
 {
-//  pfKI::GetInstance()->SetTextChatAdminMode( (bool)params[ 0 ] );
     pfKIMsg* msg = new pfKIMsg(pfKIMsg::kSetTextChatAdminMode);
     msg->SetFlags( params[0] ? pfKIMsg::kAdminMsg : 0 );
     plgDispatch::MsgSend( msg );

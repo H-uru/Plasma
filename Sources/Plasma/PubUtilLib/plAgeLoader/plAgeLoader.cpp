@@ -59,22 +59,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plClientMsg.h"
 #include "pnNetCommon/plNetApp.h"
 
-#include "plScene/plRelevanceMgr.h"
-#include "plResMgr/plKeyFinder.h"
 #include "plAgeDescription/plAgeDescription.h"
-#include "plSDL/plSDL.h"
+#include "plFile/plEncryptedStream.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plResPatcherMsg.h"
 #include "plNetClient/plNetClientMgr.h"
+#include "plProgressMgr/plProgressMgr.h"
+#include "plScene/plRelevanceMgr.h"
+#include "plSDL/plSDL.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plResManager.h"
-#include "plFile/plEncryptedStream.h"
-#include "plProgressMgr/plProgressMgr.h"
-
-/// TEMP HACK TO LOAD CONSOLE INIT FILES ON AGE LOAD
-#include "plMessage/plConsoleMsg.h"
-#include "plMessage/plLoadAvatarMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
 
 // static 
 plAgeLoader* plAgeLoader::fInstance=nil;

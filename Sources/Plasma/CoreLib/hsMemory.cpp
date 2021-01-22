@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <cstring>
-
 #include "hsMemory.h"
 #include "hsExceptions.h"
+
+#include <cstring>
 
 #define DO_MEMORY_REPORTS       // dumps memory reports upon start up of engine
 

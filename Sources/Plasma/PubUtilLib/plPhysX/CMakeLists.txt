@@ -30,8 +30,25 @@ add_library(plPhysX STATIC ${plPhysX_SOURCES} ${plPhysX_HEADERS})
 target_link_libraries(plPhysX
     PUBLIC
         CoreLib
-        PhysX::PhysX
+        pnKeyedObject
+        pnSceneObject
+        pnNucleusInc
+        plAvatar
         plPhysical
+        plStatusLog
+        string_theory
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnSceneObject
+        plDrawable
+        plMessage
+        plModifier
+        plPhysical
+        plSurface
+        PhysX::PhysX
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plPhysX_SOURCES})

@@ -48,16 +48,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXSubWorld.h"
 #include "plSimulationMgr.h"
 
-#include "plAvatar/plArmatureMod.h"
-#include "plDrawable/plDrawableGenerator.h"
-#include "plMessage/plCollideMsg.h"
 #include "pnMessage/plSetNetGroupIDMsg.h"
-#include "plModifier/plDetectorLog.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plSimulationInterface.h"
-#include "plPhysical/plPhysicalProxy.h"
 
+#include "plAvatar/plArmatureMod.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "plMessage/plCollideMsg.h"
+#include "plModifier/plDetectorLog.h"
+#include "plPhysical/plPhysicalProxy.h"
 #include "plSurface/hsGMaterial.h"      // For our proxy
 #include "plSurface/plLayerInterface.h" // For our proxy
 

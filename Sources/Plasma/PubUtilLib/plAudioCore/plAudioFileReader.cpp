@@ -52,9 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plAudioFileReader.h"
 #include "plAudioCore.h"
-//#include "hsTimer.h"
 
-#include "plUnifiedTime/plUnifiedTime.h"
 #include "plBufferedFileReader.h"
 #include "plCachedFileReader.h"
 #include "plFastWavReader.h"

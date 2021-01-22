@@ -64,12 +64,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //----------------------------
 
 #include "HeadSpin.h"
-#include "pnKeyedObject/plKey.h"
+#include <vector>
+
 #include "pnKeyedObject/plUoid.h"
 
-class plLocation;
-class plRegistryPageNode;
+class plKey;
 class plPageInfo;
+class plRegistryPageNode;
+
+namespace ST { class string; }
 
 class plKeyFinder
 {

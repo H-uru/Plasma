@@ -56,11 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "plEAXEffects.h"
-#include "pnNetCommon/plSynchedObject.h"
-#include "plAnimation/plAGChannel.h"
+
 #include "plAnimation/plAGApplicator.h"
 #include "plAudioCore/plSoundBuffer.h"
+#include "pnNetCommon/plSynchedObject.h"
 
+class plAGChannel;
 class hsResMgr;
 class hsStream;
 class plSoundProxy;
@@ -70,9 +71,11 @@ class plSoundMsg;
 class plSoftVolume;
 class plGraphPlate;
 struct hsMatrix44;
-class plSoundBuffer;
 class plSceneObject;
 class plSoundVolumeApplicator;
+
+template<typename T>
+class hsTArray;
 
 // Set this to 1 to do our own distance attenuation (model doesn't work yet tho)
 #define MCN_HACK_OUR_ATTEN  0

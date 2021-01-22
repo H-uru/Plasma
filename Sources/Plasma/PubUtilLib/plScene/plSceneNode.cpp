@@ -40,36 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include "HeadSpin.h"
-#include <algorithm>
-
 #include "plSceneNode.h"
-#include "pnDispatch/plDispatch.h"
-#include "plMessage/plNodeCleanupMsg.h"
-#include "pnMessage/plNodeRefMsg.h"
 
-#include "hsStream.h"
-#include "hsResMgr.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "plDrawable.h"
-#include "plPhysical.h"
-#include "plAudible.h"
-#include "plGLight/plLightInfo.h"
-#include "pnMessage/plRefMsg.h"
-#include "plPipeline.h"
-#include "pnKeyedObject/plKey.h"
-#include "plDrawable/plSpaceTreeMaker.h"
-#include "plDrawable/plSpaceTree.h"
 #include "plPageTreeMgr.h"
 #include "plOccluder.h"
 
-//MFHORSE
-//BLACK
-// temp hack for debugging
-#include "plDrawable/plDrawableSpans.h"
-#include "pnKeyedObject/plKeyImp.h"
+#include "HeadSpin.h"
+#include "plAudible.h"
+#include "plgDispatch.h"
+#include "plDrawable.h"
+#include "plPhysical.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+#include <algorithm>
+
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plDrawable/plSpaceTree.h"
+#include "plDrawable/plSpaceTreeMaker.h"
+#include "plGLight/plLightInfo.h"
+#include "plMessage/plNodeCleanupMsg.h"
 
 plSceneNode::plSceneNode()
 :   fDepth(0),

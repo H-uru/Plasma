@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGAnim.h"
 #include "plAGAnimInstance.h"
 #include "plAGModifier.h"
-// #include "plAvatarAnim.h"
-#include "plModifier/plAGMasterSDLModifier.h"
 #include "plMatrixChannel.h"
 
 // global
@@ -56,11 +54,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // other
 #include "plInterp/plAnimEaseTypes.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "pnKeyedObject/plMsgForwarder.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "pnMessage/plRefMsg.h"
-#include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plSDLNotificationMsg.h"
 #include "pnMessage/plTimeMsg.h"
+#include "plModifier/plAGMasterSDLModifier.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 

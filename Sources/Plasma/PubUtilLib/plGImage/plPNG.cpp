@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ctime>
 
 #include "plPNG.h"
-#include "plGImage/plMipmap.h"
+#include "plMipmap.h"
 
 #include <png.h>
 #define PNGSIGSIZE 8

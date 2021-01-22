@@ -42,8 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_LAYER_ANIMATION_INC
 #define PL_LAYER_ANIMATION_INC
 
-#include "plLayerInterface.h"
 #include "hsMatrix44.h"
+
+#include "plLayerInterface.h"
 
 // Instead of overwriting owned channels, this layer type will multiply
 // its source channel data to the underlayer

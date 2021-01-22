@@ -50,14 +50,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plRenderTarget.h"
-#include "plCubicRenderTarget.h"
-#include "hsStream.h"
-#include "hsGDeviceRef.h"
 
-#include "plPipeline.h"
+#include "plCubicRenderTarget.h"
+
 #include "plgDispatch.h"
+#include "hsGDeviceRef.h"
+#include "hsStream.h"
+#include "plPipeline.h"
+
 #include "pnMessage/plPipeResMakeMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////

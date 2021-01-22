@@ -44,10 +44,9 @@ Mead, WA   99021
 #include "plGImage/plFont.h"
 #include "plGImage/plMipmap.h"
 
+#include <memory>
 #include <QPainter>
 #include <QPicture>
-
-#include <memory>
 
 void plFontPreview::Update(plFont *font, const QString &text)
 {

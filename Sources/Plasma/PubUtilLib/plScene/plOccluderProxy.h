@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDrawable/plProxyGen.h"
 
-class plOccluder;
 class plDrawableSpans;
 class hsGMaterial;
+class plOccluder;
 
 class plOccluderProxy : public plProxyGen
 {

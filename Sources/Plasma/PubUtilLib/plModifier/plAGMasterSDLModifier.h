@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAnimTimeConvertSDLModifier.h"
 
+#include "pnNetCommon/plSDLTypes.h"
+
 //
 // This modifier is responsible for sending and recving 
 // an object's animation state
@@ -78,7 +80,7 @@ public:
 
     plAGMasterSDLModifier() {}
     ~plAGMasterSDLModifier() {}
-        
+
     const char* GetSDLName() const override { return kSDLAGMaster; }
 };
 

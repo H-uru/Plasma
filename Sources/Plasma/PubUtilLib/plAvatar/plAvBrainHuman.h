@@ -42,24 +42,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVBRAINHUMAN_INC
 #define PLAVBRAINHUMAN_INC
 
-#define HI_RES_MOVEMENT
-
 #include "plAvBrainGeneric.h"
 #include "plAvBehaviors.h"
 #include "plAnimation/plAGAnim.h"
 
 #include <deque>
 
-class plMatrixChannel;
-class plMatrixMultiplyApplicator;
 class plAGAnimInstance;
+class plAGModifier;
+class plArmatureUpdateMsg;
 class plAvTask;
 class plAvTaskMsg;
 class plAvBrainHuman;
-class plWalkingStrategy;
-class plArmatureUpdateMsg;
 class plClimbMsg;
 class plControlEventMsg;
+class plMatrixChannel;
+class plMatrixMultiplyApplicator;
+class plWalkingStrategy;
 
 class plAvBrainHuman : public plArmatureBrain
 {

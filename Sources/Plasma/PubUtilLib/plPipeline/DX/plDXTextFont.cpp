@@ -50,15 +50,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "plDXTextFont.h"
+
 #include "HeadSpin.h"
 #include "hsWindows.h"
-
 #include <d3d9.h>
 #include <ddraw.h>
 
-#include "plPipeline/hsWinRef.h"
-#include "plDXTextFont.h"
 #include "plDXPipeline.h"
+#include "plPipeline/hsWinRef.h"
 
 
 //// Local Stuff //////////////////////////////////////////////////////////////

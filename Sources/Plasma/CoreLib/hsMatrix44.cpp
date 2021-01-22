@@ -41,13 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <cmath>
-#include "HeadSpin.h"
+#include "hsMatrix44.h"
 
+
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsQuat.h"
-#include "hsMatrix44.h"
 #include "hsStream.h"
+
+#include <cmath>
 
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE

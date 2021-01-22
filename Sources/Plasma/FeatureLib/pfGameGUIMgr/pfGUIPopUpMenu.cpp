@@ -49,38 +49,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
-#include "pfGUIPopUpMenu.h"
-#include "pfGUIMenuItem.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "plViewTransform.h"
+
+#include <string_theory/format>
+
 #include "pfGUIButtonMod.h"
-#include "pfGUIDialogHandlers.h"
-#include "pfGUIDialogNotifyProc.h"
 #include "pfGUIControlHandlers.h"
 #include "pfGUICtrlGenerator.h"
+#include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogNotifyProc.h"
+#include "pfGUIMenuItem.h"
+#include "pfGUIPopUpMenu.h"
 
-#include "plgDispatch.h"
-#include "hsResMgr.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayer.h"
 #include "plGImage/plDynamicTextMap.h"
 #include "plMessage/plLayRefMsg.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plIntRefMsg.h"
-#include "pnMessage/plObjRefMsg.h"
-#include "pnMessage/plNodeRefMsg.h"
-
+#include "plPipeline/plDebugText.h"
 #include "plScene/plPostEffectMod.h"
 #include "plScene/plSceneNode.h"
-#include "pnMessage/plClientMsg.h"
-
-#include "plViewTransform.h"
-#include "plPipeline/plDebugText.h"
-
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
 
 class pfPopUpKeyGenerator
 {

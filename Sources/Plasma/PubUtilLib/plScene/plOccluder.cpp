@@ -40,20 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plOccluder.h"
-#include "hsStream.h"
-#include "plOccluderProxy.h"
-#include "plDrawable/plDrawableGenerator.h"
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayerInterface.h"
-#include "plSurface/plLayer.h"
-#include "pnMessage/plNodeRefMsg.h"
-#include "pnKeyedObject/plKey.h"
-#include "hsResMgr.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+#include "plCullPoly.h"
+#include "plOccluderProxy.h"
 #include "plVisRegion.h"
 #include "plVisMgr.h"
+
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plNodeRefMsg.h"
+
+#include "plDrawable/plDrawableGenerator.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
 
 plOccluder::plOccluder()
     : fSceneNode(), fProxyGen(new plOccluderProxy), fPriority()

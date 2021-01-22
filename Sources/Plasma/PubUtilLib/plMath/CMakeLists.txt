@@ -9,6 +9,11 @@ set(plMath_HEADERS
 )
 
 add_library(plMath STATIC ${plMath_SOURCES} ${plMath_HEADERS})
+target_link_libraries(
+    plMath
+    PUBLIC
+        CoreLib
+)
 
 source_group("Source Files" FILES ${plMath_SOURCES})
 source_group("Header Files" FILES ${plMath_HEADERS})

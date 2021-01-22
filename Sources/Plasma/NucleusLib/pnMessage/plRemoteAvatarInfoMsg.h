@@ -62,18 +62,12 @@ public:
     CLASSNAME_REGISTER(plRemoteAvatarInfoMsg);
     GETINTERFACE_ANY(plRemoteAvatarInfoMsg, plMessage);
 
-    void SetAvatarKey(plKey p) { fAvatar = p; }
-    plKey GetAvatarKey() { return fAvatar; }
+    void SetAvatarKey(plKey p) { fAvatar = std::move(p); }
+    plKey GetAvatarKey() const { return fAvatar; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        fAvatar = mgr->ReadKey(stream);
-    }
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fAvatar);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plRemoteAvatarInfoMsg_inc

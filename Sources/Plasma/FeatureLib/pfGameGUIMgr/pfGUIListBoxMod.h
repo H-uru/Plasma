@@ -48,14 +48,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIListBoxMod_h
 #define _pfGUIListBoxMod_h
 
+#include "hsTemplates.h"
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
 class hsGMaterial;
-class plTextGenerator;
 class pfGUIListElement;
-class pfScrollProc;
 class pfGUIValueCtrl;
+class plMessage;
+class pfScrollProc;
+class plTextGenerator;
+
+namespace ST { class string; }
 
 class pfGUIListBoxMod : public pfGUIControlMod
 {

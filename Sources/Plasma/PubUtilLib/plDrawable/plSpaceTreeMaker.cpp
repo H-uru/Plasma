@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plSpaceTreeMaker.h"
 #include "plMath/hsRadixSort.h"
-#include "plDrawable/plSpaceTree.h"
+#include "plSpaceTree.h"
 
  // for testing, get hsRand()
 #include "hsTimer.h"

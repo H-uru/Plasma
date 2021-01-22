@@ -39,12 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plAvBrainRideAnimatedPhysical.h"
-#include "plArmatureMod.h"
 
-#include "plAvBrainHuman.h"
+#include "plAvBrainRideAnimatedPhysical.h"
+
+#include "plArmatureMod.h"
 #include "plAvBrain.h"
+#include "plAvBrainHuman.h"
 #include "plPhysicalControllerCore.h"
+
+#include "plAnimation/plAGModifier.h"
 #include "plMessage/plRideAnimatedPhysMsg.h"
 
 

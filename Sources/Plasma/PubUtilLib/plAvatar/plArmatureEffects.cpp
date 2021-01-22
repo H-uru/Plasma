@@ -40,19 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plStatusLog/plStatusLog.h"
 #include "plArmatureEffects.h"
-#include "pfMessage/plArmatureEffectMsg.h"
+
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+
+#include "plArmatureMod.h"
+
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAudio/plAudioSystem.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "plArmatureMod.h"
-#include "pnSceneObject/plAudioInterface.h"
-#include "plAudio/plSound.h"
-#include "plAudio/plAudioSystem.h"
+#include "plStatusLog/plStatusLog.h"
+
 #include "pfAudio/plRandomSoundMod.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
+#include "pfMessage/plArmatureEffectMsg.h"
 
 const char *plArmatureEffectsMgr::SurfaceStrings[] = 
 {

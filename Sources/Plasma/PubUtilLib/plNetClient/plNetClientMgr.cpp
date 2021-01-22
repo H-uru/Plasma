@@ -39,78 +39,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plCreatableIndex.h"
-#include "hsTimer.h"
-#include "hsStream.h"
+
 #include "plNetClientMgr.h"
+
+#include "plNetLinkingMgr.h"
+
+#include "plCreatableIndex.h"
 #include "plgDispatch.h"
 #include "plPhysical.h"
-#include "plNetClientMsgHandler.h"
-#include "plNetLinkingMgr.h"
-#include "plNetCommon/plNetObjectDebugger.h"
-
-#include "pnUtils/pnUtils.h"
 #include "plProduct.h"
-#include "pnNetCommon/plSynchedObject.h"
-#include "pnNetCommon/plSDLTypes.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plObjInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
+#include "hsTimer.h"
+
 #include "pnMessage/plClientMsg.h"
-#include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "pnModifier/plModifier.h"
-#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnNetCommon/pnNetCommon.h"
+#include "pnSceneObject/plCoordinateInterface.h"
 
 #include "plAgeLoader/plAgeLoader.h"
-#include "plAgeLoader/plResPatcher.h"
-#include "plNetClientRecorder/plNetClientRecorder.h"
-#include "plScene/plSceneNode.h"
-#include "plNetCommon/plNetCommonConstants.h"
-#include "plNetMessage/plNetMessage.h"
-#include "plMessage/plLoadAvatarMsg.h"
-#include "plMessage/plLoadCloneMsg.h"
-#include "plMessage/plSynchEnableMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plLoadAgeMsg.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plAvatarMgr.h"
 #include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plCCRMsg.h"
 #include "plMessage/plAvatarMsg.h"
-#include "plMessage/plNetVoiceListMsg.h"
-#include "plMessage/plNetCommMsgs.h"
+#include "plMessage/plCCRMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plNetClientMgrMsg.h"
+#include "plMessage/plNetVoiceListMsg.h"
 #include "plMessage/plResPatcherMsg.h"
+#include "plMessage/plSynchEnableMsg.h"
 #include "plMessage/plVaultNotifyMsg.h"
+#include "plModifier/plResponderModifier.h"
+#include "plNetClientRecorder/plNetClientRecorder.h"
+#include "plNetCommon/plNetObjectDebugger.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plProgressMgr/plProgressMgr.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plPageInfo.h"
-#include "plNetTransport/plNetTransportMember.h"
-#include "plAgeDescription/plAgeDescription.h"
-#include "plAvatar/plAvatarClothing.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plSurface/plLayerInterface.h"
-#include "plStatusLog/plStatusLog.h"
+#include "plScene/plSceneNode.h"
 #include "plSDL/plSDL.h"
-#include "plUnifiedTime/plUnifiedTime.h"
-#include "plFile/plEncryptedStream.h"
-#include "plProgressMgr/plProgressMgr.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plSurface/plLayerAnimation.h"
 #include "plVault/plVault.h"
 
 #include "pfMessage/pfKIMsg.h"  // Move this to PubUtil level
 
-#if 1   // for debugging
-#include "plCreatableIndex.h"   
-#include "plModifier/plResponderModifier.h"
-#include "plSurface/plLayerAnimation.h"
-#endif
-
-#include <algorithm>
-#include <sstream>
-#include <cmath>
 
 
 ////////////////////////////////////////////////////////////////////
@@ -951,7 +925,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plCCRInvisibleMsg* invisMsg=plCCRInvisibleMsg::ConvertNoRef(msg);
     if (invisMsg)
     {
-        ::LogMsg(kLogDebug, "plNetClientMgr::MsgReceive - Got plCCRInvisibleMsg");
+        DebugMsg("plNetClientMgr::MsgReceive - Got plCCRInvisibleMsg");
         MakeCCRInvisible(invisMsg->fAvKey, invisMsg->fInvisLevel);
         return true;
     }

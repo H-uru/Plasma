@@ -42,10 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvexVolume_inc
 #define plConvexVolume_inc
 
+#include "hsGeometry3.h"
+
 #include "pnSceneObject/plObjInterface.h"
 
-struct hsPlane3;
-struct hsPoint3;
 struct hsMatrix44;
 class hsResMgr;
 

@@ -39,116 +39,115 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "plClient.h"
-#include "hsStream.h"
-#include "plResMgr/plResManager.h"
-#include "plResMgr/plKeyFinder.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "plScene/plSceneNode.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "pfCamera/plVirtualCamNeu.h"
-#include "hsTimer.h"
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "plFile/plEncryptedStream.h"
-#include "plInputCore/plInputManager.h"
-#include "plInputCore/plInputInterfaceMgr.h"
-#include "plInputCore/plInputDevice.h"
-#include "plPhysX/plSimulationMgr.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plScene/plRelevanceMgr.h"
-#include "plTimerCallbackManager.h"
-#include "pfAudio/plListener.h"
-#include "pnMessage/plCmdIfaceModMsg.h"
-#include "plMessage/plRoomLoadNotifyMsg.h"
-#include "pnMessage/plPlayerPageMsg.h"
-#include "pnMessage/plCameraMsg.h"
-#include "plMessage/plTransitionMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plNetCommMsgs.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plResPatcherMsg.h"
-
-#include "pfConsoleCore/pfConsoleEngine.h"
-#include "pfConsole/pfConsole.h"
-#include "pfConsole/pfConsoleDirSrc.h"
-#include "plScene/plPageTreeMgr.h"
-#include "plScene/plVisMgr.h"
-
-#include "plAudio/plAudioSystem.h"
-
-#include "plStatGather/plProfileManagerFull.h"
-
-#include "plPipeline.h"
+#include "plAudible.h"
+#include "plLoadMask.h"
 #include "plPipeDebugFlags.h"
-#include "plPipeline/plPipelineCreate.h"
-#include "plPipeline/plTransitionMgr.h"
-#include "plPipeline/plCaptureRender.h"
-#include "plPipeline/plDynamicEnvMap.h"
-#include "plNetClient/plLinkEffectsMgr.h"
-#include "plAvatar/plAvatarClothing.h"
-#include "plAvatar/plArmatureMod.h"
-#include "pnMessage/plProxyDrawMsg.h"
-
-#include "plScene/plRenderRequest.h"
-#include "plDrawable/plAccessGeometry.h"
 #include "plPipeResReq.h"
-#include "plDrawable/plVisLOSMgr.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "plQuality.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+#include "plTimerCallbackManager.h"
+#include "plTweak.h"
+#include "hsWindows.h"
 
-#include "plGImage/plBitmap.h"
+#ifdef HS_BUILD_FOR_WIN32
+#   include <Shlobj.h>
+#endif
 
-#include "plStatusLog/plStatusLog.h"
-#include "plProgressMgr/plProgressMgr.h"
-#include "plPipeline/plDTProgressMgr.h"
-#include "pfMoviePlayer/plMoviePlayer.h"
-#include "plMessage/plMovieMsg.h"
-
-#include "plSDL/plSDL.h"
+#include "plClient.h"
 
 #include "pnDispatch/plDispatch.h"
 #include "pnDispatch/plDispatchLogBase.h"
-#include "pfGameGUIMgr/pfGameGUIMgr.h"
-#include "pfPython/cyMisc.h"
-#include "plMessage/plInputEventMsg.h"
-#include "plMessage/plRenderRequestMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
-#include "plModifier/plSimpleModifier.h"
-#include "plAudible.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plSoundMsg.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plAudioSysMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "plAgeLoader/plResPatcher.h"
-#include "pfPython/cyPythonInterface.h"
-#include "plUnifiedTime/plClientUnifiedTime.h"
-#include "pfAnimation/plAnimDebugList.h"
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plCmdIfaceModMsg.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plProxyDrawMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plGImage/plFontCache.h"
-
-#include "pfJournalBook/pfJournalBook.h"
-
-#include "plAnimation/plAGAnimInstance.h"
 #include "plAgeLoader/plAgeLoader.h"
-
-#include "plQuality.h"
+#include "plAgeLoader/plResPatcher.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAudio/plAudioSystem.h"
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plDrawable/plAccessGeometry.h"
+#include "plDrawable/plVisLOSMgr.h"
+#include "plFile/plEncryptedStream.h"
+#include "plGImage/plAVIWriter.h"
+#include "plGImage/plBitmap.h"
+#include "plGImage/plFontCache.h"
 #include "plGLight/plShadowCaster.h"
-
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "plInputCore/plInputManager.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plMovieMsg.h"
+#include "plMessage/plNetCommMsgs.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
+#include "plMessage/plResPatcherMsg.h"
+#include "plMessage/plRoomLoadNotifyMsg.h"
+#include "plMessage/plTransitionMsg.h"
+#include "plModifier/plSimpleModifier.h"
+#include "plNetClient/plLinkEffectsMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plNetCommon/plNetCommonConstants.h"
 #include "plNetGameLib/plNetGameLib.h"
+#include "plPipeline/plCaptureRender.h"
+#include "plPipeline/plDTProgressMgr.h"
+#include "plPipeline/plDynamicEnvMap.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/plPipelineCreate.h"
+#include "plPipeline/plTransitionMgr.h"
+#include "plPhysX/plSimulationMgr.h"
+#include "plProgressMgr/plProgressMgr.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plResMgr/plPageInfo.h"
+#include "plResMgr/plResManager.h"
+#include "plScene/plSceneNode.h"
+#include "plScene/plPageTreeMgr.h"
+#include "plScene/plRelevanceMgr.h"
+#include "plScene/plRenderRequest.h"
+#include "plScene/plVisMgr.h"
+#include "plSDL/plSDL.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plStatGather/plProfileManagerFull.h"
+#include "plUnifiedTime/plClientUnifiedTime.h"
 
+#include "pfAnimation/plAnimDebugList.h"
+#include "pfAudio/plListener.h"
+#include "pfCamera/plVirtualCamNeu.h"
+#include "pfCharacter/pfMarkerMgr.h"
+#include "pfConsole/pfConsole.h"
+#include "pfConsole/pfConsoleDirSrc.h"
+#include "pfConsoleCore/pfConsoleEngine.h"
+#include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
+#include "pfJournalBook/pfJournalBook.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
+#include "pfMoviePlayer/plMoviePlayer.h"
 #include "pfPatcher/plManifests.h"
+#include "pfPython/cyMisc.h"
+#include "pfPython/cyPythonInterface.h"
 
-#include "plTweak.h"
 
 #define MSG_LOADING_BAR
 
@@ -158,8 +157,6 @@ static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
 
 #ifdef HS_BUILD_FOR_WIN32
-#include "hsWindows.h"
-#include <Shlobj.h>
 extern ITaskbarList3* gTaskbarList;
 #endif
 
@@ -229,9 +226,6 @@ plClient::~plClient()
     delete fPageMgr;
     delete [] fpAuxInitDir;
 }
-
-#include "plGImage/plAVIWriter.h"
-#include "pfCharacter/pfMarkerMgr.h"
 
 template<typename T>
 static void IUnRegisterAs(T*& ko, plFixedKeyId id)
@@ -901,8 +895,6 @@ void plClient::SetHoldLoadRequests(bool hold)
         ILoadNextRoom();
 }
 
-#include "plResMgr/plPageInfo.h"
-
 void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 {
     bool allSameAge = true;
@@ -1320,9 +1312,6 @@ void    plClient::IStopProgress()
 
 extern  bool    gDataServerLocal;
 
-#include "plQuality.h"
-#include "plLoadMask.h"
-
 //============================================================================
 bool plClient::StartInit()
 {
@@ -1541,8 +1530,6 @@ bool plClient::MainLoop()
 
     return false;
 }
-
-#include "plProfile.h"
 
 plProfile_Extern(DrawTime);
 plProfile_Extern(UpdateTime);

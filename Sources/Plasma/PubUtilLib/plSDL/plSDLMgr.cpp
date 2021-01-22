@@ -39,11 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
+
 #include "plSDL.h"
+
+#include "hsStream.h"
+
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/pnNetCommon.h"
-#include <algorithm>
 
 /////////////////////////////////////////////////////////////////////////////////
 // SDL MGR
@@ -82,9 +84,8 @@ void plSDLMgr::DeInit()
 //
 void plSDLMgr::IDeleteDescriptors(plSDL::DescriptorList* dl)
 {
-    std::for_each( dl->begin(), dl->end(),
-        [](plStateDescriptor* sd) { delete sd; }
-    );
+    for (auto i : *dl)
+        delete i;
     dl->clear();
 }
 

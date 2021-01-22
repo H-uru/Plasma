@@ -31,7 +31,25 @@ set(pnNucleusInc_SOURCES
 )
 
 add_library(pnNucleusInc STATIC ${pnNucleusInc_HEADERS} ${pnNucleusInc_SOURCES})
-target_link_libraries(pnNucleusInc CoreLib)
+target_link_libraries(
+    pnNucleusInc
+    PUBLIC
+        CoreLib
+        string_theory
+
+    # This target brings in "all of the nucleus" in theory and effectively in practice
+    # with pnNucleusCreatables. So, we need to have almost everything as an interface.
+    INTERFACE
+        pnDispatch
+        pnFactory
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+)
+
+target_include_directories(pnNucleusInc INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
 source_group("Header Files" FILES ${pnNucleusInc_HEADERS})
 source_group("Source Files" FILES ${pnNucleusInc_SOURCES})

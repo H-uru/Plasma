@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputManager.h"
 #include "plInputDevice.h"
 
-#include "plPhysical/plPickingDetector.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
 #include "plMessage/plLOSHitMsg.h"

@@ -51,24 +51,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUICtrlGenerator_h
 #define _pfGUICtrlGenerator_h
 
-#include "hsStream.h"
+#include "HeadSpin.h"
 #include "hsTemplates.h"
 
+#include <string_theory/string>
 
 //// pfGUICtrlGenerator Definition ///////////////////////////////////////////
 
-class pfGUIDialogMod;
-class pfGUIButtonMod;
-class pfGUIDragBarCtrl;
-class hsGMaterial;
 struct hsColorRGBA;
-class plSceneNode;
+class plDrawable;
+class hsGMaterial;
+class pfGUIButtonMod;
+class pfGUIDialogMod;
+class pfGUIDragBarCtrl;
 class hsKeyedObject;
 class plKey;
-class plTextGenerator;
-class plSceneObject;
-class plDrawable;
 struct hsMatrix44;
+class plSceneNode;
+class plSceneObject;
+class plTextGenerator;
 
 class pfGUICtrlGenerator
 {

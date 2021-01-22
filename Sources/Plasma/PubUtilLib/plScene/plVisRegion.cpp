@@ -40,16 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plVisRegion.h"
 
-#include "hsStream.h"
+#include "HeadSpin.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
 
 #include "plVisMgr.h"
 
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plRefMsg.h"
+
 #include "plIntersect/plRegionBase.h"
 
 plVisRegion::plVisRegion()

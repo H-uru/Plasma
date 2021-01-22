@@ -39,29 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
-#include "hsTimer.h"
+
 #include "plSDL.h"
 
 #include "plProduct.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+
 #include "pnFactory/plCreatable.h"
-#include "pnKeyedObject/plUoid.h"
 #include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plUoid.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/pnNetCommon.h"
 
-#include "plResMgr/plResManager.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plUnifiedTime/plClientUnifiedTime.h"
 
-
-#include "plResMgr/plResManager.h"
-#include "plUnifiedTime/plClientUnifiedTime.h"
-
-#include <type_traits>
 #include <cfloat>
 #include <cmath>
+#include <type_traits>
+#include <vector>
 
 /*****************************************************************************
 *

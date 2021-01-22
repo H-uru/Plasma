@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLayerOr_h
 #define _plLayerOr_h
 
-#include "plLayerInterface.h"
 #include "hsGMatState.h"
+
+#include "plLayerInterface.h"
 
 class plLayerOr : public plLayerInterface
 {

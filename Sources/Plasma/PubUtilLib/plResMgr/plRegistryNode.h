@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 
 class plRegistryKeyList;
-class hsStream;
 class plKeyImp;
 class plRegistryKeyIterator;
 

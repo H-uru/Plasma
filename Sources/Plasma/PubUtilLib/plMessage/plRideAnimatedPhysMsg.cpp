@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plRideAnimatedPhysMsg.h"
+
 #include "hsResMgr.h"
 #include "hsStream.h"
-
-#include "plRideAnimatedPhysMsg.h"
 
 plRideAnimatedPhysMsg::plRideAnimatedPhysMsg()
 :fRegion(nil)

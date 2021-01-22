@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAttachMsg_inc
 
 #include "plRefMsg.h"
-#include "hsStream.h"
 
 class hsResMgr;
 

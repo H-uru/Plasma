@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plEventCallbackMsg_inc
 #define plEventCallbackMsg_inc
 
-#include "hsStream.h"
 #include "plMessage.h"
 
 enum CallbackEvent
@@ -88,22 +87,8 @@ public:
     GETINTERFACE_ANY(plEventCallbackMsg, plMessage);
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        fEventTime = stream->ReadLEFloat();
-        fEvent = (CallbackEvent)stream->ReadLE16();
-        fIndex = stream->ReadLE16();
-        fRepeats = stream->ReadLE16();
-        fUser = stream->ReadLE16();
-    }
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLEFloat(fEventTime);
-        stream->WriteLE16((int16_t)fEvent);
-        stream->WriteLE16(fIndex);
-        stream->WriteLE16(fRepeats);
-        stream->WriteLE16(fUser);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 // For when you want to send callbacks, but someone other than the sender/receiver

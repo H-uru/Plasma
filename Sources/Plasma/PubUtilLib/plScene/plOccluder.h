@@ -43,16 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plOccluder_inc
 #define plOccluder_inc
 
-#include "pnSceneObject/plObjInterface.h"
-#include "hsTemplates.h"
-#include "hsMatrix44.h"
-#include "plCullPoly.h"
 #include "hsBounds.h"
 #include "hsBitVector.h"
+#include "hsMatrix44.h"
+#include "hsTemplates.h"
 
-class plOccluderProxy;
+#include "pnSceneObject/plObjInterface.h"
+
+class plCullPoly;
 class plDrawableSpans;
 class hsGMaterial;
+class plOccluderProxy;
 class plVisRegion;
 
 class plOccluder : public plObjInterface

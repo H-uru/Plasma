@@ -39,45 +39,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plFontConverter.h"
-#include "plFontFreeType.h"
 
-#ifdef Q_OS_WIN
+#include "plFontConverter.h"
+
 #include "HeadSpin.h"
 #include "hsWindows.h"
-#endif
 
 #include "pnAllCreatables.h"
+
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plUoid.h"
+
+#include "plGImage/plBitmap.h"
+#include "plGImage/plFont.h"
+#include "plGImage/plMipmap.h"
+#include "plMessage/plResMgrHelperMsg.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plResMgrCreatable.h"
 #include "plResMgr/plResMgrSettings.h"
-#include "plMessage/plResMgrHelperMsg.h"
-REGISTER_CREATABLE(plResMgrHelperMsg);
 
-#include "plGImage/plFont.h"
-REGISTER_CREATABLE(plFont);
-
-#include "plGImage/plBitmap.h"
-#include "plGImage/plMipmap.h"
-REGISTER_NONCREATABLE(plBitmap);
-REGISTER_CREATABLE(plMipmap);
-
-#include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plKeyImp.h"
-
+#include <functional>
 #include <QApplication>
 #include <QDialog>
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QProgressDialog>
 #include <QDragEnterEvent>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QMimeData>
+#include <QProgressDialog>
+
+
+#include "plFontFreeType.h"
 #include "ui_MainDialog.h"
 #include "ui_FonChooser.h"
 #include "ui_FreeType.h"
 #include "ui_FreeTypeBatch.h"
 
-#include <functional>
+REGISTER_NONCREATABLE(plBitmap);
+REGISTER_CREATABLE(plFont);
+REGISTER_CREATABLE(plMipmap);
+REGISTER_CREATABLE(plResMgrHelperMsg);
 
 static void IAboutDialog(QWidget *parent)
 {

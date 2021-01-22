@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAvatarSDLModifier_inc
 
 #include "HeadSpin.h"
+
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plModifier/plSDLModifier.h"
 
 
@@ -72,7 +75,7 @@ protected:
 public:
     CLASSNAME_REGISTER( plAvatarPhysicalSDLModifier );
     GETINTERFACE_ANY( plAvatarPhysicalSDLModifier, plSDLModifier);
-        
+
     const char* GetSDLName() const override { return kSDLAvatarPhysical; }
 
 };

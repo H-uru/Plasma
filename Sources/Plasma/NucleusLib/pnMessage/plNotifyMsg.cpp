@@ -51,6 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNotifyMsg.h"
 
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnNetCommon/plNetApp.h"
 
 plNotifyMsg::plNotifyMsg(const plKey &s, const plKey &r)

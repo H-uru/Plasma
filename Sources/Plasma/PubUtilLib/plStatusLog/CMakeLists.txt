@@ -9,10 +9,15 @@ set(plStatusLog_HEADERS
 )
 
 add_library(plStatusLog STATIC ${plStatusLog_SOURCES} ${plStatusLog_HEADERS})
-target_link_libraries(plStatusLog CoreLib)
-target_link_libraries(plStatusLog pnNucleusInc)
-target_link_libraries(plStatusLog plFile)
-target_link_libraries(plStatusLog plUnifiedTime)
+target_link_libraries(
+    plStatusLog
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+        string_theory
+    PRIVATE
+        plUnifiedTime
+)
 
 source_group("Source Files" FILES ${plStatusLog_SOURCES})
 source_group("Header Files" FILES ${plStatusLog_HEADERS})

@@ -7,6 +7,12 @@ set(plClipboard_HEADERS
 )
 
 add_library(plClipboard STATIC ${plClipboard_SOURCES} ${plClipboard_HEADERS})
+target_link_libraries(
+    plClipboard
+    PUBLIC
+        CoreLib
+        string_theory
+)
 
 source_group("Source Files" FILES ${plClipboard_SOURCES})
 source_group("Header Files" FILES ${plClipboard_HEADERS})

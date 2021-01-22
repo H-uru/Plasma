@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "plCullTree.h"
-#include "plDrawable/plSpaceTree.h"
-#include "hsFastMath.h"
-#include "hsColorRGBA.h"
-#include "plProfile.h"
 
+#include "plCullTree.h"
+
+#include "hsColorRGBA.h"
+#include "hsFastMath.h"
+#include "plProfile.h"
 #include "plTweak.h"
+
+#include "plDrawable/plSpaceTree.h"
 
 #define MF_DEBUG_NORM
 #ifdef MF_DEBUG_NORM

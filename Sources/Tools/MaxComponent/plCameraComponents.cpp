@@ -52,7 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 #include "MaxMain/plMaxNodeData.h"
 
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
+
 #include <string>
 #include <vector>
 

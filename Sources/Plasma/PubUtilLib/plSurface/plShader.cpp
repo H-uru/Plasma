@@ -40,16 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include "HeadSpin.h"
 #include "plShader.h"
 #include "plShaderTable.h"
 
-#include "hsStream.h"
-#include "hsMatrix44.h"
+#include "HeadSpin.h"
 #include "hsColorRGBA.h"
 #include "hsGDeviceRef.h"
-
+#include "hsMatrix44.h"
+#include "hsStream.h"
 
 // Little shader const helper
 void plShaderConst::Read(hsStream* s)

@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  HSMATRIX44_inc
 
 #include "HeadSpin.h"
-#include "hsGeometry3.h"
 #include "hsCpuID.h"
+#include "hsGeometry3.h"
+
 #include <string_theory/formatter>
 
 class hsQuat;

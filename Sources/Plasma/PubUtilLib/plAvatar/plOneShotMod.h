@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plOneShotMod_INC
 
 #include "pnModifier/plMultiModifier.h"
-#include "pnMessage/plMessage.h"
 
 // PLONESHOTMOD
 // A one shot

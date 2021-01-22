@@ -50,14 +50,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFileSystem.h"
 
+#include <string_theory/string>
+
+class plKey;
+class plSDVarDescriptor;
+class plSimpleVarDescriptor;
+class plStateDescriptor;
+class hsStream;
+
 //
 // Describes a variable in a state descriptor.
 // Every variable is actually a list, either fixed or variable length.
 // Abstract base class.
 //
-class hsStream;
-class plSimpleVarDescriptor;
-class plSDVarDescriptor;
 class plVarDescriptor
 {
 public:
@@ -184,7 +189,6 @@ public:
 //
 // A var descriptor which references another state descriptor.
 //
-class plStateDescriptor;
 class plSDVarDescriptor : public plVarDescriptor
 {
 protected:
@@ -216,7 +220,6 @@ public:
 // There is one of these for each persistent object type.
 // These descriptors are defined in a user-created .sdl file.
 //
-class plKey;
 class plStateDescriptor
 {
 private:

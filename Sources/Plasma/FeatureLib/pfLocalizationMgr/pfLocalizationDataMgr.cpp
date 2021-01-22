@@ -48,9 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "plResMgr/plLocalization.h"
-
 #include "plFile/plEncryptedStream.h"
+#include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"
 
 #include "pfLocalizedString.h"

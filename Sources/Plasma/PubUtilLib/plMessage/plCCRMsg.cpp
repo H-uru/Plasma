@@ -47,6 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCCRMsg.h"
 #include "plNetCommon/plNetCommon.h"
 
+plCCRPetitionMsg::plCCRPetitionMsg()
+    : plCCRMessage(), fPetitionType(plNetCommon::PetitionTypes::kGeneralHelp)
+{
+    SetBCastFlag(kBCastByType);
+}
+
 void plCCRPetitionMsg::Read(hsStream* stream, hsResMgr* mgr) 
 {
     plMessage::IMsgRead(stream, mgr);

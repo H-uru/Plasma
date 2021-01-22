@@ -40,26 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLineFollowMod.h"
 #include "plStereizer.h"
-#include "plInterp/plAnimPath.h"
+
+#include "hsBounds.h"
+#include "hsFastMath.h"
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plProfile.h"
 #include "hsResMgr.h"
+#include "hsTimer.h"
+
+#include "pnMessage/plPlayerPageMsg.h"
 #include "pnMessage/plRefMsg.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plDrawInterface.h"
-#include "plgDispatch.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plInterp/plAnimPath.h"
 #include "plMessage/plListenerMsg.h"
 #include "plMessage/plRenderMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "hsBounds.h"
-#include "plPipeline.h"
-#include "hsFastMath.h"
-#include "pnMessage/plPlayerPageMsg.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "hsTimer.h"
+
+plProfile_CreateTimer("LineFollow", "RenderSetup", LineFollow);
 
 plLineFollowMod::~plLineFollowMod()
 {
@@ -200,10 +204,6 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
         stream->WriteLEScalar(fSpeedClamp);
 }
 
-
-#include "plProfile.h"
-plProfile_CreateTimer("LineFollow", "RenderSetup", LineFollow);
-
 bool plLineFollowMod::MsgReceive(plMessage* msg)
 {
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
@@ -263,7 +263,7 @@ bool plLineFollowMod::MsgReceive(plMessage* msg)
     plPlayerPageMsg* pPMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pPMsg)
     {
-        if (pPMsg->fPlayer == plNetClientMgr::GetInstance()->GetLocalPlayerKey() && !pPMsg->fUnload)
+        if (pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey() && !pPMsg->fUnload)
         {
             fRefObj = (plSceneObject*)pPMsg->fPlayer->GetObjectPtr();
         }

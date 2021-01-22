@@ -54,6 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputInterface.h"
 #include "plInputDevice.h"      // For mouse device stuff
 
+#include "plAvatarInputInterface.h"
+#include "plSceneInputInterface.h"
+#include "plDebugInputInterface.h"
+#include "plTelescopeInputInterface.h"
+
 #include "pnInputCore/plKeyMap.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
@@ -66,7 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 
 #include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
 
 #include "hsResMgr.h"
 #include "plgDispatch.h"
@@ -139,11 +143,6 @@ plInputInterfaceMgr::~plInputInterfaceMgr()
 }
 
 //// Init ////////////////////////////////////////////////////////////////////
-
-#include "plAvatarInputInterface.h"
-#include "plSceneInputInterface.h"
-#include "plDebugInputInterface.h"
-#include "plTelescopeInputInterface.h"
 
 void    plInputInterfaceMgr::Init()
 {
@@ -541,7 +540,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     plPlayerPageMsg *pPMsg = plPlayerPageMsg::ConvertNoRef( msg );
     if( pPMsg != nil && !pPMsg->fUnload)
     {
-        if( pPMsg->fPlayer == plNetClientMgr::GetInstance()->GetLocalPlayerKey() )
+        if( pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey() )
             fReceivers.Append( pPMsg->fPlayer );
         else
         {

@@ -48,13 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
 
-#include <dummy.h>
-#include <iparamm2.h>
-#include <meshdlib.h>
-
-#if MAX_VERSION_MAJOR >= 13
-#   include <INamedSelectionSetManager.h>
-#endif
+#include "MaxMain/MaxAPI.h"
 
 #include "resource.h"
 #include <vector>

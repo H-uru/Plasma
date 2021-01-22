@@ -48,11 +48,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIListElement_h
 #define _pfGUIListElement_h
 
+#include "hsTemplates.h"
+
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plDynamicTextMap;
+#include "pnKeyedObject/plKey.h"
 
+class plDynamicTextMap;
 class pfGUISkin;
+
 class pfGUIListElement
 {
     protected:

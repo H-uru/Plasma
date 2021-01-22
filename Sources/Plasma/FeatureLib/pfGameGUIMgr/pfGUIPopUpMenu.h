@@ -52,18 +52,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIPopUpMenu_h
 #define _pfGUIPopUpMenu_h
 
+#include "hsBounds.h"
+#include "hsTemplates.h"
+
+#include <string>
 
 #include "pfGUIDialogMod.h"
-#include "hsBounds.h"
 
-class plMessage;
-class pfGUIButtonMod;
-class pfPopUpKeyGenerator;
-class pfGUICtrlProcObject;
 class hsGMaterial;
-class plSceneNode;
+class pfGUIButtonMod;
+class pfGUICtrlProcObject;
 class pfGUIMenuItemProc;
 class pfGUISkin;
+class plMessage;
+class plMipmap;
+class pfPopUpKeyGenerator;
+class plSceneNode;
 
 class pfGUIPopUpMenu : public pfGUIDialogMod
 {
@@ -169,7 +173,6 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 };
 
 // Skin definition. Here for now 'cause only the menus use it, but might move it later
-class plMipmap;
 class pfGUISkin : public hsKeyedObject
 {
     public:

@@ -45,22 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-
-#include "HeadSpin.h"
-#include "plPipeline.h"
 #include "plPlates.h"
 
+#include "plPipeline.h"
+#include "hsGDeviceRef.h"
+#include "plPipeDebugFlags.h"
+#include "hsResMgr.h"
+
+#include "pnMessage/plRefMsg.h"
+
+#include "plClientResMgr/plClientResMgr.h"
 #include "plGImage/plJPEG.h"
 #include "plGImage/plPNG.h"
 #include "plGImage/plMipmap.h"
 #include "plSurface/plLayer.h"
 #include "plSurface/hsGMaterial.h"
 #include "plMessage/plLayRefMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "hsGDeviceRef.h"
-#include "hsResMgr.h"
-#include "plPipeDebugFlags.h"
-#include "plClientResMgr/plClientResMgr.h"
 
 
 

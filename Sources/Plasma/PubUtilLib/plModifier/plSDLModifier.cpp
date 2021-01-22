@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDLModifier.h"
 
 #include "pnNetCommon/plSynchedObject.h"
-#include "pnDispatch/plDispatch.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plSDLModifierMsg.h"
 

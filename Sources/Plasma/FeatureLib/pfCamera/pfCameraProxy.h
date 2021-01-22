@@ -43,10 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCameraProxy_inc
 #define plCameraProxy_inc
 
+#include "HeadSpin.h"
+
 #include "plDrawable/plProxyGen.h"
 
-class plVirtualCam1;
 class plSceneNode;
+class plVirtualCam1;
 
 class plCameraProxy : public plProxyGen
 {

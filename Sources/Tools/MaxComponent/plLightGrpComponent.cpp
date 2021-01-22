@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plDrawableSpans.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "MaxPlasmaLights/plRealTimeLightBase.h"
+#include "pnMessage/plRefMsg.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //

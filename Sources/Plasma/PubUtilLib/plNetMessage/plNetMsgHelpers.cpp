@@ -39,13 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plNetMsgHelpers.h"
 #include "plNetMessage.h"
-#include "plCompression/plZlibCompress.h"
-#include "pnNetCommon/plNetApp.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnMessage/plMessage.h"
+
 #include "hsStream.h"
+
+#include "pnKeyedObject/plKey.h"
+#include "pnNetCommon/plNetApp.h"
+
+#include "plCompression/plZlibCompress.h"
+
 #include <algorithm>
 
 

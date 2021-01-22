@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plOGGCodec.h"
 
 #include "hsTimer.h"
-#include "pnNetCommon/plNetApp.h"
 
 plOGGCodec::DecodeFormat    plOGGCodec::fDecodeFormat = plOGGCodec::k16bitSigned;
 uint8_t                       plOGGCodec::fDecodeFlags = 0;
@@ -115,8 +114,6 @@ bool plOGGCodec::ReadFromHeader(int numBytes, void *data)
 void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect whichChan )
 {
     hsAssert( path.IsValid(), "Invalid path specified in plOGGCodec reader" );
-
-    // plNetClientApp::StaticDebugMsg("Ogg Open {}, t={f}, start", path, hsTimer::GetSeconds());
 
     fFilename = path;
     fWhichChannel = whichChan;
@@ -178,7 +175,6 @@ void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect wh
 
         SetPosition( 0 );
     }
-//  plNetClientApp::StaticDebugMsg("Ogg Open {}, t={f}, end", path, hsTimer::GetSeconds());
 }
 
 plOGGCodec::~plOGGCodec()
@@ -188,7 +184,6 @@ plOGGCodec::~plOGGCodec()
 
 void    plOGGCodec::Close()
 {
-    // plNetClientApp::StaticDebugMsg("Ogg Close, t={f}, start", hsTimer::GetSeconds());
     free(fHeadBuf);
     fHeadBuf = nil;
     if( fOggFile != nil )
@@ -204,7 +199,6 @@ void    plOGGCodec::Close()
         fclose( fFileHandle );
         fFileHandle = nil;
     }
-    // plNetClientApp::StaticDebugMsg("Ogg Close, t={f}, end", hsTimer::GetSeconds());
 }
 
 void    plOGGCodec::IError( const char *msg )
@@ -267,7 +261,6 @@ bool    plOGGCodec::SetPosition( uint32_t numBytes )
 bool    plOGGCodec::Read( uint32_t numBytes, void *buffer )
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
-//  plNetClientApp::StaticDebugMsg("Ogg Read, t={f}, start", hsTimer::GetSeconds());
 
     int bytesPerSample = ( fDecodeFormat == k16bitSigned ) ? 2 : 1;
     int isSigned = ( fDecodeFormat == k16bitSigned ) ? 1 : 0;
@@ -340,7 +333,6 @@ bool    plOGGCodec::Read( uint32_t numBytes, void *buffer )
         }
     }
 
-//  plNetClientApp::StaticDebugMsg("Ogg Read, t={f}, end", hsTimer::GetSeconds());
     return true;
 }
 

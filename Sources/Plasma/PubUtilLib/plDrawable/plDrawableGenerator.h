@@ -55,15 +55,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDrawableGenerator_h
 #define _plDrawableGenerator_h
 
-#include "hsTemplates.h"
-#include "hsBounds.h"
-#include "hsMatrix44.h"
+#include "HeadSpin.h"
+#include <vector>
 
+class hsBounds3Ext;
+struct hsColorRGBA;
 class hsGMaterial;
 class plDrawableSpans;
 class plGeometrySpan;
-struct hsColorRGBA;
-
+struct hsMatrix44;
+struct hsPoint3;
+struct hsVector3;
 
 //// Class Definition ////////////////////////////////////////////////////////
 

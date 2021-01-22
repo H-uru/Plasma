@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <cmath>
-
 #include "hsGeometry3.h"
 #include "hsStream.h"
+
+#include <cmath>
 
 hsVector3 operator%(const hsVector3& t, const hsVector3& s)
 {

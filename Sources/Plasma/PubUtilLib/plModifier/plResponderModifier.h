@@ -43,13 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plResponderModifier_inc
 
 #include <map>
-#include "pnModifier/plSingleModifier.h"
-#include "pnMessage/plMessage.h"
-#include "hsTemplates.h"
 
-class plNotifyMsg;
+#include "hsBitVector.h"
+#include "hsTemplates.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plMessage.h"
+#include "pnModifier/plSingleModifier.h"
+
 class plAnimCmdMsg;
+class plNotifyMsg;
 class plResponderSDLModifier;
+
 class plResponderModifier : public plSingleModifier
 {
     friend class plResponderSDLModifier;

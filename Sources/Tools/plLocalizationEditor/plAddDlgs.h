@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __plAddDlgs_h__
 #define __plAddDlgs_h__
 
-#include <QDialog>
 #include <string_theory/format>
+#include <QDialog>
 
 class plAddElementDlg : public QDialog
 {

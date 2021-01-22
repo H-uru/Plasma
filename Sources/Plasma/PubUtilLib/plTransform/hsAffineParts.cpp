@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "hsAffineParts.h"
-#include "plInterp/hsInterp.h"
+
+#include "HeadSpin.h"
+#include "plProfile.h"
 #include "hsStream.h"
 
-#include "plProfile.h"
+#include "plInterp/hsInterp.h"
 
 #define PL_OPTIMIZE_COMPOSE
 

@@ -35,7 +35,6 @@ set(plGImage_HEADERS
 )
 
 add_library(plGImage STATIC ${plGImage_SOURCES} ${plGImage_HEADERS})
-
 target_link_libraries(
     plGImage
     PUBLIC
@@ -44,8 +43,15 @@ target_link_libraries(
         plMessage
         plResMgr
     PRIVATE
+        pnDispatch
+        pnMessage
+        pnNucleusInc
+        plResMgr
         JPEG::JPEG
         PNG::PNG
+        $<$<PLATFORM_ID:Windows>:Vfw32>
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plGImage_SOURCES})

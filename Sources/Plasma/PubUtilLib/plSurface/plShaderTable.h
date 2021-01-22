@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShaderTable_inc
 #define plShaderTable_inc
 
+#include "HeadSpin.h"
+
 // When adding to the compiled table, make sure
 // you add the include in plShaderTable.cpp, or you'll
 // compile fine but have a nil shader (FFP) at runtime.

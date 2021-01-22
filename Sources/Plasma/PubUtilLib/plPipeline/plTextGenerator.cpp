@@ -50,18 +50,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#include "HeadSpin.h"
-#include "hsWindows.h"
-#include "hsMatrix44.h"
-#include "pnKeyedObject/hsKeyedObject.h"
 #include "plTextGenerator.h"
-#include "plGImage/plMipmap.h"
-#include "hsGDeviceRef.h"
-#include "pnMessage/plRefMsg.h"
 
 #include "plgDispatch.h"
+#include "hsGDeviceRef.h"
+#include "hsMatrix44.h"
 #include "hsResMgr.h"
+#include "hsWindows.h"
+
+#include "pnKeyedObject/hsKeyedObject.h"
+#include "pnMessage/plRefMsg.h"
+
+#include "plGImage/plMipmap.h"
+
 
 // Because tempKeys haven't been fixed yet (mf says to blame Eric Ellis), reffing
 // objects when we have a tempKey (or they have a tempKey) just don't work. In

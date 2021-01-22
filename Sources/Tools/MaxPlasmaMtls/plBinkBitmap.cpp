@@ -41,10 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
 
-#include <bmmlib.h>
-#include <iparamb2.h>
+#include "MaxMain/MaxAPI.h"
 
 /** Stubbed out BitmapIO instance for deprecated bink layers **/
 class plBinkBitmapIO : public BitmapIO

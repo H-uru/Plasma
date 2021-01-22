@@ -41,16 +41,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plPageOptimizer.h"
 
+#include "hsStream.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plUoid.h"
+
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plRegistryNode.h"
 
-#include "pnFactory/plFactory.h"
-#include "pnKeyedObject/plKeyImp.h"
-
-#include "hsStream.h"
 
 plPageOptimizer* plPageOptimizer::fInstance = nil;
 

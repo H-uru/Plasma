@@ -52,9 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // to a new age.
 //
 class plKey;
-class hsStream;
-class hsResMgr;
-
 class plLinkToAgeMsg : public plMessage
 {
     enum

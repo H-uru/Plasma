@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGUIValueCtrl.h"
 
-class plMessage;
 class pfGUIButtonMod;
+class plMessage;
 class pfUpDownBtnProc;
 
 class pfGUIUpDownPairMod : public pfGUIValueCtrl

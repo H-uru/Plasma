@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // global
 #include "hsResMgr.h"
+#include "hsStream.h"
 
 // other
 #include "plInterp/plAnimEaseTypes.h"

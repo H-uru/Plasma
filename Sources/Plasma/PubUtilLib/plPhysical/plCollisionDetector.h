@@ -46,14 +46,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDetectorModifier.h"
 #include "hsGeometry3.h"
 
+#include "pnKeyedObject/plKey.h"
+
 #include <set>
 #include <vector>
 
-class plMessage;
-class plCameraMsg;
-class plArmatureMod;
 class plActivatorMsg;
+class plArmatureMod;
 class plEvalMsg;
+class plCameraMsg;
+class plMessage;
 
 class plCollisionDetector : public plDetectorModifier
 {

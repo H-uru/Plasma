@@ -51,11 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include "../resource.h"
 
-#include <iparamm2.h>
-#include <stdmat.h>
+#include "MaxMain/MaxAPI.h"
+
+#include "../resource.h"
 
 #include "plNoteTrackWatcher.h"
 #include "plPassMtlBase.h"

@@ -44,8 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plModifier.h"
 
-class plSceneObject;
 class hsGMaterial;
+class plSceneObject;
 class plShader;
 
 class plGrassWave

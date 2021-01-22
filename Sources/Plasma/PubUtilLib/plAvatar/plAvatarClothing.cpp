@@ -39,46 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsTemplates.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "plDrawable/plInstanceDrawInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnMessage/plPipeResMakeMsg.h"
-#include "pfMessage/plClothingMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "plGImage/plMipmap.h"
-#include "hsGDeviceRef.h"
-#include "plPipeline/plRenderTarget.h"
-#include "plPipeline.h"
-#include "plClothingLayout.h"
+
 #include "plAvatarClothing.h"
+
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+
+#include "plArmatureEffects.h"
+#include "plArmatureMod.h"
+#include "plAvatarMgr.h"
 #include "plClothingSDLModifier.h"
-#include "plGImage/hsCodecManager.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plArmatureEffects.h"
+
+#include "pnEncryption/plRandom.h"
 #include "pnNetCommon/plNetApp.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "plMessage/plReplaceGeometryMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plSharedMesh.h"
+#include "plDrawable/plInstanceDrawInterface.h"
 #include "plDrawable/plMorphSequence.h"
 #include "plDrawable/plMorphSequenceSDLMod.h"
+#include "plDrawable/plSharedMesh.h"
 #include "plDrawable/plSpaceTree.h"
+#include "plGImage/plMipmap.h"
+#include "plMessage/plRenderMsg.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plSDL/plSDL.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
-#include "pnEncryption/plRandom.h"
-#include "plSDL/plSDL.h"
 #include "plVault/plVault.h"
-#include "plResMgr/plKeyFinder.h"
-#include "plNetClientComm/plNetClientComm.h"
 
+#include "pfMessage/plClothingMsg.h"
 
 plClothingItem::plClothingItem() : fGroup(0), fTileset(0), fType(0), fSortOrder(0),
                                    fThumbnail(nil), fAccessory(nil)
@@ -946,7 +937,7 @@ void plClothingOutfit::WriteToVault(const std::vector<plStateDataRecord*> & SDRs
 
     // Add new nodes to outfit folder
     for (const hsRef<RelVaultNode> &act : actuals)
-        VaultAddChildNodeAndWait(rvn->GetNodeId(), act->GetNodeId(), NetCommGetPlayer()->playerInt);
+        VaultAddChildNodeAndWait(rvn->GetNodeId(), act->GetNodeId(), plNetClientApp::GetInstance()->GetPlayerID());
 
     // Cleanup morph SDRs
     for (plStateDataRecord *morph : morphs)
@@ -1642,7 +1633,7 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
             VaultAddChildNodeAndWait(
                 rvn->GetNodeId(),
                 actual->GetNodeId(),
-                NetCommGetPlayer()->playerInt
+                plNetClientApp::GetInstance()->GetPlayerID()
             );
         }
     }

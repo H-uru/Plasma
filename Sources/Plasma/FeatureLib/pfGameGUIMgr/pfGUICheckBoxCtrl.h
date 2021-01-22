@@ -48,11 +48,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUICheckBoxCtrl_h
 #define _pfGUICheckBoxCtrl_h
 
+#include "HeadSpin.h"
+#include "hsTemplates.h"
+
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
-class plPostEffectMod;
 class plAGMasterMod;
+class plKey;
+struct hsMatrix44;
+class plMessage;
+struct hsPoint3;
+class plPostEffectMod;
 
 class pfGUICheckBoxCtrl : public pfGUIControlMod
 {

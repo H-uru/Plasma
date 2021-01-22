@@ -48,13 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxComponent/plComponent.h"
 
-#include <algorithm>
-#include <commdlg.h>
-#include <stdmat.h>
-#include <bmmlib.h>
-#include <iparamm2.h>
-#include <meshdlib.h>
-#include <vector>
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxMain/plMaxNode.h"
 #include "MaxComponent/plLightGrpComponent.h"

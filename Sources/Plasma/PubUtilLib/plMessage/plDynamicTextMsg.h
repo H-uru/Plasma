@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessage.h"
 #include "hsColorRGBA.h"
+#include <string_theory/string>
 
 class plDynamicTextMap;
 

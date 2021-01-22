@@ -41,27 +41,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plGrassShaderMod.h"
 
-#include "hsTimer.h"
-#include "hsResMgr.h"
 #include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+
+#include "hsGMaterial.h"
+#include "plLayer.h"
+#include "plShader.h"
 
 #include "pnKeyedObject/plUoid.h"
-
-//#include "pnSceneObject/plDrawInterface.h"
-
 #include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
+
 #include "plMessage/plMatRefMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plLayRefMsg.h"
 
-#include "plDrawable/plAccessGeometry.h"
-#include "plDrawable/plAccessSpan.h"
-#include "plDrawable/plAccessVtxSpan.h"
-
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plShader.h"
-#include "plSurface/plLayer.h"
 
 void plGrassWave::Write(hsStream *s)
 {

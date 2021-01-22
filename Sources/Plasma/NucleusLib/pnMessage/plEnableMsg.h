@@ -86,17 +86,8 @@ public:
     CLASSNAME_REGISTER(plEnableMsg);
     GETINTERFACE_ANY(plEnableMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        fCmd.Read(stream);
-        fTypes.Read(stream);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        fCmd.Write(stream);
-        fTypes.Write(stream);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     enum MsgContentFlags
     {
@@ -104,27 +95,8 @@ public:
         kTypes,
     };
 
-    void ReadVersion(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgReadVersion(stream, mgr);
-        hsBitVector contentFlags;
-        contentFlags.Read(stream);
-
-        if (contentFlags.IsBitSet(kCmd))
-            fCmd.Read(stream);
-        if (contentFlags.IsBitSet(kTypes))
-            fTypes.Read(stream);
-    }
-
-    void WriteVersion(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWriteVersion(stream, mgr);
-        hsBitVector contentFlags;
-        contentFlags.SetBit(kCmd);
-        contentFlags.SetBit(kTypes);
-        contentFlags.Write(stream);
-
-        fCmd.Write(stream);
-        fTypes.Write(stream);
-    }
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plEnableMsg_inc

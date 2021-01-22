@@ -50,13 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsWindows.h"
 
-#include <max.h>
-#include <istdplug.h>
-#include <Notify.h>
-#include <commdlg.h>
-#include <bmmlib.h>
-#include <INode.h>
-#include <stdmat.h>
+#include "MaxMain/MaxAPI.h"
 
 #include <vector>
 

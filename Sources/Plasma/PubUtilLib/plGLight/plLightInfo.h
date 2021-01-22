@@ -43,30 +43,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightInfo_inc
 #define plLightInfo_inc
 
-#include "pnSceneObject/plObjInterface.h"
-#include "hsMatrix44.h"
-#include "hsColorRGBA.h"
-#include "plIntersect/plVolumeIsect.h"
 #include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "hsMatrix44.h"
+#include "hsTemplates.h"
 
-class hsStream;
-class hsResMgr;
-class plSpaceTree;
+#include "pnSceneObject/plObjInterface.h"
 
+class hsBounds3Ext;
+class plConeIsect;
+class plDrawable;
+class plDrawableSpans;
 class hsGDeviceRef;
 class hsGMaterial;
-class plDrawableSpans;
 class plLayerInterface;
+class plLightProxy;
+class plParallelIsect;
 class plPipeline;
-class plDrawable;
-class plSoftVolume;
-class hsBounds3Ext;
-class plVisRegion;
-
+class hsResMgr;
 class plRenderRequest;
 class plRenderTarget;
-
-class plLightProxy;
+class plSoftVolume;
+class plSpaceTree;
+class plSphereIsect;
+class hsStream;
+class plVisRegion;
+class plVolumeIsect;
 
 class plLightInfo : public plObjInterface
 {
@@ -144,7 +146,7 @@ protected:
     hsBitVector                 fSlaveBits;
 
     virtual void                IMakeIsect() = 0;
-    virtual plVolumeIsect*      IGetIsect() = 0;
+    virtual plVolumeIsect*      IGetIsect() const = 0;
     virtual void                IRefresh();
     
     virtual const hsMatrix44&   IGetWorldToProj() const { return fWorldToProj; }
@@ -185,7 +187,7 @@ public:
     void Refresh() { if( IsDirty() ) { IRefresh(); SetDirty(false); } }
     virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
 
-    bool AffectsBound(const hsBounds3Ext& bnd) { return IGetIsect() ? IGetIsect()->Test(bnd) != kVolumeCulled : true; }
+    bool AffectsBound(const hsBounds3Ext& bnd);
     void GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac);
     void GetAffected(const plSpaceTree* space, hsBitVector& list, bool charac);
     const std::vector<int16_t>& GetAffected(plSpaceTree* space, const std::vector<int16_t>& visList, std::vector<int16_t>& litList, bool charac);
@@ -247,7 +249,7 @@ class plDirectionalLightInfo : public plLightInfo
 protected:
 
     void                IMakeIsect() override { }
-    plVolumeIsect*      IGetIsect() override { return nil; }
+    plVolumeIsect*      IGetIsect() const override { return nil; }
 
 public:
     plDirectionalLightInfo();
@@ -276,8 +278,8 @@ protected:
 
     plParallelIsect*            fParPlanes;
 
-    void                IMakeIsect() override;
-    plVolumeIsect*      IGetIsect() override { return fParPlanes; }
+    void           IMakeIsect() override;
+    plVolumeIsect* IGetIsect() const override;
 
     void                IRefresh() override;
 
@@ -285,7 +287,7 @@ public:
     plLimitedDirLightInfo()
         : fParPlanes(), fWidth(), fHeight(), fDepth()
     { }
-    ~plLimitedDirLightInfo() { delete fParPlanes; }
+    ~plLimitedDirLightInfo();
 
     CLASSNAME_REGISTER( plLimitedDirLightInfo );
     GETINTERFACE_ANY( plLimitedDirLightInfo, plDirectionalLightInfo );
@@ -318,8 +320,8 @@ protected:
 
     plSphereIsect*              fSphere;
 
-    void                IMakeIsect() override;
-    plVolumeIsect*      IGetIsect() override { return fSphere; }
+    void           IMakeIsect() override;
+    plVolumeIsect* IGetIsect() const override;
 
     void                IRefresh() override;
 
@@ -372,7 +374,7 @@ protected:
     plConeIsect*        fCone;
 
     void                IMakeIsect() override;
-    plVolumeIsect*      IGetIsect() override { return fCone; }
+    plVolumeIsect*      IGetIsect() const override;
 
     void                IRefresh() override;
 
@@ -383,7 +385,7 @@ public:
           fSpotOuter(hsConstants::pi<float> * 0.25f),
           fCone(), fEffectiveFOV()
     { }
-    ~plSpotLightInfo() { delete fCone; }
+    ~plSpotLightInfo();
 
     CLASSNAME_REGISTER( plSpotLightInfo );
     GETINTERFACE_ANY( plSpotLightInfo, plOmniLightInfo );

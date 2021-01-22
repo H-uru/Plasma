@@ -47,8 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 struct IDirect3DDevice9;
-class plShader;
+struct IDirect3DVertexShader9;
 class plDXPipeline;
+class plShader;
+
+typedef unsigned long DWORD;
 
 class plDXVertexShader : public plDXShader
 {

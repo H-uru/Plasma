@@ -25,8 +25,12 @@ add_library(plIntersect STATIC ${plIntersect_SOURCES} ${plIntersect_HEADERS})
 target_link_libraries(plIntersect
     PUBLIC
         CoreLib
+        pnFactory
         pnKeyedObject
         pnSceneObject
+    PRIVATE
+        pnNucleusInc
+        pnMessage
         plMessage
 )
 

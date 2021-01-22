@@ -42,8 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef OBJECT_FLOCKER_H
 #define OBJECT_FLOCKER_H
 
+#include "hsGeometry3.h"
+
+#include "pnKeyedObject/plKey.h"
 #include "pnModifier/plSingleModifier.h"
+
 #include <algorithm>
+#include <vector>
 
 class hsStream;
 class hsResMgr;

@@ -43,15 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDXTextFont_h
 
 #include "plPipeline/plTextFont.h"
-//#include "hsGDirect3DTnLDevice.h"
 
 
 //// plDXTextFont Class Definition ///////////////////////////////////////////
 
-struct IDirect3DTexture9;
 struct IDirect3DDevice9;
 struct IDirect3DStateBlock9;
+struct IDirect3DTexture9;
+struct IDirect3DVertexBuffer9;
 class plPipeline;
+
+typedef unsigned long DWORD;
 
 class plDXTextFont : public plTextFont
 {

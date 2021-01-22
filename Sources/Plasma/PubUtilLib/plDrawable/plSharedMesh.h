@@ -46,12 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plMessage.h"
 #include "hsTemplates.h"
 
-class plGeometrySpan;
 class plDrawableSpans;
+class plGeometrySpan;
+class plMorphDataSet;
 class plSceneObject;
 class hsStream;
 class hsResMgr;
-class plMorphDataSet;
 
 class plSharedMesh : public hsKeyedObject
 {

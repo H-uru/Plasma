@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "plLoadMask.h"
-#include "hsStream.h"
 #include "plQuality.h"
+#include "hsStream.h"
 
 ///////////////////////////////////////////////////////////////////
 // Global settings first. Implemented here for convenience (mine).

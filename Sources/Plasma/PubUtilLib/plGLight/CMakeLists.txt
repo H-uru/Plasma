@@ -30,9 +30,19 @@ target_link_libraries(plGLight
     PUBLIC
         CoreLib
         pnKeyedObject
+        pnModifier
         pnSceneObject
-        plIntersect
+        plDrawable
         plScene
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        plIntersect
+        plMessage
+        plPipeline
+        plSurface
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plGLight_SOURCES})

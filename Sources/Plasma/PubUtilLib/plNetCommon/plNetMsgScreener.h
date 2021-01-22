@@ -42,17 +42,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetMsgScreener_h
 #define plNetMsgScreener_h
 
-#include "pnKeyedObject/plKey.h"
 #include "plLoggable.h"
+
+#include "pnKeyedObject/plKey.h"
+
+class plMessage;
+class plNetGameMember;
+class plNetMessage;
+
+namespace ST { class string; }
 
 //
 // Class which decides what game messages are allowed to be sent to the server.
 // Used both client and server-side.
 //
-class plNetGameMember;
-class plMessage;
-class plNetMessage;
-class pfKIMsg;
+
 class plNetMsgScreener : public plLoggable
 {
 protected:

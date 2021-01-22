@@ -30,6 +30,23 @@ set(pfConditional_HEADERS
 )
 
 add_library(pfConditional ${pfConditional_SOURCES} ${pfConditional_HEADERS})
+target_link_libraries(
+    pfConditional
+    PUBLIC
+        CoreLib
+        pnInputCore
+        pnKeyedObject
+        pnMessage
+        pnModifier
+    PRIVATE
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        plAvatar
+        plMessage
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfConditional_SOURCES})
 source_group("Header Files" FILES ${pfConditional_HEADERS})

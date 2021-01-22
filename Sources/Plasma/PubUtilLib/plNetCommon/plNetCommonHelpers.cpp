@@ -39,55 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-
-#include "HeadSpin.h"
-#include "hsStream.h"
 #include "plNetCommonHelpers.h"
-#include "pnNetCommon/plGenericVar.h"
-#include "plCompression/plZlibCompress.h"
+
+#include "hsStream.h"
+
 #include <algorithm>
 #include <iterator>
+#include <string_theory/string>
 
+#include "pnNetCommon/plGenericVar.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 
-////////////////////////////////////////////////////////////////////
-const uint8_t plNetCoreStatsSummary::StreamVersion = 1;
-
-plNetCoreStatsSummary::plNetCoreStatsSummary()
-:fULBitsPS(0),
-fDLBitsPS(0),
-fULPeakBitsPS(0),
-fDLPeakBitsPS(0),
-fULPeakPktsPS(0),
-fDLPeakPktsPS(0),
-fDLDroppedPackets(0)
-{
-}
-
-void plNetCoreStatsSummary::Read(hsStream* s, hsResMgr*)
-{
-    uint8_t streamVer;
-    s->ReadLE(&streamVer);
-    hsAssert(streamVer==StreamVersion,"plNetCoreStatsSummary invalid stream version.");
-    s->ReadLE(&fULBitsPS);
-    s->ReadLE(&fDLBitsPS);
-    s->ReadLE(&fULPeakBitsPS);
-    s->ReadLE(&fDLPeakBitsPS);
-    s->ReadLE(&fULPeakPktsPS);
-    s->ReadLE(&fDLPeakPktsPS);
-    s->ReadLE(&fDLDroppedPackets);
-}
-
-void plNetCoreStatsSummary::Write(hsStream* s, hsResMgr*)
-{
-    s->WriteLE(StreamVersion);
-    s->WriteLE(fULBitsPS);
-    s->WriteLE(fDLBitsPS);
-    s->WriteLE(fULPeakBitsPS);
-    s->WriteLE(fDLPeakBitsPS);
-    s->WriteLE(fULPeakPktsPS);
-    s->WriteLE(fDLPeakPktsPS);
-    s->WriteLE(fDLDroppedPackets);
-}
+#include "plCompression/plZlibCompress.h"
 
 ////////////////////////////////////////////////////////////////////
 

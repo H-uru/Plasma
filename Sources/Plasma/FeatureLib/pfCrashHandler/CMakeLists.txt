@@ -12,6 +12,13 @@ set(pfCrashHandler_SOURCES
 )
 
 add_library(pfCrashHandler STATIC ${pfCrashHandler_SOURCES} ${pfCrashHandler_HEADERS})
+target_link_libraries(
+    pfCrashHandler
+    PUBLIC
+        CoreLib
+    PRIVATE
+        $<$<PLATFORM_ID:Windows>:Dbghelp>
+)
 
 source_group("Source Files" FILES ${pfCrashHandler_SOURCES})
 source_group("Header Files" FILES ${pfCrashHandler_HEADERS})

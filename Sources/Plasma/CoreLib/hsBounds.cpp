@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "hsBounds.h"
+
+#include "HeadSpin.h"
+#include "hsFastMath.h"
 #include "hsStream.h"
 
-#include "hsFastMath.h"
+#include <algorithm>
 
 const float hsBounds::kRealSmall = 1.0e-5f;
 
@@ -248,6 +249,12 @@ int32_t hsBounds3::TestBound(const hsBounds3& other) const
             retVal = 0;
     }
     return retVal;
+}
+
+float hsBounds3::GetMaxDim() const
+{
+    hsAssert(kBoundsNormal == fType, "Invalid type for GetMaxDim");
+    return std::max({ fMaxs.fX - fMins.fX, fMaxs.fY - fMins.fY, fMaxs.fZ - fMins.fZ });
 }
 
 bool hsBounds3::IsInside(const hsPoint3* pos) const

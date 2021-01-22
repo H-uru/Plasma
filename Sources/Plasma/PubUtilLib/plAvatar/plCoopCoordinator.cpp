@@ -48,24 +48,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // singular
 #include "plCoopCoordinator.h"
 
+#include "plTimerCallbackManager.h"
+
 // local
-#include "plAvBrainCoop.h"
+#include "plArmatureMod.h"
 #include "plAvatarMgr.h"
+#include "plAvBrainCoop.h"
 #include "plAvTaskBrain.h"
 #include "plAvTaskSeek.h"
 
-// global
-
-
 // other
-#include "plMessage/plAvCoopMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plPhysical.h"
-#include "plTimerCallbackManager.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
 
 const int kAbortTimer = 1;
@@ -125,7 +124,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
     guestBrain->SetRecipient(avMgrKey);
     hostBrain->SetRecipient(avMgrKey);
     // disable our clickability here if we are the guest
-    if (plNetClientMgr::GetInstance()->GetLocalPlayerKey() == guest)
+    if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == guest)
     {
         plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
         pMsg->SetAvKey(guest);

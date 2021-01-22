@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plANDConditionalObject_inc
 #define plANDConditionalObject_inc
 
-#include "pnModifier/plConditionalObject.h"
 #include "hsTemplates.h"
+
+#include "pnModifier/plConditionalObject.h"
 
 class plANDConditionalObject : public plConditionalObject
 {

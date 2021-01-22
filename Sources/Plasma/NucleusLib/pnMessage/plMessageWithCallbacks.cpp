@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsResMgr.h"
+
 #include "plMessageWithCallbacks.h"
-#include "plEventCallbackMsg.h"
-#include "pnNetCommon/plSynchedObject.h"
-#include "plgDispatch.h"
+
 #include "hsBitVector.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+#include "plEventCallbackMsg.h"
 
 plMessageWithCallbacks::~plMessageWithCallbacks()
 {
@@ -140,7 +142,7 @@ void plMessageWithCallbacks::SendCallbacks()
 {
     while (!fCallbacks.empty())
     {
-        plgDispatch::MsgSend(fCallbacks.back());
+        fCallbacks.back()->Send();
         fCallbacks.pop_back();
     }
 }

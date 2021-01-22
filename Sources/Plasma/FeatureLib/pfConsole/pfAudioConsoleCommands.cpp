@@ -49,21 +49,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
-#include "pfConsoleCore/pfConsoleCmd.h"
+#include <string_theory/format>
+#include <string_theory/string>
+
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-#include "plAudio/plAudioSystem.h"
-#include "plAudio/plVoiceChat.h"
-#include "pfAudio/plListener.h"
 #include "pnKeyedObject/plFixedKey.h"
-#include "plNetClient/plNetClientMgr.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "pnMessage/plSoundMsg.h"
-#include "plMessage/plListenerMsg.h"
+#include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plAudioInterface.h"
+
+#include "plAudio/plAudioSystem.h"
+#include "plAudio/plVoiceChat.h"
+#include "plMessage/plListenerMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
+#include "pfAudio/plListener.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 
@@ -471,7 +475,7 @@ PF_CONSOLE_CMD(Listener, UseCameraVelocity, "", "Use the camera's velocity to se
 
 PF_CONSOLE_CMD(Listener, UsePlayerOrientation, "", "Use the player's orientation to orient the listener")
 {
-    plKey pKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    plKey pKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     if( pKey )
     {
         plSetListenerMsg *set = new plSetListenerMsg( plSetListenerMsg::kFacing, pKey, true );
@@ -481,7 +485,7 @@ PF_CONSOLE_CMD(Listener, UsePlayerOrientation, "", "Use the player's orientation
 
 PF_CONSOLE_CMD(Listener, UsePlayerPosition, "", "Use the player's position to position the listener")
 {
-    plKey pKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    plKey pKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     if (pKey)
     {
         plSetListenerMsg *set = new plSetListenerMsg( plSetListenerMsg::kPosition, pKey, true );
@@ -491,7 +495,7 @@ PF_CONSOLE_CMD(Listener, UsePlayerPosition, "", "Use the player's position to po
 
 PF_CONSOLE_CMD(Listener, UsePlayerVelocity, "", "Use the player's velocity to set the listener velocity")
 {
-    plKey pKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    plKey pKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     if (pKey)
     {
         plSetListenerMsg *set = new plSetListenerMsg( plSetListenerMsg::kVelocity, pKey, true );
@@ -504,7 +508,7 @@ PF_CONSOLE_CMD(Listener, XMode, "bool b", "Sets velocity and position to avatar,
     static uint32_t oldPosType = 0, oldFacingType = 0, oldVelType = 0;
     
     plSetListenerMsg *set = nil;
-    plKey pKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    plKey pKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     plListener* pListener = nullptr;
 
     if( (bool)params[ 0 ] )

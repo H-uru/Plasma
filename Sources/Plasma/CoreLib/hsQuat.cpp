@@ -40,12 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "hsQuat.h"
+
+#include "HeadSpin.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
-#include "hsFastMath.h"
+
 
 //
 // Quaternion class.

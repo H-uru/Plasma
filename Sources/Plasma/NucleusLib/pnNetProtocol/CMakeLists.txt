@@ -37,10 +37,10 @@ target_link_libraries(
     pnNetProtocol
     PUBLIC
         CoreLib
+        pnNetBase
         pnUUID
     PRIVATE
         pnAsyncCore
-        pnNetBase
         pnNetCli
         pnUtils
 )

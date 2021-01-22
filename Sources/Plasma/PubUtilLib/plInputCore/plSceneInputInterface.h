@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnUUID/pnUUID.h"
+#include <string_theory/string>
 
 //// Class Definition ////////////////////////////////////////////////////////
         

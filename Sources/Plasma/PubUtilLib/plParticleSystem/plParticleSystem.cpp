@@ -39,32 +39,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
+
 #include "plParticleSystem.h"
+
+#include "plParticle.h"
+#include "plParticleEffect.h"
 #include "plParticleEmitter.h"
 #include "plParticleGenerator.h"
-#include "plParticleEffect.h"
-#include "plParticle.h"
 #include "plParticleSDLMod.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+#include "plTweak.h"
+
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
-#include "plInterp/plController.h"
-#include "plSurface/hsGMaterial.h"
-#include "plPipeline.h"
-#include "hsTimer.h"
-#include "plProfile.h"
-#include "plTweak.h"
 
 #include "plDrawable/plParticleFiller.h"
+#include "plSurface/hsGMaterial.h"
+#include "plInterp/plController.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plRenderMsg.h"
 
 plProfile_CreateCounter("Num Particles", "Particles", NumParticles);
 

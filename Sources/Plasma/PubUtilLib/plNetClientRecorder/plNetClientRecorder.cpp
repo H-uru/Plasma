@@ -39,23 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsWindows.h"
+
 #include "plNetClientRecorder.h"
+
+#include "plCreatableIndex.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsTimer.h"
+#include "hsWindows.h"
 
-#include "plNetMessage/plNetMessage.h"
-#include "plCreatableIndex.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
-#include "plSDL/plSDL.h"
-#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plNotifyMsg.h"
 
 #include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plLoadAvatarMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-
+#include "plNetMessage/plNetMessage.h"
 #include "plStatusLog/plStatusLog.h"
 
 plNetClientRecorder::plNetClientRecorder(TimeWrapper* timeWrapper) :

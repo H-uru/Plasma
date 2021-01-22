@@ -40,29 +40,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "config.h"
-
-#include <utility>
-#include <string_theory/stdio>
-
 #include "plCmdParser.h"
 
+#include <string_theory/stdio>
+#include <utility>
+
+#include "config.h"
+#ifdef OUTPUT_WAV_FILES
+#   include "plOldAudioFileReader.h"
+#endif
+
+#include "plAgeDescription/plAgeManifest.h"
+#include "plAudioCore/plSoundBuffer.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plResMgrSettings.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
-
-#include "plAgeDescription/plAgeManifest.h"
-
-#include "plAudioCore/plSoundBuffer.h"
-
-#ifdef OUTPUT_WAV_FILES
-#include "plOldAudioFileReader.h"
-#endif
-
-#ifdef USE_VLD
-#include <vld.h>
-#endif
 
 typedef std::set<std::tuple<ST::string, uint16_t>> SoundSet;
 
@@ -201,10 +194,6 @@ void DecompressSounds(SoundSet& sounds, OutputStyle verbosity, bool overwrite)
 
 int main(int argc, const char** argv)
 {
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
     bool overwrite = false;
     OutputStyle verbosity = OutputStyle::kProgress;
 

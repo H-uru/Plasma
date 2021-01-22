@@ -41,32 +41,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 //////////////////////////////////////////////////////////////////////////////
 //                                                                          //
-//  pfGUIProgressCtrl Definition                                                //
+//  pfGUIProgressCtrl Definition                                            //
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIProgressCtrl.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "plTimerCallbackManager.h"
+
 #include "pfGameGUIMgr.h"
 #include "pfGUIDialogMod.h"
 
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGMasterMod.h"
 #include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
+#include "plInterp/plAnimTimeConvert.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
-// #include "plAnimation/plAGModifier.h"
-#include "plAnimation/plAGMasterMod.h"
-#include "plAnimation/plAGAnimInstance.h"
 #include "plSurface/plLayerAnimation.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "plTimerCallbackManager.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// IEval ///////////////////////////////////////////////////////////////////
 
@@ -216,7 +211,7 @@ void    pfGUIProgressCtrl::SetCurrValue( float v )
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 }
 
@@ -234,7 +229,7 @@ void pfGUIProgressCtrl::AnimateToPercentage( float percent )
             msg->SetAnimName( fAnimName );
             msg->fTime = percent;
             msg->AddReceivers( fAnimationKeys );
-            plgDispatch::MsgSend( msg );
+            msg->Send();
 
             if (fPlaySound)
             {

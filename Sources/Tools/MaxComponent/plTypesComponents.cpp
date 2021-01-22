@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
+
 #include "plgDispatch.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
@@ -50,11 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimComponent.h"
 #include "plAudioComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
-
-#include <iparamm2.h>
-#include <windowsx.h>
-
 
 #include "pnSceneObject/plSceneObject.h"
 

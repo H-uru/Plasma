@@ -42,13 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWin32StaticSound_h
 #define plWin32StaticSound_h
 
+#include "plSoundEvent.h"
 #include "plWin32Sound.h"
 
 class hsResMgr;
 class plDSoundBuffer;
 class plEventCallbackMsg;
-
-#include "plSoundEvent.h"
 
 class plWin32StaticSound : public plWin32Sound
 {

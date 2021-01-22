@@ -40,14 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayerInterface.h"
-#include "plMessage/plLayRefMsg.h"
 #include "plLayer.h"
-#include "hsMatrix44.h"
+
+#include "HeadSpin.h"
+
 #include "hsGMatState.h"
+#include "hsMatrix44.h"
 #include "hsResMgr.h"
+
 #include "pnNetCommon/plSDLTypes.h"
+
+#include "plMessage/plLayRefMsg.h"
 
 plLayerInterface::plLayerInterface() 
 :   fUnderLay(nil),
@@ -123,7 +127,7 @@ void plLayerInterface::ISetPassThru(uint32_t chans)
 // 5) Taking advantage of rules 1) and 2), it follows that the last
 //      layer to have become active on response to a message is also
 //      the last layer to have been active.
-// 6) So when a layer becomes active in it's MsgReceive(), it notifies
+// 6) So when a layer becomes active in its MsgReceive(), it notifies
 //      all channels above it that it now owns its channels, and they
 //      should just pass through those channel values.
 // Note that a layer may claim ownership of its channels but then lose

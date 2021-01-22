@@ -24,11 +24,11 @@ target_link_libraries(
     pfLocalizationMgr
     PUBLIC
         CoreLib
+        string_theory
     PRIVATE
         plFile
         plResMgr
         plStatusLog
-
         expat::expat
 )
 

@@ -51,30 +51,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "hsTimer.h"
+
 #include "plResManagerHelper.h"
 #include "plResManager.h"
 #include "plRegistryNode.h"
 #include "plRegistryHelpers.h"
-//#include "plRegistry.h"
 #include "plResMgrSettings.h"
 
 #include "pnKeyedObject/plFixedKey.h"
+
 #include "plMessage/plResMgrHelperMsg.h"
 #include "plStatusLog/plStatusLog.h"
-#include "hsTimer.h"
 
 #ifdef MCN_RESMGR_DEBUGGING
 
 static const int    kLogSize        = 40;
 static const float  kUpdateDelay    = 0.5f;
 
+#include "pnInputCore/plInputMap.h"
+#include "pnKeyedObject/plKeyImp.h"
+
 #include "plInputCore/plInputInterface.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputInterfaceMgr.h"
-#include "pnInputCore/plInputMap.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
-#include "pnKeyedObject/plKeyImp.h"
 
 #endif
 

@@ -49,8 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNetBase.h"
 #include <string_theory/codecs>
 
-#include <algorithm>
-
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
 PF_CONSOLE_FILE_DUMMY(Core)

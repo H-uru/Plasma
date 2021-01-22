@@ -39,13 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
+
 #include "plActivatorConditionalObject.h"
-#include "plPhysical/plDetectorModifier.h"
+
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnModifier/plLogicModBase.h"
-#include "plMessage/plActivatorMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 
+#include "plMessage/plActivatorMsg.h"
 
 plActivatorConditionalObject::plActivatorConditionalObject()
 {

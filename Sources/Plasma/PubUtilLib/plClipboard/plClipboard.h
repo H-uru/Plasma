@@ -49,16 +49,14 @@ namespace ST { class string; }
 
 class plClipboard
 {
-    private:
-    
-        plClipboard() {}
-        plClipboard(const plClipboard& rhs) {}
-        
-    public:
-        bool IsTextInClipboard();
-        ST::string GetClipboardText();
-        void SetClipboardText(const ST::string& text);
-        static plClipboard& GetInstance();
+    plClipboard() {}
+    plClipboard(const plClipboard& rhs) = delete;
+
+public:
+    bool IsTextInClipboard();
+    ST::string GetClipboardText();
+    void SetClipboardText(const ST::string& text);
+    static plClipboard& GetInstance();
 };
 
 #endif // _Clipboard_h

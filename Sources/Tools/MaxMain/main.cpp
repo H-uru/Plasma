@@ -41,14 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
 
 #include "MaxComponent/plComponentMgr.h"
-#include "MaxCompat.h"
-
-
-#include <custcont.h>
-#include <direct.h>
-#include <istdplug.h>
 
 // "TEMP" -- who's gonna rewrite that now? >.<
 #include <CustAttrib.h>

@@ -44,9 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGameScoreMgr_h_
 
 #include "HeadSpin.h"
+#include "hsRefCnt.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnNetBase/pnNetBase.h"
-#include "hsRefCnt.h"
+
+namespace ST { class string; }
 
 // TODO: Rank List (seems to be unused in regular gameplay though...)
 //       That's some strange stuff...

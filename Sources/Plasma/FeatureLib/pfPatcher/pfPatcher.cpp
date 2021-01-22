@@ -47,17 +47,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPatcher.h"
 
 #include "HeadSpin.h"
-#include "plAudioCore/plAudioFileReader.h"
-#include "plCompression/plZlibStream.h"
-#include "pnEncryption/plChecksum.h"
 #include "plFileSystem.h"
-#include "pnNetBase/pnNbError.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "plStatusLog/plStatusLog.h"
 #include "hsStream.h"
 #include "hsThread.h"
 #include "hsTimer.h"
 
+#include "pnEncryption/plChecksum.h"
+#include "pnNetBase/pnNbError.h"
+
+#include "plAudioCore/plAudioFileReader.h"
+#include "plCompression/plZlibStream.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plStatusLog/plStatusLog.h"
 
 template<typename... _Args>
 static inline void PatcherLogGreen(const char* format, _Args&&... args)

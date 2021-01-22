@@ -48,21 +48,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIControlMod_h
 #define _pfGUIControlMod_h
 
-
-#include "pnModifier/plSingleModifier.h"
 #include "hsBounds.h"
-#include "plMessage/plInputEventMsg.h"
-#include "pfGameGUIMgr.h"
 #include "hsColorRGBA.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
 #include "hsRefCnt.h"
 
+#include <string_theory/string>
+
+#include "pfGameGUIMgr.h"
+
+#include "pnModifier/plSingleModifier.h"
+
+#include "plMessage/plInputEventMsg.h"
+
+class plDynamicTextMap;
+class pfGUICtrlProcObject;
+class pfGUIDialogMod;
+class plLayerInterface;
+class pfGUIDropTargetProc;
 class plMessage;
 class plPostEffectMod;
-class pfGUIDialogMod;
-class pfGUICtrlProcObject;
-class pfGUIDropTargetProc;
-class plDynamicTextMap;
-class plLayerInterface;
+class plSceneObject;
 
 //// pfGUIColorScheme ////////////////////////////////////////////////////////
 //  Tiny helper wrapper for a set of colors used to draw various controls

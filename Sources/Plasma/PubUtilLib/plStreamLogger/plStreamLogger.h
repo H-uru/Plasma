@@ -44,7 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <list>
 #include <string>
+
 #include "hsStream.h"
+
 #include "pnNetCommon/plGenericVar.h"
 
 class plStreamLogger

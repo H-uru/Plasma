@@ -17,46 +17,24 @@ set(plUruLauncher_RESOURCES
 
 add_executable(plUruLauncher WIN32 ${plUruLauncher_SOURCES} ${plUruLauncher_HEADERS}
                                    ${plUruLauncher_RESOURCES})
+target_link_libraries(
+    plUruLauncher
+    PRIVATE
+        CoreLib
+        pnAsyncCore
+        pnNetBase
+        plNetGameLib
+        plStatusLog
+        pfConsoleCore
+        pfPatcher
+
+        CURL::libcurl
+        string_theory
+)
+
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plUruLauncher PROPERTIES OUTPUT_NAME UruLauncher)
 endif(PLASMA_EXTERNAL_RELEASE)
-target_link_libraries(plUruLauncher CoreLib)
-target_link_libraries(plUruLauncher pfConsoleCore)
-target_link_libraries(plUruLauncher pfPatcher)
-target_link_libraries(plUruLauncher plAudioCore)
-target_link_libraries(plUruLauncher plCompression)
-target_link_libraries(plUruLauncher plFile)
-target_link_libraries(plUruLauncher plNetGameLib)
-target_link_libraries(plUruLauncher plNetMessage)
-target_link_libraries(plUruLauncher plNetTransport)
-target_link_libraries(plUruLauncher plStatusLog)
-target_link_libraries(plUruLauncher plUnifiedTime)
-target_link_libraries(plUruLauncher pnAsyncCore)
-target_link_libraries(plUruLauncher pnAsyncCoreExe)
-target_link_libraries(plUruLauncher pnEncryption)
-target_link_libraries(plUruLauncher pnNetBase)
-target_link_libraries(plUruLauncher pnNetCli)
-target_link_libraries(plUruLauncher pnNetCommon)
-target_link_libraries(plUruLauncher pnNetProtocol)
-target_link_libraries(plUruLauncher pnTimer)
-target_link_libraries(plUruLauncher pnUtils)
-target_link_libraries(plUruLauncher pnUUID)
-
-target_link_libraries(plUruLauncher ${DirectX_LIBRARIES})
-target_link_libraries(plUruLauncher CURL::libcurl)
-target_link_libraries(plUruLauncher ${STRING_THEORY_LIBRARIES})
-
-if(USE_VLD)
-    target_link_libraries(plUruLauncher ${VLD_LIBRARY})
-endif()
-
-if(WIN32)
-    target_link_libraries(plUruLauncher ws2_32)
-    target_link_libraries(plUruLauncher rpcrt4)
-    target_link_libraries(plUruLauncher comctl32)
-    target_link_libraries(plUruLauncher crypt32)
-    target_link_libraries(plUruLauncher wldap32)
-endif()
 
 install(
     TARGETS plUruLauncher

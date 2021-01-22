@@ -21,8 +21,9 @@ target_link_libraries(
     PUBLIC
         CoreLib
     PRIVATE
-        plFile
         pnNetBase
+        plFile
+        string_theory
 )
 
 if(WIN32 AND NOT CYGWIN)

@@ -42,24 +42,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAVBRAIN_INC
 #define PLAVBRAIN_INC
 
-#include "plAnimation/plAGModifier.h"
 #include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-#include "pnNetCommon/plSynchedObject.h"
+#include "pnFactory/plCreatable.h"
 
 #include <deque>
 
 class plArmatureModBase;
 class plArmatureMod;
 class plArmatureBehavior;
-class plHKAction;
 class plAvTask;
 class plAvTaskMsg;
 class plDebugText;
+class plMessage;
 
 class plArmatureBrain : public plCreatable
 {

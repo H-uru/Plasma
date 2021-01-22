@@ -43,13 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCullPoly_inc
 #define plCullPoly_inc
 
-#include "hsTemplates.h"
-#include "hsGeometry3.h"
 #include "hsBitVector.h"
+#include "hsGeometry3.h"
+#include "hsTemplates.h"
 
+struct hsMatrix44;
 class hsStream;
 class hsResMgr;
-struct hsMatrix44;
 
 const float          kCullPolyDegen = 1.e-4f;
 
@@ -80,7 +80,17 @@ public:
     bool                    IsHole() const { return fFlags & kHole; } // Assumes kHole is 0x1
     bool                    IsTwoSided() const { return 0 != (fFlags & kTwoSided); }
 
-    plCullPoly&             Init(const plCullPoly& p) { fClipped.Clear(); fVerts.SetCount(0); fFlags = p.fFlags; fNorm = p.fNorm; fDist = p.fDist; fCenter = p.fCenter; return *this; }
+    plCullPoly& Init(const plCullPoly& p)
+    {
+        fClipped.Clear();
+        fVerts.SetCount(0);
+        fFlags = p.fFlags;
+        fNorm = p.fNorm;
+        fDist = p.fDist;
+        fCenter = p.fCenter;
+        return *this;
+    }
+
     plCullPoly&             Flip(const plCullPoly& p);
     plCullPoly&             InitFromVerts(uint32_t f=kNone);
     float                ICalcRadius() const;
@@ -90,7 +100,12 @@ public:
     void                    Read(hsStream* s, hsResMgr* mgr);
     void                    Write(hsStream* s, hsResMgr* mgr);
 
-    bool                    DegenerateVert(const hsPoint3& p) const { return fVerts.GetCount() && (kCullPolyDegen > hsVector3(&p, &fVerts[fVerts.GetCount()-1]).MagnitudeSquared()); }
+    bool                    DegenerateVert(const hsPoint3& p) const
+    {
+        if (fVerts.GetCount())
+            return (kCullPolyDegen > hsVector3(&p, &fVerts[fVerts.GetCount() - 1]).MagnitudeSquared());
+        return false;
+    }
 
     bool                    Validate() const; // no-op, except for special debugging circumstances.
 };

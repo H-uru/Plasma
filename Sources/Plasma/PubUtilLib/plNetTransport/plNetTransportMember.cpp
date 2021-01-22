@@ -39,8 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <algorithm>
+
 #include "plNetTransportMember.h"
+
+#include <algorithm>
 
 //
 // add a channel subscription if it's not already there

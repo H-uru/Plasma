@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSDLModifier_inc
 
 #include "pnModifier/plSingleModifier.h"
-#include "pnNetCommon/plSDLTypes.h"
 
 //
 // Base class for modifiers which send/recv State Desc Language (SDL) messages

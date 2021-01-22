@@ -39,10 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plCalculatedProfiles.h"
 #include "plProfile.h"
 #include "plProfileManager.h"
-#include "plNetClient/plNetClientMgr.h"
+
 #include "hsTimer.h"
+
 #include "plPipeline/plPlates.h"
 
 #ifdef HS_FIND_MEM_LEAKS

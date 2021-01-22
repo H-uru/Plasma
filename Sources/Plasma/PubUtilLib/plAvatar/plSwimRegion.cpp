@@ -39,14 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plSwimRegion.h"
+
+#include "plArmatureMod.h"
+#include "plPhysicalControllerCore.h"
+
 #include <cmath>
 
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
-
-#include "plPhysicalControllerCore.h"
-#include "plSwimRegion.h"
-#include "plArmatureMod.h"
 
 #include "pnMessage/plRefMsg.h"
 

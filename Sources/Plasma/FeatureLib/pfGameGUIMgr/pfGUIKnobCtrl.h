@@ -48,10 +48,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIKnobCtrl_h
 #define _pfGUIKnobCtrl_h
 
+#include "hsGeometry3.h"
+#include "hsTemplates.h"
+
+#include <string_theory/string>
+
 #include "pfGUIValueCtrl.h"
 
-class plMessage;
 class plAGMasterMod;
+class plKey;
+class plMessage;
 
 class pfGUIKnobCtrl : public pfGUIValueCtrl
 {

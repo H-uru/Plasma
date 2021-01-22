@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef HSQUAT_inc
 #define HSQUAT_inc
 
-#include "hsGeometry3.h"
-
 struct hsMatrix44;
+struct hsScalarTriple;
+class hsStream;
+struct hsPoint3;
+struct hsVector3;
 
 //
 // Quaternion class.

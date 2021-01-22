@@ -26,12 +26,28 @@ set(pfAnimation_HEADERS
 )
 
 add_library(pfAnimation STATIC ${pfAnimation_SOURCES} ${pfAnimation_HEADERS})
-
-target_link_libraries(pfAnimation
+target_link_libraries(
+    pfAnimation
     PUBLIC
         CoreLib
+        pnEncryption
+        pnKeyedObject
         pnModifier
-        plModifier
+        pnSceneObject
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plAnimation
+        plAvatar
+        plGLight
+        plInterp
+        plMessage
+        plPipeline
+        plResMgr
+        plSurface
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${pfAnimation_SOURCES})

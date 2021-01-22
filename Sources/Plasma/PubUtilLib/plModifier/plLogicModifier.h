@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plLogicModBase.h"
 
+class plConditionalObject;
+
 class plLogicModifier : public plLogicModBase
 {
 protected:

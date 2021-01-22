@@ -40,17 +40,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plRandomSoundMod.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsTimer.h"
+
+#include "plMessage/plAnimCmdMsg.h"
+#include "pnMessage/plSoundMsg.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plAudioInterface.h"
-#include "pnMessage/plSoundMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
+
 #include "plAudio/plAudioSystem.h"
 #include "plAudio/plSound.h"
 #include "plAudio/plWin32GroupedSound.h"        // EEK BAD
-#include "plgDispatch.h"
-#include "hsTimer.h"
 #include "plStatusLog/plStatusLog.h"
 
 plRandomSoundModGroup::plRandomSoundModGroup() : fNumSounds(0), fIndices(nil), fGroupedIdx(-1), fCurrent(-1)

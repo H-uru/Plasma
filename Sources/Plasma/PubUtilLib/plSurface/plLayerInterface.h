@@ -43,14 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerInterface_inc
 #define plLayerInterface_inc
 
-#include "pnNetCommon/plSynchedObject.h"
 #include "hsGMatState.h"
 
-struct hsMatrix44;
-struct hsColorRGBA;
+#include "pnNetCommon/plSynchedObject.h"
+
 class plBitmap;
-class plMessage;
+struct hsColorRGBA;
 class hsGMatState;
+struct hsMatrix44;
+class plMessage;
 class plShader;
 
 class plLayerInterface : public plSynchedObject

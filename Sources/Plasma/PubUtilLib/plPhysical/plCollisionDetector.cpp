@@ -40,36 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include <cmath>
-
 #include "plCollisionDetector.h"
-#include "plMessage/plCollideMsg.h"
-#include "plgDispatch.h"
-#include "plMessage/plActivatorMsg.h"
-#include "pnMessage/plCameraMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
-#include "pnInputCore/plControlEventCodes.h"
-#include "pnNetCommon/plNetApp.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetLinkingMgr.h"
 
+#include "plgDispatch.h"
 #include "plPhysical.h"
 
-#include "pnMessage/plPlayerPageMsg.h"
-#include "plMessage/plSimStateMsg.h"
+#include <cmath>
 
+#include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvBrainDrive.h"
 #include "plAvatar/plPhysicalControllerCore.h"
-
+#include "plMessage/plActivatorMsg.h"
+#include "plMessage/plCollideMsg.h"
+#include "plMessage/plSimStateMsg.h"
 #include "plModifier/plDetectorLog.h"
-
 
 plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
 {

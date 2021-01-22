@@ -49,50 +49,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
-
-#include "pfPython/plPythonSDLModifier.h"
-#include "pfConsoleCore/pfConsoleCmd.h"
 #include "plgDispatch.h"
-
-#include "plAgeLoader/plAgeLoader.h"
-#include "plNetCommon/plNetObjectDebugger.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plNetClient/plNetLinkingMgr.h"
-#include "plAgeLoader/plResPatcher.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+
+#include "pfConsole.h"
+
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plKeyImp.h"
-#include "pnModifier/plLogicModBase.h"
-#include "hsTimer.h"
+#include "pnMessage/plAudioSysMsg.h"
 #include "pnMessage/plClientMsg.h"
 #include "pnMessage/plEnableMsg.h"
-#include "pnMessage/plAudioSysMsg.h"
-#include "plNetMessage/plNetMessage.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plOneShotMsg.h"
-#include "plMessage/plConsoleMsg.h"
-#include "../../Apps/plClient/plClient.h"
-#include "pfConsole.h"
-#include "plResMgr/plKeyFinder.h"
-#include "hsResMgr.h"
+#include "pnModifier/plLogicModBase.h"
+#include "pnUUID/pnUUID.h"
 
-// begin for agedefn test
-#include "hsStream.h"
 #include "plAgeDescription/plAgeDescription.h"
-#include "plUnifiedTime/plUnifiedTime.h"
-//end for agedefn test
-
+#include "plAgeLoader/plAgeLoader.h"
+#include "plAgeLoader/plResPatcher.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plOneShotMsg.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plNetCommon/plNetObjectDebugger.h"
+#include "plNetCommon/plSpawnPointInfo.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plSDL/plSDL.h"
 #include "plStatusLog/plStatusLog.h"
-
+#include "plUnifiedTime/plUnifiedTime.h"
 #include "plVault/plVault.h"
 
-#include "plNetCommon/plSpawnPointInfo.h"
+#include "pfConsoleCore/pfConsoleCmd.h"
+#include "pfPython/plPythonSDLModifier.h"
 
-#include "plSDL/plSDL.h"
-
-#include "plNetGameLib/plNetGameLib.h"
-
+// FIXME FIXME
+#include "../../Apps/plClient/plClient.h"
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
 

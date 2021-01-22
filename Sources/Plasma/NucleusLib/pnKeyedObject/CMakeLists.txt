@@ -24,12 +24,12 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnFactory
+        pnNucleusInc
         string_theory
     PRIVATE
         pnDispatch
         pnMessage
         pnNetCommon
-        pnNucleusInc
 )
 
 source_group("Header Files" FILES ${pnKeyedObject_HEADERS})

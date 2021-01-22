@@ -39,18 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsTimer.h"
+
 #include "plResponderModifier.h"
 #include "plResponderSDLModifier.h"
+
+#include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "hsResMgr.h"
 #include "plPhysical.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plSDLTypes.h"
 
 // for localOnly cmd check
 #include "plMessage/plLinkToAgeMsg.h"
@@ -69,8 +73,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTimerCallbackManager.h"
 
 #include "plMessage/plSimStateMsg.h"
-//#include "plHavok1\plHKPhysical.h"
-//#include "plHavok1\plHKSubWorld.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
 
@@ -474,8 +476,6 @@ void plResponderModifier::Restore()
         }
     }
 }
-
-#include "plCreatableIndex.h"
 
 plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
 {

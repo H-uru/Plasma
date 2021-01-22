@@ -39,12 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsStream.h"
-#include "pnMessage/plMessage.h"
+
 #include "plNetServerSessionInfo.h"
 #include "plNetCommon.h"
-#include "plVault/plVault.h"
+
+#include "hsStream.h"
+
+#include "pnMessage/plMessage.h"
+#include "pnNetProtocol/pnNetProtocol.h"
 
 #define SAFE(s) ((s).empty() ? "(nil)" : (s))
 #define kComma  ","

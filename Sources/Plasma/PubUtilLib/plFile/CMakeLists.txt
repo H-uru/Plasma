@@ -19,6 +19,8 @@ target_link_libraries(
     plFile
     PUBLIC
         CoreLib
+    PRIVATE
+        $<$<PLATFORM_ID:Windows>:Shell32>
 )
 
 source_group("Source Files" FILES ${plFile_SOURCES})

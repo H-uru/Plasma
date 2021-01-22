@@ -46,12 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "pnKeyedObject/plUoid.h"
 #include "plFile/plInitFileReader.h"
 
 //
 // Age Definition File Reader/Writer
 //
+class plLocation;
 class hsStream;
 
 class plAgePage

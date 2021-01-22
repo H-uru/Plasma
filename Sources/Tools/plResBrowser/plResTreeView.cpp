@@ -39,19 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
 #include "plResTreeView.h"
 #include "ui_FindDialog.h"
+
+#include "HeadSpin.h"
+
+#include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
+#include "pnKeyedObject/plUoid.h"
 
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plPageInfo.h"
-#include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plKeyImp.h"
-#include "pnFactory/plFactory.h"
 
 #include <QDialog>
 #include <QLayout>

@@ -46,6 +46,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVoiceCodec.h"
 #include "plVoiceChat.h"
 
+#ifdef USE_OPUS
+#   include <opus.h>
+#endif
+
+#ifdef USE_SPEEX
+#   include <speex/speex.h>
+#   include <speex/speex_bits.h>
+#endif
+
 static const int kSpeexSampleRate = 8000;
 
 static const int kOpusEncoderSampleRate = 16000;
@@ -58,9 +67,6 @@ static const int kOpusDecoderSampleRate = 48000;
 ***/
 
 #ifdef USE_SPEEX
-
-#include <speex/speex.h>
-#include <speex/speex_bits.h>
 
 class plSpeex : public plVoiceDecoder, public plVoiceEncoder
 {
@@ -314,8 +320,6 @@ plVoiceEncoder* plVoiceEncoder::GetSpeex()
 ***/
 
 #ifdef USE_OPUS
-
-#include <opus.h>
 
 class plOpusDecoder : public plVoiceDecoder
 {

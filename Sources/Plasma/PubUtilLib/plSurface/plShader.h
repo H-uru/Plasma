@@ -43,17 +43,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShader_inc
 #define plShader_inc
 
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "hsTemplates.h"
-#include "hsGeometry3.h"
-#include "hsMatrix44.h"
 #include "plShaderTable.h"
 
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsTemplates.h"
+
+#include "pnKeyedObject/hsKeyedObject.h"
+
+class hsGDeviceRef;
+struct hsColorRGBA;
+class hsMatrix;
 class hsStream;
 class hsResMgr;
-class hsMatrix;
-struct hsColorRGBA;
-class hsGDeviceRef;
 
 class plFloat4
 {

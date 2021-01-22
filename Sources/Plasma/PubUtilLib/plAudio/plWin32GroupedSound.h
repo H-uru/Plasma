@@ -51,13 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWin32GroupedSound_h
 #define plWin32GroupedSound_h
 
+#include "plSoundEvent.h"
 #include "plWin32StaticSound.h"
 
 class hsResMgr;
 class plDSoundBuffer;
 class plEventCallbackMsg;
-
-#include "plSoundEvent.h"
 
 class plWin32GroupedSound : public plWin32StaticSound
 {

@@ -41,6 +41,38 @@ set(MaxConvert_SOURCES
 )
 
 add_library(MaxConvert STATIC ${MaxConvert_HEADERS} ${MaxConvert_SOURCES})
+target_link_libraries(
+    MaxConvert
+    PUBLIC
+        CoreLib
+        pnEncryption
+        pnNucleusInc
+        plDrawable
+        plInterp
+    PRIVATE
+        pnKeyedObject
+        pnMessage
+        pnSceneObject
+        plAgeDescription
+        plAvatar
+        plGImage
+        plGLight
+        plMath
+        plMessage
+        plParticleSystem
+        plPhysX
+        plPipeline
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+        pfCamera
+        pfSurface
+
+        ${3dsm_LIBRARIES}
+)
+
 plasma_optimize_target(MaxConvert PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxConvert_HEADERS})

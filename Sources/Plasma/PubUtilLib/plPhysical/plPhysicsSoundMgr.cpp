@@ -39,15 +39,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <algorithm>
-#include <iterator>
-#include "hsTimer.h"
+
 #include "plPhysicsSoundMgr.h"
 #include "plPhysicalSndGroup.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "plStatusLog/plStatusLog.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pfAudio/plRandomSoundMod.h"
+
+#include <algorithm>
+#include <iterator>
+
+#include "plPhysical.h"
 
 #define MIN_VOLUME 0.0001f
 

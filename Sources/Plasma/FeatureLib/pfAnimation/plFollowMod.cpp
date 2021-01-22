@@ -40,17 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plFollowMod.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plMessage/plListenerMsg.h"
 #include "plMessage/plRenderMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnMessage/plRefMsg.h"
-#include "hsResMgr.h"
-#include "plPipeline.h"
+
+plProfile_CreateTimer("FollowMod", "RenderSetup", FollowMod);
 
 plFollowMod::plFollowMod()
 :   fLeader(nil), fMode(kPosition), fLeaderType(kLocalPlayer), fLeaderSet(false)
@@ -60,9 +66,6 @@ plFollowMod::plFollowMod()
 plFollowMod::~plFollowMod()
 {
 }
-
-#include "plProfile.h"
-plProfile_CreateTimer("FollowMod", "RenderSetup", FollowMod);
 
 bool plFollowMod::MsgReceive(plMessage* msg)
 {

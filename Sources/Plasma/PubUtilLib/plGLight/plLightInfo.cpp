@@ -71,9 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plVisRegion.h"
 #include "plScene/plVisMgr.h"
 
-// heinous
-#include "plNetClient/plNetClientMgr.h"
 #include "pnMessage/plEnableMsg.h"
+
 static float kMaxYon = 1000.f;
 static float kMinHither = 1.f;
 
@@ -171,6 +170,13 @@ void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, 
 
     }
     return;     
+}
+
+bool plLightInfo::AffectsBound(const hsBounds3Ext& bnd)
+{
+    if (plVolumeIsect* isect = IGetIsect())
+        return isect->Test(bnd) != kVolumeCulled;
+    return true;
 }
 
 void plLightInfo::GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac)
@@ -608,6 +614,11 @@ hsVector3 plDirectionalLightInfo::GetWorldDirection() const
 //////////////////////////////////////////////////////////////////////////
 // Limited Directional
 
+plLimitedDirLightInfo::~plLimitedDirLightInfo()
+{
+    delete fParPlanes;
+}
+
 void plLimitedDirLightInfo::IRefresh()
 {
     plLightInfo::IRefresh();
@@ -691,6 +702,11 @@ void plLimitedDirLightInfo::IMakeIsect()
     fParPlanes->SetTransform(fLightToWorld, fWorldToLight);
 }
 
+plVolumeIsect* plLimitedDirLightInfo::IGetIsect() const
+{
+    return fParPlanes;
+}
+
 //// ICreateProxy //////////////////////////////////////////////////////
 //  Creates a new box drawable for showing the light's
 //  influence.
@@ -737,6 +753,11 @@ void plOmniLightInfo::IMakeIsect()
 {
     fSphere = new plSphereIsect;
     fSphere->SetTransform(fLightToWorld, fWorldToLight);
+}
+
+plVolumeIsect* plOmniLightInfo::IGetIsect() const
+{
+    return fSphere;
 }
 
 void plOmniLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
@@ -868,6 +889,12 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint
 
 //////////////////////////////////////////////////////////////////////////
 // Spot
+
+plSpotLightInfo::~plSpotLightInfo()
+{
+    delete fCone;
+}
+
 void plSpotLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const
 {
     plOmniLightInfo::GetStrengthAndScale(bnd, strength, scale);
@@ -896,6 +923,11 @@ void plSpotLightInfo::IMakeIsect()
 {
     fCone = new plConeIsect;
     fCone->SetTransform(fLightToWorld, fWorldToLight);
+}
+
+plVolumeIsect* plSpotLightInfo::IGetIsect() const
+{
+    return fCone;
 }
 
 void plSpotLightInfo::IRefresh()

@@ -49,55 +49,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "pfJournalBook.h"
+
 #include <wchar.h>
 
+#include "HeadSpin.h"
+#include "hsGDeviceRef.h"
+#include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "pcSmallRect.h"
-#include "plgDispatch.h"
-#include "pfGameGUIMgr/pfGUIDialogMod.h"
-#include "pfGameGUIMgr/pfGUIControlMod.h"
-#include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
-#include "pfGameGUIMgr/pfGUIDialogHandlers.h"
-#include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
-#include "pfGameGUIMgr/pfGUIClickMapCtrl.h"
-#include "pfGameGUIMgr/pfGUIButtonMod.h"
-#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
-#include "pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
+#include "hsTimer.h"
+#include "plTimerCallbackManager.h"
 
-#include "pfMessage/pfGUINotifyMsg.h"
-#include "plGImage/plMipmap.h"
-#include "plGImage/plDynamicTextMap.h"
-#include "hsGDeviceRef.h"
-#include "plMessage/plAnimCmdMsg.h"
 #include "pnKeyedObject/plFixedKey.h"
+#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/plNetApp.h"
+
+#include "plAgeLoader/plAgeLoader.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plGImage/plFont.h"
+#include "plGImage/plJPEG.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plPNG.h"
+#include "plInputCore/plInputInterface.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plLayRefMsg.h"
 #include "plMessage/plMatRefMsg.h"
-#include "plSurface/plLayerInterface.h"
-#include "plSurface/plLayer.h"
-#include "plSurface/hsGMaterial.h"
-#include "plAgeLoader/plAgeLoader.h"
-#include "pfSurface/plLayerAVI.h"
-
-// So we can do image searches in our local age
-#include "plNetClient/plNetClientMgr.h"
-#include "plResMgr/plKeyFinder.h"
-
-// For notify sends
-#include "pnMessage/plNotifyMsg.h"
-#include "plTimerCallbackManager.h"
 #include "plMessage/plTimerCallbackMsg.h"
+#include "plResMgr/plKeyFinder.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/plLayerInterface.h"
 
-// For custom cursors
-#include "plInputCore/plInputInterface.h"
-
-// For measuring text
-#include "plGImage/plFont.h"
-
-// For SFX
-#include "hsTimer.h"
-
+#include "pfGameGUIMgr/pfGUIButtonMod.h"
+#include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
+#include "pfGameGUIMgr/pfGUIClickMapCtrl.h"
+#include "pfGameGUIMgr/pfGUIControlMod.h"
+#include "pfGameGUIMgr/pfGUIDialogHandlers.h"
+#include "pfGameGUIMgr/pfGUIDialogMod.h"
+#include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
+#include "pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
+#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
+#include "pfMessage/pfGUINotifyMsg.h"
+#include "pfSurface/plLayerAVI.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2282,11 +2277,6 @@ void    pfJournalBook::IFreeSource()
 // the code will attempt to look in the currently loaded age for a matching
 // image name.
 
-#ifndef PLASMA_EXTERNAL_RELEASE
-#include "plGImage/plJPEG.h"
-#include "plGImage/plPNG.h"
-#endif
-
 plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )
 {
     ST::string cName = ST::string::from_wchar(name);
@@ -2325,7 +2315,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     }
 
     // Do a search through our current age with just the name given
-    if( plNetClientMgr::GetInstance() != nil )
+    if( plNetClientApp::GetInstance() != nil )
     {
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
         if (!thisAge.empty())

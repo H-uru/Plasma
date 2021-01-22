@@ -51,7 +51,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLALLINCLUDES_H
 
 #include "pnNetBase/pnNetBase.h"
-#include "pnUtils/pnUtils.h"
+
+class plFileName;
+class plNetAddress;
+class hsStream;
+class plUUID;
+
+namespace ST { class string; }
 
 #include "plNglCore.h"
 #include "plNglAuth.h"

@@ -11,6 +11,14 @@ set(plTransform_HEADERS
 )
 
 add_library(plTransform STATIC ${plTransform_SOURCES} ${plTransform_HEADERS})
+target_link_libraries(
+    plTransform
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnNucleusInc
+        plInterp
+)
 
 source_group("Source Files" FILES ${plTransform_SOURCES})
 source_group("Header Files" FILES ${plTransform_HEADERS})

@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsGCompMatDefined
 #define hsGCompMatDefined
 
-#include "hsTemplates.h"
-#include "pnNetCommon/plSynchedObject.h"
-#include "hsGMatState.h"
 #include "hsColorRGBA.h"
+#include "hsGMatState.h"
+#include "hsTemplates.h"
+
+#include "pnNetCommon/plSynchedObject.h"
 
 class hsScene;
 class hsResMgr;

@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plSeekPointMod.h"
 
-// local
-#include "plAvatarMgr.h"
+#include "hsStream.h"
 
 // CTOR()
 plSeekPointMod::plSeekPointMod()
@@ -79,7 +78,6 @@ bool plSeekPointMod::MsgReceive(plMessage* msg)
 void plSeekPointMod::AddTarget(plSceneObject* so)
 {
     plMultiModifier::AddTarget(so);
-//  plAvatarMgr::GetInstance()->AddSeekPoint(this);
 }
 
 void plSeekPointMod::Read(hsStream *stream, hsResMgr *mgr)

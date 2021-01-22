@@ -39,40 +39,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plAutoProfile.h"
-
-#include "plgDispatch.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plNetClient/plNetLinkingMgr.h"
-
-#include "hsStream.h"
-#include "hsTimer.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plTimerCallbackManager.h"
-#include "plMessage/plTimerCallbackMsg.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plModifier/plSpawnModifier.h"
-#include "plMessage/plConsoleMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "plAgeLoader/plAgeLoader.h"
 #include "plProfileManagerFull.h"
 
-#include "plPipeline/plDebugText.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+#include "plTimerCallbackManager.h"
+#include "hsWindows.h"
+
+#include "pnMessage/plClientMsg.h"
 #include "pnMessage/plTimeMsg.h"
 
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plContainer/plConfigInfo.h" // for plStringList
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plTimerCallbackMsg.h"
+#include "plModifier/plSpawnModifier.h"
+#include "plNetClient/plNetClientMgr.h"
+#include "plNetClient/plNetLinkingMgr.h"
+#include "plPipeline/plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
 #include "plVault/plVault.h"
 
-#include "plContainer/plConfigInfo.h" // for plStringList
-
 // For taking screenshots
-#include "plGImage/plMipmap.h"
-#include "../../Apps/plClient/plClient.h"
-#include "plGImage/plJPEG.h"
 #include "plPipeline.h"
+#include "../../Apps/plClient/plClient.h" // FIXME FIXME FIXME DAMMIT
+#include "plGImage/plJPEG.h"
+#include "plGImage/plMipmap.h"
 
 #include <algorithm>
+#include <string>
 
 class plAutoProfileImp : public plAutoProfile
 {

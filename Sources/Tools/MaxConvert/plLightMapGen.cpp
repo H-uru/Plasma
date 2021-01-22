@@ -43,12 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsFastMath.h"
 #include "hsTemplates.h"
-#include "hsWindows.h"
+
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxComponent/plComponent.h"
 
-#include <dummy.h>
-#include <notify.h>
+
 #include <vector>
 
 #include "plLightMapGen.h"

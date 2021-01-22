@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plLoadAvatarMsg.h"
+
+#include "hsBitVector.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
-#include "pnNetCommon/plNetApp.h"
-
-#include "plLoadAvatarMsg.h"
 #include "plAvatar/plAvatarTasks.h"
 
 

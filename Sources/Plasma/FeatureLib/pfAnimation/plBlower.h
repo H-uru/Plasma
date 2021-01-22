@@ -43,13 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plBlower_inc
 #define plBlower_inc
 
-#include "pnModifier/plSingleModifier.h"
 #include "hsGeometry3.h"
-#include "pnEncryption/plRandom.h"
 
+#include "pnEncryption/plRandom.h"
+#include "pnModifier/plSingleModifier.h"
+
+class hsResMgr;
 class plSceneObject;
 class hsStream;
-class hsResMgr;
 
 class plBlower : public plSingleModifier
 {

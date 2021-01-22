@@ -36,16 +36,13 @@ set(CoreLib_SOURCES
     hsWindows.cpp
 )
 
-if(WIN32 AND NOT CYGWIN)
-    set(CoreLib_SOURCES ${CoreLib_SOURCES}
-        hsThread_Win.cpp
-    )
-endif(WIN32 AND NOT CYGWIN)
-if(UNIX)
-    set(CoreLib_SOURCES ${CoreLib_SOURCES}
-        hsThread_Unix.cpp
-    )
-endif(UNIX)
+if(CMAKE_USE_PTHREADS_INIT)
+    list(APPEND CoreLib_SOURCES hsThread_Unix.cpp)
+elseif(CMAKE_USE_WIN32_THREADS_INIT)
+    list(APPEND CoreLib_SOURCES hsThread_Win.cpp)
+else()
+    message(FATAL_ERROR "The thread library CMake provided for your platform is not supported.")
+endif()
 
 set(CoreLib_HEADERS
     HeadSpin.h
@@ -85,11 +82,17 @@ set(CoreLib_HEADERS
 )
 
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
-plasma_optimize_target(CoreLib PRECOMPILED_HEADERS _CoreLibPch.h)
+target_link_libraries(
+    CoreLib
+    PUBLIC
+        string_theory
+        Threads::Threads
+        # VLD requires the debug CRT, so be sure to limit its scope.
+        $<$<AND:$<CONFIG:DEBUG>,$<BOOL:${USE_VLD}>>:${VLD_LIBRARY}>
+)
+target_include_directories(CoreLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
-if(UNIX)
-    target_link_libraries(CoreLib pthread)
-endif(UNIX)
+plasma_optimize_target(CoreLib PRECOMPILED_HEADERS _CoreLibPch.h)
 
 source_group("Source Files" FILES ${CoreLib_SOURCES})
 source_group("Header Files" FILES ${CoreLib_HEADERS})

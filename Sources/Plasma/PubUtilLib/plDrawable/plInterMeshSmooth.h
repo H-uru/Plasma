@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterMeshSmooth_inc
 #define plInterMeshSmooth_inc
 
-#include "hsTemplates.h"
-
 class plDrawableSpans;
 struct hsPoint3;
 struct hsVector3;
+
+template<typename T>
+class hsTArray;
 
 class plSpanHandle
 {

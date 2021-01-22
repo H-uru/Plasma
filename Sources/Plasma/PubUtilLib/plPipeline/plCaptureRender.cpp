@@ -40,30 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plCaptureRender.h"
 
-#ifndef MF_FRONTBUFF_CAPTURE
+#include "plPipeline.h"
 
 #include "plGImage/plMipmap.h"
 #include "plMessage/plCaptureRenderMsg.h"
-#include "plPipeline.h"
+
+#ifndef MF_FRONTBUFF_CAPTURE
+
+#include "hsResMgr.h"
+
 #include "plRenderTarget.h"
+
+#include "pnKeyedObject/plUoid.h"
+
+#include "plGImage/plMipmap.h"
+#include "plMessage/plCaptureRenderMsg.h"
 #include "plScene/plPageTreeMgr.h"
 #include "plScene/plPostEffectMod.h"
-#include "hsResMgr.h"
-#include "pnKeyedObject/plUoid.h"
 
 #include "pfCamera/plVirtualCamNeu.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 
 #else // MF_FRONTBUFF_CAPTURE
 
-#include "plPipeline.h"
 #include "plgDispatch.h"
-
-#include "plMessage/plCaptureRenderMsg.h"
-#include "plGImage/plMipmap.h"
 
 #endif // MF_FRONTBUFF_CAPTURE
 

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStringTokenizer.h"
 
+#include <wchar.h>
+#include <wctype.h>
 
 // String Tokenizer routines
 hsStringTokenizer::hsStringTokenizer(const char *string, const char *seps) :

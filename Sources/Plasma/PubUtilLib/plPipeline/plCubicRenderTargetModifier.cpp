@@ -50,23 +50,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plCubicRenderTargetModifier.h"
 #include "plCubicRenderTarget.h"
-#include "plgDispatch.h"
-#include "plPipeline.h"
-#include "plDrawable.h"
-#include "hsBounds.h"
 
-#include "plScene/plRenderRequest.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "plMessage/plRenderRequestMsg.h"
+#include "hsBounds.h"
+#include "plgDispatch.h"
+#include "plDrawable.h"
+#include "plPipeline.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
+
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plRenderRequestMsg.h"
+#include "plScene/plRenderRequest.h"
+
 
 
 //// Constructor & Destructor /////////////////////////////////////////////////

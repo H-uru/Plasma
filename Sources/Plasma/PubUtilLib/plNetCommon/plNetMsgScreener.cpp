@@ -39,28 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plNetMsgScreener.h"
 #include "plCreatableIndex.h"
 
 #include "pnNetCommon/plNetApp.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "pnMessage/plEnableMsg.h"
-#include "pnMessage/plSetNetGroupIDMsg.h"
-#include "pnInputCore/plControlEventCodes.h"
+#include "pnKeyedObject/plKey.h"
 
-#include "plMessage/plCCRMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
-#include "plMessage/plInputEventMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plBulletMsg.h"
-#include "plMessage/plAvCoopMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
 
-#include "pfMessage/pfKIMsg.h"      
-#include "pfMessage/plClothingMsg.h"    
+#include "pfMessage/pfKIMsg.h"
 
 //
 // say why the msg got rejected

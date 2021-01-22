@@ -68,16 +68,8 @@ public:
     bool fDirtySynch;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        fLocalToWorld.Read(stream);
-        fWorldToLocal.Read(stream);
-    }
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        fLocalToWorld.Write(stream);
-        fWorldToLocal.Write(stream);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plCorrectionMsg_inc

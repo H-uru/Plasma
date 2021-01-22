@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plLogicModifier.h"
 #include "plgDispatch.h"
 #include "plTimerCallbackManager.h"
@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCursorChangeMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 
-#include "plModifier/plDetectorLog.h"
+#include "plDetectorLog.h"
 #include "plInputCore/plSceneInputInterface.h"
 #include "pfConditional/plObjectInBoxConditionalObject.h"
 

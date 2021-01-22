@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"        // just when debugging for GetSysSeconds
 
 // other
+#include "plInterp/plAnimTimeConvert.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plOneShotCallbacks.h"
@@ -348,6 +349,12 @@ void plAGAnimInstance::DetachChannels()
 #endif
 }
 
+void plAGAnimInstance::SetSpeed(float speed)
+{
+    if (fTimeConvert)
+        fTimeConvert->SetSpeed(speed);
+}
+
 // SetBlend ---------------------------------------
 // ---------
 float plAGAnimInstance::SetBlend(float blend)
@@ -457,6 +464,11 @@ void plAGAnimInstance::Stop()
 {
     if (fTimeConvert)
         fTimeConvert->Stop();
+}
+
+double plAGAnimInstance::WorldToAnimTime(double foo)
+{
+    return (fTimeConvert ? fTimeConvert->WorldToAnimTimeNoUpdate(foo) : 0.0);
 }
 
 // AttachCallbacks --------------------------------------------------

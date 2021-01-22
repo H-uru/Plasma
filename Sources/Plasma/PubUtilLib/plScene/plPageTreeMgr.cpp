@@ -40,23 +40,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plPageTreeMgr.h"
+
 #include "HeadSpin.h"
+#include "hsFastMath.h"
+#include "plDrawable.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsTemplates.h"
+#include "plTweak.h"
+
 #include <algorithm>
 
-#include "plPageTreeMgr.h"
-#include "plDrawable/plSpaceTreeMaker.h"
-#include "plDrawable/plSpaceTree.h"
-#include "plDrawable.h"
-#include "plScene/plSceneNode.h"
-#include "plPipeline.h"
-#include "plMath/hsRadixSort.h"
 #include "plCullPoly.h"
 #include "plOccluder.h"
-#include "hsFastMath.h"
-#include "plProfile.h"
+#include "plSceneNode.h"
 #include "plVisMgr.h"
 
-#include "plTweak.h"
+#include "plDrawable/plSpaceTreeMaker.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plMath/hsRadixSort.h"
 
 static std::vector<hsRadixSortElem> scratchList;
 

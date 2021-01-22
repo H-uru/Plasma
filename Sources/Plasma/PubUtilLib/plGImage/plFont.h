@@ -69,8 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
-#include <wchar.h>
-
 class plBDFConvertCallback
 {
     public:

@@ -52,11 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 #include <cfloat>
 
-#include <commdlg.h>
-#include <bmmlib.h>
-#include <istdplug.h>
-#include <pbbitmap.h>
-#include <stdmat.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "hsMaterialConverter.h"
 #include "plLayerConverter.h"

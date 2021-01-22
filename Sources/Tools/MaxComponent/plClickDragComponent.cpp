@@ -51,7 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNoteTrackDlgComp.h"
 #include "MaxMain/plMaxNode.h"
 
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
+
 #include "resource.h"
 
 #include "plClickDragComponent.h"

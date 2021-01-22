@@ -46,11 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include <cmath>
 
-#include <max.h>
-#include <stdmat.h>
-#if MAX_VERSION_MAJOR >= 13
-#   include <INamedSelectionSetManager.h>
-#endif
+#include "MaxMain/MaxAPI.h"
 
 #include "hsConverterUtils.h"
 #include "MaxMain/MaxCompat.h"

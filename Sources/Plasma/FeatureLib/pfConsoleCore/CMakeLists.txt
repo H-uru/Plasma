@@ -12,6 +12,15 @@ set(pfConsoleCore_HEADERS
 )
 
 add_library(pfConsoleCore STATIC ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS})
+target_link_libraries(
+    pfConsoleCore
+    PUBLIC
+        CoreLib
+        string_theory
+    PRIVATE
+        pnNetBase
+        plFile
+)
 
 source_group("Source Files" FILES ${pfConsoleCore_SOURCES})
 source_group("Header Files" FILES ${pfConsoleCore_HEADERS})

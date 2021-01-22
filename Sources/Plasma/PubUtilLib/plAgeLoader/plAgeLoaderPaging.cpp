@@ -48,13 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 
 #include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
 #include "pnKeyedObject/plKey.h"
 
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plNetMessage/plNetMessage.h"
-#include "plProgressMgr/plProgressMgr.h"
 #include "plSDL/plSDL.h"
-#include "pnDispatch/plDispatch.h"
 #include "plResMgr/plResManager.h"
 
 #include "plNetClient/plNetClientMgr.h"

@@ -65,13 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plProxyDrawMsg.h"
 #include "pnMessage/plCmdIfaceModMsg.h"
 
-// DEHACK
-// used to run debug drawing stuff only; should never be checked in with this enabled
- #if 0
-#include "FeatureLib/pfCamera/plVirtualCam.h"
-#include "plDrawable/plDrawableSpans.h"
- #endif
-
 #include "plAudio/plVoiceChat.h"
 #include "plInputDevice.h"
 #include "plInputManager.h"
@@ -81,8 +74,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-
-#include "pnNetCommon/plNetApp.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -482,11 +473,6 @@ bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
             if( cmd->fControlActivated )
             {
                 ISetBasicMode();                
-#if 0
-plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-plgDispatch::MsgSend(Dmsg);
-plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
             }
             return true;
 
@@ -501,12 +487,6 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                     if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_MODE && !(*fMessageQueue)[i]->fControlActivated)
                     {   
                         abort = true;
-#if 0                       
-
-                    plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-                    plgDispatch::MsgSend(Dmsg);
-                    plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
                         break;
                     }
                 }
@@ -526,12 +506,6 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                     if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
                     {   
                         abort = true;
-#if 0                       
-                        
-                        plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-                        plgDispatch::MsgSend(Dmsg);
-                        plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
                         break;
                     }
                 }
@@ -551,12 +525,6 @@ plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Insta
                     if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
                     {   
                         abort = true;
-#if 0                       
-                        
-                        plProxyDrawMsg* Dmsg = new plProxyDrawMsg(plProxyDrawMsg::kCamera | plProxyDrawMsg::kDestroy);
-                        plgDispatch::MsgSend(Dmsg);
-                        plVirtualCam::Instance()->GetPipeline()->SetDrawableTypeMask(plVirtualCam::Instance()->GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
-#endif
                         break;
                     }
                 }

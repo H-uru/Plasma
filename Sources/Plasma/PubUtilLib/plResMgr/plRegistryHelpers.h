@@ -53,22 +53,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plRegistryHelpers_h
 
 #include "HeadSpin.h"
+
 #include "pnKeyedObject/plKey.h"
+
 #include <set>
 
-class plKey;
 class plRegistryPageNode;
 
 //// Little Iterator Class Defs //////////////////////////////////////////////
 
-class plRegistryKeyIterator 
+class plRegistryKeyIterator
 {
 public:
     virtual ~plRegistryKeyIterator() {}
     virtual bool EatKey(const plKey& key) = 0;
 };
 
-class plRegistryPageIterator 
+class plRegistryPageIterator
 {
 public:
     virtual ~plRegistryPageIterator() {}

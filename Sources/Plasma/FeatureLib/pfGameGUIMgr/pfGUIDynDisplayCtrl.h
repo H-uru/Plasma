@@ -55,13 +55,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDynDisplayCtrl_h
 #define _pfGUIDynDisplayCtrl_h
 
-#include "pfGUIControlMod.h"
 #include "hsTemplates.h"
 
-class plMessage;
+#include "pfGUIControlMod.h"
+
+class hsGMaterial;
 class plDynamicTextMap;
 class plLayerInterface;
-class hsGMaterial;
+class plMessage;
 
 class pfGUIDynDisplayCtrl : public pfGUIControlMod
 {

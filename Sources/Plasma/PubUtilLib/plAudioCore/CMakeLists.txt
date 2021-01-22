@@ -27,24 +27,19 @@ target_link_libraries(
     plAudioCore
     PUBLIC
         CoreLib
-        pnFactory
         pnKeyedObject
     PRIVATE
         pnMessage
-        pnNetCommon
         pnNucleusInc
-        plStatusLog
-        plUnifiedTime
 
+        $<$<PLATFORM_ID:Windows>:${DirectX_LIBRARIES}>
         Ogg::ogg
         Vorbis::vorbis
         Vorbis::vorbisfile
+        $<$<PLATFORM_ID:Windows>:winmm>
+    INTERFACE
+        pnFactory
 )
-
-if(WIN32)
-    # Needed for WAV file support
-    target_link_libraries(plAudioCore PRIVATE ${DirectX_LIBRARIES})
-endif(WIN32)
 
 source_group("Source Files" FILES ${plAudioCore_SOURCES})
 source_group("Header Files" FILES ${plAudioCore_HEADERS})

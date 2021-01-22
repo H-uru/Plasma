@@ -39,43 +39,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTimer.h"
-#include "plNetClientMgr.h"
+
 #include "plNetClientMsgHandler.h"
-#include "hsResMgr.h"
+
+#include "plNetClientMgr.h"
+#include "plNetLinkingMgr.h"
+
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "plNetLinkingMgr.h"
-#include "plCCRMgrBase.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
 
 #include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plObjInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plObjRefMsg.h"
-#include "pnMessage/plNodeRefMsg.h"
-#include "pnMessage/plClientMsg.h"
-//#include "pnMessage/plWarpMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plCameraMsg.h"
-#include "pnMessage/plPlayerPageMsg.h"
-#include "pnFactory/plCreator.h"
-#include "pnSceneObject/plAudioInterface.h"
+#include "pnNetCommon/pnNetCommon.h"
 #include "pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plAudible/plWinAudible.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plNetTransport/plNetTransportMember.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plLoadCloneMsg.h"
 #include "plMessage/plMemberUpdateMsg.h"
 #include "plMessage/plNetOwnershipMsg.h"
-#include "plMessage/plCCRMsg.h"
-#include "plVault/plVault.h"
-#include "plSDL/plSDL.h"
-#include "plNetCommon/plNetCommonConstants.h"
-#include "plNetMessage/plNetMessage.h"
 #include "plNetMessage/plNetCommonMessage.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plNetTransport/plNetTransportMember.h"
+#include "plSDL/plSDL.h"
+#include "plVault/plVault.h"
 
 #include "pfMessage/pfKIMsg.h"      // Should be moved to PubUtil level
 

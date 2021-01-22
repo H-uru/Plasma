@@ -49,10 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGDeviceRef.h"
 #include "hsG3DDeviceSelector.h"
 
-#include "plSurface/plLayerInterface.h"
-
-
 class hsGMaterial;
+class plLayerInterface;
 class plLightInfo;
 class plShadowSlave;
 class plSpan;

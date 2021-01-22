@@ -41,12 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "hsKeyedObject.h"
+#include "hsRefCnt.h"
 
-
-struct hsMatrix44;
 class hsBounds3Ext;
 class hsGMaterial;
+struct hsMatrix44;
 class hsTriangle3;
 struct hsGSplat3;
 

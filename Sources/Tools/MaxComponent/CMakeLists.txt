@@ -174,6 +174,56 @@ add_library(MaxComponent
             ${MaxComponent_RESOURCES}
             ${MaxComponent_SOURCES}
 )
+target_link_libraries(
+    MaxComponent
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNucleusInc
+        plAvatar
+        pfGameGUIMgr
+        string_theory
+    PRIVATE
+        pnEncryption
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        plAgeDescription
+        plAnimation
+        plAudio
+        plAudioCore
+        plDrawable
+        plFile
+        plGImage
+        plGLight
+        plInterp
+        plIntersect
+        plMath
+        plMessage
+        plModifier
+        plNetCommon
+        plPipeline
+        plPhysical
+        plPhysX
+        plScene
+        plSDL
+        plSurface
+        plResMgr
+        plTransform
+        pfAnimation
+        pfAudio
+        pfCamera
+        pfConditional
+        pfGameGUIMgr
+        pfPython
+        pfSurface
+
+        ${3dsm_LIBRARIES}
+        Comctl32
+        Shlwapi
+)
+
 plasma_optimize_target(MaxComponent UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxComponent_HEADERS})

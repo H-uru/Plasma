@@ -49,12 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plDTProgressMgr.h"
-#include "plPipeline.h"
-#include "plDebugText.h"
-#include "plPlates.h"
 
+#include "plDebugText.h"
+#include "plPipeline.h"
+#include "plPlates.h"
 #include "hsTimer.h"
 
 // Draw Colors

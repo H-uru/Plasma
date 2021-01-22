@@ -40,11 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plLoadCloneMsg.h"
+
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-#include "pnNetCommon/plNetApp.h"
+#include "hsStream.h"
 
-#include "plLoadAvatarMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 // CTOR / default
 plLoadCloneMsg::plLoadCloneMsg()

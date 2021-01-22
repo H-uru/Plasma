@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXDevice.h"
 #include "plDXPipeline.h"
 
-#include <d3d9.h>
-
 #include "plPipeline/plRenderTarget.h"
 
 #include "plDXBufferRefs.h"

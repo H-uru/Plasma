@@ -35,12 +35,44 @@ target_include_directories(plNetClient PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib
 target_link_libraries(plNetClient
     PUBLIC
         CoreLib
+        pnKeyedObject
         pnNetCommon
-        plContainer
+        plMessage # plNetLinkingMgr
         plNetClientComm
-        plNetClientRecorder
+        plNetCommon
         plNetTransport
-        pfMessage # Needed for pfKIMsg
+        plUnifiedTime
+        string_theory
+    PRIVATE
+        pnAsyncCore
+        pnDispatch
+        pnMessage
+        pnModifier
+        pnNucleusInc
+        pnSceneObject
+        plAgeDescription
+        plAgeLoader
+        plAnimation
+        plAvatar
+        plContainer
+        plDrawable
+        plMessage
+        plModifier
+        plNetClientRecorder
+        plNetGameLib
+        plNetMessage
+        plParticleSystem
+        plPipeline
+        plProgressMgr
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+        plVault
+        pfMessage # For pfKIMsg
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plNetClient_SOURCES})

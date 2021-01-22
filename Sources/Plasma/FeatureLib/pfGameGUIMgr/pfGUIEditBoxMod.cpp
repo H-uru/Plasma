@@ -49,19 +49,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define LIMIT_VOICE_CHAT 1
 #endif
 
-#include "HeadSpin.h"
 #include "pfGUIEditBoxMod.h"
-#include "pfGameGUIMgr.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plGImage/plDynamicTextMap.h"
+#include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
+
+#include "pfGameGUIMgr.h"
+
 #include "pnInputCore/plKeyMap.h"
+#include "pnMessage/plRefMsg.h"
+
 #include "plClipboard/plClipboard.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plInputCore/plInputDevice.h"
 
 #include <locale>
 
@@ -572,4 +573,9 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
     fCursorPos = 0;
     SetCursorToEnd();
     IUpdate();
+}
+
+void pfGUIEditBoxMod::SetChatMode(bool state)
+{
+    plKeyboardDevice::IgnoreCapsLock(state);
 }

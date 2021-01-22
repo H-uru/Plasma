@@ -39,13 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plParticleApplicator.h"
+
 #include "plParticleSystem.h"
 #include "plParticleGenerator.h"
-#include "plParticleApplicator.h"
+
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAnimation/plScalarChannel.h"
 #include "plAnimation/plAGModifier.h"
 #include "plMessage/plParticleUpdateMsg.h"
-#include "pnSceneObject/plSceneObject.h"
+
 
 plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
 {

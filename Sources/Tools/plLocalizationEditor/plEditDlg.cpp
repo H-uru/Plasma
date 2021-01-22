@@ -43,16 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEditDlg.h"
 #include "plLocTreeView.h"
 #include "plAddDlgs.h"
+#include "ui_EditDialog.h"
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
-#include <QDialog>
-#include <QMessageBox>
-#include <QFileDialog>
-#include "ui_EditDialog.h"
-
 #include <functional>
+#include <QDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 
 static void IAboutDialog(QWidget *parent)
 {

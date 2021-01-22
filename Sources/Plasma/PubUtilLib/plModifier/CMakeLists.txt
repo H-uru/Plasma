@@ -51,9 +51,34 @@ target_include_directories(plModifier PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib"
 target_link_libraries(plModifier
     PUBLIC
         CoreLib
+        pnKeyedObject
+        pnMessage
         pnModifier
+        pnNetCommon
+        plInterp # plSimpleModifier
+        plStatusLog
+        string_theory
+    PRIVATE
+        pnNucleusInc
+        pnSceneObject
+        plAnimation
+        plAudio
+        plAvatar
+        plGImage
+        plInputCore # plAxisAnimModifier, plLogicModifier
+        plInterp
+        plMessage
         plNetCommon
+        plNetMessage
+        plPhysical
+        plPipeline # plResponderModifier
+        plResMgr
         plSDL
+        plSurface
+        pfConditional # plLogicModifier
+        pfMessage # plResponderModifier
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plModifier_SOURCES})

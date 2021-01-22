@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plDrawableGenerator.h"
+#include "plDrawableSpans.h"
+#include "plDrawableGenerator.h"
 #include "pnMessage/plProxyDrawMsg.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plRefMsg.h"

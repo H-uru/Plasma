@@ -40,25 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "plGrabCubeMap.h"
 
-#include "plPipeline.h"
-#include "plDrawable.h"
-
-#include "hsMatrix44.h"
-#include "hsGeometry3.h"
-#include "hsColorRGBA.h"
+#include "HeadSpin.h"
 #include "hsBounds.h"
+#include "hsColorRGBA.h"
+#include "plDrawable.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "plPipeline.h"
 
-#include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plGImage/plMipmap.h"
 #include "plGImage/plPNG.h"
-
 #include "plMessage/plRenderRequestMsg.h"
+#include "plScene/plRenderRequest.h"
 
 class plGrabCubeRenderRequest : public plRenderRequest
 {

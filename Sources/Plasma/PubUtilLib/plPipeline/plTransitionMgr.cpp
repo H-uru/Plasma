@@ -52,30 +52,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-
-#include "HeadSpin.h"
 #include "plTransitionMgr.h"
-#include "plPlates.h"
 
-#include "plGImage/plMipmap.h"
-#include "plSurface/plLayer.h"
-#include "plSurface/hsGMaterial.h"
-#include "plMessage/plLayRefMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plTransitionMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
+
 #include "plgDispatch.h"
 #include "hsGDeviceRef.h"
+#include "plPlates.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
-#include "plAudio/plAudioSystem.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plLinkEffectsMgr.h"
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include "plAudio/plAudioSystem.h"
+#include "plGImage/plMipmap.h"
+#include "plMessage/plLayRefMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plTransitionMsg.h"
+#include "plNetClient/plLinkEffectsMgr.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/hsGMaterial.h"
 #include "plStatusLog/plStatusLog.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////

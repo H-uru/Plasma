@@ -44,7 +44,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plResMgrHelperMsg_h
 
 #include "HeadSpin.h"
+
 #include "pnMessage/plMessage.h"
+
+#include "plResMgr/plResManagerHelper.h"
 
 class plResManagerHelper;
 class plResPageKeyRefList;
