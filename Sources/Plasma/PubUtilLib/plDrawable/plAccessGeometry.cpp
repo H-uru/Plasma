@@ -150,8 +150,7 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
                 int k;
                 for( k = 0; k < diIndex.GetCount(); k++ )
                 {
-                    accs.Expand(numGot+1);
-                    accs.SetCount(numGot+1);
+                    accs.Resize(numGot+1);
                     OpenRO(dr, diIndex[k], accs[numGot++]);
                 }
             }
@@ -178,8 +177,7 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>&
                 int k;
                 for( k = 0; k < diIndex.GetCount(); k++ )
                 {
-                    accs.Expand(numGot+1);
-                    accs.SetCount(numGot+1);
+                    accs.Resize(numGot+1);
                     OpenRW(dr, diIndex[k], accs[numGot++], idxToo);
                 }
             }

@@ -297,7 +297,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
                 if (fTextures.GetCount() <= eMsg->fWhich)
                     fTextures.ExpandAndZero(eMsg->fWhich + 1);
                 if (fElementNames.GetCount() <= eMsg->fWhich)
-                    fElementNames.Expand(eMsg->fWhich + 1);
+                    fElementNames.Resize(eMsg->fWhich + 1);
                 
                 if (fElementNames.Get(eMsg->fWhich).empty())
                     fElementNames.Set(eMsg->fWhich, eMsg->fElementName);

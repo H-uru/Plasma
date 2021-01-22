@@ -123,10 +123,7 @@ void plPhysicalSndGroup::Write( hsStream *s, hsResMgr *mgr )
 void    plPhysicalSndGroup::AddImpactSound( uint32_t against, plKey receiver )
 {
     if( fImpactSounds.GetCount() <= against )
-    {
-        fImpactSounds.Expand( against + 1 );
-        fImpactSounds.SetCount( against + 1 );
-    }
+        fImpactSounds.Resize(against + 1);
 
     fImpactSounds[ against ] = receiver;
 }
@@ -134,10 +131,7 @@ void    plPhysicalSndGroup::AddImpactSound( uint32_t against, plKey receiver )
 void    plPhysicalSndGroup::AddSlideSound( uint32_t against, plKey receiver )
 {
     if( fSlideSounds.GetCount() <= against )
-    {
-        fSlideSounds.Expand( against + 1 );
-        fSlideSounds.SetCount( against + 1 );
-    }
+        fSlideSounds.Resize(against + 1);
 
     fSlideSounds[ against ] = receiver;
 }

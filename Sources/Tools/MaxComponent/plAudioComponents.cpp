@@ -2297,12 +2297,9 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         }
 
         // Grab the data from this buffer and merge it
-        // HACK: SetCount() won't copy the old data over, Expand() won't up the use count, so do
-        // an expand-and-setCount combo.
         uint32_t pos = mergedData.GetCount();
         startPoses.Append( pos );
-        mergedData.Expand( pos + buffer->GetDataLength() );
-        mergedData.SetCount( pos + buffer->GetDataLength() );
+        mergedData.Resize(pos + buffer->GetDataLength());
         memcpy( &mergedData[ pos ], buffer->GetData(), buffer->GetDataLength() );
 
         delete buffer;

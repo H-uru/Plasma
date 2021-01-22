@@ -514,8 +514,7 @@ bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
 void plPageTreeMgr::AddOccluderList(const hsTArray<plOccluder*> occList)
 {
     int iStart = fOccluders.GetCount();
-    fOccluders.Expand(iStart + occList.GetCount());
-    fOccluders.SetCount(iStart + occList.GetCount());
+    fOccluders.Resize(iStart + occList.GetCount());
 
     plVisMgr* visMgr = fDisableVisMgr ? nil : fVisMgr;
 
@@ -546,8 +545,7 @@ void plPageTreeMgr::AddOccluderList(const hsTArray<plOccluder*> occList)
 void plPageTreeMgr::IAddCullPolyList(const hsTArray<plCullPoly>& polyList)
 {
     int iStart = fCullPolys.GetCount();
-    fCullPolys.Expand(iStart + polyList.GetCount());
-    fCullPolys.SetCount(iStart + polyList.GetCount());
+    fCullPolys.Resize(iStart + polyList.GetCount());
     int i;
     for( i = 0; i < polyList.GetCount(); i++ )
     {

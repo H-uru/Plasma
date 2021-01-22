@@ -887,8 +887,7 @@ bool    pfGUIMultiLineEditCtrl::IStoreLineStart( uint32_t line, int32_t start )
     if( fLineStarts.GetCount() <= line )
     {
         hsAssert( line == fLineStarts.GetCount(), "Trying to store a line way past the end of line starts!" );
-        fLineStarts.Expand( line + 1 );
-        fLineStarts.SetCount( line + 1 );
+        fLineStarts.Resize(line + 1);
         fLineStarts[ line ] = -1;
     }
 

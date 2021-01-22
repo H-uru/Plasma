@@ -77,8 +77,7 @@ void plMsgForwarder::Read(hsStream* s, hsResMgr* mgr)
 
     int numKeys = s->ReadLE32();
     fForwardKeys.Reset();
-    fForwardKeys.Expand(numKeys);
-    fForwardKeys.SetCount(numKeys);
+    fForwardKeys.Resize(numKeys);
     for (int i = 0; i < numKeys; i++)
     {
         plKey key = mgr->ReadKey(s);
