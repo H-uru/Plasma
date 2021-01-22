@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <expat.h>
 
-#include <stack>
+#include <deque>
 #include <unordered_set>
 
 
@@ -101,7 +101,7 @@ protected:
         ST::string fTag;
         std::map<ST::string, ST::string> fAttributes;
     };
-    std::stack<tagInfo> fTagStack;
+    std::deque<tagInfo> fTagStack;
 
     int fSkipDepth; // if we need to skip a block, this is the depth we need to skip to
 
@@ -184,16 +184,15 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
 {
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
 
-    LocalizationXMLFile::tagInfo newTag;
+    // Need a dummy parent tag on the stack at minimum
+    if (file->fTagStack.empty())
+        file->fTagStack.emplace_back();
+
+    const auto& parentTag = file->fTagStack.back();
+    auto& newTag = file->fTagStack.emplace_back();
     newTag.fTag = element;
     for (size_t i = 0; attributes[i]; i += 2)
-        newTag.fAttributes[attributes[i]] = attributes[i+1];
-
-    LocalizationXMLFile::tagInfo parentTag;
-    if (!file->fTagStack.empty())
-        parentTag = file->fTagStack.top();
-
-    file->fTagStack.push(newTag);
+        newTag.fAttributes[attributes[i]] = attributes[i + 1];
 
     if (file->fSkipDepth != -1) // we're currently skipping
         return;
@@ -237,7 +236,7 @@ void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element
         file->fCurrentTranslation = "";
     }
 
-    file->fTagStack.pop();
+    file->fTagStack.pop_back();
 }
 
 void XMLCALL LocalizationXMLFile::HandleData(void *userData, const XML_Char *data, int stringLength)
@@ -364,8 +363,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 {
     fFilename = fileName;
 
-    while (!fTagStack.empty())
-        fTagStack.pop();
+    fTagStack.clear();
 
     fCurrentAge = "";
     fCurrentSet = "";
