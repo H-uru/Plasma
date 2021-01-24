@@ -49,8 +49,7 @@ jobs:
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
             -DPLASMA_VCPKG_NUGET_RW=TRUE `
             ..
-          cmake --build . --config "${{ matrix.cfg.type }}" -j 2
-          cmake --install . --config "${{ matrix.cfg.type }}"
+          cmake --build . --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
