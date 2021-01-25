@@ -33,7 +33,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.c
 function(_plasma_vcpkg_generate_nuget_config)
     cmake_parse_arguments(_pvgnc "" "OUT_FILE;NUGET_NAME;NUGET_SOURCE;NUGET_OWNER;NUGET_TOKEN" "" ${ARGN})
     configure_file(
-        "${CMAKE_SOURCE_DIR}/nuget.config.in"
+        "${CMAKE_SOURCE_DIR}/NuGet.Config.in"
         "${_pvgnc_OUT_FILE}"
         @ONLY
     )
@@ -61,8 +61,12 @@ function(_plasma_vcpkg_setup_binarycache)
     endif()
 endfunction()
 
-_plasma_vcpkg_setup_binarycache(NAME mainline PREFIX _NUGET)
-_plasma_vcpkg_setup_binarycache(NAME fork PREFIX PLASMA_VCPKG_NUGET)
+# Binarycache can only be used on Windows or if mono is available. Since we are not using
+# vcpkg on CI, let's just disable this altogether.
+if(_HOST_IS_WINDOWS)
+    _plasma_vcpkg_setup_binarycache(NAME mainline PREFIX _NUGET)
+    _plasma_vcpkg_setup_binarycache(NAME fork PREFIX PLASMA_VCPKG_NUGET)
+endif()
 
 # Note that CMAKE_SIZEOF_VOID_P is currently undefined.
 list(APPEND VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/Scripts/Triplets")
