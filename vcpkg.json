@@ -21,6 +21,10 @@
         "platform": "!(linux | osx)"
       },
       "string-theory",
+      {
+        "name": "libuuid",
+        "platform": "linux | osx"
+      },
       "zlib"
     ]
   }
