@@ -16,7 +16,10 @@
       "opus",
       "physx",
       "python3",
-      "speex",
+      {
+        "name": "speex",
+        "platform": "!(linux | osx)"
+      },
       "string-theory",
       "zlib"
     ]
