@@ -27,7 +27,7 @@ jobs:
           arch: ${{ matrix.platform.qt-arch }}
           dir: ${{ github.workspace }}/qt
 
-      - name: Build
+      - name: Configure
         run: |
           New-Item -ItemType Directory build | Out-Null
           Set-Location build
@@ -41,7 +41,14 @@ jobs:
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
             -DPLASMA_VCPKG_NUGET_RW=TRUE `
             ..
-          cmake --build . --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
+
+      - name: Build
+        run: |
+          cmake --build build --config "${{ matrix.cfg.type }}" -j 2
+
+      - name: Install
+        run: |
+          cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
@@ -49,5 +56,6 @@ jobs:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
 
-      - name: Run Tests
-        run: cmake --build build --target check --config "${{ matrix.cfg.type }}"
+      - name: Test
+        run: |
+          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
