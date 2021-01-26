@@ -123,7 +123,7 @@ class pfMLScrollProc : public pfGUICtrlProcObject
 
         pfMLScrollProc( pfGUIMultiLineEditCtrl *parent ) : fParent( parent ) {}
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             // Do a check here to make sure we actually changed scroll
             // positions--if not, we don't want to update, since that'll be 

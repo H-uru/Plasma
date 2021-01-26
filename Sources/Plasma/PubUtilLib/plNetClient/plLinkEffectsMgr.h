@@ -91,7 +91,7 @@ public:
     
     plMessage *WaitForEffect(plKey linkKey);
 
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
 };
 
 #endif // plLinkEffectsMgr_inc

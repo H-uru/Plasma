@@ -55,10 +55,10 @@ protected:
 
     bool                        ICloseMovie();
 
-    virtual int32_t               ISecsToFrame(float secs);
-    virtual bool                IInit();
-    virtual bool                IGetCurrentFrame();
-    virtual bool                IRelease();
+    int32_t             ISecsToFrame(float secs) override;
+    bool                IInit() override;
+    bool                IGetCurrentFrame() override;
+    bool                IRelease() override;
 
 public:
     plLayerAVI();

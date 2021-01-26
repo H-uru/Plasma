@@ -84,7 +84,7 @@ protected:
     hsMatrix44              fDefaultW2C, fDefaultC2W;
 
 
-    virtual bool IEval(double secs, float del, uint32_t dirty); // called only by owner object's Eval()
+    bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
     void            ISetupRenderRequest();
     void            IDestroyRenderRequest();
@@ -107,10 +107,10 @@ public:
     GETINTERFACE_ANY( plPostEffectMod, plSingleModifier );
 
 
-    virtual bool    MsgReceive(plMessage* pMsg);
+    bool    MsgReceive(plMessage* pMsg) override;
     
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void        GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 

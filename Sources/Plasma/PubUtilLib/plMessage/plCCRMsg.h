@@ -85,8 +85,8 @@ public:
     void SetType(const uint8_t t) { fPetitionType=t;  }
     uint8_t GetType() const { return fPetitionType;   }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -104,8 +104,8 @@ public:
     CLASSNAME_REGISTER( plCCRInvisibleMsg);
     GETINTERFACE_ANY( plCCRInvisibleMsg, plCCRMessage );    
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -142,8 +142,8 @@ public:
     void SetCCRPlayerID(uint32_t t) { fCCRPlayerID=t; }
     uint32_t GetCCRPlayerID() const { return fCCRPlayerID; }
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -160,8 +160,8 @@ public:
     CLASSNAME_REGISTER( plCCRBanLinkingMsg);
     GETINTERFACE_ANY( plCCRBanLinkingMsg, plCCRMessage );   
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //
@@ -178,8 +178,8 @@ public:
     CLASSNAME_REGISTER( plCCRSilencePlayerMsg);
     GETINTERFACE_ANY( plCCRSilencePlayerMsg, plCCRMessage );    
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif  // plCCRMsg_h

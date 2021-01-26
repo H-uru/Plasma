@@ -65,9 +65,9 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         bool            fChecked;
         bool            fPlaySound;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor() const;    // As specified in plInputInterface.h
+        uint32_t      IGetDesiredCursor() const override;    // As specified in plInputInterface.h
 
     public:
 
@@ -77,15 +77,15 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUICheckBoxCtrl, pfGUIControlMod );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
 
         void        SetChecked( bool checked, bool immediate = false );
         bool        IsChecked() { return fChecked; }

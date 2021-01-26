@@ -75,8 +75,8 @@ public:
     void    SetTorans( int v ) { fTorans = v; }
 
     void    CopyFrom( const plDniCoordinateInfo * other );
-    void    Read( hsStream* s, hsResMgr* mgr );
-    void    Write( hsStream* s, hsResMgr* mgr );
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
 
     // debug
     ST::string AsString( int level=0 ) const;

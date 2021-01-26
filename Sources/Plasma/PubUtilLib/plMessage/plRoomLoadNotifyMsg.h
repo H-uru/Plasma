@@ -92,14 +92,14 @@ public:
     virtual uint8_t GetWhatHappen() { return fWhat; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fRoomKey = mgr->ReadKey(stream);
         fWhat = stream->ReadByte();
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fRoomKey);

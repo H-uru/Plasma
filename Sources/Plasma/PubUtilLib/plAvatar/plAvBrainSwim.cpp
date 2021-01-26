@@ -98,13 +98,13 @@ public:
     virtual bool PreCondition(double time, float elapsed) { return true; }
     
 protected:
-    virtual void IStart()
+    void IStart() override
     {
         plArmatureBehavior::IStart();
         fAvMod->SynchIfLocal(hsTimer::GetSysSeconds(), false);
     }
     
-    virtual void IStop()
+    void IStop() override
     {
         plArmatureBehavior::IStop();
         fAvMod->SynchIfLocal(hsTimer::GetSysSeconds(), false);
@@ -118,7 +118,7 @@ class SwimForward: public plSwimBehavior
 {
 public:
     /** Walk key is down, fast key is not down */
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->ForwardKeyDown() && !fAvMod->FastKeyDown());
     }
@@ -127,7 +127,7 @@ public:
 class SwimForwardFast: public plSwimBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->ForwardKeyDown() && fAvMod->FastKeyDown());
     }
@@ -136,7 +136,7 @@ public:
 class SwimBack : public plSwimBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->BackwardKeyDown());
     }
@@ -149,7 +149,7 @@ class TreadWater: public plSwimBehavior
 class SwimLeft : public plSwimBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return ((fAvMod->StrafeLeftKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnLeftKeyDown())) &&
                 !(fAvMod->StrafeRightKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnRightKeyDown())) &&
@@ -160,7 +160,7 @@ public:
 class SwimRight : public plSwimBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return ((fAvMod->StrafeRightKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnRightKeyDown())) &&
                 !(fAvMod->StrafeLeftKeyDown() || (fAvMod->StrafeKeyDown() && fAvMod->TurnLeftKeyDown())) &&
@@ -171,7 +171,7 @@ public:
 class SwimTurn: public plSwimBehavior
 {
 public:
-    virtual void Process(double time, float elapsed)
+    void Process(double time, float elapsed) override
     {
         static const float maxTurnSpeed = 1.0f;         // radians per second;
         static const float timeToMaxTurn = 0.5f;
@@ -183,7 +183,7 @@ public:
         fSwimBrain->fSwimStrategy->SetTurnStrength(newSpeed * fAvMod->GetKeyTurnStrength() + fAvMod->GetAnalogTurnStrength());
         // the turn is actually applied during PhysicsUpdate
     }
-    virtual void IStop()
+    void IStop() override
     {
         if (fSwimBrain->fSwimStrategy)
             fSwimBrain->fSwimStrategy->SetTurnStrength(0.0f);
@@ -194,7 +194,7 @@ public:
 class SwimTurnLeft : public SwimTurn
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->GetTurnStrength() > 0 && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()));
     }
@@ -203,7 +203,7 @@ public:
 class SwimTurnRight : public SwimTurn
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->GetTurnStrength() < 0 && (fAvMod->ForwardKeyDown() || fAvMod->BackwardKeyDown()));
     }
@@ -212,7 +212,7 @@ public:
 class TreadTurnLeft : public plSwimBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->TurnLeftKeyDown() && !fAvMod->ForwardKeyDown() && !fAvMod->BackwardKeyDown());
     }
@@ -221,7 +221,7 @@ public:
 class TreadTurnRight : public plSwimBehavior
 {
 public:
-    virtual bool PreCondition(double time, float elapsed)
+    bool PreCondition(double time, float elapsed) override
     {
         return (fAvMod->TurnRightKeyDown() && !fAvMod->ForwardKeyDown() && !fAvMod->BackwardKeyDown());
     }

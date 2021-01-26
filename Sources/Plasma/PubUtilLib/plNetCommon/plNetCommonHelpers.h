@@ -66,8 +66,8 @@ public:
     plNetCoreStatsSummary();
     CLASSNAME_REGISTER( plNetCoreStatsSummary );
     GETINTERFACE_ANY( plNetCoreStatsSummary, plCreatable );
-    void Read(hsStream* s, hsResMgr* mgr=nil);
-    void Write(hsStream* s, hsResMgr* mgr=nil);
+    void Read(hsStream* s, hsResMgr* mgr=nil) override;
+    void Write(hsStream* s, hsResMgr* mgr=nil) override;
     float GetULBitsPS() const { return fULBitsPS; }
     float GetDLBitsPS() const { return fDLBitsPS; }
     float GetULPeakBitsPS() const { return fULPeakBitsPS; }
@@ -103,8 +103,8 @@ public:
     CLASSNAME_REGISTER( plCreatableListHelper );
     GETINTERFACE_ANY( plCreatableListHelper, plCreatable );
 
-    void    Read( hsStream* s, hsResMgr* mgr );
-    void    Write( hsStream* s, hsResMgr* mgr );
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
     void    Clear() { IClearItems();    }
     void    CopyFrom( const plCreatableListHelper * other, bool manageItems );
 

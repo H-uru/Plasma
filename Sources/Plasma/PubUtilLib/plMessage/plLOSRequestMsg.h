@@ -103,8 +103,8 @@ public:
     GETINTERFACE_ANY( plLOSRequestMsg, plMessage );
 
     // Local only, runtime, no IO necessary
-    virtual void Read(hsStream* s, hsResMgr* mgr) {}
-    virtual void Write(hsStream* s, hsResMgr* mgr) {}
+    void Read(hsStream* s, hsResMgr* mgr) override { }
+    void Write(hsStream* s, hsResMgr* mgr) override { }
     
 private:
     friend class plLOSDispatch;

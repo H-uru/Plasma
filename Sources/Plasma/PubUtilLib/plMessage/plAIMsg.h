@@ -57,8 +57,8 @@ public:
     CLASSNAME_REGISTER(plAIMsg);
     GETINTERFACE_ANY(plAIMsg, plMessage);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void BrainUserString(const ST::string& userStr) {fBrainUserStr = userStr;}
     ST::string BrainUserString() const {return fBrainUserStr;}
@@ -86,8 +86,8 @@ public:
     CLASSNAME_REGISTER(plAIBrainCreatedMsg);
     GETINTERFACE_ANY(plAIBrainCreatedMsg, plAIMsg);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) {plAIMsg::Read(stream, mgr);}
-    virtual void Write(hsStream* stream, hsResMgr* mgr) {plAIMsg::Write(stream, mgr);}
+    void Read(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Read(stream, mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plAIMsg::Write(stream, mgr); }
 };
 
 // message sent when the brain arrives at it's specified goal
@@ -101,8 +101,8 @@ public:
     CLASSNAME_REGISTER(plAIArrivedAtGoalMsg);
     GETINTERFACE_ANY(plAIArrivedAtGoalMsg, plAIMsg);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void Goal(const hsPoint3& goal) {fGoal = goal;}
     hsPoint3 Goal() const {return fGoal;}

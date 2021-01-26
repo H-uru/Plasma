@@ -123,7 +123,7 @@ public:
     void SetPipeline(plPipeline* p); 
     void Init();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     static void SetFOV(float x, float y);
     static void SetFOV(plCameraModifier1* pCam);
     static void SetDepth(float h, float y);

@@ -89,10 +89,10 @@ public:
     CLASSNAME_REGISTER( plSittingModifier );
     GETINTERFACE_ANY( plSittingModifier, plSingleModifier );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
 
     void AddNotifyKey(plKey key) { fNotifyKeys.Append(key); }
 
@@ -113,7 +113,7 @@ protected:
     plAvBrainGeneric * IBuildSitBrain(plKey avModKey, plKey seekKey, const char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
 
     /** Unused. */
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     /** An array of keys to objects that are interested in receiving our sit messages. */
     hsTArray<plKey> fNotifyKeys;

@@ -91,7 +91,7 @@ class pfGUIDialogMod : public plSingleModifier
         plKey           fSceneNodeKey;
 
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
         void    IHandleDrag( hsPoint3 &mousePt, pfGameGUIMgr::EventType event, uint8_t modifiers );
 
@@ -117,10 +117,10 @@ class pfGUIDialogMod : public plSingleModifier
         GETINTERFACE_ANY( pfGUIDialogMod, plSingleModifier );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         void        SetSceneNodeKey( plKey &key ) { fSceneNodeKey = key; }
         plKey       GetSceneNodeKey();

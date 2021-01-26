@@ -106,10 +106,10 @@ public:
     CLASSNAME_REGISTER( plDynamicEnvMap );
     GETINTERFACE_ANY( plDynamicEnvMap, plCubicRenderTarget );
 
-    virtual void    Read(hsStream* s, hsResMgr* mgr);
-    virtual void    Write(hsStream* s, hsResMgr* mgr);
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void ReRender();
 
@@ -133,7 +133,7 @@ public:
 
     void        SetIncludeCharacters(bool b);
     bool        GetIncludeCharacters() const { return fIncCharacters; }
-    void        SetVisRegionName(char *name){ fVisRegionNames.Push(name); }
+    void        SetVisRegionName(char *name) override { fVisRegionNames.Push(name); }
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -203,10 +203,10 @@ public:
     CLASSNAME_REGISTER( plDynamicCamMap );
     GETINTERFACE_ANY( plDynamicCamMap, plRenderTarget );
 
-    virtual void    Read(hsStream* s, hsResMgr* mgr);
-    virtual void    Write(hsStream* s, hsResMgr* mgr);
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void ReRender();
     void Init();
@@ -215,7 +215,7 @@ public:
     void        SetIncludeCharacters(bool b);
     void        SetRefreshRate(float secs);
     void        AddVisRegion(plVisRegion* reg);
-    void        SetVisRegionName(char *name){ fVisRegionNames.Push(name); }
+    void        SetVisRegionName(char *name) override { fVisRegionNames.Push(name); }
 
     static bool     GetEnabled() { return (fFlags & kReflectionEnabled) != 0; }
     static void     SetEnabled(bool enable);

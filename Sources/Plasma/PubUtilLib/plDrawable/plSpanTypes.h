@@ -230,11 +230,11 @@ public:
 
         plVertexSpan();
 
-        virtual void    Read( hsStream* stream );
-        virtual void    Write( hsStream* stream );
+        void    Read(hsStream* stream) override;
+        void    Write(hsStream* stream) override;
 
-        virtual bool    CanMergeInto( plSpan* other );
-        virtual void    MergeInto( plSpan* other );
+        bool    CanMergeInto(plSpan* other) override;
+        void    MergeInto(plSpan* other) override;
 };
 
 //// plIcicle Class Definition ///////////////////////////////////////////////
@@ -257,12 +257,12 @@ class plIcicle : public plVertexSpan
 
         plIcicle();
 
-        virtual void    Read( hsStream* stream );
-        virtual void    Write( hsStream* stream );
+        void    Read(hsStream* stream) override;
+        void    Write(hsStream* stream) override;
 
-        virtual bool    CanMergeInto( plSpan* other );
-        virtual void    MergeInto( plSpan* other );
-        virtual void    Destroy();
+        bool    CanMergeInto(plSpan* other) override;
+        void    MergeInto(plSpan* other) override;
+        void    Destroy() override;
 };
 
 //// plParticleSpan Class Definition /////////////////////////////////////////
@@ -285,12 +285,12 @@ class plParticleSpan : public plIcicle
 
         plParticleSpan();
 
-        virtual void    Read( hsStream* stream ) { /*plParticleSpans don't read in!*/ }
-        virtual void    Write( hsStream* stream ) { /*plParticleSpans don't write out!*/ }
+        void    Read(hsStream* stream) override { /*plParticleSpans don't read in!*/ }
+        void    Write(hsStream* stream) override { /*plParticleSpans don't write out!*/ }
 
-        virtual bool    CanMergeInto( plSpan* other );
-        virtual void    MergeInto( plSpan* other );
-        virtual void    Destroy();
+        bool    CanMergeInto(plSpan* other) override;
+        void    MergeInto(plSpan* other) override;
+        void    Destroy() override;
 };
 
 //// plParticleSet Class Definition //////////////////////////////////////////

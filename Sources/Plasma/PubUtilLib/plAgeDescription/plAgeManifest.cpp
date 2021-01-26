@@ -139,9 +139,9 @@ class plVersSection : public plInitSectionTokenReader
 protected:
     plManifest* fDest;
 
-    virtual const char* GetSectionName() const { return "version"; }
+    const char* GetSectionName() const override { return "version"; }
 
-    virtual bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
+    bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData) override
     {
         if (stricmp(token, "format") == 0)
             fDest->SetFormatVersion(atoi(tokenizer->next()));
@@ -175,7 +175,7 @@ protected:
         return new plManifestFile(name, "", sum, size, zippedSize, flags);
     }
 
-    virtual bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
+    bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData) override
     {
         plManifestFile* file = IReadManifestFile(token, tokenizer, userData, false);
         AddFile(file);
@@ -192,8 +192,8 @@ public:
     plBaseSection(plManifest* dest) : plGenericSection(dest) {}
 
 protected:
-    virtual void        AddFile(plManifestFile* file) { fDest->AddFile(file); }
-    virtual const char* GetSectionName() const { return "base"; }
+    void        AddFile(plManifestFile* file) override { fDest->AddFile(file); }
+    const char* GetSectionName() const override { return "base"; }
 };
 
 

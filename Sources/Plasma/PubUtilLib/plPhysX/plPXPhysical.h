@@ -283,7 +283,7 @@ protected:
     /////////////////////////////////////////////////////////////
 
     /** Remember that we need to do a synch soon. */
-    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags);
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
 
     double GetLastSyncTime() { return fLastSyncTime; }
 

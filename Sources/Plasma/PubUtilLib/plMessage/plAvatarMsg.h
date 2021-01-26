@@ -71,8 +71,8 @@ public:
     CLASSNAME_REGISTER( plAvatarMsg );
     GETINTERFACE_ANY( plAvatarMsg, plMessage );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr) { plMessage::IMsgRead(stream, mgr); }
-    virtual void Write(hsStream *stream, hsResMgr *mgr) { plMessage::IMsgWrite(stream, mgr); }
+    void Read(hsStream *stream, hsResMgr *mgr) override { plMessage::IMsgRead(stream, mgr); }
+    void Write(hsStream *stream, hsResMgr *mgr) override { plMessage::IMsgWrite(stream, mgr); }
 };
 
 
@@ -103,8 +103,8 @@ public:
     CLASSNAME_REGISTER( plArmatureUpdateMsg );
     GETINTERFACE_ANY( plArmatureUpdateMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     plArmatureMod * fArmature;  // the armature that sent this message
                                 // valid during the message's lifetime
@@ -130,8 +130,8 @@ public:
     CLASSNAME_REGISTER(plAvatarSetTypeMsg);
     GETINTERFACE_ANY(plAvatarSetTypeMsg, plAvatarMsg);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
 private:
     bool fIsPlayer;
@@ -157,8 +157,8 @@ public:
     CLASSNAME_REGISTER( plAvTaskMsg );
     GETINTERFACE_ANY( plAvTaskMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 private:
     plAvTask *fTask;
 };
@@ -202,8 +202,8 @@ public:
     bool RotationOnly();
     plKey GetFinishCallbackKey() { return fFinishKey; }
     
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
     // public members
     plKey fSeekPoint;           // the key to the seekpoint we are going to find
@@ -231,8 +231,8 @@ public:
     CLASSNAME_REGISTER( plAvTaskSeekDoneMsg );
     GETINTERFACE_ANY( plAvTaskSeekDoneMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);    
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 class plOneShotCallbacks;
@@ -254,8 +254,8 @@ public:
     CLASSNAME_REGISTER( plAvOneShotMsg );
     GETINTERFACE_ANY( plAvOneShotMsg, plAvSeekMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     // public members
     bool fDrivable;               // are we animated by time or by mouse movement?
@@ -323,13 +323,13 @@ public:
     CLASSNAME_REGISTER( plAvBrainGenericMsg );
     GETINTERFACE_ANY( plAvBrainGenericMsg, plAvatarMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
     
     // WriteVersion writes the current version of this creatable and ReadVersion will read in
     // any previous version.
-    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 ///////////////////
@@ -348,8 +348,8 @@ public:
     CLASSNAME_REGISTER( plAvPushBrainMsg );
     GETINTERFACE_ANY( plAvPushBrainMsg, plAvTaskMsg);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     plArmatureBrain *fBrain;
 };
@@ -391,8 +391,8 @@ public:
     CLASSNAME_REGISTER(plAvatarStealthModeMsg);
     GETINTERFACE_ANY(plAvatarStealthModeMsg, plAvatarMsg);
     
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 class plAvatarBehaviorNotifyMsg : public plMessage
@@ -407,8 +407,8 @@ public:
     GETINTERFACE_ANY( plAvatarBehaviorNotifyMsg, plMessage );
     
     // Local Only
-    virtual void Read(hsStream *stream, hsResMgr *mgr) {}
-    virtual void Write(hsStream *stream, hsResMgr *mgr) {}
+    void Read(hsStream *stream, hsResMgr *mgr) override { }
+    void Write(hsStream *stream, hsResMgr *mgr) override { }
 };
 
 class plAvatarOpacityCallbackMsg : public plEventCallbackMsg
@@ -422,8 +422,8 @@ public:
     GETINTERFACE_ANY( plAvatarOpacityCallbackMsg, plEventCallbackMsg );
     
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}  
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 };
 
 class plAvatarSpawnNotifyMsg : public plMessage
@@ -437,8 +437,8 @@ public:
     GETINTERFACE_ANY( plAvatarSpawnNotifyMsg, plMessage );
 
     // Local Only
-    virtual void Read(hsStream *stream, hsResMgr *mgr) {}
-    virtual void Write(hsStream *stream, hsResMgr *mgr) {}
+    void Read(hsStream *stream, hsResMgr *mgr) override { }
+    void Write(hsStream *stream, hsResMgr *mgr) override { }
 };
 
 class plAvatarPhysicsEnableCallbackMsg : public plEventCallbackMsg
@@ -452,8 +452,8 @@ public:
     GETINTERFACE_ANY( plAvatarPhysicsEnableCallbackMsg, plEventCallbackMsg );
     
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}  
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 };
 
 #endif // plAvatarMsg_inc

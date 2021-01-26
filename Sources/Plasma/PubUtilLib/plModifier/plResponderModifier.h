@@ -103,7 +103,7 @@ protected:
 
     int8_t ICmdFromWait(int8_t waitIdx);
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     static bool fDebugAnimBox;  // Draws a box on screen when an animation is started
     static void IDebugAnimBox(bool start);
@@ -134,10 +134,10 @@ public:
     CLASSNAME_REGISTER( plResponderModifier );
     GETINTERFACE_ANY( plResponderModifier, plSingleModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     const plResponderSDLModifier* GetSDLModifier() const { return fResponderSDLMod; }
 
@@ -168,8 +168,8 @@ public:
     GETINTERFACE_ANY(plResponderEnableMsg, plMessage);
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plResponderModifier_inc

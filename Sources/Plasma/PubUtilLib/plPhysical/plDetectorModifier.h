@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDetectorModifier : public plSingleModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty){ return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     hsTArray<plKey>     fReceivers;
     plModifier*         fRemoteMod;
@@ -72,7 +72,7 @@ public:
     int GetNumReceivers() const { return fReceivers.Count(); }
     plKey GetReceiver(int i) const { return fReceivers[i]; }
     void SetProxyKey(const plKey &k) { fProxyKey = k; }
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plSingleModifier::Read(stream, mgr);
         int n = stream->ReadLE32();
@@ -85,7 +85,7 @@ public:
         fProxyKey = mgr->ReadKey(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plSingleModifier::Write(stream, mgr);
         stream->WriteLE32(fReceivers.GetCount());

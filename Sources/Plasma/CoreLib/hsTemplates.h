@@ -118,7 +118,7 @@ template <class T> class hsTArray : public hsTArrayBase
     #define hsTArray_Validate(condition)        hsAssert(condition, "oops")
 
     #ifdef HS_DEBUGTARRAY
-        virtual int      GetSizeOf() { return sizeof(T); }
+        int      GetSizeOf() override { return sizeof(T); }
     #endif
 #else
     #define hsTArray_ValidateCount(count)

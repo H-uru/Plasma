@@ -73,14 +73,14 @@ public:
 
     uint32_t fSynchFlags;
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fCmd = stream->ReadByte();
         fSynchFlags = stream->ReadLE32();
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteByte(fCmd);

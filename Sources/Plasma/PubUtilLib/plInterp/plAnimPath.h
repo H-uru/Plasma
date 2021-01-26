@@ -181,8 +181,8 @@ public:
     void ComputeArcLenDeltas(int32_t numSamples=256);
     float GetLookAheadTime(float startTime, float arcLength, bool bwd, int32_t* startSrchIdx);
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 #endif //plAnimPath_inc

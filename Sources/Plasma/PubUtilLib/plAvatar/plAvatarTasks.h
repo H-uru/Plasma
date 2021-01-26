@@ -93,16 +93,16 @@ public:
     plAvAnimTask(const ST::string &animName, float fadeSpeed, bool attach = false);
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void LeaveAge(plArmatureMod *avatar);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void LeaveAge(plArmatureMod *avatar) override;
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvAnimTask );
     GETINTERFACE_ANY( plAvAnimTask, plAvTask );
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
 protected:
     // public members
@@ -135,9 +135,9 @@ public:
     plAvSeekTask(plKey target, plAvAlignment alignType, ST::string animName);
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void LeaveAge(plArmatureMod *avatar);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void LeaveAge(plArmatureMod *avatar) override;
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekTask );
@@ -191,9 +191,9 @@ public:
     virtual ~plAvOneShotTask();
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual void LeaveAge(plArmatureMod *avatar);
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    void LeaveAge(plArmatureMod *avatar) override;
     
     void SetAnimName(const ST::string &name);
     
@@ -244,16 +244,16 @@ public:
     virtual ~plAvOneShotLinkTask();
 
     // task protocol
-    virtual bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
-    virtual bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);   
+    bool Start(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
+    bool Process(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed) override;
 
     CLASSNAME_REGISTER( plAvOneShotLinkTask );
     GETINTERFACE_ANY( plAvOneShotLinkTask, plAvOneShotTask );   
 
     // only read/writes enough to send an unstarted task across the net. Not intended for
     // use with a running task.
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr); 
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
     void SetMarkerName(const ST::string &name);
         

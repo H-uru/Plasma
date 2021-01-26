@@ -53,7 +53,7 @@ protected:
     plDrawableSpans *fDrawable;
     hsTArray<plSharedMesh*> fMeshes;
 
-    virtual void ICheckDrawableIndex(uint8_t which);
+    void ICheckDrawableIndex(uint8_t which) override;
 
 public:
     uint32_t fTargetID;
@@ -64,15 +64,15 @@ public:
     CLASSNAME_REGISTER( plInstanceDrawInterface );
     GETINTERFACE_ANY( plInstanceDrawInterface, plDrawInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, bool addToFront, int LOD, bool partialSort);
     void RemoveSharedMesh(plSharedMesh *mesh);
 
-    virtual void ReleaseData();
+    void ReleaseData() override;
     virtual void SetSharedMesh(uint8_t which, plSharedMesh *mesh);
     virtual void IClearIndex(uint8_t which);
     plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }

@@ -91,8 +91,8 @@ public:
 
     void            RoundDataPos( uint32_t &pos );
 
-    virtual void    Read( hsStream *s, hsResMgr *mgr );
-    virtual void    Write( hsStream *s, hsResMgr *mgr );
+    void    Read(hsStream *s, hsResMgr *mgr) override;
+    void    Write(hsStream *s, hsResMgr *mgr) override;
 
     plWAVHeader &GetHeader()              { return fHeader; }
     uint32_t    GetDataLength() const     { return fDataLength; }

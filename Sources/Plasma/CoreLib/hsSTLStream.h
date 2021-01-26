@@ -59,19 +59,19 @@ public:
     hsVectorStream() : fEnd() { }
     hsVectorStream(uint32_t chunkSize) : fEnd() { fVector.reserve(chunkSize); };
 
-    virtual bool      Open(const plFileName &, const char *) { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
-    virtual bool      Close()             { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
+    bool      Open(const plFileName &, const char *) override { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
+    bool      Close() override { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
     
-    virtual bool      AtEnd();
-    virtual uint32_t  Read(uint32_t byteCount, void * buffer);
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual void      Skip(uint32_t deltaByteCount);
-    virtual void      Rewind();
-    virtual void      FastFwd();
-    virtual void      Truncate();
+    bool      AtEnd() override;
+    uint32_t  Read(uint32_t byteCount, void * buffer) override;
+    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    void      Skip(uint32_t deltaByteCount) override;
+    void      Rewind() override;
+    void      FastFwd() override;
+    void      Truncate() override;
 
-    virtual uint32_t  GetEOF();
-    virtual void    CopyToMem(void* mem);
+    uint32_t  GetEOF() override;
+    void    CopyToMem(void* mem) override;
 
     virtual void    Reset();        // clears the buffers
 

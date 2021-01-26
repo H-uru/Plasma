@@ -63,8 +63,8 @@ public:
 
     plPipeline* Pipeline() const { return fPipe; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) { plMessage::IMsgRead(s, mgr); }
-    virtual void Write(hsStream* s, hsResMgr* mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read(hsStream* s, hsResMgr* mgr) override { plMessage::IMsgRead(s, mgr); }
+    void Write(hsStream* s, hsResMgr* mgr) override { plMessage::IMsgWrite(s, mgr); }
 };
 
 class plPreResourceMsg : public plMessage
@@ -83,8 +83,8 @@ public:
 
     plPipeline* Pipeline() const { return fPipe; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) {}
-    virtual void Write(hsStream* s, hsResMgr* mgr) {}
+    void Read(hsStream* s, hsResMgr* mgr) override { }
+    void Write(hsStream* s, hsResMgr* mgr) override { }
 };
 
 #endif // plRenderMsg_inc

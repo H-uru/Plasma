@@ -113,11 +113,11 @@ public:
     CLASSNAME_REGISTER(plLoadAvatarMsg);
     GETINTERFACE_ANY(plLoadAvatarMsg, plLoadCloneMsg);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void ReadVersion(hsStream* stream, hsResMgr* mgr);
-    void WriteVersion(hsStream* stream, hsResMgr* mgr);
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) override;
     
 protected:
     bool fIsPlayer;

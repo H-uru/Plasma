@@ -79,7 +79,7 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
 
         hsTArray<hsGMaterial *>         fMaterials;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
     public:
 
@@ -90,10 +90,10 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
         GETINTERFACE_ANY( pfGUIDynDisplayCtrl, pfGUIControlMod );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         uint32_t              GetNumMaps() const { return fTextMaps.GetCount(); }
         plDynamicTextMap    *GetMap( uint32_t i ) const { return fTextMaps[ i ]; }

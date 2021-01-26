@@ -80,10 +80,10 @@ public:
     GETINTERFACE_ANY( plPhysicalSndGroup, hsKeyedObject );
 
     // Our required virtual
-    virtual bool    MsgReceive( plMessage *pMsg );
+    bool MsgReceive(plMessage *pMsg) override;
 
-    virtual void Read( hsStream *s, hsResMgr *mgr );
-    virtual void Write( hsStream *s, hsResMgr *mgr );
+    void Read(hsStream *s, hsResMgr *mgr) override;
+    void Write(hsStream *s, hsResMgr *mgr) override;
 
     void PlaySlideSound(uint32_t against);
     void StopSlideSound(uint32_t against);

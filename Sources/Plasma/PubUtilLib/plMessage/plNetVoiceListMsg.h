@@ -76,9 +76,9 @@ public:
     hsTArray<uint32_t>* GetClientList() { return &fClientIDs; };
     plKey GetRemovedKey() { return fRemoved; }
     void SetRemovedKey(plKey& k) { fRemoved = k; }
-    virtual void Read(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
     
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 

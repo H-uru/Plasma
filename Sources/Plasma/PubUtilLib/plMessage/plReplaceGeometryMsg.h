@@ -63,8 +63,8 @@ public:
     GETINTERFACE_ANY( plReplaceGeometryMsg, plMessage );    
 
     // No R/W, these shouldn't be sent over the wire
-    virtual void Read(hsStream* stream, hsResMgr* mgr) {}
-    virtual void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 
     // flags
     enum

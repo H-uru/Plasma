@@ -86,17 +86,17 @@ protected:
     void    ISetTargetTransform();
     void    IBlow(double secs, float delSecs);
     
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 public:
     plBlower();
 
     CLASSNAME_REGISTER( plBlower );
     GETINTERFACE_ANY( plBlower, plSingleModifier );
     
-    virtual void SetTarget(plSceneObject* so);
+    void SetTarget(plSceneObject* so) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetMasterPower(float f) { fMasterPower = f; }
     void SetMasterFrequency(float f) { fMasterFrequency = f; }

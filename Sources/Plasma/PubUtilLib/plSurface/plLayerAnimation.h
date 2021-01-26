@@ -86,13 +86,13 @@ public:
     CLASSNAME_REGISTER( plLayerAnimationBase );
     GETINTERFACE_ANY( plLayerAnimationBase, plLayerInterface );
     
-    virtual plLayerInterface*           Attach(plLayerInterface* prev);
+    plLayerInterface*           Attach(plLayerInterface* prev) override;
     //virtual uint32_t                        Eval(double secs, uint32_t frame, uint32_t ignore) = 0;
 
-    virtual bool                        MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void                        Read(hsStream* s, hsResMgr* mgr);
-    virtual void                        Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Specialized
     float GetLength() const { return fLength; }
@@ -130,13 +130,13 @@ public:
     CLASSNAME_REGISTER( plLayerAnimation );
     GETINTERFACE_ANY( plLayerAnimation, plLayerAnimationBase );
 
-    virtual plLayerInterface*           Attach(plLayerInterface* prev);
-    virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
+    plLayerInterface*           Attach(plLayerInterface* prev) override;
+    uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore) override;
 
-    virtual bool                        MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void                        Read(hsStream* s, hsResMgr* mgr);
-    virtual void                        Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
     
     const plLayerSDLModifier* GetSDLModifier() const { return fLayerSDLMod; }
     plAnimTimeConvert& GetTimeConvert() { return fTimeConvert; }
@@ -177,12 +177,12 @@ public:
     // NEVER!
     // If you think it should... talk to Bob. He will explain why it can't be, and beat you up.
     // If he can't remember, beat him up until he does (or ask Moose).
-    virtual bool DirtySynchState(const ST::string& sdlName, uint32_t sendFlags) { return false; } // don't send link state
+    bool DirtySynchState(const ST::string& sdlName, uint32_t sendFlags) override { return false; } // don't send link state
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
-    virtual uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore); 
-    virtual bool MsgReceive(plMessage* pMsg);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
+    uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore) override;
+    bool MsgReceive(plMessage* pMsg) override;
     void Enable(bool b) { fEnabled = b; }
     void SetFadeFlag(uint8_t flag, bool val);
 
@@ -201,12 +201,12 @@ public:
     CLASSNAME_REGISTER( plLayerSDLAnimation );
     GETINTERFACE_ANY( plLayerSDLAnimation, plLayerAnimationBase );
 
-    virtual uint32_t                      Eval(double wSecs, uint32_t frame, uint32_t ignore);
+    uint32_t Eval(double wSecs, uint32_t frame, uint32_t ignore) override;
 
-    virtual bool                        MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void                        Read(hsStream* s, hsResMgr* mgr);
-    virtual void                        Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     ST::string GetVarName() const { return fVarName; }
     void SetVarName(const ST::string &name) { fVarName = name; }

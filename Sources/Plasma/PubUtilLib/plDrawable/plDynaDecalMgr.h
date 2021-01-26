@@ -229,7 +229,7 @@ protected:
 
     hsGMaterial*        IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap);
 
-    virtual void        SetKey(plKey k);
+    void                SetKey(plKey k) override;
 
     hsVector3           IReflectDir(hsVector3 dir) const;
     hsMatrix44          IL2WFromHit(hsPoint3 pos, hsVector3 dir) const;
@@ -244,10 +244,10 @@ public:
     CLASSNAME_REGISTER( plDynaDecalMgr );
     GETINTERFACE_ANY( plDynaDecalMgr, plSynchedObject );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // This is public, because you need to call it after creating
     // a DynaDecalMgr on the fly. It's normally called on Read().

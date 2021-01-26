@@ -81,12 +81,12 @@ public:                                                                         
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return CLASS_INDEX_SCOPED(plClassName); }      \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable* Create() const { return new plClassName; }         \
+    plCreatable* Create() const override { return new plClassName; }                \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
@@ -107,12 +107,12 @@ public:                                                                         
         plFactory::UnRegister(CLASS_INDEX_SCOPED(plClassName), this);               \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return CLASS_INDEX_SCOPED(plClassName); }         \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return CLASS_INDEX_SCOPED(plClassName); }      \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable*        Create() const { return nil; }                      \
+    plCreatable*        Create() const override { return nil; }                     \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
@@ -140,12 +140,12 @@ public:                                                                         
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable* Create() const { return new plClassName; }         \
+    plCreatable* Create() const override { return new plClassName; }                \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
@@ -172,12 +172,12 @@ public:                                                                         
         plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);        \
     }                                                                               \
                                                                                     \
-    virtual bool HasBaseClass(uint16_t hBase) { return plClassName::HasBaseClass(hBase); }  \
+    bool HasBaseClass(uint16_t hBase) override { return plClassName::HasBaseClass(hBase); }  \
                                                                                     \
-    virtual uint16_t ClassIndex() { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
-    virtual const char* ClassName() const { return #plClassName; }                  \
+    uint16_t ClassIndex() override { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
+    const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    virtual plCreatable*        Create() const { return nil; }                      \
+    plCreatable*        Create() const override { return nil; }                     \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \

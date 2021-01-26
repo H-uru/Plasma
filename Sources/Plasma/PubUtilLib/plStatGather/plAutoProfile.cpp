@@ -102,10 +102,10 @@ public:
         : fNextAge(), fNextSpawnPoint(), fLinkedToSingleAge(), fJustLinkToAges(), fLinkTime()
     { }
 
-    virtual void StartProfile(const char* ageName);
-    virtual void LinkToAllAges();
+    void StartProfile(const char* ageName) override;
+    void LinkToAllAges() override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 };
 
 plAutoProfile* plAutoProfile::Instance()

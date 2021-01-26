@@ -104,10 +104,10 @@ public:
     // value iterator (use for getting all values for key)
     bool GetValueIterators(const ST::string & key, Values::const_iterator & iter, Values::const_iterator & end) const;
     // streamable
-    void Read(hsStream * s);
-    void Write(hsStream * s);
+    void Read(hsStream * s) override;
+    void Write(hsStream * s) override;
     // TODO:
-    uint32_t GetStreamSize() { return 0;}
+    uint32_t GetStreamSize() override { return 0;}
 };
 
 

@@ -67,13 +67,13 @@ protected:
     static float fInterestRadius;
     static float fInterestWeight;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
     
 public:
     plInterestingModifier() : fType(kTypeInteresting), fView() { }
     virtual ~plInterestingModifier() { }
     
-    virtual bool MsgReceive(plMessage* msg) {return false;}
+    bool MsgReceive(plMessage* msg) override { return false; }
 
     CLASSNAME_REGISTER( plInterestingModifier );
     GETINTERFACE_ANY( plInterestingModifier, plSingleModifier );
@@ -84,7 +84,7 @@ public:
     void SetInterestWeight(float _InterestWeight) { fInterestWeight = _InterestWeight; }
     void SetInterestRadius(float _InterestRadius) { fInterestRadius = _InterestRadius; }
     
-    virtual void AddTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
     
     void    SetType(uint8_t type) { fType = type; }
     uint8_t   GetType() { return fType; }

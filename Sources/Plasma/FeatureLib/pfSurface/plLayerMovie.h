@@ -82,17 +82,17 @@ public:
     CLASSNAME_REGISTER( plLayerMovie );
     GETINTERFACE_ANY( plLayerMovie, plLayerAnimation );
 
-    virtual uint32_t        Eval(double secs, uint32_t frame, uint32_t ignore);
+    uint32_t        Eval(double secs, uint32_t frame, uint32_t ignore) override;
 
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void                    Read(hsStream* s, hsResMgr* mgr) override;
+    void                    Write(hsStream* s, hsResMgr* mgr) override;
 
     bool                    IsStopped() { return fTimeConvert.IsStopped(); }
 
     void                    SetMovieName(const plFileName& n) { fMovieName = n; }
     const plFileName&       GetMovieName() const { return fMovieName; }
 
-    virtual bool            MsgReceive(plMessage* msg);
+    bool                    MsgReceive(plMessage* msg) override;
 
     // Movie specific
     int                     GetWidth() const;

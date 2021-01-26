@@ -116,12 +116,12 @@ struct PingRequestTrans : NetGateKeeperTrans {
         const void *                            payload
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -139,12 +139,12 @@ struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
         bool                                                isPatcher
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -160,12 +160,12 @@ struct AuthSrvIpAddressRequestTrans : NetGateKeeperTrans {
         void *                                              param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 

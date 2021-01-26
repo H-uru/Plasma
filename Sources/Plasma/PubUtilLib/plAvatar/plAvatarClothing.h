@@ -118,10 +118,10 @@ public:
     bool HasBaseAlpha();
     bool HasSameMeshes(plClothingItem *other);
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 };
 
 class plClosetItem
@@ -149,10 +149,10 @@ public:
     
     void SetLayoutName(const ST::string &name) { fLayoutName = name; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 };
 
 class plClothingOutfit : public plSynchedObject
@@ -193,9 +193,9 @@ public:
     hsTArray<plClothingItem*> &GetItemList() { return fItems; }
     hsTArray<plClothingItemOptions*> &GetOptionList() { return fOptions; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
-    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
 
     void StripAccessories();
     void WearDefaultClothing();
@@ -209,7 +209,7 @@ public:
     
     void ForceUpdate(bool retry);       // send updateTexture msg
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void IInstanceSharedMeshes(plClothingItem *item);
     void IRemoveSharedMeshes(plClothingItem *item);
@@ -310,10 +310,10 @@ public:
     static void Init();
     static void DeInit();
 
-    //virtual void Read(hsStream* s, hsResMgr* mgr);
-    //virtual void Write(hsStream* s, hsResMgr* mgr);
+    //void Read(hsStream* s, hsResMgr* mgr) override;
+    //void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
 
     // NOTE:

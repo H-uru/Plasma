@@ -97,7 +97,7 @@ protected:
     float            fOffsetClamp;
     float            fSpeedClamp;
 
-    virtual bool        IEval(double secs, float del, uint32_t dirty);
+    bool        IEval(double secs, float del, uint32_t dirty) override;
     
     virtual bool        IGetSearchPos();
     virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm);
@@ -127,8 +127,8 @@ public:
     CLASSNAME_REGISTER( plLineFollowMod );
     GETINTERFACE_ANY( plLineFollowMod, plMultiModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Export time stuff
     void                SetPath(plAnimPath* path);
@@ -158,10 +158,10 @@ public:
     void                SetSpeedClamp(float feetPerSec);
     float               GetSpeedClamp() const { return fSpeedClamp; }
 
-    bool                MsgReceive(plMessage* msg);
+    bool                MsgReceive(plMessage* msg) override;
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so); 
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
 
     void        AddStereizer(const plKey& sterKey);
     void        RemoveStereizer(const plKey& sterKey);
@@ -184,8 +184,8 @@ public:
 
 protected:
     
-    virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm) {fDesiredMatrix = tgtXfm;}
-    virtual bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
+    void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm) override { fDesiredMatrix = tgtXfm; }
+    bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm) override;
     
     hsMatrix44  fDesiredMatrix;
     float       fCurrentTime;

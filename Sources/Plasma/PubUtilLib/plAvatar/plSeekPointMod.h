@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSeekPointMod : public plMultiModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
     char * fName;                                       // public because you can't change it
 
 public:
@@ -67,12 +67,12 @@ public:
     CLASSNAME_REGISTER( plSeekPointMod );
     GETINTERFACE_ANY( plSeekPointMod, plMultiModifier );
     
-    virtual void AddTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif

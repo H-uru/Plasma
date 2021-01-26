@@ -110,10 +110,10 @@ class plResManagerHelper : public hsKeyedObject
         CLASSNAME_REGISTER( plResManagerHelper );
         GETINTERFACE_ANY( plResManagerHelper, hsKeyedObject );
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
     
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
         void    Init();
         void    Shutdown();

@@ -76,21 +76,21 @@ class plVoiceSound : public plWin32Sound
 public:
     plVoiceSound();
 
-    bool LoadSound( bool is3D );
+    bool LoadSound(bool is3D) override;
     void AddVoiceData(const void *data, size_t bytes);
-    void Update();
-    void Play();
-    virtual void SetStartPos(unsigned bytes){}
+    void Update() override;
+    void Play() override;
+    void SetStartPos(unsigned bytes) override { }
     void SetSampleRate(uint32_t rate);
 
 private:
-    virtual bool    ILoadDataBuffer(){ return true; }
-    virtual void    IUnloadDataBuffer(){}
+    bool    ILoadDataBuffer() override { return true; }
+    void    IUnloadDataBuffer() override { }
 
-    virtual void    IDerivedActuallyPlay();
-    virtual void    ISetActualTime( double t ){}
-    virtual float   GetActualTimeSec() { return 0.0f; }
-    virtual void    IRefreshParams();
+    void    IDerivedActuallyPlay() override;
+    void    ISetActualTime(double t) override { }
+    float   GetActualTimeSec() override { return 0.0f; }
+    void    IRefreshParams() override;
 
     static unsigned fCount;
     double   fLastUpdate;

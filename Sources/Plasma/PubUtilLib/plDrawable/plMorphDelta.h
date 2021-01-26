@@ -99,8 +99,8 @@ public:
 
     void        AllocDeltas(int iSpan, int nDel, int nUVW);
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
 };
 

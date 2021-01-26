@@ -83,7 +83,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
             fReportDrag = reportDrag;
         }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             // The draggable was let up, so now we stop dragging, disable the draggable again, and pass
             // on the event to our original proc
@@ -93,7 +93,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
                 fParent->StopDragging( false );
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
+        void    HandleExtendedEvent(pfGUIControlMod *ctrl, uint32_t event) override
         {
             if( event == pfGUIDraggableMod::kDragging )
             {
@@ -113,7 +113,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
                 fOrigProc->HandleExtendedEvent( ctrl, event );
         }
 
-        virtual void    UserCallback( uint32_t userValue )
+        void    UserCallback(uint32_t userValue) override
         {
             if( fOrigProc != nil )
                 fOrigProc->UserCallback( userValue );

@@ -77,7 +77,7 @@ class pfGameGUIMsg : public plMessage
         CLASSNAME_REGISTER( pfGameGUIMsg );
         GETINTERFACE_ANY( pfGameGUIMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr) 
+        void Read(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgRead( s, mgr ); 
             s->ReadLE( &fCommand );
@@ -88,7 +88,7 @@ class pfGameGUIMsg : public plMessage
             fAge = s->ReadSafeString();
         }
         
-        virtual void Write(hsStream* s, hsResMgr* mgr) 
+        void Write(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgWrite( s, mgr ); 
             s->WriteLE( fCommand );

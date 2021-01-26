@@ -358,8 +358,8 @@ public:
     class StubbedCallback : public Callback
     {
     public:
-        void OperationStarted( uint32_t context ) {}
-        void OperationComplete( uint32_t context, int resultCode ) {}
+        void OperationStarted(uint32_t context) override { }
+        void OperationComplete(uint32_t context, int resultCode) override { }
     };
 
     // Message handler for unsolicited msgs or registered for specific msg types.

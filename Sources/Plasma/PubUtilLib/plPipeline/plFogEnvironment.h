@@ -115,8 +115,8 @@ class plFogEnvironment : public hsKeyedObject
         // Gets exp or exp^2 pipeline (DX) specific parameters.
         void    GetPipelineParams( float *density, hsColorRGBA *color ) const;
 
-        virtual void Read(hsStream *s, hsResMgr *mgr);
-        virtual void Write(hsStream *s, hsResMgr *mgr);
+        void Read(hsStream *s, hsResMgr *mgr) override;
+        void Write(hsStream *s, hsResMgr *mgr) override;
 };
 
 #endif //_plFogEnvironment_h

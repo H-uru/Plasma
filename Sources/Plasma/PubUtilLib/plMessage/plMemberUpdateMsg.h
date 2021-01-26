@@ -59,8 +59,8 @@ public:
    plMemberUpdateMsg() { SetBCastFlag( kBCastByExactType ); }
 
    // IO 
-   void Read(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgRead(stream, mgr); }
-   void Write(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgWrite(stream, mgr); }
+   void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream, mgr); }
+   void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream, mgr); }
 };
 
 #endif      // plMemberUpdateMsg

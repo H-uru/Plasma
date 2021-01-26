@@ -71,14 +71,14 @@ class pfBackdoorMsg : public plMessage
         CLASSNAME_REGISTER( pfBackdoorMsg );
         GETINTERFACE_ANY( pfBackdoorMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr) 
+        void Read(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgRead( s, mgr ); 
             fTarget = s->ReadSafeString();
             fString = s->ReadSafeString();
         }
         
-        virtual void Write(hsStream* s, hsResMgr* mgr) 
+        void Write(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgWrite( s, mgr ); 
             s->WriteSafeString(fTarget);

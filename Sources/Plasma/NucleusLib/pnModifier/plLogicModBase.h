@@ -76,7 +76,7 @@ protected:
     plNotifyMsg*                    fNotify;
     bool                            fDisabled;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return false;}
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
     void IUpdateSharedState(bool triggered) const;
     void IHandleArbitration(class plServerReplyMsg* msg);
     bool IEvalCounter();
@@ -93,11 +93,11 @@ public:
     CLASSNAME_REGISTER( plLogicModBase );
     GETINTERFACE_ANY( plLogicModBase, plSingleModifier );
 
-    void AddTarget(plSceneObject* so);
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void AddTarget(plSceneObject* so) override;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     virtual bool VerifyConditions(plMessage* msg) { return true;}
 
     virtual void Reset(bool bCounterReset);

@@ -89,14 +89,14 @@ class pfGUIListBoxMod : public pfGUIControlMod
         hsTArray<int16_t>                 fWrapStartIdxs;
 
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
         void    ICalcScrollRange();
         void    ICalcWrapStarts();
 
-        virtual void    IUpdate();
-        virtual void    IPostSetUpDynTextMap();
-        virtual uint32_t  IGetDesiredCursor() const;
+        void    IUpdate() override;
+        void    IPostSetUpDynTextMap() override;
+        uint32_t  IGetDesiredCursor() const override;
 
         int32_t   IGetItemFromPoint( hsPoint3 &mousePt );
         void    IFindSelectionRange( int32_t *min, int32_t *max );
@@ -138,23 +138,23 @@ class pfGUIListBoxMod : public pfGUIControlMod
             kRefScrollCtrl = kRefDerivedStart
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseHover(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDblClick(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
+        bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;
 
-        virtual bool    FilterMousePosition( hsPoint3 &mousePt );
+        bool    FilterMousePosition(hsPoint3 &mousePt) override;
 
-        virtual void PurgeDynaTextMapImage();
+        void PurgeDynaTextMapImage() override;
 
         // Returns selected element. Only valid for kSingleSelect list boxes
         int32_t   GetSelection() { return fSingleSelElement; }
@@ -169,9 +169,9 @@ class pfGUIListBoxMod : public pfGUIControlMod
         virtual int32_t   GetScrollRange();
 
 
-        void    Refresh() { IUpdate(); }
+        void    Refresh() override { IUpdate(); }
 
-        virtual void        SetColorScheme( pfGUIColorScheme *newScheme );
+        void        SetColorScheme(pfGUIColorScheme *newScheme) override;
 
         // Element manipulation
 

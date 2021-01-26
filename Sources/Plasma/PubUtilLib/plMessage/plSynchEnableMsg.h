@@ -60,8 +60,8 @@ public:
     CLASSNAME_REGISTER( plSynchEnableMsg);
     GETINTERFACE_ANY( plSynchEnableMsg, plMessage );    
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif  // plSynchEnableMsg_h

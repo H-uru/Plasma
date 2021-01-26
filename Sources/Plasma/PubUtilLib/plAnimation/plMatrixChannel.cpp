@@ -947,7 +947,7 @@ public:
     void SetTarget(hsPoint3 &worldPoint);
 
 private:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
     void ISolve();
     // The other bone involved in the IK solution
     plIK2Applicator *fOtherBone;

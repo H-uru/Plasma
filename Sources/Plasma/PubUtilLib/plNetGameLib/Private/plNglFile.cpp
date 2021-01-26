@@ -130,12 +130,12 @@ struct BuildIdRequestTrans : NetFileTrans {
         void *                              param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -157,12 +157,12 @@ struct ManifestRequestTrans : NetFileTrans {
         unsigned                            buildId
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -186,12 +186,12 @@ struct DownloadRequestTrans : NetFileTrans {
         unsigned                            buildId
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -208,7 +208,7 @@ struct RcvdFileDownloadChunkTrans : NetNotifyTrans {
           bytes(), data(), writer()
     { }
     ~RcvdFileDownloadChunkTrans ();
-    void Post ();
+    void Post() override;
 };
 
 

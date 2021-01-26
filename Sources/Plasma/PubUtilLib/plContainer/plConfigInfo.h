@@ -214,7 +214,7 @@ class plCmdLineConfigSource : public plConfigSource
     char ** fArgv;
     ST::string fMySection;
 protected:
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
 public:
     plCmdLineConfigSource(int argc, char ** argv, const char * mySection="CmdLine");
 };
@@ -227,7 +227,7 @@ class plEnvConfigSource : public plConfigSource
     char ** fEnvp;
     ST::string fMySection;
 protected:
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
 public:
     plEnvConfigSource(char ** envp, const char * mySection="Environment");
 };
@@ -239,8 +239,8 @@ class plIniConfigSource : public plConfigSource
 {
 protected:
     ST::string fFileName;
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
-    bool WriteOutOf(plConfigInfo & configInfo);
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
+    bool WriteOutOf(plConfigInfo & configInfo) override;
 public:
     plIniConfigSource(const char * iniFileName);
 };
@@ -253,8 +253,8 @@ class plIniStreamConfigSource : public plConfigSource
 {
 protected:
     hsStream * fStream;
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
-    bool WriteOutOf(plConfigInfo & configInfo);
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
+    bool WriteOutOf(plConfigInfo & configInfo) override;
 public:
     plIniStreamConfigSource(hsStream * stream);
 };
@@ -267,9 +267,9 @@ class plIniNoSectionsConfigSource : public plConfigSource
 {
     ST::string fFileName;
 protected:
-    bool ReadString(const ST::string & in);
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
-    bool WriteOutOf(plConfigInfo & configInfo);
+    bool ReadString(const ST::string & in) override;
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
+    bool WriteOutOf(plConfigInfo & configInfo) override;
 public:
     plIniNoSectionsConfigSource(const char * iniFileName);
 };
@@ -283,8 +283,8 @@ class plIniSectionConfigSource : public plIniConfigSource
         Sections;
 protected:
     Sections    fSections;
-    bool ReadPair(ST::string & key, ST::string & value);
-    bool ReadSubSource( const char * name );
+    bool ReadPair(ST::string & key, ST::string & value) override;
+    bool ReadSubSource(const char * name) override;
 public:
     plIniSectionConfigSource(const char * iniFileName, std::vector<ST::string> & sections);
 };
@@ -295,8 +295,8 @@ public:
 class plDatabaseConfigSource : public plConfigSource
 {
 protected:
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
-    bool WriteOutOf(plConfigInfo & configInfo);
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
+    bool WriteOutOf(plConfigInfo & configInfo) override;
 public:
     plDatabaseConfigSource(const char * connectString);
 };
@@ -308,7 +308,7 @@ class plDebugConfigSource : public plConfigSource
 {
 protected:
     ST::string fFileName;
-    bool WriteOutOf(plConfigInfo & configInfo);
+    bool WriteOutOf(plConfigInfo & configInfo) override;
 public:
     plDebugConfigSource(){}
 };
@@ -319,7 +319,7 @@ class plWWWAuthenticateConfigSource : public plConfigSource
 {
     const ST::string& fAuth;
 protected:
-    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd);
+    bool ReadInto(plConfigInfo & configInfo, KAddValueMode mode=kAlwaysAdd) override;
 public:
     plWWWAuthenticateConfigSource(const ST::string& auth);
 };
@@ -428,8 +428,8 @@ public:
     : plConfigValueBase(configName, configGroup)
     {}
     ST::string fConfigValue;
-    void ISetValue(const ST::string & value) { fConfigValue=value;}
-    ST::string IGetValue() const { return fConfigValue;}
+    void ISetValue(const ST::string & value) override { fConfigValue=value; }
+    ST::string IGetValue() const override { return fConfigValue; }
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -454,8 +454,8 @@ public:
         plConfigValueBase * item5=nil,
         plConfigValueBase * item6=nil,
         plConfigValueBase * item7=nil);
-    void ISetValue(const ST::string & value);
-    ST::string IGetValue() const;
+    void ISetValue(const ST::string & value) override;
+    ST::string IGetValue() const override;
     void AddItem(plConfigValueBase * item);
     void AddItems(
         plConfigValueBase * item1=nil,
@@ -477,8 +477,8 @@ public:
     : fConfigurable(item)
     {}
     void Set(plConfigValueBase * item) { fConfigurable=item;}
-    void ISetValue(const ST::string & value) { fConfigurable->ISetValue(value);}
-    ST::string IGetValue() const { return fConfigurable->IGetValue();}
+    void ISetValue(const ST::string & value) override { fConfigurable->ISetValue(value); }
+    ST::string IGetValue() const override { return fConfigurable->IGetValue(); }
 };
 
 ////////////////////////////////////////////////////////////////////

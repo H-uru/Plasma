@@ -90,7 +90,7 @@ class pfConsoleInputInterface : public plInputInterface
 
 
 
-        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd )
+        bool    IHandleCtrlCmd(plCtrlCmd *cmd) override
         {
             if( cmd->fControlCode == B_SET_CONSOLE_MODE )
             {
@@ -137,11 +137,11 @@ class pfConsoleInputInterface : public plInputInterface
             // RestoreDefaultKeyMappings()!!!!
         }
 
-        virtual uint32_t  GetPriorityLevel() const          { return kConsolePriority; }
-        virtual uint32_t  GetCurrentCursorID() const        { return kCursorHidden; }
-        virtual bool    HasInterestingCursorID() const    { return false; }
+        uint32_t  GetPriorityLevel() const override { return kConsolePriority; }
+        uint32_t  GetCurrentCursorID() const override { return kCursorHidden; }
+        bool    HasInterestingCursorID() const override { return false; }
 
-        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
+        bool    InterpretInputEvent(plInputEventMsg *pMsg) override
         {
             plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
             if( keyMsg != nil )
@@ -156,11 +156,11 @@ class pfConsoleInputInterface : public plInputInterface
             return false;
         }
 
-        virtual void    RefreshKeyMap()
+        void    RefreshKeyMap() override
         {
         }
 
-        virtual void    RestoreDefaultKeyMappings()
+        void    RestoreDefaultKeyMappings() override
         {
             if( fControlMap != nil )
             {

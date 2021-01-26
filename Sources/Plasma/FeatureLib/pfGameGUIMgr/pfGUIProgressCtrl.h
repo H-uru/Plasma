@@ -65,7 +65,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
         bool            fAnimTimesCalced;
         bool            fPlaySound;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
         bool            ICalcAnimTimes();
 
@@ -86,14 +86,14 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
             kReverseValues = kDerivedFlagsStart
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
 
-        virtual void    SetCurrValue( float v );
+        void    SetCurrValue(float v) override;
         virtual void    AnimateToPercentage( float percent );
 
         enum SoundEvents

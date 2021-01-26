@@ -126,8 +126,8 @@ public:
     CLASSNAME_REGISTER( plSceneObject );
     GETINTERFACE_ANY( plSceneObject, plSynchedObject );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual const plDrawInterface*              GetDrawInterface() const { return fDrawInterface; }
     virtual const plSimulationInterface*        GetSimulationInterface() const { return fSimulationInterface; }
@@ -143,14 +143,14 @@ public:
     const plModifier*       GetModifier(int i) const { return fModifiers[i]; }
     const plModifier*       GetModifierByType(uint16_t classIdx) const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     virtual bool Eval(double secs, float del);
 
     void                    SetSceneNode(plKey newNode);
     plKey                   GetSceneNode() const;
 
     // Network only strange function. Do not emulate or generalize this functionality.
-    virtual void SetNetGroup(plNetGroupId netGroup);
+    void SetNetGroup(plNetGroupId netGroup) override;
 
     virtual void    ReleaseData();
 
@@ -163,7 +163,7 @@ public:
     hsMatrix44 GetLocalToParent() const;
     hsMatrix44 GetParentToLocal() const;
 
-    virtual bool IsFinal();  // "is ready to process Loads"  
+    bool IsFinal() override;  // "is ready to process Loads"
 
     // Export only
     virtual void SetDrawInterface(plDrawInterface* di);

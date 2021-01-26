@@ -117,11 +117,11 @@ public:
 
     void SetControlMode(int i) { fControlMode = i; }
 
-    const char* GetInputName() { return "keyboard"; }
-    void HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0);
-    virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd);
+    const char* GetInputName() override { return "keyboard"; }
+    void HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0) override;
+    void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) override;
     virtual bool IsCapsLockKeyOn();
-    virtual void Shutdown();
+    void Shutdown() override;
 
     static bool     IgnoreCapsLock() { return fIgnoreCapsLock; }
     static void     IgnoreCapsLock(bool ignore) { fIgnoreCapsLock = ignore; }
@@ -161,7 +161,7 @@ public:
     plMouseDevice();
     ~plMouseDevice();
 
-    const char* GetInputName() { return "mouse"; }
+    const char* GetInputName() override { return "mouse"; }
 
     bool    HasControlFlag(int f) const { return fControlFlags.IsBitSet(f); }
     void    SetControlFlag(int f) 
@@ -177,7 +177,7 @@ public:
     float GetCursorOpacity() { return fOpacity; }
     void SetDisplayResolution(float Width, float Height);
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
     static plMouseDevice* Instance() { return plMouseDevice::fInstance; }
     

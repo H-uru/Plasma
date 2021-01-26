@@ -82,8 +82,8 @@ public:
     virtual void QueueTask(plAvTask *task);
     virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) {}
     
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
     virtual bool MsgReceive(plMessage *msg);
     
 protected:

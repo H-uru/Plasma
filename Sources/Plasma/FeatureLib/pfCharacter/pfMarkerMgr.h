@@ -89,7 +89,7 @@ public:
     static pfMarkerMgr* Instance();
     static void Shutdown();
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void AddMarker(const struct hsPoint3& pos, uint32_t id, bool justCreated);
     void RemoveMarker(uint32_t id);

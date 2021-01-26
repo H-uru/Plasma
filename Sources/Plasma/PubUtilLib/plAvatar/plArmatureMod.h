@@ -109,12 +109,12 @@ public:
     CLASSNAME_REGISTER( plArmatureModBase );
     GETINTERFACE_ANY( plArmatureModBase, plAGMasterMod );   
     
-    virtual bool    MsgReceive(plMessage* msg);
-    virtual void    AddTarget(plSceneObject* so);   
-    virtual void    RemoveTarget(plSceneObject* so);
-    virtual bool    IEval(double secs, float del, uint32_t dirty);
-    virtual void    Read(hsStream *stream, hsResMgr *mgr);
-    virtual void    Write(hsStream *stream, hsResMgr *mgr);
+    bool    MsgReceive(plMessage* msg) override;
+    void    AddTarget(plSceneObject* so) override;
+    void    RemoveTarget(plSceneObject* so) override;
+    bool    IEval(double secs, float del, uint32_t dirty) override;
+    void    Read(hsStream *stream, hsResMgr *mgr) override;
+    void    Write(hsStream *stream, hsResMgr *mgr) override;
     
     plMatrixDifferenceApp *GetRootAnimator() { return fRootAnimator; }
     plPhysicalControllerCore* GetController() const { return fController; }
@@ -126,7 +126,7 @@ public:
     plArmatureBrain *GetCurrentBrain() const;
     plDrawable *FindDrawable() const;
     virtual void LeaveAge();
-    virtual bool IsFinal();
+    bool IsFinal() override;
 
     // LOD stuff
     void    AdjustLOD();                // see if we need to switch to a different resolution
@@ -205,15 +205,15 @@ public:
     CLASSNAME_REGISTER( plArmatureMod );
     GETINTERFACE_ANY( plArmatureMod, plArmatureModBase );
     
-    virtual bool    MsgReceive(plMessage* msg);
-    virtual void    AddTarget(plSceneObject* so);
-    virtual void    RemoveTarget(plSceneObject* so);
-    virtual bool    IEval(double secs, float del, uint32_t dirty);
-    virtual void    Read(hsStream *stream, hsResMgr *mgr);
-    virtual void    Write(hsStream *stream, hsResMgr *mgr);
+    bool    MsgReceive(plMessage* msg) override;
+    void    AddTarget(plSceneObject* so) override;
+    void    RemoveTarget(plSceneObject* so) override;
+    bool    IEval(double secs, float del, uint32_t dirty) override;
+    void    Read(hsStream *stream, hsResMgr *mgr) override;
+    void    Write(hsStream *stream, hsResMgr *mgr) override;
 
-    virtual bool ValidatePhysics();
-    virtual bool ValidateMesh();
+    bool ValidatePhysics() override;
+    bool ValidateMesh() override;
 
     // Get or set the position of the avatar in simulation space.  Set any
     // arguments you don't care about to nil.
@@ -231,7 +231,7 @@ public:
     virtual void Spawn(double timeNow);
     virtual void SpawnAt(int which, double timeNow);
     virtual void EnterAge(bool reSpawn);
-    virtual void LeaveAge();
+    void LeaveAge() override;
     virtual void PanicLink(bool playLinkOutAnim = true);
     virtual void PersonalLink();
 
@@ -283,7 +283,7 @@ public:
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
     void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
-    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags );
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
     bool DirtyPhysicalSynchState(uint32_t synchFlags);
     plClothingOutfit *GetClothingOutfit() const { return fClothingOutfit; }
     plClothingSDLModifier *GetClothingSDLMod() const { return fClothingSDLMod; }
@@ -376,9 +376,9 @@ public:
     ST::string GetUserStr() const { return fUserStr; }
 
 protected:
-    virtual void IFinalize();   
-    virtual void ICustomizeApplicator();
-    virtual void ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc);
+    void IFinalize() override;
+    void ICustomizeApplicator() override;
+    void ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc) override;
     
     void    NetworkSynch(double timeNow, int force = 0);
     bool    IHandleControlMsg(plControlEventMsg* pMsg);
@@ -464,8 +464,8 @@ public:
     CLASSNAME_REGISTER( plArmatureLODMod );
     GETINTERFACE_ANY( plArmatureLODMod, plArmatureMod );
 
-    virtual void    Read(hsStream *stream, hsResMgr *mgr);
-    virtual void    Write(hsStream *stream, hsResMgr *mgr);
+    void    Read(hsStream *stream, hsResMgr *mgr) override;
+    void    Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 class plAvBoneMap

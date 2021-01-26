@@ -51,7 +51,7 @@ protected:
 
     hsTArray<plConditionalObject*>  fConditionList;
 
-    virtual void PreTrigger(bool netRequest);
+    void PreTrigger(bool netRequest) override;
 public:
     plLogicModifier();
     ~plLogicModifier();
@@ -59,15 +59,15 @@ public:
     CLASSNAME_REGISTER( plLogicModifier );
     GETINTERFACE_ANY( plLogicModifier, plLogicModBase );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    virtual void RequestTrigger(bool netRequest=false);
-    virtual bool VerifyConditions(plMessage* msg);
+    void RequestTrigger(bool netRequest=false) override;
+    bool VerifyConditions(plMessage* msg) override;
     void AddCondition(plConditionalObject* c);
-    virtual void Reset(bool bCounterReset);
+    void Reset(bool bCounterReset) override;
 
     void VolumeIgnoreExtraEnters(bool ignore = true); // hack for garrison
     void VolumeNoArbitration(bool noArbitration = true);

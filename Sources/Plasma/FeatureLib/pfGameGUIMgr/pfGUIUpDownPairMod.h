@@ -70,8 +70,8 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
         pfUpDownBtnProc *fButtonProc;
 
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
-        virtual void    IUpdate();
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
+        void    IUpdate() override;
 
     public:
 
@@ -82,15 +82,15 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
         GETINTERFACE_ANY( pfGUIUpDownPairMod, pfGUIValueCtrl );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
 
         virtual void    Update();
 
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    SetRange( float min, float max );
-        virtual void    SetCurrValue( float v );
+        void    SetRange(float min, float max) override;
+        void    SetCurrValue(float v) override;
 
         /// Export ONLY
 

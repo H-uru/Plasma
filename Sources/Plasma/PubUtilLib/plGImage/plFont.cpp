@@ -1634,7 +1634,7 @@ class plBDFLookForEndCharParser : public plBDFSectParser
     public:
         plBDFLookForEndCharParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line );
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override;
 };
 
 inline uint8_t    iHexCharToByte( char c )
@@ -1692,7 +1692,7 @@ class plBDFCharsParser : public plBDFSectParser
               fRowsLeft(), fCharacter(), fBitmap(), fBytesWide(), fBMapStride()
         { }
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "ENDFONT" ) == 0 )
             {
@@ -1835,7 +1835,7 @@ class plBDFLookForCharParser : public plBDFSectParser
     public:
         plBDFLookForCharParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "CHARS" ) == 0 )
             {
@@ -1852,7 +1852,7 @@ class plBDFPropertiesParser : public plBDFSectParser
     public:
         plBDFPropertiesParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             // Note: the properties section is entirely optional and arbitrary, but we
             // parse it in case we can get more accurate info about the font name and props
@@ -1880,7 +1880,7 @@ class plBDFHeaderParser : public plBDFSectParser
     public:
         plBDFHeaderParser( plFont &myFont, plBDFConvertCallback *callback ) : plBDFSectParser( myFont, callback ) {}
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "STARTFONT" ) == 0 )
             {
@@ -1987,7 +1987,7 @@ class plBDFCheckDimsParser : public plBDFSectParser
 
         plBDFCheckDimsParser( plFont &myFont ) : plBDFSectParser( myFont, nil ) { fMaxWidth = fMaxHeight = fNumChars = fTotalHeight = 0; fSkipNext = false; fMaxChar = 0; }
 
-        virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
+        plBDFSectParser *ParseKeyword(const char *keyword, plLineParser &line) override
         {
             if( strcmp( keyword, "ENDFONT" ) == 0 )
             {

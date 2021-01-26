@@ -61,8 +61,8 @@ public:
     bool fLoaded;
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  fLoaded = stream->ReadBool(); }
-    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); stream->WriteBool(fLoaded); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream, mgr);  fLoaded = stream->ReadBool(); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream, mgr); stream->WriteBool(fLoaded); }
 };
 
 // A msg sent locally when panding pages are done loaded and it's now ok to join the game
@@ -75,8 +75,8 @@ public:
     plAgeLoaded2Msg() { SetBCastFlag(kBCastByType); }
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  }
-    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream, mgr);  }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream, mgr); }
 };
 
 //
@@ -94,8 +94,8 @@ public:
     bool fLoading;
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr);  fLoading = stream->ReadBool(); }
-    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); stream->WriteBool(fLoading); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream, mgr);  fLoading = stream->ReadBool(); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream, mgr); stream->WriteBool(fLoading); }
 };
 
 //
@@ -110,8 +110,8 @@ public:
    plInitialAgeStateLoadedMsg() { SetBCastFlag(kBCastByType);   }
 
    // IO 
-   void Read(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgRead(stream, mgr); }
-   void Write(hsStream* stream, hsResMgr* mgr)  {   plMessage::IMsgWrite(stream, mgr); }
+   void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream, mgr); }
+   void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream, mgr); }
 };
 
 #endif      // plAgeLoadedMsg

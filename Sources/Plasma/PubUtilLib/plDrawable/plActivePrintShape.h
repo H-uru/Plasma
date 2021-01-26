@@ -64,10 +64,10 @@ public:
     CLASSNAME_REGISTER( plActivePrintShape );
     GETINTERFACE_ANY( plActivePrintShape, plPrintShape );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // Export construction
     void        AddDecalKey(const plKey& k);

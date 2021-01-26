@@ -106,7 +106,7 @@ public:
 
     void Init();
     void Shutdown();
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     bool LoadAge(const ST::string& ageName);
     bool UnloadAge()                              { return IUnloadAge(); }
     void UpdateAge(const ST::string& ageName);

@@ -123,7 +123,7 @@ public:
 
     uint32_t                  GetNumNodes() const { return fNodeList.GetCount(); }
 
-    virtual void            Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const;
+    void                    Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const override;
     virtual bool            BoundsVisible(const hsBounds3Ext& bnd) const;
     virtual bool            SphereVisible(const hsPoint3& center, float rad) const;
 

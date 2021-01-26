@@ -60,10 +60,10 @@ public:
     CLASSNAME_REGISTER( plPickedConditionalObject );
     GETINTERFACE_ANY( plPickedConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    void Evaluate() { }
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
 };
 

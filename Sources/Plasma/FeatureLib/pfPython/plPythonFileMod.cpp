@@ -253,7 +253,7 @@ class pfPythonKeyCatcher : public plDefaultKeyCatcher
             : fMod(mod)
         { }
 
-        virtual void HandleKeyEvent(plKeyEventMsg* msg)
+        void HandleKeyEvent(plKeyEventMsg* msg) override
         {
             fMod->ICallScriptMethod(plPythonFileMod::kfunc_OnDefaultKeyCaught,
                                     msg->GetKeyChar(), msg->GetKeyDown(),

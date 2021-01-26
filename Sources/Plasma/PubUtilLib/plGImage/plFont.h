@@ -251,8 +251,8 @@ class plFont : public hsKeyedObject
         CLASSNAME_REGISTER( plFont );
         GETINTERFACE_ANY( plFont, hsKeyedObject );
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
         ST::string  GetFace() const { return fFace; }
         uint8_t     GetSize() const { return fSize; }

@@ -78,8 +78,8 @@ public:
     bool BouncePoint(hsPoint3 &pos, hsVector3 &velocity, float bounce, float friction) const;
 
     inline bool TestPlane(const hsPoint3 &pos, const hsPlane3 &plane) const; // Is the point inside the plane?
-    virtual void Read(hsStream* s, hsResMgr *mgr);
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
     //virtual bool MsgReceive(plMessage* msg);
     
 protected:

@@ -141,7 +141,7 @@ public:
         : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ),
             fAgeName( ageName ) {}
 
-    virtual bool  EatKey( const plKey& key )
+    bool  EatKey(const plKey& key) override
     {
         if( key->GetUoid().GetClassType() == fClassType &&
             NameMatches( fObjName.c_str(), key->GetUoid().GetObjectName().c_str(), fSubstr ) )
@@ -153,7 +153,7 @@ public:
         return true;
     }
 
-    virtual bool  EatPage( plRegistryPageNode *pageNode )
+    bool  EatPage(plRegistryPageNode *pageNode) override
     {
 #ifndef _DEBUG
         try
@@ -285,7 +285,7 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
         plKeyFinderIterator( uint16_t classType, const ST::string &obName, std::vector<plKey>& foundKeys )
                 : fClassType( classType ), fObjName( obName ), fFoundKeys( foundKeys ) { }
 
-        virtual bool  EatKey( const plKey& key )
+        bool  EatKey(const plKey& key) override
         {
             if( key->GetUoid().IsValid() && key->GetUoid().GetClassType() == fClassType &&
                 key->GetUoid().GetObjectName().contains( fObjName ) )
@@ -296,7 +296,7 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
             return true;
         }
 
-        virtual bool EatPage( plRegistryPageNode *page )
+        bool EatPage(plRegistryPageNode *page) override
         {
             bool ret = page->IterateKeys( this );
             return ret;
@@ -345,7 +345,7 @@ class plPageFinder : public plRegistryPageIterator
         plPageFinder( plRegistryPageNode **page, const ST::string &ageS, const ST::string &pageS ) : fPagePtr( page ), fFindString( pageS ), fAgeString( ageS )
         { *fPagePtr = nil; }
 
-        virtual bool  EatPage( plRegistryPageNode *node )
+        bool  EatPage(plRegistryPageNode *node) override
         {
             const plPageInfo    &info = node->GetPageInfo();
 

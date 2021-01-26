@@ -124,7 +124,7 @@ public:
 
     virtual void                Init(const hsKeyedObject* owner);
 
-    virtual bool                MsgReceive(plMessage* msg);
+    bool                MsgReceive(plMessage* msg) override;
 
 };
 

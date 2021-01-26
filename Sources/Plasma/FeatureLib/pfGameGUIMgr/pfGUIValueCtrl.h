@@ -66,8 +66,8 @@ class pfGUIValueCtrl : public pfGUIControlMod
         CLASSNAME_REGISTER( pfGUIValueCtrl );
         GETINTERFACE_ANY( pfGUIValueCtrl, pfGUIControlMod );
 
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         virtual float    GetCurrValue() { return fValue; }
         virtual void        SetCurrValue( float v );

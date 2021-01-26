@@ -62,8 +62,8 @@ public:
     CLASSNAME_REGISTER( plShadowCastMsg );
     GETINTERFACE_ANY( plShadowCastMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Non-networkable"); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Non-networkable"); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Non-networkable"); }
 
     plPipeline*     Pipeline() const { return fPipe; }
     plShadowCaster* Caster() const { return fCaster; }

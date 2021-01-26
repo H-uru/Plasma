@@ -70,11 +70,11 @@ public:
     CLASSNAME_REGISTER( plAvatarFootMsg );
     GETINTERFACE_ANY( plAvatarFootMsg, plEventCallbackMsg );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr)
+    void Read(hsStream *stream, hsResMgr *mgr) override
     {
         hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
     }
-    virtual void Write(hsStream *stream, hsResMgr *mgr)
+    void Write(hsStream *stream, hsResMgr *mgr) override
     {
         hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
     }

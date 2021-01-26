@@ -80,12 +80,12 @@ public:
     bool DecompressedOk() { return fDecompressedOk; }
 
     // You can't use these
-    virtual bool     AtEnd();
-    virtual uint32_t Read(uint32_t byteCount, void* buffer);
-    virtual void     Skip(uint32_t deltaByteCount);
-    virtual void     Rewind();
-    virtual void     FastFwd();
-    virtual uint32_t GetEOF();
+    bool     AtEnd() override;
+    uint32_t Read(uint32_t byteCount, void* buffer) override;
+    void     Skip(uint32_t deltaByteCount) override;
+    void     Rewind() override;
+    void     FastFwd() override;
+    uint32_t GetEOF() override;
 };
 
 #endif // plZlibStream_h_inc

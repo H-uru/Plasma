@@ -63,16 +63,16 @@ protected:
     
     plResponderModifier* fResponder;
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 public:
     CLASSNAME_REGISTER( plResponderSDLModifier );
     GETINTERFACE_ANY( plResponderSDLModifier, plSDLModifier);
         
     plResponderSDLModifier() : fResponder(nil) {}
 
-    const char* GetSDLName() const { return kSDLResponder; }
-    plKey GetStateOwnerKey() const;
+    const char* GetSDLName() const override { return kSDLResponder; }
+    plKey GetStateOwnerKey() const override;
     
     plResponderModifier* GetResponder() const { return fResponder; }
     void SetResponder(plResponderModifier* r) { fResponder=r; AddTarget(nil); }

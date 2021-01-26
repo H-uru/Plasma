@@ -67,10 +67,10 @@ protected:
     void IPutBlends(plStateDataRecord* state, plAGMasterMod* objAGMaster);
     void ISetCurrentBlends(const plStateDataRecord* state, plAGMasterMod* objAGMaster);
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 
-    uint32_t IApplyModFlags(uint32_t sendFlags);
+    uint32_t IApplyModFlags(uint32_t sendFlags) override;
 
 public:
     CLASSNAME_REGISTER( plAGMasterSDLModifier);
@@ -79,7 +79,7 @@ public:
     plAGMasterSDLModifier() {}
     ~plAGMasterSDLModifier() {}
         
-    const char* GetSDLName() const { return kSDLAGMaster; }
+    const char* GetSDLName() const override { return kSDLAGMaster; }
 };
 
 #endif  // plAGMasterSDLModifier_inc

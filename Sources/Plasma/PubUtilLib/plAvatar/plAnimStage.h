@@ -233,8 +233,8 @@ public:
     void DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     // STANDARD PLASMA PROTOCOL
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     virtual void SaveAux(hsStream *stream, hsResMgr *mgr);
     virtual void LoadAux(hsStream *stream, hsResMgr *mgr, double time);

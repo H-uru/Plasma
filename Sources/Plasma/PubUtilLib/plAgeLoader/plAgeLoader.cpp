@@ -328,7 +328,7 @@ class plUnloadAgeCollector : public plRegistryPageIterator
 
         plUnloadAgeCollector(const ST::string& a) : fAge( a ) {}
 
-        virtual bool EatPage( plRegistryPageNode *page )
+        bool EatPage(plRegistryPageNode *page) override
         {
             if ( !fAge.empty() && page->GetPageInfo().GetAge().compare_i(fAge) == 0 )
             {

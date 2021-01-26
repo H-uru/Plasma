@@ -64,12 +64,12 @@ public:
     CLASSNAME_REGISTER( plObjectInBoxConditionalObject );
     GETINTERFACE_ANY( plObjectInBoxConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    void Evaluate() { }
-    void Reset() { SetSatisfied(false); }
-    virtual bool Satisfied() { return true; }
-    virtual bool Verify(plMessage* msg);
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
+    bool Satisfied() override { return true; }
+    bool Verify(plMessage* msg) override;
 
 };
 
@@ -110,8 +110,8 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
 
-    void Evaluate() { }
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
     bool Satisfied() override;
     void SetType(int i) { fType = i; }
 
@@ -131,7 +131,7 @@ public:
     CLASSNAME_REGISTER(plVolumeSensorConditionalObjectNoArbitration);
     GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plVolumeSensorConditionalObject);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

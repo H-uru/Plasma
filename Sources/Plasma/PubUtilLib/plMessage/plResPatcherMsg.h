@@ -59,8 +59,8 @@ public:
     CLASSNAME_REGISTER(plResPatcherMsg);
     GETINTERFACE_ANY(plResPatcherMsg, plMessage);
 
-    void Read (hsStream *, hsResMgr *) { FATAL("What the hell are you doing?"); }
-    void Write (hsStream *, hsResMgr *) { FATAL("What the hell are you doing?"); }
+    void Read (hsStream *, hsResMgr *) override { FATAL("What the hell are you doing?"); }
+    void Write (hsStream *, hsResMgr *) override { FATAL("What the hell are you doing?"); }
 
     ST::string GetError() const { return fError; }
     bool Success() const { return fSuccess; }

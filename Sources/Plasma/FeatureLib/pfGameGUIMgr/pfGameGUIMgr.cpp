@@ -91,21 +91,21 @@ class pfGameUIInputInterface : public plInputInterface
         bool    fHaveInterestingCursor;
         uint32_t  fCurrentCursor;
 
-        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd );
-        virtual bool    IControlCodeEnabled( ControlEventCode code );
+        bool    IHandleCtrlCmd(plCtrlCmd *cmd) override;
+        bool    IControlCodeEnabled(ControlEventCode code) override;
 
     public:
 
         pfGameUIInputInterface( pfGameGUIMgr * const mgr );
 
-        virtual uint32_t  GetPriorityLevel() const { return kGUISystemPriority; }
-        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
-        virtual uint32_t  GetCurrentCursorID() const;
-        virtual float GetCurrentCursorOpacity() const;
-        virtual bool    HasInterestingCursorID() const { return fHaveInterestingCursor; }
+        uint32_t  GetPriorityLevel() const override { return kGUISystemPriority; }
+        bool    InterpretInputEvent(plInputEventMsg *pMsg) override;
+        uint32_t  GetCurrentCursorID() const override;
+        float GetCurrentCursorOpacity() const override;
+        bool    HasInterestingCursorID() const override { return fHaveInterestingCursor; }
         virtual bool    SwitchInterpretOrder() const { return true; }
 
-        virtual void    RestoreDefaultKeyMappings()
+        void    RestoreDefaultKeyMappings() override
         {
             if( fControlMap != nil )
             {

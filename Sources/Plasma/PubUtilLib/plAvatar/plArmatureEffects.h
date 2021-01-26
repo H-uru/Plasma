@@ -72,10 +72,10 @@ public:
     CLASSNAME_REGISTER( plArmatureEffectsMgr );
     GETINTERFACE_ANY( plArmatureEffectsMgr, hsKeyedObject );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     uint32_t GetNumEffects();
     plArmatureEffect *GetEffect(uint32_t num);
@@ -146,12 +146,12 @@ public:
     CLASSNAME_REGISTER( plArmatureEffectFootSound );
     GETINTERFACE_ANY( plArmatureEffectFootSound, plArmatureEffect );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
-    virtual bool HandleTrigger(plMessage* msg);
-    virtual void Reset();
+    bool MsgReceive(plMessage* msg) override;
+    bool HandleTrigger(plMessage* msg) override;
+    void Reset() override;
     void SetFootType(uint8_t);
 
     enum

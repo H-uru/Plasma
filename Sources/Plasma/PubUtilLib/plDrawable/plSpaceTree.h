@@ -180,8 +180,8 @@ public:
 
     int16_t GetNumLeaves() const { return fNumLeaves; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void HarvestLevel(int level, hsTArray<int16_t>& list) const;
 

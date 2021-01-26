@@ -106,10 +106,10 @@ class plMipmap : public plBitmap
         virtual void    Reset();
 
         // Get the total size in bytes
-        virtual uint32_t  GetTotalSize() const;
+        uint32_t  GetTotalSize() const override;
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        void    Read(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Read(s, mgr); this->Read(s); }
+        void    Write(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Write(s, mgr); this->Write(s); }
 
         virtual uint8_t   GetNumLevels() const { return fNumLevels; }
         virtual uint32_t  GetLevelSize( uint8_t level );        // 0 is the largest
@@ -325,8 +325,8 @@ class plMipmap : public plBitmap
         void        ISetCurrLevelUBorder( uint32_t color );
         void        ISetCurrLevelVBorder( uint32_t color );
 
-        virtual uint32_t  Read( hsStream *s );
-        virtual uint32_t  Write( hsStream *s );
+        uint32_t  Read(hsStream *s) override;
+        uint32_t  Write(hsStream *s) override;
 
         friend class plCubicEnvironmap;
 

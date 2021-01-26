@@ -148,8 +148,8 @@ public:
     CLASSNAME_REGISTER( plAGApplicator );
     GETINTERFACE_ANY( plAGApplicator, plCreatable );
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 
 protected:
     // -- methods --

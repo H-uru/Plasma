@@ -142,7 +142,7 @@ class pfConsole : public hsKeyedObject
         
         static pfConsole * GetInstance ();
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
     
         void    Init( pfConsoleEngine *engine );
         void    Draw( plPipeline *p );

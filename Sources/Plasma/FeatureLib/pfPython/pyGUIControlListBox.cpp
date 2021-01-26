@@ -162,7 +162,7 @@ class pfColorListElement : public pfGUIListText
                 fString1 = nil;
         }
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override
         {
             hsColorRGBA textColor1;
             textColor1 = fTextColor1;
@@ -239,7 +239,7 @@ class pfColorListElement : public pfGUIListText
             return true;
         }
 
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override
         {
             bool wemade_string = false;
             wchar_t* thestring;
@@ -272,7 +272,7 @@ class pfColorListElement : public pfGUIListText
                 delete [] thestring;
         }
 
-        virtual int     CompareTo( pfGUIListElement *rightSide )
+        int     CompareTo(pfGUIListElement *rightSide) override
         {
             return -2;
         }
@@ -293,7 +293,7 @@ class pfListTextInBox : public pfGUIListText
             fJustify = pfGUIListText::kCenter;
         }
 
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override
         {
             *width = textGen->CalcStringWidth( GetText(), height );
             if ( *width < fMinWidth )
@@ -327,7 +327,7 @@ class pfListPictureInBox : public pfGUIListPicture
             fSrcHeight = height;
         }
 
-        virtual bool Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+        bool Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override
         {
             plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
             if( mip != nil )
@@ -357,7 +357,7 @@ class pfListPictureInBox : public pfGUIListPicture
             return true;
         }
 
-        virtual void GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
+        void GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override
         {
             plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
             if( mip == nil )
@@ -394,7 +394,7 @@ class pfListPictureInBoxWithSwatches : public pfListPictureInBox
             fSColor = secondaryColor;
         }
 
-        virtual bool Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
+        bool Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override
         {
             if( !pfListPictureInBox::Draw( textGen, x, y, maxWidth, maxHeight ) )
                 return false;

@@ -60,14 +60,14 @@ public:
     CLASSNAME_REGISTER( plControlEventConditionalObject );
     GETINTERFACE_ANY( plControlEventConditionalObject, plConditionalObject );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    void Evaluate() { }
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
     ControlEventCode fControlEvent;
 

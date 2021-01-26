@@ -52,12 +52,12 @@ public:
     GETINTERFACE_ANY( plAvBrainRideAnimatedPhysical, plArmatureBrain );
     plAvBrainRideAnimatedPhysical() : plAvBrainHuman(false),fMode(kWalking){};
     ~plAvBrainRideAnimatedPhysical();
-    virtual void Activate(plArmatureModBase *avMod);
-    virtual void Deactivate();
-    virtual bool MsgReceive(plMessage *msg);
-    virtual bool LeaveAge();
-    virtual bool Apply(double timeNow, float elapsed);
+    void Activate(plArmatureModBase *avMod) override;
+    void Deactivate() override;
+    bool MsgReceive(plMessage *msg) override;
+    bool LeaveAge() override;
+    bool Apply(double timeNow, float elapsed) override;
 protected:
-    bool IInitAnimations();
+    bool IInitAnimations() override;
     mode fMode;
 };

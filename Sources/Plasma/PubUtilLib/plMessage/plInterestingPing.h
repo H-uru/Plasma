@@ -68,7 +68,7 @@ public:
     uint8_t       fType;
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         stream->ReadLE(&fWeight);
@@ -78,7 +78,7 @@ public:
         fObj = mgr->ReadKey(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLE(fWeight);
@@ -104,12 +104,12 @@ public:
     GETINTERFACE_ANY( plInterestingPing, plMessage );
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
     }

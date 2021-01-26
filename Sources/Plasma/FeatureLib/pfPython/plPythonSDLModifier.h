@@ -90,8 +90,8 @@ protected:
     void ISetItem(const ST::string& key, PyObject* value);
     void IDirtySynchState(const ST::string& name, bool sendImmediate = false);
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 public:
     plPythonSDLModifier(plPythonFileMod* owner);
     ~plPythonSDLModifier();
@@ -99,7 +99,7 @@ public:
     CLASSNAME_REGISTER(plPythonSDLModifier);
     GETINTERFACE_ANY(plPythonSDLModifier, plSDLModifier);
 
-    virtual const char* GetSDLName() const;
+    const char* GetSDLName() const override;
 
     static bool HasSDL(const ST::string& pythonFile);
     // find the Age global SDL guy... if there is one

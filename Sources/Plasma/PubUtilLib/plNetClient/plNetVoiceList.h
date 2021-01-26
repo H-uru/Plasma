@@ -89,8 +89,8 @@ public:
 
     bool CheckForceSynch() { if (fNumUpdates>10) { fNumUpdates=0; return true;} return false; }
 
-    virtual void AddMember(plNetTransportMember* e);
-    virtual void RemoveMember(plNetTransportMember* e);
+    void AddMember(plNetTransportMember* e) override;
+    void RemoveMember(plNetTransportMember* e) override;
 
 };
 
@@ -113,9 +113,9 @@ public:
 
     void UpdateTransportGroup(plNetClientMgr* nc);
 
-    void AddMember(plNetTransportMember* e);
-    void RemoveMember(plNetTransportMember* e);
-    void Clear();
+    void AddMember(plNetTransportMember* e) override;
+    void RemoveMember(plNetTransportMember* e) override;
+    void Clear() override;
 };
 
 #endif  // plNetVoiceList_h

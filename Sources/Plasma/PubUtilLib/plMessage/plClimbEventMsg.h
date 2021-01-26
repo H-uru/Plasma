@@ -53,8 +53,8 @@ public:
     virtual ~plClimbEventMsg() { }
     CLASSNAME_REGISTER(plClimbEventMsg);
     GETINTERFACE_ANY(plClimbEventMsg, plMessage);
-    virtual void Read(hsStream* stream, hsResMgr* mgr){plMessage::IMsgRead(stream,mgr);}
-    virtual void Write(hsStream* stream, hsResMgr* mgr){plMessage::IMsgWrite(stream,mgr);}
+    void Read(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgRead(stream,mgr); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { plMessage::IMsgWrite(stream,mgr); }
 };
 
 #endif // plClimbEventMsg_h_inc

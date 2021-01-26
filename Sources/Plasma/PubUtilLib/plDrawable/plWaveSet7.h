@@ -479,8 +479,8 @@ protected:
     void                IUpdateDecVShader(int t, plPipeline* pipe);
     void                IUpdateDecVShaders(plPipeline* pipe, const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-    virtual int IShoreRef() const { return kRefShore; }
-    virtual int IDecalRef() const { return kRefDecal; }
+    int IShoreRef() const override { return kRefShore; }
+    int IDecalRef() const override { return kRefDecal; }
 
     template<typename... _Args>
     void Log(const char *format, _Args&&... args) const
@@ -511,14 +511,14 @@ public:
     CLASSNAME_REGISTER( plWaveSet7 );
     GETINTERFACE_ANY( plWaveSet7, plWaveSetBase );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     int32_t       GetNumProperties() const { return kNumProps; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     float            EvalPoint(hsPoint3& pos, hsVector3& norm);
 
@@ -606,7 +606,7 @@ public:
 
     float GetRippleScale() const { return fState.fRippleScale; }
 
-    hsVector3 GetWindDir() const { return fState.fWindDir; }
+    hsVector3 GetWindDir() const override { return fState.fWindDir; }
 
     float GetSpecularNoise() const { hsVector3 spec = fState.fSpecVec; return spec[plFixedWaterState7::kNoise]; }
     float GetSpecularStart() const { hsVector3 spec = fState.fSpecVec; return spec[plFixedWaterState7::kSpecStart]; }
@@ -652,9 +652,9 @@ public:
     void            AddBuoy(plKey soKey);
     void            RemoveBuoy(plKey soKey);
 
-    virtual bool            SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts);
+    bool            SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts) override;
 
-    virtual float        GetHeight() const { return State().fWaterHeight; }
+    float        GetHeight() const override { return State().fWaterHeight; }
 
     const plFixedWaterState7::WaveState& GeoState() const { return State().fGeoState; }
     const plFixedWaterState7::WaveState& TexState() const { return State().fTexState; }

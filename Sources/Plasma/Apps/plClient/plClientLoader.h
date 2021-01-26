@@ -49,13 +49,13 @@ class plClientLoader : private hsThread
     class plClient* fClient;
     HWND fWindow;
 
-    virtual void OnQuit() override
+    void OnQuit() override
     {
         SetQuit(true);
     }
 
     /** Does the heavy lifting of client init */
-    virtual void Run() override;
+    void Run() override;
 
 public:
     plClientLoader() : fClient(), fWindow() { }

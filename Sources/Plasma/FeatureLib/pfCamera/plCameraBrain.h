@@ -104,7 +104,7 @@ public:
     const plCameraModifier1* GetCamera() { return fCamera; }
 
     virtual void        Update(bool forced = false);
-    virtual bool        MsgReceive(plMessage* msg);
+    bool        MsgReceive(plMessage* msg) override;
 
     virtual plSceneObject*  GetSubject();
     virtual void SetSubject(plSceneObject* sub);
@@ -113,8 +113,8 @@ public:
     void        SetPOAOffset(hsVector3 pt) { fPOAOffset = pt; }
     void AddTarget();
  
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual bool    GetFaded() { return false; }
     virtual bool    SetFaded(bool b) { return false; }
@@ -243,10 +243,10 @@ public:
     CLASSNAME_REGISTER( plCameraBrain1_Drive );
     GETINTERFACE_ANY( plCameraBrain1_Drive, plCameraBrain1 );
 
-    virtual void        Update(bool forced = false);
-    virtual bool        MsgReceive(plMessage* msg);
-    virtual void Push(bool recenter = true);
-    virtual void Pop();
+    void Update(bool forced = false) override;
+    bool MsgReceive(plMessage* msg) override;
+    void Push(bool recenter = true) override;
+    void Pop() override;
 
     static float fAcceleration;
     static float fDeceleration;
@@ -267,21 +267,21 @@ public:
     GETINTERFACE_ANY( plCameraBrain1_Avatar, plCameraBrain1 );
 
 
-    virtual void        Update(bool forced = false);
-    virtual bool        MsgReceive(plMessage* msg);
+    void        Update(bool forced = false) override;
+    bool        MsgReceive(plMessage* msg) override;
     
     virtual void        CalculatePosition();                
     hsVector3   GetOffset() { return fOffset; } 
     void        SetOffset(hsVector3 pt) { fOffset = pt; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     
-    virtual bool    GetFaded() { return fFaded; }
-    virtual bool    SetFaded(bool b) { fFaded = b; return true; }
+    bool    GetFaded() override { return fFaded; }
+    bool    SetFaded(bool b) override { fFaded = b; return true; }
 
-    virtual void Pop();
-    virtual void Push(bool recenter = true);
+    void Pop() override;
+    void Push(bool recenter = true) override;
 
 protected:
     void ISendFadeMsg(bool fade);
@@ -305,10 +305,10 @@ public:
     CLASSNAME_REGISTER( plCameraBrain1_FirstPerson );
     GETINTERFACE_ANY( plCameraBrain1_FirstPerson, plCameraBrain1_Avatar );
     
-    virtual void CalculatePosition();               
-    virtual void Push(bool recenter = true);
-    virtual void Pop();
-    virtual bool        MsgReceive(plMessage* msg);
+    void CalculatePosition() override;
+    void Push(bool recenter = true) override;
+    void Pop() override;
+    bool MsgReceive(plMessage* msg) override;
     
     // for console hack
     static bool fDontFade;
@@ -332,11 +332,11 @@ public:
 
     void SetTargetPoint(plCameraModifier1* pt) { fTargetPoint = pt; }
 
-    virtual void    Update(bool forced = false);
-    void            CalculatePosition();                
-    virtual bool MsgReceive(plMessage* msg);
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Update(bool forced = false) override;
+    void CalculatePosition();
+    bool MsgReceive(plMessage* msg) override;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 private:
     plCameraModifier1*  fTargetPoint;
@@ -386,11 +386,11 @@ public:
     GETINTERFACE_ANY( plCameraBrain1_Circle, plCameraBrain1_Fixed );
 
     
-    virtual void Read(hsStream *stream, hsResMgr* mgr);
-    virtual void Write(hsStream *stream, hsResMgr* mgr);
+    void Read(hsStream *stream, hsResMgr* mgr) override;
+    void Write(hsStream *stream, hsResMgr* mgr) override;
     virtual hsPoint3    MoveTowardsFromGoal(const hsPoint3* fromGoal, double secs, bool warp = false);
-    virtual void        Update(bool forced = false);
-    virtual bool        MsgReceive(plMessage* msg);
+    void        Update(bool forced = false) override;
+    bool        MsgReceive(plMessage* msg) override;
     
     uint32_t GetCircleFlags() { return fCircleFlags; }
     hsPoint3* GetCenter() { return &fCenter; }      // use GetCenterPoint

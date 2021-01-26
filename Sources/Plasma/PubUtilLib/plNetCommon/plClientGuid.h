@@ -88,8 +88,8 @@ public:
     bool    IsFlagSet( uint16_t flag ) const { return (fFlags&flag)!=0; }
     bool    IsFullyQualified() const { return HasAccountUUID()&&HasPlayerID();}
 
-    void    Read(hsStream * s, hsResMgr* =nil);
-    void    Write(hsStream * s, hsResMgr* =nil);
+    void    Read(hsStream * s, hsResMgr* =nil) override;
+    void    Write(hsStream * s, hsResMgr* =nil) override;
 
     bool    HasAccountUUID() const { return (fFlags&kAccountUUID&&!fAccountUUID.IsNull())?true:false;}
     bool    HasPlayerID() const { return (fFlags&kPlayerID&&fPlayerID>0)?true:false;}

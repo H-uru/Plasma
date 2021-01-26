@@ -74,7 +74,7 @@ public:
     CLASSNAME_REGISTER( plRelevanceMgr );
     GETINTERFACE_ANY( plRelevanceMgr, hsKeyedObject );
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     bool GetEnabled() { return fEnabled; }
     void SetEnabled(bool val) { fEnabled = val; }

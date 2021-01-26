@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plOneShotMod : public plMultiModifier
 {
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
     ST::string fAnimName;   // the name of the animation associated with this one-shot
     bool fDrivable;       // whether the user can control the position of the animation
     bool fReversable;     // whether the user can back up the animation (fDrivable must be true as well)
@@ -73,11 +73,11 @@ public:
     CLASSNAME_REGISTER( plOneShotMod );
     GETINTERFACE_ANY( plOneShotMod, plMultiModifier );
     
-    virtual void AddTarget(plSceneObject* so);
-    bool MsgReceive(plMessage* msg);
+    void AddTarget(plSceneObject* so) override;
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 #endif

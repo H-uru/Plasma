@@ -63,8 +63,8 @@ public:
     CLASSNAME_REGISTER( plRippleShapeMsg );
     GETINTERFACE_ANY( plRippleShapeMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     const plPrintShape* GetShape() const { return fShape; }
     void SetShape(const plPrintShape* shape) { fShape = shape; }

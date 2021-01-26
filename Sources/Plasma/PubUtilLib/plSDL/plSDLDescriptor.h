@@ -157,13 +157,13 @@ public:
     plSimpleVarDescriptor();
     virtual ~plSimpleVarDescriptor() {  }
         
-    plSimpleVarDescriptor*  GetAsSimpleVarDescriptor() { return this; }
-    plSDVarDescriptor* GetAsSDVarDescriptor() { return nil; }
-    const plSimpleVarDescriptor*    GetAsSimpleVarDescriptor() const { return this; }
-    const plSDVarDescriptor* GetAsSDVarDescriptor() const { return nil; }
+    plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return this; }
+    plSDVarDescriptor* GetAsSDVarDescriptor() override { return nil; }
+    const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return this; }
+    const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return nil; }
 
     void CopyFrom(const plSimpleVarDescriptor* v);
-    void CopyFrom(const plVarDescriptor* v) { plVarDescriptor::CopyFrom(v); }   // lame compiler
+    void CopyFrom(const plVarDescriptor* v) override { plVarDescriptor::CopyFrom(v); }   // lame compiler
 
     // getters
     int     GetSize() const;
@@ -172,13 +172,13 @@ public:
     int     GetAtomicCount() const      { return fAtomicCount; }    
     
     // setters
-    bool    SetType(const ST::string& type);
+    bool    SetType(const ST::string& type) override;
     void    SetType(Type t) { plVarDescriptor::SetType(t); }    // for lame compiler
     void    SetAtomicType(Type t) { fAtomicType=t; }    
 
     // IO
-    virtual bool    Read(hsStream* s);  
-    virtual void    Write(hsStream* s) const;
+    bool    Read(hsStream* s) override;
+    void    Write(hsStream* s) const override;
 };
 
 //
@@ -192,10 +192,10 @@ protected:
 public:
     plSDVarDescriptor(plStateDescriptor* sd=nil) : fStateDesc(sd) { }
 
-    plSimpleVarDescriptor*  GetAsSimpleVarDescriptor() { return nil; }
-    plSDVarDescriptor* GetAsSDVarDescriptor() { return this; }
-    const plSimpleVarDescriptor*    GetAsSimpleVarDescriptor() const { return nil; }
-    const plSDVarDescriptor* GetAsSDVarDescriptor() const { return this; }
+    plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return nil; }
+    plSDVarDescriptor* GetAsSDVarDescriptor() override { return this; }
+    const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return nil; }
+    const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return this; }
 
     // getters
     plStateDescriptor* GetStateDescriptor() const { return fStateDesc; }
@@ -204,11 +204,11 @@ public:
     void SetStateDesc(plStateDescriptor* sd) { fStateDesc=sd; }
 
     void CopyFrom(const plSDVarDescriptor* v);
-    void CopyFrom(const plVarDescriptor* v) { plVarDescriptor::CopyFrom(v); }   // lame compiler
+    void CopyFrom(const plVarDescriptor* v) override { plVarDescriptor::CopyFrom(v); }   // lame compiler
 
     // IO
-    bool    Read(hsStream* s);  
-    void    Write(hsStream* s) const;
+    bool    Read(hsStream* s) override;
+    void    Write(hsStream* s) const override;
 };
 
 //

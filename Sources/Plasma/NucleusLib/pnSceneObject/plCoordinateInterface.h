@@ -107,10 +107,10 @@ protected:
     hsMatrix44                              fLocalToWorld;
     hsMatrix44                              fWorldToLocal;
 
-    virtual void ISetOwner(plSceneObject* so);
+    void ISetOwner(plSceneObject* so) override;
 
     virtual void ISetParent(plCoordinateInterface* par); // don't use, use AddChild on parent
-    virtual void ISetSceneNode(plKey newNode);
+    void ISetSceneNode(plKey newNode) override;
     // objectToo moves the sceneObject to the new room, else just move the data and remove
     // the object from whatever room he's in.
 
@@ -142,10 +142,10 @@ public:
     CLASSNAME_REGISTER( plCoordinateInterface );
     GETINTERFACE_ANY( plCoordinateInterface, plObjInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
     virtual void SetLocalToParent(const hsMatrix44& l2p, const hsMatrix44& p2l);
     // special version for setting transform from physics.
     // separate to keep from changing interface to add "reason" parameter
@@ -185,12 +185,12 @@ public:
     virtual plCoordinateInterface* GetChild(int i) const;
     virtual plCoordinateInterface* GetParent() const { return fParent; }
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     uint16_t GetReasons();
     void ClearReasons();
 
-    int32_t   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const override { return kNumProps; }
     static uint8_t    GetTransformPhase() { return fTransformPhase; }
     static void     SetTransformPhase(uint8_t phase) { fTransformPhase = phase; }
 

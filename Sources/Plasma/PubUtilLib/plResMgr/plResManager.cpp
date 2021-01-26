@@ -483,7 +483,7 @@ public:
         fResMgr->IterateAllPages(this);
     }
 
-    virtual bool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page) override
     {
         fResMgr->UnloadPageObjects(page, fHint);
         return true;
@@ -1013,7 +1013,7 @@ public:
     plResHolderIterator(const ST::string& age, std::set<plKey>& keys, plResManager* resMgr)
             : fAgeName(age), fKeys(keys), fResMgr(resMgr) {}
 
-    virtual bool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page) override
     {
         if (page->GetPageInfo().GetAge().compare_i(fAgeName) == 0)
         {
@@ -1116,7 +1116,7 @@ class plOurRefferAndFinder : public plRegistryKeyIterator
         plOurRefferAndFinder( hsTArray<plKey> &refArray, uint16_t classToFind, plKey &foundKey ) 
                 : fRefArray( refArray ), fClassToFind( classToFind ), fFoundKey( foundKey ) { }
 
-        virtual bool EatKey( const plKey& key )
+        bool EatKey(const plKey& key) override
         {
             // This is cute. Thanks to our new plKey smart pointers, all we have to
             // do is append the key to our ref array. This automatically guarantees us
@@ -1464,7 +1464,7 @@ public:
 
     void UnRef() { fRefArray.Reset(); }
 
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         // This is cute. Thanks to our new plKey smart pointers, all we have to
         // do is append the key to our ref array. This automatically guarantees us
@@ -1577,7 +1577,7 @@ void plResManager::UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t clas
     class plUnloadObjectsIterator : public plRegistryKeyIterator
     {
     public:
-        virtual bool EatKey(const plKey& key)
+        bool EatKey(const plKey& key) override
         {
             sIReportLeak((plKeyImp*)key, nil);
             return true;
@@ -1690,7 +1690,7 @@ protected:
 
 public:
     plKeyIterEater(plRegistryKeyIterator* iter) : fIter(iter) {}
-    virtual bool EatPage(plRegistryPageNode* keyNode)
+    bool EatPage(plRegistryPageNode* keyNode) override
     {
         return keyNode->IterateKeys(fIter);
     }

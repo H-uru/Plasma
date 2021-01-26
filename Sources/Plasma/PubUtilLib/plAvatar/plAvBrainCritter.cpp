@@ -103,13 +103,13 @@ public:
     float FadeOutLength() const {return fFadeOutLength;}
 
 protected:
-    virtual void IStart()
+    void IStart() override
     {
         plArmatureBehavior::IStart();
         fAvMod->SynchIfLocal(hsTimer::GetSysSeconds(), false);
     }
 
-    virtual void IStop()
+    void IStop() override
     {
         plArmatureBehavior::IStop();
         fAvMod->SynchIfLocal(hsTimer::GetSysSeconds(), false);

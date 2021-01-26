@@ -355,13 +355,13 @@ struct NetGateKeeperTrans : NetTrans {
 
 
 struct NetNotifyTrans : NetTrans {
-    NetNotifyTrans (ETransType transType);
-    bool CanStart () const { return true; }
-    bool Send () { m_state = kTransStateComplete; return true; }
-    bool Recv (
+    NetNotifyTrans(ETransType transType);
+    bool CanStart() const override { return true; }
+    bool Send() override { m_state = kTransStateComplete; return true; }
+    bool Recv(
         const uint8_t [],
         unsigned
-    ) { return true; }
+    ) override { return true; }
 };
 
 void NetTransInitialize ();

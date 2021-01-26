@@ -65,9 +65,9 @@ class plLayerOr : public plLayerInterface
         void    SetMiscFlags( uint32_t f )    { fOringState.fMiscFlags = f; }
         void    SetState( const hsGMatState& state );
 
-        virtual plLayerInterface*   Attach(plLayerInterface* prev);
+        plLayerInterface*   Attach(plLayerInterface* prev) override;
 
-        virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+        uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 };
 
 #endif //_plLayerOr_h

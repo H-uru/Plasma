@@ -54,7 +54,7 @@ protected:
     hsTArray<plKey> fReceivers;// Keys to notify when the anim event happens
     plMessage* fCallback;       // The callback setup message we send when the anim loads
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     void ISendNotify(bool triggered);
     bool fDisabled;
@@ -65,10 +65,10 @@ public:
     CLASSNAME_REGISTER(plAnimEventModifier);
     GETINTERFACE_ANY(plAnimEventModifier, plSingleModifier);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     // Export only
     void SetReceivers(hsTArray<plKey>& receivers) { fReceivers = receivers; }

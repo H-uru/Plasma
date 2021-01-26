@@ -82,16 +82,16 @@ public:
     plEncryptedStream(uint32_t* key=nil);
     ~plEncryptedStream();
 
-    virtual bool    Open(const plFileName& name, const char* mode = "rb");
-    virtual bool    Close();
+    bool    Open(const plFileName& name, const char* mode = "rb") override;
+    bool    Close() override;
 
-    virtual uint32_t  Read(uint32_t byteCount, void* buffer);
-    virtual uint32_t  Write(uint32_t byteCount, const void* buffer);
-    virtual bool    AtEnd();
-    virtual void    Skip(uint32_t deltaByteCount);
-    virtual void    Rewind();
-    virtual void    FastFwd();
-    virtual uint32_t  GetEOF();
+    uint32_t  Read(uint32_t byteCount, void* buffer) override;
+    uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    bool    AtEnd() override;
+    void    Skip(uint32_t deltaByteCount) override;
+    void    Rewind() override;
+    void    FastFwd() override;
+    uint32_t  GetEOF() override;
 
     uint32_t GetActualFileSize() const { return fActualFileSize;}
 

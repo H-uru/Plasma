@@ -79,7 +79,7 @@ class pfUpDownBtnProc : public pfGUICtrlProcObject
         void    SetUp( pfGUIButtonMod *up ) { fUp = up; }
         void    SetDown( pfGUIButtonMod *down ) { fDown = down; }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             if( (pfGUIButtonMod *)ctrl == fUp )
             {

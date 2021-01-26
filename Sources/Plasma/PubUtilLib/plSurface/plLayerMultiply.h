@@ -56,11 +56,11 @@ public:
     CLASSNAME_REGISTER( plLayerMultiply );
     GETINTERFACE_ANY( plLayerMultiply, plLayerInterface );
 
-    virtual plLayerInterface*   Attach(plLayerInterface* prev);
-    virtual uint32_t              Eval(double secs, uint32_t frame, uint32_t ignore);
-    virtual bool                MsgReceive(plMessage* msg);
-    virtual void                Read(hsStream* s, hsResMgr* mgr);
-    virtual void                Write(hsStream* s, hsResMgr* mgr);
+    plLayerInterface*   Attach(plLayerInterface* prev) override;
+    uint32_t            Eval(double secs, uint32_t frame, uint32_t ignore) override;
+    bool MsgReceive(plMessage* msg) override;
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void SetPreshadeColor(const hsColorRGBA& col);
     void SetRuntimeColor(const hsColorRGBA& col);

@@ -93,8 +93,8 @@ class plDynamicTextMap : public plMipmap
 
         uint16_t      fVisWidth, fVisHeight;
 
-        virtual uint32_t  Read( hsStream *s );
-        virtual uint32_t  Write( hsStream *s );
+        uint32_t  Read(hsStream *s) override;
+        uint32_t  Write(hsStream *s) override;
 
     public:
         //// Public Flags ////
@@ -123,12 +123,12 @@ class plDynamicTextMap : public plMipmap
         void            Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth = 0, uint32_t extraHeight = 0, bool premultipliedAlpha = false );
         void            SetNoCreate( uint32_t width, uint32_t height, bool hasAlpha );
 
-        virtual void    Reset();
+        void    Reset() override;
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        void    Read(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Read(s, mgr); this->Read(s); }
+        void    Write(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Write(s, mgr); this->Write(s); }
 
-        virtual uint8_t   GetNumLevels() const { return 1; }
+        uint8_t   GetNumLevels() const override { return 1; }
 
         void        Colorize() override { }
         plMipmap    *Clone() const override;
@@ -185,7 +185,7 @@ class plDynamicTextMap : public plMipmap
 
         void    FlushToHost();
 
-        bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
 
         uint16_t  GetVisibleWidth() { return fVisWidth; }
         uint16_t  GetVisibleHeight() { return fVisHeight; }

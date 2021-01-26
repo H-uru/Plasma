@@ -57,7 +57,7 @@ public:
         kCalibrated,
     };
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     int fCalibrated;
 public:
@@ -66,13 +66,13 @@ public:
     CLASSNAME_REGISTER( plMaintainersMarkerModifier );
     GETINTERFACE_ANY( plMaintainersMarkerModifier, plMultiModifier );
     
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
     void SetCalibrated(bool b) {fCalibrated = b;}
     int GetCalibrated() { return fCalibrated; }
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 

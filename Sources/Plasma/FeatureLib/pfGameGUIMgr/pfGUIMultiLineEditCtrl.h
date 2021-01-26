@@ -111,11 +111,11 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         static wchar_t  fColorCodeChar, fStyleCodeChar;
         static uint32_t   fColorCodeSize, fStyleCodeSize;
 
-        virtual bool    IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool    IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual void    IPostSetUpDynTextMap();
-        virtual void    IUpdate();
-        void            IUpdate( int32_t startLine, int32_t endLine );
+        void    IPostSetUpDynTextMap() override;
+        void    IUpdate() override;
+        void    IUpdate(int32_t startLine, int32_t endLine);
 
         friend class pfMLScrollProc;
 
@@ -198,21 +198,21 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         CLASSNAME_REGISTER( pfGUIMultiLineEditCtrl );
         GETINTERFACE_ANY( pfGUIMultiLineEditCtrl, pfGUIControlMod );
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
-        virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
+        bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
+        bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;
 
-        virtual void    PurgeDynaTextMapImage();
+        void    PurgeDynaTextMapImage() override;
 
-        virtual void    UpdateColorScheme() { fFontFlagsSet = 0; pfGUIControlMod::UpdateColorScheme(); }
+        void    UpdateColorScheme() override { fFontFlagsSet = 0; pfGUIControlMod::UpdateColorScheme(); }
 
         // Extended event types
         enum ExtendedEvents

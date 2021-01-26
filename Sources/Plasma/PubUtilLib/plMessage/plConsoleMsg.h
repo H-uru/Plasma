@@ -81,7 +81,7 @@ public:
     void SetCmd (uint32_t cmd) { fCmd = cmd; }
     void SetString (const char str[]) { free(fString); fString = hsStrcpy(str); }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) 
+    void Read(hsStream* s, hsResMgr* mgr) override
     { 
         plMessage::IMsgRead(s, mgr); 
         s->ReadLE(&fCmd);
@@ -89,7 +89,7 @@ public:
         plMsgCStringHelper::Peek(fString, s);               
     }
     
-    virtual void Write(hsStream* s, hsResMgr* mgr) 
+    void Write(hsStream* s, hsResMgr* mgr) override
     { 
         plMessage::IMsgWrite(s, mgr);
         s->WriteLE(fCmd);

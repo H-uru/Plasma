@@ -68,10 +68,10 @@ public:
     CLASSNAME_REGISTER( plHardRegionPlanes );
     GETINTERFACE_ANY( plHardRegionPlanes, plHardRegion );
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Now Planes specifics
     void AddPlane(const hsVector3& n, const hsPoint3& p);
@@ -79,8 +79,8 @@ public:
     void GetPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
     void GetWorldPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
 
-    virtual bool IIsInside(const hsPoint3& pos) const;
-    virtual bool ICameraInside() const;
+    bool IIsInside(const hsPoint3& pos) const override;
+    bool ICameraInside() const override;
 
 };
 

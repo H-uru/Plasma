@@ -132,7 +132,7 @@ class plTextGenerator : public hsKeyedObject
         hsMatrix44  GetLayerTransform();
 
 
-        virtual bool MsgReceive( plMessage *msg );
+        bool MsgReceive(plMessage *msg) override;
 };
 
 

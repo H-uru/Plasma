@@ -86,7 +86,7 @@ class pfGUIDialogProc : public pfGUICtrlProcObject
 
         // Overloaded here so you don't have to unless you want to. Overload
         // it if you want to use this for a control handler as well.
-        virtual void    DoSomething( pfGUIControlMod *ctrl ) { }
+        void    DoSomething(pfGUIControlMod *ctrl) override { }
 
         // Called on dialog init (i.e. first showing, before OnShow() is called), only ever called once
         virtual void    OnInit() { }

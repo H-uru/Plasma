@@ -61,13 +61,13 @@ public:
     CLASSNAME_REGISTER( plLocalPlayerIntersectPlaneConditionalObject );
     GETINTERFACE_ANY( plLocalPlayerIntersectPlaneConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void SetTarget(plKey pKey) { fTarget = pKey; }
     void SetPlane(plKey pKey) { fPlane = pKey; }
     
-    void Evaluate() { }
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
 };
 

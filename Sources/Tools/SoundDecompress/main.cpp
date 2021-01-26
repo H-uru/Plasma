@@ -82,7 +82,7 @@ public:
     plSoundBufferCollector(std::set<plKey>& keyArray)
                 : plKeyCollector(keyArray) {}
 
-    bool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page) override
     {
         if (page->IsValid()) {
             page->LoadKeys();

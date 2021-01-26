@@ -76,7 +76,7 @@ protected:
     void ISetVisRegion(hsKeyedObject* ref, bool on);
     void ISetDrawable(uint8_t which, plDrawable* dr);
     void IRemoveDrawable(plDrawable* dr);
-    void ISetSceneNode(plKey newNode);
+    void ISetSceneNode(plKey newNode) override;
     virtual void ICheckDrawableIndex(uint8_t which);
 
     friend class plSceneObject;
@@ -88,23 +88,23 @@ public:
     CLASSNAME_REGISTER( plDrawInterface );
     GETINTERFACE_ANY( plDrawInterface, plObjInterface );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void        SetProperty(int prop, bool on);
-    int32_t       GetNumProperties() const { return kNumProps; }
+    void        SetProperty(int prop, bool on) override;
+    int32_t       GetNumProperties() const override { return kNumProps; }
 
     // Transform settable only, if you want it get it from the coordinate interface.
-    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
     // Bounds are gettable only, they are computed on the drawable.
     const hsBounds3Ext GetLocalBounds() const;
     const hsBounds3Ext GetWorldBounds() const;
     const hsBounds3Ext GetMaxWorldBounds() const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void    ReleaseData();
+    void    ReleaseData() override;
 
     /// Funky particle system functions
     void    SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights );
