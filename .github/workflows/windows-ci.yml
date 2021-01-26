@@ -19,13 +19,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Cache Qt
-        id: cache-qt
-        uses: actions/cache@v2
-        with:
-          path: ${{ github.workspace }}/qt
-          key: qt-${{ matrix.platform.qt-version }} ${{ matrix.platform.qt-arch }}
-
       - name: Install Qt
         continue-on-error: true
         uses: jurplel/install-qt-action@v2
@@ -33,9 +26,8 @@ jobs:
           version: ${{ matrix.platform.qt-version }}
           arch: ${{ matrix.platform.qt-arch }}
           dir: ${{ github.workspace }}/qt
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-      - name: Build
+      - name: Configure
         run: |
           New-Item -ItemType Directory build | Out-Null
           Set-Location build
@@ -49,8 +41,14 @@ jobs:
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
             -DPLASMA_VCPKG_NUGET_RW=TRUE `
             ..
-          cmake --build . --config "${{ matrix.cfg.type }}" -j 2
-          cmake --install . --config "${{ matrix.cfg.type }}"
+
+      - name: Build
+        run: |
+          cmake --build build --config "${{ matrix.cfg.type }}" -j 2
+
+      - name: Install
+        run: |
+          cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
@@ -58,5 +56,6 @@ jobs:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
 
-      - name: Run Tests
-        run: cmake --build build --target check --config "${{ matrix.cfg.type }}"
+      - name: Test
+        run: |
+          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
