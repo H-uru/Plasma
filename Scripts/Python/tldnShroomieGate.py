@@ -76,7 +76,7 @@ class tldnShroomieGate(ptResponder):
 
         elif id == respLeverPull.id:
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Up SDL: %d" % (ageSDL[kGateVariable][0]))
+            PtDebugPrint(f"tldnShroomieGate:\t---Shroomie Gate Up SDL: {ageSDL[kGateVariable][0]}")
             if ageSDL["tldnShroomieGatePowerOn"][0] and self.sceneobject.isLocallyOwned():
                 ageSDL[kGateVariable] = (not ageSDL[kGateVariable][0],)
 
@@ -87,15 +87,9 @@ class tldnShroomieGate(ptResponder):
         ageSDL = PtGetAgeSDL()
         value = ageSDL[kGateVariable][0]
 
-        if playerID:
-            try:
-                avatar = PtGetAvatarKeyFromClientID(playerID).getSceneObject()
-            except:
-                avatar = None
-            ff = False
-        else:
-            avatar = None
-            ff = True
+        avatarKey = PtGetAvatarKeyFromClientID(playerID)
+        avatar = avatarKey.getSceneObject() if avatarKey else None
+        ff = avatar is None
 
         if value:
             respGateUp.run(self.key, avatar=avatar, fastforward=ff)
@@ -116,7 +110,7 @@ class tldnShroomieGate(ptResponder):
 
         if ageSDL[kGateVariable][0]:
             PtDebugPrint("tldnShroomieGate:\tInit---Shroomie Gate Up")
-            respGateUp.run(self.key,fastforward=1)
+            respGateUp.run(self.key, fastforward=True)
         else:
             PtDebugPrint("tldnShroomieGate:\tInit---Shroomie Gate Down")
-            respGateDown.run(self.key,fastforward=1)
+            respGateDown.run(self.key, fastforward=True)
