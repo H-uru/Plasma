@@ -1,3 +1,17 @@
+set(external_SCRIPTS
+    external/create_resource_dat.py
+    external/makeres.py
+    external/render_svg.py
+    external/scalergba.py
+)
+
+set(external_SCRIPTS
+    external/create_resource_dat.py
+    external/makeres.py
+    external/render_svg.py
+    external/scalergba.py
+)
+
 find_program(
     PNGCRUSH_EXECUTABLE pngcrush
     DOC "Path to pngcrush"
