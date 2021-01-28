@@ -75,7 +75,7 @@ class BitmapDlgProc : public ParamMap2UserDlgProc
 public:
     /// Called to update the controls of the dialog
     /// Note: we're bad that we use a static here, but 
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
+    void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override
     {
         ICustButton     *bmSelectBtn;
         IParamBlock2    *pblock;
@@ -150,7 +150,7 @@ public:
         
     }
     
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         static ICustButton* bmSelectBtn;
         
@@ -299,7 +299,7 @@ public:
         
         return FALSE;
     }
-    virtual void DeleteThis() {};
+    void DeleteThis() override { }
     
     void    ISetDetailCurveNumLevels( IParamMap2 *map, TimeValue t )
     {
@@ -569,7 +569,7 @@ ParamBlockDesc2 *GetBitmapBlk() { return &gBitmapParamBlk; }
 class BMTexPBAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
       plLayerTex* layer = (plLayerTex*)owner;
 
@@ -694,7 +694,7 @@ public:
                 break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 

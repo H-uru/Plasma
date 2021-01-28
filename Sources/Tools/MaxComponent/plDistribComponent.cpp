@@ -205,12 +205,12 @@ class plDistCompNilProc : public plRollupMgrProc
 public:
     plDistCompNilProc(int iRoll) : plRollupMgrProc(iRoll) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 class plDistCompActionProc : public plRollupMgrProc
@@ -218,7 +218,7 @@ class plDistCompActionProc : public plRollupMgrProc
 public:
     plDistCompActionProc() : plRollupMgrProc(plDistribComponent::kRollAction) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -247,7 +247,7 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistCompActionProc gDistCompActionProc;
 
@@ -257,7 +257,7 @@ private:
 public:
     plDistCompSpaceProc() : plRollupMgrProc(plDistribComponent::kRollSpacing) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -291,7 +291,7 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistCompSpaceProc gDistCompSpaceProc;
 
@@ -300,7 +300,7 @@ class plDistCompConformProc : public plRollupMgrProc
 private:
 public:
     plDistCompConformProc() : plRollupMgrProc(plDistribComponent::kRollConform) {}
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -335,7 +335,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistCompConformProc gDistCompConformProc;
 
@@ -384,7 +384,7 @@ private:
 public:
     plDistCompScaleProc() : plRollupMgrProc(plDistribComponent::kRollScale) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -411,7 +411,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistCompScaleProc gDistCompScaleProc;
 
@@ -420,7 +420,7 @@ class plDistCompBitmapProc : public plRollupMgrProc
 private:
 public:
     plDistCompBitmapProc() : plRollupMgrProc(plDistribComponent::kRollBitmap) {}
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -450,7 +450,7 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistCompBitmapProc gDistCompBitmapProc;
 
@@ -459,7 +459,7 @@ class plDistCompFadeProc : public plRollupMgrProc
 private:
 public:
     plDistCompFadeProc() : plRollupMgrProc(plDistribComponent::kRollFade) {}
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -508,7 +508,7 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistCompFadeProc gDistCompFadeProc;
 
@@ -520,7 +520,7 @@ CLASS_DESC(plDistribComponent, gDistribCompDesc, "Distributor",  "Distributor", 
 class plDistribCompAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plDistribComponent::kTemplates )
         {

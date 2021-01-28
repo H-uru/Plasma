@@ -58,12 +58,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class MaxUtilsClassDesc : public ClassDesc
 {
 public:
-    int             IsPublic()              { return TRUE; }
-    void*           Create(BOOL loading)    { return &plMaxUtils::Instance(); }
-    const TCHAR*    ClassName()             { return _T("Plasma Debug Utils"); }
-    SClass_ID       SuperClassID()          { return UTILITY_CLASS_ID; }
-    Class_ID        ClassID()               { return Class_ID(0x316610ee, 0xebe62c3); }
-    const TCHAR*    Category()              { return _T(""); }
+    int             IsPublic() override             { return TRUE; }
+    void*           Create(BOOL loading) override   { return &plMaxUtils::Instance(); }
+    const TCHAR*    ClassName() override            { return _T("Plasma Debug Utils"); }
+    SClass_ID       SuperClassID() override         { return UTILITY_CLASS_ID; }
+    Class_ID        ClassID() override              { return Class_ID(0x316610ee, 0xebe62c3); }
+    const TCHAR*    Category() override             { return _T(""); }
 };
 
 static MaxUtilsClassDesc theMaxUtilsClassDesc;

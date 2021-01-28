@@ -121,15 +121,15 @@ public:
     virtual void    NameChanged();
 
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
-    virtual void    Reset();
+    void    Reset() override;
 
-    int                     NumRefs();
-    virtual RefTargetHandle GetReference( int i );
-    virtual void            SetReference( int i, RefTargetHandle rtarg );
-    RefResult               NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message );
+    int             NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void            SetReference(int i, RefTargetHandle rtarg) override;
+    RefResult       NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message) override;
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
     virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
@@ -262,7 +262,7 @@ public:
         fEaseOutMinID = easeOutMinID; fEaseOutMaxID = easeOutMaxID; fEaseOutNormID = easeOutNormID;
     }
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (fDoingUpdate)
             return;

@@ -90,7 +90,7 @@ void DummyCodeIncludeFuncCluster()
 class plClusterComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -114,7 +114,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plClusterComponentProc gClusterCompProc;
 
@@ -124,7 +124,7 @@ CLASS_DESC(plClusterComponent, gClusterCompDesc, "Cluster",  "Cluster", COMP_TYP
 class plClusterCompAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plClusterComponent::kWindBones )
         {

@@ -101,7 +101,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonPythonLib : public plCommonObjLib
 {
     public:
-        virtual bool    IsInteresting( const plKey &objectKey )
+        bool    IsInteresting(const plKey &objectKey) override
         {
             if( objectKey->GetUoid().GetClassType() == plPythonFileMod::Index() )
                 return true;
@@ -153,11 +153,11 @@ protected:
 public:
     plPythonFileComponent();
 
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil) { fOthersKeys.Append(key); }
+    void AddReceiverKey(plKey key, plMaxNode* node=nil) override { fOthersKeys.Append(key); }
 
     // Returns false if the Python file for this component wasn't loaded, and clears
     // the data in the PB to prevent Max from crashing.
@@ -174,7 +174,7 @@ public:
 
     virtual PythonKeys& GetKeys() { return fModKeys; }
 
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override
     { 
         fModKeys.clear();
         fOthersKeys.Reset();
@@ -1195,8 +1195,8 @@ class plPythonFileComponentProc : public ParamMap2UserDlgProc
 {
 public:
     plPythonFileComponentProc() : fAutoUI(nil) {}
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { DestroyAutoUI(); }
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { DestroyAutoUI(); }
 
 protected:
     plAutoUIBlock *fAutoUI;

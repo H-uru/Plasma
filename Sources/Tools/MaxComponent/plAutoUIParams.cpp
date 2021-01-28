@@ -566,7 +566,7 @@ class plPickButtonParam;
 class PickNodeButtonFilter : public PickNodeCallback
 {
 public:
-    virtual BOOL Filter(INode *node) { return TRUE; }
+    BOOL Filter(INode *node) override { return TRUE; }
 };
 static PickNodeButtonFilter gPickFilter;
 
@@ -576,14 +576,14 @@ public:
     plPickButtonParam *fParam;
     IParamBlock2 *fPB;
 
-    BOOL HitTest(IObjParam *ip, HWND hWnd, ViewExp *vpt, IPoint2 m, int flags)
+    BOOL HitTest(IObjParam *ip, HWND hWnd, ViewExp *vpt, IPoint2 m, int flags) override
     {
         return (ip->PickNode(hWnd,m,&gPickFilter) != NULL);
     }
-    BOOL Pick(IObjParam *ip, ViewExp *vpt);
+    BOOL Pick(IObjParam *ip, ViewExp *vpt) override;
     
-    PickNodeCallback *GetFilter() { return &gPickFilter; }
-    BOOL    RightClick(IObjParam *ip, ViewExp *vpt);
+    PickNodeCallback *GetFilter() override { return &gPickFilter; }
+    BOOL    RightClick(IObjParam *ip, ViewExp *vpt) override;
 };
 
 static PickNodeButtonMode gPickMode;

@@ -67,13 +67,13 @@ public:
     plExportErrorMsg(bool bogus, const char* label, const char* format, float f) 
         : plErrorMsg(bogus, label, format, f) { }
 
-    virtual bool Ask(); // if b is true and user says yes to displayed query, return true, else false
-    virtual bool CheckAndAsk(); // if b is true and user says YES, throw self. only asks if b is true. returns true if b is true but user says no, else false
-    virtual bool CheckAskOrCancel(); // if b is true ( if YES, throw, else if NO return 0, else (CANCEL) return 1
-    virtual bool Show(); // if b is true, displays message, returns true
-    virtual bool Check(); // if b was true, throws self, else return false
-    virtual bool CheckAndShow(); // if b was true, shows message box then throws self, else return false
-    virtual void Quit(); // if b, quietly just throw with no message
+    bool Ask() override; // if b is true and user says yes to displayed query, return true, else false
+    bool CheckAndAsk() override; // if b is true and user says YES, throw self. only asks if b is true. returns true if b is true but user says no, else false
+    bool CheckAskOrCancel() override; // if b is true ( if YES, throw, else if NO return 0, else (CANCEL) return 1
+    bool Show() override; // if b is true, displays message, returns true
+    bool Check() override; // if b was true, throws self, else return false
+    bool CheckAndShow() override; // if b was true, shows message box then throws self, else return false
+    void Quit() override; // if b, quietly just throw with no message
 
 private:
     void        IDebugThrow();
@@ -114,13 +114,13 @@ public:
     plExportErrorDbg(bool bogus, const char* label, const char* format, int n, int m) : plExportErrorMsg() { }
     plExportErrorDbg(bool bogus, const char* label, const char* format, float f) : plExportErrorMsg() { }
 
-    bool Ask() { return false; }
-    bool CheckAndAsk() { return false; }
-    bool CheckAskOrCancel();
-    bool Show() { return false; }
-    bool Check() { return false; }
-    bool CheckAndShow() { return false; }
-    void Quit() { }
+    bool Ask() override { return false; }
+    bool CheckAndAsk() override { return false; }
+    bool CheckAskOrCancel() override;
+    bool Show() override { return false; }
+    bool Check() override { return false; }
+    bool CheckAndShow() override { return false; }
+    void Quit() override { }
 };
 
 #else // keep them as exactly the same as errormessage

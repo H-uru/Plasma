@@ -99,13 +99,13 @@ public:
     plResponderMtlProc();
 
 protected:
-    virtual void IOnInitDlg(HWND hWnd, IParamBlock2* pb);
-    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
-    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
+    void IOnInitDlg(HWND hWnd, IParamBlock2* pb) override;
+    void ILoadUser(HWND hWnd, IParamBlock2* pb) override;
+    bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID) override;
 
-    virtual void IPickNode(IParamBlock2* pb);
+    void IPickNode(IParamBlock2* pb) override;
 
-    virtual void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb);
+    void ISetNodeButtonText(HWND hWnd, IParamBlock2* pb) override;
 };
 static plResponderMtlProc gResponderMtlProc;
 
@@ -593,7 +593,7 @@ class plPickRespMtlNode : public plPickMtlNode
 protected:
     int fTypeID;
 
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int type = fPB->GetInt(fTypeID);
 
@@ -607,7 +607,7 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const char* userType) override
     {
         if (strcmp(userType, kUserTypeAll) == 0)
         {

@@ -55,15 +55,15 @@ class plDXVertexShader : public plDXShader
 protected:
     IDirect3DVertexShader9* fHandle;
     hsTArray<DWORD>&    IMakeDecl(hsTArray<DWORD>& decl) const;
-    virtual HRESULT     ICreate(plDXPipeline* pipe);  // On error, sets error string.
+    HRESULT     ICreate(plDXPipeline* pipe) override;  // On error, sets error string.
 
-    virtual HRESULT     ISetConstants(plDXPipeline* pipe); // On error, sets error string.
+    HRESULT     ISetConstants(plDXPipeline* pipe) override; // On error, sets error string.
 
 public:
     plDXVertexShader(plShader* owner);
     virtual ~plDXVertexShader();
 
-    virtual void    Release();
+    void            Release() override;
     void            Link(plDXVertexShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
 
     bool            VerifyFormat(uint8_t format) const;

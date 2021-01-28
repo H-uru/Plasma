@@ -77,7 +77,7 @@ namespace {
     public:
         ObjectInstancedEnumProc() : fInstanceCount(0) { }
         
-        int proc(ReferenceMaker *rmaker)
+        int proc(ReferenceMaker *rmaker) override
         {
             hsGuardBegin("ObjectInstancedEnumProc::proc");
 

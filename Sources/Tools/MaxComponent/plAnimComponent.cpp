@@ -295,7 +295,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -338,7 +338,7 @@ public:
         return FALSE;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };  
 //  For the paramblock below.
 static plAnimEaseComponentProc gAnimEaseCompProc;
@@ -379,7 +379,7 @@ protected:
 public:
     EaseAccessor() : fDoingUpdate(false) {}
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (fDoingUpdate)
             return;
@@ -951,7 +951,7 @@ class plPickAnimCompNode : public plPickCompNode
 protected:
     ParamID fTypeID;
 
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int type = fPB->GetInt(fTypeID);
 
@@ -965,7 +965,7 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const char* userType) override
     {
         if (strcmp(userType, kUseParamBlockNodeString) == 0)
         {
@@ -1019,10 +1019,10 @@ public:
         strcpy( fTitle, title );
     }
 
-    virtual TCHAR *dialogTitle() { return fTitle; }
-    virtual TCHAR *buttonText() { return "OK"; }
+    TCHAR *dialogTitle() override { return fTitle; }
+    TCHAR *buttonText() override { return "OK"; }
 
-    virtual int filter( INode *node )
+    int filter(INode *node) override
     {
         plComponentBase *comp = ( (plMaxNodeBase *)node )->ConvertToComponent();
         if( comp != nil && plAnimComponentBase::IsAnimComponent( comp ) )
@@ -1051,13 +1051,13 @@ public:
         return FALSE;
     }
 
-    virtual void proc( INodeTab &nodeTab )
+    void proc(INodeTab &nodeTab) override
     {
         fPB->SetValue( fParamID, (TimeValue)0, nodeTab[ 0 ] );
     }
 
-    virtual BOOL showHiddenAndFrozen() { return TRUE; }
-    virtual BOOL singleSelect() { return TRUE; }
+    BOOL showHiddenAndFrozen() override { return TRUE; }
+    BOOL singleSelect() override { return TRUE; }
 };
 
 //// Dialog Proc For Anim Selection /////////////////////////////////////////////////////////////

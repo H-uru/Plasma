@@ -65,10 +65,10 @@ protected:
     IDirect3DStateBlock9 *fOldStateBlock;
     IDirect3DStateBlock9 *fTextStateBlock;
 
-    virtual void    ICreateTexture( uint16_t *data );
-    virtual void    IInitStateBlocks();
-    virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array );
-    virtual void    IDrawLines( uint32_t count, plFontVertex *array );
+    void    ICreateTexture(uint16_t *data) override;
+    void    IInitStateBlocks() override;
+    void    IDrawPrimitive(uint32_t count, plFontVertex *array) override;
+    void    IDrawLines(uint32_t count, plFontVertex *array) override;
 
 public:
     plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device );
@@ -77,10 +77,10 @@ public:
     static  void CreateShared(IDirect3DDevice9* device);
     static  void ReleaseShared(IDirect3DDevice9* device);
 
-    virtual void    FlushDraws();
-    virtual void    SaveStates();
-    virtual void    RestoreStates();
-    virtual void    DestroyObjects();
+    void    FlushDraws() override;
+    void    SaveStates() override;
+    void    RestoreStates() override;
+    void    DestroyObjects() override;
 
     static const DWORD kFVF;
 };

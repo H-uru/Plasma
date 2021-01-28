@@ -102,18 +102,18 @@ public:
     };
     //static const char *BrainStrings[];
 
-    virtual bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-    virtual bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
 
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 };
 
 class plAvatarComponent : public plArmatureComponent
 {
 
 private:
-    void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg);
+    void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 
 
@@ -149,11 +149,11 @@ public:
             kAnimationPrefix,
         };
 
-        virtual void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg);
-        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)         { return (plArmatureComponent::PreConvert(node, pErrMsg)); }
-        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg)            { return (plArmatureComponent::Convert(node, pErrMsg)); }
-        void DeleteThis() { delete this; }
+        void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg) override;
+        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override { return (plArmatureComponent::PreConvert(node, pErrMsg)); }
+        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override { return (plArmatureComponent::Convert(node, pErrMsg)); }
+        void DeleteThis() override { delete this; }
 
 
 };
@@ -166,11 +166,11 @@ private:
     void IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg);
 
 protected:
-    virtual void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg);
+    void ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg) override;
     // Create a single shadowcaster modifier, and apply it to the 
     // sceneobject hierarchies for each LOD.
     virtual void IAttachShadowCastToLODs(plMaxNode* rootNode); 
-    virtual void IAttachShadowCastModifiersRecur(plMaxNode* node, plShadowCaster* caster);
+    void IAttachShadowCastModifiersRecur(plMaxNode* node, plShadowCaster* caster) override;
 
     hsGMaterial *fMaterial;
     
@@ -218,10 +218,10 @@ public:
         };
 
         plLODAvatarComponent();
-        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg);
-        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg);
-        void DeleteThis() { delete this; }
+        bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        bool Convert(plMaxNode* node, plErrorMsg* pErrMsg) override;
+        void DeleteThis() override { delete this; }
 
         void RemoveBone(int index);
         void AddSelectedBone();

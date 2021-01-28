@@ -71,10 +71,10 @@ public:
     static plComponentMgr &Inst();
 
     // Required Max functions
-    virtual void BeginEditParams(Interface *ip,IUtil *iu) {}
-    virtual void EndEditParams(Interface *ip,IUtil *iu) {}
-    virtual void SelectionSetChanged(Interface *ip,IUtil *iu) {}
-    virtual void DeleteThis() {}
+    void BeginEditParams(Interface *ip,IUtil *iu) override { }
+    void EndEditParams(Interface *ip,IUtil *iu) override { }
+    void SelectionSetChanged(Interface *ip,IUtil *iu) override { }
+    void DeleteThis() override { }
 
     virtual uint32_t Count();
     virtual ClassDesc *Get(uint32_t i);

@@ -97,7 +97,7 @@ protected:
     void ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb);
 
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -139,7 +139,7 @@ public:
         }
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderLinkProc gResponderLinkProc;
 
@@ -394,7 +394,7 @@ protected:
     }
 
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -427,7 +427,7 @@ public:
         }
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderEnableProc gResponderEnableProc;
 
@@ -575,7 +575,7 @@ protected:
     plResponderCompNode fCompNode;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -607,7 +607,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderOneShotProc gResponderOneShotProc;
 
@@ -732,7 +732,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -752,7 +752,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderActivatorEnableProc gResponderActivatorEnableProc;
 
@@ -877,7 +877,7 @@ protected:
     plResponderCompNode fCompNode;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -908,7 +908,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderXRegionProc gResponderXRegionProc;
 
@@ -1408,7 +1408,7 @@ enum
 class plResponderSubWorldProc : public ParamMap2UserDlgProc
 {
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1435,7 +1435,7 @@ public:
 
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 static plResponderSubWorldProc gResponderSubWorldProc;
@@ -1556,7 +1556,7 @@ enum
 class plResponderFootSurfaceProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = pm->GetParamBlock();
         HWND hCB = GetDlgItem(hWnd, IDC_COMP_RESPOND_FOOT_SURFACE);
@@ -1578,7 +1578,7 @@ public:
         }
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderFootSurfaceProc gResponderFootSurfaceProc;
 
@@ -1636,7 +1636,7 @@ protected:
     plResponderCompNode fCompNode;
 
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1667,7 +1667,7 @@ public:
 
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plResponderMultistageProc gResponderMultistageProc;
 

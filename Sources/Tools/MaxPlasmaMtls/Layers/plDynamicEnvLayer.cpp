@@ -74,14 +74,14 @@ extern HINSTANCE hInstance;
 class plDynamicEnvLayerClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plDynamicEnvLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_DYNAMIC_ENVMAP_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return DYNAMIC_ENV_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_ENV; }
-    const TCHAR*    InternalName()  { return _T("PlasmaDynamicEnvMapLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plDynamicEnvLayer(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_DYNAMIC_ENVMAP_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return DYNAMIC_ENV_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_ENV; }
+    const TCHAR*    InternalName() override { return _T("PlasmaDynamicEnvMapLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plDynamicEnvLayerClassDesc plDynamicEnvLayerDesc;
 ClassDesc2* GetDynamicEnvLayerDesc() { return &plDynamicEnvLayerDesc; }

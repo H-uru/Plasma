@@ -85,10 +85,10 @@ class plStartingPointComponent : public plComponent
 {
 public:
     plStartingPointComponent();
-    void DeleteThis() { delete this; }
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    void DeleteThis() override { delete this; }
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     //bool IsValidNodeType(plMaxNode *pNode);
 };
 
@@ -142,9 +142,9 @@ protected:
 public:
     plVehicleComponent();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plVehicleComponent, gVehicleDesc, "(ex)Vehicle", "Vehicle", COMP_TYPE_MISC, Class_ID(0x75903e2, 0x50ac210b))
@@ -173,7 +173,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -197,7 +197,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plVehicleComponentProc gVehicleComponentProc;
 
@@ -426,10 +426,10 @@ class plMaintainersMarkerComponent : public plComponent
 {
 public:
     plMaintainersMarkerComponent();
-    void DeleteThis() { delete this; }
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    void DeleteThis() override { delete this; }
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary.
@@ -493,9 +493,9 @@ protected:
 
 public:
     plGameMarkerComponent();
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plGameMarkerComponent, gGameMarkerDesc, "Game Marker",  "GameMarker", COMP_TYPE_TYPE, Class_ID(0x4a15029a, 0x350f7258))
@@ -584,7 +584,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -640,7 +640,7 @@ public:
 
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plGameMarkerComponentProc gGameMarkerComponentProc;
 
@@ -770,14 +770,14 @@ class plCameraComponent : public plComponent
 {
 public:
     plCameraComponent();
-    void DeleteThis() { delete this; }
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    void DeleteThis() override { delete this; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     bool IsValidNodeType(plMaxNode *pNode);
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
 };
 

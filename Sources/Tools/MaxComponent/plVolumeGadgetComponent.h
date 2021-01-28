@@ -54,17 +54,17 @@ protected:
 public:
     plVolumeGadgetComponent();
 
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    bool DeInit(plMaxNode *node, plErrorMsg* pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg* pErrMsg) override;
 
-    virtual bool HasLogicOut() { return true; }
+    bool HasLogicOut() override { return true; }
     
     const LogicKeys& GetLogicOutKeys() { return fLogicModOutKeys; }
     virtual plKey GetLogicOutKey(plMaxNode* node);
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables);
+    void CollectNonDrawables(INodeTab& nonDrawables) override;
 };
 
 #endif // plVolumeGadgetComponent_inc

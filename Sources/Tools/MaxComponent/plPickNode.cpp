@@ -72,15 +72,15 @@ protected:
 public:
     plPickNodeMax(IParamBlock2 *pb, int nodeListID, std::vector<Class_ID>* cids, bool single, bool canConvertToType);
 
-    virtual TCHAR *dialogTitle();
-    virtual TCHAR *buttonText() { return "OK"; }
+    TCHAR *dialogTitle() override;
+    TCHAR *buttonText() override { return "OK"; }
 
-    virtual int filter(INode *node);
+    int filter(INode *node) override;
 
-    virtual void proc(INodeTab &nodeTab);
+    void proc(INodeTab &nodeTab) override;
     
-    virtual BOOL showHiddenAndFrozen() { return TRUE; }
-    virtual BOOL singleSelect() { return fSingle; }
+    BOOL showHiddenAndFrozen() override { return TRUE; }
+    BOOL singleSelect() override { return fSingle; }
 
     void SetRefKludge(bool on) { fRefKludge = on; }
 

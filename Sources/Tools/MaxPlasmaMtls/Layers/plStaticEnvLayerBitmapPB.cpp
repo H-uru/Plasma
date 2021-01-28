@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class SELBMTexPBAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (!owner)
             return;
@@ -85,7 +85,7 @@ public:
                 break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 };
@@ -149,7 +149,7 @@ public:
     IMtlParams  *fMtlParams;
 
     /// Called to update the controls of the dialog
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map )
+    void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override
     {
         ICustButton     *bmSelectBtn;
         IParamBlock2    *pblock;
@@ -211,7 +211,7 @@ public:
     }
 
     /// Main message proc
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
       static ICustButton* bmSelectBtn;
       long  buttons[ 6 ] = { IDC_FRONT_NAME, IDC_BACK_NAME, IDC_LEFT_NAME, IDC_RIGHT_NAME, IDC_TOP_NAME, IDC_BOTTOM_NAME };
@@ -280,7 +280,7 @@ public:
 
         return FALSE;
     }
-    virtual void DeleteThis() {};
+    void DeleteThis() override { }
 
     BOOL    IDoSelectBaseFilename( IParamMap2 *map, TimeValue t, HWND hWnd )
     {

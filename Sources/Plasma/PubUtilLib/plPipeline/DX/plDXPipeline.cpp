@@ -507,7 +507,7 @@ class plRenderNilFunc : public plRenderPrimFunc
 public:
     plRenderNilFunc() {}
 
-    virtual bool RenderPrims() const { return false; }
+    bool RenderPrims() const override { return false; }
 };
 static plRenderNilFunc sRenderNil;
 
@@ -525,7 +525,7 @@ public:
                         int vStart, int vLength, int iStart, int iNumTris)
         : fD3DDevice(d3dDevice), fBaseVertexIndex(baseVertexIndex), fVStart(vStart), fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
 
-    virtual bool RenderPrims() const;
+    bool RenderPrims() const override;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

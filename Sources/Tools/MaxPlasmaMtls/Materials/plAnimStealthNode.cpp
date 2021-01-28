@@ -72,14 +72,14 @@ extern HINSTANCE hInstance;
 class plStealthClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return FALSE; }
-    void*           Create(BOOL loading) { return new plAnimStealthNode(loading); }
-    const TCHAR*    ClassName()     { return GetString( IDS_STEALTH_NAME ); }
-    SClass_ID       SuperClassID()  { return HELPER_CLASS_ID; }
-    Class_ID        ClassID()       { return ANIMSTEALTH_CLASSID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaAnimStealthInfo"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return FALSE; }
+    void*           Create(BOOL loading) override { return new plAnimStealthNode(loading); }
+    const TCHAR*    ClassName() override    { return GetString( IDS_STEALTH_NAME ); }
+    SClass_ID       SuperClassID() override { return HELPER_CLASS_ID; }
+    Class_ID        ClassID() override      { return ANIMSTEALTH_CLASSID; }
+    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    InternalName() override { return _T("PlasmaAnimStealthInfo"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plStealthClassDesc sStealthClassDesc;
 ClassDesc2* GetStealthClassDesc() { return &sStealthClassDesc; }
@@ -103,11 +103,11 @@ protected:
     HWND fhWnd;
 
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    virtual void DeleteThis() { IDeleteSegMap(); }
-    void SetThing(ReferenceTarget *m);
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { IDeleteSegMap(); }
+    void SetThing(ReferenceTarget *m) override;
 
-    virtual void Update( TimeValue t, Interval &valid, IParamMap2 *pmap );
+    void Update(TimeValue t, Interval &valid, IParamMap2 *pmap) override;
 
 protected:
     // Set all the controls to their stored value
@@ -419,7 +419,7 @@ class plGetRefs : public DependentEnumProc
 
         plGetRefs() { }
 
-        virtual int proc( ReferenceMaker *rmaker )
+        int proc(ReferenceMaker *rmaker) override
         {
             fList.Append( rmaker );
             return DEP_ENUM_CONTINUE;
@@ -837,7 +837,7 @@ class plPickAnimStealthNode : public plPickMtlNode
 protected:
     ParamID fTypeID;
 
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int type = fPB->GetInt(fTypeID);
 
@@ -851,7 +851,7 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const char* userType) override
     {
         if( strcmp( userType, kUseParamBlockNodeString ) == 0 )
         {

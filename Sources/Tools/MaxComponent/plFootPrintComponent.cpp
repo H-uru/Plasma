@@ -141,14 +141,14 @@ public:
     
     plFootPrintComponent();
     virtual ~plFootPrintComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 
     static plDynaDecalMgr* GetDecalMgr(INode* node);
@@ -161,7 +161,7 @@ CLASS_DESC(plFootPrintComponent, gFootPrintCompDesc, "Foot Print",  "FootPrint",
 class plWetProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -200,7 +200,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plWetProc gWetProc;
 
@@ -563,18 +563,18 @@ plDynaDecalMgr* plFootPrintComponent::GetDecalMgr(INode* node)
 class plRippleComponent : public plFootPrintComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plRippleComponent();
     virtual ~plRippleComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -751,13 +751,13 @@ public:
     
     plPuddleComponent();
     virtual ~plPuddleComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -905,18 +905,18 @@ plPuddleComponent::~plPuddleComponent()
 class plBulletComponent : public plFootPrintComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plBulletComponent();
     virtual ~plBulletComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1067,18 +1067,18 @@ plBulletComponent::~plBulletComponent()
 class plTorpedoComponent : public plRippleComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plTorpedoComponent();
     virtual ~plTorpedoComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1227,18 +1227,18 @@ plTorpedoComponent::~plTorpedoComponent()
 class plWakeComponent : public plFootPrintComponent
 {
 protected:
-    virtual void    IFakeParams();
+    void    IFakeParams() override;
 public:
     
     plWakeComponent();
     virtual ~plWakeComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1403,13 +1403,13 @@ public:
     
     plDirtyComponent();
     virtual ~plDirtyComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1419,7 +1419,7 @@ CLASS_DESC(plDirtyComponent, gDirtyCompDesc, "Dirty/Wet Region",  "Dirty/Wet", C
 class plDirtyProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1447,7 +1447,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDirtyProc gDirtyProc;
 
@@ -1554,13 +1554,13 @@ public:
     
     plPrintShapeComponent();
     virtual ~plPrintShapeComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1667,13 +1667,13 @@ public:
     
     plActivePrintShapeComponent();
     virtual ~plActivePrintShapeComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
@@ -1683,7 +1683,7 @@ CLASS_DESC(plActivePrintShapeComponent, gActivePrintShapeCompDesc, "Active Shape
 class plActiveProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1711,7 +1711,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plActiveProc gActiveProc;
 

@@ -67,9 +67,9 @@ CLASS_DESC(plAnimEventComponent, gAnimEventDesc, "Anim Event", "AnimEvent", COMP
 class plAnimEventProc : public plAnimCompProc
 {
 protected:
-    virtual void IPickComponent(IParamBlock2* pb);
-    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
-    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
+    void IPickComponent(IParamBlock2* pb) override;
+    void ILoadUser(HWND hWnd, IParamBlock2* pb) override;
+    bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID) override;
 
 public:
     plAnimEventProc();
@@ -391,8 +391,8 @@ public:
     plMtlEventProc();
 
 protected:
-    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
-    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
+    void ILoadUser(HWND hWnd, IParamBlock2* pb) override;
+    bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID) override;
 };
 static plMtlEventProc gMtlEventProc;
 

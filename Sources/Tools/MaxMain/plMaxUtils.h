@@ -55,10 +55,10 @@ protected:
 
 public:
     static plMaxUtils& Instance();
-    void DeleteThis() {};
+    void DeleteThis() override { }
 
-    void BeginEditParams(Interface *ip, IUtil *iu);
-    void EndEditParams(Interface *ip, IUtil *iu);
+    void BeginEditParams(Interface *ip, IUtil *iu) override;
+    void EndEditParams(Interface *ip, IUtil *iu) override;
 
     static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);

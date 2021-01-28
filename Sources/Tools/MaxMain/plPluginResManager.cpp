@@ -151,7 +151,7 @@ class plCommonKeyDistributor : public plRegistryKeyIterator
 public:
     plCommonKeyDistributor(plPluginResManager* mgr) : fMgr(mgr) {}
 
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         uint32_t count = plCommonObjLib::GetNumLibs();
 
@@ -213,7 +213,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, int32_t 
         class plEmptyIterator : public plRegistryKeyIterator
         {
         public:
-            virtual bool EatKey(const plKey& key) { return true; }
+            bool EatKey(const plKey& key) override { return true; }
         } empty;
 
         pageNode->IterateKeys(&empty);
@@ -306,7 +306,7 @@ protected:
 public:
     plSeqNumberFinder(int32_t& seqNum, bool willBeReserved) : fSeqNum(seqNum), fWillBeReserved(willBeReserved) {}
 
-    virtual bool EatPage(plRegistryPageNode* page)
+    bool EatPage(plRegistryPageNode* page) override
     {
         if (fSeqNum <= page->GetPageInfo().GetLocation().GetSequenceNumber() &&
             fWillBeReserved == page->GetPageInfo().GetLocation().IsReserved())
@@ -378,7 +378,7 @@ class plWritePageIterator : public plRegistryPageIterator
 {
 public:
     plWritePageIterator() {}
-    virtual bool EatPage(plRegistryPageNode *page) 
+    bool EatPage(plRegistryPageNode *page) override
     {
         if (page->GetPageInfo().GetLocation() != plLocation::kGlobalFixedLoc)
             page->Write();

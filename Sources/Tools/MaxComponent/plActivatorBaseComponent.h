@@ -68,16 +68,16 @@ protected:
 public:
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg);
-    virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     const LogicKeys& GetLogicKeys() { return fLogicModKeys; }
-    virtual plKey GetLogicKey(plMaxNode* node);
-    virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
+    plKey GetLogicKey(plMaxNode* node) override;
+    void AddReceiverKey(plKey pKey, plMaxNode* node=nil) override;
     virtual bool HasLogicOut() { return false; }
 
-    int CanConvertToType(Class_ID obtype)
+    int CanConvertToType(Class_ID obtype) override
     { return (obtype == ACTIVATOR_BASE_CID) ? 1 : plComponent::CanConvertToType(obtype); }
 };
 

@@ -403,14 +403,14 @@ static const char* kUserTypeAll = "(All)";
 class plPickAllMtlNode : public plPickMtlNode
 {
 protected:
-    void IAddUserType(HWND hList)
+    void IAddUserType(HWND hList) override
     {
         int idx = ListBox_AddString(hList, kUserTypeAll);
         if (!fPB->GetINode(fNodeParamID))
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const char* userType) override
     {
         if (strcmp(userType, kUserTypeAll) == 0)
             ISetNodeValue(nil);

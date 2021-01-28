@@ -63,14 +63,14 @@ extern HINSTANCE hInstance;
 class plClothingMtlClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plClothingMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_CLOTHING_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return CLOTHING_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("ClothingMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override      { return TRUE; }
+    void*           Create(BOOL loading) override { return new plClothingMtl(loading); }
+    const TCHAR*    ClassName() override     { return GetString(IDS_CLOTHING_MTL); }
+    SClass_ID       SuperClassID() override  { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override       { return CLOTHING_MTL_CLASS_ID; }
+    const TCHAR*    Category() override      { return NULL; }
+    const TCHAR*    InternalName() override  { return _T("ClothingMaterial"); }
+    HINSTANCE       HInstance() override     { return hInstance; }
 };
 static plClothingMtlClassDesc plClothingMtlDesc;
 ClassDesc2* GetClothingMtlDesc() { return &plClothingMtlDesc; }

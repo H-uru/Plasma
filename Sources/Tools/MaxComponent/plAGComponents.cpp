@@ -104,9 +104,9 @@ class plAnimAvatarComponent : public plComponent
 //  static plAGAnimMgr *fManager;
 public:
         plAnimAvatarComponent();
-        virtual bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg) override;
 
-        virtual bool Convert(plMaxNode* node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode* node, plErrorMsg *pErrMsg) override;
 
         virtual plATCAnim * NewAnimation(const ST::string &name, double begin, double end);
 
@@ -114,9 +114,9 @@ public:
         bool ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *mod, plErrorMsg *pErrMsg);
         bool MakePersistent(plMaxNode *node, plAGAnim *anim, const ST::string &animName, plErrorMsg *pErrMsg);
 
-        virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+        void CollectNonDrawables(INodeTab& nonDrawables) override { AddTargetsToList(nonDrawables); }
 
-        void DeleteThis() { delete this; }
+        void DeleteThis() override { delete this; }
 };
 
 //plAGAnimMgr * plAnimAvatarComponent::fManager = nil;
@@ -379,8 +379,8 @@ public:
     };
 
     plEmoteComponent();
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual plATCAnim * NewAnimation(const ST::string &name, double begin, double end);
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    plATCAnim * NewAnimation(const ST::string &name, double begin, double end) override;
 
 protected:
     float fFadeIn;

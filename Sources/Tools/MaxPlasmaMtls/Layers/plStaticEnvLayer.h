@@ -116,66 +116,66 @@ public:
 
     plStaticEnvLayer();
     ~plStaticEnvLayer();
-    void DeleteThis() { delete this; }      
+    void DeleteThis() override { delete this; }
 
     //From MtlBase
-    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp);
-    BOOL SetDlgThing(ParamDlg* dlg);
-    void Update(TimeValue t, Interval& valid);
-    void Reset();
-    Interval Validity(TimeValue t);
-    ULONG LocalRequirements(int subMtlNum);
+    ParamDlg* CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
+    BOOL SetDlgThing(ParamDlg* dlg) override;
+    void Update(TimeValue t, Interval& valid) override;
+    void Reset() override;
+    Interval Validity(TimeValue t) override;
+    ULONG LocalRequirements(int subMtlNum) override;
 
     //From Texmap
-    RGBA EvalColor(ShadeContext& sc);
-    float EvalMono(ShadeContext& sc);
-    Point3 EvalNormalPerturb(ShadeContext& sc);
+    RGBA EvalColor(ShadeContext& sc) override;
+    float EvalMono(ShadeContext& sc) override;
+    Point3 EvalNormalPerturb(ShadeContext& sc) override;
 
     // For displaying textures in the viewport
-    BOOL SupportTexDisplay() { return TRUE; }
-    void ActivateTexDisplay(BOOL onoff);
-    BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0);
-    DWORD GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker);
+    BOOL SupportTexDisplay() override { return TRUE; }
+    void ActivateTexDisplay(BOOL onoff) override;
+    BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0) override;
+    DWORD GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) override;
 protected:
     void IChanged();
     void IDiscardTexHandle();
 
 public:
-    void GetUVTransform(Matrix3 &uvtrans) { fUVGen->GetUVTransform(uvtrans); }
-    int GetTextureTiling() { return  fUVGen->GetTextureTiling(); }
-    int GetUVWSource() { return fUVGen->GetUVWSource(); }
-    virtual int GetMapChannel () { return fUVGen->GetMapChannel(); }    // only relevant if above returns UVWSRC_EXPLICIT
-    UVGen *GetTheUVGen() { return fUVGen; }
+    void GetUVTransform(Matrix3 &uvtrans) override { fUVGen->GetUVTransform(uvtrans); }
+    int GetTextureTiling() override { return  fUVGen->GetTextureTiling(); }
+    int GetUVWSource() override { return fUVGen->GetUVWSource(); }
+    int GetMapChannel() override { return fUVGen->GetMapChannel(); }    // only relevant if above returns UVWSRC_EXPLICIT
+    UVGen *GetTheUVGen() override { return fUVGen; }
     
     //TODO: Return anim index to reference index
-    int SubNumToRefNum(int subNum) { return subNum; }
+    int SubNumToRefNum(int subNum) override { return subNum; }
     
     
     // Loading/Saving
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 
     //From Animatable
-    Class_ID ClassID() { return STATIC_ENV_LAYER_CLASS_ID; }        
-    SClass_ID SuperClassID() { return TEXMAP_CLASS_ID; }
-    void GetClassName(TSTR& s);
+    Class_ID ClassID() override { return STATIC_ENV_LAYER_CLASS_ID; }
+    SClass_ID SuperClassID() override { return TEXMAP_CLASS_ID; }
+    void GetClassName(TSTR& s) override;
 
-    RefTargetHandle Clone( RemapDir &remap );
+    RefTargetHandle Clone(RemapDir &remap) override;
     RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message);
+        PartID& partID, RefMessage message) override;
 
-    int NumSubs();
-    Animatable* SubAnim(int i); 
-    TSTR SubAnimName(int i);
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
+    TSTR SubAnimName(int i) override;
 
     // TODO: Maintain the number or references here 
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
 
-    int NumParamBlocks();   // return number of ParamBlocks in this instance
-    IParamBlock2* GetParamBlock(int i); // return i'th ParamBlock
-    IParamBlock2* GetParamBlockByID(BlockID id); // return id'd ParamBlock
+    int NumParamBlocks() override;   // return number of ParamBlocks in this instance
+    IParamBlock2* GetParamBlock(int i) override; // return i'th ParamBlock
+    IParamBlock2* GetParamBlockByID(BlockID id) override; // return id'd ParamBlock
 
     const char *GetTextureName( int which );
 
@@ -237,13 +237,13 @@ public:
     };
 
         // Pure virtual accessors for the various bitmap related elements
-        virtual Bitmap *GetMaxBitmap(int index = 0) { return fBitmaps[ index ]; }
-        virtual PBBitmap *GetPBBitmap( int index = 0 );
-        virtual int     GetNumBitmaps() { return 6; }
+        Bitmap *GetMaxBitmap(int index = 0) override { return fBitmaps[ index ]; }
+        PBBitmap *GetPBBitmap(int index = 0) override;
+        int     GetNumBitmaps() override { return 6; }
 
     protected:
-        virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) { fBitmaps[ index ] = bitmap; }
-        virtual void ISetPBBitmap( PBBitmap *pbbm, int index = 0 );
+        void ISetMaxBitmap(Bitmap *bitmap, int index = 0) override { fBitmaps[ index ] = bitmap; }
+        void ISetPBBitmap(PBBitmap *pbbm, int index = 0) override;
 
 
 };

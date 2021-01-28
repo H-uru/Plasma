@@ -59,17 +59,17 @@ class HSExport2 : public SceneExport
 public:
                     HSExport2();
                     ~HSExport2();
-    int             ExtCount();                 // Number of extensions supported
-    const TCHAR *   Ext(int n);                 // Extension #n (i.e. "HS")
-    const TCHAR *   LongDesc();                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
-    const TCHAR *   ShortDesc();                // Short ASCII description (i.e. "3D Studio")
-    const TCHAR *   AuthorName();               // ASCII Author name
-    const TCHAR *   CopyrightMessage();         // ASCII Copyright message
-    const TCHAR *   OtherMessage1();            // Other message #1
-    const TCHAR *   OtherMessage2();            // Other message #2
-    unsigned int    Version();                  // Version number * 100 (i.e. v3.01 = 301)
-    void            ShowAbout(HWND hWnd);       // Show DLL's "About..." box
-    virtual int     DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
+    int             ExtCount() override;                 // Number of extensions supported
+    const TCHAR *   Ext(int n) override;                 // Extension #n (i.e. "HS")
+    const TCHAR *   LongDesc() override;                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
+    const TCHAR *   ShortDesc() override;                // Short ASCII description (i.e. "3D Studio")
+    const TCHAR *   AuthorName() override;               // ASCII Author name
+    const TCHAR *   CopyrightMessage() override;         // ASCII Copyright message
+    const TCHAR *   OtherMessage1() override;            // Other message #1
+    const TCHAR *   OtherMessage2() override;            // Other message #2
+    unsigned int    Version() override;                  // Version number * 100 (i.e. v3.01 = 301)
+    void            ShowAbout(HWND hWnd) override;       // Show DLL's "About..." box
+    int             DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0) override;
 
     const char*         GetName()                   { return fName; }
 
@@ -85,16 +85,16 @@ private:
 class HSClassDesc2 : public ClassDesc 
 {
 public:
-    int             IsPublic() { return 1; }
-    void *          Create(BOOL loading = FALSE) { return new HSExport2; }
-    const TCHAR *   ClassName() { return "Plasma 2.0 Scene Exporter"; }
-    SClass_ID       SuperClassID() { return SCENE_EXPORT_CLASS_ID; }
+    int             IsPublic() override { return 1; }
+    void *          Create(BOOL loading = FALSE) override { return new HSExport2; }
+    const TCHAR *   ClassName() override { return "Plasma 2.0 Scene Exporter"; }
+    SClass_ID       SuperClassID() override { return SCENE_EXPORT_CLASS_ID; }
 #ifdef HS_DEBUGGING
-    Class_ID        ClassID() { return Class_ID(0x547962c7, 0x520a702d); }
+    Class_ID        ClassID() override { return Class_ID(0x547962c7, 0x520a702d); }
 #else
-    Class_ID        ClassID() { return Class_ID(0x717f791f, 0x79412447); }
+    Class_ID        ClassID() override { return Class_ID(0x717f791f, 0x79412447); }
 #endif
-    const TCHAR*    Category() { return "Plasma Export...";  }
+    const TCHAR*    Category() override { return "Plasma Export..."; }
 };
 
 
@@ -102,7 +102,7 @@ public:
 class SimpleExportExitCallback : public ExitMAXCallback
 {
 public:
-    BOOL Exit(HWND hWnd)    { return false; }
+    BOOL Exit(HWND hWnd) override { return false; }
 };
 
 //

@@ -71,7 +71,7 @@ plRTProjDirLightDesc    plRTProjDirLightDesc::fStaticDesc;
 class plProjDirDlgProc : public plBaseLightProc
 {
     public:
-        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
         {
             IParamBlock2        *pb = map->GetParamBlock();
             plRTProjDirLight    *lite = (plRTProjDirLight *)pb->GetOwner();
@@ -116,7 +116,7 @@ class plProjDirDlgProc : public plBaseLightProc
 
             return plBaseLightProc::DlgProc( t, map, hWnd, msg, wParam, lParam );
         }
-        void DeleteThis() {};
+        void DeleteThis() override { }
 };
 static plProjDirDlgProc     gPPDirLiteDlgProc;
 

@@ -110,7 +110,7 @@ class plPlasmaMAXLayer : public Texmap
         plPlasmaMAXLayer();
         virtual ~plPlasmaMAXLayer();
 
-        void    DeleteThis() { delete this; }       
+        void    DeleteThis() override { delete this; }
 
 
         // Static that checks the classID of the given texMap and, if it's a valid Plasma MAX Layer, returns a pointer to such

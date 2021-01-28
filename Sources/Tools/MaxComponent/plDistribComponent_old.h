@@ -133,7 +133,7 @@ public:
 
 public:
     plDistribComponent_old();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
 
     BOOL            Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nil);
@@ -150,9 +150,9 @@ public:
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 };
 
 

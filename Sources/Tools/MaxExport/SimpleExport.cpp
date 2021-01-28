@@ -200,7 +200,7 @@ protected:
 public:
     plTextureLoggerCBack(plTextureExportLog* teLog) { fTELog = teLog; }
 
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         plBitmap* bmap = plBitmap::ConvertNoRef(key->ObjectIsLoaded());
         if (bmap != nil)
@@ -213,7 +213,7 @@ public:
 class plOptimizeIterator : public plRegistryKeyIterator
 {
 public:
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         if (key->GetUoid().GetClassType() == plSceneNode::Index())
         {

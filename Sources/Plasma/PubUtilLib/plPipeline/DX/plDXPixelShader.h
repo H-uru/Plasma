@@ -52,8 +52,8 @@ struct IDirect3DPixelShader9;
 
 class plDXPixelShader : public plDXShader
 {
-    virtual HRESULT     ICreate(plDXPipeline* pipe); // On error, sets error string.
-    virtual HRESULT     ISetConstants(plDXPipeline* pipe);
+    HRESULT     ICreate(plDXPipeline* pipe) override; // On error, sets error string.
+    HRESULT     ISetConstants(plDXPipeline* pipe) override;
 
     IDirect3DPixelShader9 *fHandle;
 
@@ -61,7 +61,7 @@ public:
     plDXPixelShader(plShader* owner);
     virtual ~plDXPixelShader();
 
-    void            Release();
+    void            Release() override;
     void            Link(plDXPixelShader** back) { plDXDeviceRef::Link((plDXDeviceRef**)back); }
 
     bool            VerifyFormat(uint8_t format) const;

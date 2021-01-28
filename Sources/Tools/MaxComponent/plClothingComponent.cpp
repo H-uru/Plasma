@@ -94,7 +94,7 @@ public:
     converts.
     */
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plClothingComponent::kMeshNodeAddBtn)
         {

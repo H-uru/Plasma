@@ -112,8 +112,8 @@ protected:
 public:
     plResponderProc();
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { IRemoveCmdRollups(); }
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { IRemoveCmdRollups(); }
 
 protected:
     void ICreateMenu();
@@ -186,7 +186,7 @@ CLASS_DESC(plResponderComponent, gResponderDesc, "Responder", "Responder", COMP_
 class plResponderAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == kResponderActivators || id == kResponderState)
         {
@@ -952,7 +952,7 @@ void plResponderProc::LoadState()
 class MyRemapDir : public RemapDir
 {
 public:
-    RefTargetHandle CloneRef(RefTargetHandle oldTarg)
+    RefTargetHandle CloneRef(RefTargetHandle oldTarg) override
     {
         if (oldTarg == NULL)
             return NULL;
@@ -962,15 +962,15 @@ public:
             return oldTarg;
     }
 
-    RefTargetHandle FindMapping(RefTargetHandle from) { hsAssert(0, "shit"); return NULL; }
-    void PatchPointer(RefTargetHandle* patchThis, RefTargetHandle oldTarg) { hsAssert(0, "shit"); }
-    void AddPostPatchProc(PostPatchProc* proc, bool toDelete) { hsAssert(0, "shit"); }
-    void AddEntry(RefTargetHandle hfrom, RefTargetHandle hto) { hsAssert(0, "shit"); }
-    void Backpatch() { hsAssert(0, "shit"); }
-    bool BackpatchPending() { hsAssert(0, "shit"); return false; }
-    void Clear() { hsAssert(0, "shit"); }
-    void ClearBackpatch() { hsAssert(0, "shit"); }
-    void DeleteThis() { hsAssert(0, "shit"); }
+    RefTargetHandle FindMapping(RefTargetHandle from) override { hsAssert(0, "shit"); return NULL; }
+    void PatchPointer(RefTargetHandle* patchThis, RefTargetHandle oldTarg) override { hsAssert(0, "shit"); }
+    void AddPostPatchProc(PostPatchProc* proc, bool toDelete) override { hsAssert(0, "shit"); }
+    void AddEntry(RefTargetHandle hfrom, RefTargetHandle hto) override { hsAssert(0, "shit"); }
+    void Backpatch() override { hsAssert(0, "shit"); }
+    bool BackpatchPending() override { hsAssert(0, "shit"); return false; }
+    void Clear() override { hsAssert(0, "shit"); }
+    void ClearBackpatch() override { hsAssert(0, "shit"); }
+    void DeleteThis() override { hsAssert(0, "shit"); }
     
 };
 // Even turdier - I had to define this to compile

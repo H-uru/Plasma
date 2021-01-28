@@ -75,7 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonBitmapLib : public plCommonObjLib
 {
     public:
-        virtual bool    IsInteresting( const plKey &objectKey )
+        bool    IsInteresting(const plKey &objectKey) override
         {
             if( objectKey->GetUoid().GetClassType() == plCubicEnvironmap::Index() ||
                 objectKey->GetUoid().GetClassType() == plMipmap::Index() )

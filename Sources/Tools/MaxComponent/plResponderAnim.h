@@ -55,19 +55,19 @@ class plResponderCmdAnim : public plResponderCmd
 {
 public:
     static plResponderCmdAnim& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes();
-    virtual const char *GetCategory(int idx);
-    virtual const char *GetName(int idx);
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override;
+    const char *GetCategory(int idx) override;
+    const char *GetName(int idx) override;
+    const char *GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual IParamBlock2 *CreatePB(int idx);
-    virtual plMessage *CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
+    IParamBlock2 *CreatePB(int idx) override;
+    plMessage *CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;
 
-    virtual bool IsWaitable(IParamBlock2 *pb);
-    virtual void GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints);
-    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    bool IsWaitable(IParamBlock2 *pb) override;
+    void GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints) override;
+    void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo) override;
     
     plComponentBase *GetComponent(IParamBlock2 *pb);
 

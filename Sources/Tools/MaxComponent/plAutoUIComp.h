@@ -78,16 +78,16 @@ public:
 class plAutoUIClassDesc : public plComponentClassDesc
 {
 public:
-    virtual bool IsAutoUI() { return true; }
-    virtual bool IsObsolete()   { return true; }
+    bool IsAutoUI() override { return true; }
+    bool IsObsolete() override { return true; }
 
     plAutoUIComp *autoComp;
-    void BeginEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev)
+    void BeginEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev) override
     {
         ClassDesc2::BeginEditParams(ip, obj, flags, prev);
         if (autoComp) autoComp->BeginEditParams(ip, obj, flags, prev);
     }
-    void EndEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev)
+    void EndEditParams(IObjParam *ip, ReferenceMaker* obj, ULONG flags, Animatable *prev) override
     {
         if (autoComp) autoComp->EndEditParams(ip, obj, flags, prev);
         ClassDesc2::EndEditParams(ip, obj, flags, prev);

@@ -94,7 +94,7 @@ public:
      * Launches the client window and starts the game.
      * This will block if the client is not initialized.
      */
-    void Start();
+    void Start() override;
 
     /**
      * Waits for the client to finish initing

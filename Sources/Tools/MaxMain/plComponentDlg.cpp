@@ -1002,10 +1002,10 @@ public:
         return true;
     }
 
-    virtual TCHAR *dialogTitle() { return "Select Nodes"; }
-    virtual TCHAR *buttonText() { return "Copy"; }
+    TCHAR *dialogTitle() override { return "Select Nodes"; }
+    TCHAR *buttonText() override { return "Copy"; }
 
-    virtual int filter(INode *node)
+    int filter(INode *node) override
     {
         // Make sure this node doesn't already have the components
         for (int i = 0; i < fSelectedNodes.Count(); i++)
@@ -1017,7 +1017,7 @@ public:
         return TRUE;
     }
 
-    virtual void proc(INodeTab &nodeTab)
+    void proc(INodeTab &nodeTab) override
     {
         for (int i = 0; i < nodeTab.Count(); i++)
         {

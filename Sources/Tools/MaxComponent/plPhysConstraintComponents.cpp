@@ -120,7 +120,7 @@ public:
     converts.
     */
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plComponentBase *comp = (plComponentBase*)owner;
         comp->NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_COMP_REF_CHANGED);
@@ -214,10 +214,10 @@ public:
             \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
         */
 
-        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) override { return true;}
 
-        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //
@@ -535,9 +535,9 @@ public:
     void SetDefaultTau();
     void ValidateSections();
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* errMsg);
-    bool PreConvert(plMaxNode* node, plErrorMsg* errMsg);
-    bool Convert(plMaxNode* node, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* errMsg) override;
+    bool PreConvert(plMaxNode* node, plErrorMsg* errMsg) override;
+    bool Convert(plMaxNode* node, plErrorMsg* errMsg) override;
 };
 
 class plBridgeProc : public ParamMap2UserDlgProc
@@ -547,8 +547,8 @@ protected:
     void IMoveListSel(bool up, IParamBlock2* pb, HWND hDlg);
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() {}
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 };
 static plBridgeProc gBridgeComponentProc;
 
@@ -870,10 +870,10 @@ public:
             \sa DeleteThis(), plPhysicalCoreComponent(), Convert(), GetParamVals(), MaybeMakeLocal() and FixUpPhysical()
         */
 
-        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg);
-        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) { return true;}
+        bool SetupProperties(plMaxNode* node, plErrorMsg *pErrMsg) override;
+        bool PreConvert(plMaxNode* node, plErrorMsg* plErrorMsg) override { return true;}
 
-        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
 };
 

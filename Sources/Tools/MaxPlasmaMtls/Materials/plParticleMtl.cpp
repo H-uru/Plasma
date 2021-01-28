@@ -60,14 +60,14 @@ extern HINSTANCE hInstance;
 class plParticleMtlClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plParticleMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_PARTICLE_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return PARTICLE_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("ParticleMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plParticleMtl(loading); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_PARTICLE_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return PARTICLE_MTL_CLASS_ID; }
+    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    InternalName() override { return _T("ParticleMaterial"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plParticleMtlClassDesc plParticleMtlDesc;
 ClassDesc2* GetParticleMtlDesc() { return &plParticleMtlDesc; }

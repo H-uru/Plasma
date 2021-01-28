@@ -83,10 +83,10 @@ class plBaseSoundEmitterComponent : public plComponent
         plBaseSoundEmitterComponent();
         virtual ~plBaseSoundEmitterComponent();
 
-        RefTargetHandle Clone(RemapDir &remap);
+        RefTargetHandle Clone(RemapDir &remap) override;
 
-        IOResult Save(ISave* isave);
-        IOResult Load(ILoad* iload);
+        IOResult Save(ISave* isave) override;
+        IOResult Load(ILoad* iload) override;
 
         enum WhichSound
         {
@@ -102,12 +102,12 @@ class plBaseSoundEmitterComponent : public plComponent
 
         // Internal setup and write-only set properties on the MaxNode. No reading
         // of properties on the MaxNode, as it's still indeterminant.
-        bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-        bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg, Class_ID classToConvert );
-        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) = 0;
+        bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg, Class_ID classToConvert);
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override = 0;
 
-        bool DeInit( plMaxNode *node, plErrorMsg *pErrMsg );
+        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
         virtual bool    ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg ) { return false; }
 
@@ -130,8 +130,8 @@ class plBaseSoundEmitterComponent : public plComponent
         virtual bool    IsLocalOnly() const { return true; }
 
         // Virtuals for handling animated volumes
-        virtual bool    AddToAnim( plAGAnim *anim, plMaxNode *node );
-        virtual bool    AllowUnhide() { return fAllowUnhide; }
+        bool    AddToAnim(plAGAnim *anim, plMaxNode *node) override;
+        bool    AllowUnhide() override { return fAllowUnhide; }
 
         // Flags this component to create a grouped sound instead of a normal sound
         void            SetCreateGrouped( plMaxNode *baseNode, int commonSoundIdx );
@@ -204,14 +204,14 @@ public:
     std::map<plMaxNode*, plRandomSoundMod*> fSoundMods;
 
     plRandomSoundComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     void RemoveSound(int index);
     void AddSelectedSound();

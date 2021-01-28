@@ -65,8 +65,8 @@ protected:
 public:
     void Init(IParamBlock2 *curStatePB, int curCmd, HWND hList) { fStatePB = curStatePB; fCurCmd = curCmd; fhList = hList; }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    virtual void DeleteThis() {}
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 
 protected:
     void LoadWho(bool setDefault=false);

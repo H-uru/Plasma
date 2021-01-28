@@ -107,12 +107,12 @@ protected:
 
 public:
     plAnimComponentBase();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     virtual plKey GetModKey(plMaxNode *node)=0;
     ST::string GetAnimName();
@@ -130,9 +130,9 @@ public:
     static plAnimObjInterface   *GetAnimInterface( INode *node );
 
     // plAnimObjInterface functions
-    virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
-    virtual bool    IsNodeRestricted() { return true; }
-    virtual ST::string GetIfaceSegmentName( bool allowNil );
+    void    PickTargetNode(IParamBlock2 *destPB, ParamID destParamID, ParamID typeID) override;
+    bool    IsNodeRestricted() override { return true; }
+    ST::string GetIfaceSegmentName(bool allowNil) override;
 
 protected:
     bool IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);
@@ -145,8 +145,8 @@ class plAnimComponent : public plAnimComponentBase
 {
 public:
     plAnimComponent();
-    plKey GetModKey(plMaxNode *node);
-    virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
+    plKey GetModKey(plMaxNode *node) override;
+    bool  GetKeyList(INode *restrictedNode, hsTArray<plKey> &outKeys) override;
 };
 
 class plAnimGroupedComponent : public plAnimComponentBase
@@ -157,12 +157,12 @@ protected:
 public:
     plAnimGroupedComponent();
 
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    plKey GetModKey(plMaxNode *node);
+    plKey GetModKey(plMaxNode *node) override;
 
-    virtual bool    IsNodeRestricted() { return false; }
-    virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
+    bool    IsNodeRestricted() override { return false; }
+    bool    GetKeyList(INode *restrictedNode, hsTArray<plKey> &outKeys) override;
 };
 
 //// Dialog Proc For Anim Selection /////////////////////////////////////////////////////////////
@@ -197,11 +197,11 @@ public:
     // Node restricted version
     plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgItem, ParamID nodeParamID, ParamID typeParamID, int nodeDlgItem, TCHAR *promptTitle, ParamMap2UserDlgProc *chainedDlgProc = nil );
 
-    virtual void    SetThing( ReferenceTarget *m );
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map );
-    virtual BOOL    DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    void    SetThing(ReferenceTarget *m) override;
+    void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override;
+    BOOL    DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
-    void DeleteThis();
+    void DeleteThis() override;
 };
 
 class plAnimComponentProc : public ParamMap2UserDlgProc
@@ -216,20 +216,20 @@ public:
     static void FillAgeGlobalComboBox(HWND box, const char *varName);
     static void SetBoxToAgeGlobal(HWND box, const char *varName);
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    virtual void Update(TimeValue t, Interval &valid, IParamMap2 *map); 
-    void DeleteThis();
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void Update(TimeValue t, Interval &valid, IParamMap2 *map) override;
+    void DeleteThis() override;
 };  
 
 class plAnimCompressComp : public plComponent
 {
 public:
     plAnimCompressComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    //virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    //bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
