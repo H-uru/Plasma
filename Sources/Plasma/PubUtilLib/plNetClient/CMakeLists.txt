@@ -75,5 +75,7 @@ target_link_libraries(plNetClient
         pnFactory
 )
 
+plasma_optimize_target(plNetClient PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
+
 source_group("Source Files" FILES ${plNetClient_SOURCES})
 source_group("Header Files" FILES ${plNetClient_HEADERS})

@@ -78,5 +78,7 @@ target_link_libraries(
         plSDL # :(
 )
 
+plasma_optimize_target(pnMessage PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
+
 source_group("Header Files" FILES ${pnMessage_HEADERS})
 source_group("Source Files" FILES ${pnMessage_SOURCES})

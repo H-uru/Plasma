@@ -89,8 +89,13 @@ set(plPipeline_ALL_FILES
     ${plPipeline_HEADERS}
 )
 
+set(plPipeline_PCH
+    Pch.h
+)
+
 if(PLASMA_PIPELINE STREQUAL "DirectX")
     list(APPEND plPipeline_ALL_FILES ${plDXPipeline_SOURCES} ${plDXPipeline_HEADERS})
+    list(APPEND plPipeline_PCH DX/Pch.h)
 endif(PLASMA_PIPELINE STREQUAL "DirectX")
 
 if(PLASMA_PIPELINE STREQUAL "OpenGL")
@@ -132,6 +137,8 @@ target_link_libraries(plPipeline
     INTERFACE
         pnFactory
 )
+
+plasma_optimize_target(plPipeline PRECOMPILED_HEADERS ${plPipeline_PCH})
 
 target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 
