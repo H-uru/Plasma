@@ -56,17 +56,19 @@ respLeverPull = ptAttribResponder(2, "resp: Lever Pull", netForce=1)
 respGateDown = ptAttribResponder(3, "resp: Gate Down", netForce=1)
 respGateUp = ptAttribResponder(4, "resp: Gate Up", netForce=1)
 
+kGateVariable = "tldnShroomieGateUp"
+
 class tldnShroomieGate(ptResponder):
 
     def __init__(self):
         # run parent class init
         ptResponder.__init__(self)
         self.id = 5042
-        
+
         version = 1
         self.version = version
         PtDebugPrint("__init__tldnShroomieGate v.", version)
-        
+
     def OnNotify(self,state,id,events):
         if id == clkLever.id and state:
             PtDebugPrint("tldnShroomieGate:\t---Someone Pulled the Lever")
@@ -74,30 +76,41 @@ class tldnShroomieGate(ptResponder):
 
         elif id == respLeverPull.id:
             ageSDL = PtGetAgeSDL()
-            PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Up SDL: %d" % (ageSDL["tldnShroomieGateUp"][0]))
-            if ageSDL["tldnShroomieGatePowerOn"][0] and self.sceneobject.isLocallyOwned():                
-                if ageSDL["tldnShroomieGateUp"][0]:
-                    respGateDown.run(self.key)
-                    PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Going Down")
-                else:
-                    respGateUp.run(self.key)
-                    PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Going Up")
-            ageSDL["tldnShroomieGateUp"] = (not ageSDL["tldnShroomieGateUp"][0],)
-                            
-        
+            PtDebugPrint(f"tldnShroomieGate:\t---Shroomie Gate Up SDL: {ageSDL[kGateVariable][0]}")
+            if ageSDL["tldnShroomieGatePowerOn"][0] and self.sceneobject.isLocallyOwned():
+                ageSDL[kGateVariable] = (not ageSDL[kGateVariable][0],)
+
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
+        if VARname != kGateVariable:
+            return
+
+        ageSDL = PtGetAgeSDL()
+        value = ageSDL[kGateVariable][0]
+
+        avatarKey = PtGetAvatarKeyFromClientID(playerID)
+        avatar = avatarKey.getSceneObject() if avatarKey else None
+        ff = avatar is None
+
+        if value:
+            respGateUp.run(self.key, avatar=avatar, fastforward=ff)
+            PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Going Up")
+        else:
+            respGateDown.run(self.key, avatar=avatar, fastforward=ff)
+            PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Going Down")
+
     def OnServerInitComplete(self):
         try:
             ageSDL = PtGetAgeSDL()
         except:
             PtDebugPrint("tldnShroomieGate:\tERROR---Cannot find the Teledahn Age SDL")
 
-        ageSDL.sendToClients("tldnShroomieGateUp")
-        ageSDL.setFlags("tldnShroomieGateUp", 1, 1)
-        ageSDL.setNotify(self.key, "tldnShroomieGateUp", 0.0)
-        
-        if ageSDL["tldnShroomieGateUp"][0]:
+        ageSDL.sendToClients(kGateVariable)
+        ageSDL.setFlags(kGateVariable, 1, 1)
+        ageSDL.setNotify(self.key, kGateVariable, 0.0)
+
+        if ageSDL[kGateVariable][0]:
             PtDebugPrint("tldnShroomieGate:\tInit---Shroomie Gate Up")
-            respGateUp.run(self.key,fastforward=1)
+            respGateUp.run(self.key, fastforward=True)
         else:
             PtDebugPrint("tldnShroomieGate:\tInit---Shroomie Gate Down")
-            respGateDown.run(self.key,fastforward=1)
+            respGateDown.run(self.key, fastforward=True)
