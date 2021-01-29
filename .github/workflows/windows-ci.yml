@@ -8,6 +8,7 @@ jobs:
       matrix:
         platform:
           - { generator: Visual Studio 16 2019, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
+          - { generator: Visual Studio 16 2019, arch: Win64, qt-arch: win64_msvc2019, qt-version: 5.15.2,  str: windows-x64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -52,6 +53,7 @@ jobs:
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
+        if: ${{ matrix.arch == 'Win32' }}
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
