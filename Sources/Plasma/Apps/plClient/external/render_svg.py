@@ -146,8 +146,11 @@ def render_cursors(inpath, outpath):
 			shift_all_layers(layers, *cursorOffsetList.get(cursor, [0, 0]))
 
 			outfile = os.path.join(outpath, cursor + ".png")
+			cursorSVG.documentElement.setAttribute("width", str(scalefactor*svgwidth))
+			cursorSVG.documentElement.setAttribute("height", str(scalefactor*svgheight))
+			cursorSVG.documentElement.setAttribute("viewBox", "0 0 {} {}".format(svgwidth, svgheight))
 			cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'), write_to=outfile, 
-				parent_width=svgwidth, parent_height=svgheight, scale=scalefactor)
+				parent_width=scalefactor*svgwidth, parent_height=scalefactor*svgheight)
 			scalergba.scale(outfile, outfile, scalefactor)
 
 def render_loading_books(inpath, outpath):
