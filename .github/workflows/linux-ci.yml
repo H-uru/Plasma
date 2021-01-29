@@ -2,58 +2,58 @@ name: Linux-CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-latest
+    name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
     strategy:
       matrix:
-        python-version: [3.8]
+        platform:
+          - { str: linux-x64 }
+        cfg:
+          #- { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          #- { external: ON, type: RelWithDebInfo, str: external-release }
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
 
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+              autoconf \
+              cmake \
+              libsecret-1-dev \
+              libtool \
+              nasm \
+              ninja-build \
+              qtbase5-dev
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake libcurl4-openssl-dev libopenal-dev libssl-dev \
-          libogg-dev libopus-dev libspeex-dev uuid-dev libvpx-dev \
-          libvorbis-dev qtbase5-dev
-        sudo pip install -r ${GITHUB_WORKSPACE}/requirements.txt
+      - name: Configure
+        run: |
+          cmake \
+            -DUSE_VCPKG=ON \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
+            -DPLASMA_BUILD_TESTS=ON \
+            -DPLASMA_BUILD_TOOLS=ON \
+            -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
+            -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" \
+            -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
+            -DPLASMA_VCPKG_NUGET_RW=TRUE \
+            -S . -B build
 
-    - name: Build string_theory
-      run: |
-        mkdir -p build_deps && cd build_deps
-        git clone https://github.com/zrax/string_theory
-        mkdir -p string_theory/build && cd string_theory/build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DST_BUILD_TESTS=OFF \
-              -DCMAKE_INSTALL_PREFIX="${GITHUB_WORKSPACE}/build_deps/prefix" ..
-        make -j2 && make install
+      - name: Build
+        run: |
+          cmake --build build -j 2
 
-    - name: Build PhysX
-      run: |
-        mkdir -p build_deps && cd build_deps
-        git clone -b 4.1 --depth 1 https://github.com/NVIDIAGameWorks/PhysX.git
-        cd PhysX/physx
-        ./generate_projects.sh linux
-        cd compiler/linux-debug
-        cmake -DPX_BUILDPUBLICSAMPLES=OFF -DPX_BUILDSNIPPETS=OFF \
-              -DPHYSX_CXX_FLAGS="-std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections" \
-              ../public
-        make -j2 && make install
+      - name: Test
+        run: |
+          cmake --build build --target check -j 2
 
-    - name: Build Plasma
-      run: |
-        cd ${GITHUB_WORKSPACE}
-        mkdir -p build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/build_deps/prefix;${GITHUB_WORKSPACE}/build_deps/PhysX/physx/install" \
-          -DPython_ADDITIONAL_VERSIONS=2.7 -DPLASMA_BUILD_TESTS=ON \
-          -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
-        make -j2
-        make check
+      - name: Install
+        run: |
+          cmake --build build --target install -j 2
