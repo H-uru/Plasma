@@ -42,7 +42,9 @@ jobs:
         cd PhysX/physx
         ./generate_projects.sh linux
         cd compiler/linux-debug
-        cmake -DPX_BUILDPUBLICSAMPLES=OFF -DPX_BUILDSNIPPETS=OFF ../public
+        cmake -DPX_BUILDPUBLICSAMPLES=OFF -DPX_BUILDSNIPPETS=OFF \
+              -DPHYSX_CXX_FLAGS="-std=c++11 -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections" \
+              ../public
         make -j2 && make install
 
     - name: Build Plasma
