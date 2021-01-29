@@ -8,7 +8,7 @@ jobs:
       matrix:
         platform:
           - { generator: Visual Studio 16 2019, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
-          - { generator: Visual Studio 16 2019, arch: Win64, qt-arch: win64_msvc2019, qt-version: 5.15.2,  str: windows-x64 }
+          - { generator: Visual Studio 16 2019, arch: x64, qt-arch: win64_msvc2019, qt-version: 5.15.2,  str: windows-x64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
