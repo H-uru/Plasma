@@ -13,7 +13,7 @@ if(MSVC)
 
     if(${CMAKE_SIZEOF_VOID_P} EQUAL 4)
         set(_VLD_LIB "Win32")
-    elseif(${CMAKE_SIZEOF_VOIDP} EQUAL 8)
+    elseif(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
         set(_VLD_LIB "Win64")
     endif()
 
