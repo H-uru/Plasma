@@ -97,6 +97,7 @@ jobs:
       - name: Configure
         run: |
           cmake \
+            -GNinja \
             -DUSE_VCPKG=ON \
             -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
             -DPLASMA_BUILD_TESTS=ON \
