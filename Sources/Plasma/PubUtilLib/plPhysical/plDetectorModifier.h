@@ -61,7 +61,7 @@ public:
     plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil) { }
     virtual ~plDetectorModifier() { }
     
-//  virtual bool MsgReceive(plMessage* msg) = 0;
+//  bool MsgReceive(plMessage* msg) override = 0;
 
     CLASSNAME_REGISTER( plDetectorModifier );
     GETINTERFACE_ANY( plDetectorModifier, plSingleModifier );

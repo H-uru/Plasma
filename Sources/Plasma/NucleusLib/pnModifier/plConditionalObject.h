@@ -77,7 +77,7 @@ public:
 
     virtual void SetLogicMod(plLogicModBase* pMod) { fLogicMod = pMod; }
 
-//  virtual bool MsgReceive(plMessage* msg) = 0;
+//  bool MsgReceive(plMessage* msg) override = 0;
 
     virtual bool Satisfied() { if(HasFlag(kNOT)) return !bSatisfied; else return bSatisfied; }
     void SetSatisfied(bool b) { bSatisfied=b; }

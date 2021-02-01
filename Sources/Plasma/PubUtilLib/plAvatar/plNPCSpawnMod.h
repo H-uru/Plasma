@@ -58,7 +58,7 @@ public:
     GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
     
     void AddTarget(plSceneObject* so) override;
-//  bool MsgReceive(plMessage* msg);
+//  bool MsgReceive(plMessage* msg) override;
 
     void Read(hsStream *stream, hsResMgr *mgr) override;
     void Write(hsStream *stream, hsResMgr *mgr) override;

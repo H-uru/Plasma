@@ -161,7 +161,7 @@ public:
 
     void Read(hsStream *s, hsResMgr *mgr) override;
     void Write(hsStream *s, hsResMgr *mgr) override;
-    //virtual bool MsgReceive(plMessage *msg);
+    //bool MsgReceive(plMessage *msg) override;
 
     float fLength;
     bool fIgnoreZ;
