@@ -88,6 +88,7 @@ jobs:
           sudo apt-get install -y \
               autoconf \
               cmake \
+              libcairo2 \
               libsecret-1-dev \
               libtool \
               nasm \
