@@ -69,8 +69,8 @@ public:
     void ClearGroupInfo() { fGroups.clear(); }
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) {    hsAssert(false, "NA: localOnly msg"); }
-    void Write(hsStream* stream, hsResMgr* mgr) {   hsAssert(false, "NA: localOnly msg"); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "NA: localOnly msg"); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "NA: localOnly msg"); }
 };
 
 #endif      // plNetOwnershipMsg

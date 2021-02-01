@@ -278,7 +278,7 @@ class pfJournalDlgProc : public pfGUIDialogProc
         {
         }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             if ( fBook && fBook->fCurrBook )
             {
@@ -309,32 +309,32 @@ class pfJournalDlgProc : public pfGUIDialogProc
         }
 
         // Called on dialog init (i.e. first showing, before OnShow() is called), only ever called once
-        virtual void    OnInit()
+        void    OnInit() override
         {
         }
 
         // Called before the dialog is shown, always after OnInit()
-        virtual void    OnShow()
+        void    OnShow() override
         {
         }
 
         // Called before the dialog is hidden
-        virtual void    OnHide()
+        void    OnHide() override
         {
         }
 
         // Called on the dialog's destructor, before it's unregistered with the game GUI manager
-        virtual void    OnDestroy()
+        void    OnDestroy() override
         {
         }
 
         // Called when the dialog's focused control changes
-        virtual void    OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl )
+        void    OnCtrlFocusChange(pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl) override
         {
         }
 
         // Called when the key bound to a GUI event is pressed. Only called on the top modal dialog
-        virtual void    OnControlEvent( ControlEvt event )
+        void    OnControlEvent(ControlEvt event) override
         {
             if( event == kExitMode )
             {
@@ -345,7 +345,7 @@ class pfJournalDlgProc : public pfGUIDialogProc
             }
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
+        void    HandleExtendedEvent(pfGUIControlMod *ctrl, uint32_t event) override
         {
             if (fBook)
             {
@@ -401,8 +401,8 @@ public:
     pfBookMultiLineEditProc(pfBookData *owner) { bookData = owner; }
     virtual ~pfBookMultiLineEditProc() {}
 
-    virtual void OnEndOfControlList(int32_t cursorPos) { bookData->HitEndOfControlList(cursorPos); }
-    virtual void OnBeginningOfControlList(int32_t cursorPos) { bookData->HitBeginningOfControlList(cursorPos); }
+    void OnEndOfControlList(int32_t cursorPos) override { bookData->HitEndOfControlList(cursorPos); }
+    void OnBeginningOfControlList(int32_t cursorPos) override { bookData->HitBeginningOfControlList(cursorPos); }
 };
 
 //// Book data class /////////////////////////////////////////////////////////

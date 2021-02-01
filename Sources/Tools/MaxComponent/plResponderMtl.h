@@ -60,20 +60,20 @@ class plResponderCmdMtl : public plResponderCmd
 {
 public:
     static plResponderCmdMtl& Instance();
-    virtual ParamBlockDesc2 *GetDesc();
+    ParamBlockDesc2 *GetDesc() override;
 
-    virtual int NumTypes();
-    virtual const char *GetCategory(int type);
-    virtual const char *GetName(int type);
-    virtual const char *GetInstanceName(IParamBlock2 *pb);
+    int NumTypes() override;
+    const char *GetCategory(int type) override;
+    const char *GetName(int type) override;
+    const char *GetInstanceName(IParamBlock2 *pb) override;
 
-    virtual IParamBlock2 *CreatePB(int type);
-    virtual void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
-    virtual plMessage* CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb);
+    IParamBlock2 *CreatePB(int type) override;
+    void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;
+    plMessage* CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;
 
-    virtual bool IsWaitable(IParamBlock2 *pb);
-    virtual void GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints);
-    virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
+    bool IsWaitable(IParamBlock2 *pb) override;
+    void GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints) override;
+    void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo) override;
     
     Mtl *GetMtl(IParamBlock2 *pb);
     ST::string GetAnim(IParamBlock2 *pb);

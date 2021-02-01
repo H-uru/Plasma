@@ -94,7 +94,7 @@ class plSuspendedMovementMap : public plAvatarInputMap
 {
 public:
     plSuspendedMovementMap();
-    virtual const char *GetName() { return "Suspended Movement"; }
+    const char *GetName() override { return "Suspended Movement"; }
 };
 
 // The above, plus movement
@@ -102,8 +102,8 @@ class plBasicControlMap : public plSuspendedMovementMap
 {
 public:
     plBasicControlMap();
-    virtual const char *GetName() { return "Basic"; }
-    virtual bool IsBasic() { return true; }
+    const char *GetName() override { return "Basic"; }
+    bool IsBasic() override { return true; }
 
 };
 // The above, plus movement
@@ -111,28 +111,28 @@ class plBasicThirdPersonControlMap : public plBasicControlMap
 {
 public:
     plBasicThirdPersonControlMap();
-    virtual const char *GetName() { return "Basic Third Person"; }
+    const char *GetName() override { return "Basic Third Person"; }
 };
 
 class plLadderControlMap : public plSuspendedMovementMap
 {
 public:
     plLadderControlMap();
-    virtual const char *GetName() { return "LadderClimb"; }
+    const char *GetName() override { return "LadderClimb"; }
 };
 
 class plLadderMountMap : public plSuspendedMovementMap
 {
 public:
     plLadderMountMap();
-    virtual const char *GetName() { return "Ladder Mount"; }
+    const char *GetName() override { return "Ladder Mount"; }
 };
 
 class plLadderDismountMap : public plSuspendedMovementMap
 {
 public:
     plLadderDismountMap();
-    virtual const char *GetName() { return "Ladder Dismount"; }
+    const char *GetName() override { return "Ladder Dismount"; }
 };
 
 
@@ -140,7 +140,7 @@ class plBasicFirstPersonControlMap : public plBasicControlMap
 {
 public:
     plBasicFirstPersonControlMap();
-    virtual const char *GetName() { return "Basic First Person"; }
+    const char *GetName() override { return "Basic First Person"; }
 };
 
 // Mouse walk mode
@@ -155,21 +155,21 @@ class pl3rdWalkForwardMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkForwardMap();
-    virtual const char *GetName() { return "Walking Forward"; }
+    const char *GetName() override { return "Walking Forward"; }
 };
 
 class pl3rdWalkBackwardMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkBackwardMap();
-    virtual const char *GetName() { return "Walking Backward"; }
+    const char *GetName() override { return "Walking Backward"; }
 };
 
 class pl3rdWalkBackwardLBMap : public pl3rdWalkMap
 {
 public:
     pl3rdWalkBackwardLBMap();
-    virtual const char *GetName() { return "Walking Backward (LB)"; }
+    const char *GetName() override { return "Walking Backward (LB)"; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -185,10 +185,10 @@ class plAvatarInputInterface : public plInputInterface
 
         static plAvatarInputInterface       *fInstance;
 
-        virtual bool    IHandleCtrlCmd( plCtrlCmd *cmd );
+        bool    IHandleCtrlCmd(plCtrlCmd *cmd) override;
 
         // Gets called once per IUpdate(), just like normal IEval()s
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
 
         void    IDeactivateCommand(plMouseInfo *info);
         void    IChangeInputMaps(plAvatarInputMap *newMap);
@@ -227,22 +227,22 @@ class plAvatarInputInterface : public plInputInterface
         void CameraInThirdPerson(bool state);
     
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual bool        HasInterestingCursorID() const { return true; }
-        virtual uint32_t      GetPriorityLevel() const { return kAvatarInputPriority; }
-        virtual uint32_t      GetCurrentCursorID() const { return fCurrentCursor; }
-        virtual float    GetCurrentCursorOpacity() const { return fCursorOpacity; }
+        bool            HasInterestingCursorID() const override { return true; }
+        uint32_t        GetPriorityLevel() const override { return kAvatarInputPriority; }
+        uint32_t        GetCurrentCursorID() const override { return fCurrentCursor; }
+        float           GetCurrentCursorOpacity() const override { return fCursorOpacity; }
         const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 
-        virtual bool        InterpretInputEvent( plInputEventMsg *pMsg );
-        virtual void        MissedInputEvent( plInputEventMsg *pMsg );
+        bool        InterpretInputEvent(plInputEventMsg *pMsg) override;
+        void        MissedInputEvent(plInputEventMsg *pMsg) override;
 
-        virtual bool        MsgReceive( plMessage *msg );
+        bool        MsgReceive(plMessage *msg) override;
 
-        virtual void        Init( plInputInterfaceMgr *manager );
-        virtual void        Shutdown();
+        void        Init(plInputInterfaceMgr *manager) override;
+        void        Shutdown() override;
 
-        virtual void        RestoreDefaultKeyMappings();
-        virtual void        ClearKeyMap(); 
+        void        RestoreDefaultKeyMappings() override;
+        void        ClearKeyMap() override;
         
         // [dis/en]able mouse commands for avatar movement
         void SuspendMouseMovement();

@@ -101,12 +101,12 @@ struct JoinAgeRequestTrans : NetGameTrans {
         void *                              param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -123,7 +123,7 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
           bufferType(), bufferBytes(), bufferData()
     { }
     ~RcvdPropagatedBufferTrans ();
-    void Post ();
+    void Post() override;
 };
 
 /*****************************************************************************

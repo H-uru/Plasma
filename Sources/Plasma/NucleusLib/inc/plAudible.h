@@ -68,8 +68,8 @@ public:
 
     virtual plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1) { return *this; }
     
-    virtual void Read(hsStream* s, hsResMgr* mgr){hsKeyedObject::Read(s, mgr);}
-    virtual void Write(hsStream* s, hsResMgr* mgr){hsKeyedObject::Write(s, mgr);}
+    void Read(hsStream* s, hsResMgr* mgr) override { hsKeyedObject::Read(s, mgr); }
+    void Write(hsStream* s, hsResMgr* mgr) override { hsKeyedObject::Write(s, mgr); }
     
     virtual void  SetSceneObject(plKey obj) = 0;
     virtual plKey GetSceneObject() const = 0;

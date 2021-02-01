@@ -77,13 +77,13 @@ public:
     CLASSNAME_REGISTER(plAvBrainCritter);
     GETINTERFACE_ANY(plAvBrainCritter, plArmatureBrain);
 
-    bool Apply(double time, float elapsed);
-    bool MsgReceive(plMessage* msg);
+    bool Apply(double time, float elapsed) override;
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Activate(plArmatureModBase* avMod);
-    virtual void Deactivate();
-    virtual void Suspend();
-    virtual void Resume();
+    void Activate(plArmatureModBase* avMod) override;
+    void Deactivate() override;
+    void Suspend() override;
+    void Resume() override;
 
     /**
      * Gets the SceneObject root for this avatar
@@ -134,7 +134,7 @@ public:
     void AddReceiver(const plKey key);
     void RemoveReceiver(const plKey key);
 
-    virtual void DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt);
+    void DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt) override;
 
     // For the console
     static bool fDrawDebug;

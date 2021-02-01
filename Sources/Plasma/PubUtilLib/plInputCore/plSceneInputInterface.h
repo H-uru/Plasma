@@ -106,7 +106,7 @@ class plSceneInputInterface : public plInputInterface
         hsPoint3    fLastStartPt, fLastEndPt;
         plPipeline  *fPipe;
 
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
 
         
         void    IRequestLOSCheck( float xPos, float yPos, int ID );
@@ -127,19 +127,19 @@ class plSceneInputInterface : public plInputInterface
         static bool     fShowLOS;
 
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual bool    HasInterestingCursorID() const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
-        virtual uint32_t  GetPriorityLevel() const { return kSceneInteractionPriority; }
-        virtual uint32_t  GetCurrentCursorID() const {return fCurrentCursor;}
+        bool    HasInterestingCursorID() const override { return (fCurrentCursor != kNullCursor) ? true : false; }
+        uint32_t  GetPriorityLevel() const override { return kSceneInteractionPriority; }
+        uint32_t  GetCurrentCursorID() const override { return fCurrentCursor; }
         uint32_t          SetCurrentCursorID(uint32_t id);
-        virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
+        bool    InterpretInputEvent(plInputEventMsg *pMsg) override;
         void            RequestAvatarTurnToPointLOS();
 
-        virtual bool    MsgReceive( plMessage *msg );
+        bool    MsgReceive(plMessage *msg) override;
 
-        virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown();
+        void    Init(plInputInterfaceMgr *manager) override;
+        void    Shutdown() override;
         
-        virtual void ResetClickableState();
+        void ResetClickableState() override;
 
         plKey           GetCurrMousedAvatar() const { if( fCurrClickIsAvatar ) return fCurrentClickable; else return nil; }
         static plSceneInputInterface *GetInstance() { return fInstance; }

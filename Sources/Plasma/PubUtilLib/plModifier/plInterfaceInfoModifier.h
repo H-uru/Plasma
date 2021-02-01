@@ -52,7 +52,7 @@ class plInterfaceInfoModifier : public plSingleModifier
 protected:
     
     hsTArray<plKey> fKeyList;
-    virtual bool IEval(double secs, float del, uint32_t dirty){ return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 public:
 
     plInterfaceInfoModifier(); 
@@ -65,8 +65,8 @@ public:
 
     int GetNumReferencedKeys() const { return fKeyList.Count(); }
     plKey GetReferencedKey(int i) const { return fKeyList[i]; }
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plInterfaceInfoMod_inc

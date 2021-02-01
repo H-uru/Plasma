@@ -64,14 +64,14 @@ public:
     GETINTERFACE_ANY( plActivatorMsg, plMessage );
     
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fTriggerType = stream->ReadLE32();
         fHitPoint.Read(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLE32( fTriggerType );

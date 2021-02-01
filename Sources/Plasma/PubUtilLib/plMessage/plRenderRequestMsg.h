@@ -82,8 +82,8 @@ public:
 
     // These aren't really implemented. Read/Write/Transmission of
     // these messages doesn't currently make sense.
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     plRenderRequest* Request() const { return (plRenderRequest*)fReq; }
 
@@ -108,8 +108,8 @@ public:
 
     // These aren't really implemented. Read/Write/Transmission of
     // these messages doesn't currently make sense.
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 

@@ -84,8 +84,8 @@ public:
     CLASSNAME_REGISTER( plMorphDataSet );
     GETINTERFACE_ANY( plMorphDataSet, hsKeyedObject );
     
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);     
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 // A place to hold incoming state while we're still waiting for the
@@ -121,7 +121,7 @@ protected:
 
     const plDrawInterface*      IGetDrawInterface() const;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     void ISetHaveSnap(bool on) { if(on)fMorphFlags |= kHaveSnap; else fMorphFlags &= ~kHaveSnap; }
     void ISetDirty(bool on);
@@ -154,12 +154,12 @@ public:
     CLASSNAME_REGISTER( plMorphSequence );
     GETINTERFACE_ANY( plMorphSequence, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void Init();
     void Activate();

@@ -64,8 +64,8 @@ private slots:
     void ExportP2F();
 
 protected:
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     class Ui_MainDialog *fUI;

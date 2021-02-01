@@ -54,10 +54,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMorphSequenceSDLMod : public plSDLModifier
 {
 protected:
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 
-    uint32_t IApplyModFlags(uint32_t sendFlags)
+    uint32_t IApplyModFlags(uint32_t sendFlags) override
     {
         if (fIsAvatar)
             return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState);
@@ -87,7 +87,7 @@ public:
     
     void SetCurrentStateFrom(const plStateDataRecord* srcState);
     void PutCurrentStateIn(plStateDataRecord* dstState);
-    const char* GetSDLName() const { return kSDLMorphSequence; }
+    const char* GetSDLName() const override { return kSDLMorphSequence; }
 
     void SetIsAvatar(bool avatar) { fIsAvatar = avatar; }
 };

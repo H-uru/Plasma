@@ -84,7 +84,7 @@ protected:
     hsTArray<plFadeOpacityLay*> fFadeLays;
 
     // We only act in response to messages.
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     float ICalcOpacity(const hsPoint3& targPos, const hsPoint3& refPos) const;
     void ISetOpacity();
@@ -105,14 +105,14 @@ public:
     CLASSNAME_REGISTER( plDistOpacityMod );
     GETINTERFACE_ANY( plDistOpacityMod, plSingleModifier );
 
-    virtual void            SetKey(plKey k);
+    void            SetKey(plKey k) override;
 
-    virtual bool            MsgReceive(plMessage* msg);
+    bool            MsgReceive(plMessage* msg) override;
 
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void            Read(hsStream* s, hsResMgr* mgr) override;
+    void            Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual void            SetTarget(plSceneObject* so);
+    void            SetTarget(plSceneObject* so) override;
 
     // Rules are:
     // NearTrans <= NearOpaq <= FarOpaque <= FarTrans

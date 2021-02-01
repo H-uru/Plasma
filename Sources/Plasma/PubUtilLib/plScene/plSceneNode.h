@@ -124,15 +124,15 @@ public:
     CLASSNAME_REGISTER( plSceneNode );
     GETINTERFACE_ANY( plSceneNode, hsKeyedObject );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     virtual void Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
     virtual void CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr);
 
     virtual void SubmitOccluders(plPageTreeMgr* pageMgr) const;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     int16_t GetDepth() { return fDepth; }
     int16_t IncDepth() { return ++fDepth; }

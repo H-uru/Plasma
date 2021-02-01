@@ -76,10 +76,10 @@ public:
     CLASSNAME_REGISTER( plSharedMesh );
     GETINTERFACE_ANY( plSharedMesh, hsKeyedObject );
     
-    virtual bool MsgReceive(plMessage* msg);  
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr); 
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 class plSharedMeshBCMsg : public plMessage
@@ -95,8 +95,8 @@ public:
     CLASSNAME_REGISTER( plSharedMeshBCMsg );
     GETINTERFACE_ANY( plSharedMeshBCMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) {}
-    virtual void Write(hsStream* s, hsResMgr* mgr) {}       
+    void Read(hsStream* s, hsResMgr* mgr) override { }
+    void Write(hsStream* s, hsResMgr* mgr) override { }
 };
 
 

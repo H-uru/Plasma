@@ -65,7 +65,7 @@ protected:
     plExcludeRegionSDLModifier  *fSDLModifier;
     bool fSeek; // use smart seek or teleport?
     float fSeekTime; // how long to seek for
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     void ISetPhysicalState(bool cleared);
 
@@ -81,13 +81,13 @@ public:
     CLASSNAME_REGISTER(plExcludeRegionModifier);
     GETINTERFACE_ANY(plExcludeRegionModifier, plSingleModifier);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget( plSceneObject *so );
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject *so) override;
 
     void AddSafePoint(plKey& key);
     void UseSmartSeek() { fSeek = true; }
@@ -100,8 +100,8 @@ class plExcludeRegionSDLModifier : public plSDLModifier
 protected:
     plExcludeRegionModifier* fXRegion;
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 
 public:
     plExcludeRegionSDLModifier();
@@ -110,7 +110,7 @@ public:
     CLASSNAME_REGISTER(plExcludeRegionSDLModifier);
     GETINTERFACE_ANY(plExcludeRegionSDLModifier, plSDLModifier);
 
-    const char* GetSDLName() const { return kSDLXRegion; }
+    const char* GetSDLName() const override { return kSDLXRegion; }
 };
 
 #endif // plExcludeRegionModifier_inc

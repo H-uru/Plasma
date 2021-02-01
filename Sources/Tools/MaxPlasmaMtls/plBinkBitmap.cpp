@@ -76,13 +76,13 @@ public:
 class BinkClassDesc : public ClassDesc2
 {
 public:
-    int IsPublic() { return 1; }
-    void* Create(BOOL loading=FALSE) { return static_cast<void*>(new plBinkBitmapIO); }
+    int IsPublic() override { return 1; }
+    void* Create(BOOL loading=FALSE) override { return static_cast<void*>(new plBinkBitmapIO); }
 
-    const TCHAR* ClassName() { return "Bink"; }
-    SClass_ID SuperClassID() { return BMM_IO_CLASS_ID; }
-    Class_ID ClassID() { return Class_ID(0x71c75c3c, 0x206f480e); }
-    const TCHAR* Category() { return "Bitmap I/O"; }
+    const TCHAR* ClassName() override { return "Bink"; }
+    SClass_ID SuperClassID() override { return BMM_IO_CLASS_ID; }
+    Class_ID ClassID() override { return Class_ID(0x71c75c3c, 0x206f480e); }
+    const TCHAR* Category() override { return "Bitmap I/O"; }
 };
 
 static BinkClassDesc BinkDesc;

@@ -81,8 +81,8 @@ public:
     CLASSNAME_REGISTER( plDynamicEnvMapMsg );
     GETINTERFACE_ANY( plDynamicEnvMapMsg, plMessage );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plDynamicEnvMapMsg_inc

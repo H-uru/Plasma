@@ -61,12 +61,12 @@ public:
     CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
     GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
     
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void SetBox(plKey pKey) { fBox = pKey; }
     
-    void Evaluate() { }
-    void Reset() { SetSatisfied(false); }
+    void Evaluate() override { }
+    void Reset() override { SetSatisfied(false); }
 
 };
 

@@ -93,10 +93,10 @@ public:
     CLASSNAME_REGISTER( plVisMgr );
     GETINTERFACE_ANY( plVisMgr, hsKeyedObject );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void Register(plVisRegion* reg, bool bnot);
     void UnRegister(plVisRegion* reg, bool bnot);

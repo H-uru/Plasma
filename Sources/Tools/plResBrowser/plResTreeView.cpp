@@ -99,7 +99,7 @@ public:
         static_cast<plResManager *>(hsgResMgr::ResMgr())->IterateAllPages(this);
     }
 
-    virtual bool EatPage(plRegistryPageNode *page)
+    bool EatPage(plRegistryPageNode *page) override
     {
         fCurrPage = page;
         const plPageInfo &info = page->GetPageInfo();
@@ -112,7 +112,7 @@ public:
         return true;
     }
 
-    virtual bool EatKey(const plKey &key)
+    bool EatKey(const plKey &key) override
     {
         if (fCurrType != key->GetUoid().GetClassType())
         {

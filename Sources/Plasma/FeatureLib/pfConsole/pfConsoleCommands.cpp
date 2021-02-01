@@ -670,7 +670,7 @@ class DocGenIterator : public pfConsoleCmdIterator
 
 public:
     DocGenIterator(FILE *f) { fFile = f; }
-    virtual void ProcessCmd(pfConsoleCmd* c, int depth) 
+    void ProcessCmd(pfConsoleCmd* c, int depth) override
     {
 
         if(strncmp("SampleCmd",c->GetName(), 9) != 0)
@@ -679,7 +679,7 @@ public:
                     c->GetHelp());
         }
     }
-    virtual bool ProcessGroup(pfConsoleCmdGroup *g, int depth) 
+    bool ProcessGroup(pfConsoleCmdGroup *g, int depth) override
     {
     //  if(g->GetFirstCommand() != nil)
         {
@@ -687,7 +687,7 @@ public:
                 (depth > 0) ? "3" : "2",
                 (depth > 0) ? "Sub" :"" ,
                 g->GetName(),
-				(depth > 0) ? "3" : "2");
+                (depth > 0) ? "3" : "2");
         }
         return true;
     }
@@ -700,7 +700,7 @@ class BriefDocGenIterator : public pfConsoleCmdIterator
 
 public:
     BriefDocGenIterator(FILE *f) { fFile = f; strcpy(fGrpName,"");}
-    virtual void ProcessCmd(pfConsoleCmd* c, int depth) 
+    void ProcessCmd(pfConsoleCmd* c, int depth) override
     {
 
         if(strncmp("SampleCmd",c->GetName(), 9) != 0)
@@ -709,7 +709,7 @@ public:
                         c->GetHelp());
         }
     }
-    virtual bool ProcessGroup(pfConsoleCmdGroup *g, int depth) 
+    bool ProcessGroup(pfConsoleCmdGroup *g, int depth) override
     {
     //  if(g->GetFirstCommand() != nil)
         {

@@ -62,14 +62,14 @@ extern HINSTANCE hInstance;
 class plBumpMtlClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plBumpMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_BUMP_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return BUMP_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plBumpMtl(loading); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_BUMP_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return BUMP_MTL_CLASS_ID; }
+    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plBumpMtlClassDesc plBumpMtlDesc;
 ClassDesc2* GetBumpMtlDesc() { return &plBumpMtlDesc; }

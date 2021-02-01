@@ -124,14 +124,14 @@ public:
     CLASSNAME_REGISTER( plShadowMaster );
     GETINTERFACE_ANY( plShadowMaster, plObjInterface );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) {}
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override { }
 
-    int32_t       GetNumProperties() const { return kNumProps; }
+    int32_t GetNumProperties() const override { return kNumProps; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // These are usually handled internally, activating on read and deactivating
     // on destruct. Made public in case they need to be manually handled, like

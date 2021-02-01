@@ -66,13 +66,13 @@ private:
 public:
     plLightGrpComponent();
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     const hsTArray<plLightInfo*>& GetLightInfos();
 
-    IOResult Load(ILoad* iload);
+    IOResult Load(ILoad* iload) override;
 
     static plLightGrpComponent* GetComp(plMaxNode* node);
 };

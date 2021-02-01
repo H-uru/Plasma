@@ -343,7 +343,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
             fAgeIndex = 0;
         }
 
-        virtual bool    EatPage( plRegistryPageNode *page )
+        bool    EatPage(plRegistryPageNode *page) override
         {
             if( fStep == 0 )
             {
@@ -474,7 +474,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
             return true;
         }
 
-        virtual bool    EatKey( const plKey& key )
+        bool    EatKey(const plKey& key) override
         {
             if( key->ObjectIsLoaded() )
             {
@@ -689,7 +689,7 @@ public:
         fRegistry = reg;
         fLogFile = logFile;
     }
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         fRegistry->VerifyKeyUnloaded(fLogFile, key);
         return true;
@@ -706,7 +706,7 @@ public:
     plValidatePageIterator(const char* age, plRegistryKeyIterator* iter) : fAge(age), fIter(iter) {}
 
 
-    virtual bool    EatPage( plRegistryPageNode *keyNode )
+    bool    EatPage(plRegistryPageNode *keyNode) override
     {
         if( !stricmp(fAge, keyNode->GetPageInfo().GetAge()) )
             return keyNode->IterateKeys( fIter );

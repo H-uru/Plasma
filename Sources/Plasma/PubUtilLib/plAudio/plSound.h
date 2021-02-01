@@ -230,16 +230,16 @@ public:
 
     virtual uint8_t       GetChannelSelect() const { return 0; }    // Only defined on Win32Sound right now, should be here tho
 
-    virtual void        Read(hsStream* s, hsResMgr* mgr);
-    virtual void        Write(hsStream* s, hsResMgr* mgr);
+    void        Read(hsStream* s, hsResMgr* mgr) override;
+    void        Write(hsStream* s, hsResMgr* mgr) override;
     
     virtual void        SetFadeInEffect( plFadeParams::Type type, float length );
     virtual void        SetFadeOutEffect( plFadeParams::Type type, float length );
     virtual float    CalcSoftVolume( bool enable, float distToListenerSquared );
     virtual void        UpdateSoftVolume( bool enable, bool firstTime = false );
 
-    virtual bool        MsgReceive( plMessage* pMsg );
-    virtual bool        DirtySynchState( const ST::string &sdlName = {}, uint32_t sendFlags = 0 ); // call when state has changed
+    bool        MsgReceive(plMessage* pMsg) override;
+    bool        DirtySynchState(const ST::string &sdlName = {}, uint32_t sendFlags = 0) override; // call when state has changed
 
     // Tests whether this sound is within range of the given position, not counting soft regions
     bool                IsWithinRange( const hsPoint3 &listenerPos, float *distSquared );
@@ -400,13 +400,13 @@ public:
     CLASSNAME_REGISTER( plSoundVolumeApplicator );
     GETINTERFACE_ANY( plSoundVolumeApplicator, plAGApplicator );
 
-    virtual plAGApplicator *CloneWithChannel( plAGChannel *channel );
-    virtual void            Write( hsStream *stream, hsResMgr *mgr );
-    virtual void            Read( hsStream *s, hsResMgr *mgr );
+    plAGApplicator *CloneWithChannel(plAGChannel *channel) override;
+    void            Write(hsStream *stream, hsResMgr *mgr) override;
+    void            Read(hsStream *s, hsResMgr *mgr) override;
 
 protected:
     uint32_t      fIndex;
-    virtual void IApply( const plAGModifier *mod, double time );
+    void IApply(const plAGModifier *mod, double time) override;
 };
 
 #endif //plWin32Sound_h

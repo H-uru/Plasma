@@ -66,8 +66,8 @@ public:
     CLASSNAME_REGISTER( plListenerMsg );
     GETINTERFACE_ANY( plListenerMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     const hsPoint3&     SetPosition(const hsPoint3& pos) { return fPos = pos; }
     const hsVector3&    SetDirection(const hsVector3& dir) { return fDir = dir; }
@@ -106,8 +106,8 @@ public:
     CLASSNAME_REGISTER( plSetListenerMsg );
     GETINTERFACE_ANY( plSetListenerMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void    Set( const plKey &key, uint8_t type, bool binding );
 

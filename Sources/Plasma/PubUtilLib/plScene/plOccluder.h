@@ -85,7 +85,7 @@ protected:
 
     virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fPolys; }
 
-    virtual void    ISetSceneNode(plKey node);
+    void    ISetSceneNode(plKey node) override;
 
     void            IAddVisRegion(plVisRegion* reg);
     void            IRemoveVisRegion(plVisRegion* reg);
@@ -97,7 +97,7 @@ public:
     CLASSNAME_REGISTER( plOccluder );
     GETINTERFACE_ANY( plOccluder, plObjInterface);
 
-    virtual bool        MsgReceive(plMessage* msg);
+    bool        MsgReceive(plMessage* msg) override;
 
     virtual float GetPriority() const { return fPriority; }
 
@@ -106,7 +106,7 @@ public:
 
     virtual const hsBounds3Ext& GetWorldBounds() const { return fWorldBounds; }
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
     virtual const hsMatrix44& GetLocalToWorld() const;
     virtual const hsMatrix44& GetWorldToLocal() const;
 
@@ -114,10 +114,10 @@ public:
     virtual const hsTArray<plCullPoly>& GetWorldPolyList() const { return fPolys; }
     virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fPolys; }
 
-    virtual int32_t   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const override { return kNumProps; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Visualization
     virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
@@ -126,7 +126,7 @@ public:
     virtual void ComputeFromPolys();
 
     // These two should only be called internally and on export/convert
-    virtual plKey GetSceneNode() const { return fSceneNode; }
+    plKey GetSceneNode() const override { return fSceneNode; }
 };
 
 class plMobileOccluder : public plOccluder
@@ -139,9 +139,9 @@ protected:
 
     hsTArray<plCullPoly>    fOrigPolys;
 
-    virtual void            IComputeBounds();
+    void            IComputeBounds() override;
 
-    virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fOrigPolys; }
+    hsTArray<plCullPoly>& IGetLocalPolyList() override { return fOrigPolys; }
 
 public:
 
@@ -151,19 +151,19 @@ public:
     CLASSNAME_REGISTER( plMobileOccluder );
     GETINTERFACE_ANY( plMobileOccluder, plOccluder );
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
-    virtual const hsMatrix44& GetLocalToWorld() const { return fLocalToWorld; }
-    virtual const hsMatrix44& GetWorldToLocal() const { return fWorldToLocal; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
+    const hsMatrix44& GetLocalToWorld() const override { return fLocalToWorld; }
+    const hsMatrix44& GetWorldToLocal() const override { return fWorldToLocal; }
 
-    virtual void SetPolyList(const hsTArray<plCullPoly>& list);
+    void SetPolyList(const hsTArray<plCullPoly>& list) override;
 
-    virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fOrigPolys; }
+    const hsTArray<plCullPoly>& GetLocalPolyList() const override { return fOrigPolys; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Export only function to initialize.
-    virtual void ComputeFromPolys();
+    void ComputeFromPolys() override;
 };
 
 #endif // plOccluder_inc

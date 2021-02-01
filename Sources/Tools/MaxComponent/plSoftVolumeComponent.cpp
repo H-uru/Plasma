@@ -87,12 +87,12 @@ protected:
 public:
     plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title = nil, BOOL singleSel=false );
 
-    virtual TCHAR *dialogTitle() { return fTitle; }
-    virtual TCHAR *buttonText() { return "OK"; }
-    virtual int filter(INode *node);
-    virtual void proc(INodeTab &nodeTab);
-    virtual BOOL showHiddenAndFrozen() { return TRUE; }
-    virtual BOOL singleSelect() { return fSingleSel; }
+    TCHAR *dialogTitle() override { return fTitle; }
+    TCHAR *buttonText() override { return "OK"; }
+    int filter(INode *node) override;
+    void proc(INodeTab &nodeTab) override;
+    BOOL showHiddenAndFrozen() override { return TRUE; }
+    BOOL singleSelect() override { return fSingleSel; }
 };
 
 plVolumeHitCallback::plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title, BOOL singleSel)
@@ -301,7 +301,7 @@ public:
 private:
 
     plKey               ISetFromIsect(plMaxNodeBase* pNode, plVolumeIsect* isect);
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
     plKey               ICreateFromNode(plMaxNodeBase* pNode);
     plKey               ICreateFromDummyObject(plMaxNodeBase* pNode, Object* obj);
     plKey               ICreateFromTriObject(plMaxNodeBase* pNode, Object* obj);
@@ -310,11 +310,11 @@ protected:
     void                ICreateVolume();
 public:
     plSoftVolComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    void CollectNonDrawables(INodeTab& nonDrawables) override { AddTargetsToList(nonDrawables); }
 };
 
 //
@@ -325,7 +325,7 @@ public:
 class plSoftVolObjAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
     }
 };
@@ -335,7 +335,7 @@ plSoftVolObjAccessor gSoftVolObjAccessor;
 class plSoftVolComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -350,7 +350,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSoftVolComponentProc gSoftVolProc;
 
@@ -614,13 +614,13 @@ public:
     };
 protected:
 
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
 
 public:
     plSoftVolUnionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -630,7 +630,7 @@ public:
 class plSoftVolUnionAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plSoftVolUnionComponent::kSubVolumes)
         {
@@ -645,7 +645,7 @@ plSoftVolUnionAccessor gSoftVolUnionAccessor;
 class plSoftVolUnionComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -670,7 +670,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSoftVolUnionComponentProc gSoftVolUnionProc;
 
@@ -775,13 +775,13 @@ public:
     };
 protected:
 
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
 
 public:
     plSoftVolIsectComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -791,7 +791,7 @@ public:
 class plSoftVolIsectAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plSoftVolIsectComponent::kSubVolumes)
         {
@@ -806,7 +806,7 @@ plSoftVolIsectAccessor gSoftVolIsectAccessor;
 class plSoftVolIsectComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -831,7 +831,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plSoftVolIsectComponentProc gSoftVolIsectProc;
 
@@ -932,13 +932,13 @@ public:
     };
 protected:
 
-    plKey               ICreateSoftVolume();
+    plKey               ICreateSoftVolume() override;
 
 public:
     plSoftVolNegateComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg);
+    bool SetupProperties(plMaxNode* pNode, plErrorMsg* errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -948,7 +948,7 @@ public:
 class plSoftVolNegateAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plSoftVolNegateComponent::kSubVolume)
         {
@@ -1058,14 +1058,14 @@ public:
     };
 public:
     plLightRegionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -1075,7 +1075,7 @@ public:
 class plLightRegionAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plLightRegionComponent::kSoftVolume)
         {
@@ -1167,7 +1167,7 @@ public:
         :   plSingleCompSelProc(nodeID, dlgItem, title)
     {
     }
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1415,10 +1415,10 @@ protected:
 
 public:
     plRelevanceRegionComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 };
 
 

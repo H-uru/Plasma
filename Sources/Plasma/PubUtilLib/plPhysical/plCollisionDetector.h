@@ -79,15 +79,15 @@ public:
     plCollisionDetector(int8_t type) : fType(type), fTriggered(false), fBumped(false) { }
     virtual ~plCollisionDetector() { }
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     CLASSNAME_REGISTER( plCollisionDetector );
     GETINTERFACE_ANY( plCollisionDetector, plDetectorModifier );
 
-    virtual void SetType(int8_t i) { fType |= i; }
+    void SetType(int8_t i) override { fType |= i; }
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 // sub type for object-in-volume detectors
@@ -149,13 +149,13 @@ public:
     plObjectInVolumeAndFacingDetector();
     virtual ~plObjectInVolumeAndFacingDetector();
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     CLASSNAME_REGISTER(plObjectInVolumeAndFacingDetector);
     GETINTERFACE_ANY(plObjectInVolumeAndFacingDetector, plObjectInVolumeDetector);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Export only
     void SetFacingTolerance(int degrees);
@@ -174,21 +174,21 @@ protected:
     bool fEntering;
 
     void ISendTriggerMsg();
-    virtual void IHandleEval(plEvalMsg*);
+    void IHandleEval(plEvalMsg*) override;
 public:
     plCameraRegionDetector()
         : plObjectInVolumeDetector(), fIsInside(), fEntering()
     { }
     ~plCameraRegionDetector();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     void AddMessage(plCameraMsg* pMsg) { fMessages.push_back(pMsg); }
 
     CLASSNAME_REGISTER( plCameraRegionDetector );
     GETINTERFACE_ANY( plCameraRegionDetector, plCollisionDetector );
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 
@@ -208,15 +208,15 @@ public:
     plSubworldRegionDetector() : fSub(nil), fOnExit(false) { }
     ~plSubworldRegionDetector();
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     void SetSubworldKey(plKey pKey) { fSub = pKey; }
     void SetTriggerOnExit(bool b) { fOnExit = b; }
 
     CLASSNAME_REGISTER( plSubworldRegionDetector );
     GETINTERFACE_ANY( plSubworldRegionDetector, plCollisionDetector );
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 // sub-type for panic link regions
@@ -229,12 +229,12 @@ public:
     plPanicLinkRegion() : fPlayLinkOutAnim(true) { }
 
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     CLASSNAME_REGISTER( plPanicLinkRegion );
     GETINTERFACE_ANY( plPanicLinkRegion, plCollisionDetector );
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);    
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 
@@ -252,14 +252,14 @@ public:
     plSimpleRegionSensor(plMessage *enterMsg, plMessage *exitMsg);
     virtual ~plSimpleRegionSensor();
 
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
     CLASSNAME_REGISTER( plSimpleRegionSensor );
     GETINTERFACE_ANY( plSimpleRegionSensor, plSingleModifier);
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 protected:
     plMessage *fEnterMsg;
     plMessage *fExitMsg;
@@ -277,9 +277,9 @@ public:
     CLASSNAME_REGISTER( plSwimDetector );
     GETINTERFACE_ANY( plSwimDetector, plSimpleRegionSensor);
     
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *stream, hsResMgr *mgr); 
-    bool MsgReceive(plMessage *msg);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    bool MsgReceive(plMessage *msg) override;
 };
 class plRidingAnimatedPhysicalDetector: public plSimpleRegionSensor
 {
@@ -287,7 +287,7 @@ public:
     plRidingAnimatedPhysicalDetector(){}
     plRidingAnimatedPhysicalDetector(plMessage *enterMsg, plMessage *exitMsg) : plSimpleRegionSensor(enterMsg, exitMsg) {}
     virtual ~plRidingAnimatedPhysicalDetector(){}
-    virtual bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
     CLASSNAME_REGISTER( plRidingAnimatedPhysicalDetector );
     GETINTERFACE_ANY( plRidingAnimatedPhysicalDetector, plSimpleRegionSensor);
 };

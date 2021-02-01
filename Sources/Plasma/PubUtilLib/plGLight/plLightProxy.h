@@ -53,8 +53,8 @@ protected:
     plLightInfo*            fOwner;
 
 
-    virtual plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil);
-    virtual plKey               IGetNode() const;
+    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil) override;
+    plKey               IGetNode() const override;
 public:
     plLightProxy();
     virtual ~plLightProxy();

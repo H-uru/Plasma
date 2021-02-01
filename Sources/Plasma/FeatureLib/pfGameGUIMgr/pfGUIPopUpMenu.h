@@ -147,13 +147,13 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
             kRefParentNode
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    SetEnabled( bool e );
-        virtual bool    HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers );
+        void    SetEnabled(bool e) override;
+        bool    HandleMouseEvent(pfGameGUIMgr::EventType event, float mouseX, float mouseY, uint8_t modifiers) override;
 
         void            Show( float x, float y );
 
@@ -222,9 +222,9 @@ class pfGUISkin : public hsKeyedObject
             kRefMipmap
         };
 
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
-        virtual bool    MsgReceive( plMessage *msg );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
+        bool    MsgReceive(plMessage *msg) override;
 
         plMipmap        *GetTexture() const { return fTexture; }
         void            SetTexture( plMipmap *tex );

@@ -56,8 +56,8 @@ public:
     CLASSNAME_REGISTER( plLightRefMsg );
     GETINTERFACE_ANY( plLightRefMsg, plRefMsg );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) { plRefMsg::Read(s, mgr); }
-    virtual void Write(hsStream* s, hsResMgr* mgr) { plRefMsg::Write(s, mgr); }
+    void Read(hsStream* s, hsResMgr* mgr) override { plRefMsg::Read(s, mgr); }
+    void Write(hsStream* s, hsResMgr* mgr) override { plRefMsg::Write(s, mgr); }
 };
 
 #endif // plLightRefMsg_inc

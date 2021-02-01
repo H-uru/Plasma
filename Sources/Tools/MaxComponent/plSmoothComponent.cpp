@@ -93,14 +93,14 @@ protected:
     bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
     plSmoothComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override { fDoneThis = false; return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { fDoneThis = false; return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary below.
@@ -258,14 +258,14 @@ protected:
     bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
     plSmoothAvComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override { fDoneThis = false; return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { fDoneThis = false; return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary below.
@@ -404,7 +404,7 @@ public:
     };
 
     plSmoothBaseComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     hsTArray<plAvMeshSmooth::XfmSpan>& GetSpans(plErrorMsg* pErrMsg);
 
@@ -416,8 +416,8 @@ public:
     
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary below.
@@ -574,22 +574,22 @@ protected:
     bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
     plSmoothSnapComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    virtual bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)    { fDoneThis = false; return true; }
-    virtual bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)     { fDoneThis = false; return true; }
-    virtual bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override { fDoneThis = false; return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { fDoneThis = false; return true; }
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 
 class plSmoothBaseSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { }
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 };
 
 #include "plPickNode.h"

@@ -193,7 +193,7 @@ class pfGameGUIMgr : public hsKeyedObject
 
         bool        Init();
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
 
         void    LoadDialog( const char *name, plKey recvrKey=nil, const char *ageName = nil );  // AgeName = nil defaults to "GUI"
         void    ShowDialog( const char *name ) { IShowDialog(name); }

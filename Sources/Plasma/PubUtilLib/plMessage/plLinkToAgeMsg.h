@@ -84,13 +84,13 @@ public:
     ST::string GetLinkInAnimName() { return fLinkInAnimName; }
     void SetLinkInAnimName(const ST::string& name) { fLinkInAnimName = name; }
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     
     // WriteVersion writes the current version of this creatable and ReadVersion will read in
     // any previous version.
-    virtual void ReadVersion(hsStream* s, hsResMgr* mgr);
-    virtual void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -113,11 +113,11 @@ public:
     void    SetCmd( uint8_t v ) { fLinkingMgrCmd=v; }
     plCreatableListHelper * GetArgs() { return &fArgs; }
 
-    void    Read( hsStream* stream, hsResMgr* mgr );
-    void    Write( hsStream* stream, hsResMgr* mgr );
+    void    Read(hsStream* stream, hsResMgr* mgr) override;
+    void    Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void    ReadVersion( hsStream* s, hsResMgr* mgr );
-    void    WriteVersion( hsStream* s, hsResMgr* mgr );
+    void    ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void    WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 
@@ -158,11 +158,11 @@ public:
     void    MuteLinkSfx(bool mute);
     bool    MuteLinkSfx() const { return (fFlags & kMuteLinkSfx) != 0; }
     
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     int32_t fEffects;
 };
@@ -188,8 +188,8 @@ public:
     plLinkEffectsTriggerMsg *GetTrigger() { return fTrigger; }
     
     // runtime-local only, no I/O
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -217,8 +217,8 @@ public:
     // These messages should never be sent over the net, so I'm
     // suspicious that R/W actually does something... but if
     // it isn't broken, I'm not going to touch it.
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetLinkFlag(uint32_t flag, bool on = true);
     bool HasLinkFlag(uint32_t flag);
@@ -241,8 +241,8 @@ public:
     GETINTERFACE_ANY( plLinkEffectPrepBCMsg, plMessage );   
     
     // runtime-local only, no I/O
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -256,8 +256,8 @@ public:
     CLASSNAME_REGISTER( plLinkCallbackMsg );
     GETINTERFACE_ANY( plLinkCallbackMsg, plEventCallbackMsg );
 
-    void Read(hsStream* stream, hsResMgr* mgr); 
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     plKey fLinkKey;
 };
@@ -276,8 +276,8 @@ public:
     CLASSNAME_REGISTER(plPseudoLinkEffectMsg);
     GETINTERFACE_ANY(plPseudoLinkEffectMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -292,8 +292,8 @@ public:
     CLASSNAME_REGISTER(plPseudoLinkAnimTriggerMsg);
     GETINTERFACE_ANY(plPseudoLinkAnimTriggerMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     plKey fAvatarKey;
     bool fForward;
@@ -310,8 +310,8 @@ public:
     CLASSNAME_REGISTER(plPseudoLinkAnimCallbackMsg);
     GETINTERFACE_ANY(plPseudoLinkAnimCallbackMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     plKey fAvatarKey;
 };

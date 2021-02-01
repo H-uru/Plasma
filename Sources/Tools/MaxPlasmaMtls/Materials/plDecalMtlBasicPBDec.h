@@ -80,7 +80,7 @@ public:
     ~DecalBasicDlgProc() { if (hLockButtons) ImageList_Destroy(hLockButtons); }
 
 public:
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = map->GetParamBlock();
 
@@ -95,7 +95,7 @@ public:
         }
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static DecalBasicDlgProc gDecalBasicDlgProc;
 
@@ -175,7 +175,7 @@ class DecalBasicPBAccessor : public PBAccessor
 public:
     DecalBasicPBAccessor() : fColorLocked( false ) {}
 
-    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plDecalMtl* mtl = (plDecalMtl*)owner;
         IParamBlock2 *pb = mtl->GetParamBlockByID(plDecalMtl::kBlkBasic);
@@ -199,7 +199,7 @@ public:
             break;
         }
     }
-    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
+    void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid) override
     {
     }
 

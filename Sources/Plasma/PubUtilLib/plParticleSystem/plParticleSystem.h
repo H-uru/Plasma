@@ -112,7 +112,7 @@ protected:
     plParticleSDLMod *fParticleSDLMod;
 
     bool IShouldUpdate(plPipeline* pipe) const;
-    virtual bool IEval(double secs, float del, uint32_t dirty); // required by plModifier
+    bool IEval(double secs, float del, uint32_t dirty) override; // required by plModifier
     void IHandleRenderMsg(plPipeline* pipe);
     plDrawInterface* ICheckDrawInterface();
     void IAddEffect(plParticleEffect *effect, uint32_t type);
@@ -188,14 +188,14 @@ public:
     
     plParticleSDLMod* GetSDLMod() {return fParticleSDLMod;}
     // Functions related to/required by plModifier
-    virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
-    virtual plSceneObject* GetTarget(int w) const { hsAssert(w < 1, "Bad target"); return fTarget; }
-    virtual void AddTarget(plSceneObject* so);
-    virtual void RemoveTarget(plSceneObject* so);
+    int GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(int w) const override { hsAssert(w < 1, "Bad target"); return fTarget; }
+    void AddTarget(plSceneObject* so) override;
+    void RemoveTarget(plSceneObject* so) override;
     
-    virtual void Read(hsStream* s, hsResMgr* mgr); 
-    virtual void Write(hsStream* s, hsResMgr* mgr);
-    virtual bool MsgReceive(plMessage* msg);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
+    bool MsgReceive(plMessage* msg) override;
     
     void SetAttachedToAvatar(bool attached);
     

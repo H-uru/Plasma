@@ -115,7 +115,7 @@ public:
 
     plLightGrpPostLoadCallback(plLightGrpComponent* lg) : fLightGrp(lg) {}
 
-    void proc(ILoad *iload) 
+    void proc(ILoad *iload) override
     {
         IParamBlock2* compPB = fLightGrp->GetParamBlock(plComponentBase::kBlkComp);
         INode* light = compPB->GetINode(kAffectedLightSel);

@@ -209,10 +209,10 @@ public:
 
     bool                    OwnChannel(uint32_t which) const { return 0 != (fOwnedChannels & which); }
 
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void            Read(hsStream* s, hsResMgr* mgr) override;
+    void            Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual bool            MsgReceive(plMessage* msg);
+    bool            MsgReceive(plMessage* msg) override;
 
 };
 

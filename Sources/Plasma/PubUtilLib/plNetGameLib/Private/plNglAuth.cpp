@@ -119,12 +119,12 @@ struct PingRequestTrans : NetAuthTrans {
         const void *                    payload
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -148,12 +148,12 @@ struct AccountExistsRequestTrans : NetAuthTrans {
         const wchar_t                     accountName[]
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -181,12 +181,12 @@ struct LoginRequestTrans : NetAuthTrans {
         unsigned    explorer
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -209,12 +209,12 @@ struct AgeRequestTrans : NetAuthTrans {
     );
     ~AgeRequestTrans ();
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -242,12 +242,12 @@ struct AccountCreateRequestTrans : NetAuthTrans {
         void *                                  param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -276,12 +276,12 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
         void *                                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -308,12 +308,12 @@ struct PlayerCreateRequestTrans : NetAuthTrans {
         void *                                  param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -336,12 +336,12 @@ struct PlayerDeleteRequestTrans : NetAuthTrans {
         void *                                  param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -360,12 +360,12 @@ struct UpgradeVisitorRequestTrans : NetAuthTrans {
         void *                                      param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -385,13 +385,13 @@ struct SetPlayerRequestTrans : NetAuthTrans {
     // This transaction doesn't timeout since a client starting from a clean
     // directory can take a long time between issuing this transaction and
     // receiving a reply.
-    bool TimedOut () { return false; }
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool TimedOut() override { return false; }
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -412,12 +412,12 @@ struct AccountChangePasswordRequestTrans : NetAuthTrans {
         void *                                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -439,12 +439,12 @@ struct GetPublicAgeListTrans : NetAuthTrans {
         void *                              param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -465,12 +465,12 @@ struct AccountSetRolesRequestTrans : NetAuthTrans {
         void *                                      param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -491,12 +491,12 @@ struct AccountSetBillingTypeRequestTrans : NetAuthTrans {
         void *                                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -515,12 +515,12 @@ struct AccountActivateRequestTrans : NetAuthTrans {
         void *                                      param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -542,12 +542,12 @@ struct FileListRequestTrans : NetAuthTrans {
         const wchar_t                         ext[]
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -567,12 +567,12 @@ struct FileDownloadRequestTrans : NetAuthTrans {
         hsStream *                      writer
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -590,7 +590,7 @@ struct RcvdFileDownloadChunkTrans : NetNotifyTrans {
           bytes(), offset(), data(), writer()
     { }
     ~RcvdFileDownloadChunkTrans ();
-    void Post ();
+    void Post() override;
 };
 
 
@@ -608,7 +608,7 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
           bufferType(), bufferBytes(), bufferData()
     { }
     ~RcvdPropagatedBufferTrans ();
-    void Post ();
+    void Post() override;
 };
 
 //============================================================================
@@ -622,7 +622,7 @@ struct VaultNodeChangedTrans : NetNotifyTrans {
     VaultNodeChangedTrans ()
         : NetNotifyTrans(kVaultNodeChangedTrans), m_nodeId()
     { }
-    void Post ();
+    void Post() override;
 };
 
 //============================================================================
@@ -638,7 +638,7 @@ struct VaultNodeAddedTrans : NetNotifyTrans {
         : NetNotifyTrans(kVaultNodeAddedTrans),
           m_parentId(), m_childId(), m_ownerId()
     { }
-    void Post ();
+    void Post() override;
 };
 
 //============================================================================
@@ -652,7 +652,7 @@ struct VaultNodeRemovedTrans : NetNotifyTrans {
     VaultNodeRemovedTrans ()
         : NetNotifyTrans(kVaultNodeRemovedTrans), m_parentId(), m_childId()
     { }
-    void Post ();
+    void Post() override;
 };
 
 //============================================================================
@@ -665,7 +665,7 @@ struct VaultNodeDeletedTrans : NetNotifyTrans {
     VaultNodeDeletedTrans ()
         : NetNotifyTrans(kVaultNodeDeletedTrans), m_nodeId()
     { }
-    void Post ();
+    void Post() override;
 };
 
 //============================================================================
@@ -685,12 +685,12 @@ struct VaultFetchNodeRefsTrans : NetAuthTrans {
         void *                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -726,12 +726,12 @@ struct VaultInitAgeTrans : NetAuthTrans {
     );
     ~VaultInitAgeTrans ();
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -751,12 +751,12 @@ struct VaultFetchNodeTrans : NetAuthTrans {
         void *                      param
     );
     
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -776,12 +776,12 @@ struct VaultFindNodeTrans : NetAuthTrans {
     );
 
     
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -800,12 +800,12 @@ struct VaultCreateNodeTrans : NetAuthTrans {
         void *                          param
     );
     
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -828,12 +828,12 @@ struct VaultSaveNodeTrans : NetAuthTrans {
         void *                              param
     );
     
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -855,12 +855,12 @@ struct VaultAddNodeTrans : NetAuthTrans {
         void *                          param
     );
     
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -880,12 +880,12 @@ struct VaultRemoveNodeTrans : NetAuthTrans {
         void *                              param
     );
     
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -894,7 +894,7 @@ struct VaultRemoveNodeTrans : NetAuthTrans {
 struct NotifyNewBuildTrans : NetNotifyTrans {
 
     NotifyNewBuildTrans () : NetNotifyTrans(kNotifyNewBuildTrans) {}
-    void Post ();
+    void Post() override;
 };
 
 //============================================================================
@@ -915,12 +915,12 @@ struct SetPlayerBanStatusRequestTrans : NetAuthTrans {
         void *                                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -941,12 +941,12 @@ struct ChangePlayerNameRequestTrans : NetAuthTrans {
         void *                                      param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -969,12 +969,12 @@ struct SendFriendInviteTrans : NetAuthTrans {
         void *                                  param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -983,7 +983,7 @@ struct SendFriendInviteTrans : NetAuthTrans {
 struct AuthConnectedNotifyTrans : NetNotifyTrans {
 
     AuthConnectedNotifyTrans () : NetNotifyTrans(kAuthConnectedNotifyTrans) {}
-    void Post ();
+    void Post() override;
 };
 
 
@@ -1013,12 +1013,12 @@ struct ScoreCreateTrans : NetAuthTrans {
         void *                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1037,12 +1037,12 @@ struct ScoreDeleteTrans : NetAuthTrans {
         void *                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1069,12 +1069,12 @@ struct ScoreGetScoresTrans : NetAuthTrans {
 
     ~ScoreGetScoresTrans();
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1095,12 +1095,12 @@ struct ScoreAddPointsTrans : NetAuthTrans {
         void *                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1123,12 +1123,12 @@ struct ScoreTransferPointsTrans : NetAuthTrans {
         void *                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1149,12 +1149,12 @@ struct ScoreSetPointsTrans : NetAuthTrans {
         void *                          param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1191,12 +1191,12 @@ struct ScoreGetRanksTrans : NetAuthTrans {
         void *                      param
     );
 
-    bool Send ();
-    void Post ();
-    bool Recv (
+    bool Send() override;
+    void Post() override;
+    bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-    );
+    ) override;
 };
 
 //============================================================================
@@ -1225,12 +1225,12 @@ struct ScoreGetHighScoresTrans : NetAuthTrans {
 
     ~ScoreGetHighScoresTrans();
 
-    bool Send();
-    void Post();
+    bool Send() override;
+    void Post() override;
     bool Recv(
         const uint8_t  msg[],
         unsigned    bytes
-        );
+    ) override;
 };
 
 

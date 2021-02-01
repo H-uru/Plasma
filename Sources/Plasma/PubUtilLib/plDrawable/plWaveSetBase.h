@@ -61,7 +61,7 @@ public:
     CLASSNAME_REGISTER( plWaveSetBase );
     GETINTERFACE_ANY( plWaveSetBase, plMultiModifier );
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
     int32_t       GetNumProperties() const { return 0; }
 

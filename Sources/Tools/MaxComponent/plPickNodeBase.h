@@ -84,7 +84,7 @@ protected:
     bool fCanConvertToType;
 
     bool ICanConvertToType(Object *obj);
-    virtual bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node) override;
 
 public:
     plPickNode(IParamBlock2* pb, int nodeParamID);
@@ -98,7 +98,7 @@ class plPickMtlNode : public plPickNodeBase
 protected:
     Mtl* fMtl;
 
-    bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node) override;
 
 public:
     plPickMtlNode(IParamBlock2* pb, int nodeParamID, Mtl* mtl);
@@ -112,7 +112,7 @@ class plPickCompNode : public plPickNodeBase
 protected:
     plComponentBase* fComp;
 
-    bool ICheckNode(plMaxNode* node);
+    bool ICheckNode(plMaxNode* node) override;
 
 public:
     plPickCompNode(IParamBlock2* pb, int nodeParamID, plComponentBase* comp);

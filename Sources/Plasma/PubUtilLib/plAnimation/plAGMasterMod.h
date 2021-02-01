@@ -195,18 +195,18 @@ public:
     void SetIsGroupMaster(bool master, plMsgForwarder* msgForwarder);
 
     // PLASMA PROTOCOL
-    virtual int GetNumTargets() const { return fTarget ? 1 : 0; }
-    virtual plSceneObject* GetTarget(int w) const { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
-    virtual void AddTarget(plSceneObject * object);
-    virtual void RemoveTarget(plSceneObject * object);
+    int GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(int w) const override { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
+    void AddTarget(plSceneObject * object) override;
+    void RemoveTarget(plSceneObject * object) override;
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream * stream, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream * stream, hsResMgr *mgr) override;
 
     bool HasRunningAnims();
-    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags);
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
     
     CLASSNAME_REGISTER( plAGMasterMod );
     GETINTERFACE_ANY( plAGMasterMod, plModifier );
@@ -216,7 +216,7 @@ protected:
     plAGModifier * ICacheChannelMod(plAGModifier *mod) const;
     plAGModifier * IFindChannelMod(const plSceneObject *obj, const ST::string &name) const;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
     
     virtual void IApplyDynamic() {};    // dummy function required by base class
 

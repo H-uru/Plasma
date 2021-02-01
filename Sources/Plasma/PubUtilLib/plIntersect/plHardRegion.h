@@ -67,7 +67,7 @@ protected:
     mutable uint32_t          fState;
     hsPoint3                fCamPos;
 
-    virtual void    SetKey(plKey k);
+    void    SetKey(plKey k) override;
 
 public:
     plHardRegion();
@@ -76,18 +76,18 @@ public:
     CLASSNAME_REGISTER( plHardRegion );
     GETINTERFACE_ANY( plHardRegion, plRegionBase );
 
-    virtual bool IsInside(const hsPoint3& pos) const { return IIsInside(pos); }
+    bool IsInside(const hsPoint3& pos) const override { return IIsInside(pos); }
     virtual bool CameraInside() const;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override = 0;
 
-    virtual int32_t   GetNumProperties() const { return 1; } // This is stupid.
+    int32_t   GetNumProperties() const override { return 1; } // This is stupid.
 
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual bool    IIsInside(const hsPoint3& pos) const = 0;
     virtual bool    ICameraInside() const = 0;

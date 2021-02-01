@@ -82,12 +82,12 @@ public:
     plAVIWriterImp();
     virtual ~plAVIWriterImp();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Shutdown();
+    void Shutdown() override;
 
-    virtual bool Open(const char* fileName, plPipeline* pipeline);
-    virtual void Close();
+    bool Open(const char* fileName, plPipeline* pipeline) override;
+    void Close() override;
 };
 #else
 class plAVIWriterImp : public plAVIWriter
@@ -96,12 +96,12 @@ public:
     plAVIWriterImp();
     virtual ~plAVIWriterImp();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Shutdown();
+    void Shutdown() override;
 
-    virtual bool Open(const char* fileName, plPipeline* pipeline);
-    virtual void Close();
+    bool Open(const char* fileName, plPipeline* pipeline) override;
+    void Close() override;
 };
 #endif
 

@@ -188,8 +188,8 @@ public:
     GETINTERFACE_ANY( plAGChannel, plCreatable );
 
     // persistence
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 
 protected:
     ST::string fName;

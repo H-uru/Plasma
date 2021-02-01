@@ -78,8 +78,8 @@ public:
     CLASSNAME_REGISTER( plClimbMsg );
     GETINTERFACE_ANY( plClimbMsg, plMessage );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     Command fCommand;
     Direction fDirection;

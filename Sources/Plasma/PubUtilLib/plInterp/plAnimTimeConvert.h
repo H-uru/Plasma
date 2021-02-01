@@ -189,8 +189,8 @@ public:
     float CurrentAnimTime() const { return fCurrentAnimTime; }
     void SetCurrentAnimTime(float s, bool jump = false);
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     bool HandleCmd(plAnimCmdMsg* msg);
     void AddCallback(plEventCallbackMsg* pMsg);
@@ -248,8 +248,8 @@ public:
     double GetEndWorldTime() const { return fBeginWorldTime + fLength; } 
 
     virtual plATCEaseCurve *Clone() const = 0;
-    virtual void Read(hsStream *s, hsResMgr *mgr);
-    virtual void Write(hsStream *s, hsResMgr *mgr);
+    void Read(hsStream *s, hsResMgr *mgr) override;
+    void Write(hsStream *s, hsResMgr *mgr) override;
     
     virtual void RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate = false);
     virtual void SetLengthOnRate(float rate);
@@ -272,11 +272,11 @@ public:
     CLASSNAME_REGISTER( plConstAccelEaseCurve );
     GETINTERFACE_ANY( plConstAccelEaseCurve, plATCEaseCurve );
 
-    virtual plATCEaseCurve *Clone() const;
-    virtual void SetLengthOnDistance(float dist);
-    virtual float PositionGivenTime(float time) const;
-    virtual float VelocityGivenTime(float time) const;
-    virtual float TimeGivenVelocity(float velocity) const;
+    plATCEaseCurve *Clone() const override;
+    void SetLengthOnDistance(float dist) override;
+    float PositionGivenTime(float time) const override;
+    float VelocityGivenTime(float time) const override;
+    float TimeGivenVelocity(float velocity) const override;
 };
 
 class plSplineEaseCurve : public plATCEaseCurve
@@ -289,15 +289,15 @@ public:
     CLASSNAME_REGISTER( plSplineEaseCurve );
     GETINTERFACE_ANY( plSplineEaseCurve, plATCEaseCurve );
 
-    virtual void Read(hsStream *s, hsResMgr *mgr);
-    virtual void Write(hsStream *s, hsResMgr *mgr);
+    void Read(hsStream *s, hsResMgr *mgr) override;
+    void Write(hsStream *s, hsResMgr *mgr) override;
 
-    virtual plATCEaseCurve *Clone() const;
-    virtual void RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate = false); 
-    virtual void SetLengthOnDistance(float dist);
-    virtual float PositionGivenTime(float time) const;
-    virtual float VelocityGivenTime(float time) const;
-    virtual float TimeGivenVelocity(float velocity) const;
+    plATCEaseCurve *Clone() const override;
+    void RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate = false) override;
+    void SetLengthOnDistance(float dist) override;
+    float PositionGivenTime(float time) const override;
+    float VelocityGivenTime(float time) const override;
+    float TimeGivenVelocity(float velocity) const override;
 
     float fCoef[4];
 };

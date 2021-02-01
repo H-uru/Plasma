@@ -233,7 +233,7 @@ class plDrawableSpans : public plDrawable
         void            IRebuildSpanArray();
         plParticleSpan  *ICreateParticleIcicle( hsGMaterial *material, plParticleSet *set );
 
-        virtual void    SetKey(plKey k);
+        void    SetKey(plKey k) override;
 
     public:
         plDrawableSpans();
@@ -243,42 +243,42 @@ class plDrawableSpans : public plDrawable
         GETINTERFACE_ANY( plDrawableSpans, plDrawable );
 
         virtual void SetNativeTransform(uint32_t idx, const hsMatrix44& l2w, const hsMatrix44& w2l);
-        virtual plDrawable& SetTransform( uint32_t index, const hsMatrix44& l2w, const hsMatrix44& w2l);
-        virtual const hsMatrix44& GetLocalToWorld( uint32_t index = (uint32_t)-1 ) const;
-        virtual const hsMatrix44& GetWorldToLocal( uint32_t index = (uint32_t)-1 ) const;
+        plDrawable& SetTransform(uint32_t index, const hsMatrix44& l2w, const hsMatrix44& w2l) override;
+        const hsMatrix44& GetLocalToWorld(uint32_t index = (uint32_t)-1) const override;
+        const hsMatrix44& GetWorldToLocal(uint32_t index = (uint32_t)-1) const override;
 
-        virtual plDrawable& SetProperty( uint32_t index, int prop, bool on );
-        virtual bool GetProperty( uint32_t index, int prop ) const;
+        plDrawable& SetProperty(uint32_t index, int prop, bool on) override;
+        bool GetProperty(uint32_t index, int prop) const override;
 
-        virtual plDrawable& SetProperty( int prop, bool on );
-        virtual bool GetProperty( int prop ) const;
+        plDrawable& SetProperty(int prop, bool on) override;
+        bool GetProperty(int prop) const override;
 
-        virtual plDrawable& SetNativeProperty( int prop, bool on ) { if( on ) fProps |= prop; else fProps &= ~prop; return *this; }
-        virtual bool GetNativeProperty( int prop ) const { return ( fProps & prop ) ? true : false; }
+        plDrawable& SetNativeProperty(int prop, bool on) override { if (on) fProps |= prop; else fProps &= ~prop; return *this; }
+        bool GetNativeProperty(int prop) const override { return (fProps & prop) ? true : false; }
 
-        virtual plDrawable& SetNativeProperty( uint32_t index, int prop, bool on );
-        virtual bool GetNativeProperty( uint32_t index, int prop ) const;
+        plDrawable& SetNativeProperty(uint32_t index, int prop, bool on) override;
+        bool GetNativeProperty(uint32_t index, int prop) const override;
 
-        virtual plDrawable& SetSubType( uint32_t index, plSubDrawableType t, bool on );
-        virtual uint32_t GetSubType( uint32_t index ) const; // returns or of all spans with this index (index==-1 is all spans).
+        plDrawable& SetSubType(uint32_t index, plSubDrawableType t, bool on) override;
+        uint32_t GetSubType(uint32_t index) const override; // returns or of all spans with this index (index==-1 is all spans).
 
-        virtual uint32_t  GetType() const { return fType; }
-        virtual void    SetType( uint32_t type ) { fType = type; }
+        uint32_t  GetType() const override { return fType; }
+        void    SetType(uint32_t type) override { fType = type; }
 
-        virtual void SetRenderLevel(const plRenderLevel& l);
-        virtual const plRenderLevel& GetRenderLevel() const;
+        void SetRenderLevel(const plRenderLevel& l) override;
+        const plRenderLevel& GetRenderLevel() const override;
 
-        const hsBounds3Ext& GetLocalBounds( uint32_t index = (uint32_t)-1 ) const;
-        const hsBounds3Ext& GetWorldBounds( uint32_t index = (uint32_t)-1 ) const;
-        const hsBounds3Ext& GetMaxWorldBounds( uint32_t index = (uint32_t)-1 ) const;
+        const hsBounds3Ext& GetLocalBounds(uint32_t index = (uint32_t)-1) const override;
+        const hsBounds3Ext& GetWorldBounds(uint32_t index = (uint32_t)-1) const override;
+        const hsBounds3Ext& GetMaxWorldBounds(uint32_t index = (uint32_t)-1) const override;
 
-        virtual void Read(hsStream* s, hsResMgr* mgr);
-        virtual void Write(hsStream* s, hsResMgr* mgr);
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual plSpaceTree*    GetSpaceTree() const { if(!fSpaceTree)IQuickSpaceTree(); return fSpaceTree; }
+        plSpaceTree*    GetSpaceTree() const override { if (!fSpaceTree) IQuickSpaceTree(); return fSpaceTree; }
         virtual void            SetSpaceTree(plSpaceTree* st) const;
         virtual void            SetVisSet(plVisMgr* visMgr);
-        virtual void            SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* reg, bool on);
+        void            SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* reg, bool on) override;
 
         virtual const plSpan                *GetSpan( uint32_t index ) const { return fSpans[ index ]; }
         virtual const plSpan                *GetSpan( uint32_t diIndex, uint32_t index ) const { return fSpans[ (*fDIIndices[ diIndex ])[ index ] ]; }
@@ -306,20 +306,20 @@ class plDrawableSpans : public plDrawable
         virtual void    PrepForRender( plPipeline *p );
         void            SetNotReadyToRender() { fReadyToRender = false; }
 
-        virtual bool        MsgReceive( plMessage* msg );
+        bool        MsgReceive(plMessage* msg) override;
 
         // These two should only be called by the SceneNode
-        virtual plKey GetSceneNode() const { return fSceneNode; }
-        virtual void SetSceneNode(plKey newNode);
+        plKey GetSceneNode() const override { return fSceneNode; }
+        void SetSceneNode(plKey newNode) override;
 
         // Lookup a material in the material array
         hsGMaterial     *GetMaterial( uint32_t index ) const { return ( ( index == (uint32_t)-1 ) ? nil : fMaterials[ index ] ); }
         uint32_t          GetNumMaterials() const { return fMaterials.GetCount(); }
 
         // Convert intermediate data into export/run-time-ready data
-        virtual void    Optimize();
+        void    Optimize() override;
         // Called by the sceneNode to determine if we match the criteria
-        virtual bool    DoIMatch( const plDrawableCriteria& crit );
+        bool    DoIMatch(const plDrawableCriteria& crit) override;
         // To set the criteria that this ice fits
         void            SetCriteria( const plDrawableCriteria& crit );
 
@@ -333,8 +333,8 @@ class plDrawableSpans : public plDrawable
         virtual void    SetBlendingSpanVectorBit( uint32_t bitNumber, bool on );
 
         // Taking span index. DI Index doesn't make sense here, because one object's DI can dereference into many materials etc.
-        virtual hsGMaterial*    GetSubMaterial(int index) const;
-        virtual bool            GetSubVisDists(int index, float& minDist, float& maxDist) const; // return true if span invisible before minDist and/or after maxDist
+        hsGMaterial*    GetSubMaterial(int index) const override;
+        bool            GetSubVisDists(int index, float& minDist, float& maxDist) const override; // return true if span invisible before minDist and/or after maxDist
 
         // Used by the pipeline to keep from reskinning on multiple renders per frame.
         uint32_t GetSkinTime() const { return fSkinTime; }
@@ -379,9 +379,9 @@ class plDrawableSpans : public plDrawable
         void            CleanUpGarbage() { IRemoveGarbage(); }
 
         /// Funky particle system functions
-        virtual uint32_t  CreateParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material );
-        virtual void    ResetParticleSystem( uint32_t index );
-        virtual void    AssignEmitterToParticleSystem( uint32_t index, plParticleEmitter *emitter );
+        uint32_t  CreateParticleSystem(uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material) override;
+        void    ResetParticleSystem(uint32_t index) override;
+        void    AssignEmitterToParticleSystem(uint32_t index, plParticleEmitter *emitter) override;
         
         /// SceneViewer only!
         void            GetOrigGeometrySpans( uint32_t diIndex, hsTArray<plGeometrySpan *> &arrayToFill );

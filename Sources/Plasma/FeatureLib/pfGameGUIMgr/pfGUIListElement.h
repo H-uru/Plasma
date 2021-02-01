@@ -128,14 +128,14 @@ class pfGUIListText : public pfGUIListElement
         pfGUIListText();
         pfGUIListText( const ST::string &text );
         
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
-        virtual int     CompareTo( pfGUIListElement *rightSide );
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override;
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override;
+        int     CompareTo(pfGUIListElement *rightSide) override;
 
-        virtual bool    CanBeDragged() { return true; }
+        bool    CanBeDragged() override { return true; }
         virtual void    SetJustify( JustifyTypes justify );
 
         // These two are virtual so we can derive and override them
@@ -157,14 +157,14 @@ class pfGUIListPicture : public pfGUIListElement
         pfGUIListPicture( plKey mipKey, bool respectAlpha );
         virtual ~pfGUIListPicture(); 
         
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
-        virtual int     CompareTo( pfGUIListElement *rightSide );
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override;
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override;
+        int     CompareTo(pfGUIListElement *rightSide) override;
 
-        virtual bool    CanBeDragged() { return false; }
+        bool    CanBeDragged() override { return false; }
 
         void    SetBorderSize( uint32_t size ) { fBorderSize = (uint8_t)size; }
         void    SetRespectAlpha( bool r ) { fRespectAlpha = r; }
@@ -185,14 +185,14 @@ class pfGUIListTreeRoot : public pfGUIListElement
         pfGUIListTreeRoot() : pfGUIListElement(kTreeRoot), fShowChildren(true) { }
         pfGUIListTreeRoot(const ST::string &text) : pfGUIListElement(kTreeRoot), fShowChildren(true), fText(text) { }
         
-        virtual void    Read( hsStream *s, hsResMgr *mgr );
-        virtual void    Write( hsStream *s, hsResMgr *mgr );
+        void    Read(hsStream *s, hsResMgr *mgr) override;
+        void    Write(hsStream *s, hsResMgr *mgr) override;
 
-        virtual bool    Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight );
-        virtual void    GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height );
-        virtual int     CompareTo( pfGUIListElement *rightSide );
+        bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override;
+        void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override;
+        int     CompareTo(pfGUIListElement *rightSide) override;
 
-        virtual bool    MouseClicked( uint16_t localX, uint16_t localY );
+        bool    MouseClicked(uint16_t localX, uint16_t localY) override;
 
         const ST::string GetTitle() const { return fText; }
         void        SetTitle(const ST::string &text) { fText = text; }
@@ -203,7 +203,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
         void        AddChild( pfGUIListElement *el );
         void        RemoveChild( uint32_t idx );
 
-        virtual void    SetCollapsed( bool c );
+        void    SetCollapsed(bool c) override;
 
         void        ShowChildren( bool s );
         bool        IsShowingChildren() const { return fShowChildren; }

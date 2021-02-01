@@ -53,14 +53,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCompositeClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plCompositeMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_COMP_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return COMP_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaComposite"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plCompositeMtl(loading); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_COMP_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return COMP_MTL_CLASS_ID; }
+    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    InternalName() override { return _T("PlasmaComposite"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plCompositeClassDesc plCompositeMtlDesc;
 ClassDesc2* GetCompMtlDesc() { return &plCompositeMtlDesc; }

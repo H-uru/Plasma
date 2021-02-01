@@ -140,7 +140,7 @@ class plLayerTargetContainer : public hsKeyedObject
     public:
         hsTArray<plLayerInterface *>    fLayers;
 
-        virtual bool MsgReceive( plMessage *msg )
+        bool MsgReceive(plMessage *msg) override
         {
             plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
             if( ref != nil )

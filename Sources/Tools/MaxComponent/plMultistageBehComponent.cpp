@@ -101,19 +101,19 @@ public:
 
     plKey GetMultiStageBehKey(plMaxNode *node);
 
-    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg);
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg) override;
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void AddReceiverKey(plKey pKey, plMaxNode* node=nil);
+    void AddReceiverKey(plKey pKey, plMaxNode* node=nil) override;
 
-    virtual void CreateRollups();
-    virtual void DestroyRollups();
+    void CreateRollups() override;
+    void DestroyRollups() override;
 
-    IOResult Save(ISave* isave);
-    IOResult Load(ILoad* iload);
+    IOResult Save(ISave* isave) override;
+    IOResult Load(ILoad* iload) override;
 
-    RefTargetHandle Clone(RemapDir &remap);
+    RefTargetHandle Clone(RemapDir &remap) override;
 };
 
 HWND plMultistageBehComponent::fDlg = NULL;
@@ -487,14 +487,14 @@ public:
     MaxStream(ILoad* iload) : fSave(nil), fLoad(iload) {}
 
     // Don't support any of this
-    virtual bool Open(const plFileName &, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
-    virtual bool Close() {  hsAssert(0, "Not supported"); return false; }
-    virtual void Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
-    virtual void Rewind() { hsAssert(0, "Not supported"); }
+    bool Open(const plFileName &, const char * = "rb") override { hsAssert(0, "Not supported"); return false; }
+    bool Close() override { hsAssert(0, "Not supported"); return false; }
+    void Skip(uint32_t deltaByteCount) override { hsAssert(0, "Not supported"); }
+    void Rewind() override { hsAssert(0, "Not supported"); }
 
-    virtual uint32_t  GetEOF() { return (uint32_t)fLoad->CurChunkLength(); }
+    uint32_t  GetEOF() override { return (uint32_t)fLoad->CurChunkLength(); }
 
-    virtual uint32_t Read(uint32_t byteCount, void * buffer)
+    uint32_t Read(uint32_t byteCount, void * buffer) override
     {
         ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
@@ -503,7 +503,7 @@ public:
         fPosition += numRead;
         return numRead;
     }
-    virtual uint32_t Write(uint32_t byteCount, const void* buffer)
+    uint32_t Write(uint32_t byteCount, const void* buffer) override
     {
         ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");

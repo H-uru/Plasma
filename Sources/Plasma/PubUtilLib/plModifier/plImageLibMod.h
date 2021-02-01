@@ -54,7 +54,7 @@ protected:
 
     hsTArray<plBitmap *>    fImages;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
 public:
     plImageLibMod();
@@ -63,10 +63,10 @@ public:
     CLASSNAME_REGISTER( plImageLibMod );
     GETINTERFACE_ANY( plImageLibMod, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     enum Refs
     {

@@ -66,7 +66,7 @@ class plStatusLogDrawer : public plStatusLogDrawerStub
         plStatusLogDrawer( plPipeline *pipe ) : fPipeline( pipe ) {}
         virtual ~plStatusLogDrawer() {}
 
-        virtual void    Draw(plStatusLog* curLog, plStatusLog* firstLog);
+        void    Draw(plStatusLog* curLog, plStatusLog* firstLog) override;
 };
 
 

@@ -98,11 +98,11 @@ public:
     GETINTERFACE_ANY(plLoadCloneMsg, plMessage);
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void ReadVersion(hsStream* stream, hsResMgr* mgr);
-    void WriteVersion(hsStream* stream, hsResMgr* mgr);
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) override;
     
     plKey   GetCloneKey();
     plKey   GetRequestorKey();

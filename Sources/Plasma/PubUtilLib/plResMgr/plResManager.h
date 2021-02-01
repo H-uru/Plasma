@@ -78,15 +78,15 @@ public:
     //---------------------------
     //  Load and Unload
     //---------------------------
-    virtual void        Load  (const plKey& objKey);        // places on list to be loaded
-    virtual bool        Unload(const plKey& objKey);        // Unregisters (deletes) an object, Return true if successful
-    virtual plKey       CloneKey(const plKey& objKey);
+    void        Load  (const plKey& objKey) override;        // places on list to be loaded
+    bool        Unload(const plKey& objKey) override;        // Unregisters (deletes) an object, Return true if successful
+    plKey       CloneKey(const plKey& objKey) override;
 
     //---------------------------
     //  Finding Functions
     //---------------------------
     plKey               FindOriginalKey(const plUoid&);
-    virtual plKey       FindKey(const plUoid&); // Same as above, but will check the uoid for clones
+    plKey               FindKey(const plUoid&) override; // Same as above, but will check the uoid for clones
     const plLocation&   FindLocation(const ST::string& age, const ST::string& page) const;
     // Use nil for any strings you don't need
     void                GetLocationStrings(const plLocation& loc, ST::string* ageBuffer, ST::string* pageBuffer) const;
@@ -94,40 +94,40 @@ public:
     //---------------------------
     //  Establish reference linkage 
     //---------------------------
-    virtual bool   AddViaNotify(const plKey& key, plRefMsg* msg, plRefFlags::Type flags);
-    virtual bool   AddViaNotify(plRefMsg* msg, plRefFlags::Type flags); // msg->fRef->GetKey() == sentKey
+    bool   AddViaNotify(const plKey& key, plRefMsg* msg, plRefFlags::Type flags) override;
+    bool   AddViaNotify(plRefMsg* msg, plRefFlags::Type flags) override; // msg->fRef->GetKey() == sentKey
 
-    virtual bool   SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags);
-    virtual bool   SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags);
+    bool   SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type flags) override;
+    bool   SendRef(hsKeyedObject* ko, plRefMsg* refMsg, plRefFlags::Type flags) override;
 
     //---------------------------
     //  Reding and Writing keys
     //---------------------------
     // Read a Key in, and Notify me when the Object is loaded
-    virtual plKey ReadKeyNotifyMe(hsStream* stream, plRefMsg* retMsg, plRefFlags::Type flags); 
+    plKey ReadKeyNotifyMe(hsStream* stream, plRefMsg* retMsg, plRefFlags::Type flags) override;
     // Just read the Key data in and find a match in the registry and return it.
-    virtual plKey ReadKey(hsStream* stream); 
+    plKey ReadKey(hsStream* stream) override;
 
     // For convenience you can write a key using the KeyedObject or the Key...same result
-    virtual void WriteKey(hsStream* s, hsKeyedObject* obj); 
-    virtual void WriteKey(hsStream* s, const plKey& key); 
+    void WriteKey(hsStream* s, hsKeyedObject* obj) override;
+    void WriteKey(hsStream* s, const plKey& key) override;
 
     //---------------------------
     //  Reding and Writing Objects directly
     //---------------------------
-    virtual plCreatable*    ReadCreatable(hsStream* s);
-    virtual void            WriteCreatable(hsStream* s, plCreatable* cre);
+    plCreatable*    ReadCreatable(hsStream* s) override;
+    void            WriteCreatable(hsStream* s, plCreatable* cre) override;
 
-    virtual plCreatable*    ReadCreatableVersion(hsStream* s);
-    virtual void            WriteCreatableVersion(hsStream* s, plCreatable* cre);
+    plCreatable*    ReadCreatableVersion(hsStream* s) override;
+    void            WriteCreatableVersion(hsStream* s, plCreatable* cre) override;
 
     //---------------------------
     // Registry Modification Functions
     //---------------------------
-    virtual plKey NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways);
-    virtual plKey NewKey(plUoid& newUoid, hsKeyedObject* object);
+    plKey NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways) override;
+    plKey NewKey(plUoid& newUoid, hsKeyedObject* object) override;
 
-    virtual plDispatchBase* Dispatch();
+    plDispatchBase* Dispatch() override;
 
     virtual void SetProgressBarProc(plProgressProc proc);
 
@@ -146,7 +146,7 @@ public:
     void KeepPageOpen(const plLocation& page, bool keepOpen);
 
     // We're on the way down, act accordingly.
-    virtual void BeginShutdown();
+    void BeginShutdown() override;
 
     // Determines whether the time to read each object is dumped to a log
     void LogReadTimes(bool logReadTimes);
@@ -175,19 +175,19 @@ protected:
     friend class plKeyImp;
     friend class plResManagerHelper;
 
-    virtual plKey   ReRegister(const ST::string& nm, const plUoid& uoid);
-    virtual bool    ReadObject(plKeyImp* key); // plKeys call this when needed
+    plKey   ReRegister(const ST::string& nm, const plUoid& uoid) override;
+    bool    ReadObject(plKeyImp* key) override; // plKeys call this when needed
     virtual bool    IReadObject(plKeyImp* pKey, hsStream *stream);  
 
     plCreatable*    IReadCreatable(hsStream* s) const;
     plKey           ICloneKey(const plUoid& objUoid, uint32_t playerID, uint32_t cloneID);
 
-    virtual void    IKeyReffed(plKeyImp* key);
-    virtual void    IKeyUnreffed(plKeyImp* key);
+    void    IKeyReffed(plKeyImp* key) override;
+    void    IKeyUnreffed(plKeyImp* key) override;
 
-    virtual bool    IReset();
-    virtual bool    IInit();
-    virtual void    IShutdown();
+    bool    IReset() override;
+    bool    IInit() override;
+    void    IShutdown() override;
 
     void    IPageOutSceneNodes(bool forceAll);
     void    IDropAllAgeKeys();

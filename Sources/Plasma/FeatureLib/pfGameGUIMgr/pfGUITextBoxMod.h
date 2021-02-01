@@ -63,10 +63,10 @@ class pfGUITextBoxMod : public pfGUIControlMod
         bool            fUseLocalizationPath;
 
 
-        virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
-        virtual void    IUpdate();
-        virtual void    IPostSetUpDynTextMap();
+        void    IUpdate() override;
+        void    IPostSetUpDynTextMap() override;
 
     public:
 
@@ -82,16 +82,16 @@ class pfGUITextBoxMod : public pfGUIControlMod
             kRightJustify
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    PurgeDynaTextMapImage();
+        void    PurgeDynaTextMapImage() override;
 
         virtual const wchar_t*  GetText() { return fText; }
 

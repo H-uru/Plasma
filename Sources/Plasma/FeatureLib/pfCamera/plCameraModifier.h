@@ -96,7 +96,7 @@ class plCameraModifier1 : public plSingleModifier
 protected:
 
     void Output();
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
         
 public:
     
@@ -106,12 +106,12 @@ public:
     CLASSNAME_REGISTER( plCameraModifier1 );
     GETINTERFACE_ANY( plCameraModifier1, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     void        Initialize();
     virtual void Update();
 
-    virtual void AddTarget(plSceneObject* so);
+    void AddTarget(plSceneObject* so) override;
 
     void    SetBrain(plCameraBrain1* brain) { fBrain = brain; }
 
@@ -135,8 +135,8 @@ public:
     void            SetFOVh(float f, bool fUpdateVCam = true); 
     bool            GetInSubworld() { return fInSubLastUpdate; }
     void            InSubworld(bool b) { fInSubLastUpdate = b; }
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     void AddTrans(CamTrans* t) { fTrans.Append(t); }
     int  GetNumTrans() { return fTrans.Count(); }
     CamTrans* GetTrans(int i) { return fTrans[i]; }

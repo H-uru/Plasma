@@ -54,14 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAngleAttenLayerClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plAngleAttenLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_ANGLE_ATTEN_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return ANGLE_ATTEN_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_COLMOD; }
-    const TCHAR*    InternalName()  { return _T("PlasmaAngleAttenLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plAngleAttenLayer(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_ANGLE_ATTEN_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return ANGLE_ATTEN_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_COLMOD; }
+    const TCHAR*    InternalName() override { return _T("PlasmaAngleAttenLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plAngleAttenLayerClassDesc plAngleAttenLayerDesc;
 ClassDesc2* GetAngleAttenLayerDesc() { return &plAngleAttenLayerDesc; }

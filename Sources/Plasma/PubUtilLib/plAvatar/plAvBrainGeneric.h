@@ -150,13 +150,13 @@ public:
         the brain may be in a "half-finished" state -- we may be receiving some
         complex state from another client and therefore pushing on a brain that
         is in the middle of its third stage, for example. */
-    virtual void Activate(plArmatureModBase *avMod);
+    void Activate(plArmatureModBase *avMod) override;
 
     /** Advance the current stage and swap in a new stage if necessary. */
-    virtual bool Apply(double timeNow, float elapsed);
+    bool Apply(double timeNow, float elapsed) override;
 
     /** Remove all our stages and release control of the armature. */
-    virtual void Deactivate();
+    void Deactivate() override;
 
     virtual plKey GetRecipient();
     virtual void SetRecipient(const plKey &recipient);
@@ -167,9 +167,9 @@ public:
     virtual bool RelayNotifyMsg(plNotifyMsg *msg);
 
     /** We're leaving the age. Clean up. */
-    virtual bool LeaveAge();
+    bool LeaveAge() override;
 
-    virtual bool IsRunningTask() const;
+    bool IsRunningTask() const override;
     
     /** Compare the names of the anims in our stages.
         Return true on a match (order matters). */
@@ -252,15 +252,15 @@ public:
     MoveMode GetMoveMode() { return fMoveMode; }
 
     /** Output the brain's status to the avatar debug screen. */
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) override;
 
     // plasma protocol
-    bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
     CLASSNAME_REGISTER( plAvBrainGeneric );
     GETINTERFACE_ANY( plAvBrainGeneric, plArmatureBrain );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
 protected:
     
@@ -271,7 +271,7 @@ protected:
     /////////////////////////////////////////////////////////////////////////////////////
 
     bool IHandleGenBrainMsg(const plAvBrainGenericMsg *msg);
-    bool IHandleTaskMsg(plAvTaskMsg *msg);
+    bool IHandleTaskMsg(plAvTaskMsg *msg) override;
 
     bool IBrainIsCompatible(plAvBrainGeneric *otherBrain);
 

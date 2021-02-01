@@ -140,7 +140,7 @@ private:
         }
     }
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         HWND cbox = NULL;
         switch (msg)
@@ -230,7 +230,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plDistribComponentProc_old gDistribCompProc_old;
 
@@ -241,7 +241,7 @@ OBSOLETE_CLASS_DESC(plDistribComponent_old, gDistribCompDesc_old, "Distributor(o
 class plDistribCompAccessor_old : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plDistribComponent_old::kTemplates )
         {

@@ -114,7 +114,7 @@ public:
     //
     // These set type to kBounds Normal
     // 
-    virtual void    Reset(const hsBounds3*);
+            void    Reset(const hsBounds3*) override;
     virtual void    Reset(const hsPoint3 *p);
     virtual void    Reset(int n, const hsPoint3 *p);
     virtual void    Union(const hsPoint3 *p);
@@ -133,7 +133,7 @@ public:
     const hsPoint3& GetMaxs() const;
     float GetMaxDim() const;     // Computes the answer
     const hsPoint3&  GetCenter() const; // Computes the answer if not already there
-    virtual bool IsInside(const hsPoint3* pos) const; // ok for full/empty
+    bool IsInside(const hsPoint3* pos) const override; // ok for full/empty
     virtual void TestPlane(const hsVector3 &n, hsPoint2 &depth) const;
     virtual void TestPlane(const hsPlane3 *p, hsPoint2 &depth) const;
     virtual bool ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const;
@@ -145,8 +145,8 @@ public:
     static float ClosestPointToLine(const hsPoint3 *p, const hsPoint3 *v0, const hsPoint3 *v1, hsPoint3 *out);
     static float ClosestPointToInfiniteLine(const hsPoint3* p, const hsVector3* v, hsPoint3* out);
 
-    virtual void Read(hsStream*);
-    virtual void Write(hsStream*);
+    void Read(hsStream*) override;
+    void Write(hsStream*) override;
 };
 
 inline void hsBounds3::ICalcCenter() const
@@ -218,17 +218,17 @@ public:
     //
     // These set type to kBounds Normal
     // 
-    virtual void    Reset(const hsBounds3*);
+    void    Reset(const hsBounds3*) override;
     void    SetPlane(uint32_t i, hsPlane3 *p);
 
     //
     // Only valid for kBounds Normal
     //
-    virtual bool IsInside(const hsPoint3* pos) const;
+    bool IsInside(const hsPoint3* pos) const override;
     virtual void TestPlane(const hsVector3 &n, hsPoint2 &depth) const; // Complain and refuse
 
-    virtual void Write(hsStream *stream);
-    virtual void Read(hsStream *stream);
+    void Write(hsStream *stream) override;
+    void Read(hsStream *stream) override;
 };
 
 class hsHitInfoExt;
@@ -262,30 +262,30 @@ public:
     {   if (&pRHS != this)  Reset(&pRHS);   return *this; }
 
     virtual void Reset(const hsBounds3Ext *b);
-    virtual void Reset(const hsBounds3 *b);
-    virtual void Reset(const hsPoint3 *p);
-    virtual void Reset(int n, const hsPoint3 *p);
+    void Reset(const hsBounds3 *b) override;
+    void Reset(const hsPoint3 *p) override;
+    void Reset(int n, const hsPoint3 *p) override;
 
-    virtual void Union(const hsPoint3 *p);
-    virtual void Union(const hsBounds3 *b);
+    void Union(const hsPoint3 *p) override;
+    void Union(const hsBounds3 *b) override;
 
-    virtual void Union(const hsVector3 *v); // smears the bounds in given direction
-    virtual void MakeSymmetric(const hsPoint3* p); // Expands bounds to be symmetric about p
-    virtual void InscribeSphere();
+    void Union(const hsVector3 *v) override; // smears the bounds in given direction
+    void MakeSymmetric(const hsPoint3* p) override; // Expands bounds to be symmetric about p
+    void InscribeSphere() override;
     virtual void Unalign();
 
-    virtual void Transform(const hsMatrix44 *m);
+    void Transform(const hsMatrix44 *m) override;
     virtual void Translate(const hsVector3 &v);
 
     virtual float GetRadius() const;
     virtual void GetAxes(hsVector3 *fAxis0, hsVector3 *fAxis1, hsVector3 *fAxis2) const;
     virtual hsPoint3 *GetCorner(hsPoint3 *c) const { *c = (fExtFlags & kAxisAligned ? fMins : fCorner); return c; }
-    virtual void GetCorners(hsPoint3 *b) const;
-    virtual bool ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const;
+    void GetCorners(hsPoint3 *b) const override;
+    bool ClosestPoint(const hsPoint3& p, hsPoint3& inner, hsPoint3& outer) const override;
 
-    virtual bool IsInside(const hsPoint3* pos) const; // ok for full/empty
+    bool IsInside(const hsPoint3* pos) const override; // ok for full/empty
 
-    virtual void TestPlane(const hsVector3 &n, hsPoint2 &depth) const; 
+    void TestPlane(const hsVector3 &n, hsPoint2 &depth) const override;
     virtual int32_t TestPoints(int n, const hsPoint3 *pList) const; // pos,neg,zero == allout, allin, cut
 
     // Test according to my axes only, doesn't check other's axes
@@ -311,8 +311,8 @@ public:
     virtual bool ISectCone(const hsPoint3* from, const hsPoint3* to, float radius) const;
     virtual bool ISectRayBS(const hsPoint3& from, const hsPoint3& to, hsPoint3& at) const;
 
-    virtual void Read(hsStream *s);
-    virtual void Write(hsStream *s);
+    void Read(hsStream *s) override;
+    void Write(hsStream *s) override;
 };
 
 inline float hsBounds3Ext::GetRadius() const

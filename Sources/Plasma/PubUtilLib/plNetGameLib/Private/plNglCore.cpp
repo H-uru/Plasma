@@ -65,7 +65,7 @@ struct ReportNetErrorTrans : NetNotifyTrans {
         ENetError       errError
     );
 
-    void Post ();
+    void Post() override;
 };
 
 

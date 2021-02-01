@@ -397,13 +397,13 @@ class plNoBlkClickableComponent : public plComponent
 {
 public:
     plNoBlkClickableComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg); 
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; }
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) { return true; } 
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override { return true; }
 
-    virtual void CollectNonDrawables(INodeTab& nonDrawables) { AddTargetsToList(nonDrawables); }
+    void CollectNonDrawables(INodeTab& nonDrawables) override { AddTargetsToList(nonDrawables); }
 };
 
 OBSOLETE_CLASS_DESC(plNoBlkClickableComponent, gNoBlkClickableDesc, "(ex)Non Physical Clickable Proxy",  "(ex)Non Physical Clickable Proxy", COMP_TYPE_PHYSICAL, Class_ID(0x66325afc, 0x253a3760))

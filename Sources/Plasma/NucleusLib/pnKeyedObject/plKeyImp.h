@@ -64,9 +64,9 @@ public:
     const plUoid&           GetUoid() const override { return fUoid; }
     ST::string              GetName() const override;
 
-    virtual hsKeyedObject*  GetObjectPtr();
-    virtual hsKeyedObject*  ObjectIsLoaded() const;
-    virtual hsKeyedObject*  VerifyLoaded();
+    hsKeyedObject*  GetObjectPtr() override;
+    hsKeyedObject*  ObjectIsLoaded() const override;
+    hsKeyedObject*  VerifyLoaded() override;
 
     // called before writing to disk so that static keys can have faster lookups (int compare instead of string compare)
     void SetObjectID(uint32_t id) {fUoid.SetObjectID(id);}
@@ -89,15 +89,15 @@ public:
     // should only be active ref'ed by a non-keyed parent.  Essentially just bumps/decs
     // the active ref count to facilitate normal object creation/destruction
     //----------------------
-    virtual hsKeyedObject*  RefObject(plRefFlags::Type flags = plRefFlags::kActiveRef);
-    virtual void            UnRefObject(plRefFlags::Type flags = plRefFlags::kActiveRef);
+    hsKeyedObject*  RefObject(plRefFlags::Type flags = plRefFlags::kActiveRef) override;
+    void            UnRefObject(plRefFlags::Type flags = plRefFlags::kActiveRef) override;
 
     //----------------------
     // Release has two behaviors, depending on whether the ref is active or passive:
     // Active - Release decs the ActiveRefCnt. When it gets to zero, the object will be deleted.
     // Passive - Unregisters my interest in when the object is created or destroyed.
     //----------------------
-    virtual void Release(plKey targetKey);
+    void Release(plKey targetKey) override;
 
     void UnRegister();
     void SetUoid(const plUoid& uoid);
@@ -130,10 +130,10 @@ public:
     plKeyImp*   GetRef(int i) const { return fRefs[i]; }
     void        RemoveRef(plKeyImp *key) const;
 
-    virtual uint16_t      GetActiveRefs() const           { return fNumActiveRefs; }
-    virtual uint16_t      GetNumNotifyCreated() const     { return fNotifyCreated.GetCount(); }
-    virtual plRefMsg*   GetNotifyCreated(int i) const   { return fNotifyCreated[i]; }
-    virtual const hsBitVector& GetActiveBits() const    { return fActiveRefs; }
+    uint16_t    GetActiveRefs() const override          { return fNumActiveRefs; }
+    uint16_t    GetNumNotifyCreated() const override    { return fNotifyCreated.GetCount(); }
+    plRefMsg*   GetNotifyCreated(int i) const override  { return fNotifyCreated[i]; }
+    const hsBitVector& GetActiveBits() const override   { return fActiveRefs; }
 
 protected:
     void        AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags);

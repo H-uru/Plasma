@@ -60,16 +60,16 @@ public:
 
     static void InitInstance();
 
-    void AddFilterType(uint16_t type);
-    void AddFilterExactType(uint16_t type);
+    void AddFilterType(uint16_t type) override;
+    void AddFilterExactType(uint16_t type) override;
 
-    void RemoveFilterType(uint16_t type);
-    void RemoveFilterExactType(uint16_t type);
+    void RemoveFilterType(uint16_t type) override;
+    void RemoveFilterExactType(uint16_t type) override;
 
-    void LogStatusBarChange(const char* name, const char* action);
-    void LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms);
+    void LogStatusBarChange(const char* name, const char* action) override;
+    void LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms) override;
 
-    void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent);
+    void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent) override;
 };
 
 #endif  // pfDispatchLog_inc

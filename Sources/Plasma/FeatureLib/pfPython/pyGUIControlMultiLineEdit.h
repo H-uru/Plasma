@@ -111,8 +111,8 @@ public:
 
     virtual void    DeleteLinesFromTop( int lines );
 
-    virtual uint32_t  GetFontSize() const;
-    virtual void    SetFontSize( uint32_t fontsize );
+    uint32_t  GetFontSize() const override;
+    void    SetFontSize(uint32_t fontsize) override;
 
     void BeginUpdate();
     void EndUpdate(bool redraw);

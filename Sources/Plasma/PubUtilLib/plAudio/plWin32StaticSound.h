@@ -59,22 +59,22 @@ public:
     CLASSNAME_REGISTER( plWin32StaticSound );
     GETINTERFACE_ANY( plWin32StaticSound, plWin32Sound );
     
-    virtual void    Activate( bool forcePlay = false );
-    virtual void    DeActivate();
-    virtual bool    LoadSound( bool is3D );
-    virtual void    Update();
-    virtual bool    MsgReceive(plMessage* pMsg);
-    virtual void    SetStartPos(unsigned bytes){}
+    void    Activate(bool forcePlay = false) override;
+    void    DeActivate() override;
+    bool    LoadSound(bool is3D) override;
+    void    Update() override;
+    bool    MsgReceive(plMessage* pMsg) override;
+    void    SetStartPos(unsigned bytes) override { }
 
 protected:
     bool            fRegisteredOnThread;
 
-    virtual void    IDerivedActuallyPlay();
-    virtual void    ISetActualTime( double t );
-    virtual float   GetActualTimeSec();
+    void    IDerivedActuallyPlay() override;
+    void    ISetActualTime(double t) override;
+    float   GetActualTimeSec() override;
 
-    virtual void    IAddCallback( plEventCallbackMsg *pCBMsg );
-    virtual void    IRemoveCallback( plEventCallbackMsg *pCBMsg );
+    void    IAddCallback(plEventCallbackMsg *pCBMsg) override;
+    void    IRemoveCallback(plEventCallbackMsg *pCBMsg) override;
 
 };
 
@@ -88,9 +88,9 @@ public:
     CLASSNAME_REGISTER( plWin32LinkSound );
     GETINTERFACE_ANY( plWin32LinkSound, plWin32StaticSound );
 
-    virtual void    Read(hsStream* s, hsResMgr* mgr);
-    virtual void    Write(hsStream* s, hsResMgr* mgr);
-    virtual bool    MsgReceive(plMessage* pMsg);
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
+    bool    MsgReceive(plMessage* pMsg) override;
 };
 
 #endif //plWin32StaticSound_h

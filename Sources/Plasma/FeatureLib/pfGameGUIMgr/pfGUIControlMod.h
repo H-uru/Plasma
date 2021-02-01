@@ -143,7 +143,7 @@ class pfGUIControlMod : public plSingleModifier
         virtual void    IPostSetUpDynTextMap() {}
         virtual void    IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height ) { }
 
-        virtual bool    IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
+        bool            IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
         void            ISetDialog( pfGUIDialogMod *mod ) { fDialog = mod; }
         void            IScreenToLocalPt( hsPoint3 &pt );
@@ -170,10 +170,10 @@ class pfGUIControlMod : public plSingleModifier
         GETINTERFACE_ANY( pfGUIControlMod, plSingleModifier );
 
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         uint32_t      GetTagID() { return fTagID; }
 
@@ -202,7 +202,7 @@ class pfGUIControlMod : public plSingleModifier
         const hsBounds3 &GetBounds();
         bool            PointInBounds( const hsPoint3 &point );
 
-        virtual void    SetTarget( plSceneObject *object );
+        void    SetTarget(plSceneObject *object) override;
 
         // Return false if you actually DON'T want the mouse clicked at this point (should only be used for non-rectangular region rejection)
         virtual bool    FilterMousePosition( hsPoint3 &mousePt ) { return true; }
@@ -257,7 +257,7 @@ class pfGUIControlMod : public plSingleModifier
         virtual void        PurgeDynaTextMapImage() { }
 
         // Override from plModifier so we can update our bounds
-        virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+        void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
         // Forces an immediate play of the given GUI control event sound
         void    PlaySound( uint8_t guiCtrlEvent, bool loop = false ) { IPlaySound( guiCtrlEvent, loop ); }

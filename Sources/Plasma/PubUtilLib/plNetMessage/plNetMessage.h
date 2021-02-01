@@ -179,11 +179,11 @@ public:
     GETINTERFACE_ANY( plNetMessage, plCreatable );
 
     // plCreatable
-    void Read(hsStream* s, hsResMgr* mgr);
-    void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // ctor
     plNetMessage()
@@ -296,8 +296,8 @@ class plNetMsgStream : public plNetMessage
 protected:
     plNetMsgStreamHelper fStreamHelper;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     CLASSNAME_REGISTER( plNetMsgStream );
     GETINTERFACE_ANY_AUX(plNetMsgStream,plNetMessage,plNetMsgStreamHelper,fStreamHelper)
@@ -318,8 +318,8 @@ private:
     };
 protected:
     plNetMsgObjectHelper fObjectHelper;
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     CLASSNAME_REGISTER( plNetMsgObject );
     GETINTERFACE_ANY_AUX(plNetMsgObject,plNetMessage,plNetMsgObjectHelper,fObjectHelper)
@@ -327,8 +327,8 @@ public:
     plNetMsgObjectHelper* ObjectInfo() { return &fObjectHelper; }
     const plNetMsgObjectHelper* ObjectInfo() const { return &fObjectHelper; }
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
     ST::string AsString() const override
@@ -351,8 +351,8 @@ private:
 protected:
     plNetMsgStreamHelper fStreamHelper;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgStreamedObject() {}
     ~plNetMsgStreamedObject() {}
@@ -364,8 +364,8 @@ public:
     const plNetMsgStreamHelper* StreamInfo() const { return &fStreamHelper; }
 
     //virtuals
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
 };
 
@@ -387,8 +387,8 @@ private:
     bool    fIsInitialState;
 
 protected:
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 
     bool fPersistOnServer;
     bool fIsAvatarState;
@@ -410,8 +410,8 @@ public:
     bool IsInitialState() const {return fIsInitialState!=0; }
     void SetIsInitialState( bool v ) { fIsInitialState=v; }
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 //
@@ -420,17 +420,17 @@ public:
 class plNetMsgSDLStateBCast : public plNetMsgSDLState
 {
 protected:  
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public: 
     CLASSNAME_REGISTER( plNetMsgSDLStateBCast );
     GETINTERFACE_ANY(plNetMsgSDLStateBCast, plNetMsgSDLState);
 
     // virtuals 
-    bool NeedsBroadcast() const { return true; }
+    bool NeedsBroadcast() const override { return true; }
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 //
@@ -455,8 +455,8 @@ protected:
     std::vector<plLocation> fRooms; 
     std::vector<ST::string> fRoomNames;    // for debug usage only
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgRoomsList() {}
     ~plNetMsgRoomsList() {};
@@ -483,8 +483,8 @@ class plNetMsgGameMessage: public plNetMsgStream
 protected:
     plClientUnifiedTime fDeliveryTime;  // for future timestamping
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgGameMessage() { SetBit(kNeedsReliableSend);     }
 
@@ -501,9 +501,9 @@ public:
     plMessage* GetContainedMsg(hsResMgr* resmgr = nil);
 
     // virtuals
-    bool NeedsBroadcast() const { return true; }
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    bool NeedsBroadcast() const override { return true; }
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
     ST::string AsString() const override
@@ -532,8 +532,8 @@ protected:
     bool fIsInitialState;
     plNetMsgObjectHelper fObjectHelper;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);    
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
 
     CLASSNAME_REGISTER( plNetMsgLoadClone );
@@ -541,8 +541,8 @@ public:
 
     plNetMsgLoadClone() : fIsPlayer(true),fIsLoading(true),fIsInitialState(false) {}
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     plNetMsgObjectHelper* ObjectInfo() { return &fObjectHelper; }
     const plNetMsgObjectHelper* ObjectInfo() const { return &fObjectHelper; }
@@ -570,8 +570,8 @@ public:
 class plNetMsgPlayerPage : public plNetMessage
 {
 protected:
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);    
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plUoid  fUoid;
     bool fUnload;
@@ -596,8 +596,8 @@ private:
 protected:
     plNetMsgReceiversListHelper fReceivers;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);    
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     CLASSNAME_REGISTER( plNetMsgGameMessageDirected );
     GETINTERFACE_ANY_AUX(plNetMsgGameMessageDirected,plNetMsgGameMessage,
@@ -606,8 +606,8 @@ public:
     plNetMsgReceiversListHelper* Receivers() { return &fReceivers; }    
 
     // virtuals
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 //
@@ -626,8 +626,8 @@ public:
 protected:
     uint8_t fPageFlags;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgPagingRoom() : fPageFlags(0) { SetBit(kIsSystemMessage|kNeedsReliableSend); }
     ~plNetMsgPagingRoom() {}
@@ -690,8 +690,8 @@ public:
 protected:
     std::vector<GroupInfo> fGroups; 
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     CLASSNAME_REGISTER( plNetMsgGroupOwner );
     GETINTERFACE_ANY( plNetMsgGroupOwner, plNetMsgServerToClient );
@@ -727,8 +727,8 @@ protected:
 
     plNetMsgReceiversListHelper fReceivers;
  
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgVoice(): fFlags(0), fNumFrames(0) {  }
     ~plNetMsgVoice() {}
@@ -749,10 +749,10 @@ public:
     plNetMsgReceiversListHelper* Receivers() { return &fReceivers; }
 
     // virtuals
-    bool NeedsBroadcast() const { return true; }
+    bool NeedsBroadcast() const override { return true; }
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
     ST::string AsString() const override
@@ -775,8 +775,8 @@ private:
 protected:
     bool fLockRequest;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgSharedState() : fLockRequest(false) {}
     ~plNetMsgSharedState() {}
@@ -789,8 +789,8 @@ public:
     void SetLockRequest(bool b) { fLockRequest=b; }
     bool GetLockRequest() const { return fLockRequest; }  
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
     ST::string AsString() const override
@@ -820,8 +820,8 @@ class plNetMsgGetSharedState : public plNetMsgObject
 protected:
     char fSharedStateName[kMaxNameLen];
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgGetSharedState()  { *fSharedStateName=0; SetBit(kNeedsReliableSend); }
     ~plNetMsgGetSharedState() {}
@@ -842,8 +842,8 @@ protected:
     plNetMsgObjectListHelper fObjectListHelper;
     float fMaxUpdateFreq;   // in secs
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgObjectUpdateFilter() : fMaxUpdateFreq(-1) {}
     ~plNetMsgObjectUpdateFilter() {}
@@ -877,8 +877,8 @@ class plNetMsgMembersList : public plNetMsgServerToClient
 protected:
     plNetMsgMemberListHelper fMemberListHelper;
 protected:
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     CLASSNAME_REGISTER( plNetMsgMembersList );
     GETINTERFACE_ANY_AUX(plNetMsgMembersList,plNetMsgServerToClient,plNetMsgMemberListHelper,fMemberListHelper)
@@ -895,8 +895,8 @@ protected:
     plNetMsgMemberInfoHelper fMemberInfo;
     bool fAddMember;        // else remove member
 protected:
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     CLASSNAME_REGISTER( plNetMsgMemberUpdate );
     GETINTERFACE_ANY_AUX(plNetMsgMemberUpdate,plNetMsgServerToClient,plNetMsgMemberInfoHelper,fMemberInfo)
@@ -905,7 +905,7 @@ public:
     void SetAddingMember(bool b) { fAddMember=b; }
 
     plNetMsgMemberInfoHelper* MemberInfo() { return &fMemberInfo; }
-    bool NeedsBroadcast() const { return true; }    // send to all clients
+    bool NeedsBroadcast() const override { return true; }    // send to all clients
 };
 
 
@@ -920,8 +920,8 @@ private:
     plNetMsgReceiversListHelper fReceivers;     // used by server, the players we're listening to 
     bool fAdding;                           // else removing
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgListenListUpdate() : fAdding(false) {}
     ~plNetMsgListenListUpdate() {}
@@ -935,7 +935,7 @@ public:
     void SetAdding(bool a) { fAdding=a; }
             
     // virtuals
-    bool NeedsBroadcast() const { return true; }        // use rcvrs list
+    bool NeedsBroadcast() const override { return true; }        // use rcvrs list
 };
 
 
@@ -943,8 +943,8 @@ public:
 class plNetMsgInitialAgeStateSent : public plNetMsgServerToClient
 {
     uint32_t  fNumInitialSDLStates;
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgInitialAgeStateSent():fNumInitialSDLStates(0){}
     CLASSNAME_REGISTER( plNetMsgInitialAgeStateSent );
@@ -962,8 +962,8 @@ protected:
     hsBitVector fRegionsImIn;
     hsBitVector fRegionsICareAbout;
 
-    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0);
-    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0);
+    int IPokeBuffer(hsStream* stream, uint32_t peekOptions=0) override;
+    int IPeekBuffer(hsStream* stream, uint32_t peekOptions=0) override;
 public:
     plNetMsgRelevanceRegions() { SetBit(kNeedsReliableSend); }
     ~plNetMsgRelevanceRegions() {}

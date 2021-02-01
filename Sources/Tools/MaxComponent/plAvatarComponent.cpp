@@ -598,7 +598,7 @@ public:
     AvatarCompDlgProc() {}
     ~AvatarCompDlgProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
@@ -648,7 +648,7 @@ public:
         }   
         return FALSE;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static AvatarCompDlgProc gAvatarCompDlgProc;
 
@@ -659,8 +659,8 @@ class plCompoundCtrlComponent : public plComponent
 {
 public:
     plCompoundCtrlComponent();
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode* node,plErrorMsg *pErrMsg) override;
 };
 
 CLASS_DESC(plCompoundCtrlComponent, gCompoundCtrlCompDesc, "Compound Controller", "CompoundCtrl", COMP_TYPE_AVATAR, Class_ID(0x3f2a790f, 0x30354673))
@@ -734,9 +734,9 @@ public:
         }
     }
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateBoneDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateBoneDisplay(pmap); }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int selection;
         HWND cbox = NULL;
@@ -862,7 +862,7 @@ public:
         return false;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 
@@ -891,7 +891,7 @@ public:
     converts.
     */
 
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plLODAvatarComponent::kMeshNodeAddBtn)
         {

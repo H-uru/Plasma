@@ -230,7 +230,7 @@ public:
     CLASSNAME_REGISTER(pfBookData);
     GETINTERFACE_ANY(pfBookData, hsKeyedObject);
 
-    virtual bool MsgReceive(plMessage *pMsg);
+    bool MsgReceive(plMessage *pMsg) override;
 
     pfGUIDialogMod *Dialog() const {return fDialog;}
     pfGUICheckBoxCtrl *CoverButton() const {return fCoverButton;}
@@ -382,7 +382,7 @@ class pfJournalBook : public hsKeyedObject
         GETINTERFACE_ANY( pfJournalBook, hsKeyedObject );
 
         // Our required virtual
-        virtual bool    MsgReceive( plMessage *pMsg );
+        bool    MsgReceive(plMessage *pMsg) override;
 
         // Init the singleton, for client startup
         static void SingletonInit();

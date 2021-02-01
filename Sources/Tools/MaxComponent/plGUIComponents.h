@@ -76,12 +76,12 @@ class plGUIDialogComponent : public plComponent
     public:
         // I believe booleans should always default to false, hence why this is dontInit instead of init. uint8_t me.
         plGUIDialogComponent( bool dontInit = false );
-        void DeleteThis() { delete this; }
+        void DeleteThis() override { delete this; }
 
-        bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        bool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        bool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
-        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)     { fProcReceiver = nil; return true;}
+        bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg ) override;
+        bool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg ) override;
+        bool Convert( plMaxNode *node, plErrorMsg *pErrMsg ) override;
+        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override { fProcReceiver = nil; return true;}
 
         pfGUIDialogMod  *GetModifier() { return fDialogMod; }
 
@@ -142,13 +142,13 @@ class plGUIControlBase : public plComponent
 
     public:
         plGUIControlBase() {}
-        void DeleteThis() { delete this; }
+        void DeleteThis() override { delete this; }
 
-        bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        bool PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg);
-        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+        bool PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg) override;
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-        virtual void    CollectNonDrawables( INodeTab &nonDrawables );
+        void    CollectNonDrawables(INodeTab &nonDrawables) override;
 
         virtual uint32_t  GetNumMtls() const { return 0; }
         virtual Texmap  *GetMtl( uint32_t idx ) { return nil; }
@@ -195,19 +195,19 @@ class plGUIMenuComponent : public plGUIDialogComponent
 {
     protected:
 
-        virtual pfGUIDialogMod  *IMakeDialog();
+        pfGUIDialogMod  *IMakeDialog() override;
 
         pfGUIPopUpMenu      *fConvertedMenu;
         plKey               fConvertedNode;
 
     public:
         plGUIMenuComponent();
-        void DeleteThis() { delete this; }
+        void DeleteThis() override { delete this; }
 
-        virtual bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        virtual bool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg );
-        virtual bool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
-        virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
+        bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+        bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+        bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
         plKey   GetConvertedMenuKey() const;
 

@@ -77,7 +77,7 @@ public:
     float    GetLengthInSecs() const { return fLengthInSecs; }
     bool     GetHoldState() const { return fHoldUntilNext; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) 
+    void Read(hsStream* s, hsResMgr* mgr) override
     { 
         plMessageWithCallbacks::Read(s, mgr); 
         s->ReadLE(&fEffect);
@@ -85,7 +85,7 @@ public:
         fHoldUntilNext = s->ReadBOOL();
     }
     
-    virtual void Write(hsStream* s, hsResMgr* mgr) 
+    void Write(hsStream* s, hsResMgr* mgr) override
     { 
         plMessageWithCallbacks::Write(s, mgr); 
         s->WriteLE(fEffect);

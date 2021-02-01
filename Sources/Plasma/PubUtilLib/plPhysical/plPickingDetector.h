@@ -55,7 +55,7 @@ public:
     plPickingDetector() { }
     virtual ~plPickingDetector() { }
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     CLASSNAME_REGISTER( plPickingDetector );
     GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );
@@ -70,7 +70,7 @@ public:
     plPickingDetector() { }
     virtual ~plPickingDetector() { }
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     CLASSNAME_REGISTER( plPickingDetector );
     GETINTERFACE_ANY( plPickingDetector, plDetectorModifier );

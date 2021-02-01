@@ -141,7 +141,7 @@ protected:
 
     plPythonSDLModifier* fSDLMod;
 
-    bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
     ST::string IMakeModuleName(const plSceneObject* sobj);
 

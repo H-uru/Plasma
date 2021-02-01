@@ -1105,7 +1105,7 @@ protected:
             IUpdateSoundButton( soundComponent, hDlg, dlgBtnItemToSet, which );
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         plBaseSoundEmitterComponent *soundComp = (plBaseSoundEmitterComponent *)map->GetParamBlock()->GetOwner();
 
@@ -1142,7 +1142,7 @@ static plSingleCompSelProc gSoundSoftVolumeSelProc( kSndSoftRegion, IDC_COMP_SOU
 class plSoundSoftVolAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == kSndSoftRegion )
         {
@@ -1437,9 +1437,9 @@ public:
         fPresets[ 0 ].fRoomRatio = 1.5f;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pblock = map->GetParamBlock();
 
@@ -1759,25 +1759,25 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual bool    IsLocalOnly() const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
+    bool    IsLocalOnly() const override { if (fCompPB->GetInt((ParamID)kSndIsLocalOnly)) return true; else return false; }
 
 
-    virtual bool    ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg );
+    bool    ConvertGrouped(plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg) override;
 
 protected:
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual bool    IAllowStereoFiles() const { return false; }
+    bool    IAllowStereoFiles() const override { return false; }
 
     void    ISetParameters( plWin32Sound *destSound, plErrorMsg *pErrMsg );
 
-    virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
+    bool    IGetCategoryList(char **&catList, int *&catKonstantList) override;
 };
 
 class plSoundComponentProc : public plAudioBaseComponentProc
@@ -1787,7 +1787,7 @@ class plSoundComponentProc : public plAudioBaseComponentProc
     ParamID fCategoryParamID;
 
 public:
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
     void ILoadLoops(HWND hLoop, IParamBlock2 *pb)
     {
@@ -1820,7 +1820,7 @@ public:
             SendMessage(hLoop, CB_SETCURSEL, 0, 0);
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch( msg )
         {
@@ -1899,9 +1899,9 @@ public:
 class plSoundFadeParamsDlgProc : public plAudioBaseComponentProc
 {
     public:
-        void DeleteThis() {}
+        void DeleteThis() override { }
 
-        BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
         {
             const char          *types[] = { "Linear", "Logarithmic", "Exponential", NULL };
             IParamBlock2    *pb = map->GetParamBlock();
@@ -2367,18 +2367,18 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual bool    IsLocalOnly() const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
+    bool    IsLocalOnly() const override { if (fCompPB->GetInt((ParamID)kSndIsLocalOnly)) return true; else return false; }
 
 protected:
-    virtual uint32_t ICalcSourceBufferFlags() const;
+    uint32_t ICalcSourceBufferFlags() const override;
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
-    virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
+    bool    IGetCategoryList(char **&catList, int *&catKonstantList) override;
 };
 
 //Max desc stuff necessary below.
@@ -2542,20 +2542,20 @@ public:
 
     // Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    virtual void    UpdateSoundFileSelection() { }
+    void    UpdateSoundFileSelection() override { }
 
 protected:
 
     bool    IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
+    bool    IGetCategoryList(char **&catList, int *&catKonstantList) override;
 
-    virtual bool    IHasWaveformProps() const { return false; }
+    bool    IHasWaveformProps() const override { return false; }
 };
 
 //Max desc stuff necessary below.
@@ -2705,14 +2705,14 @@ public:
 
 public:
     plEAXListenerComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *errMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *errMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 
     const char *GetCustFileName() const;
     void        SetCustFile( const char *path );
@@ -2725,7 +2725,7 @@ public:
 class plEAXListenerAccessor : public PBAccessor
 {
 public:
-    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if (id == plEAXListenerComponent::kRefSoftRegion )
         {
@@ -2782,7 +2782,7 @@ public:
     {
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2    *pb = map->GetParamBlock();
 
@@ -2841,7 +2841,7 @@ public:
         return plSingleCompSelProc::DlgProc( t, map, hWnd, msg, wParam, lParam );
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 static plEAXListenerDlgProc gEAXListenerDlgProc;
@@ -3149,11 +3149,11 @@ class plRandomSoundComponentProc : public ParamMap2UserDlgProc
 public:
     plRandomSoundComponentProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
     void UpdateDisplay(IParamMap2 *pm);
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 };
 
 static plRandomSoundComponentProc gRandomSoundComponentProc;
@@ -3623,11 +3623,11 @@ protected:
 
 public:
     plPhysicsSndGroupComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum Refs
     {
@@ -3645,10 +3645,10 @@ class plPhysicsSndGroupCompProc : public ParamMap2UserDlgProc
 public:
     plPhysicsSndGroupCompProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
-    void DeleteThis() {}
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) {  }
+    void DeleteThis() override { }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { }
 
 protected:
 
@@ -3855,7 +3855,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
 class plPhysicsSndGroupAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plPhysicsSndGroupComp::kRefImpactSounds || id == plPhysicsSndGroupComp::kRefSlideSounds )
         {

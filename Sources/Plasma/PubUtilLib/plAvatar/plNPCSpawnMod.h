@@ -57,14 +57,14 @@ public:
     CLASSNAME_REGISTER( plNPCSpawnMod );
     GETINTERFACE_ANY( plNPCSpawnMod, plSingleModifier );
     
-    virtual void AddTarget(plSceneObject* so);
-//  bool MsgReceive(plMessage* msg);
+    void AddTarget(plSceneObject* so) override;
+//  bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
     void ISendNotify(plKey &avatarKey);     // send our notification message
 
 private:

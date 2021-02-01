@@ -167,7 +167,7 @@ public:
     static void ShutDown();
 
 
-    bool MsgReceive(plMessage *msg);
+    bool MsgReceive(plMessage *msg) override;
     bool HandleCoopMsg(plAvCoopMsg *msg);
     bool HandleNotifyMsg(plNotifyMsg *msg);
     bool IPassMessageToActiveCoop(plMessage *msg, uint32_t id, uint16_t serial);

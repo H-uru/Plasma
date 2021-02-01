@@ -66,8 +66,8 @@ public:
     CLASSNAME_REGISTER(pfMarkerMsg);
     GETINTERFACE_ANY(pfMarkerMsg, plMessage);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // pfMarkerMsg_h_inc

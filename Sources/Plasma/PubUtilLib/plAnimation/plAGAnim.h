@@ -190,8 +190,8 @@ public:
     static void DumpAnimationRegistry();
 
     // persistance
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 protected:
     typedef std::vector<plAGApplicator*> ApplicatorVec;
@@ -342,8 +342,8 @@ public:
     GETINTERFACE_ANY( plATCAnim, plAGAnim );
 
     // persistance
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 protected:
     float fInitial;          /// the position of the playback head 
@@ -392,8 +392,8 @@ public:
     CLASSNAME_REGISTER( plEmoteAnim );
     GETINTERFACE_ANY( plEmoteAnim, plATCAnim );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
 protected:
     BodyUsage   fBodyUsage;     // how much of the body is used by this emote?
@@ -427,8 +427,8 @@ public:
     GETINTERFACE_ANY( plAgeGlobalAnim, plAGAnim );
 
     // persistance
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 protected:
     ST::string fGlobalVarName;   // Name of the SDL variable we animate on.

@@ -58,13 +58,13 @@ protected:
     static char kStrPlaying[];  
     static char kStrSounds[];   
 
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 public:
     CLASSNAME_REGISTER( plSoundSDLModifier );
     GETINTERFACE_ANY( plSoundSDLModifier, plSDLModifier);
         
-    const char* GetSDLName() const { return kSDLSound; }
+    const char* GetSDLName() const override { return kSDLSound; }
 };
 
 #endif  // plSoundSDLModifier_inc

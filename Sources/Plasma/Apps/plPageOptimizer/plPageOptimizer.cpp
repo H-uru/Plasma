@@ -73,7 +73,7 @@ void plPageOptimizer::IFindLoc()
     public:
         plLocation fLoc;
 
-        virtual bool EatPage(plRegistryPageNode* keyNode)
+        bool EatPage(plRegistryPageNode* keyNode) override
         {
             fLoc = keyNode->GetPageInfo().GetLocation();
             return true;
@@ -108,7 +108,7 @@ void plPageOptimizer::Optimize()
         public:
             KeyVec& fKeys;
             plVecKeyCollector(KeyVec& keys) : fKeys(keys) {}
-            virtual bool EatKey(const plKey& key) { fKeys.push_back(key); return true; }
+            bool EatKey(const plKey& key) override { fKeys.push_back(key); return true; }
         };
         plVecKeyCollector keyIt(fAllKeys);
         fResMgr->IterateKeys(&keyIt);

@@ -120,12 +120,12 @@ class pfGUIMenuItemProc : public pfGUICtrlProcObject
             fIndex = idx;
         }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             fParent->IHandleMenuSomething( fIndex, ctrl );
         }
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
+        void    HandleExtendedEvent(pfGUIControlMod *ctrl, uint32_t event) override
         {
             fParent->IHandleMenuSomething( fIndex, ctrl, (int32_t)event );
         }

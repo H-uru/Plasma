@@ -88,11 +88,11 @@ public:
     CLASSNAME_REGISTER( plSimpleParticleGenerator );
     GETINTERFACE_ANY( plSimpleParticleGenerator, plParticleGenerator);
     
-    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced);
-    virtual void UpdateParam(uint32_t paramID, float paramValue);
+    bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced) override;
+    void UpdateParam(uint32_t paramID, float paramValue) override;
 
-    virtual void Read(hsStream* s, hsResMgr *mgr); 
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
 
 protected:
     float fParticlesPerSecond;
@@ -140,11 +140,11 @@ public:
     CLASSNAME_REGISTER( plOneTimeParticleGenerator );
     GETINTERFACE_ANY( plOneTimeParticleGenerator, plParticleGenerator);
 
-    virtual bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0);
-    virtual void UpdateParam(uint32_t paramID, float paramValue) {}
+    bool AddAutoParticles(plParticleEmitter *emitter, float dt, uint32_t numForced = 0) override;
+    void UpdateParam(uint32_t paramID, float paramValue) override { }
 
-    virtual void Read(hsStream* s, hsResMgr *mgr); 
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
 
 protected:
     float fCount;

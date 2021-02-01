@@ -87,7 +87,7 @@ public:
     virtual void    Unclickable();
     virtual int32_t   GetSelection();
     virtual void    SetSelection( int32_t item );
-    virtual void    Refresh();
+    void            Refresh() override;
     virtual void    SetElement( uint16_t idx, const ST::string& text );
     virtual void    RemoveElement( uint16_t index );
     virtual void    ClearAllElements();

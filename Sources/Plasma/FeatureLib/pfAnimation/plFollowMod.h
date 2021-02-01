@@ -87,7 +87,7 @@ protected:
     bool ICheckLeader();
     void IMoveTarget();
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
 public:
     plFollowMod();
@@ -96,12 +96,12 @@ public:
     CLASSNAME_REGISTER( plFollowMod );
     GETINTERFACE_ANY( plFollowMod, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual void SetTarget(plSceneObject* so);
+    void SetTarget(plSceneObject* so) override;
 
     void SetType(FollowLeaderType t) { fLeaderType = t; }
     FollowLeaderType GetType() const { return fLeaderType; }

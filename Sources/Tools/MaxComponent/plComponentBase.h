@@ -100,7 +100,7 @@ public:
 
     plComponentBase();
     virtual ~plComponentBase();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     uint32_t NumTargets();
     plMaxNodeBase *GetTarget(uint32_t i);
@@ -155,48 +155,48 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    TCHAR* GetObjectName()      { return (TCHAR*)fClassDesc->ClassName(); }
-    void InitNodeName(TSTR& s)  { s = fClassDesc->InternalName(); }
-    void GetClassName(TSTR& s)  { s = fClassDesc->ClassName(); }
-    Class_ID ClassID()          { return fClassDesc->ClassID(); }      
+    TCHAR* GetObjectName()     override { return (TCHAR*)fClassDesc->ClassName(); }
+    void InitNodeName(TSTR& s) override { s = fClassDesc->InternalName(); }
+    void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
+    Class_ID ClassID()         override { return fClassDesc->ClassID(); }
 
-    RefTargetHandle Clone(RemapDir &remap);
+    RefTargetHandle Clone(RemapDir &remap) override;
     
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
-    RefResult NotifyRefChanged(Interval changeInt,RefTargetHandle hTarget, PartID& partID, RefMessage message);
+    int NumRefs() override;
+    RefTargetHandle GetReference(int i) override;
+    void SetReference(int i, RefTargetHandle rtarg) override;
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override;
     
     // allow retreival of our paramblock from other plug-ins
     // and the max core
-    int NumParamBlocks();
-    IParamBlock2* GetParamBlock(int i);
-    IParamBlock2* GetParamBlockByID(BlockID id);
+    int NumParamBlocks() override;
+    IParamBlock2* GetParamBlock(int i) override;
+    IParamBlock2* GetParamBlockByID(BlockID id) override;
 
     // So our animatables will show up in the trackview
-    int NumSubs();
-    Animatable* SubAnim(int i);
-    TSTR SubAnimName(int i);
+    int NumSubs() override;
+    Animatable* SubAnim(int i) override;
+    TSTR SubAnimName(int i) override;
     virtual bool AddToAnim(plAGAnim *anim, plMaxNode *node) { return false; }
 
     // plug-in mouse creation callback
-    CreateMouseCallBack* GetCreateMouseCallBack();
+    CreateMouseCallBack* GetCreateMouseCallBack() override;
     
-    void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev);
-    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);
+    void BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev) override;
+    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next) override;
     
     void BuildMesh(TimeValue t);
-    void FreeCaches();
-    void GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box);
-    void GetWorldBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box);
-    int Display(TimeValue t, INode *node, ViewExp *vpt, int flags);
-    int HitTest(TimeValue t, INode *node, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt);
-    ObjectState Eval(TimeValue t) { return ObjectState(this); }
+    void FreeCaches() override;
+    void GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
+    void GetWorldBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box3 &box) override;
+    int Display(TimeValue t, INode *node, ViewExp *vpt, int flags) override;
+    int HitTest(TimeValue t, INode *node, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt) override;
+    ObjectState Eval(TimeValue t) override { return ObjectState(this); }
 
-    IOResult Save(ISave* isave);
-    IOResult Load(ILoad* iload);
+    IOResult Save(ISave* isave) override;
+    IOResult Load(ILoad* iload) override;
 
-    int CanConvertToType(Class_ID obtype) { return (obtype == COMPONENT_CLASSID) ? 1 : 0; }
+    int CanConvertToType(Class_ID obtype) override { return (obtype == COMPONENT_CLASSID) ? 1 : 0; }
 
     const char *GetCategory() { return fClassDesc->Category(); }
 };

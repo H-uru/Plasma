@@ -70,11 +70,11 @@ public:
     CLASSNAME_REGISTER( plWin32GroupedSound );
     GETINTERFACE_ANY( plWin32GroupedSound, plWin32StaticSound );
     
-    virtual bool    LoadSound( bool is3D );
-    virtual bool    MsgReceive( plMessage *pMsg );
-    void            SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray );
-    float        GetSoundLength( int16_t soundIndex );
-    virtual double  GetLength() { return GetSoundLength( fCurrentSound ); }
+    bool    LoadSound(bool is3D) override;
+    bool    MsgReceive(plMessage *pMsg) override;
+    void    SetPositionArray(uint16_t numSounds, uint32_t *posArray, float *volumeArray);
+    float   GetSoundLength(int16_t soundIndex);
+    double  GetLength() override { return GetSoundLength( fCurrentSound ); }
 
 protected:
     uint16_t              fCurrentSound;
@@ -85,10 +85,10 @@ protected:
     // Some extra handy info for us
     uint8_t               fNumDestChannels, fNumDestBytesPerSample;
 
-    virtual void    IDerivedActuallyPlay();
+    void    IDerivedActuallyPlay() override;
 
-    virtual void    IRead( hsStream *s, hsResMgr *mgr );
-    virtual void    IWrite( hsStream *s, hsResMgr *mgr );
+    void    IRead(hsStream *s, hsResMgr *mgr) override;
+    void    IWrite(hsStream *s, hsResMgr *mgr) override;
 
     uint32_t          IGetSoundbyteLength( int16_t soundIndex );
     void            IFillCurrentSound( int16_t newCurrent = -1 );

@@ -59,16 +59,16 @@ public:
     CLASSNAME_REGISTER( plORConditionalObject );
     GETINTERFACE_ANY( plORConditionalObject, plConditionalObject );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool Satisfied(); 
+    bool Satisfied() override;
 
-    virtual bool MsgReceive(plMessage* msg);
-    void Evaluate() { }
-    void Reset();
+    bool MsgReceive(plMessage* msg) override;
+    void Evaluate() override { }
+    void Reset() override;
 
-    virtual void SetLogicMod(plLogicModBase* pMod);
+    void SetLogicMod(plLogicModBase* pMod) override;
     void AddChild(plConditionalObject* pObj);
 
 };

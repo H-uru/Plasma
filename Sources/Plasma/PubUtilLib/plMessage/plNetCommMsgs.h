@@ -68,8 +68,8 @@ public:
 
     plNetCommReplyMsg () { SetBCastFlag(kBCastByExactType); }
 
-    void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
-    void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read(hsStream * s, hsResMgr * mgr) override { plMessage::IMsgRead(s, mgr); }
+    void Write(hsStream * s, hsResMgr * mgr) override { plMessage::IMsgWrite(s, mgr); }
 };
 
 class plNetCommAuthMsg : public plNetCommReplyMsg {
@@ -85,8 +85,8 @@ public:
     CLASSNAME_REGISTER(plNetCommAuthConnectedMsg);
     GETINTERFACE_ANY(plNetCommAuthConnectedMsg, plMessage);
 
-    void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
-    void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
+    void Read(hsStream * s, hsResMgr * mgr) override { plMessage::IMsgRead(s, mgr); }
+    void Write(hsStream * s, hsResMgr * mgr) override { plMessage::IMsgWrite(s, mgr); }
 };
 
 class plNetCommFileListMsg : public plNetCommReplyMsg {

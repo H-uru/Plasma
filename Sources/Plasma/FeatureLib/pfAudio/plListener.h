@@ -58,7 +58,7 @@ public:
     CLASSNAME_REGISTER( plListener );
     GETINTERFACE_ANY( plListener, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     static void ShowDebugInfo( bool s ) { fPrintDbgInfo = s; }
 
@@ -88,7 +88,7 @@ protected:
 
     static bool         fPrintDbgInfo;
 
-    virtual bool    IEval(double secs, float del, uint32_t dirty);
+    bool            IEval(double secs, float del, uint32_t dirty) override;
     void            ISetRef( const plKey &ref, bool binding, int type );
     void            ICheckAudio() const;
 

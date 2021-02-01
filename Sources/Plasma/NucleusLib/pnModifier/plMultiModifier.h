@@ -63,14 +63,14 @@ public:
     CLASSNAME_REGISTER( plMultiModifier );
     GETINTERFACE_ANY( plMultiModifier, plModifier );
     
-    virtual bool IEval(double secs, float del, uint32_t dirty) = 0;
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    bool IEval(double secs, float del, uint32_t dirty) override = 0;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual int GetNumTargets() const { return fTargets.Count(); }
-    virtual plSceneObject* GetTarget(int w) const { hsAssert(w < GetNumTargets(), "Bad target"); return fTargets[w]; }
-    virtual void AddTarget(plSceneObject* so) {fTargets.Append(so);}
-    virtual void RemoveTarget(plSceneObject* so); 
+    int GetNumTargets() const override { return fTargets.Count(); }
+    plSceneObject* GetTarget(int w) const override { hsAssert(w < GetNumTargets(), "Bad target"); return fTargets[w]; }
+    void AddTarget(plSceneObject* so) override { fTargets.Append(so); }
+    void RemoveTarget(plSceneObject* so) override;
 
     bool HasFlag(int f) const { return fFlags.IsBitSet(f); }
     plMultiModifier& SetFlag(int f) { fFlags.SetBit(f); return *this; }

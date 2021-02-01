@@ -74,10 +74,10 @@ class plSeekPointComponent : public plComponent
 {
 public:
     plSeekPointComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
     
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     //bool IsValidNodeType(plMaxNode *pNode);
 };
 

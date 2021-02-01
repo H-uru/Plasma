@@ -76,14 +76,14 @@ public:
     GETINTERFACE_ANY( plCubicRenderTargetModifier, plModifier);
 
     // Functions related to/required by plModifier
-    virtual int             GetNumTargets() const { return fTarget ? 1 : 0; }
-    virtual plSceneObject   *GetTarget( int w ) const { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
-    virtual void            AddTarget( plSceneObject* so );
-    virtual void            RemoveTarget( plSceneObject* so );
+    int             GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject   *GetTarget(int w) const override { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
+    void            AddTarget(plSceneObject* so) override;
+    void            RemoveTarget(plSceneObject* so) override;
 
-    virtual void    Read( hsStream* s, hsResMgr* mgr ); 
-    virtual void    Write( hsStream* s, hsResMgr* mgr );
-    virtual bool    MsgReceive( plMessage* msg );
+    void    Read(hsStream* s, hsResMgr* mgr) override;
+    void    Write(hsStream* s, hsResMgr* mgr) override;
+    bool    MsgReceive(plMessage* msg) override;
 
 protected:
 
@@ -92,7 +92,7 @@ protected:
 
     plRenderRequest         *fRequests[ 6 ];
 
-    virtual bool    IEval( double secs, float del, uint32_t dirty ); // required by plModifier
+    bool    IEval(double secs, float del, uint32_t dirty) override; // required by plModifier
 
     void            ICreateRenderRequest( int face );
 

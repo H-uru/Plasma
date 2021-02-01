@@ -78,7 +78,7 @@ public:
     CLASSNAME_REGISTER( plModifier );
     GETINTERFACE_ANY( plModifier, plSynchedObject );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     virtual int GetNumTargets() const = 0;
     virtual plSceneObject* GetTarget(int iTarg) const = 0;

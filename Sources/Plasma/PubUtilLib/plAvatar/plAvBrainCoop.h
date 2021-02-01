@@ -62,8 +62,8 @@ public:
     plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode,
                   uint32_t initiatorID, uint16_t initiatorSerial, plKey hostKey);
 
-    bool MsgReceive(plMessage *msg);
-    virtual bool RelayNotifyMsg(plNotifyMsg *msg);
+    bool MsgReceive(plMessage *msg) override;
+    bool RelayNotifyMsg(plNotifyMsg *msg) override;
     void EnableGuestClick();
 
     // rtti
@@ -71,15 +71,15 @@ public:
     GETINTERFACE_ANY( plAvBrainCoop, plAvBrainGeneric);
 
     // i/o
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 
     // stuff
     uint32_t GetInitiatorID();
     uint16_t GetInitiatorSerial();
 
-    virtual plKey GetRecipient();
-    virtual void SetRecipient(const plKey &recipient);
+    plKey GetRecipient() override;
+    void SetRecipient(const plKey &recipient) override;
     
 private:
     uint32_t fInitiatorID;

@@ -72,7 +72,7 @@ public:
     void Update();
     static plInputManager*  GetInstance() { return fInstance; }
     static plInputManager*  fInstance;
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     static bool RecenterMouse() { return bRecenterMouse > 0; }
     static void SetRecenterMouse(bool b); 
     static void RecenterCursor();

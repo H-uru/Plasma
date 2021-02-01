@@ -74,18 +74,18 @@ public:
         kFastSeeking = 0x01
     };
     
-    virtual plWAVHeader &GetHeader();
+    plWAVHeader &GetHeader() override;
 
-    virtual void    Close();
+    void    Close() override;
 
-    virtual uint32_t  GetDataSize() { return fDataSize / fChannelAdjust; }
-    virtual float   GetLengthInSecs();
+    uint32_t  GetDataSize() override { return fDataSize / fChannelAdjust; }
+    float   GetLengthInSecs() override;
 
-    virtual bool    SetPosition( uint32_t numBytes );
-    virtual bool    Read( uint32_t numBytes, void *buffer );
-    virtual uint32_t  NumBytesLeft();
+    bool    SetPosition(uint32_t numBytes) override;
+    bool    Read(uint32_t numBytes, void *buffer) override;
+    uint32_t  NumBytesLeft() override;
 
-    virtual bool    IsValid() { return ( fOggFile != nil ) ? true : false; }
+    bool    IsValid() override { return ( fOggFile != nil ) ? true : false; }
 
     static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
     static void     SetDecodeFlag( uint8_t flag, bool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }

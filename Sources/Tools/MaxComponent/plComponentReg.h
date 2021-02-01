@@ -51,10 +51,10 @@ enum { kTargs };
 class plComponentClassDesc : public ClassDesc2
 {
 public:
-    int         IsPublic()      { return 0; }
-    SClass_ID   SuperClassID()  { return HELPER_CLASS_ID; }
-    HINSTANCE   HInstance()     { return hInstance; }
-    BOOL        NeedsToSave()   { return TRUE; }
+    int         IsPublic()     override { return 0; }
+    SClass_ID   SuperClassID() override { return HELPER_CLASS_ID; }
+    HINSTANCE   HInstance()    override { return hInstance; }
+    BOOL        NeedsToSave()  override { return TRUE; }
 
     virtual bool IsAutoUI()     { return false; }
     virtual bool IsObsolete()   { return false; }
@@ -88,17 +88,17 @@ class classname##ClassDesc : public plComponentClassDesc                    \
 {                                                                           \
     FUNC_CLASS_DESC(classname, longname, shortname, category, id)           \
     CONSTRUCT_DESC(classname)                                               \
-    virtual bool IsObsolete() { return true; }                              \
+    bool IsObsolete() override { return true; }                             \
 };                                                                          \
 DECLARE_CLASS_DESC(classname, varname)
 
 #define FUNC_CLASS_DESC(classname, longname, shortname, category, id)   \
 public:                                                                 \
-    void*           Create(BOOL loading) { return new classname##; }    \
-    const TCHAR*    ClassName()     { return _T(longname); }            \
-    Class_ID        ClassID()       { return id; }                      \
-    const TCHAR*    Category()      { return _T(category); }            \
-    const TCHAR*    InternalName()  { return _T(shortname); }
+    void*         Create(BOOL loading) override { return new classname##; } \
+    const TCHAR*  ClassName()    override { return _T(longname); }      \
+    Class_ID      ClassID()      override { return id; }                \
+    const TCHAR*  Category()     override { return _T(category); }      \
+    const TCHAR*  InternalName() override { return _T(shortname); }
 
 #define CONSTRUCT_DESC(classname) \
     classname##ClassDesc() { plComponentMgr::Inst().Register(this); }

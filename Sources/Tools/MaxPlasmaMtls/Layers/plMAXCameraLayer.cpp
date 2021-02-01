@@ -54,14 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMAXCameraLayerClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plMAXCameraLayer(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_MAX_CAMERA_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return MAX_CAMERA_LAYER_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_COLMOD; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMAXCameraLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plMAXCameraLayer(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_MAX_CAMERA_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return MAX_CAMERA_LAYER_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_COLMOD; }
+    const TCHAR*    InternalName() override { return _T("PlasmaMAXCameraLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plMAXCameraLayerClassDesc plMAXCameraLayerDesc;
 ClassDesc2* GetMAXCameraLayerDesc() { return &plMAXCameraLayerDesc; }
@@ -83,9 +83,9 @@ public:
         EnableWindow(GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC), !reflect);
     }
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
@@ -120,7 +120,7 @@ public:
         }
         return FALSE;
     }
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static MAXCameraLayerDlgProc gMAXCameraLayerDlgProc;
 

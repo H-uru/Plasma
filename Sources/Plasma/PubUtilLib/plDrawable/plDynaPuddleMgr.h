@@ -58,9 +58,9 @@ public:
     CLASSNAME_REGISTER( plDynaPuddleMgr );
     GETINTERFACE_ANY( plDynaPuddleMgr, plDynaRippleMgr );
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
 };
 

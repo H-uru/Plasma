@@ -71,7 +71,7 @@ class pfGroupProc : public pfGUICtrlProcObject
             fParent = parent;
         }
 
-        virtual void    DoSomething( pfGUIControlMod *ctrl )
+        void    DoSomething(pfGUIControlMod *ctrl) override
         {
             int32_t   newIdx;
 

@@ -98,7 +98,7 @@ class plTransitionMgr : public hsKeyedObject
 
         void    Init();
 
-        virtual bool MsgReceive( plMessage* msg );
+        bool MsgReceive(plMessage* msg) override;
 };
 
 

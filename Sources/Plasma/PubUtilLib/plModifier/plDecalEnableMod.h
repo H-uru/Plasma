@@ -55,7 +55,7 @@ protected:
 
     float            fWetLength;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return false; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
 
 public:
     plDecalEnableMod() : fWetLength() { }
@@ -63,10 +63,10 @@ public:
     CLASSNAME_REGISTER( plDecalEnableMod );
     GETINTERFACE_ANY( plDecalEnableMod, plSingleModifier );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetWetLength(float t) { fWetLength = t; }
     float GetWetLength() const { return fWetLength; }

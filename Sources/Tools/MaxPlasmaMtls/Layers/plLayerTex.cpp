@@ -55,14 +55,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plLayerTexClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading = FALSE) { return new plLayerTex(); }
-    const TCHAR*    ClassName()     { return GetString(IDS_LAYER); }
-    SClass_ID       SuperClassID()  { return TEXMAP_CLASS_ID; }
-    Class_ID        ClassID()       { return LAYER_TEX_CLASS_ID; }
-    const TCHAR*    Category()      { return TEXMAP_CAT_2D; }
-    const TCHAR*    InternalName()  { return _T("PlasmaLayer"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading = FALSE) override { return new plLayerTex(); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_LAYER); }
+    SClass_ID       SuperClassID() override { return TEXMAP_CLASS_ID; }
+    Class_ID        ClassID() override      { return LAYER_TEX_CLASS_ID; }
+    const TCHAR*    Category() override     { return TEXMAP_CAT_2D; }
+    const TCHAR*    InternalName() override { return _T("PlasmaLayer"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plLayerTexClassDesc plLayerTexDesc;
 ClassDesc2* GetLayerTexDesc() { return &plLayerTexDesc; }

@@ -108,7 +108,7 @@ public:
 
     bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
     ST::string AsString() const override;
-    bool IsEqualTo(const plNetMember * other) const
+    bool IsEqualTo(const plNetMember * other) const override
     {
         const plNetTransportMember * o = plNetTransportMember::ConvertNoRef(other);
         if (!o) return false;

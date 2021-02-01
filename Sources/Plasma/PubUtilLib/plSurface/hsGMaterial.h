@@ -130,8 +130,8 @@ public:
 
     virtual void        Read(hsStream* s);
     virtual void        Write(hsStream* s);
-    virtual void        Read(hsStream* s, hsResMgr *group);
-    virtual void        Write(hsStream* s, hsResMgr *group);
+    void Read(hsStream* s, hsResMgr *group) override;
+    void Write(hsStream* s, hsResMgr *group) override;
 
     virtual void Eval(double secs, uint32_t frame);
     virtual void Reset();
@@ -140,7 +140,7 @@ public:
     CLASSNAME_REGISTER( hsGMaterial );
     GETINTERFACE_ANY( hsGMaterial, hsKeyedObject );
     
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 };
 
 #endif // hsGCompMatDefined

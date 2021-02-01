@@ -96,8 +96,8 @@ class plInputIfaceMgrMsg : public plMessage
         CLASSNAME_REGISTER( plInputIfaceMgrMsg );
         GETINTERFACE_ANY( plInputIfaceMgrMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr);
-        virtual void Write(hsStream* s, hsResMgr* mgr);
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         void              SetAgeName(const ST::string& s) { ageName = s; }
         ST::string        GetAgeName() const { return ageName; }

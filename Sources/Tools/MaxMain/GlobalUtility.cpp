@@ -78,17 +78,17 @@ static PlasmaMax gPlasmaMax;
 class PlasmaMaxClassDesc : public ClassDesc
 {
 public:
-    int             IsPublic()              { return TRUE; }
-    void*           Create(BOOL loading)    { return &gPlasmaMax; }
-    const TCHAR*    ClassName()             { return _T("PlasmaMax"); }
-    SClass_ID       SuperClassID()          { return GUP_CLASS_ID; }
-    Class_ID        ClassID()               { return PLASMA_MAX_CLASSID; }
-    const TCHAR*    Category()              { return _T("");  }
+    int             IsPublic() override             { return TRUE; }
+    void*           Create(BOOL loading) override   { return &gPlasmaMax; }
+    const TCHAR*    ClassName() override            { return _T("PlasmaMax"); }
+    SClass_ID       SuperClassID() override         { return GUP_CLASS_ID; }
+    Class_ID        ClassID() override              { return PLASMA_MAX_CLASSID; }
+    const TCHAR*    Category() override             { return _T("");  }
 
     //  ************************* action table
     //  The following 2 lines are added for action tables and menu work
-    int NumActionTables() { return theActionTableMgr.NumActionTables(); }
-    ActionTable* GetActionTable(int i) { return theActionTableMgr.GetActionTable(i); }
+    int NumActionTables() override { return theActionTableMgr.NumActionTables(); }
+    ActionTable* GetActionTable(int i) override { return theActionTableMgr.GetActionTable(i); }
 };
 
 static PlasmaMaxClassDesc PlasmaMaxCD;

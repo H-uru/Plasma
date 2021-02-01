@@ -138,16 +138,16 @@ public:
     CLASSNAME_REGISTER( plLeafController );
     GETINTERFACE_ANY( plLeafController, plController );
 
-    void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const override;
 
-    virtual plControllerCacheInfo* CreateCache() const;
-    float GetLength() const;
+    plControllerCacheInfo* CreateCache() const override;
+    float GetLength() const override;
     uint32_t GetStride() const;
 
     hsPoint3Key *GetPoint3Key(uint32_t i) const;
@@ -166,14 +166,14 @@ public:
     uint8_t GetType() const { return fType; }
     uint32_t GetNumKeys() const { return fNumKeys; }
     void *GetKeyBuffer() const { return fKeys; }
-    void GetKeyTimes(hsTArray<float> &keyTimes) const;
+    void GetKeyTimes(hsTArray<float> &keyTimes) const override;
     void AllocKeys(uint32_t n, uint8_t type);
     void QuickScalarController(int numKeys, float* times, float* values, uint32_t valueStrides);
-    bool AllKeysMatch() const;
-    bool PurgeRedundantSubcontrollers();
+    bool AllKeysMatch() const override;
+    bool PurgeRedundantSubcontrollers() override;
 
-    void Read(hsStream* s, hsResMgr* mgr);
-    void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 
@@ -196,12 +196,12 @@ public:
     CLASSNAME_REGISTER( plCompoundController );
     GETINTERFACE_ANY( plCompoundController, plController );
 
-    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const;
-    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const override;
 
-    plControllerCacheInfo* CreateCache() const;
+    plControllerCacheInfo* CreateCache() const override;
     plController *GetXController() const { return fXController; }
     plController *GetYController() const { return fYController; }
     plController *GetZController() const { return fZController; }
@@ -209,10 +209,10 @@ public:
     plController *GetRotController() const { return fYController; }
     plController *GetScaleController() const { return fZController; }
     plController *GetController(int32_t i) const;
-    float GetLength() const;
-    void GetKeyTimes(hsTArray<float> &keyTimes) const;
-    bool AllKeysMatch() const;
-    bool PurgeRedundantSubcontrollers();
+    float GetLength() const override;
+    void GetKeyTimes(hsTArray<float> &keyTimes) const override;
+    bool AllKeysMatch() const override;
+    bool PurgeRedundantSubcontrollers() override;
 
     void SetXController(plController *c) { delete fXController; fXController = c; }
     void SetYController(plController *c) { delete fYController; fYController = c; }
@@ -222,8 +222,8 @@ public:
     void SetScaleController(plController *c) { delete fZController; fZController = c; }
     void SetController(int32_t i, plController* c);
 
-    void Read(hsStream* s, hsResMgr* mgr);
-    void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 #endif

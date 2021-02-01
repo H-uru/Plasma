@@ -74,9 +74,9 @@ protected:
     int              fOldPriority;      // old sound priority
     bool            fFirstTimePlay;
     
-    virtual void    IPlayNext();
-    virtual void    IPlayNextIfMaster();
-    virtual void    IStop();
+    void            IPlayNext() override;
+    void            IPlayNextIfMaster() override;
+    void            IStop() override;
     void            ISetVolume(float volume);
     void            ISetPosition(hsPoint3);
     plSound         *IGetSoundPtr(); 
@@ -88,13 +88,13 @@ public:
     CLASSNAME_REGISTER( plRandomSoundMod );
     GETINTERFACE_ANY( plRandomSoundMod, plRandomCommandMod );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr);
-    virtual void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
     void SetCurrentGroup(uint16_t group);
         
     void    ForceSoundLoadState( bool loaded );
-    bool    MsgReceive(plMessage* msg);
+    bool    MsgReceive(plMessage* msg) override;
     float           GetVolume();
 
     // EXPORT ONLY

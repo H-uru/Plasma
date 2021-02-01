@@ -91,7 +91,7 @@ public:
     CLASSNAME_REGISTER( plObjInterface );
     GETINTERFACE_ANY( plObjInterface, plSynchedObject );
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     const plSceneObject* GetOwner() const { return IGetOwner(); }
     plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
@@ -107,8 +107,8 @@ public:
 
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) = 0;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     virtual void    ReleaseData() { }
 };

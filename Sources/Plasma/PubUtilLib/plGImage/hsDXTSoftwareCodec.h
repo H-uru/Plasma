@@ -58,13 +58,13 @@ public:
 
     static void Init()  { fRegistered = Register(); }
 
-    plMipmap *CreateCompressedMipmap(plMipmap *uncompressed);
+    plMipmap *CreateCompressedMipmap(plMipmap *uncompressed) override;
 
     // Uncompresses the given source into a new destination mipmap
-    plMipmap *CreateUncompressedMipmap( plMipmap *compressed, uint8_t flags = 0 );
+    plMipmap *CreateUncompressedMipmap(plMipmap *compressed, uint8_t flags = 0) override;
 
     // Colorize a compressed mipmap
-    bool    ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask );
+    bool    ColorizeCompMipmap(plMipmap *bMap, const uint8_t *colorMask) override;
 
 private:
     enum {

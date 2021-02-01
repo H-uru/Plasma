@@ -98,8 +98,8 @@ public:
     CLASSNAME_REGISTER( plParticleEmitter );
     GETINTERFACE_ANY( plParticleEmitter, plCreatable);
 
-    virtual void Read(hsStream* s, hsResMgr *mgr); 
-    virtual void Write(hsStream* s, hsResMgr *mgr);
+    void Read(hsStream* s, hsResMgr *mgr) override;
+    void Write(hsStream* s, hsResMgr *mgr) override;
 
     enum // Miscellaneous flags
     {

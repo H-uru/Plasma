@@ -54,7 +54,7 @@ class plCaptureRenderRequest : public plRenderRequest
 {
 public:
 
-    virtual void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr);
+    void    Render(plPipeline* pipe, plPageTreeMgr* pageMgr) override;
 };
 
 class plCaptureRender

@@ -189,8 +189,8 @@ public:
     uint32_t GetNumCallbacks() const { return fCallbacks.GetCount(); }
     plMessage* GetCallback(int i) const { return fCallbacks[i]; }
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) { hsAssert(false, "Not for I/O"); plMessage::IMsgRead(s, mgr); }
-    virtual void Write(hsStream* s, hsResMgr* mgr) { hsAssert(false, "Not for I/O"); plMessage::IMsgWrite(s, mgr); }
+    void Read(hsStream* s, hsResMgr* mgr) override { hsAssert(false, "Not for I/O"); plMessage::IMsgRead(s, mgr); }
+    void Write(hsStream* s, hsResMgr* mgr) override { hsAssert(false, "Not for I/O"); plMessage::IMsgWrite(s, mgr); }
 };
 
 #endif // plMovieMsg_inc

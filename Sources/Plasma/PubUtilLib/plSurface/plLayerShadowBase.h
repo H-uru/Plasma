@@ -59,9 +59,9 @@ public:
     GETINTERFACE_ANY( plLayerLightBase, plLayerInterface );
 
 
-    virtual plLayerInterface*   Attach(plLayerInterface* prev);
+    plLayerInterface*   Attach(plLayerInterface* prev) override;
 
-    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+    uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 
 
 };
@@ -79,9 +79,9 @@ public:
     GETINTERFACE_ANY( plLayerShadowBase, plLayerInterface );
 
 
-    virtual plLayerInterface*   Attach(plLayerInterface* prev);
+    plLayerInterface*   Attach(plLayerInterface* prev) override;
 
-    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+    uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore) override;
 
 
 };

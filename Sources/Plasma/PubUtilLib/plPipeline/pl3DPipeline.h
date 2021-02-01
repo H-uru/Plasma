@@ -175,7 +175,7 @@ public:
      *
      * See plPageTreeMgr, which handles all this.
      */
-    virtual void Render(plDrawable* d, const hsTArray<int16_t>& visList);
+    void Render(plDrawable* d, const hsTArray<int16_t>& visList) override;
 
 
     /**
@@ -185,7 +185,7 @@ public:
      *
      * Not nearly as efficient, so only useful as a special case.
      */
-    virtual void Draw(plDrawable* d);
+    void Draw(plDrawable* d) override;
 
 
     //virtual plTextFont* MakeTextFont(char* face, uint16_t size) = 0;
@@ -195,11 +195,11 @@ public:
     //virtual bool CloseAccess(plAccessSpan& acc) = 0;
     //virtual void CheckTextureRef(plLayerInterface* lay) = 0;
 
-    virtual void SetDefaultFogEnviron(plFogEnvironment* fog) {
+    void SetDefaultFogEnviron(plFogEnvironment* fog) override {
         fView.SetDefaultFog(*fog);
     }
 
-    virtual const plFogEnvironment& GetDefaultFogEnviron() const {
+    const plFogEnvironment& GetDefaultFogEnviron() const override {
         return fView.GetDefaultFog();
     }
 
@@ -211,14 +211,14 @@ public:
      * Note: This function does not set up the native light device ref,
      * so you must override this in your pipeline implementation!
      */
-    virtual void RegisterLight(plLightInfo* light);
+    void RegisterLight(plLightInfo* light) override;
 
 
     /**
      * Remove a light from the pipeline's active light list.
      * Light will no longer illuminate the scene.
      */
-    virtual void UnRegisterLight(plLightInfo* light);
+    void UnRegisterLight(plLightInfo* light) override;
 
 
     //virtual void PushRenderRequest(plRenderRequest* req);
@@ -226,15 +226,15 @@ public:
     //virtual void ClearRenderTarget(plDrawable* d) = 0;
     //virtual void ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) = 0;
 
-    virtual void SetClear(const hsColorRGBA* col=nullptr, const float* depth=nullptr) {
+    void SetClear(const hsColorRGBA* col=nullptr, const float* depth=nullptr) override {
         fView.SetClear(col, depth);
     }
 
-    virtual hsColorRGBA GetClearColor() const {
+    hsColorRGBA GetClearColor() const override {
         return fView.GetClearColor();
     }
 
-    virtual float GetClearDepth() const {
+    float GetClearDepth() const override {
         return fView.GetClearDepth();
     }
 
@@ -245,14 +245,14 @@ public:
      *
      * If target is null, that's the primary surface.
      */
-    virtual void PushRenderTarget(plRenderTarget* target);
+    void PushRenderTarget(plRenderTarget* target) override;
 
     /**
      * Resume rendering to the render target before the last PushRenderTarget,
      * making sure we aren't holding on to anything from the render target
      * getting popped.
      */
-    virtual plRenderTarget* PopRenderTarget();
+    plRenderTarget* PopRenderTarget() override;
 
     //virtual bool BeginRender() = 0;
     //virtual bool EndRender() = 0;
@@ -263,24 +263,24 @@ public:
      * In particular, we cache which lights the visMgr believes to be
      * currently active
      */
-    virtual void BeginVisMgr(plVisMgr* visMgr);
+    void BeginVisMgr(plVisMgr* visMgr) override;
 
 
     /** Marks the end of a render with the given visibility manager. */
-    virtual void EndVisMgr(plVisMgr* visMgr);
+    void EndVisMgr(plVisMgr* visMgr) override;
 
 
     //virtual bool IsFullScreen() const = 0;
 
-    virtual uint32_t Width() const {
+    uint32_t Width() const override {
         return GetViewTransform().GetViewPortWidth();
     }
 
-    virtual uint32_t Height() const {
+    uint32_t Height() const override {
         return GetViewTransform().GetViewPortHeight();
     }
 
-    virtual uint32_t ColorDepth() const {
+    uint32_t ColorDepth() const override {
         return fColorDepth;
     }
 
@@ -290,7 +290,7 @@ public:
      * Check if the world space bounds are visible within the current view
      * frustum.
      */
-    virtual bool TestVisibleWorld(const hsBounds3Ext& wBnd) {
+    bool TestVisibleWorld(const hsBounds3Ext& wBnd) override {
         return fView.TestVisibleWorld(wBnd);
     }
 
@@ -299,7 +299,7 @@ public:
      * Check if the object space bounds are visible within the current view
      * frustum.
      */
-    virtual bool TestVisibleWorld(const plSceneObject* sObj) {
+    bool TestVisibleWorld(const plSceneObject* sObj) override {
         return fView.TestVisibleWorld(sObj);
     }
 
@@ -316,7 +316,7 @@ public:
      * For finer objects, like the spans themselves, the culling is done via
      * fView.GetVisibleSpans, which also takes the plVisMgr into account.
      */
-    virtual bool HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList) {
+    bool HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList) override {
         return fView.HarvestVisible(space, visList);
     }
 
@@ -325,86 +325,86 @@ public:
      * Add the input polys into the list of polys from which to generate the
      * cull tree.
      */
-    virtual bool SubmitOccluders(const hsTArray<const plCullPoly*>& polyList) {
+    bool SubmitOccluders(const hsTArray<const plCullPoly*>& polyList) override {
         return fView.SubmitOccluders(polyList);
     }
 
-    virtual void SetDebugFlag(uint32_t flag, bool on) {
+    void SetDebugFlag(uint32_t flag, bool on) override {
         fDebugFlags.SetBit(flag, on);
     }
 
-    virtual bool IsDebugFlagSet(uint32_t flag) const {
+    bool IsDebugFlagSet(uint32_t flag) const override {
         return fDebugFlags.IsBitSet(flag);
     }
 
-    virtual void SetMaxCullNodes(uint16_t n) {
+    void SetMaxCullNodes(uint16_t n) override {
         fView.SetMaxCullNodes(n);
     }
 
-    virtual uint16_t GetMaxCullNodes() const {
+    uint16_t GetMaxCullNodes() const override {
         return fView.GetMaxCullNodes();
     }
 
     //virtual bool CheckResources() = 0;
     //virtual void LoadResources() = 0;
 
-    virtual void SetProperty(uint32_t prop, bool on) {
+    void SetProperty(uint32_t prop, bool on) override {
         on ? fProperties |= prop : fProperties &= ~prop;
     }
 
 
-    virtual bool GetProperty(uint32_t prop) const {
+    bool GetProperty(uint32_t prop) const override {
         return (fProperties & prop) ? true : false;
     }
 
 
-    virtual uint32_t GetMaxLayersAtOnce() const {
+    uint32_t GetMaxLayersAtOnce() const override {
         return fMaxLayersAtOnce;
     }
 
 
-    virtual void SetDrawableTypeMask(uint32_t mask) {
+    void SetDrawableTypeMask(uint32_t mask) override {
         fView.SetDrawableTypeMask(mask);
     }
 
 
-    virtual uint32_t GetDrawableTypeMask() const {
+    uint32_t GetDrawableTypeMask() const override {
         return fView.GetDrawableTypeMask();
     }
 
 
-    virtual void SetSubDrawableTypeMask(uint32_t mask) {
+    void SetSubDrawableTypeMask(uint32_t mask) override {
         fView.SetSubDrawableTypeMask(mask);
     }
 
 
-    virtual uint32_t GetSubDrawableTypeMask() const {
+    uint32_t GetSubDrawableTypeMask() const override {
         return fView.GetSubDrawableTypeMask();
     }
 
 
-    virtual hsPoint3 GetViewPositionWorld() const {
+    hsPoint3 GetViewPositionWorld() const override {
         return GetViewTransform().GetPosition();
     }
 
 
-    virtual hsVector3 GetViewAcrossWorld() const {
+    hsVector3 GetViewAcrossWorld() const override {
         return GetViewTransform().GetAcross();
     }
 
 
-    virtual hsVector3 GetViewUpWorld() const {
+    hsVector3 GetViewUpWorld() const override {
         return GetViewTransform().GetUp();
     }
 
 
-    virtual hsVector3 GetViewDirWorld() const {
+    hsVector3 GetViewDirWorld() const override {
         return GetViewTransform().GetDirection();
     }
 
 
     /** Get the current view direction, up, and direction x up. */
-    virtual void GetViewAxesWorld(hsVector3 axes[3]) const {
+    void GetViewAxesWorld(hsVector3 axes[3]) const override {
         axes[0] = GetViewAcrossWorld();
         axes[1] = GetViewUpWorld();
         axes[2] = GetViewDirWorld();
@@ -412,7 +412,7 @@ public:
 
 
     /** Get the current FOV in degrees. */
-    virtual void GetFOV(float& fovX, float& fovY) const {
+    void GetFOV(float& fovX, float& fovY) const override {
         fovX = GetViewTransform().GetFovXDeg();
         fovY = GetViewTransform().GetFovYDeg();
     }
@@ -422,13 +422,13 @@ public:
      * Set the current FOV in degrees.
      * Forces perspective rendering to be true.
      */
-    virtual void SetFOV(float fovX, float fovY) {
+    void SetFOV(float fovX, float fovY) override {
         fView.SetFOV(fovX, fovY);
     }
 
 
     /** Get the orthogonal projection view size in world units (eg. feet). */
-    virtual void GetSize(float& width, float& height) const {
+    void GetSize(float& width, float& height) const override {
         width = GetViewTransform().GetScreenWidth();
         height = GetViewTransform().GetScreenHeight();
     }
@@ -438,19 +438,19 @@ public:
      * Set the orthogonal projection view size in world units (e.g. feet).
      * Forces projection to orthogonal if it wasn't.
      */
-    virtual void SetSize(float width, float height) {
+    void SetSize(float width, float height) override {
         fView.SetSize(width, height);
     }
 
 
     /** Get the current hither and yon. */
-    virtual void GetDepth(float& hither, float& yon) const {
+    void GetDepth(float& hither, float& yon) const override {
         GetViewTransform().GetDepth(hither, yon);
     }
 
 
     /** Set the current hither and yon. */
-    virtual void SetDepth(float hither, float yon) {
+    void SetDepth(float hither, float yon) override {
         fView.SetDepth(hither, yon);
     }
 
@@ -460,31 +460,31 @@ public:
      * matrix in IGetCameraToNDC. The layer scale and translation are tailored
      * to the current hardware.
      */
-    virtual void SetZBiasScale(float scale);
+    void SetZBiasScale(float scale) override;
 
-    virtual float GetZBiasScale() const;
+    float GetZBiasScale() const override;
 
 
     /** Return current World to Camera transform. */
-    virtual const hsMatrix44& GetWorldToCamera() const {
+    const hsMatrix44& GetWorldToCamera() const override {
         return fView.GetWorldToCamera();
     }
 
 
     /** Return current Camera to World transform. */
-    virtual const hsMatrix44& GetCameraToWorld() const {
+    const hsMatrix44& GetCameraToWorld() const override {
         return fView.GetCameraToWorld();
     }
 
     /** Immediate set of camera transform. */
-    virtual void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w);
+    void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w) override;
 
     /**
      * Return current World to Local transform.
      * Note that this is only meaningful while an object is being rendered, so
      * this function is pretty worthless.
      */
-    virtual const hsMatrix44& GetWorldToLocal() const {
+    const hsMatrix44& GetWorldToLocal() const override {
         return fView.GetWorldToLocal();
     }
 
@@ -494,12 +494,12 @@ public:
      * Note that this is only meaningful while an object is being rendered, so
      * this function is pretty worthless.
      */
-    virtual const hsMatrix44& GetLocalToWorld() const {
+    const hsMatrix44& GetLocalToWorld() const override {
         return fView.GetLocalToWorld();
     }
 
 
-    virtual const plViewTransform& GetViewTransform() const {
+    const plViewTransform& GetViewTransform() const override {
         return fView.GetConstViewTransform();
     }
 
@@ -509,20 +509,20 @@ public:
      * the camera, return a full world space position.
      * I.e. cast a ray through a screen pixel dist feet, and where is it.
      */
-    virtual void ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut);
+    void ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut) override;
 
 
     /**
      * Force a refresh of cached state when the projection matrix changes.
      */
-    virtual void RefreshMatrices() {
+    void RefreshMatrices() override {
         RefreshScreenMatrices();
     }
 
     /**
      * Force a refresh of cached state when the projection matrix changes.
      */
-    virtual void RefreshScreenMatrices();
+    void RefreshScreenMatrices() override;
 
 
     /**
@@ -530,18 +530,18 @@ public:
      * objects for rendering.
      * Must be matched with a PopOverrideMaterial.
      */
-    virtual hsGMaterial* PushOverrideMaterial(hsGMaterial* mat);
+    hsGMaterial* PushOverrideMaterial(hsGMaterial* mat) override;
 
 
     /**
      * Stop overriding with the current override material.
      * Must match a preceding PushOverrideMaterial.
      */
-    virtual void PopOverrideMaterial(hsGMaterial* restore);
+    void PopOverrideMaterial(hsGMaterial* restore) override;
 
 
     /** Return the current override material, or nullptr if there isn't any. */
-    virtual hsGMaterial* GetOverrideMaterial() const {
+    hsGMaterial* GetOverrideMaterial() const override {
         return fOverrideMat.GetCount() ? fOverrideMat.Peek() : nullptr;
     }
 
@@ -554,18 +554,18 @@ public:
      *
      * Stays in effect until removed by RemoveLayerInterface.
      */
-    virtual plLayerInterface* AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false);
+    plLayerInterface* AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false) override;
 
 
     /** Removes a layer wrapper installed by AppendLayerInterface. */
-    virtual plLayerInterface* RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false);
+    plLayerInterface* RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false) override;
 
 
     /**
      * Return the current bits set to be always on for the given category
      * (e.g. ZFlags).
      */
-    virtual uint32_t GetMaterialOverrideOn(hsGMatState::StateIdx category) const {
+    uint32_t GetMaterialOverrideOn(hsGMatState::StateIdx category) const override {
         return fMatOverOn.Value(category);
     }
 
@@ -574,7 +574,7 @@ public:
      * Return the current bits set to be always off for the given category
      * (e.g. ZFlags).
      */
-    virtual uint32_t GetMaterialOverrideOff(hsGMatState::StateIdx category) const {
+    uint32_t GetMaterialOverrideOff(hsGMatState::StateIdx category) const override {
         return fMatOverOff.Value(category);
     }
 
@@ -585,7 +585,7 @@ public:
      * If you use this, save the return value as input to
      * PopMaterialOverride, to restore previous values.
      */
-    virtual hsGMatState PushMaterialOverride(const hsGMatState& state, bool on);
+    hsGMatState PushMaterialOverride(const hsGMatState& state, bool on) override;
 
 
     /**
@@ -595,21 +595,21 @@ public:
      * If you use this, save the return value as input to
      * PopMaterialOverride, to restore previous values.
      */
-    virtual hsGMatState PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on);
+    hsGMatState PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on) override;
 
 
     /**
      * Restore the previous settings returned from the matching
      * PushMaterialOverride.
      */
-    virtual void PopMaterialOverride(const hsGMatState& restore, bool on);
+    void PopMaterialOverride(const hsGMatState& restore, bool on) override;
 
 
     /**
      * Return the current material state bits forced to on or off, depending
      * on input <on>.
      */
-    virtual const hsGMatState& GetMaterialOverride(bool on) const {
+    const hsGMatState& GetMaterialOverride(bool on) const override {
         return on ? fMatOverOn : fMatOverOff;
     }
 
@@ -620,7 +620,7 @@ public:
      *
      * See IPreprocessShadows.
      */
-    virtual void SubmitShadowSlave(plShadowSlave* slave);
+    void SubmitShadowSlave(plShadowSlave* slave) override;
 
     //virtual void SubmitClothingOutfit(plClothingOutfit* co) = 0;
     //virtual bool SetGamma(float eR, float eG, float eB) = 0;
@@ -629,7 +629,7 @@ public:
     //virtual plMipmap* ExtractMipMap(plRenderTarget* targ) = 0;
 
     /** Return the current error string. */
-    virtual const char* GetErrorString() {
+    const char* GetErrorString() override {
         return fDevice.GetErrorString();
     }
 

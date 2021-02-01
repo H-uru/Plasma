@@ -63,10 +63,10 @@ class plClothingSDLModifier : public plSDLModifier
 protected:
     plClothingOutfit* fClothingOutfit;
         
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
+    void IPutCurrentStateIn(plStateDataRecord* dstState) override;
+    void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
     
-    uint32_t IApplyModFlags(uint32_t sendFlags) { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
+    uint32_t IApplyModFlags(uint32_t sendFlags) override { return (sendFlags | plSynchedObject::kDontPersistOnServer | plSynchedObject::kIsAvatarState); }
 
 public:
     // var labels 
@@ -90,7 +90,7 @@ public:
     void SetClothingOutfit(plClothingOutfit* c) { fClothingOutfit=c; }
     
     void PutCurrentStateIn(plStateDataRecord* dstState);
-    const char* GetSDLName() const { return kSDLClothing; }
+    const char* GetSDLName() const override { return kSDLClothing; }
     static const char* GetClothingItemSDRName() { return kStrClothingDescName; }
 
     // Pass in a clothing outfit if you want to apply the clothing item. Pass in a closet item if you're just

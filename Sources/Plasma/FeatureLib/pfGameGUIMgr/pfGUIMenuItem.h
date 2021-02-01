@@ -73,9 +73,9 @@ class pfGUIMenuItem : public pfGUIButtonMod
         HowToSkin       fHowToSkin;
         bool            fSkinBuffersUpdated;
 
-        virtual void    IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height );
-        virtual void    IPostSetUpDynTextMap();
-        virtual void    IUpdate();
+        void    IGrowDTMDimsToDesiredSize(uint16_t &width, uint16_t &height) override;
+        void    IPostSetUpDynTextMap() override;
+        void    IUpdate() override;
 
         void            IUpdateSkinBuffers();
         void            IUpdateSingleSkinBuffer( uint16_t y, bool sel );
@@ -101,19 +101,19 @@ class pfGUIMenuItem : public pfGUIButtonMod
             kMouseExit
         };
 
-        virtual bool    MsgReceive( plMessage* pMsg );
+        bool    MsgReceive(plMessage* pMsg) override;
         
-        virtual void Read( hsStream* s, hsResMgr* mgr );
-        virtual void Write( hsStream* s, hsResMgr* mgr );
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
-        virtual void    SetInteresting( bool i );
+        void    SetInteresting(bool i) override;
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
-        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers );
+        void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseHover(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        virtual void    PurgeDynaTextMapImage();
+        void    PurgeDynaTextMapImage() override;
 
 
         void        SetName( const char *name );

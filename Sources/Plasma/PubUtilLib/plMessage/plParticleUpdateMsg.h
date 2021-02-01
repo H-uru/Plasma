@@ -92,7 +92,7 @@ public:
     float GetParamValue() { return fParamValue; }
 
     // IO
-    virtual void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
 
@@ -100,7 +100,7 @@ public:
         stream->ReadLE(&fParamValue);
     }
 
-    virtual void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
 
@@ -129,7 +129,7 @@ public:
     GETINTERFACE_ANY( plParticleTransferMsg, plMessage );
 
     // IO
-    virtual void Read(hsStream *stream, hsResMgr *mgr)
+    void Read(hsStream *stream, hsResMgr *mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         
@@ -137,7 +137,7 @@ public:
         fNumToTransfer = stream->ReadLE16();
     }
     
-    virtual void Write(hsStream *stream, hsResMgr *mgr)
+    void Write(hsStream *stream, hsResMgr *mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         
@@ -174,14 +174,14 @@ public:
     GETINTERFACE_ANY( plParticleKillMsg, plMessage );
 
     // Local only 
-    virtual void Read(hsStream *stream, hsResMgr *mgr) 
+    void Read(hsStream *stream, hsResMgr *mgr) override
     {
         plMessage::IMsgRead(stream,mgr);
         fNumToKill = stream->ReadLEScalar();
         fTimeLeft = stream->ReadLEScalar();
         stream->ReadLE(&fFlags);
     }
-    virtual void Write(hsStream *stream, hsResMgr *mgr)
+    void Write(hsStream *stream, hsResMgr *mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLEScalar(fNumToKill);
@@ -213,8 +213,8 @@ public:
     GETINTERFACE_ANY( plParticleFlockMsg, plMessage );
 
     // Local only 
-    virtual void Read(hsStream *stream, hsResMgr *mgr) {}
-    virtual void Write(hsStream *stream, hsResMgr *mgr) {}
+    void Read(hsStream *stream, hsResMgr *mgr) override { }
+    void Write(hsStream *stream, hsResMgr *mgr) override { }
 };  
     
 

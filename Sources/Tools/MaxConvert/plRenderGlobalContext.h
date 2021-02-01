@@ -62,11 +62,11 @@ public:
 
     void MakeRenderInstances(plMaxNode* root, TimeValue t);
 
-    virtual int NumRenderInstances() { return fInstList.GetCount(); }
-    virtual RenderInstance* GetRenderInstance( int i );
+    int NumRenderInstances() override { return fInstList.GetCount(); }
+    RenderInstance* GetRenderInstance(int i) override;
 
-    virtual void IntersectRay(RenderInstance *inst, Ray& ray, ISect &isct, ISectList &xpList, BOOL findExit);
-    virtual BOOL IntersectWorld(Ray &ray, int skipID, ISect &hit, ISectList &xplist, int blurFrame = NO_MOTBLUR);
+    void IntersectRay(RenderInstance *inst, Ray& ray, ISect &isct, ISectList &xpList, BOOL findExit) override;
+    BOOL IntersectWorld(Ray &ray, int skipID, ISect &hit, ISectList &xplist, int blurFrame = NO_MOTBLUR) override;
 };
 
 #endif // plRenderGlobalContext_inc

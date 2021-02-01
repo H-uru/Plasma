@@ -64,8 +64,8 @@ public:
     plMipmap* GetMipmap() const { return fMipmap; }
     plMipmap*       fMipmap;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "Transient message"); }
+    void Read(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Transient message"); }
+    void Write(hsStream* stream, hsResMgr* mgr) override { hsAssert(false, "Transient message"); }
 };
 
 #endif // plCaptureRenderMsg_inc

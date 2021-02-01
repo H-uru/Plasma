@@ -117,7 +117,7 @@ private:
     void    IDeInit();
 
     // Overload for plInitSectionTokenReader
-    virtual bool        IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData );
+    bool        IParseToken(const char *token, hsStringTokenizer *tokenizer, uint32_t userData) override;
 
 public:
     static char kAgeDescPath[];
@@ -136,7 +136,7 @@ public:
     void Write(hsStream* stream) const;
 
     // Overload for plInitSectionTokenReader
-    virtual const char  *GetSectionName() const;
+    const char  *GetSectionName() const override;
 
     ST::string  GetAgeName() const { return fName; }
     void        SetAgeNameFromPath( const plFileName &path );

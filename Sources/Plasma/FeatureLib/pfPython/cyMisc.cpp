@@ -2317,9 +2317,9 @@ public:
     {
         Py_XDECREF( fPyObject );
     }
-    void OperationStarted( uint32_t context )
+    void OperationStarted(uint32_t context) override
     {}
-    void OperationComplete( uint32_t context, int resultCode )
+    void OperationComplete(uint32_t context, int resultCode) override
     {
         if ( !fPyObject )
             return;

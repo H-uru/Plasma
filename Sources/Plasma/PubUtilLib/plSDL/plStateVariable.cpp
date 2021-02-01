@@ -95,11 +95,11 @@ public:
     plSDLCreatableStub(uint16_t classIndex, int len) : fClassIndex(classIndex),fData(nil),fDataLen(len) {}
     ~plSDLCreatableStub() { delete[] (char*)fData; }
 
-    const char*         ClassName() const { return "SDLCreatable";  }
-    uint16_t              ClassIndex() const { return fClassIndex;    }
+    const char*         ClassName() const override { return "SDLCreatable"; }
+    uint16_t              ClassIndex() const override { return fClassIndex; }
 
-    void Read(hsStream* s, hsResMgr* mgr) { delete[] (char*)fData; fData = new char[fDataLen]; s->Read(fDataLen, fData); }
-    void Write(hsStream* s, hsResMgr* mgr) { s->Write(fDataLen, fData); }
+    void Read(hsStream* s, hsResMgr* mgr) override { delete[] (char*)fData; fData = new char[fDataLen]; s->Read(fDataLen, fData); }
+    void Write(hsStream* s, hsResMgr* mgr) override { s->Write(fDataLen, fData); }
 };
 
 /////////////////////////////////////////////////////

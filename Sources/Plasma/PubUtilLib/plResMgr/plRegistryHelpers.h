@@ -84,7 +84,7 @@ protected:
 
 public:
     plKeyCollector(std::set<plKey>& keys) : fKeys(keys) { }
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         fKeys.insert(key);
         return true;
@@ -97,8 +97,8 @@ class plIndirectUnloadIterator : public plRegistryPageIterator, public plRegistr
 public:
     plIndirectUnloadIterator() {}
 
-    bool EatKey(const plKey& key) { return true; }
-    bool EatPage(plRegistryPageNode* page);
+    bool EatKey(const plKey& key) override { return true; }
+    bool EatPage(plRegistryPageNode* page) override;
 };
 
 #endif // _plRegistryHelpers_h

@@ -215,9 +215,9 @@ public:
         fCustomText.UpdateText(pb, hWnd);
     }
 
-    virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap) { UpdateDisplay(pmap); }
+    void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         // Check if it is for our edit box
         if (fCustomText.ProcessMsg(map, hWnd, msg, wParam, lParam))
@@ -361,7 +361,7 @@ public:
         return FALSE;
     }
 
-    virtual void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static ClothingBasicDlgProc gClothingBasicDlgProc;
 

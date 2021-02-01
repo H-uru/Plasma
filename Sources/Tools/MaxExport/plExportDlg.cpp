@@ -94,17 +94,17 @@ public:
     plExportDlgImp();
     ~plExportDlgImp();
 
-    virtual void Show();
+    void Show() override;
 
-    virtual bool IsExporting() { return fExporting; }
-    virtual bool IsAutoExporting() { return fAutoExporting; }
+    bool IsExporting() override { return fExporting; }
+    bool IsAutoExporting() override { return fAutoExporting; }
 
-    virtual bool GetDoPreshade() { return fPreshade; }
-    virtual bool GetPhysicalsOnly() { return fPhysicalsOnly; }
-    virtual bool GetDoLightMap() { return fLightMap; }
-    virtual const char* GetExportPage();
+    bool GetDoPreshade() override { return fPreshade; }
+    bool GetPhysicalsOnly() override { return fPhysicalsOnly; }
+    bool GetDoLightMap() override { return fLightMap; }
+    const char* GetExportPage() override;
 
-    virtual void StartAutoExport();
+    void StartAutoExport() override;
 };
 
 plExportDlgImp::plExportDlgImp() : fDlg(NULL), fPreshade(true), fPhysicalsOnly(false), fLightMap(true), fLastExportTime(0), fExporting(false), fAutoExporting(false)

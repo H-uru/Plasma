@@ -59,15 +59,15 @@ public:
     CLASSNAME_REGISTER( plWin32StreamingSound );
     GETINTERFACE_ANY( plWin32StreamingSound, plWin32Sound );
 
-    virtual void        DeActivate();
-    virtual bool        LoadSound( bool is3D );
-    virtual float       GetActualTimeSec();
-    virtual unsigned    GetByteOffset();
-    virtual StreamType  GetStreamType() const { return fStreamType; }
+    void        DeActivate() override;
+    bool        LoadSound(bool is3D) override;
+    float       GetActualTimeSec() override;
+    unsigned    GetByteOffset() override;
+    StreamType  GetStreamType() const override { return fStreamType; }
     virtual void        SetFilename(const char *filename, bool isCompressed);
-    virtual void        Update();   // temp
+    void        Update() override;   // temp
     void                StreamUpdate();
-    virtual bool        MsgReceive( plMessage *pMsg );
+    bool                MsgReceive(plMessage *pMsg) override;
     
 protected:
     float               fTimeAtBufferStart;
@@ -87,18 +87,18 @@ protected:
     unsigned            fStartPos;
 
     float               IGetTimeAtBufferStart() { return fTimeAtBufferStart; }
-    virtual void        SetStartPos(unsigned bytes);
+    void                SetStartPos(unsigned bytes) override;
 
-    virtual void        IDerivedActuallyPlay();
-    void                IActuallyStop();
-    virtual void        ISetActualTime( double t );
+    void                IDerivedActuallyPlay() override;
+    void                IActuallyStop() override;
+    void                ISetActualTime(double t) override;
     
-    virtual void        IAddCallback( plEventCallbackMsg *pMsg );
-    virtual void        IRemoveCallback( plEventCallbackMsg *pMsg );
+    void                IAddCallback(plEventCallbackMsg *pMsg) override;
+    void                IRemoveCallback(plEventCallbackMsg *pMsg) override;
 
-    virtual void        IFreeBuffers();
+    void                IFreeBuffers() override;
     void                IStreamUpdate();
-    virtual plSoundBuffer::ELoadReturnVal IPreLoadBuffer( bool playWhenLoaded, bool isIncidental = false  );
+    plSoundBuffer::ELoadReturnVal IPreLoadBuffer(bool playWhenLoaded, bool isIncidental = false) override;
 };
 
 #endif //plWin32StreamingSound_h

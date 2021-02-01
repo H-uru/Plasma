@@ -96,10 +96,10 @@ public:
         }
 
         // call this when your position changes
-        void UpdateWithNewPosition(const hsPoint3 &newPosition) {fPosition = newPosition;}
+        void UpdateWithNewPosition(const hsPoint3 &newPosition) override { fPosition = newPosition; }
 
         // find all close-by objects (determined by center and radius)
-        void FindNeighbors(const hsPoint3 &center, const float radius, std::vector<T> & results)
+        void FindNeighbors(const hsPoint3 &center, const float radius, std::vector<T> & results) override
         {
             // take the slow way, loop and check every one
             const float radiusSquared = radius * radius;
@@ -345,7 +345,7 @@ public:
     plKey &GetKey() {return fObjKey;}
 
     // We're redirecting this to the "banking" function
-    virtual void RegenerateLocalSpace(const hsVector3 &newVelocity, const float elapsedTime);
+    void RegenerateLocalSpace(const hsVector3 &newVelocity, const float elapsedTime) override;
 };
 
 class pfFlock
@@ -405,11 +405,11 @@ public:
     CLASSNAME_REGISTER( pfObjectFlocker );
     GETINTERFACE_ANY( pfObjectFlocker, plSingleModifier );
 
-    virtual void SetTarget(plSceneObject* so);
-    virtual bool MsgReceive(plMessage* msg);
+    void SetTarget(plSceneObject* so) override;
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetNumBoids(uint8_t val);
     void SetBoidKey(plKey key) { fBoidKey = key; }
@@ -451,7 +451,7 @@ protected:
     bool fUseTargetRotation;
     bool fRandomizeAnimationStart;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 };
 
 #endif

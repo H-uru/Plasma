@@ -146,11 +146,11 @@ public:
     virtual int Peek(hsStream* stream, uint32_t peekOptions=0);   
 
     // creatable ops
-    virtual void Read(hsStream* s, hsResMgr* mgr) { Peek(s); }
-    virtual void Write(hsStream* s, hsResMgr* mgr) { Poke(s); }
+    void Read(hsStream* s, hsResMgr* mgr) override { Peek(s); }
+    void Write(hsStream* s, hsResMgr* mgr) override { Poke(s); }
     
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
     
     void Clear();
 
@@ -216,8 +216,8 @@ public:
     uint32_t      GetPageID() const { return fUoid.GetLocation().GetSequenceNumber(); }
     const plUoid& GetUoid() const { return fUoid; }
     
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 //

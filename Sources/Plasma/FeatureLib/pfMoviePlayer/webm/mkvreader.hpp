@@ -23,8 +23,8 @@ class MkvReader : public IMkvReader {
   int Open(const char*);
   void Close();
 
-  virtual int Read(long long position, long length, unsigned char* buffer);
-  virtual int Length(long long* total, long long* available);
+  int Read(long long position, long length, unsigned char* buffer) override;
+  int Length(long long* total, long long* available) override;
 
  private:
   MkvReader(const MkvReader&);

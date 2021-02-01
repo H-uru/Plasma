@@ -58,8 +58,8 @@ public:
     CLASSNAME_REGISTER(plLoadClothingMsg);
     GETINTERFACE_ANY(plLoadClothingMsg, plMessage);
 
-    void Read(hsStream*, hsResMgr*) { }
-    void Write(hsStream*, hsResMgr*) { }
+    void Read(hsStream*, hsResMgr*) override { }
+    void Write(hsStream*, hsResMgr*) override { }
 
     plFileName GetClothingFile() const { return fClothingFile; }
 };

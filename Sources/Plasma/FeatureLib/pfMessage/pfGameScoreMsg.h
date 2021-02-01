@@ -64,8 +64,8 @@ public:
 
     ENetError GetResult() const { return fResult; }
 
-    virtual void Read(hsStream*, hsResMgr*)  { FATAL("wtf are you doing???"); }
-    virtual void Write(hsStream*, hsResMgr*) { FATAL("wtf are you doing???"); }
+    void Read(hsStream*, hsResMgr*) override { FATAL("wtf are you doing???"); }
+    void Write(hsStream*, hsResMgr*) override { FATAL("wtf are you doing???"); }
 };
 
 class pfGameScoreListMsg : public pfGameScoreMsg

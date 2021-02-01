@@ -82,7 +82,7 @@ protected:
     hsVector3       fListDirection;
     hsVector3       fListUp;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty);
+    bool IEval(double secs, float del, uint32_t dirty) override;
 
     hsPoint3    IGetLocalizedPos(const hsVector3& posToList, float distToList) const;
     hsPoint3    IGetAmbientPos() const;
@@ -104,10 +104,10 @@ public:
     CLASSNAME_REGISTER( plStereizer );
     GETINTERFACE_ANY( plStereizer, plSingleModifier );
     
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
     bool    Stereize();
     void    SetFromListenerMsg(const plListenerMsg* listMsg);

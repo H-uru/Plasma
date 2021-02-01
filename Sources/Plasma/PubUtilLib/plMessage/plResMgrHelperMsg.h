@@ -75,12 +75,12 @@ public:
     CLASSNAME_REGISTER( plResMgrHelperMsg );
     GETINTERFACE_ANY( plResMgrHelperMsg, plMessage );
 
-    virtual void Read(hsStream* s, hsResMgr* mgr) 
+    void Read(hsStream* s, hsResMgr* mgr) override
     { 
         hsAssert( false, "This should never get read" );
     }
     
-    virtual void Write(hsStream* s, hsResMgr* mgr) 
+    void Write(hsStream* s, hsResMgr* mgr) override
     { 
         hsAssert( false, "This should never get written" );
     }

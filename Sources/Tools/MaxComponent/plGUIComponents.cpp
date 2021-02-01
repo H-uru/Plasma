@@ -180,10 +180,10 @@ public:
         strcpy( fTitle, title );
     }
 
-    virtual TCHAR *dialogTitle() { return fTitle; }
-    virtual TCHAR *buttonText() { return "OK"; }
+    TCHAR *dialogTitle() override { return fTitle; }
+    TCHAR *buttonText() override { return "OK"; }
 
-    virtual int filter(INode *node)
+    int filter(INode *node) override
     {
         if( node == fOwner )
             return FALSE;
@@ -212,7 +212,7 @@ public:
         return FALSE;
     }
 
-    virtual void proc(INodeTab &nodeTab)
+    void proc(INodeTab &nodeTab) override
     {
         if ( nodeTab.Count() > 0 )
         {
@@ -223,8 +223,8 @@ public:
         }
     }
 
-    virtual BOOL showHiddenAndFrozen() { return TRUE; }
-    virtual BOOL singleSelect() { return TRUE; }
+    BOOL showHiddenAndFrozen() override { return TRUE; }
+    BOOL singleSelect() override { return TRUE; }
 };
 
 //// Single GUI Control Dialog Proc /////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ public:
         fProcChain = parentProc;
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -296,7 +296,7 @@ public:
         return false;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 const Class_ID      plGUISingleCtrlDlgProc::kEndClassList = Class_ID(); 
@@ -325,7 +325,7 @@ public:
         }
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int     i;
 
@@ -360,7 +360,7 @@ public:
         return false;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 
@@ -380,9 +380,9 @@ protected:
 
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 static plGUITagProc gGUITagProc;
@@ -392,14 +392,14 @@ class plGUITagComponent : public plComponent
 {
 public:
     plGUITagComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -649,11 +649,11 @@ protected:
 
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map );
+    void Update(TimeValue t, Interval &valid, IParamMap2 *map) override;
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 };
 
@@ -664,14 +664,14 @@ class plGUIColorSchemeComp : public plComponent
 {
 public:
     plGUIColorSchemeComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -1055,9 +1055,9 @@ public:
     {
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pblock = map->GetParamBlock();
 
@@ -1121,9 +1121,9 @@ protected:
 
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 static plGUIDialogProc gGUIDialogProc;
 
@@ -1862,9 +1862,9 @@ class plGUIButtonProc : public ParamMap2UserDlgProc
 {
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 
@@ -1876,19 +1876,19 @@ class plGUIButtonComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIButtonMod; }
-    virtual bool            ICanHaveProxy() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIButtonMod; }
+    bool            ICanHaveProxy() override { return true; }
 
 public:
     plGUIButtonComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -1950,7 +1950,7 @@ BOOL plGUIButtonProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
 class plGUIButtonAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plGUIButtonComponent::kRefAnimation ||
             id == plGUIButtonComponent::kRefMouseOverAnimation ||
@@ -2218,19 +2218,19 @@ class plGUICheckBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUICheckBoxCtrl; }
-    virtual bool            ICanHaveProxy() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUICheckBoxCtrl; }
+    bool            ICanHaveProxy() override { return true; }
 
 public:
     plGUICheckBoxComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -2255,7 +2255,7 @@ public:
 class plGUICheckBoxAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plGUICheckBoxComponent::kRefAnimation ||
             id == plGUICheckBoxComponent::kRefMouseDownSoundComp ||
@@ -2418,19 +2418,19 @@ class plGUIDraggableComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIDraggableMod; }
-    virtual bool            ICanHaveProxy() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIDraggableMod; }
+    bool            ICanHaveProxy() override { return true; }
 
 public:
     plGUIDraggableComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -2527,21 +2527,21 @@ class plGUIKnobCtrlComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIKnobCtrl; }
-    virtual bool            ICanHaveProxy() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIKnobCtrl; }
+    bool            ICanHaveProxy() override { return true; }
 
     bool    IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W );
 
 public:
     plGUIKnobCtrlComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -2776,19 +2776,19 @@ class plGUIListBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIListBoxMod; }
-    virtual bool            INeedsDynamicText() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIListBoxMod; }
+    bool            INeedsDynamicText() override { return true; }
 
 public:
     plGUIListBoxComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -2815,7 +2815,7 @@ public:
 class plGUIListBoxAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plGUIListBoxComponent::kRefScrollCtrl )
         {
@@ -3011,19 +3011,19 @@ class plGUITextBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUITextBoxMod; }
-    virtual bool            INeedsDynamicText() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUITextBoxMod; }
+    bool            INeedsDynamicText() override { return true; }
 
 public:
     plGUITextBoxComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -3052,9 +3052,9 @@ protected:
 
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int i;
         switch( msg )
@@ -3308,19 +3308,19 @@ class plGUIEditBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIEditBoxMod; }
-    virtual bool            INeedsDynamicText() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIEditBoxMod; }
+    bool            INeedsDynamicText() override { return true; }
 
 public:
     plGUIEditBoxComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -3403,18 +3403,18 @@ class plGUIUpDownPairComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIUpDownPairMod; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIUpDownPairMod; }
 
 public:
     plGUIUpDownPairComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -3445,7 +3445,7 @@ public:
         strcpy( fTitle, title );
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -3497,7 +3497,7 @@ public:
         return false;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -3507,7 +3507,7 @@ public:
 class plGUIUDAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plGUIUpDownPairComponent::kRefUpControl
             || id == plGUIUpDownPairComponent::kRefDownControl )
@@ -3615,19 +3615,19 @@ class plGUIDragBarComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIDragBarCtrl; }
-    virtual bool            ICanHaveProxy() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIDragBarCtrl; }
+    bool            ICanHaveProxy() override { return true; }
 
 public:
     plGUIDragBarComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 };
 
 //Max desc stuff necessary below.
@@ -3697,18 +3697,18 @@ class plGUIRadioGroupComponent : public plGUIControlBase
 
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIRadioGroupCtrl; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIRadioGroupCtrl; }
 
 public:
     plGUIRadioGroupComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -3748,7 +3748,7 @@ public:
         ReleaseISpinner( spin );
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -3779,7 +3779,7 @@ public:
         return false;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plGUIRadioGroupProc sGUIRadioGroupProc;
 
@@ -3793,7 +3793,7 @@ CLASS_DESC(plGUIRadioGroupComponent, gGUIRadioGroupDesc, "GUI Radio Group",  "GU
 class plGUIRadioGroupAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         plGUIRadioGroupComponent *comp = (plGUIRadioGroupComponent *)owner;
         IParamBlock2    *pBlock = comp->fCompPB;
@@ -3807,7 +3807,7 @@ public:
             sGUIRadioGroupProc.SetSpinnerRange( pBlock->GetMap( plGUIControlBase::kRollMain ) );
     }
 
-    void    TabChanged( tab_changes changeCode, Tab<PB2Value> *tab, ReferenceMaker *owner, ParamID id, int tabIndex, int count )
+    void    TabChanged(tab_changes changeCode, Tab<PB2Value> *tab, ReferenceMaker *owner, ParamID id, int tabIndex, int count) override
     {
         plGUIRadioGroupComponent *comp = (plGUIRadioGroupComponent *)owner;
         IParamBlock2    *pBlock = comp->fCompPB;
@@ -3910,19 +3910,19 @@ class plGUIDynDisplayComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIDynDisplayCtrl; }
-    virtual bool            IHasProcRollout() { return false; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIDynDisplayCtrl; }
+    bool            IHasProcRollout() override { return false; }
 
 public:
     plGUIDynDisplayComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -3941,7 +3941,7 @@ public:
     {
     }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -3982,7 +3982,7 @@ public:
         return false;
     }
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plGUIDynDisplayProc  sGUIDynDisplayProc;
 
@@ -4086,19 +4086,19 @@ class plGUIMultiLineEditComp : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIMultiLineEditCtrl; }
-    virtual bool            INeedsDynamicText() { return true; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIMultiLineEditCtrl; }
+    bool            INeedsDynamicText() override { return true; }
 
 public:
     plGUIMultiLineEditComp();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -4208,19 +4208,19 @@ class plGUIProgressCtrlComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIProgressCtrl; }
-    virtual bool            ICanHaveProxy() { return false; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIProgressCtrl; }
+    bool            ICanHaveProxy() override { return false; }
 
 public:
     plGUIProgressCtrlComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -4242,7 +4242,7 @@ public:
 class plGUIProgressCtrlAccessor : public PBAccessor
 {
 public:
-    void Set( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t )
+    void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t) override
     {
         if( id == plGUIProgressCtrlComponent::kRefAnimateSoundComp )
         {
@@ -4269,7 +4269,7 @@ public:
         strcpy( fTitle, title );
     }
     
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -4306,7 +4306,7 @@ public:
         return false;
     }
     
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 
 static plGUISoundDlgProc            sGUIProgressCtrlSndProc( plGUIProgressCtrlComponent::kRefAnimateSoundComp, IDC_GUI_ANIMSNDCOMP,
@@ -4470,19 +4470,19 @@ class plGUIClickMapComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIClickMapCtrl; }
-    virtual bool            ICanHaveProxy() { return false; }
+    pfGUIControlMod *IGetNewControl() override { return new pfGUIClickMapCtrl; }
+    bool            ICanHaveProxy() override { return false; }
 
 public:
     plGUIClickMapComponent();
-    void DeleteThis() { delete this; }
+    void DeleteThis() override { delete this; }
 
     // SetupProperties - Internal setup and write-only set properties on the MaxNode. No reading
     // of properties on the MaxNode, as it's still indeterminant.
-    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg);
+    bool SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
 
-    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
-    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
+    bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg) override;
+    bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     enum
     {
@@ -4558,11 +4558,11 @@ protected:
 
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
 //  virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map );
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 static pfGUISkinProc gGUISkinProc;
@@ -4817,9 +4817,9 @@ protected:
 
 public:
 
-    void DeleteThis() {}
+    void DeleteThis() override { }
 
-    BOOL DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 static plGUIMenuProc gGUIMenuProc;
 */

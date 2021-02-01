@@ -69,7 +69,7 @@ public:
     void EnableEdit(bool enable);
 
 protected:
-    virtual void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void OpenDataDirectory();

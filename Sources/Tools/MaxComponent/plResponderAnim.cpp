@@ -538,16 +538,16 @@ class plResponderAnimProc : public plAnimCompProc
 {
 public:
     plResponderAnimProc();
-    virtual BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 protected:
-    virtual void IPickComponent(IParamBlock2* pb);
-    virtual void IPickNode(IParamBlock2* pb, plComponentBase* comp);
+    void IPickComponent(IParamBlock2* pb) override;
+    void IPickNode(IParamBlock2* pb, plComponentBase* comp) override;
 
-    virtual void ILoadUser(HWND hWnd, IParamBlock2* pb);
-    virtual bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID);
+    void ILoadUser(HWND hWnd, IParamBlock2* pb) override;
+    bool IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resID) override;
 
-    virtual void IUpdateNodeButton(HWND hWnd, IParamBlock2* pb);
+    void IUpdateNodeButton(HWND hWnd, IParamBlock2* pb) override;
 };
 static plResponderAnimProc gResponderAnimProc;
 

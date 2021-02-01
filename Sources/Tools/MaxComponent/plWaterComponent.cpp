@@ -369,7 +369,7 @@ public:
 
     plWaterCompPostLoadCallback(plWaterComponent* wc) : fWaterComp(wc) {}
 
-    void proc(ILoad *iload) 
+    void proc(ILoad *iload) override
     {
         fWaterComp->CheckForObsoleteParams();
 
@@ -788,8 +788,8 @@ static void ISetWaterDependencies(plMaxNode* node, INode* waterNode)
 class plShoreCompSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { }
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 };
 
 BOOL plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -926,8 +926,8 @@ bool plShoreComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 class plWDecalCompSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    void DeleteThis() { }
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    void DeleteThis() override { }
 };
 
 BOOL plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -1073,7 +1073,7 @@ bool plWDecalComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 class plEnvMapCompSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1129,7 +1129,7 @@ public:
 
         return false;
     }
-    void DeleteThis() {}
+    void DeleteThis() override { }
 };
 static plEnvMapCompSelProc gEnvMapCompSelProc;
 

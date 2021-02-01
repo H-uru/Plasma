@@ -95,7 +95,7 @@ class plInputInterfaceMgr : public plSingleModifier
         plDefaultKeyCatcher     *fDefaultCatcher;
 
         
-        virtual bool IEval( double secs, float del, uint32_t dirty );
+        bool IEval(double secs, float del, uint32_t dirty) override;
 
         void    IAddInterface( plInputInterface *iface );
         void    IRemoveInterface( plInputInterface *iface );
@@ -119,9 +119,9 @@ class plInputInterfaceMgr : public plSingleModifier
         CLASSNAME_REGISTER( plInputInterfaceMgr );
         GETINTERFACE_ANY( plInputInterfaceMgr, plSingleModifier );
 
-        virtual bool    MsgReceive( plMessage *msg );
-        virtual void    Read( hsStream* s, hsResMgr* mgr );
-        virtual void    Write( hsStream* s, hsResMgr* mgr );
+        bool    MsgReceive(plMessage *msg) override;
+        void    Read(hsStream* s, hsResMgr* mgr) override;
+        void    Write(hsStream* s, hsResMgr* mgr) override;
 
         void    Init();
         void    Shutdown();

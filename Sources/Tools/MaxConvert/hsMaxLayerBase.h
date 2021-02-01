@@ -195,8 +195,8 @@ public:
     virtual int GetExplicitMipmapLevel(int i) const = 0;
 
     // KLUDGE - Had to do this to compile under MAX4 beta
-    virtual void fnReload() {};
-    virtual void fnViewImage() {};
+    void fnReload() override {}
+    void fnViewImage() override {}
 };
 
 #endif

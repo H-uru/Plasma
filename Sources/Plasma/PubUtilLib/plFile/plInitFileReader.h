@@ -103,7 +103,7 @@ class plInitSectionTokenReader : public plInitSectionReader
         plInitSectionTokenReader( const char *separators = ",=\t" );
 
         // Overridden for you. Override IParseToken()
-        virtual bool        ParseLine( const char *line, uint32_t userData );
+        bool        ParseLine(const char *line, uint32_t userData) override;
 };
 
 //// Main Reader Class ///////////////////////////////////////////////////////

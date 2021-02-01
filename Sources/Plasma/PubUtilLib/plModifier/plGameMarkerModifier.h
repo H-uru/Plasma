@@ -54,7 +54,7 @@ protected:
     uint16_t fPlaceSndIdx;
     uint16_t fHitSndIdx;
 
-    virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     plKey IFindCloneKey(plKey baseKey);
     
@@ -82,10 +82,10 @@ public:
 
     void FixupAnimKeys();
 
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plGameMarkerModifier_h_inc

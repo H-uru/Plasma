@@ -69,37 +69,37 @@ public:
     }
 
     // Animatable
-    virtual void EditTrackParams(TimeValue t, ParamDimensionBase *dim, TCHAR *pname, HWND hParent, IObjParam *ip, DWORD flags) { }
-    int TrackParamsType() { return TRACKPARAMS_WHOLE; }
-    virtual void DeleteThis() { delete this; }
+    void EditTrackParams(TimeValue t, ParamDimensionBase *dim, TCHAR *pname, HWND hParent, IObjParam *ip, DWORD flags) override { }
+    int TrackParamsType() override { return TRACKPARAMS_WHOLE; }
+    void DeleteThis() override { delete this; }
 
     // ReferenceMaker
-    virtual RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override
     {
         return REF_DONTCARE;
     }
 
-    Class_ID ClassID() { return PLASMA_FILE_DATA_CID; }
-    SClass_ID SuperClassID() { return CTRL_FLOAT_CLASS_ID; }
-    void GetClassName(TSTR& s) { s = "DEAD - SceneViewer"; }
+    Class_ID ClassID() override { return PLASMA_FILE_DATA_CID; }
+    SClass_ID SuperClassID() override { return CTRL_FLOAT_CLASS_ID; }
+    void GetClassName(TSTR& s) override { s = "DEAD - SceneViewer"; }
 
     // Control methods
-    RefTargetHandle Clone(RemapDir& remap) { return new plMaxFileDataControl(); }
-    void Copy(Control* from) { }
-    virtual BOOL IsReplaceable() { return FALSE; }
+    RefTargetHandle Clone(RemapDir& remap) override { return new plMaxFileDataControl(); }
+    void Copy(Control* from) override { }
+    BOOL IsReplaceable() override { return FALSE; }
 
     // StdControl methods
-    void GetValueLocalTime(TimeValue t, void* val, Interval& valid, GetSetMethod method = CTRL_ABSOLUTE) { }
-    void SetValueLocalTime(TimeValue t, void* val, int commit, GetSetMethod method) { }
-    void Extrapolate(Interval range, TimeValue t, void* val, Interval& valid, int type) { }
-    void *CreateTempValue() { return nullptr; }
-    void DeleteTempValue(void *val) { }
-    void ApplyValue(void* val, void* delta) { }
-    void MultiplyValue(void* val, float m) { }
+    void GetValueLocalTime(TimeValue t, void* val, Interval& valid, GetSetMethod method = CTRL_ABSOLUTE) override { }
+    void SetValueLocalTime(TimeValue t, void* val, int commit, GetSetMethod method) override { }
+    void Extrapolate(Interval range, TimeValue t, void* val, Interval& valid, int type) override { }
+    void *CreateTempValue() override { return nullptr; }
+    void DeleteTempValue(void *val) override { }
+    void ApplyValue(void* val, void* delta) override { }
+    void MultiplyValue(void* val, float m) override { }
 
     // MyControl methods
-    IOResult Load(ILoad *iload);
-    IOResult Save(ISave *isave);
+    IOResult Load(ILoad *iload) override;
+    IOResult Save(ISave *isave) override;
 };
 
 IOResult plMaxFileDataControl::Load(ILoad *iload)
@@ -146,12 +146,12 @@ IOResult plMaxFileDataControl::Save(ISave *isave)
 class MaxFileDataClassDesc : public ClassDesc
 {
 public:
-    int             IsPublic()              { return FALSE; }
-    void*           Create(BOOL loading)    { return new plMaxFileDataControl; }
-    const TCHAR*    ClassName()             { return _T("MaxFileData"); }
-    SClass_ID       SuperClassID()          { return CTRL_FLOAT_CLASS_ID; }
-    Class_ID        ClassID()               { return PLASMA_FILE_DATA_CID; }
-    const TCHAR*    Category()              { return _T(""); }
+    int             IsPublic() override             { return FALSE; }
+    void*           Create(BOOL loading) override   { return new plMaxFileDataControl; }
+    const TCHAR*    ClassName() override            { return _T("MaxFileData"); }
+    SClass_ID       SuperClassID() override         { return CTRL_FLOAT_CLASS_ID; }
+    Class_ID        ClassID() override              { return PLASMA_FILE_DATA_CID; }
+    const TCHAR*    Category() override             { return _T(""); }
 };
 
 MaxFileDataClassDesc gMaxFileDataClassDesc;

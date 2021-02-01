@@ -209,8 +209,8 @@ public:
     GETINTERFACE_ANY( plShader, hsKeyedObject );
 
     // Read and write
-    virtual void            Read(hsStream* s, hsResMgr* mgr);
-    virtual void            Write(hsStream* s, hsResMgr* mgr);
+    void            Read(hsStream* s, hsResMgr* mgr) override;
+    void            Write(hsStream* s, hsResMgr* mgr) override;
 
     void                    SetNumConsts(int cnt) { fConsts.SetCount(cnt); }
     uint32_t                  GetNumConsts() const { return fConsts.GetCount(); }

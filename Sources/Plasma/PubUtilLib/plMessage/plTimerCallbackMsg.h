@@ -61,14 +61,14 @@ public:
     int32_t fID;
     float fTime;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fID = stream->ReadLE32();
         fTime = stream->ReadLEScalar();
     }
 
-    virtual void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLE32(fID);

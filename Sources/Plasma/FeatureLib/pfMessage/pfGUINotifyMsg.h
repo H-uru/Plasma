@@ -127,14 +127,14 @@ public:
     uint32_t GetEvent() { return fEvent; }
 
     // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
+    void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgRead(stream, mgr);
         fControlKey = mgr->ReadKey(stream);
         fEvent = stream->ReadLE32();
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
+    void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fControlKey);

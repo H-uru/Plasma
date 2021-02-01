@@ -161,8 +161,8 @@ class plBitmap : public hsKeyedObject
         virtual uint32_t  GetTotalSize() const = 0;
 
         // Read and write
-        virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
-        virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
+        void    Read(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Read(s, mgr); this->Read(s); }
+        void    Write(hsStream *s, hsResMgr *mgr) override { hsKeyedObject::Write(s, mgr); this->Write(s); }
 
         uint16_t          GetFlags() const { return fFlags; }
         void            SetFlags( uint16_t flags ) { fFlags = flags; }

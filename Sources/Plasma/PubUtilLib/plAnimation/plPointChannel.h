@@ -86,15 +86,15 @@ public:
     virtual void Value(hsPoint3 &point, double time);
 
     // combine it (allocates combine object)
-    virtual plAGChannel * MakeCombine(plAGChannel * channelB);
+    plAGChannel * MakeCombine(plAGChannel * channelB) override;
 
     // blend it (allocates blend object)
-    virtual plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority);
+    plAGChannel * MakeBlend(plAGChannel * channelB, plScalarChannel * channelBias, int blendPriority) override;
 
     // const eval at time zero
-    virtual plAGChannel * MakeZeroState();
+    plAGChannel * MakeZeroState() override;
     // make a timeScale instance
-    virtual plAGChannel * MakeTimeScale(plScalarChannel *timeSource);
+    plAGChannel * MakeTimeScale(plScalarChannel *timeSource) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plPointChannel );
@@ -118,8 +118,8 @@ public:
     CLASSNAME_REGISTER( plPointConstant );
     GETINTERFACE_ANY( plPointConstant, plPointChannel );
 
-    void Read(hsStream *stream, hsResMgr *mgr);
-    void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) override;
+    void Write(hsStream *stream, hsResMgr *mgr) override;
 };
 
 ////////////////////
@@ -138,10 +138,10 @@ public:
     plPointTimeScale(plPointChannel *channel, plScalarChannel *timeSource);
     virtual ~plPointTimeScale();
 
-    virtual bool IsStoppedAt(double time);
-    virtual const hsPoint3 & Value(double time);
+    bool IsStoppedAt(double time) override;
+    const hsPoint3 & Value(double time) override;
 
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plPointTimeScale );
@@ -171,13 +171,13 @@ public:
 
     //float GetBlend() const { return fBlend; }
     //void SetBlend(float the_blend) { fBlend = the_blend; }
-    virtual bool IsStoppedAt(double time);
+    bool IsStoppedAt(double time) override;
 
     // AG PROTOCOL
-    virtual const hsPoint3 &Value(double time);
+    const hsPoint3 &Value(double time) override;
 
     // remove the specified channel from our graph
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
 
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plPointBlend );
@@ -211,10 +211,10 @@ public:
     virtual ~plPointControllerChannel();
     
     // AG PROTOCOL
-    virtual const hsPoint3 & Value(double time);
+    const hsPoint3 & Value(double time) override;
     virtual const hsPoint3 & Value(double time, plControllerCacheInfo *cache);
     
-    virtual plAGChannel * MakeCacheChannel(plAnimTimeConvert *atc);     
+    plAGChannel * MakeCacheChannel(plAnimTimeConvert *atc) override;
     
     // PLASMA PROTOCOL
     // rtti
@@ -222,8 +222,8 @@ public:
     GETINTERFACE_ANY( plPointControllerChannel, plPointChannel );
     
     // persistence
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
-    virtual void Read(hsStream *s, hsResMgr *mgr);
+    void Write(hsStream *stream, hsResMgr *mgr) override;
+    void Read(hsStream *s, hsResMgr *mgr) override;
 };
 
 ////////////////////////////////
@@ -243,7 +243,7 @@ public:
     
     virtual const hsPoint3 & Value(double time, bool peek = false);
 
-    virtual plAGChannel * Detach(plAGChannel * channel);
+    plAGChannel * Detach(plAGChannel * channel) override;
     
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plPointControllerCacheChannel );
@@ -259,7 +259,7 @@ public:
 class plPointChannelApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plPointChannelApplicator );
@@ -269,7 +269,7 @@ public:
 class plLightDiffuseApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plLightDiffuseApplicator );
@@ -279,7 +279,7 @@ public:
 class plLightAmbientApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plLightAmbientApplicator );
@@ -289,7 +289,7 @@ public:
 class plLightSpecularApplicator : public plAGApplicator
 {
 protected:
-    virtual void IApply(const plAGModifier *mod, double time);
+    void IApply(const plAGModifier *mod, double time) override;
 
 public:
     CLASSNAME_REGISTER( plLightSpecularApplicator );

@@ -140,8 +140,8 @@ public:
     bool    HasAgeSequenceNumber() const { return IsFlagSet( kHasAgeSequenceNumber ); }
     bool    HasAgeLanguage() const { return IsFlagSet( kHasAgeLanguage ); }
 
-    void    Read( hsStream * s, hsResMgr* );
-    void    Write( hsStream * s, hsResMgr* );
+    void    Read(hsStream * s, hsResMgr*) override;
+    void    Write(hsStream * s, hsResMgr*) override;
 
     ST::string AsString() const;
 };
@@ -213,8 +213,8 @@ public:
     void    SetAmCCR( bool v ) { SetFlag( kHasAmCCR ); fAmCCR=v?1:0; }
     bool    GetAmCCR() const { return fAmCCR!=0; }
 
-    void    Read( hsStream * s, hsResMgr* );
-    void    Write( hsStream * s, hsResMgr* );
+    void    Read(hsStream * s, hsResMgr*) override;
+    void    Write(hsStream * s, hsResMgr*) override;
 
     ST::string AsString() const;
 };

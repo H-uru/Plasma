@@ -144,8 +144,8 @@ class SimpleBlock : public BlockEntry {
   SimpleBlock(Cluster*, long index, long long start, long long size);
   long Parse();
 
-  Kind GetKind() const;
-  const Block* GetBlock() const;
+  Kind GetKind() const override;
+  const Block* GetBlock() const override;
 
  protected:
   Block m_block;
@@ -164,8 +164,8 @@ class BlockGroup : public BlockEntry {
 
   long Parse();
 
-  Kind GetKind() const;
-  const Block* GetBlock() const;
+  Kind GetKind() const override;
+  const Block* GetBlock() const override;
 
   long long GetPrevTimeCode() const;  // relative to block's time
   long long GetNextTimeCode() const;  // as above
@@ -375,8 +375,8 @@ class Track {
    public:
     EOSBlock();
 
-    Kind GetKind() const;
-    const Block* GetBlock() const;
+    Kind GetKind() const override;
+    const Block* GetBlock() const override;
   };
 
   EOSBlock m_eos;
@@ -400,8 +400,8 @@ class VideoTrack : public Track {
   long long GetHeight() const;
   double GetFrameRate() const;
 
-  bool VetEntry(const BlockEntry*) const;
-  long Seek(long long time_ns, const BlockEntry*&) const;
+  bool VetEntry(const BlockEntry*) const override;
+  long Seek(long long time_ns, const BlockEntry*&) const override;
 
  private:
   long long m_width;

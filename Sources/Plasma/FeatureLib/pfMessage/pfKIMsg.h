@@ -184,7 +184,7 @@ class pfKIMsg : public plMessage
         CLASSNAME_REGISTER( pfKIMsg );
         GETINTERFACE_ANY( pfKIMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr) 
+        void Read(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgRead( s, mgr ); 
             s->ReadLE( &fCommand );
@@ -196,7 +196,7 @@ class pfKIMsg : public plMessage
             fValue = s->ReadLE32();
         }
         
-        virtual void Write(hsStream* s, hsResMgr* mgr) 
+        void Write(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgWrite( s, mgr ); 
             s->WriteLE( fCommand );

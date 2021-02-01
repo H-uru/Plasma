@@ -67,14 +67,14 @@ extern HINSTANCE hInstance;
 class plDecalMtlClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return TRUE; }
-    void*           Create(BOOL loading) { return new plDecalMtl(loading); }
-    const TCHAR*    ClassName()     { return GetString(IDS_DECAL_MTL); }
-    SClass_ID       SuperClassID()  { return MATERIAL_CLASS_ID; }
-    Class_ID        ClassID()       { return DECAL_MTL_CLASS_ID; }
-    const TCHAR*    Category()      { return NULL; }
-    const TCHAR*    InternalName()  { return _T("PlasmaMaterial"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return TRUE; }
+    void*           Create(BOOL loading) override { return new plDecalMtl(loading); }
+    const TCHAR*    ClassName() override    { return GetString(IDS_DECAL_MTL); }
+    SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
+    Class_ID        ClassID() override      { return DECAL_MTL_CLASS_ID; }
+    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plDecalMtlClassDesc plDecalMtlDesc;
 ClassDesc2* GetDecalMtlDesc() { return &plDecalMtlDesc; }

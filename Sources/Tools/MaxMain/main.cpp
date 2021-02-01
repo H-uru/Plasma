@@ -173,46 +173,46 @@ public:
 
     plGeneralAttrib();
 
-    virtual RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-                               PartID& partID,  RefMessage message){return REF_SUCCEED;}
+    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,
+                               PartID& partID, RefMessage message) override { return REF_SUCCEED; }
 
-    int NumParamBlocks() { return 1; }                  // return number of ParamBlocks in this instance
-    IParamBlock2* GetParamBlock(int i) { return fPBlock; } // return i'th ParamBlock
-    IParamBlock2* GetParamBlockByID(BlockID id) { return (fPBlock->ID() == id) ? fPBlock : NULL; } // return id'd ParamBlock
+    int NumParamBlocks() override { return 1; }                  // return number of ParamBlocks in this instance
+    IParamBlock2* GetParamBlock(int i) override { return fPBlock; } // return i'th ParamBlock
+    IParamBlock2* GetParamBlockByID(BlockID id) override { return (fPBlock->ID() == id) ? fPBlock : NULL; } // return id'd ParamBlock
 
-    int NumRefs() { return 1;}
-    virtual RefTargetHandle GetReference(int i) { if(i == 0) return fPBlock; else return NULL; }
-    virtual void SetReference(int i, RefTargetHandle rtarg) { if(i == 0) fPBlock = (IParamBlock2 *)rtarg; }
+    int NumRefs() override { return 1; }
+    RefTargetHandle GetReference(int i) override { if (i == 0) return fPBlock; else return NULL; }
+    void SetReference(int i, RefTargetHandle rtarg) override { if (i == 0) fPBlock = (IParamBlock2 *)rtarg; }
 
-    virtual int NumSubs()  { return 1; }
-    virtual Animatable* SubAnim(int i) { return fPBlock; }
-    virtual TSTR SubAnimName(int i){ return fClassDesc->ClassName();} 
+    int NumSubs() override { return 1; }
+    Animatable* SubAnim(int i) override { return fPBlock; }
+    TSTR SubAnimName(int i) override { return fClassDesc->ClassName(); }
 
 
-    void BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev);
-    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next);
-    SClass_ID       SuperClassID() {return CUST_ATTRIB_CLASS_ID;}
-    Class_ID        ClassID() {return fClassDesc->ClassID();}
+    void BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev) override;
+    void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next) override;
+    SClass_ID       SuperClassID() override { return CUST_ATTRIB_CLASS_ID; }
+    Class_ID        ClassID() override { return fClassDesc->ClassID(); }
 
-    ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP);
-    virtual bool CheckCopyAttribTo(ICustAttribContainer *to) { return true; }
+    ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP) override;
+    bool CheckCopyAttribTo(ICustAttribContainer *to) override { return true; }
     
-    GETNAME_RETURN_TYPE GetName() { return (GETNAME_RETURN_TYPE)_T(fClassDesc->ClassName()); }
-    void DeleteThis() { delete this; }
+    GETNAME_RETURN_TYPE GetName() override { return (GETNAME_RETURN_TYPE)_T(fClassDesc->ClassName()); }
+    void DeleteThis() override { delete this; }
 };
 
 
 class plGeneralAttribClassDesc : public ClassDesc2
 {
 public:
-    int             IsPublic()      { return 1; }
-    void*           Create(BOOL loading) { return new plGeneralAttrib; }
-    const TCHAR*    ClassName()     { return _T("Plasma Attrib"); }
-    SClass_ID       SuperClassID()  { return CUST_ATTRIB_CLASS_ID; }
-    Class_ID        ClassID()       { return PL_GEN_ATTRIB_CLASS_ID; }
-    const TCHAR*    Category()      { return _T(""); }
-    const TCHAR*    InternalName()  { return _T("PlasmaAttrib"); }
-    HINSTANCE       HInstance()     { return hInstance; }
+    int             IsPublic() override     { return 1; }
+    void*           Create(BOOL loading) override { return new plGeneralAttrib; }
+    const TCHAR*    ClassName() override    { return _T("Plasma Attrib"); }
+    SClass_ID       SuperClassID() override { return CUST_ATTRIB_CLASS_ID; }
+    Class_ID        ClassID() override      { return PL_GEN_ATTRIB_CLASS_ID; }
+    const TCHAR*    Category() override     { return _T(""); }
+    const TCHAR*    InternalName() override { return _T("PlasmaAttrib"); }
+    HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plGeneralAttribClassDesc theGeneralAttribClassDesc;
 

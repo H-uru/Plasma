@@ -77,10 +77,10 @@ public:
     GETINTERFACE_ANY( plAvLadderMod, plSingleModifier );
     
     // virtual void AddTarget(plSceneObject* so) {  SetTarget(so);  }
-    virtual bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) override;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
     
     bool GetGoingUp() const;
     void SetGoingUp(bool v);
@@ -94,7 +94,7 @@ public:
     void SetEnabled(bool enabled) { fEnabled = enabled; }
 
 protected:
-    virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
+    bool IEval(double secs, float del, uint32_t dirty) override { return true; }
     bool IIsReadyToClimb();
     void ITriggerSelf(plKey avKey);
 

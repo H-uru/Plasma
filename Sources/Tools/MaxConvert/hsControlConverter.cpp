@@ -133,8 +133,8 @@ void hsControlConverter::DeInit()
 // dummy class that ApplyKeyReduction needs
 class KRStatus : public KeyReduceStatus
 {
-    void Init(int total) {}
-    int Progress(int p) { return KEYREDUCE_CONTINUE; }
+    void Init(int total) override { }
+    int Progress(int p) override { return KEYREDUCE_CONTINUE; }
 };
 
 void hsControlConverter::ReduceKeys(Control *control, float threshold)

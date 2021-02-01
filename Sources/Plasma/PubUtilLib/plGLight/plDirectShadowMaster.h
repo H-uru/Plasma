@@ -56,16 +56,16 @@ protected:
     mutable hsTArray<plBoundsIsect*>    fIsectPool;
     hsTArray<plShadowSlave*>            fPerspSlavePool;
 
-    virtual void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const;
-    virtual void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
-    virtual void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const;
+    void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
+    void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const override;
+    void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
+    void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
 
-    virtual plShadowSlave* INewSlave(const plShadowCaster* caster);
-    virtual plShadowSlave* INextSlave(const plShadowCaster* caster);
-    virtual plShadowSlave* IRecycleSlave(plShadowSlave* slave);
+    plShadowSlave* INewSlave(const plShadowCaster* caster) override;
+    plShadowSlave* INextSlave(const plShadowCaster* caster) override;
+    plShadowSlave* IRecycleSlave(plShadowSlave* slave) override;
 
-    virtual void IBeginRender();
+    void IBeginRender() override;
 
 public:
     plDirectShadowMaster();

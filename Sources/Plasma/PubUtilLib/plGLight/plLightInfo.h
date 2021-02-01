@@ -152,7 +152,7 @@ protected:
     void                        IAddVisRegion(plVisRegion* reg);
     void                        IRemoveVisRegion(plVisRegion* reg);
 
-    virtual void ISetSceneNode(plKey node);
+    void ISetSceneNode(plKey node) override;
 
     void                        ICheckMaxStrength();
 public:
@@ -202,24 +202,24 @@ public:
 
     plLayerInterface*   GetProjection() const { return fProjection; }
 
-    virtual void SetProperty(int prop, bool on);
+    void SetProperty(int prop, bool on) override;
 
-    virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
     virtual const hsMatrix44& GetLocalToWorld() const;
     virtual const hsMatrix44& GetWorldToLocal() const;
     virtual const hsMatrix44& GetLightToWorld() const;
     virtual const hsMatrix44& GetWorldToLight() const;
 
-    virtual int32_t   GetNumProperties() const { return kNumProps; }
+    int32_t   GetNumProperties() const override { return kNumProps; }
 
     const plSoftVolume* GetSoftVolume() const { return fSoftVolume; }
 
     virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const = 0;
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    virtual bool        MsgReceive(plMessage* msg);
+    bool        MsgReceive(plMessage* msg) override;
 
     virtual void        Unlink();
     virtual void        Link( plLightInfo **back );
@@ -232,7 +232,7 @@ public:
     const hsBitVector&  GetSlaveBits() const { return fSlaveBits; }
 
     // These two should only be called internally and on export/convert
-    virtual plKey GetSceneNode() const;
+    plKey GetSceneNode() const override;
 
     // Export only. At runtime, the LocalToLight should be considered const.
     void                SetLocalToLight(const hsMatrix44& l2lt, const hsMatrix44& lt2l);
@@ -246,8 +246,8 @@ class plDirectionalLightInfo : public plLightInfo
 {
 protected:
 
-    virtual void                IMakeIsect() {}
-    virtual plVolumeIsect*      IGetIsect() { return nil; }
+    void                IMakeIsect() override { }
+    plVolumeIsect*      IGetIsect() override { return nil; }
 
 public:
     plDirectionalLightInfo();
@@ -256,13 +256,13 @@ public:
     CLASSNAME_REGISTER( plDirectionalLightInfo );
     GETINTERFACE_ANY( plDirectionalLightInfo, plLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
     hsVector3 GetWorldDirection() const;
-    virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const { return -GetWorldDirection(); }
+    hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const override { return -GetWorldDirection(); }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -276,10 +276,10 @@ protected:
 
     plParallelIsect*            fParPlanes;
 
-    virtual void                IMakeIsect();
-    virtual plVolumeIsect*      IGetIsect() { return fParPlanes; }
+    void                IMakeIsect() override;
+    plVolumeIsect*      IGetIsect() override { return fParPlanes; }
 
-    virtual void                IRefresh();
+    void                IRefresh() override;
 
 public:
     plLimitedDirLightInfo()
@@ -290,7 +290,7 @@ public:
     CLASSNAME_REGISTER( plLimitedDirLightInfo );
     GETINTERFACE_ANY( plLimitedDirLightInfo, plDirectionalLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
     float GetWidth() const { return fWidth; }
     float GetHeight() const { return fHeight; }
@@ -300,11 +300,11 @@ public:
     void SetHeight(float h) { fHeight = h; }
     void SetDepth(float d) { fDepth = d; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
 };
 
 class plOmniLightInfo : public plLightInfo
@@ -318,10 +318,10 @@ protected:
 
     plSphereIsect*              fSphere;
 
-    virtual void                IMakeIsect();
-    virtual plVolumeIsect*      IGetIsect() { return fSphere; }
+    void                IMakeIsect() override;
+    plVolumeIsect*      IGetIsect() override { return fSphere; }
 
-    virtual void                IRefresh();
+    void                IRefresh() override;
 
 
 public:
@@ -331,9 +331,9 @@ public:
     CLASSNAME_REGISTER( plOmniLightInfo );
     GETINTERFACE_ANY( plOmniLightInfo, plLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
-    virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const;
+    hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const override;
 
     bool        IsAttenuated() const { return (fAttenLinear != 0)||(fAttenQuadratic != 0) || ( fAttenCutoff != 0 ); }
     float    GetRadius() const;
@@ -349,11 +349,11 @@ public:
     void        SetQuadraticAttenuation(float a) { fAttenQuadratic = a; SetDirty(true); }
     void        SetCutoffAttenuation( float a ) { fAttenCutoff = a; SetDirty( true ); }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
 
 };
 
@@ -371,10 +371,10 @@ protected:
 
     plConeIsect*        fCone;
 
-    virtual void                IMakeIsect();
-    virtual plVolumeIsect*      IGetIsect() { return fCone; }
+    void                IMakeIsect() override;
+    plVolumeIsect*      IGetIsect() override { return fCone; }
 
-    virtual void                IRefresh();
+    void                IRefresh() override;
 
 public:
     plSpotLightInfo()
@@ -388,10 +388,10 @@ public:
     CLASSNAME_REGISTER( plSpotLightInfo );
     GETINTERFACE_ANY( plSpotLightInfo, plOmniLightInfo );
 
-    virtual void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const;
+    void GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, float& scale) const override;
 
     hsVector3 GetWorldDirection() const;
-    virtual hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const { return -GetWorldDirection(); }
+    hsVector3 GetNegativeWorldDirection(const hsPoint3& pos) const override { return -GetWorldDirection(); }
 
     void SetFalloff(float f) { fFalloff = f; SetDirty(true); }
     void SetSpotInner(float rads) { fSpotInner = rads; SetDirty(true); }
@@ -401,11 +401,11 @@ public:
     float GetSpotInner() const { return fSpotInner; }
     float GetSpotOuter() const { return fSpotOuter; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
 
 };
 

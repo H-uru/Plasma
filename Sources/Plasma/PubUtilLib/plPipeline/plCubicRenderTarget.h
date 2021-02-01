@@ -120,7 +120,7 @@ class plCubicRenderTarget : public plRenderTarget
         }
 
         // Get the total size in bytes
-        virtual uint32_t  GetTotalSize() const;
+        uint32_t  GetTotalSize() const override;
 
         virtual void                SetCameraMatrix(const hsPoint3& pos);
         virtual const hsMatrix44&   GetWorldToCamera(uint8_t face) const { return fWorldToCameras[face]; }
@@ -128,8 +128,8 @@ class plCubicRenderTarget : public plRenderTarget
 
         plRenderTarget  *GetFace(uint8_t face) const { return fFaces[face]; }
 
-        virtual uint32_t  Read(hsStream *s);
-        virtual uint32_t  Write(hsStream *s);
+        uint32_t  Read(hsStream *s) override;
+        uint32_t  Write(hsStream *s) override;
 
 };
 

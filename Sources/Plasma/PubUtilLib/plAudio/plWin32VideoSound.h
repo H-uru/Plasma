@@ -51,16 +51,16 @@ public:
     plWin32VideoSound(const plWAVHeader& header);
     virtual ~plWin32VideoSound();
 
-    virtual void Play();
+    void Play() override;
     virtual void Pause(bool on);
     void FillSoundBuffer(void* buffer, size_t size);
 
 protected:
-    void IDerivedActuallyPlay();
-    bool LoadSound(bool is3D);
-    void SetStartPos(unsigned bytes);
-    float GetActualTimeSec();
-    void  ISetActualTime(double t);
+    void IDerivedActuallyPlay() override;
+    bool LoadSound(bool is3D) override;
+    void SetStartPos(unsigned bytes) override;
+    float GetActualTimeSec() override;
+    void  ISetActualTime(double t) override;
 
     plWAVHeader fWAVHeader;
 };

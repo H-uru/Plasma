@@ -128,8 +128,8 @@ public:
     float fTime;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 // plAnimCmdMsg is intented for animation commands sent to a plAnimTimeConvert. Commands that only apply to the
@@ -181,8 +181,8 @@ public:
     float fAnimTime;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 class plAGInstanceCallbackMsg : public plEventCallbackMsg
@@ -196,8 +196,8 @@ public:
     GETINTERFACE_ANY( plAGInstanceCallbackMsg, plEventCallbackMsg );
 
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 
     plAGAnimInstance *fInstance;
 };
@@ -216,8 +216,8 @@ public:
     GETINTERFACE_ANY( plAGDetachCallbackMsg, plEventCallbackMsg );
 
     // These aren't meant to go across the net, so no IO necessary.
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+    void Read(hsStream* stream, hsResMgr* mgr) override { }
+    void Write(hsStream* stream, hsResMgr* mgr) override { }
 
     void SetAnimName(const ST::string& name) { fAnimName = name; }
     ST::string GetAnimName() const { return fAnimName; }

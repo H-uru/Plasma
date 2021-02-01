@@ -203,7 +203,7 @@ protected:
 public:
     plWriteIterator(hsStream* s) : fStream(s) {}
 
-    virtual bool EatKey(const plKey& key)
+    bool EatKey(const plKey& key) override
     {
         plKeyImp* imp = (plKeyImp*)key;
         imp->WriteObject(fStream);
