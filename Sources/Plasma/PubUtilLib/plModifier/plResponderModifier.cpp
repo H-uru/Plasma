@@ -457,7 +457,7 @@ void plResponderModifier::Restore()
 
                 // Setup the sender and receiver
                 newCallbackMsg->SetSender(callbackMsg->GetSender());
-                for (int iReceiver = 0; i < callbackMsg->GetNumReceivers(); i++)
+                for (int iReceiver = 0; iReceiver < callbackMsg->GetNumReceivers(); iReceiver++)
                     newCallbackMsg->AddReceiver(callbackMsg->GetReceiver(iReceiver));
 
                 // Add the callbacks
