@@ -805,7 +805,7 @@ PF_CONSOLE_CMD( Console, PrintVar, "string name", "Prints the value of a given g
 {
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
-    int32_t idx = ctx.FindVar( params[ 0 ] );
+    hsSsize_t idx = ctx.FindVar(params[0]);
     if( idx == -1 )
         PrintString( "Variable not found" );
     else
@@ -818,10 +818,8 @@ PF_CONSOLE_CMD( Console, PrintAllVars, "", "Prints the values of all global cons
 {
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
-    uint32_t  i;
-
     PrintString( "Global console variables:" );
-    for( i = 0; i < ctx.GetNumVars(); i++ )
+    for (size_t i = 0; i < ctx.GetNumVars(); i++)
     {
         pfConsolePrintF(PrintString, "  {}: {}", (const char *)ctx.GetVarName(i), (const char *)ctx.GetVarValue(i));
     }
