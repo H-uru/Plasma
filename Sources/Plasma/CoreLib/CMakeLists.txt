@@ -59,7 +59,6 @@ set(CoreLib_HEADERS
     hsExceptionStack.h
     hsFastMath.h
     hsGeometry3.h
-    hsHashTable.h
     hsLockGuard.h
     hsMatrix44.h
     hsMemory.h

@@ -45,11 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <max.h>
 #include "UserPropMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsHashTable.h"
 
 #define REFMSG_USERPROP  (REFMSG_USER + 1)
-
-const uint32_t UserPropMgr::kQuickSize = 150001;//199999;
 
 UserPropMgr gUserPropMgr(GetCOREInterface());
 
@@ -752,29 +749,20 @@ INode *UserPropMgr::GetSelNode(int i) {
 
 void UserPropMgr::OpenQuickTable()
 {
-        if (!fQuickTable)
-        {
-        fQuickTable = new hsHashTable<QuickPair>(kQuickSize);
-        }
+    if (!fQuickTable)
+    {
+        fQuickTable = new std::unordered_set<QuickPair>;
+    }
     fQuickNode = nil;
 }
 
 void UserPropMgr::CloseQuickTable()
-        {
-#ifdef HS_DEBUGGING
-    if (fQuickNode && fQuickTable)
-            {
-        char str[256];
-        sprintf(str,"%d Hash Collisions reported\n",fQuickTable->CollisionCount());
-        hsStatusMessage(str);
-            }
-#endif
-
+{
     delete fQuickTable;
     fQuickTable = nil;
     fQuickNode = nil;
     QuickPair::SetBuffer(nil);
-        }
+}
 
 void UserPropMgr::IBuildQuickTable(INode* node)
 {
@@ -841,9 +829,9 @@ bool UserPropMgr::ICheckQuickEntry(const char *key, TSTR &value)
 {
     QuickPair q;
     q.SetKey(key);
-    hsHashTableIterator<QuickPair> it = fQuickTable->find(q);
+    auto it = fQuickTable->find(q);
     return it->GetVal(value);
-    }
+}
 
 
 char* UserPropMgr::QuickPair::fBuffer = nil;
@@ -866,7 +854,7 @@ uint32_t UserPropMgr::QuickPair::GetHash() const
     return h;
 }
 
-bool UserPropMgr::QuickPair::GetVal(TSTR& value)
+bool UserPropMgr::QuickPair::GetVal(TSTR& value) const
     {
     if (fKey)
         {
