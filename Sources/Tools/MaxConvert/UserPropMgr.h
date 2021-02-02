@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _USERPROPMGR_H_
 
 #include "HeadSpin.h"
+#include <unordered_set>
 
-template <class T> class hsHashTable;
 class Interface;
 class NameMaker;
 class INode;
@@ -144,11 +144,14 @@ private:
 
         uint32_t GetHash() const;
 
-        bool GetVal(TSTR& value);
+        bool GetVal(TSTR& value) const;
 
         bool operator==(const QuickPair& other) const;
     };
-    hsHashTable<QuickPair>* fQuickTable;
+
+    friend struct std::hash<QuickPair>;
+
+    std::unordered_set<QuickPair>* fQuickTable;
     static const uint32_t kQuickSize;
     INode* fQuickNode;
     void IBuildQuickTable(INode* node);
@@ -157,5 +160,17 @@ private:
     Interface *ip;
 
 };
+
+namespace std
+{
+    template <>
+    struct hash<UserPropMgr::QuickPair>
+    {
+        size_t operator()(const UserPropMgr::QuickPair& pair) const
+        {
+            return pair.GetHash();
+        }
+    };
+}
 
 #endif

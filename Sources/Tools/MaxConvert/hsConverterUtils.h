@@ -42,11 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSCONVERTERUTILS_H
 #define __HSCONVERTERUTILS_H
 
+#include <unordered_set>
+
 class Control;
 class INode;
 class Interface;
 
-template <class T> class hsHashTable;
 class hsMaxLayerBase;
 class plSimplePosController;
 class plScalarController;
@@ -125,7 +126,7 @@ private:
         CacheNode(const char* name) : fName(name), fNode(nil), fCaseSensitive(false) { }
         ~CacheNode() { }
 
-        INode* GetNode() { return fNode; }
+        INode* GetNode() const { return fNode; }
         const char* GetName() const { return fNode ? fNode->GetName() : fName; }
 
         void SetCaseSensitive(bool b) { fCaseSensitive = b; }
@@ -134,9 +135,23 @@ private:
         uint32_t GetHash() const;
         bool operator==(const CacheNode& other) const;
     };
-    hsHashTable<CacheNode>* fNodeSearchCache;
+
+    friend struct std::hash<CacheNode>;
+
+    std::unordered_set<CacheNode>* fNodeSearchCache;
 };
 
+namespace std
+{
+    template <>
+    struct hash<hsConverterUtils::CacheNode>
+    {
+        size_t operator()(const hsConverterUtils::CacheNode& node) const
+        {
+            return node.GetHash();
+        }
+    };
+}
 
 #endif
 

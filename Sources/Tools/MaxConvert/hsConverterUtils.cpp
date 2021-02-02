@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
-#include "hsHashTable.h"
 #include "hsStringTokenizer.h"
 #include "hsResMgr.h"
 #include <cmath>
@@ -494,7 +493,7 @@ INode* hsConverterUtils::GetINodeByName(const char* name, bool caseSensitive)
     {
         CacheNode cNode(name);
         cNode.SetCaseSensitive(caseSensitive);
-        hsHashTableIterator<CacheNode> it = fNodeSearchCache->find(cNode);
+        auto it = fNodeSearchCache->find(cNode);
         return it->GetNode();
     }
 
@@ -520,7 +519,7 @@ void hsConverterUtils::CreateNodeSearchCache()
 {
     if (!fNodeSearchCache)
     {
-        fNodeSearchCache = new hsHashTable<CacheNode>();
+        fNodeSearchCache = new std::unordered_set<CacheNode>;
     }
     fNodeSearchCache->clear();
 
