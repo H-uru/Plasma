@@ -2423,13 +2423,10 @@ bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visL
 
             const int numTris = span->fILength/3;
             
-            static hsTArray<plSortFace> sortScratch;
-            sortScratch.SetCount(numTris);
+            static std::vector<plSortFace> sortScratch;
+            sortScratch.resize(numTris);
 
             plProfile_IncCount(AvatarFaces, numTris);
-
-            plSortFace* begin = sortScratch.AcquireArray();
-            plSortFace* end = begin + numTris;
 
             // 
             // Have three very similar sorts here, differing only on where the "position" of
@@ -2504,16 +2501,14 @@ bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visL
 #endif // SORTTYPES
             }
 
-            std::sort(begin, end, plCompSortFace());
+            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
 
             indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            plSortFace* iter = sortScratch.AcquireArray();;
-            for( j = 0; j < numTris; j++ )
+            for (const plSortFace& iter : sortScratch)
             {
-                *indices++ = iter->fIdx[0];
-                *indices++ = iter->fIdx[1];
-                *indices++ = iter->fIdx[2];
-                iter++;
+                *indices++ = iter.fIdx[0];
+                *indices++ = iter.fIdx[1];
+                *indices++ = iter.fIdx[2];
             }
 
             group->DirtyIndexBuffer(span->fIBufferIdx);

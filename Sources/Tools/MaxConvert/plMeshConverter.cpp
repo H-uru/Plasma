@@ -2442,12 +2442,10 @@ void SetWaterColor(plGeometrySpan* span)
 
     const int nVerts = tri.VertCount();
     // Now, set up our accumulators
-    hsTArray<float> lens;
-    lens.SetCount(nVerts);
-    memset(lens.AcquireArray(), 0, nVerts * sizeof(float));
-    hsTArray<float> wgts;
-    wgts.SetCount(nVerts);
-    memset(wgts.AcquireArray(), 0, nVerts * sizeof(float));
+    std::vector<float> lens;
+    lens.resize(nVerts);
+    std::vector<float> wgts;
+    wgts.resize(nVerts);
 
     // For each triangle
     for( triIter.Begin(); triIter.More(); triIter.Advance() )
@@ -2490,9 +2488,8 @@ void SetWaterColor(plGeometrySpan* span)
     }
     // Now we might want to smooth this out some
     // This can be repeated for any degree of smoothing
-    hsTArray<float> smLens;
-    smLens.SetCount(nVerts);
-    memset(smLens.AcquireArray(), 0, nVerts * sizeof(float));
+    std::vector<float> smLens;
+    smLens.resize(nVerts);
     // For each triangle
     for( triIter.Begin(); triIter.More(); triIter.Advance() )
     {
@@ -2514,7 +2511,7 @@ void SetWaterColor(plGeometrySpan* span)
             wgts[iVertLast] += kSmooth;
         }
     }
-    lens.Swap(smLens);
+    lens.swap(smLens);
     // For each vert
     for( iVert = 0; iVert < nVerts; iVert++ )
     {

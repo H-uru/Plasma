@@ -167,7 +167,7 @@ bool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance=nil;
 
-static hsTArray<HMODULE>        fLoadedDLLs;
+static std::vector<HMODULE> fLoadedDLLs;
 
 plClient::plClient()
     : fPipeline(), fDone(), fQuitIntro(), fWindowHndl(),
@@ -1493,21 +1493,20 @@ void plClient::InitDLLs()
             PInitGlobalsFunc initGlobals = (PInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");
             (*initGlobals)(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(),
                 hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
-            fLoadedDLLs.Append(hMod);
+            fLoadedDLLs.emplace_back(hMod);
         }
     }
 }
 
 void plClient::ShutdownDLLs()
 {
-    int j;
-    for( j = 0; j < fLoadedDLLs.GetCount(); j++ )
+    for (HMODULE dll : fLoadedDLLs)
     {
-        BOOL ret = FreeLibrary(fLoadedDLLs[j]);
+        BOOL ret = FreeLibrary(dll);
         if( !ret )
             hsStatusMessage("Failed to free lib\n");
     }
-    fLoadedDLLs.Reset();
+    fLoadedDLLs.clear();
 }
 
 bool plClient::MainLoop()

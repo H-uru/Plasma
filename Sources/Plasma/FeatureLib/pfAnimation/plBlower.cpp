@@ -88,15 +88,14 @@ void plBlower::IBlow(double secs, float delSecs)
     float t = (fAccumTime += delSecs);
 
     float strength = 0;
-    int i;
-    for( i = 0; i < fOscillators.GetCount(); i++ )
+    for (const Oscillator& osc : fOscillators)
     {
         float c, s;
-        t *= fOscillators[i].fFrequency * fMasterFrequency;
-        t += fOscillators[i].fPhase;
+        t *= osc.fFrequency * fMasterFrequency;
+        t += osc.fPhase;
         hsFastMath::SinCosAppr(t, s, c);
         c += fBias;
-        strength += c * fOscillators[i].fPower;
+        strength += c * osc.fPower;
     }
     strength *= fMasterPower;
 
@@ -204,9 +203,8 @@ void plBlower::Write(hsStream* s, hsResMgr* mgr)
 void plBlower::IInitOscillators()
 {
     const float kBasePower = 5.f;
-    fOscillators.SetCount(5);
-    int i;
-    for( i = 0; i < fOscillators.GetCount(); i++ )
+    fOscillators.resize(5);
+    for (size_t i = 0; i < fOscillators.size(); i++)
     {
         float fi = float(i+1);
         fOscillators[i].fFrequency = fi / hsConstants::pi<float> * fRandom.RandRangeF(0.75f, 1.25f);

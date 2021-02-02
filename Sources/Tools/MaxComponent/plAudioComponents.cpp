@@ -2219,9 +2219,9 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     // allocate it here).
     // Also also also build up a volume array parallel to startPoses that represents the individual volume
     // setting for each sound in the group
-    hsTArray<uint32_t>        startPoses;
-    hsTArray<float>      volumes;
-    hsTArray<uint8_t>       mergedData;
+    std::vector<uint32_t>   startPoses;
+    std::vector<float>      volumes;
+    std::vector<uint8_t>    mergedData;
     int                     i;
     plWAVHeader             mergedHeader;
 
@@ -2236,8 +2236,8 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
             IShowError( kSrcBufferInvalid, msg, baseNode->GetName(), pErrMsg );
 
             // Attempt to recover
-            startPoses.Append( mergedData.GetCount() );
-            volumes.Append( 1.f );
+            startPoses.emplace_back((uint32_t)mergedData.size());
+            volumes.emplace_back(1.f);
             continue;
         }
 
@@ -2270,8 +2270,8 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
                 delete buffer;
 
                 // Attempt to recover
-                startPoses.Append( mergedData.GetCount() );
-                volumes.Append( 1.f );
+                startPoses.emplace_back((uint32_t)mergedData.size());
+                volumes.emplace_back(1.f);
                 continue;
             }
         }
@@ -2290,22 +2290,22 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
                 delete buffer;
 
                 // Attempt to recover
-                startPoses.Append( mergedData.GetCount() );
-                volumes.Append( 1.f );
+                startPoses.emplace_back((uint32_t)mergedData.size());
+                volumes.emplace_back(1.f);
                 continue;
             }
         }
 
         // Grab the data from this buffer and merge it
-        uint32_t pos = mergedData.GetCount();
-        startPoses.Append( pos );
-        mergedData.Resize(pos + buffer->GetDataLength());
+        uint32_t pos = (uint32_t)mergedData.size();
+        startPoses.emplace_back(pos);
+        mergedData.resize(pos + buffer->GetDataLength());
         memcpy( &mergedData[ pos ], buffer->GetData(), buffer->GetDataLength() );
 
         delete buffer;
 
         // Also keep track of what the volume should be for this particular sound
-        volumes.Append( groupArray[ i ]->GetSoundVolume() );
+        volumes.emplace_back(groupArray[i]->GetSoundVolume());
     }
 
     /// We got a merged buffer, so make a plSoundBuffer from it
@@ -2321,8 +2321,8 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
 
     // Create a new one...
     plSoundBuffer   *mergedBuffer = new plSoundBuffer();
-    mergedBuffer->SetInternalData( mergedHeader, mergedData.GetCount(), mergedData.AcquireArray() );
-    mergedData.Reset();
+    mergedBuffer->SetInternalData(mergedHeader, mergedData.size(), mergedData.data());
+    mergedData.clear();
     // The buffer may be shared across multiple sources. We could or together the LoadMasks of all
     // the nodes that use it, or we can just go with the default loadmask of Always load, and
     // count on it never getting dragged into memory if nothing that references it does.
@@ -2336,7 +2336,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
 
     keyName = ST::string::from_utf8(GetINode()->GetName());
     plWin32GroupedSound *sound = new plWin32GroupedSound;
-    sound->SetPositionArray( startPoses.GetCount(), startPoses.AcquireArray(), volumes.AcquireArray() );
+    sound->SetPositionArray(startPoses.size(), startPoses.data(), volumes.data());
     sound->SetProperty( plSound::kPropLoadOnlyOnCall, true );
 
     hsgResMgr::ResMgr()->NewKey( keyName, sound, baseNode->GetLocation(), baseNode->GetLoadMask() );

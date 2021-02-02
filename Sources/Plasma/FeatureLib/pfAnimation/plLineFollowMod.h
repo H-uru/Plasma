@@ -90,7 +90,7 @@ protected:
 
     mutable hsPoint3    fSearchPos;
 
-    hsTArray<plStereizer*>      fStereizers;
+    std::vector<plStereizer*> fStereizers;
 
     float            fTanOffset;
     float            fOffset;

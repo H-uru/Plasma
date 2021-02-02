@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include "plFileSystem.h"
 
+template <class T> class hsTArray;
 class plRegistryPageNode;
 class plRegistryKeyIterator;
 class plRegistryPageIterator;

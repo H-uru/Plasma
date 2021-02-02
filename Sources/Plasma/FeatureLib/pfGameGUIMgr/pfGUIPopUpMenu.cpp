@@ -546,7 +546,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
     // Control positions are in the lower left corner, so increment Y by 1 control height first
     y += height;// + topMargin;
 
-    hsTArray<pfGUIPopUpMenu *>  buildList;
+    std::vector<pfGUIPopUpMenu *> buildList;
 
     for( i = 0; i < fMenuItems.GetCount(); i++ )
     {
@@ -569,7 +569,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
             if( fMenuItems[ i ].fSubMenu != nil )
             {
                 button->SetFlag( pfGUIMenuItem::kDrawSubMenuArrow );
-                buildList.Append( pfGUIPopUpMenu::ConvertNoRef( fMenuItems[ i ].fSubMenu ) );
+                buildList.emplace_back(pfGUIPopUpMenu::ConvertNoRef(fMenuItems[i].fSubMenu));
             }
         }
 
@@ -587,8 +587,8 @@ bool    pfGUIPopUpMenu::IBuildMenu()
     // Also, we need to bump the tag ID used, such as adding parent menuItem TagID * 100.. or something
 
     // Disabled because right now we can't move menus, which is required for this to work
-    for( i = 0; i < buildList.GetCount(); i++ )
-        buildList[ i ]->IBuildMenu();
+    for (pfGUIPopUpMenu* buildMenu : buildList)
+        buildMenu->IBuildMenu();
 #endif
 
     return true;

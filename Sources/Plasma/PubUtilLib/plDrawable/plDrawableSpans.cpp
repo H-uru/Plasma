@@ -1539,8 +1539,8 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
 
     ICheckSpanForSortable(index);
 
-    static hsTArray<hsRadixSort::Elem>  sortList;
-    static hsTArray<uint16_t>             tempTriList;
+    static std::vector<hsRadixSort::Elem>  sortList;
+    static std::vector<uint16_t>           tempTriList;
     hsRadixSort::Elem                   *elem;
 
 
@@ -1553,9 +1553,9 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     hsAssert( numTris > 0, "How could we start sorting no triangles??" );
 
     /// Sort the triangles in "list"
-    sortList.SetCount( numTris );
-    tempTriList.SetCount( numTris * 3 );
-    elem = sortList.AcquireArray();
+    sortList.resize(numTris);
+    tempTriList.resize(numTris * 3);
+    elem = sortList.data();
 
     plProfile_EndLap(FaceSort, "0");
     plProfile_BeginLap(FaceSort, "1");
@@ -1583,7 +1583,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     plProfile_EndLap(FaceSort, "2");
     plProfile_BeginLap(FaceSort, "3");
 
-    uint16_t* indices = tempTriList.AcquireArray();
+    uint16_t* indices = tempTriList.data();
     // Stuff into the temp array
     for( i = 0, elem = sortedList; i < numTris; i++ )
     {
@@ -1598,7 +1598,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
 
     /// Now send them on to the buffer group
     fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                  numTris, tempTriList.AcquireArray() );
+                                                  numTris, tempTriList.data());
 
     /// Optional step in a way: copy back our new, sorted list to our original
     /// array. This lets us do less sorting next call, since the order should

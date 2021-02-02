@@ -323,7 +323,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 class plUnloadAgeCollector : public plRegistryPageIterator
 {
     public:
-        hsTArray<plRegistryPageNode *>  fPages;
+        std::vector<plRegistryPageNode *> fPages;
         const ST::string                fAge;
 
         plUnloadAgeCollector(const ST::string& a) : fAge( a ) {}
@@ -332,7 +332,7 @@ class plUnloadAgeCollector : public plRegistryPageIterator
         {
             if ( !fAge.empty() && page->GetPageInfo().GetAge().compare_i(fAge) == 0 )
             {
-                fPages.Append( page );
+                fPages.emplace_back(page);
             }
 
             return true;
@@ -367,11 +367,8 @@ bool    plAgeLoader::IUnloadAge()
     // Build up a list of all the rooms we're going to page out
     plKeyVec newPageOuts;
 
-    int i;
-    for( i = 0; i < collector.fPages.GetCount(); i++ )
+    for (plRegistryPageNode *page : collector.fPages)
     {
-        plRegistryPageNode *page = collector.fPages[ i ];
-
         plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( page->GetPageInfo().GetLocation() );
         if( roomKey != nil && roomKey->ObjectIsLoaded() )
         {
@@ -381,15 +378,15 @@ bool    plAgeLoader::IUnloadAge()
     }
 
     // Put them in our pending page outs
-    for( i = 0; i < newPageOuts.size(); i++ )
-        fPendingPageOuts.push_back(newPageOuts[i]);
+    for (const plKey& poKey : newPageOuts)
+        fPendingPageOuts.push_back(poKey);
 
     // ...then send the unload messages.  That way we ensure the list is complete
     // before any messages get processed
-    for( i = 0; i < newPageOuts.size(); i++ )
+    for (const plKey& poKey : newPageOuts)
     {
         plClientMsg *pMsg1 = new plClientMsg( plClientMsg::kUnloadRoom );
-        pMsg1->AddRoomLoc(newPageOuts[i]->GetUoid().GetLocation());
+        pMsg1->AddRoomLoc(poKey->GetUoid().GetLocation());
         pMsg1->Send( clientKey );
     }
     

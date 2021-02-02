@@ -58,9 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plTweak.h"
 
-static hsTArray<hsRadixSortElem> scratchList;
+static std::vector<hsRadixSortElem> scratchList;
 
-bool plPageTreeMgr::fDisableVisMgr = 0;
+bool plPageTreeMgr::fDisableVisMgr = false;
 
 plProfile_CreateTimer("Object Sort", "Draw", DrawObjSort);
 plProfile_CreateCounter("Objects Sorted", "Draw", DrawObjSorted);
@@ -244,7 +244,7 @@ bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& draw
     if( !drawList.GetCount() )
         return false;
 
-    scratchList.SetCount(drawList.GetCount());
+    scratchList.resize(drawList.GetCount());
 
     hsRadixSort::Elem* listTrav = nil;
     int i;
@@ -258,7 +258,7 @@ bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& draw
     listTrav->fNext = nil;
 
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), hsRadixSort::kUnsigned);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), hsRadixSort::kUnsigned);
 
     listTrav = sortedList;
 
@@ -344,7 +344,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     plProfile_IncCount(DrawObjSorted, pairs.GetCount());
 
     hsRadixSort::Elem* listTrav;
-    scratchList.SetCount(pairs.GetCount());
+    scratchList.resize(pairs.GetCount());
 
     // First, sort on distance to the camera (squared).
     listTrav = nil;
@@ -378,7 +378,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     listTrav->fNext = nil;
 
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), 0);
 
     plProfile_EndTiming(DrawObjSort);
 
@@ -565,7 +565,7 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
     hsPoint3 viewPos = pipe->GetViewPositionWorld();
 
     hsRadixSort::Elem* listTrav;
-    scratchList.SetCount(fCullPolys.GetCount());
+    scratchList.resize(fCullPolys.GetCount());
     int i;
     for( i = 0; i < fCullPolys.GetCount(); i++ )
     {
@@ -594,7 +594,7 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
     listTrav->fNext = nil;
 
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), 0);
     listTrav = sortedList;
 
     if( numSubmit > kMaxCullPolys )
@@ -617,7 +617,7 @@ bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
     plProfile_BeginTiming(DrawOccSort);
 
     hsRadixSort::Elem* listTrav = nil;
-    scratchList.SetCount(fOccluders.GetCount());
+    scratchList.resize(fOccluders.GetCount());
 
     hsPoint3 viewPos = pipe->GetViewPositionWorld();
 
@@ -646,7 +646,7 @@ bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
 
     // Sort the occluders by priority
     hsRadixSort rad;
-    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.AcquireArray(), 0);
+    hsRadixSort::Elem* sortedList = rad.Sort(scratchList.data(), 0);
     listTrav = sortedList;
 
     const uint32_t kMaxOccluders = 1000;

@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #define PLFACTORY_PRIVATE
-#include "HeadSpin.h"
 #include "plFactory.h"
 #include "hsStream.h"
 #include "plCreatable.h"
@@ -56,7 +55,7 @@ static plFactory*   theFactory = nil;
 
 plFactory::plFactory()
 {
-    fCreators.SetCountAndZero(plCreatableIndex::plNumClassIndices);
+    fCreators.resize(plCreatableIndex::plNumClassIndices);
 }
 
 plFactory::~plFactory()
@@ -80,8 +79,7 @@ uint16_t plFactory::IGetNumClasses()
 
 void plFactory::IForceShutdown()
 {
-    int i;
-    for( i = 0; i < fCreators.GetCount(); i++ )
+    for (size_t i = 0; i < fCreators.size(); i++)
     {
         if( fCreators[i] )
         {
@@ -180,7 +178,7 @@ uint16_t plFactory::GetNumClasses()
 
 bool plFactory::IDerivesFrom(uint16_t hBase, uint16_t hDer)
 {
-    if( hDer >= fCreators.GetCount() )
+    if (hDer >= fCreators.size())
         return false;
 
     return fCreators[hDer] ? fCreators[hDer]->HasBaseClass(hBase) : false;
@@ -189,7 +187,7 @@ bool plFactory::IDerivesFrom(uint16_t hBase, uint16_t hDer)
 bool plFactory::DerivesFrom(uint16_t hBase, uint16_t hDer)
 {
     if( !theFactory && !ICreateTheFactory() )
-        return 0;
+        return false;
 
     return theFactory->IDerivesFrom(hBase, hDer);
 }
@@ -201,12 +199,11 @@ uint16_t plFactory::FindClassIndex(const char* className)
 
     if (className && theFactory)
     {
-        int i;
-        for( i = 0; i < theFactory->fCreators.GetCount(); i++ )
+        for (plCreator* creator : theFactory->fCreators)
         {
-            if( theFactory->fCreators[i] && !stricmp(className, theFactory->fCreators[i]->ClassName()) )
+            if (creator && stricmp(className, creator->ClassName()) == 0)
             {
-                return theFactory->fCreators[i]->ClassIndex();
+                return creator->ClassIndex();
             }
         }
     }
@@ -216,7 +213,7 @@ uint16_t plFactory::FindClassIndex(const char* className)
 
 bool plFactory::IIsValidClassIndex(uint16_t hClass)
 {
-    return ( hClass < fCreators.GetCount() );
+    return (hClass < fCreators.size());
 }
 
 bool plFactory::IsValidClassIndex(uint16_t hClass)

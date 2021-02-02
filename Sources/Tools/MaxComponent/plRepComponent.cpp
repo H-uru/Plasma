@@ -403,13 +403,13 @@ void plRepGroupComp::IGetQC(int quals[], int caps[])
 bool plRepGroupComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     const int numReps = fCompPB->Count(kReps);
-    hsTArray<int> quals(numReps);
-    hsTArray<int> caps(numReps);
-    hsTArray<plLoadMask> masks(numReps);
+    std::vector<int> quals(numReps);
+    std::vector<int> caps(numReps);
+    std::vector<plLoadMask> masks(numReps);
 
-    IGetQC(quals.AcquireArray(), caps.AcquireArray());
+    IGetQC(quals.data(), caps.data());
 
-    ComputeAndValidate(pErrMsg, quals.AcquireArray(), caps.AcquireArray(), masks.AcquireArray());
+    ComputeAndValidate(pErrMsg, quals.data(), caps.data(), masks.data());
 
     int i;
     for( i = 0; i < numReps; i++ )
@@ -485,11 +485,11 @@ bool plRepGroupComp::Validate(plErrorMsg* pErrMsg)
     CleanDeadNodes();
 
     const int numReps = fCompPB->Count(kReps);
-    hsTArray<int> quals(numReps);
-    hsTArray<int> caps(numReps);
-    hsTArray<plLoadMask> masks(numReps);
+    std::vector<int> quals(numReps);
+    std::vector<int> caps(numReps);
+    std::vector<plLoadMask> masks(numReps);
 
-    IGetQC(quals.AcquireArray(), caps.AcquireArray());
+    IGetQC(quals.data(), caps.data());
 
-    return ComputeAndValidate(pErrMsg, quals.AcquireArray(), caps.AcquireArray(), masks.AcquireArray());
+    return ComputeAndValidate(pErrMsg, quals.data(), caps.data(), masks.data());
 }

@@ -77,7 +77,7 @@ class plTextFont
             uint32_t      fColor;
             hsPoint3    fUV;
 
-            plFontVertex& operator=(const int zero)
+            plFontVertex& operator=(std::nullptr_t)
             {
                 fPoint.Set(0,0,0);
                 fColor = 0;

@@ -193,12 +193,11 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32
 {
     // First off, find out how many and which vers we're talking here.
     // Easiest way is while we're building the LUTs we'll want later anyway.
-    hsTArray<int16_t> fwdLUT;
-    fwdLUT.SetCount(src->fNumVerts);
-    memset(fwdLUT.AcquireArray(), -1, src->fNumVerts * sizeof(*fwdLUT.AcquireArray()));
+    std::vector<int16_t> fwdLUT;
+    fwdLUT.resize(src->fNumVerts);
+    memset(fwdLUT.data(), -1, src->fNumVerts * sizeof(*fwdLUT.data()));
 
-    hsTArray<uint16_t>    bckLUT;
-    bckLUT.SetCount(0);
+    std::vector<uint16_t> bckLUT;
 
     int i;
     for( i = 0; i < tris.GetCount(); i++ )
@@ -207,28 +206,28 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32
         
         if( fwdLUT[*idx] < 0 )
         {
-            fwdLUT[*idx] = bckLUT.GetCount();
-            bckLUT.Append(*idx);
+            fwdLUT[*idx] = (int16_t)bckLUT.size();
+            bckLUT.emplace_back(*idx);
         }
 
         idx++;
 
         if( fwdLUT[*idx] < 0 )
         {
-            fwdLUT[*idx] = bckLUT.GetCount();
-            bckLUT.Append(*idx);
+            fwdLUT[*idx] = (int16_t)bckLUT.size();
+            bckLUT.emplace_back(*idx);
         }
 
         idx++;
 
         if( fwdLUT[*idx] < 0 )
         {
-            fwdLUT[*idx] = bckLUT.GetCount();
-            bckLUT.Append(*idx);
+            fwdLUT[*idx] = (int16_t)bckLUT.size();
+            bckLUT.emplace_back(*idx);
         }
     }
 
-    int numVerts = bckLUT.GetCount();
+    int numVerts = (int)bckLUT.size();
     int numTris = tris.GetCount();
 
     plGeometrySpan* dst = IAllocSpace(src, numVerts, numTris);
