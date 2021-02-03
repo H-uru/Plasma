@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map draw functions to plasma2 message
 //
 
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueHelpers.h"
@@ -58,7 +57,7 @@ class cyDraw
 {
 protected:
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     bool            fNetForce;
 
     cyDraw(plKey sender=nil,const plKey recvr=nil);
@@ -75,8 +74,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    void SetSender(plKey &sender);
-    void AddRecvr(plKey &recvr);
+    void SetSender(const plKey &sender);
+    void AddRecvr(const plKey &recvr);
     void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable draw

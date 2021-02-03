@@ -184,7 +184,7 @@ plPipeline* pyKey::GetPipeline()
 }
 
 // get the notify list count
-int32_t pyKey::NotifyListCount()
+size_t pyKey::NotifyListCount() const
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )
@@ -194,7 +194,7 @@ int32_t pyKey::NotifyListCount()
 }
 
 // get a notify list item
-plKey pyKey::GetNotifyListItem(int32_t i)
+plKey pyKey::GetNotifyListItem(size_t i) const
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )

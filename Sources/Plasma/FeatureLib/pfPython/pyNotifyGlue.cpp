@@ -431,7 +431,7 @@ PLASMA_DEFAULT_TYPE(ptNotify, "Params: selfKey\nCreates a Notify message\n"
             "- selfKey is ptKey of your PythonFile modifier");
 
 // required functions for PyObject interoperability
-PyObject *pyNotify::New(pyKey& selfkey)
+PyObject *pyNotify::New(const pyKey& selfkey)
 {
     ptNotify *newObj = (ptNotify*)ptNotify_type.tp_new(&ptNotify_type, NULL, NULL);
     newObj->fThis->SetSender(selfkey);

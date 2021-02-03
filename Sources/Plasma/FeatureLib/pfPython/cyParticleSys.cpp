@@ -54,15 +54,15 @@ cyParticleSys::cyParticleSys(plKey sender, plKey recvr)
 }
 
 // setters
-void cyParticleSys::SetSender(plKey &sender)
+void cyParticleSys::SetSender(const plKey &sender)
 {
     fSender = sender;
 }
 
-void cyParticleSys::AddRecvr(plKey &recvr)
+void cyParticleSys::AddRecvr(const plKey &recvr)
 {
     if ( recvr != nil )
-        fRecvr.Append(recvr);
+        fRecvr.emplace_back(recvr);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -84,11 +84,9 @@ void cyParticleSys::ISendParticleSysMsg(uint32_t param, float value)
     }
     pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
     // add all our receivers to the message receiver list
-    int i;
-    for ( i=0; i<fRecvr.Count(); i++ )
-    {
-        pMsg->AddReceiver(fRecvr[i]);
-    }
+    for (const plKey& rcKey : fRecvr)
+        pMsg->AddReceiver(rcKey);
+
     plgDispatch::MsgSend(pMsg);
 }
 

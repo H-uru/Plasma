@@ -58,7 +58,7 @@ class pyNotify
 private:
     plKey           fSenderKey;     // the holder of the who (the modifier) we are
     // the list of receivers that want to be notified
-    hsTArray<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
 
     bool            fNetPropagate;
     bool            fNetForce;
@@ -68,21 +68,21 @@ private:
 
 protected:
     pyNotify(); // only used by python glue, do NOT call
-    pyNotify(pyKey& selfkey);
+    pyNotify(const pyKey& selfkey);
 
 public:
     virtual ~pyNotify();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptNotify);
-    static PyObject *New(pyKey& selfkey);
+    static PyObject *New(const pyKey& selfkey);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyNotify object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyNotify); // converts a PyObject to a pyNotify (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    void SetSender(pyKey& selfkey); // only used by python glue, do NOT call
+    void SetSender(const pyKey& selfkey); // only used by python glue, do NOT call
 
     // methods that will be exposed to Python
     virtual void ClearReceivers();

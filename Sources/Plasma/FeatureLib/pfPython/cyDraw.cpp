@@ -54,21 +54,21 @@ cyDraw::cyDraw(plKey sender, plKey recvr)
 }
 
 // setters
-void cyDraw::SetSender(plKey &sender)
+void cyDraw::SetSender(const plKey &sender)
 {
     fSender = sender;
 }
 
-void cyDraw::AddRecvr(plKey &recvr)
+void cyDraw::AddRecvr(const plKey &recvr)
 {
     if ( recvr != nil )
-        fRecvr.Append(recvr);
+        fRecvr.emplace_back(recvr);
 }
 
 void cyDraw::EnableT(bool state)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plEnableMsg* pMsg = new plEnableMsg;
@@ -83,11 +83,9 @@ void cyDraw::EnableT(bool state)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the interface to the draw
         pMsg->SetCmd(plEnableMsg::kDrawable);
         pMsg->AddType(plEnableMsg::kDrawable);

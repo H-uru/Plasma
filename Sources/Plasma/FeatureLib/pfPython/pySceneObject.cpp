@@ -97,7 +97,7 @@ pySceneObject::pySceneObject()
     fNetForce = false;
 }
 
-pySceneObject::pySceneObject(pyKey& objkey, pyKey& selfkey)
+pySceneObject::pySceneObject(const pyKey& objkey, const pyKey& selfkey)
 {
     // make sure these are created
     fDraw = cyDraw::New();
@@ -111,7 +111,7 @@ pySceneObject::pySceneObject(pyKey& objkey, pyKey& selfkey)
     fNetForce = false;
 }
 
-pySceneObject::pySceneObject(plKey objkey,pyKey& selfkey)
+pySceneObject::pySceneObject(plKey objkey, const pyKey& selfkey)
 {
     // make sure these are created
     fDraw = cyDraw::New();
@@ -165,23 +165,23 @@ void pySceneObject::addObjKey(plKey key)
 {
     if ( key != nil )
     {
-        fSceneObjects.Append(key);
+        fSceneObjects.emplace_back(key);
         IAddObjKeyToAll(key);
     }
 }
 
-void pySceneObject::addObjPyKey(pyKey& objkey)
+void pySceneObject::addObjPyKey(const pyKey& objkey)
 {
     if ( objkey.getKey() != nil )
     {
-        fSceneObjects.Append(objkey.getKey());
+        fSceneObjects.emplace_back(objkey.getKey());
         IAddObjKeyToAll(objkey.getKey());
     }
 }
 
 plKey pySceneObject::getObjKey()
 {
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
         return fSceneObjects[0];
     else
         return nil;
@@ -190,7 +190,7 @@ plKey pySceneObject::getObjKey()
 PyObject* pySceneObject::getObjPyKey()
 {
     PyObject* pyobj;    // Python will manage this... it only knows when everyone is done with it
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
         pyobj = pyKey::New(fSceneObjects[0]);
     else
     {
@@ -220,7 +220,7 @@ void pySceneObject::SetNetForce(bool state)
 
 ST::string pySceneObject::GetName()
 {
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
         return fSceneObjects[0]->GetName();
     return ST::string();
 }
@@ -229,12 +229,11 @@ PyObject* pySceneObject::findObj(const ST::string& name)
 {
     PyObject* pSobj = nil;
     // search through the plKeys that we have looking for this name
-    int i;
-    for ( i=0; i<fSceneObjects.Count(); i++ )
+    for (const plKey& objKey : fSceneObjects)
     {
-        if ( name == fSceneObjects[i]->GetName() )
+        if (name == objKey->GetName())
         {
-            pSobj = pySceneObject::New(fSceneObjects[i],fPyMod);
+            pSobj = pySceneObject::New(objKey, fPyMod);
             break;
         }
     }
@@ -256,7 +255,7 @@ PyObject* pySceneObject::findObj(const ST::string& name)
 bool pySceneObject::IsLocallyOwned()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -279,7 +278,7 @@ bool pySceneObject::IsLocallyOwned()
 PyObject* pySceneObject::GetLocalToWorld()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -308,7 +307,7 @@ PyObject* pySceneObject::GetLocalToWorld()
 PyObject* pySceneObject::GetWorldToLocal()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -337,7 +336,7 @@ PyObject* pySceneObject::GetWorldToLocal()
 PyObject* pySceneObject::GetLocalToParent()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -366,7 +365,7 @@ PyObject* pySceneObject::GetLocalToParent()
 PyObject* pySceneObject::GetParentToLocal()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -395,7 +394,7 @@ PyObject* pySceneObject::GetParentToLocal()
 void pySceneObject::SetTransform(pyMatrix44& l2w, pyMatrix44& w2l)
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -411,7 +410,7 @@ void pySceneObject::SetTransform(pyMatrix44& l2w, pyMatrix44& w2l)
 PyObject* pySceneObject::GetWorldPosition()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -440,7 +439,7 @@ PyObject* pySceneObject::GetWorldPosition()
 PyObject* pySceneObject::GetViewVector()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -469,7 +468,7 @@ PyObject* pySceneObject::GetViewVector()
 PyObject* pySceneObject::GetUpVector()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -498,7 +497,7 @@ PyObject* pySceneObject::GetUpVector()
 PyObject* pySceneObject::GetRightVector()
 {
     // make sure that there are sceneobjects
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -528,13 +527,12 @@ PyObject* pySceneObject::GetRightVector()
 bool pySceneObject::IsAvatar()
 {
     // loop through all the sceneobject... looking for avatar modifiers
-    int j;
-    for ( j=0 ; j<fSceneObjects.Count() ; j++ )
+    for (const plKey& objKey : fSceneObjects)
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
         // referring to multiple objects, so the first one in the list will do.)
-        plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[j]->ObjectIsLoaded());
+        plSceneObject* obj = plSceneObject::ConvertNoRef(objKey->ObjectIsLoaded());
         if ( obj )
         {
             // search through its modifiers to see if one of them is an avatar modifier
@@ -558,13 +556,12 @@ bool pySceneObject::IsAvatar()
 PyObject* pySceneObject::GetAvatarVelocity()
 {
     // loop through all the sceneobject... looking for avatar modifiers
-    int j;
-    for ( j=0 ; j<fSceneObjects.Count() ; j++ )
+    for (const plKey& objKey : fSceneObjects)
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
         // referring to multiple objects, so the first one in the list will do.)
-        plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[j]->ObjectIsLoaded());
+        plSceneObject* obj = plSceneObject::ConvertNoRef(objKey->ObjectIsLoaded());
         if ( obj )
         {
             // search through its modifiers to see if one of them is an avatar modifier
@@ -594,13 +591,12 @@ PyObject* pySceneObject::GetAvatarVelocity()
 bool pySceneObject::IsHumanAvatar()
 {
     // loop through all the sceneobject... looking for avatar modifiers
-    int j;
-    for ( j=0 ; j<fSceneObjects.Count() ; j++ )
+    for (const plKey& objKey : fSceneObjects)
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
         // referring to multiple objects, so the first one in the list will do.)
-        plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
+        plSceneObject* obj = plSceneObject::ConvertNoRef(objKey->ObjectIsLoaded());
         if ( obj )
         {
             // search through its modifiers to see if one of them is an avatar modifier
@@ -628,7 +624,7 @@ bool pySceneObject::IsHumanAvatar()
 // switch to / from this object (assuming that it is actually a camera)
 void pySceneObject::PushCutsceneCamera(bool cut, pyKey& avKey)
 {
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -662,7 +658,7 @@ void pySceneObject::PushCutsceneCamera(bool cut, pyKey& avKey)
 
 void pySceneObject::PopCutsceneCamera(pyKey& avKey)
 {
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -790,7 +786,7 @@ void pySceneObject::PopCamera(pyKey& avKey)
 std::vector<PyObject*> pySceneObject::GetResponders()
 {
     std::vector<PyObject*> pyPL;
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -812,7 +808,7 @@ std::vector<PyObject*> pySceneObject::GetResponders()
 std::vector<PyObject*> pySceneObject::GetPythonMods()
 {
     std::vector<PyObject*> pyPL;
-    if ( fSceneObjects.Count() > 0 )
+    if (!fSceneObjects.empty())
     {
         // get the object pointer of just the first one in the list
         // (We really can't tell which one the user is thinking of if they are
@@ -980,7 +976,7 @@ int pySceneObject::GetSoundObjectIndex(const char* sndObj)
 
 void pySceneObject::VolumeSensorIgnoreExtraEnters(bool ignore)
 {
-    if (fSceneObjects.Count() > 0)
+    if (!fSceneObjects.empty())
     {
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if (obj)
@@ -997,7 +993,7 @@ void pySceneObject::VolumeSensorIgnoreExtraEnters(bool ignore)
 
 void pySceneObject::VolumeSensorNoArbitration(bool noArbitration)
 {
-    if (fSceneObjects.Count() > 0) {
+    if (!fSceneObjects.empty()) {
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if (obj) {
             for (size_t i = 0; i < obj->GetNumModifiers(); ++i) {

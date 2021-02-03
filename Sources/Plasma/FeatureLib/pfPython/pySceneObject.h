@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 #include <vector>
 
 class pyMatrix44;
@@ -59,7 +58,7 @@ class pyMatrix44;
 class pySceneObject
 {
 private:
-    hsTArray<plKey>     fSceneObjects;
+    std::vector<plKey>  fSceneObjects;
     plKey               fSenderKey;     // the holder of the who (the modifier) we are
     plKey               fPyMod;         // pyKey that points to modifier
     bool                fNetForce;
@@ -69,8 +68,8 @@ private:
 
 protected:
     pySceneObject();
-    pySceneObject(pyKey& objkey, pyKey& selfkey);
-    pySceneObject(plKey objkey,pyKey& selfkey);
+    pySceneObject(const pyKey& objkey, const pyKey& selfkey);
+    pySceneObject(plKey objkey, const pyKey& selfkey);
     pySceneObject(plKey objkey);
 
 public:
@@ -98,12 +97,12 @@ public:
 
     // getter and setters
     virtual void addObjKey(plKey key);
-    virtual void addObjPyKey(pyKey& objkey);
+    virtual void addObjPyKey(const pyKey& objkey);
     virtual plKey getObjKey();
     virtual PyObject* getObjPyKey(); // pyKey
 
     virtual void setSenderKey(plKey key);
-    virtual void setPyMod(pyKey& pymod) { fPyMod = pymod.getKey(); }
+    virtual void setPyMod(const pyKey& pymod) { fPyMod = pymod.getKey(); }
     virtual void setPyMod(const plKey& key) { fPyMod = key; }
 
     virtual void SetNetForce(bool state);

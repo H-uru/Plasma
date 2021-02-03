@@ -98,15 +98,15 @@ cyAvatar::cyAvatar(plKey sender, plKey recvr)
 }
 
 // setters
-void cyAvatar::SetSender(plKey &sender)
+void cyAvatar::SetSender(const plKey &sender)
 {
     fSender = sender;
 }
 
-void cyAvatar::AddRecvr(plKey &recvr)
+void cyAvatar::AddRecvr(const plKey &recvr)
 {
     if ( recvr != nil )
-        fRecvr.Append(recvr);
+        fRecvr.emplace_back(recvr);
 }
 
 void cyAvatar::SetSenderKey(pyKey& pKey)
@@ -170,7 +170,7 @@ plKey cyAvatar::IFindArmatureModKey(plKey avKey)
 void cyAvatar::OneShot(pyKey &seekKey, float duration, bool usePhysics,
                const ST::string &animName, bool drivable, bool reversible)
 {
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAvOneShotMsg* pMsg = new plAvOneShotMsg(
@@ -193,11 +193,8 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, bool usePhysics,
         // must have a receiver!
         pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
 
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
@@ -214,7 +211,7 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, bool usePhysics,
 void cyAvatar::RunBehavior(pyKey &behKey, bool netForce, bool netProp)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
-    if ( behKey.getKey() && fRecvr.Count() > 0)
+    if (behKey.getKey() && !fRecvr.empty())
     {
         // must determine if the behKey is pointing to Single or Multi Shot behavior
         if (plOneShotMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()))
@@ -225,10 +222,10 @@ void cyAvatar::RunBehavior(pyKey &behKey, bool netForce, bool netProp)
             pMsg->SetBCastFlag(plMessage::kNetForce, netForce);
             pMsg->SetSender(fSender);
             pMsg->AddReceiver(behKey.getKey());
-            for (int i = 0; i < fRecvr.Count(); i++) {
+            for (const plKey& rcKey : fRecvr) {
                 // make sure there is an avatar to set
-                if (fRecvr[i]) {
-                    pMsg->fPlayerKey = fRecvr[i];
+                if (rcKey) {
+                    pMsg->fPlayerKey = rcKey;
                     pMsg->SendAndKeep(); // gotta keep the message so we can keep sending it
                                          // there should really only be one avatar, though...
                 }
@@ -265,7 +262,7 @@ void cyAvatar::RunBehavior(pyKey &behKey, bool netForce, bool netProp)
             // copy data and event records to new NotifyMsg
             pNMsg->fState = 1.0;
             // need to recreate all the events in the new message by Adding them
-            if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+            if (!fRecvr.empty() && fRecvr[0] != nil)
             {
                 pNMsg->AddPickEvent((plKey)fRecvr[0], nil, true, {});
             }
@@ -319,7 +316,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
         // copy data and event records to new NotifyMsg
         pNMsg->fState = 1.0;
         // need to recreate all the events in the new message by Adding them
-        if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+        if (!fRecvr.empty() && fRecvr[0] != nil)
         {
             pNMsg->AddPickEvent((plKey)fRecvr[0], nil, true, {});
         }
@@ -348,7 +345,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
 //
 bool cyAvatar::RunCoopAnim(pyKey& targetKey, ST::string activeAvatarAnim, ST::string targetAvatarAnim, float range, float dist, bool move)
 {
-    if (fRecvr.Count() > 0 && fRecvr[0]) {
+    if (!fRecvr.empty() && fRecvr[0]) {
         // get the participating avatars
         plArmatureMod* activeAv = plAvatarMgr::FindAvatar(fRecvr[0]);
         plArmatureMod* targetAv = plAvatarMgr::FindAvatar(targetKey.getKey());
@@ -414,7 +411,7 @@ void cyAvatar::NextStage(pyKey &behKey, float transTime, bool setTime, float new
                         bool setDirection, bool isForward, bool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
-    if ( behKey.getKey() != nil && fRecvr.Count() > 0)
+    if (behKey.getKey() != nil && !fRecvr.empty())
     {
         // if it is a Multistage guy
         if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
@@ -453,7 +450,7 @@ void cyAvatar::PreviousStage(pyKey &behKey, float transTime, bool setTime, float
                         bool setDirection, bool isForward, bool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
-    if ( behKey.getKey() != nil && fRecvr.Count() > 0)
+    if (behKey.getKey() != nil && !fRecvr.empty())
     {
         // if it is a Multistage guy
         if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
@@ -493,7 +490,7 @@ void cyAvatar::GoToStage(pyKey &behKey, int32_t stage, float transTime, bool set
                         bool setDirection, bool isForward, bool netForce)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
-    if ( behKey.getKey() != nil && fRecvr.Count() > 0)
+    if (behKey.getKey() != nil && !fRecvr.empty())
     {
         // if it is a Multistage guy
         if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
@@ -548,7 +545,7 @@ void cyAvatar::SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, boo
 void cyAvatar::Seek(pyKey &seekKey, float duration, bool usePhysics)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plAvSeekMsg* pMsg = new plAvSeekMsg(
@@ -563,11 +560,8 @@ void cyAvatar::Seek(pyKey &seekKey, float duration, bool usePhysics)
         }
         pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
 
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
@@ -587,7 +581,7 @@ int32_t cyAvatar::GetAvatarClothingGroup()
     const plArmatureMod *avMod = nil;
 
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -640,7 +634,7 @@ std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
     const plArmatureMod *avMod = nil;
 
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -705,7 +699,7 @@ std::vector<PyObject*> cyAvatar::GetAvatarClothingList()
     // find the avatar's armature modifier
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -844,7 +838,7 @@ std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
     const plArmatureMod *avMod = nil;
 
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -912,7 +906,7 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const ST::string& clothing_n
     const plArmatureMod *avMod = nil;
 
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1068,7 +1062,7 @@ bool cyAvatar::WearClothingItemU(const ST::string& clothing_name, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1102,7 +1096,7 @@ bool cyAvatar::RemoveClothingItemU(const ST::string& clothing_name, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1136,7 +1130,7 @@ bool cyAvatar::TintClothingItemU(const ST::string& clothing_name, pyColor& tint,
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1169,7 +1163,7 @@ bool cyAvatar::TintClothingItemLayerU(const ST::string& clothing_name, pyColor& 
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1205,7 +1199,7 @@ ST::string cyAvatar::GetClothingItemParameterString(const ST::string& clothing_n
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1248,7 +1242,7 @@ PyObject* cyAvatar::GetTintClothingItemL(const ST::string& clothing_name, uint8_
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1300,7 +1294,7 @@ void cyAvatar::TintSkinU(pyColor& tint, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1323,7 +1317,7 @@ PyObject* cyAvatar::GetTintSkin()
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1400,7 +1394,7 @@ void cyAvatar::SetMorph(const ST::string& clothing_name, uint8_t layer, float va
         wgtPlus = 0;
     }
     
-    if ( fRecvr.Count() > 0 && fRecvr[0] != nil )
+    if (!fRecvr.empty() && fRecvr[0] != nil)
     {
         plSceneObject *so = plSceneObject::ConvertNoRef(fRecvr[0]->GetObjectPtr());
         if (so != nil)
@@ -1525,7 +1519,7 @@ void cyAvatar::SaveClothing()
 void cyAvatar::EnterSubWorld(pySceneObject& object)
 {
     // make sure that there is atleast one avatar scene object attached (should be)
-    if ( fRecvr.Count() > 0)
+    if (!fRecvr.empty())
     {
         // find the armature modifier
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
@@ -1559,7 +1553,7 @@ void cyAvatar::EnterSubWorld(pySceneObject& object)
 void cyAvatar::ExitSubWorld()
 {
     // make sure that there is atleast one avatar scene object attached (should be)
-    if ( fRecvr.Count() > 0)
+    if (!fRecvr.empty())
     {
         // find the armature modifier
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
@@ -1584,7 +1578,7 @@ void cyAvatar::ExitSubWorld()
 void cyAvatar::PlaySimpleAnimation(const ST::string& animName)
 {
     // make sure that there is atleast one avatar scene object attached (should be)
-    if ( fRecvr.Count() > 0)
+    if (!fRecvr.empty())
     {
         // find the armature modifier
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
@@ -1605,7 +1599,7 @@ void cyAvatar::PlaySimpleAnimation(const ST::string& animName)
 //
 bool cyAvatar::SaveClothingToFile(plFileName filename)
 {
-    if (fRecvr.Count() > 0) {
+    if (!fRecvr.empty()) {
         plArmatureMod* avatar = plAvatarMgr::FindAvatar(fRecvr[0]);
         if (avatar) {
             plClothingOutfit* cl = avatar->GetClothingOutfit();
@@ -1633,7 +1627,7 @@ bool cyAvatar::SaveClothingToFile(plFileName filename)
 //
 bool cyAvatar::LoadClothingFromFile(plFileName filename)
 {
-    if (fRecvr.Count() > 0) {
+    if (!fRecvr.empty()) {
         plArmatureMod* avatar = plAvatarMgr::FindAvatar(fRecvr[0]);
         if (avatar) {
             plClothingOutfit* cl = avatar->GetClothingOutfit();
@@ -1812,7 +1806,7 @@ bool cyAvatar::EnterAnimMode(const ST::string& animName)
 int cyAvatar::GetCurrentMode()
 {
     // make sure that there is atleast one avatar scene object attached (should be)
-    if ( fRecvr.Count() > 0)
+    if (!fRecvr.empty())
     {
         // find the armature modifier
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
@@ -1938,7 +1932,7 @@ void cyAvatar::SpawnNext()
 void cyAvatar::RegisterForBehaviorNotify(pyKey &selfKey)
 {
     // make sure that there is atleast one avatar scene object attached (should be)
-    if ( fRecvr.Count() > 0)
+    if (!fRecvr.empty())
     {
         // find the armature modifier
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
@@ -1960,7 +1954,7 @@ void cyAvatar::RegisterForBehaviorNotify(pyKey &selfKey)
 void cyAvatar::UnRegisterForBehaviorNotify(pyKey &selfKey)
 {
     // make sure that there is atleast one avatar scene object attached (should be)
-    if ( fRecvr.Count() > 0)
+    if (!fRecvr.empty())
     {
         // find the armature modifier
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
