@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include "plFileSystem.h"
 
-template <class T> class hsTArray;
 class plRegistryPageNode;
 class plRegistryKeyIterator;
 class plRegistryPageIterator;
@@ -197,8 +196,8 @@ protected:
 
     void IUnloadPageKeys(plRegistryPageNode* pageNode, bool dontClear = false);
 
-    bool IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums);
-    bool IWarnNewerPages(hsTArray<plRegistryPageNode*>& newerPages);
+    bool IDeleteBadPages(std::vector<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums);
+    bool IWarnNewerPages(std::vector<plRegistryPageNode*>& newerPages);
 
     void ILockPages();
     void IUnlockPages();
