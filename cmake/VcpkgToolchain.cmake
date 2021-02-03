@@ -61,9 +61,9 @@ function(_plasma_vcpkg_setup_binarycache)
     endif()
 endfunction()
 
-# Binarycache can only be used on Windows or if mono is available. Since we are not using
-# vcpkg on CI, let's just disable this altogether.
-if(_HOST_IS_WINDOWS)
+# Binarycache can only be used on Windows or if mono is available.
+find_program(_VCPKG_MONO mono)
+if(_HOST_IS_WINDOWS OR EXISTS "${_VCPKG_MONO}")
     _plasma_vcpkg_setup_binarycache(NAME mainline PREFIX _NUGET)
     _plasma_vcpkg_setup_binarycache(NAME fork PREFIX PLASMA_VCPKG_NUGET)
 endif()
