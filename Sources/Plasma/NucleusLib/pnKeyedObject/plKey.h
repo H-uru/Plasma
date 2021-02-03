@@ -64,8 +64,15 @@ public:
     plKey() : fKeyData(nullptr) { }
     plKey(std::nullptr_t) : fKeyData(nullptr) { }
     plKey(const plKey& rhs);
+    plKey(plKey&& rhs) : fKeyData(rhs.fKeyData) { rhs.fKeyData = nullptr; }
     ~plKey();
     plKey& operator=(const plKey& rhs);
+
+    plKey& operator=(plKey&& rhs)
+    {
+        std::swap(fKeyData, rhs.fKeyData);
+        return *this;
+    }
 
     bool operator==(const plKey& rhs) const { return fKeyData == rhs.fKeyData; }
     bool operator==(const plKeyData* rhs) const { return fKeyData == rhs; }
