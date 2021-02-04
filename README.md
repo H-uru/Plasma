@@ -1,5 +1,6 @@
 Plasma
 ======
+![CI](https://github.com/H-uru/Plasma/workflows/CI/badge.svg)
 
 A CMake-based fork of the GPLv3-licensed **CyanWorlds.com Engine**
 (Headspin/Plasma), with a focus on bug-fixes, cross-platform compatibility, and
@@ -15,6 +16,8 @@ Related Projects
 
 - [dirtsand](https://github.com/H-uru/dirtsand) - An open-source
   Plasma-compatible server project.
+- [moul-assets](https://github.com/H-uru/moul-assets) - MOUL game
+  assets repository.
 
 
 Library Dependencies
@@ -22,6 +25,7 @@ Library Dependencies
 
 Plasma currently requires the following third-party libraries:
 
+- NVIDIA PhysX 4.1 - https://github.com/NVIDIAGameWorks/PhysX
 - Python 3.8 (or higher) - https://www.python.org/downloads/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
