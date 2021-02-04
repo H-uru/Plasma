@@ -34,7 +34,6 @@ target_link_libraries(plNetCommon
         pnNetCommon
         pnNetProtocol
         pnUUID
-        string_theory
     PRIVATE
         pnMessage
         pnNucleusInc

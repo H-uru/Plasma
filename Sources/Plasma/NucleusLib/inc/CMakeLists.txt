@@ -35,7 +35,6 @@ target_link_libraries(
     pnNucleusInc
     PUBLIC
         CoreLib
-        string_theory
 
     # This target brings in "all of the nucleus" in theory and effectively in practice
     # with pnNucleusCreatables. So, we need to have almost everything as an interface.

@@ -21,7 +21,6 @@ target_link_libraries(
         plCompression
         plNetGameLib
         plStatusLog
-        string_theory
 )
 
 source_group("Source Files" FILES ${pfPatcher_SOURCES})

@@ -13,7 +13,6 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnKeyedObject
-        string_theory
     PRIVATE
         pnMessage
         pnNetCommon

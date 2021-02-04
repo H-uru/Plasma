@@ -182,7 +182,6 @@ target_link_libraries(
         pnNucleusInc
         plAvatar
         pfGameGUIMgr
-        string_theory
     PRIVATE
         pnEncryption
         pnMessage

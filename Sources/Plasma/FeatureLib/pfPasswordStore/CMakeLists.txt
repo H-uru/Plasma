@@ -23,7 +23,6 @@ target_link_libraries(
     PRIVATE
         pnNetBase
         plFile
-        string_theory
 )
 
 if(WIN32 AND NOT CYGWIN)

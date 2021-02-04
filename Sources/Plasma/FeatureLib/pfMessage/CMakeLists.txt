@@ -30,7 +30,6 @@ target_link_libraries(
         CoreLib
         pnMessage
         pnNetBase
-        string_theory
     PRIVATE
         pnNucleusInc
         pfGameScoreMgr

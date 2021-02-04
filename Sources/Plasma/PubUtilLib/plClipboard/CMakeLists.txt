@@ -11,7 +11,6 @@ target_link_libraries(
     plClipboard
     PUBLIC
         CoreLib
-        string_theory
 )
 
 source_group("Source Files" FILES ${plClipboard_SOURCES})

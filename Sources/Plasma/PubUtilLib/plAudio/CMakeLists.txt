@@ -47,7 +47,6 @@ target_link_libraries(plAudio
         plAnimation
         plAudioCore
         plMessage
-        string_theory
     PRIVATE
         pnMessage
         pnNucleusInc

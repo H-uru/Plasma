@@ -43,7 +43,6 @@ target_link_libraries(
         pnNucleusInc
         plResMgr
         Qt5::Widgets
-        string_theory
 )
 
 # For generated ui_*.h files

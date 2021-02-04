@@ -83,7 +83,6 @@ target_link_libraries(
         plMessage
         plModifier
         plPhysical
-        string_theory
     PRIVATE
         pnEncryption
         pnMessage

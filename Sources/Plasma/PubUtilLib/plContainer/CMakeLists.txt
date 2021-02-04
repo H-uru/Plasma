@@ -17,7 +17,6 @@ target_link_libraries(
     plContainer
     PUBLIC
         CoreLib
-        string_theory
 )
 
 source_group("Source Files" FILES ${plContainer_SOURCES})

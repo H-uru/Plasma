@@ -64,7 +64,6 @@ target_link_libraries(
         pnInputCore
         pnKeyedObject
         pnModifier
-        string_theory
     PRIVATE
         pnNucleusInc
         pnMessage

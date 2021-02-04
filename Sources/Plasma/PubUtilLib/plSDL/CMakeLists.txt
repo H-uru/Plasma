@@ -34,7 +34,6 @@ target_link_libraries(plSDL
         pnFactory
         pnKeyedObject
         plUnifiedTime
-        string_theory
     PRIVATE
         pnMessage
         pnNetCommon

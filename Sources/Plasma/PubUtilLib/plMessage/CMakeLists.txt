@@ -141,7 +141,6 @@ target_link_libraries(plMessage
         plNetMessage # plNetOwnershipMsg
         plPhysical # plLOSRequestMsg
         plResMgr # plResMgrHelperMsg
-        string_theory
     PRIVATE
         pnNetCommon
         pnNetProtocol

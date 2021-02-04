@@ -67,7 +67,6 @@ target_link_libraries(
         pfMessage
         pfPython
         pfSurface
-        string_theory
     INTERFACE
         pnFactory
 )

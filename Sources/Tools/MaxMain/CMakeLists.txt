@@ -77,7 +77,6 @@ target_link_libraries(
         pnKeyedObject
         pnNucleusInc
         plResMgr
-        string_theory
     PRIVATE
         pnFactory
         pnMessage

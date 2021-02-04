@@ -36,7 +36,6 @@ target_link_libraries(plPhysX
         plAvatar
         plPhysical
         plStatusLog
-        string_theory
     PRIVATE
         pnMessage
         pnNetCommon

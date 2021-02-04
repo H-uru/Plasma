@@ -31,7 +31,6 @@ target_link_libraries(
         CoreLib
         pnKeyedObject
         pnNucleusInc
-        string_theory
     PRIVATE
         pnDispatch
         pnMessage

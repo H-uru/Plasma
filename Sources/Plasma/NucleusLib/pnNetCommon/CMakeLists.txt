@@ -31,7 +31,6 @@ target_link_libraries(
         pnKeyedObject
         pnNucleusInc
         pnUUID
-        string_theory
     PRIVATE
         pnMessage
         pnSceneObject

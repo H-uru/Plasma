@@ -79,7 +79,6 @@ target_link_libraries(plSurface
         pnNetCommon
         pnNucleusInc
         plInterp
-        string_theory
     PRIVATE
         pnMessage
         plGImage

@@ -115,7 +115,6 @@ target_link_libraries(plPipeline
         plProgressMgr
         plScene
         plStatusLog
-        string_theory
     PRIVATE
         pnMessage
         pnNetCommon

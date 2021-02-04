@@ -30,7 +30,6 @@ target_link_libraries(
         pnKeyedObject
         pnModifier
         pnUUID
-        string_theory
     PRIVATE
         pnMessage
         pnNetCommon

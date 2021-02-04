@@ -8,7 +8,6 @@ target_link_libraries(
     PRIVATE
         CoreLib
         ${DirectX_LIBRARIES}
-        string_theory
 )
 
 source_group("Source Files" FILES ${plShaderAssembler_SOURCES})

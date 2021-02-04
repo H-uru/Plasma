@@ -35,7 +35,6 @@ target_link_libraries(
         pnModifier
         pnNetCommon
         plTransform
-        string_theory
     PRIVATE
         pnMessage
         pnNucleusInc

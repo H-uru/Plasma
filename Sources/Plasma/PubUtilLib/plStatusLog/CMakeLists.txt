@@ -14,7 +14,6 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnNucleusInc
-        string_theory
     PRIVATE
         plUnifiedTime
 )

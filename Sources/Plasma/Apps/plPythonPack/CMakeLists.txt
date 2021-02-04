@@ -13,7 +13,6 @@ target_link_libraries(
     PRIVATE
         CoreLib
         Python3::Python
-        string_theory
 )
 
 install(

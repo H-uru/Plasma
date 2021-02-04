@@ -16,7 +16,6 @@ target_link_libraries(
     pfConsoleCore
     PUBLIC
         CoreLib
-        string_theory
     PRIVATE
         pnNetBase
         plFile

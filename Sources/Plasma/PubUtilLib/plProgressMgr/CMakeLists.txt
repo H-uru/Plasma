@@ -11,7 +11,6 @@ target_link_libraries(
     plProgressMgr
     PUBLIC
         CoreLib
-        string_theory
     PRIVATE
         plClientResMgr
         plPipeline

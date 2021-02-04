@@ -27,9 +27,7 @@ target_link_libraries(
         plStatusLog
         pfConsoleCore
         pfPatcher
-
         CURL::libcurl
-        string_theory
 )
 
 if(PLASMA_EXTERNAL_RELEASE)

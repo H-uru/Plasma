@@ -24,7 +24,6 @@ target_link_libraries(
         CoreLib
         pnNetBase
         pnNetProtocol # plVaultNodeAccess
-        string_theory
     PRIVATE
         pnAsyncCore
         pnDispatch

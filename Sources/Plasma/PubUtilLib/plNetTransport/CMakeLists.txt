@@ -15,7 +15,6 @@ target_link_libraries(
         CoreLib
         pnKeyedObject
         plNetCommon
-        string_theory
     PRIVATE
         plNetClient
         plNetMessage

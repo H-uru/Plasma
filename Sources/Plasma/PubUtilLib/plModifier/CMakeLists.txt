@@ -57,7 +57,6 @@ target_link_libraries(plModifier
         pnNetCommon
         plInterp # plSimpleModifier
         plStatusLog
-        string_theory
     PRIVATE
         pnNucleusInc
         pnSceneObject

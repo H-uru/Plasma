@@ -25,7 +25,6 @@ target_link_libraries(
         CoreLib
         pnFactory
         pnNucleusInc
-        string_theory
     PRIVATE
         pnDispatch
         pnMessage

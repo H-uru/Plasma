@@ -17,7 +17,6 @@ target_link_libraries(
         pnUUID
         plMessage
         plNetCommon
-        string_theory
     PRIVATE
         pnAsyncCore
         pnNetCli

@@ -42,7 +42,6 @@ target_link_libraries(plNetClient
         plNetCommon
         plNetTransport
         plUnifiedTime
-        string_theory
     PRIVATE
         pnAsyncCore
         pnDispatch

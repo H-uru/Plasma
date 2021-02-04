@@ -11,7 +11,6 @@ target_link_libraries(
     plClientResMgr
     PUBLIC
         CoreLib
-        string_theory
     PRIVATE
         pnNucleusInc
         plGImage

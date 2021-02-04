@@ -296,7 +296,6 @@ target_link_libraries(
         pfLocalizationMgr
         pfMessage
         Python3::Python
-        string_theory
     INTERFACE
         pnFactory
 )

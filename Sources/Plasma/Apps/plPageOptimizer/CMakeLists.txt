@@ -22,7 +22,6 @@ target_link_libraries(
         pnNucleusInc
         plMessage
         plResMgr
-        string_theory
 )
 
 install(

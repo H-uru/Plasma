@@ -8,7 +8,6 @@ target_link_libraries(
     PRIVATE
         CoreLib
         plFile
-        string_theory
 )
 
 install(

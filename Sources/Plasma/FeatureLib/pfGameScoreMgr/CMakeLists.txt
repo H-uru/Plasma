@@ -17,7 +17,6 @@ target_link_libraries(
         pnNetProtocol
         plNetGameLib
         pfMessage
-        string_theory
 )
 
 source_group("Source Files" FILES ${pfGameScoreMgr_SOURCES})
