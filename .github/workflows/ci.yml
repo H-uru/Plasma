@@ -163,7 +163,7 @@ jobs:
             -DPLASMA_VCPKG_NUGET_RW=TRUE \
             -S . -B build
         env:
-          PKG_CONFIG_PATH: "/usr/local/opt/qt/lib/pkgconfig"
+          CMAKE_PREFIX_PATH: "/usr/local/opt/qt"
 
       - name: Build
         run: |
