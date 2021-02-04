@@ -1,5 +1,6 @@
 Plasma
 ======
+![CI](https://github.com/H-uru/Plasma/workflows/CI/badge.svg)
 
 A CMake-based fork of the GPLv3-licensed **CyanWorlds.com Engine**
 (Headspin/Plasma), with a focus on bug-fixes, cross-platform compatibility, and
