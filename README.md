@@ -16,6 +16,8 @@ Related Projects
 
 - [dirtsand](https://github.com/H-uru/dirtsand) - An open-source
   Plasma-compatible server project.
+- [moul-assets](https://github.com/H-uru/moul-assets) - MOUL game
+  assets repository.
 
 
 Library Dependencies
