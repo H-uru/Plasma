@@ -31,8 +31,6 @@ jobs:
 
       - name: Configure
         run: |
-          New-Item -ItemType Directory build | Out-Null
-          Set-Location build
           cmake `
             -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
             -DPLASMA_BUILD_TESTS=ON `
@@ -42,7 +40,7 @@ jobs:
             -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" `
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
             -DPLASMA_VCPKG_NUGET_RW=TRUE `
-            ..
+            -S . -B build
 
       - name: Build
         run: |
@@ -98,7 +96,7 @@ jobs:
       - name: Configure
         run: |
           cmake \
-            -GNinja \
+            -G Ninja \
             -DUSE_VCPKG=ON \
             -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
             -DPLASMA_BUILD_TESTS=ON \
@@ -109,6 +107,63 @@ jobs:
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
             -DPLASMA_VCPKG_NUGET_RW=TRUE \
             -S . -B build
+
+      - name: Build
+        run: |
+          cmake --build build -j 2
+
+      - name: Test
+        run: |
+          cmake --build build --target check -j 2
+
+      - name: Install
+        run: |
+          cmake --build build --target install -j 2
+
+
+  macos:
+    runs-on: macos-latest
+    name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+    strategy:
+      matrix:
+        platform:
+          - { str: macos-x64 }
+        cfg:
+          - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithDebInfo, str: external-release }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install \
+              autoconf \
+              cairo \
+              libtool \
+              nasm \
+              qt5
+
+      - name: Configure
+        run: |
+          cmake \
+            -DUSE_VCPKG=ON \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
+            -DPLASMA_BUILD_TESTS=ON \
+            -DPLASMA_BUILD_TOOLS=ON \
+            -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
+            -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" \
+            -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
+            -DPLASMA_VCPKG_NUGET_RW=TRUE \
+            -S . -B build
+        env:
+          CMAKE_PREFIX_PATH: "/usr/local/opt/qt"
 
       - name: Build
         run: |
