@@ -25,6 +25,7 @@ Library Dependencies
 
 Plasma currently requires the following third-party libraries:
 
+- NVIDIA PhysX 4.1 - https://github.com/NVIDIAGameWorks/PhysX
 - Python 3.8 (or higher) - https://www.python.org/downloads/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
