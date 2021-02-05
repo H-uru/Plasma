@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSoundMsg_h
 
 #include "plMessageWithCallbacks.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 
 class plSoundMsg : public plMessageWithCallbacks

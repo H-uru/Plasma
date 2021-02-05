@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGBufferGroup_h
 #define _plGBufferGroup_h
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "hsColorRGBA.h"
 

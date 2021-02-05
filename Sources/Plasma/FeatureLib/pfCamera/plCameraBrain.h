@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "hsMatrix44.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 
 class plMessage;
 class plCameraModifier1;

@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include <algorithm>
 #include "hsTimer.h"
-#include "hsTemplates.h"
 #include "hsStream.h"
 #include "plSDL.h"
 

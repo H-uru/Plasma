@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plExcludeRegionModifier.h"
 #include "plMessage/plExcludeRegionMsg.h"
-#include "hsTemplates.h"
 #include "hsResMgr.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "plDetectorLog.h"

@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLinkEffectsMgr_inc
 #define plLinkEffectsMgr_inc
 
+#include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 class plLinkEffectsTriggerMsg;

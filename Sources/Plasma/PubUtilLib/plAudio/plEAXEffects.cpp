@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEAXEffects.h"
 #include "plAudioCore/plAudioCore.h"
 #include "plDSoundBuffer.h"
-#include "hsTemplates.h"
 #include "plEAXListenerMod.h"
 #include "hsStream.h"
 #include "plAudioSystem.h"

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include "plAvBrain.h"
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
 class plArmatureMod;

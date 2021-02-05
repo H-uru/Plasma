@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVoiceChat_h
 #define plVoiceChat_h
 
-#include "hsTemplates.h"
 #include "plWin32Sound.h"
 #include "hsThread.h"
 

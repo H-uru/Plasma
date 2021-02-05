@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <signal.h>
 #endif
 
-#include "hsTemplates.h"
 #include <string_theory/format>
 
 

@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimation/plAGAnim.h"
 
 #include <deque>
-#include "hsTemplates.h"
 
 class plMatrixChannel;
 class plMatrixMultiplyApplicator;

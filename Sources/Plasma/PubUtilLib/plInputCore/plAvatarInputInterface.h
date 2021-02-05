@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputInterface.h"
 #include "pnInputCore/plInputMap.h"
 
-#include "hsTemplates.h"
-
 #include "hsGeometry3.h"
 
 

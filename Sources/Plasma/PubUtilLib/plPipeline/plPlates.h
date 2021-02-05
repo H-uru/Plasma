@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 
 #include "hsColorRGBA.h"
-#include "hsTemplates.h"
 
 #include "hsMatrix44.h"
 

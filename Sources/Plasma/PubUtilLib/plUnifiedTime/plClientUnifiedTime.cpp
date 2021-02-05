@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include <cfloat>
 #include "hsTimer.h"
-#include "hsTemplates.h"
 #include "plClientUnifiedTime.h"
 
 #if 0

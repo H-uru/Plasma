@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plStatusLog/plStatusLog.h"
-#include "hsTemplates.h"
 
 class plPhysical;
 class plPXPhysical;

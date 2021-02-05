@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDXRenderTargetRef_h
 
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 #include "plDXTextureRef.h"
 
 

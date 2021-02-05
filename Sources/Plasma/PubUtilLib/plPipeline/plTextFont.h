@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTextFont_h
 #define _plTextFont_h
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 
 //// plTextFont Class Definition //////////////////////////////////////////////

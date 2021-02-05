@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 // For our common object libs
 #include "plCommonObjLib.h"
