@@ -148,7 +148,7 @@ public:
 
     char* GetErrorString() { return (fEnumeErrorStr[0] ? fEnumeErrorStr : nil); }
 
-    HRESULT SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode);
+    bool SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode);
     HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
     HRESULT D3DEnum_SelectDefaultDriver( DWORD dwFlags );
 
