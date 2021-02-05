@@ -173,7 +173,7 @@ pl3DPipeline::~pl3DPipeline()
 }
 
 
-void pl3DPipeline::Render(plDrawable* d, const hsTArray<int16_t>& visList)
+void pl3DPipeline::Render(plDrawable* d, const std::vector<int16_t>& visList)
 {
     // Reset here, since we can push/pop renderTargets after BeginRender() but
     // before this function, which necessitates this being called
@@ -198,7 +198,7 @@ void pl3DPipeline::Draw(plDrawable* d)
         if (( ds->GetType() & fView.GetDrawableTypeMask()) == 0)
             return;
 
-        static hsTArray<int16_t>visList;
+        static std::vector<int16_t> visList;
 
         PreRender(ds, visList);
         PrepForRender(ds, visList);
@@ -579,7 +579,7 @@ void pl3DPipeline::SetViewTransform(const plViewTransform& v)
 
 /*** PROTECTED METHODS *******************************************************/
 
-void pl3DPipeline::IAttachSlaveToReceivers(int which, plDrawableSpans* drawable, const hsTArray<int16_t>& visList)
+void pl3DPipeline::IAttachSlaveToReceivers(int which, plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     plShadowSlave* slave = fShadows[which];
 
@@ -600,15 +600,15 @@ void pl3DPipeline::IAttachSlaveToReceivers(int which, plDrawableSpans* drawable,
     cache.Clear();
     space->EnableLeaves(visList, cache);
 
-    static hsTArray<int16_t> hitList;
-    hitList.SetCount(0);
+    static std::vector<int16_t> hitList;
+    hitList.clear();
     space->HarvestEnabledLeaves(slave->fIsect, cache, hitList);
 
     // For the visible spans that intercect the shadow volume, attach the shadow
     // to all appropriate for receiving this shadow map.
-    for (size_t i = 0; i < hitList.GetCount(); i++)
+    for (int16_t idx : hitList)
     {
-        const plSpan* span = drawable->GetSpan(hitList[i]);
+        const plSpan* span = drawable->GetSpan(idx);
         hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
 
         // Check that the span isn't flagged as unshadowable, or has
@@ -627,7 +627,7 @@ void pl3DPipeline::IAttachSlaveToReceivers(int which, plDrawableSpans* drawable,
 }
 
 
-void pl3DPipeline::IAttachShadowsToReceivers(plDrawableSpans* drawable, const hsTArray<int16_t>& visList)
+void pl3DPipeline::IAttachShadowsToReceivers(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     for (size_t i = 0; i < fShadows.GetCount(); i++)
         IAttachSlaveToReceivers(i, drawable, visList);
@@ -688,12 +688,12 @@ void pl3DPipeline::ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* 
 }
 
 
-void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr)
+void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     if (fView.fRenderState & kRenderNoLights)
         return;
 
-    if (!visList.GetCount())
+    if (visList.empty())
         return;
 
     plLightInfo* light;
@@ -703,33 +703,33 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     // First add in the explicit lights (from LightGroups).
     // Refresh the lights as they are added (actually a lazy eval).
     plProfile_BeginTiming(FindPerm);
-    for (size_t j = 0; j < visList.GetCount(); j++)
+    for (int16_t idx : visList)
     {
-        drawable->GetSpan(visList[j])->ClearLights();
+        drawable->GetSpan(idx)->ClearLights();
 
         if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights))
             continue;
 
         // Set the bits for the lights added from the permanent lists (during ClearLights()).
-        const hsTArray<plLightInfo*>& permaLights = drawable->GetSpan(visList[j])->fPermaLights;
+        const hsTArray<plLightInfo*>& permaLights = drawable->GetSpan(idx)->fPermaLights;
         for (size_t k = 0; k < permaLights.GetCount(); k++)
         {
             permaLights[k]->Refresh();
             if (permaLights[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaLights[k]->IsIdle())
             {
                 // If it casts a shadow, attach the shadow now.
-                ISetShadowFromGroup(drawable, drawable->GetSpan(visList[j]), permaLights[k]);
+                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaLights[k]);
             }
         }
 
-        const hsTArray<plLightInfo*>& permaProjs = drawable->GetSpan(visList[j])->fPermaProjs;
+        const hsTArray<plLightInfo*>& permaProjs = drawable->GetSpan(idx)->fPermaProjs;
         for (size_t k = 0; k < permaProjs.GetCount(); k++)
         {
             permaProjs[k]->Refresh();
             if (permaProjs[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaProjs[k]->IsIdle())
             {
                 // If it casts a shadow, attach the shadow now.
-                ISetShadowFromGroup(drawable, drawable->GetSpan(visList[j]), permaProjs[k]);
+                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaProjs[k]);
             }
         }
     }
@@ -745,26 +745,26 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     // A) moving - affected by all lights - moveList
     // B) specular - affected by specular lights - specList
     // C) visible - affected by moving lights - visList
-    static hsTArray<int16_t> tmpList;
-    static hsTArray<int16_t> moveList;
-    static hsTArray<int16_t> specList;
+    static std::vector<int16_t> tmpList;
+    static std::vector<int16_t> moveList;
+    static std::vector<int16_t> specList;
 
-    moveList.SetCount(0);
-    specList.SetCount(0);
+    moveList.clear();
+    specList.clear();
 
     plProfile_BeginTiming(FindSpan);
-    for (size_t k = 0; k < visList.GetCount(); k++)
+    for (int16_t idx : visList)
     {
-        const plSpan* span = drawable->GetSpan(visList[k]);
+        const plSpan* span = drawable->GetSpan(idx);
 
         if (span->fProps & plSpan::kPropRunTimeLight)
         {
-            moveList.Append(visList[k]);
-            specList.Append(visList[k]);
+            moveList.emplace_back(idx);
+            specList.emplace_back(idx);
         }
         else if (span->fProps & plSpan::kPropMatHasSpecular)
         {
-             specList.Append(visList[k]);
+            specList.emplace_back(idx);
         }
     }
     plProfile_EndTiming(FindSpan);
@@ -806,12 +806,12 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     {
         light = lightList[k];
 
-        tmpList.SetCount(0);
+        tmpList.clear();
         if (light->GetProperty(plLightInfo::kLPMovable))
         {
             plProfile_BeginTiming(ApplyMoving);
 
-            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+            const std::vector<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
                 visList,
                 tmpList,
                 drawable->GetNativeProperty(plDrawable::kPropCharacter));
@@ -821,13 +821,13 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
             if (fView.fRenderState & kRenderNoProjection)
                 proj = false;
 
-            for (size_t j = 0; j < litList.GetCount(); j++)
+            for (int16_t litIdx : litList)
             {
                 // Use the light IF light is enabled and
                 //      1) light is movable
                 //      2) span is movable, or
                 //      3) Both the light and the span have specular
-                const plSpan* span = drawable->GetSpan(litList[j]);
+                const plSpan* span = drawable->GetSpan(litIdx);
                 bool currProj = proj;
 
                 if (span->fProps & plSpan::kPropProjAsVtx)
@@ -853,12 +853,12 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
         }
         else if (light->GetProperty(plLightInfo::kLPHasSpecular))
         {
-            if (!specList.GetCount())
+            if (specList.empty())
                 continue;
 
             plProfile_BeginTiming(ApplyToSpec);
 
-            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+            const std::vector<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
                 specList,
                 tmpList,
                 drawable->GetNativeProperty(plDrawable::kPropCharacter));
@@ -868,13 +868,13 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
             if (fView.fRenderState & kRenderNoProjection)
                 proj = false;
 
-            for (size_t j = 0; j < litList.GetCount(); j++)
+            for (int16_t litIdx : litList)
             {
                 // Use the light IF light is enabled and
                 //      1) light is movable
                 //      2) span is movable, or
                 //      3) Both the light and the span have specular
-                const plSpan* span = drawable->GetSpan(litList[j]);
+                const plSpan* span = drawable->GetSpan(litIdx);
                 bool currProj = proj;
 
                 if (span->fProps & plSpan::kPropProjAsVtx)
@@ -900,12 +900,12 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
         }
         else
         {
-            if (!moveList.GetCount())
+            if (moveList.empty())
                 continue;
 
             plProfile_BeginTiming(ApplyToMoving);
 
-            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+            const std::vector<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
                 moveList,
                 tmpList,
                 drawable->GetNativeProperty(plDrawable::kPropCharacter));
@@ -915,13 +915,13 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
             if (fView.fRenderState & kRenderNoProjection)
                 proj = false;
 
-            for (size_t j = 0; j < litList.GetCount(); j++)
+            for (int16_t litIdx : litList)
             {
                 // Use the light IF light is enabled and
                 //      1) light is movable
                 //      2) span is movable, or
                 //      3) Both the light and the span have specular
-                const plSpan* span = drawable->GetSpan(litList[j]);
+                const plSpan* span = drawable->GetSpan(litIdx);
                 bool currProj = proj;
 
                 if (span->fProps & plSpan::kPropProjAsVtx)

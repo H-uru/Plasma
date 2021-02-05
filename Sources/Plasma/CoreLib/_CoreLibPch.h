@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <limits.h>
 #include <memory>
+#include <vector>
 #include <stdarg.h>
 #include <stdint.h>
 #include <wchar.h>

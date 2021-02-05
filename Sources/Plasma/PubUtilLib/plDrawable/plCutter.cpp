@@ -1258,22 +1258,20 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
 
     hsTArray<plAccessSpan> src;
 
-    int numSpan = 0;
+    size_t numSpan = 0;
     int iDraw;
     for( iDraw = 0; iDraw < drawVis.GetCount(); iDraw++ )
-        numSpan += drawVis[iDraw].fVisList.GetCount();
+        numSpan += drawVis[iDraw].fVisList.size();
 
     src.SetCount(numSpan);
 
-    int i;
-
     iDraw = 0;
-    int iSpan = 0;
-    for( i = 0; i < numSpan; i++ )
+    size_t iSpan = 0;
+    for (size_t i = 0; i < numSpan; i++)
     {
         plAccessGeometry::Instance()->OpenRO(drawVis[iDraw].fDrawable, drawVis[iDraw].fVisList[iSpan], src[i]);
 
-        if( ++iSpan >= drawVis[iDraw].fVisList.GetCount() )
+        if (++iSpan >= drawVis[iDraw].fVisList.size())
         {
             iDraw++;
             iSpan = 0;
@@ -1281,7 +1279,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
     }
 
     
-    for( i = 0; i < src.GetCount(); i++ )
+    for (int i = 0; i < src.GetCount(); i++)
     {
         static hsTArray<plCutoutPoly> dst;
         dst.SetCount(0);
@@ -1376,7 +1374,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
 
     }
 
-    for( i = 0; i < numSpan; i++ )
+    for (size_t i = 0; i < numSpan; i++)
     {
         plAccessGeometry::Instance()->Close(src[i]);
     }

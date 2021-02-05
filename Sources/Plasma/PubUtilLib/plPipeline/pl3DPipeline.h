@@ -175,7 +175,7 @@ public:
      *
      * See plPageTreeMgr, which handles all this.
      */
-    void Render(plDrawable* d, const hsTArray<int16_t>& visList) override;
+    void Render(plDrawable* d, const std::vector<int16_t>& visList) override;
 
 
     /**
@@ -316,7 +316,7 @@ public:
      * For finer objects, like the spans themselves, the culling is done via
      * fView.GetVisibleSpans, which also takes the plVisMgr into account.
      */
-    bool HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList) override {
+    bool HarvestVisible(plSpaceTree* space, std::vector<int16_t>& visList) override {
         return fView.HarvestVisible(space, visList);
     }
 
@@ -657,7 +657,7 @@ public:
      */
     virtual void SetViewTransform(const plViewTransform& trans);
 
-    virtual void RenderSpans(plDrawableSpans* ice, const hsTArray<int16_t>& visList) = 0;
+    virtual void RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) = 0;
 
 
 protected:
@@ -673,7 +673,7 @@ protected:
      * Find all the visible spans in this drawable affected by this shadow map,
      * and attach it to them.
      */
-    void IAttachSlaveToReceivers(int iSlave, plDrawableSpans* drawable, const hsTArray<int16_t>& visList);
+    void IAttachSlaveToReceivers(int iSlave, plDrawableSpans* drawable, const std::vector<int16_t>& visList);
 
 
     /**
@@ -681,7 +681,7 @@ protected:
      * visible spans in drawable that it affects. Shadows explicitly attached
      * via light groups are handled separately in ISetShadowFromGroup.
      */
-    void IAttachShadowsToReceivers(plDrawableSpans* drawable, const hsTArray<int16_t>& visList);
+    void IAttachShadowsToReceivers(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
 
 
     /** Only allow self shadowing if requested. */
@@ -733,7 +733,7 @@ protected:
      *  C) specular objects + specular lights, since specular can't be
      *  precomputed.
      */
-    void ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr);
+    void ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr);
 
 
     /**

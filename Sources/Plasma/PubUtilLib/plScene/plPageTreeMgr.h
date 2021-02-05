@@ -72,7 +72,7 @@ public:
     virtual ~plDrawVisList() {}
 
     plDrawable*         fDrawable;
-    hsTArray<int16_t>     fVisList;
+    std::vector<int16_t>  fVisList;
 
     plDrawVisList& operator=(const plDrawVisList& v) { fDrawable = v.fDrawable; fVisList = v.fVisList; return *this; }
 };
@@ -95,7 +95,7 @@ protected:
     bool                        IBuildSpaceTree();
     bool                        IRefreshTree(plPipeline* pipe);
     void                        ISortCullPolys(plPipeline* pipe);
-    bool                        IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list);
+    bool                        IGetOcclusion(plPipeline* pipe, std::vector<int16_t>& list);
     bool                        IGetCullPolys(plPipeline* pipe);
     void                        IResetOcclusion(plPipeline* pipe);
     void                        IAddCullPolyList(const hsTArray<plCullPoly>& polyList);

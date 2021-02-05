@@ -188,7 +188,7 @@ public:
     bool AffectsBound(const hsBounds3Ext& bnd) { return IGetIsect() ? IGetIsect()->Test(bnd) != kVolumeCulled : true; }
     void GetAffectedForced(const plSpaceTree* space, hsBitVector& list, bool charac);
     void GetAffected(const plSpaceTree* space, hsBitVector& list, bool charac);
-    const hsTArray<int16_t>& GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, bool charac);
+    const std::vector<int16_t>& GetAffected(plSpaceTree* space, const std::vector<int16_t>& visList, std::vector<int16_t>& litList, bool charac);
     bool InVisSet(const hsBitVector& visSet) const { return fVisSet.Overlap(visSet); }
     bool InVisNot(const hsBitVector& visNot) const { return fVisNot.Overlap(visNot); }
 

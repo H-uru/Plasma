@@ -151,12 +151,12 @@ public:
     // visList is write only. On output, visList is UNSORTED visible spans.
     // Called once per scene render (maybe multiple times per frame).
     // Returns true if rendering should proceed.
-    virtual bool                        PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil) = 0;
+    virtual bool                        PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nil) = 0;
     // PrepForRender - perform any processing on the drawable data nessecary before rendering.
     // visList is read only. On input, visList is SORTED visible spans, and is ALL spans which will be drawn this render.
     // Called once per scene render. 
     // Returns true if rendering should proceed.
-    virtual bool                        PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil) = 0;
+    virtual bool                        PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nil) = 0;
     // Render - draw the drawable to the current render target.
     // visList is read only. On input, visList is SORTED visible spans. May not be the complete list of visible spans
     // for this drawable.
@@ -164,7 +164,7 @@ public:
     //      Render(drawable0, visList0) // visList0 contains furthest spans in drawable0
     //      Render(drawable1, visList1) // visList1 contains spans from drawable1 between drawable0's visList0 and visList2
     //      Render(drawable0, visList2) // visList2 contains closest spans in drawable0.
-    virtual void                        Render(plDrawable* d, const hsTArray<int16_t>& visList) = 0;
+    virtual void                        Render(plDrawable* d, const std::vector<int16_t>& visList) = 0;
     // Draw - Convenience wrapper for standalone renders. Calls PreRender, PrepForRender, Render. Currently for internal
     // use only, but may prove useful for procedurals (render to texture).
     virtual void                        Draw(plDrawable* d) = 0;
@@ -240,7 +240,7 @@ public:
     // Culling. Might be used in Update before bothering to do any serious computation.
     virtual bool                        TestVisibleWorld(const hsBounds3Ext& wBnd) = 0;
     virtual bool                        TestVisibleWorld(const plSceneObject* sObj) = 0;
-    virtual bool                        HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList) = 0;
+    virtual bool                        HarvestVisible(plSpaceTree* space, std::vector<int16_t>& visList) = 0;
     virtual bool                        SubmitOccluders(const hsTArray<const plCullPoly*>& polyList) = 0;
     
     virtual void                        SetDebugFlag( uint32_t flag, bool on ) = 0;

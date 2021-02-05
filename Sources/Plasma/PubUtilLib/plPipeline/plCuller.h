@@ -54,7 +54,7 @@ public:
     plCuller() {}
     ~plCuller() {}
 
-    virtual void            Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const = 0;
+    virtual void Harvest(const plSpaceTree* space, std::vector<int16_t>& outList) const = 0;
 };
 
 #endif // plCuller_inc

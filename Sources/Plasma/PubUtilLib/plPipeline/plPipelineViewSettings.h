@@ -203,7 +203,7 @@ public:
      * For finer objects, like the spans themselves, the culling is done via
      * GetVisibleSpans, which also takes the plVisMgr into account.
      */
-    bool    HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList);
+    bool    HarvestVisible(plSpaceTree* space, std::vector<int16_t>& visList);
 
 
     /**
@@ -214,7 +214,7 @@ public:
      * \sa plSpaceTree
      * \sa plVisMgr
      */
-    void    GetVisibleSpans(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr);
+    void    GetVisibleSpans(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr);
 
 
     /**

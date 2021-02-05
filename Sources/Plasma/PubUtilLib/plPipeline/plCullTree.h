@@ -123,7 +123,7 @@ public:
 
     uint32_t                  GetNumNodes() const { return fNodeList.GetCount(); }
 
-    void                    Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const override;
+    void                    Harvest(const plSpaceTree* space, std::vector<int16_t>& outList) const override;
     virtual bool            BoundsVisible(const hsBounds3Ext& bnd) const;
     virtual bool            SphereVisible(const hsPoint3& center, float rad) const;
 
@@ -177,7 +177,7 @@ protected:
     // Using the nodes
     plCullNode::plCullStatus    ITestNode(const plSpaceTree* space, int16_t who, hsTArray<int16_t>& clear, hsTArray<int16_t>& split, hsTArray<int16_t>& culled) const;
     void                        ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& totList, hsBitVector& outList) const;
-    void                        IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const;
+    void                        IHarvest(const plSpaceTree* space, std::vector<int16_t>& outList) const;
 
     // Constructing the tree
     float                    IInterpVert(const hsPoint3& p0, const hsPoint3& p1, hsPoint3& out) const;

@@ -369,10 +369,10 @@ void plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& t
     ScratchCulled().SetCount(myCullStart);
 }
 
-void plCullNode::IHarvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const
+void plCullNode::IHarvest(const plSpaceTree* space, std::vector<int16_t>& outList) const
 {
     ITestNode(space, space->GetRoot(), ScratchTotVec(), ScratchBitVec());
-    space->BitVectorToList(outList, ScratchBitVec());
+    ScratchBitVec().Enumerate(outList);
     ScratchBitVec().Clear();
     ScratchTotVec().Clear();
 
@@ -1061,9 +1061,9 @@ void plCullTree::SetViewPos(const hsPoint3& p)
 //////////////////////////////////////////////////////////////////////
 // Use the tree
 //////////////////////////////////////////////////////////////////////
-void plCullTree::Harvest(const plSpaceTree* space, hsTArray<int16_t>& outList) const
+void plCullTree::Harvest(const plSpaceTree* space, std::vector<int16_t>& outList) const
 {
-    outList.SetCount(0);
+    outList.clear();
     if (!space->IsEmpty())
         IGetRoot()->IHarvest(space, outList);
 

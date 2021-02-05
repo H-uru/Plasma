@@ -1510,18 +1510,16 @@ bool plDynaDecalMgr::ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs)
 
     hsTArray<plAccessSpan> src;
 
-    int numSpan = 0;
+    size_t numSpan = 0;
     int iDraw;
     for( iDraw = 0; iDraw < drawVis.GetCount(); iDraw++ )
-        numSpan += drawVis[iDraw].fVisList.GetCount();
+        numSpan += drawVis[iDraw].fVisList.size();
 
     src.SetCount(numSpan);
 
-    int i;
-
     iDraw = 0;
-    int iSpan = 0;
-    for( i = 0; i < numSpan; i++ )
+    size_t iSpan = 0;
+    for (size_t i = 0; i < numSpan; i++)
     {
         static hsTArray<plCutoutPoly> dst;
         dst.SetCount(0);
@@ -1535,7 +1533,7 @@ bool plDynaDecalMgr::ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs)
 
         plAccessGeometry::Instance()->Close(src[i]);
 
-        if( ++iSpan >= drawVis[iDraw].fVisList.GetCount() )
+        if (++iSpan >= drawVis[iDraw].fVisList.size())
         {
             iDraw++;
             iSpan = 0;
