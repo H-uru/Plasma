@@ -61,7 +61,7 @@ const D3DFORMAT hsGDirect3DTnLEnumerate::kDisplayFormats[] =
         D3DFMT_X8R8G8B8,
 };
 
-HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode)
+bool hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode)
 {
 
     int i;

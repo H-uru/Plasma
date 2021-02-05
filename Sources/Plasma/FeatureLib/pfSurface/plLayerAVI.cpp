@@ -98,7 +98,7 @@ bool plLayerAVI::IInit()
     if( !(fAVIInfo->fGetFrame = AVIStreamGetFrameOpen(fAVIInfo->fAVIStream, NULL)) )
         return ISetFault("Error positioning AVI");
 
-    if( AVIStreamInfo(fAVIInfo->fAVIStream, &fAVIInfo->fAVIStreamInfo, sizeof(AVISTREAMINFO)) )
+    if (FAILED(AVIStreamInfo(fAVIInfo->fAVIStream, &fAVIInfo->fAVIStreamInfo, sizeof(AVISTREAMINFO))))
         return ISetFault("Error getting AVI info");
 
     BITMAPINFO* bmi;
