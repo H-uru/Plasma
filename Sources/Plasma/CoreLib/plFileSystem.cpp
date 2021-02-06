@@ -502,10 +502,10 @@ plFileName plFileSystem::GetCurrentAppPath()
     // Neither OS makes this one simple...
 #if HS_BUILD_FOR_WIN32
     wchar_t path[MAX_PATH];
-    size_t size = GetModuleFileNameW(nullptr, path, MAX_PATH);
+    DWORD size = GetModuleFileNameW(nullptr, path, MAX_PATH);
     if (size >= MAX_PATH) {
         // Buffer not big enough
-        size_t bigger = MAX_PATH;
+        DWORD bigger = MAX_PATH;
         do {
             bigger *= 2;
             wchar_t *path_lg = new wchar_t[bigger];
@@ -535,6 +535,7 @@ plFileName plFileSystem::GetCurrentAppPath()
         return appPath;
 
     FATAL("Your OS doesn't make life easy, does it?");
+    return ".";
 #endif
 }
 

@@ -238,12 +238,12 @@ void hsStatusMessage(const char* message)
   } else {
 #if HS_BUILD_FOR_UNIX
     printf("%s",message);
-    int len = strlen(message);
+    size_t len = strlen(message);
     if (len>0 && message[len-1]!='\n')
         printf("\n");
 #elif HS_BUILD_FOR_WIN32
     OutputDebugString(message);
-    int len = strlen(message);
+    size_t len = strlen(message);
     if (len>0 && message[len-1]!='\n')
         OutputDebugString("\n");
 #endif
@@ -435,8 +435,8 @@ void hsStrLower(char *s)
 {
     if (s)
     {
-        int i;
-        for (i = 0; i < strlen(s); i++)
+        size_t len = strlen(s);
+        for (size_t i = 0; i < len; i++)
             s[i] = tolower(s[i]);
     }
 }
@@ -447,9 +447,9 @@ void hsStrLower(char *s)
 wchar_t *hsStringToWString( const char *str )
 {
     // convert the char string to a wchar_t string
-    int len = strlen(str);
+    size_t len = strlen(str);
     wchar_t *wideString = new wchar_t[len+1];
-    for (int i=0; i<len; i++)
+    for (size_t i = 0; i < len; i++)
         wideString[i] = btowc(str[i]);
     wideString[len] = L'\0';
     return wideString;
@@ -461,11 +461,10 @@ wchar_t *hsStringToWString( const char *str )
 char    *hsWStringToString( const wchar_t *str )
 {
     // convert the wchar_t string to a char string
-    int len = wcslen(str);
+    size_t len = wcslen(str);
     char *sStr = new char[len+1];
 
-    int i;
-    for (i = 0; i < len; i++)
+    for (size_t i = 0; i < len; i++)
     {
         char temp = wctob(str[i]);
         if (temp == EOF)
