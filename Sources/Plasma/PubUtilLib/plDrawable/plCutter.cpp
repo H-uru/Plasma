@@ -1149,14 +1149,10 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         if( !numTris )
             continue;
 
-        std::vector<hsPoint3> pos;
-        pos.resize(numVerts);
-        std::vector<hsVector3> norm;
-        norm.resize(numVerts);
-        std::vector<hsPoint3> uvw;
-        uvw.resize(numVerts);
-        std::vector<hsColorRGBA> col;
-        col.resize(numVerts);
+        std::vector<hsPoint3> pos(numVerts);
+        std::vector<hsVector3> norm(numVerts);
+        std::vector<hsPoint3> uvw(numVerts);
+        std::vector<hsColorRGBA> col(numVerts);
 
         int iPoly = 0;
         int iVert = 0;
@@ -1301,14 +1297,10 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
         if( !numTris )
             continue;
 
-        std::vector<hsPoint3> pos;
-        pos.resize(numVerts);
-        std::vector<hsVector3> norm;
-        norm.resize(numVerts);
-        std::vector<hsPoint3> uvw;
-        uvw.resize(numVerts);
-        std::vector<hsColorRGBA> col;
-        col.resize(numVerts);
+        std::vector<hsPoint3> pos(numVerts);
+        std::vector<hsVector3> norm(numVerts);
+        std::vector<hsPoint3> uvw(numVerts);
+        std::vector<hsColorRGBA> col(numVerts);
 
         int iPoly = 0;
         int iVert = 0;

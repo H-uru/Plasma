@@ -786,14 +786,13 @@ void plClusterComponent::IFinishDoneNodes(INodeTab& doneNodes, plBox3Tab& fade, 
 void plClusterComponent::ISetupRenderDependencies()
 {
     hsRadixSort::Elem* listTrav;
-    std::vector<hsRadixSortElem> scratchList;
 
     int numClust = fCompPB->Count(kClusters);
 
     if( !numClust )
         return;
 
-    scratchList.resize(numClust);
+    std::vector<hsRadixSortElem> scratchList(numClust);
 
     int i;
     for( i = 0; i < numClust; i++ )

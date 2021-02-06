@@ -193,9 +193,7 @@ plGeometrySpan* plGeoSpanDice::IExtractTris(plGeometrySpan* src, hsTArray<uint32
 {
     // First off, find out how many and which vers we're talking here.
     // Easiest way is while we're building the LUTs we'll want later anyway.
-    std::vector<int16_t> fwdLUT;
-    fwdLUT.resize(src->fNumVerts);
-    memset(fwdLUT.data(), -1, src->fNumVerts * sizeof(*fwdLUT.data()));
+    std::vector<int16_t> fwdLUT(src->fNumVerts, -1);
 
     std::vector<uint16_t> bckLUT;
 

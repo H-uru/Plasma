@@ -3564,15 +3564,11 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     const int nVerts = nWid * 2;
 
-    std::vector<hsPoint3> pos;
-    std::vector<hsVector3> norm;
-
-    pos.resize(nVerts);
-    norm.resize(nVerts);
+    std::vector<hsPoint3> pos(nVerts);
+    std::vector<hsVector3> norm(nVerts);
 
 #ifdef TEST_UVWS
-    std::vector<hsPoint3> uvw; // Are we actually ever going to use these uvws?
-    uvw.resize(nVerts);
+    std::vector<hsPoint3> uvw(nVerts); // Are we actually ever going to use these uvws?
 #endif // TEST_UVWS
 
     int i;
@@ -3610,8 +3606,7 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     const int nTris = (nWid-1) * 2;
 
-    std::vector<uint16_t> idxArr;
-    idxArr.resize(nTris * 3);
+    std::vector<uint16_t> idxArr(nTris * 3);
 
     uint16_t* idx = idxArr.data();
 
@@ -4408,4 +4403,3 @@ void plWaveSet7::IUpdateGraphShaders(plPipeline* pipe, float dt)
         }
     }
 }
-

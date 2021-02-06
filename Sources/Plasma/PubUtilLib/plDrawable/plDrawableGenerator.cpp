@@ -628,10 +628,10 @@ plDrawableSpans     *plDrawableGenerator::GenerateAxesDrawable( hsGMaterial *mat
                                                                 const hsColorRGBA* multColor,
                                                                 hsTArray<uint32_t> *retIndex, plDrawableSpans *toAddTo )
 {
-    std::vector<hsPoint3>   points;
-    std::vector<hsVector3>  normals;
-    std::vector<hsColorRGBA> colors;
-    std::vector<uint16_t>   indices;
+    std::vector<hsPoint3>   points(6 * 3);
+    std::vector<hsVector3>  normals(6 * 3);
+    std::vector<hsColorRGBA> colors(6 * 3);
+    std::vector<uint16_t>   indices(6 * 3);
 
     int                 i;
     float               size = 15;
@@ -639,10 +639,6 @@ plDrawableSpans     *plDrawableGenerator::GenerateAxesDrawable( hsGMaterial *mat
 
 
     /// Generate points
-    points.resize(6 * 3);
-    normals.resize(6 * 3);
-    colors.resize(6 * 3);
-
     points[ 0 ].Set( 0, 0, 0 );
     points[ 1 ].Set( size, -size * 0.1f, 0 );
     points[ 2 ].Set( size, -size * 0.3f, 0 );
@@ -668,7 +664,6 @@ plDrawableSpans     *plDrawableGenerator::GenerateAxesDrawable( hsGMaterial *mat
     }
 
     /// Generate indices
-    indices.resize(6 * 3);
     for( i = 0; i < 18; i += 6 )
     {
         indices[ i ] = i + 0;

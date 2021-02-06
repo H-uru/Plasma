@@ -889,7 +889,7 @@ hsSsize_t plClient::IFindRoomByLoc(const plLocation& loc)
 bool plClient::IIsRoomLoading(const plLocation& loc)
 {
     return std::any_of(fRoomsLoading.begin(), fRoomsLoading.end(),
-                       [loc](const plLocation& room) {
+                       [&loc](const plLocation& room) {
                            return room == loc;
                        });
 }
