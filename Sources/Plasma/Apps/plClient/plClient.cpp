@@ -875,12 +875,12 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     return true;
 }
 
-int plClient::IFindRoomByLoc(const plLocation& loc)
+hsSsize_t plClient::IFindRoomByLoc(const plLocation& loc)
 {
     for (size_t i = 0; i < fRooms.size(); i++)
     {
         if (fRooms[i].fNode->GetKey()->GetUoid().GetLocation() == loc)
-            return int(i);
+            return hsSsize_t(i);
     }
 
     return -1;
@@ -1000,7 +1000,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
 
         // First, look in our room list. It *should* be there, which allows us to avoid a
         // potential nasty reload-find in the resMgr.
-        int roomIdx = IFindRoomByLoc(loc);
+        hsSsize_t roomIdx = IFindRoomByLoc(loc);
         if (roomIdx != -1)
             nodeKey = fRooms[roomIdx].fNode->GetKey();
 

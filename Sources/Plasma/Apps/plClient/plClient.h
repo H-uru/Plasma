@@ -197,7 +197,7 @@ protected:
 
     void    IPatchGlobalAgeFiles();
 
-    int IFindRoomByLoc(const plLocation& loc);
+    hsSsize_t IFindRoomByLoc(const plLocation& loc);
     bool IIsRoomLoading(const plLocation& loc);
     void IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold);
     void ILoadNextRoom();
