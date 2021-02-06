@@ -70,11 +70,13 @@ void CInputAccumulator::Add (unsigned count, const uint8_t * data) {
 
 //============================================================================
 bool CInputAccumulator::Get (unsigned count, void * dest) {
-    if (curr + count > buffer.end())
+    if (ptrdiff_t(count) > buffer.end() - curr)
         return false;
 //  LogMsg(kLogPerf, "Removing {} bytes from accumulator {#x}", count, (uintptr_t)this);
-    memcpy(dest, &*curr, count);
-    curr += count;
+    if (count) {
+        memcpy(dest, &*curr, count);
+        curr += count;
+    }
     return true;
 }
 
