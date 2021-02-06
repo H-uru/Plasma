@@ -1107,13 +1107,13 @@ void plResManager::IDropAllAgeKeys()
 
 class plOurRefferAndFinder : public plRegistryKeyIterator
 {
-    hsTArray<plKey> &fRefArray;
-    uint16_t          fClassToFind;
-    plKey           &fFoundKey;
+    std::vector<plKey> &fRefArray;
+    uint16_t           fClassToFind;
+    plKey              &fFoundKey;
 
     public:
 
-        plOurRefferAndFinder( hsTArray<plKey> &refArray, uint16_t classToFind, plKey &foundKey ) 
+        plOurRefferAndFinder(std::vector<plKey> &refArray, uint16_t classToFind, plKey &foundKey)
                 : fRefArray( refArray ), fClassToFind( classToFind ), fFoundKey( foundKey ) { }
 
         bool EatKey(const plKey& key) override
@@ -1121,7 +1121,7 @@ class plOurRefferAndFinder : public plRegistryKeyIterator
             // This is cute. Thanks to our new plKey smart pointers, all we have to
             // do is append the key to our ref array. This automatically guarantees us
             // an extra ref on the key, which is what we're trying to do. Go figure.
-            fRefArray.Append( key );
+            fRefArray.emplace_back(key);
 
             // Also do our find
             if( key->GetUoid().GetClassType() == fClassToFind )
@@ -1184,7 +1184,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
     // (and thus potentially delete) them later. Note that we also use this for our find.
     kResMgrLog(2, ILog(2, "...Reffing keys..."));
     plKey objKey;
-    hsTArray<plKey> keyRefList;
+    std::vector<plKey> keyRefList;
     plOurRefferAndFinder reffer(keyRefList, objClassToRef, objKey);
     pageNode->IterateKeys(&reffer);
 
@@ -1207,7 +1207,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
     // Note that since objKey is a plKey, our object that we loaded will have an extra ref...
     // Scary, huh?
     kResMgrLog(2, ILog(2, "...Dumping extra key refs..."));
-    keyRefList.Reset();
+    keyRefList.clear();
 
     // Step 5: Ref the object
     kResMgrLog(2, ILog(2, "...Dispatching refMessage..."));
@@ -1289,7 +1289,7 @@ void plResManager::PageInAge(const ST::string &age)
 
 bool plResManager::VerifyPages()
 {
-    hsTArray<plRegistryPageNode*> invalidPages, newerPages;
+    std::vector<plRegistryPageNode*> invalidPages, newerPages;
     PageMap::iterator it = fAllPages.begin();
 
     // Step 1: verify major/minor version changes
@@ -1304,7 +1304,7 @@ bool plResManager::VerifyPages()
 
             if (page->GetPageCondition() == kPageTooNew && plResMgrSettings::Get().GetFilterNewerPageVersions())
             {
-                newerPages.Append(page);
+                newerPages.emplace_back(page);
                 fAllPages.erase(loc);
             }
             else if (
@@ -1312,21 +1312,21 @@ bool plResManager::VerifyPages()
                 page->GetPageCondition() == kPageOutOfDate)
                 && plResMgrSettings::Get().GetFilterOlderPageVersions())
             {
-                invalidPages.Append(page);
+                invalidPages.emplace_back(page);
                 fAllPages.erase(loc);
             }
         }
     }
 
     // Handle all our invalid pages now
-    if (invalidPages.GetCount() > 0)
+    if (!invalidPages.empty())
     {
         if (!IDeleteBadPages(invalidPages, false))
             return false;
     }
 
     // Warn about newer pages
-    if (newerPages.GetCount() > 0)
+    if (!newerPages.empty())
     {
         if (!IWarnNewerPages(newerPages))
             return false;
@@ -1335,7 +1335,7 @@ bool plResManager::VerifyPages()
     // Step 2 of verification: make sure no sequence numbers conflict
     for (auto badPage : fConflictingPages) {
         fAllPages.erase(badPage->GetPageInfo().GetLocation());
-        invalidPages.Append(badPage);
+        invalidPages.emplace_back(badPage);
     }
     fConflictingPages.clear();
 
@@ -1352,7 +1352,7 @@ bool plResManager::VerifyPages()
     }
 
     // Handle all our conflicting pages now
-    if (invalidPages.GetCount() > 0)
+    if (!invalidPages.empty())
         return IDeleteBadPages(invalidPages, true);
 
     return true;
@@ -1362,9 +1362,9 @@ bool plResManager::VerifyPages()
 //  Given an array of pages that are invalid (major version out-of-date or
 //  whatnot), asks the user what we should do about them.
 
-static void ICatPageNames(hsTArray<plRegistryPageNode*>& pages, char* buf, int bufSize)
+static void ICatPageNames(std::vector<plRegistryPageNode*>& pages, char* buf, int bufSize)
 {
-    for (int i = 0; i < pages.GetCount(); i++)
+    for (size_t i = 0; i < pages.size(); i++)
     {
         if (i >= 25)
         {
@@ -1384,7 +1384,7 @@ static void ICatPageNames(hsTArray<plRegistryPageNode*>& pages, char* buf, int b
     }
 }
 
-bool plResManager::IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums)
+bool plResManager::IDeleteBadPages(std::vector<plRegistryPageNode*>& invalidPages, bool conflictingSeqNums)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (!hsMessageBox_SuppressPrompts)
@@ -1406,12 +1406,12 @@ bool plResManager::IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, 
 #endif // PLASMA_EXTERNAL_RELEASE
 
     // Delete 'em
-    for (int i = 0; i < invalidPages.GetCount(); i++)
+    for (plRegistryPageNode* page : invalidPages)
     {
-        invalidPages[i]->DeleteSource();
-        delete invalidPages[i];
+        page->DeleteSource();
+        delete page;
     }
-    invalidPages.Reset();
+    invalidPages.clear();
 
     fLastFoundPage = nil;
 
@@ -1423,7 +1423,7 @@ bool plResManager::IDeleteBadPages(hsTArray<plRegistryPageNode*>& invalidPages, 
 //  than the "current" one), warns the user about them but does nothing to
 //  them.
 
-bool plResManager::IWarnNewerPages(hsTArray<plRegistryPageNode*> &newerPages)
+bool plResManager::IWarnNewerPages(std::vector<plRegistryPageNode*> &newerPages)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (!hsMessageBox_SuppressPrompts)
@@ -1441,9 +1441,9 @@ bool plResManager::IWarnNewerPages(hsTArray<plRegistryPageNode*> &newerPages)
 
 
     // Not deleting the files, just delete them from memory
-    for (int i = 0; i < newerPages.GetCount(); i++)
-        delete newerPages[i];
-    newerPages.Reset();
+    for (plRegistryPageNode* page : newerPages)
+        delete page;
+    newerPages.clear();
 
     fLastFoundPage = nil;
 
@@ -1456,20 +1456,20 @@ bool plResManager::IWarnNewerPages(hsTArray<plRegistryPageNode*> &newerPages)
 class plOurReffer : public plRegistryKeyIterator
 {
 protected:
-    hsTArray<plKey> fRefArray;
+    std::vector<plKey> fRefArray;
 
 public:
     plOurReffer() {}
     virtual ~plOurReffer() { UnRef(); }
 
-    void UnRef() { fRefArray.Reset(); }
+    void UnRef() { fRefArray.clear(); }
 
     bool EatKey(const plKey& key) override
     {
         // This is cute. Thanks to our new plKey smart pointers, all we have to
         // do is append the key to our ref array. This automatically guarantees us
         // an extra ref on the key, which is what we're trying to do. Go figure.
-        fRefArray.Append(key);
+        fRefArray.emplace_back(key);
 
         return true;
     }

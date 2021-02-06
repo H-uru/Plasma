@@ -419,17 +419,17 @@ PLASMA_DEFAULT_TYPE(ptDynamicMap, "Params: key=None\nCreates a ptDynamicMap obje
 // required functions for PyObject interoperability
 PYTHON_CLASS_NEW_IMPL(ptDynamicMap, pyDynamicText)
 
-PyObject *pyDynamicText::New(pyKey& key)
+PyObject *pyDynamicText::New(const pyKey& key)
 {
     ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, NULL, NULL);
-    newObj->fThis->fReceivers.Append(key.getKey());
+    newObj->fThis->fReceivers.emplace_back(key.getKey());
     return (PyObject*)newObj;
 }
 
 PyObject *pyDynamicText::New(plKey key)
 {
     ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, NULL, NULL);
-    newObj->fThis->fReceivers.Append(key);
+    newObj->fThis->fReceivers.emplace_back(key);
     return (PyObject*)newObj;
 }
 

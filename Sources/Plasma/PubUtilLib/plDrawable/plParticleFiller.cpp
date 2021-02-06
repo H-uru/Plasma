@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleFiller.h"
 
 // Core background
-#include "hsTemplates.h"
 #include "hsFastMath.h"
 #include "plPipeline.h"
 #include "plViewTransform.h"

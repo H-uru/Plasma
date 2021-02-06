@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plLoadMask.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 #include "plQuality.h"
 
 ///////////////////////////////////////////////////////////////////

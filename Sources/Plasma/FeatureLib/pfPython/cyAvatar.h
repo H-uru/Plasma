@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
 #include <string>
-#include "hsTemplates.h"
 #include "plFileSystem.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -67,7 +66,7 @@ class cyAvatar
 {
 protected:
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     bool          fNetForce;
 
     virtual const plArmatureMod* IFindArmatureMod(plKey avObj);
@@ -95,8 +94,8 @@ public:
     static void AddPlasmaConstantsClasses(PyObject *m);
 
     // setters
-    void SetSender(plKey &sender);
-    void AddRecvr(plKey &recvr);
+    void SetSender(plKey sender);
+    void AddRecvr(plKey recvr);
     virtual void SetNetForce(bool state) { fNetForce = state; }
 
     // oneShot Avatar (must already be there)
@@ -119,7 +118,7 @@ public:
     // static behavior functions:
     static void SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, bool netForce);
 
-    virtual void SetSenderKey(pyKey &pKey);
+    virtual void SetSenderKey(const pyKey &pKey);
 
     // seek Avatar (must already be there)
     //virtual void Seek(pyKey &seekKey, float duration, bool usePhysics);

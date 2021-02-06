@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnModifier/plSingleModifier.h"
 #include "hsGeometry3.h"
 #include "pnEncryption/plRandom.h"
-#include "hsTemplates.h"
 
 class plSceneObject;
 class hsStream;
@@ -73,7 +72,7 @@ protected:
     float        fBias;
 
     float                    fAccumTime;
-    hsTArray<Oscillator>        fOscillators;
+    std::vector<Oscillator>  fOscillators;
 
     // CurrentState
     hsVector3       fDirection;

@@ -62,8 +62,8 @@ class pfConsoleContext
 
         char    *fName;
 
-        hsTArray<char *>            fVarNames;
-        hsTArray<pfConsoleCmdParam> fVarValues;
+        std::vector<char *>            fVarNames;
+        std::vector<pfConsoleCmdParam> fVarValues;
 
         void    IAddVar( const char *name, const pfConsoleCmdParam &value );
 
@@ -76,12 +76,12 @@ class pfConsoleContext
 
         void    Clear();
 
-        uint32_t              GetNumVars() const;
-        const char          *GetVarName( uint32_t idx ) const;
-        const pfConsoleCmdParam   &GetVarValue(uint32_t idx) const;
+        size_t              GetNumVars() const;
+        const char          *GetVarName(size_t idx) const;
+        const pfConsoleCmdParam   &GetVarValue(size_t idx) const;
 
-        int32_t   FindVar( const char *name ) const;
-        void    RemoveVar( uint32_t idx );
+        hsSsize_t FindVar(const char *name) const;
+        void    RemoveVar(size_t idx);
 
         void    AddVar( const char *name, const pfConsoleCmdParam &value );
         void    AddVar( const char *name, int value );
@@ -90,7 +90,7 @@ class pfConsoleContext
         void    AddVar( const char *name, char value );
         void    AddVar( const char *name, bool value );
 
-        bool    SetVar( uint32_t idx, const pfConsoleCmdParam &value );
+        bool    SetVar(size_t idx, const pfConsoleCmdParam &value);
 
         bool    SetVar( const char *name, const pfConsoleCmdParam &value );
         bool    SetVar( const char *name, int value );

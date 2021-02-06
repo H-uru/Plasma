@@ -805,7 +805,7 @@ PF_CONSOLE_CMD( Console, PrintVar, "string name", "Prints the value of a given g
 {
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
-    int32_t idx = ctx.FindVar( params[ 0 ] );
+    hsSsize_t idx = ctx.FindVar(params[0]);
     if( idx == -1 )
         PrintString( "Variable not found" );
     else
@@ -818,10 +818,8 @@ PF_CONSOLE_CMD( Console, PrintAllVars, "", "Prints the values of all global cons
 {
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
-    uint32_t  i;
-
     PrintString( "Global console variables:" );
-    for( i = 0; i < ctx.GetNumVars(); i++ )
+    for (size_t i = 0; i < ctx.GetNumVars(); i++)
     {
         pfConsolePrintF(PrintString, "  {}: {}", (const char *)ctx.GetVarName(i), (const char *)ctx.GetVarValue(i));
     }
@@ -1267,13 +1265,12 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
 {
     hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
 
-    hsTArray<uint16_t> ramp;
-    ramp.SetCount(256);
+    std::vector<uint16_t> ramp;
+    ramp.resize(256);
 
     float g = params[0];
 
-    int i;
-    for( i = 0; i < 256; i++ )
+    for (int i = 0; i < 256; i++)
     {
         float t = float(i) / 255.f;
         float sinT = std::sin(t * hsConstants::pi<float> / 2.f);
@@ -1287,7 +1284,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
         ramp[i] = uint16_t(remap * float(uint16_t(-1)) + 0.5f);
     }
 
-    pfConsole::GetPipeline()->SetGamma(ramp.AcquireArray());
+    pfConsole::GetPipeline()->SetGamma(ramp.data());
 
 //  pfConsolePrintF(PrintString, "Gamma set to <alt> {}.", g);
 }

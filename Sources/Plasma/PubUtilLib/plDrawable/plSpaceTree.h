@@ -120,8 +120,8 @@ private:
 
     void        IHarvestLevel(int16_t subRoot, int level, int currLevel, hsTArray<int16_t>& list) const;
 
-    void        IHarvestAndCullEnabledLeaves(int16_t subRoot, const hsBitVector& cache, hsTArray<int16_t>& list) const;
-    void        IHarvestEnabledLeaves(int16_t subRoot, const hsBitVector& cache, hsTArray<int16_t>& list) const;
+    void        IHarvestAndCullEnabledLeaves(int16_t subRoot, const hsBitVector& cache, std::vector<int16_t>& list) const;
+    void        IHarvestEnabledLeaves(int16_t subRoot, const hsBitVector& cache, std::vector<int16_t>& list) const;
     void        IHarvestEnabledLeaves(int16_t subIdx, const hsBitVector& cache, hsBitVector& totList, hsBitVector& list) const;
 
     void        IEnableLeaf(int16_t idx, hsBitVector& cache) const;
@@ -147,16 +147,14 @@ public:
     void HarvestLeaves(int16_t subRoot, hsBitVector& list) const;
     void HarvestLeaves(int16_t subRoot, hsBitVector& totList, hsBitVector& list) const;
 
-    void HarvestLeaves(hsTArray<int16_t>& list) const;
-    void HarvestLeaves(plVolumeIsect* cullFunc, hsTArray<int16_t>& list) const;
-    void HarvestLeaves(int16_t subRoot, hsTArray<int16_t>& list) const;
+    void HarvestLeaves(std::vector<int16_t>& list) const;
+    void HarvestLeaves(plVolumeIsect* cullFunc, std::vector<int16_t>& list) const;
+    void HarvestLeaves(int16_t subRoot, std::vector<int16_t>& list) const;
 
     void EnableLeaf(int16_t idx, hsBitVector& cache) const;
-    void EnableLeaves(const hsTArray<int16_t>& list, hsBitVector& cache) const;
-    void HarvestEnabledLeaves(plVolumeIsect* cullFunc, const hsBitVector& cache, hsTArray<int16_t>& list) const;
+    void EnableLeaves(const std::vector<int16_t>& list, hsBitVector& cache) const;
+    void HarvestEnabledLeaves(plVolumeIsect* cullFunc, const hsBitVector& cache, std::vector<int16_t>& list) const;
     void SetCache(const hsBitVector* cache) { fCache = cache; }
-
-    void BitVectorToList(hsTArray<int16_t>& list, const hsBitVector& bitVec) const;
 
     void SetHarvestFlags(plHarvestFlags f) { fHarvestFlags = f; }
     uint16_t GetHarvestFlags() const { return fHarvestFlags; }

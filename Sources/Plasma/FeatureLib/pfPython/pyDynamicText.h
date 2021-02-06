@@ -54,14 +54,13 @@ class pyImage;
 
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 class pyDynamicText
 {
 private:
     plKey           fSenderKey;     // the holder of the who (the modifier) we are
     // the list of receivers that want to be notified
-    hsTArray<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
 
     bool            fNetPropagate;
     bool            fNetForce;
@@ -82,14 +81,14 @@ private:
 
 protected:
     pyDynamicText();
-    pyDynamicText(pyKey& key);
+    pyDynamicText(const pyKey& key);
     pyDynamicText(plKey key);
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDynamicMap);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject* New(pyKey& key);
+    static PyObject* New(const pyKey& key);
     static PyObject* New(plKey key);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDynamicText object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDynamicText); // converts a PyObject to a pyDynamicText (throws error if not correct type)
@@ -99,9 +98,9 @@ public:
 
 // methods that will be exposed to Python
     // message stuff
-    void SetSender(pyKey& selfKey);
+    void SetSender(const pyKey& selfKey);
     void ClearReceivers();
-    void AddReceiver(pyKey& key);
+    void AddReceiver(const pyKey& key);
     void SetNetPropagate(bool propagate);
     void SetNetForce(bool force);
 

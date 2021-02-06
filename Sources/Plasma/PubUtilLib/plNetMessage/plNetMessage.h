@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 #include "plGeneric.h"
 #include "pnNetCommon/plNetGroup.h"
 #include "pnFactory/plCreatable.h"

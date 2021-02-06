@@ -2643,7 +2643,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
 
 void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 {
-    hsTArray<plLayerAVI*> moviesOnPage;
+    std::vector<plLayerAVI*> moviesOnPage;
     if (source && dest)
     {
         // clear any exiting layers (movies) from the material and save them to our local array
@@ -2656,7 +2656,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
             {
                 plMatRefMsg* refMsg = new plMatRefMsg(source->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(source->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
-                moviesOnPage.Append(movie);
+                moviesOnPage.emplace_back(movie);
             }
         }
         // clear the destination's movies (if it has any)
@@ -2671,10 +2671,8 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
             }
         }
         // put the movies we ripped off the old page onto the new one
-        for( i = 0; i < moviesOnPage.GetCount(); i++ )
-        {
-            dest->AddLayerViaNotify(moviesOnPage[i]);
-        }
+        for (plLayerAVI* movie : moviesOnPage)
+            dest->AddLayerViaNotify(movie);
     }
 }
 

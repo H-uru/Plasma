@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsQuat.h"
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 #include "plPhysical/plSimDefs.h"
 

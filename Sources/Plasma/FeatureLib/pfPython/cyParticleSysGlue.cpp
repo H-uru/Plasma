@@ -122,13 +122,11 @@ PyObject *cyParticleSys::New(PyObject *sender, PyObject *recvr)
     ptParticle *newObj = (ptParticle*)ptParticle_type.tp_new(&ptParticle_type, NULL, NULL);
     if (sender != NULL)
     {
-        plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
-        newObj->fThis->SetSender(senderKey);
+        newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
     if (recvr != NULL)
     {
-        plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
-        newObj->fThis->AddRecvr(recvrKey);
+        newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }
     newObj->fThis->SetNetForce(false);
     return (PyObject*)newObj;

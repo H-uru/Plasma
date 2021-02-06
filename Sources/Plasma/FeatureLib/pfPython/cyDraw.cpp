@@ -48,27 +48,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 cyDraw::cyDraw(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyDraw::SetSender(plKey &sender)
+void cyDraw::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyDraw::AddRecvr(plKey &recvr)
+void cyDraw::AddRecvr(plKey recvr)
 {
     if ( recvr != nil )
-        fRecvr.Append(recvr);
+        fRecvr.emplace_back(std::move(recvr));
 }
 
 void cyDraw::EnableT(bool state)
 {
     // must have a receiver!
-    if ( fRecvr.Count() > 0 )
+    if (!fRecvr.empty())
     {
         // create message
         plEnableMsg* pMsg = new plEnableMsg;
@@ -83,11 +83,9 @@ void cyDraw::EnableT(bool state)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
-        int i;
-        for ( i=0; i<fRecvr.Count(); i++ )
-        {
-            pMsg->AddReceiver(fRecvr[i]);
-        }
+        for (const plKey& rcKey : fRecvr)
+            pMsg->AddReceiver(rcKey);
+
         // set the interface to the draw
         pMsg->SetCmd(plEnableMsg::kDrawable);
         pMsg->AddType(plEnableMsg::kDrawable);

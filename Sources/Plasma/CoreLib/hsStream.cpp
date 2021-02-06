@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "hsMemory.h"
-#include "hsTemplates.h"
+#include "hsExceptions.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>

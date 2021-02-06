@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 #include "plSharedMesh.h"
 #include "plGeometrySpan.h"
 #include "plInstanceDrawInterface.h"

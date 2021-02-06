@@ -135,43 +135,39 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 
 void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
 {
-    static hsTArray<int16_t> visList;
-    visList.SetCount(0);
+    static std::vector<int16_t> visList;
+    visList.clear();
     GetSpaceTree()->HarvestLeaves(isect, visList);
-    static hsTArray<int16_t> visSpans;
-    visSpans.SetCount(0);
+    static std::vector<int16_t> visSpans;
+    visSpans.clear();
 
-    int i;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        int idx = visList[i];
         fDrawPool[idx]->GetSpaceTree()->HarvestLeaves(isect, visSpans);
-        if( visSpans.GetCount() )
+        if (!visSpans.empty())
         {
             plDrawVisList* drawVis = levList.Push();
             drawVis->fDrawable = fDrawPool[idx];
-            drawVis->fVisList.Swap(visSpans);
+            drawVis->fVisList.swap(visSpans);
         }
     }
 }
 
 void plSceneNode::CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr)
 {
-    static hsTArray<int16_t> visList;
-    visList.SetCount(0);
+    static std::vector<int16_t> visList;
+    visList.clear();
     pipe->HarvestVisible(GetSpaceTree(), visList);
-    static hsTArray<int16_t> visSpans;
-    visSpans.SetCount(0);
+    static std::vector<int16_t> visSpans;
+    visSpans.clear();
 
-    int i;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        int idx = visList[i];
         if( pipe->PreRender(fDrawPool[idx], visSpans, visMgr) )
         {
             plDrawVisList* drawVis = levList.Push();
             drawVis->fDrawable = fDrawPool[idx];
-            drawVis->fVisList.Swap(visSpans);
+            drawVis->fVisList.swap(visSpans);
         }
     }
 }

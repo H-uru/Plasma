@@ -201,7 +201,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
 {
     const int kBufSize = 512;
     char buff[kBufSize];
-    hsTArray<plRegionInfo*> regions;    
+    std::vector<plRegionInfo*> regions;
     hsStringTokenizer toke; 
     bool firstLine = true;
     
@@ -221,7 +221,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                     continue; // ignore the initial blank one
 
                 plRegionInfo *info = new plRegionInfo;
-                regions.Append(info);
+                regions.emplace_back(info);
                 info->fName = hsStrcpy(buff);
                 info->fIndex = GetIndex(buff);
             }
@@ -233,8 +233,8 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                 continue;
             
             int rowIndex = GetIndex(buff);
-            int column = 0;
-            while (toke.Next(buff, kBufSize) && column < regions.GetCount())
+            size_t column = 0;
+            while (toke.Next(buff, kBufSize) && column < regions.size())
             {
                 int value = atoi(buff);
                 MarkRegion(rowIndex, regions[column]->fIndex, value != 0);
@@ -244,9 +244,8 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
         }
     }
 
-    int i;
-    for (i = regions.GetCount() - 1; i >= 0; i--)
-        delete regions[i];
+    for (auto ri = regions.crend(); ri != regions.crbegin(); ++ri)
+        delete *ri;
 }
 
 ST::string plRelevanceMgr::GetRegionNames(hsBitVector regions)

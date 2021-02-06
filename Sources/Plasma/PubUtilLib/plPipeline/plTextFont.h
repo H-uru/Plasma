@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTextFont_h
 #define _plTextFont_h
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 
 //// plTextFont Class Definition //////////////////////////////////////////////
@@ -77,7 +76,7 @@ class plTextFont
             uint32_t      fColor;
             hsPoint3    fUV;
 
-            plFontVertex& operator=(const int zero)
+            plFontVertex& operator=(std::nullptr_t)
             {
                 fPoint.Set(0,0,0);
                 fColor = 0;

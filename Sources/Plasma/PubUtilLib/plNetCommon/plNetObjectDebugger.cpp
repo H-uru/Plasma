@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plNetObjectDebugger.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 
 #include "pnUtils/pnUtils.h"
 #include "pnKeyedObject/hsKeyedObject.h"

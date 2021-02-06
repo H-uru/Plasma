@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plKeyFinder.h"
 
-#include "hsTemplates.h"
-
 #include "hsResMgr.h"
 #include "plResManager.h"
 

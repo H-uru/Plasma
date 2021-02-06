@@ -41,17 +41,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <cmath>
+#include <cstdarg>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <cwchar>
 #include <functional>
 #include <limits.h>
 #include <memory>
-#include <stdarg.h>
-#include <stdint.h>
-#include <wchar.h>
+#include <vector>
 
 #include "HeadSpin.h"
 #include "hsWindows.h"

@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plAnimDebugList.h"
 #include "pnSceneObject/plSceneObject.h"

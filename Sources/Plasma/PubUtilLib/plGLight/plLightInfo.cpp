@@ -207,7 +207,7 @@ void plLightInfo::GetAffected(const plSpaceTree* space, hsBitVector& list, bool 
     }
 }
 
-const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTArray<int16_t>& visList, hsTArray<int16_t>& litList, bool charac)
+const std::vector<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const std::vector<int16_t>& visList, std::vector<int16_t>& litList, bool charac)
 {
     Refresh();
 
@@ -232,7 +232,7 @@ const hsTArray<int16_t>& plLightInfo::GetAffected(plSpaceTree* space, const hsTA
         }
     }
 
-    litList.SetCount(0);
+    litList.clear();
     return litList;
 }
 

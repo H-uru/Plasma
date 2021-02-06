@@ -134,6 +134,9 @@ typedef int32_t   hsError;
 // Declare a file-unique identifier without caring what its full name is
 #define hsUniqueIdentifier(prefix) hsMacroJoin(prefix, __LINE__)
 
+// Why can't this just be part of the standard already?
+using hsSsize_t = std::make_signed<size_t>::type;
+
 //======================================
 // Endian swap funcitions
 //======================================

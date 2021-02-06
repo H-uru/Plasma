@@ -223,13 +223,7 @@ void plDistOpacityMod::SetNearDist(float transparent, float opaque)
     ICheckDists();
 }
 
-class MatLayer
-{
-public:
-    hsGMaterial*        fMat;
-    plLayerInterface*   fLay;
-};
-
+using MatLayer = std::tuple<hsGMaterial*, plLayerInterface*>;
 
 void plDistOpacityMod::ISetup()
 {
@@ -243,7 +237,7 @@ void plDistOpacityMod::ISetup()
     if( !di )
         return;
 
-    hsTArray<MatLayer> todo;
+    std::vector<MatLayer> todo;
 
     hsTArray<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src, false);
@@ -266,29 +260,20 @@ void plDistOpacityMod::ISetup()
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )
             {
-                int k;
-                for( k = 0; k < todo.GetCount(); k++ )
-                {
-                    if( lay == todo[k].fLay )
-                        break;
-                }
-                if( k == todo.GetCount() )
-                {
-                    MatLayer* push = todo.Push();
-                    push->fMat = mat;
-                    push->fLay = lay;
-                }
+                auto it = std::find_if(todo.cbegin(), todo.cend(),
+                                       [lay](const MatLayer& matLayer) {
+                                           return lay == std::get<1>(matLayer);
+                                       });
+                if (it == todo.end())
+                    todo.emplace_back(mat, lay);
             }
         }
     }
 
     plAccessGeometry::Instance()->Close(src);
 
-    for( i = 0; i < todo.GetCount(); i++ )
+    for (const auto [mat, lay] : todo)
     {
-        hsGMaterial* mat = todo[i].fMat;
-        plLayerInterface* lay = todo[i].fLay;
-
         plFadeOpacityLay* fade = new plFadeOpacityLay;
 
         hsgResMgr::ResMgr()->NewKey(lay->GetKey()->GetName(), fade, lay->GetKey()->GetUoid().GetLocation());

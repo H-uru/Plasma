@@ -1539,8 +1539,8 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
 
     ICheckSpanForSortable(index);
 
-    static hsTArray<hsRadixSort::Elem>  sortList;
-    static hsTArray<uint16_t>             tempTriList;
+    static std::vector<hsRadixSort::Elem>  sortList;
+    static std::vector<uint16_t>           tempTriList;
     hsRadixSort::Elem                   *elem;
 
 
@@ -1553,9 +1553,9 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     hsAssert( numTris > 0, "How could we start sorting no triangles??" );
 
     /// Sort the triangles in "list"
-    sortList.SetCount( numTris );
-    tempTriList.SetCount( numTris * 3 );
-    elem = sortList.AcquireArray();
+    sortList.resize(numTris);
+    tempTriList.resize(numTris * 3);
+    elem = sortList.data();
 
     plProfile_EndLap(FaceSort, "0");
     plProfile_BeginLap(FaceSort, "1");
@@ -1583,7 +1583,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     plProfile_EndLap(FaceSort, "2");
     plProfile_BeginLap(FaceSort, "3");
 
-    uint16_t* indices = tempTriList.AcquireArray();
+    uint16_t* indices = tempTriList.data();
     // Stuff into the temp array
     for( i = 0, elem = sortedList; i < numTris; i++ )
     {
@@ -1598,7 +1598,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
 
     /// Now send them on to the buffer group
     fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                  numTris, tempTriList.AcquireArray() );
+                                                  numTris, tempTriList.data());
 
     /// Optional step in a way: copy back our new, sorted list to our original
     /// array. This lets us do less sorting next call, since the order should
@@ -1618,14 +1618,14 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
 //  front display.
 //  Updated 5.14.2001 mcn - Fixed so loops don't assume spans are icicles
 
-void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipeline* pipe)
+void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPipeline* pipe)
 {
 #define MF_CHUNKSORT
 #ifndef MF_CHUNKSORT
 
     plProfile_Inc(FaceSortCalls);
 
-    if( !visList.GetCount() )
+    if (visList.empty())
         return;
 
 
@@ -1634,18 +1634,16 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
     static hsTArray<int32_t>              counters;
     static hsTArray<uint32_t>             startIndex;
     
-    int i;
-    
     plProfile_BeginTiming(FaceSort);
     if( pipe->IsDebugFlagSet( plPipeDbg::kFlagDontSortFaces ) )
     {
         /// Don't sort, just send unchanged
         int     j, idx;
 
-        for( i = 0; i < visList.GetCount(); i++ )
+        for (int16_t idx : visList)
         {
-            plIcicle* span = (plIcicle*)fSpans[visList[i]];
-            ICheckSpanForSortable(visList[i]);
+            plIcicle* span = (plIcicle*)fSpans[idx];
+            ICheckSpanForSortable(idx);
 
             /// Build a fake list of indices....
             plGBufferTriangle*      list = span->fSortData;
@@ -1672,13 +1670,13 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     // First figure out the total number of tris to deal with.
     int totTris = 0;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
+        plIcicle* span = (plIcicle*)fSpans[idx];
 
-        startIndex[visList[i]] = totTris * 3;
+        startIndex[idx] = totTris * 3;
         if( span->fProps & plSpan::kPropReverseSort )
-            startIndex[visList[i]] += span->fILength - 3;
+            startIndex[idx] += span->fILength - 3;
 
         totTris += span->fILength / 3;
     }
@@ -1703,9 +1701,9 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
     // which would get rid of this copy and help the data alignment.
     // Oops, I already did.
     int cnt = 0;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
+        plIcicle* span = (plIcicle*)fSpans[idx];
         
         int nTris = span->fILength / 3;
 
@@ -1768,7 +1766,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
     {
         memset(newStarts, 0, kMaxBufferGroups * kMaxIndexBuffers * sizeof(int16_t));
 
-        for( i = 0; i < fSpans.GetCount(); i++ )
+        for (int i = 0; i < fSpans.GetCount(); i++)
         {
             plIcicle* span = (plIcicle*)fSpans[i];
 
@@ -1780,13 +1778,13 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     if( oldWay )
     {
-        for( i = 0; i < visList.GetCount(); i++ )
+        for (int16_t idx : visList)
         {
-            plIcicle* span = (plIcicle*)fSpans[visList[i]];
+            plIcicle* span = (plIcicle*)fSpans[idx];
 
             /// Now send them on to the buffer group
             fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() + startIndex[visList[i]]);
+                                                          span->fILength / 3, triList.AcquireArray() + startIndex[idx]);
         }
     }
     else
@@ -1794,15 +1792,15 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
         memset(newStarts, 0, kMaxBufferGroups * kMaxIndexBuffers * sizeof(int16_t));
 
         uint32_t start = 0;
-        for( i = 0; i < visList.GetCount(); i++ )
+        for (int16_t idx : visList)
         {
-            plIcicle* span = (plIcicle*)fSpans[visList[i]];
+            plIcicle* span = (plIcicle*)fSpans[idx];
 
             /// Now send them on to the buffer group
             span->fPackedIdx = span->fIStartIdx = newStarts[span->fGroupIdx][span->fIBufferIdx];
             newStarts[span->fGroupIdx][span->fIBufferIdx] += span->fILength;
             fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() + startIndex[visList[i]]);
+                                                          span->fILength / 3, triList.AcquireArray() + startIndex[idx]);
         }
     }
 
@@ -1816,7 +1814,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     plProfile_Inc(FaceSortCalls);
 
-    if( !visList.GetCount() )
+    if (visList.empty())
         return;
 
     plProfile_BeginTiming(FaceSort);
@@ -1826,17 +1824,15 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
     static std::vector<int32_t> counters;
     static std::vector<uint32_t> startIndex;
     
-    int i;
-    
     if( pipe->IsDebugFlagSet( plPipeDbg::kFlagDontSortFaces ) )
     {
         /// Don't sort, just send unchanged
         int     j, idx;
 
-        for( i = 0; i < visList.GetCount(); i++ )
+        for (int16_t idx : visList)
         {
-            plIcicle* span = (plIcicle*)fSpans[visList[i]];
-            ICheckSpanForSortable(visList[i]);
+            plIcicle* span = (plIcicle*)fSpans[idx];
+            ICheckSpanForSortable(idx);
 
             /// Build a fake list of indices....
             plGBufferTriangle*      list = span->fSortData;
@@ -1864,14 +1860,14 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     // First figure out the total number of tris to deal with.
     int totTris = 0;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
-        ICheckSpanForSortable(visList[i]);
+        plIcicle* span = (plIcicle*)fSpans[idx];
+        ICheckSpanForSortable(idx);
         
-        startIndex[visList[i]] = totTris * 3;
+        startIndex[idx] = totTris * 3;
         if( span->fProps & plSpan::kPropReverseSort )
-            startIndex[visList[i]] += span->fILength - 3;
+            startIndex[idx] += span->fILength - 3;
 
 
         totTris += span->fILength / 3;
@@ -1891,8 +1887,8 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     plProfile_EndLap(FaceSort, "0");
 
-    int iVis = 0;
-    while( iVis < visList.GetCount() )
+    size_t iVis = 0;
+    while (iVis < visList.size())
     {
         plProfile_BeginLap(FaceSort, "1");
 
@@ -1902,7 +1898,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
         // Oops, I already did.
         const int kTriCutoff = 4000;
         int cnt = 0;
-        while( (iVis < visList.GetCount()) && (cnt < kTriCutoff) )
+        while ((iVis < visList.size()) && (cnt < kTriCutoff))
         {
             plIcicle* span = (plIcicle*)fSpans[visList[iVis]];
             
@@ -1967,20 +1963,20 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     memset(newStarts, 0, kMaxBufferGroups * kMaxIndexBuffers * sizeof(int16_t));
 
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
+        plIcicle* span = (plIcicle*)fSpans[idx];
 
         hsAssert(kMaxIndexBuffers > span->fIBufferIdx, "Bigger than we counted on num buffers sort.");
 
         if( span->fProps & plSpan::kPropReverseSort )
-            startIndex[visList[i]] -= span->fILength - 3;
+            startIndex[idx] -= span->fILength - 3;
 
         /// Now send them on to the buffer group
         span->fIPackedIdx = span->fIStartIdx = newStarts[span->fGroupIdx][span->fIBufferIdx];
         newStarts[span->fGroupIdx][span->fIBufferIdx] += (int16_t)(span->fILength);
         fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                      span->fILength / 3, triList.data() + startIndex[visList[i]]);
+                                                      span->fILength / 3, triList.data() + startIndex[idx]);
     }
 
     plProfile_EndLap(FaceSort, "4");

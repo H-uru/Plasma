@@ -48,21 +48,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 cyParticleSys::cyParticleSys(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyParticleSys::SetSender(plKey &sender)
+void cyParticleSys::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyParticleSys::AddRecvr(plKey &recvr)
+void cyParticleSys::AddRecvr(plKey recvr)
 {
     if ( recvr != nil )
-        fRecvr.Append(recvr);
+        fRecvr.emplace_back(std::move(recvr));
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -84,11 +84,9 @@ void cyParticleSys::ISendParticleSysMsg(uint32_t param, float value)
     }
     pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
     // add all our receivers to the message receiver list
-    int i;
-    for ( i=0; i<fRecvr.Count(); i++ )
-    {
-        pMsg->AddReceiver(fRecvr[i]);
-    }
+    for (const plKey& rcKey : fRecvr)
+        pMsg->AddReceiver(rcKey);
+
     plgDispatch::MsgSend(pMsg);
 }
 

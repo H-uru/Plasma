@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <set>
 #include <tuple>
 
+#include "hsTemplates.h"
 #include "plAvatar/plPhysicalControllerCore.h"
 
 namespace physx

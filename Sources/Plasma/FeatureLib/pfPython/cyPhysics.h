@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
 
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 #include "pyGlueHelpers.h"
 
@@ -61,7 +60,7 @@ class cyPhysics
 {
 protected:
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     bool            fNetForce;
 
     cyPhysics(plKey sender=nil,plKey recvr=nil);
@@ -78,8 +77,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    void SetSender(plKey &sender);
-    void AddRecvr(plKey &recvr);
+    void SetSender(plKey sender);
+    void AddRecvr(plKey recvr);
 
     virtual void SetNetForce(bool state) { fNetForce = state; }
 

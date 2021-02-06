@@ -81,7 +81,7 @@ protected:
     static plMsgWrap*               fMsgHead;
     static plMsgWrap*               fMsgTail;
     static bool                     fMsgActive;
-    static hsTArray<plMessage*>     fMsgWatch;
+    static std::vector<plMessage*>  fMsgWatch;
     static MsgRecieveCallback       fMsgRecieveCallback;
 
     hsTArray<plTypeFilter*>         fRegisteredExactTypes;

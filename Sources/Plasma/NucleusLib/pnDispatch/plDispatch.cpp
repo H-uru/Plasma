@@ -91,7 +91,7 @@ bool                    plDispatch::fMsgActive = false;
 plMsgWrap*              plDispatch::fMsgCurrent = nil;
 plMsgWrap*              plDispatch::fMsgHead = nil;
 plMsgWrap*              plDispatch::fMsgTail = nil;
-hsTArray<plMessage*>    plDispatch::fMsgWatch;
+std::vector<plMessage*> plDispatch::fMsgWatch;
 MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nil;
 
 std::mutex              plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
@@ -234,7 +234,7 @@ void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 
 #ifdef HS_DEBUGGING
         if (msgWrap->fMsg->HasBCastFlag(plMessage::kMsgWatch))
-            fMsgWatch.Append(msgWrap->fMsg);
+            fMsgWatch.emplace_back(msgWrap->fMsg);
 #endif // HS_DEBUGGING
 
         if (fMsgTail)
@@ -296,10 +296,10 @@ void plDispatch::IMsgDispatch()
         bool nonLocalMsg = msg && msg->HasBCastFlag(plMessage::kNetNonLocal);
 
 #ifdef HS_DEBUGGING
-        int watchIdx = fMsgWatch.Find(msg);
-        if( fMsgWatch.kMissingIndex != watchIdx )
+        auto watchIdx = std::find(fMsgWatch.cbegin(), fMsgWatch.cend(), msg);
+        if (fMsgWatch.cend() != watchIdx)
         {
-            fMsgWatch.Remove(watchIdx);
+            fMsgWatch.erase(watchIdx);
 #if HS_BUILD_FOR_WIN32
             __debugbreak();
 #endif // HS_BUILD_FOR_WIN32

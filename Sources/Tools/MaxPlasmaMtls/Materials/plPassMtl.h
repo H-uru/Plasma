@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_PASSMTL_H
 
 #include "plPassMtlBase.h"
-#include "hsTemplates.h"
 
 #define PASS_MTL_CLASS_ID   Class_ID(0x42b6718f, 0x2d579b35)
 

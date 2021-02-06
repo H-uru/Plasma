@@ -49,14 +49,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
 
-#include "hsTemplates.h"
 #include "pyGlueHelpers.h"
 
 class cyAnimation
 {
 
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     char*           fAnimName;
     bool            fNetForce;
 
@@ -64,7 +63,7 @@ class cyAnimation
 
 protected:
     cyAnimation();
-    cyAnimation(pyKey& sender);
+    cyAnimation(const pyKey& sender);
 
     // copy constructor
     cyAnimation(const cyAnimation& anim);
@@ -84,8 +83,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    virtual void SetSender(pyKey& sender);
-    virtual void AddRecvr(pyKey& recvr);
+    virtual void SetSender(const pyKey& sender);
+    virtual void AddRecvr(const pyKey& recvr);
     virtual void SetAnimName(const char* name);
 
     virtual PyObject* GetFirstRecvr();

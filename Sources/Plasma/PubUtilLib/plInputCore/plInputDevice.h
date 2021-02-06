@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#include "pnInputCore/plControlDefinition.h"
 #include "pnInputCore/plKeyDef.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 
 class plMessage;
 struct plMouseInfo;

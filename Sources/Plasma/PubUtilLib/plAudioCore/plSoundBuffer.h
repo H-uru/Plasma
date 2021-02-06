@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
+#include "hsTemplates.h"
 #include <mutex>
 
 //// Class Definition ////////////////////////////////////////////////////////

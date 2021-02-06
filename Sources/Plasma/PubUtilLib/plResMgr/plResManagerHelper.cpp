@@ -527,13 +527,15 @@ void    plResManagerHelper::IUpdateDebugScreen( bool force )
 
     // Helper for VerifyKeyUnloaded
     bool    IVerifyKeyUnloadedRecur(const char* logFile, const plKey& baseKey, const plKey& upKey, const char* baseAge);
-    bool ILookForCyclesRecur(const char* logFile, const plKey& key, hsTArray<plKey>& tree, int& cycleStart);
+    bool ILookForCyclesRecur(const char* logFile, const plKey& key, std::vector<plKey>& tree, std::vector<plKey>::iterator& cycleStart);
 
-bool plResManager::ILookForCyclesRecur(const char* logFile, const plKey& key, hsTArray<plKey>& tree, int& cycleStart)
+bool plResManager::ILookForCyclesRecur(const char* logFile, const plKey& key, std::vector<plKey>& tree,
+                                       std::vector<plKey>::iterator& cycleStart)
 {
-    int idx = tree.Find(key);
-    tree.Append(key);
-    if (tree.kMissingIndex != idx)
+    auto idx = std::find(tree.begin(), tree.end(), key);
+    const bool found = (idx != tree.end());
+    tree.emplace_back(key);
+    if (found)
     {
         cycleStart = idx;
         // Found a cycle.
@@ -554,7 +556,7 @@ bool plResManager::ILookForCyclesRecur(const char* logFile, const plKey& key, hs
             }
         }
     }
-    tree.Pop();
+    tree.pop_back();
     return false;
 }
 
@@ -655,16 +657,15 @@ bool plResManager::VerifyKeyUnloaded(const char* logFile, const plKey& key)
         plStatusLog::AddLineS(logFile, "==================================");
         plStatusLog::AddLineSF(logFile, "Object {} [{}] page {} is loaded", key->GetName(), plFactory::GetNameOfClass(key->GetUoid().GetClassType()), page);
 
-        hsTArray<plKey> tree;
-        int cycleStart;
+        std::vector<plKey> tree;
+        std::vector<plKey>::iterator cycleStart;
         bool hasCycle = ILookForCyclesRecur(logFile, key, tree, cycleStart);
         if( hasCycle )
         {
             plStatusLog::AddLineSF(logFile, "\t{} [{}] held by dependency cycle", key->GetName(), plFactory::GetNameOfClass(key->GetUoid().GetClassType()));
-            int i;
-            for( i = cycleStart; i < tree.GetCount(); i++ )
+            for (auto it = cycleStart; it != tree.end(); ++it)
             {
-                plStatusLog::AddLineSF(logFile, "\t{} [{}]", tree[i]->GetName(), plFactory::GetNameOfClass(tree[i]->GetUoid().GetClassType()));
+                plStatusLog::AddLineSF(logFile, "\t{} [{}]", (*it)->GetName(), plFactory::GetNameOfClass((*it)->GetUoid().GetClassType()));
             }
             plStatusLog::AddLineS(logFile, "\tEnd Cycle");
             return true;

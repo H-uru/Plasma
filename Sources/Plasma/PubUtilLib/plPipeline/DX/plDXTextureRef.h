@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsMatrix44.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 #include "plDXDeviceRef.h"
 
 

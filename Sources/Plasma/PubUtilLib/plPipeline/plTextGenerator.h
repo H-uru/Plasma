@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTextGenerator_h
 #define _plTextGenerator_h
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "hsColorRGBA.h"
 

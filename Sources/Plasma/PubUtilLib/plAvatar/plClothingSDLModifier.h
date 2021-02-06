@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plSDLModifier.h"
 
 #include "hsColorRGBA.h"
-#include "hsTemplates.h"
 #include "HeadSpin.h"
 
 //

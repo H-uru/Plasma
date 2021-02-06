@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plLoadMask.h"
-#include "hsTemplates.h"
 #include "plRenderLevel.h"
 
 class plSpaceTree;

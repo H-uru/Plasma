@@ -185,10 +185,9 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fRefObj); 
 
-    stream->WriteLE32(fStereizers.GetCount());
-    int i;
-    for( i = 0; i < fStereizers.GetCount(); i++ )
-        mgr->WriteKey(stream, fStereizers[i]->GetKey());
+    stream->WriteLE32((uint32_t)fStereizers.size());
+    for (plStereizer* ster : fStereizers)
+        mgr->WriteKey(stream, ster->GetKey());
 
     uint32_t f = uint32_t(fFollowMode) | (uint32_t(fFollowFlags) << 16);
     stream->WriteLE32(f);
@@ -220,9 +219,9 @@ bool plLineFollowMod::MsgReceive(plMessage* msg)
             else if( kRefStereizer == refMsg->fType )
             {
                 plStereizer* ster = plStereizer::ConvertNoRef(refMsg->GetRef());
-                int idx = fStereizers.Find(ster);
-                if( idx == fStereizers.kMissingIndex )
-                    fStereizers.Append(ster);
+                auto idx = std::find(fStereizers.cbegin(), fStereizers.cend(), ster);
+                if (idx == fStereizers.cend())
+                    fStereizers.emplace_back(ster);
             }
         }
         else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
@@ -234,9 +233,9 @@ bool plLineFollowMod::MsgReceive(plMessage* msg)
             else if( kRefStereizer == refMsg->fType )
             {
                 plStereizer* ster = (plStereizer*)(refMsg->GetRef());
-                int idx = fStereizers.Find(ster);
-                if( idx != fStereizers.kMissingIndex )
-                    fStereizers.Remove(idx);
+                auto idx = std::find(fStereizers.cbegin(), fStereizers.cend(), ster);
+                if (idx != fStereizers.end())
+                    fStereizers.erase(idx);
             }
         }
         return true;
@@ -564,13 +563,12 @@ void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXf
             ci->SetTransform(l2w, w2l);
         }
         hsPoint3 newPos = tgtXfm.GetTranslate();
-        int i;
-        for( i = 0; i < fStereizers.GetCount(); i++ )
+        for (plStereizer* ster : fStereizers)
         {
-            if( fStereizers[i] )
+            if (ster)
             {
-                fStereizers[i]->SetWorldInitPos(newPos);
-                fStereizers[i]->Stereize();
+                ster->SetWorldInitPos(newPos);
+                ster->Stereize();
             }
         }
     }
@@ -578,11 +576,10 @@ void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXf
 
 void plLineFollowMod::ISetupStereizers(const plListenerMsg* listMsg)
 {
-    int i;
-    for( i = 0; i < fStereizers.GetCount(); i++ )
+    for (plStereizer* ster : fStereizers)
     {
-        if( fStereizers[i] )
-            fStereizers[i]->SetFromListenerMsg(listMsg);
+        if (ster)
+            ster->SetFromListenerMsg(listMsg);
     }
 }
 

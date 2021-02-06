@@ -2317,7 +2317,7 @@ plTextFont  *plDXPipeline::MakeTextFont( char *face, uint16_t size )
 // span indices within this drawable.
 // This is called once per render, and generally well before rendering begins (as part of the 
 // cull phase).
-bool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr )
+bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(drawable);
     if( !ds )
@@ -2331,21 +2331,19 @@ bool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visList,
     if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowAllBounds) )
     {
         const hsTArray<plSpan *>    &spans = ds->GetSpanArray();
-        int i;
-        for( i = 0; i < visList.GetCount(); i++ )
+        for (int16_t idx : visList)
         {
             /// Add a span to our boundsIce to show this
-            IAddBoundsSpan( fBoundsSpans, &spans[ visList[i] ]->fWorldBounds );
+            IAddBoundsSpan(fBoundsSpans, &spans[idx]->fWorldBounds);
         }
     }
     else if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowNormals) )
     {
         const hsTArray<plSpan *>    &spans = ds->GetSpanArray();
-        int i;
-        for( i = 0; i < visList.GetCount(); i++ )
+        for (int16_t idx : visList)
         {
             /// Add a span to our boundsIce to show this
-            plIcicle    *span = (plIcicle *)spans[ visList[ i ] ];
+            plIcicle    *span = (plIcicle *)spans[idx];
             if( span->fTypeMask & plSpan::kIcicleSpan )
             {
                 IAddNormalsSpan( fBoundsSpans, span, (plDXVertexBufferRef *)ds->GetVertexRef( span->fGroupIdx, span->fVBufferIdx ), 0xff0000ff );
@@ -2367,7 +2365,7 @@ bool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visList,
 #endif // MF_BOUNDS_LEVEL_ICE
 
 
-    return visList.GetCount() > 0;
+    return !visList.empty();
 }
 
 struct plSortFace
@@ -2398,15 +2396,14 @@ struct plCompSortFace
 // want sorted are a tiny subset of the avatar's faces. Moreover, and most importantly, for the avatar, we
 // want to preserve the order that spans are drawn, so, for example, the opaque base head will always be
 // drawn before the translucent hair fringe, which will always be drawn before the pink clear plastic baseball cap.
-bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visList)
+bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
 {
     plProfile_BeginTiming(AvatarSort);
-    int i;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t visIdx : visList)
     {
-        hsAssert(d->GetSpan(visList[i])->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
+        hsAssert(d->GetSpan(visIdx)->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
 
-        plIcicle* span = (plIcicle*)d->GetSpan(visList[i]);
+        plIcicle* span = (plIcicle*)d->GetSpan(visIdx);
 
         if( span->fProps & plSpan::kPartialSort )
         {
@@ -2423,13 +2420,10 @@ bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visL
 
             const int numTris = span->fILength/3;
             
-            static hsTArray<plSortFace> sortScratch;
-            sortScratch.SetCount(numTris);
+            static std::vector<plSortFace> sortScratch;
+            sortScratch.resize(numTris);
 
             plProfile_IncCount(AvatarFaces, numTris);
-
-            plSortFace* begin = sortScratch.AcquireArray();
-            plSortFace* end = begin + numTris;
 
             // 
             // Have three very similar sorts here, differing only on where the "position" of
@@ -2504,16 +2498,14 @@ bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visL
 #endif // SORTTYPES
             }
 
-            std::sort(begin, end, plCompSortFace());
+            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
 
             indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            plSortFace* iter = sortScratch.AcquireArray();;
-            for( j = 0; j < numTris; j++ )
+            for (const plSortFace& iter : sortScratch)
             {
-                *indices++ = iter->fIdx[0];
-                *indices++ = iter->fIdx[1];
-                *indices++ = iter->fIdx[2];
-                iter++;
+                *indices++ = iter.fIdx[0];
+                *indices++ = iter.fIdx[1];
+                *indices++ = iter.fIdx[2];
             }
 
             group->DirtyIndexBuffer(span->fIBufferIdx);
@@ -2534,7 +2526,7 @@ bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visL
 // This is called once per render, and before any rendering actually starts. See plPageTreeMgr.cpp.
 // So any preperation needs to last until rendering actually begins. So cached information, like
 // which lights a span will use, needs to be stored on the span.
-bool plDXPipeline::PrepForRender(plDrawable* d, hsTArray<int16_t>& visList, plVisMgr* visMgr)
+bool plDXPipeline::PrepForRender(plDrawable* d, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     plProfile_BeginTiming(PrepDrawable);
 
@@ -2783,18 +2775,17 @@ bool plDXPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* g
 // Renders an array of spans obtained from a plDrawableSpans object
 // The incoming visList gives the indices of the spans which are visible and should
 // be drawn now, and gives them in sorted order.
-void    plDXPipeline::RenderSpans( plDrawableSpans *drawable, const hsTArray<int16_t>& visList )
+void    plDXPipeline::RenderSpans(plDrawableSpans *drawable, const std::vector<int16_t>& visList)
 {
     plProfile_BeginTiming(RenderSpan);
 
     hsMatrix44      lastL2W;
-    uint32_t          i, j;
     bool            drewPatch = false;
     hsGMaterial     *material;
 
     const hsTArray<plSpan *>&       spans = drawable->GetSpanArray();
 
-    plProfile_IncCount(EmptyList, !visList.GetCount());
+    plProfile_IncCount(EmptyList, visList.empty() ? 1 : 0);
 
     /// Set this (*before* we do our TestVisibleWorld stuff...)
     lastL2W.Reset();
@@ -2805,7 +2796,7 @@ void    plDXPipeline::RenderSpans( plDrawableSpans *drawable, const hsTArray<int
 
 
     /// Loop through our spans, combining them when possible
-    for( i = 0; i < visList.GetCount(); )
+    for (size_t i = 0; i < visList.size(); )
     {
         material = GetOverrideMaterial() ? GetOverrideMaterial() : drawable->GetMaterial( spans[ visList[ i ] ]->fMaterialIdx );
 
@@ -2813,7 +2804,8 @@ void    plDXPipeline::RenderSpans( plDrawableSpans *drawable, const hsTArray<int
         plIcicle tempIce(*( (plIcicle *)spans[ visList[ i ] ] ));
 
         // Start at i + 1, look for as many spans as we can add to tempIce
-        for( j = i + 1; j < visList.GetCount(); j++ )
+        size_t j;
+        for (j = i + 1; j < visList.size(); j++)
         {
             if( GetOverrideMaterial() )
                 tempIce.fMaterialIdx = spans[visList[j]]->fMaterialIdx;
@@ -8554,7 +8546,7 @@ void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plD
 // In hardware, we want the opposite, to break it into managable chunks, manageable meaning
 // few enough matrices to fit into hardware registers. So for hardware version, we set up
 // our palette, draw a span or few, setup our matrix palette with new matrices, draw, repeat.
-bool      plDXPipeline::ISoftwareVertexBlend( plDrawableSpans* drawable, const hsTArray<int16_t>& visList )
+bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     if (IsDebugFlagSet(plPipeDbg::kFlagNoSkinning))
         return true;
@@ -8584,16 +8576,15 @@ bool      plDXPipeline::ISoftwareVertexBlend( plDrawableSpans* drawable, const h
     hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
 
     const hsTArray<plSpan *>& spans = drawable->GetSpanArray();
-    int i;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t idx : visList)
     {
-        if( blendBits.IsBitSet( visList[ i ] ) )
+        if (blendBits.IsBitSet(idx))
         {
-            const plVertexSpan &vSpan = *(plVertexSpan *)spans[visList[i]];
+            const plVertexSpan &vSpan = *(plVertexSpan *)spans[idx];
             hsAssert(kMaxVertexBuffers > vSpan.fVBufferIdx, "Bigger than we counted on num buffers skin.");
 
             blendBuffers[vSpan.fGroupIdx][vSpan.fVBufferIdx] = 1;
-            drawable->SetBlendingSpanVectorBit( visList[ i ], false );
+            drawable->SetBlendingSpanVectorBit(idx, false);
         }
     }
 
@@ -8602,7 +8593,7 @@ bool      plDXPipeline::ISoftwareVertexBlend( plDrawableSpans* drawable, const h
     // uses it, set the matrix palette and and then do the blend for that span.
     // When we've done all the spans for a group/buffer, we unlock it and move on.
     int j;
-    for( i = 0; i < kMaxBufferGroups; i++ )
+    for (int i = 0; i < kMaxBufferGroups; i++)
     {
         for( j = 0; j < kMaxVertexBuffers; j++ )
         {
@@ -8615,10 +8606,9 @@ bool      plDXPipeline::ISoftwareVertexBlend( plDrawableSpans* drawable, const h
 
                 uint8_t*  destPtr = vRef->fData;
 
-                int k;
-                for( k = 0; k < visList.GetCount(); k++ )
+                for (int16_t idx : visList)
                 {
-                    const plIcicle& span = *(plIcicle*)spans[visList[k]];
+                    const plIcicle& span = *(plIcicle*)spans[idx];
                     if( (span.fGroupIdx == i)&&(span.fVBufferIdx == j) )
                     {
                         plProfile_Inc(NumSkin);
@@ -11415,9 +11405,9 @@ bool plDXPipeline::IPrepShadowCaster(const plShadowCaster* caster)
             plDrawableSpans* drawable = castSpans[i].fDraw;
 
             // Start a visList with this index.
-            static hsTArray<int16_t> visList;
-            visList.SetCount(0);
-            visList.Append((int16_t)(castSpans[i].fIndex));
+            static std::vector<int16_t> visList;
+            visList.clear();
+            visList.emplace_back((int16_t)(castSpans[i].fIndex));
             
             // We're about to have done this castSpan.
             done.SetBit(i);
@@ -11431,7 +11421,7 @@ bool plDXPipeline::IPrepShadowCaster(const plShadowCaster* caster)
                 if( !done.IsBitSet(j) && (castSpans[j].fDraw == drawable) )
                 {
                     // Add to list
-                    visList.Append((int16_t)(castSpans[j].fIndex));
+                    visList.emplace_back((int16_t)(castSpans[j].fIndex));
 
                     // We're about to have done this castSpan.
                     done.SetBit(j);

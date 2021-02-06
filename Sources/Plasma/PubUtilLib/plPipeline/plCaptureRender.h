@@ -60,7 +60,7 @@ public:
 class plCaptureRender
 {
 protected:
-    static hsTArray<plCaptureRenderMsg*>        fProcessed;
+    static std::vector<plCaptureRenderMsg*> fProcessed;
 
     static bool         IProcess(plPipeline* pipe, const plKey& ack, plRenderTarget* targ);
 

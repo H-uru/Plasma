@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayer_inc
 #define plLayer_inc
 
-#include "hsTemplates.h"
 #include "plLayerInterface.h"
 
 class plLayer : public plLayerInterface

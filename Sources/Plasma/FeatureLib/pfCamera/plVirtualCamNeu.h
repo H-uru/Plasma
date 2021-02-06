@@ -60,8 +60,6 @@ class plSceneNode;
 class plDebugInputInterface;
 class plPlate;
 
-#include "hsTemplates.h"
-
 struct CamTrans;
 struct hsColorRGBA;
 

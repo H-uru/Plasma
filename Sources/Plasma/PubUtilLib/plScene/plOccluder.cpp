@@ -131,10 +131,10 @@ void plOccluder::IRemoveVisRegion(plVisRegion* reg)
 
 plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
 {
-    hsTArray<hsPoint3>      pos;
-    hsTArray<hsVector3>     norm;
-    hsTArray<hsColorRGBA>   color;
-    hsTArray<uint16_t>        tris;
+    std::vector<hsPoint3>   pos;
+    std::vector<hsVector3>  norm;
+    std::vector<hsColorRGBA> color;
+    std::vector<uint16_t>   tris;
 
     plLayer* lay = plLayer::ConvertNoRef(mat->GetLayer(0)->BottomOfStack());
     if( lay )
@@ -150,47 +150,48 @@ plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& i
         else
             col.Set(1.f, 1.f, 1.f, 1.f);
 
-        int triStart = tris.GetCount();
+        size_t triStart = tris.size();
 
-        int idx0 = pos.GetCount();
-        pos.Append(polys[i].fVerts[0]);
-        norm.Append(polys[i].fNorm);
-        color.Append(col);
-        pos.Append(polys[i].fVerts[1]);
-        norm.Append(polys[i].fNorm);
-        color.Append(col);
+        uint16_t idx0 = (uint16_t)pos.size();
+        pos.emplace_back(polys[i].fVerts[0]);
+        norm.emplace_back(polys[i].fNorm);
+        color.emplace_back(col);
+        pos.emplace_back(polys[i].fVerts[1]);
+        norm.emplace_back(polys[i].fNorm);
+        color.emplace_back(col);
         int j;
         for( j = 2; j < polys[i].fVerts.GetCount(); j++ )
         {
-            int idxCurr = pos.GetCount();
-            pos.Append(polys[i].fVerts[j]);
-            norm.Append(polys[i].fNorm);
-            color.Append(col);
-            tris.Append(idx0);
-            tris.Append(idxCurr-1);
-            tris.Append(idxCurr);
+            uint16_t idxCurr = (uint16_t)pos.size();
+            pos.emplace_back(polys[i].fVerts[j]);
+            norm.emplace_back(polys[i].fNorm);
+            color.emplace_back(col);
+            tris.emplace_back(idx0);
+            tris.emplace_back(idxCurr-1);
+            tris.emplace_back(idxCurr);
         }
 #if 1
         if( polys[i].IsTwoSided() )
         {
-            int n = tris.GetCount();
-            while( --n >= triStart )
+            size_t n = tris.size();
+            // triStart can be 0...
+            while (hsSsize_t(--n) >= hsSsize_t(triStart))
             {
-                int idx = tris[n];
-                tris.Append(idx);
+                uint16_t idx = tris[n];
+                tris.emplace_back(idx);
             }
         }
 #endif
     }
-    return plDrawableGenerator::GenerateDrawable(pos.GetCount(), 
-                                        pos.AcquireArray(),
-                                        norm.AcquireArray(),
+    return plDrawableGenerator::GenerateDrawable(pos.size(),
+                                        pos.data(),
+                                        norm.data(),
                                         nil, 0,
-                                        color.AcquireArray(),
+                                        color.data(),
                                         true,
                                         nil,
-                                        tris.GetCount(),
-                                        tris.AcquireArray(),
+                                        tris.size(),
+                                        tris.data(),
                                         mat,
                                         GetLocalToWorld(),
                                         true,

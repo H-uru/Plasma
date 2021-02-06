@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <list>
 
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
@@ -110,7 +109,7 @@ protected:
     plInputManager*         fInputManager;
 
     plPageTreeMgr*          fPageMgr;
-    hsTArray<plRoomRec>     fRooms;
+    std::vector<plRoomRec>  fRooms;
     plSceneNode*            fCurrentNode;
 
     plPipeline*             fPipeline;
@@ -154,8 +153,8 @@ protected:
     bool                    bPythonDebugConnected;
 #endif
 
-    hsTArray<plRenderRequest*>      fPreRenderRequests;
-    hsTArray<plRenderRequest*>      fPostRenderRequests;
+    std::vector<plRenderRequest*>   fPreRenderRequests;
+    std::vector<plRenderRequest*>   fPostRenderRequests;
 
     bool fHoldLoadRequests;
     class LoadRequest
@@ -165,8 +164,7 @@ protected:
         plLocation loc;
         bool hold;
     };
-    typedef std::list<LoadRequest*> LoadList;
-    LoadList fLoadRooms;
+    std::list<LoadRequest*> fLoadRooms;
     int fNumLoadingRooms;   // Number of rooms we're waiting for load callbacks on
     std::vector<plLocation> fRoomsLoading; // the locations we are currently in the middle of loading
 
@@ -181,7 +179,7 @@ protected:
     bool                    IFlushRenderRequests();
     void                    IProcessPreRenderRequests();
     void                    IProcessPostRenderRequests();
-    void                    IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
+    void                    IProcessRenderRequests(std::vector<plRenderRequest*>& reqs);
     void                    IAddRenderRequest(plRenderRequest* req);
 
     bool                    IPlayIntroMovie(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
@@ -199,7 +197,7 @@ protected:
 
     void    IPatchGlobalAgeFiles();
 
-    int IFindRoomByLoc(const plLocation& loc);
+    hsSsize_t IFindRoomByLoc(const plLocation& loc);
     bool IIsRoomLoading(const plLocation& loc);
     void IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold);
     void ILoadNextRoom();

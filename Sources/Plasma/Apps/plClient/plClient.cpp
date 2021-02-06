@@ -167,7 +167,7 @@ bool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance=nil;
 
-static hsTArray<HMODULE>        fLoadedDLLs;
+static std::vector<HMODULE> fLoadedDLLs;
 
 plClient::plClient()
     : fPipeline(), fDone(), fQuitIntro(), fWindowHndl(),
@@ -294,12 +294,12 @@ bool plClient::Shutdown()
     IUnRegisterAs(fInputManager, kInput_KEY);
     IUnRegisterAs(fGameGUIMgr, kGameGUIMgr_KEY);
 
-    for (int i = 0; i < fRooms.Count(); i++)
+    for (const plRoomRec& room : fRooms)
     {
-        plSceneNode *sn = fRooms[i].fNode;
+        plSceneNode *sn = room.fNode;
         GetKey()->Release(sn->GetKey());
     }
-    fRooms.Reset();
+    fRooms.clear();
     fRoomsLoading.clear();
 
     // Shutdown plNetClientMgr
@@ -592,22 +592,16 @@ bool plClient::MsgReceive(plMessage* msg)
                 if (pRefMsg->GetContext() & plRefMsg::kOnCreate ||
                     pRefMsg->GetContext() & plRefMsg::kOnRequest)
                 {
-                    bool found=false;
-                    plSceneNode *pNode = plSceneNode::ConvertNoRef(pRefMsg->GetRef()); 
-                    int i;
-                    for (i = 0; i < fRooms.Count(); i++)
-                    {
-                        if (fRooms[i].fNode->GetKey() == pRefMsg->GetSender())
-                        {
-                            found=true;
-                            break;
-                        }
-                    }
+                    plSceneNode *pNode = plSceneNode::ConvertNoRef(pRefMsg->GetRef());
+                    bool found = std::any_of(fRooms.begin(), fRooms.end(),
+                                             [pRefMsg](const plRoomRec& room) {
+                                                 return room.fNode->GetKey() == pRefMsg->GetSender();
+                                             });
                     if (!found)
                     {                   
                         if (pNode)
                         {
-                            fRooms.Append( plRoomRec( pNode, 0 ) );
+                            fRooms.emplace_back(pNode, 0);
                             fPageMgr->AddNode(pNode);
                         }
                     }
@@ -617,12 +611,11 @@ bool plClient::MsgReceive(plMessage* msg)
                     plSceneNode* node = plSceneNode::ConvertNoRef(pRefMsg->GetRef());
                     if(node)
                     {
-                        int i;
-                        for (i = 0; i < fRooms.Count(); i++)
+                        for (auto it = fRooms.cbegin(); it != fRooms.cend(); ++it)
                         {
-                            if (fRooms[i].fNode->GetKey() == node->GetKey())
+                            if (it->fNode->GetKey() == node->GetKey())
                             {
-                                fRooms.Remove(i);
+                                fRooms.erase(it);
                                 break;
                             }
                         }
@@ -882,12 +875,12 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     return true;
 }
 
-int plClient::IFindRoomByLoc(const plLocation& loc)
+hsSsize_t plClient::IFindRoomByLoc(const plLocation& loc)
 {
-    for (int i = 0; i < fRooms.Count(); i++)
+    for (size_t i = 0; i < fRooms.size(); i++)
     {
         if (fRooms[i].fNode->GetKey()->GetUoid().GetLocation() == loc)
-            return i;
+            return hsSsize_t(i);
     }
 
     return -1;
@@ -895,12 +888,10 @@ int plClient::IFindRoomByLoc(const plLocation& loc)
 
 bool plClient::IIsRoomLoading(const plLocation& loc)
 {
-    for (int i = 0; i < fRoomsLoading.size(); i++)
-    {
-        if (fRoomsLoading[i] == loc)
-            return true;
-    }
-    return false;
+    return std::any_of(fRoomsLoading.begin(), fRoomsLoading.end(),
+                       [&loc](const plLocation& room) {
+                           return room == loc;
+                       });
 }
 
 void plClient::SetHoldLoadRequests(bool hold)
@@ -1009,7 +1000,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
 
         // First, look in our room list. It *should* be there, which allows us to avoid a
         // potential nasty reload-find in the resMgr.
-        int roomIdx = IFindRoomByLoc(loc);
+        hsSsize_t roomIdx = IFindRoomByLoc(loc);
         if (roomIdx != -1)
             nodeKey = fRooms[roomIdx].fNode->GetKey();
 
@@ -1042,7 +1033,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
             if (roomIdx != -1)
             {
                 recFlags = fRooms[roomIdx].fFlags;
-                fRooms.Remove(roomIdx);
+                fRooms.erase(fRooms.begin() + roomIdx);
             }
 
             if (node == fCurrentNode)
@@ -1078,24 +1069,19 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
 {
     fCurrentNode = node; 
     // make sure we don't already have this room in the list:
-    bool bAppend = true;
-    for (int i = 0; i < fRooms.Count(); i++)
-    {
-        if (fRooms[i].fNode == fCurrentNode)
-        {   
-            bAppend = false;
-            break;
-        }
-    }
+    bool bAppend = !std::any_of(fRooms.begin(), fRooms.end(),
+                                [this](const plRoomRec& room) {
+                                    return room.fNode == fCurrentNode;
+                                });
     if (bAppend)
     {
         if (hold)
         {
-            fRooms.Append(plRoomRec(fCurrentNode, plRoomRec::kHeld));
+            fRooms.emplace_back(fCurrentNode, plRoomRec::kHeld);
         }
         else
         {
-            fRooms.Append(plRoomRec(fCurrentNode, 0));
+            fRooms.emplace_back(fCurrentNode, 0);
             fPageMgr->AddNode(fCurrentNode);
         }
     }
@@ -1177,11 +1163,11 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
         hsStatusMessageF("Done loading hold room %s, t=%f\n", pRmKey->GetName().c_str(), hsTimer::GetSeconds());
 
     plLocation loc = pRmKey->GetUoid().GetLocation();
-    for (int i = 0; i < fRoomsLoading.size(); i++)
+    for (auto it = fRoomsLoading.cbegin(); it != fRoomsLoading.cend(); ++it)
     {
-        if (fRoomsLoading[i] == loc)
+        if (*it == loc)
         {
-            fRoomsLoading.erase(fRoomsLoading.begin() + i);
+            fRoomsLoading.erase(it);
             break;
         }
     }
@@ -1493,21 +1479,20 @@ void plClient::InitDLLs()
             PInitGlobalsFunc initGlobals = (PInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");
             (*initGlobals)(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(),
                 hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
-            fLoadedDLLs.Append(hMod);
+            fLoadedDLLs.emplace_back(hMod);
         }
     }
 }
 
 void plClient::ShutdownDLLs()
 {
-    int j;
-    for( j = 0; j < fLoadedDLLs.GetCount(); j++ )
+    for (HMODULE dll : fLoadedDLLs)
     {
-        BOOL ret = FreeLibrary(fLoadedDLLs[j]);
+        BOOL ret = FreeLibrary(dll);
         if( !ret )
             hsStatusMessage("Failed to free lib\n");
     }
-    fLoadedDLLs.Reset();
+    fLoadedDLLs.clear();
 }
 
 bool plClient::MainLoop()
@@ -1879,27 +1864,25 @@ bool plClient::IFlushRenderRequests()
     // For those requesting ack's, we could go through and send them
     // mail telling them their request was ill-timed. But hopefully,
     // the lack of an acknowledgement will serve as notice.
-    int i;
-    for( i = 0; i < fPreRenderRequests.GetCount(); i++ )
-        hsRefCnt_SafeUnRef(fPreRenderRequests[i]);
-    fPreRenderRequests.Reset();
+    for (plRenderRequest* rr : fPreRenderRequests)
+        hsRefCnt_SafeUnRef(rr);
+    fPreRenderRequests.clear();
 
-    for( i = 0; i < fPostRenderRequests.GetCount(); i++ )
-        hsRefCnt_SafeUnRef(fPostRenderRequests[i]);
-    fPostRenderRequests.Reset();
+    for (plRenderRequest* rr : fPostRenderRequests)
+        hsRefCnt_SafeUnRef(rr);
+    fPostRenderRequests.clear();
 
     return false;
 }
 
-void plClient::IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs)
+void plClient::IProcessRenderRequests(std::vector<plRenderRequest*>& reqs)
 {
-    int i;
-    for( i = 0; i < reqs.GetCount(); i++ )
+    for (plRenderRequest* rr : reqs)
     {
-        reqs[i]->Render(fPipeline, fPageMgr);
-        hsRefCnt_SafeUnRef(reqs[i]);
+        rr->Render(fPipeline, fPageMgr);
+        hsRefCnt_SafeUnRef(rr);
     }
-    reqs.SetCount(0);
+    reqs.clear();
 }
 
 void plClient::IProcessPreRenderRequests()
@@ -1914,26 +1897,26 @@ void plClient::IProcessPostRenderRequests()
 
 void plClient::IAddRenderRequest(plRenderRequest* req)
 {
-    if( req->GetPriority() < 0 )
+    if (req->GetPriority() < 0)
     {
-        int i;
-        for( i = 0; i < fPreRenderRequests.GetCount(); i++ )
+        auto it = fPreRenderRequests.cbegin();
+        for (; it != fPreRenderRequests.cend(); ++it)
         {
-            if( req->GetPriority() < fPreRenderRequests[i]->GetPriority() )
+            if (req->GetPriority() < (*it)->GetPriority())
                 break;
         }
-        fPreRenderRequests.Insert(i, req);
+        fPreRenderRequests.insert(it, req);
         hsRefCnt_SafeRef(req);
     }
     else
     {
-        int i;
-        for( i = 0; i < fPostRenderRequests.GetCount(); i++ )
+        auto it = fPostRenderRequests.cbegin();
+        for (; it != fPostRenderRequests.end(); ++it)
         {
-            if( req->GetPriority() < fPostRenderRequests[i]->GetPriority() )
+            if (req->GetPriority() < (*it)->GetPriority())
                 break;
         }
-        fPostRenderRequests.Insert(i, req);
+        fPostRenderRequests.insert(it, req);
         hsRefCnt_SafeRef(req);
     }
 }

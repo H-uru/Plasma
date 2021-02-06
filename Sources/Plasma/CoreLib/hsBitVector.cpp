@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 
 hsBitVector::hsBitVector(int b, ...)
 :   fBitVectors(nil),
@@ -61,7 +60,7 @@ hsBitVector::hsBitVector(int b, ...)
     va_end( vl );
 }
 
-hsBitVector::hsBitVector(const hsTArray<int16_t>& src)
+hsBitVector::hsBitVector(const std::vector<int16_t>& src)
 :   fBitVectors(nil),
     fNumBitVectors(0)
 {
@@ -134,25 +133,24 @@ void hsBitVector::Write(hsStream* s) const
         s->WriteLE32(fBitVectors[i]);
 }
 
-hsTArray<int16_t>& hsBitVector::Enumerate(hsTArray<int16_t>& dst) const
+std::vector<int16_t>& hsBitVector::Enumerate(std::vector<int16_t>& dst) const
 {
-    dst.SetCount(0);
+    dst.clear();
     hsBitIterator iter(*this);
     int i = iter.Begin();
     while( i >= 0 )
     {
-        dst.Append(i);
+        dst.emplace_back(i);
         i = iter.Advance();
     }
     return dst;
 }
 
-hsBitVector& hsBitVector::FromList(const hsTArray<int16_t>& src)
+hsBitVector& hsBitVector::FromList(const std::vector<int16_t>& src)
 {
     Clear();
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
-        SetBit(src[i]);
+    for (int16_t bit : src)
+        SetBit(bit);
     return *this;
 }
 

@@ -230,7 +230,7 @@ void    plTextFont::IInitObjects()
 void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hexColor, 
                                 uint8_t style, uint32_t rightEdge )
 {
-    static hsTArray<plFontVertex>   verts;
+    static std::vector<plFontVertex> verts;
     
     int     i, j, width, height, count, thisCount, italOffset;
     float   x = (float)sX;
@@ -250,7 +250,7 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
         count -= thisCount;
 
         // Create an array for our vertices
-        verts.SetCountAndZero( thisCount * ( ( style & plDebugText::kStyleBold ) ? 12 : 6 ) );
+        verts.resize(thisCount * ((style & plDebugText::kStyleBold) ? 12 : 6));
     
         // Fill them all up now
         for( i = 0; i < thisCount * ( ( style & plDebugText::kStyleBold ) ? 12 : 6 ); i++ )
@@ -350,7 +350,7 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
 
         
         /// Draw a set of tris now
-        IDrawPrimitive( thisCount * ( ( style & plDebugText::kStyleBold ) ? 4 : 2 ), verts.AcquireArray() );
+        IDrawPrimitive(thisCount * ((style & plDebugText::kStyleBold) ? 4 : 2), verts.data());
 
         strPtr += thisCount;
     }
@@ -385,7 +385,7 @@ uint32_t  plTextFont::CalcStringWidth( const char *string )
 
 void    plTextFont::DrawRect( int left, int top, int right, int bottom, uint32_t hexColor )
 {
-    static hsTArray<plFontVertex>   verts;
+    static std::vector<plFontVertex>   verts;
     int                             i;
 
 
@@ -393,7 +393,7 @@ void    plTextFont::DrawRect( int left, int top, int right, int bottom, uint32_t
         IInitObjects();
 
     /// Draw!
-    verts.SetCountAndZero( 6 );
+    verts.resize(6);
     for( i = 0; i < 6; i++ )
     {
         verts[ i ].fColor = hexColor;
@@ -407,7 +407,7 @@ void    plTextFont::DrawRect( int left, int top, int right, int bottom, uint32_t
     verts[ 2 ].fPoint.fY = verts[ 3 ].fPoint.fY = verts[ 5 ].fPoint.fY = (float)bottom;
 
     // omg I had this at 6...just slap the dunce cap on me...-mcn
-    IDrawPrimitive( 2, verts.AcquireArray() );
+    IDrawPrimitive(2, verts.data());
 
     /// All done!
 }
@@ -419,7 +419,7 @@ void    plTextFont::DrawRect( int left, int top, int right, int bottom, uint32_t
 
 void    plTextFont::Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 )
 {
-    static hsTArray<plFontVertex>   verts;
+    static std::vector<plFontVertex>   verts;
     int                             i;
 
 
@@ -427,7 +427,7 @@ void    plTextFont::Draw3DBorder( int left, int top, int right, int bottom, uint
         IInitObjects();
 
     /// Draw!
-    verts.SetCountAndZero( 8 );
+    verts.resize(8);
     for( i = 0; i < 8; i++ )
     {
         verts[ i ].fColor = hexColor1;
@@ -444,7 +444,7 @@ void    plTextFont::Draw3DBorder( int left, int top, int right, int bottom, uint
     for( i = 4; i < 8; i++ )
         verts[ i ].fColor = hexColor2;
 
-    IDrawLines( 4, verts.AcquireArray() );
+    IDrawLines(4, verts.data());
 
     /// All done!
 }

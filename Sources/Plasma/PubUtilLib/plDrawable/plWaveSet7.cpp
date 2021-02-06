@@ -3564,15 +3564,11 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     const int nVerts = nWid * 2;
 
-    hsTArray<hsPoint3> pos;
-    hsTArray<hsVector3> norm;
-
-    pos.SetCount(nVerts);
-    norm.SetCount(nVerts);
+    std::vector<hsPoint3> pos(nVerts);
+    std::vector<hsVector3> norm(nVerts);
 
 #ifdef TEST_UVWS
-    hsTArray<hsPoint3> uvw; // Are we actually ever going to use these uvws?
-    uvw.SetCount(nVerts);
+    std::vector<hsPoint3> uvw(nVerts); // Are we actually ever going to use these uvws?
 #endif // TEST_UVWS
 
     int i;
@@ -3610,10 +3606,9 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     const int nTris = (nWid-1) * 2;
 
-    hsTArray<uint16_t> idxArr;
-    idxArr.SetCount(nTris * 3);
+    std::vector<uint16_t> idxArr(nTris * 3);
 
-    uint16_t* idx = idxArr.AcquireArray();
+    uint16_t* idx = idxArr.data();
 
     for( i = 0; i < nTris; i += 2 )
     {
@@ -3627,14 +3622,14 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
     }
 
 
-    plDrawableGenerator::GenerateDrawable( nVerts, pos.AcquireArray(), norm.AcquireArray(), 
+    plDrawableGenerator::GenerateDrawable(nVerts, pos.data(), norm.data(),
 #ifndef TEST_UVWS
                                                         nil, 0, 
 #else // TEST_UVWS
-                                                        uvw.AcquireArray(), 1,
+                                                        uvw.data(), 1,
 #endif // TEST_UVWS
                                                         nil, false, nil,
-                                                        nTris * 3, idxArr.AcquireArray(), 
+                                                        nTris * 3, idxArr.data(),
                                                         mat, 
                                                         hsMatrix44::IdentityMatrix(), 
                                                         false,
@@ -4408,4 +4403,3 @@ void plWaveSet7::IUpdateGraphShaders(plPipeline* pipe, float dt)
         }
     }
 }
-

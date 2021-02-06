@@ -85,8 +85,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plStatusLog/plStatusLog.h"
 
-#include "hsTemplates.h"
-
 #include "plVault/plVault.h"
 
 #include "plNetCommon/plSpawnPointInfo.h"

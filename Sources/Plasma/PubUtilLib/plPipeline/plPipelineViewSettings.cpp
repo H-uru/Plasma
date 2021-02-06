@@ -245,7 +245,7 @@ void plPipelineViewSettings::RefreshCullTree()
 }
 
 
-bool plPipelineViewSettings::HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList)
+bool plPipelineViewSettings::HarvestVisible(plSpaceTree* space, std::vector<int16_t>& visList)
 {
     if (!space)
         return false;
@@ -261,15 +261,15 @@ bool plPipelineViewSettings::HarvestVisible(plSpaceTree* space, hsTArray<int16_t
     fCullTree.Harvest(space, visList);
     plProfile_EndTiming(Harvest);
 
-    return visList.GetCount() != 0;
+    return !visList.empty();
 }
 
 
-void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr)
+void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
-    static hsTArray<int16_t> tmpVis;
-    tmpVis.SetCount(0);
-    visList.SetCount(0);
+    static std::vector<int16_t> tmpVis;
+    tmpVis.clear();
+    visList.clear();
 
     drawable->GetSpaceTree()->SetViewPos(GetViewPositionWorld());
 
@@ -305,29 +305,27 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, hsTArray
     // I haven't been able to purge it.
     if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagSkipVisDist))
     {
-        int i;
-        for (i = 0; i < tmpVis.GetCount(); i++)
+        for (int16_t vis : tmpVis)
         {
-            if (spans[tmpVis[i]]->fSubType & fSubDrawableTypeMask)
+            if (spans[vis]->fSubType & fSubDrawableTypeMask)
             {
-                visList.Append(tmpVis[i]);
+                visList.emplace_back(vis);
             }
         }
     }
     else
     {
-        int i;
-        for (i = 0; i < tmpVis.GetCount(); i++)
+        for (int16_t vis : tmpVis)
         {
-            if (spans[tmpVis[i]]->fSubType & fSubDrawableTypeMask)
+            if (spans[vis]->fSubType & fSubDrawableTypeMask)
             {
                 // We'll check here for spans we can discard because they've completely distance faded out.
                 // Note this is based on view direction distance (because the fade is), rather than the
                 // preferrable distance to camera we sort by.
                 float minDist, maxDist;
-                if (drawable->GetSubVisDists(tmpVis[i], minDist, maxDist))
+                if (drawable->GetSubVisDists(vis, minDist, maxDist))
                 {
-                    const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(tmpVis[i]).fWorldBounds;
+                    const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(vis).fWorldBounds;
                     hsPoint2 depth;
                     bnd.TestPlane(GetViewDirWorld(), depth);
 
@@ -335,7 +333,7 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, hsTArray
                         continue;
                 }
 
-                visList.Append(tmpVis[i]);
+                visList.emplace_back(vis);
             }
         }
     }

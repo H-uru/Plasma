@@ -1149,14 +1149,10 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         if( !numTris )
             continue;
 
-        hsTArray<hsPoint3> pos;
-        pos.SetCount(numVerts);
-        hsTArray<hsVector3> norm;
-        norm.SetCount(numVerts);
-        hsTArray<hsPoint3> uvw;
-        uvw.SetCount(numVerts);
-        hsTArray<hsColorRGBA> col;
-        col.SetCount(numVerts);
+        std::vector<hsPoint3> pos(numVerts);
+        std::vector<hsVector3> norm(numVerts);
+        std::vector<hsPoint3> uvw(numVerts);
+        std::vector<hsColorRGBA> col(numVerts);
 
         int iPoly = 0;
         int iVert = 0;
@@ -1190,7 +1186,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
             }
         }
 
-        hsTArray<uint16_t> idx;
+        std::vector<uint16_t> idx;
 
         uint16_t base = 0;
         for( j = 0; j < dst.GetCount(); j++ )
@@ -1199,20 +1195,20 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
             int k;
             for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
             {
-                idx.Append(base);
-                idx.Append(next++);
-                idx.Append(next);
+                idx.emplace_back(base);
+                idx.emplace_back(next++);
+                idx.emplace_back(next);
             }
             base = ++next;
         }
 
-        drawable = plDrawableGenerator::GenerateDrawable( numVerts, pos.AcquireArray(), 
-                                                        haveNormal ? norm.AcquireArray() : nil, 
-                                                        uvw.AcquireArray(), 1, 
-                                                        col.AcquireArray(), 
+        drawable = plDrawableGenerator::GenerateDrawable(numVerts, pos.data(),
+                                                        haveNormal ? norm.data() : nullptr,
+                                                        uvw.data(), 1,
+                                                        col.data(),
                                                         true, 
                                                         nil,
-                                                        idx.GetCount(), idx.AcquireArray(), 
+                                                        idx.size(), idx.data(),
                                                         src[i].GetMaterial(), 
                                                         hsMatrix44::IdentityMatrix(), 
                                                         true,
@@ -1258,22 +1254,20 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
 
     hsTArray<plAccessSpan> src;
 
-    int numSpan = 0;
+    size_t numSpan = 0;
     int iDraw;
     for( iDraw = 0; iDraw < drawVis.GetCount(); iDraw++ )
-        numSpan += drawVis[iDraw].fVisList.GetCount();
+        numSpan += drawVis[iDraw].fVisList.size();
 
     src.SetCount(numSpan);
 
-    int i;
-
     iDraw = 0;
-    int iSpan = 0;
-    for( i = 0; i < numSpan; i++ )
+    size_t iSpan = 0;
+    for (size_t i = 0; i < numSpan; i++)
     {
         plAccessGeometry::Instance()->OpenRO(drawVis[iDraw].fDrawable, drawVis[iDraw].fVisList[iSpan], src[i]);
 
-        if( ++iSpan >= drawVis[iDraw].fVisList.GetCount() )
+        if (++iSpan >= drawVis[iDraw].fVisList.size())
         {
             iDraw++;
             iSpan = 0;
@@ -1281,7 +1275,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
     }
 
     
-    for( i = 0; i < src.GetCount(); i++ )
+    for (int i = 0; i < src.GetCount(); i++)
     {
         static hsTArray<plCutoutPoly> dst;
         dst.SetCount(0);
@@ -1303,14 +1297,10 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
         if( !numTris )
             continue;
 
-        hsTArray<hsPoint3> pos;
-        pos.SetCount(numVerts);
-        hsTArray<hsVector3> norm;
-        norm.SetCount(numVerts);
-        hsTArray<hsPoint3> uvw;
-        uvw.SetCount(numVerts);
-        hsTArray<hsColorRGBA> col;
-        col.SetCount(numVerts);
+        std::vector<hsPoint3> pos(numVerts);
+        std::vector<hsVector3> norm(numVerts);
+        std::vector<hsPoint3> uvw(numVerts);
+        std::vector<hsColorRGBA> col(numVerts);
 
         int iPoly = 0;
         int iVert = 0;
@@ -1345,7 +1335,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
             }
         }
 
-        hsTArray<uint16_t> idx;
+        std::vector<uint16_t> idx;
 
         uint16_t base = 0;
         for( j = 0; j < dst.GetCount(); j++ )
@@ -1354,20 +1344,20 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
             int k;
             for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
             {
-                idx.Append(base);
-                idx.Append(next++);
-                idx.Append(next);
+                idx.emplace_back(base);
+                idx.emplace_back(next++);
+                idx.emplace_back(next);
             }
             base = ++next;
         }
 
-        drawable = plDrawableGenerator::GenerateDrawable( numVerts, pos.AcquireArray(), 
-                                                        haveNormal ? norm.AcquireArray() : nil, 
-                                                        uvw.AcquireArray(), 1, 
-                                                        col.AcquireArray(), 
+        drawable = plDrawableGenerator::GenerateDrawable(numVerts, pos.data(),
+                                                        haveNormal ? norm.data() : nullptr,
+                                                        uvw.data(), 1,
+                                                        col.data(),
                                                         false, 
                                                         nil,
-                                                        idx.GetCount(), idx.AcquireArray(), 
+                                                        idx.size(), idx.data(),
                                                         src[i].GetMaterial(), 
                                                         hsMatrix44::IdentityMatrix(), 
                                                         true,
@@ -1376,7 +1366,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
 
     }
 
-    for( i = 0; i < numSpan; i++ )
+    for (size_t i = 0; i < numSpan; i++)
     {
         plAccessGeometry::Instance()->Close(src[i]);
     }

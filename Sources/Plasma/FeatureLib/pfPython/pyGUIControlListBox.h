@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "hsTemplates.h"
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
 #include <string>
@@ -62,7 +61,7 @@ class pfGUIListTreeRoot;
 class pyGUIControlListBox : public pyGUIControl
 {
 private:
-    hsTArray<pfGUIListTreeRoot *>   fBuildRoots;
+    std::vector<pfGUIListTreeRoot *>   fBuildRoots;
 
 protected:
     pyGUIControlListBox(): pyGUIControl() {} // for python glue, do NOT call

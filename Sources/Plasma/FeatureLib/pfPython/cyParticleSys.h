@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to for Particle System
 //
 
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 #include "pyGlueHelpers.h"
 
@@ -57,7 +56,7 @@ class cyParticleSys
 {
 protected:
     plKey           fSender;
-    hsTArray<plKey> fRecvr;
+    std::vector<plKey> fRecvr;
     bool            fNetForce;
 
     void    ISendParticleSysMsg(uint32_t param, float value);
@@ -74,8 +73,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    void    SetSender(plKey &sender);
-    void    AddRecvr(plKey &recvr);
+    void    SetSender(plKey sender);
+    void    AddRecvr(plKey recvr);
     void    SetNetForce(bool state) { fNetForce = state; }
 
     void    SetParticlesPerSecond(float value);

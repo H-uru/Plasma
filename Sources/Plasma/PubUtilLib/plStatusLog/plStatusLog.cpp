@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdarg>
 #include <cstdlib>
 #include "hsThread.h"
-#include "hsTemplates.h"
 #include "hsTimer.h"
 #include "hsWindows.h"
 #include "plStatusLog.h"

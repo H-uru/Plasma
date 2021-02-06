@@ -405,13 +405,13 @@ protected:
     // Visualization of active occluders
     void            IMakeOcclusionSnap();
 
-    bool            IAvatarSort(plDrawableSpans* d, const hsTArray<int16_t>& visList);
+    bool            IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList);
     void            IBlendVertsIntoBuffer( plSpan* span, 
                                             hsMatrix44* matrixPalette, int numMatrices,
                                             const uint8_t *src, uint8_t format, uint32_t srcStride, 
                                             uint8_t *dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans )
                                                 { blend_vert_buffer.call(span, matrixPalette, numMatrices, src, format, srcStride, dest, destStride, count, localUVWChans); };
-    bool            ISoftwareVertexBlend( plDrawableSpans* drawable, const hsTArray<int16_t>& visList );
+    bool            ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
 
 
     void            ILinkDevRef( plDXDeviceRef *ref, plDXDeviceRef **refList );
@@ -549,8 +549,8 @@ public:
     virtual IDirect3DDevice9*           GetD3DDevice() const { return fD3DDevice; }
 
     // Typical 3D device
-    bool                        PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil) override;
-    bool                        PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil) override;
+    bool                        PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nil) override;
+    bool                        PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nil) override;
 
     void                        PushRenderRequest(plRenderRequest* req) override;
     void                        PopRenderRequest(plRenderRequest* req) override;
@@ -622,7 +622,7 @@ public:
     int             GetMaxAnisotropicSamples() override;
     int             GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
 
-    void RenderSpans(plDrawableSpans *ice, const hsTArray<int16_t>& visList) override;
+    void RenderSpans(plDrawableSpans *ice, const std::vector<int16_t>& visList) override;
 
     //  CPU-optimized functions
 protected:

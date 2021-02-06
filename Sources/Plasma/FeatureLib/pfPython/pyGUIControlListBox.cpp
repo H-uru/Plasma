@@ -584,8 +584,8 @@ int16_t pyGUIControlListBox::AddString( const ST::string &string )
         if ( plbmod )
         {
             pfGUIListText *element = new pfGUIListText(string);
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -601,8 +601,8 @@ int16_t   pyGUIControlListBox::AddImage( pyImage& image, bool respectAlpha )
         if ( plbmod )
         {
             pfGUIListPicture *element = new pfGUIListPicture(image.GetKey(),respectAlpha);
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -639,8 +639,8 @@ int16_t pyGUIControlListBox::AddTextWColorW( std::wstring str, pyColor& textcolo
         if ( plbmod )
         {
             pfColorListElement *element = new pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha );
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -664,8 +664,8 @@ int16_t pyGUIControlListBox::AddTextWColorWSizeW( std::wstring str, pyColor& tex
         if ( plbmod )
         {
             pfColorListElement *element = new pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha, fontsize );
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -690,8 +690,8 @@ void pyGUIControlListBox::Add2TextWColorW( std::wstring str1, pyColor& textcolor
         if ( plbmod )
         {
             pfColorListElement *element = new pfColorListElement(str1.c_str(),textcolor1.getColor(),str2.c_str(),textcolor2.getColor(),inheritalpha );
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             plbmod->AddElement( element );
         }
     }
@@ -706,8 +706,8 @@ int16_t pyGUIControlListBox::AddStringInBox( const ST::string &string, uint32_t 
         if ( plbmod )
         {
             pfListTextInBox *element = new pfListTextInBox( string, min_width, min_height );
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -723,8 +723,8 @@ int16_t   pyGUIControlListBox::AddImageInBox( pyImage& image, uint32_t x, uint32
         if ( plbmod )
         {
             pfListPictureInBox *element = new pfListPictureInBox(image.GetKey(),x,y,width,height,respectAlpha);
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -743,8 +743,8 @@ int16_t   pyGUIControlListBox::AddImageAndSwatchesInBox( pyImage& image, uint32_
             pfListPictureInBoxWithSwatches *element = new pfListPictureInBoxWithSwatches( image.GetKey(),x,y,
                                                                                         width,height,respectAlpha,
                                                                                         primary.getColor(), secondary.getColor() );
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( element );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
@@ -881,10 +881,10 @@ void    pyGUIControlListBox::AddBranch( const ST::string &name, bool initiallyOp
             pfGUIListTreeRoot *root = new pfGUIListTreeRoot(name);
             root->ShowChildren( initiallyOpen );
             
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots[ fBuildRoots.GetCount() - 1 ]->AddChild( root );
+            if (!fBuildRoots.empty())
+                fBuildRoots.back()->AddChild(root);
 
-            fBuildRoots.Append( root );
+            fBuildRoots.emplace_back(root);
             plbmod->AddElement( root );
         }
     }
@@ -898,8 +898,8 @@ void    pyGUIControlListBox::CloseBranch()
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            if( fBuildRoots.GetCount() > 0 )
-                fBuildRoots.Remove( fBuildRoots.GetCount() - 1 );
+            if (!fBuildRoots.empty())
+                fBuildRoots.pop_back();
         }
     }
 }

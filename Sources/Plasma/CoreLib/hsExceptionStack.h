@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsExceptionStack_inc
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include <vector>
 
 class hsExceptionStackDestroyer;
 
@@ -61,19 +61,19 @@ public:
 
     static hsExceptionStack& Instance();
 
-    int32_t GetNumEntries() const             { return fEntries.Count(); }
-    const char* GetEntry(int32_t i) const     { return fEntries[i]; }
+    size_t GetNumEntries() const            { return fEntries.size(); }
+    const char* GetEntry(size_t i) const    { return fEntries[i]; }
 
     void Push(const char* str);
 
     // After an exception is caught and stack has been displayed,
     // call continue to flush stack
-    void Continue()                         { fEntries.Reset(); }
+    void Continue()                         { fEntries.clear(); }
 
 private:
     static void FreeInstance();
 
-    hsTArray<const char*>                   fEntries;
+    std::vector<const char*>                fEntries;
 
     static hsExceptionStack*                fExceptionStack;
     static hsExceptionStackDestroyer        fExceptionStackDestroyer;
@@ -91,7 +91,7 @@ inline hsExceptionStack& hsExceptionStack::Instance()
 
 inline void hsExceptionStack::Push(const char* str)
 {
-    fEntries.Append(str);
+    fEntries.emplace_back(str);
 }
 
 //

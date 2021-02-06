@@ -130,7 +130,7 @@ void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
     fRenderTarget = nil;
 }
 
-hsTArray<plCaptureRenderMsg*>   plCaptureRender::fProcessed;
+std::vector<plCaptureRenderMsg*> plCaptureRender::fProcessed;
 
 // plCaptureRender::Capture
 bool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
@@ -192,19 +192,16 @@ bool plCaptureRender::IProcess(plPipeline* pipe, const plKey& ack, plRenderTarge
 
     // Stash it, and send it off during the update phase.
     plCaptureRenderMsg* msg = new plCaptureRenderMsg(ack, mipMap);
-    fProcessed.Append(msg);
+    fProcessed.emplace_back(msg);
 
     return true;
 }
 
 void plCaptureRender::Update()
 {
-    int i;
-    for( i = 0; i < fProcessed.GetCount(); i++ )
-    {
-        fProcessed[i]->Send();
-    }
-    fProcessed.SetCount(0);
+    for (plCaptureRenderMsg* procMsg : fProcessed)
+        procMsg->Send();
+    fProcessed.clear();
 }
 
 

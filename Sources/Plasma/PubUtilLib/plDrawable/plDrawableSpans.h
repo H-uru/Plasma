@@ -374,7 +374,7 @@ class plDrawableSpans : public plDrawable
         virtual uint32_t  FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B, bool searchAll) const;
         virtual uint32_t  NewDIMatrixIndex();
         void            SortSpan( uint32_t index, plPipeline *pipe );
-        void            SortVisibleSpans(const hsTArray<int16_t>& visList, plPipeline* pipe);
+        void            SortVisibleSpans(const std::vector<int16_t>& visList, plPipeline* pipe);
         void            SortVisibleSpansPartial(const hsTArray<int16_t>& visList, plPipeline* pipe);
         void            CleanUpGarbage() { IRemoveGarbage(); }
 
