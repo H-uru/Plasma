@@ -61,21 +61,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 cyPhysics::cyPhysics(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyPhysics::SetSender(const plKey &sender)
+void cyPhysics::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyPhysics::AddRecvr(const plKey &recvr)
+void cyPhysics::AddRecvr(plKey recvr)
 {
     if ( recvr != nil )
-        fRecvr.emplace_back(recvr);
+        fRecvr.emplace_back(std::move(recvr));
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -92,27 +92,26 @@ bool IExitTopmostGenericMode();
 
 cyAvatar::cyAvatar(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyAvatar::SetSender(const plKey &sender)
+void cyAvatar::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyAvatar::AddRecvr(const plKey &recvr)
+void cyAvatar::AddRecvr(plKey recvr)
 {
     if ( recvr != nil )
-        fRecvr.emplace_back(recvr);
+        fRecvr.emplace_back(std::move(recvr));
 }
 
-void cyAvatar::SetSenderKey(pyKey& pKey)
+void cyAvatar::SetSenderKey(const pyKey& pKey)
 {
-    plKey k = pKey.getKey();
-    SetSender(k);
+    SetSender(pKey.getKey());
 }
 
 

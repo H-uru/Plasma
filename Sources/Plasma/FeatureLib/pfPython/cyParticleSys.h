@@ -73,8 +73,8 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // setters
-    void    SetSender(const plKey &sender);
-    void    AddRecvr(const plKey &recvr);
+    void    SetSender(plKey sender);
+    void    AddRecvr(plKey recvr);
     void    SetNetForce(bool state) { fNetForce = state; }
 
     void    SetParticlesPerSecond(float value);

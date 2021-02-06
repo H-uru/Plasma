@@ -48,21 +48,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 cyDraw::cyDraw(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyDraw::SetSender(const plKey &sender)
+void cyDraw::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyDraw::AddRecvr(const plKey &recvr)
+void cyDraw::AddRecvr(plKey recvr)
 {
     if ( recvr != nil )
-        fRecvr.emplace_back(recvr);
+        fRecvr.emplace_back(std::move(recvr));
 }
 
 void cyDraw::EnableT(bool state)

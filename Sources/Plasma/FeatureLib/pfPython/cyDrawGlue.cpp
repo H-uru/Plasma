@@ -98,13 +98,11 @@ PyObject *cyDraw::New(PyObject *sender, PyObject *recvr)
     ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, NULL, NULL);
     if (sender != NULL)
     {
-        plKey senderKey = pyKey::ConvertFrom(sender)->getKey();
-        newObj->fThis->SetSender(senderKey);
+        newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
     if (recvr != NULL)
     {
-        plKey recvrKey = pyKey::ConvertFrom(recvr)->getKey();
-        newObj->fThis->AddRecvr(recvrKey);
+        newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }
     newObj->fThis->fNetForce = false;
 

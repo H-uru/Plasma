@@ -48,21 +48,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 cyParticleSys::cyParticleSys(plKey sender, plKey recvr)
 {
-    SetSender(sender);
-    AddRecvr(recvr);
+    SetSender(std::move(sender));
+    AddRecvr(std::move(recvr));
     fNetForce = false;
 }
 
 // setters
-void cyParticleSys::SetSender(const plKey &sender)
+void cyParticleSys::SetSender(plKey sender)
 {
-    fSender = sender;
+    fSender = std::move(sender);
 }
 
-void cyParticleSys::AddRecvr(const plKey &recvr)
+void cyParticleSys::AddRecvr(plKey recvr)
 {
     if ( recvr != nil )
-        fRecvr.emplace_back(recvr);
+        fRecvr.emplace_back(std::move(recvr));
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -94,8 +94,8 @@ public:
     static void AddPlasmaConstantsClasses(PyObject *m);
 
     // setters
-    void SetSender(const plKey &sender);
-    void AddRecvr(const plKey &recvr);
+    void SetSender(plKey sender);
+    void AddRecvr(plKey recvr);
     virtual void SetNetForce(bool state) { fNetForce = state; }
 
     // oneShot Avatar (must already be there)
@@ -118,7 +118,7 @@ public:
     // static behavior functions:
     static void SetLoopCount(pyKey &behKey, int32_t stage, int32_t loopCount, bool netForce);
 
-    virtual void SetSenderKey(pyKey &pKey);
+    virtual void SetSenderKey(const pyKey &pKey);
 
     // seek Avatar (must already be there)
     //virtual void Seek(pyKey &seekKey, float duration, bool usePhysics);
