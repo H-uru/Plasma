@@ -47,6 +47,7 @@ from __future__ import with_statement
 
 import os
 import math
+import io
 from xml.dom.minidom import parse
 from optparse import OptionParser
 import scalergba
@@ -156,36 +157,29 @@ def render_cursors(inpath, outpath):
 		maskelement.removeChild(maskgroup)
 		cursorSVG.documentElement.appendChild(maskgroup)
 		maskelement.unlink()
-		maskfile = os.path.join(outpath, "translucent_shadow_mask.png")
-		cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'), write_to=maskfile,
+		shadowmaskbytes = cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'),
 					parent_width=scalefactor*svgwidth, parent_height=scalefactor*svgheight)
 		cursorSVG.documentElement.removeChild(maskgroup)
 		maskgroup.unlink()
-		shadowmaskimg = Image.open(maskfile).getchannel("R")
-		os.remove(maskfile)
+		shadowmaskimg = Image.open(io.BytesIO(shadowmaskbytes)).getchannel("R")
 
+		def renderLayers(cursor, enabledlayers):
+			enable_only_layers(enabledlayers, layers)
+			shift_all_layers(layers, *cursorOffsetList.get(cursor, [0, 0]))
+			pngbytes = cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'),
+				parent_width=scalefactor*svgwidth, parent_height=scalefactor*svgheight)
+			return Image.open(io.BytesIO(pngbytes))
+			
 		for cursor in cursorList:
 			# Render foreground and shadows separately because CairoSVG does not
 			# support the blur effect.
-			for enabledlayers, name in ((cursorList[cursor], cursor + ".fg"), ([l + "Shadow" for l in cursorList[cursor]], cursor + ".shadow")):
-				enable_only_layers(enabledlayers, layers)
-
-				shift_all_layers(layers, *cursorOffsetList.get(cursor, [0, 0]))
-
-				outfile = os.path.join(outpath, name + ".png")
-				cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'), write_to=outfile, 
-					parent_width=scalefactor*svgwidth, parent_height=scalefactor*svgheight)
+			foregroundimg = renderLayers(cursor, cursorList[cursor])
+			shadowimg = renderLayers(cursor, [l + "Shadow" for l in cursorList[cursor]])
 
 			# Composite everything
-			shadowfile = os.path.join(outpath, cursor + ".shadow.png")
-			shadowimg = Image.open(shadowfile)
-			os.remove(shadowfile)
-			foregroundfile = os.path.join(outpath, cursor + ".fg.png")
-			foregroundimg = Image.open(foregroundfile)
-			os.remove(foregroundfile)
 			shadowimg = shadowimg.filter(ImageFilter.GaussianBlur(scalefactor*1.3))
 			outimg = Image.new("RGBA", foregroundimg.size, (0, 0, 0, 0))
-			outimg.paste(shadowimg, mask=shadowmaskimg if any("arrowTranslucent" in l for l in enabledlayers) else None)
+			outimg.paste(shadowimg, mask=shadowmaskimg if any("arrowTranslucent" in l for l in cursorList[cursor]) else None)
 			# this is empirical magic that brings the result closer to the original one from rsvg
 			outimg = Image.blend(Image.new("RGBA", foregroundimg.size, (0, 0, 0, 0)), outimg, 0.94)
 			outimg.alpha_composite(foregroundimg)
