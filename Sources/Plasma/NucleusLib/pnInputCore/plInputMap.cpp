@@ -172,10 +172,6 @@ bool    plKeyBinding::HasUnmappedKey() const
 //// plKeyMap Implementation /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-plKeyMap::plKeyMap()
-{
-}
-
 plKeyMap::~plKeyMap()
 {
     ClearAll();
@@ -183,12 +179,9 @@ plKeyMap::~plKeyMap()
 
 void    plKeyMap::ClearAll()
 {
-    uint32_t  i;
-
-
-    for( i = 0; i < fBindings.GetCount(); i++ )
-        delete fBindings[ i ];
-    fBindings.Reset();
+    for (plKeyBinding* binding : fBindings)
+        delete binding;
+    fBindings.clear();
 }
 
 //// AddCode //////////////////////////////////////////////////////////////////////////
@@ -200,7 +193,7 @@ bool    plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
     if( IFindBinding( code ) != nil )
         return false;
 
-    fBindings.Append( new plKeyBinding( code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped ) );
+    fBindings.emplace_back(new plKeyBinding(code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped));
     return true;
 }
 
@@ -213,10 +206,10 @@ bool    plKeyMap::AddConsoleCommand( const char *command )
     if( IFindConsoleBinding( command ) != nil )
         return false;
 
-    fBindings.Append( new plKeyBinding( B_CONTROL_CONSOLE_COMMAND, 
-                                        kControlFlagDownEvent | kControlFlagNoRepeat | kControlFlagNoDeactivate,
-                                        plKeyCombo::kUnmapped, plKeyCombo::kUnmapped, 
-                                        command ) );
+    fBindings.emplace_back(new plKeyBinding(B_CONTROL_CONSOLE_COMMAND,
+                                            kControlFlagDownEvent | kControlFlagNoRepeat | kControlFlagNoDeactivate,
+                                            plKeyCombo::kUnmapped, plKeyCombo::kUnmapped,
+                                            command));
     return true;
 }
 
@@ -225,13 +218,10 @@ bool    plKeyMap::AddConsoleCommand( const char *command )
 
 plKeyBinding    *plKeyMap::IFindBinding( ControlEventCode code ) const
 {
-    uint32_t  i;
-
-
-    for( i = 0; i < fBindings.GetCount(); i++ )
+    for (plKeyBinding* binding : fBindings)
     {
-        if( fBindings[ i ]->GetCode() == code )
-            return fBindings[ i ];
+        if (binding->GetCode() == code)
+            return binding;
     }
 
     return nil;
@@ -242,13 +232,10 @@ plKeyBinding    *plKeyMap::IFindBinding( ControlEventCode code ) const
 
 plKeyBinding    *plKeyMap::IFindBindingByKey( const plKeyCombo &combo ) const
 {
-    uint32_t  i;
-
-
-    for( i = 0; i < fBindings.GetCount(); i++ )
+    for (plKeyBinding* binding : fBindings)
     {
-        if( fBindings[ i ]->GetKey1() == combo || fBindings[ i ]->GetKey2() == combo )
-            return fBindings[ i ];
+        if (binding->GetKey1() == combo || binding->GetKey2() == combo)
+            return binding;
     }
 
     return nil;
@@ -258,29 +245,27 @@ plKeyBinding    *plKeyMap::IFindBindingByKey( const plKeyCombo &combo ) const
 // bindings for a key with different shift/ctrl combinations, we want any that are satisfied with
 // the given combo.
 // We guarantee that the first binding in the result array is that one with priority.
-void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, hsTArray<plKeyBinding*> &result) const
+void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, std::vector<plKeyBinding*> &result) const
 {
-    uint32_t i;
     uint8_t bestScore = 0;
-    for (i = 0; i < fBindings.GetCount(); i++)
+    for (plKeyBinding* binding : fBindings)
     {
-        bool s1, s2;
-        s1 = fBindings[i]->GetKey1().IsSatisfiedBy(combo);
-        s2 = fBindings[i]->GetKey2().IsSatisfiedBy(combo);
+        bool s1 = binding->GetKey1().IsSatisfiedBy(combo);
+        bool s2 = binding->GetKey2().IsSatisfiedBy(combo);
         if (s1 || s2)
         {
             uint8_t myScore = 0;
             if (s1)
-                myScore = fBindings[i]->GetKey1().fFlags;
-            if (s2 && (fBindings[i]->GetKey2().fFlags > myScore))
-                myScore = fBindings[i]->GetKey2().fFlags;
+                myScore = binding->GetKey1().fFlags;
+            if (s2 && (binding->GetKey2().fFlags > myScore))
+                myScore = binding->GetKey2().fFlags;
 
             if (myScore >= bestScore)
-                result.Insert(0, fBindings[i]);
+                result.emplace(result.begin(), binding);
             else
-                result.Append(fBindings[i]);
+                result.emplace_back(binding);
         }
-    }       
+    }
 }
 
 //// IFindConsoleBinding /////////////////////////////////////////////////////
@@ -288,15 +273,12 @@ void plKeyMap::IFindAllBindingsByKey(const plKeyCombo &combo, hsTArray<plKeyBind
 
 plKeyBinding    *plKeyMap::IFindConsoleBinding( const char *command ) const
 {
-    uint32_t  i;
-
-
-    for( i = 0; i < fBindings.GetCount(); i++ )
+    for (plKeyBinding* binding : fBindings)
     {
-        if( fBindings[ i ]->GetCode() == B_CONTROL_CONSOLE_COMMAND )
+        if (binding->GetCode() == B_CONTROL_CONSOLE_COMMAND)
         {
-            if( stricmp( fBindings[ i ]->GetExtendedString(), command ) == 0 )
-                return fBindings[ i ];
+            if (stricmp(binding->GetExtendedString(), command) == 0)
+                return binding;
         }
     }
 
@@ -422,14 +404,13 @@ const plKeyBinding  *plKeyMap::FindBindingByKey( const plKeyCombo &combo ) const
 }
 
 //  Same thing, but returns multiple matches (see IFindAllBindingsByKey)
-void plKeyMap::FindAllBindingsByKey( const plKeyCombo &combo, hsTArray<const plKeyBinding*> &result ) const
+void plKeyMap::FindAllBindingsByKey(const plKeyCombo &combo, std::vector<const plKeyBinding*> &result) const
 {
-    hsTArray<plKeyBinding*> bindings;
-    IFindAllBindingsByKey( combo, bindings );
+    std::vector<plKeyBinding*> bindings;
+    IFindAllBindingsByKey(combo, bindings);
 
-    int i;
-    for (i = 0; i < bindings.GetCount(); i++)
-        result.Append(bindings[i]);
+    result.reserve(result.size() + bindings.size());
+    result.insert(result.end(), bindings.begin(), bindings.end());
 }
 
 
@@ -489,10 +470,8 @@ void    plKeyMap::UnmapBinding( ControlEventCode code )
 
 void    plKeyMap::UnmapAllBindings()
 {
-    uint32_t  i;
-
-    for( i = 0; i < fBindings.GetCount(); i++ )
-        fBindings[ i ]->ClearKeys();
+    for (plKeyBinding* binding : fBindings)
+        binding->ClearKeys();
 }
 
 //// EraseBinding ////////////////////////////////////////////////////////////
@@ -501,15 +480,12 @@ void    plKeyMap::UnmapAllBindings()
 
 void    plKeyMap::EraseBinding( ControlEventCode code )
 {
-    uint32_t  i;
-
-
-    for( i = 0; i < fBindings.GetCount(); i++ )
+    for (auto iter = fBindings.begin(); iter != fBindings.end(); ++iter)
     {
-        if( fBindings[ i ]->GetCode() == code )
+        if ((*iter)->GetCode() == code)
         {
-            delete fBindings[ i ];
-            fBindings.Remove( i );
+            delete *iter;
+            fBindings.erase(iter);
             return;
         }
     }
@@ -711,15 +687,13 @@ void plKeyMap::HandleAutoDualBinding(plKeyDef key1, plKeyDef key2)
 
 void plKeyMap::ICheckAndBindDupe(plKeyDef origKey, plKeyDef dupeKey)
 {
-    hsTArray<plKeyBinding*> bindings;
+    std::vector<plKeyBinding*> bindings;
     plKeyCombo combo;
     combo.fKey = origKey;
     IFindAllBindingsByKey(combo, bindings);
-    
-    int i;
-    for (i = 0; i < bindings.GetCount(); i++)
+
+    for (plKeyBinding *binding : bindings)
     {
-        plKeyBinding *binding = bindings[i];
         if (binding->HasUnmappedKey())
         {
             combo = binding->GetMatchingKey(origKey);
