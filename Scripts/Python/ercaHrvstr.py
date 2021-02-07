@@ -336,6 +336,11 @@ class ercaHrvstr(ptResponder):
         if boolMoving:
             boolMoving = 0
             ageSDL[SDLHrvstrMoving.value] = (0,)
+            # Force positions in case we are 2 (running wide ass open) or 3 (impossible)
+            if boolRev:
+                ageSDL[SDLHrvstrPos.value] = (0,)
+            else:
+                ageSDL[SDLHrvstrPos.value] = (4,)
         
         if byteCarPos == 1:
             RespCarGoDwn.run(self.key,fastforward=1)
