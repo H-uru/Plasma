@@ -74,20 +74,19 @@ const char      *plInputMap::ConvertControlCodeToString( ControlEventCode code )
 
 plMouseMap::~plMouseMap()
 {
-    for (int i = 0; i < fMap.Count(); i++)
-        delete(fMap[i]);
-    fMap.SetCountAndZero(0);
+    for (plMouseInfo* info : fMap)
+        delete info;
+    fMap.clear();
 }
 
-int plMouseMap::AddMapping(plMouseInfo* pNfo)
+hsSsize_t plMouseMap::AddMapping(plMouseInfo* pNfo)
 {
-    for (int i = 0; i < fMap.Count(); i++)
-    {
-        if (fMap[i] == pNfo)
-            return -1;
-    }
-    fMap.Append(pNfo);
-    return (fMap.Count() - 1);
+    const auto idx = std::find(fMap.begin(), fMap.end(), pNfo);
+    if (idx != fMap.end())
+        return -1;
+
+    fMap.emplace_back(pNfo);
+    return hsSsize_t(fMap.size() - 1);
 }
 
 

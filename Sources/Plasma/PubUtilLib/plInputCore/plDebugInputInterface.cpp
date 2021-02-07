@@ -192,44 +192,43 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
             fButtonState &= ~kRightButtonDown;
             fButtonState &= ~kRightButtonRepeat;
         }
-        
 
-        for (int i=0; i < fMouseMap.fMap.Count(); i++)
+        for (plMouseInfo *mouseInfo : fMouseMap.fMap)
         {
             // is this control already set?
-            if (fControlFlags.IsBitSet(fMouseMap.fMap[i]->fCode))
+            if (fControlFlags.IsBitSet(mouseInfo->fCode))
             {
                 // can we disable this control?
                 bool disable = false;
                 
                 // can we disable this control based on a button?
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButton && !(fButtonState & kLeftButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButton && !(fButtonState & kLeftButtonDown))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButton && !(fButtonState & kRightButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagRightButton && !(fButtonState & kRightButtonDown))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonEx && (fButtonState & kLeftButtonRepeat))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && (fButtonState & kLeftButtonRepeat))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonEx && (fButtonState & kRightButtonRepeat))
+                if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && (fButtonState & kRightButtonRepeat))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonEx && !(fButtonState & kLeftButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && !(fButtonState & kLeftButtonDown))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonEx && !(fButtonState & kRightButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && !(fButtonState & kRightButtonDown))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonRepeat && !(fButtonState & kLeftButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagLeftButtonRepeat && !(fButtonState & kLeftButtonDown))
                     disable = true;
-                if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonRepeat && !(fButtonState & kRightButtonDown))
+                if (mouseInfo->fControlFlags & kControlFlagRightButtonRepeat && !(fButtonState & kRightButtonDown))
                     disable = true;
 
                 // can we disable this control based on the cursor position?
-                if (!CursorInBox(pMouseMsg, fMouseMap.fMap[i]->fBox) && fMouseMap.fMap[i]->fControlFlags & kControlFlagBoxDisable)
+                if (!CursorInBox(pMouseMsg, mouseInfo->fBox) && mouseInfo->fControlFlags & kControlFlagBoxDisable)
                     disable = true;
                 
                 if (disable)
                 {
                     plCtrlCmd* pCmd = new plCtrlCmd( this );
-                    pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
+                    pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
                     pCmd->fControlActivated = false;
-                    pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
+                    pCmd->fControlCode = mouseInfo->fCode;
                     fControlFlags.ClearBit(pCmd->fControlCode);
                     fMessageQueue->Append(pCmd);
                     handled = true;
@@ -237,26 +236,26 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 }
                 // is it a range control?  If so we need to re-send the command
                 
-                if ((fMouseMap.fMap[i]->fControlFlags & kControlFlagRangePos) || (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangeNeg))
+                if ((mouseInfo->fControlFlags & kControlFlagRangePos) || (mouseInfo->fControlFlags & kControlFlagRangeNeg))
                 {
                     plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
-                    pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
+                    pCmd->fControlCode = mouseInfo->fCode;
                     float pct = 0.0f;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangePos)
+                    if (mouseInfo->fControlFlags & kControlFlagRangePos)
                     {
-                        if (fMouseMap.fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (fMouseMap.fMap[i]->fBox.fY - fMouseMap.fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fX - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (fMouseMap.fMap[i]->fBox.fW - fMouseMap.fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fZ - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     else 
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangeNeg)
+                    if (mouseInfo->fControlFlags & kControlFlagRangeNeg)
                     {
-                        if (fMouseMap.fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (fMouseMap.fMap[i]->fBox.fY - fMouseMap.fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fY - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (fMouseMap.fMap[i]->fBox.fW - fMouseMap.fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fW - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     pCmd->fPct = pct;
                     if (pct == 1.0f || pct == -1.0f)
@@ -264,74 +263,74 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         delete pCmd;
                         break;
                     }
-                    pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
+                    pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
                     fMessageQueue->Append(pCmd);
                 }
             }
             else // if it is an 'always if in box' command see if it's not in the box
-            if ( (fMouseMap.fMap[i]->fControlFlags & kControlFlagInBox) && (!CursorInBox(pMouseMsg, fMouseMap.fMap[i]->fBox)) )
+            if ((mouseInfo->fControlFlags & kControlFlagInBox) && (!CursorInBox(pMouseMsg, mouseInfo->fBox)))
             {   
                 plCtrlCmd* pCmd = new plCtrlCmd( this );
                 pCmd->fControlActivated = false;
-                pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
-                pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
+                pCmd->fControlCode = mouseInfo->fCode;
+                pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
                 fMessageQueue->Append(pCmd);
                 continue;
             }
             else // the control is not set, see if we should set it.
             {
                 // is the cursor in the appropriate box?
-                if (CursorInBox(pMouseMsg, fMouseMap.fMap[i]->fBox))
+                if (CursorInBox(pMouseMsg, mouseInfo->fBox))
                 {   
                     // do we require a button?
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButton && !(fButtonState & kLeftButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButton && !(fButtonState & kLeftButtonDown))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButton && !(fButtonState & kRightButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButton && !(fButtonState & kRightButtonDown))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonEx && (fButtonState & kLeftButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && (fButtonState & kLeftButtonRepeat))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonEx && (fButtonState & kRightButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && (fButtonState & kRightButtonRepeat))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonRepeat && !(fButtonState & kLeftButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonRepeat && !(fButtonState & kLeftButtonRepeat))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonRepeat && !(fButtonState & kRightButtonRepeat))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonRepeat && !(fButtonState & kRightButtonRepeat))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonEx && !(fButtonState & kLeftButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonEx && !(fButtonState & kLeftButtonDown))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonEx && !(fButtonState & kLeftButtonDown))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonEx && !(fButtonState & kLeftButtonDown))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagLeftButtonUp && !(pMouseMsg->GetButton() == kLeftButtonUp))
+                    if (mouseInfo->fControlFlags & kControlFlagLeftButtonUp && !(pMouseMsg->GetButton() == kLeftButtonUp))
                         continue;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRightButtonUp && !(pMouseMsg->GetButton() == kRightButtonUp))
+                    if (mouseInfo->fControlFlags & kControlFlagRightButtonUp && !(pMouseMsg->GetButton() == kRightButtonUp))
                         continue;
 
                     // okay, we're in the box and either we don't require a button or our button is pressed.
                     // so set the command as 'enabled' 
                     // UNLESS it has kControlFlagInBox, which means we want it sent every frame it is in the box
-                    if (!(fMouseMap.fMap[i]->fControlFlags & kControlFlagInBox))
-                        fControlFlags.SetBit(fMouseMap.fMap[i]->fCode);
+                    if (!(mouseInfo->fControlFlags & kControlFlagInBox))
+                        fControlFlags.SetBit(mouseInfo->fCode);
                     // issue the command
                     plCtrlCmd* pCmd = new plCtrlCmd( this );
                     pCmd->fControlActivated = true;
-                    pCmd->fControlCode = fMouseMap.fMap[i]->fCode;
-                    pCmd->fNetPropagateToPlayers = fMouseMap.fMap[i]->fControlFlags & kControlFlagNetPropagate;
+                    pCmd->fControlCode = mouseInfo->fCode;
+                    pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
 
                     // figure out what percent (if any)
                     float pct = 0.0f;
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangePos)
+                    if (mouseInfo->fControlFlags & kControlFlagRangePos)
                     {
-                        if (fMouseMap.fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (fMouseMap.fMap[i]->fBox.fY - fMouseMap.fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fX - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (fMouseMap.fMap[i]->fBox.fW - fMouseMap.fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fZ - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     else 
-                    if (fMouseMap.fMap[i]->fControlFlags & kControlFlagRangeNeg)
+                    if (mouseInfo->fControlFlags & kControlFlagRangeNeg)
                     {
-                        if (fMouseMap.fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (fMouseMap.fMap[i]->fBox.fY - fMouseMap.fMap[i]->fBox.fX));
+                        if (mouseInfo->fControlFlags & kControlFlagXAxisEvent)
+                            pct = fabs((mouseInfo->fBox.fY - pMouseMsg->GetXPos()) / (mouseInfo->fBox.fY - mouseInfo->fBox.fX));
                         else
-                            pct = fabs((fMouseMap.fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (fMouseMap.fMap[i]->fBox.fW - fMouseMap.fMap[i]->fBox.fZ));
+                            pct = fabs((mouseInfo->fBox.fW - pMouseMsg->GetYPos()) / (mouseInfo->fBox.fW - mouseInfo->fBox.fZ));
                     }
                     pCmd->fPct = pct;
                     if (pct == 1.0f || pct == -1.0f)
