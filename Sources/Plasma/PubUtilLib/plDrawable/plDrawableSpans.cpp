@@ -1829,10 +1829,10 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
         /// Don't sort, just send unchanged
         int     j, idx;
 
-        for (int16_t idx : visList)
+        for (int16_t visIdx : visList)
         {
-            plIcicle* span = (plIcicle*)fSpans[idx];
-            ICheckSpanForSortable(idx);
+            plIcicle* span = (plIcicle*)fSpans[visIdx];
+            ICheckSpanForSortable(visIdx);
 
             /// Build a fake list of indices....
             plGBufferTriangle*      list = span->fSortData;

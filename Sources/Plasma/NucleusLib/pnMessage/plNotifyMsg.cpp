@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plNotifyMsg::plNotifyMsg(const plKey &s, const plKey &r)
 {
-    fSender = s;
+    SetSender(s);
     AddReceiver(r);
     IInit();
 }
