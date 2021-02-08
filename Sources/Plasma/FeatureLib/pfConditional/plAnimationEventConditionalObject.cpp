@@ -76,7 +76,7 @@ void plAnimationEventConditionalObject::SetEvent(const CallbackEvent b, float ti
     pMsg->AddCallback( cb );
     hsRefCnt_SafeUnRef(cb);
     pMsg->SetCmd( plAnimCmdMsg::kAddCallbacks );
-    pMsg->Send();;
+    pMsg->Send();
 }
 
 void plAnimationEventConditionalObject::Read(hsStream* stream, hsResMgr* mgr)

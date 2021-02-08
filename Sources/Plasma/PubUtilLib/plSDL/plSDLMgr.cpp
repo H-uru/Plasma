@@ -84,8 +84,8 @@ void plSDLMgr::DeInit()
 //
 void plSDLMgr::IDeleteDescriptors(plSDL::DescriptorList* dl)
 {
-    for (auto i : *dl)
-        delete i;
+    for (plStateDescriptor* sd : *dl)
+        delete sd;
     dl->clear();
 }
 
@@ -221,4 +221,3 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
     }
     return bytes;
 }
-

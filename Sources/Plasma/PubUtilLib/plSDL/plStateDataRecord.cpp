@@ -121,8 +121,8 @@ void plStateDataRecord::SetDescriptor(const ST::string& name, int version)
 
 void plStateDataRecord::IDeleteVarsList(VarsList& vars)
 {
-    for (auto i : vars)
-        delete i;
+    for (plStateVariable* var : vars)
+        delete var;
     vars.clear();
 }
 

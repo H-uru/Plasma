@@ -51,7 +51,7 @@ void pfGameGUIMsg::Read(hsStream* s, hsResMgr* mgr)
     plMessage::IMsgRead(s, mgr);
     s->ReadLE(&fCommand);
     char buffer[GAME_GUI_MSG_STRING_SIZE];
-    s->Read(std::size(buffer), buffer);
+    s->Read(sizeof(buffer), buffer);
     buffer[GAME_GUI_MSG_STRING_SIZE - 1] = 0;
     fString = buffer;
     fAge = s->ReadSafeString();
@@ -61,8 +61,8 @@ void pfGameGUIMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(s, mgr);
     s->WriteLE(fCommand);
-    char buffer[GAME_GUI_MSG_STRING_SIZE];
+    char buffer[GAME_GUI_MSG_STRING_SIZE] = {};
     strncpy(buffer, fString.c_str(), GAME_GUI_MSG_STRING_SIZE);
-    s->Write(std::size(buffer), buffer);
+    s->Write(sizeof(buffer), buffer);
     s->WriteSafeString(fAge);
 }
