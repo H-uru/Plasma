@@ -461,8 +461,8 @@ void plResponderModifier::Restore()
                     newCallbackMsg->AddReceiver(callbackMsg->GetReceiver(iReceiver));
 
                 // Add the callbacks
-                int numCallbacks = callbackMsg->GetNumCallbacks();
-                for (int iCallback = 0; iCallback < numCallbacks; iCallback++)
+                size_t numCallbacks = callbackMsg->GetNumCallbacks();
+                for (size_t iCallback = 0; iCallback < numCallbacks; iCallback++)
                 {
                     plMessage* callback = callbackMsg->GetCallback(iCallback);
 //                  hsRefCnt_SafeRef(callback); AddCallback will ref this for us.

@@ -112,7 +112,7 @@ bool plMsgForwarder::IForwardCallbackMsg(plMessage *msg)
     plMessageWithCallbacks *callbackMsg = plMessageWithCallbacks::ConvertNoRef(msg);
     if (callbackMsg && callbackMsg->GetNumCallbacks() > 0)
     {
-        for (int i = 0; i < callbackMsg->GetNumCallbacks(); i++)
+        for (size_t i = 0; i < callbackMsg->GetNumCallbacks(); i++)
         {
             plEventCallbackMsg *event = callbackMsg->GetEventCallback(i);
             hsAssert(event, "Message forwarder only supports event callback messages");

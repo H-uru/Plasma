@@ -1105,16 +1105,14 @@ bool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
     {
         if( modMsg->Cmd(plAnimCmdMsg::kAddCallbacks) )
         {
-            int i;
-            for( i = 0; i < modMsg->GetNumCallbacks(); i++ )
+            for (size_t i = 0; i < modMsg->GetNumCallbacks(); i++)
             {
                 AddCallback(plEventCallbackMsg::ConvertNoRef(modMsg->GetEventCallback(i)));
             }
         }
         if( modMsg->Cmd(plAnimCmdMsg::kRemoveCallbacks) )
         {
-            int i;
-            for( i = 0; i < modMsg->GetNumCallbacks(); i++ )
+            for (size_t i = 0; i < modMsg->GetNumCallbacks(); i++)
             {
                 RemoveCallback(modMsg->GetEventCallback(i));
             }

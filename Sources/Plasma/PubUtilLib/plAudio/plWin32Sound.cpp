@@ -380,13 +380,13 @@ plSoundEvent *plWin32Sound::IFindEvent( plSoundEvent::Types type, uint32_t byteP
 
 void plWin32Sound::RemoveCallbacks(plSoundMsg* pSoundMsg)
 {
-    for(int i = 0; i < pSoundMsg->GetNumCallbacks(); ++i )
+    for (size_t i = 0; i < pSoundMsg->GetNumCallbacks(); ++i)
         IRemoveCallback( pSoundMsg->GetEventCallback( i ) );
 }
 
 void plWin32Sound::AddCallbacks(plSoundMsg* pSoundMsg)
 {
-    for(int i = 0; i < pSoundMsg->GetNumCallbacks(); ++i )
+    for (size_t i = 0; i < pSoundMsg->GetNumCallbacks(); ++i)
         IAddCallback( pSoundMsg->GetEventCallback( i ) );
 }
 
