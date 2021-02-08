@@ -1291,7 +1291,7 @@ bool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
                 if (pKey && pKey == fCamera->GetKey())
                 {
                     const plCoordinateInterface* ci = GetSubject()->GetCoordinateInterface();
-                    for (int i = 0; i < ci->GetNumChildren(); i++)
+                    for (size_t i = 0; i < ci->GetNumChildren(); i++)
                     {
                         plSceneObject* child = (plSceneObject*)ci->GetChild(i)->GetOwner();
                         if (child)

@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plCoordinateInterface_inc
 
 #include "plObjInterface.h"
-#include "hsTemplates.h"
 #include "hsMatrix44.h"
 
 class hsStream;
@@ -98,7 +97,7 @@ protected:
     uint16_t                                fState;
     uint16_t                                fReason;        // why we've changed position (if we have)
 
-    hsTArray<plSceneObject*>                fChildren;
+    std::vector<plSceneObject*>             fChildren;
     plCoordinateInterface*                  fParent;    // if this changes, marks us as dirty
 
     hsMatrix44                              fLocalToParent;
@@ -117,10 +116,10 @@ protected:
     // Network only strange functions. Do not emulate or generalize this functionality.
     void                    ISetNetGroupRecur(plNetGroupId netGroup);
 
-    virtual void ISetChild(plSceneObject* child, int which); // sets parent on child
+    virtual void ISetChild(plSceneObject* child, hsSsize_t which); // sets parent on child
     virtual void IAddChild(plSceneObject* child); // sets parent on child
     virtual void IRemoveChild(plSceneObject* child); // removes this as parent of child
-    virtual void IRemoveChild(int i); // removes this as parent of child
+    virtual void IRemoveChild(size_t i); // removes this as parent of child
     virtual void IAttachChild(plSceneObject* child, uint8_t flags); // physically attaches child to us
     virtual void IDetachChild(plSceneObject* child, uint8_t flags); // physically detach this child from us
     virtual void IUpdateDelayProp(); // Called whenever a child is added/removed
@@ -181,8 +180,8 @@ public:
 
     virtual const hsPoint3 GetWorldPos() const { return fLocalToWorld.GetTranslate(); }
 
-    virtual int GetNumChildren() const { return fChildren.GetCount(); }
-    virtual plCoordinateInterface* GetChild(int i) const;
+    virtual size_t GetNumChildren() const { return fChildren.size(); }
+    virtual plCoordinateInterface* GetChild(size_t i) const;
     virtual plCoordinateInterface* GetParent() const { return fParent; }
 
     bool MsgReceive(plMessage* msg) override;

@@ -267,7 +267,7 @@ void plArmatureModBase::AddressMessageToDescendants(const plCoordinateInterface 
         return;
     
     msg->AddReceiver(CI->GetOwnerKey());
-    for (int i = 0; i < CI->GetNumChildren(); i++)
+    for (size_t i = 0; i < CI->GetNumChildren(); i++)
         AddressMessageToDescendants(CI->GetChild(i), msg);
 }
 

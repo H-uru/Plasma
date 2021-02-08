@@ -1296,8 +1296,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                 const plCoordinateInterface* co = playerSO->GetCoordinateInterface();
                 if (co)
                 {
-                    int i;
-                    for(i=0;i<co->GetNumChildren();i++)
+                    for (size_t i = 0; i < co->GetNumChildren(); i++)
                     {
                         if (co->GetChild(i) && co->GetChild(i)->GetOwner())
                                 const_cast<plSceneObject*>(co->GetChild(i)->GetOwner())->SetSynchFlagsBit(plSynchedObject::kAllStateIsVolatile);

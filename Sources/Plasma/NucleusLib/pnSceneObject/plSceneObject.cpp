@@ -518,7 +518,7 @@ bool plSceneObject::MsgReceive(plMessage* msg)
     if (msg->HasBCastFlag(plMessage::kPropagateToChildren))
     {
         const plCoordinateInterface* ci = GetCoordinateInterface();
-        for (int i = 0; i < ci->GetNumChildren(); i++)
+        for (size_t i = 0; i < ci->GetNumChildren(); i++)
         {
             plSceneObject* child = (plSceneObject*)ci->GetChild(i)->GetOwner();
             if (child)

@@ -798,8 +798,7 @@ void plMorphSequence::FindMorphMods(const plSceneObject *so, hsTArray<const plMo
         mods.Append(morph);
     
     const plCoordinateInterface *ci = so->GetCoordinateInterface();
-    int i;
-    for (i = 0; i < ci->GetNumChildren(); i++)
+    for (size_t i = 0; i < ci->GetNumChildren(); i++)
         FindMorphMods(ci->GetChild(i)->GetOwner(), mods);
 }
 

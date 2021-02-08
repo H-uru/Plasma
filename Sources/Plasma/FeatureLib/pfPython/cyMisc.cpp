@@ -1967,7 +1967,7 @@ void cyMisc::SetLightColorValue(pyKey& light, const ST::string& lightName, float
     if (!pIface)
     {
         // recurse through our children...
-        for (int i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
+        for (size_t i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
         {
             const plSceneObject* child = pObj->GetCoordinateInterface()->GetChild(i)->GetOwner();
             if (child)
@@ -2015,7 +2015,7 @@ void cyMisc::SetLightAnimationOn(pyKey& light, const ST::string& lightName, bool
     if (!pIface)
     {
         // recurse through our children...
-        for (int i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
+        for (size_t i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
         {
             const plSceneObject* child = pObj->GetCoordinateInterface()->GetChild(i)->GetOwner();
             if (child)

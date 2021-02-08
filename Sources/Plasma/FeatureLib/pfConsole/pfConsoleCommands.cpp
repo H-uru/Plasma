@@ -3520,8 +3520,7 @@ static plMorphSequence* LocalMorphSequence()
 
     const plCoordinateInterface* pci = playerObj->GetCoordinateInterface();
     const plModifier* constSeq = nil;
-    int i;
-    for( i = 0; i < pci->GetNumChildren(); i++ )
+    for (size_t i = 0; i < pci->GetNumChildren(); i++)
     {
         const plSceneObject* child = pci->GetChild(i)->GetOwner();
         if( child )
