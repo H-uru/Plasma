@@ -250,7 +250,7 @@ public:
     void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) override;
     void ResetSyncState() override;
 
-    plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
+    plDrawableSpans* CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 
     float GetMass() override { return fRecipe.mass; }
 

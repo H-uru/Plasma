@@ -238,7 +238,7 @@ public:
     void                SetLocalToLight(const hsMatrix44& l2lt, const hsMatrix44& lt2l);
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) { return addTo; }
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) { return addTo; }
 
 };
 
@@ -304,7 +304,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 };
 
 class plOmniLightInfo : public plLightInfo
@@ -353,7 +353,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 
 };
 
@@ -405,7 +405,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // Visualization
-    plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) override;
+    plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) override;
 
 };
 

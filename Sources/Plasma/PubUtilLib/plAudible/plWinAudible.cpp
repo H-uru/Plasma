@@ -619,7 +619,7 @@ plSound* plWinAudible::GetSound(int i) const
 }
 
 // Visualization
-plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     int i;

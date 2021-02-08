@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPhysical_inc
 
 #include "pnNetCommon/plSynchedObject.h"
-#include "hsTemplates.h"
 
 struct hsMatrix44;
 struct hsPoint3;
@@ -126,7 +125,7 @@ public:
 
     virtual float GetMass() = 0;
 
-    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) = 0;
+    virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo) = 0;
 };
 
 #endif // plPhysical_inc

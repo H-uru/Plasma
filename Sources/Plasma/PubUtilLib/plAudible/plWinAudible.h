@@ -122,7 +122,7 @@ public:
     void Write(hsStream* s, hsResMgr* mgr) override;
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo);
     
 private:
     hsTArray<plSound    *>      fSoundObjs;

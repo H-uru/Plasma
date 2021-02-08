@@ -1365,7 +1365,7 @@ void plSound::SetFadeOutEffect( plSound::plFadeParams::Type type, float length )
     fFadeOutParams.fStopWhenDone = true;
 }
 
-plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
 
