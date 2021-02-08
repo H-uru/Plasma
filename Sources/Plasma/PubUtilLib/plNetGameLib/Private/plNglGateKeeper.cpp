@@ -648,48 +648,8 @@ void CliGkConn::Send (const uintptr_t fields[], unsigned count) {
 ***/
 
 //============================================================================
-static bool Recv_PingReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const GateKeeper2Cli_PingReply & reply = *(const GateKeeper2Cli_PingReply *)msg;
-
-    if (reply.transId)
-        NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-
+// (none)
 //============================================================================
-static bool Recv_FileSrvIpAddressReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const GateKeeper2Cli_FileSrvIpAddressReply & reply = *(const GateKeeper2Cli_FileSrvIpAddressReply *)msg;
-
-    if (reply.transId)
-        NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AuthSrvIpAddressReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const GateKeeper2Cli_AuthSrvIpAddressReply & reply = *(const GateKeeper2Cli_AuthSrvIpAddressReply *)msg;
-
-    if (reply.transId)
-        NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
 
 /*****************************************************************************
 *
@@ -705,7 +665,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  &kNetMsg_GateKeeper2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_GateKeeper2Cli_##s, NetTransRecvFromMsgGeneric<GateKeeper2Cli_##s>
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(FileSrvIpAddressReply)    },

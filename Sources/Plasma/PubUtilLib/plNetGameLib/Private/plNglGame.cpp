@@ -458,36 +458,24 @@ void CliGmConn::Send (const uintptr_t fields[], unsigned count) {
 *
 ***/
 
+template<typename T>
+bool RecvMsg(const uint8_t msg[], unsigned bytes, void* param)
+{
+    // Stupid nested namespaces...
+    return ::NetTransRecvFromMsgGeneric<T>(msg, bytes, param);
+}
+
 //============================================================================
-static bool Recv_PingReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *          param
-) {
+template<>
+bool RecvMsg<Game2Cli_PingReply>(const uint8_t msg[], unsigned bytes, void* param)
+{
     return true;
 }
 
 //============================================================================
-static bool Recv_JoinAgeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *          param
-) {
-    const Game2Cli_JoinAgeReply & reply = *(const Game2Cli_JoinAgeReply *)msg;
-    if (sizeof(reply) != bytes)
-        return false;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_PropagateBuffer (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *          param
-) {
+template<>
+bool RecvMsg<Game2Cli_PropagateBuffer>(const uint8_t msg[], unsigned bytes, void* param)
+{
     const Game2Cli_PropagateBuffer & reply = *(const Game2Cli_PropagateBuffer *)msg;
 
     RcvdPropagatedBufferTrans * trans = new RcvdPropagatedBufferTrans;
@@ -501,11 +489,9 @@ static bool Recv_PropagateBuffer (
 }
 
 //============================================================================
-static bool Recv_GameMgrMsg (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *          param
-) {
+template<>
+bool RecvMsg<Game2Cli_GameMgrMsg>(const uint8_t msg[], unsigned bytes, void* param)
+{
     // What do you expect me to do with this crap?
     return true;
 }
@@ -523,7 +509,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  &kNetMsg_Game2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_Game2Cli_##s, RecvMsg<Game2Cli_##s>
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)            },
     { MSG(JoinAgeReply),        },

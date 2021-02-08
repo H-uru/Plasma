@@ -377,6 +377,26 @@ void NetTransCancelByConnId (unsigned connId, ENetError error);
 void NetTransCancelAll (ENetError error);
 void NetTransUpdate ();
 
+template<typename T, typename = void>
+struct HasTransId : std::false_type { };
+
+template<typename T>
+struct HasTransId<T, std::void_t<decltype(&T::transId)>> : std::true_type { };
+
+template<typename T>
+inline std::enable_if_t<HasTransId<T>::value, bool>
+NetTransRecvFromMsgGeneric(const uint8_t msg[], unsigned bytes, void*)
+{
+    const T* reply = reinterpret_cast<const T*>(msg);
+
+    // transId == 0 is a special "not a transaction" value, usually used
+    // by things no one cares else about, like pings. This value is never
+    // used automatically, see NetTransSend().
+    if (reply->transId != 0)
+        NetTransRecv(reply->transId, msg, bytes);
+    return true;
+}
+
 
 /*****************************************************************************
 *
