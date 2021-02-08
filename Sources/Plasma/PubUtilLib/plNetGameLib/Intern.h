@@ -385,7 +385,7 @@ struct HasTransId<T, std::void_t<decltype(&T::transId)>> : std::true_type { };
 
 template<typename T>
 inline std::enable_if_t<HasTransId<T>::value, bool>
-NetTransRecvFromMsg(const uint8_t msg[], unsigned bytes, void*)
+NetTransRecvFromMsgGeneric(const uint8_t msg[], unsigned bytes, void*)
 {
     const T* reply = reinterpret_cast<const T*>(msg);
 

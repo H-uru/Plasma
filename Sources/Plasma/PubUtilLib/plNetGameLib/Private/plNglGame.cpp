@@ -462,7 +462,7 @@ template<typename T>
 bool RecvMsg(const uint8_t msg[], unsigned bytes, void* param)
 {
     // Stupid nested namespaces...
-    return ::NetTransRecvFromMsg<T>(msg, bytes, param);
+    return ::NetTransRecvFromMsgGeneric<T>(msg, bytes, param);
 }
 
 //============================================================================

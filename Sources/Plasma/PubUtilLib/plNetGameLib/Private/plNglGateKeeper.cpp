@@ -665,7 +665,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  &kNetMsg_GateKeeper2Cli_##s, NetTransRecvFromMsg<GateKeeper2Cli_##s>
+#define MSG(s)  &kNetMsg_GateKeeper2Cli_##s, NetTransRecvFromMsgGeneric<GateKeeper2Cli_##s>
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(FileSrvIpAddressReply)    },
