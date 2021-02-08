@@ -308,7 +308,7 @@ bool plResponderModifier::IContinueSending()
                     bool foundCollision = false;
 
                     // If we find a collision event, this message is meant to trigger a multistage
-                    for (int i = 0; i < notifyMsg->GetEventCount(); i++)
+                    for (size_t i = 0; i < notifyMsg->GetEventCount(); i++)
                     {
                         proEventData* event = notifyMsg->GetEventRecord(i);
                         if (event->fEventType == proEventData::kCollision)

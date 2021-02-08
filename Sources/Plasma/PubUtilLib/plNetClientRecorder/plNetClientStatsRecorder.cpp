@@ -98,8 +98,8 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
         if (gameMsg->StreamInfo()->GetStreamType() == CLASS_INDEX_SCOPED(plNotifyMsg))
         {
             plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(gameMsg->GetContainedMsg());
-            int numEvents = notifyMsg->GetEventCount();
-            for (int i = 0; i < numEvents; i++)
+            size_t numEvents = notifyMsg->GetEventCount();
+            for (size_t i = 0; i < numEvents; i++)
             {
                 const char* eventName = "";
 

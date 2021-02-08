@@ -544,9 +544,9 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     plNotifyMsg* pNMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pNMsg)
     {
-        for(int x=0; x < pNMsg->GetEventCount();x++)
+        for(size_t x = 0; x < pNMsg->GetEventCount(); x++)
         {
-            proEventData* pED = pNMsg->GetEventRecord(0);
+            proEventData* pED = pNMsg->GetEventRecord(x);
             if ( pED->fEventType == proEventData::kMultiStage )
             {
                 proMultiStageEventData* pMS = (proMultiStageEventData*)pED;
