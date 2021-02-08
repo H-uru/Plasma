@@ -1759,41 +1759,17 @@ void CliAuConn::Send (const uintptr_t fields[], unsigned count) {
 *
 ***/
 
-//============================================================================
-static bool Recv_PingReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_PingReply & reply = *(const Auth2Cli_PingReply *)msg;
-
-    if (reply.transId)
-        NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
+template<typename T>
+bool RecvMsg(const uint8_t msg[], unsigned bytes, void* param)
+{
+    // Stupid nested namespaces...
+    return ::NetTransRecvFromMsg<T>(msg, bytes, param);
 }
 
 //============================================================================
-static bool Recv_AccountExistsReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AccountExistsReply & reply = *(const Auth2Cli_AccountExistsReply *)msg;
-
-    if (reply.transId)
-        NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-
-//============================================================================
-static bool Recv_ClientRegisterReply (
-    const uint8_t      msg[],
-    unsigned        ,
-    void *          param
-) {
+template<>
+bool RecvMsg<Auth2Cli_ClientRegisterReply>(const uint8_t msg[], unsigned, void* param)
+{
     const Auth2Cli_ClientRegisterReply & reply = *(const Auth2Cli_ClientRegisterReply *)msg;
 
     CliAuConn * conn = (CliAuConn *) param;
@@ -1807,261 +1783,23 @@ static bool Recv_ClientRegisterReply (
 }
 
 //============================================================================
-static bool Recv_AcctPlayerInfo (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctPlayerInfo & reply = *(const Auth2Cli_AcctPlayerInfo *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctLoginReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctLoginReply & reply = *(const Auth2Cli_AcctLoginReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctCreateReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctCreateReply & reply = *(const Auth2Cli_AcctCreateReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctCreateFromKeyReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctCreateFromKeyReply & reply = *(const Auth2Cli_AcctCreateFromKeyReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_PlayerCreateReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_PlayerCreateReply & reply = *(const Auth2Cli_PlayerCreateReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_PlayerDeleteReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_PlayerDeleteReply & reply = *(const Auth2Cli_PlayerDeleteReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_UpgradeVisitorReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_UpgradeVisitorReply & reply = *(const Auth2Cli_UpgradeVisitorReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctSetPlayerReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctSetPlayerReply & reply = *(const Auth2Cli_AcctSetPlayerReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctChangePasswordReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctChangePasswordReply & reply = *(const Auth2Cli_AcctChangePasswordReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctSetRolesReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctSetRolesReply & reply = *(const Auth2Cli_AcctSetRolesReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctSetBillingTypeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctSetBillingTypeReply & reply = *(const Auth2Cli_AcctSetBillingTypeReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AcctActivateReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AcctActivateReply & reply = *(const Auth2Cli_AcctActivateReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_AgeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_AgeReply & reply = *(const Auth2Cli_AgeReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_FileListReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_FileListReply & reply = *(const Auth2Cli_FileListReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_FileDownloadChunk (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_FileDownloadChunk & reply = *(const Auth2Cli_FileDownloadChunk *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_KickedOff (
-    const uint8_t      buffer[],
-    unsigned        bytes,
-    void *          param
-) {
+template<>
+bool RecvMsg<Auth2Cli_KickedOff>(const uint8_t buffer[], unsigned bytes, void* param)
+{
     const Auth2Cli_KickedOff & msg = *(const Auth2Cli_KickedOff *)buffer;
 
     ReportNetError(kNetProtocolCli2Auth, msg.reason);
     NetCliAuthDisconnect();
-    
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultNodeRefsFetched (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultNodeRefsFetched & reply = *(const Auth2Cli_VaultNodeRefsFetched *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
 
     return true;
 }
 
 //============================================================================
-static bool Recv_VaultNodeFetched (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultNodeFetched & reply = *(const Auth2Cli_VaultNodeFetched *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultNodeCreated (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultNodeCreated & reply = *(const Auth2Cli_VaultNodeCreated *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultNodeChanged (
-    const uint8_t      msg[],
-    unsigned        ,
-    void *
-) {
+template<>
+bool RecvMsg<Auth2Cli_VaultNodeChanged>(const uint8_t msg[], unsigned, void*)
+{
     const Auth2Cli_VaultNodeChanged & notify = *(const Auth2Cli_VaultNodeChanged *)msg;
-    
+
     VaultNodeChangedTrans * trans = new VaultNodeChangedTrans;
     trans->m_nodeId     = notify.nodeId;
     trans->m_revId      = notify.revisionId;
@@ -2071,13 +1809,11 @@ static bool Recv_VaultNodeChanged (
 }
 
 //============================================================================
-static bool Recv_VaultNodeAdded (
-    const uint8_t      msg[],
-    unsigned        ,
-    void *
-) {
+template<>
+bool RecvMsg<Auth2Cli_VaultNodeAdded>(const uint8_t msg[], unsigned, void*)
+{
     const Auth2Cli_VaultNodeAdded & notify = *(const Auth2Cli_VaultNodeAdded *)msg;
-    
+
     VaultNodeAddedTrans * trans = new VaultNodeAddedTrans;
     trans->m_parentId   = notify.parentId;
     trans->m_childId    = notify.childId;
@@ -2088,125 +1824,40 @@ static bool Recv_VaultNodeAdded (
 }
 
 //============================================================================
-static bool Recv_VaultNodeRemoved (
-    const uint8_t      msg[],
-    unsigned        ,
-    void *
-) {
-    const Auth2Cli_VaultNodeRemoved & notify = *(const Auth2Cli_VaultNodeRemoved *)msg;
-    
-    VaultNodeRemovedTrans * trans = new VaultNodeRemovedTrans;
-    trans->m_parentId   = notify.parentId;
-    trans->m_childId    = notify.childId;
+template<>
+bool RecvMsg<Auth2Cli_VaultNodeRemoved>(const uint8_t msg[], unsigned, void*) {
+    const Auth2Cli_VaultNodeRemoved& notify = *(const Auth2Cli_VaultNodeRemoved *)msg;
+
+    VaultNodeRemovedTrans* trans = new VaultNodeRemovedTrans;
+    trans->m_parentId = notify.parentId;
+    trans->m_childId = notify.childId;
     NetTransSend(trans);
 
     return true;
 }
 
 //============================================================================
-static bool Recv_VaultNodeDeleted (
-    const uint8_t      msg[],
-    unsigned        ,
-    void *
-) {
-    const Auth2Cli_VaultNodeDeleted & notify = *(const Auth2Cli_VaultNodeDeleted *)msg;
-    
+template<>
+bool RecvMsg<Auth2Cli_VaultNodeDeleted>(const uint8_t msg[], unsigned, void*)
+{
+    const Auth2Cli_VaultNodeDeleted& notify = *(const Auth2Cli_VaultNodeDeleted *)msg;
+
     VaultNodeDeletedTrans * trans = new VaultNodeDeletedTrans;
-    trans->m_nodeId     = notify.nodeId;
+    trans->m_nodeId = notify.nodeId;
     NetTransSend(trans);
 
     return true;
 }
 
 //============================================================================
-static bool Recv_VaultSaveNodeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultSaveNodeReply & reply = *(const Auth2Cli_VaultSaveNodeReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultAddNodeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultAddNodeReply & reply = *(const Auth2Cli_VaultAddNodeReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultRemoveNodeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultRemoveNodeReply & reply = *(const Auth2Cli_VaultRemoveNodeReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultInitAgeReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultInitAgeReply & reply = *(const Auth2Cli_VaultInitAgeReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_VaultNodeFindReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_VaultNodeFindReply & reply = *(const Auth2Cli_VaultNodeFindReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_PublicAgeList (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_PublicAgeList & reply = *(const Auth2Cli_PublicAgeList *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ServerAddr (
-    const uint8_t  in[],
-    unsigned    ,
-    void *
-) {
+template<>
+bool RecvMsg<Auth2Cli_ServerAddr>(const uint8_t in[], unsigned, void*)
+{
     // the auth server has given us its actual address (behind any load-balancer)
     // so that when we attempt a reconnect, we'll reconnect with our state on
     // the auth (but only if we reconnect in a short period of time!)
-    const Auth2Cli_ServerAddr & msg = *(const Auth2Cli_ServerAddr *)in;
-    
+    const Auth2Cli_ServerAddr& msg = *(const Auth2Cli_ServerAddr*)in;
+
     hsLockGuard(s_critsect);
     if (s_active) {
         s_active->token = msg.token;
@@ -2219,11 +1870,8 @@ static bool Recv_ServerAddr (
 }
 
 //============================================================================
-static bool Recv_NotifyNewBuild (
-    const uint8_t[],
-    unsigned    ,
-    void *
-) {
+template<>
+bool RecvMsg<Auth2Cli_NotifyNewBuild>(const uint8_t[], unsigned, void*) {
     NotifyNewBuildTrans * trans = new NotifyNewBuildTrans;
     NetTransSend(trans);
 
@@ -2231,155 +1879,10 @@ static bool Recv_NotifyNewBuild (
 }
 
 //============================================================================
-static bool Recv_SetPlayerBanStatusReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_SetPlayerBanStatusReply & reply = *(const Auth2Cli_SetPlayerBanStatusReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ChangePlayerNameReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ChangePlayerNameReply & reply = *(const Auth2Cli_ChangePlayerNameReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_SendFriendInviteReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_SendFriendInviteReply & reply = *(const Auth2Cli_SendFriendInviteReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreCreateReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreCreateReply & reply = *(const Auth2Cli_ScoreCreateReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreDeleteReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreDeleteReply & reply = *(const Auth2Cli_ScoreDeleteReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreGetScoresReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreGetScoresReply & reply = *(const Auth2Cli_ScoreGetScoresReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreAddPointsReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreAddPointsReply & reply = *(const Auth2Cli_ScoreAddPointsReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreTransferPointsReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreTransferPointsReply & reply = *(const Auth2Cli_ScoreTransferPointsReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreSetPointsReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreSetPointsReply & reply = *(const Auth2Cli_ScoreSetPointsReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreGetRanksReply (
-    const uint8_t      msg[],
-    unsigned        bytes,
-    void *
-) {
-    const Auth2Cli_ScoreGetRanksReply & reply = *(const Auth2Cli_ScoreGetRanksReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ScoreGetHighScoresReply(
-    const uint8_t   msg[],
-    unsigned        bytes,
-    void *
-    ) {
-    const Auth2Cli_ScoreGetHighScoresReply & reply = *(const Auth2Cli_ScoreGetHighScoresReply *)msg;
-
-    NetTransRecv(reply.transId, msg, bytes);
-
-    return true;
-}
-
-//============================================================================
-static bool Recv_ServerCaps(
-    const uint8_t   msg[],
-    unsigned        bytes,
-    void *          param
-    ) {
-    const Auth2Cli_ServerCaps & caps = *(const Auth2Cli_ServerCaps *)msg;
+template<>
+bool RecvMsg<Auth2Cli_ServerCaps>(const uint8_t msg[], unsigned bytes, void* param)
+{
+    const Auth2Cli_ServerCaps& caps = *(const Auth2Cli_ServerCaps*)msg;
 
     hsReadOnlyStream stream(caps.byteCount, reinterpret_cast<const void*>(caps.buffer));
     ((CliAuConn*)param)->caps.Read(&stream);
@@ -2445,7 +1948,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  &kNetMsg_Auth2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_Auth2Cli_##s, RecvMsg<Auth2Cli_##s>
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(ClientRegisterReply)      },
