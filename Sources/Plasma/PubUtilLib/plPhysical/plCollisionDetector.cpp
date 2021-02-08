@@ -78,7 +78,7 @@ plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
     {
         // search through its modifiers to see if one of them is an avatar modifier
         plArmatureMod* avMod = nil;
-        for (int i = 0; i < avObj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < avObj->GetNumModifiers(); i++)
         {
             const plModifier* mod = avObj->GetModifier(i);
             // see if it is an avatar mod base class

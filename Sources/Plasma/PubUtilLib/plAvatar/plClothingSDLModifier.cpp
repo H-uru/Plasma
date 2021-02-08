@@ -77,10 +77,9 @@ plClothingOutfit* plClothingSDLModifier::GetClothingOutfit()
     if (fClothingOutfit)
         return fClothingOutfit;
 
-    int i;
     plSceneObject* target = GetTarget();
     hsAssert(target, "plClothingSDLModifier: nil target");
-    for (i=0;i<target->GetNumModifiers();i++)
+    for (size_t i = 0; i < target->GetNumModifiers(); i++)
     {
         const plArmatureMod* am = plArmatureMod::ConvertNoRef(target->GetModifier(i));
         if (am)
@@ -312,9 +311,9 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
 // FINDARMATUREMOD
 const plClothingSDLModifier *plClothingSDLModifier::FindClothingSDLModifier(const plSceneObject *obj)
 {
-    int count = obj->GetNumModifiers();
+    size_t count = obj->GetNumModifiers();
 
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
     {
         const plModifier *mod = obj->GetModifier(i);
         const plClothingSDLModifier *sdlMod = plClothingSDLModifier::ConvertNoRef(mod);

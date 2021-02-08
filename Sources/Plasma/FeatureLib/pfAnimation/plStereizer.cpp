@@ -286,9 +286,8 @@ bool plStereizer::CheckForMaster()
     if( !targ )
         return false;
 
-    int n = targ->GetNumModifiers();
-    int i;
-    for( i = 0; i < n; i++ )
+    size_t n = targ->GetNumModifiers();
+    for (size_t i = 0; i < n; i++)
     {
         plLineFollowMod* line = plLineFollowMod::ConvertNoRef(IGetTargetModifier(0, i));
         if( line )

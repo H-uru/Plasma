@@ -128,8 +128,7 @@ const plArmatureMod* cyAvatar::IFindArmatureMod(plKey avKey)
     if ( avObj )
     {
         // search through its modifiers to see if one of them is an avatar modifier
-        int i;
-        for ( i=0; i<avObj->GetNumModifiers(); i++ )
+        for (size_t i = 0; i < avObj->GetNumModifiers(); i++)
         {
             const plModifier* mod = avObj->GetModifier(i);
             // see if it is an avatar mod base class
@@ -1345,8 +1344,7 @@ plMorphSequence* cyAvatar::LocalMorphSequence()
         return nil;
 
     const plModifier* constSeq = nil;
-    int i;
-    for (i = 0; i < so->GetNumModifiers(); i++)
+    for (size_t i = 0; i < so->GetNumModifiers(); i++)
     {
         constSeq = so->GetModifier(i);
         if (constSeq && plMorphSequence::ConvertNoRef(constSeq))

@@ -3541,9 +3541,9 @@ plAGModifier *plMaxNode::HasAGMod()
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
-        int numMods = SO->GetNumModifiers();
+        size_t numMods = SO->GetNumModifiers();
 
-        for (int i = 0; i < numMods; i++)
+        for (size_t i = 0; i < numMods; i++)
         {
             const plModifier *mod = SO->GetModifier(i);
 
@@ -3561,9 +3561,9 @@ plAGMasterMod *plMaxNode::GetAGMasterMod()
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
-        int numMods = SO->GetNumModifiers();
+        size_t numMods = SO->GetNumModifiers();
 
-        for (int i = 0; i < numMods; i++)
+        for (size_t i = 0; i < numMods; i++)
         {
             const plModifier *mod = SO->GetModifier(i);
 
@@ -4012,11 +4012,11 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
     if (!CanConvert())
         return ret;
     
-    uint32_t count = GetSceneObject()->GetNumModifiers();
+    size_t count = GetSceneObject()->GetNumModifiers();
     hsTArray<plKey> keys;
     // Go through all the modifiers attached to this node's scene object
     // and grab keys for objects who we would need to send interface messages to
-    for (uint32_t i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
     {
         const plModifier* pMod = GetSceneObject()->GetModifier(i);
         // right now all we care about are these, but I guarentee you we will

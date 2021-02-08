@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShadowMaster_inc
 #define plShadowMaster_inc
 
+#include "hsTemplates.h"
+
 #include "pnSceneObject/plObjInterface.h"
 
 class plShadowCaster;

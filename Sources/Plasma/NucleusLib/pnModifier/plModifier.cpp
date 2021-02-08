@@ -82,7 +82,7 @@ plObjInterface* plModifier::IGetTargetGenericInterface(int iTarg, uint32_t class
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((uint16_t)classIdx) : nil; 
 }
 
-plModifier* plModifier::IGetTargetModifier(int iTarg, int iMod) const
+plModifier* plModifier::IGetTargetModifier(int iTarg, size_t iMod) const
 { 
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nil; 
 }

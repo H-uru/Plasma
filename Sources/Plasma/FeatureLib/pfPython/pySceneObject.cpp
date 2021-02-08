@@ -536,8 +536,7 @@ bool pySceneObject::IsAvatar()
         if ( obj )
         {
             // search through its modifiers to see if one of them is an avatar modifier
-            int i;
-            for ( i=0; i<obj->GetNumModifiers(); i++ )
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plModifier* mod = obj->GetModifier(i);
                 // see if it is an avatar mod base class
@@ -565,8 +564,7 @@ PyObject* pySceneObject::GetAvatarVelocity()
         if ( obj )
         {
             // search through its modifiers to see if one of them is an avatar modifier
-            int i;
-            for ( i=0; i<obj->GetNumModifiers(); i++ )
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plModifier* mod = obj->GetModifier(i);
                 // see if it is an avatar mod base class
@@ -600,17 +598,16 @@ bool pySceneObject::IsHumanAvatar()
         if ( obj )
         {
             // search through its modifiers to see if one of them is an avatar modifier
-            int i;
-            for ( i=0; i<obj->GetNumModifiers(); i++ )
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plModifier* mod = obj->GetModifier(i);
                 // see if it is an avatar mod base class
                 plArmatureMod* avatar = (plArmatureMod*)plArmatureMod::ConvertNoRef(mod);
                 if ( avatar )
                 {
-                    for (int i = 0; i < avatar->GetBrainCount(); ++i)
+                    for (int j = 0; j < avatar->GetBrainCount(); ++j)
                     {
-                        if (plAvBrainHuman::ConvertNoRef(avatar->GetBrain(i)))
+                        if (plAvBrainHuman::ConvertNoRef(avatar->GetBrain(j)))
                             return true;
                     }
                 }
@@ -632,7 +629,7 @@ void pySceneObject::PushCutsceneCamera(bool cut, pyKey& avKey)
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if ( obj )
         {   
-            for (int i = 0; i < obj->GetNumModifiers(); i++)
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
                 if (pCam)
@@ -666,7 +663,7 @@ void pySceneObject::PopCutsceneCamera(pyKey& avKey)
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if ( obj )
         {   
-            for (int i = 0; i < obj->GetNumModifiers(); i++)
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
                 if (pCam)
@@ -693,7 +690,7 @@ void pySceneObject::PushCamera(pyKey& avKey)
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {   
-        for (int i = 0; i < obj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < obj->GetNumModifiers(); i++)
         {
             const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
             if (pCam)
@@ -722,7 +719,7 @@ void pySceneObject::PushCameraCut(pyKey& avKey)
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {   
-        for (int i = 0; i < obj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < obj->GetNumModifiers(); i++)
         {
             const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
             if (pCam)
@@ -760,7 +757,7 @@ void pySceneObject::PopCamera(pyKey& avKey)
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {   
-        for (int i = 0; i < obj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < obj->GetNumModifiers(); i++)
         {
             const plCameraModifier1* pCam = plCameraModifier1::ConvertNoRef(obj->GetModifier(i));
             if (pCam)
@@ -794,7 +791,7 @@ std::vector<PyObject*> pySceneObject::GetResponders()
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if ( obj )
         {   
-            for (int i = 0; i < obj->GetNumModifiers(); i++)
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plResponderModifier* resp = plResponderModifier::ConvertNoRef(obj->GetModifier(i));
                 if (resp)
@@ -816,7 +813,7 @@ std::vector<PyObject*> pySceneObject::GetPythonMods()
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if ( obj )
         {   
-            for (int i = 0; i < obj->GetNumModifiers(); i++)
+            for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
                 const plPythonFileMod* resp = plPythonFileMod::ConvertNoRef(obj->GetModifier(i));
                 if (resp)
@@ -846,7 +843,7 @@ int8_t pySceneObject::GetResponderState()
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
     {
-        for (int i = 0; i < obj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < obj->GetNumModifiers(); i++)
         {
             const plResponderModifier* resp = plResponderModifier::ConvertNoRef(obj->GetModifier(i));
             if (resp)
@@ -981,7 +978,7 @@ void pySceneObject::VolumeSensorIgnoreExtraEnters(bool ignore)
         plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
         if (obj)
         {
-            for (int i = 0; i < obj->GetNumModifiers(); ++i)
+            for (size_t i = 0; i < obj->GetNumModifiers(); ++i)
             {
                 plLogicModifier* logic = const_cast<plLogicModifier*>(plLogicModifier::ConvertNoRef(obj->GetModifier(i)));
                 if (logic)

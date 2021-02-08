@@ -2062,9 +2062,8 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     // to interpolate to the correct FOV at each keyframe
     
     plAnimComponentBase* pAnim = nil;
-    int count = node->NumAttachedComponents();
-    int i;
-    for (i = 0; i < count; i++)
+    uint32_t count = node->NumAttachedComponents();
+    for (uint32_t i = 0; i < count; i++)
     {
         plComponentBase *comp = node->GetAttachedComponent(i);
         if (comp->ClassID() == ANIM_COMP_CID || comp->ClassID() == ANIM_GROUP_COMP_CID)
@@ -2075,7 +2074,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     }
 
     plCamera1Component* pCamComp = nil;
-    for (i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         plComponentBase *comp = node->GetAttachedComponent(i);
         if (comp->ClassID() == FIXEDCAM_CID)
@@ -2086,8 +2085,8 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     }
 
     const plCameraModifier1* pCamMod = nil;
-    count = node->GetSceneObject()->GetNumModifiers();
-    for (i=0; i < count; i++)
+    size_t modCount = node->GetSceneObject()->GetNumModifiers();
+    for (size_t i = 0; i < modCount; i++)
     {
         pCamMod = plCameraModifier1::ConvertNoRef(node->GetSceneObject()->GetModifier(i));
         if (pCamMod)
@@ -2102,7 +2101,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     GenCamera* theCam;
     hsTArray<float> fovW;
     hsTArray<float> fovH;
-    for (i=0; i < kfArray->Count(); i++)
+    for (int i = 0; i < kfArray->Count(); i++)
     {
         TimeValue t = TimeValue(GetTicksPerFrame() * (kfArray[0][i].fFrame));
         theCam = (GenCamera *) obj->ConvertToType(t, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
@@ -2128,7 +2127,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         fovH.Append(hDeg);
             
     }
-    for (i=0; i < kfArray->Count(); i++)
+    for (int i = 0; i < kfArray->Count(); i++)
     {
         
         plCameraMsg* pFOVMsg = new plCameraMsg;

@@ -1350,8 +1350,7 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
     plSceneObject* sceneObj=plSceneObject::ConvertNoRef(obj);
     if (sceneObj)
     {
-        int i;
-        for(i=0; i<sceneObj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < sceneObj->GetNumModifiers(); i++)
             if (sceneObj->GetModifier(i) && sceneObj->GetModifier(i)->ClassIndex()==classIdx)
                 cnt++;
     }

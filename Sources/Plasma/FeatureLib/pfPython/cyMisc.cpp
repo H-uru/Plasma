@@ -2532,7 +2532,7 @@ void cyMisc::RebuildCameraStack(const ST::string& name, const char* ageName)
         plSceneObject* pObj = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
         if (pObj)
         {
-            for (int i = 1; i < pObj->GetNumModifiers(); i++)
+            for (size_t i = 1; i < pObj->GetNumModifiers(); i++)
             {
                 pMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
                 if (pMod)

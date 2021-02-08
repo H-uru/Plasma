@@ -274,9 +274,8 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                         else
                             plDetectorLog::Special("{}: LOS hit", pObj->GetKeyName());
                     }
-                    int i;
                     const plInterfaceInfoModifier* pMod = 0;
-                    for( i = 0; i < pObj->GetNumModifiers(); i++ )
+                    for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                     {
                         if (fBookMode == kNotOffering) // when sharing a book we don't care about other clickables
                         {

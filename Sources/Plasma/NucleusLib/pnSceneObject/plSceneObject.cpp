@@ -94,11 +94,8 @@ plSceneObject::~plSceneObject()
 
     IRemoveAllGenerics();
 
-    int i;
-    int knt;
-
-    knt = fModifiers.GetCount();
-    for( i = 0; i < knt; i++ )
+    size_t knt = fModifiers.size();
+    for (size_t i = 0; i < knt; i++)
     {
         if( fModifiers[i] )
             fModifiers[i]->RemoveTarget(this);
@@ -122,21 +119,19 @@ void plSceneObject::Read(hsStream* stream, hsResMgr* mgr)
     // AI
     mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 
-    int i;
-
-    int nGen = stream->ReadLE32();
-    fGenerics.SetCount(0);
-    for( i = 0; i < nGen; i++ )
+    uint32_t nGen = stream->ReadLE32();
+    fGenerics.clear();
+    for (uint32_t i = 0; i < nGen; i++)
     {
         mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
     }
 
     plObjRefMsg* refMsg;
 
-    int nOldMods=fModifiers.GetCount();     // existng modifiers created during interface loading
-    int nNewMods = stream->ReadLE32();
-    fModifiers.ExpandAndZero(nOldMods+nNewMods);    // reserve space for new modifiers+existing modifiers
-    for( i = nOldMods; i < nOldMods+nNewMods; i++ )
+    size_t nOldMods = fModifiers.size();     // existng modifiers created during interface loading
+    uint32_t nNewMods = stream->ReadLE32();
+    fModifiers.resize(nOldMods + nNewMods);    // reserve space for new modifiers+existing modifiers
+    for (size_t i = nOldMods; i < nOldMods + nNewMods; i++)
     {
         refMsg = new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, i, plObjRefMsg::kModifier);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
@@ -157,19 +152,17 @@ void plSceneObject::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fCoordinateInterface);
     mgr->WriteKey(stream, fAudioInterface);
 
-    int i;
+    stream->WriteLE32((uint32_t)fGenerics.size());
+    for (plObjInterface* generic : fGenerics)
+        mgr->WriteKey(stream, generic);
 
-    stream->WriteLE32(fGenerics.GetCount());
-    for( i = 0; i < fGenerics.GetCount(); i++ )
-        mgr->WriteKey(stream, fGenerics[i]);
+    for (auto iter = fModifiers.crbegin(); iter != fModifiers.crend(); ++iter)
+        if ((*iter)->GetKey() == nil)
+            RemoveModifier(*iter);
 
-    for( i = fModifiers.GetCount() - 1; i >= 0; i--)
-        if (fModifiers[i]->GetKey() == nil)
-            RemoveModifier(fModifiers[i]);
-
-    stream->WriteLE32(fModifiers.GetCount());
-    for( i = 0; i < fModifiers.GetCount(); i++ )
-        mgr->WriteKey(stream,fModifiers[i]);
+    stream->WriteLE32((uint32_t)fModifiers.size());
+    for (plModifier* modifier : fModifiers)
+        mgr->WriteKey(stream, modifier);
 
     mgr->WriteKey(stream, fSceneNode);
 }
@@ -189,11 +182,10 @@ void    plSceneObject::ReleaseData()
     if( fAudioInterface )
         fAudioInterface->ReleaseData();
 
-    int i;
-    for( i = 0; i < fGenerics.GetCount(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] )
-            fGenerics[i]->ReleaseData();
+        if (generic)
+            generic->ReleaseData();
     }
 }
 
@@ -246,20 +238,19 @@ void plSceneObject::ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     plProfile_EndTiming(SOAITrans);
 
     plProfile_BeginTiming(SOGITrans);
-    int i;
-    for( i = 0; i < fGenerics.GetCount(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] )
-            fGenerics[i]->SetTransform(l2w, w2l);
+        if (generic)
+            generic->SetTransform(l2w, w2l);
     }
     plProfile_EndTiming(SOGITrans);
 
 
     plProfile_BeginTiming(SOMOTrans);
-    for( i = 0; i < fModifiers.GetCount(); i++ )
+    for (plModifier* modifier : fModifiers)
     {
-        if( fModifiers[i] )
-            fModifiers[i]->SetTransform(l2w, w2l);
+        if (modifier)
+            modifier->SetTransform(l2w, w2l);
     }
     plProfile_EndTiming(SOMOTrans);
     plProfile_EndTiming(SOTrans);
@@ -311,15 +302,16 @@ hsMatrix44 plSceneObject::GetParentToLocal() const
     return p2l;
 }
 
-void plSceneObject::IAddModifier(plModifier* mo, int i)
+void plSceneObject::IAddModifier(plModifier* mo, hsSsize_t idx)
 {
     if( !mo )
         return;
 
-    if( i < 0 )
-        i = fModifiers.GetCount();
-    fModifiers.ExpandAndZero(i+1);
-    fModifiers.Set(i, mo);
+    if (idx < 0)
+        idx = (hsSsize_t)fModifiers.size();
+    if (size_t(idx + 1) > fModifiers.size())
+        fModifiers.resize(idx + 1);
+    fModifiers[idx] = mo;
     mo->AddTarget(this);
 }
 
@@ -328,11 +320,11 @@ void plSceneObject::IRemoveModifier(plModifier* mo)
     if( !mo )
         return;
 
-    int idx = fModifiers.Find(mo);
-    if( idx != fModifiers.kMissingIndex )
+    const auto idx = std::find(fModifiers.cbegin(), fModifiers.cend(), mo);
+    if (idx != fModifiers.cend())
     {
         mo->RemoveTarget(this);
-        fModifiers.Remove(idx);
+        fModifiers.erase(idx);
     }
 }
 
@@ -371,16 +363,11 @@ void plSceneObject::IRemoveInterface(int16_t idx, plObjInterface* who)
 bool plSceneObject::IPropagateToModifiers(plMessage* msg)
 {
     bool retVal = false;
-    int i;
-    int nMods = fModifiers.GetCount();
 
-    for( i = 0; i < nMods; i++ )
+    for (plModifier* modifier : fModifiers)
     {
-        if( fModifiers[i] )
-        {
-            plModifier *mod = fModifiers[i];
-            retVal |= mod->MsgReceive(msg);
-        }
+        if (modifier)
+            retVal |= modifier->MsgReceive(msg);
     }
     return retVal;
 }
@@ -389,11 +376,10 @@ bool plSceneObject::Eval(double secs, float delSecs)
 {
     uint32_t dirty = ~0L;
     bool retVal = false;
-    int i;
-    for( i = 0; i < fModifiers.GetCount(); i++ )
+    for (plModifier* modifier : fModifiers)
     {
-        if( fModifiers[i] )
-            retVal |= fModifiers[i]->IEval(secs, delSecs, dirty);
+        if (modifier)
+            retVal |= modifier->IEval(secs, delSecs, dirty);
     }
     return retVal;
 }
@@ -412,11 +398,10 @@ void plSceneObject::SetSceneNode(plKey newNode)
     if( fCoordinateInterface )
         fCoordinateInterface->ISetSceneNode(newNode);
 
-    int i;
-    for( i = 0; i < GetNumGenerics(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] )
-            fGenerics[i]->ISetSceneNode(newNode);
+        if (generic)
+            generic->ISetSceneNode(newNode);
     }
 
     if( newNode )
@@ -447,12 +432,10 @@ void plSceneObject::SetNetGroup(plNetGroupId netGroup)
 
 const plModifier* plSceneObject::GetModifierByType(uint16_t classIdx) const
 {
-    int i;
-    for (i = 0; i < fModifiers.GetCount(); i++)
+    for (plModifier* modifier : fModifiers)
     {
-        plModifier * mod = fModifiers[i];
-        if (mod && plFactory::DerivesFrom(classIdx, mod->ClassIndex()))
-            return mod;
+        if (modifier && plFactory::DerivesFrom(classIdx, modifier->ClassIndex()))
+            return modifier;
     }
 
     return nil;
@@ -706,16 +689,15 @@ bool plSceneObject::IMsgHandle(plMessage* msg)
 void plSceneObject::IPropagateToGenerics(const hsBitVector& types, plMessage* msg)
 {
     hsBitIterator iter(types);
-    int i;
-    for( i = 0; i < fGenerics.GetCount(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] )
+        if (generic)
         {
             for( iter.Begin(); !iter.End(); iter.Advance() )
             {
-                if( plFactory::DerivesFrom(iter.Current(), fGenerics[i]->ClassIndex()) )
+                if (plFactory::DerivesFrom(iter.Current(), generic->ClassIndex()))
                 {
-                    fGenerics[i]->MsgReceive(msg);
+                    generic->MsgReceive(msg);
                     break;
                 }
             }
@@ -725,21 +707,19 @@ void plSceneObject::IPropagateToGenerics(const hsBitVector& types, plMessage* ms
 
 void plSceneObject::IPropagateToGenerics(plMessage* msg)
 {
-    int i;
-    for( i = 0; i < fGenerics.GetCount(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] )
-            fGenerics[i]->MsgReceive(msg);
+        if (generic)
+            generic->MsgReceive(msg);
     }
 }
 
 plObjInterface* plSceneObject::GetVolatileGenericInterface(uint16_t classIdx) const
 {
-    int i;
-    for( i = 0; i < fGenerics.GetCount(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] && plFactory::DerivesFrom(classIdx, fGenerics[i]->ClassIndex()) )
-            return fGenerics[i];
+        if (generic && plFactory::DerivesFrom(classIdx, generic->ClassIndex()))
+            return generic;
     }
     return nil;
 }
@@ -748,9 +728,10 @@ void plSceneObject::IAddGeneric(plObjInterface* gen)
 {
     if( gen )
     {
-        if( fGenerics.kMissingIndex == fGenerics.Find(gen) )
+        const auto idx = std::find(fGenerics.cbegin(), fGenerics.cend(), gen);
+        if (idx == fGenerics.cend())
         {
-            fGenerics.Append(gen);
+            fGenerics.emplace_back(gen);
             gen->ISetOwner(this);
         }
     }
@@ -760,24 +741,23 @@ void plSceneObject::IRemoveGeneric(plObjInterface* gen)
 {
     if( gen )
     {
-        int idx = fGenerics.Find(gen);
-        if( fGenerics.kMissingIndex != idx )
+        const auto idx = std::find(fGenerics.cbegin(), fGenerics.cend(), gen);
+        if (idx != fGenerics.cend())
         {
             gen->ISetOwner(nil);
-            fGenerics.Remove(idx);
+            fGenerics.erase(idx);
         }
     }
 }
 
 void plSceneObject::IRemoveAllGenerics()
 {
-    int i;
-    for( i = 0; i < fGenerics.GetCount(); i++ )
+    for (plObjInterface* generic : fGenerics)
     {
-        if( fGenerics[i] )
-            fGenerics[i]->ISetOwner(nil);
+        if (generic)
+            generic->ISetOwner(nil);
     }
-    fGenerics.Reset();
+    fGenerics.clear();
 }
 
 void plSceneObject::ISetDrawInterface(plDrawInterface* di) 
@@ -839,9 +819,8 @@ bool  plSceneObject::IsFinal()
     if (!plSynchedObject::IsFinal())
         return false;
 
-    int i;
-    for(i=0;i<GetNumModifiers(); i++)
-        if (fModifiers[i] && !fModifiers[i]->IsFinal())
+    for (plModifier* modifier : fModifiers)
+        if (modifier && !modifier->IsFinal())
             return false;
 
     return true;
@@ -870,7 +849,7 @@ void plSceneObject::SetCoordinateInterface(plCoordinateInterface* ci)
 
 void plSceneObject::AddModifier(plModifier* mo)
 {
-    IAddModifier(mo, fModifiers.GetCount());
+    IAddModifier(mo, (hsSsize_t)fModifiers.size());
 }
 
 void plSceneObject::RemoveModifier(plModifier* mo)

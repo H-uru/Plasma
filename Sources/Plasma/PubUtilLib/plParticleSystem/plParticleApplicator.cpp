@@ -49,9 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
 {
-    uint32_t numMods = so->GetNumModifiers();
-    int i;
-    for (i = 0; i < numMods; i++)
+    size_t numMods = so->GetNumModifiers();
+    for (size_t i = 0; i < numMods; i++)
     {
         const plParticleSystem *result = plParticleSystem::ConvertNoRef(so->GetModifier(i));
         if (result != nil)

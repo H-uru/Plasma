@@ -2012,8 +2012,7 @@ PF_CONSOLE_CMD( App,
     plKey receiver = nil;
     PrintString(status);
 
-    int i;
-    for( i = 0; i < obj->GetNumModifiers(); i++ )
+    for (size_t i = 0; i < obj->GetNumModifiers(); i++)
     {
         if( plSimpleModifier::ConvertNoRef(obj->GetModifier(i)) )
         {
@@ -2151,7 +2150,7 @@ PF_CONSOLE_CMD( App,
         return;
     }
 
-    int i;
+    size_t i;
     for( i = 0; i < obj->GetNumModifiers(); i++ )
     {
         if( plPostEffectMod::ConvertNoRef(obj->GetModifier(i)) )
@@ -3527,8 +3526,7 @@ static plMorphSequence* LocalMorphSequence()
         const plSceneObject* child = pci->GetChild(i)->GetOwner();
         if( child )
         {
-            int j;
-            for( j = 0; j < child->GetNumModifiers(); j++ )
+            for (size_t j = 0; j < child->GetNumModifiers(); j++)
             {
                 constSeq = child->GetModifier(j);
                 if( constSeq && plMorphSequence::ConvertNoRef(constSeq) )
@@ -5286,8 +5284,7 @@ void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if (so == nil) return;
 
-    int i;
-    for (i = so->GetNumModifiers() - 1; i >= 0; i--)
+    for (hsSsize_t i = so->GetNumModifiers() - 1; i >= 0; i--)
     {
         const plParticleSystem *sys = plParticleSystem::ConvertNoRef(so->GetModifier(i));
         if (sys != nil)

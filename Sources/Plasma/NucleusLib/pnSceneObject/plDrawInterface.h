@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDrawInterface_inc
 #define plDrawInterface_inc
 
+#include "hsTemplates.h"
+
 #include "plObjInterface.h"
 
 class plDrawable;

@@ -1309,7 +1309,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                         plSceneObject* pObj = plSceneObject::ConvertNoRef( pCamKey->GetObjectPtr() );
                         if (!pObj)
                             return true;
-                        for (int i = 0; i < pObj->GetNumModifiers(); i++)
+                        for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                         {
                             plKey pModKey = pObj->GetModifier(i)->GetKey();
                             pCamMod = plCameraModifier1::ConvertNoRef( pModKey->GetObjectPtr() );
