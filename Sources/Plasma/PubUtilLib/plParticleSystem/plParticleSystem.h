@@ -100,7 +100,7 @@ protected:
     hsTArray<plParticleEffect *> fConstraints;  // Rigid body, collision, connectivity, etc.
     plParticleContext   fContext; // Rendering context passed to forces/effects/constraints.
 
-    hsTArray<plKey>     fPermaLights; // Runtime lights assigned to this system. Currently don't support projected lights on particles.
+    std::vector<plKey>  fPermaLights; // Runtime lights assigned to this system. Currently don't support projected lights on particles.
 
     // Material related animations, mapped over the course of a particle's life
     plController *fAmbientCtl;

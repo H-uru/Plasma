@@ -647,13 +647,13 @@ bool plMorphSequence::IFindIndices(int iShare)
     if( meshIdx < 0 )
         return false;
 
-    plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable((uint8_t)meshIdx));
+    plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable((size_t)meshIdx));
     if( !dr )
         return false;
 
     mInfo.fCurrDraw = dr;
 
-    plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((uint8_t)meshIdx));
+    plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((size_t)meshIdx));
 
     hsAssert(mInfo.fMesh->fSpans.GetCount() == diIndex.GetCount(), "Mismatch between geometry and indices");
 

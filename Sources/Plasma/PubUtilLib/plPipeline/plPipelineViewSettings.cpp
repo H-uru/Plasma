@@ -376,9 +376,8 @@ bool plPipelineViewSettings::TestVisibleWorld(const plSceneObject* sObj)
     if (!di)
         return false;
 
-    const int numDraw = di->GetNumDrawables();
-    int i;
-    for (i = 0; i < numDraw; i++)
+    const size_t numDraw = di->GetNumDrawables();
+    for (size_t i = 0; i < numDraw; i++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(i));
         if (!dr)

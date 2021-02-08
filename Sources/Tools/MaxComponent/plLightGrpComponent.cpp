@@ -145,8 +145,7 @@ bool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMs
 
         const plDrawInterface* di = pNode->GetSceneObject()->GetDrawInterface();
 
-        int iDraw;
-        for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+        for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
         {
             plDrawableSpans* drawable = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
             if( drawable )

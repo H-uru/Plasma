@@ -129,8 +129,7 @@ void plShadowCaster::ICollectAllSpans()
             // Nil di- either it hasn't loaded yet, or we've been applied to something that isn't visible (oops).
             if( di && !di->GetProperty(plDrawInterface::kDisable) )
             {
-                int j;
-                for( j = 0; j < di->GetNumDrawables(); j++ )
+                for (size_t j = 0; j < di->GetNumDrawables(); j++)
                 {
                     plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
                     // Nil dr - it hasn't loaded yet.

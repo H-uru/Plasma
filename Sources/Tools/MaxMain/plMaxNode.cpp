@@ -1521,21 +1521,21 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     /// Now assign to the interface
     if( oSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, oSpans );
         di->SetDrawableMeshIndex( iDraw, oIndex );
     }
 
     if( bSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, bSpans );
         di->SetDrawableMeshIndex( iDraw, bIndex );
     }
 
     if( sSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, sSpans );
         di->SetDrawableMeshIndex( iDraw, sIndex );
     }
@@ -1681,7 +1681,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         const char  *dbgBoneName = bone->GetName();
 
         // Pick which drawable to point the DI to
-        uint8_t iDraw = 0;
+        size_t iDraw = 0;
 
         /// Now create the actual bone DI, or grab it if it's already created
         plDrawInterface *di = obj->GetVolatileDrawInterface();
@@ -1726,7 +1726,6 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
-    uint8_t   iDraw;
     int     index, i;
 
     
@@ -1747,7 +1746,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 
     index = 0;
     spanArray.Reset();
-    for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+    for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
@@ -1937,8 +1936,7 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if( !di )
         return true;
 
-    uint8_t iDraw;
-    for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+    for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
