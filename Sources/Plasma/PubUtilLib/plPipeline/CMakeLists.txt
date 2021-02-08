@@ -99,9 +99,8 @@ if(PLASMA_PIPELINE STREQUAL "DirectX")
 endif(PLASMA_PIPELINE STREQUAL "DirectX")
 
 if(PLASMA_PIPELINE STREQUAL "OpenGL")
+    find_package(OpenGL REQUIRED)
     list(APPEND plPipeline_ALL_FILES ${plGLPipeline_SOURCES} ${plGLPipeline_HEADERS})
-    # FIXME: should use a find module to find these libraries
-    set(OpenGL_LIBRARIES EGL GLESv2)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
 add_library(plPipeline STATIC ${plPipeline_ALL_FILES})
@@ -132,7 +131,7 @@ target_link_libraries(plPipeline
         pfCamera # plCaptureRender, plDynamicEnvMap, plDXPipeline
         pfGameGUIMgr # plCaptureRender
         $<$<STREQUAL:${PLASMA_PIPELINE},DirectX>:${DirectX_LIBRARIES}>
-        $<$<STREQUAL:${PLASMA_PIPELINE},OpenGL>:${OpenGL_LIBRARIES}>
+        $<$<STREQUAL:${PLASMA_PIPELINE},OpenGL>:OpenGL::GL>
     INTERFACE
         pnFactory
 )
