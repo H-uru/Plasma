@@ -381,7 +381,7 @@ template<typename T, typename = void>
 struct HasTransId : std::false_type { };
 
 template<typename T>
-struct HasTransId<T, decltype((void)T::transId, void())> : std::true_type { };
+struct HasTransId<T, std::void_t<decltype(&T::transId)>> : std::true_type { };
 
 template<typename T>
 inline std::enable_if_t<HasTransId<T>::value, bool>
