@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLogicModifier_inc
 #define plLogicModifier_inc
 
+#include "hsTemplates.h"
+
 #include "pnModifier/plLogicModBase.h"
 
 class plLogicModifier : public plLogicModBase
