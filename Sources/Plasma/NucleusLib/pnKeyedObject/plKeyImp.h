@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plKeyImp_inc
 
 #include "plKey.h"
-#include "hsTemplates.h"
-#include "plUoid.h"  
+#include "plUoid.h"
 #include "hsBitVector.h"
 #include "plRefFlags.h"
 
@@ -118,37 +117,35 @@ public:
     plKey   GetClone(uint32_t playerID, uint32_t cloneID) const;
     void    CopyForClone(const plKeyImp* p, uint32_t playerID, uint32_t cloneID);    // Copy the contents of p for cloning process
 
-    uint32_t  GetNumClones();
-    plKey   GetCloneByIdx(uint32_t idx);
+    size_t  GetNumClones();
+    plKey   GetCloneByIdx(size_t idx);
     plKey   GetCloneOwner() const { return fCloneOwner; }
 
     void NotifyCreated();
     void ISetupNotify(plRefMsg* msg, plRefFlags::Type flags); // Setup notifcations for reference, don't send anything.
 
     void        AddRef(plKeyImp* key) const;
-    uint16_t      GetNumRefs() const { return fRefs.GetCount(); }
-    plKeyImp*   GetRef(int i) const { return fRefs[i]; }
+    size_t      GetNumRefs() const { return fRefs.size(); }
+    plKeyImp*   GetRef(size_t i) const { return fRefs[i]; }
     void        RemoveRef(plKeyImp *key) const;
 
     uint16_t    GetActiveRefs() const override          { return fNumActiveRefs; }
-    uint16_t    GetNumNotifyCreated() const override    { return fNotifyCreated.GetCount(); }
-    plRefMsg*   GetNotifyCreated(int i) const override  { return fNotifyCreated[i]; }
+    size_t      GetNumNotifyCreated() const override    { return fNotifyCreated.size(); }
+    plRefMsg*   GetNotifyCreated(size_t i) const override { return fNotifyCreated[i]; }
     const hsBitVector& GetActiveBits() const override   { return fActiveRefs; }
 
 protected:
     void        AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags);
     void        ClearNotifyCreated();
-    uint16_t      GetNumNotifyCreated() { return fNotifyCreated.GetCount(); }
-    plRefMsg*   GetNotifyCreated(int i) { return fNotifyCreated[i]; }
-    void        RemoveNotifyCreated(int i);
+    void        RemoveNotifyCreated(size_t i);
 
     uint16_t      IncActiveRefs() { return ++fNumActiveRefs; }
     uint16_t      DecActiveRefs() { return fNumActiveRefs ? --fNumActiveRefs : 0; }
 
-    bool    IsActiveRef(int i) const            { return fActiveRefs.IsBitSet(i) != 0; }
-    void    SetActiveRef(int i, bool on=true) { fActiveRefs.SetBit(i, on); }
-    bool    IsNotified(int i) const             { return fNotified.IsBitSet(i) != 0; }
-    void    SetNotified(int i, bool on=true)  { fNotified.SetBit(i, on); }
+    bool    IsActiveRef(size_t i) const          { return fActiveRefs.IsBitSet(i) != 0; }
+    void    SetActiveRef(size_t i, bool on=true) { fActiveRefs.SetBit(i, on); }
+    bool    IsNotified(size_t i) const           { return fNotified.IsBitSet(i) != 0; }
+    void    SetNotified(size_t i, bool on=true)  { fNotified.SetBit(i, on); }
 
     void SatisfyPending(plRefMsg* msg) const;
     void SatisfyPending() const;
@@ -167,13 +164,13 @@ protected:
     uint32_t fDataLen;    // Length in the Datafile
 
     // Following used by hsResMgr to notify on defered load or when a passive ref is destroyed.
-    uint16_t                      fNumActiveRefs; // num active refs on me
+    uint16_t                    fNumActiveRefs; // num active refs on me
     hsBitVector                 fActiveRefs;    // Which of notify created are active refs
     hsBitVector                 fNotified;      // which of notifycreated i've already notified.
-    hsTArray<plRefMsg*>         fNotifyCreated; // people to notify when I'm created or destroyed
-    mutable hsTArray<plKeyImp*> fRefs;          // refs I've made (to be released when I'm unregistered).
-    mutable int16_t               fPendingRefs;   // Outstanding requests I have out.
-    mutable hsTArray<plKeyImp*> fClones;        // clones of me
+    std::vector<plRefMsg*>      fNotifyCreated; // people to notify when I'm created or destroyed
+    mutable std::vector<plKeyImp*>  fRefs;      // refs I've made (to be released when I'm unregistered).
+    mutable int16_t             fPendingRefs;   // Outstanding requests I have out.
+    mutable std::vector<plKeyImp*>  fClones;    // clones of me
     mutable plKey               fCloneOwner;    // pointer for clones back to the owning key
 };
 

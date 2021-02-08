@@ -2958,10 +2958,10 @@ PyObject* cyMisc::FindClones(pyKey* object) {
     plUoid uoid = obj->GetUoid();
 
     plKeyImp* imp = ((plKeyImp*)obj);
-    uint32_t cloneNum = imp->GetNumClones();
+    size_t cloneNum = imp->GetNumClones();
     PyObject* keyList = PyList_New(cloneNum);
 
-    for (int i=0; i < cloneNum; i++) {
+    for (size_t i = 0; i < cloneNum; i++) {
         PyObject* key = pyKey::New(imp->GetCloneByIdx(i));
         PyList_SET_ITEM(keyList, i, key);
     }

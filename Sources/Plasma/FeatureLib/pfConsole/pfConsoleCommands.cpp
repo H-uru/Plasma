@@ -2523,9 +2523,9 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
 class plActiveRefPeekerKey : public plKeyImp
 {
     public:
-        uint16_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
-        plRefMsg*   PeekNotifyCreated(int i) { return GetNotifyCreated(i); }
-        bool        PeekIsActiveRef(int i) const { return IsActiveRef(i); }
+        size_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
+        plRefMsg*   PeekNotifyCreated(size_t i) { return GetNotifyCreated(i); }
+        bool        PeekIsActiveRef(size_t i) const { return IsActiveRef(i); }
 };
 
 // Not static so others can call it - making it even handier
@@ -2546,12 +2546,12 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
     if( peeker->PeekNumNotifies() == 0 )
         return;
 
-    uint32_t a, i, j, limit = 30, count = 0;
+    uint32_t a, j, limit = 30, count = 0;
     for( a = 0; a < 2; a++ )
     {
         PrintString( ( a == 0 ) ? "  Active:" : "  Passive:" );
 
-        for( i = 0; i < peeker->PeekNumNotifies(); i++ )
+        for (size_t i = 0; i < peeker->PeekNumNotifies(); i++)
         {
             if( ( a == 0 && peeker->PeekIsActiveRef( i ) ) || ( a == 1 && !peeker->PeekIsActiveRef( i ) ) )
             {
@@ -2597,8 +2597,7 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
     plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
     if( peeker->GetNumClones() > 0 )
     {
-        uint32_t i;
-        for( i = 0; i < peeker->GetNumClones(); i++ )
+        for (size_t i = 0; i < peeker->GetNumClones(); i++)
         {
             MyHandyPrintFunction( peeker->GetCloneByIdx( i ), PrintString );
         }

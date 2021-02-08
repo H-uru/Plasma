@@ -127,12 +127,12 @@ plKeyImp::~plKeyImp()
         ((plKeyImp*)fCloneOwner)->RemoveClone(this);
     }
 
-    for (int i = 0; i < fClones.GetCount(); i++)
+    for (plKeyImp* clone : fClones)
     {
-        if (fClones[i])
-            fClones[i]->UnRegister();
+        if (clone)
+            clone->UnRegister();
     }
-    fClones.Reset();
+    fClones.clear();
 
     // This is normally empty by now, but if we never got loaded,
     // there will be unsent ref messages in the NotifyCreated list
@@ -336,9 +336,9 @@ hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p)
 
 void plKeyImp::ClearNotifyCreated()
 {
-    for (int i = 0; i < fNotifyCreated.GetCount(); i++)
-        hsRefCnt_SafeUnRef(fNotifyCreated[i]);
-    fNotifyCreated.Reset();
+    for (plRefMsg* msg : fNotifyCreated)
+        hsRefCnt_SafeUnRef(msg);
+    fNotifyCreated.clear();
     fNotified.Reset();
     fActiveRefs.Reset();
 }
@@ -360,13 +360,13 @@ void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags)
     }
 
     hsRefCnt_SafeRef(msg);
-    fNotifyCreated.Append(msg);
+    fNotifyCreated.emplace_back(msg);
 }
 
-void plKeyImp::RemoveNotifyCreated(int i)
+void plKeyImp::RemoveNotifyCreated(size_t i)
 {
     hsRefCnt_SafeUnRef(fNotifyCreated[i]);
-    fNotifyCreated.Remove(i);
+    fNotifyCreated.erase(fNotifyCreated.begin() + i);
 
     fNotified.RemoveBit(i);
     fActiveRefs.RemoveBit(i);
@@ -375,15 +375,15 @@ void plKeyImp::RemoveNotifyCreated(int i)
 void plKeyImp::AddRef(plKeyImp* key) const
 {
     fPendingRefs++;
-    fRefs.Append(key);
+    fRefs.emplace_back(key);
 }
 
 
 void plKeyImp::RemoveRef(plKeyImp* key) const
 {
-    int idx = fRefs.Find(key);
-    if (fRefs.kMissingIndex != idx)
-        fRefs.Remove(idx);
+    auto idx = std::find(fRefs.cbegin(), fRefs.cend(), key);
+    if (idx != fRefs.cend())
+        fRefs.erase(idx);
 }
 
 void plKeyImp::AddClone(plKeyImp* key)
@@ -392,17 +392,17 @@ void plKeyImp::AddClone(plKeyImp* key)
                 "Adding a clone which is already there?");
 
     key->fCloneOwner = plKey::Make(this);
-    fClones.Append(key);
+    fClones.emplace_back(key);
 }
 
 void plKeyImp::RemoveClone(plKeyImp* key) const
 {
     if (key->GetUoid().IsClone())
     {
-        int idx = fClones.Find(key);
-        if (idx != -1)
+        auto idx = std::find(fClones.cbegin(), fClones.cend(), key);
+        if (idx != fClones.cend())
         {
-            fClones.Remove(idx);
+            fClones.erase(idx);
             key->fCloneOwner = nil;
         }
     }
@@ -410,9 +410,8 @@ void plKeyImp::RemoveClone(plKeyImp* key) const
 
 plKey plKeyImp::GetClone(uint32_t playerID, uint32_t cloneID) const
 {
-    for (int i = 0; i < fClones.GetCount(); i++)
+    for (plKeyImp* cloneKey : fClones)
     {
-        plKeyImp* cloneKey = fClones[i];
         if (cloneKey
             && cloneKey->GetUoid().GetCloneID() == cloneID
             && cloneKey->GetUoid().GetClonePlayerID() == playerID)
@@ -422,14 +421,14 @@ plKey plKeyImp::GetClone(uint32_t playerID, uint32_t cloneID) const
     return plKey();
 }
 
-uint32_t plKeyImp::GetNumClones()
+size_t plKeyImp::GetNumClones()
 {
-    return fClones.GetCount();
+    return fClones.size();
 }
 
-plKey plKeyImp::GetCloneByIdx(uint32_t idx)
+plKey plKeyImp::GetCloneByIdx(size_t idx)
 {
-    if (idx < fClones.GetCount())
+    if (idx < fClones.size())
         return plKey::Make(fClones[idx]);
 
     return nil;
@@ -502,15 +501,15 @@ void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
 // when our object has just been loaded, at which time normally fRefs.GetCount() == 0.
 void plKeyImp::INotifySelf(hsKeyedObject* ko)
 {
-    for (int i = 0; i < fRefs.GetCount(); i++)
+    for (plKeyImp* ref : fRefs)
     {
-        hsKeyedObject* rcv = fRefs[i]->GetObjectPtr();
+        hsKeyedObject* rcv = ref->GetObjectPtr();
         if (rcv)
         {
-            for (int j = 0; j < fRefs[i]->fNotifyCreated.GetCount(); j++)
+            for (size_t j = 0; j < ref->fNotifyCreated.size(); j++)
             {
-                plRefMsg* refMsg = fRefs[i]->fNotifyCreated[j];
-                if (refMsg && refMsg->GetRef() && !fRefs[i]->IsNotified(j))
+                plRefMsg* refMsg = ref->fNotifyCreated[j];
+                if (refMsg && refMsg->GetRef() && !ref->IsNotified(j))
                 {
                     hsAssert(refMsg->GetRef() == rcv, "Ref message out of sync with its ref");
 
@@ -519,8 +518,8 @@ void plKeyImp::INotifySelf(hsKeyedObject* ko)
                     {
                         if (&(*refMsg->GetReceiver(k)) == (plKeyData*)this)
                         {
-                            fRefs[i]->SetNotified(j);
-                            fRefs[i]->SatisfyPending(refMsg);
+                            ref->SetNotified(j);
+                            ref->SatisfyPending(refMsg);
 
                             hsRefCnt_SafeRef(refMsg);
                             plgDispatch::MsgSend(refMsg);
@@ -541,7 +540,7 @@ void plKeyImp::NotifyCreated()
 
     INotifySelf(ko);
 
-    for (int i = 0; i < GetNumNotifyCreated(); i++)
+    for (size_t i = 0; i < GetNumNotifyCreated(); i++)
     {
         if (!IsNotified(i) && GetNotifyCreated(i)->GetReceiver(0)->GetObjectPtr())
         {
@@ -564,8 +563,7 @@ void plKeyImp::INotifyDestroyed()
 {
     hsKeyedObject* ko = GetObjectPtr();
     hsAssert(ko, "Notifying of destroy on already destroyed");
-    int i;
-    for( i = 0; i < GetNumNotifyCreated(); i++ )
+    for (size_t i = 0; i < GetNumNotifyCreated(); i++)
     {
         hsAssert(ko, "Notifying of destroy on already destroyed");
         plRefMsg* msg = GetNotifyCreated(i);
@@ -582,12 +580,12 @@ void plKeyImp::IClearRefs()
 {
     while (GetNumRefs())
         IRelease(GetRef(0));
-    fRefs.Reset();
+    fRefs.clear();
 
-    for (int i = 0; i < GetNumNotifyCreated(); i++)
+    for (size_t i = 0; i < GetNumNotifyCreated(); i++)
     {
         plRefMsg* msg = GetNotifyCreated(i);
-        for (int j = 0; j < msg->GetNumReceivers(); j++)
+        for (size_t j = 0; j < msg->GetNumReceivers(); j++)
             ((plKeyImp*)msg->GetReceiver(j))->RemoveRef(this);
     }
 }
@@ -606,15 +604,15 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
     // to me on destruction, and to find out if I have an active of passive 
     // ref on this key.  Not sure why I don't track my own active/passive ref states
     bool isActive = false;
-    int iTarg = -1;
-    for (int i = 0; (iTarg < 0) && (i < iTargetKey->GetNumNotifyCreated()); i++)
+    hsSsize_t iTarg = -1;
+    for (size_t i = 0; (iTarg < 0) && (i < iTargetKey->GetNumNotifyCreated()); i++)
     {
         plMessage* rcvMsg = iTargetKey->GetNotifyCreated(i);
         for (int j = 0; j < rcvMsg->GetNumReceivers(); j++)
         {
             if (&(*rcvMsg->GetReceiver(j)) == (plKeyData*)this)
             {
-                isActive = iTargetKey->IsActiveRef(iTarg = i);
+                isActive = iTargetKey->IsActiveRef(iTarg = (hsSsize_t)i);
                 break;
             }
         }
