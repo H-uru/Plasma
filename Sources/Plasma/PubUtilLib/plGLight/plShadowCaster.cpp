@@ -119,8 +119,7 @@ void plShadowCaster::Deactivate() const
 void plShadowCaster::ICollectAllSpans()
 {
     fSpans.SetCount(0);
-    int i;
-    for( i = 0; i < GetNumTargets(); i++ )
+    for (size_t i = 0; i < GetNumTargets(); i++)
     {
         plSceneObject* so = GetTarget(i);
         // Nil target? Shouldn't happen.

@@ -58,7 +58,7 @@ float plInterestingModifier::fInterestWeight     = 1.0f;
 
 bool plInterestingModifier::IEval(double secs, float del, uint32_t dirty)
 {
-    for (int i=0; i < GetNumTargets(); i++)
+    for (size_t i = 0; i < GetNumTargets(); i++)
     {
         if( GetTarget(i) && GetTarget(i)->GetDrawInterface() )
         {

@@ -96,8 +96,8 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
 
-    int GetNumTargets() const override { return fTarget ? 1 : 0; }
-    plSceneObject* GetTarget(int w) const override { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
+    size_t GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(size_t w) const override { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
     void AddTarget(plSceneObject* so) override;
     void RemoveTarget(plSceneObject* so) override;
     virtual plAnimTimeConvert& GetTimeConvert() { return fTimeConvert;  }

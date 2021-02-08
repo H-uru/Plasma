@@ -85,7 +85,7 @@ void plSpawnModifier::AddTarget(plSceneObject* so)
 void plSpawnModifier::RemoveTarget(plSceneObject* so)
 {
     plMultiModifier::RemoveTarget(so);
-    hsAssert(fTargets.GetCount() == 0, "Spawn modifier has multiple targets. Matt.");
+    hsAssert(fTargets.empty(), "Spawn modifier has multiple targets. Matt.");
 
     plAvatarMgr::GetInstance()->RemoveSpawnPoint(this);
 }

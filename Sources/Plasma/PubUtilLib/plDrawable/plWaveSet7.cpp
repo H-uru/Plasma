@@ -1093,8 +1093,7 @@ void plWaveSet7::ICheckTargetMaterials()
 {
     hsBounds3Ext targBnd;
     targBnd.MakeEmpty();
-    int i;
-    for( i = 0; i < GetNumTargets(); i++ )
+    for (size_t i = 0; i < GetNumTargets(); i++)
     {
         plSceneObject* so = GetTarget(i);
         if( !so )

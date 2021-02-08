@@ -76,8 +76,8 @@ public:
     GETINTERFACE_ANY( plCubicRenderTargetModifier, plModifier);
 
     // Functions related to/required by plModifier
-    int             GetNumTargets() const override { return fTarget ? 1 : 0; }
-    plSceneObject   *GetTarget(int w) const override { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
+    size_t          GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject   *GetTarget(size_t w) const override { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
     void            AddTarget(plSceneObject* so) override;
     void            RemoveTarget(plSceneObject* so) override;
 

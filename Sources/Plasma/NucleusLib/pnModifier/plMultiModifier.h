@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 
 class plSceneObject;
 class plMultiModMsg;
@@ -53,7 +52,7 @@ class plMultiModMsg;
 class plMultiModifier : public plModifier
 {
 protected:
-    hsTArray<plSceneObject*>    fTargets;
+    std::vector<plSceneObject*>    fTargets;
     hsBitVector     fFlags;
 
 public:
@@ -67,9 +66,9 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) override;
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    int GetNumTargets() const override { return fTargets.Count(); }
-    plSceneObject* GetTarget(int w) const override { hsAssert(w < GetNumTargets(), "Bad target"); return fTargets[w]; }
-    void AddTarget(plSceneObject* so) override { fTargets.Append(so); }
+    size_t GetNumTargets() const override { return fTargets.size(); }
+    plSceneObject* GetTarget(size_t w) const override { hsAssert(w < GetNumTargets(), "Bad target"); return fTargets[w]; }
+    void AddTarget(plSceneObject* so) override { fTargets.emplace_back(so); }
     void RemoveTarget(plSceneObject* so) override;
 
     bool HasFlag(int f) const { return fFlags.IsBitSet(f); }

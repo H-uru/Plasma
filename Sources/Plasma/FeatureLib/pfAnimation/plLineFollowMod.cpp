@@ -339,8 +339,7 @@ bool plLineFollowMod::IEval(double secs, float del, uint32_t dirty)
     if( fFollowFlags & kOffset )
         IOffsetTargetTransform(tgtXfm);
 
-    int i;
-    for( i = 0; i < GetNumTargets(); i++ )
+    for (size_t i = 0; i < GetNumTargets(); i++)
     {
         ISetTargetTransform(i, tgtXfm);
     }
@@ -525,7 +524,7 @@ hsMatrix44 plLineFollowMod::ISpeedClamp(plCoordinateInterface* ci, const hsMatri
     return unclTgtXfm;
 }
 
-void plLineFollowMod::ISetTargetTransform(int iTarg, const hsMatrix44& unclTgtXfm)
+void plLineFollowMod::ISetTargetTransform(size_t iTarg, const hsMatrix44& unclTgtXfm)
 {
     plCoordinateInterface* ci = IGetTargetCoordinateInterface(iTarg);
     if( ci )
