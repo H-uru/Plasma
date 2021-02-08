@@ -209,12 +209,12 @@ bool plNPCSpawnComp::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
         // let's make a notification message that we'll use to notify interested parties
         // when we actually do our spawn.
         plNotifyMsg *notify = new plNotifyMsg();
-        hsTArray<plKey> receivers;
+        std::vector<plKey> receivers;
         IGetReceivers(node, receivers);
         notify->SetSender(mod->GetKey());
         notify->SetState(1.0f);
-        for (int i = 0; i < receivers.Count(); i++)
-            notify->AddReceiver(receivers[i]);
+        for (const plKey& receiver : receivers)
+            notify->AddReceiver(receiver);
 
         mod->SetNotify(notify);
 

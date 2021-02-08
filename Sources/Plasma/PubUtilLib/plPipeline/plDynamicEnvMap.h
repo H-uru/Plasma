@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCubicRenderTarget.h"
 #include "plScene/plRenderRequest.h"
 #include "hsBitVector.h"
+#include "hsTemplates.h"
 
 class plRenderRequestMsg;
 class hsStream;

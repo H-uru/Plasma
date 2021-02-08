@@ -54,7 +54,7 @@ class plMessage;
 class Mtl;
 class IParamBlock2;
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 
 class plResponderCmdMtl : public plResponderCmd
 {
@@ -78,7 +78,5 @@ public:
     Mtl *GetMtl(IParamBlock2 *pb);
     ST::string GetAnim(IParamBlock2 *pb);
 };
-
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys);
 
 #endif

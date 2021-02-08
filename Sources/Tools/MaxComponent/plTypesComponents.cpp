@@ -715,10 +715,10 @@ plKey plGameMarkerComponent::IGetMtlAnimKey(int paramID, plMaxNode* node)
 {
     Mtl* mtl = fCompPB->GetMtl(kMarkerMtl);
     plMaxNode* mtlNode  = (plMaxNode*)fCompPB->GetINode(kMarkerMtlNode);
-    hsTArray<plKey> keys;
+    std::vector<plKey> keys;
     ST::string anim = ST::string::from_utf8(fCompPB->GetStr(paramID));
     GetMatAnimModKey(mtl, mtlNode, anim, keys);
-    hsAssert(keys.Count() == 1, "Wrong number of keys");
+    hsAssert(keys.size() == 1, "Wrong number of keys");
     return keys[0];
 }
 

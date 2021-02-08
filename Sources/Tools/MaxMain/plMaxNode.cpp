@@ -160,7 +160,7 @@ static plKey ExternGetNewKey(const ST::string &name, plModifier *mod, plLocation
 }
 
 // In plResponderComponent (for no apparent reason).
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 // In plAudioComponents
 int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
 
@@ -4025,7 +4025,7 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
         const plLogicModifier* pLog = plLogicModifier::ConvertNoRef(pMod);
         if( pDet )
         {
-            for (int j = 0; j < pDet->GetNumReceivers(); j++)
+            for (size_t j = 0; j < pDet->GetNumReceivers(); j++)
                 keys.Append(pDet->GetReceiver(j));
         }
         else

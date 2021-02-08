@@ -826,7 +826,7 @@ plMessage *plResponderCmdDetectorEnable::CreateMsg(plMaxNode* node, plErrorMsg *
     plEnableMsg *msg = new plEnableMsg;
     msg->SetCmd(enable ? plEnableMsg::kEnable : plEnableMsg::kDisable);
 
-    hsTArray<plKey> keys;
+    std::vector<plKey> keys;
 
     if (comp->CanConvertToType(ACTIVATOR_BASE_CID))
     {
@@ -835,10 +835,8 @@ plMessage *plResponderCmdDetectorEnable::CreateMsg(plMaxNode* node, plErrorMsg *
         const plActivatorBaseComponent::LogicKeys& logicKeys = activatorComp->GetLogicKeys();
         plActivatorBaseComponent::LogicKeys::const_iterator it;
         for (it = logicKeys.begin(); it != logicKeys.end(); it++)
-        {
-            plKey key = it->second;
-            keys.Append(key);
-        }
+            keys.emplace_back(it->second);
+
         // check to see if this is a region sensor and if so if it has exit and / or enter activators
         if (activatorComp->HasLogicOut())
         {
@@ -846,10 +844,7 @@ plMessage *plResponderCmdDetectorEnable::CreateMsg(plMaxNode* node, plErrorMsg *
             const plActivatorBaseComponent::LogicKeys& logicKeys = volComp->GetLogicOutKeys();
             plActivatorBaseComponent::LogicKeys::const_iterator it;
             for (it = logicKeys.begin(); it != logicKeys.end(); it++)
-            {
-                plKey key = it->second;
-                keys.Append(key);
-            }
+                keys.emplace_back(it->second);
         }
     }
     else if (comp->ClassID() == NAV_LADDER_CID)

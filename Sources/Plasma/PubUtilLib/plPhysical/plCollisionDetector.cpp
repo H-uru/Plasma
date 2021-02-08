@@ -112,10 +112,10 @@ bool plCollisionDetector::MsgReceive(plMessage* msg)
         {
             if (!fBumped && !fTriggered)
             {
-                for (int i = 0; i < fReceivers.Count(); i++)
+                for (const plKey& receiver : fReceivers)
                 {
                     plActivatorMsg* pMsg = new plActivatorMsg;
-                    pMsg->AddReceiver( fReceivers[i] );
+                    pMsg->AddReceiver(receiver);
 
                     if (fProxyKey)
                         pMsg->fHiteeObj = fProxyKey;
@@ -139,10 +139,10 @@ bool plCollisionDetector::MsgReceive(plMessage* msg)
             return false;
         }
 
-        for (int i = 0; i < fReceivers.Count(); i++)
+        for (const plKey& receiver : fReceivers)
         {
             plActivatorMsg* pMsg = new plActivatorMsg;
-            pMsg->AddReceiver( fReceivers[i] );
+            pMsg->AddReceiver(receiver);
             if (fProxyKey)
                 pMsg->fHiteeObj = fProxyKey;
             else
@@ -192,10 +192,10 @@ bool plCollisionDetector::MsgReceive(plMessage* msg)
         if (!fBumped && fTriggered)
         {
             plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
-            for (int i = 0; i < fReceivers.Count(); i++)
+            for (const plKey& receiver : fReceivers)
             {
                 plActivatorMsg* pMsg = new plActivatorMsg;
-                pMsg->AddReceiver( fReceivers[i] );
+                pMsg->AddReceiver(receiver);
                 if (fProxyKey)
                     pMsg->fHiteeObj = fProxyKey;
                 else

@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 #include "hsGeometry3.h"
+#include "hsTemplates.h"
 
 
 //

@@ -48,12 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 class plMessageWithCallbacks;
-class plForwardCallback;
+struct plForwardCallback;
 
 class plMsgForwarder : public hsKeyedObject
 {
 protected:
-    hsTArray<plKey> fForwardKeys;
+    std::vector<plKey> fForwardKeys;
 
     typedef std::map<plMessage*, plForwardCallback*> CallbackMap;
     CallbackMap fCallbacks;

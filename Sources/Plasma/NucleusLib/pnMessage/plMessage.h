@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreatable.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 class plKey;
 class hsStream;
@@ -128,7 +127,7 @@ public:
 
     plMessage& ClearReceivers();
     plMessage& AddReceiver(plKey r);
-    plMessage& AddReceivers(const hsTArray<plKey>& rList);
+    plMessage& AddReceivers(const std::vector<plKey>& rList);
 
     bool Send(plKey r=nullptr, bool async=false); // Message will self-destruct after send.
     bool SendAndKeep(plKey r=nullptr, bool async=false); // Message won't self-destruct after send.

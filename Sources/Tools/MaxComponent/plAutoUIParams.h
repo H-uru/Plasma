@@ -373,7 +373,7 @@ public:
 class plPickMaterialAnimationButtonParam : public plPickButtonParam
 {
 protected:
-    hsTArray<plKey> fKeys; // FIXME: std::vector
+    std::vector<plKey> fKeys;
 
 public:
     plPickMaterialAnimationButtonParam(ParamID id, const char *name);

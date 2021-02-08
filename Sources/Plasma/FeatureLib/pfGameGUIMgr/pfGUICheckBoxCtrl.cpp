@@ -91,10 +91,11 @@ void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    fAnimationKeys.Reset();
-    uint32_t i, count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.clear();
+    uint32_t count = s->ReadLE32();
+    fAnimationKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fAnimationKeys.emplace_back(mgr->ReadKey(s));
 
     fAnimName = s->ReadSafeString();
     fChecked = s->ReadBool();
@@ -104,10 +105,9 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    uint32_t i, count = fAnimationKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fAnimationKeys[ i ] );
+    s->WriteLE32((uint32_t)fAnimationKeys.size());
+    for (const plKey &key : fAnimationKeys)
+        mgr->WriteKey(s, key);
 
     s->WriteSafeString( fAnimName );
     s->WriteBool( fChecked );
@@ -118,7 +118,7 @@ void    pfGUICheckBoxCtrl::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUICheckBoxCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
         fBoundsValid = false;
 }
 
@@ -154,7 +154,7 @@ void    pfGUICheckBoxCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 void    pfGUICheckBoxCtrl::SetChecked( bool checked, bool immediate /*= false*/ )
 {
     fChecked = checked;
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         plAnimCmdMsg *msg = new plAnimCmdMsg();
         if( fChecked )
@@ -191,7 +191,7 @@ void    pfGUICheckBoxCtrl::SetChecked( bool checked, bool immediate /*= false*/ 
     }
 }
 
-void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
+void    pfGUICheckBoxCtrl::SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fAnimationKeys = keys;
     fAnimName = name;

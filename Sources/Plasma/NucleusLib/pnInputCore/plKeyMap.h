@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputMap.h"
 #include "plControlEventCodes.h"
 
+#include <vector>
 
 //// plKeyCombo //////////////////////////////////////////////////////////////
 //  Tiny class/data type representing a single key combo. Ex. shift+C

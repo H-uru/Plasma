@@ -538,13 +538,13 @@ plKey plAnimComponent::GetModKey(plMaxNode *node)
     return nil;
 }
 
-bool    plAnimComponent::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
+bool    plAnimComponent::GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys)
 {
     if( restrictedNode != nil )
     {
         if( fMods.find( (plMaxNode *)restrictedNode ) != fMods.end() )
         {
-            outKeys.Append( fMods[ (plMaxNode *)restrictedNode ]->GetKey() );
+            outKeys.emplace_back(fMods[(plMaxNode *)restrictedNode]->GetKey());
             return true;
         }
         return false;
@@ -569,11 +569,11 @@ plKey plAnimGroupedComponent::GetModKey(plMaxNode *node)
     return nil;
 }
 
-bool    plAnimGroupedComponent::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
+bool    plAnimGroupedComponent::GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys)
 {
     if( fForward )
     {
-        outKeys.Append( fForward->GetKey() );
+        outKeys.emplace_back(fForward->GetKey());
         return true;
     }
     return false;

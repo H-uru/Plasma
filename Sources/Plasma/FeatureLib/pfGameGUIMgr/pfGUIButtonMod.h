@@ -59,10 +59,10 @@ class pfGUIButtonMod : public pfGUIControlMod
 {
     protected:
 
-        hsTArray<plKey> fAnimationKeys;
+        std::vector<plKey> fAnimationKeys;
         ST::string      fAnimName;
 
-        hsTArray<plKey> fMouseOverAnimKeys;
+        std::vector<plKey> fMouseOverAnimKeys;
         ST::string      fMouseOverAnimName;
 
         bool            fClicking;
@@ -129,8 +129,8 @@ class pfGUIButtonMod : public pfGUIControlMod
         void    StopDragging( bool cancel );
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name );
-        void    SetMouseOverAnimKeys( hsTArray<plKey> &keys, const ST::string &name );
+        void    SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name);
+        void    SetMouseOverAnimKeys(const std::vector<plKey> &keys, const ST::string &name);
 };
 
 #endif // _pfGUIButtonMod_h

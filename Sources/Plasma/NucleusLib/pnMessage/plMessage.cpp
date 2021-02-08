@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "hsTemplates.h"
 #include "plgDispatch.h"
 #include "hsBitVector.h"
 #include <algorithm>
@@ -87,11 +86,10 @@ plMessage&      plMessage::RemoveReceiver(size_t i) { fReceivers.erase(fReceiver
 plMessage&      plMessage::ClearReceivers() { fReceivers.clear(); return *this; }
 plMessage&      plMessage::AddReceiver(plKey r) { fReceivers.emplace_back(std::move(r)); return *this; }
 
-plMessage& plMessage::AddReceivers(const hsTArray<plKey>& rList)
+plMessage& plMessage::AddReceivers(const std::vector<plKey>& rList)
 {
-    int i;
-    for( i = 0; i < rList.GetCount(); i++ )
-        AddReceiver(rList[i]);
+    fReceivers.reserve(fReceivers.size() + rList.size());
+    fReceivers.insert(fReceivers.end(), rList.begin(), rList.end());
 
     return *this;
 }

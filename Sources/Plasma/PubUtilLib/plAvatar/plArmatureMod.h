@@ -433,7 +433,7 @@ protected:
     hsBitVector fOldRegionsImIn;
     hsBitVector fOldRegionsICareAbout;
     
-    hsTArray<plKey> fNotifyKeys;
+    std::vector<plKey> fNotifyKeys;
 
     // Extra info for creating our special physical at runtime
     float fPhysHeight;

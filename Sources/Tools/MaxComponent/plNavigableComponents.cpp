@@ -199,7 +199,7 @@ void plAvLadderComponent::CollectNonDrawables(INodeTab& nonDrawables)
 
 bool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fKeys.Reset();
+    fKeys.clear();
 
     //
     // Create an invisible blocker for the ladder shape, so the avatar won't fall over the side
@@ -271,8 +271,7 @@ bool plAvLadderComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     bool enabled = (fCompPB->GetInt(kEnabled) != 0);
 
     plAvLadderMod* ladMod = new plAvLadderMod(goingUp, ladderType, loops, enabled, ladderView);
-    plKey modKey = node->AddModifier(ladMod, IGetUniqueName(node));
-    fKeys.Append(modKey);
+    fKeys.emplace_back(node->AddModifier(ladMod, IGetUniqueName(node)));
 
     return true;
 }
@@ -284,6 +283,6 @@ bool plAvLadderComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plAvLadderComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fKeys.Reset();
+    fKeys.clear();
     return true;
 }

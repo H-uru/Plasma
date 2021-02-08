@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnMessage/plMessage.h"
+#include "hsTemplates.h"
 
 class plGeometrySpan;
 class plDrawableSpans;

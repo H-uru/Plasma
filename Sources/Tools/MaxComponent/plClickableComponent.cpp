@@ -324,10 +324,10 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (fCompPB->GetInt(kClickableOneShot))
         logic->SetFlag(plLogicModBase::kOneShot);
 
-    hsTArray<plKey> receivers;
+    std::vector<plKey> receivers;
     IGetReceivers(node, receivers);
-    for (int i = 0; i < receivers.Count(); i++)
-        logic->AddNotifyReceiver(receivers[i]);
+    for (const plKey& receiver : receivers)
+        logic->AddNotifyReceiver(receiver);
 
         // Create the detector
     plDetectorModifier *detector = nil;
