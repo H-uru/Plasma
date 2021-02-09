@@ -89,7 +89,7 @@ protected:
 
     hsTArray<const plOccluder*> fOccluders;
     hsTArray<const plCullPoly*> fCullPolys;
-    hsTArray<const plCullPoly*> fSortedCullPolys;
+    std::vector<const plCullPoly*> fSortedCullPolys;
 
     void                        ITrashSpaceTree();
     bool                        IBuildSpaceTree();

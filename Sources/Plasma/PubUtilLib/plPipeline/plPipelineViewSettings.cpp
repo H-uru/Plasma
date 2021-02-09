@@ -341,17 +341,16 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, std::vec
 }
 
 
-bool plPipelineViewSettings::SubmitOccluders(const hsTArray<const plCullPoly*>& polyList)
+bool plPipelineViewSettings::SubmitOccluders(const std::vector<const plCullPoly*>& polyList)
 {
     fCullPolys.SetCount(0);
     fCullHoles.SetCount(0);
-    int i;
-    for (i = 0; i < polyList.GetCount(); i++)
+    for (const plCullPoly* poly : polyList)
     {
-        if (polyList[i]->IsHole())
-            fCullHoles.Append(polyList[i]);
+        if (poly->IsHole())
+            fCullHoles.Append(poly);
         else
-            fCullPolys.Append(polyList[i]);
+            fCullPolys.Append(poly);
     }
     fCullTreeDirty = true;
 

@@ -550,19 +550,18 @@ void plPageTreeMgr::IAddCullPolyList(const hsTArray<plCullPoly>& polyList)
 
 void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
 {
-    fSortedCullPolys.SetCount(0);
+    fSortedCullPolys.clear();
     if( !fCullPolys.GetCount() )
         return;
 
-    const int kMaxCullPolys = 300;
-    int numSubmit = 0;
+    constexpr size_t kMaxCullPolys = 300;
+    size_t numSubmit = 0;
 
     hsPoint3 viewPos = pipe->GetViewPositionWorld();
 
     hsRadixSort::Elem* listTrav;
     scratchList.resize(fCullPolys.GetCount());
-    int i;
-    for( i = 0; i < fCullPolys.GetCount(); i++ )
+    for (int i = 0; i < fCullPolys.GetCount(); i++)
     {
         bool backFace = fCullPolys[i]->fNorm.InnerProduct(viewPos) + fCullPolys[i]->fDist <= 0;
         if( backFace )
@@ -595,9 +594,9 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
     if( numSubmit > kMaxCullPolys )
         numSubmit = kMaxCullPolys;
 
-    fSortedCullPolys.SetCount(numSubmit);
+    fSortedCullPolys.resize(numSubmit);
 
-    for( i = 0; i < numSubmit; i++ )
+    for (size_t i = 0; i < numSubmit; i++)
     {
         fSortedCullPolys[i] = (const plCullPoly*)listTrav->fBody;
         listTrav = listTrav->fNext;
@@ -685,16 +684,16 @@ bool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, std::vector<int16_t>& list)
     ISortCullPolys(pipe);
     plProfile_EndTiming(DrawOccPolySort);
 
-    if( fSortedCullPolys.GetCount() )
+    if (!fSortedCullPolys.empty())
         pipe->SubmitOccluders(fSortedCullPolys);
 
     plProfile_EndTiming(DrawOccBuild);
 
-    return fSortedCullPolys.GetCount() > 0;
+    return !fSortedCullPolys.empty();
 }
 
 void plPageTreeMgr::IResetOcclusion(plPipeline* pipe)
 {
     fCullPolys.SetCount(0);
-    fSortedCullPolys.SetCount(0);
+    fSortedCullPolys.clear();
 }

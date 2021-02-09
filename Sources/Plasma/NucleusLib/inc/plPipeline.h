@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreatable.h"
 #include "hsGMatState.h"
-#include "hsTemplates.h"
 
 #define MIN_WIDTH 640
 #define MIN_HEIGHT 480
@@ -241,7 +240,7 @@ public:
     virtual bool                        TestVisibleWorld(const hsBounds3Ext& wBnd) = 0;
     virtual bool                        TestVisibleWorld(const plSceneObject* sObj) = 0;
     virtual bool                        HarvestVisible(plSpaceTree* space, std::vector<int16_t>& visList) = 0;
-    virtual bool                        SubmitOccluders(const hsTArray<const plCullPoly*>& polyList) = 0;
+    virtual bool                        SubmitOccluders(const std::vector<const plCullPoly*>& polyList) = 0;
     
     virtual void                        SetDebugFlag( uint32_t flag, bool on ) = 0;
     virtual bool                        IsDebugFlagSet( uint32_t flag ) const = 0;

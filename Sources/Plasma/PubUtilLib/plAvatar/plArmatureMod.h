@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnSceneObject/plSimulationInterface.h"
 
+#include "hsTemplates.h"
 #include "hsMatrix44.h"
 #include "plNetCommon/plNetCommon.h"
 
