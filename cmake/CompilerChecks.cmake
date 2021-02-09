@@ -10,6 +10,17 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif()
 
+# Use LTCG if available.
+if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT _IPO_SUPPORTED LANGUAGES CXX OUTPUT _IPO_OUTPUT)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${_IPO_SUPPORTED} CACHE BOOL "Use link-time optimizations")
+    if(_IPO_SUPPORTED)
+        message(STATUS "IPO supported: using link-time optimizations")
+    else()
+        message(STATUS "IPO not supported: ${_IPO_OUTPUT}")
+    endif()
+endif()
 
 # Check for CPUID headers
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
