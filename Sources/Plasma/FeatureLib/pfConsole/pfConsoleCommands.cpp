@@ -6082,7 +6082,7 @@ PF_CONSOLE_CMD( Python,
     // now evaluate this mess they made
     PyObject* mymod = PythonInterface::FindModule("__main__");
 
-    PythonInterface::RunString("import xCheat;xc=[x for x in dir(xCheat) if not x.startswith('_')]\nfor i in range((len(xc)/4)+1): print xc[i*4:(i*4)+4]\n",mymod);
+    PythonInterface::RunString("import xCheat;xc=[x for x in dir(xCheat) if not x.startswith('_')]\nfor i in range((len(xc)//4)+1): print(xc[i*4:(i*4)+4])\n",mymod);
     std::string output;
     // get the messages
     PythonInterface::getOutputAndReset(&output);
