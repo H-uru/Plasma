@@ -2723,9 +2723,7 @@ bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // so to avoid breaking old formats, if we can't grab an animObjInterface, we just grab the key
         // of the master mod of our node, like we would've before
         plAGMasterMod   *master = node->GetAGMasterMod();
-        std::vector<plKey> keys;
-        keys.emplace_back(master->GetKey());
-        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
+        ctrl->SetAnimationKeys({master->GetKey()}, ENTIRE_ANIMATION_NAME);
     }
 
     if( fCompPB->GetInt( kRefOrientation ) == 1 )
@@ -4441,9 +4439,7 @@ bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // so to avoid breaking old formats, if we can't grab an animObjInterface, we just grab the key
         // of the master mod of our node, like we would've before
         plAGMasterMod   *master = node->GetAGMasterMod();
-        std::vector<plKey> keys;
-        keys.emplace_back(master->GetKey());
-        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
+        ctrl->SetAnimationKeys({master->GetKey()}, ENTIRE_ANIMATION_NAME);
     }
 
     const char *errMsg = ISetSoundIndex( kRefAnimateSound, kRefAnimateSoundComp, pfGUIProgressCtrl::kAnimateSound, node );
