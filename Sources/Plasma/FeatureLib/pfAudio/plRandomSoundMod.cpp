@@ -155,8 +155,9 @@ void plRandomSoundMod::IPlayNext()
 
     int i;
     uint16_t currentSndIdx;
-    int nSounds = (fGroups == nil ? ai->GetNumSounds() : fGroups[fCurrentGroup].fNumSounds);
-    fEndTimes.ExpandAndZero(nSounds);
+    size_t nSounds = (fGroups == nil ? ai->GetNumSounds() : fGroups[fCurrentGroup].fNumSounds);
+    if (nSounds > fEndTimes.size())
+        fEndTimes.resize(nSounds);
     plSound *pSound = nil;
 
     // The global sound priority has changed, update the active random sounds list

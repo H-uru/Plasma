@@ -107,8 +107,7 @@ int plRandomCommandMod::IExcludeSelections(int ncmds)
     }
     double currTime = hsTimer::GetSysSeconds();
     fExcluded.Clear();
-    int i;
-    for( i = 0; i < fEndTimes.GetCount(); i++ )
+    for (size_t i = 0; i < fEndTimes.size(); i++)
     {
         if( fEndTimes[i] > currTime )
         {
