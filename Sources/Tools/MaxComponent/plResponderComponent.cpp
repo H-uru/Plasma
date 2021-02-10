@@ -967,7 +967,13 @@ public:
     void AddPostPatchProc(PostPatchProc* proc, bool toDelete) override { hsAssert(0, "shit"); }
     void AddEntry(RefTargetHandle hfrom, RefTargetHandle hto) override { hsAssert(0, "shit"); }
     void Backpatch() override { hsAssert(0, "shit"); }
+
+    // Best guess... It's not in Max 2008 (v10) but is in 2011 (v13). If you have the 2009 (v11)
+    // or 2010 (v12) SDKs, please FIXME :)
+#if MAX_VERSION_MAJOR >= 12
     bool BackpatchPending() override { hsAssert(0, "shit"); return false; }
+#endif
+
     void Clear() override { hsAssert(0, "shit"); }
     void ClearBackpatch() override { hsAssert(0, "shit"); }
     void DeleteThis() override { hsAssert(0, "shit"); }
