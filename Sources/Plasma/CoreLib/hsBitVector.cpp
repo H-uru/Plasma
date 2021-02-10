@@ -45,28 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 
-hsBitVector::hsBitVector(int b, ...)
-:   fBitVectors(nil),
-    fNumBitVectors(0)
-{
-    va_list vl;
-
-    va_start( vl, b );
-
-    do {
-        SetBit( b, true );
-    } while( (b = va_arg( vl, int )) >= 0 );
-
-    va_end( vl );
-}
-
-hsBitVector::hsBitVector(const std::vector<int16_t>& src)
-:   fBitVectors(nil),
-    fNumBitVectors(0)
-{
-    FromList(src);
-}
-
 void hsBitVector::IGrow(uint32_t newNumBitVectors)
 {
     hsAssert(newNumBitVectors > fNumBitVectors, "Growing smaller");
@@ -144,14 +122,6 @@ std::vector<int16_t>& hsBitVector::Enumerate(std::vector<int16_t>& dst) const
         i = iter.Advance();
     }
     return dst;
-}
-
-hsBitVector& hsBitVector::FromList(const std::vector<int16_t>& src)
-{
-    Clear();
-    for (int16_t bit : src)
-        SetBit(bit);
-    return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////
