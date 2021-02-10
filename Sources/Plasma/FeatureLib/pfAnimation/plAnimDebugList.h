@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimDebugList_inc
 #define plAnimDebugList_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 class plKey;
 
@@ -51,12 +51,11 @@ namespace ST { class string; }
 // Simple debugging tool, everything is public
 // This class collects a list of keyed objects that deal with
 // animation, to report info on them when requested.
-class plAnimDebugList
+struct plAnimDebugList
 {
-public:
     bool fEnabled;
-    hsTArray<plKey> fSOKeys;
-    hsTArray<plKey> fMaterialKeys;
+    std::vector<plKey> fSOKeys;
+    std::vector<plKey> fMaterialKeys;
 
     plAnimDebugList() : fEnabled(false) {}
     ~plAnimDebugList() {}

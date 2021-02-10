@@ -73,7 +73,7 @@ class plLinkEffectsMgr;
 class plOperationProgress;
 class pfGameGUIMgr;
 class pfKI;
-class plAnimDebugList;
+struct plAnimDebugList;
 class plFontCache;
 class plClientMsg;
 class plLocation;
