@@ -372,7 +372,7 @@ size_t hsAppender::PopHead(size_t count, void* data)
             data = (void*)((char*)data + size);
         sizeNeeded -= size;
         fCount -= size / fElemSize;
-        hsAssert(ptrdiff_t(fCount) >= 0, "bad fElemSize");
+        hsAssert(hsSsize_t(fCount) >= 0, "bad fElemSize");
     }
     return origCount - fCount;      // return number of elements popped
 }
