@@ -67,23 +67,27 @@ bool plObjectInBoxConditionalObject::MsgReceive(plMessage* msg)
     {
         if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeEnter)
         {
-            fInside.Append(pActivateMsg->fHitterObj);
+            fInside.emplace_back(pActivateMsg->fHitterObj);
             return true;
         }
         else
         if (pActivateMsg->fTriggerType == plActivatorMsg::kVolumeExit)
         {
-            for (int i = 0; i < fInside.Count(); i++)
+            for (auto iter = fInside.begin(); iter != fInside.end(); )
             {
-                if (fInside[i] == pActivateMsg->fHitterObj)
+                if (*iter == pActivateMsg->fHitterObj)
                 {
-                    fInside.Remove(i);
+                    iter = fInside.erase(iter);
                     if (pActivateMsg->fHitterObj == fCurrentTrigger && fCurrentTrigger && fLogicMod->HasFlag(plLogicModBase::kTriggered) && !IsToggle())
                     {
                         fCurrentTrigger = nil;
                         fLogicMod->GetNotify()->AddContainerEvent(pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, false);
                         fLogicMod->RequestUnTrigger();
                     }
+                }
+                else
+                {
+                    ++iter;
                 }
             }
             return true;
@@ -99,9 +103,9 @@ bool plObjectInBoxConditionalObject::Verify(plMessage* msg)
     plActivatorMsg* pActivateMsg = plActivatorMsg::ConvertNoRef(msg);
     if (pActivateMsg)
     {
-        for (int i = 0; i < fInside.Count(); i++)
+        for (const plKey& inKey : fInside)
         {
-            if (pActivateMsg->fHitterObj == fInside[i])
+            if (pActivateMsg->fHitterObj == inKey)
             {
                 fLogicMod->GetNotify()->AddContainerEvent(pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, true);
                 fCurrentTrigger = pActivateMsg->fHiteeObj;
@@ -113,9 +117,9 @@ bool plObjectInBoxConditionalObject::Verify(plMessage* msg)
     plFakeOutMsg* pFakeMsg = plFakeOutMsg::ConvertNoRef(msg);
     if (pFakeMsg && plNetClientApp::GetInstance()->GetLocalPlayerKey())
     {
-        for (int i = 0; i < fInside.Count(); i++)
+        for (const plKey& inKey : fInside)
         {
-            if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == fInside[i])
+            if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == inKey)
                 return true;
         }
     }

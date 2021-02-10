@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plObjectInBoxConditionalObject_inc
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include <set>
 
 #include "pnKeyedObject/plKey.h"
@@ -57,7 +56,7 @@ class plObjectInBoxConditionalObject : public plConditionalObject
 {
 protected:
 
-    hsTArray<plKey>     fInside;
+    std::vector<plKey>  fInside;
     plKey               fCurrentTrigger;
 
 public:
