@@ -353,7 +353,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool plClosetItem::IsMatch(plClosetItem *other)
+bool plClosetItem::IsMatch(const plClosetItem *other) const
 {
     return (fItem == other->fItem && fOptions.IsMatch(&other->fOptions));
 }
@@ -559,7 +559,7 @@ float plClothingOutfit::GetSkinBlend(uint8_t layer)
 
     return 0;
 }
-    
+
 void plClothingOutfit::IAddItem(plClothingItem *item)
 {
     if (item->fGroup != fGroup)
@@ -1591,7 +1591,7 @@ plClothingElement *plClothingMgr::FindElementByName(const ST::string &name) cons
     return nil; 
 }
 
-void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
+void plClothingMgr::AddItemsToCloset(const std::vector<plClosetItem> &items)
 {
     hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
@@ -1601,11 +1601,11 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
     GetClosetItems(closet);
     
     RelVaultNode::RefList templates;
-    
-    for (unsigned i = 0; i < items.GetCount(); ++i) {
+
+    for (const plClosetItem& item : items) {
         bool match = false;
         for (unsigned j = 0; j < closet.GetCount(); ++j) {
-            if (closet[j].IsMatch(&items[i]))
+            if (closet[j].IsMatch(&item))
             {
                 match = true;
                 break;
@@ -1616,7 +1616,7 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
             continue;
 
         plStateDataRecord rec(plClothingSDLModifier::GetClothingItemSDRName());
-        plClothingSDLModifier::PutSingleItemIntoSDR(&items[i], &rec);
+        plClothingSDLModifier::PutSingleItemIntoSDR(&item, &rec);
         
         hsRef<RelVaultNode> templateNode(new RelVaultNode, hsStealRef);
         templateNode->SetNodeType(plVault::kNodeType_SDL);

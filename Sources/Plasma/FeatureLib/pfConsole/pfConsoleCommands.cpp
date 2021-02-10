@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 #include "hsTimer.h"
 
 #include "pfConsole.h"
@@ -5726,8 +5725,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "string itemName, float r, float g, float b, float r2, float g2, float b2", // Params
                 "Add a clothing item to your closet" )      // Help string
 {
-    hsTArray<plClosetItem> items;
-    items.SetCount(1);
+    std::vector<plClosetItem> items(1);
     items[0].fItem = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     items[0].fOptions.fTint1.Set(params[1], params[2], params[3], 1.f);
     items[0].fOptions.fTint2.Set(params[4], params[5], params[6], 1.f);

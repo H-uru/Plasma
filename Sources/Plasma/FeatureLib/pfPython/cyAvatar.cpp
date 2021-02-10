@@ -809,8 +809,7 @@ void cyAvatar::AddWardrobeClothingItem(const ST::string& clothing_name,pyColor& 
     plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name);
     if ( item )
     {
-        hsTArray<plClosetItem> items;
-        items.SetCount(1);
+        std::vector<plClosetItem> items(1);
         items[0].fItem = item;
         items[0].fOptions.fTint1.Set(tint1.getRed(), tint1.getGreen(), tint1.getBlue(), 1.f);
         items[0].fOptions.fTint2.Set(tint2.getRed(), tint2.getGreen(), tint2.getBlue(), 1.f);

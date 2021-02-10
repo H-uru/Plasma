@@ -65,15 +65,17 @@ class plSharedMesh;
 class plStateDataRecord;
 class plDXPipeline;
 
-class plClothingItemOptions
+struct plClothingItemOptions
 {
-public:
     hsColorRGBA fTint1;
     hsColorRGBA fTint2;
 
     plClothingItemOptions() { fTint1.Set(1.f, 1.f, 1.f, 1.f); fTint2.Set(1.f, 1.f, 1.f, 1.f); }
 
-    bool IsMatch(plClothingItemOptions *other) { return fTint1 == other->fTint1 && fTint2 == other->fTint2; }
+    bool IsMatch(const plClothingItemOptions *other) const
+    {
+        return fTint1 == other->fTint1 && fTint2 == other->fTint2;
+    }
 };
 
 class plClothingItem : public hsKeyedObject
@@ -128,15 +130,14 @@ public:
     bool MsgReceive(plMessage* msg) override;
 };
 
-class plClosetItem
+struct plClosetItem
 {
-public:
-    plClosetItem() : fItem(nil) {}
+    plClosetItem() : fItem() { }
 
     plClothingItem *fItem;
     plClothingItemOptions fOptions;
 
-    bool IsMatch(plClosetItem *other);
+    bool IsMatch(const plClosetItem *other) const;
 };
 
 class plClothingBase : public hsKeyedObject
@@ -290,7 +291,7 @@ public:
 
 
     // Functions that just relate to the clothing you have permission to wear (closet)
-    void AddItemsToCloset(hsTArray<plClosetItem> &items);
+    void AddItemsToCloset(const std::vector<plClosetItem> &items);
     void GetClosetItems(hsTArray<plClosetItem> &out);
 
     // Functions that relate to all existing clothing

@@ -161,7 +161,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
         var->Set(clothing->fAvatar->fLinkInAnimKey);    
 }
 
-void plClothingSDLModifier::PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr)
+void plClothingSDLModifier::PutSingleItemIntoSDR(const plClosetItem *item, plStateDataRecord *sdr)
 {
     plKey key = item->fItem->GetKey();
     sdr->FindVar(kStrItem)->Set(key);           

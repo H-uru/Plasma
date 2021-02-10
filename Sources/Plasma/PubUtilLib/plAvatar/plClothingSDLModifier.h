@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 class plClothingOutfit;
 class plClothingItem;
-class plClothingItemOptions;
-class plClosetItem;
+struct plClothingItemOptions;
+struct plClosetItem;
 class plStateDataRecord;
 class plKey;
 class plClothingSDLModifier : public plSDLModifier
@@ -98,7 +98,7 @@ public:
     // looking to parse the SDL info.
     // Aw heck. Go crazy if you want and pass them BOTH in! Muahahaha!
     static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nil, plClosetItem *closetItem = nil);
-    static void PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr);
+    static void PutSingleItemIntoSDR(const plClosetItem *item, plStateDataRecord *sdr);
         
     static const plClothingSDLModifier *FindClothingSDLModifier(const plSceneObject *obj);
 };
