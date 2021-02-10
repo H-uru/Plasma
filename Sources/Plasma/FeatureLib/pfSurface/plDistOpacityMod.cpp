@@ -125,11 +125,8 @@ void plDistOpacityMod::ISetOpacity()
 
     float opacity = ICalcOpacity(GetTarget()->GetLocalToWorld().GetTranslate(), fRefPos);
 
-    const int num = fFadeLays.GetCount();
-    int i;
-    for( i = 0; i < num; i++ )
-        fFadeLays[i]->SetOpacity(opacity);  
-
+    for (plFadeOpacityLay* lay : fFadeLays)
+        lay->SetOpacity(opacity);
 }
 
 bool plDistOpacityMod::MsgReceive(plMessage* msg)
@@ -162,9 +159,9 @@ bool plDistOpacityMod::MsgReceive(plMessage* msg)
             if( ref->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
                 plFadeOpacityLay* lay = plFadeOpacityLay::ConvertNoRef(ref->GetRef());
-                int idx = fFadeLays.Find(lay);
-                if( idx != fFadeLays.kMissingIndex )
-                    fFadeLays.Remove(idx);
+                auto idx = std::find(fFadeLays.cbegin(), fFadeLays.cend(), lay);
+                if (idx != fFadeLays.end())
+                    fFadeLays.erase(idx);
             }
             break;
         };
@@ -223,7 +220,7 @@ using MatLayer = std::tuple<hsGMaterial*, plLayerInterface*>;
 
 void plDistOpacityMod::ISetup()
 {
-    fFadeLays.Reset();
+    fFadeLays.clear();
 
     plSceneObject* so = GetTarget();
     if( !so )
@@ -277,7 +274,7 @@ void plDistOpacityMod::ISetup()
         fade->AttachViaNotify(lay);
 
         // We should add a ref or something here if we're going to hold on to this (even though we created and "own" it).
-        fFadeLays.Append(fade);
+        fFadeLays.emplace_back(fade);
 
         plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
         msg->SetOldRef(lay);

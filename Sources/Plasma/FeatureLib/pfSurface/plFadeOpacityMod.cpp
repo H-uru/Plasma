@@ -204,7 +204,7 @@ bool plFadeOpacityMod::IReady()
     if( !fSetup )
         ISetup(so);
 
-    if( !fFadeLays.GetCount() )
+    if (fFadeLays.empty())
         return false;
 
     return true;
@@ -267,10 +267,8 @@ void plFadeOpacityMod::ISetOpacity()
 {
     ICalcOpacity();
 
-    const int num = fFadeLays.GetCount();
-    int i;
-    for( i = 0; i < num; i++ )
-        fFadeLays[i]->SetOpacity(fOpCurrent);   
+    for (plFadeOpacityLay* lay : fFadeLays)
+        lay->SetOpacity(fOpCurrent);
 }
 
 void plFadeOpacityMod::IFadeUp()
@@ -336,7 +334,7 @@ void plFadeOpacityMod::IFadeDown()
 
 void plFadeOpacityMod::ISetup(plSceneObject* so)
 {
-    fFadeLays.Reset();
+    fFadeLays.clear();
     
     if( !so )
         return;
@@ -366,7 +364,7 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
                 fade->AttachViaNotify(lay);
 
                 // We should add a ref or something here if we're going to hold on to this (even though we created and "own" it).
-                fFadeLays.Append(fade);
+                fFadeLays.emplace_back(fade);
 
                 plMatRefMsg* msg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnReplace, i, plMatRefMsg::kLayer);
                 msg->SetOldRef(lay);
