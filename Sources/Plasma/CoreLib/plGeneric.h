@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __PLGENERIC_H__
 #define __PLGENERIC_H__
 
-#include "hsStream.h"
+#include <string_theory/string>
+
+class hsStream;
 
 class plGeneric
 {

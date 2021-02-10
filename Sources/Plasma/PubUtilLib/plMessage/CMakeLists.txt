@@ -1,5 +1,7 @@
 set(plMessage_SOURCES
     plAccountUpdateMsg.cpp
+    plActivatorMsg.cpp
+    plAgeLoadedMsg.cpp
     plAIMsg.cpp
     plAnimCmdMsg.cpp
     plAvatarMsg.cpp
@@ -8,11 +10,15 @@ set(plMessage_SOURCES
     plCaptureRenderMsg.cpp
     plCCRMsg.cpp
     plClimbMsg.cpp
+    plCondRefMsg.cpp
+    plConsoleMsg.cpp
     plDynaDecalEnableMsg.cpp
     plDynamicEnvMapMsg.cpp
     plDynamicTextMsg.cpp
+    plExcludeRegionMsg.cpp
     plInputEventMsg.cpp
     plInputIfaceMgrMsg.cpp
+    plInterestingPing.cpp
     plLayRefMsg.cpp
     plLinkToAgeMsg.cpp
     plListenerMsg.cpp
@@ -22,16 +28,22 @@ set(plMessage_SOURCES
     plLOSHitMsg.cpp
     plLOSRequestMsg.cpp
     plMatrixUpdateMsg.cpp
+    plMeshRefMsg.cpp
     plMultistageMsg.cpp
+    plNetCommMsgs.cpp
     plNetVoiceListMsg.cpp
     plOneShotCallbacks.cpp
     plOneShotMsg.cpp
+    plParticleUpdateMsg.cpp
+    plPickedMsg.cpp
     plRenderRequestMsg.cpp
     plRideAnimatedPhysMsg.cpp
     plRippleShapeMsg.cpp
+    plRoomLoadNotifyMsg.cpp
     plSimStateMsg.cpp
     plSwimMsg.cpp
     plSynchEnableMsg.cpp
+    plTimerCallbackMsg.cpp
     plTransitionMsg.cpp
     plVaultNotifyMsg.cpp
 )
@@ -119,8 +131,25 @@ plasma_optimize_target(plMessage UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 target_link_libraries(plMessage
     PUBLIC
         CoreLib
+        pnInputCore
+        pnKeyedObject
         pnMessage
-        plNetCommon
+        pnNetBase
+        pnUUID
+        plAvatar
+        plNetCommon # plLinkToAgeMsg, plVaultNotifyMsg
+        plNetMessage # plNetOwnershipMsg
+        plPhysical # plLOSRequestMsg
+        plResMgr # plResMgrHelperMsg
+    PRIVATE
+        pnNetCommon
+        pnNetProtocol
+        pnSceneObject
+        plGImage
+        plInputCore # plInputIfaceMgrMsg
+        plNetGameLib
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plMessage_SOURCES})

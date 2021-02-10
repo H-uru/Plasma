@@ -40,12 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "hsWindows.h"
-#include <commdlg.h>
 
-#include <max.h>
-#include <bmmlib.h>
-#include <guplib.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "plExportProgressBar.h"
 

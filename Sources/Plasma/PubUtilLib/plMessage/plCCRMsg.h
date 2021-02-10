@@ -67,7 +67,7 @@ private:
     std::string fNote;
     std::string fTitle;
 public:
-    plCCRPetitionMsg() : fPetitionType(plNetCommon::PetitionTypes::kGeneralHelp) { fBCastFlags |= kBCastByType; }
+    plCCRPetitionMsg();
     ~plCCRPetitionMsg() {}
 
     CLASSNAME_REGISTER( plCCRPetitionMsg);

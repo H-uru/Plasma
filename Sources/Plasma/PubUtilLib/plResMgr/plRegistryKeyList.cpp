@@ -40,14 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plRegistryKeyList.h"
+#include "plRegistryHelpers.h"
+
 #include <algorithm>
+#include <string_theory/string>
 
 #include "HeadSpin.h"
 #include "hsStream.h"
 
 #include "pnKeyedObject/plKeyImp.h"
-#include "plRegistryHelpers.h"
-#include "plRegistryKeyList.h"
+
+
 
 plRegistryKeyList::~plRegistryKeyList()
 {

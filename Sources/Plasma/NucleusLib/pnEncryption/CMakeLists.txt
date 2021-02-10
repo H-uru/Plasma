@@ -19,9 +19,6 @@ target_link_libraries(
     PUBLIC
         CoreLib
         OpenSSL::Crypto
-
-    PRIVATE
-        string_theory
 )
 
 source_group("Source Files" FILES ${pnEncryption_SOURCES})

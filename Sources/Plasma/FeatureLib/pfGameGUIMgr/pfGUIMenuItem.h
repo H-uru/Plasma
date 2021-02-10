@@ -52,9 +52,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGUIButtonMod.h"
 
-class plMessage;
-
 class pfGUISkin;
+class plMessage;
+struct hsPoint3;
+
 class pfGUIMenuItem : public pfGUIButtonMod
 {
     public:

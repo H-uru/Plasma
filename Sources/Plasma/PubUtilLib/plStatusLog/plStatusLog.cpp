@@ -55,17 +55,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "plStatusLog.h"
+#include "plEncryptLogLine.h"
+
 #include <cstdarg>
 #include <cstdlib>
+
+#include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
 #include "hsWindows.h"
-#include "plStatusLog.h"
+
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "plProduct.h"
-
-#include "plEncryptLogLine.h"
-
 
 //////////////////////////////////////////////////////////////////////////////
 //// plStatusLogMgr Stuff ////////////////////////////////////////////////////

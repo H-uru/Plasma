@@ -44,36 +44,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimStage.h"
 
 // local
-#include "plAvatarMgr.h"
-#include "plAnimation/plAGAnim.h"
 #include "plArmatureMod.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAnimation/plMatrixChannel.h"
+#include "plAvatarMgr.h"
 #include "plAvBrainGeneric.h"
 #include "plMultistageBehMod.h"
 
 // global
-
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
 #include <cstdio>
-#include <cmath>
 
 // other
-#include "pnSceneObject/plSceneObject.h"
-#include "plMessage/plSimStateMsg.h"
-#include "plStatusLog/plStatusLog.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGModifier.h"
+#include "plAnimation/plMatrixChannel.h"
+#include "plInterp/plAnimTimeConvert.h"
 #include "plPipeline/plDebugText.h"
-
-#ifdef DEBUG_MULTISTAGE
-#include "plAvatarMgr.h"
-#include "plStatusLog/plStatusLog.h"
-#endif
-
-
-class plAGAnim;
 
 // PLANIMSTAGE default ctor
 plAnimStage::plAnimStage()

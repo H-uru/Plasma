@@ -45,8 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRealTimeLightBase.h"
 #include "resource.h"
 
-#include <decomp.h>
-#include <hsv.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"

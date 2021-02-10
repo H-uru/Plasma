@@ -56,18 +56,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plArmatureMod_inc
 #define plArmatureMod_inc
 
-#include "plAnimation/plAGMasterMod.h"
-
-// other local
-#include "plAvDefs.h"
-
-#include "pnSceneObject/plSimulationInterface.h"
-
+#include "HeadSpin.h"
+#include "hsBitVector.h"
 #include "hsTemplates.h"
-#include "hsMatrix44.h"
-#include "plNetCommon/plNetCommon.h"
 
-#include <cfloat>
+#include "plAnimation/plAGMasterMod.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -75,28 +68,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-class hsQuat;
-class plMatrixChannel;
+class plAGAnim;
 class plAGModifier;
-class plAGMasterMod;
-class plAGChannel;
-class plClothingOutfit;
-class plClothingSDLModifier;
+class plAnimTimeConvert;
+class plArmatureBrain;
+class plArmatureEffectsMgr;
+class plArmatureUpdateMsg;
+class plATCAnim;
+class plAvBoneMap;
+class plAvatarInputStateMsg;
 class plAvatarSDLModifier;
 class plAvatarPhysicalSDLModifier;
+class plClothingOutfit;
+class plClothingSDLModifier;
+class plControlEventMsg;
+class plCoordinateInterface;
+class plDebugText;
+class plDrawable;
+class plLayerLinkAnimation;
 class plMatrixDelayedCorrectionApplicator;
 class plMatrixDifferenceApp;
-class plDebugText;
-class plArmatureEffectsMgr;
-class plAvBoneMap;      // below
-class plDrawable;
-class plControlEventMsg;
-class plAvatarInputStateMsg;
-class plLayerLinkAnimation;
-class plPipeline;
-class plArmatureBrain;
-class plArmatureUpdateMsg;
+class hsQuat;
 class plPhysicalControllerCore;
+struct hsPoint3;
+class plSceneObject;
+
 
 typedef std::vector<plKey> plKeyVector;
 typedef std::vector<plArmatureBrain*> plBrainStack;
@@ -283,7 +279,7 @@ public:
     ST::string GetMoveKeyString() const;
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
-    void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
+    void SynchInputState() const;
     bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
     bool DirtyPhysicalSynchState(uint32_t synchFlags);
     plClothingOutfit *GetClothingOutfit() const { return fClothingOutfit; }
@@ -339,8 +335,6 @@ public:
     const hsBitVector& GetRelRegionCareAbout() const    { return fRegionsICareAbout; }
     const hsBitVector& GetRelRegionImIn() const         { return fRegionsImIn; }
 
-    bool    IsKILowestLevel();
-    int     GetKILevel();
     void    SetLinkInAnim(const ST::string &animName);
     plKey   GetLinkInAnimKey() const;
 

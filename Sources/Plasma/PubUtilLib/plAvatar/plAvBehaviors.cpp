@@ -39,15 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cmath>
-#include <algorithm>
 
 #include "plAvBehaviors.h"
+
+#include <algorithm>
+
 #include "plAvBrainHuman.h"
 #include "plArmatureMod.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plMessage/plAvatarMsg.h"
 
+#include "plAnimation/plAGAnimInstance.h"
+#include "plInterp/plAnimTimeConvert.h"
 #include "plPipeline/plDebugText.h"
 
 plArmatureBehavior::plArmatureBehavior() : fAnim(nil), fArmature(nil), fBrain(nil), fIndex((uint8_t)-1), fFlags(0) {}

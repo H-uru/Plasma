@@ -45,21 +45,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIButtonMod.h"
-#include "pfGUIDraggableMod.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGameGUIMgr.h"
 #include "pfGUIControlHandlers.h"
 #include "pfGUIDialogMod.h"
+#include "pfGUIDraggableMod.h"
+
+#include "pnMessage/plRefMsg.h"
 
 #include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Control Proc For Managing the Draggable /////////////////////////////////
 
@@ -248,7 +248,7 @@ void    pfGUIButtonMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
         msg->SetCmd( plAnimCmdMsg::kGoToBegin );    
         msg->SetAnimName( fAnimName );
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 
     IPlaySound( kMouseDown );
@@ -278,7 +278,7 @@ void    pfGUIButtonMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
         msg->SetCmd( plAnimCmdMsg::kGoToEnd );  
         msg->SetAnimName( fAnimName );
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 
     IPlaySound( kMouseUp );
@@ -344,7 +344,7 @@ void    pfGUIButtonMod::SetInteresting( bool i )
         msg->SetCmd( fInteresting ? plAnimCmdMsg::kSetForewards : plAnimCmdMsg::kSetBackwards );
         msg->SetAnimName( fMouseOverAnimName );
         msg->AddReceivers( fMouseOverAnimKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 
     if( i )

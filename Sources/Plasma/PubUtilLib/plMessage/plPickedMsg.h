@@ -70,21 +70,9 @@ public:
     CLASSNAME_REGISTER( plPickedMsg );
     GETINTERFACE_ANY( plPickedMsg, plMessage );
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fPicked = stream->ReadBool();
-        fHitPoint.Read(stream);
-    }
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteBool(fPicked);
-        fHitPoint.Write(stream);
-    }
-    
-
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

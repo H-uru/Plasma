@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plAudible/plWinAudible.h"
 #include "plNetMessage/plNetMessage.h"
+#include "pnNetCommon/plNetApp.h"
 #include "plPipeline/plPlates.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"

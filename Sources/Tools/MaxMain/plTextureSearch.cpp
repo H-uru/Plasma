@@ -41,15 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
+
+#include "MaxAPI.h"
 
 #include "resource.h"
 #include <set>
-
-#include <bmmlib.h>
-#include <IMtlEdit.h>
-#include <max.h>
-#include <pbbitmap.h>
 
 #include "plTextureSearch.h"
 

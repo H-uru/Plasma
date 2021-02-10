@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define __HSMATERIALCONVERTER_H
 
 #include "HeadSpin.h"
+#include "hsTemplates.h"
+
 #include <maxtypes.h>
 
 class hsStream;

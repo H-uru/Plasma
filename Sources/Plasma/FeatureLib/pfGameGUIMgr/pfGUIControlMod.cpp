@@ -45,37 +45,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIControlMod.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsGeometry3.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGameGUIMgr.h"
-#include "pfGUIDialogMod.h"
 #include "pfGUIControlHandlers.h"
 #include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogMod.h"
 #include "pfGUIListElement.h"   // Includes dropTargetProc
+#include "pfGUIPopUpMenu.h"     // For skin, can we move that please? Thank you
 
-#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plEnableMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plDeviceRecreateMsg.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plAudioInterface.h"
-
-#include "plGImage/plDynamicTextMap.h"
-#include "plSurface/plLayer.h"
-#include "plMessage/plRenderMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plSoundMsg.h"
-#include "plPipeline.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
 
 #include "plDrawable/plAccessGeometry.h"
 #include "plDrawable/plAccessSpan.h"
 #include "plDrawable/plAccessVtxSpan.h"
-
-#include "pfGUIPopUpMenu.h"     // For skin, can we move that please? Thank you
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
+#include "plGImage/plDynamicTextMap.h"
+#include "plMessage/plDeviceRecreateMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plSurface/plLayer.h"
 
 //// pfGUIColorScheme Functions //////////////////////////////////////////////
 

@@ -39,12 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plRelevanceMgr.h"
 #include "plRelevanceRegion.h"
-#include "plIntersect/plRegionBase.h"
-#include "pnMessage/plRefMsg.h"
+
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
+
+#include "pnMessage/plRefMsg.h"
+
+#include "plIntersect/plRegionBase.h"
 
 plRelevanceMgr* plRelevanceMgr::fInstance = nil;
 

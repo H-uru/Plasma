@@ -1,5 +1,3 @@
-include_directories("${PLASMA_SOURCE_ROOT}/Apps")
-
 set(plResBrowser_HEADERS
     plResBrowser.h
     plResTreeView.h
@@ -33,23 +31,27 @@ set(plResBrowser_UIC_SOURCES
 )
 qt5_wrap_ui(plResBrowser_UIC ${plResBrowser_UIC_SOURCES})
 
-# For generated ui_*.h files
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 add_executable(plResBrowser WIN32 MACOSX_BUNDLE
                ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
                ${plResBrowser_RCC} ${plResBrowser_UIC} ${plResBrowser_MOC})
+target_link_libraries(
+    plResBrowser
+    PRIVATE
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnNucleusInc
+        plResMgr
+        Qt5::Widgets
+)
 
-target_link_libraries(plResBrowser CoreLib)
-target_link_libraries(plResBrowser plResMgr)
-target_link_libraries(plResBrowser pnSceneObject)
-target_link_libraries(plResBrowser ${STRING_THEORY_LIBRARIES})
-target_link_libraries(plResBrowser Qt5::Widgets)
-
-if(USE_VLD)
-    target_link_libraries(plResBrowser ${VLD_LIBRARY})
-endif()
+# For generated ui_*.h files
+target_include_directories(
+    plResBrowser
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}
+)
 
 source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})
 source_group("Header Files" FILES ${plResBrowser_HEADERS})

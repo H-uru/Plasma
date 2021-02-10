@@ -48,10 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIProgressCtrl_h
 #define _pfGUIProgressCtrl_h
 
+#include "hsTemplates.h"
+
+#include <string_theory/string>
+
 #include "pfGUIValueCtrl.h"
 
-class plMessage;
 class plAGMasterMod;
+class plMessage;
 
 class pfGUIProgressCtrl : public pfGUIValueCtrl
 {

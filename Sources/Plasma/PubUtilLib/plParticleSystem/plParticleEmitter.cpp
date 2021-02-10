@@ -39,22 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
-#include "hsResMgr.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plParticleUpdateMsg.h"
-#include "plParticleGenerator.h"
 #include "plParticleEmitter.h"
-#include "plParticleSystem.h"
+
 #include "plParticle.h"
 #include "plParticleEffect.h"
+#include "plParticleGenerator.h"
+#include "plParticleSystem.h"
+
 #include "hsColorRGBA.h"
+#include "hsFastMath.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+
+#include "pnMessage/plRefMsg.h"
+
 #include "plInterp/plController.h"
+#include "plMessage/plParticleUpdateMsg.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
-#include "plProfile.h"
-#include "hsFastMath.h"
+
+
 
 plProfile_CreateTimer("Update", "Particles", ParticleUpdate);
 plProfile_CreateTimer("Generate", "Particles", ParticleGenerate);

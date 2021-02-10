@@ -39,11 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plGameMarkerModifier.h"
-#include "plMessage/plCollideMsg.h"
+
+#include "hsResMgr.h"
 
 #include "pnMessage/plNotifyMsg.h"
 #include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plCollideMsg.h"
 
 bool plGameMarkerModifier::MsgReceive(plMessage* msg)
 {

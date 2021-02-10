@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWarpMsg_inc
 #define plWarpMsg_inc
 
-#include "hsStream.h"
 #include "plMessage.h"
 #include "hsMatrix44.h"
 
@@ -90,16 +89,8 @@ public:
     void SetTransform(const hsMatrix44& mat) { fTransform = mat; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        fTransform.Read(stream);
-        stream->ReadLE(&fWarpFlags);
-    }
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        fTransform.Write(stream);
-        stream->WriteLE(fWarpFlags);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plWarpMsg_inc

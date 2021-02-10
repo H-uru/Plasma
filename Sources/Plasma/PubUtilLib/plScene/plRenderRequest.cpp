@@ -40,16 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plRenderRequest.h"
-#include "plPageTreeMgr.h"
-#include "plPipeline/plRenderTarget.h"
-#include "hsFastMath.h"
-#include "hsStream.h"
-#include "plPipeline.h"
-#include "plMessage/plRenderRequestMsg.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
+#include "hsFastMath.h"
+#include "plPipeline.h"
+#include "hsStream.h"
+
+#include "plPageTreeMgr.h"
 #include "plVisMgr.h"
+
+#include "plPipeline/plRenderTarget.h"
 
 plRenderRequest::plRenderRequest()
 :   fRenderTarget(nil),

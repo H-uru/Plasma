@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pnKeyedObject/plUoid.h"
+
+#include <string_theory/string>
 #include <vector>
 
 class hsStream;

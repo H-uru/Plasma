@@ -1,5 +1,6 @@
 set(plPhysical_SOURCES
     plCollisionDetector.cpp
+    plDetectorModifier.cpp
     plPhysicalProxy.cpp
     plPhysicalSDLModifier.cpp
     plPhysicalSndGroup.cpp
@@ -20,6 +21,27 @@ set(plPhysical_HEADERS
 )
 
 add_library(plPhysical STATIC ${plPhysical_SOURCES} ${plPhysical_HEADERS})
+target_link_libraries(
+    plPhysical
+    PUBLIC
+        CoreLib
+        pnKeyedObject
+        pnNetCommon
+        plDrawable
+        plModifier
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plAvatar
+        plMessage
+        plPhysX
+        plSDL
+        plStatusLog
+        plSurface
+    INTERFACE
+        pnFactory
+)
 
 target_include_directories(plPhysical PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 

@@ -43,9 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plControlEventConditionalObject_inc
 #define plControlEventConditionalObject_inc
 
-#include "pnModifier/plConditionalObject.h"
 #include "pnInputCore/plControlEventCodes.h"
-
+#include "pnModifier/plConditionalObject.h"
 
 class plControlEventConditionalObject : public plConditionalObject
 {

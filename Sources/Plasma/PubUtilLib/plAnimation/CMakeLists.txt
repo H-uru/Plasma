@@ -27,11 +27,24 @@ set(plAnimation_HEADERS
 )
 
 add_library(plAnimation STATIC ${plAnimation_SOURCES} ${plAnimation_HEADERS})
-
-target_link_libraries(plAnimation pnModifier)
-target_link_libraries(plAnimation plInterp)
-target_link_libraries(plAnimation plSDL)
-target_link_libraries(plAnimation plTransform)
+target_link_libraries(
+    plAnimation
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnModifier
+        pnNetCommon
+        plTransform
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plGLight
+        plInterp
+        plMessage
+        plModifier
+        plSDL
+)
 
 source_group("Source Files" FILES ${plAnimation_SOURCES})
 source_group("Header Files" FILES ${plAnimation_HEADERS})

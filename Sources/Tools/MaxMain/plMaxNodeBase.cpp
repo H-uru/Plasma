@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "hsMatrix44.h"
 #include "plRenderLevel.h"
@@ -48,14 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxNodeBase.h"
 #include "plMaxNodeData.h"
 #include "MaxComponent/plComponentBase.h"
-#include "MaxCompat.h"
-
-#include <guplib.h>
-#include <iparamm2.h>
-#include <dummy.h>
-#include <iskin.h>
-#include <modstack.h>
-#include <utilapi.h>
 
 #include <algorithm>
 #include <set>

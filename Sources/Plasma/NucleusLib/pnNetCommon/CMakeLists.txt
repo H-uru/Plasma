@@ -29,6 +29,7 @@ target_link_libraries(
         CoreLib
         pnFactory
         pnKeyedObject
+        pnNucleusInc
         pnUUID
     PRIVATE
         pnMessage

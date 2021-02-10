@@ -42,16 +42,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pfMarkerMgr_h_inc
 #define pfMarkerMgr_h_inc
 
+#include "HeadSpin.h"
+
+#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/hsKeyedObject.h"
+
 #include <map>
 
 class plStatusLog;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class pfMarkerMsg;
 class pfMarkerGame;
 class pfMarkerInfo;
+class pfMarkerMsg;
 
 class pfMarkerMgr : public hsKeyedObject
 {

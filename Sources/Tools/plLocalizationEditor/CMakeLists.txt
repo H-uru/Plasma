@@ -1,5 +1,3 @@
-add_definitions("-DUNICODE")
-
 set(plLocalizationEditor_HEADERS
     plAddDlgs.h
     plEditDlg.h
@@ -32,27 +30,28 @@ set(plLocalizationEditor_UIC_SOURCES
 )
 qt5_wrap_ui(plLocalizationEditor_UIC ${plLocalizationEditor_UIC_SOURCES})
 
-# For generated ui_*.h files
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 add_executable(plLocalizationEditor WIN32 MACOSX_BUNDLE
                ${plLocalizationEditor_HEADERS} ${plLocalizationEditor_SOURCES}
                ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC}
                ${plLocalizationEditor_MOC})
+target_link_libraries(
+    plLocalizationEditor
+    PRIVATE
+        CoreLib
+        pnNucleusInc
+        plMessage
+        plResMgr
+        pfLocalizationMgr
+        Qt5::Widgets
+)
 
-target_link_libraries(plLocalizationEditor CoreLib)
-target_link_libraries(plLocalizationEditor pnSceneObject)
-target_link_libraries(plLocalizationEditor pnUUID)
-target_link_libraries(plLocalizationEditor plResMgr)
-target_link_libraries(plLocalizationEditor pfLocalizationMgr)
-target_link_libraries(plLocalizationEditor plAgeDescription)
-target_link_libraries(plLocalizationEditor ${STRING_THEORY_LIBRARIES})
-target_link_libraries(plLocalizationEditor Qt5::Widgets)
-
-if(USE_VLD)
-    target_link_libraries(plLocalizationEditor ${VLD_LIBRARY})
-endif()
+# For generated ui_*.h files
+target_include_directories(
+    plLocalizationEditor
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}
+)
 
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_MOC})
 source_group("Header Files" FILES ${plLocalizationEditor_HEADERS})

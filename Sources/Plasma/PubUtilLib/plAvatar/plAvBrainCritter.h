@@ -43,13 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AV_BRAIN_CRITTER_H
 
 #include <map>
-#include "plAvBrain.h"
-#include "pnKeyedObject/plKey.h"
+#include <string>
+#include <vector>
 
-class plArmatureMod;
-class plWalkingStrategy;
+#include "plAvBrain.h"
+
+#include "hsGeometry3.h"
+
 class plAIMsg;
+class plArmatureMod;
+class plKey;
+class plMessage;
 class plRandom;
+class plSceneObject;
+class plWalkingStrategy;
 
 class plAvBrainCritter : public plArmatureBrain
 {

@@ -42,12 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plViewFaceModifier_inc
 #define plViewFaceModifier_inc
 
-#include "hsMatrix44.h"
 #include "hsBounds.h"
+#include "hsMatrix44.h"
+
 #include "pnModifier/plSingleModifier.h"
 
 class plGenRefMsg;
 class plPipeline;
+class plSceneObject;
 
 class plViewFaceModifier : public plSingleModifier
 {

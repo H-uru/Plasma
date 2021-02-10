@@ -14,6 +14,7 @@ target_link_libraries(
     plCompression
     PUBLIC
         CoreLib
+    PRIVATE
         ZLIB::ZLIB
 )
 

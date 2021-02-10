@@ -28,7 +28,6 @@ target_link_libraries(
         plFile
         plResMgr
         plStatusLog
-
         expat::expat
 )
 

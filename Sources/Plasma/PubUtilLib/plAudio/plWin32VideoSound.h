@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWin32VideoSound_h
 #define plWin32VideoSound_h
 
+#include "plAudioCore/plAudioCore.h"
 #include "plWin32Sound.h"
 
 class plWin32VideoSound : public plWin32Sound

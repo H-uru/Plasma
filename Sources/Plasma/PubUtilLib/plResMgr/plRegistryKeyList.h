@@ -42,12 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRegistryKeyList_h_inc
 #define plRegistryKeyList_h_inc
 
+#include "HeadSpin.h"
+
 #include <vector>
 
 class plKeyImp;
 class plRegistryKeyIterator;
 class hsStream;
 class plUoid;
+
+namespace ST { class string; }
 
 //
 //  List of keys for a single class type.

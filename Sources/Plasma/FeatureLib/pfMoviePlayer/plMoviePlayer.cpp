@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMoviePlayer.h"
 
-#include "hsConfig.h"
 #ifdef USE_WEBM
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
@@ -54,12 +53,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define WEBM_CODECID_OPUS "A_OPUS"
 #endif
 
+#include "hsConfig.h"
+#include "hsGDeviceRef.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
+
+#include "pnKeyedObject/plUoid.h"
+
 #include "plAudio/plWin32VideoSound.h"
 #include "plGImage/plMipmap.h"
-#include "pnKeyedObject/plUoid.h"
-#include "hsGDeviceRef.h"
+#include "plMessage/plMovieMsg.h"
 #include "plPipeline/plPlates.h"
 #include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"
@@ -425,6 +428,12 @@ bool plMoviePlayer::NextFrame()
 #else
     return false;
 #endif // MOVIE_AVAILABLE
+}
+
+void plMoviePlayer::AddCallback(plMessage* msg)
+{
+    hsRefCnt_SafeRef(msg);
+    fCallbacks.push_back(msg);
 }
 
 bool plMoviePlayer::Pause(bool on)

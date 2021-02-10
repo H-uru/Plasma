@@ -3,11 +3,11 @@ set(plShaderAssembler_SOURCES
 )
 
 add_executable(plShaderAssembler ${plShaderAssembler_SOURCES})
-target_link_libraries(plShaderAssembler ${DirectX_LIBRARIES})
-target_link_libraries(plShaderAssembler CoreLib)
-target_link_libraries(plShaderAssembler ${STRING_THEORY_LIBRARIES})
-if(USE_VLD)
-    target_link_libraries(plShaderAssembler ${VLD_LIBRARIES})
-endif()
+target_link_libraries(
+    plShaderAssembler
+    PRIVATE
+        CoreLib
+        ${DirectX_LIBRARIES}
+)
 
 source_group("Source Files" FILES ${plShaderAssembler_SOURCES})

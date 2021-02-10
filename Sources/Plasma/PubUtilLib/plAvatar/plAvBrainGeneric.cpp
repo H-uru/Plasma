@@ -46,33 +46,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // local
 #include "plAnimStage.h"
 #include "plArmatureMod.h"
-// #include "plAvatarTasks.h"
+#include "plAvatarMgr.h"
+#include "plAvBrainHuman.h"
 #include "plAvTask.h"
 #include "plAvTaskBrain.h"
-#include "plAvBrainHuman.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAnimation/plMatrixChannel.h"
 
 // global
 #include "hsTimer.h"
 #include "plgDispatch.h"
 
 // other
-#include "pnNetCommon/plSDLTypes.h"
 #include "pnMessage/plCameraMsg.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plMatrixChannel.h"
+#include "plInputCore/plAvatarInputInterface.h"
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plInputEventMsg.h"
-#include "plMessage/plSimStateMsg.h"
-#include "plMessage/plConsoleMsg.h"
-#include "plPipeline/plDebugText.h"
-#include "plInputCore/plAvatarInputInterface.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
-
-#ifdef DEBUG_MULTISTAGE
-#include "plAvatarMgr.h"
-#include "plStatusLog/plStatusLog.h"
-#endif
+#include "plPipeline/plDebugText.h"
 
 bool plAvBrainGeneric::fForce3rdPerson = true;
 const float plAvBrainGeneric::kDefaultFadeIn = 6.f; // 1/6th of a second to fade in

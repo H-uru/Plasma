@@ -39,30 +39,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plResManager.h"
+#include "plLocalization.h"
 #include "plRegistryNode.h"
 #include "plResManagerHelper.h"
 #include "plResMgrSettings.h"
-#include "plLocalization.h"
-#include "hsSTLStream.h"
 
+#include "hsSTLStream.h"
 #include "hsTimer.h"
 #include "plTimerCallbackManager.h"
 
-#include "plScene/plSceneNode.h"
+#include "pnDispatch/plDispatch.h"
+#include "pnFactory/plCreator.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKeyImp.h"
-#include "pnDispatch/plDispatch.h"
-#include "plStatusLog/plStatusLog.h"
+#include "pnMessage/plClientMsg.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plObjRefMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "pnFactory/plCreator.h"
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plNetApp.h"
+
 #include "plAgeDescription/plAgeDescription.h"
+#include "plScene/plSceneNode.h"
+#include "plStatusLog/plStatusLog.h"
 
 bool gDataServerLocal = false;
 
@@ -1809,7 +1810,6 @@ void plResManager::IUnlockPages()
 }
 
 // Defined here 'cause release build hates it defined in settings.h for some reason
-#include "plResMgrSettings.h"
 plResMgrSettings& plResMgrSettings::Get()
 {
     static plResMgrSettings fSettings;

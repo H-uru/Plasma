@@ -50,10 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "plTextFont.h"
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
-#include "plTextFont.h"
+
 #include "plDebugText.h"
 
 #define DisplayableChar(c) (c >= 0 && c <= 128)

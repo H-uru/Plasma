@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "plWinAudible.h"
 #include "hsMatrix44.h"
-#include "hsTimer.h"
 #include "plAudio/plSound.h"
 #include "plAudio/plWin32Sound.h"
 #include "plAudio/plVoiceChat.h"
@@ -53,21 +52,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plSoundMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "pnMessage/plAudioSysMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
 #include "hsResMgr.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsQuat.h"
 
 #include "plgDispatch.h"
 #include "pnMessage/plNodeRefMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
 #include "pnMessage/plCmdIfaceModMsg.h"
 #include "pnMessage/plProxyDrawMsg.h"
 #include "plMessage/plInputEventMsg.h"
-#include "pnInputCore/plControlEventCodes.h"
 #include "plModifier/plSoundSDLModifier.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plStatusLog/plStatusLog.h"
+
+// Visualization
+#include "plWinAudibleProxy.h"
 
 #define SND_INDEX_CHECK( index, ret )           \
     if( index >= fSoundObjs.GetCount() ) \
@@ -91,9 +89,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
                 fSoundObjs[ i ]->func;          \
         }                                       \
     }                                           
-
-// Visualization
-#include "plWinAudibleProxy.h"
 
 plWinAudible::plWinAudible()
 :   fSceneNode(nil), fSceneObj(nil), fSDLMod(nil)
@@ -299,7 +294,6 @@ void plWinAudible::SynchedPlay(int index)
 
 void plWinAudible::Play(int index )
 {   
-    // hsStatusMessageF( "Playing sound %s, index %d, time=%f\n", GetKeyName().c_str(), index, hsTimer::GetSeconds());
     SND_APPLY_LOOP( index, Play(), ; );
 }
 
@@ -460,13 +454,8 @@ void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
     {   
         plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, 0);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
-        //plSound* pSnd =  plSound::ConvertNoRef(mgr->ReadCreatable(s));
-        //IAssignSoundKey( pSnd, GetKey() ? GetKeyName() : "", i );
-        //if (plWin32LinkSound::ConvertNoRef(pSnd))
-        //  plgDispatch::Dispatch()->RegisterForExactType(plLinkEffectBCMsg::Index(), pSnd->GetKey());
-        //fSoundObjs[i] = pSnd;
-    }   
-        
+    }
+
     plKey pSceneKey = mgr->ReadKey(s);
     plNodeRefMsg* refMsg = new plNodeRefMsg(pSceneKey, plRefMsg::kOnCreate, -1, plNodeRefMsg::kAudible); 
     mgr->AddViaNotify(GetKey(), refMsg, plRefFlags::kPassiveRef);

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderGlobalContext_inc
 #define plRenderGlobalContext_inc
 
+#include "hsTemplates.h"
+
 class plRenderInstance;
 
 class plRenderGlobalContext : public RenderGlobalContext

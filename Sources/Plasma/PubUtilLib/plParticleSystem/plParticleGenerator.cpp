@@ -39,20 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
-#include "hsStream.h"
-#include "hsFastMath.h"
 
-#include "plParticle.h"
-#include "plParticleSystem.h"
-#include "plParticleEmitter.h"
 #include "plParticleGenerator.h"
+#include "plParticle.h"
+#include "plParticleEmitter.h"
+#include "plParticleSystem.h"
+
 #include "hsColorRGBA.h"
-#include "plMessage/plParticleUpdateMsg.h"
-#include "plInterp/plController.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnEncryption/plRandom.h"
+
+#include "plInterp/plController.h"
+#include "plMessage/plParticleUpdateMsg.h"
 
 static const float DEFAULT_INVERSE_MASS = 1.f;
 

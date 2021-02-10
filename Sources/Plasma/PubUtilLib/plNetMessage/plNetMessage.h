@@ -42,25 +42,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetMessage_h_inc
 #define plNetMessage_h_inc
 
-
 #include "HeadSpin.h"
-#include "hsStream.h"
 #include "hsBitVector.h"
-#include "plGeneric.h"
+
+#include "pnNetBase/pnNetBase.h"
 #include "pnNetCommon/plNetGroup.h"
 #include "pnFactory/plCreatable.h"
-#include "pnFactory/plFactory.h"
-#include "plUnifiedTime/plClientUnifiedTime.h"
-#include "plNetCommon/plNetServerSessionInfo.h"
-#include "plNetCommon/plNetCommon.h"
-#include "plNetCommon/plNetCommonHelpers.h"
-#include "plNetCommon/plNetCommonConstants.h"
-
-#include "plStreamLogger/plStreamLogger.h"
 
 #include "plNetMsgHelpers.h"
 
-#include "pnNetBase/pnNetBase.h"
+#include "plNetCommon/plNetServerSessionInfo.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetCommonConstants.h"
+#include "plNetCommon/plNetCommonHelpers.h"
+#include "plStreamLogger/plStreamLogger.h"
+#include "plUnifiedTime/plClientUnifiedTime.h"
 
 class plMessage;
 class plUUID;
@@ -245,34 +241,7 @@ public:
     void InitReplyFieldsFrom(plNetMessage * msg);
 
     // debug
-    virtual ST::string AsString() const
-    {
-        const char* delim = "";
-
-        ST::string_stream ss;
-        if ( GetHasPlayerID() )
-        {
-            ss << delim << "p:" << GetPlayerID();
-            delim = ",";
-        }
-        if ( GetHasTransactionID() )
-        {
-            ss << delim << "x:" << GetTransactionID();
-            delim = ",";
-        }
-        if ( GetHasAcctUUID() )
-        {
-            ss << delim << "a:" << GetAcctUUID()->AsString();
-            delim = ",";
-        }
-        if ( IsBitSet(kHasVersion) )
-        {
-            ss << delim << "v:" << (int)fProtocolVerMajor << "." << (int)fProtocolVerMinor;
-            delim = ",";
-        }
-
-        return ss.to_string();
-    }
+    virtual ST::string AsString() const;
 };
 
 // 
@@ -330,10 +299,7 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
-    ST::string AsString() const override
-    {
-        return ST::format("object={}, {}",fObjectHelper.GetUoid(), plNetMessage::AsString());
-    }
+    ST::string AsString() const override;
 
 };
 
@@ -475,7 +441,6 @@ public:
 //
 // Game msg - wraps a plMessage.
 //
-class hsResMgr;
 
 class plNetMsgGameMessage: public plNetMsgStream
 {
@@ -505,11 +470,7 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
-    ST::string AsString() const override
-    {
-        const char* noc=plFactory::GetTheFactory()->GetNameOfClass(StreamInfo()->GetStreamType());
-        return ST::format("{} {}", plNetMsgStream::AsString(), noc ? noc : "?");
-    }
+    ST::string AsString() const override;
 };
 
 //
@@ -556,11 +517,7 @@ public:
 
 
     // debug
-    ST::string AsString() const override
-    {
-        return ST::format("object={} initial={}, {}",fObjectHelper.GetUoid(), fIsInitialState,
-            plNetMsgGameMessage::AsString());
-    }
+    ST::string AsString() const override;
 };
 
 //
@@ -647,12 +604,7 @@ public:
     bool GetRequestingState() const { return (fPageFlags & kRequestState) != 0; } 
 
     // debug
-    ST::string AsString() const override
-    {
-        return ST::format("pageFlags:{02X}, paging {}, requestingState:{}, resetting={}",
-            fPageFlags, (fPageFlags&kPagingOut)?"out":"in",
-            (fPageFlags&kRequestState)?"yes":"no", (fPageFlags & kResetList)!=0);
-    }
+    ST::string AsString() const override;
 };
 
 //
@@ -754,10 +706,7 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
-    ST::string AsString() const override
-    {
-        return ST::format("len={}",fVoiceData.size());
-    }
+    ST::string AsString() const override;
 };
 
 //
@@ -792,10 +741,7 @@ public:
     void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 
     // debug
-    ST::string AsString() const override
-    {
-        return ST::format("lockReq={}, {}",fLockRequest, plNetMsgStreamedObject::AsString());
-    }
+    ST::string AsString() const override;
 };
 
 //
@@ -976,17 +922,7 @@ public:
     const hsBitVector& GetRegionsICareAbout() const { return fRegionsICareAbout;    }
     const hsBitVector& GetRegionsImIn() const       { return fRegionsImIn;  }
 
-    ST::string AsString() const override
-    {
-        ST::string b1, b2;
-        int i;
-        for(i=0;i<fRegionsImIn.GetNumBitVectors(); i++)
-            b1 += ST::format("{#x} ", fRegionsImIn.GetBitVector(i));
-        for(i=0;i<fRegionsICareAbout.GetNumBitVectors(); i++)
-            b2 += ST::format("{#x} ", fRegionsICareAbout.GetBitVector(i));
-        return ST::format("rgnsImIn:{}, rgnsICareAbout:{}, {}",
-            b1, b2, plNetMessage::AsString());
-    }
+    ST::string AsString() const override;
 };
 
 #endif  // plNetMessage_h_inc

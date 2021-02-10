@@ -40,26 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include <cmath>
-
-#include "hsTimer.h"
 #include "plLayerAnimation.h"
-#include "pnKeyedObject/plKey.h"
 
-#include "plInterp/plController.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "plModifier/plLayerSDLModifier.h"
-#include "pnMessage/plCameraMsg.h"
-#include "plNetClient/plLinkEffectsMgr.h"
+#include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "plModifier/plSDLModifier.h"
-#include "plSDL/plSDL.h"
+#include "hsTimer.h"
+
+#include <cmath>
+
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plSDLNotificationMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plInterp/plController.h"
 #include "plMessage/plAvatarMsg.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plModifier/plLayerSDLModifier.h"
+#include "plModifier/plSDLModifier.h"
+#include "plNetClient/plLinkEffectsMgr.h"
+#include "plSDL/plSDL.h"
 
 
 plLayerAnimationBase::~plLayerAnimationBase()

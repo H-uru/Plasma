@@ -48,15 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLAGMASTERMOD_INC
 #define PLAGMASTERMOD_INC
 
-/////////////////////////////////////////////////////////////////////////////////////////
-//
-// INCLUDES
-//
-/////////////////////////////////////////////////////////////////////////////////////////
+#include <map>
 #include "pnModifier/plModifier.h"
-#include "plAGChannel.h"
 #include "plAGDefs.h"
-#include "pnKeyedObject/plMsgForwarder.h"
 
 
 class plAGModifier;
@@ -64,6 +58,8 @@ class plAGAnimInstance;
 class plAGAnim;
 class plATCAnim;
 class plAGMasterSDLModifier;
+class plAnimTimeConvert;
+class plMsgForwarder;
 
 ////////////////
 //

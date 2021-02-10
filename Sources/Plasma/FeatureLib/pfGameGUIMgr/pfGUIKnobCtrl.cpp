@@ -45,26 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIKnobCtrl.h"
-#include "pfGameGUIMgr.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGUIDialogMod.h"
 
-#include "plInputCore/plInputInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-// #include "plAnimation/plAGModifier.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAnimation/plAGMasterMod.h"
 #include "plAnimation/plAGAnimInstance.h"
+#include "plInputCore/plInputInterface.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "plSurface/plLayerAnimation.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -338,7 +334,7 @@ void    pfGUIKnobCtrl::SetCurrValue( float v )
         msg->SetAnimName( fAnimName );
         msg->fTime = newTime;
         msg->AddReceivers( fAnimationKeys );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
 }
 

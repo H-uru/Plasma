@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
 
 //
 //  This is the data for the parameters (or attributes) for the PythonFile components

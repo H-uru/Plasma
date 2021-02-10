@@ -49,17 +49,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "hsStream.h"
-#include "pnNetCommon/pnNetCommon.h"
+#include <string_theory/string>
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
-#include "pnKeyedObject/plUoid.h"
 #include "pnKeyedObject/plKey.h"
-#include "plUnifiedTime/plUnifiedTime.h"
+#include "pnKeyedObject/plUoid.h"
+
 #include "plNetCommon/plClientGuid.h"
-#include <algorithm>
 
 class plKey;
 class hsStream;
+class hsStreamable;
 
 
 ////////////////////////////////////////////////////////////////////

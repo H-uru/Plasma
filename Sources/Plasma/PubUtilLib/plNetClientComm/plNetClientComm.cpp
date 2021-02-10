@@ -47,24 +47,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm.h"
 
-#include "pnAsyncCore/pnAsyncCore.h"
 #include "plProduct.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "pnEncryption/plChallengeHash.h"
+#include "hsResMgr.h"
 
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnEncryption/plChallengeHash.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnNetCommon/plNetApp.h"
+
+#include "plFile/plStreamSource.h"
+#include "plMessage/plAccountUpdateMsg.h"
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plNetClientMgrMsg.h"
-#include "plNetMessage/plNetMessage.h"
 #include "plNetCommon/plNetCommon.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plVault/plVault.h"
-#include "plMessage/plAccountUpdateMsg.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plFile/plStreamSource.h"
 
 #include "pfMessage/pfKIMsg.h"
-
-#include "hsResMgr.h"
 
 #ifdef HS_BUILD_FOR_MACOS
 #include <malloc/malloc.h>
@@ -1040,7 +1040,7 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
 ) {
     s_age = age;
 
-    if (plNetClientMgr::GetInstance()->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
+    if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
         plNetCommLinkToAgeMsg * msg = new plNetCommLinkToAgeMsg;
         msg->result     = kNetSuccess;
         msg->param      = nil;

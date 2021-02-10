@@ -39,17 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plMsgForwarder.h"
-#include "hsResMgr.h"
+
 #include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnMessage/plMessage.h"
-#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plMessageWithCallbacks.h"
+#include "pnMessage/plSelfDestructMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/plSynchedObject.h"
-
-#include "pnMessage/plSelfDestructMsg.h"
-#include "pnMessage/plMessageWithCallbacks.h"
-
 
 struct plForwardCallback
 {

@@ -44,22 +44,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <vector>
+
+class plNetClientMgr;
+class plNetTransportMember;
+
 //
 // a simple class used by the net client code to hold listenLists and talkLists
 // for voice filtering.
 //
-class plNetTransportMember;
 class plNetVoiceList
 {
 protected:
-    typedef std::vector<plNetTransportMember*> VoiceListType;   
+    typedef std::vector<plNetTransportMember*> VoiceListType;
 protected:
-    VoiceListType fMembers; 
+    VoiceListType fMembers;
 
-public: 
-    plNetVoiceList() {}
-    virtual ~plNetVoiceList() {}
-    
+public:
+    plNetVoiceList() = default;
+    virtual ~plNetVoiceList() = default;
+
     int GetNumMembers() const { return fMembers.size(); }
     plNetTransportMember* GetMember(int i) const { return fMembers[i];  }
     virtual void AddMember(plNetTransportMember* e) = 0;
@@ -98,7 +102,6 @@ public:
 // Specialized version for talk list
 // a list of other players I am talking to
 //
-class plNetClientMgr;
 class plNetTalkList : public plNetVoiceList
 {
 private:

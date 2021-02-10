@@ -75,9 +75,20 @@ target_link_libraries(plSurface
     PUBLIC
         CoreLib
         pnKeyedObject
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        plInterp
+    PRIVATE
+        pnMessage
         plGImage
         plInterp
         plMessage
+        plModifier
+        plNetClient
+        plSDL
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${plSurface_SOURCES})

@@ -55,10 +55,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsG3DDeviceSelector_inc
 #define hsG3DDeviceSelector_inc
 
+#include "hsBitVector.h"
+#include "hsRefCnt.h"
+#include "hsTemplates.h"
+
 #include "hsWinRef.h"
 
-#include "hsTemplates.h"
-#include "hsBitVector.h"
 #include <string_theory/string>
 
 #ifdef HS_BUILD_FOR_WIN32

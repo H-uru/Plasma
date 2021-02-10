@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "plProduct.h"
+
+#include "HeadSpin.h"
 #include <string_theory/format>
 
 static_assert(PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");

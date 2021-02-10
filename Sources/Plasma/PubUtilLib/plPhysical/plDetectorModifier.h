@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDetectorModifier_inc
 #define plDetectorModifier_inc
 
-#include "pnModifier/plSingleModifier.h"
-#include "pnMessage/plObjRefMsg.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
+
+#include "pnModifier/plSingleModifier.h"
 
 class plDetectorModifier : public plSingleModifier
 {
@@ -72,28 +72,8 @@ public:
     size_t GetNumReceivers() const { return fReceivers.size(); }
     plKey GetReceiver(size_t i) const { return fReceivers[i]; }
     void SetProxyKey(const plKey &k) { fProxyKey = k; }
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plSingleModifier::Read(stream, mgr);
-        uint32_t n = stream->ReadLE32();
-        fReceivers.clear();
-        fReceivers.reserve(n);
-        for (uint32_t i = 0; i < n; i++)
-            fReceivers.emplace_back(mgr->ReadKey(stream));
-        mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
-        fProxyKey = mgr->ReadKey(stream);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plSingleModifier::Write(stream, mgr);
-        stream->WriteLE32((uint32_t)fReceivers.size());
-        for (const plKey& key : fReceivers)
-            mgr->WriteKey(stream, key);
-        
-        mgr->WriteKey(stream, fRemoteMod);
-        mgr->WriteKey(stream, fProxyKey);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

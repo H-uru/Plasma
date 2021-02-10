@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLSEEKPOINTMOD_INC
 
 #include "pnModifier/plMultiModifier.h"
-#include "pnMessage/plMessage.h"
 
 // PLSEEKPOINTMOD
 // This modifier is something the avatar knows how to go to. (you know, seek)

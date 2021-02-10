@@ -43,9 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalPlayerIntersectPlaneConditionalObject_inc
 #define plLocalPlayerIntersectPlaneConditionalObject_inc
 
+#include "pnKeyedObject/plKey.h"
 #include "pnModifier/plConditionalObject.h"
-
-class plKey;
 
 class plLocalPlayerIntersectPlaneConditionalObject : public plConditionalObject
 {
@@ -63,8 +62,8 @@ public:
     
     bool MsgReceive(plMessage* msg) override;
 
-    void SetTarget(plKey pKey) { fTarget = pKey; }
-    void SetPlane(plKey pKey) { fPlane = pKey; }
+    void SetTarget(plKey pKey) { fTarget = std::move(pKey); }
+    void SetPlane(plKey pKey) { fPlane = std::move(pKey); }
     
     void Evaluate() override { }
     void Reset() override { SetSatisfied(false); }

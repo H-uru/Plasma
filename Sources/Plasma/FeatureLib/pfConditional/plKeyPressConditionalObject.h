@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plKeyPressConditionalObject_inc
 #define plKeyPressConditionalObject_inc
 
-#include "pnModifier/plConditionalObject.h"
 #include "pnInputCore/plKeyDef.h"
+#include "pnModifier/plConditionalObject.h"
 
 
 class plKeyPressConditionalObject : public plConditionalObject

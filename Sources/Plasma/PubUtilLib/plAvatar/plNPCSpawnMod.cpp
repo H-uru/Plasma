@@ -47,14 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // local
 #include "plAvatarMgr.h"
 
-// global
-#include "hsMatrix44.h"
-
 // other
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-//#include "pnMessage/plWarpMsg.h"
+#include "hsResMgr.h"
+
 #include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 
 // plNPCSpawnMod ctor

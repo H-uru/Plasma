@@ -40,19 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plProduct.h"
+#include "hsStream.h"
 #include "hsTimer.h"
-#include "plResMgr/plResManager.h"
-#include "plResMgr/plResMgrSettings.h"
+
+#include "pnKeyedObject/plKeyImp.h"
 
 #include "plAgeDescription/plAgeManifest.h"
-
+#include "plAudioCore/plSoundBuffer.h"
 #include "plResMgr/plRegistryHelpers.h"
 #include "plResMgr/plRegistryNode.h"
-
-#include "plAudioCore/plSoundBuffer.h"
-#include "hsStream.h"
-
-#include "plProduct.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plResMgrSettings.h"
 
 
 //// Globals /////////////////////////////////////////////////////////////////
@@ -205,8 +204,6 @@ bool DumpSounds()
 }
 
 //////////////////////////////////////////////////////////////////////////
-
-#include "../pnKeyedObject/plKeyImp.h"
 
 class plStatDumpIterator : public plRegistryPageIterator, public plRegistryKeyIterator
 {

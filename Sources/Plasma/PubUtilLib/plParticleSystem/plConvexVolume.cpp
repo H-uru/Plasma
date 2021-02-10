@@ -39,10 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
+#include "plConvexVolume.h"
+
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-#include "plConvexVolume.h"
 #include "hsStream.h"
 
 plConvexVolume::plConvexVolume()

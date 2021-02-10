@@ -40,8 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plTimeMsg.h"
+
+#include "HeadSpin.h"
+#include "hsStream.h"
 #include "hsTimer.h"
 
 plTimeMsg::plTimeMsg()
@@ -62,6 +64,20 @@ plTimeMsg::plTimeMsg(const plKey &s,
 
 plTimeMsg::~plTimeMsg()
 {
+}
+
+void plTimeMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plMessage::IMsgRead(stream, mgr);
+    stream->ReadLE(&fSeconds);
+    stream->ReadLE(&fDelSecs);
+}
+
+void plTimeMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plMessage::IMsgWrite(stream, mgr);
+    stream->WriteLE(fSeconds);
+    stream->WriteLE(fDelSecs);
 }
 
 plEvalMsg::plEvalMsg()

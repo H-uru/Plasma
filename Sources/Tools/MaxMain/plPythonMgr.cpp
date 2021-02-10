@@ -41,16 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "hsWindows.h"
 #include "plFileSystem.h"
+
+#include "MaxAPI.h"
 
 #include <Python.h>
 #include <string>
 #include <vector>
-
-#include <iparamb2.h>
-#include <max.h>
-#include <direct.h>
 
 #include "plPythonMgr.h"
 #include "plMaxCFGFile.h"

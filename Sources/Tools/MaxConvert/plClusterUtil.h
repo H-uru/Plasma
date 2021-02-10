@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDrawable/plSpanInstance.h"
 
+#include <tab.h>
+
 class hsBounds3Ext;
 class plCluster;
 class plClusterGroup;

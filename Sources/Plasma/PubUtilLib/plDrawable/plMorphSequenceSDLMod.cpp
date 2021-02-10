@@ -42,10 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMorphSequenceSDLMod.h"
 #include "plMorphSequence.h"
 #include "plSharedMesh.h"
+
+
 #include "hsResMgr.h"
-#include "pnSceneObject/plSceneObject.h"
+
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plSDL/plSDL.h"
 
 // static vars

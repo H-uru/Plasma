@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plKeyFinder.h"
 #include "pnSceneObject/plSceneObject.h"
 
-#include "plScene/plSceneNode.h"
 #include "pnMessage/plClientMsg.h"
 #include "plgDispatch.h"
 #include "pnMessage/plWarpMsg.h"

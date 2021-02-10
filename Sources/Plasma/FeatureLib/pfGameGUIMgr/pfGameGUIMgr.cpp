@@ -49,32 +49,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "hsTimer.h"
-#include "HeadSpin.h"
 #include "pfGameGUIMgr.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+
+#include "pfGUIControlMod.h"
 #include "pfGUIDialogMod.h"
 #include "pfGUIDialogHandlers.h"
 #include "pfGUIDialogNotifyProc.h"
-#include "pfGUIControlMod.h"
 #include "pfGUIPopUpMenu.h"
+#include "pfGUITagDefs.h"
 
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plInputEventMsg.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "pnNetCommon/plSynchedObject.h"
-#include "plInputCore/plInputInterface.h"
-#include "plInputCore/plInputDevice.h"
-#include "plInputCore/plInputInterfaceMgr.h"
 #include "pnInputCore/plKeyMap.h"
 #include "pnKeyedObject/plFixedKey.h"
+#include "pnMessage/plClientMsg.h"
 #include "pnSceneObject/plSceneObject.h"    // So we can get the target sceneNode of a dialog
-#include "plMessage/plConsoleMsg.h"
-#include "plgDispatch.h"
 
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plInputInterface.h"
+#include "plInputCore/plInputInterfaceMgr.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 #include "plResMgr/plKeyFinder.h"
 
-#include "pfGUITagDefs.h"
+#include "pfMessage/pfGameGUIMsg.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -535,13 +536,13 @@ void    pfGameGUIMgr::IActivateGUI( bool activate )
         fInputConfig = new pfGameUIInputInterface( this );
         plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kAddInterface );
         msg->SetIFace( fInputConfig );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
     }
     else
     {
         plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
         msg->SetIFace( fInputConfig );
-        plgDispatch::MsgSend( msg );
+        msg->Send();
 
         hsRefCnt_SafeUnRef( fInputConfig );
         fInputConfig = nil;

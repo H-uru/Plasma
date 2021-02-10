@@ -43,9 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRandomSoundMod_inc
 #define plRandomSoundMod_inc
 
+#include "HeadSpin.h"
+#include "hsBitVector.h"
+
+#include <vector>
+
 #include "pfAnimation/plRandomCommandMod.h"
-class plSound;
+
 struct hsPoint3;
+class plSound;
 
 class plRandomSoundModGroup
 {

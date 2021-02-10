@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //======================================
 // Some standard includes
 //======================================
+#include <cfloat>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>

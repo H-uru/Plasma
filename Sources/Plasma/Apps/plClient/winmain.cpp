@@ -41,6 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "plCmdParser.h"
+#include "plPipeline.h"
+#include "plProduct.h"
+#include "hsStream.h"
 #include "hsWindows.h"
 
 #include <process.h>
@@ -51,26 +55,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <curl/curl.h>
 
-#include "hsStream.h"
-#include "plCmdParser.h"
 #include "plClient.h"
 #include "plClientLoader.h"
-#include "pfCrashHandler/plCrashCli.h"
-#include "plNetClient/plNetClientMgr.h"
+#include "res/resource.h"
+
+#include "pnEncryption/plChallengeHash.h"
+
+#include "plFile/plEncryptedStream.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputManager.h"
-#include "plPipeline.h"
-#include "plResMgr/plResManager.h"
-#include "plResMgr/plLocalization.h"
-#include "plFile/plEncryptedStream.h"
-#include "pfPasswordStore/pfPasswordStore.h"
-#include "pnEncryption/plChallengeHash.h"
-#include "plStatusLog/plStatusLog.h"
-#include "plProduct.h"
+#include "plNetClient/plNetClientMgr.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plPhysX/plPXSimulation.h"
+#include "plResMgr/plLocalization.h"
+#include "plResMgr/plResManager.h"
+#include "plResMgr/plVersion.h"
+#include "plStatusLog/plStatusLog.h"
 
-#include "res/resource.h"
+#include "pfConsoleCore/pfConsoleEngine.h"
+#include "pfCrashHandler/plCrashCli.h"
+#include "pfPasswordStore/pfPasswordStore.h"
 
 //
 // Defines
@@ -963,7 +967,6 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 #endif // HS_DEBUGGING
 }
 
-#include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_ALL()
 
 bool WinInit(HINSTANCE hInst)
@@ -1000,7 +1003,6 @@ bool WinInit(HINSTANCE hInst)
     return true;
 }
 
-#include "plResMgr/plVersion.h"
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
     PF_CONSOLE_INIT_ALL()

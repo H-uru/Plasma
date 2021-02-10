@@ -43,12 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvert_inc
 #define plConvert_inc
 
+#include "hsTemplates.h"
+
 class plErrorMsg;
 class plKey;
+class plLightMapGen;
 class plLocation;
 class plMaxNode;
 class plMessage;
-class plLightMapGen;
 class hsVertexShader;
 
 class plConvertSettings

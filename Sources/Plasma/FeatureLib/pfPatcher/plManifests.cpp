@@ -43,6 +43,8 @@ Mead, WA   99021
 #include "plManifests.h"
 #include "plFileSystem.h"
 
+#include <string_theory/string>
+
 // Helper that returns the appropriate string per build
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define MANIFEST(in, ex) ex

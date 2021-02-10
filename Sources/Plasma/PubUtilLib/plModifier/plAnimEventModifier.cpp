@@ -42,14 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimEventModifier.h"
 
 #include "hsResMgr.h"
-#include "pnMessage/plMessage.h"
+#include "hsStream.h"
 
-#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
-
-#include "pnNetCommon/plNetApp.h"
 #include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 plAnimEventModifier::plAnimEventModifier() : fCallback(nil), fDisabled(false)
 {

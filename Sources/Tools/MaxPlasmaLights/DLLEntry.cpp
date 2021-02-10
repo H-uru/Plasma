@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRealTimeLights.h"
 #include "MaxMain/MaxCompat.h"
 
-#include "pnMessage/pnMessageCreatable.h"
 #include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
 #include "pnNetCommon/pnNetCommonCreatable.h"
 
 #include "plRTProjDirLightClassDesc.h"

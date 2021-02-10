@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderSDLModifier_inc
 #define plResponderSDLModifier_inc
 
-#include "plModifier/plSDLModifier.h"
+#include "plSDLModifier.h"
+
+#include "pnNetCommon/plSDLTypes.h"
 
 //
 // This modifier is responsible for sending and recving responder state
@@ -73,7 +75,7 @@ public:
 
     const char* GetSDLName() const override { return kSDLResponder; }
     plKey GetStateOwnerKey() const override;
-    
+
     plResponderModifier* GetResponder() const { return fResponder; }
     void SetResponder(plResponderModifier* r) { fResponder=r; AddTarget(nil); }
 };

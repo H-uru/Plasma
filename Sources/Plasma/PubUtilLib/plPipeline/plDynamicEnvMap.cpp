@@ -40,32 +40,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plDynamicEnvMap.h"
 
-#include "plPipeline.h"
-#include "plPipeDebugFlags.h"
 #include "plDrawable.h"
 #include "plgDispatch.h"
+#include "plPipeline.h"
+#include "plPipeDebugFlags.h"
 #include "hsResMgr.h"
-
 #include "hsTimer.h"
 #include "hsStream.h"
 
-#include "plMessage/plRenderRequestMsg.h"
-#include "plMessage/plDynamicEnvMapMsg.h"
-#include "pfCamera/plCameraModifier.h"
-#include "pfCamera/plVirtualCamNeu.h"
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "plMessage/plLayRefMsg.h"
 #include "pnMessage/plPipeResMakeMsg.h"
 #include "pnMessage/plRefMsg.h"
 
-#include "plScene/plVisRegion.h"
-#include "plScene/plVisMgr.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plDynamicEnvMapMsg.h"
+#include "plMessage/plLayRefMsg.h"
+#include "plMessage/plRenderRequestMsg.h"
+#include "plMessage/plRenderMsg.h"
 #include "plResMgr/plKeyFinder.h"
+#include "plScene/plVisMgr.h"
+#include "plScene/plVisRegion.h"
 #include "plSurface/plLayer.h"
+
+#include "pfCamera/plCameraModifier.h"
+#include "pfCamera/plVirtualCamNeu.h"
 
 plDynamicEnvMap::plDynamicEnvMap()
     : fHither(0.3f),

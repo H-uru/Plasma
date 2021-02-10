@@ -39,34 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
 #include "plCameraModifier.h"
+
+#include "plgDispatch.h"
+#include "plPhysical.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+
 #include "plCameraBrain.h"
 #include "plVirtualCamNeu.h"
-#include "hsTimer.h"
-#include "plgDispatch.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plInputEventMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plTimeMsg.h"
+
 #include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "plInputCore/plInputDevice.h"
-#include "plInputCore/plInputManager.h"
-#include "hsResMgr.h"
 #include "pnMessage/plCameraMsg.h"
-#include "plPhysical/plSimDefs.h"
-
-#include "plPhysical.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plSimulationInterface.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plPhysicalControllerCore.h"
 
-#include <cmath>
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plPhysicalControllerCore.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plInputEventMsg.h"
 
 // new stuff
 

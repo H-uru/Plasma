@@ -43,8 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPXSimDefs_H
 #define plPXSimDefs_H
 
-#include <PxConfig.h>
-#include <PxPhysicsAPI.h>
+/**
+ * \file plPXSimDefs.h
+ * Private include file to convert plSimDefs to PhysX filter data.
+ */
+
+#include "plPhysXAPI.h"
+
 #include "plPhysical/plSimDefs.h"
 
 static_assert(plSimDefs::kGroupMax - 1 <= sizeof(physx::PxFilterData::word0) * 8,

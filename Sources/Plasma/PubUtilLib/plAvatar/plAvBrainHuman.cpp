@@ -40,55 +40,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include <cmath>
-
-#include "plPhysicalControllerCore.h"
 #include "plAvBrainHuman.h"
+
+#include "HeadSpin.h"
+
+#include "hsGeometry3.h"
+#include "plPhysical.h"
+#include "hsQuat.h"
+#include "hsTimer.h"
+
+#include "plAnimStage.h"
+#include "plArmatureMod.h"
+#include "plAvatarClothing.h"
+#include "plAvatarMgr.h"
 #include "plAvBrainClimb.h"
 #include "plAvBrainDrive.h"
 #include "plAvBrainGeneric.h"
 #include "plAvBrainSwim.h"
-#include "plArmatureMod.h"
-#include "plAnimation/plAGModifier.h"
-#include "plAnimation/plMatrixChannel.h"
 #include "plAvTask.h"
 #include "plAvTaskBrain.h"
 #include "plAvTaskSeek.h"
+#include "plPhysicalControllerCore.h"
+
+#include <cmath>
+
+#include "pnEncryption/plRandom.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
 #include "plAnimation/plAGAnim.h"
 #include "plAnimation/plAGAnimInstance.h"
-#include "plAvatarMgr.h"
-#include "plAnimStage.h"
-#include "plAvatarClothing.h"
-
-#include "hsTimer.h"
-#include "hsGeometry3.h"
-
-#include "plPipeline.h"
-#include "plgDispatch.h"
-#include "hsQuat.h"
-#include "plPhysical.h"
-#include "plStatusLog/plStatusLog.h"
-
-#include "pnNetCommon/plNetApp.h"
-#include "pnSceneObject/plCoordinateInterface.h"
+#include "plAnimation/plAGModifier.h"
+#include "plAnimation/plMatrixChannel.h"
 #include "plInputCore/plAvatarInputInterface.h"
 #include "plInputCore/plInputDevice.h"
-#include "pnEncryption/plRandom.h"
-#include "plPipeline/plDebugText.h"
-#include "plNetClient/plNetLinkingMgr.h"
-
+#include "plInterp/plAnimTimeConvert.h"
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plClimbMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLOSHitMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
-#include "plMessage/plSimStateMsg.h"
-#include "plMessage/plSwimMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "pnMessage/plWarpMsg.h"
-#include "pnMessage/plProxyDrawMsg.h"
 #include "plMessage/plRideAnimatedPhysMsg.h"
+#include "plMessage/plSwimMsg.h"
+#include "plPipeline/plDebugText.h"
+#include "plStatusLog/plStatusLog.h"
 
 float plAvBrainHuman::fWalkTimeToMaxTurn = .3f;
 float plAvBrainHuman::fRunTimeToMaxTurn = .1f;

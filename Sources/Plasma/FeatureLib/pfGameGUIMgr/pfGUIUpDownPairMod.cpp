@@ -45,18 +45,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIUpDownPairMod.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pfGameGUIMgr.h"
 #include "pfGUIButtonMod.h"
 #include "pfGUIControlHandlers.h"
 
 #include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
 
 //// Wee Little Control Proc for our buttons /////////////////////////////////
 

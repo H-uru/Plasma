@@ -46,6 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include <string>
+#include <vector>
+
 class hsKeyedObject;
 class plStatusLog;
 class plNetObjectDebugger : public plNetObjectDebuggerBase

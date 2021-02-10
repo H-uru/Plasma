@@ -22,9 +22,32 @@ set(plInputCore_HEADERS
 )
 
 add_library(plInputCore STATIC ${plInputCore_SOURCES} ${plInputCore_HEADERS})
-
-target_link_libraries(plInputCore CoreLib)
-target_link_libraries(plInputCore pnInputCore)
+target_link_libraries(
+    plInputCore
+    PUBLIC
+        CoreLib
+        pnInputCore
+        pnKeyedObject
+        pnModifier
+        pnUUID
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        plAudio
+        plAvatar
+        plGImage
+        plMessage
+        plModifier
+        plNetClient
+        plNetTransport
+        plPipeline
+        plResMgr
+        plVault
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${plInputCore_SOURCES})
 source_group("Header Files" FILES ${plInputCore_HEADERS})

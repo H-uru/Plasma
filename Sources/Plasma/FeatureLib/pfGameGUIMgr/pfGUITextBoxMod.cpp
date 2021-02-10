@@ -45,22 +45,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUITextBoxMod.h"
-#include "pfGameGUIMgr.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
+#include "HeadSpin.h"
+#include "hsStream.h"
+
+#include <string>
+#include <vector>
+
 #include "plAnimation/plAGModifier.h"
 #include "plGImage/plDynamicTextMap.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
+#include "plMessage/plAnimCmdMsg.h"
 #include "plResMgr/plLocalization.h"
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
-
-
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 

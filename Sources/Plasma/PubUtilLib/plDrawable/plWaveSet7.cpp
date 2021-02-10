@@ -67,12 +67,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 #include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSimulationInterface.h"
 
 #include "plPhysical.h"
 
 #include "plSurface/hsGMaterial.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plDrawableGenerator.h"
+#include "plDrawableSpans.h"
+#include "plDrawableGenerator.h"
 
 #include "plMessage/plAvatarMsg.h"
 #include "plAvatar/plArmatureMod.h"
@@ -1036,7 +1037,7 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
     // Don't currently have anything informative from the physical to use.
     // So, let's fake something for the moment.
 
-    plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
+//  plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
 
 //  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0.f, 0.f, 1.f) * forceMag * dt);
 //  iMsg->Send();

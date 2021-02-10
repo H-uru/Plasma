@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsExceptions.h"
 
-#include "plGImage/plMipmap.h"
+#include "plMipmap.h"
 
 #include <jpeglib.h>
 #include <jerror.h>

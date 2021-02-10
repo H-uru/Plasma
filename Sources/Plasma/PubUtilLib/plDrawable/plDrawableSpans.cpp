@@ -56,14 +56,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include "plgDispatch.h"
+#include "plPipeDebugFlags.h"
+#include "plPipeline.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
+
 #include "plAccessSpan.h"
 #include "plAccessTriSpan.h"
 
 #include "plDrawableSpans.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "plPipeline.h"
-#include "plPipeDebugFlags.h"
+
 #include "plGeometrySpan.h"
 #include "plSpaceTree.h"
 #include "plParticleFiller.h"
@@ -89,8 +94,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem/plParticleEmitter.h"
 #include "plParticleSystem/plParticle.h"
 #include "plGLight/plLightInfo.h"
-#include "plgDispatch.h"
-#include "plProfile.h"
 
 #include "plMath/plTriUtils.h"
 
@@ -1129,8 +1132,6 @@ bool    plDrawableSpans::ITestMatForSpecularity( hsGMaterial *mat )
     return false;
 }
 
-
-#include "plProfile.h"
 plProfile_CreateTimer("MatrixPalleteHack", "RenderSetup", PalletteHack);
 //// MsgReceive //////////////////////////////////////////////////////////////
 

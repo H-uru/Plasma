@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAIMsg_inc
 
 #include "hsGeometry3.h"
+#include <string_theory/string>
+
 #include "pnMessage/plMessage.h"
 
 class plAvBrainCritter;

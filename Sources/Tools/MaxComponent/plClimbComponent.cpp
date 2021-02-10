@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 #include "plPhysicalComponents.h"
 #include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
 #include <map>
 
 #include "resource.h"

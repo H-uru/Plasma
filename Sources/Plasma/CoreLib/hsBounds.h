@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsPoint2.h"
 #include "hsMatrix44.h"
-#include <algorithm>
 
 ///////////////////////////////////////////////////////////////////////////////
 // BOUNDS
@@ -182,12 +181,6 @@ inline const hsPoint3& hsBounds3::GetCenter() const
     if(!(fBounds3Flags & kCenterValid))
         ICalcCenter();
     return fCenter; 
-}
-
-inline float hsBounds3::GetMaxDim() const
-{ 
-    hsAssert(kBoundsNormal == fType, "Invalid type for GetMaxDim");
-    return std::max({ fMaxs.fX - fMins.fX, fMaxs.fY - fMins.fY, fMaxs.fZ - fMins.fZ });
 }
 
 //

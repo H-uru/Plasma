@@ -48,9 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "plWinRegistryTools.h"
+
 #include "HeadSpin.h"
 #include "hsWindows.h"
-#include "plWinRegistryTools.h"
 
 #include <QString>
 #include <string>

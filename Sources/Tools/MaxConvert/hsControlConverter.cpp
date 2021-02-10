@@ -41,21 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <functional>
-#include <math.h>
+#include <cmath>
 #include <memory>
 
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
 #include "hsTemplates.h"
 #include "hsWindows.h"
-#include <commdlg.h>
-#include <cmath>
-#include <stdmat.h>
-#include <bmmlib.h>
-#include <istdplug.h>
-#include <iparamb2.h>
-#include <modstack.h>
-#include <keyreduc.h>
+
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxMain/plMaxNode.h"
 

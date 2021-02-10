@@ -40,13 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-
 #include "plAxisAnimModifier.h"
+
 #include "hsResMgr.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnKeyedObject/plKey.h"
-#include "plNetMessage/plNetMsgHelpers.h"
 #include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"

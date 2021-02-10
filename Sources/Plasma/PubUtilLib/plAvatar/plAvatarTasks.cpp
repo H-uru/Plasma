@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
 
 // singular
 #include "plAvatarTasks.h"
@@ -48,34 +47,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plArmatureMod.h"
 #include "plSeekPointMod.h"
 #include "plAvBrainHuman.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAnimation/plAGModifier.h"
-#include "plAnimation/plMatrixChannel.h"
 #include "plPhysicalControllerCore.h"
 #include "plAvatarMgr.h"
 
 // global
-
+#include "HeadSpin.h"
+#include "plgDispatch.h"
 
 // other
-#include "plgDispatch.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plMessage/plOneShotCallbacks.h"
-#include "plMessage/plConsoleMsg.h"
 #include "pnKeyedObject/plKey.h"
+#include "pnMessage/plCameraMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "plPipeline/plDebugText.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGModifier.h"
+#include "plAnimation/plMatrixChannel.h"
 #include "plInputCore/plInputInterfaceMgr.h"
+#include "plInterp/plAnimTimeConvert.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plConsoleMsg.h"
+#include "plMessage/plLinkToAgeMsg.h"
+#include "plMessage/plOneShotCallbacks.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetCommon/plNetCommon.h"
-#include "plMessage/plLinkToAgeMsg.h"
+#include "plPipeline/plDebugText.h"
+
 #include "pfMessage/pfKIMsg.h"
 
 // for console hack
 bool plAvOneShotTask::fForce3rdPerson = true;
-#include "pnMessage/plCameraMsg.h"
 
 /////////////
 //

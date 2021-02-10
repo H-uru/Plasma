@@ -43,16 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plGrabCubeMap_inc
 #define plGrabCubeMap_inc
 
-#include <string_theory/string>
-#include "plScene/plRenderRequest.h"
-
-class plSceneObject;
-class plPipeline;
-class plPageTreeMgr;
-
-struct hsMatrix44;
-struct hsPoint3;
 struct hsColorRGBA;
+struct hsMatrix44;
+class plPageTreeMgr;
+class plPipeline;
+struct hsPoint3;
+class plSceneObject;
 
 class plGrabCubeMap
 {

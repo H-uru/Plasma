@@ -44,8 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAudioSysMsg_inc
 
 #include "plMessage.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
 
 class plKey;
 
@@ -83,25 +81,16 @@ public:
     CLASSNAME_REGISTER(plAudioSysMsg);
     GETINTERFACE_ANY(plAudioSysMsg, plMessage);
     
-    int GetAudFlag() { return fAudFlag; }
-    plKey GetSceneObject() { return pObj; }
-    void SetSceneObject(plKey &k) { pObj = k; }
+    int GetAudFlag() const { return fAudFlag; }
+    plKey GetSceneObject() const { return pObj; }
+    void SetSceneObject(plKey k) { pObj = std::move(k); }
 
     bool    GetBoolFlag() { return fBoolFlag; }
     void    SetBoolFlag( bool b ) { fBoolFlag = b; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        stream->WriteLE(fAudFlag);
-        mgr->WriteKey(stream, pObj);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->ReadLE(&fAudFlag);
-        pObj = mgr->ReadKey(stream);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plAudioSysMsg

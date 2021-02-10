@@ -44,9 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plClientResMgr_h
 
 #include <unordered_map>
+#include <vector>
 
-class plMipmap;
 class plFileName;
+class plMipmap;
+
+namespace ST
+{
+    struct hash;
+    class string;
+};
 
 class plClientResMgr {
 protected:

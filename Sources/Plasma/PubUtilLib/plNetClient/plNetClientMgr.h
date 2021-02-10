@@ -43,7 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_NET_CLIENT_inc
 
 #include "HeadSpin.h"
+
 #include <list>
+#include <string>
+#include <vector>
+
+#include <string_theory/string>
 
 #include "plNetClientGroup.h"
 #include "plNetVoiceList.h"
@@ -53,8 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/plNetApp.h"
 
 #include "plNetTransport/plNetTransport.h"
-#include "pnEncryption/plChecksum.h"
-#include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetClientComm/plNetClientComm.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 
@@ -68,7 +71,6 @@ class plSynchedObject;
 struct DistSqInfo;
 class plStatusLog;
 class plOperationProgress;
-class plIDataServer;
 class plPlate;
 class plLoadCloneMsg;
 class plPlayerPageMsg;

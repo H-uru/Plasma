@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plProfileManagerFull_h_inc
 
 #include <set>
-#include <string>
+#include <string_theory/string>
+
 #include "plFileSystem.h"
 
 #include "plProfileManager.h"

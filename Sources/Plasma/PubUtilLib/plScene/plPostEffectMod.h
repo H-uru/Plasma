@@ -43,16 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPostEffectMod_inc
 #define plPostEffectMod_inc
 
+#include "hsBitVector.h"
+#include "hsMatrix44.h"
+
 #include "pnModifier/plSingleModifier.h"
 
-#include "hsMatrix44.h"
-#include "hsBitVector.h"
 
-class plSceneNode;
-class plPageTreeMgr;
 class plMessage;
-class plRenderTarget;
+class plPageTreeMgr;
 class plRenderRequest;
+class plRenderTarget;
+class plSceneNode;
 class plViewTransform;
 
 class plPostEffectMod : public plSingleModifier

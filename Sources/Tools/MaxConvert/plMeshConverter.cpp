@@ -55,14 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTemplates.h"
 #include "plTweak.h"
-#include "hsWindows.h"
 
-#include <max.h>
-#include <iparamb2.h>
-#include <modstack.h>
-#include <ISkin.h>
-#include <meshdlib.h> 
-#include <stdmat.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "plMeshConverter.h"
 #include "MaxMain/plMaxNode.h"

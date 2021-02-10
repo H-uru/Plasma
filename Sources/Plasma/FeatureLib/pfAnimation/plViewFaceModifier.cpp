@@ -40,20 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plViewFaceModifier.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
 #include "hsFastMath.h"
 #include "plPipeline.h"
+#include "plProfile.h"
 
 #include "pnMessage/plRefMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plListenerMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plAvatar/plAvBrainHuman.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plListenerMsg.h"
+#include "plMessage/plRenderMsg.h"
+
+plProfile_CreateTimer("ViewFacing", "RenderSetup", ViewFace);
 
 plViewFaceModifier::plViewFaceModifier()
     : fLastDirY(0.f, 1.f, 0.f),
@@ -262,11 +267,6 @@ bool plViewFaceModifier::IFacePoint(plPipeline* pipe, const hsPoint3& at)
 
     return true;
 }
-
-
-
-#include "plProfile.h"
-plProfile_CreateTimer("ViewFacing", "RenderSetup", ViewFace);
 
 bool plViewFaceModifier::MsgReceive(plMessage* msg)
 {

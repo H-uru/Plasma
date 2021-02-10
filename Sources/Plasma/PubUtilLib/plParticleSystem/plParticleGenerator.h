@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 
+#include "pnFactory/plCreatable.h"
+
 class plParticleEmitter;
 class plScalarController;
 

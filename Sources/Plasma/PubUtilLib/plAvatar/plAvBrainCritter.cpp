@@ -40,26 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <string_theory/formatter>
-
-#include "plPhysicalControllerCore.h"
 #include "plAvBrainCritter.h"
-#include "plAvBrainHuman.h"
-#include "plArmatureMod.h"
-#include "plAvBehaviors.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAvatarMgr.h"
 
 #include "plgDispatch.h"
 
-#include "plMessage/plAIMsg.h"
+#include <string_theory/formatter>
 
-#include "plPipeline/plDebugText.h"
-#include "pnSceneObject/plCoordinateInterface.h"
+#include "plArmatureMod.h"
+#include "plAvatarMgr.h"
+#include "plAvBehaviors.h"
+#include "plAvBrainHuman.h"
+#include "plAvDefs.h"
+#include "plPhysicalControllerCore.h"
+
 #include "pnEncryption/plRandom.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGModifier.h"
+
+#include "plMessage/plAIMsg.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetTransport/plNetTransportMember.h"
+#include "plPipeline/plDebugText.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 

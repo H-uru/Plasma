@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWin32StreamingSound_h
 #define plWin32StreamingSound_h
 
+#include "plFileSystem.h"
 #include "plWin32Sound.h"
 
 class plDSoundBuffer;

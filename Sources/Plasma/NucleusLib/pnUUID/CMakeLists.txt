@@ -29,7 +29,6 @@ target_link_libraries(
     pnUUID
     PUBLIC
         CoreLib
-        string_theory
     PRIVATE
         $<$<PLATFORM_ID:Linux>:${Uuid_LIBRARIES}>
         $<$<PLATFORM_ID:Windows>:rpcrt4>

@@ -40,19 +40,27 @@ set(pnMessage_HEADERS
 )
 
 set(pnMessage_SOURCES
+    plAudioSysMsg.cpp
     plCameraMsg.cpp
     plClientMsg.cpp
+    plCorrectionMsg.cpp
+    plCursorChangeMsg.cpp
+    plEnableMsg.cpp
+    plEventCallbackMsg.cpp
     plMessage.cpp
     plMessageWithCallbacks.cpp
     plNodeChangeMsg.cpp
     plNotifyMsg.cpp
+    plPlayerPageMsg.cpp
     plProxyDrawMsg.cpp
     plRefMsg.cpp
+    plRemoteAvatarInfoMsg.cpp
     plSDLModifierMsg.cpp
     plServerReplyMsg.cpp
     plSimulationMsg.cpp
     plSoundMsg.cpp
     plTimeMsg.cpp
+    plWarpMsg.cpp
 )
 
 add_library(pnMessage STATIC ${pnMessage_HEADERS} ${pnMessage_SOURCES})
@@ -69,6 +77,8 @@ target_link_libraries(
     PRIVATE
         plSDL # :(
 )
+
+plasma_optimize_target(pnMessage PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
 
 source_group("Header Files" FILES ${pnMessage_HEADERS})
 source_group("Source Files" FILES ${pnMessage_SOURCES})

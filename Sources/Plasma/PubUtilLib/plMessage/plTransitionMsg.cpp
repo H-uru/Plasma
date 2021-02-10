@@ -40,12 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
 #include "plTransitionMsg.h"
+
+#include "hsStream.h"
 
 plTransitionMsg::~plTransitionMsg()
 {
     Clear();
 }
 
+void plTransitionMsg::Read(hsStream* s, hsResMgr* mgr)
+{
+    plMessageWithCallbacks::Read(s, mgr);
+    s->ReadLE(&fEffect);
+    s->ReadLE(&fLengthInSecs);
+    fHoldUntilNext = s->ReadBOOL();
+}
 
+void plTransitionMsg::Write(hsStream* s, hsResMgr* mgr)
+{
+    plMessageWithCallbacks::Write(s, mgr);
+    s->WriteLE(fEffect);
+    s->WriteLE(fLengthInSecs);
+    s->WriteBOOL(fHoldUntilNext);
+}

@@ -42,18 +42,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // singular
 #include "plSittingModifier.h"
 
+#include "plAnimStage.h"
+#include "plArmatureMod.h"
+#include "plAvatarMgr.h"
+#include "plAvBrainGeneric.h"
+#include "plAvBrainHuman.h"
+#include "plAvTaskBrain.h"
+
 //other
 #include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plCameraMsg.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAnimStage.h"
-#include "plAvatar/plAvTaskBrain.h"
-#include "plAvatar/plAvBrainGeneric.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "plAvatar/plAvatarMgr.h"
+#include "pnMessage/plNotifyMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSceneObject.h"
+
 #include "plInputCore/plAvatarInputInterface.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "plMessage/plLoadAvatarMsg.h"
 
 // This is still pretty much a hack, but it's a compartmentalized hack instead of the previous
 // interwoven spaghetti hack.
@@ -72,6 +71,7 @@ class plNotifyMsg;
 class plCoopCoordinator;
 class plLoadCloneMsg;
 class plStatusLog;
+class plAvTask;
 
 /** \class plAvatarMgr
     Gathering place for global animations and miscellaneous avatar data.

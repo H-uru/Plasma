@@ -43,14 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDistOpacityMod_inc
 #define plDistOpacityMod_inc
 
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "pnModifier/plSingleModifier.h"
 #include "hsTemplates.h"
 
+#include "pnModifier/plSingleModifier.h"
+
+class plFadeOpacityLay;
 class plPipeline;
 class plRenderMsg;
-class plFadeOpacityLay;
-
 
 class plDistOpacityMod : public plSingleModifier
 {

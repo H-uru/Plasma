@@ -42,10 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClothingSDLModifier_inc
 #define plClothingSDLModifier_inc
 
-#include "plModifier/plSDLModifier.h"
-
-#include "hsColorRGBA.h"
 #include "HeadSpin.h"
+#include "hsColorRGBA.h"
+
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plModifier/plSDLModifier.h"
 
 //
 // This modifier is responsible for sending and recving 

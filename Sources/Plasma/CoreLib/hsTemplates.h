@@ -42,12 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsTemplatesDefined
 #define hsTemplatesDefined
 
-#include "hsExceptions.h"
 #include "hsMemory.h"
-#include "hsRefCnt.h"
 
-#include <cstdarg>
-#include <algorithm>
+#include <type_traits>
 
 
 #ifdef HS_DEBUGGING

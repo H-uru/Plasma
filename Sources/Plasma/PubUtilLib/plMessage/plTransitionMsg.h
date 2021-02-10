@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plTransitionMsg_inc
 
 #include "HeadSpin.h"
-#include "hsStream.h"
 #include "pnMessage/plMessageWithCallbacks.h"
 
 class plTransitionMsg : public plMessageWithCallbacks
@@ -77,21 +76,8 @@ public:
     float    GetLengthInSecs() const { return fLengthInSecs; }
     bool     GetHoldState() const { return fHoldUntilNext; }
 
-    void Read(hsStream* s, hsResMgr* mgr) override
-    { 
-        plMessageWithCallbacks::Read(s, mgr); 
-        s->ReadLE(&fEffect);
-        s->ReadLE(&fLengthInSecs);
-        fHoldUntilNext = s->ReadBOOL();
-    }
-    
-    void Write(hsStream* s, hsResMgr* mgr) override
-    { 
-        plMessageWithCallbacks::Write(s, mgr); 
-        s->WriteLE(fEffect);
-        s->WriteLE(fLengthInSecs);
-        s->WriteBOOL(fHoldUntilNext);
-    }
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 };
 
 #endif // plTransitionMsg_inc

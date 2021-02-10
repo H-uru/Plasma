@@ -45,20 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plLoadCloneMsg.h"
 
-#include "pnKeyedObject/plUoid.h"
-
 class plAvTask;
+class plKey;
+class plUoid;
 
 //
 // A msg which is sent to the networking system 
 // to cause a player to be loaded or unloaded
 //
-class plKey;
-class hsStream;
-class hsResMgr;
-
-// not sure if we need this yet, but it's already in the index so here's just enough
-// implementation to keep the compiler happy.
 class plLoadAvatarMsg : public plLoadCloneMsg
 {
 public:

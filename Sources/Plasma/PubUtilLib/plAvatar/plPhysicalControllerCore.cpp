@@ -39,19 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cmath>
-#include <algorithm>
-
 #include "plPhysicalControllerCore.h"
+
+#include "plPhysical.h"
+
+#include <algorithm>
+#include <cmath>
 
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
 #include "plSwimRegion.h"
 
-#include "plAnimation/plMatrixChannel.h"
 #include "pnMessage/plCorrectionMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "plPhysical.h"
+
+#include "plAnimation/plMatrixChannel.h"
 #include "plPhysX/plPXSubWorld.h"
 
 // Gravity constants

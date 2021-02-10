@@ -40,20 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <algorithm>
-#include <cfloat>
-#include "hsMatrix44.h"
-#include "hsGeometry3.h"
 #include "plNetClientMgr.h"
 
-#include "plNetMessage/plNetMessage.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnKeyedObject/plKey.h"
+#include "hsMatrix44.h"
+#include "hsGeometry3.h"
 
-#include "plNetTransport/plNetTransportMember.h"
+#include <algorithm>
+
+#include "pnKeyedObject/plKey.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plMessage/plMemberUpdateMsg.h"
 #include "plMessage/plNetVoiceListMsg.h"
+#include "plNetMessage/plNetMessage.h"
+#include "plNetTransport/plNetTransportMember.h"
 #include "plStatusLog/plStatusLog.h"
 #include "plVault/plVault.h"
 

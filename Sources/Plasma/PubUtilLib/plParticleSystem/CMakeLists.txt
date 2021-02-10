@@ -24,6 +24,28 @@ set(plParticleSystem_HEADERS
 )
 
 add_library(plParticleSystem STATIC ${plParticleSystem_SOURCES} ${plParticleSystem_HEADERS})
+target_link_libraries(
+    plParticleSystem
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        plAnimation
+        plModifier
+    PRIVATE
+        pnEncryption
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plDrawable
+        plInterp
+        plMessage
+        plSDL
+        plSurface
+)
 
 source_group("Source Files" FILES ${plParticleSystem_SOURCES})
 source_group("Header Files" FILES ${plParticleSystem_HEADERS})

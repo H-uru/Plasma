@@ -105,12 +105,31 @@ add_library(plDrawable STATIC ${plDrawable_SOURCES} ${plDrawable_HEADERS})
 target_link_libraries(plDrawable
     PUBLIC
         CoreLib
+        pnEncryption
+        pnFactory
         pnKeyedObject
-        plMath
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        pnTimer
+        plIntersect
+        plModifier
+    PRIVATE
+        pnNucleusInc
+        plAvatar
+        plGImage
         plGLight
+        plInputCore # From plVisLOSMgr
+        plInterp
+        plIntersect
+        plMath
         plMessage
+        plParticleSystem
+        plPipeline
         plScene
         plSDL
+        plStatusLog
         plSurface
 )
 

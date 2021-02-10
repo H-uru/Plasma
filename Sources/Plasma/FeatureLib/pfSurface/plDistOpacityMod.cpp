@@ -41,29 +41,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 
-#include "HeadSpin.h"
-
 #include "plDistOpacityMod.h"
 
-#include "plFadeOpacityLay.h"
-#include "plSurface/hsGMaterial.h"
+#include "HeadSpin.h"
+#include "plPipeline.h"
+#include "plgDispatch.h"
+#include "hsQuat.h"
+#include "hsResMgr.h"
 
+#include "plFadeOpacityLay.h"
+
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAvatar/plArmatureMod.h"
 #include "plDrawable/plAccessGeometry.h"
 #include "plDrawable/plAccessSpan.h"
-
-#include "plMessage/plMatRefMsg.h"
-
-// If we're tracking the camera
-#include "plMessage/plRenderMsg.h"
-#include "plPipeline.h"
-
-// If we're tracking the avater
 #include "plMessage/plAvatarMsg.h"
-#include "plAvatar/plArmatureMod.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "hsQuat.h"
+#include "plMessage/plMatRefMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plSurface/hsGMaterial.h"
 
 plDistOpacityMod::plDistOpacityMod()
 :   fSetup(false)

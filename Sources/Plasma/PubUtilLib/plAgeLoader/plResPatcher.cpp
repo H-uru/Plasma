@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 
-#include "plAgeLoader/plAgeLoader.h"
+#include "plAgeLoader.h"
 #include "plFile/plEncryptedStream.h"
 #include "plFile/plStreamSource.h"
 #include "plFile/plSecureStream.h"

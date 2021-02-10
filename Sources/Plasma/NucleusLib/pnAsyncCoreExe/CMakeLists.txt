@@ -40,17 +40,17 @@ add_library(pnAsyncCoreExe STATIC
             ${pnAsyncCoreExe_PRIVATE} ${pnAysncCoreExe_PRIVATE_NT}
             ${pnAsyncCoreExe_PRIVATE_UNIX} ${pnAsyncCoreExe_PRIVATE_WIN32})
 
+# Yeah, this looks strange, but this library has no public headers. It's
+# the actual implementation of pnAsyncCore. Either rewrite it or get over it.
 target_link_libraries(
     pnAsyncCoreExe
-    PUBLIC
+    PRIVATE
         CoreLib
         pnAsyncCore
         pnNetBase
         pnUtils
+        $<$<BOOL:${USE_VLD}>:${VLD_LIBRARY}>
 )
-if(USE_VLD)
-    target_link_libraries(pnAsyncCoreExe PRIVATE ${VLD_LIBRARY})
-endif()
 
 source_group("Source Files" FILES ${pnAsyncCoreExe_SOURCES})
 source_group("Header Files" FILES ${pnAsyncCoreExe_HEADERS})

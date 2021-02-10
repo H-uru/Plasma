@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerSDLModifier_inc
 #define plLayerSDLModifier_inc
 
-#include "plModifier/plAnimTimeConvertSDLModifier.h"
+#include "plAnimTimeConvertSDLModifier.h"
+
+#include "pnNetCommon/plSDLTypes.h"
 
 //
 // This modifier is responsible for sending and recving 
@@ -72,9 +74,9 @@ public:
     GETINTERFACE_ANY( plLayerSDLModifier, plAnimTimeConvertSDLModifier);
         
     plLayerSDLModifier() : fLayerAnimation(nil) {}
-    
+
     const char* GetSDLName() const override { return kSDLLayer; }
-    
+
     plLayerAnimation* GetLayerAnimation() const { return fLayerAnimation; }
     void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation=l; AddTarget(nil); }
     plKey GetStateOwnerKey() const override;

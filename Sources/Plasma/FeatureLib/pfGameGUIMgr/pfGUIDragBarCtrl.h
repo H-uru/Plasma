@@ -48,8 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDragBarCtrl_h
 #define _pfGUIDragBarCtrl_h
 
+#include "hsGeometry3.h"
+
 #include "pfGUIControlMod.h"
 
+struct hsMatrix44;
 class plMessage;
 
 class pfGUIDragBarCtrl : public pfGUIControlMod

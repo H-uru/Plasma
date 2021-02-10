@@ -39,26 +39,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsMatrix44.h"
-#include "HeadSpin.h"
+
 #include "plListener.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "plAudio/plAudioSystem.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsResMgr.h"
+
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plAudioSysMsg.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plSimulationInterface.h"
-#include "pfCamera/plVirtualCamNeu.h"
-#include "plMessage/plListenerMsg.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plPipeline/plDebugText.h"
 
+#include "plAudio/plAudioSystem.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plPhysicalControllerCore.h"
+#include "plMessage/plListenerMsg.h"
+#include "plPipeline/plDebugText.h"
+
+#include "pfCamera/plVirtualCamNeu.h"
 
 bool        plListener::fPrintDbgInfo = false;
 
@@ -73,7 +78,7 @@ bool plListener::IEval(double secs, float del, uint32_t dirty)
         plDebugText::Instance().DrawString( x, 16, "Listener:", (uint32_t)0xffffffff, plDebugText::kStyleBold );
 
     // Get the avatar's SceneObject
-    plKey key = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
+    plKey key = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     if(key)
         pRefObject = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
 

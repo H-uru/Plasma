@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plTimeMsg_inc
 
 #include "plMessage.h"
-#include "hsStream.h"
 
 class plTimeMsg : public plMessage
 {
@@ -69,17 +68,8 @@ public:
     float        DelSeconds() { return fDelSecs; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgRead(stream, mgr);
-        stream->ReadLE(&fSeconds);
-        stream->ReadLE(&fDelSecs);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLE(fSeconds);
-        stream->WriteLE(fDelSecs);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 class plEvalMsg : public plTimeMsg

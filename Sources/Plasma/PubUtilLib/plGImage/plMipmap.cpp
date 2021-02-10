@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 #include "hsColorRGBA.h"
+#include "hsCodecManager.h"
 #include "hsGDeviceRef.h"
 #include "plProfile.h"
 #include "plJPEG.h"
@@ -836,9 +837,6 @@ void    plMipmap::RemoveMipping()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-
-
-#include "hsCodecManager.h"
 
 
 namespace {

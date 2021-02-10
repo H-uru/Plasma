@@ -79,13 +79,9 @@ function(_deploy_qt)
 endfunction()
 
 include_directories("${PLASMA_TOOLS_ROOT}")
-include_directories("${PLASMA_SOURCE_ROOT}/CoreLib")
 include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
-include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib/inc")
 include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
-include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib/inc")
 include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
-include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib/inc")
 
 if(PLASMA_BUILD_TOOLS)
     _add_tools(TOOLS SoundDecompress)
@@ -98,7 +94,7 @@ if(PLASMA_BUILD_TOOLS)
         _add_tools(TOOLS plShaderAssembler)
     endif()
 
-    if(FREETYPE_FOUND AND Qt5_FOUND)
+    if(TARGET freetype AND Qt5_FOUND)
         _add_tools(GUI TOOLS plFontConverter)
     endif()
 

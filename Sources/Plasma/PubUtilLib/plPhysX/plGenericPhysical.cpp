@@ -51,17 +51,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsSTLStream.h"
 #include "hsTimer.h"
 
-#include "plMessage/plAngularVelocityMsg.h"
 #include "pnMessage/plCorrectionMsg.h"
-#include "plMessage/plLinearVelocityMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
 #include "pnMessage/plObjRefMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plSimulationInterface.h"
+
+#include "plMessage/plAngularVelocityMsg.h"
+#include "plMessage/plLinearVelocityMsg.h"
 #include "plMessage/plSimStateMsg.h"
-#include "plNetClient/plNetClientMgr.h"
 #include "plPhysical/plPhysicalSDLModifier.h"
 #include "plPhysical/plPhysicalSndGroup.h"
 #include "plPhysical/plPhysicalProxy.h"
-#include "pnSceneObject/plSimulationInterface.h"
 
 // ==========================================================================
 

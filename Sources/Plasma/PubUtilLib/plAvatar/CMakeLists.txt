@@ -69,9 +69,49 @@ set(plAvatar_HEADERS
 
 add_library(plAvatar STATIC ${plAvatar_SOURCES} ${plAvatar_HEADERS})
 plasma_optimize_target(plAvatar UNITY_BUILD)
+target_link_libraries(
+    plAvatar
+    PUBLIC
+        CoreLib
+        pnFactory
+        pnKeyedObject
+        pnModifier
+        pnNetCommon
+        pnSceneObject
+        pnTimer
+        plAnimation
+        plMessage
+        plModifier
+        plPhysical
+    PRIVATE
+        pnEncryption
+        pnMessage
+        pnNucleusInc
+        plAudio
+        plDrawable
+        plGImage
+        plInputCore
+        plInterp
+        plMessage
+        plNetClient
+        plNetCommon
+        plNetMessage
+        plNetTransport
+        plParticleSystem
+        plPhysX
+        plPipeline
+        plResMgr
+        plScene
+        plSDL
+        plStatusLog
+        plSurface
+        plVault
+        pfAudio # :(
+        pfCamera # :(
+        pfMessage # :(
+)
 
 target_include_directories(plAvatar PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
-target_link_libraries(plAvatar PUBLIC plAnimation)
 
 source_group("Source Files" FILES ${plAvatar_SOURCES})
 source_group("Header Files" FILES ${plAvatar_HEADERS})

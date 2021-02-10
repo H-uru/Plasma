@@ -53,7 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 
 #include "resource.h"
-#include <windowsx.h>
+
+#include "MaxMain/MaxAPI.h"
 
 #include "plAvatarComponent.h"
 #include "plMaxAnimUtils.h"
@@ -87,8 +88,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plWin32StaticSound.h"
 #include "plAudioCore/plSoundBuffer.h"
 
-#include "MaxMain/plPlasmaRefMsgs.h"         
+#include "MaxMain/plPlasmaRefMsgs.h"
 
+#include "plAnimation/plAGModifier.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvBrainCritter.h"

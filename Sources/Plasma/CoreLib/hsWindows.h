@@ -89,6 +89,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #       undef DrawText
 #   endif
 
+    // Conflicts with plSynchedObject::StateDefn
+#   ifdef GetObject
+#       undef GetObject
+#   endif
+
+
     const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion();
 
     /** COM Result holder used for formatting to log. */

@@ -43,13 +43,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvMeshSmooth_inc
 #define plAvMeshSmooth_inc
 
-#include "hsTemplates.h"
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"
 
+class plGeometrySpan;
 struct hsPoint3;
 struct hsVector3;
-class plGeometrySpan;
+
+template<typename T>
+class hsTArray;
 
 class plAvMeshSmooth
 {

@@ -49,7 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfBackdoorMsg_h
 
 #include "HeadSpin.h"
-#include "hsStream.h"
+
+#include <string_theory/string>
+
 #include "pnMessage/plMessage.h"
 
 class pfBackdoorMsg : public plMessage
@@ -71,19 +73,8 @@ class pfBackdoorMsg : public plMessage
         CLASSNAME_REGISTER( pfBackdoorMsg );
         GETINTERFACE_ANY( pfBackdoorMsg, plMessage );
 
-        void Read(hsStream* s, hsResMgr* mgr) override
-        { 
-            plMessage::IMsgRead( s, mgr ); 
-            fTarget = s->ReadSafeString();
-            fString = s->ReadSafeString();
-        }
-        
-        void Write(hsStream* s, hsResMgr* mgr) override
-        { 
-            plMessage::IMsgWrite( s, mgr ); 
-            s->WriteSafeString(fTarget);
-            s->WriteSafeString(fString);
-        }
+        void Read(hsStream* s, hsResMgr* mgr) override;
+        void Write(hsStream* s, hsResMgr* mgr) override;
 
         ST::string  GetTarget() const { return fTarget; }
         ST::string  GetString() const { return fString; }

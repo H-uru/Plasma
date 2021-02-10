@@ -45,17 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIListElement.h"
-#include "pfGameGUIMgr.h"
 
-#include "pfGUIPopUpMenu.h"     // For skins
+#include <string_theory/format>
 
-#include "plGImage/plDynamicTextMap.h"
-#include "plGImage/hsCodecManager.h"
-#include "plPipeline/plDebugText.h"     // To quickly and hackily get the screen size in pixels
+#include "HeadSpin.h"
 #include "hsResMgr.h"
 
+#include "pfGameGUIMgr.h"
+#include "pfGUIPopUpMenu.h"     // For skins
+
+#include "plGImage/hsCodecManager.h"
+#include "plGImage/plDynamicTextMap.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //// Base Stuff //////////////////////////////////////////////////////////////

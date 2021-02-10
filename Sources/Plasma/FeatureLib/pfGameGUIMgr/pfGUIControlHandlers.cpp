@@ -45,15 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIControlHandlers.h"
+
+#include "HeadSpin.h"
+
 #include "pfGUIControlMod.h"
 #include "pfGUIDialogMod.h"
 
 #include "plMessage/plConsoleMsg.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 
 //// Writeable Stuff /////////////////////////////////////////////////////////
 
@@ -152,7 +151,7 @@ void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
     if( fCommand != nil )
     {
         plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
-        plgDispatch::MsgSend( cMsg );
+        cMsg->Send();
     }
 }
 

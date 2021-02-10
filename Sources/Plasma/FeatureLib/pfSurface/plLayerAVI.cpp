@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plLayerAVI.h"
+
 #if HS_BUILD_FOR_WIN32
 #   include "hsWindows.h"
 #   include <vfw.h>
 #endif // HS_BUILD_FOR_WIN32
 
-#include "plLayerAVI.h"
 #include "plGImage/plMipmap.h"
 
 #if HS_BUILD_FOR_WIN32

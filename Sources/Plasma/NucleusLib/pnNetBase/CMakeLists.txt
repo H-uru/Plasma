@@ -19,8 +19,6 @@ target_link_libraries(
     pnNetBase
     PUBLIC
         CoreLib
-    PRIVATE
-        string_theory
 )
 
 source_group("Header Files" FILES ${pnNetBase_HEADERS})

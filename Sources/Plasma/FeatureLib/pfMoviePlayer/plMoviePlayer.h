@@ -44,14 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plMoviePlayer_inc
 
 #include "HeadSpin.h"
+#include "hsColorRGBA.h"
 #include "plFileSystem.h"
 #include "hsPoint2.h"
-#include "hsColorRGBA.h"
-#include "plMessage/plMovieMsg.h"
+#include "hsRefCnt.h"
 
 #include <memory>
-#include <vector>
 #include <tuple>
+#include <vector>
+
+class plMessage;
 
 namespace mkvparser
 {
@@ -98,7 +100,7 @@ public:
     bool Stop();
     bool NextFrame();
 
-    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.push_back(msg); }
+    void AddCallback(plMessage* msg);
     uint32_t GetNumCallbacks() const { return 0; }
     plMessage* GetCallback(int i) const { return nullptr; }
 

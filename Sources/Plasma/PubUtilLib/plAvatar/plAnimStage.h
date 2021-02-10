@@ -47,19 +47,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_ANIM_STAGE_INC
 #define PL_ANIM_STAGE_INC
 
-#include <vector>
 #include "hsMatrix44.h"
+
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
 
-class plMessage;
 class plAGAnimInstance;
-class plArmatureMod;
-class plArmatureMod;
-class hsStream;
-class hsResMgr;
 class plArmatureBrain;
+class plArmatureMod;
 class plDebugText;
+class plMessage;
 class plMultistageBehMod;
+class hsResMgr;
+class hsStream;
 
 // PLANIMSTAGE
 // In a multi-stage behavior, each stage is specified in one of these classes

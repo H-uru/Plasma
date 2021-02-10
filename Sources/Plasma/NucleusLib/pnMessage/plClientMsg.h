@@ -42,10 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClientMsg_inc
 #define plClientMsg_inc
 
-#include "plMessage.h"
 #include "plRefMsg.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
 
 #include "pnKeyedObject/plUoid.h"
 
@@ -149,17 +146,8 @@ public:
     int8_t                    fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plRefMsg::Read(stream, mgr);
-        stream->ReadLE(&fType);
-        stream->ReadLE(&fWhich);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plRefMsg::Write(stream, mgr);
-        stream->WriteLE(fType);
-        stream->WriteLE(fWhich);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plClientMsg

@@ -1,7 +1,3 @@
-if(WIN32)
-    add_definitions(-DWIN32)
-endif(WIN32)
-
 set(pfSurface_SOURCES
     plDistOpacityMod.cpp
     plFadeOpacityLay.cpp
@@ -22,6 +18,24 @@ set(pfSurface_HEADERS
 )
 
 add_library(pfSurface STATIC ${pfSurface_SOURCES} ${pfSurface_HEADERS})
+target_link_libraries(
+    pfSurface
+    PUBLIC
+        CoreLib
+        pnModifier
+        plSurface
+    PRIVATE
+        pnNucleusInc
+        pnSceneObject
+        plAvatar
+        plDrawable
+        plGImage
+        plMessage
+        plScene
+        $<$<PLATFORM_ID:Windows>:Vfw32>
+    INTERFACE
+        pnFactory
+)
 
 source_group("Source Files" FILES ${pfSurface_SOURCES})
 source_group("Header Files" FILES ${pfSurface_HEADERS})

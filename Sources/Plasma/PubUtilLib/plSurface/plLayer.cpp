@@ -40,21 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plLayer.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "hsMatrix44.h"
-#include "hsGMatState.inl"
-#include "plMessage/plLayRefMsg.h"
-#include "plGImage/plBitmap.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
 #include "hsGDeviceRef.h"
+#include "hsGMatState.inl"
+#include "hsMatrix44.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plShader.h"
 
-#include "plPipeline.h"
-#include "plgDispatch.h"
 #include "pnMessage/plPipeResMakeMsg.h"
+
+#include "plGImage/plBitmap.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plMessage/plLayRefMsg.h"
 
 plLayer::plLayer()
 {

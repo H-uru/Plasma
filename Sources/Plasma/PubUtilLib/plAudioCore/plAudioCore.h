@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAudioCore_h
 #define _plAudioCore_h
 
+#include "HeadSpin.h"
+
 //// plWAVHeader Class ///////////////////////////////////////////////////////
 //  Just a small info class about WAV sound
 

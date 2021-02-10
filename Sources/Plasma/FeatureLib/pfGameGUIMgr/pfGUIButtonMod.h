@@ -48,12 +48,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIButtonMod_h
 #define _pfGUIButtonMod_h
 
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
+#include "hsTemplates.h"
+
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
-class plPostEffectMod;
 class plAGMasterMod;
 class pfGUIDraggableMod;
+class plKey;
+struct hsMatrix44;
+class plMessage;
+class plPostEffectMod;
 
 class pfGUIButtonMod : public pfGUIControlMod
 {

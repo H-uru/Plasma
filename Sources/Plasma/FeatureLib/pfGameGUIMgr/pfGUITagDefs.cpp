@@ -46,8 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "pfGameGUIMgr.h"
 #include "pfGUITagDefs.h"
+#include "pfGameGUIMgr.h"
+
 
 //// Tag List ////////////////////////////////////////////////////////////////
 //  Here's the actual list of tags. It's basically a list of konstants, but

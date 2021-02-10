@@ -40,25 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plFileSystem.h"
+#include "plProduct.h"
+
 #include "HeadSpin.h"
 
 #if HS_BUILD_FOR_WIN32
 #   include "hsWindows.h"
 #   include <shlobj.h>
 #else
-#   include <limits.h>
-#   include <unistd.h>
-#   include <sys/types.h>
-#   include <dirent.h>
-#   include <fnmatch.h>
 #   include <cstdlib>
 #   include <functional>
 #   include <memory>
+
+#   include <fnmatch.h>
+#   include <dirent.h>
+#   include <limits.h>
+#   include <sys/types.h>
+#   include <unistd.h>
 #endif
 #include <sys/stat.h>
 
-#include "plFileSystem.h"
-#include "plProduct.h"
+
 #include <string_theory/format>
 
 /* NOTE For this file:  Windows uses UTF-16 filenames, and does not support

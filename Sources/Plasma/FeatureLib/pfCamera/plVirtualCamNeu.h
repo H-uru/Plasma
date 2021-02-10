@@ -43,25 +43,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVirtualCam1_inc
 #define plVirtualCam1_inc
 
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "hsMatrix44.h"
+#include "HeadSpin.h"
 #include "hsBitVector.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+
+#include "pnKeyedObject/hsKeyedObject.h"
+
 #include <vector>
 
-class plPipeline;
 class plCameraModifier1;
 class plCameraBrain1;
-class plSceneObject;
-class plKey;
-class hsGMaterial;
-class plDrawableSpans;
 class plCameraProxy;
-class plSceneNode;
-class plDebugInputInterface;
-class plPlate;
-
 struct CamTrans;
 struct hsColorRGBA;
+class plDebugInputInterface;
+class plDrawableSpans;
+class hsGMaterial;
+class plKey;
+class plPipeline;
+class plPlate;
+class plSceneNode;
+class plSceneObject;
 
 #define POS_TRANS_OFF       0
 #define POS_TRANS_FIXED     1

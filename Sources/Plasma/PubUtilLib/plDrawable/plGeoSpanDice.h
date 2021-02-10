@@ -44,9 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plGeoSpanDice_inc
 
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 class plGeometrySpan;
+
+template<typename T>
+class hsTArray;
 
 class plGeoSpanDice
 {

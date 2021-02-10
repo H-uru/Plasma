@@ -45,22 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIMultiLineEditCtrl.h"
-#include "pfGameGUIMgr.h"
-#include "pfGUIUpDownPairMod.h"
-#include "pfGUIControlHandlers.h"
-#include "pfGUIDialogMod.h"
-#include "pfGUIDialogHandlers.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plGImage/plDynamicTextMap.h"
+#include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
+
+#include "pfGameGUIMgr.h"
+#include "pfGUIControlHandlers.h"
+#include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogMod.h"
+#include "pfGUIUpDownPairMod.h"
+
+#include "pnMessage/plRefMsg.h"
+
+#include "plAnimation/plAGModifier.h"
 #include "plClipboard/plClipboard.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plGImage/plDynamicTextMap.h"
+
+#include "pfMessage/pfGameGUIMsg.h"
 
 //// Tiny Helper Class ///////////////////////////////////////////////////////
 

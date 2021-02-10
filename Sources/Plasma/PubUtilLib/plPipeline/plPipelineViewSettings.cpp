@@ -41,22 +41,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plPipelineViewSettings.h"
-#include "pl3DPipeline.h"
-#include "plProfile.h"
 
+#include "pl3DPipeline.h"
+#include "plPipeDebugFlags.h"
+#include "plProfile.h"
 #include "hsResMgr.h"
 
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayerInterface.h"
-#include "plSurface/plLayer.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plSpaceTree.h"
-#include "plDrawable/plDrawableGenerator.h"
-#include "plDrawable/plSpanTypes.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plSceneObject.h"
+
+#include "plDrawable/plDrawableGenerator.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plDrawable/plSpanTypes.h"
 #include "plScene/plVisMgr.h"
-#include "plPipeDebugFlags.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
+#include "plSurface/plLayerInterface.h"
 
 plProfile_CreateTimer("Harvest", "Draw", Harvest);
 plProfile_Extern(DrawOccBuild);

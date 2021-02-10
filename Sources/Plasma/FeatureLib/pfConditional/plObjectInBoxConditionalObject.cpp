@@ -39,18 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plObjectInBoxConditionalObject.h"
-#include "plPhysical/plDetectorModifier.h"
-#include "pnModifier/plLogicModBase.h"
-#include "plMessage/plActivatorMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "pnMessage/plFakeOutMsg.h"
-#include "pnNetCommon/plNetApp.h"
-#include "plAvatar/plArmatureMod.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnMessage/plPlayerPageMsg.h"
+
 #include "plgDispatch.h"
+
+#include "pnMessage/plFakeOutMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnModifier/plLogicModBase.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "plMessage/plActivatorMsg.h"
 
 plObjectInBoxConditionalObject::plObjectInBoxConditionalObject() :
 fCurrentTrigger(nil)

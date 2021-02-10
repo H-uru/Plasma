@@ -44,10 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plIntRefMsg_inc
 
 #include "plRefMsg.h"
-#include "hsStream.h"
-
-class hsResMgr;
-
 
 class plIntRefMsg : public plRefMsg
 {
@@ -75,19 +71,8 @@ public:
     int16_t       fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr) override {
-        plRefMsg::Read(stream, mgr);
-        stream->ReadLE(&fType);
-        stream->ReadLE(&fWhich);
-        stream->ReadLE(&fIdx);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override {
-        plRefMsg::Write(stream, mgr);
-        stream->WriteLE(fType);
-        stream->WriteLE(fWhich);
-        stream->WriteLE(fIdx);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plIntRefMsg_inc

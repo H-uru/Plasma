@@ -21,33 +21,31 @@ target_link_libraries(
     pfConsole
     PUBLIC
         CoreLib
-        pfConsoleCore
         pnDispatch
-        pnFactory
         pnKeyedObject
-
+        pfConsoleCore
     PRIVATE
+        pnInputCore
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        pnTimer
+        pnUUID
         plAgeDescription
         plAgeLoader
-        pfAnimation
         plAnimation
-        pfAudio
         plAudio
         plAvatar
         plDrawable
-        pfCamera
-        pfGameGUIMgr
         plGImage
         plGLight
         plInputCore
-        pnInputCore
         plNetClient
         plNetCommon
-        pnNetCommon
         plNetGameLib
-        pfMessage
+        plNetMessage
         plMessage
-        pnMessage
         plModifier
         plParticleSystem
         plPhysical
@@ -56,16 +54,21 @@ target_link_libraries(
         pfPython
         plResMgr
         plScene
-        pnSceneObject
         plSDL
         plStatGather
         plStatusLog
         plSurface
-        pfSurface
-        pnTimer
         plUnifiedTime
         plVault
-        string_theory
+        pfAudio
+        pfAnimation
+        pfCamera
+        pfGameGUIMgr
+        pfMessage
+        pfPython
+        pfSurface
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${pfConsole_SOURCES})

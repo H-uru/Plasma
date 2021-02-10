@@ -40,29 +40,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsResMgr.h"
 #include "plNetMessage.h"
+
+#include "plCreatableIndex.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plNetCommonMessage.h"
 #include "plNetMsgVersion.h"
-#include "plCreatableIndex.h"
 
-#include "pnKeyedObject/plKeyImp.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnNetCommon/plNetSharedState.h"
-#include "pnMessage/plMessage.h"
-#include "pnNetCommon/pnNetCommon.h"
-#include "pnNetCommon/plGenericVar.h"
 #include "pnFactory/plFactory.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plMessage.h"
+#include "pnNetCommon/plGenericVar.h"
+#include "pnNetCommon/plNetSharedState.h"
+#include "pnNetCommon/pnNetCommon.h"
 
-#include "plVault/plVault.h"
 #include "plNetCommon/plNetCommon.h"
 #include "plSDL/plSDL.h"
-
-#if defined(HS_BUILD_FOR_UNIX)
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
 
 #include <algorithm>
 
@@ -402,6 +397,35 @@ void plNetMessage::ValidatePoke() const
     
 }
 
+ST::string plNetMessage::AsString() const
+{
+    const char* delim = "";
+
+    ST::string_stream ss;
+    if (GetHasPlayerID())
+    {
+        ss << delim << "p:" << GetPlayerID();
+        delim = ",";
+    }
+    if (GetHasTransactionID())
+    {
+        ss << delim << "x:" << GetTransactionID();
+        delim = ",";
+    }
+    if (GetHasAcctUUID())
+    {
+        ss << delim << "a:" << GetAcctUUID()->AsString();
+        delim = ",";
+    }
+    if (IsBitSet(kHasVersion))
+    {
+        ss << delim << "v:" << (int)fProtocolVerMajor << "." << (int)fProtocolVerMinor;
+        delim = ",";
+    }
+
+    return ss.to_string();
+}
+
 
 ////////////////////////////////////////////////////////
 // plNetMsgStream
@@ -529,6 +553,12 @@ void plNetMsgGameMessage::WriteVersion(hsStream* s, hsResMgr* mgr)
     hsRefCnt_SafeUnRef(gameMsg);
 }
 
+ST::string plNetMsgGameMessage::AsString() const
+{
+    const char* noc = plFactory::GetTheFactory()->GetNameOfClass(StreamInfo()->GetStreamType());
+    return ST::format("{} {}", plNetMsgStream::AsString(), noc ? noc : "?");
+}
+
 ////////////////////////////////////////////////////////
 // plNetMsgGameMessageDirected
 ////////////////////////////////////////////////////////
@@ -628,6 +658,11 @@ void plNetMsgObject::WriteVersion(hsStream* s, hsResMgr* mgr)
     
     // kNetMsgObjectHelper
     fObjectHelper.WriteVersion(s, mgr);
+}
+
+ST::string plNetMsgObject::AsString() const
+{
+    return ST::format("object={}, {}", fObjectHelper.GetUoid(), plNetMessage::AsString());
 }
 
 ////////////////////////////////////////////////////////
@@ -897,6 +932,13 @@ int plNetMsgPagingRoom::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     return bytes;
 }
 
+ST::string plNetMsgPagingRoom::AsString() const
+{
+    return ST::format("pageFlags:{02X}, paging {}, requestingState:{}, resetting={}",
+        fPageFlags, (fPageFlags & kPagingOut) ? "out" : "in",
+        (fPageFlags & kRequestState) ? "yes" : "no", (fPageFlags & kResetList) != 0);
+}
+
 ////////////////////////////////////////////////////////
 // plNetMsgGroupOwner
 ////////////////////////////////////////////////////////
@@ -991,6 +1033,10 @@ void plNetMsgSharedState::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE(fLockRequest);
 }
 
+ST::string plNetMsgSharedState::AsString() const
+{
+    return ST::format("lockReq={}, {}", fLockRequest, plNetMsgStreamedObject::AsString());
+}
 
 ////////////////////////////////////////////////////////
 // plNetMsgGetSharedState
@@ -1182,6 +1228,12 @@ const char *plNetMsgVoice::GetVoiceData() const
 {
     return fVoiceData.c_str();
 }
+
+ST::string plNetMsgVoice::AsString() const
+{
+    return ST::format("len={}", fVoiceData.size());
+}
+
 ////////////////////////////////////////////////////////
 
 
@@ -1305,6 +1357,12 @@ void plNetMsgLoadClone::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE(fIsInitialState);
 }
 
+ST::string plNetMsgLoadClone::AsString() const
+{
+    return ST::format("object={} initial={}, {}", fObjectHelper.GetUoid(), fIsInitialState,
+        plNetMsgGameMessage::AsString());
+}
+
 ////////////////////////////////////////////////////////////////////
 
 int plNetMsgInitialAgeStateSent::IPokeBuffer( hsStream* stream, uint32_t peekOptions )
@@ -1352,6 +1410,17 @@ int plNetMsgRelevanceRegions::IPeekBuffer( hsStream* stream, uint32_t peekOption
         bytes=stream->GetPosition();
     }
     return bytes;
+}
+
+ST::string plNetMsgRelevanceRegions::AsString() const
+{
+    ST::string b1, b2;
+    for (uint32_t i = 0; i < fRegionsImIn.GetNumBitVectors(); i++)
+        b1 += ST::format("{#x} ", fRegionsImIn.GetBitVector(i));
+    for (uint32_t i = 0; i < fRegionsICareAbout.GetNumBitVectors(); i++)
+        b2 += ST::format("{#x} ", fRegionsICareAbout.GetBitVector(i));
+    return ST::format("rgnsImIn:{}, rgnsICareAbout:{}, {}",
+        b1, b2, plNetMessage::AsString());
 }
 
 ////////////////////////////////////////////////////////////////////

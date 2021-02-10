@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGeneric.h"
 
+#include "hsStream.h"
+
 plGeneric::plGeneric(): fType(kNull), fBoolVal(false), fIntVal(0), fFloatVal(0.0) {}
 
 plGeneric::plGeneric(const bool& val): fType(kBool), fBoolVal(val), fIntVal(0), fFloatVal(0.0) {}

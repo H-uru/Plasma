@@ -49,8 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plOldAudioFileReader.h"
+
+#include "HeadSpin.h"
 
 #include "plAudioCore/plBufferedFileReader.h"
 #include "plAudioCore/plCachedFileReader.h"

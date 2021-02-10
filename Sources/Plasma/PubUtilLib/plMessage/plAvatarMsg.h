@@ -44,8 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAvatarMsg_inc
 
 #include "hsBitVector.h"
-#include "plAvatar/plArmatureMod.h"
 #include "pnMessage/plEventCallbackMsg.h"
+#include "plAvatar/plAvDefs.h"
 
 class plSceneObject;
 class hsStream;
@@ -53,6 +53,7 @@ class hsResMgr;
 class plAvTask;
 class plKey;
 class plArmatureMod;
+class plArmatureModBase;
 class plArmatureBrain;
 
 /** \Class plAvatarMsg

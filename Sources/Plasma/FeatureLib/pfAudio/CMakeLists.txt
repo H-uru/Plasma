@@ -10,11 +10,26 @@ set(pfAudio_HEADERS
 )
 
 add_library(pfAudio STATIC ${pfAudio_SOURCES} ${pfAudio_HEADERS})
-
-target_link_libraries(pfAudio
+target_link_libraries(
+    pfAudio
     PUBLIC
         CoreLib
+        pnModifier
         pfAnimation
+    PRIVATE
+        pnKeyedObject
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        plAudio
+        plAvatar
+        plMessage
+        plPipeline
+        plStatusLog
+        pfCamera
+    INTERFACE
+        pnFactory
 )
 
 source_group("Source Files" FILES ${pfAudio_SOURCES})

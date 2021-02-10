@@ -45,22 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Pch.h included more than once"
-#endif
+#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PCH_H
 
+#include <atomic>
 #include <type_traits>
 
-#include "pnUtils/pnUtils.h"
-#include "pnEncryption/plBigNum.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "pnNetCli/pnNetCli.h"
+#include "hsBitVector.h"
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
-#include "hsBitVector.h"
+
+#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnEncryption/plBigNum.h"
+#include "pnNetBase/pnNetBase.h"
+#include "pnNetCli/pnNetCli.h"
+#include "pnUtils/pnUtils.h"
 
 #define USES_PROTOCOL_CLI2AUTH
 #define USES_PROTOCOL_CLI2GAME
@@ -76,4 +76,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <malloc/malloc.h>
 #else
 #include <malloc.h>
+#endif
+
 #endif

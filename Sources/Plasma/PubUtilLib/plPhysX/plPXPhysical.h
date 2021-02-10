@@ -42,29 +42,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPXPhysical_h_inc
 #define plPXPhysical_h_inc
 
-#include "hsGeometry3.h"
-#include "hsMatrix44.h"
-#include "hsQuat.h"
-
-#include "plPhysical.h"
-#include "plPhysical/plSimDefs.h"
-#include "hsBitVector.h"
 #include <memory>
 
+#include "hsBitVector.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "plPhysical.h"
+#include "hsQuat.h"
+
+#include "pnKeyedObject/plKey.h"
+
+#include "plPhysical/plSimDefs.h"
+
+class plDrawableSpans;
+class plGenRefMsg;
+class hsGMaterial;
+class plLOSHit;
+class plMessage;
+class plPhysicalProxy;
+struct hsPlane3;
 struct hsPoint3;
 class hsQuat;
-class plPhysicalProxy;
-class plDrawableSpans;
-class hsGMaterial;
-struct hsPlane3;
-
-class plMessage;
-class plLOSHit;
-class plSimulationMsg;
-class plSDLModifier;
 class plPhysicalSndGroup;
-class plGenRefMsg;
 class plSceneObject;
+class plSDLModifier;
+class plSimulationMsg;
 class hsVectorStream;
 
 namespace physx

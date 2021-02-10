@@ -48,10 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUITextBoxMod_h
 #define _pfGUITextBoxMod_h
 
+#include <string_theory/string>
+
 #include "pfGUIControlMod.h"
 
-class plMessage;
 class hsGMaterial;
+class plMessage;
 class plTextGenerator;
 
 class pfGUITextBoxMod : public pfGUIControlMod

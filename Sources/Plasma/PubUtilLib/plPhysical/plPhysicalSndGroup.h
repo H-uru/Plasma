@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "pnKeyedObject/plUoid.h"
 
 class plSound;
 class plPhysicalSndGroup : public hsKeyedObject

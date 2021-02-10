@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
 
 #include "pnUtCoreLib.h"    // must be first in list
+#include "hsWindows.h"
 
 #ifdef HS_BUILD_FOR_MACOS
 #include <malloc/malloc.h>

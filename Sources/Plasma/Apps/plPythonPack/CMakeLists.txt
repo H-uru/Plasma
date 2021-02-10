@@ -10,18 +10,10 @@ set(plPythonPack_HEADERS
 add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
 target_link_libraries(
     plPythonPack
-    PUBLIC
+    PRIVATE
         CoreLib
         Python3::Python
-
-    PRIVATE
-        plFile
-        string_theory
 )
-
-if(USE_VLD)
-    target_link_libraries(plPythonPack PRIVATE ${VLD_LIBRARY})
-endif()
 
 install(
     TARGETS plPythonPack

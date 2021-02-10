@@ -40,9 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnNetCommon/plNetApp.h"
-
 #include "plSynchEnableMsg.h"
+
+#include "hsStream.h"
+
+#include "pnNetCommon/plNetApp.h"
 
 plSynchEnableMsg::plSynchEnableMsg(bool push, bool enable) : fPush(push), fEnable(enable)
 {

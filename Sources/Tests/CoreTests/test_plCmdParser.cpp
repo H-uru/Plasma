@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 #include <gtest/gtest.h>
+
 #include "HeadSpin.h"
 #include "plCmdParser.h"
 

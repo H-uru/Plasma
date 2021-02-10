@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plViewTransform_inc
 #define plViewTransform_inc
 
-#include "hsMatrix44.h"
 #include "hsGeometry3.h"
+#include "hsMatrix44.h"
 #include "hsPoint2.h"
 
 class hsBounds3;

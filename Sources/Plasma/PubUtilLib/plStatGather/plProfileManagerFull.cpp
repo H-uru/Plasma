@@ -40,15 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plProfileManagerFull.h"
+#include "plCalculatedProfiles.h"
 #include "plProfileManager.h"
+
+#include "hsStream.h"
 
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plPlates.h"
-
-#include "plCalculatedProfiles.h"
-
-#include "hsStream.h"
-#include "pnUtils/pnUtils.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 
 plProfileManagerFull::plProfileManagerFull() :

@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDynamicEnvMap_inc
 #define plDynamicEnvMap_inc
 
-#include "plCubicRenderTarget.h"
-#include "plScene/plRenderRequest.h"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
+#include "plCubicRenderTarget.h"
+#include "plScene/plRenderRequest.h"
 
 class plRenderRequestMsg;
 class hsStream;

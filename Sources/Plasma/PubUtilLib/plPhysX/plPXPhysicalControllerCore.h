@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <set>
 #include <tuple>
+#include <vector>
 
 #include "plAvatar/plPhysicalControllerCore.h"
 
@@ -62,6 +63,9 @@ class hsGMaterial;
 class plSceneObject;
 class plPXPhysical;
 class plCollideMsg;
+
+template<typename T>
+class hsTArray;
 
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {

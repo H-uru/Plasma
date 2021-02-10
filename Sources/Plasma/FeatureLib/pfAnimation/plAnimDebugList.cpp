@@ -39,17 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "plAnimDebugList.h"
+
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "plAnimDebugList.h"
+
 #include "pnSceneObject/plSceneObject.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGMasterMod.h"
+#include "plPipeline/plDebugText.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerAnimation.h"
-#include "plAnimation/plAGMasterMod.h"
-#include "plAnimation/plAGAnimInstance.h"
-#include "plAnimation/plAGAnim.h"
-#include "plResMgr/plKeyFinder.h"
-#include "plPipeline/plDebugText.h"
 
 void plAnimDebugList::AddObjects(const ST::string &subString)
 {

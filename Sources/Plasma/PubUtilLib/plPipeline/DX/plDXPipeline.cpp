@@ -51,103 +51,79 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "plDXPipeline.h"
+
 #include "HeadSpin.h"
 #include "hsWindows.h"
-
 #include <d3d9.h>
 #include <DirectXMath.h>
-#include "hsGDirect3D.h"
-
-#include "plPipeline/hsWinRef.h"
-
-#include "HeadSpin.h"
-#include "plDXPipeline.h"
-#include "plPipeline/plPipelineCreate.h"
-#include "plPipeline/plDebugText.h"
-#include "plDXEnumerate.h"
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "hsResMgr.h"
-#include "plPipeline/plStatusLogDrawer.h"
-#include "plQuality.h"
-
-#include "plPipeDebugFlags.h"
-
-#include "hsTemplates.h"
-//#include "hsGEnviron.h"
-#include "plProfile.h"
-#include "plMessage/plDeviceRecreateMsg.h"
-#include "pnMessage/plSelfDestructMsg.h"
-#include "pnMessage/plClientMsg.h"
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayerInterface.h"
-#include "plSurface/plLayerShadowBase.h"
-#include "plGImage/plMipmap.h"
-#include "plGImage/plCubicEnvironmap.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plGeometrySpan.h"
-#include "plDrawable/plSpaceTree.h"
-#include "plDrawable/plDrawableGenerator.h"
-#include "plDrawable/plSpanTypes.h"
-#include "plDrawable/plAccessSpan.h"
-#include "plDrawable/plAuxSpan.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "hsFastMath.h"
-#include "plGLight/plLightInfo.h"
-#include "plParticleSystem/plParticleEmitter.h"
-#include "plParticleSystem/plParticle.h"
-#include "plAvatar/plAvatarClothing.h"
-#include "plPipeline/plDebugText.h"
-#include "plPipeline/plFogEnvironment.h"
-#include "plDXTextFont.h"
-#include "plDrawable/plGBufferGroup.h"
-#include "hsTimer.h"
-#include "plgDispatch.h"
-#include "plScene/plRenderRequest.h"
-#include "plScene/plVisMgr.h"
-#include "plPipeline/plRenderTarget.h"
-#include "plPipeline/plCubicRenderTarget.h"
-#include "plPipeline/plDynamicEnvMap.h"
-#include "pfCamera/plVirtualCamNeu.h"
 
 #include "plDXBufferRefs.h"
-#include "plDXTextureRef.h"
+#include "plDXEnumerate.h"
 #include "plDXLightRef.h"
+#include "plDXPixelShader.h"
 #include "plDXRenderTargetRef.h"
+#include "plDXTextFont.h"
+#include "plDXTextureRef.h"
 #include "plDXVertexShader.h"
-#include "plDXPixelShader.h"
+#include "hsGDirect3D.h"
 
-#include "plGLight/plShadowSlave.h"
-#include "plGLight/plShadowCaster.h"
-
+#include "hsFastMath.h"
 #include "hsGMatState.inl"
-
-#include "plSurface/plShader.h"
-#include "plDXVertexShader.h"
-#include "plDXPixelShader.h"
-
-#include "pnMessage/plPipeResMakeMsg.h"
+#include "plPipeDebugFlags.h"
 #include "plPipeResReq.h"
-#include "pnNetCommon/plNetApp.h"   // for dbg logging
-#include "pfCamera/plVirtualCamNeu.h"
-#include "pfCamera/plCameraModifier.h"
-#include "plResMgr/plLocalization.h"
-
-
-// mf horse - test hack, nuke this later
-#include "plSurface/plLayerDepth.h"
-
-#include "plGImage/hsCodecManager.h"
-//#include "plGImage/hsDXTDirectXCodec.h"
-
-#ifdef HS_DEBUGGING
-// This is so VC++ will let us view the contents of plIcicle::fOwnerKey
-#include "pnKeyedObject/plKey.h"
-#endif
-
-#include "plPipeline/plCullTree.h"
-
+#include "plProfile.h"
+#include "plQuality.h"
+#include "hsResMgr.h"
+#include "hsTemplates.h"
+#include "hsTimer.h"
 #include "plTweak.h"
+
+// Project local
+#include "plPipeline/plCubicRenderTarget.h"
+#include "plPipeline/plCullTree.h"
+#include "plPipeline/plDebugText.h"
+#include "plPipeline/plDynamicEnvMap.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/plFogEnvironment.h"
+#include "plPipeline/plPipelineCreate.h"
+#include "plPipeline/plRenderTarget.h"
+#include "plPipeline/plStatusLogDrawer.h"
+#include "plPipeline/hsWinRef.h"
+
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plPipeResMakeMsg.h"
+#include "pnNetCommon/plNetApp.h"   // for dbg logging
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plAvatar/plAvatarClothing.h"
+#include "plDrawable/plAccessSpan.h"
+#include "plDrawable/plAuxSpan.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plGBufferGroup.h"
+#include "plDrawable/plGeometrySpan.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plDrawable/plSpanTypes.h"
+#include "plGImage/hsCodecManager.h"
+#include "plGImage/plCubicEnvironmap.h"
+#include "plGImage/plMipmap.h"
+#include "plGLight/plLightInfo.h"
+#include "plGLight/plShadowCaster.h"
+#include "plGLight/plShadowSlave.h"
+#include "plMessage/plDeviceRecreateMsg.h"
+#include "plResMgr/plLocalization.h"
+#include "plScene/plRenderRequest.h"
+#include "plScene/plVisMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerDepth.h" // mf horse - test hack, nuke this later
+#include "plSurface/plLayerInterface.h"
+#include "plSurface/plLayerShadowBase.h"
+#include "plSurface/plShader.h"
+
+#include "pfCamera/plCameraModifier.h"
+#include "pfCamera/plVirtualCamNeu.h"
 
 #include <algorithm>
 
@@ -2011,7 +1987,7 @@ bool plDXPipeline::IResetDevice()
             /// Broadcast a message letting everyone know that we were recreated and that
             /// all device-specific stuff needs to be recreated
             plDeviceRecreateMsg* clean = new plDeviceRecreateMsg(this);
-            plgDispatch::MsgSend(clean);
+            clean->Send();
         }
         fDevWasLost = true;
         fDeviceLost = false;
@@ -2280,7 +2256,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     /// Broadcast a message letting everyone know that we were recreated and that
     /// all device-specific stuff needs to be recreated
     plDeviceRecreateMsg* clean = new plDeviceRecreateMsg(this);
-    plgDispatch::MsgSend(clean);
+    clean->Send();
 }
 
 
@@ -3005,7 +2981,7 @@ bool plDXPipeline::BeginRender()
         /// Broadcast a message letting everyone know that we were recreated and that
         /// all device-specific stuff needs to be recreated
 //      plDeviceRecreateMsg* clean = new plDeviceRecreateMsg(this);
-//      plgDispatch::MsgSend(clean);
+//      clean->Send();
 
         fDevWasLost = false;
     }

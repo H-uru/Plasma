@@ -46,38 +46,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#include <cmath>
-
 // singular
 #include "plAvBrainSwim.h"
 
 // local
-#include "plArmatureMod.h"
-#include "plAvBehaviors.h"
-#include "plAvBrainHuman.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAvBrainDrive.h"
-#include "plAnimation/plMatrixChannel.h"
-#include "plSwimRegion.h"
-#include "plAvatarTasks.h"
 #include "plArmatureEffects.h"
+#include "plArmatureMod.h"
+#include "plAvatarTasks.h"
+#include "plAvBehaviors.h"
+#include "plAvBrainDrive.h"
+#include "plAvBrainHuman.h"
 #include "plAvTaskBrain.h"
+#include "plPhysicalControllerCore.h"
+#include "plSwimRegion.h"
+
 // global
 #include "hsQuat.h"
 #include "hsTimer.h"
-#include "plPhysical.h"
-#include "plPhysicalControllerCore.h"
+
+#include <cmath>
+
 // other
+#include "pnMessage/plCameraMsg.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plAGModifier.h"
+#include "plAnimation/plMatrixChannel.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plLOSHitMsg.h"
+#include "plMessage/plLOSRequestMsg.h"
+#include "plMessage/plSwimMsg.h"
 #include "plPhysical/plCollisionDetector.h"
 #include "plPipeline/plDebugText.h"
 
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plSwimMsg.h"
-#include "plMessage/plLOSRequestMsg.h"
-#include "plMessage/plLOSHitMsg.h"
-#include "plMessage/plInputEventMsg.h"
-#include "plMessage/plSimStateMsg.h"
-#include "pnMessage/plCameraMsg.h"
 #include "pfMessage/plArmatureEffectMsg.h"
 
 class plSwimBehavior : public plArmatureBehavior

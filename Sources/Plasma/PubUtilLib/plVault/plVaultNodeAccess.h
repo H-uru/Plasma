@@ -51,6 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
 
 #include "hsGeometry3.h"
+#include "hsRefCnt.h"
+
+#include "pnNetProtocol/pnNetProtocol.h"
+
+#include <string_theory/string>
 
 /*****************************************************************************
 *

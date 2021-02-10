@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plParticleUpdateMsg_inc
 
 #include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
-#include "hsStream.h"
 #include "hsBitVector.h"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -92,21 +90,8 @@ public:
     float GetParamValue() { return fParamValue; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-
-        fParamID = stream->ReadLE32();
-        stream->ReadLE(&fParamValue);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-
-        stream->WriteLE32(fParamID);
-        stream->WriteLE(fParamValue);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,22 +114,8 @@ public:
     GETINTERFACE_ANY( plParticleTransferMsg, plMessage );
 
     // IO
-    void Read(hsStream *stream, hsResMgr *mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-        
-        fSysSOKey = mgr->ReadKey(stream);
-        fNumToTransfer = stream->ReadLE16();
-    }
-    
-    void Write(hsStream *stream, hsResMgr *mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        
-        mgr->WriteKey(stream, fSysSOKey);
-        stream->WriteLE16(fNumToTransfer);
-    }
-    
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 
@@ -173,21 +144,9 @@ public:
     CLASSNAME_REGISTER( plParticleKillMsg );
     GETINTERFACE_ANY( plParticleKillMsg, plMessage );
 
-    // Local only 
-    void Read(hsStream *stream, hsResMgr *mgr) override
-    {
-        plMessage::IMsgRead(stream,mgr);
-        fNumToKill = stream->ReadLEScalar();
-        fTimeLeft = stream->ReadLEScalar();
-        stream->ReadLE(&fFlags);
-    }
-    void Write(hsStream *stream, hsResMgr *mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        stream->WriteLEScalar(fNumToKill);
-        stream->WriteLEScalar(fTimeLeft);
-        stream->WriteLE(fFlags);
-    }
+    // Local only
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 //////////////////////////////////////////////////////////////////////////////

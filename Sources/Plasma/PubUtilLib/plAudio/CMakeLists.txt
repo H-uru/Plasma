@@ -39,19 +39,29 @@ add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})
 
 target_link_libraries(plAudio
     PUBLIC
-        OpenAL::OpenAL
         CoreLib
+        OpenAL::OpenAL
+        pnKeyedObject
+        pnModifier
+        pnNetCommon
         plAnimation
         plAudioCore
         plMessage
+    PRIVATE
+        pnMessage
+        pnNucleusInc
+        pnSceneObject
+        plAudible
+        plDrawable
+        plIntersect
+        plMessage
+        plPipeline
+        plStatusLog
+        $<$<BOOL:${USE_OPUS}>:Opus::opus>
+        $<$<BOOL:${USE_SPEEX}>:Speex::speex>
+    INTERFACE
+        pnFactory
 )
-
-if(USE_OPUS)
-    target_link_libraries(plAudio PRIVATE Opus::opus)
-endif()
-if(USE_SPEEX)
-    target_link_libraries(plAudio PRIVATE Speex::speex)
-endif()
 
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})

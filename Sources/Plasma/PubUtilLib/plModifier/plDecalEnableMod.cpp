@@ -40,8 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include "HeadSpin.h"
 #include "plDecalEnableMod.h"
 #include "plMessage/plDynaDecalEnableMsg.h"
 #include "plMessage/plCollideMsg.h"

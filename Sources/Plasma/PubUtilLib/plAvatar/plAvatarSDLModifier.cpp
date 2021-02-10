@@ -40,19 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plAvatarSDLModifier.h"
-#include "plArmatureMod.h"
 
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvBrainGeneric.h"
-#include "plAvatar/plAvBrainClimb.h"
-#include "plAvatar/plAvBrainDrive.h"
-#include "plAvatar/plAnimStage.h"
-#include "plAvatar/plPhysicalControllerCore.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "plArmatureMod.h"
+#include "plAvBrainGeneric.h"
+#include "plAvBrainClimb.h"
+#include "plAvBrainDrive.h"
+#include "plAnimStage.h"
+#include "plPhysicalControllerCore.h"
+
 #include "pnMessage/plSDLModifierMsg.h"
-#include "plSDL/plSDL.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plNetClient/plNetClientMgr.h"
-#include "pnAsyncCore/pnAsyncCore.h"
+#include "plSDL/plSDL.h"
 
 // static vars
 char    plAvatarPhysicalSDLModifier::kStrPosition[] = "position";
@@ -546,7 +546,7 @@ bool plAvatarSDLModifier::IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, 
 void plAvatarSDLModifier::IPutBaseAvatarStateIn(plArmatureMod *avMod, plStateDataRecord* dstState)
 {
     if (avMod->GetStealthLevel() > 0)
-        ::LogMsg(kLogDebug, "plAvatarSDLModifier::IPutBaseAvatarStateIn - Stealth level being set greater than zero");
+        plNetClientMgr::StaticDebugMsg("plAvatarSDLModifier::IPutBaseAvatarStateIn - Stealth level being set greater than zero");
     dstState->FindVar(kStrInvisibilityLevel)->Set(avMod->GetStealthLevel());
 }
 
@@ -560,7 +560,7 @@ void plAvatarSDLModifier::ISetBaseAvatarStateFrom(plArmatureMod *avMod, const pl
         srcState->FindVar(kStrInvisibilityLevel)->Get(&invisLevel);
 
         if (invisLevel > 0)
-            ::LogMsg(kLogDebug, "plAvatarSDLModifier::ISetBaseAvatarStateFrom - Stealth level greater than zero");
+            plNetClientMgr::StaticDebugMsg("plAvatarSDLModifier::ISetBaseAvatarStateFrom - Stealth level greater than zero");
         plNetClientMgr::GetInstance()->MakeCCRInvisible(avMod->GetTarget(0)->GetKey(), invisLevel);
     }
 }

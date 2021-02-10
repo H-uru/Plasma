@@ -41,16 +41,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plKeyFinder.h"
 
+#include "plCreatableIndex.h"
 #include "hsResMgr.h"
+
+#include "plPageInfo.h"
+#include "plRegistryHelpers.h"
+#include "plRegistryKeyList.h"
+#include "plRegistryNode.h"
 #include "plResManager.h"
 
-#include "plRegistryHelpers.h"
-#include "plRegistryNode.h"
-#include "plRegistryKeyList.h"
-#include "plPageInfo.h"
 #include "pnFactory/plFactory.h"
-
-#include "plCreatableIndex.h"
+#include "pnKeyedObject/plKey.h"
 
 plResManager* IGetResMgr() { return (plResManager*)hsgResMgr::ResMgr(); }
 

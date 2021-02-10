@@ -39,15 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plSynchedObject.h"
+
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plNetApp.h"
 #include "plNetGroup.h"
-#include "hsResMgr.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plSetNetGroupIDMsg.h"
 
+#ifdef USE_DIRTY_NOTIFIERS
 #include <algorithm>
+#endif
 
 // statics
 plSynchedObject* plSynchedObject::fStaticSynchedObj=nil;

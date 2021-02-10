@@ -39,40 +39,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include <cmath>
 
 #include "plCameraBrain.h"
-#include "hsTimer.h"
-#include "hsResMgr.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
 #include "plRefFlags.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+
+#include <cmath>
+
 #include "plCameraModifier.h"
 #include "plVirtualCamNeu.h"
-#include "plgDispatch.h"
-#include "plInterp/plController.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plSimulationInterface.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "plScene/plSceneNode.h"
+
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plCameraMsg.h"
-#include "pnMessage/plPlayerPageMsg.h"
 #include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plPlayerPageMsg.h"
+#include "pnMessage/plRefMsg.h"
 #include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/plNetApp.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plInputManager.h"
+#include "plInterp/plController.h"
+#include "plMessage/plAvatarMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLOSRequestMsg.h"
 #include "plMessage/plLOSHitMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "pnKeyedObject/plKey.h"
-#include "plInputCore/plInputDevice.h"
-#include "plInputCore/plInputManager.h"
-#include "pnNetCommon/plNetApp.h"
+#include "plScene/plSceneNode.h"
+
 #include "pfAnimation/plLineFollowMod.h"
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "plNetClient/plNetClientMgr.h"
 
 bool plCameraBrain1_FirstPerson::fDontFade = false;
 float plCameraBrain1::fFallAccel         = 20.0f;
@@ -603,7 +608,7 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
     plPlayerPageMsg* pPMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pPMsg)
     {
-        if (pPMsg->fPlayer == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
+        if (pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey())
         {
             if (pPMsg->fUnload)
             {
@@ -959,17 +964,17 @@ plCameraBrain1_Avatar::plCameraBrain1_Avatar(plCameraModifier1* pMod)
 // destructor
 plCameraBrain1_Avatar::~plCameraBrain1_Avatar()
 {
-    if (!plNetClientMgr::GetInstance())
+    if (!plNetClientApp::GetInstance())
         return;
         
     if (fFaded)
     {
         plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
         pMsg->SetFadeOut(false);
-        pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+        pMsg->SetSubjectKey(plNetClientApp::GetInstance()->GetLocalPlayerKey());
         pMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
-        pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+        pMsg->AddReceiver(plNetClientApp::GetInstance()->GetLocalPlayerKey());
         plgDispatch::MsgSend(pMsg);
     }
 
@@ -1190,8 +1195,8 @@ bool plCameraBrain1_Avatar::MsgReceive(plMessage* msg)
             {
                 SetSubject((plSceneObject*)pRefMsg->GetRef());
                 plSceneObject* avSO = nil;
-                if (plNetClientMgr::GetInstance())
-                    avSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
+                if (plNetClientApp::GetInstance())
+                    avSO = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayer());
 
                 if (GetSubject() == avSO)
                 {
@@ -1250,7 +1255,7 @@ void plCameraBrain1_Avatar::Read(hsStream* stream, hsResMgr* mgr)
     
     if (fFlags.IsBitSet(kFollowLocalAvatar) && GetSubject())
     {
-        plSceneObject* avSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
+        plSceneObject* avSO = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayer());
         if (GetSubject() == avSO)
         {
             plArmatureMod* avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
@@ -1775,7 +1780,7 @@ bool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
         }
     }
     plPlayerPageMsg* pPMsg = plPlayerPageMsg::ConvertNoRef(msg);
-    if (pPMsg && pPMsg->fPlayer == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
+    if (pPMsg && pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey())
     {
         if (pPMsg->fUnload)
         {

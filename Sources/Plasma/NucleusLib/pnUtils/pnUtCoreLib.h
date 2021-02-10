@@ -49,8 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTCORELIB_H
 
 #include "HeadSpin.h"
-
-#include "hsWindows.h"
 #include "hsStream.h"
 
 #endif

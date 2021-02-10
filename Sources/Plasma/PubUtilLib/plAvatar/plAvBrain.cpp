@@ -41,21 +41,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 // local
 #include "plAvBrain.h"
-#include "plAvBehaviors.h"
-#include "plArmatureMod.h"
-#include "plAvatarMgr.h"
-#include "plAvatarTasks.h"
 
-// global
-#include "hsGeometry3.h"
-#include "hsQuat.h"
+#include "plArmatureMod.h"
+#include "plAvatarTasks.h"
+#include "plAvBehaviors.h"
 
 // other
 #include "pnSceneObject/plSceneObject.h"
-#include "plPipeline/plDebugText.h"
 
-// messages
 #include "plMessage/plAvatarMsg.h"
+#include "plPipeline/plDebugText.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////

@@ -48,20 +48,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-
 #include "plWin32GroupedSound.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plDSoundBuffer.h"
 
 #include "plAudioSystem.h"
 #include "plAudioCore/plSoundBuffer.h"
 #include "plAudioCore/plSoundDeswizzler.h"
-#include "plgDispatch.h"
+
 #include "pnMessage/plSoundMsg.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "plProfile.h"
-#include "hsResMgr.h"
 
 plProfile_Extern( MemSounds );
 plProfile_Extern( StaticSndShoveTime );

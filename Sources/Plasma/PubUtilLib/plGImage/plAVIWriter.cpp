@@ -57,6 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnDispatch/plDispatch.h"
 #include "pnKeyedObject/plFixedKey.h"
 
+#include "plProfile.h"
+plProfile_CreateTimer("AviCapture", "RenderSetup", AviCapture);
+
 bool plAVIWriter::fInitialized = false;
 
 #if HS_BUILD_FOR_WIN32
@@ -143,11 +146,6 @@ void plAVIWriterImp::Shutdown()
     UnRegisterAs(kAVIWriter_KEY);
     SetKey(nil);
 }
-
-
-
-#include "plProfile.h"
-plProfile_CreateTimer("AviCapture", "RenderSetup", AviCapture);
 
 bool plAVIWriterImp::MsgReceive(plMessage* msg)
 {

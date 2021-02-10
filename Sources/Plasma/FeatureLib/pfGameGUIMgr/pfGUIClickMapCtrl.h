@@ -48,6 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIClickMapCtrl_h
 #define _pfGUIClickMapCtrl_h
 
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
+
 #include "pfGUIControlMod.h"
 
 class plMessage;

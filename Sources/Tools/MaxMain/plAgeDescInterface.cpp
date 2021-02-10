@@ -42,9 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsTemplates.h"
-#include "hsWindows.h"
 
-#include <max.h>
+#include "MaxAPI.h"
 
 #include "resource.h"
 
@@ -196,12 +195,12 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         if( fBoldFont == nil )
         {
             HFONT origFont = (HFONT)SendMessage( hDlg, WM_GETFONT, 0, 0 );
-            LOGFONT origInfo, newInfo;
-            GetObject( origFont, sizeof( origInfo ), &origInfo );
+            LOGFONTA origInfo, newInfo;
+            GetObjectA( origFont, sizeof( origInfo ), &origInfo );
             memcpy( &newInfo, &origInfo, sizeof( newInfo ) );
             newInfo.lfWeight = FW_BOLD;
 
-            fBoldFont = CreateFontIndirect( &newInfo );
+            fBoldFont = CreateFontIndirectA( &newInfo );
         }
 
         if( fHiliteBrush == nil )

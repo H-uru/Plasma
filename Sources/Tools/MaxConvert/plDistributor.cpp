@@ -44,12 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsWindows.h"
 
-#include <commdlg.h>
-#include <max.h>
-#include <stdmat.h>
-#include <bmmlib.h>
-#include <iparamb2.h>
-#include <meshdlib.h> 
+#include "MaxMain/MaxAPI.h"
 
 #include "MaxExport/plExportProgressBar.h"
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"

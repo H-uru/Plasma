@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plFogEnvironment_h
 #define _plFogEnvironment_h
 
-#include "pnKeyedObject/hsKeyedObject.h"
 #include "HeadSpin.h"
 #include "hsColorRGBA.h"
 
+#include "pnKeyedObject/hsKeyedObject.h"
 
 
 //// plFogEnvironment Class Definition ////////////////////////////////////////////

@@ -48,9 +48,8 @@ class plBitmap;
 class plErrorMsg;
 class plKey;
 class plLocation;
-class plMipmap;
 class hsMaxLayerBase;
-
+class plMipmap;
 
 class plBitmapData
 {

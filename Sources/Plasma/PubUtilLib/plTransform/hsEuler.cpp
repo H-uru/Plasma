@@ -45,11 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // See Gems IV, Ken Shoemake
 //////////////////////////////////////////////////////////////////////////
 //
+
+#include "hsEuler.h"
+
+#include "hsMatrix44.h"
+#include "hsQuat.h"
+
 #include <cfloat>  // for FLT_EPSILON
 #include <cmath>
-#include "hsEuler.h"
-#include "hsQuat.h"
-#include "hsMatrix44.h"
 
 enum QuatPart 
 {

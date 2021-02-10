@@ -253,8 +253,54 @@ set(pfPython_GLUE
 )
 
 add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE})
+target_link_libraries(
+    pfPython
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+    PRIVATE
+        pnEncryption
+        pnInputCore
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        pnSceneObject
+        pnUUID
+        plAgeDescription
+        plAnimation
+        plAudio
+        plAvatar
+        plDrawable
+        plFile
+        plGImage
+        plGLight
+        plInputCore
+        plModifier
+        plNetClient
+        plNetClientComm
+        plNetCommon
+        plNetTransport
+        plPipeline
+        plResMgr
+        plSDL
+        plStatusLog
+        plSurface
+        plVault
+        pfCamera
+        pfCharacter
+        pfGameGUIMgr
+        pfGameScoreMgr
+        pfJournalBook
+        pfLocalizationMgr
+        pfMessage
+        Python3::Python
+    INTERFACE
+        pnFactory
+)
+
 plasma_optimize_target(pfPython UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
-target_link_libraries(pfPython Python3::Python)
 
 source_group("Source Files" FILES ${pfPython_SOURCES})
 source_group("Header Files" FILES ${pfPython_HEADERS})

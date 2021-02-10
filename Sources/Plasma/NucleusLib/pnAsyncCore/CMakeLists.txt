@@ -22,11 +22,11 @@ target_link_libraries(
         CoreLib
         pnNetCommon
         pnUUID
-        string_theory
     PRIVATE
-        plStatusLog # :(
+        $<$<PLATFORM_ID:Windows>:pnAsyncCoreExe> # Implementation (Windows only) is here.
         pnNetBase
         pnUtils
+        plStatusLog # :(
 )
 
 source_group("Header Files" FILES ${pnAsyncCore_HEADERS})

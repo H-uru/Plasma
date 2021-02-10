@@ -39,11 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plClientGuid.h"
-#include "hsStream.h"
 #include "plNetCommon.h"
+
+#include "hsStream.h"
+
 #include "pnMessage/plMessage.h"
-#include "plSockets/plNet.h"
 
 plClientGuid::plClientGuid()
 :fPlayerID(0)

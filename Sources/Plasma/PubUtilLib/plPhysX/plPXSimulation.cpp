@@ -49,8 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSimulationMgr.h"
 
 #include "plProfile.h"
+
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSimulationInterface.h"
+
 #include "plStatusLog/plStatusLog.h"
 
 // ==========================================================================

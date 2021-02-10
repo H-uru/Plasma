@@ -1,13 +1,6 @@
-if(WIN32)
-    option(SoundDecompress_MOULa_Mode "Output wav files for MOULa" OFF)
-    if(SoundDecompress_MOULa_Mode)
-        set(OUTPUT_WAV_FILES ON)
-    endif()
-else(WIN32)
-    set(OUTPUT_WAV_FILES OFF)
-endif(WIN32)
+cmake_dependent_option(SoundDecompress_MOULa_Mode "Output wav files for MOULa" OFF [[WIN32]] OFF)
+set(OUTPUT_WAV_FILES ${SoundDecompress_MOULa_Mode})
 configure_file(config.h.in config.h @ONLY)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(SoundDecompress_SOURCES
     plAllCreatables.cpp
@@ -23,16 +16,24 @@ if(SoundDecompress_MOULa_Mode)
 endif()
 
 add_executable(SoundDecompress ${SoundDecompress_SOURCES})
-target_link_libraries(SoundDecompress CoreLib plResMgr plAudioCore)
-target_link_libraries(SoundDecompress ${STRING_THEORY_LIBRARIES})
+target_link_libraries(
+    SoundDecompress
+    PRIVATE
+        CoreLib
+        pnDispatch
+        pnFactory
+        pnKeyedObject
+        pnMessage
+        pnModifier
+        pnNetCommon
+        pnNucleusInc
+        plAgeDescription
+        plAudioCore
+        plMessage
+        plResMgr
+)
 
-if(SoundDecompress_MOULa_Mode)
-    target_link_libraries(SoundDecompress ${DirectX_LIBRARIES})
-endif()
-
-if(USE_VLD)
-    target_link_libraries(SoundDecompress ${VLD_LIBRARY})
-endif()
+target_include_directories(SoundDecompress PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 source_group("Source Files" FILES ${SoundDecompress_SOURCES})
 source_group("Header Files" FILES ${SoundDecompress_HEADERS})

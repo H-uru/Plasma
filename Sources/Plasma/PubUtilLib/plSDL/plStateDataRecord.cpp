@@ -39,13 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <algorithm>
-#include "hsTimer.h"
-#include "hsStream.h"
 #include "plSDL.h"
 
-#include "plNetMessage/plNetMessage.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+
 #include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/pnNetCommon.h"
+
+#include "plNetMessage/plNetMessage.h"
 
 const ST::string plSDL::kAgeSDLObjectName = ST_LITERAL("AgeSDLHook");
 
@@ -119,9 +121,8 @@ void plStateDataRecord::SetDescriptor(const ST::string& name, int version)
 
 void plStateDataRecord::IDeleteVarsList(VarsList& vars)
 {
-    std::for_each( vars.begin(), vars.end(),
-        [](plStateVariable* var) { delete var; }
-    );
+    for (plStateVariable* var : vars)
+        delete var;
     vars.clear();
 }
 

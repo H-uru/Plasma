@@ -39,39 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPhysicalControllerCore.h"
-
-#include "HeadSpin.h"
-#include <cmath>
 
 // singular
 #include "plAvLadderModifier.h"
 
+// global
+#include "HeadSpin.h"
+#include "hsStream.h"
+#include "plCreatableIndex.h"
+#include "plgDispatch.h"
+
+#include <cmath>
+
 // local
+#include "plAnimStage.h"
 #include "plArmatureMod.h"
 #include "plAvatarMgr.h"
 #include "plAvBrainGeneric.h"
-#include "plAnimation/plAGAnim.h"
-#include "plAnimStage.h"
+#include "plAvBrainHuman.h"
+#include "plPhysicalControllerCore.h"
 
-// global
-#include "plCreatableIndex.h"
-// #include "plgDispatch.h"                     // Message Dependencies
-#include "hsStream.h"
-
-//other
-#include "plMessage/plCollideMsg.h"
-#include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-#include "plStatusLog/plStatusLog.h"
+// other
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plEnableMsg.h"
-
+#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plTimeMsg.h"
-#include "plgDispatch.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "plAvatar/plAvBrainHuman.h"
+
+#include "plAnimation/plAGAnim.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plCollideMsg.h"
 #include "plModifier/plDetectorLog.h"
 
 enum NotifyType

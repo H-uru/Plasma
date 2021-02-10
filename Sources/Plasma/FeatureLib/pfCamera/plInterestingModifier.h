@@ -43,13 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterestingModifier_inc
 #define plInterestingModifier_inc
 
-#include "pnModifier/plSingleModifier.h"
-#include "pnMessage/plMessage.h"
-#include "hsResMgr.h"
+#include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "hsStream.h"
 
-class plInputEventMsg;
+#include "pnModifier/plSingleModifier.h"
 
 class plInterestingModifier : public plSingleModifier
 {

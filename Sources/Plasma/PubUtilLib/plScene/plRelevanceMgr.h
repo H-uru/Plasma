@@ -42,14 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRelevanceMgr_inc
 #define plRelevanceMgr_inc
 
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "hsGeometry3.h"
 #include "hsTemplates.h"
-#include "hsBitVector.h"
 
+#include "pnKeyedObject/hsKeyedObject.h"
 
+class hsBitVector;
+struct hsPoint3;
 class plRelevanceRegion;
 class hsStream;
+
+namespace ST { class string; }
 
 class plRelevanceMgr : public hsKeyedObject
 {

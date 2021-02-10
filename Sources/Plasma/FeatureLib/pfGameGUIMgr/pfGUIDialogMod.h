@@ -48,17 +48,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDialogMod_h
 #define _pfGUIDialogMod_h
 
-
-#include "pnModifier/plSingleModifier.h"
-#include "pfGameGUIMgr.h"
 #include "hsMatrix44.h"
+#include "hsTemplates.h"
 
-class plMessage;
-class plPostEffectMod;
+#include "pfGameGUIMgr.h"
+
+#include "pnKeyedObject/plKey.h"
+#include "pnModifier/plSingleModifier.h"
+
+class pfGUIColorScheme;
 class pfGUIControlMod;
 class pfGUIDialogProc;
 class pfGUIListElement;
-class pfGUIColorScheme;
+class plMessage;
+class plPostEffectMod;
 
 class pfGUIDialogMod : public plSingleModifier
 {

@@ -49,13 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pnKeyedObject/plKey.h"
-#include "hsWindows.h"
-#include <windowsx.h>
-#include "../resource.h"
 
-#include "MaxMain/MaxCompat.h"
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
+
+#include "pnKeyedObject/plKey.h"
+
+#include "../resource.h"
 
 #include "plAnimStealthNode.h"
 #include "plPassMtlBase.h"

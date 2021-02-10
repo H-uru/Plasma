@@ -42,7 +42,7 @@ Mead, WA   99021
 
 #include "HeadSpin.h"
 
-#include <max.h>
+#include "MaxAPI.h"
 
 #include <iterator>
 

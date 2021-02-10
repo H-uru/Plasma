@@ -39,11 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plSpawnPointInfo.h"
-#include "pnMessage/plMessage.h"
+
 #include "hsStream.h"
 #include "hsBitVector.h"
 
+#include "pnMessage/plMessage.h"
 
 const plSpawnPointInfo kDefaultSpawnPoint( kDefaultSpawnPtTitle, kDefaultSpawnPtName );
 

@@ -40,9 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plVisMgr.h"
-
 #include "plVisRegion.h"
 
 hsBitVector plVisMgr::fIdxSet;

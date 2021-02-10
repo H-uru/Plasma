@@ -44,9 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAnimCmdMsg_inc
 
 #include "pnMessage/plMessageWithCallbacks.h"
+
 #include "hsBitVector.h"
+#include <string_theory/string>
 
 class plAGAnimInstance;
+class plKey;
 
 class plAnimCmdMsg : public plMessageWithCallbacks
 {

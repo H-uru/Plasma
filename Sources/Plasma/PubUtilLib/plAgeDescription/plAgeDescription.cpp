@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFile/plInitFileReader.h"
 #include "plFile/plEncryptedStream.h"
+#include "pnKeyedObject/plUoid.h"
 #include "hsStringTokenizer.h"
 
 #include <functional>

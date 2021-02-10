@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plCmdParser.h"
 
-#include <vector>
+#include "HeadSpin.h"
+
 #include <algorithm>
 #include <regex>
+#include <vector>
 
 #define  WHITESPACE     " \"\t\r\n\x1A"
 #define  FLAGS          "-/"

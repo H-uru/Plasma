@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plNotifyMsg_h_
 
 #include "plMessage.h"
-#include "hsResMgr.h"
 
 #include "hsGeometry3.h"
 

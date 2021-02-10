@@ -48,17 +48,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIMultiLineEditCtrl_h
 #define _pfGUIMultiLineEditCtrl_h
 
-#include "pfGUIControlMod.h"
+#include "hsBounds.h"
 #include "hsTemplates.h"
+
+#include <string_theory/string>
+
+#include "pfGUIControlMod.h"
 
 #include "plInputCore/plInputDevice.h"
 
-class plMessage;
 class hsGMaterial;
-class plTextGenerator;
-class pfMLScrollProc;
 class pfGUIValueCtrl;
-
+class plMessage;
+class pfMLScrollProc;
+class plTextGenerator;
 struct plUndoAction;
 
 class pfGUIMultiLineEditProc

@@ -65,11 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsWindows.h"
 
-#include <Max.h>
-#include <stdmat.h>
-#include <istdplug.h>
-#include <iparamb2.h>
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "plLayerConverter.h"
 

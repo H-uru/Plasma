@@ -40,24 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plExcludeRegionModifier.h"
-#include "plMessage/plExcludeRegionMsg.h"
-#include "hsResMgr.h"
-#include "pnSceneObject/plCoordinateInterface.h"
 #include "plDetectorLog.h"
 
-// For MsgReceive
-#include "plMessage/plCollideMsg.h"
-#include "pnSceneObject/plSceneObject.h"
-
-// For IClear and IRelease
-#include "plMessage/plAvatarMsg.h"
 #include "plPhysical.h"
-#include "plPhysical/plSimDefs.h"
+#include "hsResMgr.h"
 
-#include "plAvatar/plAvBrainGeneric.h"
-
-#include "plSDL/plSDL.h"
 #include "pnMessage/plSDLModifierMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plSimulationInterface.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainGeneric.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plCollideMsg.h"
+#include "plMessage/plExcludeRegionMsg.h"
+#include "plPhysical/plSimDefs.h"
+#include "plSDL/plSDL.h"
 
 static plPhysical* GetPhysical(plSceneObject* obj)
 {

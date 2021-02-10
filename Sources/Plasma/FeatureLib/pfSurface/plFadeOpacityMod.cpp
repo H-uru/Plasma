@@ -40,31 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plFadeOpacityMod.h"
+
+#include "HeadSpin.h"
+#include "hsBounds.h"
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
 
 #include "plFadeOpacityLay.h"
 
-#include "plMessage/plRenderMsg.h"
-#include "plMessage/plMatRefMsg.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plSurface/hsGMaterial.h"
-
-#include "plDrawable/plVisLOSMgr.h"
 #include "plDrawable/plAccessGeometry.h"
 #include "plDrawable/plAccessSpan.h"
 #include "plDrawable/plDrawableSpans.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plDrawInterface.h"
-
+#include "plDrawable/plVisLOSMgr.h"
+#include "plMessage/plRenderMsg.h"
+#include "plMessage/plMatRefMsg.h"
 #include "plScene/plVisMgr.h"
-
-#include "plgDispatch.h"
-#include "plPipeline.h"
-#include "hsBounds.h"
-#include "hsTimer.h"
-#include "hsResMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 /*
     curr = (t - t0) / fadeUp;

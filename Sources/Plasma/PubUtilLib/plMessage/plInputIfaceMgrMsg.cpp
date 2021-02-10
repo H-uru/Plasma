@@ -40,9 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsResMgr.h"
-
 #include "plInputIfaceMgrMsg.h"
+
+#include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "plInputCore/plInputInterface.h"
 
 plInputIfaceMgrMsg::~plInputIfaceMgrMsg()

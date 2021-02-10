@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plShadowSlave.h"
 #include "plPerspDirSlave.h"
 #include "plShadowCaster.h"
+
+#include "plIntersect/plVolumeIsect.h"
 #include "plMessage/plShadowCastMsg.h"
 
 #include "plLightInfo.h"

@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plParticleSDLMod_inc
 #define plParticleSDLMod_inc
 
+#include "pnNetCommon/plSDLTypes.h"
+
 #include "plModifier/plSDLModifier.h"
 
 //

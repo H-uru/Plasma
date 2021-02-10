@@ -45,23 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUIListBoxMod.h"
-#include "pfGUIListElement.h"
-#include "pfGameGUIMgr.h"
-#include "pfGUIUpDownPairMod.h"
-#include "pfGUIControlHandlers.h"
-#include "pfGUIDialogMod.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plAnimation/plAGModifier.h"
-#include "plGImage/plDynamicTextMap.h"
-#include "plInputCore/plInputInterface.h"
+#include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
+#include "pfGameGUIMgr.h"
+#include "pfGUIControlHandlers.h"
+#include "pfGUIDialogMod.h"
+#include "pfGUIListElement.h"
+#include "pfGUIUpDownPairMod.h"
+
+#include "pnMessage/plRefMsg.h"
+
+#include "plAnimation/plAGModifier.h"
+#include "plGImage/plDynamicTextMap.h"
+#include "plInputCore/plInputInterface.h"
+#include "plMessage/plAnimCmdMsg.h"
+
+#include "pfMessage/pfGameGUIMsg.h"
 
 #define kIndentAmount       16
 

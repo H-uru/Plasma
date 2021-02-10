@@ -40,53 +40,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include <algorithm>
-
 #include "plVirtualCamNeu.h"
-#include "plCameraModifier.h"
-#include "plCameraBrain.h"
-#include "plPipeline.h"
 #include "pfCameraProxy.h"
+#include "plCameraBrain.h"
+#include "plCameraModifier.h"
+
+#include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
+#include "hsGeometry3.h"
+#include "plPipeline.h"
 #include "hsMatrix44.h"
-#include "pnSceneObject/plSceneObject.h"
+#include "hsQuat.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "plAudio/plAudioSystem.h"
-#include "plInputCore/plInputDevice.h"
-#include "plInputCore/plInputManager.h"
+
+#include <algorithm>
+
 #include "pnInputCore/plKeyDef.h"
-#include "plScene/plSceneNode.h"
-#include "plMessage/plAvatarMsg.h"
-#include "pnMessage/plWarpMsg.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "pnMessage/plCameraMsg.h"
-#include "pnMessage/plEnableMsg.h"
-#include "pnMessage/plTimeMsg.h"
-#include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plCmdIfaceModMsg.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plPlayerPageMsg.h"
-#include "plMessage/plInputEventMsg.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "plDrawable/plDrawableGenerator.h"
-#include "plScene/plSceneNode.h"
-#include "plInputCore/plDebugInputInterface.h"
-#include "plInputCore/plAvatarInputInterface.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
-#include "plStatusLog/plStatusLog.h"
-#include "plPipeline/plPlates.h"
-#include "plGImage/plMipmap.h"
-#include "plSurface/plLayer.h"
-#include "plSurface/hsGMaterial.h"
+#include "pnMessage/plTimeMsg.h"
+#include "pnMessage/plWarpMsg.h"
 #include "pnNetCommon/plNetApp.h"
-#include "plNetClient/plNetClientMgr.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plAvatarMgr.h"
-
-#include "hsGeometry3.h"
-#include "hsQuat.h"
+#include "plInputCore/plAvatarInputInterface.h"
+#include "plInputCore/plDebugInputInterface.h"
+#include "plInputCore/plInputDevice.h"
+#include "plInputCore/plInputManager.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plInputEventMsg.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
+#include "plStatusLog/plStatusLog.h"
 
 float plVirtualCam1::fFOVw                    = 45.0f;
 float plVirtualCam1::fFOVh                    = 33.75f;
@@ -246,7 +241,7 @@ void plVirtualCam1::RebuildStack(const plKey& key)
         pMsg->SetCmd(plEnableMsg::kEnable);
         pMsg->AddType(plEnableMsg::kDrawable);
         pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
-        pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+        pMsg->AddReceiver(plNetClientApp::GetInstance()->GetLocalPlayerKey());
         plgDispatch::MsgSend(pMsg);
     }
 
@@ -771,7 +766,7 @@ void plVirtualCam1::Output()
             pMsg->SetCmd(plEnableMsg::kEnable);
             pMsg->AddType(plEnableMsg::kDrawable);
             pMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
-            pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+            pMsg->AddReceiver(plNetClientApp::GetInstance()->GetLocalPlayerKey());
             plgDispatch::MsgSend(pMsg);
         }
     }
@@ -902,11 +897,11 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
     plPlayerPageMsg* pPMsg = plPlayerPageMsg::ConvertNoRef(msg);
     if (pPMsg)
     {
-        if (!pPMsg->fUnload && pPMsg->fPlayer == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
+        if (!pPMsg->fUnload && pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey())
         {
             /*if (HasFlags(kRegisteredForBehaviors))
                 return true;*/ // not reliable anymore since we have a dummy avatar in the startup age
-            plSceneObject* avSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
+            plSceneObject* avSO = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayer());
             if (avSO)
             {
 
@@ -1091,7 +1086,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
         else
         if (pCam->Cmd(plCameraMsg::kCreateNewDefaultCam))
         {
-            if (pCam->GetSubject() == plNetClientMgr::GetInstance()->GetLocalPlayer())
+            if (pCam->GetSubject() == plNetClientApp::GetInstance()->GetLocalPlayer())
                 CreateDefaultCamera(pCam->GetSubject());
             return true;
         }
@@ -1248,10 +1243,10 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                 ClearFlags(kJustLinkedIn);
                 plCameraTargetFadeMsg* pMsg = new plCameraTargetFadeMsg;
                 pMsg->SetFadeOut(true);
-                pMsg->SetSubjectKey(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+                pMsg->SetSubjectKey(plNetClientApp::GetInstance()->GetLocalPlayerKey());
                 pMsg->SetBCastFlag(plMessage::kBCastByExactType);
                 pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
-                pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+                pMsg->AddReceiver(plNetClientApp::GetInstance()->GetLocalPlayerKey());
                 plgDispatch::MsgSend(pMsg);
                 return true;
             }

@@ -39,18 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plPickingDetector.h"
-#include "plMessage/plActivatorMsg.h"
-#include "plMessage/plPickedMsg.h"
-#include "pnNetCommon/plNetApp.h"
-#include "pnSceneObject/plSceneObject.h"
+
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plObjRefMsg.h"
-#include "pnMessage/plFakeOutMsg.h"
 #include "pnNetCommon/plNetApp.h"
-#include "plgDispatch.h"
+#include "pnSceneObject/plSceneObject.h"
 
+#include "plMessage/plActivatorMsg.h"
+#include "plMessage/plPickedMsg.h"
 
 bool plPickingDetector::MsgReceive(plMessage* msg)
 {
@@ -98,7 +96,7 @@ bool plPickingDetector::MsgReceive(plMessage* msg)
                 pMsg->fHitterObj = locPlayerKey;
 
             pMsg->SetSender(GetKey());
-            plgDispatch::MsgSend( pMsg );
+            pMsg->Send();
             hsStatusMessageF("%s sending activate message to %s\n",GetKey()->GetName().c_str(), receiver->GetName().c_str());
         }
     }

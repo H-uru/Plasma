@@ -43,40 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetCommonHelpers_h_inc
 
 #include "HeadSpin.h"
-#include <map>
 
-#include "hsTimer.h"
-#include "pnNetCommon/pnNetCommon.h"
-#include "pnNetCommon/plNetApp.h"
+#include <map>
+#include <string>
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
 
-////////////////////////////////////////////////////////////////////
-
-class plNetCoreStatsSummary : public plCreatable
-{
-    static const uint8_t StreamVersion;
-    float fULBitsPS;
-    float fDLBitsPS;
-    float fULPeakBitsPS;
-    float fDLPeakBitsPS;
-    float fULPeakPktsPS;
-    float fDLPeakPktsPS;
-    uint32_t fDLDroppedPackets;
-public:
-    plNetCoreStatsSummary();
-    CLASSNAME_REGISTER( plNetCoreStatsSummary );
-    GETINTERFACE_ANY( plNetCoreStatsSummary, plCreatable );
-    void Read(hsStream* s, hsResMgr* mgr=nil) override;
-    void Write(hsStream* s, hsResMgr* mgr=nil) override;
-    float GetULBitsPS() const { return fULBitsPS; }
-    float GetDLBitsPS() const { return fDLBitsPS; }
-    float GetULPeakBitsPS() const { return fULPeakBitsPS; }
-    float GetDLPeakBitsPS() const { return fDLPeakBitsPS; }
-    float GetULPeakPktsPS() const { return fULPeakPktsPS; }
-    float GetDLPeakPktsPS() const { return fDLPeakPktsPS; }
-    uint32_t GetDLDroppedPackets() const { return fDLDroppedPackets; }
-};
-
+namespace ST { class string; }
 
 ////////////////////////////////////////////////////////////////////
 
@@ -131,49 +105,5 @@ public:
     void    GetItemsAsVec( std::vector<plCreatable*>& out );
     void    GetItems( std::map<uint16_t,plCreatable*>& out );
 };
-
-/////////////////////////////////////////////////////////////////////
-struct plOperationTimer
-{
-    bool    fRunning;
-    double  fStartTime;
-    double  fEndTime;
-    ST::string fComment;
-    ST::string fSpacer;
-    bool    fPrintAtStart;
-    ST::string fTag;
-    plOperationTimer( const char * tag="", bool printAtStart=false )
-        : fRunning( false )
-        , fTag( tag )
-        , fStartTime( 0.0 )
-        , fEndTime( 0.0 )
-        , fPrintAtStart( printAtStart )
-    {}
-    ~plOperationTimer() { Stop(); }
-    void Start( const char * comment, int level=0 )
-    {
-        fSpacer = ST::string::fill(level, '\t');
-        Stop();
-        fRunning = true;
-        fComment = comment;
-        fStartTime = hsTimer::GetSeconds();
-        if ( fPrintAtStart )
-        {
-            hsLogEntry( plNetApp::StaticDebugMsg( "{}{} Timing: {}",
-                fSpacer, fTag, fComment ) );
-        }
-    }
-    void Stop()
-    {
-        if ( !fRunning )
-            return;
-        fRunning = false;
-        fEndTime = hsTimer::GetSeconds()-fStartTime;
-        hsLogEntry( plNetApp::StaticDebugMsg( "{}{} Timed: {f} secs: {}",
-            fSpacer, fTag, fEndTime, fComment ) );
-    }
-    double GetTime() const { return fEndTime;}
-};
-
 
 #endif // plNetCommonHelpers_h_inc

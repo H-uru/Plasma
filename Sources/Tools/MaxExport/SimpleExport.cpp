@@ -47,9 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptionStack.h"
 #include "hsStream.h"
 
-#include <bitmap.h>
-#include <notify.h>
-#include <max.h>
+#include "MaxMain/MaxAPI.h"
 
 #include "SimpleExport.h"
 #include "plExportErrorMsg.h"

@@ -43,13 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGChannel.h"
 
 // local
+#include "plAGAnimInstance.h"
 #include "plAGModifier.h"
 
 // global
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-
-#include "plAGAnimInstance.h"
+#include "hsStream.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

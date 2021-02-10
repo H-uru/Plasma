@@ -3,12 +3,12 @@ set(plFileSecure_SOURCES
 )
 
 add_executable(plFileSecure ${plFileSecure_SOURCES})
-target_link_libraries(plFileSecure CoreLib plFile)
-target_link_libraries(plFileSecure ${STRING_THEORY_LIBRARIES})
-
-if(USE_VLD)
-    target_link_libraries(plFileSecure ${VLD_LIBRARY})
-endif()
+target_link_libraries(
+    plFileSecure
+    PRIVATE
+        CoreLib
+        plFile
+)
 
 install(
     TARGETS plFileSecure

@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFileSystem.h"
 
-#pragma comment(lib, "winmm.lib")
-
 static inline HRESULT DXTrace(const TCHAR* msg, const char* file, int line, HRESULT hr)
 {
     ST::string error = ST::format("Error Calling: {}\n{}", msg, (hsCOMError)hr);

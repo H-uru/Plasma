@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "pfCameraProxy.h"
+
 #include "plVirtualCamNeu.h"
-#include "plDrawable/plDrawableGenerator.h"
+
 #include "pnMessage/plProxyDrawMsg.h"
+
 #include "plScene/plSceneNode.h"
 
 plCameraProxy::plCameraProxy()

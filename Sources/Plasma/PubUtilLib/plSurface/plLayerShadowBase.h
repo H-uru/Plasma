@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLayerShadowBase_inc
 #define plLayerShadowBase_inc
 
-#include "plLayerInterface.h"
 #include "hsGMatState.h"
+
+#include "plLayerInterface.h"
 
 class plLayerLightBase : public plLayerInterface
 {

@@ -39,13 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plPhysicalProxy.h"
 #include "plPhysical.h"
-#include "plPhysX/plPXPhysicalControllerCore.h"
-#include "plDrawable/plDrawableSpans.h"
-#include "plDrawable/plDrawableGenerator.h"
+
 #include "pnMessage/plProxyDrawMsg.h"
 
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plDrawableGenerator.h"
+#include "plPhysX/plPXPhysicalControllerCore.h" // Potential loop
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
 
@@ -72,7 +74,7 @@ bool plPhysicalProxy::Init(plPXPhysicalControllerCore* controller)
     return fController != nil;
 }
 
-plKey plPhysicalProxy::IGetNode() const 
+plKey plPhysicalProxy::IGetNode() const
 {
     if (fOwner)
         return fOwner->GetSceneNode();

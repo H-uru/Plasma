@@ -39,11 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plgDispatch.h"
+
 #include "plNetClientMgr.h"
 
-#include "pnNetCommon/pnNetCommon.h"
+#include "plgDispatch.h"
+
 #include "pnMessage/plTimeMsg.h"
+#include "pnNetCommon/pnNetCommon.h"
 
 #include "plNetClientRecorder/plNetClientRecorder.h"
 

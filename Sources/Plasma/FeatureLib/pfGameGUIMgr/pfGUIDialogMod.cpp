@@ -45,30 +45,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
+
 #include "pfGameGUIMgr.h"
-#include "pfGUIDialogMod.h"
-#include "pfGUIControlMod.h"
-#include "pfGUIDialogHandlers.h"
-#include "pfGUIDialogNotifyProc.h"
-#include "pfGUIListElement.h"
-#include "plScene/plPostEffectMod.h"
 
-#include "pnMessage/plRefMsg.h"
-#include "pfMessage/pfGameGUIMsg.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "plScene/plSceneNode.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
-#include "plStatusLog/plStatusLog.h"
-
-#include "plgDispatch.h"
+#include "HeadSpin.h"
+#include "hsGeometry3.h"
 #include "hsResMgr.h"
 #include "plViewTransform.h"
 
+#include "pfGUIControlMod.h"
+#include "pfGUIDialogHandlers.h"
+#include "pfGUIDialogMod.h"
+#include "pfGUIDialogNotifyProc.h"
+#include "pfGUIListElement.h"
+
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plAnimCmdMsg.h"
+#include "plPipeline/plDebugText.h"
+#include "plScene/plPostEffectMod.h"
+#include "plScene/plSceneNode.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
@@ -93,7 +94,7 @@ pfGUIDialogMod::~pfGUIDialogMod()
     {
         plGenRefMsg *refMsg = new plGenRefMsg( mgrKey, plRefMsg::kOnRemove, 0, pfGameGUIMgr::kDlgModRef );
         refMsg->SetRef( this );
-        plgDispatch::MsgSend( refMsg );
+        refMsg->Send();
     }
 
     SetHandler( nil );
@@ -154,14 +155,14 @@ bool    pfGUIDialogMod::MsgReceive( plMessage *msg )
                     {
                         plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
                         animMsg->SetCmd( plAnimCmdMsg::kContinue );
-                        plgDispatch::MsgSend( animMsg );
+                        animMsg->Send();
                     }
                 }
                 else if( ref->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
                 {
                     plAnimCmdMsg    *animMsg = new plAnimCmdMsg( GetKey(), fRenderMod->GetKey(), nil );
                     animMsg->SetCmd( plAnimCmdMsg::kStop );
-                    plgDispatch::MsgSend( animMsg );
+                    animMsg->Send();
 
                     fRenderMod = nil;
                 }
@@ -270,7 +271,7 @@ void    pfGUIDialogMod::SetEnabled( bool e )
         }
         else
             animMsg->SetCmd( plAnimCmdMsg::kStop );
-        plgDispatch::MsgSend( animMsg );
+        animMsg->Send();
     }
 
 }
@@ -386,10 +387,6 @@ void    pfGUIDialogMod::UpdateInterestingThings( float mouseX, float mouseY, uin
 }
 
 //// HandleMouseEvent ////////////////////////////////////////////////////////
-
-#ifdef HS_DEBUGGING      // Debugging bounds rects
-#include "plPipeline/plDebugText.h"
-#endif
 
 bool        pfGUIDialogMod::HandleMouseEvent( pfGameGUIMgr::EventType event, float mouseX, float mouseY,
                                                 uint8_t modifiers )

@@ -49,7 +49,6 @@ REGISTER_CREATABLE(plClientGuid);
 
 #include "plNetCommonHelpers.h"
 REGISTER_CREATABLE(plCreatableListHelper);
-REGISTER_CREATABLE(plNetCoreStatsSummary);
 
 #include "plNetMember.h"
 REGISTER_NONCREATABLE(plNetMember);

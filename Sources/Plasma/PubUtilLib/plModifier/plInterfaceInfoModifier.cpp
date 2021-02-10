@@ -40,9 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plInterfaceInfoModifier.h"
+
 #include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnKeyedObject/plKey.h"
 
 

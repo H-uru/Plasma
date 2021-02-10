@@ -86,25 +86,14 @@ public:
         kUnloaded,
     };
 
-    virtual void SetRoom(plKey &rkey) { fRoomKey = rkey; }
-    virtual plKey GetRoom() { return fRoomKey; }
+    virtual void SetRoom(plKey rkey) { fRoomKey = std::move(rkey); }
+    virtual plKey GetRoom() const { return fRoomKey; }
     virtual void SetWhatHappen(uint8_t what) { fWhat = what; }
-    virtual uint8_t GetWhatHappen() { return fWhat; }
+    virtual uint8_t GetWhatHappen() const { return fWhat; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fRoomKey = mgr->ReadKey(stream);
-        fWhat = stream->ReadByte();
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr) override
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fRoomKey);
-        stream->WriteByte(fWhat);
-    }
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

@@ -43,10 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimationEventConditionalObject_inc
 #define plAnimationEventConditionalObject_inc
 
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plEventCallbackMsg.h" // CallbackEvent's defined here
 #include "pnModifier/plConditionalObject.h"
-#include "pnInputCore/plKeyDef.h"
-#include "pnMessage/plEventCallbackMsg.h" // AnimationEvent's defined here
-
 
 class plAnimationEventConditionalObject : public plConditionalObject
 {

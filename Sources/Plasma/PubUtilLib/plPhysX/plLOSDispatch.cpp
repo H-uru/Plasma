@@ -39,21 +39,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plLOSDispatch.h"
+
 #include "plgDispatch.h"
-#include "plMessage/plLOSRequestMsg.h"
-#include "plMessage/plLOSHitMsg.h"
-#include "plMessage/plRenderMsg.h"
+#include "plProfile.h"
+
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnSceneObject/plSceneObject.h"
-#include "plModifier/plLogicModifier.h"
 
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plPhysicalControllerCore.h"
+#include "plMessage/plLOSRequestMsg.h"
+#include "plMessage/plLOSHitMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plModifier/plLogicModifier.h"
 #include "plStatusLog/plStatusLog.h"
 
-#include "plProfile.h"
 plProfile_CreateTimer("LineOfSight", "Simulation", LineOfSight);
 
 plLOSDispatch::plLOSDispatch()

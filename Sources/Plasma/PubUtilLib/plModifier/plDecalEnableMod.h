@@ -45,7 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "pnModifier/plSingleModifier.h"
-#include "pnKeyedObject/plKey.h"
+
+class plKey;
 
 class plDecalEnableMod : public plSingleModifier
 {

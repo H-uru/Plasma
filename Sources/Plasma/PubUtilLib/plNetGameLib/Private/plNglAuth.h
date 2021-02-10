@@ -50,9 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLAUTH_H
 
-#include "pnNetCommon/plNetAddress.h"
-
-class plUUID;
+#include "pnEncryption/plChecksum.h"
 
 /*****************************************************************************
 *

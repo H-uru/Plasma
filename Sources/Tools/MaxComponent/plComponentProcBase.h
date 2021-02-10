@@ -45,8 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include <vector>
 
-#include "hsWindows.h"
-#include <iparamm2.h>
+#include "MaxMain/MaxAPI.h"
 
 //
 //  Const Char* [] Version

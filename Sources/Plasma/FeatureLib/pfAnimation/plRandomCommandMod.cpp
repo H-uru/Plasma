@@ -40,16 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <cmath>
-
-#include "HeadSpin.h"
 #include "plRandomCommandMod.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
-#include "plgDispatch.h"
+
 #include "hsTimer.h"
 
+#include <cstdlib>
+
+#include "pnSceneObject/plSceneObject.h"
+#include "pnMessage/plEventCallbackMsg.h"
+
+#include "plMessage/plAnimCmdMsg.h"
 
 static const float kRandNormalize = 1.f / 32767.f;
 
@@ -297,5 +297,5 @@ void plRandomCommandMod::IRetry(float secs)
 
     plAnimCmdMsg* msg = new plAnimCmdMsg(nil, GetKey(), &t);
     msg->SetCmd(plAnimCmdMsg::kContinue);
-    plgDispatch::MsgSend(msg);
+    msg->Send();
 }

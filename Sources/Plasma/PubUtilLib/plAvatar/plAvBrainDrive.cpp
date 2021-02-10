@@ -44,16 +44,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plArmatureMod.h"
 
 // global includes
-#include "hsTimer.h"
 #include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsQuat.h"
+#include "hsTimer.h"
 
 // other includes
-#include "hsQuat.h"
-#include "plMessage/plSimStateMsg.h"
 #include "pnMessage/plCameraMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
-// messages
 #include "plMessage/plInputEventMsg.h"
+#include "plMessage/plSimStateMsg.h"
 
 // CTOR default
 plAvBrainDrive::plAvBrainDrive()

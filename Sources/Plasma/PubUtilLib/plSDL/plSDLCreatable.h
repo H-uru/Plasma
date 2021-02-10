@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSDLCreatable_h
 #define plSDLCreatable_h
 
+#include "pnFactory/plCreator.h"
+
 #include "plSDL.h"
 REGISTER_CREATABLE(plStateDataRecord);
 

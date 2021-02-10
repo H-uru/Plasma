@@ -43,19 +43,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAccessGeometry_inc
 #define plAccessGeometry_inc
 
-#include "hsTemplates.h"
+#include "hsRefCnt.h"
 
+class plAccessSpan;
+class plDrawInterface;
 class plDrawable;
 class plDrawableSpans;
 class plGeometrySpan;
-class plDrawInterface;
-class plAccessSpan;
-class plSpan;
-class plParticleSpan;
 class plIcicle;
+class plParticleSpan;
+class plPipeline;
+class plSpan;
 class plVertexSpan;
 
-class plPipeline;
+template<typename T>
+class hsTArray;
 
 class plAccessGeometry : public hsRefCnt
 {

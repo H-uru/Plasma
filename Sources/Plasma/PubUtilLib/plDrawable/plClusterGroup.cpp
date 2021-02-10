@@ -64,7 +64,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //STUB
 #include "plgDispatch.h"
-#include "plMessage/plAgeLoadedMsg.h"
 
 plClusterGroup::plClusterGroup()
 :   fSceneNode(nil),

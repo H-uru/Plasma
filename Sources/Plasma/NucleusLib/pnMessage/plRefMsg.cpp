@@ -40,12 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
 #include "plRefMsg.h"
+
+#include "HeadSpin.h"
+#include "hsResMgr.h"
 #include "hsStream.h"
 
-#include "hsResMgr.h"
-#include "pnKeyedObject/plKey.h"
+#include "plIntRefMsg.h"
+#include "plObjRefMsg.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
 
 plRefMsg::plRefMsg()
@@ -112,4 +115,34 @@ void plGenRefMsg::Write(hsStream* stream, hsResMgr* mgr)
     plRefMsg::Write(stream, mgr);
     stream->WriteLE(fType);
     stream->WriteLE32(fWhich);
+}
+
+void plIntRefMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Read(stream, mgr);
+    stream->ReadLE(&fType);
+    stream->ReadLE(&fWhich);
+    stream->ReadLE(&fIdx);
+}
+
+void plIntRefMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Write(stream, mgr);
+    stream->WriteLE(fType);
+    stream->WriteLE(fWhich);
+    stream->WriteLE(fIdx);
+}
+
+void plObjRefMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Read(stream, mgr);
+    stream->ReadLE(&fType);
+    stream->ReadLE(&fWhich);
+}
+
+void plObjRefMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plRefMsg::Write(stream, mgr);
+    stream->WriteLE(fType);
+    stream->WriteLE(fWhich);
 }

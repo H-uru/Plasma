@@ -29,6 +29,12 @@ target_link_libraries(plInterp
         pnNetCommon
         plIntersect
         plTransform
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
+        plIntersect
+        plMessage
 )
 
 source_group("Source Files" FILES ${plInterp_SOURCES})

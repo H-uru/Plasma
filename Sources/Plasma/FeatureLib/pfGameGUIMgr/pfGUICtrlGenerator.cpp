@@ -45,38 +45,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pfGUICtrlGenerator.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
+#include "hsResMgr.h"
+
+#include <string_theory/format>
+
 #include "pfGameGUIMgr.h"
+#include "pfGUIButtonMod.h"
+#include "pfGUIControlHandlers.h"
 #include "pfGUIControlMod.h"
 #include "pfGUIDialogMod.h"
-#include "pfGUIButtonMod.h"
 #include "pfGUIDragBarCtrl.h"
-#include "pfGUIControlHandlers.h"
 #include "pfGUIMenuItem.h"
 
-#include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayer.h"
-#include "plGImage/plMipmap.h"
 #include "pnKeyedObject/plFixedKey.h"
+#include "pnMessage/plAttachMsg.h"
+#include "pnMessage/plClientMsg.h"
+#include "pnMessage/plIntRefMsg.h"
+#include "plMessage/plLayRefMsg.h"
+#include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plDrawableGenerator.h"
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnMessage/plIntRefMsg.h"
-#include "pnMessage/plObjRefMsg.h"
-#include "pnMessage/plNodeRefMsg.h"
+#include "plGImage/plMipmap.h"
 #include "plPipeline/plTextGenerator.h"
 #include "plScene/plPostEffectMod.h"
 #include "plScene/plSceneNode.h"
-#include "pnMessage/plClientMsg.h"
-#include "plMessage/plLayRefMsg.h"
-#include "pnMessage/plAttachMsg.h"
-
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayer.h"
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 

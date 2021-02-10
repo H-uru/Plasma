@@ -116,6 +116,21 @@ add_library(MaxPlasmaMtls
             ${MaxPlasmaMtls_SOURCES_Layers}
             ${MaxPlasmaMtls_SOURCES_Materials}
 )
+target_link_libraries(
+    MaxPlasmaMtls
+    PUBLIC
+        CoreLib
+        pnNucleusInc
+        plInterp
+    PRIVATE
+        pnKeyedObject
+        pnMessage
+        plAvatar
+        plSurface
+
+        ${3dsm_LIBRARIES}
+)
+
 plasma_optimize_target(MaxPlasmaMtls PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxPlasmaMtls_HEADERS})

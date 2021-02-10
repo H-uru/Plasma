@@ -48,11 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
 #include "MaxMain/plMaxNodeData.h"
-#include "resource.h"
+#include "MaxMain/MaxAPI.h"
 
-#include <iparamm2.h>
-#include <memory>
-#include <notify.h>
+#include "resource.h"
 
 #ifdef MAXASS_AVAILABLE
 #   include "../../AssetMan/PublicInterface/MaxAssInterface.h"

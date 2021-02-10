@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef PLAVTASKSEEK_INC
 #define PLAVTASKSEEK_INC
-#pragma once
 
 #include "plAvatarTasks.h"
 #include "hsQuat.h"

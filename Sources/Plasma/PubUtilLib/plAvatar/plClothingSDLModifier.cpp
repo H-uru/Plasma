@@ -40,14 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plClothingSDLModifier.h"
+
+#include "plArmatureMod.h"
 #include "plAvatarClothing.h"
 #include "plClothingLayout.h"
-#include "plArmatureMod.h"
 
-#include "pnSceneObject/plSceneObject.h"
-#include "pnMessage/plSDLModifierMsg.h"
-#include "plSDL/plSDL.h"
 #include "pnKeyedObject/plKeyImp.h"
+#include "pnMessage/plSDLModifierMsg.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plSDL/plSDL.h"
+
 
 // static vars
 char plClothingSDLModifier::kStrItem[]="item";

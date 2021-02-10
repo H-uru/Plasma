@@ -54,18 +54,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXSimulation.h"
 #include "plPXSubWorld.h"
 
-#include "plMessage/plCollideMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
 #include "pnMessage/plRefMsg.h"
-#include "plModifier/plDetectorLog.h"
-#include "plModifier/plExcludeRegionModifier.h"
 #include "pnNetCommon/plSDLTypes.h"
-#include "plPhysical/plPhysicsSoundMgr.h"
 #include "pnSceneObject/plSimulationInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plMessage/plCollideMsg.h"
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plModifier/plDetectorLog.h"
+#include "plModifier/plExcludeRegionModifier.h"
+#include "plPhysical/plPhysicsSoundMgr.h"
 #include "plStatusLog/plStatusLog.h"
-
-
 
 /////////////////////////////////////////////////////////////////
 //

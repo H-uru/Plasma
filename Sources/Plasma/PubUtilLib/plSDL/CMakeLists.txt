@@ -28,12 +28,19 @@ set(plSDL_SDLFILES
 )
 
 add_library(plSDL STATIC ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES})
-
 target_link_libraries(plSDL
     PUBLIC
         CoreLib
+        pnFactory
+        pnKeyedObject
+        plUnifiedTime
+    PRIVATE
+        pnMessage
+        pnNetCommon
+        pnNucleusInc
         plFile
         plNetMessage
+        plResMgr
 )
 
 source_group("Source Files" FILES ${plSDL_SOURCES})

@@ -71,26 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "plTweak.h"
 
-// Windows
-#include "hsWindows.h"
-#include <CommCtrl.h>
-#include <commdlg.h>
-
 // 3ds Max SDK
-// This stuff should ALWAYS come after hsWindows.h
-#include <max.h>
-#include <bmmlib.h>
-#include <dummy.h>
-#include <keyreduc.h>
-#include <INode.h>
-#include <iparamm2.h> // needs to be above ISkin.h for Max 7
-#include <ISkin.h>
-#include <istdplug.h>
-#include <maxversion.h>
-#include <meshdlib.h> 
-#include <modstack.h>
-#include <notify.h>
-#include <stdmat.h>
+#include "MaxMain/MaxAPI.h"
 
 #include <string_theory/string>
 

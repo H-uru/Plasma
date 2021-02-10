@@ -42,14 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCameraBrain_inc
 #define plCameraBrain_inc
 
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "hsMatrix44.h"
 #include "hsBitVector.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
 
-class plMessage;
+#include "pnKeyedObject/hsKeyedObject.h"
+
 class plCameraModifier1;
-class plSceneObject;
+class plMessage;
 class plRailCameraMod;
+class plSceneObject;
 
 class plCameraBrain1 : public hsKeyedObject
 {

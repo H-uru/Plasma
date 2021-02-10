@@ -25,6 +25,13 @@ set(plSockets_HEADERS
 )
 
 add_library(plSockets STATIC ${plSockets_SOURCES} ${plSockets_HEADERS})
+target_link_libraries(
+    plSockets
+    PUBLIC
+        CoreLib
+    PRIVATE
+        pnNetCommon
+)
 
 source_group("Source Files" FILES ${plSockets_SOURCES})
 source_group("Header Files" FILES ${plSockets_HEADERS})

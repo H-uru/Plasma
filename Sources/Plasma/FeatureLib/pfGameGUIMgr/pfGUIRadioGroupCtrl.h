@@ -48,13 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIRadioGroupCtrl_h
 #define _pfGUIRadioGroupCtrl_h
 
-#include "pfGUIValueCtrl.h"
 #include "hsTemplates.h"
 
-class plMessage;
-class pfGUICheckBoxCtrl;
-class pfGroupProc;
+#include "pfGUIValueCtrl.h"
 
+class pfGroupProc;
+class pfGUICheckBoxCtrl;
+class plMessage;
 
 class pfGUIRadioGroupCtrl : public pfGUIControlMod
 {

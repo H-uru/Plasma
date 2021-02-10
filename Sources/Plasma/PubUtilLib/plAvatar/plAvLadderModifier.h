@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAvLadderMod_INC
 
 #include "pnModifier/plSingleModifier.h"
-#include "pnMessage/plMessage.h"
 #include "hsGeometry3.h"
 
 // has a detector region. when a local avatar enters that region,

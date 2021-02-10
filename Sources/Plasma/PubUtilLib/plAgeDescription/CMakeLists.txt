@@ -1,6 +1,5 @@
 set(plAgeDescription_SOURCES
     plAgeDescription.cpp
-    plAgeManifest.cpp
 )
 
 set(plAgeDescription_HEADERS
@@ -9,6 +8,15 @@ set(plAgeDescription_HEADERS
 )
 
 add_library(plAgeDescription STATIC ${plAgeDescription_SOURCES} ${plAgeDescription_HEADERS})
+target_link_libraries(
+    plAgeDescription
+    PUBLIC
+        CoreLib
+        plFile
+        plUnifiedTime
+    PRIVATE
+        pnKeyedObject
+)
 
 source_group("Source Files" FILES ${plAgeDescription_SOURCES})
 source_group("Header Files" FILES ${plAgeDescription_HEADERS})

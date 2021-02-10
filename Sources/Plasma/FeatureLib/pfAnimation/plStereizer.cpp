@@ -40,26 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-
-#include <cmath>
+#include "plStereizer.h"
 
 #include "HeadSpin.h"
-
-#include "plStereizer.h"
-#include "plLineFollowMod.h"
-
-#include "plMessage/plListenerMsg.h"
 #include "plgDispatch.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-
 #include "hsFastMath.h"
-
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
 
+#include "plLineFollowMod.h"
+
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plMessage/plListenerMsg.h"
 
 plStereizer::~plStereizer()
 {

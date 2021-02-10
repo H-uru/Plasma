@@ -9,11 +9,18 @@ set(pfPatcher_HEADERS
 )
 
 add_library(pfPatcher STATIC ${pfPatcher_SOURCES} ${pfPatcher_HEADERS})
-
-target_link_libraries(pfPatcher
+target_link_libraries(
+    pfPatcher
     PUBLIC
         CoreLib
+        pnNetBase
+    PRIVATE
         pnEncryption
+        pnNucleusInc
+        plAudioCore
+        plCompression
+        plNetGameLib
+        plStatusLog
 )
 
 source_group("Source Files" FILES ${pfPatcher_SOURCES})

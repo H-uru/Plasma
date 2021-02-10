@@ -45,23 +45,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
-#include "hsResMgr.h"
-
 #include "plNetCliAgeLeaver.h"
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
 
-#include "pnMessage/plTimeMsg.h"
+#include "hsResMgr.h"
 
-#include "plNetClientComm/plNetClientComm.h"
-#include "plNetGameLib/plNetGameLib.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plAvatar/plAvatarMgr.h"
-#include "plVault/plVault.h"
-
 #include "plMessage/plLoadAgeMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
+#include "plNetClientComm/plNetClientComm.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plVault/plVault.h"
 
 
 
@@ -151,10 +148,6 @@ void plNCAgeLeaver::Complete (bool success, const char msg[]) {
 
 //============================================================================
 bool plNCAgeLeaver::MsgReceive (plMessage * msg) {
-    plNetClientMgr *    nc = plNetClientMgr::GetInstance();
-    plAvatarMgr *       am = plAvatarMgr::GetInstance();
-    plAgeLoader *       al = plAgeLoader::GetInstance();
-
     //========================================================================
     // Done with link out effects
     //========================================================================
@@ -187,7 +180,6 @@ bool plNCAgeLeaver::MsgReceive (plMessage * msg) {
 void plNCAgeLeaver::ExecNextOp () {
     plNetClientMgr *    nc = plNetClientMgr::GetInstance();
     plAvatarMgr *       am = plAvatarMgr::GetInstance();
-    plAgeLoader *       al = plAgeLoader::GetInstance();
 
     NextOp next = nextOp;
     nextOp      = kNoOp;

@@ -52,14 +52,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDLDescriptor.h"
 
 #include "pnFactory/plCreatable.h"
-#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
+class plClientUnifiedTime;
+class plKey;
+class plNetApp;
+class plSDLMgr;
+class plUoid;
+
 namespace plSDL
 {
-    typedef std::list<plStateDescriptor*> DescriptorList;   
+    typedef std::list<plStateDescriptor*> DescriptorList;
     enum    GeneralPurpose
     {
         kLatestVersion  = -1,       // used when requesting the latest version of a state descriptor
@@ -188,10 +193,11 @@ private:
 public:
     plStateChangeNotifier();
     plStateChangeNotifier(float i, plKey k);
+    virtual ~plStateChangeNotifier();
 
-    void AddNotificationKey(plKey k) { IAddKey(k);  }
+    void AddNotificationKey(plKey k);
     void AddNotificationKeys(KeyList keys);
-    int RemoveNotificationKey(plKey k);         // returns number of keys left after removal
+    int RemoveNotificationKey(const plKey& k);         // returns number of keys left after removal
     int RemoveNotificationKeys(KeyList keys);   // returns number of keys left after removal
 
     void SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, const ST::string& sdlName);
@@ -208,9 +214,7 @@ public:
 //
 // A (non-nested) variable descriptor and its data contents.
 //
-class plUoid;
-class plKey;
-class plClientUnifiedTime;
+
 class plSimpleStateVariable : public plStateVariable
 {
 protected:
@@ -506,7 +510,6 @@ public:
 //
 // Simple SDL parser
 //
-class plSDLMgr;
 class plSDLParser
 {
 private:
@@ -539,7 +542,6 @@ public:
 // Holds, loads and unloads all state descriptors from sdl files.
 // Singleton.
 //
-class plNetApp;
 class plSDLMgr
 {
     friend class plSDLParser;

@@ -209,7 +209,6 @@ REGISTER_CREATABLE(plNetCommAuthConnectedMsg);
 REGISTER_CREATABLE(plNetCommAuthMsg);
 REGISTER_CREATABLE(plNetCommCreatePlayerMsg);
 REGISTER_CREATABLE(plNetCommDeletePlayerMsg);
-REGISTER_CREATABLE(plNetCommFileDownloadMsg);
 REGISTER_CREATABLE(plNetCommFileListMsg);
 REGISTER_CREATABLE(plNetCommLinkToAgeMsg);
 REGISTER_CREATABLE(plNetCommPlayerListMsg);

@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "MaxAPI.h"
+
 #include "plgDispatch.h"
 #include "hsFastMath.h"
 #include "pnKeyedObject/plKey.h"
@@ -52,12 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxNode.h"
 #include "plMaxNodeData.h"
 #include "MaxComponent/plComponent.h"
-
-#include <guplib.h>
-#include <iparamm2.h>
-#include <iskin.h>
-#include <mnmath.h>
-#include <utilapi.h>
 
 #include "GlobalUtility.h"
 #include "plPluginResManager.h"
@@ -104,6 +100,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plTimeMsg.h"
 #include "pfAnimation/plViewFaceModifier.h" // mf horse temp hack testing to be thrown away
 
+#include "plScene/plCullPoly.h"
 #include "plScene/plOccluder.h"
 
 #include "plDrawable/plDrawableSpans.h"
@@ -141,6 +138,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxPlasmaLights/plRealTimeLightBase.h"
 #include "MaxPlasmaLights/plRTProjDirLight.h"
 
+#include "plGetLocationDlg.h"
+
+#include "plResMgr/plKeyFinder.h"
+#include "plMaxCFGFile.h"
+#include "plAgeDescription/plAgeDescription.h"
+#include "plResMgr/plPageInfo.h"
+#include "pnNetCommon/plSDLTypes.h"
+
+#include "plMaxMeshExtractor.h"
+#include "plPhysX/plSimulationMgr.h"
 
 extern UserPropMgr gUserPropMgr;
 
@@ -420,16 +427,11 @@ bool plMaxNode::ClearMaxNodeData(plErrorMsg *pErrMsg, plConvertSettings *setting
     return true;
 }
 
-#include "plGetLocationDlg.h"
+
 
 //
 // Helper for setting synchedObject options, until we have a GUI
 //
-#include "plResMgr/plKeyFinder.h"
-#include "plMaxCFGFile.h"
-#include "plAgeDescription/plAgeDescription.h"
-#include "plResMgr/plPageInfo.h"
-#include "pnNetCommon/plSDLTypes.h"
 
 void plMaxNode::CheckSynchOptions(plSynchedObject* so)
 {
@@ -612,9 +614,6 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     return true;
 }
-
-#include "plMaxMeshExtractor.h"
-#include "plPhysX/plSimulationMgr.h"
 
 bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {

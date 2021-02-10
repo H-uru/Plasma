@@ -43,15 +43,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCameraModifier_inc
 #define plCameraModifier_inc
 
-#include "pnModifier/plSingleModifier.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 
-class plPipeline;
-class plKey;
+#include "pnKeyedObject/plKey.h"
+#include "pnModifier/plSingleModifier.h"
+
 class plCameraBrain1;
 class plCameraMsg;
+class plPipeline;
+
 struct CamTrans
 {
     // used when creating default track transitions at runtime

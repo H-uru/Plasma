@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsStream.h"
-
 #include "plVaultNotifyMsg.h"
+
+#include "hsStream.h"
 
 plVaultNotifyMsg::plVaultNotifyMsg()
 : fType( kNothing )
