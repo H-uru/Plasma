@@ -54,7 +54,7 @@ plORConditionalObject::plORConditionalObject()
 
 plORConditionalObject::~plORConditionalObject()
 {
-    fChildren.SetCountAndZero(0);
+    fChildren.clear();
 }
 
 bool plORConditionalObject::MsgReceive(plMessage* msg)
@@ -73,18 +73,18 @@ bool plORConditionalObject::MsgReceive(plMessage* msg)
 void plORConditionalObject::SetLogicMod(plLogicModBase* pMod)
 {
     fLogicMod = pMod;
-    for (int i = 0; i < fChildren.Count(); i++)
+    for (plConditionalObject* child : fChildren)
     {
-        if( fChildren[i] )
-            fChildren[i]->SetLogicMod(pMod);
+        if (child)
+            child->SetLogicMod(pMod);
     }
 }
 
 bool plORConditionalObject::Satisfied() 
 {
-    for (int i = 0; i < fChildren.Count(); i++)
+    for (plConditionalObject* child : fChildren)
     {
-        if (fChildren[i]->Satisfied())
+        if (child->Satisfied())
             return true;
     }
     return false;
@@ -92,14 +92,14 @@ bool plORConditionalObject::Satisfied()
 
 void plORConditionalObject::AddChild(plConditionalObject* pObj)
 {
-    fChildren.Append(pObj);
+    fChildren.emplace_back(pObj);
     pObj->SetLogicMod(fLogicMod);
 }
 
 void plORConditionalObject::Reset()
 {
-    for (int i = 0; i < fChildren.Count(); i++)
-        fChildren[i]->Reset();
+    for (plConditionalObject* child : fChildren)
+        child->Reset();
 }
 
 void plORConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
@@ -107,21 +107,20 @@ void plORConditionalObject::Read(hsStream* stream, hsResMgr* mgr)
     plConditionalObject::Read(stream, mgr);
     
     plCondRefMsg* refMsg;
-    int n = stream->ReadLE32();
-    fChildren.SetCountAndZero(n);
-    for(int i = 0; i < n; i++ )
-    {   
+    uint32_t n = stream->ReadLE32();
+    fChildren.resize(n);
+    for (uint32_t i = 0; i < n; i++)
+    {
         refMsg = new plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
-    }   
+    }
 }
 
 void plORConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
     
-    stream->WriteLE32(fChildren.GetCount());
-    for( int i = 0; i < fChildren.GetCount(); i++ )
-        mgr->WriteKey(stream, fChildren[i]);
+    stream->WriteLE32((uint32_t)fChildren.size());
+    for (plConditionalObject* child : fChildren)
+        mgr->WriteKey(stream, child);
 }
-
