@@ -1022,7 +1022,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         fLocalNotify = !pNtfyMsg->HasBCastFlag(plMessage::kNetNonLocal);
 
         PyObject* levents = PyTuple_New(pNtfyMsg->GetEventCount());
-        for (int i = 0; i < pNtfyMsg->GetEventCount(); i++) {
+        for (size_t i = 0; i < pNtfyMsg->GetEventCount(); i++) {
             proEventData* pED = pNtfyMsg->GetEventRecord(i);
             switch (pED->fEventType) {
                 case proEventData::kCollision:

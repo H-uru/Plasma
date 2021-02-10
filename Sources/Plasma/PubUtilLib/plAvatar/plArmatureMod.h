@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnSceneObject/plSimulationInterface.h"
 
+#include "hsTemplates.h"
 #include "hsMatrix44.h"
 #include "plNetCommon/plNetCommon.h"
 
@@ -433,7 +434,7 @@ protected:
     hsBitVector fOldRegionsImIn;
     hsBitVector fOldRegionsICareAbout;
     
-    hsTArray<plKey> fNotifyKeys;
+    std::vector<plKey> fNotifyKeys;
 
     // Extra info for creating our special physical at runtime
     float fPhysHeight;

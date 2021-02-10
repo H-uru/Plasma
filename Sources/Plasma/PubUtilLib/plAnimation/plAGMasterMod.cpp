@@ -374,8 +374,8 @@ plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const ST:
 
     if(CI)
     {
-        int childCount = CI->GetNumChildren();
-        for (int i = 0; i < childCount; i++)
+        size_t childCount = CI->GetNumChildren();
+        for (size_t i = 0; i < childCount; i++)
         {
             const plSceneObject * subChild = CI->GetChild(i)->GetOwner();
             plAGModifier * mod = IFindChannelMod(subChild, name);

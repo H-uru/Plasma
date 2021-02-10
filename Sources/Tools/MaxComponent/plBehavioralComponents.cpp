@@ -178,10 +178,10 @@ bool plAvBehaviorSittingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // XXX sitMod->SetSeekTime(fCompPB->GetFloat(kSeekTimeFloat));
 
         // Get all the keys who want to be notified when the avatar ass hits the seat
-        hsTArray<plKey> receivers;
+        std::vector<plKey> receivers;
         IGetReceivers(node, receivers);
-        for (int i = 0; i < receivers.Count(); i++)
-            sitMod->AddNotifyKey(receivers[i]);
+        for (const plKey& receiver : receivers)
+            sitMod->AddNotifyKey(receiver);
     }
 
     return true;

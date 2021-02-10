@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFileSystem.h"
 #include "hsGeometry3.h"
+#include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plMessage/plLoadAvatarMsg.h"

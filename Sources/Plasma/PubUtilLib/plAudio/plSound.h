@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSound_h
 #define plSound_h
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "plEAXEffects.h"
 #include "pnNetCommon/plSynchedObject.h"
@@ -253,7 +252,7 @@ public:
     uint8_t               GetPriority() const { return fPriority; }
 
     // Visualization
-    virtual plDrawableSpans*    CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
+    virtual plDrawableSpans*    CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo);
 
     // Forced loading/unloading (for when the audio system's LOD just doesn't cut it)
     virtual void        ForceLoad(  );

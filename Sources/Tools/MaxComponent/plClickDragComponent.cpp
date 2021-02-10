@@ -401,20 +401,19 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plAxisAnimModifier* pAxis = plAxisAnimModifier::ConvertNoRef(axisKey->GetObjectPtr());
     // attach the animation controller to the animation objects:
     // find an animation controller:
-    
-    hsTArray<plKey> receivers;
+
+    std::vector<plKey> receivers;
     IGetReceivers(node, receivers);
     
-    int i;
-    for (i = 0; i < receivers.Count(); i++)
-        pAxis->GetNotify()->AddReceiver(receivers[i]);
+    for (const plKey& receiver : receivers)
+        pAxis->GetNotify()->AddReceiver(receiver);
 
     pAxis->SetNotificationKey(logicKey);
     uint32_t count = node->NumAttachedComponents();
     bool bHasAnim = false;
     plAnimComponentBase* pAnim = nil;
 
-    for (i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         plComponentBase *comp = node->GetAttachedComponent(i);
         if (comp->ClassID() == ANIM_COMP_CID || comp->ClassID() == ANIM_GROUP_COMP_CID)

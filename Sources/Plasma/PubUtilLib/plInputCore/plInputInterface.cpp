@@ -184,14 +184,14 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     plKeyCombo  combo( keyMsg->GetKeyCode(), ( keyMsg->GetShiftKeyDown() ? plKeyCombo::kShift : 0 ) |
                                             ( keyMsg->GetCtrlKeyDown() ? plKeyCombo::kCtrl : 0 ) );
 
-    hsTArray<const plKeyBinding *> bindings;
+    std::vector<const plKeyBinding *> bindings;
     fControlMap->FindAllBindingsByKey(combo, bindings);
 
     // The first binding is the one we want. (FindAllBindingsByKey guarantees this)
-    const plKeyBinding *binding = (bindings.GetCount() ? bindings[0] : nil);
+    const plKeyBinding *binding = (bindings.empty() ? nullptr : bindings.front());
 
     // If other bindings were found, they lose out to the first one.
-    for (int i = 1; i < bindings.GetCount(); i++)
+    for (size_t i = 1; i < bindings.size(); i++)
         IDeactivateBinding(bindings[i]);
 
     /*

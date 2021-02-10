@@ -129,7 +129,7 @@ void plOccluder::IRemoveVisRegion(plVisRegion* reg)
     }
 }
 
-plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     std::vector<hsPoint3>   pos;
     std::vector<hsVector3>  norm;

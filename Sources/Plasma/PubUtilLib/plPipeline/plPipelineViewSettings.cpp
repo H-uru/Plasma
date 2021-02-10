@@ -341,17 +341,16 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, std::vec
 }
 
 
-bool plPipelineViewSettings::SubmitOccluders(const hsTArray<const plCullPoly*>& polyList)
+bool plPipelineViewSettings::SubmitOccluders(const std::vector<const plCullPoly*>& polyList)
 {
     fCullPolys.SetCount(0);
     fCullHoles.SetCount(0);
-    int i;
-    for (i = 0; i < polyList.GetCount(); i++)
+    for (const plCullPoly* poly : polyList)
     {
-        if (polyList[i]->IsHole())
-            fCullHoles.Append(polyList[i]);
+        if (poly->IsHole())
+            fCullHoles.Append(poly);
         else
-            fCullPolys.Append(polyList[i]);
+            fCullPolys.Append(poly);
     }
     fCullTreeDirty = true;
 
@@ -376,9 +375,8 @@ bool plPipelineViewSettings::TestVisibleWorld(const plSceneObject* sObj)
     if (!di)
         return false;
 
-    const int numDraw = di->GetNumDrawables();
-    int i;
-    for (i = 0; i < numDraw; i++)
+    const size_t numDraw = di->GetNumDrawables();
+    for (size_t i = 0; i < numDraw; i++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(i));
         if (!dr)

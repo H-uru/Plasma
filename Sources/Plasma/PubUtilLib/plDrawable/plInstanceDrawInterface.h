@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInstanceDrawInterface_inc
 #define plInstanceDrawInterface_inc
 
+#include "hsTemplates.h"
+
 #include "pnSceneObject/plDrawInterface.h"
 
 class plDrawableSpans;
@@ -53,7 +55,7 @@ protected:
     plDrawableSpans *fDrawable;
     hsTArray<plSharedMesh*> fMeshes;
 
-    void ICheckDrawableIndex(uint8_t which) override;
+    void ICheckDrawableIndex(size_t which) override;
 
 public:
     uint32_t fTargetID;
@@ -73,8 +75,8 @@ public:
     void RemoveSharedMesh(plSharedMesh *mesh);
 
     void ReleaseData() override;
-    virtual void SetSharedMesh(uint8_t which, plSharedMesh *mesh);
-    virtual void IClearIndex(uint8_t which);
+    virtual void SetSharedMesh(size_t which, plSharedMesh *mesh);
+    virtual void IClearIndex(size_t which);
     plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }
 
     int32_t GetSharedMeshIndex(const plSharedMesh *mesh) const;

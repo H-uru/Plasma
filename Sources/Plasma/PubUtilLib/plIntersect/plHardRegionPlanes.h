@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plHardRegionPlanes_inc
 #define plHardRegionPlanes_inc
 
+#include "hsTemplates.h"
+
 #include "plHardRegion.h"
 
 class plHardRegionPlanes : public plHardRegion

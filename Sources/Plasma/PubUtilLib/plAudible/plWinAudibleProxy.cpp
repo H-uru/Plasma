@@ -72,7 +72,7 @@ plKey plWinAudibleProxy::IGetNode() const
     return fOwner ? fOwner->GetSceneNode() : nil; 
 }
 
-plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudibleProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if( fOwner )
     {

@@ -2012,8 +2012,7 @@ PF_CONSOLE_CMD( App,
     plKey receiver = nil;
     PrintString(status);
 
-    int i;
-    for( i = 0; i < obj->GetNumModifiers(); i++ )
+    for (size_t i = 0; i < obj->GetNumModifiers(); i++)
     {
         if( plSimpleModifier::ConvertNoRef(obj->GetModifier(i)) )
         {
@@ -2151,7 +2150,7 @@ PF_CONSOLE_CMD( App,
         return;
     }
 
-    int i;
+    size_t i;
     for( i = 0; i < obj->GetNumModifiers(); i++ )
     {
         if( plPostEffectMod::ConvertNoRef(obj->GetModifier(i)) )
@@ -2524,9 +2523,9 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
 class plActiveRefPeekerKey : public plKeyImp
 {
     public:
-        uint16_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
-        plRefMsg*   PeekNotifyCreated(int i) { return GetNotifyCreated(i); }
-        bool        PeekIsActiveRef(int i) const { return IsActiveRef(i); }
+        size_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
+        plRefMsg*   PeekNotifyCreated(size_t i) { return GetNotifyCreated(i); }
+        bool        PeekIsActiveRef(size_t i) const { return IsActiveRef(i); }
 };
 
 // Not static so others can call it - making it even handier
@@ -2547,12 +2546,12 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
     if( peeker->PeekNumNotifies() == 0 )
         return;
 
-    uint32_t a, i, j, limit = 30, count = 0;
+    uint32_t a, j, limit = 30, count = 0;
     for( a = 0; a < 2; a++ )
     {
         PrintString( ( a == 0 ) ? "  Active:" : "  Passive:" );
 
-        for( i = 0; i < peeker->PeekNumNotifies(); i++ )
+        for (size_t i = 0; i < peeker->PeekNumNotifies(); i++)
         {
             if( ( a == 0 && peeker->PeekIsActiveRef( i ) ) || ( a == 1 && !peeker->PeekIsActiveRef( i ) ) )
             {
@@ -2598,8 +2597,7 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
     plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
     if( peeker->GetNumClones() > 0 )
     {
-        uint32_t i;
-        for( i = 0; i < peeker->GetNumClones(); i++ )
+        for (size_t i = 0; i < peeker->GetNumClones(); i++)
         {
             MyHandyPrintFunction( peeker->GetCloneByIdx( i ), PrintString );
         }
@@ -3521,14 +3519,12 @@ static plMorphSequence* LocalMorphSequence()
 
     const plCoordinateInterface* pci = playerObj->GetCoordinateInterface();
     const plModifier* constSeq = nil;
-    int i;
-    for( i = 0; i < pci->GetNumChildren(); i++ )
+    for (size_t i = 0; i < pci->GetNumChildren(); i++)
     {
         const plSceneObject* child = pci->GetChild(i)->GetOwner();
         if( child )
         {
-            int j;
-            for( j = 0; j < child->GetNumModifiers(); j++ )
+            for (size_t j = 0; j < child->GetNumModifiers(); j++)
             {
                 constSeq = child->GetModifier(j);
                 if( constSeq && plMorphSequence::ConvertNoRef(constSeq) )
@@ -5286,8 +5282,7 @@ void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if (so == nil) return;
 
-    int i;
-    for (i = so->GetNumModifiers() - 1; i >= 0; i--)
+    for (hsSsize_t i = so->GetNumModifiers() - 1; i >= 0; i--)
     {
         const plParticleSystem *sys = plParticleSystem::ConvertNoRef(so->GetModifier(i));
         if (sys != nil)

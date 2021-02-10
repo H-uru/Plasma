@@ -121,10 +121,9 @@ void plSittingModifier::Write(hsStream *stream, hsResMgr *mgr)
 void plSittingModifier::ISetupNotify(plNotifyMsg *notifyMsg, plNotifyMsg *originalNotify)
 {
     // Copy the original events to the new notify (some notify receivers need to have events)
-    int i;
-    for (i = 0; i < originalNotify->GetEventCount(); i++)
+    for (size_t i = 0; i < originalNotify->GetEventCount(); i++)
         notifyMsg->AddEvent(originalNotify->GetEventRecord(i));
-    for (i = 0; i < fNotifyKeys.Count(); i++)
+    for (int i = 0; i < fNotifyKeys.Count(); i++)
     {
         plKey receiver = fNotifyKeys[i];
         notifyMsg->AddReceiver(receiver);

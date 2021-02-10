@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnNetCommon/plSynchedObject.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 
 class plObjInterface;
 class plDrawInterface;
@@ -75,7 +74,7 @@ class plSceneObject : public plSynchedObject {
     plAudioInterface*           GetVolatileAudioInterface() { return fAudioInterface; }
     plObjInterface*             GetVolatileGenericInterface(uint16_t classIdx) const;
 
-    plModifier*                 GetVolatileModifier(int i) { return fModifiers[i]; }
+    plModifier*                 GetVolatileModifier(size_t i) { return fModifiers[i]; }
 
     plKey                       fSceneNode;
 
@@ -93,9 +92,9 @@ protected:
     plCoordinateInterface*      fCoordinateInterface;
     plAudioInterface*           fAudioInterface;
 
-    hsTArray<plModifier*>       fModifiers;
+    std::vector<plModifier*>    fModifiers;
 
-    hsTArray<plObjInterface*> fGenerics;
+    std::vector<plObjInterface*> fGenerics;
 
     void                    ISetDrawInterface(plDrawInterface* di);
     void                    ISetSimulationInterface(plSimulationInterface* si);
@@ -108,7 +107,7 @@ protected:
     void                    IPropagateToGenerics(plMessage* msg);
     void                    IPropagateToGenerics(const hsBitVector& types, plMessage* msg);
 
-    void                    IAddModifier(plModifier* mo, int i);
+    void                    IAddModifier(plModifier* mo, hsSsize_t i);
     void                    IRemoveModifier(plModifier* mo);
     bool                    IPropagateToModifiers(plMessage* msg);
 
@@ -134,13 +133,13 @@ public:
     virtual const plCoordinateInterface*        GetCoordinateInterface() const { return fCoordinateInterface; }
     virtual const plAudioInterface*             GetAudioInterface() const { return fAudioInterface; }
 
-    int                     GetNumGenerics() const { return fGenerics.GetCount(); }
-    const plObjInterface*   GetGeneric(int i) const { return fGenerics[i]; }
+    size_t                  GetNumGenerics() const { return fGenerics.size(); }
+    const plObjInterface*   GetGeneric(size_t i) const { return fGenerics[i]; }
 
     plObjInterface*         GetGenericInterface(uint16_t classIdx) const { return GetVolatileGenericInterface(classIdx); }
 
-    int                     GetNumModifiers() const { return fModifiers.GetCount(); }
-    const plModifier*       GetModifier(int i) const { return fModifiers[i]; }
+    size_t                  GetNumModifiers() const { return fModifiers.size(); }
+    const plModifier*       GetModifier(size_t i) const { return fModifiers[i]; }
     const plModifier*       GetModifierByType(uint16_t classIdx) const;
 
     bool MsgReceive(plMessage* msg) override;

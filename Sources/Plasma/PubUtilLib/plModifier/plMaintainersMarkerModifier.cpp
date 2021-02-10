@@ -52,7 +52,7 @@ void plMaintainersMarkerModifier::AddTarget(plSceneObject* so)
 void plMaintainersMarkerModifier::RemoveTarget(plSceneObject* so)
 {
     plMultiModifier::RemoveTarget(so);
-    hsAssert(fTargets.GetCount() == 0, "Spawn modifier has multiple targets. Matt.");
+    hsAssert(fTargets.empty(), "Spawn modifier has multiple targets. Matt.");
 
     plAvatarMgr::GetInstance()->RemoveMaintainersMarker(this);
 }

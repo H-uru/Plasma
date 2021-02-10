@@ -251,8 +251,7 @@ bool plShadowCastComponent::AddShadowCastModifier(plSceneObject* so, plShadowCas
 {
     // First off, ensure that we NEVER NEVER NEVER have more than one shadowcaster on an object.
     // That would be BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD.
-    int i;
-    for( i = 0; i < so->GetNumModifiers(); i++ )
+    for (size_t i = 0; i < so->GetNumModifiers(); i++)
     {
         if( plShadowCaster::ConvertNoRef(so->GetModifier(i)) )
             return false;

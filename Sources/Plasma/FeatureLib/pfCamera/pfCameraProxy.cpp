@@ -74,7 +74,7 @@ plKey plCameraProxy::IGetNode() const
     return nil; 
 }
 
-plDrawableSpans* plCameraProxy::ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plCameraProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     if( fOwner )
     {

@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
-#include "hsTemplates.h"
 #include "plgDispatch.h"
 #include "hsBitVector.h"
 #include <algorithm>
@@ -70,11 +69,8 @@ plMessage::plMessage(const plKey &s,
     fNetRcvrPlayerIDs(nil),
     dispatchBreak(false)
 {
-    if( r )
-    {
-        fReceivers.SetCount(1);
-        fReceivers[0] = r;
-    }
+    if (r)
+        fReceivers.emplace_back(r);
     fTimeStamp = t ? *t : hsTimer::GetSysSeconds();
 }
 
@@ -83,34 +79,32 @@ plMessage::~plMessage()
     delete fNetRcvrPlayerIDs;
 }
 
-plMessage&      plMessage::SetNumReceivers(int n) { fReceivers.SetCount(n); return *this; }
-uint32_t          plMessage::GetNumReceivers() const { return fReceivers.GetCount(); }
-const plKey&    plMessage::GetReceiver(int i) const { return fReceivers[i]; }
-plMessage&      plMessage::RemoveReceiver(int i) { fReceivers.Remove(i); return *this; }
+size_t          plMessage::GetNumReceivers() const { return fReceivers.size(); }
+const plKey&    plMessage::GetReceiver(size_t i) const { return fReceivers[i]; }
+plMessage&      plMessage::RemoveReceiver(size_t i) { fReceivers.erase(fReceivers.begin() + i); return *this; }
 
-plMessage&      plMessage::ClearReceivers() { fReceivers.SetCount(0); return *this; }
-plMessage&      plMessage::AddReceiver(const plKey &r) { fReceivers.Append(r); return *this; }
+plMessage&      plMessage::ClearReceivers() { fReceivers.clear(); return *this; }
+plMessage&      plMessage::AddReceiver(plKey r) { fReceivers.emplace_back(std::move(r)); return *this; }
 
-plMessage& plMessage::AddReceivers(const hsTArray<plKey>& rList)
+plMessage& plMessage::AddReceivers(const std::vector<plKey>& rList)
 {
-    int i;
-    for( i = 0; i < rList.GetCount(); i++ )
-        AddReceiver(rList[i]);
+    fReceivers.reserve(fReceivers.size() + rList.size());
+    fReceivers.insert(fReceivers.end(), rList.begin(), rList.end());
 
     return *this;
 }
 
-bool plMessage::Send(const plKey r, bool async)
+bool plMessage::Send(plKey r, bool async)
 {
-    if( r )
-        AddReceiver(r);
+    if (r)
+        AddReceiver(std::move(r));
     return plgDispatch::MsgSend(this,async);
 }
 
-bool plMessage::SendAndKeep(const plKey r, bool async)
+bool plMessage::SendAndKeep(plKey r, bool async)
 {
     Ref();
-    return Send(r, async);
+    return Send(std::move(r), async);
 }
 
 void plMessage::IMsgRead(hsStream* s, hsResMgr* mgr)
@@ -118,11 +112,10 @@ void plMessage::IMsgRead(hsStream* s, hsResMgr* mgr)
     plCreatable::Read(s, mgr);
 
     fSender = mgr->ReadKey(s);
-    int n;
+    uint32_t n;
     s->LogReadLE(&n,"NumberOfReceivers"); 
-    fReceivers.SetCount(n);
-    int i;
-    for( i = 0; i < fReceivers.GetCount(); i++ )
+    fReceivers.resize(n);
+    for (size_t i = 0; i < fReceivers.size(); i++)
         fReceivers[i] = mgr->ReadKey(s);
 
     s->LogReadLE(&fTimeStamp,"TimeStamp");    // read as double
@@ -134,10 +127,9 @@ void plMessage::IMsgWrite(hsStream* s, hsResMgr* mgr)
     plCreatable::Write(s, mgr);
     
     mgr->WriteKey(s,fSender);
-    s->WriteLE32(fReceivers.GetCount());
-    int i;
-    for( i = 0; i < fReceivers.GetCount(); i++ )
-        mgr->WriteKey(s,fReceivers[i]);
+    s->WriteLE32((uint32_t)fReceivers.size());
+    for (const plKey& receiver : fReceivers)
+        mgr->WriteKey(s, receiver);
 
     s->WriteLE(fTimeStamp);   // write as double
     s->WriteLE32(fBCastFlags);
@@ -161,10 +153,9 @@ void plMessage::IMsgReadVersion(hsStream* s, hsResMgr* mgr)
 
     if (contentFlags.IsBitSet(kMsgReceivers))
     {
-        int n = s->ReadLE32();
-        fReceivers.SetCount(n);
-        int i;
-        for( i = 0; i < fReceivers.GetCount(); i++ )
+        uint32_t n = s->ReadLE32();
+        fReceivers.resize(n);
+        for (size_t i = 0; i < fReceivers.size(); i++)
             fReceivers[i] = mgr->ReadKey(s);
     }
 
@@ -188,10 +179,9 @@ void plMessage::IMsgWriteVersion(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s,fSender);
 
     // kMsgReceivers
-    s->WriteLE32(fReceivers.GetCount());
-    int i;
-    for( i = 0; i < fReceivers.GetCount(); i++ )
-        mgr->WriteKey(s,fReceivers[i]);
+    s->WriteLE32((uint32_t)fReceivers.size());
+    for (const plKey& receiver : fReceivers)
+        mgr->WriteKey(s, receiver);
 
     // kMsgTimeStamp
     s->WriteLE(fTimeStamp);   // write as double

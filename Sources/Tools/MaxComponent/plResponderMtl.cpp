@@ -258,7 +258,7 @@ ST::string plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
     return ST::string::from_utf8(pb->GetStr(kMtlAnim));
 }
 
-void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, hsTArray<plKey>& keys)
+void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, std::vector<plKey>& keys)
 {
     if (!layer)
         return;
@@ -269,23 +269,23 @@ void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, hsTAr
         ST::string ID = animLayer->GetSegmentID();
         if (!segName.compare(ID))
         {
-            if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
-                keys.Append(animLayer->GetKey());
+            const auto idx = std::find(keys.begin(), keys.end(), animLayer->GetKey());
+            if (idx == keys.end())
+                keys.emplace_back(animLayer->GetKey());
         }
     }
 
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-int ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, hsTArray<plKey>& keys)
+size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (uint32_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), segName, keys);
-    return keys.GetCount();
+    return keys.size();
 }
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys)
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, std::vector<plKey>& keys)
 {
     int retVal = 0;
 
@@ -341,8 +341,6 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
 
     SegmentMap *segMap = GetAnimSegmentMap(maxMtl, pErrMsg);
 
-    hsTArray<plKey> keys;
-
     if( segMap )
     {
         GetSegMapAnimTime(animName, segMap, SegmentSpec::kAnim, begin, end);
@@ -354,6 +352,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     else
         mtlNode = (plMaxNode*)pb->GetINode(kMtlNode);
 
+    std::vector<plKey> keys;
     GetMatAnimModKey(maxMtl, mtlNode, animName, keys);
 
     ST::string loopName = ST::string::from_utf8(pb->GetStr(kMtlLoop));
@@ -362,7 +361,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
 
     DeleteSegmentMap(segMap);
 
-    if (!keys.GetCount())
+    if (keys.empty())
     {
         // We need the check here because "physicals only" export mode means that
         // most of the materials won't be there, so we should ignore this warning. -Colin

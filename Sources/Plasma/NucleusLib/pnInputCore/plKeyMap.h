@@ -54,8 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputMap.h"
 #include "plControlEventCodes.h"
 
-#include "hsTemplates.h"
-
+#include <vector>
 
 //// plKeyCombo //////////////////////////////////////////////////////////////
 //  Tiny class/data type representing a single key combo. Ex. shift+C
@@ -154,12 +153,12 @@ class plKeyMap : public plInputMap
             kSecondAlways           // Ditto but for 2nd key
         };
 
-    protected:
+    private:
 
-        hsTArray<plKeyBinding *>    fBindings;
+        std::vector<plKeyBinding *> fBindings;
 
         plKeyBinding    *IFindBindingByKey( const plKeyCombo &combo ) const;
-        void             IFindAllBindingsByKey( const plKeyCombo &combo, hsTArray<plKeyBinding*> &result ) const;
+        void             IFindAllBindingsByKey(const plKeyCombo &combo, std::vector<plKeyBinding*> &result) const;
         plKeyBinding    *IFindBinding( ControlEventCode code ) const;
         plKeyBinding    *IFindConsoleBinding( const char *command ) const;
 
@@ -168,7 +167,7 @@ class plKeyMap : public plInputMap
             
     public:
 
-        plKeyMap();
+        plKeyMap() = default;
         virtual ~plKeyMap();
 
         // Adds a given control code to the map. Once you add it, you can't change its flags. Returns false if the code is already present
@@ -192,7 +191,7 @@ class plKeyMap : public plInputMap
         const plKeyBinding  *FindBindingByKey( const plKeyCombo &combo ) const;
 
         // Finds multiple bindings (when there are unneeded ctrl/shift flags)
-        void FindAllBindingsByKey( const plKeyCombo &combo, hsTArray<const plKeyBinding*> &result ) const;
+        void FindAllBindingsByKey(const plKeyCombo &combo, std::vector<const plKeyBinding*> &result) const;
         
         // Searches for the binding by console command. Returns nil if not found
         const plKeyBinding* FindConsoleBinding( const char *command ) const;
@@ -220,8 +219,8 @@ class plKeyMap : public plInputMap
         static const char* GetStringUnmapped();
 
 
-        uint32_t              GetNumBindings() const { return fBindings.GetCount(); }
-        const plKeyBinding  &GetBinding( uint32_t i ) const { return *fBindings[ i ]; }
+        size_t              GetNumBindings() const { return fBindings.size(); }
+        const plKeyBinding  &GetBinding(size_t i) const { return *fBindings[i]; }
         void                HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
 
         static const char* ConvertVKeyToChar( uint32_t vk );

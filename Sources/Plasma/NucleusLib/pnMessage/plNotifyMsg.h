@@ -372,7 +372,7 @@ public:
     int32_t       fType;              // what type of notification
     float    fState;             // state of the notifier 0.0=false, 1.0=true
     int32_t       fID;                // special ID mostly for responder State transitions
-    hsTArray<proEventData*> fEvents;// list of events with data
+    std::vector<proEventData*> fEvents; // list of events with data
 
     void SetType(notificationType type) { fType = type; }
     void SetState(float state) { fState = state; }
@@ -402,8 +402,8 @@ public:
     void AddBookEvent( uint32_t event, uint32_t linkID = 0 );
     void AddHitClimbingBlockerEvent(const plKey &blocker);
     proEventData* FindEventRecord( int32_t eventtype );
-    int32_t GetEventCount() { return fEvents.Count(); }
-    proEventData* GetEventRecord(int32_t i) { return fEvents[i]; }
+    size_t GetEventCount() { return fEvents.size(); }
+    proEventData* GetEventRecord(size_t i) { return fEvents[i]; }
     void ClearEvents();
 
     // Searches the event records for an event triggered by an avatar, and returns that key

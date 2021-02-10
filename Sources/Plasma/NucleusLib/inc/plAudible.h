@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAudible_inc
 #define plAudible_inc
 
-#include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 class plSound;
@@ -110,9 +109,6 @@ public:
     virtual void        SetFilename(int index, const char *filename, bool isCompressed) = 0;  // set filename for a streaming sound
     virtual void        SetFadeIn( const int type, const float length, int index = -1 ) = 0;
     virtual void        SetFadeOut( const int type, const float length, int index = -1 ) = 0;
-
-protected:
-    hsTArray<plEventCallbackMsg*> fCallbacks;
 };
 
 #endif // plAudible_inc

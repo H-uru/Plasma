@@ -137,8 +137,7 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
     int numGot = 0;
     accs.SetCount(di->GetNumDrawables());
     accs.SetCount(0);
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -164,8 +163,7 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>&
     int numGot = 0;
     accs.Expand(di->GetNumDrawables());
     accs.SetCount(0);
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -194,8 +192,7 @@ void plAccessGeometry::Close(hsTArray<plAccessSpan>& accs) const
 
 void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels) const
 {
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -216,8 +213,7 @@ void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels
 
 void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t channels) const
 {
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.
@@ -238,8 +234,7 @@ void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t chann
 
 void plAccessGeometry::ReleaseSnapShot(const plDrawInterface* di) const
 {
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.

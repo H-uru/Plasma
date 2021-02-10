@@ -784,7 +784,7 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 const plCameraModifier1* pCamMod = nil;
                 if (pObj)
                 {
-                    for (int i = 0; i < pObj->GetNumModifiers(); i++)
+                    for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                     {
                         pCamMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
                         if (pCamMod)
@@ -2413,7 +2413,7 @@ bool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
     const plCameraModifier1* pCamMod = nil;
     if (pObj)
     {
-        for (int i = 0; i < pObj->GetNumModifiers(); i++)
+        for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
         {
             pCamMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
             if (pCamMod)

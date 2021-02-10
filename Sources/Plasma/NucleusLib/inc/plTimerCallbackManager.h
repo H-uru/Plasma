@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsTemplates.h"
 
 class plMessage;
 
@@ -82,7 +81,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
 private:
-    hsTArray<plTimerCallback*>  fCallbacks;
+    std::vector<plTimerCallback*>  fCallbacks;
 };
 
 class plgTimerCallbackMgr

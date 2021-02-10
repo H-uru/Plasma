@@ -1967,7 +1967,7 @@ void cyMisc::SetLightColorValue(pyKey& light, const ST::string& lightName, float
     if (!pIface)
     {
         // recurse through our children...
-        for (int i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
+        for (size_t i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
         {
             const plSceneObject* child = pObj->GetCoordinateInterface()->GetChild(i)->GetOwner();
             if (child)
@@ -2015,7 +2015,7 @@ void cyMisc::SetLightAnimationOn(pyKey& light, const ST::string& lightName, bool
     if (!pIface)
     {
         // recurse through our children...
-        for (int i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
+        for (size_t i = 0; i < pObj->GetCoordinateInterface()->GetNumChildren(); i++)
         {
             const plSceneObject* child = pObj->GetCoordinateInterface()->GetChild(i)->GetOwner();
             if (child)
@@ -2532,7 +2532,7 @@ void cyMisc::RebuildCameraStack(const ST::string& name, const char* ageName)
         plSceneObject* pObj = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
         if (pObj)
         {
-            for (int i = 1; i < pObj->GetNumModifiers(); i++)
+            for (size_t i = 1; i < pObj->GetNumModifiers(); i++)
             {
                 pMod = plCameraModifier1::ConvertNoRef(pObj->GetModifier(i));
                 if (pMod)
@@ -2958,10 +2958,10 @@ PyObject* cyMisc::FindClones(pyKey* object) {
     plUoid uoid = obj->GetUoid();
 
     plKeyImp* imp = ((plKeyImp*)obj);
-    uint32_t cloneNum = imp->GetNumClones();
+    size_t cloneNum = imp->GetNumClones();
     PyObject* keyList = PyList_New(cloneNum);
 
-    for (int i=0; i < cloneNum; i++) {
+    for (size_t i = 0; i < cloneNum; i++) {
         PyObject* key = pyKey::New(imp->GetCloneByIdx(i));
         PyList_SET_ITEM(keyList, i, key);
     }

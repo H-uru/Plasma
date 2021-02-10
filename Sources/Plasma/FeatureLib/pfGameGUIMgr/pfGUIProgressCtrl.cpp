@@ -97,10 +97,11 @@ void    pfGUIProgressCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Read(s, mgr);
 
-    fAnimationKeys.Reset();
-    uint32_t i, count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.clear();
+    uint32_t count = s->ReadLE32();
+    fAnimationKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fAnimationKeys.emplace_back(mgr->ReadKey(s));
     fAnimName = s->ReadSafeString();
 
     fAnimTimesCalced = false;
@@ -110,10 +111,9 @@ void    pfGUIProgressCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Write( s, mgr );
 
-    uint32_t i, count = fAnimationKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fAnimationKeys[ i ] );
+    s->WriteLE32((uint32_t)fAnimationKeys.size());
+    for (const plKey& key : fAnimationKeys)
+        mgr->WriteKey(s, key);
     s->WriteSafeString( fAnimName );
 }
 
@@ -122,13 +122,13 @@ void    pfGUIProgressCtrl::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUIProgressCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIValueCtrl::UpdateBounds( invXformMatrix, force );
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
         fBoundsValid = false;
 }
 
 //// SetAnimationKeys ////////////////////////////////////////////////////////
 
-void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
+void    pfGUIProgressCtrl::SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fAnimationKeys = keys;
     fAnimName = name;
@@ -146,10 +146,10 @@ bool    pfGUIProgressCtrl::ICalcAnimTimes()
     float tBegin = 1e30f, tEnd = -1e30f;
     bool     foundOne = false;
 
-    for( int i = 0; i < fAnimationKeys.GetCount(); i++ )
+    for (const plKey &animKey : fAnimationKeys)
     {
         // Handle AGMasterMods
-        plAGMasterMod *mod = plAGMasterMod::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
+        plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(animKey->ObjectIsLoaded());
         if( mod != nil )
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
@@ -164,7 +164,7 @@ bool    pfGUIProgressCtrl::ICalcAnimTimes()
             foundOne = true;
         }
         // Handle layer animations
-        plLayerAnimation *layer = plLayerAnimation::ConvertNoRef( fAnimationKeys[ i ]->ObjectIsLoaded() );
+        plLayerAnimation *layer = plLayerAnimation::ConvertNoRef(animKey->ObjectIsLoaded());
         if( layer != nil )
         {
             float begin = layer->GetTimeConvert().GetBegin();
@@ -199,7 +199,7 @@ void    pfGUIProgressCtrl::SetCurrValue( float v )
 //  if( old == (int)fValue )
 //      return;
 
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         ICalcAnimTimes();
 
@@ -227,7 +227,7 @@ void pfGUIProgressCtrl::AnimateToPercentage( float percent )
     {
         pfGUIValueCtrl::SetCurrValue( (fMax - fMin) * percent + fMin );
 
-        if( fAnimationKeys.GetCount() > 0 )
+        if (!fAnimationKeys.empty())
         {
             plAnimCmdMsg *msg = new plAnimCmdMsg();
             msg->SetCmd( plAnimCmdMsg::kPlayToPercentage ); 

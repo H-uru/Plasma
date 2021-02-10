@@ -57,32 +57,32 @@ plModifier::~plModifier()
 {
 }
 
-plDrawInterface* plModifier::IGetTargetDrawInterface(int iTarg) const
+plDrawInterface* plModifier::IGetTargetDrawInterface(size_t iTarg) const
 { 
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileDrawInterface() : nil; 
 }
 
-plSimulationInterface* plModifier::IGetTargetSimulationInterface(int iTarg) const
+plSimulationInterface* plModifier::IGetTargetSimulationInterface(size_t iTarg) const
 { 
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileSimulationInterface() : nil; 
 }
 
-plCoordinateInterface* plModifier::IGetTargetCoordinateInterface(int iTarg) const
+plCoordinateInterface* plModifier::IGetTargetCoordinateInterface(size_t iTarg) const
 { 
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileCoordinateInterface() : nil; 
 }
 
-plAudioInterface* plModifier::IGetTargetAudioInterface(int iTarg) const
+plAudioInterface* plModifier::IGetTargetAudioInterface(size_t iTarg) const
 { 
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileAudioInterface() : nil; 
 }
 
-plObjInterface* plModifier::IGetTargetGenericInterface(int iTarg, uint32_t classIdx) const
+plObjInterface* plModifier::IGetTargetGenericInterface(size_t iTarg, uint32_t classIdx) const
 {
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileGenericInterface((uint16_t)classIdx) : nil; 
 }
 
-plModifier* plModifier::IGetTargetModifier(int iTarg, int iMod) const
+plModifier* plModifier::IGetTargetModifier(size_t iTarg, size_t iMod) const
 { 
     return GetTarget(iTarg) ? GetTarget(iTarg)->GetVolatileModifier(iMod) : nil; 
 }

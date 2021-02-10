@@ -1093,8 +1093,7 @@ void plWaveSet7::ICheckTargetMaterials()
 {
     hsBounds3Ext targBnd;
     targBnd.MakeEmpty();
-    int i;
-    for( i = 0; i < GetNumTargets(); i++ )
+    for (size_t i = 0; i < GetNumTargets(); i++)
     {
         plSceneObject* so = GetTarget(i);
         if( !so )
@@ -1108,8 +1107,7 @@ void plWaveSet7::ICheckTargetMaterials()
         plAccessGeometry::Instance()->OpenRO(di, src, false);
 
         const int numUVWs = src.GetCount() && src[0].AccessVtx().HasUVWs() ? src[0].AccessVtx().NumUVWs() : 0;
-        int j;
-        for( j = 0; j < src.GetCount(); j++ )
+        for (int j = 0; j < src.GetCount(); j++)
         {
             hsAssert(src[j].AccessVtx().NumUVWs() == numUVWs, "Must have same number uvws on each water mesh");
             ICreateFixedMat(src[j].GetMaterial(), numUVWs); // no-op if it's already setup.
@@ -1119,7 +1117,7 @@ void plWaveSet7::ICheckTargetMaterials()
 
         plAccessGeometry::Instance()->Close(src);
 
-        for( j = 0; j < di->GetNumDrawables(); j++ )
+        for (size_t j = 0; j < di->GetNumDrawables(); j++)
         {
             plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
             if( dr )

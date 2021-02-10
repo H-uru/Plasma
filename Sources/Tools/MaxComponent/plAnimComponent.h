@@ -146,7 +146,7 @@ class plAnimComponent : public plAnimComponentBase
 public:
     plAnimComponent();
     plKey GetModKey(plMaxNode *node) override;
-    bool  GetKeyList(INode *restrictedNode, hsTArray<plKey> &outKeys) override;
+    bool  GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys) override;
 };
 
 class plAnimGroupedComponent : public plAnimComponentBase
@@ -162,7 +162,7 @@ public:
     plKey GetModKey(plMaxNode *node) override;
 
     bool    IsNodeRestricted() override { return false; }
-    bool    GetKeyList(INode *restrictedNode, hsTArray<plKey> &outKeys) override;
+    bool    GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys) override;
 };
 
 //// Dialog Proc For Anim Selection /////////////////////////////////////////////////////////////

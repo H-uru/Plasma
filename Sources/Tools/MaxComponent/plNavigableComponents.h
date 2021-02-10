@@ -54,7 +54,7 @@ template<class T> class hsTArray;
 class plAvLadderComponent : public plComponent
 {
 public:
-    typedef hsTArray<plKey> LadderModKeys;
+    typedef std::vector<plKey> LadderModKeys;
 
 protected:
     LadderModKeys fKeys;

@@ -162,7 +162,7 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
     plNotifyMsg* pNMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pNMsg)
     {
-        for (int i = 0; i < pNMsg->GetEventCount(); i++)
+        for (size_t i = 0; i < pNMsg->GetEventCount(); i++)
         {
             if (pNMsg->GetEventRecord(i)->fEventType == proEventData::kActivate)
             {

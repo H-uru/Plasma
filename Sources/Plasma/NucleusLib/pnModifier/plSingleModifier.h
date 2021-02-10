@@ -67,8 +67,8 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) override;
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    int GetNumTargets() const override { return 1; }
-    plSceneObject* GetTarget(int iTarg) const override { return fTarget; }
+    size_t GetNumTargets() const override { return 1; }
+    plSceneObject* GetTarget(size_t iTarg) const override { return fTarget; }
     void AddTarget(plSceneObject* so) override { SetTarget(so); }
     void RemoveTarget(plSceneObject* so) override { fTarget = 0; }
 

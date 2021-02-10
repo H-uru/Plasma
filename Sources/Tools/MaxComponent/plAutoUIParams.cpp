@@ -1591,14 +1591,14 @@ const char* plPickMaterialAnimationButtonParam::GetString(IParamBlock2 *pb)
 
 int plPickMaterialAnimationButtonParam::GetCount(IParamBlock2 *pb)
 {
-    return fKeys.Count();
+    return (int)fKeys.size();
 }
 
 plKey plPickMaterialAnimationButtonParam::GetKey(IParamBlock2 *pb, int idx)
-{   
-    int kcount = fKeys.Count();
+{
+    size_t kcount = fKeys.size();
 
-    if ( idx >= 0 && idx < kcount )
+    if (idx >= 0 && size_t(idx) < kcount)
     {
         return fKeys[idx];
     }
@@ -1607,20 +1607,20 @@ plKey plPickMaterialAnimationButtonParam::GetKey(IParamBlock2 *pb, int idx)
 }
 
 // this is in plResponderMtl.cpp
-extern int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys);
+extern int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, std::vector<plKey>& keys);
 
 void plPickMaterialAnimationButtonParam::CreateKeyArray(IParamBlock2* pb)
 {
-    fKeys.Reset();
+    fKeys.clear();
 
     Mtl* mtl = (Mtl*)pb->GetReferenceTarget(fID);
 
-    int bob = GetMatAnimModKey(mtl, nil, ST::string(), fKeys);
+    GetMatAnimModKey(mtl, nil, ST::string(), fKeys);
 }
 
 void plPickMaterialAnimationButtonParam::DestroyKeyArray()
 {
-    fKeys.Reset();
+    fKeys.clear();
 }
 
 int plPickMaterialAnimationButtonParam::CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset)

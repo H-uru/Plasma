@@ -226,7 +226,7 @@ void plProxyGen::IGenerateProxy()
     hsGMaterial* mat = IGetProxyMaterial();
     hsAssert(mat, "Failed to create proxy material");
 
-    fProxyIndex.SetCount(0);
+    fProxyIndex.clear();
     fProxyDrawables[idx] = ICreateProxy(mat, fProxyIndex, fProxyDrawables[idx]);
 
     if( fProxyDrawables[idx] && !fProxyDrawables[idx]->GetKey() )
@@ -349,9 +349,8 @@ void plProxyGen::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     uint32_t idx = IGetProxyIndex();
     if( fProxyDrawables[idx] )
     {
-        int i;
-        for( i = 0; i < fProxyIndex.GetCount(); i++ )
-            fProxyDrawables[idx]->SetTransform(fProxyIndex[i], l2w, w2l);
+        for (uint32_t proxyIndex : fProxyIndex)
+            fProxyDrawables[idx]->SetTransform(proxyIndex, l2w, w2l);
     }
 }
 
@@ -360,8 +359,7 @@ void plProxyGen::SetDisable(bool on)
     uint32_t idx = IGetProxyIndex();
     if( fProxyDrawables[idx] )
     {
-        int i;
-        for( i = 0; i < fProxyIndex.GetCount(); i++ )
-            fProxyDrawables[idx]->SetNativeProperty(fProxyIndex[i], plDrawable::kPropNoDraw, on);
+        for (uint32_t proxyIndex : fProxyIndex)
+            fProxyDrawables[idx]->SetNativeProperty(proxyIndex, plDrawable::kPropNoDraw, on);
     }
 }

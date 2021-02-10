@@ -204,12 +204,8 @@ void pyNotify::Send()
     pNMsg->fState = fBuildMsg.fState;
     pNMsg->fID = fBuildMsg.fID;
     // need to recreate all the events in the new message by Adding them
-    int i;
-    for ( i=0; i<fBuildMsg.fEvents.GetCount(); i++ )
-    {
-        proEventData* pED = fBuildMsg.fEvents.Get(i);
+    for (proEventData* pED : fBuildMsg.fEvents)
         pNMsg->AddEvent( pED );
-    }
 
     // add receivers
     // loop though adding the ones that want to be notified of the change

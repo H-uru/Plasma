@@ -274,9 +274,8 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                         else
                             plDetectorLog::Special("{}: LOS hit", pObj->GetKeyName());
                     }
-                    int i;
                     const plInterfaceInfoModifier* pMod = 0;
-                    for( i = 0; i < pObj->GetNumModifiers(); i++ )
+                    for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                     {
                         if (fBookMode == kNotOffering) // when sharing a book we don't care about other clickables
                         {
@@ -545,9 +544,9 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
     plNotifyMsg* pNMsg = plNotifyMsg::ConvertNoRef(msg);
     if (pNMsg)
     {
-        for(int x=0; x < pNMsg->GetEventCount();x++)
+        for(size_t x = 0; x < pNMsg->GetEventCount(); x++)
         {
-            proEventData* pED = pNMsg->GetEventRecord(0);
+            proEventData* pED = pNMsg->GetEventRecord(x);
             if ( pED->fEventType == proEventData::kMultiStage )
             {
                 proMultiStageEventData* pMS = (proMultiStageEventData*)pED;

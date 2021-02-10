@@ -63,7 +63,7 @@ protected:
     ReceiverKeys fReceivers;
 //  hsTArray<plKey> fReceivers;
 
-    void IGetReceivers(plMaxNode* node, hsTArray<plKey>& receivers);
+    void IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers);
 
 public:
     // Internal setup and write-only set properties on the MaxNode. No reading

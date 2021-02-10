@@ -267,7 +267,7 @@ void plArmatureModBase::AddressMessageToDescendants(const plCoordinateInterface 
         return;
     
     msg->AddReceiver(CI->GetOwnerKey());
-    for (int i = 0; i < CI->GetNumChildren(); i++)
+    for (size_t i = 0; i < CI->GetNumChildren(); i++)
         AddressMessageToDescendants(CI->GetChild(i), msg);
 }
 
@@ -885,18 +885,21 @@ plSceneObject *plArmatureMod::GetFollowerParticleSystemSO()
 
 void plArmatureMod::RegisterForBehaviorNotify(plKey key)
 {
-    if (fNotifyKeys.Find(key) == fNotifyKeys.kMissingIndex)
-        fNotifyKeys.Append(key);
+    const auto idx = std::find(fNotifyKeys.begin(), fNotifyKeys.end(), key);
+    if (idx == fNotifyKeys.end())
+        fNotifyKeys.emplace_back(std::move(key));
 }
 
 void plArmatureMod::UnRegisterForBehaviorNotify(plKey key)
 {
-    fNotifyKeys.RemoveItem(key);
+    const auto idx = std::find(fNotifyKeys.begin(), fNotifyKeys.end(), key);
+    if (idx != fNotifyKeys.end())
+        fNotifyKeys.erase(idx);
 }
 
 void plArmatureMod::IFireBehaviorNotify(uint32_t type, bool behaviorStart)
 {
-    if (fNotifyKeys.GetCount() > 0)
+    if (!fNotifyKeys.empty())
     {
         plAvatarBehaviorNotifyMsg *msg = new plAvatarBehaviorNotifyMsg();
         msg->SetSender(GetKey());

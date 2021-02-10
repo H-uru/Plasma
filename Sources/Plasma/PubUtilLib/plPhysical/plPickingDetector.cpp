@@ -76,10 +76,10 @@ bool plPickingDetector::MsgReceive(plMessage* msg)
     plPickedMsg* pPMsg = plPickedMsg::ConvertNoRef(msg);
     if (pPMsg)
     {
-        for (int i = 0; i < fReceivers.Count(); i++)
+        for (const plKey& receiver : fReceivers)
         {
             plActivatorMsg* pMsg = new plActivatorMsg;
-            pMsg->AddReceiver( fReceivers[i] );
+            pMsg->AddReceiver(receiver);
             if (pPMsg->fPicked)
                 pMsg->SetTriggerType( plActivatorMsg::kPickedTrigger );
             else
@@ -99,7 +99,7 @@ bool plPickingDetector::MsgReceive(plMessage* msg)
 
             pMsg->SetSender(GetKey());
             plgDispatch::MsgSend( pMsg );
-            hsStatusMessageF("%s sending activate message to %s\n",GetKey()->GetName().c_str(), fReceivers[i]->GetName().c_str());
+            hsStatusMessageF("%s sending activate message to %s\n",GetKey()->GetName().c_str(), receiver->GetName().c_str());
         }
     }
 

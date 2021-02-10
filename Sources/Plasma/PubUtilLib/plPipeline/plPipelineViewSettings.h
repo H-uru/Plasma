@@ -221,7 +221,7 @@ public:
      * Add the input polys into the list of polys from which to generate the
      * cull tree.
      */
-    bool    SubmitOccluders(const hsTArray<const plCullPoly*>& polyList);
+    bool    SubmitOccluders(const std::vector<const plCullPoly*>& polyList);
 
 
     /**

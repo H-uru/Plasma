@@ -67,17 +67,18 @@ public:
     };
 
 protected:
-    hsTArray<plDrawable*>       fDrawables;
-    hsTArray<uint32_t>            fDrawableIndices;
+    // TODO: Maybe these should be stored as a tuple or struct...
+    std::vector<plDrawable*>    fDrawables;
+    std::vector<uint32_t>       fDrawableIndices;
 
-    hsTArray<hsKeyedObject*>    fRegions;
+    std::vector<hsKeyedObject*> fRegions;
 
-    void ISetVisRegions(int iDraw);
+    void ISetVisRegions(size_t iDraw);
     void ISetVisRegion(hsKeyedObject* ref, bool on);
-    void ISetDrawable(uint8_t which, plDrawable* dr);
+    void ISetDrawable(size_t which, plDrawable* dr);
     void IRemoveDrawable(plDrawable* dr);
     void ISetSceneNode(plKey newNode) override;
-    virtual void ICheckDrawableIndex(uint8_t which);
+    virtual void ICheckDrawableIndex(size_t which);
 
     friend class plSceneObject;
 
@@ -107,17 +108,18 @@ public:
     void    ReleaseData() override;
 
     /// Funky particle system functions
-    void    SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights );
+    void    SetUpForParticleSystem(uint32_t maxNumEmitters, uint32_t maxNumParticles,
+                                   hsGMaterial *material, const std::vector<plKey>& lights);
     void    ResetParticleSystem();
     void    AssignEmitterToParticleSystem( plParticleEmitter *emitter );
 
     /// EXPORT-ONLY
-    void    SetDrawable(uint8_t which, plDrawable* dr);
-    plDrawable* GetDrawable( uint8_t which ) const { return which < fDrawables.GetCount() ? fDrawables[which] : nil; }
-    uint32_t  GetNumDrawables() const { return fDrawables.GetCount(); }
+    void    SetDrawable(size_t which, plDrawable* dr);
+    plDrawable* GetDrawable(size_t which ) const { return which < fDrawables.size() ? fDrawables[which] : nil; }
+    size_t  GetNumDrawables() const { return fDrawables.size(); }
     // Sets the triMesh index to be used when referring to our spans in the drawable
-    void    SetDrawableMeshIndex( uint8_t which, uint32_t index );
-    uint32_t  GetDrawableMeshIndex( uint8_t which ) const { return which < fDrawableIndices.GetCount() ? fDrawableIndices[which] : uint32_t(-1); }
+    void    SetDrawableMeshIndex(size_t which, uint32_t index);
+    uint32_t  GetDrawableMeshIndex(size_t which) const { return which < fDrawableIndices.size() ? fDrawableIndices[which] : uint32_t(-1); }
 };
 
 

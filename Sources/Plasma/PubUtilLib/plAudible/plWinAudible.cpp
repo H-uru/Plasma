@@ -584,15 +584,14 @@ void plWinAudible::AddCallbacks(plSoundMsg* pMsg)
     // sanity check
     if (pMsg->fIndex >= fSoundObjs.Count())
         return;
-    int i;
-    for( i = 0; i < pMsg->GetNumCallbacks(); i++ )
+    for (size_t i = 0; i < pMsg->GetNumCallbacks(); i++)
     {
         pMsg->GetEventCallback(i)->fIndex = pMsg->fIndex;
         pMsg->GetEventCallback(i)->SetSender(GetKey());
     }
     if( pMsg->fIndex < 0 )
     {
-        for( i = 0; i < fSoundObjs.Count(); i++ )
+        for (int i = 0; i < fSoundObjs.Count(); i++)
             fSoundObjs[i]->AddCallbacks(pMsg);
     }
     else
@@ -620,7 +619,7 @@ plSound* plWinAudible::GetSound(int i) const
 }
 
 // Visualization
-plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     int i;

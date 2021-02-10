@@ -2156,9 +2156,9 @@ bool plGUIButtonComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                                     : (INode *)node;
 
 
-            hsTArray<plKey> keys;
-            if( iface->GetKeyList( restrict, keys ) && keys.GetCount() > 0 )
-                button->SetAnimationKeys( keys, iface->GetIfaceSegmentName( false ) );
+            std::vector<plKey> keys;
+            if (iface->GetKeyList(restrict, keys) && !keys.empty())
+                button->SetAnimationKeys(keys, iface->GetIfaceSegmentName(false));
         }
     }
 
@@ -2171,9 +2171,8 @@ bool plGUIButtonComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                                     ? fCompPB->GetINode( kRefMouseOverAnimationNode )
                                     : (INode *)node;
 
-
-            hsTArray<plKey> keys;
-            if( iface->GetKeyList( restrict, keys ) && keys.GetCount() > 0 )
+            std::vector<plKey> keys;
+            if (iface->GetKeyList(restrict, keys) && !keys.empty())
                 button->SetMouseOverAnimKeys( keys, iface->GetIfaceSegmentName( false ) );
         }
     }
@@ -2383,8 +2382,8 @@ bool plGUICheckBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                                     : (INode *)node;
 
 
-            hsTArray<plKey> keys;
-            if( iface->GetKeyList( restrict, keys ) && keys.GetCount() > 0 )
+            std::vector<plKey> keys;
+            if (iface->GetKeyList(restrict, keys) && !keys.empty())
                 button->SetAnimationKeys( keys, iface->GetIfaceSegmentName( false ) );
         }
     }
@@ -2714,8 +2713,8 @@ bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                                 : (INode *)node;
 
 
-        hsTArray<plKey> keys;
-        if( iface->GetKeyList( restrict, keys ) && keys.GetCount() > 0 )
+        std::vector<plKey> keys;
+        if (iface->GetKeyList(restrict, keys) && !keys.empty())
             ctrl->SetAnimationKeys( keys, iface->GetIfaceSegmentName( false ) );
     }
     else
@@ -2724,9 +2723,7 @@ bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // so to avoid breaking old formats, if we can't grab an animObjInterface, we just grab the key
         // of the master mod of our node, like we would've before
         plAGMasterMod   *master = node->GetAGMasterMod();
-        hsTArray<plKey> keys;
-        keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
+        ctrl->SetAnimationKeys({master->GetKey()}, ENTIRE_ANIMATION_NAME);
     }
 
     if( fCompPB->GetInt( kRefOrientation ) == 1 )
@@ -4432,8 +4429,8 @@ bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                                 : (INode *)node;
 
 
-        hsTArray<plKey> keys;
-        if( iface->GetKeyList( restrict, keys ) && keys.GetCount() > 0 )
+        std::vector<plKey> keys;
+        if (iface->GetKeyList(restrict, keys) && !keys.empty())
             ctrl->SetAnimationKeys( keys, iface->GetIfaceSegmentName( false ) );
     }
     else
@@ -4442,9 +4439,7 @@ bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // so to avoid breaking old formats, if we can't grab an animObjInterface, we just grab the key
         // of the master mod of our node, like we would've before
         plAGMasterMod   *master = node->GetAGMasterMod();
-        hsTArray<plKey> keys;
-        keys.Append( master->GetKey() );
-        ctrl->SetAnimationKeys( keys, ENTIRE_ANIMATION_NAME );
+        ctrl->SetAnimationKeys({master->GetKey()}, ENTIRE_ANIMATION_NAME);
     }
 
     const char *errMsg = ISetSoundIndex( kRefAnimateSound, kRefAnimateSoundComp, pfGUIProgressCtrl::kAnimateSound, node );

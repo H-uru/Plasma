@@ -1043,7 +1043,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
     bool newDrawable = !drawable;
     bool haveNormal = true;
 
-    hsTArray<uint32_t> retIndex;
+    std::vector<uint32_t> retIndex;
 
     hsTArray<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src);
@@ -1245,7 +1245,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
     bool newDrawable = !drawable;
     bool haveNormal = true;
 
-    hsTArray<uint32_t> retIndex;
+    std::vector<uint32_t> retIndex;
 
     hsTArray<plDrawVisList> drawVis;
     node->Harvest(&cutter.GetIsect(), drawVis);

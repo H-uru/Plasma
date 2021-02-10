@@ -100,7 +100,7 @@ protected:
     bool        IEval(double secs, float del, uint32_t dirty) override;
     
     virtual bool        IGetSearchPos();
-    virtual void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm);
+    virtual void        ISetTargetTransform(size_t iTarg, const hsMatrix44& tgtXfm);
     virtual void        ISetPathTransform();
 
     virtual bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm);
@@ -184,7 +184,7 @@ public:
 
 protected:
     
-    void        ISetTargetTransform(int iTarg, const hsMatrix44& tgtXfm) override { fDesiredMatrix = tgtXfm; }
+    void        ISetTargetTransform(size_t iTarg, const hsMatrix44& tgtXfm) override { fDesiredMatrix = tgtXfm; }
     bool        IGetTargetTransform(hsPoint3& searchPos, hsMatrix44& tgtXfm) override;
     
     hsMatrix44  fDesiredMatrix;

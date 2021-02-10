@@ -398,7 +398,7 @@ void plPXPhysicalControllerCore::LeaveAge()
     SetSubworld(nullptr);
 }
 
-plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     // FIXME
     plDrawableSpans* myDraw = addTo;

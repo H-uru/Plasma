@@ -78,18 +78,16 @@ plCoordinateInterface::~plCoordinateInterface()
 {
     if( fParent )
         fParent->IRemoveChild(IGetOwner());
-    int i;
-    for( i = fChildren.GetCount()-1; i >= 0; i-- )
+    for (hsSsize_t i = fChildren.size() - 1; i >= 0; i--)
         IRemoveChild(i);
 }
 
 void plCoordinateInterface::ISetSceneNode(plKey newNode)
 {
-    int i;
-    for( i = 0; i < fChildren.GetCount(); i++ )
+    for (plSceneObject* child : fChildren)
     {
-        if( fChildren[i] )
-            fChildren[i]->SetSceneNode(newNode);
+        if (child)
+            child->SetSceneNode(newNode);
     }
 }
 
@@ -113,12 +111,12 @@ void plCoordinateInterface::ISetParent(plCoordinateInterface* par)
     fReason |= kReasonUnknown;
 }
 
-plCoordinateInterface* plCoordinateInterface::GetChild(int i) const 
+plCoordinateInterface* plCoordinateInterface::GetChild(size_t i) const
 { 
     return fChildren[i] ? fChildren[i]->GetVolatileCoordinateInterface() : nil; 
 }
 
-void plCoordinateInterface::IRemoveChild(int i)
+void plCoordinateInterface::IRemoveChild(size_t i)
 {
     if( fChildren[i] )
     {
@@ -126,26 +124,27 @@ void plCoordinateInterface::IRemoveChild(int i)
         if( childCI )
             childCI->ISetParent(nil);
     }
-    fChildren.Remove(i);
+    fChildren.erase(fChildren.begin() + i);
 }
 
 void plCoordinateInterface::IRemoveChild(plSceneObject* child)
 {
-    int idx = fChildren.Find(child);
-    if( idx != fChildren.kMissingIndex )
-        IRemoveChild(idx);
+    auto idx = std::find(fChildren.begin(), fChildren.end(), child);
+    if (idx != fChildren.end())
+        IRemoveChild(std::distance(fChildren.begin(), idx));
 }
 
-void plCoordinateInterface::ISetChild(plSceneObject* child, int which)
+void plCoordinateInterface::ISetChild(plSceneObject* child, hsSsize_t which)
 {
     hsAssert(child, "Setting a nil child");
     plCoordinateInterface* childCI = child->GetVolatileCoordinateInterface();
     hsAssert(childCI, "Child with no coordinate interface");
     childCI->ISetParent(this);
 
-    if( which < 0 )
-        which = fChildren.GetCount();
-    fChildren.ExpandAndZero(which+1);
+    if (which < 0)
+        which = (hsSsize_t)fChildren.size();
+    if (size_t(which + 1) > fChildren.size())
+        fChildren.resize(which + 1);
     fChildren[which] = child;
 
     // If we can't delay our transform update, neither can any of our parents.
@@ -236,11 +235,10 @@ void plCoordinateInterface::IDetachChild(plSceneObject* child, uint8_t flags)
  */
 void plCoordinateInterface::IUpdateDelayProp()
 {
-    int i;
     if (!GetProperty(kCanEverDelayTransform))
         return;
 
-    for (i = 0; i < GetNumChildren(); i++)
+    for (size_t i = 0; i < GetNumChildren(); i++)
     {
         // If we still have a child that needs the delay...     
         if (!GetChild(i)->GetProperty(kDelayedTransformEval))
@@ -493,11 +491,10 @@ void plCoordinateInterface::ITransformChanged(bool force, uint16_t reasons, bool
     plProfile_EndTiming(CITransT);
     if (process)
     {
-        int i;
-        for( i = 0; i < fChildren.GetCount(); i++ )
+        for (plSceneObject* child : fChildren)
         {
-            if( fChildren[i] && fChildren[i]->GetVolatileCoordinateInterface() )
-                fChildren[i]->GetVolatileCoordinateInterface()->ITransformChanged(force, propagateReasons, checkForDelay);
+            if (child && child->GetVolatileCoordinateInterface())
+                child->GetVolatileCoordinateInterface()->ITransformChanged(force, propagateReasons, checkForDelay);
         }
     }
     else if (force)
@@ -531,8 +528,7 @@ void plCoordinateInterface::ISetNetGroupRecur(plNetGroupId netGroup)
 
     IGetOwner()->plSynchedObject::SetNetGroup(netGroup);
 
-    int i;
-    for( i = 0; i < GetNumChildren(); i++ )
+    for (size_t i = 0; i < GetNumChildren(); i++)
     {
         if( GetChild(i) )
         {
@@ -571,11 +567,9 @@ void plCoordinateInterface::Write(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Write(stream);
     fWorldToLocal.Write(stream);
 
-    stream->WriteLE32(fChildren.GetCount());
-    int i;
-    for( i = 0; i < fChildren.GetCount(); i++ )
-        mgr->WriteKey(stream, fChildren[i]);
-
+    stream->WriteLE32((uint32_t)fChildren.size());
+    for (plSceneObject* child : fChildren)
+        mgr->WriteKey(stream, child);
 }
 
 bool plCoordinateInterface::MsgReceive(plMessage* msg)

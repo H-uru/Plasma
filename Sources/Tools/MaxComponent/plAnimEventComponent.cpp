@@ -222,8 +222,8 @@ bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
 
     mod->SetCallback(animMsg);
-    
-    hsTArray<plKey> receivers;
+
+    std::vector<plKey> receivers;
     IGetReceivers(node, receivers);
     mod->SetReceivers(receivers);
 
@@ -490,7 +490,7 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     //
     // Create and setup the callback message
     //
-    hsTArray<plKey> animKeys;
+    std::vector<plKey> animKeys;
     GetMatAnimModKey(mtl, mtlNode, mtlAnim, animKeys);
 
     plAnimCmdMsg *animMsg = new plAnimCmdMsg;
@@ -528,7 +528,7 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     mod->SetCallback(animMsg);
 
-    hsTArray<plKey> receivers;
+    std::vector<plKey> receivers;
     IGetReceivers(node, receivers);
     mod->SetReceivers(receivers);
 

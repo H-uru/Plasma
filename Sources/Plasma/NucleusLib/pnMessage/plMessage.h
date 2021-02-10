@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreatable.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 class plKey;
 class hsStream;
@@ -87,11 +86,12 @@ private:
     friend class plDispatch;
     friend class plDispatchLog;
 
-protected:
+private:
     plKey                   fSender;
-    hsTArray<plKey>         fReceivers;
+    std::vector<plKey>      fReceivers;
     double                  fTimeStamp;
 
+protected:
     uint32_t                  fBCastFlags;
     std::vector<uint32_t>*    fNetRcvrPlayerIDs;
 
@@ -119,19 +119,18 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override = 0;
 
     const plKey GetSender() const { return fSender; }
-    plMessage&  SetSender(const plKey &s) { fSender = s; return *this; }
+    plMessage&  SetSender(plKey s) { fSender = std::move(s); return *this; }
 
-    plMessage&   SetNumReceivers(int n);
-    uint32_t     GetNumReceivers() const ;
-    const plKey& GetReceiver(int i) const;
-    plMessage&   RemoveReceiver(int i);
+    size_t       GetNumReceivers() const;
+    const plKey& GetReceiver(size_t i) const;
+    plMessage&   RemoveReceiver(size_t i);
 
     plMessage& ClearReceivers();
-    plMessage& AddReceiver(const plKey &r);
-    plMessage& AddReceivers(const hsTArray<plKey>& rList);
+    plMessage& AddReceiver(plKey r);
+    plMessage& AddReceivers(const std::vector<plKey>& rList);
 
-    bool Send(const plKey r=nullptr, bool async=false); // Message will self-destruct after send.
-    bool SendAndKeep(const plKey r=nullptr, bool async=false); // Message won't self-destruct after send.
+    bool Send(plKey r=nullptr, bool async=false); // Message will self-destruct after send.
+    bool SendAndKeep(plKey r=nullptr, bool async=false); // Message won't self-destruct after send.
 
     double GetTimeStamp() const { return fTimeStamp; }
     plMessage& SetTimeStamp(double t) { fTimeStamp = t; return *this; }

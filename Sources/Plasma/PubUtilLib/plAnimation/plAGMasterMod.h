@@ -195,8 +195,8 @@ public:
     void SetIsGroupMaster(bool master, plMsgForwarder* msgForwarder);
 
     // PLASMA PROTOCOL
-    int GetNumTargets() const override { return fTarget ? 1 : 0; }
-    plSceneObject* GetTarget(int w) const override { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
+    size_t GetNumTargets() const override { return fTarget ? 1 : 0; }
+    plSceneObject* GetTarget(size_t w) const override { /* hsAssert(w < GetNumTargets(), "Bad target"); */ return fTarget; }
     void AddTarget(plSceneObject * object) override;
     void RemoveTarget(plSceneObject * object) override;
 

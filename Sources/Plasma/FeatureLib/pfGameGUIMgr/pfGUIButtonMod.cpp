@@ -188,16 +188,18 @@ void    pfGUIButtonMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    fAnimationKeys.Reset();
-    uint32_t i, count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fAnimationKeys.Append( mgr->ReadKey( s ) );
+    fAnimationKeys.clear();
+    uint32_t count = s->ReadLE32();
+    fAnimationKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fAnimationKeys.emplace_back(mgr->ReadKey(s));
     fAnimName = s->ReadSafeString();
 
-    fMouseOverAnimKeys.Reset();
+    fMouseOverAnimKeys.clear();
     count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
-        fMouseOverAnimKeys.Append( mgr->ReadKey( s ) );
+    fMouseOverAnimKeys.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
+        fMouseOverAnimKeys.emplace_back(mgr->ReadKey(s));
     fMouseOverAnimName = s->ReadSafeString();
 
     fNotifyType = s->ReadLE32();
@@ -208,16 +210,14 @@ void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    uint32_t i, count = fAnimationKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fAnimationKeys[ i ] );
+    s->WriteLE32((uint32_t)fAnimationKeys.size());
+    for (const plKey& key : fAnimationKeys)
+        mgr->WriteKey(s, key);
     s->WriteSafeString( fAnimName );
 
-    count = fMouseOverAnimKeys.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey( s, fMouseOverAnimKeys[ i ] );
+    s->WriteLE32((uint32_t)fMouseOverAnimKeys.size());
+    for (const plKey& key : fMouseOverAnimKeys)
+        mgr->WriteKey(s, key);
     s->WriteSafeString( fMouseOverAnimName );
 
     s->WriteLE32( fNotifyType );
@@ -231,7 +231,7 @@ void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
 void    pfGUIButtonMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     pfGUIControlMod::UpdateBounds( invXformMatrix, force );
-    if( fAnimationKeys.GetCount() > 0 || fMouseOverAnimKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty() || !fMouseOverAnimKeys.empty())
         fBoundsValid = false;
 }
 
@@ -240,7 +240,7 @@ void    pfGUIButtonMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 void    pfGUIButtonMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
     fClicking = true;
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kContinue );
@@ -270,7 +270,7 @@ void    pfGUIButtonMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
         return;
 
     fClicking = false;
-    if( fAnimationKeys.GetCount() > 0 )
+    if (!fAnimationKeys.empty())
     {
         plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kContinue );
@@ -337,7 +337,7 @@ void    pfGUIButtonMod::SetInteresting( bool i )
 {
     pfGUIControlMod::SetInteresting( i );
 
-    if( fMouseOverAnimKeys.GetCount() )
+    if (!fMouseOverAnimKeys.empty())
     {
         plAnimCmdMsg *msg = new plAnimCmdMsg();
         msg->SetCmd( plAnimCmdMsg::kContinue );
@@ -354,13 +354,13 @@ void    pfGUIButtonMod::SetInteresting( bool i )
 }
 
 
-void    pfGUIButtonMod::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
+void    pfGUIButtonMod::SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fAnimationKeys = keys;
     fAnimName = name;
 }
 
-void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const ST::string &name )
+void    pfGUIButtonMod::SetMouseOverAnimKeys(const std::vector<plKey> &keys, const ST::string &name)
 {
     fMouseOverAnimKeys = keys;
     fMouseOverAnimName = name;

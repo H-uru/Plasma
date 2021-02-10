@@ -283,8 +283,8 @@ hsKeyedObject* plResManager::IGetSharedObject(plKeyImp* pKey)
     plKeyImp* origKey = (plKeyImp*)pKey->GetCloneOwner();
 
     // Find the first non-nil key and ask it to clone itself
-    uint32_t count = origKey->GetNumClones();
-    for (uint32_t i = 0; i < count; i++)
+    size_t count = origKey->GetNumClones();
+    for (size_t i = 0; i < count; i++)
     {
         plKey cloneKey = origKey->GetCloneByIdx(i);
         if (cloneKey)

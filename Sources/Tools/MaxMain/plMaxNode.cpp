@@ -160,7 +160,7 @@ static plKey ExternGetNewKey(const ST::string &name, plModifier *mod, plLocation
 }
 
 // In plResponderComponent (for no apparent reason).
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 // In plAudioComponents
 int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
 
@@ -1521,21 +1521,21 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     /// Now assign to the interface
     if( oSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, oSpans );
         di->SetDrawableMeshIndex( iDraw, oIndex );
     }
 
     if( bSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, bSpans );
         di->SetDrawableMeshIndex( iDraw, bIndex );
     }
 
     if( sSpans )
     {
-        uint8_t iDraw = di->GetNumDrawables();
+        size_t iDraw = di->GetNumDrawables();
         di->SetDrawable( iDraw, sSpans );
         di->SetDrawableMeshIndex( iDraw, sIndex );
     }
@@ -1681,7 +1681,7 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
         const char  *dbgBoneName = bone->GetName();
 
         // Pick which drawable to point the DI to
-        uint8_t iDraw = 0;
+        size_t iDraw = 0;
 
         /// Now create the actual bone DI, or grab it if it's already created
         plDrawInterface *di = obj->GetVolatileDrawInterface();
@@ -1726,7 +1726,6 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings )
 {
-    uint8_t   iDraw;
     int     index, i;
 
     
@@ -1747,7 +1746,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 
     index = 0;
     spanArray.Reset();
-    for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+    for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
@@ -1937,8 +1936,7 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if( !di )
         return true;
 
-    uint8_t iDraw;
-    for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+    for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
         if( !dr )
@@ -3541,9 +3539,9 @@ plAGModifier *plMaxNode::HasAGMod()
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
-        int numMods = SO->GetNumModifiers();
+        size_t numMods = SO->GetNumModifiers();
 
-        for (int i = 0; i < numMods; i++)
+        for (size_t i = 0; i < numMods; i++)
         {
             const plModifier *mod = SO->GetModifier(i);
 
@@ -3561,9 +3559,9 @@ plAGMasterMod *plMaxNode::GetAGMasterMod()
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
-        int numMods = SO->GetNumModifiers();
+        size_t numMods = SO->GetNumModifiers();
 
-        for (int i = 0; i < numMods; i++)
+        for (size_t i = 0; i < numMods; i++)
         {
             const plModifier *mod = SO->GetModifier(i);
 
@@ -4012,11 +4010,11 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
     if (!CanConvert())
         return ret;
     
-    uint32_t count = GetSceneObject()->GetNumModifiers();
+    size_t count = GetSceneObject()->GetNumModifiers();
     hsTArray<plKey> keys;
     // Go through all the modifiers attached to this node's scene object
     // and grab keys for objects who we would need to send interface messages to
-    for (uint32_t i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
     {
         const plModifier* pMod = GetSceneObject()->GetModifier(i);
         // right now all we care about are these, but I guarentee you we will
@@ -4025,7 +4023,7 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
         const plLogicModifier* pLog = plLogicModifier::ConvertNoRef(pMod);
         if( pDet )
         {
-            for (int j = 0; j < pDet->GetNumReceivers(); j++)
+            for (size_t j = 0; j < pDet->GetNumReceivers(); j++)
                 keys.Append(pDet->GetReceiver(j));
         }
         else

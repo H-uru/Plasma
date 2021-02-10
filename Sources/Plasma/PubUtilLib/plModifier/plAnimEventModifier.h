@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAnimEventModifier : public plSingleModifier
 {
 protected:
-    hsTArray<plKey> fReceivers;// Keys to notify when the anim event happens
+    std::vector<plKey> fReceivers; // Keys to notify when the anim event happens
     plMessage* fCallback;       // The callback setup message we send when the anim loads
 
     bool IEval(double secs, float del, uint32_t dirty) override { return false; }
@@ -71,7 +71,7 @@ public:
     bool MsgReceive(plMessage* msg) override;
 
     // Export only
-    void SetReceivers(hsTArray<plKey>& receivers) { fReceivers = receivers; }
+    void SetReceivers(const std::vector<plKey>& receivers) { fReceivers = receivers; }
     void SetCallback(plMessage* callback) { fCallback = callback; }
 };
 

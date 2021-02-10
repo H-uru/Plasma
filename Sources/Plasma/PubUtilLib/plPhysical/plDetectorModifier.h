@@ -53,7 +53,7 @@ class plDetectorModifier : public plSingleModifier
 protected:
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
-    hsTArray<plKey>     fReceivers;
+    std::vector<plKey>  fReceivers;
     plModifier*         fRemoteMod;
     plKey               fProxyKey;
 
@@ -65,22 +65,21 @@ public:
 
     CLASSNAME_REGISTER( plDetectorModifier );
     GETINTERFACE_ANY( plDetectorModifier, plSingleModifier );
-    void AddLogicObj(plKey pKey) { fReceivers.Append(pKey); }
+    void AddLogicObj(plKey pKey) { fReceivers.emplace_back(std::move(pKey)); }
     void SetRemote(plModifier* p) { fRemoteMod = p; }
     plModifier* RemoteMod() { return fRemoteMod; }
     virtual void SetType(int8_t i) { }
-    int GetNumReceivers() const { return fReceivers.Count(); }
-    plKey GetReceiver(int i) const { return fReceivers[i]; }
+    size_t GetNumReceivers() const { return fReceivers.size(); }
+    plKey GetReceiver(size_t i) const { return fReceivers[i]; }
     void SetProxyKey(const plKey &k) { fProxyKey = k; }
     void Read(hsStream* stream, hsResMgr* mgr) override
     {
         plSingleModifier::Read(stream, mgr);
-        int n = stream->ReadLE32();
-        fReceivers.Reset();
-        for(int i = 0; i < n; i++ )
-        {   
-            fReceivers.Append(mgr->ReadKey(stream));
-        }
+        uint32_t n = stream->ReadLE32();
+        fReceivers.clear();
+        fReceivers.reserve(n);
+        for (uint32_t i = 0; i < n; i++)
+            fReceivers.emplace_back(mgr->ReadKey(stream));
         mgr->ReadKeyNotifyMe(stream, new plObjRefMsg(GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         fProxyKey = mgr->ReadKey(stream);
     }
@@ -88,9 +87,9 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override
     {
         plSingleModifier::Write(stream, mgr);
-        stream->WriteLE32(fReceivers.GetCount());
-        for( int i = 0; i < fReceivers.GetCount(); i++ )
-            mgr->WriteKey(stream, fReceivers[i]);
+        stream->WriteLE32((uint32_t)fReceivers.size());
+        for (const plKey& key : fReceivers)
+            mgr->WriteKey(stream, key);
         
         mgr->WriteKey(stream, fRemoteMod);
         mgr->WriteKey(stream, fProxyKey);

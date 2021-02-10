@@ -140,7 +140,7 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
     index = fDrawable->AppendDISpans(mesh->fSpans, index, false, true, addToFront, lod);
             
     // Tell the drawInterface what drawable and index it wants.
-    uint8_t iDraw = (uint8_t)GetNumDrawables();
+    size_t iDraw = GetNumDrawables();
     ISetDrawable(iDraw, fDrawable);
     SetDrawableMeshIndex(iDraw, index);
     SetSharedMesh(iDraw, mesh);
@@ -176,8 +176,8 @@ void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
     uint32_t geoIndex = fMeshes.Find(mesh);
     if (geoIndex != fMeshes.kMissingIndex)
     {
-        IClearIndex((uint8_t)geoIndex);
-                
+        IClearIndex(geoIndex);
+
         plSharedMeshBCMsg *smMsg = new plSharedMeshBCMsg;
         smMsg->SetSender(GetKey());
         smMsg->fDraw = fDrawable;
@@ -197,7 +197,7 @@ void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
     }
 }
 
-void plInstanceDrawInterface::ICheckDrawableIndex(uint8_t which)
+void plInstanceDrawInterface::ICheckDrawableIndex(size_t which)
 {
     if( which >= fMeshes.GetCount() )
     {
@@ -214,13 +214,13 @@ void plInstanceDrawInterface::ReleaseData()
     plDrawInterface::ReleaseData();
 }
 
-void plInstanceDrawInterface::SetSharedMesh(uint8_t which, plSharedMesh *mesh)
+void plInstanceDrawInterface::SetSharedMesh(size_t which, plSharedMesh *mesh)
 {
     ICheckDrawableIndex(which);
     fMeshes[which] = mesh;
 }
 
-void plInstanceDrawInterface::IClearIndex(uint8_t which)
+void plInstanceDrawInterface::IClearIndex(size_t which)
 {
     plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(fDrawables[which]);
     if (drawable != nil)
@@ -230,8 +230,8 @@ void plInstanceDrawInterface::IClearIndex(uint8_t which)
         diMsg->Send();
     }
     
-    fDrawables.Remove(which);
-    fDrawableIndices.Remove(which);
+    fDrawables.erase(fDrawables.begin() + which);
+    fDrawableIndices.erase(fDrawableIndices.begin() + which);
     fMeshes.Remove(which);
 }
 

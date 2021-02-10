@@ -127,8 +127,8 @@ public:
 
     virtual uint16_t      GetActiveRefs() const = 0;
 
-    virtual uint16_t      GetNumNotifyCreated() const = 0;
-    virtual plRefMsg*   GetNotifyCreated(int i) const = 0;
+    virtual size_t      GetNumNotifyCreated() const = 0;
+    virtual plRefMsg*   GetNotifyCreated(size_t i) const = 0;
     virtual const hsBitVector& GetActiveBits() const = 0;
 
 protected:

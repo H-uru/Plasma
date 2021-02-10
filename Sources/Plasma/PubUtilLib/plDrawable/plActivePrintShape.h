@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plActivePrintShape_inc
 #define plActivePrintShape_inc
 
+#include "hsTemplates.h"
+
 #include "plPrintShape.h"
 
 class plRippleShapeMsg;

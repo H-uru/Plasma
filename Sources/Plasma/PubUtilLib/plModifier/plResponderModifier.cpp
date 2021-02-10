@@ -308,7 +308,7 @@ bool plResponderModifier::IContinueSending()
                     bool foundCollision = false;
 
                     // If we find a collision event, this message is meant to trigger a multistage
-                    for (int i = 0; i < notifyMsg->GetEventCount(); i++)
+                    for (size_t i = 0; i < notifyMsg->GetEventCount(); i++)
                     {
                         proEventData* event = notifyMsg->GetEventRecord(i);
                         if (event->fEventType == proEventData::kCollision)
@@ -461,8 +461,8 @@ void plResponderModifier::Restore()
                     newCallbackMsg->AddReceiver(callbackMsg->GetReceiver(iReceiver));
 
                 // Add the callbacks
-                int numCallbacks = callbackMsg->GetNumCallbacks();
-                for (int iCallback = 0; iCallback < numCallbacks; iCallback++)
+                size_t numCallbacks = callbackMsg->GetNumCallbacks();
+                for (size_t iCallback = 0; iCallback < numCallbacks; iCallback++)
                 {
                     plMessage* callback = callbackMsg->GetCallback(iCallback);
 //                  hsRefCnt_SafeRef(callback); AddCallback will ref this for us.

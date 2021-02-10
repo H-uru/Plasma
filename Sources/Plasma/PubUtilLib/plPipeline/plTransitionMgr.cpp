@@ -246,9 +246,6 @@ void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 
 bool    plTransitionMgr::MsgReceive( plMessage* msg )
 {
-    int         i;
-
-
     plTimeMsg   *time = plTimeMsg::ConvertNoRef( msg );
     if( time != nil )
     {
@@ -302,7 +299,7 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
         if( fRegisteredForTime )
             IStop( true );
 
-        for( i = 0; i < effect->GetNumCallbacks(); i++ )
+        for (size_t i = 0; i < effect->GetNumCallbacks(); i++)
         {
             plEventCallbackMsg *pMsg = effect->GetEventCallback( i );
             hsRefCnt_SafeRef( pMsg );

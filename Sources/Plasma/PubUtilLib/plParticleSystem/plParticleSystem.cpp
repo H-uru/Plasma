@@ -628,8 +628,7 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     fWindMult = s->ReadLEScalar();
 
     fNumValidEmitters = s->ReadLE32();
-    int i;
-    for (i = 0; i < fNumValidEmitters; i++)
+    for (uint32_t i = 0; i < fNumValidEmitters; i++)
     {
         fEmitters[i] = plParticleEmitter::ConvertNoRef(mgr->ReadCreatable(s));
         fEmitters[i]->ISetSystem(this);
@@ -639,12 +638,10 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     IReadEffectsArray(fEffects, kEffectMisc, s, mgr);
     IReadEffectsArray(fConstraints, kEffectConstraint, s, mgr);
 
-    int count = s->ReadLE32();
-    fPermaLights.SetCount(count);
-    for( i = 0; i < count; i++ )
-    {
+    uint32_t count = s->ReadLE32();
+    fPermaLights.resize(count);
+    for (uint32_t i = 0; i < count; i++)
         fPermaLights[i] = mgr->ReadKey(s);
-    }
 }
 
 void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
@@ -694,10 +691,9 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
     for (i = 0; i < count; i++)
         mgr->WriteKey(s, fConstraints.Get(i));
 
-    count = fPermaLights.GetCount();
-    s->WriteLE32(count);
-    for( i = 0; i < count; i++ )
-        mgr->WriteKey(s, fPermaLights[i]);
+    s->WriteLE32((uint32_t)fPermaLights.size());
+    for (const plKey& key : fPermaLights)
+        mgr->WriteKey(s, key);
 }
 
 void plParticleSystem::SetAttachedToAvatar(bool attached)
@@ -709,5 +705,5 @@ void plParticleSystem::SetAttachedToAvatar(bool attached)
 
 void plParticleSystem::AddLight(plKey liKey)
 {
-    fPermaLights.Append(liKey);
+    fPermaLights.emplace_back(std::move(liKey));
 }

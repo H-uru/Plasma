@@ -67,7 +67,7 @@ protected:
     plPhysical* fOwner;
     plPXPhysicalControllerCore* fController;
 
-    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo=nil) override;
+    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nil) override;
     plKey               IGetNode() const override;
 };
 

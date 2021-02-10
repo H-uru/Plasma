@@ -793,7 +793,7 @@ void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
     // Hack here: since we don't have an official interface to select these directly
     // in MAX, we just use a GUI check box to grab them for us, even though we never
     // actually use the functionality of the checkbox itself
-    const hsTArray<plKey> &keys = fTurnPageButton->GetAnimationKeys();
+    const std::vector<plKey> &keys = fTurnPageButton->GetAnimationKeys();
     ST::string animName = fTurnPageButton->GetAnimationName();
 
     plAnimCmdMsg *msg = new plAnimCmdMsg();
@@ -1400,7 +1400,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( bool closeNotOpen, bool immediat
     // Do the animation manually so we can get a callback
     fBookGUIs[fCurBookGUI]->CurrentlyOpen(!closeNotOpen);
 
-    const hsTArray<plKey> &keys = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationKeys();
+    const std::vector<plKey> &keys = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationKeys();
     ST::string animName = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationName();
 
     plAnimCmdMsg *msg = new plAnimCmdMsg();

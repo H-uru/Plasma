@@ -88,11 +88,8 @@ fDisabled(false)
 
 plLogicModBase::~plLogicModBase()
 {
-    int i;
-    for (i = 0; i < fCommandList.Count(); i++ )
-    {
-        hsRefCnt_SafeUnRef(fCommandList[i]);
-    }
+    for (plMessage* command : fCommandList)
+        hsRefCnt_SafeUnRef(command);
 
     hsRefCnt_SafeUnRef(fNotify);
 }
@@ -299,28 +296,26 @@ void plLogicModBase::Reset(bool bCounterReset)
 }
 
 void plLogicModBase::CreateNotifyMsg()
-{   
+{
     fNotify = new plNotifyMsg;
-    for (int i = 0; i < fReceiverList.Count(); i++)
-        fNotify->AddReceiver(fReceiverList[i]);
+    for (const plKey& receiver : fReceiverList)
+        fNotify->AddReceiver(receiver);
 }
 
 void plLogicModBase::AddNotifyReceiver(plKey receiver)
 {
-    fReceiverList.Append(receiver);
+    fReceiverList.emplace_back(receiver);
     fNotify->AddReceiver(receiver);
 }
 
 void plLogicModBase::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
-    int n = stream->ReadLE32();
-    fCommandList.SetCountAndZero(n);
-    for(int i = 0; i < n; i++ )
-    {   
-        plMessage* pMsg =  plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
-        fCommandList[i] = pMsg;
-    }
+    uint32_t n = stream->ReadLE32();
+    fCommandList.resize(n);
+    for (uint32_t i = 0; i < n; i++)
+        fCommandList[i] = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
+
     if (fNotify)
         delete fNotify;
     plNotifyMsg* pNMsg =  plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(stream));
@@ -328,16 +323,16 @@ void plLogicModBase::Read(hsStream* stream, hsResMgr* mgr)
 
     fFlags.Read(stream);
     fDisabled = stream->ReadBool();
-    for (int d = 0; d < fNotify->GetNumReceivers(); d++)
-        fReceiverList.Append(fNotify->GetReceiver(d));
+    for (size_t d = 0; d < fNotify->GetNumReceivers(); d++)
+        fReceiverList.emplace_back(fNotify->GetReceiver(d));
 }
 
 void plLogicModBase::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
-    stream->WriteLE32(fCommandList.GetCount());
-    for(int i = 0; i < fCommandList.GetCount(); i++ )
-        mgr->WriteCreatable( stream, fCommandList[i] );
+    stream->WriteLE32((uint32_t)fCommandList.size());
+    for (plMessage* command : fCommandList)
+        mgr->WriteCreatable(stream, command);
     mgr->WriteCreatable( stream, fNotify );
     fFlags.Write(stream);
     stream->WriteBool(fDisabled);

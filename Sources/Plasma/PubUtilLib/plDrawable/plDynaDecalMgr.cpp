@@ -1449,7 +1449,7 @@ bool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
         return retVal;
 
     plProfile_BeginTiming(Total);
-    for (int j = 0; j < di->GetNumDrawables(); j++)
+    for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.

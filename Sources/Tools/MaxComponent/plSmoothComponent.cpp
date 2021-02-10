@@ -181,8 +181,7 @@ bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>
         if( !di )
             continue;
 
-        uint8_t iDraw;
-        for( iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++ )
+        for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
         {
             plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
             if( !dr )

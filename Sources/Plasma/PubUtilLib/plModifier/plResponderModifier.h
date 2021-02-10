@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include "pnModifier/plSingleModifier.h"
 #include "pnMessage/plMessage.h"
-
+#include "hsTemplates.h"
 
 class plNotifyMsg;
 class plAnimCmdMsg;

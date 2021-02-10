@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Helpers /////////////////////////////////////////////////////////////////
 
-static void ISearchLayerRecur( plLayerInterface *layer, const ST::string &segName, hsTArray<plKey>& keys )
+static void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, std::vector<plKey>& keys)
 {
     if( !layer )
         return;
@@ -74,24 +74,24 @@ static void ISearchLayerRecur( plLayerInterface *layer, const ST::string &segNam
         ST::string ID = animLayer->GetSegmentID();
         if (!ID.compare(segName))
         {
-            if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
-                keys.Append(animLayer->GetKey());
+            const auto idx = std::find(keys.begin(), keys.end(), animLayer->GetKey());
+            if (idx == keys.end())
+                keys.emplace_back(animLayer->GetKey());
         }
     }
 
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-static int ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, hsTArray<plKey>& keys)
+static size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
     ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::string() : segName;
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (uint32_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), name, keys);
-    return keys.GetCount();
+    return keys.size();
 }
 
-static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys)
+static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, std::vector<plKey>& keys)
 {
     int retVal = 0;
 
@@ -240,7 +240,7 @@ void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float
 
 //// plAnimObjInterface Functions ////////////////////////////////////////////
 
-bool    plAnimStealthNode::GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys )
+bool    plAnimStealthNode::GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys)
 {
     if( !fPreppedForConvert )
     {

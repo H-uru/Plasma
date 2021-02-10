@@ -225,7 +225,7 @@ public:
     void    PickTargetNode(IParamBlock2 *destPB, ParamID destParamID, ParamID typeID) override;
     bool    IsNodeRestricted() override { return true; }
     ST::string GetIfaceSegmentName(bool allowNil) override;
-    bool    GetKeyList(INode *restrictedNode, hsTArray<plKey> &outKeys) override;
+    bool    GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys) override;
     bool        MightRequireSeparateMaterial() override { return true; }
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene

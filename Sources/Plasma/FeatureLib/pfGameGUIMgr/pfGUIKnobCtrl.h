@@ -57,7 +57,7 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
 {
     protected:
 
-        hsTArray<plKey> fAnimationKeys;
+        std::vector<plKey> fAnimationKeys;
         ST::string      fAnimName;
 
         hsPoint3        fDragStart;
@@ -108,7 +108,7 @@ class pfGUIKnobCtrl : public pfGUIValueCtrl
         void    SetCurrValue(float v) override;
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name );
+        void    SetAnimationKeys(const std::vector<plKey> &keys, const ST::string &name);
         void    SetScreenRange( const hsPoint3 &startPos, const hsPoint3 &endPos ) { fAnimStartPos = startPos; fAnimEndPos = endPos; }
 };
 

@@ -551,7 +551,7 @@ physx::PxTriangleMesh* plPXPhysical::ICookTriMesh(hsStream* s)
 // ==========================================================================
 
 static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
-                                       hsTArray<uint32_t>& idx,
+                                       std::vector<uint32_t>& idx,
                                        const physx::PxShape* shape,
                                        const physx::PxBoxGeometry& geometry,
                                        const hsMatrix44& l2w, hsGMaterial* mat, bool blended)
@@ -562,7 +562,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
 }
 
 static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
-                                       hsTArray<uint32_t>& idx,
+                                       std::vector<uint32_t>& idx,
                                        const physx::PxShape* shape,
                                        const physx::PxConvexMeshGeometry& geometry,
                                        const hsMatrix44& l2w, hsGMaterial* mat, bool blended)
@@ -626,7 +626,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
 }
 
 static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
-                                       hsTArray<uint32_t>& idx,
+                                       std::vector<uint32_t>& idx,
                                        const physx::PxShape* shape,
                                        const physx::PxSphereGeometry& geometry,
                                        const hsMatrix44& l2w, hsGMaterial* mat, bool blended)
@@ -637,7 +637,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
 }
 
 static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
-                                       hsTArray<uint32_t>& idx,
+                                       std::vector<uint32_t>& idx,
                                        const physx::PxShape* shape,
                                        const physx::PxTriangleMeshGeometry& geometry,
                                        const hsMatrix44& l2w, hsGMaterial* mat, bool blended)
@@ -660,7 +660,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
                                                  mat, l2w, blended, &idx, drawable);
 }
 
-plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo)
+plDrawableSpans* plPXPhysical::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
     plDrawableSpans* myDraw = addTo;
     hsMatrix44 l2w, unused;

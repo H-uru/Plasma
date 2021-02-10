@@ -46,7 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plControlDefinition.h"
-#include "hsTemplates.h"
+
+#include <vector>
 
 class plInputMap
 {
@@ -60,8 +61,8 @@ class plMouseMap : public plInputMap
 {
 public:
     ~plMouseMap();
-    hsTArray<plMouseInfo*> fMap;
-    int AddMapping(plMouseInfo* pNfo);
+    std::vector<plMouseInfo*> fMap;
+    hsSsize_t AddMapping(plMouseInfo* pNfo);
 };
 
 #endif // PL_INPUT_DEVICE_H

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLogicModBase_inc
 
 #include "plSingleModifier.h"
-#include "hsTemplates.h"
 
 class plConditionalObject;
 class plSceneObject;
@@ -67,14 +66,14 @@ public:
 protected:
     static uint32_t sArbitrationDelayMs;
 
-    hsTArray<plMessage*>            fCommandList;
-    hsTArray<plKey>                 fReceiverList;
-    uint32_t                          fCounterLimit;
-    float                        fTimer;
-    hsBitVector                     fFlags;
-    uint32_t                          fCounter;
-    plNotifyMsg*                    fNotify;
-    bool                            fDisabled;
+    std::vector<plMessage*> fCommandList;
+    std::vector<plKey>      fReceiverList;
+    uint32_t                fCounterLimit;
+    float                   fTimer;
+    hsBitVector             fFlags;
+    uint32_t                fCounter;
+    plNotifyMsg*            fNotify;
+    bool                    fDisabled;
 
     bool IEval(double secs, float del, uint32_t dirty) override { return false; }
     void IUpdateSharedState(bool triggered) const;
@@ -107,7 +106,7 @@ public:
 
     plNotifyMsg* GetNotify() { return fNotify; }
 
-    void AddCommand(plMessage* msg) { fCommandList.Append(msg); }
+    void AddCommand(plMessage* msg) { fCommandList.emplace_back(msg); }
     void SetOneShot(bool b) { if (b) SetFlag(kOneShot); else ClearFlag(kOneShot); }
     void RegisterForMessageType(uint16_t hClass);
 

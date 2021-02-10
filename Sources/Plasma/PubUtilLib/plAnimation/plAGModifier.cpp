@@ -293,9 +293,9 @@ const plModifier * FindModifierByClass(const plSceneObject *obj, int classID)
 {
     if(obj)
     {
-        int modCount = obj->GetNumModifiers();
+        size_t modCount = obj->GetNumModifiers();
 
-        for (int i = 0; i < modCount; i++)
+        for (size_t i = 0; i < modCount; i++)
         {
             const plModifier *mod = obj->GetModifier(i);
 
