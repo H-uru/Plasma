@@ -53,7 +53,7 @@ plMorphArray::~plMorphArray()
 
 
 // MorphArray - Apply
-void plMorphArray::Apply(hsTArray<plAccessSpan>& dst, hsTArray<float>* weights /* = nil */) const
+void plMorphArray::Apply(std::vector<plAccessSpan>& dst, hsTArray<float>* weights /* = nil */) const
 {
     // Have our choice of cache thrashing here
     // We can for each delta/for each vert

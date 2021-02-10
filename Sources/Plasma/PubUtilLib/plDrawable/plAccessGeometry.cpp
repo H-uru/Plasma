@@ -132,11 +132,11 @@ void plAccessGeometry::SetTheIntance(plAccessGeometry* i)
 // The first couple of these just interpret between the SceneObjects we like to
 // think about and the clumps of geometry that comprise each one.
 
-void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool useSnap) const
+void plAccessGeometry::OpenRO(const plDrawInterface* di, std::vector<plAccessSpan>& accs, bool useSnap) const
 {
     int numGot = 0;
-    accs.SetCount(di->GetNumDrawables());
-    accs.SetCount(0);
+    accs.clear();
+    accs.reserve(di->GetNumDrawables());
     for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
@@ -146,10 +146,9 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (uint32_t k = 0; k < diIndex.GetCount(); k++)
                 {
-                    accs.Resize(numGot+1);
+                    accs.resize(numGot+1);
                     OpenRO(dr, diIndex[k], accs[numGot++]);
                 }
             }
@@ -158,11 +157,11 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, hsTArray<plAccessSpan>&
 
 }
 
-void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>& accs, bool idxToo) const
+void plAccessGeometry::OpenRW(const plDrawInterface* di, std::vector<plAccessSpan>& accs, bool idxToo) const
 {
     int numGot = 0;
-    accs.Expand(di->GetNumDrawables());
-    accs.SetCount(0);
+    accs.clear();
+    accs.reserve(di->GetNumDrawables());
     for (size_t j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
@@ -172,10 +171,9 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>&
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (uint32_t k = 0; k < diIndex.GetCount(); k++)
                 {
-                    accs.Resize(numGot+1);
+                    accs.resize(numGot+1);
                     OpenRW(dr, diIndex[k], accs[numGot++], idxToo);
                 }
             }
@@ -183,11 +181,10 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, hsTArray<plAccessSpan>&
     }
 }
 
-void plAccessGeometry::Close(hsTArray<plAccessSpan>& accs) const
+void plAccessGeometry::Close(std::vector<plAccessSpan>& accs) const
 {
-    int i;
-    for( i = 0; i < accs.GetCount(); i++ )
-        Close(accs[i]);
+    for (plAccessSpan& span : accs)
+        Close(span);
 }
 
 void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels) const

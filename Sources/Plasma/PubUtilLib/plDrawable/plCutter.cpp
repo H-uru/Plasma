@@ -735,7 +735,7 @@ bool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTAr
     return false;
 }
 
-void plCutter::ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::ICutoutTransformedConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
 {
     const hsMatrix44& l2w = src.GetLocalToWorld();
     hsMatrix44 l2wNorm;
@@ -775,7 +775,7 @@ void plCutter::ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutou
 // We usually don't need to do any transform, because the kind of surface you
 // would leave prints on tends to be static, with the transform folded into the
 // verts. So it's worth having 2 separate versions of the function.
-void plCutter::ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::ICutoutTransformed(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
 {
     const hsMatrix44& l2w = src.GetLocalToWorld();
     hsMatrix44 l2wNorm;
@@ -809,7 +809,7 @@ void plCutter::ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst
     }
 }
 
-void plCutter::ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::ICutoutConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
 {
     if( !(src.GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
     {
@@ -848,7 +848,7 @@ void plCutter::ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst
 }
 
 // Cutout
-void plCutter::Cutout(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::Cutout(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
 {
     if( !src.HasAccessTri() )
         return;
@@ -1045,20 +1045,19 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
 
     std::vector<uint32_t> retIndex;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src);
     
-    if( !src.GetCount() )
+    if (src.empty())
         return;
 
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
+    for (const plAccessSpan& span : src)
     {
 
         static hsTArray<plCutoutPoly> dst;
         dst.SetCount(0);
 #if 1
-        cutter.Cutout(src[i], dst);
+        cutter.Cutout(span, dst);
 #else
         hsPoint3 corner;
         hsVector3 ax[3];
@@ -1137,8 +1136,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         // Total number of tris?
         int numVerts = 0;
         int numTris = 0;
-        int j;
-        for( j = 0; j < dst.GetCount(); j++ )
+        for (int j = 0; j < dst.GetCount(); j++)
         {
             if( dst[j].fVerts.GetCount() )
             {
@@ -1156,8 +1154,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
 
         int iPoly = 0;
         int iVert = 0;
-        int iv;
-        for( iv = 0; iv < numVerts; iv++ )
+        for (int iv = 0; iv < numVerts; iv++)
         {
             pos[iv] = dst[iPoly].fVerts[iVert].fPos;
             norm[iv] = dst[iPoly].fVerts[iVert].fNorm;
@@ -1189,11 +1186,10 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         std::vector<uint16_t> idx;
 
         uint16_t base = 0;
-        for( j = 0; j < dst.GetCount(); j++ )
+        for (int j = 0; j < dst.GetCount(); j++)
         {
             uint16_t next = base+1;
-            int k;
-            for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
+            for (int k = 2; k < dst[j].fVerts.GetCount(); k++)
             {
                 idx.emplace_back(base);
                 idx.emplace_back(next++);
@@ -1209,7 +1205,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
                                                         true, 
                                                         nil,
                                                         idx.size(), idx.data(),
-                                                        src[i].GetMaterial(), 
+                                                        span.GetMaterial(),
                                                         hsMatrix44::IdentityMatrix(), 
                                                         true,
                                                         &retIndex, 

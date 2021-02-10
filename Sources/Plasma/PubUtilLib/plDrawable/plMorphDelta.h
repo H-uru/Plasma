@@ -88,7 +88,7 @@ public:
     void        SetWeight(float w) { fWeight = w; }
     float    GetWeight() const { return fWeight; }
 
-    void        Apply(hsTArray<plAccessSpan>& dst, float weight = -1.f) const;
+    void        Apply(std::vector<plAccessSpan>& dst, float weight = -1.f) const;
 
     void        ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved);
     void        ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);

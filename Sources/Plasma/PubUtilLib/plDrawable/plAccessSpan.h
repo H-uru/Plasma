@@ -99,9 +99,12 @@ public:
     bool HasAccessVtx() const { return fType != kUndefined; }
 
     plAccessTriSpan&    AccessTri() { hsAssert(fType == kTri, "Cross type access"); return fAccess.fAccessTri; }
+    const plAccessTriSpan& AccessTri() const { hsAssert(fType == kTri, "Cross type access"); return fAccess.fAccessTri; }
     plAccessPartySpan&  AccessParty() { hsAssert(fType == kParty, "Cross type access"); return fAccess.fAccessParty; }
+    const plAccessPartySpan& AccessParty() const { hsAssert(fType == kParty, "Cross type access"); return fAccess.fAccessParty; }
 
     inline plAccessVtxSpan& AccessVtx();
+    inline const plAccessVtxSpan& AccessVtx() const;
 
 
     const hsMatrix44&   GetLocalToWorld() const { return *fLocalToWorld; }
@@ -119,9 +122,9 @@ public:
     float GetWaterHeight() const { hsAssert(HasWaterHeight(), "Check before asking"); return *fWaterHeight; }
 };
 
-inline plAccessVtxSpan& plAccessSpan::AccessVtx()
+plAccessVtxSpan& plAccessSpan::AccessVtx()
 {
-    switch( fType )
+    switch (fType)
     {
     case kTri:
         return fAccess.fAccessTri;
@@ -139,5 +142,23 @@ inline plAccessVtxSpan& plAccessSpan::AccessVtx()
 }
 
 
+const plAccessVtxSpan& plAccessSpan::AccessVtx() const
+{
+    switch (fType)
+    {
+    case kTri:
+        return fAccess.fAccessTri;
+    case kParty:
+        return fAccess.fAccessParty;
+    case kVtx:
+        return fAccess.fAccessVtx;
+
+    case kUndefined:
+    default:
+        break;
+    }
+    hsAssert(false, "Undefined type");
+    return fAccess.fAccessVtx;
+}
 
 #endif // plAccessSpan_inc

@@ -227,17 +227,17 @@ private:
         uint8_t*    fValueByte;
     };
     uint8_t*                    fValueEnd;
-    plAccessVtxSpan*            fAccess;
+    const plAccessVtxSpan*      fAccess;
     plAccessVtxSpan::Channel    fChan;
 
     void                        ISetEnd() { fValueEnd = fAccess->fChannels[fChan] + fAccess->fNumVerts * fAccess->fStrides[fChan]; }
 
 public:
-    plAccIterator(plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { Set(acc, chan); }
+    plAccIterator(const plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { Set(acc, chan); }
     plAccIterator(const plAccIterator& accIt) { *this = accIt; }
     plAccIterator() : fValueByte(nil), fValueEnd(nil), fAccess(nil), fChan(plAccessVtxSpan::kInvalid) {}
 
-    void Set(plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { fAccess = acc; fChan = chan; ISetEnd(); }
+    void Set(const plAccessVtxSpan* acc, plAccessVtxSpan::Channel chan) { fAccess = acc; fChan = chan; ISetEnd(); }
 
     T*          Value() const { return fValue; }
 
@@ -255,12 +255,12 @@ protected:
     plAccIterator<hsPoint3>     fPosition;
 
 public:
-    plAccPositionIterator(plAccessVtxSpan* acc) 
+    plAccPositionIterator(const plAccessVtxSpan* acc)
         :   fPosition(acc, plAccessVtxSpan::kPosition) {}
 
     plAccPositionIterator() {}
 
-    plAccPositionIterator& Set(plAccessVtxSpan* acc) 
+    plAccPositionIterator& Set(const plAccessVtxSpan* acc)
     { 
         fPosition.Set(acc, plAccessVtxSpan::kPosition); 
         return *this; 

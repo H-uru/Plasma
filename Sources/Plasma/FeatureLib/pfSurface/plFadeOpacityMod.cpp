@@ -343,11 +343,10 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
     if( !di )
         return;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src, false);
 
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
+    for (size_t i = 0; i < src.size(); i++)
     {
         hsGMaterial* mat = src[i].GetMaterial();
 

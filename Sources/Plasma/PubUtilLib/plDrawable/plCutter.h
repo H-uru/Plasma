@@ -138,9 +138,9 @@ protected:
 
     inline void     ISetPosNorm(float parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
 
-    void            ICutoutTransformed(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-    void            ICutoutConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-    void            ICutoutTransformedConstHeight(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutTransformed(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutTransformedConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
 
 
 public:
@@ -159,7 +159,7 @@ public:
 
     void        Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, bool flip=false);
 
-    void        Cutout(plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void        Cutout(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
     bool        CutoutGrid(int nWid, int nLen, plFlatGridMesh& dst) const;
 
     void        SetLength(const hsVector3& s) { fLengthU = s.fX; fLengthV = s.fY; fLengthW = s.fZ; }

@@ -232,7 +232,7 @@ void plDistOpacityMod::ISetup()
 
     std::vector<MatLayer> todo;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src, false);
 
     // We are guaranteed that each Max object will be given a unique
@@ -242,13 +242,11 @@ void plDistOpacityMod::ISetup()
     // making sure we don't include any layer more than once (strip repeats).
     // This would be grossly inefficient if the numbers involved weren't all
     // very small. So an n^2 search isn't bad if n <= 2.
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
+    for (const plAccessSpan& span : src)
     {
-        hsGMaterial* mat = src[i].GetMaterial();
+        hsGMaterial* mat = span.GetMaterial();
 
-        int j;
-        for( j = 0; j < mat->GetNumLayers(); j++ )
+        for (uint32_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )
@@ -265,8 +263,11 @@ void plDistOpacityMod::ISetup()
 
     plAccessGeometry::Instance()->Close(src);
 
-    for (const auto [mat, lay] : todo)
+    for (size_t i = 0; i < todo.size(); ++i)
     {
+        // We need i below...
+        const auto [mat, lay] = todo[i];
+
         plFadeOpacityLay* fade = new plFadeOpacityLay;
 
         hsgResMgr::ResMgr()->NewKey(lay->GetKey()->GetName(), fade, lay->GetKey()->GetUoid().GetLocation());

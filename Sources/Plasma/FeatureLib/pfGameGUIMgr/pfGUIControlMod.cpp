@@ -304,14 +304,13 @@ static void GetObjectPoints( plSceneObject *so, hsTArray<hsPoint3> &outPoints )
 
     // The following uses mf's spiffy plAccessGeometry/Spans stuff, which, in 
     // one uint16_t, kicksAss.
-    hsTArray<plAccessSpan> spans;
+    std::vector<plAccessSpan> spans;
     plAccessGeometry::Instance()->OpenRO( di, spans );
 
-    int i;
     outPoints.Reset();
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (const plAccessSpan& span : spans)
     {
-        plAccessVtxSpan& vtxSrc = spans[ i ].AccessVtx();
+        const plAccessVtxSpan& vtxSrc = span.AccessVtx();
         plAccPositionIterator iterSrc( &vtxSrc );
 
         for( iterSrc.Begin(); iterSrc.More(); iterSrc.Advance() )

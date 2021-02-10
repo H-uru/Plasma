@@ -53,7 +53,7 @@ public:
     plMorphArray();
     virtual ~plMorphArray();
 
-    void Apply(hsTArray<plAccessSpan>& dst, hsTArray<float>* weights = nil) const;
+    void Apply(std::vector<plAccessSpan>& dst, hsTArray<float>* weights = nil) const;
 
     void Read(hsStream* s, hsResMgr* mgr);
     void Write(hsStream* s, hsResMgr* mgr); 
