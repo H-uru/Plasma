@@ -174,7 +174,7 @@ void plLightInfo::GetStrengthAndScale(const hsBounds3Ext& bnd, float& strength, 
 
 bool plLightInfo::AffectsBound(const hsBounds3Ext& bnd)
 {
-    if (plVolumeIsect* isect = IGetIsect())
+    if (plVolumeIsect* isect = IGetIsect(); isect)
         return isect->Test(bnd) != kVolumeCulled;
     return true;
 }
@@ -1021,4 +1021,3 @@ plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint
                                                         addTo);
     return draw;
 }
-

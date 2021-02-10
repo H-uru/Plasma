@@ -1415,10 +1415,9 @@ int plNetMsgRelevanceRegions::IPeekBuffer( hsStream* stream, uint32_t peekOption
 ST::string plNetMsgRelevanceRegions::AsString() const
 {
     ST::string b1, b2;
-    int i;
-    for (i = 0; i < fRegionsImIn.GetNumBitVectors(); i++)
+    for (uint32_t i = 0; i < fRegionsImIn.GetNumBitVectors(); i++)
         b1 += ST::format("{#x} ", fRegionsImIn.GetBitVector(i));
-    for (i = 0; i < fRegionsICareAbout.GetNumBitVectors(); i++)
+    for (uint32_t i = 0; i < fRegionsICareAbout.GetNumBitVectors(); i++)
         b2 += ST::format("{#x} ", fRegionsICareAbout.GetBitVector(i));
     return ST::format("rgnsImIn:{}, rgnsICareAbout:{}, {}",
         b1, b2, plNetMessage::AsString());
