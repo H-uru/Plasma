@@ -605,13 +605,13 @@ int32_t cyAvatar::GetAvatarClothingGroup()
 std::vector<ST::string> cyAvatar::GetEntireClothingList(int32_t clothing_type)
 {
     // Currently, just all the clothing available will be returned
-    hsTArray<plClothingItem*> clothingList = plClothingMgr::GetClothingMgr()->GetItemList();
-    int numItems = clothingList.GetCount();
+    const std::vector<plClothingItem*> &clothingList = plClothingMgr::GetClothingMgr()->GetItemList();
 
     // create the string list to send to python...
     std::vector<ST::string> retVal;
-    for (int i = 0; i < numItems; i++)
-        retVal.push_back(clothingList[i]->GetName());
+    retVal.reserve(clothingList.size());
+    for (plClothingItem* item : clothingList)
+        retVal.emplace_back(item->GetName());
 
     return retVal;
 }
@@ -641,14 +641,11 @@ std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
             if ( avMod )
             {
                 // Get all the clothes that we can wear
-                hsTArray<plClothingItem*> clothingList;
+                std::vector<plClothingItem*> clothingList;
                 plClothingMgr::GetClothingMgr()->GetItemsByGroup(avMod->GetClothingOutfit()->fGroup, clothingList);
-                int numItems = clothingList.GetCount();
                 // create the string list to send to python... as a python object
-                int i;
-                for ( i=0; i<numItems; i++ )
+                for (plClothingItem* item : clothingList)
                 {
-                    plClothingItem* item = clothingList[i];
                     if ( clothing_type == -1 || item->fType == clothing_type )
                     {
                         // add this event record to the main event list (lists within a list)
@@ -706,16 +703,13 @@ std::vector<PyObject*> cyAvatar::GetAvatarClothingList()
             if ( avMod )
             {
                 // Currently, just all the clothing available will be returned
-                hsTArray<plClothingItem*> clothingList = avMod->GetClothingOutfit()->GetItemList();
-                int numItems = clothingList.GetCount();
+                const std::vector<plClothingItem*> &clothingList = avMod->GetClothingOutfit()->GetItemList();
                 // create the string list to send to python... as a python object
-                int i;
-                for ( i=0; i<numItems; i++ )
+                for (plClothingItem* item : clothingList)
                 {
                     // add this event record to the main event list (lists within a list)
                     // create list
                     PyObject* clothingItem = PyList_New(5);
-                    plClothingItem* item = clothingList[i];
 
                     // [0] = clothing name
                     PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(item->GetName()));
@@ -754,41 +748,39 @@ std::vector<PyObject*> cyAvatar::GetAvatarClothingList()
 std::vector<PyObject*> cyAvatar::GetWardrobeClothingList()
 {
     std::vector<PyObject*> retVal;
-    hsTArray<plClosetItem> closetList;
+    std::vector<plClosetItem> closetList;
     plClothingMgr::GetClothingMgr()->GetClosetItems(closetList);
-    int numItems = closetList.GetCount();
     // create the string list to send to python... as a python object
-    int i;
-    for ( i=0; i<numItems; i++ )
+    for (const plClosetItem& item : closetList)
     {
         // add this event record to the main event list (lists within a list)
         // create list
         PyObject* closetItem = PyList_New(7);
 
         // [0] = clothing name
-        PyList_SetItem(closetItem, 0, PyUnicode_FromSTString(closetList[i].fItem->GetName()));
+        PyList_SetItem(closetItem, 0, PyUnicode_FromSTString(item.fItem->GetName()));
         
         // [1] = clothing type
-        PyList_SetItem(closetItem, 1, PyLong_FromLong(closetList[i].fItem->fType));
+        PyList_SetItem(closetItem, 1, PyLong_FromLong(item.fItem->fType));
         
         // [2] = description
-        PyList_SetItem(closetItem, 2, PyUnicode_FromSTString(closetList[i].fItem->fDescription));
+        PyList_SetItem(closetItem, 2, PyUnicode_FromSTString(item.fItem->fDescription));
 
         // [3] = ptImage of icon
-        if ( closetList[i].fItem->fThumbnail != nil )
+        if (item.fItem->fThumbnail != nil)
             // create a ptImage
-            PyList_SetItem(closetItem, 3, pyImage::New(closetList[i].fItem->fThumbnail->GetKey()));
+            PyList_SetItem(closetItem, 3, pyImage::New(item.fItem->fThumbnail->GetKey()));
         else
             PyList_SetItem(closetItem, 3, PyLong_FromLong(0));
 
         // [4] = fCustomText
-        PyList_SetItem(closetItem, 4, PyUnicode_FromSTString(closetList[i].fItem->fCustomText));
+        PyList_SetItem(closetItem, 4, PyUnicode_FromSTString(item.fItem->fCustomText));
 
         // [5] = fTint1
-        PyList_SetItem(closetItem, 5, pyColor::New(closetList[i].fOptions.fTint1));
+        PyList_SetItem(closetItem, 5, pyColor::New(item.fOptions.fTint1));
         
         // [6] = fTint2
-        PyList_SetItem(closetItem, 6, pyColor::New(closetList[i].fOptions.fTint2));
+        PyList_SetItem(closetItem, 6, pyColor::New(item.fOptions.fTint2));
 
         retVal.push_back(closetItem);
     }
@@ -844,15 +836,12 @@ std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
             if ( avMod )
             {
                 // Get all the clothes that we can wear
-                hsTArray<plClothingItem*> clothingList;
+                std::vector<plClothingItem*> clothingList;
                 plClothingMgr::GetClothingMgr()->GetItemsByGroup(avMod->GetClothingOutfit()->fGroup, clothingList);
                 plClothingMgr::GetClothingMgr()->FilterUniqueMeshes(clothingList); // filter all redundant meshes
-                int numItems = clothingList.GetCount();
                 // create the string list to send to python... as a python object
-                int i;
-                for ( i=0; i<numItems; i++ )
+                for (plClothingItem* item : clothingList)
                 {
-                    plClothingItem* item = clothingList[i];
                     if ( clothing_type == -1 || item->fType == clothing_type )
                     {
                         // add this event record to the main event list (lists within a list)
@@ -912,17 +901,14 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const ST::string& clothing_n
             if ( avMod )
             {
                 // Get all clothes with the same mesh as the one passed in
-                hsTArray<plClothingItem*> clothingList;
+                std::vector<plClothingItem*> clothingList;
                 plClothingMgr::GetClothingMgr()->GetAllWithSameMesh(plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name), clothingList);
-                int numItems = clothingList.GetCount();
                 // create the string list to send to python... as a python object
-                int i;
-                for ( i=0; i<numItems; i++ )
+                for (plClothingItem* item : clothingList)
                 {
                     // add this event record to the main event list (lists within a list)
                     // create list
                     PyObject* clothingItem = PyList_New(5);
-                    plClothingItem* item = clothingList[i];
 
                     // [0] = clothing name
                     PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(item->GetName()));

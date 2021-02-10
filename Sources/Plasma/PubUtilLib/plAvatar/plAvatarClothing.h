@@ -122,7 +122,7 @@ public:
     bool CanWearWith(plClothingItem *item);
     bool WearBefore(plClothingItem *item); // Should we come before the arg item? (texture gen order)
     bool HasBaseAlpha();
-    bool HasSameMeshes(plClothingItem *other);
+    bool HasSameMeshes(const plClothingItem *other) const;
 
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;
@@ -168,8 +168,9 @@ public:
     plArmatureMod *fAvatar;
     plLayer *fTargetLayer;
     hsGMaterial *fMaterial; // Needed to tell swapped geometry what material to use.
-    hsTArray<plClothingItem*> fItems;
-    hsTArray<plClothingItemOptions*> fOptions;
+    // TODO: Consider a tuple?
+    std::vector<plClothingItem*> fItems;
+    std::vector<plClothingItemOptions*> fOptions;
     plClothingBase *fBase;
     uint8_t fGroup;
     bool fSynchClients;     // set true if the next synch should be bcast
@@ -195,8 +196,8 @@ public:
     float GetSkinBlend(uint8_t layer);     
     hsColorRGBA GetItemTint(plClothingItem *item, uint8_t layer = 2) const;
     float GetAge() const { return fSkinBlends[0]; }
-    hsTArray<plClothingItem*> &GetItemList() { return fItems; }
-    hsTArray<plClothingItemOptions*> &GetOptionList() { return fOptions; }
+    const std::vector<plClothingItem*> &GetItemList() const { return fItems; }
+    const std::vector<plClothingItemOptions*> &GetOptionList() const { return fOptions; }
 
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;
@@ -269,11 +270,11 @@ protected:
 
 class plClothingMgr : public hsKeyedObject
 {
-protected:
+private:
     static plClothingMgr *fInstance;
 
     hsTArray<plClothingElement*> fElements;
-    hsTArray<plClothingItem*> fItems;
+    std::vector<plClothingItem*> fItems;
     hsTArray<plClothingLayout*> fLayouts;
     
     void IInit();
@@ -292,18 +293,18 @@ public:
 
     // Functions that just relate to the clothing you have permission to wear (closet)
     void AddItemsToCloset(const std::vector<plClosetItem> &items);
-    void GetClosetItems(hsTArray<plClosetItem> &out);
+    void GetClosetItems(std::vector<plClosetItem> &out);
 
     // Functions that relate to all existing clothing
     plClothingItem *FindItemByName(const ST::string &name) const;
-    hsTArray<plClothingItem*>& GetItemList() { return fItems; }
-    void GetItemsByGroup(uint8_t group, hsTArray<plClothingItem*> &out);
+    const std::vector<plClothingItem*>& GetItemList() const { return fItems; }
+    void GetItemsByGroup(uint8_t group, std::vector<plClothingItem*> &out);
     void GetItemsByGroupAndType(uint8_t group, uint8_t type, hsTArray<plClothingItem*> &out);
-    void GetAllWithSameMesh(plClothingItem *item, hsTArray<plClothingItem*> &out);
+    void GetAllWithSameMesh(plClothingItem *item, std::vector<plClothingItem*> &out);
     
     // Give an array of items (from one of the above functions, for example)
     // and this will yank out items so that only item is in the array for each mesh.
-    void FilterUniqueMeshes(hsTArray<plClothingItem*> &items);
+    void FilterUniqueMeshes(std::vector<plClothingItem*> &items);
 
     // For a pair of items that go together (ie gloves) give us one, we'll give you the other
     plClothingItem *GetLRMatch(plClothingItem *item);

@@ -12177,16 +12177,14 @@ void plDXPipeline::IPreprocessAvatarTextures()
         IDrawClothingQuad(-1.f, -1.f, 2.f, 2.f, uOff, vOff, co->fBase->fBaseTexture);
         plClothingLayout *layout = plClothingMgr::GetClothingMgr()->GetLayout(co->fBase->fLayoutName);
 
-        int i, j, k;
-        for (i = 0; i < co->fItems.GetCount(); i++)
+        for (plClothingItem *item : co->fItems)
         {
-            plClothingItem *item = co->fItems[i];
             //if (!co->fDirtyItems.IsBitSet(item->fTileset))
             //  continue; // Not dirty, don't update
 
-            for (j = 0; j < item->fElements.GetCount(); j++)
+            for (int j = 0; j < item->fElements.GetCount(); j++)
             {
-                for (k = 0; k < plClothingElement::kLayerMax; k++)
+                for (int k = 0; k < plClothingElement::kLayerMax; k++)
                 {
                     if (item->fTextures[j][k] == nil)
                         continue;
