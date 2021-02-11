@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsRefCnt.h"
+#include "hsTemplates.h"
 
 #include <string_theory/string>
 

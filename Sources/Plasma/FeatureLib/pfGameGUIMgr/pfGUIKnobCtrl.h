@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIKnobCtrl_h
 
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 #include <string_theory/string>
 

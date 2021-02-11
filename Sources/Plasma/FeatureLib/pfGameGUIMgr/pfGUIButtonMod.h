@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 #include <string_theory/string>
 

@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUICheckBoxCtrl_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 
 #include <string_theory/string>
 
