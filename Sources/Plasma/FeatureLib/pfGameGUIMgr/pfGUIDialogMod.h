@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIDialogMod_h
 
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 
 #include "pfGameGUIMgr.h"
 
@@ -77,7 +76,7 @@ class pfGUIDialogMod : public plSingleModifier
         plPostEffectMod             *fRenderMod;
         bool                        fEnabled;
         char                        fName[ 128 ];
-        hsTArray<pfGUIControlMod *> fControls;
+        std::vector<pfGUIControlMod *> fControls;
         pfGUIControlMod             *fControlOfInterest;
         pfGUIControlMod             *fFocusCtrl;
         pfGUIControlMod             *fMousedCtrl;   // Which one is the mouse over?
@@ -86,7 +85,7 @@ class pfGUIDialogMod : public plSingleModifier
         pfGUIDialogProc             *fHandler;
         plKey                       fProcReceiver;      // Non-nil means we handle everything by creating notify messages and sending them to this key
 
-        hsTArray<pfGUIListElement *>    fDragElements;
+        std::vector<pfGUIListElement *> fDragElements;
         bool                            fDragMode, fDragReceptive;
         pfGUIControlMod                 *fDragTarget;
         pfGUIControlMod                 *fDragSource;
@@ -150,8 +149,8 @@ class pfGUIDialogMod : public plSingleModifier
         void        RefreshAllControls();
 
         void            AddControl( pfGUIControlMod *ctrl );
-        uint32_t          GetNumControls() { return fControls.GetCount(); }
-        pfGUIControlMod *GetControl( uint32_t idx ) { return fControls[ idx ]; }
+        size_t          GetNumControls() { return fControls.size(); }
+        pfGUIControlMod *GetControl(size_t idx) { return fControls[ idx ]; }
 
         pfGUIColorScheme    *GetColorScheme() const { return fColorScheme; }
 

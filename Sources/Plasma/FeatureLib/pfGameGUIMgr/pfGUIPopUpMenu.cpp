@@ -348,13 +348,13 @@ void    pfGUIPopUpMenu::ISeekToOrigin()
     uint32_t i;
     float   x = 0.5f/*fOriginX*/, y = fOriginY;
 
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ] != nil )
+        if (ctrl != nil)
         {
-            fControls[ i ]->SetObjectCenter( x, y );
+            ctrl->SetObjectCenter( x, y );
 
-//          const hsBounds3 &bnds = fControls[ i ]->GetBounds();
+//          const hsBounds3 &bnds = ctrl->GetBounds();
             y += fMenuItems[ i ].fYOffsetToNext;//bnds.GetMaxs().fY - bnds.GetMins().fY;
 
 /*          hsMatrix44 p2l, l2p = GetTarget()->GetLocalToWorld();
@@ -598,20 +598,17 @@ bool    pfGUIPopUpMenu::IBuildMenu()
 
 void    pfGUIPopUpMenu::ITearDownMenu()
 {
-    int     i;
-
-
-    for( i = 0; i < fControls.GetCount(); i++ )
+    for (pfGUIControlMod* ctrl : fControls)
     {
-        if( fControls[ i ] != nil )
+        if (ctrl != nil)
         {
             // It's not enough to release the key, we have to have the sceneNode release the key, too.
             // Easy enough to do by just setting it's sn to nil
-            if( fControls[ i ]->GetTarget() != nil )
-                fControls[ i ]->GetTarget()->SetSceneNode( nil );
+            if (ctrl->GetTarget() != nil)
+                ctrl->GetTarget()->SetSceneNode(nil);
 
             // Now release it from us
-            GetKey()->Release( fControls[ i ]->GetKey() );
+            GetKey()->Release(ctrl->GetKey());
         }
     }
 

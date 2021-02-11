@@ -78,7 +78,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plAudible.h"
 #include "plgDispatch.h"
