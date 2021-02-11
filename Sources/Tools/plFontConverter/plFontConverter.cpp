@@ -172,7 +172,8 @@ void plFontConverter::dropEvent(QDropEvent *event)
 void plFontConverter::OpenFNT()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a FNT file to convert"),
-                            QString(), "Windows FNT files (*.fnt);;All files (*.*)");
+                            QString(), tr("Windows FNT files (*.fnt);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
         IImportFNT(fileName.toUtf8().constData());
@@ -181,7 +182,8 @@ void plFontConverter::OpenFNT()
 void plFontConverter::OpenBDF()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a BDF file to convert"),
-                            QString(), "Adobe BDF files (*.bdf);;All files (*.*)");
+                            QString(), tr("Adobe BDF files (*.bdf);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
         IImportBDF(fileName.toUtf8().constData());
@@ -190,7 +192,8 @@ void plFontConverter::OpenBDF()
 void plFontConverter::OpenFON()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a FON file to convert"),
-                            QString(), "Windows FON files (*.fon *.exe);;All files (*.*)");
+                            QString(), tr("Windows FON files (*.fon *.exe);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
         IImportFON(fileName.toUtf8().constData());
@@ -199,7 +202,8 @@ void plFontConverter::OpenFON()
 void plFontConverter::OpenTTF()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a TrueType font to convert"),
-                            QString(), "TrueType files (*.ttf *.ttc);;All files (*.*)");
+                            QString(), tr("TrueType files (*.ttf *.ttc);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
         IImportFreeType(fileName.toUtf8().constData());
@@ -208,7 +212,8 @@ void plFontConverter::OpenTTF()
 void plFontConverter::OpenP2F()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a P2F file to open"),
-                            QString(), "Plasma 2 font files (*.p2f);;All files (*.*)");
+                            QString(), tr("Plasma 2 font files (*.p2f);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
         IOpenP2F(fileName.toUtf8().constData());
@@ -226,7 +231,8 @@ void plFontConverter::ExportP2F()
     // Write out
     QString saveFile = QFileDialog::getSaveFileName(this, tr("Specify a file to export to"),
                             QString("%1-%2.p2f").arg(fFont->GetFace().c_str()).arg(fFont->GetSize()),
-                            "Plasma 2 font files (*.p2f)");
+                            tr("Plasma 2 font files (*.p2f)"), nullptr,
+                            QFileDialog::DontUseNativeDialog);
 
     if (!saveFile.isEmpty())
     {
@@ -546,7 +552,8 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
 
     QString outPath = QFileDialog::getExistingDirectory(this,
                 tr("Select a path to write the P2F fonts to:"),
-                QDir::current().absolutePath(), QFileDialog::ShowDirsOnly);
+                QDir::current().absolutePath(),
+                QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
     if (outPath.isEmpty())
         return;
 

@@ -205,7 +205,8 @@ void plResBrowser::dropEvent(QDropEvent *event)
 void plResBrowser::OpenFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Choose a file to browse"),
-                            QString(), "Plasma 2 Pack Files (*.prp);;All files (*.*)");
+                            QString(), tr("Plasma 2 Pack Files (*.prp);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
         LoadPrpFile(fileName);
@@ -216,7 +217,7 @@ void plResBrowser::OpenDirectory()
     QString path = QFileDialog::getExistingDirectory(this,
                 tr("Select a Plasma 2 Data Directory:"),
                 QDir::current().absolutePath(),
-                QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
+                QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseNativeDialog);
 
     if (!path.isEmpty())
         LoadResourcePath(path);
@@ -231,7 +232,8 @@ void plResBrowser::SaveSelectedObject()
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Export object"),
                             QString("%1.bin").arg(itemKey->GetName().c_str()),
-                            "Binary Files (*.bin);;All files (*.*)");
+                            tr("Binary Files (*.bin);;All files (*.*)"),
+                            nullptr, QFileDialog::DontUseNativeDialog);
 
     if (!fileName.isEmpty())
     {

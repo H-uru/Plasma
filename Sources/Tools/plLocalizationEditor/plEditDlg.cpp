@@ -207,7 +207,7 @@ void EditDialog::OpenDataDirectory()
     QString path = QFileDialog::getExistingDirectory(this,
                 tr("Select a localization data directory:"),
                 QDir::current().absolutePath(),
-                QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
+                QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontUseNativeDialog);
 
     if (!path.isEmpty())
     {
@@ -253,7 +253,7 @@ void EditDialog::SaveToDirectory()
 
     QString path = QFileDialog::getExistingDirectory(this,
                 tr("Select a directory to save the localization data to:"),
-                fCurrentSavePath, QFileDialog::ShowDirsOnly);
+                fCurrentSavePath, QFileDialog::ShowDirsOnly | QFileDialog::DontUseNativeDialog);
 
     // save it to a new directory
     if (!path.isEmpty())
