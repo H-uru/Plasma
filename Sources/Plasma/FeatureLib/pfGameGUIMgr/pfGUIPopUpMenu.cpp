@@ -240,9 +240,9 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
 
     fMargin = s->ReadLE16();
 
-    uint32_t i, count = s->ReadLE32();
-    fMenuItems.SetCount( count );
-    for( i = 0; i < count; i++ )
+    uint32_t count = s->ReadLE32();
+    fMenuItems.resize(count);
+    for (uint32_t i = 0; i < count; i++)
     {
         char readTemp[ 256 ];
         s->Read( sizeof( readTemp ), readTemp );
@@ -271,20 +271,19 @@ void    pfGUIPopUpMenu::Write( hsStream *s, hsResMgr *mgr )
 
     s->WriteLE16( fMargin );
 
-    s->WriteLE32( fMenuItems.GetCount() );
-    uint32_t i;
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    s->WriteLE32((uint32_t)fMenuItems.size());
+    for (const pfMenuItem& item : fMenuItems)
     {
         char writeTemp[ 256 ];
-        char *sName = hsWStringToString( fMenuItems[ i ].fName.c_str() );
+        char *sName = hsWStringToString(item.fName.c_str());
         strncpy( writeTemp, sName, sizeof( writeTemp ) );
         delete [] sName;
         s->Write( sizeof( writeTemp ), writeTemp );
 
         // Write the handler out (if it's not a writeable, damn you)
-        pfGUICtrlProcWriteableObject::Write( (pfGUICtrlProcWriteableObject *)fMenuItems[ i ].fHandler, s );
+        pfGUICtrlProcWriteableObject::Write((pfGUICtrlProcWriteableObject *)item.fHandler, s);
 
-        mgr->WriteKey( s, fMenuItems[ i ].fSubMenu );
+        mgr->WriteKey(s, item.fSubMenu);
     }
 
     // Note: we force parentNode to nil here because we only use it when we dynamically
@@ -430,9 +429,6 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
 
 bool    pfGUIPopUpMenu::IBuildMenu()
 {
-    int     i;
-
-
     if( fWaitingForSkin && fSkin == nil )
         return false;       // Still waiting to get our skin before building
 
@@ -473,11 +469,11 @@ bool    pfGUIPopUpMenu::IBuildMenu()
     // a whole new DTMap and use it to calculate some stuff
     plDynamicTextMap *scratch = new plDynamicTextMap( 8, 8, false );
     scratch->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, true );
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    for (const pfMenuItem& item : fMenuItems)
     {
         uint16_t  thisW, thisH;
-        thisW = scratch->CalcStringWidth( fMenuItems[ i ].fName.c_str(), &thisH );
-        if( fMenuItems[ i ].fSubMenu != nil )
+        thisW = scratch->CalcStringWidth(item.fName.c_str(), &thisH);
+        if (item.fSubMenu != nil)
         {
             if( fSkin != nil )
                 thisW += 4 + ( fSkin->GetElement( pfGUISkin::kSubMenuArrow ).fWidth << 1 );
@@ -527,16 +523,24 @@ bool    pfGUIPopUpMenu::IBuildMenu()
 
     switch( fAlignment )
     {
-        case kAlignUpLeft: x -= width; y -= height * fMenuItems.GetCount(); break;
-        case kAlignUpRight: y -= height * fMenuItems.GetCount(); break;
-        case kAlignDownLeft: x -= width; break;
-        case kAlignDownRight: break;
+        case kAlignUpLeft:
+            x -= width;
+            y -= height * fMenuItems.size();
+            break;
+        case kAlignUpRight:
+            y -= height * fMenuItems.size();
+            break;
+        case kAlignDownLeft:
+            x -= width;
+            break;
+        case kAlignDownRight:
+            break;
     }
 
-    if( y + height * fMenuItems.GetCount() > 1.f )
+    if (y + height * fMenuItems.size() > 1.f)
     {
         // Make sure we don't go off the bottom
-        y = 1.f - height * fMenuItems.GetCount();
+        y = 1.f - height * fMenuItems.size();
     }
     // And the top (takes precedence)
     if( y < 0.f )
@@ -547,12 +551,12 @@ bool    pfGUIPopUpMenu::IBuildMenu()
 
     std::vector<pfGUIPopUpMenu *> buildList;
 
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    for (size_t i = 0; i < fMenuItems.size(); i++)
     {
         hsGMaterial *mat = ICreateDynMaterial();
 
-        float thisMargin = ( i == 0 || i == fMenuItems.GetCount() - 1 ) ? topMargin : 0.f;
-        float thisOffset = ( i == fMenuItems.GetCount() - 1 ) ? topMargin : 0.f;
+        float thisMargin = (i == 0 || i == fMenuItems.size() - 1) ? topMargin : 0.f;
+        float thisOffset = (i == fMenuItems.size() - 1) ? topMargin : 0.f;
 
         pfGUIMenuItem *button = pfGUIMenuItem::ConvertNoRef( pfGUICtrlGenerator::Instance().CreateRectButton( this, fMenuItems[ i ].fName.c_str(), x, y + thisOffset, width, height + thisMargin, mat, true ) );
         if( button != nil )
@@ -564,7 +568,9 @@ bool    pfGUIPopUpMenu::IBuildMenu()
             button->SetTagID(i);
             button->SetDynTextMap( mat->GetLayer( 0 ), plDynamicTextMap::ConvertNoRef( mat->GetLayer( 0 )->GetTexture() ) );
             button->SetFlag( pfGUIMenuItem::kReportHovers );
-            button->SetSkin( fSkin, ( i == 0 ) ? pfGUIMenuItem::kTop : ( i == fMenuItems.GetCount() - 1 ) ? pfGUIMenuItem::kBottom : pfGUIMenuItem::kMiddle );
+            button->SetSkin(fSkin, (i == 0) ? pfGUIMenuItem::kTop
+                                 : (i == fMenuItems.size() - 1) ? pfGUIMenuItem::kBottom
+                                 : pfGUIMenuItem::kMiddle);
             if( fMenuItems[ i ].fSubMenu != nil )
             {
                 button->SetFlag( pfGUIMenuItem::kDrawSubMenuArrow );
@@ -644,19 +650,16 @@ bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, flo
 
 void    pfGUIPopUpMenu::ClearItems()
 {
-    int     i;
-
-
-    for( i = 0; i < fMenuItems.GetCount(); i++ )
+    for (const pfMenuItem& item : fMenuItems)
     {
-        if( fMenuItems[ i ].fHandler != nil )
+        if (item.fHandler != nil)
         {
-            if( fMenuItems[ i ].fHandler->DecRef() )
-                delete fMenuItems[ i ].fHandler;
+            if (item.fHandler->DecRef())
+                delete item.fHandler;
         }
     }
 
-    fMenuItems.Reset();
+    fMenuItems.clear();
 
     fNeedsRebuilding = true;
 }
@@ -673,8 +676,7 @@ void    pfGUIPopUpMenu::AddItem( const char *name, pfGUICtrlProcObject *handler,
 
 void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu )
 {
-    pfMenuItem  newItem;
-
+    pfMenuItem  &newItem = fMenuItems.emplace_back();
 
     newItem.fName = name;
     newItem.fHandler = handler;
@@ -684,8 +686,6 @@ void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handl
 
     if( subMenu != nil )
         subMenu->fParent = this;
-
-    fMenuItems.Append( newItem );
 
     fNeedsRebuilding = true;
 }
