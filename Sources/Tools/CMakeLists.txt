@@ -84,7 +84,7 @@ include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
 include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 if(PLASMA_BUILD_TOOLS)
-    _add_tools(TOOLS plLocalizationBenchmark SoundDecompress)
+    _add_tools(TOOLS SoundDecompress)
 
     if(Qt5_FOUND)
         _add_tools(GUI TOOLS plLocalizationEditor plResBrowser)
@@ -100,6 +100,8 @@ if(PLASMA_BUILD_TOOLS)
 
     _deploy_qt()
 endif()
+
+add_subdirectory(plLocalizationBenchmark)
 
 # Max Stuff goes below here...
 if(3dsm_FOUND AND 3dsm_BUILD_PLUGIN)

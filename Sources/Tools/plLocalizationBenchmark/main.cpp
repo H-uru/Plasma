@@ -56,7 +56,7 @@ enum CmdLineArgs
 
 static const plCmdArgDef s_cmdLineArgs[] = {
     { (kCmdTypeUint | kCmdArgFlagged), "Count", kArgCount },
-    { (kCmdTypeString | kCmdArgOptional), "Database", kArgDirectory },
+    { (kCmdTypeString | kCmdArgOptional), "Directory", kArgDirectory },
 };
 
 using ClockT = std::chrono::steady_clock;

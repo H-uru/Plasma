@@ -184,10 +184,6 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
 {
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
 
-    // Need a dummy parent tag on the stack at minimum
-    if (file->fTagStack.empty())
-        file->fTagStack.emplace();
-
     const auto& parentTag = file->fTagStack.top();
     auto& newTag = file->fTagStack.emplace();
     newTag.fTag = element;
@@ -365,6 +361,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
     while (!fTagStack.empty())
         fTagStack.pop();
+    fTagStack.emplace();
 
     fCurrentAge = "";
     fCurrentSet = "";
@@ -545,7 +542,7 @@ void LocalizationDatabase::IMergeData()
 
 void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::string &setName, LocalizationXMLFile::set::iterator& curElement)
 {
-    std::unordered_set<ST::string, ST::hash> languageNames;
+    std::unordered_set<ST::string> languageNames;
     ST::string defaultLanguage = plLocalization::GetLanguageName((plLocalization::Language)0);
 
     int numLocales = plLocalization::GetNumLocales();
