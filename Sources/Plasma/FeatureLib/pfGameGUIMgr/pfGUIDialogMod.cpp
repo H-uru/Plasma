@@ -403,7 +403,7 @@ static bool     showBounds = false;
             if (ctrl->HasFlag(pfGUIControlMod::kIntangible))
                 continue;
 
-            if (ctrl->fBoundsPoints.GetCount() > 0)
+            if (!ctrl->fBoundsPoints.empty())
             {
                 const hsBounds3 &bnds = ctrl->GetBounds();
                 plDebugText::Instance().Draw3DBorder( (uint16_t)(sW * bnds.GetMins().fX),
@@ -412,14 +412,14 @@ static bool     showBounds = false;
                                         (uint16_t)(sH * bnds.GetMaxs().fY), 0x3000ffff, 0x3000ffff );
 
                 uint32_t color = 0xffff0000;
-                for (int j = 0; j < ctrl->fBoundsPoints.GetCount(); j++)
+                for (size_t j = 0; j < ctrl->fBoundsPoints.size(); j++)
                 {
 //                  color = 0xff000000 | ( ( j * 16 ) << 16 );
                     float x = sW * ctrl->fBoundsPoints[j].fX;
                     float y = sH * ctrl->fBoundsPoints[j].fY;
                     plDebugText::Instance().DrawRect( (uint16_t)(x - 2), (uint16_t)(y - 2), (uint16_t)(x + 2), (uint16_t)(y + 2), color );
-                    char str[ 16 ];
-                    snprintf(str, 16, "%d", j);
+                    char str[24];
+                    snprintf(str, std::size(str), "%zu", j);
                     plDebugText::Instance().DrawString( (uint16_t)(x + 8), (uint16_t)(y - 8), str, color );
                 }
             }
