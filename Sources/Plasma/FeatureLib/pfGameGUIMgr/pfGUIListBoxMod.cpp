@@ -1084,7 +1084,7 @@ void    pfGUIListBoxMod::RemoveElement( uint16_t index )
         if (element->GetType() == pfGUIListElement::kTreeRoot)
         {
             pfGUIListTreeRoot *root = (pfGUIListTreeRoot *)element;
-            for (uint32_t j = 0; j < root->GetNumChildren(); )
+            for (size_t j = 0; j < root->GetNumChildren(); )
             {
                 if( root->GetChild( j ) == fElements[ index ] )
                     root->RemoveChild( j );

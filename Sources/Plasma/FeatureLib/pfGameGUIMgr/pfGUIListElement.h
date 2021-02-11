@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIListElement_h
 #define _pfGUIListElement_h
 
-#include "hsTemplates.h"
-
 #include <string_theory/string>
 
 #include "pfGUIControlMod.h"
@@ -184,7 +182,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
         ST::string      fText;
         bool            fShowChildren;
 
-        hsTArray<pfGUIListElement *>    fChildren;
+        std::vector<pfGUIListElement *> fChildren;
 
     public:
 
@@ -203,11 +201,11 @@ class pfGUIListTreeRoot : public pfGUIListElement
         const ST::string GetTitle() const { return fText; }
         void        SetTitle(const ST::string &text) { fText = text; }
 
-        uint32_t            GetNumChildren() const { return fChildren.GetCount(); }
-        pfGUIListElement    *GetChild( uint32_t i ) const { return fChildren[ i ]; }
+        size_t              GetNumChildren() const { return fChildren.size(); }
+        pfGUIListElement    *GetChild(size_t i) const { return fChildren[i]; }
         
         void        AddChild( pfGUIListElement *el );
-        void        RemoveChild( uint32_t idx );
+        void        RemoveChild(size_t idx);
 
         void    SetCollapsed(bool c) override;
 

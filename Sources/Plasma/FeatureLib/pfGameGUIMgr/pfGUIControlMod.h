@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 
 #include <string_theory/string>
+#include <vector>
 
 #include "pfGameGUIMgr.h"
 
