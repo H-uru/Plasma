@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIListBoxMod_h
 #define _pfGUIListBoxMod_h
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "pfGUIControlMod.h"
 
@@ -71,26 +71,26 @@ class pfGUIListBoxMod : public pfGUIControlMod
         {
             int16_t   fLeft, fTop, fRight, fBottom;
 
+            plSmallRect() : fLeft(), fTop(), fRight(), fBottom() { }
+
             void    Set( int16_t l, int16_t t, int16_t r, int16_t b );
             bool    Contains( int16_t x, int16_t y );
-
-            plSmallRect& operator=(const int zero) { fLeft = fTop = fRight = fBottom = 0; return *this; }
         };
 
         pfGUIValueCtrl  *fScrollControl;
 
         pfScrollProc    *fScrollProc;
 
-        hsTArray<pfGUIListElement *>    fElements;
-        int32_t                           fCurrClick, fScrollPos, fCurrHover;
-        uint8_t                           fModsAtDragTime;
-        int32_t                           fMinSel, fMaxSel;
+        std::vector<pfGUIListElement *> fElements;
+        int32_t                         fCurrClick, fScrollPos, fCurrHover;
+        uint8_t                         fModsAtDragTime;
+        int32_t                         fMinSel, fMaxSel;
         bool                            fCheckScroll, fClicking;
-        int32_t                           fSingleSelElement;
+        int32_t                         fSingleSelElement;
         bool                            fScrollRangeUpdateDeferred;
         bool                            fLocked, fReadyToRoll;
-        hsTArray<plSmallRect>           fElementBounds;
-        hsTArray<int16_t>                 fWrapStartIdxs;
+        std::vector<plSmallRect>        fElementBounds;
+        std::vector<size_t>             fWrapStartIdxs;
 
 
         bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
@@ -102,7 +102,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
         void    IPostSetUpDynTextMap() override;
         uint32_t  IGetDesiredCursor() const override;
 
-        int32_t   IGetItemFromPoint( hsPoint3 &mousePt );
+        int32_t   IGetItemFromPoint(const hsPoint3 &mousePt);
         void    IFindSelectionRange( int32_t *min, int32_t *max );
         void    ISelectRange( int8_t min, int8_t max, bool select );
 
@@ -123,7 +123,7 @@ class pfGUIListBoxMod : public pfGUIControlMod
             kAllowMultipleElementsPerRow,
             kScrollLeftToRight,
             kAllowMousePassThrough,
-            kGrowLeavesAndProcessOxygen,
+            kGrowLeavesAndProcessOxygen,    // It's a tree!
             kHandsOffMultiSelect,       // Do multiselect w/o needing ctrl or shift
             kForbidNoSelection
         };

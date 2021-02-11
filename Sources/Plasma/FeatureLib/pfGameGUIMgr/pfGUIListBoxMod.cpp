@@ -187,10 +187,6 @@ void    pfGUIListBoxMod::IPostSetUpDynTextMap()
 
 void    pfGUIListBoxMod::IUpdate()
 {
-    int         i, j;
-    uint16_t      x, y, width, height, maxHeight;
-
-
     if( !fReadyToRoll )
         return;
     if( fScrollRangeUpdateDeferred )
@@ -200,7 +196,7 @@ void    pfGUIListBoxMod::IUpdate()
     }
 
     fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
-    if( fElements.GetCount() == 0 )
+    if (fElements.empty())
     {
         fDynTextMap->FlushToHost();
         return;
@@ -228,12 +224,12 @@ void    pfGUIListBoxMod::IUpdate()
             // To do this check, we search on either side of our scroll range (we can only
             // search past after we draw, unfortunately). If there's a selected item out
             // of our range, then we best move the scrollPos to move it into view
-            for( j = 0; j < fScrollPos; j++ )
+            for (int32_t j = 0; j < fScrollPos; j++)
             {
-                int end = ( j < fWrapStartIdxs.GetCount() - 1 ) ? fWrapStartIdxs[ j + 1 ] : fElements.GetCount();
+                size_t end = (j < int32_t(fWrapStartIdxs.size() - 1)) ? fWrapStartIdxs[j + 1] : fElements.size();
 
                 bool anySelected = false;
-                for( i = fWrapStartIdxs[ j ]; i < end; i++ )
+                for (size_t i = fWrapStartIdxs[j]; i < end; i++)
                     anySelected |= fElements[ i ]->IsSelected();
 
                 if( anySelected )
@@ -250,19 +246,23 @@ void    pfGUIListBoxMod::IUpdate()
     else
         fScrollPos = 0;
 
-    fElementBounds.SetCountAndZero( fElements.GetCount() );
+    fElementBounds.assign(fElements.size(), plSmallRect());
 
+    size_t j;
     if( !HasFlag( kScrollLeftToRight ) )
     {
-        for( j = fScrollPos, y = 4; j < fWrapStartIdxs.GetCount() && y < fDynTextMap->GetVisibleHeight() - 8; j++ )
+        uint16_t y = 4;
+        for (j = fScrollPos; j < fWrapStartIdxs.size() && y < fDynTextMap->GetVisibleHeight() - 8; j++)
         {
-            int end = ( j < fWrapStartIdxs.GetCount() - 1 ) ? fWrapStartIdxs[ j + 1 ] : fElements.GetCount();
+            size_t end = (j < fWrapStartIdxs.size() - 1) ? fWrapStartIdxs[j + 1] : fElements.size();
 
-            for( maxHeight = 0, i = fWrapStartIdxs[ j ], x = 0; i < end; i++ )
+            uint16_t maxHeight = 0, x = 0;
+            for (size_t i = fWrapStartIdxs[j]; i < end; i++)
             {
                 if( HasFlag( kGrowLeavesAndProcessOxygen ) && fElements[ i ]->IsCollapsed() )
                     continue;       // Skip collapsed items
 
+                uint16_t width, height;
                 fElements[ i ]->GetSize( fDynTextMap, &width, &height );
 
                 if( !HasFlag( kAllowMultipleElementsPerRow ) )
@@ -286,7 +286,7 @@ void    pfGUIListBoxMod::IUpdate()
                     break;
                 }
 
-                maxHeight = ( height > maxHeight ) ? height : maxHeight;
+                maxHeight = std::max(height, maxHeight);
                 fElementBounds[ i ].Set( x, y, x + width - 1, y + height - 1 );
                 x += width;
             }
@@ -296,12 +296,15 @@ void    pfGUIListBoxMod::IUpdate()
     }
     else
     {
-        for( j = fScrollPos, x = 4; j < fWrapStartIdxs.GetCount() && x < fDynTextMap->GetVisibleWidth() - 8; j++ )
+        uint16_t x = 4;
+        for (j = fScrollPos; j < fWrapStartIdxs.size() && x < fDynTextMap->GetVisibleWidth() - 8; j++)
         {
-            int end = ( j < fWrapStartIdxs.GetCount() - 1 ) ? fWrapStartIdxs[ j + 1 ] : fElements.GetCount();
+            size_t end = (j < fWrapStartIdxs.size() - 1) ? fWrapStartIdxs[j + 1] : fElements.size();
 
-            for( maxHeight = 0, i = fWrapStartIdxs[ j ], y = 0; i < end; i++ )
+            uint16_t maxWidth = 0, y = 0;
+            for (size_t i = fWrapStartIdxs[j]; i < end; i++)
             {
+                uint16_t width, height;
                 fElements[ i ]->GetSize( fDynTextMap, &width, &height );
 
                 if( !HasFlag( kAllowMultipleElementsPerRow ) )
@@ -318,12 +321,12 @@ void    pfGUIListBoxMod::IUpdate()
                     break;
                 }
 
-                maxHeight = ( width > maxHeight ) ? width : maxHeight;
+                maxWidth = std::max(width, maxWidth);
                 fElementBounds[ i ].Set( x, y, x + width - 1, y + height - 1 );
                 y += height;
             }
 
-            x += maxHeight;
+            x += maxWidth;
         }
     }
 
@@ -332,17 +335,17 @@ void    pfGUIListBoxMod::IUpdate()
     if( fCheckScroll && fScrollControl != nil )
     {
         fCheckScroll = false;
-        for( ; j < fWrapStartIdxs.GetCount(); j++ )
+        for( ; j < fWrapStartIdxs.size(); j++)
         {
-            int end = ( j < fWrapStartIdxs.GetCount() - 1 ) ? fWrapStartIdxs[ j + 1 ] : fElements.GetCount();
+            size_t end = (j < fWrapStartIdxs.size() - 1) ? fWrapStartIdxs[j + 1] : fElements.size();
 
             bool anySelected = false;
-            for( i = fWrapStartIdxs[ j ]; i < end; i++ )
+            for (size_t i = fWrapStartIdxs[j]; i < end; i++)
                 anySelected |= fElements[ i ]->IsSelected();
 
             if( anySelected )
             {
-                fScrollPos = j;
+                fScrollPos = (int32_t)j;
                 fScrollControl->SetCurrValue( (float)( (int)fScrollControl->GetMax() - fScrollPos ) );
                 IUpdate();      // Gotta update again, since we just changed the scrollPos after the fact
                 return;
@@ -359,17 +362,17 @@ void    pfGUIListBoxMod::IUpdate()
 
 void    pfGUIListBoxMod::ICalcWrapStarts()
 {
-    uint16_t      i, x, y, maxHeight, width, height;
-
-
-    fWrapStartIdxs.Reset();
+    fWrapStartIdxs.clear();
 
     if( HasFlag( kAllowMultipleElementsPerRow ) )
     {
         if( !HasFlag( kScrollLeftToRight ) )
         {
-            for( i = 0, x = (uint16_t)-1, y = 4, maxHeight = 0; i < fElements.GetCount(); i++ )
+            uint16_t x = (uint16_t)-1, y = 4;
+            uint16_t maxHeight = 0;
+            for (size_t i = 0; i < fElements.size(); i++)
             {
+                uint16_t width, height;
                 fElements[ i ]->GetSize( fDynTextMap, &width, &height );
 
                 if( x + width >= fDynTextMap->GetVisibleWidth() )
@@ -377,37 +380,40 @@ void    pfGUIListBoxMod::ICalcWrapStarts()
                     x = 0;
                     y += maxHeight;
                     maxHeight = 0;
-                    fWrapStartIdxs.Append( i );
+                    fWrapStartIdxs.emplace_back(i);
                 }
                 x += width;
-                maxHeight = ( height > maxHeight ) ? height : maxHeight;
+                maxHeight = std::max(height, maxHeight);
             }
         }
         else
         {
-            for( i = 0, y = (uint16_t)-1, x = 4, maxHeight = 0; i < fElements.GetCount(); i++ )
+            uint16_t x = 4, y = (uint16_t)-1;
+            uint16_t maxWidth = 0;
+            for (size_t i = 0; i < fElements.size(); i++)
             {
+                uint16_t width, height;
                 fElements[ i ]->GetSize( fDynTextMap, &width, &height );
                 if( y + height >= fDynTextMap->GetVisibleHeight() )
                 {
                     y = 0;
-                    x += maxHeight;
-                    maxHeight = 0;
-                    fWrapStartIdxs.Append( i );
+                    x += maxWidth;
+                    maxWidth = 0;
+                    fWrapStartIdxs.emplace_back(i);
                 }
                 y += height;
-                maxHeight = ( width > maxHeight ) ? width : maxHeight;
+                maxWidth = std::max(width, maxWidth);
             }
         }
     }
     else
     {
-        for( i = 0; i < fElements.GetCount(); i++ )
+        for (size_t i = 0; i < fElements.size(); i++)
         {
             if( HasFlag( kGrowLeavesAndProcessOxygen ) && fElements[ i ]->IsCollapsed() )
                 continue;
 
-            fWrapStartIdxs.Append( i );
+            fWrapStartIdxs.emplace_back(i);
         }
     }
 }
@@ -417,10 +423,6 @@ void    pfGUIListBoxMod::ICalcWrapStarts()
 
 void    pfGUIListBoxMod::ICalcScrollRange()
 {
-    uint16_t      ctrlHt, ctrlWd, height, width, maxHeight;
-    int         i, j, end;
-
-
     if( !fReadyToRoll )
     {
         fScrollRangeUpdateDeferred = true;
@@ -432,27 +434,31 @@ void    pfGUIListBoxMod::ICalcScrollRange()
     // how many elements away from the end we can get before we see blank space. Which means
     // counting up from the end until we have passed the height of our control.
 
-    end = fElements.GetCount();
+    size_t end = fElements.size();
+    hsSsize_t i;
     if( !HasFlag( kScrollLeftToRight ) )
     {
         if( HasFlag( kGrowLeavesAndProcessOxygen ) )
         {
             // OK, that really isn't the end, the end will the count of non-collapsed elements. Haha.
-            for( i = 0, end = 0; i < fElements.GetCount(); i++ )
+            end = 0;
+            for (pfGUIListElement* element : fElements)
             {
-                if( !fElements[ i ]->IsCollapsed() )
+                if (!element->IsCollapsed())
                     end++;
             }
         }
 
-        for( i = fWrapStartIdxs.GetCount() - 1, height = 0; i >= 0; i-- )
+        uint16_t height = 0;
+        for (i = fWrapStartIdxs.size() - 1; i >= 0; i--)
         {
             // Get the max height of this row
-            maxHeight = 0;
-            for( j = fWrapStartIdxs[ i ]; j < end; j++ )
+            uint16_t maxHeight = 0;
+            for (size_t j = fWrapStartIdxs[i]; j < end; j++)
             {
-                fElements[ j ]->GetSize( fDynTextMap, &width, &ctrlHt );
-                maxHeight = ( ctrlHt > maxHeight ) ? ctrlHt : maxHeight;
+                uint16_t ctrlWd, ctrlHt;
+                fElements[j]->GetSize(fDynTextMap, &ctrlWd, &ctrlHt);
+                maxHeight = std::max(ctrlHt, maxHeight);
             }
             end = fWrapStartIdxs[ i ];
             height += maxHeight;
@@ -463,17 +469,19 @@ void    pfGUIListBoxMod::ICalcScrollRange()
     }
     else
     {
-        for( i = fWrapStartIdxs.GetCount() - 1, width = 0; i >= 0; i-- )
+        uint16_t width = 0;
+        for (i = fWrapStartIdxs.size() - 1; i >= 0; i--)
         {
             // Get the max width of this column
-            maxHeight = 0;
-            for( j = fWrapStartIdxs[ i ]; j < end; j++ )
+            uint16_t maxWidth = 0;
+            for (size_t j = fWrapStartIdxs[i]; j < end; j++)
             {
+                uint16_t ctrlWd, ctrlHt;
                 fElements[ j ]->GetSize( fDynTextMap, &ctrlWd, &ctrlHt );
-                maxHeight = ( ctrlWd > maxHeight ) ? ctrlWd : maxHeight;
+                maxWidth = std::max(ctrlWd, maxWidth);
             }
             end = fWrapStartIdxs[ i ];
-            width += maxHeight;
+            width += maxWidth;
 
             if( width > fDynTextMap->GetVisibleWidth() - 8 )
                 break;
@@ -486,8 +494,8 @@ void    pfGUIListBoxMod::ICalcScrollRange()
         // Because we reverse the position on draw, we have to do some special trick here
         // to make sure the reversed position stays the same
         fScrollPos = (int)fScrollControl->GetMax() - (int)fScrollControl->GetCurrValue();
-        if( fScrollPos >= fWrapStartIdxs.GetCount() )
-            fScrollPos = fWrapStartIdxs.GetCount() - 1;
+        if (fScrollPos >= (int32_t)fWrapStartIdxs.size())
+            fScrollPos = int32_t(fWrapStartIdxs.size() - 1);
 
         if( i < 0 )
             // Smaller than the viewing area, so we don't scroll at all
@@ -561,25 +569,25 @@ bool    pfGUIListBoxMod::FilterMousePosition( hsPoint3 &mousePt )
 
 void    pfGUIListBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    int32_t   i;
-
-    int lastSelection = -1;
+    int32_t lastSelection = -1;
     if (HasFlag(kForbidNoSelection))
     {
         // grab the last item we had selected just in case they clicked outside the list of selectable objects
-        for (i=0; i<fElements.GetCount(); i++)
+        for (size_t i = 0; i < fElements.size(); ++i)
+        {
             if (fElements[i]->IsSelected())
             {
-                lastSelection = i;
+                lastSelection = int32_t(i);
                 break;
             }
+        }
     }
     
     if( HasFlag(kSingleSelect) || ( !( modifiers & ( pfGameGUIMgr::kShiftDown | pfGameGUIMgr::kCtrlDown ) ) && !HasFlag( kHandsOffMultiSelect ) ) )
     {
         // Deselect everyone!
-        for( i = 0; i < fElements.GetCount(); i++ )
-            fElements[ i ]->SetSelected( false );
+        for (pfGUIListElement* element : fElements)
+            element->SetSelected(false);
         fSingleSelElement = -1;
     }
     else if( modifiers & pfGameGUIMgr::kShiftDown )
@@ -640,10 +648,10 @@ void    pfGUIListBoxMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
         int32_t   item = IGetItemFromPoint( mousePt );
         if( item != fCurrClick )
         {
-            if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
+            if (fCurrClick >= 0 && (size_t)fCurrClick < fElements.size())
                 fElements[ fCurrClick ]->SetSelected( false );
             fCurrHover = fCurrClick = item;
-            if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
+            if (fCurrClick >= 0 && (size_t)fCurrClick < fElements.size())
                 fElements[ fCurrClick ]->SetSelected( true );
             else if (HasFlag(kForbidNoSelection) && fCurrClick == -1)
             {
@@ -658,7 +666,7 @@ void    pfGUIListBoxMod::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
         {
             // We didn't change selection, so go ahead and pass the click on to
             // the item, in case it wants to do something
-            if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
+            if (fCurrClick >= 0 && (size_t)fCurrClick < fElements.size())
             {
                 hsPoint3 localPt = mousePt;
                 IScreenToLocalPt( localPt );
@@ -691,9 +699,6 @@ void    pfGUIListBoxMod::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers 
 
 void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    int     i;
-
-
     if( ( fModsAtDragTime & pfGameGUIMgr::kShiftDown && !HasFlag( kSingleSelect ) ) )
     {
         // Select our new range, deselect everything outside
@@ -720,10 +725,10 @@ void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
             // the dialog entering Drag Mode(tm). Basically, we tell our parent dialog
             // which items to drag and it'll run with the rest
             fDialog->ClearDragList();
-            for( i = 0; i < fElements.GetCount(); i++ )
+            for (pfGUIListElement* element : fElements)
             {
-                if( fElements[ i ]->IsSelected() )
-                    fDialog->AddToDragList( fElements[ i ] );
+                if (element->IsSelected())
+                    fDialog->AddToDragList(element);
             }
             fDialog->EnterDragMode( this );
         }
@@ -732,10 +737,10 @@ void    pfGUIListBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
             int32_t   item = IGetItemFromPoint( mousePt );
             if( item != fCurrClick )
             {
-                if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
+                if (fCurrClick >= 0 && (size_t)fCurrClick < fElements.size())
                     fElements[ fCurrClick ]->SetSelected( false );
                 fCurrHover = fCurrClick = item;
-                if( fCurrClick >= 0 && fCurrClick < fElements.GetCount() )
+                if (fCurrClick >= 0 && (size_t)fCurrClick < fElements.size())
                     fElements[ fCurrClick ]->SetSelected( true );
                 fCheckScroll = true;
                 fSingleSelElement = fCurrClick;
@@ -772,40 +777,40 @@ void    pfGUIListBoxMod::HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifie
 
 //// IGetItemFromPoint ///////////////////////////////////////////////////////
 
-int32_t   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
+int32_t   pfGUIListBoxMod::IGetItemFromPoint(const hsPoint3 &mousePt)
 {
     if( !fBounds.IsInside( &mousePt ) )
         return -1;
 
     hsPoint3    localPt = mousePt; // despite getting a ref to the point (why?) we do NOT want to modify it
     IScreenToLocalPt( localPt );
-    uint32_t      i;
-    int16_t       clickItem = -1 , clickY = (int16_t)( localPt.fY * ( fDynTextMap->GetVisibleHeight() - 1 ) );
-    int16_t       clickX = (int16_t)( localPt.fX * ( fDynTextMap->GetVisibleWidth() - 1 ) );
+    int16_t clickY = (int16_t)(localPt.fY * (fDynTextMap->GetVisibleHeight() - 1));
+    int16_t clickX = (int16_t)(localPt.fX * (fDynTextMap->GetVisibleWidth() - 1));
+    int32_t clickItem = -1;
 
     // We have a nice array that has the starting (top) Y's of each visible element. So we just
     // check against that.
-    uint32_t startAt = 0;
+    size_t startAt = 0;
     // make sure that we have a valid fScrollPos
     if ( fScrollPos != -1 )
     {
         // make sure that there is an Idx at fScrollPos
-        if ( fWrapStartIdxs.GetCount() > fScrollPos )
+        if (fWrapStartIdxs.size() > (size_t)fScrollPos)
         {
             startAt = fWrapStartIdxs[ fScrollPos ];
             clickItem = -1;
         }
     }
-    for( i = startAt; i < fElements.GetCount(); i++ )
+    for (size_t i = startAt; i < fElements.size(); i++)
     {
-        if( i<fElementBounds.GetCount() && fElementBounds[ i ].Contains( clickX, clickY ) )
+        if (i < fElementBounds.size() && fElementBounds[i].Contains(clickX, clickY))
         {
-            clickItem = (int16_t)i;
+            clickItem = (int32_t)i;
             break;
         }
     }
 
-    if( clickItem > fElements.GetCount() - 1 )
+    if ((size_t)clickItem > fElements.size() - 1)
         clickItem = -1;
 
     return clickItem;
@@ -817,25 +822,22 @@ int32_t   pfGUIListBoxMod::IGetItemFromPoint( hsPoint3 &mousePt )
 
 void    pfGUIListBoxMod::IFindSelectionRange( int32_t *min, int32_t *max )
 {
-    int32_t       i;
-
-
     *min = *max = -1;
 
-    for( i = 0; i < fElements.GetCount(); i++ )
+    for (size_t i = 0; i < fElements.size(); i++)
     {
         if( fElements[ i ]->IsSelected() )
         {
-            *min = i;
+            *min = (int32_t)i;
             break;
         }
     }
 
-    for( i = fElements.GetCount() - 1; i >= 0; i-- )
+    for (hsSsize_t i = fElements.size() - 1; i >= 0; i--)
     {
         if( fElements[ i ]->IsSelected() )
         {
-            *max = i;
+            *max = (int32_t)i;
             break;
         }
     }
@@ -845,13 +847,10 @@ void    pfGUIListBoxMod::IFindSelectionRange( int32_t *min, int32_t *max )
 
 void    pfGUIListBoxMod::ISelectRange( int8_t min, int8_t max, bool select )
 {
-    int16_t   i;
-
-
     if( max == -1 )
-        max = fElements.GetCount() - 1;
+        max = int8_t(fElements.size() - 1);
 
-    for( i = min; i <= max; i++ )
+    for (int8_t i = min; i <= max; i++ )
         fElements[ i ]->SetSelected( select );
 }
 
@@ -870,7 +869,7 @@ void    pfGUIListBoxMod::SetSelection( int32_t item )
     else
         ISelectRange( 0, -1, false );
 
-    if( item != -1 && item < fElements.GetCount() )
+    if (item != -1 && (size_t)item < fElements.size())
         fElements[ item ]->SetSelected( true );
 
     fCheckScroll = true;
@@ -880,7 +879,7 @@ void    pfGUIListBoxMod::SetSelection( int32_t item )
 void    pfGUIListBoxMod::RemoveSelection( int32_t item )
 {
     // make sure the item is valid
-    if ( item != -1 && item < fElements.GetCount() )
+    if (item != -1 && (size_t)item < fElements.size())
     {
         // if single select and its what is selected
         if ( HasFlag( kSingleSelect) && fSingleSelElement == item )
@@ -901,7 +900,7 @@ void    pfGUIListBoxMod::RemoveSelection( int32_t item )
 void    pfGUIListBoxMod::AddSelection( int32_t item )
 {
     // make sure the item is valid (can't add a non-selection!)
-    if ( item != -1 && item < fElements.GetCount() )
+    if (item != -1 && (size_t)item < fElements.size())
     {
         // if single select then just like SetSelection
         if ( HasFlag( kSingleSelect) )
@@ -937,7 +936,7 @@ bool    pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
         // Use arrow keys to do our dirty work
         if( key == KEY_UP )
         {
-            if( fCurrClick == -1 && fElements.GetCount() > 0 )
+            if (fCurrClick == -1 && !fElements.empty())
                 fCurrClick = 0;
             else while( fCurrClick > 0 )
             {
@@ -948,9 +947,9 @@ bool    pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
         }
         else if( key == KEY_DOWN )
         {
-            if( fCurrClick == -1 && fElements.GetCount() > 0 )
-                fCurrClick = fElements.GetCount() - 1;
-            else while( fCurrClick < fElements.GetCount() - 1 )
+            if (fCurrClick == -1 && !fElements.empty())
+                fCurrClick = int32_t(fElements.size() - 1);
+            else while ((size_t)fCurrClick < fElements.size() - 1)
             {
                 fCurrClick++;
                 if( !HasFlag( kGrowLeavesAndProcessOxygen ) || !fElements[ fCurrClick ]->IsCollapsed() )
@@ -959,13 +958,13 @@ bool    pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
         }
         else if( key == KEY_HOME )
         {
-            if( fElements.GetCount() > 0 )
-                fCurrClick = 0;         
+            if (!fElements.empty())
+                fCurrClick = 0;
         }
         else if( key == KEY_END )
         {
-            if( fElements.GetCount() > 0 )
-                fCurrClick = fElements.GetCount() - 1;          
+            if (!fElements.empty())
+                fCurrClick = int32_t(fElements.size() - 1);
         }
         else if( key == KEY_ENTER && HasFlag( kGrowLeavesAndProcessOxygen ) )
         {
@@ -1027,14 +1026,12 @@ void    pfGUIListBoxMod::ScrollToBegin()
 
 void        pfGUIListBoxMod::SetColorScheme( pfGUIColorScheme *newScheme )
 {
-    uint16_t  i;
-
     pfGUIControlMod::SetColorScheme( newScheme );
 
-    for( i = 0; i < fElements.GetCount(); i++ )
+    for (pfGUIListElement* element : fElements)
     {
-        fElements[ i ]->SetColorScheme( newScheme );
-        fElements[ i ]->SetSkin( fSkin );
+        element->SetColorScheme(newScheme);
+        element->SetSkin(fSkin);
     }
 }
 
@@ -1065,8 +1062,8 @@ int32_t pfGUIListBoxMod::GetScrollRange()
 
 uint16_t  pfGUIListBoxMod::AddElement( pfGUIListElement *el )
 {
-    uint16_t  idx = fElements.GetCount();
-    fElements.Append( el );
+    uint16_t idx = (uint16_t)fElements.size();
+    fElements.emplace_back(el);
     el->SetColorScheme( GetColorScheme() );
     el->SetSkin( fSkin );
     if( !fLocked )
@@ -1082,13 +1079,12 @@ uint16_t  pfGUIListBoxMod::AddElement( pfGUIListElement *el )
 void    pfGUIListBoxMod::RemoveElement( uint16_t index )
 {
     // Make sure no other elements care about this one
-    uint16_t i, j;
-    for( i = 0; i < fElements.GetCount(); i++ )
+    for (pfGUIListElement* element : fElements)
     {
-        if( fElements[ i ]->GetType() == pfGUIListElement::kTreeRoot )
+        if (element->GetType() == pfGUIListElement::kTreeRoot)
         {
-            pfGUIListTreeRoot *root = (pfGUIListTreeRoot *)fElements[ i ];
-            for( j = 0; j < root->GetNumChildren(); )
+            pfGUIListTreeRoot *root = (pfGUIListTreeRoot *)element;
+            for (uint32_t j = 0; j < root->GetNumChildren(); )
             {
                 if( root->GetChild( j ) == fElements[ index ] )
                     root->RemoveChild( j );
@@ -1099,7 +1095,7 @@ void    pfGUIListBoxMod::RemoveElement( uint16_t index )
     }
 
     delete fElements[ index ];
-    fElements.Remove( index );
+    fElements.erase(fElements.begin() + index);
 
     if( index == fSingleSelElement )
         fSingleSelElement = -1;
@@ -1118,26 +1114,20 @@ void    pfGUIListBoxMod::RemoveElement( uint16_t index )
 
 int16_t   pfGUIListBoxMod::FindElement( pfGUIListElement *toCompareTo )
 {
-    int     i;
-
-
-    for( i = 0; i < fElements.GetCount(); i++ )
+    for (size_t i = 0; i < fElements.size(); i++)
     {
         if( fElements[ i ]->CompareTo( toCompareTo ) == 0 )
-            return i;
+            return int16_t(i);
     }
 
-    return (int16_t)-1;
+    return -1;
 }
 
 void    pfGUIListBoxMod::ClearAllElements()
 {
-    int     i;
-
-
-    for( i = 0; i < fElements.GetCount(); i++ )
-        delete fElements[ i ];
-    fElements.Reset();
+    for (pfGUIListElement* element : fElements)
+        delete element;
+    fElements.clear();
     fSingleSelElement = -1;
 
     if( !fLocked )
@@ -1163,7 +1153,7 @@ int16_t   pfGUIListBoxMod::FindString( const ST::string &toCompareTo )
 
 uint16_t  pfGUIListBoxMod::GetNumElements()
 {
-    return fElements.GetCount();
+    return (uint16_t)fElements.size();
 }
 
 pfGUIListElement    *pfGUIListBoxMod::GetElement( uint16_t idx )
