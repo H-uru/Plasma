@@ -44,8 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
+#include "plPhysical.h"
 #include "hsQuat.h"
+
 #include "pnKeyedObject/plKey.h"
+
 #include "plPhysical/plSimDefs.h"
 
 #include <optional>
@@ -60,17 +63,25 @@ class plSceneObject;
 
 struct plControllerHitRecord
 {
-    plPhysical* ObjHit;
+    plKey PhysHit;
     hsPoint3 Point;
     hsVector3 Normal;
     float Displacement;
 
     plControllerHitRecord()
-        : ObjHit(), Point(), Normal(), Displacement()
+        : Point(), Normal(), Displacement()
     { }
-    plControllerHitRecord(plPhysical* phys, hsPoint3 p, hsVector3 n, float d=0.f)
-        : ObjHit(phys), Point(std::move(p)), Normal(std::move(n)), Displacement(d)
-    { }
+    plControllerHitRecord(plKey physHit, hsPoint3 p, hsVector3 n, float d=0.f)
+        : PhysHit(std::move(physHit)), Point(std::move(p)), Normal(std::move(n)), Displacement(d)
+    {
+    }
+
+    plPhysical* GetPhysical() const
+    {
+        if (PhysHit)
+            return plPhysical::ConvertNoRef(PhysHit->ObjectIsLoaded());
+        return nullptr;
+    }
 };
 
 class plPhysicalControllerCore

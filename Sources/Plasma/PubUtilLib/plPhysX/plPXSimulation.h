@@ -109,6 +109,7 @@ public:
     plPXActorData(plPXPhysical* physical);
     plPXActorData(plPXPhysicalControllerCore* controller);
 
+    /** Gets the key of the owner object. */
     [[nodiscard]]
     plKey GetKey() const { return fKey; }
 
