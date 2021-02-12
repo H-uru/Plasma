@@ -1465,7 +1465,7 @@ void    pfGUIMultiLineEditCtrl::SetBuffer(const char *codedText, size_t length)
     // convert to wchar_t and set
     auto convertedText = std::make_unique<wchar_t[]>(length);
     for (size_t curChar = 0; curChar < length; curChar++)
-        convertedText[ curChar ] = (wchar_t)codedText[curChar];
+        convertedText[curChar] = (wchar_t)codedText[curChar];
     SetBuffer(convertedText.get(), length);
 }
 
@@ -1724,9 +1724,7 @@ void pfGUIMultiLineEditCtrl::ISetGlobalBuffer()
 {
     if (fPrevCtrl)
     {
-        fPrevCtrl->fBuffer.clear();
-        for (wchar_t ch : fBuffer)
-            fPrevCtrl->fBuffer.emplace_back(ch);
+        fPrevCtrl->fBuffer = fBuffer;
         fPrevCtrl->ISetGlobalBuffer(); // pass the update backwards
     }
 }

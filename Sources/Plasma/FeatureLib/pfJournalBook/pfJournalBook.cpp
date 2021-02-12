@@ -3212,7 +3212,7 @@ void    pfJournalBook::IRecalcPageStarts( uint32_t upToPage )
         IRenderPage( page, pfJournalDlgProc::kTagTurnBackDTMap, false );
         // Reset any "visible" links since they aren't really visible
         for (pfEsHTMLChunk* linkChunk : fVisibleLinks)
-            linkChunk->fLinkRect.Set(0,0,0,0);
+            linkChunk->fLinkRect.Set(0, 0, 0, 0);
     }
 }
 
