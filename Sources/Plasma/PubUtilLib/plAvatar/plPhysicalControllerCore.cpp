@@ -378,8 +378,6 @@ plWalkingStrategy::plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControll
 
 static inline bool IFilterGround(const plControllerHitRecord& candidate, float zMax)
 {
-    if (!candidate.GetPhysical())
-        return false;
     if (candidate.Point.fZ >= zMax)
         return false;
     // Removes near-perpendicular turds
@@ -499,7 +497,7 @@ void plWalkingStrategy::Apply(float delSecs)
 
 void plWalkingStrategy::ICheckGroundSteepness(const plControllerHitRecord& ground)
 {
-    if (ground.GetPhysical()->GetGroup() != plSimDefs::kGroupDynamic) {
+    if (ground.GetPhysical() && ground.GetPhysical()->GetGroup() != plSimDefs::kGroupDynamic) {
         if (ground.Normal.fZ >= GetFallStopThreshold())
             fFlags &= ~kFallingNormal;
         else if (ground.Normal.fZ < GetFallStartThreshold())
