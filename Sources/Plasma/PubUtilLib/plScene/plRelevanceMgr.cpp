@@ -196,7 +196,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
 {
     const int kBufSize = 512;
     char buff[kBufSize];
-    std::vector<std::tuple<ST::string, uint32_t>> regions;
+    std::vector<uint32_t> regions;
     hsStringTokenizer toke; 
     bool firstLine = true;
     
@@ -215,7 +215,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
                 ST::string name = ST::string::from_utf8(buff);
                 if (name.empty())
                     continue; // ignore the initial blank one
-                regions.emplace_back(std::make_tuple(name, GetIndex(name)));
+                regions.emplace_back(GetIndex(name));
             }
         }
         else // parsing actual settings.
@@ -224,12 +224,12 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             if (!toke.Next(buff, kBufSize))
                 continue;
             
-            int rowIndex = GetIndex(buff);
+            uint32_t rowIndex = GetIndex(buff);
             size_t column = 0;
             while (toke.Next(buff, kBufSize) && column < regions.size())
             {
                 int value = atoi(buff);
-                MarkRegion(rowIndex, std::get<1>(regions[column]), value != 0);
+                MarkRegion(rowIndex, regions[column], value != 0);
 
                 column++;
             }
