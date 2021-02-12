@@ -58,7 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
+
+#include <vector>
 
 #include "plAnimation/plAGMasterMod.h"
 
@@ -234,9 +235,9 @@ public:
 
     virtual bool ToggleDontPanicLinkFlag() { fDontPanicLink = fDontPanicLink ? false : true; return fDontPanicLink; }
 
-    int GetBrainCount();
+    size_t GetBrainCount();
     plArmatureBrain *GetNextBrain(plArmatureBrain *brain);
-    plArmatureBrain *GetBrain(int index) { if(index <= fBrains.size()) return fBrains.at(index); else return nil; }
+    plArmatureBrain *GetBrain(size_t index) { if (index <= fBrains.size()) return fBrains.at(index); else return nil; }
     plArmatureBrain *FindBrainByClass(uint32_t classID) const;
 
     void TurnToPoint(hsPoint3 &point);
@@ -417,7 +418,7 @@ protected:
     plClothingSDLModifier *fClothingSDLMod;
     plAvatarSDLModifier *fAvatarSDLMod;
     plAvatarPhysicalSDLModifier *fAvatarPhysicalSDLMod;
-    hsTArray<const plSceneObject*> fClothToSOMap;
+    std::vector<const plSceneObject*> fClothToSOMap;
     plArmatureEffectsMgr *fEffects;
     plSceneObject *fFollowerParticleSystemSO;
     static ST::string fSpawnPointOverride;

@@ -176,11 +176,11 @@ void plAvatarSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState
             // and rebuild them from the incoming synch state
             // This is acceptable because we should only receive this state when
             // we're loading another player for the first time after entering an age.
-            int brainCount = avMod->GetBrainCount();
-            if(brainCount > 1)
+            size_t brainCount = avMod->GetBrainCount();
+            if (brainCount > 1)
             {
                 // remove all non-default brains
-                for(int i = 0; i < brainCount - 1; i++)
+                for (size_t i = 0; i < brainCount - 1; i++)
                 {
                     plArmatureBrain* current = avMod->GetCurrentBrain();
                     avMod->PopBrain();
@@ -245,10 +245,10 @@ void plAvatarSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
         IPutBaseAvatarStateIn(avMod, dstState);
         // create a brainUnion nested record
         plSDStateVariable* brainUnionArray = dstState->FindSDVar(plAvatarSDLModifier::kStrBrainStack);
-        int nBrains = avMod->GetBrainCount();
-        brainUnionArray->Resize(nBrains - 1);       // we skip the base brain
+        size_t nBrains = avMod->GetBrainCount();
+        brainUnionArray->Resize((int)nBrains - 1);       // we skip the base brain
         
-        for (int i = 1; i < nBrains; i++)
+        for (size_t i = 1; i < nBrains; i++)
         {
             plStateDataRecord *brainUnion = brainUnionArray->GetStateDataRecord(i - 1);
 
