@@ -194,7 +194,7 @@ private:
     hsPlane3    *fPlanes;
     uint32_t    fNumPlanes;
 public:
-    hsBoundsOriented() : fPlanes(nil),fNumPlanes(0),fCenterValid(false) {}
+    hsBoundsOriented() : fCenterValid(), fPlanes(), fNumPlanes() {}
     virtual ~hsBoundsOriented() {   if (fPlanes) delete [] fPlanes; }
 
     // Center is not computed by the class, it must be set by the creator of the class.
@@ -246,7 +246,7 @@ protected:
     void IMakeDists() const;
     void IMakeMinsMaxs();
 public:
-    hsBounds3Ext() : fDists(), fRadius(), fExtFlags(kAxisAligned) {};
+    hsBounds3Ext() : fExtFlags(kAxisAligned), fDists(), fRadius() {};
 
     hsBounds3Ext(const hsBounds3 &b);
     hsBounds3Ext &operator=(const hsBounds3 &b);

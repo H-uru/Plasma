@@ -48,11 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // String Tokenizer routines
 hsStringTokenizer::hsStringTokenizer(const char *string, const char *seps) :
-fQAsTok(true),
-fInQuote(false),
-fString(nil),
-fSeps(nil),
-fLastTerminator(nil)
+    fSeps(), fLastTerminator(), fQAsTok(true), fInQuote(), fString()
 {
     Reset(string,seps);
 }
@@ -172,11 +168,7 @@ void hsStringTokenizer::ParseQuotes(bool qAsTok)
 
 // String Tokenizer routines
 hsWStringTokenizer::hsWStringTokenizer(const wchar_t *string, const wchar_t *seps) :
-    fQAsTok(true),
-    fInQuote(false),
-    fString(nil),
-    fSeps(nil),
-    fLastTerminator(nil)
+    fSeps(), fLastTerminator(), fQAsTok(true), fInQuote(), fString()
 {
     Reset(string,seps);
 }

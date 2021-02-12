@@ -1014,9 +1014,7 @@ uint32_t hsWriteOnlyStream::Write(uint32_t byteCount, const void* buffer)
 ///////////////////////////////////////////////////////////////////////////////////
 
 hsQueueStream::hsQueueStream(int32_t size) :
-    fSize(size),
-    fReadCursor(0),
-    fWriteCursor(0)
+    fReadCursor(), fWriteCursor(), fSize(size)
 {
     fQueue = new char[fSize];
 }
