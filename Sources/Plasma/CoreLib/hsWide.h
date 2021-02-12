@@ -109,7 +109,7 @@ const hsWide kNegInfinity64 = { static_cast<int32_t>(kNegInfinity32), 0 };
     #define hsSignalMathUnderflow()
 
 #define WIDE_ISNEG(hi, lo)                      (int32_t(hi) < 0)
-#define WIDE_LESSTHAN(hi, lo, hi2, lo2)             ((hi) < (hi2) || (hi) == (hi2) && (lo) < (lo2))
+#define WIDE_LESSTHAN(hi, lo, hi2, lo2)             ((hi) < (hi2) || ((hi) == (hi2) && (lo) < (lo2)))
 #define WIDE_SHIFTLEFT(outH, outL, inH, inL, shift)     do { (outH) = ((inH) << (shift)) | ((inL) >> (32 - (shift))); (outL) = (inL) << (shift); } while (0)
 #define WIDE_NEGATE(hi, lo)                     do { (hi) = ~(hi); if (((lo) = -int32_t(lo)) == 0) (hi) += 1; } while (0) 
 #define WIDE_ADDPOS(hi, lo, scaler)             do { uint32_t tmp = (lo) + (scaler); if (tmp < (lo)) (hi) += 1; (lo) = tmp; } while (0)
