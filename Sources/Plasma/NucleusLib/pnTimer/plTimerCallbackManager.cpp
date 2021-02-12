@@ -112,16 +112,16 @@ bool plTimerCallbackManager::CancelCallbacksToKey(const plKey& key)
 {
     bool removed = false;
 
-    for (auto iter = fCallbacks.rbegin(); iter != fCallbacks.rend(); ++iter)
+    for (hsSsize_t i = fCallbacks.size() - 1; i >= 0; --i)
     {
-        for (size_t j = 0; j < (*iter)->fMsg->GetNumReceivers(); j++)
+        for (size_t j = 0; j < fCallbacks[i]->fMsg->GetNumReceivers(); j++)
         {
-            const plKey rKey = (*iter)->fMsg->GetReceiver(j);
+            const plKey rKey = fCallbacks[i]->fMsg->GetReceiver(j);
             
             if (rKey == key)
             {
-                delete *iter;
-                fCallbacks.erase((iter + 1).base());  // Yuck: can't erase a reverse_iterator
+                delete fCallbacks[i];
+                fCallbacks.erase(fCallbacks.begin() + i);
                 removed = true;
                 break;
             }
