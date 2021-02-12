@@ -378,6 +378,8 @@ plWalkingStrategy::plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControll
 
 static inline bool IFilterGround(const plControllerHitRecord& candidate, float zMax)
 {
+    if (!candidate.GetPhysical())
+        return false;
     if (candidate.Point.fZ >= zMax)
         return false;
     // Removes near-perpendicular turds
@@ -448,13 +450,14 @@ void plWalkingStrategy::Apply(float delSecs)
         // which case we just add the platform's velocity to ours and move along with life.
         hsVector3 groundVel;
         auto ground = IFindGroundCandidate();
-        if (!ground) {
-            // should never happen
+        if (!ground || !ground->GetPhysical()) {
+            // This will happen if the ground got paged out from under us.
+            // Yes, I am looking at you, Minkata.
             velocity.fZ = achievedVelocity.fZ + (kGravity * delSecs);
-        } else if (ground->ObjHit->GetLinearVelocitySim(groundVel)) {
+        } else if (ground->GetPhysical()->GetLinearVelocitySim(groundVel)) {
             // Don't want to inherit the velocity of a kickable -- that results in near infinite
             // acceleration, which sucks.
-            if ((fFlags & kRidePlatform) && ground->ObjHit->GetGroup() != plSimDefs::kGroupDynamic) {
+            if ((fFlags & kRidePlatform) && ground->GetPhysical()->GetGroup() != plSimDefs::kGroupDynamic) {
                 velocity.fX += groundVel.fX;
                 velocity.fY += groundVel.fY;
             }
@@ -496,7 +499,7 @@ void plWalkingStrategy::Apply(float delSecs)
 
 void plWalkingStrategy::ICheckGroundSteepness(const plControllerHitRecord& ground)
 {
-    if (ground.ObjHit->GetGroup() != plSimDefs::kGroupDynamic) {
+    if (ground.GetPhysical()->GetGroup() != plSimDefs::kGroupDynamic) {
         if (ground.Normal.fZ >= GetFallStopThreshold())
             fFlags &= ~kFallingNormal;
         else if (ground.Normal.fZ < GetFallStartThreshold())
@@ -597,7 +600,7 @@ void plWalkingStrategy::Reset(bool newAge)
 
 void plWalkingStrategy::AddContact(plPhysical* phys, const hsPoint3& pos, const hsVector3& normal)
 {
-    fContacts.emplace_back(phys, pos, normal);
+    fContacts.emplace_back(phys->GetKey(), pos, normal);
 }
 
 void plWalkingStrategy::RecalcVelocity(double timeNow, float elapsed, bool useAnim)

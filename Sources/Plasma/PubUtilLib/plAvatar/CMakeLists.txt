@@ -77,6 +77,7 @@ target_link_libraries(
         pnKeyedObject
         pnModifier
         pnNetCommon
+        pnNucleusInc
         pnSceneObject
         pnTimer
         plAnimation
@@ -86,7 +87,6 @@ target_link_libraries(
     PRIVATE
         pnEncryption
         pnMessage
-        pnNucleusInc
         plAudio
         plDrawable
         plGImage

@@ -315,7 +315,7 @@ std::vector<plControllerHitRecord> plPXPhysicalControllerCore::ISweepMulti(const
             for (size_t i = 0; i < nbHits; ++i) {
                 const physx::PxSweepHit& hit = buffer[i];
                 auto hitActor = static_cast<plPXActorData*>(hit.actor->userData);
-                fHits.emplace_back(hitActor->GetPhysical(),
+                fHits.emplace_back(hitActor->GetPhysical()->GetKey(),
                                    plPXConvert::Point(hit.position),
                                    plPXConvert::Vector(hit.normal),
                                    hit.distance);
@@ -361,7 +361,7 @@ std::optional<plControllerHitRecord> plPXPhysicalControllerCore::ISweepSingle(co
 
     std::optional<plControllerHitRecord> retval;
     if (buf.hasBlock) {
-        retval.emplace(static_cast<plPXActorData*>(buf.block.actor->userData)->GetPhysical(),
+        retval.emplace(static_cast<plPXActorData*>(buf.block.actor->userData)->GetPhysical()->GetKey(),
                        plPXConvert::Point(buf.block.position),
                        plPXConvert::Vector(buf.block.normal),
                        buf.block.distance);
@@ -589,7 +589,7 @@ void plPXPhysicalControllerCore::AddContact(plPXPhysical* phys, const hsPoint3& 
     fMovementStrategy->AddContact(phys, pos, normal);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    fDbgCollisionInfo.emplace_back(phys, pos, normal);
+    fDbgCollisionInfo.emplace_back(phys->GetKey(), pos, normal);
 #endif
 
     // If this is a Plasma dynamic, we may need to take ownership of it.
@@ -632,7 +632,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     for (const auto& i : fDbgCollisionInfo) {
         float angle = hsRadiansToDegrees(acos(i.Normal * hsVector3(0.f, 0.f, 1.f)));
         debugString = ST::format("\tCollision: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f})",
-                i.ObjHit->GetKeyName(),
+                i.PhysHit->GetName(),
                 i.Normal.fX, i.Normal.fY, i.Normal.fZ, angle);
         debugTxt.DrawString(x, y, debugString);
         y += lineHeight;
