@@ -75,6 +75,7 @@ public:
 plWinCoreAudioEndpointVolume::plWinCoreAudioEndpointVolume()
     : fDevice()
 {
+    hsRequireCOM();
 }
 
 plWinCoreAudioEndpointVolume::~plWinCoreAudioEndpointVolume()

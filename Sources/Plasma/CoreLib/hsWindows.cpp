@@ -59,7 +59,13 @@ public:
     {
         CoUninitialize();
     }
-} s_COMInit;
+};
+
+void hsRequireCOM()
+{
+    // This will initialize COM the first time this function is called.
+    static hsCOMInit s_comInit;
+}
 
 // =============================================================================
 

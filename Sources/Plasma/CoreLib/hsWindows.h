@@ -97,6 +97,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion();
 
+    // Initializes COM exactly once the first time it's called.
+    void hsRequireCOM();
+
     /** COM Result holder used for formatting to log. */
     struct hsCOMError
     {
