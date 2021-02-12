@@ -249,7 +249,7 @@ bool plAudioInterface::MsgReceive(plMessage* msg)
         if (pSoundMsg->Cmd( plSoundMsg::kGetNumSounds ) )
         {
             plSoundMsg* pReply = new plSoundMsg;
-            pReply->fIndex = fAudible->GetNumSounds();
+            pReply->fIndex = (int)fAudible->GetNumSounds();
             pReply->AddReceiver(pSoundMsg->GetSender());
             pReply->SetCmd( plSoundMsg::kGetNumSounds );
             plgDispatch::MsgSend(pReply);

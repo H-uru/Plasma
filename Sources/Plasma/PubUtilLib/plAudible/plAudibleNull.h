@@ -85,8 +85,8 @@ public:
     void        Activate() override { }
     void        DeActivate() override { }
     void        GetStatus(plSoundMsg* pMsg) override { }
-    int         GetNumSounds() const override { return 0; }
-    plSound*    GetSound(int i) const override { return nil; }
+    size_t      GetNumSounds() const override { return 0; }
+    plSound*    GetSound(size_t i) const override { return nil; }
     int         GetSoundIndex(const char *keyname) const override { return -1; }
     void        SetVolume(const float volume,int index = -1) override { }
     void        SetFilename(int index, const char *filename, bool isCompressed) override { }

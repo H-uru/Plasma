@@ -3521,9 +3521,10 @@ bool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         ai = node->GetSceneObject()->GetAudioInterface();
         pAudible = (plWinAudible*)ai->GetAudible();
-        int numSounds = pAudible->GetNumSounds();
+        size_t numSounds = pAudible->GetNumSounds();
         
-        if(numSounds == 0) return true;
+        if (numSounds == 0)
+            return true;
         
         pSound = pAudible->GetSound(0); // Get sound ptr
         int highestPriority = pSound->GetPriority();
@@ -3532,7 +3533,7 @@ bool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         int distToLowest = 9 - highestPriority;
         if( distToLowest <= 0) distToLowest = 1;    // just incase
 
-        for( int i = 0; i < numSounds; i++)
+        for (size_t i = 0; i < numSounds; i++)
         {
             pSound = pAudible->GetSound(i); // Get sound ptr
 
