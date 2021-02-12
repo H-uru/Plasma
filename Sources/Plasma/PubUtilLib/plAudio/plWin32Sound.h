@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWin32Sound_h
 #define plWin32Sound_h
 
-#include "hsTemplates.h"
 #include "plSound.h"
 #include "hsThread.h"
 #include "plSoundEvent.h"
+
+#include <vector>
 
 #define NUM_MAX_HANDLES     16
 #define REPEAT_INFINITE     0xffffffff
@@ -111,7 +112,7 @@ protected:
     
     uint8_t               fChannelSelect;     // For selecting a mono channel from a stereo file
 
-    hsTArray<plSoundEvent *>    fSoundEvents;
+    std::vector<plSoundEvent *> fSoundEvents;
 
     void    ISetActualVolume(float v) override;
     void    IActuallyStop() override;

@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSoundEvent.h"
 #include "plWin32StaticSound.h"
 
+#include <vector>
+
 class hsResMgr;
 class plDSoundBuffer;
 class plEventCallbackMsg;
@@ -71,15 +73,15 @@ public:
     
     bool    LoadSound(bool is3D) override;
     bool    MsgReceive(plMessage *pMsg) override;
-    void    SetPositionArray(uint16_t numSounds, uint32_t *posArray, float *volumeArray);
-    float   GetSoundLength(int16_t soundIndex);
+    void    SetPositionArray(size_t numSounds, const uint32_t *posArray, const float *volumeArray);
+    float   GetSoundLength(uint16_t soundIndex);
     double  GetLength() override { return GetSoundLength( fCurrentSound ); }
 
 protected:
     uint16_t              fCurrentSound;
     uint32_t              fCurrentSoundLength;
-    hsTArray<uint32_t>    fStartPositions;    // In bytes
-    hsTArray<float>  fVolumes;
+    std::vector<uint32_t> fStartPositions;    // In bytes
+    std::vector<float>    fVolumes;
 
     // Some extra handy info for us
     uint8_t               fNumDestChannels, fNumDestBytesPerSample;
@@ -89,7 +91,7 @@ protected:
     void    IRead(hsStream *s, hsResMgr *mgr) override;
     void    IWrite(hsStream *s, hsResMgr *mgr) override;
 
-    uint32_t          IGetSoundbyteLength( int16_t soundIndex );
+    uint32_t          IGetSoundbyteLength(uint16_t soundIndex);
     void            IFillCurrentSound( int16_t newCurrent = -1 );
     
     // Abstracting a few things here for the incidentalMgr
