@@ -136,16 +136,14 @@ pfGameGUIMgr::pfGameGUIMgr()
 
 pfGameGUIMgr::~pfGameGUIMgr()
 {
-    int     i;
-
     // the GUIMgr is dead!
     fInstance = nil;
 
-    for( i = 0; i < fDialogs.GetCount(); i++ )
-        UnloadDialog( fDialogs[ i ] );
+    for (pfGUIDialogMod* dialog : fDialogs)
+        UnloadDialog(dialog);
 
-    for( i = 0; i < fDialogToSetKeyOf.GetCount(); i++ )
-        delete fDialogToSetKeyOf[i];
+    for (pfDialogNameSetKey* dlgKey : fDialogToSetKeyOf)
+        delete dlgKey;
 
     if( fActivated )
         IActivateGUI( false );
@@ -213,27 +211,23 @@ bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
 
 void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
 {
-    int     i;
-
-
-    if( fDialogs.Find( (pfGUIDialogMod *)obj ) == fDialogs.kMissingIndex )
+    if (std::find(fDialogs.cbegin(), fDialogs.cend(), (pfGUIDialogMod *)obj) == fDialogs.cend())
     {
         pfGUIDialogMod  *mod = pfGUIDialogMod::ConvertNoRef( obj );
         if( mod != nil )
         {
             mod->UpdateAspectRatio();   // adding a new dialog, make sure the correct aspect ratio is set
-            fDialogs.Append( mod );
-
+            fDialogs.emplace_back(mod);
 
             // check to see if it is the dialog we are waiting for to be loaded
-            for ( i=0 ; i<fDialogToSetKeyOf.Count() ; i++ )
+            for (auto iter = fDialogToSetKeyOf.cbegin(); iter != fDialogToSetKeyOf.cend(); ++iter)
             {
-                if ( strcmp(fDialogToSetKeyOf[i]->GetName(), mod->GetName()) == 0 )
+                if (strcmp((*iter)->GetName(), mod->GetName()) == 0)
                 {
-                    SetDialogToNotify(mod,fDialogToSetKeyOf[i]->GetKey());
+                    SetDialogToNotify(mod, (*iter)->GetKey());
                     // now remove this entry... we did it
-                    delete fDialogToSetKeyOf[i];
-                    fDialogToSetKeyOf.Remove(i);
+                    delete *iter;
+                    fDialogToSetKeyOf.erase(iter);
                     // that's all the damage we can do for now...
                     break;
                 }
@@ -259,8 +253,8 @@ void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
 
 void    pfGameGUIMgr::IRemoveDlgFromList( hsKeyedObject *obj )
 {
-    int idx = fDialogs.Find( (pfGUIDialogMod *)obj );
-    if( idx != fDialogs.kMissingIndex )
+    auto iter = std::find(fDialogs.cbegin(), fDialogs.cend(), (pfGUIDialogMod *)obj);
+    if (iter != fDialogs.cend())
     {
         pfGUIDialogMod  *mod = pfGUIDialogMod::ConvertNoRef( obj );
         hsAssert( mod != nil, "Non-dialog sent to gameGUIMgr::IRemoveDlg()" );
@@ -278,7 +272,7 @@ void    pfGameGUIMgr::IRemoveDlgFromList( hsKeyedObject *obj )
 
             // Needed?
 //              GetKey()->Release( mod->GetKey() );
-            fDialogs.Remove( idx );
+            fDialogs.erase(iter);
         }
     }
 
@@ -305,20 +299,14 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
     if ( recvrKey != nil )
     {
         // first see if we are loading a dialog that is already being loaded
-        bool alreadyLoaded = false;
-        int i;
-        for ( i=0 ; i<fDialogToSetKeyOf.Count() ; i++ )
-        {
-            if ( strcmp(fDialogToSetKeyOf[i]->GetName(), name) == 0 )
-            {
-                alreadyLoaded = true;
-                break;
-            }
-        }
+        bool alreadyLoaded = std::any_of(fDialogToSetKeyOf.cbegin(), fDialogToSetKeyOf.cend(),
+                                         [name](pfDialogNameSetKey* dlgKey) {
+                                             return strcmp(dlgKey->GetName(), name) == 0;
+                                         });
         if (!alreadyLoaded)
         {
             pfDialogNameSetKey* pDNSK = new pfDialogNameSetKey(name,recvrKey);
-            fDialogToSetKeyOf.Append(pDNSK);
+            fDialogToSetKeyOf.emplace_back(pDNSK);
         }
     }
 
@@ -339,15 +327,12 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
 
 void    pfGameGUIMgr::IShowDialog( const char *name )
 {
-    int     i;
-
-
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if( stricmp( fDialogs[ i ]->GetName(), name ) == 0 )
+        if (stricmp(dialog->GetName(), name) == 0)
         {
-            ShowDialog( fDialogs[ i ] );
-            fDialogs[i]->RefreshAllControls();
+            ShowDialog(dialog);
+            dialog->RefreshAllControls();
             break;
         }
     }
@@ -357,14 +342,11 @@ void    pfGameGUIMgr::IShowDialog( const char *name )
 
 void    pfGameGUIMgr::IHideDialog( const char *name )
 {
-    int     i;
-
-
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if( stricmp( fDialogs[ i ]->GetName(), name ) == 0 )
+        if (stricmp(dialog->GetName(), name) == 0)
         {
-            HideDialog( fDialogs[ i ] );
+            HideDialog(dialog);
             break;
         }
     }
@@ -409,14 +391,11 @@ void    pfGameGUIMgr::HideDialog( pfGUIDialogMod *dlg )
 
 void    pfGameGUIMgr::UnloadDialog( const char *name )
 {
-    int     i;
-
-
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if( stricmp( fDialogs[ i ]->GetName(), name ) == 0 )
+        if (stricmp(dialog->GetName(), name) == 0)
         {
-            UnloadDialog( fDialogs[ i ] );
+            UnloadDialog(dialog);
             break;
         }
     }
@@ -455,27 +434,17 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 bool    pfGameGUIMgr::IsDialogLoaded( const char *name )
 {
     // search through all the dialogs we've loaded
-    int     i;
-    for( i = 0; i < fDialogs.GetCount(); i++ )
-    {
-        if( stricmp( fDialogs[ i ]->GetName(), name ) == 0 )
-        {
-            // found 'em
-            return true;
-        }
-    }
-    // nota
-    return false;
+    return std::any_of(fDialogs.cbegin(), fDialogs.cend(),
+                       [name](pfGUIDialogMod* dialog) {
+                           return strcmp(dialog->GetName(), name) == 0;
+                       });
 }
 
 pfGUIPopUpMenu  *pfGameGUIMgr::FindPopUpMenu( const char *name )
 {
-    int     i;
-
-
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef( fDialogs[ i ] );
+        pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef(dialog);
         if( menu != nil && stricmp( menu->GetName(), name ) == 0 )
             return menu;
     }
@@ -500,12 +469,11 @@ std::vector<plPostEffectMod*> pfGameGUIMgr::GetDlgRenderMods() const
 //
 void pfGameGUIMgr::SetDialogToNotify(const char *name, plKey recvrKey)
 {
-    int     i;
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if( stricmp( fDialogs[ i ]->GetName(), name ) == 0 )
+        if (stricmp(dialog->GetName(), name) == 0)
         {
-            SetDialogToNotify( fDialogs[ i ], recvrKey );
+            SetDialogToNotify(dialog, recvrKey);
             break;
         }
     }
@@ -861,13 +829,10 @@ extern pfGUITag gGUITags[];     // From pfGUITagDefs.cpp
 
 pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( uint32_t tagID )
 {
-    int     i;
-
-
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if( fDialogs[ i ]->GetTagID() == tagID )
-            return fDialogs[ i ];
+        if (dialog->GetTagID() == tagID)
+            return dialog;
     }
 
     return nil;
@@ -877,13 +842,10 @@ pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( uint32_t tagID )
 
 pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromString( const char *name )
 {
-    int     i;
-
-
-    for( i = 0; i < fDialogs.GetCount(); i++ )
+    for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if( stricmp( fDialogs[ i ]->GetName(), name ) == 0 )
-            return fDialogs[ i ];
+        if (stricmp(dialog->GetName(), name) == 0)
+            return dialog;
     }
 
     return nil;
@@ -946,11 +908,10 @@ void pfGameGUIMgr::SetAspectRatio(float aspectratio)
     if (fAspectRatio != oldAspectRatio)
     {
         // need to tell dialogs to update
-        int i;
-        for (i = 0; i < fDialogs.GetCount(); i++)
+        for (pfGUIDialogMod* dialog : fDialogs)
         {
-            if (fDialogs[i])
-                fDialogs[i]->UpdateAspectRatio();
+            if (dialog)
+                dialog->UpdateAspectRatio();
         }
     }
 }

@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRandomCommandMod_inc
 #define plRandomCommandMod_inc
 
-#include "hsTemplates.h"
-
 #include "pnModifier/plSingleModifier.h"
 
 class plRandomCommandMod : public plSingleModifier
@@ -67,15 +65,15 @@ protected:
 
     // These are only lightly synched, the only synched state is whether
     // they are currently active.
-    uint8_t                           fState;
+    uint8_t             fState;
 
-    hsBitVector                     fExcluded;
-    int8_t                            fCurrent;
-    uint8_t                           fMode; // static, if it becomes dynamic, move to SynchedValue
-    hsTArray<double>                fEndTimes;
+    hsBitVector         fExcluded;
+    int8_t              fCurrent;
+    uint8_t             fMode; // static, if it becomes dynamic, move to SynchedValue
+    std::vector<double> fEndTimes;
 
-    float                        fMinDelay;
-    float                        fMaxDelay;
+    float               fMinDelay;
+    float               fMaxDelay;
     
     void            IStart();
     virtual void    IStop();

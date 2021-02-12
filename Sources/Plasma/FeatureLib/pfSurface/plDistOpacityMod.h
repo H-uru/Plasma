@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 #include "pnModifier/plSingleModifier.h"
 
@@ -82,7 +81,7 @@ protected:
 
     hsPoint3        fRefPos;
 
-    hsTArray<plFadeOpacityLay*> fFadeLays;
+    std::vector<plFadeOpacityLay*> fFadeLays;
 
     // We only act in response to messages.
     bool IEval(double secs, float del, uint32_t dirty) override { return false; }

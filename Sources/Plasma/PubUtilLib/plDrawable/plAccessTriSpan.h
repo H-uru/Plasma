@@ -69,12 +69,12 @@ protected:
     uint16_t*                 fCurrIdx;
     uint16_t*                 fEndIdx;
 
-    plAccessTriSpan*        fAccess;
+    const plAccessTriSpan*    fAccess;
 public:
     plAccTriIterator() { Set(nil); }
-    plAccTriIterator(plAccessTriSpan* acc) { Set(acc); }
+    plAccTriIterator(const plAccessTriSpan* acc) { Set(acc); }
 
-    void            Set(plAccessTriSpan* acc) { fAccess = acc; fCurrIdx = nil; }
+    void            Set(const plAccessTriSpan* acc) { fAccess = acc; fCurrIdx = nil; }
 
     void            Begin();
     void            Advance();

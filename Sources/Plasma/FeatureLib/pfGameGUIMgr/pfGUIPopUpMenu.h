@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIPopUpMenu_h
 
 #include "hsBounds.h"
-#include "hsTemplates.h"
 
 #include <string>
 
@@ -104,10 +103,10 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 
         // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
         bool                    fNeedsRebuilding, fWaitingForSkin;
-        float                fOriginX, fOriginY;
-        uint16_t                  fMargin;
-        hsTArray<pfMenuItem>    fMenuItems;
-        int32_t                   fSubMenuOpen;
+        float                   fOriginX, fOriginY;
+        uint16_t                fMargin;
+        std::vector<pfMenuItem> fMenuItems;
+        int32_t                 fSubMenuOpen;
 
         pfGUISkin               *fSkin;
 

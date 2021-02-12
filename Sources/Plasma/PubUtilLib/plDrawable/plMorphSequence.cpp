@@ -390,15 +390,13 @@ void plMorphSequence::DeInit()
     }
 }
 
-void plMorphSequence::IRenormalize(hsTArray<plAccessSpan>& dst) const
+void plMorphSequence::IRenormalize(std::vector<plAccessSpan>& dst) const
 {
-    int i;
-    for( i = 0; i < dst.GetCount(); i++ )
+    for (plAccessSpan& span : dst)
     {
-        hsAssert(dst[i].HasAccessVtx(), "Come on, everyone has vertices");
-        plAccessVtxSpan& accVtx = dst[i].AccessVtx();
-        int j;
-        for( j = 0; j < accVtx.VertCount(); j++ )
+        hsAssert(span.HasAccessVtx(), "Come on, everyone has vertices");
+        plAccessVtxSpan& accVtx = span.AccessVtx();
+        for (uint32_t j = 0; j < accVtx.VertCount(); j++)
         {
             hsFastMath::Normalize(accVtx.Normal(j));
         }
@@ -416,12 +414,11 @@ void plMorphSequence::Apply() const
     Reset(di);
 
     // We'll be accumulating into the buffer, so open RW
-    hsTArray<plAccessSpan> dst;
+    std::vector<plAccessSpan> dst;
     plAccessGeometry::Instance()->OpenRW(di, dst);
 
     // For each MorphArray
-    int i;
-    for( i = 0; i < fMorphs.GetCount(); i++ )
+    for (int i = 0; i < fMorphs.GetCount(); i++)
     {
         // Apply Delta
         fMorphs[i].Apply(dst);
@@ -572,7 +569,7 @@ void plMorphSequence::IApplyShared(int iShare)
 
     plSharedMeshInfo& mInfo = fSharedMeshes[iShare];
 
-    hsTArray<plAccessSpan> dst;
+    std::vector<plAccessSpan> dst;
     // Now copy each shared mesh geometryspan into the drawable
     // to get it back to it's pristine condition.
     int i;
@@ -581,7 +578,7 @@ void plMorphSequence::IApplyShared(int iShare)
         plAccessSpan dstAcc;
         plAccessGeometry::Instance()->OpenRW(mInfo.fCurrDraw, mInfo.fCurrIdx[i], dstAcc);
 
-        dst.Append(dstAcc);
+        dst.emplace_back(dstAcc);
     }
 
     // For each MorphArray

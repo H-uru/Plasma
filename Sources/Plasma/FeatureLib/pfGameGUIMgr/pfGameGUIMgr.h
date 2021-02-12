@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGameGUIMgr_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 
 #include "pnInputCore/plKeyDef.h"
 #include "pnKeyedObject/plKey.h"
@@ -96,10 +95,11 @@ private:
     char    *fName;
     plKey   fKey;
 public:
-    pfDialogNameSetKey(const char *name, plKey key) { fName = hsStrcpy(name); fKey=key; }
+    pfDialogNameSetKey(const char *name, plKey key)
+        : fName(hsStrcpy(name)), fKey(std::move(key)) { }
     ~pfDialogNameSetKey() { delete [] fName; }
-    const char *GetName() { return fName; }
-    plKey GetKey() { return fKey; }
+    const char *GetName() const { return fName; }
+    plKey GetKey() const { return fKey; }
 };
 
 //// Manager Class Definition ////////////////////////////////////////////////
@@ -137,12 +137,12 @@ class pfGameGUIMgr : public hsKeyedObject
 
     protected:
 
-        hsTArray<pfGUIDialogMod *>  fDialogs;
+        std::vector<pfGUIDialogMod *>  fDialogs;
         pfGUIDialogMod              *fActiveDialogs;
 
         // These two lists help us manage when dialogs get told to load or unload versus when they actually *do*
-        hsTArray<pfDialogNameSetKey *>  fDlgsPendingLoad;
-        hsTArray<pfDialogNameSetKey *>  fDlgsPendingUnload;
+        std::vector<pfDialogNameSetKey *>  fDlgsPendingLoad;
+        std::vector<pfDialogNameSetKey *>  fDlgsPendingUnload;
 
         bool    fActivated;
         uint32_t  fActiveDlgCount;
@@ -159,7 +159,7 @@ class pfGameGUIMgr : public hsKeyedObject
         // This array shouldn't get more than one entry... but
         // it could be more....
         // LoadDialog adds an entry and MsgReceive removes it
-        hsTArray<pfDialogNameSetKey *>  fDialogToSetKeyOf;
+        std::vector<pfDialogNameSetKey *>  fDialogToSetKeyOf;
 
         void    ILoadDialog( const char *name );
         void    IShowDialog( const char *name );

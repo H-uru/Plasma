@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 
 #include <string_theory/string>
+#include <vector>
 
 #include "pfGameGUIMgr.h"
 
@@ -139,9 +140,9 @@ class pfGUIControlMod : public plSingleModifier
         pfGUIColorScheme    *fColorScheme;
         plSceneObject       *fProxy;
 
-        hsTArray<hsPoint3>  fBoundsPoints;      // For more accurate bounds tests
+        std::vector<hsPoint3> fBoundsPoints;      // For more accurate bounds tests
 
-        hsTArray<int>   fSoundIndices;  // Indices of sounds to trigger on the target SO's audible interface
+        std::vector<int>    fSoundIndices;  // Indices of sounds to trigger on the target SO's audible interface
 
         pfGUISkin       *fSkin;
 

@@ -90,7 +90,7 @@ public:
     int32_t       GetNumProperties() const override { return kNumProps; }
 
     plSound*    GetSound(int i) const;
-    int         GetNumSounds() const;
+    size_t      GetNumSounds() const;
 
     bool MsgReceive(plMessage* msg) override;
 

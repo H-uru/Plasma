@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIRadioGroupCtrl_h
 #define _pfGUIRadioGroupCtrl_h
 
-#include "hsTemplates.h"
-
 #include "pfGUIValueCtrl.h"
 
 class pfGroupProc;
@@ -67,7 +65,7 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
             kRefControl = kRefDerivedStart
         };
 
-        hsTArray<pfGUICheckBoxCtrl *>   fControls;
+        std::vector<pfGUICheckBoxCtrl *> fControls;
         pfGroupProc                     *fButtonProc;
 
         int32_t                           fValue, fDefaultValue;

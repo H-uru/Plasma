@@ -123,7 +123,7 @@ public:
     virtual const char  *GetName();
     virtual uint32_t      GetVersion();
 
-    virtual uint32_t      GetNumControls();
+    virtual size_t      GetNumControls();
     virtual PyObject*   GetControl( uint32_t idx ); // returns pyKey
     virtual void        SetFocus( pyKey& gcKey );
     virtual void        NoFocus( );

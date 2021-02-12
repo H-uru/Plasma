@@ -76,19 +76,17 @@ plCameraModifier1::plCameraModifier1()
 
 plCameraModifier1::~plCameraModifier1()
 {
-    int i;
-    for (i = 0; i < GetNumTrans(); i++)
-        delete(GetTrans(i));
-    fTrans.SetCountAndZero(0);
-    
-    for (i = 0; i < fMessageQueue.Count(); i++)
-        hsRefCnt_SafeUnRef(fMessageQueue[i]);
-    fMessageQueue.SetCountAndZero(0);
+    for (CamTrans* trans : fTrans)
+        delete trans;
+    fTrans.clear();
 
-    for (i = 0; i < fFOVInstructions.Count(); i++)
-        hsRefCnt_SafeUnRef(fFOVInstructions[i]);
-    fFOVInstructions.SetCountAndZero(0);
+    for (plMessage* message : fMessageQueue)
+        hsRefCnt_SafeUnRef(message);
+    fMessageQueue.clear();
 
+    for (plCameraMsg* message : fFOVInstructions)
+        hsRefCnt_SafeUnRef(message);
+    fFOVInstructions.clear();
 }
 
 
@@ -173,7 +171,7 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
         if (pCamMsg->Cmd(plCameraMsg::kAddFOVKeyframe))
         {
             hsRefCnt_SafeRef(msg);
-            fFOVInstructions.Append(pCamMsg);
+            fFOVInstructions.emplace_back(pCamMsg);
             return true;
         }
         else
@@ -201,7 +199,7 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
         hsRefCnt_SafeRef(msg);
         msg->ClearReceivers();
         msg->AddReceiver(msg->GetSender());
-        fMessageQueue.Append(msg);
+        fMessageQueue.emplace_back(msg);
         return true;
     }
     plGenRefMsg* pRefMsg = plGenRefMsg::ConvertNoRef(msg);
@@ -323,9 +321,8 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
     hsKeyedObject::Read(stream, mgr);
     fBrain = nil;
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
-    int count = stream->ReadLE32();
-    int i;
-    for (i = 0; i < count; i++)
+    uint32_t count = stream->ReadLE32();
+    for (uint32_t i = 0; i < count; i++)
     {
         
         plKey key = mgr->ReadKey(stream);
@@ -350,26 +347,26 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         camTrans->fCutPOA = cutpoa;
         camTrans->fIgnore = ignore;
 
-        fTrans.Append(camTrans);
+        fTrans.emplace_back(camTrans);
     }
     fFOVw = stream->ReadLEFloat();
     fFOVh = stream->ReadLEFloat();
-    int n = stream->ReadLE32();
-    fMessageQueue.SetCountAndZero(n);
-    for(i = 0; i < n; i++ )
+    uint32_t n = stream->ReadLE32();
+    fMessageQueue.resize(n);
+    for (uint32_t i = 0; i < n; i++)
     {   
         plMessage* pMsg =  plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
         fMessageQueue[i] = pMsg;
     }
-    for(i = 0; i < n; i++ )
+    for (uint32_t i = 0; i < n; i++)
     {   
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, i, kRefCallbackMsg), plRefFlags::kActiveRef);
     }
 
     n = stream->ReadLE32();
-    fFOVInstructions.SetCountAndZero(n);
-    for(i = 0; i < n; i++ )
-    {   
+    fFOVInstructions.resize(n);
+    for (uint32_t i = 0; i < n; i++)
+    {
         plCameraMsg* pMsg =  plCameraMsg::ConvertNoRef(mgr->ReadCreatable(stream));
         fFOVInstructions[i] = pMsg;
     }
@@ -377,7 +374,6 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
     fStartAnimOnPush = stream->ReadBool();
     fStopAnimOnPop = stream->ReadBool();
     fResetAnimOnPop = stream->ReadBool();
-    
 }
 
 void plCameraModifier1::Write(hsStream* stream, hsResMgr* mgr)
@@ -386,36 +382,35 @@ void plCameraModifier1::Write(hsStream* stream, hsResMgr* mgr)
     if (fBrain)
         mgr->WriteKey(stream, fBrain );
     
-    int i = fTrans.Count();
-    stream->WriteLE32(i);
-    for (i = 0; i < fTrans.Count(); i++)
+    stream->WriteLE32((uint32_t)fTrans.size());
+    for (CamTrans* trans : fTrans)
     {   
-        mgr->WriteKey(stream, fTrans[i]->fTransTo);
-        stream->WriteBool(fTrans[i]->fCutPos);
-        stream->WriteBool(fTrans[i]->fCutPOA);
-        stream->WriteBool(fTrans[i]->fIgnore);
-        stream->WriteLEScalar(fTrans[i]->fVelocity);
-        stream->WriteLEScalar(fTrans[i]->fAccel);
-        stream->WriteLEScalar(fTrans[i]->fDecel);
-        stream->WriteLEScalar(fTrans[i]->fPOAVelocity);
-        stream->WriteLEScalar(fTrans[i]->fPOAAccel);
-        stream->WriteLEScalar(fTrans[i]->fPOADecel);
+        mgr->WriteKey(stream, trans->fTransTo);
+        stream->WriteBool(trans->fCutPos);
+        stream->WriteBool(trans->fCutPOA);
+        stream->WriteBool(trans->fIgnore);
+        stream->WriteLEScalar(trans->fVelocity);
+        stream->WriteLEScalar(trans->fAccel);
+        stream->WriteLEScalar(trans->fDecel);
+        stream->WriteLEScalar(trans->fPOAVelocity);
+        stream->WriteLEScalar(trans->fPOAAccel);
+        stream->WriteLEScalar(trans->fPOADecel);
     }
     stream->WriteLEFloat(fFOVw);
     stream->WriteLEFloat(fFOVh);
-    stream->WriteLE32(fMessageQueue.Count());
-    for (i = 0; i < fMessageQueue.Count(); i++)
+    stream->WriteLE32((uint32_t)fMessageQueue.size());
+    for (plMessage* message : fMessageQueue)
     {
-        mgr->WriteCreatable(stream, fMessageQueue[i]);
+        mgr->WriteCreatable(stream, message);
     }
-    for (i = 0; i < fMessageQueue.Count(); i++)
+    for (plMessage* message : fMessageQueue)
     {
-        mgr->WriteKey(stream, fMessageQueue[i]->GetSender());
+        mgr->WriteKey(stream, message->GetSender());
     }
-    stream->WriteLE32(fFOVInstructions.Count());
-    for (i = 0; i < fFOVInstructions.Count(); i++)
+    stream->WriteLE32((uint32_t)fFOVInstructions.size());
+    for (plCameraMsg* message : fFOVInstructions)
     {
-        mgr->WriteCreatable(stream, fFOVInstructions[i]);
+        mgr->WriteCreatable(stream, message);
     }
     stream->WriteBool(fAnimated);
     stream->WriteBool(fStartAnimOnPush);

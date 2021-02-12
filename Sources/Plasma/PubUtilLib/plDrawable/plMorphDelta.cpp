@@ -67,7 +67,7 @@ plMorphDelta& plMorphDelta::operator=(const plMorphDelta& src)
     return *this;
 }
 
-void plMorphDelta::Apply(hsTArray<plAccessSpan>& dst, float weight /* = -1.f */) const
+void plMorphDelta::Apply(std::vector<plAccessSpan>& dst, float weight /* = -1.f */) const
 {
     if( weight == -1.f)
         weight = fWeight; // None passed in, use our stored value

@@ -94,7 +94,7 @@ int plAudioInterface::GetSoundIndex(const char *keyname)
         return -1;
 }
 
-int plAudioInterface::GetNumSounds() const
+size_t plAudioInterface::GetNumSounds() const
 {
     if( fAudible )
         return fAudible->GetNumSounds();

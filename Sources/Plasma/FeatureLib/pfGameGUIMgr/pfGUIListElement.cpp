@@ -350,32 +350,26 @@ int     pfGUIListTreeRoot::CompareTo( pfGUIListElement *rightSide )
 
 void    pfGUIListTreeRoot::AddChild( pfGUIListElement *el )
 {
-    fChildren.Append( el );
+    fChildren.emplace_back(el);
     el->SetIndentLevel( GetIndentLevel() + 1 );
     el->SetCollapsed( !fShowChildren );
 }
 
-void    pfGUIListTreeRoot::RemoveChild( uint32_t idx )
+void    pfGUIListTreeRoot::RemoveChild(size_t idx)
 {
-    fChildren.Remove( idx );
+    fChildren.erase(fChildren.begin() + idx);
 }
 
 void    pfGUIListTreeRoot::ShowChildren( bool s )
 {
-    uint32_t i;
-
-
     fShowChildren = s;
-    for( i = 0; i < fChildren.GetCount(); i++ )
-        fChildren[ i ]->SetCollapsed( !s );
+    for (pfGUIListElement* child : fChildren)
+        child->SetCollapsed(!s);
 }
 
 void    pfGUIListTreeRoot::SetCollapsed( bool c )
 {
-    uint32_t i;
-
-    
     pfGUIListElement::SetCollapsed( c );
-    for( i = 0; i < fChildren.GetCount(); i++ )
-        fChildren[ i ]->SetCollapsed( c ? true : !fShowChildren );
+    for (pfGUIListElement* child : fChildren)
+        child->SetCollapsed(c ? true : !fShowChildren);
 }

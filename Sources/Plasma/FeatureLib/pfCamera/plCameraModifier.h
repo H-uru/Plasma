@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/plKey.h"
 #include "pnModifier/plSingleModifier.h"
@@ -139,9 +138,9 @@ public:
     void            InSubworld(bool b) { fInSubLastUpdate = b; }
     void Read(hsStream* stream, hsResMgr* mgr) override;
     void Write(hsStream* stream, hsResMgr* mgr) override;
-    void AddTrans(CamTrans* t) { fTrans.Append(t); }
-    int  GetNumTrans() { return fTrans.Count(); }
-    CamTrans* GetTrans(int i) { return fTrans[i]; }
+    void AddTrans(CamTrans* t) { fTrans.emplace_back(t); }
+    size_t GetNumTrans() { return fTrans.size(); }
+    CamTrans* GetTrans(size_t i) const { return fTrans[i]; }
     void SetSubject(plSceneObject* pObj); 
     plSceneObject* GetSubject();
 
@@ -158,12 +157,12 @@ private:
     hsPoint3                fFrom;
     hsPoint3                fAt;
     plCameraBrain1*         fBrain; // the 'logic' portion of the camera
-    hsTArray<CamTrans*>     fTrans;
+    std::vector<CamTrans*>  fTrans;
     plSceneObject*          fSubObj;
-    float                fFOVw;
-    float                fFOVh;
-    hsTArray<plMessage*>    fMessageQueue;
-    hsTArray<plCameraMsg*>  fFOVInstructions;
+    float                   fFOVw;
+    float                   fFOVh;
+    std::vector<plMessage*> fMessageQueue;
+    std::vector<plCameraMsg*> fFOVInstructions;
     bool                    fAnimated, fStartAnimOnPush, fStopAnimOnPop, fResetAnimOnPop;
     hsPoint3                fLastSubPos;
     hsPoint3                fLastSubPOA;

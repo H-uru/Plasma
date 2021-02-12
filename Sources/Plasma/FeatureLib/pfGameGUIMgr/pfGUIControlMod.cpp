@@ -296,26 +296,25 @@ static bool     CreateConvexHull( hsPoint3 *inPoints, int &numPoints )
 //  Retrieves ALL of the points of a sceneObject's meshes. And I mean ALL of 
 //  'em...
 
-static void GetObjectPoints( plSceneObject *so, hsTArray<hsPoint3> &outPoints )
+static void GetObjectPoints(plSceneObject *so, std::vector<hsPoint3> &outPoints)
 {
     const plDrawInterface* di = so->GetDrawInterface();
     if( !di )
         return;
 
-    // The following uses mf's spiffy plAccessGeometry/Spans stuff, which, in 
-    // one uint16_t, kicksAss.
-    hsTArray<plAccessSpan> spans;
+    // The following uses mf's spiffy plAccessGeometry/Spans stuff, which, in
+    // one word, kicksAss.
+    std::vector<plAccessSpan> spans;
     plAccessGeometry::Instance()->OpenRO( di, spans );
 
-    int i;
-    outPoints.Reset();
-    for( i = 0; i < spans.GetCount(); i++ )
+    outPoints.clear();
+    for (const plAccessSpan& span : spans)
     {
-        plAccessVtxSpan& vtxSrc = spans[ i ].AccessVtx();
+        const plAccessVtxSpan& vtxSrc = span.AccessVtx();
         plAccPositionIterator iterSrc( &vtxSrc );
 
         for( iterSrc.Begin(); iterSrc.More(); iterSrc.Advance() )
-            outPoints.Append( *iterSrc.Position() );
+            outPoints.emplace_back(*iterSrc.Position());
     }
     
     if (plAccessGeometry::Instance())
@@ -357,13 +356,10 @@ bool    pfGUIControlMod::PointInBounds( const hsPoint3 &point )
 
     if( fBounds.GetType() != kBoundsEmpty && fBounds.GetType() != kBoundsUninitialized && fBounds.IsInside( &point ) )
     {
-        if( fBoundsPoints.GetCount() > 0 )
+        if (!fBoundsPoints.empty())
         {
             // We have a more-accurate bounds set, so use it
-            int     i;
-
-
-            for( i = 1; i < fBoundsPoints.GetCount() - 1; i++ )
+            for (size_t i = 1; i < fBoundsPoints.size() - 1; i++)
             {
                 // Test the triangle (0,i,i+1)
                 if( PointInTriangle( fBoundsPoints[ 0 ], fBoundsPoints[ i ], fBoundsPoints[ i + 1 ], point ) )
@@ -395,8 +391,6 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 {
     hsMatrix44  xformMatrix, projMatrix;
     hsPoint3    corners[ 8 ];
-    int         i;
-
 
     if( ( !fBoundsValid || force ) && fDialog && GetTarget() )
     {
@@ -406,26 +400,26 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
 
         if( HasFlag( kBetterHitTesting ) )
         {
-            hsTArray<hsPoint3>  scrnPoints;
+            std::vector<hsPoint3> scrnPoints;
 
             // Create a list of points to make a 2D convex hull from
             GetObjectPoints( GetTarget(), scrnPoints );
             hsMatrix44 l2w = GetTarget()->GetLocalToWorld();
-            for( i = 0; i < scrnPoints.GetCount(); i++ )
+            for (hsPoint3& point : scrnPoints)
             {
-                scrnPoints[ i ] = l2w * scrnPoints[ i ];
-                scrnPoints[ i ] = fDialog->WorldToScreenPoint( scrnPoints[ i ] );
+                point = l2w * point;
+                point = fDialog->WorldToScreenPoint(point);
             }
 
             // Now create a convex hull from them, assuming the Zs are all the same
-            int numPoints = scrnPoints.GetCount();
-            if( !CreateConvexHull( scrnPoints.AcquireArray(), numPoints ) )
+            int numPoints = (int)scrnPoints.size();
+            if (!CreateConvexHull(scrnPoints.data(), numPoints))
                 return;
 
             // Copy & store. Also recalc our bounding box just for fun
             fBounds.MakeEmpty();
-            fBoundsPoints.SetCount( numPoints );
-            for( i = 0; i < numPoints; i++ )
+            fBoundsPoints.resize(numPoints);
+            for (int i = 0; i < numPoints; i++)
             {
                 fBoundsPoints[ i ] = scrnPoints[ i ];
                 fBounds.Union( &fBoundsPoints[ i ] );
@@ -440,7 +434,7 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
             worldBounds.Transform( &l2w );
 
             worldBounds.GetCorners( corners );
-            for( i = 0; i < 8; i++ )
+            for (int i = 0; i < 8; i++)
             {
                 hsPoint3 scrnPt = fDialog->WorldToScreenPoint( corners[ i ] );
                 fBounds.Union( &scrnPt );
@@ -809,13 +803,13 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     }
 
     // Read in our sound indices
-    uint8_t i, count = s->ReadByte();
+    uint8_t count = s->ReadByte();
     if( count == 0 )
-        fSoundIndices.Reset();
+        fSoundIndices.clear();
     else
     {
-        fSoundIndices.SetCountAndZero( count );
-        for( i = 0; i < count; i++ )
+        fSoundIndices.assign(count, 0);
+        for (uint8_t i = 0; i < count; i++)
             fSoundIndices[ i ] = (int)s->ReadLE32();
     }
 
@@ -856,10 +850,9 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
         s->WriteBool( false );
 
     // Write out our sound indices
-    s->WriteByte( fSoundIndices.GetCount() );
-    uint8_t i;
-    for( i = 0; i < fSoundIndices.GetCount(); i++ )
-        s->WriteLE32( fSoundIndices[ i ] );
+    s->WriteByte((uint8_t)fSoundIndices.size());
+    for (int idx : fSoundIndices)
+        s->WriteLE32(idx);
 
     if( HasFlag( kHasProxy ) )
         mgr->WriteKey( s, fProxy->GetKey() );
@@ -940,8 +933,8 @@ void    pfGUIControlMod::SetDropTargetHdlr( pfGUIDropTargetProc *h )
 
 void    pfGUIControlMod::SetSoundIndex( uint8_t guiCtrlEvent, int soundIndex )
 {
-    if( fSoundIndices.GetCount() < guiCtrlEvent + 1 )
-        fSoundIndices.ExpandAndZero( guiCtrlEvent + 1 );
+    if (fSoundIndices.size() < guiCtrlEvent + 1)
+        fSoundIndices.resize(guiCtrlEvent + 1);
 
     fSoundIndices[ guiCtrlEvent ] = soundIndex + 1; // We +1, since 0 means no sound
 }
@@ -952,7 +945,7 @@ void    pfGUIControlMod::SetSoundIndex( uint8_t guiCtrlEvent, int soundIndex )
 
 void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, bool loop /* = false */ )
 {
-    if( guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[ guiCtrlEvent ] == 0 )
+    if (guiCtrlEvent >= fSoundIndices.size() || fSoundIndices[guiCtrlEvent] == 0)
         return;
 
     if( GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
@@ -973,7 +966,7 @@ void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, bool loop /* = false 
 
 void    pfGUIControlMod::IStopSound(uint8_t guiCtrlEvent)
 {
-    if (guiCtrlEvent >= fSoundIndices.GetCount() || fSoundIndices[guiCtrlEvent] == 0)
+    if (guiCtrlEvent >= fSoundIndices.size() || fSoundIndices[guiCtrlEvent] == 0)
         return;
 
     if (GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )

@@ -55,8 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIDynDisplayCtrl_h
 #define _pfGUIDynDisplayCtrl_h
 
-#include "hsTemplates.h"
-
 #include "pfGUIControlMod.h"
 
 class hsGMaterial;
@@ -75,10 +73,10 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
             kRefMaterial
         };
 
-        hsTArray<plDynamicTextMap *>    fTextMaps;
-        hsTArray<plLayerInterface *>    fLayers;
+        std::vector<plDynamicTextMap *> fTextMaps;
+        std::vector<plLayerInterface *> fLayers;
 
-        hsTArray<hsGMaterial *>         fMaterials;
+        std::vector<hsGMaterial *>      fMaterials;
 
         bool IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
@@ -96,14 +94,14 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
         void Read(hsStream* s, hsResMgr* mgr) override;
         void Write(hsStream* s, hsResMgr* mgr) override;
 
-        uint32_t              GetNumMaps() const { return fTextMaps.GetCount(); }
-        plDynamicTextMap    *GetMap( uint32_t i ) const { return fTextMaps[ i ]; }
+        size_t              GetNumMaps() const { return fTextMaps.size(); }
+        plDynamicTextMap    *GetMap(size_t i) const { return fTextMaps[i]; }
 
-        uint32_t              GetNumLayers() const { return fLayers.GetCount(); }
-        plLayerInterface    *GetLayer( uint32_t i ) const { return fLayers[ i ]; }
+        size_t              GetNumLayers() const { return fLayers.size(); }
+        plLayerInterface    *GetLayer(size_t i) const { return fLayers[i]; }
 
-        uint32_t              GetNumMaterials() const { return fMaterials.GetCount(); }
-        hsGMaterial         *GetMaterial( uint32_t i ) const { return fMaterials[ i ]; }
+        size_t              GetNumMaterials() const { return fMaterials.size(); }
+        hsGMaterial         *GetMaterial(size_t i) const { return fMaterials[i]; }
 
         // Export only
         void    AddMap( plDynamicTextMap *map );

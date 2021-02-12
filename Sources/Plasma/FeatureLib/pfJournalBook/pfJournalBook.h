@@ -170,7 +170,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include <string_theory/string>
 
-#include "hsTemplates.h"
 #include "hsColorRGBA.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -458,8 +457,8 @@ class pfJournalBook : public hsKeyedObject
         std::string GetEditableText();
 
         void    SetEditableText(std::string text);
-        
-    protected:
+
+    private:
 
         struct loadedMovie
         {
@@ -473,10 +472,10 @@ class pfJournalBook : public hsKeyedObject
         // Our compiled esHTML source
         std::wstring                fUncompiledSource;
         plLocation                  fDefLoc;
-        hsTArray<pfEsHTMLChunk *>   fHTMLSource;
-        hsTArray<pfEsHTMLChunk *>   fCoverDecals; // stored in a separate location so we can draw them all immediately
+        std::vector<pfEsHTMLChunk *> fHTMLSource;
+        std::vector<pfEsHTMLChunk *> fCoverDecals; // stored in a separate location so we can draw them all immediately
 
-        hsTArray<loadedMovie *> fLoadedMovies;
+        std::vector<loadedMovie *> fLoadedMovies;
 
         // The key of the mipmap to use as the cover image
         plKey   fCoverMipKey;
@@ -489,7 +488,7 @@ class pfJournalBook : public hsKeyedObject
         bool    fCoverFromHTML;
         // Cached array of page starts in the esHTML source. Generated as we flip through
         // the book, so that going backwards can be done efficiently.
-        hsTArray<uint32_t>    fPageStarts;
+        std::vector<uint32_t> fPageStarts;
 
         // is the book done showing and ready for more page calculations
         bool    fAreWeShowing;
@@ -516,7 +515,7 @@ class pfJournalBook : public hsKeyedObject
         plKey   fPageTurnAnimKey;
 
         // Current list of linkable image chunks we have visible on the screen, for quick hit testing
-        hsTArray<pfEsHTMLChunk *>   fVisibleLinks;
+        std::vector<pfEsHTMLChunk *> fVisibleLinks;
 
         static std::map<ST::string,pfBookData*> fBookGUIs;
         ST::string fCurBookGUI;
@@ -565,7 +564,7 @@ class pfJournalBook : public hsKeyedObject
         void    IFinishShow( bool startOpened );
 
         // Find the current moused link, if any
-        int32_t   IFindCurrVisibleLink( bool rightNotLeft, bool hoverNotUp );
+        hsSsize_t IFindCurrVisibleLink(bool rightNotLeft, bool hoverNotUp);
 
         // Ensures that all the page starts are calced up to the given page (but not including it)
         void    IRecalcPageStarts( uint32_t upToPage );
@@ -590,7 +589,7 @@ class pfJournalBook : public hsKeyedObject
         // Cover functions
         plLayerInterface    *IMakeBaseLayer(plMipmap *image);
         plLayerInterface    *IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMipmap *decal, plMipmap *baseMipmap);
-        void    ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterface*> layers);
+        void    ISetDecalLayers(hsGMaterial *material, const std::vector<plLayerInterface*> &layers);
 };
 
 

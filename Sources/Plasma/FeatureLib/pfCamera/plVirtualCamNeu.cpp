@@ -1463,7 +1463,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
     CamTrans* pTrans = nil;
     if (pCam->GetNumTrans())
     {
-        for (int i = 0; i < pCam->GetNumTrans(); i++)
+        for (size_t i = 0; i < pCam->GetNumTrans(); i++)
         {
             if (pCam->GetTrans(i)->fTransTo == GetCurrentStackCamera()->GetKey())
             {   // if it is specifically for this camera, this is the one to use    
@@ -1693,7 +1693,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
             CamTrans* pTrans = nil;
             if (GetCurrentStackCamera()->GetNumTrans())
             {
-                for (int i = 0; i < GetCurrentStackCamera()->GetNumTrans(); i++)
+                for (size_t i = 0; i < GetCurrentStackCamera()->GetNumTrans(); i++)
                 {
                     if (GetCurrentStackCamera()->GetTrans(i)->fTransTo == pCam->GetKey())
                     {   

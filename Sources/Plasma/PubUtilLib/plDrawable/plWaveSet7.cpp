@@ -1104,16 +1104,16 @@ void plWaveSet7::ICheckTargetMaterials()
         if( !di )
             continue;
 
-        hsTArray<plAccessSpan> src;
+        std::vector<plAccessSpan> src;
         plAccessGeometry::Instance()->OpenRO(di, src, false);
 
-        const int numUVWs = src.GetCount() && src[0].AccessVtx().HasUVWs() ? src[0].AccessVtx().NumUVWs() : 0;
-        for (int j = 0; j < src.GetCount(); j++)
+        const int numUVWs = !src.empty() && src[0].AccessVtx().HasUVWs() ? src[0].AccessVtx().NumUVWs() : 0;
+        for (const plAccessSpan& span : src)
         {
-            hsAssert(src[j].AccessVtx().NumUVWs() == numUVWs, "Must have same number uvws on each water mesh");
-            ICreateFixedMat(src[j].GetMaterial(), numUVWs); // no-op if it's already setup.
+            hsAssert(span.AccessVtx().NumUVWs() == numUVWs, "Must have same number uvws on each water mesh");
+            ICreateFixedMat(span.GetMaterial(), numUVWs); // no-op if it's already setup.
 
-            targBnd.Union(&src[j].GetWorldBounds());
+            targBnd.Union(&span.GetWorldBounds());
         }
 
         plAccessGeometry::Instance()->Close(src);
@@ -3394,17 +3394,14 @@ void plWaveSet7::ICheckShoreMaterial(plSceneObject* so)
     if( !di )
         return;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src);
 
-    if( !src.GetCount() )
+    if (src.empty())
         return;
 
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
-    {
-        ISetupGraphShore(src[i].GetMaterial());
-    }
+    for (const plAccessSpan& span : src)
+        ISetupGraphShore(span.GetMaterial());
 
     plAccessGeometry::Instance()->Close(src);
 
@@ -3426,17 +3423,14 @@ void plWaveSet7::ICheckDecalMaterial(plSceneObject* so)
     if( !di )
         return;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
     plAccessGeometry::Instance()->OpenRO(di, src);
 
-    if( !src.GetCount() )
+    if (src.empty())
         return;
 
-    int i;
-    for( i = 0; i < src.GetCount(); i++ )
-    {
-        ISetupDecal(src[i].GetMaterial());
-    }
+    for (const plAccessSpan& span : src)
+        ISetupDecal(span.GetMaterial());
 
     plAccessGeometry::Instance()->Close(src);
 

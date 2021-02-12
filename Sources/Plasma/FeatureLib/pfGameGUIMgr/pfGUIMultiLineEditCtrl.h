@@ -49,9 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfGUIMultiLineEditCtrl_h
 
 #include "hsBounds.h"
-#include "hsTemplates.h"
 
 #include <string_theory/string>
+#include <vector>
 
 #include "pfGUIControlMod.h"
 
@@ -98,21 +98,17 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
     protected:
 
-        mutable hsTArray<wchar_t>   fBuffer;        // Because AcquireArray() isn't const
-
-        hsTArray<int32_t> fLineStarts;
-        uint16_t          fLineHeight, fCurrCursorX, fCurrCursorY;
-        int32_t           fCursorPos, fLastCursorLine;
+        std::vector<wchar_t> fBuffer;
+        std::vector<int32_t> fLineStarts;
+        uint16_t        fLineHeight, fCurrCursorX, fCurrCursorY;
+        int32_t         fCursorPos, fLastCursorLine;
         bool            fReadyToRender;
         hsBounds3Ext    fLastP2PArea;
-        int8_t            fLockCount;
-        uint8_t           fCalcedFontSize;    // The font size that we calced our line height at
+        int8_t          fLockCount;
+        uint8_t         fCalcedFontSize;    // The font size that we calced our line height at
 
-        uint8_t           fLastKeyModifiers;
+        uint8_t         fLastKeyModifiers;
         wchar_t         fLastKeyPressed;
-
-        static wchar_t  fColorCodeChar, fStyleCodeChar;
-        static uint32_t   fColorCodeSize, fStyleCodeSize;
 
         bool    IEval(double secs, float del, uint32_t dirty) override; // called only by owner object's Eval()
 
@@ -155,7 +151,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         int32_t   IRecalcLineStarts( int32_t startingLine, bool force, bool dontUpdate = false );
         void    IRecalcFromCursor( bool forceUpdate = false );
         int32_t   IFindCursorLine( int32_t cursorPos = -1 ) const;
-        bool    IStoreLineStart( uint32_t line, int32_t start );
+        bool    IStoreLineStart(int32_t line, int32_t start);
         void    IOffsetLineStarts( uint32_t position, int32_t offset, bool offsetSelectionEnd = false );
         int32_t   IPointToPosition( int16_t x, int16_t y, bool searchOutsideBounds = false );
         int32_t   ICalcNumVisibleLines() const;
@@ -183,7 +179,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    IUpdateBuffer();
         void    IUpdateLineStarts();
         void    ISetGlobalBuffer();
-        void    ISetLineStarts(hsTArray<int32_t> lineStarts);
+        void    ISetLineStarts(const std::vector<int32_t> &lineStarts);
 
         void    IHitEndOfControlList(int32_t cursorPos);
         void    IHitBeginningOfControlList(int32_t cursorPos);
@@ -239,12 +235,12 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    ClearBuffer();
         void    SetBuffer( const char *asciiText );
         void    SetBuffer( const wchar_t *asciiText );
-        void    SetBuffer( const uint8_t *codedText, uint32_t length );
-        void    SetBuffer( const uint16_t *codedText, uint32_t length );
+        void    SetBuffer(const char *codedText, size_t length);
+        void    SetBuffer(const wchar_t *codedText, size_t length);
         char    *GetNonCodedBuffer() const;
         wchar_t *GetNonCodedBufferW() const;
-        uint8_t   *GetCodedBuffer( uint32_t &length ) const;
-        uint16_t  *GetCodedBufferW( uint32_t &length ) const;
+        char    *GetCodedBuffer(size_t &length) const;
+        wchar_t *GetCodedBufferW(size_t &length) const;
         uint32_t  GetBufferSize();
 
         void    SetBufferLimit(int32_t limit) { fBufferLimit = limit; }

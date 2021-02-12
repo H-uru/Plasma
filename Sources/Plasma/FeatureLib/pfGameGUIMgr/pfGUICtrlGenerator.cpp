@@ -98,22 +98,18 @@ pfGUICtrlGenerator::~pfGUICtrlGenerator()
 
 void    pfGUICtrlGenerator::Shutdown()
 {
-    int i;
-    
-
     // Destroy our scene nodes and dialogs
-    for( i = 0; i < fDynDlgNodes.GetCount(); i++ )
+    for (size_t i = 0; i < fDynDlgNodes.size(); i++)
     {
         pfGameGUIMgr::GetInstance()->UnloadDialog( fDynDialogs[ i ] );
         fDynDlgNodes[ i ]->GetKey()->UnRefObject();
     }
-    fDynDlgNodes.Reset();
-    fDynDialogs.Reset();
-    
-    for( i = 0; i < fTextGens.GetCount(); i++ )
-        delete fTextGens[ i ];
-    fTextGens.Reset();
+    fDynDlgNodes.clear();
+    fDynDialogs.clear();
 
+    for (plTextGenerator* textGen : fTextGens)
+        delete textGen;
+    fTextGens.clear();
 }
 
 //// Instance ////////////////////////////////////////////////////////////////
@@ -201,7 +197,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorR
     strWidth = textGen->CalcStringWidth( text, &strHeight );
     textGen->DrawString( ( pixWidth - strWidth ) >> 1, ( pixHeight - strHeight ) >> 1, text );
     textGen->FlushToHost();
-    fTextGens.Append( textGen );
+    fTextGens.emplace_back(textGen);
 
     // Create a material with a simple blank layer, fully ambient
     hsGMaterial *material = new hsGMaterial;
@@ -236,7 +232,7 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
 {
     plKey snKey = ( dlg != nil ) ? ( dlg->GetTarget() != nil ? dlg->GetTarget()->GetSceneNode() : nil ) : nil;
     if( snKey == nil )
-        snKey = fDynDlgNodes.Peek()->GetKey();
+        snKey = fDynDlgNodes.back()->GetKey();
 
     hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plNodeRefMsg( snKey, plRefMsg::kOnCreate, 0, plNodeRefMsg::kDrawable ), plRefFlags::kActiveRef );       
 
@@ -255,7 +251,7 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
 
     if( parent == nil )
     {
-        parent = ( fDynDragBars.GetCount() > 0 ) ? fDynDragBars.Peek() : nil;
+        parent = !fDynDragBars.empty() ? fDynDragBars.back() : nil;
         if( parent == nil )
             parent = dlg->GetTarget();
     }
@@ -421,7 +417,7 @@ pfGUIDragBarCtrl *pfGUICtrlGenerator::GenerateDragBar( float x, float y, float w
 
     plSceneObject *newObj = IGenSceneObject( dlgToAddTo, myDraw, dlgToAddTo->GetTarget(), &l2w, &w2l );
 
-    fDynDragBars[ fDynDragBars.GetCount() - 1 ] = newObj;
+    fDynDragBars.back() = newObj;
 
     pfGUIDragBarCtrl *newBtn = new pfGUIDragBarCtrl;
     IAddKey( newBtn, "GUIDragBar" );
@@ -442,11 +438,11 @@ pfGUIDragBarCtrl *pfGUICtrlGenerator::GenerateDragBar( float x, float y, float w
 
 pfGUIDialogMod  *pfGUICtrlGenerator::IGetDialog()
 {
-    if( fDynDialogs.GetCount() == 0 )
+    if (fDynDialogs.empty())
         IGenerateDialog( "GUIBaseDynamicDlg", 20.f );
 
-    hsAssert( fDynDialogs.GetCount() > 0, "Unable to get a dynamic dialog to add buttons to" );
-    return fDynDialogs.Peek();
+    hsAssert(!fDynDialogs.empty(), "Unable to get a dynamic dialog to add buttons to");
+    return fDynDialogs.back();
 }
 
 //// IGenerateDialog /////////////////////////////////////////////////////////
@@ -476,8 +472,8 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
     node = new plSceneNode;
     IAddKey( node, "GUISceneNode" );
     node->GetKey()->RefObject();
-    fDynDlgNodes.Append( node );
-    fDynDragBars.Append( nil );
+    fDynDlgNodes.emplace_back(node);
+    fDynDragBars.emplace_back(nullptr);
 
     hsgResMgr::ResMgr()->AddViaNotify( node->GetKey(), new plGenRefMsg( renderMod->GetKey(), plRefMsg::kOnCreate, 0, plPostEffectMod::kNodeRef ), plRefFlags::kPassiveRef );        
 
@@ -522,6 +518,6 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
     if( show )
         pfGameGUIMgr::GetInstance()->ShowDialog( dialog );
 
-    fDynDialogs.Append( dialog );
+    fDynDialogs.emplace_back(dialog);
     return dialog;
 }

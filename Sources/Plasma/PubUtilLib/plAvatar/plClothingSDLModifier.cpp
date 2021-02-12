@@ -113,20 +113,19 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     hsAssert(clothing, "nil clothingOutfit");
     
     hsTArray<plStateDataRecord*> SDRs;
-    hsTArray<plClothingItem*> items=clothing->GetItemList();
-    hsTArray<plClothingItemOptions*> options=clothing->GetOptionList();
+    const std::vector<plClothingItem*>& items = clothing->GetItemList();
+    const std::vector<plClothingItemOptions*>& options = clothing->GetOptionList();
     
     plSDStateVariable* clothesStateDesc = dstState->FindSDVar(kStrWardrobe);    // find clothes list
-    int itemCount=items.GetCount();
-    int optionsCount = options.GetCount();
+    size_t itemCount = items.size();
+    size_t optionsCount = options.size();
     hsAssert(optionsCount==itemCount, "number of items should match number of options according to clothing.sdl"); 
     
     if (clothesStateDesc->GetCount() != itemCount)
         clothesStateDesc->Alloc(itemCount);     // set appropriate list size
 
-    int lowerCount = (itemCount <= optionsCount ? itemCount : optionsCount);
-    int i;
-    for(i = 0; i < lowerCount; i++)
+    size_t lowerCount = std::min(itemCount, optionsCount);
+    for (size_t i = 0; i < lowerCount; i++)
     {
         plClosetItem closetItem;
         closetItem.fItem = items[i];
@@ -148,7 +147,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     int numBlends = plClothingElement::kLayerSkinLast - plClothingElement::kLayerSkinFirst;
     if (faceBlends->GetCount() != numBlends)
         faceBlends->Alloc(numBlends);
-    for(i = 0; i < numBlends; i++)
+    for (int i = 0; i < numBlends; i++)
         faceBlends->Set((uint8_t)(clothing->fSkinBlends[i] * 255), i);
 
     SDRs.Append(appearanceStateDesc->GetStateDataRecord(0));
@@ -161,7 +160,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
         var->Set(clothing->fAvatar->fLinkInAnimKey);    
 }
 
-void plClothingSDLModifier::PutSingleItemIntoSDR(plClosetItem *item, plStateDataRecord *sdr)
+void plClothingSDLModifier::PutSingleItemIntoSDR(const plClosetItem *item, plStateDataRecord *sdr)
 {
     plKey key = item->fItem->GetKey();
     sdr->FindVar(kStrItem)->Set(key);           

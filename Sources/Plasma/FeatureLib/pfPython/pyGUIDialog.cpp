@@ -218,7 +218,7 @@ uint32_t pyGUIDialog::GetVersion()
 }
 
 
-uint32_t pyGUIDialog::GetNumControls()
+size_t pyGUIDialog::GetNumControls()
 {
     if ( fGCkey )
     {

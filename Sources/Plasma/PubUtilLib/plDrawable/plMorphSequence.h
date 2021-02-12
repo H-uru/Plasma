@@ -131,7 +131,7 @@ protected:
     bool        IFindIndices(int iShare);
     void        IReleaseIndices(int iShare);
 
-    void        IRenormalize(hsTArray<plAccessSpan>& dst) const;
+    void        IRenormalize(std::vector<plAccessSpan>& dst) const;
 
     void        IResetShared();
     void        IReleaseIndices(); // Puts everyone inactive

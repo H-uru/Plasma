@@ -2645,13 +2645,9 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
 
     DebugDumpMoveKeys(x, y, lineHeight, debugTxt);
 
-    int i;
-    for(i = 0; i < fBrains.size(); i++)
-    {
-        plArmatureBrain *brain = fBrains[i];
+    for (plArmatureBrain *brain : fBrains)
         brain->DumpToDebugDisplay(x, y, lineHeight, debugTxt);
-    }
-    
+
     if (fClothingOutfit)
     {
         y += lineHeight;
@@ -2660,12 +2656,12 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         y += lineHeight;
         ST::string_stream outfit;
         int itemCount = 0; 
-        for (i = 0; i < fClothingOutfit->fItems.GetCount(); i++)
+        for (plClothingItem* item : fClothingOutfit->fItems)
         {
             if (itemCount == 0)
                 outfit << "    ";
 
-            outfit << fClothingOutfit->fItems[i]->fName;
+            outfit << item->fName;
             itemCount++;
 
             if (itemCount == 4)

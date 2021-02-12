@@ -43,14 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plORConditionalObject_inc
 #define plORConditionalObject_inc
 
-#include "hsTemplates.h"
-
 #include "pnModifier/plConditionalObject.h"
 
 class plORConditionalObject : public plConditionalObject
 {
 protected:
-    hsTArray<plConditionalObject*>  fChildren;
+    std::vector<plConditionalObject*>  fChildren;
 
 public:
     

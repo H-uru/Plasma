@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plFadeOpacityMod_inc
 
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 #include "pnModifier/plSingleModifier.h"
 
@@ -86,7 +85,7 @@ protected:
     hsPoint3        fLastEye;
 
     // The target layers
-    hsTArray<plFadeOpacityLay*> fFadeLays;
+    std::vector<plFadeOpacityLay*> fFadeLays;
 
     // A global to turn the whole thing off for debug/perf
     static bool     fLOSCheckDisabled;
