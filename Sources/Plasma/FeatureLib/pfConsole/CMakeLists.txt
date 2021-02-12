@@ -33,7 +33,6 @@ target_link_libraries(
         pnNetCommon
         pnNucleusInc
         pnSceneObject
-        pnTimer
         pnUUID
         plAgeDescription
         plAgeLoader
