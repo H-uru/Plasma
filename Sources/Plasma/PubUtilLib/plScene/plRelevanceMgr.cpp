@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
 
+#include <tuple>
+
 #include "pnMessage/plRefMsg.h"
 
 #include "plIntersect/plRegionBase.h"
@@ -177,17 +179,6 @@ void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doIC
     fRegions[localIdx - 1]->fRegionsICareAbout.SetBit(remoteIdx, doICare);
 }
 
-// tiny class for the function below
-class plRegionInfo
-{
-public:
-    char *fName;
-    int fIndex;
-    
-    plRegionInfo() : fName(nil), fIndex(-1) {}
-    ~plRegionInfo() { delete [] fName; }
-};
-
 /*
 *   This function expects a CSV file representing the matrix
 *   
@@ -205,7 +196,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
 {
     const int kBufSize = 512;
     char buff[kBufSize];
-    std::vector<plRegionInfo*> regions;
+    std::vector<std::tuple<ST::string, uint32_t>> regions;
     hsStringTokenizer toke; 
     bool firstLine = true;
     
@@ -221,13 +212,10 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             
             while (toke.Next(buff, kBufSize))
             {
-                if (strcmp(buff, "") == 0)
+                ST::string name = ST::string::from_utf8(buff);
+                if (name.empty())
                     continue; // ignore the initial blank one
-
-                plRegionInfo *info = new plRegionInfo;
-                regions.emplace_back(info);
-                info->fName = hsStrcpy(buff);
-                info->fIndex = GetIndex(buff);
+                regions.emplace_back(std::make_tuple(name, GetIndex(name)));
             }
         }
         else // parsing actual settings.
@@ -241,15 +229,12 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
             while (toke.Next(buff, kBufSize) && column < regions.size())
             {
                 int value = atoi(buff);
-                MarkRegion(rowIndex, regions[column]->fIndex, value != 0);
+                MarkRegion(rowIndex, std::get<1>(regions[column]), value != 0);
 
                 column++;
             }
         }
     }
-
-    for (auto ri = regions.crend(); ri != regions.crbegin(); ++ri)
-        delete *ri;
 }
 
 ST::string plRelevanceMgr::GetRegionNames(hsBitVector regions)
