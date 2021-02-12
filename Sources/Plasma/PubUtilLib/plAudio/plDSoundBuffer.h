@@ -51,8 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDSoundBuffer_h
 
 #include <list>
-#include "hsTemplates.h"
 #include "plEAXEffects.h"
+
 #define STREAMING_BUFFERS 16
 #define STREAM_BUFFER_SIZE      4608*4
 
@@ -138,8 +138,7 @@ protected:
     bool                fValid, fLooping;
     uint32_t              fLockLength;
     void *              fLockPtr;
-    
-    hsTArray<uint32_t>    fPosNotifys;
+
     bool                fStreaming;
     plWAVHeader*        fBufferDesc;
     uint32_t              fBufferSize;

@@ -74,9 +74,6 @@ struct hsMatrix44;
 class plSceneObject;
 class plSoundVolumeApplicator;
 
-template<typename T>
-class hsTArray;
-
 // Set this to 1 to do our own distance attenuation (model doesn't work yet tho)
 #define MCN_HACK_OUR_ATTEN  0
 #define MAX_INCIDENTALS 4
