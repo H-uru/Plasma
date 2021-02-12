@@ -121,6 +121,8 @@ INT_PTR CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 {
     // NT6 Taskbar Majick
     if (uMsg == s_taskbarCreated) {
+        hsRequireCOM();
+
         if (s_taskbar)
             s_taskbar->Release();
         HRESULT result = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&s_taskbar);

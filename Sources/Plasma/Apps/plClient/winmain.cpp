@@ -180,6 +180,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // Messages we registered for manually (no const value)
     if (message == s_WmTaskbarList)
     {
+        hsRequireCOM();
+
         // Grab the Windows 7 taskbar list stuff
         if (gTaskbarList)
             gTaskbarList->Release();
