@@ -388,7 +388,7 @@ std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char
         return contents;
 
     struct dirent *de;
-    while (de = readdir(dir)) {
+    while (de = readdir(dir), de) {
         plFileName dir_name = plFileName::Join(path, de->d_name);
         if (plFileInfo(dir_name).IsDirectory()) {
             // Should also handle . and ..
@@ -434,7 +434,7 @@ std::vector<plFileName> plFileSystem::ListSubdirs(const plFileName &path)
         return contents;
 
     struct dirent *de;
-    while (de = readdir(dir)) {
+    while (de = readdir(dir), de) {
         if (plFileInfo(plFileName::Join(path, de->d_name)).IsDirectory()) {
             plFileName name = de->d_name;
             if (name != "." && name != "..")
