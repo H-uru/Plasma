@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plSingleModifier.h"    // base class
 #include "pnKeyedObject/plKey.h"            // for the notification keys
-#include "hsTemplates.h"                    // for the array they're kept in
+#include <vector>                           // for the vector they're kept in
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -94,7 +94,7 @@ public:
 
     bool MsgReceive(plMessage *msg) override;
 
-    void AddNotifyKey(plKey key) { fNotifyKeys.Append(key); }
+    void AddNotifyKey(plKey key) { fNotifyKeys.emplace_back(std::move(key)); }
 
     virtual void Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
     virtual void UnTrigger();
@@ -116,7 +116,7 @@ protected:
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
     /** An array of keys to objects that are interested in receiving our sit messages. */
-    hsTArray<plKey> fNotifyKeys;
+    std::vector<plKey> fNotifyKeys;
 
     /** The chair in question is in use. It will untrigger when the avatar leaves it. */
     //bool              fTriggered;
