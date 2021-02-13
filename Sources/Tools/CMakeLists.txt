@@ -101,6 +101,8 @@ if(PLASMA_BUILD_TOOLS)
     _deploy_qt()
 endif()
 
+add_subdirectory(plLocalizationBenchmark)
+
 # Max Stuff goes below here...
 if(3dsm_FOUND AND 3dsm_BUILD_PLUGIN)
     add_subdirectory(MaxComponent)
