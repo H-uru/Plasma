@@ -58,9 +58,6 @@ class plPipeline;
 class plSpan;
 class plVertexSpan;
 
-template<typename T>
-class hsTArray;
-
 class plAccessGeometry : public hsRefCnt
 {
 protected:

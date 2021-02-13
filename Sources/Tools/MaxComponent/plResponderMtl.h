@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResponderCmd.h"
 #include "pnKeyedObject/plKey.h"
 
-template <class T> class hsTArray;
 class plErrorMsg;
 class plMaxNode;
 class plMaxNodeBase;

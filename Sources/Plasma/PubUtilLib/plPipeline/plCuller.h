@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCuller_inc
 #define plCuller_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 class plSpaceTree;
 

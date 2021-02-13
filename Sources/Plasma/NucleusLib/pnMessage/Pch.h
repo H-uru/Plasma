@@ -51,6 +51,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsTimer.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/plKey.h"

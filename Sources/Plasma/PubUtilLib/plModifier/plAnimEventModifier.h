@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAnimEventModifier_h_inc
 
 #include "pnModifier/plSingleModifier.h"
-#include "hsTemplates.h"
 
 //
 // Detects an anim event (marker, begin, end) and sends out a notification.

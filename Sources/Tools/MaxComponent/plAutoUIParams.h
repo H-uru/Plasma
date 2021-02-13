@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAutoUIParams_inc
 #define plAutoUIParams_inc
 
-#include "hsTemplates.h"
 #include <vector>
 
 class plKey;
