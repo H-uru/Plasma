@@ -47,6 +47,7 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # End HeadSpin Configuration
 
 # Find all 3rd-party libraries that are required
+find_package(3dsm)
 find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
 find_package(freetype)
@@ -100,6 +101,7 @@ endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
+cmake_dependent_option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF "WIN32 AND 3dsm_FOUND" OFF)
 
 cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus::opus" OFF)
 cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)
@@ -107,19 +109,7 @@ cmake_dependent_option(USE_VPX "Use VPX for movie support" ON "TARGET VPX::VPX" 
 cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "USE_OPUS AND USE_VPX" OFF)
 
 if(WIN32)
-    find_package(3dsm)
-
-    option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
-    if (3dsm_BUILD_PLUGIN AND 3dsm_FOUND)
-        add_definitions(-DBUILDING_MAXPLUGIN)
-    endif()
-else()
-    set(3dsm_BUILD_PLUGIN OFF)
-endif()
-
-if(WIN32)
     find_package(VLD)
-
 
     option(USE_VLD "Build and link with Visual Leak Detector" OFF)
     if(USE_VLD AND VLD_FOUND)
