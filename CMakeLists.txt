@@ -65,6 +65,7 @@ find_package(Speex)
 find_package(string_theory 2.0 REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
+find_package(VLD)
 find_package(Vorbis REQUIRED)
 find_package(VPX)
 find_package(ZLIB REQUIRED)
@@ -107,16 +108,7 @@ cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus:
 cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)
 cmake_dependent_option(USE_VPX "Use VPX for movie support" ON "TARGET VPX::VPX" OFF)
 cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "USE_OPUS AND USE_VPX" OFF)
-
-if(WIN32)
-    find_package(VLD)
-
-    option(USE_VLD "Build and link with Visual Leak Detector" OFF)
-    if(USE_VLD AND VLD_FOUND)
-        add_definitions(-DUSE_VLD)
-        include_directories(${VLD_INCLUDE_DIR})
-    endif()
-endif()
+cmake_dependent_option(USE_VLD "Build and link with Visual Leak Detector" OFF "TARGET VLD::VLD" OFF)
 
 # Configure compile-time compiler-specific flags and other config files
 include(cmake/CompilerChecks.cmake)

@@ -87,8 +87,7 @@ target_link_libraries(
     PUBLIC
         string_theory
         Threads::Threads
-        # VLD requires the debug CRT, so be sure to limit its scope.
-        $<$<AND:$<CONFIG:DEBUG>,$<BOOL:${USE_VLD}>>:${VLD_LIBRARY}>
+        $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
 )
 target_include_directories(CoreLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
