@@ -254,9 +254,8 @@ plAvBrainSwim::~plAvBrainSwim()
 
     fSurfaceProbeMsg->UnRef();
 
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
-        delete fBehaviors[i];
+    for (plArmatureBehavior* behavior : fBehaviors)
+        delete behavior;
 }
 
 bool plAvBrainSwim::Apply(double time, float elapsed)
@@ -295,12 +294,11 @@ bool plAvBrainSwim::Apply(double time, float elapsed)
             fMode = kWalking;
     } 
 
-    int i;
     if (fMode == kWalking || fMode == kWading || nextBrain->IsRunningTask())
     {
         nextBrain->Apply(time, elapsed); // Let brain below process for us              
 
-        for (i = 0; i < kSwimBehaviorMax; i++)
+        for (size_t i = 0; i < kSwimBehaviorMax; i++)
             fBehaviors[i]->SetStrength(0.f, 2.f);
     }
     else if (fMode == kAbort)
@@ -445,9 +443,8 @@ void plAvBrainSwim::IStartWading()
     nextBrain->Resume();
     fMode = kWading;
     
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
-        fBehaviors[i]->SetStrength(0.f, 2.f);
+    for (plArmatureBehavior* behavior : fBehaviors)
+        behavior->SetStrength(0.f, 2.f);
     
     if (fAvMod->IsLocalAvatar())
     {
@@ -493,10 +490,9 @@ void plAvBrainSwim::IStartSwimming(bool is2D)
 
 bool plAvBrainSwim::IProcessSwimming2D(double time, float elapsed)
 {
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
+    for (plArmatureBehavior* aBehavior : fBehaviors)
     {
-        plSwimBehavior *behavior = (plSwimBehavior*)fBehaviors[i];
+        plSwimBehavior *behavior = (plSwimBehavior*)aBehavior;
         if (behavior->PreCondition(time, elapsed) && !IsRunningTask())
         {
             behavior->SetStrength(1.f, 2.f);
@@ -528,7 +524,7 @@ bool plAvBrainSwim::IInitAnimations()
     plAGAnim *treadWaterLeft = fAvMod->FindCustomAnim("TreadWaterTurnLeft");
     plAGAnim *treadWaterRight = fAvMod->FindCustomAnim("TreadWaterTurnRight");  
 
-    fBehaviors.SetCountAndZero(kSwimBehaviorMax);
+    fBehaviors.assign(kSwimBehaviorMax, nullptr);
     plSwimBehavior *behavior;
     fBehaviors[kTreadWater] = behavior = new TreadWater;
     behavior->Init(treadWater, true, this, fAvMod, kTreadWater);
@@ -628,7 +624,6 @@ void plAvBrainSwim::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
     debugTxt.DrawString(x, y, ST::format("Linear Velocity: ({5.2f}, {5.2f}, {5.2f})", linV.fX, linV.fY, linV.fZ));
     y += lineHeight;
     
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
-        fBehaviors[i]->DumpDebug(x, y, lineHeight, debugTxt);
+    for (plArmatureBehavior* behavior : fBehaviors)
+        behavior->DumpDebug(x, y, lineHeight, debugTxt);
 }

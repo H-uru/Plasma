@@ -319,10 +319,9 @@ void plAvBrainHuman::IInitBoneMap()
 
 plAvBrainHuman::~plAvBrainHuman()
 {
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
-        delete fBehaviors[i];
-    fBehaviors.Reset();
+    for (plArmatureBehavior* behavior : fBehaviors)
+        delete behavior;
+    fBehaviors.clear();
 
     delete fWalkingStrategy;
     fWalkingStrategy = nil;
@@ -404,14 +403,14 @@ bool plAvBrainHuman::IHandleControlMsg(plControlEventMsg* msg)
 
 bool plAvBrainHuman::IsMovingForward()
 {
-    if ((fBehaviors.Count() <= kWalk) || (fBehaviors.Count() <= kRun))
+    if ((fBehaviors.size() <= kWalk) || (fBehaviors.size() <= kRun))
         return false; // behaviors aren't set up yet
     return (fBehaviors[kWalk]->GetStrength() > 0 || fBehaviors[kRun]->GetStrength() > 0);
 }
 
 bool plAvBrainHuman::IsBehaviorPlaying(int behavior)
 {
-    if ((behavior < 0) || (behavior >= fBehaviors.Count()))
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
         return false;
     if (!fBehaviors[behavior])
         return false;
@@ -529,8 +528,8 @@ float plAvBrainHuman::IGetTurnStrength(double timeNow)
         turnCurve = fWalkTurnCurve;
     }
     
-    plArmatureBehavior * turnLeft  = fBehaviors.Count() >= kMovingTurnLeft  ? fBehaviors[kMovingTurnLeft]  : nil;
-    plArmatureBehavior * turnRight = fBehaviors.Count() >= kMovingTurnRight ? fBehaviors[kMovingTurnRight] : nil;
+    plArmatureBehavior * turnLeft  = fBehaviors.size() >= kMovingTurnLeft  ? fBehaviors[kMovingTurnLeft]  : nil;
+    plArmatureBehavior * turnRight = fBehaviors.size() >= kMovingTurnRight ? fBehaviors[kMovingTurnRight] : nil;
     
     float turnLeftStrength = turnLeft ? turnLeft->GetStrength() : 0.f;
     float turnRightStrength = turnRight ? turnRight->GetStrength() : 0.f;
@@ -623,7 +622,7 @@ bool plAvBrainHuman::IHandleTaskMsg(plAvTaskMsg *msg)
 
 void plAvBrainHuman::ResetIdle()
 {
-    if (fBehaviors.Count() > kIdle)
+    if (fBehaviors.size() > kIdle)
         fBehaviors[kIdle]->Rewind();
 }
 
@@ -634,15 +633,13 @@ void plAvBrainHuman::IdleOnly(bool instantOff)
 
     float rate = instantOff ? 0.f : 1.f;
 
-    int i;
-    for (i = kWalk; i < fBehaviors.GetCount(); i++)
+    for (size_t i = kWalk; i < fBehaviors.size(); i++)
         fBehaviors[i]->SetStrength(0, rate);
 }
 
 bool plAvBrainHuman::IsMovementZeroBlend()
 {
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
+    for (size_t i = 0; i < fBehaviors.size(); i++)
     {
         if (i == kIdle || i == kFall)
             continue;
@@ -738,7 +735,7 @@ bool plAvBrainHuman::IInitAnimations()
     if (idle && walk && run && walkBack && standingLeft && standingRight && stepLeft && stepRight)
     {
         plHBehavior *behavior;
-        fBehaviors.SetCountAndZero(kHuBehaviorMax);
+        fBehaviors.assign(kHuBehaviorMax, nullptr);
         fBehaviors[kIdle] = behavior = new Idle;
         behavior->Init(idle, true, this, fAvMod, kDefaultFade, kDefaultFade, kIdle, plHBehavior::kBehaviorTypeIdle);
         behavior->SetStrength(1.f, 0.f);
@@ -805,10 +802,9 @@ bool plAvBrainHuman::IInitAnimations()
 
 bool plAvBrainHuman::RunStandardBehaviors(double timeNow, float elapsed)
 {
-    int i;
-    for (i = 0; i < fBehaviors.GetCount(); i++)
+    for (plArmatureBehavior* aBehavior : fBehaviors)
     {
-        plHBehavior *behavior = (plHBehavior*)fBehaviors[i];
+        plHBehavior *behavior = (plHBehavior*)aBehavior;
         if (behavior->PreCondition(timeNow, elapsed))
         {
             behavior->SetStrength(1.f, behavior->fFadeIn);
@@ -879,8 +875,8 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
                 grounded, fWalkingStrategy->GetAirTime(), fWalkingStrategy->GetImpactTime(), pushing));
     y += lineHeight;
 
-    for (int i = 0; i < fBehaviors.GetCount(); i++)
-        fBehaviors[i]->DumpDebug(x, y, lineHeight, debugTxt);
+    for (plArmatureBehavior* behavior : fBehaviors)
+        behavior->DumpDebug(x, y, lineHeight, debugTxt);
 
     debugTxt.DrawString(x, y, "Tasks:");
     y += lineHeight;
