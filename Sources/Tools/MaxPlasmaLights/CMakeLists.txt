@@ -1,5 +1,3 @@
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxPlasmaLights_HEADERS
     plRealTimeLightBase.h
     plRealTimeLights.h
@@ -40,7 +38,7 @@ target_link_libraries(
         MaxComponent
         MaxPlasmaMtls
 
-        ${3dsm_LIBRARIES}
+        3dsm
         Comctl32
 )
 

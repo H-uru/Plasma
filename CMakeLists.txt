@@ -98,11 +98,11 @@ if(PLASMA_PIPELINE STREQUAL "OpenGL")
     add_definitions(-DPLASMA_PIPELINE_GL)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
-#Allow us to disable certain parts of the build
+# Allow us to disable certain parts of the build
+cmake_dependent_option(PLASMA_BUILD_MAX_PLUGIN "Do we want to build the 3ds Max plugin?" OFF "TARGET 3dsm" OFF)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
-cmake_dependent_option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF "WIN32 AND 3dsm_FOUND" OFF)
 
 cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus::opus" OFF)
 cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)

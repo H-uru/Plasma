@@ -1,5 +1,3 @@
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxMain_HEADERS
     GlobalUtility.h
     main.def
@@ -116,7 +114,7 @@ target_link_libraries(
         MaxPlasmaLights
         MaxPlasmaMtls
 
-        ${3dsm_LIBRARIES}
+        3dsm
         Comctl32
         Python3::Python
 )
