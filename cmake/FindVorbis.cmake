@@ -39,7 +39,4 @@ if(NOT TARGET Vorbis::vorbis)
             IMPORTED_LOCATION ${VorbisFile_LIBRARY}
         )
     endif()
-
-    set(Vorbis_INCLUDE_DIRS ${Vorbis_INCLUDE_DIR})
-    set(Vorbis_LIBRARIES ${Vorbis_LIBRARY} ${VorbisFile_LIBRARY})
 endif()

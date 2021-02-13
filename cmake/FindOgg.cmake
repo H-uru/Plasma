@@ -22,7 +22,4 @@ if(NOT TARGET Ogg::ogg)
             IMPORTED_LOCATION ${Ogg_LIBRARY}
         )
     endif()
-
-    set(Ogg_INCLUDE_DIRS ${Ogg_INCLUDE_DIR})
-    set(Ogg_LIBRARIES ${Ogg_LIBRARY})
 endif()
