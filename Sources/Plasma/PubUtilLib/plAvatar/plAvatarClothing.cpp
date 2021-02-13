@@ -587,15 +587,15 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
             }
         }
 
-        size_t i;
-        for (i = 0; i < fItems.size(); i++)
+        size_t iItem;
+        for (iItem = 0; iItem < fItems.size(); iItem++)
         {
-            if (item->WearBefore(fItems[i]))
+            if (item->WearBefore(fItems[iItem]))
                 break;
         }
-        fItems.emplace(fItems.begin() + i, item);
+        fItems.emplace(fItems.begin() + iItem, item);
         plClothingItemOptions *op = new plClothingItemOptions;
-        fOptions.emplace(fOptions.begin() + i, op);
+        fOptions.emplace(fOptions.begin() + iItem, op);
         IInstanceSharedMeshes(item);
         fDirtyItems.SetBit(item->fTileset);
         
@@ -604,10 +604,9 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
         {
             plArmatureEffectsMgr *mgr = fAvatar->GetArmatureEffects();
             plArmatureEffectFootSound *soundEffect = nil;
-            int num = mgr->GetNumEffects();
-            int i;
+            size_t num = mgr->GetNumEffects();
 
-            for (i = 0; i < num; i++)
+            for (size_t i = 0; i < num; i++)
             {
                 soundEffect = plArmatureEffectFootSound::ConvertNoRef(mgr->GetEffect(i));
                 if (soundEffect)

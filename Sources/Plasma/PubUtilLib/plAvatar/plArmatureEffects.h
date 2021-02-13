@@ -46,7 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plArmatureEffects_inc
 
 #include "hsBitVector.h"
-#include "hsTemplates.h"
+
+#include <vector>
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -62,7 +63,7 @@ class plRandomSoundMod;
 class plArmatureEffectsMgr : public hsKeyedObject
 {
 protected:
-    hsTArray<plArmatureEffect *> fEffects;
+    std::vector<plArmatureEffect *> fEffects;
     bool fEnabled;
 
 public:
@@ -78,8 +79,8 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
 
-    uint32_t GetNumEffects();
-    plArmatureEffect *GetEffect(uint32_t num);
+    size_t GetNumEffects();
+    plArmatureEffect *GetEffect(size_t num);
     void ResetEffects();
 
     plArmatureMod *fArmature;
@@ -134,7 +135,7 @@ public:
 class plArmatureEffectFootSound : public plArmatureEffect
 {
 protected:
-    hsTArray<plArmatureEffectFootSurface *> fSurfaces;
+    std::vector<plArmatureEffectFootSurface *> fSurfaces;
     hsBitVector fActiveSurfaces;
     plRandomSoundMod *fMods[plArmatureEffectsMgr::kMaxSurface];
 
