@@ -8,15 +8,6 @@ set(pnUUID_HEADERS
     pnUUID.h
 )
 
-if(UNIX AND NOT APPLE)
-    set_package_properties(
-        Uuid PROPERTIES
-        DESCRIPTION "UUID library for Linux (provided by util-linux)"
-        TYPE REQUIRED
-    )
-    find_package(Uuid REQUIRED)
-endif()
-
 add_library(pnUUID STATIC ${pnUUID_SOURCES} ${pnUUID_HEADERS})
 target_link_libraries(
     pnUUID
