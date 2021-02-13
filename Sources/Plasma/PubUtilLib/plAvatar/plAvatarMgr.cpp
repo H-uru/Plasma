@@ -137,7 +137,7 @@ void plAvatarMgr::IReset()
     fOneShots.clear();
     fAvatars.clear();
     fSpawnPoints.clear();
-    fMaintainersMarkers.SetCountAndZero(0);
+    fMaintainersMarkers.clear();
 
     plCoopMap::iterator acIt = fActiveCoops.begin();
     while (acIt != fActiveCoops.end())
@@ -321,7 +321,7 @@ bool plAvatarMgr::MsgReceive(plMessage *msg)
     if (pCloneMsg)
     {
         pCloneMsg->Ref();
-        fCloneMsgQueue.Append(pCloneMsg);
+        fCloneMsgQueue.emplace_back(pCloneMsg);
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
         return true;
     }
@@ -329,17 +329,17 @@ bool plAvatarMgr::MsgReceive(plMessage *msg)
     plEvalMsg* pEval = plEvalMsg::ConvertNoRef(msg);
     if (pEval)
     {
-        for (int i = fCloneMsgQueue.Count() - 1; i > -1; i--)
+        for (hsSsize_t i = fCloneMsgQueue.size() - 1; i >= 0; i--)
         {
             plArmatureMod* pAvatar = FindAvatarByPlayerID(fCloneMsgQueue[i]->GetUserData());
             if (pAvatar && pAvatar->GetKey()->ObjectIsLoaded())
             {   
                 pAvatar->MsgReceive(fCloneMsgQueue[i]);
                 fCloneMsgQueue[i]->UnRef();
-                fCloneMsgQueue.Remove(i);
+                fCloneMsgQueue.erase(fCloneMsgQueue.begin() + i);
             }
         }
-        if (fCloneMsgQueue.Count() == 0)
+        if (fCloneMsgQueue.empty())
             plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
         
         return true;
@@ -868,31 +868,33 @@ int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
 // ADD maintainers marker
 void plAvatarMgr::AddMaintainersMarker(plMaintainersMarkerModifier *mm)
 {
-    fMaintainersMarkers.Append(mm);
+    fMaintainersMarkers.emplace_back(mm);
 }
 
 // REMOVE maintainers marker
 void plAvatarMgr::RemoveMaintainersMarker(plMaintainersMarkerModifier *mm)
 {
-    for (int i = 0; i < fMaintainersMarkers.Count(); i++)
+    for (auto iter = fMaintainersMarkers.begin(); iter != fMaintainersMarkers.end(); )
     {
-        if (fMaintainersMarkers[i] == mm)
-            fMaintainersMarkers.Remove(i);
+        if (*iter == mm)
+            iter = fMaintainersMarkers.erase(iter);
+        else
+            ++iter;
     }
 }
 
 void plAvatarMgr::PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret)
 {
-    int count = fMaintainersMarkers.Count();
+    size_t count = fMaintainersMarkers.size();
     //  plDniCoordinateInfo ret = new plDniCoordinateInfo;
     if (count > 0)
-    {   
+    {
 
         // find the closest maintainers marker
-        int nearestIndex = 0;
+        size_t nearestIndex = 0;
         if (count > 1)
         {
-            for (int i = 0; i < fMaintainersMarkers.Count(); i++)
+            for (size_t i = 0; i < fMaintainersMarkers.size(); i++)
             {
                 if (fMaintainersMarkers[i]->GetTarget(0))
                 {
