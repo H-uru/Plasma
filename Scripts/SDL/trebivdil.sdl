@@ -45,5 +45,4 @@ STATEDESC trebivdil
     VERSION 1
     
     VAR BOOL trebChisoBookVis[1]        DEFAULT=1    DEFAULTOPTION=VAULT
-
 }
