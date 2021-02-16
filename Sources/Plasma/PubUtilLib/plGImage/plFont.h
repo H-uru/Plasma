@@ -64,8 +64,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsColorRGBA.h"
-#include "hsTemplates.h"
 #include "pcSmallRect.h"
+
+#include <vector>
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -165,27 +166,16 @@ class plFont : public hsKeyedObject
                                         // (left kerning currently unsupported, just 
                                         // in here in case we need to eventually)
 
-                plCharacter& operator=(const int zero) 
-                { 
-                    fBitmapOff=0;
-                    fHeight = 0;
-                    fBaseline = 0;
-                    fLeftKern = 0;
-                    fRightKern = 0;
-
-                    return *this;
-                }
-
                 plCharacter();
-                void    Read( hsStream *s );
-                void    Write( hsStream *s );
+                void    Read(hsStream *s);
+                void    Write(hsStream *s) const;
         };
 
         // First character we encode--everything below this we don't render
         uint16_t  fFirstChar;
 
-        // Our characters, stored in an hsTArray for easy construction
-        hsTArray<plCharacter>   fCharacters;
+        // Our characters, stored in a vector for easy construction
+        std::vector<plCharacter> fCharacters;
 
         // Max character bitmap height and max ascent for any character
         uint32_t  fMaxCharHeight;
@@ -255,7 +245,7 @@ class plFont : public hsKeyedObject
         ST::string  GetFace() const { return fFace; }
         uint8_t     GetSize() const { return fSize; }
         uint16_t    GetFirstChar() const { return fFirstChar; }
-        uint16_t    GetNumChars() const { return fCharacters.GetCount(); }
+        size_t      GetNumChars() const { return fCharacters.size(); }
         uint32_t    GetFlags() const { return fFlags; }
         float       GetDescent() const { return (float)fFontDescent; }
         float       GetAscent() const { return (float)fFontAscent; }

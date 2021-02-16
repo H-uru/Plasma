@@ -91,7 +91,7 @@ void    plFont::plCharacter::Read( hsStream *s )
     s->ReadLE( &fRightKern );
 }
 
-void    plFont::plCharacter::Write( hsStream *s )
+void plFont::plCharacter::Write(hsStream *s) const
 {
     s->WriteLE( fBitmapOff );
     s->WriteLE( fHeight );
@@ -127,7 +127,7 @@ void    plFont::IClear( bool onConstruct )
     fBMapData = nil;
     fFirstChar = 0;
     fMaxCharHeight = 0;
-    fCharacters.Reset();
+    fCharacters.clear();
 
     fRenderInfo.fFlags = 0;
     fRenderInfo.fX = fRenderInfo.fY = fRenderInfo.fNumCols = 0;
@@ -184,11 +184,11 @@ void    plFont::SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t 
 
 void    plFont::ICalcFontAscent()
 {
-    uint32_t  i;
-
-
     // Hack for now, only calc the ascent for characters in the 127 character ASCII range
-    for( i = 0, fFontAscent = 0, fFontDescent = 0, fMaxCharHeight = 0; i < fCharacters.GetCount(); i++ )
+    fFontAscent = 0;
+    fFontDescent = 0;
+    fMaxCharHeight = 0;
+    for (size_t i = 0; i < fCharacters.size(); i++)
     {
         if( i + fFirstChar < 128 && fFontAscent < fCharacters[ i ].fBaseline )
             fFontAscent = fCharacters[ i ].fBaseline;
@@ -442,7 +442,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
                 
                 // handle invalid chars discretely
                 plCharacter* charToDraw = NULL;
-                if (fCharacters.Count() <= ((uint16_t)string[i] - fFirstChar))
+                if (fCharacters.size() <= ((uint16_t)string[i] - fFirstChar))
                     charToDraw = &(fCharacters[(uint16_t)L' ' - fFirstChar]);
                 else
                     charToDraw = &(fCharacters[(uint16_t)string[i] - fFirstChar]);
@@ -695,7 +695,7 @@ void    plFont::IRenderLoop( const wchar_t *string, int32_t maxCount )
         else
         {
             c -= fFirstChar;
-            if( c >= fCharacters.GetCount() )
+            if (c >= fCharacters.size())
                 ;   // Invalid char
             else
             {
@@ -1217,11 +1217,8 @@ void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint1
 
 uint8_t   *plFont::IGetFreeCharData( uint32_t &newOffset )
 {
-    int32_t i;
-
-
     newOffset = 0;
-    for( i = fCharacters.GetCount() - 1; i >= 0; i-- )
+    for (hsSsize_t i = fCharacters.size() - 1; i >= 0; i--)
     {
         uint32_t thisOff = fCharacters[ i ].fBitmapOff + ( ( fCharacters[ i ].fHeight * fWidth * fBPP ) >> 3 );
         if( newOffset < thisOff )
@@ -1442,7 +1439,7 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
             outChar.fBaseline = fntInfo.ascent;
             outChar.fLeftKern = 0.f;
             outChar.fRightKern = (float)(charEntries[ i ].width - fWidth);
-            fCharacters.Append( outChar );
+            fCharacters.emplace_back(outChar);
 
             if( outChar.fHeight > fMaxCharHeight )
                 fMaxCharHeight = outChar.fHeight;
@@ -1741,8 +1738,8 @@ class plBDFCharsParser : public plBDFSectParser
 
                     // Set up our pointer. Note that since BDFs don't tell us the starting character,
                     // we just make it 0
-                    if( fFont.fCharacters.GetCount() < fWhichChar + 1 )
-                        fFont.fCharacters.SetCount( fWhichChar + 1 );
+                    if (fFont.fCharacters.size() < fWhichChar + 1)
+                        fFont.fCharacters.resize(fWhichChar + 1);
 
                     fCharacter = &fFont.fCharacters[ fWhichChar ];
                 }
@@ -2069,8 +2066,8 @@ bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callb
         fBPP = 1;
 
         // Pre-expand our char list
-        fCharacters.ExpandAndZero( checkDims.fMaxChar + 1 );
-        fCharacters.SetCount( 0 );
+        fCharacters.clear();
+        fCharacters.reserve(checkDims.fMaxChar + 1);
 
         if( callback != nil )
             callback->NumChars( (uint16_t)(checkDims.fNumChars) );
@@ -2148,10 +2145,9 @@ bool    plFont::ReadRaw( hsStream *s )
 
     s->ReadLE( &fFirstChar );
 
-    uint32_t i;
-    fCharacters.SetCountAndZero( s->ReadLE32() );
-    for( i = 0; i < fCharacters.GetCount(); i++ )
-        fCharacters[ i ].Read( s );
+    fCharacters.resize(s->ReadLE32());
+    for (plCharacter& ch : fCharacters)
+        ch.Read(s);
 
     ICalcFontAscent();
 
@@ -2179,10 +2175,9 @@ bool    plFont::WriteRaw( hsStream *s )
 
     s->WriteLE( fFirstChar );
 
-    uint32_t i;
-    s->WriteLE32( fCharacters.GetCount() );
-    for( i = 0; i < fCharacters.GetCount(); i++ )
-        fCharacters[ i ].Write( s );
+    s->WriteLE32((uint32_t)fCharacters.size());
+    for (const plCharacter& ch : fCharacters)
+        ch.Write(s);
 
     return true;
 }
