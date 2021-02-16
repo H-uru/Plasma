@@ -44,9 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBitVector.h"
 #include "hsColorRGBA.h"
-#include "hsTemplates.h"
 
 #include <string_theory/string>
+#include <vector>
 
 #include "pnNetCommon/plSynchedObject.h"
 
@@ -93,9 +93,9 @@ public:
     // to change plClothingMgr::IsLRMatch() as well
     ST::string fName;
     plSharedMesh *fMeshes[kMaxNumLODLevels];
-    hsTArray<plMipmap **> fTextures;
-    hsTArray<ST::string> fElementNames;
-    hsTArray<plClothingElement *> fElements;
+    std::vector<plMipmap **> fTextures;
+    std::vector<ST::string> fElementNames;
+    std::vector<plClothingElement *> fElements;
     uint8_t fGroup;   // Each avatar can wear one of the available groups
     uint8_t fType;    // Each group has multiple types of clothes (shirt/pants/etc)
     uint8_t fTileset;
@@ -273,15 +273,15 @@ class plClothingMgr : public hsKeyedObject
 private:
     static plClothingMgr *fInstance;
 
-    hsTArray<plClothingElement*> fElements;
+    std::vector<plClothingElement*> fElements;
     std::vector<plClothingItem*> fItems;
-    hsTArray<plClothingLayout*> fLayouts;
+    std::vector<plClothingLayout*> fLayouts;
     
     void IInit();
     void IAddItem(plClothingItem *item);
 
 public:
-    plClothingMgr();
+    plClothingMgr() = default;
     ~plClothingMgr();
 
     CLASSNAME_REGISTER( plClothingMgr );
@@ -299,7 +299,7 @@ public:
     plClothingItem *FindItemByName(const ST::string &name) const;
     const std::vector<plClothingItem*>& GetItemList() const { return fItems; }
     void GetItemsByGroup(uint8_t group, std::vector<plClothingItem*> &out);
-    void GetItemsByGroupAndType(uint8_t group, uint8_t type, hsTArray<plClothingItem*> &out);
+    void GetItemsByGroupAndType(uint8_t group, uint8_t type, std::vector<plClothingItem*> &out);
     void GetAllWithSameMesh(plClothingItem *item, std::vector<plClothingItem*> &out);
     
     // Give an array of items (from one of the above functions, for example)

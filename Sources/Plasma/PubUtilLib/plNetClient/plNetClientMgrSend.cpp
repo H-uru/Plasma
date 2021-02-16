@@ -219,13 +219,11 @@ void plNetClientMgr::SendLocalPlayerAvatarCustomizations()
     if (avMod->IsInStealthMode() && avMod->GetTarget(0))
         avMod->GetTarget(0)->DirtySynchState(kSDLAvatar, plSynchedObject::kForceFullSend);
 
-    hsTArray<const plMorphSequence*> morphs;
+    std::vector<const plMorphSequence*> morphs;
     plMorphSequence::FindMorphMods(avMod->GetTarget(0), morphs);
-    int i;
-    for (i = 0; i < morphs.GetCount(); i++)
-        if (morphs[i]->GetTarget(0))
-            morphs[i]->GetTarget(0)->DirtySynchState(kSDLMorphSequence, plSynchedObject::kBCastToClients);
-
+    for (const plMorphSequence* morphSeq : morphs)
+        if (morphSeq->GetTarget(0))
+            morphSeq->GetTarget(0)->DirtySynchState(kSDLMorphSequence, plSynchedObject::kBCastToClients);
 }
 
 //

@@ -564,19 +564,18 @@ Interval plClothingMtl::DisplacementValidity(TimeValue t)
 
 plClothingElement *plClothingMtl::FindElementByName(const ST::string &name) const
 {
-    int i;
-    for (i = 0; i < fElements.GetCount(); i++)
+    for (plClothingElement* element : fElements)
     {
-        if (fElements.Get(i)->fName == name)
-            return fElements.Get(i);
+        if (element->fName == name)
+            return element;
     }
     return nil; 
 }
 
 void plClothingMtl::InitTilesets()
 {
-    hsAssert(fElements.GetCount() == 0, "Tilesets already initialized");
-    fElements.Reset();
+    hsAssert(fElements.empty(), "Tilesets already initialized");
+    fElements.clear();
     fTilesets.SetCountAndZero(plClothingLayout::kMaxTileset);
 
     plClothingElement::GetElements(fElements);
@@ -693,8 +692,10 @@ void plClothingMtl::InitTilesets()
 
 void plClothingMtl::ReleaseTilesets()
 {
-    while (fElements.GetCount() > 0)
-        delete fElements.Pop();
+    while (!fElements.empty()) {
+        delete fElements.back();
+        fElements.pop_back();
+    }
     while (fTilesets.GetCount() > 0)
         delete fTilesets.Pop();
 }

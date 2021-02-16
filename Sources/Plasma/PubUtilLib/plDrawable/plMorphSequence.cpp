@@ -788,11 +788,11 @@ void plMorphSequence::RemoveSharedMesh(plSharedMesh* mesh)
         plgDispatch::Dispatch()->UnRegisterForExactType(plSharedMeshBCMsg::Index(), GetKey());
 }
 
-void plMorphSequence::FindMorphMods(const plSceneObject *so, hsTArray<const plMorphSequence*> &mods)
+void plMorphSequence::FindMorphMods(const plSceneObject *so, std::vector<const plMorphSequence*> &mods)
 {
     const plMorphSequence *morph = plMorphSequence::ConvertNoRef(so->GetModifierByType(plMorphSequence::Index()));
     if (morph)
-        mods.Append(morph);
+        mods.emplace_back(morph);
     
     const plCoordinateInterface *ci = so->GetCoordinateInterface();
     for (size_t i = 0; i < ci->GetNumChildren(); i++)
