@@ -70,13 +70,10 @@ bool        plInitSectionTokenReader::ParseLine( const char *line, uint32_t user
 
 void    plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
 {
-    uint32_t      i;
+    for (size_t i = 0; readerArray[i] != nil; i++)
+        fSections.emplace_back(readerArray[i]);
 
-
-    for( i = 0; readerArray[ i ] != nil; i++ )
-        fSections.Append( readerArray[ i ] );
-
-    hsAssert( fSections.GetCount() > 0, "No sections for initFileReader" );
+    hsAssert(!fSections.empty(), "No sections for initFileReader");
 
     fCurrSection = fSections[ 0 ];
 }
@@ -168,14 +165,12 @@ bool    plInitFileReader::Parse( uint32_t userData )
             if( end != nil )
                 *end = 0;
 
-            uint32_t      i;
-
             bool foundSection = false;
-            for( i = 0; i < fSections.GetCount(); i++ )
+            for (plInitSectionReader* section : fSections)
             {
-                if( stricmp( fSections[ i ]->GetSectionName(), &fCurrLine[ 1 ] ) == 0 )
+                if (stricmp(section->GetSectionName(), &fCurrLine[1]) == 0)
                 {
-                    fCurrSection = fSections[ i ];
+                    fCurrSection = section;
                     foundSection = true;
                     break;
                 }
