@@ -1257,7 +1257,7 @@ static ParamBlockDesc2 sSoundSharedPB
 
 //// ParamBlock Macros for Waveform Properties Rollout ///////////////////////////////////////////
 
-#define sSndWaveformPropsHeader     kSndWaveformParams, IDD_COMP_SOUNDSRC, IDS_COMP_SOUNDSRC, 0, 0, NULL
+#define sSndWaveformPropsHeader     kSndWaveformParams, IDD_COMP_SOUNDSRC, IDS_COMP_SOUNDSRC, 0, 0, nullptr
 
 #define sSndWaveformPropsParamTemplate \
                                                                                                             \
@@ -3235,7 +3235,7 @@ ParamBlockDesc2 gRandomSoundBk
  plComponent::kBlkComp, _T("RandomSound"), 0, &gRandomSoundDesc, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, plComponent::kRefComp,
 
     2, 
-    kRandomSoundMain, IDD_COMP_RANDOMSOUND, IDS_COMP_RANDOMSOUNDS, 0, 0, NULL,
+    kRandomSoundMain, IDD_COMP_RANDOMSOUND, IDS_COMP_RANDOMSOUNDS, 0, 0, nullptr,
     kRandomSoundGroup, IDD_COMP_RANDOMSOUND_GROUPS, IDS_COMP_RANDOMSOUNDS_GROUPS, 0, APPENDROLL_CLOSED, &gRandomSoundComponentProc,
 
     // Main rollout

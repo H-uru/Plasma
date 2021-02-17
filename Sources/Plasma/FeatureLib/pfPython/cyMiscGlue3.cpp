@@ -299,7 +299,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netF
 
 /*PYTHON_GLOBAL_METHOD_DEFINITION(PtLinkToAge, args, "Params: selfKey,ageName,spawnPointName\nDEPRECIATED: Links you to the specified age and spawnpoint")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     char* ageName;
     char* spawnPointName;
     if (!PyArg_ParseTuple(args, "Oss", &keyObj, &ageName, &spawnPointName))

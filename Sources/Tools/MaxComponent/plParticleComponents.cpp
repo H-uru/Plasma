@@ -991,7 +991,7 @@ ParamBlockDesc2 gParticleFadeBk
     plComponent::kBlkComp, _T("ParticleFade"), 0, &gParticleFadeDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PARTICLE_FADE, IDS_COMP_PARTICLE_FADE_ROLL, 0, 0, NULL,
+    IDD_COMP_PARTICLE_FADE, IDS_COMP_PARTICLE_FADE_ROLL, 0, 0, nullptr,
 
     plParticleFadeComponent::kFadeDistance, _T("FadeDistance"), TYPE_INT,   P_ANIMATABLE, 0,    
         p_default, 100,
@@ -1111,7 +1111,7 @@ ParamBlockDesc2 gParticleVolumeBk
     plComponent::kBlkComp, _T("ParticleVolume"), 0, &gParticleVolumeDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PARTICLE_VOLUME, IDS_COMP_PARTICLE_VOLUME_ROLL, 0, 0, NULL,
+    IDD_COMP_PARTICLE_VOLUME, IDS_COMP_PARTICLE_VOLUME_ROLL, 0, 0, nullptr,
 
     plParticleVolumeComponent::kSourceNode, _T("SourceINode"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_PARTICLE_VOLUME_NODE,
@@ -1224,7 +1224,7 @@ ParamBlockDesc2 gParticleWindBk
     plComponent::kBlkComp, _T("ParticleWind"), 0, &gParticleWindDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PARTICLE_WIND, IDS_COMP_PARTICLE_WIND, 0, 0, NULL,
+    IDD_COMP_PARTICLE_WIND, IDS_COMP_PARTICLE_WIND, 0, 0, nullptr,
 
     plParticleWindComponent::kScaleX,   _T("ScaleX"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 25.f,
@@ -1345,7 +1345,7 @@ ParamBlockDesc2 gParticleUniWindBk
     plComponent::kBlkComp, _T("ParticleUniWind"), 0, &gParticleUniWindDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PARTICLE_UNIWIND, IDS_COMP_PARTICLE_UNIWIND, 0, 0, NULL,
+    IDD_COMP_PARTICLE_UNIWIND, IDS_COMP_PARTICLE_UNIWIND, 0, 0, nullptr,
 
     plParticleUniWindComponent::kStrength,  _T("Strength"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 30.f,

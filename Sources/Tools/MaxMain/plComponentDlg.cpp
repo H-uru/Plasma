@@ -784,7 +784,7 @@ void plComponentDlg::IOpenRightClickMenu()
             INodeTab copy;
 
             // Make the copy
-            fInterface->CloneNodes(tab, Point3(0,0,0), true, NODE_COPY, NULL, &copy);
+            fInterface->CloneNodes(tab, Point3(0,0,0), true, NODE_COPY, nullptr, &copy);
 
             // Delete the targets for the copy and add it to the tree
             plMaxNode *newNode = (plMaxNode*)copy[0];

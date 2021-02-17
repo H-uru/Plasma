@@ -75,7 +75,7 @@ public:
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plParticleMtl::kTexmap));
 
         switch (msg)

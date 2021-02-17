@@ -508,7 +508,7 @@ ParamBlockDesc2 gStereizeBk
 (   
     plComponent::kBlkComp, _T("Stereize"), 0, &gStereizeDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_STEREIZE, IDS_COMP_STEREIZE, 0, 0, NULL,
+    IDD_COMP_STEREIZE, IDS_COMP_STEREIZE, 0, 0, nullptr,
 
     plStereizeComp::kLeft,  _T("Left"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,

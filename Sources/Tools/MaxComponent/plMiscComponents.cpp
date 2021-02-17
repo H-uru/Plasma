@@ -149,7 +149,7 @@ ParamBlockDesc2 gInterestBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
     1, _T("Player Attention"), 0, &gInterestDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_INTEREST, IDS_COMP_INTERESTS, 0, 0, NULL,
+    IDD_COMP_INTEREST, IDS_COMP_INTERESTS, 0, 0, nullptr,
 
     // params
     kInteresting,       _T("interesting"),      TYPE_STRING,        0, 0,   
@@ -879,7 +879,7 @@ ParamBlockDesc2 gRoomCompBk
 (   
     1, _T("Location"), 0, &gRoomDesc, P_AUTO_CONSTRUCT+ P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_ROOM, IDS_COMP_ROOMS, 0,   0,  NULL,
+    IDD_COMP_ROOM, IDS_COMP_ROOMS, 0,   0,  nullptr,
 
     // params
     kLocAge,            _T("Age"),      TYPE_STRING,        0, 0,
@@ -945,7 +945,7 @@ ParamBlockDesc2 gViewFacingBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
     1, _T("View Facing"), 0, &gViewFacingDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 #if 0
-    IDD_COMP_VIEWFACE, IDS_COMP_VIEWFACES, 0, 0, NULL,
+    IDD_COMP_VIEWFACE, IDS_COMP_VIEWFACES, 0, 0, nullptr,
 
     kTypeofView,    _T("ViewType"),     TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_VF1,  IDC_RADIO_VF2,  IDC_RADIO_VF3,  IDC_RADIO_VF4, 
@@ -1336,7 +1336,7 @@ ParamBlockDesc2 gCamViewBk
 (
     plComponent::kBlkComp, _T("CamView"), 0, &gCamViewDesc, P_AUTO_CONSTRUCT/* + P_AUTO_UI*/, plComponent::kRefComp,
 
-//  IDD_COMP_CAMVIEW, IDS_COMP_CAMVIEWS, 0, 0, NULL,
+//  IDD_COMP_CAMVIEW, IDS_COMP_CAMVIEWS, 0, 0, nullptr,
 
     end
 );
@@ -1739,7 +1739,7 @@ ParamBlockDesc2 gUnleashBk
 (
     plComponent::kBlkComp, _T("Unleash"), 0, &gUnleashDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_UNLEASH, IDS_COMP_UNLEASH, 0, 0, NULL,
+    IDD_COMP_UNLEASH, IDS_COMP_UNLEASH, 0, 0, nullptr,
 
     end
 );
@@ -1791,7 +1791,7 @@ ParamBlockDesc2 gForceRTLightBk
 (
     plComponent::kBlkComp, _T("ForceRTLight"), 0, &gForceRTLightDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FORCE_RTLIGHT, IDS_COMP_FORCE_RTLIGHT, 0, 0, NULL,
+    IDD_COMP_FORCE_RTLIGHT, IDS_COMP_FORCE_RTLIGHT, 0, 0, nullptr,
 
     end
 );
@@ -2336,7 +2336,7 @@ protected:
                     maxWidth = strSize.cx;
             }
         }
-        SendMessage( ctrl, LB_SETHORIZONTALEXTENT, (WPARAM)maxWidth, NULL );
+        SendMessage(ctrl, LB_SETHORIZONTALEXTENT, (WPARAM)maxWidth, 0);
         ReleaseDC( ctrl, dc );
 
         EnableWindow( GetDlgItem( hDlg, IDC_IMAGE_EDIT ), false );

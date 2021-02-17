@@ -81,6 +81,6 @@ ClassDesc2  *plPlasmaMtlImport::GetMtlDesc( int i )
         case 12: return GetStealthClassDesc();
         case 13: return GetBinkClassDesc();
         case 14: return GetMAXCameraLayerDesc();
-        default: return 0;
+        default: return nullptr;
     }
 }

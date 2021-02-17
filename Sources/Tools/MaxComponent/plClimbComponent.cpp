@@ -388,7 +388,7 @@ ParamBlockDesc2 gClimbBlockBk
 (
     plComponent::kBlkComp, _T("Climb Blocker"), 0, &gClimbBlockDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CLIMB_BLOCK, IDS_COMP_CLIMB_BLOCKER, 0, 0, NULL,
+    IDD_COMP_CLIMB_BLOCK, IDS_COMP_CLIMB_BLOCKER, 0, 0, nullptr,
 
     end
 );

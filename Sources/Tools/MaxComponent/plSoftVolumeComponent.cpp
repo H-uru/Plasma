@@ -1502,7 +1502,7 @@ ParamBlockDesc2 gEffVisSetBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
  plComponent::kBlkComp, _T("EffVisSet"), 0, &gEffVisSetDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_EFFVISSET, IDS_COMP_EFFVISSET, 0, 0, NULL,
+    IDD_COMP_EFFVISSET, IDS_COMP_EFFVISSET, 0, 0, nullptr,
 
     plEffVisSetComponent::kHideNormal,  _T("HideNormal"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,

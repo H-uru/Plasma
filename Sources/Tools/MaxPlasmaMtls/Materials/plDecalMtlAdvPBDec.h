@@ -50,7 +50,7 @@ static ParamBlockDesc2 gDecalAdvPB
     P_AUTO_CONSTRUCT + P_AUTO_UI, plDecalMtl::kRefAdv,
 
     // UI
-    IDD_PASS_ADV, IDS_PASS_ADV, 0, APPENDROLL_CLOSED, NULL,
+    IDD_PASS_ADV, IDS_PASS_ADV, 0, APPENDROLL_CLOSED, nullptr,
 
     // Misc Properties
     kPBAdvWire,         _T("basicWire"),    TYPE_BOOL,      0, 0,

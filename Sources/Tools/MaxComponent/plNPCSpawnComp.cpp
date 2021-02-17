@@ -112,7 +112,7 @@ ParamBlockDesc2 gNPCSpawnBlock
     plComponent::kBlkComp, _T("(ex)One Shot Comp"), 0, &gNPCSpawnDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Rollout data
-    IDD_COMP_NPC_SPAWN, IDS_COMP_NPC_SPAWNER, 0, 0, NULL,
+    IDD_COMP_NPC_SPAWN, IDS_COMP_NPC_SPAWNER, 0, 0, nullptr,
 
     //params
     kModelName, _T("ModelName"),    TYPE_STRING,    0, 0,

@@ -1340,7 +1340,7 @@ RefTargetHandle plRTLightBase::GetReference(int i)
         case kRefGeneralLightProp:
             return nullptr;
         case kRefProjMap:
-            //if(fLightPB->GetTexmap(kProjMapTexButton, 0) != NULL)
+            //if(fLightPB->GetTexmap(kProjMapTexButton, 0) != nullptr)
             //{
             //  MyMap = fLightPB->GetTexmap(kProjMapTexButton, 0);          
             //return (RefTargetHandle) MyMap; 

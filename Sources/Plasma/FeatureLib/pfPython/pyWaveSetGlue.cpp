@@ -98,7 +98,7 @@ PYTHON_METHOD_NOARGS(ptWaveSet, get##funcSuffix, "Returns the attribute's value"
 #define WAVESET_OBJ_DEF(funcSuffix, pyObjType, cObjType) \
 PYTHON_METHOD_DEFINITION(ptWaveSet, set##funcSuffix, args) \
 { \
-    PyObject* sObj = NULL; \
+    PyObject* sObj = nullptr; \
     float secs = 0; \
     if (!PyArg_ParseTuple(args, "O|f", &sObj, &secs)) \
     { \

@@ -72,7 +72,7 @@ static BumpBasicDlgProc gBumpBasicDlgProc;
 
 static ParamBlockDesc2 gBumpBasicPB
 (
-    plBumpMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetBumpMtlDesc(),//NULL,
+    plBumpMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetBumpMtlDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plBumpMtl::kRefBasic,
 
     // UI

@@ -201,7 +201,7 @@ int BaseObjLight::Update(TimeValue t, const RendContext& rc, RenderGlobalContext
 OmniLight::OmniLight(INode *inode, BOOL forceShadowBuf ) : BaseObjLight(inode){
 
     //projector = /*doShadows =  shadowRay =*/  FALSE; 
-    //projMap = NULL;
+    //projMap = nullptr;
     needMultiple = FALSE;
 
 }

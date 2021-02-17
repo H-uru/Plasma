@@ -223,12 +223,12 @@ std::string DebuggerCallback::IParseCurrentException()
 {
     std::string error = "";
 
-    if (PyErr_Occurred() == NULL)
+    if (PyErr_Occurred() == nullptr)
         return error; // no error occurred
 
-    PyObject* errType = NULL;
-    PyObject* errVal = NULL;
-    PyObject* errTraceback = NULL;
+    PyObject* errType = nullptr;
+    PyObject* errVal = nullptr;
+    PyObject* errTraceback = nullptr;
     PyErr_Fetch(&errType, &errVal, &errTraceback); // clears the error flag
     PyErr_NormalizeException(&errType, &errVal, &errTraceback);
 
@@ -236,10 +236,10 @@ std::string DebuggerCallback::IParseCurrentException()
     {
         // we know how to parse out information from syntax errors
         PyObject* message;
-        char* filename = NULL;
+        char* filename = nullptr;
         int lineNumber = 0;
         int offset = 0;
-        char* text = NULL;
+        char* text = nullptr;
 
         if (PyTuple_Check(errVal))
         {
@@ -530,7 +530,7 @@ static int PythonTraceCallback(PyObject*, PyFrameObject* frame, int what, PyObje
 
     // update the callback class' stored values
     debServerCallback.SetFrame(frame);
-    debServerCallback.SetExceptionInfo(NULL);
+    debServerCallback.SetExceptionInfo(nullptr);
 
     // translate the python what value to the debugger what value
     plCyDebServer::TraceWhat debuggerWhat;
@@ -933,7 +933,7 @@ void PythonInterface::initPython()
     {
         debugServer.SetCallbackClass(&debServerCallback);
         debugServer.Init();
-        PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, NULL);
+        PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, nullptr);
     }
 #endif
 

@@ -76,7 +76,7 @@ static const float kDefOpaque1 = 0.f;
 
 static ParamBlockDesc2 gAngleAttenParamBlk
 (
-    plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//NULL,
+    plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plAngleAttenLayer::kRefAngles,
 
     IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nil,

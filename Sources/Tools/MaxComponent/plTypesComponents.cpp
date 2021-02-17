@@ -440,7 +440,7 @@ ParamBlockDesc2 gMaintainersBk
 (
     
     1, _T("maintainersMarker"), 0, &gMaintainersDesc, P_AUTO_CONSTRUCT  + P_AUTO_UI, plComponent::kRefComp,
-    IDD_COMP_MAINTAINERS_MARKER, IDS_COMP_MAINTAINERS_MARKER, 0, 0, NULL,
+    IDD_COMP_MAINTAINERS_MARKER, IDS_COMP_MAINTAINERS_MARKER, 0, 0, nullptr,
 
     kCalibrated, _T("Calibrated"),      TYPE_INT,       0, 0,
         p_ui, TYPE_RADIO, 3,    IDC_RADIO_BROKEN, IDC_RADIO_REPAIRED, IDC_RADIO_CALIBRATED,
@@ -798,7 +798,7 @@ ParamBlockDesc2 gCameraBk
 (   
     1, _T("camera"), 0, &gCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERA, IDS_COMP_CAMERAS,  0, 0, NULL,
+    IDD_COMP_CAMERA, IDS_COMP_CAMERAS,  0, 0, nullptr,
 
     // params
     kCamera,    _T("Animation"),        TYPE_INT,       0, 0,

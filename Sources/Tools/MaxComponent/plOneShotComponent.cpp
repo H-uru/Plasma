@@ -127,7 +127,7 @@ ParamBlockDesc2 gOneShotBlock
     plComponent::kBlkComp, _T("(ex)One Shot Comp"), 0, &gOneShotDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Rollout data
-    IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, NULL,
+    IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, nullptr,
 
     //params
     kOneShotAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,

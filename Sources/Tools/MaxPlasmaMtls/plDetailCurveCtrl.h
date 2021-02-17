@@ -61,7 +61,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDetailCurveCtrl_h
 #define _plDetailCurveCtrl_h
 
-#define GET_DETAIL_CURVE_CTRL( dlg, id ) (GetDlgItem( dlg, id ) ? (plDetailCurveCtrl *)GetWindowLong( GetDlgItem( dlg, id ), GWL_USERDATA ) : NULL )
+#define GET_DETAIL_CURVE_CTRL(dlg, id) \
+    (GetDlgItem(dlg, id) ? (plDetailCurveCtrl *)GetWindowLong(GetDlgItem(dlg, id), GWL_USERDATA) : nullptr)
 
 // Message to parent to let it know a point got dragged. lParam = pointer to control, wParam = 1 if start point, 0 if end point
 #define PL_DC_POINT_DRAGGED WM_USER + 50
@@ -125,7 +126,7 @@ class plDetailCurveCtrl
 
     public:
 
-        plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRect, HINSTANCE instance = NULL );
+        plDetailCurveCtrl(HWND parentWnd, WPARAM id, RECT *clientRect, HINSTANCE instance = nullptr);
         ~plDetailCurveCtrl();
 
         void    SetStartPoint( float percentLevel, float opacity );

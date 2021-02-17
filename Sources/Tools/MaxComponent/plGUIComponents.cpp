@@ -2447,7 +2447,7 @@ ParamBlockDesc2 gGUIDraggableBk
  plComponent::kBlkComp, _T("GUIDraggable"), 0, &gGUIDraggableDesc, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_INCLUDE_PARAMS, plComponent::kRefComp,
 
     3,
-    plGUIControlBase::kRollMain, IDD_COMP_GUIDRAGGABLE, IDS_COMP_GUIDRAGGABLE, 0, 0, NULL,
+    plGUIControlBase::kRollMain, IDD_COMP_GUIDRAGGABLE, IDS_COMP_GUIDRAGGABLE, 0, 0, nullptr,
     plGUIControlBase::kRollProc, IDD_COMP_GUIPROCROLLOUT, IDS_COMP_GUIPROCROLLOUT, 0, 0, nil,   
     
     sGUIProxyParamHeader,
@@ -3334,7 +3334,7 @@ ParamBlockDesc2 gGUIEditBoxBk
  plComponent::kBlkComp, _T("GUIEditBox"), 0, &gGUIEditBoxDesc, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_INCLUDE_PARAMS, plComponent::kRefComp,
 
     2,
-    plGUIControlBase::kRollMain, IDD_COMP_GUIEDITBOX, IDS_COMP_GUIEDITBOX, 0, 0, NULL,
+    plGUIControlBase::kRollMain, IDD_COMP_GUIEDITBOX, IDS_COMP_GUIEDITBOX, 0, 0, nullptr,
     plGUIControlBase::kRollProc, IDD_COMP_GUIPROCROLLOUT, IDS_COMP_GUIPROCROLLOUT, 0, 0, nil,   
     
     &sGUIControlProcParamTemplate,  
@@ -3635,7 +3635,7 @@ ParamBlockDesc2 gGUIDragBarBk
  plComponent::kBlkComp, _T("GUIDragBar"), 0, &gGUIDragBarDesc, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_INCLUDE_PARAMS, plComponent::kRefComp,
 
     3,
-    plGUIControlBase::kRollMain, IDD_COMP_GUIDRAGBAR, IDS_COMP_GUIDRAGBAR, 0, 0, NULL,
+    plGUIControlBase::kRollMain, IDD_COMP_GUIDRAGBAR, IDS_COMP_GUIDRAGBAR, 0, 0, nullptr,
     plGUIControlBase::kRollProc, IDD_COMP_GUIPROCROLLOUT, IDS_COMP_GUIPROCROLLOUT, 0, 0, nil,   
     
     sGUIProxyParamHeader,
@@ -4493,7 +4493,7 @@ ParamBlockDesc2 gGUIClickMapBk
  plComponent::kBlkComp, _T("GUIClickMap"), 0, &gGUIClickMapDesc, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP + P_INCLUDE_PARAMS, plComponent::kRefComp,
 
     2,
-    plGUIControlBase::kRollMain, IDD_COMP_GUICLICKMAP, IDS_COMP_GUICLICKMAP, 0, 0, NULL,
+    plGUIControlBase::kRollMain, IDD_COMP_GUICLICKMAP, IDS_COMP_GUICLICKMAP, 0, 0, nullptr,
     plGUIControlBase::kRollProc, IDD_COMP_GUIPROCROLLOUT, IDS_COMP_GUIPROCROLLOUT, 0, 0, nil,   
     
     &sGUIControlProcParamTemplate,

@@ -272,7 +272,7 @@ public:
 **      1, _T(""), 0, &gStartPtDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, 0,
 **  
 **      //rollout
-**      IDD_COMP_STARTINGPOINT, IDS_COMP_STARTINGPOINTS, 0, 0, NULL,
+**      IDD_COMP_STARTINGPOINT, IDS_COMP_STARTINGPOINTS, 0, 0, nullptr,
 **  
 **      // params
 **      kPlayerStartingPoint,       _T("Start Point:"),     TYPE_STRING,        0, 0,   

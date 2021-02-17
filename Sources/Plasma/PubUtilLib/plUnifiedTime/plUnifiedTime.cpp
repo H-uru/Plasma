@@ -510,27 +510,27 @@ namespace pvt_strptime
 #define __isleap(year)  \
     ((year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0))
     
-#define match_char(ch1, ch2) if (ch1 != ch2) return NULL
+#define match_char(ch1, ch2) if (ch1 != ch2) return nullptr
 #define match_string(cs1, s2) \
     (strnicmp((cs1), (s2), strlen (cs1)) ? 0 : ((s2) += strlen (cs1), 1))
 #define get_number(from, to, n) \
     do {                                          \
-    int __n = n;                                  \
-    val = 0;                                      \
-    while (*rp == ' ')                                \
-    ++rp;                                     \
-    if (*rp < '0' || *rp > '9')                           \
-    return NULL;                                  \
-    do {                                      \
-    val *= 10;                                \
-    val += *rp++ - '0';                           \
-    } while (--__n > 0 && val * 10 <= to && *rp >= '0' && *rp <= '9');        \
-    if (val < from || val > to)                           \
-    return NULL;                                  \
+        int __n = n;                              \
+        val = 0;                                  \
+        while (*rp == ' ')                        \
+            ++rp;                                 \
+        if (*rp < '0' || *rp > '9')               \
+            return nullptr;                       \
+        do {                                      \
+            val *= 10;                            \
+            val += *rp++ - '0';                   \
+        } while (--__n > 0 && val * 10 <= to && *rp >= '0' && *rp <= '9'); \
+        if (val < from || val > to)               \
+            return nullptr;                       \
     } while (0)
 #define recursive(new_fmt) \
     (*(new_fmt) != '\0'                               \
-    && (rp = strptime_internal (rp, (new_fmt), tm, mode)) != NULL)
+    && (rp = strptime_internal (rp, (new_fmt), tm, mode)) != nullptr)
     
     static char const weekday_name[][10] =
     {

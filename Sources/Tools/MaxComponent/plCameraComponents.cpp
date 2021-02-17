@@ -167,7 +167,7 @@ ParamBlockDesc2 gLimitPaneraBk
 (   
     1, _T("camera"), 0, &gLimitPaneraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERAPAN, IDS_COMP_ALLOW_PAN,  0, 0, NULL,
+    IDD_COMP_CAMERAPAN, IDS_COMP_ALLOW_PAN,  0, 0, nullptr,
 
     kLimitPanX, _T("Limit X"),      TYPE_BOOL,              0, 0,
     p_ui,               TYPE_SINGLECHEKBOX, IDC_X_AXIS,
@@ -249,7 +249,7 @@ ParamBlockDesc2 gCameraZoomeraBk
 (   
     1, _T("camera"), 0, &gCameraZoomeraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERAZOOM, IDS_COMP_CAMERAZOOM,  0, 0, NULL,
+    IDD_COMP_CAMERAZOOM, IDS_COMP_CAMERAZOOM,  0, 0, nullptr,
 
     kZoomMaxDeg,    _T("max degrees"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
@@ -344,7 +344,7 @@ ParamBlockDesc2 gTransOverrideeraBk
 (   
     1, _T("camera"), 0, &gTransOverrideeraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERA_TRANS, IDS_COMP_CAMERATRANS,  0, 0, NULL,
+    IDD_COMP_CAMERA_TRANS, IDS_COMP_CAMERATRANS,  0, 0, nullptr,
     
     kTransitionTo, _T("transitionto"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
@@ -528,7 +528,7 @@ ParamBlockDesc2 gPOAAvatareraBk
 (   
     1, _T("camera"), 0, &gPOAAvatareraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_AVATAR_POA, IDS_AVATARPOA, 0, 0, NULL,
+    IDD_COMP_AVATAR_POA, IDS_AVATARPOA, 0, 0, nullptr,
 
 
     kAvPOAOffX, _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
@@ -594,7 +594,7 @@ ParamBlockDesc2 gPOAObjecteraBk
 (   
     1, _T("camera"), 0, &gPOAObjecteraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_OBJECT_POA, IDS_COMP_OBJECTPOA,  0, 0, NULL,
+    IDD_COMP_OBJECT_POA, IDS_COMP_OBJECTPOA,  0, 0, nullptr,
         
     kPOAObject, _T("objectPOA"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXY,
@@ -1209,7 +1209,7 @@ ParamBlockDesc2 gAutoCameraBk
 (   
     1, _T("camera"), 0, &gAutoCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_AUTOCAM, IDS_COMP_AUTOCAM,  0, 0, NULL,
+    IDD_COMP_AUTOCAM, IDS_COMP_AUTOCAM,  0, 0, nullptr,
         
     kAutoCamOffX,   _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
@@ -1432,7 +1432,7 @@ ParamBlockDesc2 gFPCameraBk
 (   
     1, _T("camera"), 0, &gFPCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FIRSTPERSON_CAM, IDS_COMP_FIRST_PERSONCAM,  0, 0, NULL,
+    IDD_COMP_FIRSTPERSON_CAM, IDS_COMP_FIRST_PERSONCAM,  0, 0, nullptr,
         
     kFPCamOffX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
@@ -2012,7 +2012,7 @@ ParamBlockDesc2 gCameraRegionBlock
 (
     plComponent::kBlkComp, _T("cameraRegion"), 0, &gCameraDetectorDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERARGN, IDS_CAMERARGN, 0, 0, NULL,
+    IDD_COMP_CAMERARGN, IDS_CAMERARGN, 0, 0, nullptr,
 
 
     kCameraTarget, _T("CameraTarget"),  TYPE_INODE,     0, 0,
@@ -2169,7 +2169,7 @@ ParamBlockDesc2 gFollowCameraBk
 (   
     1, _T("camera"), 0, &gFollowCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_OBJECT_FOLLOWCAM, IDS_COMP_OBJECT_FOLLOWCAM,  0, 0, NULL,
+    IDD_COMP_OBJECT_FOLLOWCAM, IDS_COMP_OBJECT_FOLLOWCAM,  0, 0, nullptr,
         
     kFollowCamOffX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
@@ -2374,7 +2374,7 @@ ParamBlockDesc2 gAnimcamCmdBlock
 (
     plComponent::kBlkComp, _T("animCamCmd"), 0, &gAnimcamCmdDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_ANIMCAM_COMMANDS, IDS_COMP_ANIM_CAM_CMD, 0, 0, NULL,
+    IDD_COMP_ANIMCAM_COMMANDS, IDS_COMP_ANIM_CAM_CMD, 0, 0, nullptr,
 
     kAnimateOnPush, _T("animOnPush"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_BEGINONPUSH,

@@ -202,7 +202,7 @@ Animatable* plClothingMtl::SubAnim(int i)
     case 1: return fBasicPB->GetTexmap(kTexmap);
     }
 
-    return NULL;
+    return nullptr;
 }
 */
 

@@ -144,7 +144,7 @@ class plPlate
         void    SetPosition( float x, float y, float z = -1.0f );
         void    SetSize( float width, float height, bool adjustByAspectRatio = false );
 
-        plMipmap        *CreateMaterial( uint32_t width, uint32_t height, bool withAlpha, plMipmap* texture = NULL );
+        plMipmap        *CreateMaterial(uint32_t width, uint32_t height, bool withAlpha, plMipmap* texture = nullptr);
         void            CreateFromResource(const ST::string& resName);
         void            ReloadFromResource(const ST::string& resName);
 };

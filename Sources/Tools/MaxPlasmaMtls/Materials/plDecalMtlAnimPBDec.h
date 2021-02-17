@@ -49,7 +49,7 @@ using namespace plPassBaseParamIDs;
 
 static ParamBlockDesc2 gDecalAnimPB
 (
-    plDecalMtl::kBlkAnim, _T("anim"), IDS_PASS_ANIM, GetDecalMtlDesc(),//NULL,
+    plDecalMtl::kBlkAnim, _T("anim"), IDS_PASS_ANIM, GetDecalMtlDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI + P_CALLSETS_ON_LOAD, plDecalMtl::kRefAnim,
 
     // UI

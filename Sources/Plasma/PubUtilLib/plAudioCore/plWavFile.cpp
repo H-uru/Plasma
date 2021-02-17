@@ -1013,7 +1013,7 @@ public:
         chunkID = mmioFOURCC('c','u','e',' ');
         chunkSize = ChunkSize;
         dwCuePoints = (ChunkSize - (sizeof(DWORD)*1))/(sizeof(CuePoint));
-        //points = NULL;
+        //points = nullptr;
         //points = new CuePoint[dwCuePoints];
         
     }
@@ -1053,7 +1053,7 @@ public:
         chunkID = mmioFOURCC('l','a','b','l');
         chunkSize = ChunkSize;
         dwIdentifier = 0;
-        dwText = NULL;
+        dwText = nullptr;
     }
 
     LabelChunk() 
@@ -1061,7 +1061,7 @@ public:
         chunkID = mmioFOURCC('l','a','b','l');
         chunkSize = 0;
         dwIdentifier = 0;
-        dwText = NULL;
+        dwText = nullptr;
     }
 
 

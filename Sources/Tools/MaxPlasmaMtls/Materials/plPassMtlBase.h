@@ -188,7 +188,7 @@ public:
     virtual float        GetEaseOutMinLength() { return 1; }
     virtual float        GetEaseOutMaxLength() { return 1; }
     virtual float        GetEaseOutNormLength() { return 1; }
-    virtual const char*  GetGlobalVarName() { return NULL; }
+    virtual const char*  GetGlobalVarName() { return nullptr; }
     virtual int          GetUseGlobal() { return 0; }
 
     // Basic block

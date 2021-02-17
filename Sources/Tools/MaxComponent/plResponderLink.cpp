@@ -505,7 +505,7 @@ ParamBlockDesc2 gPhysicalEnableBlock
 (
     kResponderPhysEnableBlk, _T("physEnableCmd"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_ENABLE_PHYS, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_ENABLE_PHYS, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kEnablePhys,    _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
@@ -1034,7 +1034,7 @@ ParamBlockDesc2 gResponderCameraTransitionBlock
 (
     kResponderCameraTransitionBlk, _T("camera"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_CAMERA, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_CAMERA, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kCameraObj, _T("CameraObj"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
@@ -1135,7 +1135,7 @@ ParamBlockDesc2 gResponderCameraForceBlock
 (
     kResponderCameraForceBlk, _T("cameraForce"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_CAM_FORCE, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_CAM_FORCE, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kCamForce,  _T("force"),    TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_THIRD, IDC_RADIO_FIRST,   
@@ -1188,7 +1188,7 @@ ParamBlockDesc2 gResponderDelayBlock
 (
     kResponderDelayBlk, _T("delay"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_DELAY, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_DELAY, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kDelayTime, _T("delay"),    TYPE_FLOAT,     0, 0,
         p_default,  1.0f,
@@ -1263,7 +1263,7 @@ ParamBlockDesc2 gResponderVisibilityBlock
 (
     kResponderVisibilityBlk, _T("Visibility"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_VISIBILITY, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_VISIBILITY, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kVisibilityNode,    _T("VisibilityNode"),   TYPE_INODE,     0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,

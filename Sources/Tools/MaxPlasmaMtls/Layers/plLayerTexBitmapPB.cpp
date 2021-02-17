@@ -157,7 +157,7 @@ public:
         switch (msg)
         {
         case WM_INITDIALOG:
-            fLastBMap = NULL;
+            fLastBMap = nullptr;
             fSettingDetailValues = false;
             break;
             
@@ -410,7 +410,7 @@ static BitmapDlgProc gBitmapDlgProc;
 
 static ParamBlockDesc2 gBitmapParamBlk
 (
-    plLayerTex::kBlkBitmap, _T("bitmap"),  0, GetLayerTexDesc(),//NULL,
+    plLayerTex::kBlkBitmap, _T("bitmap"),  0, GetLayerTexDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plLayerTex::kRefBitmap,
 
     IDD_LAYER_TEX, IDS_LAYER_TEX, 0, 0, &gBitmapDlgProc,
@@ -652,14 +652,14 @@ public:
             case kBmpDetailStopSize:
             case kBmpDetailStartOpac:
             case kBmpDetailStopOpac:
-                if( pb != NULL )
+                if (pb != nullptr)
                 {
                     if( IIsProcSettingDetailValues( pb ) )
                         break;  // Ignore, since we're the ones setting 'em
 
                     HWND dlg = pb->GetMap()->GetHWnd();
                     plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( dlg, IDC_DETAIL_CURVE_CTRL );
-                    if( ctrl != NULL )
+                    if (ctrl != nullptr)
                     {
                         if( id == kBmpDetailStartSize || id == kBmpDetailStartOpac )
                             ctrl->SetStartPoint( (float)pb->GetInt( kBmpDetailStartSize, t ) / 100.f,
@@ -687,7 +687,7 @@ public:
                 break;
 
             case kBmpUseDetail:
-                if( pb != NULL )
+                if (pb != nullptr)
                 {
                     HWND dlg = pb->GetMap()->GetHWnd();
                     EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)val.i );

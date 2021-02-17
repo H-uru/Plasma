@@ -76,7 +76,7 @@ public:
             case plStaticEnvLayer::kBmpBaseFilename:
                 if( pb->GetMap() )
                 {
-                    pb->GetMap()->Enable( plStaticEnvLayer::kBmpGenerateFaces, ( val.s == NULL || val.s[ 0 ] == 0 ) ? FALSE : TRUE );
+                    pb->GetMap()->Enable(plStaticEnvLayer::kBmpGenerateFaces, (val.s == nullptr || val.s[0] == 0) ? FALSE : TRUE);
 
                     ICustButton     *bmSelectBtn = GetICustButton( GetDlgItem( pb->GetMap()->GetHWnd(), IDC_GENERATE_FACES ) );
                     bmSelectBtn->SetText( _T( "Generate From Node" ) );
@@ -175,7 +175,7 @@ public:
         plStaticEnvLayer *layer = (plStaticEnvLayer *)map->GetParamBlock()->GetOwner();
         bi.SetName( layer->GetBaseFilename( t ) );
         SetDlgItemText( map->GetHWnd(), IDC_BASE_FILENAME, bi.Filename() );
-        map->Enable( plStaticEnvLayer::kBmpGenerateFaces, ( bi.Name() == NULL || bi.Name()[ 0 ] == 0 ) ? FALSE : TRUE );
+        map->Enable(plStaticEnvLayer::kBmpGenerateFaces, (bi.Name() == nullptr || bi.Name()[0] == 0) ? FALSE : TRUE);
 
         bmSelectBtn = GetICustButton( GetDlgItem( map->GetHWnd(), IDC_GENERATE_FACES ) );
         bmSelectBtn->SetText( _T( "Generate From Node" ) );
@@ -310,7 +310,7 @@ public:
         
         /// Select one file
         PBBitmap *pbbm = map->GetParamBlock()->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap, t );
-        if( pbbm != NULL )
+        if (pbbm != nullptr)
             bi.SetName( pbbm->bi.Name() );
         if( !TheManager->SelectFileInput( &bi, GetCOREInterface()->GetMAXHWnd(), _T( "Select one of the generated face bitmaps" ) ) )
             return FALSE;
@@ -318,15 +318,15 @@ public:
         /// Copy the name over and get our mod point
         strcpy( filename, bi.Filename() );
         modPoint = strstr( filename, "_UP" );
-        if( modPoint == NULL )
+        if (modPoint == nullptr)
             modPoint = strstr( filename, "_DN" );
-        if( modPoint == NULL )
+        if (modPoint == nullptr)
             modPoint = strstr( filename, "_LF" );
-        if( modPoint == NULL )
+        if (modPoint == nullptr)
             modPoint = strstr( filename, "_RT" );
-        if( modPoint == NULL )
+        if (modPoint == nullptr)
             modPoint = strstr( filename, "_FR" );
-        if( modPoint == NULL )
+        if (modPoint == nullptr)
             modPoint = strstr( filename, "_BK" );
 
         /// Load each face
@@ -395,7 +395,7 @@ static SELBitmapDlgProc gSELBitmapDlgProc;
 
 static ParamBlockDesc2 gBitmapParamBlk
 (
-    plStaticEnvLayer::kBlkBitmap, _T("bitmap"),  0, GetStaticEnvLayerDesc(),//NULL,
+    plStaticEnvLayer::kBlkBitmap, _T("bitmap"),  0, GetStaticEnvLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plStaticEnvLayer::kRefBitmap,
 
     IDD_STATIC_ENVMAP_LAYER, IDS_STATIC_ENVMAP_LAYER_TEX, 0, 0, &gSELBitmapDlgProc,

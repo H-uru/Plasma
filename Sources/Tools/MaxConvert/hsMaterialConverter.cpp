@@ -2814,7 +2814,7 @@ hsGMaterial *hsMaterialConverter::IWrapTextureInMaterial(Texmap *texMap, plMaxNo
         }
 #if 0       
         // Texture map info
-        if (texMap != NULL)
+        if (texMap != nullptr)
         {
             IInitAttrTexture(node, nil, hLay, texMap, nodeName);
         }

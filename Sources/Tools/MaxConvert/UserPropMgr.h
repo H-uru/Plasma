@@ -110,7 +110,7 @@ public:
 
     bool IsAlike(INode *node, bool MatchAll=true);
     int CountAlike(bool MatchAll=true);
-    void DeSelectUnAlike(INode *node=NULL);
+    void DeSelectUnAlike(INode *node = nullptr);
 
     Interface *GetInterface() { return ip; }
 
@@ -120,8 +120,8 @@ public:
 private:
     INode* GetAncestorIfNeeded(INode* node, const int32_t hFlag);
     void DeSelectWithOut(const char *name, const char *value);
-    void RecursiveSelectAll(INode *node = NULL);
-    int RecursiveCountAlike(INode *node = NULL, bool MatchAll=true);
+    void RecursiveSelectAll(INode *node = nullptr);
+    int RecursiveCountAlike(INode *node = nullptr, bool MatchAll=true);
     bool IsMatch(const char *val1, const char *val2);
     bool vProps;
     TSTR vbuf;

@@ -1575,7 +1575,7 @@ ParamBlockDesc2 gPrintShapeBk
 (   
     plComponent::kBlkComp, _T("PrintShape"), 0, &gPrintShapeCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FP_PRINTSHAPE, IDS_COMP_FP_PRINTSHAPE, 0, 0, NULL,
+    IDD_COMP_FP_PRINTSHAPE, IDS_COMP_FP_PRINTSHAPE, 0, 0, nullptr,
 
     plPrintShapeComponent::kWidth, _T("Width"), TYPE_FLOAT,     0, 0,   
         p_default, 0.45,

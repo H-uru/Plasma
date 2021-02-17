@@ -132,7 +132,7 @@ ParamBlockDesc2 gAnimAvatarBk
     plComponent::kBlkComp, _T("CompoundAnim"), 0, &gAnimAvatarDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_ANIM_AVATAR, IDS_COMP_ANIM_AVATARS, 0, 0, NULL,
+    IDD_COMP_ANIM_AVATAR, IDS_COMP_ANIM_AVATARS, 0, 0, nullptr,
 
     // params
     kShareableBool, _T("ShareableBool"), TYPE_BOOL, 0, 0,   
@@ -401,7 +401,7 @@ ParamBlockDesc2 gEmoteBk
     plComponent::kBlkComp, _T("EmoteAnim"), 0, &gEmoteDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_EMOTE, IDS_COMP_EMOTE, 0, 0, NULL,
+    IDD_COMP_EMOTE, IDS_COMP_EMOTE, 0, 0, nullptr,
 
     plEmoteComponent::kBodyUsage, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_BODY_UNKNOWN, IDC_BODY_UPPER, IDC_BODY_FULL,

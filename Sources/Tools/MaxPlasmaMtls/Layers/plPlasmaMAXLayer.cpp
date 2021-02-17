@@ -351,8 +351,8 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     }
     else
     {
-        ISetMaxBitmap(NULL, index);
-        ISetPBBitmap(NULL, index);
+        ISetMaxBitmap(nullptr, index);
+        ISetPBBitmap(nullptr, index);
     }
 
     NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);

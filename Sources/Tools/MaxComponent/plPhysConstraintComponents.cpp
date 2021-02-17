@@ -236,7 +236,7 @@ ParamBlockDesc2 gPhysHingeConstraintBk
     plComponent::kBlkComp, _T("Hinge Constraint"), 0, &gPhysHingeConstDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PHYS_HINGE_CONSTRAINT, IDS_COMP_PHYS_HINGE_CONSTRAINTS, 0, 0, NULL,//&gPhysCoreComponentProc,
+    IDD_COMP_PHYS_HINGE_CONSTRAINT, IDS_COMP_PHYS_HINGE_CONSTRAINTS, 0, 0, nullptr,//&gPhysCoreComponentProc,
     
     // params
 
@@ -902,7 +902,7 @@ ParamBlockDesc2 gPhysSSConstraintBk
     plComponent::kBlkComp, _T("Strong Spring Constraint"), 0, &gPhysStrongSpringConstDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PHYS_SS_CONSTRAINT, IDS_COMP_PHYS_SS_CONSTRAINTS, 0, 0, NULL,//&gPhysCoreComponentProc,
+    IDD_COMP_PHYS_SS_CONSTRAINT, IDS_COMP_PHYS_SS_CONSTRAINTS, 0, 0, nullptr,//&gPhysCoreComponentProc,
     
     // params
 

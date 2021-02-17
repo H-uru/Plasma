@@ -110,7 +110,7 @@ extern void D3DSURF_MEMDEL(IDirect3DCubeTexture9* cTex);
 
 extern void plReleaseObject(IUnknown* x);
 
-#define  ReleaseObject(x)   if(x){ plReleaseObject(x); x=NULL; }
+#define  ReleaseObject(x)   if (x) { plReleaseObject(x); x = nullptr; }
 
 typedef LPDIRECT3D9 (WINAPI * Direct3DCreateProc)( UINT sdkVersion );
 

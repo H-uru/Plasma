@@ -65,7 +65,7 @@ class plBrowseFolder
 {
 public:
     static plFileName GetFolder(const plFileName &startPath = {},
-                                const ST::string &title = {}, HWND hwndOwner = NULL);
+                                const ST::string &title = {}, HWND hwndOwner = nullptr);
 
 protected:
     static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);

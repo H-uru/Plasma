@@ -185,7 +185,7 @@ ParamBlockDesc2 gSpawnBlk
 (
     plComponent::kBlkComp, _T("Spawn"), 0, &gSpawnDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_TEMPLATE, IDS_COMP_CLONE_INST, 0, 0, NULL,
+    IDD_COMP_TEMPLATE, IDS_COMP_CLONE_INST, 0, 0, nullptr,
 
     kTemplateName,  _T("name"),     TYPE_STRING,    0, 0,
         p_ui,       TYPE_EDITBOX, IDC_NAME,

@@ -151,7 +151,7 @@ public:
         IParamBlock2 *pb = pmap->GetParamBlock();
 
         plClothingMtl *mtl = (plClothingMtl *)pb->GetOwner();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;
@@ -195,10 +195,10 @@ public:
         {
             plClothingElement *element = tileset->fElements.Get(i);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
-                        WM_SETTEXT, NULL, (LPARAM)element->fName.c_str());
+                        WM_SETTEXT, 0, (LPARAM)element->fName.c_str());
             snprintf(buff, std::size(buff), "(%d, %d)", element->fWidth, element->fHeight);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), 
-                        WM_SETTEXT, NULL, (LPARAM)buff);
+                        WM_SETTEXT, 0, (LPARAM)buff);
             
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), SW_SHOW); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), SW_SHOW); 
@@ -228,7 +228,7 @@ public:
 
         IParamBlock2 *pb = map->GetParamBlock();
         plClothingMtl *mtl = (plClothingMtl *)pb->GetOwner();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;

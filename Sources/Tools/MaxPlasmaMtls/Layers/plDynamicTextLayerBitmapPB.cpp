@@ -243,7 +243,7 @@ static DTLPBAccessor gDTLPBAccessor;
 
 static ParamBlockDesc2 gBitmapParamBlk
 (
-    plDynamicTextLayer::kBlkBitmap, _T("bitmap"),  0, GetDynamicTextLayerDesc(),//NULL,
+    plDynamicTextLayer::kBlkBitmap, _T("bitmap"),  0, GetDynamicTextLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plDynamicTextLayer::kRefBitmap,
 
     IDD_DYN_TEXT_LAYER, IDS_DYN_TEXT_LAYER_PROPS, 0, 0, &gDTLBitmapDlgProc,

@@ -652,8 +652,8 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
 
     HKEY hKey;
     RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
-    RegSetValueExW(hKey, L"LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, sizeof(pLoginParam->username));
-    RegSetValueEx(hKey, "RememberPassword", NULL, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
+    RegSetValueExW(hKey, L"LastAccountName", 0, REG_SZ, (LPBYTE) pLoginParam->username, sizeof(pLoginParam->username));
+    RegSetValueEx(hKey, "RememberPassword", 0, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
     RegCloseKey(hKey);
 
     // If the password field is the fake string
@@ -959,7 +959,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     // Now, try to create a nice exception dialog after plCrashHandler is done.
     s_crash.WaitForHandle();
     HWND parentHwnd = gClient ? gClient->GetWindowHandle() : GetActiveWindow();
-    DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, NULL);
+    DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, 0L);
 
     // Means that we have handled this.
     return EXCEPTION_EXECUTE_HANDLER;

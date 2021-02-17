@@ -55,7 +55,7 @@ protected:
     SegmentMap::iterator fStopPointIt;
 
 public:
-    plAnimInfo() : fSegMap(NULL), fAnimSpec(NULL) {}
+    plAnimInfo() : fSegMap(), fAnimSpec() { }
     plAnimInfo(SegmentMap *segMap, const ST::string &animName);
 
     ST::string GetAnimName();
@@ -86,7 +86,7 @@ public:
     plNotetrackAnim(Animatable *anim, plErrorMsg *pErrMsg);
     ~plNotetrackAnim();
 
-    bool HasNotetracks() { return (fSegMap != NULL); }
+    bool HasNotetracks() { return (fSegMap != nullptr); }
 
     ST::string GetNextAnimName();
     plAnimInfo GetAnimInfo(const ST::string &animName);

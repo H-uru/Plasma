@@ -137,7 +137,7 @@ static plEaseAccessor sEaseAccessor( plAnimStealthNode::kBlockPB, plAnimStealthN
 
 ParamBlockDesc2 plAnimStealthNode::sAnimStealthPB
 (
-    kBlockPB, _T( "animStealth" ), IDS_STEALTH_NAME, GetStealthClassDesc(),//NULL,
+    kBlockPB, _T("animStealth"), IDS_STEALTH_NAME, GetStealthClassDesc(),//nullptr,
                                         P_AUTO_CONSTRUCT + P_AUTO_UI, kRefParamBlock,
 
     // UI
