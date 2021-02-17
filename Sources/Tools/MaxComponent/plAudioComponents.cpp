@@ -1903,7 +1903,7 @@ class plSoundFadeParamsDlgProc : public plAudioBaseComponentProc
 
         BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
         {
-            const char          *types[] = { "Linear", "Logarithmic", "Exponential", NULL };
+            const char          *types[] = { "Linear", "Logarithmic", "Exponential", nullptr };
             IParamBlock2    *pb = map->GetParamBlock();
             BOOL            enable;
 

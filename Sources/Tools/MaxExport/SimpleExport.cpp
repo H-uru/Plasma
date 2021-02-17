@@ -303,7 +303,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
 
     // Add disk source for writing
     plFileName datPath = plFileName::Join(out_path, "dat");
-    CreateDirectoryW(datPath.WideString().data(), NULL);
+    CreateDirectoryW(datPath.WideString().data(), nullptr);
     plPluginResManager::ResMgr()->SetDataPath(datPath);
 
     if (hsgResMgr::Reset())

@@ -102,7 +102,7 @@ class PickControlNode : public PickObjectProc
         plStaticEnvLayer    *fLayer;
         HWND                fHWnd;
 
-        PickControlNode() { fLayer = NULL; }
+        PickControlNode() : fLayer() { }
 
         BOOL    Pick( INode *node )
         {

@@ -571,7 +571,7 @@ bool hsMaterialConverter::IsMultiMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsMultiMat");
 
-    if (m == NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -584,7 +584,7 @@ bool hsMaterialConverter::IsHsMaxMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsHsMaxMat");
 
-    if (m==NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -597,7 +597,7 @@ bool hsMaterialConverter::IsMultipassMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsHsMaxMat");
 
-    if (m==NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -610,7 +610,7 @@ bool hsMaterialConverter::IsDecalMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsDecalMat");
 
-    if (m==NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -623,7 +623,7 @@ bool hsMaterialConverter::IsCompositeMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsCompositeMat");
 
-    if (m==NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -636,7 +636,7 @@ bool hsMaterialConverter::IsParticleMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsParticleMat");
 
-    if (m==NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -649,7 +649,7 @@ bool hsMaterialConverter::IsClothingMat(Mtl *m)
 {
     hsGuardBegin("hsMaterialConverter::IsClothingMat");
 
-    if (m==NULL)
+    if (m == nullptr)
     {
         return false;
     }
@@ -3854,7 +3854,7 @@ Texmap *hsMaterialConverter::GetUVChannelBase(plMaxNode *node, Mtl* mtl, int whi
         return (texMap);
     }
 
-    return (0);
+    return nullptr;
     hsGuardEnd; 
 }
 

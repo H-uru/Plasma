@@ -267,12 +267,12 @@ void plSimpleStateVariable::Alloc(int listSize)
 
 #define RESET(typeName, type, var)  \
     case typeName:  \
-        for(i=0;i<cnt;i++)  \
-            var[i]=0;   \
+        for (int i = 0; i < cnt; i++)  \
+            var[i] = 0;   \
         break;
 void plSimpleStateVariable::Reset()
 {
-    int i, cnt = fVar.GetAtomicCount()*fVar.GetCount();
+    int cnt = fVar.GetAtomicCount()*fVar.GetCount();
     if (cnt)
     {
         switch (fVar.GetAtomicType())
@@ -284,14 +284,16 @@ void plSimpleStateVariable::Reset()
         RESET(plVarDescriptor::kFloat, float, fF)
         RESET(plVarDescriptor::kDouble, double, fD)
         RESET(plVarDescriptor::kBool, bool, fB)
-        RESET(plVarDescriptor::kCreatable, plCreatable*, fC)
-        case plVarDescriptor::kTime:
+        case plVarDescriptor::kCreatable:
+            for (int i = 0; i < cnt; i++)
+                fC[i] = nullptr;
             break;
+        case plVarDescriptor::kTime:
         case plVarDescriptor::kKey:
             break;
         case plVarDescriptor::kString32:
-            for(i=0;i<cnt;i++)  
-                *fS32[i]=0; 
+            for (int i = 0; i < cnt; i++)
+                *fS32[i] = 0;
             break;
         default:
             hsAssert(false, "undefined atomic type");

@@ -104,7 +104,7 @@ plPlasmaMAXLayer::~plPlasmaMAXLayer()
 plPlasmaMAXLayer    *plPlasmaMAXLayer::GetPlasmaMAXLayer( Texmap *map )
 {
     if (!map)
-        return NULL;
+        return nullptr;
 
     int     i;
 
@@ -115,7 +115,7 @@ plPlasmaMAXLayer    *plPlasmaMAXLayer::GetPlasmaMAXLayer( Texmap *map )
             return (plPlasmaMAXLayer *)map;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     if (BM)
     {
         BM->DeleteThis();
-        BM = NULL;
+        BM = nullptr;
     }
     
     if (bi)
@@ -294,7 +294,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
         if (result == BMMRES_SUCCESS)
             ISetMaxBitmap(BM, index);
         else
-            ISetMaxBitmap(NULL, index);
+            ISetMaxBitmap(nullptr, index);
 
         // The load may have failed, but we still want to set the paramblock. We
         // don't want to modify the layer if we're just missing the file.
@@ -303,8 +303,8 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     }
     else
     {
-        ISetMaxBitmap(NULL, index);
-        ISetPBBitmap(NULL, index);
+        ISetMaxBitmap(nullptr, index);
+        ISetPBBitmap(nullptr, index);
     }
 
 /*
@@ -313,7 +313,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     if (BM)
     {
         BM->DeleteThis();
-        BM = NULL;
+        BM = nullptr;
     }
     
     if (filename)
@@ -447,7 +447,7 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
     else
     {
         BitmapInfo bi;
-        if( pbbm != NULL )
+        if (pbbm != nullptr)
             bi.SetName( pbbm->bi.Name() );
 
         BOOL selectedNewBitmap = TheManager->SelectFileInput(&bi,

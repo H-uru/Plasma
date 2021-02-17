@@ -89,7 +89,7 @@ struct pythonClassName \
 #define PYTHON_CLASS_NEW_IMPL(pythonClassName, glueClassName) \
 PyObject *glueClassName::New() \
 { \
-    pythonClassName *newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, NULL, NULL); \
+    pythonClassName *newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
     return (PyObject*)newObj; \
 }
 
@@ -120,7 +120,7 @@ glueClassName *glueClassName::ConvertFrom(PyObject *obj) \
     if (!Check(obj)) \
     { \
         PyErr_SetString(PyExc_TypeError, "object is not a " #pythonClassName); \
-        return NULL; \
+        return nullptr; \
     } \
     return ((pythonClassName*)obj)->fThis; \
 }
@@ -143,13 +143,13 @@ PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *, PyObject *) \
 { \
     pythonClassName *self; \
     self = (pythonClassName*)type->tp_alloc(type, 0); \
-    if (self != NULL) \
+    if (self != nullptr) \
     { \
         self->fThis = new glueClassName(); \
-        if (self->fThis == NULL) \
+        if (self->fThis == nullptr) \
         { \
             Py_DECREF(self); \
-            return NULL; \
+            return nullptr; \
         } \
     } \
 \
@@ -193,12 +193,12 @@ int pythonClassName##___init__(pythonClassName *self, PyObject *args, PyObject *
 #if PY_VERSION_HEX >= 0x03080000
 #   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET 0
 #   if PY_VERSION_HEX >= 0x03090000
-#       define PYTHON_TP_VECTORCALL_PRINT 0,
+#       define PYTHON_TP_VECTORCALL_PRINT nullptr,
 #   else
-#       define PYTHON_TP_VECTORCALL_PRINT 0, 0,
+#       define PYTHON_TP_VECTORCALL_PRINT nullptr, nullptr,
 #   endif
 #else
-#   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET 0
+#   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET nullptr
 #   define PYTHON_TP_VECTORCALL_PRINT
 #endif
 
@@ -210,80 +210,80 @@ PYTHON_TYPE_START(pythonClassName) \
     0,                                  /* tp_itemsize */ \
     PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET, \
-    0,                                  /* tp_getattr */ \
-    0,                                  /* tp_setattr */ \
-    0,                                  /* tp_as_async */ \
-    0,                                  /* tp_repr */ \
-    0,                                  /* tp_as_number */ \
-    0,                                  /* tp_as_sequence */ \
-    0,                                  /* tp_as_mapping */ \
-    0,                                  /* tp_hash */ \
-    0,                                  /* tp_call */ \
-    0,                                  /* tp_str */ \
-    0,                                  /* tp_getattro */ \
-    0,                                  /* tp_setattro */ \
-    0,                                  /* tp_as_buffer */ \
+    nullptr,                            /* tp_getattr */ \
+    nullptr,                            /* tp_setattr */ \
+    nullptr,                            /* tp_as_async */ \
+    nullptr,                            /* tp_repr */ \
+    nullptr,                            /* tp_as_number */ \
+    nullptr,                            /* tp_as_sequence */ \
+    nullptr,                            /* tp_as_mapping */ \
+    nullptr,                            /* tp_hash */ \
+    nullptr,                            /* tp_call */ \
+    nullptr,                            /* tp_str */ \
+    nullptr,                            /* tp_getattro */ \
+    nullptr,                            /* tp_setattro */ \
+    nullptr,                            /* tp_as_buffer */ \
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
     docString,                          /* tp_doc */ \
-    0,                                  /* tp_traverse */ \
-    0,                                  /* tp_clear */ \
-    0,                                  /* tp_richcompare */ \
+    nullptr,                            /* tp_traverse */ \
+    nullptr,                            /* tp_clear */ \
+    nullptr,                            /* tp_richcompare */ \
     0,                                  /* tp_weaklistoffset */ \
-    0,                                  /* tp_iter */ \
-    0,                                  /* tp_iternext */ \
+    nullptr,                            /* tp_iter */ \
+    nullptr,                            /* tp_iternext */ \
     PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
-    0,                                  /* tp_members */ \
-    0,                                  /* tp_getset */ \
-    0,                                  /* tp_base */ \
-    0,                                  /* tp_dict */ \
-    0,                                  /* tp_descr_get */ \
-    0,                                  /* tp_descr_set */ \
+    nullptr,                            /* tp_members */ \
+    nullptr,                            /* tp_getset */ \
+    nullptr,                            /* tp_base */ \
+    nullptr,                            /* tp_dict */ \
+    nullptr,                            /* tp_descr_get */ \
+    nullptr,                            /* tp_descr_set */ \
     0,                                  /* tp_dictoffset */ \
     PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
-    0,                                  /* tp_alloc */ \
+    nullptr,                            /* tp_alloc */ \
     PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
-    0, /* tp_free */ \
-    0, /* tp_is_gc */ \
-    0, /* tp_bases */ \
-    0, /* tp_mro */ \
-    0, /* tp_cache */ \
-    0, /* tp_subclasses */ \
-    0, /* tp_weaklist */ \
-    0, /* tp_del */ \
-    0, /* tp_version_tag */ \
-    0, /* tp_finalize */ \
+    nullptr,                            /* tp_free */ \
+    nullptr,                            /* tp_is_gc */ \
+    nullptr,                            /* tp_bases */ \
+    nullptr,                            /* tp_mro */ \
+    nullptr,                            /* tp_cache */ \
+    nullptr,                            /* tp_subclasses */ \
+    nullptr,                            /* tp_weaklist */ \
+    nullptr,                            /* tp_del */ \
+    0,                                  /* tp_version_tag */ \
+    nullptr,                            /* tp_finalize */ \
     PYTHON_TP_VECTORCALL_PRINT \
 PYTHON_TYPE_END
 
 // default rich compare function name
 #define PYTHON_DEFAULT_RICH_COMPARE(pythonClassName) pythonClassName##_richCompare
-#define PYTHON_NO_RICH_COMPARE 0
+#define PYTHON_NO_RICH_COMPARE nullptr
 
 // default as_ table names
 #define PYTHON_DEFAULT_AS_NUMBER(pythonClassName) &pythonClassName##_as_number
-#define PYTHON_NO_AS_NUMBER 0
+#define PYTHON_NO_AS_NUMBER nullptr
 #define PYTHON_DEFAULT_AS_SEQUENCE(pythonClassName) &pythonClassName##_as_sequence
-#define PYTHON_NO_AS_SEQUENCE 0
+#define PYTHON_NO_AS_SEQUENCE nullptr
 #define PYTHON_DEFAULT_AS_MAPPING(pythonClassName) &pythonClassName##_as_mapping
-#define PYTHON_NO_AS_MAPPING 0
+#define PYTHON_NO_AS_MAPPING nullptr
 
 // str function
 #define PYTHON_DEFAULT_STR(pythonClassName) (reprfunc)pythonClassName##_str
-#define PYTHON_NO_STR 0
+#define PYTHON_NO_STR nullptr
 
 // get/set attro
 #define PYTHON_DEFAULT_GETATTRO PyObject_GenericGetAttr
-#define PYTHON_NO_GETATTRO 0
+#define PYTHON_NO_GETATTRO nullptr
 #define PYTHON_DEFAULT_SETATTRO PyObject_GenericSetAttr
-#define PYTHON_NO_SETATTRO 0
+#define PYTHON_NO_SETATTRO nullptr
 
 // get/set table default name
 #define PYTHON_DEFAULT_GETSET(pythonClassName) pythonClassName##_getseters
-#define PYTHON_NO_GETSET 0
+#define PYTHON_NO_GETSET nullptr
 
 // default base pointer
 #define PYTHON_DEFAULT_BASE_TYPE(glueBaseClass) glueBaseClass::type_ptr
-#define PYTHON_NO_BASE 0
+#define PYTHON_NO_BASE nullptr
 
 // for glue functions that need custom stuff, you need to define the macros yourself
 #define PLASMA_CUSTOM_TYPE(pythonClassName, docString) \
@@ -293,48 +293,48 @@ PYTHON_TYPE_END
     0,                                  /* tp_itemsize */ \
     PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET, \
-    0,                                  /* tp_getattr */ \
-    0,                                  /* tp_setattr */ \
-    0,                                  /* tp_as_async */ \
-    0,                                  /* tp_repr */ \
+    nullptr,                            /* tp_getattr */ \
+    nullptr,                            /* tp_setattr */ \
+    nullptr,                            /* tp_as_async */ \
+    nullptr,                            /* tp_repr */ \
     pythonClassName##_AS_NUMBER,        /* tp_as_number */ \
     pythonClassName##_AS_SEQUENCE,      /* tp_as_sequence */ \
     pythonClassName##_AS_MAPPING,       /* tp_as_mapping */ \
-    0,                                  /* tp_hash */ \
-    0,                                  /* tp_call */ \
+    nullptr,                            /* tp_hash */ \
+    nullptr,                            /* tp_call */ \
     pythonClassName##_STR,              /* tp_str */ \
     pythonClassName##_GETATTRO,         /* tp_getattro */ \
     pythonClassName##_SETATTRO,         /* tp_setattro */ \
-    0,                                  /* tp_as_buffer */ \
+    nullptr,                            /* tp_as_buffer */ \
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
     docString,                          /* tp_doc */ \
-    0,                                  /* tp_traverse */ \
-    0,                                  /* tp_clear */ \
+    nullptr,                            /* tp_traverse */ \
+    nullptr,                            /* tp_clear */ \
     pythonClassName##_RICH_COMPARE,     /* tp_richcompare */ \
     0,                                  /* tp_weaklistoffset */ \
-    0,                                  /* tp_iter */ \
-    0,                                  /* tp_iternext */ \
+    nullptr,                            /* tp_iter */ \
+    nullptr,                            /* tp_iternext */ \
     PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
-    0,                                  /* tp_members */ \
+    nullptr,                            /* tp_members */ \
     pythonClassName##_GETSET,           /* tp_getset */ \
     pythonClassName##_BASE,             /* tp_base */ \
-    0,                                  /* tp_dict */ \
-    0,                                  /* tp_descr_get */ \
-    0,                                  /* tp_descr_set */ \
+    nullptr,                            /* tp_dict */ \
+    nullptr,                            /* tp_descr_get */ \
+    nullptr,                            /* tp_descr_set */ \
     0,                                  /* tp_dictoffset */ \
     PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
-    0,                                  /* tp_alloc */ \
+    nullptr,                            /* tp_alloc */ \
     PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
-    0, /* tp_free */ \
-    0, /* tp_is_gc */ \
-    0, /* tp_bases */ \
-    0, /* tp_mro */ \
-    0, /* tp_cache */ \
-    0, /* tp_subclasses */ \
-    0, /* tp_weaklist */ \
-    0, /* tp_del */ \
-    0, /* tp_version_tag */ \
-    0, /* tp_finalize */ \
+    nullptr,                            /* tp_free */ \
+    nullptr,                            /* tp_is_gc */ \
+    nullptr,                            /* tp_bases */ \
+    nullptr,                            /* tp_mro */ \
+    nullptr,                            /* tp_cache */ \
+    nullptr,                            /* tp_subclasses */ \
+    nullptr,                            /* tp_weaklist */ \
+    nullptr,                            /* tp_del */ \
+    0,                                  /* tp_version_tag */ \
+    nullptr,                            /* tp_finalize */ \
     PYTHON_TP_VECTORCALL_PRINT \
 PYTHON_TYPE_END
 
@@ -346,48 +346,48 @@ PYTHON_TYPE_START(pythonClassName) \
     0,                                  /* tp_itemsize */ \
     PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET, \
-    0,                                  /* tp_getattr */ \
-    0,                                  /* tp_setattr */ \
-    0,                                  /* tp_compare */ \
-    0,                                  /* tp_repr */ \
-    0,                                  /* tp_as_number */ \
-    0,                                  /* tp_as_sequence */ \
-    0,                                  /* tp_as_mapping */ \
-    0,                                  /* tp_hash */ \
-    0,                                  /* tp_call */ \
-    0,                                  /* tp_str */ \
-    0,                                  /* tp_getattro */ \
-    0,                                  /* tp_setattro */ \
-    0,                                  /* tp_as_buffer */ \
+    nullptr,                            /* tp_getattr */ \
+    nullptr,                            /* tp_setattr */ \
+    nullptr,                            /* tp_compare */ \
+    nullptr,                            /* tp_repr */ \
+    nullptr,                            /* tp_as_number */ \
+    nullptr,                            /* tp_as_sequence */ \
+    nullptr,                            /* tp_as_mapping */ \
+    nullptr,                            /* tp_hash */ \
+    nullptr,                            /* tp_call */ \
+    nullptr,                            /* tp_str */ \
+    nullptr,                            /* tp_getattro */ \
+    nullptr,                            /* tp_setattro */ \
+    nullptr,                            /* tp_as_buffer */ \
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
     docString,                          /* tp_doc */ \
-    0,                                  /* tp_traverse */ \
-    0,                                  /* tp_clear */ \
-    0,                                  /* tp_richcompare */ \
+    nullptr,                            /* tp_traverse */ \
+    nullptr,                            /* tp_clear */ \
+    nullptr,                            /* tp_richcompare */ \
     0,                                  /* tp_weaklistoffset */ \
-    0,                                  /* tp_iter */ \
-    0,                                  /* tp_iternext */ \
+    nullptr,                            /* tp_iter */ \
+    nullptr,                            /* tp_iternext */ \
     PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
-    0,                                  /* tp_members */ \
-    0,                                  /* tp_getset */ \
+    nullptr,                            /* tp_members */ \
+    nullptr,                            /* tp_getset */ \
     glueBaseClass::type_ptr,            /* tp_base */ \
-    0,                                  /* tp_dict */ \
-    0,                                  /* tp_descr_get */ \
-    0,                                  /* tp_descr_set */ \
+    nullptr,                            /* tp_dict */ \
+    nullptr,                            /* tp_descr_get */ \
+    nullptr,                            /* tp_descr_set */ \
     0,                                  /* tp_dictoffset */ \
     PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
-    0,                                  /* tp_alloc */ \
+    nullptr,                            /* tp_alloc */ \
     PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
-    0, /* tp_free */ \
-    0, /* tp_is_gc */ \
-    0, /* tp_bases */ \
-    0, /* tp_mro */ \
-    0, /* tp_cache */ \
-    0, /* tp_subclasses */ \
-    0, /* tp_weaklist */ \
-    0, /* tp_del */ \
-    0, /* tp_version_tag */ \
-    0, /* tp_finalize */ \
+    nullptr,                            /* tp_free */ \
+    nullptr,                            /* tp_is_gc */ \
+    nullptr,                            /* tp_bases */ \
+    nullptr,                            /* tp_mro */ \
+    nullptr,                            /* tp_cache */ \
+    nullptr,                            /* tp_subclasses */ \
+    nullptr,                            /* tp_weaklist */ \
+    nullptr,                            /* tp_del */ \
+    0,                                  /* tp_version_tag */ \
+    nullptr,                            /* tp_finalize */ \
     PYTHON_TP_VECTORCALL_PRINT \
 PYTHON_TYPE_END
 
@@ -401,7 +401,7 @@ PYTHON_TYPE_END
 
 // called at the beginning of the class definition function to grab the module
 #define PYTHON_CLASS_IMPORT_START(m) \
-if (m == NULL) \
+if (m == nullptr) \
     return; \
 \
 Py_INCREF(m)
@@ -442,7 +442,7 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 }
 
 // Different basic return types
-#define PYTHON_RETURN_ERROR {return NULL;}
+#define PYTHON_RETURN_ERROR { return nullptr; }
 #define PYTHON_RETURN_NONE {Py_INCREF(Py_None); return Py_None;}
 #define PYTHON_RETURN_BOOL(testValue) \
 { \
@@ -457,7 +457,7 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 #define PYTHON_START_METHODS_TABLE(pythonClassName) static PyMethodDef pythonClassName##_methods[] = {
 
 // method table end (automatically adds sentinal value)
-#define PYTHON_END_METHODS_TABLE {NULL} }
+#define PYTHON_END_METHODS_TABLE { nullptr } }
 
 // basic method
 #define PYTHON_METHOD(pythonClassName, methodName, docString) \
@@ -511,12 +511,12 @@ int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *clo
 #define PYTHON_START_GETSET_TABLE(pythonClassName) static PyGetSetDef pythonClassName##_getseters[] = {
 
 // and easy terminator to make things look pretty (automatically adds sentinel value)
-#define PYTHON_END_GETSET_TABLE {NULL} }
+#define PYTHON_END_GETSET_TABLE { nullptr } }
 
 // the get/set definition
 #define PYTHON_GETSET(pythonClassName, attribName, docString) {_pycs(#attribName), \
     (getter)pythonClassName##_get##attribName, (setter)pythonClassName##_set##attribName, \
-    _pycs(docString), NULL}
+    _pycs(docString), nullptr }
 
 /////////////////////////////////////////////////////////////////////
 // as_ table macros

@@ -131,15 +131,15 @@ TriObject* plResetXform::IGetTriObject(INode* node, BOOL& deleteIt) const
 {
     Object *obj = node->EvalWorldState(TimeValue(0)).obj;
     if( !obj )
-        return NULL;
+        return nullptr;
 
     if( !obj->CanConvertToType( triObjectClassID ) )
-        return NULL;
+        return nullptr;
 
     // Convert to triMesh object
     TriObject   *meshObj = (TriObject*)obj->ConvertToType(TimeValue(0), triObjectClassID);
     if( !meshObj )
-        return NULL;
+        return nullptr;
 
     deleteIt = meshObj != obj;
 

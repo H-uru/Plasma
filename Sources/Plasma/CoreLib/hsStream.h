@@ -287,7 +287,7 @@ class hsUNIXStream: public hsStream
     char*       fBuff;
 
 public:
-    hsUNIXStream(): fRef(0), fBuff(nil) {}
+    hsUNIXStream(): fRef(), fBuff() { }
     ~hsUNIXStream();
     bool  Open(const plFileName& name, const char* mode = "rb") override;
     bool  Close() override;

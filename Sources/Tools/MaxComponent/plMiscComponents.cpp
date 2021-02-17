@@ -1623,7 +1623,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
 
     if( plFollowMod::kObject == lType )
     {
-        if(fCompPB->GetINode(kLeaderObjectSel) != NULL)
+        if (fCompPB->GetINode(kLeaderObjectSel) != nullptr)
         {
             plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kLeaderObjectSel);
 

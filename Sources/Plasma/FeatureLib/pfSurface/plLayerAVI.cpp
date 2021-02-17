@@ -91,12 +91,12 @@ bool plLayerAVI::IInit()
                                 streamtypeVIDEO,
                                 0,
                                 OF_READ,
-                                NULL);
+                                nullptr);
 
     if (ret)
         return ISetFault("Error opening AVI");
 
-    if( !(fAVIInfo->fGetFrame = AVIStreamGetFrameOpen(fAVIInfo->fAVIStream, NULL)) )
+    if (fAVIInfo->fGetFrame = AVIStreamGetFrameOpen(fAVIInfo->fAVIStream, nullptr); !fAVIInfo->fGetFrame)
         return ISetFault("Error positioning AVI");
 
     if (FAILED(AVIStreamInfo(fAVIInfo->fAVIStream, &fAVIInfo->fAVIStreamInfo, sizeof(AVISTREAMINFO))))
@@ -230,7 +230,7 @@ bool plLayerAVI::ICloseMovie()
 #if HS_BUILD_FOR_WIN32
     if( fAVIInfo->fGetFrame )
         AVIStreamGetFrameClose(fAVIInfo->fGetFrame);
-    fAVIInfo->fGetFrame = 0;
+    fAVIInfo->fGetFrame = nullptr;
 
     if( fAVIInfo->fAVIStream )
         AVIStreamRelease(fAVIInfo->fAVIStream);

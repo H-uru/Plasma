@@ -228,8 +228,8 @@ DWORD PlasmaMax::Start()
     plComponentShow::Init();
     plCreateMenu();
 
-    RegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(NotifyProc, 0, NOTIFY_SYSTEM_STARTUP);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_STARTUP);
 
     // Now we have to init like we're a real doggone client...
     plFileName clientPath = plFileName::Join(pathTemp, "dat");
@@ -244,7 +244,7 @@ DWORD PlasmaMax::Start()
 
 void PlasmaMax::Stop()
 {
-    UnRegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
+    UnRegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
 
     pfLocalizationMgr::Shutdown();
     plFontCache::GetInstance().UnRegisterAs(kFontCache_KEY);

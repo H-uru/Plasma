@@ -142,8 +142,8 @@ bool plParticleCoreComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plConvert &convert = plConvert::Instance();
     if (!hsMaterialConverter::IsParticleMat(maxMaterial))
     {
-        maxMaterial = nil;
-        pNode->SetMtl(NULL);
+        maxMaterial = nullptr;
+        pNode->SetMtl(nullptr);
         if (pErrMsg->Set(!(convert.fWarned & plConvert::kWarnedBadMaterialOnParticle), pNode->GetName(),
         "Only \"Plasma Particle\" materials (not in a multi-material) may be applied to particle system objects."
         " Using a default material for now.").CheckAskOrCancel())
@@ -707,7 +707,7 @@ public:
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
 
         int selection;
         switch (msg)

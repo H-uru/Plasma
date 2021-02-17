@@ -218,7 +218,7 @@ public:
     {
         IHandleRollupState(map, hWnd, msg);
 
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
         case WM_INITDIALOG:
@@ -257,7 +257,7 @@ public:
     {
         IHandleRollupState(map, hWnd, msg);
 
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
 
@@ -300,7 +300,7 @@ public:
     {
         IHandleRollupState(map, hWnd, msg);
 
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
 
@@ -384,7 +384,7 @@ public:
     {
         IHandleRollupState(map, hWnd, msg);
 
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
 
@@ -420,7 +420,7 @@ public:
     {
         IHandleRollupState(map, hWnd, msg);
 
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
         case WM_INITDIALOG:
@@ -459,7 +459,7 @@ public:
     {
         IHandleRollupState(map, hWnd, msg);
 
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
         case WM_INITDIALOG:

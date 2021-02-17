@@ -108,7 +108,7 @@ std::string WStringToString(std::wstring val)
 
 HTREEITEM plPickLocalizationDlg::IAddVar(std::string name, std::string match, HTREEITEM hParent)
 {
-    TVINSERTSTRUCT tvi = {0};
+    TVINSERTSTRUCT tvi = {};
     tvi.hParent = hParent;
     tvi.hInsertAfter = TVI_LAST;
     tvi.item.mask = TVIF_TEXT | TVIF_PARAM;

@@ -188,7 +188,7 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
     err = AVIFileOpen(  &fFileHandle,           // returned file pointer
                         fileName,               // file name
                         OF_WRITE | OF_CREATE,   // mode to open file with
-                        NULL);                  // use handler determined
+                        nullptr);               // use handler determined
     hsAssert(err == AVIERR_OK, "Error creating AVI file in plAVIWriter::Open");
     if (err != AVIERR_OK)
     {
@@ -216,7 +216,7 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
         AVICOMPRESSOPTIONS FAR * aopts[1] = {&opts};
         memset(&opts, 0, sizeof(opts));
 
-        BOOL bErr = AVISaveOptions(NULL, ICMF_CHOOSE_DATARATE, 1, &fStreamHandle, (LPAVICOMPRESSOPTIONS FAR*)&aopts);
+        BOOL bErr = AVISaveOptions(nullptr, ICMF_CHOOSE_DATARATE, 1, &fStreamHandle, (LPAVICOMPRESSOPTIONS FAR*)&aopts);
         hsAssert(bErr, "Error saving stream options in plAVIWriter::Open");
         if (!bErr)
         {
@@ -224,7 +224,7 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
             return false;
         }
 
-        err = AVIMakeCompressedStream(&fCompressedHandle, fStreamHandle, &opts, NULL);
+        err = AVIMakeCompressedStream(&fCompressedHandle, fStreamHandle, &opts, nullptr);
         hsAssert(err == AVIERR_OK, "Error creating compressed stream in plAVIWriter::Open");
         if (err != AVIERR_OK)
         {
@@ -326,8 +326,8 @@ bool plAVIWriterImp::ICaptureFrame(plPipeline* pipeline)
                             (LPBYTE)frame.GetAddr32(0,0),
                             frame.GetTotalSize(),
                             AVIIF_KEYFRAME,
-                            NULL,
-                            NULL);
+                            nullptr,
+                            nullptr);
 
     return (err == AVIERR_OK);
 }

@@ -100,7 +100,7 @@ int plAutoUIParam::ISizeControl(HWND hDlg, HWND hControl, int w, int h, int y, i
 HWND plAutoUIParam::ICreateControl(HWND hDlg, const char *className, const char *wndName, DWORD style, DWORD exStyle)
 {
     HWND hwnd = CreateWindowEx(exStyle, className, wndName, WS_VISIBLE | WS_CHILD | style,
-                0, 0, 0, 0, hDlg, 0/*(HMENU)fDlgItemID*/, hInstance, NULL);
+                0, 0, 0, 0, hDlg, nullptr/*(HMENU)fDlgItemID*/, hInstance, nullptr);
 
     fControlVec.push_back(hwnd);
 
@@ -578,7 +578,7 @@ public:
 
     BOOL HitTest(IObjParam *ip, HWND hWnd, ViewExp *vpt, IPoint2 m, int flags) override
     {
-        return (ip->PickNode(hWnd,m,&gPickFilter) != NULL);
+        return (ip->PickNode(hWnd,m,&gPickFilter) != nullptr);
     }
     BOOL Pick(IObjParam *ip, ViewExp *vpt) override;
     

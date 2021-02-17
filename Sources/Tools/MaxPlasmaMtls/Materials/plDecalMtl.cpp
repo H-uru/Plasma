@@ -69,7 +69,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_DECAL_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return DECAL_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -223,7 +223,7 @@ Animatable* plDecalMtl::SubAnim(int i)
         break;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plDecalMtl::NumParamBlocks()
@@ -247,7 +247,7 @@ IParamBlock2* plDecalMtl::GetParamBlockByID(BlockID id)
     else if (fAnimPB->ID() == id)
         return fAnimPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plDecalMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -270,7 +270,7 @@ Texmap* plDecalMtl::GetSubTexmap(int i)
    else if (i == 1)
       return fLayersPB->GetTexmap(kDecalLayTop);
    
-   return NULL;
+   return nullptr;
 }
 
 void plDecalMtl::SetSubTexmap(int i, Texmap *m)

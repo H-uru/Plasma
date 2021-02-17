@@ -574,7 +574,7 @@ namespace pvt_strptime
         struct tm *tp,
         int mode)
     {
-        struct tm *l = 0;
+        struct tm *l = nullptr;
         switch (mode)
         {
         case plUnifiedTime::kGmt:
@@ -584,7 +584,7 @@ namespace pvt_strptime
             l = localtime(t);
         }
         if (! l)
-            return 0;
+            return nullptr;
         *tp = *l;
         tp->tm_isdst = -1;
         return tp;
@@ -685,7 +685,7 @@ start_over:
                 }
                 if (cnt == 7)
                     /* Does not match a weekday name.  */
-                    return NULL;
+                    return nullptr;
                 tm->tm_wday = cnt;
                 have_wday = 1;
                 break;
@@ -703,14 +703,14 @@ start_over:
                 }
                 if (cnt == 12)
                     /* Does not match a month name.  */
-                    return NULL;
+                    return nullptr;
                 tm->tm_mon = cnt;
                 want_xday = 1;
                 break;
             case 'c':
                 /* Match locale's date and time format.  */
                 if (!recursive (HERE_D_T_FMT))
-                    return NULL;
+                    return nullptr;
                 want_xday = 1;
                 break;
             case 'C':
@@ -729,7 +729,7 @@ start_over:
                 break;
             case 'F':
                 if (!recursive ("%Y-%m-%d"))
-                    return NULL;
+                    return nullptr;
                 want_xday = 1;
                 break;
             case 'x':
@@ -737,7 +737,7 @@ start_over:
             case 'D':
                 /* Match standard day format.  */
                 if (!recursive (HERE_D_FMT))
-                    return NULL;
+                    return nullptr;
                 want_xday = 1;
                 break;
             case 'k':
@@ -783,15 +783,15 @@ start_over:
                     if (match_string (HERE_PM_STR, rp))
                         is_pm = 1;
                     else
-                        return NULL;
+                        return nullptr;
                     break;
             case 'r':
                 if (!recursive (HERE_T_FMT_AMPM))
-                    return NULL;
+                    return nullptr;
                 break;
             case 'R':
                 if (!recursive ("%H:%M"))
-                    return NULL;
+                    return nullptr;
                 break;
             case 's':
                 {
@@ -802,7 +802,7 @@ start_over:
                     time_t secs = 0;
                     if (*rp < '0' || *rp > '9')
                         /* We need at least one digit.  */
-                        return NULL;
+                        return nullptr;
                     
                     do
                     {
@@ -811,9 +811,9 @@ start_over:
                     }
                     while (*rp >= '0' && *rp <= '9');
                     
-                    if (time_r (&secs, tm, mode) == NULL)
+                    if (time_r(&secs, tm, mode) == nullptr)
                         /* Error in function.  */
-                        return NULL;
+                        return nullptr;
                 }
                 break;
             case 'S':
@@ -824,7 +824,7 @@ start_over:
                 /* Fall through.  */
             case 'T':
                 if (!recursive (HERE_T_FMT))
-                    return NULL;
+                    return nullptr;
                 break;
             case 'u':
                 get_number (1, 7, 1);
@@ -837,7 +837,7 @@ start_over:
                 break;
             case 'G':
                 if (*rp < '0' || *rp > '9')
-                    return NULL;
+                    return nullptr;
                     /* XXX Ignore the number since we would need some more
                 information to compute a real date.  */
                 do
@@ -939,11 +939,11 @@ start_over:
                     want_xday = 1;
                     break;
                 default:
-                    return NULL;
+                    return nullptr;
                 }
                 break;
                 default:
-                    return NULL;
+                    return nullptr;
     }
     }
     
@@ -1017,7 +1017,7 @@ int32_t   plUnifiedTime::IGetLocalTimeZoneOffset()
         // Taken from devx.com from an article written by Danny Kalev
         // http://gethelp.devx.com/techtips/cpp_pro/10min/2001/10min1200-3.asp
 
-        time_t  currLocalTime = time( 0 );      // current local time
+        time_t  currLocalTime = time(nullptr);  // current local time
 
         struct tm   local = *gmtime( &currLocalTime );  // convert curr to GMT, store as tm
         

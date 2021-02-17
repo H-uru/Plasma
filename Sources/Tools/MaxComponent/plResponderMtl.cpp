@@ -111,7 +111,7 @@ static plResponderMtlProc gResponderMtlProc;
 
 ParamBlockDesc2 gResponderMtlBlock
 (
-    kResponderMtlBlk, _T("mtlCmd"), 0, NULL, P_AUTO_UI,
+    kResponderMtlBlk, _T("mtlCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_MTL, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMtlProc,
 
@@ -515,7 +515,7 @@ void plResponderMtlProc::IOnInitDlg(HWND hWnd, IParamBlock2* pb)
         RECT itemRect, clientRect;
         GetWindowRect(GetDlgItem(hWnd, IDC_LOOP_TEXT), &itemRect);
         GetWindowRect(hWnd, &clientRect);
-        SetWindowPos(hWnd, NULL, 0, 0, clientRect.right-clientRect.left,
+        SetWindowPos(hWnd, nullptr, 0, 0, clientRect.right-clientRect.left,
             itemRect.top-clientRect.top, SWP_NOMOVE | SWP_NOZORDER);
     }
 }

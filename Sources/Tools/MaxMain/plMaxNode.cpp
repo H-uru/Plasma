@@ -2053,7 +2053,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                 kBias, // Increasing the bias parameter keeps triangles from becoming degenerate. range [0..1] (0 = no bias).
                 kMaxEdge, // This will prevent the optimize function from creating edges longer than this value. If this parameter is <=0 no limit is placed on the length of the edges.
                 kOptFlags, // Let them input using smoothing groups, but nothing else.
-                NULL); // progress bar
+                nullptr); // progress bar
 
             
             MNMesh mnMesh(mesh);

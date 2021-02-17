@@ -243,7 +243,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getSubType)
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setDeviceInbox, args)
 {
     char* inboxName; 
-    PyObject* cb = NULL;
+    PyObject* cb = nullptr;
     unsigned long context = 0;
     if (!PyArg_ParseTuple(args, "s|Ol", &inboxName, &cb, &context))
     {

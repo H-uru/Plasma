@@ -86,7 +86,7 @@ enum
 
 ParamBlockDesc2 gResponderWaitBlock
 (
-    kResponderWaitBlk, _T("waitCmd"), 0, NULL, P_AUTO_UI,
+    kResponderWaitBlk, _T("waitCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_WAIT, IDS_COMP_WAIT, 0, 0, &gResponderWaitProc,
 

@@ -64,7 +64,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_BUMP_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return BUMP_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -196,7 +196,7 @@ Animatable* plBumpMtl::SubAnim(int i)
         break;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plBumpMtl::NumParamBlocks()
@@ -216,7 +216,7 @@ IParamBlock2* plBumpMtl::GetParamBlockByID(BlockID id)
     else if (fAnimPB->ID() == id)
         return fAnimPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plBumpMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -237,7 +237,7 @@ Texmap* plBumpMtl::GetSubTexmap(int i)
     if (i == 0)
         return fBasicPB->GetTexmap(kBumpBasLayer);
 
-    return NULL;
+    return nullptr;
 }
 
 void plBumpMtl::SetSubTexmap(int i, Texmap *m)

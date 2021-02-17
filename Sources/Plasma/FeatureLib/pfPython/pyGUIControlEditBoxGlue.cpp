@@ -54,7 +54,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlEditBox)
 
 PYTHON_INIT_DEFINITION(ptGUIControlEditBox, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -136,8 +136,8 @@ PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlEditBox, end, SetCursorToEnd)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setColor, args)
 {
-    PyObject* foreColorObj = NULL;
-    PyObject* backColorObj = NULL;
+    PyObject* foreColorObj = nullptr;
+    PyObject* backColorObj = nullptr;
     if (!PyArg_ParseTuple(args, "OO", &foreColorObj, &backColorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setColor expects two ptColor objects");
@@ -156,8 +156,8 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setColor, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setSelectionColor, args)
 {
-    PyObject* foreColorObj = NULL;
-    PyObject* backColorObj = NULL;
+    PyObject* foreColorObj = nullptr;
+    PyObject* backColorObj = nullptr;
     if (!PyArg_ParseTuple(args, "OO", &foreColorObj, &backColorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setSelectionColor expects two ptColor objects");
@@ -251,14 +251,14 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlEditBox, pyGUIControl, "Params: ctrlKey\nP
 // required functions for PyObject interoperability
 PyObject *pyGUIControlEditBox::New(pyKey& gckey)
 {
-    ptGUIControlEditBox *newObj = (ptGUIControlEditBox*)ptGUIControlEditBox_type.tp_new(&ptGUIControlEditBox_type, NULL, NULL);
+    ptGUIControlEditBox *newObj = (ptGUIControlEditBox*)ptGUIControlEditBox_type.tp_new(&ptGUIControlEditBox_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlEditBox::New(plKey objkey)
 {
-    ptGUIControlEditBox *newObj = (ptGUIControlEditBox*)ptGUIControlEditBox_type.tp_new(&ptGUIControlEditBox_type, NULL, NULL);
+    ptGUIControlEditBox *newObj = (ptGUIControlEditBox*)ptGUIControlEditBox_type.tp_new(&ptGUIControlEditBox_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     return (PyObject*)newObj;
 }

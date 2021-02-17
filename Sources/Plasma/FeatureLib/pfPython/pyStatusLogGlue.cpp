@@ -73,7 +73,7 @@ PYTHON_METHOD_DEFINITION(ptStatusLog, open, args)
 PYTHON_METHOD_DEFINITION(ptStatusLog, write, args)
 {
     ST::string text;
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &text, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "write expects a string and an optional ptColor");
@@ -118,7 +118,7 @@ PYTHON_CLASS_NEW_IMPL(ptStatusLog, pyStatusLog)
 
 PyObject *pyStatusLog::New(plStatusLog* log)
 {
-    ptStatusLog *newObj = (ptStatusLog*)ptStatusLog_type.tp_new(&ptStatusLog_type, NULL, NULL);
+    ptStatusLog *newObj = (ptStatusLog*)ptStatusLog_type.tp_new(&ptStatusLog_type, nullptr, nullptr);
     newObj->fThis->fLog = log;
     newObj->fThis->fICreatedLog = false;
     return (PyObject*)newObj;

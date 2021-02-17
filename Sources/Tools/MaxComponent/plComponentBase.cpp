@@ -62,7 +62,7 @@ plComponentBase::~plComponentBase()
 
 CreateMouseCallBack* plComponentBase::GetCreateMouseCallBack()
 {
-    return NULL;
+    return nullptr;
 }
 
 void plComponentBase::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev)
@@ -459,7 +459,7 @@ void plComponentBase::CreateRollups()
                                                     GetString(spec.title),
                                                     spec.rollup_flags,
                                                     spec.dlgProc,
-                                                    NULL,
+                                                    nullptr,
                                                     ROLLUP_CAT_STANDARD);
 
                 // Save the rollout in the paramblock
@@ -477,7 +477,7 @@ void plComponentBase::CreateRollups()
                                                 GetString(pd->title),
                                                 pd->flags,
                                                 pd->dlgProc,
-                                                NULL,
+                                                nullptr,
                                                 ROLLUP_CAT_STANDARD);
 
             // Save the rollout in the paramblock
@@ -694,10 +694,10 @@ static void ComponentNotify(void *param, NotifyInfo *info)
 
 void plComponentShow::Init()
 {
-    RegisterNotification(ComponentNotify, 0, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(ComponentNotify, 0, NOTIFY_NODE_UNHIDE);
-    RegisterNotification(ComponentNotify, 0, NOTIFY_SYSTEM_SHUTDOWN);
-    RegisterNotification(ComponentNotify, 0, NOTIFY_FILE_PRE_OPEN);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_NODE_UNHIDE);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_SYSTEM_SHUTDOWN);
+    RegisterNotification(ComponentNotify, nullptr, NOTIFY_FILE_PRE_OPEN);
 }
 
 void plComponentShow::Update()

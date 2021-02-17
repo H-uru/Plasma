@@ -124,7 +124,7 @@ public:
         HWND dlg = map->GetHWnd();
         
         plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( dlg, IDC_DETAIL_CURVE_CTRL );
-        if( ctrl == NULL )
+        if (ctrl == nullptr)
         {
             // The control hasn't been created, so create it already!
             HWND                basis;
@@ -140,7 +140,7 @@ public:
         
         EnableWindow( GetDlgItem( dlg, IDC_DETAIL_CURVE_CTRL ), (BOOL)pblock->GetInt( kBmpUseDetail, t ) );
         
-        if( ctrl != NULL )
+        if (ctrl != nullptr)
         {
             ctrl->SetStartPoint( (float)pblock->GetInt( kBmpDetailStartSize, t ) / 100.f,
                 (float)pblock->GetInt( kBmpDetailStartOpac, t ) / 100.f );
@@ -305,7 +305,7 @@ public:
     {
         /// Set the level count on the detail control
         plDetailCurveCtrl *ctrl = GET_DETAIL_CURVE_CTRL( map->GetHWnd(), IDC_DETAIL_CURVE_CTRL );
-        if( ctrl != NULL )
+        if (ctrl != nullptr)
         {
             IParamBlock2 *pblock = map->GetParamBlock();
             int w = pblock->GetInt( kBmpExportWidth, t );
@@ -361,7 +361,7 @@ public:
         // And clamp aspect ratio
         PBBitmap        *pbbm = pblock->GetBitmap( kBmpBitmap, t );
         
-        if( pbbm != NULL )
+        if (pbbm != nullptr)
         {
             int realWidth = pbbm->bi.Width();
             int realHeight = pbbm->bi.Height();
@@ -573,7 +573,8 @@ public:
     {
       plLayerTex* layer = (plLayerTex*)owner;
 
-      if(layer == NULL) return;
+      if (layer == nullptr)
+          return;
       
       IParamBlock2 *pb = layer->GetParamBlockByID(plLayerTex::kBlkBitmap);
 
@@ -755,7 +756,7 @@ void BMCropper::OnClose()
 bool    BMTexPBAccessor::IIsProcSettingDetailValues( IParamBlock2 *pb )
 {
     BitmapDlgProc *proc = (BitmapDlgProc *)pb->GetMap()->GetUserDlgProc();
-    if( proc != NULL )
+    if (proc != nullptr)
         return proc->fSettingDetailValues;
 
     return false;

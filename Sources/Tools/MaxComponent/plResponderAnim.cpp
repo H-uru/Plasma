@@ -580,7 +580,7 @@ BOOL plResponderAnimProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT m
                 RECT itemRect, clientRect;
                 GetWindowRect(GetDlgItem(hWnd, IDC_LOOP_TEXT), &itemRect);
                 GetWindowRect(hWnd, &clientRect);
-                SetWindowPos(hWnd, NULL, 0, 0, clientRect.right-clientRect.left,
+                SetWindowPos(hWnd, nullptr, 0, 0, clientRect.right-clientRect.left,
                     itemRect.top-clientRect.top, SWP_NOMOVE | SWP_NOZORDER);
             }
 
@@ -651,7 +651,7 @@ void plResponderAnimProc::IPickComponent(IParamBlock2* pb)
 
 ParamBlockDesc2 gResponderAnimBlock
 (
-    kResponderAnimBlk, _T("animCmd"), 0, NULL, P_AUTO_UI,
+    kResponderAnimBlk, _T("animCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_ANIM, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderAnimProc,
 

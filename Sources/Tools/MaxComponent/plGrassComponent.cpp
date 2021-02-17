@@ -96,7 +96,7 @@ public:
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
 
         int selection;
         switch (msg)

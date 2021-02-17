@@ -152,7 +152,7 @@ static void LookupThreadProc (AsyncThread * thread) {
     WNDCLASS wc;
     memset(&wc, 0, sizeof(wc));
     wc.lpfnWndProc      = DefWindowProc;
-    wc.hInstance        = GetModuleHandle(0);
+    wc.hInstance        = GetModuleHandle(nullptr);
     wc.lpszClassName    = WINDOW_CLASS;
     RegisterClass(&wc);
 
@@ -160,11 +160,11 @@ static void LookupThreadProc (AsyncThread * thread) {
         WINDOW_CLASS,
         WINDOW_CLASS,
         WS_OVERLAPPED,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
-        (HWND)0,
-        (HMENU) 0,
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        nullptr,
+        nullptr,
         wc.hInstance,
-        0
+        nullptr
     );
     if (!s_lookupWindow)
         ErrorAssert(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
@@ -214,10 +214,10 @@ static void StartLookupThread () {
 
     // create a shutdown event
     HANDLE lookupStartEvent = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) 0,
+        nullptr,
         true,           // manual reset
         false,          // initial state off
-        (LPCTSTR) 0     // name
+        nullptr         // name
     );
     if (!lookupStartEvent)
         ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());

@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // hsStringTable
 //
 
-hsStringTable::Node::Node(char c) : sib(0), kid(0), chr(c), data(0) {};
-hsStringTable::Node::~Node() { };
+hsStringTable::Node::Node(char c) : sib(), kid(), chr(c), data() { }
+hsStringTable::Node::~Node() { }
 void* hsStringTable::Node::GetData() { return data; }
 void hsStringTable::Node::SetData(void* v) { data = v; }
 

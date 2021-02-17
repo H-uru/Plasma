@@ -353,8 +353,8 @@ plLeafController* hsControlConverter::MakeScalarController(Control* control, plM
 {
     hsGuardBegin("hsControlConverter::MakeScalarController");
 
-    if (control == NULL)
-        return NULL;
+    if (control == nullptr)
+        return nullptr;
 
     ISetSegRange(start, end);
 
@@ -376,8 +376,8 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
 {
     hsGuardBegin("hsControlConverter::MakePosController");
 
-    if (control == NULL)
-        return NULL;
+    if (control == nullptr)
+        return nullptr;
 
     ISetSegRange(start, end);
 
@@ -441,7 +441,7 @@ plController *hsControlConverter::MakeScaleController(Control *control, plMaxNod
                        "Warning: Noise scale controller not supported.  Ignoring.", MB_OK);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 plController *hsControlConverter::MakeRotController(Control *control, plMaxNode *node, bool camRot /* = false */, 
@@ -539,7 +539,7 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
             return rc;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void hsControlConverter::ScalePositionController(plController* ctl, float scale)
@@ -611,7 +611,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
     hsGuardBegin("hsControlConverter::MakeTransformController");
 
     if (!control)
-        return NULL;
+        return nullptr;
 
     ISetSegRange(start, end);
 
@@ -624,7 +624,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
         {
             fErrorMsg->Set(true, "Transform Controller Error", "Transform controller doesn't have 3 sub controllers").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         plCompoundController *tmc = new plCompoundController;
@@ -660,10 +660,10 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
         else
         {
             delete tmc;
-            return NULL;
+            return nullptr;
         }
     }
-    return NULL;
+    return nullptr;
 
     hsGuardEnd;
 }
@@ -766,7 +766,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         {
             fErrorMsg->Set(true, "Quat Controller Creation Error", "Control is not keyable.").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -845,7 +845,7 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
         {
             fErrorMsg->Set(true, "Scale Value Controller Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -885,7 +885,7 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
         {
             fErrorMsg->Set(true, "Scale Value Controller Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -926,7 +926,7 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
         {
             fErrorMsg->Set(true, "Simple Position Controller Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -1680,7 +1680,7 @@ Control *hsControlConverter::GetControllerByID(IParamBlock2 *pblock, int paramID
         }
     }
 
-    return NULL;
+    return nullptr;
     hsGuardEnd;
 }
 

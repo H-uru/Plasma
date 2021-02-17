@@ -181,7 +181,7 @@ static void UnlinkAndAbandonConn_CS (CliGmConn * conn) {
     conn->abandoned = true;
     if (conn->cancelId) {
         AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
+        conn->cancelId  = nullptr;
     }
     else if (conn->sock) {
         AsyncSocketDisconnect(conn->sock, true);
@@ -225,7 +225,7 @@ static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
     bool notify;
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = 0;
+        conn->cancelId = nullptr;
         s_conns.Unlink(conn);
         
         notify
@@ -300,7 +300,7 @@ static bool SocketNotifyCallback (
             {
                 hsLockGuard(s_critsect);
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId  = nullptr;
                 abandoned       = conn->abandoned;
             }
             if (abandoned)

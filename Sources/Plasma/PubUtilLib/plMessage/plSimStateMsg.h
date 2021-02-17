@@ -56,7 +56,7 @@ public:
         fWorldKey = nil;
     }
     plSubWorldMsg(const plKey &sender, const plKey &receiver, const plKey &worldKey)
-        : plSimulationMsg(sender, receiver, 0)
+        : plSimulationMsg(sender, receiver, nullptr)
     {
         fWorldKey = worldKey;
         SetBCastFlag(plMessage::kNetPropagate);

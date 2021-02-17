@@ -66,7 +66,7 @@ public:
 static plLayerTexClassDesc plLayerTexDesc;
 ClassDesc2* GetLayerTexDesc() { return &plLayerTexDesc; }
 
-ParamDlg* plLayerTex::fUVGenDlg = NULL;
+ParamDlg* plLayerTex::fUVGenDlg = nullptr;
 
 // For initializing paramblock descriptor
 ParamBlockDesc2 *GetBitmapBlk();
@@ -79,11 +79,11 @@ void    plLayerTex::GetClassName( TSTR &s )
 }
 
 plLayerTex::plLayerTex() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
-    fTexTime(0),
-    fBM(NULL),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
+    fTexTime(),
+    fBM(),
     fIValid(NEVER)
 {
 #if 0
@@ -112,7 +112,7 @@ plLayerTex::~plLayerTex()
 void plLayerTex::Reset() 
 {
     GetLayerTexDesc()->Reset(this, TRUE);   // reset all pb2's
-    SetBitmap(NULL);
+    SetBitmap(nullptr);
 
     fIValid.SetEmpty();
 }
@@ -194,7 +194,7 @@ RefTargetHandle plLayerTex::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -242,7 +242,7 @@ IParamBlock2* plLayerTex::GetParamBlockByID(BlockID id)
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -268,7 +268,7 @@ Animatable* plLayerTex::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -368,7 +368,7 @@ IOResult plLayerTex::Load(ILoad *iload)
 
 bool plLayerTex::HasAlpha()
 {
-   return (fBM != NULL && fBM->HasAlpha() != 0);
+   return (fBM != nullptr && fBM->HasAlpha() != 0);
 }
 
 Bitmap* plLayerTex::GetBitmap(TimeValue t)
@@ -491,7 +491,7 @@ void plLayerTex::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -506,7 +506,7 @@ BITMAPINFO *plLayerTex::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, In
                         // FIXME
     fTexTime = 0;//CalcFrame(t);
 //  texValid = clipValid;
-    BITMAPINFO *bmi = NULL;
+    BITMAPINFO *bmi = nullptr;
     int xflags = 0;
 
     if (fBitmapPB->GetInt(kBmpApply))
@@ -644,7 +644,7 @@ const char *plLayerTex::GetTextureName()
             return pbbm->bi.Name();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plLayerTex::ISetPBBitmap(PBBitmap *pbbm, int index /* = 0 */)

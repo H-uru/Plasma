@@ -52,11 +52,11 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptColor)
 
 PYTHON_INIT_DEFINITION(ptColor, args, keywords)
 {
-    const char *kwlist[] = {"red", "green", "blue", "alpha", NULL};
-    PyObject* redObj = NULL;
-    PyObject* greenObj = NULL;
-    PyObject* blueObj = NULL;
-    PyObject* alphaObj = NULL;
+    const char *kwlist[] = {"red", "green", "blue", "alpha", nullptr};
+    PyObject* redObj = nullptr;
+    PyObject* greenObj = nullptr;
+    PyObject* blueObj = nullptr;
+    PyObject* alphaObj = nullptr;
     float red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "|OOOO", const_cast<char **>(kwlist),
                                      &redObj, &greenObj, &blueObj, &alphaObj))
@@ -285,7 +285,7 @@ PYTHON_CLASS_NEW_IMPL(ptColor, pyColor)
 
 PyObject *pyColor::New(float red, float green, float blue, float alpha)
 {
-    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, NULL, NULL);
+    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, nullptr, nullptr);
     newObj->fThis->setRed(red);
     newObj->fThis->setGreen(green);
     newObj->fThis->setBlue(blue);
@@ -295,7 +295,7 @@ PyObject *pyColor::New(float red, float green, float blue, float alpha)
 
 PyObject *pyColor::New(const hsColorRGBA & color)
 {
-    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, NULL, NULL);
+    ptColor *newObj = (ptColor*)ptColor_type.tp_new(&ptColor_type, nullptr, nullptr);
     newObj->fThis->setColor(color);
     return (PyObject*)newObj;
 }

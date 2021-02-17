@@ -776,7 +776,7 @@ pfFlock::~pfFlock()
     fBoids.clear();
 
     delete fDatabase;
-    fDatabase = NULL;
+    fDatabase = nullptr;
 }
 
 void pfFlock::SetGoalWeight(float goalWeight)

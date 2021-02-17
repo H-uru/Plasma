@@ -76,7 +76,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString( IDS_STEALTH_NAME ); }
     SClass_ID       SuperClassID() override { return HELPER_CLASS_ID; }
     Class_ID        ClassID() override      { return ANIMSTEALTH_CLASSID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaAnimStealthInfo"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };

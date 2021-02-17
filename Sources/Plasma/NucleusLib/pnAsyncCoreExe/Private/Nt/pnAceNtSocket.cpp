@@ -192,7 +192,7 @@ static bool ListenPortIncrement (
         ASSERT(listener->listenCount >= 0);
         break;
     }
-    return listener != 0;
+    return listener != nullptr;
 }
 
 //===========================================================================
@@ -228,7 +228,7 @@ static void SocketStartAsyncRead (NtSock * sock) {
                 sock->handle,
                 sock->buffer + sock->bytesLeft,
                 sizeof(sock->buffer) - sock->bytesLeft,
-                0,
+                nullptr,
                 &sock->opRead.overlapped
             );
         }
@@ -271,10 +271,10 @@ static bool SocketDispatchRead (NtSock * sock) {
 
     // perform kNotifySocketListenSuccess
     SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
-    notify.param            = nil;
-    notify.asyncId          = 0;
+    notify.param            = nullptr;
+    notify.asyncId          = nullptr;
     notify.addr             = sock->addr;
-    sock->userState         = nil;
+    sock->userState         = nullptr;
     sock->connType          = notify.connType;
     notify.buffer           = sock->opRead.read.buffer + bytesProcessed;
     notify.bytes            = sock->opRead.read.bytes - bytesProcessed;
@@ -459,7 +459,7 @@ static bool SocketInitConnect (
         AsyncNotifySocketConnect notify;
         SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
         notify.param        = op.param;
-        notify.asyncId      = 0;
+        notify.asyncId      = nullptr;
         notify.connType     = sock->connType;
         sock->notifyProc    = op.notifyProc;
         if (!sock->notifyProc((AsyncSocket) sock, kNotifySocketConnectSuccess, &notify, &sock->userState))
@@ -491,8 +491,8 @@ static void SocketInitListen (
             // perform kNotifySocketListenSuccess
             AsyncNotifySocketListen notify;
             SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
-            notify.param            = nil;
-            notify.asyncId          = 0;
+            notify.param            = nullptr;
+            notify.asyncId          = nullptr;
             notify.connType         = 0;
             notify.buildId          = 0;
             notify.buildType        = 0;
@@ -723,7 +723,7 @@ static void ListenThreadProc (AsyncThread *) {
 
         // wait for connection or timeout
         const struct timeval timeout = { 0, 250*1000 }; // seconds, microseconds
-        int result = select(0, &readfds, &writefds, 0, &timeout);
+        int result = select(0, &readfds, &writefds, nullptr, &timeout);
         if (result == SOCKET_ERROR) {
             LogMsg(kLogError, "socket select failed");
             continue;
@@ -738,7 +738,7 @@ static void ListenThreadProc (AsyncThread *) {
         for (NtListener * listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
             if (FD_ISSET(listener->hSocket, &readfds)) {
                 SOCKET s;
-                while (INVALID_SOCKET != (s = accept(listener->hSocket, 0, 0))) {
+                while (INVALID_SOCKET != (s = accept(listener->hSocket, nullptr, nullptr))) {
                     SocketInitListen(
                         SocketInitCommon(s),
                         listener->addr,
@@ -995,8 +995,8 @@ void INtSocketOpCompleteSocketRead (
         sock->bytesLeft += bytes;
 
         // dispatch data
-        sock->opRead.read.param             = nil;
-        sock->opRead.read.asyncId           = 0;
+        sock->opRead.read.param             = nullptr;
+        sock->opRead.read.asyncId           = nullptr;
         sock->opRead.read.buffer            = sock->buffer;
         sock->opRead.read.bytes             = sock->bytesLeft;
         sock->opRead.read.bytesProcessed    = 0;
@@ -1089,7 +1089,7 @@ bool INtSocketOpCompleteQueuedSocketWrite (
             sock->handle,
             op->write.buffer,
             op->write.bytes,
-            0,
+            nullptr,
             &op->overlapped
         );
     }

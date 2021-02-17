@@ -227,7 +227,7 @@ bool plMouseDevice::bCursorOverride = false;
 bool plMouseDevice::bInverted = false;
 float plMouseDevice::fWidth = BASE_WIDTH;
 float plMouseDevice::fHeight = BASE_HEIGHT;
-plMouseDevice* plMouseDevice::fInstance = 0;
+plMouseDevice* plMouseDevice::fInstance = nullptr;
 
 plMouseDevice::plMouseDevice()
     : fXPos(), fYPos(), fOpacity(1.f), fButtonState(),

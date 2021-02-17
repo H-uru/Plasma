@@ -95,12 +95,12 @@ PLASMA_DEFAULT_TYPE(ptDraw, "Plasma Draw class");
 // required functions for PyObject interoperability
 PyObject *cyDraw::New(PyObject *sender, PyObject *recvr)
 {
-    ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, NULL, NULL);
-    if (sender != NULL)
+    ptDraw *newObj = (ptDraw*)ptDraw_type.tp_new(&ptDraw_type, nullptr, nullptr);
+    if (sender != nullptr)
     {
         newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
-    if (recvr != NULL)
+    if (recvr != nullptr)
     {
         newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }

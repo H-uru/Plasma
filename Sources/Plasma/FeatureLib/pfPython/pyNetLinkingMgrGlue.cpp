@@ -81,8 +81,8 @@ PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, setEnabled, args)
 PYTHON_METHOD_DEFINITION_WKEY(ptNetLinkingMgr, linkToAge, args, kwargs)
 {
     const char* kwlist[] = { "ageLink", "anim", "linkInSfx", "linkOutSfx", nullptr };
-    PyObject* ageLinkObj = NULL;
-    char* linkAnim = NULL;
+    PyObject* ageLinkObj = nullptr;
+    char* linkAnim = nullptr;
     bool linkInSfx = true;
     bool linkOutSfx = true;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|sbb", const_cast<char **>(kwlist),
@@ -119,7 +119,7 @@ PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, linkPlayerHere, args)
 
 PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, linkPlayerToAge, args)
 {
-    PyObject* ageLinkObj = NULL;
+    PyObject* ageLinkObj = nullptr;
     unsigned long pid;
     if (!PyArg_ParseTuple(args, "Ol", &ageLinkObj, &pid))
     {

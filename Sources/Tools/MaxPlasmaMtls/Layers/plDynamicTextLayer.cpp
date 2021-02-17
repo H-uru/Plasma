@@ -67,16 +67,16 @@ ClassDesc2* GetDynamicTextLayerDesc() { return &plDynamicTextLayerDesc; }
 
 #include "plDynamicTextLayerBitmapPB.cpp"
 
-ParamDlg* plDynamicTextLayer::fUVGenDlg = NULL;
+ParamDlg* plDynamicTextLayer::fUVGenDlg = nullptr;
 
 plDynamicTextLayer::plDynamicTextLayer() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
     fTexTime(0),
     fIValid(NEVER)
 {
-    fInitBitmap = NULL;
+    fInitBitmap = nullptr;
 
     plDynamicTextLayerDesc.MakeAutoParamBlocks(this);
     ReplaceReference(kRefUVGen, GetNewDefaultUVGen());  
@@ -172,7 +172,7 @@ RefTargetHandle plDynamicTextLayer::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -207,7 +207,7 @@ IParamBlock2* plDynamicTextLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fBitmapPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -216,7 +216,7 @@ IParamBlock2* plDynamicTextLayer::GetParamBlockByID(BlockID id)
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -242,7 +242,7 @@ Animatable* plDynamicTextLayer::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -404,7 +404,7 @@ void plDynamicTextLayer::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -419,7 +419,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
                         // FIXME
     fTexTime = 0;//CalcFrame(t);
 //  texValid = clipValid;
-    BITMAPINFO *bmi = NULL;
+    BITMAPINFO *bmi = nullptr;
     int xflags = 0;
 
     // Create a bitmap to write into via Windows
@@ -552,7 +552,7 @@ const char *plDynamicTextLayer::GetTextureName( int which )
     PBBitmap *pbbm = fBitmapPB->GetBitmap( kBmpInitBitmap );
     if( pbbm )
         return pbbm->bi.Name();
-    return NULL;
+    return nullptr;
 }
 
 void plDynamicTextLayer::ISetPBBitmap(PBBitmap *pbbm, int index /* = 0 */)

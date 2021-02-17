@@ -283,7 +283,7 @@ public:
                         TSTR newName( node ? node->GetName() : "Pick" );
                         ::SetWindowText( ::GetDlgItem(hWnd, fDlgItem ), newName );
                         map->Invalidate( fNodeID );
-                        ::InvalidateRect( hWnd, NULL, TRUE );
+                        ::InvalidateRect(hWnd, nullptr, TRUE);
                         return true;
                     }
                 }
@@ -3473,7 +3473,7 @@ public:
                         TSTR newName( node ? node->GetName() : "Pick" );
                         ::SetWindowText( ::GetDlgItem(hWnd, fUpDlgItem ), newName );
                         map->Invalidate( fUpNodeID );
-                        ::InvalidateRect( hWnd, NULL, TRUE );
+                        ::InvalidateRect(hWnd, nullptr, TRUE);
                     }
                     else if( LOWORD( wParam ) == fDownDlgItem )
                     {
@@ -3485,7 +3485,7 @@ public:
                         TSTR newName( node ? node->GetName() : "Pick" );
                         ::SetWindowText( ::GetDlgItem(hWnd, fDownDlgItem ), newName );
                         map->Invalidate( fDownDlgItem );
-                        ::InvalidateRect( hWnd, NULL, TRUE );
+                        ::InvalidateRect(hWnd, nullptr, TRUE);
                     }
                 }
                 return true;
@@ -4293,7 +4293,7 @@ public:
                     TSTR newName( node ? node->GetName() : "Pick" );
                     ::SetWindowText( ::GetDlgItem(hWnd, fSoundItem ), newName );
                     map->Invalidate( fSoundID );
-                    ::InvalidateRect( hWnd, NULL, TRUE );
+                    ::InvalidateRect(hWnd, nullptr, TRUE);
                     return true;
                 }
             }

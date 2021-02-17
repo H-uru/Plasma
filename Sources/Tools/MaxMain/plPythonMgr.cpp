@@ -83,7 +83,7 @@ bool ICallVoidFunc(PyObject *dict, char *funcName, PyObject*& val)
     {
         if (PyCallable_Check(func))
         {
-            val = PyObject_CallFunction(func, NULL);
+            val = PyObject_CallFunction(func, nullptr);
             if (val)
             {
                 // there might have been some message printed, so get it out to the log file

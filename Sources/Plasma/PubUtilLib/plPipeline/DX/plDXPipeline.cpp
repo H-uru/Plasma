@@ -1458,7 +1458,7 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
                                                          fCurrentDevice->fDDType,
                                                          fmt,
                                                          fCurrentMode->fWindowed ? TRUE : FALSE,
-                                                         params.MultiSampleType, NULL);
+                                                         params.MultiSampleType, nullptr);
             if( !FAILED(hr) )
             {
                 params.AutoDepthStencilFormat = fmt;
@@ -1478,7 +1478,7 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
                                                              fCurrentDevice->fDDType,
                                                              fmt,
                                                              fCurrentMode->fWindowed ? TRUE : FALSE,
-                                                             params.MultiSampleType, NULL);
+                                                             params.MultiSampleType, nullptr);
                 if( !FAILED(hr) )
                 {
                     params.AutoDepthStencilFormat = fmt;
@@ -1843,7 +1843,7 @@ void plDXPipeline::ICreateDynamicBuffers()
                                                     usage, 
                                                     0,
                                                     poolType, 
-                                                    &fDynVtxBuff, NULL) ) )
+                                                    &fDynVtxBuff, nullptr)))
         {
             hsAssert(false, "Don't know what to do here.");
         }
@@ -3339,7 +3339,7 @@ bool  plDXPipeline::CaptureScreen( plMipmap *dest, bool flipVertical, uint16_t d
 
     if( fSettings.fFullscreen )
     {
-        if (FAILED(fD3DDevice->CreateOffscreenPlainSurface(width, height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &surface, NULL)))
+        if (FAILED(fD3DDevice->CreateOffscreenPlainSurface(width, height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &surface, nullptr)))
             return false;
 
         rToLock.left = GetViewTransform().GetViewPortLeft();
@@ -3352,7 +3352,7 @@ bool  plDXPipeline::CaptureScreen( plMipmap *dest, bool flipVertical, uint16_t d
         bigWidth = GetSystemMetrics( SM_CXSCREEN );
         bigHeight = GetSystemMetrics( SM_CYSCREEN );
 
-        if (FAILED(fD3DDevice->CreateOffscreenPlainSurface(bigWidth, bigHeight, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &surface, NULL)))
+        if (FAILED(fD3DDevice->CreateOffscreenPlainSurface(bigWidth, bigHeight, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &surface, nullptr)))
             return false;
 
         GetClientRect( fDevice.fHWnd, &rToLock );
@@ -3523,7 +3523,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
             if( FAILED( fD3DDevice->CreateDepthStencilSurface(
                                 owner->GetWidth(), owner->GetHeight(), depthFormat, 
                                 D3DMULTISAMPLE_NONE, 0, FALSE,
-                                &depthSurface, NULL ) ) )
+                                &depthSurface, nullptr)))
             {
                 return nil;
             }
@@ -3541,7 +3541,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
                 if( FAILED( fD3DDevice->CreateDepthStencilSurface(
                                     kSharedWidth, kSharedHeight, depthFormat, 
                                     D3DMULTISAMPLE_NONE, 0, FALSE,
-                                    &fSharedDepthSurface[iZ], NULL ) ) )
+                                    &fSharedDepthSurface[iZ], nullptr)))
                 {
                     return nil;
                 }
@@ -3567,7 +3567,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
-                                                        D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, NULL ) ) )
+                                                    D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, nullptr)))
         {
             /// Create a CUBIC texture
             for( int i = 0; i < 6; i++ )
@@ -3613,7 +3613,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
-                                                        D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, NULL ) ) )
+                                                D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, nullptr)))
         {
             D3DSURF_MEMNEW(texture);
 
@@ -3648,7 +3648,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         // lockable.
         if( !FAILED( fD3DDevice->CreateRenderTarget( owner->GetWidth(), owner->GetHeight(), surfFormat,
                             D3DMULTISAMPLE_NONE, 0,
-                            TRUE, &surface, NULL ) ) )
+                            TRUE, &surface, nullptr)))
         {
             D3DSURF_MEMNEW(surface);
 
@@ -3763,7 +3763,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
 
         hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
-                                                        D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, NULL ) ) )
+                                                    D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, nullptr)))
         {
 
             /// Create a CUBIC texture
@@ -3810,7 +3810,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
 
         hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
-                                                        D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, NULL ) ) )
+                                                D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, nullptr)))
         {
             D3DSURF_MEMNEW(texture);
 
@@ -3837,7 +3837,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
 
         if( !FAILED( fD3DDevice->CreateRenderTarget( width, height, surfFormat, 
                             D3DMULTISAMPLE_NONE, 0,
-                            FALSE, &surface, NULL ) ) )
+                            FALSE, &surface, nullptr)))
         {
             D3DSURF_MEMNEW(surface);
 
@@ -5880,9 +5880,9 @@ void    plDXPipeline::IHandleTextureStage( uint32_t stage, plLayerInterface *lay
         IUseTextureRef(stage, ref, layer);
     else
     {
-        fD3DDevice->SetTexture( stage, NULL );
+        fD3DDevice->SetTexture(stage, nullptr);
         hsRefCnt_SafeUnRef( fLayerRef[ stage ] );
-        fLayerRef[ stage ] = nil;
+        fLayerRef[stage] = nullptr;
     }
 }
 
@@ -7275,7 +7275,7 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
                                           IGetD3DTextureUsage(ref),
                                           formatType,
                                           poolType,
-                                          &texPtr, NULL ) ) )
+                                          &texPtr, nullptr)))
     {
         IGetD3DError();
         plStatusLog::AddLineSF( "pipeline.log", 0xffff0000, "Unable to create texture ({}) Owner: {} "
@@ -7336,7 +7336,7 @@ IDirect3DCubeTexture9   *plDXPipeline::IMakeD3DCubeTexture( plDXTextureRef *ref,
     D3DPOOL                 poolType = D3DPOOL_MANAGED;
     IDirect3DCubeTexture9   *texPtr = nil;
     fManagedAlloced = true;
-    WEAK_ERROR_CHECK(fD3DDevice->CreateCubeTexture( ref->fMaxWidth, ref->fMMLvs, 0, formatType, poolType, &texPtr, NULL));
+    WEAK_ERROR_CHECK(fD3DDevice->CreateCubeTexture( ref->fMaxWidth, ref->fMMLvs, 0, formatType, poolType, &texPtr, nullptr));
     PROFILE_POOL_MEM(poolType, ref->fDataSize, true, (ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "(UnknownTexture)" : "(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
     return texPtr;
@@ -8131,7 +8131,7 @@ void plDXPipeline::ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBuffer
                                                     usage, 
                                                     fvfFormat,
                                                     poolType, 
-                                                    &vRef->fD3DBuffer, NULL) ) )
+                                                    &vRef->fD3DBuffer, nullptr)))
         {
             hsAssert( false, "CreateVertexBuffer() call failed!" );
             vRef->fD3DBuffer = nil;
@@ -8482,7 +8482,7 @@ void plDXPipeline::ICheckIndexBuffer(plDXIndexBufferRef* iRef)
                                                     usage, 
                                                     D3DFMT_INDEX16, 
                                                     poolType, 
-                                                    &iRef->fD3DBuffer, NULL) ) )
+                                                    &iRef->fD3DBuffer, nullptr)))
         {
             hsAssert( false, "CreateIndexBuffer() call failed!" );
             iRef->fD3DBuffer = nil;
@@ -9163,7 +9163,7 @@ void plDXPipeline::ISetPipeConsts(plShader* shader)
 // Lastly, all constants will be set (as a block) for any non-FFP vertex or pixel shader.
 HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
 {
-    IDirect3DVertexShader9 *vsHandle = NULL;
+    IDirect3DVertexShader9 *vsHandle = nullptr;
     if( vShader )
     {
         hsAssert(vShader->IsVertexShader(), "Wrong type shader as vertex shader");
@@ -9190,7 +9190,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         }
     }
 
-    IDirect3DPixelShader9 *psHandle = NULL;
+    IDirect3DPixelShader9 *psHandle = nullptr;
     if( pShader )
     {
         hsAssert(pShader->IsPixelShader(), "Wrong type shader as pixel shader");
@@ -9748,7 +9748,7 @@ void plDXPlateManager::ICreateGeometry(plDXPipeline* pipe)
     if( FAILED( fD3DDevice->CreateVertexBuffer( 4 * sizeof( plPlateVertex ),
                                                 D3DUSAGE_WRITEONLY, 
                                                 fvfFormat,
-                                                poolType, &fVertBuffer, NULL ) ) )
+                                                poolType, &fVertBuffer, nullptr)))
     {
         hsAssert( false, "CreateVertexBuffer() call failed!" );
         fCreatedSucessfully = false;
@@ -9829,7 +9829,7 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
     
     // Make sure skinning is disabled.
     fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
-    fD3DDevice->SetVertexShader( dxPipe->fSettings.fCurrVertexShader = NULL);
+    fD3DDevice->SetVertexShader(dxPipe->fSettings.fCurrVertexShader = nullptr);
     fD3DDevice->SetFVF(dxPipe->fSettings.fCurrFVFFormat = PLD3D_PLATEFVF);
     fD3DDevice->SetStreamSource( 0, fVertBuffer, 0, sizeof( plPlateVertex ) );  
     plProfile_Inc(VertexChange);
@@ -10701,7 +10701,7 @@ bool plDXPipeline::ICreateBlurVBuffers()
                                                     D3DUSAGE_WRITEONLY, 
                                                     fvfFormat,
                                                     D3DPOOL_DEFAULT, 
-                                                    &vBuffer, NULL) ) )
+                                                    &vBuffer, nullptr)))
         {
             hsAssert( false, "CreateVertexBuffer() call failed!" );
             return false;
@@ -10791,7 +10791,7 @@ bool plDXPipeline::ISetBlurQuadToRender(plRenderTarget* smap)
         hsAssert(vBuffer, "AllocBlurVBuffers failed");
     }
 
-    HRESULT r = fD3DDevice->SetVertexShader(fSettings.fCurrVertexShader = NULL);
+    HRESULT r = fD3DDevice->SetVertexShader(fSettings.fCurrVertexShader = nullptr);
     fD3DDevice->SetFVF(fSettings.fCurrFVFFormat = kVFormat);
     hsAssert( r == D3D_OK, "Error trying to set the vertex shader!" );
 
@@ -10844,7 +10844,7 @@ void plDXPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans
         plProfile_Inc(VertexChange);
 
         fSettings.fCurrFVFFormat = IGetBufferD3DFormat(vRef->fFormat);
-        r = fD3DDevice->SetVertexShader(fSettings.fCurrVertexShader = NULL);
+        r = fD3DDevice->SetVertexShader(fSettings.fCurrVertexShader = nullptr);
         fD3DDevice->SetFVF(fSettings.fCurrFVFFormat);
         hsAssert( r == D3D_OK, "Error trying to set the vertex shader!" );
 
@@ -12101,7 +12101,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
     // not update our FVF. 
     hsRefCnt_SafeUnRef(fSettings.fCurrVertexBuffRef);
     fSettings.fCurrVertexBuffRef = nil;
-    fD3DDevice->SetStreamSource(0, NULL, 0, 0);
+    fD3DDevice->SetStreamSource(0, nullptr, 0, 0);
     fD3DDevice->SetFVF(fSettings.fCurrFVFFormat = kVFormat);
     fD3DDevice->SetTransform(D3DTS_VIEW, &d3dIdentityMatrix);
     fD3DDevice->SetTransform(D3DTS_WORLD, &d3dIdentityMatrix);

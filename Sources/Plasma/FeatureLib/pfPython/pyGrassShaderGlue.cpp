@@ -53,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGrassShader)
 
 PYTHON_INIT_DEFINITION(ptGrassShader, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "init expects a ptKey");
@@ -74,7 +74,7 @@ PYTHON_INIT_DEFINITION(ptGrassShader, args, keywords)
 PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
 {
     int waveNum;
-    PyObject *tupleObject = NULL;
+    PyObject *tupleObject = nullptr;
     if (!PyArg_ParseTuple(args, "iO", &waveNum, &tupleObject))
     {
         PyErr_SetString(PyExc_TypeError, "setWaveDistortion expects a integer and tuple of floats");
@@ -106,7 +106,7 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
 PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDirection, args)
 {
     int waveNum;
-    PyObject *tupleObject = NULL;
+    PyObject *tupleObject = nullptr;
     if (!PyArg_ParseTuple(args, "iO", &waveNum, &tupleObject))
     {
         PyErr_SetString(PyExc_TypeError, "setWaveDirection expects a integer and tuple of floats");
@@ -211,7 +211,7 @@ PLASMA_DEFAULT_TYPE(ptGrassShader, "Params: key\nPlasma Grass Shader class");
 // required functions for PyObject interoperability
 PyObject *pyGrassShader::New(plKey key)
 {
-    ptGrassShader *newObj = (ptGrassShader*)ptGrassShader_type.tp_new(&ptGrassShader_type, NULL, NULL);
+    ptGrassShader *newObj = (ptGrassShader*)ptGrassShader_type.tp_new(&ptGrassShader_type, nullptr, nullptr);
     newObj->fThis->SetKey(key);
     return (PyObject*)newObj;
 }

@@ -1366,7 +1366,7 @@ static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label,
         tvi.state = tvi.stateMask = TVIS_BOLD | TVIS_EXPANDED;
     }
 
-    TVINSERTSTRUCT tvins = {0};
+    TVINSERTSTRUCT tvins = {};
     tvins.item         = tvi;
     tvins.hParent      = hParent;
     tvins.hInsertAfter = TVI_LAST;

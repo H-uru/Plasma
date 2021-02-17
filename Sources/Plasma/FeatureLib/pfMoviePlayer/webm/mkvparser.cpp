@@ -254,7 +254,7 @@ long mkvparser::UnserializeInt(IMkvReader* pReader, long long pos, long size,
 long mkvparser::UnserializeString(IMkvReader* pReader, long long pos,
                                   long long size_, char*& str) {
   delete[] str;
-  str = NULL;
+  str = nullptr;
 
   if (size_ >= LONG_MAX)  // we need (size+1) chars
     return E_FILE_FORMAT_INVALID;
@@ -263,7 +263,7 @@ long mkvparser::UnserializeString(IMkvReader* pReader, long long pos,
 
   str = new (std::nothrow) char[size + 1];
 
-  if (str == NULL)
+  if (str == nullptr)
     return -1;
 
   unsigned char* const buf = reinterpret_cast<unsigned char*>(str);
@@ -272,7 +272,7 @@ long mkvparser::UnserializeString(IMkvReader* pReader, long long pos,
 
   if (status) {
     delete[] str;
-    str = NULL;
+    str = nullptr;
 
     return status;
   }
@@ -408,7 +408,7 @@ bool mkvparser::Match(IMkvReader* pReader, long long& pos, unsigned long id_,
 
 namespace mkvparser {
 
-EBMLHeader::EBMLHeader() : m_docType(NULL) { Init(); }
+EBMLHeader::EBMLHeader() : m_docType() { Init(); }
 
 EBMLHeader::~EBMLHeader() { delete[] m_docType; }
 
@@ -420,7 +420,7 @@ void EBMLHeader::Init() {
 
   if (m_docType) {
     delete[] m_docType;
-    m_docType = NULL;
+    m_docType = nullptr;
   }
 
   m_docTypeVersion = 1;
@@ -596,16 +596,16 @@ Segment::Segment(IMkvReader* pReader, long long elem_start,
       m_start(start),
       m_size(size),
       m_pos(start),
-      m_pUnknownSize(0),
-      m_pSeekHead(NULL),
-      m_pInfo(NULL),
-      m_pTracks(NULL),
-      m_pCues(NULL),
-      m_pChapters(NULL),
-      m_clusters(NULL),
-      m_clusterCount(0),
-      m_clusterPreloadCount(0),
-      m_clusterSize(0) {}
+      m_pUnknownSize(),
+      m_pSeekHead(),
+      m_pInfo(),
+      m_pTracks(),
+      m_pCues(),
+      m_pChapters(),
+      m_clusters(),
+      m_clusterCount(),
+      m_clusterPreloadCount(),
+      m_clusterSize() { }
 
 Segment::~Segment() {
   const long count = m_clusterCount + m_clusterPreloadCount;
@@ -634,7 +634,7 @@ long long Segment::CreateInstance(IMkvReader* pReader, long long pos,
   assert(pReader);
   assert(pos >= 0);
 
-  pSegment = NULL;
+  pSegment = nullptr;
 
   long long total, available;
 
@@ -730,7 +730,7 @@ long long Segment::CreateInstance(IMkvReader* pReader, long long pos,
                                             // elem_size
                                             pos, size);
 
-      if (pSegment == 0)
+      if (pSegment == nullptr)
         return -1;  // generic error
 
       return 0;  // success
@@ -849,7 +849,7 @@ long long Segment::ParseHeaders() {
       m_pInfo = new (std::nothrow)
           SegmentInfo(this, pos, size, element_start, element_size);
 
-      if (m_pInfo == NULL)
+      if (m_pInfo == nullptr)
         return -1;
 
       const long status = m_pInfo->Parse();
@@ -863,7 +863,7 @@ long long Segment::ParseHeaders() {
       m_pTracks = new (std::nothrow)
           Tracks(this, pos, size, element_start, element_size);
 
-      if (m_pTracks == NULL)
+      if (m_pTracks == nullptr)
         return -1;
 
       const long status = m_pTracks->Parse();
@@ -871,19 +871,19 @@ long long Segment::ParseHeaders() {
       if (status)
         return status;
     } else if (id == 0x0C53BB6B) {  // Cues ID
-      if (m_pCues == NULL) {
+      if (m_pCues == nullptr) {
         m_pCues = new (std::nothrow)
             Cues(this, pos, size, element_start, element_size);
 
-        if (m_pCues == NULL)
+        if (m_pCues == nullptr)
           return -1;
       }
     } else if (id == 0x014D9B74) {  // SeekHead ID
-      if (m_pSeekHead == NULL) {
+      if (m_pSeekHead == nullptr) {
         m_pSeekHead = new (std::nothrow)
             SeekHead(this, pos, size, element_start, element_size);
 
-        if (m_pSeekHead == NULL)
+        if (m_pSeekHead == nullptr)
           return -1;
 
         const long status = m_pSeekHead->Parse();
@@ -892,11 +892,11 @@ long long Segment::ParseHeaders() {
           return status;
       }
     } else if (id == 0x0043A770) {  // Chapters ID
-      if (m_pChapters == NULL) {
+      if (m_pChapters == nullptr) {
         m_pChapters = new (std::nothrow)
             Chapters(this, pos, size, element_start, element_size);
 
-        if (m_pChapters == NULL)
+        if (m_pChapters == nullptr)
           return -1;
 
         const long status = m_pChapters->Parse();
@@ -911,10 +911,10 @@ long long Segment::ParseHeaders() {
 
   assert((segment_stop < 0) || (m_pos <= segment_stop));
 
-  if (m_pInfo == NULL)  // TODO: liberalize this behavior
+  if (m_pInfo == nullptr)  // TODO: liberalize this behavior
     return E_FILE_FORMAT_INVALID;
 
-  if (m_pTracks == NULL)
+  if (m_pTracks == nullptr)
     return E_FILE_FORMAT_INVALID;
 
   return 0;  // success
@@ -1043,7 +1043,7 @@ long Segment::DoLoadCluster(long long& pos, long& len) {
       if (size == unknown_size)
         return E_FILE_FORMAT_INVALID;  // TODO: liberalize
 
-      if (m_pCues == NULL) {
+      if (m_pCues == nullptr) {
         const long long element_size = (pos - idpos) + size;
 
         m_pCues = new Cues(this, pos, size, idpos, element_size);
@@ -1514,7 +1514,7 @@ long Segment::DoLoadClusterUnknownSize(long long& pos, long& len) {
   pos = start + size;
   m_pos = pos;
 
-  m_pUnknownSize = 0;
+  m_pUnknownSize = nullptr;
 
   return 2;  // continue parsing
 #endif
@@ -1625,7 +1625,7 @@ void Segment::PreloadCluster(Cluster* pCluster, ptrdiff_t idx) {
 }
 
 long Segment::Load() {
-  assert(m_clusters == NULL);
+  assert(m_clusters == nullptr);
   assert(m_clusterSize == 0);
   assert(m_clusterCount == 0);
   // assert(m_size >= 0);
@@ -1663,10 +1663,10 @@ SeekHead::SeekHead(Segment* pSegment, long long start, long long size_,
       m_size(size_),
       m_element_start(element_start),
       m_element_size(element_size),
-      m_entries(0),
-      m_entry_count(0),
-      m_void_elements(0),
-      m_void_element_count(0) {}
+      m_entries(),
+      m_entry_count(),
+      m_void_elements(),
+      m_void_element_count() { }
 
 SeekHead::~SeekHead() {
   delete[] m_entries;
@@ -1705,12 +1705,12 @@ long SeekHead::Parse() {
 
   m_entries = new (std::nothrow) Entry[entry_count];
 
-  if (m_entries == NULL)
+  if (m_entries == nullptr)
     return -1;
 
   m_void_elements = new (std::nothrow) VoidElement[void_element_count];
 
-  if (m_void_elements == NULL)
+  if (m_void_elements == nullptr)
     return -1;
 
   // now parse the entries and void elements
@@ -1769,10 +1769,10 @@ int SeekHead::GetCount() const { return m_entry_count; }
 
 const SeekHead::Entry* SeekHead::GetEntry(int idx) const {
   if (idx < 0)
-    return 0;
+    return nullptr;
 
   if (idx >= m_entry_count)
-    return 0;
+    return nullptr;
 
   return m_entries + idx;
 }
@@ -1781,10 +1781,10 @@ int SeekHead::GetVoidElementCount() const { return m_void_element_count; }
 
 const SeekHead::VoidElement* SeekHead::GetVoidElement(int idx) const {
   if (idx < 0)
-    return 0;
+    return nullptr;
 
   if (idx >= m_void_element_count)
-    return 0;
+    return nullptr;
 
   return m_void_elements + idx;
 }
@@ -2114,10 +2114,10 @@ Cues::Cues(Segment* pSegment, long long start_, long long size_,
       m_size(size_),
       m_element_start(element_start),
       m_element_size(element_size),
-      m_cue_points(NULL),
-      m_count(0),
-      m_preload_count(0),
-      m_pos(start_) {}
+      m_cue_points(),
+      m_count(),
+      m_preload_count(),
+      m_pos(start_) { }
 
 Cues::~Cues() {
   const long n = m_count + m_preload_count;
@@ -2136,7 +2136,7 @@ Cues::~Cues() {
 }
 
 long Cues::GetCount() const {
-  if (m_cue_points == NULL)
+  if (m_cue_points == nullptr)
     return -1;
 
   return m_count;  // TODO: really ignore preload count?
@@ -2295,7 +2295,7 @@ bool Cues::Find(long long time_ns, const Track* pTrack, const CuePoint*& pCP,
     if (time_ns <= pCP->GetTime(m_pSegment))
     {
         pTP = pCP->Find(pTrack);
-        return (pTP != NULL);
+        return (pTP != nullptr);
     }
 
     IMkvReader* const pReader = m_pSegment->m_pReader;
@@ -2333,7 +2333,7 @@ bool Cues::Find(long long time_ns, const Track* pTrack, const CuePoint*& pCP,
     assert(pCP);
     assert(pCP->GetTime(m_pSegment) <= time_ns);
 #else
-  if (m_cue_points == NULL)
+  if (m_cue_points == nullptr)
     return false;
 
   if (m_count == 0)
@@ -2350,7 +2350,7 @@ bool Cues::Find(long long time_ns, const Track* pTrack, const CuePoint*& pCP,
 
   if (time_ns <= pCP->GetTime(m_pSegment)) {
     pTP = pCP->Find(pTrack);
-    return (pTP != NULL);
+    return (pTP != nullptr);
   }
 
   while (i < j) {
@@ -2393,7 +2393,7 @@ bool Cues::Find(long long time_ns, const Track* pTrack, const CuePoint*& pCP,
   // that track-based structure for a matching cue point.
 
   pTP = pCP->Find(pTrack);
-  return (pTP != NULL);
+  return (pTP != nullptr);
 }
 
 #if 0
@@ -2451,16 +2451,16 @@ bool Cues::FindNext(
     assert(pCP->GetTime(m_pSegment) > time_ns);
 
     pTP = pCP->Find(pTrack);
-    return (pTP != NULL);
+    return (pTP != nullptr);
 }
 #endif
 
 const CuePoint* Cues::GetFirst() const {
-  if (m_cue_points == NULL)
-    return NULL;
+  if (m_cue_points == nullptr)
+    return nullptr;
 
   if (m_count == 0)
-    return NULL;
+    return nullptr;
 
 #if 0
     LoadCuePoint();  //init cues
@@ -2468,7 +2468,7 @@ const CuePoint* Cues::GetFirst() const {
     const size_t count = m_count + m_preload_count;
 
     if (count == 0)  //weird
-        return NULL;
+        return nullptr;
 #endif
 
   CuePoint* const* const pp = m_cue_points;
@@ -2482,11 +2482,11 @@ const CuePoint* Cues::GetFirst() const {
 }
 
 const CuePoint* Cues::GetLast() const {
-  if (m_cue_points == NULL)
-    return NULL;
+  if (m_cue_points == nullptr)
+    return nullptr;
 
   if (m_count <= 0)
-    return NULL;
+    return nullptr;
 
 #if 0
     LoadCuePoint();  //init cues
@@ -2494,7 +2494,7 @@ const CuePoint* Cues::GetLast() const {
     const size_t count = m_count + m_preload_count;
 
     if (count == 0)  //weird
-        return NULL;
+        return nullptr;
 
     const size_t index = count - 1;
 
@@ -2521,8 +2521,8 @@ const CuePoint* Cues::GetLast() const {
 }
 
 const CuePoint* Cues::GetNext(const CuePoint* pCurr) const {
-  if (pCurr == NULL)
-    return NULL;
+  if (pCurr == nullptr)
+    return nullptr;
 
   assert(pCurr->GetTimeCode() >= 0);
   assert(m_cue_points);
@@ -2541,7 +2541,7 @@ const CuePoint* Cues::GetNext(const CuePoint* pCurr) const {
     ++index;
 
     if (index >= count)
-        return NULL;
+        return nullptr;
 
     CuePoint* const pNext = pp[index];
     assert(pNext);
@@ -2558,7 +2558,7 @@ const CuePoint* Cues::GetNext(const CuePoint* pCurr) const {
   ++index;
 
   if (index >= m_count)
-    return NULL;
+    return nullptr;
 
   CuePoint* const pNext = pp[index];
   assert(pNext);
@@ -2570,11 +2570,11 @@ const CuePoint* Cues::GetNext(const CuePoint* pCurr) const {
 
 const BlockEntry* Cues::GetBlock(const CuePoint* pCP,
                                  const CuePoint::TrackPosition* pTP) const {
-  if (pCP == NULL)
-    return NULL;
+  if (pCP == nullptr)
+    return nullptr;
 
-  if (pTP == NULL)
-    return NULL;
+  if (pTP == nullptr)
+    return nullptr;
 
   return m_pSegment->GetBlock(*pCP, *pTP);
 }
@@ -2634,7 +2634,7 @@ const BlockEntry* Segment::GetBlock(const CuePoint& cp,
 
 const Cluster* Segment::FindOrPreloadCluster(long long requested_pos) {
   if (requested_pos < 0)
-    return 0;
+    return nullptr;
 
   Cluster** const ii = m_clusters;
   Cluster** i = ii;
@@ -2689,12 +2689,12 @@ const Cluster* Segment::FindOrPreloadCluster(long long requested_pos) {
 }
 
 CuePoint::CuePoint(long idx, long long pos)
-    : m_element_start(0),
-      m_element_size(0),
+    : m_element_start(),
+      m_element_size(),
       m_index(idx),
       m_timecode(-1 * pos),
-      m_track_positions(NULL),
-      m_track_positions_count(0) {
+      m_track_positions(),
+      m_track_positions_count() {
   assert(pos > 0);
 }
 
@@ -2707,7 +2707,7 @@ void CuePoint::Load(IMkvReader* pReader) {
   if (m_timecode >= 0)  // already loaded
     return;
 
-  assert(m_track_positions == NULL);
+  assert(m_track_positions == nullptr);
   assert(m_track_positions_count == 0);
 
   long long pos_ = -m_timecode;
@@ -2869,7 +2869,7 @@ const CuePoint::TrackPosition* CuePoint::Find(const Track* pTrack) const {
       return &p;
   }
 
-  return NULL;  // no matching track number found
+  return nullptr;  // no matching track number found
 }
 
 long long CuePoint::GetTimeCode() const { return m_timecode; }
@@ -2925,7 +2925,7 @@ bool Segment::DoneParsing() const {
 #endif
 
 const Cluster* Segment::GetFirst() const {
-  if ((m_clusters == NULL) || (m_clusterCount <= 0))
+  if ((m_clusters == nullptr) || (m_clusterCount <= 0))
     return &m_eos;
 
   Cluster* const pCluster = m_clusters[0];
@@ -2935,7 +2935,7 @@ const Cluster* Segment::GetFirst() const {
 }
 
 const Cluster* Segment::GetLast() const {
-  if ((m_clusters == NULL) || (m_clusterCount <= 0))
+  if ((m_clusters == nullptr) || (m_clusterCount <= 0))
     return &m_eos;
 
   const long idx = m_clusterCount - 1;
@@ -2987,12 +2987,12 @@ const Cluster* Segment::GetNext(const Cluster* pCurr) {
     assert(result == 0);
     assert((pos + len) <= stop);  // TODO
     if (result != 0)
-      return NULL;
+      return nullptr;
 
     const long long id = ReadUInt(m_pReader, pos, len);
     assert(id == 0x0F43B675);  // Cluster ID
     if (id != 0x0F43B675)
-      return NULL;
+      return nullptr;
 
     pos += len;  // consume ID
 
@@ -3022,7 +3022,7 @@ const Cluster* Segment::GetNext(const Cluster* pCurr) {
     assert(result == 0);
     assert((pos + len) <= stop);  // TODO
     if (result != 0)
-      return NULL;
+      return nullptr;
 
     const long long idpos = pos;  // pos of next (potential) cluster
 
@@ -3067,7 +3067,7 @@ const Cluster* Segment::GetNext(const Cluster* pCurr) {
   }
 
   if (off_next <= 0)
-    return 0;
+    return nullptr;
 
   Cluster** const ii = m_clusters + m_clusterCount;
   Cluster** i = ii;
@@ -3123,7 +3123,7 @@ long Segment::ParseNext(const Cluster* pCurr, const Cluster*& pResult,
   assert(!pCurr->EOS());
   assert(m_clusters);
 
-  pResult = 0;
+  pResult = nullptr;
 
   if (pCurr->m_index >= 0) {  // loaded (not merely preloaded)
     assert(m_clusters[pCurr->m_index] == pCurr);
@@ -3369,7 +3369,7 @@ long Segment::DoParseNext(const Cluster*& pResult, long long& pos, long& len) {
       const long long element_start = idpos;
       const long long element_size = element_stop - element_start;
 
-      if (m_pCues == NULL) {
+      if (m_pCues == nullptr) {
         m_pCues = new Cues(this, pos, size, element_start, element_size);
         assert(m_pCues);  // TODO
       }
@@ -3588,7 +3588,7 @@ long Segment::DoParseNext(const Cluster*& pResult, long long& pos, long& len) {
 }
 
 const Cluster* Segment::FindCluster(long long time_ns) const {
-  if ((m_clusters == NULL) || (m_clusterCount <= 0))
+  if ((m_clusters == nullptr) || (m_clusterCount <= 0))
     return &m_eos;
 
   {
@@ -3649,7 +3649,7 @@ const BlockEntry* Segment::Seek(
 {
     assert(pTrack);
 
-    if ((m_clusters == NULL) || (m_clusterCount <= 0))
+    if ((m_clusters == nullptr) || (m_clusterCount <= 0))
         return pTrack->GetEOS();
 
     Cluster** const i = m_clusters;
@@ -3798,7 +3798,7 @@ bool Segment::SearchCues(
     if (pTrack->GetType() != 1)  //not video
         return false;  //TODO: for now, just handle video stream
 
-    if (m_pCues == NULL)
+    if (m_pCues == nullptr)
         return false;
 
     if (!m_pCues->Find(time_ns, pTrack, pCP, pTP))
@@ -3839,9 +3839,9 @@ Chapters::Chapters(Segment* pSegment, long long payload_start,
       m_size(payload_size),
       m_element_start(element_start),
       m_element_size(element_size),
-      m_editions(NULL),
-      m_editions_size(0),
-      m_editions_count(0) {}
+      m_editions(),
+      m_editions_size(),
+      m_editions_count() { }
 
 Chapters::~Chapters() {
   while (m_editions_count > 0) {
@@ -3886,10 +3886,10 @@ int Chapters::GetEditionCount() const { return m_editions_count; }
 
 const Chapters::Edition* Chapters::GetEdition(int idx) const {
   if (idx < 0)
-    return NULL;
+    return nullptr;
 
   if (idx >= m_editions_count)
-    return NULL;
+    return nullptr;
 
   return m_editions + idx;
 }
@@ -3902,7 +3902,7 @@ bool Chapters::ExpandEditionsArray() {
 
   Edition* const editions = new (std::nothrow) Edition[size];
 
-  if (editions == NULL)
+  if (editions == nullptr)
     return false;
 
   for (int idx = 0; idx < m_editions_count; ++idx) {
@@ -3934,16 +3934,16 @@ int Chapters::Edition::GetAtomCount() const { return m_atoms_count; }
 
 const Chapters::Atom* Chapters::Edition::GetAtom(int index) const {
   if (index < 0)
-    return NULL;
+    return nullptr;
 
   if (index >= m_atoms_count)
-    return NULL;
+    return nullptr;
 
   return m_atoms + index;
 }
 
 void Chapters::Edition::Init() {
-  m_atoms = NULL;
+  m_atoms = nullptr;
   m_atoms_size = 0;
   m_atoms_count = 0;
 }
@@ -3961,7 +3961,7 @@ void Chapters::Edition::Clear() {
   }
 
   delete[] m_atoms;
-  m_atoms = NULL;
+  m_atoms = nullptr;
 
   m_atoms_size = 0;
 }
@@ -4015,7 +4015,7 @@ bool Chapters::Edition::ExpandAtomsArray() {
 
   Atom* const atoms = new (std::nothrow) Atom[size];
 
-  if (atoms == NULL)
+  if (atoms == nullptr)
     return false;
 
   for (int idx = 0; idx < m_atoms_count; ++idx) {
@@ -4053,21 +4053,21 @@ int Chapters::Atom::GetDisplayCount() const { return m_displays_count; }
 
 const Chapters::Display* Chapters::Atom::GetDisplay(int index) const {
   if (index < 0)
-    return NULL;
+    return nullptr;
 
   if (index >= m_displays_count)
-    return NULL;
+    return nullptr;
 
   return m_displays + index;
 }
 
 void Chapters::Atom::Init() {
-  m_string_uid = NULL;
+  m_string_uid = nullptr;
   m_uid = 0;
   m_start_timecode = -1;
   m_stop_timecode = -1;
 
-  m_displays = NULL;
+  m_displays = nullptr;
   m_displays_size = 0;
   m_displays_count = 0;
 }
@@ -4085,7 +4085,7 @@ void Chapters::Atom::ShallowCopy(Atom& rhs) const {
 
 void Chapters::Atom::Clear() {
   delete[] m_string_uid;
-  m_string_uid = NULL;
+  m_string_uid = nullptr;
 
   while (m_displays_count > 0) {
     Display& d = m_displays[--m_displays_count];
@@ -4093,7 +4093,7 @@ void Chapters::Atom::Clear() {
   }
 
   delete[] m_displays;
-  m_displays = NULL;
+  m_displays = nullptr;
 
   m_displays_size = 0;
 }
@@ -4156,17 +4156,17 @@ long Chapters::Atom::Parse(IMkvReader* pReader, long long pos, long long size) {
 
 long long Chapters::Atom::GetTime(const Chapters* pChapters,
                                   long long timecode) {
-  if (pChapters == NULL)
+  if (pChapters == nullptr)
     return -1;
 
   Segment* const pSegment = pChapters->m_pSegment;
 
-  if (pSegment == NULL)  // weird
+  if (pSegment == nullptr)  // weird
     return -1;
 
   const SegmentInfo* const pInfo = pSegment->GetInfo();
 
-  if (pInfo == NULL)
+  if (pInfo == nullptr)
     return -1;
 
   const long long timecode_scale = pInfo->GetTimeCodeScale();
@@ -4201,7 +4201,7 @@ bool Chapters::Atom::ExpandDisplaysArray() {
 
   Display* const displays = new (std::nothrow) Display[size];
 
-  if (displays == NULL)
+  if (displays == nullptr)
     return false;
 
   for (int idx = 0; idx < m_displays_count; ++idx) {
@@ -4226,9 +4226,9 @@ const char* Chapters::Display::GetLanguage() const { return m_language; }
 const char* Chapters::Display::GetCountry() const { return m_country; }
 
 void Chapters::Display::Init() {
-  m_string = NULL;
-  m_language = NULL;
-  m_country = NULL;
+  m_string = nullptr;
+  m_language = nullptr;
+  m_country = nullptr;
 }
 
 void Chapters::Display::ShallowCopy(Display& rhs) const {
@@ -4239,13 +4239,13 @@ void Chapters::Display::ShallowCopy(Display& rhs) const {
 
 void Chapters::Display::Clear() {
   delete[] m_string;
-  m_string = NULL;
+  m_string = nullptr;
 
   delete[] m_language;
-  m_language = NULL;
+  m_language = nullptr;
 
   delete[] m_country;
-  m_country = NULL;
+  m_country = nullptr;
 }
 
 long Chapters::Display::Parse(IMkvReader* pReader, long long pos,
@@ -4295,25 +4295,25 @@ SegmentInfo::SegmentInfo(Segment* pSegment, long long start, long long size_,
       m_size(size_),
       m_element_start(element_start),
       m_element_size(element_size),
-      m_pMuxingAppAsUTF8(NULL),
-      m_pWritingAppAsUTF8(NULL),
-      m_pTitleAsUTF8(NULL) {}
+      m_pMuxingAppAsUTF8(),
+      m_pWritingAppAsUTF8(),
+      m_pTitleAsUTF8() { }
 
 SegmentInfo::~SegmentInfo() {
   delete[] m_pMuxingAppAsUTF8;
-  m_pMuxingAppAsUTF8 = NULL;
+  m_pMuxingAppAsUTF8 = nullptr;
 
   delete[] m_pWritingAppAsUTF8;
-  m_pWritingAppAsUTF8 = NULL;
+  m_pWritingAppAsUTF8 = nullptr;
 
   delete[] m_pTitleAsUTF8;
-  m_pTitleAsUTF8 = NULL;
+  m_pTitleAsUTF8 = nullptr;
 }
 
 long SegmentInfo::Parse() {
-  assert(m_pMuxingAppAsUTF8 == NULL);
-  assert(m_pWritingAppAsUTF8 == NULL);
-  assert(m_pTitleAsUTF8 == NULL);
+  assert(m_pMuxingAppAsUTF8 == nullptr);
+  assert(m_pWritingAppAsUTF8 == nullptr);
+  assert(m_pTitleAsUTF8 == nullptr);
 
   IMkvReader* const pReader = m_pSegment->m_pReader;
 
@@ -4399,22 +4399,22 @@ const char* SegmentInfo::GetTitleAsUTF8() const { return m_pTitleAsUTF8; }
 ///////////////////////////////////////////////////////////////
 // ContentEncoding element
 ContentEncoding::ContentCompression::ContentCompression()
-    : algo(0), settings(NULL), settings_len(0) {}
+    : algo(), settings(), settings_len() { }
 
 ContentEncoding::ContentCompression::~ContentCompression() {
   delete[] settings;
 }
 
 ContentEncoding::ContentEncryption::ContentEncryption()
-    : algo(0),
-      key_id(NULL),
-      key_id_len(0),
-      signature(NULL),
-      signature_len(0),
-      sig_key_id(NULL),
-      sig_key_id_len(0),
-      sig_algo(0),
-      sig_hash_algo(0) {}
+    : algo(),
+      key_id(),
+      key_id_len(),
+      signature(),
+      signature_len(),
+      sig_key_id(),
+      sig_key_id_len(),
+      sig_algo(),
+      sig_hash_algo() { }
 
 ContentEncoding::ContentEncryption::~ContentEncryption() {
   delete[] key_id;
@@ -4423,13 +4423,13 @@ ContentEncoding::ContentEncryption::~ContentEncryption() {
 }
 
 ContentEncoding::ContentEncoding()
-    : compression_entries_(NULL),
-      compression_entries_end_(NULL),
-      encryption_entries_(NULL),
-      encryption_entries_end_(NULL),
-      encoding_order_(0),
+    : compression_entries_(),
+      compression_entries_end_(),
+      encryption_entries_(),
+      encryption_entries_end_(),
+      encoding_order_(),
       encoding_scope_(1),
-      encoding_type_(0) {}
+      encoding_type_() { }
 
 ContentEncoding::~ContentEncoding() {
   ContentCompression** comp_i = compression_entries_;
@@ -4459,7 +4459,7 @@ ContentEncoding::GetCompressionByIndex(unsigned long idx) const {
   assert(count >= 0);
 
   if (idx >= static_cast<unsigned long>(count))
-    return NULL;
+    return nullptr;
 
   return compression_entries_[idx];
 }
@@ -4477,7 +4477,7 @@ const ContentEncoding::ContentEncryption* ContentEncoding::GetEncryptionByIndex(
   assert(count >= 0);
 
   if (idx >= static_cast<unsigned long>(count))
-    return NULL;
+    return nullptr;
 
   return encryption_entries_[idx];
 }
@@ -4652,7 +4652,7 @@ long ContentEncoding::ParseCompressionEntry(long long start, long long size,
       const size_t buflen = static_cast<size_t>(size);
       typedef unsigned char* buf_t;
       const buf_t buf = new (std::nothrow) unsigned char[buflen];
-      if (buf == NULL)
+      if (buf == nullptr)
         return -1;
 
       const int read_status =
@@ -4700,7 +4700,7 @@ long ContentEncoding::ParseEncryptionEntry(long long start, long long size,
     } else if (id == 0x7E2) {
       // ContentEncKeyID
       delete[] encryption -> key_id;
-      encryption->key_id = NULL;
+      encryption->key_id = nullptr;
       encryption->key_id_len = 0;
 
       if (size <= 0)
@@ -4709,7 +4709,7 @@ long ContentEncoding::ParseEncryptionEntry(long long start, long long size,
       const size_t buflen = static_cast<size_t>(size);
       typedef unsigned char* buf_t;
       const buf_t buf = new (std::nothrow) unsigned char[buflen];
-      if (buf == NULL)
+      if (buf == nullptr)
         return -1;
 
       const int read_status =
@@ -4724,7 +4724,7 @@ long ContentEncoding::ParseEncryptionEntry(long long start, long long size,
     } else if (id == 0x7E3) {
       // ContentSignature
       delete[] encryption -> signature;
-      encryption->signature = NULL;
+      encryption->signature = nullptr;
       encryption->signature_len = 0;
 
       if (size <= 0)
@@ -4733,7 +4733,7 @@ long ContentEncoding::ParseEncryptionEntry(long long start, long long size,
       const size_t buflen = static_cast<size_t>(size);
       typedef unsigned char* buf_t;
       const buf_t buf = new (std::nothrow) unsigned char[buflen];
-      if (buf == NULL)
+      if (buf == nullptr)
         return -1;
 
       const int read_status =
@@ -4748,7 +4748,7 @@ long ContentEncoding::ParseEncryptionEntry(long long start, long long size,
     } else if (id == 0x7E4) {
       // ContentSigKeyID
       delete[] encryption -> sig_key_id;
-      encryption->sig_key_id = NULL;
+      encryption->sig_key_id = nullptr;
       encryption->sig_key_id_len = 0;
 
       if (size <= 0)
@@ -4757,7 +4757,7 @@ long ContentEncoding::ParseEncryptionEntry(long long start, long long size,
       const size_t buflen = static_cast<size_t>(size);
       typedef unsigned char* buf_t;
       const buf_t buf = new (std::nothrow) unsigned char[buflen];
-      if (buf == NULL)
+      if (buf == nullptr)
         return -1;
 
       const int read_status =
@@ -4794,8 +4794,8 @@ Track::Track(Segment* pSegment, long long element_start, long long element_size)
     : m_pSegment(pSegment),
       m_element_start(element_start),
       m_element_size(element_size),
-      content_encoding_entries_(NULL),
-      content_encoding_entries_end_(NULL) {}
+      content_encoding_entries_(),
+      content_encoding_entries_end_() { }
 
 Track::~Track() {
   Info& info = const_cast<Info&>(m_info);
@@ -4820,7 +4820,7 @@ long Track::Create(Segment* pSegment, const Info& info, long long element_start,
   Track* const pTrack =
       new (std::nothrow) Track(pSegment, element_start, element_size);
 
-  if (pTrack == NULL)
+  if (pTrack == nullptr)
     return -1;  // generic error
 
   const int status = info.Copy(pTrack->m_info);
@@ -4835,40 +4835,40 @@ long Track::Create(Segment* pSegment, const Info& info, long long element_start,
 }
 
 Track::Info::Info()
-    : uid(0),
-      defaultDuration(0),
-      codecDelay(0),
-      seekPreRoll(0),
-      nameAsUTF8(NULL),
-      language(NULL),
-      codecId(NULL),
-      codecNameAsUTF8(NULL),
-      codecPrivate(NULL),
-      codecPrivateSize(0),
-      lacing(false) {}
+    : uid(),
+      defaultDuration(),
+      codecDelay(),
+      seekPreRoll(),
+      nameAsUTF8(),
+      language(),
+      codecId(),
+      codecNameAsUTF8(),
+      codecPrivate(),
+      codecPrivateSize(),
+      lacing() { }
 
 Track::Info::~Info() { Clear(); }
 
 void Track::Info::Clear() {
   delete[] nameAsUTF8;
-  nameAsUTF8 = NULL;
+  nameAsUTF8 = nullptr;
 
   delete[] language;
-  language = NULL;
+  language = nullptr;
 
   delete[] codecId;
-  codecId = NULL;
+  codecId = nullptr;
 
   delete[] codecPrivate;
-  codecPrivate = NULL;
+  codecPrivate = nullptr;
   codecPrivateSize = 0;
 
   delete[] codecNameAsUTF8;
-  codecNameAsUTF8 = NULL;
+  codecNameAsUTF8 = nullptr;
 }
 
 int Track::Info::CopyStr(char* Info::*str, Info& dst_) const {
-  if (str == static_cast<char * Info::*>(NULL))
+  if (str == static_cast<char * Info::*>(nullptr))
     return -1;
 
   char*& dst = dst_.*str;
@@ -4878,14 +4878,14 @@ int Track::Info::CopyStr(char* Info::*str, Info& dst_) const {
 
   const char* const src = this->*str;
 
-  if (src == NULL)
+  if (src == nullptr)
     return 0;
 
   const size_t len = strlen(src);
 
   dst = new (std::nothrow) char[len + 1];
 
-  if (dst == NULL)
+  if (dst == nullptr)
     return -1;
 
   strcpy(dst, src);
@@ -4925,7 +4925,7 @@ int Track::Info::Copy(Info& dst) const {
     return status;
 
   if (codecPrivateSize > 0) {
-    if (codecPrivate == NULL)
+    if (codecPrivate == nullptr)
       return -1;
 
     if (dst.codecPrivate)
@@ -4936,7 +4936,7 @@ int Track::Info::Copy(Info& dst) const {
 
     dst.codecPrivate = new (std::nothrow) unsigned char[codecPrivateSize];
 
-    if (dst.codecPrivate == NULL)
+    if (dst.codecPrivate == nullptr)
       return -1;
 
     memcpy(dst.codecPrivate, codecPrivate, codecPrivateSize);
@@ -4981,7 +4981,7 @@ long Track::GetFirst(const BlockEntry*& pBlockEntry) const {
   const Cluster* pCluster = m_pSegment->GetFirst();
 
   for (int i = 0;;) {
-    if (pCluster == NULL) {
+    if (pCluster == nullptr) {
       pBlockEntry = GetEOS();
       return 1;
     }
@@ -4999,7 +4999,7 @@ long Track::GetFirst(const BlockEntry*& pBlockEntry) const {
       }
 #endif
 
-      pBlockEntry = 0;
+      pBlockEntry = nullptr;
       return E_BUFFER_NOT_FULL;
     }
 
@@ -5008,7 +5008,7 @@ long Track::GetFirst(const BlockEntry*& pBlockEntry) const {
     if (status < 0)  // error
       return status;
 
-    if (pBlockEntry == 0) {  // empty cluster
+    if (pBlockEntry == nullptr) {  // empty cluster
       pCluster = m_pSegment->GetNext(pCluster);
       continue;
     }
@@ -5029,7 +5029,7 @@ long Track::GetFirst(const BlockEntry*& pBlockEntry) const {
       if (status < 0)  // error
         return status;
 
-      if (pNextEntry == 0)
+      if (pNextEntry == nullptr)
         break;
 
       pBlockEntry = pNextEntry;
@@ -5088,7 +5088,7 @@ long Track::GetNext(const BlockEntry* pCurrEntry,
 
     pCluster = m_pSegment->GetNext(pCluster);
 
-    if (pCluster == NULL) {
+    if (pCluster == nullptr) {
       pNextEntry = GetEOS();
       return 1;
     }
@@ -5119,7 +5119,7 @@ long Track::GetNext(const BlockEntry* pCurrEntry,
       // would have to scan the each cluster as it's loaded, so that
       // would just push back the problem.)
 
-      pNextEntry = NULL;
+      pNextEntry = nullptr;
       return E_BUFFER_NOT_FULL;
     }
 
@@ -5128,7 +5128,7 @@ long Track::GetNext(const BlockEntry* pCurrEntry,
     if (status < 0)  // error
       return status;
 
-    if (pNextEntry == NULL)  // empty cluster
+    if (pNextEntry == nullptr)  // empty cluster
       continue;
 
     ++i;
@@ -5231,7 +5231,7 @@ long Track::Seek(long long time_ns, const BlockEntry*& pResult) const {
 
     pResult = pCluster->GetEntry(this);
 
-    if ((pResult != 0) && !pResult->EOS())
+    if ((pResult != nullptr) && !pResult->EOS())
       return 0;
 
     // landed on empty cluster (no entries)
@@ -5248,7 +5248,7 @@ const ContentEncoding* Track::GetContentEncodingByIndex(
   assert(count >= 0);
 
   if (idx >= static_cast<unsigned long>(count))
-    return NULL;
+    return nullptr;
 
   return content_encoding_entries_[idx];
 }
@@ -5325,11 +5325,11 @@ long Track::ParseContentEncodingsEntry(long long start, long long size) {
   return 0;
 }
 
-Track::EOSBlock::EOSBlock() : BlockEntry(NULL, LONG_MIN) {}
+Track::EOSBlock::EOSBlock() : BlockEntry(nullptr, LONG_MIN) { }
 
 BlockEntry::Kind Track::EOSBlock::GetKind() const { return kBlockEOS; }
 
-const Block* Track::EOSBlock::GetBlock() const { return NULL; }
+const Block* Track::EOSBlock::GetBlock() const { return nullptr; }
 
 VideoTrack::VideoTrack(Segment* pSegment, long long element_start,
                        long long element_size)
@@ -5396,7 +5396,7 @@ long VideoTrack::Parse(Segment* pSegment, const Info& info,
   VideoTrack* const pTrack =
       new (std::nothrow) VideoTrack(pSegment, element_start, element_size);
 
-  if (pTrack == NULL)
+  if (pTrack == nullptr)
     return -1;  // generic error
 
   const int status = info.Copy(pTrack->m_info);
@@ -5486,7 +5486,7 @@ long VideoTrack::Seek(long long time_ns, const BlockEntry*& pResult) const {
 
   pResult = pCluster->GetEntry(this, time_ns);
 
-  if ((pResult != 0) && !pResult->EOS())  // found a keyframe
+  if ((pResult != nullptr) && !pResult->EOS())  // found a keyframe
     return 0;
 
   while (lo != i) {
@@ -5505,7 +5505,7 @@ long VideoTrack::Seek(long long time_ns, const BlockEntry*& pResult) const {
     pResult = pCluster->GetEntry(this, time_ns);
 #endif
 
-    if ((pResult != 0) && !pResult->EOS())
+    if ((pResult != nullptr) && !pResult->EOS())
       return 0;
   }
 
@@ -5587,7 +5587,7 @@ long AudioTrack::Parse(Segment* pSegment, const Info& info,
   AudioTrack* const pTrack =
       new (std::nothrow) AudioTrack(pSegment, element_start, element_size);
 
-  if (pTrack == NULL)
+  if (pTrack == nullptr)
     return -1;  // generic error
 
   const int status = info.Copy(pTrack->m_info);
@@ -5618,12 +5618,12 @@ Tracks::Tracks(Segment* pSegment, long long start, long long size_,
       m_size(size_),
       m_element_start(element_start),
       m_element_size(element_size),
-      m_trackEntries(NULL),
-      m_trackEntriesEnd(NULL) {}
+      m_trackEntries(),
+      m_trackEntriesEnd() { }
 
 long Tracks::Parse() {
-  assert(m_trackEntries == NULL);
-  assert(m_trackEntriesEnd == NULL);
+  assert(m_trackEntries == nullptr);
+  assert(m_trackEntriesEnd == nullptr);
 
   const long long stop = m_start + m_size;
   IMkvReader* const pReader = m_pSegment->m_pReader;
@@ -5656,7 +5656,7 @@ long Tracks::Parse() {
 
   m_trackEntries = new (std::nothrow) Track* [count];
 
-  if (m_trackEntries == NULL)
+  if (m_trackEntries == nullptr)
     return -1;
 
   m_trackEntriesEnd = m_trackEntries;
@@ -5684,7 +5684,7 @@ long Tracks::Parse() {
 
     if (id == 0x2E) {  // TrackEntry ID
       Track*& pTrack = *m_trackEntriesEnd;
-      pTrack = NULL;
+      pTrack = nullptr;
 
       const long status = ParseTrackEntry(pos, payload_size, element_start,
                                           element_size, pTrack);
@@ -5832,7 +5832,7 @@ long Tracks::ParseTrackEntry(long long track_start, long long track_size,
         return E_FILE_FORMAT_INVALID;
     } else if (id == 0x23A2) {  // Codec Private
       delete[] info.codecPrivate;
-      info.codecPrivate = NULL;
+      info.codecPrivate = nullptr;
       info.codecPrivateSize = 0;
 
       const size_t buflen = static_cast<size_t>(size);
@@ -5842,7 +5842,7 @@ long Tracks::ParseTrackEntry(long long track_start, long long track_size,
 
         const buf_t buf = new (std::nothrow) unsigned char[buflen];
 
-        if (buf == NULL)
+        if (buf == nullptr)
           return -1;
 
         const int status = pReader->Read(pos, static_cast<long>(buflen), buf);
@@ -5893,7 +5893,7 @@ long Tracks::ParseTrackEntry(long long track_start, long long track_size,
 
     info.settings = v;
 
-    VideoTrack* pTrack = NULL;
+    VideoTrack* pTrack = nullptr;
 
     const long status = VideoTrack::Parse(m_pSegment, info, element_start,
                                           element_size, pTrack);
@@ -5915,7 +5915,7 @@ long Tracks::ParseTrackEntry(long long track_start, long long track_size,
 
     info.settings = a;
 
-    AudioTrack* pTrack = NULL;
+    AudioTrack* pTrack = nullptr;
 
     const long status = AudioTrack::Parse(m_pSegment, info, element_start,
                                           element_size, pTrack);
@@ -5943,7 +5943,7 @@ long Tracks::ParseTrackEntry(long long track_start, long long track_size,
     info.settings.start = -1;
     info.settings.size = 0;
 
-    Track* pTrack = NULL;
+    Track* pTrack = nullptr;
 
     const long status =
         Track::Create(m_pSegment, info, element_start, element_size, pTrack);
@@ -5972,7 +5972,7 @@ Tracks::~Tracks() {
 
 const Track* Tracks::GetTrackByNumber(long tn) const {
   if (tn < 0)
-    return NULL;
+    return nullptr;
 
   Track** i = m_trackEntries;
   Track** const j = m_trackEntriesEnd;
@@ -5980,21 +5980,21 @@ const Track* Tracks::GetTrackByNumber(long tn) const {
   while (i != j) {
     Track* const pTrack = *i++;
 
-    if (pTrack == NULL)
+    if (pTrack == nullptr)
       continue;
 
     if (tn == pTrack->GetNumber())
       return pTrack;
   }
 
-  return NULL;  // not found
+  return nullptr;  // not found
 }
 
 const Track* Tracks::GetTrackByIndex(unsigned long idx) const {
   const ptrdiff_t count = m_trackEntriesEnd - m_trackEntries;
 
   if (idx >= static_cast<unsigned long>(count))
-    return NULL;
+    return nullptr;
 
   return m_trackEntries[idx];
 }
@@ -6517,7 +6517,7 @@ long Cluster::ParseSimpleBlock(long long block_size, long long& pos,
 
     const Track* const pTrack = pTracks->GetTrackByNumber(tn);
 
-    if (pTrack == NULL)
+    if (pTrack == nullptr)
         return E_FILE_FORMAT_INVALID;
 #endif
 
@@ -6750,7 +6750,7 @@ long Cluster::ParseBlockGroup(long long payload_size, long long& pos,
 
         const Track* const pTrack = pTracks->GetTrackByNumber(tn);
 
-        if (pTrack == NULL)
+        if (pTrack == nullptr)
             return E_FILE_FORMAT_INVALID;
 #endif
 
@@ -6815,7 +6815,7 @@ long Cluster::ParseBlockGroup(long long payload_size, long long& pos,
 long Cluster::GetEntry(long index, const mkvparser::BlockEntry*& pEntry) const {
   assert(m_pos >= m_element_start);
 
-  pEntry = NULL;
+  pEntry = nullptr;
 
   if (index < 0)
     return -1;  // generic error
@@ -6861,16 +6861,16 @@ Cluster* Cluster::Create(Segment* pSegment, long idx, long long off)
 }
 
 Cluster::Cluster()
-    : m_pSegment(NULL),
-      m_element_start(0),
-      m_index(0),
-      m_pos(0),
-      m_element_size(0),
-      m_timecode(0),
-      m_entries(NULL),
-      m_entries_size(0),
-      m_entries_count(0)  // means "no entries"
-{}
+    : m_pSegment(),
+      m_element_start(),
+      m_index(),
+      m_pos(),
+      m_element_size(),
+      m_timecode(),
+      m_entries(),
+      m_entries_size(),
+      m_entries_count()  // means "no entries"
+{ }
 
 Cluster::Cluster(Segment* pSegment, long idx, long long element_start
                  /* long long element_size */)
@@ -6880,10 +6880,10 @@ Cluster::Cluster(Segment* pSegment, long idx, long long element_start
       m_pos(element_start),
       m_element_size(-1 /* element_size */),
       m_timecode(-1),
-      m_entries(NULL),
-      m_entries_size(0),
+      m_entries(),
+      m_entries_size(),
       m_entries_count(-1)  // means "has not been parsed yet"
-{}
+{ }
 
 Cluster::~Cluster() {
   if (m_entries_count <= 0)
@@ -6902,7 +6902,7 @@ Cluster::~Cluster() {
   delete[] m_entries;
 }
 
-bool Cluster::EOS() const { return (m_pSegment == NULL); }
+bool Cluster::EOS() const { return (m_pSegment == nullptr); }
 
 long Cluster::GetIndex() const { return m_index; }
 
@@ -7224,7 +7224,7 @@ long long Cluster::GetFirstTime() const {
   if (status < 0)  // error
     return status;
 
-  if (pEntry == NULL)  // empty cluster
+  if (pEntry == nullptr)  // empty cluster
     return GetTime();
 
   const Block* const pBlock = pEntry->GetBlock();
@@ -7241,7 +7241,7 @@ long long Cluster::GetLastTime() const {
   if (status < 0)  // error
     return status;
 
-  if (pEntry == NULL)  // empty cluster
+  if (pEntry == nullptr)  // empty cluster
     return GetTime();
 
   const Block* const pBlock = pEntry->GetBlock();
@@ -7256,7 +7256,7 @@ long Cluster::CreateBlock(long long id,
   assert((id == 0x20) || (id == 0x23));  // BlockGroup or SimpleBlock
 
   if (m_entries_count < 0) {  // haven't parsed anything yet
-    assert(m_entries == NULL);
+    assert(m_entries == nullptr);
     assert(m_entries_size == 0);
 
     m_entries_size = 1024;
@@ -7377,7 +7377,7 @@ long Cluster::CreateBlockGroup(long long start_offset, long long size,
   pEntry = new (std::nothrow)
       BlockGroup(this, idx, bpos, bsize, prev, next, duration, discard_padding);
 
-  if (pEntry == NULL)
+  if (pEntry == nullptr)
     return -1;  // generic error
 
   BlockGroup* const p = static_cast<BlockGroup*>(pEntry);
@@ -7390,7 +7390,7 @@ long Cluster::CreateBlockGroup(long long start_offset, long long size,
   }
 
   delete pEntry;
-  pEntry = 0;
+  pEntry = nullptr;
 
   return status;
 }
@@ -7408,7 +7408,7 @@ long Cluster::CreateSimpleBlock(long long st, long long sz) {
 
   pEntry = new (std::nothrow) SimpleBlock(this, idx, st, sz);
 
-  if (pEntry == NULL)
+  if (pEntry == nullptr)
     return -1;  // generic error
 
   SimpleBlock* const p = static_cast<SimpleBlock*>(pEntry);
@@ -7421,7 +7421,7 @@ long Cluster::CreateSimpleBlock(long long st, long long sz) {
   }
 
   delete pEntry;
-  pEntry = 0;
+  pEntry = nullptr;
 
   return status;
 }
@@ -7434,12 +7434,12 @@ long Cluster::GetFirst(const BlockEntry*& pFirst) const {
     const long status = Parse(pos, len);
 
     if (status < 0) {  // error
-      pFirst = NULL;
+      pFirst = nullptr;
       return status;
     }
 
     if (m_entries_count <= 0) {  // empty cluster
-      pFirst = NULL;
+      pFirst = nullptr;
       return 0;
     }
   }
@@ -7460,7 +7460,7 @@ long Cluster::GetLast(const BlockEntry*& pLast) const {
     const long status = Parse(pos, len);
 
     if (status < 0) {  // error
-      pLast = NULL;
+      pLast = nullptr;
       return status;
     }
 
@@ -7469,7 +7469,7 @@ long Cluster::GetLast(const BlockEntry*& pLast) const {
   }
 
   if (m_entries_count <= 0) {
-    pLast = NULL;
+    pLast = nullptr;
     return 0;
   }
 
@@ -7501,12 +7501,12 @@ long Cluster::GetNext(const BlockEntry* pCurr, const BlockEntry*& pNext) const {
     const long status = Parse(pos, len);
 
     if (status < 0) {  // error
-      pNext = NULL;
+      pNext = nullptr;
       return status;
     }
 
     if (status > 0) {
-      pNext = NULL;
+      pNext = nullptr;
       return 0;
     }
 
@@ -7527,15 +7527,15 @@ const BlockEntry* Cluster::GetEntry(const Track* pTrack,
                                     long long time_ns) const {
   assert(pTrack);
 
-  if (m_pSegment == NULL)  // this is the special EOS cluster
+  if (m_pSegment == nullptr)  // this is the special EOS cluster
     return pTrack->GetEOS();
 
 #if 0
 
     LoadBlockEntries();
 
-    if ((m_entries == NULL) || (m_entries_count <= 0))
-        return NULL;  //return EOS here?
+    if ((m_entries == nullptr) || (m_entries_count <= 0))
+        return nullptr;  //return EOS here?
 
     const BlockEntry* pResult = pTrack->GetEOS();
 
@@ -7597,7 +7597,7 @@ const BlockEntry* Cluster::GetEntry(const Track* pTrack,
         return pResult;
 
       if (status < 0)  // should never happen
-        return 0;
+        return nullptr;
 
       assert(m_entries);
       assert(index < m_entries_count);
@@ -7646,13 +7646,13 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
 
     LoadBlockEntries();
 
-    if (m_entries == NULL)
-        return NULL;
+    if (m_entries == nullptr)
+        return nullptr;
 
     const long long count = m_entries_count;
 
     if (count <= 0)
-        return NULL;
+        return nullptr;
 
     const long long tc = cp.GetTimeCode();
 
@@ -7702,7 +7702,7 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
             continue;
 
         if (tc_ > tc)
-            return NULL;
+            return nullptr;
 
         const Tracks* const pTracks = m_pSegment->GetTracks();
         assert(pTracks);
@@ -7710,8 +7710,8 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
         const long tn = static_cast<long>(tp.m_track);
         const Track* const pTrack = pTracks->GetTrackByNumber(tn);
 
-        if (pTrack == NULL)
-            return NULL;
+        if (pTrack == nullptr)
+            return nullptr;
 
         const long long type = pTrack->GetType();
 
@@ -7719,15 +7719,15 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
             return pEntry;
 
         if (type != 1)  //not video
-            return NULL;
+            return nullptr;
 
         if (!pBlock->IsKey())
-            return NULL;
+            return nullptr;
 
         return pEntry;
     }
 
-    return NULL;
+    return nullptr;
 
 #else
 
@@ -7744,10 +7744,10 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
       const long status = Parse(pos, len);
 
       if (status < 0)  // TODO: can this happen?
-        return NULL;
+        return nullptr;
 
       if (status > 0)  // nothing remains to be parsed
-        return NULL;
+        return nullptr;
     }
 
     const BlockEntry* const pEntry = m_entries[index];
@@ -7773,10 +7773,10 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
       const long status = Parse(pos, len);
 
       if (status < 0)  // TODO: can this happen?
-        return NULL;
+        return nullptr;
 
       if (status > 0)  // nothing remains to be parsed
-        return NULL;
+        return nullptr;
 
       assert(m_entries);
       assert(index < m_entries_count);
@@ -7802,7 +7802,7 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
     }
 
     if (tc_ > tc)
-      return NULL;
+      return nullptr;
 
     const Tracks* const pTracks = m_pSegment->GetTracks();
     assert(pTracks);
@@ -7810,8 +7810,8 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
     const long tn = static_cast<long>(tp.m_track);
     const Track* const pTrack = pTracks->GetTrackByNumber(tn);
 
-    if (pTrack == NULL)
-      return NULL;
+    if (pTrack == nullptr)
+      return nullptr;
 
     const long long type = pTrack->GetType();
 
@@ -7819,10 +7819,10 @@ const BlockEntry* Cluster::GetEntry(const CuePoint& cp,
       return pEntry;
 
     if (type != 1)  // not video
-      return NULL;
+      return nullptr;
 
     if (!pBlock->IsKey())
-      return NULL;
+      return nullptr;
 
     return pEntry;
   }
@@ -7835,12 +7835,12 @@ const BlockEntry* Cluster::GetMaxKey(const VideoTrack* pTrack) const
 {
     assert(pTrack);
 
-    if (m_pSegment == NULL)  //EOS
+    if (m_pSegment == nullptr)  //EOS
         return pTrack->GetEOS();
 
     LoadBlockEntries();
 
-    if ((m_entries == NULL) || (m_entries_count <= 0))
+    if ((m_entries == nullptr) || (m_entries_count <= 0))
         return pTrack->GetEOS();
 
     BlockEntry** i = m_entries + m_entries_count;
@@ -7917,7 +7917,7 @@ void BlockGroup::ParseBlock(long long start, long long size)
     //TODO: the Matroska spec says you have multiple blocks within the
     //same block group, with blocks ranked by priority (the flag bits).
 
-    assert(m_pBlock == NULL);
+    assert(m_pBlock == nullptr);
     m_pBlock = pBlock;
 }
 #endif
@@ -7935,26 +7935,26 @@ long long BlockGroup::GetDurationTimeCode() const { return m_duration; }
 Block::Block(long long start, long long size_, long long discard_padding)
     : m_start(start),
       m_size(size_),
-      m_track(0),
+      m_track(),
       m_timecode(-1),
-      m_flags(0),
-      m_frames(NULL),
+      m_flags(),
+      m_frames(),
       m_frame_count(-1),
-      m_discard_padding(discard_padding) {}
+      m_discard_padding(discard_padding) { }
 
 Block::~Block() { delete[] m_frames; }
 
 long Block::Parse(const Cluster* pCluster) {
-  if (pCluster == NULL)
+  if (pCluster == nullptr)
     return -1;
 
-  if (pCluster->m_pSegment == NULL)
+  if (pCluster->m_pSegment == nullptr)
     return -1;
 
   assert(m_start >= 0);
   assert(m_size >= 0);
   assert(m_track <= 0);
-  assert(m_frames == NULL);
+  assert(m_frames == nullptr);
   assert(m_frame_count <= 0);
 
   long long pos = m_start;
@@ -8275,7 +8275,7 @@ long Block::Parse(const Cluster* pCluster) {
 }
 
 long long Block::GetTimeCode(const Cluster* pCluster) const {
-  if (pCluster == 0)
+  if (pCluster == nullptr)
     return m_timecode;
 
   const long long tc0 = pCluster->GetTimeCode();

@@ -67,7 +67,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_PASS_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return PASS_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -226,7 +226,7 @@ Animatable* plPassMtl::SubAnim(int i)
         break;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plPassMtl::NumParamBlocks()
@@ -250,7 +250,7 @@ IParamBlock2* plPassMtl::GetParamBlockByID(BlockID id)
     else if (fAnimPB->ID() == id)
         return fAnimPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plPassMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -273,7 +273,7 @@ Texmap* plPassMtl::GetSubTexmap(int i)
     else if (i == 1)
         return fLayersPB->GetTexmap(kPassLayTop);
 
-    return NULL;
+    return nullptr;
 }
 
 void plPassMtl::SetSubTexmap(int i, Texmap *m)

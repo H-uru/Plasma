@@ -504,7 +504,7 @@ ST::string cyMisc::GetClientName(pyKey &avKey)
 
 PyObject* cyMisc::GetAvatarKeyFromClientID(int clientID)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
 
     if (clientID == plNetClientMgr::GetInstance()->GetPlayerID())
     {
@@ -1689,7 +1689,7 @@ void cyMisc::NotifyOffererPublicLinkAccepted(uint32_t offerer)
 
 void cyMisc::ToggleAvatarClickability(bool on)
 {
-    plInputIfaceMgrMsg* pMsg = 0;
+    plInputIfaceMgrMsg* pMsg = nullptr;
     if (on)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIEnableAvatarClickable);
     else
@@ -1814,7 +1814,7 @@ void cyMisc::TransferParticlesToKey(pyKey& fromKey, pyKey& toKey, int numParticl
     
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
-    plParticleTransferMsg* pMsg = new plParticleTransferMsg(nil, avMod->GetKey(), 0, frKey, numParticles);
+    plParticleTransferMsg* pMsg = new plParticleTransferMsg(nil, avMod->GetKey(), nullptr, frKey, numParticles);
     pMsg->SetBCastFlag(plMessage::kNetPropagate);
     pMsg->SetBCastFlag(plMessage::kNetForce);
     pMsg->Send();
@@ -1849,7 +1849,7 @@ void cyMisc::SetParticleDissentPoint(float x, float y, float z, pyKey& particles
     plParticleEffect *flock = sys->GetEffect(plParticleFlockEffect::Index());
     if (flock)
     {
-        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetDissentPoint, x, y, z))->Send();
+        (new plParticleFlockMsg(nil, flock->GetKey(), nullptr, plParticleFlockMsg::kFlockCmdSetDissentPoint, x, y, z))->Send();
     }
 }
 
@@ -1883,7 +1883,7 @@ void cyMisc::SetParticleOffset(float x, float y, float z, pyKey& particles)
     plParticleEffect *flock = sys->GetEffect(plParticleFlockEffect::Index());
     if (flock)
     {
-        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetOffset, x, y, z))->Send();
+        (new plParticleFlockMsg(nil, flock->GetKey(), nullptr, plParticleFlockMsg::kFlockCmdSetOffset, x, y, z))->Send();
     }
 }
 
@@ -1916,7 +1916,8 @@ void cyMisc::KillParticles(float time, float pct, pyKey& particles)
     plParticleEffect *flock = sys->GetEffect(plParticleFlockEffect::Index());
     if (flock)
     {
-        plParticleKillMsg* pMsg = new plParticleKillMsg(nil, frKey, 0, pct, time, plParticleKillMsg::kParticleKillPercentage | plParticleKillMsg::kParticleKillImmortalOnly);
+        plParticleKillMsg* pMsg = new plParticleKillMsg(nil, frKey, nullptr, pct, time,
+                                            plParticleKillMsg::kParticleKillPercentage | plParticleKillMsg::kParticleKillImmortalOnly);
         pMsg->SetBCastFlag(plMessage::kNetPropagate);
         pMsg->SetBCastFlag(plMessage::kNetForce);
         pMsg->SetBCastFlag(plMessage::kPropagateToChildren);

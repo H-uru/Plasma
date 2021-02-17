@@ -418,7 +418,7 @@ void plAutoUIBase::AddPickGrassComponentButton(int16_t id, const char *scriptNam
 
 BOOL CALLBACK plAutoUIBase::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    plAutoUIBase *pthis = NULL;
+    plAutoUIBase *pthis = nullptr;
     if (msg == WM_INITDIALOG)
     {
         SetWindowLong(hDlg, GWL_USERDATA, lParam);
@@ -477,7 +477,7 @@ BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 if (index >= 0)
                     rollup->SetPageDlgHeight(index, yOffset);
                 
-                InvalidateRect(fhDlg, NULL, TRUE);
+                InvalidateRect(fhDlg, nullptr, TRUE);
             }
             return TRUE;
         }
@@ -523,7 +523,7 @@ BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 if (index >= 0)
                     rollup->SetPageDlgHeight(index, yOffset);
 
-                InvalidateRect(fhDlg, NULL, TRUE);
+                InvalidateRect(fhDlg, nullptr, TRUE);
             }
         }
 

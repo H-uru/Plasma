@@ -59,7 +59,7 @@ void plResCollector::Collect()
     ip->ChooseDirectory(ip->GetMAXHWnd(),
                         "Choose a folder to copy the resources to",
                         path,
-                        NULL);
+                        nullptr);
     if (!strcmp(path, ""))
         return;
 
@@ -81,7 +81,7 @@ void plResCollector::Collect()
         ST::string texName = *it;
 
         char outpath[MAX_PATH], name[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
-        _splitpath(texName.c_str(), NULL, NULL, name, ext);
+        _splitpath(texName.c_str(), nullptr, nullptr, name, ext);
         strcat(name, ext);
 
         if (bar.Update(name))

@@ -515,10 +515,10 @@ void plVirtualCam1::PushThirdPerson()
 //
 void plVirtualCam1::StartInterpPanLimits()
 {
-    plCameraBrain1* pBrain = 0;
+    plCameraBrain1* pBrain = nullptr;
     if (fPythonOverride && fPythonOverride->GetBrain())
         pBrain = fPythonOverride->GetBrain();
-    if (pBrain == 0 && GetCurrentStackCamera() && GetCurrentStackCamera()->GetBrain())
+    if (pBrain == nullptr && GetCurrentStackCamera() && GetCurrentStackCamera()->GetBrain())
         pBrain = GetCurrentStackCamera()->GetBrain();
 
     if (pBrain)
@@ -1783,7 +1783,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     }
 
     plCameraModifier1* pCam = GetCurrentStackCamera();
-    plCameraBrain1* pBrain = 0;
+    plCameraBrain1* pBrain = nullptr;
 
 #ifdef STATUS_LOG
     if (fPrevCam->GetKey() && pCam->GetKey())

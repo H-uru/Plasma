@@ -91,7 +91,7 @@ plDXTextFont::plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device ) : plTex
     fDevice = device;
     fD3DTexture = nil;
 
-    fOldStateBlock = fTextStateBlock = 0;
+    fOldStateBlock = fTextStateBlock = nullptr;
 }
 
 plDXTextFont::~plDXTextFont()
@@ -113,11 +113,11 @@ void    plDXTextFont::ICreateTexture( uint16_t *data )
     hsAssert( fTextureWidth <= d3dCaps.MaxTextureWidth, "Cannot initialize DX font--texture size too big" );
 
     // Create our texture object
-    hr = fDevice->CreateTexture( fTextureWidth, fTextureHeight, 1, 0, D3DFMT_A4R4G4B4, D3DPOOL_MANAGED, &fD3DTexture, NULL );
+    hr = fDevice->CreateTexture(fTextureWidth, fTextureHeight, 1, 0, D3DFMT_A4R4G4B4, D3DPOOL_MANAGED, &fD3DTexture, nullptr);
     hsAssert( !FAILED( hr ), "Cannot create D3D texture" );
 
     // Lock the texture and write our values out
-    fD3DTexture->LockRect( 0, &lockInfo, 0, 0 );
+    fD3DTexture->LockRect(0, &lockInfo, nullptr, 0);
     memcpy( lockInfo.pBits, data, fTextureWidth * fTextureHeight * sizeof( uint16_t ) );
     fD3DTexture->UnlockRect( 0 );
 }
@@ -125,7 +125,7 @@ void    plDXTextFont::ICreateTexture( uint16_t *data )
 void plDXTextFont::CreateShared(IDirect3DDevice9* device)
 {
     if( FAILED( device->CreateVertexBuffer( sizeof( plFontVertex ) * kNumVertsInBuffer,
-        D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &fBuffer, NULL ) ) )
+        D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &fBuffer, nullptr)))
     {
         hsAssert( false, "CreateVertexBuffer() call failed!" );
     }
@@ -194,7 +194,7 @@ void    plDXTextFont::DestroyObjects()
     ReleaseObject(fTextStateBlock);
     ReleaseObject(fD3DTexture);
 
-    fOldStateBlock = fTextStateBlock = 0;
+    fOldStateBlock = fTextStateBlock = nullptr;
     fD3DTexture = nil;
     fInitialized = false;
 }
@@ -254,7 +254,7 @@ void    plDXTextFont::IDrawLines( uint32_t count, plFontVertex *array )
     if( count == 0 || array == nil )
         return;
 
-    fDevice->SetVertexShader(NULL);
+    fDevice->SetVertexShader(nullptr);
     fDevice->SetFVF(kFVF);
     fDevice->SetStreamSource(0, fBuffer, 0, sizeof(plFontVertex));
     fDevice->DrawPrimitiveUP( D3DPT_LINELIST, count, (const void *)array, sizeof( plFontVertex ) );
@@ -270,7 +270,7 @@ void    plDXTextFont::FlushDraws()
 
     if( fBufferCursor > 0 )
     {
-        fDevice->SetVertexShader( NULL );
+        fDevice->SetVertexShader(nullptr);
         fDevice->SetFVF(kFVF);
         fDevice->SetStreamSource( 0, fBuffer, 0, sizeof( plFontVertex ) );
         fDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, fBufferCursor / 3 );

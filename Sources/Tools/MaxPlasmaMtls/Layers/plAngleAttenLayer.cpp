@@ -133,7 +133,7 @@ static ParamBlockDesc2 gAngleAttenParamBlk
 );
 
 plAngleAttenLayer::plAngleAttenLayer() :
-    fParmsPB(NULL),
+    fParmsPB(),
     fIValid(NEVER),
     fCosTransp0(0),
     fCosOpaque0(0),
@@ -204,7 +204,7 @@ RefTargetHandle plAngleAttenLayer::GetReference(int i)
     switch (i)
     {
         case kRefAngles:        return fParmsPB;
-        default:                return NULL;
+        default:                return nullptr;
     }
 }
 
@@ -230,7 +230,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fParmsPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -239,7 +239,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlockByID(BlockID id)
     if (fParmsPB->ID() == id)
         return fParmsPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -263,7 +263,7 @@ Animatable* plAngleAttenLayer::SubAnim(int i)
     switch (i)
     {
         case kRefAngles:        return fParmsPB;
-        default: return NULL;
+        default:                return nullptr;
     }
 }
 
@@ -463,7 +463,7 @@ DWORD plAngleAttenLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker
 
 const char *plAngleAttenLayer::GetTextureName( int which )
 {
-    return NULL;
+    return nullptr;
 }
 
 int plAngleAttenLayer::GetLoClamp()

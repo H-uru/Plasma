@@ -73,10 +73,10 @@ PYTHON_METHOD_DEFINITION(ptAvatar, netForce, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, oneShot, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     float duration;
     char usePhysics;
-    char* animName = NULL;
+    char* animName = nullptr;
     char drivable, reversable;
     if (!PyArg_ParseTuple(args, "Ofbsbb", &keyObj, &duration, &usePhysics, &animName, &drivable, &reversable))
     {
@@ -96,7 +96,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, oneShot, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, runBehavior, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     char netForce;
     char netProp = 1;
     if (!PyArg_ParseTuple(args, "Ob|b", &keyObj, &netForce, &netProp))
@@ -117,8 +117,8 @@ PYTHON_METHOD_DEFINITION(ptAvatar, runBehavior, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, runBehaviorSetNotify, args)
 {
-    PyObject* behKeyObj = NULL;
-    PyObject* replyKeyObj = NULL;
+    PyObject* behKeyObj = nullptr;
+    PyObject* replyKeyObj = nullptr;
     char netForce;
     char netProp = 1;
     if (!PyArg_ParseTuple(args, "OOb|b", &behKeyObj, &replyKeyObj, &netForce, &netProp))
@@ -159,7 +159,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, runCoopAnim, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, nextStage, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     float transTime;
     char setTime;
     float newTime;
@@ -182,7 +182,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, nextStage, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, previousStage, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     float transTime;
     char setTime;
     float newTime;
@@ -205,7 +205,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, previousStage, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, gotoStage, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     long stage;
     float transTime;
     char setTime;
@@ -275,7 +275,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getAvatarClothingList)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getMatchingClothingItem, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     if (!PyArg_ParseTuple(args, "s", &clothingName))
     {
         PyErr_SetString(PyExc_TypeError, "getMatchingClothingItem expects a string");
@@ -288,7 +288,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getMatchingClothingItem, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, wearClothingItem, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     char update = 1;
     if (!PyArg_ParseTuple(args, "s|b", &clothingName, &update))
     {
@@ -302,7 +302,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, wearClothingItem, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, removeClothingItem, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     char update = 1;
     if (!PyArg_ParseTuple(args, "s|b", &clothingName, &update))
     {
@@ -316,8 +316,8 @@ PYTHON_METHOD_DEFINITION(ptAvatar, removeClothingItem, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItem, args)
 {
-    char* clothingName = NULL;
-    PyObject* tintObj = NULL;
+    char* clothingName = nullptr;
+    PyObject* tintObj = nullptr;
     char update = 1;
     if (!PyArg_ParseTuple(args, "sO|b", &clothingName, &tintObj, &update))
     {
@@ -337,8 +337,8 @@ PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItem, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItemLayer, args)
 {
-    char* clothingName = NULL;
-    PyObject* tintObj = NULL;
+    char* clothingName = nullptr;
+    PyObject* tintObj = nullptr;
     unsigned char layer;
     char update = 1;
     if (!PyArg_ParseTuple(args, "sOB|b", &clothingName, &tintObj, &layer, &update))
@@ -359,7 +359,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItemLayer, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getTintClothingItem, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     unsigned char layer = 1;
     if (!PyArg_ParseTuple(args, "s|B", &clothingName, &layer))
     {
@@ -373,7 +373,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getTintClothingItem, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, tintSkin, args)
 {
-    PyObject* tintObj = NULL;
+    PyObject* tintObj = nullptr;
     char update = 1;
     if (!PyArg_ParseTuple(args, "O|b", &tintObj, &update))
     {
@@ -398,7 +398,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getTintSkin)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, enterSubWorld, args)
 {
-    PyObject* sceneObj = NULL;
+    PyObject* sceneObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &sceneObj))
     {
         PyErr_SetString(PyExc_TypeError, "enterSubWorld expects a ptSceneObject");
@@ -419,7 +419,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptAvatar, exitSubWorld, ExitSubWorld)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, setMorph, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     unsigned char layer;
     float value;
     if (!PyArg_ParseTuple(args, "sBf", &clothingName, &layer, &value))
@@ -435,7 +435,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, setMorph, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getMorph, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     unsigned char layer;
     if (!PyArg_ParseTuple(args, "sB", &clothingName, &layer))
     {
@@ -493,7 +493,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getUniqueMeshList, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getAllWithSameMesh, args)
 {
-    char* clothingName = NULL;
+    char* clothingName = nullptr;
     if (!PyArg_ParseTuple(args, "s", &clothingName))
     {
         PyErr_SetString(PyExc_TypeError, "getAllWithSameMesh expects a string");
@@ -519,9 +519,9 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getWardrobeClothingList)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, addWardrobeClothingItem, args)
 {
-    char* clothingName = NULL;
-    PyObject* tint1Obj = NULL;
-    PyObject* tint2Obj = NULL;
+    char* clothingName = nullptr;
+    PyObject* tint1Obj = nullptr;
+    PyObject* tint2Obj = nullptr;
     if (!PyArg_ParseTuple(args, "sOO", &clothingName, &tint1Obj, &tint2Obj))
     {
         PyErr_SetString(PyExc_TypeError, "addWardrobeClothingItem expects a string and two ptColor objects");
@@ -542,7 +542,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, addWardrobeClothingItem, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, setReplyKey, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "setReplyKey expects a ptKey object");
@@ -566,7 +566,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getCurrentMode)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, registerForBehaviorNotify, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "registerForBehaviorNotify expects a ptKey object");
@@ -585,7 +585,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, registerForBehaviorNotify, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, unRegisterForBehaviorNotify, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "unRegisterForBehaviorNotify expects a ptKey object");
@@ -604,7 +604,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, unRegisterForBehaviorNotify, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, playSimpleAnimation, args)
 {
-    char* animName = NULL;
+    char* animName = nullptr;
     if (!PyArg_ParseTuple(args, "s", &animName))
     {
         PyErr_SetString(PyExc_TypeError, "playSimpleAnimation expects a string object");
@@ -701,7 +701,7 @@ PYTHON_END_METHODS_TABLE;
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorKey,stage,loopCount,netForce\nThis will set the loop count for a particular stage in a multistage behavior")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     long stage, loopCount;
     char netForce;
     if (!PyArg_ParseTuple(args, "Ollb", &keyObj, &stage, &loopCount, &netForce))
@@ -722,7 +722,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorK
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtChangeAvatar, args, "Params: gender\nChange the local avatar's gender (or clothing type)")
 {
-    char* gender = NULL;
+    char* gender = nullptr;
     if (!PyArg_ParseTuple(args, "s", &gender))
     {
         PyErr_SetString(PyExc_TypeError, "PtChangeAvatar expects a string");
@@ -736,7 +736,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtChangeAvatar, args, "Params: gender\nChange th
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePlayerName, args, "Params: name\nChange the local avatar's name")
 {
-    char* name = NULL;
+    char* name = nullptr;
     if (!PyArg_ParseTuple(args, "s", &name))
     {
         PyErr_SetString(PyExc_TypeError, "PtChangePlayerName expects a string");
@@ -750,7 +750,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePlayerName, args, "Params: name\nChange 
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtEmoteAvatar, args, "Params: emote\nPlay an emote on the local avatar (netpropagated)")
 {
-    char* emote = NULL;
+    char* emote = nullptr;
     if (!PyArg_ParseTuple(args, "s", &emote))
     {
         PyErr_SetString(PyExc_TypeError, "PtEmoteAvatar expects a string");

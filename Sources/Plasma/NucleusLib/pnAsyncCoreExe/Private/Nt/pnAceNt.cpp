@@ -314,17 +314,17 @@ void NtInitialize () {
 
     // create a cleanup event
     s_waitEvent = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) 0,
+        nullptr,
         true,           // manual reset
         false,          // initial state off
-        (LPCTSTR) nil   // name
+        nullptr         // name
     );
     if (!s_waitEvent)
         ErrorAssert(__LINE__, __FILE__, "CreateEvent {#x}", GetLastError());        
 
     // create IO completion port
-    if (0 == (s_ioPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0)))
-        ErrorAssert(__LINE__, __FILE__, "CreateIoCompletionPort {#x}", GetLastError());        
+    if (s_ioPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0); s_ioPort == nullptr)
+        ErrorAssert(__LINE__, __FILE__, "CreateIoCompletionPort {#x}", GetLastError());
 
     // calculate number of IO worker threads to create
     if (!s_pageSizeMask) {
@@ -367,7 +367,7 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         // Post a completion notification to worker threads to wake them up
         long thread;
         for (thread = 0; thread < s_ioThreadCount; thread++)
-            PostQueuedCompletionStatus(s_ioPort, 0, 0, 0);
+            PostQueuedCompletionStatus(s_ioPort, 0, 0, nullptr);
 
         // Close each thread
         for (thread = 0; thread < s_ioThreadCount; thread++) {
@@ -379,12 +379,12 @@ void NtDestroy (unsigned exitThreadWaitMs) {
 
         // Cleanup port
         CloseHandle(s_ioPort);
-        s_ioPort = 0;
+        s_ioPort = nullptr;
     }
 
     if (s_waitEvent) {
         CloseHandle(s_waitEvent);
-        s_waitEvent = 0;
+        s_waitEvent = nullptr;
     }
 
     INtSocketDestroy();

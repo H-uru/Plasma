@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRequestLOSScreen, args, "Params: selfKey,ID,xPos,yPos,distance,what,reportType\nRequest a LOS check from a point on the screen")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     long id;
     float xPos, yPos, distance;
     int what, reportType;
@@ -75,7 +75,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtRequestLOSScreen, args, "Params: selfKey,ID,xP
 PYTHON_GLOBAL_METHOD_DEFINITION(PtKillParticles, args, "Params: timeRemaining,pctToKill,particleSystem\nTells particleSystem to kill pctToKill percent of its particles")
 {
     float timeRemaining, pctToKill;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "ffO", &timeRemaining, &pctToKill, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtKillParticles expects two floats and a ptKey");
@@ -93,7 +93,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtKillParticles, args, "Params: timeRemaining,pc
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNumParticles, args, "Params: key\nKey is the key of scene object host to particle system")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetNumParticles expects a ptKey");
@@ -111,7 +111,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNumParticles, args, "Params: key\nKey is th
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetParticleOffset, args, "Params: x,y,z,particlesys\nSets the particlesys particle system's offset")
 {
     float x,y,z;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "fffO", &x, &y, &z, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetParticleOffset expects three floats and a ptKey");
@@ -129,7 +129,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetParticleOffset, args, "Params: x,y,z,partic
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a\n Key is the key of scene object host to light. Name is the name of the light to manipulate")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     ST::string name;
     float r,g,b,a;
     if (!PyArg_ParseTuple(args, "OO&ffff", &keyObj, PyUnicode_STStringConverter, &name, &r, &g, &b, &a))
@@ -149,7 +149,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightAnimStart, args, "Params: key,name,start\n Key is the key of scene object host to light, start is a bool. Name is the name of the light to manipulate")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     ST::string name;
     char start;
     if (!PyArg_ParseTuple(args, "OO&b", &keyObj, PyUnicode_STStringConverter, &name, &start))
@@ -189,7 +189,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsEnterChatModeKeyBound, "Returns wheth
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtShootBulletFromScreen, args, "Params: selfkey, xPos, yPos, radius, range\nShoots a bullet from a position on the screen")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     float xPos, yPos, radius, range;
     if (!PyArg_ParseTuple(args, "Offff", &keyObj, &xPos, &yPos, &radius, &range))
     {
@@ -208,8 +208,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtShootBulletFromScreen, args, "Params: selfkey,
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtShootBulletFromObject, args, "Params: selfkey, gunObj, radius, range\nShoots a bullet from an object")
 {
-    PyObject* selfKeyObj = NULL;
-    PyObject* gunSceneObj = NULL;
+    PyObject* selfKeyObj = nullptr;
+    PyObject* gunSceneObj = nullptr;
     float radius, range;
     if (!PyArg_ParseTuple(args, "OOff", &selfKeyObj, &gunSceneObj, &radius, &range))
     {
@@ -231,7 +231,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetPublicAgeList, args, "Params: ageName, cbOb
             "cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)")
 {
     char* ageName;
-    PyObject* cbObject = NULL;
+    PyObject* cbObject = nullptr;
     if (!PyArg_ParseTuple(args, "s|O", &ageName, &cbObject))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetPublicAgeList expects a string and an optional object with a gotPublicAgeList() method");
@@ -244,8 +244,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetPublicAgeList, args, "Params: ageName, cbOb
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePublicAge, args, "Params: ageInfo, cbObject=None\nCreate a public instance of the given age.\n"
             "cbObject, if supplied should have a member called publicAgeCreated(self,ageInfo)")
 {
-    PyObject* ageInfoObj = NULL;
-    PyObject* cbObject = NULL;
+    PyObject* ageInfoObj = nullptr;
+    PyObject* cbObject = nullptr;
     if (!PyArg_ParseTuple(args, "O|O", &ageInfoObj, &cbObject))
     {
         PyErr_SetString(PyExc_TypeError, "PtCreatePublicAge expects a ptAgeInfoStruct object and an optional object with a publicAgeCreated() method");
@@ -265,7 +265,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtRemovePublicAge, args, "Params: ageInstanceGui
             "cbObject, if supplied should have a member called publicAgeRemoved(self,ageInstanceGuid)")
 {
     char* ageInstanceGUID;
-    PyObject* cbObject = NULL;
+    PyObject* cbObject = nullptr;
     if (!PyArg_ParseTuple(args, "s|O", &ageInstanceGUID, &cbObject))
     {
         PyErr_SetString(PyExc_TypeError, "PtRemovePublicAge expects a string and an optional object with a publicAgeRemoved() method");
@@ -451,7 +451,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetAlarm, args, "Params: secs, cbObject, cbCon
             "cbObject is a python object with the method onAlarm(int context)\ncbContext is an integer.")
 {
     float secs;
-    PyObject* cbObject = NULL;
+    PyObject* cbObject = nullptr;
     unsigned long cbContext;
     if (!PyArg_ParseTuple(args, "fOl", &secs, &cbObject, &cbContext))
     {
@@ -477,7 +477,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSaveScreenShot, args, "Params: fileName,width=
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtStartScreenCapture, args, "Params: selfKey,width=800,height=600\nStarts a capture of the screen")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     unsigned short width = 800, height = 600;
     if (!PyArg_ParseTuple(args, "O|hh", &keyObj, &width, &height))
     {
@@ -497,7 +497,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtStartScreenCapture, args, "Params: selfKey,wid
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIGZMarkerMsg, args, "Params: markerNumber,sender\nSame as PtSendKIMessageInt except 'sender' could get a notify message back\n")
 {
     long markerNumber;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "lO", &markerNumber, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendKIGZMarkerMsg expects a long and a ptKey");
@@ -516,7 +516,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIGZMarkerMsg, args, "Params: markerNumber
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIRegisterImagerMsg, args, "Params: imagerName, sender\nSends a message to the KI to register the specified imager")
 {
     char* name;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "sO", &name, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendKIRegisterImagerMsg expects a string and a ptKey");
@@ -534,7 +534,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIRegisterImagerMsg, args, "Params: imager
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtWearMaintainerSuit, args, "Params: key,wearOrNot\nWears or removes the maintainer suit of clothes")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     char wearOrNot;
     if (!PyArg_ParseTuple(args, "Ob", &keyObj, &wearOrNot))
     {
@@ -553,7 +553,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWearMaintainerSuit, args, "Params: key,wearOrN
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtWearDefaultClothing, args, "Params: key\nForces the avatar to wear the default clothing set")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey");
@@ -576,8 +576,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeTimeOfDayPercent, "Returns the cu
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCheckVisLOS, args, "Params: startPoint,endPoint\nDoes LOS check from start to end")
 {
-    PyObject* startPointObj = NULL;
-    PyObject* endPointObj = NULL;
+    PyObject* startPointObj = nullptr;
+    PyObject* endPointObj = nullptr;
     if (!PyArg_ParseTuple(args, "OO", &startPointObj, &endPointObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtCheckVisLOS expects two ptPoint3 objects");
@@ -672,7 +672,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetGraphicsOptions, args, "Params: width, heig
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorNetFlags, args, "Params: behKey, netForce, netProp\nSets net flags on the associated behavior")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     char netForce;
     char netProp;
     if (!PyArg_ParseTuple(args, "Obb", &keyObj, &netForce, &netProp))

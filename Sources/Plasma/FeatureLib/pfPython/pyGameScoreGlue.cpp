@@ -386,7 +386,7 @@ PLASMA_DEFAULT_TYPE(ptGameScore, "Plasma Game Score");
 // required functions for PyObject interoperability
 PyObject* pyGameScore::New(pfGameScore* score)
 {
-    ptGameScore* newObj = (ptGameScore*)ptGameScore_type.tp_new(&ptGameScore_type, NULL, NULL);
+    ptGameScore* newObj = (ptGameScore*)ptGameScore_type.tp_new(&ptGameScore_type, nullptr, nullptr);
     hsRefCnt_SafeUnRef(newObj->fThis->fScore);
     newObj->fThis->fScore = score;
     hsRefCnt_SafeRef(newObj->fThis->fScore);

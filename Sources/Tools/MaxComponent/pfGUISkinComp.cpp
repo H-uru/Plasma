@@ -213,10 +213,10 @@ void    pfGUISkinEditProc::IRefreshImageBuffer()
 
 void    pfGUISkinEditProc::IInitDblBuffer()
 {
-    if( fDblDC == NULL )
+    if (fDblDC == nullptr)
     {
         int     width, height;
-        HDC     desk = GetDC( NULL );
+        HDC     desk = GetDC(nullptr);
 
         plLayerTex *layer = fComp->GetSkinBitmap();
         PBBitmap *pbBMap = layer->GetPBBitmap();
@@ -240,7 +240,7 @@ void    pfGUISkinEditProc::IInitDblBuffer()
         fImageBitmap = CreateCompatibleBitmap( desk/*fDblDC*/, width, height );
         SelectObject( fImageDC, fImageBitmap );
 
-        ReleaseDC( NULL, desk );
+        ReleaseDC(nullptr, desk);
 
         fDblWidth = width;
         fDblHeight = height;
@@ -252,16 +252,16 @@ void    pfGUISkinEditProc::IInitDblBuffer()
 
 void    pfGUISkinEditProc::IKillDblBuffer()
 {
-    if( fDblDC != NULL )
+    if (fDblDC != nullptr)
     {
-        SelectObject( fDblDC, (HBITMAP)NULL );
+        SelectObject(fDblDC, nullptr);
         DeleteObject( fDblBitmap );
         DeleteDC( fDblDC );
     }
 
-    if( fImageDC != NULL )
+    if (fImageDC != nullptr)
     {
-        SelectObject( fImageDC, (HBITMAP)NULL );
+        SelectObject(fImageDC, nullptr);
         DeleteObject( fImageBitmap );
         DeleteDC( fImageDC );
     }
@@ -552,7 +552,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
                 BeginPaint( hDlg, &pInfo );
                 hDC = (HDC)pInfo.hdc;
 
-                if( fDblDC == NULL )
+                if (fDblDC == nullptr)
                     IInitDblBuffer();
 
                 int width = fDblWidth;

@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if !HS_BUILD_FOR_WIN32
 #include <errno.h>
-#define INVALID_HANDLE_VALUE 0
+#define INVALID_HANDLE_VALUE nullptr
 #endif
 
 // our default encryption key
@@ -67,10 +67,10 @@ static const int kMaxBufferedFileSize = 10*1024;
 const char plSecureStream::kKeyFilename[] = "encryption.key";
 
 plSecureStream::plSecureStream(bool deleteOnExit, uint32_t* key) :
-fRef(INVALID_HANDLE_VALUE),
-fActualFileSize(0),
-fBufferedStream(false),
-fRAMStream(nil),
+fRef(),
+fActualFileSize(),
+fBufferedStream(),
+fRAMStream(),
 fOpenMode(kOpenFail),
 fDeleteOnExit(deleteOnExit)
 {
@@ -81,10 +81,10 @@ fDeleteOnExit(deleteOnExit)
 }
 
 plSecureStream::plSecureStream(hsStream* base, uint32_t* key) :
-fRef(INVALID_HANDLE_VALUE),
-fActualFileSize(0),
-fBufferedStream(false),
-fRAMStream(nil),
+fRef(),
+fActualFileSize(),
+fBufferedStream(),
+fRAMStream(),
 fOpenMode(kOpenFail),
 fDeleteOnExit(false)
 {
@@ -161,20 +161,20 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
             fRef = CreateFileW(name.WideString().data(),
                                 GENERIC_READ,   // open for reading
                                 0,              // no one can open the file until we're done
-                                NULL,           // default security
+                                nullptr,        // default security
                                 OPEN_EXISTING,  // only open existing files (no creation)
                                 FILE_FLAG_DELETE_ON_CLOSE,  // delete the file from disk when we close the handle
-                                NULL);          // no template
+                                nullptr);       // no template
         }
         else
         {
             fRef = CreateFileW(name.WideString().data(),
                                 GENERIC_READ,   // open for reading
                                 0,              // no one can open the file until we're done
-                                NULL,           // default security
+                                nullptr,        // default security
                                 OPEN_EXISTING,  // only open existing files (no creation)
                                 FILE_ATTRIBUTE_NORMAL,  // normal file attributes
-                                NULL);          // no template
+                                nullptr);       // no template
         }
 
         fPosition = 0;
@@ -191,7 +191,7 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
         }
 
         DWORD numBytesRead;
-        ReadFile(fRef, &fActualFileSize, sizeof(uint32_t), &numBytesRead, NULL);
+        ReadFile(fRef, &fActualFileSize, sizeof(uint32_t), &numBytesRead, nullptr);
 #elif HS_BUILD_FOR_UNIX
         fRef = plFileSystem::Open(name, "rb");
         fPosition = 0;
@@ -308,7 +308,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
         return 0;
     uint32_t numItems;
 #if HS_BUILD_FOR_WIN32
-    bool success = (ReadFile(fRef, buffer, bytes, (LPDWORD)&numItems, NULL) != 0);
+    bool success = (ReadFile(fRef, buffer, bytes, (LPDWORD)&numItems, nullptr) != 0);
 #elif HS_BUILD_FOR_UNIX
     numItems = fread(buffer, bytes, 1, fRef);
     bool success = numItems != 0;
@@ -377,7 +377,7 @@ void plSecureStream::Skip(uint32_t delta)
         fBytesRead += delta;
         fPosition += delta;
 #if HS_BUILD_FOR_WIN32
-        SetFilePointer(fRef, delta, 0, FILE_CURRENT);
+        SetFilePointer(fRef, delta, nullptr, FILE_CURRENT);
 #elif HS_BUILD_FOR_UNIX
         fseek(fRef, delta, SEEK_CUR);
 #endif
@@ -396,7 +396,7 @@ void plSecureStream::Rewind()
         fBytesRead = 0;
         fPosition = 0;
 #if HS_BUILD_FOR_WIN32
-        SetFilePointer(fRef, kFileStartOffset, 0, FILE_BEGIN);
+        SetFilePointer(fRef, kFileStartOffset, nullptr, FILE_BEGIN);
 #elif HS_BUILD_FOR_UNIX
         fseek(fRef, kFileStartOffset, SEEK_SET);
 #endif
@@ -413,7 +413,7 @@ void plSecureStream::FastFwd()
     else if (fRef != INVALID_HANDLE_VALUE)
     {
 #if HS_BUILD_FOR_WIN32
-        fBytesRead = fPosition = SetFilePointer(fRef, kFileStartOffset + fActualFileSize, 0, FILE_BEGIN);
+        fBytesRead = fPosition = SetFilePointer(fRef, kFileStartOffset + fActualFileSize, nullptr, FILE_BEGIN);
 #elif HS_BUILD_FOR_UNIX
         fBytesRead = fPosition = fseek(fRef, 0, SEEK_END);
 #endif
@@ -631,7 +631,7 @@ bool plSecureStream::ICheckMagicString(hsFD fp)
     char magicString[kMagicStringLen+1];
 #ifdef HS_BUILD_FOR_WIN32
     DWORD numread;
-    ReadFile(fp, &magicString, kMagicStringLen, &numread, NULL);
+    ReadFile(fp, &magicString, kMagicStringLen, &numread, nullptr);
 #elif HS_BUILD_FOR_UNIX
     fread(&magicString, kMagicStringLen, 1, fp);
 #endif
@@ -647,10 +647,10 @@ bool plSecureStream::IsSecureFile(const plFileName& fileName)
     fp = CreateFileW(fileName.WideString().data(),
         GENERIC_READ,   // open for reading
         0,              // no one can open the file until we're done
-        NULL,           // default security
+        nullptr,        // default security
         OPEN_EXISTING,  // only open existing files (no creation)
         FILE_ATTRIBUTE_NORMAL,  // normal file attributes
-        NULL);          // no template
+        nullptr);       // no template
 #elif HS_BUILD_FOR_UNIX
     fp = plFileSystem::Open(fileName, "rb");
 #endif

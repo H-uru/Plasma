@@ -56,10 +56,10 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
     // we have two sets of arguments we can use, hence the generic PyObject* pointers
     // argument set 1: pyKey, string, uint32_t, float
     // argument set 2: string, uint32_t
-    PyObject* firstObj = NULL; // can be a pyKey or a string
-    PyObject* secondObj = NULL; // can be a string or a uint32_t
-    PyObject* thirdObj = NULL; // uint32_t
-    PyObject* fourthObj = NULL; // float
+    PyObject* firstObj = nullptr; // can be a pyKey or a string
+    PyObject* secondObj = nullptr; // can be a string or a uint32_t
+    PyObject* thirdObj = nullptr; // uint32_t
+    PyObject* fourthObj = nullptr; // float
     if (!PyArg_ParseTuple(args, "OO|OO", &firstObj, &secondObj, &thirdObj, &fourthObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
@@ -81,7 +81,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 
         key = pyKey::ConvertFrom(firstObj)->getKey();
         name = PyUnicode_AsSTString(secondObj);
-        pid = PyNumber_AsSsize_t(thirdObj, NULL);
+        pid = PyNumber_AsSsize_t(thirdObj, nullptr);
         distSeq = (float)PyFloat_AsDouble(fourthObj);
     } else if (PyUnicode_Check(firstObj)) {
         name = PyUnicode_AsSTString(firstObj);
@@ -91,7 +91,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
             PYTHON_RETURN_INIT_ERROR;
         }
 
-        pid = PyNumber_AsSsize_t(secondObj, NULL);
+        pid = PyNumber_AsSsize_t(secondObj, nullptr);
     } else {
         PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
         PYTHON_RETURN_INIT_ERROR;
@@ -188,21 +188,21 @@ PLASMA_CUSTOM_TYPE(ptPlayer, "Params: avkey,name,playerID,distanceSq\nAnd option
 // required functions for PyObject interoperability
 PyObject *pyPlayer::New(pyKey& avKey, const ST::string& pname, uint32_t pid, float distsq)
 {
-    ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
+    ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
     newObj->fThis->Init(avKey.getKey(), pname, pid, distsq);
     return (PyObject*)newObj;
 }
 
 PyObject *pyPlayer::New(plKey avKey, const ST::string& pname, uint32_t pid, float distsq)
 {
-    ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
+    ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
     newObj->fThis->Init(avKey, pname, pid, distsq);
     return (PyObject*)newObj;
 }
 
 PyObject *pyPlayer::New(const ST::string& pname, uint32_t pid)
 {
-    ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
+    ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
     newObj->fThis->Init(nil, pname, pid, -1);
     return (PyObject*)newObj;
 }

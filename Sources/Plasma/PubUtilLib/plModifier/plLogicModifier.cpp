@@ -156,7 +156,7 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
     plFakeOutMsg* pFakeMsg = plFakeOutMsg::ConvertNoRef(msg);
     if (pFakeMsg)
     {
-        plCursorChangeMsg* pMsg = 0;
+        plCursorChangeMsg* pMsg = nullptr;
         if ((VerifyConditions(pFakeMsg) && fMyCursor) && !Disabled())
             pMsg = new plCursorChangeMsg(fMyCursor, 1);
         else

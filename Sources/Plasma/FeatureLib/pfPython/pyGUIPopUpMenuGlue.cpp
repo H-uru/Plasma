@@ -53,10 +53,10 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIPopUpMenu)
 
 PYTHON_INIT_DEFINITION(ptGUIPopUpMenu, args, keywords)
 {
-    PyObject* arg1 = NULL;
-    PyObject* arg2 = NULL;
-    PyObject* arg3 = NULL;
-    PyObject* arg4 = NULL;
+    PyObject* arg1 = nullptr;
+    PyObject* arg2 = nullptr;
+    PyObject* arg3 = nullptr;
+    PyObject* arg4 = nullptr;
     if (!PyArg_ParseTuple(args, "O|OOO", &arg1, &arg2, &arg3, &arg4))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects one of three argument lists:\n"
@@ -325,7 +325,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItemW, args)
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
 {
     char* name;
-    PyObject* subMenuObj = NULL;
+    PyObject* subMenuObj = nullptr;
     if (!PyArg_ParseTuple(args, "sO", &name, &subMenuObj))
     {
         PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a string and a ptGUIPopUpMenu");
@@ -344,7 +344,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItemW, args)
 {
     wchar_t* name;
-    PyObject* subMenuObj = NULL;
+    PyObject* subMenuObj = nullptr;
     if (!PyArg_ParseTuple(args, "uO", &name, &subMenuObj))
     {
         PyErr_SetString(PyExc_TypeError, "addSubMenuItemW expects a unicode string and a ptGUIPopUpMenu");
@@ -406,7 +406,7 @@ PYTHON_CLASS_NEW_IMPL(ptGUIPopUpMenu, pyGUIPopUpMenu)
 
 PyObject *pyGUIPopUpMenu::New(pyKey& gckey)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     newObj->fThis->fBuiltMenu = nil;
     return (PyObject*)newObj;
@@ -414,7 +414,7 @@ PyObject *pyGUIPopUpMenu::New(pyKey& gckey)
 
 PyObject *pyGUIPopUpMenu::New(plKey objkey)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     newObj->fThis->fBuiltMenu = nil;
     return (PyObject*)newObj;
@@ -422,14 +422,14 @@ PyObject *pyGUIPopUpMenu::New(plKey objkey)
 
 PyObject *pyGUIPopUpMenu::New(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->setup(name, screenOriginX, screenOriginY, destLoc);
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIPopUpMenu::New(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
 {
-    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, NULL, NULL);
+    ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->setup(name, parent, screenOriginX, screenOriginY);
     return (PyObject*)newObj;
 }

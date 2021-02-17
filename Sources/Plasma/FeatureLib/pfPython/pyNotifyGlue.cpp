@@ -55,7 +55,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptNotify)
 
 PYTHON_INIT_DEFINITION(ptNotify, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -75,7 +75,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptNotify, clearReceivers, ClearReceivers)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addReceiver, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addReceiver expects a ptKey");
@@ -142,8 +142,8 @@ PYTHON_METHOD_DEFINITION(ptNotify, setType, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addCollisionEvent, args)
 {
     char enterFlag;
-    PyObject* hitterKey = NULL;
-    PyObject* hitteeKey = NULL;
+    PyObject* hitterKey = nullptr;
+    PyObject* hitteeKey = nullptr;
     if (!PyArg_ParseTuple(args, "bOO", &enterFlag, &hitterKey, &hitteeKey))
     {
         PyErr_SetString(PyExc_TypeError, "addCollisionEvent expects a boolean, and two ptKeys");
@@ -163,9 +163,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addCollisionEvent, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addPickEvent, args)
 {
     char enabledFlag;
-    PyObject* pickerKey = NULL;
-    PyObject* pickeeKey = NULL;
-    PyObject* hitPointObj = NULL;
+    PyObject* pickerKey = nullptr;
+    PyObject* pickeeKey = nullptr;
+    PyObject* hitPointObj = nullptr;
     if (!PyArg_ParseTuple(args, "bOOO", &enabledFlag, &pickerKey, &pickeeKey, &hitPointObj))
     {
         PyErr_SetString(PyExc_TypeError, "addPickEvent expects a boolean, two ptKeys and a ptPoint3");
@@ -199,14 +199,14 @@ PYTHON_METHOD_DEFINITION(ptNotify, addControlKeyEvent, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
 {
     char* name;
-    PyObject* number = NULL;
+    PyObject* number = nullptr;
     if (!PyArg_ParseTuple(args, "s|O", &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and optional number");
         PYTHON_RETURN_ERROR;
     }
 
-    if (number == NULL || number == Py_None)
+    if (number == nullptr || number == Py_None)
         self->fThis->AddVarNull(name);
     else if (PyLong_Check(number))
         self->fThis->AddVarNumber(name, static_cast<int32_t>(PyLong_AsLong(number)));
@@ -280,7 +280,7 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNull, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addVarKey, args)
 {
     char* name;
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "sO", &name, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addVarKey expects a string and a ptKey");
@@ -299,8 +299,8 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarKey, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addFacingEvent, args)
 {
     char enabledFlag;
-    PyObject* facerKey = NULL;
-    PyObject* faceeKey = NULL;
+    PyObject* facerKey = nullptr;
+    PyObject* faceeKey = nullptr;
     float dot;
     if (!PyArg_ParseTuple(args, "bOOf", &enabledFlag, &facerKey, &faceeKey, &dot))
     {
@@ -321,16 +321,16 @@ PYTHON_METHOD_DEFINITION(ptNotify, addFacingEvent, args)
 PYTHON_METHOD_DEFINITION(ptNotify, addContainerEvent, args)
 {
     char enterFlag;
-    PyObject* containerKey = NULL;
-    PyObject* containedKey = NULL;
+    PyObject* containerKey = nullptr;
+    PyObject* containedKey = nullptr;
     if (!PyArg_ParseTuple(args, "bOO", &enterFlag, &containerKey, &containedKey))
     {
         PyErr_SetString(PyExc_TypeError, "addContainerEvent expects a boolean, and two ptKeys");
         PYTHON_RETURN_ERROR;
     }
 
-    pyKey* container = NULL;
-    pyKey* contained = NULL;
+    pyKey* container = nullptr;
+    pyKey* contained = nullptr;
     
     if (containerKey != Py_None)
     {
@@ -433,7 +433,7 @@ PLASMA_DEFAULT_TYPE(ptNotify, "Params: selfKey\nCreates a Notify message\n"
 // required functions for PyObject interoperability
 PyObject *pyNotify::New(const pyKey& selfkey)
 {
-    ptNotify *newObj = (ptNotify*)ptNotify_type.tp_new(&ptNotify_type, NULL, NULL);
+    ptNotify *newObj = (ptNotify*)ptNotify_type.tp_new(&ptNotify_type, nullptr, nullptr);
     newObj->fThis->SetSender(selfkey);
     return (PyObject*)newObj;
 }

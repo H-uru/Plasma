@@ -108,7 +108,7 @@ BOOL plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             int numCleared = ClearTextureIds();
             char buf[256];
             sprintf(buf, "Cleared %d texture ids", numCleared);
-            MessageBox(NULL, buf, "AssetMan Clear", MB_OK);
+            MessageBox(nullptr, buf, "AssetMan Clear", MB_OK);
             return TRUE;
         }
         break;

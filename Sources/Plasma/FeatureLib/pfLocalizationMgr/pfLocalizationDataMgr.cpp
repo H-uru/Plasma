@@ -373,7 +373,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
     char Buff[FILEBUFFERSIZE];
 
-    fParser = XML_ParserCreate_MM(NULL, &gHeapAllocator, NULL);
+    fParser = XML_ParserCreate_MM(nullptr, &gHeapAllocator, nullptr);
     if (!fParser)
     {
         AddError("ERROR: Couldn't allocate memory for parser");

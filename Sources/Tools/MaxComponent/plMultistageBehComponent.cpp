@@ -116,7 +116,7 @@ public:
     RefTargetHandle Clone(RemapDir &remap) override;
 };
 
-HWND plMultistageBehComponent::fDlg = NULL;
+HWND plMultistageBehComponent::fDlg = nullptr;
 int plMultistageBehComponent::fCurStage = -1;
 
 //
@@ -277,7 +277,7 @@ void plMultistageBehComponent::DestroyRollups()
     if (fDlg)
     {
         GetCOREInterface()->DeleteRollupPage(fDlg);
-        fDlg = NULL;
+        fDlg = nullptr;
     }
 
     plComponent::DestroyRollups();

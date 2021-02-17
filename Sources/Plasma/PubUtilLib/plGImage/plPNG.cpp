@@ -83,7 +83,7 @@ plPNG& plPNG::Instance()
 
 plMipmap* plPNG::IRead(hsStream* inStream)
 {
-    plMipmap* newMipmap = NULL;
+    plMipmap* newMipmap = nullptr;
     png_structp png_ptr;
     png_infop info_ptr;
     png_infop end_info;
@@ -95,7 +95,7 @@ plMipmap* plPNG::IRead(hsStream* inStream)
 
         if (!png_sig_cmp(sig, 0, PNGSIGSIZE)) {
             //  Allocate required structs
-            png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+            png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
             if (!png_ptr) {
                 throw false;
@@ -104,14 +104,14 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             info_ptr = png_create_info_struct(png_ptr);
 
             if (!info_ptr) {
-                png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+                png_destroy_read_struct(&png_ptr, nullptr, nullptr);
                 throw false;
             }
 
             end_info = png_create_info_struct(png_ptr);
 
             if (!end_info) {
-                png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+                png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
                 throw false;
             }
 
@@ -198,7 +198,7 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST
 
     try {
         //  Allocate required structs
-        png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+        png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
         if (!png_ptr) {
             throw false;
@@ -207,12 +207,12 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST
         png_infop info_ptr = png_create_info_struct(png_ptr);
 
         if (!info_ptr) {
-            png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+            png_destroy_write_struct(&png_ptr, nullptr);
             throw false;
         }
 
         //  Assign delegate function for writing to hsStream
-        png_set_write_fn(png_ptr, (png_voidp)outStream, pngWriteDelegate, NULL);
+        png_set_write_fn(png_ptr, (png_voidp)outStream, pngWriteDelegate, nullptr);
         png_set_IHDR(png_ptr, info_ptr, source->GetWidth(), source->GetHeight(), 8, PNG_COLOR_TYPE_RGB_ALPHA,
                      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
         // Invert color byte-order as used by plMipmap for DirectX

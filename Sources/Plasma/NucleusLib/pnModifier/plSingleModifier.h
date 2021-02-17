@@ -70,7 +70,7 @@ public:
     size_t GetNumTargets() const override { return 1; }
     plSceneObject* GetTarget(size_t iTarg) const override { return fTarget; }
     void AddTarget(plSceneObject* so) override { SetTarget(so); }
-    void RemoveTarget(plSceneObject* so) override { fTarget = 0; }
+    void RemoveTarget(plSceneObject* so) override { fTarget = nullptr; }
 
 
     virtual plSceneObject* GetTarget() const { return fTarget; }

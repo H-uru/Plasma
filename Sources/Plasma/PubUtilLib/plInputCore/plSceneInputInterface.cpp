@@ -273,7 +273,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                         else
                             plDetectorLog::Special("{}: LOS hit", pObj->GetKeyName());
                     }
-                    const plInterfaceInfoModifier* pMod = 0;
+                    const plInterfaceInfoModifier* pMod = nullptr;
                     for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
                     {
                         if (fBookMode == kNotOffering) // when sharing a book we don't care about other clickables
@@ -1077,7 +1077,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
 {
     // tell everyone else to be able to / not to be able to select this avatar
-    plInputIfaceMgrMsg* pMsg = 0;
+    plInputIfaceMgrMsg* pMsg = nullptr;
     if (!add)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else
@@ -1138,7 +1138,7 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool 
 
 void plSceneInputInterface::ISendAvatarDisabledNotification(bool enabled)
 {
-    plInputIfaceMgrMsg* pMsg = 0;
+    plInputIfaceMgrMsg* pMsg = nullptr;
     if (enabled)
         pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableAvatarClickable);
     else

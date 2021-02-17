@@ -129,7 +129,7 @@ NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
     {
-        if (_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
+        if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, msg))
             DebugBreakAlways();
     } else
 #endif // _MSC_VER

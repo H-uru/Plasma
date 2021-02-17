@@ -53,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUISkin)
 
 PYTHON_INIT_DEFINITION(ptGUISkin, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -130,14 +130,14 @@ PYTHON_CLASS_NEW_IMPL(ptGUISkin, pyGUISkin)
 
 PyObject *pyGUISkin::New(pyKey& gckey)
 {
-    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, NULL, NULL);
+    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUISkin::New(plKey objkey)
 {
-    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, NULL, NULL);
+    ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     return (PyObject*)newObj;
 }

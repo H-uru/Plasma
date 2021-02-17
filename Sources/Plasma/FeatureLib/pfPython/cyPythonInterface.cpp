@@ -661,10 +661,10 @@ PyObject *pyOutputRedirector::New()
     if (!fTypeCreated)
     {
         if (PyType_Ready(&ptOutputRedirector_type) < 0)
-            return NULL;
+            return nullptr;
         fTypeCreated = true;
     }
-    ptOutputRedirector *newObj = (ptOutputRedirector*)ptOutputRedirector_type.tp_new(&ptOutputRedirector_type, NULL, NULL);
+    ptOutputRedirector *newObj = (ptOutputRedirector*)ptOutputRedirector_type.tp_new(&ptOutputRedirector_type, nullptr, nullptr);
     return (PyObject*)newObj;
 }
 
@@ -790,10 +790,10 @@ PyObject *pyErrorRedirector::New()
     if (!fTypeCreated)
     {
         if (PyType_Ready(&ptErrorRedirector_type) < 0)
-            return NULL;
+            return nullptr;
         fTypeCreated = true;
     }
-    ptErrorRedirector *newObj = (ptErrorRedirector*)ptErrorRedirector_type.tp_new(&ptErrorRedirector_type, NULL, NULL);
+    ptErrorRedirector *newObj = (ptErrorRedirector*)ptErrorRedirector_type.tp_new(&ptErrorRedirector_type, nullptr, nullptr);
     return (PyObject*)newObj;
 }
 
@@ -1362,10 +1362,9 @@ PyObject* PythonInterface::ImportModule(const char* module)
 //
 PyObject* PythonInterface::FindModule(const char* module)
 {
-    PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (PyObject* m = PyDict_GetItemString(modules, module); m && PyModule_Check(m))
         // just return what we found
         return m;
 
@@ -1384,10 +1383,9 @@ PyObject* PythonInterface::FindModule(const char* module)
 //
 bool PythonInterface::IsModuleNameUnique(const ST::string& module)
 {
-    PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module.c_str())) != NULL && PyModule_Check(m))
+    if (PyObject* m = PyDict_GetItemString(modules, module.c_str()); m && PyModule_Check(m))
     {
         return false;
     }
@@ -1406,7 +1404,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
     PyObject *m, *d;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (m = PyDict_GetItemString(modules, module); m && PyModule_Check(m))
     {
         // clear it
         hsAssert(false, ST::format("ERROR! Creating a python module of the same name - {}", module).c_str());
@@ -1415,17 +1413,17 @@ PyObject* PythonInterface::CreateModule(const char* module)
 
     // create the module
     m = PyImport_AddModule(module);
-    if (m == NULL)
-        return nil;
+    if (m == nullptr)
+        return nullptr;
     d = PyModule_GetDict(m);
     // add in the built-ins
     // first make sure that we don't already have the builtins
-    if (PyDict_GetItemString(d, "__builtins__") == NULL)
+    if (PyDict_GetItemString(d, "__builtins__") == nullptr)
     {
         // if we need the builtins then find the builtin module
         PyObject *bimod = PyImport_ImportModule("builtins");
         // then add the builtin dicitionary to our module's dictionary
-        if (bimod == NULL || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
+        if (bimod == nullptr || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
             getOutputAndReset();
             return nil;
         }
@@ -1471,7 +1469,7 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
     while ( funcNames[i] != nil )
     {
         PyObject* func = PyDict_GetItemString(dict, funcNames[i]);
-        if ( func != NULL && PyCallable_Check(func)>0 )
+        if (func != nullptr && PyCallable_Check(func) > 0)
         {
             // if it is defined then mark the funcTable
             funcTable[i] = func;
@@ -1536,7 +1534,7 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
     s = PyMarshal_WriteObjectToString(pyobj, Py_MARSHAL_VERSION);
 
     // did it actually do it?
-    if ( s != NULL )
+    if (s != nullptr)
     {
         // yes, then get the size and the string address
         *size = PyBytes_Size(s);
@@ -1583,7 +1581,7 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL) {
+        if (module == nullptr) {
             PyErr_Print();
             return false;
         }
@@ -1593,7 +1591,7 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
     // run the string
     v = PyRun_String(command, Py_single_input, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();
@@ -1676,7 +1674,7 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (module == nullptr)
             return false;
     }
     // get the dictionaries for this module
@@ -1684,7 +1682,7 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     // run the string
     v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();
@@ -1705,15 +1703,15 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 //
 PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObject* args)
 {
-    if (module == NULL)
-        return NULL;
+    if (module == nullptr)
+        return nullptr;
 
     PyObject* function = PyObject_GetAttrString(module, name);
 
-    PyObject* result = NULL;
-    if (function != nil) 
+    PyObject* result = nullptr;
+    if (function != nullptr)
     {
-        result = PyObject_Call(function, args, NULL);
+        result = PyObject_Call(function, args, nullptr);
         Py_DECREF(function);
     }
 
@@ -1722,13 +1720,13 @@ PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObj
 
 PyObject* PythonInterface::ParseArgs(const char* args)
 {
-    PyObject* result = NULL;
+    PyObject* result = nullptr;
     PyObject* scope = PyDict_New();
     if (scope) 
     {
         //- Py_eval_input makes this function accept only single expresion (not statement)
         //- When using empty scope, functions and classes like 'file' or '__import__' are not visible
-        result = PyRun_String(args, Py_eval_input, scope, NULL);
+        result = PyRun_String(args, Py_eval_input, scope, nullptr);
         Py_DECREF(scope);
     }
    

@@ -1149,7 +1149,7 @@ BOOL    plPlasmaAnimSelectDlgProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND 
                     TSTR newName( node ? node->GetName() : "Pick" );
                     ::SetWindowText( ::GetDlgItem(hWnd, fDlgItem ), newName );
                     pmap->Invalidate( fParamID );
-                    ::InvalidateRect( hWnd, NULL, TRUE );
+                    ::InvalidateRect(hWnd, nullptr, TRUE);
 
                     IUpdateNodeBtn( hWnd, pb );
                     return true;

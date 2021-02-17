@@ -122,7 +122,7 @@ hsTArray<plPassMtlBase *>   plPostLoadHandler::fPostLoads;
 bool plPostLoadHandler::fLoading = false;
 
 
-plPassMtlBase::plPassMtlBase( BOOL loading ) : fNTWatcher( nil ), fBasicPB(NULL), fAdvPB(NULL), fLayersPB(NULL), fAnimPB(NULL),
+plPassMtlBase::plPassMtlBase(BOOL loading) : fNTWatcher(), fBasicPB(), fAdvPB(), fLayersPB(), fAnimPB(),
                                  fLoading( loading )
 {
     fNTWatcher = new plNoteTrackWatcher( this );

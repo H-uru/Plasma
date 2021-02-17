@@ -126,7 +126,7 @@ void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect wh
         fOggFile = new OggVorbis_File;
 
         /// Open the OGG decompressor
-        if( ov_open( fFileHandle, fOggFile, NULL, 0 ) < 0 )
+        if (ov_open(fFileHandle, fOggFile, nullptr, 0) < 0)
         {
             IError( "Unable to open OGG source file" );
             return;

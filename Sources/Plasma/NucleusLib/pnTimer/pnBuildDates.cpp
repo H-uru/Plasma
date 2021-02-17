@@ -62,7 +62,7 @@ char    pnBuildDates::fBuildTime[ 128 ] = __TIME__;
 static  pnBuildDates    staticObjToForceResLoad;
 
 #if HS_BUILD_FOR_WIN32
-HINSTANCE   sModuleHandle = GetModuleHandle( NULL );
+HINSTANCE   sModuleHandle = GetModuleHandle(nullptr);
 #endif
 
 pnBuildDates::pnBuildDates()
@@ -78,11 +78,11 @@ void    pnBuildDates::IGetString( int resID, char *destBuffer, int size )
 #if HS_BUILD_FOR_WIN32
     HRSRC rsrc = ::FindResource( sModuleHandle, MAKEINTRESOURCE( resID ), RT_RCDATA );
 
-    if( rsrc != NULL )
+    if (rsrc != nullptr)
     {
         HGLOBAL handle = ::LoadResource( sModuleHandle, rsrc );
 
-        if( handle != NULL )
+        if (handle != nullptr)
         {
             char *str = (char *)::LockResource( handle );
             strncpy( destBuffer, str, size );

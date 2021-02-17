@@ -441,7 +441,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
                 }
                 
                 // handle invalid chars discretely
-                plCharacter* charToDraw = NULL;
+                plCharacter* charToDraw = nullptr;
                 if (fCharacters.size() <= ((uint16_t)string[i] - fFirstChar))
                     charToDraw = &(fCharacters[(uint16_t)L' ' - fFirstChar]);
                 else

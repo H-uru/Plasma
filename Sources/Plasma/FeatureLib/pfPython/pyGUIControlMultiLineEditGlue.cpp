@@ -57,7 +57,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlMultiLineEdit)
 
 PYTHON_INIT_DEFINITION(ptGUIControlMultiLineEdit, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -161,7 +161,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getStringW)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBuffer, args)
 {
-    PyObject* bufferObj = NULL;
+    PyObject* bufferObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &bufferObj))
     {
         PyErr_SetString(PyExc_TypeError, "setEncodedBuffer expects a python buffer object");
@@ -173,7 +173,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBuffer, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBufferW, args)
 {
-    PyObject* bufferObj = NULL;
+    PyObject* bufferObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &bufferObj))
     {
         PyErr_SetString(PyExc_TypeError, "setEncodedBufferW expects a python buffer object");
@@ -282,7 +282,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStringW, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "insertColor expects a ptColor");
@@ -428,14 +428,14 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlMultiLineEdit, pyGUIControl, "Params: ctrl
 // required functions for PyObject interoperability
 PyObject *pyGUIControlMultiLineEdit::New(pyKey& gckey)
 {
-    ptGUIControlMultiLineEdit *newObj = (ptGUIControlMultiLineEdit*)ptGUIControlMultiLineEdit_type.tp_new(&ptGUIControlMultiLineEdit_type, NULL, NULL);
+    ptGUIControlMultiLineEdit *newObj = (ptGUIControlMultiLineEdit*)ptGUIControlMultiLineEdit_type.tp_new(&ptGUIControlMultiLineEdit_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlMultiLineEdit::New(plKey objkey)
 {
-    ptGUIControlMultiLineEdit *newObj = (ptGUIControlMultiLineEdit*)ptGUIControlMultiLineEdit_type.tp_new(&ptGUIControlMultiLineEdit_type, NULL, NULL);
+    ptGUIControlMultiLineEdit *newObj = (ptGUIControlMultiLineEdit*)ptGUIControlMultiLineEdit_type.tp_new(&ptGUIControlMultiLineEdit_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     return (PyObject*)newObj;
 }

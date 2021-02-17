@@ -74,12 +74,12 @@ const char* DecayLevel[] = {
                             "None",
                             "Inverse",
                             "Inverse Square",
-                            NULL
+                            nullptr
                             };
 
 const char* ShadowState[] = {
                             "Shadow Map",
-                            NULL
+                            nullptr
                             };
 
 
@@ -169,7 +169,7 @@ BaseObjLight::BaseObjLight(INode *n) : ObjLightDesc(n)
 {
     ObjectState os = n->EvalWorldState(TimeValue(0));
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    gl = (os.obj->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTLightBase*)os.obj->GetReference(0) : (plRTLightBase*)os.obj;  // JBW 4/7/99
+    gl = (os.obj->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTLightBase*)os.obj->GetReference(0) : (plRTLightBase*)os.obj;  // JBW 4/7/99
 }   
 
 static Color blackCol(0,0,0);
@@ -256,7 +256,7 @@ int OmniLight::Update(TimeValue t, const RendContext & rc,
     ObjectState os = inode->EvalWorldState(t);
     LightObject* lob = (LightObject *)os.obj;       
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    plRTOmniLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTOmniLight*)lob->GetReference(0) : (plRTOmniLight*)lob;  // JBW 4/7/99
+    plRTOmniLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTOmniLight*)lob->GetReference(0) : (plRTOmniLight*)lob;  // JBW 4/7/99
 
     decayType = gl->GetDecayType(); 
     decayRadius = gl->GetDecayRadius(t);
@@ -288,7 +288,7 @@ int OmniLight::Update(TimeValue t, const RendContext & rc,
 
 SpotLight::SpotLight(INode *inode, BOOL forceShadowBuf ):BaseObjLight(inode) 
 {
-    projMap = NULL;
+    projMap = nullptr;
 }
 
 int SpotLight::Update(TimeValue t, const RendContext &rc, RenderGlobalContext *rgc, BOOL shadows, BOOL shadowGeomChanged)
@@ -308,7 +308,7 @@ int SpotLight::Update(TimeValue t, const RendContext &rc, RenderGlobalContext *r
     ObjectState os = inode->EvalWorldState(t);
     LightObject* lob = (LightObject *)os.obj;       
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    plRTLightBase* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTLightBase*)lob->GetReference(0) : (plRTLightBase*)lob;  // JBW 4/7/99
+    plRTLightBase* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTLightBase*)lob->GetReference(0) : (plRTLightBase*)lob;  // JBW 4/7/99
 
     decayType = gl->GetDecayType(); 
     decayRadius = gl->GetDecayRadius(t);
@@ -358,7 +358,7 @@ BOOL SpotLight::IsFacingLight(Point3 &dir)
 
 DirLight::DirLight(INode *inode, BOOL forceShadowBuf ) : BaseObjLight(inode)
 {
-    projMap = NULL;
+    projMap = nullptr;
 }
 
 int DirLight::Update(TimeValue t, const RendContext &rc, 
@@ -375,7 +375,7 @@ int DirLight::Update(TimeValue t, const RendContext &rc,
     ObjectState os = inode->EvalWorldState(t);
     LightObject* lob = (LightObject *)os.obj;       
     assert(os.obj->SuperClassID()==LIGHT_CLASS_ID);
-    plRTDirLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != NULL) ? (plRTDirLight*)lob->GetReference(0) : (plRTDirLight*)lob;  // JBW 4/7/99
+    plRTDirLight* gl = (lob->GetInterface(I_MAXSCRIPTPLUGIN) != nullptr) ? (plRTDirLight*)lob->GetReference(0) : (plRTDirLight*)lob;  // JBW 4/7/99
 
     //projector =  gl->GetProjector();
 
@@ -412,15 +412,15 @@ int DirLight::UpdateViewDepParams(const Matrix3& worldToCam) {
 
 plRTOmniLight::plRTOmniLight()
 {
-    fIP = NULL; 
-    fLightPB = NULL; 
+    fIP = nullptr;
+    fLightPB = nullptr;
     fClassDesc = plRTOmniLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks(this);
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = NULL;
+    fTex = nullptr;
 
     meshBuilt = 0; 
     
@@ -587,15 +587,15 @@ void    plRTOmniLight::GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt,
 
 plRTSpotLight::plRTSpotLight()
 {
-    fIP = NULL; 
-    fLightPB = NULL; 
+    fIP = nullptr;
+    fLightPB = nullptr;
     fClassDesc = plRTSpotLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks(this);
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = NULL;
+    fTex = nullptr;
     meshBuilt = 0; 
     
     IBuildMeshes(true);
@@ -793,15 +793,15 @@ void    plRTSpotLight::GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt,
 
 plRTDirLight::plRTDirLight()
 {
-    fIP = NULL; 
-    fLightPB = NULL; 
+    fIP = nullptr;
+    fLightPB = nullptr;
     fClassDesc = plRTDirLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks(this);
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = NULL;
+    fTex = nullptr;
     meshBuilt = 0; 
     
     IBuildMeshes(true);

@@ -53,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptImage)
 
 PYTHON_INIT_DEFINITION(ptImage, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -116,7 +116,7 @@ PYTHON_METHOD_DEFINITION(ptImage, getPixelColor, args)
 
 PYTHON_METHOD_DEFINITION(ptImage, getColorLoc, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "getColorLoc expects a ptColor");
@@ -209,7 +209,7 @@ PLASMA_CUSTOM_TYPE(ptImage, "Params: imgKey\nPlasma image class");
 #ifndef BUILDING_PYPLASMA
 PyObject *pyImage::New(plMipmap* mipmap)
 {
-    ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, NULL, NULL);
+    ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, nullptr, nullptr);
     newObj->fThis->fMipmap = mipmap;
     newObj->fThis->fMipMapKey = mipmap->GetKey();
     if (mipmap->GetKey())
@@ -220,14 +220,14 @@ PyObject *pyImage::New(plMipmap* mipmap)
 
 PyObject *pyImage::New(plKey mipmapKey)
 {
-    ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, NULL, NULL);
+    ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, nullptr, nullptr);
     newObj->fThis->fMipMapKey = mipmapKey;
     return (PyObject*)newObj;
 }
 
 PyObject *pyImage::New(pyKey& mipmapKey)
 {
-    ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, NULL, NULL);
+    ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, nullptr, nullptr);
     newObj->fThis->fMipMapKey = mipmapKey.getKey();
     return (PyObject*)newObj;
 }

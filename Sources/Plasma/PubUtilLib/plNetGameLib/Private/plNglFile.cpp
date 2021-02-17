@@ -276,7 +276,7 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
     bool needsDecref = true;
     if (conn->cancelId) {
         AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
+        conn->cancelId  = nullptr;
         needsDecref = false;
     }
     else {
@@ -315,7 +315,7 @@ static void NotifyConnSocketConnect (CliFileConn * conn) {
 static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = 0;
+        conn->cancelId = nullptr;
         s_conns.Unlink(conn);
 
         if (conn == s_active)
@@ -345,7 +345,7 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
     conn->StopAutoPing();
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = 0;
+        conn->cancelId = nullptr;
         s_conns.Unlink(conn);
 
         if (conn == s_active)
@@ -448,7 +448,7 @@ static bool SocketNotifyCallback (
                 hsLockGuard(s_critsect);
                 hsLockForWriting lock(conn->sockLock);
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId  = nullptr;
             }
             NotifyConnSocketConnect(conn);
         break;

@@ -142,7 +142,7 @@ PYTHON_CLASS_NEW_IMPL(ptSDLStateDataRecord, pySDLStateDataRecord)
 
 PyObject *pySDLStateDataRecord::New(plStateDataRecord* rec)
 {
-    ptSDLStateDataRecord* newObj = (ptSDLStateDataRecord*)ptSDLStateDataRecord_type.tp_new(&ptSDLStateDataRecord_type, NULL, NULL);
+    ptSDLStateDataRecord* newObj = (ptSDLStateDataRecord*)ptSDLStateDataRecord_type.tp_new(&ptSDLStateDataRecord_type, nullptr, nullptr);
     newObj->fThis->fRec = rec;
     return (PyObject*)newObj;
 }
@@ -300,7 +300,7 @@ PYTHON_CLASS_NEW_IMPL(ptSimpleStateVariable, pySimpleStateVariable)
 
 PyObject *pySimpleStateVariable::New(plSimpleStateVariable* var)
 {
-    ptSimpleStateVariable* newObj = (ptSimpleStateVariable*)ptSimpleStateVariable_type.tp_new(&ptSimpleStateVariable_type, NULL, NULL);
+    ptSimpleStateVariable* newObj = (ptSimpleStateVariable*)ptSimpleStateVariable_type.tp_new(&ptSimpleStateVariable_type, nullptr, nullptr);
     newObj->fThis->fVar = var;
     return (PyObject*)newObj;
 }

@@ -76,7 +76,7 @@ void plNetClientRecorder::IMakeFilename(const char* recName, char* path)
 {
     strcpy(path, "Recordings" PATH_SEPARATOR_STR);
 #if HS_BUILD_FOR_WIN32
-    CreateDirectory(path, NULL);
+    CreateDirectory(path, nullptr);
 #endif
 
     const char* lastDot = strrchr(recName, '.');

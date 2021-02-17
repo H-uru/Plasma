@@ -93,7 +93,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 
     // Note: this will return shared mem too on Win9x.  There's a way to catch that, but it's too slow -Colin
     uint32_t processMemUsed = 0;
-    void* curAddress = 0;
+    void* curAddress = nullptr;
     while (VirtualQuery(curAddress, &mbi, sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
     {
         if (mbi.State == MEM_COMMIT && mbi.Type == MEM_PRIVATE)

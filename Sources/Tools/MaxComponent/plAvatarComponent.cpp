@@ -288,7 +288,7 @@ bool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 
 bool plArmatureComponent::IVerifyUsedNode(INode* thisNode, plErrorMsg* pErrMsg, bool IsHull)
 {
-    if(thisNode != NULL)
+    if (thisNode != nullptr)
     {
         if(((plMaxNode*)thisNode)->CanConvert())
         {
@@ -606,8 +606,8 @@ public:
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
-        char* buffer = NULL;
+        HWND cbox = nullptr;
+        char* buffer = nullptr;
 
         int selection;
         switch (msg)
@@ -741,7 +741,7 @@ public:
     BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int selection;
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         HWND hList = GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_BONELIST);
 
         switch (msg)

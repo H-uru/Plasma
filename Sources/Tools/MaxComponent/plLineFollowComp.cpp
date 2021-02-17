@@ -282,9 +282,7 @@ bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 
     if( plLineFollowMod::kFollowObject == mode )
     {
-        if(fCompPB->GetINode(kFollowObjectSel) != NULL)
-
-
+        if (fCompPB->GetINode(kFollowObjectSel) != nullptr)
         {
             plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kFollowObjectSel);
             //plMaxNodeData* pMD = targNode->GetMaxNodeData();

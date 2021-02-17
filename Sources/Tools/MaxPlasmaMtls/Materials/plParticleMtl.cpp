@@ -64,7 +64,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_PARTICLE_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return PARTICLE_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("ParticleMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -85,7 +85,7 @@ const char *plParticleMtl::NormalStrings[] = // Make sure these match up in orde
     "Emissive"
 };
 
-plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB(NULL)//, fBM(NULL), fUVGen(NULL)
+plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB()//, fBM(), fUVGen()
 {
 #if 0 // This wasn't working on load
     // Initialize the paramblock descriptors only once
@@ -188,7 +188,7 @@ Animatable* plParticleMtl::SubAnim(int i)
     case 1: return fBasicPB->GetTexmap(kTexmap);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plParticleMtl::NumRefs()
@@ -203,7 +203,7 @@ RefTargetHandle plParticleMtl::GetReference(int i)
     case kRefBasic:  return fBasicPB;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plParticleMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -227,7 +227,7 @@ IParamBlock2* plParticleMtl::GetParamBlockByID(BlockID id)
     if (fBasicPB->ID() == id)
         return fBasicPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -269,7 +269,7 @@ Texmap* plParticleMtl::GetSubTexmap(int i)
     if (i == 0)
         return fBasicPB->GetTexmap(kTexmap);
 
-    return NULL;
+    return nullptr;
 }
 
 void plParticleMtl::SetSubTexmap(int i, Texmap *m)

@@ -292,7 +292,7 @@ bool plAudioSystem::Init()
 
     plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: Device Init Success!");
 
-    fContext = alcCreateContext(fPlaybackDevice, 0);
+    fContext = alcCreateContext(fPlaybackDevice, nullptr);
     alcMakeContextCurrent(fContext);
 
     if (alGetError() != AL_NO_ERROR) {

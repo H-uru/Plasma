@@ -498,7 +498,7 @@ INode* hsConverterUtils::GetINodeByName(const char* name, bool caseSensitive)
     {
         fErrorMsg->Set(true, "Get INode by Name Error", "nil fInterface in hsConverterUtils::GetINodeByName()").Show();
         fErrorMsg->Set();
-        return NULL;        
+        return nullptr;
     }
 
 

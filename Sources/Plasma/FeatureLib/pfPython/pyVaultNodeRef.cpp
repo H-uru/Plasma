@@ -114,7 +114,7 @@ unsigned pyVaultNodeRef::GetSaverID () {
 
 PyObject * pyVaultNodeRef::GetSaver () {
     if (!fParent || !fChild)
-        return 0;
+        return nullptr;
 
     hsRef<RelVaultNode> saver;
     if (hsRef<RelVaultNode> child = VaultGetNode(fChild->GetNodeId())) {

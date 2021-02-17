@@ -89,10 +89,10 @@ ClassDesc2* GetDynamicEnvLayerDesc() { return &plDynamicEnvLayerDesc; }
 //// Constructor/Destructor ///////////////////////////////////////////////////
 
 plDynamicEnvLayer::plDynamicEnvLayer() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
-    fTexTime(0),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
+    fTexTime(),
     fIValid(NEVER)
 {
     plDynamicEnvLayerDesc.MakeAutoParamBlocks(this);
@@ -178,7 +178,7 @@ RefTargetHandle plDynamicEnvLayer::GetReference( int i )
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -211,7 +211,7 @@ IParamBlock2    *plDynamicEnvLayer::GetParamBlock( int i )
     switch( i )
     {
         case 0: return fBitmapPB;
-        default: return NULL;
+        default: return nullptr;
     }
 }
 
@@ -220,7 +220,7 @@ IParamBlock2    *plDynamicEnvLayer::GetParamBlockByID( BlockID id )
     if( fBitmapPB->ID() == id )
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //// Clone ////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ Animatable  *plDynamicEnvLayer::SubAnim( int i )
     switch( i )
     {
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -369,7 +369,7 @@ void plDynamicEnvLayer::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -381,7 +381,7 @@ void plDynamicEnvLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plDynamicEnvLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return NULL;
+    return nullptr;
 }
 
 DWORD plDynamicEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 

@@ -277,7 +277,7 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
 {
     memset( &fEnumeErrorStr[0], 0x00, sizeof(fEnumeErrorStr) );
 
-    fCurrentDriver = NULL;      // The selected DD driver
+    fCurrentDriver = nullptr;      // The selected DD driver
     fDrivers.Reset();       // List of DD drivers
 
     // Create a D3D object to use
@@ -514,7 +514,7 @@ bool    hsGDirect3DTnLEnumerate::IFindFSAATypes( IDirect3D9 *pD3D, UINT iAdapter
     {
         if (SUCCEEDED(pD3D->CheckDeviceMultiSampleType(iAdapter, deviceType, modeInfo->fDDmode.Format, 
             modeInfo->fWindowed ? TRUE : FALSE,
-            (D3DMULTISAMPLE_TYPE)type, NULL)))
+            (D3DMULTISAMPLE_TYPE)type, nullptr)))
         {
             modeInfo->fFSAATypes.Append((D3DMULTISAMPLE_TYPE)type);
         }

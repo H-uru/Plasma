@@ -5387,7 +5387,7 @@ PF_CONSOLE_CMD( ParticleSystem,
     
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if (avMod)
-        (new plParticleTransferMsg(nil, avMod->GetKey(), 0, so->GetKey(), (int)params[1]))->Send();
+        (new plParticleTransferMsg(nil, avMod->GetKey(), nullptr, so->GetKey(), (int)params[1]))->Send();
 }
 
 PF_CONSOLE_CMD( ParticleSystem,
@@ -5407,7 +5407,7 @@ PF_CONSOLE_CMD( ParticleSystem,
     if (sys != nil)
     {
         uint8_t flags = (params[3] ? plParticleKillMsg::kParticleKillPercentage : 0);
-        (new plParticleKillMsg(nil, sys->GetKey(), 0, params[2], params[1], flags))->Send();
+        (new plParticleKillMsg(nil, sys->GetKey(), nullptr, params[2], params[1], flags))->Send();
     }
 }
 
@@ -5444,7 +5444,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
     plParticleEffect *flock = FindFlock(ST::string::from_utf8(params[0]));
     if (flock)
     {
-        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetOffset, params[1], params[2], params[3]))->Send();
+        (new plParticleFlockMsg(nil, flock->GetKey(), nullptr, plParticleFlockMsg::kFlockCmdSetOffset, params[1], params[2], params[3]))->Send();
     }
 }   
 
@@ -5456,7 +5456,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
     plParticleEffect *flock = FindFlock(ST::string::from_utf8(params[0]));
     if (flock)
     {
-        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetDissentPoint, params[1], params[2], params[3]))->Send();
+        (new plParticleFlockMsg(nil, flock->GetKey(), nullptr, plParticleFlockMsg::kFlockCmdSetDissentPoint, params[1], params[2], params[3]))->Send();
     }
 }
 

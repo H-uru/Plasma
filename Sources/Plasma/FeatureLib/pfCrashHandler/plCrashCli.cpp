@@ -73,7 +73,7 @@ plCrashCli::plCrashCli()
     IInit(mapname);
 
     // Initialize the shared memory
-    fLinkH = CreateFileMappingA(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(plCrashMemLink), mapname);
+    fLinkH = CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, sizeof(plCrashMemLink), mapname);
     hsAssert(fLinkH, "Failed to create plCrashHandler mapping");
     if (!fLinkH)
         return;
@@ -92,12 +92,12 @@ plCrashCli::plCrashCli()
     CreateProcessA(
                    CRASH_HANDLER_EXE, // plCrashHandler.exe
                    cmdline,           // plCrashHandler.exe Plasma20CrashHandler-%u
-                   NULL,
-                   NULL,
+                   nullptr,
+                   nullptr,
                    FALSE,
                    CREATE_NO_WINDOW, // Don't create any new windows or consoles
-                   NULL,
-                   NULL,             // Use the directory of the current plClient
+                   nullptr,
+                   nullptr,          // Use the directory of the current plClient
                    &info,
                    &fCrashSrv        // Save the CrashSrv handles
     );

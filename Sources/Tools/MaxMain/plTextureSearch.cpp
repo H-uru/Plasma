@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     static jvUniqueId gAssetID;
 #endif
 
-plTextureSearch::plTextureSearch() : fDlg(NULL)
+plTextureSearch::plTextureSearch() : fDlg()
 {
 #ifdef MAXASS_AVAILABLE
     gAssetID.SetEmpty();
@@ -103,7 +103,7 @@ void plTextureSearch::Toggle()
     else
     {
         DestroyWindow(fDlg);
-        fDlg = NULL;
+        fDlg = nullptr;
     }
 }
 
@@ -392,7 +392,7 @@ void plTextureSearch::IPickReplaceTexture()
     else
     {
         char fname[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
-        _splitpath(fFileName, NULL, NULL, fname, ext);
+        _splitpath(fFileName, nullptr, nullptr, fname, ext);
         strcat(fname, ext);
 
         SetDlgItemText(fDlg, IDC_REPLACE_BUTTON, fname);

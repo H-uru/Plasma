@@ -67,7 +67,7 @@ ST::string plClipboard::GetClipboardText()
         return ST::string();
 
 #ifdef HS_BUILD_FOR_WIN32
-    if (!::OpenClipboard(NULL))
+    if (!::OpenClipboard(nullptr))
         return ST::string();
 
     HANDLE clipboardData = ::GetClipboardData(CF_UNICODETEXT);
@@ -100,7 +100,7 @@ void plClipboard::SetClipboardText(const ST::string& text)
     if (!copy)
         return;
 
-    if (!::OpenClipboard(NULL))
+    if (!::OpenClipboard(nullptr))
         return;
 
     ::EmptyClipboard();

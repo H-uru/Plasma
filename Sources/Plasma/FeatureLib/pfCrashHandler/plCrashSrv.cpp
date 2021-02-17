@@ -81,17 +81,17 @@ void plCrashSrv::IHandleCrash()
     HANDLE file = CreateFileW(dumpPath.WideString().data(),
                               GENERIC_WRITE,
                               0,
-                              NULL,
+                              nullptr,
                               CREATE_ALWAYS,
                               FILE_ATTRIBUTE_NORMAL,
-                              NULL
+                              nullptr
     );
 
     MINIDUMP_EXCEPTION_INFORMATION e;
     e.ClientPointers = TRUE;
     e.ExceptionPointers = fLink->fExceptionPtrs;
     e.ThreadId = fLink->fClientThreadID;
-    MiniDumpWriteDump(fLink->fClientProcess, fLink->fClientProcessID, file, MiniDumpNormal, &e, NULL, NULL);
+    MiniDumpWriteDump(fLink->fClientProcess, fLink->fClientProcessID, file, MiniDumpNormal, &e, nullptr, nullptr);
     CloseHandle(file);
 }
 

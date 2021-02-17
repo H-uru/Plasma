@@ -873,7 +873,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
 
 void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* LimitPanComp = 0;
+    plComponentBase* LimitPanComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -902,7 +902,7 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
 
 void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* LimitZoomComp = 0;
+    plComponentBase* LimitZoomComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -923,7 +923,7 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
 
 void plCameraBaseComponent::ISetIgnoreSubworld(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* subComp = 0;
+    plComponentBase* subComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -967,16 +967,16 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
     // do we want a special POA for this brain
     bool bResult = false;
     bool bAvPOA = false;
-    plComponentBase* POAComp = 0;
+    plComponentBase* POAComp = nullptr;
     bool bPOAObject = false;
-    plComponentBase* objPOAComp = 0;
+    plComponentBase* objPOAComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == OBJECT_POA_CID)
         {   
-            if (objPOAComp != 0 || POAComp != 0)
+            if (objPOAComp != nullptr || POAComp != nullptr)
             {
                 pErrMsg->Set(true, "Export Error - Cameras",
                 "Object %s : Cameras must have one and only one POA component!\n",
@@ -989,7 +989,7 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         }
         if (comp->ClassID() == AVATAR_POA_CID)
         {
-            if (objPOAComp != 0 || POAComp != 0)
+            if (objPOAComp != nullptr || POAComp != nullptr)
             {
                 pErrMsg->Set(true, "Export Error - Cameras",
                 "Object %s : Cameras must have one and only one POA component!\n",

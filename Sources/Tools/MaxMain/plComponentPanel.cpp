@@ -153,7 +153,7 @@ BOOL plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                             if (width > ListView_GetColumnWidth(nmhdr->hwndFrom, 0))
                             {
                                 ListView_SetColumnWidth(nmhdr->hwndFrom, 0, width);
-                                InvalidateRect(nmhdr->hwndFrom, NULL, FALSE);
+                                InvalidateRect(nmhdr->hwndFrom, nullptr, FALSE);
                             }
 
                             // Update the name in the tree too

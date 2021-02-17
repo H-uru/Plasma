@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInterp/plAnimEaseTypes.h"
 
-plNoteTrackDlg::plNoteTrackDlg() : fhAnim(NULL), fhLoop(NULL), fPB(nil), fAnimID(-1), fLoopID(-1), fSegMap(nil), fOwner(nil)
+plNoteTrackDlg::plNoteTrackDlg() : fhAnim(), fhLoop(), fPB(), fAnimID(-1), fLoopID(-1), fSegMap(), fOwner()
 {
 }
 

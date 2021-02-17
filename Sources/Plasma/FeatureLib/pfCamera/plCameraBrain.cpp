@@ -120,7 +120,7 @@ void plCameraBrain1::AddTarget()
 {
     fTargetMatrix = fCamera->GetTarget()->GetCoordinateInterface()->GetLocalToWorld();
     hsVector3 view;
-    fTargetMatrix.GetAxis(0, &view, 0);
+    fTargetMatrix.GetAxis(nullptr, &view, nullptr);
     fGoal = fTargetMatrix.GetTranslate();
     fPOAGoal = fGoal - view;
     fCamera->SetTargetPos(fGoal);
@@ -212,7 +212,7 @@ void plCameraBrain1::Update(bool forced)
         {
             fTargetMatrix = fCamera->GetTarget()->GetCoordinateInterface()->GetLocalToWorld();
             hsVector3 view;
-            fTargetMatrix.GetAxis(0, &view, 0);
+            fTargetMatrix.GetAxis(nullptr, &view, nullptr);
             fGoal = fTargetMatrix.GetTranslate();
             fPOAGoal = fGoal - (view * 10);
         }

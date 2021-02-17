@@ -107,7 +107,9 @@ protected:
     const char* const       fFileName;
 
 public:
-    plShaderDecl(const char* const fname, plShaderID::ID id = plShaderID::Unregistered, uint32_t byteLen = 0, const uint8_t* const codes = 0L) : fID(id), fbyteLen(byteLen), fCodes(codes), fFileName(fname) {}
+    plShaderDecl(const char* const fname, plShaderID::ID id = plShaderID::Unregistered,
+                 uint32_t byteLen = 0, const uint8_t* const codes = nullptr)
+        : fID(id), fbyteLen(byteLen), fCodes(codes), fFileName(fname) { }
     // Data (fCodes) is never deleted, It points to memory compiled in.
 
     plShaderID::ID GetID() const { return fID; }

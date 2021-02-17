@@ -77,14 +77,14 @@ plMultipassMtlDlg::plMultipassMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plMultipas
     fDADMgr.Init(this);
 
     fhMtlEdit = hwMtlEdit;
-    fhRollup = NULL;
+    fhRollup = nullptr;
     fMtl = m;
     fPBlock = fMtl->GetParamBlockByID(plMultipassMtl::kBlkPasses);
     ip = imp;
     valid = FALSE;
 
     for (int i = 0; i < NSUBMTLS; i++)
-        fLayerBtns[i] = NULL;
+        fLayerBtns[i] = nullptr;
 
     curTime = imp->GetTime();
 
@@ -98,17 +98,17 @@ plMultipassMtlDlg::plMultipassMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plMultipas
 
 plMultipassMtlDlg::~plMultipassMtlDlg()
 {
-    fMtl->SetParamDlg(NULL);
+    fMtl->SetParamDlg(nullptr);
     for (int i = 0; i < NSUBMTLS; i++)
     {
         ReleaseICustButton(fLayerBtns[i]);
-        fLayerBtns[i] = NULL; 
+        fLayerBtns[i] = nullptr;
     }
 
-    SetWindowLong(fhRollup, GWL_USERDATA, NULL);
+    SetWindowLong(fhRollup, GWL_USERDATA, 0L);
     ip->DeleteRollupPage(fhRollup);
 
-    fhRollup = NULL;
+    fhRollup = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void plMultipassMtlDlg::SetThing(ReferenceTarget *m)
 
     // Bad?
     if (fMtl) 
-        fMtl->SetParamDlg(NULL);
+        fMtl->SetParamDlg(nullptr);
     fMtl = (plMultipassMtl *)m;
     if (fMtl)
         fMtl->SetParamDlg(this);
@@ -176,7 +176,7 @@ BOOL plMultipassMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
     }
     else
     {
-        if ((theDlg = (plMultipassMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA)) == NULL)
+        if (theDlg = (plMultipassMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA); theDlg == nullptr)
             return FALSE; 
     }
 
@@ -224,10 +224,10 @@ BOOL plMultipassMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
         for (i = 0; i < NSUBMTLS; i++)
         {
             ReleaseICustButton(fLayerBtns[i]);
-            fLayerBtns[i] = NULL;
+            fLayerBtns[i] = nullptr;
         }
         ReleaseISpinner(fNumTexSpin);
-        fNumTexSpin = NULL;
+        fNumTexSpin = nullptr;
         break;
 
     case CC_SPINNER_CHANGE:

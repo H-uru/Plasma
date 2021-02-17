@@ -682,7 +682,7 @@ void plResponderProc::AddCommand()
 
     // Create the popup menu and get the option the user selects
     SetForegroundWindow(fhDlg);
-    int type = TrackPopupMenu(fhMenu, TPM_RIGHTALIGN | TPM_NONOTIFY | TPM_RETURNCMD, rect.left, rect.top, 0, fhDlg, NULL);
+    int type = TrackPopupMenu(fhMenu, TPM_RIGHTALIGN | TPM_NONOTIFY | TPM_RETURNCMD, rect.left, rect.top, 0, fhDlg, nullptr);
     PostMessage(fhDlg, WM_USER, 0, 0);
 
     if (type == 0)
@@ -763,7 +763,7 @@ IParamMap2 *plResponderProc::ICreateMap(IParamBlock2 *pb)
                                         GetString(pd->title),
                                         pd->flags,
                                         pd->dlgProc,
-                                        NULL,
+                                        nullptr,
                                         ROLLUP_CAT_STANDARD);
 
     // Save the rollout in the paramblock
@@ -914,7 +914,7 @@ void plResponderProc::IDrawComboItem(DRAWITEMSTRUCT *dis)
         strcpy(buf, buf2);
     }
 
-    ExtTextOut(dis->hDC, x, y, ETO_CLIPPED | ETO_OPAQUE, &dis->rcItem, buf, strlen(buf), NULL); 
+    ExtTextOut(dis->hDC, x, y, ETO_CLIPPED | ETO_OPAQUE, &dis->rcItem, buf, strlen(buf), nullptr);
 
     // Restore the previous colors. 
     SetTextColor(dis->hDC, clrForeground); 
@@ -951,15 +951,15 @@ class MyRemapDir : public RemapDir
 public:
     RefTargetHandle CloneRef(RefTargetHandle oldTarg) override
     {
-        if (oldTarg == NULL)
-            return NULL;
+        if (oldTarg == nullptr)
+            return nullptr;
         else if (oldTarg->SuperClassID() == PARAMETER_BLOCK2_CLASS_ID)
             return oldTarg->Clone(*this);
         else
             return oldTarg;
     }
 
-    RefTargetHandle FindMapping(RefTargetHandle from) override { hsAssert(0, "shit"); return NULL; }
+    RefTargetHandle FindMapping(RefTargetHandle from) override { hsAssert(0, "shit"); return nullptr; }
     void PatchPointer(RefTargetHandle* patchThis, RefTargetHandle oldTarg) override { hsAssert(0, "shit"); }
     void AddPostPatchProc(PostPatchProc* proc, bool toDelete) override { hsAssert(0, "shit"); }
     void AddEntry(RefTargetHandle hfrom, RefTargetHandle hto) override { hsAssert(0, "shit"); }
@@ -977,7 +977,7 @@ public:
     
 };
 // Even turdier - I had to define this to compile
-RefTargetHandle RemapDir::CloneRef(RefTargetHandle oldTarg) { return NULL; }
+RefTargetHandle RemapDir::CloneRef(RefTargetHandle oldTarg) { return nullptr; }
 static MyRemapDir gMyRemapDir;
 
 RefTargetHandle plResponderComponent::Clone(RemapDir &remap)
@@ -1284,7 +1284,7 @@ void plResponderProc::ICmdRightClick(HWND hCmdList)
         AppendMenu(hMenu, MF_STRING, 1, enabled ? "Disable" : "Enable");
 
         SetForegroundWindow(fhDlg);
-        int sel = TrackPopupMenu(hMenu, TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, 0, fhDlg, NULL);
+        int sel = TrackPopupMenu(hMenu, TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, 0, fhDlg, nullptr);
         if (sel == 1)
         {
             fStatePB->SetValue(kStateCmdEnabled, 0, !enabled, index);

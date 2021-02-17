@@ -499,7 +499,7 @@ bool plConfigSource::ReadPair(ST::string & key, ST::string & value)
 
 bool plConfigSource::ReadList(char ** l)
 {
-    while(*l != NULL)
+    while (*l != nullptr)
     {
         ReadString(*l);
         l++;
@@ -577,7 +577,7 @@ bool plEnvConfigSource::ReadInto(plConfigInfo & configInfo, KAddValueMode mode)
     if (!plConfigSource::ReadInto(configInfo, mode))
         return false;
     
-    if (fEnvp != NULL)
+    if (fEnvp != nullptr)
     {
         fCurrSection = fMySection;
         fEffectiveSection = fCurrSection;

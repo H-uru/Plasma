@@ -455,7 +455,7 @@ plFileName plFileSystem::GetUserDataPath()
     if (!_userData.IsValid()) {
 #if HS_BUILD_FOR_WIN32
         wchar_t path[MAX_PATH];
-        if (!SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, TRUE))
+        if (!SHGetSpecialFolderPathW(nullptr, path, CSIDL_LOCAL_APPDATA, TRUE))
             return "";
 
         _userData = plFileName::Join(ST::string::from_wchar(path), plProduct::LongName());
