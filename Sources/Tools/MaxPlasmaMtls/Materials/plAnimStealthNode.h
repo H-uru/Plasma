@@ -126,7 +126,7 @@ public:
     void            SetNodeName( const char *parentName );
 
     // Create the dialog for this object and place it inside the given dialog, centering it in the given control if any
-    bool    CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams *parentParams, HWND frameCtrl = nil );
+    bool    CreateAndEmbedDlg(IParamMap2 *parentMap, IMtlParams *parentParams, HWND frameCtrl = nullptr);
 
     // Release said dialog
     void    ReleaseDlg();
@@ -168,7 +168,7 @@ public:
 
     // We override because we don't want to be able to animate this sucker
     int         NumSubs() override { return 0; }
-    Animatable  *SubAnim(int i) override { return nil; }
+    Animatable  *SubAnim(int i) override { return nullptr; }
     TSTR        SubAnimName(int i) override { return fClassDesc->ClassName(); }
 
     // plug-in mouse creation callback

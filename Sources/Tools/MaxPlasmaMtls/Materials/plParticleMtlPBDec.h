@@ -60,7 +60,7 @@ public:
         ICustButton *bmSelectBtn;
 
         SendMessage(cbox, CB_SETCURSEL, pb->GetInt(plParticleMtl::kNormal), 0);
-        pbbm = (layer == nil ? nil : layer->GetPBBitmap());
+        pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
 
         bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_PARTICLE_TEXTURE));
         bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
@@ -98,7 +98,7 @@ public:
             }
             else if (id == IDC_PARTICLE_TEXTURE)
             {
-                if (layer == nil)
+                if (layer == nullptr)
                     return FALSE;
                 layer->HandleBitmapSelection();
                 UpdateDisplay(map);

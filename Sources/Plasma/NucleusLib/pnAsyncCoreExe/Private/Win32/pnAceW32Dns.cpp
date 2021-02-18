@@ -136,7 +136,7 @@ static void LookupFindAndProcess (HANDLE cancelHandle, unsigned error) {
         hsLockGuard(s_critsect);
         for (lookup = s_lookupList.Head(); lookup; lookup = s_lookupList.Next(lookup)) {
             if (lookup->cancelHandle == cancelHandle) {
-                lookup->cancelHandle = nil;
+                lookup->cancelHandle = nullptr;
                 s_lookupList.Unlink(lookup);
                 break;
             }
@@ -192,7 +192,7 @@ static void LookupThreadProc (AsyncThread * thread) {
             lookup = s_lookupList.Head();
             if (lookup) {
                 WSACancelAsyncRequest(lookup->cancelHandle);
-                lookup->cancelHandle = nil;
+                lookup->cancelHandle = nullptr;
                 s_lookupList.Unlink(lookup);
             }
         }
@@ -204,7 +204,7 @@ static void LookupThreadProc (AsyncThread * thread) {
 
     // cleanup
     DestroyWindow(s_lookupWindow);
-    s_lookupWindow = nil;
+    s_lookupWindow = nullptr;
 }
 
 //===========================================================================

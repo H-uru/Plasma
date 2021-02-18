@@ -423,9 +423,9 @@ protected:
 
     // Error handling
     void    IAddErrorMessage( char *errStr );
-    void    ISetErrorMessage( char *errStr = nil );
+    void    ISetErrorMessage(char *errStr = nullptr);
     void    IGetD3DError();
-    void    IShowErrorMessage( char *errStr = nil );
+    void    IShowErrorMessage(char *errStr = nullptr);
     bool    ICreateFail( char *errStr );
 
     // Device initialization
@@ -549,8 +549,8 @@ public:
     virtual IDirect3DDevice9*           GetD3DDevice() const { return fD3DDevice; }
 
     // Typical 3D device
-    bool                        PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nil) override;
-    bool                        PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nil) override;
+    bool                        PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
+    bool                        PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
 
     void                        PushRenderRequest(plRenderRequest* req) override;
     void                        PopRenderRequest(plRenderRequest* req) override;
@@ -558,7 +558,7 @@ public:
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync = false) override;
 
     void                        ClearRenderTarget(plDrawable* d) override;
-    void                        ClearRenderTarget(const hsColorRGBA* col = nil, const float* depth = nil) override;
+    void                        ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) override;
     hsGDeviceRef*               MakeRenderTargetRef(plRenderTarget *owner) override;
     virtual hsGDeviceRef*       SharedRenderTargetRef(plRenderTarget* sharer, plRenderTarget *owner);
 
@@ -596,7 +596,7 @@ public:
     static short    GetDXBitDepth( D3DFORMAT format );
 
     // Default fog settings
-    void            SetDefaultFogEnviron(plFogEnvironment *fog) override { fView.SetDefaultFog(*fog); fCurrFog.fEnvPtr = nil; }
+    void            SetDefaultFogEnviron(plFogEnvironment *fog) override { fView.SetDefaultFog(*fog); fCurrFog.fEnvPtr = nullptr; }
 
 
 

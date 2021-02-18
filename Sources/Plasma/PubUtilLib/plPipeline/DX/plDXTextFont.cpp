@@ -81,7 +81,7 @@ const uint32_t    kNumVertsInBuffer(4608);
 // See the declaration for plFontVertex in plTextFont.h for info
 const DWORD plDXTextFont::kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
-IDirect3DVertexBuffer9*     plDXTextFont::fBuffer = nil;
+IDirect3DVertexBuffer9*     plDXTextFont::fBuffer = nullptr;
 uint32_t                      plDXTextFont::fBufferCursor = 0;
 
 //// Constructor & Destructor /////////////////////////////////////////////////
@@ -89,7 +89,7 @@ uint32_t                      plDXTextFont::fBufferCursor = 0;
 plDXTextFont::plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device ) : plTextFont( pipe )
 {
     fDevice = device;
-    fD3DTexture = nil;
+    fD3DTexture = nullptr;
 
     fOldStateBlock = fTextStateBlock = nullptr;
 }
@@ -195,7 +195,7 @@ void    plDXTextFont::DestroyObjects()
     ReleaseObject(fD3DTexture);
 
     fOldStateBlock = fTextStateBlock = nullptr;
-    fD3DTexture = nil;
+    fD3DTexture = nullptr;
     fInitialized = false;
 }
 
@@ -236,7 +236,7 @@ void    plDXTextFont::IDrawPrimitive( uint32_t count, plFontVertex *array )
         }
     }
 
-    if( v != nil && array != nil )
+    if (v != nullptr && array != nullptr)
     {
         memcpy( v, array, count * sizeof( plFontVertex ) * 3 );
     }
@@ -251,7 +251,7 @@ void    plDXTextFont::IDrawLines( uint32_t count, plFontVertex *array )
     if( !fBuffer )
         return;
 
-    if( count == 0 || array == nil )
+    if (count == 0 || array == nullptr)
         return;
 
     fDevice->SetVertexShader(nullptr);
@@ -312,7 +312,7 @@ void    plDXTextFont::RestoreStates()
     if (fOldStateBlock)
         fOldStateBlock->Apply();
     
-    fDevice->SetTexture( 0, nil );
+    fDevice->SetTexture(0, nullptr);
     fDevice->SetTransform( D3DTS_TEXTURE0, &d3dIdentityMatrix );
 }
 

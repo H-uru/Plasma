@@ -56,7 +56,7 @@ plATCEaseCurve *plATCEaseCurve::CreateEaseCurve(uint8_t type, float minLength, f
     if (type == plAnimEaseTypes::kSpline)
         return new plSplineEaseCurve(minLength, maxLength, length, startSpeed, goalSpeed);
 
-    return nil;
+    return nullptr;
 }
 
 void plATCEaseCurve::RecalcToSpeed(float startSpeed, float goalSpeed, bool preserveRate /* = false */)

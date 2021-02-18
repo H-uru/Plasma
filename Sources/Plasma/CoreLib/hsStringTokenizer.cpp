@@ -88,7 +88,7 @@ inline bool hsStringTokenizer::IsSep(char c)
 char *hsStringTokenizer::next() 
 {
     if (*fTok == 0) 
-        return nil;
+        return nullptr;
 
     char *cur = fTok;
     while (*fTok != 0 && !IsSep(*fTok)) 
@@ -112,7 +112,7 @@ char *hsStringTokenizer::next()
 bool  hsStringTokenizer::Next( char *token, uint32_t maxTokLen )
 {
     char *t = next();
-    if( t == nil )
+    if (t == nullptr)
         return false;
 
     hsStrncpy( token, t, maxTokLen );
@@ -122,10 +122,10 @@ bool  hsStringTokenizer::Next( char *token, uint32_t maxTokLen )
 // Restores the last character replaced to generate a terminator
 void    hsStringTokenizer::RestoreLastTerminator()
 {
-    if( fLastTerminator != nil )
+    if (fLastTerminator != nullptr)
     {
         *fLastTerminator = fLastRep;
-        fLastTerminator = nil;
+        fLastTerminator = nullptr;
     }
 }
 
@@ -133,11 +133,11 @@ void hsStringTokenizer::Reset(const char *string, const char *seps)
 {
     if (fString)
         delete[] fString;
-    fString = string ? hsStrcpy(string) : nil;
+    fString = string ? hsStrcpy(string) : nullptr;
 
     if (fSeps)
         delete[] fSeps;
-    fSeps = seps ? hsStrcpy(seps) : nil;
+    fSeps = seps ? hsStrcpy(seps) : nullptr;
     fNumSeps = fSeps ? strlen(fSeps) : 0;
     fCheckAlphaNum = false;
     for (int32_t i=0; i<fNumSeps; i++)
@@ -151,7 +151,7 @@ void hsStringTokenizer::Reset(const char *string, const char *seps)
 
     fTok = fString;
 
-    fLastTerminator = nil;
+    fLastTerminator = nullptr;
     fLastRep = 0;
 
     // don't skip empty fields.
@@ -208,7 +208,7 @@ inline bool hsWStringTokenizer::IsSep(wchar_t c)
 wchar_t *hsWStringTokenizer::next() 
 {
     if (*fTok == L'\0') 
-        return nil;
+        return nullptr;
 
     wchar_t *cur = fTok;
     while (*fTok != L'\0' && !IsSep(*fTok)) 
@@ -232,7 +232,7 @@ wchar_t *hsWStringTokenizer::next()
 bool  hsWStringTokenizer::Next( wchar_t *token, uint32_t maxTokLen )
 {
     wchar_t *t = next();
-    if( t == nil )
+    if (t == nullptr)
         return false;
 
     wcsncpy( token, t, maxTokLen - 1 );
@@ -243,10 +243,10 @@ bool  hsWStringTokenizer::Next( wchar_t *token, uint32_t maxTokLen )
 // Restores the last character replaced to generate a terminator
 void    hsWStringTokenizer::RestoreLastTerminator()
 {
-    if( fLastTerminator != nil )
+    if (fLastTerminator != nullptr)
     {
         *fLastTerminator = fLastRep;
-        fLastTerminator = nil;
+        fLastTerminator = nullptr;
     }
 }
 
@@ -262,7 +262,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
         fString[count] = L'\0';
     }
     else
-        fString = nil;
+        fString = nullptr;
 
     if (fSeps)
         delete[] fSeps;
@@ -274,7 +274,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
         fSeps[count] = L'\0';
     }
     else
-        fSeps = nil;
+        fSeps = nullptr;
 
     fNumSeps = fSeps ? wcslen(fSeps) : 0;
     fCheckAlphaNum = false;
@@ -289,7 +289,7 @@ void hsWStringTokenizer::Reset(const wchar_t *string, const wchar_t *seps)
 
     fTok = fString;
 
-    fLastTerminator = nil;
+    fLastTerminator = nullptr;
     fLastRep = 0;
 
     // don't skip empty fields.

@@ -54,22 +54,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 plCameraMsg::plCameraMsg() :
-fNewCam(nil),
-fTriggerer(nil),
-fTransTime(0),
-fSubject(nil),
-fPipe(nil),
-fActivated(false)
+fTransTime(),
+fSubject(),
+fPipe(),
+fActivated()
 {
 }
 
 plCameraMsg::plCameraMsg(const plKey &s, const plKey &r, const double* t)  : 
-fNewCam(nil),
-fTriggerer(nil),
-fTransTime(0),
-fSubject(nil),
-fPipe(nil),
-fActivated(false),
+fTransTime(),
+fSubject(),
+fPipe(),
+fActivated(),
 plMessage(s, r, t)
 {
 }

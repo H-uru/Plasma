@@ -146,7 +146,7 @@ public:
     void            GetBonesRootsRecur(hsTArray<plMaxNode*>& list);
     plSceneObject*  MakeCharacterHierarchy(plErrorMsg *pErrMsg);
     void            SetupBonesAliasesRecur(const char *rootName);
-    void            SetupBoneHierarchyPalette(plMaxBoneMap *bones = nil);
+    void            SetupBoneHierarchyPalette(plMaxBoneMap *bones = nullptr);
 
     void SetDISceneNodeSpans( plDrawInterface *di, bool needBlending );
 
@@ -244,7 +244,7 @@ public:
     uint8_t fNumBones;
     plMaxNodeBase *fOwner; // Make note of which node created us, so they can delete us.
 
-    plMaxBoneMap() : fNumBones(0), fOwner(nil) {}
+    plMaxBoneMap() : fNumBones(), fOwner() { }
 
     void AddBone(plMaxNodeBase *bone);
     uint8_t GetIndex(plMaxNodeBase *bone);

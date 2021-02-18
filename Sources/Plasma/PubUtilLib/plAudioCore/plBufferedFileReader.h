@@ -69,7 +69,7 @@ public:
     bool    SetPosition(uint32_t numBytes) override;
     bool    Read(uint32_t numBytes, void *buffer) override;
     uint32_t  NumBytesLeft() override;
-    bool    IsValid() override { return (fBuffer != nil) ? true : false; }
+    bool    IsValid() override { return (fBuffer != nullptr); }
 
 protected:
     uint32_t        fBufferSize;

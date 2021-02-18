@@ -160,7 +160,7 @@ private:
     void    IEnableEaseCurves(Animatable* control, bool enable);
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
     int     IAddPartsKeys(Control* control, hsTArray <hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
-    int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nil, bool rotQuat = false);
+    int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nullptr, bool rotQuat = false);
     int32_t   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end);
     ControllerType IGetControlType(TSTR ctrlName);
     bool    IIsKeyTimeInRange(TimeValue time);

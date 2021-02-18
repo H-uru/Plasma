@@ -133,7 +133,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
         GetKey()->Release(cloneKey);        // undo the active ref we took in ILoadClone
 
         // send message to scene object to remove him from the room
-        plNodeChangeMsg* nodeChange = new plNodeChangeMsg(GetKey(), cloneKey, nil);
+        plNodeChangeMsg* nodeChange = new plNodeChangeMsg(GetKey(), cloneKey, nullptr);
         plgDispatch::MsgSend(nodeChange);
     }
 

@@ -143,7 +143,7 @@ plAvBrainHuman * GetMainAvatarBrain()
         if(brain)
             return brain;
     }
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -385,7 +385,7 @@ PF_CONSOLE_CMD( Avatar_Multistage, Advance, "", "Advances the avatar's current m
     {
         plKey avKey = avatar->GetKey();
         
-        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
+        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nullptr, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
         msg->Send();
     }
 }
@@ -399,7 +399,7 @@ PF_CONSOLE_CMD( Avatar_Multistage, Regress, "", "Regresses the avatar's current 
     {
         plKey avKey = avatar->GetKey();
         
-        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nil, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
+        plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nullptr, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
         msg->Send();
     }
 }
@@ -498,7 +498,7 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
             
             plKey avKey = avatar->GetKey();
             float unused = 0.0f;
-            plAvSeekMsg *msg = new plAvSeekMsg(nil, avKey, targetKey, unused, false);
+            plAvSeekMsg *msg = new plAvSeekMsg(nullptr, avKey, targetKey, unused, false);
             
             plgDispatch::MsgSend(msg);
         }
@@ -896,7 +896,7 @@ PF_CONSOLE_CMD( Avatar_AG, DumpFull, "", "print out the animation graph for the 
 
     double time = hsTimer::GetSysSeconds();
 
-    avatar->DumpAniGraph(nil, false, time);
+    avatar->DumpAniGraph(nullptr, false, time);
 }
 
 PF_CONSOLE_CMD( Avatar_AG, DumpFullOptimized, "", "print out the optimized animation graph for the avatar")
@@ -904,7 +904,7 @@ PF_CONSOLE_CMD( Avatar_AG, DumpFullOptimized, "", "print out the optimized anima
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
     double time = hsTimer::GetSysSeconds();
-    avatar->DumpAniGraph(nil, true, time);
+    avatar->DumpAniGraph(nullptr, true, time);
 }
 
 PF_CONSOLE_CMD( Avatar_AG, DumpSingle, "string boneName", "print out the animation graph for the given (avatar) bone")

@@ -117,8 +117,8 @@ class plTextFont
                 fNext->fPrevPtr = fPrevPtr;
             *fPrevPtr = fNext;
 
-            fNext = nil;
-            fPrevPtr = nil;
+            fNext = nullptr;
+            fPrevPtr = nullptr;
         }
 
     public:

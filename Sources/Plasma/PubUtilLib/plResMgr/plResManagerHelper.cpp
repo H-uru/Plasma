@@ -92,7 +92,7 @@ static const float  kUpdateDelay    = 0.5f;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plResManagerHelper  *plResManagerHelper::fInstance = nil;
+plResManagerHelper  *plResManagerHelper::fInstance = nullptr;
 
 plResManagerHelper::plResManagerHelper( plResManager *resMgr )
 {
@@ -101,7 +101,7 @@ plResManagerHelper::plResManagerHelper( plResManager *resMgr )
 
     fInShutdown = false;
 #ifdef MCN_RESMGR_DEBUGGING
-    fDebugScreen = nil;
+    fDebugScreen = nullptr;
     fCurrAge = -1;
     fCurrAgeExpanded = false;
     fRefreshing = false;
@@ -110,7 +110,7 @@ plResManagerHelper::plResManagerHelper( plResManager *resMgr )
 }
 plResManagerHelper::~plResManagerHelper()
 {
-    fInstance = nil;
+    fInstance = nullptr;
 }
 
 //// Shutdown ////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ void    plResManagerHelper::Init()
 bool    plResManagerHelper::MsgReceive( plMessage *msg )
 {
     plResMgrHelperMsg *refferMsg = plResMgrHelperMsg::ConvertNoRef( msg );
-    if( refferMsg != nil )
+    if (refferMsg != nullptr)
     {
         if( refferMsg->GetCommand() == plResMgrHelperMsg::kKeyRefList )
         {
@@ -142,7 +142,7 @@ bool    plResManagerHelper::MsgReceive( plMessage *msg )
             hsStatusMessage( "*** Dropping page keys after timed delay ***" );
 
             delete refferMsg->fKeyList;
-            refferMsg->fKeyList = nil;
+            refferMsg->fKeyList = nullptr;
         }
         else if( refferMsg->GetCommand() == plResMgrHelperMsg::kUpdateDebugScreen )
         {
@@ -178,7 +178,7 @@ void    plResManagerHelper::Write( hsStream *s, hsResMgr *mgr )
 
 void plResManagerHelper::LoadAndHoldPageKeys( plRegistryPageNode *page )
 {
-    hsAssert( GetKey() != nil, "Can't load and hold keys when we don't have a key for the helper" );
+    hsAssert(GetKey() != nullptr, "Can't load and hold keys when we don't have a key for the helper");
 
     // Create our msg
     plResMgrHelperMsg   *refferMsg = new plResMgrHelperMsg( plResMgrHelperMsg::kKeyRefList );
@@ -225,7 +225,7 @@ class plResMgrDebugInterface : public plInputInterface
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg *pKeyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
-            if( pKeyMsg != nil && pKeyMsg->GetKeyDown() )
+            if (pKeyMsg != nullptr && pKeyMsg->GetKeyDown())
             {
                 if( pKeyMsg->GetKeyCode() == KEY_UP && fParent->fCurrAge >= 0 )
                 {
@@ -288,7 +288,7 @@ void    plResManagerHelper::EnableDebugScreen( bool enable )
 #ifdef MCN_RESMGR_DEBUGGING
     if( enable )
     {
-        if( fDebugScreen == nil )
+        if (fDebugScreen == nullptr)
         {
             fDebugScreen = plStatusLogMgr::GetInstance().CreateStatusLog( kLogSize, "ResManager Status", plStatusLog::kFilledBackground | plStatusLog::kDontWriteFile );
             fRefreshing = true;
@@ -306,17 +306,17 @@ void    plResManagerHelper::EnableDebugScreen( bool enable )
     else
     {
         fRefreshing = false;
-        if( fDebugScreen != nil )
+        if (fDebugScreen != nullptr)
         {
             delete fDebugScreen;
-            fDebugScreen = nil;
+            fDebugScreen = nullptr;
 
             plInputIfaceMgrMsg *imsg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
             imsg->SetIFace( fDebugInput );
             imsg->Send();
 
             hsRefCnt_SafeUnRef( fDebugInput );
-            fDebugInput = nil;
+            fDebugInput = nullptr;
         }
     }
 #endif
@@ -353,20 +353,20 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                 fStep = 1;
                 fLines++;
             }
-            else if( fStep == 1 && page != nil && !page->IsLoaded() )
+            else if (fStep == 1 && page != nullptr && !page->IsLoaded())
             {
                 fStep = 2;
                 fLog->AddLine( 0xff80ff80, "Holding Pages" );
                 fLines++;
             }
     
-            if( page != nil && page->IsLoaded() )
+            if (page != nullptr && page->IsLoaded())
                 fLoadedCount++;
-            else if( page != nil )
+            else if (page != nullptr)
                 fHoldingCount++;
 
             // Changed ages?
-            if( page == nil || page->GetPageInfo().GetAge() != fCurrAge )
+            if (page == nullptr || page->GetPageInfo().GetAge() != fCurrAge)
             {
                 // Print some info for the last age we were on
                 if( fCurrAge[ 0 ] != 0 )
@@ -391,7 +391,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
                     fAgeIndex++;
                 }
                 fPageCount = 0;
-                if( page != nil )
+                if (page != nullptr)
                     strncpy( fCurrAge, page->GetPageInfo().GetAge().c_str(), sizeof( fCurrAge ) - 1 );
                 else
                     fCurrAge[ 0 ] = 0;
@@ -414,7 +414,7 @@ class plDebugPrintIterator : public plRegistryPageIterator, plRegistryKeyIterato
 
             fPageCount++;
 
-            if( fParent->fCurrAge == fAgeIndex && fParent->fCurrAgeExpanded && page != nil )
+            if (fParent->fCurrAge == fAgeIndex && fParent->fCurrAgeExpanded && page != nullptr)
             {
                 // Count keys for this page
                 fTotalKeys = fLoadedKeys = fTotalSize = fLoadedSize = 0;
@@ -503,7 +503,7 @@ void    plResManagerHelper::IUpdateDebugScreen( bool force )
 
     plDebugPrintIterator    iter( this, fDebugScreen, loadedCnt, holdingCnt );
     fResManager->IterateAllPages( &iter );
-    iter.EatPage( nil );        // Force a final update
+    iter.EatPage(nullptr);        // Force a final update
 
     fDebugScreen->AddLineF( plStatusLog::kGreen, "{} pages loaded, {} holding", loadedCnt, holdingCnt );
 

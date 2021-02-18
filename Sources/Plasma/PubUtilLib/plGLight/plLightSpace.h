@@ -56,7 +56,7 @@ protected:
 
     hsKeyedObject*      IGetLightInfo() const { return fLightInfo; }
 public:
-    plLightSpace() : fLightInfo(nil) {}
+    plLightSpace() : fLightInfo() { }
     virtual ~plLightSpace() {}
 
     CLASSNAME_REGISTER( plLightSpace );

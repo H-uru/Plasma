@@ -174,7 +174,7 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
     ram.Rewind();
 
     unsigned bytes = ram.GetEOF();
-    uint8_t * buf = nil;
+    uint8_t * buf = nullptr;
     buf = (uint8_t *)malloc(bytes);
 
     ram.CopyToMem(buf);
@@ -231,7 +231,7 @@ void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
         SetImageType(dstType);
         free(buffer);
     } else {
-        SetImageData(nil, 0);
+        SetImageData(nullptr, 0);
         SetImageType(kNone);
     }
 }
@@ -253,10 +253,10 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 
         case kNone:
         default:
-            (*dst) = nil;
+            (*dst) = nullptr;
             break;
     }
-    return ((*dst) != nil);
+    return ((*dst) != nullptr);
 }
 
 
@@ -380,7 +380,7 @@ void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 //============================================================================
 const class plUnifiedTime * VaultAgeInfoNode::GetAgeTime () const {
     hsAssert(false, "eric, implement me.");
-    return nil;
+    return nullptr;
 }
 
 //============================================================================

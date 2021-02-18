@@ -85,10 +85,10 @@ void plWin32Sound::DeActivate()
 
 void plWin32Sound::IFreeBuffers()
 {
-    if( fDSoundBuffer != nil )
+    if (fDSoundBuffer != nullptr)
     {
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
         plProfile_DelMem(MemSounds, fTotalBytes);
         fTotalBytes = 0;
     }
@@ -135,7 +135,7 @@ void plWin32Sound::IActuallyStop()
 {
     if( fReallyPlaying )
     {
-        if( fDSoundBuffer != nil )
+        if (fDSoundBuffer != nullptr)
         {
             if(IsPropertySet(kPropIncidental))
             {
@@ -149,7 +149,7 @@ void plWin32Sound::IActuallyStop()
     }
     else
     {
-        if( fDSoundBuffer != nil && fDSoundBuffer->IsPlaying() )
+        if (fDSoundBuffer != nullptr && fDSoundBuffer->IsPlaying())
         {
             plStatusLog::AddLineSF( "audio.log", 0xffff0000, "WARNING: BUFFER FLAGGED AS STOPPED BUT NOT STOPPED - {}", GetKey() ? GetKeyName() : ST_LITERAL("(nil)") );
             fDSoundBuffer->Stop();
@@ -158,7 +158,7 @@ void plWin32Sound::IActuallyStop()
 
     // send callbacks
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStop );
-    if( event != nil )
+    if (event != nullptr)
     {
         event->SendCallbacks();
     }
@@ -299,7 +299,7 @@ void plWin32Sound::IRefreshParams()
 
 void plWin32Sound::IRefreshEAXSettings( bool force )
 {
-    if( fDSoundBuffer != nil )
+    if (fDSoundBuffer != nullptr)
         fDSoundBuffer->SetEAXSettings( &GetEAXSettings(), force );
 }
 
@@ -310,11 +310,11 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
 
     if( type == plSoundEvent::kTime )
     {
-        uint32_t byteTime = ( fDSoundBuffer != nil ) ? fDSoundBuffer->GetBufferBytePos( pMsg->fEventTime ) : 0;
+        uint32_t byteTime = (fDSoundBuffer != nullptr) ? fDSoundBuffer->GetBufferBytePos(pMsg->fEventTime) : 0;
 
         event = IFindEvent( type, byteTime );
 
-        if( event == nil )
+        if (event == nullptr)
         {
             // Add a new sound event for this guy
             event = new plSoundEvent( type, byteTime, this );
@@ -326,7 +326,7 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
     {
         event = IFindEvent( type );
 
-        if( event == nil )
+        if (event == nullptr)
         {
             // Add a new sound event for this guy
             event = new plSoundEvent( type, this );
@@ -373,7 +373,7 @@ plSoundEvent *plWin32Sound::IFindEvent( plSoundEvent::Types type, uint32_t byteP
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plWin32Sound::RemoveCallbacks(plSoundMsg* pSoundMsg)
@@ -391,7 +391,7 @@ void plWin32Sound::AddCallbacks(plSoundMsg* pSoundMsg)
 bool plWin32Sound::MsgReceive( plMessage* pMsg )
 {
     plEventCallbackMsg *e = plEventCallbackMsg::ConvertNoRef( pMsg );
-    if( e != nil )
+    if (e != nullptr)
     {
         if( e->fEvent == kStop )
         {
@@ -403,7 +403,7 @@ bool plWin32Sound::MsgReceive( plMessage* pMsg )
             {
                 IStartFade( &fFadeOutParams );
                 plSoundEvent    *event = IFindEvent( plSoundEvent::kStop );
-                if( event != nil )
+                if (event != nullptr)
                     event->SendCallbacks();
             }
             else

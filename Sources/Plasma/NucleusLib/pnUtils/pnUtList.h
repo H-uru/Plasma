@@ -180,7 +180,7 @@ bool CBaseLink::IsLinked () const {
 
 //===========================================================================
 uint8_t * CBaseLink::Next () const {
-    return TermCheck(m_next) ? nil : m_next;
+    return TermCheck(m_next) ? nullptr : m_next;
 }
 
 //===========================================================================
@@ -437,11 +437,11 @@ public:
     inline T * Head ();
     inline const T * Head () const;
     inline bool IsLinked (const T * node) const;
-    inline void Link (T * node, ELinkType linkType = kListTail, T * existingNode = nil);
-    inline void Link (TList<T> * list, ELinkType linkType = kListTail, T * existingNode = nil);
-    inline void Link (TList<T> * list, T * afterNode, T * beforeNode, ELinkType linkType = kListTail, T * existingNode = nil);
-    inline T * New (ELinkType linkType = kListTail, T * existingNode = nil, const char file[] = nil, int line = 0);
-    inline T * NewZero (ELinkType linkType = kListTail, T * existingNode = nil, const char file[] = nil, int line = 0);
+    inline void Link (T * node, ELinkType linkType = kListTail, T * existingNode = nullptr);
+    inline void Link (TList<T> * list, ELinkType linkType = kListTail, T * existingNode = nullptr);
+    inline void Link (TList<T> * list, T * afterNode, T * beforeNode, ELinkType linkType = kListTail, T * existingNode = nullptr);
+    inline T * New (ELinkType linkType = kListTail, T * existingNode = nullptr, const char file[] = nullptr, int line = 0);
+    inline T * NewZero (ELinkType linkType = kListTail, T * existingNode = nullptr, const char file[] = nullptr, int line = 0);
     inline T * Next (const T * node);
     inline const T * Next (const T * node) const;
     inline T * NextUnchecked (const T * node);
@@ -457,7 +457,7 @@ public:
 //===========================================================================
 template<class T>
 void TList<T>::Clear () {
-    for (T * curr; (curr = Head()) != nil; Delete(curr))
+    for (T * curr; (curr = Head()) != nullptr; Delete(curr))
         ;
 }
 
@@ -494,7 +494,7 @@ void TList<T>::Link (T * node, ELinkType linkType, T * existingNode) {
 //===========================================================================
 template<class T>
 void TList<T>::Link (TList<T> * list, ELinkType linkType, T * existingNode) {
-    CBaseList::Link(list, nil, nil, linkType, (uint8_t *)existingNode);
+    CBaseList::Link(list, nullptr, nullptr, linkType, (uint8_t *)existingNode);
 }
 
 //===========================================================================

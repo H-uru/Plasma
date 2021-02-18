@@ -121,13 +121,13 @@ plSimulationMgr::plSimulationMgr()
 plSimulationMgr::~plSimulationMgr()
 {
     fLOSDispatch->UnRef();
-    fLOSDispatch = nil;
+    fLOSDispatch = nullptr;
 
     delete fSoundMgr;
-    fSoundMgr = nil;
+    fSoundMgr = nullptr;
 
     delete fLog;
-    fLog = nil;
+    fLog = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -78,20 +78,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     if( index != -1 )                           \
     {                                           \
         SND_INDEX_CHECK( index, ret );          \
-        if (fSoundObjs[index] != nil)           \
+        if (fSoundObjs[index] != nullptr)       \
             fSoundObjs[index]->func;            \
     }                                           \
     else                                        \
     {                                           \
         for (plSound* sound : fSoundObjs)       \
         {                                       \
-            if (sound != nil)                   \
+            if (sound != nullptr)               \
                 sound->func;                    \
         }                                       \
     }                                           
 
 plWinAudible::plWinAudible()
-:   fSceneNode(nil), fSceneObj(nil), fSDLMod(nil)
+:   fSDLMod()
 {
     fProxyGen = new plWinAudibleProxy;
     fProxyGen->Init(this);
@@ -118,7 +118,7 @@ plWinAudible::~plWinAudible()
 
 void plWinAudible::SetSceneObject(plKey obj)
 {
-    plKey oldKey = nil;
+    plKey oldKey;
     // remove old SDL mod
     if (fSDLMod && fSceneObj && fSceneObj != obj)
     {
@@ -127,11 +127,11 @@ void plWinAudible::SetSceneObject(plKey obj)
         if (so)
             so->RemoveModifier(fSDLMod);
         delete fSDLMod;
-        fSDLMod=nil;
+        fSDLMod = nullptr;
     }
 
     fSceneObj = obj;
-    plSceneObject* so=plSceneObject::ConvertNoRef(obj ? obj->ObjectIsLoaded() : nil);
+    plSceneObject* so = plSceneObject::ConvertNoRef(obj ? obj->ObjectIsLoaded() : nullptr);
     if (so)
     {
         so->RemoveModifier(fSDLMod);        
@@ -142,14 +142,14 @@ void plWinAudible::SetSceneObject(plKey obj)
 
     for (plSound* sound : fSoundObjs)
     {
-        if (sound != nil && sound->GetKey() != nil)
+        if (sound != nullptr && sound->GetKey() != nullptr)
         {
-            if( obj != nil )
+            if (obj != nullptr)
             {
                 plGenRefMsg *replaceMsg = new plGenRefMsg(sound->GetKey(), plRefMsg::kOnReplace, 0, plSound::kRefParentSceneObject);
                 hsgResMgr::ResMgr()->AddViaNotify( obj, replaceMsg, plRefFlags::kPassiveRef );
             }
-            else if( oldKey != nil )
+            else if (oldKey != nullptr)
                 sound->GetKey()->Release(oldKey);
         }
     }
@@ -203,7 +203,7 @@ void plWinAudible::GetStatus(plSoundMsg* pMsg)
 
 bool plWinAudible::AddSound( plSound *pSnd, int index, bool is3D )
 {
-    hsAssert(pSnd->GetKey() != nil, "Adding a new sound with no key.");
+    hsAssert(pSnd->GetKey() != nullptr, "Adding a new sound with no key.");
     if (plgAudioSys::Active())
     {
         hsgResMgr::ResMgr()->AddViaNotify( pSnd->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
@@ -250,7 +250,7 @@ plAudible& plWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w
     if (index != -1)
     {
         SND_INDEX_CHECK( index, (*this) );
-        if( fSoundObjs[ index ] != nil )
+        if (fSoundObjs[index] != nullptr)
         {
             fSoundObjs[index]->SetPosition( pos );
             fSoundObjs[index]->SetConeOrientation( v.fX,v.fY,v.fZ );
@@ -260,7 +260,7 @@ plAudible& plWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w
     {
         for (plSound* sound : fSoundObjs)
         {
-            if (sound != nil)
+            if (sound != nullptr)
             {
                 sound->SetConeOrientation(v.fX, v.fY, v.fZ);
                 sound->SetPosition(pos);
@@ -346,14 +346,14 @@ void    plWinAudible::ToggleMuted( int index )
     if( index != -1 )
     {
         SND_INDEX_CHECK( index, ; );
-        if( fSoundObjs[ index ] != nil )
+        if (fSoundObjs[index] != nullptr)
             fSoundObjs[ index ]->SetMuted( !fSoundObjs[ index ]->IsMuted() );
     }
     else
     {
         for (plSound* sound : fSoundObjs)
         {
-            if (sound != nil)
+            if (sound != nullptr)
                 sound->SetMuted(!sound->IsMuted());
         }
     }
@@ -423,13 +423,13 @@ bool plWinAudible::IsPlaying(int index)
         {
             for (plSound* sound : fSoundObjs)
             {
-                if (sound != nil && sound->IsPlaying())
+                if (sound != nullptr && sound->IsPlaying())
                     return true;
             }
             return false;
         }
 
-        if( fSoundObjs[ index ] == nil )
+        if (fSoundObjs[index] == nullptr)
             return false;
 
         return(fSoundObjs[index]->IsPlaying());
@@ -473,7 +473,7 @@ void plWinAudible::Write(hsStream* s, hsResMgr* mgr)
 void plWinAudible::Activate()
 {
     for (plSound* sound : fSoundObjs)
-        if (sound != nil)
+        if (sound != nullptr)
             sound->Activate();
 }
 
@@ -482,7 +482,7 @@ void plWinAudible::DeActivate()
 {
     for (plSound* sound : fSoundObjs)
     {
-        if (sound != nil)
+        if (sound != nullptr)
             sound->DeActivate();
     }
 }
@@ -507,7 +507,7 @@ bool plWinAudible::MsgReceive(plMessage* msg)
             else if( refMsg->GetContext() & (plRefMsg::kOnRemove | plRefMsg::kOnDestroy) )
             {
                 if ((size_t)index < fSoundObjs.size())
-                    fSoundObjs[index] = nil;
+                    fSoundObjs[index] = nullptr;
             }
             return true;
         }
@@ -524,7 +524,7 @@ bool plWinAudible::MsgReceive(plMessage* msg)
 
     // proxyDrawMsg handling--just pass it on to the proxy object
     plProxyDrawMsg *pdMsg = plProxyDrawMsg::ConvertNoRef( msg );
-    if( pdMsg != nil )
+    if (pdMsg != nullptr)
     {
         if( fProxyGen )
             return fProxyGen->MsgReceive( pdMsg );
@@ -604,9 +604,9 @@ plDrawableSpans* plWinAudible::CreateProxy(hsGMaterial* mat, std::vector<uint32_
 //
 
 pl2WayWinAudible::pl2WayWinAudible() :
-fVoicePlayer(nil),
-fVoiceRecorder(nil),
-fActive(false)
+fVoicePlayer(),
+fVoiceRecorder(),
+fActive()
 {
 }
 

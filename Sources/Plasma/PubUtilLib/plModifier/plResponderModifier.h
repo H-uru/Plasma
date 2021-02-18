@@ -63,7 +63,7 @@ protected:
     class plResponderCmd
     {
     public:
-        plResponderCmd() : fMsg(nil), fWaitOn(-1) {}
+        plResponderCmd() : fMsg(), fWaitOn(-1) { }
         plResponderCmd(plMessage *msg, int8_t waitOn) : fMsg(msg), fWaitOn(waitOn) {}
 
         plMessage *fMsg;

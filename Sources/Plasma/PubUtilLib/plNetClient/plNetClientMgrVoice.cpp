@@ -262,7 +262,7 @@ bool plNetClientMgr::IUpdateListenList(double secs)
                             fTransport.GetMember(i)->AsStdString());
                     }
 #endif
-                    plSceneObject* obj=plSceneObject::ConvertNoRef(k ? k->ObjectIsLoaded() : nil);
+                    plSceneObject* obj=plSceneObject::ConvertNoRef(k ? k->ObjectIsLoaded() : nullptr);
                     if (obj && obj->GetCoordinateInterface())
                     {
 #if 1
@@ -383,15 +383,15 @@ void plNetClientMgr::IHandleNetVoiceListMsg(plNetVoiceListMsg* msg)
         // add in the members we receive from python
         for (i = 0; i < msg->GetClientList()->Count(); i++)
         {
-            plNetTransportMember **members = nil;
+            plNetTransportMember **members = nullptr;
             plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
                     
-            if( members != nil)
+            if (members != nullptr)
             {
                 for(int j= 0; j < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); j++ )
                 {
                     plNetTransportMember *mbr = members[ j ];
-                    if( mbr != nil && mbr->GetAvatarKey() != nil && mbr->GetPlayerID() == msg->GetClientList()->AcquireArray()[i])
+                    if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == msg->GetClientList()->AcquireArray()[i])
                     {
                         plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
                     }

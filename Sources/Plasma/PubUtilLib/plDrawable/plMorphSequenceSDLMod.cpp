@@ -73,7 +73,7 @@ void plMorphSequenceSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
     plSceneObject* sobj=GetTarget();
     hsAssert(sobj, "plMorphSequenceSDLMod, nil target");
     
-    const plMorphSequence *kMorphMod = nil;
+    const plMorphSequence *kMorphMod = nullptr;
     int i, j;
     kMorphMod = plMorphSequence::ConvertNoRef(sobj->GetModifierByType(plMorphSequence::Index()));
     if (!kMorphMod)
@@ -93,8 +93,8 @@ void plMorphSequenceSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
         if (i == morphMod->fSharedMeshes.GetCount())
         {
             // the non-sharedMesh morph
-            if (morphMod->GetNumLayers(nil) != 0)
-                keys.Append(nil);
+            if (morphMod->GetNumLayers(nullptr) != 0)
+                keys.Append(nullptr);
         }
         else
         {

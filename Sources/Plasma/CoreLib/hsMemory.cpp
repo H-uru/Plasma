@@ -436,7 +436,7 @@ void* hsAppender::PeekTail() const
     if (fLastBlock)
         return (char*)fLastBlock->fStop - fElemSize;
     else
-        return nil;
+        return nullptr;
 }
 
 bool hsAppender::PopTail(void* data)

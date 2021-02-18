@@ -80,13 +80,13 @@ plConst(int) kDefMaxFaces(1000);
 plConst(float) kDefMinSize(50.f);
 
 plClusterUtil::plClusterUtil()
-:   fGroup(nil),
-    fTemplNode(nil),
-    fTemplate(nil),
+:   fGroup(),
+    fTemplNode(),
+    fTemplate(),
     fMinFaces(kDefMinFaces),
     fMaxFaces(kDefMaxFaces),
     fMinSize(kDefMinSize),
-    fIdx(0)
+    fIdx()
 {
 }
 
@@ -689,8 +689,8 @@ void plClusterUtil::IAddInstsToCluster(plCluster* cluster, plSpanTemplateB* temp
         span->SetLocalToWorld(plMaxNodeBase::Matrix3ToMatrix44(insts[i]));
 
         span->Encode(cluster->GetEncoding(), templ->NumVerts(),
-            delPos[i] ? delPos[i]->Addr(0) : nil,
-            colors[i] ? colors[i]->Addr(0) : nil);
+            delPos[i] ? delPos[i]->Addr(0) : nullptr,
+            colors[i] ? colors[i]->Addr(0) : nullptr);
 
         cluster->IAddInst(span);
     }
@@ -707,8 +707,8 @@ void plClusterUtil::IAllocPosAndColor(plSpanTemplateB* templ, const plL2WTab& in
     int i;
     for( i = 0; i < insts.Count(); i++ )
     {
-        delPos[i] = nil;
-        colors[i] = nil;
+        delPos[i] = nullptr;
+        colors[i] = nullptr;
     }
 }
 
@@ -726,8 +726,8 @@ void plClusterUtil::IDelPosAndColor(plSpanTemplateB* templ,
                                     plPoint3TabTab& delPos, plColorTabTab& colors)
 {
 
-    bool doDef = def != nil;
-    bool doCol = shade != nil;
+    bool doDef = def != nullptr;
+    bool doCol = shade != nullptr;
     // For each inst
     int i;
     for( i = 0; i < insts.Count(); i++ )

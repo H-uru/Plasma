@@ -75,7 +75,7 @@ void AsyncTimerCreate (
     AsyncTimer **   timer,
     FAsyncTimerProc timerProc, 
     unsigned        callbackMs,
-    void *          param = nil
+    void *          param = nullptr
 );
 
 // Timer procs can be in the process of getting called in

@@ -124,7 +124,7 @@ plNetMessage* plNetMessage::CreateAndRead(const plNetCommonMessage* msg, plStrea
     // create
     plNetMessage* pHdr = Create(msg);
     if (!pHdr)
-        return nil;
+        return nullptr;
     
     // read
     pHdr->PeekBuffer(msg->GetData(), msg->GetLen(), 0, false, el);
@@ -144,7 +144,7 @@ plNetMessage* plNetMessage::Create(const plNetCommonMessage* msg)
         readStream.Init(sizeof(classIndex), msg->GetData());
         readStream.ReadLE(&classIndex);
         if (!plFactory::IsValidClassIndex(classIndex))
-            return nil;
+            return nullptr;
         plNetMessage* pnm = plNetMessage::ConvertNoRef(plFactory::Create(classIndex));
         if (pnm)
             pnm->SetNetCoreMsg(msg);
@@ -156,7 +156,7 @@ plNetMessage* plNetMessage::Create(const plNetCommonMessage* msg)
         }
         return pnm;
     }
-    return nil;
+    return nullptr;
 }
 
 int plNetMessage::PokeBuffer(char* bufIn, int bufLen, uint32_t peekOptions)
@@ -735,7 +735,7 @@ void plNetMsgSDLState::ISetDescName() const
     {
         hsReadOnlyStream stream(StreamInfo()->GetStreamLen(), StreamInfo()->GetStreamBuf());
         /* This code can crash the game server sometimes -eap
-        char* descName = nil;
+        char* descName = nullptr;
         int ver;
         if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
             fDescName = descName;

@@ -111,7 +111,7 @@ std::thread AsyncThreadCreate (
 ) {
     AsyncThread * thread    = new AsyncThread;
     thread->proc            = threadProc;
-    thread->handle          = nil;
+    thread->handle          = nullptr;
     thread->argument        = argument;
     thread->workTimeMs      = kAsyncTimeInfinite;
     StrCopy(thread->name, name, std::size(thread->name));

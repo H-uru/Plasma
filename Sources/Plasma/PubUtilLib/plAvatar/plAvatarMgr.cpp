@@ -87,7 +87,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 
 // The static single instance, allocated on demand by GetInstance()
-plAvatarMgr     *plAvatarMgr::fInstance = nil;
+plAvatarMgr     *plAvatarMgr::fInstance = nullptr;
 
 // CTOR
 plAvatarMgr::plAvatarMgr()
@@ -102,7 +102,7 @@ plAvatarMgr::~plAvatarMgr()
     IReset();
 
     delete fLog;
-    fLog = nil;
+    fLog = nullptr;
 }
 
 // GETINSTANCE
@@ -125,7 +125,7 @@ void plAvatarMgr::ShutDown()
         fInstance->UnRef();
         if(fInstance)
             fInstance->UnRegister();
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }
 
@@ -589,7 +589,7 @@ plSeekPointMod * plAvatarMgr::FindSeekPoint(const ST::string &name)
     
     if (found == fSeekPoints.end())
     {
-        return nil;
+        return nullptr;
     } else {
         return (*found).second;
     }
@@ -637,7 +637,7 @@ plOneShotMod *plAvatarMgr::FindOneShot(const ST::string &name)
 
     if (found == fOneShots.end())
     {
-        return nil;
+        return nullptr;
     } else {
         return found->second;
     }
@@ -683,7 +683,7 @@ plArmatureMod* plAvatarMgr::GetLocalAvatar()
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 plKey plAvatarMgr::GetLocalAvatarKey()
@@ -692,7 +692,7 @@ plKey plAvatarMgr::GetLocalAvatarKey()
     if (avatar)
         return avatar->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 plArmatureMod *plAvatarMgr::GetFirstRemoteAvatar()
@@ -711,7 +711,7 @@ plArmatureMod *plAvatarMgr::GetFirstRemoteAvatar()
         }
     }
     
-    return nil;
+    return nullptr;
 }
 
 plArmatureMod* plAvatarMgr::FindAvatar(const plKey& avatarKey)
@@ -720,7 +720,7 @@ plArmatureMod* plAvatarMgr::FindAvatar(const plKey& avatarKey)
     if (so)
         return const_cast<plArmatureMod*>((plArmatureMod*)so->GetModifierByType(plArmatureMod::Index()));
     
-    return nil;
+    return nullptr;
 }
 
 plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(uint32_t pid)
@@ -732,7 +732,7 @@ plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(uint32_t pid)
         if (armature && (armature->GetKey()->GetUoid().GetClonePlayerID() == pid))
             return armature;
     }
-    return nil;
+    return nullptr;
 }
 
 plArmatureMod *plAvatarMgr::FindAvatarByModelName(const ST::string& name)
@@ -745,7 +745,7 @@ plArmatureMod *plAvatarMgr::FindAvatarByModelName(const ST::string& name)
             return armature;
     }
     
-    return nil;
+    return nullptr;
 }
 
 void plAvatarMgr::FindAllAvatarsByModelName(const char* name, plArmatureModPtrVec& outVec)
@@ -782,7 +782,9 @@ const plSpawnModifier * plAvatarMgr::GetSpawnPoint(int i)
     if(i < fSpawnPoints.size())
     {
         return fSpawnPoints[i];
-    } else return nil;
+    }
+    else
+        return nullptr;
 }
 
 int plAvatarMgr::FindSpawnPoint( const char *name ) const
@@ -791,7 +793,7 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
 
     for( i = 0; i < fSpawnPoints.size(); i++ )
     {
-        if( fSpawnPoints[ i ] != nil && 
+        if (fSpawnPoints[i] != nullptr &&
             ( fSpawnPoints[ i ]->GetKey()->GetUoid().GetObjectName().contains( name ) ||
               fSpawnPoints[ i ]->GetTarget(0)->GetKeyName().contains( name ) ))
             return i;
@@ -819,7 +821,7 @@ int plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
     if (!localSO)
         return plCCRError::kNilLocalAvatar;
 
-    plWarpMsg *warp = new plWarpMsg(nil, (iMove ? localSO->GetKey() : remoteSO->GetKey()), 
+    plWarpMsg *warp = new plWarpMsg(nullptr, (iMove ? localSO->GetKey() : remoteSO->GetKey()),
         plWarpMsg::kFlushTransform, (iMove ? remoteSO->GetLocalToWorld() : localSO->GetLocalToWorld()));
     
     warp->SetBCastFlag(plMessage::kNetPropagate);
@@ -838,7 +840,7 @@ int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
     hsVector3 v(x, y, z);
     m.SetTranslate(&v);
 
-    plWarpMsg *warp = new plWarpMsg(nil, localSO->GetKey(), plWarpMsg::kFlushTransform, m);
+    plWarpMsg *warp = new plWarpMsg(nullptr, localSO->GetKey(), plWarpMsg::kFlushTransform, m);
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
@@ -850,7 +852,7 @@ int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     plNetTransportMember* mbr=nc->TransportMgr().GetMember(nc->TransportMgr().FindMember(pid));
     plSceneObject *player = plSceneObject::ConvertNoRef(mbr && mbr->GetAvatarKey() ? 
-        mbr->GetAvatarKey()->ObjectIsLoaded() : nil);
+        mbr->GetAvatarKey()->ObjectIsLoaded() : nullptr);
     if (!player)
         return plCCRError::kNilLocalAvatar;
 
@@ -858,7 +860,7 @@ int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
     hsVector3 v(x, y, z);
     m.SetTranslate(&v);
 
-    plWarpMsg *warp = new plWarpMsg(nil, player->GetKey(), 0, m);
+    plWarpMsg *warp = new plWarpMsg(nullptr, player->GetKey(), 0, m);
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
@@ -982,7 +984,7 @@ void plAvatarMgr::GetDniCoordinate(plDniCoordinateInfo* ret)
 // ----------
 void plAvatarMgr::OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *linkMsg, plKey replyKey)
 {
-    if(hostKey != nil && guestKey != nil)
+    if (hostKey != nullptr && guestKey != nullptr)
     {
         const plArmatureMod *hostAv = FindAvatar(hostKey);
         const plArmatureMod *guestAv = FindAvatar(guestKey);

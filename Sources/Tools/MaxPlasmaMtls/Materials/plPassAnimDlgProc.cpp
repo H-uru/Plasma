@@ -70,13 +70,13 @@ using namespace plPassBaseParamIDs;
 
 plPassAnimDlgProc::plPassAnimDlgProc()
 {
-    fCurrParamMap = nil;
+    fCurrParamMap = nullptr;
     fInitingNames = false;
 }
 
 plPassAnimDlgProc::~plPassAnimDlgProc()
 {
-    if( fCurrParamMap != nil )
+    if (fCurrParamMap != nullptr)
     {
         plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
         mtl->RegisterChangeCallback( this );
@@ -92,7 +92,7 @@ plPassAnimDlgProc   &plPassAnimDlgProc::Get()
 void plPassAnimDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
 {
 /*  plAnimStealthNode *testStealth = (plAnimStealthNode *)pmap->GetParamBlock()->GetINode( (ParamID)kPBAnimTESTING );
-    if( testStealth != nil )
+    if (testStealth != nullptr)
     {
         IParamBlock2 *pb = testStealth->GetParamBlockByID( plAnimStealthNode::kBlockPB );
         if( pb && pb->GetMap() && pb->GetMap()->GetUserDlgProc() )
@@ -109,7 +109,7 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
 {
     if( fCurrParamMap != pMap )
     {
-        if( fCurrParamMap != nil )
+        if (fCurrParamMap != nullptr)
         {
             plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
             mtl->UnregisterChangeCallback( this );
@@ -117,7 +117,7 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
 
         fCurrParamMap = pMap;
 
-        if( fCurrParamMap != nil )
+        if (fCurrParamMap != nullptr)
         {
             plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
             mtl->RegisterChangeCallback( this );
@@ -132,18 +132,18 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
     switch (msg)
     {
         case WM_DESTROY:
-            if( fCurrParamMap != nil )
+            if (fCurrParamMap != nullptr)
             {
                 plPassMtlBase *mtl = (plPassMtlBase *)( fCurrParamMap->GetParamBlock()->GetOwner() );
                 mtl->RegisterChangeCallback( this );
-                fCurrParamMap = nil;
+                fCurrParamMap = nullptr;
             }
             break;
 
         case WM_INITDIALOG:
             {
                 fhWnd = hWnd;
-                fCurrStealth = nil;
+                fCurrStealth = nullptr;
                 IInitControls(mtl, pb);
 
                 plAnimComponentProc::FillAgeGlobalComboBox(gWnd, pb->GetStr(ParamID(kPBAnimGlobalName)));                           
@@ -192,7 +192,7 @@ BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT m
 
 void    plPassAnimDlgProc::SegmentListChanged()
 {
-    if( fCurrParamMap != nil )
+    if (fCurrParamMap != nullptr)
         ILoadNames( fCurrParamMap->GetParamBlock() );
 }
 
@@ -203,14 +203,14 @@ void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, bool clear )
     
     // Get current selection
     if( clear )
-        newStealth = nil;
+        newStealth = nullptr;
     else
     {
         int sel = SendDlgItemMessage( fhWnd, IDC_NAMES, CB_GETCURSEL, 0, 0 );
         if( sel == CB_ERR )
         {
             // Somehow we don't have a selection...fine, just destroy
-            newStealth = nil;
+            newStealth = nullptr;
         }
         else
         {
@@ -222,18 +222,18 @@ void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, bool clear )
     if( newStealth == fCurrStealth )
         return;
 
-    if( fCurrStealth != nil && newStealth != nil )
+    if (fCurrStealth != nullptr && newStealth != nullptr)
     {
         fCurrStealth->SwitchDlg( newStealth );
     }
     else
     {
         // Destroy the old
-        if( fCurrStealth != nil )
+        if (fCurrStealth != nullptr)
             fCurrStealth->ReleaseDlg();
 
         // Show the new
-        if( newStealth != nil )
+        if (newStealth != nullptr)
             IExposeStealthNode( newStealth, thisMap );
     }
 
@@ -290,7 +290,7 @@ void plPassAnimDlgProc::ILoadNames(IParamBlock2 *pb )
     for( i = 0; i < count; i++ )
     {
         plAnimStealthNode *stealth = mtl->IGetStealth( i, false );
-        if( stealth != nil )
+        if (stealth != nullptr)
         {
             int idx = SendMessage( hAnims, CB_ADDSTRING, 0, (LPARAM)stealth->GetSegmentName().c_str() );
             SendMessage( hAnims, CB_SETITEMDATA, idx, (LPARAM)stealth );
@@ -308,8 +308,8 @@ void plPassAnimDlgProc::IEnableGlobal(HWND hWnd, bool enable)
     Edit_Enable(GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME), enable);
     ComboBox_Enable(GetDlgItem(hWnd, IDC_NAMES), !enable);
 
-    HWND stealthWnd = ( fCurrStealth != nil ) ? fCurrStealth->GetWinDlg() : nil;
-    if( stealthWnd != nil )
+    HWND stealthWnd = (fCurrStealth != nullptr) ? fCurrStealth->GetWinDlg() : nullptr;
+    if (stealthWnd != nullptr)
         EnableWindow( stealthWnd, !enable );
 }
 

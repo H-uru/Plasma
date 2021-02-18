@@ -366,7 +366,7 @@ public:
     BOOL    IDoLayerClicked( int whichBtn, int whichFace, IParamMap2 *map, TimeValue t, HWND hWnd )
     {
         plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
-        if (layer == nil)
+        if (layer == nullptr)
             return FALSE;
 
         BOOL selectedNewBitmap = layer->HandleBitmapSelection( whichFace - plStaticEnvLayer::kFrontFace );
@@ -376,7 +376,7 @@ public:
 
             PBBitmap *pbbm = layer->GetPBBitmap( whichFace - plStaticEnvLayer::kFrontFace );
             bmSelectBtn = GetICustButton( GetDlgItem( hWnd, whichBtn ) );
-            bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : nil);
+            bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : nullptr);
             ReleaseICustButton(bmSelectBtn);
 
             return TRUE;

@@ -82,7 +82,7 @@ void plPickNodeBase::IInitDlg(HWND hDlg)
 //  LONG style = GetWindowLong(hList, GWL_STYLE);
 //  SetWindowLong(hList, GWL_STYLE, style | LBS_MULTIPLESEL);
 
-    plMaxNode* curSelNode = nil;
+    plMaxNode* curSelNode = nullptr;
     ParamType2 type = fPB->GetParameterType(fNodeParamID);
     if (type == TYPE_REFTARG)
         curSelNode = (plMaxNode*)fPB->GetReferenceTarget(fNodeParamID);
@@ -94,7 +94,7 @@ void plPickNodeBase::IInitDlg(HWND hDlg)
 
 BOOL plPickNodeBase::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static plPickNodeBase* pthis = nil;
+    static plPickNodeBase* pthis = nullptr;
 
     switch (msg)
     {
@@ -174,7 +174,7 @@ void plPickNodeBase::IGetSelNode(HWND hList)
     if (node)
     {
         ISetNodeValue(node);
-        ISetUserType(node, nil);
+        ISetUserType(node, nullptr);
     }
     else
     {
@@ -184,11 +184,11 @@ void plPickNodeBase::IGetSelNode(HWND hList)
 
 /*      if (!strcmp(buf, kUserTypeNone))
         {
-            ISetNodeValue(nil);
-            ISetUserType(nil, nil);
+            ISetNodeValue(nullptr);
+            ISetUserType(nullptr, nullptr);
         }
         else
-*/          ISetUserType(nil, buf);
+*/          ISetUserType(nullptr, buf);
 
         delete [] buf;
     }

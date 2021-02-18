@@ -74,13 +74,13 @@ private:
 protected:
     uint32_t fLen;            // sent
 public:
-    plNetCommonMessage() : fLen(0),fMsgData(nil) {}
+    plNetCommonMessage() : fLen(), fMsgData() { }
     virtual ~plNetCommonMessage() { hsRefCnt_SafeUnRef(fMsgData); }
 
     // setters
     void SetData(char *d)       
     {   
-        plNetCommonMessageData* n = d ? new plNetCommonMessageData(d) : nil;
+        plNetCommonMessageData* n = d ? new plNetCommonMessageData(d) : nullptr;
         hsRefCnt_SafeAssign(fMsgData, n);       
         hsRefCnt_SafeUnRef(n);
     }
@@ -91,7 +91,7 @@ public:
     void SetLen(uint32_t l)       { fLen=l; }
 
     // getters
-    char* GetData() const { return fMsgData ? fMsgData->GetData() : nil; } 
+    char* GetData() const { return fMsgData ? fMsgData->GetData() : nullptr; }
     virtual uint32_t GetDataLen() { return fLen; }
     uint32_t GetLen()         const { return fLen;  }
     plNetCommonMessageData* GetMsgData() const { return fMsgData; }

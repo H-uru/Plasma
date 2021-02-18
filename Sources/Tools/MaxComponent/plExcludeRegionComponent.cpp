@@ -105,7 +105,7 @@ plKey plExcludeRegionComponent::GetKey(plMaxNode *node)
     if (it != fXRegionKeys.end())
         return it->second;
 
-    return nil;
+    return nullptr;
 }
 
 bool plExcludeRegionComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)

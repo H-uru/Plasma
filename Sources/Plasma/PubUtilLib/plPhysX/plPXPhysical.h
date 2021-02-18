@@ -276,7 +276,7 @@ protected:
         bounceOff and vice-versa
         */
     // Set overlapText to get a string naming all the overlapping physicals (that you must delete)
-    bool CheckValidPosition(char** overlapText=nil);
+    bool CheckValidPosition(char** overlapText=nullptr);
 
     /////////////////////////////////////////////////////////////
     //

@@ -126,7 +126,7 @@ plNetClientMgr::~plNetClientMgr()
     IDeInitNetClientComm(); 
 
     if (this==GetInstance())
-        SetInstance(nil);       // we're going down boys
+        SetInstance(nullptr);       // we're going down boys
     IClearPendingLoads();
     delete fTaskProgBar;
 }
@@ -150,7 +150,7 @@ void plNetClientMgr::Shutdown()
     if (fMsgRecorder)
     {
         delete fMsgRecorder;
-        fMsgRecorder = nil;
+        fMsgRecorder = nullptr;
     }
     for (int i = 0; i < fMsgPlayers.size(); i++)
         delete fMsgPlayers[i];
@@ -194,11 +194,11 @@ void plNetClientMgr::IAddCloneRoom()
 void plNetClientMgr::IRemoveCloneRoom()
 {
     plKey cloneRoomKey = hsgResMgr::ResMgr()->FindKey(kNetClientCloneRoom_KEY);
-    plSceneNode *cloneRoom = cloneRoomKey ? plSceneNode::ConvertNoRef(cloneRoomKey->ObjectIsLoaded()) : nil;
+    plSceneNode *cloneRoom = cloneRoomKey ? plSceneNode::ConvertNoRef(cloneRoomKey->ObjectIsLoaded()) : nullptr;
     if (cloneRoom)
     {
         cloneRoom->UnRegisterAs(kNetClientCloneRoom_KEY);
-        cloneRoom = nil;
+        cloneRoom = nullptr;
     }
 }       
 
@@ -744,10 +744,10 @@ int plNetClientMgr::IsLocallyOwned(const plSynchedObject* obj) const
 plSynchedObject* plNetClientMgr::GetLocalPlayer(bool forceLoad) const
 { 
     if (forceLoad)
-        return fLocalPlayerKey ? plSynchedObject::ConvertNoRef(fLocalPlayerKey->GetObjectPtr()) : nil; 
+        return fLocalPlayerKey ? plSynchedObject::ConvertNoRef(fLocalPlayerKey->GetObjectPtr()) : nullptr;
     else
         return fLocalPlayerKey ?
-            plSynchedObject::ConvertNoRef(fLocalPlayerKey->ObjectIsLoaded()) : nil; 
+            plSynchedObject::ConvertNoRef(fLocalPlayerKey->ObjectIsLoaded()) : nullptr;
 }
 
 plSynchedObject* plNetClientMgr::GetNPC(uint32_t i) const
@@ -782,7 +782,7 @@ bool plNetClientMgr::IsNPCKey(const plKey& npc, int* idx) const
 //
 plSynchedObject* plNetClientMgr::GetRemotePlayer(int i) const
 { 
-    return fRemotePlayerKeys[i] ? plSynchedObject::ConvertNoRef(fRemotePlayerKeys[i]->ObjectIsLoaded()) : nil; 
+    return fRemotePlayerKeys[i] ? plSynchedObject::ConvertNoRef(fRemotePlayerKeys[i]->ObjectIsLoaded()) : nullptr;
 }
 
 //
@@ -855,13 +855,13 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         hsAssert(ref->fType==kAgeSDLHook, "unknown ref msg context");
         if (ref->GetContext()==plRefMsg::kOnCreate)
         {
-            hsAssert(fAgeSDLObjectKey==nil, "already have a ref to age sdl hook");
+            hsAssert(fAgeSDLObjectKey == nullptr, "already have a ref to age sdl hook");
             fAgeSDLObjectKey = ref->GetRef()->GetKey();
             DebugMsg("Age SDL hook object created, uoid={}", fAgeSDLObjectKey->GetUoid().StringIze());
         }
         else
         {
-            fAgeSDLObjectKey=nil;
+            fAgeSDLObjectKey = nullptr;
             DebugMsg("Age SDL hook object destroyed");
         }
         return true;
@@ -1219,7 +1219,7 @@ void plNetClientMgr::IDisableNet () {
     }
 
     hsRefCnt_SafeUnRef(fDisableMsg);
-    fDisableMsg = nil;
+    fDisableMsg = nullptr;
 }
 
 bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
@@ -1232,7 +1232,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
     {
         if (GetLocalPlayerKey() == playerKey)
         {
-            fLocalPlayerKey = nil;
+            fLocalPlayerKey = nullptr;
             DebugMsg("Net: Unloading local player {}", playerKey->GetName());
 
             // notify server - NOTE: he might not still be around to get this...
@@ -1313,11 +1313,11 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
 {
     plLayerAnimation* layer = plLayerAnimation::ConvertNoRef(obj);
     if (layer)
-        return (layer->GetSDLModifier() != nil);
+        return (layer->GetSDLModifier() != nullptr);
 
     plResponderModifier* resp = plResponderModifier::ConvertNoRef(obj);
     if (resp)
-        return (resp->GetSDLModifier() != nil);
+        return (resp->GetSDLModifier() != nullptr);
 
     int cnt=0;
     plSceneObject* sceneObj=plSceneObject::ConvertNoRef(obj);

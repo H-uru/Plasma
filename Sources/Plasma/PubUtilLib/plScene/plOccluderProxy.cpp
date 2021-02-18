@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plOccluderProxy::plOccluderProxy()
 :   plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.5f),
-    fOwner(nil)
+    fOwner()
 {
 }
 
@@ -66,12 +66,12 @@ bool plOccluderProxy::Init(plOccluder* occluder)
     fOwner = occluder;
     fProxyMsgType = plProxyDrawMsg::kOccluder;
 
-    return fOwner != nil;
+    return fOwner != nullptr;
 }
 
 plKey plOccluderProxy::IGetNode() const 
 { 
-    return fOwner ? fOwner->GetSceneNode() : nil; 
+    return fOwner ? fOwner->GetSceneNode() : nullptr;
 }
 
 plDrawableSpans* plOccluderProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
@@ -80,5 +80,5 @@ plDrawableSpans* plOccluderProxy::ICreateProxy(hsGMaterial* mat, std::vector<uin
     {
         return fOwner->CreateProxy(mat, idx, addTo);
     }
-    return nil;
+    return nullptr;
 }

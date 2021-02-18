@@ -126,10 +126,10 @@ void plPhysicalSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
             ILogState(srcState, false, "RCV", plStatusLog::kGreen);
 
         phys->SetSyncState(
-            isPosSet ? &pos : nil,
-            isRotSet ? &rot : nil,
-            isLinVSet ? &linV : nil,
-            isAngVSet ? &angV : nil);
+            isPosSet ? &pos : nullptr,
+            isRotSet ? &rot : nullptr,
+            isLinVSet ? &linV : nullptr,
+            isAngVSet ? &angV : nullptr);
     }
 }
 
@@ -243,7 +243,7 @@ void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDi
 
 plStatusLog* plPhysicalSDLModifier::IGetLog()
 {
-    static plStatusLog* gLog = nil;
+    static plStatusLog* gLog = nullptr;
     if (!gLog)
     {
         gLog = plStatusLogMgr::GetInstance().CreateStatusLog(20, "PhysicsSDL.log",
@@ -258,7 +258,7 @@ plStatusLog* plPhysicalSDLModifier::IGetLog()
 
 plPhysical* plPhysicalSDLModifier::IGetPhysical()
 {
-    plPhysical* phys = nil;
+    plPhysical* phys = nullptr;
 
     plSceneObject* sobj = GetTarget();
     if (sobj)

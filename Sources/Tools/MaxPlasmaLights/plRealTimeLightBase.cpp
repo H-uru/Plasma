@@ -192,7 +192,7 @@ CreateMouseCallBack* plRTLightBase::GetCreateMouseCallBack()
 /////////////////////////////////////////////////////////////////////////////
 
 #if 0
-plRTLightBase::plRTLightBase() : fIP(nil), fClassDesc(nil), fLightPB(nil)
+plRTLightBase::plRTLightBase() : fIP(), fClassDesc(), fLightPB()
 {
     fColor = Color(0.5f, 0.5f, 1.f);
 }
@@ -364,7 +364,7 @@ IParamBlock2* plRTLightBase::GetParamBlockByID( short id )
     if( id == fLightPB->ID() )
         return fLightPB; 
     else 
-        return nil;
+        return nullptr;
 }
 
 IParamBlock2    *plRTLightBase::GetParamBlock( int i )
@@ -372,7 +372,7 @@ IParamBlock2    *plRTLightBase::GetParamBlock( int i )
     switch( i )
     {
         case 0: return fLightPB;
-        default: return nil;
+        default: return nullptr;
     }
 }
 
@@ -1238,7 +1238,7 @@ void    plRTLightBase::DrawArrow( TimeValue t, GraphicsWindow *gw, Point3 &direc
     pts[ 3 ] = pts[ 1 ] - direction * 10.f;
     pts[ 2 ] = pts[ 3 ] + Point3( direction.y, direction.z, direction.x ) * 5.f;
 
-    gw->polyline( 4, pts, nil, nil, true, nil );
+    gw->polyline(4, pts, nullptr, nullptr, true, nullptr);
 }
 
 int plRTLightBase::HitTest(TimeValue t, INode *node, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt)

@@ -52,7 +52,7 @@ plOneShotMsg::plOneShotMsg()
 plOneShotMsg::~plOneShotMsg()
 {
     hsRefCnt_SafeUnRef(fCallbacks);
-    fCallbacks = nil;
+    fCallbacks = nullptr;
 }
 
 void plOneShotMsg::Read(hsStream* stream, hsResMgr* mgr)

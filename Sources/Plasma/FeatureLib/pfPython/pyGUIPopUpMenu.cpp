@@ -64,74 +64,77 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfGameGUIMgr/pfGUIControlHandlers.h"
 
-#define kGetMenuPtr( ret ) if( fGCkey == nil ) return ret; \
-            pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef( fGCkey->ObjectIsLoaded() ); \
-            if( menu == nil ) return ret;
+#define kGetMenuPtr(ret) \
+        if (fGCkey == nullptr) \
+            return ret; \
+        pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef(fGCkey->ObjectIsLoaded()); \
+        if (menu == nullptr) \
+            return ret;
 
 
 pyGUIPopUpMenu::pyGUIPopUpMenu(pyKey& gckey)
 {
     fGCkey = gckey.getKey();
-    fBuiltMenu = nil;
+    fBuiltMenu = nullptr;
 }
 
 pyGUIPopUpMenu::pyGUIPopUpMenu(plKey objkey)
 {
     fGCkey = objkey;
-    fBuiltMenu = nil;
+    fBuiltMenu = nullptr;
 }
 
 pyGUIPopUpMenu::pyGUIPopUpMenu()
 {
-    fGCkey = nil;
-    fBuiltMenu = nil;
+    fGCkey = nullptr;
+    fBuiltMenu = nullptr;
 }
 
 pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc/* = plLocation::kGlobalFixedLoc */)
 {
-    fBuiltMenu = pfGUIPopUpMenu::Build( name, nil, screenOriginX, screenOriginY, destLoc );
-    if( fBuiltMenu != nil )
+    fBuiltMenu = pfGUIPopUpMenu::Build(name, nullptr, screenOriginX, screenOriginY, destLoc);
+    if (fBuiltMenu != nullptr)
     {
         fGCkey = fBuiltMenu->GetKey();
         fGCkey->RefObject();
     }
     else
-        fGCkey = nil;
+        fGCkey = nullptr;
 }
 
 pyGUIPopUpMenu::pyGUIPopUpMenu( const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY )
 {
     pfGUIPopUpMenu *parentMenu = pfGUIPopUpMenu::ConvertNoRef( parent.fGCkey->ObjectIsLoaded() );
     
-    const plLocation &parentLoc = ( parentMenu != nil ) ? parentMenu->GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc;
+    const plLocation &parentLoc = (parentMenu != nullptr) ? parentMenu->GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc;
 
     fBuiltMenu = pfGUIPopUpMenu::Build( name, parentMenu, screenOriginX, screenOriginY, parentLoc );
-    if( fBuiltMenu != nil )
+    if (fBuiltMenu != nullptr)
     {
         fGCkey = fBuiltMenu->GetKey();
         fGCkey->RefObject();
     }
     else
-        fGCkey = nil;
+        fGCkey = nullptr;
 }
 
 pyGUIPopUpMenu::~pyGUIPopUpMenu()
 {
     // Optimistic, I know, to assume the destructor will be called, but still...
-    if( fBuiltMenu != nil )
+    if (fBuiltMenu != nullptr)
     {
         fBuiltMenu->GetKey()->UnRefObject();
-        fBuiltMenu = nil;
+        fBuiltMenu = nullptr;
     }
 }
 
 void pyGUIPopUpMenu::setup(plKey objkey)
 {
     // kill any previous menu
-    if( fBuiltMenu != nil )
+    if (fBuiltMenu != nullptr)
     {
         fBuiltMenu->GetKey()->UnRefObject();
-        fBuiltMenu = nil;
+        fBuiltMenu = nullptr;
     }
 
     // setup the new one
@@ -141,45 +144,45 @@ void pyGUIPopUpMenu::setup(plKey objkey)
 void pyGUIPopUpMenu::setup(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
 {
     // kill any previous menu
-    if( fBuiltMenu != nil )
+    if (fBuiltMenu != nullptr)
     {
         fBuiltMenu->GetKey()->UnRefObject();
-        fBuiltMenu = nil;
+        fBuiltMenu = nullptr;
     }
 
     // setup the new one
-    fBuiltMenu = pfGUIPopUpMenu::Build( name, nil, screenOriginX, screenOriginY, destLoc );
-    if( fBuiltMenu != nil )
+    fBuiltMenu = pfGUIPopUpMenu::Build(name, nullptr, screenOriginX, screenOriginY, destLoc);
+    if (fBuiltMenu != nullptr)
     {
         fGCkey = fBuiltMenu->GetKey();
         fGCkey->RefObject();
     }
     else
-        fGCkey = nil;
+        fGCkey = nullptr;
 }
 
 void pyGUIPopUpMenu::setup(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
 {
     // kill any previous menu
-    if( fBuiltMenu != nil )
+    if (fBuiltMenu != nullptr)
     {
         fBuiltMenu->GetKey()->UnRefObject();
-        fBuiltMenu = nil;
+        fBuiltMenu = nullptr;
     }
 
     // setup the new one
     pfGUIPopUpMenu *parentMenu = pfGUIPopUpMenu::ConvertNoRef( parent.fGCkey->ObjectIsLoaded() );
 
-    const plLocation &parentLoc = ( parentMenu != nil ) ? parentMenu->GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc;
+    const plLocation &parentLoc = (parentMenu != nullptr) ? parentMenu->GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc;
 
     fBuiltMenu = pfGUIPopUpMenu::Build( name, parentMenu, screenOriginX, screenOriginY, parentLoc );
-    if( fBuiltMenu != nil )
+    if (fBuiltMenu != nullptr)
     {
         fGCkey = fBuiltMenu->GetKey();
         fGCkey->RefObject();
     }
     else
-        fGCkey = nil;
+        fGCkey = nullptr;
 }
 
 bool pyGUIPopUpMenu::IsGUIPopUpMenu(pyKey& gckey)
@@ -194,9 +197,9 @@ bool pyGUIPopUpMenu::IsGUIPopUpMenu(pyKey& gckey)
 bool pyGUIPopUpMenu::operator==(const pyGUIPopUpMenu &gcobj) const
 {
     plKey theirs = ((pyGUIPopUpMenu&)gcobj).getObjKey();
-    if ( fGCkey == nil && theirs == nil )
+    if (fGCkey == nullptr && theirs == nullptr)
         return true;
-    else if ( fGCkey != nil && theirs != nil )
+    else if (fGCkey != nullptr && theirs != nullptr)
         return (fGCkey->GetUoid()==theirs->GetUoid());
     else
         return false;
@@ -266,7 +269,7 @@ void pyGUIPopUpMenu::Hide()
     // get color schemes
 PyObject* pyGUIPopUpMenu::GetForeColor()
 {
-    kGetMenuPtr( nil );
+    kGetMenuPtr(nullptr);
 
     pfGUIColorScheme* color = menu->GetColorScheme();
     return pyColor::New(color->fForeColor.r,color->fForeColor.g,color->fForeColor.b,color->fForeColor.a);
@@ -274,7 +277,7 @@ PyObject* pyGUIPopUpMenu::GetForeColor()
 
 PyObject* pyGUIPopUpMenu::GetSelColor()
 {
-    kGetMenuPtr( nil );
+    kGetMenuPtr(nullptr);
 
     pfGUIColorScheme* color = menu->GetColorScheme();
     return pyColor::New(color->fSelForeColor.r,color->fSelForeColor.g,color->fSelForeColor.b,color->fSelForeColor.a);
@@ -282,7 +285,7 @@ PyObject* pyGUIPopUpMenu::GetSelColor()
 
 PyObject* pyGUIPopUpMenu::GetBackColor()
 {
-    kGetMenuPtr( nil );
+    kGetMenuPtr(nullptr);
 
     pfGUIColorScheme* color = menu->GetColorScheme();
     return pyColor::New(color->fBackColor.r,color->fBackColor.g,color->fBackColor.b,color->fBackColor.a);
@@ -290,7 +293,7 @@ PyObject* pyGUIPopUpMenu::GetBackColor()
 
 PyObject* pyGUIPopUpMenu::GetBackSelColor()
 {
-    kGetMenuPtr( nil );
+    kGetMenuPtr(nullptr);
 
     pfGUIColorScheme* color = menu->GetColorScheme();
     return pyColor::New(color->fSelBackColor.r,color->fSelBackColor.g,color->fSelBackColor.b,color->fSelBackColor.a);
@@ -367,7 +370,7 @@ void    pyGUIPopUpMenu::AddConsoleCmdItem( const char *name, const char *console
 void    pyGUIPopUpMenu::AddConsoleCmdItemW( std::wstring name, const char *consoleCmd )
 {
     kGetMenuPtr( ; );
-    menu->AddItem( name.c_str(), new pfGUIConsoleCmdProc( consoleCmd ), nil );
+    menu->AddItem(name.c_str(), new pfGUIConsoleCmdProc(consoleCmd), nullptr);
 }
 
 void    pyGUIPopUpMenu::AddNotifyItem( const char *name )
@@ -380,7 +383,7 @@ void    pyGUIPopUpMenu::AddNotifyItem( const char *name )
 void    pyGUIPopUpMenu::AddNotifyItemW( std::wstring name )
 {
     kGetMenuPtr( ; );
-    menu->AddItem( name.c_str(), (pfGUICtrlProcObject *)( menu->GetHandler() ), nil );
+    menu->AddItem(name.c_str(), (pfGUICtrlProcObject *)(menu->GetHandler()), nullptr);
 }
 
 void    pyGUIPopUpMenu::AddSubMenuItem( const char *name, pyGUIPopUpMenu &subMenu )
@@ -394,11 +397,11 @@ void    pyGUIPopUpMenu::AddSubMenuItemW( std::wstring name, pyGUIPopUpMenu &subM
 {
     kGetMenuPtr( ; );
 
-    if( subMenu.fGCkey == nil )
+    if (subMenu.fGCkey == nullptr)
         return;
     pfGUIPopUpMenu *subM = pfGUIPopUpMenu::ConvertNoRef( subMenu.fGCkey->ObjectIsLoaded() );
-    if( subM == nil )
+    if (subM == nullptr)
         return;
 
-    menu->AddItem( name.c_str(), nil, subM );
+    menu->AddItem(name.c_str(), nullptr, subM);
 }

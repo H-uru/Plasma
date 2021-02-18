@@ -88,7 +88,7 @@ protected:
     bool                            fQueuedMsgOn;       // Turns on or off Queued Messages, Plugins need them off
 
     hsKeyedObject*                  IGetOwner() { return fOwner; }
-    plKey                           IGetOwnerKey() { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
+    plKey                           IGetOwnerKey() { return IGetOwner() ? IGetOwner()->GetKey() : nullptr; }
     int                             IFindType(uint16_t hClass);
     int                             IFindSender(const plKey& sender);
     bool                            IUnRegisterForExactType(uint16_t idx, const plKey& receiver);

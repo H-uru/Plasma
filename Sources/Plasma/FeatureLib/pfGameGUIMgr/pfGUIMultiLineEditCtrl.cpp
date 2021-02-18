@@ -176,7 +176,7 @@ bool    pfGUIMultiLineEditCtrl::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIMultiLineEditCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefScrollCtrl )
         {
@@ -188,7 +188,7 @@ bool    pfGUIMultiLineEditCtrl::MsgReceive( plMessage *msg )
                 IUpdateScrollRange();
             }
             else
-                fScrollControl = nil;
+                fScrollControl = nullptr;
             return true;
         }
     }
@@ -212,7 +212,7 @@ void    pfGUIMultiLineEditCtrl::SetScrollPosition( int32_t topLine )
 
     IUpdate();
 
-    if( fScrollControl != nil ) 
+    if (fScrollControl != nullptr)
         // Scroll control values are reversed
         fScrollControl->SetCurrValue( fScrollControl->GetMax() - (float)fScrollPos );
 
@@ -242,7 +242,7 @@ void    pfGUIMultiLineEditCtrl::MoveCursor( Direction dir )
 
 void    pfGUIMultiLineEditCtrl::IUpdateScrollRange()
 {
-    if( fScrollControl == nil )
+    if (fScrollControl == nullptr)
         return;
 
     if ((int32_t)fLineStarts.size() > ICalcNumVisibleLines() - 1)
@@ -279,7 +279,7 @@ void    pfGUIMultiLineEditCtrl::IUpdateScrollRange()
 
 void pfGUIMultiLineEditCtrl::SetScrollEnable( bool state )
 {
-    if (fScrollControl == nil )
+    if (fScrollControl == nullptr)
         return;
 
     if ( state )
@@ -338,7 +338,7 @@ void    pfGUIMultiLineEditCtrl::IPostSetUpDynTextMap()
 
 int32_t   pfGUIMultiLineEditCtrl::ICalcNumVisibleLines() const
 {
-    if (fDynTextMap == nil || fLineHeight == 0)
+    if (fDynTextMap == nullptr || fLineHeight == 0)
         return 0;
     return (fDynTextMap->GetVisibleHeight() + fLineHeight - (fTopMargin + fBottomMargin + 1)) / fLineHeight;
 }
@@ -596,7 +596,7 @@ uint32_t  pfGUIMultiLineEditCtrl::IRenderLine( uint16_t x, uint16_t y, int32_t s
 
 void pfGUIMultiLineEditCtrl::PurgeDynaTextMapImage()
 {
-    if ( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
         fDynTextMap->PurgeImage();
 }
 
@@ -614,7 +614,7 @@ void    pfGUIMultiLineEditCtrl::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    fScrollControl = nil;
+    fScrollControl = nullptr;
     if( s->ReadBool() )
     {
         fScrollProc = new pfMLScrollProc( this );
@@ -627,7 +627,7 @@ void    pfGUIMultiLineEditCtrl::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    if( fScrollControl != nil )
+    if (fScrollControl != nullptr)
     {
         s->WriteBool( true );
         mgr->WriteKey( s, fScrollControl->GetKey() );
@@ -685,7 +685,7 @@ int32_t   pfGUIMultiLineEditCtrl::IPointToPosition( int16_t ptX, int16_t ptY, bo
 
 inline bool IIsWordBreaker( const wchar_t c )
 {
-    return ( wcschr( L" \t,.;\n", c ) != nil ) ? true : false;
+    return (wcschr(L" \t,.;\n", c) != nullptr);
 }
 
 //// IOffsetToNextChar ///////////////////////////////////////////////////////
@@ -728,7 +728,7 @@ int32_t   pfGUIMultiLineEditCtrl::IRecalcLineStarts( int32_t startingLine, bool 
     if( fPrevCtrl )
         IUpdateBuffer(); // make sure our buffer is correct if we are linked
     
-    if( fDynTextMap == nil )
+    if (fDynTextMap == nullptr)
     {
         // Can't calculate anything. Just return invalid
         fLineStarts.clear();
@@ -942,7 +942,7 @@ void    pfGUIMultiLineEditCtrl::IOffsetLineStarts( uint32_t position, int32_t of
 
 void    pfGUIMultiLineEditCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    if( fDynTextMap == nil || !fBounds.IsInside( &mousePt ) )
+    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
         return;
 
     IScreenToLocalPt( mousePt );
@@ -956,7 +956,7 @@ void    pfGUIMultiLineEditCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modi
 
 void    pfGUIMultiLineEditCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    if( fDynTextMap == nil || !fBounds.IsInside( &mousePt ) )
+    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
         return;
 
     IScreenToLocalPt( mousePt );
@@ -970,7 +970,7 @@ void    pfGUIMultiLineEditCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifi
 
 void    pfGUIMultiLineEditCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    if( fDynTextMap == nil || !fBounds.IsInside( &mousePt ) )
+    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
         return;
 
     IScreenToLocalPt( mousePt );
@@ -1622,8 +1622,8 @@ void    pfGUIMultiLineEditCtrl::SetNext( pfGUIMultiLineEditCtrl *newNext )
 void    pfGUIMultiLineEditCtrl::ClearNext()
 {
     if (fNextCtrl)
-        fNextCtrl->fPrevCtrl = nil; // unlink ourselves from the next control
-    fNextCtrl = nil;
+        fNextCtrl->fPrevCtrl = nullptr; // unlink ourselves from the next control
+    fNextCtrl = nullptr;
 }
 
 void    pfGUIMultiLineEditCtrl::SetPrev( pfGUIMultiLineEditCtrl *newPrev )
@@ -1642,8 +1642,8 @@ void    pfGUIMultiLineEditCtrl::SetPrev( pfGUIMultiLineEditCtrl *newPrev )
 void    pfGUIMultiLineEditCtrl::ClearPrev()
 {
     if (fPrevCtrl)
-        fPrevCtrl->fNextCtrl = nil; // unlink ourselves from the prev control
-    fPrevCtrl = nil;
+        fPrevCtrl->fNextCtrl = nullptr; // unlink ourselves from the prev control
+    fPrevCtrl = nullptr;
 }
 
 void    pfGUIMultiLineEditCtrl::SetEventProc(pfGUIMultiLineEditProc *eventProc)
@@ -1666,7 +1666,7 @@ void    pfGUIMultiLineEditCtrl::ClearEventProc()
     {
         if (fEventProc)
             delete fEventProc;
-        fEventProc = nil;
+        fEventProc = nullptr;
     }
 }
 

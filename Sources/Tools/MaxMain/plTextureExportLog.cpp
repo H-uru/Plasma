@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plTextureExportLog::plTextureExportLog( const char *fileName )
 {
     fFileName = hsStrcpy( fileName );
-    fNodeList = nil;
+    fNodeList = nullptr;
 }
 
 plTextureExportLog::~plTextureExportLog()
@@ -73,13 +73,13 @@ plTextureExportLog::~plTextureExportLog()
     plBMapNode  *node;
 
 
-    if( fFileName != nil )
+    if (fFileName != nullptr)
     {
         Write();
         delete [] fFileName;
     }
 
-    while( fNodeList != nil )
+    while (fNodeList != nullptr)
     {
         node = fNodeList->fNextNode;
         delete fNodeList;
@@ -98,7 +98,7 @@ void    plTextureExportLog::IAddBMapNode( uint32_t rank, plBitmap *bMap )
     node->fRank = rank;
 
 
-    for( nodeHdl = &fNodeList; *nodeHdl != nil; )
+    for (nodeHdl = &fNodeList; *nodeHdl != nullptr; )
     {
         if( (*nodeHdl)->fRank < rank )
             break;
@@ -135,7 +135,7 @@ void    plTextureExportLog::Write()
     stream->WriteString( "\n" );
     stream->WriteString( "------------------------------------------------------------\n" );
 
-    for( node = fNodeList; node != nil; node = node->fNextNode )
+    for (node = fNodeList; node != nullptr; node = node->fNextNode)
     {
         plMipmap            *mip = plMipmap::ConvertNoRef( node->fBitmap );
         plDynamicTextMap    *dynText = plDynamicTextMap::ConvertNoRef( node->fBitmap );
@@ -144,7 +144,7 @@ void    plTextureExportLog::Write()
         plRenderTarget*     rend = plRenderTarget::ConvertNoRef( node->fBitmap );
 
         // Name
-        IWriteTabbedString( stream, node->fBitmap->GetKeyName().c_str(), dynText != nil ? 8 : 4 );
+        IWriteTabbedString(stream, node->fBitmap->GetKeyName().c_str(), dynText != nullptr ? 8 : 4);
 
         // Size, formatted
         size = node->fBitmap->GetTotalSize();
@@ -164,7 +164,7 @@ void    plTextureExportLog::Write()
             IWriteTabbedString( stream, str, 2 ); 
         }
 
-        if( dynText != nil )
+        if (dynText != nullptr)
         {
             IWriteTabbedString( stream, "Dynamic text map", 3 );
 
@@ -181,7 +181,7 @@ void    plTextureExportLog::Write()
                                             ? "JPEG"
                                             : "Uncompressed", 2 );
         }
-        else if( cubic != nil )
+        else if (cubic != nullptr)
         {
             IWriteTabbedString( stream, "Cubic EnvironMap", 3 );
 
@@ -197,7 +197,7 @@ void    plTextureExportLog::Write()
                                             ? "JPEG"
                                             : "Uncompressed", 2 );
         }
-        else if( mip != nil )
+        else if (mip != nullptr)
         {
             IWriteTabbedString( stream, "Mipmap", 3 );
 
@@ -245,7 +245,7 @@ void    plTextureExportLog::Write()
 
     // HACK: Prevent the destructor from writing out now
     delete [] fFileName;
-    fFileName = nil;
+    fFileName = nullptr;
 }
 
 void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int numTabs )

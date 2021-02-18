@@ -56,24 +56,24 @@ static inline void byteswap(size_t size, uint8_t* data)
 *
 ***/
 
-plBigNum::plBigNum () : m_context(nil)
+plBigNum::plBigNum () : m_context()
 {
     m_number = BN_new();
 }
 
-plBigNum::plBigNum(const plBigNum& a) : m_context(nil)
+plBigNum::plBigNum(const plBigNum& a) : m_context()
 {
     m_number = BN_new();
     BN_copy(m_number, a.m_number);
 }
 
-plBigNum::plBigNum(unsigned a) : m_context(nil)
+plBigNum::plBigNum(unsigned a) : m_context()
 {
     m_number = BN_new();
     BN_set_word(m_number, a);
 }
 
-plBigNum::plBigNum(unsigned bytes, const void* data, bool le) : m_context(nil)
+plBigNum::plBigNum(unsigned bytes, const void* data, bool le) : m_context()
 {
     m_number = BN_new();
     if (le)

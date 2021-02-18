@@ -101,7 +101,7 @@ bool plUnifiedTime::SetToUTC()
     struct timeval tv;
     
     // get the secs and micros from Jan 1, 1970
-    int ret = gettimeofday(&tv, nil);
+    int ret = gettimeofday(&tv, nullptr);
     if (ret == 0)
     {
         fSecs = tv.tv_sec;
@@ -120,7 +120,7 @@ bool plUnifiedTime::SetToUTC()
 
 struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 {
-    struct tm * tm = nil;
+    struct tm * tm = nullptr;
     switch (fMode)
     {
     case kGmt:
@@ -322,7 +322,7 @@ const char* plUnifiedTime::PrintWMillis() const
 
 struct tm * plUnifiedTime::GetTm(struct tm * ptm) const
 {
-    if (ptm != nil)
+    if (ptm != nullptr)
     {
         *ptm = *IGetTime(&fSecs);
         return ptm;
@@ -468,7 +468,7 @@ std::string plUnifiedTime::Format(const char * fmt) const
 {
     char buf[128];
     struct tm * t = IGetTime(&fSecs);
-    if (t == nil ||
+    if (t == nullptr ||
         !strftime(buf, sizeof(buf), fmt, t))
         buf[0] = '\0';
     return std::string(buf);
@@ -992,9 +992,9 @@ bool plUnifiedTime::FromString(const char * buf, const char * fmt)
     struct tm tm;
     tm.tm_isdst = -1;
 #if !defined(HS_BUILD_FOR_UNIX)
-    bool result = (pvt_strptime::strptime_internal(buf, fmt, &tm, fMode)!=nil);
+    bool result = (pvt_strptime::strptime_internal(buf, fmt, &tm, fMode) != nullptr);
 #else
-    bool result = (strptime(buf, fmt, &tm)!=nil);
+    bool result = (strptime(buf, fmt, &tm) != nullptr);
 #endif
     if (result)
         *this = tm;

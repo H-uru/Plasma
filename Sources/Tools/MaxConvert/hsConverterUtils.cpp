@@ -101,9 +101,9 @@ hsConverterUtils& hsConverterUtils::Instance()
 
 hsConverterUtils::hsConverterUtils() :
 fInterface(GetCOREInterface()),
-fErrorMsg(nil),
-fSuppressMangling(false),
-fWarned(0)
+fErrorMsg(),
+fSuppressMangling(),
+fWarned()
 {
 }
 
@@ -188,7 +188,7 @@ bool hsConverterUtils::IsReservedKeyword(const char* nodeName)
 {
     hsGuardBegin("hsConverterUtils::IsReservedKeyword");
 
-    return (nodeName!=nil &&
+    return (nodeName != nullptr &&
         (  !_stricmp(nodeName, "theplayer")
         || !_stricmp(nodeName, "the_player")
         || !_stricmp(nodeName, "thecamera")
@@ -246,11 +246,11 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
     hsGuardBegin("hsConverterUtils::MangleReference");
 
     if (!node)
-        return nil;
+        return nullptr;
 
     ST::string tempName;
     char *nodeName = node->GetName();
-    char *roomName = nil;
+    char *roomName = nullptr;
     TSTR sdata;
     hsStringTokenizer toker;
     if (gUserPropMgr.GetUserPropString(node, "Rooms", sdata)) 
@@ -316,7 +316,7 @@ INode* hsConverterUtils::FindINodeFromMangledName(const char* mangName)
     hsGuardBegin("hsConverterUtils::FindINodeFromMangledName");
 
     if( !(mangName && *mangName) )
-        return nil;
+        return nullptr;
 
     const char* nodeName = mangName;
 
@@ -349,7 +349,7 @@ INode* hsConverterUtils::FindINodeFromKeyedObject(hsKeyedObject* obj)
             return retVal;
     }
 */
-    return nil;
+    return nullptr;
     hsGuardEnd; 
 }
 
@@ -453,7 +453,7 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
     hsGuardBegin("hsConverterUtils::IGetINodeByNameRecur");
 
     if (!node || !node->GetName())
-        return nil;
+        return nullptr;
 
     char* nodeName=node->GetName();
     if (!_stricmp(nodeName, wantName))
@@ -469,7 +469,7 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
             return ret;
     }
     
-    return nil;
+    return nullptr;
     hsGuardEnd; 
 }
 
@@ -482,7 +482,7 @@ INode* hsConverterUtils::GetINodeByName(const char* name, bool caseSensitive)
 
     if (!name)
     {
-        return nil;
+        return nullptr;
     }
 
     if (fNodeSearchCache)
@@ -525,7 +525,7 @@ void hsConverterUtils::CreateNodeSearchCache()
 void hsConverterUtils::DestroyNodeSearchCache()
 {
     delete fNodeSearchCache;
-    fNodeSearchCache = nil;
+    fNodeSearchCache = nullptr;
 }
 
 void hsConverterUtils::IBuildNodeSearchCacheRecur(INode* node)

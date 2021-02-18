@@ -61,7 +61,7 @@ void cyParticleSys::SetSender(plKey sender)
 
 void cyParticleSys::AddRecvr(plKey recvr)
 {
-    if ( recvr != nil )
+    if (recvr != nullptr)
         fRecvr.emplace_back(std::move(recvr));
 }
 
@@ -74,7 +74,7 @@ void cyParticleSys::AddRecvr(plKey recvr)
 //
 void cyParticleSys::ISendParticleSysMsg(uint32_t param, float value)
 {
-    plParticleUpdateMsg* pMsg = new plParticleUpdateMsg(fSender, nil, nil, param, value);
+    plParticleUpdateMsg* pMsg = new plParticleUpdateMsg(fSender, nullptr, nullptr, param, value);
     // check if this needs to be network forced to all clients
     if (fNetForce )
     {

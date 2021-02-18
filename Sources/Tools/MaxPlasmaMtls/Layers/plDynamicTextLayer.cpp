@@ -433,8 +433,8 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     tempBMI.bmiHeader.biBitCount = 32;
 
     DWORD       *bitmapBits;
-    HDC winDC = CreateCompatibleDC( nil );
-    HBITMAP bitmap = CreateDIBSection( winDC, &tempBMI, DIB_RGB_COLORS, (void **)&bitmapBits, nil, 0 );
+    HDC winDC = CreateCompatibleDC(nullptr);
+    HBITMAP bitmap = CreateDIBSection(winDC, &tempBMI, DIB_RGB_COLORS, (void **)&bitmapBits, nullptr, 0);
 
     HBITMAP old = (HBITMAP)SelectObject( winDC, bitmap );
 
@@ -453,7 +453,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     int nHeight = -MulDiv( 72, GetDeviceCaps( winDC, LOGPIXELSY ), 72 );
     HFONT winFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                         CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, "Times New Roman" );
-    if( winFont != nil )
+    if (winFont != nullptr)
     {
         HFONT origFont = (HFONT)SelectObject( winDC, winFont );
         SetTextColor( winDC, RGB( 32, 32, 32 ) );
@@ -466,7 +466,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     nHeight = -MulDiv( 8, GetDeviceCaps( winDC, LOGPIXELSY ), 72 );
     winFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                         CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, "Arial" );
-    if( winFont != nil )
+    if (winFont != nullptr)
     {
         HFONT origFont = (HFONT)SelectObject( winDC, winFont );
 
@@ -502,7 +502,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
 
             if( color == RGB( 0, 0, 0 ) )
             {
-                if( fBitmapPB->GetInt( kBmpUseInitImage ) && fInitBitmap != nil )
+                if (fBitmapPB->GetInt(kBmpUseInitImage) && fInitBitmap != nullptr)
                     fInitBitmap->GetLinearPixels( x, y, 1, p64 );
                 else
                     p64->r = p64->g = p64->b = 0;

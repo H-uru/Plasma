@@ -414,7 +414,7 @@ public:
                 // If the responder component is hosed, remove it so the plResponderGetComp won't get bogus info
                 if (!plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder))
                 {
-                    ReferenceTarget *empty = nil;
+                    ReferenceTarget *empty = nullptr;
                     pb->SetValue(kEnableResponder, 0, empty);
                 }
 
@@ -945,7 +945,7 @@ ParamBlockDesc2 *plResponderCmdXRegion::GetDesc()
 
 IParamBlock2 *plResponderCmdXRegion::CreatePB(int idx)
 {
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderXRegionBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderXRegionBlock, nullptr);
 
     int type = kRespondXRegionClear;
     if (idx == 1)
@@ -1299,7 +1299,7 @@ ParamBlockDesc2 *plResponderCmdVisibility::GetDesc()
 
 IParamBlock2 *plResponderCmdVisibility::CreatePB(int idx)
 {
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderVisibilityBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderVisibilityBlock, nullptr);
 
     int type = kRespondVisibilityOn;
     if (idx == 1)
@@ -1464,7 +1464,7 @@ ParamBlockDesc2 *plResponderCmdSubWorld::GetDesc()
 
 IParamBlock2 *plResponderCmdSubWorld::CreatePB(int idx)
 {
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderSubWorldBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderSubWorldBlock, nullptr);
 
     int type = kRespondSubWorldEnter;
     if (idx == 1)

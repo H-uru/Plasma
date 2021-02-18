@@ -56,14 +56,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // plNPCSpawnMod ctor
 plNPCSpawnMod::plNPCSpawnMod()
-: fAutoSpawn(false),
-  fNotify(nil)
+: fAutoSpawn(),
+  fNotify()
 {
 }
 
 // plNPCSpawnMod ctor modelName accountName
 plNPCSpawnMod::plNPCSpawnMod(const ST::string &modelName, const ST::string &accountName, bool autoSpawn)
-: fAutoSpawn(autoSpawn), fNotify(nil)
+: fAutoSpawn(autoSpawn), fNotify()
 {
     fModelName = modelName;
     fAccountName = accountName;
@@ -99,7 +99,7 @@ bool plNPCSpawnMod::Trigger()
             plKey spawnPoint = GetTarget(0)->GetKey();
 
             // Note: we will be unloaded by the NetApp's NPC magick
-            fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nil);
+            fSpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(fModelName, fAccountName, false, spawnPoint, nullptr);
 
             ISendNotify(fSpawnedKey);
         }

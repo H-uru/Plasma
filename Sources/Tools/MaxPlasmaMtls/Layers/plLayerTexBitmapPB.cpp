@@ -243,7 +243,7 @@ public:
             else if (LOWORD(wParam) == IDC_LAYER_NAME)
             {
                 plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
-                if (layer == nil)
+                if (layer == nullptr)
                     return FALSE;
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 
@@ -258,10 +258,10 @@ public:
                     
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_LAYER_NAME));
                     PBBitmap *pbbm = layer->GetPBBitmap();
-                    bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "");
                     ReleaseICustButton(bmSelectBtn);
                     
-                    if (pbbm != nil)
+                    if (pbbm != nullptr)
                     {
                         // Init values for clamping spinners to powers of 2
                         int width = IFloorPow2( pbbm->bi.Width() );

@@ -66,11 +66,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 plClusterGroup::plClusterGroup()
-:   fSceneNode(nil),
-    fDrawable(nil),
-    fTemplate(nil),
-    fMaterial(nil),
-    fUnPacked(0)
+:   fTemplate(),
+    fMaterial(),
+    fUnPacked()
 {
     fVisSet.SetBit(plVisMgr::kNormal);
 }
@@ -254,7 +252,7 @@ bool plClusterGroup::IOnRemove(plGenRefMsg* ref)
     switch( ref->fType )
     {
     case kRefMaterial:
-        fMaterial = nil;
+        fMaterial = nullptr;
         return true;
     case kRefRegion:
         return IRemoveVisRegion(plVisRegion::ConvertNoRef(ref->GetRef()));

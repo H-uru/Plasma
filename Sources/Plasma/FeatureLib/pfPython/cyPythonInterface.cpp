@@ -170,14 +170,14 @@ int32_t PythonInterface::initialized = 0;                 // only need to initia
 bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
 
-PyObject* PythonInterface::stdOut = nil;                // python object of the stdout file
-PyObject* PythonInterface::stdErr = nil;                // python object of the err file
+PyObject* PythonInterface::stdOut = nullptr;            // python object of the stdout file
+PyObject* PythonInterface::stdErr = nullptr;            // python object of the err file
 
 bool      PythonInterface::debug_initialized = false;   // has the debug been initialized yet?
-PyObject* PythonInterface::dbgMod = nil;                // display module for stdout and stderr
-PyObject* PythonInterface::dbgOut = nil;
-PyObject* PythonInterface::dbgSlice = nil;              // time slice function for the debug window
-plStatusLog* PythonInterface::dbgLog = nil;             // output logfile
+PyObject* PythonInterface::dbgMod = nullptr;            // display module for stdout and stderr
+PyObject* PythonInterface::dbgOut = nullptr;
+PyObject* PythonInterface::dbgSlice = nullptr;          // time slice function for the debug window
+plStatusLog* PythonInterface::dbgLog = nullptr;         // output logfile
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 bool PythonInterface::usePythonDebugger = false;
@@ -993,7 +993,7 @@ void PythonInterface::initDebugInterface()
         // bring up the debug window
         dbgMod = PyImport_ImportModule("cydebug");
         // was there a debug module?
-        if ( dbgMod != nil )
+        if (dbgMod != nullptr)
         {
             PyObject *dict;
             // get the dictionary for this module
@@ -1224,10 +1224,10 @@ void PythonInterface::finiPython()
             dbgLog->AddLine("Hmm... Errors during Python shutdown.");
 
         // close done the log file, if we created one
-        if ( dbgLog != nil )
+        if (dbgLog != nullptr)
         {
             delete dbgLog;
-            dbgLog = nil;
+            dbgLog = nullptr;
         }
 
         initialized = 0;
@@ -1244,14 +1244,14 @@ void PythonInterface::finiPython()
 void PythonInterface::debugTimeSlice()
 {
     // check to see if the debug python module is loaded
-    if ( dbgSlice != nil )
+    if (dbgSlice != nullptr)
     {
         // then send it the new text
-        PyObject* retVal = PyObject_CallFunction(dbgSlice,nil);
-        if ( retVal == nil )
+        PyObject* retVal = PyObject_CallFunction(dbgSlice, nullptr);
+        if (retVal == nullptr)
         {
             // for some reason this function didn't, remember that and not call it again
-            dbgSlice = nil;
+            dbgSlice = nullptr;
             // if there was an error make sure that the stderr gets flushed so it can be seen
             PyErr_Print();      // make sure the error is printed
             PyErr_Clear();      // clear the error
@@ -1286,7 +1286,7 @@ PyObject* PythonInterface::GetStdErr()
 //
 int PythonInterface::getOutputAndReset(std::string *output)
 {
-    if (stdOut != nil)
+    if (stdOut != nullptr)
     {
         std::string strVal = pyOutputRedirector::GetData(stdOut);
         int size = strVal.length();
@@ -1302,14 +1302,14 @@ int PythonInterface::getOutputAndReset(std::string *output)
 #endif
 
         // check to see if the debug python module is loaded
-        if ( dbgOut != nil )
+        if (dbgOut != nullptr)
         {
             // then send it the new text
             PyObject* retVal = PyObject_CallFunction(dbgOut, _pycs("s"), strVal.c_str());
-            if ( retVal == nil )
+            if (retVal == nullptr)
             {
                 // for some reason this function didn't, remember that and not call it again
-                dbgOut = nil;
+                dbgOut = nullptr;
                 // if there was an error make sure that the stderr gets flushed so it can be seen
                 PyErr_Print();      // make sure the error is printed
                 PyErr_Clear();      // clear the error
@@ -1341,10 +1341,10 @@ void PythonInterface::WriteToStdErr(const char* text)
 
 PyObject* PythonInterface::ImportModule(const char* module) 
 {
-    PyObject* result = nil;
+    PyObject* result = nullptr;
     PyObject* name = PyUnicode_FromString(module);
 
-    if (name != nil) 
+    if (name != nullptr)
     {
         result = PyImport_Import(name);
         Py_DECREF(name);
@@ -1369,7 +1369,7 @@ PyObject* PythonInterface::FindModule(const char* module)
         return m;
 
     // couldn't find the module, return None (sorta)
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1425,7 +1425,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
         // then add the builtin dicitionary to our module's dictionary
         if (bimod == nullptr || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
             getOutputAndReset();
-            return nil;
+            return nullptr;
         }
         Py_DECREF(bimod);
     }
@@ -1448,7 +1448,7 @@ PyObject* PythonInterface::GetModuleItem(const char* item, PyObject* module)
         return PyDict_GetItemString(d, item);
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1466,7 +1466,7 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
     dict = PyModule_GetDict(module);
     // start looking for the functions
     int i=0;
-    while ( funcNames[i] != nil )
+    while (funcNames[i] != nullptr)
     {
         PyObject* func = PyDict_GetItemString(dict, funcNames[i]);
         if (func != nullptr && PyCallable_Check(func) > 0)
@@ -1476,7 +1476,7 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
         }
         else    // else we couldn't find the funtion
         {
-            funcTable[i] = nil;
+            funcTable[i] = nullptr;
         }
         i++;
     }
@@ -1772,6 +1772,6 @@ bool PythonInterface::RunFunctionSafe(const char* module, const char* function, 
 pyKey* PythonInterface::GetpyKeyFromPython(PyObject* pkey)
 {
     if (!pyKey::Check(pkey))
-        return nil;
+        return nullptr;
     return pyKey::ConvertFrom(pkey);
 }

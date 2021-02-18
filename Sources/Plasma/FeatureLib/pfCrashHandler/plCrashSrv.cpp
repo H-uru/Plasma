@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <shlobj.h>
 
 plCrashSrv::plCrashSrv(const char* file)
-    : fLink(nil), fLinkH(nil)
+    : fLink(), fLinkH()
 {
     // Init semas
     IInit(file);

@@ -146,7 +146,7 @@ plAGApplicator * plAGModifier::GetApplicator(plAGPinType pinType) const
         if(otherType == pinType)
             return app;
     }
-    return nil;
+    return nullptr;
 }
 
 // SETAPPLICATOR
@@ -177,7 +177,7 @@ void plAGModifier::SetApplicator(plAGApplicator *newApp)
 
             plAGChannel *extChannel = existingApp->GetChannel();
             newApp->SetChannel(extChannel);
-            existingApp->SetChannel(nil);
+            existingApp->SetChannel(nullptr);
             fApps[i] = newApp;
 
             delete existingApp;
@@ -214,7 +214,7 @@ plAGChannel * plAGModifier::MergeChannel(plAGApplicator *app,
                                          int priority)
 {
     int numApps = fApps.size();
-    plAGChannel * result = nil;
+    plAGChannel * result = nullptr;
 
     for (int i = 0; i < numApps; i++)
     {
@@ -308,6 +308,6 @@ const plModifier * FindModifierByClass(const plSceneObject *obj, int classID)
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 

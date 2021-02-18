@@ -73,7 +73,7 @@ public:
     hsTArray<plMorphArrayWeights> fArrayWeights;
     uint8_t               fFlags;
 
-    plSharedMeshInfo() : fMesh(nil), fCurrDraw(nil), fFlags(0) {}
+    plSharedMeshInfo() : fMesh(), fCurrDraw(), fFlags() { }
 };
 
 // Keyed storage class for morph arrays/deltas
@@ -169,14 +169,14 @@ public:
     void DeActivate();
 
     void Apply() const;
-    void Reset(const plDrawInterface* di=nil) const;
+    void Reset(const plDrawInterface* di=nullptr) const;
 
-    int GetNumLayers(plKey meshKey = nil) const; 
+    int GetNumLayers(plKey meshKey = {}) const;
     void AddLayer(const plMorphArray& ma) { fMorphs.Append(ma); }
 
-    int GetNumDeltas(int iLay, plKey meshKey = nil) const;
-    float GetWeight(int iLay, int iDel, plKey meshKey = nil) const;
-    void SetWeight(int iLay, int iDel, float w, plKey meshKey = nil);
+    int GetNumDeltas(int iLay, plKey meshKey = {}) const;
+    float GetWeight(int iLay, int iDel, plKey meshKey = {}) const;
+    void SetWeight(int iLay, int iDel, float w, plKey meshKey = {});
 
     bool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }
     bool GetDirty() const { return 0 != (fMorphFlags & kDirty); }

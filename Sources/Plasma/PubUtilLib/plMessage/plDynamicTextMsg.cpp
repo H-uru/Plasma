@@ -211,7 +211,7 @@ void    plDynamicTextMsg::Write( hsStream *s, hsResMgr *mgr )
 #ifdef HS_DEBUGGING
     if (fCmd & (kDrawImage | kDrawClippedImage))
     {
-        hsAssert(fImageKey != nil, "plDynamicTextMsg::Write: Must set imageKey for draw operation");
+        hsAssert(fImageKey != nullptr, "plDynamicTextMsg::Write: Must set imageKey for draw operation");
     }
 #endif
 

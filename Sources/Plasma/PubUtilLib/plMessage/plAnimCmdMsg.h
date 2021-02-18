@@ -67,7 +67,7 @@ private:
 
 public:
     plAnimCmdMsg()
-        : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
+        : plMessageWithCallbacks(nullptr, nullptr, nullptr) { IInit(); }
     plAnimCmdMsg(const plKey &s, 
                 const plKey &r, 
                 const double* t)
@@ -152,7 +152,7 @@ private:
 
 public:
     plAGCmdMsg()
-        : plMessage(nil, nil, nil) { IInit(); }
+        : plMessage(nullptr, nullptr, nullptr) { IInit(); }
     plAGCmdMsg(const plKey &s, 
                const plKey &r, 
                const double* t)
@@ -191,9 +191,9 @@ public:
 class plAGInstanceCallbackMsg : public plEventCallbackMsg
 {
 public:
-    plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance(nil) {}
+    plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance() { }
     plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
-      plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance(nil) {}
+      plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance() { }
 
     CLASSNAME_REGISTER( plAGInstanceCallbackMsg );
     GETINTERFACE_ANY( plAGInstanceCallbackMsg, plEventCallbackMsg );

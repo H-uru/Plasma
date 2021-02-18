@@ -233,17 +233,17 @@ void plRepresentComp::SetLoadMask(const plLoadMask& m)
 
 plRepresentComp* plRepresentComp::GetComp(INode* node)
 {
-    if( node == nil )
-        return nil;
+    if (node == nullptr)
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( comp->ClassID() == REPCOMP_CID )
         return (plRepresentComp*) comp;
 
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

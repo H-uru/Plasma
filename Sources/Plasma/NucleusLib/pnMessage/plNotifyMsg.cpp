@@ -777,7 +777,7 @@ proEventData* plNotifyMsg::FindEventRecord( int32_t eventtype )
                 return pEDTest;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 
@@ -931,7 +931,7 @@ plKey plNotifyMsg::GetAvatarKey()
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -960,7 +960,7 @@ proEventData* proEventData::ICreateEventDataType(int32_t type)
     case kClimbingBlockerHit: return new proClimbingBlockerHitEventData;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// proEventData::Read /////////////////////////////////////////////////////
@@ -973,7 +973,7 @@ proEventData* proEventData::Read( hsStream *stream, hsResMgr *mgr )
 
     proEventData* data = ICreateEventDataType(evtType);
 
-    if (data != nil)
+    if (data != nullptr)
         data->IRead(stream, mgr);
 
     return data;
@@ -1001,13 +1001,13 @@ proEventData* proEventData::ReadVersion(hsStream* s, hsResMgr* mgr)
 
         proEventData* data = ICreateEventDataType(evtType);
 
-        if (data != nil)
+        if (data != nullptr)
             data->IReadVersion(s, mgr);
 
         return data;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void proEventData::WriteVersion(hsStream* s, hsResMgr* mgr)

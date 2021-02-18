@@ -70,7 +70,7 @@ plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
     if (avObj)
     {
         // search through its modifiers to see if one of them is an avatar modifier
-        plArmatureMod* avMod = nil;
+        plArmatureMod* avMod = nullptr;
         for (size_t i = 0; i < avObj->GetNumModifiers(); i++)
         {
             const plModifier* mod = avObj->GetModifier(i);
@@ -81,14 +81,14 @@ plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plCollisionDetector::IIsDisabledAvatar(plKey key)
 {
     plArmatureMod* avMod = IGetAvatarModifier(key);
-    plArmatureBrain* avBrain = avMod ? avMod->GetCurrentBrain() : nil;
-    return (plAvBrainDrive::ConvertNoRef(avBrain) != nil);
+    plArmatureBrain* avBrain = avMod ? avMod->GetCurrentBrain() : nullptr;
+    return (plAvBrainDrive::ConvertNoRef(avBrain) != nullptr);
 }
 
 bool plCollisionDetector::MsgReceive(plMessage* msg)
@@ -429,7 +429,7 @@ void plObjectInVolumeAndFacingDetector::SetFacingTolerance(int degrees)
 void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
 {
     plArmatureMod* armMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
-    plSceneObject* avatar = armMod ? armMod->GetTarget(0) : nil;
+    plSceneObject* avatar = armMod ? armMod->GetTarget(0) : nullptr;
     plSceneObject* target = GetTarget();
 
     if (armMod && target)
@@ -577,7 +577,7 @@ bool plSubworldRegionDetector::MsgReceive(plMessage* msg)
                 else
                 {
                     plDetectorLog::Special("Switching to main subworld");
-                    plSubWorldMsg* msg = new plSubWorldMsg(GetKey(), avMod->GetKey(), nil);
+                    plSubWorldMsg* msg = new plSubWorldMsg(GetKey(), avMod->GetKey(), nullptr);
                     msg->Send();
                 }
             }
@@ -665,7 +665,7 @@ void plPanicLinkRegion::Write(hsStream* stream, hsResMgr* mgr)
 
 // ctor default
 plSimpleRegionSensor::plSimpleRegionSensor()
-: fEnterMsg(nil), fExitMsg(nil)
+: fEnterMsg(), fExitMsg()
 {
 }
 
@@ -712,7 +712,7 @@ void plSimpleRegionSensor::Read(hsStream *stream, hsResMgr *mgr)
     {
         fEnterMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     } else {
-        fEnterMsg = nil;
+        fEnterMsg = nullptr;
     }
 
     if(stream->ReadBool())
@@ -720,7 +720,7 @@ void plSimpleRegionSensor::Read(hsStream *stream, hsResMgr *mgr)
         fExitMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
         hsAssert(fExitMsg, "Corrupted plSimpleRegionSensor during read.");
     } else {
-        fExitMsg = nil;
+        fExitMsg = nullptr;
     }
 }
 

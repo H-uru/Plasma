@@ -139,7 +139,7 @@ plLayer* hsGMaterial::MakeBaseLayer()
         buff = ST::format("{}_Layer", GetKeyName());
     else
         buff = ST_LITERAL("Layer");
-    hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
+    hsgResMgr::ResMgr()->NewKey(buff, newLay, GetKey() != nullptr ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc);
 
     // Add layer so we have it now.
     AddLayerViaNotify(newLay);

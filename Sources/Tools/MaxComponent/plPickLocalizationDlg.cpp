@@ -114,7 +114,7 @@ HTREEITEM plPickLocalizationDlg::IAddVar(std::string name, std::string match, HT
     tvi.item.mask = TVIF_TEXT | TVIF_PARAM;
     tvi.item.pszText = (char*)name.c_str();
     tvi.item.cchTextMax = name.length();
-    tvi.item.lParam = (LPARAM)nil;
+    tvi.item.lParam = (LPARAM)nullptr;
 
     HTREEITEM hItem = TreeView_InsertItem(fTree, &tvi);
 
@@ -212,7 +212,7 @@ bool plPickLocalizationDlg::IValidatePath()
 
 BOOL CALLBACK plPickLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static plPickLocalizationDlg* pthis = nil;
+    static plPickLocalizationDlg* pthis = nullptr;
 
     switch (msg)
     {

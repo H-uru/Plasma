@@ -51,7 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInterp/plAnimTimeConvert.h"
 #include "plPipeline/plDebugText.h"
 
-plArmatureBehavior::plArmatureBehavior() : fAnim(nil), fArmature(nil), fBrain(nil), fIndex((uint8_t)-1), fFlags(0) {}
+plArmatureBehavior::plArmatureBehavior()
+    : fAnim(), fArmature(), fBrain(), fIndex((uint8_t)-1), fFlags()
+{ }
 
 plArmatureBehavior::~plArmatureBehavior() 
 {

@@ -62,7 +62,7 @@ uint8_t plCoordinateInterface::fTransformPhase = plCoordinateInterface::kTransfo
 bool plCoordinateInterface::fDelayedTransformsEnabled = true;
 
 plCoordinateInterface::plCoordinateInterface()
-: fParent(nil),
+: fParent(),
   fReason(kReasonUnknown)
 {
     fLocalToParent.Reset();
@@ -113,7 +113,7 @@ void plCoordinateInterface::ISetParent(plCoordinateInterface* par)
 
 plCoordinateInterface* plCoordinateInterface::GetChild(size_t i) const
 { 
-    return fChildren[i] ? fChildren[i]->GetVolatileCoordinateInterface() : nil; 
+    return fChildren[i] ? fChildren[i]->GetVolatileCoordinateInterface() : nullptr;
 }
 
 void plCoordinateInterface::IRemoveChild(size_t i)
@@ -122,7 +122,7 @@ void plCoordinateInterface::IRemoveChild(size_t i)
     {
         plCoordinateInterface* childCI = fChildren[i]->GetVolatileCoordinateInterface();
         if( childCI )
-            childCI->ISetParent(nil);
+            childCI->ISetParent(nullptr);
     }
     fChildren.erase(fChildren.begin() + i);
 }
@@ -596,7 +596,7 @@ bool plCoordinateInterface::MsgReceive(plMessage* msg)
         case plIntRefMsg::kChildObject:
         case plIntRefMsg::kChild:
             {
-                plSceneObject* co = nil;
+                plSceneObject* co = nullptr;
                 if( intRefMsg->fType == plIntRefMsg::kChildObject )
                 {
                     co = plSceneObject::ConvertNoRef(intRefMsg->GetRef());
@@ -604,7 +604,7 @@ bool plCoordinateInterface::MsgReceive(plMessage* msg)
                 else
                 {
                     plCoordinateInterface* ci = plCoordinateInterface::ConvertNoRef(intRefMsg->GetRef());
-                    co = ci ? ci->IGetOwner() : nil;
+                    co = ci ? ci->IGetOwner() : nullptr;
                 }
                 if( intRefMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnReplace) )
                 {

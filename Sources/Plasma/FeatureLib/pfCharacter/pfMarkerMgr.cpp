@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ////////////////////////////////////////////////////////////////////////////////
 
-pfMarkerMgr* pfMarkerMgr::fInstance = nil;
+pfMarkerMgr* pfMarkerMgr::fInstance = nullptr;
 const uint32_t pfMarkerMgr::kNoMarkerSelected = (uint32_t)(-1);
 
 pfMarkerMgr* pfMarkerMgr::Instance()
@@ -77,7 +77,7 @@ void pfMarkerMgr::Shutdown()
     if (pfMarkerMgr::fInstance)
     {
         pfMarkerMgr::fInstance->IShutdown();
-        pfMarkerMgr::fInstance = nil;
+        pfMarkerMgr::fInstance = nullptr;
     }
 }
 
@@ -128,7 +128,7 @@ pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, uint32_t& id)
         ++curMarker;
     }
     id = kNoMarkerSelected;
-    return nil;
+    return nullptr;
 }
 
 void pfMarkerMgr::IUpdate()

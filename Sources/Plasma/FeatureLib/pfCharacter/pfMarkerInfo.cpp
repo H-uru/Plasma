@@ -85,10 +85,10 @@ void pfMarkerInfo::Init()
 }
 
 pfMarkerInfo::pfMarkerInfo(const hsPoint3& pos, bool isNew) :
-    fMod(nil),
+    fMod(),
     fPosition(pos),
     fType(kMarkerOpen),
-    fLastChange(0),
+    fLastChange(),
     fVisible(true),
     fIsNew(isNew),
     fSpawned(false)
@@ -188,8 +188,8 @@ void pfMarkerInfo::Remove()
         cloneMsg->SetBCastFlag(plMessage::kNetPropagate, false);
         cloneMsg->Send();
 
-        fKey = nil;
-        fMod = nil;
+        fKey = nullptr;
+        fMod = nullptr;
     }
 }
 
@@ -225,7 +225,7 @@ void pfMarkerInfo::IPlayColor(bool play)
     if (fMod && fSpawned)
     {
         // Play the correct color anim
-        plKey key = nil;
+        plKey key;
         switch (fType)
         {
         case kMarkerOpen:

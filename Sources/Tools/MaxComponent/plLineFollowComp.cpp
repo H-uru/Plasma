@@ -266,8 +266,8 @@ ParamBlockDesc2 gLineFollowBk
 );
 
 plLineFollowComponent::plLineFollowComponent()
-:   fValid(false),
-    fLineMod(nil)
+:   fValid(),
+    fLineMod()
 {
     fClassDesc = &gLineFollowDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -369,7 +369,7 @@ bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 plLineFollowMod* plLineFollowComponent::GetLineMod(plErrorMsg* pErrMsg)
 {
     if( !fValid )
-        return nil;
+        return nullptr;
     if( !fLineMod )
     {
         int i;
@@ -406,7 +406,7 @@ bool plLineFollowComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 bool plLineFollowComponent::SetupProperties(plMaxNode* pNode,  plErrorMsg* pErrMsg)
 {
     fValid = false;
-    fLineMod = nil;
+    fLineMod = nullptr;
 
     if( !fCompPB->GetINode(kPathObjectSel) )
     {
@@ -626,7 +626,7 @@ plLineFollowMod* plStereizeComp::ISetMaster(plStereizer* stereo, plMaxNode* node
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////

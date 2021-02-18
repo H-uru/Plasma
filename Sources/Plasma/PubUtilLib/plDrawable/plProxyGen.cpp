@@ -59,9 +59,9 @@ static hsTArray<hsGMaterial*>   fProxyMaterials;
 static uint32_t                   fProxyKeyCounter = 0;
 
 plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
-:   fProxyMsgType(0),
-    fProxyDraw(nil),
-    fProxyMat(nil)
+:   fProxyMsgType(),
+    fProxyDraw(),
+    fProxyMat()
 {
     fAmbient = amb;
     fColor = dif;
@@ -196,7 +196,7 @@ hsGMaterial* plProxyGen::IFindProxyMaterial() const
             return mat;
     }
 
-    return nil;
+    return nullptr;
 }
 
 hsGMaterial* plProxyGen::IGetProxyMaterial() const
@@ -272,7 +272,7 @@ void plProxyGen::IRemoveProxy(uint32_t idx) const
 {
     if( fProxyDrawables[idx] )
     {
-        fProxyDrawables[idx]->SetSceneNode(nil);
+        fProxyDrawables[idx]->SetSceneNode(nullptr);
     }
 }
 
@@ -282,14 +282,14 @@ void plProxyGen::IDestroyProxy()
     if( fProxyDraw )
     {
         if( fProxyDraw->GetSceneNode() )
-            fProxyDraw->SetSceneNode(nil);
+            fProxyDraw->SetSceneNode(nullptr);
         GetKey()->Release(fProxyDraw->GetKey());
-        fProxyDraw = nil;
+        fProxyDraw = nullptr;
     }
     if( fProxyMat )
     {
         GetKey()->Release(fProxyMat->GetKey());
-        fProxyMat = nil;
+        fProxyMat = nullptr;
     }
     fProxyDrawables.Reset();
     fProxyMaterials.Reset();
@@ -302,17 +302,17 @@ bool plProxyGen::MsgReceive(plMessage* msg)
     {
         if( pDraw->GetProxyFlags() & plProxyDrawMsg::kCreate )
         {
-            if( fProxyDraw == nil )
+            if (fProxyDraw == nullptr)
                 IGenerateProxy();
         }
         else if( pDraw->GetProxyFlags() & plProxyDrawMsg::kDestroy )
         {
-            if( fProxyDraw != nil )
+            if (fProxyDraw != nullptr)
                 IDestroyProxy();
         }
         else if( pDraw->GetProxyFlags() & plProxyDrawMsg::kToggle )
         {
-            if( fProxyDraw == nil )
+            if (fProxyDraw == nullptr)
                 IGenerateProxy();
             else
                 IDestroyProxy();
@@ -325,7 +325,7 @@ bool plProxyGen::MsgReceive(plMessage* msg)
         if( nodeRef->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
             if( nodeRef->fWhich < fProxyDrawables.GetCount() )
-                fProxyDrawables[nodeRef->fWhich] = nil;
+                fProxyDrawables[nodeRef->fWhich] = nullptr;
         }
         return true;
     }
@@ -335,7 +335,7 @@ bool plProxyGen::MsgReceive(plMessage* msg)
         if( genMsg->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
             if( genMsg->fWhich < fProxyMaterials.GetCount() )
-                fProxyMaterials[genMsg->fWhich] = nil;
+                fProxyMaterials[genMsg->fWhich] = nullptr;
         }
         return true;
     }

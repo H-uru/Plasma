@@ -81,7 +81,7 @@ class plGUIDialogComponent : public plComponent
         bool SetupProperties( plMaxNode *pNode, plErrorMsg *pErrMsg ) override;
         bool PreConvert( plMaxNode *pNode, plErrorMsg *pErrMsg ) override;
         bool Convert( plMaxNode *node, plErrorMsg *pErrMsg ) override;
-        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override { fProcReceiver = nil; return true;}
+        bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override { fProcReceiver = nullptr; return true; }
 
         pfGUIDialogMod  *GetModifier() { return fDialogMod; }
 
@@ -151,7 +151,7 @@ class plGUIControlBase : public plComponent
         void    CollectNonDrawables(INodeTab &nonDrawables) override;
 
         virtual uint32_t  GetNumMtls() const { return 0; }
-        virtual Texmap  *GetMtl( uint32_t idx ) { return nil; }
+        virtual Texmap  *GetMtl(uint32_t idx) { return nullptr; }
 
         // Given a maxNode that is really a component, will return a pointer to the GUI control modifier
         // created for it at export time. Only valid after PreConvert. If you think the control component 
@@ -159,7 +159,7 @@ class plGUIControlBase : public plComponent
         // asking for as well to make sure you get the right control. If not, just leave the second
         // parameter nil, but that can be VERY dangerous if the component results in more than one
         // GUI control.
-        static pfGUIControlMod *GrabControlMod( INode *node, INode *sceneObjectNode = nil );
+        static pfGUIControlMod *GrabControlMod(INode *node, INode *sceneObjectNode = nullptr);
 
         // Like GrabControlMod, but for when you already have a pointer to some kind of component
         static pfGUIControlMod  *ConvertCompToControl( plComponentBase *comp, INode *sceneObjectNode );

@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////
 
 pySDLStateDataRecord::pySDLStateDataRecord()
-: fRec( nil )
+: fRec()
 {
 }
 
@@ -116,7 +116,7 @@ void pySDLStateDataRecord::SetFromDefaults(bool timeStampNow)
 ///////////////////////////////////////////////////////////////////////////
 
 pySimpleStateVariable::pySimpleStateVariable()
-: fVar( nil )
+: fVar()
 {
 }
 
@@ -240,7 +240,7 @@ ST::string pySimpleStateVariable::GetString( int idx ) const
 
 plKey pySimpleStateVariable::GetKey( int idx ) const
 {
-    plKey theKey = nil;
+    plKey theKey;
     if (fVar)
         fVar->Get(&theKey, idx);
     return theKey;

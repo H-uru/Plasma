@@ -129,7 +129,7 @@ public:
             else if( LOWORD( wParam ) == IDC_INITIMAGE )
             {
                 plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
-                if( layer == nil )
+                if (layer == nullptr)
                     return FALSE;
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();        
                 if( selectedNewBitmap )
@@ -139,7 +139,7 @@ public:
                     ICustButton *bmSelectBtn = GetICustButton( GetDlgItem( hWnd, IDC_INITIMAGE ) );
                     PBBitmap *pbbm = layer->GetPBBitmap();
                     
-                    bmSelectBtn->SetText( pbbm != nil ? (TCHAR *)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR *)pbbm->bi.Filename() : "");
                     
                     ReleaseICustButton( bmSelectBtn );                          
                 }

@@ -441,11 +441,11 @@ void plBumpMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
 void plBumpMtl::GetInterpVtxValue(int channel, ShadeContext &sc, Point3 &val)
 {
     Mesh *mesh = sc.globContext->GetRenderInstance(sc.NodeID())->mesh;
-    if (mesh != nil)
+    if (mesh != nullptr)
     {
         Face *maxFace = &mesh->faces[ sc.FaceNumber() ];
         UVVert *map = mesh->mapVerts(channel);
-        if (map != nil)
+        if (map != nullptr)
         {
             Point3 p0 = map[maxFace->getVert( 0 )];
             Point3 p1 = map[maxFace->getVert( 1 )];
@@ -667,16 +667,16 @@ int     plBumpMtl::GetShine() { return 0; }
 Color   plBumpMtl::GetSpecularColor() { return Color(0,0,0); }
 int     plBumpMtl::GetDiffuseColorLock() { return 0; }
 Color   plBumpMtl::GetRuntimeColor() { return fBasicPB->GetColor(kBumpBasRunColor); }
-Control *plBumpMtl::GetPreshadeColorController() { return nil; }
-Control *plBumpMtl::GetAmbColorController() { return nil; }
-Control *plBumpMtl::GetOpacityController() { return nil; }
-Control *plBumpMtl::GetSpecularColorController() { return nil; }
+Control *plBumpMtl::GetPreshadeColorController() { return nullptr; }
+Control *plBumpMtl::GetAmbColorController() { return nullptr; }
+Control *plBumpMtl::GetOpacityController() { return nullptr; }
+Control *plBumpMtl::GetSpecularColorController() { return nullptr; }
 Control *plBumpMtl::GetRuntimeColorController() { return GetParamBlock2Controller(fBasicPB, ParamID(kBumpBasRunColor)); }
 
 // Layer block
 Texmap *plBumpMtl::GetBaseLayer() { return fBasicPB->GetTexmap(kBumpBasLayer); }
 int     plBumpMtl::GetTopLayerOn() { return 0; }
-Texmap *plBumpMtl::GetTopLayer() { return nil; }
+Texmap *plBumpMtl::GetTopLayer() { return nullptr; }
 int     plBumpMtl::GetLayerBlend() { return 0; }
 int     plBumpMtl::GetOutputAlpha() { return 0; }
 int     plBumpMtl::GetOutputBlend() { return fBasicPB->GetInt( kBumpBasSpecular ) ? plPassMtlBase::kBlendAdd : plPassMtlBase::kBlendAlpha; }

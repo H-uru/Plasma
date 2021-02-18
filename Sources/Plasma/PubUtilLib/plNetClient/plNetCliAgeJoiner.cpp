@@ -120,7 +120,7 @@ struct plNCAgeJoiner {
     static plNCAgeJoiner* s_instance;
 };
 
-plNCAgeJoiner* plNCAgeJoiner::s_instance = nil;
+plNCAgeJoiner* plNCAgeJoiner::s_instance = nullptr;
 
 
 /*****************************************************************************
@@ -163,8 +163,8 @@ plNCAgeJoiner::plNCAgeJoiner (
 ,   muteLinkSfx(muteSfx)
 ,   callback(callback)
 ,   userState(userState)
-,   complete(false)
-,   progressBar(nil)
+,   complete()
+,   progressBar()
 {
 }
 
@@ -194,7 +194,7 @@ void plNCAgeJoiner::Complete (bool success, const char msg[]) {
     if (!complete) {
         complete = true;
         
-        s_instance = nil;
+        s_instance = nullptr;
         
         NCAgeJoinerCompleteNotify   notify;
         notify.success  = success;
@@ -333,10 +333,10 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //============================================================================
         case kDestroyProgressBar: {
-            plDispatch::SetMsgRecieveCallback(nil);
-            ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(nil);
+            plDispatch::SetMsgRecieveCallback(nullptr);
+            ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(nullptr);
             delete progressBar;
-            progressBar = nil;
+            progressBar = nullptr;
             nc->EndTask();
 
             nextOp = kEnableClickables;
@@ -406,7 +406,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
                 ageVaultId,
                 AgeVaultDownloadCallback,
                 this,
-                nil, // FVaultDownloadProgressCallback
+                nullptr, // FVaultDownloadProgressCallback
                 this
             );
         }

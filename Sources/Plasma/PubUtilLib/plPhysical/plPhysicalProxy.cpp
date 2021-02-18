@@ -59,7 +59,7 @@ bool plPhysicalProxy::Init(plPhysical* liInfo)
     fOwner = liInfo;
     fProxyMsgType = plProxyDrawMsg::kPhysical;
 
-    return fOwner != nil;
+    return fOwner != nullptr;
 }
 
 bool plPhysicalProxy::Init(plPXPhysicalControllerCore* controller)
@@ -71,7 +71,7 @@ bool plPhysicalProxy::Init(plPXPhysicalControllerCore* controller)
     fController = controller;
     fProxyMsgType = plProxyDrawMsg::kPhysical;
 
-    return fController != nil;
+    return fController != nullptr;
 }
 
 plKey plPhysicalProxy::IGetNode() const
@@ -80,7 +80,7 @@ plKey plPhysicalProxy::IGetNode() const
         return fOwner->GetSceneNode();
     if (fController)
         return fController->GetOwner();
-    return nil;
+    return nullptr;
 }
 
 plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
@@ -93,5 +93,5 @@ plDrawableSpans* plPhysicalProxy::ICreateProxy(hsGMaterial* mat, std::vector<uin
     {
         return fController->CreateProxy(mat,idx,addTo);
     }
-    return nil;
+    return nullptr;
 }

@@ -125,7 +125,7 @@ class plDXFogSettings
 
         void    Reset()
         {
-            fEnvPtr = nil;
+            fEnvPtr = nullptr;
             fMode = D3DFOG_NONE;
             fIsVertex = 0;
             fIsShader = 0;

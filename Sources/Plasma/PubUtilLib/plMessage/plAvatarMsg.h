@@ -65,7 +65,7 @@ public:
     // tors
     plAvatarMsg() : plMessage() { }
     plAvatarMsg(const plKey &sender, const plKey &receiver)
-        : plMessage(sender, receiver, nil) { }
+        : plMessage(sender, receiver, nullptr) { }
 
 
     // plasma protocol
@@ -191,7 +191,7 @@ public:
     plAvSeekMsg();
     plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
                 plAvAlignment align = kAlignHandle, const ST::string& animName = {}, bool noSeek = false,
-                uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
+                uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = {});
     
     // plasma protocol
     CLASSNAME_REGISTER( plAvSeekMsg );
@@ -432,7 +432,7 @@ class plAvatarSpawnNotifyMsg : public plMessage
 public:
     plArmatureMod *fAvMod;
 
-    plAvatarSpawnNotifyMsg() : fAvMod(nil) {}
+    plAvatarSpawnNotifyMsg() : fAvMod() { }
 
     CLASSNAME_REGISTER( plAvatarSpawnNotifyMsg );
     GETINTERFACE_ANY( plAvatarSpawnNotifyMsg, plMessage );

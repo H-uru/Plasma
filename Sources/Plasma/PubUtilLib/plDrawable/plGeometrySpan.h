@@ -210,14 +210,14 @@ class plGeometrySpan
         uint16_t  AddVertex( hsPoint3 *position, hsPoint3 *normal, hsColorRGBA& multColor, hsColorRGBA& addColor,
                             hsPoint3 **uvPtrArray, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0 );
         uint16_t  AddVertex( hsPoint3 *position, hsPoint3 *normal, uint32_t hexColor, uint32_t specularColor = 0,
-                            hsPoint3 **uvPtrArray = nil, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0 );
+                            hsPoint3 **uvPtrArray = nullptr, float weight1 = -1.0f, float weight2 = -1.0f, float weight3 = -1.0f, uint32_t weightIndices = 0);
 
         void    AddIndex( uint16_t index );
         void    AddTriIndices( uint16_t index1, uint16_t index2, uint16_t index3 );
         void    AddTriangle( hsPoint3 *vert1, hsPoint3 *vert2, hsPoint3 *vert3, uint32_t color );
 
-        // uvws is an array count*uvwsPerVtx long in order [uvw(s) for vtx0, uvw(s) for vtx1, ...], or is nil
-        void    AddVertexArray( uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3 *uvws=nil, int uvwsPerVtx=0 );
+        // uvws is an array count*uvwsPerVtx long in order [uvw(s) for vtx0, uvw(s) for vtx1, ...], or is nullptr
+        void    AddVertexArray(uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3 *uvws=nullptr, int uvwsPerVtx=0);
         void    AddIndexArray( uint32_t count, uint16_t *indices );
 
         void    EndCreate();
@@ -227,12 +227,12 @@ class plGeometrySpan
         // Wrong. Also used for the interleaving of the multiple vertex data streams here into single vertex
         //      stream within the plGBufferGroups. mf.
         void    ExtractInitColor( uint32_t index, hsColorRGBA *multColor, hsColorRGBA *addColor) const;
-        void    ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
-        void    ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 *normal, uint32_t *color, uint32_t *specColor = nil );
+        void    ExtractVertex(uint32_t index, hsPoint3 *pos, hsVector3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nullptr);
+        void    ExtractVertex(uint32_t index, hsPoint3 *pos, hsVector3 *normal, uint32_t *color, uint32_t *specColor = nullptr);
         void    ExtractUv( uint32_t vIdx, uint8_t uvIdx, hsPoint3* uv );
         void    ExtractWeights( uint32_t vIdx, float *weightArray, uint32_t *indices );
-        void    StuffVertex( uint32_t index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nil );
-        void    StuffVertex( uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor = nil );
+        void    StuffVertex(uint32_t index, hsPoint3 *pos, hsPoint3 *normal, hsColorRGBA *color, hsColorRGBA *specColor = nullptr);
+        void    StuffVertex(uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor = nullptr);
 
         // Clear out the buffers
         void            ClearBuffers();

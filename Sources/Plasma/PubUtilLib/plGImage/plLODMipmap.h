@@ -93,7 +93,7 @@ public:
     plMipmap*   Clone() const override { return fBase->Clone(); }
     void        CopyFrom(const plMipmap *source) override;
 
-    void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nil) override;
+    void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nullptr) override;
 
     void    ScaleNicely(uint32_t *destPtr, uint16_t destWidth, uint16_t destHeight,
                         uint16_t destStride, plMipmap::ScaleFilter filter) const override;

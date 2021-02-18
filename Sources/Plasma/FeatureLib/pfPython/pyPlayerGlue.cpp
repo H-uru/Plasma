@@ -203,7 +203,7 @@ PyObject *pyPlayer::New(plKey avKey, const ST::string& pname, uint32_t pid, floa
 PyObject *pyPlayer::New(const ST::string& pname, uint32_t pid)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, nullptr, nullptr);
-    newObj->fThis->Init(nil, pname, pid, -1);
+    newObj->fThis->Init(nullptr, pname, pid, -1);
     return (PyObject*)newObj;
 }
 

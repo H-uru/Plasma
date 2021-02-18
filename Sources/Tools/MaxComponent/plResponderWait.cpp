@@ -130,7 +130,7 @@ void ResponderWait::FixupWaitBlock(IParamBlock2 *waitPB)
 
 IParamBlock2 *ResponderWait::CreatePB()
 {
-    return CreateParameterBlock2(&gResponderWaitBlock, nil);
+    return CreateParameterBlock2(&gResponderWaitBlock, nullptr);
 }
 
 bool ResponderWait::GetWaitOnMe(IParamBlock2* waitPB)
@@ -315,7 +315,7 @@ void plResponderWaitProc::LoadPoint(bool force)
     int who = fWaitPB->GetInt(kWaitWho);
     const char *point = fWaitPB->GetStr(kWaitPoint);
     if (point && *point == '\0')
-        point = nil;
+        point = nullptr;
 
     CheckRadioButton(fhDlg, IDC_RADIO_FINISH, IDC_RADIO_POINT, point || force ? IDC_RADIO_POINT : IDC_RADIO_FINISH);
 
@@ -323,7 +323,7 @@ void plResponderWaitProc::LoadPoint(bool force)
     EnableWindow(GetDlgItem(fhDlg, IDC_RADIO_FINISH), enableAll);
     EnableWindow(GetDlgItem(fhDlg, IDC_RADIO_POINT), enableAll);
 
-    BOOL enablePoint = ((point != nil) || force) && enableAll;
+    BOOL enablePoint = ((point != nullptr) || force) && enableAll;
     EnableWindow(GetDlgItem(fhDlg, IDC_WAIT_POINT), enablePoint);
     ComboBox_ResetContent(GetDlgItem(fhDlg, IDC_WAIT_POINT));
 

@@ -85,7 +85,7 @@ void CalculateProfiles()
     #endif
 }
 
-static plGraphPlate* fFPSPlate = nil;
+static plGraphPlate* fFPSPlate = nullptr;
 
 static int ICreateStdPlate(plGraphPlate** graph)
 {
@@ -114,7 +114,7 @@ void CreateStandardGraphs(const char* groupName, bool create)
         else
         {
             plPlateManager::Instance().DestroyPlate(fFPSPlate);
-            fFPSPlate = nil;
+            fFPSPlate = nullptr;
         }
     }
 }

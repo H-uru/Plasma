@@ -106,7 +106,7 @@ class pfGUIButtonMod : public pfGUIControlMod
         void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         virtual void    SetNotifyType(int32_t kind);
         virtual int32_t   GetNotifyType();

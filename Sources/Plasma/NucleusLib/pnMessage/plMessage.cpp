@@ -53,11 +53,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iterator>
 
 plMessage::plMessage()
-:   fSender(nil),
-    fBCastFlags(kLocalPropagate),
-    fTimeStamp(0),
-    fNetRcvrPlayerIDs(nil),
-    dispatchBreak(false)
+:   fBCastFlags(kLocalPropagate),
+    fTimeStamp(),
+    fNetRcvrPlayerIDs(),
+    dispatchBreak()
 {
 }
 
@@ -66,8 +65,8 @@ plMessage::plMessage(const plKey &s,
             const double* t)
 :   fSender(s),
     fBCastFlags(kLocalPropagate),
-    fNetRcvrPlayerIDs(nil),
-    dispatchBreak(false)
+    fNetRcvrPlayerIDs(),
+    dispatchBreak()
 {
     if (r)
         fReceivers.emplace_back(r);
@@ -338,7 +337,7 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekO
     stream->LogSubStreamStart("push me");
     stream->LogReadLE(&strlen,"StrLen");
     delete [] str;
-    str = nil;
+    str = nullptr;
     if (strlen <= stream->GetSizeLeft())
     {
         if (strlen)
@@ -362,7 +361,7 @@ int plMsgCStringHelper::Poke(const ST::string & str, hsStream* stream, const uin
 
 int plMsgCStringHelper::Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions)
 {
-    char * temp = nil;
+    char * temp = nullptr;
     int pos = Peek(temp, stream, peekOptions);
     str = ST::string::from_latin_1(temp);
     delete [] temp;

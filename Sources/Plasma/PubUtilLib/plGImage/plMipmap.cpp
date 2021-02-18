@@ -152,7 +152,7 @@ void    plMipmap::Create( uint32_t width, uint32_t height, unsigned config, uint
         }
     }
 
-    fLevelSizes = nil;
+    fLevelSizes = nullptr;
     IBuildLevelSizes();
 
     fTotalSize = 0;
@@ -176,18 +176,18 @@ void    plMipmap::Create( uint32_t width, uint32_t height, unsigned config, uint
 void    plMipmap::Reset()
 {
     delete [] fLevelSizes;
-    fLevelSizes = nil;
+    fLevelSizes = nullptr;
     if( !( fFlags & kUserOwnsBitmap ) )
     {
 #ifdef MEMORY_LEAK_TRACER
-        if( fImage != nil )
+        if (fImage != nullptr)
             IRemoveFromMemRecord( (uint8_t *)fImage );
 #endif
 
         delete[] (uint8_t*)fImage;
         plProfile_DelMem(MemMipmaps, fTotalSize);
     }
-    fImage = nil;
+    fImage = nullptr;
 }
 
 
@@ -229,7 +229,7 @@ uint32_t  plMipmap::Read( hsStream *s )
     totalRead += 4 * 4 + 1;
     
     if( fTotalSize == 0 )
-        fImage = nil; 
+        fImage = nullptr;
     else
     {
         IBuildLevelSizes();
@@ -527,8 +527,8 @@ void plMipmap::IReadJPEGImage( hsStream *stream )
     uint8_t flags = 0;
     flags = stream->ReadByte();
 
-    plMipmap *temp = nil;
-    plMipmap *alpha = nil;
+    plMipmap *temp = nullptr;
+    plMipmap *alpha = nullptr;
 
     if (flags & kColorDataRLE)
         temp = IReadRLEImage(stream);
@@ -610,7 +610,7 @@ void plMipmap::IWritePNGImage(hsStream* stream)
 
 uint32_t  plMipmap::GetLevelSize( uint8_t level )
 {
-    if( fLevelSizes == nil )
+    if (fLevelSizes == nullptr)
         IBuildLevelSizes();
 
     return fLevelSizes[ level ];
@@ -670,7 +670,7 @@ uint8_t   *plMipmap::GetLevelPtr( uint8_t level, uint32_t *width, uint32_t *heig
     uint32_t  w, h, r;
 
 
-    if( fLevelSizes == nil )
+    if (fLevelSizes == nullptr)
         IBuildLevelSizes();
 
     for( i = 0, data = (uint8_t *)fImage, w = fWidth, h = fHeight, r = fRowBytes; i < level; i++ )
@@ -685,11 +685,11 @@ uint8_t   *plMipmap::GetLevelPtr( uint8_t level, uint32_t *width, uint32_t *heig
             h >>= 1;
     }
 
-    if( width != nil )
+    if (width != nullptr)
         *width = w;
-    if( height != nil )
+    if (height != nullptr)
         *height = h;
-    if( rowBytes != nil )
+    if (rowBytes != nullptr)
         *rowBytes = r;
 
     return data;
@@ -782,7 +782,7 @@ void    plMipmap::ClipToMaxSize( uint32_t maxDimension )
 
     /// Create a new image pointer
     destData = new uint8_t[ newSize ];
-    hsAssert( destData != nil, "Out of memory in ClipToMaxSize()" );
+    hsAssert(destData != nullptr, "Out of memory in ClipToMaxSize()");
     memcpy( destData, srcData, newSize );
 
 #ifdef MEMORY_LEAK_TRACER
@@ -813,7 +813,7 @@ void    plMipmap::RemoveMipping()
 
     /// Create a new image pointer
     destData = new uint8_t[ fLevelSizes[ 0 ] ];
-    hsAssert( destData != nil, "Out of memory in ClipToMaxSize()" );
+    hsAssert(destData != nullptr, "Out of memory in ClipToMaxSize()");
     memcpy( destData, fImage, fLevelSizes[ 0 ] );
 
 #ifdef MEMORY_LEAK_TRACER
@@ -1571,7 +1571,7 @@ uint32_t plMipmap::CopyOutPixels(uint32_t destXSize, uint32_t destYSize,
 
 void    plMipmap::CopyFrom( const plMipmap *source )
 {
-    hsAssert( source != nil, "nil source in plMipmap::CopyFrom()" );
+    hsAssert(source != nullptr, "nil source in plMipmap::CopyFrom()");
 
     plProfile_DelMem(MemMipmaps, fTotalSize);
 #ifdef MEMORY_LEAK_TRACER
@@ -1619,7 +1619,7 @@ void    plMipmap::CopyFrom( const plMipmap *source )
     IBuildLevelSizes();
     
     // We just changed our texture, so if we have a texture ref, we better dirty it
-    if( GetDeviceRef() != nil )
+    if (GetDeviceRef() != nullptr)
         GetDeviceRef()->SetDirty( true );
 }
 
@@ -1661,7 +1661,7 @@ void    plMipmap::Composite( plMipmap *source, uint16_t x, uint16_t y, plMipmap:
     }
 
     // Grab the correct options pointer
-    if( options == nil )
+    if (options == nullptr)
     {
         static CompositeOptions     defaultOptions;
         options = &defaultOptions;
@@ -1909,7 +1909,7 @@ void    plMipmap::Composite( plMipmap *source, uint16_t x, uint16_t y, plMipmap:
     }
 
     // All done!
-    if( GetDeviceRef() != nil )
+    if (GetDeviceRef() != nullptr)
         GetDeviceRef()->SetDirty( true );
 }
 
@@ -2130,7 +2130,7 @@ bool    plMipmap::ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap:
 {
     // Make a temp buffer
     uint32_t  *newData = new uint32_t[ newWidth * newHeight ];
-    if( newData == nil )
+    if (newData == nullptr)
         return false;
 
     // Scale to it
@@ -2159,7 +2159,7 @@ bool    plMipmap::ResizeNicely( uint16_t newWidth, uint16_t newHeight, plMipmap:
 #ifdef MEMORY_LEAK_TRACER
 //// Debug Mipmap Memory Leak Tracker /////////////////////////////////////////
 
-plMipmap::plRecord  *plMipmap::fRecords = nil;
+plMipmap::plRecord  *plMipmap::fRecords = nullptr;
 uint32_t            plMipmap::fNumMipmaps = 0;
 
 void    plMipmap::IAddToMemRecord( plMipmap *mip, plRecord::Method method )
@@ -2194,7 +2194,7 @@ void    plMipmap::IRemoveFromMemRecord( uint8_t *image )
     plRecord    *record;
 
 
-    for( record = fRecords; record != nil; record = record->fNext )
+    for (record = fRecords; record != nullptr; record = record->fNext)
     {
         if( record->fImage == image )
         {
@@ -2213,7 +2213,7 @@ void    plMipmap::IReportLeaks()
 
 
     hsStatusMessage( "--- plMipmap Leaks ---\n" );
-    for( record = fRecords; record != nil;  )
+    for (record = fRecords; record != nullptr; )
     {
         size = record->fHeight * record->fRowBytes;
         if (size >= 1024) {

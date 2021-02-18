@@ -237,8 +237,8 @@ public:
     //----------
     // Component
     //----------
-    bool IsComponent(Object *obj=nil);        // Object pointer is only necessary for internal use,
-    bool IsExternComponent(Object *obj=nil);
+    bool IsComponent(Object *obj=nullptr);        // Object pointer is only necessary for internal use,
+    bool IsExternComponent(Object *obj=nullptr);
     plComponentBase *ConvertToComponent();      // Returns nil if node is not a component
 
 

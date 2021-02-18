@@ -636,9 +636,9 @@ bool hsUNIXStream::Close()
     int rtn = true;
     if (fRef)
         rtn = fclose(fRef);
-    fRef = nil;
+    fRef = nullptr;
     delete [] fBuff;
-    fBuff = nil;
+    fBuff = nullptr;
 
     return !rtn;
 }
@@ -879,7 +879,7 @@ uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 void hsRAMStream::Skip(uint32_t deltaByteCount)
 {
     fPosition += deltaByteCount;
-    fIter.Next(deltaByteCount, nil);
+    fIter.Next(deltaByteCount, nullptr);
 }
 
 void hsRAMStream::Rewind()
@@ -1142,18 +1142,18 @@ inline void FastByteCopy(void* dest, const void* src, uint32_t bytes)
 //#define LOG_BUFFERED
 
 hsBufferedStream::hsBufferedStream()
-: fRef(nil)
-, fFileSize(0)
-, fBufferLen(0)
-, fWriteBufferUsed(false)
+: fRef()
+, fFileSize()
+, fBufferLen()
+, fWriteBufferUsed()
 #ifdef HS_DEBUGGING
-, fBufferHits(0)
-, fBufferMisses(0)
-, fBufferReadIn(0)
-, fBufferReadOut(0)
-, fReadDirect(0)
-, fLastReadPos(0)
-, fCloseReason(nil)
+, fBufferHits()
+, fBufferMisses()
+, fBufferReadIn()
+, fBufferReadOut()
+, fReadDirect()
+, fLastReadPos()
+, fCloseReason()
 #endif
 {
 }
@@ -1171,7 +1171,7 @@ bool hsBufferedStream::Open(const plFileName& name, const char* mode)
     fBufferHits = fBufferMisses = 0;
     fBufferReadIn = fBufferReadOut = fReadDirect = fLastReadPos = 0;
     fFilename = name;
-    fCloseReason = nil;
+    fCloseReason = nullptr;
 #endif // LOG_BUFFERED
 
     return true;
@@ -1182,7 +1182,7 @@ bool hsBufferedStream::Close()
     int rtn = true;
     if (fRef)
         rtn = fclose(fRef);
-    fRef = nil;
+    fRef = nullptr;
 
 #ifdef LOG_BUFFERED
     hsUNIXStream s;

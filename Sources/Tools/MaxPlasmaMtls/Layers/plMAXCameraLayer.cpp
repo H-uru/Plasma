@@ -406,7 +406,7 @@ void plMAXCameraLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plMAXCameraLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return nil;
+    return nullptr;
 }
 
 DWORD plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)

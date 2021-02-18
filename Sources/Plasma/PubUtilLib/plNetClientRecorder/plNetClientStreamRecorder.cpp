@@ -59,8 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plNetClientStreamRecorder::plNetClientStreamRecorder(TimeWrapper* timeWrapper) :
     plNetClientLoggingRecorder(timeWrapper),
-    fRecordStream(nil),
-    fResMgr(nil)
+    fRecordStream(),
+    fResMgr()
 {
     if (fLog)
         delete fLog;
@@ -145,7 +145,7 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
         else
         {
             delete fRecordStream;
-            fRecordStream = nil;
+            fRecordStream = nullptr;
             return false;
         }
 
@@ -186,13 +186,13 @@ void plNetClientStreamRecorder::RecordAgeLoadedMsg(plAgeLoadedMsg* ageLoadedMsg)
 
 bool plNetClientStreamRecorder::IsQueueEmpty()
 {
-    return (fRecordStream == nil);
+    return (fRecordStream == nullptr);
 }
 
 
 plNetMessage* plNetClientStreamRecorder::GetNextMessage()
 {
-    plNetMessage* msg = nil;
+    plNetMessage* msg = nullptr;
     while (!fBetweenAges && (msg = IGetNextMessage()))
     {
         if (IIsValidMsg(msg))
@@ -201,12 +201,12 @@ plNetMessage* plNetClientStreamRecorder::GetNextMessage()
             hsRefCnt_SafeUnRef(msg);
     }
 
-    return nil;
+    return nullptr;
 }
 
 plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
 {
-    plNetMessage* msg = nil;
+    plNetMessage* msg = nullptr;
 
     if (!IsQueueEmpty() && GetNextMessageTimeDelta() <= 0 )
     {
@@ -240,7 +240,7 @@ plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
         {
             fRecordStream->Close();
             delete fRecordStream;
-            fRecordStream = nil;
+            fRecordStream = nullptr;
         }
     }
     

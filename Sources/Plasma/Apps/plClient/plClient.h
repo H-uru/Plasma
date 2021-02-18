@@ -96,7 +96,7 @@ protected:
             plSceneNode *fNode;
             uint32_t      fFlags;
 
-            plRoomRec() { fNode = nil; fFlags = 0; }
+            plRoomRec() : fNode(), fFlags() { }
             plRoomRec( plSceneNode *n, uint32_t f ) : fNode( n ), fFlags( f ) {}
 
             enum Flags

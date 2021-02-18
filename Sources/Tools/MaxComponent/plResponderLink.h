@@ -58,7 +58,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Link"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 
@@ -101,7 +101,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "One Shot"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 
@@ -118,7 +118,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Notify Triggerer"; }
     const char *GetInstanceName(IParamBlock2 *pb) override { return GetName(0); }
 
@@ -161,7 +161,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Camera Transition"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 
@@ -177,7 +177,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Camera Force 3rd"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 
@@ -191,7 +191,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Delay"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 
@@ -238,7 +238,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Footstep Surface"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 
@@ -252,7 +252,7 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nil; }
+    const char *GetCategory(int idx) override { return nullptr; }
     const char *GetName(int idx) override { return "Trigger Multistage"; }
     const char *GetInstanceName(IParamBlock2 *pb) override;
 

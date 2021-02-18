@@ -73,7 +73,7 @@ plParticleEmitter::plParticleEmitter()
 }
 
 void plParticleEmitter::Init(plParticleSystem *system, uint32_t maxParticles, uint32_t spanIndex, uint32_t miscFlags,
-                             plParticleGenerator *gen /* = nil */)
+                             plParticleGenerator *gen /* = nullptr */)
 {
     IClear();
     fSystem = system;
@@ -123,12 +123,12 @@ plParticleEmitter::~plParticleEmitter()
 void plParticleEmitter::IClear()
 {
     delete [] fParticleCores;
-    fParticleCores = nil;
+    fParticleCores = nullptr;
     delete [] fParticleExts;
-    fParticleExts = nil;
+    fParticleExts = nullptr;
     if( !(fMiscFlags & kBorrowedGenerator) )
         delete fGenerator;
-    fGenerator = nil;
+    fGenerator = nullptr;
 }
 
 void plParticleEmitter::ISetupParticleMem()
@@ -258,7 +258,7 @@ void plParticleEmitter::KillParticles(float num, float timeToDie, uint8_t flags)
 
 void plParticleEmitter::UpdateGenerator(uint32_t paramID, float paramValue)
 {
-    if (fGenerator != nil)
+    if (fGenerator != nullptr)
         fGenerator->UpdateParam(paramID, paramValue);
 }
 
@@ -301,7 +301,7 @@ bool plParticleEmitter::IUpdate(float delta)
         plProfile_EndTiming(ParticleUpdate);
     }
 
-    if (fGenerator == nil && fNumValidParticles <= 0)
+    if (fGenerator == nullptr && fNumValidParticles <= 0)
         return false; // no generator, no particles, let the system decide if this emitter is done
     else
         return true;
@@ -326,13 +326,13 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
     fTargetInfo.fFirstNewParticle = fNumValidParticles;
     
-    if ((fGenerator != nil) && (fTimeToLive >= 0))
+    if ((fGenerator != nullptr) && (fTimeToLive >= 0))
     {
         plProfile_BeginLap(ParticleGenerate, fSystem->GetKeyName().c_str());
         if (!fGenerator->AddAutoParticles(this, delta))
         {
             delete fGenerator;
-            fGenerator = nil;
+            fGenerator = nullptr;
         }
         if( (fTimeToLive > 0) && ((fTimeToLive -= delta) <= 0) )
             fTimeToLive = -1.f;
@@ -371,10 +371,10 @@ void plParticleEmitter::IUpdateParticles(float delta)
         {           
             float percent = (1.0f - fParticleExts[i].fLife / fParticleExts[i].fStartLife);
             colorCtl = (fMiscFlags & kMatIsEmissive ? fSystem->fAmbientCtl : fSystem->fDiffuseCtl);
-            if (colorCtl != nil)
+            if (colorCtl != nullptr)
                 colorCtl->Interp(colorCtl->GetLength() * percent, &color);
 
-            if (fSystem->fOpacityCtl != nil)
+            if (fSystem->fOpacityCtl != nullptr)
             {
                 fSystem->fOpacityCtl->Interp(fSystem->fOpacityCtl->GetLength() * percent, &alpha);
                 alpha /= 100.0f;
@@ -384,13 +384,13 @@ void plParticleEmitter::IUpdateParticles(float delta)
                     alpha = 1.f;
             }
 
-            if (fSystem->fWidthCtl != nil)
+            if (fSystem->fWidthCtl != nullptr)
             {
                 fSystem->fWidthCtl->Interp(fSystem->fWidthCtl->GetLength() * percent,
                                            &fParticleCores[i].fHSize);
                 fParticleCores[i].fHSize *= fParticleExts[i].fScale;
             }
-            if (fSystem->fHeightCtl != nil)
+            if (fSystem->fHeightCtl != nullptr)
             {
                 fSystem->fHeightCtl->Interp(fSystem->fHeightCtl->GetLength() * percent,
                                             &fParticleCores[i].fVSize);

@@ -79,8 +79,8 @@ void plSwimRegionInterface::GetCurrent(plPhysicalControllerCore *physical, hsVec
 /////////////////////////////////////////////////////////////////////////
 
 plSwimCircularCurrentRegion::plSwimCircularCurrentRegion() : 
-    fCurrentSO(nil), 
-    fRotation(0.f), 
+    fCurrentSO(),
+    fRotation(),
     fPullNearDistSq(1.f),
     fPullNearVel(0.f),
     fPullFarDistSq(1.f),
@@ -123,7 +123,7 @@ bool plSwimCircularCurrentRegion::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fCurrentSO = so;
             else if (refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove))
-                fCurrentSO = nil;
+                fCurrentSO = nullptr;
             
             return true;
         }
@@ -134,7 +134,7 @@ bool plSwimCircularCurrentRegion::MsgReceive(plMessage* msg)
 
 void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed)
 {
-    if (elapsed <= 0.f || fCurrentSO == nil || GetProperty(kDisable))
+    if (elapsed <= 0.f || fCurrentSO == nullptr || GetProperty(kDisable))
     {
         linearResult.Set(0.f, 0.f, 0.f);
         angularResult = 0.f;
@@ -197,7 +197,7 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
 /////////////////////////////////////////////////////////////////////////////////////
 
 plSwimStraightCurrentRegion::plSwimStraightCurrentRegion() : 
-    fCurrentSO(nil), 
+    fCurrentSO(),
     fNearDist(1.f),
     fNearVel(0.f),
     fFarDist(1.f),
@@ -238,7 +238,7 @@ bool plSwimStraightCurrentRegion::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fCurrentSO = so;
             else if (refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove))
-                fCurrentSO = nil;
+                fCurrentSO = nullptr;
             
             return true;
         }

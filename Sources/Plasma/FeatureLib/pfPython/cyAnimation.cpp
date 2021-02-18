@@ -56,17 +56,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 cyAnimation::cyAnimation()
+    : fAnimName(), fNetForce()
 {
-    fSender = nil;
-    fAnimName = nil;
-    fNetForce = false;
 }
 
 cyAnimation::cyAnimation(const pyKey& sender)
+    : fAnimName(), fNetForce()
 {
     SetSender(sender);
-    fAnimName = nil;
-    fNetForce = false;
 }
 
 // copy constructor
@@ -82,10 +79,10 @@ cyAnimation::cyAnimation(const cyAnimation& anim)
 // clean up on the way out
 cyAnimation::~cyAnimation()
 {
-    if (fAnimName != nil )
+    if (fAnimName != nullptr)
     {
         delete [] fAnimName;
-        fAnimName = nil;
+        fAnimName = nullptr;
     }
 }
 
@@ -105,12 +102,12 @@ PyObject* cyAnimation::GetFirstRecvr()
 {
     if (!fRecvr.empty())
         return pyKey::New(fRecvr[0]);
-    return nil;
+    return nullptr;
 }
 
 void cyAnimation::SetAnimName(const char* name)
 {
-    if ( fAnimName != nil )
+    if (fAnimName != nullptr)
         delete [] fAnimName;
     fAnimName = hsStrcpy(name);
 }
@@ -144,7 +141,7 @@ void cyAnimation::Play()
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
 
         // NOTE: The animation modifier will set the animation back to the starting point automatically
@@ -185,7 +182,7 @@ void cyAnimation::Stop()
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kStop);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
@@ -221,7 +218,7 @@ void cyAnimation::Resume()
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kContinue);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
@@ -271,7 +268,7 @@ void cyAnimation::PlayToTime(float time)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kPlayToTime);
         pMsg->fTime = time;
@@ -308,7 +305,7 @@ void cyAnimation::PlayToPercentage(float zeroToOne)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kPlayToPercentage);
         pMsg->fTime = zeroToOne;
@@ -346,7 +343,7 @@ void cyAnimation::SkipToTime(float time)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kGoToTime);
         pMsg->fTime = time;
@@ -383,7 +380,7 @@ void cyAnimation::Looped(bool looped)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         if ( looped )
             pMsg->SetCmd(plAnimCmdMsg::kSetLooping);
@@ -422,7 +419,7 @@ void cyAnimation::Backwards(bool backwards)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         if ( backwards )
             pMsg->SetCmd(plAnimCmdMsg::kSetBackwards);
@@ -461,7 +458,7 @@ void cyAnimation::SetLoopStart(float start)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kSetLoopBegin);
         pMsg->fLoopBegin = start;
@@ -491,7 +488,7 @@ void cyAnimation::SetLoopEnd(float end)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kSetLoopEnd);
         pMsg->fLoopEnd = end;
@@ -531,7 +528,7 @@ void cyAnimation::Speed(float speed)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(plAnimCmdMsg::kSetSpeed);
         pMsg->fSpeed = speed;
@@ -561,7 +558,7 @@ void cyAnimation::IRunOneCmd(int cmd)
             pMsg->AddReceiver(rcKey);
 
         // set the notetrack name (if there is one)
-        if ( fAnimName != nil )
+        if (fAnimName != nullptr)
             pMsg->SetAnimName(fAnimName);
         pMsg->SetCmd(cmd);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes

@@ -134,10 +134,10 @@ bool  plZlibCompress::UncompressFile( const char *compressedPath, const char *de
     auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
     outFile = fopen( destPath, "wb" );
-    if( outFile != nil )
+    if (outFile != nullptr)
     {
         inFile = gzopen( compressedPath, "rb" );
-        if( inFile != nil )
+        if (inFile != nullptr)
         {
             for( ;; )
             {
@@ -176,10 +176,10 @@ bool  plZlibCompress::CompressFile( const char *uncompressedPath, const char *de
 
 
     inFile = fopen( uncompressedPath, "rb" );
-    if( inFile != nil )
+    if (inFile != nullptr)
     {
         outFile = gzopen( destPath, "wb" );
-        if( outFile != nil )
+        if (outFile != nullptr)
         {
             for( ;; )
             {
@@ -219,7 +219,7 @@ bool  plZlibCompress::UncompressToStream( const char * filename, hsStream * s )
     auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
     inFile = gzopen( filename, "rb" );
-    if( inFile != nil )
+    if (inFile != nullptr)
     {
         for( ;; )
         {
@@ -253,7 +253,7 @@ bool  plZlibCompress::CompressToFile( hsStream * s, const char * filename )
     auto buffer = std::make_unique<uint8_t[]>(kGzBufferSize);
 
     outFile = gzopen( filename, "wb" );
-    if( outFile != nil )
+    if (outFile != nullptr)
     {
         for( ;; )
         {

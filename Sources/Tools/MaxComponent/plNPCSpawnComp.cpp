@@ -103,7 +103,7 @@ plKey GetNPCSpawnModKey(plComponentBase *npcSpawnComp, plMaxNodeBase *target)
         return comp->GetNPCSpawnKey((plMaxNode*)target);
     }
 
-    return nil;
+    return nullptr;
 }
 
 // GNPCSPAWNBLOCK
@@ -144,7 +144,7 @@ plKey plNPCSpawnComp::GetNPCSpawnKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 // ISVALID

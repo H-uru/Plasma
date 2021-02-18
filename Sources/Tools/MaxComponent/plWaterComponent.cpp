@@ -460,7 +460,7 @@ void plWaterComponent::CheckForObsoleteParams()
 
 // Component implementation
 plWaterComponent::plWaterComponent()
-:   fWaveSet(nil)
+:   fWaveSet()
 {
     fClassDesc = &gWaterCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -521,7 +521,7 @@ bool plWaterComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 { 
     if( fWaveSet )
         fWaveSet->GetKey()->UnRefObject();
-    fWaveSet = nil;
+    fWaveSet = nullptr;
 
     return true; 
 }
@@ -686,7 +686,7 @@ bool plWaterComponent::IMakeWaveSet(plMaxNode* node, plErrorMsg* pErrMsg)
 
 float plWaterComponent::IGetWaterHeight()
 {
-    plMaxNodeBase* node = nil;
+    plMaxNodeBase* node = nullptr;
     
     int i;
     for( i = 0; i < NumTargets(); i++ )
@@ -722,14 +722,14 @@ float plWaterComponent::GetWaterHeight(INode* node)
 plWaveSetBase* plWaterComponent::GetWaveSet(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
     if( !comp )
-        return nil;
+        return nullptr;
 
     if( comp->ClassID() != WATER_COMP_CID )
-        return nil;
+        return nullptr;
 
     plWaterComponent* water = (plWaterComponent*)comp;
     return water->IGetWaveSet();
@@ -738,7 +738,7 @@ plWaveSetBase* plWaterComponent::GetWaveSet(INode* node)
 plWaveSetBase* plWaterComponent::GetWaveSetFromNode(plMaxNode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     int n = node->NumAttachedComponents();
     int i;
@@ -751,7 +751,7 @@ plWaveSetBase* plWaterComponent::GetWaveSetFromNode(plMaxNode* node)
             return water->IGetWaveSet();
         }
     }
-    return nil;
+    return nullptr;
 }
 
 static void ISetWaterDependencies(plMaxNode* node, INode* waterNode)
@@ -1219,7 +1219,7 @@ plEnvMapComponent::plEnvMapComponent()
 // of properties on the MaxNode, as it's still indeterminant.
 bool plEnvMapComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 {
-    fMap = nil;
+    fMap = nullptr;
 
     node->SetForceLocal(true);
 
@@ -1252,7 +1252,7 @@ plDynamicCamMap* plEnvMapComponent::GetCamMap()
 
 plRenderTarget* plEnvMapComponent::IGetMap()
 {
-    plMaxNode* firstTarg = nil;
+    plMaxNode* firstTarg = nullptr;
     int numTarg = NumTargets();
     int i;
     for( i = 0; i < numTarg; i++ )
@@ -1264,7 +1264,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
         }
     }
     if( !firstTarg )
-        return nil;
+        return nullptr;
 
     if( !fMap )
     {
@@ -1276,9 +1276,9 @@ plRenderTarget* plEnvMapComponent::IGetMap()
         }
         size = 1 << uint32_t(i);
 
-        plDynamicEnvMap* env = nil;
-        plDynamicCamMap* cam = nil;
-        fMap = nil;
+        plDynamicEnvMap* env = nullptr;
+        plDynamicCamMap* cam = nullptr;
+        fMap = nullptr;
         if (fCompPB->GetInt((ParamID(kMapType))) == kMapCubic)
             fMap = env = new plDynamicEnvMap(size, size, 32);
         else if (fCompPB->GetInt((ParamID(kMapType))) == kMapSingle)
@@ -1309,7 +1309,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
             cam->fColor.Set(fogColor.r, fogColor.g, fogColor.b, 1.f);
         }
         if (!fMap)
-            return nil;
+            return nullptr;
 
         int visGot = 0;
         int numVis = fCompPB->Count(kVisSets);
@@ -1359,7 +1359,7 @@ plDynamicEnvMap* plEnvMapComponent::GetEnvMap(plMaxNode* node)
     if (envComp)
         return envComp->GetEnvMap();
 
-    return nil;
+    return nullptr;
 }
 
 plDynamicCamMap* plEnvMapComponent::GetCamMap(plMaxNode *node)
@@ -1368,13 +1368,13 @@ plDynamicCamMap* plEnvMapComponent::GetCamMap(plMaxNode *node)
     if (envComp)
         return envComp->GetCamMap();
 
-    return nil;
+    return nullptr;
 }
 
 plEnvMapComponent *plEnvMapComponent::GetEnvMapComponent(plMaxNode *node)
 {
     if (!node)
-        return nil;
+        return nullptr;
 
     int n = node->NumAttachedComponents();
     int i;
@@ -1386,5 +1386,5 @@ plEnvMapComponent *plEnvMapComponent::GetEnvMapComponent(plMaxNode *node)
             return (plEnvMapComponent*)comp;
         }
     }
-    return nil;
+    return nullptr;
 }

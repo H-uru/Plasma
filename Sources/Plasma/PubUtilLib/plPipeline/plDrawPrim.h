@@ -66,7 +66,7 @@ protected:
     hsGMaterial*    fMaterial;
 
 public:
-    plDrawPrim() : fMaterial(nil), fDrawProps(0), fPrimType(kTypeNone) {}
+    plDrawPrim() : fMaterial(), fDrawProps(), fPrimType(kTypeNone) { }
     virtual ~plDrawPrim();
 
     virtual const hsBounds3Ext& GetLocalBounds() const = 0;

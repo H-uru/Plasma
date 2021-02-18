@@ -60,8 +60,8 @@ void plSpanEncoding::Write(hsStream* s) const
 
 
 plSpanInstance::plSpanInstance()
-:   fPosDelta(nil),
-    fCol(nil)
+:   fPosDelta(),
+    fCol()
 {
     fL2W[0][1] = fL2W[0][2] = 0.f;
     fL2W[1][0] = fL2W[1][2] = 0.f;
@@ -77,9 +77,9 @@ plSpanInstance::~plSpanInstance()
 void plSpanInstance::DeAlloc()
 {
     delete [] fPosDelta;
-    fPosDelta = nil;
+    fPosDelta = nullptr;
     delete [] fCol;
-    fCol = nil;
+    fCol = nullptr;
 }
 
 void plSpanInstance::Alloc(const plSpanEncoding& encoding, uint32_t numVerts)

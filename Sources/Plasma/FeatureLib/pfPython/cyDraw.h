@@ -60,7 +60,7 @@ protected:
     std::vector<plKey> fRecvr;
     bool            fNetForce;
 
-    cyDraw(plKey sender=nil,const plKey recvr=nil);
+    cyDraw(plKey sender = {}, plKey recvr = {});
 
 public:
     virtual ~cyDraw() { }

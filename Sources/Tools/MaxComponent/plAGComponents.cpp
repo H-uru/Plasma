@@ -119,7 +119,7 @@ public:
         void DeleteThis() override { delete this; }
 };
 
-//plAGAnimMgr * plAnimAvatarComponent::fManager = nil;
+//plAGAnimMgr * plAnimAvatarComponent::fManager = nullptr;
 
 CLASS_DESC(plAnimAvatarComponent, gAnimAvatarDesc, "Compound Animation",  "Compound Animation", COMP_TYPE_AVATAR, Class_ID(0x3192253d, 0x60c4178c))
 
@@ -291,7 +291,7 @@ bool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *
             {
                 channel = new plMatrixConstant(constSetting);
                 delete tmc;
-                tmc = nil;
+                tmc = nullptr;
             }
             else
             {
@@ -327,7 +327,7 @@ plKey FindSceneNode(plMaxNode *node)
         {
             return FindSceneNode(parent);
         } else {
-            return nil;
+            return nullptr;
         }
     }
 }

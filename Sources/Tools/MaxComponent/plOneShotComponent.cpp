@@ -108,7 +108,7 @@ plKey OneShotComp::GetOneShotKey(plComponentBase *oneShotComp, plMaxNodeBase *ta
         return comp->GetOneShotKey((plMaxNode*)target);
     }
 
-    return nil;
+    return nullptr;
 }
     
 
@@ -174,7 +174,7 @@ plKey plOneShotComponent::GetOneShotKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 bool plOneShotComponent::IsValid()

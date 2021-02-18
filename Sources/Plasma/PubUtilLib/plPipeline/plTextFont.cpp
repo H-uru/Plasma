@@ -109,8 +109,8 @@ uint16_t  *plTextFont::IInitFontTexture()
     bmi.bmiHeader.biCompression = BI_RGB;
     bmi.bmiHeader.biBitCount = 32;
     
-    hDC = CreateCompatibleDC( nil );
-    hBitmap = CreateDIBSection( hDC, &bmi, DIB_RGB_COLORS, (void **)&bitmapBits, nil, 0 );
+    hDC = CreateCompatibleDC(nullptr);
+    hBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (void **)&bitmapBits, nullptr, 0);
     SetMapMode( hDC, MM_TEXT );
 
     nHeight = -MulDiv( fSize, GetDeviceCaps( hDC, LOGPIXELSY ), 72 );
@@ -118,7 +118,7 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     hFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                         CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace );
-    hsAssert( hFont != nil, "Cannot create Windows font" );
+    hsAssert(hFont != nullptr, "Cannot create Windows font");
 
     SelectObject( hDC, hBitmap );
     SelectObject( hDC, hFont );
@@ -147,7 +147,7 @@ uint16_t  *plTextFont::IInitFontTexture()
             y += size.cy + 1;
         }
 
-        ExtTextOut( hDC, x, y, ETO_OPAQUE, nil, myChar, 1, nil );
+        ExtTextOut(hDC, x, y, ETO_OPAQUE, nullptr, myChar, 1, nullptr);
 
         fCharInfo[ c ].fW = (uint16_t)size.cx;
         fCharInfo[ c ].fH = (uint16_t)size.cy;
@@ -215,7 +215,7 @@ void    plTextFont::IInitObjects()
 
     // Create texture
     data = IInitFontTexture();
-    hsAssert( data != nil, "Cannot create font texture" );
+    hsAssert(data != nullptr, "Cannot create font texture");
 
     ICreateTexture( data );
     delete [] data;

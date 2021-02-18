@@ -204,7 +204,7 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
             break;
 
         case plRefMsg::kOnDestroy:
-            fSndGroup = nil;
+            fSndGroup = nullptr;
             break;
         }
         break;

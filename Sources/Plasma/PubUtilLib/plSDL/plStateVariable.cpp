@@ -90,7 +90,7 @@ public:
     void* fData;
     int fDataLen;
 
-    plSDLCreatableStub(uint16_t classIndex, int len) : fClassIndex(classIndex),fData(nil),fDataLen(len) {}
+    plSDLCreatableStub(uint16_t classIndex, int len) : fClassIndex(classIndex), fData(), fDataLen(len) { }
     ~plSDLCreatableStub() { delete[] (char*)fData; }
 
     const char*         ClassName() const override { return "SDLCreatable"; }
@@ -157,16 +157,16 @@ void plSimpleStateVariable::IInit()
 {
     SetDirty(false);
     SetUsed(false);
-    fBy=nil;
-    fS=nil;
-    fI=nil;
-    fF=nil;
-    fD=nil;
-    fB=nil;
-    fU=nil;
-    fS32=nil;
-    fC=nil;
-    fT=nil;
+    fBy = nullptr;
+    fS = nullptr;
+    fI = nullptr;
+    fF = nullptr;
+    fD = nullptr;
+    fB = nullptr;
+    fU = nullptr;
+    fS32 = nullptr;
+    fC = nullptr;
+    fT = nullptr;
     fTimeStamp.ToEpoch();   
 }
 
@@ -1510,7 +1510,7 @@ bool plSimpleStateVariable::Set(plCreatable* v, int idx)
             hsgResMgr::ResMgr()->WriteCreatable(&stream, v);
             stream.Rewind();
         }
-        plCreatable* copy = v ? hsgResMgr::ResMgr()->ReadCreatable(&stream): nil;
+        plCreatable* copy = v ? hsgResMgr::ResMgr()->ReadCreatable(&stream): nullptr;
         hsAssert(!v || copy, "failed to create creatable copy");
         fC[idx]=copy;
         IVarSet();
@@ -1715,11 +1715,11 @@ bool plSimpleStateVariable::Get(plKey* value, int idx) const
                     if (foundKeys.size() >= 1)
                         *value = foundKeys[0];
                     else
-                        *value = nil;
+                        *value = nullptr;
                 }
             }
         } else {
-            *value = nil;
+            *value = nullptr;
         }
         return true;
     }
@@ -1746,7 +1746,7 @@ bool plSimpleStateVariable::Get(plCreatable** value, int idx) const
 
     if (fVar.GetAtomicType()==plVarDescriptor::kCreatable)
     {
-        *value = nil;
+        *value = nullptr;
         plCreatable* v = fC[idx];
         if (v)
         {
@@ -2391,7 +2391,7 @@ void plSimpleStateVariable::SetFromDefaults(bool timeStampNow)
 // plSDStateVariable
 ///////////////////////////////////////////////////////////////////////////////
 
-plSDStateVariable::plSDStateVariable(plSDVarDescriptor* sdvd) : fVarDescriptor(nil)
+plSDStateVariable::plSDStateVariable(plSDVarDescriptor* sdvd) : fVarDescriptor()
 { 
     Alloc(sdvd);
 }
@@ -2445,7 +2445,7 @@ void plSDStateVariable::Alloc(plSDVarDescriptor* sdvd, int listSize)
     if (sdvd==fVarDescriptor)
     {
         // trick to not have to delete and recreate fVarDescriptor
-        fVarDescriptor=nil;
+        fVarDescriptor = nullptr;
         IDeInit();  
         fVarDescriptor=sdvd;
     }
@@ -2454,7 +2454,7 @@ void plSDStateVariable::Alloc(plSDVarDescriptor* sdvd, int listSize)
 
     if (sdvd) 
     {
-        if (fVarDescriptor==nil)
+        if (fVarDescriptor == nullptr)
         {
             fVarDescriptor = new plSDVarDescriptor;
             fVarDescriptor->CopyFrom(sdvd);
@@ -2486,7 +2486,7 @@ void plSDStateVariable::IDeInit()
         delete *it;
     fDataRecList.clear();
     delete fVarDescriptor;
-    fVarDescriptor=nil;
+    fVarDescriptor = nullptr;
 }
 
 //
@@ -2711,7 +2711,7 @@ void plSDStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) const
         if ( (dirtyOnly && fDataRecList[i]->IsDirty()) || 
             (!dirtyOnly && fDataRecList[i]->IsUsed()) )
         {
-            fDataRecList[i]->DumpToObjectDebugger(nil, dirtyOnly, level+1);
+            fDataRecList[i]->DumpToObjectDebugger(nullptr, dirtyOnly, level+1);
         }
     }
 }
@@ -2729,7 +2729,7 @@ void plSDStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int level
         if ( (dirtyOnly && fDataRecList[i]->IsDirty()) || 
             (!dirtyOnly && fDataRecList[i]->IsUsed()) )
         {
-            fDataRecList[i]->DumpToStream(stream, nil, dirtyOnly, level+1);
+            fDataRecList[i]->DumpToStream(stream, nullptr, dirtyOnly, level+1);
         }
     }
 }

@@ -74,7 +74,7 @@ plInputInterface::~plInputInterface()
 
 void plInputInterface::ClearKeyMap()
 { 
-    if( fControlMap != nil ) 
+    if (fControlMap != nullptr)
         fControlMap->ClearAll(); 
 }
 
@@ -92,7 +92,7 @@ void    plInputInterface::Write( hsStream* s, hsResMgr* mgr )
 
 bool        plInputInterface::IOwnsControlCode( ControlEventCode code )
 {
-    if( fControlMap->FindBinding( code ) != nil )
+    if (fControlMap->FindBinding(code) != nullptr)
         return true;
     
     return false;
@@ -142,7 +142,7 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     bool    activate;
     
     plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( msg );
-    if( keyMsg == nil )
+    if (keyMsg == nullptr)
         return false;
 
 
@@ -155,7 +155,7 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     for (int16_t ctrl : enabledCtrls)
     {
         const plKeyBinding *binding = fControlMap->FindBinding((ControlEventCode)ctrl);
-        if( binding == nil )
+        if (binding == nullptr)
             ; // Somehow we lost the binding??
         else
         {
@@ -196,7 +196,7 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
 
     /*
     const plKeyBinding *binding = fControlMap->FindBindingByKey( combo );
-    if( binding == nil )
+    if (binding == nullptr)
     {
         // Don't panic just yet, there are some special cases with the shift key to check first
         if( keyMsg->GetKeyCode() == KEY_SHIFT || keyMsg->GetShiftKeyDown() )

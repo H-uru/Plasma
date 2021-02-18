@@ -61,7 +61,7 @@ static void IPureVirtualCall()
 #endif // _MSC_VER
 
 plCrashCli::plCrashCli()
-    : fLink(nil), fLinkH(nil)
+    : fLink(), fLinkH()
 {
     char mapname[128];
     char cmdline[128];

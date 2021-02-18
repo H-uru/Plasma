@@ -92,7 +92,7 @@ class plCubicRenderTarget : public plRenderTarget
 
         plCubicRenderTarget()
         {
-            fFaces[0] = fFaces[1] = fFaces[2] = fFaces[3] = fFaces[4] = fFaces[5] = nil;
+            fFaces[0] = fFaces[1] = fFaces[2] = fFaces[3] = fFaces[4] = fFaces[5] = nullptr;
         }
 
         plCubicRenderTarget( uint16_t flags, uint16_t width, uint16_t height, uint8_t bitDepth, uint8_t zDepth = -1, uint8_t sDepth = -1 ) 

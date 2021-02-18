@@ -68,7 +68,7 @@ void plAvBrainRideAnimatedPhysical::Activate(plArmatureModBase *avMod)
 plAvBrainRideAnimatedPhysical::~plAvBrainRideAnimatedPhysical()
 {
     delete fWalkingStrategy;
-    fWalkingStrategy = nil;
+    fWalkingStrategy = nullptr;
 }
 
 void plAvBrainRideAnimatedPhysical::Deactivate()
@@ -109,8 +109,8 @@ bool plAvBrainRideAnimatedPhysical::IInitAnimations()
     plAGAnim *runJump = fAvMod->FindCustomAnim("RunningJump");
     plAGAnim *groundImpact = fAvMod->FindCustomAnim("GroundImpact");
     plAGAnim *runningImpact = fAvMod->FindCustomAnim("RunningImpact");
-    plAGAnim *movingLeft = nil; // fAvMod->FindCustomAnim("LeanLeft");
-    plAGAnim *movingRight = nil; // fAvMod->FindCustomAnim("LeanRight");
+    plAGAnim *movingLeft = nullptr; // fAvMod->FindCustomAnim("LeanLeft");
+    plAGAnim *movingRight = nullptr; // fAvMod->FindCustomAnim("LeanRight");
     plAGAnim *pushWalk = fAvMod->FindCustomAnim("BallPushWalk");
 
     //plAGAnim *pushIdle = fAvMod->FindCustomAnim("BallPushIdle");

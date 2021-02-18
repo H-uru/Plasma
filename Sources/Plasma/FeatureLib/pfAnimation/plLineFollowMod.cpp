@@ -227,9 +227,9 @@ bool plLineFollowMod::MsgReceive(plMessage* msg)
         else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
             if( kRefParent == refMsg->fType )
-                fPathParent = nil;
+                fPathParent = nullptr;
             else if( kRefObject == refMsg->fType )
-                fRefObj = nil;
+                fRefObj = nullptr;
             else if( kRefStereizer == refMsg->fType )
             {
                 plStereizer* ster = (plStereizer*)(refMsg->GetRef());

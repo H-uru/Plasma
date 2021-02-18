@@ -228,8 +228,8 @@ void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLE32(fInitiatorID);
     stream->WriteLE16(fInitiatorSerial);
 
-    bool hasHostKey = (fHostKey != nil);
-    bool hasGuestKey = (fGuestKey != nil);
+    bool hasHostKey = (fHostKey != nullptr);
+    bool hasGuestKey = (fGuestKey != nullptr);
 
     stream->WriteBool(hasHostKey);
     if(hasHostKey)
@@ -251,7 +251,7 @@ void plAvBrainCoop::Write(hsStream *stream, hsResMgr *mgr)
 plKey plAvBrainCoop::GetRecipient()
 {
     if (fRecipients.size() == 0)
-        return nil;
+        return nullptr;
     return fRecipients[0];
 }
 

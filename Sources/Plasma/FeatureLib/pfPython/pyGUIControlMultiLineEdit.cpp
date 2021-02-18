@@ -169,7 +169,7 @@ const char* pyGUIControlMultiLineEdit::GetText()
         }
     }
     // return None on error
-    return nil;
+    return nullptr;
 }
 
 const wchar_t* pyGUIControlMultiLineEdit::GetTextW()
@@ -187,7 +187,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetTextW()
         }
     }
     // return None on error
-    return nil;
+    return nullptr;
 }
 
 //
@@ -208,7 +208,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
             Py_ssize_t length = view.len;
             PyBuffer_Release(&view);
 
-            if ( daBuffer != nil )
+            if (daBuffer != nullptr)
             {
                 // don't alter the user's buffer... but into a copy of our own
                 char* altBuffer = new char[length];
@@ -246,7 +246,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
             Py_ssize_t length = view.len;
             PyBuffer_Release(&view);
 
-            if ( daBuffer != nil )
+            if (daBuffer != nullptr)
             {
                 // don't alter the user's buffer... but into a copy of our own
                 wchar_t* altBuffer = new wchar_t[length];
@@ -301,7 +301,7 @@ const char* pyGUIControlMultiLineEdit::GetEncodedBuffer()
         }
     }
     // return None on error
-    return nil;
+    return nullptr;
 }
 
 const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
@@ -336,7 +336,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
         }
     }
     // return None on error
-    return nil;
+    return nullptr;
 }
 
 uint32_t  pyGUIControlMultiLineEdit::GetBufferSize()

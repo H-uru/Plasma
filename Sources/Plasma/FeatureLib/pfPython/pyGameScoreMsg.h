@@ -51,7 +51,7 @@ protected:
     pfGameScoreMsg* fMsg;
 
     pyGameScoreMsg()
-        : fMsg(nil)
+        : fMsg()
     { }
 
     pyGameScoreMsg(pfGameScoreMsg* msg)

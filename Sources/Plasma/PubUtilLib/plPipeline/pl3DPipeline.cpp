@@ -818,7 +818,7 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t
                 drawable->GetNativeProperty(plDrawable::kPropCharacter));
 
             // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
-            bool proj = nil != light->GetProjection();
+            bool proj = nullptr != light->GetProjection();
             if (fView.fRenderState & kRenderNoProjection)
                 proj = false;
 
@@ -865,7 +865,7 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t
                 drawable->GetNativeProperty(plDrawable::kPropCharacter));
 
             // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
-            bool proj = nil != light->GetProjection();
+            bool proj = nullptr != light->GetProjection();
             if (fView.fRenderState & kRenderNoProjection)
                 proj = false;
 
@@ -912,7 +912,7 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t
                 drawable->GetNativeProperty(plDrawable::kPropCharacter));
 
             // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
-            bool proj = nil != light->GetProjection();
+            bool proj = nullptr != light->GetProjection();
             if (fView.fRenderState & kRenderNoProjection)
                 proj = false;
 

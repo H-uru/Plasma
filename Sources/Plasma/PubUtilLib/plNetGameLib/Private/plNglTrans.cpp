@@ -84,7 +84,7 @@ static NetTrans * FindTransIncRef_CS (unsigned transId, const char tag[]) {
             return trans;
         }
 
-    return nil;
+    return nullptr;
 }
 
 //============================================================================

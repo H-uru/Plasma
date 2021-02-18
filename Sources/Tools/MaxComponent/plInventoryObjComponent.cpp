@@ -180,7 +180,7 @@ plKey plInventoryObjComponent::GetLogicKey(plMaxNode* node)
         if (node == it->first)
             return(it->second);
     }
-    return nil;
+    return nullptr;
 }
 
 
@@ -230,9 +230,9 @@ public:
 //          fPB = map->GetParamBlock();
 /*          
 //          fNoteTrackDlgX.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX),
-//                              nil,
+//                              nullptr,
 ///                             kClickDragAnimX,
-/                               nil,
+/                               nullptr,
                                 fPB,
                                 fPB->GetOwner());
 
@@ -241,9 +241,9 @@ public:
             EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX), true);
             
             fNoteTrackDlgY.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y),
-                                nil,
+                                nullptr,
                                 kClickDragAnimY,
-                                nil,
+                                nullptr,
                                 fPB,
                                 fPB->GetOwner());
 

@@ -137,7 +137,7 @@ static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         info = (plPickMaterialInfo*)lParam;
 
         MtlSet mtls;
-        plMtlCollector::GetMtls(&mtls, nil, info->fFlags);
+        plMtlCollector::GetMtls(&mtls, nullptr, info->fFlags);
         
         HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
 
@@ -193,6 +193,6 @@ Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
         return info.fMtl;
     }
 
-    return nil;
+    return nullptr;
 }
 

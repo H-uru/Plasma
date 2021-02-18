@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 
 
-plDebugInputInterface   *plDebugInputInterface::fInstance = nil;
+plDebugInputInterface   *plDebugInputInterface::fInstance = nullptr;
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -97,7 +97,7 @@ plDebugInputInterface::plDebugInputInterface()
 
 plDebugInputInterface::~plDebugInputInterface()
 {
-    fInstance = nil;
+    fInstance = nullptr;
 }
 
 //// Init/Shutdown ///////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ void    plDebugInputInterface::Shutdown()
 
 void    plDebugInputInterface::RestoreDefaultKeyMappings()
 {
-    if( fControlMap == nil )
+    if (fControlMap == nullptr)
         return;
 
     fControlMap->UnmapAllBindings();

@@ -113,7 +113,7 @@ bool plConfigInfoLogging::GetAllValuesAny(std::vector<ST::string>& values, const
     return values.size() != 0;
 }
 
-bool plConfigInfoLogging::GetValueIn(ST::string& retval, const ST::string & key,  const ST::string & desc, const ST::string & defval, const char * section1, ... /*, nil*/)
+bool plConfigInfoLogging::GetValueIn(ST::string& retval, const ST::string & key,  const ST::string & desc, const ST::string & defval, const char * section1, ... /*, nullptr*/)
 {
     const char * section = section1;
     va_list va;
@@ -143,7 +143,7 @@ bool plConfigInfoLogging::GetValueIn(ST::string& retval, const ST::string & key,
     return found;
 }
 
-bool plConfigInfoLogging::GetValueIn(int& retval, const ST::string & key,  const ST::string & desc, int defval, const char * section1, ... /*, nil*/)
+bool plConfigInfoLogging::GetValueIn(int& retval, const ST::string & key,  const ST::string & desc, int defval, const char * section1, ... /*, nullptr*/)
 {
     const char * section = section1;
     va_list va;
@@ -173,7 +173,7 @@ bool plConfigInfoLogging::GetValueIn(int& retval, const ST::string & key,  const
     return found;
 }
 
-bool plConfigInfoLogging::GetValueIn(bool& retval, const ST::string & key,  const ST::string & desc, bool defval, const char * section1, ... /*, nil*/)
+bool plConfigInfoLogging::GetValueIn(bool& retval, const ST::string & key,  const ST::string & desc, bool defval, const char * section1, ... /*, nullptr*/)
 {
     const char * section = section1;
     va_list va;
@@ -203,7 +203,7 @@ bool plConfigInfoLogging::GetValueIn(bool& retval, const ST::string & key,  cons
     return found;
 }
 
-bool plConfigInfoLogging::GetValueIn(float& retval, const ST::string & key,  const ST::string & desc, double defval, const char * section1, ... /*, nil*/)
+bool plConfigInfoLogging::GetValueIn(float& retval, const ST::string & key,  const ST::string & desc, double defval, const char * section1, ... /*, nullptr*/)
 {
     const char * section = section1;
     va_list va;
@@ -233,7 +233,7 @@ bool plConfigInfoLogging::GetValueIn(float& retval, const ST::string & key,  con
     return found;
 }
 
-bool plConfigInfoLogging::GetValueIn(double& retval, const ST::string & key,  const ST::string & desc, double defval, const char * section1, ... /*, nil*/)
+bool plConfigInfoLogging::GetValueIn(double& retval, const ST::string & key,  const ST::string & desc, double defval, const char * section1, ... /*, nullptr*/)
 {
     const char * section = section1;
     va_list va;

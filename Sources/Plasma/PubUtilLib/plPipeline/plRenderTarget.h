@@ -119,7 +119,7 @@ class plRenderTarget : public plBitmap
             fStencilDepth = ( stencilDepth != 0xff ) ? stencilDepth : 0;
 
             fFlags = flags;
-            fParent = nil;
+            fParent = nullptr;
 
             hsAssert( fFlags & (kIsTexture|kIsOffscreen), "Cannot perform this on an on-screen RenderTarget" );
             fApplyTexQuality = false;
@@ -139,7 +139,7 @@ class plRenderTarget : public plBitmap
             fStencilDepth = ( stencilDepth != 0xff ) ? stencilDepth : 0;
 
             fFlags = flags;
-            fParent = nil;
+            fParent = nullptr;
 
             hsAssert( !( fFlags & (kIsTexture|kIsOffscreen) ), "Cannot perform this on an offscreen RenderTarget" );
             fApplyTexQuality = false;

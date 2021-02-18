@@ -88,8 +88,8 @@ public:
     bool            IsEqualTo( const plServerGuid * other ) const;
     operator std::string () const { return AsString();}
 
-    void            Read( hsStream * s, hsResMgr* mgr=nil );
-    void            Write( hsStream * s, hsResMgr* mgr=nil );
+    void            Read(hsStream * s, hsResMgr* mgr=nullptr);
+    void            Write(hsStream * s, hsResMgr* mgr=nullptr);
     void            CopyFrom( const plServerGuid & other );
     void            CopyFrom( const plServerGuid * other );
     void            Clear();

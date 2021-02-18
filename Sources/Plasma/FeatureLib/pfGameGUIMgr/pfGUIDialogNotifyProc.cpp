@@ -71,7 +71,7 @@ pfGUIDialogNotifyProc::pfGUIDialogNotifyProc( plKey &r )
 
 void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, uint32_t event )
 {
-    pfGUINotifyMsg  *notify = new pfGUINotifyMsg( fDialog->GetKey(), fReceiver, nil );
+    pfGUINotifyMsg  *notify = new pfGUINotifyMsg(fDialog->GetKey(), fReceiver, nullptr);
     notify->SetEvent( ctrlKey, event );
     notify->Send();
 }
@@ -79,9 +79,9 @@ void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, uint32_t event )
 
 void pfGUIDialogNotifyProc::DoSomething( pfGUIControlMod *ctrl )
 {
-    if( pfGUIButtonMod::ConvertNoRef( ctrl ) != nil ||
-        pfGUIListBoxMod::ConvertNoRef( ctrl ) != nil ||
-        pfGUIEditBoxMod::ConvertNoRef( ctrl ) != nil )
+    if (pfGUIButtonMod::ConvertNoRef(ctrl) != nullptr ||
+        pfGUIListBoxMod::ConvertNoRef(ctrl) != nullptr ||
+        pfGUIEditBoxMod::ConvertNoRef(ctrl) != nullptr)
     {
         // only fire the button if it is triggering
         // ... all other types just fire
@@ -96,7 +96,7 @@ void pfGUIDialogNotifyProc::DoSomething( pfGUIControlMod *ctrl )
 void pfGUIDialogNotifyProc::HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
 {
     pfGUIEditBoxMod *edit = pfGUIEditBoxMod::ConvertNoRef( ctrl );
-    if(edit != nil && event == pfGUIEditBoxMod::kWantAutocomplete)
+    if (edit != nullptr && event == pfGUIEditBoxMod::kWantAutocomplete)
     {
         //send notify, somebody will do something with that (like python script)
         ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kSpecialAction );
@@ -116,7 +116,7 @@ void pfGUIDialogNotifyProc::OnInit()
     if ( fDialog )
         ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kDialogLoaded );
     else
-        ISendNotify( nil, pfGUINotifyMsg::kDialogLoaded );
+        ISendNotify(nullptr, pfGUINotifyMsg::kDialogLoaded);
 }
 
 void pfGUIDialogNotifyProc::OnShow()
@@ -124,7 +124,7 @@ void pfGUIDialogNotifyProc::OnShow()
     if ( fDialog )
         ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
     else
-        ISendNotify( nil, pfGUINotifyMsg::kShowHide );
+        ISendNotify(nullptr, pfGUINotifyMsg::kShowHide);
 }
 
 void pfGUIDialogNotifyProc::OnHide()
@@ -132,7 +132,7 @@ void pfGUIDialogNotifyProc::OnHide()
     if ( fDialog )
         ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
     else
-        ISendNotify( nil, pfGUINotifyMsg::kShowHide );
+        ISendNotify(nullptr, pfGUINotifyMsg::kShowHide);
 }
 
 void pfGUIDialogNotifyProc::OnDestroy()
@@ -142,7 +142,7 @@ void pfGUIDialogNotifyProc::OnDestroy()
 void pfGUIDialogNotifyProc::OnControlEvent( ControlEvt event )
 {
     if( event == kExitMode )
-        ISendNotify( ( fDialog != nil ) ? fDialog->GetKey() : nil, pfGUINotifyMsg::kExitMode );
+        ISendNotify((fDialog != nullptr) ? fDialog->GetKey() : nullptr, pfGUINotifyMsg::kExitMode);
 }
 
 // Called when the dialog's focused control changes
@@ -151,11 +151,11 @@ void pfGUIDialogNotifyProc::OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUICo
     if ( newCtrl )
         ISendNotify( newCtrl->GetKey(), pfGUINotifyMsg::kFocusChange);
     else
-        ISendNotify( nil, pfGUINotifyMsg::kFocusChange);
+        ISendNotify(nullptr, pfGUINotifyMsg::kFocusChange);
 
 }
 
 void pfGUIDialogNotifyProc::OnInterestingEvent( pfGUIControlMod *ctrl )
 {
-    ISendNotify( ( ctrl != nil ) ? ctrl->GetKey() : nil, pfGUINotifyMsg::kInterestingEvent );
+    ISendNotify((ctrl != nullptr) ? ctrl->GetKey() : nullptr, pfGUINotifyMsg::kInterestingEvent);
 }

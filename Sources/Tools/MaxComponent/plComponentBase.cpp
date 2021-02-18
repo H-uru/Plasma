@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plPlasmaRefMsgs.h"
 #include "plAutoUIComp.h"
 
-plComponentBase::plComponentBase() : fClassDesc(nil), fCompPB(nil), fTargsPB(nil)
+plComponentBase::plComponentBase() : fClassDesc(), fCompPB(), fTargsPB()
 {
 }
 
@@ -87,7 +87,7 @@ IParamBlock2 *plComponentBase::GetParamBlock(int i)
     else if (i == kRefTargs)
         return fTargsPB;
 
-    return nil;
+    return nullptr;
 }
 
 IParamBlock2 *plComponentBase::GetParamBlockByID(BlockID id)
@@ -97,7 +97,7 @@ IParamBlock2 *plComponentBase::GetParamBlockByID(BlockID id)
     else if (fTargsPB && fTargsPB->ID() == id)
         return fTargsPB;
 
-    return nil;
+    return nullptr;
 }
 
 // So our animatables will show up in the trackview
@@ -170,7 +170,7 @@ RefTargetHandle plComponentBase::GetReference(int i)
     else if (i == kRefTargs)
         return fTargsPB;
 
-    return nil;
+    return nullptr;
 }
 
 void plComponentBase::SetReference(int i, RefTargetHandle rtarg)
@@ -220,7 +220,7 @@ plMaxNodeBase *plComponentBase::GetTarget(uint32_t i)
     if (fTargsPB && i < NumTargets())
         return (plMaxNodeBase*)fTargsPB->GetINode(kTargs, 0, i);
 
-    return nil;
+    return nullptr;
 }
 
 void plComponentBase::AddTarget(plMaxNodeBase *target)
@@ -318,7 +318,7 @@ plMaxNodeBase *plComponentBase::GetINode()
     // There should only be one INode in this list.
     DependentIterator di(this);
     ReferenceMaker* rm = di.Next();
-    while (rm != nil) 
+    while (rm != nullptr)
     {
         if (rm->SuperClassID() == BASENODE_CLASS_ID)
             return (plMaxNodeBase*)rm;
@@ -326,7 +326,7 @@ plMaxNodeBase *plComponentBase::GetINode()
         rm = di.Next();
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plComponentBase::IsExternal()
@@ -513,7 +513,7 @@ void plComponentBase::DestroyRollups()
                 MapID id = pd->map_specs[i].map_id;
                 // Destroy any parammap saved in the rollup
                 IParamMap2 *map = fCompPB->GetMap(id);
-                fCompPB->SetMap(nil, id);
+                fCompPB->SetMap(nullptr, id);
                 if (map)
                     DestroyCPParamMap2(map);
             }
@@ -522,7 +522,7 @@ void plComponentBase::DestroyRollups()
         {
             // Destroy any parammap saved in the rollup
             IParamMap2 *map = fCompPB->GetMap();
-            fCompPB->SetMap(nil);
+            fCompPB->SetMap(nullptr);
             if (map)
                 DestroyCPParamMap2(map);
         }
@@ -637,7 +637,7 @@ static void ComponentNotify(void *param, NotifyInfo *info)
         if (!gUpdatingComponents)
         {
             plMaxNodeBase *node = (plMaxNodeBase*)info->callParam;
-            plComponentBase *comp = node ? node->ConvertToComponent() : nil;
+            plComponentBase *comp = node ? node->ConvertToComponent() : nullptr;
             if (comp)
             {
                 node->Hide(!comp->AllowUnhide());

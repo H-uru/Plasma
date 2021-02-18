@@ -121,7 +121,7 @@ class plKeyBinding
     public:
 
         plKeyBinding();
-        plKeyBinding( ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nil );
+        plKeyBinding(ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nullptr);
         virtual ~plKeyBinding();
 
         ControlEventCode    GetCode() const { return fCode; }

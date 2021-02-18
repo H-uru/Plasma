@@ -75,17 +75,16 @@ const float plAvBrainGeneric::kDefaultFadeOut = 0.f; // instant fade out.
 // plAvBrainGeneric ----------------
 // -----------------
 plAvBrainGeneric::plAvBrainGeneric()
-: fRecipient(nil),
-  fStages(new plAnimStageVec),
-  fCurStage(0),
+: fStages(new plAnimStageVec),
+  fCurStage(),
   fType(kGeneric),
   fExitFlags(kExitNormal),
   fMode(kEntering),
   fForward(true),
-  fStartMessage(nil),
-  fEndMessage(nil),
-  fFadeIn(0.0f),
-  fFadeOut(0.0f),
+  fStartMessage(),
+  fEndMessage(),
+  fFadeIn(),
+  fFadeOut(),
   fMoveMode(kMoveRelative),
   fBodyUsage(plAGAnim::kBodyUnknown)
 {
@@ -104,7 +103,7 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
 : plArmatureBrain(),
   fRecipient(recipient),
   fStages(stages),
-  fCurStage(0),
+  fCurStage(),
   fType(kGeneric),
   fExitFlags(exitFlags),
   fMode(kEntering),
@@ -120,15 +119,14 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
 
 // plAvBrainGeneric 
 plAvBrainGeneric::plAvBrainGeneric(uint32_t exitFlags, float fadeIn, float fadeOut, MoveMode moveMode)
-: fRecipient(nil),
-  fStages(nil),
-  fCurStage(0),
+: fStages(),
+  fCurStage(),
   fType(kGeneric),
   fExitFlags(exitFlags),
   fMode(kEntering),
   fForward(true),
-  fStartMessage(nil),
-  fEndMessage(nil),
+  fStartMessage(),
+  fEndMessage(),
   fFadeIn(fadeIn),
   fFadeOut(fadeOut),
   fMoveMode(moveMode),
@@ -147,7 +145,7 @@ plAvBrainGeneric::~plAvBrainGeneric()
     for(int i = 0; i < fNumStages; i++)
     {
         plAnimStage *stage = (*fStages)[i];
-        (*fStages)[i] = nil;
+        (*fStages)[i] = nullptr;
         stage->Detach(fAvMod);
         delete stage;
     }
@@ -186,7 +184,7 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
         if(fStartMessage)
         {
             fStartMessage->Send();
-            fStartMessage = nil;
+            fStartMessage = nullptr;
         }
         
         if (plAvBrainGeneric::fForce3rdPerson && fAvMod->IsLocalAvatar())
@@ -267,7 +265,7 @@ void plAvBrainGeneric::Deactivate()
     if (fEndMessage)
     {
         fEndMessage->Send();
-        fEndMessage = nil;
+        fEndMessage = nullptr;
     }
     if (fMode != kAbort)        // we're being forcibly removed...
         IExitMoveMode();
@@ -818,12 +816,12 @@ void plAvBrainGeneric::Read(hsStream *stream, hsResMgr *mgr)
     if(stream->ReadBool()) {
         fStartMessage = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     } else {
-        fStartMessage = nil;
+        fStartMessage = nullptr;
     }
     if(stream->ReadBool()) {
         fEndMessage = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     } else {
-        fEndMessage = nil;
+        fEndMessage = nullptr;
     }
 
     fFadeIn = stream->ReadLEScalar();

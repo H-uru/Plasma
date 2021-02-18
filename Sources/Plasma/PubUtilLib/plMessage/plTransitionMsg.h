@@ -62,9 +62,9 @@ public:
         kFadeOutNoSound
     };
 
-    plTransitionMsg() : plMessageWithCallbacks(nil, nil, nil), fEffect( 0 ) { SetBCastFlag(kBCastByExactType);  }
+    plTransitionMsg() : plMessageWithCallbacks(nullptr, nullptr, nullptr), fEffect() { SetBCastFlag(kBCastByExactType); }
     plTransitionMsg( uint32_t type, float lengthInSecs, bool holdUntilNext = false ) : 
-                plMessageWithCallbacks(nil, nil, nil), fEffect( type ), fLengthInSecs( lengthInSecs ), fHoldUntilNext( holdUntilNext )
+                plMessageWithCallbacks(nullptr, nullptr, nullptr), fEffect(type), fLengthInSecs(lengthInSecs), fHoldUntilNext(holdUntilNext)
                 { SetBCastFlag( kBCastByExactType );  }
     
     ~plTransitionMsg();

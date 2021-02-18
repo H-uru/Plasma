@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plRefMsg.h"
 
-plSharedMesh::plSharedMesh() : fMorphSet(nil), fFlags(0)
+plSharedMesh::plSharedMesh() : fMorphSet(), fFlags()
 {
 }
 
@@ -94,7 +94,7 @@ bool plSharedMesh::MsgReceive(plMessage* msg)
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                fMorphSet = nil;
+                fMorphSet = nullptr;
             }
             return true;
         }
@@ -129,7 +129,7 @@ void plSharedMesh::Write(hsStream* s, hsResMgr* mgr)
     for (i = 0; i < fSpans.GetCount(); i++)
         fSpans[i]->Write(s);
 
-    mgr->WriteKey(s, (fMorphSet ? fMorphSet->GetKey() : nil));
+    mgr->WriteKey(s, (fMorphSet ? fMorphSet->GetKey() : nullptr));
     s->WriteByte(fFlags);
 }
 

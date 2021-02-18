@@ -140,14 +140,14 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
         req->SetClearColor(clearColor);
         req->SetClearDepth(1.f);
 
-        req->SetClearDrawable(nil);
-        req->SetRenderTarget(nil);
+        req->SetClearDrawable(nullptr);
+        req->SetRenderTarget(nullptr);
 
         req->SetCameraTransform(worldToCameras[i], cameraToWorlds[i]);
 
         req->fFileName = plFileName::Join(cubedir, ST::format("{}_{}.png", pref, suff[i]));
 
-        plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nil, req);
+        plRenderRequestMsg* reqMsg = new plRenderRequestMsg(nullptr, req);
         reqMsg->Send();
         hsRefCnt_SafeUnRef(req);
     }

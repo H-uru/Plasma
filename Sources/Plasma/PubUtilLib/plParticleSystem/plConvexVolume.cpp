@@ -48,9 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plConvexVolume::plConvexVolume()
 {
-    //fFlags = nil;
-    fLocalPlanes = nil;
-    fWorldPlanes = nil;
+    //fFlags = nullptr;
+    fLocalPlanes = nullptr;
+    fWorldPlanes = nullptr;
     fNumPlanes = 0;
 }
 

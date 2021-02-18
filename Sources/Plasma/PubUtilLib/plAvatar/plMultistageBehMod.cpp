@@ -60,7 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plMultistageMsg.h"
 
-plMultistageBehMod::plMultistageBehMod() : fStages(nil), fFreezePhys(false), fSmartSeek(false), fReverseFBControlsOnRelease(false), fNetProp(true), fNetForce(false)
+plMultistageBehMod::plMultistageBehMod()
+    : fStages(), fFreezePhys(), fSmartSeek(), fReverseFBControlsOnRelease(),
+      fNetProp(true), fNetForce()
 {
 }
 
@@ -111,7 +113,7 @@ void plMultistageBehMod::IDeleteStageVec()
         }
 
         delete fStages;
-        fStages = nil;
+        fStages = nullptr;
     }
 }
 
@@ -160,11 +162,11 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
                         sprintf(sbuf,"plMultistageModMsg - starting multistage from %s",sender->GetName().c_str());
                         plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
-                        plAvSeekMsg *seeker = new plAvSeekMsg(nil, avModKey, seekKey, 1.0f, fSmartSeek);
+                        plAvSeekMsg *seeker = new plAvSeekMsg(nullptr, avModKey, seekKey, 1.0f, fSmartSeek);
                         seeker->Send();
 
                         // these (currently unused) callbacks are for the brain itself, not any of the stages
-                        plMessage *exitCallback = nil, *enterCallback = nil;
+                        plMessage *exitCallback = nullptr, *enterCallback = nullptr;
                         uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
                         plAvBrainGeneric *brain = new plAvBrainGeneric(stages, exitCallback, enterCallback, sender, exitFlags, 

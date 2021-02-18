@@ -58,11 +58,11 @@ plParticleGenerator *plParticleApplicator::IGetParticleGen(plSceneObject *so)
     for (size_t i = 0; i < numMods; i++)
     {
         const plParticleSystem *result = plParticleSystem::ConvertNoRef(so->GetModifier(i));
-        if (result != nil)
+        if (result != nullptr)
             return result->GetExportedGenerator();
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plParticleLifeMinApplicator::IApply(const plAGModifier *mod, double time)

@@ -92,7 +92,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         void        SetChecked( bool checked, bool immediate = false );
         bool        IsChecked() { return fChecked; }

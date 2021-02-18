@@ -76,10 +76,10 @@ public:
     CLASSNAME_REGISTER( plNetTransportMember);
     GETINTERFACE_ANY( plNetTransportMember, plNetMember);
 
-    plNetTransportMember() : fAvatarKey(nil),
-        fTransportFlags(0),fPlayerID(0),fDistSq(-1),fCCRLevel(0) {}
+    plNetTransportMember() :
+        fTransportFlags(), fPlayerID(), fDistSq(-1), fCCRLevel() { }
     plNetTransportMember(plNetApp* na) : plNetMember(na),
-        fAvatarKey(nil),fTransportFlags(0),fPlayerID(0),fDistSq(-1),fCCRLevel(0) {}
+        fTransportFlags(), fPlayerID(), fDistSq(-1), fCCRLevel() { }
     ~plNetTransportMember() {}
 
     void SetDistSq(float s) { fDistSq=s; }

@@ -330,7 +330,7 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         logic->AddNotifyReceiver(receiver);
 
         // Create the detector
-    plDetectorModifier *detector = nil;
+    plDetectorModifier *detector = nullptr;
     detector = new plPickingDetector;
 
     // Register the detector

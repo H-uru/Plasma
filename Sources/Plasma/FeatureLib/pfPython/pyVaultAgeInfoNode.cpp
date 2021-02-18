@@ -70,7 +70,7 @@ pyVaultAgeInfoNode::pyVaultAgeInfoNode()
 //============================================================================
 /*
 static PyObject * GetChildFolder (RelVaultNode * node, unsigned type) {
-    PyObject * result = nil;
+    PyObject * result = nullptr;
     if (RelVaultNode * rvn = node->GetChildFolderNodeIncRef(type, 1)) {
         result = pyVaultFolderNode::New(rvn);
         rvn->UnRef();
@@ -81,7 +81,7 @@ static PyObject * GetChildFolder (RelVaultNode * node, unsigned type) {
 
 //============================================================================
 static PyObject * GetChildPlayerInfoList(hsWeakRef<RelVaultNode> node, unsigned type) {
-    PyObject * result = nil;
+    PyObject * result = nullptr;
     if (hsRef<RelVaultNode> rvn = node->GetChildPlayerInfoListNode(type, 1))
         result = pyVaultPlayerInfoListNode::New(rvn);
     return result;
@@ -89,7 +89,7 @@ static PyObject * GetChildPlayerInfoList(hsWeakRef<RelVaultNode> node, unsigned 
 
 //============================================================================
 static PyObject * GetChildAgeInfoList(hsWeakRef<RelVaultNode> node, unsigned type) {
-    PyObject * result = nil;
+    PyObject * result = nullptr;
     if (hsRef<RelVaultNode> rvn = node->GetChildAgeInfoListNode(type, 1))
         result = pyVaultAgeInfoListNode::New(rvn);
     return result;

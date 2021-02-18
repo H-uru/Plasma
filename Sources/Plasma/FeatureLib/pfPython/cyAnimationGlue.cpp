@@ -306,7 +306,7 @@ PyObject *cyAnimation::New(PyObject *sender)
     ptAnimation *newObj = (ptAnimation*)ptAnimation_type.tp_new(&ptAnimation_type, nullptr, nullptr);
     pyKey *key = pyKey::ConvertFrom(sender);
     newObj->fThis->SetSender(*key);
-    newObj->fThis->fAnimName = nil;
+    newObj->fThis->fAnimName = nullptr;
     newObj->fThis->fNetForce = false;
     return (PyObject*)newObj;
 }

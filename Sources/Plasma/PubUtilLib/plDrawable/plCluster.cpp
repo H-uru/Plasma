@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 
 plCluster::plCluster()
-:   fGroup(nil)
+:   fGroup()
 {
 }
 

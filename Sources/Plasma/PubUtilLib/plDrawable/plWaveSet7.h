@@ -666,10 +666,10 @@ public:
 
     void StopLog();
     void StartLog();
-    bool Logging() const { return fStatusLog != nil; }
+    bool Logging() const { return fStatusLog != nullptr; }
     void StartGraph();
     void StopGraph();
-    bool Graphing() const { return fStatusGraph != nil; }
+    bool Graphing() const { return fStatusGraph != nullptr; }
 };
 
 #endif // plWaveSet7_inc

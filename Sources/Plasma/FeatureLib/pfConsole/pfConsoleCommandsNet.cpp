@@ -541,7 +541,7 @@ PF_CONSOLE_CMD( Net, DownloadViaManifest,
                "string remoteManifestFileName", // paramList
                "Downloads the given file from the dataserver, then updates all the ages listed in the file" )   // helpString
 {
-//  if( hsgResMgr::ResMgr() != nil )
+//  if (hsgResMgr::ResMgr() != nullptr)
 //  {
 //      plResPatcher::PatchFromManifest( params[ 0 ] );
 //  }
@@ -600,7 +600,7 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "Create a debug log about the specified object. AddObject objName [pageName], wildcards allowed" )   // helpString
 {
     char* objName = params[0];  
-    char* pageName = numParams>1 ? (char*)params[1] : nil;
+    char* pageName = numParams>1 ? (char*)params[1] : nullptr;
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->AddDebugObject(objName, pageName);
 }
@@ -611,7 +611,7 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "Stop focused debugging about the specified object. RemoveObject objName [pageName], wildcards allowed" )    // helpString
 {
     char* objName = params[0];  
-    char* pageName = numParams>1 ? (char*)params[1] : nil;
+    char* pageName = numParams>1 ? (char*)params[1] : nullptr;
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->RemoveDebugObject(objName, pageName);
 }

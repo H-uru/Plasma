@@ -77,15 +77,15 @@ const float kAbortTimerDuration = 15; // 15 seconds
 /////////////////////////////////////////////////////////////////////////////////////////
 
 plCoopCoordinator::plCoopCoordinator()
-: fHostBrain(nil),
-  fGuestBrain(nil),
-  fInitiatorID(0),
-  fInitiatorSerial(0),
-  fHostOfferStage(0),
-  fGuestAcceptStage(0),
-  fGuestAcceptMsg(nil),
-  fAutoStartGuest(nil),
-  fGuestAccepted(false)
+: fHostBrain(),
+  fGuestBrain(),
+  fInitiatorID(),
+  fInitiatorSerial(),
+  fHostOfferStage(),
+  fGuestAcceptStage(),
+  fGuestAcceptMsg(),
+  fAutoStartGuest(),
+  fGuestAccepted()
 {
 }
 
@@ -190,7 +190,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
                         fGuestAcceptMsg->Send();
                     }
                     // kill the message (along with being active)
-                    fGuestAcceptMsg = nil;
+                    fGuestAcceptMsg = nullptr;
                     fGuestLinked = true;
                     IAdvanceParticipant(true);  // advance the host
 //                  IAdvanceParticipant(false); // advance the guest
@@ -222,7 +222,7 @@ bool plCoopCoordinator::MsgReceive(plMessage *msg)
             case plAvCoopMsg::kGuestSeekAbort:
                 // if they aborted then just advance the host
                 // kill the message (along with being active)
-                fGuestAcceptMsg = nil;
+                fGuestAcceptMsg = nullptr;
                 fGuestLinked = true;
                 IAdvanceParticipant(true);  // advance the host
                 break;
@@ -297,10 +297,10 @@ void plCoopCoordinator::IStartHost()
     plArmatureMod *hostAv = plAvatarMgr::FindAvatar(fHostKey);
     if (guestAv && hostAv)
     {
-        plAvSeekMsg *msg = new plAvSeekMsg(nil, hostAv->GetKey(), nil, 1.f, true);
+        plAvSeekMsg *msg = new plAvSeekMsg(nullptr, hostAv->GetKey(), nullptr, 1.f, true);
         hsClearBits(msg->fFlags, plAvSeekMsg::kSeekFlagForce3rdPersonOnStart);
-        guestAv->GetPositionAndRotationSim(&msg->fTargetLookAt, nil);
-        hostAv->GetPositionAndRotationSim(&msg->fTargetPos, nil);
+        guestAv->GetPositionAndRotationSim(&msg->fTargetLookAt, nullptr);
+        hostAv->GetPositionAndRotationSim(&msg->fTargetPos, nullptr);
         msg->Send();
     }   
 
@@ -342,7 +342,7 @@ void plCoopCoordinator::IContinueGuest()
     plAvTaskMsg *brainM = new plAvTaskMsg(GetKey(), fGuestKey, brainT);
     brainM->SetBCastFlag(plMessage::kPropagateToModifiers);
     brainM->Send();
-    fGuestBrain = nil;          // the armature will destroy the brain when done.
+    fGuestBrain = nullptr;          // the armature will destroy the brain when done.
 }
 
 // IContinueHost ----------------------
@@ -352,7 +352,7 @@ void plCoopCoordinator::IAdvanceParticipant(bool host)
     DebugMsg("COOP: IAdvanceParticipant(%d)", host ? 1 : 0);
     plKey &who = host ? fHostKey : fGuestKey;
 
-    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nil, who,
+    plAvBrainGenericMsg* pMsg = new plAvBrainGenericMsg(nullptr, who,
         plAvBrainGenericMsg::kNextStage, 0, false, 0.0,
         false, false, 0.0);
 
@@ -373,7 +373,7 @@ void plCoopCoordinator::IStartTimeout()
 // --------------
 void plCoopCoordinator::ITimeout()
 {
-    fGuestAcceptMsg = nil;
+    fGuestAcceptMsg = nullptr;
     IAdvanceParticipant(true); // advance the host
 }
 
@@ -393,7 +393,7 @@ void plCoopCoordinator::Read(hsStream *stream, hsResMgr *mgr)
     if(stream->ReadBool())
         fGuestAcceptMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
     else
-        fGuestAcceptMsg = nil;
+        fGuestAcceptMsg = nullptr;
 
     fSynchBone = stream->ReadSafeString();
     fAutoStartGuest = stream->ReadBool();
@@ -415,7 +415,7 @@ void plCoopCoordinator::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteByte((uint8_t)fHostOfferStage);
     stream->WriteByte((uint8_t)fGuestAcceptStage);
 
-    stream->WriteBool(fGuestAcceptMsg != nil);
+    stream->WriteBool(fGuestAcceptMsg != nullptr);
     if(fGuestAcceptMsg)
         mgr->WriteCreatable(stream, fGuestAcceptMsg);
 

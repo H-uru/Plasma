@@ -68,9 +68,9 @@ plPostEffectMod::plPostEffectMod()
     fYon(100.f),
     fFovX(hsConstants::pi<float> * 0.25f),
     fFovY(hsConstants::pi<float> * 0.25f * 0.75f),
-    fPageMgr(nil),
-    fRenderTarget(nil),
-    fRenderRequest(nil)
+    fPageMgr(),
+    fRenderTarget(),
+    fRenderRequest()
 {
     fDefaultW2C = hsMatrix44::IdentityMatrix();
     fDefaultC2W = hsMatrix44::IdentityMatrix();
@@ -115,11 +115,11 @@ void        plPostEffectMod::EnableLightsOnRenderRequest()
 void plPostEffectMod::IDestroyRenderRequest()
 {
     delete fRenderTarget;
-    fRenderTarget = nil;
+    fRenderTarget = nullptr;
     delete fRenderRequest;
-    fRenderRequest = nil;
+    fRenderRequest = nullptr;
     delete fPageMgr;
-    fPageMgr = nil;
+    fPageMgr = nullptr;
 }
 
 void plPostEffectMod::IRegisterForRenderMsg(bool on)

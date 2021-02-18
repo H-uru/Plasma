@@ -210,9 +210,9 @@ ParamBlockDesc2 plAnimStealthNode::sAnimStealthPB
     end
 );
 
-plAnimStealthNode::plAnimStealthNode( BOOL loading ) : fClassDesc(nil), fParamBlock(nil), fParentMtl(nil)
+plAnimStealthNode::plAnimStealthNode(BOOL loading) : fClassDesc(), fParamBlock(), fParentMtl()
 {
-    fCachedSegMap = nil;
+    fCachedSegMap = nullptr;
     fClassDesc = &sStealthClassDesc;
     fClassDesc->MakeAutoParamBlocks( this );
 }
@@ -224,7 +224,7 @@ plAnimStealthNode::~plAnimStealthNode()
 
 CreateMouseCallBack *plAnimStealthNode::GetCreateMouseCallBack()
 {
-    return nil;
+    return nullptr;
 }
 
 void    plAnimStealthNode::SetParentMtl( plPassMtlBase *parent )
@@ -234,36 +234,36 @@ void    plAnimStealthNode::SetParentMtl( plPassMtlBase *parent )
 
 bool    plAnimStealthNode::CanConvertToStealth( INode *objNode )
 {
-    return ( ConvertToStealth( objNode ) != nil );
+    return (ConvertToStealth(objNode) != nullptr);
 }
 
 plAnimStealthNode   *plAnimStealthNode::ConvertToStealth( INode *objNode )
 {
-    if( objNode == nil )
-        return nil;
+    if (objNode == nullptr)
+        return nullptr;
 
     Object *obj = objNode->GetObjectRef();
-    if( obj == nil )
-        return nil;
+    if (obj == nullptr)
+        return nullptr;
 
     if( obj->CanConvertToType( ANIMSTEALTH_CLASSID ) )
         return (plAnimStealthNode *)obj;
 
-    return nil;
+    return nullptr;
 }
 
 
 ST::string plAnimStealthNode::GetSegmentName() const
 {
     const char *str = fParamBlock->GetStr( (ParamID)kPBName );
-    if( str == nil || str[ 0 ] == 0 )
+    if (str == nullptr || str[0] == 0)
         return ENTIRE_ANIMATION_NAME;
     return ST::string::from_utf8(str);
 }
 
 void    plAnimStealthNode::SetSegment( const char *name )
 {
-    if( name == nil || strcmp(name, ENTIRE_ANIMATION_NAME) == 0 || name[ 0 ] == 0 )
+    if (name == nullptr || strcmp(name, ENTIRE_ANIMATION_NAME) == 0 || name[0] == 0)
         fParamBlock->SetValue( (ParamID)kPBName, 0, "" );
     else
         fParamBlock->SetValue( (ParamID)kPBName, 0, (char *)name );
@@ -272,12 +272,12 @@ void    plAnimStealthNode::SetSegment( const char *name )
 void    plAnimStealthNode::SetNodeName( const char *parentName )
 {
     INode *node = GetINode();
-    if( node != nil )
+    if (node != nullptr)
     {
         char name[ 512 ], newName[ 512 ];
         sprintf(name, "%s : %s", parentName, GetSegmentName().c_str());
 
-        if( GetCOREInterface()->GetINodeByName( name ) != nil )
+        if (GetCOREInterface()->GetINodeByName(name) != nullptr)
         {
             // For whatever reason, MakeNameUnique() doesn't ACTUALLY make a name unique!
             // So we just need to more or less do it ourselves...
@@ -285,7 +285,7 @@ void    plAnimStealthNode::SetNodeName( const char *parentName )
             for( i = 1; i < 1024; i++ )
             {
                 sprintf( newName, "%s(%d)", name, i );
-                if( GetCOREInterface()->GetINodeByName( newName ) == nil )
+                if (GetCOREInterface()->GetINodeByName(newName) == nullptr)
                     break;
             }
             if( i == 1024 )
@@ -316,7 +316,7 @@ IParamBlock2 *plAnimStealthNode::GetParamBlock( int i )
     if( i == kRefParamBlock )
         return fParamBlock;
 
-    return nil;
+    return nullptr;
 }
 
 IParamBlock2 *plAnimStealthNode::GetParamBlockByID( BlockID id )
@@ -324,7 +324,7 @@ IParamBlock2 *plAnimStealthNode::GetParamBlockByID( BlockID id )
     if( fParamBlock && fParamBlock->ID() == id )
         return fParamBlock;
 
-    return nil;
+    return nullptr;
 }
 
 RefTargetHandle plAnimStealthNode::Clone(RemapDir &remap)
@@ -379,7 +379,7 @@ RefTargetHandle plAnimStealthNode::GetReference( int i )
     else if( i == kRefParentMtl )
         return fParentMtl;
 
-    return nil;
+    return nullptr;
 }
 
 void plAnimStealthNode::SetReference( int i, RefTargetHandle rtarg )
@@ -427,7 +427,7 @@ class plGetRefs : public DependentEnumProc
 
 bool        plAnimStealthNode::IsParentUsedInScene()
 {
-    if( GetParentMtl() == nil )
+    if (GetParentMtl() == nullptr)
         return false;
 
     // There are two possibilities: either a node uses us and thus has a ref to us,
@@ -441,7 +441,7 @@ bool        plAnimStealthNode::IsParentUsedInScene()
 
     DependentIterator di(this);
     ReferenceMaker* item = di.Next();
-    while( item != nil )
+    while (item != nullptr)
     {
         TSTR s;
         item->GetClassName( s );
@@ -456,7 +456,7 @@ bool        plAnimStealthNode::IsParentUsedInScene()
 
             DependentIterator sub(multisub);
             ReferenceMaker* item2 = sub.Next();
-            while( item2 != nil )
+            while (item2 != nullptr)
             {
                 if( item2->SuperClassID() == BASENODE_CLASS_ID )
                     return true;        // Horray, a node has a ref to us!
@@ -503,7 +503,7 @@ INode *plAnimStealthNode::GetINode()
         item = di.Next();
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plStealthDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
@@ -528,7 +528,7 @@ void plStealthDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
 //  we can simply store the address of that proc the first time we subclass and
 //  use it for restoring every time thereafter (see the following DlgProc)
 
-static WNDPROC  sOldStealthDlgProc = nil;
+static WNDPROC  sOldStealthDlgProc = nullptr;
 
 static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -544,10 +544,10 @@ static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM 
                 // rather, we want IMtlParams to do it just like it would if we could actually call
                 // CreateChildMParamMap2
                 IParamBlock2 *pb = map->GetParamBlock();
-                if( pb != nil )
+                if (pb != nullptr)
                 {
                     plAnimStealthNode *stealth = (plAnimStealthNode *)pb->GetOwner();
-                    if( stealth != nil )
+                    if (stealth != nullptr)
                     {
                         plPassMtlBase *mtl = (plPassMtlBase *)stealth->GetParentMtl();
                         mtl->fIMtlParams->RollupMouseMessage( hWnd, msg, wParam, lParam );
@@ -557,7 +557,7 @@ static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM 
             }
     }
 
-    if( sOldStealthDlgProc != nil )
+    if (sOldStealthDlgProc != nullptr)
         return CallWindowProc( sOldStealthDlgProc, hWnd, msg, wParam, lParam );
     else
         return 0;
@@ -576,7 +576,7 @@ BOOL plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg
             // Note that the first time, we grab the old proc so we can restore with that
             // one every time after, since they should always be the same proc
             WNDPROC old = (WNDPROC)SetWindowLongPtr( hWnd, DWLP_DLGPROC, (LONG_PTR)plStealthMouseOverrideProc );
-            if( sOldStealthDlgProc == nil )
+            if (sOldStealthDlgProc == nullptr)
                 sOldStealthDlgProc = old;
 
             fhWnd = hWnd;
@@ -651,7 +651,7 @@ void plStealthDlgProc::IDeleteSegMap()
 {
     // If we have a segment map, delete the memory associated with it
     DeleteSegmentMap( fSegMap );
-    fSegMap = nil;
+    fSegMap = nullptr;
 }
 
 void plStealthDlgProc::ISetSel(HWND hCombo, const char *name)
@@ -687,16 +687,16 @@ void plStealthDlgProc::IInitControls( plAnimStealthNode *stealth, IParamBlock2 *
 {
     IDeleteSegMap();
 
-    if( stealth->GetParentMtl() != nil )
+    if (stealth->GetParentMtl() != nullptr)
     {
-        fSegMap = GetAnimSegmentMap( stealth->GetParentMtl(), nil );
+        fSegMap = GetAnimSegmentMap(stealth->GetParentMtl(), nullptr);
 
         ILoadLoops( pb );
     }
     else
     {
         // ?? What should we do?
-        fSegMap = nil;
+        fSegMap = nullptr;
         hsStatusMessage( "No parent material yet in plStealthDlgProc::IInitControls()...not good..." );
     }
 
@@ -714,7 +714,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
     ST::string segName = ST::string::from_utf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
-    if( segName.empty() || fSegMap == nil )
+    if (segName.empty() || fSegMap == nullptr)
     {
         // Default of "entire animation", no other loop options
         SendMessage( hLoops, CB_SETCURSEL, defIdx, 0 );
@@ -761,8 +761,8 @@ void plAnimStealthNode::EndEditParams(IObjParam *ip, ULONG flags, Animatable *ne
 void    plAnimStealthNode::ReleaseDlg()
 {
     IParamMap2 *map = fParamBlock->GetMap();
-    fParamBlock->SetMap( nil );
-    if( map != nil )
+    fParamBlock->SetMap(nullptr);
+    if (map != nullptr)
         DestroyChildCPParamMap2( map );
 }
 
@@ -774,7 +774,7 @@ void    plAnimStealthNode::SwitchDlg( plAnimStealthNode *toSwitchTo )
 {
     IParamMap2 *map = fParamBlock->GetMap();
 
-    fParamBlock->SetMap( nil );
+    fParamBlock->SetMap(nullptr);
     toSwitchTo->fParamBlock->SetMap( map );
 
     map->SetParamBlock( toSwitchTo->fParamBlock );
@@ -791,17 +791,17 @@ bool    plAnimStealthNode::CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams 
 {
     IParamMap2 *map = CreateChildCPParamMap2( fParamBlock, GetCOREInterface(), hInstance,
                                             parentMap, MAKEINTRESOURCE( IDD_STEALTH_ANIM ),
-                                            nil, &sStealthDlgProc );
+                                            nullptr, &sStealthDlgProc);
     fParamBlock->SetMap( map );
 
-    if( frameCtrl != nil )
+    if (frameCtrl != nullptr)
     {
         HWND child = fParamBlock->GetMap()->GetHWnd();
         RECT childFrame, centerFrame;
 
         ::GetClientRect( child, &childFrame );
         ::GetWindowRect( frameCtrl, &centerFrame );
-        ::MapWindowPoints( nil, parentMap->GetHWnd(), (POINT *)&centerFrame, 2 );
+        ::MapWindowPoints(nullptr, parentMap->GetHWnd(), (POINT *)&centerFrame, 2);
 
         int frameWidth = centerFrame.right - centerFrame.left;
         int frameHeight = centerFrame.bottom - centerFrame.top;
@@ -811,7 +811,7 @@ bool    plAnimStealthNode::CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams 
         ::OffsetRect( &childFrame, ( frameWidth - childWidth ) >> 1, ( frameHeight - childHeight ) >> 1 );      
         ::OffsetRect( &childFrame, centerFrame.left, centerFrame.top );     
 
-        ::SetWindowPos( child, nil, childFrame.left, childFrame.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER );
+        ::SetWindowPos(child, nullptr, childFrame.left, childFrame.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     }
 
     return true;
@@ -823,10 +823,10 @@ bool    plAnimStealthNode::CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams 
 HWND    plAnimStealthNode::GetWinDlg() const
 {
     IParamMap2 *map = fParamBlock->GetMap();
-    if( map != nil )
+    if (map != nullptr)
         return map->GetHWnd();
 
-    return nil;
+    return nullptr;
 }
 
 //// Picker Dialog for Restricted Animation Components //////////////////////////////////////////
@@ -854,12 +854,12 @@ protected:
     {
         if( strcmp( userType, kUseParamBlockNodeString ) == 0 )
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
         }
         else if( strcmp(userType, kUseOwnerNodeString ) == 0 )
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
         }
         else
@@ -935,7 +935,7 @@ plStealthNodeAccessor   &plStealthNodeAccessor::GetInstance()
 
 void    plStealthNodeAccessor::ISetParent( ReferenceTarget *target, plPassMtlBase *parent )
 {
-    if( target != nil && target->ClassID() == ANIMSTEALTH_CLASSID )
+    if (target != nullptr && target->ClassID() == ANIMSTEALTH_CLASSID)
     {
         ( (plAnimStealthNode *)target )->SetParentMtl( parent );
     }
@@ -975,7 +975,7 @@ void    plStealthNodeAccessor::Set( PB2Value &v, ReferenceMaker *owner, ParamID 
 
     // A stealth node paramBlock value just got set. First make sure we 
     // un-set the old stealth's parent
-    ISetParent( pb->GetReferenceTarget( id, tabIndex ), nil );
+    ISetParent(pb->GetReferenceTarget(id, tabIndex), nullptr);
         
     // So make sure that the stealth node that was just added gets its parent mtl set properly
     ISetParent( v.r, mtl );

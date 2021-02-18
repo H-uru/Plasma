@@ -136,7 +136,7 @@ private:
         const char* fKey;
         const char* fVal;
     public:
-        QuickPair() : fKey(nil), fVal(nil) { }
+        QuickPair() : fKey(), fVal() { }
         ~QuickPair() { }
 
         void SetKey(const char* k) { fKey = k; }

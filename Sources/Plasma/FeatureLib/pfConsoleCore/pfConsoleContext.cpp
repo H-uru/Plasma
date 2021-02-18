@@ -61,7 +61,7 @@ pfConsoleContext    &pfConsoleContext::GetRootContext()
 
 pfConsoleContext::pfConsoleContext( const char *name )
 {
-    fName = ( name != nil ) ? hsStrcpy( name ) : nil;
+    fName = (name != nullptr) ? hsStrcpy(name) : nullptr;
     fAddWhenNotFound = true;
 }
 
@@ -94,7 +94,7 @@ const char *pfConsoleContext::GetVarName(size_t idx) const
     if (idx >= fVarNames.size())
     {
         hsAssert( false, "GetVarName() index out of range for console context" );
-        return nil;
+        return nullptr;
     }
 
     return fVarNames[ idx ];

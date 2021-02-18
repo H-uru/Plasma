@@ -70,7 +70,7 @@ public:
 static ComponentUtilClassDesc theComponentUtilCD;
 ClassDesc* GetComponentUtilDesc() { return &theComponentUtilCD; }
 
-plComponentUtil::plComponentUtil() : fInterface(nil), fhPanel(nil), fCurComponent(nil), fLastComponent(nil)
+plComponentUtil::plComponentUtil() : fInterface(), fhPanel(), fCurComponent(), fLastComponent()
 {
 }
 
@@ -217,7 +217,7 @@ plComponentBase* plComponentUtil::IGetListSelection()
             return (plComponentBase*)item.lParam;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plComponentUtil::BeginEditParams(Interface *ip, IUtil *iu)
@@ -241,9 +241,9 @@ void plComponentUtil::EndEditParams(Interface *ip, IUtil *iu)
     IDestroyRollups();
 
     GetCOREInterface()->DeleteRollupPage(fhPanel);
-    fhPanel = nil;
-    fCurComponent = nil;
-    fInterface = nil;
+    fhPanel = nullptr;
+    fCurComponent = nullptr;
+    fInterface = nullptr;
 }
 
 void plComponentUtil::SelectionSetChanged(Interface *ip, IUtil *iu)
@@ -266,7 +266,7 @@ void plComponentUtil::IUpdateRollups()
     int nodeCount = fInterface->GetSelNodeCount();
     if (nodeCount == 0)
     {
-        IAddRollups(nil);
+        IAddRollups(nullptr);
         return;
     }
 
@@ -315,7 +315,7 @@ void plComponentUtil::IUpdateRollups()
         ListView_EnsureVisible(hList, idx, FALSE);
     }
     else
-        IAddRollups(nil);
+        IAddRollups(nullptr);
 }
 
 int plComponentUtil::IFindListItem(plComponentBase* comp)
@@ -443,7 +443,7 @@ void plComponentUtil::IComponentPreDelete(plComponentBase* comp)
     if (fCurComponent == comp)
     {
         IDestroyRollups();
-        fCurComponent = nil;
+        fCurComponent = nullptr;
     }
 }
 

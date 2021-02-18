@@ -186,7 +186,7 @@ const char *plResponderCmdAnim::GetCategory(int idx)
         return "Random Sound";
     }
 
-    return nil;
+    return nullptr;
 }
 
 const char *plResponderCmdAnim::GetName(int idx)
@@ -228,7 +228,7 @@ const char *plResponderCmdAnim::GetName(int idx)
         return "Synched Play";
     }
 
-    return nil;
+    return nullptr;
 }
 
 static const char *GetShortName(int type)
@@ -254,7 +254,7 @@ static const char *GetShortName(int type)
     case kRespondFastForwardAnim:   return "Anim FFwd";
     }
 
-    return nil;
+    return nullptr;
 }
 const char *plResponderCmdAnim::GetInstanceName(IParamBlock2 *pb)
 {
@@ -287,7 +287,7 @@ plComponentBase *plResponderCmdAnim::GetComponent(IParamBlock2 *pb)
     if (node)
         return node->ConvertToComponent();
     else
-        return nil;
+        return nullptr;
 }
 
 plMessage *plResponderCmdAnim::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
@@ -326,8 +326,8 @@ bool GetCompAndNode(IParamBlock2* pb, plMaxNode* node, plComponentBase*& comp, p
 
 plMessage *plResponderCmdAnim::ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
 {
-    plAnimComponentBase *comp = nil;
-    plMaxNode *targNode = nil;
+    plAnimComponentBase *comp = nullptr;
+    plMaxNode *targNode = nullptr;
     if (!GetCompAndNode(pb, node, (plComponentBase*&)comp, targNode))
         throw "A valid animation component and node were not found";
 
@@ -491,7 +491,7 @@ void plResponderCmdAnim::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
 
     if (animComp)
     {
-        plNotetrackAnim notetrackAnim(animComp, nil);
+        plNotetrackAnim notetrackAnim(animComp, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
         ST::string marker;
         while (!(marker = info.GetNextMarkerName()).empty())
@@ -520,7 +520,7 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
         plAnimComponent *animComp = (plAnimComponent*)GetComponent(pb);
         ST::string animName = animComp->GetAnimName();
 
-        plNotetrackAnim notetrackAnim(animComp, nil);
+        plNotetrackAnim notetrackAnim(animComp, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
 
         eventMsg->fEvent = kTime;
@@ -683,7 +683,7 @@ IParamBlock2 *plResponderCmdAnim::CreatePB(int idx)
     int type = IndexToOldType(idx);
 
     // Create the paramblock and save it's type
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderAnimBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderAnimBlock, nullptr);
     pb->SetValue(kRespAnimType, 0, type);
 
     return pb;
@@ -711,7 +711,7 @@ protected:
     {
         if (userType && !strcmp(userType, kResponderNodeName))
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodeResponder);
         }
         else
@@ -758,7 +758,7 @@ void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
         ST::string animName = ((plAnimComponent*)comp)->GetAnimName();
 
         // Get the shared animations for all the nodes this component is applied to
-        plNotetrackAnim anim(comp, nil);
+        plNotetrackAnim anim(comp, nullptr);
         plAnimInfo info = anim.GetAnimInfo(animName);
         // Get all the loops in this animation
         ST::string loopName;

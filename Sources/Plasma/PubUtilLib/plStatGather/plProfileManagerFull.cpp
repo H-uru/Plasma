@@ -51,10 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProfileManagerFull::plProfileManagerFull() :
     fVars(plProfileManager::Instance().fVars),
-    fLogStats(false),
-    fShowLaps(nil),
-    fMinLap(0),
-    fDetailGraph(nil)
+    fLogStats(),
+    fShowLaps(),
+    fMinLap(),
+    fDetailGraph()
 {
 }
 
@@ -85,7 +85,7 @@ void plProfileManagerFull::ShowGroup(const char* groupName)
     }
     else
     {
-        const char* shareGroupName = nil;
+        const char* shareGroupName = nullptr;
         for (int i = 0; i < fVars.size(); i++)
         {
             if (stricmp(fVars[i]->GetGroup(), groupName) == 0)
@@ -149,7 +149,7 @@ plProfileVar* plProfileManagerFull::IFindTimer(const char *name)
             return fVars[i];
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plProfileManagerFull::GetLaps(LapNames& lapNames)
@@ -493,7 +493,7 @@ void plProfileManagerFull::ILogStats()
 
 void plProfileManagerFull::ShowLaps(const char* groupName, const char* varName)
 {
-    plProfileVar* var = nil;
+    plProfileVar* var = nullptr;
 
 
     if(fShowLaps)
@@ -516,7 +516,7 @@ void plProfileManagerFull::ShowLaps(const char* groupName, const char* varName)
         if (var == fShowLaps)
         {
     
-            fShowLaps = nil;
+            fShowLaps = nullptr;
         }
         else 
         {
@@ -543,7 +543,7 @@ void plProfileManagerFull::CreateGraph(const char* varName, uint32_t min, uint32
     plProfileVar* var = IFindTimer(varName);
     if (var)
     {
-        plGraphPlate* graph = nil;
+        plGraphPlate* graph = nullptr;
         plPlateManager::Instance().CreateGraphPlate(&graph);
         graph->SetSize(0.25, 0.25);
         graph->SetDataRange(min, max, 100);
@@ -589,7 +589,7 @@ void plProfileManagerFull::HideDetailGraph()
     if (fDetailGraph)
     {
         plPlateManager::Instance().DestroyPlate(fDetailGraph);
-        fDetailGraph = nil;
+        fDetailGraph = nullptr;
     }
 }
 

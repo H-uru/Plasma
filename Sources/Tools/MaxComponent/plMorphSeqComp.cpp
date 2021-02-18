@@ -94,7 +94,7 @@ ParamBlockDesc2 gMorphLayBk
 (   
     plComponent::kBlkComp, _T("MorphLay"), 0, &gMorphLayCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_MORPHLAY, IDS_COMP_MORPHLAY, 0, 0, nil,
+    IDD_COMP_MORPHLAY, IDS_COMP_MORPHLAY, 0, 0, nullptr,
 
     plMorphLayComp::kDeltas,    _T("Deltas"),   TYPE_INODE_TAB, 0,      P_CAN_CONVERT, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, IDC_ADD_TARGS, 0, IDC_DEL_TARGS,
@@ -357,18 +357,18 @@ plMorphLayComp* plMorphSeqComp::IGetLayerComp(int i)
 {
     plMaxNode* node = (plMaxNode*)fCompPB->GetINode(kLayers, TimeValue(0), i);
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
     if( !comp )
-        return nil;
+        return nullptr;
 
     if( comp->ClassID() == MORPHLAY_COMP_CID )
     {
         return (plMorphLayComp*)comp;
     }
 
-    return nil;
+    return nullptr;
 }
 
 plMorphSeqComp::plMorphSeqComp()

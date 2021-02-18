@@ -69,7 +69,7 @@ public:
     plParticleEmitter();
     ~plParticleEmitter();
     void Init(plParticleSystem *system, uint32_t maxParticles, uint32_t spanIndex, uint32_t miscFlags,
-              plParticleGenerator *gen = nil);
+              plParticleGenerator *gen = nullptr);
     void Clone(plParticleEmitter* src, uint32_t spanIndex);
 
     plParticleCore *GetParticleArray() const { return fParticleCores; }

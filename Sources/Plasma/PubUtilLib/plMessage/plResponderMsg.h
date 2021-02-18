@@ -52,7 +52,7 @@ public:
     // Don't bother reading and writing this, it is set right before sending
     plKey fPlayerKey;
 
-    plResponderMsg() : fPlayerKey(nil) {}
+    plResponderMsg() = default;
     ~plResponderMsg() {}
 
     CLASSNAME_REGISTER(plResponderMsg);

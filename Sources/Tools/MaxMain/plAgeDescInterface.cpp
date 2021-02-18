@@ -127,11 +127,11 @@ BOOL CALLBACK DumbDialogProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 
 //// Constructor/Destructor ///////////////////////////////////////////////////
 
-plAgeDescInterface::plAgeDescInterface() : fhDlg(nil), fDirty(false), fSpin(nil), fCurAge(-1)
+plAgeDescInterface::plAgeDescInterface() : fhDlg(), fDirty(), fSpin(), fCurAge(-1)
 {
     fCurrAgeCheckedOut = false;
-    fBoldFont = nil;
-    fAssetManIface = nil;
+    fBoldFont = nullptr;
+    fAssetManIface = nullptr;
 
     // Make sure the date/time picker controls we need are initialized
     INITCOMMONCONTROLSEX icc;
@@ -146,11 +146,11 @@ plAgeDescInterface::~plAgeDescInterface()
 
     DeleteObject( fBoldFont );
     DeleteObject( fHiliteBrush );
-    fBoldFont = nil;
+    fBoldFont = nullptr;
 
 #ifdef MAXASS_AVAILABLE
     delete fAssetManIface;
-    fAssetManIface = nil;
+    fAssetManIface = nullptr;
 #endif
 }
 
@@ -187,12 +187,12 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         fhDlg = hDlg;
 
 #ifdef MAXASS_AVAILABLE
-        if( fAssetManIface == nil )
+        if (fAssetManIface == nullptr)
             fAssetManIface = new MaxAssBranchAccess();
 #endif
 
         // Make our bold font by getting the normal font and bolding
-        if( fBoldFont == nil )
+        if (fBoldFont == nullptr)
         {
             HFONT origFont = (HFONT)SendMessage( hDlg, WM_GETFONT, 0, 0 );
             LOGFONTA origInfo, newInfo;
@@ -203,7 +203,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             fBoldFont = CreateFontIndirectA( &newInfo );
         }
 
-        if( fHiliteBrush == nil )
+        if (fHiliteBrush == nullptr)
             fHiliteBrush = CreateSolidBrush( RGB( 255, 0, 0 ) );
 
         IInitControls();
@@ -213,7 +213,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
     case WM_DESTROY:
 #ifdef MAXASS_AVAILABLE
         delete fAssetManIface;
-        fAssetManIface = nil;
+        fAssetManIface = nullptr;
 #endif
         return TRUE;
 
@@ -243,10 +243,10 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                 IUpdateCurAge();
 #endif
                 DestroyWindow(fhDlg);
-                fhDlg = nil;
+                fhDlg = nullptr;
                 fDirty = false;
                 fCurAge = -1;
-                fSpin = nil;
+                fSpin = nullptr;
             }
             return TRUE;
 
@@ -438,7 +438,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                     {
                         // Prepaint on an item. We get to change item font and color here
                         int idx = SGetTreeData( hdr->hwndFrom, (HTREEITEM)treeNotify->nmcd.dwItemSpec );
-/*                      if( item == nil || item->fType != plAgeFile::kBranch )
+/*                      if (item == nullptr || item->fType != plAgeFile::kBranch)
                         {
                             // Default drawing, with default font and such
                             SetWindowLong( hDlg, DWL_MSGRESULT, CDRF_DODEFAULT );
@@ -455,7 +455,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                         if (idx == -1)
                         {
                             // Set a bold font for the branch headers
-                            if( fBoldFont != nil )
+                            if (fBoldFont != nullptr)
                                 SelectObject( treeNotify->nmcd.hdc, fBoldFont );
                         }
 
@@ -538,7 +538,7 @@ void    plAgeDescInterface::ICheckOutCurrentAge()
     hsAssert( !fCurrAgeCheckedOut, "Trying to re-check out an age!" );
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge == nil )
+    if (currAge == nullptr)
     {
         hsAssert( false, "How are you checking out an age if none is selected?" );
         return;
@@ -570,7 +570,7 @@ void    plAgeDescInterface::ICheckInCurrentAge()
     hsAssert( fCurrAgeCheckedOut, "Trying to check in an age when none is checked out!" );
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge == nil )
+    if (currAge == nullptr)
     {
         hsAssert( false, "How are you checking in an age if none is selected?" );
         return;
@@ -594,7 +594,7 @@ void    plAgeDescInterface::IUndoCheckOutCurrentAge()
     hsAssert( fCurrAgeCheckedOut, "Trying to undo check out an age when none is checked out!" );
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge == nil )
+    if (currAge == nullptr)
     {
         hsAssert( false, "How are you undoing a checkout if no age is selected?" );
         return;
@@ -619,7 +619,7 @@ void    plAgeDescInterface::IInvalidateCheckOutIndicator()
     GetClientRect( dummy, &r );
     MapWindowPoints( dummy, fhDlg, (POINT *)&r, 2 );
 
-    RedrawWindow( fhDlg, &r, nil, RDW_INVALIDATE | RDW_ERASE );
+    RedrawWindow(fhDlg, &r, nullptr, RDW_INVALIDATE | RDW_ERASE);
 }
 
 bool    plAgeDescInterface::IMakeSureCheckedIn()
@@ -680,7 +680,7 @@ void    plAgeDescInterface::IUpdateCurAge()
     // Get the current age selection
     plAgeFile   *currAge = IGetCurrentAge();
 
-    if (currAge == nil)
+    if (currAge == nullptr)
     {
         ISetControlDefaults();
         IEnableControls( false );
@@ -771,9 +771,9 @@ void plAgeDescInterface::IEnableControls(bool enable)
     bool checkedOut = true;
 
     plAgeFile *currAge = IGetCurrentAge();
-    if( currAge != nil && currAge->fType == plAgeFile::kAssetFile )
+    if (currAge != nullptr && currAge->fType == plAgeFile::kAssetFile)
         checkedOut = fCurrAgeCheckedOut && enable;
-    else if( currAge != nil && currAge->fType == plAgeFile::kLocalFile )
+    else if (currAge != nullptr && currAge->fType == plAgeFile::kLocalFile)
         checkedOut = enable;
     else
         checkedOut = false;
@@ -791,7 +791,7 @@ void plAgeDescInterface::IEnableControls(bool enable)
     fSpin->Enable(checkedOut );
     fCapSpin->Enable(checkedOut );
 
-    if( currAge != nil && currAge->fType == plAgeFile::kAssetFile )
+    if (currAge != nullptr && currAge->fType == plAgeFile::kAssetFile)
     {
         EnableWindow( GetDlgItem( fhDlg, IDC_AGE_CHECKIN ), checkedOut );
         EnableWindow( GetDlgItem( fhDlg, IDC_AGE_UNDOCHECKOUT ), checkedOut );
@@ -858,7 +858,7 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
     // Add AssetMan ages, if available (since we're static, go thru the main MaxAss interface)
     // Hoikas (many years later) does not believe the above comment...
     MaxAssInterface *assetMan = GetMaxAssInterface();
-    if( assetMan!= nil )
+    if (assetMan != nullptr)
     {
         hsTArray<jvUniqueId> doneAssets;
 
@@ -924,13 +924,13 @@ void plAgeDescInterface::IFillAgeTree()
     TreeView_DeleteAllItems(ageTree);
 
 #ifdef MAXASS_AVAILABLE
-    if( fAssetManIface != nil )
-        fAssetManBranch = SAddTreeItem(ageTree, nil, "AssetMan Ages", -1);
+    if (fAssetManIface != nullptr)
+        fAssetManBranch = SAddTreeItem(ageTree, nullptr, "AssetMan Ages", -1);
     else
-        fAssetManBranch = nil;
+        fAssetManBranch = nullptr;
 #endif
 
-    fLocalBranch = SAddTreeItem(ageTree, nil, "Local Ages", -1);
+    fLocalBranch = SAddTreeItem(ageTree, nullptr, "Local Ages", -1);
 
     IGetAgeFiles(fAgeFiles);
 
@@ -949,7 +949,7 @@ void plAgeDescInterface::IFillAgeTree()
 
 BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static ST::string *name = nil;
+    static ST::string *name = nullptr;
 
     switch (msg)
     {
@@ -1109,7 +1109,7 @@ uint32_t  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
         for( i = 0; i < count; i++ )
         {
             plAgePage *page = (plAgePage *)ListBox_GetItemData( pageCombo, i );
-            if( page != nil && page->GetSeqSuffix() == searchSeq )
+            if (page != nullptr && page->GetSeqSuffix() == searchSeq)
             {
                 searchSeq++;
                 break;
@@ -1275,7 +1275,7 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     plAgePage *page;
 
     HWND hPage = GetDlgItem(fhDlg, IDC_PAGE_LIST);
-    while( ( page = aged.GetNextPage() ) != nil )
+    while ((page = aged.GetNextPage()) != nullptr)
     {
         int idx = ListBox_AddString( hPage, page->GetName().c_str() );
         ListBox_SetItemData( hPage, idx, (LPARAM)new plAgePage( *page ) );
@@ -1340,12 +1340,12 @@ plAgeFile* plAgeDescInterface::IGetCurrentAge()
 {
     HWND    ageTree = GetDlgItem( fhDlg, IDC_AGE_LIST );
     fCurrAgeItem = TreeView_GetSelection( ageTree );
-    if( fCurrAgeItem == nil )
-        return nil;
+    if (fCurrAgeItem == nullptr)
+        return nullptr;
 
     int idx = SGetTreeData( ageTree, fCurrAgeItem );
     if (idx == -1)
-        return nil;
+        return nullptr;
 
     return fAgeFiles[idx];
 }

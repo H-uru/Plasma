@@ -164,7 +164,7 @@ bool plArmatureComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 //      restitution = 0.5f;
 //      friction = 0.1f;
 //  }
-    plMaxNode *animRoot = nil;
+    plMaxNode *animRoot = nullptr;
 
     if(ClassID() == AVATAR_CLASS_ID)
         animRoot = (plMaxNode *)fCompPB->GetINode(plAvatarComponent::kRootNode);
@@ -496,7 +496,7 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     TSTR sdata;
     hsStringTokenizer toker;
 
-    if (mod == nil)
+    if (mod == nullptr)
     {
         hsAssert(false, "Adding clothes to a nil armatureMod.");
         return;
@@ -523,16 +523,16 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     hsgResMgr::ResMgr()->AddViaNotify(outfit->GetKey(), msg, plRefFlags::kActiveRef); // Attach outfit
     
     
-    plMipmap *baseTex = nil;
-    plLayerInterface *li = nil;
+    plMipmap *baseTex = nullptr;
+    plLayerInterface *li = nullptr;
 
-    if (mat != nil)
+    if (mat != nullptr)
     {
         li = mat->GetLayer(0)->BottomOfStack();
         baseTex = plMipmap::ConvertNoRef(li->GetTexture());
         hsAssert(li->GetTexture() == baseTex, "Base texture mismatch on avatar construction?");
     }
-    if (mat != nil && baseTex != nil)
+    if (mat != nullptr && baseTex != nullptr)
     {
         // Let's fix up these bitmap flags. Normally, they are set on convert based on
         // the contents of the bitmap. But here our contents are subject to change at runtime.
@@ -564,7 +564,7 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
 
 void plAvatarComponent::ISetupClothes(plMaxNode *node, plArmatureMod *mod, plErrorMsg *pErrMsg)
 {
-    AddClothingToMod(node, mod, fCompPB->GetInt(kClothingGroup), nil, pErrMsg);
+    AddClothingToMod(node, mod, fCompPB->GetInt(kClothingGroup), nullptr, pErrMsg);
 }
 
 bool plAvatarComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -709,7 +709,7 @@ protected:
     HWND fMstrDlg;
 
 public:
-    plLODAvatarComponentProc() : fComp(nil), fPB(nil) {}
+    plLODAvatarComponentProc() : fComp(), fPB() { }
 
     void UpdateBoneDisplay(IParamMap2 *pm)
     {
@@ -725,7 +725,7 @@ public:
         while (startIdx < endIdx)
         {
             INode *curNode = pb->GetINode(ParamID(plLODAvatarComponent::kBoneList), 0, startIdx);
-            if (curNode == nil)
+            if (curNode == nullptr)
             {
                 fComp->RemoveBone(startIdx);
                 endIdx--;
@@ -1040,7 +1040,7 @@ ParamBlockDesc2 gPLODAvatarBk
     end
 );
 
-plLODAvatarComponent::plLODAvatarComponent() : fMaterial(nil)
+plLODAvatarComponent::plLODAvatarComponent() : fMaterial()
 {
     fClassDesc = &gLODAvatarCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -1122,7 +1122,7 @@ bool plLODAvatarComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     if (mtl)
     {
         hsMaterialConverter::Instance().GetMaterialArray(mtl, node, mats);
-        fMaterial = (mats.GetCount() > 0 ? mats[0] : nil);
+        fMaterial = (mats.GetCount() > 0 ? mats[0] : nullptr);
     }
     return result;
 }
@@ -1146,7 +1146,7 @@ bool plLODAvatarComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
             if (compNode)
             {
                 plAGModifier *agMod = compNode->HasAGMod();
-                keyVec->push_back(agMod ? agMod->GetKey() : nil);
+                keyVec->push_back(agMod ? agMod->GetKey() : nullptr);
             }
         }
         plArmatureLODMod::ConvertNoRef(fArmMod)->AppendBoneVec(keyVec);

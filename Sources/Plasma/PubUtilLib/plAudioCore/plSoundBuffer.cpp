@@ -71,10 +71,10 @@ static plAudioFileReader *CreateReader( bool fullpath, const plFileName &filenam
 
     plAudioFileReader* reader = plAudioFileReader::CreateReader(path, channel, type);
 
-    if( reader == nil || !reader->IsValid() )
+    if (reader == nullptr || !reader->IsValid())
     {
         delete reader;
-        return nil;
+        return nullptr;
     }
 
     return reader;
@@ -98,7 +98,7 @@ void plSoundPreloader::Run()
         }
         else
         {
-            plAudioFileReader *reader = nil;
+            plAudioFileReader *reader = nullptr;
             while (!templist.empty())
             {
                 plSoundBuffer* buf = templist.back();
@@ -211,7 +211,7 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
     if( !( fFlags & kIsExternal ) )
     {
         fData = new uint8_t[ fDataLength ];
-        if( fData == nil )
+        if (fData == nullptr)
             fFlags |= kIsExternal;
         else
         {
@@ -222,7 +222,7 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
     }
     else
     {
-        fData = nil;
+        fData = nullptr;
 //      fValid = EnsureInternal();
         fValid = true;
     }
@@ -232,7 +232,7 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    if( fData == nil )
+    if (fData == nullptr)
         fFlags |= kIsExternal;
 
     s->WriteLE( fFlags );
@@ -316,10 +316,10 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::AsyncLoad(plAudioFileReader::Stream
     {
         fAsyncLoadLength = length;
         fStreamType = type;
-        if(fData == nil )
+        if (fData == nullptr)
         {
             fData = new uint8_t[ fAsyncLoadLength ? fAsyncLoadLength : fDataLength ];
-            if( fData == nil )
+            if (fData == nullptr)
                 return kError;
         }
 
@@ -363,10 +363,10 @@ void    plSoundBuffer::UnLoad()
         fReader->Close();
 
     delete fReader;
-    fReader = nil;
+    fReader = nullptr;
 
     delete [] fData;
-    fData = nil;
+    fData = nullptr;
     SetLoaded(false);
     fFlags |= kIsExternal;
     
@@ -384,7 +384,7 @@ void    plSoundBuffer::RoundDataPos( uint32_t &pos )
 plAudioFileReader *plSoundBuffer::GetAudioReader() 
 { 
     plAudioFileReader * reader = fReader;
-    fReader = nil; 
+    fReader = nullptr;
     return reader; 
 }       
     
@@ -432,10 +432,10 @@ void    plSoundBuffer::SetInternalData( plWAVHeader &header, uint32_t length, ui
 // for plugins only
 plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
 {   
-    if( fData == nil )
+    if (fData == nullptr)
     {
         fData = new uint8_t[fDataLength ];
-        if( fData == nil )
+        if (fData == nullptr)
             return kError;
     }
     if(!fReader)
@@ -443,14 +443,14 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
     //else
     //  fReader->Open();
 
-    if( fReader == nil )
+    if (fReader == nullptr)
         return kError;
     
     unsigned readLen = fDataLength; 
     if( !fReader->Read( readLen, fData ) )
     {
         delete [] fData;
-        fData = nil;
+        fData = nullptr;
         return kError;
     }
     
@@ -458,7 +458,7 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
     {
         fReader->Close();
         delete fReader;
-        fReader = nil;
+        fReader = nullptr;
     }
     return kSuccess;
 }
@@ -474,10 +474,10 @@ bool    plSoundBuffer::IGrabHeaderInfo()
         if(!fReader)
         {
             fReader = plAudioFileReader::CreateReader(path, GetReaderSelect(), plAudioFileReader::kStreamNative);
-            if( fReader == nil || !fReader->IsValid() )
+            if (fReader == nullptr || !fReader->IsValid())
             {
                 delete fReader;
-                fReader = nil;
+                fReader = nullptr;
                 return false;
             }
         }
@@ -488,7 +488,7 @@ bool    plSoundBuffer::IGrabHeaderInfo()
 
         fReader->Close();
         delete fReader;
-        fReader = nil;
+        fReader = nullptr;
     }
 
     return true;
@@ -513,10 +513,10 @@ plAudioFileReader   *plSoundBuffer::IGetReader( bool fullpath )
     
     plAudioFileReader* reader = plAudioFileReader::CreateReader(path, GetReaderSelect(), type);
 
-    if( reader == nil || !reader->IsValid() )
+    if (reader == nullptr || !reader->IsValid())
     {
         delete reader;
-        return nil;
+        return nullptr;
     }
 
     fHeader = reader->GetHeader();

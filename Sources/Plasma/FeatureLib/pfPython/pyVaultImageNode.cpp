@@ -155,8 +155,8 @@ void pyVaultImageNode::Image_SetImage(pyImage& image)
 
     if (fMipmapKey) {
         fMipmapKey->UnRefObject();
-        fMipmapKey = nil;
-        fMipmap = nil;
+        fMipmapKey = nullptr;
+        fMipmap = nullptr;
     }
 
     fMipmap = image.GetImage();
@@ -179,8 +179,8 @@ void pyVaultImageNode::SetImageFromBuf( PyObject * pybuf )
 
     if (fMipmapKey) {
         fMipmapKey->UnRefObject();
-        fMipmapKey = nil;
-        fMipmap = nil;
+        fMipmapKey = nullptr;
+        fMipmap = nullptr;
     }
 
     Py_buffer view;
@@ -203,8 +203,8 @@ void pyVaultImageNode::SetImageFromScrShot()
 
     if (fMipmapKey) {
         fMipmapKey->UnRefObject();
-        fMipmapKey = nil;
-        fMipmap = nil;
+        fMipmapKey = nullptr;
+        fMipmap = nullptr;
     }
 
     if (cyMisc::GetPipeline()) {
@@ -219,10 +219,10 @@ void pyVaultImageNode::SetImageFromScrShot()
             access.StuffImage(fMipmap);
         }
         else {
-            access.SetImageData(nil, 0);
+            access.SetImageData(nullptr, 0);
             access.SetImageType(VaultImageNode::kNone);
             delete fMipmap;
-            fMipmap = nil;
+            fMipmap = nullptr;
         }
     }
 }

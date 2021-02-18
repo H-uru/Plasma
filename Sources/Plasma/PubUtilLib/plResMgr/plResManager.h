@@ -87,7 +87,7 @@ public:
     plKey               FindOriginalKey(const plUoid&);
     plKey               FindKey(const plUoid&) override; // Same as above, but will check the uoid for clones
     const plLocation&   FindLocation(const ST::string& age, const ST::string& page) const;
-    // Use nil for any strings you don't need
+    // Use nullptr for any strings you don't need
     void                GetLocationStrings(const plLocation& loc, ST::string* ageBuffer, ST::string* pageBuffer) const;
 
     //---------------------------

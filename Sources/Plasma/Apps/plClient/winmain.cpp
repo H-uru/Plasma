@@ -90,7 +90,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Globals
 //
-ITaskbarList3* gTaskbarList = nil; // NT 6.1+ taskbar stuff
+ITaskbarList3* gTaskbarList = nullptr; // NT 6.1+ taskbar stuff
 
 extern bool gDataServerLocal;
 extern bool gSkipPreload;
@@ -134,7 +134,7 @@ static std::atomic<bool>  s_loginDlgRunning(false);
 static std::thread      s_statusThread;
 static UINT             s_WmTaskbarList = RegisterWindowMessage("TaskbarButtonCreated");
 
-FILE *errFP = nil;
+FILE *errFP = nullptr;
 HINSTANCE               gHInst = nullptr;      // Instance of this app
 
 static const unsigned   AUTH_LOGIN_TIMER    = 1;
@@ -187,7 +187,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             gTaskbarList->Release();
         HRESULT result = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&gTaskbarList);
         if (FAILED(result))
-            gTaskbarList = nil;
+            gTaskbarList = nullptr;
         return 0;
     }
 
@@ -266,7 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     // kill game if window is closed
                     gClient->SetDone(TRUE);
                     if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
-                        mgr->QueueDisableNet(false, nil);
+                        mgr->QueueDisableNet(false, nullptr);
                     DestroyWindow(gClient->GetWindowHandle());
                     break;
             }
@@ -440,7 +440,7 @@ static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd)
         NetCommConnect();
 
     bool cancelled = false;
-    NetCommAuthenticate(nil);
+    NetCommAuthenticate(nullptr);
 
     ::DialogBoxParam(gHInst, MAKEINTRESOURCE( IDD_AUTHENTICATING ), parentWnd, AuthDialogProc, (LPARAM)&cancelled);
 
@@ -672,7 +672,7 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
     NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
-    NetCommSetAuthTokenAndOS(nil, L"win");
+    NetCommSetAuthTokenAndOS(nullptr, L"win");
 }
 
 static void LoadUserPass(LoginDialogParam *pLoginParam)
@@ -940,7 +940,7 @@ INT_PTR CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 INT_PTR CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-    static char *sLastMsg = nil;
+    static char *sLastMsg = nullptr;
 
     switch( uMsg )
     {
@@ -1047,7 +1047,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // check to see if we were launched from the patcher
     bool eventExists = false;
     // we check to see if the event exists that the patcher should have created
-    HANDLE hPatcherEvent = CreateEventW(nil, TRUE, FALSE, L"UruPatcherEvent");
+    HANDLE hPatcherEvent = CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent");
     if (hPatcherEvent != nullptr)
     {
         // successfully created it, check to see if it was already created
@@ -1092,7 +1092,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #ifdef PLASMA_EXTERNAL_RELEASE
     // If another instance is running, exit.  We'll automatically release our
     // lock on the mutex when our process exits
-    HANDLE hOneInstance = CreateMutex(nil, FALSE, "UruExplorer");
+    HANDLE hOneInstance = CreateMutex(nullptr, FALSE, "UruExplorer");
     if (WaitForSingleObject(hOneInstance,0) != WAIT_OBJECT_0)
     {
         switch (plLocalization::GetLanguage())

@@ -258,7 +258,7 @@ void plMorphDelta::AllocDeltas(int iSpan, int nDel, int nUVW)
     if( uvwCnt )
         fSpans[iSpan].fUVWs = new hsPoint3[uvwCnt];
     else
-        fSpans[iSpan].fUVWs = nil;
+        fSpans[iSpan].fUVWs = nullptr;
 }
 
 void plMorphDelta::SetDeltas(int iSpan, const hsTArray<plVertDelta>& deltas, int numUVWChans, const hsPoint3* uvws)

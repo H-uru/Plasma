@@ -77,7 +77,7 @@ void plCloneSpawnModifier::SetTarget(plSceneObject* so)
         // Assume the clone template is in the same age we are
         const plLocation& loc = GetKey()->GetUoid().GetLocation();
         ST::string ageName;
-        ((plResManager*)hsgResMgr::ResMgr())->GetLocationStrings(loc, &ageName, nil);
+        ((plResManager*)hsgResMgr::ResMgr())->GetLocationStrings(loc, &ageName, nullptr);
 
         // Spawn the clone
         plKey cloneKey = SpawnClone(fTemplateName, ageName, GetTarget()->GetLocalToWorld(), GetKey());
@@ -117,5 +117,5 @@ plKey plCloneSpawnModifier::SpawnClone(const ST::string& cloneName, const ST::st
         return cloneKey;
     }
 
-    return nil;
+    return nullptr;
 }

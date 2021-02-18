@@ -168,10 +168,10 @@ class plMAXVertNormal
 
         plMAXVertNormal *fNext;
 
-        plMAXVertNormal() { fSmGroup = 0; fNext = nil; fInited = false; fNormal = Point3( 0, 0, 0 ); }
-        plMAXVertNormal( Point3 &n, DWORD s ) { fNext = nil; fInited = true; fNormal = n; fSmGroup = s; }
+        plMAXVertNormal() { fSmGroup = 0; fNext = nullptr; fInited = false; fNormal = Point3(0, 0, 0); }
+        plMAXVertNormal(Point3 &n, DWORD s) { fNext = nullptr; fInited = true; fNormal = n; fSmGroup = s; }
         ~plMAXVertNormal() { /*delete fNext; */}
-        void    DestroyChain() { if( fNext != nil ) fNext->DestroyChain(); delete fNext; fNext = nil; }
+        void    DestroyChain() { if (fNext != nullptr) fNext->DestroyChain(); delete fNext; fNext = nullptr; }
 
         // Adding normalization of input n. Input is usually just crossproduct of face edges. Non-normalized,
         // large faces will overwhelm small faces on summation, which is the opposite of what we want, since
@@ -195,7 +195,7 @@ class plMAXVertNormal
 
         Point3  &GetNormal( DWORD s )
         {
-            if( ( fSmGroup & s ) || ( fNext == nil ) )
+            if ((fSmGroup & s) || (fNext == nullptr))
                 return fNormal;
             else
                 return fNext->GetNormal( s );
@@ -215,7 +215,7 @@ class plMAXVertNormal
             plMAXVertNormal *ptr = fNext, *prev = this;
 
 
-            while( ptr != nil )
+            while (ptr != nullptr)
             {
                 if( ptr->fSmGroup & fSmGroup )
                 {
@@ -246,9 +246,9 @@ plMeshConverter& plMeshConverter::Instance()
 }
 
 plMeshConverter::plMeshConverter() :
-                    fInterface(nil),
+                    fInterface(),
                     fConverterUtils(hsConverterUtils::Instance()),
-                    fIsInitialized(false)
+                    fIsInitialized()
 {
     hsGuardBegin("plMeshConverter::plMeshConverter");
     hsGuardEnd;
@@ -299,7 +299,7 @@ void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint
 
     /// Get da mesh
     mesh = IGetNodeMesh( node );
-    if( mesh == nil )
+    if (mesh == nullptr)
         return ;
 
     numVerts = mesh->getNumVerts();
@@ -347,8 +347,8 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
 
     /// Get da mesh
     mesh = IGetNodeMesh( node );
-    if( mesh == nil )
-        return nil;
+    if (mesh == nullptr)
+        return nullptr;
 
     numFaces = mesh->getNumFaces();
     numVerts = mesh->getNumVerts();
@@ -370,7 +370,7 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
     for( i = 0; i < numFaces; i++ )
     {
         Face        *maxFace = &mesh->faces[ i ];
-        TVFace      *maxColorFace = ( mesh->vcFace != nil ) ? &mesh->vcFace[ i ] : nil;
+        TVFace      *maxColorFace = (mesh->vcFace != nullptr) ? &mesh->vcFace[i] : nullptr;
         hsPoint3    pos[ 3 ];
         hsPoint3    testPt1, testPt2, testPt3;
         hsVector3   normal;
@@ -515,11 +515,11 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
     int32_t           numFaces, i, j, k, numVerts, maxNumBones, maxUVWSrc;
     int32_t           numMaterials = 1, numSubMaterials = 1;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
-    Mtl             *maxMaterial = nil;
+    Mtl             *maxMaterial = nullptr;
     bool            isComposite, isMultiMat, flipOrder, checkForOverflow = false, includesComp;
     uint8_t           ourFormat, numChannels, maxBlendChannels;
-    hsColorRGBA     *colorArray = nil;
-    hsColorRGBA     *illumArray = nil;
+    hsColorRGBA     *colorArray = nullptr;
+    hsColorRGBA     *illumArray = nullptr;
     uint32_t          sharedSpanProps = 0;
     hsBitVector     usedSubMtls;
     bool            makeAlphaLayer = node->VtxAlphaNotAvailable();
@@ -530,8 +530,8 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
     hsTArray<hsTArray<plMAXVertexAccumulator *> *>  ourAccumulators;
 
     hsTArray<plMAXVertNormal>       vertNormalCache;
-    hsTArray<plMAXVertNormal>*      vertDPosDuCache = nil;
-    hsTArray<plMAXVertNormal>*      vertDPosDvCache = nil;
+    hsTArray<plMAXVertNormal>*      vertDPosDuCache = nullptr;
+    hsTArray<plMAXVertNormal>*      vertDPosDvCache = nullptr;
 
     //// Setup ///////////////////////////////////////////////////////////////
     plLocation nodeLoc = node->GetLocation(); 
@@ -545,7 +545,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
     /// Get da mesh
     mesh = IGetNodeMesh( node );
-    if( mesh == nil )
+    if (mesh == nullptr)
         return false;
     numFaces = mesh->getNumFaces();
     numVerts = mesh->getNumVerts();
@@ -636,7 +636,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
         if( mesh->numCVerts > 0)
         {
-            if (mesh->vertCol != nil)
+            if (mesh->vertCol != nullptr)
             {
                 colorArray = new hsColorRGBA[ mesh->numCVerts ];
                 for( i = 0; i < mesh->numCVerts; i++ )  
@@ -655,7 +655,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             }
         }
 
-        if (illumMap != nil)
+        if (illumMap != nullptr)
         {
             // MF_HORSE CARNAGE
             illumArray = new hsColorRGBA[numIllumVerts];
@@ -690,7 +690,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 if (usedSubMtls.IsBitSet(i)) // Only export the sub materials actually used
                     ourMaterials[i] = hsMaterialConverter::Instance().CreateMaterialArray( maxMaterial->GetSubMtl(i), node, i);
                 else
-                    ourMaterials[i] = nil;
+                    ourMaterials[i] = nullptr;
             }
         }
         else // plPassMtl, plDecalMat, plMultiPassMtl
@@ -705,12 +705,12 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         for( i = 0, maxUVWSrc = -1; i < numMaterials; i++ )
         {
             hsTArray<plExportMaterialData> *subMats = ourMaterials[i];
-            if (subMats == nil)
+            if (subMats == nullptr)
                 continue;
             for( j = 0; j < subMats->GetCount(); j++ )
             {               
                 plExportMaterialData currData = subMats->Get(j);
-                if (currData.fMaterial == nil)
+                if (currData.fMaterial == nullptr)
                     continue;
                 
                 for( k = 0; k < currData.fMaterial->GetNumLayers(); k++ )
@@ -719,7 +719,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
                     int uvwSrc = layer->GetUVWSrc() & plLayerInterface::kUVWIdxMask;
 
-                    if( maxUVWSrc < uvwSrc && layer->GetTexture() != nil )
+                    if (maxUVWSrc < uvwSrc && layer->GetTexture() != nullptr)
                         maxUVWSrc = uvwSrc;
                     if( maxBlendChannels < currData.fNumBlendChannels)
                         maxBlendChannels = currData.fNumBlendChannels;
@@ -744,7 +744,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             // (trick is, make sure those extra channels are valid first)
             for( i = maxUVWSrc + 1; i < numChannels; i++ )
             {
-                if( mesh->mapFaces( i + 1 ) == nil )
+                if (mesh->mapFaces(i + 1) == nullptr)
                 {
                     numChannels = i;
                     break;
@@ -769,9 +769,9 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         ourAccumulators.SetCount( numMaterials );
         for( i = 0; i < numMaterials; i++ )
         {           
-            if (ourMaterials[i] == nil)
+            if (ourMaterials[i] == nullptr)
             {
-                ourAccumulators[i] = nil;
+                ourAccumulators[i] = nullptr;
                 continue;
             }
 
@@ -834,7 +834,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         }
         else
         {
-            skinData = nil;
+            skinData = nullptr;
 
             if( node->NumBones() )
             {
@@ -888,7 +888,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         for( i = 0; i < numFaces; i++ )
         {
             Face        *maxFace = &mesh->faces[ i ];
-            TVFace      *maxColorFace = ( mesh->vcFace != nil ) ? &mesh->vcFace[ i ] : nil;
+            TVFace      *maxColorFace = (mesh->vcFace != nullptr) ? &mesh->vcFace[i] : nullptr;
             hsPoint3    pos[ 3 ];
             hsPoint3    testPt1, testPt2, testPt3;
             hsVector3   normals[ 3 ];
@@ -920,7 +920,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
             int numBlendChannels = 0;
             hsTArray<plExportMaterialData> *subMtls = ourMaterials[mainMatIndex];
-            hsAssert(subMtls != nil, "Face is assigned a material that we think is unused.");
+            hsAssert(subMtls != nullptr, "Face is assigned a material that we think is unused.");
 
             for (j = 0; j < subMtls->GetCount(); j++)
             {
@@ -993,7 +993,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             }
 
             // Handle colors
-            if( maxColorFace == nil )
+            if (maxColorFace == nullptr)
             {
                 colors[2] = colors[1] = colors[0] = white;
             }
@@ -1005,7 +1005,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
             }
             
             // Don't want to write illum values to the vertex for composite materials
-            if (illumArray == nil || includesComp)
+            if (illumArray == nullptr || includesComp)
             {
                 illums[ 0 ] = illums[ 1 ] = illums[ 2 ] = black;
             }
@@ -1018,7 +1018,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 // MF_HORSE CARNAGE
             }
             
-            if (alphaMap != nil) // if it IS nil, then alpha values are all at the default 1.0
+            if (alphaMap != nullptr) // if it IS nil, then alpha values are all at the default 1.0
             {
                 // MF_HORSE CARNAGE
                 TVFace* tvFace = &mesh->mapFaces(MAP_ALPHA)[i];
@@ -1039,13 +1039,13 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                     case plCompositeMtl::kCompBlendVertexAlpha:
                         break;
                     case plCompositeMtl::kCompBlendVertexIllumRed:
-                        colors[j].a = (tvFaces != nil ? illumMap[tvFaces[i].getTVert(flipOrder ? 2 - j : j)].x : 1.0f);
+                        colors[j].a = (tvFaces != nullptr ? illumMap[tvFaces[i].getTVert(flipOrder ? 2 - j : j)].x : 1.0f);
                         break;
                     case plCompositeMtl::kCompBlendVertexIllumGreen:
-                        colors[j].a = (tvFaces != nil ? illumMap[tvFaces[i].getTVert(flipOrder ? 2 - j : j)].y : 1.0f);
+                        colors[j].a = (tvFaces != nullptr ? illumMap[tvFaces[i].getTVert(flipOrder ? 2 - j : j)].y : 1.0f);
                         break;
                     case plCompositeMtl::kCompBlendVertexIllumBlue:
-                        colors[j].a = (tvFaces != nil ? illumMap[tvFaces[i].getTVert(flipOrder ? 2 - j : j)].z : 1.0f);
+                        colors[j].a = (tvFaces != nullptr ? illumMap[tvFaces[i].getTVert(flipOrder ? 2 - j : j)].z : 1.0f);
                         break;
                     default: // Different channels, thus we flush the alpha to 100 and do alpha through a 2nd layer.
                         colors[j].a = 1.0f;
@@ -1158,7 +1158,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 subMatIndex = ((plCompositeMtl *)currMaxMtl)->ComputeMaterialIndex(opac, 3) - 1;
             }
             // Add!
-            hsAssert(ourAccumulators[mainMatIndex] != nil, "Trying to add a face with an unused sub-material.");
+            hsAssert(ourAccumulators[mainMatIndex] != nullptr, "Trying to add a face with an unused sub-material.");
             ourAccumulators[ mainMatIndex ]->Get(subMatIndex)->AddVertex( vertIdx[ 0 ], &pos[ 0 ], &normals[ 0 ], colors[ 0 ], illums[ 0 ], uvs1 );
             ourAccumulators[ mainMatIndex ]->Get(subMatIndex)->AddVertex( vertIdx[ 1 ], &pos[ 1 ], &normals[ 1 ], colors[ 1 ], illums[ 1 ], uvs2 );
             ourAccumulators[ mainMatIndex ]->Get(subMatIndex)->AddVertex( vertIdx[ 2 ], &pos[ 2 ], &normals[ 2 ], colors[ 2 ], illums[ 2 ], uvs3 );
@@ -1171,7 +1171,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         {
             hsTArray<plExportMaterialData> *subMats = ourMaterials[i];
             // A sub material of a MultiMat that never gets used will have a nil value, signifying no spans to export
-            if (subMats == nil)
+            if (subMats == nullptr)
                 continue;
             for( j = 0; j < subMats->GetCount(); j++)
             {
@@ -1195,7 +1195,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 if( (bumpDuChan[i] >= 0) && (bumpDvChan[i] > 0) )
                     span->fLocalUVWChans = (bumpDuChan[i] << 8) | bumpDvChan[i];
 
-                if( (span->fMaterial != nil)
+                if ((span->fMaterial != nullptr)
                     && (span->fMaterial->GetNumLayers() > 0) 
                     && (span->fMaterial->GetLayer( 0 )->GetState().fBlendFlags & hsGMatState::kBlendMask) ) 
                 {
@@ -1301,18 +1301,18 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
 
         for( i = 0; i < numMaterials; i++ )
         {
-            if( vertDPosDuCache != nil )
+            if (vertDPosDuCache != nullptr)
             {
                 for( j = 0; j < vertDPosDuCache[i].GetCount(); j++ )
                     vertDPosDuCache[i][j].DestroyChain();
             }
-            if( vertDPosDvCache != nil )
+            if (vertDPosDvCache != nullptr)
             {
                 for( j = 0; j < vertDPosDvCache[i].GetCount(); j++ )
                     vertDPosDvCache[i][j].DestroyChain();
             }
 
-            if (ourAccumulators[i] == nil)
+            if (ourAccumulators[i] == nullptr)
                 continue;
             for( j = 0; j < ourAccumulators[ i ]->GetCount(); j++ )
             {
@@ -1360,20 +1360,20 @@ uint32_t  plMeshConverter::ISetHexAlpha( uint32_t color, float alpha)
 // via IGetNodeMesh().
 void plMeshConverter::IDeleteTempGeometry()
 {
-    if( fTriObjToDelete != nil )
+    if (fTriObjToDelete != nullptr)
     {
         fTriObjToDelete->DeleteMe();
-        fTriObjToDelete = nil;
+        fTriObjToDelete = nullptr;
     }
     if( fMeshToDelete )
     {
         delete fMeshToDelete;
-        fMeshToDelete = nil;
+        fMeshToDelete = nullptr;
     }
 }
 
 //// IGetNodeMesh ////////////////////////////////////////////////////////////
-//  Get the Mesh object attached to a node. Returns nil if the node
+//  Get the Mesh object attached to a node. Returns nullptr if the node
 //  is not a triMesh object
 
 Mesh    *plMeshConverter::IGetNodeMesh( plMaxNode *node )
@@ -1382,21 +1382,21 @@ Mesh    *plMeshConverter::IGetNodeMesh( plMaxNode *node )
 
     const char* dbgNodeName = node->GetName();
 
-    fTriObjToDelete = nil;
-    fMeshToDelete = nil;
+    fTriObjToDelete = nullptr;
+    fMeshToDelete = nullptr;
 
     // Get da object
     Object *obj = node->EvalWorldState( fConverterUtils.GetTime( fInterface ) ).obj;
-    if( obj == nil )
-        return nil;
+    if (obj == nullptr)
+        return nullptr;
 
     if( !obj->CanConvertToType( triObjectClassID ) )
-        return nil;
+        return nullptr;
 
     // Convert to triMesh object
     TriObject   *meshObj = (TriObject *)obj->ConvertToType( fConverterUtils.GetTime( fInterface ), triObjectClassID );
-    if( meshObj == nil )
-        return nil;
+    if (meshObj == nullptr)
+        return nullptr;
 
     if( meshObj != obj )
         fTriObjToDelete = meshObj;
@@ -1404,7 +1404,7 @@ Mesh    *plMeshConverter::IGetNodeMesh( plMaxNode *node )
     // Get the mesh
     Mesh    *mesh = &(meshObj->mesh);
     if( mesh->getNumFaces() == 0 )
-        return nil;
+        return nullptr;
 
     if( node->GetDup2Sided() )
     {
@@ -1562,8 +1562,8 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
             UVVert pt;
             pt.z = 0.0f;
 
-            TVFace* alphaFace = mesh->mapFaces(MAP_ALPHA) ? &mesh->mapFaces(MAP_ALPHA)[faceIdx] : nil;
-            TVFace* illumFace = mesh->mapFaces(MAP_SHADING) ? &mesh->mapFaces(MAP_SHADING)[faceIdx] : nil;
+            TVFace* alphaFace = mesh->mapFaces(MAP_ALPHA) ? &mesh->mapFaces(MAP_ALPHA)[faceIdx] : nullptr;
+            TVFace* illumFace = mesh->mapFaces(MAP_SHADING) ? &mesh->mapFaces(MAP_SHADING)[faceIdx] : nullptr;
 
             if (hsMaterialConverter::Instance().IsCompositeMat( maxMtl ))
             {
@@ -1574,20 +1574,20 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
 
 
                 compMtl->SetOpacityVal(&pt.x, 
-                        (alphas == nil 
-                            ? nil 
+                        (alphas == nullptr
+                            ? nullptr
                             : &alphas[ alphaFace->getTVert(j) ]),
-                        (illums == nil 
-                            ? nil 
+                        (illums == nullptr
+                            ? nullptr
                             : &illums[ illumFace->getTVert(j) ]),
                         pb->GetInt(kCompBlend, 0, 0));
                 
                 compMtl->SetOpacityVal(&pt.y, 
-                    (alphas == nil 
-                        ? nil 
+                    (alphas == nullptr
+                        ? nullptr
                         : &alphas[ alphaFace->getTVert(j) ]),
-                    (illums == nil 
-                        ? nil 
+                    (illums == nullptr
+                        ? nullptr
                         : &illums[ illumFace->getTVert(j) ]),
                     pb->GetInt(kCompBlend, 0, 1));
                 // MF_HORSE CARNAGE
@@ -1596,7 +1596,7 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
             {       
                 pt.y = 0.0;
                 pt.z = 1.0;
-                if (alphas == nil || alphaFace == nil)
+                if (alphas == nullptr || alphaFace == nullptr)
                     pt.x = 1.0;
                 else
                     pt.x = alphas[alphaFace->getTVert(j)].x;
@@ -1735,7 +1735,7 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
         int i;
         for( i = 0; i < mesh->getNumFaces(); i++ )
         {
-            const plLayerInterface* layer = nil;
+            const plLayerInterface* layer = nullptr;
             if( isMultiMat )
             {
                 int index = mesh->faces[i].getMatID();
@@ -1994,7 +1994,7 @@ plMAXVertexAccNode::plMAXVertexAccNode( const hsPoint3 *point, const hsVector3 *
     fNumChannels = numChannels;
     fIndex = index;
 
-    fNext = nil;
+    fNext = nullptr;
 }
 
 //// IsEqual /////////////////////////////////////////////////////////////////
@@ -2040,7 +2040,7 @@ plMAXVertexAccumulator::~plMAXVertexAccumulator()
     
     for( i = 0; i < fNumPoints; i++ )
     {
-        while( fPointList[ i ] != nil )
+        while (fPointList[i] != nullptr)
         {
             node = fPointList[ i ]->fNext;
             delete fPointList[ i ];
@@ -2064,7 +2064,7 @@ void    plMAXVertexAccumulator::AddVertex( int index, hsPoint3 *point, hsVector3
 
 
     // See if one exists in this list
-    for( node = fPointList[ index ]; node != nil; node = node->fNext )
+    for (node = fPointList[index]; node != nullptr; node = node->fNext)
     {
         if( node->IsEqual( normal, color, illum, uvs ) )
         {
@@ -2095,11 +2095,11 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
     hsPoint3                *uvs[ plGeometrySpan::kMaxNumUVChannels ];  
 
     const char* dbgNodeName = maxNode->GetName();
-    TempWeightInfo          *weights = nil;
+    TempWeightInfo          *weights = nullptr;
 
     /// Precalculate the weights if necessary
     weights = new TempWeightInfo[ fNumPoints ];
-    if( skinData != nil )
+    if (skinData != nullptr)
     {
         for( i = 0; i < fNumPoints; i++ )
         {
@@ -2208,14 +2208,14 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
 
     /// Stuff the verts
     for( i = 0; i < plGeometrySpan::kMaxNumUVChannels; i++)
-        uvs[ i ] = nil;
+        uvs[i] = nullptr;
 
     for( i = 0; i < fNumVertices; i++ )
     {
         origIdx = fInverseVertTable[ i ];
 
         // origIdx gets us the list, but we need to know which node in the list
-        for( node = fPointList[ origIdx ]; node != nil; node = node->fNext )
+        for (node = fPointList[origIdx]; node != nullptr; node = node->fNext)
         {
             if( node->fIndex == i )
             {
@@ -2234,14 +2234,14 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
                 break;
             }
         }
-        hsAssert( node != nil, "Invalid accumulator table when stuffing buffers!" );
+        hsAssert(node != nullptr, "Invalid accumulator table when stuffing buffers!");
     }
 
     /// Now stuff the indices
     for( i = 0; i < fIndices.GetCount(); i++ )
         span->AddIndex( fIndices[ i ] );
 
-    if( weights != nil )
+    if (weights != nullptr)
         delete [] weights;
 }
 

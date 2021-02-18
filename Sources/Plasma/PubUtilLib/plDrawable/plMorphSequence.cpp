@@ -112,8 +112,8 @@ public:
 hsTArray<plMorphTarget> fTgtWgts;
 
 plMorphSequence::plMorphSequence()
-:   fMorphFlags(0),
-    fMorphSDLMod(nil),
+:   fMorphFlags(),
+    fMorphSDLMod(),
     fGlobalLayerRef(-1)
 {
 }
@@ -216,7 +216,7 @@ bool plMorphSequence::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-int plMorphSequence::GetNumLayers(plKey meshKey /* = nil */) const
+int plMorphSequence::GetNumLayers(plKey meshKey /* = {} */) const
 {
     int index = IFindSharedMeshIndex(meshKey);
     if (index < 0)
@@ -225,7 +225,7 @@ int plMorphSequence::GetNumLayers(plKey meshKey /* = nil */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs.GetCount();
 }
 
-int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = nil */) const 
+int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = {} */) const
 { 
     int index = IFindSharedMeshIndex(meshKey);
     if (index < 0)
@@ -234,7 +234,7 @@ int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = nil */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs[iLay].GetNumDeltas();
 }
 
-float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil */) const 
+float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = {} */) const
 { 
     int index = IFindSharedMeshIndex(meshKey);
     if (index == -1)
@@ -243,15 +243,15 @@ float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = nil */) 
         return fSharedMeshes[index].fArrayWeights[iLay].fDeltaWeights[iDel];
 }
 
-void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = nil */)
+void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = {} */)
 {
     int index = IFindSharedMeshIndex(meshKey);
 
     // Only dirty if the weight isn't for a pending mesh
-    if(meshKey == nil || index >= 0)
+    if (meshKey == nullptr || index >= 0)
         ISetDirty(true);
 
-    if (meshKey == nil)
+    if (meshKey == nullptr)
     {
         if( iLay < fMorphs.GetCount() )
         {
@@ -447,7 +447,7 @@ const plDrawInterface* plMorphSequence::IGetDrawInterface() const
 {
     plSceneObject* so = GetTarget();
     if( !so )
-        return nil;
+        return nullptr;
 
     const plDrawInterface* di = so->GetDrawInterface();
 
@@ -474,7 +474,7 @@ void plMorphSequence::RemoveTarget(plSceneObject *so)
             so->RemoveModifier(fMorphSDLMod);
 
     delete fMorphSDLMod;
-    fMorphSDLMod = nil;     
+    fMorphSDLMod = nullptr;
 }
     
 void plMorphSequence::Read(hsStream* s, hsResMgr* mgr)
@@ -564,7 +564,7 @@ void plMorphSequence::IReleaseIndices()
 
 void plMorphSequence::IApplyShared(int iShare)
 {
-    if( iShare >= fSharedMeshes.GetCount() || fSharedMeshes[iShare].fCurrDraw == nil)
+    if (iShare >= fSharedMeshes.GetCount() || fSharedMeshes[iShare].fCurrDraw == nullptr)
         return;
 
     plSharedMeshInfo& mInfo = fSharedMeshes[iShare];
@@ -597,7 +597,7 @@ void plMorphSequence::IApplyShared(int iShare)
 
 bool plMorphSequence::IResetShared(int iShare)
 {
-    if( iShare >= fSharedMeshes.GetCount() || fSharedMeshes[iShare].fCurrDraw == nil)
+    if (iShare >= fSharedMeshes.GetCount() || fSharedMeshes[iShare].fCurrDraw == nullptr)
         return false;
 
     plSharedMeshInfo& mInfo = fSharedMeshes[iShare];
@@ -634,7 +634,7 @@ bool plMorphSequence::IResetShared(int iShare)
 bool plMorphSequence::IFindIndices(int iShare)
 {
     plSharedMeshInfo& mInfo = fSharedMeshes[iShare];
-    mInfo.fCurrDraw = nil; // In case we fail.
+    mInfo.fCurrDraw = nullptr; // In case we fail.
 
     const plInstanceDrawInterface* di = plInstanceDrawInterface::ConvertNoRef(IGetDrawInterface());
     if( !di )
@@ -666,7 +666,7 @@ bool plMorphSequence::IFindIndices(int iShare)
 void plMorphSequence::IReleaseIndices(int iShare)
 {
     plSharedMeshInfo& mInfo = fSharedMeshes[iShare];
-    mInfo.fCurrDraw = nil;
+    mInfo.fCurrDraw = nullptr;
 }
 
 int32_t plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
@@ -725,7 +725,7 @@ void plMorphSequence::AddSharedMesh(plSharedMesh* mesh)
 
     plSharedMeshInfo mInfo;
     mInfo.fMesh = mesh;
-    mInfo.fCurrDraw = nil;
+    mInfo.fCurrDraw = nullptr;
 
     // Intialize our weights to zero.
     mInfo.fArrayWeights.Reset();

@@ -94,7 +94,7 @@ void plNetClientMgr::IShowLists()
     int baseY=y;
     txt.DrawString(x,y,"   Members",255,255,255,255,plDebugText::kStyleBold);
     y+=yOff;
-    plNetTransportMember** members=nil;
+    plNetTransportMember** members = nullptr;
     fTransport.GetMemberListDistSorted(members);
     for(i=0;i<fTransport.GetNumMembers();i++)
     {
@@ -102,7 +102,7 @@ void plNetClientMgr::IShowLists()
         hsAssert(mbr, "ShowLists: nil member?");
         if (mbr->IsServer())
             continue;
-        player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nil);
+        player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nullptr);
         sprintf(str, "%s%s %s p2p=%d dist=%.1f",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingVoice ? "V" : " ",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
@@ -223,7 +223,7 @@ void plNetClientMgr::IShowRelevanceRegions()
     const char* title = "Name / In / Care";
     txt.DrawString(x, y - yOff, title, 255, 255, 255, 255, plDebugText::kStyleBold);
 
-    plNetTransportMember** members = nil;
+    plNetTransportMember** members = nullptr;
     fTransport.GetMemberListDistSorted(members);
 
     //
@@ -255,8 +255,8 @@ void plNetClientMgr::IShowRelevanceRegions()
     //
     // Print out the regions
     //
-    const hsBitVector* ourCare = nil;
-    const hsBitVector* ourIn = nil;
+    const hsBitVector* ourCare = nullptr;
+    const hsBitVector* ourIn = nullptr;
 
     plSceneObject* player = plSceneObject::ConvertNoRef(GetLocalPlayer());
     if (player)
@@ -265,10 +265,10 @@ void plNetClientMgr::IShowRelevanceRegions()
         if (avMod)
         {
             ourIn = &avMod->GetRelRegionImIn();
-            uint32_t width = IPrintRelRegion(*ourIn, x, y, nil);
+            uint32_t width = IPrintRelRegion(*ourIn, x, y, nullptr);
 
             ourCare = &avMod->GetRelRegionCareAbout();
-            IPrintRelRegion(*ourCare, x + width + xOff, y, nil);
+            IPrintRelRegion(*ourCare, x + width + xOff, y, nullptr);
 
             y += yOff;
         }
@@ -280,7 +280,7 @@ void plNetClientMgr::IShowRelevanceRegions()
         if (mbr->IsServer())
             continue;
 
-        player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nil);
+        player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nullptr);
         if (player)
         {
             const plArmatureMod* avMod = plArmatureMod::ConvertNoRef(player->GetModifierByType(plArmatureMod::Index()));
@@ -345,7 +345,7 @@ void plNetClientMgr::IShowAvatars()
     y=startY;
     x=startX;
 
-    plNetTransportMember** members=nil;
+    plNetTransportMember** members = nullptr;
     fTransport.GetMemberListDistSorted(members);
     for(i=0;i<fTransport.GetNumMembers();i++)
     {
@@ -354,7 +354,7 @@ void plNetClientMgr::IShowAvatars()
         if (mbr->IsServer())
             continue;
 
-        player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nil);
+        player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nullptr);
         pos = (player ? player->GetLocalToWorld() * hsPoint3() : hsPoint3());
         ori = (player ? player->GetLocalToWorld() * hsVector3(0.f, -1.f, 0.f) : hsVector3());
 

@@ -265,7 +265,7 @@ public:
     
     // conversion ops
     plSimpleStateVariable* GetAsSimpleStateVar() override { return this; }
-    plSDStateVariable* GetAsSDStateVar() override { return nil; }
+    plSDStateVariable* GetAsSDStateVar() override { return nullptr; }
     bool operator==(const plSimpleStateVariable &other) const;  // assumes matching var descriptors
 
     void TimeStamp(const plUnifiedTime & ut=plUnifiedTime::GetCurrent()) override;
@@ -350,7 +350,7 @@ public:
     ~plSDStateVariable();   // delete all records
 
     // conversion ops
-    plSimpleStateVariable* GetAsSimpleStateVar() override { return nil; }
+    plSimpleStateVariable* GetAsSimpleStateVar() override { return nullptr; }
     plSDStateVariable* GetAsSDStateVar() override { return this; }
     bool operator==(const plSDStateVariable &other) const;  // assumes matching var descriptors
 
@@ -438,7 +438,7 @@ public:
     plStateDataRecord(const ST::string& sdName, int version=plSDL::kLatestVersion);
     plStateDataRecord(plStateDescriptor* sd);
     plStateDataRecord(const plStateDataRecord &other, uint32_t writeOptions=0 ):fFlags(0) { CopyFrom(other, writeOptions); }
-    plStateDataRecord() : fDescriptor(nil), fFlags(0) {}
+    plStateDataRecord() : fDescriptor(), fFlags() { }
     ~plStateDataRecord();
 
     bool ConvertTo(plStateDescriptor* other, bool force=false );
@@ -503,8 +503,8 @@ public:
     bool Read(hsStream* s, float timeConvert, uint32_t readOptions=0);
     void Write(hsStream* s, float timeConvert, uint32_t writeOptions=0) const;
 
-    static bool ReadStreamHeader(hsStream* s, ST::string* name, int* version, plUoid* objUoid=nil);
-    void WriteStreamHeader(hsStream* s, plUoid* objUoid=nil) const;
+    static bool ReadStreamHeader(hsStream* s, ST::string* name, int* version, plUoid* objUoid=nullptr);
+    void WriteStreamHeader(hsStream* s, plUoid* objUoid=nullptr) const;
 };
 
 //
@@ -557,7 +557,7 @@ public:
     ~plSDLMgr();
 
     static plSDLMgr* GetInstance();
-    plStateDescriptor* FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl=nil) const;   // version or kLatestVersion
+    plStateDescriptor* FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl=nullptr) const;   // version or kLatestVersion
     
     const plSDL::DescriptorList * GetDescriptors() const { return &fDescriptors;}
 
@@ -574,8 +574,8 @@ public:
     bool AllowTimeStamping() const { return ! ( fBehaviorFlags&plSDL::kDisallowTimeStamping ); }
 
     // I/O - return # of bytes read/written
-    int Write(hsStream* s, const plSDL::DescriptorList* dl=nil);    // write descriptors to a stream
-    int Read(hsStream* s, plSDL::DescriptorList* dl=nil);       // read descriptors into provided list (use legacyList if nil)
+    int Write(hsStream* s, const plSDL::DescriptorList* dl=nullptr);    // write descriptors to a stream
+    int Read(hsStream* s, plSDL::DescriptorList* dl=nullptr);       // read descriptors into provided list (use legacyList if nil)
 };
 
 #endif  // PL_SDL_inc

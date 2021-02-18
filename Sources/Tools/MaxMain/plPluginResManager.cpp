@@ -60,7 +60,7 @@ plKey plPluginResManager::NameToLoc(const ST::string& age, const ST::string& pag
 {
     // Get or create our page
     plRegistryPageNode* pageNode = INameToPage(age, page, sequenceNumber, itinerant);
-    hsAssert(pageNode != nil, "No page returned from INameToPage(), shouldn't be possible");
+    hsAssert(pageNode != nullptr, "No page returned from INameToPage(), shouldn't be possible");
 
     // Go find the sceneNode now, since we know the page exists (go through our normal channels, though)
     ST::string keyName = ST::format("{}_{}", age, page);
@@ -68,7 +68,7 @@ plKey plPluginResManager::NameToLoc(const ST::string& age, const ST::string& pag
     plUoid nodeUoid(pageNode->GetPageInfo().GetLocation(), plSceneNode::Index(), keyName);
 
     plKey snKey = FindKey(nodeUoid);
-    if (snKey == nil)
+    if (snKey == nullptr)
     {
         // Not found, create a new one
         plSceneNode *newSceneNode = new plSceneNode;
@@ -83,7 +83,7 @@ plKey plPluginResManager::NameToLoc(const ST::string& age, const ST::string& pag
     }
     else
     {
-        hsAssert(snKey->ObjectIsLoaded() != nil, "Somehow we still have the key for a sceneNode that hasn't been loaded.");
+        hsAssert(snKey->ObjectIsLoaded() != nullptr, "Somehow we still have the key for a sceneNode that hasn't been loaded.");
 
         // Force load, or attempt to at least
         plSceneNode* node = plSceneNode::ConvertNoRef(snKey->VerifyLoaded());
@@ -109,7 +109,7 @@ plRegistryPageNode* plPluginResManager::INameToPage(const ST::string& age, const
 {
     // Find the location first, to see if it already exists
     plRegistryPageNode* pageNode = FindPage(age, page);
-    if (pageNode == nil)
+    if (pageNode == nullptr)
     {
         // This page does not yet exist, so create a new page
         if (sequenceNumber != uint32_t(-1))
@@ -235,7 +235,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, int32_t 
             // Note: INameToPage will turn around and call us again, so no need to do the call twice
             plRegistryPageNode* texturePage = INameToPage(pageNode->GetPageInfo().GetAge(), 
                                                             plAgeDescription::GetCommonPage(plAgeDescription::kTextures), texSeqNum);
-            hsAssert(texturePage != nil, "Unable to get or create the shared textures page? Shouldn't be possible.");
+            hsAssert(texturePage != nullptr, "Unable to get or create the shared textures page? Shouldn't be possible.");
 
             // Do the other one
             int32_t commonSeqNum = -1;
@@ -246,7 +246,7 @@ void plPluginResManager::IPreLoadTextures(plRegistryPageNode* pageNode, int32_t 
             plRegistryPageNode* commonPage = INameToPage(pageNode->GetPageInfo().GetAge(), 
                                                             plAgeDescription::GetCommonPage(plAgeDescription::kGlobal),
                                                             commonSeqNum);
-            hsAssert(commonPage != nil, "Unable to get or create the shared built-in page? Shouldn't be possible.");
+            hsAssert(commonPage != nullptr, "Unable to get or create the shared built-in page? Shouldn't be possible.");
         }
     }
 }
@@ -261,7 +261,7 @@ const plLocation& plPluginResManager::GetCommonPage(const plLocation &sisterPage
         return sisterPage;          // Reserved pages have no common pages
 
     plRegistryPageNode* page = FindPage(sisterPage);
-    if (page == nil)
+    if (page == nullptr)
     {
         hsAssert(false, "Trying to find the sister common page to a page that doesn't exist!");
         return sisterPage;
@@ -270,7 +270,7 @@ const plLocation& plPluginResManager::GetCommonPage(const plLocation &sisterPage
     // Find the common page in the same age as this one
     plRegistryPageNode* commonPage = FindPage(page->GetPageInfo().GetAge(), 
                                                 plAgeDescription::GetCommonPage(whichPage));
-    if (commonPage == nil)
+    if (commonPage == nullptr)
     {
         hsAssert(false, "Unable to find sister common page to this page");
         return sisterPage;
@@ -398,7 +398,7 @@ void plPluginResManager::EndExport()
 {
     for (int i = 0; i < fExportedNodes.GetCount(); i++)
     {
-        if (fExportedNodes[i] != nil)
+        if (fExportedNodes[i] != nullptr)
             fExportedNodes[i]->GetKey()->UnRefObject();
     }
     fExportedNodes.Reset();
@@ -432,7 +432,7 @@ int32_t plPluginResManager::VerifySeqNumber(int32_t sequenceNumber, const ST::st
     }
 
     fLastVerifyError = kNoVerifyError;
-    fLastVerifyPage = nil;
+    fLastVerifyPage = nullptr;
 
     plLocation toCompareTo;
     if (willBeReserved)
@@ -442,7 +442,7 @@ int32_t plPluginResManager::VerifySeqNumber(int32_t sequenceNumber, const ST::st
 
     // Does the page already exist?
     plRegistryPageNode* pageNode = FindPage(age, page);
-    if (pageNode != nil)
+    if (pageNode != nullptr)
     {
         if (pageNode->GetPageInfo().GetLocation() == toCompareTo)
             // Right page, right sequence #. Assume we're smart enough to already have it right
@@ -456,7 +456,7 @@ int32_t plPluginResManager::VerifySeqNumber(int32_t sequenceNumber, const ST::st
     if (sequenceNumber > 0)
     {
         pageNode = FindPage(toCompareTo);
-        if (pageNode == nil)
+        if (pageNode == nullptr)
             // Safe to use
             return negated ? -sequenceNumber : sequenceNumber;
         else
@@ -483,7 +483,7 @@ int32_t plPluginResManager::VerifySeqNumber(int32_t sequenceNumber, const ST::st
             toCompareTo = plLocation::MakeNormal(sequenceNumber);
 
         pageNode = FindPage(toCompareTo);
-        if (pageNode == nil)
+        if (pageNode == nullptr)
             return negated ? -sequenceNumber : sequenceNumber;
     }
 
@@ -511,7 +511,7 @@ bool plPluginResManager::NukeKeyAndObject(plKey& objectKey)
     // Check the ref count on the object. Nobody should have a ref to it
     // except the key
     hsKeyedObject* object = objectKey->ObjectIsLoaded();
-    if (object != nil)
+    if (object != nullptr)
     {
         if (keyData->GetActiveRefs())
             // Somebody still has a ref to this object, so we can't nuke it
@@ -519,7 +519,7 @@ bool plPluginResManager::NukeKeyAndObject(plKey& objectKey)
     }
 
     // Nobody has a ref to the object, so we're clear to nuke
-    keyData->SetObjectPtr(nil);
+    keyData->SetObjectPtr(nullptr);
 
     // Check the key. The refcount should be 1 at this point, for the copy
     // we're holding in this function. Nobody else should be holding the key
@@ -528,7 +528,7 @@ bool plPluginResManager::NukeKeyAndObject(plKey& objectKey)
         return false;
 
     // Nuke out the key as well
-    objectKey = nil;
+    objectKey = nullptr;
 
     // All done!
     return true;

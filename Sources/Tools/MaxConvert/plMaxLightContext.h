@@ -74,7 +74,7 @@ public:
 
     BOOL InMtlEditor() override { return false; }    // is this rendering the mtl editor sample sphere?
 
-    LightDesc* Light(int n) override { return nil; } // get the nth light.
+    LightDesc* Light(int n) override { return nullptr; } // get the nth light.
 
     TimeValue CurTime() override { return fCurrentTime; }        // current time value
 

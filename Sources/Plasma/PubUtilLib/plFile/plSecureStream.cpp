@@ -291,7 +291,7 @@ bool plSecureStream::Close()
     if (fRAMStream)
     {
         delete fRAMStream;
-        fRAMStream = nil;
+        fRAMStream = nullptr;
     }
 
     fWriteFileName = ST::string();
@@ -537,7 +537,7 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const plFileName& o
         if (!seededRand)
         {
             seededRand = true;
-            srand((unsigned int)time(nil));
+            srand((unsigned int)time(nullptr));
         }
 
         for (int i = amtRead; i < kEncryptChunkSize; i++)
@@ -559,7 +559,7 @@ bool plSecureStream::IWriteEncrypted(hsStream* sourceStream, const plFileName& o
     return true;
 }
 
-bool plSecureStream::FileEncrypt(const plFileName& fileName, uint32_t* key /* = nil */)
+bool plSecureStream::FileEncrypt(const plFileName& fileName, uint32_t* key /* = nullptr */)
 {
     hsUNIXStream sIn;
     if (!sIn.Open(fileName))
@@ -588,7 +588,7 @@ bool plSecureStream::FileEncrypt(const plFileName& fileName, uint32_t* key /* = 
     return true;
 }
 
-bool plSecureStream::FileDecrypt(const plFileName& fileName, uint32_t* key /* = nil */)
+bool plSecureStream::FileDecrypt(const plFileName& fileName, uint32_t* key /* = nullptr */)
 {
     plSecureStream sIn(false, key);
     if (!sIn.Open(fileName))
@@ -669,7 +669,7 @@ bool plSecureStream::IsSecureFile(const plFileName& fileName)
     return isEncrypted;
 }
 
-hsStream* plSecureStream::OpenSecureFile(const plFileName& fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nil */)
+hsStream* plSecureStream::OpenSecureFile(const plFileName& fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nullptr */)
 {
     bool requireEncryption = flags & kRequireEncryption;
     bool deleteOnExit = flags & kDeleteOnExit;
@@ -686,9 +686,9 @@ hsStream* plSecureStream::OpenSecureFile(const plFileName& fileName, const uint3
     return s;
 }
 
-hsStream* plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nil */)
+hsStream* plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nullptr */)
 {
-    hsStream* s = nil;
+    hsStream* s = nullptr;
 #ifdef PLASMA_EXTERNAL_RELEASE
     s = new plSecureStream(false, key);
 #else

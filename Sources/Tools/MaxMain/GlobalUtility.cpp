@@ -99,7 +99,7 @@ ClassDesc* GetGUPDesc() { return &PlasmaMaxCD; }
 // This function is from the console.  This dummy version is here so that plNetLinkingMgr will build.
 plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString)
 {
-    return nil;
+    return nullptr;
 }
 
 
@@ -112,7 +112,7 @@ PlasmaMax::PlasmaMax()
 
 void DoAllRecur(PMaxNodeFunc p, plMaxNode *node)
 {
-    (node->*p)(nil, nil);
+    (node->*p)(nullptr, nullptr);
     
     for (int i = 0; i < node->NumberOfChildren(); i++)
     {
@@ -277,7 +277,7 @@ DWORD PlasmaMax::Control(DWORD parameter)
     if (parameter == kGetTextures)
     {
         TexSet texmaps;
-        plMtlCollector::GetMtls(nil, &texmaps);
+        plMtlCollector::GetMtls(nullptr, &texmaps);
 
         std::vector<TexInfo> texInfo;
 

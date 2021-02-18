@@ -92,7 +92,7 @@ bool plNetObjectDebugger::DebugObject::StringMatches(const char* str) const
     {
         std::string tmp = str;
         hsStrLower((char*)tmp.c_str());
-        return (strstr(tmp.c_str(), fObjName.c_str()) != nil);
+        return (strstr(tmp.c_str(), fObjName.c_str()) != nullptr);
     }
 
     hsAssert(false, "missing flags");
@@ -140,7 +140,7 @@ bool plNetObjectDebugger::DebugObject::ObjectMatches(const hsKeyedObject* obj)
 /////////////////////////////////////////////////////////////////
 // plNetObjectDebugger
 /////////////////////////////////////////////////////////////////
-plNetObjectDebugger::plNetObjectDebugger() : fStatusLog(nil), fDebugging(false)
+plNetObjectDebugger::plNetObjectDebugger() : fStatusLog(), fDebugging()
 {
 }
 

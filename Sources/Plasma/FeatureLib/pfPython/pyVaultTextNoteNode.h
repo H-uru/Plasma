@@ -87,7 +87,7 @@ public:
     int32_t Note_GetSubType();
 
     PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
-    void SetDeviceInbox( const char * devName, PyObject * cb=nil, uint32_t cbContext=0 );
+    void SetDeviceInbox(const char * devName, PyObject * cb=nullptr, uint32_t cbContext=0);
 };
 
 #endif // _pyVaultTextNoteNode_h_

@@ -182,11 +182,11 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     hsMaterialConverter::Instance().GetMaterialArray(maxMaterial, node, matArray);
     hsGMaterial* particleMat = matArray[0];
     
-    plController *ambientCtl = nil;
-    plController *diffuseCtl = nil;
-    plController *opacityCtl = nil; 
-    plController *widthCtl = nil;
-    plController *heightCtl = nil;
+    plController *ambientCtl = nullptr;
+    plController *diffuseCtl = nullptr;
+    plController *opacityCtl = nullptr;
+    plController *widthCtl = nullptr;
+    plController *heightCtl = nullptr;
     hsControlConverter& cc = hsControlConverter::Instance();
 
     if (hsMaterialConverter::IsParticleMat(maxMaterial)) // Exporter will yell if this is false, but we have to handle it
@@ -228,7 +228,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     partLifeMin = fUserInput.fLifeMin;
     partLifeMax = fUserInput.fLifeMax;
     plLeafController *ppsCtl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kPPS)), node);
-    if (ppsCtl != nil && ppsCtl->GetLength() > 0)
+    if (ppsCtl != nullptr && ppsCtl->GetLength() > 0)
     {
         // Simulate just the birth across the curve and record the max
         float frameDelta = (1.f / MAX_FRAMES_PER_SEC); 
@@ -324,7 +324,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     maxTotalParticles *=  maxEmitters;
 
     delete ppsCtl;
-    ppsCtl = nil;
+    ppsCtl = nullptr;
     
     uint32_t maxAllowedParticles = plGBufferGroup::kMaxNumIndicesPerBuffer / 6;
     if (maxTotalParticles > maxAllowedParticles)
@@ -352,7 +352,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
 
     // Figure out the appropriate generator to add
-    plParticleGenerator *generator = nil;
+    plParticleGenerator *generator = nullptr;
     uint32_t sources;
     float *pitchArray;
     float *yawArray;
@@ -534,7 +534,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     if (fCompPB->GetInt(kGenType) != kGenOnePerVertex)
     {
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kLifeMin)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleLifeMinApplicator *app = new plParticleLifeMinApplicator();
             app->SetChannelName(node->GetName());
@@ -543,7 +543,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
 
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kLifeMax)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleLifeMaxApplicator *app = new plParticleLifeMaxApplicator();
             app->SetChannelName(node->GetName());
@@ -552,7 +552,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
 
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kPPS)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticlePPSApplicator *app = new plParticlePPSApplicator();
             app->SetChannelName(node->GetName());
@@ -561,7 +561,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
 
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kConeAngle)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleAngleApplicator *app = new plParticleAngleApplicator();
             app->SetChannelName(node->GetName());
@@ -570,7 +570,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
 
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kVelocityMin)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleVelMinApplicator *app = new plParticleVelMinApplicator();
             app->SetChannelName(node->GetName());
@@ -579,7 +579,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
 
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kVelocityMax)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleVelMaxApplicator *app = new plParticleVelMaxApplicator();
             app->SetChannelName(node->GetName());
@@ -589,7 +589,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         
         /*
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kGravity)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleGravityApplicator *app = new plParticleGravityApplicator();
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
@@ -597,7 +597,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
         }
 
         ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kDrag)), node, start, end);
-        if (ctl != nil)
+        if (ctl != nullptr)
         {
             plParticleDragApplicator *app = new plParticleDragApplicator();
             plAnimComponentBase::SetupCtl(anim, ctl, app, node);
@@ -607,7 +607,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     }
 
     ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kScaleMin)), node, start, end);
-    if (ctl != nil)
+    if (ctl != nullptr)
     {
         plParticleScaleMinApplicator *app = new plParticleScaleMinApplicator();
         app->SetChannelName(node->GetName());
@@ -616,7 +616,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     }
 
     ctl = cc.MakeScalarController(GetParamBlock2Controller(fCompPB, ParamID(kScaleMax)), node, start, end);
-    if (ctl != nil)
+    if (ctl != nullptr)
     {
         plParticleScaleMaxApplicator *app = new plParticleScaleMaxApplicator();
         app->SetChannelName(node->GetName());
@@ -941,7 +941,7 @@ bool plParticleEffectComponent::IsParticleEffectComponent(plComponentBase *comp)
 
 bool plParticleEffectComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fEffect = nil;
+    fEffect = nullptr;
     return true;
 }
 
@@ -964,7 +964,7 @@ bool plParticleEffectComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 void plParticleFadeComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNode *node)
 {
-    plParticleFadeVolumeEffect *effect = nil;
+    plParticleFadeVolumeEffect *effect = nullptr;
     if( !fEffect )
     {
         effect = new plParticleFadeVolumeEffect();
@@ -1030,10 +1030,10 @@ bool plParticleVolumeComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg
     if (!plParticleEffectComponent::PreConvert(pNode, pErrMsg))
         return false;
 
-    fBound = nil;
+    fBound = nullptr;
 
     plMaxNode *source = (plMaxNode *)fCompPB->GetINode(kSourceNode);
-    if (source == nil || !source->CanConvert())
+    if (source == nullptr || !source->CanConvert())
     {
         pErrMsg->Set(true, pNode->GetName(), "Particle Convex Volume component has not been assigned a "
                      "node to build itself from or Volume has Ignore component on it.. Ignoring component.").Show();
@@ -1050,7 +1050,7 @@ bool plParticleVolumeComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg
 
 void plParticleVolumeComponent::BuildVolume(plMaxNode *node)
 {
-    if (fBound != nil)
+    if (fBound != nullptr)
         return; // already converted it
 
     fBound = new plBoundInterface;
@@ -1062,12 +1062,12 @@ void plParticleVolumeComponent::BuildVolume(plMaxNode *node)
 
 void plParticleVolumeComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNode *node)
 {
-    plParticleCollisionEffect *effect = nil;
+    plParticleCollisionEffect *effect = nullptr;
     if( !fEffect )
     {
         plMaxNode *source = (plMaxNode *)fCompPB->GetINode(kSourceNode);
 
-        if (source == nil || !source->CanConvert())
+        if (source == nullptr || !source->CanConvert())
             return; // No source selected, user has already been warned.
 
         BuildVolume(source);
@@ -1190,7 +1190,7 @@ static hsVector3 IGetRefDir(plMaxNode* node, INode* refNode, float clampAngDeg)
 
 void plParticleWindComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNode *node)
 {
-    plParticleLocalWind* effect = nil;
+    plParticleLocalWind* effect = nullptr;
     if( !fEffect )
     {
         effect = new plParticleLocalWind();
@@ -1311,7 +1311,7 @@ plParticleWindComponent::plParticleWindComponent()
 
 void plParticleUniWindComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNode *node)
 {
-    plParticleUniformWind* effect = nil;
+    plParticleUniformWind* effect = nullptr;
     if( !fEffect )
     {
         effect = new plParticleUniformWind();
@@ -1482,7 +1482,7 @@ static ParticleFlockEffectDlgProc gParticleFlockEffectDlgProc;
 
 void plParticleFlockComponent::AddToParticleSystem(plParticleSystem *sys, plMaxNode *node)
 {
-    plParticleFlockEffect* effect = nil;
+    plParticleFlockEffect* effect = nullptr;
     if( !fEffect )
     {
         effect = new plParticleFlockEffect();

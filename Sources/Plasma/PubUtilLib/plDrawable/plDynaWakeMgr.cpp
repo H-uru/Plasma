@@ -86,7 +86,7 @@ int plDynaWakeMgr::INewDecal()
 
 plDynaWakeMgr::plDynaWakeMgr()
 :
-    fAnimPath(nil),
+    fAnimPath(),
     fDefaultDir(0.f, 1.f, 0.f),
     fAnimWgt(0),
     fVelWgt(1.f)

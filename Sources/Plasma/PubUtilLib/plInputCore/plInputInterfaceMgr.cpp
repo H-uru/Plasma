@@ -105,13 +105,13 @@ void plCtrlCmd::Read(hsStream* stream, hsResMgr* mgr)
 
 plDefaultKeyCatcher::~plDefaultKeyCatcher()
 {
-    if( plInputInterfaceMgr::GetInstance() != nil )
-        plInputInterfaceMgr::GetInstance()->SetDefaultKeyCatcher( nil );
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
+        plInputInterfaceMgr::GetInstance()->SetDefaultKeyCatcher(nullptr);
 }
 
 //// Statics /////////////////////////////////////////////////////////////////
 
-plInputInterfaceMgr *plInputInterfaceMgr::fInstance = nil;
+plInputInterfaceMgr *plInputInterfaceMgr::fInstance = nullptr;
 
 
 //// Constructor/Destructor //////////////////////////////////////////////////
@@ -129,17 +129,17 @@ plInputInterfaceMgr::plInputInterfaceMgr()
     // make sure we don't miss control keys on remote players
     SetSynchFlagsBit(plSynchedObject::kSendReliably);
 #endif
-    hsAssert( fInstance == nil, "Attempting to create two input interface managers!" );
+    hsAssert(fInstance == nullptr, "Attempting to create two input interface managers!");
     fInstance = this;
 
-    fCurrentFocus = nil;
-    fDefaultCatcher = nil;
+    fCurrentFocus = nullptr;
+    fDefaultCatcher = nullptr;
 }
 
 plInputInterfaceMgr::~plInputInterfaceMgr()
 {
     Shutdown();
-    fInstance = nil;
+    fInstance = nullptr;
 }
 
 //// Init ////////////////////////////////////////////////////////////////////
@@ -424,7 +424,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     }
 
     plInputEventMsg *ieMsg = plInputEventMsg::ConvertNoRef( msg );
-    if( ieMsg != nil )
+    if (ieMsg != nullptr)
     {
         const char *inputIEM = "InputEventMsg";
         plProfile_BeginLap(Input, inputIEM);
@@ -460,7 +460,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
             if( !handled )
             {
                 // Fell all the way through the stack...must've been a very uninteresting message...
-                if( plKeyEventMsg::ConvertNoRef( ieMsg ) && fDefaultCatcher != nil )
+                if (plKeyEventMsg::ConvertNoRef(ieMsg) && fDefaultCatcher != nullptr)
                 {
                     // But somebody loves those keys :)
                     fDefaultCatcher->HandleKeyEvent( plKeyEventMsg::ConvertNoRef( ieMsg ) );
@@ -515,7 +515,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     }
 
     plInputIfaceMgrMsg *mgrMsg = plInputIfaceMgrMsg::ConvertNoRef( msg );
-    if( mgrMsg != nil )
+    if (mgrMsg != nullptr)
     {
         if( mgrMsg->GetCommand() == plInputIfaceMgrMsg::kAddInterface )
         {
@@ -538,7 +538,7 @@ bool    plInputInterfaceMgr::MsgReceive( plMessage *msg )
     }
 
     plPlayerPageMsg *pPMsg = plPlayerPageMsg::ConvertNoRef( msg );
-    if( pPMsg != nil && !pPMsg->fUnload)
+    if (pPMsg != nullptr && !pPMsg->fUnload)
     {
         if( pPMsg->fPlayer == plNetClientApp::GetInstance()->GetLocalPlayerKey() )
             fReceivers.Append( pPMsg->fPlayer );
@@ -635,7 +635,7 @@ plKeyMap    *plInputInterfaceMgr::IGetRoutedKeyMap( ControlEventCode code )
             return fInterfaces[ i ]->fControlMap;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// IUnbind /////////////////////////////////////////////////////////////////
@@ -667,7 +667,7 @@ void plInputInterfaceMgr::ClearAllKeyMaps()
 void    plInputInterfaceMgr::BindAction( const plKeyCombo &key, ControlEventCode code )
 {
     plKeyMap *map = IGetRoutedKeyMap( code );
-    if( map != nil )
+    if (map != nullptr)
     {
         // Use default prefs
         map->EnsureKeysClear( key, plKeyCombo::kUnmapped );
@@ -680,7 +680,7 @@ void    plInputInterfaceMgr::BindAction( const plKeyCombo &key1, const plKeyComb
                                         ControlEventCode code )
 {
     plKeyMap *map = IGetRoutedKeyMap( code );
-    if( map != nil )
+    if (map != nullptr)
     {
         // Force the bindings to each key, since the user specified both
         map->EnsureKeysClear( key1, key2 );
@@ -693,13 +693,13 @@ void    plInputInterfaceMgr::BindAction( const plKeyCombo &key1, const plKeyComb
 const plKeyBinding* plInputInterfaceMgr::FindBinding( ControlEventCode code )\
 {
     plKeyMap *map = IGetRoutedKeyMap( code );
-    if( map != nil )
+    if (map != nullptr)
     {
         // Use default prefs
         return map->FindBinding(code);
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref /*= kNoPreference*/  )
@@ -710,7 +710,7 @@ void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd
 //#endif
 
     plKeyMap *map = IGetRoutedKeyMap( B_CONTROL_CONSOLE_COMMAND );
-    if( map != nil )
+    if (map != nullptr)
     {
         // Default prefs again
         map->EnsureKeysClear( key, plKeyCombo::kUnmapped );
@@ -727,11 +727,11 @@ void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd
 const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd( const char *cmd )
 {
     plKeyMap *map = IGetRoutedKeyMap( B_CONTROL_CONSOLE_COMMAND );
-    if( map != nil )
+    if (map != nullptr)
     {
         return map->FindConsoleBinding(cmd);
     }
-    return nil;
+    return nullptr;
 }
 
 //// InitDefaultKeyMap ///////////////////////////////////////////////////////
@@ -858,7 +858,7 @@ void plInputInterfaceMgr::SetCurrentFocus(plInputInterface *focus)
 void plInputInterfaceMgr::ReleaseCurrentFocus(plInputInterface *focus)
 {
     if (fCurrentFocus == focus)
-        fCurrentFocus = nil;
+        fCurrentFocus = nullptr;
 }
 
 
@@ -877,7 +877,7 @@ const char  *plInputInterfaceMgr::IKeyComboToString( const plKeyCombo &combo )
     else
     {
         const char *c = plKeyMap::ConvertVKeyToChar( combo.fKey );
-        if( c != nil )
+        if (c != nullptr)
             strncpy( str, c, sizeof( str ) );
         else
         {

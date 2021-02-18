@@ -97,7 +97,7 @@ public:
     // Pass in a clothing outfit if you want to apply the clothing item. Pass in a closet item if you're just
     // looking to parse the SDL info.
     // Aw heck. Go crazy if you want and pass them BOTH in! Muahahaha!
-    static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nil, plClosetItem *closetItem = nil);
+    static void HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing = nullptr, plClosetItem *closetItem = nullptr);
     static void PutSingleItemIntoSDR(const plClosetItem *item, plStateDataRecord *sdr);
         
     static const plClothingSDLModifier *FindClothingSDLModifier(const plSceneObject *obj);

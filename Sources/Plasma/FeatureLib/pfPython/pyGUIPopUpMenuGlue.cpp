@@ -408,7 +408,7 @@ PyObject *pyGUIPopUpMenu::New(pyKey& gckey)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
-    newObj->fThis->fBuiltMenu = nil;
+    newObj->fThis->fBuiltMenu = nullptr;
     return (PyObject*)newObj;
 }
 
@@ -416,7 +416,7 @@ PyObject *pyGUIPopUpMenu::New(plKey objkey)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
-    newObj->fThis->fBuiltMenu = nil;
+    newObj->fThis->fBuiltMenu = nullptr;
     return (PyObject*)newObj;
 }
 

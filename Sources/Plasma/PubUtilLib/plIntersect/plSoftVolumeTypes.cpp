@@ -55,8 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////
 
 plSoftVolumeSimple::plSoftVolumeSimple()
-:   fVolume(nil),
-    fSoftDist(0)
+:   fVolume(),
+    fSoftDist()
 {
 }
 

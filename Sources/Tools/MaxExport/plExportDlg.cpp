@@ -152,7 +152,7 @@ BOOL plExportDlgImp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 const char* plExportDlgImp::GetExportPage()
 {
     if (fExportPage[0] == '\0')
-        return nil;
+        return nullptr;
     else
         return fExportPage;
 }

@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plProfile_CreateTimer("FollowMod", "RenderSetup", FollowMod);
 
 plFollowMod::plFollowMod()
-:   fLeader(nil), fMode(kPosition), fLeaderType(kLocalPlayer), fLeaderSet(false)
+:   fLeader(), fMode(kPosition), fLeaderType(kLocalPlayer), fLeaderSet(false)
 {
 }
 
@@ -102,7 +102,7 @@ bool plFollowMod::MsgReceive(plMessage* msg)
             if( ref->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fLeader = plSceneObject::ConvertNoRef(ref->GetRef());
             else if( ref->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fLeader = nil;
+                fLeader = nullptr;
             return true;
         default:
             hsAssert(false, "Unknown ref type to FollowMod");

@@ -410,7 +410,7 @@ DWORD plDynamicEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker
 
 bool    plDynamicEnvLayer::MustBeUnique()
 {
-    if( fBitmapPB->GetINode( kBmpAnchorNode ) == nil )
+    if (fBitmapPB->GetINode(kBmpAnchorNode) == nullptr)
         return true;
 
     return false;

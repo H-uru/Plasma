@@ -92,7 +92,7 @@ public:
 
 inline void hsThrowIfNilParam(const void* p)
 {
-    if (p == nil)
+    if (p == nullptr)
     {
         hsAssert(0,"hsNilParamException");
         throw hsNilParamException();

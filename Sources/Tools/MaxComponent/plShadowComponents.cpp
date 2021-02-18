@@ -189,7 +189,7 @@ ParamBlockDesc2 gShadowCastBk
 );
 
 plShadowCastComponent::plShadowCastComponent()
-:   fCaster(nil)
+:   fCaster()
 {
     fClassDesc = &gShadowCastDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -226,7 +226,7 @@ bool plShadowCastComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plShadowCastComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
-    fCaster = nil;
+    fCaster = nullptr;
     return true;
 }
 
@@ -274,7 +274,7 @@ ParamBlockDesc2 gShadowRcvBk
 (
     plComponent::kBlkComp, _T("ShadowRcv"), 0, &gShadowRcvDesc, P_AUTO_CONSTRUCT+P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_SHADOW_RCV, IDS_COMP_SHADOW_RCV,  0, 0, nil,
+    IDD_COMP_SHADOW_RCV, IDS_COMP_SHADOW_RCV,  0, 0, nullptr,
 
     plShadowRcvComponent::kForceRadio, _T("ForceShadow"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_FORCE_ON,                 IDC_RADIO_FORCE_OFF,

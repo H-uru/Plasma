@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCreatableStrings.h"
 
 
-static plFactory*   theFactory = nil;
+static plFactory*   theFactory = nullptr;
 
 plFactory::plFactory()
 {
@@ -69,7 +69,7 @@ bool plFactory::ICreateTheFactory()
 
     theFactory = new plFactory;
 
-    return theFactory != nil;
+    return theFactory != nullptr;
 }
 
 uint16_t plFactory::IGetNumClasses()
@@ -84,7 +84,7 @@ void plFactory::IForceShutdown()
         if( fCreators[i] )
         {
             UnRef();
-            fCreators[i] = nil;
+            fCreators[i] = nullptr;
         }
     }
 }
@@ -92,7 +92,7 @@ void plFactory::IForceShutdown()
 void plFactory::IShutdown()
 {
     delete theFactory;
-    theFactory = nil;
+    theFactory = nullptr;
 }
 
 uint16_t plFactory::IRegister(uint16_t hClass, plCreator* worker)
@@ -116,7 +116,7 @@ bool plFactory::CanCreate(uint16_t hClass)
     if( hClass >= theFactory->IGetNumClasses() )    // invalid index
         return false;
 
-    return ( theFactory->fCreators[ hClass ] != nil );  // check creator
+    return (theFactory->fCreators[hClass] != nullptr);  // check creator
 }
 
 plCreatable* plFactory::ICreate(uint16_t hClass)
@@ -130,7 +130,7 @@ plCreatable* plFactory::ICreate(uint16_t hClass)
     {
         hsAssert( false, ST::format("Invalid class index ({04X}) or nil creator : plFactory::Create()", hClass).c_str());
     }
-    return nil;
+    return nullptr;
 }
 
 void plFactory::UnRegister(uint16_t hClass, plCreator* worker)
@@ -146,7 +146,7 @@ void plFactory::UnRegister(uint16_t hClass, plCreator* worker)
 
 void plFactory::IUnRegister(uint16_t hClass)
 {
-    fCreators[hClass] = nil;
+    fCreators[hClass] = nullptr;
 }
 
 uint16_t plFactory::Register(uint16_t hClass, plCreator* worker)
@@ -161,7 +161,7 @@ uint16_t plFactory::Register(uint16_t hClass, plCreator* worker)
 plCreatable* plFactory::Create(uint16_t hClass)
 {
     if( !theFactory && !ICreateTheFactory() )
-            return nil;
+        return nullptr;
 
     return theFactory->ICreate(hClass);
 }
@@ -248,7 +248,7 @@ void plFactory::SetTheFactory(plFactory* fac)
         hsRefCnt_SafeUnRef(theFactory);
         if( theFactory->RefCnt() < 2 )
             delete theFactory;
-        theFactory = nil;
+        theFactory = nullptr;
     }
 
 }
@@ -256,7 +256,7 @@ void plFactory::SetTheFactory(plFactory* fac)
 plFactory* plFactory::GetTheFactory()
 {
     if( !theFactory && !ICreateTheFactory() )
-            return nil;
+        return nullptr;
 
     return theFactory;
 }
@@ -289,7 +289,7 @@ const char  *plFactory::GetNameOfClass(uint16_t type)
     }
 
     hsAssert(type < GetNumClasses() || type==0xffff,"InValid type");
-    return nil;
+    return nullptr;
 }
 
 #ifdef HS_DEBUGGING

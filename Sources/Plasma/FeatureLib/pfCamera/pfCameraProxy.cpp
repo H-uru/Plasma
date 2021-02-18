@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plCameraProxy::plCameraProxy()
 :   plProxyGen(hsColorRGBA().Set(0.2f,0.2f,0.8f,1.f), hsColorRGBA().Set(1.f,0.5f,0.5f,1.f), 0.2f),
-    fOwner(nil), node(nil)
+    fOwner(), node()
 {
 }
 
@@ -65,14 +65,14 @@ bool plCameraProxy::Init(plVirtualCam1* aud)
     fOwner = aud;
     fProxyMsgType = plProxyDrawMsg::kCamera;
 
-    return fOwner != nil;
+    return fOwner != nullptr;
 }
 
 plKey plCameraProxy::IGetNode() const 
 {
     if (node)
         return node->GetKey();
-    return nil; 
+    return nullptr;
 }
 
 plDrawableSpans* plCameraProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
@@ -81,5 +81,5 @@ plDrawableSpans* plCameraProxy::ICreateProxy(hsGMaterial* mat, std::vector<uint3
     {
 //      return fOwner->CreateProxy(mat, idx, addTo);
     }
-    return nil;
+    return nullptr;
 }

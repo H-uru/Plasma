@@ -406,7 +406,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
         for (i = 0; i < numStages; i++)
         {
             plAnimStage *s = (*stages)[i];
-            (*stages)[i] = nil;
+            (*stages)[i] = nullptr;
             delete s;
         }
         delete stages;
@@ -415,7 +415,7 @@ bool plAvatarSDLModifier::ISetGenericBrainFrom(plArmatureMod *avMod, const plSta
 
     plAvBrainGeneric *newBrain =
         new plAvBrainGeneric(stages,
-                             nil, nil,
+                             nullptr, nullptr,
                              callbackRcvr,
                              exitFlags,
                              fadeIn,
@@ -460,24 +460,24 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     srcState->FindVar(StandardStageVarNames::kStrName)->Get(name);
     plAGAnim *anim = avMod->FindCustomAnim(name);
     if (!anim)
-        return nil;
+        return nullptr;
 
     int fwd, bwd, adv, reg;
     srcState->FindVar(StandardStageVarNames::kStrForward)->Get(&fwd);
     if (fwd >= plAnimStage::kForwardMax)
-        return nil;
+        return nullptr;
 
     srcState->FindVar(StandardStageVarNames::kStrBackward)->Get(&bwd);
     if (bwd >= plAnimStage::kBackMax)
-        return nil;
+        return nullptr;
     
     srcState->FindVar(StandardStageVarNames::kStrStageAdvance)->Get(&adv);
     if (adv >= plAnimStage::kAdvanceMax)
-        return nil;
+        return nullptr;
 
     srcState->FindVar(StandardStageVarNames::kStrStageRegress)->Get(&reg);
     if (reg >= plAnimStage::kRegressMax)
-        return nil;
+        return nullptr;
     
     int numLoops;
     srcState->FindVar(StandardStageVarNames::kStrNumLoops)->Get(&numLoops);
@@ -488,7 +488,7 @@ plAnimStage * plAvatarSDLModifier::IGetStageFrom(plArmatureMod *avMod, const plS
     int curLoop;
     srcState->FindVar(StandardStageVarNames::kStrCurrentLoop)->Get(&curLoop);
     if (curLoop > numLoops && numLoops > 0) // numLoops == -1 means infinite looping
-        return nil;
+        return nullptr;
     
     bool isAttached;
     srcState->FindVar(StandardStageVarNames::kStrIsAttached)->Get(&isAttached);

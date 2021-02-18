@@ -235,7 +235,7 @@ void plDrawInterface::IRemoveDrawable(plDrawable *dr)
     if (iter != fDrawables.cend())
     {
         size_t idx = std::distance(fDrawables.cbegin(), iter);
-        fDrawables[idx] = nil;
+        fDrawables[idx] = nullptr;
         fDrawableIndices[idx] = uint32_t(-1);
     }
     else
@@ -290,7 +290,7 @@ void plDrawInterface::SetDrawable(size_t which, plDrawable *dr)
     }
     else
     {
-        ISetDrawable(which, nil);
+        ISetDrawable(which, nullptr);
     }
 }
 
@@ -345,7 +345,7 @@ bool plDrawInterface::MsgReceive(plMessage* msg)
 void plDrawInterface::SetUpForParticleSystem(uint32_t maxNumEmitters, uint32_t maxNumParticles,
                                              hsGMaterial *material, const std::vector<plKey>& lights)
 {
-    hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
+    hsAssert(fDrawables[0] != nullptr, "No drawable to use for particle system!");
     SetDrawableMeshIndex( 0, fDrawables[0]->CreateParticleSystem( maxNumEmitters, maxNumParticles, material ) );
     for (const plKey& light : lights)
     {
@@ -357,13 +357,13 @@ void plDrawInterface::SetUpForParticleSystem(uint32_t maxNumEmitters, uint32_t m
 
 void    plDrawInterface::ResetParticleSystem()
 {
-    hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
+    hsAssert(fDrawables[0] != nullptr, "No drawable to use for particle system!");
     fDrawables[0]->ResetParticleSystem( fDrawableIndices[0] );
 }
 
 void    plDrawInterface::AssignEmitterToParticleSystem( plParticleEmitter *emitter )
 {
-    hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
+    hsAssert(fDrawables[0] != nullptr, "No drawable to use for particle system!");
     fDrawables[0]->AssignEmitterToParticleSystem( fDrawableIndices[0], emitter );
 }
 

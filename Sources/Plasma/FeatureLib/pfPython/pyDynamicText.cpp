@@ -127,7 +127,7 @@ plDynamicTextMsg* pyDynamicText::ICreateDTMsg()
         return pMsg;
     }
     else
-        return nil;
+        return nullptr;
 }
 
 //////////////////////////////////////////////
@@ -316,7 +316,7 @@ uint16_t  pyDynamicText::GetWidth()
         return 0;
 
     plDynamicTextMap *dtMap = plDynamicTextMap::ConvertNoRef( fReceivers[ 0 ]->ObjectIsLoaded() );
-    if( dtMap == nil )
+    if (dtMap == nullptr)
         return 0;
 
     return (uint16_t)dtMap->GetWidth();
@@ -331,7 +331,7 @@ uint16_t  pyDynamicText::GetHeight()
         return 0;
 
     plDynamicTextMap *dtMap = plDynamicTextMap::ConvertNoRef( fReceivers[ 0 ]->ObjectIsLoaded() );
-    if( dtMap == nil )
+    if (dtMap == nullptr)
         return 0;
 
     return (uint16_t)dtMap->GetHeight();
@@ -375,5 +375,5 @@ plKey pyDynamicText::GetImage()
     if (!fReceivers.empty())
         return fReceivers[0];
     else
-        return nil;
+        return nullptr;
 }

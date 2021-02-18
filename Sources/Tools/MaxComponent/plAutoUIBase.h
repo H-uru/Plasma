@@ -90,15 +90,15 @@ public:
     void AddIntSpinner  (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
                         int def=1, int min=0, int max=1);
     void AddEditBox     (int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        const char *def=nil, int lines=1);
+                        const char *def=nullptr, int lines=1);
     void AddPickNodeList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil);
+                        std::vector<Class_ID>* filter=nullptr);
     void AddPickNodeButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil, bool canConvertToType=false);
+                        std::vector<Class_ID>* filter=nullptr, bool canConvertToType=false);
     void AddPickComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil, bool canConvertToType=false);
+                        std::vector<Class_ID>* filter=nullptr, bool canConvertToType=false);
     void AddPickComponentList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates,
-                        std::vector<Class_ID>* filter=nil);
+                        std::vector<Class_ID>* filter=nullptr);
     void AddPickActivatorList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
     void AddPickActivatorButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
     void AddPickDynamicTextButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
@@ -115,7 +115,7 @@ public:
     void AddPickGUIPopUpMenuButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
     void AddPickGUISkinButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
     
-    void AddDropDownList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<std::string>* options = nil);
+    void AddDropDownList(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates, std::vector<std::string>* options = nullptr);
     void AddPickGrassComponentButton(int16_t id, const char *scriptName, const char *name, int vid, std::vector<std::string>* vstates);
 
     void CreateAutoRollup(IParamBlock2 *pb);

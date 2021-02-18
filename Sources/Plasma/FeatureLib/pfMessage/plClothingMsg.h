@@ -60,7 +60,7 @@ public:
     uint8_t fDelta;
     float fWeight;
 
-    plClothingMsg() : fCommands(0), fItemKey(nil), fLayer(0), fDelta(0), fWeight(0) { fColor.Set(1.f, 1.f, 1.f, 1.f); }
+    plClothingMsg() : fCommands(), fLayer(), fDelta(), fWeight() { fColor.Set(1.f, 1.f, 1.f, 1.f); }
     ~plClothingMsg() {}
 
     CLASSNAME_REGISTER( plClothingMsg );

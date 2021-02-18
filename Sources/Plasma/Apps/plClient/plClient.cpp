@@ -153,8 +153,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // static hsVector3 gAbsDown(0,0,-1.f);
 
-static plDispatchBase* gDisp = nil;
-static plTimerCallbackManager* gTimerMgr = nil;
+static plDispatchBase* gDisp = nullptr;
+static plTimerCallbackManager* gTimerMgr = nullptr;
 
 #ifdef HS_BUILD_FOR_WIN32
 extern ITaskbarList3* gTaskbarList;
@@ -162,7 +162,7 @@ extern ITaskbarList3* gTaskbarList;
 
 bool plClient::fDelayMS = false;
 
-plClient* plClient::fInstance=nil;
+plClient* plClient::fInstance = nullptr;
 
 static std::vector<HMODULE> fLoadedDLLs;
 
@@ -221,7 +221,7 @@ plClient::~plClient()
 {
     hsStatusMessage("Destructing client\n");
 
-    plClient::SetInstance( nil );
+    plClient::SetInstance(nullptr);
 
     delete fPageMgr;
     delete [] fpAuxInitDir;
@@ -242,7 +242,7 @@ bool plClient::Shutdown()
     delete fProgressBar;
 
     // Just in case, clear this out (trying to fix a crash bug where this is still active at shutdown)
-    plDispatch::SetMsgRecieveCallback(nil);
+    plDispatch::SetMsgRecieveCallback(nullptr);
 
     // Let the resmanager know we're going to be shutting down.
     hsgResMgr::ResMgr()->BeginShutdown();
@@ -301,7 +301,7 @@ bool plClient::Shutdown()
     plAccessGeometry::DeInit();
 
     delete fPipeline;
-    fPipeline = nil;
+    fPipeline = nullptr;
 
     if (plSimulationMgr::GetInstance())
         plSimulationMgr::Shutdown();
@@ -314,7 +314,7 @@ bool plClient::Shutdown()
     IUnRegisterAs(fTransitionMgr, kTransitionMgr_KEY);
 
     delete fConsoleEngine;
-    fConsoleEngine = nil;
+    fConsoleEngine = nullptr;
 
     IUnRegisterAs(fLinkEffectsMgr, kLinkEffectsMgr_KEY);
 
@@ -353,7 +353,7 @@ bool plClient::Shutdown()
     plVisLOSMgr::DeInit();
 
     delete fPageMgr;
-    fPageMgr = nil;
+    fPageMgr = nullptr;
     plGlobalVisMgr::DeInit();
 
 #ifdef TRACK_AG_ALLOCS
@@ -467,7 +467,7 @@ bool plClient::InitPipeline()
     }
 
     plPipeline *pipe = plPipelineCreate::CreatePipeline( hWnd, &dmr );
-    if( pipe->GetErrorString() != nil )
+    if (pipe->GetErrorString() != nullptr)
     {
         ISetGraphicsDefaults();
 #ifdef PLASMA_EXTERNAL_RELEASE
@@ -478,7 +478,7 @@ bool plClient::InitPipeline()
         delete pipe;
         devSel.GetDefault(&dmr);
         pipe = plPipelineCreate::CreatePipeline( hWnd, &dmr );
-        if(pipe->GetErrorString() != nil)
+        if (pipe->GetErrorString() != nullptr)
         {
             // not much else we can do
             return true;
@@ -522,9 +522,9 @@ bool plClient::InitPipeline()
 void    plClient::SetClearColor( hsColorRGBA &color )
 {
     fClearColor = color;
-    if( fPipeline != nil )
+    if (fPipeline != nullptr)
     {
-        fPipeline->SetClear(&fClearColor, nil);
+        fPipeline->SetClear(&fClearColor, nullptr);
     }
 }
 
@@ -941,7 +941,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 
 void plClient::ILoadNextRoom()
 {
-    LoadRequest* req = nil;
+    LoadRequest* req = nullptr;
 
     while (!fLoadRooms.empty())
     {
@@ -953,7 +953,7 @@ void plClient::ILoadNextRoom()
         if (alreadyLoaded || isLoading)
         {
             delete req;
-            req = nil;
+            req = nullptr;
             fNumLoadingRooms--;
         }
         else
@@ -988,7 +988,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
         if (!loc.IsValid())
             continue;
 
-        plKey nodeKey = nil;
+        plKey nodeKey;
 
         // First, look in our room list. It *should* be there, which allows us to avoid a
         // potential nasty reload-find in the resMgr.
@@ -996,12 +996,12 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
         if (roomIdx != -1)
             nodeKey = fRooms[roomIdx].fNode->GetKey();
 
-        if (nodeKey == nil)
+        if (nodeKey == nullptr)
         {
             nodeKey = plKeyFinder::Instance().FindSceneNodeKey(loc);
         }
 
-        if (nodeKey != nil)
+        if (nodeKey != nullptr)
         {
             plSceneNode* node = plSceneNode::ConvertNoRef(nodeKey->ObjectIsLoaded());
             if (node)
@@ -1029,14 +1029,14 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
             }
 
             if (node == fCurrentNode)
-                fCurrentNode = nil;
+                fCurrentNode = nullptr;
 
             #ifndef PLASMA_EXTERNAL_RELEASE
             plStatusLog::AddLineSF("pageouts.log", "Telling netClientMgr about paging out {}",
                                    nodeKey->GetUoid().GetObjectName());
             #endif
 
-            if (plNetClientMgr::GetInstance() != nil)
+            if (plNetClientMgr::GetInstance() != nullptr)
             {
                 // Don't care really about the message that just came in, we care whether it was really held or not
                 if (!hsCheckBits(recFlags, plRoomRec::kHeld))
@@ -1050,7 +1050,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
         {
             #ifndef PLASMA_EXTERNAL_RELEASE
 //          plStatusLog::AddLineSF("pageouts.log", "++ Can't find node key for paging out room {}, loc 0x{x}",
-//              pMsg->GetRoomName() != nil ? pMsg->GetRoomName() : "",
+//              pMsg->GetRoomName() != nullptr ? pMsg->GetRoomName() : "",
 //              loc.GetSequenceNumber());
             #endif
         }
@@ -1081,7 +1081,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
     fNumLoadingRooms--;
     
     // Shut down the progress bar if that was the last room
-    if (fProgressBar != nil && fNumLoadingRooms <= 0)
+    if (fProgressBar != nullptr && fNumLoadingRooms <= 0)
     {
 #ifdef MSG_LOADING_BAR
         if (!hold)
@@ -1291,10 +1291,10 @@ void    plClient::IStopProgress()
             plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "done");
 #endif // PLASMA_EXTERNAL_RELEASE
 
-        plDispatch::SetMsgRecieveCallback(nil);
+        plDispatch::SetMsgRecieveCallback(nullptr);
         ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IReadKeyedObjCallback);
         delete fProgressBar;
-        fProgressBar = nil;
+        fProgressBar = nullptr;
 
         plPipeResReq::Request();
 
@@ -1598,18 +1598,18 @@ bool plClient::IUpdate()
     // starting trouble during their update. So to get rid of this message, some
     // other way of flushing the dispatch after NegClientMgr's update is needed. mf 
     plProfile_BeginTiming(TimeMsg);
-    plTimeMsg* msg = new plTimeMsg(nil, nil, nil, nil);
+    plTimeMsg* msg = new plTimeMsg(nullptr, nullptr, nullptr, nullptr);
     plgDispatch::MsgSend(msg);
     plProfile_EndTiming(TimeMsg);
 
     plProfile_BeginTiming(EvalMsg);
-    plEvalMsg* eval = new plEvalMsg(nil, nil, nil, nil);
+    plEvalMsg* eval = new plEvalMsg(nullptr, nullptr, nullptr, nullptr);
     plgDispatch::MsgSend(eval);
     plProfile_EndTiming(EvalMsg);
 
     char *xFormLap1 = "Main";
     plProfile_BeginLap(TransformMsg, xFormLap1);
-    plTransformMsg* xform = new plTransformMsg(nil, nil, nil, nil);
+    plTransformMsg* xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
     plgDispatch::MsgSend(xform);
     plProfile_EndLap(TransformMsg, xFormLap1);
 
@@ -1627,7 +1627,7 @@ bool plClient::IUpdate()
     {
         char *xFormLap2 = "Simulation";
         plProfile_BeginLap(TransformMsg, xFormLap2);
-        xform = new plTransformMsg(nil, nil, nil, nil);
+        xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
         plProfile_EndLap(TransformMsg, xFormLap2);
     }
@@ -1635,7 +1635,7 @@ bool plClient::IUpdate()
     {
         char *xFormLap3 = "Delayed";
         plProfile_BeginLap(TransformMsg, xFormLap3);
-        xform = new plDelayedTransformMsg(nil, nil, nil, nil);
+        xform = new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
         plProfile_EndLap(TransformMsg, xFormLap3);
     }
@@ -2062,7 +2062,7 @@ void plClient::IDetectAudioVideoSettings()
     plPipeline::fDefaultPipeParams.VSync = false;
 
     int val = 0;
-    hsStream *stream = nil;
+    hsStream *stream = nullptr;
     hsUNIXStream s;
     plFileName audioIniFile = plFileName::Join(plFileSystem::GetInitPath(), "audio.ini");
     plFileName graphicsIniFile = plFileName::Join(plFileSystem::GetInitPath(), "graphics.ini");
@@ -2117,7 +2117,7 @@ void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
     WriteBool(stream, "Graphics.EnableVSync", plPipeline::fDefaultPipeParams.VSync);
     stream->Close();
     delete stream;
-    stream = nil;
+    stream = nullptr;
 }
 
 

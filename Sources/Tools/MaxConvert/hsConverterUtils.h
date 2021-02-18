@@ -122,8 +122,8 @@ private:
         const char* fName;
         bool fCaseSensitive;
     public:
-        CacheNode(INode* node=nil) : fNode(node), fName(nil), fCaseSensitive(false) { }
-        CacheNode(const char* name) : fName(name), fNode(nil), fCaseSensitive(false) { }
+        CacheNode(INode* node=nullptr) : fNode(node), fName(), fCaseSensitive() { }
+        CacheNode(const char* name) : fName(name), fNode(), fCaseSensitive() { }
         ~CacheNode() { }
 
         INode* GetNode() const { return fNode; }

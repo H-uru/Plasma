@@ -79,7 +79,7 @@ struct pyAlarm
     {
         if ( fCb )
         {
-            PyObject* func = nil;
+            PyObject* func = nullptr;
 
             // Call the callback.
             func = PyObject_GetAttrString( fCb, "onAlarm" );

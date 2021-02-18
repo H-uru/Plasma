@@ -58,7 +58,7 @@ class plNetMsgHandler
 protected:
     plNetApp* fNetApp;
 public:
-    plNetMsgHandler() : fNetApp(nil) {}
+    plNetMsgHandler() : fNetApp() { }
     virtual ~plNetMsgHandler() {}
 
     void SetNetApp(plNetApp* na) { fNetApp=na; }

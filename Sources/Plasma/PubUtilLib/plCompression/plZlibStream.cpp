@@ -72,14 +72,14 @@ bool plZlibStream::Close()
     {
         fOutput->Close();
         delete fOutput;
-        fOutput = nil;
+        fOutput = nullptr;
     }
     if (fZStream)
     {
         z_streamp zstream = (z_streamp)fZStream;
         inflateEnd(zstream);
         delete zstream;
-        fZStream = nil;
+        fZStream = nullptr;
     }
 
     return true;
@@ -241,7 +241,7 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     memset(zstream, 0, sizeof(z_stream_s));
     zstream->zalloc = ZlibAlloc;
     zstream->zfree = ZlibFree;
-    zstream->opaque = nil;
+    zstream->opaque = nullptr;
     zstream->avail_in = byteCount - clipBuffer;
     zstream->next_in = (uint8_t*)&fHeaderCache[clipBuffer];
     // Gotta use inflateInit2, because there's no header for zlib to look at.

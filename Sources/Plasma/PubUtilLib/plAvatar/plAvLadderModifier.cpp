@@ -287,7 +287,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
 
                 uint32_t exitFlags = plAvBrainGeneric::kExitNormal;
 
-                plAvBrainGeneric *ladBrain = new plAvBrainGeneric(v, enterNotify, nil, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
+                plAvBrainGeneric *ladBrain = new plAvBrainGeneric(v, enterNotify, nullptr, nullptr, exitFlags, plAvBrainGeneric::kDefaultFadeIn,
                                                                   plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
                 ladBrain->SetType(plAvBrainGeneric::kLadder);
                 ladBrain->SetReverseFBControlsOnRelease(!fGoingUp);
@@ -296,9 +296,9 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
 
                 // Very important that we dumb seek here. Otherwise you can run off the edge of a ladder, and seek will be helpless
                 // until you hit the ground, at which point you have no hope of successfully seeking.
-                plAvSeekMsg *seeker = new plAvSeekMsg(nil, avKey, seekKey, 1.0f, false);
+                plAvSeekMsg *seeker = new plAvSeekMsg(nullptr, avKey, seekKey, 1.0f, false);
                 seeker->Send();
-                plAvPushBrainMsg *brainer = new plAvPushBrainMsg(nil, avKey, ladBrain);
+                plAvPushBrainMsg *brainer = new plAvPushBrainMsg(nullptr, avKey, ladBrain);
                 brainer->Send();
             }
         }

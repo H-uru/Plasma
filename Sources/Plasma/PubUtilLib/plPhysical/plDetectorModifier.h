@@ -58,7 +58,7 @@ protected:
     plKey               fProxyKey;
 
 public:
-    plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil) { }
+    plDetectorModifier() : fRemoteMod() { }
     virtual ~plDetectorModifier() { }
     
 //  bool MsgReceive(plMessage* msg) override = 0;

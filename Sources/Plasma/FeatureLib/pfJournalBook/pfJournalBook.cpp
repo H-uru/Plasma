@@ -415,20 +415,20 @@ void pfBookData::LoadGUI()
 bool pfBookData::MsgReceive(plMessage *pMsg)
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef(pMsg);
-    if(ref != nil)
+    if (ref != nullptr)
     {
         if(ref->fType == kRefDialog)
         {
             if(ref->GetContext() & (plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace))
             {
                 pfGUIDialogMod *temp = pfGUIDialogMod::ConvertNoRef(ref->GetRef());
-                if (temp != nil) // sanity check
+                if (temp != nullptr) // sanity check
                     fDialog = temp;
             }
             /*else
             {
-                fDialog = nil;
-                fCoverButton = nil;
+                fDialog = nullptr;
+                fCoverButton = nullptr;
             }*/
             return true;
         }
@@ -437,13 +437,13 @@ bool pfBookData::MsgReceive(plMessage *pMsg)
             if(ref->GetContext() & (plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace))
                 fDefaultCover = plMipmap::ConvertNoRef(ref->GetRef());
             else
-                fDefaultCover = nil;
+                fDefaultCover = nullptr;
             return true;
         }
     }
 
     plEventCallbackMsg *callback = plEventCallbackMsg::ConvertNoRef( pMsg );
-    if( callback != nil )
+    if (callback != nullptr)
     {
         // Our callback message to tell us the page is done flipping
         if( callback->fUser & 0x08 )
@@ -472,7 +472,7 @@ bool pfBookData::MsgReceive(plMessage *pMsg)
     }
 
     pfGUINotifyMsg *notify = pfGUINotifyMsg::ConvertNoRef(pMsg);
-    if(notify != nil)
+    if (notify != nullptr)
     {
         // The only time we should get this is when the dialog loads; after that, we hijack
         // the dialog proc with our own
@@ -481,7 +481,7 @@ bool pfBookData::MsgReceive(plMessage *pMsg)
     }
 
     plTimeMsg *time = plTimeMsg::ConvertNoRef( pMsg );
-    if( time != nil && fCurrSFXPages != kNoSides && !fCurrentlyTurning && fCurrentlyOpen )
+    if (time != nullptr && fCurrSFXPages != kNoSides && !fCurrentlyTurning && fCurrentlyOpen)
     {
         IHandleSFX( (float)time->DSeconds() );
         return true;        
@@ -507,7 +507,7 @@ bool pfBookData::MsgReceive(plMessage *pMsg)
 
 void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
 {
-    hsAssert(templateDlg != nil, "Nil template in pfBookData::IInitTemplate()!");
+    hsAssert(templateDlg != nullptr, "Nil template in pfBookData::IInitTemplate()!");
 
     // Init and ref our fDialog pointer
     hsgResMgr::ResMgr()->SendRef(templateDlg->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDialog), plRefFlags::kPassiveRef);  
@@ -540,7 +540,7 @@ void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
 
     // Grab and ref the default cover mipmap
     plLayer *lay = plLayer::ConvertNoRef(fCoverLayer);
-    if((lay != nil)&&(lay->GetTexture() != nil))
+    if ((lay != nullptr) && (lay->GetTexture() != nullptr))
         hsgResMgr::ResMgr()->AddViaNotify(lay->GetTexture()->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDefaultCover), plRefFlags::kPassiveRef);  
 
     fLeftPageMap->SetFlag(pfGUIClickMapCtrl::kReportHovering);
@@ -606,7 +606,7 @@ pfGUIMultiLineEditCtrl *pfBookData::GetEditCtrl(uint32_t which)
     case pfJournalDlgProc::kTagTurnBackEditCtrl:
         return fTurnBackEditCtrl;
     default:
-        return nil;
+        return nullptr;
     }
 }
 
@@ -636,7 +636,7 @@ void pfBookData::RegisterForSFX(WhichSide whichPages)
 
 void pfBookData::IHandleSFX(float currTime, WhichSide whichSide /*= kNoSides*/)
 {
-    if(fCurrBook == nil)
+    if (fCurrBook == nullptr)
         return;
     if(whichSide == kNoSides)
     {
@@ -914,7 +914,7 @@ void pfBookData::IFinishTriggeredFlip(bool wasBackwards)
         if ( turnFront->IsValid() && right->IsValid() )
         {
             memcpy(right->GetImage(), turnFront->GetImage(), right->GetLevelSize(0));
-            if(right->GetDeviceRef() != nil)
+            if (right->GetDeviceRef() != nullptr)
                 right->GetDeviceRef()->SetDirty(true);
         }
         // we are going to attempt to re-render the left-hand page
@@ -936,7 +936,7 @@ void pfBookData::IFinishTriggeredFlip(bool wasBackwards)
         if ( turnBack->IsValid() && left->IsValid() )
         {
             memcpy(left->GetImage(), turnBack->GetImage(), left->GetLevelSize(0));
-            if(left->GetDeviceRef() != nil)
+            if (left->GetDeviceRef() != nullptr)
                 left->GetDeviceRef()->SetDirty(true);
         }
         // we are going to attempt to re-render the right-hand page
@@ -1056,7 +1056,7 @@ void pfBookData::EnableEditGUI(bool enable/* =true */)
 
 //// Our Singleton Stuff /////////////////////////////////////////////////////
 
-//pfJournalBook *pfJournalBook::fInstance = nil;
+//pfJournalBook *pfJournalBook::fInstance = nullptr;
 std::map<ST::string,pfBookData*> pfJournalBook::fBookGUIs;
 
 void    pfJournalBook::SingletonInit()
@@ -1073,7 +1073,7 @@ void    pfJournalBook::SingletonShutdown()
     {
         pfBookData *bookData = i->second;
         bookData->GetKey()->UnRefObject();
-        i->second = nil;
+        i->second = nullptr;
         i++;
     }
     fBookGUIs.clear();
@@ -1097,7 +1097,7 @@ void    pfJournalBook::UnloadGUI( const ST::string &guiName )
     if (loc != fBookGUIs.end()) // make sure it's loaded
     {
         fBookGUIs[guiName]->GetKey()->UnRefObject();
-        fBookGUIs[guiName] = nil;
+        fBookGUIs[guiName] = nullptr;
         fBookGUIs.erase(loc);
     }
 }
@@ -1116,8 +1116,8 @@ void    pfJournalBook::UnloadAllGUIs()
 // the name of the mipmap to use as the cover of the book. The callback
 // key is the keyed object to send event messages to (see <img> tag).
 
-pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
-                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = nil */ )
+pfJournalBook::pfJournalBook(const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
+                             const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
 {
     if (!guiName.empty())
         fCurBookGUI = guiName;
@@ -1152,8 +1152,8 @@ pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plK
     delete [] wESHTMLSource;
 }
 
-pfJournalBook::pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
-                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = nil */ )
+pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
+                             const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
 {
     if (!guiName.empty())
         fCurBookGUI = guiName;
@@ -1223,11 +1223,11 @@ void    pfJournalBook::Show( bool startOpened /*= false */)
     ILoadAllImages( false );
 
     hsGMaterial *cover = fBookGUIs[fCurBookGUI]->CoverMaterial();
-    if( cover != nil )
+    if (cover != nullptr)
     {
         std::vector<plLayerInterface*> layers;
-        plMipmap *mip = fCoverMipKey ? plMipmap::ConvertNoRef( fCoverMipKey->ObjectIsLoaded() ) : nil;
-        if( mip != nil )
+        plMipmap *mip = fCoverMipKey ? plMipmap::ConvertNoRef(fCoverMipKey->ObjectIsLoaded()) : nullptr;
+        if (mip != nullptr)
         {
             layers.emplace_back(IMakeBaseLayer(mip));
 
@@ -1235,8 +1235,8 @@ void    pfJournalBook::Show( bool startOpened /*= false */)
             {
                 if (decalChunk->fType == pfEsHTMLChunk::kDecal)
                 {
-                    plMipmap *decal = plMipmap::ConvertNoRef(decalChunk->fImageKey != nil ? decalChunk->fImageKey->ObjectIsLoaded() : nil);
-                    if (decal != nil)
+                    plMipmap *decal = plMipmap::ConvertNoRef(decalChunk->fImageKey != nullptr ? decalChunk->fImageKey->ObjectIsLoaded() : nullptr);
+                    if (decal != nullptr)
                         layers.emplace_back(IMakeDecalLayer(decalChunk, decal, mip));
                 }
                 else
@@ -1302,7 +1302,7 @@ void    pfJournalBook::Hide()
         {
             if (fBookGUIs[fCurBookGUI]->Dialog())
                 fBookGUIs[fCurBookGUI]->Dialog()->Hide();
-            fBookGUIs[fCurBookGUI]->CurBook(nil);
+            fBookGUIs[fCurBookGUI]->CurBook(nullptr);
             ISendNotify( kNotifyHide );
             ILoadAllImages( true );
             // purge the dynaTextMaps, we're done with them for now
@@ -1458,7 +1458,7 @@ void    pfJournalBook::NextPage()
         if ( turnFront->IsValid() && right->IsValid() )
         {
             memcpy( turnFront->GetImage(), right->GetImage(), right->GetLevelSize( 0 ) );
-            if( turnFront->GetDeviceRef() != nil )
+            if (turnFront->GetDeviceRef() != nullptr)
                 turnFront->GetDeviceRef()->SetDirty( true );
         }
         // copy the videos over
@@ -1526,7 +1526,7 @@ void    pfJournalBook::PreviousPage()
         if ( turnBack->IsValid() && left->IsValid() )
         {
             memcpy( turnBack->GetImage(), left->GetImage(), left->GetLevelSize( 0 ) );
-            if( turnBack->GetDeviceRef() != nil )
+            if (turnBack->GetDeviceRef() != nullptr)
                 turnBack->GetDeviceRef()->SetDirty( true );
         }
         // copy the videos over
@@ -2152,11 +2152,11 @@ uint8_t   pfJournalBook::IGetTagType( const wchar_t *string )
                 { L"decal", pfEsHTMLChunk::kDecal },
                 { L"movie", pfEsHTMLChunk::kMovie },
                 { L"editable", pfEsHTMLChunk::kEditable },
-                { nil, pfEsHTMLChunk::kEmpty } };
+                { nullptr, pfEsHTMLChunk::kEmpty } };
                 
 
     uint32_t i;
-    for( i = 0; tags[ i ].fTag != nil; i++ )
+    for (i = 0; tags[i].fTag != nullptr; i++)
     {
         if( wcsnicmp( string + 1, tags[ i ].fTag, wcslen( tags[ i ].fTag ) ) == 0 )
         {
@@ -2283,7 +2283,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     // Try first to find in the given location
     plUoid myUoid( loc, plMipmap::Index(), cName );
     plKey key = hsgResMgr::ResMgr()->FindKey( myUoid );
-    if( key != nil )
+    if (key != nullptr)
     {
         return key;
     }
@@ -2293,26 +2293,26 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     const plLocation &globLoc = plKeyFinder::Instance().FindLocation( "GUI", "BkBookImages" );
     myUoid = plUoid( globLoc, plMipmap::Index(), cName );
     key = hsgResMgr::ResMgr()->FindKey( myUoid );
-    if( key != nil )
+    if (key != nullptr)
     {
         return key;
     }
 
     // Do a search through our current age with just the name given
-    if( plNetClientApp::GetInstance() != nil )
+    if (plNetClientApp::GetInstance() != nullptr)
     {
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
         if (!thisAge.empty())
         {
             key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), cName, true );
-            if( key != nil )
+            if (key != nullptr)
             {
                 return key;
             }
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// IRenderPage /////////////////////////////////////////////////////////////
@@ -2327,9 +2327,9 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
     
     // Grab the DTMap via the GUI system
     plDynamicTextMap *dtMap = fBookGUIs[fCurBookGUI]->GetDTMap( whichDTMap );
-    hsAssert( dtMap != nil, "Invalid DT map in IRenderPage()" );
+    hsAssert(dtMap != nullptr, "Invalid DT map in IRenderPage()");
 
-    loadedMovie *movie = nil;
+    loadedMovie *movie = nullptr;
     bool movieAlreadyLoaded = false;
 
     // Make sure our page starts are up-to-snuff, at least to this point
@@ -2341,7 +2341,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
     if( !suppressRendering )
         dtMap->ClearToColor( color );
 
-    hsGMaterial *material = nil;
+    hsGMaterial *material = nullptr;
     if (whichDTMap == pfJournalDlgProc::kTagLeftDTMap)
         material = fBookGUIs[fCurBookGUI]->PageMaterial(pfBookData::kLeftPage);
     else if (whichDTMap == pfJournalDlgProc::kTagRightDTMap)
@@ -2473,8 +2473,8 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
 
                 case pfEsHTMLChunk::kImage:
                     {
-                        plMipmap *mip = plMipmap::ConvertNoRef( chunk->fImageKey != nil ? chunk->fImageKey->ObjectIsLoaded() : nil );
-                        if( mip != nil )
+                        plMipmap *mip = plMipmap::ConvertNoRef(chunk->fImageKey != nullptr ? chunk->fImageKey->ObjectIsLoaded() : nullptr);
+                        if (mip != nullptr)
                         {
                             // First, determine if we need to be processing FX messages
                             if( chunk->fFlags & pfEsHTMLChunk::kGlowing )
@@ -2552,7 +2552,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     break;
 
                 case pfEsHTMLChunk::kMovie:
-                    movieAlreadyLoaded = (IMovieAlreadyLoaded(chunk) != nil); // have we already cached it?
+                    movieAlreadyLoaded = (IMovieAlreadyLoaded(chunk) != nullptr); // have we already cached it?
                     plLayerAVI *movieLayer = IMakeMovieLayer(chunk, x, y, (plMipmap*)dtMap, whichDTMap, suppressRendering);
                     if (movieLayer)
                     {
@@ -2584,7 +2584,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                             movie->movieLayer = movieLayer; // save the layer and chunk data
                             movie->movieChunk = chunk;
                             fLoadedMovies.emplace_back(movie);
-                            movie = nil;
+                            movie = nullptr;
                             movieAlreadyLoaded = false;
                         }
                         if (material && !suppressRendering)
@@ -2752,7 +2752,7 @@ pfJournalBook::loadedMovie *pfJournalBook::IMovieAlreadyLoaded(pfEsHTMLChunk *ch
         if ((chunk->fText == lm->movieChunk->fText) && (chunk->fMovieIndex == lm->movieChunk->fMovieIndex))
             return lm;
     }
-    return nil;
+    return nullptr;
 }
 
 plKey pfJournalBook::GetMovie(uint8_t index)
@@ -2760,7 +2760,7 @@ plKey pfJournalBook::GetMovie(uint8_t index)
     loadedMovie *movie = IGetMovieByIndex(index);
     if (movie)
         return movie->movieLayer->GetKey();
-    return plKey(nil);
+    return plKey();
 }
 
 pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(uint8_t index)
@@ -2770,15 +2770,15 @@ pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(uint8_t index)
         if (lm->movieChunk->fMovieIndex == index)
             return lm;
     }
-    return nil;
+    return nullptr;
 }
 
 plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender)
 {
     // see if it's already loaded
     loadedMovie *movie = IMovieAlreadyLoaded(chunk);
-    plLayer* layer = nil;
-    plLayerAVI* movieLayer = nil;
+    plLayer* layer = nullptr;
+    plLayerAVI* movieLayer = nullptr;
     uint16_t movieWidth=0,movieHeight=0;
     if (movie)
     {
@@ -2818,7 +2818,7 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         if (movieHeight == 0 || movieWidth == 0) // problem loading the file
         {
             movieLayer->GetKey()->UnRefObject();
-            return nil;
+            return nullptr;
         }
     }
 
@@ -3221,7 +3221,7 @@ void    pfJournalBook::IRecalcPageStarts( uint32_t upToPage )
 
 void    pfJournalBook::ISendNotify( uint32_t type, uint32_t linkID )
 {
-    if( fCallbackKey != nil )
+    if (fCallbackKey != nullptr)
     {
         plNotifyMsg *pMsg = new plNotifyMsg;
         pMsg->AddBookEvent( type, linkID );
@@ -3250,7 +3250,7 @@ void    pfJournalBook::SetBookSize( float width, float height )
 void    pfJournalBook::ILoadAllImages( bool unload )
 {
     // load the cover
-    if( fCoverFromHTML && fCoverMipKey != nil )
+    if (fCoverFromHTML && fCoverMipKey != nullptr)
     {
         if( unload )
             fBookGUIs[fCurBookGUI]->GetKey()->Release( fCoverMipKey );
@@ -3263,7 +3263,7 @@ void    pfJournalBook::ILoadAllImages( bool unload )
 
     for (pfEsHTMLChunk* chunk : fHTMLSource)
     {
-        if (chunk->fType == pfEsHTMLChunk::kImage && chunk->fImageKey != nil)
+        if (chunk->fType == pfEsHTMLChunk::kImage && chunk->fImageKey != nullptr)
         {
             if( unload )
                 fBookGUIs[fCurBookGUI]->GetKey()->Release(chunk->fImageKey);

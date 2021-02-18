@@ -210,7 +210,7 @@ static CliGkConn * GetConnIncRef_CS (const char tag[]) {
         conn->Ref(tag);
         return conn;
     }
-    return nil;
+    return nullptr;
 }
 
 //============================================================================
@@ -227,7 +227,7 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
     conn->StopAutoReconnect();
 
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
+        AsyncSocketConnectCancel(nullptr, conn->cancelId);
         conn->cancelId  = nullptr;
     }
     else if (conn->sock) {
@@ -269,7 +269,7 @@ static void NotifyConnSocketConnect (CliGkConn * conn) {
         false,
         ConnEncrypt,
         0,
-        nil,
+        nullptr,
         conn
     );
 }
@@ -298,8 +298,8 @@ static void CheckedReconnect (CliGkConn * conn, ENetError error) {
         // clean up the socket and start reconnect
         if (conn->cli)
             NetCliDelete(conn->cli, true);
-        conn->cli = nil;
-        conn->sock = nil;
+        conn->cli = nullptr;
+        conn->sock = nullptr;
         
         conn->StartAutoReconnect();
     }
@@ -314,7 +314,7 @@ static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
         s_conns.Unlink(conn);
 
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
     
     CheckedReconnect(conn, kNetErrConnectFailed);
@@ -333,7 +333,7 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
         s_conns.Unlink(conn);
             
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
 
     // Cancel all transactions in process on this connection.
@@ -507,10 +507,10 @@ static unsigned CliGkConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGkConn::CliGkConn ()
-    : hsRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
-    , sock(nil), cli(nil), seq(0), serverChallenge(0)
-    , cancelId(nil), abandoned(false)
+    : hsRefCnt(0), reconnectTimer(), reconnectStartMs()
+    , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
+    , sock(), cli(), seq(), serverChallenge()
+    , cancelId(), abandoned()
 {
     ++s_perf[kPerfConnCount];
 }
@@ -584,7 +584,7 @@ void CliGkConn::AutoReconnect () {
 void CliGkConn::StopAutoReconnect () {
     hsLockGuard(critsect);
     if (AsyncTimer * timer = reconnectTimer) {
-        reconnectTimer = nil;
+        reconnectTimer = nullptr;
         AsyncTimerDeleteCallback(timer, CliGkConnTimerDestroyed);
     }
 }
@@ -592,7 +592,7 @@ void CliGkConn::StopAutoReconnect () {
 //============================================================================
 bool CliGkConn::AutoReconnectEnabled () {
     
-    return (reconnectTimer != nil) && !s_perf[kAutoReconnectDisabled];
+    return (reconnectTimer != nullptr) && !s_perf[kAutoReconnectDisabled];
 }
 
 //============================================================================
@@ -613,7 +613,7 @@ void CliGkConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
         AsyncTimerDeleteCallback(pingTimer, CliGkConnTimerDestroyed);
-        pingTimer = nil;
+        pingTimer = nullptr;
     }
 }
 
@@ -874,7 +874,7 @@ bool AuthSrvIpAddressRequestTrans::Recv (
 //============================================================================
 NetGateKeeperTrans::NetGateKeeperTrans (ETransType transType)
 :   NetTrans(kNetProtocolCli2GateKeeper, transType)
-,   m_conn(nil)
+,   m_conn()
 {
 }
 
@@ -887,14 +887,14 @@ NetGateKeeperTrans::~NetGateKeeperTrans () {
 bool NetGateKeeperTrans::AcquireConn () {
     if (!m_conn)
         m_conn = GetConnIncRef("AcquireConn");
-    return m_conn != nil;
+    return m_conn != nullptr;
 }
 
 //============================================================================
 void NetGateKeeperTrans::ReleaseConn () {
     if (m_conn) {
         m_conn->UnRef("AcquireConn");
-        m_conn = nil;
+        m_conn = nullptr;
     }
 }
 
@@ -936,7 +936,7 @@ void GateKeeperDestroy (bool wait) {
         hsLockGuard(s_critsect);
         while (CliGkConn * conn = s_conns.Head())
             UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
+        s_active = nullptr;
     }
 
     if (!wait)
@@ -989,7 +989,7 @@ void NetCliGateKeeperStartConnect (
                     AsyncLookupCallback,
                     gateKeeperAddrList[i].c_str(),
                     GetClientPort(),
-                    nil
+                    nullptr
                 );
                 break;
             }
@@ -1006,7 +1006,7 @@ void NetCliGateKeeperDisconnect () {
     hsLockGuard(s_critsect);
     while (CliGkConn * conn = s_conns.Head())
         UnlinkAndAbandonConn_CS(conn);
-    s_active = nil;
+    s_active = nullptr;
 }
 
 //============================================================================

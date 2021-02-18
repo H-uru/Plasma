@@ -59,7 +59,7 @@ char plLayerSDLModifier::kStrChannelData[]="channelData";
 
 plKey plLayerSDLModifier::GetStateOwnerKey() const
 { 
-    return fLayerAnimation ? fLayerAnimation->GetKey() : nil; 
+    return fLayerAnimation ? fLayerAnimation->GetKey() : nullptr;
 }
 
 //

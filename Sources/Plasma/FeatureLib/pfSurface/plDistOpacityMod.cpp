@@ -134,7 +134,7 @@ bool plDistOpacityMod::MsgReceive(plMessage* msg)
     plArmatureUpdateMsg* arm = plArmatureUpdateMsg::ConvertNoRef(msg);
     if( arm && arm->IsLocal() )
     {
-        arm->fArmature->GetPositionAndRotationSim(&fRefPos, nil);
+        arm->fArmature->GetPositionAndRotationSim(&fRefPos, nullptr);
 
         return true;
     }

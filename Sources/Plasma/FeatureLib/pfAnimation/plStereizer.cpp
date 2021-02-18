@@ -260,7 +260,7 @@ plCoordinateInterface* plStereizer::IGetParent() const
     {
         return coord->GetParent();
     }
-    return nil;
+    return nullptr;
 }
 
 // Note that (along with it's many other hacky defects), this

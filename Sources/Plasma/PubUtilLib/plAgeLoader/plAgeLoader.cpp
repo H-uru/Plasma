@@ -75,14 +75,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 
 // static 
-plAgeLoader* plAgeLoader::fInstance=nil;
+plAgeLoader* plAgeLoader::fInstance = nullptr;
 
 //
 // CONSTRUCT
 //
 plAgeLoader::plAgeLoader() :
-        fInitialAgeState(nil),
-        fFlags(0)
+        fInitialAgeState(),
+        fFlags()
 {
 }
 
@@ -92,7 +92,7 @@ plAgeLoader::plAgeLoader() :
 plAgeLoader::~plAgeLoader()
 {
     delete fInitialAgeState;
-    fInitialAgeState=nil;
+    fInitialAgeState = nullptr;
 
     if ( PendingAgeFniFiles().size() )
         plNetClientApp::StaticErrorMsg( "~plAgeLoader(): {} pending age fni files", PendingAgeFniFiles().size() );
@@ -102,7 +102,7 @@ plAgeLoader::~plAgeLoader()
     ClearPageExcludeList();     // Clear our debugging exclude list, just to be tidy
     
     if (fInstance==this)
-        SetInstance(nil);
+        SetInstance(nullptr);
 }
 
 void plAgeLoader::Shutdown()
@@ -142,7 +142,7 @@ void plAgeLoader::SetInstance(plAgeLoader* inst)
 bool plAgeLoader::MsgReceive(plMessage* msg)
 {
     plInitialAgeStateLoadedMsg *stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef( msg );
-    if( stateMsg != nil )
+    if (stateMsg != nullptr)
     {
         // done receiving the initial state of the age from the server
         return true;
@@ -250,13 +250,13 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 
     // Copy, exclude pages we want excluded, and collect our scene nodes
     fCurAgeDescription.CopyFrom(ad);
-    while( ( page = ad.GetNextPage() ) != nil )
+    while ((page = ad.GetNextPage()) != nullptr)
     {
         if( IsPageExcluded( page, fAgeName) )
             continue;
 
         plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( fAgeName, page->GetName() );
-        if( roomKey != nil )
+        if (roomKey != nullptr)
             AddPendingPageInRoomKey( roomKey );
     }
     ad.SeekFirstPage();
@@ -282,7 +282,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     pMsg1->SetAgeName(fAgeName);
 
     // Loop and ref!
-    while( ( page = ad.GetNextPage() ) != nil )
+    while ((page = ad.GetNextPage()) != nullptr)
     {
         if( IsPageExcluded( page, fAgeName) )
         {
@@ -368,7 +368,7 @@ bool    plAgeLoader::IUnloadAge()
     for (plRegistryPageNode *page : collector.fPages)
     {
         plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( page->GetPageInfo().GetLocation() );
-        if( roomKey != nil && roomKey->ObjectIsLoaded() )
+        if (roomKey != nullptr && roomKey->ObjectIsLoaded())
         {
             nc->DebugMsg( "\tPaging out room {}\n", page->GetPageInfo().GetPage() );
             newPageOuts.push_back(roomKey);
@@ -426,7 +426,7 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
 }
 
 //
-// return alloced stream or nil
+// return alloced stream or nullptr
 // static
 //
 hsStream* plAgeLoader::GetAgeDescFileStream(const ST::string& ageName)

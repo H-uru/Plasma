@@ -72,7 +72,7 @@ bool plTimerCallbackManager::MsgReceive(plMessage* msg)
                 plgDispatch::MsgSend(fCallbacks.back()->fMsg);
 
                 // Set it nil so the TimerCallback destructor doesn't unRef it
-                fCallbacks.back()->fMsg = nil;
+                fCallbacks.back()->fMsg = nullptr;
 
                 delete fCallbacks.back();
                 fCallbacks.pop_back();
@@ -150,7 +150,7 @@ plTimerCallback::~plTimerCallback()
 {
     if (fMsg)
         hsRefCnt_SafeUnRef(fMsg);
-    fMsg = nil;
+    fMsg = nullptr;
 }
 
 void plTimerCallback::Read(hsStream* stream, hsResMgr* mgr)
@@ -161,7 +161,7 @@ void plTimerCallback::Write(hsStream* stream, hsResMgr* mgr)
 }
 
 
-plTimerCallbackManager* plgTimerCallbackMgr::fMgr = nil;
+plTimerCallbackManager* plgTimerCallbackMgr::fMgr = nullptr;
 
 void plgTimerCallbackMgr::Init()
 {

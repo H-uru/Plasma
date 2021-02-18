@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-plComponentDlg::plComponentDlg() : fhDlg(nil), fCompMenu(nil), fTypeMenu(nil), fCommentNode(nil)
+plComponentDlg::plComponentDlg() : fhDlg(), fCompMenu(), fTypeMenu(), fCommentNode()
 {
     fInterface = GetCOREInterface();
 
@@ -328,7 +328,7 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                     else
                     {
-                        fCommentNode = nil;
+                        fCommentNode = nullptr;
                         SetDlgItemText(hDlg, IDC_COMMENTS, "");
                     }
 
@@ -438,7 +438,7 @@ HTREEITEM plComponentDlg::IFindTreeItem(HWND hTree, const char *name, HTREEITEM 
         hChild = TreeView_GetNextSibling(hTree, hChild);
     }
 
-    return nil;
+    return nullptr;
 }
 
 HTREEITEM plComponentDlg::IAddComponent(HWND hTree, plMaxNode *node)
@@ -491,8 +491,8 @@ void plComponentDlg::ICreateMenu()
     HMENU hNew = CreatePopupMenu();
     InsertMenu(hMenu, 0, MF_POPUP | MF_STRING | MF_BYPOSITION, (UINT)hNew, "New");
 
-    const char *lastCat = nil;
-    HMENU hCurType = nil;
+    const char *lastCat = nullptr;
+    HMENU hCurType = nullptr;
 
     uint32_t count = plComponentMgr::Inst().Count();
     for (uint32_t i = 0; i < count; i++)
@@ -701,7 +701,7 @@ plMaxNode *plComponentDlg::ITreeItemToNode(HWND hTree, HTREEITEM hItem)
             return (plMaxNode*)item.lParam;
     }
 
-    return nil;
+    return nullptr;
 }
 
 enum
@@ -749,7 +749,7 @@ void plComponentDlg::IOpenRightClickMenu()
     item.hItem = hitTest.hItem;
     TreeView_GetItem(hTree, &item);
 
-    HMENU menu = nil;
+    HMENU menu = nullptr;
     if (IIsComponent(item.lParam))
         menu = fCompMenu;
     else if (IIsType(item.lParam))
@@ -852,7 +852,7 @@ void plComponentDlg::IRefreshTree()
 {
     if (fhDlg)
     {
-        fCommentNode = nil;
+        fCommentNode = nullptr;
 
         HWND hTree = GetDlgItem(fhDlg, IDC_TREE);
         TreeView_DeleteAllItems(hTree);

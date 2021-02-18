@@ -71,13 +71,13 @@ public:
     CLASSNAME_REGISTER( plResponderSDLModifier );
     GETINTERFACE_ANY( plResponderSDLModifier, plSDLModifier);
         
-    plResponderSDLModifier() : fResponder(nil) {}
+    plResponderSDLModifier() : fResponder() { }
 
     const char* GetSDLName() const override { return kSDLResponder; }
     plKey GetStateOwnerKey() const override;
 
     plResponderModifier* GetResponder() const { return fResponder; }
-    void SetResponder(plResponderModifier* r) { fResponder=r; AddTarget(nil); }
+    void SetResponder(plResponderModifier* r) { fResponder = r; AddTarget(nullptr); }
 };
 
 #endif  // plResponderSDLModifier_inc

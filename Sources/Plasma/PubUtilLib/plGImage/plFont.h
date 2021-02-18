@@ -273,8 +273,8 @@ class plFont : public hsKeyedObject
         void    SetRenderClipping( int16_t x, int16_t y, int16_t width, int16_t height );
         void    SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t height );
 
-        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const ST::string &string, uint16_t *lastX = nil, uint16_t *lastY = nil );
-        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    RenderString(plMipmap *mip, uint16_t x, uint16_t y, const ST::string &string, uint16_t *lastX = nullptr, uint16_t *lastY = nullptr);
+        void    RenderString(plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, uint16_t *lastX = nullptr, uint16_t *lastY = nullptr);
 
         uint16_t  CalcStringWidth( const ST::string &string );
         uint16_t  CalcStringWidth( const wchar_t *string );

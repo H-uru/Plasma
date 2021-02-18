@@ -80,11 +80,11 @@ bool GetSegMapAnimTime(const ST::string &animName, SegmentMap *segMap, SegmentSp
 SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg *pErrorMsg)
 {
     if (anims.empty())
-        return nil;
+        return nullptr;
 
     SegmentMap *segMap = GetAnimSegmentMap(anims[0], pErrorMsg);
     if (!segMap)
-        return nil;
+        return nullptr;
 
     int i;
     for (i = 1; i < anims.size(); i++)
@@ -94,13 +94,13 @@ SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg 
         if (!curSegMap)
         {
             DeleteSegmentMap(segMap);
-            return nil;
+            return nullptr;
         }
 
         if (segMap->begin() == segMap->end())
         {
             DeleteSegmentMap(segMap);
-            return nil;
+            return nullptr;
         }
 
         SegmentMap::iterator it = segMap->begin();
@@ -249,7 +249,7 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
         else
         {
             SegmentMap::iterator existing = segMap->find(name);
-            SegmentSpec *existingSpec = (existing != segMap->end()) ? (*existing).second : nil;
+            SegmentSpec *existingSpec = (existing != segMap->end()) ? (*existing).second : nullptr;
             const char *kErrorTitle = "NoteTrack Anim Error";
 
             if (existingSpec)
@@ -344,7 +344,7 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
 SegmentMap * GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg)
 {
     if (!anim->HasNoteTracks())
-        return nil;
+        return nullptr;
     
     SegmentMap *segMap = new SegmentMap();
 

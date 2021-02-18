@@ -100,12 +100,11 @@ class pfUpDownBtnProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIUpDownPairMod::pfGUIUpDownPairMod()
+    : fUpControl(), fDownControl()
 {
-    fUpControl = nil;
-    fDownControl = nil;
     fValue = fMin = fMax = fStep = 0.f;
 
-    fButtonProc = new pfUpDownBtnProc( nil, nil, this );
+    fButtonProc = new pfUpDownBtnProc(nullptr, nullptr, this);
     fButtonProc->IncRef();
     SetFlag( kIntangible );
 }
@@ -159,7 +158,7 @@ void    pfGUIUpDownPairMod::Update()
 bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefUpControl )
         {
@@ -171,8 +170,8 @@ bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
             }
             else
             {
-                fUpControl = nil;
-                fButtonProc->SetUp( nil );
+                fUpControl = nullptr;
+                fButtonProc->SetUp(nullptr);
             }
             return true;
         }
@@ -186,8 +185,8 @@ bool    pfGUIUpDownPairMod::MsgReceive( plMessage *msg )
             }
             else
             {
-                fDownControl = nil;
-                fButtonProc->SetDown( nil );
+                fDownControl = nullptr;
+                fButtonProc->SetDown(nullptr);
             }
             return true;
         }
@@ -202,8 +201,8 @@ void    pfGUIUpDownPairMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIValueCtrl::Read(s, mgr);
 
-    fUpControl = nil;
-    fDownControl = nil;
+    fUpControl = nullptr;
+    fDownControl = nullptr;
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
 

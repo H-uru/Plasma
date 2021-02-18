@@ -68,53 +68,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // PLANIMSTAGE default ctor
 plAnimStage::plAnimStage()
-: fNotify(0),
-  fArmature(nil),
-  fBrain(nil),
+: fNotify(),
+  fArmature(),
+  fBrain(),
   fForwardType(kForwardNone),
   fBackType(kBackNone),
   fAdvanceType(kAdvanceNone),
   fRegressType(kRegressNone),
-  fLoops(0),
-  fAnimInstance(nil),
-  fLocalTime(0.0f),
-  fLength(0.0f),
-  fCurLoop(0),
-  fAttached(false),
-  fDoAdvanceTo(false),
-  fAdvanceTo(0),
-  fDoRegressTo(false),
-  fRegressTo(0),
-  fMod(nil),
-  fSentNotifies(0),
-  fReverseOnIdle(false),
-  fDone(false)
+  fLoops(),
+  fAnimInstance(),
+  fLocalTime(),
+  fLength(),
+  fCurLoop(),
+  fAttached(),
+  fDoAdvanceTo(),
+  fAdvanceTo(),
+  fDoRegressTo(),
+  fRegressTo(),
+  fMod(),
+  fSentNotifies(),
+  fReverseOnIdle(),
+  fDone()
 {
 }
 
 plAnimStage::plAnimStage(const ST::string &animName, uint8_t notify)
 : fAnimName(animName),
   fNotify(notify),
-  fArmature(nil),
-  fBrain(nil),
+  fArmature(),
+  fBrain(),
   fForwardType(kForwardAuto),       // different from default
   fBackType(kBackNone),
   fAdvanceType(kAdvanceAuto),       // different from default
   fRegressType(kRegressNone),
-  fLoops(0),
-  fAnimInstance(nil),
-  fLocalTime(0.0f),
-  fLength(0.0f),
-  fCurLoop(0),
-  fAttached(false),
-  fDoAdvanceTo(false),
-  fAdvanceTo(0),
-  fDoRegressTo(false),
-  fRegressTo(0),
-  fMod(nil),
-  fSentNotifies(0),
-  fReverseOnIdle(false),
-  fDone(false)
+  fLoops(),
+  fAnimInstance(),
+  fLocalTime(),
+  fLength(),
+  fCurLoop(),
+  fAttached(),
+  fDoAdvanceTo(),
+  fAdvanceTo(),
+  fDoRegressTo(),
+  fRegressTo(),
+  fMod(),
+  fSentNotifies(),
+  fReverseOnIdle(),
+  fDone()
 {
 }
 
@@ -128,27 +128,27 @@ plAnimStage::plAnimStage(const ST::string &animName,
                          RegressType regress,
                          int loops)
 : fAnimName(animName),
-  fArmature(nil),
-  fBrain(nil),
+  fArmature(),
+  fBrain(),
   fNotify(notify),
   fForwardType(forward),
   fBackType(back),
   fAdvanceType(advance),
   fRegressType(regress),
   fLoops(loops),
-  fAnimInstance(nil),
-  fLocalTime(0.0f),
-  fLength(0.0f),
-  fCurLoop(0),
-  fAttached(false),
-  fDoAdvanceTo(false),
-  fAdvanceTo(0),
-  fDoRegressTo(false),
-  fRegressTo(0),
-  fMod(nil),
-  fSentNotifies(0),
-  fReverseOnIdle(false),
-  fDone(false)
+  fAnimInstance(),
+  fLocalTime(),
+  fLength(),
+  fCurLoop(),
+  fAttached(),
+  fDoAdvanceTo(),
+  fAdvanceTo(),
+  fDoRegressTo(),
+  fRegressTo(),
+  fMod(),
+  fSentNotifies(),
+  fReverseOnIdle(),
+  fDone()
 {
 }
 
@@ -164,34 +164,34 @@ plAnimStage::plAnimStage(const ST::string &animName,
                          bool doRegressTo,
                          int regressTo)
 : fAnimName(animName),
-  fArmature(nil),
-  fBrain(nil),
+  fArmature(),
+  fBrain(),
   fNotify(notify),
   fForwardType(forward),
   fBackType(back),
   fAdvanceType(advance),
   fRegressType(regress),
   fLoops(loops),
-  fAnimInstance(nil),
-  fLocalTime(0.0f),
-  fLength(0.0f),
-  fCurLoop(0),
-  fAttached(false),
+  fAnimInstance(),
+  fLocalTime(),
+  fLength(),
+  fCurLoop(),
+  fAttached(),
   fDoAdvanceTo(doAdvanceTo),
   fAdvanceTo(advanceTo),
   fDoRegressTo(doRegressTo),
   fRegressTo(regressTo),
-  fMod(nil),
-  fSentNotifies(0),
-  fReverseOnIdle(false),
-  fDone(false)
+  fMod(),
+  fSentNotifies(),
+  fReverseOnIdle(),
+  fDone()
 {
 }
 
 // PLANIMSTAGE dtor
 plAnimStage::~plAnimStage()
 {
-    hsAssert(fAnimInstance == nil, "plAnimStage still has anim instance during destruction. (that's bad.)");
+    hsAssert(fAnimInstance == nullptr, "plAnimStage still has anim instance during destruction. (that's bad.)");
     // we could delete the animation instance here, but it should have been deleted already...
     // *** check back in a while....
 }
@@ -213,7 +213,7 @@ const plAnimStage& plAnimStage::operator=(const plAnimStage& src)
     fRegressTo = src.fRegressTo;
     fMod = src.fMod;
 
-    fAnimInstance = nil;
+    fAnimInstance = nullptr;
     fLocalTime = 0.0f;
     fLength = 0.0f;
     fCurLoop = 0;
@@ -263,7 +263,7 @@ plAGAnimInstance * plAnimStage::Attach(plArmatureMod *armature, plArmatureBrain 
     if(fAnimInstance)
     {
         fAnimInstance->Stop();      // we'll be setting the time directly.
-        fAnimatedHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nil);
+        fAnimatedHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nullptr);
         fAttached = true;
         // this is too early to send the enter notify. we're attached, but we may not
         // have faded in yet.
@@ -324,11 +324,11 @@ bool plAnimStage::Detach(plArmatureMod *armature)
 #endif
 //  hsStatusMessageF("Detaching plAnimStage <%s>", fAnimName.c_str());
     if(fArmature) {
-        fArmature = nil;
+        fArmature = nullptr;
 
         if(fAnimInstance) {
             armature->DetachAnimation(fAnimInstance);       // detach instantly
-            fAnimInstance = nil;
+            fAnimInstance = nullptr;
             result =  true;
         }
 #ifdef DEBUG_MULTISTAGE
@@ -338,7 +338,7 @@ bool plAnimStage::Detach(plArmatureMod *armature)
 //      hsStatusMessageF("Detach: stage already detached.");
     }
     
-    fBrain = nil;
+    fBrain = nullptr;
     fAttached = false;
     return result;
 }

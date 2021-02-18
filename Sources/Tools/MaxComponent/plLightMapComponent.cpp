@@ -126,7 +126,6 @@ ParamBlockDesc2 gLightMapBk
 
 
 plLightMapComponent::plLightMapComponent()
-:   fLightMapKey(nil)
 {
     fClassDesc = &gLightMapDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -142,7 +141,7 @@ bool plLightMapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plLightMapComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fLightMapKey = nil;
+    fLightMapKey = nullptr;
     return true;
 }
 

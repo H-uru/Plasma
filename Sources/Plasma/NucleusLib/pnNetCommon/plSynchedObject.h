@@ -94,7 +94,7 @@ public:
         ST::string  fSDLName;
 
         plSynchedObject* GetObject() const { return plSynchedObject::ConvertNoRef(fObjKey->ObjectIsLoaded()); }
-        StateDefn() : fObjKey(nil),fSendFlags(0) {}
+        StateDefn() : fSendFlags() { }
         StateDefn(plKey k, uint32_t f, const ST::string& sdlName)
             : fObjKey(k), fSendFlags(f), fSDLName(sdlName) { }
     };
@@ -207,7 +207,7 @@ protected:
     plKey fSynchedObjKey;
     void* fUserData;
 public: 
-    plDirtyNotifier() : fSynchedObjKey(nil),fUserData(nil) {}
+    plDirtyNotifier() : fUserData() { }
     virtual ~plDirtyNotifier()
     {
         if (fSynchedObjKey)

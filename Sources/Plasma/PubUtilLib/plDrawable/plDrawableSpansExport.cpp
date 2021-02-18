@@ -292,7 +292,7 @@ uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32
     /// Rebuild the pointer array
     IRebuildSpanArray();
 
-    SetSpaceTree(nil);
+    SetSpaceTree(nullptr);
 
     fOptimized = false;
 
@@ -370,7 +370,7 @@ static plStatusLog* IStartLog(const char* name, int numSpans)
 static plStatusLog* IEndLog(plStatusLog* statusLog)
 {
     delete statusLog;
-    return nil;
+    return nullptr;
 }
 
 static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* span, plGBufferGroup* group)
@@ -746,11 +746,11 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
         t1 = span1->fMaterial->GetLayer( i )->GetTexture();
         t2 = span2->fMaterial->GetLayer( i )->GetTexture();
 
-        if( t1 != nil && t2 == nil )
+        if (t1 != nullptr && t2 == nullptr)
             return 1;
-        else if( t1 == nil && t2 != nil )
+        else if (t1 == nullptr && t2 != nullptr)
             return -1;
-        else if( t1 == nil && t2 == nil )
+        else if (t1 == nullptr && t2 == nullptr)
             break;  // Textures equal up to here--keep going with rest of tests
         
         if( !t1->GetKeyName().empty() && !t2->GetKeyName().empty() )

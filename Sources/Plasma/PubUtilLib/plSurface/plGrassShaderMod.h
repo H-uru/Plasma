@@ -67,7 +67,7 @@ public:
 class plGrassShaderMod : public plModifier
 {
 public:
-    plGrassShaderMod() : fTarget(nil), fMaterial(nil), fVShader(nil), fPShader(nil) {}
+    plGrassShaderMod() : fTarget(), fMaterial(), fVShader(), fPShader() { }
     ~plGrassShaderMod();
 
     void ResetWaves();

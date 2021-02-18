@@ -112,7 +112,7 @@ public:                                                                         
     uint16_t ClassIndex() override { return CLASS_INDEX_SCOPED(plClassName); }      \
     const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    plCreatable*        Create() const override { return nil; }                     \
+    plCreatable*        Create() const override { return nullptr; }                 \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
@@ -177,7 +177,7 @@ public:                                                                         
     uint16_t ClassIndex() override { return EXTERN_CLASS_INDEX_SCOPED(plClassName); }  \
     const char* ClassName() const override { return #plClassName; }                 \
                                                                                     \
-    plCreatable*        Create() const override { return nil; }                     \
+    plCreatable*        Create() const override { return nullptr; }                 \
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \

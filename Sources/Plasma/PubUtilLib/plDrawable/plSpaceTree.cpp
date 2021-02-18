@@ -82,9 +82,9 @@ void plSpaceTreeNode::Write(hsStream* s)
 }
 
 plSpaceTree::plSpaceTree()
-:   fCullFunc(nil),
-    fNumLeaves(0),
-    fCache(nil)
+:   fCullFunc(),
+    fNumLeaves(),
+    fCache()
 {
 }
 

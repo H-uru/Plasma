@@ -1317,7 +1317,7 @@ static CliAuConn * GetConnIncRef_CS (const char tag[]) {
         conn->Ref(tag);
         return conn;
     }
-    return nil;
+    return nullptr;
 }
 
 //============================================================================
@@ -1334,7 +1334,7 @@ static void UnlinkAndAbandonConn_CS (CliAuConn * conn) {
     conn->StopAutoReconnect();
 
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
+        AsyncSocketConnectCancel(nullptr, conn->cancelId);
         conn->cancelId  = nullptr;
     }
     else if (conn->sock) {
@@ -1383,7 +1383,7 @@ static void NotifyConnSocketConnect (CliAuConn * conn) {
         false,
         ConnEncrypt,
         0,
-        nil,
+        nullptr,
         conn
     );
 }
@@ -1412,8 +1412,8 @@ static void CheckedReconnect (CliAuConn * conn, ENetError error) {
         // clean up the socket and start reconnect
         if (conn->cli)
             NetCliDelete(conn->cli, true);
-        conn->cli = nil;
-        conn->sock = nil;
+        conn->cli = nullptr;
+        conn->sock = nullptr;
         
         conn->StartAutoReconnect();
     }
@@ -1428,7 +1428,7 @@ static void NotifyConnSocketConnectFailed (CliAuConn * conn) {
         s_conns.Unlink(conn);
 
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
     
     CheckedReconnect(conn, kNetErrConnectFailed);
@@ -1447,7 +1447,7 @@ static void NotifyConnSocketDisconnect (CliAuConn * conn) {
         s_conns.Unlink(conn);
             
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
 
 
@@ -1619,10 +1619,10 @@ static unsigned CliAuConnPingTimerProc (void * param) {
 
 //============================================================================
 CliAuConn::CliAuConn ()
-    : hsRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
-    , sock(nil), cli(nil), seq(0), serverChallenge(0)
-    , cancelId(nil), abandoned(false)
+    : hsRefCnt(0), reconnectTimer(), reconnectStartMs()
+    , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
+    , sock(), cli(), seq(), serverChallenge()
+    , cancelId(), abandoned()
 {
     ++s_perf[kPerfConnCount];
 }
@@ -1696,7 +1696,7 @@ void CliAuConn::AutoReconnect () {
 void CliAuConn::StopAutoReconnect () {
     hsLockGuard(critsect);
     if (AsyncTimer * timer = reconnectTimer) {
-        reconnectTimer = nil;
+        reconnectTimer = nullptr;
         AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
     }
 }
@@ -1704,7 +1704,7 @@ void CliAuConn::StopAutoReconnect () {
 //============================================================================
 bool CliAuConn::AutoReconnectEnabled () {
     
-    return (reconnectTimer != nil) && !s_perf[kAutoReconnectDisabled];
+    return (reconnectTimer != nullptr) && !s_perf[kAutoReconnectDisabled];
 }
 
 //============================================================================
@@ -1725,7 +1725,7 @@ void CliAuConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
         AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
-        pingTimer = nil;
+        pingTimer = nullptr;
     }
 }
 
@@ -3449,7 +3449,7 @@ VaultFetchNodeTrans::VaultFetchNodeTrans (
 ,   m_nodeId(nodeId)
 ,   m_callback(callback)
 ,   m_param(param)
-,   m_node(nil)
+,   m_node()
 {
 }
 
@@ -4006,7 +4006,7 @@ bool SendFriendInviteTrans::Recv (
 
 //============================================================================
 void AuthConnectedNotifyTrans::Post() {
-    if (s_connectedCb != nil)
+    if (s_connectedCb != nullptr)
         s_connectedCb();
 }
 
@@ -4223,7 +4223,7 @@ bool ScoreGetScoresTrans::Recv (
     }
     else {
         m_scoreCount    = 0;
-        m_scores        = nil;
+        m_scores        = nullptr;
     }
 
     m_result        = reply.result;
@@ -4487,7 +4487,7 @@ bool ScoreGetRanksTrans::Recv (
     }
     else {
         m_rankCount = 0;
-        m_ranks     = nil;
+        m_ranks     = nullptr;
     }
 
     m_result        = reply.result;
@@ -4596,7 +4596,7 @@ bool ScoreGetHighScoresTrans::Recv(
 //============================================================================
 NetAuthTrans::NetAuthTrans (ETransType transType)
 :   NetTrans(kNetProtocolCli2Auth, transType)
-,   m_conn(nil)
+,   m_conn()
 {
 }
 
@@ -4609,14 +4609,14 @@ NetAuthTrans::~NetAuthTrans () {
 bool NetAuthTrans::AcquireConn () {
     if (!m_conn)
         m_conn = GetConnIncRef("AcquireConn");
-    return m_conn != nil;
+    return m_conn != nullptr;
 }
 
 //============================================================================
 void NetAuthTrans::ReleaseConn () {
     if (m_conn) {
         m_conn->UnRef("AcquireConn");
-        m_conn = nil;
+        m_conn = nullptr;
     }
 }
 
@@ -4645,13 +4645,13 @@ void AuthInitialize () {
 void AuthDestroy (bool wait) {
     s_running = false;
     
-    s_bufRcvdCb = nil;
-    s_connectedCb = nil;
-    s_vaultNodeChangedHandler   = nil;
-    s_vaultNodeAddedHandler     = nil;
-    s_vaultNodeRemovedHandler   = nil;
-    s_vaultNodeDeletedHandler   = nil;
-    s_notifyNewBuildHandler     = nil;
+    s_bufRcvdCb = nullptr;
+    s_connectedCb = nullptr;
+    s_vaultNodeChangedHandler   = nullptr;
+    s_vaultNodeAddedHandler     = nullptr;
+    s_vaultNodeRemovedHandler   = nullptr;
+    s_vaultNodeDeletedHandler   = nullptr;
+    s_notifyNewBuildHandler     = nullptr;
     
 
     NetTransCancelByProtocol(
@@ -4667,7 +4667,7 @@ void AuthDestroy (bool wait) {
         hsLockGuard(s_critsect);
         while (CliAuConn * conn = s_conns.Head())
             UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
+        s_active = nullptr;
     }
 
     if (!wait)
@@ -4737,7 +4737,7 @@ void NetCliAuthStartConnect (
                     AsyncLookupCallback,
                     authAddrList[i].c_str(),
                     GetClientPort(),
-                    nil
+                    nullptr
                 );
                 break;
             }
@@ -4767,7 +4767,7 @@ void NetCliAuthDisconnect () {
     hsLockGuard(s_critsect);
     while (CliAuConn * conn = s_conns.Head())
         UnlinkAndAbandonConn_CS(conn);
-    s_active = nil;
+    s_active = nullptr;
 }
 
 //============================================================================

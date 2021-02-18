@@ -78,7 +78,7 @@ plVarDescriptor* plStateDescriptor::FindVar(const ST::string& name, int* idx) co
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -109,7 +109,7 @@ bool plStateDescriptor::Read(hsStream* s)
     for(i=0;i<numVars; i++)
     {
         uint8_t SDVar=s->ReadByte();      
-        plVarDescriptor* var = nil;
+        plVarDescriptor* var = nullptr;
         if (SDVar)
             var = new plSDVarDescriptor;
         else
@@ -140,7 +140,7 @@ void plStateDescriptor::Write(hsStream* s) const
 
     VarsList::const_iterator it;
     for (const plVarDescriptor* desc : fVarsList) {
-        auto SDVar = (uint8_t)(desc->GetAsSDVarDescriptor() != nil);
+        auto SDVar = (uint8_t)(desc->GetAsSDVarDescriptor() != nullptr);
         s->WriteByte(SDVar);
         desc->Write(s);
     }

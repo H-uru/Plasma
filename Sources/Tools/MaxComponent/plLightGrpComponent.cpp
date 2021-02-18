@@ -83,7 +83,7 @@ ParamBlockDesc2 gLightGrpBk
 (
     plComponent::kBlkComp, _T("LightGroup"), 0, &gLightGrpDesc, P_AUTO_CONSTRUCT+P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_LIGHTINC, IDS_COMP_LIGHTINCS,  0, 0, nil,
+    IDD_COMP_LIGHTINC, IDS_COMP_LIGHTINCS,  0, 0, nullptr,
 
     kIncludeChars,  _T("Include characters"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
@@ -123,7 +123,7 @@ public:
         if( light )
         {
             fLightGrp->AddTarget((plMaxNodeBase*)light);
-            compPB->SetValue(kAffectedLightSel, TimeValue(0), (INode*)nil);
+            compPB->SetValue(kAffectedLightSel, TimeValue(0), (INode*)nullptr);
         }
         delete this;
     }
@@ -235,7 +235,7 @@ plLightGrpComponent* plLightGrpComponent::GetComp(plMaxNode* node)
         if( comp && comp->ClassID() == LIGHTGRP_COMP_CID )
             return (plLightGrpComponent*)comp;
     }
-    return nil;
+    return nullptr;
 }
 
 bool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)

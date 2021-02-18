@@ -87,7 +87,7 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
         {
             // The draggable was let up, so now we stop dragging, disable the draggable again, and pass
             // on the event to our original proc
-            if( fOrigProc != nil && fParent->IsTriggering() )
+            if (fOrigProc != nullptr && fParent->IsTriggering())
                 fOrigProc->DoSomething( ctrl );
             if (!fParent->IsButtonDown())
                 fParent->StopDragging( false );
@@ -109,13 +109,13 @@ class pfGUIButtonDragProc : public pfGUICtrlProcObject
                     return;
             }
             
-            if( fOrigProc != nil )
+            if (fOrigProc != nullptr)
                 fOrigProc->HandleExtendedEvent( ctrl, event );
         }
 
         void    UserCallback(uint32_t userValue) override
         {
-            if( fOrigProc != nil )
+            if (fOrigProc != nullptr)
                 fOrigProc->UserCallback( userValue );
         }
 };
@@ -126,7 +126,7 @@ void    pfGUIButtonMod::StopDragging( bool cancel )
     fDraggable->StopDragging( cancel );
     fDraggable->SetVisible( false );
     fDraggable->SetHandler( fOrigHandler );
-    fOrigHandler = nil;
+    fOrigHandler = nullptr;
 
     if( !fOrigReportedDrag )
         fDraggable->ClearFlag( pfGUIDraggableMod::kReportDragging );
@@ -167,7 +167,7 @@ bool    pfGUIButtonMod::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIButtonMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil && refMsg->fType == kRefDraggable )
+    if (refMsg != nullptr && refMsg->fType == kRefDraggable)
     {
         if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
         {
@@ -175,7 +175,7 @@ bool    pfGUIButtonMod::MsgReceive( plMessage *msg )
             fDraggable->SetVisible( false );        // Disable until we're dragging
         }
         else
-            fDraggable = nil;
+            fDraggable = nullptr;
         return true;
     }
 
@@ -222,7 +222,7 @@ void    pfGUIButtonMod::Write( hsStream *s, hsResMgr *mgr )
 
     s->WriteLE32( fNotifyType );
 
-    mgr->WriteKey( s, fDraggable != nil ? fDraggable->GetKey() : nil );
+    mgr->WriteKey(s, fDraggable != nullptr ? fDraggable->GetKey() : nullptr);
 
 }
 
@@ -298,7 +298,7 @@ void    pfGUIButtonMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
     if( !fClicking )
         return;
 
-    if( fDraggable == nil )
+    if (fDraggable == nullptr)
         return;
 
     if( !fDraggable->IsVisible() )
@@ -371,7 +371,7 @@ void    pfGUIButtonMod::SetMouseOverAnimKeys(const std::vector<plKey> &keys, con
 
 uint32_t      pfGUIButtonMod::IGetDesiredCursor() const
 {
-    if( fHandler == nil )
+    if (fHandler == nullptr)
         return 0;
 
     if( fClicking )

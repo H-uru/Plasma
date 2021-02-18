@@ -65,9 +65,9 @@ public:
         kExecuteLine
     };
 
-    plConsoleMsg() : plMessage(nil, nil, nil), fCmd( 0 ), fString( nil ) { SetBCastFlag(kBCastByExactType); }
+    plConsoleMsg() : plMessage(nullptr, nullptr, nullptr), fCmd(), fString() { SetBCastFlag(kBCastByExactType); }
     plConsoleMsg( uint32_t cmd, const char *str ) : 
-                plMessage(nil, nil, nil), fCmd( cmd ), fString(hsStrcpy(str))
+                plMessage(nullptr, nullptr, nullptr), fCmd(cmd), fString(hsStrcpy(str))
                 { SetBCastFlag( kBCastByExactType ); }
     
     ~plConsoleMsg() { free(fString); }

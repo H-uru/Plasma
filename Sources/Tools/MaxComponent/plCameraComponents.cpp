@@ -438,11 +438,11 @@ bool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     // see if there is a camera specified
     INode* pCamNode = fCompPB->GetINode(kTransitionTo);
             
-    PreTrans* pTrans = nil;
+    PreTrans* pTrans = nullptr;
     if (pCamNode)
         pTrans = new PreTrans(((plMaxNode*)pCamNode)->GetSceneObject());
     else
-        pTrans = new PreTrans(nil);
+        pTrans = new PreTrans(nullptr);
 
     if (fCompPB->GetInt(kIgnoreTrans))
     {
@@ -661,7 +661,7 @@ plKey plPOAObjectComponent::GetObjectKey()
 {
     if (fCompPB->GetINode(kPOAObject))
         return ((plMaxNode*)(fCompPB->GetINode(kPOAObject)))->GetSceneObject()->GetKey();
-    return nil;
+    return nullptr;
 }
 
 //
@@ -782,7 +782,7 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 PreTrans *trans = it->second;
                 // convert the pre transition to a camera transition (get the camera modifier key that we are going to)
                 plSceneObject* pObj = trans->fTransTo;
-                const plCameraModifier1* pCamMod = nil;
+                const plCameraModifier1* pCamMod = nullptr;
                 if (pObj)
                 {
                     for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
@@ -792,9 +792,9 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             break;
                     }
                 }
-                CamTrans* camTrans = nil;
+                CamTrans* camTrans = nullptr;
                 if (!pCamMod)
-                    camTrans = new CamTrans(nil);
+                    camTrans = new CamTrans(nullptr);
                 else
                     camTrans = new CamTrans(pCamMod->GetKey());
 
@@ -820,7 +820,7 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
 
-    GenCamera* theCam = nil;
+    GenCamera* theCam = nullptr;
     Object* obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
     TimeValue Now = hsConverterUtils::Instance().GetTime(pNode->GetInterface());
 
@@ -828,7 +828,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
         theCam = (GenCamera *) obj->ConvertToType(Now, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
     else
     {
-        return nil;
+        return nullptr;
     }
 
     pNode->SetDrawable(false);
@@ -1628,8 +1628,8 @@ ParamBlockDesc2 gRailCameraBk
 );
 
 plRailCameraComponent::plRailCameraComponent()
-:   fValid(false),
-    fLineMod(nil)
+:   fValid(),
+    fLineMod()
 {
     fClassDesc = &gRailCameraDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -1715,7 +1715,7 @@ bool plRailCameraComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrM
         return false;
 
     fValid = false;
-    fLineMod = nil;
+    fLineMod = nullptr;
 
     if( !fCompPB->GetINode(kRailCamObj) )
     {
@@ -2411,7 +2411,7 @@ bool plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 bool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plSceneObject* pObj = pNode->GetSceneObject();
-    const plCameraModifier1* pCamMod = nil;
+    const plCameraModifier1* pCamMod = nullptr;
     if (pObj)
     {
         for (size_t i = 0; i < pObj->GetNumModifiers(); i++)

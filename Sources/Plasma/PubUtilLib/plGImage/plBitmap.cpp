@@ -75,13 +75,13 @@ plBitmap::plBitmap()
     fFlags = 0;
     fCompressionType = kUncompressed;
     fUncompressedInfo.fType = UncompressedInfo::kRGB8888;
-    fDeviceRef = nil;
+    fDeviceRef = nullptr;
     fLowModifiedTime = fHighModifiedTime = 0;
 }
 
 plBitmap::~plBitmap()
 {
-    if( fDeviceRef != nil )
+    if (fDeviceRef != nullptr)
         hsRefCnt_SafeUnRef( fDeviceRef );
 }
 

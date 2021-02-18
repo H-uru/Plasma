@@ -102,7 +102,7 @@ plLinkEffectsTriggerMsg *plLinkEffectsMgr::IFindLinkTriggerMsg(plKey linkKey)
         if (fLinks[i]->GetLinkKey() == linkKey)
             return fLinks[i];
     }
-    return nil;
+    return nullptr;
 }
 
 void plLinkEffectsMgr::IAddLink(plLinkEffectsTriggerMsg *msg)
@@ -304,7 +304,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             !pTriggerMsg->IsLeavingAge(), pTriggerMsg->GetInvisLevel());
 
         plKey linkKey = pTriggerMsg->GetLinkKey();
-        if (linkKey == nil)
+        if (linkKey == nullptr)
             return true;
 
         if ((linkKey != nc->GetLocalPlayerKey()) &&
@@ -321,14 +321,14 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         }
 
         plSceneObject *avatar = plSceneObject::ConvertNoRef(linkKey->ObjectIsLoaded());
-        if (avatar == nil)
+        if (avatar == nullptr)
         {
             plNetApp::GetInstance()->DebugMsg("Can't find avatar, mod={}\n", linkKey->GetName());
             return true;
         }
 
         // This is not the right place to catch this problem.
-//      if (IFindLinkTriggerMsg(linkKey) != nil)
+//      if (IFindLinkTriggerMsg(linkKey) != nullptr)
 //      { 
 //          hsAssert(false, "Trying to link an Avatar already in the process of linking.");
 //          return true;
@@ -399,8 +399,8 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         
         if (!pTriggerMsg->IsLeavingAge()) // Avatar is currently entering a new age
         {
-            plATCAnim *linkInAnim = nil;
-            plKey linkInAnimKey = nil;
+            plATCAnim *linkInAnim = nullptr;
+            plKey linkInAnimKey;
             const plArmatureMod *avMod = plArmatureMod::ConvertNoRef(avatar->GetModifierByType(plArmatureMod::Index()));
             if (pTriggerMsg->HasBCastFlag(plMessage::kNetNonLocal))
             {
@@ -410,13 +410,13 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             else
             {
                 // this is our backup trigger we send ourselves. We've already received the remote player's SDL.
-                linkInAnimKey = avMod ? avMod->GetLinkInAnimKey() : nil;
+                linkInAnimKey = avMod ? avMod->GetLinkInAnimKey() : nullptr;
             }
-            linkInAnim = plATCAnim::ConvertNoRef(linkInAnimKey ? linkInAnimKey->ObjectIsLoaded() : nil);
+            linkInAnim = plATCAnim::ConvertNoRef(linkInAnimKey ? linkInAnimKey->ObjectIsLoaded() : nullptr);
             
             if (avMod && linkInAnim)
             {   
-                plAvOneShotTask *task = new plAvOneShotTask(linkInAnim->GetName(), false, false, nil);
+                plAvOneShotTask *task = new plAvOneShotTask(linkInAnim->GetName(), false, false, nullptr);
                 task->fBackwards = true;
                 task->fDisableLooping = true;
                 task->fDisablePhysics = false;
@@ -447,7 +447,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
             !msg->HasBCastFlag(plMessage::kNetNonLocal));
 
         plLinkEffectsTriggerMsg *pTriggerMsg = IFindLinkTriggerMsg(pLinkCallbackMsg->fLinkKey);
-        if (pTriggerMsg == nil)
+        if (pTriggerMsg == nullptr)
         {
             hsAssert(true, "Received a callback for an avatar that isn't linking.");
             return true;
@@ -523,7 +523,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
 void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
 {
     plLinkEffectsTriggerMsg *msg = IFindLinkTriggerMsg(linkKey);
-    if (msg == nil)
+    if (msg == nullptr)
     {
         hsAssert(true, "Request to wait on an effect for an avatar that isn't linking.");
         return;
@@ -542,10 +542,10 @@ void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
 plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
 {
     plLinkEffectsTriggerMsg *msg = IFindLinkTriggerMsg(linkKey);
-    if (msg == nil)
+    if (msg == nullptr)
     {
         hsAssert(true, "Request to wait on an effect for an avatar that isn't linking.");
-        return nil;
+        return nullptr;
     }
 
     msg->fEffects++;
@@ -561,7 +561,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
 void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, float time)
 {
     plPseudoLinkEffectMsg* msg = IFindPseudo(linkKey);
-    if (msg == nil)
+    if (msg == nullptr)
     {
         hsAssert(true, "Request to wait on an fake effect for an avatar that isn't fake linking.");
         return;
@@ -582,7 +582,7 @@ plPseudoLinkEffectMsg* plLinkEffectsMgr::IFindPseudo(plKey avatarKey)
         if (fPseudolist[i]->fAvatarKey == avatarKey)
             return fPseudolist[i];
     }
-    return nil;
+    return nullptr;
 
 }
 

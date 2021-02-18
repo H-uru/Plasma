@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Globals /////////////////////////////////////////////////////////////////
 
-plResManager* gResMgr = nil;
+plResManager* gResMgr = nullptr;
 
 bool DumpStats(const plFileName& patchDir);
 bool DumpSounds();

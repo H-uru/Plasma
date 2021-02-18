@@ -123,7 +123,7 @@ bool HasPhysicalComponent(plComponentBase *comp)
 bool    plAnimComponentBase::GetAnimKey( plMaxNode *node, hsTArray<plKey> &outKeys )
 {
     plComponentBase *comp = node->ConvertToComponent();
-    if( comp != nil )
+    if (comp != nullptr)
     {
         if( IsAnimComponent( comp ) )
         {
@@ -139,12 +139,12 @@ bool    plAnimComponentBase::GetAnimKey( plMaxNode *node, hsTArray<plKey> &outKe
 
 plAnimObjInterface  *plAnimComponentBase::GetAnimInterface( INode *inode )
 {
-    if( inode == nil )
-        return nil;
+    if (inode == nullptr)
+        return nullptr;
 
     plMaxNode *node = (plMaxNode *)inode;
     plComponentBase *comp = node->ConvertToComponent();
-    if( comp != nil )
+    if (comp != nullptr)
     {
         if( IsAnimComponent( comp ) )
         {
@@ -155,11 +155,11 @@ plAnimObjInterface  *plAnimComponentBase::GetAnimInterface( INode *inode )
     else
     {
         plAnimStealthNode *stealth = plAnimStealthNode::ConvertToStealth( node );
-        if( stealth != nil )
+        if (stealth != nullptr)
             return (plAnimObjInterface *)stealth;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plAnimComponentProc::EnableGlobal(HWND hWnd, bool enable)
@@ -535,12 +535,12 @@ plKey plAnimComponent::GetModKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 bool    plAnimComponent::GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys)
 {
-    if( restrictedNode != nil )
+    if (restrictedNode != nullptr)
     {
         if( fMods.find( (plMaxNode *)restrictedNode ) != fMods.end() )
         {
@@ -556,7 +556,7 @@ bool    plAnimComponent::GetKeyList(INode *restrictedNode, std::vector<plKey> &o
     }
 }
 
-plAnimGroupedComponent::plAnimGroupedComponent() : fForward(nil)
+plAnimGroupedComponent::plAnimGroupedComponent() : fForward()
 {
     fClassDesc = &gAnimGroupedDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -566,7 +566,7 @@ plKey plAnimGroupedComponent::GetModKey(plMaxNode *node)
 {
     if( fForward )
         return fForward->GetKey();
-    return nil;
+    return nullptr;
 }
 
 bool    plAnimGroupedComponent::GetKeyList(INode *restrictedNode, std::vector<plKey> &outKeys)
@@ -697,7 +697,7 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         const char *name = node->GetName();
 
         plAGMasterMod *mod = node->GetAGMasterMod();
-        if (mod == nil)
+        if (mod == nullptr)
         {
             if (!node->HasAGMod()) // Need to add this before the MasterMod, if it doesn't have one already.
             {
@@ -825,7 +825,7 @@ bool plAnimComponentBase::IAddLightToAnim(plMaxNode *node, plAGAnim *anim, plErr
     Object *obj = node->GetObjectRef();
     Class_ID cid = obj->ClassID();
 
-    IParamBlock2 *pb = nil;
+    IParamBlock2 *pb = nullptr;
     if (cid == RTSPOT_LIGHT_CLASSID)
         pb = obj->GetParamBlockByID(plRTLightBase::kBlkSpotLight);
     else if (cid == RTOMNI_LIGHT_CLASSID)
@@ -887,7 +887,7 @@ bool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plErr
 {
     // anims made by this component are private to the specific AGMasterMod, so we attach them there.
     plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(fMods[node]);
-    hsAssert(mod != nil, "No MasterMod to make animation persistent!");
+    hsAssert(mod != nullptr, "No MasterMod to make animation persistent!");
 
     ST::string buffer = ST::format("{}_{}_anim_{}", node->GetName(), anim->GetName(), mod->GetNumPrivateAnimations());
     plLocation nodeLoc = node->GetLocation();
@@ -908,7 +908,7 @@ bool plAnimComponentBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         // Either we delete it here, or we make it persistent below and the resMgr handles it
         delete fAnims[node];
-        fAnims[node] = nil;
+        fAnims[node] = nullptr;
         return false;
     }
 
@@ -969,12 +969,12 @@ protected:
     {
         if (strcmp(userType, kUseParamBlockNodeString) == 0)
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
         }
         else if (strcmp(userType, kUseOwnerNodeString) == 0)
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
         }
         else
@@ -1012,7 +1012,7 @@ protected:
     TCHAR           fTitle[ 128 ];
 
 public:
-    plPlasmaAnimHitCallback( IParamBlock2 *pb, ParamID paramID, TCHAR *title = nil )
+    plPlasmaAnimHitCallback(IParamBlock2 *pb, ParamID paramID, TCHAR *title = nullptr)
         : fPB( pb ), fParamID( paramID )
 
     {
@@ -1025,7 +1025,7 @@ public:
     int filter(INode *node) override
     {
         plComponentBase *comp = ( (plMaxNodeBase *)node )->ConvertToComponent();
-        if( comp != nil && plAnimComponentBase::IsAnimComponent( comp ) )
+        if (comp != nullptr && plAnimComponentBase::IsAnimComponent(comp))
         {
             // Make sure it won't create a cyclical reference (Max doesn't like those)
             if( comp->TestForLoop( FOREVER, fPB ) == REF_FAIL )
@@ -1036,7 +1036,7 @@ public:
         else
         {
             plAnimStealthNode *stealth = plAnimStealthNode::ConvertToStealth( node );
-            if( stealth != nil )
+            if (stealth != nullptr)
             {
                 if( stealth->TestForLoop( FOREVER, fPB ) == REF_FAIL )
                     return FALSE;
@@ -1086,13 +1086,13 @@ plPlasmaAnimSelectDlgProc::plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgIt
 
 void    plPlasmaAnimSelectDlgProc::SetThing( ReferenceTarget *m )
 {
-    if( fChain != nil )
+    if (fChain != nullptr)
         fChain->SetThing( m );
 }
 
 void    plPlasmaAnimSelectDlgProc::Update( TimeValue t, Interval &valid, IParamMap2 *pmap )
 {
-    if( fChain != nil )
+    if (fChain != nullptr)
         fChain->Update( t, valid, pmap );
 }
 
@@ -1111,7 +1111,7 @@ void    plPlasmaAnimSelectDlgProc::IUpdateNodeBtn( HWND hWnd, IParamBlock2 *pb )
         }
 
         plAnimObjInterface *iface = plAnimComponentBase::GetAnimInterface( pb->GetINode( fParamID ) );
-        if( iface == nil || !iface->IsNodeRestricted() )
+        if (iface == nullptr || !iface->IsNodeRestricted())
             ::EnableWindow( ::GetDlgItem( hWnd, fNodeDlgItem ), false );
         else
         {
@@ -1168,7 +1168,7 @@ BOOL    plPlasmaAnimSelectDlgProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND 
             break;
     }
 
-    if( fChain != nil )
+    if (fChain != nullptr)
         return fChain->DlgProc( t, pmap, hWnd, msg, wParam, lParam );
 
     return false;
@@ -1186,7 +1186,7 @@ CLASS_DESC(plAnimCompressComp, gAnimCompressDesc, "Anim Compress",  "AnimCompres
 ParamBlockDesc2 gAnimCompressBk
 (   
     plComponent::kBlkComp, _T("AnimCompress"), 0, &gAnimCompressDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
-    IDD_COMP_ANIM_COMPRESS, IDS_COMP_ANIM_COMPRESS_ROLL, 0, 0, nil,
+    IDD_COMP_ANIM_COMPRESS, IDS_COMP_ANIM_COMPRESS_ROLL, 0, 0, nullptr,
 
     plAnimCompressComp::kAnimCompressLevel, _T("compressLevel"),    TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3, IDC_COMP_ANIM_COMPRESS_NONE, IDC_COMP_ANIM_COMPRESS_LOW, IDC_COMP_ANIM_COMPRESS_HIGH,

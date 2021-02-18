@@ -421,7 +421,7 @@ static bool DispatchData (NetCli * cli, void * param) {
 
             msgId = hsToLE16(msgId);
 
-            if (nil == (cli->recvMsg = NetMsgChannelFindRecvMessage(cli->channel, msgId)))
+            if (cli->recvMsg = NetMsgChannelFindRecvMessage(cli->channel, msgId); cli->recvMsg == nullptr)
                 goto ERR_NO_HANDLER;
 
             // prepare to start decompressing new fields
@@ -735,8 +735,8 @@ static bool ServerRecvConnect (
     }
 
     if (seedLength == 0) { // client wishes no encryption (that's okay, nobody else can "fake" us as nobody has the private key, so if the client actually wants encryption it will only work with the correct peer)
-        cli->cryptIn = nil;
-        cli->cryptOut = nil;
+        cli->cryptIn = nullptr;
+        cli->cryptOut = nullptr;
     }
     else {
         // Compute client seed
@@ -786,7 +786,7 @@ static bool ClientRecvEncrypt (
 
     // find out if we want encryption
     const plBigNum* DH_N;
-    NetMsgChannelGetDhConstants(cli->channel, nil, nil, &DH_N);
+    NetMsgChannelGetDhConstants(cli->channel, nullptr, nullptr, &DH_N);
     bool encrypt = !DH_N->isZero();
 
     // Process message
@@ -812,8 +812,8 @@ static bool ClientRecvEncrypt (
     else { // honestly we do not care what the other side sends, we will send plaintext
         if (pkt.length != sizeof(pkt))
             return false;
-        cli->cryptIn = nil;
-        cli->cryptOut = nil;
+        cli->cryptIn = nullptr;
+        cli->cryptOut = nullptr;
     }
 
     cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
@@ -889,8 +889,8 @@ static unsigned DispatchPacket (
 
 //===========================================================================
 static void ResetSendRecv (NetCli * cli) {
-    cli->recvMsg            = nil;
-    cli->recvField          = nil;
+    cli->recvMsg            = nullptr;
+    cli->recvField          = nullptr;
     cli->recvFieldBytes     = 0;
     cli->recvDispatch       = true;
     cli->sendCurr           = cli->sendBuffer;
@@ -912,7 +912,7 @@ static NetCli * ConnCreate (
         &largestRecv
     );
     if (!channel)
-        return nil;
+        return nullptr;
 
     NetCli * const cli  = new NetCli;
     cli->sock           = sock;
@@ -992,7 +992,7 @@ NetCli * NetCliConnectAccept (
 
 //============================================================================
 void NetCliClearSocket (NetCli * cli) {
-    cli->sock = nil;
+    cli->sock = nullptr;
 }
 
 //============================================================================

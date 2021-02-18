@@ -240,7 +240,7 @@ void plFontConverter::ExportP2F()
             /*
             sprintf( fileName, "%s-%d", gFont->GetFace(), gFont->GetSize() );
 
-            if( gFont->GetKey() == nil )
+            if (gFont->GetKey() == nullptr)
                 hsgResMgr::ResMgr()->NewKey( fileName, gFont, plLocation::kGlobalFixedLoc );
             */
             fFont->WriteRaw(&stream);
@@ -433,13 +433,13 @@ void plFontConverter::IImportFON(const plFileName &path)
 
     // FON files are really just resource modules
     IMakeNewFont();
-    HMODULE file = LoadLibraryExA(path.AsString().c_str(), nil, LOAD_LIBRARY_AS_DATAFILE | DONT_RESOLVE_DLL_REFERENCES);
+    HMODULE file = LoadLibraryExA(path.AsString().c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE | DONT_RESOLVE_DLL_REFERENCES);
     if (file == nullptr)
     {
         char msg[512];
 
         FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            nil, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)msg, sizeof(msg), nil);
+            nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)msg, sizeof(msg), nullptr);
 
         QMessageBox::critical(this, tr("Error"),
                 tr("Failure importing FON file: can't open as resource library (%1)").arg(msg));
@@ -480,7 +480,7 @@ void plFontConverter::IImportFON(const plFileName &path)
             char msg[512];
 
             FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                nil, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)msg, sizeof(msg), nil);
+                nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)msg, sizeof(msg), nullptr);
 
             QMessageBox::critical(this, tr("Error"),
                     tr("Failure importing FON file: can't enumerate resources (%1)").arg(msg));
@@ -562,7 +562,7 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
         plFontFreeType *ft2Convert = reinterpret_cast<plFontFreeType *>(fFont);
 
         info.fSize = size;
-        if (!ft2Convert->ImportFreeType(path, &info, nil))
+        if (!ft2Convert->ImportFreeType(path, &info, nullptr))
         {
             QMessageBox::critical(this, tr("ERROR"), tr("Failure converting TrueType file"));
             continue;

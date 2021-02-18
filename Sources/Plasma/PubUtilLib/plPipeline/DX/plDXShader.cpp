@@ -52,16 +52,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plDXShader::plDXShader(plShader* owner)
 :   fOwner(owner),
-    fPipe(nil)
+    fPipe()
 {
     owner->SetDeviceRef(this);
 }
 
 plDXShader::~plDXShader()
 {
-    fPipe = nil;
+    fPipe = nullptr;
 
-    ISetError(nil);
+    ISetError(nullptr);
 }
 
 void plDXShader::SetOwner(plShader* owner)

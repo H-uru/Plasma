@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info);
 
 plDispatchLog::plDispatchLog() :
-    fLog(nil),
+    fLog(),
     fStartTicks(hsTimer::GetTicks())
 {
     fLog = plStatusLogMgr::GetInstance().CreateStatusLog(20, "Dispatch.log", plStatusLog::kAlignToTop | plStatusLog::kFilledBackground | plStatusLog::kRawTimeStamp);
@@ -319,7 +319,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info)
     plRefMsg* refMsg = plRefMsg::ConvertNoRef(msg);
     if (refMsg)
     {
-        const char* typeName = nil;
+        const char* typeName = nullptr;
         #define GetType(type)   if (refMsg->GetContext() == plRefMsg::type) typeName = #type;
         GetType(kOnCreate);
         GetType(kOnDestroy);

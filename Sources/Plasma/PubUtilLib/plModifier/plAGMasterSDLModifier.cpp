@@ -135,7 +135,7 @@ plAGMasterMod* plAGMasterSDLModifier::IGetObjectsAGMasterMod(plSceneObject* obj)
             return avMod;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //

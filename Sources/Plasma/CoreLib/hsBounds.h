@@ -328,7 +328,7 @@ public:
     hsHitInfoExt(const hsPoint3 *ctr, const hsVector3& offset) { fRootCenter=ctr; fDelPos=offset; };
 
     void Set(const hsBounds3Ext *m, const hsVector3* n, float d)
-    { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nil; }
+    { fDepth = d; fBoxBnd = m; fNormal = *n; fOtherBoxBnd = nullptr; }
     void Set(const hsBounds3Ext *m, const hsBounds3Ext *o, const hsVector3 &norm, float d)
     { fDepth = d; fBoxBnd = m, fOtherBoxBnd = o; fNormal = norm; }
 };

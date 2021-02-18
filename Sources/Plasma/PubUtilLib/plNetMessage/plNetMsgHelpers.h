@@ -71,7 +71,7 @@ class plNetMsgStreamableHelper : public plCreatable
 {
     hsStreamable *  fObject;
 public:
-    plNetMsgStreamableHelper():fObject(nil){}
+    plNetMsgStreamableHelper() : fObject() { }
     plNetMsgStreamableHelper(hsStreamable * object):fObject(object){}
     plNetMsgStreamableHelper & operator =(hsStreamable * value);
     operator hsStreamable *() const { return fObject;}
@@ -97,7 +97,7 @@ class plNetMsgCreatableHelper : public plCreatable
     plCreatable *   fCreatable;
     bool            fWeCreatedIt;
 public:
-    plNetMsgCreatableHelper(plCreatable * object = nil);
+    plNetMsgCreatableHelper(plCreatable * object = nullptr);
     ~plNetMsgCreatableHelper();
     plNetMsgCreatableHelper & operator =(plCreatable * value);
     operator plCreatable*();

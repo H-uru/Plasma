@@ -177,9 +177,9 @@ class pfKIMsg : public plMessage
 
 #ifndef KI_CONSTANTS_ONLY
 
-        pfKIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); }
-        pfKIMsg( uint8_t command ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); IInit(); fCommand = command; }
-        pfKIMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); IInit(); fCommand = command; }
+        pfKIMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); IInit(); }
+        pfKIMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); IInit(); fCommand = command; }
+        pfKIMsg(plKey &receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); IInit(); fCommand = command; }
 
         CLASSNAME_REGISTER( pfKIMsg );
         GETINTERFACE_ANY( pfKIMsg, plMessage );

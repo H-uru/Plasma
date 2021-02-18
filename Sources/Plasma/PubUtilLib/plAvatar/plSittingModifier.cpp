@@ -67,16 +67,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // CTOR ------------------------------
 // -----
 plSittingModifier::plSittingModifier()
-: fTriggeredAvatarKey(nil),
-  fMiscFlags(0)
+: fMiscFlags()
 {
 }
 
 // CTOR ------------------------------------------------------------------------
 // -----
 plSittingModifier::plSittingModifier(bool hasFront, bool hasLeft, bool hasRight)
-: fTriggeredAvatarKey(nil),
-  fMiscFlags(0)
+: fMiscFlags()
 {
     if (hasFront)
         fMiscFlags |= kApproachFront;
@@ -157,14 +155,14 @@ bool plSittingModifier::MsgReceive(plMessage *msg)
                 plSceneObject * obj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
                 if (obj) {
                     const plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
-                    plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nil);
+                    plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nullptr);
                     if (brain && !brain->IsRunningTask())
                     {
                         plNotifyMsg *notifyEnter = new plNotifyMsg();   // a message to send back when the brain starts
                         notifyEnter->fState = 1.0f;                     // it's an "on" event
                         ISetupNotify(notifyEnter, notifyMsg);           // copy events and address to sender
 
-                        plNotifyMsg *notifyExit = nil;
+                        plNotifyMsg *notifyExit = nullptr;
                         if (avatarKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
                         {
                             notifyExit = new plNotifyMsg();         // a new message to send back when the brain's done
@@ -223,8 +221,8 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
         // send the SEEK message
 
 
-        const char *animName = nil;   // this will be the name of our sit animation, which we
-                                      // need to know so we can seek properly.
+        const char *animName = nullptr;   // this will be the name of our sit animation, which we
+                                          // need to know so we can seek properly.
         
         plAvBrainGeneric *brain = IBuildSitBrain(avModKey, seekKey, &animName, enterNotify, exitNotify);
         if(brain)
@@ -282,7 +280,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
         // The first step is to get the transform from the end to the beginning of the
         // animation. That's what this next line is doing. It's a bit unintuitive
         // until you look at the parameter definitions.
-        GetStartToEndTransform(anim, nil, &animEndToStart, "Handle");
+        GetStartToEndTransform(anim, nullptr, &animEndToStart, "Handle");
         hsMatrix44 candidateGoal = sitGoal * animEndToStart;
         hsPoint3 distP = candidateGoal.GetTranslate() - curPosition;
         hsVector3 distV(distP.fX, distP.fY, distP.fZ);
@@ -340,7 +338,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
         if(sitAnimName)
         {
             uint32_t exitFlags = plAvBrainGeneric::kExitNormal;   // SOME stages can be interrupted, but not the brain itself
-            brain = new plAvBrainGeneric(nil, enterNotify, exitNotify, nil, exitFlags, plAvBrainGeneric::kDefaultFadeIn, 
+            brain = new plAvBrainGeneric(nullptr, enterNotify, exitNotify, nullptr, exitFlags, plAvBrainGeneric::kDefaultFadeIn,
                                          plAvBrainGeneric::kDefaultFadeOut, plAvBrainGeneric::kMoveRelative);
 
             plAnimStage *sitStage = new plAnimStage(sitAnimName, 0, plAnimStage::kForwardAuto, plAnimStage::kBackNone,
@@ -384,5 +382,5 @@ void plSittingModifier::UnTrigger()
             plAvatarInputInterface::GetInstance()->EnableControl(true, B_CONTROL_MOVE_FORWARD);
     }
     
-    fTriggeredAvatarKey = nil;
+    fTriggeredAvatarKey = nullptr;
 }

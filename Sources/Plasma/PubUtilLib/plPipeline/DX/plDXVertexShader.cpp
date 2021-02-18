@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plShader.h"
 
 plDXVertexShader::plDXVertexShader(plShader* owner)
-:   plDXShader(owner), fHandle(nil)
+:   plDXShader(owner), fHandle()
 {
 }
 
@@ -64,10 +64,10 @@ plDXVertexShader::~plDXVertexShader()
 void plDXVertexShader::Release()
 {
     ReleaseObject(fHandle);
-    fHandle = nil;
-    fPipe = nil;
+    fHandle = nullptr;
+    fPipe = nullptr;
 
-    ISetError(nil);
+    ISetError(nullptr);
 }
 
 bool plDXVertexShader::VerifyFormat(uint8_t format) const
@@ -81,20 +81,20 @@ IDirect3DVertexShader9 *plDXVertexShader::GetShader(plDXPipeline* pipe)
     if ( !fHandle )
     {
         if( FAILED(hr = ICreate(pipe)) )
-            return nil;
+            return nullptr;
     }
 
     if( FAILED(hr = ISetConstants(pipe)) )
-        return nil;
+        return nullptr;
 
     return fHandle;
 }
 
 HRESULT plDXVertexShader::ICreate(plDXPipeline* pipe)
 {
-    fHandle = nil; // in case something goes wrong.
-    fPipe = nil;
-    ISetError(nil);
+    fHandle = nullptr; // in case something goes wrong.
+    fPipe = nullptr;
+    ISetError(nullptr);
 
     // We could store the compiled buffer and skip the assembly step
     // if we need to recreate the shader (e.g. on device lost).

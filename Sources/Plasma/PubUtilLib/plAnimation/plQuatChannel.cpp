@@ -164,8 +164,8 @@ void plQuatConstant::Write(hsStream *stream, hsResMgr *mgr)
 
 // CTOR
 plQuatTimeScale::plQuatTimeScale()
-: fTimeSource(nil),
-  fChannelIn(nil)
+: fTimeSource(),
+  fChannelIn()
 {
 }
 
@@ -202,7 +202,7 @@ plAGChannel * plQuatTimeScale::Detach(plAGChannel * channel)
     fChannelIn = plQuatChannel::ConvertNoRef(fChannelIn->Detach(channel));
 
     if(!fChannelIn || channel == this)
-        result = nil;
+        result = nullptr;
 
     if (result != this)
         delete this;
@@ -216,9 +216,9 @@ plAGChannel * plQuatTimeScale::Detach(plAGChannel * channel)
 
 // CTOR
 plQuatBlend::plQuatBlend()
-: fQuatA(nil),
-  fQuatB(nil),
-  fChannelBias(nil)
+: fQuatA(),
+  fQuatB(),
+  fChannelBias()
 {
 }
 
@@ -235,8 +235,8 @@ plQuatBlend::~plQuatBlend()
 {
     //if (fQuatA) delete fQuatA;
     //if (fQuatB) delete fQuatB;
-    fQuatA = fQuatB = nil;
-    fChannelBias = nil;
+    fQuatA = fQuatB = nullptr;
+    fChannelBias = nullptr;
 }
 
 bool plQuatBlend::IsStoppedAt(double time)

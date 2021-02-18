@@ -100,33 +100,33 @@ plAvBrainClimb::plAvBrainClimb()
 : fCurMode(kInactive),
   fNextMode(kInactive),
   fDesiredDirection(plClimbMsg::kUp),
-  fControlDir(0.0f),
+  fControlDir(),
 
   fAllowedDirections(plClimbMsg::kUp | plClimbMsg::kDown | plClimbMsg::kLeft | plClimbMsg::kRight),
-  fPhysicallyBlockedDirections(0),
-  fOldPhysicallyBlockedDirections(0),
-  fAllowedDismounts(0),
+  fPhysicallyBlockedDirections(),
+  fOldPhysicallyBlockedDirections(),
+  fAllowedDismounts(),
 
-  fCurStage(nil),
-  fExitStage(nil),
-  fVerticalProbeLength(0.0f),
-  fHorizontalProbeLength(0.0f),
+  fCurStage(),
+  fExitStage(),
+  fVerticalProbeLength(),
+  fHorizontalProbeLength(),
 
-  fUp(nil),
-  fDown(nil),
-  fLeft(nil),
-  fRight(nil),
-  fMountUp(nil),
-  fMountDown(nil),
-  fMountLeft(nil),
-  fMountRight(nil),
-  fDismountUp(nil),
-  fDismountDown(nil),
-  fDismountLeft(nil),
-  fDismountRight(nil),
-  fIdle(nil),
-  fRelease(nil),
-  fFallOff(nil)
+  fUp(),
+  fDown(),
+  fLeft(),
+  fRight(),
+  fMountUp(),
+  fMountDown(),
+  fMountLeft(),
+  fMountRight(),
+  fDismountUp(),
+  fDismountDown(),
+  fDismountLeft(),
+  fDismountRight(),
+  fIdle(),
+  fRelease(),
+  fFallOff()
 {
     IInitAnimations();
 }
@@ -136,33 +136,33 @@ plAvBrainClimb::plAvBrainClimb(Mode nextMode)
 : fCurMode(kInactive),
   fNextMode(nextMode),
   fDesiredDirection(plClimbMsg::kUp),
-  fControlDir(0.0f),
+  fControlDir(),
 
   fAllowedDirections(plClimbMsg::kUp | plClimbMsg::kDown | plClimbMsg::kLeft | plClimbMsg::kRight),
-  fPhysicallyBlockedDirections(0),
-  fOldPhysicallyBlockedDirections(0),
-  fAllowedDismounts(0),
+  fPhysicallyBlockedDirections(),
+  fOldPhysicallyBlockedDirections(),
+  fAllowedDismounts(),
 
-  fCurStage(nil),
-  fExitStage(nil),
-  fVerticalProbeLength(0.0f),
-  fHorizontalProbeLength(0.0f),
+  fCurStage(),
+  fExitStage(),
+  fVerticalProbeLength(),
+  fHorizontalProbeLength(),
 
-  fUp(nil),
-  fDown(nil),
-  fLeft(nil),
-  fRight(nil),
-  fMountUp(nil),
-  fMountDown(nil),
-  fMountLeft(nil),
-  fMountRight(nil),
-  fDismountUp(nil),
-  fDismountDown(nil),
-  fDismountLeft(nil),
-  fDismountRight(nil),
-  fIdle(nil),
-  fRelease(nil),
-  fFallOff(nil)
+  fUp(),
+  fDown(),
+  fLeft(),
+  fRight(),
+  fMountUp(),
+  fMountDown(),
+  fMountLeft(),
+  fMountRight(),
+  fDismountUp(),
+  fDismountDown(),
+  fDismountLeft(),
+  fDismountRight(),
+  fIdle(),
+  fRelease(),
+  fFallOff()
 {
     IInitAnimations();  
 }
@@ -336,7 +336,7 @@ bool plAvBrainClimb::IProcessExitStage(double time, float elapsed)
     if(curBlend > .99)      // reached peak strength
     {
         fCurStage->Detach(fAvMod);  // remove the (now completely masked) underlying anim
-        fCurStage = nil;
+        fCurStage = nullptr;
         ai->Fade(0, 2.0f);      // start fading the exit anim
     } else if(animDone && curBlend == 0.0f) {   
         return true;        // finished and faded; we're really done now
@@ -445,7 +445,7 @@ bool plAvBrainClimb::ITryStageTransition(double time, float overage)
             hsAssert(fCurStage, "Couldn't get next stage - mode has no stage. (Matt)");
             fCurMode = fNextMode;
             if(fCurStage)
-                result = (fCurStage->Attach(fAvMod, this, 1.0f, time) != nil);
+                result = (fCurStage->Attach(fAvMod, this, 1.0f, time) != nullptr);
             fAvMod->DirtySynchState(kSDLAvatar, 0);     // write our new stage to the server
         } else {
             result = false;
@@ -597,10 +597,10 @@ plAnimStage * plAvBrainClimb::IGetStageFromMode(Mode mode)
     case kFinishing:
     case kUnknown:
     case kDone:
-        return nil;
+        return nullptr;
     default:
         hsAssert(false, "Unknown mode.");
-        return nil;
+        return nullptr;
     }
 }
 
@@ -722,7 +722,7 @@ void plAvBrainClimb::ICalcProbeLengths()
     hsAssert(up, "Couldn't find ClimbUp animation.");
     if(up)
     {
-        GetStartToEndTransform(up, &upMove, nil, "Handle");
+        GetStartToEndTransform(up, &upMove, nullptr, "Handle");
         fVerticalProbeLength = upMove.GetTranslate().fZ;
     } else
         fVerticalProbeLength = 4.0f;    // guess
@@ -730,7 +730,7 @@ void plAvBrainClimb::ICalcProbeLengths()
     hsAssert(left, "Couldn't find ClimbLeft animation.");
     if(left)
     {
-        GetStartToEndTransform(left, &leftMove, nil, "Handle");
+        GetStartToEndTransform(left, &leftMove, nullptr, "Handle");
         fHorizontalProbeLength = leftMove.GetTranslate().fX;
     } else
         fHorizontalProbeLength = 3.0f;  // guess

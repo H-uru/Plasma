@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// pfLocalizationMgr Functions /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-pfLocalizationMgr   *pfLocalizationMgr::fInstance = nil;
+pfLocalizationMgr   *pfLocalizationMgr::fInstance = nullptr;
 
 //// Constructor/Destructor //////////////////////////////////////////
 
@@ -68,7 +68,7 @@ pfLocalizationMgr::pfLocalizationMgr()
 
 pfLocalizationMgr::~pfLocalizationMgr()
 {
-    fInstance = nil;
+    fInstance = nullptr;
 }
 
 //// Initialize //////////////////////////////////////////////////////

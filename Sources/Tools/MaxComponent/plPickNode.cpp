@@ -100,7 +100,7 @@ bool plPickNodeMax::CanConvertToType(Object *obj)
 }
 
 plPickNodeMax::plPickNodeMax(IParamBlock2 *pb, int nodeListID, std::vector<Class_ID>* cids, bool single, bool canConvertToType) :
-  fPB(pb), fNodeListID(nodeListID), fSingle(single), fCanConvertToType(canConvertToType), fRefKludge(false), fComp(nil), fMtl(nil)
+  fPB(pb), fNodeListID(nodeListID), fSingle(single), fCanConvertToType(canConvertToType), fRefKludge(), fComp(), fMtl()
 {
     if (cids)
         fCIDs = *cids; 

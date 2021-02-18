@@ -76,12 +76,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plTextGenerator::plTextGenerator()
 {
-    fHost = nil;
+    fHost = nullptr;
 }
 
 plTextGenerator::plTextGenerator( plMipmap *host, uint16_t width, uint16_t height )
 {
-    fHost = nil;
+    fHost = nullptr;
     Attach( host, width, height );
 }
 
@@ -103,7 +103,7 @@ void    plTextGenerator::Attach( plMipmap *host, uint16_t width, uint16_t height
     uint16_t      textWidth, textHeight;
 
 
-    hsAssert( fHost == nil, "Attempting to attach an already attached plTextGenerator" );
+    hsAssert(fHost == nullptr, "Attempting to attach an already attached plTextGenerator");
 
     fHost = host;
 
@@ -134,7 +134,7 @@ void    plTextGenerator::Attach( plMipmap *host, uint16_t width, uint16_t height
 
     // Destroy the old texture ref, since it's probably completely nutsoid at this point.
     // This should force the pipeline to recreate one more suitable for our use
-    fHost->SetDeviceRef( nil );
+    fHost->SetDeviceRef(nullptr);
 
     // Some init color
     hsColorRGBA color;
@@ -145,7 +145,7 @@ void    plTextGenerator::Attach( plMipmap *host, uint16_t width, uint16_t height
 #ifdef MCN_DO_REFS
     /// Of course, brilliantly enough, if we did an attach on the constructor, we don't have a key
     /// yet, so we better give ourselves one before we can call AddViaNotify()
-    if( GetKey() == nil )
+    if (GetKey() == nullptr)
     {
         char    str[ 256 ];
         sprintf( str, "plTextGen:%s", fHost->GetKeyName() );
@@ -178,8 +178,8 @@ uint32_t      *plTextGenerator::IAllocateOSSurface( uint16_t width, uint16_t hei
     bmi.bmiHeader.biCompression = BI_RGB;
     bmi.bmiHeader.biBitCount = 32;
     
-    fWinRGBDC = CreateCompatibleDC( nil );
-    fWinRGBBitmap = CreateDIBSection( fWinRGBDC, &bmi, DIB_RGB_COLORS, (void **)&fWinRGBBits, nil, 0 );
+    fWinRGBDC = CreateCompatibleDC(nullptr);
+    fWinRGBBitmap = CreateDIBSection(fWinRGBDC, &bmi, DIB_RGB_COLORS, (void **)&fWinRGBBits, nullptr, 0);
     SetMapMode( fWinRGBDC, MM_TEXT );
     SetBkMode( fWinRGBDC, TRANSPARENT );
     SetTextAlign( fWinRGBDC, TA_TOP | TA_LEFT );
@@ -195,8 +195,8 @@ uint32_t      *plTextGenerator::IAllocateOSSurface( uint16_t width, uint16_t hei
     bmi.bmiHeader.biCompression = BI_RGB;
     bmi.bmiHeader.biBitCount = 8;
     
-    fWinAlphaDC = CreateCompatibleDC( nil );
-    fWinAlphaBitmap = CreateDIBSection( fWinAlphaDC, &bmi, DIB_RGB_COLORS, (void **)&fWinAlphaBits, nil, 0 );
+    fWinAlphaDC = CreateCompatibleDC(nullptr);
+    fWinAlphaBitmap = CreateDIBSection(fWinAlphaDC, &bmi, DIB_RGB_COLORS, (void **)&fWinAlphaBits, nullptr, 0);
     SetMapMode( fWinAlphaDC, MM_TEXT );
     SetBkMode( fWinAlphaDC, TRANSPARENT );
     SetTextAlign( fWinAlphaDC, TA_TOP | TA_LEFT );
@@ -214,24 +214,24 @@ uint32_t      *plTextGenerator::IAllocateOSSurface( uint16_t width, uint16_t hei
 
 void    plTextGenerator::Detach()
 {
-    if( fHost == nil )
+    if (fHost == nullptr)
         return;
-//  hsAssert( fHost != nil, "Attempting to detach unattached host" );
+//  hsAssert(fHost != nullptr, "Attempting to detach unattached host");
 
-    SetFont( nil, 0 );
+    SetFont(nullptr, 0);
     IDestroyOSSurface();
 
     fHost->Reset();
     fHost->fFlags &= ~( plMipmap::kUserOwnsBitmap | plMipmap::kDontThrowAwayImage );
 
     // Destroy the old texture ref, since we're no longer using it
-    fHost->SetDeviceRef( nil );
+    fHost->SetDeviceRef(nullptr);
 
 #ifdef MCN_DO_REFS
     plMipmap    *oldHost = fHost;
 #endif
 
-    fHost = nil;
+    fHost = nullptr;
 
 #ifdef MCN_DO_REFS
     // Now send ourselves a unref msg, just in case we were called directly (if this was done by 
@@ -248,7 +248,7 @@ void    plTextGenerator::IDestroyOSSurface()
 {
 #if HS_BUILD_FOR_WIN32
 
-    fHost->fImage = nil;    // DeleteObject() will get rid of it for us
+    fHost->fImage = nullptr;    // DeleteObject() will get rid of it for us
     DeleteObject( fWinRGBBitmap );
     DeleteDC( fWinRGBDC );
 
@@ -285,28 +285,28 @@ void    plTextGenerator::ClearToColor( hsColorRGBA &color )
 void    plTextGenerator::SetFont( const char *face, uint16_t size, bool antiAliasRGB )
 {
 #if HS_BUILD_FOR_WIN32
-    if( fWinFont != nil )
+    if (fWinFont != nullptr)
     {
         DeleteObject( fWinFont );
-        fWinFont = nil;
+        fWinFont = nullptr;
     }
-    if( fWinAlphaFont != nil )
+    if (fWinAlphaFont != nullptr)
     {
         DeleteObject( fWinAlphaFont );
-        fWinAlphaFont = nil;
+        fWinAlphaFont = nullptr;
     }
 
-    if( face != nil )
+    if (face != nullptr)
     {
         int nHeight = -MulDiv( size, GetDeviceCaps( fWinRGBDC, LOGPIXELSY ), 72 );
         fWinFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                                 CLIP_DEFAULT_PRECIS, antiAliasRGB ? ANTIALIASED_QUALITY : DEFAULT_QUALITY, VARIABLE_PITCH, face );
-        hsAssert( fWinFont != nil, "Cannot create Windows font for plTextGenerator" );
+        hsAssert(fWinFont != nullptr, "Cannot create Windows font for plTextGenerator");
 
         // The font for the alpha channel is identical except that it's antialiased, whereas the RGB version isn't.
         fWinAlphaFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                                 CLIP_DEFAULT_PRECIS, (!antiAliasRGB) ? ANTIALIASED_QUALITY : DEFAULT_QUALITY, VARIABLE_PITCH, face );
-        hsAssert( fWinAlphaFont != nil, "Cannot create Windows font for plTextGenerator" );
+        hsAssert(fWinAlphaFont != nullptr, "Cannot create Windows font for plTextGenerator");
 
         SelectObject( fWinRGBDC, fWinFont );
         SelectObject( fWinAlphaDC, fWinAlphaFont );
@@ -377,8 +377,8 @@ void    plTextGenerator::DrawClippedString( int16_t x, int16_t y, const wchar_t 
     RECT    r;
     ::SetRect( &r, x, y, x + width, y + height );
 
-    ::ExtTextOutW( fWinRGBDC, x, y, ETO_CLIPPED, &r, text, wcslen( text ), nil );
-    ::ExtTextOutW( fWinAlphaDC, x, y, ETO_CLIPPED, &r, text, wcslen( text ), nil );
+    ::ExtTextOutW(fWinRGBDC, x, y, ETO_CLIPPED, &r, text, wcslen(text), nullptr);
+    ::ExtTextOutW(fWinAlphaDC, x, y, ETO_CLIPPED, &r, text, wcslen(text), nullptr);
 
 #endif
 }
@@ -399,8 +399,8 @@ void    plTextGenerator::DrawClippedString( int16_t x, int16_t y, const wchar_t 
     RECT    r;
     ::SetRect( &r, clipX, clipY, clipX + width, clipY + height );
 
-    ::ExtTextOutW( fWinRGBDC, x, y, ETO_CLIPPED, &r, text, wcslen( text ), nil );
-    ::ExtTextOutW( fWinAlphaDC, x, y, ETO_CLIPPED, &r, text, wcslen( text ), nil );
+    ::ExtTextOutW(fWinRGBDC, x, y, ETO_CLIPPED, &r, text, wcslen(text), nullptr);
+    ::ExtTextOutW(fWinAlphaDC, x, y, ETO_CLIPPED, &r, text, wcslen(text), nullptr);
 
 #endif
 }
@@ -449,7 +449,7 @@ uint16_t      plTextGenerator::CalcStringWidth( const wchar_t *text, uint16_t *h
     SIZE size;
     ::GetTextExtentPoint32W( fWinRGBDC, text, wcslen( text ), &size );
 
-    if( height != nil )
+    if (height != nullptr)
         *height = (uint16_t)size.cy;
 
     return (uint16_t)size.cx;
@@ -477,7 +477,7 @@ void    plTextGenerator::CalcWrappedStringSize( const wchar_t *text, uint16_t *w
     ::DrawTextW( fWinRGBDC, text, wcslen( text ), &r, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_WORDBREAK | DT_CALCRECT );
 
     *width = (uint16_t)(r.right);
-    if( height != nil )
+    if (height != nullptr)
         *height = (uint16_t)r.bottom;
 #endif
 }
@@ -561,7 +561,7 @@ void    plTextGenerator::FlushToHost()
 #endif
 
     // Dirty the mipmap's deviceRef, if there is one
-    if( fHost->GetDeviceRef() != nil )
+    if (fHost->GetDeviceRef() != nullptr)
         fHost->GetDeviceRef()->SetDirty( true );
 }
 
@@ -569,12 +569,12 @@ void    plTextGenerator::FlushToHost()
 
 uint16_t  plTextGenerator::GetTextWidth()
 {
-    return ( fHost != nil ) ? (uint16_t)(fHost->fWidth) : 0;
+    return (fHost != nullptr) ? (uint16_t)(fHost->fWidth) : 0;
 }
 
 uint16_t  plTextGenerator::GetTextHeight()
 {
-    return ( fHost != nil ) ? (uint16_t)(fHost->fHeight) : 0;
+    return (fHost != nullptr) ? (uint16_t)(fHost->fHeight) : 0;
 }
 
 //// GetLayerTransform ////////////////////////////////////////////////////////
@@ -598,7 +598,7 @@ bool    plTextGenerator::MsgReceive( plMessage *msg )
 {
 #ifdef MCN_DO_REFS
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest ) )
         {

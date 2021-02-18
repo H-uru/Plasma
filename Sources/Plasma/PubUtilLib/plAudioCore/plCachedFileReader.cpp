@@ -64,7 +64,7 @@ plCachedFileReader::plCachedFileReader(const plFileName &path,
 
     /// Open the file as a plain binary stream
     fFileHandle = plFileSystem::Open(path, "rb");
-    if (fFileHandle != nil)
+    if (fFileHandle != nullptr)
     {
         if (fread(&fHeader, 1, sizeof(plWAVHeader), fFileHandle)
                 != sizeof(plWAVHeader))
@@ -89,7 +89,7 @@ plCachedFileReader::plCachedFileReader(const plFileName &path,
 
 plCachedFileReader::~plCachedFileReader()
 {
-    if (fFileHandle != nil) {
+    if (fFileHandle != nullptr) {
         fclose(fFileHandle);
     }
 }
@@ -109,10 +109,10 @@ plWAVHeader &plCachedFileReader::GetHeader()
 
 void plCachedFileReader::Close()
 {
-    if (fFileHandle != nil)
+    if (fFileHandle != nullptr)
     {
         fclose(fFileHandle);
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
 }
 
@@ -173,7 +173,7 @@ bool plCachedFileReader::OpenForWriting(const plFileName &path, plWAVHeader &hea
     /// Open the file as a plain binary stream
     fFileHandle = plFileSystem::Open(path, "wb");
 
-    if (fFileHandle != nil)
+    if (fFileHandle != nullptr)
     {
         if (fwrite(&fHeader, 1, sizeof(plWAVHeader), fFileHandle)
                 != sizeof(plWAVHeader))
@@ -183,7 +183,7 @@ bool plCachedFileReader::OpenForWriting(const plFileName &path, plWAVHeader &hea
         }
     }
 
-    return fFileHandle != nil;
+    return fFileHandle != nullptr;
 }
 
 uint32_t plCachedFileReader::Write(uint32_t bytes, void* buffer)

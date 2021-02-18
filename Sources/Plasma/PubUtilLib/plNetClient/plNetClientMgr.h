@@ -283,7 +283,7 @@ public:
     
     // getters
     uint32_t            GetPlayerID() const override;
-    ST::string          GetPlayerName(const plKey avKey=nil) const override;
+    ST::string          GetPlayerName(const plKey avKey={}) const override;
     ST::string          GetPlayerNameById (unsigned playerId) const;
     unsigned            GetPlayerIdByName(const ST::string & name) const;
 
@@ -312,13 +312,13 @@ public:
     const plKeyVec& NPCKeys() const { return fNPCKeys; }
     plSynchedObject* GetNPC(uint32_t i) const;
     void AddNPCKey(const plKey& npc);
-    bool IsNPCKey(const plKey& npc, int* idx=nil) const;
+    bool IsNPCKey(const plKey& npc, int* idx=nullptr) const;
     
     // remote players
     const plKeyVec& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
     plSynchedObject* GetRemotePlayer(int i) const;
     void AddRemotePlayerKey(plKey p);
-    bool IsRemotePlayerKey(const plKey p, int* idx=nil) override;
+    bool IsRemotePlayerKey(const plKey p, int* idx=nullptr) override;
     bool IsAPlayerKey(const plKey pKey) { return (pKey==GetLocalPlayerKey() || IsRemotePlayerKey(pKey));    }
 
     void SetConsoleOutput( bool b ) { SetFlagsBit(kConsoleOutput, b); }

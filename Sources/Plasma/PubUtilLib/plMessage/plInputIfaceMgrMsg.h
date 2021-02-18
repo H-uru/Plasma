@@ -86,10 +86,10 @@ class plInputIfaceMgrMsg : public plMessage
             kSetShareAgeInstanceGuid,
         };
 
-        plInputIfaceMgrMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fInterface = nil; fAvKey = nil; }
-        plInputIfaceMgrMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fInterface = nil; fAvKey = nil; }
-        plInputIfaceMgrMsg( uint8_t command ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fCommand = command; fInterface = nil; fAvKey = nil; }
-        plInputIfaceMgrMsg( uint8_t command, uint32_t pageID ) : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fCommand = command; fPageID = pageID; fInterface = nil; fAvKey = nil; }
+        plInputIfaceMgrMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(plKey &receiver, uint8_t command) : plMessage(nullptr, nullptr, nullptr) { AddReceiver(receiver); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(uint8_t command) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fInterface = nullptr; fAvKey = nullptr; }
+        plInputIfaceMgrMsg(uint8_t command, uint32_t pageID) : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag(kBCastByExactType); fCommand = command; fPageID = pageID; fInterface = nullptr; fAvKey = nullptr; }
         ~plInputIfaceMgrMsg();
 
         CLASSNAME_REGISTER( plInputIfaceMgrMsg );

@@ -74,7 +74,7 @@ public:
 
     const LogicKeys& GetLogicKeys() { return fLogicModKeys; }
     plKey GetLogicKey(plMaxNode* node) override;
-    void AddReceiverKey(plKey pKey, plMaxNode* node=nil) override;
+    void AddReceiverKey(plKey pKey, plMaxNode* node=nullptr) override;
     virtual bool HasLogicOut() { return false; }
 
     int CanConvertToType(Class_ID obtype) override

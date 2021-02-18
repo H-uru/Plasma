@@ -64,9 +64,9 @@ void plDniCoordinateInfo::CopyFrom( const plDniCoordinateInfo * other )
 {
     hsRAMStream stream;
     plCreatable * otherNonConst = const_cast<plDniCoordinateInfo*>( other );    // because plCreatable Write isn't const, but should be.
-    otherNonConst->Write( &stream, nil );
+    otherNonConst->Write(&stream, nullptr);
     stream.Rewind();
-    Read( &stream, nil );
+    Read(&stream, nullptr);
 }
 
 void plDniCoordinateInfo::Read( hsStream* s, hsResMgr* mgr )

@@ -57,7 +57,7 @@ protected:
     uint32_t fMgrIdx;
     
 public:
-    plRelevanceRegion() : fRegion(nil), fMgrIdx((uint32_t)-1) {}
+    plRelevanceRegion() : fRegion(), fMgrIdx((uint32_t)-1) { }
     virtual ~plRelevanceRegion() {}
     
     CLASSNAME_REGISTER( plRelevanceRegion );

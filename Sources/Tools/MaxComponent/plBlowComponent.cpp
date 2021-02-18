@@ -71,7 +71,7 @@ ParamBlockDesc2 gBlowBk
 (   
     plComponent::kBlkComp, _T("Blow"), 0, &gBlowCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_BLOW, IDS_COMP_BLOWS, 0, 0, nil,
+    IDD_COMP_BLOW, IDS_COMP_BLOWS, 0, 0, nullptr,
 
     plBlowComponent::kStrength, _T("Strength"), TYPE_FLOAT,     0, 0,   
         p_default, 100.0,

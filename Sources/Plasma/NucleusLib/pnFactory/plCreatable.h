@@ -94,7 +94,7 @@ public:
 //      static  uint16_t Index() - returns the index for that class.
 //      virtual uint16_t ClassIndex() - returns index for this object's class.
 //      static plClassName* Convert(plCreatable* c) - if c exposes an interface
-//          as plClassName, return that, else nil. Incs the ref count of the object.
+//          as plClassName, return that, else nullptr. Incs the ref count of the object.
 //      static plClassName* ConvertNoRef(plCreatable* c) - Same as Convert(), but
 //          doesn't inc the ref count.
 //      static plClassName* Create() - returns a new object of type plClassName
@@ -114,7 +114,7 @@ public:
 //  REGISTER_CREATABLE( plClassName ) - normal creatable type, any you can instantiate.
 //  or
 //  REGISTER_NONCREATABLE( plClassName ) - can't be created either because it's pure virtual
-//      or just doesn't want to be creatable. It's Create member returns nil. But Convert
+//      or just doesn't want to be creatable. It's Create member returns nullptr. But Convert
 //      may return an interface, depending on the GETINTERFACE above.
 //  - This line is the only exposure to the plCreator.
 //  This will define a Creator for class plClassName, instantiate it as a static, and register
@@ -142,11 +142,11 @@ public:
 //      fred* f = fred::Create();  more likely f was passed in.
 //      wilma* w = wilma::Convert(f)
 //  NOTE that two strange things may be true here:
-//      1) f != nil, w == nil
+//      1) f != nullptr, w == nullptr
 //          either fred's not really derived from wilma, 
 //          or fred doesn't like to be cast down,
 //          or wilma just doesn't want to expose an interface.
-//      2) f != nil, w != nil, and f != w
+//      2) f != nullptr, w != nullptr, and f != w
 //          fred has pulled a sneaky and created a wilma to return.
 //          so unrelated classes can still "Convert" as one another.
 //

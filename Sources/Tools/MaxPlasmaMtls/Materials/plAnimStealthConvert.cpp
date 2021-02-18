@@ -127,7 +127,7 @@ static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& seg
 
 SegmentSpec *plAnimStealthNode::IGetSegmentSpec() const
 {
-    if( fCachedSegMap != nil )
+    if (fCachedSegMap != nullptr)
     {
         ST::string name = GetSegmentName();
         if( !name.empty() )
@@ -140,14 +140,14 @@ SegmentSpec *plAnimStealthNode::IGetSegmentSpec() const
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 
 float    plAnimStealthNode::GetSegStart() const
 {
     SegmentSpec *spec = IGetSegmentSpec();
-    if( spec != nil )
+    if (spec != nullptr)
         return spec->fStart;
 
     return 0.f;
@@ -156,7 +156,7 @@ float    plAnimStealthNode::GetSegStart() const
 float    plAnimStealthNode::GetSegEnd() const
 {
     SegmentSpec *spec = IGetSegmentSpec();
-    if( spec != nil )
+    if (spec != nullptr)
         return spec->fEnd;
 
     return 0.f;
@@ -168,13 +168,13 @@ void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
     end = GetSegEnd();
 
     ST::string loopName = GetLoopName();
-    if( !loopName.empty() && fCachedSegMap != nil )
+    if (!loopName.empty() && fCachedSegMap != nullptr)
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
 void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
 {
-    if( fCachedSegMap == nil )
+    if (fCachedSegMap == nullptr)
         return;
 
     for (SegmentMap::iterator it = fCachedSegMap->begin(); it != fCachedSegMap->end(); it++)
@@ -204,8 +204,8 @@ void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float
     else
     {
         SegmentSpec *spec = IGetSegmentSpec();
-        convert.SetBegin( ( spec != nil ) ? spec->fStart : 0.f );
-        convert.SetEnd( ( spec != nil ) ? spec->fEnd : 0.f );
+        convert.SetBegin((spec != nullptr) ? spec->fStart : 0.f);
+        convert.SetEnd((spec != nullptr) ? spec->fEnd : 0.f);
     }
 
     // Even if we're not looping, set the loop points. (A responder
@@ -262,9 +262,9 @@ bool    plAnimStealthNode::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg
 {
     fPreppedForConvert = true;
     plPassMtlBase *parent = GetParentMtl();
-    if( parent != nil && fCachedSegMap == nil )
+    if (parent != nullptr && fCachedSegMap == nullptr)
     {
-        fCachedSegMap = GetAnimSegmentMap( parent, nil );
+        fCachedSegMap = GetAnimSegmentMap(parent, nullptr);
     }
     return true;
 }
@@ -274,9 +274,9 @@ bool    plAnimStealthNode::SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg
 bool    plAnimStealthNode::ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg )
 {
     fPreppedForConvert = false;
-    if( fCachedSegMap != nil )
+    if (fCachedSegMap != nullptr)
         DeleteSegmentMap( fCachedSegMap );
-    fCachedSegMap = nil;
+    fCachedSegMap = nullptr;
 
     return true;
 }

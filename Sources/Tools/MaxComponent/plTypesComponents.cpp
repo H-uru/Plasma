@@ -243,7 +243,7 @@ ParamBlockDesc2 gVehicleBlock
     end
 );
 
-plVehicleComponent::plVehicleComponent() : fMod(nil)
+plVehicleComponent::plVehicleComponent() : fMod()
 {
     fClassDesc = &gVehicleDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -339,7 +339,7 @@ bool plVehicleComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plKey modKey = pNode->AddModifier(fMod, IGetUniqueName(pNode));
 
     plMaxNode* detectorNode = (plMaxNode*)fCompPB->GetINode(kVehicleDriveDet);
-    plComponentBase* comp = detectorNode ? detectorNode->ConvertToComponent() : nil;
+    plComponentBase* comp = detectorNode ? detectorNode->ConvertToComponent() : nullptr;
     if (comp)
         comp->AddReceiverKey(modKey);
 
@@ -556,7 +556,7 @@ protected:
         {
             SetDlgItemText(hWnd, IDC_MTL_BUTTON, mtl->GetName());
 
-            plNotetrackAnim anim(mtl, nil);
+            plNotetrackAnim anim(mtl, nullptr);
             ILoadCombo(hWnd, IDC_ANIM_RED_COMBO, kMarkerRedAnim, pb, anim);
             ILoadCombo(hWnd, IDC_ANIM_GREEN_COMBO, kMarkerGreenAnim, pb, anim);
             ILoadCombo(hWnd, IDC_ANIM_OPEN_COMBO, kMarkerOpenAnim, pb, anim);
@@ -732,7 +732,7 @@ plKey plGameMarkerComponent::IGetAnimKey(int nodeID, int compID)
         return comp->GetModKey(animNode);
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plGameMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)

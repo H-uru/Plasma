@@ -132,10 +132,10 @@ namespace
 //// Constructor/Destructor ///////////////////////////////////////////////////
 
 plLayerConverter::plLayerConverter() :
-    fInterface( nil ),
+    fInterface(),
     fConverterUtils( hsConverterUtils::Instance() )
 {
-    fErrorMsg = nil;
+    fErrorMsg = nullptr;
     fWarned = 0;
     fSaving = false;
 }
@@ -168,7 +168,7 @@ void    plLayerConverter::DeInit()
     int i;
     for( i = 0; i < fConvertedLayers.GetCount(); i++ )
     {
-        if( fConvertedLayers[ i ] != nil )
+        if (fConvertedLayers[i] != nullptr)
             fConvertedLayers[ i ]->IClearConversionTargets();
     }
     fConvertedLayers.Reset();
@@ -204,12 +204,12 @@ plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
 
     // We only convert plPlasmaMAXLayers
     plPlasmaMAXLayer    *layer = plPlasmaMAXLayer::GetPlasmaMAXLayer( texmap );
-    if( layer == nil )
+    if (layer == nullptr)
     {
         fErrorMsg->Set( true, "Plasma Layer Error", "Cannot convert layer '%s'--unrecognized MAX layer type", texmap->GetName() );
         fErrorMsg->Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
 
     // KLUDGE - Some things don't set the name for their layers (ie projected
@@ -220,7 +220,7 @@ plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
         layer->SetName(maxNode->GetName());
 
     // Switch on the class ID
-    plLayerInterface    *plasmaLayer = nil;
+    plLayerInterface    *plasmaLayer = nullptr;
 
     if( layer->ClassID() == LAYER_TEX_CLASS_ID )
         plasmaLayer = IConvertLayerTex( layer, maxNode, blendFlags, preserveUVOffset, upperLayer );
@@ -252,7 +252,7 @@ plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
 
 void    plLayerConverter::IRegisterConversion( plPlasmaMAXLayer *origLayer, plLayerInterface *convertedLayer )
 {
-    if( convertedLayer == nil )
+    if (convertedLayer == nullptr)
         return;
 
     // Add this to our list of converted layers (so we can clean them up later)
@@ -288,15 +288,15 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     {
         fErrorMsg->Set( !bitmapPB, "Plasma Layer Error", "Bitmap paramblock for Plasma Layer not found" ).Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
 
     // Get a new layer to play with
     plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
 
     // We're using a texture, try and get its info
-    PBBitmap    *pbbm = nil;
-    BitmapInfo  *bi = nil;
+    PBBitmap    *pbbm = nullptr;
+    BitmapInfo  *bi = nullptr;
 
     if( bitmapPB->GetInt( kBmpUseBitmap ) )
     {
@@ -316,7 +316,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
             fErrorMsg->Set( false );
 
             delete plasmaLayer;
-            return nil;
+            return nullptr;
         }
         else
         {
@@ -396,8 +396,8 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     IProcessUVGen( layer, plasmaLayer, &bd, preserveUVOffset );
 
     // Create the texture.  If it works, assign it to the layer
-    if( ( plasmaLayer = IAssignTexture( &bd, maxNode, plasmaLayer, upperLayer, clipID ) ) == nil )
-        return nil;
+    if (plasmaLayer = IAssignTexture(&bd, maxNode, plasmaLayer, upperLayer, clipID); plasmaLayer == nullptr)
+        return nullptr;
 
     // All done!
     return (plLayerInterface *)plasmaLayer;
@@ -423,7 +423,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     {
         fErrorMsg->Set( !bitmapPB, "Plasma Layer Error", "Bitmap paramblock for Plasma Layer not found" ).Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
 
     // Get a new layer to play with
@@ -431,7 +431,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
 
     // Get the texture info
     PBBitmap *pbbm = bitmapPB->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap + 0 );
-    BitmapInfo *bi = nil;
+    BitmapInfo *bi = nullptr;
     if( pbbm )
         bi = &pbbm->bi;
 
@@ -501,8 +501,8 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     plasmaLayer->SetUVWSrc( plasmaLayer->GetUVWSrc() | plLayerInterface::kUVWReflect );
 
     // Create the texture.  If it works, assign it to the layer
-    if( ( plasmaLayer = IAssignTexture( &bd, maxNode, plasmaLayer, upperLayer ) ) == nil )
-        return nil;
+    if (plasmaLayer = IAssignTexture(&bd, maxNode, plasmaLayer, upperLayer); plasmaLayer == nullptr)
+        return nullptr;
 
     // Tag this layer as reflective cubic environmentmapping
     if( bitmapPB->GetInt(plStaticEnvLayer::kBmpRefract) )
@@ -533,7 +533,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     {
         fErrorMsg->Set( !bitmapPB, "Plasma Layer Error", "Bitmap paramblock for Plasma Layer not found" ).Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
 
     // Get a new layer to play with
@@ -541,7 +541,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
 
     // Get the anchor node
     plMaxNode   *anchor = (plMaxNode *)bitmapPB->GetINode( plDynamicEnvLayer::kBmpAnchorNode );
-    if( anchor == nil )
+    if (anchor == nullptr)
         // Default to self as the anchor--just make sure we make unique versions of this material!
         anchor = maxNode;
     
@@ -600,7 +600,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
     {
         fErrorMsg->Set(!pb, "Plasma Layer Error", "Paramblock for Plasma Camera Layer not found" ).Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
 
     plLayer *plasmaLayer = ICreateLayer (ST::string::from_utf8(layer->GetName()), upperLayer, loc);
@@ -671,7 +671,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
     {
         fErrorMsg->Set( !bitmapPB, "Plasma Layer Error", "Bitmap paramblock for Plasma Layer not found" ).Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
 
     // Get a new layer to play with
@@ -679,7 +679,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
 
 
     /// UV Gen
-    IProcessUVGen( maxLayer, plasmaLayer, nil, preserveUVOffset );
+    IProcessUVGen(maxLayer, plasmaLayer, nullptr, preserveUVOffset);
 
     // Create the "texture"
     plDynamicTextMap *texture = ICreateDynTextMap( plasmaLayer->GetKeyName(), 
@@ -690,7 +690,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
 
     // Set the initial bitmap if necessary
     uint32_t *initBuffer = IGetInitBitmapBuffer( maxLayer );
-    if( initBuffer != nil )
+    if (initBuffer != nullptr)
     {
         texture->SetInitBuffer( initBuffer );
         delete [] initBuffer;
@@ -719,15 +719,15 @@ uint32_t  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) c
     IParamBlock2 *bitmapPB = layer->GetParamBlockByID( plDynamicTextLayer::kBlkBitmap );
     Bitmap      *initBitmap = layer->GetBitmap( TimeValue( 0 ) );
 
-    if( bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpUseInitImage ) == 0 || initBitmap == nil )
-        return nil;
+    if (bitmapPB->GetInt((ParamID)plDynamicTextLayer::kBmpUseInitImage) == 0 || initBitmap == nullptr)
+        return nullptr;
 
     width = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportWidth );
     height = bitmapPB->GetInt( (ParamID)plDynamicTextLayer::kBmpExportHeight );
 
     buffer = new uint32_t[ width * height ];
-    if( buffer == nil )
-        return nil;
+    if (buffer == nullptr)
+        return nullptr;
 
     // Fill buffer from the MAX bitmap
     PixelBuf        l64( width );
@@ -741,7 +741,7 @@ uint32_t  *plLayerConverter::IGetInitBitmapBuffer( plDynamicTextLayer *layer ) c
         if( !initBitmap->GetLinearPixels( 0, y, width, p64 ) )
         {
             delete [] buffer;
-            return nil;
+            return nullptr;
         }
 
         for( int x = 0; x < width; x++ )
@@ -898,7 +898,7 @@ plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *la
     {
         fErrorMsg->Set(true, maxNode->GetName(), "Angle Attenuation layers can only be used as a top layer").Show();
         fErrorMsg->Set();
-        return nil;
+        return nullptr;
     }
     plAngleAttenLayer* aaLay = (plAngleAttenLayer*)layer;
     Box3 fade = aaLay->GetFade();
@@ -949,7 +949,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
     if (!(tiling & U_WRAP))
     {
         destLayer->SetClampFlags( destLayer->GetClampFlags() | hsGMatState::kClampTextureU );
-        if( bitmapData != nil )
+        if (bitmapData != nullptr)
             bitmapData->clampFlags |= plBitmapData::kClampU;
     }
 
@@ -957,7 +957,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
     if (!(tiling & V_WRAP))
     {
         destLayer->SetClampFlags( destLayer->GetClampFlags() | hsGMatState::kClampTextureV );
-        if( bitmapData != nil )
+        if (bitmapData != nullptr)
             bitmapData->clampFlags |= plBitmapData::kClampV;
     }
 
@@ -990,7 +990,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const ST::string &laye
     hsGuardBegin( "plPlasmaMAXLayer::ICreateDynTextMap" );
 
     plKey               key;
-    plDynamicTextMap    *map = nil;
+    plDynamicTextMap    *map = nullptr;
 
     
     // Need a unique key name for every layer that uses one. We could also key
@@ -999,10 +999,10 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const ST::string &laye
 
     // Does it already exist?
     key = node->FindPageKey( plDynamicTextMap::Index(), texName );
-    if( key != nil )
+    if (key != nullptr)
     {
         map = plDynamicTextMap::ConvertNoRef( key->GetObjectPtr() );
-        if( map != nil )
+        if (map != nullptr)
             return map;
     }
 
@@ -1045,12 +1045,12 @@ plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLo
 
 //// IAssignTexture ///////////////////////////////////////////////////////////
 //  Create a texture and assign it to the layer given. Returns the layer again,
-//  or nil if there was an error and it got deleted.
+//  or nullptr if there was an error and it got deleted.
 
 plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode, plLayer *destLayer, bool upperLayer, int clipID )
 {
     plBitmap *texture = plBitmapCreator::Instance().CreateTexture( bd, maxNode->GetLocation(), clipID );
-    if( texture == nil )
+    if (texture == nullptr)
     {
         if( upperLayer )
         {
@@ -1059,7 +1059,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
             fErrorMsg->Set( false );
 
             delete destLayer;
-            return nil;
+            return nullptr;
         }
         else
         {
@@ -1086,30 +1086,30 @@ plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const ST::string 
     if( env )
         return env;
 
-    plCubicRenderTarget *cubic = nil;
+    plCubicRenderTarget *cubic = nullptr;
 
 
     plKey   key;
 
     key = node->FindPageKey( plCubicRenderTarget::Index(), name );
-    if( key != nil )
+    if (key != nullptr)
     {
         plCubicRenderTarget *cubic = plCubicRenderTarget::ConvertNoRef( key->GetObjectPtr() );
-        if( cubic != nil )
+        if (cubic != nullptr)
             return cubic;
     }
 
     /// Get the key from the anchor
-    if( anchor == nil || anchor->GetSceneObject() == nil )
-        return nil;
+    if (anchor == nullptr || anchor->GetSceneObject() == nullptr)
+        return nullptr;
 
     plKey   sObjKey = anchor->GetSceneObject()->GetKey();
-    if( sObjKey == nil )
-        return nil;
+    if (sObjKey == nullptr)
+        return nullptr;
 
     /// Create
     cubic = new plCubicRenderTarget( plRenderTarget::kIsTexture, 256, 256, 32 );
-    hsAssert( cubic != nil, "Cannot create cubic render target!" );
+    hsAssert(cubic != nullptr, "Cannot create cubic render target!");
 
     /// Add a key
     key = hsgResMgr::ResMgr()->NewKey( name, cubic, node->GetLocation() );

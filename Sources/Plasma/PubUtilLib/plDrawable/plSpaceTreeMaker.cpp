@@ -137,7 +137,7 @@ void plSpaceTreeMaker::ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVect
         listTrav->fNext = listTrav+1;
         listTrav++;
     }
-    list[nodes.GetCount()-1].fNext = nil;
+    list[nodes.GetCount()-1].fNext = nullptr;
     uint32_t sortFlags = 0;
     hsRadixSort rad;
     hsRadixSort::Elem* sortedList = rad.Sort(list, sortFlags);
@@ -207,7 +207,7 @@ hsBounds3Ext plSpaceTreeMaker::IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>&
 plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>& nodes)
 {
     if( !nodes.GetCount() )
-        return nil;
+        return nullptr;
 
     StartTimer(kMakeFatTree);
 
@@ -218,8 +218,8 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>&
     {
         *subRoot = *nodes[0];
 
-        subRoot->fChildren[0] = nil;
-        subRoot->fChildren[1] = nil;
+        subRoot->fChildren[0] = nullptr;
+        subRoot->fChildren[1] = nullptr;
 
         StopTimer(kMakeFatTree);
 
@@ -321,7 +321,7 @@ plSpacePrepNode* plSpaceTreeMaker::INewSubRoot(const hsBounds3Ext& bnd)
 plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& nodes)
 {
     if( !nodes.GetCount() )
-        return nil;
+        return nullptr;
 
     if( nodes.GetCount() == 1 )
     {
@@ -340,7 +340,7 @@ plSpacePrepNode* plSpaceTreeMaker::IMakeTreeRecur(hsTArray<plSpacePrepNode*>& no
     hsTArray<plSpacePrepNode*> list1;
     IFindBigList(nodes, length, axis, list0, list1);
 
-    plSpacePrepNode* subRoot = nil;
+    plSpacePrepNode* subRoot = nullptr;
 
     // If list0 not empty, put them in first child, recur on remainder,
     if( list0.GetCount() && list1.GetCount() )
@@ -376,15 +376,15 @@ void plSpaceTreeMaker::IMakeTree()
     fPrepTree = IMakeTreeRecur(fLeaves);
 
     delete [] fSortScratch;
-    fSortScratch = nil;
+    fSortScratch = nullptr;
 }
 
 void plSpaceTreeMaker::Reset()
 {
     fLeaves.Reset();
-    fPrepTree = nil;
+    fPrepTree = nullptr;
     fTreeSize = 0;
-    fSortScratch = nil;
+    fSortScratch = nullptr;
 }
 
 void plSpaceTreeMaker::IDeleteTreeRecur(plSpacePrepNode* node)
@@ -401,7 +401,7 @@ void plSpaceTreeMaker::IDeleteTreeRecur(plSpacePrepNode* node)
 void plSpaceTreeMaker::Cleanup()
 {
     IDeleteTreeRecur(fPrepTree);
-    fPrepTree = nil;
+    fPrepTree = nullptr;
 
     int i;
     for( i = 0; i < fLeaves.GetCount(); i++ )
@@ -415,8 +415,8 @@ int32_t plSpaceTreeMaker::AddLeaf(const hsBounds3Ext& worldBnd, bool disable)
     plSpacePrepNode* leaf = new plSpacePrepNode;
     fLeaves.Append(leaf);
     leaf->fDataIndex = fLeaves.GetCount()-1;
-    leaf->fChildren[0] = nil;
-    leaf->fChildren[1] = nil;
+    leaf->fChildren[0] = nullptr;
+    leaf->fChildren[1] = nullptr;
     
     leaf->fWorldBounds = worldBnd;
     if( leaf->fWorldBounds.GetType() != kBoundsNormal )

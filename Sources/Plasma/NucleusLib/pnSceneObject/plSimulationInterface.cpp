@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plNodeRefMsg.h"
 #include "pnKeyedObject/plKey.h"
 
-plSimulationInterface::plSimulationInterface() : fPhysical(nil)
+plSimulationInterface::plSimulationInterface() : fPhysical()
 {
 }
 
@@ -151,7 +151,7 @@ bool plSimulationInterface::MsgReceive(plMessage* msg)
                 if (phys)
                 {
                     hsAssert(phys == fPhysical, "Removing Physical I don't have");
-                    fPhysical = nil;
+                    fPhysical = nullptr;
                 }
             }
             else

@@ -83,7 +83,7 @@ void plScalarChannel::Value(float &scalar, double time, bool peek)
 // ------------
 plAGChannel * plScalarChannel::MakeCombine(plAGChannel *other)
 {
-    return nil;
+    return nullptr;
 }
 
 // MakeBlend ---------------------------------------------------
@@ -166,8 +166,8 @@ void plScalarConstant::Write(hsStream *stream, hsResMgr *mgr)
 
 // CTOR
 plScalarTimeScale::plScalarTimeScale()
-: fTimeSource(nil),
-  fChannelIn(nil)
+: fTimeSource(),
+  fChannelIn()
 {
 }
 
@@ -204,7 +204,7 @@ plAGChannel * plScalarTimeScale::Detach(plAGChannel * detach)
     fChannelIn = plScalarChannel::ConvertNoRef(fChannelIn->Detach(detach));
     
     if(!fChannelIn || detach == this)
-        result = nil;
+        result = nullptr;
     
     if(result != this)
         delete this;
@@ -223,9 +223,9 @@ plAGChannel * plScalarTimeScale::Detach(plAGChannel * detach)
 // ctor ----------------------
 // -----
 plScalarBlend::plScalarBlend()
-: fChannelA(nil),
-  fChannelB(nil),
-  fChannelBias(nil)
+: fChannelA(),
+  fChannelB(),
+  fChannelBias()
 {
 }
 
@@ -243,9 +243,9 @@ plScalarBlend::plScalarBlend(plScalarChannel * channelA, plScalarChannel * chann
 // -----
 plScalarBlend::~plScalarBlend()
 {
-    fChannelA = nil;
-    fChannelB = nil;
-    fChannelBias = nil;
+    fChannelA = nullptr;
+    fChannelB = nullptr;
+    fChannelBias = nullptr;
 }
 
 // IsStoppedAt -------------------------------
@@ -300,7 +300,7 @@ plAGChannel * plScalarBlend::Detach(plAGChannel *remove)
     else if(fChannelB && !fChannelA)
         result = fChannelB;
     else if(!fChannelA && !fChannelB)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -317,7 +317,7 @@ plAGChannel * plScalarBlend::Detach(plAGChannel *remove)
 // ctor ----------------------------------------------
 // -----
 plScalarControllerChannel::plScalarControllerChannel()
-: fController(nil)
+: fController()
 {
 }
 
@@ -334,7 +334,7 @@ plScalarControllerChannel::~plScalarControllerChannel()
 {
     if(fController) {
         delete fController;
-        fController = nil;
+        fController = nullptr;
     }
 }
 
@@ -342,7 +342,7 @@ plScalarControllerChannel::~plScalarControllerChannel()
 // ------
 const float & plScalarControllerChannel::Value(double time, bool peek)
 {
-    return Value(time, peek, nil);
+    return Value(time, peek, nullptr);
 }
 
 // Value ------------------------------------------------------------------
@@ -391,8 +391,8 @@ void plScalarControllerChannel::Read(hsStream *stream, hsResMgr *mgr)
 // ctor --------------------------------------------------------
 // -----
 plScalarControllerCacheChannel::plScalarControllerCacheChannel()
-: fControllerChannel(nil),
-  fCache(nil)
+: fControllerChannel(),
+  fCache()
 {
 }
 
@@ -410,7 +410,7 @@ plScalarControllerCacheChannel::plScalarControllerCacheChannel(plScalarControlle
 plScalarControllerCacheChannel::~plScalarControllerCacheChannel()
 {
     delete fCache;
-    fControllerChannel = nil;
+    fControllerChannel = nullptr;
 }
 
 // Value ---------------------------------------------------------------------
@@ -428,12 +428,12 @@ plAGChannel * plScalarControllerCacheChannel::Detach(plAGChannel * channel)
 
     if(channel == this)
     {
-        result = nil;
+        result = nullptr;
     } else {
         fControllerChannel = plScalarControllerChannel::ConvertNoRef(fControllerChannel->Detach(channel));
         
         if(!fControllerChannel)
-            result = nil;
+            result = nullptr;
     }
     if(result != this)
         delete this;
@@ -449,7 +449,7 @@ plAGChannel * plScalarControllerCacheChannel::Detach(plAGChannel * channel)
 
 // ctor --------------------
 plATCChannel::plATCChannel()
-: fConvert(nil)
+: fConvert()
 {
 }
 
@@ -488,13 +488,13 @@ const float & plATCChannel::Value(double time, bool peek)
 // ctor --------------------------------
 // -----
 plScalarSDLChannel::plScalarSDLChannel()
-: fLength(1), fVar(nil) 
+: fLength(1), fVar()
 {
     fResult = 0;
 }
 
 plScalarSDLChannel::plScalarSDLChannel(float length)
-: fLength(length), fVar(nil) 
+: fLength(length), fVar()
 {
     fResult = 0;
 }

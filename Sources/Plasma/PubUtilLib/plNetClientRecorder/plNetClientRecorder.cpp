@@ -102,9 +102,9 @@ bool plNetClientRecorder::IsRecordableMsg(plNetMessage* msg) const
 
 plNetClientLoggingRecorder::plNetClientLoggingRecorder(TimeWrapper* timeWrapper) :
     plNetClientRecorder(timeWrapper),
-    fPlaybackTimeOffset(0),
-    fNextPlaybackTime(0),
-    fLog(nil),
+    fPlaybackTimeOffset(),
+    fNextPlaybackTime(),
+    fLog(),
     fBetweenAges(true)
 {
 }
@@ -112,7 +112,7 @@ plNetClientLoggingRecorder::plNetClientLoggingRecorder(TimeWrapper* timeWrapper)
 plNetClientLoggingRecorder::~plNetClientLoggingRecorder()
 {
     delete fLog;
-    fLog = nil;
+    fLog = nullptr;
 }
 
 bool plNetClientLoggingRecorder::IProcessRecordMsg(plNetMessage* msg, double secs)

@@ -79,7 +79,7 @@ public:
     bool RemoveMember(plNetTransportMember* mbr);             // from master list and all channels
     bool RemoveMember(int idx);                               // from master list and all channels
     int GetNumMembers() const { return fMembers.size(); }
-    plNetTransportMember* GetMember(int i) const { return i>=0 && i<fMembers.size() ? fMembers[i] : nil; }
+    plNetTransportMember* GetMember(int i) const { return i >= 0 && i < fMembers.size() ? fMembers[i] : nullptr; }
     void ClearMembers();
 
     // channel group ops

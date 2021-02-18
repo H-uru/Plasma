@@ -150,7 +150,7 @@ bool    pfGUIRadioGroupCtrl::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIRadioGroupCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefControl )
         {
@@ -163,7 +163,7 @@ bool    pfGUIRadioGroupCtrl::MsgReceive( plMessage *msg )
             }
             else
             {
-                fControls[ refMsg->fWhich ] = nil;
+                fControls[refMsg->fWhich] = nullptr;
             }
             return true;
         }
@@ -185,7 +185,7 @@ void    pfGUIRadioGroupCtrl::Read( hsStream *s, hsResMgr *mgr )
         mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kRefControl ), plRefFlags::kActiveRef );
 
     fValue = fDefaultValue = s->ReadLE16();
-    if( fValue != -1 && fControls[ fValue ] != nil )
+    if (fValue != -1 && fControls[fValue] != nullptr)
         fControls[ fValue ]->SetChecked( true );
 }
 

@@ -103,13 +103,11 @@ class plAxisInputInterface : public plInputInterface
 };
 
 plAxisAnimModifier::plAxisAnimModifier() : 
-fXAnim(nil), 
-fYAnim(nil), 
-fActive(false), 
-fXPos(0.0f), 
-fYPos(0.0f), 
-fIface(0), 
-fAllOrNothing(false)
+fActive(),
+fXPos(),
+fYPos(),
+fIface(),
+fAllOrNothing()
 {
     fNotify = new plNotifyMsg;
     fInputIface = new plAxisInputInterface( this );
@@ -346,13 +344,13 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
         if (pRefMsg->GetContext() == plRefMsg::kOnDestroy )
         {
             if (pRefMsg->fType == kTypeX)
-                fXAnim = nil;
+                fXAnim = nullptr;
             else 
             if (pRefMsg->fType == kTypeY)
-                fYAnim = nil;
+                fYAnim = nullptr;
             else 
             if (pRefMsg->fType == kTypeLogic)
-                fNotificationKey = nil;
+                fNotificationKey = nullptr;
         }
         return true;    
     }

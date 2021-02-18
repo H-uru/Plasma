@@ -69,7 +69,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void    plSpan::Read( hsStream *stream )
 {
     fSubType = (uint16_t)(stream->ReadLE32());
-    fFogEnvironment = nil;
+    fFogEnvironment = nullptr;
 
     fMaterialIdx = stream->ReadLE32();
     fLocalToWorld.Read( stream );
@@ -92,7 +92,7 @@ void    plSpan::Read( hsStream *stream )
         fWaterHeight = stream->ReadLEScalar();
 
 #ifdef HS_DEBUGGING
-    fOwnerKey = nil;
+    fOwnerKey = nullptr;
 #endif
 }
 
@@ -302,10 +302,10 @@ plSpan::plSpan()
     fTypeMask = kSpan;
     fSubType = plDrawable::kSubNormal;
     fMaterialIdx = (uint32_t)-1;
-    fFogEnvironment = nil;
+    fFogEnvironment = nullptr;
     fProps = 0;
 
-    fSnapShot = nil;
+    fSnapShot = nullptr;
 
     ClearLights();
     fVisSet.SetBit(0);
@@ -321,7 +321,7 @@ plSpan::plSpan()
     fWaterHeight = 0;
 
 #ifdef HS_DEBUGGING
-    fOwnerKey = nil;
+    fOwnerKey = nullptr;
 #endif
 }
 
@@ -335,7 +335,7 @@ void plSpan::Destroy()
 
     int i;
     for( i = 0; i < fAuxSpans.GetCount(); i++ )
-        fAuxSpans[i]->fDrawable = nil;
+        fAuxSpans[i]->fDrawable = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -437,7 +437,7 @@ void    plIcicle::Read( hsStream *stream )
             fSortData[ i ].Read( stream );
     }
     else
-        fSortData = nil;
+        fSortData = nullptr;
 }
 
 //// Write ///////////////////////////////////////////////////////////////////
@@ -465,7 +465,7 @@ void    plIcicle::Destroy()
 {
     plSpan::Destroy();
     delete [] fSortData;
-    fSortData = nil;
+    fSortData = nullptr;
 }
 
 //// CanMergeInto ////////////////////////////////////////////////////////////
@@ -509,7 +509,7 @@ plIcicle::plIcicle()
 {
     fTypeMask |= kIcicleSpan;
 
-    fSortData = nil;
+    fSortData = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -524,7 +524,7 @@ plParticleSpan::plParticleSpan() : plIcicle()
 
     fProps |= kPropProjAsVtx;
 
-    fSource = nil;
+    fSource = nullptr;
     fSortCount = 0;
 }
 
@@ -547,8 +547,8 @@ void    plParticleSpan::MergeInto( plSpan *other )
 void    plParticleSpan::Destroy()
 {
     plIcicle::Destroy();
-    fSource = nil;
-    if( fParentSet != nil )
+    fSource = nullptr;
+    if (fParentSet != nullptr)
     {
         fParentSet->fRefCount--;
         if( fParentSet->fRefCount == 0 )

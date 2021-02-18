@@ -116,7 +116,7 @@ CryptKey * CryptKeyCreate (
     unsigned        bytes,
     const void *    data
 ) {
-    CryptKey * key = nil;
+    CryptKey * key = nullptr;
     switch (algorithm) {
         case kCryptRc4: {
             RC4_KEY * rc4 = new RC4_KEY;

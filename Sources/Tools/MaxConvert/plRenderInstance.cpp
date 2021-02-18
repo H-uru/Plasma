@@ -68,13 +68,13 @@ public:
 static plNilView nilView;
 
 plRenderInstance::plRenderInstance()
-:   fNext(nil),
-    fNode(nil),
-    fObject(nil),
-    fDeleteMesh(false)
+:   fNext(),
+    fNode(),
+    fObject(),
+    fDeleteMesh()
 {
-    mtl = nil;
-    mesh = nil;
+    mtl = nullptr;
+    mesh = nullptr;
     flags = 0;
     wireSize = 1.f;
     vis = 1.f;
@@ -99,7 +99,7 @@ void plRenderInstance::Cleanup()
     if( mesh && fDeleteMesh )
     {
         mesh->DeleteThis();
-        mesh = nil;
+        mesh = nullptr;
         fDeleteMesh = false;
     }
 }
@@ -118,7 +118,7 @@ BOOL plRenderInstance::Update(TimeValue& t)
     if( mesh && fDeleteMesh )
     {
         mesh->DeleteThis();
-        mesh = nil;
+        mesh = nullptr;
     }
     fDeleteMesh = false;
     mesh = ((GeomObject*)fObject)->GetRenderMesh(t, fNode, nilView, fDeleteMesh);
@@ -148,7 +148,7 @@ BOOL plRenderInstance::Update(TimeValue& t)
     for( i = 0; i < 3; i++ )
         normalObjToCam.SetRow(i, inv.GetColumn3(i));
 
-    obBox = mesh->getBoundingBox(nil);
+    obBox = mesh->getBoundingBox(nullptr);
     center = obBox.Center();
     radsq = LengthSquared(obBox.Width());
 
@@ -157,7 +157,7 @@ BOOL plRenderInstance::Update(TimeValue& t)
 
 BOOL plRenderInstance::GetFromNode(INode* node, TimeValue& t, int idx)
 {
-    fNext = nil;
+    fNext = nullptr;
 
     fValid = Interval(t, t);
 
@@ -285,7 +285,7 @@ void plRenderInstance::GetCamVerts(int fnum, Point3 cp[3])
 Mtl* plRenderInstance::GetMtl(int fnum)
 {
     if( !mtl )
-        return nil;
+        return nullptr;
 
     if( TestFlag(INST_MTL_BYFACE) )
     {

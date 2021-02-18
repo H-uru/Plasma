@@ -158,19 +158,19 @@ plComponentBase *ResponderGetActivator(plComponentBase *comp, int idx)
         return activatorNode->ConvertToComponent();
     }
 
-    return nil;
+    return nullptr;
 }
 
 plKey Responder::GetKey(plComponentBase *comp, plMaxNodeBase *node)
 {
     if (comp->ClassID() != RESPONDER_CID)
-        return nil;
+        return nullptr;
 
     plResponderComponent *responder = (plResponderComponent*)comp;
     if (responder->fModKeys.find((plMaxNode*)node) != responder->fModKeys.end())
         return responder->fModKeys[(plMaxNode*)node];
 
-    return nil; 
+    return nullptr;
 }
 
 CLASS_DESC(plResponderComponent, gResponderDesc, "Responder", "Responder", COMP_TYPE_LOGIC, RESPONDER_CID)
@@ -267,7 +267,7 @@ std::vector<plResponderCmd*> gResponderCmds;
 plResponderCmd *plResponderCmd::Find(IParamBlock2 *pb)
 {
     if (!pb)
-        return nil;
+        return nullptr;
 
     ParamBlockDesc2 *pbDesc = pb->GetDesc();
 
@@ -277,13 +277,13 @@ plResponderCmd *plResponderCmd::Find(IParamBlock2 *pb)
             return gResponderCmds[i];
     }
 
-    return nil;
+    return nullptr;
 }
 
 IParamBlock2* plResponderCmd::CreatePB(int idx)
 {
     hsAssert(NumTypes() == 1, "Can't auto-create the pb for a cmd with multiple types");
-    IParamBlock2 *pb = CreateParameterBlock2(GetDesc(), nil);
+    IParamBlock2 *pb = CreateParameterBlock2(GetDesc(), nullptr);
     return pb;
 }
 
@@ -350,7 +350,7 @@ bool plResponderComponent::PreConvert(plMaxNode *node,plErrorMsg *pErrMsg)
     for (int i = 0; i < fCompPB->Count(kResponderActivators); i++)
     {
         plMaxNode *activatorNode = (plMaxNode*)fCompPB->GetINode(kResponderActivators, 0, i);
-        plComponentBase *comp = activatorNode ? activatorNode->ConvertToComponent() : nil;
+        plComponentBase *comp = activatorNode ? activatorNode->ConvertToComponent() : nullptr;
         if (comp)
         {
             if (fCompPB->GetInt(kResponderLocalDetect))
@@ -428,7 +428,7 @@ void plResponderComponent::IConvertCmds(plMaxNode* node, plErrorMsg* pErrMsg, in
     // Add the messages to the logic modifier
     for (int i = 0; i < statePB->Count(kStateCmdParams); i++)
     {
-        plMessage *msg = nil;
+        plMessage *msg = nullptr;
 
         BOOL enabled = statePB->GetInt(kStateCmdEnabled, 0, i);
         if (!enabled)
@@ -552,7 +552,7 @@ void plResponderComponent::IFixOldPB()
     {
         if (fCompPB->Count(kResponderState) == 0)
         {
-            IParamBlock2 *pb = CreateParameterBlock2(&gStateBlock, nil);
+            IParamBlock2 *pb = CreateParameterBlock2(&gStateBlock, nullptr);
             int idx = fCompPB->Append(kResponderState, 1, (ReferenceTarget**)&pb);
             pb->SetValue(kStateCmdSwitch, 0, idx);
         }
@@ -625,7 +625,8 @@ void plResponderProc::ICreateMenu()
     }
 }
 
-plResponderProc::plResponderProc() : fCmdMap(nil), fCmdIdx(-1), fCurState(0), fhMenu(nil), fIgnoreNextDrop(false)
+plResponderProc::plResponderProc()
+    : fCmdMap(), fCmdIdx(-1), fCurState(), fhMenu(), fIgnoreNextDrop()
 {
 }
 
@@ -659,7 +660,7 @@ const char* plResponderProc::GetCommandName(int cmdIdx)
     }
 
     hsAssert(0, "Bad index to GetCommandName");
-    return nil;
+    return nullptr;
 }
 
 void plResponderProc::LoadList()
@@ -734,12 +735,12 @@ void plResponderProc::IRemoveCmdRollups()
     if (fCmdMap)
     {
         DestroyCPParamMap2(fCmdMap);
-        fCmdMap = nil;
+        fCmdMap = nullptr;
     }
     if (fWaitMap)
     {
         DestroyCPParamMap2(fWaitMap);
-        fWaitMap = nil;
+        fWaitMap = nullptr;
     }
 }
 
@@ -751,7 +752,7 @@ IParamMap2 *plResponderProc::ICreateMap(IParamBlock2 *pb)
     if (pd->Count() < 1)
     {
         pb->ReleaseDesc();
-        return nil;
+        return nullptr;
     }
 
     // Create the rollout
@@ -892,7 +893,7 @@ void plResponderProc::IDrawComboItem(DRAWITEMSTRUCT *dis)
     int x = LOWORD(GetDialogBaseUnits()) / 4;
 
     // If this is a command, not a state, make it bold
-    HFONT oldFont = nil;
+    HFONT oldFont = nullptr;
     if (dis->itemData != kStateName)
     {
         LOGFONT lf;
@@ -1172,7 +1173,7 @@ BOOL plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, 
 
                 if (type == kStateAdd)
                 {
-                    IParamBlock2 *pb = CreateParameterBlock2(&gStateBlock, nil);
+                    IParamBlock2 *pb = CreateParameterBlock2(&gStateBlock, nullptr);
                     fCurState = AddState(pb);
                     fCmdIdx = -1;
                 }

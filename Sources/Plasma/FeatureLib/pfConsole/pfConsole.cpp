@@ -80,9 +80,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Static Class Stuff //////////////////////////////////////////////////////
 
-pfConsole   *pfConsole::fTheConsole = nil;
+pfConsole   *pfConsole::fTheConsole = nullptr;
 uint32_t      pfConsole::fConsoleTextColor = 0xff00ff00;
-plPipeline  *pfConsole::fPipeline = nil;
+plPipeline  *pfConsole::fPipeline = nullptr;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ class pfConsoleInputInterface : public plInputInterface
         bool    InterpretInputEvent(plInputEventMsg *pMsg) override
         {
             plKeyEventMsg   *keyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
-            if( keyMsg != nil )
+            if (keyMsg != nullptr)
             {
                 if( fConsole->fMode )
                 {
@@ -169,7 +169,7 @@ class pfConsoleInputInterface : public plInputInterface
 
         void    RestoreDefaultKeyMappings() override
         {
-            if( fControlMap != nil )
+            if (fControlMap != nullptr)
             {
                 fControlMap->UnmapAllBindings();
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -192,23 +192,23 @@ pfConsole::pfConsole()
 
 pfConsole::~pfConsole()
 {
-    if( fInputInterface != nil )
+    if (fInputInterface != nullptr)
     {
         plInputIfaceMgrMsg *msg = new plInputIfaceMgrMsg( plInputIfaceMgrMsg::kRemoveInterface );
         msg->SetIFace( fInputInterface );
         plgDispatch::MsgSend( msg );
 
         hsRefCnt_SafeUnRef( fInputInterface );
-        fInputInterface = nil;
+        fInputInterface = nullptr;
     }
 
-    if( fDisplayBuffer != nil )
+    if (fDisplayBuffer != nullptr)
     {
         delete [] fDisplayBuffer;
-        fDisplayBuffer = nil;
+        fDisplayBuffer = nullptr;
     }
 
-    fTheConsole = nil;
+    fTheConsole = nullptr;
 
     plgDispatch::Dispatch()->UnRegisterForExactType( plConsoleMsg::Index(), GetKey() );
     plgDispatch::Dispatch()->UnRegisterForExactType( plControlEventMsg::Index(), GetKey() );
@@ -299,7 +299,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     }
 
     plControlEventMsg *ctrlMsg = plControlEventMsg::ConvertNoRef( msg );
-    if( ctrlMsg != nil )
+    if (ctrlMsg != nullptr)
     {
         if( ctrlMsg->ControlActivated() && ctrlMsg->GetControlCode() == B_CONTROL_CONSOLE_COMMAND && plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kPlayingGame))
         {
@@ -310,7 +310,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     }
 
     plConsoleMsg *cmd = plConsoleMsg::ConvertNoRef( msg );
-    if( cmd != nil && cmd->GetString() != nil )
+    if (cmd != nullptr && cmd->GetString() != nullptr)
     {
         if( cmd->GetCmd() == plConsoleMsg::kExecuteFile )
         {
@@ -758,7 +758,7 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
         string += 2;
     }
 
-    for( ptr = string; ptr != nil && *ptr != 0; )
+    for (ptr = string; ptr != nullptr && *ptr != 0; )
     {
         // Go as far as possible
         if( strlen( ptr ) < kMaxCharsWide - margin - margin - 1 )
@@ -778,7 +778,7 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
             ptr++;
             continue;
         }
-        if( ptr3 != nil && ptr3 < ptr2 )
+        if (ptr3 != nullptr && ptr3 < ptr2)
             ptr2 = ptr3;
 
         // Add this part
@@ -902,16 +902,16 @@ void    pfConsole::Draw( plPipeline *p )
             // Our concession to windows
 #ifdef HS_BUILD_FOR_WIN32
             #include "../../Apps/plClient/res/resource.h"
-            HRSRC rsrc = FindResource( nil, MAKEINTRESOURCE( IDR_CNSL1 ), "CNSL" );
-            if( rsrc != nil )
+            HRSRC rsrc = FindResource(nullptr, MAKEINTRESOURCE(IDR_CNSL1), "CNSL");
+            if (rsrc != nullptr)
             {
-                HGLOBAL hdl = LoadResource( nil, rsrc );
-                if( hdl != nil )
+                HGLOBAL hdl = LoadResource(nullptr, rsrc);
+                if (hdl != nullptr)
                 {
                     uint8_t *ptr = (uint8_t *)LockResource( hdl );
-                    if( ptr != nil )
+                    if (ptr != nullptr)
                     {
-                        for( i = 0; i < SizeofResource( nil, rsrc ); i++ )
+                        for (i = 0; i < SizeofResource(nullptr, rsrc); i++)
                             tmpSrc[ i ] = ptr[ i ] + 26;
                         UnlockResource( hdl );
                     }
@@ -992,7 +992,7 @@ void    pfConsole::IUpdateTooltip()
 
     strcpy( tmpStr, fWorkingLine );
     c = (char *)fEngine->GetCmdSignature( tmpStr );
-    if( c == nil || strcmp( c, fLastHelpMsg ) != 0 )
+    if (c == nullptr || strcmp(c, fLastHelpMsg) != 0)
     {
         /// Different--update timer to wait
         fHelpTimer = kHelpDelay;
@@ -1045,5 +1045,5 @@ void pfConsole::RunCommandAsync (const char cmd[]) {
     consoleMsg->SetCmd(plConsoleMsg::kExecuteLine);
     consoleMsg->SetString(cmd);
 //  consoleMsg->SetBreakBeforeDispatch(true);
-    consoleMsg->Send(nil, true);
+    consoleMsg->Send(nullptr, true);
 }

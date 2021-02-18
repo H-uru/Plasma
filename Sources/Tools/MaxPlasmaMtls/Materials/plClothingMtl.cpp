@@ -569,7 +569,7 @@ plClothingElement *plClothingMtl::FindElementByName(const ST::string &name) cons
         if (element->fName == name)
             return element;
     }
-    return nil; 
+    return nullptr;
 }
 
 void plClothingMtl::InitTilesets()
@@ -702,7 +702,7 @@ void plClothingMtl::ReleaseTilesets()
 
 /////////////////////////////////////////////////////////////////////////////////
 
-plClothingTileset::plClothingTileset() : fName(nil) 
+plClothingTileset::plClothingTileset() : fName()
 {
     fElements.Reset();
 }

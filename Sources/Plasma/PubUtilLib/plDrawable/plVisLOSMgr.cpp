@@ -429,8 +429,8 @@ bool plVisLOSMgr::CursorCheck(plVisHit& hit)
 
 /////////////////////////////////////////////////////////////////
 
-static plSceneObject* marker = nil;
-static plPipeline* fPipe = nil;
+static plSceneObject* marker = nullptr;
+static plPipeline* fPipe = nullptr;
 
 
 void VisLOSHackBegin(plPipeline* p, plSceneObject* m)

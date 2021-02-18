@@ -63,11 +63,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plEAXListenerMod::plEAXListenerMod()
+    : fSoftRegion(), fRegistered(), fGetsMessages()
 {
     fListenerProps = new EAXREVERBPROPERTIES;
-    fSoftRegion = nil;
-    fRegistered = false;
-    fGetsMessages = false;
 
 #ifdef EAX_SDK_AVAILABLE
     memcpy( fListenerProps, &REVERB_ORIGINAL_PRESETS[ ORIGINAL_GENERIC ], sizeof( EAXREVERBPROPERTIES ) );
@@ -97,11 +95,11 @@ void    plEAXListenerMod::IRegister()
         fGetsMessages = true;
     }
 
-    if( fRegistered || GetKey() == nil )
+    if (fRegistered || GetKey() == nullptr)
         return;
 
     plKey sysKey = hsgResMgr::ResMgr()->FindKey( plUoid( kAudioSystem_KEY ) );
-    if( sysKey != nil )
+    if (sysKey != nullptr)
     {
         plGenRefMsg *refMsg = new plGenRefMsg( sysKey, plRefMsg::kOnCreate, 0, 0 );
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );
@@ -111,11 +109,11 @@ void    plEAXListenerMod::IRegister()
 
 void    plEAXListenerMod::IUnRegister()
 {
-    if( !fRegistered || GetKey() == nil )
+    if (!fRegistered || GetKey() == nullptr)
         return;
 
     plKey sysKey = hsgResMgr::ResMgr()->FindKey( plUoid( kAudioSystem_KEY ) );
-    if( sysKey != nil && GetKey() != nil )
+    if (sysKey != nullptr && GetKey() != nullptr)
         sysKey->Release( GetKey() );
 
     fRegistered = false;
@@ -130,7 +128,7 @@ bool plEAXListenerMod::IEval( double secs, float del, uint32_t dirty )
 bool    plEAXListenerMod::MsgReceive( plMessage* pMsg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( pMsg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         switch( refMsg->fType )
         {
@@ -142,14 +140,14 @@ bool    plEAXListenerMod::MsgReceive( plMessage* pMsg )
                 }
                 else if( refMsg->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
                 {
-                    fSoftRegion = nil;
+                    fSoftRegion = nullptr;
                 }
                 break;
         }
     }
 
     plAudioSysMsg *sysMsg = plAudioSysMsg::ConvertNoRef( pMsg );
-    if( sysMsg != nil )
+    if (sysMsg != nullptr)
     {
         if( sysMsg->GetAudFlag() == plAudioSysMsg::kActivate )
         {
@@ -247,7 +245,7 @@ void    plEAXListenerMod::SetFromPreset( uint32_t preset )
 
 float   plEAXListenerMod::GetStrength()
 {
-    if( fSoftRegion == nil )
+    if (fSoftRegion == nullptr)
         return 0.f;
 
     return fSoftRegion->GetListenerStrength();

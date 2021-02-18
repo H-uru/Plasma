@@ -68,7 +68,7 @@ public:
 static MaxUtilsClassDesc theMaxUtilsClassDesc;
 ClassDesc* GetMaxUtilsDesc() { return &theMaxUtilsClassDesc; }
 
-plMaxUtils::plMaxUtils() :  fhPanel(nil), fhResDlg(nil)
+plMaxUtils::plMaxUtils() : fhPanel(), fhResDlg()
 {
 }
 
@@ -129,7 +129,7 @@ int ClearTextureIds()
     int numCleared = 0;
 
     TexSet texmaps;
-    plMtlCollector::GetMtls(nil, &texmaps);
+    plMtlCollector::GetMtls(nullptr, &texmaps);
 
     TexSet::iterator texIt = texmaps.begin();
     for (; texIt != texmaps.end(); texIt++)

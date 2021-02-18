@@ -59,5 +59,5 @@ void plComponentNoteTrackDlg::ICacheNoteTrack()
             targets.push_back((Animatable*)comp->GetTarget(i));
     }
 
-    fSegMap = GetSharedAnimSegmentMap(targets, nil);
+    fSegMap = GetSharedAnimSegmentMap(targets, nullptr);
 }

@@ -72,7 +72,7 @@ void plAccessSpan::SetSource(plSpan* s)
     fLocalBounds = &s->fLocalBounds;
     fWorldBounds = &s->fWorldBounds;
 
-    fWaterHeight = s->fProps & plSpan::kWaterHeight ? &s->fWaterHeight : nil;
+    fWaterHeight = s->fProps & plSpan::kWaterHeight ? &s->fWaterHeight : nullptr;
 }
 void plAccessSpan::SetSource(plGeometrySpan* s)
 { 
@@ -81,7 +81,7 @@ void plAccessSpan::SetSource(plGeometrySpan* s)
     fLocalBounds = &s->fLocalBounds;
     fWorldBounds = &s->fWorldBounds;
 
-    fWaterHeight = s->fProps & plGeometrySpan::kWaterHeight ? &s->fWaterHeight : nil;
+    fWaterHeight = s->fProps & plGeometrySpan::kWaterHeight ? &s->fWaterHeight : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ plAccessGeometry::plAccessGeometry(plPipeline* pipe)
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // Global access stuff.
-plAccessGeometry*   plAccessGeometry::fInstance = nil;
+plAccessGeometry*   plAccessGeometry::fInstance = nullptr;
 
 void plAccessGeometry::Init(plPipeline* pipe)
 {
@@ -368,7 +368,7 @@ void plAccessGeometry::IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeom
     plAccessTriSpan& tri = dst.AccessTri();
     tri.fNumTris = src->fNumIndices / 3;
     tri.fTris = src->fIndexData;
-    tri.fIdxDeviceRef = nil;
+    tri.fIdxDeviceRef = nullptr;
 
     dst.SetSource(const_cast<plGeometrySpan*>(src));
     dst.SetMaterial(src->fMaterial);
@@ -386,7 +386,7 @@ void plAccessGeometry::IAccessSpanFromSourceSpan(plAccessSpan& dst, const plGeom
     acc.UVWStream(ptr, (uint16_t)sz, 0);
     acc.SetNumUVWs(src->CalcNumUVs(src->fFormat));
 
-    acc.fVtxDeviceRef = nil;
+    acc.fVtxDeviceRef = nullptr;
 }
 
 void plAccessGeometry::IAccessSpanFromSpan(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* span, bool useSnap, bool readOnly) const
@@ -466,7 +466,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
             }
             else
             {
-                acc.WgtIndexStream(nil, 0, offset);
+                acc.WgtIndexStream(nullptr, 0, offset);
             }
         }
         else
@@ -511,7 +511,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
             }
             else
             {
-                acc.WgtIndexStream(nil, 0, 0);
+                acc.WgtIndexStream(nullptr, 0, 0);
             }
         }
         else
@@ -536,7 +536,7 @@ void plAccessGeometry::IAccessSpanFromVertexSpan(plAccessSpan& dst, plDrawableSp
         acc.SetNumUVWs(grp->GetNumUVs());
     }
 
-    acc.fVtxDeviceRef = nil;
+    acc.fVtxDeviceRef = nullptr;
 }
 
 void plAccessGeometry::IAccessConnectivity(plAccessSpan& dst, plDrawableSpans* drawable, const plSpan* src) const
@@ -553,7 +553,7 @@ void plAccessGeometry::IAccessConnectivity(plAccessSpan& dst, plDrawableSpans* d
         plGBufferGroup* grp = drawable->GetBufferGroup(span->fGroupIdx);
         acc.fTris = grp->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
 
-        acc.fIdxDeviceRef = nil;
+        acc.fIdxDeviceRef = nullptr;
     }
     // Hmm, particle should probably go here...
     else 
@@ -575,7 +575,7 @@ void plAccessGeometry::IAccessSpanFromIcicle(plAccessSpan& dst, plDrawableSpans*
     plGBufferGroup* grp = drawable->GetBufferGroup(span->fGroupIdx);
     acc.fTris = grp->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
 
-    acc.fIdxDeviceRef = nil;
+    acc.fIdxDeviceRef = nullptr;
 }
 
 void plAccessGeometry::IAccessSpanFromParticle(plAccessSpan& dst, plDrawableSpans* drawable, const plParticleSpan* span, bool readOnly) const

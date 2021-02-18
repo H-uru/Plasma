@@ -100,7 +100,7 @@ public:
         kListener   = kPosition | kVelocity | kFacing
     };
 
-    plSetListenerMsg() : plMessage( nil, nil, nil ) { fType = 0; fBinding = false; }
+    plSetListenerMsg() : plMessage(nullptr, nullptr, nullptr) { fType = 0; fBinding = false; }
     plSetListenerMsg( uint8_t type, const plKey &srcKey, bool binding );
 
     CLASSNAME_REGISTER( plSetListenerMsg );

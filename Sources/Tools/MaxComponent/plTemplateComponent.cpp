@@ -61,7 +61,7 @@ static const char *GetPBString(IParamBlock2 *pb, ParamID id)
 {
     const char *str = pb->GetStr(id, 0);
     if (str && *str == '\0')
-        return nil;
+        return nullptr;
     return str;
 }
 
@@ -113,7 +113,7 @@ const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 #include "MaxMain/plMaxNodeData.h"

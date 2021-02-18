@@ -80,7 +80,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plTransitionMgr::plTransitionMgr()
 {
-    fEffectPlate = nil;
+    fEffectPlate = nullptr;
     fCurrentEffect = kIdle;
     fPlaying = false;
 }
@@ -100,7 +100,7 @@ plTransitionMgr::~plTransitionMgr()
     for( i = 0; i < fCallbacks.GetCount(); i++ )
         hsRefCnt_SafeUnRef( fCallbacks[ i ] );
 
-    if( fEffectPlate != nil )
+    if (fEffectPlate != nullptr)
         plPlateManager::Instance().DestroyPlate( fEffectPlate );
 
     if( fRegisteredForTime )
@@ -117,7 +117,7 @@ void    plTransitionMgr::ICreatePlate()
     int     x, y;
 
 
-    fEffectPlate = nil;
+    fEffectPlate = nullptr;
 
     // +0.01 to deal with the half-pixel antialiasing stuff
     plPlateManager::Instance().CreatePlate(&fEffectPlate, 0, 0, 2.01f, 2.01f);
@@ -162,12 +162,12 @@ void    plTransitionMgr::IStartFadeOut( float lengthInSecs, uint8_t effect )
         fRegisteredForTime = true;
     }
 
-    if( fEffectPlate == nil )
+    if (fEffectPlate == nullptr)
         ICreatePlate();
     fEffectPlate->SetVisible( true );
 
     plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-    if( layer != nil )
+    if (layer != nullptr)
     {
         layer->SetOpacity( fCurrOpacity );
     }
@@ -188,12 +188,12 @@ void    plTransitionMgr::IStartFadeIn( float lengthInSecs, uint8_t effect )
     plgDispatch::Dispatch()->RegisterForExactType( plTimeMsg::Index(), GetKey() );
     fRegisteredForTime = true;
 
-    if( fEffectPlate == nil )
+    if (fEffectPlate == nullptr)
         ICreatePlate();
     fEffectPlate->SetVisible( true );
 
     plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-    if( layer != nil )
+    if (layer != nullptr)
     {
         layer->SetOpacity( fCurrOpacity );
     }
@@ -210,14 +210,14 @@ void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 
     if( fPlaying )
     {
-        if( !fHoldAtEnd && fEffectPlate != nil && !aboutToStartAgain )
+        if (!fHoldAtEnd && fEffectPlate != nullptr && !aboutToStartAgain)
             fEffectPlate->SetVisible( false );
 
         // finish the opacity to the end opacity
-        if( fEffectPlate != nil )
+        if (fEffectPlate != nullptr)
         {
             plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-            if( layer != nil )
+            if (layer != nullptr)
             {
                 layer->SetOpacity( (fCurrentEffect == kFadeIn || fCurrentEffect == kTransitionFadeIn) ? 0.f : 1.f );
             }
@@ -245,7 +245,7 @@ void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 bool    plTransitionMgr::MsgReceive( plMessage* msg )
 {
     plTimeMsg   *time = plTimeMsg::ConvertNoRef( msg );
-    if( time != nil )
+    if (time != nullptr)
     {
         if( !fPlaying )
             return false;
@@ -271,11 +271,11 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
         {
             // Grab the layer so we can set the opacity
             fCurrOpacity += (float)(fOpacDelta * ( time->DSeconds() - fLastTime ));//*/time->DelSeconds();
-            if( fEffectPlate == nil )
+            if (fEffectPlate == nullptr)
                 ICreatePlate();
 
             plLayer *layer = (plLayer *)fEffectPlate->GetMaterial()->GetLayer( 0 );
-            if( layer != nil )
+            if (layer != nullptr)
             {
                 layer->SetOpacity( fCurrOpacity );
             }
@@ -292,7 +292,7 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
     }
     
     plTransitionMsg *effect = plTransitionMsg::ConvertNoRef( msg );
-    if( effect != nil )
+    if (effect != nullptr)
     {
         if( fRegisteredForTime )
             IStop( true );
@@ -328,12 +328,12 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
     }
 
     plLinkEffectBCMsg *link = plLinkEffectBCMsg::ConvertNoRef( msg );
-    if( link != nil )
+    if (link != nullptr)
     {
         const float kScreenFadeTime = 3.f; // seconds
 
         // Go ahead and auto-trigger based on link FX messages
-        if( plNetClientApp::GetInstance() != nil && link->fLinkKey == plNetClientApp::GetInstance()->GetLocalPlayerKey() )
+        if (plNetClientApp::GetInstance() != nullptr && link->fLinkKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
         {
             if( fRegisteredForTime )
                 IStop( true );
@@ -356,7 +356,7 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
             if (link->HasLinkFlag(plLinkEffectBCMsg::kSendCallback))
             {
                 plLinkEffectsMgr *mgr;
-                if( ( mgr = plLinkEffectsMgr::ConvertNoRef( link->GetSender()->ObjectIsLoaded() ) ) != nil )
+                if (mgr = plLinkEffectsMgr::ConvertNoRef(link->GetSender()->ObjectIsLoaded()); mgr != nullptr)
                 {
                     plEventCallbackMsg *cback = plEventCallbackMsg::ConvertNoRef( mgr->WaitForEffect( link->fLinkKey ) );
 //                  hsRefCnt_SafeRef( cback ); // mgr has given us ownership, his ref is now ours. No need for another. -mf-

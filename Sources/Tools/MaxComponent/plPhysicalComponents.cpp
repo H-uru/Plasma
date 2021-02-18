@@ -1283,7 +1283,7 @@ plSwim2DComponent::plSwim2DComponent()
 bool plSwim2DComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
 {
     IFixBounds();
-    plPhysicalProps *physProps = nil;
+    plPhysicalProps *physProps = nullptr;
     plMaxNode *detectorNode = (plMaxNode *)fCompPB->GetINode(kSwimDetectorNode);
     if (detectorNode)
     {
@@ -1312,9 +1312,9 @@ bool plSwim2DComponent::SetupProperties(plMaxNode *node, plErrorMsg *errMsg)
 
 bool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plSwimRegionInterface *swimInt = nil;
+    plSwimRegionInterface *swimInt = nullptr;
     int type = fCompPB->GetInt(ParamID(kSwimCurrentType));
-    if (type != kCurrentNone && fCompPB->GetINode(ParamID(kSwimCurrentNode)) == nil)
+    if (type != kCurrentNone && fCompPB->GetINode(ParamID(kSwimCurrentNode)) == nullptr)
     {
         pErrMsg->Set(true, node->GetName(), "No dummy box set to define current. Forcing current to \"none\"").Show();
         type = kCurrentNone;
@@ -1354,8 +1354,8 @@ bool plSwim2DComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (!detectorNode->GetSceneObject()->GetModifierByType(plSwimDetector::Index()))
         {
             plKey nilKey;
-            plSwimMsg *enterMsg = new plSwimMsg(detectorNode->GetKey(), nilKey, true, nil);
-            plSwimMsg *exitMsg = new plSwimMsg(detectorNode->GetKey(), nilKey, false, nil);
+            plSwimMsg *enterMsg = new plSwimMsg(detectorNode->GetKey(), nilKey, true, nullptr);
+            plSwimMsg *exitMsg = new plSwimMsg(detectorNode->GetKey(), nilKey, false, nullptr);
             enterMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             exitMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
             plSwimDetector *swimMod = new plSwimDetector(enterMsg, exitMsg);
@@ -1782,7 +1782,7 @@ bool plSubworldDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        detector->SetSubworldKey(nil);
+        detector->SetSubworldKey(nullptr);
     }
 
     bool onExit = (fCompPB->GetInt(kSubworldTriggerOn) == kSubTriggerOnExit);
@@ -2002,9 +2002,9 @@ bool plRideAnimatedPhysicalComponent::Convert(plMaxNode *node, plErrorMsg *pErrM
 {
     plSceneObject *obj = node->GetSceneObject();
     plLocation loc = node->GetLocation();
-    plRideAnimatedPhysMsg* enter = new plRideAnimatedPhysMsg(obj->GetKey(), nil, true, nil);
+    plRideAnimatedPhysMsg* enter = new plRideAnimatedPhysMsg(obj->GetKey(), nullptr, true, nullptr);
     enter->SetBCastFlag(plMessage::kPropagateToModifiers);
-    plRideAnimatedPhysMsg* exit = new plRideAnimatedPhysMsg(obj->GetKey(), nil, false, nil);
+    plRideAnimatedPhysMsg* exit = new plRideAnimatedPhysMsg(obj->GetKey(), nullptr, false, nullptr);
     exit->SetBCastFlag(plMessage::kPropagateToModifiers);
     plRidingAnimatedPhysicalDetector *detector = new plRidingAnimatedPhysicalDetector(enter, exit);
     // Register the detector

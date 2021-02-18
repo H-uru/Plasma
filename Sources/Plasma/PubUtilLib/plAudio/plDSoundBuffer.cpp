@@ -124,7 +124,7 @@ void    plDSoundBuffer::IRelease()
     memset(streamingBuffers, 0, STREAMING_BUFFERS * sizeof(unsigned));
 
     delete fBufferDesc;
-    fBufferDesc = nil;
+    fBufferDesc = nullptr;
     fBufferSize = 0;
 
     fValid = false;
@@ -704,7 +704,7 @@ uint32_t  plDSoundBuffer::bytePosToMSecs( uint32_t bytePos ) const
 
 uint32_t  plDSoundBuffer::GetBufferBytePos( float timeInSecs ) const
 {
-    hsAssert( fBufferDesc != nil, "Nil buffer description when calling GetBufferBytePos()" );
+    hsAssert(fBufferDesc != nullptr, "Nil buffer description when calling GetBufferBytePos()");
 
     uint32_t  uint8_t = (uint32_t)( timeInSecs * (float)fBufferDesc->fNumSamplesPerSec );
     uint8_t *= fBufferDesc->fBlockAlign;
@@ -730,7 +730,7 @@ void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, bool for
 
 uint8_t   plDSoundBuffer::GetBlockAlign() const
 {
-    return ( fBufferDesc != nil ) ? fBufferDesc->fBlockAlign : 0;
+    return (fBufferDesc != nullptr) ? fBufferDesc->fBlockAlign : 0;
 }
 
 //// SetScalarVolume /////////////////////////////////////////////////////////

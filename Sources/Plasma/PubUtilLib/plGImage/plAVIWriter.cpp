@@ -144,7 +144,7 @@ void plAVIWriterImp::Shutdown()
 {
     Close();
     UnRegisterAs(kAVIWriter_KEY);
-    SetKey(nil);
+    SetKey(nullptr);
 }
 
 bool plAVIWriterImp::MsgReceive(plMessage* msg)
@@ -261,19 +261,19 @@ void plAVIWriterImp::Close()
     if (fStreamHandle)
     {
         AVIStreamClose(fStreamHandle);
-        fStreamHandle = nil;
+        fStreamHandle = nullptr;
     }
 
     if (fCompressedHandle)
     {
         AVIStreamClose(fCompressedHandle);
-        fCompressedHandle = nil;
+        fCompressedHandle = nullptr;
     }
 
     if (fFileHandle)
     {
         AVIFileClose(fFileHandle);
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
 
     AVIFileExit();

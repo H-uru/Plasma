@@ -497,9 +497,9 @@ void    plRTOmniLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
     /// Draw sphere-thingy
     GetAttenPoints( t, dist, pts );
 
-    gw->polyline( NUM_CIRC_PTS, pts,                    nil, nil, true, nil );
-    gw->polyline( NUM_CIRC_PTS, pts + NUM_CIRC_PTS,     nil, nil, true, nil );
-    gw->polyline( NUM_CIRC_PTS, pts + 2 * NUM_CIRC_PTS, nil, nil, true, nil );
+    gw->polyline( NUM_CIRC_PTS, pts,                    nullptr, nullptr, true, nullptr);
+    gw->polyline( NUM_CIRC_PTS, pts + NUM_CIRC_PTS,     nullptr, nullptr, true, nullptr);
+    gw->polyline( NUM_CIRC_PTS, pts + 2 * NUM_CIRC_PTS, nullptr, nullptr, true, nullptr);
 }
 
 
@@ -619,7 +619,7 @@ RefTargetHandle plRTSpotLight::Clone(RemapDir &remap)
 Texmap  *plRTSpotLight::GetProjMap()
 {
     if( !fLightPB->GetInt( kUseProjectorBool ) )
-        return nil;
+        return nullptr;
 
     Interval valid = Interval(0,0); 
     if( !GetTex() )
@@ -708,7 +708,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
     /// Draw hotspot cone
     gw->setColor( LINE_COLOR, GetUIColor( COLOR_HOTSPOT ) );
     GetConePoints( t, -1.0f, GetHotspot( t ), dist, pts );
-    gw->polyline( NUM_CIRC_PTS, pts, nil, nil, true, nil );
+    gw->polyline(NUM_CIRC_PTS, pts, nullptr, nullptr, true, nullptr);
 
     if( GetUseAtten() )
     {
@@ -716,7 +716,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
         for( i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX )
         {
             u[ 1 ] = pts[ i ];
-            gw->polyline( 2, u, nil, nil, true, nil );
+            gw->polyline(2, u, nullptr, nullptr, true, nullptr);
         }
     }
     else
@@ -733,7 +733,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
     {
         gw->setColor( LINE_COLOR, GetUIColor( COLOR_FALLOFF ) );
         GetConePoints( t, -1.0f, GetFallsize( t ), dist, pts );
-        gw->polyline( NUM_CIRC_PTS, pts, nil, nil, true, nil );
+        gw->polyline(NUM_CIRC_PTS, pts, nullptr, nullptr, true, nullptr);
 
         if( GetUseAtten() )
         {
@@ -741,7 +741,7 @@ void    plRTSpotLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
             for( i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX )
             {
                 u[ 1 ] = pts[ i ];
-                gw->polyline( 2, u, nil, nil, true, nil );
+                gw->polyline(2, u, nullptr, nullptr, true, nullptr);
             }
         }
         else
@@ -856,7 +856,7 @@ void    plRTDirLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist )
             {
                 d = dist * ( 5 - r ) / 5;
                 IBuildZArrow( i * spacing, j * spacing, -d, -10.f, arrow );
-                gw->polyline( 6, arrow, nil, nil, true, nil );
+                gw->polyline(6, arrow, nullptr, nullptr, true, nullptr);
             }
         }
     }

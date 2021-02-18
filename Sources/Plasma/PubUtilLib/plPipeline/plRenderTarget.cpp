@@ -161,7 +161,7 @@ uint32_t  plCubicRenderTarget::Read( hsStream *s )
 
     for( i = 0; i < 6; i++ )
     {
-        if( fFaces[ i ] == nil )
+        if (fFaces[i] == nullptr)
             fFaces[ i ] = new plRenderTarget();
 
         fFaces[ i ]->fParent = this;
@@ -191,7 +191,7 @@ uint32_t  plCubicRenderTarget::GetTotalSize() const
     
     for( i = 0; i < 6; i++ )
     {
-        if( fFaces[ i ] != nil )
+        if (fFaces[i] != nullptr)
             size += fFaces[ i ]->GetTotalSize();
     }
 

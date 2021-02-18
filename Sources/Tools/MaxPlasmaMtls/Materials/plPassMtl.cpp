@@ -520,11 +520,11 @@ void plPassMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback &
 void plPassMtl::GetInterpVtxValue(int channel, ShadeContext &sc, Point3 &val)
 {
     Mesh *mesh = sc.globContext->GetRenderInstance(sc.NodeID())->mesh;
-    if (mesh != nil)
+    if (mesh != nullptr)
     {
         Face *maxFace = &mesh->faces[ sc.FaceNumber() ];
         UVVert *map = mesh->mapVerts(channel);
-        if (map != nil)
+        if (map != nullptr)
         {
             Point3 p0 = map[maxFace->getVert( 0 )];
             Point3 p1 = map[maxFace->getVert( 1 )];

@@ -94,7 +94,7 @@ bool plInstanceDrawInterface::MsgReceive(plMessage* msg)
     if (refMsg)
     {
         if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-            fDrawable = nil;
+            fDrawable = nullptr;
         else
             fDrawable = plDrawableSpans::ConvertNoRef(refMsg->GetRef());
         return true;
@@ -105,7 +105,7 @@ bool plInstanceDrawInterface::MsgReceive(plMessage* msg)
 
 void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat, bool addToFront, int lod, bool partialSort)
 {
-    if (fDrawable == nil)
+    if (fDrawable == nullptr)
     {
         hsAssert(false, "Missing drawable when instancing a shared mesh. Ignoring instance.");
         return;
@@ -223,7 +223,7 @@ void plInstanceDrawInterface::SetSharedMesh(size_t which, plSharedMesh *mesh)
 void plInstanceDrawInterface::IClearIndex(size_t which)
 {
     plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(fDrawables[which]);
-    if (drawable != nil)
+    if (drawable != nullptr)
     {
         plDISpansMsg* diMsg = new plDISpansMsg(fDrawable->GetKey(), plDISpansMsg::kRemovingSpan, fDrawableIndices[which], plDISpansMsg::kLeaveEmptyDrawable);
         diMsg->SetSender(GetKey());

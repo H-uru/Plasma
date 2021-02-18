@@ -80,10 +80,10 @@ static unsigned                 s_pageSizeMask;
 //===========================================================================
 CNtWaitHandle::CNtWaitHandle () {
     m_event = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) nil,
+        nullptr,
         true,   // manual reset
         false,  // initial state
-        (LPCTSTR) nil
+        nullptr
     );
 }
 
@@ -164,7 +164,7 @@ static void INtOpDispatch (
             for (;;) {
                 // wake up any other threads waiting on this event
                 CNtWaitHandle * signalComplete = op->signalComplete;
-                op->signalComplete = nil;
+                op->signalComplete = nullptr;
 
                 // since this operation is at the head of the list we can complete it
                 if (op->asyncId && !++ntObj->nextCompleteSequence)

@@ -771,7 +771,7 @@ pfFlock::~pfFlock()
     for (int i = 0; i < flock_size; i++)
     {
         delete fBoids[i];
-        fBoids[i] = nil;
+        fBoids[i] = nullptr;
     }
     fBoids.clear();
 
@@ -881,7 +881,7 @@ pfBoid *pfFlock::GetBoid(int i)
     if (i >= 0 && i < fBoids.size())
         return fBoids[i];
     else
-        return nil;
+        return nullptr;
 }
 
 pfObjectFlocker::pfObjectFlocker() :
@@ -955,7 +955,7 @@ bool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
 {
     fFlock.Update(fTarget, del);
 
-    plSceneObject* boidSO = nil;
+    plSceneObject* boidSO = nullptr;
     for (int i = 0; i < fNumBoids; i++)
     {
         pfBoid* boid = fFlock.GetBoid(i);

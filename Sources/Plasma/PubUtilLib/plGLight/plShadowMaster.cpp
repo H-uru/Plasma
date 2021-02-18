@@ -108,7 +108,7 @@ plShadowMaster::plShadowMaster()
     fMaxSize(256),
     fMinSize(256),
     fPower(1.f),
-    fLightInfo(nil)
+    fLightInfo()
 {
 }
 
@@ -277,7 +277,7 @@ bool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
 
 plLightInfo* plShadowMaster::ISetLightInfo()
 {
-    fLightInfo = nil;
+    fLightInfo = nullptr;
     plSceneObject* owner = IGetOwner();
     if( owner )
     {
@@ -360,7 +360,7 @@ plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, cons
 plShadowSlave* plShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
     fSlavePool.SetCount(fSlavePool.GetCount()-1);
-    return nil;
+    return nullptr;
 }
 
 plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plShadowSlave* slave)
@@ -419,7 +419,7 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
     dist /= maxDist - minDist;
     dist = 1.f - dist;
 
-    // If it's totally faded out, recycle the slave and return nil;
+    // If it's totally faded out, recycle the slave and return nullptr;
     if( dist <= 0 )
         return IRecycleSlave(slave);
 

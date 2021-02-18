@@ -56,8 +56,8 @@ nm()
 {
     this->ip = ip;
 
-    fQuickTable = nil;
-    fQuickNode = nil;
+    fQuickTable = nullptr;
+    fQuickNode = nullptr;
 
     vProps = false;
 }
@@ -291,7 +291,7 @@ void UserPropMgr::SetUserPropBuffer(INode *node, const TSTR &buf)
     // QuickTable invalidate
     if (node && node == fQuickNode)
     {
-        fQuickNode = nil;
+        fQuickNode = nullptr;
     }
 
     if (vProps)
@@ -346,7 +346,7 @@ void UserPropMgr::ClearUserProp(INode *node, const char *name, const int32_t hFl
     // QuickTable invalidate
     if (node && node == fQuickNode)
     {
-        fQuickNode = nil;
+        fQuickNode = nullptr;
     }
 
     TSTR buf;
@@ -480,7 +480,7 @@ void UserPropMgr::SetUserProp(INode *node, const char *name, const char *value, 
     // QuickTable invalidate
     if (node && node == fQuickNode)
     {
-        fQuickNode = nil;
+        fQuickNode = nullptr;
     }
 
     TSTR buf;
@@ -759,15 +759,15 @@ void UserPropMgr::OpenQuickTable()
     {
         fQuickTable = new std::unordered_set<QuickPair>;
     }
-    fQuickNode = nil;
+    fQuickNode = nullptr;
 }
 
 void UserPropMgr::CloseQuickTable()
 {
     delete fQuickTable;
-    fQuickTable = nil;
-    fQuickNode = nil;
-    QuickPair::SetBuffer(nil);
+    fQuickTable = nullptr;
+    fQuickNode = nullptr;
+    QuickPair::SetBuffer(nullptr);
 }
 
 void UserPropMgr::IBuildQuickTable(INode* node)
@@ -808,7 +808,7 @@ void UserPropMgr::IBuildQuickTable(INode* node)
                     }
                     else 
                     {
-                        qPair.SetVal(nil);
+                        qPair.SetVal(nullptr);
                         inName = (tok != nullptr);
                     }
 
@@ -827,7 +827,7 @@ void UserPropMgr::IBuildQuickTable(INode* node)
 
         // QuickPair owns the tok'd buffer now
         QuickPair::SetBuffer(toker.fString);
-        toker.fString = nil;
+        toker.fString = nullptr;
     }
 }
 
@@ -840,7 +840,7 @@ bool UserPropMgr::ICheckQuickEntry(const char *key, TSTR &value)
 }
 
 
-char* UserPropMgr::QuickPair::fBuffer = nil;
+char* UserPropMgr::QuickPair::fBuffer = nullptr;
 
 void UserPropMgr::QuickPair::SetBuffer(char* buf)
 {

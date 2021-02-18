@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 // statics
-plSynchedObject* plSynchedObject::fStaticSynchedObj=nil;
+plSynchedObject* plSynchedObject::fStaticSynchedObj = nullptr;
 std::vector<plSynchedObject::StateDefn> plSynchedObject::fDirtyStates;
 std::vector<bool> plSynchedObject::fSynchStateStack;
 

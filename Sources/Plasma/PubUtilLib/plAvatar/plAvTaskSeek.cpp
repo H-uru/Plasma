@@ -310,7 +310,7 @@ void plAvTaskSeek::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double 
 
 void plAvTaskSeek::LeaveAge(plArmatureMod *avatar)
 {
-    fSeekObject = nil;
+    fSeekObject = nullptr;
     fState = kSeekAbort;
 }
 
@@ -455,7 +455,7 @@ bool plAvTaskSeek::ITryFinish(plArmatureMod *avatar, plAvBrainHuman *brain, doub
 
     newRotation.Normalize();
     if (hsCheckBits(fFlags, kSeekFlagRotationOnly))
-        avatar->SetPositionAndRotationSim(nil, &newRotation);
+        avatar->SetPositionAndRotationSim(nullptr, &newRotation);
     else
         avatar->SetPositionAndRotationSim(&newPosition, &newRotation);
 
@@ -512,12 +512,12 @@ bool plAvTaskSeek::IFinishRotation(hsQuat &newRotation,
 bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
 {
     // This is an entirely valid case. It just means our goal is fixed.
-    if (fSeekObject == nil)
+    if (fSeekObject == nullptr)
         return true;
 
     // goal here is to express the target matrix in the avatar's PHYSICAL space
     hsMatrix44 targL2W = fSeekObject->GetLocalToWorld();
-    const plCoordinateInterface* subworldCI = nil;
+    const plCoordinateInterface* subworldCI = nullptr;
     if (avatar->GetController())
         subworldCI = avatar->GetController()->GetSubworldCI();
     if (subworldCI)
@@ -540,7 +540,7 @@ bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
                 // don't need to do this every frame; the animation doesn't change.
                 // *** cache the adjustment;
-                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
+                GetStartToEndTransform(anim, nullptr, &adjustment, "Handle");   // actually getting end-to-start
                 // ... but we do still need to multiply by the (potentially changed) target
                 targL2W = targL2W * adjustment;
             }

@@ -52,8 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plIntersect/plVolumeIsect.h"
 
 plModulator::plModulator()
-:   fVolume(nil),
-    fSoftDist(0)
+:   fVolume(),
+    fSoftDist()
 {
 }
 

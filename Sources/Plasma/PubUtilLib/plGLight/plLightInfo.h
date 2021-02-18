@@ -226,7 +226,7 @@ public:
     virtual void        Unlink();
     virtual void        Link( plLightInfo **back );
     virtual plLightInfo *GetNext() { return fNextDevPtr; }
-    virtual bool        IsLinked() { return ( fNextDevPtr != nil || fPrevDevPtr != nil ) ? true : false; }
+    virtual bool        IsLinked() { return (fNextDevPtr != nullptr || fPrevDevPtr != nullptr); }
 
     // New shadow
     void                ClearSlaveBits() { fSlaveBits.Clear(); }
@@ -249,7 +249,7 @@ class plDirectionalLightInfo : public plLightInfo
 protected:
 
     void                IMakeIsect() override { }
-    plVolumeIsect*      IGetIsect() const override { return nil; }
+    plVolumeIsect*      IGetIsect() const override { return nullptr; }
 
 public:
     plDirectionalLightInfo();

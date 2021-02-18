@@ -96,7 +96,7 @@ public:
     static plVisLOSMgr* Instance();
 
     static void Init(plPipeline* pipe, plPageTreeMgr* mgr) { Instance()->fPipe = pipe; Instance()->fPageMgr = mgr; }
-    static void DeInit() { Instance()->fPipe = nil; Instance()->fPageMgr = nil; }
+    static void DeInit() { Instance()->fPipe = nullptr; Instance()->fPageMgr = nullptr; }
 };
 
 #endif // plVisLOSMgr_inc

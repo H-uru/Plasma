@@ -232,7 +232,7 @@ bool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
     
     plSceneObject* seekTarget = plSceneObject::ConvertNoRef(fTarget->ObjectIsLoaded());
     hsMatrix44 targetL2W = seekTarget->GetLocalToWorld();
-    const plCoordinateInterface* subworldCI = nil;
+    const plCoordinateInterface* subworldCI = nullptr;
     if (avatar->GetController())
         subworldCI = avatar->GetController()->GetSubworldCI();
     if (subworldCI)
@@ -249,7 +249,7 @@ bool plAvSeekTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, double t
             {
                 hsMatrix44 adjustment;
                 plAGAnim *anim = avatar->FindCustomAnim(fAnimName);
-                GetStartToEndTransform(anim, nil, &adjustment, "Handle");   // actually getting end-to-start
+                GetStartToEndTransform(anim, nullptr, &adjustment, "Handle");   // actually getting end-to-start
                 targetL2W = targetL2W * adjustment;
             }
             break;
@@ -322,7 +322,7 @@ bool plAvSeekTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, double
 
 void plAvSeekTask::LeaveAge(plArmatureMod *avatar)
 {
-    fTarget = nil;
+    fTarget = nullptr;
     fCleanup = true;
 }
 
@@ -334,14 +334,14 @@ void plAvSeekTask::LeaveAge(plArmatureMod *avatar)
 
 // CTOR default
 plAvAnimTask::plAvAnimTask()
-: fInitialBlend(0.0f),
-  fTargetBlend(0.0f),
-  fFadeSpeed(0.0f),
-  fSetTime(0.0f),
-  fStart(false),
-  fLoop(false),
-  fAttach(false),
-  fAnimInstance(nil)
+: fInitialBlend(),
+  fTargetBlend(),
+  fFadeSpeed(),
+  fSetTime(),
+  fStart(),
+  fLoop(),
+  fAttach(),
+  fAnimInstance()
 {
 }
 
@@ -362,21 +362,21 @@ plAvAnimTask::plAvAnimTask(const ST::string &animName,
   fStart(start),
   fLoop(loop),
   fAttach(attach),
-  fAnimInstance(nil)
+  fAnimInstance()
 {
 }
 
 // CTOR animName, fadeSpeed, attach
 plAvAnimTask::plAvAnimTask(const ST::string &animName, float fadeSpeed, bool attach)
 : fAnimName(animName),
-  fInitialBlend(0.0f),
-  fTargetBlend(0.0f),
+  fInitialBlend(),
+  fTargetBlend(),
   fFadeSpeed(fadeSpeed),
-  fSetTime(0.0f),
-  fStart(false),
-  fLoop(false),
+  fSetTime(),
+  fStart(),
+  fLoop(),
   fAttach(attach),
-  fAnimInstance(nil)
+  fAnimInstance()
 {
 }
 
@@ -503,13 +503,13 @@ void plAvOneShotTask::InitDefaults()
     fDisableLooping = false;
     fDisablePhysics = true;
     fMoveHandle = false;
-    fAnimInstance = nil;
+    fAnimInstance = nullptr;
     fDrivable = false;
     fReversible = false;
     fEnablePhysicsAtEnd = false;
     fDetachAnimation = false;
     fIgnore = false;
-    fCallbacks = nil;
+    fCallbacks = nullptr;
     fWaitFrames = 0;
 }
 
@@ -591,7 +591,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             fAnimInstance->AttachCallbacks(fCallbacks);
             // ok, we're done with it, release it back to the river
             hsRefCnt_SafeUnRef(fCallbacks);
-            fCallbacks = nil;
+            fCallbacks = nullptr;
         }
 
         fAnimInstance->SetBlend(1.0f);
@@ -624,7 +624,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
             plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
         }
 
-        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nil);
+        fMoveHandle = (fAnimInstance->GetAnimation()->GetChannel("Handle") != nullptr);
         if(fMoveHandle)
         {
             plMatrixDifferenceApp *differ = avatar->GetRootAnimator();
@@ -676,7 +676,7 @@ bool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, dou
                         // 
                         // It's only debugging code anyway to help the artist check that
                         // their oneshot doesn't end while penetrating geometry.
-                        char *overlaps = nil;
+                        char *overlaps = nullptr;
                         if (avatar->GetPhysical())
                             avatar->GetPhysical()->CheckValidPosition(&overlaps);
                         if (overlaps)

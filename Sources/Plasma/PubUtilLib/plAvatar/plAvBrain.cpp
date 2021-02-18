@@ -56,9 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 
 plArmatureBrain::plArmatureBrain() :
-    fCurTask(nil),
-    fArmature(nil),
-    fAvMod(nil)
+    fCurTask(),
+    fArmature(),
+    fAvMod()
 {
 }
 
@@ -170,7 +170,7 @@ void plArmatureBrain::IProcessTasks(double time, float elapsed)
         {
             fCurTask->Finish(plArmatureMod::ConvertNoRef(fArmature), this, time, elapsed);
             delete fCurTask;
-            fCurTask = nil;
+            fCurTask = nullptr;
         }
         
         // need a new task

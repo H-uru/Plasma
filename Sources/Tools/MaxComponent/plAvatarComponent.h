@@ -73,7 +73,7 @@ private:
 protected:
     plArmatureMod *fArmMod;
 
-    plArmatureComponent() : fArmMod(nil) {}
+    plArmatureComponent() : fArmMod() { }
     plArmatureMod* IGenerateMyArmMod(plHKPhysical* myHKPhys, plMaxNode* node);
     bool IVerifyUsedNode(INode* thisNode, plErrorMsg *pErrMsg, bool isHull);
 

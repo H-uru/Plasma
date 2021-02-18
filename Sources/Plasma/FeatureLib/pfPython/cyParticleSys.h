@@ -61,12 +61,12 @@ protected:
 
     void    ISendParticleSysMsg(uint32_t param, float value);
 
-    cyParticleSys(const plKey sender=nil,const plKey recvr=nil);
+    cyParticleSys(plKey sender = {}, plKey recvr = {});
 
 public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptParticle);
-    static PyObject *New(PyObject *sender = nil, PyObject *recvr = nil);
+    static PyObject *New(PyObject *sender = nullptr, PyObject *recvr = nullptr);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyParticleSys object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyParticleSys); // converts a PyObject to a cyParticleSys (throws error if not correct type)
 

@@ -117,13 +117,13 @@ plMaxNodeData *plMaxNodeBase::GetMaxNodeData()
     if (adc)
         return (plMaxNodeData*)adc->data;
 
-    return nil;
+    return nullptr;
 }
 
 #define GetMD   plMaxNodeData *pMD = GetMaxNodeData(); //hsAssert(pMD,"Missing MaxNodeData");   // Get MaxNode Data
 
-plKey           plMaxNodeBase::GetKey()             { GetMD; return (pMD) ? pMD->GetKey() : nil;        }
-plSceneObject*  plMaxNodeBase::GetSceneObject()     { GetMD; return (pMD) ? pMD->GetSceneObject() : nil;}
+plKey           plMaxNodeBase::GetKey()             { GetMD; return (pMD) ? pMD->GetKey() : nullptr; }
+plSceneObject*  plMaxNodeBase::GetSceneObject()     { GetMD; return (pMD) ? pMD->GetSceneObject() : nullptr; }
 bool            plMaxNodeBase::GetForceLocal()          { GetMD; return (pMD) ? pMD->GetForceLocal() : false; }
 bool            plMaxNodeBase::GetReverseSort()         { GetMD; return (pMD) ? pMD->GetReverseSort() : false;}
 bool            plMaxNodeBase::GetSortAsOpaque()        { GetMD; return (pMD) ? pMD->GetSortAsOpaque() : false;}
@@ -142,7 +142,7 @@ bool            plMaxNodeBase::GetEnvironOnly()     { GetMD; return (pMD) ? pMD-
 bool            plMaxNodeBase::GetWaterDecEnv()         { GetMD; return (pMD) ? pMD->GetWaterDecEnv() : false; }
 bool            plMaxNodeBase::GetNoPreShade()          { GetMD; return (pMD) ? pMD->GetNoPreShade() && !pMD->GetForcePreShade() : false;}
 bool            plMaxNodeBase::GetForcePreShade()       { GetMD; return (pMD) ? pMD->GetForcePreShade() : false;}
-plKey           plMaxNodeBase::GetRoomKey()         { GetMD; return (pMD) ? pMD->GetRoomKey() : nil;    }
+plKey           plMaxNodeBase::GetRoomKey()         { GetMD; return (pMD) ? pMD->GetRoomKey() : nullptr; }
 bool            plMaxNodeBase::GetDrawable()            { GetMD; return (pMD) ? pMD->GetDrawable() : false;   }
 bool            plMaxNodeBase::GetPhysical()            { GetMD; return (pMD) ? pMD->GetPhysical() : false;   }
 bool            plMaxNodeBase::GetItinerant()           { GetMD; return (pMD) ? pMD->GetItinerant() : false;  }
@@ -164,7 +164,7 @@ bool            plMaxNodeBase::GetForceMaterialCopy()   { GetMD; return (pMD) ? 
 bool            plMaxNodeBase::GetInstanced()           { GetMD; return (pMD) ? pMD->GetInstanced() : false; }
 bool            plMaxNodeBase::GetParticleRelated() { GetMD; return (pMD) ? pMD->GetParticleRelated() : false; }
 uint32_t        plMaxNodeBase::GetSoundIdxCounter() { GetMD; return (pMD) ? pMD->GetSoundIdxCounter() : 0; }
-plSceneObject*  plMaxNodeBase::GetAvatarSO()            { GetMD; return (pMD) ? pMD->GetAvatarSO() : nil; }
+plSceneObject*  plMaxNodeBase::GetAvatarSO()            { GetMD; return (pMD) ? pMD->GetAvatarSO() : nullptr; }
 BOOL            plMaxNodeBase::HasFade()                { GetMD; return (pMD) ? pMD->HasFade() : false; }
 Box3            plMaxNodeBase::GetFade()                { GetMD; return (pMD) ? pMD->GetFade() : Box3(Point3(0,0,0), Point3(0,0,0)); }
 bool            plMaxNodeBase::GetDup2Sided()           { GetMD; return (pMD) ? pMD->GetDup2Sided() : false;}
@@ -172,17 +172,17 @@ bool            plMaxNodeBase::GetRadiateNorms()        { GetMD; return (pMD) ? 
 BOOL            plMaxNodeBase::HasNormalChan()          { GetMD; return (pMD) ? pMD->HasNormalChan() : false; }
 int             plMaxNodeBase::GetNormalChan()          { GetMD; return (pMD) ? pMD->GetNormalChan() : 0; }
 bool            plMaxNodeBase::GetIsGUI()               { GetMD; return (pMD) ? pMD->GetIsGUI() : false; }
-plSharedMesh*   plMaxNodeBase::GetSwappableGeom()       { GetMD; return (pMD) ? pMD->GetSwappableGeom() : nil; }
+plSharedMesh*   plMaxNodeBase::GetSwappableGeom()       { GetMD; return (pMD) ? pMD->GetSwappableGeom() : nullptr; }
 uint32_t        plMaxNodeBase::GetSwappableGeomTarget()     { GetMD; return (pMD) ? pMD->GetSwappableGeomTarget() : -1; }
-plMaxBoneMap*   plMaxNodeBase::GetBoneMap()                 { GetMD; return (pMD) ? pMD->GetBoneMap() : nil; }
+plMaxBoneMap*   plMaxNodeBase::GetBoneMap()                 { GetMD; return (pMD) ? pMD->GetBoneMap() : nullptr; }
 bool            plMaxNodeBase::GetOverrideHighLevelSDL()    { GetMD; return (pMD) ? pMD->GetOverrideHighLevelSDL() : false; }
 uint8_t         plMaxNodeBase::GetAnimCompress()                    { GetMD; return (pMD) ? pMD->GetAnimCompress() : false; }
 float           plMaxNodeBase::GetKeyReduceThreshold()              { GetMD; return (pMD) ? pMD->GetKeyReduceThreshold() : 0; }
 int             plMaxNodeBase::NumRenderDependencies()              { GetMD; return (pMD) ? pMD->NumRenderDependencies() : 0; }
-plMaxNodeBase*  plMaxNodeBase::GetRenderDependency(int i)           { GetMD; return (pMD) ? pMD->GetRenderDependency(i) : nil; }
+plMaxNodeBase*  plMaxNodeBase::GetRenderDependency(int i)           { GetMD; return (pMD) ? pMD->GetRenderDependency(i) : nullptr; }
 
 int             plMaxNodeBase::NumBones()                           { GetMD; return (pMD) ? pMD->NumBones() : 0;    }
-plMaxNodeBase*  plMaxNodeBase::GetBone(int i)                       { GetMD; return (pMD) ? pMD->GetBone(i) : nil;  }
+plMaxNodeBase*  plMaxNodeBase::GetBone(int i)                       { GetMD; return (pMD) ? pMD->GetBone(i) : nullptr; }
 
 
 //------------------------------
@@ -316,7 +316,7 @@ bool plMaxNodeBase::AddRenderDependency(plMaxNodeBase* m)
 
 uint8_t *plMaxNodeBase::IGetSceneViewerChunk()
 {
-    uint8_t *SVChunk = nil;
+    uint8_t *SVChunk = nullptr;
 
     AppDataChunk *adc = GetAppDataChunk(PLASMA_MAX_CLASSID, GUP_CLASS_ID, kPlasmaSceneViewerChunk);
     if (adc)
@@ -436,7 +436,7 @@ void plMaxNodeBase::SetItinerant(bool b)
 }
 
 //// FindSkinModifier ///////////////////////////////////////////////////////
-//  Given an INode, gets the ISkin object of that node, or nil if there is
+//  Given an INode, gets the ISkin object of that node, or nullptr if there is
 //  none. Taken from the Max4 SDK, ISkin.h
 ISkin* plMaxNodeBase::FindSkinModifier()
 {
@@ -444,8 +444,8 @@ ISkin* plMaxNodeBase::FindSkinModifier()
 
     // Get object from node. Abort if no object.
     Object *pObj = GetObjectRef();
-    if( pObj == nil )
-        return nil;
+    if (pObj == nullptr)
+        return nullptr;
 
     // Is derived object ?
     while( pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID )
@@ -470,7 +470,7 @@ ISkin* plMaxNodeBase::FindSkinModifier()
     }
 
     // Not found.
-    return nil;
+    return nullptr;
 }
 
 bool plMaxNodeBase::IsXRef()
@@ -521,7 +521,7 @@ plComponentBase *plMaxNodeBase::ConvertToComponent()
     if (IsComponent())
         return (plComponentBase*)GetObjectRef();
 
-    return nil;
+    return nullptr;
 }
 
 // There isn't an easy way to determine if there are any components attached to a node.
@@ -578,13 +578,13 @@ plComponentBase *plMaxNodeBase::GetAttachedComponent(uint32_t i, bool all)
         item = di.Next();;
     }
 
-    return nil;
+    return nullptr;
 }
 
 plComponentBase *plMaxNodeBase::IRefMakerToComponent(ReferenceMaker *maker, bool all)
 {
     if (!maker)
-        return nil;
+        return nullptr;
 
     // Is the refmaker a paramblock?  If so, it may be the
     // targets block of a component
@@ -619,7 +619,7 @@ plComponentBase *plMaxNodeBase::IRefMakerToComponent(ReferenceMaker *maker, bool
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plMaxNodeBase::IRenderLevelSet(bool forBlend)

@@ -111,7 +111,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         ftFontBox.xMax = ftFontBox.yMax = -32000;
 
         // Hack for now: if we don't have a charmap active already, just choose the first one
-        if( ftFace->charmap == nil )
+        if (ftFace->charmap == nullptr)
         {
             if( ftFace->num_charmaps == 0 )
                 throw false;
@@ -186,7 +186,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         // Pre-expand our char list
         fCharacters.clear();
         fCharacters.reserve(maxChar + 1);
-        if( callback != nil )
+        if (callback != nullptr)
             callback->NumChars( (uint16_t)(maxChar + 1) );
 
         // Now re-run through our stored list of glyphs, converting them to bitmaps
@@ -210,7 +210,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
             plCharacter *ch = &fCharacters[ glyphChars[ i ] ];
 
             uint8_t *ourBitmap = IGetFreeCharData( ch->fBitmapOff );
-            if( ourBitmap == nil )
+            if (ourBitmap == nullptr)
                 throw false;
 
             if( ch->fBitmapOff > ( ( fWidth * ( fHeight - ftBitmap->bitmap.rows ) * fBPP ) >> 3 ) )
@@ -240,7 +240,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
 
             FT_Done_Glyph( ftGlyphs[ i ] );
 
-            if( callback != nil )
+            if (callback != nullptr)
                 callback->CharDone();
         }
 

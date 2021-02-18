@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Watcher Class Desc //////////////////////////////////////////////////////
 
-plNoteTrackWatcher::plNoteTrackWatcher( plPassMtlBase *parentMtl ) : fParentMtl(nil)
+plNoteTrackWatcher::plNoteTrackWatcher(plPassMtlBase *parentMtl) : fParentMtl()
 {
     fNoteTrackCount = parentMtl->NumNoteTracks();
     ReplaceReference(kRefParentMtl, parentMtl);
@@ -69,9 +69,9 @@ plNoteTrackWatcher::plNoteTrackWatcher( plPassMtlBase *parentMtl ) : fParentMtl(
 
 plNoteTrackWatcher::~plNoteTrackWatcher()
 {
-    if( fParentMtl != nil )
+    if (fParentMtl != nullptr)
     {
-        fParentMtl->fNTWatcher = nil;
+        fParentMtl->fNTWatcher = nullptr;
         DeleteReference( kRefParentMtl );
     }
     DeleteAllRefsFromMe();
@@ -95,7 +95,7 @@ RefTargetHandle plNoteTrackWatcher::GetReference( int i )
     if( i == kRefParentMtl )
         return fParentMtl;
 
-    return nil;
+    return nullptr;
 }
 
 void plNoteTrackWatcher::SetReference( int i, RefTargetHandle rtarg )
@@ -109,7 +109,7 @@ RefResult plNoteTrackWatcher::NotifyRefChanged(Interval changeInt, RefTargetHand
     switch( message )
     {
         case REFMSG_SUBANIM_STRUCTURE_CHANGED:
-            if( hTarget == fParentMtl && fParentMtl != nil )
+            if (hTarget == fParentMtl && fParentMtl != nullptr)
             {
                 // Structure of parent material changed--did it gain or lose a notetrack?
                 int oldCount = fNoteTrackCount;
@@ -135,7 +135,7 @@ RefResult plNoteTrackWatcher::NotifyRefChanged(Interval changeInt, RefTargetHand
             break;
 
         case REFMSG_TARGET_DELETED:
-            fParentMtl = nil;
+            fParentMtl = nullptr;
             break;
     }
 

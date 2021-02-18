@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plRenderRequestMsg::plRenderRequestMsg(plKey sender, plRenderRequestBase* req)
-:   plMessage(sender, nil, nil),
+:   plMessage(sender, nullptr, nullptr),
     fReq(req)
 {
     plUoid oid( kClient_KEY );      // from plFixedKey.h
@@ -76,7 +76,7 @@ void plRenderRequestMsg::Read(hsStream* s, hsResMgr* mgr)
     hsAssert(false, "Transmission/read/write of render requests not currently supported");
     plMessage::IMsgRead(s, mgr);
 
-    fReq = nil;
+    fReq = nullptr;
 }
 
 void plRenderRequestMsg::Write(hsStream* s, hsResMgr* mgr)
@@ -91,7 +91,7 @@ plRenderRequestAck::plRenderRequestAck()
 }
 
 plRenderRequestAck::plRenderRequestAck(plKey r, uint32_t userData)
-:   plMessage(nil, r, nil),
+:   plMessage(nullptr, r, nullptr),
     fUserData(userData)
 {
 }

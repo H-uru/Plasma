@@ -129,7 +129,7 @@ public:
             fPB = map->GetParamBlock();
             
             fNoteTrackDlgX.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX),
-                                nil,
+                                nullptr,
                                 kClickDragAnimX,
                                 -1,
                                 fPB,
@@ -140,7 +140,7 @@ public:
             EnableWindow(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIMX), true);
             
             fNoteTrackDlgY.Init(GetDlgItem(hWnd, IDC_COMP_CLICK_DRAG_ANIM_Y),
-                                nil,
+                                nullptr,
                                 kClickDragAnimY,
                                 -1,
                                 fPB,
@@ -272,7 +272,7 @@ plKey plClickDragComponent::GetAxisKey(plMaxNode* node)
     if (it != fAxisKeys.end())
         return(it->second);
 
-    return nil;
+    return nullptr;
 }
 
 void plClickDragComponent::CollectNonDrawables(INodeTab& nonDrawables)
@@ -295,7 +295,7 @@ bool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     plActivatorBaseComponent::SetupProperties(node, pErrMsg);
 
     // Phys Props for the Clickable itself.
-    plMaxNode *boundsNode = nil;
+    plMaxNode *boundsNode = nullptr;
     boundsNode = (plMaxNode*)fCompPB->GetINode(kClickDragProxy);
     if(boundsNode && fCompPB->GetInt(kClickDragUseProxy))
         if(boundsNode->CanConvert())
@@ -327,7 +327,7 @@ bool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
         physProps->SetBoundsType(fCompPB->GetInt(kClikDragBoundsType), node, pErrMsg);
     }
     // Phys Properties for the auto-generated Detector Region...
-    boundsNode = nil;
+    boundsNode = nullptr;
     boundsNode = (plMaxNode*)fCompPB->GetINode(kClickDragProxyRegion);
     if(boundsNode)
     {
@@ -389,7 +389,7 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     logic->fMyCursor = plCursorChangeMsg::kCursorOpen;
 
         // Create the detector
-    plDetectorModifier *detector = nil;
+    plDetectorModifier *detector = nullptr;
     detector = new plPickingDetector;
 
     // Register the detector
@@ -412,7 +412,7 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     pAxis->SetNotificationKey(logicKey);
     uint32_t count = node->NumAttachedComponents();
     bool bHasAnim = false;
-    plAnimComponentBase* pAnim = nil;
+    plAnimComponentBase* pAnim = nullptr;
 
     for (uint32_t i = 0; i < count; i++)
     {
@@ -481,8 +481,8 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 
     // is this a using a proxy primitive?
-    plPickingDetector* det2 = nil;
-    plKey det2Key  = nil;
+    plPickingDetector* det2 = nullptr;
+    plKey det2Key;
     plMaxNode* pProxyNode = (plMaxNode*)fCompPB->GetINode(kClickDragProxy);
     
     if (pProxyNode && fCompPB->GetInt(kClickDragUseProxy))

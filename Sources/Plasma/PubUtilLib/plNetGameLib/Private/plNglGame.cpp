@@ -166,7 +166,7 @@ static CliGmConn * GetConnIncRef_CS (const char tag[]) {
             conn->Ref(tag);
             return conn;
         }
-    return nil;
+    return nullptr;
 }
 
 //============================================================================
@@ -180,7 +180,7 @@ static void UnlinkAndAbandonConn_CS (CliGmConn * conn) {
     s_conns.Unlink(conn);
     conn->abandoned = true;
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
+        AsyncSocketConnectCancel(nullptr, conn->cancelId);
         conn->cancelId  = nullptr;
     }
     else if (conn->sock) {
@@ -215,7 +215,7 @@ static void NotifyConnSocketConnect (CliGmConn * conn) {
         true,
         ConnEncrypt,
         0,
-        nil,
+        nullptr,
         conn
     );
 }
@@ -234,7 +234,7 @@ static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
             && (!s_active || conn == s_active);
             
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
 
     NetTransCancelByConnId(conn->seq, kNetErrTimeout);
@@ -260,7 +260,7 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
             && (!s_active || conn == s_active);
 
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
 
     // Cancel all transactions in process on this connection.
@@ -276,7 +276,7 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
 static bool NotifyConnSocketRead (CliGmConn * conn, AsyncNotifySocketRead * read) {
     // TODO: Only dispatch messages from the active game server
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, nil);
+    bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, nullptr);
     read->bytesProcessed += read->bytes;
     return result;
 }
@@ -395,9 +395,9 @@ static unsigned CliGmConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGmConn::CliGmConn ()
-    : hsRefCnt(0), sock(nil), cancelId(nil), cli(nil)
-    , seq(0), abandoned(false)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : hsRefCnt(0), sock(), cancelId(), cli()
+    , seq(), abandoned()
+    , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
 {
     ++s_perf[kPerfConnCount];
 }
@@ -427,7 +427,7 @@ void CliGmConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
         AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
-        pingTimer = nil;
+        pingTimer = nullptr;
     }
 }
 
@@ -607,7 +607,7 @@ void RcvdPropagatedBufferTrans::Post () {
 //============================================================================
 NetGameTrans::NetGameTrans (ETransType transType)
 :   NetTrans(kNetProtocolCli2Game, transType)
-,   m_conn(nil)
+,   m_conn()
 {
 }
 
@@ -620,14 +620,14 @@ NetGameTrans::~NetGameTrans () {
 bool NetGameTrans::AcquireConn () {
     if (!m_conn)
         m_conn = GetConnIncRef("AcquireConn");
-    return m_conn != nil;
+    return m_conn != nullptr;
 }
 
 //============================================================================
 void NetGameTrans::ReleaseConn () {
     if (m_conn) {
         m_conn->UnRef("AcquireConn");
-        m_conn = nil;
+        m_conn = nullptr;
     }
 }
 
@@ -655,7 +655,7 @@ void GameInitialize () {
 //============================================================================
 void GameDestroy (bool wait) {
     s_running = false;
-    s_bufHandler = nil;
+    s_bufHandler = nullptr;
 
     NetTransCancelByProtocol(
         kNetProtocolCli2Game,
@@ -670,7 +670,7 @@ void GameDestroy (bool wait) {
         hsLockGuard(s_critsect);
         while (CliGmConn * conn = s_conns.Head())
             UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
+        s_active = nullptr;
     }
     
     if (!wait)
@@ -731,7 +731,7 @@ void NetCliGameDisconnect () {
     hsLockGuard(s_critsect);
     while (CliGmConn * conn = s_conns.Head())
         UnlinkAndAbandonConn_CS(conn);
-    s_active = nil;
+    s_active = nullptr;
 }
 
 //============================================================================

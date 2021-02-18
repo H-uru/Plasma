@@ -107,7 +107,7 @@ static PyObject * GetAgeInfoList (unsigned folderType) {
 //////////////////////////////////////////////////
 PyObject* pyVault::GetPlayerInfo()
 {
-    PyObject * result = nil;
+    PyObject * result = nullptr;
     if (hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode()) {
         if (hsRef<RelVaultNode> rvnPlrInfo = rvnPlr->GetChildNode(plVault::kNodeType_PlayerInfo, 1))
             result = pyVaultPlayerInfoNode::New(rvnPlrInfo);

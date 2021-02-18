@@ -123,8 +123,8 @@ public:
     static bool HasAnimatedTextures(Texmap* texMap);
     static bool HasAnimatedMaterial(plMaxNode* node);
     static bool IsAnimatedMaterial(Mtl* mtl);
-    static bool HasMaterialDiffuseOrOpacityAnimation(plMaxNode* node, Mtl* mtl=nil);
-    static bool HasEmissiveLayer(plMaxNode* node, Mtl* mtl=nil);
+    static bool HasMaterialDiffuseOrOpacityAnimation(plMaxNode* node, Mtl* mtl=nullptr);
+    static bool HasEmissiveLayer(plMaxNode* node, Mtl* mtl=nullptr);
     static bool IsWaterLayer(plMaxNode* node, Texmap* texMap);
     static bool IsFireLayer(plMaxNode* node, Texmap* texMap);
     static bool IsAVILayer(Texmap*  texMap);
@@ -226,8 +226,8 @@ enum {
     // All this to catch duplicate mats with same name.  Sigh.
     struct DoneMaterialData
     {
-        DoneMaterialData() : fHsMaterial(nil), fMaxMaterial(nil), fNode(nil), 
-            fSubMultiMat(false), fOwnedCopy(false) { }
+        DoneMaterialData() : fHsMaterial(), fMaxMaterial(), fNode(),
+            fSubMultiMat(), fOwnedCopy() { }
 
         hsGMaterial         *fHsMaterial;
         Mtl                 *fMaxMaterial;

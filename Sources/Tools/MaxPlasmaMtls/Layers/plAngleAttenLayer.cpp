@@ -79,7 +79,7 @@ static ParamBlockDesc2 gAngleAttenParamBlk
     plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plAngleAttenLayer::kRefAngles,
 
-    IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nil,
+    IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nullptr,
 
     // Texture size
     plAngleAttenLayer::kTranspAngle0,   _T("transp0"),  TYPE_FLOAT, 0, 0,
@@ -452,7 +452,7 @@ void plAngleAttenLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plAngleAttenLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return nil;
+    return nullptr;
                         // FIXME
 }
 

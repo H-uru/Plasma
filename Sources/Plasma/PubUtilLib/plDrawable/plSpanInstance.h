@@ -151,8 +151,8 @@ public:
 
     void SetLocalToWorld(const hsMatrix44& l2w);
 
-    bool HasPosDelta() const { return fPosDelta != nil; }
-    bool HasColor() const { return fCol != nil; }
+    bool HasPosDelta() const { return fPosDelta != nullptr; }
+    bool HasColor() const { return fCol != nullptr; }
 
     static uint16_t PosStrideFromEncoding(const plSpanEncoding& encoding)
     {

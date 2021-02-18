@@ -1062,7 +1062,7 @@ BOOL plDistribComponent::IsFlexible() const
 
 void plDistribComponent::ISetProbTexmap(plDistributor& distrib)
 {
-    distrib.SetProbabilityBitmapTex(nil);
+    distrib.SetProbabilityBitmapTex(nullptr);
 
     Texmap* tex = fCompPB->GetTexmap(kProbTexmap);
     if( tex )
@@ -1130,7 +1130,7 @@ void plDistribComponent::Preview()
     bar.Start("Preview", NumTargets() << 4);
 
     plDistTree distTree;
-    Distribute(replicants, nil, bar, &distTree);
+    Distribute(replicants, nullptr, bar, &distTree);
 
     IMakeOne(replicants);
 
@@ -1143,7 +1143,7 @@ void plDistribComponent::Preview()
 INode* plDistribComponent::IMakeOne(plDistribInstTab& nodes)
 {
     if( !nodes.Count() )
-        return nil;
+        return nullptr;
 
     int iStartNode = 0;
 
@@ -1196,7 +1196,7 @@ INode* plDistribComponent::IMakeOne(plDistribInstTab& nodes)
         fCompPB->Append(kReplicants, 1, &outNode);
     }
 
-    return nil;
+    return nullptr;
 }
 
 Box3 plDistribComponent::GetFade()

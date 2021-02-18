@@ -185,7 +185,7 @@ public:
         PartID& partID, RefMessage message) override;
 
     int NumSubs() override { return 0; }
-    Animatable* SubAnim(int i) override { return nil; }
+    Animatable* SubAnim(int i) override { return nullptr; }
     TSTR SubAnimName(int i) override { return ""; }
 
     int NumRefs() override;

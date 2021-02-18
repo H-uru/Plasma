@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    pfGUICtrlProcWriteableObject::Write( pfGUICtrlProcWriteableObject *obj, hsStream *s )
 {
-    if( obj != nil )
+    if (obj != nullptr)
     {
         s->WriteLE32( obj->fType );
         obj->IWrite( s );
@@ -88,11 +88,11 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
             break;
 
         case kNull:
-            return nil;
+            return nullptr;
 
         default:
             hsAssert( false, "Invalid proc type in Read()" );
-            return nil;
+            return nullptr;
     }
 
     obj->IRead( s );
@@ -107,13 +107,13 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 
 pfGUIConsoleCmdProc::pfGUIConsoleCmdProc() : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
 { 
-    fCommand = nil; 
+    fCommand = nullptr;
 }
 
 pfGUIConsoleCmdProc::pfGUIConsoleCmdProc( const char *cmd )
                 : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
 {
-    fCommand = nil;
+    fCommand = nullptr;
     SetCommand( cmd );
 }
 
@@ -132,12 +132,12 @@ void    pfGUIConsoleCmdProc::IRead( hsStream *s )
         s->Read( i, fCommand );
     }
     else
-        fCommand = nil;
+        fCommand = nullptr;
 }
 
 void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
 {
-    if( fCommand != nil )
+    if (fCommand != nullptr)
     {
         s->WriteLE32( strlen( fCommand ) );
         s->Write( strlen( fCommand ), fCommand );
@@ -148,7 +148,7 @@ void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
 
 void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
 {
-    if( fCommand != nil )
+    if (fCommand != nullptr)
     {
         plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
         cMsg->Send();
@@ -159,8 +159,8 @@ void    pfGUIConsoleCmdProc::SetCommand( const char *cmd )
 {
     delete [] fCommand;
 
-    if( cmd == nil )
-        fCommand = nil;
+    if (cmd == nullptr)
+        fCommand = nullptr;
     else
     {
         fCommand = new char[ strlen( cmd ) + 1 ];

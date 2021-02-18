@@ -165,7 +165,7 @@ PyObject *pyKey::New(plKey key)
     ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
     newObj->fThis->fKey = key;
 #ifndef BUILDING_PYPLASMA
-    newObj->fThis->fPyFileMod = nil;
+    newObj->fThis->fPyFileMod = nullptr;
     newObj->fThis->fNetForce = false;
 #endif
     return (PyObject*)newObj;
@@ -176,7 +176,7 @@ PyObject *pyKey::New(pyKey *key)
     ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
     newObj->fThis->fKey = key->getKey();
 #ifndef BUILDING_PYPLASMA
-    newObj->fThis->fPyFileMod = nil;
+    newObj->fThis->fPyFileMod = nullptr;
     newObj->fThis->fNetForce = false;
 #endif
     return (PyObject*)newObj;

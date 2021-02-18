@@ -53,7 +53,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reas
 {
     char* message;
     unsigned char reason = 0;
-    char* title = nil;
+    char* title = nullptr;
     if (!PyArg_ParseTuple(args, "s|bs", &message, &reason, &title))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendPetitionToCCR expects a string, and an optional unsigned 8-bit int and optional string");
