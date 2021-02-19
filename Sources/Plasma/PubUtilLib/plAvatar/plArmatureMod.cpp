@@ -2036,11 +2036,6 @@ plArmatureBrain * plArmatureMod::GetNextBrain(plArmatureBrain *brain)
     return result;
 }
 
-size_t plArmatureMod::GetBrainCount()
-{
-    return fBrains.size();
-}
-
 plArmatureBrain * plArmatureMod::FindBrainByClass(uint32_t classID) const
 {
     int n = fBrains.size();

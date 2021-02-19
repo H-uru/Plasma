@@ -163,16 +163,6 @@ bool plArmatureEffectsMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-size_t plArmatureEffectsMgr::GetNumEffects()
-{
-    return fEffects.size();
-}
-
-plArmatureEffect *plArmatureEffectsMgr::GetEffect(size_t num)
-{
-    return fEffects[num];
-}
-
 void plArmatureEffectsMgr::ResetEffects()
 {
     for (plArmatureEffect* effect : fEffects)

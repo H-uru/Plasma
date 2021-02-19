@@ -115,7 +115,7 @@ protected:
     /** Unused. */
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
-    /** An array of keys to objects that are interested in receiving our sit messages. */
+    /** A vector of keys to objects that are interested in receiving our sit messages. */
     std::vector<plKey> fNotifyKeys;
 
     /** The chair in question is in use. It will untrigger when the avatar leaves it. */

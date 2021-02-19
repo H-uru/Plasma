@@ -79,8 +79,8 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
 
-    size_t GetNumEffects();
-    plArmatureEffect *GetEffect(size_t num);
+    size_t GetNumEffects() const { return fEffects.size(); }
+    plArmatureEffect *GetEffect(size_t num) const { return fEffects[num]; }
     void ResetEffects();
 
     plArmatureMod *fArmature;

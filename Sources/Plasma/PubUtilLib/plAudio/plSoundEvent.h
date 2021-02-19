@@ -48,7 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoundEvent_h
 #define _plSoundEvent_h
 
-#include <cstdint>
+#include "HeadSpin.h"
+
 #include <vector>
 
 class plEventCallbackMsg;

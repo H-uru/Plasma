@@ -235,9 +235,9 @@ public:
 
     virtual bool ToggleDontPanicLinkFlag() { fDontPanicLink = fDontPanicLink ? false : true; return fDontPanicLink; }
 
-    size_t GetBrainCount();
+    size_t GetBrainCount() const { return fBrains.size(); }
     plArmatureBrain *GetNextBrain(plArmatureBrain *brain);
-    plArmatureBrain *GetBrain(size_t index) { if (index <= fBrains.size()) return fBrains.at(index); else return nil; }
+    plArmatureBrain *GetBrain(size_t index) const { if (index <= fBrains.size()) return fBrains.at(index); else return nil; }
     plArmatureBrain *FindBrainByClass(uint32_t classID) const;
 
     void TurnToPoint(hsPoint3 &point);

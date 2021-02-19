@@ -88,11 +88,8 @@ void plSoundPreloader::Run()
     {
         {
             hsLockGuard(fCritSect);
-            while (!fBuffers.empty())
-            {
-                templist.emplace_back(fBuffers.back());
-                fBuffers.pop_back();
-            }
+            templist.insert(templist.end(), fBuffers.rbegin(), fBuffers.rend());
+            fBuffers.clear();
         }
 
         if (templist.empty())
