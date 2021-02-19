@@ -69,10 +69,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "plFontFreeType.h"
-#include "ui_MainDialog.h"
-#include "ui_FonChooser.h"
-#include "ui_FreeType.h"
-#include "ui_FreeTypeBatch.h"
+#include "res/ui_MainDialog.h"
+#include "res/ui_FonChooser.h"
+#include "res/ui_FreeType.h"
+#include "res/ui_FreeTypeBatch.h"
 
 REGISTER_NONCREATABLE(plBitmap);
 REGISTER_CREATABLE(plFont);

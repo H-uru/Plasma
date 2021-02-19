@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEditDlg.h"
 #include "plLocTreeView.h"
 #include "plAddDlgs.h"
-#include "ui_EditDialog.h"
+#include "res/ui_EditDialog.h"
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"

@@ -1,4 +1,7 @@
 find_package(Qt5 COMPONENTS Core Widgets)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 # Based on https://stackoverflow.com/a/41199492 for easily deploying Qt DLLs on Windows.
 if(WIN32 AND TARGET Qt5::qmake AND NOT TARGET Qt5::windeployqt)
