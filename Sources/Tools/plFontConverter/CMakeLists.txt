@@ -43,11 +43,19 @@ target_link_libraries(
         Qt5::Widgets
 )
 
-set_target_properties(plFontConverter
+set_target_properties(
+    plFontConverter
     PROPERTIES
         AUTOMOC ON
         AUTORCC ON
         AUTOUIC ON
+)
+
+target_include_directories(
+    plFontConverter
+    PRIVATE
+        # Needed for custom widget include in MainDialog.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 source_group("Source Files" FILES ${plFontConverter_SOURCES} ${plFontConverter_MOC})

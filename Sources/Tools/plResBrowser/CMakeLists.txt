@@ -42,11 +42,19 @@ target_link_libraries(
         Qt5::Widgets
 )
 
-set_target_properties(plResBrowser
+set_target_properties(
+    plResBrowser
     PROPERTIES
         AUTOMOC ON
         AUTORCC ON
         AUTOUIC ON
+)
+
+target_include_directories(
+    plResBrowser
+    PRIVATE
+        # Needed for custom widget include in ResBrowser.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})

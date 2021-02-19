@@ -41,11 +41,19 @@ target_link_libraries(
         Qt5::Widgets
 )
 
-set_target_properties(plLocalizationEditor
+set_target_properties(
+    plLocalizationEditor
     PROPERTIES
         AUTOMOC ON
         AUTORCC ON
         AUTOUIC ON
+)
+
+target_include_directories(
+    plLocalizationEditor
+    PRIVATE
+        # Needed for custom widget include in EditDialog.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_MOC})
