@@ -204,6 +204,24 @@ plKey &plKey::operator=( const plKey &rhs )
     return *this;
 }
 
+plKey &plKey::operator=(std::nullptr_t)
+{
+#if TRACK_REFS  // FOR DEBUGGING ONLY
+    if (IsTracked(fKeyData))
+    {
+        char msg[512];
+        sprintf(msg, "D: Key %s %s is being nilified", keyNameToLookFor, CloneString(fKeyData));
+        //hsAssert(false, msg);
+        hsStatusMessageF(msg);
+    }
+#endif
+
+    IDecRef();
+    fKeyData = nullptr;
+
+    return *this;
+}
+
 plKeyData   *plKey::operator->() const
 {
     return fKeyData;
