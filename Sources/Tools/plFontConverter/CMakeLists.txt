@@ -43,6 +43,13 @@ target_link_libraries(
         Qt5::Widgets
 )
 
+set_target_properties(plFontConverter
+    PROPERTIES
+        AUTOMOC ON
+        AUTORCC ON
+        AUTOUIC ON
+)
+
 source_group("Source Files" FILES ${plFontConverter_SOURCES} ${plFontConverter_MOC})
 source_group("Header Files" FILES ${plFontConverter_HEADERS})
 source_group("Resource Files" FILES ${plFontConverter_RCC} ${plFontConverter_UIC})

@@ -42,6 +42,13 @@ target_link_libraries(
         Qt5::Widgets
 )
 
+set_target_properties(plResBrowser
+    PROPERTIES
+        AUTOMOC ON
+        AUTORCC ON
+        AUTOUIC ON
+)
+
 source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})
 source_group("Header Files" FILES ${plResBrowser_HEADERS})
 source_group("Resource Files" FILES ${plResBrowser_RCC} ${plResBrowser_UIC})

@@ -41,6 +41,13 @@ target_link_libraries(
         Qt5::Widgets
 )
 
+set_target_properties(plLocalizationEditor
+    PROPERTIES
+        AUTOMOC ON
+        AUTORCC ON
+        AUTOUIC ON
+)
+
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_MOC})
 source_group("Header Files" FILES ${plLocalizationEditor_HEADERS})
 source_group("Resource Files" FILES ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC})
