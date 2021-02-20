@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plResBrowser.h"
-#include "ui_ResBrowser.h"
+#include "res/ui_ResBrowser.h"
 
 #if HS_BUILD_FOR_WIN32
 #   include "plWinRegistryTools.h"

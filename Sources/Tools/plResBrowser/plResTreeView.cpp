@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plResTreeView.h"
-#include "ui_FindDialog.h"
+#include "res/ui_FindDialog.h"
 
 #include "HeadSpin.h"
 

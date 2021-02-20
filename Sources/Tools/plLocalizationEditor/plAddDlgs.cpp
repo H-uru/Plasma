@@ -48,8 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 #include <QPushButton>
-#include "ui_AddElement.h"
-#include "ui_AddLocalization.h"
+#include "res/ui_AddElement.h"
+#include "res/ui_AddLocalization.h"
 
 #include <vector>
 

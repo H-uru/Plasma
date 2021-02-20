@@ -3,7 +3,6 @@ set(plLocalizationEditor_HEADERS
     plEditDlg.h
     plLocTreeView.h
 )
-qt5_wrap_cpp(plLocalizationEditor_MOC ${plLocalizationEditor_HEADERS})
 
 set(plLocalizationEditor_SOURCES
     plAddDlgs.cpp
@@ -13,27 +12,24 @@ set(plLocalizationEditor_SOURCES
 )
 
 if(WIN32)
-    set(plLocalizationEditor_SOURCES ${plLocalizationEditor_SOURCES}
+    list(APPEND plLocalizationEditor_SOURCES
         res/plLocalizationEditor.rc
     )
 endif()
 
-set(plLocalizationEditor_RCC_SOURCES
+set(plLocalizationEditor_RCC
     res/plLocalizationEditor.qrc
 )
-qt5_add_resources(plLocalizationEditor_RCC ${plLocalizationEditor_RCC_SOURCES})
 
-set(plLocalizationEditor_UIC_SOURCES
+set(plLocalizationEditor_UIC
     res/EditDialog.ui
     res/AddElement.ui
     res/AddLocalization.ui
 )
-qt5_wrap_ui(plLocalizationEditor_UIC ${plLocalizationEditor_UIC_SOURCES})
 
 add_executable(plLocalizationEditor WIN32 MACOSX_BUNDLE
                ${plLocalizationEditor_HEADERS} ${plLocalizationEditor_SOURCES}
-               ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC}
-               ${plLocalizationEditor_MOC})
+               ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC})
 target_link_libraries(
     plLocalizationEditor
     PRIVATE
@@ -45,15 +41,21 @@ target_link_libraries(
         Qt5::Widgets
 )
 
-# For generated ui_*.h files
+set_target_properties(
+    plLocalizationEditor
+    PROPERTIES
+        AUTOMOC ON
+        AUTORCC ON
+        AUTOUIC ON
+)
+
 target_include_directories(
     plLocalizationEditor
     PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${CMAKE_CURRENT_LIST_DIR}
+        # Needed for custom widget include in EditDialog.ui
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_MOC})
 source_group("Header Files" FILES ${plLocalizationEditor_HEADERS})
-source_group("Resource Files" FILES ${plLocalizationEditor_RCC_SOURCES} ${plLocalizationEditor_RCC}
-                                    ${plLocalizationEditor_UIC_SOURCES} ${plLocalizationEditor_UIC})
+source_group("Resource Files" FILES ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC})
