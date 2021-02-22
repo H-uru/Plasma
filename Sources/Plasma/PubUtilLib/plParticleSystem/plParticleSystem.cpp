@@ -105,9 +105,9 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
     fNextEmitterToGo = 0;
     fMiscFlags = 0;
 
-    fForces.Reset();
-    fEffects.Reset();
-    fConstraints.Reset();
+    fForces.clear();
+    fEffects.clear();
+    fConstraints.clear();
 
     fXTiles = xTiles;
     fYTiles = yTiles;
@@ -131,14 +131,14 @@ void plParticleSystem::IAddEffect(plParticleEffect *effect, uint32_t type)
     switch(type)
     {
     case kEffectForce:
-        fForces.Append(effect);
+        fForces.emplace_back(effect);
         break;
     case kEffectMisc:
     default:
-        fEffects.Append(effect);
+        fEffects.emplace_back(effect);
         break;
     case kEffectConstraint:
-        fConstraints.Append(effect);
+        fConstraints.emplace_back(effect);
         break;
     }
 }
@@ -290,18 +290,17 @@ plParticleGenerator *plParticleSystem::GetExportedGenerator() const
 
 plParticleEffect *plParticleSystem::GetEffect(uint16_t type) const
 {
-    int i;
-    for (i = 0; i < fForces.GetCount(); i++)
-        if (fForces[i]->ClassIndex() == type)
-            return fForces[i];
+    for (plParticleEffect* forceEffect : fForces)
+        if (forceEffect->ClassIndex() == type)
+            return forceEffect;
 
-    for (i = 0; i < fEffects.GetCount(); i++)
-        if (fEffects[i]->ClassIndex() == type)
-            return fEffects[i];
+    for (plParticleEffect* effect : fEffects)
+        if (effect->ClassIndex() == type)
+            return effect;
 
-    for (i = 0; i < fConstraints.GetCount(); i++)
-        if (fConstraints[i]->ClassIndex() == type)
-            return fConstraints[i];
+    for (plParticleEffect* constraint : fConstraints)
+        if (constraint->ClassIndex() == type)
+            return constraint;
 
     return nullptr;
 }
@@ -593,13 +592,13 @@ void plParticleSystem::IPreSim()
     fPreSim = 0;
 }
 
-void plParticleSystem::IReadEffectsArray(hsTArray<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr)
+void plParticleSystem::IReadEffectsArray(std::vector<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr)
 {
     plGenRefMsg *msg;
-    effects.Reset();
+    effects.clear();
     uint32_t count = s->ReadLE32();
-    int i;
-    for (i = 0; i < count; i++)
+    effects.reserve(count);
+    for (uint32_t i = 0; i < count; i++)
     {
         msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, (int8_t)type);
         mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
@@ -679,21 +678,17 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
         mgr->WriteCreatable(s, fEmitters[i]);
     }
 
-    int count;
-    count = fForces.GetCount();
-    s->WriteLE32(count);
-    for (i = 0; i < count; i++)
-        mgr->WriteKey(s, fForces.Get(i));
+    s->WriteLE32((uint32_t)fForces.size());
+    for (plParticleEffect* forceEffect : fForces)
+        mgr->WriteKey(s, forceEffect);
 
-    count = fEffects.GetCount();
-    s->WriteLE32(count);
-    for (i = 0; i < count; i++)
-        mgr->WriteKey(s, fEffects.Get(i));
+    s->WriteLE32((uint32_t)fEffects.size());
+    for (plParticleEffect* effect : fEffects)
+        mgr->WriteKey(s, effect);
 
-    count = fConstraints.GetCount();
-    s->WriteLE32(count);
-    for (i = 0; i < count; i++)
-        mgr->WriteKey(s, fConstraints.Get(i));
+    s->WriteLE32((uint32_t)fConstraints.size());
+    for (plParticleEffect* constraint : fConstraints)
+        mgr->WriteKey(s, constraint);
 
     s->WriteLE32((uint32_t)fPermaLights.size());
     for (const plKey& key : fPermaLights)
