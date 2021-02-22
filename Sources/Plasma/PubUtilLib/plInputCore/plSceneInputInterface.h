@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputInterface.h"
 #include "hsGeometry3.h"
+#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnUUID/pnUUID.h"
 #include <string_theory/string>

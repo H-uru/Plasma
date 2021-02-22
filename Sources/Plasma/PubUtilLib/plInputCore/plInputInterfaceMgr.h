@@ -78,7 +78,7 @@ class plInputInterfaceMgr : public plSingleModifier
         static plInputInterfaceMgr  *fInstance;
 
         hsTArray<plInputInterface *>    fInterfaces;
-        hsTArray<plCtrlCmd *>           fMessageQueue;
+        std::vector<plCtrlCmd *>        fMessageQueue;
         hsTArray<plKey>                 fReceivers;
 
 #ifdef MCN_DISABLE_OLD_WITH_NEW_HACK

@@ -175,21 +175,19 @@ void    plInputInterfaceMgr::Init()
 
 void    plInputInterfaceMgr::Shutdown()
 {
-    int i;
-
 
 //  WriteKeyMap();
 
-    for( i = 0; i < fInterfaces.GetCount(); i++ )
+    for (int i = 0; i < fInterfaces.GetCount(); i++)
     {
         fInterfaces[ i ]->Shutdown();
         hsRefCnt_SafeUnRef( fInterfaces[ i ] );
     }
     fInterfaces.Reset();
 
-    for( i = 0; i < fMessageQueue.GetCount(); i++ )
-        delete fMessageQueue[ i ];
-    fMessageQueue.Reset();
+    for (plCtrlCmd* ctrlMsg : fMessageQueue)
+        delete ctrlMsg;
+    fMessageQueue.clear();
 
     plgDispatch::Dispatch()->UnRegisterForType( plInputIfaceMgrMsg::Index(), GetKey() );
     plgDispatch::Dispatch()->UnRegisterForType( plInputEventMsg::Index(), GetKey() );
@@ -298,28 +296,27 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
 {
     const char *inputEval = "Eval";
     plProfile_BeginLap(Input, inputEval);
-    int     i;
 
 
     // Let all our layers eval
-    for( i = 0; i < fInterfaces.GetCount(); i++ )
+    for (int i = 0; i < fInterfaces.GetCount(); i++)
         fInterfaces[ i ]->IEval( secs, del, dirty );
 
     // Handle our message queue now
-    for( i = 0; i < fMessageQueue.Count(); i++ )
+    for (plCtrlCmd* ctrlMsg : fMessageQueue)
     {
         // Can its layer handle it?
-        if( !fMessageQueue[ i ]->GetSource()->IHandleCtrlCmd( fMessageQueue[ i ] ) )
+        if (!ctrlMsg->GetSource()->IHandleCtrlCmd(ctrlMsg))
         {
             // Nope, just dispatch it like normal
             plControlEventMsg* pMsg = new plControlEventMsg;
             for (int j = 0; j < fReceivers.Count(); j++)
                 pMsg->AddReceiver( fReceivers[ j ] );
-            pMsg->SetControlActivated( fMessageQueue[i]->fControlActivated );
-            pMsg->SetControlCode( fMessageQueue[i]->fControlCode );
-            pMsg->SetControlPct(fMessageQueue[i]->fPct);
-            pMsg->SetTurnToPt( fMessageQueue[i]->fPt );
-            pMsg->SetCmdString(fMessageQueue[i]->GetCmdString());       
+            pMsg->SetControlActivated(ctrlMsg->fControlActivated);
+            pMsg->SetControlCode(ctrlMsg->fControlCode);
+            pMsg->SetControlPct(ctrlMsg->fPct);
+            pMsg->SetTurnToPt(ctrlMsg->fPt);
+            pMsg->SetCmdString(ctrlMsg->GetCmdString());
             pMsg->SetSender( GetKey() );    
             plgDispatch::MsgSend( pMsg );
 
@@ -327,7 +324,7 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
             //      send same msg over network to players
             ///////////////////////////////////////////////////////
 
-            if (fMessageQueue[i]->fNetPropagateToPlayers)
+            if (ctrlMsg->fNetPropagateToPlayers)
             {
                 pMsg = new plControlEventMsg;
                 for (int j = 0; j < fReceivers.Count(); j++)
@@ -335,11 +332,11 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
                         pMsg->AddReceiver( fReceivers[j] );
                 if (pMsg->GetNumReceivers())
                 {
-                    pMsg->SetControlActivated( fMessageQueue[i]->fControlActivated );
-                    pMsg->SetControlCode( fMessageQueue[i]->fControlCode );
-                    pMsg->SetControlPct(fMessageQueue[i]->fPct);
-                    pMsg->SetTurnToPt( fMessageQueue[i]->fPt );
-                    pMsg->SetCmdString(fMessageQueue[i]->GetCmdString());
+                    pMsg->SetControlActivated(ctrlMsg->fControlActivated);
+                    pMsg->SetControlCode(ctrlMsg->fControlCode);
+                    pMsg->SetControlPct(ctrlMsg->fPct);
+                    pMsg->SetTurnToPt(ctrlMsg->fPt);
+                    pMsg->SetCmdString(ctrlMsg->GetCmdString());
                     pMsg->SetSender( GetKey() );
                     pMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kPropagateToModifiers | 
                         plMessage::kNetUseRelevanceRegions);    // bcast only to other players who care about the region I'm in
@@ -354,9 +351,9 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
     }
 
     // Clear the message queue
-    for( i = 0; i < fMessageQueue.Count(); i++ )
-        delete fMessageQueue[ i ];
-    fMessageQueue.SetCount( 0 );
+    for (plCtrlCmd* ctrlMsg : fMessageQueue)
+        delete ctrlMsg;
+    fMessageQueue.clear();
 
     plProfile_EndLap(Input, inputEval);
     return true;
