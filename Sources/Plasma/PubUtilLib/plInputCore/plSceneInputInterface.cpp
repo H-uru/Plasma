@@ -292,7 +292,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                                     fCurrentClickable = pObj->GetKey();
                                     fCurrentClickableLogicMod = pLogicMod->GetKey();
                                     fCurrentClickPoint = pLOSMsg->fHitPoint;
-                                    for (int x = 0; x < pMod->GetNumReferencedKeys(); x++)
+                                    for (size_t x = 0; x < pMod->GetNumReferencedKeys(); x++)
                                         fClickableMap.Append( new clickableTest(pMod->GetReferencedKey(x)));
                                 }
                                 else
