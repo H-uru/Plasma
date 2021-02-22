@@ -43,14 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetVoiceListMsg_inc
 #define plNetVoiceListMsg_inc
 
+#include <vector>
+
 #include "pnMessage/plMessage.h"
-#include "hsTemplates.h"
 
 class plNetVoiceListMsg : public plMessage
 {
-protected:
-
-    hsTArray<uint32_t>    fClientIDs;
+private:
+    std::vector<uint32_t> fClientIDs;
     int                 fCmd;
     plKey               fRemoved;
 
@@ -73,7 +73,8 @@ public:
     GETINTERFACE_ANY( plNetVoiceListMsg, plMessage );
 
     uint32_t      GetCmd() { return fCmd; }
-    hsTArray<uint32_t>* GetClientList() { return &fClientIDs; };
+    std::vector<uint32_t>& GetClientList() { return fClientIDs; }
+    const std::vector<uint32_t>& GetClientList() const { return fClientIDs; }
     plKey GetRemovedKey() { return fRemoved; }
     void SetRemovedKey(plKey& k) { fRemoved = k; }
     void Read(hsStream* s, hsResMgr* mgr) override;

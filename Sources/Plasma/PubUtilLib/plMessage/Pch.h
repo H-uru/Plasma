@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "hsGeometry3.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 
 // Plasma Nucleus
 #include "plgDispatch.h"
