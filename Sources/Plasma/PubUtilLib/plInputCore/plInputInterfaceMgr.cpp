@@ -301,8 +301,12 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
         iface->IEval(secs, del, dirty);
 
     // Handle our message queue now
-    for (plCtrlCmd* ctrlMsg : fMessageQueue)
+    // NOTE: Do not use a range-based for loop here, since the size of
+    // fMessageQueue might change in the middle of the loop !!!
+    for (size_t i = 0; i < fMessageQueue.size(); ++i)
     {
+        plCtrlCmd* ctrlMsg = fMessageQueue[i];
+
         // Can its layer handle it?
         if (!ctrlMsg->GetSource()->IHandleCtrlCmd(ctrlMsg))
         {
