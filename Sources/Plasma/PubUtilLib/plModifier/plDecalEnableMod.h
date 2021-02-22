@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDecalEnableMod_inc
 #define plDecalEnableMod_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "pnModifier/plSingleModifier.h"
 
 class plKey;
@@ -51,8 +52,7 @@ class plKey;
 class plDecalEnableMod : public plSingleModifier
 {
 protected:
-    
-    hsTArray<plKey>     fDecalMgrs;
+    std::vector<plKey> fDecalMgrs;
 
     float            fWetLength;
 
@@ -72,9 +72,9 @@ public:
     void SetWetLength(float t) { fWetLength = t; }
     float GetWetLength() const { return fWetLength; }
 
-    void AddDecalKey(const plKey& k) { fDecalMgrs.Append(k); }
-    uint32_t GetNumDecalKeys() const { return fDecalMgrs.GetCount(); }
-    const plKey& GetDecalKey(int i) const { return fDecalMgrs[i]; }
+    void AddDecalKey(plKey k) { fDecalMgrs.emplace_back(std::move(k)); }
+    size_t GetNumDecalKeys() const { return fDecalMgrs.size(); }
+    const plKey& GetDecalKey(size_t i) const { return fDecalMgrs[i]; }
 };
 
 #endif // plDecalEnableMod_inc
