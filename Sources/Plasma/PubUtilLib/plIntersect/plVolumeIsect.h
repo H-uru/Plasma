@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 #include "hsBounds.h"
+#include <vector>
 
 #include "pnFactory/plCreatable.h"
 
@@ -178,17 +178,16 @@ public:
 class plParallelIsect : public plVolumeIsect
 {
 protected:
-    class ParPlane
+    struct ParPlane
     {
-    public:
         hsVector3           fNorm;
-        float            fMin;
-        float            fMax;
+        float               fMin;
+        float               fMax;
 
         hsPoint3            fPosOne;
         hsPoint3            fPosTwo;
     };
-    hsTArray<ParPlane>      fPlanes;
+    std::vector<ParPlane> fPlanes;
 
 public:
     plParallelIsect() { }
@@ -196,10 +195,10 @@ public:
     CLASSNAME_REGISTER( plParallelIsect );
     GETINTERFACE_ANY( plParallelIsect, plVolumeIsect );
 
-    void SetNumPlanes(int n); // each plane is really two parallel planes
-    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
+    void SetNumPlanes(size_t n); // each plane is really two parallel planes
+    size_t GetNumPlanes() const { return fPlanes.size(); }
 
-    void SetPlane(int which, const hsPoint3& locPosOne, const hsPoint3& locPosTwo);
+    void SetPlane(size_t which, const hsPoint3& locPosOne, const hsPoint3& locPosTwo);
 
     void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
@@ -213,9 +212,8 @@ public:
 class plConvexIsect : public plVolumeIsect
 {
 protected:
-    class SinglePlane
+    struct SinglePlane
     {
-    public:
         hsVector3       fNorm;
         float        fDist;
         hsPoint3        fPos;
@@ -223,8 +221,7 @@ protected:
         hsVector3       fWorldNorm;
         float        fWorldDist;
     };
-
-    hsTArray<SinglePlane>   fPlanes;
+    std::vector<SinglePlane>   fPlanes;
 
 public:
     plConvexIsect() { }
@@ -232,10 +229,10 @@ public:
     CLASSNAME_REGISTER( plConvexIsect );
     GETINTERFACE_ANY( plConvexIsect, plVolumeIsect );
 
-    void ClearPlanes() { fPlanes.SetCount(0); }
+    void ClearPlanes() { fPlanes.clear(); }
     void AddPlaneUnchecked(const hsVector3& n, float dist); // no validation here
     void AddPlane(const hsVector3& n, const hsPoint3& p);
-    uint16_t GetNumPlanes() const { return fPlanes.GetCount(); }
+    size_t GetNumPlanes() const { return fPlanes.size(); }
 
     void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
@@ -271,7 +268,7 @@ public:
 class plComplexIsect : public plVolumeIsect
 {
 protected:
-    hsTArray<plVolumeIsect*>        fVolumes;
+    std::vector<plVolumeIsect*> fVolumes;
 
 public:
     virtual ~plComplexIsect();
@@ -280,7 +277,7 @@ public:
     GETINTERFACE_ANY( plComplexIsect, plVolumeIsect );
 
     void AddVolume(plVolumeIsect* v); // Will capture pointer
-    uint16_t GetNumVolumes() const { return fVolumes.GetCount(); }
+    size_t GetNumVolumes() const { return fVolumes.size(); }
 
     void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
