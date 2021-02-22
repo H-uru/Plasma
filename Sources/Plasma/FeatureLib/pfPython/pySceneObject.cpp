@@ -605,7 +605,7 @@ bool pySceneObject::IsHumanAvatar()
                 plArmatureMod* avatar = (plArmatureMod*)plArmatureMod::ConvertNoRef(mod);
                 if ( avatar )
                 {
-                    for (int j = 0; j < avatar->GetBrainCount(); ++j)
+                    for (size_t j = 0; j < avatar->GetBrainCount(); ++j)
                     {
                         if (plAvBrainHuman::ConvertNoRef(avatar->GetBrain(j)))
                             return true;

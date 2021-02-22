@@ -97,8 +97,8 @@ public:
     virtual void        RemoveCallbacks(plSoundMsg* pMsg) = 0;
     virtual void        AddCallbacks(plSoundMsg* pMsg) = 0;
     virtual void        GetStatus(plSoundMsg* pMsg) = 0;
-    virtual int         GetNumSounds() const = 0;   
-    virtual plSound*    GetSound(int i) const = 0;
+    virtual size_t      GetNumSounds() const = 0;
+    virtual plSound*    GetSound(size_t i) const = 0;
     virtual int         GetSoundIndex(const char *keyname) const = 0;
     virtual void        Init(bool isLocal) { }
     virtual void        SetVolume(const float volume,int index = -1) = 0;

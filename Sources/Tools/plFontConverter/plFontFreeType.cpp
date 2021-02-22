@@ -184,8 +184,8 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         uint32_t stride = ( fBPP == 1 ) ? ( fWidth >> 3 ) : fWidth;
 
         // Pre-expand our char list
-        fCharacters.ExpandAndZero( maxChar + 1 );
-        fCharacters.SetCount( 0 );
+        fCharacters.clear();
+        fCharacters.reserve(maxChar + 1);
         if( callback != nil )
             callback->NumChars( (uint16_t)(maxChar + 1) );
 
@@ -203,8 +203,8 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
                     throw false;
             }
 
-            if( fCharacters.GetCount() < glyphChars[ i ] + 1 )
-                fCharacters.SetCount( glyphChars[ i ] + 1 );
+            if (fCharacters.size() < glyphChars[i] + 1)
+                fCharacters.resize(glyphChars[i] + 1);
 
             FT_BitmapGlyph ftBitmap = (FT_BitmapGlyph)ftGlyphs[ i ];
             plCharacter *ch = &fCharacters[ glyphChars[ i ] ];

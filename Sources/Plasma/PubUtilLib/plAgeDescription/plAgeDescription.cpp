@@ -204,12 +204,12 @@ void plAgeDescription::IInit()
 
 void plAgeDescription::ClearPageList()
 {
-    fPages.Reset();
+    fPages.clear();
 }
 
 void    plAgeDescription::AppendPage( const ST::string &name, int seqSuffix, uint8_t flags )
 {
-    fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (uint32_t)seqSuffix, flags ) );
+    fPages.emplace_back(name, (seqSuffix == -1) ? fPages.size() : (uint32_t)seqSuffix, flags);
 }
 
 void    plAgeDescription::SeekFirstPage()
@@ -222,10 +222,10 @@ plAgePage   *plAgeDescription::GetNextPage()
     plAgePage   *ret = nil;
 
 
-    if( fPageIterator >= 0 && fPageIterator < fPages.GetCount() )
+    if (fPageIterator >= 0 && (size_t)fPageIterator < fPages.size())
     {
         ret = &fPages[ fPageIterator++ ];
-        if( fPageIterator >= fPages.GetCount() )
+        if ((size_t)fPageIterator >= fPages.size())
             fPageIterator = -1;
     }
 
@@ -234,11 +234,11 @@ plAgePage   *plAgeDescription::GetNextPage()
 
 void plAgeDescription::RemovePage( const ST::string &page )
 {
-    for (int i = 0; i < fPages.GetCount(); i++)
+    for (auto iter = fPages.begin(); iter != fPages.end(); ++iter)
     {
-        if (page == fPages[i].GetName())
+        if (page == iter->GetName())
         {
-            fPages.Remove(i);
+            fPages.erase(iter);
             return;
         }
     }
@@ -246,10 +246,10 @@ void plAgeDescription::RemovePage( const ST::string &page )
 
 const plAgePage *plAgeDescription::FindPage(const ST::string &name) const
 {
-    for (int i = 0; i < fPages.GetCount(); i++)
+    for (const plAgePage& page : fPages)
     {
-        if (name == fPages[i].GetName())
-            return &fPages[i];
+        if (name == page.GetName())
+            return &page;
     }
 
     return nil;
@@ -324,12 +324,8 @@ void plAgeDescription::Write(hsStream* stream) const
     stream->WriteString( buf );
 
     // Write out the pages
-    int i;
-    for( i = 0; i < fPages.GetCount(); i++ )
-    {
-        sprintf(buf, "Page=%s\n", fPages[ i ].GetAsString().c_str() );
-        stream->WriteString(buf);
-    }
+    for (const plAgePage& page : fPages)
+        stream->WriteString(ST::format("Page={}\n", page.GetAsString()));
 }
 
 // Somewhat of an overkill, but I created it, so I better use it.
@@ -362,9 +358,9 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
     }
     else if (!stricmp(token, "Page"))
     {
-        fPages.Append( plAgePage( tokenizer->GetRestOfString() ) );
-        if( fPages[ fPages.GetCount() - 1 ].GetSeqSuffix() == plAgePage::kInvalidSeqSuffix )
-            fPages[ fPages.GetCount() - 1 ].SetSeqSuffix( fPages.GetCount() );
+        fPages.emplace_back(tokenizer->GetRestOfString());
+        if (fPages.back().GetSeqSuffix() == plAgePage::kInvalidSeqSuffix)
+            fPages.back().SetSeqSuffix(fPages.size());
     }
     else if (!stricmp(token, "MaxCapacity"))
     {
@@ -471,23 +467,21 @@ const char *plAgeDescription::GetCommonPage( int pageType )
 
 void    plAgeDescription::AppendCommonPages()
 {
-    uint32_t startSuffix = 0xffff, i;
+    uint32_t startSuffix = 0xffff;
 
 
     if( IsGlobalAge() )
         return;
 
-    for( i = 0; i < kNumCommonPages; i++ )
-        fPages.Append( plAgePage( fCommonPages[ i ], startSuffix - i, 0 ) );
+    for (uint32_t i = 0; i < kNumCommonPages; i++)
+        fPages.emplace_back(fCommonPages[i], startSuffix - i, 0);
 }
 
 void    plAgeDescription::CopyFrom(const plAgeDescription& other)
 {
     IDeInit();
     fName = other.GetAgeName();
-    int i;
-    for(i=0;i<other.fPages.GetCount(); i++)
-        fPages.Append( other.fPages[ i ] );
+    fPages = other.fPages;
 
     fStart = other.fStart;
     fDayLength = other.fDayLength;
@@ -500,10 +494,9 @@ void    plAgeDescription::CopyFrom(const plAgeDescription& other)
 
 bool plAgeDescription::FindLocation(const plLocation& loc) const
 {
-    int i;
-    for( i = 0; i < fPages.GetCount(); i++ )
+    for (const plAgePage& page : fPages)
     {
-        plLocation pageLoc = CalcPageLocation(fPages[i].GetName());
+        plLocation pageLoc = CalcPageLocation(page.GetName());
         if (pageLoc == loc)
             return true;
     }

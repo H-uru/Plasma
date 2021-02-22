@@ -120,7 +120,7 @@ bool plAvBrainRideAnimatedPhysical::IInitAnimations()
     if (idle && walk && run && walkBack && standingLeft && standingRight && stepLeft && stepRight)
     {
         plHBehavior *behavior;
-        fBehaviors.SetCountAndZero(kHuBehaviorMax);
+        fBehaviors.assign(kHuBehaviorMax, nullptr);
         fBehaviors[kIdle] = behavior = new Idle;
         behavior->Init(idle, true, this, fAvMod, kDefaultFade, kDefaultFade, kIdle, plHBehavior::kBehaviorTypeIdle);
         behavior->SetStrength(1.f, 0.f);

@@ -47,7 +47,6 @@ class plErrorMsg;
 class plKey;
 class plMaxNode;
 class INodeTab;
-template<class T> class hsTArray;
 
 #define NAV_LADDER_CID Class_ID(0x6b010148, 0x47cc7464)
 

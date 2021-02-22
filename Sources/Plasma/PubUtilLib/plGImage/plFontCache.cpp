@@ -91,11 +91,11 @@ void    plFontCache::Clear()
 
 plFont  *plFontCache::GetFont( const ST::string &face, uint8_t size, uint32_t fontFlags )
 {
-    uint32_t  i, currIdx = (uint32_t)-1;
+    hsSsize_t currIdx = -1;
     int     currDeltaSize = 100000;
 
 
-    for( i = 0; i < fCache.GetCount(); i++ )
+    for (size_t i = 0; i < fCache.size(); i++)
     {
         if (fCache[i]->GetFace().compare_ni(face, face.size()) == 0 &&
             (fCache[i]->GetFlags() == fontFlags))
@@ -106,12 +106,12 @@ plFont  *plFontCache::GetFont( const ST::string &face, uint8_t size, uint32_t fo
             if( delta < currDeltaSize )
             {
                 currDeltaSize = delta;
-                currIdx = i;
+                currIdx = hsSsize_t(i);
             }
         }
     }
 
-    if( currIdx != (uint32_t)-1 )
+    if (currIdx != -1)
     {
         //if( currDeltaSize > 0 )
         //  plStatusLog::AddLineS( "pipeline.log", "Warning: plFontCache is matching {} {} (requested {} {})", fCache[ currIdx ]->GetFace(), fCache[ currIdx ]->GetSize(), face, size );
@@ -184,14 +184,14 @@ bool    plFontCache::MsgReceive( plMessage* pMsg )
     {
         if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
         {
-            fCache.Append( plFont::ConvertNoRef( ref->GetRef() ) );
+            fCache.emplace_back(plFont::ConvertNoRef(ref->GetRef()));
         }
         else
         {
             plFont *font = plFont::ConvertNoRef( ref->GetRef() );
-            uint32_t idx = fCache.Find( font );
-            if( idx != fCache.kMissingIndex )
-                fCache.Remove( idx );
+            auto idx = std::find(fCache.cbegin(), fCache.cend(), font);
+            if (idx != fCache.cend())
+                fCache.erase(idx);
         }
         return true;
     }

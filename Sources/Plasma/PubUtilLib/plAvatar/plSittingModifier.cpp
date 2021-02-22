@@ -100,9 +100,10 @@ void plSittingModifier::Read(hsStream *stream, hsResMgr *mgr)
 
     fMiscFlags = stream->ReadByte();
 
-    int keyCount = stream->ReadLE32();
-    for (int i = 0; i < keyCount; i++ )
-        fNotifyKeys.Append(mgr->ReadKey(stream));
+    uint32_t keyCount = stream->ReadLE32();
+    fNotifyKeys.reserve(keyCount);
+    for (uint32_t i = 0; i < keyCount; i++ )
+        fNotifyKeys.emplace_back(mgr->ReadKey(stream));
 }
 
 // Write -----------------------------------------------------
@@ -113,9 +114,9 @@ void plSittingModifier::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteByte(fMiscFlags);
     
-    stream->WriteLE32(fNotifyKeys.GetCount());
-    for (int i = 0; i < fNotifyKeys.GetCount(); i++)
-        mgr->WriteKey(stream, fNotifyKeys[i]);
+    stream->WriteLE32((uint32_t)fNotifyKeys.size());
+    for (const plKey& key : fNotifyKeys)
+        mgr->WriteKey(stream, key);
 }
 
 // ISetupNotify -------------------------------------------------------------------------
@@ -125,11 +126,8 @@ void plSittingModifier::ISetupNotify(plNotifyMsg *notifyMsg, plNotifyMsg *origin
     // Copy the original events to the new notify (some notify receivers need to have events)
     for (size_t i = 0; i < originalNotify->GetEventCount(); i++)
         notifyMsg->AddEvent(originalNotify->GetEventRecord(i));
-    for (int i = 0; i < fNotifyKeys.Count(); i++)
-    {
-        plKey receiver = fNotifyKeys[i];
+    for (const plKey& receiver : fNotifyKeys)
         notifyMsg->AddReceiver(receiver);
-    }
     notifyMsg->SetSender(GetKey());
     plNetClientApp::InheritNetMsgFlags(originalNotify, notifyMsg, true);
 }

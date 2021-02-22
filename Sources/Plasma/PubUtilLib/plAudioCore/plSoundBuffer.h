@@ -57,8 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
-#include "hsTemplates.h"
+
 #include <mutex>
+#include <vector>
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -162,7 +163,7 @@ protected:
 class plSoundPreloader : public hsThread
 {
 protected:
-    hsTArray<plSoundBuffer*> fBuffers;
+    std::vector<plSoundBuffer*> fBuffers;
     hsEvent fEvent;
     bool fRunning;
     std::mutex fCritSect;
@@ -185,10 +186,11 @@ public:
 
     bool IsRunning() const { return fRunning; }
 
-    void AddBuffer(plSoundBuffer* buffer) {
+    void AddBuffer(plSoundBuffer* buffer)
+    {
         {
             hsLockGuard(fCritSect);
-            fBuffers.Push(buffer);
+            fBuffers.emplace_back(buffer);
         }
 
         fEvent.Signal();

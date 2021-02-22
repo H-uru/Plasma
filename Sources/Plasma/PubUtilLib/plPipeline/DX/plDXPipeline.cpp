@@ -12182,7 +12182,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
             //if (!co->fDirtyItems.IsBitSet(item->fTileset))
             //  continue; // Not dirty, don't update
 
-            for (int j = 0; j < item->fElements.GetCount(); j++)
+            for (size_t j = 0; j < item->fElements.size(); j++)
             {
                 for (int k = 0; k < plClothingElement::kLayerMax; k++)
                 {
@@ -12209,7 +12209,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
                     fD3DDevice->SetRenderState(D3DRS_TEXTUREFACTOR, tint.ToARGB32());
                     fLayerState[0].fBlendFlags = uint32_t(-1);
                     float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
-                    float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;                
+                    float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;
                     float screenX = (float)item->fElements[j]->fXPos / layout->fOrigWidth * 2.f - 1.f;
                     float screenY = (1.f - (float)item->fElements[j]->fYPos / layout->fOrigWidth) * 2.f - 1.f - screenH;
                     IDrawClothingQuad(screenX, screenY, screenW, screenH, uOff, vOff, itemBufferTex);

@@ -144,7 +144,7 @@ plAvBrainCritter::plAvBrainCritter()
 
 plAvBrainCritter::~plAvBrainCritter()
 {
-    for (int i = 0; i < fBehaviors.GetCount(); ++i)
+    for (size_t i = 0; i < fBehaviors.size(); ++i)
     {
         delete fBehaviors[i];
         fBehaviors[i] = nil;
@@ -253,9 +253,9 @@ void plAvBrainCritter::AddBehavior(const std::string& animationName, const std::
 
     // create the behavior and set it up
     CritterBehavior* behavior = new CritterBehavior(behaviorName, randomStartPos, fadeInLen, fadeOutLen);
-    fBehaviors.Push(behavior);
-    behavior->Init(anim, loop, this, fAvMod, fBehaviors.Count() - 1);
-    fUserBehaviors[behaviorName].push_back(fBehaviors.Count() - 1);
+    fBehaviors.emplace_back(behavior);
+    behavior->Init(anim, loop, this, fAvMod, fBehaviors.size() - 1);
+    fUserBehaviors[behaviorName].push_back(fBehaviors.size() - 1);
 }
 
 void plAvBrainCritter::StartBehavior(const std::string& behaviorName, bool fade /* = true */)
@@ -279,7 +279,7 @@ void plAvBrainCritter::StartBehavior(const std::string& behaviorName, bool fade 
 bool plAvBrainCritter::RunningBehavior(const std::string& behaviorName) const
 {
     // make sure the behavior exists
-    std::map<std::string, std::vector<int> >::const_iterator behaviorIterator = fUserBehaviors.find(behaviorName);
+    auto behaviorIterator = fUserBehaviors.find(behaviorName);
     if (behaviorIterator == fUserBehaviors.end())
         return false;
     else
@@ -289,7 +289,7 @@ bool plAvBrainCritter::RunningBehavior(const std::string& behaviorName) const
     }
 
     // check all behaviors that use this tag and return true if we are running one of them
-    for (unsigned i = 0; i < behaviorIterator->second.size(); ++i)
+    for (size_t i = 0; i < behaviorIterator->second.size(); ++i)
     {
         if (fCurMode == behaviorIterator->second[i])
             return true;
@@ -299,14 +299,14 @@ bool plAvBrainCritter::RunningBehavior(const std::string& behaviorName) const
 
 std::string plAvBrainCritter::BehaviorName(int behavior) const
 {
-    if ((behavior >= fBehaviors.Count()) || (behavior < 0))
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
         return "";
     return ((CritterBehavior*)fBehaviors[behavior])->Name();
 }
 
 ST::string plAvBrainCritter::AnimationName(int behavior) const
 {
-    if ((behavior >= fBehaviors.Count()) || (behavior < 0))
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
         return ST::string();
     return ((CritterBehavior*)fBehaviors[behavior])->AnimName();
 }
@@ -457,8 +457,8 @@ void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebu
     // draw it
     debugTxt.DrawString(x, y, mode);
     y += lineHeight;
-    for (int i = 0; i < fBehaviors.GetCount(); ++i)
-        fBehaviors[i]->DumpDebug(x, y, lineHeight, debugTxt);
+    for (plArmatureBehavior* behavior : fBehaviors)
+        behavior->DumpDebug(x, y, lineHeight, debugTxt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -472,7 +472,7 @@ bool plAvBrainCritter::IInitBaseAnimations()
     hsAssert(idle, "Creature is missing idle animation");
     hsAssert(run, "Creature is missing run animation");
 
-    fBehaviors.SetCountAndZero(kNumDefaultModes);
+    fBehaviors.assign(kNumDefaultModes, nullptr);
 
     CritterBehavior* behavior;
     if (idle)
@@ -494,7 +494,7 @@ bool plAvBrainCritter::IInitBaseAnimations()
 
 int plAvBrainCritter::IPickBehavior(int behavior) const
 {
-    if ((behavior >= fBehaviors.Count()) || (behavior < 0))
+    if ((behavior < 0) || ((size_t)behavior >= fBehaviors.size()))
         return IPickBehavior(kDefaultIdleBehName); // do an idle if the behavior is invalid
 
     CritterBehavior* behaviorObj = (CritterBehavior*)(fBehaviors[behavior]);
@@ -504,7 +504,7 @@ int plAvBrainCritter::IPickBehavior(int behavior) const
 int plAvBrainCritter::IPickBehavior(const std::string& behavior) const
 {
     // make sure the behavior exists
-    std::map<std::string, std::vector<int> >::const_iterator behaviorIterator = fUserBehaviors.find(behavior);
+    auto behaviorIterator = fUserBehaviors.find(behavior);
     if (behaviorIterator == fUserBehaviors.end())
     {
         if (behavior != kDefaultIdleBehName)
@@ -513,7 +513,7 @@ int plAvBrainCritter::IPickBehavior(const std::string& behavior) const
     }
     else
     {
-        unsigned numBehaviors = behaviorIterator->second.size();
+        size_t numBehaviors = behaviorIterator->second.size();
         if (numBehaviors == 0)
         {
             if (behavior != kDefaultIdleBehName)
@@ -529,7 +529,7 @@ int plAvBrainCritter::IPickBehavior(const std::string& behavior) const
 
 void plAvBrainCritter::IFadeOutBehavior()
 {
-    if ((fCurMode >= fBehaviors.Count()) || (fCurMode < 0))
+    if ((fCurMode < 0) || ((size_t)fCurMode >= fBehaviors.size()))
         return; // invalid fCurMode
 
     // fade out currently playing behavior
@@ -539,7 +539,7 @@ void plAvBrainCritter::IFadeOutBehavior()
 
 void plAvBrainCritter::IStartBehavior()
 {
-    if ((fNextMode >= fBehaviors.Count()) || (fNextMode < 0))
+    if ((fNextMode < 0) || (fNextMode >= fBehaviors.size()))
         return; // invalid fNextMode
 
     // fade in our behavior

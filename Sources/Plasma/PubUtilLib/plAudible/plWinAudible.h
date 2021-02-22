@@ -44,8 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plWinAudible_inc
 
 #include "plAudible.h"
-#include "hsTemplates.h"
 #include "hsMatrix44.h"
+
+#include <vector>
 
 class plSound;
 class hsResMgr;
@@ -100,8 +101,8 @@ public:
     bool        AddSound(plSound *pSnd, int index,bool is3D);
     int         AddSoundFromResource(plSound *pSnd, void* addr, int32_t size, bool is3D);
     void        GetStatus(plSoundMsg* pMsg) override;
-    int         GetNumSounds() const override { return fSoundObjs.Count(); }
-    plSound*    GetSound(int i) const override;
+    size_t      GetNumSounds() const override { return fSoundObjs.size(); }
+    plSound*    GetSound(size_t i) const override;
     int         GetSoundIndex(const char *keyname) const override;
     void        SetVolume(const float volume,int index = -1) override;
     void        SetMuted(bool muted, int index = -1) override;
@@ -125,7 +126,7 @@ public:
     virtual plDrawableSpans*    CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo);
     
 private:
-    hsTArray<plSound    *>      fSoundObjs;
+    std::vector<plSound *>      fSoundObjs;
     plKey                       fSceneNode;
     plWinAudibleProxy*          fProxyGen;
     hsMatrix44                  fLocalToWorld;

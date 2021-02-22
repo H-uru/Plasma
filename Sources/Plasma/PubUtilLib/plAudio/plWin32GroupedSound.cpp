@@ -72,18 +72,10 @@ plProfile_Extern( StaticSwizzleTime );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *posArray, float *volumeArray )
+void    plWin32GroupedSound::SetPositionArray(size_t numSounds, const uint32_t *posArray, const float *volumeArray)
 {
-    uint16_t  i;
-
-
-    fStartPositions.SetCountAndZero( numSounds );
-    fVolumes.SetCountAndZero( numSounds );
-    for( i = 0; i < numSounds; i++ )
-    {
-        fStartPositions[ i ] = posArray[ i ];
-        fVolumes[ i ] = volumeArray[ i ];
-    }
+    fStartPositions.assign(posArray, posArray + numSounds);
+    fVolumes.assign(volumeArray, volumeArray + numSounds);
 }
 
 //// IRead/IWrite ////////////////////////////////////////////////////////////
@@ -91,10 +83,10 @@ void    plWin32GroupedSound::SetPositionArray( uint16_t numSounds, uint32_t *pos
 void plWin32GroupedSound::IRead( hsStream *s, hsResMgr *mgr )
 {
     plWin32StaticSound::IRead( s, mgr );
-    uint16_t i, n = s->ReadLE16();
-    fStartPositions.SetCountAndZero( n );
-    fVolumes.SetCountAndZero( n );
-    for( i = 0; i < n; i++ )
+    uint16_t n = s->ReadLE16();
+    fStartPositions.resize(n);
+    fVolumes.resize(n);
+    for (uint16_t i = 0; i < n; i++)
     {
         fStartPositions[ i ] = s->ReadLE32();
         fVolumes[ i ] = s->ReadLEScalar();
@@ -105,9 +97,8 @@ void plWin32GroupedSound::IWrite( hsStream *s, hsResMgr *mgr )
 {
     plWin32StaticSound::IWrite( s, mgr );
 
-    s->WriteLE16( fStartPositions.GetCount() );
-    uint16_t i;
-    for( i = 0; i < fStartPositions.GetCount(); i++ )
+    s->WriteLE16((uint16_t)fStartPositions.size());
+    for (size_t i = 0; i < fStartPositions.size(); i++)
     {
         s->WriteLE32( fStartPositions[ i ] );
         s->WriteLEScalar( fVolumes[ i ] );
@@ -174,15 +165,14 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
 
     // Calculate the maximum size for our buffer. This will be the length of the longest sound we're going to 
     // have to play.
-    uint16_t i;
-    uint32_t maxSoundSize, len;
-    for( i = 1, maxSoundSize = 0; i < fStartPositions.GetCount(); i++ )
+    uint32_t maxSoundSize = 0, len = 0;
+    for (size_t i = 1; i < fStartPositions.size(); i++)
     {
         len = fStartPositions[ i ] - fStartPositions[ i - 1 ];
         if( len > maxSoundSize )
             maxSoundSize = len;
     }
-    len = buffer->GetDataLength() - fStartPositions[ fStartPositions.GetCount() - 1 ];
+    len = buffer->GetDataLength() - fStartPositions.back();
     if( len > maxSoundSize )
         maxSoundSize = len;
 
@@ -252,7 +242,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
 //// GetSoundLength //////////////////////////////////////////////////////////
 //  Gets the length (in seconds) of the given sound index from the group.
 
-float    plWin32GroupedSound::GetSoundLength( int16_t soundIndex )
+float    plWin32GroupedSound::GetSoundLength(uint16_t soundIndex)
 {
     plSoundBuffer *buffer = (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded();
     if(buffer)
@@ -266,10 +256,9 @@ float    plWin32GroupedSound::GetSoundLength( int16_t soundIndex )
 //// IGetSoundbyteLength /////////////////////////////////////////////////////
 //  uint8_t version of above.
 
-uint32_t      plWin32GroupedSound::IGetSoundbyteLength( int16_t soundIndex )
+uint32_t      plWin32GroupedSound::IGetSoundbyteLength(uint16_t soundIndex)
 {
-
-    if( soundIndex == fStartPositions.GetCount() - 1 )
+    if (soundIndex == fStartPositions.size() - 1)
         return ((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetDataLength() - fStartPositions[ soundIndex ];
     else
         return fStartPositions[ soundIndex + 1 ] - fStartPositions[ soundIndex ];
@@ -309,7 +298,7 @@ void    plWin32GroupedSound::IFillCurrentSound( int16_t newCurrent /*= -1*/ )
     {
         fCurrentSound = (uint16_t)newCurrent;
 
-        if( fCurrentSound >= fStartPositions.GetCount() )
+        if (fCurrentSound >= fStartPositions.size())
         {
             // Invalid index!
             hsAssert( false, "Invalid index in plWin32GroupedSound::IFillCurrentSound()" );

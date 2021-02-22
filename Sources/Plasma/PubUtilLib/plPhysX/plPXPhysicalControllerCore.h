@@ -64,9 +64,6 @@ class plSceneObject;
 class plPXPhysical;
 class plCollideMsg;
 
-template<typename T>
-class hsTArray;
-
 class plPXPhysicalControllerCore: public plPhysicalControllerCore
 {
 public:

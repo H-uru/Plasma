@@ -1099,7 +1099,8 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
         {
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                fClothToSOMap.ExpandAndZero(refMsg->fWhich + 1);
+                if ((size_t)refMsg->fWhich >= fClothToSOMap.size())
+                    fClothToSOMap.resize(refMsg->fWhich + 1);
                 fClothToSOMap[refMsg->fWhich] = so;
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
@@ -1881,7 +1882,7 @@ void plArmatureMod::ICustomizeApplicator()
 
 const plSceneObject *plArmatureMod::GetClothingSO(uint8_t lod) const 
 {
-    if (fClothToSOMap.GetCount() <= lod)
+    if (fClothToSOMap.size() <= lod)
         return nil;
 
     return fClothToSOMap[lod];
@@ -1985,9 +1986,8 @@ bool plArmatureMod::ValidateMesh()
     if (fWaitFlags & kNeedMesh)
     {
         fWaitFlags &= ~kNeedMesh;
-        int n = fMeshKeys.size();
-        
-        for(int i = 0; i < n; i++)
+
+        for (size_t i = 0; i < fMeshKeys.size(); i++)
         {
             plKey meshKey = fMeshKeys[i];
             plSceneObject * meshObj = (plSceneObject *)meshKey->GetObjectPtr();
@@ -2002,13 +2002,13 @@ bool plArmatureMod::ValidateMesh()
             EnableDrawingTree(meshObj, visible);
             
             // If we haven't created the mapping yet...
-            if (fClothToSOMap.GetCount() <= i || fClothToSOMap[i] == nil)
+            if (fClothToSOMap.size() <= i || fClothToSOMap[i] == nil)
             {
                 plGenRefMsg *refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, i, 0);
                 hsgResMgr::ResMgr()->SendRef(meshObj->GetKey(), refMsg, plRefFlags::kPassiveRef); 
             }
         }
-        if (!GetTarget(0)->GetKeyName().compare("Yeesha"))
+        if (GetTarget(0)->GetKeyName() == "Yeesha")
             ISetTransparentDrawOrder(true);
         else
             ISetTransparentDrawOrder(false);
@@ -2022,8 +2022,7 @@ plArmatureBrain * plArmatureMod::GetNextBrain(plArmatureBrain *brain)
     plArmatureBrain * result = nil;
     bool passedTarget = false;
 
-    int count = fBrains.size();
-    for(int i = count - 1; i >= 0; i--)
+    for (hsSsize_t i = fBrains.size() - 1; i >= 0; i--)
     {
         plArmatureBrain *curBrain = fBrains.at(i);
         if(passedTarget)
@@ -2035,11 +2034,6 @@ plArmatureBrain * plArmatureMod::GetNextBrain(plArmatureBrain *brain)
     }
 
     return result;
-}
-
-int plArmatureMod::GetBrainCount()
-{
-    return fBrains.size();
 }
 
 plArmatureBrain * plArmatureMod::FindBrainByClass(uint32_t classID) const
@@ -2328,8 +2322,7 @@ int plArmatureMod::GetCurrentGenericType()
 
 bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
 {
-    int i;
-    for (i = 0; i < GetBrainCount(); i++)
+    for (size_t i = 0; i < GetBrainCount(); i++)
     {
         plAvBrainGeneric *brain = plAvBrainGeneric::ConvertNoRef(GetBrain(i));
         if (brain && brain->MatchAnimNames(names, count))

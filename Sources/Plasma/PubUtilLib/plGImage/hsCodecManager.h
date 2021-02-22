@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsCodecManager_inc
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include <vector>
 
 class hsCodec;
 class plMipmap;
@@ -104,10 +104,10 @@ private:
         hsCodecList(uint32_t f) : fCompressionFormat(f) { }
 
         uint32_t                  fCompressionFormat;
-        hsTArray<hsCodecEntry>  fCodecList;
+        std::vector<hsCodecEntry> fCodecList;
     };
 
-    hsTArray<hsCodecList>       fCodecTable;
+    std::vector<hsCodecList> fCodecTable;
 };
 
 #endif // hsCodecManager_inc

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMorphSequence_inc
 #define plMorphSequence_inc
 
+#include <vector>
+
 #include "pnModifier/plSingleModifier.h"
 #include "plMorphArray.h"
 
@@ -183,7 +185,7 @@ public:
     void SetUseSharedMesh(bool on) { if(on)fMorphFlags |= kHaveShared; else fMorphFlags &= ~kHaveShared; }
     void AddSharedMesh(plSharedMesh* mesh);
     void RemoveSharedMesh(plSharedMesh* mesh);
-    static void FindMorphMods(const plSceneObject *so, hsTArray<const plMorphSequence*> &mods);
+    static void FindMorphMods(const plSceneObject *so, std::vector<const plMorphSequence*> &mods);
     plMorphSequenceSDLMod *GetSDLMod() const { return fMorphSDLMod; }
 };
 

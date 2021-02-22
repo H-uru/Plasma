@@ -57,7 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plFontCache_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plFileSystem.h"
 
@@ -69,7 +71,7 @@ class plFontCache : public hsKeyedObject
 {
     protected:  
 
-        hsTArray<plFont *>      fCache;
+        std::vector<plFont *>   fCache;
         plFileName              fCustFontDir;
 
         static plFontCache     *fInstance;

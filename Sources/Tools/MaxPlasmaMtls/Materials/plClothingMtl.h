@@ -128,7 +128,7 @@ public:
     static const UINT32 TextConstants[kMaxTiles * 2];
 
     hsTArray<plClothingTileset *> fTilesets;
-    hsTArray<plClothingElement *> fElements;
+    std::vector<plClothingElement *> fElements;
     virtual void InitTilesets();
     virtual void ReleaseTilesets();
     plClothingElement *FindElementByName(const ST::string &name) const;

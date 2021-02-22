@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLAVBRAIN_INC
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
@@ -51,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreatable.h"
 
 #include <deque>
+#include <vector>
 
 class plArmatureModBase;
 class plArmatureMod;
@@ -95,7 +95,7 @@ protected:
     
     plArmatureModBase *fArmature;
     plArmatureMod *fAvMod;
-    hsTArray<plArmatureBehavior*> fBehaviors;
+    std::vector<plArmatureBehavior*> fBehaviors;
 };
 
 

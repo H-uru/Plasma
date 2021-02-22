@@ -82,28 +82,27 @@ static plAudioFileReader *CreateReader( bool fullpath, const plFileName &filenam
 
 void plSoundPreloader::Run()
 {
-    hsTArray<plSoundBuffer*> templist;
+    std::vector<plSoundBuffer*> templist;
 
     while (fRunning)
     {
         {
             hsLockGuard(fCritSect);
-            while (fBuffers.GetCount())
-            {
-                templist.Append(fBuffers.Pop());
-            }
+            templist.insert(templist.end(), fBuffers.rbegin(), fBuffers.rend());
+            fBuffers.clear();
         }
 
-        if (templist.GetCount() == 0)
+        if (templist.empty())
         {
             fEvent.Wait();
         }
         else
         {
             plAudioFileReader *reader = nil;
-            while (templist.GetCount())
+            while (!templist.empty())
             {
-                plSoundBuffer* buf = templist.Pop();
+                plSoundBuffer* buf = templist.back();
+                templist.pop_back();
 
                 if (buf->GetData())
                 {
@@ -130,9 +129,10 @@ void plSoundPreloader::Run()
     // since the sound buffer will wait to be destroyed until it is marked as loaded
     {
         hsLockGuard(fCritSect);
-        while (fBuffers.GetCount())
+        while (!fBuffers.empty())
         {
-            plSoundBuffer* buf = fBuffers.Pop();
+            plSoundBuffer* buf = fBuffers.back();
+            fBuffers.pop_back();
             buf->SetLoaded(true);
         }
     }

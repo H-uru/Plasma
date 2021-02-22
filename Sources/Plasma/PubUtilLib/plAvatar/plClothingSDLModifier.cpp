@@ -112,7 +112,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     plClothingOutfit* clothing = GetClothingOutfit();
     hsAssert(clothing, "nil clothingOutfit");
     
-    hsTArray<plStateDataRecord*> SDRs;
+    std::vector<plStateDataRecord*> SDRs;
     const std::vector<plClothingItem*>& items = clothing->GetItemList();
     const std::vector<plClothingItemOptions*>& options = clothing->GetOptionList();
     
@@ -132,7 +132,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
         closetItem.fOptions = *options[i];
 
         PutSingleItemIntoSDR(&closetItem, clothesStateDesc->GetStateDataRecord(i));
-        SDRs.Append(clothesStateDesc->GetStateDataRecord(i));
+        SDRs.emplace_back(clothesStateDesc->GetStateDataRecord(i));
     }
 
     // skin tint
@@ -150,7 +150,7 @@ void plClothingSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)
     for (int i = 0; i < numBlends; i++)
         faceBlends->Set((uint8_t)(clothing->fSkinBlends[i] * 255), i);
 
-    SDRs.Append(appearanceStateDesc->GetStateDataRecord(0));
+    SDRs.emplace_back(appearanceStateDesc->GetStateDataRecord(0));
 
     // This logically belongs in the avatar.sdl file, but clothing.sdl is already broadcast to
     // other players when you join an age, and I don't want to broadcast all of avatar.sdl for

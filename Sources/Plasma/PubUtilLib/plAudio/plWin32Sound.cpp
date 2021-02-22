@@ -120,11 +120,8 @@ void plWin32Sound::IActuallyPlay()
         {
             // If we can't load (for ex., if audio is off), then we act like we played and then stopped
             // really fast. Thus, we need to send *all* of our callbacks off immediately and then Stop().
-            uint32_t i;
-            for( i = 0; i < fSoundEvents.GetCount(); i++ )
-            {
-                fSoundEvents[ i ]->SendCallbacks();
-            }
+            for (plSoundEvent* event : fSoundEvents)
+                event->SendCallbacks();
 
             // Now stop, 'cause we played really really really really fast
             fPlaying = false;
@@ -322,7 +319,7 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
             // Add a new sound event for this guy
             event = new plSoundEvent( type, byteTime, this );
             //fDSoundBuffer->AddPosNotify( byteTime );
-            fSoundEvents.Append( event );
+            fSoundEvents.emplace_back(event);
         }
     }
     else
@@ -333,7 +330,7 @@ void plWin32Sound::IAddCallback( plEventCallbackMsg *pMsg )
         {
             // Add a new sound event for this guy
             event = new plSoundEvent( type, this );
-            fSoundEvents.Append( event );
+            fSoundEvents.emplace_back(event);
         }
     }
 
@@ -344,19 +341,20 @@ void plWin32Sound::IRemoveCallback( plEventCallbackMsg *pMsg )
 {
     plSoundEvent::Types type = plSoundEvent::GetTypeFromCallbackMsg( pMsg );
 
-    for(int i = 0; i < fSoundEvents.GetCount(); ++i)
+    for (auto iter = fSoundEvents.begin(); iter != fSoundEvents.end(); ++iter)
     {
-        if( fSoundEvents[ i ]->GetType() == type )
+        plSoundEvent* event = *iter;
+        if (event->GetType() == type)
         {
-            if( fSoundEvents[ i ]->RemoveCallback( pMsg ) )
+            if (event->RemoveCallback(pMsg))
             {
-                if( fSoundEvents[ i ]->GetNumCallbacks() == 0 )
+                if (event->GetNumCallbacks() == 0)
                 {
-                    //if( fSoundEvents[ i ]->GetType() == plSoundEvent::kTime )
-                        //fDSoundBuffer->RemovePosNotify( fSoundEvents[ i ]->GetTime() );
+                    //if (event->GetType() == plSoundEvent::kTime)
+                        //fDSoundBuffer->RemovePosNotify(event->GetTime());
 
-                    delete fSoundEvents[ i ];
-                    fSoundEvents.Remove( i );
+                    delete event;
+                    fSoundEvents.erase(iter);
                 }
                 break;
             }
@@ -366,12 +364,12 @@ void plWin32Sound::IRemoveCallback( plEventCallbackMsg *pMsg )
 
 plSoundEvent *plWin32Sound::IFindEvent( plSoundEvent::Types type, uint32_t bytePos )
 {
-    for(int i = 0; i < fSoundEvents.GetCount(); ++i )
+    for (plSoundEvent* event : fSoundEvents)
     {
-        if( fSoundEvents[ i ]->GetType() == type )
+        if (event->GetType() == type)
         {
-            if( type != plSoundEvent::kTime || bytePos == fSoundEvents[ i ]->GetTime() )
-                return fSoundEvents[ i ];
+            if (type != plSoundEvent::kTime || bytePos == event->GetTime())
+                return event;
         }
     }
 

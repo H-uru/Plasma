@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_AGE_DESCRIPTION_H
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+
+#include <vector>
 
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plFile/plInitFileReader.h"
@@ -100,7 +101,7 @@ private:
     ST::string  fName;
 
     int32_t     fPageIterator;
-    hsTArray<plAgePage> fPages;
+    std::vector<plAgePage> fPages;
 
     plUnifiedTime fStart;
 
@@ -149,7 +150,7 @@ public:
 
     void        SeekFirstPage();
     plAgePage   *GetNextPage();
-    int         GetNumPages() const { return fPages.GetCount(); }
+    size_t      GetNumPages() const { return fPages.size(); }
     const plAgePage   *FindPage(const ST::string &name) const;
     bool FindLocation(const plLocation& loc) const;
     plLocation  CalcPageLocation( const ST::string &page ) const;

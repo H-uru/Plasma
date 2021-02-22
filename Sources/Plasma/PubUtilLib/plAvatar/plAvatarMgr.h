@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <map>
+#include <vector>
 
 #include "plFileSystem.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -227,7 +227,7 @@ protected:
     typedef std::vector<const plSpawnModifier*> plSpawnVec;
     plSpawnVec  fSpawnPoints;
 
-    hsTArray<plMaintainersMarkerModifier*> fMaintainersMarkers;
+    std::vector<plMaintainersMarkerModifier*> fMaintainersMarkers;
 
     // we're using a multimap, which is a map which allows multiple entries to
     // share the same key. the key we use is the initiator's player id; in the vast
@@ -238,7 +238,7 @@ protected:
     typedef std::multimap<uint32_t, plCoopCoordinator *> plCoopMap;
     plCoopMap fActiveCoops;
 
-    hsTArray<plLoadCloneMsg*> fCloneMsgQueue;
+    std::vector<plLoadCloneMsg*> fCloneMsgQueue;
     plStatusLog *fLog;  
 };
 
