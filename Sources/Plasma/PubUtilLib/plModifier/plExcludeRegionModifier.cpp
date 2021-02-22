@@ -139,7 +139,7 @@ bool plExcludeRegionModifier::MsgReceive(plMessage* msg)
         {
             plDetectorLog::Special("Clearing exclude region {}", GetKeyName());
             IMoveAvatars();
-            fContainedAvatars.Reset();
+            fContainedAvatars.clear();
             ISetPhysicalState(true);
         }
         else if (exclMsg->GetCmd() == plExcludeRegionMsg::kRelease)
@@ -162,14 +162,15 @@ bool plExcludeRegionModifier::MsgReceive(plMessage* msg)
         if (collideMsg->fEntering)
         {
             plDetectorLog::Special("Avatar enter exclude region {}", GetKeyName());
-            fContainedAvatars.Append(collideMsg->fOtherKey);
+            fContainedAvatars.emplace_back(collideMsg->fOtherKey);
         }
         else
         {
             plDetectorLog::Special("Avatar exit exclude region {}", GetKeyName());
-            int idx = fContainedAvatars.Find(collideMsg->fOtherKey);
-            if (idx != fContainedAvatars.kMissingIndex)
-                fContainedAvatars.Remove(idx);
+            auto idx = std::find(fContainedAvatars.cbegin(), fContainedAvatars.cend(),
+                                 collideMsg->fOtherKey);
+            if (idx != fContainedAvatars.cend())
+                fContainedAvatars.erase(idx);
         }
 
         return true;
@@ -238,8 +239,8 @@ int plExcludeRegionModifier::IFindClosestSafePoint(plKey avatar)
 // Move avatars out of volume
 void plExcludeRegionModifier::IMoveAvatars()
 {
-    for (int i = 0; i < fContainedAvatars.Count(); i++) {
-        plSceneObject* so = plSceneObject::ConvertNoRef(fContainedAvatars[i]->ObjectIsLoaded());
+    for (const plKey& avatarKey : fContainedAvatars) {
+        plSceneObject* so = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
         auto constAvMod = (const plArmatureMod*)so->GetModifierByType(plArmatureMod::Index());
         if (constAvMod) {
             plAvBrainGeneric *curGenBrain = (plAvBrainGeneric *)constAvMod->FindBrainByClass(plAvBrainGeneric::Index());
@@ -258,12 +259,12 @@ void plExcludeRegionModifier::IMoveAvatars()
                 );
                 pMsg->Send();
             } else {
-                int closestIdx = IFindClosestSafePoint(fContainedAvatars[i]);
+                int closestIdx = IFindClosestSafePoint(avatarKey);
 
                 if (closestIdx != -1) {
                     plAvSeekMsg* msg = new plAvSeekMsg;
                     msg->SetBCastFlag(plMessage::kPropagateToModifiers);
-                    msg->AddReceiver(fContainedAvatars[i]);
+                    msg->AddReceiver(avatarKey);
                     msg->fSmartSeek = fSeek;
                     msg->fDuration = fSeekTime;
                     msg->fSeekPoint = fSafePoints[closestIdx];
