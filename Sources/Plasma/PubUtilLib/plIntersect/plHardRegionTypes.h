@@ -43,13 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plHardRegionTypes_inc
 #define plHardRegionTypes_inc
 
+#include <vector>
+
 #include "plHardRegion.h"
-#include "hsTemplates.h"
 
 class plHardRegionComplex : public plHardRegion
 {
 protected:
-    hsTArray<plHardRegion*>         fSubRegions;
+    std::vector<plHardRegion*> fSubRegions;
 
 public:
     plHardRegionComplex();
@@ -67,8 +68,8 @@ public:
     // Now Complex specifics
     bool MsgReceive(plMessage* msg) override;
 
-    uint16_t          GetNumSubs() const { return fSubRegions.GetCount(); }
-    const plHardRegion* GetSub(int i) const { return fSubRegions[i]; }
+    size_t GetNumSubs() const { return fSubRegions.size(); }
+    const plHardRegion* GetSub(size_t i) const { return fSubRegions[i]; }
 };
 
 class plHardRegionUnion : public plHardRegionComplex
