@@ -76,9 +76,9 @@ plLogicModifier::~plLogicModifier()
 // in boxes) are okay or not.
 bool plLogicModifier::VerifyConditions(plMessage* msg)
 {
-    for (int i = 0; i < fConditionList.Count(); i++)
+    for (plConditionalObject* condition : fConditionList)
     {
-        if (!fConditionList[i]->Verify(msg))
+        if (!condition->Verify(msg))
             return false;
     }
     return true;
@@ -93,8 +93,8 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
         plConditionalObject* pCond = plConditionalObject::ConvertNoRef( pCondMsg->GetRef() );
         if (pCond && (pCondMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)))
         {
-            if (fConditionList.Count() <= pCondMsg->fWhich)
-                fConditionList.ExpandAndZero(pCondMsg->fWhich + 1);
+            if ((hsSsize_t)fConditionList.size() <= pCondMsg->fWhich)
+                fConditionList.resize(pCondMsg->fWhich + 1);
             
             fConditionList[pCondMsg->fWhich] = pCond;
             pCond->SetLogicMod(this);
@@ -133,10 +133,10 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
             }
 
             if (!ignore)
-            {       
-                for (int i = 0; i < fConditionList.Count(); i++)
+            {
+                for (plConditionalObject* condition : fConditionList)
                 {
-                    if (fConditionList[i]->MsgReceive(msg))
+                    if (condition->MsgReceive(msg))
                         return true;
                 }
             }
@@ -146,9 +146,9 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
     plNotifyMsg* pNotify = plNotifyMsg::ConvertNoRef(msg);
     if (pNotify)
     {
-        for (int i = 0; i < fConditionList.Count(); i++)
+        for (plConditionalObject* condition : fConditionList)
         {
-            if (fConditionList[i]->MsgReceive(msg))
+            if (condition->MsgReceive(msg))
                 return true;
         }
     }
@@ -171,11 +171,11 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
                 }
                 else
                 {
-                    for (int i = 0; i < fConditionList.Count(); i++)
+                    for (plConditionalObject* condition : fConditionList)
                     {
-                        if (!fConditionList[i]->Verify(msg))
+                        if (!condition->Verify(msg))
                         {
-                            plDetectorLog::Red("{}: LogicMod {} conditional not met", fConditionList[i]->GetKeyName(), fConditionList[i]->ClassName());
+                            plDetectorLog::Red("{}: LogicMod {} conditional not met", condition->GetKeyName(), condition->ClassName());
                         }
                     }
                 }
@@ -196,9 +196,9 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
 
 void plLogicModifier::RequestTrigger(bool netRequest)
 {
-    for (int i = 0; i < fConditionList.Count(); i++)
+    for (plConditionalObject* condition : fConditionList)
     {
-        if (!fConditionList[i]->Satisfied())
+        if (!condition->Satisfied())
             return;
     }
 
@@ -222,19 +222,18 @@ void plLogicModifier::PreTrigger(bool netRequest)
 void plLogicModifier::Reset(bool bCounterReset)
 {
     plLogicModBase::Reset(bCounterReset);
-    for (int i = 0; i < fConditionList.Count(); i++)
-        fConditionList[i]->Reset();
+    for (plConditionalObject* condition : fConditionList)
+        condition->Reset();
 }
 
 void plLogicModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
     plLogicModBase::Read(stream, mgr);
     plCondRefMsg* refMsg;
-    int n = stream->ReadLE32();
-    fConditionList.SetCountAndZero(n);
-    int i;
-    for(i = 0; i < n; i++ )
-    {   
+    uint32_t n = stream->ReadLE32();
+    fConditionList.assign(n, nullptr);
+    for (uint32_t i = 0; i < n; i++)
+    {
         refMsg = new plCondRefMsg(GetKey(), i);
         mgr->ReadKeyNotifyMe(stream,refMsg, plRefFlags::kActiveRef);
     }
@@ -244,9 +243,9 @@ void plLogicModifier::Read(hsStream* stream, hsResMgr* mgr)
 void plLogicModifier::Write(hsStream* stream, hsResMgr* mgr)
 {
     plLogicModBase::Write(stream, mgr);
-    stream->WriteLE32(fConditionList.GetCount());
-    for( int i = 0; i < fConditionList.GetCount(); i++ )
-        mgr->WriteKey(stream, fConditionList[i]);
+    stream->WriteLE32((uint32_t)fConditionList.size());
+    for (plConditionalObject* condition : fConditionList)
+        mgr->WriteKey(stream, condition);
     stream->WriteLE32(fMyCursor);
 }
 
@@ -255,7 +254,7 @@ void plLogicModifier::AddCondition(plConditionalObject* c)
     plGenRefMsg *msg= new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1);
     hsgResMgr::ResMgr()->AddViaNotify(c->GetKey(), msg, plRefFlags::kActiveRef); 
 
-    fConditionList.Append(c); 
+    fConditionList.emplace_back(c);
     c->SetLogicMod(this);
     if (c->HasFlag(plConditionalObject::kLocalElement))
         SetFlag(kLocalElement);
@@ -263,9 +262,9 @@ void plLogicModifier::AddCondition(plConditionalObject* c)
 
 void plLogicModifier::VolumeIgnoreExtraEnters(bool ignore /* = true */)
 {
-    for (int curCondition = 0; curCondition < fConditionList.GetCount(); ++curCondition)
+    for (plConditionalObject* curCondition : fConditionList)
     {
-        plVolumeSensorConditionalObject* condition = plVolumeSensorConditionalObject::ConvertNoRef(fConditionList[curCondition]);
+        plVolumeSensorConditionalObject* condition = plVolumeSensorConditionalObject::ConvertNoRef(curCondition);
         if (condition)
             condition->IgnoreExtraEnters(ignore);
     }
@@ -273,8 +272,8 @@ void plLogicModifier::VolumeIgnoreExtraEnters(bool ignore /* = true */)
 
 void plLogicModifier::VolumeNoArbitration(bool noArbitration)
 {
-    for (size_t i = 0; i < fConditionList.Count(); ++i) {
-        plVolumeSensorConditionalObject* condition = plVolumeSensorConditionalObject::ConvertNoRef(fConditionList[i]);
+    for (plConditionalObject* curCondition : fConditionList) {
+        plVolumeSensorConditionalObject* condition = plVolumeSensorConditionalObject::ConvertNoRef(curCondition);
         if (condition)
             condition->NoServerArbitration(noArbitration);
     }

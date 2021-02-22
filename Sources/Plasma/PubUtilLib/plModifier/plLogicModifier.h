@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLogicModifier_inc
 #define plLogicModifier_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "pnModifier/plLogicModBase.h"
 
@@ -52,10 +52,10 @@ class plConditionalObject;
 class plLogicModifier : public plLogicModBase
 {
 protected:
-
-    hsTArray<plConditionalObject*>  fConditionList;
+    std::vector<plConditionalObject*> fConditionList;
 
     void PreTrigger(bool netRequest) override;
+
 public:
     plLogicModifier();
     ~plLogicModifier();
