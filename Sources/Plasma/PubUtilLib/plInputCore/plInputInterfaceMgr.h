@@ -52,9 +52,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plInputInterfaceMgr_h
 #define _plInputInterfaceMgr_h
 
-#include "pnModifier/plSingleModifier.h"
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
+#include <vector>
+
+#include "pnModifier/plSingleModifier.h"
 #include "pnInputCore/plKeyMap.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -77,14 +78,9 @@ class plInputInterfaceMgr : public plSingleModifier
 
         static plInputInterfaceMgr  *fInstance;
 
-        hsTArray<plInputInterface *>    fInterfaces;
+        std::vector<plInputInterface *> fInterfaces;
         std::vector<plCtrlCmd *>        fMessageQueue;
-        hsTArray<plKey>                 fReceivers;
-
-#ifdef MCN_DISABLE_OLD_WITH_NEW_HACK
-        hsTArray<ControlEventCode>      fDisabledCodes;
-        hsTArray<uint32_t>                fDisabledKeys;
-#endif
+        std::vector<plKey>              fReceivers;
 
         bool        fClickEnabled;
         int32_t       fCurrentCursor;
