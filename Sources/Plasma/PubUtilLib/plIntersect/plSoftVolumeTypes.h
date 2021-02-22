@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSoftVolumeTypes_inc
 #define plSoftVolumeTypes_inc
 
+#include <vector>
+
 #include "plSoftVolume.h"
-#include "hsTemplates.h"
 
 class plVolumeIsect;
 
@@ -81,7 +82,7 @@ public:
 class plSoftVolumeComplex : public plSoftVolume
 {
 protected:
-    hsTArray<plSoftVolume*>         fSubVolumes;
+    std::vector<plSoftVolume*> fSubVolumes;
 
 public:
     plSoftVolumeComplex();
@@ -101,8 +102,8 @@ public:
     // Now Complex specifics
     bool MsgReceive(plMessage* msg) override;
 
-    uint16_t          GetNumSubs() const { return fSubVolumes.GetCount(); }
-    const plSoftVolume* GetSub(int i) const { return fSubVolumes[i]; }
+    size_t GetNumSubs() const { return fSubVolumes.size(); }
+    const plSoftVolume* GetSub(size_t i) const { return fSubVolumes[i]; }
 };
 
 class plSoftVolumeUnion : public plSoftVolumeComplex
