@@ -379,7 +379,7 @@ bool plResponderComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     int numStates = fCompPB->Count(kResponderState);
 
     plResponderModifier *responder = IGetResponderMod(node);
-    responder->fStates.SetCount(numStates);
+    responder->fStates.resize(numStates);
 
     for (int i = 0; i < numStates; i++)
     {
@@ -465,8 +465,7 @@ void plResponderComponent::IConvertCmds(plMaxNode* node, plErrorMsg* pErrMsg, in
         {
             msg->SetSender(responder->GetKey());
             responder->AddCommand(msg, state);
-            int idx = responder->fStates[state].fCmds.Count()-1;
-            cmdIdxs[i] = idx;
+            cmdIdxs[i] = (int)(responder->fStates[state].fCmds.size() - 1);
         }
     }
 }
@@ -481,9 +480,9 @@ void plResponderComponent::ISetupDefaultWait(plMaxNode* node, plErrorMsg* pErrMs
 {
     IParamBlock2 *statePB = (IParamBlock2*)fCompPB->GetReferenceTarget(kResponderState, 0, state);
     plResponderModifier *responder = IGetResponderMod(node);
-    hsTArray<plResponderModifier::plResponderCmd>& cmds = responder->fStates[state].fCmds;
+    std::vector<plResponderModifier::plResponderCmd>& cmds = responder->fStates[state].fCmds;
 
-    int numCmds = cmds.Count();
+    int numCmds = (int)cmds.size();
     for (int i = 0; i < numCmds; i++)
     {
         IParamBlock2 *waitPB = GetWaitBlk(statePB, i);
@@ -514,7 +513,7 @@ void plResponderComponent::IConvertCmdWaits(plMaxNode* node, plErrorMsg* pErrMsg
 {
     IParamBlock2 *statePB = (IParamBlock2*)fCompPB->GetReferenceTarget(kResponderState, 0, state);
     plResponderModifier *responder = IGetResponderMod(node);
-    hsTArray<plResponderModifier::plResponderCmd>& cmds = responder->fStates[state].fCmds;
+    std::vector<plResponderModifier::plResponderCmd>& cmds = responder->fStates[state].fCmds;
 
     int numWaits = statePB->Count(kStateCmdWait);
     for (int i = 0; i < numWaits; i++)

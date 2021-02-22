@@ -150,12 +150,12 @@ void plResponderSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSt
 
     if (numVars)
     {
-        bool stateValid = (curState >= 0 && curState < fResponder->fStates.Count());
+        bool stateValid = (curState >= 0 && (size_t)curState < fResponder->fStates.size());
         hsAssert(stateValid, "Received invalid responder state");
         if (!stateValid)
             return;
 
-        bool cmdValid = curCommand == -1 || (curCommand >= 0 && curCommand < fResponder->fStates[curState].fCmds.Count());
+        bool cmdValid = curCommand == -1 || (curCommand >= 0 && (size_t)curCommand < fResponder->fStates[curState].fCmds.size());
         hsAssert(stateValid, "Received invalid responder command");
         if (!cmdValid)
             return;
