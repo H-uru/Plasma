@@ -101,13 +101,3 @@ enum EAsyncPerfCounter {
 };
 
 long AsyncPerfGetCounter (unsigned id);
-
-
-/*****************************************************************************
-*
-*   Misc functions
-*
-***/
-
-void AsyncSignalShutdown ();
-void AsyncWaitForShutdown ();

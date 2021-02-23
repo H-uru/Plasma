@@ -390,17 +390,6 @@ void NtDestroy (unsigned exitThreadWaitMs) {
     INtSocketDestroy();
 }
 
-//===========================================================================
-void NtSignalShutdown () {
-    SetEvent(s_waitEvent);
-}
-
-//===========================================================================
-void NtWaitForShutdown () {
-    if (s_waitEvent)
-        WaitForSingleObject(s_waitEvent, INFINITE);
-}
-
 } using namespace Nt;
 
 
@@ -414,18 +403,11 @@ void NtWaitForShutdown () {
 void NtGetApi (AsyncApi * api) {
     api->initialize             = NtInitialize;
     api->destroy                = NtDestroy;
-    api->signalShutdown         = NtSignalShutdown;
-    api->waitForShutdown        = NtWaitForShutdown;
     
     api->socketConnect          = NtSocketConnect;
     api->socketConnectCancel    = NtSocketConnectCancel;
     api->socketDisconnect       = NtSocketDisconnect;
     api->socketDelete           = NtSocketDelete;
     api->socketSend             = NtSocketSend;
-    api->socketWrite            = NtSocketWrite;
-    api->socketSetNotifyProc    = NtSocketSetNotifyProc;
-    api->socketSetBacklogAlloc  = NtSocketSetBacklogAlloc;
-    api->socketStartListening   = NtSocketStartListening;
-    api->socketStopListening    = NtSocketStopListening;
     api->socketEnableNagling    = NtSocketEnableNagling;
 }

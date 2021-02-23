@@ -101,8 +101,6 @@ void TimerDestroy (unsigned exitThreadWaitMs);
 // Core
 typedef void (* FInitialize) ();
 typedef void (* FDestroy) (unsigned exitThreadWaitMs);
-typedef void (* FSignalShutdown) ();
-typedef void (* FWaitForShutdown) ();
 
 // Sockets
 typedef void (* FAsyncSocketConnect) (
@@ -134,33 +132,6 @@ typedef bool (* FAsyncSocketSend) (
     unsigned        bytes
 );
 
-typedef bool (* FAsyncSocketWrite) (
-    AsyncSocket     sock,
-    const void *    buffer,
-    unsigned        bytes,
-    void *          param
-);
-
-typedef void (* FAsyncSocketSetNotifyProc) (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-);
-
-typedef void (* FAsyncSocketSetBacklogAlloc) (
-    AsyncSocket             sock,
-    unsigned                bufferSize
-);
-
-typedef unsigned (* FAsyncSocketStartListening) (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-
-typedef void (* FAsyncSocketStopListening) (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-
 typedef void (* FAsyncSocketEnableNagling) (
     AsyncSocket             conn,
     bool                    enable
@@ -179,20 +150,13 @@ struct AsyncApi {
     // Init
     FInitialize                     initialize;
     FDestroy                        destroy;
-    FSignalShutdown                 signalShutdown;
-    FWaitForShutdown                waitForShutdown;
-    
+
     // Sockets
     FAsyncSocketConnect             socketConnect;
     FAsyncSocketConnectCancel       socketConnectCancel;
     FAsyncSocketDisconnect          socketDisconnect;
     FAsyncSocketDelete              socketDelete;
     FAsyncSocketSend                socketSend;
-    FAsyncSocketWrite               socketWrite;
-    FAsyncSocketSetNotifyProc       socketSetNotifyProc;
-    FAsyncSocketSetBacklogAlloc     socketSetBacklogAlloc;
-    FAsyncSocketStartListening      socketStartListening;
-    FAsyncSocketStopListening       socketStopListening;
     FAsyncSocketEnableNagling       socketEnableNagling;
 };
 

@@ -1121,50 +1121,6 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 ***/
 
 //===========================================================================
-unsigned NtSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    plNetAddress addr = listenAddr;
-    {
-        hsLockGuard(s_listenCrit);
-        StartListenThread();
-        for (;;) {
-            // if the port is already open then just increment the reference count
-            if (ListenPortIncrement(addr, notifyProc, 1))
-                break;
-
-            SOCKET s;
-            if (INVALID_SOCKET == (s = ListenSocket(&addr)))
-                break;
-
-            // create a new listener record
-            NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
-            listener->hSocket       = s;
-            listener->addr          = addr;
-            listener->notifyProc    = notifyProc;
-            listener->listenCount   = 1;
-            break;
-        }
-    }
-
-    unsigned port = addr.GetPort();
-    if (port)
-        SetEvent(s_listenEvent);
-
-    return port;
-}
-
-//===========================================================================
-void NtSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    hsLockGuard(s_listenCrit);
-    ListenPortIncrement(listenAddr, notifyProc, -1);
-}
-
-//===========================================================================
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
@@ -1366,63 +1322,6 @@ bool NtSocketSend (
 }
 
 //===========================================================================
-bool NtSocketWrite (
-    AsyncSocket     conn,
-    const void *    buffer,
-    unsigned        bytes,
-    void *          param
-) {
-    NtSock * sock = (NtSock *) conn;
-    ASSERT(buffer);
-    ASSERT(bytes);
-    ASSERT(sock->ioType == kNtSocket);
-
-//    LogMsg(kLogPerf, "Nt sock {#x} writing {} bytes", (uintptr_t)sock, bytes);
-
-    bool result;
-    hsLockGuard(sock->critsect);
-    for (;;) {
-        // Is the socket closing?
-        if (sock->closeTimeMs) {
-            result = false;
-            break;
-        }
-
-        // init Operation
-        NtOpSocketWrite * op        = new NtOpSocketWrite;
-        op->overlapped.Offset       = 0;
-        op->overlapped.OffsetHigh   = 0;
-        op->overlapped.hEvent       = nil;
-        op->opType                  = kOpQueuedSocketWrite;
-        op->asyncId                 = INtConnSequenceStart(sock);
-        op->notify                  = true;
-        op->pending                 = 1;
-        op->signalComplete          = nil;
-        sock->opList.Link(op, kListTail);
-
-        // init OpWrite
-        op->queueTimeMs             = TimeGetMs();
-        op->bytesAlloc              = bytes;
-        op->write.param             = param;
-        op->write.asyncId           = op->asyncId;
-        op->write.buffer            = (uint8_t *) buffer;
-        op->write.bytes             = bytes;
-        op->write.bytesProcessed    = bytes;
-        PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
-
-        ++sock->ioCount;
-
-        if (op == sock->opList.Head())
-            result = INtSocketOpCompleteQueuedSocketWrite((NtSock *) sock, op);
-        else
-            result = true;
-        break;
-    }
-
-    return result;
-}
-
-//===========================================================================
 // -- use only for server<->client connections, not server<->server!
 // -- Note that Nagling is enabled by default
 void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
@@ -1443,23 +1342,6 @@ void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
         if (result)
             LogMsg(kLogError, "setsockopt failed (nagling)");
     }
-}
-
-//===========================================================================
-void NtSocketSetNotifyProc (
-    AsyncSocket            conn,
-    FAsyncNotifySocketProc notifyProc
-) {
-    NtSock * sock = (NtSock *) conn;
-    ASSERT(sock->ioType == kNtSocket);
-    ((NtSock *) sock)->notifyProc = notifyProc;
-}
-
-//===========================================================================
-void NtSocketSetBacklogAlloc (AsyncSocket conn, unsigned bufferSize) {
-    NtSock * sock = (NtSock *) conn;
-    ASSERT(sock->ioType == kNtSocket);
-    ((NtSock *) sock)->backlogAlloc = bufferSize;
 }
 
 } using namespace Nt;

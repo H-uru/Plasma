@@ -168,18 +168,6 @@ void AsyncCoreDestroy (unsigned waitMs) {
 }
 
 //============================================================================
-void AsyncSignalShutdown () {
-    ASSERT(g_api.signalShutdown);
-    g_api.signalShutdown();
-}
-
-//============================================================================
-void AsyncWaitForShutdown () {
-    ASSERT(g_api.waitForShutdown);
-    g_api.waitForShutdown();
-}
-
-//============================================================================
 long AsyncPerfGetCounter (unsigned id) {
     static_assert(std::size(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
     ASSERT(id < kNumAsyncPerfCounters);
