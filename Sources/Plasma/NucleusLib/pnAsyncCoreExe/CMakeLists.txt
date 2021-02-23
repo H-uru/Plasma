@@ -21,7 +21,6 @@ set(pnAysncCoreExe_PRIVATE_NT
     Private/Nt/pnAceNt.h
     Private/Nt/pnAceNtInt.h
     Private/Nt/pnAceNtSocket.cpp
-    Private/Nt/pnAceNtThread.cpp
 )
 
 set(pnAsyncCoreExe_PRIVATE_UNIX

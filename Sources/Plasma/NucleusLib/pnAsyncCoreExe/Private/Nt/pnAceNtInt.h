@@ -193,7 +193,6 @@ void NtInitialize ();
 void NtDestroy (unsigned exitThreadWaitMs);
 void NtSignalShutdown ();
 void NtWaitForShutdown ();
-void NtSleep (unsigned sleepMs);
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,

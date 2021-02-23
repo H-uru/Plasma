@@ -99,9 +99,6 @@ std::thread AsyncThreadCreate (
 
 void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs);
 
-// This function should ONLY be called during shutdown while waiting for things to expire
-void AsyncSleep (unsigned sleepMs);
-
 
 /*****************************************************************************
 *
