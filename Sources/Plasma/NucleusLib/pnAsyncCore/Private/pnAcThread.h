@@ -60,17 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// for IoWaitId/TimerCreate/TimerUpdate
-const unsigned kAsyncTimeInfinite = (unsigned) -1;
+namespace std { class thread; }
 
-#ifdef   _MSC_VER
-#define  THREADCALL __stdcall
-#else
-#define  THREADCALL CDECL
-#endif
+// for IoWaitId/TimerCreate/TimerUpdate
+constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
 struct AsyncThread;
-typedef unsigned (THREADCALL * FAsyncThreadProc)(AsyncThread * thread);
+typedef void (* FAsyncThreadProc)(AsyncThread * thread);
 
 
 // Threads are also allowed to set the workTimeMs field of their
@@ -83,7 +79,7 @@ typedef unsigned (THREADCALL * FAsyncThreadProc)(AsyncThread * thread);
 struct AsyncThread {
     LINK(AsyncThread)   link;
     FAsyncThreadProc    proc;
-    void *              handle;
+    std::thread *       handle;
     void *              argument;
     unsigned            workTimeMs;
     wchar_t             name[16];
@@ -95,11 +91,13 @@ struct AsyncThread {
 *
 ***/
 
-void * AsyncThreadCreate (
+std::thread AsyncThreadCreate (
     FAsyncThreadProc    proc,
     void *              argument,
     const wchar_t       name[]
 );
+
+void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs);
 
 // This function should ONLY be called during shutdown while waiting for things to expire
 void AsyncSleep (unsigned sleepMs);

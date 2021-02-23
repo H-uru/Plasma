@@ -65,7 +65,7 @@ static bool                     s_running;
 static HANDLE                   s_waitEvent;
 
 static long                     s_ioThreadCount;
-static HANDLE                   s_ioThreadHandles[kMaxWorkerThreads];
+static std::thread              s_ioThreadHandles[kMaxWorkerThreads];
 
 static HANDLE                   s_ioPort;
 static unsigned                 s_pageSizeMask;
@@ -208,7 +208,7 @@ static void INtOpDispatch (
 }
 
 //===========================================================================
-static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
+static void NtWorkerThreadProc (AsyncThread * thread) {
     unsigned sleepMs    = INFINITE;
     while (s_running) {
 
@@ -239,10 +239,7 @@ static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
         }
 
         sleepMs = INFINITE;
-        continue;
     }
-
-    return 0;
 }
 
 
@@ -345,7 +342,7 @@ void NtInitialize () {
 
     // create IO worker threads
     for (long thread = 0; thread < s_ioThreadCount; thread++) {
-        s_ioThreadHandles[thread] = (HANDLE) AsyncThreadCreate(
+        s_ioThreadHandles[thread] = AsyncThreadCreate(
             NtWorkerThreadProc,
             (void *) thread,
             L"NtWorkerThread"
@@ -374,10 +371,9 @@ void NtDestroy (unsigned exitThreadWaitMs) {
 
         // Close each thread
         for (thread = 0; thread < s_ioThreadCount; thread++) {
-            if (s_ioThreadHandles[thread]) {
-                WaitForSingleObject(s_ioThreadHandles[thread], exitThreadWaitMs);
-                CloseHandle(s_ioThreadHandles[thread]);
-                s_ioThreadHandles[thread] = nil;
+            if (s_ioThreadHandles[thread].joinable()) {
+                AsyncThreadTimedJoin(s_ioThreadHandles[thread], exitThreadWaitMs);
+                s_ioThreadHandles[thread] = {};
             }
         }
 

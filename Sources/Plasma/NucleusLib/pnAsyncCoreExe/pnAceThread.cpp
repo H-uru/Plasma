@@ -63,8 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-static unsigned CALLBACK CreateThreadProc (LPVOID param) {
-
+static void CreateThreadProc(AsyncThread * thread)
+{
 #ifdef USE_VLD
     VLDEnable();
 #endif
@@ -72,17 +72,13 @@ static unsigned CALLBACK CreateThreadProc (LPVOID param) {
     PerfAddCounter(kAsyncPerfThreadsTotal, 1);
     PerfAddCounter(kAsyncPerfThreadsCurr, 1);
 
-    // Initialize thread
-    AsyncThread * thread = (AsyncThread *) param;
-
     // Call thread procedure
-    unsigned result = thread->proc(thread);
+    thread->proc(thread);
 
     // Cleanup thread
     delete thread;
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-    return result;
 }
 
 
@@ -108,7 +104,7 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
 ***/
 
 //===========================================================================
-void * AsyncThreadCreate (
+std::thread AsyncThreadCreate (
     FAsyncThreadProc    threadProc,
     void *              argument,
     const wchar_t         name[]
@@ -119,22 +115,15 @@ void * AsyncThreadCreate (
     thread->argument        = argument;
     thread->workTimeMs      = kAsyncTimeInfinite;
     StrCopy(thread->name, name, std::size(thread->name));
-    
-    // Create thread suspended
-    unsigned threadId;
-    HANDLE handle = (HANDLE) _beginthreadex(
-        (LPSECURITY_ATTRIBUTES) 0,
-        0,          // stack size
-        CreateThreadProc,
-        thread,     // argument
-        0,          // initFlag
-        &threadId
-    );
-    if (!handle) {
-        LogMsg(kLogFatal, "{} ({})", __FILE__, GetLastError());
-        ErrorAssert(__LINE__, __FILE__, "_beginthreadex failed");
-    }
 
-    thread->handle = handle;
+    std::thread handle(&CreateThreadProc, thread);
+    thread->handle = &handle;
     return handle;
+}
+
+void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
+{
+    // HACK: No cross-platform way to perform a timed join :(
+    WaitForSingleObject(thread.native_handle(), timeoutMs);
+    thread.detach();
 }

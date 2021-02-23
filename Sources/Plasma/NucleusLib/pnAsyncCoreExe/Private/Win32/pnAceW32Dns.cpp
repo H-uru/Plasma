@@ -74,7 +74,7 @@ struct Lookup {
 
 static std::recursive_mutex     s_critsect;
 static LISTDECL(Lookup, link)   s_lookupList;
-static HANDLE                   s_lookupThread;
+static std::thread              s_lookupThread;
 static HWND                     s_lookupWindow;
 static unsigned                 s_nextLookupCancelId = 1;
 
@@ -147,7 +147,7 @@ static void LookupFindAndProcess (HANDLE cancelHandle, unsigned error) {
 }
 
 //===========================================================================
-static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
+static void LookupThreadProc (AsyncThread * thread) {
     static const char WINDOW_CLASS[] = "AsyncLookupWnd";
     WNDCLASS wc;
     memset(&wc, 0, sizeof(wc));
@@ -205,13 +205,11 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
     // cleanup
     DestroyWindow(s_lookupWindow);
     s_lookupWindow = nil;
-
-    return 0;
 }
 
 //===========================================================================
 static void StartLookupThread () {
-    if (s_lookupThread)
+    if (s_lookupThread.joinable())
         return;
 
     // create a shutdown event
@@ -225,7 +223,7 @@ static void StartLookupThread () {
         ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());
 
     // create a thread to perform lookups
-    s_lookupThread = (HANDLE) AsyncThreadCreate(
+    s_lookupThread = AsyncThreadCreate(
         LookupThreadProc,
         lookupStartEvent,
         L"AsyncLookupThread"
@@ -245,11 +243,10 @@ static void StartLookupThread () {
 
 //===========================================================================
 void DnsDestroy (unsigned exitThreadWaitMs) {
-    if (s_lookupThread) {
+    if (s_lookupThread.joinable()) {
         PostMessage(s_lookupWindow, WM_LOOKUP_EXIT, 0, 0);
-        WaitForSingleObject(s_lookupThread, exitThreadWaitMs);
-        CloseHandle(s_lookupThread);
-        s_lookupThread = nil;
+        AsyncThreadTimedJoin(s_lookupThread, exitThreadWaitMs);
+        s_lookupThread = {};
         ASSERT(!s_lookupWindow);
     }
 }

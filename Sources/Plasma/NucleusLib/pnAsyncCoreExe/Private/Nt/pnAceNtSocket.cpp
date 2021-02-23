@@ -135,7 +135,7 @@ static LISTDECL(NtListener, nextPort)   s_listenList;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
 static bool                             s_runListenThread;
 static unsigned                         s_nextConnectCancelId = 1;
-static HANDLE                           s_listenThread;
+static std::thread                      s_listenThread;
 static HANDLE                           s_listenEvent;
 
 
@@ -703,7 +703,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
 }
 
 //===========================================================================
-static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
+static void ListenThreadProc (AsyncThread *) {
     fd_set readfds;
     fd_set writefds;
     for (;;) {
@@ -770,13 +770,11 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
         }
         INtConnPostOperation(nil, op, 0);
     }
-
-    return 0;
 }
 
 //===========================================================================
 static void StartListenThread () {
-    if (s_listenThread)
+    if (s_listenThread.joinable())
         return;
 
     s_listenEvent = CreateEvent(
@@ -789,7 +787,7 @@ static void StartListenThread () {
 
     // create a low-priority thread to listen on ports
     s_runListenThread = true;
-    s_listenThread = (HANDLE) AsyncThreadCreate(
+    s_listenThread = AsyncThreadCreate(
         ListenThreadProc,
         nil,
         L"NtListenThread"
@@ -898,11 +896,10 @@ void INtSocketInitialize () {
 //===========================================================================
 void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
     s_runListenThread = false;
-    if (s_listenThread) {
+    if (s_listenThread.joinable()) {
         SetEvent(s_listenEvent);
-        WaitForSingleObject(s_listenThread, exitThreadWaitMs);
-        CloseHandle(s_listenThread);
-        s_listenThread = nil;
+        AsyncThreadTimedJoin(s_listenThread, exitThreadWaitMs);
+        s_listenThread = {};
     }
     if (s_listenEvent) {
         CloseHandle(s_listenEvent);

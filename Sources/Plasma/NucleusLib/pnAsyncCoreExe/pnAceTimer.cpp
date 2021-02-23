@@ -65,7 +65,7 @@ struct AsyncTimer {
 
 static std::recursive_mutex s_timerCrit;
 static FAsyncTimerProc      s_timerCurr;
-static HANDLE               s_timerThread;
+static std::thread          s_timerThread;
 static HANDLE               s_timerEvent;
 static bool                 s_running;
 
@@ -159,7 +159,7 @@ static inline unsigned RunTimers () {
 }
 
 //===========================================================================
-static unsigned THREADCALL TimerThreadProc (AsyncThread *) {
+static void TimerThreadProc (AsyncThread *) {
     do {
         unsigned sleepMs;
         {
@@ -169,13 +169,12 @@ static unsigned THREADCALL TimerThreadProc (AsyncThread *) {
 
         WaitForSingleObject(s_timerEvent, sleepMs);
     } while (s_running);
-    return 0;
 }
 
 //===========================================================================
 // inline because it is called only once
 static inline void InitializeTimer () {
-    if (!s_timerThread) {
+    if (!s_timerThread.joinable()) {
         s_running = true;
 
         s_timerEvent = CreateEvent(
@@ -187,7 +186,7 @@ static inline void InitializeTimer () {
         if (!s_timerEvent)
             ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
 
-        s_timerThread = (HANDLE) AsyncThreadCreate(
+        s_timerThread = AsyncThreadCreate(
             TimerThreadProc,
             nil,
             L"AsyncTimerThread"
@@ -206,11 +205,10 @@ static inline void InitializeTimer () {
 void TimerDestroy (unsigned exitThreadWaitMs) {
     s_running = false;
 
-    if (s_timerThread) {
+    if (s_timerThread.joinable()) {
         SetEvent(s_timerEvent);
-        WaitForSingleObject(s_timerThread, exitThreadWaitMs);
-        CloseHandle(s_timerThread);
-        s_timerThread = nil;
+        AsyncThreadTimedJoin(s_timerThread, exitThreadWaitMs);
+        s_timerThread = {};
     }
 
     if (s_timerEvent) {
