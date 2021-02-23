@@ -120,10 +120,3 @@ std::thread AsyncThreadCreate (
     thread->handle = &handle;
     return handle;
 }
-
-void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
-{
-    // HACK: No cross-platform way to perform a timed join :(
-    WaitForSingleObject(thread.native_handle(), timeoutMs);
-    thread.detach();
-}

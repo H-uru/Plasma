@@ -170,6 +170,14 @@ static void FirstThreadTaskProc (AsyncThread * param) {
 ***/
 
 //============================================================================
+void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
+{
+    // HACK: No cross-platform way to perform a timed join :(
+    WaitForSingleObject(thread.native_handle(), timeoutMs);
+    thread.detach();
+}
+
+//============================================================================
 void AsyncThreadTaskInitialize (unsigned threads) {
     // Create completion port
     s_taskPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
