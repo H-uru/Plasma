@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm.h"
 
-#include <thread>
 #include <chrono>
+#include <thread>
 
 #include "plProduct.h"
 #include "hsResMgr.h"
