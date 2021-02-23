@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
 
+#include <thread>
+
 #include "pnNetBase/pnNbError.h"
 #include "pnUtils/pnUtils.h"
 
@@ -59,8 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   Type definitions
 *
 ***/
-
-namespace std { class thread; }
 
 // for IoWaitId/TimerCreate/TimerUpdate
 constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
