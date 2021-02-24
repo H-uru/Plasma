@@ -104,7 +104,7 @@ endif()
 add_subdirectory(plLocalizationBenchmark)
 
 # Max Stuff goes below here...
-if(3dsm_FOUND AND 3dsm_BUILD_PLUGIN)
+if(PLASMA_BUILD_MAX_PLUGIN)
     add_subdirectory(MaxComponent)
     add_subdirectory(MaxConvert)
     add_subdirectory(MaxExport)

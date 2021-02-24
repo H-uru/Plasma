@@ -1,5 +1,3 @@
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxPlasmaMtls_HEADERS
     plBMSampler.h
     plDetailCurveCtrl.h
@@ -128,7 +126,7 @@ target_link_libraries(
         plAvatar
         plSurface
 
-        ${3dsm_LIBRARIES}
+        3dsm
 )
 
 plasma_optimize_target(MaxPlasmaMtls PRECOMPILED_HEADERS Pch.h)

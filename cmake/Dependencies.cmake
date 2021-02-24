@@ -115,6 +115,11 @@ set_package_properties(
     TYPE REQUIRED
 )
 set_package_properties(
+    Uuid PROPERTIES
+    DESCRIPTION "UUID library for Linux (provided by util-linux)"
+    TYPE REQUIRED
+)
+set_package_properties(
     VLD PROPERTIES
     URL "https://kinddragon.github.io/vld/"
     DESCRIPTION "Visual Leak Debugger for software compiled with Microsoft Visual C++"

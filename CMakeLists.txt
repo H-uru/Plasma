@@ -51,7 +51,6 @@ find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
 find_package(freetype)
 find_package(JPEG REQUIRED)
-find_package(LIBSECRET)
 find_package(Ogg REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -59,7 +58,6 @@ find_package(Opus)
 find_package(PhysX REQUIRED)
 find_package(PNG REQUIRED)
 find_package(Python3 3.8 REQUIRED Interpreter Development)
-find_package(Security)
 find_package(Speex)
 find_package(string_theory 2.0 REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -68,19 +66,18 @@ find_package(Vorbis REQUIRED)
 find_package(VPX)
 find_package(ZLIB REQUIRED)
 
+if(APPLE)
+    find_package(Security)
+elseif(UNIX)
+    find_package(LIBSECRET)
+    find_package(Uuid REQUIRED)
+elseif(WIN32)
+    find_package(3dsm)
+    find_package(VLD)
+endif()
+
 include(BuildOptimizations)
 include(PythonUtils)
-
-if(WIN32)
-    # libCurl isn't smart enough to detect this for us, so we have to configure it ourselves
-    option(CURL_IS_STATIC "Using the static version of libcurl?" ON)
-    if(CURL_IS_STATIC)
-        add_definitions(-DCURL_STATICLIB)
-    endif(CURL_IS_STATIC)
-
-    # Same story for expat
-    option(EXPAT_IS_STATIC "Using the static version of libexpat" ON)
-endif(WIN32)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 if(PLASMA_EXTERNAL_RELEASE)
@@ -107,7 +104,8 @@ if(PLASMA_PIPELINE STREQUAL "OpenGL")
     add_definitions(-DPLASMA_PIPELINE_GL)
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
-#Allow us to disable certain parts of the build
+# Allow us to disable certain parts of the build
+cmake_dependent_option(PLASMA_BUILD_MAX_PLUGIN "Do we want to build the 3ds Max plugin?" OFF "TARGET 3dsm" OFF)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
@@ -116,28 +114,7 @@ cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus:
 cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)
 cmake_dependent_option(USE_VPX "Use VPX for movie support" ON "TARGET VPX::VPX" OFF)
 cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "USE_OPUS AND USE_VPX" OFF)
-
-if(WIN32)
-    find_package(3dsm)
-
-    option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
-    if (3dsm_BUILD_PLUGIN AND 3dsm_FOUND)
-        add_definitions(-DBUILDING_MAXPLUGIN)
-    endif()
-else()
-    set(3dsm_BUILD_PLUGIN OFF)
-endif()
-
-if(WIN32)
-    find_package(VLD)
-
-
-    option(USE_VLD "Build and link with Visual Leak Detector" OFF)
-    if(USE_VLD AND VLD_FOUND)
-        add_definitions(-DUSE_VLD)
-        include_directories(${VLD_INCLUDE_DIR})
-    endif()
-endif()
+cmake_dependent_option(USE_VLD "Build and link with Visual Leak Detector" OFF "TARGET VLD::VLD" OFF)
 
 # Configure compile-time compiler-specific flags and other config files
 include(cmake/CompilerChecks.cmake)

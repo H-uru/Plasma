@@ -1,6 +1,3 @@
-include_directories(${3dsm_INCLUDE_DIR})
-include_directories(${OPENAL_INCLUDE_DIR})
-
 set(MaxComponent_HEADERS
     BipedKiller.h
     ComponentDummies.h
@@ -218,7 +215,7 @@ target_link_libraries(
         pfPython
         pfSurface
 
-        ${3dsm_LIBRARIES}
+        3dsm
         Comctl32
         Shlwapi
 )

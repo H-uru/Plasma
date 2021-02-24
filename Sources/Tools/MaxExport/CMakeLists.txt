@@ -1,5 +1,3 @@
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxExport_HEADERS
     plErrorMsg.h
     plExportDlg.h
@@ -36,7 +34,7 @@ target_link_libraries(
         plStatusLog
         pfPython
 
-        ${3dsm_LIBRARIES}
+        3dsm
 )
 
 plasma_optimize_target(MaxExport PRECOMPILED_HEADERS Pch.h)

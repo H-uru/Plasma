@@ -37,5 +37,3 @@ if(Speex_FOUND AND NOT TARGET Speex::speex)
         )
     endif()
 endif()
-
-set(Speex_INCLUDE_DIRS ${Speex_INCLUDE_DIR})

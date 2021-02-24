@@ -37,5 +37,3 @@ if(VPX_FOUND AND NOT TARGET VPX::VPX)
         )
     endif()
 endif()
-
-set(VPX_INCLUDE_DIRS ${VPX_INCLUDE_DIR})

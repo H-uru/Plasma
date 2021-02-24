@@ -1,5 +1,3 @@
-include_directories(${3dsm_INCLUDE_DIR})
-
 set(MaxConvert_HEADERS
     hsControlConverter.h
     hsConverterUtils.h
@@ -70,7 +68,7 @@ target_link_libraries(
         pfCamera
         pfSurface
 
-        ${3dsm_LIBRARIES}
+        3dsm
 )
 
 plasma_optimize_target(MaxConvert PRECOMPILED_HEADERS Pch.h)

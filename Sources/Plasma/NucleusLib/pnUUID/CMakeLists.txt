@@ -1,24 +1,8 @@
 set(pnUUID_SOURCES
     pnUUID.cpp
+    $<$<PLATFORM_ID:Windows>:pnUUID_Win32.cpp>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:pnUUID_Unix.cpp>
 )
-
-if(WIN32)
-    set(pnUUID_SOURCES ${pnUUID_SOURCES} pnUUID_Win32.cpp)
-endif(WIN32)
-
-if(UNIX)
-    if(NOT APPLE)
-        find_package(Uuid REQUIRED)
-        set_package_properties(Uuid PROPERTIES
-            DESCRIPTION "UUID library for Linux (provided by util-linux)"
-            TYPE REQUIRED
-        )
-
-        include_directories(${Uuid_INCLUDE_DIR})
-    endif()
-
-    set(pnUUID_SOURCES ${pnUUID_SOURCES} pnUUID_Unix.cpp)
-endif(UNIX)
 
 set(pnUUID_HEADERS
     pnUUID.h
@@ -30,7 +14,7 @@ target_link_libraries(
     PUBLIC
         CoreLib
     PRIVATE
-        $<$<PLATFORM_ID:Linux>:${Uuid_LIBRARIES}>
+        $<$<PLATFORM_ID:Linux>:Uuid::Uuid>
         $<$<PLATFORM_ID:Windows>:rpcrt4>
 )
 
