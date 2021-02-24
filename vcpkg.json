@@ -3,6 +3,7 @@
     "version-string": "2.0.70.2",
     "description": "Cyan Worlds' Plasma game engine",
     "dependencies": [
+      "asio",
       "curl",
       "expat",
       "freetype",

@@ -36,6 +36,7 @@ Plasma currently requires the following third-party libraries:
 - zlib - http://zlib.net/
 - libcurl - http://curl.haxx.se/
 - string_theory - http://github.com/zrax/string_theory/
+- Standalone ASIO - https://think-async.com/Asio/
 
 The following libraries are optional:
 

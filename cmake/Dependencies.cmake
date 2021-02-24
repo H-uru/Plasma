@@ -7,6 +7,12 @@ set_package_properties(
     TYPE OPTIONAL
 )
 set_package_properties(
+    ASIO PROPERTIES
+    URL "https://think-async.com/Asio/"
+    DESCRIPTION "Async framework for C++"
+    TYPE REQUIRED
+)
+set_package_properties(
     CURL PROPERTIES
     URL "http://curl.haxx.se/libcurl/"
     DESCRIPTION "Multi-protocol file transfer library"
