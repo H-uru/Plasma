@@ -628,8 +628,7 @@ void CliFileConn::AutoReconnect () {
     hsLockGuard(timerCritsect);
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
-    AsyncTimerCreate(
-        &reconnectTimer,
+    reconnectTimer = AsyncTimerCreate(
         CliFileConnTimerReconnectProc,
         0,  // immediate callback
         this
@@ -669,8 +668,7 @@ void CliFileConn::AutoPing () {
         timerPeriod = sock ? 0 : kAsyncTimeInfinite;
     }
 
-    AsyncTimerCreate(
-        &pingTimer,
+    pingTimer = AsyncTimerCreate(
         CliFileConnPingTimerProc,
         timerPeriod,
         this

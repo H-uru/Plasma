@@ -568,8 +568,7 @@ void CliGkConn::AutoReconnect () {
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
     hsLockGuard(critsect);
-    AsyncTimerCreate(
-        &reconnectTimer,
+    reconnectTimer = AsyncTimerCreate(
         CliGkConnReconnectTimerProc,
         0,  // immediate callback
         this
@@ -596,8 +595,7 @@ void CliGkConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    AsyncTimerCreate(
-        &pingTimer,
+    pingTimer = AsyncTimerCreate(
         CliGkConnPingTimerProc,
         sock ? 0 : kAsyncTimeInfinite,
         this

@@ -65,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <asio/executor_work_guard.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
+#include <asio/steady_timer.hpp>
 
 #include <process.h>
 

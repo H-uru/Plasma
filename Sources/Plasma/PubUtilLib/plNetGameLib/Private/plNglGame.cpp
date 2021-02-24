@@ -414,8 +414,7 @@ void CliGmConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    AsyncTimerCreate(
-        &pingTimer,
+    pingTimer = AsyncTimerCreate(
         CliGmConnPingTimerProc,
         sock ? 0 : kAsyncTimeInfinite,
         this

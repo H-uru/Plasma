@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTIMER_H
 
+#include <functional>
 
 /*****************************************************************************
 *
@@ -67,13 +68,12 @@ struct AsyncTimer;
 
 // Return callbackMs to wait that long until next callback.
 // Return kAsyncTimeInfinite to stop callbacks (note: does not destroy Timer structure)
-typedef unsigned (* FAsyncTimerProc)(void * param);
+typedef std::function<unsigned (void* /* param */)> FAsyncTimerProc;
 
 // 1) Timer procs do not get starved by I/O, they are called periodically.
 // 2) Timer procs will never be called by multiple threads simultaneously.
-void AsyncTimerCreate (
-    AsyncTimer **   timer,
-    FAsyncTimerProc timerProc, 
+AsyncTimer* AsyncTimerCreate (
+    FAsyncTimerProc timerProc,
     unsigned        callbackMs,
     void *          param = nullptr
 );

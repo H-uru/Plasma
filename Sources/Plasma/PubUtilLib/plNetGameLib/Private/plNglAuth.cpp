@@ -1680,8 +1680,7 @@ void CliAuConn::AutoReconnect () {
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
     hsLockGuard(critsect);
-    AsyncTimerCreate(
-        &reconnectTimer,
+    reconnectTimer = AsyncTimerCreate(
         CliAuConnReconnectTimerProc,
         0,  // immediate callback
         this
@@ -1708,8 +1707,7 @@ void CliAuConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    AsyncTimerCreate(
-        &pingTimer,
+    pingTimer = AsyncTimerCreate(
         CliAuConnPingTimerProc,
         sock ? 0 : kAsyncTimeInfinite,
         this

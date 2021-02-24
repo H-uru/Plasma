@@ -886,8 +886,7 @@ static unsigned SocketCloseTimerCallback (void *) {
 
 //===========================================================================
 void INtSocketInitialize () {
-    AsyncTimerCreate(
-        &s_socketTimer,
+    s_socketTimer = AsyncTimerCreate(
         SocketCloseTimerCallback,
         kAsyncTimeInfinite
     );
