@@ -103,7 +103,7 @@ struct AsyncNotifySocket {
     void *          param;
     AsyncId         asyncId;
 
-    AsyncNotifySocket() : param(nil), asyncId(nil) { }
+    AsyncNotifySocket() : param(), asyncId() { }
 };
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
@@ -125,8 +125,8 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
     unsigned        bytesProcessed;
 
     AsyncNotifySocketListen()
-        : buildId(0), buildType(0), branchId(0), buffer(nil), bytes(0),
-          bytesProcessed(0) { }
+        : buildId(), buildType(), branchId(), buffer(), bytes(),
+          bytesProcessed() { }
 };
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {
@@ -134,7 +134,7 @@ struct AsyncNotifySocketRead : AsyncNotifySocket {
     unsigned        bytes;
     unsigned        bytesProcessed;
 
-    AsyncNotifySocketRead() : buffer(nil), bytes(0), bytesProcessed(0) { }
+    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
 };
 
 typedef AsyncNotifySocketRead AsyncNotifySocketWrite;
@@ -209,8 +209,8 @@ void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
-    void *                  param = nil,
-    const void *            sendData = nil,
+    void *                  param = nullptr,
+    const void *            sendData = nullptr,
     unsigned                sendBytes = 0,
     unsigned                connectMs = 0,      // 0 => use default value
     unsigned                localPort = 0       // 0 => don't bind local port

@@ -203,7 +203,7 @@ void plVisMgr::ForceVisSets(const hsBitVector& enabled, bool isNot)
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-plVisMgr* plGlobalVisMgr::fInstance = nil;
+plVisMgr* plGlobalVisMgr::fInstance = nullptr;
 
 void plGlobalVisMgr::Init()
 {
@@ -216,6 +216,6 @@ void plGlobalVisMgr::DeInit()
     if (fInstance)
     {
         fInstance->UnRegisterAs(kGlobalVisMgr_KEY);
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }

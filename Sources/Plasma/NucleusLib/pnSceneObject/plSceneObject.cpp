@@ -77,20 +77,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 int dbgCurrentTest = 0;
 
 plSceneObject::plSceneObject()
-:   fDrawInterface(nil),
-    fSimulationInterface(nil),
-    fCoordinateInterface(nil),
-    fAudioInterface(nil),
-    fSceneNode(nil)
+:   fDrawInterface(),
+    fSimulationInterface(),
+    fCoordinateInterface(),
+    fAudioInterface()
 {
 }
 
 plSceneObject::~plSceneObject()
 {
-    SetDrawInterface(nil);
-    SetSimulationInterface(nil);
-    SetCoordinateInterface(nil);
-    SetAudioInterface(nil);
+    SetDrawInterface(nullptr);
+    SetSimulationInterface(nullptr);
+    SetCoordinateInterface(nullptr);
+    SetAudioInterface(nullptr);
 
     IRemoveAllGenerics();
 
@@ -157,7 +156,7 @@ void plSceneObject::Write(hsStream* stream, hsResMgr* mgr)
         mgr->WriteKey(stream, generic);
 
     for (auto iter = fModifiers.crbegin(); iter != fModifiers.crend(); ++iter)
-        if ((*iter)->GetKey() == nil)
+        if ((*iter)->GetKey() == nullptr)
             RemoveModifier(*iter);
 
     stream->WriteLE32((uint32_t)fModifiers.size());
@@ -349,13 +348,13 @@ void plSceneObject::ISetInterface(plObjInterface* iface)
 void plSceneObject::IRemoveInterface(int16_t idx, plObjInterface* who)
 {
     if( plFactory::DerivesFrom(plDrawInterface::Index(), idx) )
-        ISetDrawInterface(nil);
+        ISetDrawInterface(nullptr);
     else if( plFactory::DerivesFrom(plSimulationInterface::Index(), idx) )
-        ISetSimulationInterface(nil);
+        ISetSimulationInterface(nullptr);
     else if( plFactory::DerivesFrom(plCoordinateInterface::Index(), idx) )
-        ISetCoordinateInterface(nil);
+        ISetCoordinateInterface(nullptr);
     else if( plFactory::DerivesFrom(plAudioInterface::Index(), idx) )
-        ISetAudioInterface(nil);
+        ISetAudioInterface(nullptr);
     else
         IRemoveGeneric(who);
 }
@@ -438,16 +437,16 @@ const plModifier* plSceneObject::GetModifierByType(uint16_t classIdx) const
             return modifier;
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plSceneObject::MsgReceive(plMessage* msg)
 {
 
-#if 0   // objects are only in the nil room when they are being paged out
+#if 0   // objects are only in the nullptr room when they are being paged out
     // TEMP - until we have another way to neutralize objects
-    // for an object in the 'nil' room, ignore most msgs    
-    if (GetSceneNode()==nil && !plNodeChangeMsg::ConvertNoRef(msg) &&
+    // for an object in the 'nullptr' room, ignore most msgs
+    if (GetSceneNode() == nullptr && !plNodeChangeMsg::ConvertNoRef(msg) &&
         !plRefMsg::ConvertNoRef(msg)&&
         !plSelfDestructMsg::ConvertNoRef(msg))
         return false;
@@ -457,7 +456,7 @@ bool plSceneObject::MsgReceive(plMessage* msg)
     // If it's a bcast, let our own dispatcher find who's interested.
     plTransformMsg* trans;
     plEvalMsg* eval = plEvalMsg::ConvertNoRef(msg);
-    plAttachMsg* att = nil;
+    plAttachMsg* att = nullptr;
     if( eval )
     {
         // Switched things over so that modifiers register for the eval message themselves,
@@ -721,7 +720,7 @@ plObjInterface* plSceneObject::GetVolatileGenericInterface(uint16_t classIdx) co
         if (generic && plFactory::DerivesFrom(classIdx, generic->ClassIndex()))
             return generic;
     }
-    return nil;
+    return nullptr;
 }
 
 void plSceneObject::IAddGeneric(plObjInterface* gen)
@@ -744,7 +743,7 @@ void plSceneObject::IRemoveGeneric(plObjInterface* gen)
         const auto idx = std::find(fGenerics.cbegin(), fGenerics.cend(), gen);
         if (idx != fGenerics.cend())
         {
-            gen->ISetOwner(nil);
+            gen->ISetOwner(nullptr);
             fGenerics.erase(idx);
         }
     }
@@ -755,7 +754,7 @@ void plSceneObject::IRemoveAllGenerics()
     for (plObjInterface* generic : fGenerics)
     {
         if (generic)
-            generic->ISetOwner(nil);
+            generic->ISetOwner(nullptr);
     }
     fGenerics.clear();
 }
@@ -765,7 +764,7 @@ void plSceneObject::ISetDrawInterface(plDrawInterface* di)
     if( fDrawInterface != di )
     {
         if( fDrawInterface )
-            fDrawInterface->ISetOwner(nil);
+            fDrawInterface->ISetOwner(nullptr);
 
         fDrawInterface = di;
         if( di )
@@ -778,7 +777,7 @@ void plSceneObject::ISetSimulationInterface(plSimulationInterface* si)
     if( fSimulationInterface != si )
     {
         if( fSimulationInterface )
-            fSimulationInterface->ISetOwner(nil);
+            fSimulationInterface->ISetOwner(nullptr);
 
         fSimulationInterface = si;
         if( si )
@@ -791,7 +790,7 @@ void plSceneObject::ISetAudioInterface(plAudioInterface* ai)
     if( fAudioInterface != ai )
     {
         if( fAudioInterface )
-            fAudioInterface->ISetOwner(nil);
+            fAudioInterface->ISetOwner(nullptr);
         fAudioInterface = ai;
         if( ai )
             ai->ISetOwner(this);
@@ -803,7 +802,7 @@ void plSceneObject::ISetCoordinateInterface(plCoordinateInterface* ci)
     if( fCoordinateInterface != ci )
     {
         if( fCoordinateInterface )
-            fCoordinateInterface->ISetOwner(nil);
+            fCoordinateInterface->ISetOwner(nullptr);
 
         fCoordinateInterface = ci;
         if( ci )

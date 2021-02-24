@@ -117,9 +117,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void DummyCodeIncludeFuncMisc() 
 {
-    RegisterNotification(plPageInfoComponent::NotifyProc, nil, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(plPageInfoComponent::NotifyProc, nil, NOTIFY_SYSTEM_POST_RESET);
-    RegisterNotification(plPageInfoComponent::NotifyProc, nil, NOTIFY_SYSTEM_POST_NEW);
+    RegisterNotification(plPageInfoComponent::NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(plPageInfoComponent::NotifyProc, nullptr, NOTIFY_SYSTEM_POST_RESET);
+    RegisterNotification(plPageInfoComponent::NotifyProc, nullptr, NOTIFY_SYSTEM_POST_NEW);
 }
 
 
@@ -149,7 +149,7 @@ ParamBlockDesc2 gInterestBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
     1, _T("Player Attention"), 0, &gInterestDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_INTEREST, IDS_COMP_INTERESTS, 0, 0, NULL,
+    IDD_COMP_INTEREST, IDS_COMP_INTERESTS, 0, 0, nullptr,
 
     // params
     kInteresting,       _T("interesting"),      TYPE_STRING,        0, 0,   
@@ -216,7 +216,7 @@ protected:
         if( idx == CB_ERR )
             return;
         char *agePath = (char *)ComboBox_GetItemData( GetDlgItem( fhDlg, IDC_COMP_LOCATION_AGECOMBO ), idx );
-        if( agePath == nil )
+        if (agePath == nullptr)
             return;
 
         // Get the age description
@@ -227,12 +227,12 @@ protected:
 
         const char *curPage = fPB->GetStr(plPageInfoComponent::kInfoPage);
         if (curPage && *curPage == '\0')
-            curPage = nil;
+            curPage = nullptr;
 
         // Load the page combo and select the saved page (if it's in there)
         plAgePage *page;
         aged.SeekFirstPage();
-        while( ( page = aged.GetNextPage() ) != nil )
+        while ((page = aged.GetNextPage()) != nullptr)
         {
             int idx = ComboBox_AddString(hPageCombo, page->GetName().c_str() );
             if (curPage && (page->GetName() == curPage))
@@ -246,7 +246,7 @@ protected:
         while( ComboBox_GetCount( combo ) > 0 )
         {
             char *path = (char *)ComboBox_GetItemData( combo, 0 );
-            if( path != nil )
+            if (path != nullptr)
                 delete [] path;
             ComboBox_DeleteString( combo, 0 );
         }
@@ -546,7 +546,7 @@ bool plPageInfoComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
         if (node->GetSwappableGeom())
         {
             snKey->Release(so->GetKey());
-            node->GetMaxNodeData()->SetSceneObject(nil);
+            node->GetMaxNodeData()->SetSceneObject(nullptr);
 
             // Since child refs are now passive, this isn't needed.
             /*
@@ -577,7 +577,7 @@ void    plPageInfoComponent::IVerifyLatestAgeAsset( const ST::string &ageName, c
     plFileName ageFileName, assetPath;
 
    MaxAssInterface *assetMan = GetMaxAssInterface();
-   if( assetMan == nil )
+   if (assetMan == nullptr)
        return;      // No AssetMan available
 
     // Try to find it in assetMan
@@ -668,7 +668,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
 
     // Find our page
     const char *compPBPageName = fCompPB->GetStr( kInfoPage );
-    if( compPBPageName == nil )
+    if (compPBPageName == nullptr)
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
@@ -684,7 +684,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     plAgePage   *page;
     aged->SeekFirstPage();
 
-    while( ( page = aged->GetNextPage() ) != nil )
+    while ((page = aged->GetNextPage()) != nullptr)
     {
         if( page->GetName().compare_i( compPBPageName ) == 0 )
         {
@@ -755,7 +755,7 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
 {
     int             seqPrefix, seqSuffix = 0;
     plAgeDescription *aged = GetAgeDesc( ageName );
-    if( aged == nil )
+    if (aged == nullptr)
     {
         // ???? This ain't good...attempt to get the resMgr to give us a temporary seqNum...
         return 0;
@@ -766,7 +766,7 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
     // Find our page
     plAgePage *page;
     aged->SeekFirstPage();
-    while( ( page = aged->GetNextPage() ) != nil )
+    while ((page = aged->GetNextPage()) != nullptr)
     {
         if (page->GetName().compare_i(pageName) == 0)
         {
@@ -799,9 +799,9 @@ plAgeDescription *plPageInfoUtils::GetAgeDesc( const ST::string &ageName )
 const char* LocCompGetPage(plComponentBase* comp)
 {
     if (!comp)
-        return nil;
+        return nullptr;
 
-    const char* page = nil;
+    const char* page = nullptr;
     
     if (comp->ClassID() == PAGEINFO_CID)
     {
@@ -812,7 +812,7 @@ const char* LocCompGetPage(plComponentBase* comp)
     if (page && *page != '\0')
         return page;
     
-    return nil;
+    return nullptr;
 }
 
 static const char *CheckPageInfoCompsRecur(plMaxNode *node)
@@ -830,7 +830,7 @@ static const char *CheckPageInfoCompsRecur(plMaxNode *node)
         if (result)
             return result;
     }
-    return nil;
+    return nullptr;
 }
 
 void plPageInfoComponent::NotifyProc(void *param, NotifyInfo *info)
@@ -838,7 +838,7 @@ void plPageInfoComponent::NotifyProc(void *param, NotifyInfo *info)
     if (info->intcode == NOTIFY_FILE_POST_OPEN)
     {
         const char *ageName = CheckPageInfoCompsRecur((plMaxNode*)GetCOREInterface()->GetRootNode());
-        if (ageName != nil)
+        if (ageName != nullptr)
             strncpy( fCurrExportedAge, ageName, sizeof( fCurrExportedAge ) );
     }
     else if (info->intcode == NOTIFY_SYSTEM_POST_RESET ||
@@ -879,7 +879,7 @@ ParamBlockDesc2 gRoomCompBk
 (   
     1, _T("Location"), 0, &gRoomDesc, P_AUTO_CONSTRUCT+ P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_ROOM, IDS_COMP_ROOMS, 0,   0,  NULL,
+    IDD_COMP_ROOM, IDS_COMP_ROOMS, 0,   0,  nullptr,
 
     // params
     kLocAge,            _T("Age"),      TYPE_STRING,        0, 0,
@@ -945,7 +945,7 @@ ParamBlockDesc2 gViewFacingBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
     1, _T("View Facing"), 0, &gViewFacingDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 #if 0
-    IDD_COMP_VIEWFACE, IDS_COMP_VIEWFACES, 0, 0, NULL,
+    IDD_COMP_VIEWFACE, IDS_COMP_VIEWFACES, 0, 0, nullptr,
 
     kTypeofView,    _T("ViewType"),     TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_VF1,  IDC_RADIO_VF2,  IDC_RADIO_VF3,  IDC_RADIO_VF4, 
@@ -1336,7 +1336,7 @@ ParamBlockDesc2 gCamViewBk
 (
     plComponent::kBlkComp, _T("CamView"), 0, &gCamViewDesc, P_AUTO_CONSTRUCT/* + P_AUTO_UI*/, plComponent::kRefComp,
 
-//  IDD_COMP_CAMVIEW, IDS_COMP_CAMVIEWS, 0, 0, NULL,
+//  IDD_COMP_CAMVIEW, IDS_COMP_CAMVIEWS, 0, 0, nullptr,
 
     end
 );
@@ -1354,7 +1354,7 @@ bool plCamViewComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     Object* obj = node->EvalWorldState(timeVal).obj;
 
-    GenCamera* cam = nil;
+    GenCamera* cam = nullptr;
     if( obj->CanConvertToType(Class_ID(LOOKAT_CAM_CLASS_ID, 0)) )
         cam = (GenCamera *) obj->ConvertToType(timeVal, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
     else 
@@ -1623,7 +1623,7 @@ plFollowMod* plFollowComponent::IMakeFollowMod(plMaxNode* pNode, plErrorMsg* pEr
 
     if( plFollowMod::kObject == lType )
     {
-        if(fCompPB->GetINode(kLeaderObjectSel) != NULL)
+        if (fCompPB->GetINode(kLeaderObjectSel) != nullptr)
         {
             plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kLeaderObjectSel);
 
@@ -1739,7 +1739,7 @@ ParamBlockDesc2 gUnleashBk
 (
     plComponent::kBlkComp, _T("Unleash"), 0, &gUnleashDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_UNLEASH, IDS_COMP_UNLEASH, 0, 0, NULL,
+    IDD_COMP_UNLEASH, IDS_COMP_UNLEASH, 0, 0, nullptr,
 
     end
 );
@@ -1791,7 +1791,7 @@ ParamBlockDesc2 gForceRTLightBk
 (
     plComponent::kBlkComp, _T("ForceRTLight"), 0, &gForceRTLightDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FORCE_RTLIGHT, IDS_COMP_FORCE_RTLIGHT, 0, 0, NULL,
+    IDD_COMP_FORCE_RTLIGHT, IDS_COMP_FORCE_RTLIGHT, 0, 0, nullptr,
 
     end
 );
@@ -2324,7 +2324,7 @@ protected:
         for( int i = 0; i < comp->GetNumBitmaps(); i++ )
         {
             plLayerTex *layer = comp->GetBitmap( i );
-            if( layer != nil )
+            if (layer != nullptr)
             {
                 const char *str = layer->GetPBBitmap()->bi.Filename();
                 int idx = SendMessage( ctrl, LB_ADDSTRING, 0, (LPARAM)str );
@@ -2336,7 +2336,7 @@ protected:
                     maxWidth = strSize.cx;
             }
         }
-        SendMessage( ctrl, LB_SETHORIZONTALEXTENT, (WPARAM)maxWidth, NULL );
+        SendMessage(ctrl, LB_SETHORIZONTALEXTENT, (WPARAM)maxWidth, 0);
         ReleaseDC( ctrl, dc );
 
         EnableWindow( GetDlgItem( hDlg, IDC_IMAGE_EDIT ), false );
@@ -2389,7 +2389,7 @@ public:
                     {
                         idx = SendDlgItemMessage( hWnd, IDC_IMAGE_LIST, LB_GETITEMDATA, (WPARAM)idx, 0 );
                         plLayerTex *layer = comp->GetBitmap( idx );
-                        if( layer != nil && layer->HandleBitmapSelection() )
+                        if (layer != nullptr && layer->HandleBitmapSelection())
                         {
                             IRefreshImageList( hWnd, comp );
                         }
@@ -2471,7 +2471,7 @@ plLayerTex  *pfImageLibComponent::GetBitmap( int idx )
 {  
     // If we don't have one, create one
     plLayerTex  *layer = (plLayerTex *)fCompPB->GetTexmap( (ParamID)kRefImageList, 0, idx );
-    if( layer == nil || layer->ClassID() != LAYER_TEX_CLASS_ID )
+    if (layer == nullptr || layer->ClassID() != LAYER_TEX_CLASS_ID)
     {
         layer = new plLayerTex;
         fCompPB->SetValue( (ParamID)kRefImageList, 0, (Texmap *)layer, idx );
@@ -2522,10 +2522,10 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     for( i = 0; i < GetNumBitmaps(); i++ )
     {
         plLayerTex *layer = GetBitmap( i );
-        if( layer != nil )
+        if (layer != nullptr)
         {
             PBBitmap *texture = layer->GetPBBitmap();
-            if( texture != nil )
+            if (texture != nullptr)
             {
                 uint32_t flags = plBitmap::kAlphaChannelFlag;
 
@@ -2537,7 +2537,7 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 }
                 else // compress using PNG compression scheme
                     bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
-                if( bMap != nil )
+                if (bMap != nullptr)
                 {
                     hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( lib->GetKey(), 
                                             plRefMsg::kOnCreate, lib->GetNumImages(), plImageLibMod::kRefImage ), plRefFlags::kActiveRef );

@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info);
 
 plDispatchLog::plDispatchLog() :
-    fLog(nil),
+    fLog(),
     fStartTicks(hsTimer::GetTicks())
 {
     fLog = plStatusLogMgr::GetInstance().CreateStatusLog(20, "Dispatch.log", plStatusLog::kAlignToTop | plStatusLog::kFilledBackground | plStatusLog::kRawTimeStamp);
@@ -93,7 +93,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 
     // Note: this will return shared mem too on Win9x.  There's a way to catch that, but it's too slow -Colin
     uint32_t processMemUsed = 0;
-    void* curAddress = 0;
+    void* curAddress = nullptr;
     while (VirtualQuery(curAddress, &mbi, sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
     {
         if (mbi.State == MEM_COMMIT && mbi.Type == MEM_PRIVATE)
@@ -319,7 +319,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info)
     plRefMsg* refMsg = plRefMsg::ConvertNoRef(msg);
     if (refMsg)
     {
-        const char* typeName = nil;
+        const char* typeName = nullptr;
         #define GetType(type)   if (refMsg->GetContext() == plRefMsg::type) typeName = #type;
         GetType(kOnCreate);
         GetType(kOnDestroy);

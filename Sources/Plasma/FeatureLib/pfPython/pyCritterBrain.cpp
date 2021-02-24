@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvBrainCritter.h"
 #include "pnSceneObject/plSceneObject.h"
 
-pyCritterBrain::pyCritterBrain(): fBrain(nil) {}
+pyCritterBrain::pyCritterBrain() : fBrain() { }
 
 bool pyCritterBrain::operator==(const pyCritterBrain& other) const
 {
@@ -105,7 +105,7 @@ bool pyCritterBrain::RunningBehavior(const std::string& behaviorName) const
 std::string pyCritterBrain::BehaviorName(int behavior) const
 {
     if (!fBrain)
-        return nil;
+        return nullptr;
     return fBrain->BehaviorName(behavior);
 }
 
@@ -133,14 +133,14 @@ int pyCritterBrain::NextBehavior() const
 std::string pyCritterBrain::IdleBehaviorName() const
 {
     if (!fBrain)
-        return nil;
+        return nullptr;
     return fBrain->IdleBehaviorName();
 }
 
 std::string pyCritterBrain::RunBehaviorName() const
 {
     if (!fBrain)
-        return nil;
+        return nullptr;
     return fBrain->RunBehaviorName();
 }
 

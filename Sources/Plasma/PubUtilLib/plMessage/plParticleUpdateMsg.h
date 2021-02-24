@@ -53,7 +53,7 @@ class plParticleUpdateMsg : public plMessage
 {
 public:
     plParticleUpdateMsg()
-        : plMessage(nil, nil, nil) {}
+        : plMessage(nullptr, nullptr, nullptr) { }
     plParticleUpdateMsg(const plKey &s, const plKey &r, const double* t, uint32_t paramID, float paramValue )
         : plMessage(s, r, t) { fParamID = paramID; fParamValue = paramValue; }
     virtual ~plParticleUpdateMsg() {}
@@ -105,7 +105,7 @@ public:
     plKey   fSysSOKey; // sceneObject of the system we're snagging particles from
     uint16_t  fNumToTransfer; // number of particles to transfer
     
-    plParticleTransferMsg() : plMessage(nil, nil, nil), fSysSOKey(nil), fNumToTransfer(0) {}
+    plParticleTransferMsg() : plMessage(nullptr, nullptr, nullptr), fNumToTransfer() { }
     plParticleTransferMsg(const plKey &s, const plKey &r, const double* t, plKey sysSOKey, uint16_t numParticles )
         : plMessage(s, r, t) { fSysSOKey = sysSOKey; fNumToTransfer = numParticles; }
     virtual ~plParticleTransferMsg() {} 
@@ -136,7 +136,7 @@ public:
         kParticleKillPercentage = 0x2,      // Tells us to interpret "fNumToKill" as a 0-1 percentage.
     };
 
-    plParticleKillMsg() : plMessage(nil, nil, nil), fNumToKill(0.f), fTimeLeft(0.f), fFlags(kParticleKillImmortalOnly) {}
+    plParticleKillMsg() : plMessage(nullptr, nullptr, nullptr), fNumToKill(), fTimeLeft(), fFlags(kParticleKillImmortalOnly) { }
     plParticleKillMsg(const plKey &s, const plKey &r, const double* t, float numToKill, float timeLeft, uint8_t flags = kParticleKillImmortalOnly )
         : plMessage(s, r, t) { fNumToKill = numToKill; fTimeLeft = timeLeft; fFlags = flags; }
     virtual ~plParticleKillMsg() {} 
@@ -163,7 +163,7 @@ public:
         kFlockCmdSetDissentPoint,
     };
 
-    plParticleFlockMsg() : plMessage(nil, nil, nil), fCmd(0), fX(0.f), fY(0.f), fZ(0.f) {}
+    plParticleFlockMsg() : plMessage(nullptr, nullptr, nullptr), fCmd(), fX(), fY(), fZ() { }
     plParticleFlockMsg(const plKey &s, const plKey &r, const double* t, uint8_t cmd, float x, float y, float z)
         : plMessage(s, r, t), fCmd(cmd), fX(x), fY(y), fZ(z) {}
     virtual ~plParticleFlockMsg() {}

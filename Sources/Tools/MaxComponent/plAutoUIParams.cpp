@@ -100,7 +100,7 @@ int plAutoUIParam::ISizeControl(HWND hDlg, HWND hControl, int w, int h, int y, i
 HWND plAutoUIParam::ICreateControl(HWND hDlg, const char *className, const char *wndName, DWORD style, DWORD exStyle)
 {
     HWND hwnd = CreateWindowEx(exStyle, className, wndName, WS_VISIBLE | WS_CHILD | style,
-                0, 0, 0, 0, hDlg, 0/*(HMENU)fDlgItemID*/, hInstance, NULL);
+                0, 0, 0, 0, hDlg, nullptr/*(HMENU)fDlgItemID*/, hInstance, nullptr);
 
     fControlVec.push_back(hwnd);
 
@@ -220,7 +220,7 @@ int plAutoUIParam::GetInt(IParamBlock2 *pb)
 const char* plAutoUIParam::GetString(IParamBlock2 *pb)
 {
     hsAssert(false, "Parameter is not a string");
-    return nil;
+    return nullptr;
 }
 int plAutoUIParam::GetCount(IParamBlock2 *pb)
 {
@@ -230,19 +230,19 @@ int plAutoUIParam::GetCount(IParamBlock2 *pb)
 plKey plAutoUIParam::GetKey(IParamBlock2 *pb, int idx)
 {
     hsAssert(false, "Parameter is not a key");
-    return nil;
+    return nullptr;
 }
 plComponentBase *plAutoUIParam::GetComponent(IParamBlock2 *pb, int idx)
 {
     hsAssert(false, "Parameter is not a component");
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plCheckBoxParam::plCheckBoxParam(ParamID id, const char *name) :
-  plAutoUIParam(id, name), fhCheck(nil)
+  plAutoUIParam(id, name), fhCheck()
 {
 }
 
@@ -288,7 +288,7 @@ bool plCheckBoxParam::GetBool(IParamBlock2 *pb)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plSpinnerParam::plSpinnerParam(ParamID id, const char *name, bool isFloat) :
-    plAutoUIParam(id, name), fIsFloat(isFloat), fhSpinner(nil)
+    plAutoUIParam(id, name), fIsFloat(isFloat), fhSpinner()
 {
 }
 
@@ -375,7 +375,7 @@ int plSpinnerParam::GetInt(IParamBlock2 *pb)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plEditParam::plEditParam(ParamID id, const char *name, int lines) :
-    plAutoUIParam(id, name), fhEdit(nil), fLines(lines)
+    plAutoUIParam(id, name), fhEdit(), fLines(lines)
 {
 }
 
@@ -391,7 +391,7 @@ int plEditParam::CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset)
     if (fLines > 1)
         flags |= ES_AUTOVSCROLL | ES_MULTILINE | ES_WANTRETURN;
 
-    fhEdit = ICreateControl(hDlg, "Edit", nil, flags, WS_EX_CLIENTEDGE);
+    fhEdit = ICreateControl(hDlg, "Edit", nullptr, flags, WS_EX_CLIENTEDGE);
     yOffset += ISizeControl(hDlg, fhEdit, 100, 5 + 8*fLines, yOffset) + 2;
     ISetControlFont(fhEdit);
 
@@ -456,7 +456,7 @@ const char* plEditParam::GetString(IParamBlock2 *pb)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickListParam::plPickListParam(ParamID id, const char *name, std::vector<Class_ID>* filter) :
-    plAutoUIParam(id, name), fhList(nil), fhAdd(nil), fhRemove(nil)
+    plAutoUIParam(id, name), fhList(), fhAdd(), fhRemove()
 {
     if (filter)
         fCIDs = *filter;
@@ -467,7 +467,7 @@ int plPickListParam::CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset)
     yOffset += IAddStaticText(hDlg, yOffset, fName) + 2;
 
     // Create the listbox
-    fhList = ICreateControl(hDlg, "ListBox", nil, LBS_STANDARD | LBS_NOINTEGRALHEIGHT, WS_EX_CLIENTEDGE);
+    fhList = ICreateControl(hDlg, "ListBox", nullptr, LBS_STANDARD | LBS_NOINTEGRALHEIGHT, WS_EX_CLIENTEDGE);
     yOffset += ISizeControl(hDlg, fhList, 100, 5+4*8, yOffset) + 2;
     ISetControlFont(fhList);
 
@@ -555,7 +555,7 @@ plKey plPickListParam::GetKey(IParamBlock2 *pb, int idx)
     if (node)
         return node->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +578,7 @@ public:
 
     BOOL HitTest(IObjParam *ip, HWND hWnd, ViewExp *vpt, IPoint2 m, int flags) override
     {
-        return (ip->PickNode(hWnd,m,&gPickFilter) != NULL);
+        return (ip->PickNode(hWnd,m,&gPickFilter) != nullptr);
     }
     BOOL Pick(IObjParam *ip, ViewExp *vpt) override;
     
@@ -589,7 +589,7 @@ public:
 static PickNodeButtonMode gPickMode;
 
 plPickButtonParam::plPickButtonParam(ParamID id, const char *name, std::vector<Class_ID>* filter, bool canConvertToType) :
-      plAutoUIParam(id, name), fButton(nil), fCanConvertToType(canConvertToType)
+      plAutoUIParam(id, name), fButton(), fCanConvertToType(canConvertToType)
 {
     if (filter)
         fCIDs = *filter;
@@ -679,7 +679,7 @@ bool plPickButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IPar
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -705,8 +705,8 @@ BOOL PickNodeButtonMode::Pick(IObjParam *ip, ViewExp *vpt)
     INode *node = vpt->GetClosestHit();
     if (node && fParam && fPB)
         fParam->SetPickNode(node, fPB);
-    fParam = nil;
-    fPB = nil;
+    fParam = nullptr;
+    fPB = nullptr;
 
     return TRUE;
 }
@@ -714,9 +714,9 @@ BOOL PickNodeButtonMode::Pick(IObjParam *ip, ViewExp *vpt)
 BOOL PickNodeButtonMode::RightClick(IObjParam *ip, ViewExp *vpt)
 {
     if (fParam && fPB)
-        fParam->SetPickNode(nil, nil);
-    fParam = nil;
-    fPB = nil;
+        fParam->SetPickNode(nullptr, nullptr);
+    fParam = nullptr;
+    fPB = nullptr;
 
     return TRUE;
 }
@@ -736,7 +736,7 @@ plKey plPickButtonParam::GetKey(IParamBlock2 *pb, int idx)
     if (node)
         return node->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -760,7 +760,7 @@ plComponentBase* plPickComponentButtonParam::GetComponent(IParamBlock2 *pb, int 
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -787,14 +787,14 @@ plComponentBase *plPickComponentListParam::GetComponent(IParamBlock2 *pb, int id
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickActivatorButtonParam::plPickActivatorButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -809,7 +809,7 @@ plComponentBase* plPickActivatorButtonParam::GetComponent(IParamBlock2 *pb, int 
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 bool plPickActivatorButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb)
@@ -837,7 +837,7 @@ bool plPickActivatorButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPa
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -851,7 +851,7 @@ bool plPickActivatorButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPa
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickActivatorListParam::plPickActivatorListParam(ParamID id, const char *name) :
-    plPickListParam(id, name, nil)
+    plPickListParam(id, name, nullptr)
 {
 }
 
@@ -881,14 +881,14 @@ plComponentBase *plPickActivatorListParam::GetComponent(IParamBlock2 *pb, int id
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickDynamicTextButtonParam::plPickDynamicTextButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -914,7 +914,7 @@ int plPickDynamicTextButtonParam::GetCount(IParamBlock2 *pb)
     if ( texmap )
     {
         plPlasmaMAXLayer *maxLayer = plPlasmaMAXLayer::GetPlasmaMAXLayer( texmap );
-        if( maxLayer != nil )
+        if (maxLayer != nullptr)
         {
             // It's one of our Plasma layer types, which means most likely it got converted.
  
@@ -935,7 +935,7 @@ plKey plPickDynamicTextButtonParam::GetKey(IParamBlock2 *pb, int idx)
     if ( texmap )
     {
         plPlasmaMAXLayer *maxLayer = plPlasmaMAXLayer::GetPlasmaMAXLayer( texmap );
-        if( maxLayer != nil )
+        if (maxLayer != nullptr)
         {
             // make sure the index is valid
             if ( idx >= 0 && idx < maxLayer->GetNumConversionTargets() )
@@ -953,7 +953,7 @@ plKey plPickDynamicTextButtonParam::GetKey(IParamBlock2 *pb, int idx)
     }
 
     // otherwise we didn't find one, because of one of many reasons
-    return nil;
+    return nullptr;
 }
 
 int plPickDynamicTextButtonParam::CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset)
@@ -1012,7 +1012,7 @@ bool plPickDynamicTextButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM l
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1027,7 +1027,7 @@ bool plPickDynamicTextButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM l
 
 
 plPickSingleComponentButtonParam::plPickSingleComponentButtonParam(ParamID id, const char *name, int myType, Class_ID myClassToPick ) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
         fClassToPick = myClassToPick;
         fMyType = myType;
@@ -1045,7 +1045,7 @@ plComponentBase* plPickSingleComponentButtonParam::GetComponent(IParamBlock2 *pb
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1075,7 +1075,7 @@ bool plPickSingleComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPAR
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1089,7 +1089,7 @@ bool plPickSingleComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPAR
 
 
 plPickExcludeRegionButtonParam::plPickExcludeRegionButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1105,7 +1105,7 @@ plComponentBase* plPickExcludeRegionButtonParam::GetComponent(IParamBlock2 *pb, 
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1134,7 +1134,7 @@ bool plPickExcludeRegionButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1149,7 +1149,7 @@ bool plPickExcludeRegionButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM
 
 
 plPickWaterComponentButtonParam::plPickWaterComponentButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1165,7 +1165,7 @@ plComponentBase* plPickWaterComponentButtonParam::GetComponent(IParamBlock2 *pb,
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1194,7 +1194,7 @@ bool plPickWaterComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARA
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1207,7 +1207,7 @@ bool plPickWaterComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARA
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickSwimCurrentInterfaceButtonParam::plPickSwimCurrentInterfaceButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1223,7 +1223,7 @@ plComponentBase* plPickSwimCurrentInterfaceButtonParam::GetComponent(IParamBlock
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1252,7 +1252,7 @@ bool plPickSwimCurrentInterfaceButtonParam::IsMyMessage(UINT msg, WPARAM wParam,
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1265,7 +1265,7 @@ bool plPickSwimCurrentInterfaceButtonParam::IsMyMessage(UINT msg, WPARAM wParam,
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickClusterComponentButtonParam::plPickClusterComponentButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1281,7 +1281,7 @@ plComponentBase* plPickClusterComponentButtonParam::GetComponent(IParamBlock2 *p
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 bool plPickClusterComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParamBlock2 *pb)
@@ -1308,7 +1308,7 @@ bool plPickClusterComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPA
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1320,7 +1320,7 @@ bool plPickClusterComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPA
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickAnimationButtonParam::plPickAnimationButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1336,7 +1336,7 @@ plComponentBase* plPickAnimationButtonParam::GetComponent(IParamBlock2 *pb, int 
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1366,7 +1366,7 @@ bool plPickAnimationButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPa
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1379,7 +1379,7 @@ bool plPickAnimationButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPa
 
 
 plPickBehaviorButtonParam::plPickBehaviorButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1395,7 +1395,7 @@ plComponentBase* plPickBehaviorButtonParam::GetComponent(IParamBlock2 *pb, int i
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1425,7 +1425,7 @@ bool plPickBehaviorButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPar
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1437,7 +1437,7 @@ bool plPickBehaviorButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPar
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickMaterialButtonParam::plPickMaterialButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1463,7 +1463,7 @@ int plPickMaterialButtonParam::GetCount(IParamBlock2 *pb)
     if ( texmap )
     {
         plPlasmaMAXLayer *maxLayer = plPlasmaMAXLayer::GetPlasmaMAXLayer( texmap );
-        if( maxLayer != nil )
+        if (maxLayer != nullptr)
         {
             // It's one of our Plasma layer types, which means most likely it got converted.
  
@@ -1484,7 +1484,7 @@ plKey plPickMaterialButtonParam::GetKey(IParamBlock2 *pb, int idx)
     if ( texmap )
     {
         plPlasmaMAXLayer *maxLayer = plPlasmaMAXLayer::GetPlasmaMAXLayer( texmap );
-        if( maxLayer != nil )
+        if (maxLayer != nullptr)
         {
             // make sure the index is valid
             if ( idx >= 0 && idx < maxLayer->GetNumConversionTargets() )
@@ -1502,7 +1502,7 @@ plKey plPickMaterialButtonParam::GetKey(IParamBlock2 *pb, int idx)
     }
 
     // otherwise we didn't find one, because of one of many reasons
-    return nil;
+    return nullptr;
 }
 
 int plPickMaterialButtonParam::CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset)
@@ -1561,7 +1561,7 @@ bool plPickMaterialButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPar
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1574,7 +1574,7 @@ bool plPickMaterialButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lPar
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickMaterialAnimationButtonParam::plPickMaterialAnimationButtonParam(ParamID id, const char *name) :
-    plPickButtonParam(id, name, nil, false)
+    plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1603,7 +1603,7 @@ plKey plPickMaterialAnimationButtonParam::GetKey(IParamBlock2 *pb, int idx)
         return fKeys[idx];
     }
 
-    return nil;
+    return nullptr;
 }
 
 // this is in plResponderMtl.cpp
@@ -1615,7 +1615,7 @@ void plPickMaterialAnimationButtonParam::CreateKeyArray(IParamBlock2* pb)
 
     Mtl* mtl = (Mtl*)pb->GetReferenceTarget(fID);
 
-    GetMatAnimModKey(mtl, nil, ST::string(), fKeys);
+    GetMatAnimModKey(mtl, nullptr, ST::string(), fKeys);
 }
 
 void plPickMaterialAnimationButtonParam::DestroyKeyArray()
@@ -1678,7 +1678,7 @@ bool plPickMaterialAnimationButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LP
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }
@@ -1691,7 +1691,7 @@ bool plPickMaterialAnimationButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LP
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plDropDownListParam::plDropDownListParam(ParamID id, const char *name, std::vector<std::string>* options) :
-    plAutoUIParam(id, name), fhList(nil)
+    plAutoUIParam(id, name), fhList()
 {
     if (options)
         fOptions = *options;
@@ -1702,7 +1702,7 @@ int plDropDownListParam::CreateControls(HWND hDlg, IParamBlock2 *pb, int yOffset
     yOffset += IAddStaticText(hDlg, yOffset, fName) + 2;
 
     // Create the combobox
-    fhList = ICreateControl(hDlg, "ComboBox", nil, CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL, WS_EX_CLIENTEDGE);
+    fhList = ICreateControl(hDlg, "ComboBox", nullptr, CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL, WS_EX_CLIENTEDGE);
     ISizeControl(hDlg, fhList, 100, 100, yOffset);
     yOffset += 13 + 2;
     ISetControlFont(fhList);
@@ -1824,7 +1824,7 @@ void plDropDownListParam::Show(int yOffset)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 plPickGrassComponentButtonParam::plPickGrassComponentButtonParam(ParamID id, const char *name) :
-plPickButtonParam(id, name, nil, false)
+plPickButtonParam(id, name, nullptr, false)
 {
 }
 
@@ -1840,7 +1840,7 @@ plComponentBase* plPickGrassComponentButtonParam::GetComponent(IParamBlock2 *pb,
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1869,7 +1869,7 @@ bool plPickGrassComponentButtonParam::IsMyMessage(UINT msg, WPARAM wParam, LPARA
     {
         if ((HWND)lParam == fhRemove)
         {
-            pb->SetValue(fID, 0, (ReferenceTarget*)nil);
+            pb->SetValue(fID, 0, (ReferenceTarget*)nullptr);
             fButton->SetText("(none)");
             return true;
         }

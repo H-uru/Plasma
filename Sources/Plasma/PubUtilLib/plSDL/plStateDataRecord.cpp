@@ -96,13 +96,13 @@ void plSDL::VariableLengthWrite(hsStream* s, int size, int val)
 // State Data
 /////////////////////////////////////////////////////////////////////////////////
 plStateDataRecord::plStateDataRecord(const ST::string& name, int version) : fFlags(0)
-, fDescriptor( nil )
+, fDescriptor()
 {
     SetDescriptor(name, version);
 }
 
 plStateDataRecord::plStateDataRecord(plStateDescriptor* sd) : fFlags(0)
-, fDescriptor( nil )
+, fDescriptor()
 {
     IInitDescriptor(sd);
 }
@@ -678,7 +678,7 @@ plStateVariable* plStateDataRecord::IFindVar(const VarsList& vars, const ST::str
     if (plSDLMgr::GetInstance()->GetNetApp())
         plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed to find SDL var {}", name);
 
-    return nil;
+    return nullptr;
 }
 
 //

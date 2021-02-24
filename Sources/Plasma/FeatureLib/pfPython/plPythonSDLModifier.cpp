@@ -61,7 +61,7 @@ plStateDataRecord * GetAgeSDL()
     const plPythonSDLModifier * mod = plPythonSDLModifier::FindAgeSDL();
     if ( mod )
         return mod->GetStateCache();
-    return nil;
+    return nullptr;
 }
 
 
@@ -503,7 +503,7 @@ PyObject* plPythonSDLModifier::ISDLVarToPython(plSimpleStateVariable* var)
 
 bool plPythonSDLModifier::HasSDL(const ST::string& pythonFile)
 {
-    return (plSDLMgr::GetInstance()->FindDescriptor(pythonFile, plSDL::kLatestVersion) != nil);
+    return (plSDLMgr::GetInstance()->FindDescriptor(pythonFile, plSDL::kLatestVersion) != nullptr);
 }
 
 const plSDLModifier* ExternFindAgeSDL()

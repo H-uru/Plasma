@@ -50,8 +50,8 @@ class plMipmap;
 class plCaptureRenderMsg : public plMessage
 {
 public:
-    plCaptureRenderMsg() : plMessage(), fMipmap(nil) {}
-    plCaptureRenderMsg(const plKey &r, plMipmap* mipmap) : plMessage(nil, r, nil), fMipmap(mipmap) {}
+    plCaptureRenderMsg() : plMessage(), fMipmap() { }
+    plCaptureRenderMsg(const plKey &r, plMipmap* mipmap) : plMessage(nullptr, r, nullptr), fMipmap(mipmap) { }
 
     virtual ~plCaptureRenderMsg();
     

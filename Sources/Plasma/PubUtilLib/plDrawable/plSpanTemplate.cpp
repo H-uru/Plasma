@@ -92,8 +92,8 @@ void plSpanTemplate::DeAlloc()
     fNumVerts = 0;
     fFormat = 0;
 
-    fData = nil;
-    fIndices = nil;
+    fData = nullptr;
+    fIndices = nullptr;
 }
 
 void plSpanTemplate::Read(hsStream* stream)
@@ -138,6 +138,6 @@ void plSpanTemplateB::DeAllocColors()
     delete [] fMultColors;
     delete [] fAddColors;
 
-    fMultColors = nil;
-    fAddColors = nil;
+    fMultColors = nullptr;
+    fAddColors = nullptr;
 }

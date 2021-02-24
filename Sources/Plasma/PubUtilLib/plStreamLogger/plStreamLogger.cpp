@@ -135,7 +135,7 @@ void hsReadOnlyLoggingStream::Skip(uint32_t deltaByteCount)
     hsReadOnlyStream::Skip(deltaByteCount);
     if (deltaByteCount > 0 && !IsLogEntryWaiting())
     {
-        LogEntry(plGenericType::kNone,deltaByteCount,nil,"Unknown Skip");
+        LogEntry(plGenericType::kNone, deltaByteCount, nullptr, "Unknown Skip");
     }
 }
 
@@ -144,7 +144,7 @@ uint32_t hsReadOnlyLoggingStream::Read(uint32_t byteCount, void * buffer)
     uint32_t ret = hsReadOnlyStream::Read(byteCount,buffer);
     if (ret > 0 && !IsLogEntryWaiting())
     {
-        LogEntry(plGenericType::kNone,byteCount,nil,"Unknown Read");
+        LogEntry(plGenericType::kNone,byteCount, nullptr, "Unknown Read");
     }
 
     return ret;
@@ -157,7 +157,7 @@ void hsReadOnlyLoggingStream::LogSkip(uint32_t deltaByteCount, const char* desc)
     Skip(deltaByteCount);
     if (deltaByteCount > 0)
     {
-        LogEntry(plGenericType::kNone,deltaByteCount,nil,desc);
+        LogEntry(plGenericType::kNone, deltaByteCount, nullptr, desc);
     }
 }
 
@@ -167,7 +167,7 @@ uint32_t hsReadOnlyLoggingStream::LogRead(uint32_t byteCount, void * buffer, con
     uint32_t ret = Read(byteCount,buffer);
     if (ret > 0)
     {
-        LogEntry(plGenericType::kNone,byteCount,nil,desc);
+        LogEntry(plGenericType::kNone, byteCount, nullptr, desc);
     }
 
     return ret;
@@ -193,7 +193,7 @@ char *hsReadOnlyLoggingStream::LogReadSafeString()
         return name;
     }
     LogSubStreamEnd();
-    return nil;
+    return nullptr;
 }
 
 char *hsReadOnlyLoggingStream::LogReadSafeStringLong()
@@ -215,6 +215,6 @@ char *hsReadOnlyLoggingStream::LogReadSafeStringLong()
         return name;
     }
     LogSubStreamEnd();
-    return nil;
+    return nullptr;
 }
 #endif

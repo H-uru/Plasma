@@ -111,7 +111,7 @@ plOperationProgress* plProgressMgr::RegisterOverallOperation(float length, const
 
 plOperationProgress* plProgressMgr::IRegisterOperation(float length, const char *title, StaticText staticTextType, bool isRetry, bool isOverall, bool alwaysDrawText)
 {
-    if (fOperations == nil)
+    if (fOperations == nullptr)
     {
         fCurrentStaticText = staticTextType;
         Activate();
@@ -142,7 +142,7 @@ plOperationProgress* plProgressMgr::IRegisterOperation(float length, const char 
 
 void plProgressMgr::IUnregisterOperation(plOperationProgress* op)
 {
-    plOperationProgress* last = nil;
+    plOperationProgress* last = nullptr;
     plOperationProgress* cur = fOperations;
 
     while (cur)
@@ -164,7 +164,7 @@ void plProgressMgr::IUnregisterOperation(plOperationProgress* op)
         cur = cur->fNext;
     }
 
-    if (fOperations == nil)
+    if (fOperations == nullptr)
     {
         fCurrentStaticText = kNone;
         Deactivate();
@@ -198,7 +198,7 @@ void plProgressMgr::IUpdateCallbackProc(plOperationProgress* progress)
 
     // Update everyone who wants to know about progress
     IDerivedCallbackProc(progress);
-    if (fCallbackProc != nil)
+    if (fCallbackProc != nullptr)
         fCallbackProc(progress);
 
     IUpdateFlags(progress);
@@ -227,7 +227,7 @@ void    plProgressMgr::CancelAllOps()
     plOperationProgress *op;
 
 
-    for( op = fOperations; op != nil; op = op->GetNext() )
+    for (op = fOperations; op != nullptr; op = op->GetNext())
         op->SetCancelFlag( true );
 
     fCurrentStaticText = kNone;
@@ -258,15 +258,15 @@ const ST::string plProgressMgr::GetStaticTextID(StaticText staticTextType)
 
 plOperationProgress::plOperationProgress( float length ) :
     fMax(length),
-    fValue(0),
-    fNext(nil),
-    fBack(nil),
-    fContext(0),
+    fValue(),
+    fNext(),
+    fBack(),
+    fContext(),
     fFlags(kInitUpdate),
     fStartTime(hsTimer::GetSeconds()),
-    fElapsedSecs(0),
-    fRemainingSecs(0),
-    fAmtPerSec(0.f)
+    fElapsedSecs(),
+    fRemainingSecs(),
+    fAmtPerSec()
 {
 }
 

@@ -60,7 +60,7 @@ plDebugText plDebugText::fInstance;
 
 void    plDebugText::DrawString( uint16_t x, uint16_t y, const char *string, uint32_t hexColor, uint8_t style )
 {
-    if( IsEnabled() && fManager && string != nil && string[ 0 ] != 0 )
+    if (IsEnabled() && fManager && string != nullptr && string[0] != 0)
         fManager->AddString( x, y, string, hexColor, style, fDrawOnTopMode );
 }
 
@@ -151,7 +151,7 @@ plDebugTextManager::plDebugTextNode::plDebugTextNode( uint16_t left, uint16_t to
 
 plDebugTextManager::~plDebugTextManager()
 {
-    if( fFont != nil )
+    if (fFont != nullptr)
         delete fFont;
 }
 
@@ -201,13 +201,13 @@ void    plDebugTextManager::DrawToDevice( plPipeline *pipe )
         return;
     }
 
-    if( fFont == nil )
+    if (fFont == nullptr)
     {
         // Create font first time around
         fFont = pipe->MakeTextFont( (char *)plDebugText::Instance().GetFontFace(), 
                                         plDebugText::Instance().GetFontSize() );
 
-        if( fFont == nil )
+        if (fFont == nullptr)
         {
             plDebugText::Instance().DisablePermanently();
             return;
@@ -274,7 +274,7 @@ void    plDebugTextManager::DrawToDevice( plPipeline *pipe )
 
 uint32_t  plDebugTextManager::CalcStringWidth( const char *string )
 {
-    if( !plDebugText::Instance().IsEnabled() || fFont == nil )
+    if (!plDebugText::Instance().IsEnabled() || fFont == nullptr)
         return 0;
 
     return fFont->CalcStringWidth( string );    
@@ -284,9 +284,9 @@ uint32_t  plDebugTextManager::CalcStringWidth( const char *string )
 
 void    plDebugTextManager::GetScreenSize( uint32_t *width, uint32_t *height )
 {
-    if( width != nil )
+    if (width != nullptr)
         *width = fSWidth;
-    if( height != nil )
+    if (height != nullptr)
         *height = fSHeight;
 }
 

@@ -53,33 +53,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// pfConsoleCmdGroup Stuff /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-pfConsoleCmdGroup   *pfConsoleCmdGroup::fBaseCmdGroup = nil;
+pfConsoleCmdGroup   *pfConsoleCmdGroup::fBaseCmdGroup = nullptr;
 uint32_t              pfConsoleCmdGroup::fBaseCmdGroupRef = 0;
 
 
 //// Constructor & Destructor ////////////////////////////////////////////////
 
-pfConsoleCmdGroup::pfConsoleCmdGroup(const char *name, const char *parent )
+pfConsoleCmdGroup::pfConsoleCmdGroup(const char *name, const char *parent)
+    : fNext(), fPrevPtr(), fCommands(), fSubGroups()
 {
-    fNext = nil;
-    fPrevPtr = nil;
-    fCommands = nil;
-    fSubGroups = nil;
-    
-    if( name == nil )
+    if (name == nullptr)
     {
         /// Create base
         hsStrncpy( fName, "base", sizeof( fName ) );
-        fParentGroup = nil;
+        fParentGroup = nullptr;
     }
     else
     {
         pfConsoleCmdGroup   *group = GetBaseGroup();
 
-        if( parent != nil && parent[ 0 ] != 0 )
+        if (parent != nullptr && parent[0] != 0)
         {
             group = group->FindSubGroupRecurse( parent );
-            hsAssert( group != nil, "Trying to register group under nonexistant group!" );
+            hsAssert(group != nullptr, "Trying to register group under nonexistant group!");
         }
 
         hsStrncpy( fName, name, sizeof( fName ) );
@@ -103,10 +99,10 @@ pfConsoleCmdGroup::~pfConsoleCmdGroup()
 
 pfConsoleCmdGroup   *pfConsoleCmdGroup::GetBaseGroup()
 {
-    if( fBaseCmdGroup == nil )
+    if (fBaseCmdGroup == nullptr)
     {
         /// Initialize base group
-        fBaseCmdGroup = new pfConsoleCmdGroup( nil, nil );
+        fBaseCmdGroup = new pfConsoleCmdGroup(nullptr, nullptr);
     }
 
     return fBaseCmdGroup;
@@ -120,7 +116,7 @@ void    pfConsoleCmdGroup::DecBaseCmdGroupRef()
     if( fBaseCmdGroupRef == 0 )
     {
         delete fBaseCmdGroup;
-        fBaseCmdGroup = nil;
+        fBaseCmdGroup = nullptr;
     }
 }
 
@@ -146,16 +142,16 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommand( const char *name )
     pfConsoleCmd    *cmd;
 
 
-    hsAssert( name != nil, "nil name passed to FindCommand()" );
+    hsAssert(name != nullptr, "nil name passed to FindCommand()");
 
     /// Only search locally
-    for( cmd = fCommands; cmd != nil; cmd = cmd->GetNext() )
+    for (cmd = fCommands; cmd != nullptr; cmd = cmd->GetNext())
     {
         if( strcmp( cmd->GetName(), name ) == 0 )
             return cmd;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// FindNestedPartialCommand ////////////////////////////////////////////////
@@ -170,11 +166,11 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, uint32
     pfConsoleCmdGroup   *group;
 
 
-    hsAssert( name != nil, "nil name passed to FindNestedPartialCommand()" );
-    hsAssert( counter != nil, "nil counter passed to FindNestedPartialCommand()" );
+    hsAssert(name != nullptr, "nil name passed to FindNestedPartialCommand()");
+    hsAssert(counter != nullptr, "nil counter passed to FindNestedPartialCommand()");
 
     // Try us
-    for( cmd = fCommands; cmd != nil; cmd = cmd->GetNext() )
+    for (cmd = fCommands; cmd != nullptr; cmd = cmd->GetNext())
     {
         if(strnicmp( cmd->GetName(), name, strlen( name ) ) == 0 )
         {
@@ -186,14 +182,14 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, uint32
     }
 
     // Try children
-    for( group = fSubGroups; group != nil; group = group->GetNext() )
+    for (group = fSubGroups; group != nullptr; group = group->GetNext())
     {
         cmd = group->FindNestedPartialCommand( name, counter );
-        if( cmd != nil )
+        if (cmd != nullptr)
             return cmd;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// FindSubGroup ////////////////////////////////////////////////////////////
@@ -203,16 +199,16 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroup( const char *name )
     pfConsoleCmdGroup   *group;
 
 
-    hsAssert( name != nil, "nil name passed to FindSubGroup()" );
+    hsAssert(name != nullptr, "nil name passed to FindSubGroup()");
 
     /// Only search locally
-    for( group = fSubGroups; group != nil; group = group->GetNext() )
+    for (group = fSubGroups; group != nullptr; group = group->GetNext())
     {
         if( strcmp( group->GetName(), name ) == 0 )
             return group;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// FindSubGroupRecurse /////////////////////////////////////////////////////
@@ -227,19 +223,19 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupRecurse( const char *name )
 
 
     string = new char[ strlen( name ) + 1 ];
-    hsAssert( string != nil, "Cannot allocate string in FindSubGroupRecurse()" );
+    hsAssert(string != nullptr, "Cannot allocate string in FindSubGroupRecurse()");
     strcpy( string, name );
 
     /// Scan for subgroups
     group = pfConsoleCmdGroup::GetBaseGroup();
     ptr = strtok( string, seps );
-    while( ptr != nil )
+    while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
         group = group->FindSubGroup( ptr );
-        hsAssert( group != nil, "Invalid group name to FindSubGroupRecurse()" );
+        hsAssert(group != nullptr, "Invalid group name to FindSubGroupRecurse()");
 
-        ptr = strtok( nil, seps );
+        ptr = strtok(nullptr, seps);
     }
 
     delete [] string;
@@ -254,17 +250,17 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( const char *name, uint8_t
     pfConsoleCmd    *cmd;
 
 
-    hsAssert( name != nil, "nil name passed to FindCommandNoCase()" );
+    hsAssert(name != nullptr, "nil name passed to FindCommandNoCase()");
 
     /// Only search locally
-    if( start == nil )
+    if (start == nullptr)
         start = fCommands;
     else
         start = start->GetNext();
 
     if( flags & kFindPartial )
     {
-        for( cmd = start; cmd != nil; cmd = cmd->GetNext() )
+        for (cmd = start; cmd != nullptr; cmd = cmd->GetNext())
         {
             if(strnicmp( cmd->GetName(), name, strlen( name ) ) == 0 )
                 return cmd;
@@ -272,14 +268,14 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( const char *name, uint8_t
     }
     else
     {
-        for( cmd = start; cmd != nil; cmd = cmd->GetNext() )
+        for (cmd = start; cmd != nullptr; cmd = cmd->GetNext())
         {
             if( stricmp( cmd->GetName(), name ) == 0 )
                 return cmd;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// FindSubGroupNoCase //////////////////////////////////////////////////////
@@ -289,17 +285,17 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( const char *name, ui
     pfConsoleCmdGroup   *group;
 
 
-    hsAssert( name != nil, "nil name passed to FindSubGroupNoCase()" );
+    hsAssert(name != nullptr, "nil name passed to FindSubGroupNoCase()");
 
     /// Only search locally
-    if( start == nil )
+    if (start == nullptr)
         start = fSubGroups;
     else
         start = start->GetNext();
 
     if( flags & kFindPartial )
     {
-        for( group = start; group != nil; group = group->GetNext() )
+        for (group = start; group != nullptr; group = group->GetNext())
         {
             if(strnicmp( group->GetName(), name, strlen( name ) ) == 0 )
                 return group;
@@ -307,21 +303,21 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( const char *name, ui
     }
     else
     {
-        for( group = start; group != nil; group = group->GetNext() )
+        for (group = start; group != nullptr; group = group->GetNext())
         {
             if( stricmp( group->GetName(), name ) == 0 )
                 return group;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// Link & Unlink ///////////////////////////////////////////////////////////
 
 void    pfConsoleCmdGroup::Link( pfConsoleCmdGroup **prevPtr )
 {
-    hsAssert( fNext == nil && fPrevPtr == nil, "Trying to link console group that's already linked!" );
+    hsAssert(fNext == nullptr && fPrevPtr == nullptr, "Trying to link console group that's already linked!");
 
     fNext = *prevPtr;
     if( *prevPtr )
@@ -332,7 +328,7 @@ void    pfConsoleCmdGroup::Link( pfConsoleCmdGroup **prevPtr )
 
 void    pfConsoleCmdGroup::Unlink()
 {
-    hsAssert( fNext != nil || fPrevPtr != nil, "Trying to unlink console group that isn't linked!" );
+    hsAssert(fNext != nullptr || fPrevPtr != nullptr, "Trying to unlink console group that isn't linked!");
 
     if( fNext )
         fNext->fPrevPtr = fPrevPtr;
@@ -375,8 +371,8 @@ pfConsoleCmd::pfConsoleCmd(const char *group, const char *name,
                             const char *paramList, const char *help, 
                             pfConsoleCmdPtr func, bool localOnly )
 {
-    fNext = nil;
-    fPrevPtr = nil;
+    fNext = nullptr;
+    fPrevPtr = nullptr;
 
     fFunction = func;
     fLocalOnly = localOnly;
@@ -416,10 +412,10 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
 
 
     /// Simple check
-    if( paramList == nil )
+    if (paramList == nullptr)
     {
         fSignature.Push( kAny );
-        fSigLabels.Push( (char *)nil );
+        fSigLabels.Push(nullptr);
         return;
     }
 
@@ -436,7 +432,7 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
     {
         /// Find break
         nextPtr = strchr( ptr, ',' );
-        if( nextPtr != nil )
+        if (nextPtr != nullptr)
         {
             *nextPtr = 0;
             nextPtr++;
@@ -444,19 +440,19 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
 
         /// Do this param
         tok = strtok( ptr, seps );
-        if( tok == nil && ptr == params )
+        if (tok == nullptr && ptr == params)
             break;
 
-        hsAssert( tok != nil, "Bad parameter list for console command!" );
-        tok2 = strtok( nil, seps );
+        hsAssert(tok != nullptr, "Bad parameter list for console command!");
+        tok2 = strtok(nullptr, seps);
 
-        if( tok2 != nil )
+        if (tok2 != nullptr)
         {
             // Type and label: assume label second
             fSigLabels.Push( hsStrcpy( tok2 ) );            
         }
         else
-            fSigLabels.Push( (char *)nil );
+            fSigLabels.Push(nullptr);
 
         // Find type
         for( i = 0; i < kNumTypes; i++ )
@@ -470,7 +466,7 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
 
         hsAssert( i < kNumTypes, "Bad parameter type in console command parameter list!" );
 
-    } while( ( ptr = nextPtr ) != nil );
+    } while ((ptr = nextPtr) != nullptr);
 }
 
 //// Register ////////////////////////////////////////////////////////////////
@@ -482,7 +478,7 @@ void    pfConsoleCmd::Register(const char *group, const char *name )
     pfConsoleCmdGroup   *g;
 
 
-    if( group == nil || group[ 0 ] == 0 )
+    if (group == nullptr || group[0] == 0)
     {
         g = pfConsoleCmdGroup::GetBaseGroup();
         g->AddCommand( this );
@@ -490,7 +486,7 @@ void    pfConsoleCmd::Register(const char *group, const char *name )
     else
     {
         g = pfConsoleCmdGroup::FindSubGroupRecurse( group );
-        hsAssert( g != nil, "Trying to register command under nonexistant group!" );
+        hsAssert(g != nullptr, "Trying to register command under nonexistant group!");
         g->AddCommand( this );
     }
 
@@ -517,7 +513,7 @@ void    pfConsoleCmd::Execute( int32_t numParams, pfConsoleCmdParam *params, voi
 
 void    pfConsoleCmd::Link( pfConsoleCmd **prevPtr )
 {
-    hsAssert( fNext == nil && fPrevPtr == nil, "Trying to link console command that's already linked!" );
+    hsAssert(fNext == nullptr && fPrevPtr == nullptr, "Trying to link console command that's already linked!");
 
     fNext = *prevPtr;
     if( *prevPtr )
@@ -528,7 +524,7 @@ void    pfConsoleCmd::Link( pfConsoleCmd **prevPtr )
 
 void    pfConsoleCmd::Unlink()
 {
-    hsAssert( fNext != nil || fPrevPtr != nil, "Trying to unlink console command that isn't linked!" );
+    hsAssert(fNext != nullptr || fPrevPtr != nullptr, "Trying to unlink console command that isn't linked!");
 
     if( fNext )
         fNext->fPrevPtr = fPrevPtr;
@@ -573,7 +569,7 @@ const char  *pfConsoleCmd::GetSignature()
     strcpy( string, fName );
     for( i = 0; i < fSignature.GetCount(); i++ )
     {
-        if( fSigLabels[ i ] == nil )
+        if (fSigLabels[i] == nullptr)
             sprintf( pStr, "%s", fSigTypes[ fSignature[ i ] ] );
         else
             sprintf( pStr, "%s %s", fSigTypes[ fSignature[ i ] ], fSigLabels[ i ] );
@@ -601,7 +597,7 @@ const int & pfConsoleCmdParam::IToInt() const
     static int  i;
     if( fType == kAny )
     {
-        hsAssert( fValue.s != nil, "Weird parameter during conversion" );
+        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
         i = atoi( fValue.s );
         return i;
     }
@@ -616,7 +612,7 @@ const float &   pfConsoleCmdParam::IToFloat() const
     static float f;
     if( fType == kAny )
     {
-        hsAssert( fValue.s != nil, "Weird parameter during conversion" );
+        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
         f = (float)atof( fValue.s );
         return f;
     }
@@ -631,7 +627,7 @@ const bool &    pfConsoleCmdParam::IToBool() const
     static bool b;
     if( fType == kAny )
     {
-        hsAssert( fValue.s != nil, "Weird parameter during conversion" );
+        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
         if( atoi( fValue.s ) > 0 || stricmp( fValue.s, "true" ) == 0 )
             b = true;
         else
@@ -657,7 +653,7 @@ const char &    pfConsoleCmdParam::IToChar() const
     static char     c;
     if( fType == kAny )
     {
-        hsAssert( fValue.s != nil, "Weird parameter during conversion" );
+        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
         c = fValue.s[ 0 ];
         return c;
     }

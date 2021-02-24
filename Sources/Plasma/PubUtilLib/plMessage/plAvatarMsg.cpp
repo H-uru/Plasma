@@ -66,7 +66,7 @@ plArmatureUpdateMsg::plArmatureUpdateMsg()
 plArmatureUpdateMsg::plArmatureUpdateMsg(const plKey &sender,
                                          bool isLocal, bool isPlayerControlled,
                                          plArmatureMod *armature)
-: plAvatarMsg(sender, nil),
+: plAvatarMsg(sender, nullptr),
   fIsLocal(isLocal),
   fIsPlayerControlled(isPlayerControlled),
   fArmature(armature),
@@ -122,12 +122,12 @@ void plAvatarSetTypeMsg::Write(hsStream *stream, hsResMgr *mgr)
 //////////////
 
 plAvTaskMsg::plAvTaskMsg()
-: plAvatarMsg(), fTask(nil)
+: plAvatarMsg(), fTask()
 {
 }
 
 plAvTaskMsg::plAvTaskMsg(const plKey &sender, const plKey &receiver)
-: plAvatarMsg(sender, receiver), fTask(nil)
+: plAvatarMsg(sender, receiver), fTask()
 {
 }
 
@@ -286,7 +286,7 @@ void plAvTaskSeekDoneMsg::Write(hsStream *stream, hsResMgr *mgr)
 
 // CTOR()
 plAvOneShotMsg::plAvOneShotMsg()
-: plAvSeekMsg(), fDrivable(false), fReversible(false), fCallbacks(nil)
+: plAvSeekMsg(), fDrivable(false), fReversible(false), fCallbacks()
 {
 }
 
@@ -295,7 +295,7 @@ plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                          const plKey& seekKey, float duration, bool smartSeek,
                          const ST::string &animName, bool drivable, bool reversible)
 : plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek, kAlignHandle, animName),
-  fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
+  fDrivable(drivable), fReversible(reversible), fCallbacks()
 {
 }
 
@@ -303,7 +303,7 @@ plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
 plAvOneShotMsg::~plAvOneShotMsg()
 {
     hsRefCnt_SafeUnRef(fCallbacks);
-    fCallbacks = nil;
+    fCallbacks = nullptr;
 }
 
 // READ
@@ -485,7 +485,7 @@ void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
 
 // default ctor
 plAvPushBrainMsg::plAvPushBrainMsg()
-: fBrain(nil)
+: fBrain()
 {
 }
 

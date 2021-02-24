@@ -125,7 +125,7 @@ bool    pfGUIListText::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, 
 void    pfGUIListText::GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
 {
     *width = textGen->CalcStringWidth( GetText(), height );
-    if( height != nil )
+    if (height != nullptr)
     { 
         if( *height == 0 )
             *height = 10;       // Never allow zero height elements
@@ -174,7 +174,7 @@ pfGUIListPicture::pfGUIListPicture(plKey mipKey, bool respectAlpha)
     : pfGUIListElement(kPicture), fRespectAlpha(respectAlpha), fBorderSize(2), fMipmapKey(std::move(mipKey))
 {
     plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
-    if( mip != nil && mip->IsCompressed() )
+    if (mip != nullptr && mip->IsCompressed())
     {
         // Gotta make and grab an uncompressed one
         plMipmap *uncompBuffer = hsCodecManager::Instance().CreateUncompressedMipmap( mip, hsCodecManager::k32BitDepth );
@@ -187,7 +187,7 @@ pfGUIListPicture::pfGUIListPicture(plKey mipKey, bool respectAlpha)
 pfGUIListPicture::~pfGUIListPicture()
 {
     fMipmapKey->UnRefObject();
-    fMipmapKey = nil;
+    fMipmapKey = nullptr;
 }
 
 //// Virtuals ////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ bool    pfGUIListPicture::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t 
         textGen->FillRect( x, y, maxWidth, maxHeight, fColors->fSelBackColor );
 
     plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
-    if( mip != nil )
+    if (mip != nullptr)
     {
         if( mip->GetWidth() + fBorderSize + fBorderSize > maxWidth || mip->GetHeight() + fBorderSize + fBorderSize > maxHeight )
             return false;
@@ -224,15 +224,15 @@ bool    pfGUIListPicture::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t 
 void    pfGUIListPicture::GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
 {
     plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
-    if( mip == nil )
+    if (mip == nullptr)
     {
         *width = 16;
-        if( height != nil )
+        if (height != nullptr)
             *height = 16;
     }
 
     *width = (uint16_t)(mip->GetWidth() + fBorderSize + fBorderSize);
-    if( height != nil )
+    if (height != nullptr)
         *height = (uint16_t)(mip->GetHeight() + fBorderSize + fBorderSize);
 }
 
@@ -280,7 +280,7 @@ bool    pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t
         textGen->SetTextColor( fColors->fForeColor, fColors->fTransparent && fColors->fBackColor.a == 0.f );
     }
 
-    if( fSkin != nil )
+    if (fSkin != nullptr)
     {
         const pfGUISkin::pfSRect &r = fSkin->GetElement( fShowChildren ? pfGUISkin::kTreeButtonOpen : pfGUISkin::kTreeButtonClosed );
 
@@ -299,7 +299,7 @@ bool    pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t
 
 bool    pfGUIListTreeRoot::MouseClicked( uint16_t localX, uint16_t localY )
 {
-    if( fSkin != nil )
+    if (fSkin != nullptr)
     {
         const pfGUISkin::pfSRect &r = fSkin->GetElement( fShowChildren ? pfGUISkin::kTreeButtonOpen : pfGUISkin::kTreeButtonClosed );
 
@@ -319,14 +319,14 @@ bool    pfGUIListTreeRoot::MouseClicked( uint16_t localX, uint16_t localY )
 void    pfGUIListTreeRoot::GetSize( plDynamicTextMap *textGen, uint16_t *width, uint16_t *height )
 {
     *width = textGen->CalcStringWidth( GetTitle(), height );
-    if( height != nil )
+    if (height != nullptr)
     { 
         if( *height == 0 )
             *height = 10;       // Never allow zero height elements
         else
             *height += 0;       // Add one pixel on each side for padding (or not, 3.21.02 mcn)
 
-        if( fSkin != nil )
+        if (fSkin != nullptr)
         {
             uint16_t h = fSkin->GetElement( pfGUISkin::kTreeButtonClosed ).fHeight;
             if( *height < h )
@@ -334,7 +334,7 @@ void    pfGUIListTreeRoot::GetSize( plDynamicTextMap *textGen, uint16_t *width, 
         }
     }
 
-    if( fSkin != nil )
+    if (fSkin != nullptr)
         *width += fSkin->GetElement( pfGUISkin::kTreeButtonClosed ).fWidth;
 }
 

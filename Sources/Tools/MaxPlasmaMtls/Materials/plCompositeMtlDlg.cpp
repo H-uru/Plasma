@@ -70,14 +70,14 @@ plCompositeMtlDlg::plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plComposit
     fDADMgr.Init(this);
 
     fhMtlEdit = hwMtlEdit;
-    fhRollup = NULL;
+    fhRollup = nullptr;
     fMtl = m;
     fPBlock = fMtl->GetParamBlockByID(plCompositeMtl::kBlkPasses);
     ip = imp;
     valid = FALSE;
 
     for (int i = 0; i < NSUBMTLS; i++)
-        fLayerBtns[i] = NULL;
+        fLayerBtns[i] = nullptr;
 
     curTime = imp->GetTime();
 
@@ -91,17 +91,17 @@ plCompositeMtlDlg::plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plComposit
 
 plCompositeMtlDlg::~plCompositeMtlDlg()
 {
-    fMtl->SetParamDlg(NULL);
+    fMtl->SetParamDlg(nullptr);
     for (int i = 0; i < NSUBMTLS; i++)
     {
         ReleaseICustButton(fLayerBtns[i]);
-        fLayerBtns[i] = NULL; 
+        fLayerBtns[i] = nullptr;
     }
 
-    SetWindowLong(fhRollup, GWL_USERDATA, NULL);
+    SetWindowLong(fhRollup, GWL_USERDATA, 0L);
     ip->DeleteRollupPage(fhRollup);
 
-    fhRollup = NULL;
+    fhRollup = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void plCompositeMtlDlg::SetThing(ReferenceTarget *m)
 
     // Bad?
     if (fMtl) 
-        fMtl->SetParamDlg(NULL);
+        fMtl->SetParamDlg(nullptr);
     fMtl = (plCompositeMtl *)m;
     if (fMtl)
         fMtl->SetParamDlg(this);
@@ -169,7 +169,7 @@ BOOL plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
     }
     else
     {
-        if ((theDlg = (plCompositeMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA)) == NULL)
+        if (theDlg = (plCompositeMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA); theDlg == nullptr)
             return FALSE; 
     }
 
@@ -198,7 +198,7 @@ BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
 
                 if (i > 0) // the first material doesn't get one, nyah nyah!
                 {
-                    HWND cbox = NULL;
+                    HWND cbox = nullptr;
                     int j;
                     for (j = 0; j < plCompositeMtl::kCompNumBlendMethods; j++)
                     {
@@ -220,7 +220,7 @@ BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
         for (i = 0; i < NSUBMTLS; i++)
         {
             ReleaseICustButton(fLayerBtns[i]);
-            fLayerBtns[i] = NULL;
+            fLayerBtns[i] = nullptr;
         }
         break;
 

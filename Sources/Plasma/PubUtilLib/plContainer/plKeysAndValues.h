@@ -96,10 +96,10 @@ public:
     bool SetValue(const ST::string & key, int value);
     bool SetValue(const ST::string & key, double value);
     // get single value
-    ST::string GetValue(const ST::string & key, const ST::string & defval={}, bool * outFound=nil) const;
-    uint32_t GetValue(const ST::string & key, uint32_t defval, bool * outFound=nil) const;
-    int GetValue(const ST::string & key, int defval, bool * outFound=nil) const;
-    double GetValue(const ST::string & key, double defval, bool * outFound=nil) const;
+    ST::string GetValue(const ST::string & key, const ST::string & defval={}, bool * outFound=nullptr) const;
+    uint32_t GetValue(const ST::string & key, uint32_t defval, bool * outFound=nullptr) const;
+    int GetValue(const ST::string & key, int defval, bool * outFound=nullptr) const;
+    double GetValue(const ST::string & key, double defval, bool * outFound=nullptr) const;
     std::vector<ST::string> GetAllValues(const ST::string & key);
     // key iterator
     bool GetKeyIterators(Keys::const_iterator & iter, Keys::const_iterator & end) const;

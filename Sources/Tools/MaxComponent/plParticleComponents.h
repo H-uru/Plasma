@@ -169,7 +169,7 @@ class plParticleEffectComponent : public plComponent
 protected:
     plParticleEffect*       fEffect;
 public:
-    plParticleEffectComponent() : fEffect(nil) {}
+    plParticleEffectComponent() : fEffect() { }
     void DeleteThis() override { delete this; }
 
     bool SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg) override;

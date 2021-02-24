@@ -59,14 +59,14 @@ extern ClassDesc* GetMaxFileDataDesc();
 extern ClassDesc* GetMaxUtilsDesc();
 
 static HSClassDesc2 HSDesc;
-HINSTANCE hInstance = NULL;
+HINSTANCE hInstance = nullptr;
 
 /*inline*/ TCHAR *GetString(int id)
 {
     static TCHAR buf[256];
     if (hInstance)
-        return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-    return NULL;
+        return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : nullptr;
+    return nullptr;
 }
 
 //
@@ -172,10 +172,10 @@ public:
 
     int NumParamBlocks() override { return 1; }                  // return number of ParamBlocks in this instance
     IParamBlock2* GetParamBlock(int i) override { return fPBlock; } // return i'th ParamBlock
-    IParamBlock2* GetParamBlockByID(BlockID id) override { return (fPBlock->ID() == id) ? fPBlock : NULL; } // return id'd ParamBlock
+    IParamBlock2* GetParamBlockByID(BlockID id) override { return (fPBlock->ID() == id) ? fPBlock : nullptr; } // return id'd ParamBlock
 
     int NumRefs() override { return 1; }
-    RefTargetHandle GetReference(int i) override { if (i == 0) return fPBlock; else return NULL; }
+    RefTargetHandle GetReference(int i) override { if (i == 0) return fPBlock; else return nullptr; }
     void SetReference(int i, RefTargetHandle rtarg) override { if (i == 0) fPBlock = (IParamBlock2 *)rtarg; }
 
     int NumSubs() override { return 1; }
@@ -230,7 +230,7 @@ ParamBlockDesc2 generalAttribBlock
     end
 );
 
-plGeneralAttrib::plGeneralAttrib() : fClassDesc(&theGeneralAttribClassDesc), fPBlock(NULL)
+plGeneralAttrib::plGeneralAttrib() : fClassDesc(&theGeneralAttribClassDesc), fPBlock()
 {
     fClassDesc->MakeAutoParamBlocks(this);
 }

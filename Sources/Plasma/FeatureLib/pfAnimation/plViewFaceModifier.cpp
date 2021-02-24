@@ -379,7 +379,7 @@ void plViewFaceModifier::IOnRemove(plGenRefMsg* refMsg)
     switch(refMsg->fType)
     {
     case kRefFaceObj:
-        fFaceObj = nil;
+        fFaceObj = nullptr;
         break;
     }
 }

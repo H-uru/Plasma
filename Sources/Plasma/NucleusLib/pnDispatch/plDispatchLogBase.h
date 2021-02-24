@@ -71,7 +71,7 @@ public:
     static void SetFlags(uint32_t f) { fFlags=f; }
     static uint32_t GetFlags() { return fFlags; }
 
-    static bool IsLogging() { return fInstance != nil; }
+    static bool IsLogging() { return fInstance != nullptr; }
     static bool IsLoggingLong() { return (fFlags & kLogLongReceives) != 0; }
 
     virtual void AddFilterType(uint16_t type)=0;

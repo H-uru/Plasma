@@ -53,8 +53,8 @@ protected:
     plPipeline*             fPipe;
 public:
 
-    plPipeResMakeMsg() : plMessage(nil, nil, nil), fPipe(nil) { SetBCastFlag(kBCastByExactType); }
-    plPipeResMakeMsg(plPipeline* pipe) : plMessage(nil, nil, nil), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
+    plPipeResMakeMsg() : plMessage(nullptr, nullptr, nullptr), fPipe() { SetBCastFlag(kBCastByExactType); }
+    plPipeResMakeMsg(plPipeline* pipe) : plMessage(nullptr, nullptr, nullptr), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
 
     ~plPipeResMakeMsg() {}
 

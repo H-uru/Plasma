@@ -123,7 +123,7 @@ void plAnimDebugList::ShowReport()
         for (uint32_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface *layer = mat->GetLayer(j)->BottomOfStack();
-            while (layer != nil)
+            while (layer != nullptr)
             {
                 plLayerAnimation *layerAnim = plLayerAnimation::ConvertNoRef(layer);
                 if (layerAnim)

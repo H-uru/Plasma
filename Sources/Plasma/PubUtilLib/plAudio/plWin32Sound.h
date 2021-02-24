@@ -119,7 +119,7 @@ protected:
     bool    IActuallyPlaying() override { return fReallyPlaying; }
     void    IActuallyPlay() override;
     void    IFreeBuffers() override;
-    bool    IActuallyLoaded() override { return ( fDSoundBuffer != nil ) ? true : false; }
+    bool    IActuallyLoaded() override { return (fDSoundBuffer != nullptr); }
 
     // Override to make sure the buffer is available before the base class is called
     void    IRefreshParams() override;

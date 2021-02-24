@@ -57,11 +57,11 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptBook)
 
 PYTHON_INIT_DEFINITION(ptBook, args, keywords)
 {
-    const char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", NULL};
-    PyObject* sourceObj = NULL;
-    PyObject* coverObj = NULL;
-    PyObject* callbackObj = NULL;
-    char* guiName = NULL;
+    const char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", nullptr};
+    PyObject* sourceObj = nullptr;
+    PyObject* coverObj = nullptr;
+    PyObject* callbackObj = nullptr;
+    char* guiName = nullptr;
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|OOs", const_cast<char **>(kwlist),
                                      &sourceObj, &coverObj, &callbackObj, &guiName))
     {
@@ -70,7 +70,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     }
 
     // convert all the optional arguments
-    plKey coverKey = nil;
+    plKey coverKey;
     if (coverObj)
     {
         if (pyKey::Check(coverObj))
@@ -82,7 +82,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
                 PYTHON_RETURN_INIT_ERROR;
             }
             callbackObj = coverObj;
-            coverObj = nil;
+            coverObj = nullptr;
         }
         else if (!pyImage::Check(coverObj))
         {
@@ -93,7 +93,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
             coverKey = pyImage::ConvertFrom(coverObj)->GetKey();
     }
 
-    plKey callbackKey = nil;
+    plKey callbackKey;
     if (callbackObj)
     {
         if (!pyKey::Check(callbackObj))
@@ -285,16 +285,16 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptBook, "Params: esHTMLSource,coverImage=None,callbackKey=None,guiName=''\nCreates a new book");
 
 // required functions for PyObject interoperability
-PyObject *pyJournalBook::New(std::string htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, const ST::string &guiName /* = "" */)
+PyObject *pyJournalBook::New(std::string htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
-    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, NULL, NULL);
+    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, nullptr, nullptr);
     newObj->fThis->MakeBook(htmlSource, coverImageKey, callbackKey, guiName);
     return (PyObject*)newObj;
 }
 
-PyObject *pyJournalBook::New(std::wstring htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, const ST::string &guiName /* = "" */)
+PyObject *pyJournalBook::New(std::wstring htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
-    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, NULL, NULL);
+    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, nullptr, nullptr);
     newObj->fThis->MakeBook(htmlSource, coverImageKey, callbackKey, guiName);
     return (PyObject*)newObj;
 }

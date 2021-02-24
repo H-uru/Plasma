@@ -57,13 +57,14 @@ public:
 
     plFileName fMovieName;
 
-    pfMovieEventMsg(const plFileName& movieName, Reason reason=kMovieDone) : plMessage(nil, nil, nil)
+    pfMovieEventMsg(const plFileName& movieName, Reason reason=kMovieDone)
+        : plMessage(nullptr, nullptr, nullptr)
     {
         fReason = reason;
         fMovieName = movieName;
     }
 
-    pfMovieEventMsg() : plMessage(nil, nil, nil), fReason(kMovieDone)
+    pfMovieEventMsg() : plMessage(nullptr, nullptr, nullptr), fReason(kMovieDone)
     {
     }
 

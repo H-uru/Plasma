@@ -124,7 +124,7 @@ template <class T> class hsTArray : public hsTArrayBase
     #define hsTArray_Validate(condition)
 #endif
 public:
-    hsTArray() : fArray(nil) {}
+    hsTArray() : fArray() { }
     inline  hsTArray(int count);
     inline  hsTArray(const hsTArray<T>& src);
             ~hsTArray() { if (fArray) delete[] fArray; 
@@ -222,7 +222,7 @@ public:
 
 //////////////  Public hsTArray methods
 
-template <class T> hsTArray<T>::hsTArray(int count) : fArray(nil)
+template <class T> hsTArray<T>::hsTArray(int count) : fArray()
 {
     hsTArray_ValidateCount(count);
     fUseCount = fTotalCount = count;
@@ -230,7 +230,7 @@ template <class T> hsTArray<T>::hsTArray(int count) : fArray(nil)
         fArray = new T[count];
 }
 
-template <class T> hsTArray<T>::hsTArray(const hsTArray<T>& src) : fArray(nil)
+template <class T> hsTArray<T>::hsTArray(const hsTArray<T>& src) : fArray()
 {
     int count = src.Count();
     fUseCount = fTotalCount = count;
@@ -339,7 +339,7 @@ template <class T> void hsTArray<T>::Expand(int NewCount) // New Count is Absolu
     {   
         T*  newArray = new T[NewCount];
 
-        if (fArray != nil)
+        if (fArray != nullptr)
         {   hsTArray_CopyForward(fArray, newArray, fUseCount);
 //          hsTArray_CopyForward(&fArray[index], &newArray[index + count], fUseCount - index);
             delete[] fArray;
@@ -354,7 +354,7 @@ template <class T> void hsTArray<T>::Reset()
     if (fArray)
     {   
         delete[] fArray;
-        fArray = nil;
+        fArray = nullptr;
         fUseCount = fTotalCount = 0;
     }
 }
@@ -415,7 +415,7 @@ template <class T> void hsTArray<T>::IncCount(int index, int count)
         GrowArraySize(newCount);    // Sets new fTotalCount
         T*  newArray = new T[fTotalCount];
 
-        if (fArray != nil)
+        if (fArray != nullptr)
         {   hsTArray_CopyForward(fArray, newArray, index);
             hsTArray_CopyForward(&fArray[index], &newArray[index + count], fUseCount - index);
             delete[] fArray;

@@ -76,7 +76,7 @@ ParamBlockDesc2 gXImposterBk
 (   
     plComponent::kBlkComp, _T("X-Form"), 0, &gXImposterDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_XFORM, IDS_COMP_XFORMS, 0, 0, NULL,
+    IDD_COMP_XFORM, IDS_COMP_XFORMS, 0, 0, nullptr,
 
     end
 );
@@ -117,7 +117,7 @@ ParamBlockDesc2 gForceCTTBk
 (   
     plComponent::kBlkComp, _T("ForceCTT"), 0, &gForceCTTDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FORCE_CTT, IDS_COMP_FORCE_CTT, 0, 0, NULL,
+    IDD_COMP_FORCE_CTT, IDS_COMP_FORCE_CTT, 0, 0, nullptr,
 
     end
 );

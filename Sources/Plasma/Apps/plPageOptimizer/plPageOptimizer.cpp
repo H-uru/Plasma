@@ -53,11 +53,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plRegistryNode.h"
 
 
-plPageOptimizer* plPageOptimizer::fInstance = nil;
+plPageOptimizer* plPageOptimizer::fInstance = nullptr;
 
 plPageOptimizer::plPageOptimizer(const plFileName& pagePath) :
     fOptimized(true),
-    fPageNode(nil),
+    fPageNode(),
     fPagePath(pagePath)
 {
     fInstance = this;
@@ -123,7 +123,7 @@ void plPageOptimizer::Optimize()
         // Unload everything
         snKey->RefObject();
         snKey->UnRefObject();
-        snKey = nil;
+        snKey = nullptr;
     }
     else
     {

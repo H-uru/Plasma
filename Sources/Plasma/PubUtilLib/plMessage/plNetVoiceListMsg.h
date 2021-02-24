@@ -62,9 +62,9 @@ public:
         kDistanceMode,
     };
 
-    plNetVoiceListMsg() : plMessage(nil, nil, nil), fCmd( 0 ) { SetBCastFlag(kBCastByExactType); }
+    plNetVoiceListMsg() : plMessage(nullptr, nullptr, nullptr), fCmd() { SetBCastFlag(kBCastByExactType); }
     plNetVoiceListMsg( uint32_t cmd ) : 
-                plMessage(nil, nil, nil), fCmd( cmd )
+                plMessage(nullptr, nullptr, nullptr), fCmd(cmd)
                 { SetBCastFlag( kBCastByExactType ); }
     
     ~plNetVoiceListMsg() { }

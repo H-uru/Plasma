@@ -93,7 +93,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
         void Read(hsStream* s, hsResMgr* mgr) override;
         void Write(hsStream* s, hsResMgr* mgr) override;
 
-        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         void    SetCurrValue(float v) override;
         virtual void    AnimateToPercentage( float percent );

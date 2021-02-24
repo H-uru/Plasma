@@ -124,7 +124,7 @@ class plMipmap : public plBitmap
 
         void            *GetImage() const { return fImage; }
         void            SetImagePtr( void *ptr ) { fImage = ptr; }
-        uint8_t           *GetLevelPtr( uint8_t level, uint32_t *width = nil, uint32_t *height = nil, uint32_t *rowBytes = nil );
+        uint8_t           *GetLevelPtr(uint8_t level, uint32_t *width = nullptr, uint32_t *height = nullptr, uint32_t *rowBytes = nullptr);
 
         // Sets the current level pointer for use with GetAddr*
         virtual void    SetCurrLevel(uint8_t level);
@@ -275,7 +275,7 @@ class plMipmap : public plBitmap
         };
 
         // Compositing function. Take a (smaller) mipmap and composite it onto this one at the given location. Nil options means use default
-        virtual void    Composite( plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nil );
+        virtual void    Composite(plMipmap *source, uint16_t x, uint16_t y, CompositeOptions *options = nullptr);
 
         // Scaling function
         enum ScaleFilter
@@ -364,7 +364,7 @@ class plMipmap : public plBitmap
                 {
                     fBackPtr = backPtr;
                     fNext = *backPtr;
-                    if( fNext != nil )
+                    if (fNext != nullptr)
                         fNext->fBackPtr = &fNext;
                     *backPtr = this;
                 }
@@ -372,7 +372,7 @@ class plMipmap : public plBitmap
                 void    Unlink()
                 {
                     *fBackPtr = fNext;
-                    if( fNext != nil )
+                    if (fNext != nullptr)
                         fNext->fBackPtr = fBackPtr;
                 }
         };

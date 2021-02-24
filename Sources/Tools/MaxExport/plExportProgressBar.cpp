@@ -70,7 +70,7 @@ void plExportProgressBar::Start(char *name, uint32_t steps)
     fCurStep = 0;
 
     fInterface->ProgressEnd();
-    fInterface->ProgressStart(name, TRUE, ProgressDummyFunc, nil);
+    fInterface->ProgressStart(name, TRUE, ProgressDummyFunc, nullptr);
    
    GUP* exportServerGup = OpenGupPlugIn(Class_ID(470000004,99));
    if(exportServerGup && name)

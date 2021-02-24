@@ -281,27 +281,27 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
     {
         if (statusStr)
             *statusStr = "Object name is nil";
-        return nil;
+        return nullptr;
     }
     
     if (type<0 || type>=plFactory::GetNumClasses())
     {
         if (statusStr)
             *statusStr = "Illegal class type val";
-        return nil;
+        return nullptr;
     }
 
-    plKey key=nil;
+    plKey key;
     // Try restricted to our age first, if we're not given an age name. This works
     // around most of the problems associated with unused keys in pages causing the pages to be marked
     // as not loaded and thus screwing up our searches
-    if (ageName.empty() && plNetClientMgr::GetInstance() != nil)
+    if (ageName.empty() && plNetClientMgr::GetInstance() != nullptr)
     {
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
         if (!thisAge.empty())
         {
             key = plKeyFinder::Instance().StupidSearch(thisAge, ST::string(), type, name, subString);
-            if (key != nil)
+            if (key != nullptr)
             {
                 if (statusStr)
                     *statusStr = "Found Object";
@@ -316,7 +316,7 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
     {
         if (statusStr)
             *statusStr = "Can't find object";
-        return nil;
+        return nullptr;
     }
     
     if (!key->ObjectIsLoaded())
@@ -341,11 +341,11 @@ plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
 {
     plKey key=FindObjectByName(name, plSceneObject::Index(), ageName, statusStr, subString);
 
-    if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nil))
+    if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr))
     {
         if (statusStr)
             *statusStr = "Can't find SceneObject";
-        return nil;
+        return nullptr;
     }
 
     return key;
@@ -362,7 +362,7 @@ plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, cons
     {
         if (statusStr)
             *statusStr = "TypeName is nil";
-        return nil;
+        return nullptr;
     }
     
     return FindObjectByName(name, plFactory::FindClassIndex(typeName), ageName, statusStr, subString);
@@ -500,7 +500,7 @@ PF_CONSOLE_CMD( Stats, Show,    // Group name, Function name
                 "Shows or hides a given category of statistics.\n"
                 "List the valid categories using Stats.ListGroups")
 {
-    const char* group = nil;
+    const char* group = nullptr;
     if (numParams > 0)
         group = params[0];
 
@@ -623,7 +623,7 @@ PF_CONSOLE_CMD(Stats, RemoveDetailVar, "string stat", "Removes the specified var
 
 PF_CONSOLE_CMD(Stats, AutoProfile, "...", "Performs an automated profile in all the ages. Optional: Specify an age name to do just that age")
 {
-    const char* ageName = nil;
+    const char* ageName = nullptr;
     if (numParams > 0)
         ageName = params[0];
 
@@ -687,7 +687,7 @@ public:
     }
     bool ProcessGroup(pfConsoleCmdGroup *g, int depth) override
     {
-    //  if(g->GetFirstCommand() != nil)
+    //  if (g->GetFirstCommand() != nullptr)
         {
             fprintf(fFile, "<p><strong><h%s>Command %sGroup %s </strong></h%s></p>\n",
                 (depth > 0) ? "3" : "2",
@@ -717,7 +717,7 @@ public:
     }
     bool ProcessGroup(pfConsoleCmdGroup *g, int depth) override
     {
-    //  if(g->GetFirstCommand() != nil)
+    //  if (g->GetFirstCommand() != nullptr)
         {
             fprintf(fFile, "<br />\n");
             if(depth <1)
@@ -748,7 +748,7 @@ PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName",
 
 
     f = fopen(params[0],"wt");
-    if(f == nil)
+    if (f == nullptr)
     {
         PrintString("Couldn't Open File");
         return;
@@ -779,7 +779,7 @@ PF_CONSOLE_CMD( Console, CreateBriefDocumentation, "string fileName",
 
 
     f = fopen(params[0],"wt");
-    if(f == nil)
+    if (f == nullptr)
     {
         PrintString("Couldn't Open File");
         return;
@@ -1022,7 +1022,7 @@ PF_CONSOLE_CMD( Graphics, BumpW, "", "Set bump mapping method to cheapest availa
 
 PF_CONSOLE_CMD( Graphics, AllowWBuffering, "", "Enables the use of w-buffering\n(w-buffering is disabled by default)." )
 {
-    PF_SANITY_CHECK( pfConsole::GetPipeline() == nil, "This command MUST be used in an .ini file (before pipeline initialization)" );
+    PF_SANITY_CHECK(pfConsole::GetPipeline() == nullptr, "This command MUST be used in an .ini file (before pipeline initialization)");
 
     extern uint32_t fDbgSetupInitFlags;
 
@@ -1033,7 +1033,7 @@ PF_CONSOLE_CMD( Graphics, AllowWBuffering, "", "Enables the use of w-buffering\n
 
 PF_CONSOLE_CMD( Graphics, ForceGeForce2Quality, "", "Forces higher-level hardware down to roughly the capabilities of a GeForce 2." )
 {
-    PF_SANITY_CHECK( pfConsole::GetPipeline() == nil, "This command MUST be used in an .ini file (before pipeline initialization)" );
+    PF_SANITY_CHECK(pfConsole::GetPipeline() == nullptr, "This command MUST be used in an .ini file (before pipeline initialization)");
 
     extern uint32_t fDbgSetupInitFlags;
 
@@ -1216,7 +1216,7 @@ PF_CONSOLE_SUBGROUP( Graphics, Renderer )       // Creates a sub-group under a g
 
 PF_CONSOLE_CMD( Graphics_Renderer, SetClearColor, "float r, float g, float b", "Sets the global clear color" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     hsColorRGBA     c;
 
@@ -1241,7 +1241,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, mfTest, "int mfDbgTest", "Reserved for intern
 
 PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or (r,g,b))" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     float g = params[0];
 
@@ -1269,7 +1269,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
 
 PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternative ramp)" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     std::vector<uint16_t> ramp;
     ramp.resize(256);
@@ -1299,7 +1299,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
 
 PF_CONSOLE_CMD( Graphics_Renderer, MaxCullNodes, "...", "Limit occluder processing" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     int maxCullNodes;
     if( numParams > 0 )
@@ -1320,7 +1320,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, MaxCullNodes, "...", "Limit occluder processi
 
 PF_CONSOLE_CMD( Graphics_Renderer, SetYon, "float yon, ...", "Sets the view yon" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     float        hither, yon;
 
@@ -1337,7 +1337,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetYon, "float yon, ...", "Sets the view yon"
 
 PF_CONSOLE_CMD( Graphics_Renderer, TweakZBiasScale, "float deltaScale", "Adjusts the device-dependent scale value for upper-layer z biasing" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     float        scale;
 
@@ -1350,7 +1350,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TweakZBiasScale, "float deltaScale", "Adjusts
 
 PF_CONSOLE_CMD( Graphics_Renderer, SetZBiasScale, "float scale", "Sets the device-dependent scale value for upper-layer z biasing" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     pfConsole::GetPipeline()->SetZBiasScale( (float)params[ 0 ] );
     
@@ -1361,7 +1361,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetZBiasScale, "float scale", "Sets the devic
 
 PF_CONSOLE_CMD( Graphics_Renderer, Overwire, "...", "Turn on (off) overlay wire rendering" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     bool on = false;
     uint32_t flag = plPipeDbg::kFlagOverlayWire;
@@ -1377,7 +1377,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Overwire, "...", "Turn on (off) overlay wire 
 
 PF_CONSOLE_CMD( Graphics_Renderer, Overdraw, "bool on", "Turn on (off) overdraw rendering" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     static plLayerDepth ld;
     static bool ldOn = false;
@@ -1403,7 +1403,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Overdraw, "bool on", "Turn on (off) overdraw 
 
 PF_CONSOLE_CMD( Graphics_Renderer, Wireframe, "...", "Toggle or set wireframe view mode." )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     static bool         wireOn = false;
     static plLayerOr    wireLayer;
@@ -1434,7 +1434,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Wireframe, "...", "Toggle or set wireframe vi
 
 PF_CONSOLE_CMD( Graphics_Renderer, TwoSided, "...", "Toggle or set force two-sided." )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     static bool         twoSideOn = false;
     static plLayerOr    twoSideLayer;
@@ -1524,7 +1524,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeCam,
 
 PF_CONSOLE_CMD( Graphics_Renderer, AVIWrite, "...", "Saves each frame to an AVI file" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     char fileName[ 512 ];
 
@@ -1558,7 +1558,7 @@ PF_CONSOLE_CMD(Graphics_Renderer, AVIClose, "", "Stops the current AVI recording
 /*
 PF_CONSOLE_CMD( Graphics_Renderer, GenerateReflectMaps, "string baseObject, string baseFileName, int size", "Generates the six cubic faces of a reflection map centered on the given object" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     // First, create the renderTarget for the renderRequests
     plRenderTarget *target = new plRenderTarget( plRenderTarget::kIsProjected | plRenderTarget::kIsTexture, 
@@ -1574,7 +1574,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, GenerateReflectMaps, "string baseObject, stri
 
 PF_CONSOLE_CMD( Graphics_Renderer, ToggleScene, "", "Toggles main scene drawing" )
 {
-    if( plClient::GetInstance() == nil )
+    if (plClient::GetInstance() == nullptr)
     {
         PrintString( "Command invalid before client init" );
         return;
@@ -1594,7 +1594,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, ToggleScene, "", "Toggles main scene drawing"
 
 PF_CONSOLE_CMD( Graphics_Renderer, ToggleRenderRequests, "", "Toggles processing of pre- and post-render requests" )
 {
-    if( plClient::GetInstance() == nil )
+    if (plClient::GetInstance() == nullptr)
     {
         PrintString( "Command invalid before client init" );
         return;
@@ -1620,7 +1620,7 @@ PF_CONSOLE_SUBGROUP( Graphics_Renderer, Fog )
 
 PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefColor, "float r, float g, float b", "Sets the default fog color" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
 
     plFogEnvironment    env;
@@ -1634,7 +1634,7 @@ PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefColor, "float r, float g, float b",
 
 PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefLinear, "float start, float end, float density", "Sets the default fog to linear" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
 
     plFogEnvironment    env;
@@ -1646,7 +1646,7 @@ PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefLinear, "float start, float end, fl
 
 PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefExp, "float end, float density", "Sets the default fog to linear" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
 
     plFogEnvironment    env;
@@ -1658,7 +1658,7 @@ PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefExp, "float end, float density", "S
 
 PF_CONSOLE_CMD( Graphics_Renderer_Fog, SetDefExp2, "float end, float density", "Sets the default fog to exp^2" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
 
     plFogEnvironment    env;
@@ -1702,7 +1702,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     ST::string ageName = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
 
     plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), ageName, nullptr, true);
-    plSceneObject *obj = ( key != nil ) ? plSceneObject::ConvertNoRef( key->GetObjectPtr() ) : nil;
+    plSceneObject *obj = (key != nullptr) ? plSceneObject::ConvertNoRef(key->GetObjectPtr()) : nullptr;
     if( !obj )
     {
         pfConsolePrintF(PrintString, "Cannot find sceneObject {}", (char *)params[0]);
@@ -1710,7 +1710,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
-    if( ai == nil )
+    if (ai == nullptr)
     {
         pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", (char *)params[0]);
         return;
@@ -2013,7 +2013,7 @@ PF_CONSOLE_CMD( App,
         return;
     }
 
-    plKey receiver = nil;
+    plKey receiver;
     PrintString(status);
 
     for (size_t i = 0; i < obj->GetNumModifiers(); i++)
@@ -2167,7 +2167,7 @@ PF_CONSOLE_CMD( App,
     }
     ST::string str = name;
 
-    plAnimCmdMsg* cmd = new plAnimCmdMsg(nil, obj->GetModifier(i)->GetKey(), nil);
+    plAnimCmdMsg* cmd = new plAnimCmdMsg(nullptr, obj->GetModifier(i)->GetKey(), nullptr);
 
     if( numParams > 1 )
     {
@@ -2482,7 +2482,7 @@ PF_CONSOLE_GROUP( Registry )        // Defines a main command group
 PF_CONSOLE_CMD( Registry, ToggleDebugStats, "", "Toggles the debug statistics screen for the registry" )
 {
     plResManagerHelper *helper = plResManagerHelper::GetInstance();
-    if( helper == nil )
+    if (helper == nullptr)
     {
         PrintString( "ERROR: ResManager helper object not initialized." );
         return;
@@ -2558,7 +2558,7 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
             if( ( a == 0 && peeker->PeekIsActiveRef( i ) ) || ( a == 1 && !peeker->PeekIsActiveRef( i ) ) )
             {
                 plRefMsg *msg = peeker->PeekNotifyCreated( i );
-                if( msg != nil )
+                if (msg != nullptr)
                 {
                     for( j = 0; j < msg->GetNumReceivers(); j++ )
                     {
@@ -2588,7 +2588,7 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
 {
     const char *result = "";
     plKey obj = FindObjectByNameAndType(ST::string::from_utf8(params[1]), params[0], "", &result);
-    if( obj == nil )
+    if (obj == nullptr)
     {
         PrintString( result );
         return;
@@ -2895,7 +2895,7 @@ static plLogicModBase *FindLogicMod(const ST::string &name)
     if (key)
         return plLogicModBase::ConvertNoRef(key->GetObjectPtr());
 
-    return nil;
+    return nullptr;
 }
 
 PF_CONSOLE_CMD( Logic, TriggerDetectorNum, "int detectorNum", "Triggers the detector with this number (from ListDetectors)")
@@ -2951,7 +2951,7 @@ static void ResponderSendTrigger(plKey responderKey, int responderState, bool fa
 
     // Setup the event data in case this is a OneShot responder that needs it
     plKey playerKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
-    msg->AddPickEvent(playerKey, nil, true, hsPoint3(0,0,0) );
+    msg->AddPickEvent(playerKey, nullptr, true, hsPoint3(0, 0, 0));
 
     if (responderState != -1)
         msg->AddResponderStateEvent(responderState);
@@ -3093,7 +3093,7 @@ PF_CONSOLE_GROUP( Keyboard )        // Defines a main command group
 
 PF_CONSOLE_CMD( Keyboard, ResetBindings, "", "Resets the keyboard bindings to their defaults" )
 {
-    if( plInputInterfaceMgr::GetInstance() != nil )
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
         plInputInterfaceMgr::GetInstance()->InitDefaultKeyMap();
 
     PrintString( "Keyboard bindings reset" );
@@ -3102,7 +3102,7 @@ PF_CONSOLE_CMD( Keyboard, ResetBindings, "", "Resets the keyboard bindings to th
 
 PF_CONSOLE_CMD( Keyboard, ClearBindings, "", "Resets the keyboard bindings to empty" )
 {
-    if( plInputInterfaceMgr::GetInstance() != nil )
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
         plInputInterfaceMgr::GetInstance()->ClearAllKeyMaps();
 
     PrintString( "Keyboard bindings destroyed" );
@@ -3156,7 +3156,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
         return;
     }
 
-    if( plInputInterfaceMgr::GetInstance() != nil )
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
         plKeyCombo key1 = IBindKeyToVKey( params[ 0 ] );
         plInputInterfaceMgr::GetInstance()->BindAction( key1, code );
@@ -3175,7 +3175,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
         return;
     }
 
-    if( plInputInterfaceMgr::GetInstance() != nil )
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
         plKeyCombo key1 = IBindKeyToVKey( params[ 0 ] );
         plKeyCombo key2 = IBindKeyToVKey( params[ 1 ] );
@@ -3190,7 +3190,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
 {
     plKeyCombo key = IBindKeyToVKey( params[ 0 ] );
 
-    if( plInputInterfaceMgr::GetInstance() != nil )
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
         plInputInterfaceMgr::GetInstance()->BindConsoleCmd( key, params[ 1 ], plKeyMap::kFirstAlways );
 }
 
@@ -3258,14 +3258,14 @@ PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
     if( !nodeKey )
         return;
 
-    plNodeChangeMsg* msg = new plNodeChangeMsg(nil, playerKey, nodeKey);
+    plNodeChangeMsg* msg = new plNodeChangeMsg(nullptr, playerKey, nodeKey);
     plgDispatch::MsgSend(msg);
     pfConsolePrintF(PrintString, "{} moved to {}", (char*)params[0], (char*)params[1]);
 }
 
 PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page from ever being loaded. Useful for debugging." )
 {
-    if( plNetClientMgr::GetInstance() == nil )
+    if (plNetClientMgr::GetInstance() == nullptr)
         PrintString( "Unable to exclude page--NetClientMgr not loaded" );
     else
     {
@@ -3276,7 +3276,7 @@ PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page fr
 
 PF_CONSOLE_CMD( Nav, ClearExcludeList, "", "Clears the list of pages to exclude from loading." )
 {
-    if( plAgeLoader::GetInstance() != nil )
+    if (plAgeLoader::GetInstance() != nullptr)
         plAgeLoader::GetInstance()->ClearPageExcludeList();
 }
 
@@ -3506,13 +3506,13 @@ static plMorphSequence* LocalMorphSequence()
 {
     plKey playerKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
     if( !playerKey )
-        return nil;
+        return nullptr;
     plSceneObject* playerObj = plSceneObject::ConvertNoRef(playerKey->ObjectIsLoaded());
     if( !playerObj )
-        return nil;
+        return nullptr;
 
     const plCoordinateInterface* pci = playerObj->GetCoordinateInterface();
-    const plModifier* constSeq = nil;
+    const plModifier* constSeq = nullptr;
     for (size_t i = 0; i < pci->GetNumChildren(); i++)
     {
         const plSceneObject* child = pci->GetChild(i)->GetOwner();
@@ -3528,7 +3528,7 @@ static plMorphSequence* LocalMorphSequence()
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3642,7 +3642,7 @@ PF_CONSOLE_CMD( Access,
     
 }
 
-char *gCurrMorph = nil;
+char *gCurrMorph = nullptr;
 
 PF_CONSOLE_CMD( Access,
                 SetMorphItem,
@@ -3650,7 +3650,7 @@ PF_CONSOLE_CMD( Access,
                 "Set which clothing item we want to morph" )
 {
     delete [] gCurrMorph;
-    gCurrMorph = hsStrcpy(nil, params[0]);
+    gCurrMorph = hsStrcpy(nullptr, params[0]);
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3812,7 +3812,7 @@ PF_CONSOLE_CMD( Access,
 
 }
 
-static plSceneObject* losObj = nil;
+static plSceneObject* losObj = nullptr;
 
 PF_CONSOLE_CMD( Access,
                     Obj,
@@ -3837,7 +3837,7 @@ PF_CONSOLE_CMD( Access,
     plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
     PrintString(status);
 
-    plSceneObject* so = nil;
+    plSceneObject* so = nullptr;
     if( key )
     {
         so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
@@ -3855,7 +3855,7 @@ PF_CONSOLE_CMD( Access,
 {
     extern void VisLOSHackBegin(plPipeline* p, plSceneObject* m);
 
-    VisLOSHackBegin(nil, nil);
+    VisLOSHackBegin(nullptr, nullptr);
 }
 
 
@@ -3895,7 +3895,7 @@ PF_CONSOLE_CMD( Access,
 
 }
 
-plSceneObject* gunObj = nil;
+plSceneObject* gunObj = nullptr;
 float gunRadius = 1.f;
 float gunRange = 5000.f;
 
@@ -3943,7 +3943,7 @@ PF_CONSOLE_CMD( Access,
 
     float range = gunRange;
 
-    plBulletMsg* bull = new plBulletMsg(nil, nil, nil);
+    plBulletMsg* bull = new plBulletMsg(nullptr, nullptr, nullptr);
     bull->FireShot(pos, dir, radius, range);
 
     bull->Send();
@@ -3972,7 +3972,7 @@ PF_CONSOLE_CMD( Access,
 
     float range = gunRange;
 
-    plBulletMsg* bull = new plBulletMsg(nil, nil, nil);
+    plBulletMsg* bull = new plBulletMsg(nullptr, nullptr, nullptr);
     bull->FireShot(pos, dir, radius, range);
 
     bull->Send();
@@ -4191,7 +4191,7 @@ static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
     plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), "", &status, false);
     PrintString(status);
     if (!waveKey)
-        return nil;
+        return nullptr;
 
     plWaveSet7* waveSet = plWaveSet7::ConvertNoRef(waveKey->ObjectIsLoaded());
     if( !waveSet )
@@ -4206,13 +4206,13 @@ static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const ST::string& nam
     if( !numParams )
     {
         PrintString("Missing name of water component");
-        return nil;
+        return nullptr;
     }
     plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
     if( waveSet && (numParams < n) )
     {
         IDisplayWaveVal(PrintString, waveSet, cmd);
-        return nil;
+        return nullptr;
     }
     return waveSet;
 }
@@ -4683,7 +4683,7 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, PhysicalT,   // Group name, Function name
                 "Enable or disable the physical of a sceneobject" ) // Help string
 {
     const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], nil, &status);
+    plKey key = FindSceneObjectByName(params[0], nullptr, &status);
     PrintString(status);
     if (!key)
         return;
@@ -4768,7 +4768,7 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
         return;
     }
 
-    plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRequest, nil);
+    plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRequest, nullptr);
     plgDispatch::MsgSend(attMsg);
 
     pfConsolePrintF(PrintString, "{} now child of {}", childName, parentName);
@@ -4801,7 +4801,7 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
         && child->GetCoordinateInterface()->GetParent()->GetOwner() )
     {
         plKey parentKey = child->GetCoordinateInterface()->GetParent()->GetOwner()->GetKey();
-        plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRemove, nil);
+        plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRemove, nullptr);
         plgDispatch::MsgSend(attMsg);
 
         pfConsolePrintF(PrintString, "{} detached from {}", childName, parentKey->GetName());
@@ -4885,136 +4885,136 @@ PF_CONSOLE_CMD( Physics, ShowExternal, "", "Display a snapshot of the world as H
 
 PF_CONSOLE_CMD( Physics, ApplyForce, "string Object, float x, float y, float z", "Apply a force to a scene object at its center of mass.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key) 
     {
         hsVector3 force(params[1], params[2], params[3]);
-        plForceMsg *m = new plForceMsg(nil, key, force);
+        plForceMsg *m = new plForceMsg(nullptr, key, force);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ApplyForceAtPoint, "string Object, float forceX, float forceY, float forceZ, float pointX, float pointY, float pointZ", "Apply a force to a scene object at a particular point in world space.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr, nullptr);
 
     if(key) 
     {
         hsVector3 force(params[1], params[2], params[3]);
         hsPoint3 point(params[4], params[5], params[6]);
-        plOffsetForceMsg *m = new plOffsetForceMsg(nil, key, force, point);
+        plOffsetForceMsg *m = new plOffsetForceMsg(nullptr, key, force, point);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ApplyTorque, "string Object, float axisX, float axisY, float axisZ", "Apply a torque to a scene object about given axis. Magnitude is size of force.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         hsVector3 torque(params[1], params[2], params[3]);
-        plTorqueMsg *m = new plTorqueMsg(nil, key, torque);
+        plTorqueMsg *m = new plTorqueMsg(nullptr, key, torque);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ApplyImpulse, "string Object, float x, float y, float z", "Apply an impulse to a scene object.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         hsVector3 impulse(params[1], params[2], params[3]);
-        plImpulseMsg *m = new plImpulseMsg(nil, key, impulse);
+        plImpulseMsg *m = new plImpulseMsg(nullptr, key, impulse);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ApplyImpulseAtPoint, "string Object, float impulseX, float impulseY, float impulseZ, float pointX, float pointY, float pointZ", "Apply an impulse to a scene object at a particular point in world space.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         hsVector3 impulse(params[1], params[2], params[3]);
         hsPoint3 point(params[4], params[5], params[6]);
-        plOffsetImpulseMsg *m = new plOffsetImpulseMsg(nil, key, impulse, point);
+        plOffsetImpulseMsg *m = new plOffsetImpulseMsg(nullptr, key, impulse, point);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ApplyAngularImpulse, "string Object, float x, float y, float z", "Apply a rotational impulse about the given axis a scene object. Magnitude is strength.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         hsVector3 impulse(params[1], params[2], params[3]);
-        plAngularImpulseMsg *m = new plAngularImpulseMsg(nil, key, impulse);
+        plAngularImpulseMsg *m = new plAngularImpulseMsg(nullptr, key, impulse);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ApplyDamping, "string Object, float dampFactor", "Reduce the velocity and spin of the object to the given percentage.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         float dampFactor = params[1];
-        plDampMsg *m = new plDampMsg(nil, key, dampFactor);
+        plDampMsg *m = new plDampMsg(nullptr, key, dampFactor);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, ShiftMass, "string Object, float x, float y, float z", "Shift the object's center of mass.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         hsVector3 offset(params[1], params[2], params[3]);
-        plShiftMassMsg *m = new plShiftMassMsg(nil, key, offset);
+        plShiftMassMsg *m = new plShiftMassMsg(nullptr, key, offset);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, Suppress, "string Object, int doSuppress", "Remove(true) or re-add the named physical from/to the simulation.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
     if(key)
     {
         int iDoSuppress = params[1];
         
         bool doSuppress = iDoSuppress ? true : false;
-        plSimSuppressMsg *msg = new plSimSuppressMsg(nil, key, doSuppress);
+        plSimSuppressMsg *msg = new plSimSuppressMsg(nullptr, key, doSuppress);
         msg->Send();
     }
 }
 
 PF_CONSOLE_CMD( Physics, SetEventGroup, "string Object, int group, int status, int clearOthers", "Add to or remove from physics event group.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         int group = params[1], status = params[2], clearOthers = params[3];
-        plEventGroupMsg *m = new plEventGroupMsg(nil, key, group, status, clearOthers);
+        plEventGroupMsg *m = new plEventGroupMsg(nullptr, key, group, status, clearOthers);
         plgDispatch::MsgSend(m);
     }
 }
 
 PF_CONSOLE_CMD( Physics, Freeze, "string Object, int status", "Immobilize the given simulated object.")
 {
-    plKey key = FindSceneObjectByName(params[0], nil, nil);
+    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
 
     if(key)
     {
         int status = params[1];
 
-        plFreezeMsg *m = new plFreezeMsg(nil, key, nil, status);
+        plFreezeMsg *m = new plFreezeMsg(nullptr, key, nullptr, status);
 
         plgDispatch::MsgSend(m);
     }
@@ -5090,12 +5090,12 @@ PF_CONSOLE_CMD(Physics,
 
 PF_CONSOLE_GROUP( Mouse )
 
-PF_CONSOLE_CMD( Mouse, Invert, nil, "invert the mouse")
+PF_CONSOLE_CMD(Mouse, Invert, nullptr, "invert the mouse")
 {
     plMouseDevice::SetInverted(true);
 }
 
-PF_CONSOLE_CMD( Mouse, UnInvert, nil, "un-invert the mouse")
+PF_CONSOLE_CMD(Mouse, UnInvert, nullptr, "un-invert the mouse")
 {
     plMouseDevice::SetInverted(false);
 }
@@ -5107,27 +5107,27 @@ PF_CONSOLE_CMD( Mouse, SetDeadZone, "float zone", "Sets the dead zone for the mo
     float f = params[0];
 }
 
-PF_CONSOLE_CMD( Mouse, Enable, nil, "Enable mouse input")
+PF_CONSOLE_CMD(Mouse, Enable, nullptr, "Enable mouse input")
 {
 //  plCommandInterfaceModifier::GetInstance()->EnableMouseInput();
 }
-PF_CONSOLE_CMD( Mouse, Disable, nil, "Disable mouse input")
+PF_CONSOLE_CMD(Mouse, Disable, nullptr, "Disable mouse input")
 {
 //  plCommandInterfaceModifier::GetInstance()->DisableMouseInput();
 }
 
 PF_CONSOLE_CMD( Mouse, SetFadeDelay, "float delayInSecs", "Set how long the cursor has to not move before it fades out" )
 {
-    if( plAvatarInputInterface::GetInstance() != nil )
+    if (plAvatarInputInterface::GetInstance() != nullptr)
         plAvatarInputInterface::GetInstance()->SetCursorFadeDelay( params[ 0 ] );
 }
 
-PF_CONSOLE_CMD( Mouse, Hide, nil, "hide mouse cursor")
+PF_CONSOLE_CMD(Mouse, Hide, nullptr, "hide mouse cursor")
 {
     plMouseDevice::HideCursor(true);
 }
 
-PF_CONSOLE_CMD( Mouse, Show, nil, "hide mouse cursor")
+PF_CONSOLE_CMD(Mouse, Show, nullptr, "hide mouse cursor")
 {
     plMouseDevice::ShowCursor(true);
 }
@@ -5258,17 +5258,19 @@ void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value
     const char *status = "";
     plKey key = FindSceneObjectByName(objName, "", &status);
     PrintString(status);
-    if (key == nil) return;
+    if (key == nullptr)
+        return;
 
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
-    if (so == nil) return;
+    if (so == nullptr)
+        return;
 
     for (hsSsize_t i = so->GetNumModifiers() - 1; i >= 0; i--)
     {
         const plParticleSystem *sys = plParticleSystem::ConvertNoRef(so->GetModifier(i));
-        if (sys != nil)
+        if (sys != nullptr)
         {
-            plgDispatch::MsgSend(new plParticleUpdateMsg(nil, sys->GetKey(), nil, paramID, value));
+            plgDispatch::MsgSend(new plParticleUpdateMsg(nullptr, sys->GetKey(), nullptr, paramID, value));
             PrintString("Particle system successfully updated.");
             return;
         }
@@ -5378,16 +5380,16 @@ PF_CONSOLE_CMD( ParticleSystem,
                "Creates a system (if necessary) on the avatar, and transfers particles" )
 {
     plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
-    if (key == nil) 
+    if (key == nullptr)
         return;
     
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
-    if (so == nil) 
+    if (so == nullptr)
         return;
     
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if (avMod)
-        (new plParticleTransferMsg(nil, avMod->GetKey(), 0, so->GetKey(), (int)params[1]))->Send();
+        (new plParticleTransferMsg(nullptr, avMod->GetKey(), nullptr, so->GetKey(), (int)params[1]))->Send();
 }
 
 PF_CONSOLE_CMD( ParticleSystem,
@@ -5396,18 +5398,18 @@ PF_CONSOLE_CMD( ParticleSystem,
                "Flag some particles for death." )
 {
     plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
-    if (key == nil) 
+    if (key == nullptr)
         return;
     
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
-    if (so == nil) 
+    if (so == nullptr)
         return;
     
     const plParticleSystem *sys = plParticleSystem::ConvertNoRef(so->GetModifierByType(plParticleSystem::Index()));
-    if (sys != nil)
+    if (sys != nullptr)
     {
         uint8_t flags = (params[3] ? plParticleKillMsg::kParticleKillPercentage : 0);
-        (new plParticleKillMsg(nil, sys->GetKey(), 0, params[2], params[1], flags))->Send();
+        (new plParticleKillMsg(nullptr, sys->GetKey(), nullptr, params[2], params[1], flags))->Send();
     }
 }
 
@@ -5418,20 +5420,20 @@ static plParticleFlockEffect *FindFlock(const ST::string &objName)
 {
     plKey key = FindSceneObjectByName(objName, "", nullptr);
     
-    if (key == nil)
-        return nil;
+    if (key == nullptr)
+        return nullptr;
     
     plSceneObject *so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
-    if (so == nil) 
-        return nil;
+    if (so == nullptr)
+        return nullptr;
     
     const plParticleSystem *sys = plParticleSystem::ConvertNoRef(so->GetModifierByType(plParticleSystem::Index()));
-    if (sys == nil)
-        return nil;
+    if (sys == nullptr)
+        return nullptr;
     
     plParticleFlockEffect *flock = plParticleFlockEffect::ConvertNoRef(sys->GetEffect(plParticleFlockEffect::Index()));
-    if (flock == nil)
-        return nil;
+    if (flock == nullptr)
+        return nullptr;
     
     return flock;
 }
@@ -5444,7 +5446,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
     plParticleEffect *flock = FindFlock(ST::string::from_utf8(params[0]));
     if (flock)
     {
-        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetOffset, params[1], params[2], params[3]))->Send();
+        (new plParticleFlockMsg(nullptr, flock->GetKey(), nullptr, plParticleFlockMsg::kFlockCmdSetOffset, params[1], params[2], params[3]))->Send();
     }
 }   
 
@@ -5456,7 +5458,7 @@ PF_CONSOLE_CMD( ParticleSystem_Flock,
     plParticleEffect *flock = FindFlock(ST::string::from_utf8(params[0]));
     if (flock)
     {
-        (new plParticleFlockMsg(nil, flock->GetKey(), 0, plParticleFlockMsg::kFlockCmdSetDissentPoint, params[1], params[2], params[3]))->Send();
+        (new plParticleFlockMsg(nullptr, flock->GetKey(), nullptr, plParticleFlockMsg::kFlockCmdSetDissentPoint, params[1], params[2], params[3]))->Send();
     }
 }
 
@@ -5594,7 +5596,7 @@ PF_CONSOLE_GROUP( Animation ) // Defines a main command group
 void SendAnimCmdMsg(const ST::string &objName, plMessage *msg)
 {
     plKey key = FindSceneObjectByName(objName, "", nullptr);
-    if (key != nil)
+    if (key != nullptr)
     {
         msg->AddReceiver(key);
         plgDispatch::MsgSend(msg);
@@ -5839,16 +5841,16 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
     }
 }
 
-static plPlate *avatarTargetTexturePlate = nil;
+static plPlate *avatarTargetTexturePlate = nullptr;
 
 PF_CONSOLE_CMD( Clothing,
                ShowTargetTexture,
                "...",
                "Show/hide the texture we use for the local avatar on a square (for debugging)." )
 {
-    if (avatarTargetTexturePlate == nil)
+    if (avatarTargetTexturePlate == nullptr)
     {
-        plArmatureMod *avMod = nil;
+        plArmatureMod *avMod = nullptr;
         if (numParams > 0)
             avMod = plAvatarMgr::GetInstance()->FindAvatarByPlayerID((int)params[0]);
         else

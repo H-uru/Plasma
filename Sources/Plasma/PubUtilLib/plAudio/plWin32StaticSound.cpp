@@ -156,7 +156,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
             fFailed = true;
 
             delete fDSoundBuffer;
-            fDSoundBuffer = nil;
+            fDSoundBuffer = nullptr;
 
             return false;
         }
@@ -166,7 +166,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         if(!fDSoundBuffer->FillBuffer(buffer->GetData(), buffer->GetDataLength(), &header))
         {
             delete fDSoundBuffer;
-            fDSoundBuffer = nil;
+            fDSoundBuffer = nullptr;
             plStatusLog::AddLineSF("audio.log", "Could not play static sound, no voices left {}", GetKeyName());
             return false;
         }
@@ -226,7 +226,7 @@ void plWin32StaticSound::IDerivedActuallyPlay()
     }
 
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStart );
-    if( event != nil )
+    if (event != nullptr)
         event->SendCallbacks();
 }
 
@@ -296,7 +296,7 @@ void plWin32LinkSound::Write(hsStream* s, hsResMgr* mgr)
 bool plWin32LinkSound::MsgReceive( plMessage* pMsg )
 {
     plLinkEffectBCMsg *msg = plLinkEffectBCMsg::ConvertNoRef( pMsg );
-    if( msg != nil && !msg->HasLinkFlag(plLinkEffectBCMsg::kMute))
+    if (msg != nullptr && !msg->HasLinkFlag(plLinkEffectBCMsg::kMute))
     {
         if (msg->fLinkKey->GetUoid().GetClonePlayerID() == GetKey()->GetUoid().GetClonePlayerID())
         {
@@ -311,7 +311,7 @@ bool plWin32LinkSound::MsgReceive( plMessage* pMsg )
     }
 
     plPseudoLinkEffectMsg *psmsg = plPseudoLinkEffectMsg::ConvertNoRef( pMsg );
-    if( psmsg != nil)
+    if (psmsg != nullptr)
     {
         if (psmsg->fAvatarKey->GetUoid().GetClonePlayerID() == GetKey()->GetUoid().GetClonePlayerID())
         {

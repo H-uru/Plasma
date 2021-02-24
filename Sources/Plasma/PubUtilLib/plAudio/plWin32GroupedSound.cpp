@@ -115,7 +115,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     if( fPriority > plgAudioSys::GetPriorityCutoff() )
         return false;   // Don't set the failed flag, just return
 
-    if( !plgAudioSys::Active() || fDSoundBuffer != nil )
+    if (!plgAudioSys::Active() || fDSoundBuffer != nullptr)
         return false;
 
 
@@ -201,7 +201,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
         fFailed = true;
 
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
 
         return false;
     }
@@ -222,7 +222,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
                             0);
 #endif
     IPrintDbgMessage( str.c_str() );
-    if( GetKey() != nil && GetKeyName().contains( "Footstep" ) )
+    if (GetKey() != nullptr && GetKeyName().contains("Footstep"))
         ;
     else
         plStatusLog::AddLineSF( "audioTimes.log", "{} ({})", str, GetKey() ? GetKeyName() : ST_LITERAL("unkeyed") );
@@ -269,7 +269,7 @@ uint32_t      plWin32GroupedSound::IGetSoundbyteLength(uint16_t soundIndex)
 
 void    *plWin32GroupedSound::IGetDataPointer() const
 {
-    return ( fDataBufferKey->ObjectIsLoaded() ) ? (void *)( (uint8_t *)((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetData() + fStartPositions[ fCurrentSound ] ) : nil;
+    return (fDataBufferKey->ObjectIsLoaded()) ? (void *)((uint8_t *)((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetData() + fStartPositions[fCurrentSound]) : nullptr;
 }
 
 uint32_t  plWin32GroupedSound::IGetDataLength() const
@@ -315,7 +315,7 @@ void    plWin32GroupedSound::IFillCurrentSound( int16_t newCurrent /*= -1*/ )
         SetVolume( fVolumes[ fCurrentSound ] );
     }
 
-    if( fDSoundBuffer != nil )
+    if (fDSoundBuffer != nullptr)
     {
         /// Lock our buffer
         //fDSoundBuffer->Lock( dataLength, dataPtr );
@@ -366,19 +366,19 @@ void plWin32GroupedSound::IDerivedActuallyPlay()
     }
 
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStart );
-    if( event != nil )
+    if (event != nullptr)
         event->SendCallbacks();
 }
 
 bool    plWin32GroupedSound::MsgReceive( plMessage* pMsg )
 {
     plSoundMsg *soundMsg = plSoundMsg::ConvertNoRef( pMsg );
-    if( soundMsg != nil && soundMsg->Cmd( plSoundMsg::kSelectFromGroup ) )
+    if (soundMsg != nullptr && soundMsg->Cmd(plSoundMsg::kSelectFromGroup))
     {
         IFillCurrentSound( soundMsg->fIndex );
         return true;
     }
-    else if( soundMsg != nil && soundMsg->Cmd( plSoundMsg::kPlay ) )
+    else if (soundMsg != nullptr && soundMsg->Cmd(plSoundMsg::kPlay))
     {
         Play();
         //plIncidentalMgr::GetInstance()->Play( this, plIncidentalMgr::kNormal );

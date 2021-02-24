@@ -119,7 +119,7 @@ public:
 
 protected:
     int  ISizeControl(HWND hDlg, HWND hControl, int w, int h, int y, int x=3);
-    HWND ICreateControl(HWND hDlg, const char *className, const char *wndName=nil, DWORD style=0, DWORD exStyle=0);
+    HWND ICreateControl(HWND hDlg, const char *className, const char *wndName=nullptr, DWORD style=0, DWORD exStyle=0);
     void ISetControlFont(HWND hControl);
 
     int IAddStaticText(HWND hDlg, int y, const char *text);

@@ -273,23 +273,15 @@ bool plPythonFileMod::fAtConvertTime = false;
 //  PURPOSE    : Constructor and destructor
 //
 plPythonFileMod::plPythonFileMod()
+    : fModule(), fLocalNotify(true), fIsFirstTimeEval(true),
+      fVaultCallback(), fSDLMod(), fSelfKey(), fInstance(), fKeyCatcher(),
+      fPipe(), fAmIAttachedToClone()
 {
-    fModule = nil;
-    fLocalNotify= true;
-    fIsFirstTimeEval = true;
-    fVaultCallback = nil;
-    fSDLMod = nil;
-    fSelfKey = nil;
-    fInstance = nil;
-    fKeyCatcher = nil;
-    fPipe = nil;
-    fAmIAttachedToClone = false;
-
     // assume that all the functions are not available
     // ...if the functions are defined in the module, then we'll call 'em
     int i;
     for (i=0 ; i<kfunc_lastone; i++)
-        fPyFunctionInstances[i] = nil;
+        fPyFunctionInstances[i] = nullptr;
 }
 
 plPythonFileMod::~plPythonFileMod()

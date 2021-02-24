@@ -164,7 +164,7 @@ bool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
     {
         plMaxNode *LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
-        if (LODNode != nil)
+        if (LODNode != nullptr)
         {
             char *dbgNodeName = LODNode->GetName();
             //LODNode->SetCanConvert(false);
@@ -194,8 +194,8 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     int i, j;
     hsTArray<plGeometrySpan*> spanArray;
     hsTArray<plKey> keys;
-    plMaxNode *LODNode = nil;
-    plMaxNode *locationNode = nil;
+    plMaxNode *LODNode = nullptr;
+    plMaxNode *locationNode = nullptr;
 
 
     if (fCompPB->Count(plClothingComponent::kMaterials) <= 0)
@@ -206,7 +206,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         spanArray.Reset();
         //plSharedMesh *mesh = new plSharedMesh;
         LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
-        if (LODNode != nil)
+        if (LODNode != nullptr)
         {
             char *dbgNodeName = LODNode->GetName();
             keys.Append(LODNode->GetSwappableGeom()->GetKey());
@@ -226,7 +226,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-            keys.Append(nil);
+            keys.Append(nullptr);
             //delete mesh;
         }
     }
@@ -244,7 +244,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         plGenRefMsg *refMsg;
         for (j = 0; j < keys.GetCount(); j++)
         {
-            if (keys[j] != nil)
+            if (keys[j] != nullptr)
             {
                 refMsg = new plGenRefMsg(cloth->GetKey(), plRefMsg::kOnCreate, j, -1);
                 hsgResMgr::ResMgr()->AddViaNotify(keys[j], refMsg, plRefFlags::kActiveRef);
@@ -296,7 +296,7 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
             if (LOWORD(wParam) == IDC_CLOTHING_ADD)
             {
                 Mtl *pickedMtl = plPickMaterialMap::PickMaterial(plMtlCollector::kClothingMtlOnly);
-                if (pickedMtl != nil)
+                if (pickedMtl != nullptr)
                 {
                     LRESULT stringIdx = ListBox_FindStringExact(hList, -1, pickedMtl->GetName());
                     if (stringIdx == LB_ERR) // It's not already there, go and add it
@@ -321,7 +321,7 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
             else if( LOWORD( wParam ) == IDC_CLOTHING_CLEARMESH )
             {
                 int state = pb->GetInt(plClothingComponent::kLODState);
-                pb->SetValue(plClothingComponent::kMeshNodeTab, 0, (INode*)nil, state );
+                pb->SetValue(plClothingComponent::kMeshNodeTab, 0, (INode*)nullptr, state);
                 pb->Reset(plClothingComponent::kMeshNodeAddBtn);
             }
         }

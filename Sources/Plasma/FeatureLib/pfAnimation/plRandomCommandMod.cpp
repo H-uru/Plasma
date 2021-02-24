@@ -294,7 +294,7 @@ void plRandomCommandMod::IRetry(float secs)
 
     double t = hsTimer::GetSysSeconds() + secs;
 
-    plAnimCmdMsg* msg = new plAnimCmdMsg(nil, GetKey(), &t);
+    plAnimCmdMsg* msg = new plAnimCmdMsg(nullptr, GetKey(), &t);
     msg->SetCmd(plAnimCmdMsg::kContinue);
     msg->Send();
 }

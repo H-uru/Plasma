@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////////
 
-plAIMsg::plAIMsg(): plMessage(nil, nil, nil), fBrainUserStr("")
+plAIMsg::plAIMsg(): plMessage(nullptr, nullptr, nullptr), fBrainUserStr("")
 {}
 
-plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, receiver, nil)
+plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, receiver, nullptr)
 {
     // set up our user string from the sender, if it is the right type
     plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());

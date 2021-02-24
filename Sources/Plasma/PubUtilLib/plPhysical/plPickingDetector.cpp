@@ -65,7 +65,7 @@ bool plPickingDetector::MsgReceive(plMessage* msg)
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                SetRemote(nil);
+                SetRemote(nullptr);
             }
         }
         return true;

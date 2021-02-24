@@ -56,8 +56,8 @@ class hsVertexShader;
 class plConvertSettings
 {
 public:
-    plConvertSettings() : fSceneViewer(false), fReconvert(false), fDoPreshade(true), fDoLightMap(true),
-        fLightMapGen(nil), fVertexShader(nil), fPhysicalsOnly(false), fExportPage(nil) {}
+    plConvertSettings() : fSceneViewer(), fReconvert(), fDoPreshade(true), fDoLightMap(true),
+        fLightMapGen(), fVertexShader(), fPhysicalsOnly(), fExportPage() { }
 
     bool fSceneViewer;  // Are we converting this for the SceneViewer?
     bool fReconvert;    // Don't need to set, will be done internally by plConvert

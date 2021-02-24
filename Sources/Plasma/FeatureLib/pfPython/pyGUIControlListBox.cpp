@@ -84,14 +84,14 @@ class pfColorListElement : public pfGUIListText
             }
             else
             {
-                fString1 = nil;
+                fString1 = nullptr;
                 fText = ST::string();
             }
             fTextColor1 = color1;
             if (string2)
                 fString2 = hsStringToWString(string2);
             else
-                fString2 = nil;
+                fString2 = nullptr;
             fTextColor2 = color2;
             fInheritAlpha = inheritalpha;
             fJustify = kLeftJustify;
@@ -108,7 +108,7 @@ class pfColorListElement : public pfGUIListText
             }
             else
             {
-                fString1 = nil;
+                fString1 = nullptr;
                 fText = ST::string();
             }
             fTextColor1 = color1;
@@ -118,7 +118,7 @@ class pfColorListElement : public pfGUIListText
                 wcscpy(fString2,string2);
             }
             else
-                fString2 = nil;
+                fString2 = nullptr;
             fTextColor2 = color2;
             fInheritAlpha = inheritalpha;
             fJustify = kLeftJustify;
@@ -130,7 +130,7 @@ class pfColorListElement : public pfGUIListText
             if ( fString1 )
             {
                 delete [] fString1;
-                fString1 = nil;
+                fString1 = nullptr;
                 fText = ST::string();
             }
             if ( fString2 )
@@ -142,10 +142,10 @@ class pfColorListElement : public pfGUIListText
             if ( fString1 )
                 delete [] fString1;
 
-            if( text != nil )
+            if (text != nullptr)
                 fString1 = hsStringToWString(text);
             else
-                fString1 = nil;
+                fString1 = nullptr;
         }
 
         virtual void SetText( const wchar_t *text )
@@ -153,13 +153,13 @@ class pfColorListElement : public pfGUIListText
             if ( fString1 )
                 delete [] fString1;
 
-            if( text != nil )
+            if (text != nullptr)
             {
                 fString1 = new wchar_t[wcslen(text)+1];
                 wcscpy(fString1,text);
             }
             else
-                fString1 = nil;
+                fString1 = nullptr;
         }
 
         bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override
@@ -223,7 +223,7 @@ class pfColorListElement : public pfGUIListText
                 uint16_t width, height;
                 textGen->CalcWrappedStringSize(fString1,&width,&height);
                 x += 2 + width;
-                if ( fString2 == nil )
+                if (fString2 == nullptr)
                     y += height;
                 if ( fOverrideFontSize != -1 )
                     textGen->SetFont( fColors->fFontFace, fColors->fFontSize, fColors->fFontFlags );
@@ -255,7 +255,7 @@ class pfColorListElement : public pfGUIListText
             else if (fString2)
                 thestring = fString2;
             else
-                thestring = nil;
+                thestring = nullptr;
             *width = textGen->GetVisibleWidth() - 4;
 
             if ( fOverrideFontSize != -1 )
@@ -264,7 +264,7 @@ class pfColorListElement : public pfGUIListText
             if ( fOverrideFontSize != -1 )
                 textGen->SetFont( fColors->fFontFace, fColors->fFontSize, fColors->fFontFlags );
 
-            if( height != nil )
+            if (height != nullptr)
                 *height += 0;
             *width += 4;
             // clean up thestring if we made it
@@ -298,7 +298,7 @@ class pfListTextInBox : public pfGUIListText
             *width = textGen->CalcStringWidth( GetText(), height );
             if ( *width < fMinWidth )
                 *width = (uint16_t)fMinWidth;
-            if( height != nil )
+            if (height != nullptr)
             { 
                 if( *height == 0 )
                     *height = 10;       // Never allow zero height elements
@@ -330,7 +330,7 @@ class pfListPictureInBox : public pfGUIListPicture
         bool Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override
         {
             plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
-            if( mip != nil )
+            if (mip != nullptr)
             {
                 if( fSrcWidth + fBorderSize + fBorderSize > maxWidth || fSrcHeight + fBorderSize + fBorderSize > maxHeight )
                     return false;
@@ -360,16 +360,16 @@ class pfListPictureInBox : public pfGUIListPicture
         void GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override
         {
             plMipmap *mip = plMipmap::ConvertNoRef( fMipmapKey->ObjectIsLoaded() );
-            if( mip == nil )
+            if (mip == nullptr)
             {
                 *width = 16;
-                if( height != nil )
+                if (height != nullptr)
                     *height = 16;
             }
             else
             {
                 *width = (uint16_t)(fSrcWidth + fBorderSize + fBorderSize);
-                if( height != nil )
+                if (height != nullptr)
                     *height = (uint16_t)(fSrcHeight + fBorderSize + fBorderSize);
             }
         }
@@ -638,7 +638,7 @@ int16_t pyGUIControlListBox::AddTextWColorW( std::wstring str, pyColor& textcolo
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = new pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha );
+            pfColorListElement *element = new pfColorListElement(str.c_str(), textcolor.getColor(), nullptr, hsColorRGBA(), inheritalpha);
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
@@ -663,7 +663,7 @@ int16_t pyGUIControlListBox::AddTextWColorWSizeW( std::wstring str, pyColor& tex
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = new pfColorListElement( str.c_str(), textcolor.getColor(),nil,hsColorRGBA(),inheritalpha, fontsize );
+            pfColorListElement *element = new pfColorListElement(str.c_str(), textcolor.getColor(), nullptr, hsColorRGBA(), inheritalpha, fontsize);
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );

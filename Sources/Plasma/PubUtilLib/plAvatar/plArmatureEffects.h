@@ -68,7 +68,7 @@ protected:
 
 public:
 
-    plArmatureEffectsMgr() : fArmature(nil), fEnabled(true) {}
+    plArmatureEffectsMgr() : fArmature(), fEnabled(true) { }
     virtual ~plArmatureEffectsMgr() {}
 
     CLASSNAME_REGISTER( plArmatureEffectsMgr );

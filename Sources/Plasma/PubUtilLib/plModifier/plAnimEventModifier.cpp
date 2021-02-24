@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 #include "pnNetCommon/plNetApp.h"
 
-plAnimEventModifier::plAnimEventModifier() : fCallback(nil), fDisabled(false)
+plAnimEventModifier::plAnimEventModifier() : fCallback(), fDisabled()
 {
 }
 

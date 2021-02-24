@@ -79,12 +79,12 @@ public:
     uint32_t GetGameType() const { return fGameType; }
     uint32_t GetOwner() const { return fOwnerId; }
     int32_t  GetPoints() const { return fValue; }
-    void     SetPoints(int32_t value, plKey rcvr = nil);
+    void     SetPoints(int32_t value, plKey rcvr = {});
 
-    void AddPoints(int32_t add, plKey rcvr = nil);
+    void AddPoints(int32_t add, plKey rcvr = {});
     void Delete();
-    void TransferPoints(pfGameScore* to, plKey rcvr = nil) { TransferPoints(to, fValue, rcvr); }
-    void TransferPoints(pfGameScore* to, int32_t points, plKey rcvr = nil);
+    void TransferPoints(pfGameScore* to, plKey rcvr = {}) { TransferPoints(to, fValue, rcvr); }
+    void TransferPoints(pfGameScore* to, int32_t points, plKey rcvr = {});
 
     static void Create(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t value, const plKey& rcvr);
     static void Find(uint32_t ownerId, const ST::string& name, const plKey& rcvr);

@@ -90,7 +90,7 @@ const Class_ID  plPlasmaMAXLayer::fDerivedTypes[] =
 
 plPlasmaMAXLayer::plPlasmaMAXLayer()
 {
-    fConversionTargets = nil;
+    fConversionTargets = nullptr;
 }
 
 plPlasmaMAXLayer::~plPlasmaMAXLayer()
@@ -104,7 +104,7 @@ plPlasmaMAXLayer::~plPlasmaMAXLayer()
 plPlasmaMAXLayer    *plPlasmaMAXLayer::GetPlasmaMAXLayer( Texmap *map )
 {
     if (!map)
-        return NULL;
+        return nullptr;
 
     int     i;
 
@@ -115,7 +115,7 @@ plPlasmaMAXLayer    *plPlasmaMAXLayer::GetPlasmaMAXLayer( Texmap *map )
             return (plPlasmaMAXLayer *)map;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -141,12 +141,12 @@ class plLayerTargetContainer : public hsKeyedObject
         bool MsgReceive(plMessage *msg) override
         {
             plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
-            if( ref != nil )
+            if (ref != nullptr)
             {
                 if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                     fLayers[ ref->fWhich ] = plLayerInterface::ConvertNoRef( ref->GetRef() );
                 else
-                    fLayers[ ref->fWhich ] = nil;
+                    fLayers[ref->fWhich] = nullptr;
             }
 
             return hsKeyedObject::MsgReceive( msg );
@@ -164,7 +164,7 @@ uint32_t  plLayerTargetContainer::fKeyCount = 0;
 
 void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
 {
-    if( fConversionTargets == nil )
+    if (fConversionTargets == nullptr)
     {
         // Create us a new container
         fConversionTargets = new plLayerTargetContainer;
@@ -180,23 +180,23 @@ void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
 
 void    plPlasmaMAXLayer::IClearConversionTargets()
 {
-    if( fConversionTargets != nil )
+    if (fConversionTargets != nullptr)
     {
         fConversionTargets->GetKey()->UnRefObject();
-        fConversionTargets = nil;
+        fConversionTargets = nullptr;
     }
 }
 
 int     plPlasmaMAXLayer::GetNumConversionTargets()
 {
-    if( fConversionTargets == nil )
+    if (fConversionTargets == nullptr)
         return 0;
 
 
     int i, count = 0;
     for( i = 0; i < fConversionTargets->fLayers.GetCount(); i++ )
     {
-        if( fConversionTargets->fLayers[ i ] != nil )
+        if (fConversionTargets->fLayers[i] != nullptr)
             count++;
     }
     return count;
@@ -204,13 +204,13 @@ int     plPlasmaMAXLayer::GetNumConversionTargets()
 
 plLayerInterface    *plPlasmaMAXLayer::GetConversionTarget( int index )
 {
-    if( fConversionTargets == nil )
-        return nil;
+    if (fConversionTargets == nullptr)
+        return nullptr;
 
     int i;
     for( i = 0; i < fConversionTargets->fLayers.GetCount(); i++ )
     {
-        if( fConversionTargets->fLayers[ i ] != nil )
+        if (fConversionTargets->fLayers[i] != nullptr)
         {
             if( index == 0 )
                 return fConversionTargets->fLayers[ i ];
@@ -218,7 +218,7 @@ plLayerInterface    *plPlasmaMAXLayer::GetConversionTarget( int index )
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     if (BM)
     {
         BM->DeleteThis();
-        BM = NULL;
+        BM = nullptr;
     }
     
     if (bi)
@@ -294,7 +294,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
         if (result == BMMRES_SUCCESS)
             ISetMaxBitmap(BM, index);
         else
-            ISetMaxBitmap(NULL, index);
+            ISetMaxBitmap(nullptr, index);
 
         // The load may have failed, but we still want to set the paramblock. We
         // don't want to modify the layer if we're just missing the file.
@@ -303,8 +303,8 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     }
     else
     {
-        ISetMaxBitmap(NULL, index);
-        ISetPBBitmap(NULL, index);
+        ISetMaxBitmap(nullptr, index);
+        ISetPBBitmap(nullptr, index);
     }
 
 /*
@@ -313,7 +313,7 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     if (BM)
     {
         BM->DeleteThis();
-        BM = NULL;
+        BM = nullptr;
     }
     
     if (filename)
@@ -351,8 +351,8 @@ void plPlasmaMAXLayer::SetBitmap(BitmapInfo *bi, int index)
     }
     else
     {
-        ISetMaxBitmap(NULL, index);
-        ISetPBBitmap(NULL, index);
+        ISetMaxBitmap(nullptr, index);
+        ISetPBBitmap(nullptr, index);
     }
 
     NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
@@ -387,7 +387,7 @@ bool    plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, 
     GetBitmapAssetId(targetAssetId, index);
 
     MaxAssInterface* maxAssInterface = GetMaxAssInterface();
-    if (maxAssInterface != nil && !targetAssetId.IsEmpty()) 
+    if (maxAssInterface != nullptr && !targetAssetId.IsEmpty())
     {
         // Download the latest version and retrieve the filename
         if (maxAssInterface->GetLatestVersionFile(targetAssetId, destFilename, maxLength))
@@ -396,7 +396,7 @@ bool    plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, 
 #endif
 
     // Normal return
-    if( GetPBBitmap( index ) == nil )
+    if (GetPBBitmap(index) == nullptr)
         return false;
 
     strncpy( destFilename, GetPBBitmap( index )->bi.Name(), maxLength );
@@ -414,13 +414,13 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
 #endif
     
     // If the control key is held, we want to get rid of this texture
-    if ((GetKeyState(VK_CONTROL) & 0x8000) && pbbm != nil)
+    if ((GetKeyState(VK_CONTROL) & 0x8000) && pbbm != nullptr)
     {
         char msg[512];
         sprintf(msg, "Are you sure you want to change this bitmap from %s to (none)?", pbbm->bi.Name());
         if (hsMessageBox(msg, "Remove texture?", hsMessageBoxYesNo) == hsMBoxYes)
         {
-            SetBitmap(nil, index);
+            SetBitmap(nullptr, index);
             return TRUE;
         }
         return FALSE;
@@ -447,7 +447,7 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
     else
     {
         BitmapInfo bi;
-        if( pbbm != NULL )
+        if (pbbm != nullptr)
             bi.SetName( pbbm->bi.Name() );
 
         BOOL selectedNewBitmap = TheManager->SelectFileInput(&bi,

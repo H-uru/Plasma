@@ -113,7 +113,7 @@ protected:
 
     void                    ISetInterface(plObjInterface* iface);
     void                    IRemoveInterface(plObjInterface* iface);
-    void                    IRemoveInterface(int16_t idx, plObjInterface* iface=nil);
+    void                    IRemoveInterface(int16_t idx, plObjInterface* iface=nullptr);
 
     void                    ISetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 

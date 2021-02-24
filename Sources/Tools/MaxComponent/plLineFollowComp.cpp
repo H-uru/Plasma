@@ -266,8 +266,8 @@ ParamBlockDesc2 gLineFollowBk
 );
 
 plLineFollowComponent::plLineFollowComponent()
-:   fValid(false),
-    fLineMod(nil)
+:   fValid(),
+    fLineMod()
 {
     fClassDesc = &gLineFollowDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -282,9 +282,7 @@ bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 
     if( plLineFollowMod::kFollowObject == mode )
     {
-        if(fCompPB->GetINode(kFollowObjectSel) != NULL)
-
-
+        if (fCompPB->GetINode(kFollowObjectSel) != nullptr)
         {
             plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kFollowObjectSel);
             //plMaxNodeData* pMD = targNode->GetMaxNodeData();
@@ -371,7 +369,7 @@ bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
 plLineFollowMod* plLineFollowComponent::GetLineMod(plErrorMsg* pErrMsg)
 {
     if( !fValid )
-        return nil;
+        return nullptr;
     if( !fLineMod )
     {
         int i;
@@ -408,7 +406,7 @@ bool plLineFollowComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 bool plLineFollowComponent::SetupProperties(plMaxNode* pNode,  plErrorMsg* pErrMsg)
 {
     fValid = false;
-    fLineMod = nil;
+    fLineMod = nullptr;
 
     if( !fCompPB->GetINode(kPathObjectSel) )
     {
@@ -510,7 +508,7 @@ ParamBlockDesc2 gStereizeBk
 (   
     plComponent::kBlkComp, _T("Stereize"), 0, &gStereizeDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_STEREIZE, IDS_COMP_STEREIZE, 0, 0, NULL,
+    IDD_COMP_STEREIZE, IDS_COMP_STEREIZE, 0, 0, nullptr,
 
     plStereizeComp::kLeft,  _T("Left"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
@@ -628,7 +626,7 @@ plLineFollowMod* plStereizeComp::ISetMaster(plStereizer* stereo, plMaxNode* node
             }
         }
     }
-    return nil;
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////

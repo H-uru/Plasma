@@ -102,7 +102,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
       fTimeConvert()
 {
     int i;
-    plScalarChannel *timeChan = nil;
+    plScalarChannel *timeChan = nullptr;
 #ifdef TRACK_AG_ALLOCS
     gGlobalAnimName = anim->GetName();      // for debug tracking...
 #endif // TRACK_AG_ALLOCS
@@ -258,7 +258,7 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
 void plAGAnimInstance::SearchForGlobals()
 {
     const plAgeGlobalAnim *ageAnim = plAgeGlobalAnim::ConvertNoRef(fAnimation);
-    if (ageAnim != nil && fSDLChannels.size() > 0)
+    if (ageAnim != nullptr && fSDLChannels.size() > 0)
     {
         extern const plSDLModifier *ExternFindAgeSDL();
         const plSDLModifier *sdlMod = ExternFindAgeSDL();

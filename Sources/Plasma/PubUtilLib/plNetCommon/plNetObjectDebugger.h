@@ -89,8 +89,8 @@ public:
     void SetDebugging(bool b) override { fDebugging = b; }
 
     // object fxns
-    bool AddDebugObject(const char* objName, const char* pageName=nil);
-    bool RemoveDebugObject(const char* objName, const char* pageName=nil);
+    bool AddDebugObject(const char* objName, const char* pageName=nullptr);
+    bool RemoveDebugObject(const char* objName, const char* pageName=nullptr);
     void ClearAllDebugObjects();
     int GetNumDebugObjects() const { return fDebugObjects.size(); }
     bool IsDebugObject(const hsKeyedObject* obj) const override;

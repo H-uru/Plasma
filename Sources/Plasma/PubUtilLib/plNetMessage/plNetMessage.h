@@ -188,10 +188,10 @@ public:
           fFlags(0)
     { }
 
-    static plNetMessage* CreateAndRead(const plNetCommonMessage*, plStreamLogger::EventList* el = nil);
+    static plNetMessage* CreateAndRead(const plNetCommonMessage*, plStreamLogger::EventList* el = nullptr);
     static plNetMessage* Create(const plNetCommonMessage*);
     int PokeBuffer(char* buf, int bufLen, uint32_t peekOptions=0);            // put msg in buffer
-    int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false, plStreamLogger::EventList* el = nil);   // get msg out of buffer
+    int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false, plStreamLogger::EventList* el = nullptr);   // get msg out of buffer
     bool NeedsReliableSend() const { return IsBitSet(kNeedsReliableSend); }
     bool IsSystemMessage() const { return IsBitSet(kIsSystemMessage);   }
     virtual void ValidatePoke() const;
@@ -462,7 +462,7 @@ public:
     plClientUnifiedTime& GetDeliveryTime() { return fDeliveryTime; }
     void SetDeliveryTime(plClientUnifiedTime& ut) { fDeliveryTime=ut; }
 
-    plMessage* GetContainedMsg(hsResMgr* resmgr = nil);
+    plMessage* GetContainedMsg(hsResMgr* resmgr = nullptr);
 
     // virtuals
     bool NeedsBroadcast() const override { return true; }

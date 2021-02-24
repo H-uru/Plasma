@@ -69,7 +69,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_DECAL_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return DECAL_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -223,7 +223,7 @@ Animatable* plDecalMtl::SubAnim(int i)
         break;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plDecalMtl::NumParamBlocks()
@@ -247,7 +247,7 @@ IParamBlock2* plDecalMtl::GetParamBlockByID(BlockID id)
     else if (fAnimPB->ID() == id)
         return fAnimPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plDecalMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -270,7 +270,7 @@ Texmap* plDecalMtl::GetSubTexmap(int i)
    else if (i == 1)
       return fLayersPB->GetTexmap(kDecalLayTop);
    
-   return NULL;
+   return nullptr;
 }
 
 void plDecalMtl::SetSubTexmap(int i, Texmap *m)
@@ -426,8 +426,8 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
     Texmap *tx[2];
     int diffChan = stdIDToChannel[ ID_DI ];
     int opacChan = stdIDToChannel[ ID_OP ];
-    tx[0] = (*maps)[diffChan].IsActive()?(*maps)[diffChan].map:NULL;
-    tx[1] = (*maps)[opacChan].IsActive()?(*maps)[opacChan].map:NULL;
+    tx[0] = (*maps)[diffChan].IsActive() ? (*maps)[diffChan].map : nullptr;
+    tx[1] = (*maps)[opacChan].IsActive() ? (*maps)[opacChan].map : nullptr;
 #endif
 
     int nsupport = cb.NumberTexturesSupported();
@@ -437,13 +437,13 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
     int nmaps=0;
     for (int i=0; i<NTEXHANDLES; i++) {
         if (tx[i]) nmaps ++;
-        bmi[i] = NULL;
+        bmi[i] = nullptr;
         }
     mtl->texture.SetCount(nmaps);
     if (nmaps==0) 
         return;
     for (i=0; i<nmaps; i++)
-        mtl->texture[i].textHandle = NULL;
+        mtl->texture[i].textHandle = nullptr;
     texHandleValid.SetInfinite();
     Interval  valid;
     BOOL needDecal = FALSE;
@@ -475,7 +475,7 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
                 texHandleValid &= valid;
                 StuffAlpha(bmi[1], (*maps)[opacChan].amount, GetOpacity(t),ntx?whiteCol:pShader->GetDiffuseClr(t));
                 texHandle[ntx] = cb.MakeHandle(bmi[1]); 
-                bmi[1] = NULL; 
+                bmi[1] = nullptr;
                 mtl->texture[ntx].textHandle = texHandle[ntx]->GetHandle();
                 SetTexOps(mtl,ntx,TXOP_OPACITY);
                 useSubForTex[ntx] = opacChan;
@@ -493,7 +493,7 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
                         StuffAlphaInto(bmi[1], bmi[0], (*maps)[opacChan].amount, GetOpacity(t));
                         op = TXOP_OPACITY;
                         free(bmi[1]);
-                        bmi[1] = NULL;
+                        bmi[1] = nullptr;
                         }
 //                  }
                 }
@@ -501,7 +501,7 @@ void plDecalMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallback 
         }
     if (bmi[0]) {
         texHandle[0] = cb.MakeHandle(bmi[0]); 
-        bmi[0] = NULL; 
+        bmi[0] = nullptr;
         mtl->texture[0].textHandle = texHandle[0]->GetHandle();
         SetTexOps(mtl,0,op);
         }

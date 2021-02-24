@@ -531,7 +531,7 @@ const T * THashTable<T,K>::Find (const K & key) const {
     for (const T * curr = slotList.Head(); curr; curr = slotList.Next(curr))
         if ((this->GetHash(curr) == hash) && (*curr == key))
             return curr;
-    return nil;
+    return nullptr;
 }
 
 //===========================================================================
@@ -542,7 +542,7 @@ const T * THashTable<T,K>::FindNext (const K & key, const T * object) const {
     for (const T * curr = slotList.Next(object); curr; curr = slotList.Next(curr))
         if ((this->GetHash(curr) == hash) && (*curr == key))
             return curr;
-    return nil;
+    return nullptr;
 }
 
 //===========================================================================

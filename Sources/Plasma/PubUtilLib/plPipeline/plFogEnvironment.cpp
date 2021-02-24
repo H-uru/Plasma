@@ -99,7 +99,7 @@ void    plFogEnvironment::Set( float start, float end, float density, const hsCo
         fEnd = end;
         fDensity = density;
     }
-    if( color != nil )
+    if (color != nullptr)
         fColor = *color;
 }
 
@@ -120,22 +120,22 @@ void    plFogEnvironment::SetExp( FogType type, float end, float density, const 
         fEnd = end;
         fDensity = density;
     }
-    if( color != nil )
+    if (color != nullptr)
         fColor = *color;
 }
 
 //// GetParameters ///////////////////////////////////////////////////////////
 //  Gets the parameters. Sets start to 0 if the type is not linear (can be
-//  nil).
+//  nullptr).
 
 void    plFogEnvironment::GetParameters( float *start, float *end, float *density, hsColorRGBA *color ) const
 {
-    hsAssert( fType != kLinearFog || start != nil, "Trying to get non-linear paramters on linear fog!" );
-    hsAssert( end != nil && density != nil && color != nil, "Bad pointer to plFogEnvironment::GetParameters()" );
+    hsAssert(fType != kLinearFog || start != nullptr, "Trying to get non-linear paramters on linear fog!");
+    hsAssert(end != nullptr && density != nullptr && color != nullptr, "Bad pointer to plFogEnvironment::GetParameters()");
 
     if( fType == kLinearFog )
         *start = fStart;
-    else if( start != nil )
+    else if (start != nullptr)
         *start = 0.0f;
 
     *end = fEnd;

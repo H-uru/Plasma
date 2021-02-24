@@ -108,7 +108,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         return plSoundBuffer::kPending;
     bool sfxPath = fNewFilename.IsValid() ? false : true;
 
-    if (fDataStream != nil && !fNewFilename.IsValid())
+    if (fDataStream != nullptr && !fNewFilename.IsValid())
         return plSoundBuffer::kSuccess;     // Already loaded
 
     if(!ILoadDataBuffer())
@@ -178,10 +178,10 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             fDataStream = plAudioFileReader::CreateReader(strPath, select,type);
         }
 
-        if( fDataStream == nil || !fDataStream->IsValid() )
+        if (fDataStream == nullptr || !fDataStream->IsValid())
         {
             delete fDataStream;
-            fDataStream = nil;
+            fDataStream = nullptr;
             return plSoundBuffer::kError;
         }
 
@@ -207,7 +207,7 @@ void plWin32StreamingSound::IFreeBuffers()
             // we are deleting the stream, we must release the sound data.
             FreeSoundData();
             delete fDataStream;
-            fDataStream = nil;
+            fDataStream = nullptr;
         }
         fSrcFilename = "";
     }
@@ -276,10 +276,10 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     {
         fDataStream->Close();
         delete fDataStream;
-        fDataStream = nil;
+        fDataStream = nullptr;
 
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
 
         ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
                                     " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
@@ -324,9 +324,9 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     {
         fDataStream->Close();
         delete fDataStream;
-        fDataStream = nil;
+        fDataStream = nullptr;
         delete fDSoundBuffer;
-        fDSoundBuffer = nil;
+        fDSoundBuffer = nullptr;
 
         plStatusLog::AddLineSF("audio.log", "Could not play streaming sound, no voices left {}", GetKeyName());
         return false;
@@ -352,7 +352,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
                                              (uint8_t)(fDataStream->GetHeader().fNumChannels), 
                                              header.fBitsPerSample / 8 );
     else
-        fDeswizzler = nil;
+        fDeswizzler = nullptr;
 
     // LEAVE THE WAV FILE OPEN! (We *are* streaming, after all :)
     return true;
@@ -423,7 +423,7 @@ void plWin32StreamingSound::IDerivedActuallyPlay()
 
     /// Send start callbacks
     plSoundEvent    *event = IFindEvent( plSoundEvent::kStart );
-    if( event != nil )
+    if (event != nullptr)
         event->SendCallbacks();
 }
 

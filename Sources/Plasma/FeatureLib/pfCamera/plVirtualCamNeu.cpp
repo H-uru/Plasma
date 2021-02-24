@@ -103,7 +103,7 @@ bool  plVirtualCam1::StayInFirstPersonForever = false;
 // #define STATUS_LOG
 
 #ifdef STATUS_LOG
-static plStatusLog *camLog = nil;
+static plStatusLog *camLog = nullptr;
 #endif
 
 // static functions
@@ -127,7 +127,7 @@ bool plVirtualCam1::IsCurrentCamera(const plCameraModifier1* mod)
     return false;
 }
 
-plVirtualCam1* plVirtualCam1::fInstance = nil;
+plVirtualCam1* plVirtualCam1::fInstance = nullptr;
 
 void plVirtualCam1::Deactivate() 
 { 
@@ -201,7 +201,7 @@ plCameraModifier1* plVirtualCam1::GetCameraNumber(size_t camNumber)
     if (fCameraStack.size() > camNumber)
         return fCameraStack[camNumber];
     else
-        return nil;
+        return nullptr;
 }
 // for rebuilding camera stack
 void plVirtualCam1::RebuildStack(const plKey& key)
@@ -359,9 +359,9 @@ void plVirtualCam1::SetPipeline(plPipeline* p)
 void  plVirtualCam1::Reset(bool bRender)
 {
     if (fPythonOverride)
-        fPythonOverride = nil;
+        fPythonOverride = nullptr;
     if (fFirstPersonOverride)
-        fFirstPersonOverride = nil;
+        fFirstPersonOverride = nullptr;
     fCamerasLoaded.clear();
     fCameraStack.clear();
     fCameraStack.push_back(fDriveCamera);
@@ -416,7 +416,7 @@ plCameraModifier1* plVirtualCam1::GetCurrentCamera()
         return(fTransitionCamera);
     if (fCameraStack.size())
         return fCameraStack.back();
-    return nil;
+    return nullptr;
 }
 
 bool plVirtualCam1::Is1stPersonCamera()
@@ -436,7 +436,7 @@ plCameraModifier1* plVirtualCam1::GetCurrentStackCamera()
     if (fCameraStack.size())
         return fCameraStack.back();
     else
-        return nil;
+        return nullptr;
 }
 
 void plVirtualCam1::SetCutNextTrans()
@@ -515,10 +515,10 @@ void plVirtualCam1::PushThirdPerson()
 //
 void plVirtualCam1::StartInterpPanLimits()
 {
-    plCameraBrain1* pBrain = 0;
+    plCameraBrain1* pBrain = nullptr;
     if (fPythonOverride && fPythonOverride->GetBrain())
         pBrain = fPythonOverride->GetBrain();
-    if (pBrain == 0 && GetCurrentStackCamera() && GetCurrentStackCamera()->GetBrain())
+    if (pBrain == nullptr && GetCurrentStackCamera() && GetCurrentStackCamera()->GetBrain())
         pBrain = GetCurrentStackCamera()->GetBrain();
 
     if (pBrain)
@@ -633,7 +633,7 @@ void plVirtualCam1::AdjustForInput()
             fX += (float)(panSpeed * secs);
     }
     if ((fY == 0.5f && fX == 0.5f) &&
-        fFirstPersonOverride == nil) 
+        fFirstPersonOverride == nullptr)
         return;
     
     if (fY > 1.0f)
@@ -646,7 +646,7 @@ void plVirtualCam1::AdjustForInput()
         fX = 0.0f;
 
     if ((fXPanLimit == 0.0f && fZPanLimit == 0.0f) &&
-        fFirstPersonOverride == nil) 
+        fFirstPersonOverride == nullptr)
         return;
 
     hsMatrix44 m;
@@ -759,7 +759,7 @@ void plVirtualCam1::Output()
     if (fFadeCounter)
     {
         fFadeCounter-=1;
-        if (fFadeCounter == 0 && fFirstPersonOverride == nil)
+        if (fFadeCounter == 0 && fFirstPersonOverride == nullptr)
         {
             plEnableMsg* pMsg = new plEnableMsg;
             pMsg->SetSender(GetKey());
@@ -848,7 +848,7 @@ void plVirtualCam1::FirstPersonOverride()
         GetCurrentStackCamera()->Push(!HasFlags(kAvatarWalking));
         GetCurrentStackCamera()->GetBrain()->SetFlags(plCameraBrain1::kCutPosOnce);
         GetCurrentStackCamera()->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
-        fFirstPersonOverride = nil;
+        fFirstPersonOverride = nullptr;
 #ifdef STATUS_LOG
         camLog->AddLine("Built-In First Person Camera Disabled");
 #endif
@@ -863,7 +863,7 @@ void plVirtualCam1::FirstPersonOverride()
     else
     if (HasFlags(kFirstPersonEnabled))
     {
-//      plCameraBrain1* pBrain = nil;
+//      plCameraBrain1* pBrain = nullptr;
 //      if (GetCurrentStackCamera() && GetCurrentStackCamera()->GetBrain())
 //      {
 //          pBrain = plCameraBrain1_FirstPerson::ConvertNoRef(GetCurrentStackCamera()->GetBrain());
@@ -936,7 +936,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                     plAvatarInputInterface::GetInstance()->CameraInThirdPerson(true);
             }
             else
-            if (fFirstPersonOverride == nil)
+            if (fFirstPersonOverride == nullptr)
             {
                 plAvatarInputInterface::GetInstance()->CameraInThirdPerson(true);
             }
@@ -1110,7 +1110,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                     GetCurrentStackCamera()->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
                     fX = fY = 0.5f;
                 }
-                fPythonOverride = nil;
+                fPythonOverride = nullptr;
                 SetFlags(kFirstPersonEnabled);
 #ifdef STATUS_LOG
                 camLog->AddLine("Override Python Camera Disabled");
@@ -1460,7 +1460,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
         return;
     
     // look up whatever transition we might have specified
-    CamTrans* pTrans = nil;
+    CamTrans* pTrans = nullptr;
     if (pCam->GetNumTrans())
     {
         for (size_t i = 0; i < pCam->GetNumTrans(); i++)
@@ -1471,7 +1471,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
                 break;
             }
             else // if it's generic, assign it but keep looking for a specific one...
-            if (pCam->GetTrans(i)->fTransTo == nil)
+            if (pCam->GetTrans(i)->fTransTo == nullptr)
                 pTrans = pCam->GetTrans(i);
         }
     }
@@ -1690,7 +1690,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
 
             // handle transition between the cameras
             // check to see if the new camera has a transition override for the current camera
-            CamTrans* pTrans = nil;
+            CamTrans* pTrans = nullptr;
             if (GetCurrentStackCamera()->GetNumTrans())
             {
                 for (size_t i = 0; i < GetCurrentStackCamera()->GetNumTrans(); i++)
@@ -1701,7 +1701,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
                         break;
                     }
                     else
-                    if (GetCurrentStackCamera()->GetTrans(i)->fTransTo == nil)
+                    if (GetCurrentStackCamera()->GetTrans(i)->fTransTo == nullptr)
                         pTrans = GetCurrentStackCamera()->GetTrans(i);
                 }
             }
@@ -1783,7 +1783,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     }
 
     plCameraModifier1* pCam = GetCurrentStackCamera();
-    plCameraBrain1* pBrain = 0;
+    plCameraBrain1* pBrain = nullptr;
 
 #ifdef STATUS_LOG
     if (fPrevCam->GetKey() && pCam->GetKey())
@@ -1878,7 +1878,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
         pBrain->SetCurrentCamSpeed(pOldBrain->GetCurrentCamSpeed());
         pBrain->SetCurrentViewSpeed(pOldBrain->GetCurrentViewSpeed());
         delete(pOldBrain);
-        fTransitionCamera->SetBrain(nil);
+        fTransitionCamera->SetBrain(nullptr);
 #ifdef STATUS_LOG
         camLog->AddLine("Stopping in-progress camera transition");
 #endif
@@ -1966,7 +1966,7 @@ void plVirtualCam1::FinishTransition()
 {
     plCameraBrain1* pBrain = fTransitionCamera->GetBrain();
     delete(pBrain);
-    fTransitionCamera->SetBrain(nil);
+    fTransitionCamera->SetBrain(nullptr);
     
     fTransPos = POS_TRANS_OFF;
 #ifdef STATUS_LOG

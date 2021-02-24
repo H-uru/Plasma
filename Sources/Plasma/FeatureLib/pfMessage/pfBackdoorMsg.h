@@ -61,9 +61,9 @@ class pfBackdoorMsg : public plMessage
         ST::string  fString;
 
     public:
-        pfBackdoorMsg() : plMessage(nil, nil, nil) {}
+        pfBackdoorMsg() : plMessage(nullptr, nullptr, nullptr) { }
         pfBackdoorMsg(const ST::string& target, const ST::string& string)
-            : plMessage(nil, nil, nil), fTarget(target), fString(string)
+            : plMessage(nullptr, nullptr, nullptr), fTarget(target), fString(string)
         {
             // across the net and just to those listening
             SetBCastFlag( plMessage::kNetPropagate );

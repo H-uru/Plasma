@@ -119,7 +119,7 @@ plFastWAV::plFastWAV(const plFileName &path, plAudioCore::ChannelSelect whichCha
     fWhichChannel = whichChan;
 
     fFileHandle = plFileSystem::Open(path, "rb");
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         /// Read in our header and calc our start position
         plRIFFHeader    riffHdr( fFileHandle );
@@ -194,7 +194,7 @@ plFastWAV::plFastWAV(const plFileName &path, plAudioCore::ChannelSelect whichCha
 
 plFastWAV::~plFastWAV()
 {
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
         fclose( fFileHandle );
 }
 
@@ -237,10 +237,10 @@ void plFastWAV::Open()
 
 void    plFastWAV::Close()
 {
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         fclose( fFileHandle );
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
 }
 

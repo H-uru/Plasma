@@ -81,17 +81,14 @@ plFileName plStatusLogMgr::IGetBasePath()
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 plStatusLogMgr::plStatusLogMgr()
+    : fDisplays(), fCurrDisplay(), fDrawer(), fLastLogChangeTime()
 {
-    fDisplays = nil;
-    fCurrDisplay = nil;
-    fDrawer = nil;
-    fLastLogChangeTime = 0;
 }
 
 plStatusLogMgr::~plStatusLogMgr()
 {
     // Unlink all the displays, but don't delete them; leave that to whomever owns them
-    while( fDisplays != nil )
+    while (fDisplays != nullptr)
     {
         plStatusLog *log = fDisplays;
 
@@ -113,9 +110,9 @@ plStatusLogMgr  &plStatusLogMgr::GetInstance()
 void    plStatusLogMgr::Draw()
 {
     /// Just draw current plStatusLog
-    if( fCurrDisplay != nil && fDrawer != nil )
+    if (fCurrDisplay != nullptr && fDrawer != nullptr)
     {
-        plStatusLog* firstLog = nil;
+        plStatusLog* firstLog = nullptr;
         if (hsTimer::GetSysSeconds() - fLastLogChangeTime < 1)
             firstLog = fDisplays;
 
@@ -150,7 +147,7 @@ plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const plF
 void    plStatusLogMgr::ToggleStatusLog( plStatusLog *logToDisplay )
 {
     if( fCurrDisplay == logToDisplay )
-        fCurrDisplay = nil;
+        fCurrDisplay = nullptr;
     else
         fCurrDisplay = logToDisplay;
 
@@ -162,7 +159,7 @@ void    plStatusLogMgr::ToggleStatusLog( plStatusLog *logToDisplay )
 void plStatusLogMgr::SetCurrStatusLog(const plFileName& logName)
 {
     plStatusLog* log = FindLog(logName, false);
-    if (log != nil)
+    if (log != nullptr)
         fCurrDisplay = log;
 }
 
@@ -170,7 +167,7 @@ void plStatusLogMgr::SetCurrStatusLog(const plFileName& logName)
 
 void    plStatusLogMgr::NextStatusLog()
 {
-    if( fCurrDisplay == nil )
+    if (fCurrDisplay == nullptr)
         fCurrDisplay = fDisplays;
     else
         fCurrDisplay = fCurrDisplay->fNext;
@@ -180,7 +177,7 @@ void    plStatusLogMgr::NextStatusLog()
 
 void    plStatusLogMgr::PrevStatusLog()
 {
-    if( fCurrDisplay == nil )
+    if (fCurrDisplay == nullptr)
     {
         fCurrDisplay = fDisplays;
         while (fCurrDisplay && fCurrDisplay->fNext)
@@ -204,7 +201,7 @@ plStatusLog *plStatusLogMgr::FindLog( const plFileName &filename, bool createIfN
 {
     plStatusLog *log = fDisplays;
 
-    while( log != nil )
+    while (log != nullptr)
     {
         if (log->GetFileName().AsString().compare_i(filename.AsString()) == 0)
             return log;
@@ -213,7 +210,7 @@ plStatusLog *plStatusLogMgr::FindLog( const plFileName &filename, bool createIfN
     }
 
     if( !createIfNotFound )
-        return nil;
+        return nullptr;
 
     // Didn't find one, so create one! (make it a nice default one :)
     log = CreateStatusLog( kDefaultNumLines, filename, plStatusLog::kFilledBackground |
@@ -228,7 +225,7 @@ void plStatusLogMgr::BounceLogs()
 {
     plStatusLog *log = fDisplays;
 
-    while( log != nil )
+    while (log != nullptr)
     {
         plStatusLog * tmp = log;
         log = log->fNext;
@@ -301,21 +298,21 @@ void    plStatusLog::IInit()
     fColors = new uint32_t[ fMaxNumLines ];
     for( i = 0; i < fMaxNumLines; i++ )
     {
-        fLines[ i ] = nil;
+        fLines[i] = nullptr;
         fColors[ i ] = kWhite;
     }
 
-    fNext = nil;
-    fBack = nil;
+    fNext = nullptr;
+    fBack = nullptr;
 
 }
 
 bool plStatusLog::IReOpen()
 {
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         fclose( fFileHandle );
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
 
     // Open the file, clearing it, if necessary
@@ -354,23 +351,23 @@ bool plStatusLog::IReOpen()
     else
         fSize = 0;
 
-    return fFileHandle != nil;
+    return fFileHandle != nullptr;
 }
 
 void    plStatusLog::IFini()
 {
     int     i;
 
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         fclose( fFileHandle );
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
 
     if( *fDisplayPointer == this )
-        *fDisplayPointer = nil;
+        *fDisplayPointer = nullptr;
 
-    if( fBack != nil || fNext != nil )
+    if (fBack != nullptr || fNext != nullptr)
         IUnlink();
 
     for( i = 0; i < fMaxNumLines; i++ )
@@ -413,15 +410,15 @@ void    plStatusLog::IUnlink()
         fNext->fBack = fBack;
     *fBack = fNext;
 
-    fBack = nil;
-    fNext = nil;
+    fBack = nullptr;
+    fNext = nullptr;
 }
 
 //// ILink ///////////////////////////////////////////////////////////////////
 
 void    plStatusLog::ILink( plStatusLog **back )
 {
-    hsAssert( fNext == nil && fBack == nil, "Trying to link a plStatusLog that's already linked" );
+    hsAssert(fNext == nullptr && fBack == nullptr, "Trying to link a plStatusLog that's already linked");
 
     fNext = *back;
     if( *back )
@@ -456,12 +453,12 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
     }
 
     /// Add new
-    if( line == nil || strlen( line ) == 0 )
+    if (line == nullptr || strlen(line) == 0)
     {
         if (fMaxNumLines > 0)
         {
             fColors[ i ] = 0;
-            fLines[ i ] = nil;
+            fLines[i] = nullptr;
         }
         ret = IPrintLineToFile( "", 0 );
     }
@@ -477,7 +474,7 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
             fLines[ i ][ count ] = 0;
 
             char *c = strchr( fLines[ i ], '\n' );
-            if( c != nil )
+            if (c != nullptr)
             {
                 *c = 0;
                 count--;
@@ -505,7 +502,7 @@ bool plStatusLog::AddLine(uint32_t color, const char *line)
     bool ret = true;
 
     /// Scan for carriage returns and feed each section into IAddLine()
-    for( str = (char *)line; ( c = strchr( str, '\n' ) ) != nil; str = c + 1 )
+    for (str = (char *)line; (c = strchr(str, '\n')) != nullptr; str = c + 1)
     {
         // So if we got here, c points to a carriage return...
         ret = IAddLine( str, (uintptr_t)c - (uintptr_t)str, color );
@@ -530,7 +527,7 @@ void    plStatusLog::Clear()
     for( i = 0; i < fMaxNumLines; i++ )
     {
         delete [] fLines[ i ];
-        fLines[ i ] = nil;
+        fLines[i] = nullptr;
     }
 }
 
@@ -542,10 +539,10 @@ void    plStatusLog::Bounce( uint32_t flags)
     if (flags)
         fOrigFlags=flags;
     Clear();
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         fclose( fFileHandle );
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
     AddLine( "--------- Bounced Log ---------" );
 }
@@ -568,9 +565,9 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
     if (!fFileHandle)
         IReOpen();
 
-    bool ret = ( fFileHandle!=nil );
+    bool ret = (fFileHandle != nullptr);
 
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         char work[256];
         ST::string_stream buf;

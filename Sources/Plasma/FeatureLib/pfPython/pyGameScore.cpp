@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 
 pyGameScore::pyGameScore() 
-    : fScore(nil)
+    : fScore()
 { }
 
 pyGameScore::pyGameScore(pfGameScore * score) 
@@ -100,7 +100,7 @@ void pyGameScore::Delete()
     if (fScore)
     {
         fScore->Delete();
-        fScore = nil;
+        fScore = nullptr;
     }
 }
 

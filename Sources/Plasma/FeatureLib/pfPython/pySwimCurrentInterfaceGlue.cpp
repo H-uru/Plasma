@@ -53,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptSwimCurrentInterface)
 
 PYTHON_INIT_DEFINITION(ptSwimCurrentInterface, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -210,14 +210,14 @@ PLASMA_CUSTOM_TYPE(ptSwimCurrentInterface, "Params: key\nCreates a new ptSwimCur
 // required functions for PyObject interoperability
 PyObject *pySwimCurrentInterface::New(plKey key)
 {
-    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, NULL, NULL);
+    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, nullptr, nullptr);
     newObj->fThis->fSwimCurrentKey = key;
     return (PyObject*)newObj;
 }
 
 PyObject *pySwimCurrentInterface::New(pyKey& key)
 {
-    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, NULL, NULL);
+    ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, nullptr, nullptr);
     newObj->fThis->fSwimCurrentKey = key.getKey();
     return (PyObject*)newObj;
 }

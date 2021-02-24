@@ -74,14 +74,14 @@ plPlate::plPlate( plPlate **owningHandle )
 {
     fXformMatrix.Reset();
     fDepth = 1.0f;
-    fMaterial = nil;
+    fMaterial = nullptr;
     fFlags = 0;
     fOpacity = 1.f;
 
-    fNext = nil;
-    fPrevPtr = nil;
+    fNext = nullptr;
+    fPrevPtr = nullptr;
     fOwningHandle = owningHandle;
-    fMipmap = nil;
+    fMipmap = nullptr;
     memset( fTitle, 0, sizeof( fTitle ) );
 }
 
@@ -94,8 +94,8 @@ plPlate::~plPlate()
         hsRefCnt_SafeUnRef( fMaterial );
     }
 
-    fMaterial = nil;
-    *fOwningHandle = nil;
+    fMaterial = nullptr;
+    *fOwningHandle = nullptr;
 }
 
 //// SetPosition /////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ void plPlate::SetTexture(plBitmap *texture)
 
 void    plPlate::SetOpacity( float opacity )
 {
-    if( fMaterial != nil && fMaterial->GetLayer( 0 ) != nil )
+    if (fMaterial != nullptr && fMaterial->GetLayer(0) != nullptr)
     {
         plLayer *layer = (plLayer *)fMaterial->GetLayer( 0 );
         layer->SetOpacity( opacity );
@@ -262,11 +262,11 @@ void plPlate::ReloadFromResource(const ST::string& resName)
 
 void    plPlate::ILink( plPlate **back )
 {
-    hsAssert( fNext == nil && fPrevPtr == nil, "Trying to link a plate that's already linked" );
+    hsAssert(fNext == nullptr && fPrevPtr == nullptr, "Trying to link a plate that's already linked");
 
     
     /// Advance back as far as we need to go
-    while( *back != nil && (*back)->fDepth > fDepth )
+    while (*back != nullptr && (*back)->fDepth > fDepth)
         back = &( (*back)->fNext );
 
     /// Link!
@@ -283,7 +283,7 @@ bool plPlate::IsVisible()
     if (fMaterial->GetNumLayers() == 0)
         return false;
     plLayerInterface* layer = fMaterial->GetLayer(0);
-    if (layer->GetTexture() == nil)
+    if (layer->GetTexture() == nullptr)
         return false;
 
     // cursory check of material indicates it's valid, return our visible flag status
@@ -300,7 +300,7 @@ bool plPlate::IsVisible()
 plGraphPlate::plGraphPlate( plPlate **owningHandle ) : plPlate( owningHandle )
 {
     fFlags |= kFlagIsAGraph;
-    SetLabelText( nil );
+    SetLabelText(nullptr);
 }
 
 plGraphPlate::~plGraphPlate()
@@ -367,10 +367,10 @@ void    plGraphPlate::ClearData()
     ptr[ 0 ] = fAxesHexColor;
     ptr[ fMipmap->GetWidth() - 5 + 1 ] = fAxesHexColor;
 
-    if( fMaterial->GetLayer( 0 ) != nil && fMaterial->GetLayer( 0 )->GetTexture() )
+    if (fMaterial->GetLayer(0) != nullptr && fMaterial->GetLayer(0)->GetTexture())
     {
         hsGDeviceRef    *ref = fMaterial->GetLayer( 0 )->GetTexture()->GetDeviceRef();
-        if( ref != nil )
+        if (ref != nullptr)
             ref->SetDirty( true );
     }
 }
@@ -394,7 +394,7 @@ void    plGraphPlate::AddData( int32_t value, int32_t value2, int32_t value3, in
 
 void    plGraphPlate::AddData( std::vector<int32_t> values )
 {
-    hsAssert( fMipmap != nil, "Trying to add data to an uninitialized plGraphPlate" );
+    hsAssert(fMipmap != nullptr, "Trying to add data to an uninitialized plGraphPlate");
 
     fMipmap->SetCurrLevel( 0 );
 
@@ -493,10 +493,10 @@ void    plGraphPlate::AddData( std::vector<int32_t> values )
 
     fLastValues = values;
 
-    if( fMaterial->GetLayer( 0 ) != nil && fMaterial->GetLayer( 0 )->GetTexture() != nil )
+    if (fMaterial->GetLayer(0) != nullptr && fMaterial->GetLayer(0)->GetTexture() != nullptr)
     {
         hsGDeviceRef    *ref = fMaterial->GetLayer( 0 )->GetTexture()->GetDeviceRef();
-        if( ref != nil )
+        if (ref != nullptr)
             ref->SetDirty( true );
     }
 }
@@ -538,22 +538,22 @@ void    plGraphPlate::SetDataColors( const std::vector<uint32_t> & hexColors )
 void    plGraphPlate::SetLabelText(const char *text1, const char *text2, const char *text3, const char *text4 )
 {
     std::vector<std::string> strings;
-    if( text1 != nil )
+    if (text1 != nullptr)
         strings.push_back(text1);
     else
         strings.push_back("");
 
-    if( text2 != nil )
+    if (text2 != nullptr)
         strings.push_back(text2);
     else
         strings.push_back("");
 
-    if( text3 != nil )
+    if (text3 != nullptr)
         strings.push_back(text3);
     else
         strings.push_back("");
 
-    if( text4 != nil )
+    if (text4 != nullptr)
         strings.push_back(text4);
     else
         strings.push_back("");
@@ -665,17 +665,17 @@ void    plGraphPlate::IDrawDigit( char digit, uint32_t *dataPtr, uint32_t stride
 //// plPlateManager Functions ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-plPlateManager  *plPlateManager::fInstance = nil;
+plPlateManager  *plPlateManager::fInstance = nullptr;
 
 
 //// Destructor  /////////////////////////////////////////////////////////////
 
 plPlateManager::~plPlateManager()
 {
-    while( fPlates != nil )
+    while (fPlates != nullptr)
         DestroyPlate( fPlates );
 
-    fInstance = nil;
+    fInstance = nullptr;
 }
 
 //// CreatePlate /////////////////////////////////////////////////////////////
@@ -715,7 +715,7 @@ void    plPlateManager::CreateGraphPlate( plGraphPlate **handle )
 
 void    plPlateManager::DestroyPlate( plPlate *plate )
 {
-    if( plate != nil )
+    if (plate != nullptr)
     {
         plate->IUnlink();
         delete plate;

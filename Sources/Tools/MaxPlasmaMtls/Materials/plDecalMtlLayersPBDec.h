@@ -56,7 +56,7 @@ static ParamBlockDesc2 gDecalMtlLayersPB
     P_AUTO_CONSTRUCT + P_AUTO_UI, plDecalMtl::kRefLayers,
 
     // UI
-    IDD_PASS_LAYERS, IDS_PASS_LAYERS, 0, 0, NULL,
+    IDD_PASS_LAYERS, IDS_PASS_LAYERS, 0, 0, nullptr,
 
     kDecalLayBase,          _T("baseLayer"),    TYPE_TEXMAP,        0, IDS_BASIC_AMB,
         p_ui,               TYPE_TEXMAPBUTTON, IDC_LAYER1,

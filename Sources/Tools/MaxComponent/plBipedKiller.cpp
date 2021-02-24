@@ -141,7 +141,7 @@ void RemoveBiped(INode *bipRoot, Interface *theInterface)
     SetDefaultController(CTRL_POSITION_CLASS_ID, posCtrl);
     SetDefaultController(CTRL_SCALE_CLASS_ID, scaleCtrl);
 
-    ProcessNodeRecurse(bipRoot, nil, theInterface);
+    ProcessNodeRecurse(bipRoot, nullptr, theInterface);
 
     //deinit
     ResumeAnimate();
@@ -171,13 +171,13 @@ void ProcessNodeRecurse(INode *node, INode *parent, Interface *theInterface)
 void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterface)
 {
     int numChildren = bipNode->NumberOfChildren();
-    char *bipName = bipNode ? bipNode->GetName() : nil;
-    INode *replacement = nil;
+    char *bipName = bipNode ? bipNode->GetName() : nullptr;
+    INode *replacement = nullptr;
 
     for (int i = 0; i < numChildren; i++)
     {
         INode *child = bipNode->GetChildNode(i);
-        char *childName = child ? child->GetName() : nil;
+        char *childName = child ? child->GetName() : nullptr;
 
         if( ! HasBipController(child) )
         {

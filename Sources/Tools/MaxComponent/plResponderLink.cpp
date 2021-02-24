@@ -145,7 +145,7 @@ static plResponderLinkProc gResponderLinkProc;
 
 ParamBlockDesc2 gResponderLinkBlock
 (
-    kResponderLnkBlk, _T("linkCmd"), 0, NULL, P_AUTO_UI,
+    kResponderLnkBlk, _T("linkCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_LINK, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderLinkProc,
 
@@ -414,7 +414,7 @@ public:
                 // If the responder component is hosed, remove it so the plResponderGetComp won't get bogus info
                 if (!plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder))
                 {
-                    ReferenceTarget *empty = nil;
+                    ReferenceTarget *empty = nullptr;
                     pb->SetValue(kEnableResponder, 0, empty);
                 }
 
@@ -433,7 +433,7 @@ static plResponderEnableProc gResponderEnableProc;
 
 ParamBlockDesc2 gResponderEnableBlock
 (
-    kResponderEnableMsgBlk, _T("enableCmd"), 0, NULL, P_AUTO_UI,
+    kResponderEnableMsgBlk, _T("enableCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_ENABLE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderEnableProc,
 
@@ -503,9 +503,9 @@ enum
 
 ParamBlockDesc2 gPhysicalEnableBlock
 (
-    kResponderPhysEnableBlk, _T("physEnableCmd"), 0, NULL, P_AUTO_UI,
+    kResponderPhysEnableBlk, _T("physEnableCmd"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_ENABLE_PHYS, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_ENABLE_PHYS, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kEnablePhys,    _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
@@ -613,7 +613,7 @@ static plResponderOneShotProc gResponderOneShotProc;
 
 ParamBlockDesc2 gResponderOneShotBlock
 (
-    kResponderOneShotMsgBlk, _T("oneShotCmd"), 0, NULL, P_AUTO_UI,
+    kResponderOneShotMsgBlk, _T("oneShotCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderOneShotProc,
 
@@ -685,7 +685,7 @@ void plResponderCmdOneShot::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IPa
 
 ParamBlockDesc2 gResponderNotifyBlock
 (
-    kResponderNotifyMsgBlk, _T("notifyCmd"), 0, NULL, 0,
+    kResponderNotifyMsgBlk, _T("notifyCmd"), 0, nullptr, 0,
 
     end
 );
@@ -758,7 +758,7 @@ static plResponderActivatorEnableProc gResponderActivatorEnableProc;
 
 ParamBlockDesc2 gResponderActivatorEnableBlock
 (
-    kResponderActivatorEnableBlk, _T("detectorEnable"), 0, NULL, P_AUTO_UI,
+    kResponderActivatorEnableBlk, _T("detectorEnable"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_ENABLE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderActivatorEnableProc,
 
@@ -909,7 +909,7 @@ static plResponderXRegionProc gResponderXRegionProc;
 
 ParamBlockDesc2 gResponderXRegionBlock
 (
-    kResponderXRegionBlk, _T("xRegion"), 0, NULL, P_AUTO_UI,
+    kResponderXRegionBlk, _T("xRegion"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderXRegionProc,
 
@@ -945,7 +945,7 @@ ParamBlockDesc2 *plResponderCmdXRegion::GetDesc()
 
 IParamBlock2 *plResponderCmdXRegion::CreatePB(int idx)
 {
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderXRegionBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderXRegionBlock, nullptr);
 
     int type = kRespondXRegionClear;
     if (idx == 1)
@@ -1032,9 +1032,9 @@ enum
 
 ParamBlockDesc2 gResponderCameraTransitionBlock
 (
-    kResponderCameraTransitionBlk, _T("camera"), 0, NULL, P_AUTO_UI,
+    kResponderCameraTransitionBlk, _T("camera"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_CAMERA, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_CAMERA, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kCameraObj, _T("CameraObj"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
@@ -1133,9 +1133,9 @@ enum
 
 ParamBlockDesc2 gResponderCameraForceBlock
 (
-    kResponderCameraForceBlk, _T("cameraForce"), 0, NULL, P_AUTO_UI,
+    kResponderCameraForceBlk, _T("cameraForce"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_CAM_FORCE, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_CAM_FORCE, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kCamForce,  _T("force"),    TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_THIRD, IDC_RADIO_FIRST,   
@@ -1186,9 +1186,9 @@ enum { kDelayTime };
 
 ParamBlockDesc2 gResponderDelayBlock
 (
-    kResponderDelayBlk, _T("delay"), 0, NULL, P_AUTO_UI,
+    kResponderDelayBlk, _T("delay"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_DELAY, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_DELAY, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kDelayTime, _T("delay"),    TYPE_FLOAT,     0, 0,
         p_default,  1.0f,
@@ -1261,9 +1261,9 @@ enum { kVisibilityNode, kVisibilityType, kVisibilityChildren };
 
 ParamBlockDesc2 gResponderVisibilityBlock
 (
-    kResponderVisibilityBlk, _T("Visibility"), 0, NULL, P_AUTO_UI,
+    kResponderVisibilityBlk, _T("Visibility"), 0, nullptr, P_AUTO_UI,
 
-    IDD_COMP_RESPOND_VISIBILITY, IDS_COMP_CMD_PARAMS, 0, 0, NULL,
+    IDD_COMP_RESPOND_VISIBILITY, IDS_COMP_CMD_PARAMS, 0, 0, nullptr,
 
     kVisibilityNode,    _T("VisibilityNode"),   TYPE_INODE,     0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
@@ -1299,7 +1299,7 @@ ParamBlockDesc2 *plResponderCmdVisibility::GetDesc()
 
 IParamBlock2 *plResponderCmdVisibility::CreatePB(int idx)
 {
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderVisibilityBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderVisibilityBlock, nullptr);
 
     int type = kRespondVisibilityOn;
     if (idx == 1)
@@ -1437,7 +1437,7 @@ static plResponderSubWorldProc gResponderSubWorldProc;
 
 ParamBlockDesc2 gResponderSubWorldBlock
 (
-    kResponderSubWorldBlk, _T("SubWorld"), 0, NULL, P_AUTO_UI,
+    kResponderSubWorldBlk, _T("SubWorld"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_SUBWORLD, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderSubWorldProc,
 
@@ -1464,7 +1464,7 @@ ParamBlockDesc2 *plResponderCmdSubWorld::GetDesc()
 
 IParamBlock2 *plResponderCmdSubWorld::CreatePB(int idx)
 {
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderSubWorldBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderSubWorldBlock, nullptr);
 
     int type = kRespondSubWorldEnter;
     if (idx == 1)
@@ -1579,7 +1579,7 @@ static plResponderFootSurfaceProc gResponderFootSurfaceProc;
 
 ParamBlockDesc2 gResponderFootSurfaceBlock
 (
-    kResponderFootSurfaceBlk, _T("FootSurface"), 0, NULL, P_AUTO_UI,
+    kResponderFootSurfaceBlk, _T("FootSurface"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_FOOT_SURFACE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderFootSurfaceProc,
 
@@ -1668,7 +1668,7 @@ static plResponderMultistageProc gResponderMultistageProc;
 
 ParamBlockDesc2 gResponderMultistageBlock
 (
-    kResponderMultistageBlk, _T("multistage"), 0, NULL, P_AUTO_UI,
+    kResponderMultistageBlk, _T("multistage"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMultistageProc,
 

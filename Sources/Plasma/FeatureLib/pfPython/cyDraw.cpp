@@ -61,7 +61,7 @@ void cyDraw::SetSender(plKey sender)
 
 void cyDraw::AddRecvr(plKey recvr)
 {
-    if ( recvr != nil )
+    if (recvr != nullptr)
         fRecvr.emplace_back(std::move(recvr));
 }
 

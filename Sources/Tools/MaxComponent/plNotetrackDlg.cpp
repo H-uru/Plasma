@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInterp/plAnimEaseTypes.h"
 
-plNoteTrackDlg::plNoteTrackDlg() : fhAnim(NULL), fhLoop(NULL), fPB(nil), fAnimID(-1), fLoopID(-1), fSegMap(nil), fOwner(nil)
+plNoteTrackDlg::plNoteTrackDlg() : fhAnim(), fhLoop(), fPB(), fAnimID(-1), fLoopID(-1), fSegMap(), fOwner()
 {
 }
 
@@ -72,7 +72,7 @@ void plNoteTrackDlg::ICacheNoteTrack()
 {
     DeleteCache();
 
-    fSegMap = GetAnimSegmentMap(fOwner, nil);
+    fSegMap = GetAnimSegmentMap(fOwner, nullptr);
 }
 
 void plNoteTrackDlg::DeleteCache()
@@ -80,7 +80,7 @@ void plNoteTrackDlg::DeleteCache()
     if (fSegMap)
     {
         DeleteSegmentMap(fSegMap);
-        fSegMap = nil;
+        fSegMap = nullptr;
     }
 }
 
@@ -156,7 +156,7 @@ void plNoteTrackDlg::ILoadLoops()
     if (fSegMap)
     {
         // Get the animation segment (or leave it nil if we're using the entire animation)
-        SegmentSpec *animSpec = nil;
+        SegmentSpec *animSpec = nullptr;
         ST::string animName = ST::string::from_utf8(fPB->GetStr(fAnimID));
         if (!animName.empty() && fSegMap->find(animName) != fSegMap->end())
             animSpec = (*fSegMap)[animName];

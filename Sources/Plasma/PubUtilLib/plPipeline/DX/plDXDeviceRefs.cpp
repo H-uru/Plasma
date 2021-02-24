@@ -85,13 +85,13 @@ plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
 
 plDXDeviceRef::plDXDeviceRef()
 {
-    fNext = nil;
-    fBack = nil;
+    fNext = nullptr;
+    fBack = nullptr;
 }
 
 plDXDeviceRef::~plDXDeviceRef()
 {
-    if( fNext != nil || fBack != nil )
+    if (fNext != nullptr || fBack != nullptr)
         Unlink();
 }
 
@@ -102,13 +102,13 @@ void    plDXDeviceRef::Unlink()
         fNext->fBack = fBack;
     *fBack = fNext;
 
-    fBack = nil;
-    fNext = nil;
+    fBack = nullptr;
+    fNext = nullptr;
 }
 
 void    plDXDeviceRef::Link( plDXDeviceRef **back )
 {
-    hsAssert( fNext == nil && fBack == nil, "Trying to link a plDXDeviceRef that's already linked" );
+    hsAssert(fNext == nullptr && fBack == nullptr, "Trying to link a plDXDeviceRef that's already linked");
 
     fNext = *back;
     if( *back )
@@ -138,7 +138,7 @@ plDXIndexBufferRef::~plDXIndexBufferRef()
 
 void    plDXVertexBufferRef::Release()
 {
-    if( fD3DBuffer != nil )
+    if (fD3DBuffer != nullptr)
     {
         ReleaseObject(fD3DBuffer);
         if (!Volatile())
@@ -149,14 +149,14 @@ void    plDXVertexBufferRef::Release()
         }
     }
     delete [] fData;
-    fData = nil;
+    fData = nullptr;
 
     SetDirty( true );
 }
 
 void    plDXIndexBufferRef::Release()
 {
-    if( fD3DBuffer != nil )
+    if (fD3DBuffer != nullptr)
     {
         plProfile_DelMem(MemIndex, fCount * sizeof(uint16_t));
         PROFILE_POOL_MEM(fPoolType, fCount * sizeof(uint16_t), false, "IndexBuff");
@@ -178,7 +178,7 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uin
     if( fDataSize > 0 )
         plProfile_DelMem(MemTexture, fDataSize + sizeof(plDXTextureRef));
 
-    if( ( fFormatType != ft || fMMLvs != ml || fMaxWidth != mw || fMaxHeight != mh ) && fD3DTexture != nil )
+    if ((fFormatType != ft || fMMLvs != ml || fMaxWidth != mw || fMaxHeight != mh) && fD3DTexture != nullptr)
         ReleaseObject( fD3DTexture );
     if( !fD3DTexture )
         fUseTime = 0;
@@ -189,7 +189,7 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uin
     fMaxHeight  = mh;
     fNumPix     = np;
     fDataSize   = manSize;
-    if( fLevelSizes != nil )
+    if (fLevelSizes != nullptr)
         delete [] fLevelSizes;
     if( lSz )
         fLevelSizes = lSz;
@@ -255,7 +255,7 @@ void    plDXLightRef::UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *s
     SET_D3DCOLORVALUE( fD3DInfo.Ambient, fOwner->GetAmbient() );
     SET_D3DCOLORVALUE( fD3DInfo.Specular, fOwner->GetSpecular() );
 
-    if( ( omniOwner = plOmniLightInfo::ConvertNoRef( fOwner ) ) != nil )
+    if ((omniOwner = plOmniLightInfo::ConvertNoRef(fOwner)) != nullptr)
     {
         fD3DInfo.Type = D3DLIGHT_POINT;
 
@@ -298,7 +298,7 @@ void    plDXLightRef::UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *s
             fD3DInfo.Phi = spotOwner->GetSpotOuter() * 2; 
         }
     }
-    else if( ( dirOwner = plDirectionalLightInfo::ConvertNoRef( fOwner ) ) != nil )
+    else if ((dirOwner = plDirectionalLightInfo::ConvertNoRef(fOwner)) != nullptr)
     {   
         fD3DInfo.Type = D3DLIGHT_DIRECTIONAL;
 
@@ -332,14 +332,14 @@ void    plDXLightRef::Release()
     if( fD3DDevice )
     {
         fD3DDevice->LightEnable( fD3DIndex, false );
-        fD3DDevice = nil;
+        fD3DDevice = nullptr;
     }
 
     if( fParentSettings )
     {
         fParentSettings->fEnabledFlags.SetBit( fD3DIndex, false );
         fParentSettings->ReleaseD3DIndex( fD3DIndex );
-        fParentSettings = nil;
+        fParentSettings = nullptr;
     }
     fD3DIndex = 0;
 
@@ -358,11 +358,11 @@ plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTar
                                         owner->GetWidth() * owner->GetHeight(),
                                         owner->GetWidth() * owner->GetHeight() * ( owner->GetPixelSize() >> 3 ),
                                         0,
-                                        nil, 
-                                        nil, true, true )
+                                        nullptr,
+                                        nullptr, true, true)
 {
-    fD3DColorSurface = nil;
-    fD3DDepthSurface = nil;
+    fD3DColorSurface = nullptr;
+    fD3DDepthSurface = nullptr;
     fReleaseDepth = releaseDepthOnDelete;
     fOwner = owner;
 
@@ -377,7 +377,7 @@ plDXRenderTargetRef::plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTar
             fFlags |= kPerspProjection;
     }
     
-    if( plCubicRenderTarget::ConvertNoRef( owner ) != nil )
+    if (plCubicRenderTarget::ConvertNoRef(owner) != nullptr)
         fFlags |= kCubicMap;
 }
 
@@ -391,8 +391,8 @@ plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, uint32_t ml, plRend
                                 owner->GetWidth() * owner->GetHeight(),
                                 owner->GetWidth() * owner->GetHeight() * ( owner->GetPixelSize() >> 3 ),
                                 0,
-                                nil, 
-                                nil, true, true );
+                                nullptr,
+                                nullptr, true, true);
 
     if( owner->GetFlags() & plRenderTarget::kIsTexture )
         fFlags |= kOffscreenRT;
@@ -405,7 +405,7 @@ plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, uint32_t ml, plRend
             fFlags |= kPerspProjection;
     }
 
-    if( plCubicRenderTarget::ConvertNoRef( owner ) != nil )
+    if (plCubicRenderTarget::ConvertNoRef(owner) != nullptr)
         fFlags |= kCubicMap;
 
     return *this;
@@ -416,14 +416,14 @@ plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, uint32_t ml, plRend
 void    plDXRenderTargetRef::SetTexture( IDirect3DSurface9 *surface, IDirect3DSurface9 *depth )
 {
     fD3DColorSurface = surface;
-    fD3DTexture = nil;
+    fD3DTexture = nullptr;
     fD3DDepthSurface = depth;
 }
 
 void    plDXRenderTargetRef::SetTexture( IDirect3DTexture9 *surface, IDirect3DSurface9 *depth )
 {
     fD3DTexture = surface;
-    fD3DColorSurface = nil;
+    fD3DColorSurface = nullptr;
     fD3DDepthSurface = depth;
 }
 
@@ -443,7 +443,7 @@ void    plDXRenderTargetRef::SetTexture( IDirect3DCubeTexture9 *surface, IDirect
 
     fD3DTexture = surface;
     fD3DDepthSurface = depth;
-    fD3DColorSurface = nil;
+    fD3DColorSurface = nullptr;
 
     /// Get the faces and assign to each of the child targets
     cubic = plCubicRenderTarget::ConvertNoRef( fOwner );

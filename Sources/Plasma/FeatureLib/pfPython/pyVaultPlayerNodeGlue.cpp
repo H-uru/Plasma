@@ -124,7 +124,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, getLinkToCity)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getOwnedAgeLink, args)
 {
-    PyObject* infoObj = NULL;
+    PyObject* infoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &infoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getOwnedAgeLink expects a ptAgeInfoStruct");
@@ -153,7 +153,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeOwnedAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getVisitAgeLink, args)
 {
-    PyObject* infoObj = NULL;
+    PyObject* infoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &infoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getVisitAgeLink expects a ptAgeInfoStruct");

@@ -70,7 +70,7 @@ public:
     void Register(const char* str, void* data);
 
     typedef bool (hsStringTableCallback)(Node*);
-    bool Iterate(hsStringTableCallback* callback, Node* fromNode=nil);
+    bool Iterate(hsStringTableCallback* callback, Node* fromNode=nullptr);
 private:
     Node* FindRecur(Node* root, const char* str, bool createIfNeeded=false);
     Node* FindPartialRecur(Node* root, char* str, int32_t len) const;

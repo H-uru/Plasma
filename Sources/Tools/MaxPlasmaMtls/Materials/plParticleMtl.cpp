@@ -64,7 +64,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_PARTICLE_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return PARTICLE_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("ParticleMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -85,7 +85,7 @@ const char *plParticleMtl::NormalStrings[] = // Make sure these match up in orde
     "Emissive"
 };
 
-plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB(NULL)//, fBM(NULL), fUVGen(NULL)
+plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB()//, fBM(), fUVGen()
 {
 #if 0 // This wasn't working on load
     // Initialize the paramblock descriptors only once
@@ -188,7 +188,7 @@ Animatable* plParticleMtl::SubAnim(int i)
     case 1: return fBasicPB->GetTexmap(kTexmap);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int plParticleMtl::NumRefs()
@@ -203,7 +203,7 @@ RefTargetHandle plParticleMtl::GetReference(int i)
     case kRefBasic:  return fBasicPB;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plParticleMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -227,7 +227,7 @@ IParamBlock2* plParticleMtl::GetParamBlockByID(BlockID id)
     if (fBasicPB->ID() == id)
         return fBasicPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -269,7 +269,7 @@ Texmap* plParticleMtl::GetSubTexmap(int i)
     if (i == 0)
         return fBasicPB->GetTexmap(kTexmap);
 
-    return NULL;
+    return nullptr;
 }
 
 void plParticleMtl::SetSubTexmap(int i, Texmap *m)
@@ -407,8 +407,8 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
     Texmap *tx[2];
     int diffChan = stdIDToChannel[ ID_DI ];
     int opacChan = stdIDToChannel[ ID_OP ];
-    tx[0] = (*maps)[diffChan].IsActive()?(*maps)[diffChan].map:NULL;
-    tx[1] = (*maps)[opacChan].IsActive()?(*maps)[opacChan].map:NULL;
+    tx[0] = (*maps)[diffChan].IsActive() ? (*maps)[diffChan].map : nullptr;
+    tx[1] = (*maps)[opacChan].IsActive() ? (*maps)[opacChan].map : nullptr;
 #endif
 
     int nsupport = cb.NumberTexturesSupported();
@@ -418,13 +418,13 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
     int nmaps=0;
     for (int i=0; i<NTEXHANDLES; i++) {
         if (tx[i]) nmaps ++;
-        bmi[i] = NULL;
+        bmi[i] = nullptr;
         }
     mtl->texture.SetCount(nmaps);
     if (nmaps==0) 
         return;
     for (i=0; i<nmaps; i++)
-        mtl->texture[i].textHandle = NULL;
+        mtl->texture[i].textHandle = nullptr;
     texHandleValid.SetInfinite();
     Interval  valid;
     BOOL needDecal = FALSE;
@@ -456,7 +456,7 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
                 texHandleValid &= valid;
                 StuffAlpha(bmi[1], (*maps)[opacChan].amount, GetOpacity(t),ntx?whiteCol:pShader->GetDiffuseClr(t));
                 texHandle[ntx] = cb.MakeHandle(bmi[1]); 
-                bmi[1] = NULL; 
+                bmi[1] = nullptr;
                 mtl->texture[ntx].textHandle = texHandle[ntx]->GetHandle();
                 SetTexOps(mtl,ntx,TXOP_OPACITY);
                 useSubForTex[ntx] = opacChan;
@@ -474,7 +474,7 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
                         StuffAlphaInto(bmi[1], bmi[0], (*maps)[opacChan].amount, GetOpacity(t));
                         op = TXOP_OPACITY;
                         free(bmi[1]);
-                        bmi[1] = NULL;
+                        bmi[1] = nullptr;
                         }
 //                  }
                 }
@@ -482,7 +482,7 @@ void plParticleMtl::SetupGfxMultiMaps(TimeValue t, Material *mtl, MtlMakerCallba
         }
     if (bmi[0]) {
         texHandle[0] = cb.MakeHandle(bmi[0]); 
-        bmi[0] = NULL; 
+        bmi[0] = nullptr;
         mtl->texture[0].textHandle = texHandle[0]->GetHandle();
         SetTexOps(mtl,0,op);
         }

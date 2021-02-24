@@ -260,7 +260,7 @@ public:
     hsGDeviceRef*           GetDeviceRef() const { return fDeviceRef; }
     void                    SetDeviceRef(hsGDeviceRef* ref) const;
 
-    const void*             GetConstBasePtr() const { return fConsts.GetCount() ? &fConsts[0] : nil; }
+    const void*             GetConstBasePtr() const { return fConsts.GetCount() ? &fConsts[0] : nullptr; }
 
     void                    CopyConsts(const plShader* src) { fConsts = src->fConsts; }
 

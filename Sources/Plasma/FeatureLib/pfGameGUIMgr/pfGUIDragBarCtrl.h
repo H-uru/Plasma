@@ -88,7 +88,7 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
         virtual void    SetAnchored( bool anchored ) { fAnchored = anchored; }
         virtual bool    IsAnchored() { return fAnchored; }
 
-        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         // Export only
 };

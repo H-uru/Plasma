@@ -79,7 +79,7 @@ protected:
 
 public:
     // If you don't pass in a key (4 uint32_t's), the default one will be used
-    plEncryptedStream(uint32_t* key=nil);
+    plEncryptedStream(uint32_t* key=nullptr);
     ~plEncryptedStream();
 
     bool    Open(const plFileName& name, const char* mode = "rb") override;
@@ -103,8 +103,8 @@ public:
     // Attempts to create a read-binary stream for the requested file.  If it's
     // encrypted, you'll get a plEncryptedStream, otherwise just a standard
     // hsUNIXStream.  Remember to delete the stream when you're done with it.
-    static hsStream* OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nil);
-    static hsStream* OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nullptr);
+    static hsStream* OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nullptr);
 };
 
 #endif // plEncryptedStream_h_inc

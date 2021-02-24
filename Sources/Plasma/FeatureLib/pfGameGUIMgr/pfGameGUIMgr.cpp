@@ -108,7 +108,7 @@ class pfGameUIInputInterface : public plInputInterface
 
         void    RestoreDefaultKeyMappings() override
         {
-            if( fControlMap != nil )
+            if (fControlMap != nullptr)
             {
                 fControlMap->UnmapAllBindings();
                 fControlMap->BindKey( KEY_BACKSPACE, B_CONTROL_EXIT_GUI_MODE, plKeyMap::kFirstAlways );
@@ -121,7 +121,7 @@ class pfGameUIInputInterface : public plInputInterface
 //// pfGameGUIMgr Functions //////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-pfGameGUIMgr    *pfGameGUIMgr::fInstance = nil;
+pfGameGUIMgr    *pfGameGUIMgr::fInstance = nullptr;
 
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -137,7 +137,7 @@ pfGameGUIMgr::pfGameGUIMgr()
 pfGameGUIMgr::~pfGameGUIMgr()
 {
     // the GUIMgr is dead!
-    fInstance = nil;
+    fInstance = nullptr;
 
     for (pfGUIDialogMod* dialog : fDialogs)
         UnloadDialog(dialog);
@@ -170,10 +170,10 @@ void    pfGameGUIMgr::Draw( plPipeline *p )
 bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
 {
     pfGameGUIMsg    *guiMsg = pfGameGUIMsg::ConvertNoRef( pMsg );
-    if( guiMsg != nil )
+    if (guiMsg != nullptr)
     {
         if( guiMsg->GetCommand() == pfGameGUIMsg::kLoadDialog )
-            LoadDialog(guiMsg->GetString().c_str(), nil, guiMsg->GetAge().c_str());
+            LoadDialog(guiMsg->GetString().c_str(), nullptr, guiMsg->GetAge().c_str());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kShowDialog )
             IShowDialog(guiMsg->GetString().c_str());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kHideDialog )
@@ -183,7 +183,7 @@ bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
     }
 
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( pMsg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kDlgModRef )
         {
@@ -214,7 +214,7 @@ void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
     if (std::find(fDialogs.cbegin(), fDialogs.cend(), (pfGUIDialogMod *)obj) == fDialogs.cend())
     {
         pfGUIDialogMod  *mod = pfGUIDialogMod::ConvertNoRef( obj );
-        if( mod != nil )
+        if (mod != nullptr)
         {
             mod->UpdateAspectRatio();   // adding a new dialog, make sure the correct aspect ratio is set
             fDialogs.emplace_back(mod);
@@ -257,16 +257,16 @@ void    pfGameGUIMgr::IRemoveDlgFromList( hsKeyedObject *obj )
     if (iter != fDialogs.cend())
     {
         pfGUIDialogMod  *mod = pfGUIDialogMod::ConvertNoRef( obj );
-        hsAssert( mod != nil, "Non-dialog sent to gameGUIMgr::IRemoveDlg()" );
+        hsAssert(mod != nullptr, "Non-dialog sent to gameGUIMgr::IRemoveDlg()");
 
-        if( mod != nil )
+        if (mod != nullptr)
         {
             if( mod->IsEnabled() )
             {
                 mod->SetEnabled( false );
 
                 mod->Unlink();
-                if( fActiveDialogs == nil )
+                if (fActiveDialogs == nullptr)
                     IActivateGUI( false );
             }
 
@@ -296,7 +296,7 @@ void    pfGameGUIMgr::IRemoveDlgFromList( hsKeyedObject *obj )
 void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *ageName )
 {
     // see if they want to set the receiver key once the dialog is loaded
-    if ( recvrKey != nil )
+    if (recvrKey != nullptr)
     {
         // first see if we are loading a dialog that is already being loaded
         bool alreadyLoaded = std::any_of(fDialogToSetKeyOf.cbegin(), fDialogToSetKeyOf.cend(),
@@ -310,7 +310,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         }
     }
 
-    hsStatusMessageF("\nLoading Dialog %s %s ... %f\n", name, ( ageName != nil ) ? ageName : "GUI", hsTimer::GetSeconds() );
+    hsStatusMessageF("\nLoading Dialog %s %s ... %f\n", name, (ageName != nullptr) ? ageName : "GUI", hsTimer::GetSeconds());
 
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
@@ -320,7 +320,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
     msg->Send();
 
     // Now add this dialog to a list of pending loads (will remove it once it's fully loaded)
-//  fDlgsPendingLoad.Append( new pfDialogNameSetKey( name, nil ) );
+//  fDlgsPendingLoad.Append(new pfDialogNameSetKey(name, nullptr));
 }
 
 //// IShowDialog /////////////////////////////////////////////////////////////
@@ -363,7 +363,7 @@ void    pfGameGUIMgr::ShowDialog( pfGUIDialogMod *dlg, bool resetClickables /* =
         dlg->SetEnabled( true );
 
         // Add to active list
-        if( fActiveDialogs == nil )
+        if (fActiveDialogs == nullptr)
             IActivateGUI( true );
         
         dlg->LinkToList( &fActiveDialogs );
@@ -381,7 +381,7 @@ void    pfGameGUIMgr::HideDialog( pfGUIDialogMod *dlg )
         dlg->SetEnabled( false );
 
         dlg->Unlink();
-        if( fActiveDialogs == nil )
+        if (fActiveDialogs == nullptr)
             IActivateGUI( false );
     }
 }
@@ -406,17 +406,17 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 //  IRemoveDlgFromList( dlg );
 
     // Add the name to our list of dialogs pending unload
-//  fDlgsPendingUnload.Append( new pfDialogNameSetKey( dlg->GetName(), nil ) );
+//  fDlgsPendingUnload.Append(new pfDialogNameSetKey(dlg->GetName(), nullptr));
 
     plKey       sceneNodeKey = dlg->GetSceneNodeKey();
-    if( sceneNodeKey == nil )
+    if (sceneNodeKey == nullptr)
     {
         hsStatusMessageF( "Warning: Unable to grab sceneNodeKey to unload dialog %s; searching for it...", dlg->GetName() );
         sceneNodeKey = plKeyFinder::Instance().FindSceneNodeKey( dlg->GetKey()->GetUoid().GetLocation() );
     }
 
 //  if( dlg->GetTarget() )
-    if( sceneNodeKey != nil )
+    if (sceneNodeKey != nullptr)
     {
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
@@ -445,11 +445,11 @@ pfGUIPopUpMenu  *pfGameGUIMgr::FindPopUpMenu( const char *name )
     for (pfGUIDialogMod* dialog : fDialogs)
     {
         pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef(dialog);
-        if( menu != nil && stricmp( menu->GetName(), name ) == 0 )
+        if (menu != nullptr && stricmp(menu->GetName(), name) == 0)
             return menu;
     }
 
-    return nil;
+    return nullptr;
 }
 
 std::vector<plPostEffectMod*> pfGameGUIMgr::GetDlgRenderMods() const
@@ -513,7 +513,7 @@ void    pfGameGUIMgr::IActivateGUI( bool activate )
         msg->Send();
 
         hsRefCnt_SafeUnRef( fInputConfig );
-        fInputConfig = nil;
+        fInputConfig = nullptr;
     }
 
     fActivated = activate;
@@ -529,14 +529,14 @@ bool    pfGameGUIMgr::IHandleMouse( EventType event, float mouseX, float mouseY,
 
     // Update interesting things first, no matter what, for ALL dialogs
     bool    modalPresent = false;
-    for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
+    for (dlg = fActiveDialogs; dlg != nullptr; dlg = dlg->GetNext())
     {
         dlg->UpdateInterestingThings( mouseX, mouseY, modifiers, modalPresent );
         if (dlg->HasFlag( pfGUIDialogMod::kModal ))
             modalPresent = true;
     }
 
-    for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
+    for (dlg = fActiveDialogs; dlg != nullptr; dlg = dlg->GetNext())
     {
         if( dlg->HandleMouseEvent( event, mouseX, mouseY, modifiers ) ||
             ( dlg->HasFlag( pfGUIDialogMod::kModal ) && event != pfGameGUIMgr::kMouseUp ) )
@@ -558,7 +558,7 @@ bool    pfGameGUIMgr::IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modi
     pfGUIDialogMod  *dlg;
 
 
-    for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
+    for (dlg = fActiveDialogs; dlg != nullptr; dlg = dlg->GetNext())
     {
         if( dlg->HandleKeyEvent( event, key, modifiers ) )
             return true;
@@ -579,7 +579,7 @@ bool    pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers )
     if (!key)
         return false;
 
-    for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
+    for (dlg = fActiveDialogs; dlg != nullptr; dlg = dlg->GetNext())
     {
         if( dlg->HandleKeyPress( key, modifiers ) )
             return true;
@@ -594,7 +594,7 @@ bool    pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers )
 
 bool    pfGameGUIMgr::IModalBlocking()
 {
-    return ( IGetTopModal() != nil ) ? true : false;
+    return (IGetTopModal() != nullptr);
 }
 
 //// IGetTopModal ////////////////////////////////////////////////////////////
@@ -605,13 +605,13 @@ pfGUIDialogMod  *pfGameGUIMgr::IGetTopModal() const
     pfGUIDialogMod  *dlg;
 
 
-    for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
+    for (dlg = fActiveDialogs; dlg != nullptr; dlg = dlg->GetNext())
     {
         if( dlg->HasFlag( pfGUIDialogMod::kModal ) )
             return dlg;
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -650,10 +650,10 @@ bool    pfGameUIInputInterface::IControlCodeEnabled( ControlEventCode code )
             return false;
 
         pfGUIDialogMod *dlg = fGUIManager->IGetTopModal();
-        if( dlg != nil )
+        if (dlg != nullptr)
         {
             pfGUIControlMod *ctrl = dlg->GetFocus();
-            if( ctrl != nil && ctrl->HasFlag( pfGUIControlMod::kTakesSpecialKeys ) )
+            if (ctrl != nullptr && ctrl->HasFlag(pfGUIControlMod::kTakesSpecialKeys))
                 return false;
         }
     }
@@ -667,7 +667,7 @@ bool    pfGameUIInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
         if( cmd->fControlActivated )
         {
             pfGUIDialogMod *dlg = fGUIManager->IGetTopModal();
-            if( dlg != nil && dlg->GetHandler() != nil )
+            if (dlg != nullptr && dlg->GetHandler() != nullptr)
                 dlg->GetHandler()->OnControlEvent( pfGUIDialogProc::kExitMode );
         }
 
@@ -760,7 +760,7 @@ bool    pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     plConsoleMsg * consoleMsg = new plConsoleMsg;
                     consoleMsg->SetCmd(plConsoleMsg::kExecuteLine);
                     consoleMsg->SetString("Game.KITakePicture");
-                    consoleMsg->Send(nil, true);
+                    consoleMsg->Send(nullptr, true);
                 }
             }
         }
@@ -835,7 +835,7 @@ pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( uint32_t tagID )
             return dialog;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// GetDialogFromString ////////////////////////////////////////////////////////
@@ -848,7 +848,7 @@ pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromString( const char *name )
             return dialog;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// GetControlFromTag ///////////////////////////////////////////////////////

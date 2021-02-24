@@ -172,8 +172,8 @@ void    plEAXListener::Shutdown()
         return;
 
 #ifdef EAX_SDK_AVAILABLE
-    s_EAXSet = nil;
-    s_EAXGet = nil;
+    s_EAXSet = nullptr;
+    s_EAXGet = nullptr;
 #endif
     IRelease();
 }
@@ -276,7 +276,7 @@ void    plEAXListener::IMuteProperties( EAXREVERBPROPERTIES *props, float percen
 
 void    plEAXListener::ClearProcessCache()
 {
-    fLastBigRegion = nil;
+    fLastBigRegion = nullptr;
     fLastModCount = -1;
     fLastWasEmpty = false;
     fLastSingleStrength = -1.f;
@@ -298,23 +298,23 @@ void    plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray )
     float   totalStrength;
     bool    firstOne;
 
-    plEAXListenerMod        *thisBigRegion = nil;
+    plEAXListenerMod        *thisBigRegion = nullptr;
     EAXLISTENERPROPERTIES   finalProps;
     static int oldTime = timeGetTime();     // Get starting time
     int newTime;
     bool bMorphing = false;
 
-    static plStatusLog  *myLog = nil;
+    static plStatusLog  *myLog = nullptr;
 
-    if( myLog == nil && plgAudioSys::AreExtendedLogsEnabled() )
+    if (myLog == nullptr && plgAudioSys::AreExtendedLogsEnabled())
         myLog = plStatusLogMgr::GetInstance().CreateStatusLog( 30, "EAX Reverbs", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kDontWriteFile );
-    else if( myLog != nil && !plgAudioSys::AreExtendedLogsEnabled() )
+    else if (myLog != nullptr && !plgAudioSys::AreExtendedLogsEnabled())
     {
         delete myLog;
-        myLog = nil;
+        myLog = nullptr;
     }
 
-    if( myLog != nil )
+    if (myLog != nullptr)
         myLog->Clear();
 
     if( modArray.size() != fLastModCount )
@@ -333,7 +333,7 @@ void    plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray )
         DebugLog( "{} regions to calc", modArray.size() );
 
         // Reset and find a new one if applicable
-        thisBigRegion = nil;
+        thisBigRegion = nullptr;
 
         // Accumulate settings from all the active listener regions (shouldn't be too many, we hope)
         totalStrength = 0.f;
@@ -348,7 +348,7 @@ void    plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray )
                 if( totalStrength == 0.f )
                     thisBigRegion = mod;
                 else
-                    thisBigRegion = nil;
+                    thisBigRegion = nullptr;
 
                 if( firstOne )
                 {
@@ -382,7 +382,7 @@ void    plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray )
 //          finalProps.lRoomLF = EAXLISTENER_MINROOMLF;
 //          finalProps.lRoomHF = EAXLISTENER_MINROOMHF;
             fLastWasEmpty = true;
-            fLastBigRegion = nil;
+            fLastBigRegion = nullptr;
             fLastSingleStrength = -1.f;
         }
         else 
@@ -394,7 +394,7 @@ void    plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray )
                 return;
 
             fLastBigRegion = thisBigRegion;
-            fLastSingleStrength = ( thisBigRegion != nil ) ? totalStrength : -1.f;
+            fLastSingleStrength = (thisBigRegion != nullptr) ? totalStrength : -1.f;
 
             if( totalStrength < 1.f )
             {

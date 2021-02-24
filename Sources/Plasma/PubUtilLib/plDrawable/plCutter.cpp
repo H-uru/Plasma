@@ -1039,7 +1039,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
     if( !di )
         return;
 
-    static plDrawableSpans* drawable = nil;
+    static plDrawableSpans* drawable = nullptr;
     bool newDrawable = !drawable;
     bool haveNormal = true;
 
@@ -1203,7 +1203,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
                                                         uvw.data(), 1,
                                                         col.data(),
                                                         true, 
-                                                        nil,
+                                                        nullptr,
                                                         idx.size(), idx.data(),
                                                         span.GetMaterial(),
                                                         hsMatrix44::IdentityMatrix(), 
@@ -1237,7 +1237,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
     if( !node )
         return;
 
-    static plDrawableSpans* drawable = nil;
+    static plDrawableSpans* drawable = nullptr;
     bool newDrawable = !drawable;
     bool haveNormal = true;
 
@@ -1352,7 +1352,7 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
                                                         uvw.data(), 1,
                                                         col.data(),
                                                         false, 
-                                                        nil,
+                                                        nullptr,
                                                         idx.size(), idx.data(),
                                                         src[i].GetMaterial(), 
                                                         hsMatrix44::IdentityMatrix(), 

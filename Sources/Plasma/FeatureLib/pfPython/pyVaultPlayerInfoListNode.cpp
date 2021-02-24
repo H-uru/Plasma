@@ -120,7 +120,7 @@ void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
     access.SetPlayerId(playerID);
 
     if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(&templateNode, 1))
-        VaultRemoveChildNode(fNode->GetNodeId(), rvn->GetNodeId(), nil, nil);
+        VaultRemoveChildNode(fNode->GetNodeId(), rvn->GetNodeId(), nullptr, nullptr);
 }
 
 PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )

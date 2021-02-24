@@ -76,7 +76,7 @@ protected:
     }
 
 public:
-    DecalBasicDlgProc() : hLockButtons(NULL) {}
+    DecalBasicDlgProc() : hLockButtons() { }
     ~DecalBasicDlgProc() { if (hLockButtons) ImageList_Destroy(hLockButtons); }
 
 public:
@@ -101,7 +101,7 @@ static DecalBasicDlgProc gDecalBasicDlgProc;
 
 static ParamBlockDesc2 gDecalBasicPB
 (
-    plDecalMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetDecalMtlDesc(),//NULL,
+    plDecalMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetDecalMtlDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plDecalMtl::kRefBasic,
 
     // UI

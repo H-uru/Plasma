@@ -167,7 +167,7 @@ ParamBlockDesc2 gLimitPaneraBk
 (   
     1, _T("camera"), 0, &gLimitPaneraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERAPAN, IDS_COMP_ALLOW_PAN,  0, 0, NULL,
+    IDD_COMP_CAMERAPAN, IDS_COMP_ALLOW_PAN,  0, 0, nullptr,
 
     kLimitPanX, _T("Limit X"),      TYPE_BOOL,              0, 0,
     p_ui,               TYPE_SINGLECHEKBOX, IDC_X_AXIS,
@@ -249,7 +249,7 @@ ParamBlockDesc2 gCameraZoomeraBk
 (   
     1, _T("camera"), 0, &gCameraZoomeraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERAZOOM, IDS_COMP_CAMERAZOOM,  0, 0, NULL,
+    IDD_COMP_CAMERAZOOM, IDS_COMP_CAMERAZOOM,  0, 0, nullptr,
 
     kZoomMaxDeg,    _T("max degrees"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
@@ -344,7 +344,7 @@ ParamBlockDesc2 gTransOverrideeraBk
 (   
     1, _T("camera"), 0, &gTransOverrideeraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERA_TRANS, IDS_COMP_CAMERATRANS,  0, 0, NULL,
+    IDD_COMP_CAMERA_TRANS, IDS_COMP_CAMERATRANS,  0, 0, nullptr,
     
     kTransitionTo, _T("transitionto"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
@@ -438,11 +438,11 @@ bool plTransOverrideComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     // see if there is a camera specified
     INode* pCamNode = fCompPB->GetINode(kTransitionTo);
             
-    PreTrans* pTrans = nil;
+    PreTrans* pTrans = nullptr;
     if (pCamNode)
         pTrans = new PreTrans(((plMaxNode*)pCamNode)->GetSceneObject());
     else
-        pTrans = new PreTrans(nil);
+        pTrans = new PreTrans(nullptr);
 
     if (fCompPB->GetInt(kIgnoreTrans))
     {
@@ -528,7 +528,7 @@ ParamBlockDesc2 gPOAAvatareraBk
 (   
     1, _T("camera"), 0, &gPOAAvatareraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_AVATAR_POA, IDS_AVATARPOA, 0, 0, NULL,
+    IDD_COMP_AVATAR_POA, IDS_AVATARPOA, 0, 0, nullptr,
 
 
     kAvPOAOffX, _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
@@ -594,7 +594,7 @@ ParamBlockDesc2 gPOAObjecteraBk
 (   
     1, _T("camera"), 0, &gPOAObjecteraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_OBJECT_POA, IDS_COMP_OBJECTPOA,  0, 0, NULL,
+    IDD_COMP_OBJECT_POA, IDS_COMP_OBJECTPOA,  0, 0, nullptr,
         
     kPOAObject, _T("objectPOA"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXY,
@@ -661,7 +661,7 @@ plKey plPOAObjectComponent::GetObjectKey()
 {
     if (fCompPB->GetINode(kPOAObject))
         return ((plMaxNode*)(fCompPB->GetINode(kPOAObject)))->GetSceneObject()->GetKey();
-    return nil;
+    return nullptr;
 }
 
 //
@@ -782,7 +782,7 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 PreTrans *trans = it->second;
                 // convert the pre transition to a camera transition (get the camera modifier key that we are going to)
                 plSceneObject* pObj = trans->fTransTo;
-                const plCameraModifier1* pCamMod = nil;
+                const plCameraModifier1* pCamMod = nullptr;
                 if (pObj)
                 {
                     for (size_t i = 0; i < pObj->GetNumModifiers(); i++)
@@ -792,9 +792,9 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             break;
                     }
                 }
-                CamTrans* camTrans = nil;
+                CamTrans* camTrans = nullptr;
                 if (!pCamMod)
-                    camTrans = new CamTrans(nil);
+                    camTrans = new CamTrans(nullptr);
                 else
                     camTrans = new CamTrans(pCamMod->GetKey());
 
@@ -820,7 +820,7 @@ bool plCameraBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
 
-    GenCamera* theCam = nil;
+    GenCamera* theCam = nullptr;
     Object* obj = pNode->EvalWorldState(hsConverterUtils::Instance().GetTime(pNode->GetInterface())).obj;
     TimeValue Now = hsConverterUtils::Instance().GetTime(pNode->GetInterface());
 
@@ -828,7 +828,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
         theCam = (GenCamera *) obj->ConvertToType(Now, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
     else
     {
-        return nil;
+        return nullptr;
     }
 
     pNode->SetDrawable(false);
@@ -873,7 +873,7 @@ plCameraModifier1* plCameraBaseComponent::ICreateCameraModifier(plMaxNode* pNode
 
 void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* LimitPanComp = 0;
+    plComponentBase* LimitPanComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -902,7 +902,7 @@ void plCameraBaseComponent::ISetLimitPan(plMaxNode* pNode, plCameraBrain1* pBrai
 
 void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* LimitZoomComp = 0;
+    plComponentBase* LimitZoomComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -923,7 +923,7 @@ void plCameraBaseComponent::ISetLimitZoom(plMaxNode* pNode, plCameraBrain1* pBra
 
 void plCameraBaseComponent::ISetIgnoreSubworld(plMaxNode* pNode, plCameraBrain1* pBrain)
 {
-    plComponentBase* subComp = 0;
+    plComponentBase* subComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
@@ -967,16 +967,16 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
     // do we want a special POA for this brain
     bool bResult = false;
     bool bAvPOA = false;
-    plComponentBase* POAComp = 0;
+    plComponentBase* POAComp = nullptr;
     bool bPOAObject = false;
-    plComponentBase* objPOAComp = 0;
+    plComponentBase* objPOAComp = nullptr;
 
     for (uint32_t x = 0; x < pNode->NumAttachedComponents(); x++)
     {
         plComponentBase *comp = pNode->GetAttachedComponent(x);
         if (comp->ClassID() == OBJECT_POA_CID)
         {   
-            if (objPOAComp != 0 || POAComp != 0)
+            if (objPOAComp != nullptr || POAComp != nullptr)
             {
                 pErrMsg->Set(true, "Export Error - Cameras",
                 "Object %s : Cameras must have one and only one POA component!\n",
@@ -989,7 +989,7 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         }
         if (comp->ClassID() == AVATAR_POA_CID)
         {
-            if (objPOAComp != 0 || POAComp != 0)
+            if (objPOAComp != nullptr || POAComp != nullptr)
             {
                 pErrMsg->Set(true, "Export Error - Cameras",
                 "Object %s : Cameras must have one and only one POA component!\n",
@@ -1209,7 +1209,7 @@ ParamBlockDesc2 gAutoCameraBk
 (   
     1, _T("camera"), 0, &gAutoCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_AUTOCAM, IDS_COMP_AUTOCAM,  0, 0, NULL,
+    IDD_COMP_AUTOCAM, IDS_COMP_AUTOCAM,  0, 0, nullptr,
         
     kAutoCamOffX,   _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
@@ -1432,7 +1432,7 @@ ParamBlockDesc2 gFPCameraBk
 (   
     1, _T("camera"), 0, &gFPCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FIRSTPERSON_CAM, IDS_COMP_FIRST_PERSONCAM,  0, 0, NULL,
+    IDD_COMP_FIRSTPERSON_CAM, IDS_COMP_FIRST_PERSONCAM,  0, 0, nullptr,
         
     kFPCamOffX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
@@ -1628,8 +1628,8 @@ ParamBlockDesc2 gRailCameraBk
 );
 
 plRailCameraComponent::plRailCameraComponent()
-:   fValid(false),
-    fLineMod(nil)
+:   fValid(),
+    fLineMod()
 {
     fClassDesc = &gRailCameraDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -1715,7 +1715,7 @@ bool plRailCameraComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrM
         return false;
 
     fValid = false;
-    fLineMod = nil;
+    fLineMod = nullptr;
 
     if( !fCompPB->GetINode(kRailCamObj) )
     {
@@ -2012,7 +2012,7 @@ ParamBlockDesc2 gCameraRegionBlock
 (
     plComponent::kBlkComp, _T("cameraRegion"), 0, &gCameraDetectorDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERARGN, IDS_CAMERARGN, 0, 0, NULL,
+    IDD_COMP_CAMERARGN, IDS_CAMERARGN, 0, 0, nullptr,
 
 
     kCameraTarget, _T("CameraTarget"),  TYPE_INODE,     0, 0,
@@ -2169,7 +2169,7 @@ ParamBlockDesc2 gFollowCameraBk
 (   
     1, _T("camera"), 0, &gFollowCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_OBJECT_FOLLOWCAM, IDS_COMP_OBJECT_FOLLOWCAM,  0, 0, NULL,
+    IDD_COMP_OBJECT_FOLLOWCAM, IDS_COMP_OBJECT_FOLLOWCAM,  0, 0, nullptr,
         
     kFollowCamOffX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
@@ -2374,7 +2374,7 @@ ParamBlockDesc2 gAnimcamCmdBlock
 (
     plComponent::kBlkComp, _T("animCamCmd"), 0, &gAnimcamCmdDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_ANIMCAM_COMMANDS, IDS_COMP_ANIM_CAM_CMD, 0, 0, NULL,
+    IDD_COMP_ANIMCAM_COMMANDS, IDS_COMP_ANIM_CAM_CMD, 0, 0, nullptr,
 
     kAnimateOnPush, _T("animOnPush"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_BEGINONPUSH,
@@ -2411,7 +2411,7 @@ bool plCameraAnimCmdComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 bool plCameraAnimCmdComponent::Convert(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
     plSceneObject* pObj = pNode->GetSceneObject();
-    const plCameraModifier1* pCamMod = nil;
+    const plCameraModifier1* pCamMod = nullptr;
     if (pObj)
     {
         for (size_t i = 0; i < pObj->GetNumModifiers(); i++)

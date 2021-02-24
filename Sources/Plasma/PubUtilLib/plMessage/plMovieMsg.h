@@ -93,7 +93,7 @@ protected:
 
 public:
     plMovieMsg(const ST::string& name, uint16_t cmd)
-        : plMessage(nil, nil, nil) 
+        : plMessage(nullptr, nullptr, nullptr)
     { 
         fFileName = name;
         SetCmd(cmd).MakeDefault();

@@ -190,7 +190,7 @@ class plDrawableSpans : public plDrawable
 
         // The following two functions return true if they create a new span, false if it's just an instance
         bool    IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, plVertexSpan *span, int lod, plVertexSpan *instancedParent );
-        bool    IConvertGeoSpanToIcicle( plGeometrySpan *geoSpan, plIcicle *icicle, int lod, plIcicle *instancedParent = nil );
+        bool    IConvertGeoSpanToIcicle(plGeometrySpan *geoSpan, plIcicle *icicle, int lod, plIcicle *instancedParent = nullptr);
 
         void    IUpdateIcicleFromGeoSpan( plGeometrySpan *geoSpan, plIcicle *icicle );
         void    IUpdateVertexSpanFromGeoSpan( plGeometrySpan *geoSpan, plVertexSpan *span );
@@ -313,7 +313,7 @@ class plDrawableSpans : public plDrawable
         void SetSceneNode(plKey newNode) override;
 
         // Lookup a material in the material array
-        hsGMaterial     *GetMaterial( uint32_t index ) const { return ( ( index == (uint32_t)-1 ) ? nil : fMaterials[ index ] ); }
+        hsGMaterial     *GetMaterial(uint32_t index) const { return ((index == (uint32_t)-1) ? nullptr : fMaterials[index]); }
         uint32_t          GetNumMaterials() const { return fMaterials.GetCount(); }
 
         // Convert intermediate data into export/run-time-ready data

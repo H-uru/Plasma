@@ -147,7 +147,7 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
-    wchar_t* tempstr = nil;
+    wchar_t* tempstr = nullptr;
 
     IReadValue(&scoreId, &buffer, &bufsz);
     IReadValue(&ownerId, &buffer, &bufsz);
@@ -202,7 +202,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     uint8_t * buffer = const_cast<uint8_t *>(inbuffer);
     uint8_t * start = buffer;
 
-    wchar_t* tempstr = nil;
+    wchar_t* tempstr = nullptr;
 
     IReadValue(&rank, &buffer, &bufsz);
     IReadValue(&score, &buffer, &bufsz);

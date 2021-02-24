@@ -89,18 +89,18 @@ public:
 
 int32_t                 plDispatch::fNumBufferReq = 0;
 bool                    plDispatch::fMsgActive = false;
-plMsgWrap*              plDispatch::fMsgCurrent = nil;
-plMsgWrap*              plDispatch::fMsgHead = nil;
-plMsgWrap*              plDispatch::fMsgTail = nil;
+plMsgWrap*              plDispatch::fMsgCurrent = nullptr;
+plMsgWrap*              plDispatch::fMsgHead = nullptr;
+plMsgWrap*              plDispatch::fMsgTail = nullptr;
 std::vector<plMessage*> plDispatch::fMsgWatch;
-MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nil;
+MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nullptr;
 
 std::mutex              plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
 std::mutex              plDispatch::fMsgDispatchLock; // mutex for IMsgDispatch
 
 
 plDispatch::plDispatch()
-: fOwner(nil), fFutureMsgQueue(nil), fQueuedMsgOn(true)
+: fOwner(), fFutureMsgQueue(), fQueuedMsgOn(true)
 {
 }
 
@@ -143,7 +143,7 @@ void plDispatch::ITrashUndelivered()
         }
 
         // reset static members which we just deleted - MOOSE
-        fMsgCurrent=fMsgHead=fMsgTail=nil;
+        fMsgCurrent = fMsgHead = fMsgTail = nullptr;
 
         fMsgActive = false;
     }
@@ -202,7 +202,7 @@ void plDispatch::ICheckDeferred(double secs)
 {
     while( fFutureMsgQueue && (fFutureMsgQueue->fMsg->fTimeStamp < secs) )
     {
-        plMsgWrap* send = IDequeue(&fFutureMsgQueue, nil);
+        plMsgWrap* send = IDequeue(&fFutureMsgQueue, nullptr);
         MsgSend(send->fMsg);
         delete send;
     }
@@ -315,7 +315,7 @@ void plDispatch::IMsgDispatch()
         for (size_t i = 0; fMsgCurrent && i < fMsgCurrent->GetNumReceivers(); i++)
         {
             const plKey& rcvKey = fMsgCurrent->GetReceiver(i);
-            plReceiver* rcv = rcvKey ? plReceiver::ConvertNoRef(rcvKey->ObjectIsLoaded()) : nil;
+            plReceiver* rcv = rcvKey ? plReceiver::ConvertNoRef(rcvKey->ObjectIsLoaded()) : nullptr;
             if( rcv )
             {
                 if (nonLocalMsg)
@@ -382,7 +382,7 @@ void plDispatch::IMsgDispatch()
 
                 numReceivers++;
 
-                if (fMsgRecieveCallback != nil)
+                if (fMsgRecieveCallback != nullptr)
                     fMsgRecieveCallback();
             }
         }
@@ -419,7 +419,7 @@ bool plDispatch::IMsgNetPropagate(plMessage* msg)
         hsLockGuard(fMsgCurrentMutex);
 
         // Make sure cascaded messages all have the same net flags
-        plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nil, msg, false);
+        plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nullptr, msg, false);
     }
 
     // Decide if msg should go out over the network.
@@ -482,7 +482,7 @@ bool plDispatch::MsgSend(plMessage* msg, bool async)
                 if( msg->HasBCastFlag(plMessage::kClearAfterBCast) )
                 {
                     delete filt;
-                    fRegisteredExactTypes[idx] = nil;
+                    fRegisteredExactTypes[idx] = nullptr;
                 }
             }
         }
@@ -591,7 +591,7 @@ bool plDispatch::IUnRegisterForExactType(uint16_t idx, const plKey& receiver)
             else
             {
                 delete filt;
-                fRegisteredExactTypes[idx] = nil;
+                fRegisteredExactTypes[idx] = nullptr;
             }
 
             break;
@@ -619,7 +619,7 @@ void plDispatch::UnRegisterAll(const plKey& receiver)
                 else
                 {
                     delete filt;
-                    fRegisteredExactTypes[i] = nil;
+                    fRegisteredExactTypes[i] = nullptr;
                 }
             }
         }

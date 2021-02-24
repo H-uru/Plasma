@@ -114,7 +114,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg* pErrMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    void AddReceiverKey(plKey key, plMaxNode* node=nil) override;
+    void AddReceiverKey(plKey key, plMaxNode* node=nullptr) override;
     plKey GetLogicKey(plMaxNode* node) override;
     const LogicKeys& GetLogicKeys();
 

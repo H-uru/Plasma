@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyGrassShader::pyGrassShader()
 {
-    fShaderKey = nil;
 }
 
 pyGrassShader::pyGrassShader(plKey key)

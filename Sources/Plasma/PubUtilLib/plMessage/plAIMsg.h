@@ -83,7 +83,7 @@ class plAIBrainCreatedMsg : public plAIMsg
 {
 public:
     plAIBrainCreatedMsg(): plAIMsg() {SetBCastFlag(plMessage::kBCastByExactType);}
-    plAIBrainCreatedMsg(const plKey& sender): plAIMsg(sender, nil) {SetBCastFlag(plMessage::kBCastByExactType);}
+    plAIBrainCreatedMsg(const plKey& sender): plAIMsg(sender, nullptr) { SetBCastFlag(plMessage::kBCastByExactType); }
 
     CLASSNAME_REGISTER(plAIBrainCreatedMsg);
     GETINTERFACE_ANY(plAIBrainCreatedMsg, plAIMsg);

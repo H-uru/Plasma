@@ -70,9 +70,9 @@ protected:
 
     pyImage() // for python glue only, do NOT call
     {
-        fMipMapKey = nil;
+        fMipMapKey = nullptr;
 #ifndef BUILDING_PYPLASMA
-        fMipmap = nil;
+        fMipmap = nullptr;
 #endif
     } 
 
@@ -81,7 +81,7 @@ protected:
     {
         fMipMapKey = mipmapKey;
 #ifndef BUILDING_PYPLASMA
-        fMipmap = nil;
+        fMipmap = nullptr;
 #endif
     }
 

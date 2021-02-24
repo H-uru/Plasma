@@ -53,7 +53,7 @@ public:
     static plAutoProfile* Instance();
 
     // If ageName is nil, do all ages
-    virtual void StartProfile(const char* ageName = nil)=0;
+    virtual void StartProfile(const char* ageName = nullptr) = 0;
 
     // For when we just want to link to each age, for other reasons (profiling load times)
     virtual void LinkToAllAges()=0;

@@ -143,9 +143,9 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
             //  - create instance of class
             PyObject* getID = PythonInterface::GetModuleItem("glue_getBlockID",fModule);
             bool foundID = false;
-            if ( getID!=nil && PyCallable_Check(getID) )
+            if (getID != nullptr && PyCallable_Check(getID))
             {
-                PyObject* id = PyObject_CallFunction(getID,nil);
+                PyObject* id = PyObject_CallFunction(getID, nullptr);
                 if ( id && PyLong_Check(id) )
                     foundID = true;
             }

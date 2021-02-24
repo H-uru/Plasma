@@ -103,8 +103,8 @@ struct Operation {
     LINK(Operation) link;
 
     Operation()
-        : opType((EOpType)0), asyncId(nil), notify(false), pending(0),
-          signalComplete(nil)
+        : opType(), asyncId(), notify(), pending(),
+          signalComplete()
     {
         memset(&overlapped, 0, sizeof(overlapped));
     }
@@ -128,9 +128,9 @@ struct NtObject {
     bool                        closed;
 
     NtObject()
-        : ioType((EIoType)0), handle(nil), userState(nil),
-          nextCompleteSequence(0), nextStartSequence(0),
-          ioCount(0), closed(false) { }
+        : ioType(), handle(), userState(),
+          nextCompleteSequence(), nextStartSequence(),
+          ioCount(), closed() { }
 };
 
 

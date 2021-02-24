@@ -49,7 +49,7 @@ using namespace plPassBaseParamIDs;
 
 static ParamBlockDesc2 gBumpAnimPB
 (
-    plBumpMtl::kBlkAnim, _T("anim"), IDS_PASS_ANIM, GetBumpMtlDesc(),//NULL,
+    plBumpMtl::kBlkAnim, _T("anim"), IDS_PASS_ANIM, GetBumpMtlDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI + P_CALLSETS_ON_LOAD, plBumpMtl::kRefAnim,
 
     // UI

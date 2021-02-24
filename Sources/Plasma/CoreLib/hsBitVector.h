@@ -60,10 +60,10 @@ protected:
     friend      class hsBitIterator;
 public:
     hsBitVector(const hsBitVector& other);
-    hsBitVector() : fBitVectors(nil), fNumBitVectors(0) {}
+    hsBitVector() : fBitVectors(), fNumBitVectors() { }
     virtual ~hsBitVector() { Reset(); }
 
-    hsBitVector& Reset() { delete [] fBitVectors; fBitVectors = nil; fNumBitVectors = 0; return *this; }
+    hsBitVector& Reset() { delete [] fBitVectors; fBitVectors = nullptr; fNumBitVectors = 0; return *this; }
     hsBitVector& Clear(); // everyone clear, but no dealloc
     hsBitVector& Set(int upToBit=-1); // WARNING - see comments at function
 

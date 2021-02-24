@@ -259,14 +259,14 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
 #endif
 
     // get sender object
-    plSynchedObject* synchedObj = msg->GetSender() ? plSynchedObject::ConvertNoRef(msg->GetSender()->ObjectIsLoaded()) : nil;
+    plSynchedObject* synchedObj = msg->GetSender() ? plSynchedObject::ConvertNoRef(msg->GetSender()->ObjectIsLoaded()) : nullptr;
 
     // if sender is flagged as localOnly, he shouldn't talk to the network
     if (synchedObj && !synchedObj->IsNetSynched() )
         return hsOK;
 
     // choose appropriate type of net game msg wrapper
-    plNetMsgGameMessage* netMsgWrap=nil;
+    plNetMsgGameMessage* netMsgWrap = nullptr;
     plLoadCloneMsg* loadClone = plLoadCloneMsg::ConvertNoRef(msg);
     if (loadClone)
     {
@@ -388,7 +388,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     netMsgWrap->SetNetProtocol(kNetProtocolCli2Game);
     int ret = SendMsg(netMsgWrap);
 
-    if (plNetObjectDebugger::GetInstance()->IsDebugObject(msg->GetSender() ? msg->GetSender()->ObjectIsLoaded() : nil))
+    if (plNetObjectDebugger::GetInstance()->IsDebugObject(msg->GetSender() ? msg->GetSender()->ObjectIsLoaded() : nullptr))
     {
     #if 0
         hsLogEntry(plNetObjectDebugger::GetInstance()->LogMsg(

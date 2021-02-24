@@ -51,21 +51,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plLODMipmap::plLODMipmap() 
-:   fBase(nil), 
-    fLOD(0)
+:   fBase(),
+    fLOD()
 {
     int i;
     for( i = 0; i < kNumLODs; i++ )
-        fDeviceRefs[i] = nil;
+        fDeviceRefs[i] = nullptr;
 }
 
 plLODMipmap::plLODMipmap(plMipmap* mip)
-:   fBase(nil),
-    fLOD(0)
+:   fBase(),
+    fLOD()
 {
     int i;
     for( i = 0; i < kNumLODs; i++ )
-        fDeviceRefs[i] = nil;
+        fDeviceRefs[i] = nullptr;
 
     hsgResMgr::ResMgr()->NewKey(mip->GetKey()->GetName(), this, mip->GetKey()->GetUoid().GetLocation());
 
@@ -82,13 +82,13 @@ plLODMipmap::plLODMipmap(plMipmap* mip)
 plLODMipmap::~plLODMipmap()
 {
     // And matching unreffing of the mipmap here.
-    fImage = nil;
+    fImage = nullptr;
 
     int i;
     for( i = 0; i < kNumLODs; i++ )
     {
         hsRefCnt_SafeUnRef(fDeviceRefs[i]);
-        fDeviceRefs[i] = nil;
+        fDeviceRefs[i] = nullptr;
     }
 }
 
@@ -180,7 +180,7 @@ void plLODMipmap::ISetupCurrLevel()
 
 void plLODMipmap::INilify()
 {
-    fBase = nil;
+    fBase = nullptr;
 
     fPixelSize = 0;
     fSpace = kNoSpace;
@@ -190,7 +190,7 @@ void plLODMipmap::INilify()
     fUncompressedInfo.fType = UncompressedInfo::kRGB8888;
 
     // plMipmap
-    fImage = nil;
+    fImage = nullptr;
     fWidth = 0;
     fHeight = 0;
 
@@ -199,20 +199,20 @@ void plLODMipmap::INilify()
     fNumLevels = 0;
     fTotalSize = 0;
 
-    fCurrLevelPtr = nil;
+    fCurrLevelPtr = nullptr;
     fCurrLevel = 0;
     fCurrLevelWidth = 0;
     fCurrLevelHeight = 0;
     fCurrLevelRowBytes = 0;
 
     delete [] fLevelSizes;
-    fLevelSizes = nil;
+    fLevelSizes = nullptr;
 
     int i;
     for( i = 0; i < kNumLODs; i++ )
     {
         hsRefCnt_SafeUnRef(fDeviceRefs[i]);
-        fDeviceRefs[i] = nil;
+        fDeviceRefs[i] = nullptr;
     }
 }
 

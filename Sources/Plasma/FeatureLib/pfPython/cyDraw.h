@@ -60,14 +60,14 @@ protected:
     std::vector<plKey> fRecvr;
     bool            fNetForce;
 
-    cyDraw(plKey sender=nil,const plKey recvr=nil);
+    cyDraw(plKey sender = {}, plKey recvr = {});
 
 public:
     virtual ~cyDraw() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDraw);
-    static PyObject *New(PyObject *sender = NULL, PyObject* recvr = NULL);
+    static PyObject *New(PyObject *sender = nullptr, PyObject* recvr = nullptr);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyDraw object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyDraw); // converts a PyObject to a cyDraw (throws error if not correct type)
 

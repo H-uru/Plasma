@@ -98,16 +98,16 @@ public:
     CLASSNAME_REGISTER( plController );
     GETINTERFACE_ANY( plController, plCreatable );
 
-    virtual void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const {}
-    virtual void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const {}
+    virtual void Interp(float time, float* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nullptr) const {}
+    virtual void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nullptr) const {}
 
-    virtual plControllerCacheInfo* CreateCache() const { return nil; } // Caller must handle deleting the pointer.
+    virtual plControllerCacheInfo* CreateCache() const { return nullptr; } // Caller must handle deleting the pointer.
     virtual float GetLength() const = 0;
     virtual void GetKeyTimes(hsTArray<float> &keyTimes) const = 0;
     virtual bool AllKeysMatch() const = 0;
@@ -132,19 +132,19 @@ protected:
     mutable uint32_t fLastKeyIdx;
 
 public:
-    plLeafController() : fType(hsKeyFrame::kUnknownKeyFrame), fKeys(nil), fNumKeys(0), fLastKeyIdx(0) {}
+    plLeafController() : fType(hsKeyFrame::kUnknownKeyFrame), fKeys(), fNumKeys(), fLastKeyIdx() { }
     virtual ~plLeafController();
 
     CLASSNAME_REGISTER( plLeafController );
     GETINTERFACE_ANY( plLeafController, plController );
 
-    void Interp(float time, float* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, float* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsScaleValue* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsMatrix33* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsMatrix44* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nullptr) const override;
 
     plControllerCacheInfo* CreateCache() const override;
     float GetLength() const override;
@@ -196,10 +196,10 @@ public:
     CLASSNAME_REGISTER( plCompoundController );
     GETINTERFACE_ANY( plCompoundController, plController );
 
-    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nil) const override;
-    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nil) const override;
+    void Interp(float time, hsQuat* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsScalarTriple* result, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsAffineParts* parts, plControllerCacheInfo *cache = nullptr) const override;
+    void Interp(float time, hsColorRGBA* result, plControllerCacheInfo *cache = nullptr) const override;
 
     plControllerCacheInfo* CreateCache() const override;
     plController *GetXController() const { return fXController; }

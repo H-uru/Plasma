@@ -261,11 +261,11 @@ void VaultCreateNode (          // non-blocking
     void *                      state,
     void *                      param
 );
-hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nil --> failure
+hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nullptr --> failure
     plVault::NodeTypes          nodeType,
     ENetError *                 result
 );
-hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nil --> failure
+hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nullptr --> failure
     hsWeakRef<NetVaultNode>     templateNode,
     ENetError *                 result
 );

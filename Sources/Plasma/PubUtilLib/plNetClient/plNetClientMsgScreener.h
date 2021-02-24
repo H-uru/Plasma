@@ -55,7 +55,7 @@ protected:
     ST::string IGetAgeName() const override;
     bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const override;
     bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const override;
-    bool IIsSenderCCR(const plNetGameMember* gm=nil) const override;
+    bool IIsSenderCCR(const plNetGameMember* gm=nullptr) const override;
     bool IAmClient() const override { return true; }
     bool IScreenIncoming(const plMessage* msg) const;
 public:

@@ -61,7 +61,7 @@ void plClothingMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
 
     stream->WriteLE32(fCommands);
-    stream->WriteBool(fItemKey != nil);
+    stream->WriteBool(fItemKey != nullptr);
     if (fItemKey)
         mgr->WriteKey(stream, fItemKey);
     fColor.Write(stream);
@@ -108,7 +108,7 @@ void plClothingMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     // kClothingCommands
     s->WriteLE32(fCommands);
     // kClothingItemKey
-    s->WriteBool(fItemKey != nil);
+    s->WriteBool(fItemKey != nullptr);
     if (fItemKey)
         mgr->WriteKey(s, fItemKey);
     // kClothingColor

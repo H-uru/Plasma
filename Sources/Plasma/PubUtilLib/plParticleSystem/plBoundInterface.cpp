@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsResMgr.h"
 
-plBoundInterface::plBoundInterface() : fBounds(nil)
+plBoundInterface::plBoundInterface() : fBounds()
 {
 }
 
@@ -58,7 +58,7 @@ plBoundInterface::~plBoundInterface()
 void plBoundInterface::ReleaseData()
 {
     delete fBounds;
-    fBounds = nil;
+    fBounds = nullptr;
 }
 
 void plBoundInterface::Init(plConvexVolume *bounds)
@@ -73,7 +73,7 @@ void plBoundInterface::Init(plConvexVolume *bounds)
 // matrix, but not send an update to fBounds.
 void plBoundInterface::SetTransform(const hsMatrix44 &l2w, const hsMatrix44&w2l)
 {
-    if (fBounds != nil)
+    if (fBounds != nullptr)
         fBounds->Update(l2w);
 }
 

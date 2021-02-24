@@ -81,7 +81,7 @@ public:
     virtual bool WriteLines(const std::vector<std::string> & lines);
     virtual void Close();
 
-    virtual bool IsOpen() { return (fStream != nil); }
+    virtual bool IsOpen() { return (fStream != nullptr); }
 };
 
 

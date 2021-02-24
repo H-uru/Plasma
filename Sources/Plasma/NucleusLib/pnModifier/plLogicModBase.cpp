@@ -77,11 +77,11 @@ void plLogicModBase::ConsoleRequestTrigger()
 }
 
 plLogicModBase::plLogicModBase() :
-fCounter(0),
-fCounterLimit(0),
-fTimer(0.0f),
-fNotify(nil),
-fDisabled(false)
+fCounter(),
+fCounterLimit(),
+fTimer(),
+fNotify(),
+fDisabled()
 {
     fNotify = new plNotifyMsg;
 }

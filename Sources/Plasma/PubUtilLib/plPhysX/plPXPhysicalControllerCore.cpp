@@ -406,7 +406,7 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::
     float radius = fRadius;
     myDraw = plDrawableGenerator::GenerateSphericalDrawable(fLocalPosition, radius,
         mat, fLastGlobalLoc, blended,
-        nil, &idx, myDraw);
+        nullptr, &idx, myDraw);
 
 /*
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
@@ -416,7 +416,7 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::
 
         myDraw = plDrawableGenerator::GenerateConicalDrawable(fRadius*10, fHeight*10,
             mat, so->GetLocalToWorld(), blended,
-            nil, &idx, myDraw);
+            nullptr, &idx, myDraw);
     }
 */
     return myDraw;

@@ -68,15 +68,15 @@ protected:
     };
     virtual const char* IGetSenderName(const plNetGameMember* gm) const = 0;
     virtual ST::string IGetAgeName() const = 0;
-    virtual bool IIsSenderCCR(const plNetGameMember* gm=nil) const = 0;
+    virtual bool IIsSenderCCR(const plNetGameMember* gm=nullptr) const = 0;
     virtual bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const = 0;
     virtual bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const { return true; }
 
     virtual void ILogChatMessage(const plMessage* msg_, const plNetGameMember* gm) const {}
     virtual void ILogCCRMessage(int16_t classIndex, const plNetGameMember* gm) const {}
     
-    Answer IAllowMessageType(int16_t classIndex, const plNetGameMember* gm=nil) const;
-    bool IValidateMessage(const plMessage* msg, const plNetGameMember* gm=nil) const;
+    Answer IAllowMessageType(int16_t classIndex, const plNetGameMember* gm=nullptr) const;
+    bool IValidateMessage(const plMessage* msg, const plNetGameMember* gm=nullptr) const;
     void IRejectLogMsg(int16_t classIndex, const char* desc, const plNetGameMember* gm) const;
     void IRejectLogMsg(const plMessage* msg, const char* desc, const plNetGameMember* gm) const;
     virtual bool IAmClient() const = 0;

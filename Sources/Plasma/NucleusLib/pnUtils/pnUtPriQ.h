@@ -166,7 +166,7 @@ C * TPriorityQueue<C,P>::Delete (C * object) {
     if (queue && (index < queue->Count()))
         return (*queue)[index];
     else
-        return nil;
+        return nullptr;
 
 }
 
@@ -325,7 +325,7 @@ inline C * const * TPriorityQueue<C,P>::Term () const {
 //===========================================================================
 template<class C, class P>
 inline void TPriorityQueue<C,P>::Unlink (unsigned index) {
-    Priority(m_array[index])->Link(nil, 0);
+    Priority(m_array[index])->Link(nullptr, 0);
 }
 
 //===========================================================================
@@ -360,11 +360,11 @@ template<class C, class P>
 class TBasePriority {
 
 public:
-    TBasePriority () : m_queue(nil), m_index(0) { }
+    TBasePriority () : m_queue(), m_index() { }
     virtual ~TBasePriority () { Unlink(); }
 
     void Unlink   ()       { if (m_queue) m_queue->Remove(m_index); }
-    bool IsLinked () const { return m_queue != nil; }
+    bool IsLinked () const { return m_queue != nullptr; }
 
 public:
     TBasePriority (const TBasePriority &);
@@ -396,7 +396,7 @@ inline void TBasePriority<C,P>::Link (TPriorityQueue<C,P> * queue, unsigned inde
 template<class C, class P>
 void TBasePriority<C,P>::Relink () {
 
-    // cache m_queue, since m_queue->Remove() will set it to nil
+    // cache m_queue, since m_queue->Remove() will set it to nullptr
     TPriorityQueue<C,P> * queue = m_queue;
     if (!queue)
         return;

@@ -136,7 +136,7 @@ public:
     void DeleteThis() override { delete this; }
 
 
-    BOOL            Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nil);
+    BOOL            Distribute(plDistribInstTab& reps, plExportProgressBar& bar, plDistTree* dt=nullptr);
     void            Done();
 
     void            Clear();

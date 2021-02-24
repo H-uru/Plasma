@@ -55,7 +55,7 @@ class plUoid;
 class hsKeyedObject : public plReceiver
 {
 public:
-    hsKeyedObject() : fpKey(nil) {}
+    hsKeyedObject() = default;
     virtual ~hsKeyedObject();
 
     CLASSNAME_REGISTER(hsKeyedObject);

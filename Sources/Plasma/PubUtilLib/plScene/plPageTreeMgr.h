@@ -68,7 +68,7 @@ public:
 class plDrawVisList
 {
 public:
-    plDrawVisList() : fDrawable(nil) {}
+    plDrawVisList() : fDrawable() { }
     virtual ~plDrawVisList() {}
 
     plDrawable*         fDrawable;

@@ -211,7 +211,7 @@ ParamBlockDesc2 gObjectFlockerBk
 
 plObjectFlockerComponent::plObjectFlockerComponent()
 {
-    fFlocker = nil;
+    fFlocker = nullptr;
     fClassDesc = &gObjectFlockerDesc;
     fClassDesc->MakeAutoParamBlocks(this);
 }
@@ -254,7 +254,7 @@ bool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     fFlocker->SetNumBoids(fCompPB->GetInt(ParamID(kNumBoids)));
 
-    plKey boidKey = nil;
+    plKey boidKey;
     plMaxNode* targNode = (plMaxNode*)fCompPB->GetINode(kBoidObject);
 
     if( targNode->CanConvert() )
@@ -284,7 +284,7 @@ bool plObjectFlockerComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( fFlocker )
         fFlocker->GetKey()->UnRefObject();
-    fFlocker = nil;
+    fFlocker = nullptr;
 
     return true;
 }

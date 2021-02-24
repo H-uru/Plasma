@@ -63,14 +63,14 @@ protected:
     std::vector<plKey> fRecvr;
     bool            fNetForce;
 
-    cyPhysics(plKey sender=nil,plKey recvr=nil);
+    cyPhysics(plKey sender = {}, plKey recvr = {});
 
 public:
     virtual ~cyPhysics() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptPhysics);
-    static PyObject *New(PyObject *sender = nil, PyObject *recvr = nil);
+    static PyObject *New(PyObject *sender = nullptr, PyObject *recvr = nullptr);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyPhysics object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyPhysics); // converts a PyObject to a cyPhysics (throws error if not correct type)
 

@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plDXPixelShader::plDXPixelShader(plShader* owner)
-:   plDXShader(owner), fHandle(nil)
+:   plDXShader(owner), fHandle()
 {
 }
 
@@ -64,10 +64,10 @@ plDXPixelShader::~plDXPixelShader()
 void plDXPixelShader::Release()
 {
     ReleaseObject(fHandle);
-    fHandle = nil;
-    fPipe = nil;
+    fHandle = nullptr;
+    fPipe = nullptr;
 
-    ISetError(nil);
+    ISetError(nullptr);
 }
 
 bool plDXPixelShader::VerifyFormat(uint8_t format) const
@@ -81,20 +81,20 @@ IDirect3DPixelShader9 *plDXPixelShader::GetShader(plDXPipeline* pipe)
     if ( !fHandle )
     {
         if( FAILED(hr = ICreate(pipe)) )
-            return nil;
+            return nullptr;
     }
 
     if( FAILED(hr = ISetConstants(pipe)) )
-        return nil;
+        return nullptr;
 
     return fHandle;
 }
 
 HRESULT plDXPixelShader::ICreate(plDXPipeline* pipe)
 {
-    fHandle = nil; // in case something goes wrong.
-    fPipe = nil;
-    ISetError(nil);
+    fHandle = nullptr; // in case something goes wrong.
+    fPipe = nullptr;
+    ISetError(nullptr);
 
     DWORD* shaderCodes = (DWORD*)(fOwner->GetDecl()->GetCodes());
 

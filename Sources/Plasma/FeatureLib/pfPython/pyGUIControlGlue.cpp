@@ -54,7 +54,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControl)
 
 PYTHON_INIT_DEFINITION(ptGUIControl, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -194,7 +194,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptGUIControl, refresh, Refresh)
 
 PYTHON_METHOD_DEFINITION(ptGUIControl, setObjectCenter, args)
 {
-    PyObject* pointObj = NULL;
+    PyObject* pointObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &pointObj))
     {
         PyErr_SetString(PyExc_TypeError, "setObjectCenter expects a ptPoint3");
@@ -372,21 +372,21 @@ PYTHON_EXPOSE_TYPE_DEFINITION(ptGUIControl, pyGUIControl);
 // required functions for PyObject interoperability
 PyObject *pyGUIControl::New(pyKey& gckey)
 {
-    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, NULL, NULL);
+    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControl::New(plKey objkey)
 {
-    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, NULL, NULL);
+    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControl::New(const pyGUIControl& other)
 {
-    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, NULL, NULL);
+    ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
     newObj->fThis->fGCkey = other.fGCkey;
     return (PyObject*)newObj;
 }

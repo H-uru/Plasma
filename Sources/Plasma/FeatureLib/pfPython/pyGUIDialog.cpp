@@ -82,7 +82,6 @@ pyGUIDialog::pyGUIDialog(plKey objkey)
 
 pyGUIDialog::pyGUIDialog()
 {
-    fGCkey = nil;
 }
 
 bool pyGUIDialog::IsGUIDialog(pyKey& gckey)
@@ -137,9 +136,9 @@ uint32_t pyGUIDialog::WhatControlType(pyKey& gckey)
 bool pyGUIDialog::operator==(const pyGUIDialog &gcobj) const
 {
     plKey theirs = ((pyGUIDialog&)gcobj).getObjKey();
-    if ( fGCkey == nil && theirs == nil )
+    if (fGCkey == nullptr && theirs == nullptr)
         return true;
-    else if ( fGCkey != nil && theirs != nil )
+    else if (fGCkey != nullptr && theirs != nullptr)
         return (fGCkey->GetUoid()==theirs->GetUoid());
     else
         return false;
@@ -511,7 +510,7 @@ void pyGUIDialog::NoFocus( )
         pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pdmod )
         {
-            pdmod->SetFocus(nil);
+            pdmod->SetFocus(nullptr);
         }
     }
 }

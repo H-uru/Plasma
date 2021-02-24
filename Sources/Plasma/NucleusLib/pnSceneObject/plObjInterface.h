@@ -79,10 +79,10 @@ protected:
     virtual void    ISetOwner(plSceneObject* owner);
     void            ISetAllProperties(const hsBitVector& b);    
 
-    plDrawInterface* IGetOwnerDrawInterface() { return fOwner ? fOwner->GetVolatileDrawInterface() : nil; }
-    plSimulationInterface* IGetOwnerSimulationInterface() { return fOwner ? fOwner->GetVolatileSimulationInterface() : nil; }
-    plCoordinateInterface* IGetOwnerCoordinateInterface() { return fOwner ? fOwner->GetVolatileCoordinateInterface() : nil; }
-    plAudioInterface* IGetOwnerAudioInterface() { return fOwner ? fOwner->GetVolatileAudioInterface() : nil; }
+    plDrawInterface* IGetOwnerDrawInterface() { return fOwner ? fOwner->GetVolatileDrawInterface() : nullptr; }
+    plSimulationInterface* IGetOwnerSimulationInterface() { return fOwner ? fOwner->GetVolatileSimulationInterface() : nullptr; }
+    plCoordinateInterface* IGetOwnerCoordinateInterface() { return fOwner ? fOwner->GetVolatileCoordinateInterface() : nullptr; }
+    plAudioInterface* IGetOwnerAudioInterface() { return fOwner ? fOwner->GetVolatileAudioInterface() : nullptr; }
 public:
 
     plObjInterface();
@@ -94,9 +94,9 @@ public:
     bool MsgReceive(plMessage* msg) override;
 
     const plSceneObject* GetOwner() const { return IGetOwner(); }
-    plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nil; }
+    plKey GetOwnerKey() const { return IGetOwner() ? IGetOwner()->GetKey() : nullptr; }
     
-    virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nil; } 
+    virtual plKey GetSceneNode() const { return IGetOwner() ? IGetOwner()->GetSceneNode() : nullptr; }
 
     // override SetProperty to pass the prop down to the pool objects 
     virtual void    SetProperty(int prop, bool on) { fProps.SetBit(prop, on); }

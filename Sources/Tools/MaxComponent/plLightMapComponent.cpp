@@ -84,7 +84,7 @@ ParamBlockDesc2 gLightMapBk
 (
     plComponent::kBlkComp, _T("lightMap"), 0, &gLightMapDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_LIGHTMAP, IDS_COMP_LIGHTMAPS, 0, 0, NULL,
+    IDD_COMP_LIGHTMAP, IDS_COMP_LIGHTMAPS, 0, 0, nullptr,
 
         kMapChannel, _T("UVW Channel Light Map"), TYPE_INT, 0, 0,
         p_ui,   TYPE_SPINNER, EDITTYPE_INT, IDC_COMP_LIGHTMAP_EDIT1, IDC_COMP_LIGHTMAP_SPIN1,   0.4,
@@ -126,7 +126,6 @@ ParamBlockDesc2 gLightMapBk
 
 
 plLightMapComponent::plLightMapComponent()
-:   fLightMapKey(nil)
 {
     fClassDesc = &gLightMapDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -142,7 +141,7 @@ bool plLightMapComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plLightMapComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fLightMapKey = nil;
+    fLightMapKey = nullptr;
     return true;
 }
 

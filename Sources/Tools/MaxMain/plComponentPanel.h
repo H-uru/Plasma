@@ -70,7 +70,7 @@ public:
     static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    bool IsOpen() { return (fhPanel != NULL); }
+    bool IsOpen() { return (fhPanel != nullptr); }
 
 protected:
     void IUpdateRollups();

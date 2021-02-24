@@ -138,7 +138,7 @@ private:
 public:
     BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         switch (msg)
         {
 
@@ -680,7 +680,7 @@ BOOL plDistribComponent_old::IsFlexible() const
 
 void plDistribComponent_old::ISetProbTexmap(plDistributor& distrib)
 {
-    distrib.SetProbabilityBitmapTex(nil);
+    distrib.SetProbabilityBitmapTex(nullptr);
 
     Texmap* tex = fCompPB->GetTexmap(kProbTexmap);
     if( tex )
@@ -751,7 +751,7 @@ void plDistribComponent_old::Preview()
 INode* plDistribComponent_old::IMakeOne(plDistribInstTab& nodes)
 {
     if( !nodes.Count() )
-        return nil;
+        return nullptr;
 
     int iStartNode = 0;
 
@@ -804,7 +804,7 @@ INode* plDistribComponent_old::IMakeOne(plDistribInstTab& nodes)
         fCompPB->Append(kReplicants, 1, &outNode);
     }
 
-    return nil;
+    return nullptr;
 }
 
 Box3 plDistribComponent_old::GetFade()

@@ -93,18 +93,18 @@ static void ILog(uint8_t level, const char* format, _Args&&... args)
 }
 
 plResManager::plResManager():
-    fInited(false),
-    fDispatch(nil),
-    fReadingObject( false ),
-    fCurCloneID(0),
-    fCurClonePlayerID(0),
-    fCloningCounter(0),
-    fProgressProc(nil),
-    fMyHelper(nil),
-    fLogReadTimes(false),
-    fPageListLock(0),
-    fPagesNeedCleanup(false),
-    fLastFoundPage(nil)
+    fInited(),
+    fDispatch(),
+    fReadingObject(),
+    fCurCloneID(),
+    fCurClonePlayerID(),
+    fCloningCounter(),
+    fProgressProc(),
+    fMyHelper(),
+    fLogReadTimes(),
+    fPageListLock(),
+    fPagesNeedCleanup(),
+    fLastFoundPage()
 {
 #ifdef HS_DEBUGGING
     plFactory::Validate(hsKeyedObject::Index());
@@ -154,7 +154,7 @@ bool plResManager::IInit()
     // Init our helper
     fMyHelper = new plResManagerHelper(this);
     fMyHelper->Init();
-    hsAssert(fMyHelper->GetKey() != nil, "ResManager helper didn't init properly!" );
+    hsAssert(fMyHelper->GetKey() != nullptr, "ResManager helper didn't init properly!");
 
     kResMgrLog(1, ILog(1, "   ...Init was successful!"));
 
@@ -199,7 +199,7 @@ void plResManager::IShutdown()
 
     // Shut down our helper
     fMyHelper->Shutdown();  // This will call UnregisterAs(), which will delete itself
-    fMyHelper = nil;
+    fMyHelper = nullptr;
 
     // TimerCallbackMgr is a fixed-keyed object, so needs to shut down before the registry
     plgTimerCallbackMgr::Shutdown(); 
@@ -224,7 +224,7 @@ void plResManager::IShutdown()
     fLoadedPages.clear();
 
     IUnlockPages();
-    fLastFoundPage = nil;
+    fLastFoundPage = nullptr;
 
     // Now, kill off the Dispatcher
     hsRefCnt_SafeUnRef(fDispatch);
@@ -250,7 +250,7 @@ plRegistryPageNode* plResManager::FindSinglePage(const plFileName& path) const
             return it->second;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plResManager::RemoveSinglePage(const plFileName& path)
@@ -300,7 +300,7 @@ hsKeyedObject* plResManager::IGetSharedObject(plKeyImp* pKey)
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// ReadObject /////////////////////////////////////////////////////////////
@@ -362,7 +362,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     if (fLogReadTimes)
         startTime = hsTimer::GetTicks();
 
-    hsKeyedObject* ko = nil;
+    hsKeyedObject* ko = nullptr;
 
     hsAssert(pKey, "Null Key");
     if (pKey->GetUoid().GetLoadMask().DontLoad())
@@ -409,7 +409,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     {
         kResMgrLog(4, ILog(4, "   ...Trying to get shared object..."));
         ko = IGetSharedObject(pKey);
-        kResMgrLog(4, ILog(4, "   ...IGetSharedObject() {}", (ko != nil) ? "succeeded" : "failed"));
+        kResMgrLog(4, ILog(4, "   ...IGetSharedObject() {}", (ko != nullptr) ? "succeeded" : "failed"));
     }
 
     // If we couldn't share the object, read in a fresh copy
@@ -424,7 +424,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         {   
             ko = hsKeyedObject::ConvertNoRef(cre);
 
-            if (ko != nil)
+            if (ko != nullptr)
             {
                 kResMgrLog(4, ILog(4, "   ...Creatable read and valid"));
             }
@@ -433,7 +433,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
                 kResMgrLog(3, ILog(3, "   ...Creatable read from stream not keyed object!"));
             }
 
-            if (fProgressProc != nil)
+            if (fProgressProc != nullptr)
             {
                 fProgressProc(plKey::Make(pKey));
             }
@@ -467,7 +467,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         totalTime += (hsTimer::GetTicks() - startTime) - childTime;
     }
 
-    return (ko != nil);
+    return (ko != nullptr);
 }
 
 //// plPageOutIterator ///////////////////////////////////////////////////////
@@ -521,7 +521,7 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
         if (localName.IsValid())
         {
             plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName.AsString());
-            if (localKey != nil)
+            if (localKey != nullptr)
                 return localKey;
         }
     }
@@ -533,15 +533,15 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
 plKey plResManager::FindOriginalKey(const plUoid& uoid)
 {
     plKey key;
-    plKeyImp* foundKey = nil;
+    plKeyImp* foundKey = nullptr;
 
     plRegistryPageNode* page = FindPage(uoid.GetLocation());
-    if (page == nil)
+    if (page == nullptr)
         return key;
 
     // Try our find first, without loading
     foundKey = IFindKeyLocalized(uoid, page);
-    if (foundKey != nil)
+    if (foundKey != nullptr)
         key = plKey::Make(foundKey);
 
     if (!key && plResMgrSettings::Get().GetPassiveKeyRead())
@@ -568,7 +568,7 @@ plKey plResManager::FindOriginalKey(const plUoid& uoid)
 
         // Try again
         foundKey = IFindKeyLocalized(uoid, page);
-        if (foundKey != nil)
+        if (foundKey != nullptr)
             key = plKey::Make(foundKey);
     }
     return key;
@@ -701,13 +701,13 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
     if (!key)
     {
         hsRefCnt_SafeUnRef(msg);
-        return nil;
+        return nullptr;
     }
     if(key->GetUoid().GetLoadMask().DontLoad())
     {
         hsStatusMessageF("%s being skipped because of load mask", key->GetName().c_str());
         hsRefCnt_SafeUnRef(msg);
-        return nil;
+        return nullptr;
     }
 
     ((plKeyImp*)key)->SetupNotify(msg,flags);
@@ -785,7 +785,7 @@ plKey plResManager::ReRegister(const ST::string& nm, const plUoid& oid)
         // the clone doesn't exist
         else if (oid.IsClone())
         {
-            return nil;
+            return nullptr;
         }
     }
     else    //we are cloning
@@ -811,7 +811,7 @@ plKey plResManager::ReRegister(const ST::string& nm, const plUoid& oid)
         {
             hsAssert(false, "Attempting to add duplicate key");
             delete pKey;
-            return nil;
+            return nullptr;
         }
 
         pKey->SetUoid(oid);         // Tell the Key its ID
@@ -830,7 +830,7 @@ plKey plResManager::ReadKey(hsStream* s)
 {
     bool nonNil = s->ReadBool();
     if (!nonNil)
-        return nil;
+        return nullptr;
 
     plUoid uoid;
     uoid.Read(s);
@@ -846,7 +846,7 @@ plKey plResManager::ReadKey(hsStream* s)
     {
         // We're reading a clone key. first see if we already have that key around....
         key = FindKey(uoid);
-        if (key == nil)
+        if (key == nullptr)
         {
             fCurClonePlayerID = uoid.GetClonePlayerID();
             fCurCloneID = uoid.GetCloneID();
@@ -871,12 +871,12 @@ void plResManager::WriteKey(hsStream* s, hsKeyedObject* obj)
     if (obj)
         WriteKey(s, obj->GetKey());
     else
-        WriteKey(s, plKey(nil));
+        WriteKey(s, {});
 }
 
 void    plResManager::WriteKey(hsStream *s, const plKey &key)
 {
-    s->WriteBool(key != nil);
+    s->WriteBool(key != nullptr);
     if (key)
         key->GetUoid().Write(s);
 }
@@ -889,7 +889,7 @@ plKey plResManager::CloneKey(const plKey& objKey)
     if (!objKey)
     {
         hsStatusMessage("CloneKey: nil key, returning nil");
-        return nil;
+        return nullptr;
     }
 
     fCloningCounter++;
@@ -960,7 +960,7 @@ plCreatable* plResManager::ReadCreatableVersion(hsStream* s)
 inline void IWriteCreatable(hsStream* s, plCreatable* pCre)
 {
     int16_t hClass = pCre ? pCre->ClassIndex() : 0x8000;
-    hsAssert(pCre == nil || plFactory::IsValidClassIndex(hClass), "Invalid class index on write");
+    hsAssert(pCre == nullptr || plFactory::IsValidClassIndex(hClass), "Invalid class index on write");
     s->WriteLE16(hClass);
 }
 
@@ -1144,7 +1144,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
 
     // Step 0: Find the pageNode
     plRegistryPageNode* pageNode = FindPage(page);
-    if (pageNode == nil)
+    if (pageNode == nullptr)
     {
         kResMgrLog(1, ILog(1, "...Page not found!"));
         hsAssert(false, "Invalid location given to PageInRoom()");
@@ -1190,7 +1190,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
     pageNode->IterateKeys(&reffer);
 
     // Step 3: Do our load
-    if (objKey == nil)
+    if (objKey == nullptr)
     {
         kResMgrLog(1, ILog(1, "...SceneNode not found to base page-in op on. Aborting..."));
         // This is coming up a lot lately; too intrusive to be an assert.
@@ -1414,7 +1414,7 @@ bool plResManager::IDeleteBadPages(std::vector<plRegistryPageNode*>& invalidPage
     }
     invalidPages.clear();
 
-    fLastFoundPage = nil;
+    fLastFoundPage = nullptr;
 
     return true;
 }
@@ -1446,7 +1446,7 @@ bool plResManager::IWarnNewerPages(std::vector<plRegistryPageNode*> &newerPages)
         delete page;
     newerPages.clear();
 
-    fLastFoundPage = nil;
+    fLastFoundPage = nullptr;
 
     return true;
 }
@@ -1531,10 +1531,10 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     static bool alreadyDone = false;
     static plRegistryPageNode* lastPage;
 
-    if (page != nil)
+    if (page != nullptr)
         lastPage = page;
 
-    if (key == nil)
+    if (key == nullptr)
     {
         alreadyDone = false;
         return;
@@ -1580,12 +1580,12 @@ void plResManager::UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t clas
     public:
         bool EatKey(const plKey& key) override
         {
-            sIReportLeak((plKeyImp*)key, nil);
+            sIReportLeak((plKeyImp*)key, nullptr);
             return true;
         }
     };
 
-    sIReportLeak(nil, pageNode);
+    sIReportLeak(nullptr, pageNode);
 
     plUnloadObjectsIterator iterator;
 
@@ -1600,7 +1600,7 @@ void plResManager::UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t clas
 plRegistryPageNode* plResManager::FindPage(const plLocation& location) const
 {
     // Quick optimization
-    if (fLastFoundPage != nil && fLastFoundPage->GetPageInfo().GetLocation() == location)
+    if (fLastFoundPage != nullptr && fLastFoundPage->GetPageInfo().GetLocation() == location)
         return fLastFoundPage;
 
     PageMap::const_iterator it = fAllPages.find(location);
@@ -1610,7 +1610,7 @@ plRegistryPageNode* plResManager::FindPage(const plLocation& location) const
         return it->second;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// FindPage ////////////////////////////////////////////////////////////////
@@ -1625,7 +1625,7 @@ plRegistryPageNode* plResManager::FindPage(const ST::string& age, const ST::stri
             return it->second;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1638,7 +1638,7 @@ plRegistryPageNode* plResManager::FindPage(const ST::string& age, const ST::stri
 void plResManager::AddKey(plKeyImp* key)
 {
     plRegistryPageNode* page = FindPage(key->GetUoid().GetLocation());
-    if (page == nil)
+    if (page == nullptr)
         return;
 
     page->AddKey(key);
@@ -1648,7 +1648,7 @@ void plResManager::AddKey(plKeyImp* key)
 void plResManager::IKeyReffed(plKeyImp* key)
 {
     plRegistryPageNode* page = FindPage(key->GetUoid().GetLocation());
-    if (page == nil)
+    if (page == nullptr)
     {
         hsAssert(0, "Couldn't find page that key belongs to");
         return;
@@ -1708,7 +1708,7 @@ bool plResManager::IterateKeys(plRegistryKeyIterator* iterator)
 bool plResManager::IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo)
 {
     plRegistryPageNode* page = FindPage(pageToRestrictTo);
-    if (page == nil)
+    if (page == nullptr)
     {
         hsAssert(false, "Page not found to iterate through");
         return false;

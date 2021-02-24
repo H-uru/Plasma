@@ -68,17 +68,17 @@ ClassDesc2* GetStaticEnvLayerDesc() { return &plStaticEnvLayerDesc; }
 #include "plStaticEnvLayerBitmapPB.cpp"
 
 plStaticEnvLayer::plStaticEnvLayer() :
-    fBitmapPB(NULL),
-    fUVGen(NULL),
-    fTexHandle(NULL),
-    fTexTime(0),
+    fBitmapPB(),
+    fUVGen(),
+    fTexHandle(),
+    fTexTime(),
     fIValid(NEVER)
 {
     int i;
 
     for( i = 0; i < 6; i++ )
     {
-        fBitmaps[ i ] = NULL;
+        fBitmaps[i] = nullptr;
     }
 
     plStaticEnvLayerDesc.MakeAutoParamBlocks(this);
@@ -110,7 +110,7 @@ void plStaticEnvLayer::Reset()
     GetStaticEnvLayerDesc()->Reset(this, TRUE); // reset all pb2's
     for( int i = 0; i < 6; i++ )
     {
-        SetBitmap( NULL, i );
+        SetBitmap(nullptr, i);
     }
 
     fIValid.SetEmpty();
@@ -179,7 +179,7 @@ RefTargetHandle plStaticEnvLayer::GetReference(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -214,7 +214,7 @@ IParamBlock2* plStaticEnvLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fBitmapPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -223,7 +223,7 @@ IParamBlock2* plStaticEnvLayer::GetParamBlockByID(BlockID id)
     if (fBitmapPB->ID() == id)
         return fBitmapPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -249,7 +249,7 @@ Animatable* plStaticEnvLayer::SubAnim(int i)
     {
         case kRefUVGen:     return fUVGen;
         case kRefBitmap:    return fBitmapPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -361,7 +361,7 @@ AColor plStaticEnvLayer::EvalColor(ShadeContext& sc)
     Point3  v = sc.VectorTo( sc.Normal(), REF_OBJECT );
     float   wx,wy,wz;
     Color   rcol;
-    Bitmap  *refmap = NULL;
+    Bitmap  *refmap = nullptr;
     Point3  rv;
     Point2  uv;
     int     size;
@@ -409,7 +409,7 @@ AColor plStaticEnvLayer::EvalColor(ShadeContext& sc)
         }
     }
 
-    if( refmap == NULL )
+    if (refmap == nullptr)
         color.White();
     else
     {
@@ -483,7 +483,7 @@ void plStaticEnvLayer::IDiscardTexHandle()
     if (fTexHandle)
     {
         fTexHandle->DeleteThis();
-        fTexHandle = NULL;
+        fTexHandle = nullptr;
     }
 }
 
@@ -498,7 +498,7 @@ BITMAPINFO *plStaticEnvLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmak
                         // FIXME
     fTexTime = 0;//CalcFrame(t);
 //  texValid = clipValid;
-    BITMAPINFO *bmi = NULL;
+    BITMAPINFO *bmi = nullptr;
     int xflags = 0;
 
     if (fBitmapPB->GetInt(kBmpRGBOutput) == 1)
@@ -535,7 +535,7 @@ const char *plStaticEnvLayer::GetTextureName( int which )
             return pbbm->bi.Name();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //// Set/GetBaseFilename //////////////////////////////////////////////////////
@@ -607,7 +607,7 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
     int         res, size;
     BOOL        success = 0;
     TSTR        fname, fullname;
-    Bitmap      *bm = NULL;
+    Bitmap      *bm = nullptr;
     TSTR        path, filename, ext, thisFilename;
     BitmapInfo  biOutFile;
 
@@ -673,7 +673,7 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
         // Construct filename
         thisFilename.printf( _T( "%s\\%s%s%s" ), path, filename, suffixes[ i ], ext );
 
-        res = ip->CurRendererRenderFrame( ip->GetTime(), bm, NULL, 1.0f, &vp );
+        res = ip->CurRendererRenderFrame(ip->GetTime(), bm, nullptr, 1.0f, &vp);
         if( !res ) 
             goto fail;
 

@@ -111,7 +111,7 @@ int plAGAnim::GetChannelCount() const
 plAGChannel * plAGAnim::GetChannel(int index) const
 {
     plAGApplicator *app = fApps[index];
-    return (app ? app->GetChannel() : nil);
+    return (app ? app->GetChannel() : nullptr);
 }
 
 // GetChannel --------------------------------------------
@@ -131,7 +131,7 @@ plAGChannel * plAGAnim::GetChannel(const ST::string &name) const
             return channel;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 // GetApplicatorCount ------------------
@@ -241,7 +241,7 @@ void plAGAnim::Write(hsStream *stream, hsResMgr *mgr)
     {
         plAGApplicator *app = fApps[i];
         hsAssert(app, "Missing applicator during write.");
-        plAGChannel *channel = nil;
+        plAGChannel *channel = nullptr;
         if (app)
             channel = app->GetChannel();
     
@@ -279,7 +279,7 @@ plAGAnim * plAGAnim::FindAnim(const ST::string &name)
     {
         return (*i).second;
     } else {
-        return nil;
+        return nullptr;
     }
 }
 

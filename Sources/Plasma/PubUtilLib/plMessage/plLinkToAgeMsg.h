@@ -134,7 +134,7 @@ protected:
     int fInvisLevel;
     int fFlags;
 public:
-    plLinkEffectsTriggerMsg() : fLeavingAge(true), fLinkKey(nil), fLinkInAnimKey(nil), fEffects(0), fInvisLevel(0), fFlags(0) {  }
+    plLinkEffectsTriggerMsg() : fLeavingAge(true), fEffects(), fInvisLevel(), fFlags() { }
     ~plLinkEffectsTriggerMsg();
 
     CLASSNAME_REGISTER( plLinkEffectsTriggerMsg );
@@ -175,7 +175,7 @@ public:
     bool fLeavingAge;
     plKey fLinkKey; 
 
-    plLinkEffectsTriggerPrepMsg() : fLeavingAge(false), fLinkKey(nil), fTrigger(nil) {  }
+    plLinkEffectsTriggerPrepMsg() : fLeavingAge(), fTrigger() { }
     ~plLinkEffectsTriggerPrepMsg();
     
     CLASSNAME_REGISTER( plLinkEffectsTriggerPrepMsg );

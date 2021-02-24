@@ -119,7 +119,7 @@ public:
         void DeleteThis() override { delete this; }
 };
 
-//plAGAnimMgr * plAnimAvatarComponent::fManager = nil;
+//plAGAnimMgr * plAnimAvatarComponent::fManager = nullptr;
 
 CLASS_DESC(plAnimAvatarComponent, gAnimAvatarDesc, "Compound Animation",  "Compound Animation", COMP_TYPE_AVATAR, Class_ID(0x3192253d, 0x60c4178c))
 
@@ -132,7 +132,7 @@ ParamBlockDesc2 gAnimAvatarBk
     plComponent::kBlkComp, _T("CompoundAnim"), 0, &gAnimAvatarDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_ANIM_AVATAR, IDS_COMP_ANIM_AVATARS, 0, 0, NULL,
+    IDD_COMP_ANIM_AVATAR, IDS_COMP_ANIM_AVATARS, 0, 0, nullptr,
 
     // params
     kShareableBool, _T("ShareableBool"), TYPE_BOOL, 0, 0,   
@@ -291,7 +291,7 @@ bool plAnimAvatarComponent::ConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *
             {
                 channel = new plMatrixConstant(constSetting);
                 delete tmc;
-                tmc = nil;
+                tmc = nullptr;
             }
             else
             {
@@ -327,7 +327,7 @@ plKey FindSceneNode(plMaxNode *node)
         {
             return FindSceneNode(parent);
         } else {
-            return nil;
+            return nullptr;
         }
     }
 }
@@ -401,7 +401,7 @@ ParamBlockDesc2 gEmoteBk
     plComponent::kBlkComp, _T("EmoteAnim"), 0, &gEmoteDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_EMOTE, IDS_COMP_EMOTE, 0, 0, NULL,
+    IDD_COMP_EMOTE, IDS_COMP_EMOTE, 0, 0, nullptr,
 
     plEmoteComponent::kBodyUsage, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_BODY_UNKNOWN, IDC_BODY_UPPER, IDC_BODY_FULL,

@@ -99,7 +99,7 @@ ParamBlockDesc2 gClickableBlock
 (
     plComponent::kBlkComp, _T("clickable"), 0, &gClickableDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_DETECTOR_CLICKABLE, IDS_COMP_DETECTOR_CLICKABLE, 0, 0, NULL,
+    IDD_COMP_DETECTOR_CLICKABLE, IDS_COMP_DETECTOR_CLICKABLE, 0, 0, nullptr,
 
     kClickableDirectional,      _T("directional"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_OMNI,
@@ -330,7 +330,7 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         logic->AddNotifyReceiver(receiver);
 
         // Create the detector
-    plDetectorModifier *detector = nil;
+    plDetectorModifier *detector = nullptr;
     detector = new plPickingDetector;
 
     // Register the detector

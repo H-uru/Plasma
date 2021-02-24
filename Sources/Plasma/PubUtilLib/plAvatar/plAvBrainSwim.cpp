@@ -87,7 +87,7 @@ class plSwimBehavior : public plArmatureBehavior
     friend class plAvBrainSwim;
 
 public: 
-    plSwimBehavior() : fAvMod(nil), fSwimBrain(nil) {}
+    plSwimBehavior() : fAvMod(), fSwimBrain() { }
     virtual ~plSwimBehavior() {}
     
     void Init(plAGAnim *anim, bool loop, plAvBrainSwim *brain, plArmatureMod *body, uint8_t index)
@@ -250,7 +250,7 @@ plAvBrainSwim::plAvBrainSwim() :
 plAvBrainSwim::~plAvBrainSwim()
 {
     delete fSwimStrategy;
-    fSwimStrategy = nil;
+    fSwimStrategy = nullptr;
 
     fSurfaceProbeMsg->UnRef();
 
@@ -327,11 +327,11 @@ bool plAvBrainSwim::MsgReceive(plMessage *msg)
     {
         if (losHit->fRequestID == plArmatureMod::kAvatarLOSSwimSurface)
         {
-            plSwimRegionInterface *region = nil;
+            plSwimRegionInterface *region = nullptr;
             if (!losHit->fNoHit)
             {
                 plSceneObject *hitObj = plSceneObject::ConvertNoRef(losHit->fObj->ObjectIsLoaded());
-                region = hitObj ? plSwimRegionInterface::ConvertNoRef(hitObj->GetGenericInterface(plSwimRegionInterface::Index())) : nil;
+                region = hitObj ? plSwimRegionInterface::ConvertNoRef(hitObj->GetGenericInterface(plSwimRegionInterface::Index())) : nullptr;
                 //100-fDistance because of casting the ray from above to get around physxs Raycast requirments
                 fSurfaceDistance = 100.f-losHit->fDistance;
             }
@@ -343,7 +343,7 @@ bool plAvBrainSwim::MsgReceive(plMessage *msg)
                 if (region)
                     fSwimStrategy->SetSurface(region, fArmature->GetTarget(0)->GetLocalToWorld().GetTranslate().fZ + fSurfaceDistance);
                 else
-                    fSwimStrategy->SetSurface(nil, 0.f);
+                    fSwimStrategy->SetSurface(nullptr, 0.f);
             }
             return true;
         }
@@ -545,10 +545,10 @@ bool plAvBrainSwim::IInitAnimations()
     behavior->Init(swimRight, true, this, fAvMod, kSwimRight);
     
     fBehaviors[kSwimTurnLeft] = behavior = new SwimTurnLeft;
-    behavior->Init(nil, true, this, fAvMod, kSwimTurnLeft);
+    behavior->Init(nullptr, true, this, fAvMod, kSwimTurnLeft);
     
     fBehaviors[kSwimTurnRight] = behavior = new SwimTurnRight;
-    behavior->Init(nil, true, this, fAvMod, kSwimTurnRight);
+    behavior->Init(nullptr, true, this, fAvMod, kSwimTurnRight);
     
     fBehaviors[kTreadTurnLeft] = behavior = new TreadTurnLeft;
     behavior->Init(treadWaterLeft, true, this, fAvMod, kTreadTurnLeft);

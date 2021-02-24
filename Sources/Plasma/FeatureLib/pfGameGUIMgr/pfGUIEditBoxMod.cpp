@@ -113,7 +113,7 @@ void    pfGUIEditBoxMod::IUpdate()
     hsColorRGBA c;
 
 
-    if( fDynTextMap == nil || !fDynTextMap->IsValid() )
+    if (fDynTextMap == nullptr || !fDynTextMap->IsValid())
         return;
 
     c.Set( 0.f, 0.f, 0.f, 1.f );
@@ -122,7 +122,7 @@ void    pfGUIEditBoxMod::IUpdate()
     else
         fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
 
-    if( fBuffer != nil )
+    if (fBuffer != nullptr)
     {
         // First, calc the cursor position, so we can adjust the scrollPos as necessary
         int16_t cursorPos, oldCursorPos;
@@ -171,7 +171,7 @@ void    pfGUIEditBoxMod::IUpdate()
 
 void pfGUIEditBoxMod::PurgeDynaTextMapImage()
 {
-    if ( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
         fDynTextMap->PurgeImage();
 }
 
@@ -198,7 +198,7 @@ void    pfGUIEditBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
     uint16_t  width;
 
 
-    if( fBuffer != nil && fDynTextMap != nil )
+    if (fBuffer != nullptr && fDynTextMap != nullptr)
     {
         if( !fBounds.IsInside( &mousePt ) )
             return;
@@ -236,7 +236,7 @@ void    pfGUIEditBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 
 bool    pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
-    if( fBuffer == nil )
+    if (fBuffer == nullptr)
         return false;
 
     int i = wcslen( fBuffer );
@@ -347,12 +347,12 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 if( fCursorPos > 0 )
                     fCursorPos--;
             }
-            else if( key == KEY_RIGHT && fBuffer != nil )
+            else if (key == KEY_RIGHT && fBuffer != nullptr)
             {
                 if( fCursorPos < wcslen( fBuffer ) )
                     fCursorPos++;
             }
-            else if( key == KEY_BACKSPACE && fBuffer != nil )
+            else if (key == KEY_BACKSPACE && fBuffer != nullptr)
             {
                 if( fCursorPos > 0 )
                 {
@@ -360,7 +360,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                     memmove( fBuffer + fCursorPos, fBuffer + fCursorPos + 1, (wcslen( fBuffer + fCursorPos + 1 ) + 1) * sizeof(wchar_t) );
                 }
             }
-            else if( key == KEY_DELETE && fBuffer != nil )
+            else if (key == KEY_DELETE && fBuffer != nullptr)
             {
                 if( fCursorPos < wcslen( fBuffer ) )
                     memmove( fBuffer + fCursorPos, fBuffer + fCursorPos + 1, (wcslen( fBuffer + fCursorPos + 1 ) + 1) * sizeof(wchar_t) );          
@@ -467,7 +467,7 @@ std::string pfGUIEditBoxMod::GetBuffer()
 
 void    pfGUIEditBoxMod::ClearBuffer()
 {
-    if( fBuffer != nil )
+    if (fBuffer != nullptr)
     {
         memset( fBuffer, 0, (fBufferSize + 1) * sizeof(wchar_t) );
         fCursorPos = 0;
@@ -485,7 +485,7 @@ void    pfGUIEditBoxMod::SetText( const char *str )
 
 void    pfGUIEditBoxMod::SetText( const wchar_t *str )
 {
-    if( fBuffer != nil )
+    if (fBuffer != nullptr)
     {
         wcsncpy( fBuffer, str, fBufferSize - 1 );
         fCursorPos = 0;
@@ -505,7 +505,7 @@ void    pfGUIEditBoxMod::SetBufferSize( uint32_t size )
         memset( fBuffer, 0, (size + 1) * sizeof(wchar_t) );
     }
     else
-        fBuffer = nil;
+        fBuffer = nullptr;
 
     fCursorPos = 0;
     fScrollPos = 0;
@@ -519,7 +519,7 @@ void    pfGUIEditBoxMod::SetCursorToHome()
 
 void    pfGUIEditBoxMod::SetCursorToEnd()
 {
-    if( fBuffer != nil )
+    if (fBuffer != nullptr)
         fCursorPos = wcslen( fBuffer );
 }
 

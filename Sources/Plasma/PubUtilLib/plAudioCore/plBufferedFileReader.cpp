@@ -66,7 +66,7 @@ plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore:
 {
     // Init some stuff
     fBufferSize = 0;
-    fBuffer = nil;
+    fBuffer = nullptr;
     fCursor = 0;
 
     hsAssert( path.IsValid(), "Invalid path specified in plBufferedFileReader" );
@@ -74,7 +74,7 @@ plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore:
     // Ask plAudioFileReader for another reader to get this file
     // Note: have this reader do the chanSelect for us
     plAudioFileReader *reader = plAudioFileReader::CreateReader( path, whichChan );
-    if( reader == nil || !reader->IsValid() )
+    if (reader == nullptr || !reader->IsValid())
     {
         delete reader;
         IError( "Unable to open file to read in to RAM buffer" );
@@ -86,7 +86,7 @@ plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore:
     fBufferSize = reader->GetDataSize();
     fBuffer = new uint8_t[ fBufferSize ];
     //plProfile_NewMem( SndBufferedMem, fBufferSize );
-    if( fBuffer == nil )
+    if (fBuffer == nullptr)
     {
         delete reader;
         IError( "Unable to allocate RAM buffer" );
@@ -114,7 +114,7 @@ void    plBufferedFileReader::Close()
     //plProfile_DelMem( SndBufferedMem, fBufferSize );
 
     delete fBuffer;
-    fBuffer = nil;
+    fBuffer = nullptr;
     fBufferSize = 0;
     fCursor = 0;
 }

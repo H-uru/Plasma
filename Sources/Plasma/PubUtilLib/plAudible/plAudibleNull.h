@@ -52,7 +52,7 @@ class plAudibleNull : public plAudible
 {
 public:
 
-    plAudibleNull() : fSceneNode(nil),fSceneObj(nil) { }
+    plAudibleNull() = default;
 
     CLASSNAME_REGISTER( plAudibleNull );
     GETINTERFACE_ANY( plAudibleNull, plAudible );
@@ -86,7 +86,7 @@ public:
     void        DeActivate() override { }
     void        GetStatus(plSoundMsg* pMsg) override { }
     size_t      GetNumSounds() const override { return 0; }
-    plSound*    GetSound(size_t i) const override { return nil; }
+    plSound*    GetSound(size_t i) const override { return nullptr; }
     int         GetSoundIndex(const char *keyname) const override { return -1; }
     void        SetVolume(const float volume,int index = -1) override { }
     void        SetFilename(int index, const char *filename, bool isCompressed) override { }

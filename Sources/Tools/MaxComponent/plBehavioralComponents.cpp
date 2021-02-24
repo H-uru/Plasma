@@ -149,7 +149,7 @@ bool plAvBehaviorSittingComponent::SetupProperties(plMaxNode* node, plErrorMsg *
 bool plAvBehaviorSittingComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     plMaxNode *detectNode = (plMaxNode*)fCompPB->GetINode(kDetector);
-    plComponentBase *detectComp = detectNode ? detectNode->ConvertToComponent() : nil;
+    plComponentBase *detectComp = detectNode ? detectNode->ConvertToComponent() : nullptr;
     if (detectComp)
     {
         bool hasFrontApproach = fCompPB->GetInt(ParamID(kApproachFront)) ? true : false;

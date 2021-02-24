@@ -74,8 +74,8 @@ public:
     float            fRefresh;
 
 public:
-    plDynamicEnvMapMsg() : plMessage(nil, nil, nil), fCmd(0) {}
-    plDynamicEnvMapMsg(const plKey& rcv) : plMessage(nil, rcv, nil), fCmd(0) {}
+    plDynamicEnvMapMsg() : plMessage(nullptr, nullptr, nullptr), fCmd() { }
+    plDynamicEnvMapMsg(const plKey& rcv) : plMessage(nullptr, rcv, nullptr), fCmd() { }
     virtual ~plDynamicEnvMapMsg() {}
 
     CLASSNAME_REGISTER( plDynamicEnvMapMsg );

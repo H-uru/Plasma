@@ -66,7 +66,7 @@ class plDebugText
 
         plDebugText() 
         { 
-            fManager = nil;
+            fManager = nullptr;
 #ifdef PLASMA_EXTERNAL_RELEASE
             SetFont( "Trebuchet MS Bold", 8 );
 #else
@@ -185,7 +185,7 @@ class   plDebugTextManager
 
     public:
 
-        plDebugTextManager() { plDebugText::Instance().SetManager( this ); fFont = nil; }
+        plDebugTextManager() { plDebugText::Instance().SetManager(this); fFont = nullptr; }
         ~plDebugTextManager();
 
         void    AddString( uint16_t x, uint16_t y, const char *s, uint32_t hexColor, uint8_t style, bool drawOnTop = false );

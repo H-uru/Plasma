@@ -109,15 +109,15 @@ void plDistributor::Reset()
 
 void plDistributor::IClear()
 {
-    fInterface = nil;
+    fInterface = nullptr;
 
-    fDistTree = nil;
+    fDistTree = nullptr;
 
     fMeshTree.Reset();
 
-    fSurfNode = nil;
-    fSurfMesh = nil;
-    fSurfObjToDelete = nil;
+    fSurfNode = nullptr;
+    fSurfMesh = nullptr;
+    fSurfObjToDelete = nullptr;
 
     fRepNodes.ZeroCount();
 
@@ -147,8 +147,8 @@ void plDistributor::IClear()
     fScaleLo.Set(1.f,1.f,1.f);
     fScaleHi.Set(1.f,1.f,1.f);
 
-    fProbBitmapTex = nil;
-    fProbLayerTex = nil;
+    fProbBitmapTex = nullptr;
+    fProbLayerTex = nullptr;
     fProbColorChan = kRed;
 
     fProbRemapFromLo = 0;
@@ -165,7 +165,7 @@ void plDistributor::IClear()
 
     fFade.pmin = fFade.pmax = Point3(0,0,0);
 
-    fBone = nil;
+    fBone = nullptr;
 }
 
 BOOL plDistributor::IGetMesh(INode* node, TriObject*& objToDelete, Mesh*& retMesh) const
@@ -173,8 +173,8 @@ BOOL plDistributor::IGetMesh(INode* node, TriObject*& objToDelete, Mesh*& retMes
     if( objToDelete )
         objToDelete->DeleteThis();
 
-    retMesh = nil;
-    objToDelete = nil;
+    retMesh = nullptr;
+    objToDelete = nullptr;
 
     // Get da object
     Object *obj = node->EvalWorldState(TimeValue(0)).obj;
@@ -198,7 +198,7 @@ BOOL plDistributor::IGetMesh(INode* node, TriObject*& objToDelete, Mesh*& retMes
     {
         if( objToDelete )
             objToDelete->DeleteThis();
-        objToDelete = nil;
+        objToDelete = nullptr;
         return false;
     }
 
@@ -346,7 +346,7 @@ BOOL plDistributor::IDistributeOverMesh(plDistribInstTab& reps, plMeshCacheTab& 
 
         if( ((i / iUpdate) * iUpdate) == i )
         {
-            if( bar.Update(nil) )
+            if (bar.Update(nullptr))
                 return false;
         }
     }
@@ -396,7 +396,7 @@ bool plDistributor::IFailsProbBitmap(int iFace, const Point3& bary) const
     // with no valid probability map, everything goes.
     int uvwChan = 1;
     Matrix3 uvtrans(true);
-    Bitmap* bm = nil;
+    Bitmap* bm = nullptr;
     UINT filtType = BMM_FILTER_PYRAMID;
     if( fProbBitmapTex )
     {
@@ -957,8 +957,8 @@ BOOL plDistributor::IReadyRepNodes(plMeshCacheTab& cache) const
     int i;
     for( i = 0; i < fRepNodes.Count(); i++ )
     {
-        Mesh* mesh = nil;
-        TriObject* obj = nil;
+        Mesh* mesh = nullptr;
+        TriObject* obj = nullptr;
         if( IGetMesh(fRepNodes[i], obj, mesh) )
         {
             plMaxNode* repNode = (plMaxNode*)fRepNodes[i];
@@ -972,7 +972,7 @@ BOOL plDistributor::IReadyRepNodes(plMeshCacheTab& cache) const
             if( obj )
                 obj->DeleteThis();
 
-            BOOL hasXImp = nil != repNode->GetXImposterComp();
+            BOOL hasXImp = nullptr != repNode->GetXImposterComp();
 
             ISetupNormals(repNode, cache[iCache].fMesh, hasXImp);
 
@@ -1467,13 +1467,13 @@ void plDistributor::SetPolarRange(float deg)
 
 void plDistributor::SetProbabilityBitmapTex(BitmapTex* t)
 {
-    fProbLayerTex = nil;
+    fProbLayerTex = nullptr;
     fProbBitmapTex = t;
 }
 
 void plDistributor::SetProbabilityLayerTex(plLayerTex* t)
 {
-    fProbBitmapTex = nil;
+    fProbBitmapTex = nullptr;
     fProbLayerTex = t;
 }
 

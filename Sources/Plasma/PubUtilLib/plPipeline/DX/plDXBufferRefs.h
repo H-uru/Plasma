@@ -107,16 +107,16 @@ class plDXVertexBufferRef : public plDXDeviceRef
         plDXVertexBufferRef*    GetNext() { return (plDXVertexBufferRef *)fNext; }
 
         plDXVertexBufferRef() :
-            fD3DBuffer(nil),
-            fCount(0),
-            fIndex(0),
-            fVertexSize(0),
-            fOffset(0),
-            fOwner(nil),
-            fData(nil),
-            fFormat(0),
-            fRefTime(0),
-            fDevice(nil)
+            fD3DBuffer(),
+            fCount(),
+            fIndex(),
+            fVertexSize(),
+            fOffset(),
+            fOwner(),
+            fData(),
+            fFormat(),
+            fRefTime(),
+            fDevice()
         {
         }
 
@@ -156,12 +156,12 @@ class plDXIndexBufferRef : public plDXDeviceRef
         plDXIndexBufferRef* GetNext() { return (plDXIndexBufferRef *)fNext; }
 
         plDXIndexBufferRef() :
-            fD3DBuffer(nil),
-            fCount(0),
-            fIndex(0),
-            fOffset(0),
-            fOwner(nil),
-            fRefTime(0),
+            fD3DBuffer(),
+            fCount(),
+            fIndex(),
+            fOffset(),
+            fOwner(),
+            fRefTime(),
             fPoolType(D3DPOOL_MANAGED)
         {
         }

@@ -133,7 +133,7 @@ class KRStatus : public KeyReduceStatus
 
 void hsControlConverter::ReduceKeys(Control *control, float threshold)
 {
-    if (control == nil || threshold <= 0)
+    if (control == nullptr || threshold <= 0)
         return;
 
     KRStatus status;
@@ -223,17 +223,17 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
     hsGuardBegin("hsControlConverter::MakeMatrix44Controller");
 
     if( !uvGen )
-        return nil;
+        return nullptr;
 
     ISetSegRange(-1, -1);
 
     Tab<TimeValue> kTimes;
     kTimes.ZeroCount();
-    Control* uScaleCtl = nil;
-    Control* vScaleCtl = nil;
-    Control* uOffCtl= nil;
-    Control* vOffCtl = nil;
-    Control* rotCtl = nil;
+    Control* uScaleCtl = nullptr;
+    Control* vScaleCtl = nullptr;
+    Control* uOffCtl= nullptr;
+    Control* vOffCtl = nullptr;
+    Control* rotCtl = nullptr;
     GetControllerByName(uvGen, TSTR("U Offset"), uOffCtl);
     GetControllerByName(uvGen, TSTR("V Offset"), vOffCtl);
     GetControllerByName(uvGen, TSTR("U Tiling"), uScaleCtl);
@@ -241,9 +241,9 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
     GetControllerByName(uvGen, TSTR("Angle"), rotCtl);
 
     // new with Max R2, replacing "Angle", but it doesn't hurt to look...
-    Control* uAngCtl = nil;
-    Control* vAngCtl = nil;
-    Control* wAngCtl = nil; 
+    Control* uAngCtl = nullptr;
+    Control* vAngCtl = nullptr;
+    Control* wAngCtl = nullptr;
     GetControllerByName(uvGen, TSTR("U Angle"), uAngCtl);
     GetControllerByName(uvGen, TSTR("V Angle"), vAngCtl);
     GetControllerByName(uvGen, TSTR("W Angle"), wAngCtl);
@@ -266,7 +266,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
 
     if( kTimes.Count()<2 )
     {
-        return nil;
+        return nullptr;
     }
 
     plLeafController* ctrl = new plLeafController;
@@ -303,9 +303,9 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(Control* prsControl
     Tab<TimeValue> kTimes;
     kTimes.ZeroCount();
 
-    Control* posCtl = nil;
-    Control* scaleCtl = nil;
-    Control* rotCtl = nil;
+    Control* posCtl = nullptr;
+    Control* scaleCtl = nullptr;
+    Control* rotCtl = nullptr;
     posCtl = prsControl->GetPositionController();
     rotCtl = prsControl->GetRotationController();
     scaleCtl = prsControl->GetScaleController();
@@ -317,7 +317,7 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(Control* prsControl
 
     if( kTimes.Count()<2 )
     {
-        return nil;
+        return nullptr;
     }
 
     plLeafController* ctrl = new plLeafController;
@@ -353,8 +353,8 @@ plLeafController* hsControlConverter::MakeScalarController(Control* control, plM
 {
     hsGuardBegin("hsControlConverter::MakeScalarController");
 
-    if (control == NULL)
-        return NULL;
+    if (control == nullptr)
+        return nullptr;
 
     ISetSegRange(start, end);
 
@@ -376,8 +376,8 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
 {
     hsGuardBegin("hsControlConverter::MakePosController");
 
-    if (control == NULL)
-        return NULL;
+    if (control == nullptr)
+        return nullptr;
 
     ISetSegRange(start, end);
 
@@ -413,7 +413,7 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
         if (!keep)
         {
             delete hsCont;
-            hsCont = nil;
+            hsCont = nullptr;
         }
     }
 
@@ -441,7 +441,7 @@ plController *hsControlConverter::MakeScaleController(Control *control, plMaxNod
                        "Warning: Noise scale controller not supported.  Ignoring.", MB_OK);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 plController *hsControlConverter::MakeRotController(Control *control, plMaxNode *node, bool camRot /* = false */, 
@@ -464,14 +464,14 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
             {
                 MessageBox(GetActiveWindow(), node->GetName(), 
                     "Warning: Noise rotation controller not supported.  Ignoring.", MB_OK);
-                return nil;
+                return nullptr;
             }
             if (fErrorMsg->Set(control->ClassID() != Class_ID(EULER_CONTROL_CLASS_ID,0), 
                 node->GetName(), "Expecting euler rot ctrler").CheckAndAsk())
-                return nil;
+                return nullptr;
 
             if (fErrorMsg->Set(control->NumSubs() != 3, node->GetName(), "Rot compound controller should have 3 subcontrollers").CheckAndAsk())
-                return nil;
+                return nullptr;
 
             plCompoundController* rc = new plCompoundController;
             int i;
@@ -533,13 +533,13 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
             else if (numRotConts == 0) // No sub controllers, no point in having the compound controller then
             {
                 delete rc;
-                rc = nil;
+                rc = nullptr;
             }
 
             return rc;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void hsControlConverter::ScalePositionController(plController* ctl, float scale)
@@ -611,7 +611,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
     hsGuardBegin("hsControlConverter::MakeTransformController");
 
     if (!control)
-        return NULL;
+        return nullptr;
 
     ISetSegRange(start, end);
 
@@ -624,7 +624,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
         {
             fErrorMsg->Set(true, "Transform Controller Error", "Transform controller doesn't have 3 sub controllers").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         plCompoundController *tmc = new plCompoundController;
@@ -660,10 +660,10 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
         else
         {
             delete tmc;
-            return NULL;
+            return nullptr;
         }
     }
-    return NULL;
+    return nullptr;
 
     hsGuardEnd;
 }
@@ -686,7 +686,7 @@ void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, p
         {
         case ctrlTypePosition:
             {
-                if(tmc->GetPosController() != nil)
+                if (tmc->GetPosController() != nullptr)
                 {
                     fErrorMsg->Set(true, "Position Controller Error", "Non-nil position controller").Show();
                     fErrorMsg->Set();
@@ -698,7 +698,7 @@ void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, p
         case ctrlTypeRollAngle:
         case ctrlTypeRotation:
             {
-                if(tmc->GetRotController() != nil)
+                if (tmc->GetRotController() != nullptr)
                 {
                     fErrorMsg->Set(true, "Position Controller Error", "Non-nil Rotation controller").Show();
                     fErrorMsg->Set();
@@ -710,7 +710,7 @@ void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, p
             break;
         case ctrlTypeScale:
             {
-                if(tmc->GetScaleController() != nil)
+                if (tmc->GetScaleController() != nullptr)
                 {
                     fErrorMsg->Set(true, "Scale Controller Error", "Non-nil Scale Controller").Show();
                     fErrorMsg->Set();
@@ -760,13 +760,13 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
 
     int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
+    if (ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nullptr, control, startIdx, endIdx) > 1)
     {
         if(!(control->IsKeyable()))
         {
             fErrorMsg->Set(true, "Quat Controller Creation Error", "Control is not keyable.").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -824,7 +824,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         return pc;
     }
 
-    return nil;
+    return nullptr;
     hsGuardEnd;
 }
 
@@ -839,13 +839,13 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
     //plMaxNode* xformParent = GetXformParent(node);
     int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
+    if (ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nullptr, control, startIdx, endIdx) > 1)
     {
         if(!(control->IsKeyable()))
         {
             fErrorMsg->Set(true, "Scale Value Controller Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -866,7 +866,7 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
         return pc;
     }
     
-    return nil;
+    return nullptr;
     hsGuardEnd;
 }
 
@@ -879,13 +879,13 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
 
     int32_t startIdx, endIdx;
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
+    if (ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nullptr, control, startIdx, endIdx) > 1)
     {
         if(!(control->IsKeyable()))
         {
             fErrorMsg->Set(true, "Scale Value Controller Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -906,7 +906,7 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
 
         return pc;
     }
-    return nil;
+    return nullptr;
     hsGuardEnd;
 }
 
@@ -920,13 +920,13 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
 
     IKeyControl* ikeys = GetKeyControlInterface(control);
     int32_t startIdx, endIdx;
-    if ( ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx)>1 )
+    if (ikeys && IGetRangeCoverKeyIndices(node ? node->GetName() : nullptr, control, startIdx, endIdx) > 1)
     {
         if(!(control->IsKeyable()))
         {
             fErrorMsg->Set(true, "Simple Position Controller Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return NULL;
+            return nullptr;
         }
 
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
@@ -947,7 +947,7 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
         return pc;
     }
 
-    return nil;
+    return nullptr;
     hsGuardEnd;
 }
 
@@ -965,7 +965,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
     if (control->IsLeaf())
     {
         IKeyControl* ikeys = GetKeyControlInterface(control);
-        int num = ikeys ? IGetRangeCoverKeyIndices(node ? node->GetName() : nil, control, startIdx, endIdx) : 0;
+        int num = ikeys ? IGetRangeCoverKeyIndices(node ? node->GetName() : nullptr, control, startIdx, endIdx) : 0;
         
         if (num<2)
         {
@@ -1252,7 +1252,7 @@ int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, Tim
 
     Class_ID cID = control->ClassID();
     SClass_ID sID = control->SuperClassID();
-    char* nodeName = node ? node->GetName() : nil;
+    char* nodeName = node ? node->GetName() : nullptr;
 
     // BEZ
     if (cID == Class_ID(HYBRIDINTERP_POSITION_CLASS_ID,0) ||
@@ -1644,7 +1644,7 @@ bool hsControlConverter::GetControllerByName(Animatable* anim, TSTR &name, Contr
         int i;
         for( i = 0; i < nSub; i++ )
         {
-            if (anim->SubAnim(i)==nil)
+            if (anim->SubAnim(i) == nullptr)
                 continue;
             TSTR subName = anim->SubAnimName(i);
             if( subName == name )
@@ -1659,7 +1659,7 @@ bool hsControlConverter::GetControllerByName(Animatable* anim, TSTR &name, Contr
             }
         }
     }
-    ctl = nil;
+    ctl = nullptr;
 
     return false;
     hsGuardEnd;
@@ -1680,7 +1680,7 @@ Control *hsControlConverter::GetControllerByID(IParamBlock2 *pblock, int paramID
         }
     }
 
-    return NULL;
+    return nullptr;
     hsGuardEnd;
 }
 
@@ -1947,7 +1947,7 @@ bool    hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &t
     Object *obj = node->GetObjectRef();
     if( !obj )
         return false;
-    IDerivedObject *derObj = nil;
+    IDerivedObject *derObj = nullptr;
     if( obj->CanConvertToType(derivObjClassID) )
     {
         derObj = (IDerivedObject *)obj->ConvertToType(fConverterUtils.GetTime(fInterface), derivObjClassID);
@@ -2019,7 +2019,7 @@ bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Ani
         int i;
         for( i = 0; i < nSub; i++ )
         {
-            if (anim->SubAnim(i)==nil)
+            if (anim->SubAnim(i) == nullptr)
                 continue;
             TSTR subName = anim->SubAnimName(i);
             if( subName == name )
@@ -2034,7 +2034,7 @@ bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Ani
             }
         }
     }
-    subAnim = nil;
+    subAnim = nullptr;
     return false;
     hsGuardEnd; 
 }
@@ -2055,7 +2055,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     // create callback messages for the animation to send to the camera
     // to interpolate to the correct FOV at each keyframe
     
-    plAnimComponentBase* pAnim = nil;
+    plAnimComponentBase* pAnim = nullptr;
     uint32_t count = node->NumAttachedComponents();
     for (uint32_t i = 0; i < count; i++)
     {
@@ -2067,7 +2067,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         }
     }
 
-    plCamera1Component* pCamComp = nil;
+    plCamera1Component* pCamComp = nullptr;
     for (uint32_t i = 0; i < count; i++)
     {
         plComponentBase *comp = node->GetAttachedComponent(i);
@@ -2078,7 +2078,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         }
     }
 
-    const plCameraModifier1* pCamMod = nil;
+    const plCameraModifier1* pCamMod = nullptr;
     size_t modCount = node->GetSceneObject()->GetNumModifiers();
     for (size_t i = 0; i < modCount; i++)
     {

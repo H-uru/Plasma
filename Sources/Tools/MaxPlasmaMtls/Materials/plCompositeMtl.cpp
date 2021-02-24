@@ -57,7 +57,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_COMP_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return COMP_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaComposite"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -78,7 +78,7 @@ const char *plCompositeMtl::BlendStrings[] = // Make sure these match up in orde
     "Inv. Vtx Illum Blue"
 };
 
-plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB(NULL)
+plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB()
 {
     plCompositeMtlDesc.MakeAutoParamBlocks(this);
 
@@ -241,7 +241,7 @@ RefTargetHandle plCompositeMtl::GetReference(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 void plCompositeMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -260,7 +260,7 @@ IParamBlock2 *plCompositeMtl::GetParamBlock(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 IParamBlock2 *plCompositeMtl::GetParamBlockByID(BlockID id)
@@ -268,7 +268,7 @@ IParamBlock2 *plCompositeMtl::GetParamBlockByID(BlockID id)
     if (fPassesPB->ID() == id)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plCompositeMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
@@ -303,7 +303,7 @@ Mtl *plCompositeMtl::GetSubMtl(int i)
     if (i < NumSubMtls())
         return fPassesPB->GetMtl(kCompPasses, 0, i);
 
-    return NULL;
+    return nullptr;
 }
 
 void plCompositeMtl::SetSubMtl(int i, Mtl *m)
@@ -439,7 +439,7 @@ void plCompositeMtl::Shade(ShadeContext& sc)
             continue;
 
         Mtl *mtl = GetSubMtl(i);
-        if (mtl == NULL || mtl->ClassID() != PASS_MTL_CLASS_ID)
+        if (mtl == nullptr || mtl->ClassID() != PASS_MTL_CLASS_ID)
             continue;
 
         float opacity;
@@ -526,28 +526,28 @@ void plCompositeMtl::SetOpacityVal(float *target, UVVert *alpha, UVVert *illum, 
 {
     if (method == kCompBlendVertexAlpha || method == kCompBlendInverseVtxAlpha)
     {
-        if (alpha == NULL)
+        if (alpha == nullptr)
             *target = 1.0f;
         else
             *target = alpha->x;
     }
     else if (method == kCompBlendVertexIllumRed || method == kCompBlendInverseVtxIllumRed)
     {
-        if (illum == NULL)
+        if (illum == nullptr)
             *target = 1.0f;
         else
             *target = illum->x;
     }
     else if (method == kCompBlendVertexIllumGreen || method == kCompBlendInverseVtxIllumGreen)
     {
-        if (illum == NULL)
+        if (illum == nullptr)
             *target = 1.0f;
         else
             *target = illum->y;
     }
     else if (method == kCompBlendVertexIllumBlue || method == kCompBlendInverseVtxIllumBlue)
     {
-        if (illum == NULL)
+        if (illum == nullptr)
             *target = 1.0f;
         else
             *target = illum->z;

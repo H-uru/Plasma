@@ -117,10 +117,6 @@ namespace hsConstants
     inline constexpr T inv_sqrt2 = T(1.0) / hsConstants::sqrt2<T>;
 }
 
-#ifndef nil
-#   define nil (nullptr)
-#endif
-
 typedef int32_t   hsError;
 
 #define hsOK                0
@@ -267,7 +263,7 @@ void    hsStrLower(char *s);
 
 inline char* hsStrcpy(const char* src)
 {
-    return hsStrcpy(nil, src);
+    return hsStrcpy(nullptr, src);
 }
 
 inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)

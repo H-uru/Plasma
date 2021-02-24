@@ -71,11 +71,11 @@ void plShaderConst::Write(hsStream* s)
 //////////////////////////////////////////////////////////////////////////////////
 
 plShader::plShader()
-:   fFlags(0),
-    fDeviceRef(nil),
-    fInput(0),
-    fOutput(0),
-    fDecl(0)
+:   fFlags(),
+    fDeviceRef(),
+    fInput(),
+    fOutput(),
+    fDecl()
 {
 }
 

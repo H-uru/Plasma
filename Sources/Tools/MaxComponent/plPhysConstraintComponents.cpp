@@ -236,7 +236,7 @@ ParamBlockDesc2 gPhysHingeConstraintBk
     plComponent::kBlkComp, _T("Hinge Constraint"), 0, &gPhysHingeConstDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PHYS_HINGE_CONSTRAINT, IDS_COMP_PHYS_HINGE_CONSTRAINTS, 0, 0, NULL,//&gPhysCoreComponentProc,
+    IDD_COMP_PHYS_HINGE_CONSTRAINT, IDS_COMP_PHYS_HINGE_CONSTRAINTS, 0, 0, nullptr,//&gPhysCoreComponentProc,
     
     // params
 
@@ -449,7 +449,7 @@ bool plPhysHingeConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pErrMs
 
 
 
-        plKey ParentKey  = nil;
+        plKey ParentKey;
         if(fCompPB->GetINode(kParent) && fCompPB->GetInt(kUseParentBool))
             if(((plMaxNode*)fCompPB->GetINode(kParent))->CanConvert())
             {
@@ -678,7 +678,7 @@ bool plPhysBridgeComponent::PreConvert(plMaxNode* node, plErrorMsg* errMsg)
 
 bool plPhysBridgeComponent::Convert(plMaxNode* node, plErrorMsg* errMsg)
 {
-    plMaxNode* parent = nil;
+    plMaxNode* parent = nullptr;
 
     // Find the parent for this section
     int count = fCompPB->Count(kSections);
@@ -902,7 +902,7 @@ ParamBlockDesc2 gPhysSSConstraintBk
     plComponent::kBlkComp, _T("Strong Spring Constraint"), 0, &gPhysStrongSpringConstDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Roll out
-    IDD_COMP_PHYS_SS_CONSTRAINT, IDS_COMP_PHYS_SS_CONSTRAINTS, 0, 0, NULL,//&gPhysCoreComponentProc,
+    IDD_COMP_PHYS_SS_CONSTRAINT, IDS_COMP_PHYS_SS_CONSTRAINTS, 0, 0, nullptr,//&gPhysCoreComponentProc,
     
     // params
 
@@ -1053,7 +1053,7 @@ bool plStrongSpringConstraintComponent::Convert(plMaxNode *node, plErrorMsg *pEr
 
         Object *obj = fCompPB->GetINode(kParent)->EvalWorldState(0/*hsConverterUtils::Instance().GetTime(GetInterface())*/).obj;
 
-        plKey ParentKey  = nil;
+        plKey ParentKey;
         if(fCompPB->GetINode(kParent))
             if(((plMaxNode*)fCompPB->GetINode(kParent))->CanConvert() && (obj->ClassID() == Class_ID(DUMMY_CLASS_ID,0) || obj->SuperClassID() == GEOMOBJECT_CLASS_ID ))
             {

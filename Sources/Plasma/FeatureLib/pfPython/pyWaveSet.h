@@ -60,7 +60,7 @@ private:
     plKey fWaterKey;
 
 protected:
-    pyWaveSet(): fWaterKey(nil) {} // for python glue only, do NOT call
+    pyWaveSet() = default; // for python glue only, do NOT call
     pyWaveSet(plKey key);
     pyWaveSet(pyKey& key);
 

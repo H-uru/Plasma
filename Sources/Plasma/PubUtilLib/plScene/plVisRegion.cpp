@@ -54,9 +54,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plIntersect/plRegionBase.h"
 
 plVisRegion::plVisRegion()
-:   fIndex(0),
-    fRegion(nil),
-    fMgr(nil)
+:   fIndex(),
+    fRegion(),
+    fMgr()
 {
     fMgr = plGlobalVisMgr::Instance();
 
@@ -100,7 +100,7 @@ bool plVisRegion::MsgReceive(plMessage* msg)
             }
             else
             {
-                fRegion = nil;
+                fRegion = nullptr;
             }
             return true;
         case kRefVisMgr:
@@ -114,7 +114,7 @@ bool plVisRegion::MsgReceive(plMessage* msg)
             }
             else
             {
-                fMgr = nil;
+                fMgr = nullptr;
             }
             return true;
 

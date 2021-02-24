@@ -46,10 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////
 
 plMemBuffer::plMemBuffer()
+    : fBuffer(), fBufferLocal(), fBufferLen()
 {
-    fBuffer = nil;
-    fBufferLocal = false;
-    fBufferLen = 0;
 }
 
 
@@ -103,7 +101,7 @@ void plMemBuffer::GrowBuffer(int newLen)
         
         char * tmp =  new char[len];
         
-        if(fBuffer != nil)
+        if (fBuffer != nullptr)
             memcpy(tmp,fBuffer,fBufferLen);
         
         ClearBuffer();
@@ -136,9 +134,9 @@ void plMemBuffer::ClearBuffer()
 {
     if(fBufferLocal == true)
     {
-        if(fBuffer != nil)
+        if (fBuffer != nullptr)
             delete [] fBuffer;
-        fBuffer = nil;
+        fBuffer = nullptr;
     }        
 }
 

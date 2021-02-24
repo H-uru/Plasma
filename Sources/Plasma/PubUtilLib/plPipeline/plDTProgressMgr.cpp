@@ -68,10 +68,10 @@ enum
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 plDTProgressMgr::plDTProgressMgr() :
-    fCurrentImage(0),
-    fLastDraw(0.0f),
-    fStaticTextPlate(nil),
-    fActivePlate(nil)
+    fCurrentImage(),
+    fLastDraw(),
+    fStaticTextPlate(),
+    fActivePlate()
 {
 }
 
@@ -86,7 +86,7 @@ void    plDTProgressMgr::DeclareThyself()
 
 void    plDTProgressMgr::Activate()
 {
-    if (fStaticTextPlate == nil && fCurrentStaticText != plProgressMgr::kNone)
+    if (fStaticTextPlate == nullptr && fCurrentStaticText != plProgressMgr::kNone)
     {
         plPlateManager::Instance().CreatePlate(&fStaticTextPlate);
 
@@ -97,7 +97,7 @@ void    plDTProgressMgr::Activate()
         fStaticTextPlate->SetPosition(0, 0.5f, 0);
     }
 
-    if (fActivePlate == nil)
+    if (fActivePlate == nullptr)
     {
         plPlateManager::Instance().CreatePlate( &fActivePlate );
 
@@ -115,14 +115,14 @@ void    plDTProgressMgr::Deactivate()
     {
         fStaticTextPlate->SetVisible(false);
         plPlateManager::Instance().DestroyPlate( fStaticTextPlate );
-        fStaticTextPlate = nil;
+        fStaticTextPlate = nullptr;
     }
 
     if (fActivePlate)
     {
         fActivePlate->SetVisible(false);
         plPlateManager::Instance().DestroyPlate( fActivePlate );
-        fActivePlate = nil;
+        fActivePlate = nullptr;
     }
 }
 
@@ -136,7 +136,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
     plOperationProgress *prog;
 
 
-    if( fOperations == nil )
+    if (fOperations == nullptr)
         return;
 
     scrnWidth = (uint16_t)p->Width();
@@ -169,7 +169,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
         }
     }
 
-    for( prog = fOperations; prog != nil; prog = prog->GetNext() )
+    for (prog = fOperations; prog != nullptr; prog = prog->GetNext())
     {
         if (IDrawTheStupidThing(p, prog, x, y, width, height))
             y -= text.GetFontSize() + 8 + height + 4;

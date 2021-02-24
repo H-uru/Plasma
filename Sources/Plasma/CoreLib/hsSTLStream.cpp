@@ -138,5 +138,5 @@ const void *hsVectorStream::GetData()
     if (fVector.size() > 0)
         return &fVector[0];
     else
-        return nil;
+        return nullptr;
 }

@@ -152,8 +152,8 @@ static HASHTABLEDECL(
     link
 ) s_handlers;
 
-static NetCommMsgHandler    s_defaultHandler(0, nil, nil);
-static NetCommMsgHandler    s_preHandler(0, nil, nil);
+static NetCommMsgHandler    s_defaultHandler(0, nullptr, nullptr);
+static NetCommMsgHandler    s_preHandler(0, nullptr, nullptr);
 
 
 //============================================================================
@@ -164,7 +164,7 @@ static void INetErrorCallback (
     NetClientDestroy(false);
     
     plNetClientMgrMsg * msg = new plNetClientMgrMsg(plNetClientMgrMsg::kCmdDisableNet,
-                                                    true, nil);
+                                                    true, nullptr);
     msg->AddReceiver(plNetClientApp::GetInstance()->GetKey());
 
     switch (error)
@@ -269,7 +269,7 @@ static void PlayerInitCallback (
     void *      param
 ) {
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
-        s_player = nil;
+        s_player = nullptr;
     }
     else {
         // Ensure the city link has the required spawn points
@@ -304,7 +304,7 @@ static void INetCliAuthSetPlayerRequestCallback (
         PlayerInitCallback(result, param);
     }
     else if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
-        s_player = nil;
+        s_player = nullptr;
         PlayerInitCallback(result, param);
     }
     else {
@@ -315,8 +315,8 @@ static void INetCliAuthSetPlayerRequestCallback (
             s_player->playerInt,
             PlayerInitCallback,
             param,
-            nil,
-            nil
+            nullptr,
+            nullptr
         );
     }
 }
@@ -327,7 +327,7 @@ static void LoginPlayerInitCallback (
     void *                      param
 ) {
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound))
-        s_player = nil;
+        s_player = nullptr;
     else
         VaultProcessPlayerInbox();
 
@@ -358,7 +358,7 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
     void *          param
 ) {
     if (IS_NET_ERROR(result) && (result != kNetErrVaultNodeNotFound)) {
-        s_player = nil;
+        s_player = nullptr;
         
         plNetCommAuthMsg * msg  = new plNetCommAuthMsg;
         msg->result             = result;
@@ -371,8 +371,8 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
             s_player->playerInt,
             LoginPlayerInitCallback,
             param,
-            nil,
-            nil
+            nullptr,
+            nullptr
         );
     }
 }
@@ -389,7 +389,7 @@ static void INetCliAuthLoginRequestCallback (
 ) {
     s_authResult = result;
 
-    s_player = nil;
+    s_player = nullptr;
     s_players.clear();
     
     bool wantsStartUpAge = (s_startupAge.ageDatasetName.empty() ||
@@ -714,7 +714,7 @@ void NetCommSetAvatarLoaded (bool loaded /* = true */) {
 
 //============================================================================
 void NetCommChangeMyPassword (const ST::string& password) {
-    NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nil);
+    NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nullptr);
 }
 
 //============================================================================
@@ -738,8 +738,8 @@ void NetCommStartup () {
 void NetCommShutdown () {
     s_shutdown = true;
 
-    NetCommSetDefaultMsgHandler(nil, nil);
-    NetCommSetMsgPreHandler(nil, nil);
+    NetCommSetDefaultMsgHandler(nullptr, nullptr);
+    NetCommSetMsgPreHandler(nullptr, nullptr);
     NetCommRemoveMsgHandler(
         kNetCommAllMsgClasses,
         kNetCommAllMsgHandlers,
@@ -809,7 +809,7 @@ void NetCommConnect () {
         connectedToKeeper = true;
 
         // request an auth server ip address
-        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback, nil);
+        NetCliGateKeeperAuthSrvIpAddressRequest(AuthSrvIpAddressCallback, nullptr);
 
         while(!s_hasAuthSrvIpAddress && !s_netError) {
             NetClientUpdate();
@@ -838,7 +838,7 @@ void NetCommConnect () {
             }
 
             // request a file server ip address
-            NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, nil, false);
+            NetCliGateKeeperFileSrvIpAddressRequest(FileSrvIpAddressCallback, nullptr, false);
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();
@@ -1032,7 +1032,7 @@ void NetCommAuthenticate (
         s_iniAuthToken,
         s_iniOS,
         INetCliAuthLoginRequestCallback,
-        nil
+        nullptr
     );
 }
 
@@ -1046,7 +1046,7 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
     if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
         plNetCommLinkToAgeMsg * msg = new plNetCommLinkToAgeMsg;
         msg->result     = kNetSuccess;
-        msg->param      = nil;
+        msg->param      = nullptr;
         msg->Send();
 
         return;
@@ -1072,14 +1072,14 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
             VaultPlayerInfoNode pInfo(rvn);
             pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
-            NetCliAuthVaultNodeSave(rvn.Get(), nil, nil);
+            NetCliAuthVaultNodeSave(rvn.Get(), nullptr, nullptr);
         }
 
         VaultCull(s_player->playerInt);
     }
 
     if (desiredPlayerInt == 0)
-        s_player = nil;
+        s_player = nullptr;
     else {
         for (NetCommPlayer& player : s_players) {
             if (player.playerInt == desiredPlayerInt) {
@@ -1255,7 +1255,7 @@ void NetCommSendFriendInvite (
         toName,
         inviteUuid,
         INetCliAuthSendFriendInviteCallback,
-        nil
+        nullptr
     );
 }
 
@@ -1277,7 +1277,7 @@ plNetClientComm::plNetClientComm()
 // ~plNetClientComm ----------------------------------------------
 plNetClientComm::~plNetClientComm()
 {
-    NetCommSetMsgPreHandler(nil, nil);
+    NetCommSetMsgPreHandler(nullptr, nullptr);
 }
 
 // AddMsgHandlerForType ----------------------------------------------

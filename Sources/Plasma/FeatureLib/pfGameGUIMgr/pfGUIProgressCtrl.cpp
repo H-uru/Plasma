@@ -145,7 +145,7 @@ bool    pfGUIProgressCtrl::ICalcAnimTimes()
     {
         // Handle AGMasterMods
         plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(animKey->ObjectIsLoaded());
-        if( mod != nil )
+        if (mod != nullptr)
         {
             for( int j = 0; j < mod->GetNumAnimations(); j++ )
             {
@@ -160,7 +160,7 @@ bool    pfGUIProgressCtrl::ICalcAnimTimes()
         }
         // Handle layer animations
         plLayerAnimation *layer = plLayerAnimation::ConvertNoRef(animKey->ObjectIsLoaded());
-        if( layer != nil )
+        if (layer != nullptr)
         {
             float begin = layer->GetTimeConvert().GetBegin();
             float end = layer->GetTimeConvert().GetEnd();

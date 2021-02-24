@@ -59,7 +59,7 @@ plLayerMovie::plLayerMovie()
 {
     fOwnedChannels |= kTexture;
     fTexture = new plBitmap*;
-    *fTexture = nil;
+    *fTexture = nullptr;
 }
 
 plLayerMovie::~plLayerMovie()

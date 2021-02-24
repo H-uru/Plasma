@@ -107,7 +107,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptCritterBrain, obj1, obj2, compareType)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, addReceiver, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addReceiver expects a ptKey");
@@ -125,7 +125,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, addReceiver, args)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, removeReceiver, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "removeReceiver expects a ptKey");
@@ -149,7 +149,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, getSceneObject, GetSceneObject)
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 {
     const char* kwlist[] = {"animationName", "behaviorName", "loop", "randomStartPos",
-                            "fadeInLen", "fadeOutLen", NULL};
+                            "fadeInLen", "fadeOutLen", nullptr};
     char* animName;
     char* behName;
     char loop = 1, randomStartPos = 1;
@@ -168,7 +168,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 {
-    const char* kwlist[] = {"behaviorName", "fade", NULL};
+    const char* kwlist[] = {"behaviorName", "fade", nullptr};
     char* behName;
     char fade = 1;
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "s|b", const_cast<char**>(kwlist),
@@ -183,7 +183,7 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, runningBehavior, args)
 {
-    char* behName = NULL;
+    char* behName = nullptr;
     if (!PyArg_ParseTuple(args, "s", &behName))
     {
         PyErr_SetString(PyExc_TypeError, "runningBehavior expects a string");
@@ -237,8 +237,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, runBehaviorName)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, goToGoal, args, keywords)
 {
-    const char* kwlist[] = {"newGoal", "avoidingAvatars", NULL};
-    PyObject* goalObj = NULL;
+    const char* kwlist[] = {"newGoal", "avoidingAvatars", nullptr};
+    PyObject* goalObj = nullptr;
     char avoidingAvatars = 0;
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", const_cast<char **>(kwlist),
                                      &goalObj, &avoidingAvatars))
@@ -434,7 +434,7 @@ PLASMA_CUSTOM_TYPE(ptCritterBrain, "Object to manipulate critter brains");
 // required functions for PyObject interoperability
 PyObject* pyCritterBrain::New(plAvBrainCritter* brain)
 {
-    ptCritterBrain *newObj = (ptCritterBrain*)ptCritterBrain_type.tp_new(&ptCritterBrain_type, NULL, NULL);
+    ptCritterBrain *newObj = (ptCritterBrain*)ptCritterBrain_type.tp_new(&ptCritterBrain_type, nullptr, nullptr);
     newObj->fThis->fBrain = brain;
     return (PyObject*)newObj;
 }

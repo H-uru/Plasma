@@ -68,7 +68,7 @@ public:
 static MaxUtilsClassDesc theMaxUtilsClassDesc;
 ClassDesc* GetMaxUtilsDesc() { return &theMaxUtilsClassDesc; }
 
-plMaxUtils::plMaxUtils() :  fhPanel(nil), fhResDlg(nil)
+plMaxUtils::plMaxUtils() : fhPanel(), fhResDlg()
 {
 }
 
@@ -108,7 +108,7 @@ BOOL plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             int numCleared = ClearTextureIds();
             char buf[256];
             sprintf(buf, "Cleared %d texture ids", numCleared);
-            MessageBox(NULL, buf, "AssetMan Clear", MB_OK);
+            MessageBox(nullptr, buf, "AssetMan Clear", MB_OK);
             return TRUE;
         }
         break;
@@ -129,7 +129,7 @@ int ClearTextureIds()
     int numCleared = 0;
 
     TexSet texmaps;
-    plMtlCollector::GetMtls(nil, &texmaps);
+    plMtlCollector::GetMtls(nullptr, &texmaps);
 
     TexSet::iterator texIt = texmaps.begin();
     for (; texIt != texmaps.end(); texIt++)

@@ -79,7 +79,7 @@ public:
                         fEventTime(0.0f), fEvent((CallbackEvent)0), fRepeats(-1), fUser(0), fIndex(0) { }
 
     plEventCallbackMsg(const plKey &receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
-                        plMessage(nil, receiver, nil), fEvent(e), fIndex(idx), fEventTime(t), fRepeats(repeats), fUser(user) {}
+                        plMessage(nullptr, receiver, nullptr), fEvent(e), fIndex(idx), fEventTime(t), fRepeats(repeats), fUser(user) { }
 
     ~plEventCallbackMsg() { }
 
@@ -113,8 +113,8 @@ public:
             fMsg->SendAndKeep();
     }
 
-    plEventCallbackInterceptMsg() : plEventCallbackMsg(), fMsg(nil) {}
-    ~plEventCallbackInterceptMsg() { hsRefCnt_SafeUnRef(fMsg); fMsg = nil; }
+    plEventCallbackInterceptMsg() : plEventCallbackMsg(), fMsg() { }
+    ~plEventCallbackInterceptMsg() { hsRefCnt_SafeUnRef(fMsg); fMsg = nullptr; }
 
     CLASSNAME_REGISTER(plEventCallbackInterceptMsg);
     GETINTERFACE_ANY(plEventCallbackInterceptMsg, plEventCallbackMsg);

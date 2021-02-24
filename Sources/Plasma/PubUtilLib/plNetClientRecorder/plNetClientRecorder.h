@@ -81,7 +81,7 @@ public:
     // Playback functions
     double GetTime();
     virtual bool IsQueueEmpty() { hsAssert(false,"plNetClientRecording: Playback not supported"); return true; }
-    virtual plNetMessage* GetNextMessage() { hsAssert(false,"plNetClientRecording: Playback not supported"); return nil; }
+    virtual plNetMessage* GetNextMessage() { hsAssert(false, "plNetClientRecording: Playback not supported"); return nullptr; }
     virtual double GetNextMessageTimeDelta() { hsAssert(false,"plNetClientRecording: Playback not supported"); return 0; }
 };
 
@@ -124,7 +124,7 @@ protected:
     void ILogMsg(plNetMessage* msg, const char* preText="") override;
 
 public:
-    plNetClientStreamRecorder(TimeWrapper* timeWrapper = nil);
+    plNetClientStreamRecorder(TimeWrapper* timeWrapper = nullptr);
     ~plNetClientStreamRecorder();
 
     bool BeginRecording(const char* recName) override;
@@ -148,7 +148,7 @@ protected:
     void ILogMsg(plNetMessage* msg, const char* preText="") override;
 
 public:
-    plNetClientStatsRecorder(TimeWrapper* timeWrapper = nil);
+    plNetClientStatsRecorder(TimeWrapper* timeWrapper = nullptr);
     ~plNetClientStatsRecorder();
 
     bool BeginRecording(const char* recName) override;
@@ -166,7 +166,7 @@ protected:
 
 public:
     plNetClientStreamAndStatsRecorder(plNetClientStreamRecorder* streamrec, plNetClientStatsRecorder* statrec) :
-      plNetClientRecorder(nil),fStreamRecorder(streamrec), fStatsRecorder(statrec) {}
+      plNetClientRecorder(nullptr), fStreamRecorder(streamrec), fStatsRecorder(statrec) { }
       ~plNetClientStreamAndStatsRecorder() { delete fStreamRecorder; delete fStatsRecorder; }
 
     bool BeginRecording(const char* recName) override { return fStreamRecorder->BeginRecording(recName) && fStatsRecorder->BeginRecording(recName); }
@@ -187,7 +187,7 @@ public:
 class plNetClientStressStreamRecorder : public plNetClientStreamRecorder
 {
 public:
-    plNetClientStressStreamRecorder(TimeWrapper* timeWrapper = nil) : plNetClientStreamRecorder(timeWrapper) {}
+    plNetClientStressStreamRecorder(TimeWrapper* timeWrapper = nullptr) : plNetClientStreamRecorder(timeWrapper) {}
     bool IsRecordableMsg(plNetMessage* msg) const override;
 };
 

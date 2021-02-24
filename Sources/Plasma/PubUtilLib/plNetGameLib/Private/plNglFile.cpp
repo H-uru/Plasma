@@ -93,7 +93,7 @@ struct CliFileConn : hsRefCnt {
     // to initiate connection attempts to the remote host whenever
     // the socket is disconnected.
     void AutoReconnect ();
-    bool AutoReconnectEnabled () {return (reconnectTimer != nil);}
+    bool AutoReconnectEnabled() { return (reconnectTimer != nullptr); }
     void StopAutoReconnect (); // call before destruction
     void StartAutoReconnect ();
     void TimerReconnect ();
@@ -231,7 +231,7 @@ static std::atomic<long>            s_perf[kNumPerf];
 static unsigned                     s_connectBuildId;
 static unsigned                     s_serverType;
 
-static FNetCliFileBuildIdUpdateCallback s_buildIdCallback = nil;
+static FNetCliFileBuildIdUpdateCallback s_buildIdCallback = nullptr;
 
 const unsigned kMinValidConnectionMs                = 25 * 1000;
 
@@ -256,7 +256,7 @@ static CliFileConn * GetConnIncRef_CS (const char tag[]) {
         conn->Ref(tag);
         return conn;
     }
-    return nil;
+    return nullptr;
 }
 
 //============================================================================
@@ -275,8 +275,8 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
 
     bool needsDecref = true;
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
+        AsyncSocketConnectCancel(nullptr, conn->cancelId);
+        conn->cancelId  = nullptr;
         needsDecref = false;
     }
     else {
@@ -315,11 +315,11 @@ static void NotifyConnSocketConnect (CliFileConn * conn) {
 static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = 0;
+        conn->cancelId = nullptr;
         s_conns.Unlink(conn);
 
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
     
     // Cancel all transactions in progress on this connection.
@@ -345,11 +345,11 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
     conn->StopAutoPing();
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = 0;
+        conn->cancelId = nullptr;
         s_conns.Unlink(conn);
 
         if (conn == s_active)
-            s_active = nil;
+            s_active = nullptr;
     }
 
     // Cancel all transactions in progress on this connection.
@@ -448,7 +448,7 @@ static bool SocketNotifyCallback (
                 hsLockGuard(s_critsect);
                 hsLockForWriting lock(conn->sockLock);
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId  = nullptr;
             }
             NotifyConnSocketConnect(conn);
         break;
@@ -561,11 +561,11 @@ static void AsyncLookupCallback (
 
 //============================================================================
 CliFileConn::CliFileConn ()
-    : hsRefCnt(0), sock(nil), seq(0), cancelId(nil), abandoned(false)
-    , buildId(0), serverType(0)
-    , reconnectTimer(nil), reconnectStartMs(0), connectStartMs(0)
-    , numImmediateDisconnects(0), numFailedConnects(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : hsRefCnt(0), sock(), seq(), cancelId(), abandoned()
+    , buildId(), serverType()
+    , reconnectTimer(), reconnectStartMs(), connectStartMs()
+    , numImmediateDisconnects(), numFailedConnects()
+    , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
 {
     ++s_perf[kPerfConnCount];
 }
@@ -651,7 +651,7 @@ static unsigned CliFileConnTimerDestroyed (void * param) {
 void CliFileConn::StopAutoReconnect () {
     hsLockGuard(timerCritsect);
     if (AsyncTimer * timer = reconnectTimer) {
-        reconnectTimer = nil;
+        reconnectTimer = nullptr;
         AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
     }
 }
@@ -685,7 +685,7 @@ void CliFileConn::AutoPing () {
 void CliFileConn::StopAutoPing () {
     hsLockGuard(timerCritsect);
     if (AsyncTimer * timer = pingTimer) {
-        pingTimer = nil;
+        pingTimer = nullptr;
         AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
     }
 }
@@ -724,7 +724,7 @@ void CliFileConn::TimerPing () {
 
 //============================================================================
 void CliFileConn::Destroy () {
-    AsyncSocket oldSock = nil;
+    AsyncSocket oldSock = nullptr;
 
     {
         hsLockForWriting lock(sockLock);
@@ -1216,7 +1216,7 @@ void RcvdFileDownloadChunkTrans::Post () {
 //============================================================================
 NetFileTrans::NetFileTrans (ETransType transType)
 :   NetTrans(kNetProtocolCli2File, transType)
-,   m_conn(nil)
+,   m_conn()
 {
 }
 
@@ -1229,14 +1229,14 @@ NetFileTrans::~NetFileTrans () {
 bool NetFileTrans::AcquireConn () {
     if (!m_conn)
         m_conn = GetConnIncRef("AcquireConn");
-    return m_conn != nil;
+    return m_conn != nullptr;
 }
 
 //============================================================================
 void NetFileTrans::ReleaseConn () {
     if (m_conn) {
         m_conn->UnRef("AcquireConn");
-        m_conn = nil;
+        m_conn = nullptr;
     }
 }
 
@@ -1269,7 +1269,7 @@ void FileDestroy (bool wait) {
         hsLockGuard(s_critsect);
         while (CliFileConn * conn = s_conns.Head())
             UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
+        s_active = nullptr;
     }
 
     if (!wait)
@@ -1284,7 +1284,7 @@ void FileDestroy (bool wait) {
 //============================================================================
 bool FileQueryConnected () {
     hsLockGuard(s_critsect);
-    return s_active != nil;
+    return s_active != nullptr;
 }
 
 //============================================================================
@@ -1325,7 +1325,7 @@ void NetCliFileStartConnect (
                     AsyncLookupCallback,
                     fileAddrList[i].c_str(),
                     GetClientPort(),
-                    nil
+                    nullptr
                 );
                 break;
             }
@@ -1342,7 +1342,7 @@ void NetCliFileDisconnect () {
     hsLockGuard(s_critsect);
     while (CliFileConn * conn = s_conns.Head())
         UnlinkAndAbandonConn_CS(conn);
-    s_active = nil;
+    s_active = nullptr;
 }
 
 //============================================================================

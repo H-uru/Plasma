@@ -83,7 +83,7 @@ void plAnimTimeConvert::SetCurrentEaseCurve(int x)
         hsAssert(false, "invalid arg to SetCurrentEaseCurve");
         break;
     case kEaseNone:
-        fCurrentEaseCurve=nil;
+        fCurrentEaseCurve = nullptr;
         break;
     case kEaseIn:
         fCurrentEaseCurve=fEaseInCurve;
@@ -99,7 +99,7 @@ void plAnimTimeConvert::SetCurrentEaseCurve(int x)
 
 int plAnimTimeConvert::GetCurrentEaseCurve() const
 {
-    if (fCurrentEaseCurve==nil)
+    if (fCurrentEaseCurve == nullptr)
         return kEaseNone;
     if (fCurrentEaseCurve==fEaseInCurve)
         return kEaseIn;
@@ -166,10 +166,10 @@ void plAnimTimeConvert::IClearSpeedEase()
 {
     
     if (fCurrentEaseCurve == fSpeedEaseCurve)
-        fCurrentEaseCurve = nil;
+        fCurrentEaseCurve = nullptr;
 
     delete fSpeedEaseCurve;
-    fSpeedEaseCurve = nil;
+    fSpeedEaseCurve = nullptr;
 }
 
 void plAnimTimeConvert::ICheckTimeCallbacks(float frameStart, float frameStop)
@@ -237,7 +237,7 @@ void plAnimTimeConvert::ISendCallback(int i)
     if (!fCallbackMsgs[i]->HasBCastFlag(plMessage::kNetPropagate) ||
         !fOwner || fOwner->IsLocallyOwned()==plSynchedObject::kYes)
     {
-        fCallbackMsgs[i]->SetSender(fOwner ? fOwner->GetKey() : nil);
+        fCallbackMsgs[i]->SetSender(fOwner ? fOwner->GetKey() : nullptr);
 
         hsRefCnt_SafeRef(fCallbackMsgs[i]);
         plgDispatch::MsgSend(fCallbackMsgs[i]);
@@ -295,7 +295,7 @@ plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, floa
     state->fLoopEnd = fLoopEnd;
     state->fSpeed = fSpeed;
     state->fWrapTime = fWrapTime;
-    state->fEaseCurve = (fCurrentEaseCurve == nil ? nil : fCurrentEaseCurve->Clone());  
+    state->fEaseCurve = (fCurrentEaseCurve == nullptr ? nullptr : fCurrentEaseCurve->Clone());
 
     fStates.push_front(state);
     IFlushOldStates();
@@ -361,7 +361,7 @@ plATCState *plAnimTimeConvert::IGetState(double wSecs) const
             return state;
     }
 
-    return nil;
+    return nullptr;
 }
 
 plATCState *plAnimTimeConvert::IGetLatestState() const
@@ -433,7 +433,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
     }
     float secs = 0, delSecs = 0;
 
-    if (fCurrentEaseCurve != nil)
+    if (fCurrentEaseCurve != nullptr)
     {
         delSecs += ICalcEaseTime(fCurrentEaseCurve, fLastEvalWorldTime, wSecs);
         if (wSecs > fCurrentEaseCurve->GetEndWorldTime())
@@ -443,7 +443,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
 
             IClearSpeedEase();
             
-            fCurrentEaseCurve = nil;
+            fCurrentEaseCurve = nullptr;
         }
     }
     else 
@@ -546,7 +546,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
     ICheckTimeCallbacks(fCurrentAnimTime, secs);
     
     fLastEvalWorldTime = wSecs;
-    if (fEaseOutCurve != nil && !(fFlags & kEasingIn) && wSecs >= fEaseOutCurve->GetEndWorldTime())
+    if (fEaseOutCurve != nullptr && !(fFlags & kEasingIn) && wSecs >= fEaseOutCurve->GetEndWorldTime())
         IStop(wSecs, secs);
     
     return fCurrentAnimTime = secs;
@@ -560,7 +560,7 @@ float plAnimTimeConvert::WorldToAnimTimeNoUpdate(double wSecs) const
 float plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *state)
 {
     //hsAssert(wSecs >= fLastEvalWorldTime, "Tried to eval a time that's earlier than the last eval time.");
-    if (state == nil)
+    if (state == nullptr)
         return 0;
     
     if (state->fFlags & kStopped)
@@ -568,7 +568,7 @@ float plAnimTimeConvert::IWorldToAnimTimeNoUpdate(double wSecs, plATCState *stat
     
     float secs = 0, delSecs = 0;
     
-    if (state->fEaseCurve != nil)
+    if (state->fEaseCurve != nullptr)
     {
         delSecs += ICalcEaseTime(state->fEaseCurve, state->fStartWorldTime, wSecs);
         if (wSecs > state->fEaseCurve->GetEndWorldTime())
@@ -785,19 +785,19 @@ void plAnimTimeConvert::SetSpeed(float goal, float rate /* = 0 */)
     if (rate == 0)
     {
         IClearSpeedEase();
-        fCurrentEaseCurve = nil;
+        fCurrentEaseCurve = nullptr;
 
     }
     // Skip if we're either stopped or stopping. We'll take the new speed into account next time we start up.
     else if ((fFlags & kEasingIn)) 
     {
         double curTime = hsTimer::GetSysSeconds();
-        if (fCurrentEaseCurve != nil)
+        if (fCurrentEaseCurve != nullptr)
         {
             double easeTime = curTime - fCurrentEaseCurve->fBeginWorldTime;
             curSpeed = fCurrentEaseCurve->VelocityGivenTime((float)easeTime);
         }
-        if (fSpeedEaseCurve != nil)
+        if (fSpeedEaseCurve != nullptr)
         {
             fSpeedEaseCurve->RecalcToSpeed(curSpeed, goal);
             fSpeedEaseCurve->SetLengthOnRate(rate);
@@ -905,7 +905,7 @@ plAnimTimeConvert& plAnimTimeConvert::Stop(bool on)
 
 plAnimTimeConvert& plAnimTimeConvert::Stop(double stopTime) 
 {   
-    if( IsStopped() || (fEaseOutCurve != nil && !(fFlags & kEasingIn)) )
+    if (IsStopped() || (fEaseOutCurve != nullptr && !(fFlags & kEasingIn)))
         return *this;
 
     if (stopTime < 0)
@@ -914,13 +914,13 @@ plAnimTimeConvert& plAnimTimeConvert::Stop(double stopTime)
     
     SetFlag(kEasingIn, false);
 
-    if( fEaseOutCurve == nil )
+    if (fEaseOutCurve == nullptr)
     {
         return IStop(stopTime, fCurrentAnimTime);
     }
 
     float currSpeed;
-    if (fCurrentEaseCurve == nil || stopTime >= fCurrentEaseCurve->GetEndWorldTime())
+    if (fCurrentEaseCurve == nullptr || stopTime >= fCurrentEaseCurve->GetEndWorldTime())
         currSpeed = fSpeed;
     else
         currSpeed = fCurrentEaseCurve->VelocityGivenTime((float)(stopTime - fCurrentEaseCurve->fBeginWorldTime));
@@ -946,10 +946,10 @@ plAnimTimeConvert& plAnimTimeConvert::Start(double startTime)
     if (startTime < 0)
         startTime = hsTimer::GetSysSeconds();
     
-    if (fEaseInCurve != nil)
+    if (fEaseInCurve != nullptr)
     {
         float currSpeed;
-        if (fCurrentEaseCurve == nil || startTime >= fCurrentEaseCurve->GetEndWorldTime())
+        if (fCurrentEaseCurve == nullptr || startTime >= fCurrentEaseCurve->GetEndWorldTime())
             currSpeed = 0;
         else
             currSpeed = fCurrentEaseCurve->VelocityGivenTime((float)(startTime - fCurrentEaseCurve->fBeginWorldTime));
@@ -1302,7 +1302,7 @@ void plATCState::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLEScalar(fLoopEnd);
     s->WriteLEScalar(fSpeed);
     s->WriteLEScalar(fWrapTime);
-    if (fEaseCurve != nil)
+    if (fEaseCurve != nullptr)
     {
         s->WriteBool(true);
         mgr->WriteCreatable(s, fEaseCurve);

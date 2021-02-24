@@ -54,7 +54,7 @@ public:
 
     plCollideMsg() { SetBCastFlag(plMessage::kPropagateToModifiers); }
     plCollideMsg(const plKey& s, const plKey& r, plKey other, bool entering)
-        : fOtherKey(std::move(other)), fEntering(entering), plMessage(s, r, 0)
+        : fOtherKey(std::move(other)), fEntering(entering), plMessage(s, r, nullptr)
     {
         SetBCastFlag(plMessage::kPropagateToModifiers);
     }

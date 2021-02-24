@@ -56,7 +56,7 @@ public:
     
 protected:
     plWinAudible*           fOwner;
-    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nil) override;
+    plDrawableSpans*    ICreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo=nullptr) override;
     plKey               IGetNode() const override;
 };
 

@@ -83,7 +83,7 @@ bool ICallVoidFunc(PyObject *dict, char *funcName, PyObject*& val)
     {
         if (PyCallable_Check(func))
         {
-            val = PyObject_CallFunction(func, NULL);
+            val = PyObject_CallFunction(func, nullptr);
             if (val)
             {
                 // there might have been some message printed, so get it out to the log file
@@ -253,7 +253,7 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
         }
 
         // Get the class name
-        char *className = nil;
+        char *className = nullptr;
         if (!ICallStrFunc(dict, kGetClassName, className))
         {
             Py_DECREF(module);
@@ -298,7 +298,7 @@ bool plPythonMgr::IQueryPythonFile(const char *fileName)
             {
                 PyObject *ret = PyObject_CallFunction(getParamFunc, "l", i);
                 
-                PyObject *visinfo = nil;
+                PyObject *visinfo = nullptr;
                 int ddlParamID = -1;
                 std::vector<std::string> vec;
 
@@ -448,7 +448,7 @@ void plPythonMgr::IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, const char *p
     int def = 0;
     IGetTupleInt(tuple, 3, def);
 
-    autoUI->AddCheckBox(id, nil, paramName, vid, vstates, def);
+    autoUI->AddCheckBox(id, nullptr, paramName, vid, vstates, def);
 }
 
 void plPythonMgr::IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
@@ -464,7 +464,7 @@ void plPythonMgr::IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, const char *pa
         IGetTupleInt(range, 1, max);
     }
 
-    autoUI->AddIntSpinner(id, nil, paramName, vid, vstates, def, min, max);
+    autoUI->AddIntSpinner(id, nullptr, paramName, vid, vstates, def, min, max);
 }
 
 void plPythonMgr::IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
@@ -480,7 +480,7 @@ void plPythonMgr::IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, const char *
         IGetTupleFloat(range, 1, max);
     }
 
-    autoUI->AddFloatSpinner(id, nil, paramName, vid, vstates, def, min, max);
+    autoUI->AddFloatSpinner(id, nullptr, paramName, vid, vstates, def, min, max);
 }
 
 void plPythonMgr::IAddString(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
@@ -488,82 +488,82 @@ void plPythonMgr::IAddString(plAutoUIBlock *autoUI, PyObject *tuple, const char 
     const char *def = nullptr;
     IGetTupleString(tuple, 3, def);
 
-    autoUI->AddEditBox(id, nil, paramName, vid, vstates, def);
+    autoUI->AddEditBox(id, nullptr, paramName, vid, vstates, def);
 }
 
 void plPythonMgr::IAddSceneObj(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickNodeButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickNodeButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddSceneObjList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickNodeList(id, nil, paramName, vid, vstates);
+    autoUI->AddPickNodeList(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddActivator(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickActivatorButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickActivatorButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddActivatorList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickActivatorList(id, nil, paramName, vid, vstates);
+    autoUI->AddPickActivatorList(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddDynamicText(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickDynamicTextButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickDynamicTextButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddGUIDialog(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickGUIDialogButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGUIDialogButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddExcludeRegion(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickExcludeRegionButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickExcludeRegionButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddWaterComponent(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickWaterComponentButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickWaterComponentButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddSwimCurrentInterface(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickSwimCurrentInterfaceButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickSwimCurrentInterfaceButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddClusterComponent(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickClusterComponentButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickClusterComponentButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddAnimation(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickAnimationButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickAnimationButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddBehavior(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickBehaviorButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickBehaviorButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddMaterial(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickMaterialButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickMaterialButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddGUIPopUpMenu(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickGUIPopUpMenuButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGUIPopUpMenuButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickGUISkinButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGUISkinButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
@@ -571,7 +571,7 @@ void plPythonMgr::IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, const ch
     std::vector<Class_ID> cids;
     cids.push_back(RESPONDER_CID);
     
-    autoUI->AddPickComponentButton(id, nil, paramName, vid, vstates, &cids, true);
+    autoUI->AddPickComponentButton(id, nullptr, paramName, vid, vstates, &cids, true);
 }
 
 void plPythonMgr::IAddResponderList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
@@ -579,17 +579,17 @@ void plPythonMgr::IAddResponderList(plAutoUIBlock *autoUI, PyObject *tuple, cons
     std::vector<Class_ID> cids;
     cids.push_back(RESPONDER_CID);
     
-    autoUI->AddPickComponentList(id, nil, paramName, vid, vstates, &cids);
+    autoUI->AddPickComponentList(id, nullptr, paramName, vid, vstates, &cids);
 }
 
 void plPythonMgr::IAddMaterialAnimation(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickMaterialAnimationButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickMaterialAnimationButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, const char* paramName, int id, int vid, std::vector<std::string>* vstates)
 {
-    autoUI->AddPickGrassComponentButton(id, nil, paramName, vid, vstates);
+    autoUI->AddPickGrassComponentButton(id, nullptr, paramName, vid, vstates);
 }
 
 void plPythonMgr::LoadPythonFiles()
@@ -637,6 +637,6 @@ void plPythonMgr::IAddDropDownList(plAutoUIBlock *autoUI, PyObject *tuple, const
             optionsVec.push_back(str);
         }
 
-        autoUI->AddDropDownList(id, nil, paramName, vid, vstates, &optionsVec);
+        autoUI->AddDropDownList(id, nullptr, paramName, vid, vstates, &optionsVec);
     }
 }

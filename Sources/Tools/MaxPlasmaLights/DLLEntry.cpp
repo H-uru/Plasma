@@ -97,7 +97,7 @@ __declspec(dllexport) ClassDesc* LibClassDesc(int i)
         case 1: return (ClassDesc*)plRTOmniLightDesc::GetDesc();
         case 2: return (ClassDesc*)plRTDirLightDesc::GetDesc();
         case 3: return (ClassDesc*)plRTProjDirLightDesc::GetDesc();
-        default: return 0;
+        default: return nullptr;
     }
 }
 
@@ -111,7 +111,7 @@ TCHAR *GetString(int id)
     static TCHAR buf[256];
 
     if (hInstance)
-        return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : NULL;
-    return NULL;
+        return LoadString(hInstance, id, buf, sizeof(buf)) ? buf : nullptr;
+    return nullptr;
 }
 

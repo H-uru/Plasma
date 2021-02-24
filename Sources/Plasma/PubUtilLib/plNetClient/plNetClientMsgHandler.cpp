@@ -239,7 +239,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     //
     // ERROR CHECK SDL FILE
     //
-    plStateDataRecord* sdRec  = des ? new plStateDataRecord(des) : nil;
+    plStateDataRecord* sdRec  = des ? new plStateDataRecord(des) : nullptr;
     if (!sdRec || sdRec->GetDescriptor()->GetVersion()!=ver)
     {
         ST::string err;
@@ -258,7 +258,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     }
     else if( sdRec->Read( &stream, 0, rwFlags ) )
     {
-        plStateDataRecord* stateRec = nil;
+        plStateDataRecord* stateRec = nullptr;
         if (m->IsInitialState())
         {
             stateRec = new plStateDataRecord(des);
@@ -370,7 +370,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
             if (m->GetHasPlayerID())
             {
                 int idx=nc->fTransport.FindMember(m->GetPlayerID());
-                plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nil;
+                plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nullptr;
                 if (mbr)
                     mbr->SetTransportFlags(mbr->GetTransportFlags() | plNetTransportMember::kSendingActions);
             }
@@ -490,7 +490,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
     
     if (m->AddingMember())
     {
-        plNetTransportMember* mbr=nil;
+        plNetTransportMember* mbr = nullptr;
         int idx = nc->fTransport.FindMember(m->MemberInfo()->GetClientGuid()->GetPlayerID());
         if ( idx>=0 )
             mbr = nc->fTransport.GetMember(idx);
@@ -537,7 +537,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
 */
 
     int idx=nc->fTransport.FindMember(m->GetPlayerID());
-    plNetTransportMember* tm = (idx==-1 ? nil : nc->fTransport.GetMember(idx));
+    plNetTransportMember* tm = (idx == -1 ? nullptr : nc->fTransport.GetMember(idx));
     if(!tm)
     {
 #if 0

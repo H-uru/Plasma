@@ -201,7 +201,7 @@ public:
     bool EatKey(const plKey& key) override
     {
         plBitmap* bmap = plBitmap::ConvertNoRef(key->ObjectIsLoaded());
-        if (bmap != nil)
+        if (bmap != nullptr)
             fTELog->AddTexture(bmap);
         return true;    // Always continue
     }
@@ -216,7 +216,7 @@ public:
         if (key->GetUoid().GetClassType() == plSceneNode::Index())
         {
             plSceneNode* sn = plSceneNode::ConvertNoRef(key->ObjectIsLoaded());
-            if (sn != nil)
+            if (sn != nullptr)
                 sn->OptimizeDrawables();
         }
         return true;    // Always continue
@@ -303,7 +303,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
 
     // Add disk source for writing
     plFileName datPath = plFileName::Join(out_path, "dat");
-    CreateDirectoryW(datPath.WideString().data(), NULL);
+    CreateDirectoryW(datPath.WideString().data(), nullptr);
     plPluginResManager::ResMgr()->SetDataPath(datPath);
 
     if (hsgResMgr::Reset())

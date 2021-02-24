@@ -49,14 +49,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plClimbMsg::plClimbMsg()
 : fCommand(kNoCommand),
   fDirection(plClimbMsg::kCenter),
-  fStatus(false),
-  fTarget(nil)
+  fStatus()
 {
     // nothing
 }
 
 plClimbMsg::plClimbMsg(const plKey &sender, const plKey &receiver, Command command, Direction direction, bool status, plKey target)
-: plMessage(sender, receiver, nil),
+: plMessage(sender, receiver, nullptr),
   fCommand(command), fDirection(direction),
   fStatus(status),
   fTarget(target)

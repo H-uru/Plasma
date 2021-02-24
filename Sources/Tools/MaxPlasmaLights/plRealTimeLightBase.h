@@ -319,7 +319,7 @@ public:
         kAnimLoopName
     };
     
-    plRTLightBase() { }//meshBuilt = 0; fClassDesc = NULL;  fLightPB = NULL; fIP = NULL; BuildMeshes(true); }
+    plRTLightBase() { }//meshBuilt = 0; fClassDesc = nullptr;  fLightPB = nullptr; fIP = nullptr; BuildMeshes(true); }
     virtual ~plRTLightBase();
     void DeleteThis() override { delete this; }
 
@@ -461,7 +461,7 @@ public:
     void SetOvershoot(int a) override { }
     int GetProjector() override { return 0; }
     void SetProjector(int a) override { fLightPB->SetValue(kUseProjectorBool, 0, a); }
-    ExclList* GetExclList() override { return NULL; }
+    ExclList* GetExclList() override { return nullptr; }
     BOOL Include() override { return false; }
     Texmap* GetProjMap() override; //{ Interval valid = Interval(0,0); Texmap* MyMap; fLightPB->GetValue(kProjMapTexButton, 0, MyMap, valid); return MyMap; }
     void SetProjMap(BitmapInfo* pmap);
@@ -475,7 +475,7 @@ public:
     void SetShadow(int a) override;
     BOOL GetShadowType() override { return -1; } //No Shadows generated ....
     void SetShadowType(int a) override { }       //Until implemented....
-    GenLight* NewLight(int type) override { return NULL; }
+    GenLight* NewLight(int type) override { return nullptr; }
     int Type() override { return -1; }
     void SetSpotShape(int a) override { }
     void SetHSVColor(TimeValue t, class Point3 &b) override;

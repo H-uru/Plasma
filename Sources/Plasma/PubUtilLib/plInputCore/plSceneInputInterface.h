@@ -142,7 +142,7 @@ class plSceneInputInterface : public plInputInterface
         
         void ResetClickableState() override;
 
-        plKey           GetCurrMousedAvatar() const { if( fCurrClickIsAvatar ) return fCurrentClickable; else return nil; }
+        plKey GetCurrMousedAvatar() const { if (fCurrClickIsAvatar) return fCurrentClickable; else return nullptr; }
         static plSceneInputInterface *GetInstance() { return fInstance; }
 };
 

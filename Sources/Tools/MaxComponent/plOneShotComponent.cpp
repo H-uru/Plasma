@@ -108,7 +108,7 @@ plKey OneShotComp::GetOneShotKey(plComponentBase *oneShotComp, plMaxNodeBase *ta
         return comp->GetOneShotKey((plMaxNode*)target);
     }
 
-    return nil;
+    return nullptr;
 }
     
 
@@ -127,7 +127,7 @@ ParamBlockDesc2 gOneShotBlock
     plComponent::kBlkComp, _T("(ex)One Shot Comp"), 0, &gOneShotDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Rollout data
-    IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, NULL,
+    IDD_COMP_ONESHOT, IDS_COMP_ONESHOTS, 0, 0, nullptr,
 
     //params
     kOneShotAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,
@@ -174,7 +174,7 @@ plKey plOneShotComponent::GetOneShotKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 bool plOneShotComponent::IsValid()

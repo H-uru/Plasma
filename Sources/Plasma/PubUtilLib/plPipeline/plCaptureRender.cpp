@@ -129,7 +129,7 @@ void plCaptureRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)
     plCaptureRender::IProcess(pipe, GetAck(), GetRenderTarget());
 
     delete fRenderTarget;
-    fRenderTarget = nil;
+    fRenderTarget = nullptr;
 }
 
 std::vector<plCaptureRenderMsg*> plCaptureRender::fProcessed;

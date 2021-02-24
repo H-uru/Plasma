@@ -64,12 +64,12 @@ uint8_t                       plOGGCodec::fDecodeFlags = 0;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plOGGCodec::plOGGCodec( const plFileName &path, plAudioCore::ChannelSelect whichChan ) : fFileHandle( nil )
+plOGGCodec::plOGGCodec(const plFileName &path, plAudioCore::ChannelSelect whichChan) : fFileHandle()
 {
-    fOggFile = nil;
+    fOggFile = nullptr;
     IOpen( path, whichChan );
     fCurHeaderPos = 0;
-    fHeadBuf = nil;
+    fHeadBuf = nullptr;
 }
 
 void    plOGGCodec::BuildActualWaveHeader()
@@ -120,13 +120,13 @@ void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect wh
 
     /// Open the file as a plain binary stream
     fFileHandle = plFileSystem::Open(path, "rb");
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         /// Create the OGG data struct
         fOggFile = new OggVorbis_File;
 
         /// Open the OGG decompressor
-        if( ov_open( fFileHandle, fOggFile, NULL, 0 ) < 0 )
+        if (ov_open(fFileHandle, fOggFile, nullptr, 0) < 0)
         {
             IError( "Unable to open OGG source file" );
             return;
@@ -185,8 +185,8 @@ plOGGCodec::~plOGGCodec()
 void    plOGGCodec::Close()
 {
     free(fHeadBuf);
-    fHeadBuf = nil;
-    if( fOggFile != nil )
+    fHeadBuf = nullptr;
+    if (fOggFile != nullptr)
     {
         ov_clear( fOggFile );
         delete fOggFile;
@@ -194,10 +194,10 @@ void    plOGGCodec::Close()
         fFileHandle = nullptr; // ov_clear closes this
     }
 
-    if( fFileHandle != nil )
+    if (fFileHandle != nullptr)
     {
         fclose( fFileHandle );
-        fFileHandle = nil;
+        fFileHandle = nullptr;
     }
 }
 

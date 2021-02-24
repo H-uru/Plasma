@@ -50,7 +50,7 @@ class plSingleModMsg : public plMessage
 {
 public:
     plSingleModMsg()
-        : plMessage(nil, nil, nil) {}
+        : plMessage(nullptr, nullptr, nullptr) { }
     plSingleModMsg(const plKey &s, 
                 const plKey &r, 
                 const double* t)

@@ -130,7 +130,7 @@ public:
     static PyObject* GetStdErr();
 
     // get the Output to the error file to be displayed
-    static int getOutputAndReset(std::string* output = nil);
+    static int getOutputAndReset(std::string* output = nullptr);
 
     // Writes 'text' to the Python log
     static void WriteToLog(const ST::string& text);

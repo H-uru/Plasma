@@ -133,29 +133,19 @@ class pfGUIMenuItemProc : public pfGUICtrlProcObject
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIPopUpMenu::pfGUIPopUpMenu()
+    : fNeedsRebuilding(), fParent(), fKeyGen(), fSubMenuOpen(-1),
+      fMargin(4), fSkin(), fWaitingForSkin(), fParentNode(),
+      fOriginX(), fOriginY(), fOriginAnchor(), fOriginContext(),
+      fAlignment(kAlignDownRight)
 {
-    fNeedsRebuilding = false;
-    fParent = nil;
-    fKeyGen = nil;
-    fSubMenuOpen = -1;
     SetFlag( kModalOutsideMenus );
-    fMargin = 4;
-    fSkin = nil;
-    fWaitingForSkin = false;
-
-    fParentNode = nil;
-    fOriginX = fOriginY = 0.f;
-    fOriginAnchor = nil;
-    fOriginContext = nil;
-
-    fAlignment = kAlignDownRight;
 }
 
 pfGUIPopUpMenu::~pfGUIPopUpMenu()
 {
-    SetSkin( nil );
+    SetSkin(nullptr);
 
-//  if( fParentNode != nil )
+//  if (fParentNode != nullptr)
 //      fParentNode->GetKey()->UnRefObject();
 
     ITearDownMenu();
@@ -169,7 +159,7 @@ pfGUIPopUpMenu::~pfGUIPopUpMenu()
 bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
-    if( ref != nil )
+    if (ref != nullptr)
     {
         if( ref->fType == kRefSkin )
         {
@@ -179,7 +169,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
                 fWaitingForSkin = false;
             }
             else
-                fSkin = nil;
+                fSkin = nullptr;
 
             fNeedsRebuilding = true;
             if( IsVisible() )
@@ -195,7 +185,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fMenuItems[ ref->fWhich ].fSubMenu = pfGUIPopUpMenu::ConvertNoRef( ref->GetRef() );
             else
-                fMenuItems[ ref->fWhich ].fSubMenu = nil;
+                fMenuItems[ref->fWhich].fSubMenu = nullptr;
             return true;
         }
         else if( ref->fType == kRefOriginAnchor )
@@ -203,7 +193,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fOriginAnchor = plSceneObject::ConvertNoRef( ref->GetRef() );
             else
-                fOriginAnchor = nil;
+                fOriginAnchor = nullptr;
             return true;
         }
         else if( ref->fType == kRefOriginContext )
@@ -211,7 +201,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fOriginContext = pfGUIDialogMod::ConvertNoRef( ref->GetRef() );
             else
-                fOriginContext = nil;
+                fOriginContext = nullptr;
             return true;
         }
         else if( ref->fType == kRefParentNode )
@@ -219,7 +209,7 @@ bool    pfGUIPopUpMenu::MsgReceive( plMessage *msg )
             if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fParentNode = plSceneNode::ConvertNoRef( ref->GetRef() );
             else
-                fParentNode = nil;
+                fParentNode = nullptr;
             return true;
         }
     }
@@ -290,7 +280,7 @@ void    pfGUIPopUpMenu::Write( hsStream *s, hsResMgr *mgr )
     // create nodes at runtime and need to unref and destroy them later. Since we're
     // reading from disk, we'll already have a sceneNode somewhere, so we don't need
     // this.
-    fParentNode = nil;
+    fParentNode = nullptr;
 
     mgr->WriteKey( s, fSkin );
     mgr->WriteKey( s, fOriginAnchor );
@@ -319,7 +309,7 @@ void    pfGUIPopUpMenu::SetEnabled( bool e )
     }
     else if( !e )
     {
-        if( fParent != nil )
+        if (fParent != nullptr)
             pfGUIPopUpMenu::ConvertNoRef( fParent )->fSubMenuOpen = -1;
 
         // Hide our submenus if we have any open
@@ -349,7 +339,7 @@ void    pfGUIPopUpMenu::ISeekToOrigin()
 
     for (pfGUIControlMod* ctrl : fControls)
     {
-        if (ctrl != nil)
+        if (ctrl != nullptr)
         {
             ctrl->SetObjectCenter( x, y );
 
@@ -388,7 +378,7 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
             fSubMenuOpen = -1;
         }
 
-        if( extended == pfGUIMenuItem::kMouseHover && fMenuItems[ idx ].fSubMenu != nil )
+        if (extended == pfGUIMenuItem::kMouseHover && fMenuItems[idx].fSubMenu != nullptr)
         {
             // Open new submenu
             const hsBounds3 &bnds = ctrl->GetBounds();
@@ -398,17 +388,17 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
     }
     else
     {
-        if( fMenuItems[ idx ].fHandler != nil )
+        if (fMenuItems[idx].fHandler != nullptr)
             fMenuItems[ idx ].fHandler->DoSomething( ctrl );
         
         // If item isn't a sub-menu, close this menu. Else add to list of menus to close
         // once the smallest submenu goes away
-        if( fMenuItems[ idx ].fSubMenu == nil )
+        if (fMenuItems[idx].fSubMenu == nullptr)
         {
             // Basically, we want to hide ourselves and as many up in the chain of command as
             // can be hidden
             pfGUIPopUpMenu *menu = this;
-            while( menu != nil && !menu->HasFlag( kStayOpenAfterClick ) )
+            while (menu != nullptr && !menu->HasFlag(kStayOpenAfterClick))
             {
                 menu->Hide();
                 menu = pfGUIPopUpMenu::ConvertNoRef( menu->fParent );
@@ -429,7 +419,7 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
 
 bool    pfGUIPopUpMenu::IBuildMenu()
 {
-    if( fWaitingForSkin && fSkin == nil )
+    if (fWaitingForSkin && fSkin == nullptr)
         return false;       // Still waiting to get our skin before building
 
     pfGUIColorScheme *scheme = new pfGUIColorScheme();
@@ -437,18 +427,18 @@ bool    pfGUIPopUpMenu::IBuildMenu()
     scheme->fBackColor.Set( 1, 1, 1, 1 );
 
     // If we don't have origin points, get them from translating our anchor
-    if( fOriginX == -1 || fOriginY == -1 && fOriginAnchor != nil )
+    if (fOriginX == -1 || fOriginY == -1 && fOriginAnchor != nullptr)
     {
         hsPoint3 scrnPt;
         const plDrawInterface *di = fOriginAnchor->GetDrawInterface();
-        if( di != nil )
+        if (di != nullptr)
         {
             scrnPt = di->GetLocalBounds().GetCenter();
             scrnPt = fOriginAnchor->GetLocalToWorld() * scrnPt;
         }
         else
             scrnPt = fOriginAnchor->GetLocalToWorld().GetTranslate();
-        if( fOriginContext != nil )
+        if (fOriginContext != nullptr)
             scrnPt = fOriginContext->WorldToScreenPoint( scrnPt );
         else
             scrnPt = WorldToScreenPoint( scrnPt );
@@ -461,7 +451,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
 
     float x = fOriginX, y = fOriginY;
     float width = 0.f, height = 0.f;
-    float topMargin = ( fSkin != nil ) ? fSkin->GetBorderMargin() : 0.f;
+    float topMargin = (fSkin != nullptr) ? fSkin->GetBorderMargin() : 0.f;
     
     // First step: loop through and calculate the size of our menu
     // The PROBLEM is that we can't do that unless we have a friggin surface on
@@ -473,23 +463,23 @@ bool    pfGUIPopUpMenu::IBuildMenu()
     {
         uint16_t  thisW, thisH;
         thisW = scratch->CalcStringWidth(item.fName.c_str(), &thisH);
-        if (item.fSubMenu != nil)
+        if (item.fSubMenu != nullptr)
         {
-            if( fSkin != nil )
+            if (fSkin != nullptr)
                 thisW += 4 + ( fSkin->GetElement( pfGUISkin::kSubMenuArrow ).fWidth << 1 );
             else
-                thisW += scratch->CalcStringWidth( " >>", nil );
+                thisW += scratch->CalcStringWidth(" >>", nullptr);
         }
         thisH += 2; // Give us at least one pixel on each side
 
         int margin = fMargin;
-        if( fSkin != nil )
+        if (fSkin != nullptr)
             margin = fSkin->GetBorderMargin() << 1;
 
         if( width < thisW + margin )
             width = (float)(thisW + margin);
 
-        if( fSkin != nil )
+        if (fSkin != nullptr)
             margin = fSkin->GetItemMargin() << 1;
 
         if( height < thisH + margin )
@@ -559,7 +549,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
         float thisOffset = (i == fMenuItems.size() - 1) ? topMargin : 0.f;
 
         pfGUIMenuItem *button = pfGUIMenuItem::ConvertNoRef( pfGUICtrlGenerator::Instance().CreateRectButton( this, fMenuItems[ i ].fName.c_str(), x, y + thisOffset, width, height + thisMargin, mat, true ) );
-        if( button != nil )
+        if (button != nullptr)
         {
             button->SetColorScheme( scheme );
             button->SetName( fMenuItems[ i ].fName.c_str() );
@@ -571,7 +561,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
             button->SetSkin(fSkin, (i == 0) ? pfGUIMenuItem::kTop
                                  : (i == fMenuItems.size() - 1) ? pfGUIMenuItem::kBottom
                                  : pfGUIMenuItem::kMiddle);
-            if( fMenuItems[ i ].fSubMenu != nil )
+            if (fMenuItems[i].fSubMenu != nullptr)
             {
                 button->SetFlag( pfGUIMenuItem::kDrawSubMenuArrow );
                 buildList.emplace_back(pfGUIPopUpMenu::ConvertNoRef(fMenuItems[i].fSubMenu));
@@ -606,12 +596,12 @@ void    pfGUIPopUpMenu::ITearDownMenu()
 {
     for (pfGUIControlMod* ctrl : fControls)
     {
-        if (ctrl != nil)
+        if (ctrl != nullptr)
         {
             // It's not enough to release the key, we have to have the sceneNode release the key, too.
             // Easy enough to do by just setting it's sn to nil
-            if (ctrl->GetTarget() != nil)
-                ctrl->GetTarget()->SetSceneNode(nil);
+            if (ctrl->GetTarget() != nullptr)
+                ctrl->GetTarget()->SetSceneNode(nullptr);
 
             // Now release it from us
             GetKey()->Release(ctrl->GetKey());
@@ -637,12 +627,12 @@ bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, flo
             // Now we pass the click to our parent. Why? Because it's possible that someone above us
             // will either a) also want to hide (cancel the entire menu selection) or b) select
             // another option
-            if( fParent != nil )
+            if (fParent != nullptr)
                 return fParent->HandleMouseEvent( event, mouseX, mouseY, modifiers );
         }
     }
 
-    return ( fParent != nil ) ? r : ( HasFlag( kModalOutsideMenus ) || ( fSubMenuOpen != -1 ) );
+    return (fParent != nullptr) ? r : (HasFlag(kModalOutsideMenus) || (fSubMenuOpen != -1));
 }
 
 //// ClearItems //////////////////////////////////////////////////////////////
@@ -652,7 +642,7 @@ void    pfGUIPopUpMenu::ClearItems()
 {
     for (const pfMenuItem& item : fMenuItems)
     {
-        if (item.fHandler != nil)
+        if (item.fHandler != nullptr)
         {
             if (item.fHandler->DecRef())
                 delete item.fHandler;
@@ -680,11 +670,11 @@ void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handl
 
     newItem.fName = name;
     newItem.fHandler = handler;
-    if( newItem.fHandler != nil )
+    if (newItem.fHandler != nullptr)
         newItem.fHandler->IncRef();
     newItem.fSubMenu = subMenu;
 
-    if( subMenu != nil )
+    if (subMenu != nullptr)
         subMenu->fParent = this;
 
     fNeedsRebuilding = true;
@@ -742,15 +732,15 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
     menu->fOriginY = y;
 
     // By default, share the same skin as the parent
-    if( parent != nil && ( (pfGUIPopUpMenu *)parent )->fSkin != nil )
+    if (parent != nullptr && ((pfGUIPopUpMenu *)parent)->fSkin != nullptr)
     {
         menu->fWaitingForSkin = true;
         hsgResMgr::ResMgr()->SendRef( ( (pfGUIPopUpMenu *)parent )->fSkin->GetKey(), new plGenRefMsg( menu->GetKey(), plRefMsg::kOnCreate, -1, pfGUIPopUpMenu::kRefSkin ), plRefFlags::kActiveRef );
     }
 
     // HACK for now: create us a temp skin to use
-/*  static pfGUISkin *skin = nil;
-    if( skin == nil )
+/*  static pfGUISkin *skin = nullptr;
+    if (skin == nullptr)
     {
         plLocation loc;
         loc.Set( 0x1425 );
@@ -823,10 +813,10 @@ pfGUIPopUpMenu  *pfGUIPopUpMenu::Build( const char *name, pfGUIDialogMod *parent
 void    pfGUIPopUpMenu::SetSkin( pfGUISkin *skin )
 {
     // Just a function wrapper for SendRef
-    if( fSkin != nil )
+    if (fSkin != nullptr)
         GetKey()->Release( fSkin->GetKey() );
 
-    if( skin != nil )
+    if (skin != nullptr)
     {
         hsgResMgr::ResMgr()->SendRef( skin->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefSkin ), plRefFlags::kActiveRef );
         fWaitingForSkin = true;
@@ -849,9 +839,9 @@ pfGUISkin::pfGUISkin()
 pfGUISkin::pfGUISkin(plMipmap* texture)
     : fTexture(texture), fItemMargin(), fBorderMargin()
 {
-    if( fTexture != nil )
+    if (fTexture != nullptr)
     {
-        hsAssert( fTexture->GetKey() != nil, "Creating a GUI skin via a mipmap with no key!" );
+        hsAssert(fTexture->GetKey() != nullptr, "Creating a GUI skin via a mipmap with no key!");
         fTexture->GetKey()->RefObject();
     }
     memset( fElements, 0, sizeof( pfSRect ) * kNumElements );
@@ -859,18 +849,18 @@ pfGUISkin::pfGUISkin(plMipmap* texture)
 
 pfGUISkin::~pfGUISkin()
 {
-    SetTexture( nil );
+    SetTexture(nullptr);
 }
 
 void    pfGUISkin::SetTexture( plMipmap *tex )
 {
-    if( fTexture != nil && fTexture->GetKey() != nil )
+    if (fTexture != nullptr && fTexture->GetKey() != nullptr)
         fTexture->GetKey()->UnRefObject();
 
     fTexture = tex;
-    if( fTexture != nil )
+    if (fTexture != nullptr)
     {
-        hsAssert( fTexture->GetKey() != nil, "Creating a GUI skin via a mipmap with no key!" );
+        hsAssert(fTexture->GetKey() != nullptr, "Creating a GUI skin via a mipmap with no key!");
         fTexture->GetKey()->RefObject();
     }
 }
@@ -921,12 +911,12 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
 bool    pfGUISkin::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( msg );
-    if( ref != nil )
+    if (ref != nullptr)
     {
         if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
             fTexture = plMipmap::ConvertNoRef( ref->GetRef() );
         else
-            fTexture = nil;
+            fTexture = nullptr;
 
         return true;
     }

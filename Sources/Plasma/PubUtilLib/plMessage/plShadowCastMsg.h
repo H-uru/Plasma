@@ -55,8 +55,8 @@ protected:
     plShadowCaster*     fCaster;
 
 public:
-    plShadowCastMsg() : fPipe(nil), fCaster(nil) { SetBCastFlag(kBCastByType); }
-    plShadowCastMsg(plKey sender, plShadowCaster* cast, plPipeline* pipe) : plMessage(sender, nil, nil), fPipe(pipe), fCaster(cast) { SetBCastFlag(kBCastByType); }
+    plShadowCastMsg() : fPipe(), fCaster() { SetBCastFlag(kBCastByType); }
+    plShadowCastMsg(plKey sender, plShadowCaster* cast, plPipeline* pipe) : plMessage(sender, nullptr, nullptr), fPipe(pipe), fCaster(cast) { SetBCastFlag(kBCastByType); }
     ~plShadowCastMsg() {}
 
     CLASSNAME_REGISTER( plShadowCastMsg );

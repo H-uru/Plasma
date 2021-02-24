@@ -85,28 +85,28 @@ plGeometrySpan::~plGeometrySpan()
 
 void    plGeometrySpan::IClearMembers()
 {
-    fVertexData = nil; 
-    fIndexData = nil; 
-    fMaterial = nil; 
+    fVertexData = nullptr;
+    fIndexData = nullptr;
+    fMaterial = nullptr;
     fNumVerts = fNumIndices = 0; 
     fBaseMatrix = fNumMatrices = 0;
     fLocalUVWChans = 0;
     fMaxBoneIdx = 0;
     fPenBoneIdx = 0;
     fCreating = false;
-    fFogEnviron = nil;
+    fFogEnviron = nullptr;
     fProps = 0;
 
     fMinDist = fMaxDist = -1.f;
 
     fWaterHeight = 0;
 
-    fMultColor = nil;
-    fAddColor = nil;
+    fMultColor = nullptr;
+    fAddColor = nullptr;
 
-    fDiffuseRGBA = nil;
-    fSpecularRGBA = nil;
-    fInstanceRefs = nil;
+    fDiffuseRGBA = nullptr;
+    fSpecularRGBA = nullptr;
+    fInstanceRefs = nullptr;
     fInstanceGroupID = kNoGroupID;
     fSpanRefIndex = (uint32_t)-1;
 
@@ -135,7 +135,7 @@ void    plGeometrySpan::ClearBuffers()
 
     // If we have an instanceRefs array, remove ourselves from
     // the array. If we are the last in the array, remove the array itself
-    if( fInstanceRefs != nil )
+    if (fInstanceRefs != nullptr)
     {
         if( fInstanceRefs->GetCount() == 1 )
         {
@@ -152,26 +152,26 @@ void    plGeometrySpan::ClearBuffers()
             fInstanceRefs->Remove( idx );
             removeData = false; // Don't remove data until we're the last one
         }
-        fInstanceRefs = nil;
+        fInstanceRefs = nullptr;
         fInstanceGroupID = kNoGroupID;
     }
 
     if( removeData )
     {
         delete [] fVertexData;
-        fVertexData = nil;
+        fVertexData = nullptr;
 
         delete [] fMultColor;
         delete [] fAddColor;
-        fMultColor = nil;
-        fAddColor = nil;
+        fMultColor = nullptr;
+        fAddColor = nullptr;
     }
 
     delete [] fIndexData;
     delete [] fDiffuseRGBA;
     delete [] fSpecularRGBA;
-    fIndexData = nil;
-    fDiffuseRGBA = fSpecularRGBA = nil;
+    fIndexData = nullptr;
+    fDiffuseRGBA = fSpecularRGBA = nullptr;
 }
 
 //// MakeInstanceOf //////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
 
     /// Adjust the instanceRefs array
     array = instance->fInstanceRefs;
-    if( array == nil )
+    if (array == nullptr)
     {
         // Go find a new groupID
         instance->fInstanceGroupID = IAllocateNewGroupID();
@@ -294,7 +294,7 @@ void plGeometrySpan::UnInstance()
     {
         IUnShareData();
     }
-    fInstanceRefs = nil;
+    fInstanceRefs = nullptr;
     fInstanceGroupID = kNoGroupID;
     fProps &= ~plGeometrySpan::kInstanced;
 }
@@ -333,7 +333,7 @@ void    plGeometrySpan::IClearGroupID( uint32_t groupID )
 //        sets the groupID flag, and returns a pointer to the array.
 //  - The group ID does exist:
 //      - If the array count is less than expectedCount - 1, returns the array
-//      - else sets the hash entry to nil and returns the array. 
+//      - else sets the hash entry to nullptr and returns the array.
 //  Since we want to clear the hash table as soon as possible, but don't want
 //  to search the entire hash table every time to make sure its empty, we
 //  keep an ID of the highest element in the hash table that's set; every time
@@ -347,7 +347,7 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID
 
     groupID--;      // Make it our array index
 
-    if( fInstanceGroups.GetCount() <= groupID || fInstanceGroups[ groupID ] == nil )
+    if (fInstanceGroups.GetCount() <= groupID || fInstanceGroups[groupID] == nullptr)
     {
         // Not yet in the list--make a new hsTArray
         array = new hsTArray<plGeometrySpan *>;
@@ -372,10 +372,10 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID
         if( expectedCount == array->GetCount() + 1 )    // I.E. next Append() will make it ==
         {
             // Done with it, remove from hash table
-            fInstanceGroups[ groupID ] = nil;
+            fInstanceGroups[groupID] = nullptr;
             
             // Find new fHighestReadInstanceGroup
-            for( ; fHighestReadInstanceGroup > 0 && fInstanceGroups[ fHighestReadInstanceGroup - 1 ] == nil; 
+            for (; fHighestReadInstanceGroup > 0 && fInstanceGroups[fHighestReadInstanceGroup - 1] == nullptr;
                    fHighestReadInstanceGroup-- );
 
             if( fHighestReadInstanceGroup == 0 )
@@ -414,13 +414,13 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
     fNumIndices = source->fNumIndices;
     fDecalLevel = source->fDecalLevel;
 
-    if( source->fIndexData != nil )
+    if (source->fIndexData != nullptr)
     {
         fIndexData = new uint16_t[ fNumIndices ];
         memcpy( fIndexData, source->fIndexData, sizeof( uint16_t ) * fNumIndices );
     }
     else
-        fIndexData = nil;
+        fIndexData = nullptr;
 
     if( source->fDiffuseRGBA )
     {
@@ -428,7 +428,7 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
         memcpy( fDiffuseRGBA, source->fDiffuseRGBA, sizeof( uint32_t ) * fNumVerts );
     }
     else 
-        fDiffuseRGBA = nil;
+        fDiffuseRGBA = nullptr;
 
     if( source->fSpecularRGBA )
     {
@@ -436,7 +436,7 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
         memcpy( fSpecularRGBA, source->fSpecularRGBA, sizeof( uint32_t ) * fNumVerts );
     }
     else 
-        fSpecularRGBA = nil;
+        fSpecularRGBA = nullptr;
 
     fLocalToOBB = source->fLocalToOBB;
     fOBBToLocal = source->fOBBToLocal;
@@ -455,10 +455,10 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 
     IDuplicateUniqueData( source );
 
-    fInstanceRefs = nil;
+    fInstanceRefs = nullptr;
     fInstanceGroupID = kNoGroupID;
 
-    if( source->fVertexData != nil )
+    if (source->fVertexData != nullptr)
     {
         size = GetVertexSize( fFormat );
 
@@ -466,7 +466,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
         memcpy( fVertexData, source->fVertexData, size * fNumVerts );
     }
     else
-        fVertexData = nil;
+        fVertexData = nullptr;
 
     if( source->fMultColor )
     {
@@ -475,7 +475,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
     }
     else
     {
-        fMultColor = nil;
+        fMultColor = nullptr;
     }
 
     if( source->fAddColor )
@@ -485,7 +485,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
     }
     else
     {
-        fAddColor = nil;
+        fAddColor = nullptr;
     }
 }
 
@@ -561,11 +561,11 @@ void    plGeometrySpan::Read( hsStream *stream )
     }
     else
     {
-        fVertexData = nil;
-        fMultColor = nil;
-        fAddColor = nil;
-        fDiffuseRGBA = nil;
-        fSpecularRGBA = nil;
+        fVertexData = nullptr;
+        fMultColor = nullptr;
+        fAddColor = nullptr;
+        fDiffuseRGBA = nullptr;
+        fSpecularRGBA = nullptr;
     }
 
     if( fNumIndices > 0 )
@@ -574,7 +574,7 @@ void    plGeometrySpan::Read( hsStream *stream )
         stream->ReadLE16( fNumIndices, fIndexData );
     }
     else
-        fIndexData = nil;
+        fIndexData = nullptr;
 
     // Read the group ID, then look up our instanceRef array from it
     fInstanceGroupID = stream->ReadLE32();
@@ -584,7 +584,7 @@ void    plGeometrySpan::Read( hsStream *stream )
 
         fInstanceRefs = IGetInstanceGroup( fInstanceGroupID, count );
         fInstanceRefs->Append( this );
-        hsAssert( fInstanceRefs != nil, "Cannot locate fInstanceRefs on plGeometrySpan::Read()" );
+        hsAssert(fInstanceRefs != nullptr, "Cannot locate fInstanceRefs on plGeometrySpan::Read()");
     }
 }
 
@@ -657,7 +657,7 @@ void    plGeometrySpan::Write( hsStream *stream )
         stream->WriteLE32( fInstanceRefs->GetCount() );
     else
     {
-        hsAssert( fInstanceRefs == nil, "Nil instanceRefs array but no group ID, non sequitur" );
+        hsAssert(fInstanceRefs == nullptr, "Nil instanceRefs array but no group ID, non sequitur");
     }
 }
 
@@ -730,11 +730,11 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint3
     hsAssert( fCreating, "Calling AddVertex() on a non-creating plGeometrySpan!" );
 
     // UV channels
-    if( uvPtrArray != nil )
+    if (uvPtrArray != nullptr)
     {
         for( i = 0; i < kMaxNumUVChannels; i++ )
         {
-            if( uvPtrArray[ i ] == nil )
+            if (uvPtrArray[i] == nullptr)
                 break;
             vert.fUVs[ i ] = *(uvPtrArray[ i ]);
         }
@@ -829,7 +829,7 @@ void    plGeometrySpan::AddVertexArray( uint32_t count, hsPoint3 *positions, hsV
     for( i = 0; i < count; i++, dest++ )
     {
         fVertAccum[ dest ].fPosition = positions[ i ];
-        if( normals != nil )
+        if (normals != nullptr)
         {
             // Stupid hsPoint3...I COULD change it, but why?
             fVertAccum[ dest ].fNormal.fX = normals[ i ].fX;
@@ -839,7 +839,7 @@ void    plGeometrySpan::AddVertexArray( uint32_t count, hsPoint3 *positions, hsV
         else
             fVertAccum[ dest ].fNormal.Set( 0, 0, 0 );
 
-        if( colors != nil )
+        if (colors != nullptr)
             fVertAccum[ dest ].fColor = colors[ i ];
         else
             fVertAccum[ dest ].fColor = 0xffffffff;
@@ -885,11 +885,11 @@ void    plGeometrySpan::EndCreate()
     if( fVertAccum.GetCount() <= 0 )
     {
         delete [] fVertexData;
-        fVertexData = nil;
+        fVertexData = nullptr;
         fNumVerts = 0;
 
         delete [] fIndexData;
-        fIndexData = nil;
+        fIndexData = nullptr;
         fNumIndices = 0;
         fVertAccum.Reset();
         fIndexAccum.Reset();
@@ -902,9 +902,9 @@ void    plGeometrySpan::EndCreate()
     bounds.MakeEmpty();
     size = GetVertexSize( fFormat );
 
-    if( fVertexData == nil || fNumVerts < fVertAccum.GetCount() )
+    if (fVertexData == nullptr || fNumVerts < fVertAccum.GetCount())
     {
-        if( fVertexData != nil )
+        if (fVertexData != nullptr)
             delete [] fVertexData;
 
         fNumVerts = fVertAccum.GetCount();
@@ -981,12 +981,12 @@ void    plGeometrySpan::EndCreate()
     if( fIndexAccum.GetCount() == 0 )       // Allowed for patches
     {
         delete [] fIndexData;
-        fIndexData = nil;
+        fIndexData = nullptr;
         fNumIndices = 0;
     }
-    else if( fIndexData == nil || fNumIndices < fIndexAccum.GetCount() )
+    else if (fIndexData == nullptr || fNumIndices < fIndexAccum.GetCount())
     {
-        if( fIndexData != nil )
+        if (fIndexData != nullptr)
             delete [] fIndexData;
 
         fNumIndices = fIndexAccum.GetCount();
@@ -1045,7 +1045,7 @@ void    plGeometrySpan::ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 
     color->g = ( ( hex >>  8 ) & 0xff ) / 255.0f;
     color->b = ( ( hex >>  0 ) & 0xff ) / 255.0f;
 
-    if( specColor != nil )
+    if (specColor != nullptr)
     {
         specColor->a = ( ( spec >> 24 ) & 0xff ) / 255.0f;
         specColor->r = ( ( spec >> 16 ) & 0xff ) / 255.0f;
@@ -1079,7 +1079,7 @@ void    plGeometrySpan::ExtractVertex( uint32_t index, hsPoint3 *pos, hsVector3 
 
     /// Diffuse color
     *color = fDiffuseRGBA[ index ];
-    if( specColor != nil )
+    if (specColor != nullptr)
         *specColor = fSpecularRGBA[ index ];
 }
 
@@ -1188,7 +1188,7 @@ void    plGeometrySpan::StuffVertex( uint32_t index, hsColorRGBA *color, hsColor
     
     fDiffuseRGBA[ index ] = ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
 
-    if( specColor != nil )
+    if (specColor != nullptr)
     {
         a = (uint8_t)( specColor->a >= 1 ? 255 : specColor->a <= 0 ? 0 : specColor->a * 255.0 );
         r = (uint8_t)( specColor->r >= 1 ? 255 : specColor->r <= 0 ? 0 : specColor->r * 255.0 );

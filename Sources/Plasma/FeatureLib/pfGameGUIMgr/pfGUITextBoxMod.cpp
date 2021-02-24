@@ -66,7 +66,7 @@ pfGUITextBoxMod::pfGUITextBoxMod()
 {
 //  SetFlag( kWantsInterest );
     SetFlag( kIntangible );
-    fText = nil;
+    fText = nullptr;
     fUseLocalizationPath = false;
 }
 
@@ -105,7 +105,7 @@ void    pfGUITextBoxMod::IPostSetUpDynTextMap()
 
 void    pfGUITextBoxMod::IUpdate()
 {
-    if( fDynTextMap == nil || !fDynTextMap->IsValid() )
+    if (fDynTextMap == nullptr || !fDynTextMap->IsValid())
         return;
 
     if( HasFlag( kCenterJustify ) )
@@ -122,7 +122,7 @@ void    pfGUITextBoxMod::IUpdate()
         drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).to_wchar().data();
     else
     {
-        if( fText != nil )
+        if (fText != nullptr)
         {
             int lang = plLocalization::GetLanguage();
             std::vector<std::wstring> translations = plLocalization::StringToLocal(fText);
@@ -141,7 +141,7 @@ void    pfGUITextBoxMod::IUpdate()
 
 void pfGUITextBoxMod::PurgeDynaTextMapImage()
 {
-    if ( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
         fDynTextMap->PurgeImage();
 }
 
@@ -162,7 +162,7 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
         delete [] text;
     }
     else
-        fText = nil;
+        fText = nullptr;
 
     fUseLocalizationPath = s->ReadBool();
     if (fUseLocalizationPath)
@@ -175,7 +175,7 @@ void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    if( fText == nil )
+    if (fText == nullptr)
         s->WriteLE32( 0 );
     else
     {
@@ -218,7 +218,7 @@ void    pfGUITextBoxMod::SetText( const char *text )
         fText = hsStringToWString(text);
     }
     else
-        fText = nil;
+        fText = nullptr;
     IUpdate();
 }
 
@@ -231,7 +231,7 @@ void    pfGUITextBoxMod::SetText( const wchar_t *text )
         wcscpy(fText,text);
     }
     else
-        fText = nil;
+        fText = nullptr;
     IUpdate();
 }
 

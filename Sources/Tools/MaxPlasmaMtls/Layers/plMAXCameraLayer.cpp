@@ -90,7 +90,7 @@ public:
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
 
         switch (msg)
         {
@@ -173,7 +173,7 @@ const char *plMAXCameraLayer::kUVStrings[] = { "1", "2", "3", "4", "5", "6", "7"
 const uint8_t plMAXCameraLayer::kMaxUVSrc = 8;
 
 plMAXCameraLayer::plMAXCameraLayer() :
-fParmsPB(NULL),
+fParmsPB(),
 fIValid(NEVER)
 {
     plMAXCameraLayerDesc.MakeAutoParamBlocks(this);
@@ -236,7 +236,7 @@ RefTargetHandle plMAXCameraLayer::GetReference(int i)
     switch (i)
     {
     case kRefMain:      return fParmsPB;
-    default:                return NULL;
+    default:            return nullptr;
     }
 }
 
@@ -262,7 +262,7 @@ IParamBlock2* plMAXCameraLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fParmsPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -271,7 +271,7 @@ IParamBlock2* plMAXCameraLayer::GetParamBlockByID(BlockID id)
     if (fParmsPB->ID() == id)
         return fParmsPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget
@@ -294,7 +294,7 @@ Animatable* plMAXCameraLayer::SubAnim(int i)
     switch (i)
     {
         case kRefMain:      return fParmsPB;
-        default: return NULL;
+        default:            return nullptr;
     }
 }
 
@@ -406,7 +406,7 @@ void plMAXCameraLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plMAXCameraLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return nil;
+    return nullptr;
 }
 
 DWORD plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
@@ -416,5 +416,5 @@ DWORD plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 
 const char *plMAXCameraLayer::GetTextureName( int which )
 {
-    return NULL;
+    return nullptr;
 }

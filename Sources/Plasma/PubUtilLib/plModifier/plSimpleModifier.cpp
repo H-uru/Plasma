@@ -93,7 +93,7 @@ void plSimpleModifier::AddTarget(plSceneObject* o)
 void plSimpleModifier::RemoveTarget(plSceneObject* o)
 {
     hsAssert(o == fTarget, "Removing target I don't have");
-    fTarget = nil;
+    fTarget = nullptr;
 }
 
 void plSimpleModifier::IBegin()

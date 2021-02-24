@@ -111,7 +111,7 @@ ParamBlockDesc2 gSmoothBk
 (   
  plComponent::kBlkComp, _T("Smooth"), 0, &gSmoothDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_SMOOTH, IDS_COMP_SMOOTHS, 0, 0, NULL,
+    IDD_COMP_SMOOTH, IDS_COMP_SMOOTHS, 0, 0, nullptr,
 
     plSmoothComponent::kSmoothAngle, _T("SmoothAngle"),     TYPE_FLOAT, 0, 0,
         p_default, 75.0f,
@@ -225,7 +225,7 @@ bool plSmoothComponent::IReShade(plErrorMsg* pErrMsg)
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
         if( node )
-            node->ShadeMesh(pErrMsg, nil);
+            node->ShadeMesh(pErrMsg, nullptr);
     }
     return true;
 }
@@ -275,7 +275,7 @@ ParamBlockDesc2 gSmoothAvBk
 (   
  plComponent::kBlkComp, _T("SmoothAv"), 0, &gSmoothAvDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_SMOOTHAV, IDS_COMP_SMOOTHAV, 0, 0, NULL,
+    IDD_COMP_SMOOTHAV, IDS_COMP_SMOOTHAV, 0, 0, nullptr,
 
     plSmoothAvComponent::kSmoothAngle, _T("SmoothAngle"),       TYPE_FLOAT, 0, 0,
         p_default, 75.0f,
@@ -378,7 +378,7 @@ bool plSmoothAvComponent::IReShade(plErrorMsg* pErrMsg)
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
         if( node )
-            node->ShadeMesh(pErrMsg, nil);
+            node->ShadeMesh(pErrMsg, nullptr);
     }
     return true;
 }
@@ -426,7 +426,7 @@ ParamBlockDesc2 gSmoothBaseBk
 (   
     plComponent::kBlkComp, _T("SmoothBase"), 0, &gSmoothBaseDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_SMOOTHBASE, IDS_COMP_SMOOTHBASE, 0, 0, NULL,
+    IDD_COMP_SMOOTHBASE, IDS_COMP_SMOOTHBASE, 0, 0, nullptr,
 
     plSmoothBaseComponent::kSmoothAngle, _T("SmoothAngle"),     TYPE_FLOAT, 0, 0,
         p_default, 75.0f,
@@ -476,16 +476,16 @@ bool plSmoothBaseComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 plSmoothBaseComponent* plSmoothBaseComponent::GetSmoothBaseComp(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( comp->ClassID() == CID_SMOOTHBASE )
         return (plSmoothBaseComponent*)comp;
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -796,7 +796,7 @@ bool plSmoothSnapComponent::IReShade(plErrorMsg* pErrMsg)
     {
         plMaxNode *node = (plMaxNode*)GetTarget(i);
         if( node )
-            node->ShadeMesh(pErrMsg, nil);
+            node->ShadeMesh(pErrMsg, nullptr);
     }
     return true;
 }

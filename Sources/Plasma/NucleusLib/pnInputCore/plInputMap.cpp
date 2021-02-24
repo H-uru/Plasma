@@ -64,7 +64,7 @@ const char      *plInputMap::ConvertControlCodeToString( ControlEventCode code )
         if( fCmdConvert[ i ].fCode == code )
             return fCmdConvert[ i ].fDesc;
     }
-    return nil;
+    return nullptr;
 }
 
 //
@@ -121,16 +121,16 @@ plKeyBinding::plKeyBinding()
     fCodeFlags = 0;
     fKey1 = plKeyCombo::kUnmapped;
     fKey2 = plKeyCombo::kUnmapped;
-    fString = nil;
+    fString = nullptr;
 }
 
-plKeyBinding::plKeyBinding( ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string /*= nil*/ )
+plKeyBinding::plKeyBinding(ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string /*= nullptr*/)
 {
     fCode = code;
     fCodeFlags = codeFlags;
     fKey1 = key1;
     fKey2 = key2;
-    fString = ( string == nil ) ? nil : hsStrcpy( string );
+    fString = (string == nullptr) ? nullptr : hsStrcpy(string);
 }
 
 plKeyBinding::~plKeyBinding()
@@ -190,7 +190,7 @@ void    plKeyMap::ClearAll()
 
 bool    plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
 {
-    if( IFindBinding( code ) != nil )
+    if (IFindBinding(code) != nullptr)
         return false;
 
     fBindings.emplace_back(new plKeyBinding(code, codeFlags, plKeyCombo::kUnmapped, plKeyCombo::kUnmapped));
@@ -203,7 +203,7 @@ bool    plKeyMap::AddCode( ControlEventCode code, uint32_t codeFlags )
 
 bool    plKeyMap::AddConsoleCommand( const char *command )
 {
-    if( IFindConsoleBinding( command ) != nil )
+    if (IFindConsoleBinding(command) != nullptr)
         return false;
 
     fBindings.emplace_back(new plKeyBinding(B_CONTROL_CONSOLE_COMMAND,
@@ -224,7 +224,7 @@ plKeyBinding    *plKeyMap::IFindBinding( ControlEventCode code ) const
             return binding;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// IFindBindingByKey ///////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ plKeyBinding    *plKeyMap::IFindBindingByKey( const plKeyCombo &combo ) const
             return binding;
     }
 
-    return nil;
+    return nullptr;
 }
 
 // Find ALL bindings that could be triggered by this combo. Meaning that if we have multiple
@@ -282,7 +282,7 @@ plKeyBinding    *plKeyMap::IFindConsoleBinding( const char *command ) const
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 //// IActuallyBind ///////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ void    plKeyMap::IActuallyBind( plKeyBinding *binding, const plKeyCombo &combo,
 
 bool    plKeyMap::BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref /*= kNoPreference*/ )
 {
-    plKeyBinding* binding = nil;
+    plKeyBinding* binding = nullptr;
 
     // Control combos are ok. Binding directly to control is not.
     if ( combo.fKey == KEY_CTRL )
@@ -345,13 +345,13 @@ bool    plKeyMap::BindKey( const plKeyCombo &combo, ControlEventCode code, BindP
     {
         // Make sure key isn't already used
         binding = IFindBindingByKey( combo );
-        if( binding != nil )
+        if (binding != nullptr)
             return false;
     }
 
     // Get binding for this code
     binding = IFindBinding( code );
-    if( binding == nil )
+    if (binding == nullptr)
         return false;
 
     IActuallyBind( binding, combo, pref );
@@ -363,7 +363,7 @@ bool    plKeyMap::BindKey( const plKeyCombo &combo, ControlEventCode code, BindP
 
 bool    plKeyMap::BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref /*= kNoPreference*/ )
 {
-    plKeyBinding* binding = nil;
+    plKeyBinding* binding = nullptr;
 
     // Control combos are ok. Binding directly to control is not.
     if ( combo.fKey == KEY_CTRL )
@@ -374,13 +374,13 @@ bool    plKeyMap::BindKeyToConsoleCmd( const plKeyCombo &combo, const char *comm
     {
         // Make sure key isn't already used
         binding = IFindBindingByKey( combo );
-        if( binding != nil )
+        if (binding != nullptr)
             return false;
     }
 
     // Get binding for this code
     binding = IFindConsoleBinding( command );
-    if( binding == nil )
+    if (binding == nullptr)
         return false;
 
     IActuallyBind( binding, combo, pref );
@@ -388,7 +388,7 @@ bool    plKeyMap::BindKeyToConsoleCmd( const plKeyCombo &combo, const char *comm
 }
 
 //// FindBinding /////////////////////////////////////////////////////////////
-//  Searches for the binding for a given code. Returns nil if not found
+//  Searches for the binding for a given code. Returns nullptr if not found
 
 const plKeyBinding  *plKeyMap::FindBinding( ControlEventCode code ) const
 {
@@ -446,7 +446,7 @@ void    plKeyMap::UnmapKey( const plKeyCombo &combo )
 
     // Just in case we're in multiple bindings, even tho we are guarding against
     // that
-    while( ( binding = IFindBindingByKey( combo ) ) != nil )
+    while ((binding = IFindBindingByKey(combo)) != nullptr)
     {
         if( binding->GetKey1() == combo )
             binding->SetKey1( plKeyCombo::kUnmapped );
@@ -461,7 +461,7 @@ void    plKeyMap::UnmapKey( const plKeyCombo &combo )
 void    plKeyMap::UnmapBinding( ControlEventCode code )
 {
     plKeyBinding *binding = IFindBinding( code );
-    if( binding != nil )
+    if (binding != nullptr)
         binding->ClearKeys();
 }
 
@@ -520,7 +520,7 @@ const char* plKeyMap::ConvertVKeyToChar( uint32_t vk )
             return (keyConvert[i].fKeyName);
     }
 
-    return nil;
+    return nullptr;
 }
 
 plKeyDef plKeyMap::ConvertCharToVKey( const char *c )
@@ -698,7 +698,7 @@ void plKeyMap::ICheckAndBindDupe(plKeyDef origKey, plKeyDef dupeKey)
         {
             combo = binding->GetMatchingKey(origKey);
             combo.fKey = dupeKey;
-            if (IFindBindingByKey(combo) == nil)
+            if (IFindBindingByKey(combo) == nullptr)
                 IActuallyBind(binding, combo, kNoPreference);
         }
     }   

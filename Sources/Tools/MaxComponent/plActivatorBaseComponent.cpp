@@ -61,14 +61,14 @@ plKey plActivatorBaseComponent::GetLogicKey(plMaxNode* node)
     if (it != fLogicModKeys.end())
         return it->second;
 
-    return nil;
+    return nullptr;
 }
 
 void plActivatorBaseComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers)
 {
     // Add the guys who want to be notified by all instances
-    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nil);
-    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nil);
+    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nullptr);
+    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nullptr);
     for (; lowIt != highIt; lowIt++)
         receivers.emplace_back(lowIt->second);
 

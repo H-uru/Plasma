@@ -63,7 +63,7 @@ public:
     }
     bool Get( uint32_t key, T*& outItem, bool remove=true )
     {
-        outItem = nil;
+        outItem = nullptr;
         Items::iterator ii = fItems.find( key );
         if ( ii==fItems.end() )
             return false;

@@ -103,7 +103,7 @@ plLightInfo::plLightInfo()
 
 plLightInfo::~plLightInfo()
 {
-    if( fNextDevPtr != nil || fPrevDevPtr != nil )
+    if (fNextDevPtr != nullptr || fPrevDevPtr != nullptr)
         Unlink();
 
     hsRefCnt_SafeUnRef( fDeviceRef );
@@ -281,7 +281,7 @@ void plLightInfo::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
     if( IGetIsect() )
         IGetIsect()->SetTransform(fLightToWorld, fWorldToLight);
 
-    if( fDeviceRef != nil )
+    if (fDeviceRef != nullptr)
         fDeviceRef->SetDirty( true );
 
     fProxyGen->SetTransform(fLightToWorld, fWorldToLight);
@@ -410,10 +410,10 @@ bool plLightInfo::MsgReceive(plMessage* msg)
             switch( refMsg->fType )
             {
             case kProjection:
-                fProjection = nil;
+                fProjection = nullptr;
                 break;
             case kSoftVolume:
-                fSoftVolume = nil;
+                fSoftVolume = nullptr;
                 break;
             case kVisRegion:
                 IRemoveVisRegion(plVisRegion::ConvertNoRef(refMsg->GetRef()));
@@ -450,7 +450,7 @@ bool plLightInfo::MsgReceive(plMessage* msg)
 void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     hsRefCnt_SafeUnRef( fDeviceRef );
-    fDeviceRef = nil;
+    fDeviceRef = nullptr;
 
     plObjInterface::Read(s, mgr);
 
@@ -527,7 +527,7 @@ void plLightInfo::ISetSceneNode(plKey node)
     }
     fSceneNode = node;
 
-    if( fSceneNode != nil )
+    if (fSceneNode != nullptr)
     {
         if( !fRegisteredForRenderMsg )
         {
@@ -558,13 +558,13 @@ void    plLightInfo::Unlink()
         fNextDevPtr->fPrevDevPtr = fPrevDevPtr;
     *fPrevDevPtr = fNextDevPtr;
 
-    fNextDevPtr = nil;
-    fPrevDevPtr = nil;
+    fNextDevPtr = nullptr;
+    fPrevDevPtr = nullptr;
 }
 
 void    plLightInfo::Link( plLightInfo **back )
 {
-    hsAssert( fNextDevPtr == nil && fPrevDevPtr == nil, "Trying to link a lightInfo that's already linked" );
+    hsAssert(fNextDevPtr == nullptr && fPrevDevPtr == nullptr, "Trying to link a lightInfo that's already linked");
 
     fNextDevPtr = *back;
     if( *back )
@@ -724,7 +724,7 @@ plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, std::vecto
                                                             mat, 
                                                             fLightToWorld, 
                                                             true,
-                                                            nil,
+                                                            nullptr,
                                                             &idx, 
                                                             addTo );
 
@@ -736,11 +736,11 @@ plDrawableSpans* plLimitedDirLightInfo::CreateProxy(hsGMaterial* mat, std::vecto
 //////////////////////////////////////////////////////////////////////////
 // Omni
 plOmniLightInfo::plOmniLightInfo()
-:   fAttenConst(0),
+:   fAttenConst(),
     fAttenLinear(1.f),
-    fAttenQuadratic(0),
-    fAttenCutoff(0),
-    fSphere(nil)
+    fAttenQuadratic(),
+    fAttenCutoff(),
+    fSphere()
 {
 }
 
@@ -832,7 +832,7 @@ void plOmniLightInfo::IRefresh()
     else
     {
         delete fSphere;
-        fSphere = nil;
+        fSphere = nullptr;
     }
 }
 
@@ -879,7 +879,7 @@ plDrawableSpans* plOmniLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint
                                                         mat, 
                                                         fLightToWorld, 
                                                         true,
-                                                        nil,
+                                                        nullptr,
                                                         &idx,
                                                         addTo);
 
@@ -1016,7 +1016,7 @@ plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, std::vector<uint
                                                         mat, 
                                                         fLightToWorld, 
                                                         true,
-                                                        nil,
+                                                        nullptr,
                                                         &idx,
                                                         addTo);
     return draw;

@@ -169,8 +169,8 @@ class pfGUIDialogMod : public plSingleModifier
                 fNext->fPrevPtr = fPrevPtr;
             *fPrevPtr = fNext;
 
-            fPrevPtr = nil;
-            fNext = nil;
+            fPrevPtr = nullptr;
+            fNext = nullptr;
         }
 
         void            SetFocus( pfGUIControlMod *ctrl );

@@ -77,7 +77,7 @@ protected:
 
 
 public:
-    PassBasicDlgProc() : hLockButtons(NULL) {}
+    PassBasicDlgProc() : hLockButtons() { }
     ~PassBasicDlgProc() { if (hLockButtons) ImageList_Destroy(hLockButtons); }
 
     BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
@@ -102,7 +102,7 @@ static PassBasicDlgProc gPassBasicDlgProc;
 
 static ParamBlockDesc2 gPassBasicPB
 (
-    plPassMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetPassMtlDesc(),//NULL,
+    plPassMtl::kBlkBasic, _T("basic"), IDS_PASS_BASIC, GetPassMtlDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plPassMtl::kRefBasic,
 
     // UI

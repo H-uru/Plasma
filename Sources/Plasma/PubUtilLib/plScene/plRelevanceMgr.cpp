@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plIntersect/plRegionBase.h"
 
-plRelevanceMgr* plRelevanceMgr::fInstance = nil;
+plRelevanceMgr* plRelevanceMgr::fInstance = nullptr;
 
 plRelevanceMgr::plRelevanceMgr() : fEnabled(true)
 {
@@ -69,7 +69,7 @@ void plRelevanceMgr::DeInit()
     if (fInstance)
     {
         fInstance->UnRegisterAs(kRelevanceMgr_KEY);
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }
 
@@ -79,7 +79,7 @@ void plRelevanceMgr::IAddRegion(plRelevanceRegion *region)
     int dstIdx = fRegions.GetCount();
     for (i = 0; i < fRegions.GetCount(); i++)
     {
-        if (fRegions[i] == nil)
+        if (fRegions[i] == nullptr)
         {
             dstIdx = i;
             break;
@@ -96,7 +96,7 @@ void plRelevanceMgr::IAddRegion(plRelevanceRegion *region)
 
 void plRelevanceMgr::IRemoveRegion(plRelevanceRegion *region)
 {
-    fRegions[region->fMgrIdx - 1] = nil;
+    fRegions[region->fMgrIdx - 1] = nullptr;
 }
 
 void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout)
@@ -130,7 +130,7 @@ uint32_t plRelevanceMgr::GetNumRegions() const
 {
     int i;
 
-    for (i = fRegions.GetCount(); i > 0 && fRegions[i - 1] == nil; i--);
+    for (i = fRegions.GetCount(); i > 0 && fRegions[i - 1] == nullptr; i--);
 
     return i + 1; // Add 1 for the special zero-region
 }
@@ -173,7 +173,7 @@ void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doIC
     if (localIdx == (uint32_t)-1 || remoteIdx == (uint32_t)-1)
         return;
 
-    if (localIdx - 1 >= fRegions.GetCount() || remoteIdx - 1 >= fRegions.GetCount() || fRegions[localIdx - 1] == nil)
+    if (localIdx - 1 >= fRegions.GetCount() || remoteIdx - 1 >= fRegions.GetCount() || fRegions[localIdx - 1] == nullptr)
         return;
 
     fRegions[localIdx - 1]->fRegionsICareAbout.SetBit(remoteIdx, doICare);

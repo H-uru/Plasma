@@ -90,7 +90,7 @@ protected:
     int16_t                           fRoot;
     mutable hsTArray<plCullNode>    fNodeList; // Scratch list we make the tree from.
     plCullNode*                     IGetRoot() const { return IGetNode(fRoot); }
-    plCullNode*                     IGetNode(int16_t i) const { return i >= 0 ? &fNodeList[i] : nil; }
+    plCullNode*                     IGetNode(int16_t i) const { return i >= 0 ? &fNodeList[i] : nullptr; }
 
     void                ITestNode(const plSpaceTree* space, int16_t who, hsTArray<int16_t>& outList) const; // Appends to outlist
     void                ITestList(const plSpaceTree* space, const hsTArray<int16_t>& inList, hsTArray<int16_t>& outList) const;

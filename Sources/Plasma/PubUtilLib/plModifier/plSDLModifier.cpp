@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMessage/plNetMessage.h"
 #include "plSDL/plSDL.h"
 
-plSDLModifier::plSDLModifier() : fStateCache(nil), fSentOrRecvdState(false)
+plSDLModifier::plSDLModifier() : fStateCache(), fSentOrRecvdState()
 {
 }
 
@@ -60,7 +60,7 @@ plSDLModifier::~plSDLModifier()
 
 plKey plSDLModifier::GetStateOwnerKey() const
 { 
-    return GetTarget() ? GetTarget()->GetKey() : nil; 
+    return GetTarget() ? GetTarget()->GetKey() : nullptr;
 }
 
 void plSDLModifier::AddTarget(plSceneObject* so) 

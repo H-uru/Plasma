@@ -54,7 +54,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlTextBox)
 
 PYTHON_INIT_DEFINITION(ptGUIControlTextBox, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -131,7 +131,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setFontSize, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setForeColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setForeColor expects a ptColor");
@@ -149,7 +149,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setForeColor, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setBackColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "setBackColor expects a ptColor");
@@ -208,14 +208,14 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlTextBox, pyGUIControl, "Params: ctrlKey\nP
 // required functions for PyObject interoperability
 PyObject *pyGUIControlTextBox::New(pyKey& gckey)
 {
-    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, NULL, NULL);
+    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlTextBox::New(plKey objkey)
 {
-    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, NULL, NULL);
+    ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     return (PyObject*)newObj;
 }

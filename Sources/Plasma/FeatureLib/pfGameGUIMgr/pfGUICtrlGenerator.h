@@ -96,7 +96,10 @@ class pfGUICtrlGenerator
         pfGUIDialogMod  *IGetDialog();
         pfGUIDialogMod  *IGenerateDialog( const char *name, float scrnWidth, bool show = true );
 
-        plSceneObject   *IGenSceneObject( pfGUIDialogMod *dlg, plDrawable *myDraw, plSceneObject *parent = nil, hsMatrix44 *l2w = nil, hsMatrix44 *w2l = nil );
+        plSceneObject   *IGenSceneObject(pfGUIDialogMod *dlg, plDrawable *myDraw,
+                                         plSceneObject *parent = nullptr,
+                                         hsMatrix44 *l2w = nullptr,
+                                         hsMatrix44 *w2l = nullptr);
 
     public:
         

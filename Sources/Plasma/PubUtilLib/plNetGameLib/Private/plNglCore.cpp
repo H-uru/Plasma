@@ -160,7 +160,7 @@ void NetClientCancelAllTrans () {
 void NetClientDestroy (bool wait) {
 
     if (1 == s_initCount.fetch_sub(1)) {
-        s_errorProc = nil;
+        s_errorProc = nullptr;
 
         GateKeeperDestroy(false);
         FileDestroy(false);

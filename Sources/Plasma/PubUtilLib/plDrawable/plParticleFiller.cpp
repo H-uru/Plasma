@@ -327,13 +327,13 @@ void inline IInlSetNormalViewFace( hsVector3 &partNorm, const hsVector3 &zVec )
 void inline IInlSetNormalStrongestLight( hsVector3 &partNorm, const plParticleCore &particle, 
                                         const plOmniLightInfo *omniLight, const plDirectionalLightInfo *directionLight, const hsVector3 &zVec )
 {
-    if( omniLight != nil )
+    if (omniLight != nullptr)
     {
         hsPoint3 pos = omniLight->GetWorldPosition();
         partNorm.Set( &particle.fPos, &pos );
         partNorm = -partNorm;
     }
-    else if( directionLight != nil )
+    else if (directionLight != nullptr)
     {
         partNorm = -directionLight->GetWorldDirection();
     }
@@ -658,8 +658,8 @@ void plParticleFiller::FillParticles(plPipeline* pipe, plDrawableSpans* drawable
     /// Get the z vector (pointing away from the camera) in worldspace
     hsMatrix44 viewToWorld = pipe->GetCameraToWorld();
 
-    plOmniLightInfo* omniLight = nil;
-    plDirectionalLightInfo* directionLight = nil;
+    plOmniLightInfo* omniLight = nullptr;
+    plDirectionalLightInfo* directionLight = nullptr;
 
     /// Get strongest light, if there is one, for normal generation
     if( span->GetNumLights( false ) > 0 )

@@ -84,7 +84,7 @@ class CritterBehavior : public plArmatureBehavior
 
 public: 
     CritterBehavior(const std::string& name, bool randomStart = false, float fadeInLength = 2.f, float fadeOutLength = 2.f) : plArmatureBehavior(),
-        fAvMod(nil), fCritterBrain(nil), fName(name), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) {}
+        fAvMod(), fCritterBrain(), fName(name), fRandomStartPoint(randomStart), fFadeInLength(fadeInLength), fFadeOutLength(fadeOutLength) { }
     virtual ~CritterBehavior() {}
 
     void Init(plAGAnim* anim, bool loop, plAvBrainCritter* brain, plArmatureMod* body, uint8_t index)
@@ -147,11 +147,11 @@ plAvBrainCritter::~plAvBrainCritter()
     for (size_t i = 0; i < fBehaviors.size(); ++i)
     {
         delete fBehaviors[i];
-        fBehaviors[i] = nil;
+        fBehaviors[i] = nullptr;
     }
 
     delete fWalkingStrategy;
-    fWalkingStrategy = nil;
+    fWalkingStrategy = nullptr;
 
     fUserBehaviors.clear();
     fReceivers.clear();
@@ -240,7 +240,7 @@ plSceneObject* plAvBrainCritter::GetTarget() const
 {
     if (fArmature)
         return fArmature->GetTarget(0);
-    return nil;
+    return nullptr;
 }
 
 void plAvBrainCritter::AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop /* = true */, bool randomStartPos /* = true */,

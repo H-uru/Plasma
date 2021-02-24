@@ -337,7 +337,7 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
     HDC         deskDC;
     int         width, height, bpp, total;
 
-    deskDC = GetDC( nil );
+    deskDC = GetDC(nullptr);
     width = GetDeviceCaps( deskDC, HORZRES );
     height = GetDeviceCaps( deskDC, VERTRES );
     bpp = GetDeviceCaps( deskDC, BITSPIXEL );
@@ -363,7 +363,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
     strcpy( fTempWinClass, "DSTestClass" );
     memset( &tempClass, 0, sizeof( tempClass ) );
     tempClass.lpfnWndProc = DefWindowProc;
-    tempClass.hInstance = GetModuleHandle( nil );
+    tempClass.hInstance = GetModuleHandle(nullptr);
     tempClass.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
     tempClass.lpszClassName = fTempWinClass;
     uint16_t ret = RegisterClass(&tempClass);
@@ -372,7 +372,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
     ITryDirect3DTnL(winRef);
 
     /// Get rid of the class
-    UnregisterClass( fTempWinClass, GetModuleHandle( nil ) );
+    UnregisterClass(fTempWinClass, GetModuleHandle(nullptr));
 #endif
 }
 
@@ -679,14 +679,14 @@ void    hsG3DDeviceSelector::ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRec
             /// Found it!
 
             // Flags to force set
-            if( dsCFTable[ i ].fFlagsToSet != nil )
+            if (dsCFTable[i].fFlagsToSet != nullptr)
             {
                 for( j = 0; j < dsCFTable[ i ].fFlagsToSet[ 0 ]; j++ )
                     record.SetCap( dsCFTable[ i ].fFlagsToSet[ j + 1 ] );
             }
 
             // Flags to force clear
-            if( dsCFTable[ i ].fFlagsToClear != nil )
+            if (dsCFTable[i].fFlagsToClear != nullptr)
             {
                 for( j = 0; j < dsCFTable[ i ].fFlagsToClear[ 0 ]; j++ )
                     record.SetCap( dsCFTable[ i ].fFlagsToClear[ j + 1 ], false );

@@ -126,7 +126,7 @@ public:
         kFollowPlayer,
         kFollowObject
     };
-    void            SetFollowMode(FollowMode m, plKey soKey=nil); // For follow object, set obj, else it's ignored.
+    void            SetFollowMode(FollowMode m, plKey soKey = {}); // For follow object, set obj, else it's ignored.
     FollowMode      GetFollowMode() const;
     plSceneObject*  GetFollowObject() const { return fFaceObj; }
 

@@ -296,7 +296,7 @@ float plLayerAnimationBase::IMakeUniformLength()
 plLayerAnimation::plLayerAnimation()
 :
     plLayerAnimationBase(),
-    fLayerSDLMod(nil)
+    fLayerSDLMod()
 {
     fTimeConvert.SetOwner(this);
 }
@@ -411,12 +411,11 @@ void plLayerAnimation::DefaultAnimation()
 ///////////////////////////////////////////////////////////////////////////////////////
 
 plLayerLinkAnimation::plLayerLinkAnimation() : 
-    fLinkKey(nil), 
     fLeavingAge(true),
     fEnabled(true), 
-    fFadeFlags(0), 
-    fLastFadeFlag(0),
-    fFadeFlagsDirty(false) 
+    fFadeFlags(),
+    fLastFadeFlag(),
+    fFadeFlagsDirty()
 { 
     fIFaceCallback = new plEventCallbackMsg();
     fIFaceCallback->fEvent = kTime;
@@ -550,7 +549,7 @@ void plLayerLinkAnimation::SetFadeFlag(uint8_t flag, bool val)
 bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
 {
     plLinkEffectPrepBCMsg *bcpMsg = plLinkEffectPrepBCMsg::ConvertNoRef(pMsg);
-    if (bcpMsg != nil)
+    if (bcpMsg != nullptr)
     {
         if (bcpMsg->fLinkKey != fLinkKey || bcpMsg->fLeavingAge)
             return true;
@@ -561,7 +560,7 @@ bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
         
         
     plLinkEffectBCMsg *msg = plLinkEffectBCMsg::ConvertNoRef(pMsg);
-    if (msg != nil)
+    if (msg != nullptr)
     {
         if (msg->fLinkKey == fLinkKey)
         {
@@ -665,7 +664,7 @@ bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-plLayerSDLAnimation::plLayerSDLAnimation() : plLayerAnimationBase(), fVar(nil) {}
+plLayerSDLAnimation::plLayerSDLAnimation() : plLayerAnimationBase(), fVar() { }
 
 uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {

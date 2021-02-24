@@ -61,7 +61,8 @@ public:
         fEvent = kTime;
         SetBCastFlag(plMessage::kBCastByExactType);
     }
-    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, bool isLeft) : plEventCallbackMsg(s, nil, nil), fArmature(armature), fIsLeft(isLeft) 
+    plAvatarFootMsg(const plKey& s, plArmatureMod *armature, bool isLeft)
+        : plEventCallbackMsg(s, nullptr, nullptr), fArmature(armature), fIsLeft(isLeft)
     {
         fEvent = kTime;
         SetBCastFlag(plMessage::kBCastByExactType);

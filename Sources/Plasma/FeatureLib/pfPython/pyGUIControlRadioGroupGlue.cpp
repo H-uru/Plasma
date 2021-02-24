@@ -53,7 +53,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptGUIControlRadioGroup)
 
 PYTHON_INIT_DEFINITION(ptGUIControlRadioGroup, args, keywords)
 {
-    PyObject *keyObject = NULL;
+    PyObject *keyObject = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObject))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -99,14 +99,14 @@ PLASMA_DEFAULT_TYPE_WBASE(ptGUIControlRadioGroup, pyGUIControl, "Params: ctrlKey
 // required functions for PyObject interoperability
 PyObject *pyGUIControlRadioGroup::New(pyKey& gckey)
 {
-    ptGUIControlRadioGroup *newObj = (ptGUIControlRadioGroup*)ptGUIControlRadioGroup_type.tp_new(&ptGUIControlRadioGroup_type, NULL, NULL);
+    ptGUIControlRadioGroup *newObj = (ptGUIControlRadioGroup*)ptGUIControlRadioGroup_type.tp_new(&ptGUIControlRadioGroup_type, nullptr, nullptr);
     newObj->fThis->fGCkey = gckey.getKey();
     return (PyObject*)newObj;
 }
 
 PyObject *pyGUIControlRadioGroup::New(plKey objkey)
 {
-    ptGUIControlRadioGroup *newObj = (ptGUIControlRadioGroup*)ptGUIControlRadioGroup_type.tp_new(&ptGUIControlRadioGroup_type, NULL, NULL);
+    ptGUIControlRadioGroup *newObj = (ptGUIControlRadioGroup*)ptGUIControlRadioGroup_type.tp_new(&ptGUIControlRadioGroup_type, nullptr, nullptr);
     newObj->fThis->fGCkey = objkey;
     return (PyObject*)newObj;
 }

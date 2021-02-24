@@ -90,7 +90,7 @@ const plCoordinateInterface* plPhysicalControllerCore::GetSubworldCI()
             return so->GetCoordinateInterface();
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plPhysicalControllerCore::IncrementAngle(float deltaAngle)
@@ -640,10 +640,10 @@ const float plWalkingStrategy::kControlledFlightThreshold = 1.0f;
 // Swim Strategy
 plSwimStrategy::plSwimStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller)
     : plAnimatedMovementStrategy(rootApp, controller),
-    fBuoyancy(0.0f),
-    fSurfaceHeight(0.0f),
-    fCurrentRegion(nil),
-    fHadContacts(false)
+    fBuoyancy(),
+    fSurfaceHeight(),
+    fCurrentRegion(),
+    fHadContacts()
 {
 }
 
@@ -666,7 +666,7 @@ void plSwimStrategy::Apply(float delSecs)
     velocity.fZ += achievedVelocity.fZ;
 
     // Water Current
-    if (fCurrentRegion != nil)
+    if (fCurrentRegion != nullptr)
     {
         float angCurrent = 0.0f;
         hsVector3 linCurrent;
@@ -685,7 +685,7 @@ void plSwimStrategy::Apply(float delSecs)
         velocity.fZ = kTerminalVelocity;
 
     // Reset vars and move controller //
-    fController->SetPushingPhysical(nil);
+    fController->SetPushingPhysical(nullptr);
     fController->SetFacingPushingPhysical(false);
     fHadContacts = false;
 
@@ -703,7 +703,7 @@ void plSwimStrategy::IAdjustBuoyancy()
     // the surface for the avatar to be "at the surface"
     static const float surfaceDepth = 4.0f;
 
-    if (fCurrentRegion == nil)
+    if (fCurrentRegion == nullptr)
     {
         fBuoyancy = 0.f;
         return;

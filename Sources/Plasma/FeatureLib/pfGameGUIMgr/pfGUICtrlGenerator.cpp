@@ -230,8 +230,8 @@ void    pfGUICtrlGenerator::GenerateDialog( const char *name )
 plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDrawable *myDraw, plSceneObject *parent,
                                                         hsMatrix44 *l2w, hsMatrix44 *w2l )
 {
-    plKey snKey = ( dlg != nil ) ? ( dlg->GetTarget() != nil ? dlg->GetTarget()->GetSceneNode() : nil ) : nil;
-    if( snKey == nil )
+    plKey snKey = (dlg != nullptr) ? (dlg->GetTarget() != nullptr ? dlg->GetTarget()->GetSceneNode() : nullptr) : nullptr;
+    if (snKey == nullptr)
         snKey = fDynDlgNodes.back()->GetKey();
 
     hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plNodeRefMsg( snKey, plRefMsg::kOnCreate, 0, plNodeRefMsg::kDrawable ), plRefFlags::kActiveRef );       
@@ -249,20 +249,20 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
     hsgResMgr::ResMgr()->SendRef( newDI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
     hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plIntRefMsg( newDI->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kDrawable ), plRefFlags::kActiveRef );
 
-    if( parent == nil )
+    if (parent == nullptr)
     {
-        parent = !fDynDragBars.empty() ? fDynDragBars.back() : nil;
-        if( parent == nil )
+        parent = !fDynDragBars.empty() ? fDynDragBars.back() : nullptr;
+        if (parent == nullptr)
             parent = dlg->GetTarget();
     }
 
-    if( parent != nil )
+    if (parent != nullptr)
 //      hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plIntRefMsg( parent->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kChild ), plRefFlags::kActiveRef );
-        hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plAttachMsg( parent->GetKey(), nil, plRefMsg::kOnRequest ), plRefFlags::kActiveRef );
+        hsgResMgr::ResMgr()->SendRef(newCI->GetKey(), new plAttachMsg(parent->GetKey(), nullptr, plRefMsg::kOnRequest), plRefFlags::kActiveRef);
     
     newObj->SetSceneNode( snKey );
 
-    if( l2w != nil )
+    if (l2w != nullptr)
     {
         newObj->SetTransform( *l2w, *w2l );
 //      newCI->SetLocalToParent( *l2w, *w2l );
@@ -285,7 +285,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, floa
     material = ICreateTextMaterial( title, color, textColor, width * 20.f, height * 20.f );
 
     pfGUIButtonMod *but = CreateRectButton( dlgToAddTo, title, x, y, width, height, material );
-    if( but != nil )
+    if (but != nullptr)
         but->SetHandler( new pfGUIConsoleCmdProc( consoleCmd ) );
 
     return but;
@@ -362,14 +362,14 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateSphereButton( float x, float y, flo
     l2w.Reset();
     // We bump up the quality since we're actually far closer to these things then the normal
     // world camera would put us
-    myDraw = plDrawableGenerator::GenerateSphericalDrawable( pt, radius, material, l2w,
-                                                            false, nil, nil, nil, 100.f );
+    myDraw = plDrawableGenerator::GenerateSphericalDrawable(pt, radius, material, l2w,
+                                                            false, nullptr, nullptr, nullptr, 100.f);
 
     vec.Set( x, -y, 0 );
     l2w.MakeTranslateMat( &vec );
     l2w.GetInverse( &w2l );
 
-    plSceneObject *newObj = IGenSceneObject( dlgToAddTo, myDraw );//, nil, &l2w, &w2l );
+    plSceneObject *newObj = IGenSceneObject(dlgToAddTo, myDraw);//, nullptr, &l2w, &w2l);
 
     pfGUIButtonMod *newBtn = new pfGUIButtonMod;
     IAddKey( newBtn, "GUIButton" );

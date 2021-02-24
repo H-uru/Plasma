@@ -74,12 +74,12 @@ uint32_t GetBinAddr(const ST::string& textAddr)
     addr = inet_addr(textAddr.c_str());
     if(addr == INADDR_NONE)
     {
-        struct addrinfo* ai = nil;
+        struct addrinfo* ai = nullptr;
         struct addrinfo hints;
         memset(&hints, 0, sizeof(struct addrinfo));
         hints.ai_family = PF_INET;
         hints.ai_flags  = AI_CANONNAME;
-        if (getaddrinfo(textAddr.c_str(), nil, &hints, &ai) != 0)
+        if (getaddrinfo(textAddr.c_str(), nullptr, &hints, &ai) != 0)
         {
             hsAssert(false, "getaddrinfo failed");
             return addr;

@@ -93,7 +93,7 @@ plAudioFileReader* plAudioFileReader::CreateReader(const plFileName& path, plAud
     else if (type == kStreamNative)
         return new plOGGCodec(path, whichChan);
 
-    return nil;
+    return nullptr;
 }
 
 plAudioFileReader* plAudioFileReader::CreateWriter(const plFileName& path, plWAVHeader& header)

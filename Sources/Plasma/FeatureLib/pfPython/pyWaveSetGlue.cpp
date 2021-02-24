@@ -55,7 +55,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptWaveSet)
 
 PYTHON_INIT_DEFINITION(ptWaveSet, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a ptKey");
@@ -98,7 +98,7 @@ PYTHON_METHOD_NOARGS(ptWaveSet, get##funcSuffix, "Returns the attribute's value"
 #define WAVESET_OBJ_DEF(funcSuffix, pyObjType, cObjType) \
 PYTHON_METHOD_DEFINITION(ptWaveSet, set##funcSuffix, args) \
 { \
-    PyObject* sObj = NULL; \
+    PyObject* sObj = nullptr; \
     float secs = 0; \
     if (!PyArg_ParseTuple(args, "O|f", &sObj, &secs)) \
     { \
@@ -218,14 +218,14 @@ PLASMA_DEFAULT_TYPE(ptWaveSet, "Params:key\nCreates a new ptWaveSet");
 // required functions for PyObject interoperability
 PyObject *pyWaveSet::New(plKey key)
 {
-    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
+    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, nullptr, nullptr);
     newObj->fThis->fWaterKey = key;
     return (PyObject*)newObj;
 }
 
 PyObject *pyWaveSet::New(pyKey &key)
 {
-    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, NULL, NULL);
+    ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, nullptr, nullptr);
     newObj->fThis->fWaterKey = key.getKey();
     return (PyObject*)newObj;
 }

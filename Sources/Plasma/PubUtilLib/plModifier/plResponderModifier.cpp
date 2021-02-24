@@ -107,7 +107,7 @@ void plResponderEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 plResponderModifier::~plResponderModifier()
 {
     delete fResponderSDLMod;
-    fResponderSDLMod=nil;
+    fResponderSDLMod = nullptr;
 
     for (int i = 0; i < fStates.Count(); i++)
     {
@@ -210,7 +210,7 @@ bool plResponderModifier::IIsLocalOnlyCmd(plMessage* cmd)
         return true;
 
     plSoundMsg *snd = plSoundMsg::ConvertNoRef( cmd );
-    if( snd != nil && snd->Cmd( plSoundMsg::kIsLocalOnly ) )
+    if (snd != nullptr && snd->Cmd(plSoundMsg::kIsLocalOnly))
         return true;
 
     return false;
@@ -233,7 +233,7 @@ void plResponderModifier::ISetResponderStateFromNotify(plNotifyMsg* msg)
 {
     // set the state of the responder IF they want it to be
     proResponderStateEventData* event = (proResponderStateEventData*)msg->FindEventRecord(proEventData::kResponderState);
-    if (event != nil)
+    if (event != nullptr)
         ISetResponderState((int8_t)(event->fState));
 }
 
@@ -440,7 +440,7 @@ void plResponderModifier::Restore()
             if (callbackMsg)
             {
                 // Create a new message for just the callbacks
-                plMessageWithCallbacks* newCallbackMsg = nil;
+                plMessageWithCallbacks* newCallbackMsg = nullptr;
 
                 if (plAnimCmdMsg* animMsg = plAnimCmdMsg::ConvertNoRef(callbackMsg))
                 {
@@ -480,7 +480,7 @@ void plResponderModifier::Restore()
 plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
 {
     if (!msg)
-        return nil;
+        return nullptr;
 
     if (plAnimCmdMsg* animMsg = plAnimCmdMsg::ConvertNoRef(msg))
     {
@@ -523,7 +523,7 @@ plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
     {
         if( fFlags & kSkipFFSound )
         {
-            return nil;
+            return nullptr;
         }
         if(soundMsg->Cmd(plSoundMsg::kPlay) ||
             soundMsg->Cmd(plSoundMsg::kToggleState)  ||
@@ -591,7 +591,7 @@ plMessage* plResponderModifier::IGetFastForwardMsg(plMessage* msg, bool python)
         return msg;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plResponderModifier::IFastForward(bool python)
@@ -741,7 +741,7 @@ void plResponderModifier::IDebugPlayMsg(plAnimCmdMsg* msg)
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifdef STATUS_LOG
-static plStatusLog *gLog = nil;
+static plStatusLog *gLog = nullptr;
 static std::vector<ST::string> gNoLogStrings;
 #endif // STATUS_LOG
 

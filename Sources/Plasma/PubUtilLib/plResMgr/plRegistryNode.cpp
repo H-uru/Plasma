@@ -126,7 +126,7 @@ hsStream* plRegistryPageNode::OpenStream()
     if (fOpenRequests == 0)
     {
         if (!fStream.Open(fPath, "rb"))
-            return nil;
+            return nullptr;
     }
     fOpenRequests++;
     return &fStream;
@@ -283,7 +283,7 @@ bool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator) const
 bool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, uint16_t classToRestrictTo) const
 {
     plRegistryKeyList* keyList = IGetKeyList(classToRestrictTo);
-    if (keyList != nil)
+    if (keyList != nullptr)
         return keyList->IterateKeys(iterator);
 
     return true;
@@ -292,8 +292,8 @@ bool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, uint16_t c
 plKeyImp* plRegistryPageNode::FindKey(uint16_t classType, const ST::string& name) const
 {
     plRegistryKeyList* keys = IGetKeyList(classType);
-    if (keys == nil)
-        return nil;
+    if (keys == nullptr)
+        return nullptr;
 
     return keys->FindKey(name);
 }
@@ -301,8 +301,8 @@ plKeyImp* plRegistryPageNode::FindKey(uint16_t classType, const ST::string& name
 plKeyImp* plRegistryPageNode::FindKey(const plUoid& uoid) const
 {
     plRegistryKeyList* keys = IGetKeyList(uoid.GetClassType());
-    if (keys == nil)
-        return nil;
+    if (keys == nullptr)
+        return nullptr;
 
     return keys->FindKey(uoid);
 }
@@ -311,14 +311,14 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
 {
     uint16_t classType = key->GetUoid().GetClassType();
     plRegistryKeyList* keys = fKeyLists[classType];
-    if (keys == nil)
+    if (keys == nullptr)
     {
         keys = new plRegistryKeyList(classType);
         fKeyLists[classType] = keys;
     }
 
     // Error check
-    if (keys->FindKey(key->GetUoid().GetObjectName()) != nil)
+    if (keys->FindKey(key->GetUoid().GetObjectName()) != nullptr)
     {
         //char str[512], tempStr[128];
         //sprintf(str, "Attempting to add a key with a duplicate name. Not allowed."
@@ -331,7 +331,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
         for (int i = 0; i < 500; i++)
         {
             ST::string tempName = ST::format("{}{}", key->GetUoid().GetObjectName(), i);
-            if (keys->FindKey(tempName) == nil)
+            if (keys->FindKey(tempName) == nullptr)
             {
                 plUoid uoid(key->GetUoid().GetLocation(), key->GetUoid().GetClassType(), tempName, key->GetUoid().GetLoadMask());
                 key->SetUoid(uoid);
@@ -357,7 +357,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
 void plRegistryPageNode::SetKeyUsed(plKeyImp* key)
 {
     plRegistryKeyList* keys = IGetKeyList(key->GetUoid().GetClassType());
-    if (keys == nil)
+    if (keys == nullptr)
         return;
 
     keys->SetKeyUsed(key);
@@ -366,7 +366,7 @@ void plRegistryPageNode::SetKeyUsed(plKeyImp* key)
 bool plRegistryPageNode::SetKeyUnused(plKeyImp* key)
 {
     plRegistryKeyList* keys = IGetKeyList(key->GetUoid().GetClassType());
-    if (keys == nil)
+    if (keys == nullptr)
         return false;
 
     plRegistryKeyList::LoadStatus loadStatusChange;
@@ -385,7 +385,7 @@ plRegistryKeyList* plRegistryPageNode::IGetKeyList(uint16_t classType) const
     if (it != fKeyLists.end())
         return it->second;
 
-    return nil;
+    return nullptr;
 }
 
 void plRegistryPageNode::DeleteSource()

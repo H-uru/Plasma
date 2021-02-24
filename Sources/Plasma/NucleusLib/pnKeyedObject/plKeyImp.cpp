@@ -79,26 +79,24 @@ hsKeyedObject* plKeyImp::SafeGetObject(const plKeyImp* key) {
 }
 
 plKeyImp::plKeyImp() :
-    fObjectPtr(nil),
+    fObjectPtr(),
     fStartPos(-1),
     fDataLen(-1),
-    fNumActiveRefs(0),
-    fPendingRefs(1),
-    fCloneOwner(nil)
+    fNumActiveRefs(),
+    fPendingRefs(1)
 {
 #ifdef HS_DEBUGGING
-    fClassType = nil;
+    fClassType = nullptr;
 #endif
 }
 
 plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
     fUoid(u),
-    fObjectPtr(nil),
+    fObjectPtr(),
     fStartPos(pos),
     fDataLen(len),
-    fNumActiveRefs(0),
-    fPendingRefs(1),
-    fCloneOwner(nil)
+    fNumActiveRefs(),
+    fPendingRefs(1)
 {
     plProfile_NewMem(KeyMem, CalcKeySize(this));
 
@@ -119,9 +117,9 @@ plKeyImp::~plKeyImp()
     hsStatusMessage(buf);
 #endif
 
-    hsAssert(fObjectPtr == nil, "Deleting non-nil key!  Bad idea!");
+    hsAssert(fObjectPtr == nullptr, "Deleting non-nil key!  Bad idea!");
 
-    if (fCloneOwner != nil)
+    if (fCloneOwner != nullptr)
     {
         // Must be a clone, remove us from our parent list
         ((plKeyImp*)fCloneOwner)->RemoveClone(this);
@@ -166,7 +164,7 @@ hsKeyedObject* plKeyImp::ObjectIsLoaded() const
 // Copy the contents of p for cloning process
 void plKeyImp::CopyForClone(const plKeyImp *p, uint32_t playerID, uint32_t cloneID)
 {
-    fObjectPtr = nil;               // the clone object start as nil
+    fObjectPtr = nullptr;           // the clone object start as nil
     fUoid = p->GetUoid();           // we will set the UOID the same to start
 
 #ifdef HS_DEBUGGING
@@ -226,7 +224,7 @@ void plKeyImp::Write(hsStream* s)
 void plKeyImp::WriteObject(hsStream* stream)
 {
     hsKeyedObject* ko = ObjectIsLoaded();
-    if (ko == nil)
+    if (ko == nullptr)
     {
         // Mark the key as not written
         fStartPos = (uint32_t)-1;
@@ -247,7 +245,7 @@ void plKeyImp::UnRegister()     // called from plRegistry
     if (ko)
     {
         INotifyDestroyed();
-        fObjectPtr = nil;
+        fObjectPtr = nullptr;
         fNumActiveRefs = 0;
 
         hsRefCnt_SafeUnRef(ko);
@@ -259,7 +257,7 @@ void plKeyImp::UnRegister()     // called from plRegistry
 hsKeyedObject* plKeyImp::RefObject(plRefFlags::Type flags)
 {
     if ((flags == plRefFlags::kPassiveRef) && !ObjectIsLoaded())
-        return nil;
+        return nullptr;
 
 #ifdef LOG_ACTIVE_REFS
     if (IsTrackedKey(this))
@@ -299,7 +297,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
 
 hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p) 
 {
-    hsKeyedObject* retVal = nil;
+    hsKeyedObject* retVal = nullptr;
 
     // If our object is the only one with a ref to us, this function will crash, so we 
     // make sure we have an extra ref, just like in UnRegister().
@@ -327,8 +325,8 @@ hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p)
         if (fObjectPtr)
             UnRegister();
 
-        fObjectPtr = nil;
-        retVal = nil;
+        fObjectPtr = nullptr;
+        retVal = nullptr;
     }
 
     return retVal;
@@ -403,7 +401,7 @@ void plKeyImp::RemoveClone(plKeyImp* key) const
         if (idx != fClones.cend())
         {
             fClones.erase(idx);
-            key->fCloneOwner = nil;
+            key->fCloneOwner = nullptr;
         }
     }
 }
@@ -431,7 +429,7 @@ plKey plKeyImp::GetCloneByIdx(size_t idx)
     if (idx < fClones.size())
         return plKey::Make(fClones[idx]);
 
-    return nil;
+    return nullptr;
 }
 
 void plKeyImp::SatisfyPending(plRefMsg* msg) const
@@ -454,7 +452,7 @@ void plKeyImp::SatisfyPending() const
 
 void plKeyImp::ISetupNotify(plRefMsg* msg, plRefFlags::Type flags)
 {
-    msg->SetSender(nil);
+    msg->SetSender(nullptr);
 
     AddNotifyCreated(msg, flags);
 
@@ -495,7 +493,7 @@ void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
 
 // We could just call NotifyCreated() on all our fRefs, and then fix
 // up fNotified to only get set when the message actually was delivered (i.e.
-// refMsg->GetReceiver(0)->GetObjectPtr() != nil. But that only really works
+// refMsg->GetReceiver(0)->GetObjectPtr() != nullptr. But that only really works
 // if we guarantee the refMsg->GetNumReceivers() == 1.
 // This looks like it'll take forever to run, but this is only called right
 // when our object has just been loaded, at which time normally fRefs.GetCount() == 0.

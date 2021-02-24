@@ -53,10 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 pyNotify::pyNotify()
+    : fNetPropagate(true), fNetForce(false)
 {
-    fSenderKey = nil;
-    fNetPropagate = true;
-    fNetForce = false;
     fBuildMsg.fType = plNotifyMsg::kActivator;
     fBuildMsg.fState = 0.0f;
     fBuildMsg.fID = 0;

@@ -80,11 +80,11 @@ plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plM
                 }
             }
             
-            return nil;
+            return nullptr;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth)
@@ -106,11 +106,11 @@ plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t
                 }
             }
             
-            return nil;
+            return nullptr;
         }
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )

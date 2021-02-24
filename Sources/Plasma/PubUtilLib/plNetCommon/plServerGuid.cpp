@@ -72,7 +72,7 @@ static uint32_t SecsSinceUNIXEpoch()
 static uint32_t SecsSinceUNIXEpoch()
 {
     struct timeval tv;
-    gettimeofday(&tv, nil);
+    gettimeofday(&tv, nullptr);
     return tv.tv_sec;
 }
 

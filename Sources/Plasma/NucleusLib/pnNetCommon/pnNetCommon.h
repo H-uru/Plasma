@@ -97,42 +97,6 @@ public:
     hsStream* GetStream() { return &fStream;}
 };
 
-
-///////////////////////////////////////////////////////////////////
-// hsTempRef is incomplete. This type fills in some of the gaps
-// (like symmetrical ref/unref and correct self-assign)
-
-template <class T>
-class plSafePtr
-{
-    T * fPtr;
-public:
-    plSafePtr(T * ptr = nil): fPtr(ptr) {hsRefCnt_SafeRef(fPtr);}
-    ~plSafePtr() { hsRefCnt_SafeUnRef(fPtr); }
-    operator T*() const { return fPtr; }
-    operator T*&() { return fPtr; }
-    operator const T&() const { return *fPtr; }
-    operator bool() const { return fPtr!=nil;}
-    T * operator->() const { return fPtr; }
-    T * operator *() const { return fPtr; }
-    T * operator=(T * ptr)
-    {
-        hsRefCnt_SafeRef(ptr);
-        hsRefCnt_SafeUnRef(fPtr);
-        fPtr = ptr;
-        return fPtr;
-    }
-    void Attach(T * ptr)
-    {
-        if (fPtr==ptr)
-            return;
-        hsRefCnt_SafeUnRef(fPtr);
-        fPtr = ptr;
-    }
-    void Detach() { fPtr=nil;}
-};
-
-
 #endif // pnNetCommon_h_inc
 
 ///////////////////////////////////////////////////////////////////

@@ -121,11 +121,11 @@ static void NotifyProc(void *param, NotifyInfo *info);
 // Notify us on file open so we can check for bad Python components
 void DummyCodeIncludePythonFileFunc()
 {
-    RegisterNotification(NotifyProc, nil, NOTIFY_FILE_POST_OPEN);
-    RegisterNotification(NotifyProc, nil, NOTIFY_FILE_PRE_SAVE);
-    RegisterNotification(NotifyProc, nil, NOTIFY_SYSTEM_POST_RESET);
-    RegisterNotification(NotifyProc, nil, NOTIFY_SYSTEM_POST_NEW);
-    RegisterNotification(NotifyProc, nil, NOTIFY_SYSTEM_SHUTDOWN2);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_FILE_PRE_SAVE);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_POST_RESET);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_POST_NEW);
+    RegisterNotification(NotifyProc, nullptr, NOTIFY_SYSTEM_SHUTDOWN2);
 }
 
 // Param block ID's
@@ -157,7 +157,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    void AddReceiverKey(plKey key, plMaxNode* node=nil) override { fOthersKeys.Append(key); }
+    void AddReceiverKey(plKey key, plMaxNode* node=nullptr) override { fOthersKeys.Append(key); }
 
     // Returns false if the Python file for this component wasn't loaded, and clears
     // the data in the PB to prevent Max from crashing.
@@ -225,7 +225,7 @@ plComponentClassDesc *PythonFile::GetClassDesc()
 static plAutoUIBlock *FindAutoUI(IParamBlock2 *pb)
 {
     if (!pb)
-        return nil;
+        return nullptr;
 
     for (int i = 0; i < gAutoUIBlocks.size(); i++)
     {
@@ -233,7 +233,7 @@ static plAutoUIBlock *FindAutoUI(IParamBlock2 *pb)
             return gAutoUIBlocks[i];
     }
 
-    return nil;
+    return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -278,14 +278,14 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         // Do we already have this guy?
         plPythonFileMod *existingOne = plPythonFileMod::ConvertNoRef( sCommonPythonLib.FindObject( plPythonFileMod::kGlobalNameKonstant ) );
-        if( existingOne != nil )
+        if (existingOne != nullptr)
         {
             // This component already exists, which can happen since it's in a common page. So we need
             // to nuke the key and its object so we can reuse it.
             modKey = existingOne->GetKey();
 
             // But first detach it from its target sceneObject
-            if( existingOne->GetTarget( 0 ) != nil )
+            if (existingOne->GetTarget(0) != nullptr)
                 existingOne->GetTarget( 0 )->GetKey()->Release( modKey );
 
             if( !sCommonPythonLib.RemoveObjectAndKey( modKey ) )
@@ -298,12 +298,12 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
             }
 
             // Pointer is invalid now anyways...
-            existingOne = nil;
+            existingOne = nullptr;
         }
 
         // Also make sure we have an age SDL object to attach to (currently only used for python, hence why it's safe here)
         obj = plSceneObject::ConvertNoRef( sCommonPythonLib.FindObject( plSDL::kAgeSDLObjectName ) );
-        if( obj != nil )
+        if (obj != nullptr)
         {
             plKey foo = obj->GetKey();
             if( !sCommonPythonLib.RemoveObjectAndKey( foo ) )
@@ -316,7 +316,7 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
             }
 
             // Pointer is invalid now anyways...
-            obj = nil;
+            obj = nullptr;
         }
 
         // Create us a new sceneObject to attach to
@@ -351,7 +351,7 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
                 // Guess we won't be using that modifier we new'd up there. Does that mean we should delete it? Sure.
                 delete mod;
-                mod = nil;
+                mod = nullptr;
             }
         }
         else    // else, nope... create a modifier for each object its attached to
@@ -468,7 +468,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 for (int i = 0; i < numKeys; i++)
                 {
                     plKey skey = param->GetKey(pb, i);
-                    if ( skey != nil )
+                    if (skey != nullptr)
                     {
                         pyParam.SetToSceneObject(skey, true);
                         // make sure that there really was a sceneobject
@@ -499,7 +499,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         for (int j = 0; j < comp->NumTargets(); j++)
                         {
                             plKey responderKey = Responder::GetKey(comp, comp->GetTarget(j));
-                            if ( responderKey != nil )
+                            if (responderKey != nullptr)
                             {
                                 pyParam.SetToResponder(responderKey);
                                 mod->AddParameter(pyParam);
@@ -595,7 +595,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             plGUIDialogComponent *dialog_comp = (plGUIDialogComponent*)comp;
                             plKey dialogKey = dialog_comp->GetModifierKey();
                             pyParam.SetToGUIDialog(dialogKey);
-                            if ( pyParam.fObjectKey == nil )
+                            if (pyParam.fObjectKey == nullptr)
                             {
                                 char buf[512];
                                 sprintf(buf,"The GUIDialog attribute %s that was selected in %s PythonFile, somehow does not exist!?",
@@ -625,7 +625,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             plGUIMenuComponent *guiComp = (plGUIMenuComponent*)comp;
                             plKey key = guiComp->GetConvertedMenuKey();
                             pyParam.SetToGUIPopUpMenu( key );
-                            if ( pyParam.fObjectKey == nil )
+                            if (pyParam.fObjectKey == nullptr)
                             {
                                 char buf[512];
                                 sprintf(buf,"The GUIPopUpMenu attribute %s that was selected in %s PythonFile, somehow does not exist!?",
@@ -655,7 +655,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             plGUISkinComp *guiComp = (plGUISkinComp *)comp;
                             plKey key = guiComp->GetConvertedSkinKey();
                             pyParam.SetToGUISkin( key );
-                            if ( pyParam.fObjectKey == nil )
+                            if (pyParam.fObjectKey == nullptr)
                             {
                                 char buf[512];
                                 sprintf(buf,"The GUISkin attribute %s that was selected in %s PythonFile, somehow does not exist!?",
@@ -684,7 +684,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         {
                             plExcludeRegionComponent *excomp = (plExcludeRegionComponent*)comp;
                             plKey exKey = excomp->GetKey((plMaxNode*)(comp->GetTarget(j)));
-                            if ( exKey != nil )
+                            if (exKey != nullptr)
                             {
                                 // only get one real target, just count the rest
                                 if ( number_of_real_targets_found == 0 )
@@ -717,16 +717,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeWaterComponent:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plWaveSetBase* wsb = nil;
+                plWaveSetBase* wsb = nullptr;
 
                 if (comp)
                 {
                     wsb = plWaterComponent::GetWaveSet(comp->GetINode());
 
-                    if (wsb != nil)
+                    if (wsb != nullptr)
                     {
                         plKey waterKey = wsb->GetKey();
-                        if ( waterKey != nil )
+                        if (waterKey != nullptr)
                         {                           
                             pyParam.SetToWaterComponent(waterKey);
                             mod->AddParameter(pyParam);
@@ -739,13 +739,13 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeSwimCurrentInterface:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plSwimRegionInterface* sri = nil;
+                plSwimRegionInterface* sri = nullptr;
                 
                 if (comp && comp->ClassID() == PHYS_SWIMSURFACE_CID)
                 {
                     plSwim2DComponent* swimcomp = (plSwim2DComponent*)comp;
                     std::map<plMaxNode*, plSwimRegionInterface*>::const_iterator containsNode;
-                    plMaxNode* mnode = nil;
+                    plMaxNode* mnode = nullptr;
 
                     for (int i = 0; i < swimcomp->NumTargets(); i++)
                     {
@@ -758,10 +758,10 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         }
                     }
 
-                    if (sri != nil)
+                    if (sri != nullptr)
                     {
                         plKey swimKey = sri->GetKey();
-                        if ( swimKey != nil )
+                        if (swimKey != nullptr)
                         {                           
                             pyParam.SetToSwimCurrentInterface(swimKey);
                             mod->AddParameter(pyParam);
@@ -774,7 +774,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeClusterComponent:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plClusterGroup* clusterGroup = nil;
+                plClusterGroup* clusterGroup = nullptr;
 
                 if (comp && comp->ClassID() == CLUSTER_COMP_CID)
                 {
@@ -785,7 +785,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     {
                         plClusterGroup* group = clusterComp->GetGroup(i);
                         plKey groupKey = group->GetKey();
-                        if (groupKey != nil)
+                        if (groupKey != nullptr)
                         {
                             pyParam.SetToClusterComponent(groupKey);
                             mod->AddParameter(pyParam);
@@ -841,7 +841,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         for ( j=0; j<comp->NumTargets(); j++ )
                         {
                             plKey behKey = OneShotComp::GetOneShotKey(comp,(plMaxNode*)(comp->GetTarget(j)));
-                            if ( behKey != nil )
+                            if (behKey != nullptr)
                             {
                                 // only get one real target, just count the rest
                                 if ( number_of_real_targets_found == 0 )
@@ -860,7 +860,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         for ( j=0; j<comp->NumTargets(); j++ )
                         {
                             plKey behKey = MultiStageBeh::GetMultiStageBehKey(comp,(plMaxNode*)(comp->GetTarget(j)));
-                            if ( behKey != nil )
+                            if (behKey != nullptr)
                             {
                                 // only get one real target, just count the rest
                                 if ( number_of_real_targets_found == 0 )
@@ -936,16 +936,16 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         case plAutoUIParam::kTypeGrassComponent:
             {
                 plComponentBase* comp = param->GetComponent(pb, 0);
-                plGrassShaderMod* shader = nil;
+                plGrassShaderMod* shader = nullptr;
 
                 if (comp)
                 {
                     shader = plGrassComponent::GetShader(comp->GetINode());
 
-                    if (shader != nil)
+                    if (shader != nullptr)
                     {
                         plKey shaderKey = shader->GetKey();
-                        if ( shaderKey != nil )
+                        if (shaderKey != nullptr)
                         {                           
                             pyParam.SetToGrassShaderComponent(shaderKey);
                             mod->AddParameter(pyParam);
@@ -969,7 +969,7 @@ plPythonFileComponent::Validate plPythonFileComponent::ValidateFile()
     if (!block || fCompPB->GetInt(kPythonVersion) > block->GetVersion())
     {
         // Bad type, clear out the PB so this won't blow up during a save
-        fCompPB->SetValue(kPythonFilePB, 0, (ReferenceTarget*)nil);
+        fCompPB->SetValue(kPythonFilePB, 0, (ReferenceTarget*)nullptr);
 
         if (!block)
             return kPythonNoFile;
@@ -1194,7 +1194,7 @@ static void NotifyProc(void *param, NotifyInfo *info)
 class plPythonFileComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    plPythonFileComponentProc() : fAutoUI(nil) {}
+    plPythonFileComponentProc() : fAutoUI() { }
     BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { DestroyAutoUI(); }
 
@@ -1322,6 +1322,6 @@ void plPythonFileComponentProc::DestroyAutoUI()
     if (fAutoUI)
     {
         fAutoUI->DestroyAutoRollup();
-        fAutoUI = nil;
+        fAutoUI = nullptr;
     }
 }

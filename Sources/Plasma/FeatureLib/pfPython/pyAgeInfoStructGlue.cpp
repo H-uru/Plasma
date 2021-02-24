@@ -90,7 +90,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptAgeInfoStruct, obj1, obj2, compareType)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, copyFrom, args)
 {
-    PyObject* infoStructObj = NULL;
+    PyObject* infoStructObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &infoStructObj))
     {
         PyErr_SetString(PyExc_TypeError, "copyFrom expects a ptAgeInfoStruct or ptAgeInfoStructRef");
@@ -272,7 +272,7 @@ PYTHON_CLASS_NEW_IMPL(ptAgeInfoStruct, pyAgeInfoStruct)
 
 PyObject *pyAgeInfoStruct::New(plAgeInfoStruct *info)
 {
-    ptAgeInfoStruct *newObj = (ptAgeInfoStruct*)ptAgeInfoStruct_type.tp_new(&ptAgeInfoStruct_type, NULL, NULL);
+    ptAgeInfoStruct *newObj = (ptAgeInfoStruct*)ptAgeInfoStruct_type.tp_new(&ptAgeInfoStruct_type, nullptr, nullptr);
     newObj->fThis->fAgeInfo.CopyFrom(info);
     return (PyObject*)newObj;
 }
@@ -301,7 +301,7 @@ PYTHON_NO_INIT_DEFINITION(ptAgeInfoStructRef)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, copyFrom, args)
 {
-    PyObject* infoStructObj = NULL;
+    PyObject* infoStructObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &infoStructObj))
     {
         PyErr_SetString(PyExc_TypeError, "copyFrom expects a ptAgeInfoStruct or ptAgeInfoStructRef");
@@ -434,7 +434,7 @@ PLASMA_DEFAULT_TYPE(ptAgeInfoStructRef, "Class to hold AgeInfo struct data");
 // required functions for PyObject interoperability
 PyObject *pyAgeInfoStructRef::New(plAgeInfoStruct &info)
 {
-    ptAgeInfoStructRef *newObj = (ptAgeInfoStructRef*)ptAgeInfoStructRef_type.tp_new(&ptAgeInfoStructRef_type, NULL, NULL);
+    ptAgeInfoStructRef *newObj = (ptAgeInfoStructRef*)ptAgeInfoStructRef_type.tp_new(&ptAgeInfoStructRef_type, nullptr, nullptr);
     newObj->fThis->fAgeInfo.CopyFrom(&info);
     return (PyObject*)newObj;
 }

@@ -302,7 +302,7 @@ bool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
         return true;
     }
 
-    fDecalMgr = nil;
+    fDecalMgr = nullptr;
 
     fValid = true;
     fNotifiesSetup = false;
@@ -340,12 +340,12 @@ bool plFootPrintComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 bool plFootPrintComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    fDecalMgr = nil;
+    fDecalMgr = nullptr;
     return true;
 }
 
 plFootPrintComponent::plFootPrintComponent()
-:   fDecalMgr(nil)
+:   fDecalMgr()
 {
     fClassDesc = &gFootPrintCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -396,7 +396,7 @@ bool plFootPrintComponent::ISetupDecalMgr(plMaxNode* node, plErrorMsg* pErrMsg, 
     if( !ICreateDecalMaterials(node, pErrMsg) )
     {
         delete fDecalMgr;
-        fDecalMgr = nil;
+        fDecalMgr = nullptr;
         return fValid = false;
     }
 
@@ -437,7 +437,7 @@ bool plFootPrintComponent::ISetupParticles(plMaxNode* node, plErrorMsg* pErrMsg)
         plParticleComponent* partyComp = IGetParticleComp(fCompPB->GetINode(kParticles, TimeValue(0), i));
         if( partyComp && partyComp->NumTargets() )
         {
-            plMaxNodeBase* partyNode = nil;
+            plMaxNodeBase* partyNode = nullptr;
             const int numTarg = partyComp->NumTargets();
             int j;
             for( j = 0; j < numTarg; j++ )
@@ -520,11 +520,11 @@ bool plFootPrintComponent::ISetupColorDecalMaterials(plMaxNode* node, plErrorMsg
 plParticleComponent* plFootPrintComponent::IGetParticleComp(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( comp->ClassID() == PARTICLE_SYSTEM_COMPONENT_CLASS_ID )
     {
@@ -532,17 +532,17 @@ plParticleComponent* plFootPrintComponent::IGetParticleComp(INode* node)
         return party;
     }
 
-    return nil;
+    return nullptr;
 }
 
 plDynaDecalMgr* plFootPrintComponent::GetDecalMgr(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
-    if( comp == nil )
-        return nil;
+    if (comp == nullptr)
+        return nullptr;
 
     if( (comp->ClassID() == FOOTPRINT_COMP_CID)
         || (comp->ClassID() == RIPPLE_COMP_CID) 
@@ -554,7 +554,7 @@ plDynaDecalMgr* plFootPrintComponent::GetDecalMgr(INode* node)
         return foot->fDecalMgr;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +688,7 @@ bool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     // If we haven't already, create our DynaDecalMgr and stash it away.
     if( !fDecalMgr )
     {
-        plDynaRippleMgr* ripple = nil;
+        plDynaRippleMgr* ripple = nullptr;
         if( node->GetVS() || node->UserPropExists("XXXWaterColor") )
         {
             ripple = new plDynaRippleVSMgr;
@@ -1575,7 +1575,7 @@ ParamBlockDesc2 gPrintShapeBk
 (   
     plComponent::kBlkComp, _T("PrintShape"), 0, &gPrintShapeCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FP_PRINTSHAPE, IDS_COMP_FP_PRINTSHAPE, 0, 0, NULL,
+    IDD_COMP_FP_PRINTSHAPE, IDS_COMP_FP_PRINTSHAPE, 0, 0, nullptr,
 
     plPrintShapeComponent::kWidth, _T("Width"), TYPE_FLOAT,     0, 0,   
         p_default, 0.45,

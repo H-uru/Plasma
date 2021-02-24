@@ -119,7 +119,7 @@ void pfGameScore::AddPoints(int32_t add, plKey rcvr)
 //======================================
 void pfGameScore::Delete()
 {
-    NetCliAuthScoreDelete(fScoreId, nil, nil); // who cares about getting a notify here?
+    NetCliAuthScoreDelete(fScoreId, nullptr, nullptr); // who cares about getting a notify here?
     UnRef(); // kthxbai
 }
 
@@ -159,7 +159,7 @@ static void OnScoreCreate(
 
 void pfGameScore::Create(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t value, const plKey& rcvr)
 {
-    NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
+    NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nullptr, rcvr));
 }
 
 //======================================

@@ -146,7 +146,7 @@ public:
 
     VOID    D3DEnum_FreeResources();
 
-    char* GetErrorString() { return (fEnumeErrorStr[0] ? fEnumeErrorStr : nil); }
+    char* GetErrorString() { return (fEnumeErrorStr[0] ? fEnumeErrorStr : nullptr); }
 
     bool SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode);
     HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
@@ -156,8 +156,8 @@ public:
     D3DEnum_DriverInfo* GetDriver(int i) { return &fDrivers[i]; }
 
     D3DEnum_DriverInfo* GetCurrentDriver() { return fCurrentDriver; }
-    D3DEnum_DeviceInfo* GetCurrentDevice() { return GetCurrentDriver() ? GetCurrentDriver()->fCurrentDevice : nil; }
-    D3DEnum_ModeInfo* GetCurrentMode() { return GetCurrentDevice() ? GetCurrentDriver()->fCurrentMode : nil; }
+    D3DEnum_DeviceInfo* GetCurrentDevice() { return GetCurrentDriver() ? GetCurrentDriver()->fCurrentDevice : nullptr; }
+    D3DEnum_ModeInfo* GetCurrentMode() { return GetCurrentDevice() ? GetCurrentDriver()->fCurrentMode : nullptr; }
 
     void SetCurrentDriver(D3DEnum_DriverInfo* d) { fCurrentDriver = d; }
     void SetCurrentDevice(D3DEnum_DeviceInfo* d) { hsAssert(GetCurrentDriver(), "Set Driver first"); GetCurrentDriver()->fCurrentDevice = d; } 

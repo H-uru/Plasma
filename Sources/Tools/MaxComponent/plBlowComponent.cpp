@@ -71,7 +71,7 @@ ParamBlockDesc2 gBlowBk
 (   
     plComponent::kBlkComp, _T("Blow"), 0, &gBlowCompDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_BLOW, IDS_COMP_BLOWS, 0, 0, nil,
+    IDD_COMP_BLOW, IDS_COMP_BLOWS, 0, 0, nullptr,
 
     plBlowComponent::kStrength, _T("Strength"), TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
@@ -159,7 +159,7 @@ ParamBlockDesc2 gFlexibilityBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
  plComponent::kBlkComp, _T("Flexibility"), 0, &gFlexibilityDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_FLEXIBILITY, IDS_COMP_FLEXIBILITYS, 0, 0, NULL,
+    IDD_COMP_FLEXIBILITY, IDS_COMP_FLEXIBILITYS, 0, 0, nullptr,
 
     plFlexibilityComponent::kFlexibility, _T("Flexibility"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,

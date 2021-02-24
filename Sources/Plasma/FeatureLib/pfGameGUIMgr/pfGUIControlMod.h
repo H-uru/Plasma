@@ -201,7 +201,7 @@ class pfGUIControlMod : public plSingleModifier
         
         virtual void    Refresh();
 
-        virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
+        virtual void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false);
         void            SetObjectCenter( float x, float y );
         virtual hsPoint3 GetObjectCenter() { return fScreenCenter; }
         float        GetScreenMinZ() { return fScreenMinZ; }

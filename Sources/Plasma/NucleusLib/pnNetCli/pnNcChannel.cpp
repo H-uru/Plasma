@@ -120,7 +120,7 @@ ChannelCrit::~ChannelCrit () {
         }
 
         delete s_channels;
-        s_channels = nil;
+        s_channels = nullptr;
     }
 }
 
@@ -259,7 +259,7 @@ static void AddRecvMsgs_CS (
 //===========================================================================
 static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
     if (!s_channels)
-        return nil;
+        return nullptr;
 
     std::list<NetMsgChannel*>::iterator it = s_channels->begin();
     for (; it != s_channels->end(); ++it) {
@@ -267,7 +267,7 @@ static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
             return *it;
     }
 
-    return nil;
+    return nullptr;
 }
 
 //===========================================================================
@@ -332,12 +332,12 @@ const NetMsgInitRecv * NetMsgChannelFindRecvMessage (
 ) {
     // Is message in range?
     if (messageId >= channel->m_recvMsgs.size())
-        return nil;
+        return nullptr;
 
     // Is message defined?
     const NetMsgInitRecv * recvMsg = &channel->m_recvMsgs[messageId];
     if (!recvMsg->msg->count)
-        return nil;
+        return nullptr;
 
     // Success!
     return recvMsg;

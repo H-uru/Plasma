@@ -69,12 +69,12 @@ plAutoUIParam *plAutoUIBlock::GetParam(int idx)
         return fParams[idx];
 
     hsAssert(0, "Param index out of range");
-    return nil;
+    return nullptr;
 }
 
 IParamBlock2 *plAutoUIBlock::CreatePB()
 {
-    return CreateParameterBlock2(fDesc, nil);
+    return CreateParameterBlock2(fDesc, nullptr);
 }
 
 int plAutoUIBlock::GetBlockID()

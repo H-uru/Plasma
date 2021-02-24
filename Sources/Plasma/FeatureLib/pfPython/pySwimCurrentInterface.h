@@ -51,7 +51,7 @@ private:
     plKey fSwimCurrentKey;
 
 protected:
-    pySwimCurrentInterface(): fSwimCurrentKey(nil) {} // for python glue only, do NOT call
+    pySwimCurrentInterface() = default; // for python glue only, do NOT call
     pySwimCurrentInterface(plKey key);
     pySwimCurrentInterface(pyKey& key);
 

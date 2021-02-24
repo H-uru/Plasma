@@ -90,7 +90,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Globals
 //
-ITaskbarList3* gTaskbarList = nil; // NT 6.1+ taskbar stuff
+ITaskbarList3* gTaskbarList = nullptr; // NT 6.1+ taskbar stuff
 
 extern bool gDataServerLocal;
 extern bool gSkipPreload;
@@ -134,8 +134,8 @@ static std::atomic<bool>  s_loginDlgRunning(false);
 static std::thread      s_statusThread;
 static UINT             s_WmTaskbarList = RegisterWindowMessage("TaskbarButtonCreated");
 
-FILE *errFP = nil;
-HINSTANCE               gHInst = NULL;      // Instance of this app
+FILE *errFP = nullptr;
+HINSTANCE               gHInst = nullptr;      // Instance of this app
 
 static const unsigned   AUTH_LOGIN_TIMER    = 1;
 static const unsigned   AUTH_FAILED_TIMER   = 2;
@@ -185,9 +185,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Grab the Windows 7 taskbar list stuff
         if (gTaskbarList)
             gTaskbarList->Release();
-        HRESULT result = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&gTaskbarList);
+        HRESULT result = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void**)&gTaskbarList);
         if (FAILED(result))
-            gTaskbarList = nil;
+            gTaskbarList = nullptr;
         return 0;
     }
 
@@ -266,7 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     // kill game if window is closed
                     gClient->SetDone(TRUE);
                     if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
-                        mgr->QueueDisableNet(false, nil);
+                        mgr->QueueDisableNet(false, nullptr);
                     DestroyWindow(gClient->GetWindowHandle());
                     break;
             }
@@ -377,7 +377,7 @@ void    PumpMessageQueueProc()
     MSG msg;
 
     // Look for a message
-    while (PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ))
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
     {
         // Handle the message
         TranslateMessage( &msg );
@@ -392,13 +392,13 @@ void InitNetClientComm()
 
 INT_PTR CALLBACK AuthDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-    static bool* cancelled = NULL;
+    static bool* cancelled = nullptr;
 
     switch( uMsg )
     {
     case WM_INITDIALOG:
         cancelled = (bool*)lParam;
-        SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, NULL);
+        SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, nullptr);
         return TRUE;
 
     case WM_TIMER:
@@ -440,7 +440,7 @@ static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd)
         NetCommConnect();
 
     bool cancelled = false;
-    NetCommAuthenticate(nil);
+    NetCommAuthenticate(nullptr);
 
     ::DialogBoxParam(gHInst, MAKEINTRESOURCE( IDD_AUTHENTICATING ), parentWnd, AuthDialogProc, (LPARAM)&cancelled);
 
@@ -498,9 +498,9 @@ static void AuthFailedStrings (ENetError authError,
                                          const char **ppStr1, const char **ppStr2,
                                          const wchar_t **ppWStr)
 {
-  *ppStr1 = NULL;
-  *ppStr2 = NULL;
-  *ppWStr = NULL;
+  *ppStr1 = nullptr;
+  *ppStr2 = nullptr;
+  *ppWStr = nullptr;
 
     switch (plLocalization::GetLanguage())
     {
@@ -651,9 +651,9 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
     ST::string thePass = password;
 
     HKEY hKey;
-    RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
-    RegSetValueExW(hKey, L"LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, sizeof(pLoginParam->username));
-    RegSetValueEx(hKey, "RememberPassword", NULL, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
+    RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
+    RegSetValueExW(hKey, L"LastAccountName", 0, REG_SZ, (LPBYTE) pLoginParam->username, sizeof(pLoginParam->username));
+    RegSetValueEx(hKey, "RememberPassword", 0, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
     RegCloseKey(hKey);
 
     // If the password field is the fake string
@@ -672,7 +672,7 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
     NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
-    NetCommSetAuthTokenAndOS(nil, L"win");
+    NetCommSetAuthTokenAndOS(nullptr, L"win");
 }
 
 static void LoadUserPass(LoginDialogParam *pLoginParam)
@@ -683,8 +683,8 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
     uint32_t rememberAccount = 0;
     DWORD acctLen = sizeof(accountName), remLen = sizeof(rememberAccount);
     RegOpenKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
-    RegQueryValueExW(hKey, L"LastAccountName", 0, NULL, (LPBYTE) &accountName, &acctLen);
-    RegQueryValueEx(hKey, "RememberPassword", 0, NULL, (LPBYTE) &rememberAccount, &remLen);
+    RegQueryValueExW(hKey, L"LastAccountName", nullptr, nullptr, (LPBYTE) &accountName, &acctLen);
+    RegQueryValueEx(hKey, "RememberPassword", nullptr, nullptr, (LPBYTE) &rememberAccount, &remLen);
     RegCloseKey(hKey);
 
     pLoginParam->remember = false;
@@ -788,7 +788,7 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             }
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);
 
-            SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, NULL);
+            SetTimer(hwndDlg, AUTH_LOGIN_TIMER, 10, nullptr);
             return FALSE;
         }
 
@@ -814,7 +814,7 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
         {
             if (showAuthFailed)
             {
-                SetTimer(hwndDlg, AUTH_FAILED_TIMER, 10, NULL);
+                SetTimer(hwndDlg, AUTH_FAILED_TIMER, 10, nullptr);
                 showAuthFailed = false;
             }
             return FALSE;
@@ -879,7 +879,7 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
                 ST::string signupurl = GetServerSignupUrl();
-                ShellExecuteW(NULL, L"open", signupurl.to_wchar().data(), NULL, NULL, SW_SHOWNORMAL);
+                ShellExecuteW(nullptr, L"open", signupurl.to_wchar().data(), nullptr, nullptr, SW_SHOWNORMAL);
 
                 return TRUE;
             }
@@ -940,7 +940,7 @@ INT_PTR CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 INT_PTR CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-    static char *sLastMsg = nil;
+    static char *sLastMsg = nullptr;
 
     switch( uMsg )
     {
@@ -959,7 +959,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     // Now, try to create a nice exception dialog after plCrashHandler is done.
     s_crash.WaitForHandle();
     HWND parentHwnd = gClient ? gClient->GetWindowHandle() : GetActiveWindow();
-    DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, NULL);
+    DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, 0L);
 
     // Means that we have handled this.
     return EXCEPTION_EXECUTE_HANDLER;
@@ -982,7 +982,7 @@ bool WinInit(HINSTANCE hInst)
     wndClass.hInstance = hInst;
     wndClass.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON_DIRT));
 
-    wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wndClass.hbrBackground = (struct HBRUSH__*) (GetStockObject(BLACK_BRUSH));
     wndClass.lpszMenuName = CLASSNAME;
     wndClass.lpszClassName = CLASSNAME;
@@ -998,7 +998,7 @@ bool WinInit(HINSTANCE hInst)
         0, 0,
         800 + gWinBorderDX * 2,
         600 + gWinBorderDY * 2 + gWinMenuDY,
-        NULL, NULL, hInst, NULL
+        nullptr, nullptr, hInst, nullptr
         );
     gClient.SetClientWindow(hWnd);
     gClient.Init();
@@ -1047,8 +1047,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // check to see if we were launched from the patcher
     bool eventExists = false;
     // we check to see if the event exists that the patcher should have created
-    HANDLE hPatcherEvent = CreateEventW(nil, TRUE, FALSE, L"UruPatcherEvent");
-    if (hPatcherEvent != NULL)
+    HANDLE hPatcherEvent = CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent");
+    if (hPatcherEvent != nullptr)
     {
         // successfully created it, check to see if it was already created
         if (GetLastError() == ERROR_ALREADY_EXISTS)
@@ -1069,7 +1069,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
-        if(!CreateProcessW(s_patcherExeName, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+        if(!CreateProcessW(s_patcherExeName, nullptr, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi))
         {
             hsMessageBox("Failed to launch patcher", "Error", hsMessageBoxNormal);
         }
@@ -1092,7 +1092,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #ifdef PLASMA_EXTERNAL_RELEASE
     // If another instance is running, exit.  We'll automatically release our
     // lock on the mutex when our process exits
-    HANDLE hOneInstance = CreateMutex(nil, FALSE, "UruExplorer");
+    HANDLE hOneInstance = CreateMutex(nullptr, FALSE, "UruExplorer");
     if (WaitForSingleObject(hOneInstance,0) != WAIT_OBJECT_0)
     {
         switch (plLocalization::GetLanguage())
@@ -1155,7 +1155,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         ENetError auth;
 
         NetCommSetAccountUsernamePassword(loginParam.username, loginParam.namePassHash);
-        bool cancelled = AuthenticateNetClientComm(&auth, NULL);
+        bool cancelled = AuthenticateNetClientComm(&auth, nullptr);
 
         if (IS_NET_ERROR(auth) || cancelled) {
             doIntroDialogs = true;
@@ -1170,12 +1170,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 
     if (doIntroDialogs) {
-        needExit = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_MAIN ), NULL, UruLoginDialogProc, (LPARAM)&loginParam ) <= 0;
+        needExit = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_MAIN ), nullptr, UruLoginDialogProc, (LPARAM)&loginParam ) <= 0;
     }
 
     if (doIntroDialogs && !needExit) {
         HINSTANCE hRichEdDll = LoadLibrary("RICHED20.DLL");
-        INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), NULL, UruTOSDialogProc, (LPARAM)hInst);
+        INT_PTR val = ::DialogBoxParam( hInst, MAKEINTRESOURCE( IDD_URULOGIN_EULA ), nullptr, UruTOSDialogProc, (LPARAM)hInst);
         FreeLibrary(hRichEdDll);
         if (val <= 0) {
             DWORD error = GetLastError();
@@ -1200,7 +1200,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // We should quite frankly be done initing the client by now. But, if not, spawn the good old
     // "Starting URU, please wait..." dialog (not so yay)
     if (!gClient.IsInited()) {
-        HWND splashDialog = ::CreateDialog(hInst, MAKEINTRESOURCE(IDD_LOADING), NULL, SplashDialogProc);
+        HWND splashDialog = ::CreateDialog(hInst, MAKEINTRESOURCE(IDD_LOADING), nullptr, SplashDialogProc);
         gClient.Wait();
         ::DestroyWindow(splashDialog);
     }
@@ -1224,7 +1224,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
                 break;
 
             // Look for a message
-            while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+            while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
                 // Handle the message
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);

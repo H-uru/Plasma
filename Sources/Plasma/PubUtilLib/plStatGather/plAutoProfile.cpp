@@ -181,7 +181,7 @@ void plAutoProfileImp::IShutdown()
                        plFileName::Join(plProfileManagerFull::Instance().GetProfilePath(), kAgeTimingLog));
 
 #ifdef HS_BUILD_FOR_WIN32
-    ShellExecute(nil, nil, "PostRun.bat", nil, nil, SW_SHOWNORMAL);
+    ShellExecute(nullptr, nullptr, "PostRun.bat", nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 
     plgDispatch::Dispatch()->UnRegisterForExactType(plEvalMsg::Index(), GetKey());
@@ -241,7 +241,7 @@ void plAutoProfileImp::INextProfile()
 
 bool plAutoProfileImp::INextAge()
 {
-    const char* ageName = nil;
+    const char* ageName = nullptr;
 
     if (fAgeName.length() > 0)
     {

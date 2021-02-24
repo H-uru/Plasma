@@ -786,7 +786,7 @@ public:
     //
     // PURPOSE    : Get the list of public ages for the given age name.
     //
-    static void GetPublicAgeList( const char * ageName, PyObject * cbObject=nil );
+    static void GetPublicAgeList(const char * ageName, PyObject * cbObject = nullptr);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -795,7 +795,7 @@ public:
     //
     // PURPOSE    : Add a public age to the list of available ones.
     //
-    static void CreatePublicAge( pyAgeInfoStruct * ageInfo, PyObject * cbObject=nil );
+    static void CreatePublicAge(pyAgeInfoStruct * ageInfo, PyObject * cbObject = nullptr);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -804,7 +804,7 @@ public:
     //
     // PURPOSE    : Remove a public age from the list of available ones.
     //
-    static void RemovePublicAge( const char * ageInstanceGuid, PyObject * cbObject=nil );
+    static void RemovePublicAge(const char * ageInstanceGuid, PyObject * cbObject = nullptr);
 
     //////////////////////////////////////////////////////////////////////////////
     //

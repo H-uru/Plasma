@@ -103,7 +103,7 @@ plKey GetNPCSpawnModKey(plComponentBase *npcSpawnComp, plMaxNodeBase *target)
         return comp->GetNPCSpawnKey((plMaxNode*)target);
     }
 
-    return nil;
+    return nullptr;
 }
 
 // GNPCSPAWNBLOCK
@@ -112,7 +112,7 @@ ParamBlockDesc2 gNPCSpawnBlock
     plComponent::kBlkComp, _T("(ex)One Shot Comp"), 0, &gNPCSpawnDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
     //Rollout data
-    IDD_COMP_NPC_SPAWN, IDS_COMP_NPC_SPAWNER, 0, 0, NULL,
+    IDD_COMP_NPC_SPAWN, IDS_COMP_NPC_SPAWNER, 0, 0, nullptr,
 
     //params
     kModelName, _T("ModelName"),    TYPE_STRING,    0, 0,
@@ -144,7 +144,7 @@ plKey plNPCSpawnComp::GetNPCSpawnKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 // ISVALID

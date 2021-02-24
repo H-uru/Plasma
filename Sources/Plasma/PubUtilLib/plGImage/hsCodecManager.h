@@ -91,7 +91,7 @@ public:
 private:
     struct hsCodecEntry
     {
-        hsCodecEntry() : fPriority(0), fCodec(nil) { }
+        hsCodecEntry() : fPriority(), fCodec() { }
         hsCodecEntry(float p, hsCodec *c) : fPriority(p), fCodec(c) { }
 
         float                fPriority;

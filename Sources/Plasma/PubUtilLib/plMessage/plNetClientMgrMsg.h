@@ -65,7 +65,7 @@ public:
     CLASSNAME_REGISTER(plNetClientMgrMsg);
     GETINTERFACE_ANY(plNetClientMgrMsg, plMessage);
 
-    plNetClientMgrMsg(unsigned _type = 0, bool _yes = false, const char * _str = nil)
+    plNetClientMgrMsg(unsigned _type = 0, bool _yes = false, const char * _str = nullptr)
         : type(_type), yes(_yes)
     {
         if (_str) {

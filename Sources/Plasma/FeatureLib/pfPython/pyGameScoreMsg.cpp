@@ -52,7 +52,7 @@ PyObject* pyGameScoreMsg::CreateFinal(pfGameScoreMsg* msg)
         return pyGameScoreTransferMsg::New(t);
     if (pfGameScoreUpdateMsg* u = pfGameScoreUpdateMsg::ConvertNoRef(msg))
         return pyGameScoreUpdateMsg::New(u);
-    return nil;
+    return nullptr;
 }
 
 ST::string pyGameScoreMsg::GetError() const
@@ -94,26 +94,26 @@ PyObject* pyGameScoreListMsg::GetScore(size_t idx) const
 {
     if (pfGameScoreListMsg* pList = pfGameScoreListMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pList->GetScore(idx));
-    return nil;
+    return nullptr;
 }
 
 PyObject* pyGameScoreTransferMsg::GetDestinationScore() const
 {
     if (pfGameScoreTransferMsg* pTrans = pfGameScoreTransferMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pTrans->GetDestination());
-    return nil;
+    return nullptr;
 }
 
 PyObject* pyGameScoreTransferMsg::GetSourceScore() const
 {
     if (pfGameScoreTransferMsg* pTrans = pfGameScoreTransferMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pTrans->GetSource());
-    return nil;
+    return nullptr;
 }
 
 PyObject* pyGameScoreUpdateMsg::GetScore() const
 {
     if (pfGameScoreUpdateMsg* pUp = pfGameScoreUpdateMsg::ConvertNoRef(fMsg))
         return pyGameScore::New(pUp->GetScore());
-    return nil;
+    return nullptr;
 }

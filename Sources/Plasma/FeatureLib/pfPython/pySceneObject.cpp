@@ -152,9 +152,9 @@ bool pySceneObject::operator==(const pySceneObject &sobj) const
 {
     plKey ours = ((pySceneObject*)this)->getObjKey();
     plKey theirs = ((pySceneObject&)sobj).getObjKey();
-    if ( ours == nil && theirs == nil )
+    if (ours == nullptr && theirs == nullptr)
         return true;
-    else if ( ours != nil && theirs != nil )
+    else if (ours != nullptr && theirs != nullptr)
         return (ours->GetUoid()==theirs->GetUoid());
     else
         return false;
@@ -163,7 +163,7 @@ bool pySceneObject::operator==(const pySceneObject &sobj) const
 // getter and setters
 void pySceneObject::addObjKey(plKey key)
 {
-    if ( key != nil )
+    if (key != nullptr)
     {
         fSceneObjects.emplace_back(key);
         IAddObjKeyToAll(key);
@@ -172,7 +172,7 @@ void pySceneObject::addObjKey(plKey key)
 
 void pySceneObject::addObjPyKey(const pyKey& objkey)
 {
-    if ( objkey.getKey() != nil )
+    if (objkey.getKey() != nullptr)
     {
         fSceneObjects.emplace_back(objkey.getKey());
         IAddObjKeyToAll(objkey.getKey());
@@ -184,7 +184,7 @@ plKey pySceneObject::getObjKey()
     if (!fSceneObjects.empty())
         return fSceneObjects[0];
     else
-        return nil;
+        return nullptr;
 }
 
 PyObject* pySceneObject::getObjPyKey()
@@ -227,7 +227,7 @@ ST::string pySceneObject::GetName()
 
 PyObject* pySceneObject::findObj(const ST::string& name)
 {
-    PyObject* pSobj = nil;
+    PyObject* pSobj = nullptr;
     // search through the plKeys that we have looking for this name
     for (const plKey& objKey : fSceneObjects)
     {
@@ -239,7 +239,7 @@ PyObject* pySceneObject::findObj(const ST::string& name)
     }
 
     // did we find one? if not make an object with nil object
-    if ( pSobj == nil )
+    if (pSobj == nullptr)
     {
         // throw a Python error, so the coder knows it didn't work
         PyErr_SetString(PyExc_KeyError, name.c_str());
@@ -294,7 +294,7 @@ PyObject* pySceneObject::GetLocalToWorld()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -323,7 +323,7 @@ PyObject* pySceneObject::GetWorldToLocal()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -352,7 +352,7 @@ PyObject* pySceneObject::GetLocalToParent()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -381,7 +381,7 @@ PyObject* pySceneObject::GetParentToLocal()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -426,7 +426,7 @@ PyObject* pySceneObject::GetWorldPosition()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -455,7 +455,7 @@ PyObject* pySceneObject::GetViewVector()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -484,7 +484,7 @@ PyObject* pySceneObject::GetUpVector()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }
@@ -513,7 +513,7 @@ PyObject* pySceneObject::GetRightVector()
                 ST::string errmsg = ST::format("Sceneobject {} does not have a coordinate interface.",
                                                obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
-                return nil; // return nil to tell python we errored
+                return nullptr; // return nullptr to tell python we errored
             }
         }
     }

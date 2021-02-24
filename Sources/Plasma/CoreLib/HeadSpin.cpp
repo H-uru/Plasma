@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////
 /////////////////// For Status Messages ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-hsDebugMessageProc gHSStatusProc = nil;
+hsDebugMessageProc gHSStatusProc = nullptr;
 
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc)
 {
@@ -75,7 +75,7 @@ hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc)
 
 //////////////////////////////////////////////////////////////////////////
 
-hsDebugMessageProc gHSDebugProc = nil;
+hsDebugMessageProc gHSDebugProc = nullptr;
 
 hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc)
 {
@@ -129,7 +129,7 @@ NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
     {
-        if (_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
+        if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, msg))
             DebugBreakAlways();
     } else
 #endif // _MSC_VER
@@ -399,12 +399,12 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 
 int hsMessageBox(const char* message, const char* caption, int kind, int icon)
 {
-    return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
+    return hsMessageBoxWithOwner(nullptr, message, caption, kind, icon);
 }
 
 int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon)
 {
-    return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
+    return hsMessageBoxWithOwner(nullptr, message, caption, kind, icon);
 }
 
 /**************************************/
@@ -412,7 +412,7 @@ char* hsStrcpy(char* dst, const char* src)
 {
     if (src)
     {
-        if (dst == nil)
+        if (dst == nullptr)
         {
             size_t count = strlen(src);
             dst = new char[count + 1];

@@ -109,7 +109,7 @@ public:
     uint32_t GetMicros() const { return fMicros; }
     double GetSecsDouble() const;  // get the secs and micros as a double floating point value
     bool GetTime(short &year, short &month, short &day, short &hour, short &minute, short &second) const;
-    struct tm * GetTm(struct tm * ptm=nil) const;
+    struct tm * GetTm(struct tm * ptm=nullptr) const;
     int GetYear() const;
     int GetMonth() const;
     int GetDay() const;

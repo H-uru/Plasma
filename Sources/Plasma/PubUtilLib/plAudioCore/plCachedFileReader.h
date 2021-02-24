@@ -79,7 +79,7 @@ public:
     bool    OpenForWriting(const plFileName &path, plWAVHeader &header) override;
     uint32_t  Write(uint32_t bytes, void *buffer) override;
 
-    bool    IsValid() override { return fFileHandle != nil; }
+    bool    IsValid() override { return fFileHandle != nullptr; }
 
 protected:
     enum

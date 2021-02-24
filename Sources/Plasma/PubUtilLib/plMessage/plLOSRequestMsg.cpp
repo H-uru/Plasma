@@ -59,7 +59,7 @@ plLOSRequestMsg::plLOSRequestMsg()
 }
 
 plLOSRequestMsg::plLOSRequestMsg(const plKey& sender, const hsPoint3& fromPoint, const hsPoint3& toPoint, plSimDefs::plLOSDB db, TestType test, ReportType report)
-    : plMessage(sender, hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY), nil),
+    : plMessage(sender, hsgResMgr::ResMgr()->FindKey(kLOSObject_KEY), nullptr),
       fFrom(fromPoint),
       fTo(toPoint),
       fRequestID(),

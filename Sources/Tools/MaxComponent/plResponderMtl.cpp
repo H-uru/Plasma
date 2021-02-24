@@ -111,7 +111,7 @@ static plResponderMtlProc gResponderMtlProc;
 
 ParamBlockDesc2 gResponderMtlBlock
 (
-    kResponderMtlBlk, _T("mtlCmd"), 0, NULL, P_AUTO_UI,
+    kResponderMtlBlk, _T("mtlCmd"), 0, nullptr, P_AUTO_UI,
 
     IDD_COMP_RESPOND_MTL, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMtlProc,
 
@@ -206,7 +206,7 @@ const char *plResponderCmdMtl::GetName(int idx)
     case kRespondRewindMat: return "Rewind";
     }
 
-    return nil;
+    return nullptr;
 }
 
 static const char *GetShortName(int type)
@@ -223,7 +223,7 @@ static const char *GetShortName(int type)
     case kRespondRewindMat: return "Mat Rewind";
     }
 
-    return nil;
+    return nullptr;
 }
 const char *plResponderCmdMtl::GetInstanceName(IParamBlock2 *pb)
 {
@@ -242,7 +242,7 @@ IParamBlock2 *plResponderCmdMtl::CreatePB(int idx)
     int type = IndexToOldType(idx);
 
     // Create the paramblock and save it's type
-    IParamBlock2 *pb = CreateParameterBlock2(&gResponderMtlBlock, nil);
+    IParamBlock2 *pb = CreateParameterBlock2(&gResponderMtlBlock, nullptr);
     pb->SetValue(kMtlType, 0, type);
 
     return pb;
@@ -366,7 +366,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
         // We need the check here because "physicals only" export mode means that
         // most of the materials won't be there, so we should ignore this warning. -Colin
         if (plConvert::Instance().GetConvertSettings()->fPhysicalsOnly)
-            return nil;
+            return nullptr;
         else
             throw "Material animation key(s) not found";
     }
@@ -446,7 +446,7 @@ void plResponderCmdMtl::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
 
     if (mtl)
     {
-        plNotetrackAnim notetrackAnim(mtl, nil);
+        plNotetrackAnim notetrackAnim(mtl, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
         ST::string marker;
         while (!(marker = info.GetNextMarkerName()).empty())
@@ -472,7 +472,7 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
         Mtl *mtl = GetMtl(pb);
         ST::string animName = GetAnim(pb);
 
-        plNotetrackAnim notetrackAnim(mtl, nil);
+        plNotetrackAnim notetrackAnim(mtl, nullptr);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
 
         eventMsg->fEvent = kTime;
@@ -515,7 +515,7 @@ void plResponderMtlProc::IOnInitDlg(HWND hWnd, IParamBlock2* pb)
         RECT itemRect, clientRect;
         GetWindowRect(GetDlgItem(hWnd, IDC_LOOP_TEXT), &itemRect);
         GetWindowRect(hWnd, &clientRect);
-        SetWindowPos(hWnd, NULL, 0, 0, clientRect.right-clientRect.left,
+        SetWindowPos(hWnd, nullptr, 0, 0, clientRect.right-clientRect.left,
             itemRect.top-clientRect.top, SWP_NOMOVE | SWP_NOZORDER);
     }
 }
@@ -542,7 +542,7 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 
     ComboBox_Enable(hLoop, TRUE);
 
-    plNotetrackAnim anim(mtl, nil);
+    plNotetrackAnim anim(mtl, nullptr);
     ST::string animName = ST::string::from_utf8(pb->GetStr(kMtlAnim));
     plAnimInfo info = anim.GetAnimInfo(animName);
 
@@ -610,12 +610,12 @@ protected:
     {
         if (strcmp(userType, kUserTypeAll) == 0)
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodePB);
         }
         else if (strcmp(userType, kResponderNodeName) == 0)
         {
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodeResponder);
         }
         else

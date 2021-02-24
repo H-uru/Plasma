@@ -47,5 +47,5 @@ hsExceptionStackDestroyer hsExceptionStack::fExceptionStackDestroyer;
 void hsExceptionStack::FreeInstance()
 {
     delete fExceptionStack;
-    fExceptionStack = nil;
+    fExceptionStack = nullptr;
 }

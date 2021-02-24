@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plMiscComponents.h"
 #include "MaxExport/plErrorMsg.h"
 
-plGetLocationDlg::plGetLocationDlg() : fNode(nil), fErrMsg(nil), fDefaultLocation(nil)
+plGetLocationDlg::plGetLocationDlg() : fNode(), fErrMsg(), fDefaultLocation()
 {
 }
 
@@ -103,7 +103,7 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
 
 void plGetLocationDlg::ResetDefaultLocation()
 {
-    fDefaultLocation = nil;
+    fDefaultLocation = nullptr;
 }
 
 void plGetLocationDlg::IListRooms(plMaxNode *node, HWND hList)
@@ -141,7 +141,7 @@ void plGetLocationDlg::ISetLocation(plMaxNode *locNode)
 
     // Add the roomless node to the target list and run the convert pass that gives it a room
     comp->AddTarget(fNode);         // Might want to fix this...
-    comp->SetupProperties(fNode, nil);
+    comp->SetupProperties(fNode, nullptr);
 }
 
 INT_PTR plGetLocationDlg::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)

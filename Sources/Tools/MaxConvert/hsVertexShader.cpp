@@ -90,9 +90,9 @@ extern TimeValue GetTime(Interface *gi);
 
 hsVertexShader::hsVertexShader() :
     fConverterUtils(hsConverterUtils::Instance()),
-    fInterface(nil),
-    fLightMapGen(nil),
-    fShaded(0)
+    fInterface(),
+    fLightMapGen(),
+    fShaded()
 {
     hsGuardBegin("hsVertexShader::hsVertexShader");
     fLocalToWorld.Reset();
@@ -130,7 +130,7 @@ void hsVertexShader::Close()
 {
     hsGuardBegin("hsVertexShader::DeInitLights");
 
-    fLightMapGen = nil;
+    fLightMapGen = nullptr;
 
     hsGuardEnd;
 }
@@ -170,7 +170,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
     hsBitVector         dirtyVector;
     int                 i;
     bool                translucent, shadeIt, addingIt;
-    plLayerInterface    *layer = nil;
+    plLayerInterface    *layer = nullptr;
 
 
     hsGuardBegin("hsVertexShader::ShadeSpan");
@@ -236,7 +236,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
     }
 
     /// Get mat colors to modulate by
-    if( layer == nil )
+    if (layer == nullptr)
     {
         preDiffuse.Set( 1, 1, 1, 1 );
         rtDiffuse.Set( 1, 1, 1, 1 );
@@ -356,7 +356,7 @@ void hsVertexShader::IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVec
     hsGuardBegin( "hsVertexShader::IShadeVertices" );
 
     plMaxNode* maxNode = (plMaxNode*)node;
-    if( maxNode->CanConvert() && (nil != maxNode->GetLightMapComponent()) )
+    if (maxNode->CanConvert() && (nullptr != maxNode->GetLightMapComponent()))
         return;
 
     int     index;

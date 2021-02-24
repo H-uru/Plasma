@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 
 plDynaTorpedoVSMgr::plDynaTorpedoVSMgr()
-:   fWaveSetBase(nil)
+:   fWaveSetBase()
 {
 }
 
@@ -137,7 +137,7 @@ bool plDynaTorpedoVSMgr::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fWaveSetBase = plWaveSetBase::ConvertNoRef(refMsg->GetRef());
             else
-                fWaveSetBase = nil;
+                fWaveSetBase = nullptr;
             return true;
         }
     }

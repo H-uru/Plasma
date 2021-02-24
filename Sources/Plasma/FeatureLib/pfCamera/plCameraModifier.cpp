@@ -219,18 +219,18 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
                 }
             }
             else
-            if (pRefMsg->fType == kRefCallbackMsg && fMessageQueue[pRefMsg->fWhich] != nil)
+            if (pRefMsg->fType == kRefCallbackMsg && fMessageQueue[pRefMsg->fWhich] != nullptr)
             {
                 
                 plgDispatch::MsgSend(fMessageQueue[pRefMsg->fWhich]);
-                fMessageQueue[pRefMsg->fWhich] = nil;
+                fMessageQueue[pRefMsg->fWhich] = nullptr;
             }
         }
         else if( pRefMsg->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
             plCameraBrain1* pBrain = (plCameraBrain1*)(pRefMsg->GetRef());
             if (fBrain == pBrain)
-                fBrain = nil;
+                fBrain = nullptr;
         }
         return true;
      }
@@ -258,7 +258,7 @@ void plCameraModifier1::Update()
 
         if (moveInSub && GetBrain()->GetSubject())
         {
-            plKey worldKey = nil;
+            plKey worldKey;
 
             // First check if this is a physical.  If so, grab the subworld from that
             if (GetBrain()->GetSubject()->GetSimulationInterface())
@@ -319,7 +319,7 @@ void plCameraModifier1::Update()
 void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
 {
     hsKeyedObject::Read(stream, mgr);
-    fBrain = nil;
+    fBrain = nullptr;
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefBrain), plRefFlags::kActiveRef);
     uint32_t count = stream->ReadLE32();
     for (uint32_t i = 0; i < count; i++)

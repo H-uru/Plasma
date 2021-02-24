@@ -105,7 +105,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    void AddReceiverKey(plKey pKey, plMaxNode* node=nil) override;
+    void AddReceiverKey(plKey pKey, plMaxNode* node=nullptr) override;
 
     void CreateRollups() override;
     void DestroyRollups() override;
@@ -116,7 +116,7 @@ public:
     RefTargetHandle Clone(RemapDir &remap) override;
 };
 
-HWND plMultistageBehComponent::fDlg = NULL;
+HWND plMultistageBehComponent::fDlg = nullptr;
 int plMultistageBehComponent::fCurStage = -1;
 
 //
@@ -130,7 +130,7 @@ plKey MultiStageBeh::GetMultiStageBehKey(plComponentBase *multiStageBehComp, plM
         return comp->GetMultiStageBehKey((plMaxNode*)target);
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -163,7 +163,7 @@ plKey plMultistageBehComponent::GetMultiStageBehKey(plMaxNode *node)
     if (fMods.find(node) != fMods.end())
         return fMods[node]->GetKey();
 
-    return nil;
+    return nullptr;
 }
 
 void plMultistageBehComponent::AddReceiverKey(plKey pKey, plMaxNode* node)
@@ -174,8 +174,8 @@ void plMultistageBehComponent::AddReceiverKey(plKey pKey, plMaxNode* node)
 void plMultistageBehComponent::IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers)
 {
     // Add the guys who want to be notified by all instances
-    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nil);
-    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nil);
+    ReceiverKeys::iterator lowIt = fReceivers.lower_bound(nullptr);
+    ReceiverKeys::iterator highIt = fReceivers.upper_bound(nullptr);
     for (; lowIt != highIt; lowIt++)
         receivers.push_back(lowIt->second);
 
@@ -277,7 +277,7 @@ void plMultistageBehComponent::DestroyRollups()
     if (fDlg)
     {
         GetCOREInterface()->DeleteRollupPage(fDlg);
-        fDlg = NULL;
+        fDlg = nullptr;
     }
 
     plComponent::DestroyRollups();
@@ -483,8 +483,8 @@ protected:
     ILoad* fLoad;
 
 public:
-    MaxStream(ISave* isave) : fSave(isave), fLoad(nil) {}
-    MaxStream(ILoad* iload) : fSave(nil), fLoad(iload) {}
+    MaxStream(ISave* isave) : fSave(isave), fLoad() { }
+    MaxStream(ILoad* iload) : fSave(), fLoad(iload) { }
 
     // Don't support any of this
     bool Open(const plFileName &, const char * = "rb") override { hsAssert(0, "Not supported"); return false; }
@@ -546,7 +546,7 @@ IOResult plMultistageBehComponent::Load(ILoad* iload)
 
     while (iload->OpenChunk() == IO_OK)
     {
-        plBaseStage *stage = nil;
+        plBaseStage *stage = nullptr;
 
         switch (iload->CurChunkID())
         {

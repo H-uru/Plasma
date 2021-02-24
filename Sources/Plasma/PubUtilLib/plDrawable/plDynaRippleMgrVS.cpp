@@ -92,7 +92,7 @@ int plDynaRippleVSMgr::INewDecal()
 
 
 plDynaRippleVSMgr::plDynaRippleVSMgr()
-:   fWaveSetBase(nil)
+:   fWaveSetBase()
 {
 }
 
@@ -129,7 +129,7 @@ bool plDynaRippleVSMgr::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fWaveSetBase = plWaveSetBase::ConvertNoRef(refMsg->GetRef());
             else
-                fWaveSetBase = nil;
+                fWaveSetBase = nullptr;
             return true;
         }
     }

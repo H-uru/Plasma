@@ -126,7 +126,7 @@ plCreatable * plCreatableListHelper::GetItem( uint16_t id, bool unManageItem/*=f
         }
         return it->second;
     }
-    return nil;
+    return nullptr;
 }
 
 bool plCreatableListHelper::ItemExists( uint16_t id ) const

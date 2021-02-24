@@ -108,8 +108,8 @@ public:
 
     plMaxNodeBase *GetINode();
 
-    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil) { }
-    virtual plKey GetLogicKey(plMaxNode* node) {return nil;}
+    virtual void AddReceiverKey(plKey key, plMaxNode* node=nullptr) { }
+    virtual plKey GetLogicKey(plMaxNode* node) { return nullptr; }
 
     // Return true if you want to allow yourself to be unhidden.  This is for components
     // with animatable parameters they want to expose in the TrackView.
@@ -272,7 +272,7 @@ public:
 **      1, _T(""), 0, &gStartPtDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, 0,
 **  
 **      //rollout
-**      IDD_COMP_STARTINGPOINT, IDS_COMP_STARTINGPOINTS, 0, 0, NULL,
+**      IDD_COMP_STARTINGPOINT, IDS_COMP_STARTINGPOINTS, 0, 0, nullptr,
 **  
 **      // params
 **      kPlayerStartingPoint,       _T("Start Point:"),     TYPE_STRING,        0, 0,   

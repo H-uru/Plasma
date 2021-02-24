@@ -120,7 +120,7 @@ void plCameraBrain1::AddTarget()
 {
     fTargetMatrix = fCamera->GetTarget()->GetCoordinateInterface()->GetLocalToWorld();
     hsVector3 view;
-    fTargetMatrix.GetAxis(0, &view, 0);
+    fTargetMatrix.GetAxis(nullptr, &view, nullptr);
     fGoal = fTargetMatrix.GetTranslate();
     fPOAGoal = fGoal - view;
     fCamera->SetTargetPos(fGoal);
@@ -212,7 +212,7 @@ void plCameraBrain1::Update(bool forced)
         {
             fTargetMatrix = fCamera->GetTarget()->GetCoordinateInterface()->GetLocalToWorld();
             hsVector3 view;
-            fTargetMatrix.GetAxis(0, &view, 0);
+            fTargetMatrix.GetAxis(nullptr, &view, nullptr);
             fGoal = fTargetMatrix.GetTranslate();
             fPOAGoal = fGoal - (view * 10);
         }
@@ -586,7 +586,7 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
             if( pRefMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 SetSubject((plSceneObject*)pRefMsg->GetRef());
             else
-                SetSubject(nil);
+                SetSubject(nullptr);
             return true;
         }
         else
@@ -599,7 +599,7 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
             }
             else
             {
-                fRail = nil;
+                fRail = nullptr;
                 fFlags.ClearBit(kRailComponent);
             }
             return true;
@@ -613,7 +613,7 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
             if (pPMsg->fUnload)
             {
                 if (fFlags.IsBitSet(kFollowLocalAvatar))
-                    SetSubject(nil);
+                    SetSubject(nullptr);
             }
             else
             {
@@ -700,7 +700,7 @@ plSceneObject* plCameraBrain1::GetSubject()
 {
     if (fSubjectKey)
         return plSceneObject::ConvertNoRef(fSubjectKey->ObjectIsLoaded());
-    return nil;
+    return nullptr;
 }
 
 void plCameraBrain1::SetSubject(plSceneObject* sub)
@@ -708,7 +708,7 @@ void plCameraBrain1::SetSubject(plSceneObject* sub)
     if (sub)
         fSubjectKey = sub->GetKey();
     else
-        fSubjectKey = nil;
+        fSubjectKey = nullptr;
 }
 
 //
@@ -1166,7 +1166,7 @@ bool plCameraBrain1_Avatar::MsgReceive(plMessage* msg)
         if (pLOSMsg->fHitFlags & plSimDefs::kLOS_CameraAvoidObject)
             fObstacle = (plSceneObject*)pLOSMsg->fObj->GetObjectPtr();
         else
-            fObstacle = nil;
+            fObstacle = nullptr;
         return true;
     }
     plMouseEventMsg* pMouseMsg = plMouseEventMsg::ConvertNoRef(msg);
@@ -1194,7 +1194,7 @@ bool plCameraBrain1_Avatar::MsgReceive(plMessage* msg)
             if( pRefMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
             {
                 SetSubject((plSceneObject*)pRefMsg->GetRef());
-                plSceneObject* avSO = nil;
+                plSceneObject* avSO = nullptr;
                 if (plNetClientApp::GetInstance())
                     avSO = plSceneObject::ConvertNoRef(plNetClientApp::GetInstance()->GetLocalPlayer());
 
@@ -1206,7 +1206,7 @@ bool plCameraBrain1_Avatar::MsgReceive(plMessage* msg)
                 }
             }
             else
-                SetSubject(nil);
+                SetSubject(nullptr);
             return true;
         }
     }
@@ -1288,7 +1288,7 @@ bool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
         {
             if( pRefMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
             {   
-                fPosNode = nil;
+                fPosNode = nullptr;
                 SetSubject((plSceneObject*)pRefMsg->GetRef());
                 // are we the built-in 1st person camera?  If we are, change our subject pointer to FPCameraOrigin node on the avatar
                 plUoid U(kDefaultCameraMod1_KEY);
@@ -1315,8 +1315,8 @@ bool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
             }
             else
             {
-                fPosNode = nil;
-                SetSubject(nil);
+                fPosNode = nullptr;
+                SetSubject(nullptr);
             }
             return true;
         }
@@ -1446,12 +1446,12 @@ void plCameraBrain1_FirstPerson::Pop()
 
 plCameraBrain1_Fixed::plCameraBrain1_Fixed() : plCameraBrain1()
 {
-    fTargetPoint= nil;
+    fTargetPoint = nullptr;
 }
 
 plCameraBrain1_Fixed::plCameraBrain1_Fixed(plCameraModifier1* pMod) : plCameraBrain1(pMod)
 {
-    fTargetPoint = nil;
+    fTargetPoint = nullptr;
 }   
 
 // destructor
@@ -1757,7 +1757,7 @@ bool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
             if( pRefMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fCenterObject = (plSceneObject*)pRefMsg->GetRef();
             else
-                fCenterObject = nil;
+                fCenterObject = nullptr;
             return true;
         }
         else
@@ -1766,7 +1766,7 @@ bool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
             if( pRefMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fPOAObj = (plSceneObject*)pRefMsg->GetRef();
             else
-                fPOAObj = nil;
+                fPOAObj = nullptr;
             return true;
         }
         else
@@ -1775,7 +1775,7 @@ bool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
             if( pRefMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 SetSubject((plSceneObject*)pRefMsg->GetRef());
             else
-                SetSubject(nil);
+                SetSubject(nullptr);
             return true;
         }
     }
@@ -1785,9 +1785,9 @@ bool plCameraBrain1_Circle::MsgReceive(plMessage* msg)
         if (pPMsg->fUnload)
         {
             if (GetCircleFlags() & kCircleLocalAvatar)
-                fPOAObj = nil;
+                fPOAObj = nullptr;
             if (fFlags.IsBitSet(kFollowLocalAvatar))
-                SetSubject(nil);
+                SetSubject(nullptr);
         }
         else
         {

@@ -116,8 +116,8 @@ public:
     void Div(const plBigNum& a, const plBigNum& b, plBigNum* remainder)
     {
         // this = a / b, remainder = a % b
-        // either this or remainder may be nil
-        BN_div(this ? m_number : nil, remainder ? remainder->m_number : nil,
+        // either this or remainder may be nullptr
+        BN_div(this ? m_number : nullptr, remainder ? remainder->m_number : nullptr,
                a.m_number, b.m_number, GetContext());
     }
 
@@ -141,7 +141,7 @@ public:
     void Mod(const plBigNum& a, const plBigNum& b)
     {
         // this = a % b
-        BN_div(nil, m_number, a.m_number, b.m_number, GetContext());
+        BN_div(nullptr, m_number, a.m_number, b.m_number, GetContext());
     }
 
     void Mul(const plBigNum& a, uint32_t b)

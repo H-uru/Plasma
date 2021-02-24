@@ -148,7 +148,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getLinkToCity)
 
 PYTHON_METHOD_DEFINITION(ptVault, getOwnedAgeLink, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getOwnedAgeLink expects a ptAgeInfoStruct");
@@ -165,7 +165,7 @@ PYTHON_METHOD_DEFINITION(ptVault, getOwnedAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, getVisitAgeLink, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "getVisitAgeLink expects a ptAgeInfoStruct");
@@ -212,7 +212,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getGlobalInbox)
 
 PYTHON_METHOD_DEFINITION(ptVault, findNode, args)
 {
-    PyObject* templateNodeObj = NULL;
+    PyObject* templateNodeObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &templateNodeObj))
     {
         PyErr_SetString(PyExc_TypeError, "findNode expects a ptVaultNode");
@@ -229,7 +229,7 @@ PYTHON_METHOD_DEFINITION(ptVault, findNode, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, sendToDevice, args)
 {
-    PyObject* nodeObj = NULL;
+    PyObject* nodeObj = nullptr;
     char* deviceName;
     if (!PyArg_ParseTuple(args, "Os", &nodeObj, &deviceName))
     {
@@ -253,7 +253,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getPsnlAgeSDL)
 
 PYTHON_METHOD_DEFINITION(ptVault, updatePsnlAgeSDL, args)
 {
-    PyObject* pyrecObj = NULL;
+    PyObject* pyrecObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &pyrecObj))
     {
         PyErr_SetString(PyExc_TypeError, "updatePsnlAgeSDL expects a ptSDLStateDataRecord");
@@ -291,7 +291,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVault, amCzarOfCurrentAge)
 
 PYTHON_METHOD_DEFINITION(ptVault, amAgeOwner, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "amAgeOwner expects a ptAgeInfoStruct");
@@ -308,7 +308,7 @@ PYTHON_METHOD_DEFINITION(ptVault, amAgeOwner, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, amAgeCzar, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
         PyErr_SetString(PyExc_TypeError, "amAgeCzar expects a ptAgeInfoStruct");
@@ -338,7 +338,7 @@ PYTHON_METHOD_DEFINITION(ptVault, registerMTStation, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, registerOwnedAge, args)
 {
-    PyObject* ageLinkObj = NULL;
+    PyObject* ageLinkObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageLinkObj))
     {
         PyErr_SetString(PyExc_TypeError, "registerOwnedAge expects a ptAgeLinkStruct");
@@ -368,7 +368,7 @@ PYTHON_METHOD_DEFINITION(ptVault, unRegisterOwnedAge, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, registerVisitAge, args)
 {
-    PyObject* ageLinkObj = NULL;
+    PyObject* ageLinkObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &ageLinkObj))
     {
         PyErr_SetString(PyExc_TypeError, "registerVisitAge expects a ptAgeLinkStruct");
@@ -398,7 +398,7 @@ PYTHON_METHOD_DEFINITION(ptVault, unRegisterVisitAge, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, invitePlayerToAge, args)
 {
-    PyObject* ageLinkObj = NULL;
+    PyObject* ageLinkObj = nullptr;
     unsigned long playerID;
     if (!PyArg_ParseTuple(args, "Ol", &ageLinkObj, &playerID))
     {
@@ -430,7 +430,7 @@ PYTHON_METHOD_DEFINITION(ptVault, unInvitePlayerToAge, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, offerLinkToPlayer, args)
 {
-    PyObject* ageLinkObj = NULL;
+    PyObject* ageLinkObj = nullptr;
     unsigned long playerID;
     if (!PyArg_ParseTuple(args, "Ol", &ageLinkObj, &playerID))
     {
@@ -451,7 +451,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptVault, createNeighborhood, CreateNeighborhood)
 
 PYTHON_METHOD_DEFINITION(ptVault, setAgePublic, args)
 {
-    PyObject* ageInfoObj = NULL;
+    PyObject* ageInfoObj = nullptr;
     char makePublic;
     if (!PyArg_ParseTuple(args, "Ob", &ageInfoObj, &makePublic))
     {

@@ -116,7 +116,7 @@ void plDrawableGenerator::IFillSpan( uint32_t vertCount, hsPoint3 *positions, hs
 
 
     /// Calculate normals if we don't have them
-    if( normals == nil )
+    if (normals == nullptr)
     {
         int         i;
         hsVector3   normal, v1, v2;
@@ -142,12 +142,12 @@ void plDrawableGenerator::IFillSpan( uint32_t vertCount, hsPoint3 *positions, hs
         normals = myNormals.data();
     }
 
-    if( uvws == nil )
+    if (uvws == nullptr)
         uvwsPerVtx = 0;
     span->BeginCreate( material, localToWorld, plGeometrySpan::UVCountToFormat( (uint8_t)uvwsPerVtx ) );
 
     if( !origColors && !fauxShade )
-        span->AddVertexArray( vertCount, positions, normals, nil, uvws, uvwsPerVtx );
+        span->AddVertexArray(vertCount, positions, normals, nullptr, uvws, uvwsPerVtx);
     else
     {
         std::vector<hsColorRGBA> colArray;
@@ -246,7 +246,7 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
     plGeometrySpan              *span;
 
     // Set up props on the new drawable
-    if( toAddTo != nil )
+    if (toAddTo != nullptr)
         newDraw = toAddTo;
     else
     {
@@ -277,7 +277,7 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
     /// Now add the span to the new drawable, clear up the span's buffers and return!
     uint32_t trash = uint32_t(-1);
     uint32_t idx = newDraw->AppendDISpans( spanArray, trash, false );
-    if( retIndex != nil )
+    if (retIndex != nullptr)
         retIndex->emplace_back(idx);
 
     return newDraw;
@@ -354,8 +354,8 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
 
     /// Create a drawable for it
     drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(), normals.data(),
-                                                        nil, 0,
-                                                        nil, true, multColor,
+                                                        nullptr, 0,
+                                                        nullptr, true, multColor,
                                                         indices.size(), indices.data(),
                                                         material, localToWorld, blended, retIndex, toAddTo );
 
@@ -452,7 +452,7 @@ plDrawableSpans     *plDrawableGenerator::GenerateBoxDrawable( const hsPoint3 &c
     /// Create a drawable for it
     drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(), normals.data(),
                                                         uvws.data(), 1,
-                                                        nil, true, multColor,
+                                                        nullptr, true, multColor,
                                                         indices.size(), indices.data(),
                                                         material, localToWorld, blended, retIndex, toAddTo );
 
@@ -514,8 +514,8 @@ plDrawableSpans     *plDrawableGenerator::GenerateBoundsDrawable( hsBounds3Ext *
 
     /// Create a drawable for it
     drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(), normals.data(),
-                                                        nil, 0,
-                                                        nil, true, multColor,
+                                                        nullptr, 0,
+                                                        nullptr, true, multColor,
                                                         indices.size(), indices.data(),
                                                         material, localToWorld, blended, retIndex, toAddTo );
 
@@ -613,8 +613,8 @@ plDrawableSpans     *plDrawableGenerator::GenerateConicalDrawable( hsPoint3 &ape
 
     /// Create a drawable for it
     drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(), normals.data(),
-                                                        nil, 0,
-                                                        nil, true, multColor,
+                                                        nullptr, 0,
+                                                        nullptr, true, multColor,
                                                         indices.size(), indices.data(),
                                                         material, localToWorld, blended, retIndex, toAddTo );
 
@@ -676,8 +676,8 @@ plDrawableSpans     *plDrawableGenerator::GenerateAxesDrawable( hsGMaterial *mat
 
     /// Create a drawable for it
     drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(), normals.data(),
-                                                        nil, 0,
-                                                        nil, true, multColor,
+                                                        nullptr, 0,
+                                                        nullptr, true, multColor,
                                                         indices.size(), indices.data(),
                                                         material, localToWorld, blended, retIndex, toAddTo );
 
@@ -731,7 +731,7 @@ plDrawableSpans     *plDrawableGenerator::GeneratePlanarDrawable( const hsPoint3
     /// Create a drawable for it
     drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(), normals.data(),
                                                         uvws.data(), 1,
-                                                        nil, true, multColor,
+                                                        nullptr, true, multColor,
                                                         indices.size(), indices.data(),
                                                         material, localToWorld, blended, retIndex, toAddTo );
 

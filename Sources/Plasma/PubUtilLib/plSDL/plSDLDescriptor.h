@@ -163,9 +163,9 @@ public:
     virtual ~plSimpleVarDescriptor() {  }
         
     plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return this; }
-    plSDVarDescriptor* GetAsSDVarDescriptor() override { return nil; }
+    plSDVarDescriptor* GetAsSDVarDescriptor() override { return nullptr; }
     const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return this; }
-    const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return nil; }
+    const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return nullptr; }
 
     void CopyFrom(const plSimpleVarDescriptor* v);
     void CopyFrom(const plVarDescriptor* v) override { plVarDescriptor::CopyFrom(v); }   // lame compiler
@@ -194,11 +194,11 @@ class plSDVarDescriptor : public plVarDescriptor
 protected:
     plStateDescriptor* fStateDesc;      
 public:
-    plSDVarDescriptor(plStateDescriptor* sd=nil) : fStateDesc(sd) { }
+    plSDVarDescriptor(plStateDescriptor* sd=nullptr) : fStateDesc(sd) { }
 
-    plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return nil; }
+    plSimpleVarDescriptor* GetAsSimpleVarDescriptor() override { return nullptr; }
     plSDVarDescriptor* GetAsSDVarDescriptor() override { return this; }
-    const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return nil; }
+    const plSimpleVarDescriptor* GetAsSimpleVarDescriptor() const override { return nullptr; }
     const plSDVarDescriptor* GetAsSDVarDescriptor() const override { return this; }
 
     // getters
@@ -248,7 +248,7 @@ public:
     void AddVar(plVarDescriptor* v) { fVarsList.push_back(v); }
     void SetFilename(const plFileName& n) { fFilename=n;}
 
-    plVarDescriptor* FindVar(const ST::string& name, int* idx=nil) const;
+    plVarDescriptor* FindVar(const ST::string& name, int* idx=nullptr) const;
 
     // IO
     bool Read(hsStream* s); 

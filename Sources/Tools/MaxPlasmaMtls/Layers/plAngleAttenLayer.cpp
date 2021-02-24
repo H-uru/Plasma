@@ -76,10 +76,10 @@ static const float kDefOpaque1 = 0.f;
 
 static ParamBlockDesc2 gAngleAttenParamBlk
 (
-    plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//NULL,
+    plAngleAttenLayer::kBlkAngles, _T("angles"),  0, GetAngleAttenLayerDesc(),//nullptr,
     P_AUTO_CONSTRUCT + P_AUTO_UI, plAngleAttenLayer::kRefAngles,
 
-    IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nil,
+    IDD_ANGLE_ATTEN_LAYER, IDS_ANGLE_ATTEN_LAYER_PROPS, 0, 0, nullptr,
 
     // Texture size
     plAngleAttenLayer::kTranspAngle0,   _T("transp0"),  TYPE_FLOAT, 0, 0,
@@ -133,7 +133,7 @@ static ParamBlockDesc2 gAngleAttenParamBlk
 );
 
 plAngleAttenLayer::plAngleAttenLayer() :
-    fParmsPB(NULL),
+    fParmsPB(),
     fIValid(NEVER),
     fCosTransp0(0),
     fCosOpaque0(0),
@@ -204,7 +204,7 @@ RefTargetHandle plAngleAttenLayer::GetReference(int i)
     switch (i)
     {
         case kRefAngles:        return fParmsPB;
-        default:                return NULL;
+        default:                return nullptr;
     }
 }
 
@@ -230,7 +230,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlock(int i)
     switch (i)
     {
     case 0: return fParmsPB;
-    default: return NULL;
+    default: return nullptr;
     }
 }
 
@@ -239,7 +239,7 @@ IParamBlock2* plAngleAttenLayer::GetParamBlockByID(BlockID id)
     if (fParmsPB->ID() == id)
         return fParmsPB;
     else
-        return NULL;
+        return nullptr;
 }
 
 //From ReferenceTarget 
@@ -263,7 +263,7 @@ Animatable* plAngleAttenLayer::SubAnim(int i)
     switch (i)
     {
         case kRefAngles:        return fParmsPB;
-        default: return NULL;
+        default:                return nullptr;
     }
 }
 
@@ -452,7 +452,7 @@ void plAngleAttenLayer::ActivateTexDisplay(BOOL onoff)
 
 BITMAPINFO *plAngleAttenLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono, BOOL forceW, BOOL forceH)
 {
-    return nil;
+    return nullptr;
                         // FIXME
 }
 
@@ -463,7 +463,7 @@ DWORD plAngleAttenLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker
 
 const char *plAngleAttenLayer::GetTextureName( int which )
 {
-    return NULL;
+    return nullptr;
 }
 
 int plAngleAttenLayer::GetLoClamp()

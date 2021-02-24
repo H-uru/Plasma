@@ -76,7 +76,7 @@ public:
     bool    Read(uint32_t numBytes, void *buffer) override;
     uint32_t  NumBytesLeft() override;
 
-    bool    IsValid() override { return ( fFileHandle != nil ) ? true : false; }
+    bool    IsValid() override { return (fFileHandle != nullptr); }
 
 protected:
     enum

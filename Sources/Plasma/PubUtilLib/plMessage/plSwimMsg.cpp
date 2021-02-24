@@ -49,15 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // ctor default ------
 // -------------
 plSwimMsg::plSwimMsg()
-: fIsEntering(false),
-  fSwimRegionKey(nil)
+: fIsEntering()
 {
 }
 
 // ctor sender receiver entering ----------------------------------------------
 // ------------------------------
 plSwimMsg::plSwimMsg(const plKey &sender, const plKey &receiver, bool entering, plKey regionKey)
-: plMessage(sender, receiver, nil),
+: plMessage(sender, receiver, nullptr),
   fIsEntering(entering)
 {
     fSwimRegionKey = regionKey;

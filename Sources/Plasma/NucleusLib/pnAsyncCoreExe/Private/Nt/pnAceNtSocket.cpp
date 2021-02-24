@@ -147,8 +147,8 @@ static LISTDECL(NtSock, link)           s_socketList;
 
 //===========================================================================
 inline NtSock::NtSock ()
-    : closeTimeMs(0), connType(0), notifyProc(nil), bytesLeft(0)
-    , backlogAlloc(0), initTimeMs(0)
+    : closeTimeMs(), connType(), notifyProc(), bytesLeft()
+    , backlogAlloc(), initTimeMs()
 {
     memset(buffer, 0, sizeof(buffer));
 
@@ -192,7 +192,7 @@ static bool ListenPortIncrement (
         ASSERT(listener->listenCount >= 0);
         break;
     }
-    return listener != 0;
+    return listener != nullptr;
 }
 
 //===========================================================================
@@ -228,7 +228,7 @@ static void SocketStartAsyncRead (NtSock * sock) {
                 sock->handle,
                 sock->buffer + sock->bytesLeft,
                 sizeof(sock->buffer) - sock->bytesLeft,
-                0,
+                nullptr,
                 &sock->opRead.overlapped
             );
         }
@@ -271,10 +271,10 @@ static bool SocketDispatchRead (NtSock * sock) {
 
     // perform kNotifySocketListenSuccess
     SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
-    notify.param            = nil;
-    notify.asyncId          = 0;
+    notify.param            = nullptr;
+    notify.asyncId          = nullptr;
     notify.addr             = sock->addr;
-    sock->userState         = nil;
+    sock->userState         = nullptr;
     sock->connType          = notify.connType;
     notify.buffer           = sock->opRead.read.buffer + bytesProcessed;
     notify.bytes            = sock->opRead.read.bytes - bytesProcessed;
@@ -324,7 +324,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
                 );
             }
             NtSocketDisconnect((AsyncSocket) sock, true);
-            return nil;
+            return nullptr;
         }
 
         break;
@@ -361,18 +361,18 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
     const AsyncId asyncId       = INtConnSequenceStart(sock);
     op->overlapped.Offset       = 0;
     op->overlapped.OffsetHigh   = 0;
-    op->overlapped.hEvent       = nil;
+    op->overlapped.hEvent       = nullptr;
     op->opType                  = kOpQueuedSocketWrite;
     op->asyncId                 = asyncId;
     op->notify                  = false;
     op->pending                 = 1;
-    op->signalComplete          = nil;
+    op->signalComplete          = nullptr;
     sock->opList.Link(op, kListTail);
 
     // init OpWrite
     op->queueTimeMs             = TimeGetMs();
     op->bytesAlloc              = bytesAlloc;
-    op->write.param             = nil;
+    op->write.param             = nullptr;
     op->write.asyncId           = asyncId;
     op->write.buffer            = (uint8_t *) (op + 1);
     op->write.bytes             = bytes;
@@ -459,7 +459,7 @@ static bool SocketInitConnect (
         AsyncNotifySocketConnect notify;
         SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
         notify.param        = op.param;
-        notify.asyncId      = 0;
+        notify.asyncId      = nullptr;
         notify.connType     = sock->connType;
         sock->notifyProc    = op.notifyProc;
         if (!sock->notifyProc((AsyncSocket) sock, kNotifySocketConnectSuccess, &notify, &sock->userState))
@@ -491,8 +491,8 @@ static void SocketInitListen (
             // perform kNotifySocketListenSuccess
             AsyncNotifySocketListen notify;
             SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
-            notify.param            = nil;
-            notify.asyncId          = 0;
+            notify.param            = nullptr;
+            notify.asyncId          = nullptr;
             notify.connType         = 0;
             notify.buildId          = 0;
             notify.buildType        = 0;
@@ -681,7 +681,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
                 op->hSocket = INVALID_SOCKET;
             }
             s_connectList.Unlink(op);
-            INtConnPostOperation(nil, op, 0);
+            INtConnPostOperation(nullptr, op, 0);
             continue;
         }
 
@@ -689,7 +689,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
         if (op->hSocket == INVALID_SOCKET) {
             if (INVALID_SOCKET == (op->hSocket = ConnectSocket(op->localPort, op->remoteAddr))) {
                 s_connectList.Unlink(op);
-                INtConnPostOperation(nil, op, 0);
+                INtConnPostOperation(nullptr, op, 0);
                 continue;
             }
 
@@ -723,7 +723,7 @@ static void ListenThreadProc (AsyncThread *) {
 
         // wait for connection or timeout
         const struct timeval timeout = { 0, 250*1000 }; // seconds, microseconds
-        int result = select(0, &readfds, &writefds, 0, &timeout);
+        int result = select(0, &readfds, &writefds, nullptr, &timeout);
         if (result == SOCKET_ERROR) {
             LogMsg(kLogError, "socket select failed");
             continue;
@@ -738,7 +738,7 @@ static void ListenThreadProc (AsyncThread *) {
         for (NtListener * listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
             if (FD_ISSET(listener->hSocket, &readfds)) {
                 SOCKET s;
-                while (INVALID_SOCKET != (s = accept(listener->hSocket, 0, 0))) {
+                while (INVALID_SOCKET != (s = accept(listener->hSocket, nullptr, nullptr))) {
                     SocketInitListen(
                         SocketInitCommon(s),
                         listener->addr,
@@ -756,19 +756,19 @@ static void ListenThreadProc (AsyncThread *) {
 
             if (FD_ISSET(op->hSocket, &writefds)) {
                 s_connectList.Unlink(op);
-                INtConnPostOperation(nil, op, 0);
+                INtConnPostOperation(nullptr, op, 0);
             }
         }
     }
 
     // cleanup all connectors
     hsLockGuard(s_listenCrit);
-    for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nil; s_connectList.Unlink(op)) {
+    for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nullptr; s_connectList.Unlink(op)) {
         if (op->hSocket != INVALID_SOCKET) {
             closesocket(op->hSocket);
             op->hSocket = 0;
         }
-        INtConnPostOperation(nil, op, 0);
+        INtConnPostOperation(nullptr, op, 0);
     }
 }
 
@@ -778,10 +778,10 @@ static void StartListenThread () {
         return;
 
     s_listenEvent = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) nil,
+        nullptr,
         false,  // auto-reset event
         false,  // initial state unsignaled
-        (LPCTSTR) nil
+        nullptr
     );
     ASSERT(s_listenEvent);
 
@@ -789,7 +789,7 @@ static void StartListenThread () {
     s_runListenThread = true;
     s_listenThread = AsyncThreadCreate(
         ListenThreadProc,
-        nil,
+        nullptr,
         L"NtListenThread"
     );
 }
@@ -903,7 +903,7 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
     }
     if (s_listenEvent) {
         CloseHandle(s_listenEvent);
-        s_listenEvent = nil;
+        s_listenEvent = nullptr;
     }
 
     hsLockGuard(s_listenCrit);
@@ -915,7 +915,7 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
 void INtSocketDestroy () {
     if (s_socketTimer) {
         AsyncTimerDelete(s_socketTimer, kAsyncTimerDestroyWaitComplete);
-        s_socketTimer = nil;
+        s_socketTimer = nullptr;
     }
 }
 
@@ -932,8 +932,8 @@ void INtSockDelete (
         // After this call, the application becomes responsible for
         // calling NtSocketDelete at some later point in time.
         FAsyncNotifySocketProc notifyProc  = sock->notifyProc;
-        sock->notifyProc                = nil;
-        notifyProc((AsyncSocket) sock, kNotifySocketDisconnect, nil, &sock->userState);
+        sock->notifyProc                = nullptr;
+        notifyProc((AsyncSocket) sock, kNotifySocketDisconnect, nullptr, &sock->userState);
         DWORD err = GetLastError();
     }
     else {
@@ -965,7 +965,7 @@ void INtSocketOpCompleteSocketConnect (NtOpConnAttempt * op) {
         failed.connType   = op->sendData[0];
         failed.remoteAddr = op->remoteAddr;
         memset(&failed.localAddr, 0, sizeof(failed.localAddr));
-        op->notifyProc(nil, kNotifySocketConnectFailed, &failed, nil);
+        op->notifyProc(nullptr, kNotifySocketConnectFailed, &failed, nullptr);
     }
 
     // we can delete the operation outside an NtConn * critical
@@ -995,8 +995,8 @@ void INtSocketOpCompleteSocketRead (
         sock->bytesLeft += bytes;
 
         // dispatch data
-        sock->opRead.read.param             = nil;
-        sock->opRead.read.asyncId           = 0;
+        sock->opRead.read.param             = nullptr;
+        sock->opRead.read.asyncId           = nullptr;
         sock->opRead.read.buffer            = sock->buffer;
         sock->opRead.read.bytes             = sock->bytesLeft;
         sock->opRead.read.bytesProcessed    = 0;
@@ -1089,7 +1089,7 @@ bool INtSocketOpCompleteQueuedSocketWrite (
             sock->handle,
             op->write.buffer,
             op->write.bytes,
-            0,
+            nullptr,
             &op->overlapped
         );
     }
@@ -1140,12 +1140,12 @@ void NtSocketConnect (
     // init Operation
     op->overlapped.Offset       = 0;
     op->overlapped.OffsetHigh   = 0;
-    op->overlapped.hEvent       = nil;
+    op->overlapped.hEvent       = nullptr;
     op->opType                  = kOpConnAttempt;
-    op->asyncId                 = nil;
+    op->asyncId                 = nullptr;
     op->notify                  = true;
     op->pending                 = 1;
-    op->signalComplete          = nil;
+    op->signalComplete          = nullptr;
 
     // init OpConnAttempt
     op->canceled                = false;
@@ -1182,7 +1182,7 @@ void NtSocketConnect (
 // before the cancel can complete... you have been warned
 void NtSocketConnectCancel (
     FAsyncNotifySocketProc notifyProc,
-    AsyncCancelId          cancelId        // nil = cancel all with specified notifyProc
+    AsyncCancelId          cancelId        // nullptr = cancel all with specified notifyProc
 ) {
     hsLockGuard(s_listenCrit);
     for (NtOpConnAttempt * op = s_connectList.Head(); op; op = s_connectList.Next(op)) {
@@ -1287,7 +1287,7 @@ bool NtSocketSend (
         }
 
         // if there isn't any data queued, send this batch immediately
-        bool dataQueued = sock->opList.Head() != nil;
+        bool dataQueued = sock->opList.Head() != nullptr;
         if (!dataQueued) {
             int bytesSent = send((SOCKET) sock->handle, (const char *) data, bytes, 0);
             if (bytesSent != SOCKET_ERROR) {

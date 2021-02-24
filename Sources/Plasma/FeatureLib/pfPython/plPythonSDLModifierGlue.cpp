@@ -60,7 +60,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setIndex, args)
 {
     char* key;
     int idx;
-    PyObject* value = NULL;
+    PyObject* value = nullptr;
     if (!PyArg_ParseTuple(args, "siO", &key, &idx, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setIndex expects a string, int, and an object");
@@ -74,7 +74,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setIndexNow, args)
 {
     ST::string key;
     int idx;
-    PyObject* value = NULL;
+    PyObject* value = nullptr;
     if (!PyArg_ParseTuple(args, "O&iO", PyUnicode_STStringConverter, &key, &idx, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setIndexNow expects a string, int, and an object");
@@ -87,7 +87,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setIndexNow, args)
 PYTHON_METHOD_DEFINITION(ptSDL, setDefault, args)
 {
     ST::string key;
-    PyObject* value = NULL;
+    PyObject* value = nullptr;
     if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &key, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setDefault expects a string and a tuple");
@@ -189,7 +189,7 @@ PyObject* ptSDL_subscript(ptSDL* self, PyObject* key)
 
 int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
 {
-    if (value == NULL) // remove, which isn't supported
+    if (value == nullptr) // remove, which isn't supported
     {
         PyErr_SetString(PyExc_RuntimeError, "Cannot remove sdl records");
         return -1; // error return
@@ -210,7 +210,7 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
 }
 
 PYTHON_START_AS_MAPPING_TABLE(ptSDL)
-    0,                                  /* mp_length */
+    nullptr,                            /* mp_length */
     (binaryfunc)ptSDL_subscript,        /* mp_subscript */
     (objobjargproc)ptSDL_ass_subscript, /* mp_ass_subscript */
 PYTHON_END_AS_MAPPING_TABLE;
@@ -231,7 +231,7 @@ PYTHON_CLASS_NEW_IMPL(ptSDL, pySDLModifier)
 
 PyObject *pySDLModifier::New(plPythonSDLModifier *sdlMod)
 {
-    ptSDL *newObj = (ptSDL*)ptSDL_type.tp_new(&ptSDL_type, NULL, NULL);
+    ptSDL *newObj = (ptSDL*)ptSDL_type.tp_new(&ptSDL_type, nullptr, nullptr);
     newObj->fThis->fRecord = sdlMod;
     return (PyObject*)newObj;
 }

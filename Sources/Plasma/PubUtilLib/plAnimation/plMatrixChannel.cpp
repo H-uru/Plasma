@@ -130,7 +130,7 @@ void plMatrixChannel::Value(hsMatrix44 &matrix, double time, bool peek)
 // ------------
 plAGChannel * plMatrixChannel::MakeCombine(plAGChannel *other)
 {
-    return nil;
+    return nullptr;
 }
 
 // MakeBlend ---------------------------------------------------
@@ -231,7 +231,7 @@ void plMatrixConstant::Read(hsStream *stream, hsResMgr *mgr)
 // ctor ------------------------------
 // -----
 plMatrixTimeScale::plMatrixTimeScale()
-: plMatrixChannel(), fTimeSource(nil), fChannelIn(nil)
+: plMatrixChannel(), fTimeSource(), fChannelIn()
 {
 }
 
@@ -285,7 +285,7 @@ plAGChannel * plMatrixTimeScale::Detach(plAGChannel * detach)
     // If you delete a timescale, it is not replaced with its upstream node;
     // it's just gone.
     if(!fChannelIn || detach == this)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -343,9 +343,9 @@ plMatrixBlend::plMatrixBlend(plMatrixChannel * channelA, plMatrixChannel * chann
 // -----
 plMatrixBlend::~plMatrixBlend()
 {
-    fChannelA = nil;
-    fChannelB = nil;
-    fChannelBias = nil;
+    fChannelA = nullptr;
+    fChannelB = nullptr;
+    fChannelBias = nullptr;
 }
 
 // MakeBlend --------------------------------------------------
@@ -443,7 +443,7 @@ plAGChannel * plMatrixBlend::Detach(plAGChannel *remove)
     else if(fChannelB && !fChannelA)
         result = fChannelB;
     else if(!fChannelA && !fChannelB)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -495,7 +495,7 @@ void plMatrixBlend::Dump(int indent, bool optimized, double time)
 // ctor ----------------------------------------------
 // -----
 plMatrixControllerChannel::plMatrixControllerChannel()
-: plMatrixChannel(), fController(nil)
+: plMatrixChannel(), fController()
 {
 }
 
@@ -514,7 +514,7 @@ plMatrixControllerChannel::~plMatrixControllerChannel()
 {
     if(fController) {
         delete fController;
-        fController = nil;
+        fController = nullptr;
     }
 }
 
@@ -522,7 +522,7 @@ plMatrixControllerChannel::~plMatrixControllerChannel()
 // ------
 const hsMatrix44 & plMatrixControllerChannel::Value(double time, bool peek)
 {
-    return Value(time, peek, nil);
+    return Value(time, peek, nullptr);
 }
 
 // Value ------------------------------------------------------------------
@@ -544,7 +544,7 @@ const hsMatrix44 & plMatrixControllerChannel::Value(double time, bool peek,
 // ------------
 const hsAffineParts & plMatrixControllerChannel::AffineValue(double time, bool peek)
 {
-    return AffineValue(time, peek, nil);
+    return AffineValue(time, peek, nullptr);
 }
 
 // AffineValue ---------------------------------------------------------------------
@@ -606,7 +606,7 @@ void plMatrixControllerChannel::Read(hsStream *stream, hsResMgr *mgr)
 
 // CTOR
 plMatrixControllerCacheChannel::plMatrixControllerCacheChannel()
-: plMatrixChannel(), fControllerChannel(nil), fCache(nil)
+: plMatrixChannel(), fControllerChannel(), fCache()
 {
 }
 
@@ -620,7 +620,7 @@ plMatrixControllerCacheChannel::plMatrixControllerCacheChannel(plMatrixControlle
 plMatrixControllerCacheChannel::~plMatrixControllerCacheChannel()
 {
     delete fCache;
-    fControllerChannel = nil;
+    fControllerChannel = nullptr;
 }
 
 // VALUE(time)
@@ -646,7 +646,7 @@ plAGChannel * plMatrixControllerCacheChannel::Detach(plAGChannel * detach)
         result = fControllerChannel;
 
     if(!fControllerChannel)
-        result = nil;
+        result = nullptr;
 
     if(result != this)
         delete this;
@@ -660,7 +660,7 @@ plAGChannel * plMatrixControllerCacheChannel::Detach(plAGChannel * detach)
 
 // CTOR
 plQuatPointCombine::plQuatPointCombine()
-: fQuatChannel(nil), fPointChannel(nil)
+: fQuatChannel(), fPointChannel()
 {
 }
 
@@ -676,11 +676,11 @@ plQuatPointCombine::~plQuatPointCombine()
 {
     if(fQuatChannel) {
     //XXX   delete fQuatChannel;
-        fQuatChannel = nil;
+        fQuatChannel = nullptr;
     }
     if(fPointChannel) {
     //XXX   delete fPointChannel;
-        fPointChannel = nil;
+        fPointChannel = nullptr;
     }
 }
 

@@ -202,7 +202,7 @@ public:
     T*      PeekHead() const { return (T*)hsAppender::PeekHead(); }
     T*      PeekTail() const { return (T*)hsAppender::PeekTail(); }
     bool    PopHead(T* item = nullptr) { return hsAppender::PopHead(item); }
-    size_t  PopHead(size_t count, T item[] = nil) { return hsAppender::PopHead(count, item); }
+    size_t  PopHead(size_t count, T item[] = nullptr) { return hsAppender::PopHead(count, item); }
     bool    PopTail(T* item = nullptr) { return hsAppender::PopTail(item); }
 
     //  Alternate intefaces
@@ -228,9 +228,9 @@ public:
     hsTAppenderIterator() : hsAppenderIterator() {}
     hsTAppenderIterator(const hsTAppender<T>* list) : hsAppenderIterator(list->GetAppender()) {}
 
-    void    ResetToHead() { hsAppenderIterator::ResetToHead(nil); }
+    void    ResetToHead() { hsAppenderIterator::ResetToHead(nullptr); }
     void    ResetToHead(const hsTAppender<T>* list) { hsAppenderIterator::ResetToHead(list->GetAppender()); }
-    void    ResetToTail() { hsAppenderIterator::ResetToTail(nil); }
+    void    ResetToTail() { hsAppenderIterator::ResetToTail(nullptr); }
     void    ResetToTail(const hsTAppender<T>* list) { hsAppenderIterator::ResetToTail(list->GetAppender()); }
     T*      Next() { return (T*)hsAppenderIterator::Next(); }
     int     Next(T* item) { return hsAppenderIterator::Next(item); }

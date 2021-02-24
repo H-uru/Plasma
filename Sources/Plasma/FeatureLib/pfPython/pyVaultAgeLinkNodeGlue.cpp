@@ -106,7 +106,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeLinkNode, getVolatile)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, addSpawnPoint, args)
 {
-    PyObject* spawnPtObj = NULL;
+    PyObject* spawnPtObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &spawnPtObj))
     {
         PyErr_SetString(PyExc_TypeError, "addSpawnPoint expects a ptSpawnPointInfo or a ptSpawnPointInfoRef");
@@ -130,7 +130,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, addSpawnPoint, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, removeSpawnPoint, args)
 {
-    PyObject* spawnPtObj = NULL;
+    PyObject* spawnPtObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &spawnPtObj))
     {
         PyErr_SetString(PyExc_TypeError, "removeSpawnPoint expects a ptSpawnPointInfo, a ptSpawnPointInfoRef, or a string");

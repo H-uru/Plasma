@@ -56,7 +56,7 @@ char plResponderSDLModifier::kStrTriggerer[]="triggerer";
 
 plKey plResponderSDLModifier::GetStateOwnerKey() const
 {
-    return fResponder ? fResponder->GetKey() : nil;
+    return fResponder ? fResponder->GetKey() : nullptr;
 }
 
 //

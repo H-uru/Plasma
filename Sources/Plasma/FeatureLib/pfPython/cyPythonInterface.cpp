@@ -170,14 +170,14 @@ int32_t PythonInterface::initialized = 0;                 // only need to initia
 bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
 
-PyObject* PythonInterface::stdOut = nil;                // python object of the stdout file
-PyObject* PythonInterface::stdErr = nil;                // python object of the err file
+PyObject* PythonInterface::stdOut = nullptr;            // python object of the stdout file
+PyObject* PythonInterface::stdErr = nullptr;            // python object of the err file
 
 bool      PythonInterface::debug_initialized = false;   // has the debug been initialized yet?
-PyObject* PythonInterface::dbgMod = nil;                // display module for stdout and stderr
-PyObject* PythonInterface::dbgOut = nil;
-PyObject* PythonInterface::dbgSlice = nil;              // time slice function for the debug window
-plStatusLog* PythonInterface::dbgLog = nil;             // output logfile
+PyObject* PythonInterface::dbgMod = nullptr;            // display module for stdout and stderr
+PyObject* PythonInterface::dbgOut = nullptr;
+PyObject* PythonInterface::dbgSlice = nullptr;          // time slice function for the debug window
+plStatusLog* PythonInterface::dbgLog = nullptr;         // output logfile
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 bool PythonInterface::usePythonDebugger = false;
@@ -223,12 +223,12 @@ std::string DebuggerCallback::IParseCurrentException()
 {
     std::string error = "";
 
-    if (PyErr_Occurred() == NULL)
+    if (PyErr_Occurred() == nullptr)
         return error; // no error occurred
 
-    PyObject* errType = NULL;
-    PyObject* errVal = NULL;
-    PyObject* errTraceback = NULL;
+    PyObject* errType = nullptr;
+    PyObject* errVal = nullptr;
+    PyObject* errTraceback = nullptr;
     PyErr_Fetch(&errType, &errVal, &errTraceback); // clears the error flag
     PyErr_NormalizeException(&errType, &errVal, &errTraceback);
 
@@ -236,10 +236,10 @@ std::string DebuggerCallback::IParseCurrentException()
     {
         // we know how to parse out information from syntax errors
         PyObject* message;
-        char* filename = NULL;
+        char* filename = nullptr;
         int lineNumber = 0;
         int offset = 0;
-        char* text = NULL;
+        char* text = nullptr;
 
         if (PyTuple_Check(errVal))
         {
@@ -530,7 +530,7 @@ static int PythonTraceCallback(PyObject*, PyFrameObject* frame, int what, PyObje
 
     // update the callback class' stored values
     debServerCallback.SetFrame(frame);
-    debServerCallback.SetExceptionInfo(NULL);
+    debServerCallback.SetExceptionInfo(nullptr);
 
     // translate the python what value to the debugger what value
     plCyDebServer::TraceWhat debuggerWhat;
@@ -661,10 +661,10 @@ PyObject *pyOutputRedirector::New()
     if (!fTypeCreated)
     {
         if (PyType_Ready(&ptOutputRedirector_type) < 0)
-            return NULL;
+            return nullptr;
         fTypeCreated = true;
     }
-    ptOutputRedirector *newObj = (ptOutputRedirector*)ptOutputRedirector_type.tp_new(&ptOutputRedirector_type, NULL, NULL);
+    ptOutputRedirector *newObj = (ptOutputRedirector*)ptOutputRedirector_type.tp_new(&ptOutputRedirector_type, nullptr, nullptr);
     return (PyObject*)newObj;
 }
 
@@ -790,10 +790,10 @@ PyObject *pyErrorRedirector::New()
     if (!fTypeCreated)
     {
         if (PyType_Ready(&ptErrorRedirector_type) < 0)
-            return NULL;
+            return nullptr;
         fTypeCreated = true;
     }
-    ptErrorRedirector *newObj = (ptErrorRedirector*)ptErrorRedirector_type.tp_new(&ptErrorRedirector_type, NULL, NULL);
+    ptErrorRedirector *newObj = (ptErrorRedirector*)ptErrorRedirector_type.tp_new(&ptErrorRedirector_type, nullptr, nullptr);
     return (PyObject*)newObj;
 }
 
@@ -933,7 +933,7 @@ void PythonInterface::initPython()
     {
         debugServer.SetCallbackClass(&debServerCallback);
         debugServer.Init();
-        PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, NULL);
+        PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, nullptr);
     }
 #endif
 
@@ -993,7 +993,7 @@ void PythonInterface::initDebugInterface()
         // bring up the debug window
         dbgMod = PyImport_ImportModule("cydebug");
         // was there a debug module?
-        if ( dbgMod != nil )
+        if (dbgMod != nullptr)
         {
             PyObject *dict;
             // get the dictionary for this module
@@ -1224,10 +1224,10 @@ void PythonInterface::finiPython()
             dbgLog->AddLine("Hmm... Errors during Python shutdown.");
 
         // close done the log file, if we created one
-        if ( dbgLog != nil )
+        if (dbgLog != nullptr)
         {
             delete dbgLog;
-            dbgLog = nil;
+            dbgLog = nullptr;
         }
 
         initialized = 0;
@@ -1244,14 +1244,14 @@ void PythonInterface::finiPython()
 void PythonInterface::debugTimeSlice()
 {
     // check to see if the debug python module is loaded
-    if ( dbgSlice != nil )
+    if (dbgSlice != nullptr)
     {
         // then send it the new text
-        PyObject* retVal = PyObject_CallFunction(dbgSlice,nil);
-        if ( retVal == nil )
+        PyObject* retVal = PyObject_CallFunction(dbgSlice, nullptr);
+        if (retVal == nullptr)
         {
             // for some reason this function didn't, remember that and not call it again
-            dbgSlice = nil;
+            dbgSlice = nullptr;
             // if there was an error make sure that the stderr gets flushed so it can be seen
             PyErr_Print();      // make sure the error is printed
             PyErr_Clear();      // clear the error
@@ -1286,7 +1286,7 @@ PyObject* PythonInterface::GetStdErr()
 //
 int PythonInterface::getOutputAndReset(std::string *output)
 {
-    if (stdOut != nil)
+    if (stdOut != nullptr)
     {
         std::string strVal = pyOutputRedirector::GetData(stdOut);
         int size = strVal.length();
@@ -1302,14 +1302,14 @@ int PythonInterface::getOutputAndReset(std::string *output)
 #endif
 
         // check to see if the debug python module is loaded
-        if ( dbgOut != nil )
+        if (dbgOut != nullptr)
         {
             // then send it the new text
             PyObject* retVal = PyObject_CallFunction(dbgOut, _pycs("s"), strVal.c_str());
-            if ( retVal == nil )
+            if (retVal == nullptr)
             {
                 // for some reason this function didn't, remember that and not call it again
-                dbgOut = nil;
+                dbgOut = nullptr;
                 // if there was an error make sure that the stderr gets flushed so it can be seen
                 PyErr_Print();      // make sure the error is printed
                 PyErr_Clear();      // clear the error
@@ -1341,10 +1341,10 @@ void PythonInterface::WriteToStdErr(const char* text)
 
 PyObject* PythonInterface::ImportModule(const char* module) 
 {
-    PyObject* result = nil;
+    PyObject* result = nullptr;
     PyObject* name = PyUnicode_FromString(module);
 
-    if (name != nil) 
+    if (name != nullptr)
     {
         result = PyImport_Import(name);
         Py_DECREF(name);
@@ -1362,15 +1362,14 @@ PyObject* PythonInterface::ImportModule(const char* module)
 //
 PyObject* PythonInterface::FindModule(const char* module)
 {
-    PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (PyObject* m = PyDict_GetItemString(modules, module); m && PyModule_Check(m))
         // just return what we found
         return m;
 
     // couldn't find the module, return None (sorta)
-    return nil;
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1384,10 +1383,9 @@ PyObject* PythonInterface::FindModule(const char* module)
 //
 bool PythonInterface::IsModuleNameUnique(const ST::string& module)
 {
-    PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module.c_str())) != NULL && PyModule_Check(m))
+    if (PyObject* m = PyDict_GetItemString(modules, module.c_str()); m && PyModule_Check(m))
     {
         return false;
     }
@@ -1406,7 +1404,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
     PyObject *m, *d;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if (m = PyDict_GetItemString(modules, module); m && PyModule_Check(m))
     {
         // clear it
         hsAssert(false, ST::format("ERROR! Creating a python module of the same name - {}", module).c_str());
@@ -1415,19 +1413,19 @@ PyObject* PythonInterface::CreateModule(const char* module)
 
     // create the module
     m = PyImport_AddModule(module);
-    if (m == NULL)
-        return nil;
+    if (m == nullptr)
+        return nullptr;
     d = PyModule_GetDict(m);
     // add in the built-ins
     // first make sure that we don't already have the builtins
-    if (PyDict_GetItemString(d, "__builtins__") == NULL)
+    if (PyDict_GetItemString(d, "__builtins__") == nullptr)
     {
         // if we need the builtins then find the builtin module
         PyObject *bimod = PyImport_ImportModule("builtins");
         // then add the builtin dicitionary to our module's dictionary
-        if (bimod == NULL || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
+        if (bimod == nullptr || PyDict_SetItemString(d, "__builtins__", bimod) != 0) {
             getOutputAndReset();
-            return nil;
+            return nullptr;
         }
         Py_DECREF(bimod);
     }
@@ -1450,7 +1448,7 @@ PyObject* PythonInterface::GetModuleItem(const char* item, PyObject* module)
         return PyDict_GetItemString(d, item);
     }
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -1468,17 +1466,17 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
     dict = PyModule_GetDict(module);
     // start looking for the functions
     int i=0;
-    while ( funcNames[i] != nil )
+    while (funcNames[i] != nullptr)
     {
         PyObject* func = PyDict_GetItemString(dict, funcNames[i]);
-        if ( func != NULL && PyCallable_Check(func)>0 )
+        if (func != nullptr && PyCallable_Check(func) > 0)
         {
             // if it is defined then mark the funcTable
             funcTable[i] = func;
         }
         else    // else we couldn't find the funtion
         {
-            funcTable[i] = nil;
+            funcTable[i] = nullptr;
         }
         i++;
     }
@@ -1536,7 +1534,7 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
     s = PyMarshal_WriteObjectToString(pyobj, Py_MARSHAL_VERSION);
 
     // did it actually do it?
-    if ( s != NULL )
+    if (s != nullptr)
     {
         // yes, then get the size and the string address
         *size = PyBytes_Size(s);
@@ -1583,7 +1581,7 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL) {
+        if (module == nullptr) {
             PyErr_Print();
             return false;
         }
@@ -1593,7 +1591,7 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
     // run the string
     v = PyRun_String(command, Py_single_input, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();
@@ -1676,7 +1674,7 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (module == nullptr)
             return false;
     }
     // get the dictionaries for this module
@@ -1684,7 +1682,7 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     // run the string
     v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();
@@ -1705,15 +1703,15 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 //
 PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObject* args)
 {
-    if (module == NULL)
-        return NULL;
+    if (module == nullptr)
+        return nullptr;
 
     PyObject* function = PyObject_GetAttrString(module, name);
 
-    PyObject* result = NULL;
-    if (function != nil) 
+    PyObject* result = nullptr;
+    if (function != nullptr)
     {
-        result = PyObject_Call(function, args, NULL);
+        result = PyObject_Call(function, args, nullptr);
         Py_DECREF(function);
     }
 
@@ -1722,13 +1720,13 @@ PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObj
 
 PyObject* PythonInterface::ParseArgs(const char* args)
 {
-    PyObject* result = NULL;
+    PyObject* result = nullptr;
     PyObject* scope = PyDict_New();
     if (scope) 
     {
         //- Py_eval_input makes this function accept only single expresion (not statement)
         //- When using empty scope, functions and classes like 'file' or '__import__' are not visible
-        result = PyRun_String(args, Py_eval_input, scope, NULL);
+        result = PyRun_String(args, Py_eval_input, scope, nullptr);
         Py_DECREF(scope);
     }
    
@@ -1774,6 +1772,6 @@ bool PythonInterface::RunFunctionSafe(const char* module, const char* function, 
 pyKey* PythonInterface::GetpyKeyFromPython(PyObject* pkey)
 {
     if (!pyKey::Check(pkey))
-        return nil;
+        return nullptr;
     return pyKey::ConvertFrom(pkey);
 }

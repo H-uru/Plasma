@@ -95,7 +95,7 @@ void    plSoundEvent::SendCallbacks()
             fOwner->IsLocallyOwned() == plSynchedObject::kYes )     
         {
             /// Do this a bit differently so we can do our MsgSend last
-            plSoundMsg* sMsg = nil;
+            plSoundMsg* sMsg = nullptr;
 
             // Ref to make sure the dispatcher doesn't delete it on us
             hsRefCnt_SafeRef( msg );
@@ -121,7 +121,7 @@ void    plSoundEvent::SendCallbacks()
                 plgDispatch::MsgSend( msg, true );
             }
 
-            if( sMsg != nil )
+            if (sMsg != nullptr)
             {
                 plgDispatch::MsgSend( sMsg, true );
                 fCallbackEndingFlags[ j ] = 0xff;       // Our special flag to mean "hey, don't

@@ -67,9 +67,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plNodeCleanupMsg.h"
 
 plSceneNode::plSceneNode()
-:   fDepth(0),
-    fSpaceTree(nil),
-    fFilterGenerics(false)
+:   fDepth(),
+    fSpaceTree(),
+    fFilterGenerics()
 {
 }
 
@@ -199,7 +199,7 @@ plSpaceTree* plSceneNode::IBuildSpaceTree()
 plSpaceTree* plSceneNode::ITrashSpaceTree()
 {
     delete fSpaceTree;
-    return fSpaceTree = nil;
+    return fSpaceTree = nullptr;
 }
 
 void plSceneNode::IDirtySpaceTree()

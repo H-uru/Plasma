@@ -43,5 +43,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCCRMgr.h"
 
 // static 
-plCCRMgrBase* plCCRMgrBase::fBaseInstance=nil;
+plCCRMgrBase* plCCRMgrBase::fBaseInstance = nullptr;
 

@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 StringTokenizer::StringTokenizer() {
     qAsTok = true;
     inQuote = false;
-    this->string = this->seps = 0;
+    this->string = this->seps = nullptr;
 }
 StringTokenizer::StringTokenizer(const char *string, const char *seps) {
     qAsTok = true;
@@ -69,7 +69,8 @@ bool StringTokenizer::hasMoreTokens() {
     return (*tok != '\0');
 };
 char *StringTokenizer::next() {
-    if (*tok == '\0') return NULL;
+    if (*tok == '\0')
+        return nullptr;
     char *cur = tok;
     while (*tok != '\0' && !isSep(*tok)) tok++;
     if (*tok != '\0') {

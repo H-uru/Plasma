@@ -179,11 +179,11 @@ plArmatureEffectFootSound::plArmatureEffectFootSound()
 {
     plArmatureEffectFootSurface *surface = new plArmatureEffectFootSurface;
     surface->fID = plArmatureEffectsMgr::kFootNoSurface;
-    surface->fTrigger = nil;
+    surface->fTrigger = nullptr;
     fSurfaces.emplace_back(surface);
     for (int i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
     {
-        fMods[i] = nil;
+        fMods[i] = nullptr;
     }
     SetFootType(kFootTypeShoe);
 }
@@ -224,7 +224,7 @@ void plArmatureEffectFootSound::Write(hsStream* s, hsResMgr* mgr)
 
     s->WriteByte(plArmatureEffectsMgr::kMaxSurface);
     for (size_t i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
-        mgr->WriteKey(s, (fMods[i] ? fMods[i]->GetKey() : nil));
+        mgr->WriteKey(s, (fMods[i] ? fMods[i]->GetKey() : nullptr));
 }
 
 bool plArmatureEffectFootSound::MsgReceive(plMessage* msg)
@@ -240,7 +240,7 @@ bool plArmatureEffectFootSound::MsgReceive(plMessage* msg)
                 fMods[refMsg->fWhich] = rsMod;
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )    
-                fMods[refMsg->fWhich] = nil;
+                fMods[refMsg->fWhich] = nullptr;
 
             return true;
         }
@@ -256,7 +256,7 @@ bool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
     {
         uint32_t curSurfaceIndex = fSurfaces.back()->fID;
 
-        if (curSurfaceIndex < plArmatureEffectsMgr::kMaxSurface && fMods[curSurfaceIndex] != nil)
+        if (curSurfaceIndex < plArmatureEffectsMgr::kMaxSurface && fMods[curSurfaceIndex] != nullptr)
         {
             if (plgAudioSys::Active() && fActiveSurfaces.IsBitSet(curSurfaceIndex))
             {

@@ -71,7 +71,7 @@ public:
     {
         while (1)
         {
-            HWND hMtlDlg = FindWindow(NULL, "Material/Map Browser");
+            HWND hMtlDlg = FindWindow(nullptr, "Material/Map Browser");
             if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
             {
                 SendMessage(GetDlgItem(hMtlDlg, kScene), BM_CLICK, 0, 0);
@@ -137,7 +137,7 @@ static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         info = (plPickMaterialInfo*)lParam;
 
         MtlSet mtls;
-        plMtlCollector::GetMtls(&mtls, nil, info->fFlags);
+        plMtlCollector::GetMtls(&mtls, nullptr, info->fFlags);
         
         HWND hList = GetDlgItem(hDlg, IDC_MTL_LIST);
 
@@ -180,10 +180,10 @@ static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
 {
     plPickMaterialInfo info;
-    info.fMtl = NULL;
+    info.fMtl = nullptr;
     info.fFlags = flags;
 
-    //Mtl *mtl = NULL;
+    //Mtl *mtl = nullptr;
     int ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
 
     if (ret == 1)
@@ -193,6 +193,6 @@ Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
         return info.fMtl;
     }
 
-    return nil;
+    return nullptr;
 }
 

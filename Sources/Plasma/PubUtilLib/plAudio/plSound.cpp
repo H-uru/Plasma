@@ -73,8 +73,8 @@ plProfile_CreateCounterNoReset( "Loaded", "Sound", SoundNumLoaded );
 plProfile_CreateCounterNoReset( "Waiting to Die", "Sound", WaitingToDie );
 plProfile_CreateAsynchTimer( "Sound Load Time", "Sound", SoundLoadTime );
 
-plGraphPlate    *plSound::fDebugPlate = nil;
-plSound         *plSound::fCurrDebugPlateSound = nil;
+plGraphPlate    *plSound::fDebugPlate = nullptr;
+plSound         *plSound::fCurrDebugPlateSound = nullptr;
 bool            plSound::fLoadOnDemandFlag = true;
 bool            plSound::fLoadFromDiskOnDemand = true;
 unsigned        plSound::fIncidentalsPlaying = 0;
@@ -116,7 +116,7 @@ void plSound::IUpdateDebugPlate()
 {
     if( this == fCurrDebugPlateSound )
     {
-        if( fDebugPlate == nil )
+        if (fDebugPlate == nullptr)
         {
             plPlateManager::Instance().CreateGraphPlate( &fDebugPlate );
             fDebugPlate->SetSize( 0.50, 0.25 );
@@ -137,10 +137,10 @@ void plSound::IUpdateDebugPlate()
 
 void plSound::SetCurrDebugPlate( const plKey& soundKey )
 {
-    if( soundKey == nil )
+    if (soundKey == nullptr)
     {
-        fCurrDebugPlateSound = nil;
-        if( fDebugPlate != nil )
+        fCurrDebugPlateSound = nullptr;
+        if (fDebugPlate != nullptr)
             fDebugPlate->SetVisible( false );
     }
     else
@@ -557,7 +557,7 @@ void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
 
 void plSound::IStopFade( bool shuttingDown, bool SetVolEnd)
 {
-    if( fCurrFadeParams != nil )
+    if (fCurrFadeParams != nullptr)
     {
         if( fCurrFadeParams == &fCoolSoftVolumeTrickParams )
         {
@@ -583,7 +583,7 @@ void plSound::IStopFade( bool shuttingDown, bool SetVolEnd)
     }
 
     fFading = false;
-    fCurrFadeParams = nil;
+    fCurrFadeParams = nullptr;
 
     // Fade done, unregister for time message
     if( fRegisteredForTime )
@@ -596,10 +596,10 @@ void plSound::IStopFade( bool shuttingDown, bool SetVolEnd)
 bool plSound::MsgReceive( plMessage* pMsg )
 {
     plTimeMsg   *time = plTimeMsg::ConvertNoRef( pMsg );
-    if( time != nil )
+    if (time != nullptr)
     {
         /// Time message for handling fade ins/outs
-        if( fCurrFadeParams == nil )
+        if (fCurrFadeParams == nullptr)
             return true;
 
         fCurrFadeParams->fCurrTime += time->DelSeconds();
@@ -633,7 +633,7 @@ bool plSound::MsgReceive( plMessage* pMsg )
             }
 
             // Done with this one!
-            fCurrFadeParams = nil;
+            fCurrFadeParams = nullptr;
             fFading = false;
         }   
         else
@@ -662,7 +662,7 @@ bool plSound::MsgReceive( plMessage* pMsg )
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnRemove | plRefMsg::kOnDestroy) )
             {
-                ISetSoftRegion( nil );
+                ISetSoftRegion(nullptr);
                 return true;
             }
         }
@@ -675,7 +675,7 @@ bool plSound::MsgReceive( plMessage* pMsg )
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnRemove | plRefMsg::kOnDestroy) )
             {
-                ISetSoftOcclusionRegion( nil );
+                ISetSoftOcclusionRegion(nullptr);
                 return true;
             }
         }
@@ -687,7 +687,7 @@ bool plSound::MsgReceive( plMessage* pMsg )
                 SetLength( fDataBuffer->GetDataLengthInSecs() );
             }
             else
-                fDataBuffer = nil;
+                fDataBuffer = nullptr;
 
             return true;
         }
@@ -696,14 +696,14 @@ bool plSound::MsgReceive( plMessage* pMsg )
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fOwningSceneObject = plSceneObject::ConvertNoRef( refMsg->GetRef() );
             else
-                fOwningSceneObject = nil;
+                fOwningSceneObject = nullptr;
 
             return true;
         }
     }
 
     plSoundMsg *pSoundMsg = plSoundMsg::ConvertNoRef( pMsg );
-    if( pSoundMsg != nil )
+    if (pSoundMsg != nullptr)
     {   
         if( pSoundMsg->Cmd( plSoundMsg::kAddCallbacks ) )
         {
@@ -719,9 +719,9 @@ bool plSound::MsgReceive( plMessage* pMsg )
     }
 
     plListenerMsg *listenMsg = plListenerMsg::ConvertNoRef( pMsg );
-    if( listenMsg != nil )
+    if (listenMsg != nullptr)
     {
-        if( fSoftOcclusionRegion != nil )
+        if (fSoftOcclusionRegion != nullptr)
         {
             // The EAX settings have 0 as the start value and 1 as the end, and since start
             // translates to "inside the soft region", it's reversed of what the region gives us
@@ -847,9 +847,9 @@ double plSound::GetLength()
 void plSound::ISetSoftRegion( plSoftVolume *region )
 {
     /// We're either registering or unregistering
-    if( fSoftRegion == nil && region != nil )
+    if (fSoftRegion == nullptr && region != nullptr)
         RegisterOnAudioSys();
-    else if( fSoftRegion != nil && region == nil )
+    else if (fSoftRegion != nullptr && region == nullptr)
         UnregisterOnAudioSys();
 
     fSoftRegion = region;
@@ -859,11 +859,11 @@ void plSound::ISetSoftRegion( plSoftVolume *region )
 void plSound::ISetSoftOcclusionRegion( plSoftVolume *region )
 {
     /// We're either registering or unregistering for listener messages
-    if( fSoftOcclusionRegion == nil && region != nil )
+    if (fSoftOcclusionRegion == nullptr && region != nullptr)
     {
         plgDispatch::Dispatch()->RegisterForExactType( plListenerMsg::Index(), GetKey() );
     }
-    else if( fSoftOcclusionRegion != nil && region == nil )
+    else if (fSoftOcclusionRegion != nullptr && region == nullptr)
     {
         plgDispatch::Dispatch()->UnRegisterForExactType( plListenerMsg::Index(), GetKey() );
     }
@@ -937,7 +937,7 @@ float plSound::CalcSoftVolume( bool enable, float distToListenerSquared )
     if( !enable )
         // We apparently don't know jack. Let the audioSystem's decision rule
         fSoftVolume = 0.f;
-    else if( fSoftRegion != nil )
+    else if (fSoftRegion != nullptr)
         fSoftVolume = fSoftRegion->GetListenerStrength();
     else
         fSoftVolume = 1.f;
@@ -979,7 +979,7 @@ bool plSound::IWillBeAbleToPlay()
     if( fSoftVolume == 0.f )
         return false;
 
-    return IsWithinRange( plgAudioSys::GetCurrListenerPos(), nil );
+    return IsWithinRange(plgAudioSys::GetCurrListenerPos(), nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -989,7 +989,7 @@ bool plSound::IsWithinRange( const hsPoint3 &listenerPos, float *distSquared )
 {
     if( !IsPropertySet( plSound::kPropIs3DSound ) )
     {
-        if( distSquared != nil )
+        if (distSquared != nullptr)
             *distSquared = 1.f;
         return true;
     }
@@ -999,7 +999,7 @@ bool plSound::IsWithinRange( const hsPoint3 &listenerPos, float *distSquared )
 
     distance.Set( &listenerPos, &soundPos );
 
-    if( distSquared != nil )
+    if (distSquared != nullptr)
         *distSquared = distance.MagnitudeSquared();
 
     if( GetMax() == 1000000000 )
@@ -1435,7 +1435,7 @@ bool plSound::DirtySynchState(const ST::string& sdlName /* kSDLSound */, uint32_
     if( sdlName.empty() )
         sdlName = kSDLSound;
 
-    if( fOwningSceneObject != nil )
+    if (fOwningSceneObject != nullptr)
         return fOwningSceneObject->DirtySynchState(sdlName, sendFlags);
 */
     return false;
@@ -1457,13 +1457,13 @@ void plSoundVolumeApplicator::IApply( const plAGModifier *mod, double time )
 
         // Find the audio interface and thus the plSound from it
         plSceneObject *so = mod->GetTarget( 0 );
-        if( so != nil )
+        if (so != nullptr)
         {
             const plAudioInterface *ai = so->GetAudioInterface();
-            if( ai != nil && fIndex < ai->GetNumSounds() )
+            if (ai != nullptr && fIndex < ai->GetNumSounds())
             {
                 plSound *sound = ai->GetSound( fIndex );
-                if( sound != nil )
+                if (sound != nullptr)
                 {
                     sound->SetVolume( digitalVolume );
                     return;

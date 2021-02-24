@@ -61,7 +61,7 @@ class pyGUIControl
 protected:
     plKey                   fGCkey;
     
-    pyGUIControl(): fGCkey(nil) {} // only used by python glue, do NOT call
+    pyGUIControl() = default; // only used by python glue, do NOT call
     pyGUIControl(pyKey& gckey);
     pyGUIControl(plKey objkey);
     // copy constructor

@@ -100,7 +100,7 @@ class pfGUIDraggableMod : public pfGUIControlMod
         void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
 
-        void    UpdateBounds(hsMatrix44 *invXformMatrix = nil, bool force = false) override;
+        void    UpdateBounds(hsMatrix44 *invXformMatrix = nullptr, bool force = false) override;
 
         void            StopDragging( bool cancel );
         const hsPoint3  &GetLastMousePt() const { return fLastMousePt; }

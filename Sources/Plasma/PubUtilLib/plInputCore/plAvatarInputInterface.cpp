@@ -77,7 +77,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plAvatarInputInterface  *plAvatarInputInterface::fInstance = nil;
+plAvatarInputInterface  *plAvatarInputInterface::fInstance = nullptr;
 
 plAvatarInputInterface::plAvatarInputInterface()
 {
@@ -88,7 +88,7 @@ plAvatarInputInterface::plAvatarInputInterface()
     fCursorTimeout = 0;
     fCursorFadeDelay = 3.f;
     f3rdPerson = true;
-    fInputMap = nil;
+    fInputMap = nullptr;
     ISetBasicMode(); // Must be after 3rdPerson and fInputMap are set.
     SetEnabled( true );         // Always enabled
 
@@ -278,7 +278,7 @@ void plAvatarInputInterface::ISetMouseWalkMode(ControlEventCode code)
 void plAvatarInputInterface::ClearKeyMap()
 { 
     // Note: we might be clearing our key bindings, but we still want to be owners of the commands,
-    if( fControlMap != nil )
+    if (fControlMap != nullptr)
     {
         fControlMap->UnmapAllBindings();
         
@@ -291,7 +291,7 @@ void plAvatarInputInterface::ClearKeyMap()
 
 void    plAvatarInputInterface::RestoreDefaultKeyMappings()
 {
-    if( fControlMap == nil )
+    if (fControlMap == nullptr)
         return;
 
     fControlMap->UnmapAllBindings();
@@ -623,7 +623,7 @@ void    plAvatarInputInterface::MissedInputEvent( plInputEventMsg *pMsg )
     int                 i;
 
 
-    if( plKeyEventMsg::ConvertNoRef( pMsg ) == nil )
+    if (plKeyEventMsg::ConvertNoRef(pMsg) == nullptr)
     {
         // We only "lose focus" if someone else grabbed a key message. Don't care about anything else.
         return;
@@ -674,7 +674,7 @@ bool plAvatarInputInterface::IsEnterChatModeBound()
 
 bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 {
-    if( fInputMap == nil )
+    if (fInputMap == nullptr)
         return false;
 
     plMouseMap  *mouseMap = fInputMap->fMouseMap;

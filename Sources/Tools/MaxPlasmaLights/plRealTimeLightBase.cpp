@@ -163,11 +163,11 @@ int RTLightMouseCallBack::proc(ViewExp *vpt, int msg, int point, int flags, IPoi
         switch (point)
         {
         case 0:
-            mat.SetTrans(vpt->SnapPoint(m,m,NULL,SNAP_IN_PLANE));
+            mat.SetTrans(vpt->SnapPoint(m, m, nullptr, SNAP_IN_PLANE));
             break;
 
         case 1:
-            mat.SetTrans(vpt->SnapPoint(m,m,NULL,SNAP_IN_PLANE));
+            mat.SetTrans(vpt->SnapPoint(m, m, nullptr, SNAP_IN_PLANE));
             if (msg == MOUSE_POINT)
                 return 0;
             break;          
@@ -192,7 +192,7 @@ CreateMouseCallBack* plRTLightBase::GetCreateMouseCallBack()
 /////////////////////////////////////////////////////////////////////////////
 
 #if 0
-plRTLightBase::plRTLightBase() : fIP(nil), fClassDesc(nil), fLightPB(nil)
+plRTLightBase::plRTLightBase() : fIP(), fClassDesc(), fLightPB()
 {
     fColor = Color(0.5f, 0.5f, 1.f);
 }
@@ -349,7 +349,7 @@ void plRTLightBase::BuildSpotMesh(float coneSize)
 plRTLightBase::~plRTLightBase()
 {
     DeleteAllRefsFromMe();
-    fLightPB = NULL;
+    fLightPB = nullptr;
     if( fTex )
         delete fTex;
 }
@@ -364,7 +364,7 @@ IParamBlock2* plRTLightBase::GetParamBlockByID( short id )
     if( id == fLightPB->ID() )
         return fLightPB; 
     else 
-        return nil;
+        return nullptr;
 }
 
 IParamBlock2    *plRTLightBase::GetParamBlock( int i )
@@ -372,7 +372,7 @@ IParamBlock2    *plRTLightBase::GetParamBlock( int i )
     switch( i )
     {
         case 0: return fLightPB;
-        default: return nil;
+        default: return nullptr;
     }
 }
 
@@ -408,9 +408,9 @@ Animatable *plRTLightBase::SubAnim(int i)
             Texmap* MyMap;
             return (Animatable*) fLightPB->GetValue(kProjMapTexButton, 0, MyMap, FOREVER);          
         case kRefShadowType: 
-            return NULL;
-        default: return NULL;
-
+            return nullptr;
+        default:
+            return nullptr;
     }
 
     //return (Animatable*) fLightPB;
@@ -710,11 +710,11 @@ void plRTLightBase::DrawX(TimeValue t, float asp, int npts, float dist, Graphics
     Point3 q[3*NUM_CIRC_PTS+1];
     Point3 u[2];
     GetConePoints(t, asp, GetFallsize(t), dist, q);
-    gw->polyline(npts, q,NULL, NULL, TRUE, NULL);
+    gw->polyline(npts, q, nullptr, nullptr, TRUE, nullptr);
     u[0] = q[0]; u[1] = q[2*indx];
-    gw->polyline(2, u,NULL, NULL, FALSE, NULL);
+    gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
     u[0] = q[indx]; u[1] = q[3*indx];
-    gw->polyline(2, u,NULL, NULL, FALSE, NULL);
+    gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
 }
 
 
@@ -740,23 +740,23 @@ void plRTLightBase::DrawWarpRect(TimeValue t, GraphicsWindow *gw, float angle, f
 {
     GetRectXPoints(t, angle,dist,q);
     for (int i=0; i<6; i++)
-        gw->polyline(NUM_ARC_PTS, q+i*NUM_ARC_PTS,NULL, NULL, FALSE, NULL);  
+        gw->polyline(NUM_ARC_PTS, q+i*NUM_ARC_PTS, nullptr, nullptr, FALSE, nullptr);
 }
 
 void plRTLightBase::DrawCircleX(TimeValue t, GraphicsWindow *gw, float angle, float dist, Point3 *q) 
 {
     GetCirXPoints(t, angle,dist,q);
-    gw->polyline(NUM_CIRC_PTS, q,NULL, NULL, TRUE, NULL);  // circle 
-    gw->polyline(NUM_ARC_PTS, q+NUM_CIRC_PTS,NULL, NULL, FALSE, NULL); // vert arc
-    gw->polyline(NUM_ARC_PTS, q+NUM_CIRC_PTS+NUM_ARC_PTS,NULL, NULL, FALSE, NULL);  // horiz arc
+    gw->polyline(NUM_CIRC_PTS, q, nullptr, nullptr, TRUE, nullptr);  // circle
+    gw->polyline(NUM_ARC_PTS, q+NUM_CIRC_PTS, nullptr, nullptr, FALSE, nullptr); // vert arc
+    gw->polyline(NUM_ARC_PTS, q+NUM_CIRC_PTS+NUM_ARC_PTS, nullptr, nullptr, FALSE, nullptr);  // horiz arc
 }
 
 void plRTLightBase::DrawSphereArcs(TimeValue t, GraphicsWindow *gw, float r, Point3 *q) 
 {
     GetAttenPoints(t, r, q);
-    gw->polyline(NUM_CIRC_PTS, q,               NULL, NULL, TRUE, NULL);
-    gw->polyline(NUM_CIRC_PTS, q+NUM_CIRC_PTS,  NULL, NULL, TRUE, NULL);
-    gw->polyline(NUM_CIRC_PTS, q+2*NUM_CIRC_PTS,NULL, NULL, TRUE, NULL);
+    gw->polyline(NUM_CIRC_PTS, q,                nullptr, nullptr, TRUE, nullptr);
+    gw->polyline(NUM_CIRC_PTS, q+NUM_CIRC_PTS,   nullptr, nullptr, TRUE, nullptr);
+    gw->polyline(NUM_CIRC_PTS, q+2*NUM_CIRC_PTS, nullptr, nullptr, TRUE, nullptr);
 }
 
 //
@@ -832,7 +832,7 @@ void plRTLightBase::GetLocalBoundBox(TimeValue t, INode *node, ViewExp *vpt, Box
     float scaleFactor = vpt->NonScalingObjectSize()*vpt->GetVPWorldWidth(loc) / 360.0f;
     box = fMesh.getBoundingBox();
     box.Scale(scaleFactor);
-    BoxLight(t, node, box, NULL);
+    BoxLight(t, node, box, nullptr);
 
 }
 
@@ -1007,7 +1007,7 @@ int plRTLightBase::Display(TimeValue t, INode *node, ViewExp *vpt, int flags)
     }
     
     fMesh.render( gw, gw->getMaterial(),
-        (flags&USE_DAMAGE_RECT) ? &vpt->GetDammageRect() : NULL, COMP_ALL); 
+        (flags & USE_DAMAGE_RECT) ? &vpt->GetDammageRect() : nullptr, COMP_ALL);
     
     DrawConeAndLine(t, node, gw, 1);
 //  DrawAtten(t, node, gw);
@@ -1096,20 +1096,20 @@ void plRTLightBase::DrawCone(TimeValue t, GraphicsWindow *gw, float dist)
             // draw (far) hotspot circle
             u[0] = q[0];
             u[1] = q[NUM_CIRC_PTS];
-            gw->polyline( 2, u, NULL, NULL, FALSE, NULL);
+            gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
         }
-        gw->polyline(NUM_CIRC_PTS, q, NULL, NULL, TRUE, NULL);
+        gw->polyline(NUM_CIRC_PTS, q, nullptr, nullptr, TRUE, nullptr);
         if (dirLight) 
         {
             // draw 4 axial hotspot lines
             for (i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX) 
             {
                 u[0] =  q[i];   u[1] =  q[i]; u[1].z += dist;
-                gw->polyline( 2, u, NULL, NULL, FALSE, NULL );  
+                gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
             }
             GetConePoints(t, -1.0f, 20/*GetHotspot(t)*/, 0.0f, q);
             // draw (near) hotspot circle
-            gw->polyline(NUM_CIRC_PTS, q, NULL, NULL, TRUE, NULL);
+            gw->polyline(NUM_CIRC_PTS, q, nullptr, nullptr, TRUE, nullptr);
         }
         else  
         {
@@ -1118,7 +1118,7 @@ void plRTLightBase::DrawCone(TimeValue t, GraphicsWindow *gw, float dist)
             for (i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX) 
             {
                 u[1] =  q[i];
-                gw->polyline( 2, u, NULL, NULL, FALSE, NULL );  
+                gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
             }
         }
         if(!IsDir())
@@ -1130,10 +1130,10 @@ void plRTLightBase::DrawCone(TimeValue t, GraphicsWindow *gw, float dist)
         {
             // draw (far) fallsize circle
             u[0] = q[0];    u[1] = q[NUM_CIRC_PTS];
-            gw->polyline( 2, u, NULL, NULL, FALSE, NULL);
+            gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
             u[0] = Point3(0,0,0);
         }
-        gw->polyline(NUM_CIRC_PTS, q, NULL, NULL, TRUE, NULL);
+        gw->polyline(NUM_CIRC_PTS, q, nullptr, nullptr, TRUE, nullptr);
         if (dirLight)
         {
             float dfar = q[0].z;
@@ -1151,12 +1151,12 @@ void plRTLightBase::DrawCone(TimeValue t, GraphicsWindow *gw, float dist)
             for (i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX) 
             {
                 u[0] =  q[i];  u[0].z = dfar;   u[1] =  q[i]; u[1].z = dnear;
-                gw->polyline( 2, u, NULL, NULL, FALSE, NULL );  
+                gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
             }
 
             GetConePoints(t, -1.0f, 10000.0, 0.0f, q);
             // draw (near) fallsize circle
-            gw->polyline(NUM_CIRC_PTS, q, NULL, NULL, TRUE, NULL);
+            gw->polyline(NUM_CIRC_PTS, q, nullptr, nullptr, TRUE, nullptr);
             
         }
         else 
@@ -1171,7 +1171,7 @@ void plRTLightBase::DrawCone(TimeValue t, GraphicsWindow *gw, float dist)
             for (i = 0; i < NUM_CIRC_PTS; i += SEG_INDEX) 
             {
                 u[1] =  -q[i]*dfar/dist;    
-                gw->polyline( 2, u, NULL, NULL, FALSE, NULL );  
+                gw->polyline(2, u, nullptr, nullptr, FALSE, nullptr);
             }
         }
     }
@@ -1208,7 +1208,7 @@ int plRTLightBase::DrawConeAndLine(TimeValue t, INode* inode, GraphicsWindow *gw
                 gw->setColor( LINE_COLOR, GetUIColor(COLOR_TARGET_LINE));
             v[0] = Point3(0,0,0);
             v[1] = Point3(0.0f, 0.0f, (drawing == -1)? (-0.9f * dist): -dist);
-            gw->polyline( 2, v, NULL, NULL, FALSE, NULL );  
+            gw->polyline(2, v, nullptr, nullptr, FALSE, nullptr);
         }
         
     }
@@ -1238,7 +1238,7 @@ void    plRTLightBase::DrawArrow( TimeValue t, GraphicsWindow *gw, Point3 &direc
     pts[ 3 ] = pts[ 1 ] - direction * 10.f;
     pts[ 2 ] = pts[ 3 ] + Point3( direction.y, direction.z, direction.x ) * 5.f;
 
-    gw->polyline( 4, pts, nil, nil, true, nil );
+    gw->polyline(4, pts, nullptr, nullptr, true, nullptr);
 }
 
 int plRTLightBase::HitTest(TimeValue t, INode *node, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt)
@@ -1338,18 +1338,18 @@ RefTargetHandle plRTLightBase::GetReference(int i)
     switch(i)
         {
         case kRefGeneralLightProp:
-            return NULL;
+            return nullptr;
         case kRefProjMap:
-            //if(fLightPB->GetTexmap(kProjMapTexButton, 0) != NULL)
+            //if(fLightPB->GetTexmap(kProjMapTexButton, 0) != nullptr)
             //{
             //  MyMap = fLightPB->GetTexmap(kProjMapTexButton, 0);          
             //return (RefTargetHandle) MyMap; 
             //}else
-                return NULL;
+                return nullptr;
         case kRefShadowProjMap:
-            return NULL;
+            return nullptr;
         case kRefShadowType:
-            return NULL;
+            return nullptr;
         case kRefOmniLight:
         case kRefSpotLight:
         case kRefTSpotLight:
@@ -1358,7 +1358,7 @@ RefTargetHandle plRTLightBase::GetReference(int i)
         case kRefProjDirLight:
             return (RefTargetHandle)fLightPB;
         default:
-            return NULL;
+            return nullptr;
         }
 
 }       
@@ -1423,7 +1423,7 @@ void plRTLightBase::BeginEditParams(IObjParam *ip, ULONG flags, Animatable *prev
 void plRTLightBase::EndEditParams(IObjParam *ip, ULONG flags, Animatable *next)
 {   
     GenLight::EndEditParams( ip, flags, next );
-    fIP = NULL;
+    fIP = nullptr;
     fClassDesc->EndEditParams(ip, this, flags, next);
 }
 
@@ -1510,9 +1510,7 @@ IOResult plRTLightBase::Load(ILoad* iload)
     
 ObjLightDesc *plRTLightBase::CreateLightDesc(INode *n, BOOL forceShadowBuf)
 {
-
-    return NULL;
-
+    return nullptr;
 }
 
 
@@ -1713,7 +1711,7 @@ void plRTLightBase::SetShadow(int a)
 Texmap* plRTLightBase::GetProjMap() 
 { 
     if( !fLightPB->GetInt(kUseProjectorBool) )
-        return NULL;
+        return nullptr;
 
     if( GetTex() )
     {

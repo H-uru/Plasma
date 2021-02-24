@@ -137,11 +137,11 @@ bool plDynaDecalMgr::fDisableUpdate = false;
 
 plDynaDecalMgr::plDynaDecalMgr()
 :   
-    fMatPreShade(nil),
-    fMatRTShade(nil),
+    fMatPreShade(),
+    fMatRTShade(),
     fMaxNumVerts(kDefMaxNumVerts),
     fMaxNumIdx(kDefMaxNumIdx),
-    fWetLength(0),
+    fWetLength(),
     fRampEnd(kDefRampEnd),
     fDecayStart(kDefDecayStart),
     fLifeSpan(kDefLifeSpan),
@@ -310,12 +310,12 @@ bool plDynaDecalMgr::IMakeAuxRefs(plPipeline* pipe)
 
 const plPrintShape* plDynaDecalMgr::IGetPrintShape(const plKey& objKey) const
 {
-    const plPrintShape* shape = nil;
+    const plPrintShape* shape = nullptr;
     plSceneObject* part = plSceneObject::ConvertNoRef(objKey->ObjectIsLoaded());
     if( part )
     {
         // This is a safe cast, because GetGenericInterface(type) will only return
-        // either a valid object of that type, or nil.
+        // either a valid object of that type, or nullptr.
         shape = static_cast<plPrintShape*>(part->GetGenericInterface(plPrintShape::Index()));
     }
     return shape;
@@ -323,12 +323,12 @@ const plPrintShape* plDynaDecalMgr::IGetPrintShape(const plKey& objKey) const
 
 const plPrintShape* plDynaDecalMgr::IGetPrintShape(plArmatureMod* avMod, uint32_t id) const
 {
-    const plPrintShape* shape = nil;
+    const plPrintShape* shape = nullptr;
     const plSceneObject* part = avMod->FindBone(id);
     if( part )
     {
         // This is a safe cast, because GetGenericInterface(type) will only return
-        // either a valid object of that type, or nil.
+        // either a valid object of that type, or nullptr.
         shape = static_cast<plPrintShape*>(part->GetGenericInterface(plPrintShape::Index()));
     }
     return shape;
@@ -437,13 +437,13 @@ bool plDynaDecalMgr::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fMatPreShade = hsGMaterial::ConvertNoRef(refMsg->GetRef());
             else
-                fMatPreShade = nil;
+                fMatPreShade = nullptr;
             return true;
         case kRefMatRTShade:
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fMatRTShade = hsGMaterial::ConvertNoRef(refMsg->GetRef());
             else
-                fMatRTShade = nil;
+                fMatRTShade = nullptr;
             return true;
         case kRefTarget:
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
@@ -619,7 +619,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
     // Which was causing errors when you asked for more than the max and didn't
     // get it. So now if you ask for too many verts, you just lose.
     if (numVerts > fMaxNumVerts || numIdx > fMaxNumIdx)
-        return nil;
+        return nullptr;
 
     plSpan* span = const_cast<plSpan*>(targ->GetSpan(iSpan));
 
@@ -681,7 +681,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
     //      A) we'll need to flush managed memory to load it in.
     //      B) we'll be stuck with that memory (video and system) used up until this age is paged out and reloaded
     //      C) we've got a whole bunch of extra faces to draw.
-    // If we just return nil:
+    // If we just return nullptr:
     //      A) opposite of above
     //      B) we stop leaving footprints/ripples for a while.
     // I'm going to try the latter for a bit.
@@ -703,7 +703,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
 
     return aux;
 #else // MF_NEVER_RUN_OUT
-    return nil;
+    return nullptr;
 #endif // MF_NEVER_RUN_OUT
 }
 
@@ -734,7 +734,7 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_
     aux->fVStartIdx = grp->GetVertStartFromCell(aux->fVBufferIdx, aux->fCellIdx, aux->fCellOffset);
     aux->fVLength = 0;
 
-    uint16_t* dataPtr = nil;
+    uint16_t* dataPtr = nullptr;
     grp->ReserveIndexStorage(maxNumIdx, &aux->fIBufferIdx, &aux->fIStartIdx, &dataPtr);
     //aux->fIStartIdx /* should be assigning something? */;
 
@@ -752,7 +752,7 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_
     aux->fOrigUVW.SetCount(maxNumVerts);
 
     aux->fOwner = (void*)this;
-    aux->fDrawable = nil;
+    aux->fDrawable = nullptr;
     aux->fBaseSpanIdx = 0;
 
     grp->SetVertBufferStart(aux->fVBufferIdx, aux->fVStartIdx);
@@ -771,7 +771,7 @@ hsGMaterial* plDynaDecalMgr::ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, b
                                     | hsGMatState::kBlendMult
                                     | hsGMatState::kBlendMADD));
     bool bump = 0 != (mat->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscBumpChans);
-    bool hasVS = nil != mat->GetLayer(0)->GetVertexShader();
+    bool hasVS = nullptr != mat->GetLayer(0)->GetVertexShader();
 
     if( hasVS )
     {
@@ -889,7 +889,7 @@ void plDynaDecalMgr::IKillDecal(int i)
         if( aux->fDrawable )
             const_cast<plSpan*>(aux->fDrawable->GetSpan(aux->fBaseSpanIdx))->RemoveAuxSpan(aux);
 
-        aux->fDrawable = nil;
+        aux->fDrawable = nullptr;
         aux->fBaseSpanIdx = 0;
     }
 
@@ -1377,7 +1377,7 @@ bool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t, h
 
     // Find a span to put them in. Either the current span, or a new
     // one if it's full up.
-    plAuxSpan* auxSpan = IGetAuxSpan(targ, iSpan, nil, numVerts, numIdx);
+    plAuxSpan* auxSpan = IGetAuxSpan(targ, iSpan, nullptr, numVerts, numIdx);
 
     // If we're full up, just see if we hit anything, but don't 
     // make any more decals. Might be nice to accelerate decay
@@ -1563,7 +1563,7 @@ bool plDynaDecalMgr::ICutoutTargets(double secs)
 hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap)
 {
     if( !mat || !envMap )
-        return nil;
+        return nullptr;
 
     plLayerInterface* oldLay = mat->GetLayer(0);
 
@@ -1577,9 +1577,9 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
     hsgResMgr::ResMgr()->NewKey(buff, newMat, GetKey()->GetUoid().GetLocation());
 
     static plTweak<float> kSmooth(1.f);
-    plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, plBumpMapGen::kBubbleTest, kSmooth);
-//  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, plBumpMapGen::kNormalize, kSmooth);
-//  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, 0, 0);
+    plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nullptr, oldMip, 0xffffffff, plBumpMapGen::kBubbleTest, kSmooth);
+//  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nullptr, oldMip, 0xffffffff, plBumpMapGen::kNormalize, kSmooth);
+//  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nullptr, oldMip, 0xffffffff, 0, 0);
     buff = ST::format("{}_BumpMap", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, bumpMap, GetKey()->GetUoid().GetLocation());
 
@@ -1643,7 +1643,7 @@ void plDynaDecalMgr::ConvertToEnvMap(plBitmap* envMap)
 
 const plMipmap* plDynaDecalMgr::GetMipmap() const
 {
-    plMipmap* mip = nil;
+    plMipmap* mip = nullptr;
     if( fMatRTShade )
         mip = plMipmap::ConvertNoRef(fMatRTShade->GetLayer(0)->GetTexture());
 

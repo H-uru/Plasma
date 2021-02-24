@@ -82,7 +82,7 @@ ClassDesc *plComponentMgr::Get(uint32_t i)
     else
     {
         hsAssert(0, "Component index out of range");
-        return nil;
+        return nullptr;
     }
 }
 

@@ -93,13 +93,13 @@ plLayer::plLayer()
     fSpecularPower = new float;
 
     fTexture = new plBitmap*;
-    *fTexture = nil;
+    *fTexture = nullptr;
 
     fVertexShader = new plShader*;
-    *fVertexShader = nil;
+    *fVertexShader = nullptr;
 
     fPixelShader = new plShader*;
-    *fPixelShader = nil;
+    *fPixelShader = nullptr;
 
     fBumpEnvXfm = new hsMatrix44;
     fBumpEnvXfm->Reset();
@@ -190,7 +190,7 @@ bool plLayer::MsgReceive(plMessage* msg)
                 }
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
                 {
-                    *fTexture = nil;
+                    *fTexture = nullptr;
                     plgDispatch::Dispatch()->UnRegisterForExactType(plPipeTexMakeMsg::Index(), GetKey());
                 }
             }
@@ -204,7 +204,7 @@ bool plLayer::MsgReceive(plMessage* msg)
                 }
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
                 {
-                    *fVertexShader = nil;
+                    *fVertexShader = nullptr;
                 }
             }
             return true;
@@ -217,7 +217,7 @@ bool plLayer::MsgReceive(plMessage* msg)
                 }
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
                 {
-                    *fPixelShader = nil;
+                    *fPixelShader = nullptr;
                 }
             }
             return true;
@@ -252,7 +252,7 @@ plLayer& plLayer::InitToDefault()
 {
     fState->Reset();
 
-    *fTexture = nil;
+    *fTexture = nullptr;
 
     SetRuntimeColor(hsColorRGBA().Set(0.5f, 0.5f, 0.5f, 1.f));
     SetPreshadeColor(hsColorRGBA().Set(0.5f, 0.5f, 0.5f, 1.f));
@@ -266,8 +266,8 @@ plLayer& plLayer::InitToDefault()
     SetSpecularColor( hsColorRGBA().Set(0,0,0,1.f));
     SetSpecularPower(1.f);
 
-    *fVertexShader = nil;
-    *fPixelShader = nil;
+    *fVertexShader = nullptr;
+    *fPixelShader = nullptr;
 
     fBumpEnvXfm->Reset();
 

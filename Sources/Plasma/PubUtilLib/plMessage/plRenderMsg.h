@@ -53,8 +53,8 @@ protected:
     plPipeline*             fPipe;
 
 public:
-    plRenderMsg() : plMessage(nil, nil, nil), fPipe(nil) { SetBCastFlag(kBCastByExactType); }
-    plRenderMsg(plPipeline* pipe) : plMessage(nil, nil, nil), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
+    plRenderMsg() : plMessage(nullptr, nullptr, nullptr), fPipe() { SetBCastFlag(kBCastByExactType); }
+    plRenderMsg(plPipeline* pipe) : plMessage(nullptr, nullptr, nullptr), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
 
     ~plRenderMsg() {}
     
@@ -73,8 +73,8 @@ protected:
     plPipeline*             fPipe;
 
 public:
-    plPreResourceMsg() : plMessage(nil, nil, nil), fPipe(nil) { SetBCastFlag(kBCastByExactType); }
-    plPreResourceMsg(plPipeline* pipe) : plMessage(nil, nil, nil), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
+    plPreResourceMsg() : plMessage(nullptr, nullptr, nullptr), fPipe() { SetBCastFlag(kBCastByExactType); }
+    plPreResourceMsg(plPipeline* pipe) : plMessage(nullptr, nullptr, nullptr), fPipe(pipe) { SetBCastFlag(kBCastByExactType); }
 
     ~plPreResourceMsg() {}
 

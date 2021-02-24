@@ -52,12 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 UserPropMgr gUserPropMgr(GetCOREInterface());
 
 UserPropMgr::UserPropMgr(Interface *ip) : 
-nm(0)
+nm()
 {
     this->ip = ip;
 
-    fQuickTable = nil;
-    fQuickNode = nil;
+    fQuickTable = nullptr;
+    fQuickNode = nullptr;
 
     vProps = false;
 }
@@ -69,8 +69,10 @@ UserPropMgr::~UserPropMgr()
 
 void UserPropMgr::SetUserPropFlag(INode *node, const char *name, const bool setFlag, const int32_t hFlag) 
 {
-    if (setFlag) SetUserProp(node,name,NULL,hFlag);
-    else ClearUserProp(node,name,hFlag);
+    if (setFlag)
+        SetUserProp(node, name, nullptr, hFlag);
+    else
+        ClearUserProp(node, name, hFlag);
 }
 
 void UserPropMgr::ClearUserPropALL(const char *name, const int32_t hFlag) 
@@ -148,7 +150,8 @@ ip->ThawSelection();
                 tok = toker.next();
                 if (tok && *tok == '=') {
                     tok = toker.next();
-                } else tok = NULL;
+                } else
+                    tok = nullptr;
                 DeSelectWithOut(name,tok);
             } else isName = false;
         } else {
@@ -181,7 +184,7 @@ int UserPropMgr::RecursiveCountAlike(INode *node, bool MatchAll) {
 
 
 int UserPropMgr::CountAlike(bool MatchAll) {
-    return RecursiveCountAlike(NULL, MatchAll);
+    return RecursiveCountAlike(nullptr, MatchAll);
 }
 
 bool UserPropMgr::IsMatch(const char *val1, const char *val2) {
@@ -288,7 +291,7 @@ void UserPropMgr::SetUserPropBuffer(INode *node, const TSTR &buf)
     // QuickTable invalidate
     if (node && node == fQuickNode)
     {
-        fQuickNode = nil;
+        fQuickNode = nullptr;
     }
 
     if (vProps)
@@ -343,7 +346,7 @@ void UserPropMgr::ClearUserProp(INode *node, const char *name, const int32_t hFl
     // QuickTable invalidate
     if (node && node == fQuickNode)
     {
-        fQuickNode = nil;
+        fQuickNode = nullptr;
     }
 
     TSTR buf;
@@ -477,7 +480,7 @@ void UserPropMgr::SetUserProp(INode *node, const char *name, const char *value, 
     // QuickTable invalidate
     if (node && node == fQuickNode)
     {
-        fQuickNode = nil;
+        fQuickNode = nullptr;
     }
 
     TSTR buf;
@@ -743,8 +746,10 @@ int UserPropMgr::GetSelNodeCount() {
     else return ip->GetSelNodeCount();
 }
 INode *UserPropMgr::GetSelNode(int i) {
-    if (vProps) return NULL;
-    else return ip->GetSelNode(i);
+    if (vProps)
+        return nullptr;
+    else
+        return ip->GetSelNode(i);
 }
 
 
@@ -754,15 +759,15 @@ void UserPropMgr::OpenQuickTable()
     {
         fQuickTable = new std::unordered_set<QuickPair>;
     }
-    fQuickNode = nil;
+    fQuickNode = nullptr;
 }
 
 void UserPropMgr::CloseQuickTable()
 {
     delete fQuickTable;
-    fQuickTable = nil;
-    fQuickNode = nil;
-    QuickPair::SetBuffer(nil);
+    fQuickTable = nullptr;
+    fQuickNode = nullptr;
+    QuickPair::SetBuffer(nullptr);
 }
 
 void UserPropMgr::IBuildQuickTable(INode* node)
@@ -803,8 +808,8 @@ void UserPropMgr::IBuildQuickTable(INode* node)
                     }
                     else 
                     {
-                        qPair.SetVal(nil);
-                        inName = (tok != 0);
+                        qPair.SetVal(nullptr);
+                        inName = (tok != nullptr);
                     }
 
                     fQuickTable->insert(qPair);
@@ -822,7 +827,7 @@ void UserPropMgr::IBuildQuickTable(INode* node)
 
         // QuickPair owns the tok'd buffer now
         QuickPair::SetBuffer(toker.fString);
-        toker.fString = nil;
+        toker.fString = nullptr;
     }
 }
 
@@ -835,7 +840,7 @@ bool UserPropMgr::ICheckQuickEntry(const char *key, TSTR &value)
 }
 
 
-char* UserPropMgr::QuickPair::fBuffer = nil;
+char* UserPropMgr::QuickPair::fBuffer = nullptr;
 
 void UserPropMgr::QuickPair::SetBuffer(char* buf)
 {

@@ -66,14 +66,14 @@ PyObject *NewEnumValue(char const* name, long value);
 static PyObject *EnumValue_new(PyTypeObject *type, PyObject *args, PyObject *)
 {
     EnumValue *self = (EnumValue*)type->tp_alloc(type, 0);
-    if (self != NULL)
+    if (self != nullptr)
     {
-        char *nameTemp = NULL;
+        char *nameTemp = nullptr;
         long value;
         if (!PyArg_ParseTuple(args, "l|s", &value, &nameTemp))
         {
             Py_DECREF(self);
-            return NULL;
+            return nullptr;
         }
 
         if (nameTemp) // copy the value if it was passed
@@ -83,7 +83,7 @@ static PyObject *EnumValue_new(PyTypeObject *type, PyObject *args, PyObject *)
             self->name[strlen(nameTemp)] = '\0';
         }
         else
-            self->name = NULL;
+            self->name = nullptr;
         self->value = value;
     }
 
@@ -100,7 +100,7 @@ static void EnumValue_dealloc(EnumValue *self)
 static PyObject *EnumValue_repr(PyObject *self)
 {
     EnumValue *obj = (EnumValue*)self;
-    if (obj->name == NULL)
+    if (obj->name == nullptr)
     {
         // no name, so just output our value
         return PyUnicode_FromFormat("%s(%ld)", Py_TYPE(obj)->tp_name, obj->value);
@@ -115,7 +115,7 @@ static PyObject *EnumValue_repr(PyObject *self)
 static PyObject* EnumValue_str(PyObject* self)
 {
     EnumValue *obj = (EnumValue*)self;
-    if (obj->name == NULL)
+    if (obj->name == nullptr)
     {
         // no name, so return our value
         return PyUnicode_FromFormat("%s(%ld)", Py_TYPE(obj)->tp_name, obj->value);
@@ -151,7 +151,7 @@ int EnumValue_nonzero(EnumValue *v)
 
 PyObject *EnumValue_and(PyObject *v, PyObject *w)
 {
-    EnumValue *obj = NULL;
+    EnumValue *obj = nullptr;
     long other = 0;
     if (IsEnumValue(v))
     {
@@ -183,7 +183,7 @@ PyObject *EnumValue_and(PyObject *v, PyObject *w)
 
 PyObject *EnumValue_xor(PyObject *v, PyObject *w)
 {
-    EnumValue *obj = NULL;
+    EnumValue *obj = nullptr;
     long other = 0;
     if (IsEnumValue(v))
     {
@@ -215,7 +215,7 @@ PyObject *EnumValue_xor(PyObject *v, PyObject *w)
 
 PyObject *EnumValue_or(PyObject *v, PyObject *w)
 {
-    EnumValue *obj = NULL;
+    EnumValue *obj = nullptr;
     long other = 0;
     if (IsEnumValue(v))
     {
@@ -262,42 +262,42 @@ PyObject *EnumValue_float(EnumValue *v)
 
 // we support some of the number methods
 PYTHON_START_AS_NUMBER_TABLE(EnumValue)
-    0,                          /*nb_add*/
-    0,                          /*nb_subtract*/
-    0,                          /*nb_multiply*/
-    0,                          /*nb_remainder*/
-    0,                          /*nb_divmod*/
-    0,                          /*nb_power*/
-    0,                          /*nb_negative*/
-    0,                          /*nb_positive*/
-    0,                          /*nb_absolute*/
+    nullptr,                    /*nb_add*/
+    nullptr,                    /*nb_subtract*/
+    nullptr,                    /*nb_multiply*/
+    nullptr,                    /*nb_remainder*/
+    nullptr,                    /*nb_divmod*/
+    nullptr,                    /*nb_power*/
+    nullptr,                    /*nb_negative*/
+    nullptr,                    /*nb_positive*/
+    nullptr,                    /*nb_absolute*/
     (inquiry)EnumValue_nonzero, /*nb_bool*/
-    0,                          /*nb_invert*/
-    0,                          /*nb_lshift*/
-    0,                          /*nb_rshift*/
+    nullptr,                    /*nb_invert*/
+    nullptr,                    /*nb_lshift*/
+    nullptr,                    /*nb_rshift*/
     (binaryfunc)EnumValue_and,  /*nb_and*/
     (binaryfunc)EnumValue_xor,  /*nb_xor*/
     (binaryfunc)EnumValue_or,   /*nb_or*/
     (unaryfunc)EnumValue_long,  /*nb_int*/
-    0,                          /*nb_reserved*/
+    nullptr,                    /*nb_reserved*/
     (unaryfunc)EnumValue_float, /*nb_float*/
-    0,                          /*nb_inplace_add*/
-    0,                          /*nb_inplace_subtract*/
-    0,                          /*nb_inplace_multiply*/
-    0,                          /*nb_inplace_remainder*/
-    0,                          /*nb_inplace_power*/
-    0,                          /*nb_inplace_lshift*/
-    0,                          /*nb_inplace_rshift*/
-    0,                          /*nb_inplace_and*/
-    0,                          /*nb_inplace_xor*/
-    0,                          /*nb_inplace_or*/
-    0,                          /* nb_floor_divide */
-    0,                          /* nb_true_divide */
-    0,                          /* nb_inplace_floor_divide */
-    0,                          /* nb_inplace_true_divide */
+    nullptr,                    /*nb_inplace_add*/
+    nullptr,                    /*nb_inplace_subtract*/
+    nullptr,                    /*nb_inplace_multiply*/
+    nullptr,                    /*nb_inplace_remainder*/
+    nullptr,                    /*nb_inplace_power*/
+    nullptr,                    /*nb_inplace_lshift*/
+    nullptr,                    /*nb_inplace_rshift*/
+    nullptr,                    /*nb_inplace_and*/
+    nullptr,                    /*nb_inplace_xor*/
+    nullptr,                    /*nb_inplace_or*/
+    nullptr,                    /* nb_floor_divide */
+    nullptr,                    /* nb_true_divide */
+    nullptr,                    /* nb_inplace_floor_divide */
+    nullptr,                    /* nb_inplace_true_divide */
     (unaryfunc)EnumValue_long,  /* nb_index */
-    0,                          /* nb_matrix_multiply */
-    0,                          /* nb_inplace_matrix_multiply */
+    nullptr,                    /* nb_matrix_multiply */
+    nullptr,                    /* nb_inplace_matrix_multiply */
 PYTHON_END_AS_NUMBER_TABLE;
 
 PYTHON_RICH_COMPARE_DEFINITION(EnumValue, v, w, compareType)
@@ -357,49 +357,49 @@ PYTHON_TYPE_START(EnumValue)
     0,                                  /* tp_itemsize */
     (destructor)EnumValue_dealloc,      /* tp_dealloc */
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET,
-    0,                                  /* tp_getattr */
-    0,                                  /* tp_setattr */
-    0,                                  /* tp_as_async */
+    nullptr,                            /* tp_getattr */
+    nullptr,                            /* tp_setattr */
+    nullptr,                            /* tp_as_async */
     EnumValue_repr,                     /* tp_repr */
     PYTHON_DEFAULT_AS_NUMBER(EnumValue),/* tp_as_number */
-    0,                                  /* tp_as_sequence */
-    0,                                  /* tp_as_mapping */
+    nullptr,                            /* tp_as_sequence */
+    nullptr,                            /* tp_as_mapping */
     EnumValue_hash,                     /* tp_hash */
-    0,                                  /* tp_call */
+    nullptr,                            /* tp_call */
     EnumValue_str,                      /* tp_str */
-    0,                                  /* tp_getattro */
-    0,                                  /* tp_setattro */
-    0,                                  /* tp_as_buffer */
+    nullptr,                            /* tp_getattro */
+    nullptr,                            /* tp_setattro */
+    nullptr,                            /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT
     | Py_TPFLAGS_BASETYPE,              /* tp_flags */
     "A basic enumeration value",        /* tp_doc */
-    0,                                  /* tp_traverse */
-    0,                                  /* tp_clear */
+    nullptr,                            /* tp_traverse */
+    nullptr,                            /* tp_clear */
     EnumValue_richCompare,              /* tp_richcompare */
     0,                                  /* tp_weaklistoffset */
-    0,                                  /* tp_iter */
-    0,                                  /* tp_iternext */
+    nullptr,                            /* tp_iter */
+    nullptr,                            /* tp_iternext */
     PYTHON_DEFAULT_METHODS_TABLE(EnumValue),    /* tp_methods */
-    0,                                  /* tp_members */
-    0,                                  /* tp_getset */
-    0,                                  /* tp_base */
-    0,                                  /* tp_dict */
-    0,                                  /* tp_descr_get */
-    0,                                  /* tp_descr_set */
+    nullptr,                            /* tp_members */
+    nullptr,                            /* tp_getset */
+    nullptr,                            /* tp_base */
+    nullptr,                            /* tp_dict */
+    nullptr,                            /* tp_descr_get */
+    nullptr,                            /* tp_descr_set */
     0,                                  /* tp_dictoffset */
     PYTHON_DEFAULT_INIT(EnumValue),     /* tp_init */
-    0,                                  /* tp_alloc */
+    nullptr,                            /* tp_alloc */
     EnumValue_new,                      /* tp_new */
-    0,                                  /* tp_free */
-    0,                                  /* tp_is_gc */
-    0,                                  /* tp_bases */
-    0,                                  /* tp_mro */
-    0,                                  /* tp_cache */
-    0,                                  /* tp_subclasses */
-    0,                                  /* tp_weaklist */
-    0,                                  /* tp_del */
+    nullptr,                            /* tp_free */
+    nullptr,                            /* tp_is_gc */
+    nullptr,                            /* tp_bases */
+    nullptr,                            /* tp_mro */
+    nullptr,                            /* tp_cache */
+    nullptr,                            /* tp_subclasses */
+    nullptr,                            /* tp_weaklist */
+    nullptr,                            /* tp_del */
     0,                                  /* tp_version_tag */
-    0,                                  /* tp_finalize */
+    nullptr,                            /* tp_finalize */
     PYTHON_TP_VECTORCALL_PRINT
 PYTHON_TYPE_END;
 
@@ -410,12 +410,12 @@ bool IsEnumValue(PyObject *obj)
 
 PyObject *NewEnumValue(char const* name, long value)
 {
-    PyObject *tempArgs = NULL;
+    PyObject *tempArgs = nullptr;
     if (name)
         tempArgs = Py_BuildValue("(ls)", value, name); // args are value, name
     else
         tempArgs = Py_BuildValue("(l)", value); // args are value only
-    EnumValue *newObj = (EnumValue*)EnumValue_type.tp_new(&EnumValue_type, tempArgs, NULL);
+    EnumValue *newObj = (EnumValue*)EnumValue_type.tp_new(&EnumValue_type, tempArgs, nullptr);
     Py_DECREF(tempArgs); // clean up the temps
     return (PyObject*)newObj;
 }
@@ -433,25 +433,25 @@ struct Enum
 static PyObject *Enum_new(PyTypeObject *type, PyObject *, PyObject *)
 {
     Enum *self = (Enum*)type->tp_alloc(type, 0);
-    if (self != NULL)
+    if (self != nullptr)
     {
         self->values = PyDict_New();
-        if (self->values == NULL)
+        if (self->values == nullptr)
         {
             Py_DECREF(self);
-            return NULL;
+            return nullptr;
         }
         self->lookup = PyDict_New();
-        if (self->lookup == NULL)
+        if (self->lookup == nullptr)
         {
             Py_DECREF(self);
-            return NULL;
+            return nullptr;
         }
         self->reverseLookup = PyDict_New();
-        if (self->reverseLookup == NULL)
+        if (self->reverseLookup == nullptr)
         {
             Py_DECREF(self);
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -473,11 +473,11 @@ static int Enum_traverse(Enum *self, visitproc visit, void *arg)
 static int Enum_clear(Enum *self)
 {
     Py_XDECREF(self->values);
-    self->values = NULL;
+    self->values = nullptr;
     Py_XDECREF(self->lookup);
-    self->lookup = NULL;
+    self->lookup = nullptr;
     Py_XDECREF(self->reverseLookup);
-    self->reverseLookup = NULL;
+    self->reverseLookup = nullptr;
 
     return 0;
 }
@@ -568,50 +568,50 @@ PYTHON_TYPE_START(Enum)
     0,                                  /* tp_itemsize */
     (destructor)Enum_dealloc,           /* tp_dealloc */
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET,
-    0,                                  /* tp_getattr */
-    0,                                  /* tp_setattr */
-    0,                                  /* tp_compare */
-    0,                                  /* tp_repr */
-    0,                                  /* tp_as_number */
-    0,                                  /* tp_as_sequence */
-    0,                                  /* tp_as_mapping */
-    0,                                  /* tp_hash */
-    0,                                  /* tp_call */
-    0,                                  /* tp_str */
+    nullptr,                            /* tp_getattr */
+    nullptr,                            /* tp_setattr */
+    nullptr,                            /* tp_compare */
+    nullptr,                            /* tp_repr */
+    nullptr,                            /* tp_as_number */
+    nullptr,                            /* tp_as_sequence */
+    nullptr,                            /* tp_as_mapping */
+    nullptr,                            /* tp_hash */
+    nullptr,                            /* tp_call */
+    nullptr,                            /* tp_str */
     Enum_getattro,                      /* tp_getattro */
     Enum_setattro,                      /* tp_setattro */
-    0,                                  /* tp_as_buffer */
+    nullptr,                            /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT
     | Py_TPFLAGS_BASETYPE
     | Py_TPFLAGS_HAVE_GC,               /* tp_flags */
     "Enum base class",                  /* tp_doc */
     (traverseproc)Enum_traverse,        /* tp_traverse */
     (inquiry)Enum_clear,                /* tp_clear */
-    0,                                  /* tp_richcompare */
+    nullptr,                            /* tp_richcompare */
     0,                                  /* tp_weaklistoffset */
-    0,                                  /* tp_iter */
-    0,                                  /* tp_iternext */
+    nullptr,                            /* tp_iter */
+    nullptr,                            /* tp_iternext */
     PYTHON_DEFAULT_METHODS_TABLE(Enum), /* tp_methods */
-    0,                                  /* tp_members */
-    0,                                  /* tp_getset */
-    0,                                  /* tp_base */
-    0,                                  /* tp_dict */
-    0,                                  /* tp_descr_get */
-    0,                                  /* tp_descr_set */
+    nullptr,                            /* tp_members */
+    nullptr,                            /* tp_getset */
+    nullptr,                            /* tp_base */
+    nullptr,                            /* tp_dict */
+    nullptr,                            /* tp_descr_get */
+    nullptr,                            /* tp_descr_set */
     0,                                  /* tp_dictoffset */
     PYTHON_DEFAULT_INIT(Enum),          /* tp_init */
-    0,                                  /* tp_alloc */
+    nullptr,                            /* tp_alloc */
     Enum_new,                           /* tp_new */
-    0,                                  /* tp_free */
-    0,                                  /* tp_is_gc */
-    0,                                  /* tp_bases */
-    0,                                  /* tp_mro */
-    0,                                  /* tp_cache */
-    0,                                  /* tp_subclasses */
-    0,                                  /* tp_weaklist */
-    0,                                  /* tp_del */
+    nullptr,                            /* tp_free */
+    nullptr,                            /* tp_is_gc */
+    nullptr,                            /* tp_bases */
+    nullptr,                            /* tp_mro */
+    nullptr,                            /* tp_cache */
+    nullptr,                            /* tp_subclasses */
+    nullptr,                            /* tp_weaklist */
+    nullptr,                            /* tp_del */
     0,                                  /* tp_version_tag */
-    0,                                  /* tp_finalize */
+    nullptr,                            /* tp_finalize */
     PYTHON_TP_VECTORCALL_PRINT
 PYTHON_TYPE_END;
 
@@ -627,11 +627,11 @@ void pyEnum::AddPlasmaConstantsClasses(PyObject *m)
 // makes an enum object using the specified name and values
 void pyEnum::MakeEnum(PyObject *m, const char* name, std::map<std::string, int> values)
 {
-    if (m == NULL)
+    if (m == nullptr)
         return;
 
-    Enum *newEnum = (Enum*)Enum_type.tp_new(&Enum_type, NULL, NULL);
-    if (newEnum == NULL)
+    Enum *newEnum = (Enum*)Enum_type.tp_new(&Enum_type, nullptr, nullptr);
+    if (newEnum == nullptr)
     {
         std::string errorStr = "Could not create enum named ";
         errorStr += name;

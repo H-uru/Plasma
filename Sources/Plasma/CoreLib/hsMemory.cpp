@@ -436,7 +436,7 @@ void* hsAppender::PeekTail() const
     if (fLastBlock)
         return (char*)fLastBlock->fStop - fElemSize;
     else
-        return nil;
+        return nullptr;
 }
 
 bool hsAppender::PopTail(void* data)
@@ -615,7 +615,8 @@ char *TrimFileName(char *name)      // Trim file name of leading Directories
 {
     int len = 0;
     char *ptr;
-    if (!name) return NULL;
+    if (!name)
+        return nullptr;
 
     len = strlen(name);
     ptr = name + len;
@@ -687,7 +688,7 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
     ltb[0].fName = "NULL";      // Use first Table Pos for NULL
 
     long tblpos;
-    while (cmbh != NULL)        // Accumulate Stats to table
+    while (cmbh != nullptr)     // Accumulate Stats to table
     {
         if (cmbh == cmbh_last && !full) // full indicates ignore last "checkpoint", stop at last checkpoint if !full
             break;
@@ -697,7 +698,7 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
         {
             normsize += cmbh->nDataSize; 
             
-            if (cmbh->szFileName != NULL)               // Shorten to just the file name, looks better, and strcmps faster
+            if (cmbh->szFileName != nullptr)    // Shorten to just the file name, looks better, and strcmps faster
             {
                 ftrim = TrimFileName(cmbh->szFileName);
                 for (tblpos  = 1; tblpos < tblEnd; tblpos++)    // find the name in the table
@@ -735,7 +736,7 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
         // chunk and keeping it (watch for mem leaks though) or figuring out an "approximat" re syncying routine
         // that works before we run thru collecting data. PBG
 
-    if (cmbh_last && !full && cmbh == NULL)
+    if (cmbh_last && !full && cmbh == nullptr)
     {
         //hsAssert(0,"Stats error: incremental mem check point has been deleted");
         errStr = "CHECK POINT ERROR, Results Inacurate";
@@ -744,13 +745,13 @@ static  _CrtMemBlockHeader *cmbh_last;  // Remember this header for next increme
     if (normsize)       // Don't write out about nothing
     {
         
-        CreateDirectory("Reports",NULL);            // stick em in a sub directory
+        CreateDirectory("Reports", nullptr);        // stick em in a sub directory
         char fnm[512];
         snprintf(fnm, std::size(fnm), "Reports\\%s", fname);
  
         FILE * DumpLogFile = fopen( fnm, "w" );
 //      long allocs=0;
-        if ( DumpLogFile != NULL )
+        if (DumpLogFile != nullptr)
         {
                 // Print Stats
             fprintf(DumpLogFile, "Filename                Total=%ld(k) %s\n",(normsize + 500)/1000,errStr);

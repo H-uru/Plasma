@@ -116,8 +116,7 @@ const uint32_t        plDrawableSpans::kSpanTypeParticleSpan  = 0xc0000000;
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 plDrawableSpans::plDrawableSpans() :
-    fSceneNode(nil),
-    fSpaceTree(nil)
+    fSpaceTree()
 {
     fReadyToRender = false;
     fProps = 0;
@@ -164,11 +163,11 @@ plDrawableSpans::~plDrawableSpans()
     fSourceSpans.Reset();
 
     /// Loop and unref our materials
-    if( GetKey() != nil )
+    if (GetKey() != nullptr)
     {
         for( i = 0; i < fMaterials.GetCount(); i++ )
         {
-            if( fMaterials[ i ] != nil && fMaterials[ i ]->GetKey() != nil )
+            if (fMaterials[i] != nullptr && fMaterials[i]->GetKey() != nullptr)
                 GetKey()->Release( fMaterials[ i ]->GetKey() );
         }
     }
@@ -223,7 +222,7 @@ void    plDrawableSpans::PrepForRender( plPipeline *p )
 {
     /// If we're not registered for this message, register for it so we know when
     /// we need to refresh the buffers
-    if( !fRegisteredForRecreate && GetKey() != nil )
+    if (!fRegisteredForRecreate && GetKey() != nullptr)
     {
         fRegisteredForRecreate = true;
         plgDispatch::Dispatch()->RegisterForExactType( plDeviceRecreateMsg::Index(), GetKey() );
@@ -352,7 +351,7 @@ void plDrawableSpans::SetVisSet(plVisMgr* visMgr)
     }
     else
     {
-        GetSpaceTree()->SetCache(nil);
+        GetSpaceTree()->SetCache(nullptr);
     }
     plProfile_EndTiming(VisSelect);
 }
@@ -553,7 +552,7 @@ plDrawable& plDrawableSpans::SetTransform( uint32_t index, const hsMatrix44& l2w
                 {
                     /// If we have a geoSpan for this, update its transform as well,
                     /// just in case we need to use it later (<cough> SceneViewer reshade <cough>)
-                    if( fSourceSpans[ idx ] == nil )
+                    if (fSourceSpans[idx] == nullptr)
                     {
                         plStatusLog::AddLineS( "pipeline.log", 0xffffffff, "Nil source spans found in SetTransform()" );
                     }
@@ -1160,7 +1159,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
 
                     for( i = 0; i < fSpans.GetCount(); i++ )
                     {
-                        if( fSpans[ i ] != nil && fSpans[ i ]->fMaterialIdx == refMsg->fWhich )
+                        if (fSpans[i] != nullptr && fSpans[i]->fMaterialIdx == refMsg->fWhich)
                         {
                             if( hasSpec )
                                 fSpans[ i ]->fProps |= plSpan::kPropMatHasSpecular;
@@ -1174,7 +1173,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             {
                 hsAssert( refMsg->fWhich < fMaterials.GetCount(), "Invalid material index" );
 
-                fMaterials[ refMsg->fWhich ] = nil;
+                fMaterials[refMsg->fWhich] = nullptr;
             }
             return true;
         }
@@ -1196,7 +1195,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
                 {
                     if( fSpans[ i ]->fFogEnvironment == fog )
                     {
-                        fSpans[ i ]->fFogEnvironment = nil;
+                        fSpans[i]->fFogEnvironment = nullptr;
                         break;
                     }
                 }
@@ -1308,7 +1307,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             return true;
         }
     }   
-    else if( plDeviceRecreateMsg::ConvertNoRef( msg ) != nil )
+    else if (plDeviceRecreateMsg::ConvertNoRef(msg) != nullptr)
     {
         /// Device recreation message--just reset our flag so we refresh buffer groups
         fReadyToRender = false;
@@ -1572,7 +1571,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
         elem[ i ].fBody = &list[ i ];
         elem[ i ].fNext = elem + i + 1;
     }
-    elem[ i - 1 ].fNext = nil;
+    elem[i - 1].fNext = nullptr;
 
     plProfile_EndLap(FaceSort, "1");
     plProfile_BeginLap(FaceSort, "2");
@@ -1722,7 +1721,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             cnt++;
         }
     }
-    elem[cnt-1].fNext = nil;
+    elem[cnt-1].fNext = nullptr;
 
     plProfile_EndLap(FaceSort, "1");
     plProfile_BeginLap(FaceSort, "2");
@@ -1920,7 +1919,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             }
             iVis++;
         }
-        elem[cnt-1].fNext = nil;
+        elem[cnt-1].fNext = nullptr;
 
         plProfile_EndLap(FaceSort, "1");
         plProfile_BeginLap(FaceSort, "2");
@@ -2390,7 +2389,7 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
         if( clearSpansAfterAdd )
         {
             delete spans[ i ];
-            spans[ i ] = nil;
+            spans[i] = nullptr;
         }
         else if( !doNotAddToSource )
         {
@@ -2459,7 +2458,7 @@ uint32_t  plDrawableSpans::IAddAMaterial( hsGMaterial *material )
     // Scan again for a blank space to add into, if possible
     for( i = 0; i < fMaterials.GetCount(); i++ )
     {
-        if( fMaterials[ i ] == nil )
+        if (fMaterials[i] == nullptr)
         {
             fMaterials[ i ] = material;
             IRefMaterial( i );
@@ -2485,7 +2484,7 @@ uint32_t  plDrawableSpans::IRefMaterial( uint32_t index )
 {
     hsGMaterial     *material = fMaterials[ index ];
 
-    if( GetKey() && material != nil && material->GetKey() != nil )
+    if (GetKey() && material != nullptr && material->GetKey() != nullptr)
         hsgResMgr::ResMgr()->AddViaNotify( material->GetKey(), new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, index, 0 ), plRefFlags::kActiveRef );
 
     return index;
@@ -2510,9 +2509,9 @@ void    plDrawableSpans::ICheckToRemoveMaterial( uint32_t materialIdx )
     {
         /// No longer used--Release() it
         mat = fMaterials[ materialIdx ];
-        if( GetKey() && mat != nil && mat->GetKey() != nil )
+        if (GetKey() && mat != nullptr && mat->GetKey() != nullptr)
             GetKey()->Release( mat->GetKey() );
-        fMaterials[ materialIdx ] = nil;
+        fMaterials[materialIdx] = nullptr;
     }
 }
 
@@ -2582,7 +2581,7 @@ bool    plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, p
         idxVol = true;
 
     // Are we instanced?
-    if( instancedParent != nil /*&& !( fProps & kPropVolatile )*/ )
+    if (instancedParent != nullptr /*&& !( fProps & kPropVolatile )*/)
     {
         /// We can instance w/o vert data IF 1) we're not the first span, 2) we can fit into the same buffer group, and
         /// 3) we can fit into the same vertex buffer in the buffer group
@@ -2657,13 +2656,13 @@ bool    plDrawableSpans::IConvertGeoSpanToIcicle(plGeometrySpan *geoSpan, plIcic
     Disabling this 8.16.2001. Works great until you have to SORT the faces, then things blow up. We could
     do this only when we won't sort faces, but it's easier right now to just never do this ever.
 
-    if( instancedParent != nil && instancedParent != icicle && ( icicle->fProps & plSpan::kPropRunTimeLight ) )
+    if (instancedParent != nullptr && instancedParent != icicle && (icicle->fProps & plSpan::kPropRunTimeLight))
     {
         /// WOW! We can actually share the *exact* same data, since we don't do any preshading. Coooooool!
         icicle->fIBufferIdx = instancedParent->fIBufferIdx;
         icicle->fIStartIdx = instancedParent->fIStartIdx;
         icicle->fILength = instancedParent->fILength;
-        icicle->fSortData = nil;
+        icicle->fSortData = nullptr;
     }
     else
 */
@@ -2675,7 +2674,7 @@ bool    plDrawableSpans::IConvertGeoSpanToIcicle(plGeometrySpan *geoSpan, plIcic
         icicle->fIBufferIdx = ibIndex;
         icicle->fIPackedIdx = icicle->fIStartIdx = ibStart;
         icicle->fILength = geoSpan->fNumIndices;
-        icicle->fSortData = nil;
+        icicle->fSortData = nullptr;
     }
 
     return true;
@@ -2826,7 +2825,7 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
 void    plDrawableSpans::IRebuildSpanArray()
 {
     uint32_t      j, i;
-    plIcicle    *icicle = nil;
+    plIcicle    *icicle = nullptr;
 
 
     for( j = 0; j < fSpans.GetCount(); j++ )
@@ -2836,7 +2835,7 @@ void    plDrawableSpans::IRebuildSpanArray()
             case kSpanTypeIcicle: 
                 icicle = &fIcicles[ fSpanSourceIndices[ j ] & kSpanIDMask ];
                 fSpans[ j ] = (plSpan *)icicle; 
-                if( icicle->fSortData != nil )
+                if (icicle->fSortData != nullptr)
                 {
                     // GOTTA RESET THE SPAN INDICES TOO!!!
                     for( i = 0; i < icicle->fILength / 3; i++ )
@@ -2850,7 +2849,7 @@ void    plDrawableSpans::IRebuildSpanArray()
     }
 
     // Redid the span array, so cause the space tree to rebuild to match
-    SetSpaceTree( nil );
+    SetSpaceTree(nullptr);
 
     // Rebuild bit vectors for various span types
     IBuildVectors();
@@ -2998,7 +2997,7 @@ void    plDrawableSpans::IRemoveGarbage()
                         fIcicles[ k ].fCellOffset -= j - i;
 
                     // Adjust sorting data, if necessary
-                    if( fIcicles[ k ].fSortData != nil )
+                    if (fIcicles[k].fSortData != nullptr)
                         IAdjustSortData( fIcicles[ k ].fSortData, fIcicles[ k ].fILength / 3, i, -(int16_t)( j - i ) );
                 }
                 for( k = 0; k < fParticleSpans.GetCount(); k++ )
@@ -3008,7 +3007,7 @@ void    plDrawableSpans::IRemoveGarbage()
                         fParticleSpans[ k ].fCellOffset -= j - i;
 
                     // Adjust sorting data, if necessary
-                    if( fParticleSpans[ k ].fSortData != nil )
+                    if (fParticleSpans[k].fSortData != nullptr)
                         IAdjustSortData( fParticleSpans[ k ].fSortData, fParticleSpans[ k ].fILength / 3, i, -(int16_t)( j - i ) );
                 }
 
@@ -3171,7 +3170,7 @@ void    plDrawableSpans::IMakeSpanSortable( uint32_t index )
     /// Create data for it
     list = fGroups[ span->fGroupIdx ]->ConvertToTriList( (int16_t)index, span->fIBufferIdx, span->fVBufferIdx, span->fCellIdx, 
                                                          span->fIStartIdx, span->fILength / 3 );
-    if( list == nil )
+    if (list == nullptr)
         return;
 
     span->fSortData = list;
@@ -3271,7 +3270,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
             fIcicles[iSpan].fLocalUVWChans = 0;
             fIcicles[iSpan].fMaxBoneIdx = 0;
             fIcicles[iSpan].fPenBoneIdx = 0;
-            fIcicles[iSpan].fFogEnvironment = nil;
+            fIcicles[iSpan].fFogEnvironment = nullptr;
             fIcicles[iSpan].fMaxDist = cluster->GetLOD().fMaxDist;
             fIcicles[iSpan].fMinDist = cluster->GetLOD().fMinDist;
             fIcicles[iSpan].fWaterHeight = 0;
@@ -3282,7 +3281,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
             {
                 int iLight;
                 for( iLight = 0; iLight < lights.GetCount(); iLight++ )
-                    fIcicles[iSpan].AddPermaLight(lights[iLight], lights[iLight]->GetProjection() != nil);
+                    fIcicles[iSpan].AddPermaLight(lights[iLight], lights[iLight]->GetProjection() != nullptr);
             }
 
             fIcicles[iSpan].fGroupIdx = grpIdx;
@@ -3434,7 +3433,7 @@ uint32_t      plDrawableSpans::CreateParticleSystem( uint32_t maxNumSpans, uint3
     numVerts = maxNumParticles * 4;     // 4 verts per particle
     numIndices = maxNumParticles * 6;   // 6 indices per particle
 
-    if( material != nil && material->GetLayer( 0 ) != nil && material->GetLayer( 0 )->GetTexture() != nil )
+    if (material != nullptr && material->GetLayer(0) != nullptr && material->GetLayer(0)->GetTexture() != nullptr)
         set->fFormat = plGeometrySpan::UVCountToFormat( 1 );
     else
         set->fFormat = plGeometrySpan::UVCountToFormat( 0 );
@@ -3491,10 +3490,10 @@ void    plDrawableSpans::IAssignMatIdxToSpan( plSpan *span, hsGMaterial *mtl )
 {
     fSettingMatIdxLock = true;
 
-    if( mtl != nil )
+    if (mtl != nullptr)
         span->fMaterialIdx = IAddAMaterial( mtl );
 
-    if( fMaterials[ span->fMaterialIdx ] != nil )
+    if (fMaterials[span->fMaterialIdx] != nullptr)
     {
         if( ITestMatForSpecularity( fMaterials[ span->fMaterialIdx ] ) )
             span->fProps |= plSpan::kPropMatHasSpecular;
@@ -3546,8 +3545,8 @@ plParticleSpan  *plDrawableSpans::ICreateParticleIcicle( hsGMaterial *material, 
     icicle->fIBufferIdx = set->fIBufferIdx;
     icicle->fIPackedIdx = icicle->fIStartIdx = set->fIStartIdx;
     icicle->fILength = 0;
-    icicle->fFogEnvironment = nil;
-    icicle->fSortData = nil;
+    icicle->fFogEnvironment = nullptr;
+    icicle->fSortData = nullptr;
 
     icicle->fSrcSpanIdx = fSpans.GetCount();
 
@@ -3565,7 +3564,7 @@ plParticleSpan  *plDrawableSpans::ICreateParticleIcicle( hsGMaterial *material, 
     fReadyToRender = false;
     
     // Cause us to rebuild the space tree when needed
-    SetSpaceTree( nil );
+    SetSpaceTree(nullptr);
 
     return icicle;
 }
@@ -3588,7 +3587,7 @@ void        plDrawableSpans::ResetParticleSystem( uint32_t setIndex )
         span->fVLength = 0;
         span->fIPackedIdx = span->fIStartIdx = 0;
         span->fILength = 0;
-        span->fSource = nil;
+        span->fSource = nullptr;
         span->fProps |= plSpan::kPropNoDraw;
         GetSpaceTree()->SetLeafFlag( (int16_t)(span->fSrcSpanIdx), plSpaceTreeNode::kDisabled );
 
@@ -3646,7 +3645,7 @@ void    plDrawableSpans::AssignEmitterToParticleSystem( uint32_t setIndex, plPar
     if( fProps & kPropSortFaces )
     {
         // Prep sorting data
-        if( icicle->fSortData == nil || icicle->fSortCount < ( numParticles << 1 ) )
+        if (icicle->fSortData == nullptr || icicle->fSortCount < (numParticles << 1))
         {
             delete [] icicle->fSortData;
             icicle->fSortData = sortArray = new plGBufferTriangle[ numParticles << 1 ];
@@ -3735,7 +3734,7 @@ uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
     fMaxWorldBounds = fWorldBounds;
 
     // Cause us to rebuild the space tree when needed
-    SetSpaceTree( nil );
+    SetSpaceTree(nullptr);
 
     fReadyToRender = false;
 
@@ -3773,7 +3772,7 @@ uint32_t  plDrawableSpans::RefreshSpan( uint32_t index )
     fMaxWorldBounds = fWorldBounds;
 
     // Cause us to rebuild the space tree when needed
-    SetSpaceTree( nil );
+    SetSpaceTree(nullptr);
 
     fReadyToRender = false;
 
@@ -3932,7 +3931,7 @@ void plDrawableSpans::ClearAndSetMaterialCount(uint32_t count)
     // Release the old materials
     for (int i = 0; i < fMaterials.GetCount(); i++)
     {
-        if ( fMaterials[ i ] != nil && fMaterials[ i ]->GetKey() != nil )
+        if (fMaterials[i] != nullptr && fMaterials[i]->GetKey() != nullptr)
             GetKey()->Release( fMaterials[ i ]->GetKey() );
     }
 

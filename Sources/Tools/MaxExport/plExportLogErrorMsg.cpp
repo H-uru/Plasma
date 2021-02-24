@@ -70,7 +70,7 @@ plExportLogErrorMsg::~plExportLogErrorMsg()
     else
     {
         fErrfile = fopen(fErrfile_name, "wt");
-        setbuf(fErrfile, nil);
+        setbuf(fErrfile, nullptr);
         fprintf(fErrfile, "No errors found! Good job.");
         fclose(fErrfile);
     }
@@ -166,7 +166,7 @@ void plExportLogErrorMsg::IWriteErrorFile(const char* label, const char* msg)
         {
             // must be the first write... open the error file
             fErrfile = fopen(fErrfile_name, "wt");
-            setbuf(fErrfile, nil);
+            setbuf(fErrfile, nullptr);
             fNumberErrors = 0;
         }
         fprintf(fErrfile, "%s: %s\n", label, msg);

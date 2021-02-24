@@ -164,7 +164,7 @@ void plNetLinkingMgr::NCAgeJoinerCallback (
     switch (type) {
         case kAgeJoinerComplete: {
             ASSERT(joiner == s_ageJoiner);
-            s_ageJoiner = nil;
+            s_ageJoiner = nullptr;
             
             lm->IPostProcessLink();
 
@@ -193,7 +193,7 @@ void plNetLinkingMgr::NCAgeLeaverCallback (
     switch (type) {
         case kAgeLeaveComplete: {
             ASSERT(leaver == s_ageLeaver);
-            s_ageLeaver = nil;
+            s_ageLeaver = nullptr;
 
             // Pull our wait op off exec queue
             if (NlmOpWaitOp * waitOp = (NlmOpWaitOp *) userState) {
@@ -495,7 +495,7 @@ bool plNetLinkingMgr::IProcessLinkingMgrMsg( plLinkingMgrMsg * msg )
 bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg) 
 {
     // No deferred link? Bye bye.
-    if (fDeferredLink == nil)
+    if (fDeferredLink == nullptr)
         return false;
 
     plAgeLinkStruct* cur = GetAgeLink();
@@ -511,7 +511,7 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
             return false;
     }
 
-    if (cVaultLink != nil)
+    if (cVaultLink != nullptr)
     {
         // This is something that Cyan does... >.<
         // It's very useful though...
@@ -524,7 +524,7 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
         }
 
         IDoLink(fDeferredLink);
-        fDeferredLink = nil;
+        fDeferredLink = nullptr;
         return true;
     }
 
@@ -556,7 +556,7 @@ bool plNetLinkingMgr::IDispatchMsg( plMessage* msg, uint32_t playerID )
 
 void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
-    LinkToAge(link, nil, linkInSfx, linkOutSfx, playerID);
+    LinkToAge(link, nullptr, linkInSfx, linkOutSfx, playerID);
 }
 
 void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
@@ -784,8 +784,8 @@ void plNetLinkingMgr::IPostProcessLink()
                             fldr->GetNodeId(),
                             info->GetNodeId(),
                             NetCommGetPlayer()->playerInt,
-                            nil,
-                            nil
+                            nullptr,
+                            nullptr
                         );
             }
         }
@@ -806,8 +806,8 @@ void plNetLinkingMgr::IPostProcessLink()
                             fldr->GetNodeId(),
                             info->GetNodeId(),
                             NetCommGetPlayer()->playerInt,
-                            nil,
-                            nil
+                            nullptr,
+                            nullptr
                         );
             }
         }
@@ -843,7 +843,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
     // Appear offline until we're done linking
     if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
-        accInfo.SetAgeInstName(nil);
+        accInfo.SetAgeInstName(nullptr);
         accInfo.SetAgeInstUuid(kNilUuid);
         accInfo.SetOnline(false);
     }

@@ -192,10 +192,10 @@ public:
     int     GetHandledDlgItem() const { return fDlgItem; }
 
     // No node restriction version
-    plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgItem, TCHAR *promptTitle, ParamMap2UserDlgProc *chainedDlgProc = nil );
+    plPlasmaAnimSelectDlgProc(ParamID paramID, int dlgItem, TCHAR *promptTitle, ParamMap2UserDlgProc *chainedDlgProc = nullptr);
 
     // Node restricted version
-    plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgItem, ParamID nodeParamID, ParamID typeParamID, int nodeDlgItem, TCHAR *promptTitle, ParamMap2UserDlgProc *chainedDlgProc = nil );
+    plPlasmaAnimSelectDlgProc(ParamID paramID, int dlgItem, ParamID nodeParamID, ParamID typeParamID, int nodeDlgItem, TCHAR *promptTitle, ParamMap2UserDlgProc *chainedDlgProc = nullptr);
 
     void    SetThing(ReferenceTarget *m) override;
     void    Update(TimeValue t, Interval &valid, IParamMap2 *map) override;

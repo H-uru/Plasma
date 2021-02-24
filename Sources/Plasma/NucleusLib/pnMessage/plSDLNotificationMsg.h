@@ -54,7 +54,7 @@ public:
     int fPlayerID;              // pid of the player who changed the data
     ST::string fHintString;     // hint from the player who changed the data
 
-    plSDLNotificationMsg() : fDelta(0), fVar(nil), fPlayerID(0) {}
+    plSDLNotificationMsg() : fDelta(), fVar(), fPlayerID() { }
     ~plSDLNotificationMsg() { }
 
     CLASSNAME_REGISTER(plSDLNotificationMsg);

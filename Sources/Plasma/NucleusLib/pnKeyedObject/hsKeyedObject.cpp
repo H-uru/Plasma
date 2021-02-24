@@ -49,15 +49,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void hsKeyedObject::SetKey(plKey k)              
 {
-    if (fpKey != nil)
+    if (fpKey != nullptr)
     {
-        hsAssert(k == nil || k == fpKey, "Changing an object's key is not allowed");
-        ((plKeyImp*)fpKey)->SetObjectPtr(nil); 
+        hsAssert(k == nullptr || k == fpKey, "Changing an object's key is not allowed");
+        ((plKeyImp*)fpKey)->SetObjectPtr(nullptr);
     }
 
     fpKey = k;
 
-    if (fpKey != nil)
+    if (fpKey != nullptr)
         ((plKeyImp*)fpKey)->SetObjectPtr(this); 
 }   
 
@@ -80,7 +80,7 @@ hsKeyedObject::~hsKeyedObject()
     if( fpKey && fpKey->ObjectIsLoaded() )
     {
         // If our key is pointing to an object (presumably back to us),
-        // then UnRegister will call SetObjectPtr(nil) will unregister the key (and us), which will
+        // then UnRegister will call SetObjectPtr(nullptr) will unregister the key (and us), which will
         // decrement our RefCnt. Unfortunately, we are here because of a call
         // to our destructor, in which case we don't want to go back into our
         // destructor again. So we'll just up the RefCnt, plKey::UnRegister will dec it back to 1.
@@ -96,7 +96,7 @@ void hsKeyedObject::UnRegister()
         if (plgDispatch::Dispatch())
             plgDispatch::Dispatch()->UnRegisterAll(fpKey);
         
-        ((plKeyImp *)fpKey)->SetObjectPtr(nil);
+        ((plKeyImp *)fpKey)->SetObjectPtr(nullptr);
     }
 }
 
@@ -106,7 +106,7 @@ plKey hsKeyedObject::RegisterAs(plFixedKeyId fixedKey)
 
     hsAssert(meUoid.GetClassType() == ClassIndex(), "Registering as wrong type!");
     plKey key = hsgResMgr::ResMgr()->FindKey(meUoid);
-    if (key == nil)
+    if (key == nullptr)
     {
         key = hsgResMgr::ResMgr()->NewKey(meUoid, this);
 

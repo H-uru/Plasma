@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputCore/plTelescopeInputInterface.h"
 
 cyInputInterface::cyInputInterface() :
-fTelescopeInterface(nil)
+fTelescopeInterface()
 {
 }
 
@@ -94,6 +94,6 @@ void cyInputInterface::PopTelescope()
         pMsg->SetIFace(fTelescopeInterface);
         pMsg->Send();
         hsRefCnt_SafeUnRef( fTelescopeInterface );
-        fTelescopeInterface = nil;
+        fTelescopeInterface = nullptr;
     }
 }

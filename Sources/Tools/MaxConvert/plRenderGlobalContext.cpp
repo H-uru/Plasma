@@ -67,10 +67,10 @@ plRenderGlobalContext::plRenderGlobalContext(Interface* ip, TimeValue t)
     farRange = 10000.f;
     devAspect = 1.f;          // PIXEL aspect ratio of device pixel H/W
     frameDur = 1.f;
-    envMap = nil;
+    envMap = nullptr;
     globalLightLevel.White();
-    atmos = nil;
-    pToneOp = nil;  // The tone operator, may be NULL
+    atmos = nullptr;
+    pToneOp = nullptr;  // The tone operator, may be NULL
     time = t;
     wireMode = false;       // wire frame render mode?
     wire_thick = 1.f;   // global wire thickness
@@ -121,7 +121,7 @@ RenderInstance* plRenderGlobalContext::GetRenderInstance(int i)
     if (fInstList.GetCount() > i)
         return &fInstList[i];
     else
-        return nil;
+        return nullptr;
 }
 
 void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney)
@@ -182,7 +182,7 @@ void plRenderGlobalContext::IntersectRay(RenderInstance *inst, Ray& origRay, ISe
         Mtl* mtl = inst->GetINode()->GetMtl();
         thisHit.matreq = mtl ? mtl->Requirements(thisHit.mtlNum) : 0;
 
-        thisHit.next = nil;
+        thisHit.next = nullptr;
 
         if( thisHit.matreq & (MTLREQ_TRANSP | MTLREQ_ADDITIVE_TRANSP) )
         {

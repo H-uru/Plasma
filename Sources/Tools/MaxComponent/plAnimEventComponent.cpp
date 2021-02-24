@@ -206,7 +206,7 @@ bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     if (fCompPB->Count(kAnimMarkers) > 0)
     {
-        plNotetrackAnim anim(animComp, nil);
+        plNotetrackAnim anim(animComp, nullptr);
         plAnimInfo info = anim.GetAnimInfo(animName);
 
         int numMarkers = fCompPB->Count(kAnimMarkers);
@@ -325,7 +325,7 @@ void plAnimEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
     if (comp)
     {
         // Get the shared animations for all the nodes this component is applied to
-        plNotetrackAnim anim(comp, nil);
+        plNotetrackAnim anim(comp, nullptr);
         plAnimInfo info = anim.GetAnimInfo(comp->GetAnimName());
 
         RemoveDeadMarkers(pb, kAnimMarkers, info);
@@ -511,7 +511,7 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     if (fCompPB->Count(kMtlMarkers) > 0)
     {
-        plNotetrackAnim anim(mtl, nil);
+        plNotetrackAnim anim(mtl, nullptr);
         plAnimInfo info = anim.GetAnimInfo(mtlAnim);
 
         int numMarkers = fCompPB->Count(kMtlMarkers);
@@ -584,7 +584,7 @@ void plMtlEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
         ST::string mtlAnim = ST::string::from_utf8(pb->GetStr(kMtlAnim));
 
         // Get the shared animations for all the nodes this component is applied to
-        plNotetrackAnim anim(mtl, nil);
+        plNotetrackAnim anim(mtl, nullptr);
         plAnimInfo info = anim.GetAnimInfo(mtlAnim);
 
         RemoveDeadMarkers(pb, kMtlMarkers, info);

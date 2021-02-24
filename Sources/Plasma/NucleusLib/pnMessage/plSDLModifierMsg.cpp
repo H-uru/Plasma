@@ -45,10 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plSDLModifierMsg::plSDLModifierMsg(const ST::string& sdlName, Action a) :
     fSDLName(sdlName),
     fAction(a),
-    fState(nil),
-    fPlayerID(0),
-    fManageStateMem(false),
-    fFlags(0)
+    fState(),
+    fPlayerID(),
+    fManageStateMem(),
+    fFlags()
 { 
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }

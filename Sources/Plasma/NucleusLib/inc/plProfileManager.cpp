@@ -133,14 +133,14 @@ uint64_t plProfileManager::GetTime()
 ///////////////////////////////////////////////////////////////////////////////
 
 plProfileBase::plProfileBase() :
-    fName(nil),
-    fDisplayFlags(0),
-    fValue(0),
-    fTimerSamples(0),
-    fAvgCount(0),
-    fAvgTotal(0),
-    fLastAvg(0),
-    fMax(0),
+    fName(),
+    fDisplayFlags(),
+    fValue(),
+    fTimerSamples(),
+    fAvgCount(),
+    fAvgTotal(),
+    fLastAvg(),
+    fMax(),
     fActive(false),
     fRunning(true)
 {
@@ -287,7 +287,7 @@ plProfileLaps::LapInfo* plProfileLaps::IFindLap(const char* lapName)
             return &fLapTimes[i];
         }
     }
-    return nil;
+    return nullptr;
 }
 
 void plProfileLaps::BeginLap(uint64_t curValue, const char* name)
@@ -365,7 +365,7 @@ plProfileBase* plProfileLaps::GetLap(int i)
 
 plProfileVar::plProfileVar(const char *name, const char* group, uint8_t flags) :
     fGroup(group),
-    fLaps(nil)
+    fLaps()
 {
     fName = name;
     fDisplayFlags = flags;

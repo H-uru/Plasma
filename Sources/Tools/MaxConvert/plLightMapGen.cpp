@@ -147,11 +147,11 @@ plLightMapGen::plLightMapGen()
     fScale(1.f),
     fUVWSrc(-1),
     fMapRange(-1.f),
-    fInterface(nil),
-    fRenderer(nil),
+    fInterface(),
+    fRenderer(),
     fRecalcLightMaps(true),
-    fRGC(nil),
-    fRP(nil)
+    fRGC(),
+    fRP()
 {
     fWidth = kDefaultSize;
     fHeight = kDefaultSize;
@@ -199,7 +199,7 @@ bool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
         vp.farRange = 30.f;
 
         fRenderer->Open(fInterface->GetRootNode(), 
-            nil,
+            nullptr,
             &vp,
             *fRP, 
             fInterface->GetMAXHWnd());
@@ -268,7 +268,7 @@ bool plLightMapGen::Close()
     for (int i = 0; i < fSharedComponents.size(); i++)
     {
         if (fSharedComponents[i]->GetLightMapKey()) // if it has a key
-            fSharedComponents[i]->SetLightMapKey(nil); // nil it out
+            fSharedComponents[i]->SetLightMapKey(nullptr); // nil it out
     }
     fSharedComponents.clear();
 
@@ -279,11 +279,11 @@ bool plLightMapGen::Close()
 #else // MF_NEW_RGC
     if( fRenderer )
         fRenderer->Close(fInterface->GetMAXHWnd());
-    fRenderer = nil;
+    fRenderer = nullptr;
 #endif // MF_NEW_RGC
-    fRGC = nil;
+    fRGC = nullptr;
     delete fRP;
-    fRP = nil;
+    fRP = nullptr;
 
     fPreppedMipmaps.SetCount(0);
     fCreatedLayers.SetCount(0);
@@ -292,7 +292,7 @@ bool plLightMapGen::Close()
     IReleaseActiveLights();
     IReleaseAllLights();
 
-    fInterface = nil;
+    fInterface = nullptr;
 
     return true;
 }
@@ -540,7 +540,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
 plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
 {
     plMipmap* dst = plMipmap::ConvertNoRef( lay->GetTexture() );//->GetBitmap();
-    hsAssert( dst != nil, "nil mipmap in IMakeAccumBitmap()" );
+    hsAssert(dst != nullptr, "nil mipmap in IMakeAccumBitmap()");
 
     int width = dst->GetWidth();
     int height = dst->GetHeight();
@@ -555,7 +555,7 @@ plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
 bool plLightMapGen::IAddToLightMap(plLayerInterface* lay, plMipmap* src) const
 {
     plMipmap* dst = plMipmap::ConvertNoRef( lay->GetTexture() );//->GetBitmap();
-    hsAssert( dst != nil, "nil mipmap in IAddToLightMap()" );
+    hsAssert(dst != nullptr, "nil mipmap in IAddToLightMap()");
 
     src->SetCurrLevel( 0 );
     dst->SetCurrLevel( 0 );
@@ -790,7 +790,7 @@ bool plLightMapGen::IGetLight(INode* node)
         liInfo->fMapRange = -1.f;
 
         liInfo->fLiNode = node;
-        liInfo->fObjLiDesc = nil;
+        liInfo->fObjLiDesc = nullptr;
         liInfo->fNewRender = true;
 
         return true;
@@ -1149,7 +1149,7 @@ bool plLightMapGen::IReleaseAllLights()
         if( fAllLights[i].fObjLiDesc )
             fAllLights[i].fObjLiDesc->DeleteThis();
 
-        fAllLights[i].fObjLiDesc = nil;
+        fAllLights[i].fObjLiDesc = nullptr;
     }
     fAllLights.SetCount(0);
     
@@ -1168,7 +1168,7 @@ bool plLightMapGen::IWantsMaps(plMaxNode* node)
     if( !(node->CanConvert() && node->GetDrawable()) )
         return false;
 
-    return nil != node->GetLightMapComponent();
+    return nullptr != node->GetLightMapComponent();
 }
 
 bool plLightMapGen::IValidateUVWSrc(hsTArray<plGeometrySpan *>& spans) const
@@ -1199,7 +1199,7 @@ plLayerInterface* plLightMapGen::IGetLightMapLayer(plMaxNode* node, plGeometrySp
     plMipmap* mip = plMipmap::ConvertNoRef(lay->GetTexture());
     hsAssert(mip, "This should have been a mipmap we created ourselves.");
     if( !mip )
-        return nil;
+        return nullptr;
     if( fPreppedMipmaps.Find(mip) == fPreppedMipmaps.kMissingIndex )
     {
         if( IsFresh(mip) )
@@ -1246,7 +1246,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         }
         hsAssert(false, "Something not a light map material registered with our name?");
     }
-    hsGMaterial* objMat = nil;
+    hsGMaterial* objMat = nullptr;
     
     bool sharemaps = node->GetLightMapComponent()->GetShared();
     if( sharemaps )
@@ -1312,7 +1312,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
                         // make sure the lightmap component isn't holding a key,
                         // it will get assigned one a few lines later anyway
                         if (node->GetLightMapComponent()->GetLightMapKey())
-                            node->GetLightMapComponent()->SetLightMapKey(nil);
+                            node->GetLightMapComponent()->SetLightMapKey(nullptr);
 
                         plBitmapCreator::Instance().DeleteExportedBitmap(mipKey);
                     }

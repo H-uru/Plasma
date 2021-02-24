@@ -110,7 +110,7 @@ void plBaseStage::IBaseClone(plBaseStage* clone)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-HWND plStandardStage::fDlg = NULL;
+HWND plStandardStage::fDlg = nullptr;
 
 plStandardStage::plStandardStage()
 {
@@ -191,7 +191,7 @@ void plStandardStage::DestroyDlg()
     IGetAnimName();
 
     IDestroyDlg(fDlg);
-    fDlg = nil;
+    fDlg = nullptr;
 }
 
 #define SetBit(f,b,on) on ? hsSetBits(f,b) : hsClearBits(f,b)

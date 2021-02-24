@@ -94,7 +94,7 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
                             plController *ambientCtl,   plController *diffuseCtl, plController *opacityCtl, 
                             plController *widthCtl, plController *heightCtl)
 {
-    fTarget = nil;
+    fTarget = nullptr;
     fLastTime = 0;
     fCurrTime = 0;
     SetGravity(1.0f);
@@ -117,7 +117,7 @@ void plParticleSystem::Init(uint32_t xTiles, uint32_t yTiles, uint32_t maxTotalP
     fEmitters = new plParticleEmitter *[fMaxEmitters];
     int i;
     for (i = 0; i < maxEmitters; i++)
-        fEmitters[i] = nil; 
+        fEmitters[i] = nullptr;
 
     fAmbientCtl = ambientCtl;
     fDiffuseCtl = diffuseCtl;
@@ -146,7 +146,7 @@ void plParticleSystem::IAddEffect(plParticleEffect *effect, uint32_t type)
 plParticleEmitter* plParticleSystem::GetAvailEmitter()
 {
     if( !fNumValidEmitters ) // got to start with at least one.
-        return nil;
+        return nullptr;
 
     float minTTL = 1.e33f;
     int iMinTTL = -1;
@@ -274,7 +274,7 @@ uint16_t plParticleSystem::StealParticlesFrom(plParticleSystem *victim, uint16_t
 
     if (victim)
     {
-        uint16_t numStolen = fEmitters[0]->StealParticlesFrom(victim->fNumValidEmitters > 0 ? victim->fEmitters[0] : nil, num);
+        uint16_t numStolen = fEmitters[0]->StealParticlesFrom(victim->fNumValidEmitters > 0 ? victim->fEmitters[0] : nullptr, num);
         GetTarget(0)->DirtySynchState(kSDLParticleSystem, 0);   
         victim->GetTarget(0)->DirtySynchState(kSDLParticleSystem, 0);   
         return numStolen;
@@ -285,7 +285,7 @@ uint16_t plParticleSystem::StealParticlesFrom(plParticleSystem *victim, uint16_t
 
 plParticleGenerator *plParticleSystem::GetExportedGenerator() const 
 { 
-    return (fNumValidEmitters > 0 ? fEmitters[0]->fGenerator : nil);
+    return (fNumValidEmitters > 0 ? fEmitters[0]->fGenerator : nullptr);
 }
 
 plParticleEffect *plParticleSystem::GetEffect(uint16_t type) const
@@ -303,7 +303,7 @@ plParticleEffect *plParticleSystem::GetEffect(uint16_t type) const
         if (fConstraints[i]->ClassIndex() == type)
             return fConstraints[i];
 
-    return nil;
+    return nullptr;
 }
 
 uint32_t plParticleSystem::GetNumValidParticles(bool immortalOnly /* = false */) const
@@ -405,7 +405,7 @@ plDrawInterface* plParticleSystem::ICheckDrawInterface()
 {
     plDrawInterface* di = IGetTargetDrawInterface(0);
     if( !di )
-        return nil;
+        return nullptr;
 
     if( di->GetDrawableMeshIndex(0) == uint32_t(-1) )
     {
@@ -506,7 +506,7 @@ bool plParticleSystem::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 fTexture = mat;
             else
-                fTexture = nil;
+                fTexture = nullptr;
             return true;
         }
         if ((effect = plParticleEffect::ConvertNoRef(refMsg->GetRef())))
@@ -545,7 +545,7 @@ void plParticleSystem::UpdateGenerator(uint32_t paramID, float value)
 
 void plParticleSystem::AddTarget(plSceneObject *so)
 {
-    if (fTarget != nil)
+    if (fTarget != nullptr)
         RemoveTarget(fTarget);
 
     fTarget = so;
@@ -561,15 +561,15 @@ void plParticleSystem::AddTarget(plSceneObject *so)
 
 void plParticleSystem::RemoveTarget(plSceneObject *so)
 {
-    if (so == fTarget && so != nil)
+    if (so == fTarget && so != nullptr)
     {
         if (fParticleSDLMod)
         {
             so->RemoveModifier(fParticleSDLMod);
             delete fParticleSDLMod;
-            fParticleSDLMod = nil;
+            fParticleSDLMod = nullptr;
         }
-        fTarget = nil;
+        fTarget = nullptr;
     }
 }
 

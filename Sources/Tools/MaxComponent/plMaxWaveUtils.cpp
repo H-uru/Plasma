@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
 {
     CWaveFile waveFile;
-    waveFile.Open(file, nil, WAVEFILE_READ);
+    waveFile.Open(file, nullptr, WAVEFILE_READ);
     int numMarkers = waveFile.GetNumMarkers();
     if (numMarkers == 0)
-        return nil;
+        return nullptr;
 
     SegmentMap *segMap = new SegmentMap();
 

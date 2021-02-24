@@ -74,7 +74,7 @@ void cyPhysics::SetSender(plKey sender)
 
 void cyPhysics::AddRecvr(plKey recvr)
 {
-    if ( recvr != nil )
+    if (recvr != nullptr)
         fRecvr.emplace_back(std::move(recvr));
 }
 

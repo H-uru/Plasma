@@ -158,7 +158,7 @@ void plInputManager::SetMouseScale(float s)
     RECT rect2 = rect;
     rect2.right /= fMouseScale;
     rect2.bottom /= fMouseScale;
-    ::MapWindowPoints( fhWnd, NULL, (POINT *)&rect2, 2 );
+    ::MapWindowPoints(fhWnd, nullptr, (POINT *)&rect2, 2);
     BOOL ret = ::ClipCursor( &rect );
 
     // Now move the cursor to the right spot

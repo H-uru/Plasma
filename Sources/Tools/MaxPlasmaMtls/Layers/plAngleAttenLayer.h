@@ -166,8 +166,8 @@ public:
 
 
     // Pure virtual accessors for the various bitmap related elements
-    Bitmap *GetMaxBitmap(int index = 0) override { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
-    PBBitmap *GetPBBitmap( int index = 0 ) override { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
+    Bitmap *GetMaxBitmap(int index = 0) override { hsAssert(false, "Function call not valid on this type of layer."); return nullptr; }
+    PBBitmap *GetPBBitmap(int index = 0) override { hsAssert(false, "Function call not valid on this type of layer."); return nullptr; }
     int     GetNumBitmaps() override { return 0; }
 
     // Some specific to processing this layer type into runtime materials.

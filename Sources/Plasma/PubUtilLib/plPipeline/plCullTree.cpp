@@ -720,8 +720,8 @@ int16_t plCullTree::IAddPolyRecur(const plCullPoly& poly, int16_t iNode)
                         || ((iNode > 5) && poly.IsHole());
     bool addOuter = !poly.IsHole() || (IGetNode(iNode)->fOuterChild >= 0);
 
-    plCullPoly* innerPoly = nil;
-    plCullPoly* outerPoly = nil;
+    plCullPoly* innerPoly = nullptr;
+    plCullPoly* outerPoly = nullptr;
 
     plCullNode::plCullStatus test = IGetNode(iNode)->ISplitPoly(poly, innerPoly, outerPoly);
 

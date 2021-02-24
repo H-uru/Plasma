@@ -91,22 +91,22 @@ class plCommonObjLibList
         }
 };
 
-plCommonObjLibList  *plCommonObjLib::fLibList = nil;
+plCommonObjLibList  *plCommonObjLib::fLibList = nullptr;
 
 uint32_t  plCommonObjLib::GetNumLibs()
 {
-    return ( fLibList != nil ) ? fLibList->fLibs.GetCount() : 0;
+    return (fLibList != nullptr) ? fLibList->fLibs.GetCount() : 0;
 }
 
 plCommonObjLib  *plCommonObjLib::GetLib( uint32_t idx )
 {
-    if( fLibList == nil )
-        return nil;
+    if (fLibList == nullptr)
+        return nullptr;
 
     if( idx < fLibList->fLibs.GetCount() )
         return fLibList->fLibs[ idx ];
 
-    return nil;
+    return nullptr;
 }
 
 
@@ -117,7 +117,7 @@ plCommonObjLib  *plCommonObjLib::GetLib( uint32_t idx )
 plCommonObjLib::plCommonObjLib()
 {
     // Make sure we have a list to add ourselves to
-    if( fLibList == nil )
+    if (fLibList == nullptr)
         fLibList = new plCommonObjLibList();
 
     // Add ourselves to the list of libs
@@ -133,7 +133,7 @@ plCommonObjLib::~plCommonObjLib()
     {
         // List is no longer needed
         delete fLibList;
-        fLibList = nil;
+        fLibList = nullptr;
     }
 }
 
@@ -160,7 +160,7 @@ void    plCommonObjLib::ClearObjectList()
 
 void    plCommonObjLib::AddObject( hsKeyedObject *object )
 {
-    if( object == nil || object->GetKey() == nil )
+    if (object == nullptr || object->GetKey() == nullptr)
     {
         hsAssert( false, "Trying to add an object to a commonLib that doesn't have a key" );
         return;
@@ -181,14 +181,14 @@ bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
     if (!key)
     {
         hsAssert( false, "Received RemoveObjectAndKey() call for a key that is invalid. Nillifying key anyway." );
-        key = nil;
+        key = nullptr;
         return true;
     }
     hsKeyedObject *object = hsKeyedObject::ConvertNoRef( key->ObjectIsLoaded() );
-    if( object == nil )
+    if (object == nullptr)
     {
         hsAssert( false, "Received RemoveObjectAndKey() call for a key that isn't loaded. Nillifying key anyway." );
-        key = nil;
+        key = nullptr;
         return true;
     }
 
@@ -196,7 +196,7 @@ bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
     if( idx == fObjects.kMissingIndex )
     {
         hsAssert( false, "Trying to RemoveObjectAndKey() for a common object not in the lib." );
-        key = nil;
+        key = nullptr;
         return true;
     }
 
@@ -217,7 +217,7 @@ bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
 
 //// FindObject //////////////////////////////////////////////////////////////
 //  Given a name and an optional class type, tries to find that object in
-//  our lib. Returns nil if not found. Use to find out if you already have a
+//  our lib. Returns nullptr if not found. Use to find out if you already have a
 //  object of a given name that was previously exported.
 
 hsKeyedObject   *plCommonObjLib::FindObject( const ST::string &name, uint16_t classType /* = -1 */ )
@@ -237,5 +237,5 @@ hsKeyedObject   *plCommonObjLib::FindObject( const ST::string &name, uint16_t cl
         }
     }
 
-    return nil;
+    return nullptr;
 }

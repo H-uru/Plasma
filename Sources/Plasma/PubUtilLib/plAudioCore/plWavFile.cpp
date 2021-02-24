@@ -129,13 +129,13 @@ HRESULT CWaveFile::Open(const plFileName &fileName, WAVEFORMATEX* pwfx, DWORD dw
                     return DXTRACE_ERR( TEXT("FindResource"), E_FAIL );
             }
 
-            if( NULL == ( hResData = LoadResource( NULL, hResInfo ) ) )
+            if (hResData = LoadResource(nullptr, hResInfo); hResData == nullptr)
                 return DXTRACE_ERR( TEXT("LoadResource"), E_FAIL );
 
-            if( 0 == ( dwSize = SizeofResource( NULL, hResInfo ) ) ) 
+            if (dwSize = SizeofResource(nullptr, hResInfo); dwSize == 0)
                 return DXTRACE_ERR( TEXT("SizeofResource"), E_FAIL );
 
-            if( NULL == ( pvRes = LockResource( hResData ) ) )
+            if (pvRes = LockResource(hResData); pvRes == nullptr)
                 return DXTRACE_ERR( TEXT("LockResource"), E_FAIL );
 
             CHAR* pData = new CHAR[ dwSize ];
@@ -172,7 +172,7 @@ HRESULT CWaveFile::Open(const plFileName &fileName, WAVEFORMATEX* pwfx, DWORD dw
     {
         m_hmmio = mmioOpenW(wFileName.data(), nullptr,
                             MMIO_ALLOCBUF | MMIO_READWRITE | MMIO_CREATE);
-        if( NULL == m_hmmio )
+        if (m_hmmio == nullptr)
             return DXTRACE_ERR( TEXT("mmioOpen"), E_FAIL );
 
         if( FAILED( hr = WriteMMIO( pwfx ) ) )
@@ -294,9 +294,9 @@ HRESULT CWaveFile::ReadMMIO()
     MMCKINFO        ckIn;           // chunk info. for general use.
     PCMWAVEFORMAT   pcmWaveFormat;  // Temp PCM structure to load in.       
 
-    m_pwfx = NULL;
+    m_pwfx = nullptr;
 
-    if( ( 0 != mmioDescend( m_hmmio, &m_ckRiff, NULL, 0 ) ) )
+    if (mmioDescend(m_hmmio, &m_ckRiff, nullptr, 0) != 0)
         return DXTRACE_ERR( TEXT("mmioDescend"), E_FAIL );
 
     // Check to make sure this is a valid wave file
@@ -324,7 +324,7 @@ HRESULT CWaveFile::ReadMMIO()
     if( pcmWaveFormat.wf.wFormatTag == WAVE_FORMAT_PCM )
     {
         m_pwfx = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX));
-        if( NULL == m_pwfx )
+        if (m_pwfx == nullptr)
             return DXTRACE_ERR( TEXT("m_pwfx"), E_FAIL );
 
         // Copy the bytes from the pcm structure to the waveformatex structure
@@ -339,7 +339,7 @@ HRESULT CWaveFile::ReadMMIO()
             return DXTRACE_ERR( TEXT("mmioRead"), E_FAIL );
 
         m_pwfx = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX) + cbExtraBytes);
-        if( NULL == m_pwfx )
+        if (m_pwfx == nullptr)
             return DXTRACE_ERR( TEXT("new"), E_FAIL );
 
         // Copy the bytes from the pcm structure to the waveformatex structure
@@ -502,7 +502,7 @@ HRESULT CWaveFile::ResetFile()
     }
     else 
     {
-        if( m_hmmio == NULL )
+        if (m_hmmio == nullptr)
             return CO_E_NOTINITIALIZED;
 
         if( m_dwFlags == WAVEFILE_READ )
@@ -549,9 +549,9 @@ HRESULT CWaveFile::Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead )
 {
     if( m_bIsReadingFromMemory )
     {
-        if( m_pbDataCur == NULL )
+        if (m_pbDataCur == nullptr)
             return CO_E_NOTINITIALIZED;
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = 0;
 
         if( (BYTE*)(m_pbDataCur + dwSizeToRead) > 
@@ -562,7 +562,7 @@ HRESULT CWaveFile::Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead )
         
         CopyMemory( pBuffer, m_pbDataCur, dwSizeToRead );
         
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = dwSizeToRead;
 
         return S_OK;
@@ -571,12 +571,12 @@ HRESULT CWaveFile::Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead )
     {
         MMIOINFO mmioinfoIn; // current status of m_hmmio
 
-        if( m_hmmio == NULL )
+        if (m_hmmio == nullptr)
             return CO_E_NOTINITIALIZED;
-        if( pBuffer == NULL || pdwSizeRead == NULL )
+        if (pBuffer == nullptr || pdwSizeRead == nullptr)
             return E_INVALIDARG;
 
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = 0;
 
         if( 0 != mmioGetInfo( m_hmmio, &mmioinfoIn, 0 ) )
@@ -633,7 +633,7 @@ HRESULT CWaveFile::Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead )
         if( 0 != mmioSetInfo( m_hmmio, &mmioinfoIn, 0 ) )
             return DXTRACE_ERR( TEXT("mmioSetInfo"), E_FAIL );
 
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = cbDataIn;
 
         return S_OK;
@@ -648,9 +648,9 @@ HRESULT CWaveFile::AdvanceWithoutRead( DWORD dwSizeToRead, DWORD* pdwSizeRead )
 {
     if( m_bIsReadingFromMemory )
     {
-        if( m_pbDataCur == NULL )
+        if (m_pbDataCur == nullptr)
             return CO_E_NOTINITIALIZED;
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = 0;
 
         if( (BYTE*)(m_pbDataCur + dwSizeToRead) > 
@@ -659,7 +659,7 @@ HRESULT CWaveFile::AdvanceWithoutRead( DWORD dwSizeToRead, DWORD* pdwSizeRead )
             dwSizeToRead = m_ulDataSize - (DWORD)(m_pbDataCur - m_pbData);
         }
         
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = dwSizeToRead;
 
         return S_OK;
@@ -668,12 +668,12 @@ HRESULT CWaveFile::AdvanceWithoutRead( DWORD dwSizeToRead, DWORD* pdwSizeRead )
     {
         MMIOINFO mmioinfoIn; // current status of m_hmmio
 
-        if( m_hmmio == NULL )
+        if (m_hmmio == nullptr)
             return CO_E_NOTINITIALIZED;
-        if( pdwSizeRead == NULL )
+        if (pdwSizeRead == nullptr)
             return E_INVALIDARG;
 
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = 0;
 
         if( 0 != mmioGetInfo( m_hmmio, &mmioinfoIn, 0 ) )
@@ -726,7 +726,7 @@ HRESULT CWaveFile::AdvanceWithoutRead( DWORD dwSizeToRead, DWORD* pdwSizeRead )
         if( 0 != mmioSetInfo( m_hmmio, &mmioinfoIn, 0 ) )
             return DXTRACE_ERR( TEXT("mmioSetInfo"), E_FAIL );
 
-        if( pdwSizeRead != NULL )
+        if (pdwSizeRead != nullptr)
             *pdwSizeRead = cbDataIn;
 
         return S_OK;
@@ -743,13 +743,13 @@ HRESULT CWaveFile::IClose()
     if( m_dwFlags == WAVEFILE_READ )
     {
         mmioClose( m_hmmio, 0 );
-        m_hmmio = NULL;
+        m_hmmio = nullptr;
     }
     else
     {
         m_mmioinfoOut.dwFlags |= MMIO_DIRTY;
 
-        if( m_hmmio == NULL )
+        if (m_hmmio == nullptr)
             return CO_E_NOTINITIALIZED;
 
         if( 0 != mmioSetInfo( m_hmmio, &m_mmioinfoOut, 0 ) )
@@ -766,7 +766,7 @@ HRESULT CWaveFile::IClose()
         
         mmioSeek( m_hmmio, 0, SEEK_SET );
 
-        if( 0 != (INT)mmioDescend( m_hmmio, &m_ckRiff, NULL, 0 ) )
+        if ((INT)mmioDescend(m_hmmio, &m_ckRiff, nullptr, 0) != 0)
             return DXTRACE_ERR( TEXT("mmioDescend"), E_FAIL );
     
         m_ck.ckid = mmioFOURCC('f', 'a', 'c', 't');
@@ -784,7 +784,7 @@ HRESULT CWaveFile::IClose()
             return DXTRACE_ERR( TEXT("mmioAscend"), E_FAIL );
     
         mmioClose( m_hmmio, 0 );
-        m_hmmio = NULL;
+        m_hmmio = nullptr;
     }
 
     return S_OK;
@@ -876,9 +876,9 @@ HRESULT CWaveFile::Write( UINT nSizeToWrite, BYTE* pbSrcData, UINT* pnSizeWrote 
 
     if( m_bIsReadingFromMemory )
         return E_NOTIMPL;
-    if( m_hmmio == NULL )
+    if (m_hmmio == nullptr)
         return CO_E_NOTINITIALIZED;
-    if( pnSizeWrote == NULL || pbSrcData == NULL )
+    if (pnSizeWrote == nullptr || pbSrcData == nullptr)
         return E_INVALIDARG;
 
     *pnSizeWrote = 0;
@@ -1013,7 +1013,7 @@ public:
         chunkID = mmioFOURCC('c','u','e',' ');
         chunkSize = ChunkSize;
         dwCuePoints = (ChunkSize - (sizeof(DWORD)*1))/(sizeof(CuePoint));
-        //points = NULL;
+        //points = nullptr;
         //points = new CuePoint[dwCuePoints];
         
     }
@@ -1053,7 +1053,7 @@ public:
         chunkID = mmioFOURCC('l','a','b','l');
         chunkSize = ChunkSize;
         dwIdentifier = 0;
-        dwText = NULL;
+        dwText = nullptr;
     }
 
     LabelChunk() 
@@ -1061,7 +1061,7 @@ public:
         chunkID = mmioFOURCC('l','a','b','l');
         chunkSize = 0;
         dwIdentifier = 0;
-        dwText = NULL;
+        dwText = nullptr;
     }
 
 

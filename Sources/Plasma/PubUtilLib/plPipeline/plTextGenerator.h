@@ -114,8 +114,8 @@ class plTextGenerator : public hsKeyedObject
         void        DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
         void        DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height );
         void        DrawWrappedString( uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height );
-        uint16_t      CalcStringWidth( const char *text, uint16_t *height = nil );
-        uint16_t      CalcStringWidth( const wchar_t *text, uint16_t *height = nil );
+        uint16_t    CalcStringWidth(const char *text, uint16_t *height = nullptr);
+        uint16_t    CalcStringWidth(const wchar_t *text, uint16_t *height = nullptr);
         void        CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height );
         void        CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height );
         void        FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );

@@ -210,7 +210,7 @@ public:
                 + j * sizeof(hsPoint3);
         }
         hsAssert(false, "Unrecognized vertex channel");
-        return nil;
+        return nullptr;
     }
 
     bool ValidateInput(Channel chan, int i, int j) const
@@ -260,7 +260,7 @@ class plSpanTemplateB : public plSpanTemplate
     hsColorRGBA*    fAddColors;
 
 public:
-    plSpanTemplateB(INode* src) : plSpanTemplate(), fSrc(src), fMaterial(nil) {}
+    plSpanTemplateB(INode* src) : plSpanTemplate(), fSrc(src), fMaterial() { }
     virtual ~plSpanTemplateB() { DeAllocColors(); }
 
     void ComputeBounds();

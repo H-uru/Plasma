@@ -174,7 +174,7 @@ void plAnimCompProc::IUpdateCompButton(HWND hWnd, IParamBlock2* pb)
 
 plComponentBase* plAnimCompProc::IGetComp(IParamBlock2* pb)
 {
-    plMaxNode* node = nil;
+    plMaxNode* node = nullptr;
     if (pb->GetParameterType(fCompParamID) == TYPE_REFTARG)
         node = (plMaxNode*)pb->GetReferenceTarget(fCompParamID);
     else
@@ -183,7 +183,7 @@ plComponentBase* plAnimCompProc::IGetComp(IParamBlock2* pb)
     if (node)
         return node->ConvertToComponent();
 
-    return nil;
+    return nullptr;
 }
 
 plMaxNode* plAnimCompProc::IGetNode(IParamBlock2* pb)
@@ -197,9 +197,9 @@ plMaxNode* plAnimCompProc::IGetNode(IParamBlock2* pb)
 void plAnimCompProc::IClearNode(IParamBlock2* pb)
 {
     if (pb->GetParameterType(fNodeParamID) == TYPE_REFTARG)
-        pb->SetValue(fNodeParamID, 0, (ReferenceTarget*)nil);
+        pb->SetValue(fNodeParamID, 0, (ReferenceTarget*)nullptr);
     else
-        pb->SetValue(fNodeParamID, 0, (INode*)nil);
+        pb->SetValue(fNodeParamID, 0, (INode*)nullptr);
 }
 
 bool plAnimCompProc::GetCompAndNode(IParamBlock2* pb, plComponentBase*& comp, plMaxNode*& node)
@@ -290,7 +290,7 @@ void plMtlAnimProc::IUpdateMtlButton(HWND hWnd, IParamBlock2* pb)
         SetWindowText(hMtl, "(none)");
 
     // Enable the node button if a material is selected
-    EnableWindow(GetDlgItem(hWnd, fNodeButtonID), (savedMtl != nil));
+    EnableWindow(GetDlgItem(hWnd, fNodeButtonID), (savedMtl != nullptr));
 
     // Update the dependencies of this
     IUpdateNodeButton(hWnd, pb);
@@ -319,7 +319,7 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
     Mtl* mtl = IGetMtl(pb);
     if (mtl)
     {
-        plNotetrackAnim anim(mtl, nil);
+        plNotetrackAnim anim(mtl, nullptr);
         ST::string animName;
         while (!(animName = anim.GetNextAnimName()).empty())
         {
@@ -345,7 +345,7 @@ void plMtlAnimProc::IMtlButtonPress(HWND hWnd, IParamBlock2* pb)
                                                     plMtlCollector::kPlasmaOnly);
 
     // Save the mtl in the pb and update the interface
-    if (pickedMtl != nil)
+    if (pickedMtl != nullptr)
     {
         if (pb->GetParameterType(fMtlParamID) == TYPE_REFTARG)
             pb->SetValue(fMtlParamID, 0, (ReferenceTarget*)pickedMtl);
@@ -357,7 +357,7 @@ void plMtlAnimProc::IMtlButtonPress(HWND hWnd, IParamBlock2* pb)
     // Make sure the current node has the selected material on it (clear it otherwise)
     INode* node = pb->GetINode(fNodeParamID);
     if (!pickedMtl || !node || node->GetMtl() != pickedMtl)
-        pb->SetValue(fNodeParamID, 0, (INode*)nil);
+        pb->SetValue(fNodeParamID, 0, (INode*)nullptr);
 
     IUpdateMtlButton(hWnd, pb);
 }
@@ -414,7 +414,7 @@ protected:
     void ISetUserType(plMaxNode* node, const char* userType) override
     {
         if (strcmp(userType, kUserTypeAll) == 0)
-            ISetNodeValue(nil);
+            ISetNodeValue(nullptr);
     }
 
 public:

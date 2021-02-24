@@ -66,7 +66,7 @@ public:
     const TCHAR*    ClassName() override     { return GetString(IDS_CLOTHING_MTL); }
     SClass_ID       SuperClassID() override  { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override       { return CLOTHING_MTL_CLASS_ID; }
-    const TCHAR*    Category() override      { return NULL; }
+    const TCHAR*    Category() override      { return nullptr; }
     const TCHAR*    InternalName() override  { return _T("ClothingMaterial"); }
     HINSTANCE       HInstance() override     { return hInstance; }
 };
@@ -125,7 +125,7 @@ const uint8_t plClothingMtl::LayerToPBIdx[] =
     kTexmap2
 };
 
-plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB(NULL)
+plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB()
 {
     plClothingMtlDesc.MakeAutoParamBlocks(this);
 
@@ -202,7 +202,7 @@ Animatable* plClothingMtl::SubAnim(int i)
     case 1: return fBasicPB->GetTexmap(kTexmap);
     }
 
-    return NULL;
+    return nullptr;
 }
 */
 
@@ -218,7 +218,7 @@ RefTargetHandle plClothingMtl::GetReference(int i)
     case kRefBasic:  return fBasicPB;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void plClothingMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -242,7 +242,7 @@ IParamBlock2* plClothingMtl::GetParamBlockByID(BlockID id)
     if (fBasicPB->ID() == id)
         return fBasicPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plClothingMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
@@ -286,7 +286,7 @@ Texmap* plClothingMtl::GetSubTexmap(int i)
     if (i == plClothingElement::kLayerMax * kMaxTiles)
         return fBasicPB->GetTexmap(ParamID(kThumbnail));
 
-    return NULL;
+    return nullptr;
 }
 
 void plClothingMtl::SetSubTexmap(int i, Texmap *m)
@@ -569,7 +569,7 @@ plClothingElement *plClothingMtl::FindElementByName(const ST::string &name) cons
         if (element->fName == name)
             return element;
     }
-    return nil; 
+    return nullptr;
 }
 
 void plClothingMtl::InitTilesets()
@@ -702,7 +702,7 @@ void plClothingMtl::ReleaseTilesets()
 
 /////////////////////////////////////////////////////////////////////////////////
 
-plClothingTileset::plClothingTileset() : fName(nil) 
+plClothingTileset::plClothingTileset() : fName()
 {
     fElements.Reset();
 }

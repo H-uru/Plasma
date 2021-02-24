@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // CTOR()
 plSeekPointMod::plSeekPointMod()
-: fName(nil), plMultiModifier()
+: fName(), plMultiModifier()
 {
     // this constructor is called from the loader. 
 }
@@ -63,7 +63,7 @@ plSeekPointMod::~plSeekPointMod()
 {
     if(fName) {
         delete[] fName;
-        fName = nil;
+        fName = nullptr;
     }
 }
 

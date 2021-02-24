@@ -89,8 +89,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtExcludeRegionSet, args, "Params: senderKey,reg
             "- 'regionKey' is a ptKey of the exclude region\n"
             "- 'state' is either kExRegRelease or kExRegClear")
 {
-    PyObject* senderObj = NULL;
-    PyObject* regionObj = NULL;
+    PyObject* senderObj = nullptr;
+    PyObject* regionObj = nullptr;
     unsigned short stateVal;
     if (!PyArg_ParseTuple(args, "OOh", &senderObj, &regionObj, &stateVal))
     {
@@ -113,8 +113,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtExcludeRegionSetNow, args, "Params: senderKey,
             "- 'regionKey' is a ptKey of the exclude region\n"
             "- 'state' is either kExRegRelease or kExRegClear")
 {
-    PyObject* senderObj = NULL;
-    PyObject* regionObj = NULL;
+    PyObject* senderObj = nullptr;
+    PyObject* regionObj = nullptr;
     unsigned short stateVal;
     if (!PyArg_ParseTuple(args, "OOh", &senderObj, &regionObj, &stateVal))
     {
@@ -162,8 +162,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetFrameDeltaTime, "Returns the amount 
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=false, ageName=\"\"\nPages in node, or a list of nodes")
 {
-    PyObject* nodeNameObj = NULL;
-    char* ageName = NULL;
+    PyObject* nodeNameObj = nullptr;
+    char* ageName = nullptr;
     char netForce = 0;
     if (!PyArg_ParseTuple(args, "O|bs", &nodeNameObj, &netForce, &ageName))
     {
@@ -226,7 +226,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLimitAvatarLOD, args, "Params: LODlimit\nSets 
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFogSetDefColor, args, "Params: color\nSets default fog color")
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtFogSetDefColor expects a ptColor object");
@@ -282,8 +282,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadDialog, args, "Params: dialogName,selfKey=
             "If the dialog is already loaded then it won't load it again")
 {
     char* dialogName;
-    PyObject* keyObj = NULL;
-    char* ageName = NULL;
+    PyObject* keyObj = nullptr;
+    char* ageName = nullptr;
     if (!PyArg_ParseTuple(args, "s|Os", &dialogName, &keyObj, &ageName))
     {
         PyErr_SetString(PyExc_TypeError, "PtLoadDialog expects a string, and optionally a ptKey and second string");
@@ -383,7 +383,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsGUIModal, "Returns true if the GUI is
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPrivateChatList, args, "Params: chatList\nLock the local avatar into private vox messaging, and / or add new members to his chat list")
 {
-    PyObject* chatListObj = NULL;
+    PyObject* chatListObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &chatListObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendPrivateChatList expects a list of ptPlayers");
@@ -417,7 +417,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPrivateChatList, args, "Params: chatList\n
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtClearPrivateChatList, args, "Params: memberKey\nRemove the local avatar from private vox messaging, and / or clear members from his chat list")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtClearPrivateChatList expects a ptKey");

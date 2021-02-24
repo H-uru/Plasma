@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plTimeMsg.h"
 
 plActivePrintShape::plActivePrintShape()
-:   fShapeMsg(nil)
+:   fShapeMsg()
 {
 }
 
@@ -125,6 +125,6 @@ bool plActivePrintShape::INotify()
 
 plRippleShapeMsg* plActivePrintShape::ISetupShapeMsg()
 {
-    fShapeMsg = new plRippleShapeMsg(nil, this);
+    fShapeMsg = new plRippleShapeMsg(nullptr, this);
     return fShapeMsg;
 }

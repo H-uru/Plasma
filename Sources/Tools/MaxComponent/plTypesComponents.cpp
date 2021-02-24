@@ -243,7 +243,7 @@ ParamBlockDesc2 gVehicleBlock
     end
 );
 
-plVehicleComponent::plVehicleComponent() : fMod(nil)
+plVehicleComponent::plVehicleComponent() : fMod()
 {
     fClassDesc = &gVehicleDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -339,7 +339,7 @@ bool plVehicleComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
     plKey modKey = pNode->AddModifier(fMod, IGetUniqueName(pNode));
 
     plMaxNode* detectorNode = (plMaxNode*)fCompPB->GetINode(kVehicleDriveDet);
-    plComponentBase* comp = detectorNode ? detectorNode->ConvertToComponent() : nil;
+    plComponentBase* comp = detectorNode ? detectorNode->ConvertToComponent() : nullptr;
     if (comp)
         comp->AddReceiverKey(modKey);
 
@@ -440,7 +440,7 @@ ParamBlockDesc2 gMaintainersBk
 (
     
     1, _T("maintainersMarker"), 0, &gMaintainersDesc, P_AUTO_CONSTRUCT  + P_AUTO_UI, plComponent::kRefComp,
-    IDD_COMP_MAINTAINERS_MARKER, IDS_COMP_MAINTAINERS_MARKER, 0, 0, NULL,
+    IDD_COMP_MAINTAINERS_MARKER, IDS_COMP_MAINTAINERS_MARKER, 0, 0, nullptr,
 
     kCalibrated, _T("Calibrated"),      TYPE_INT,       0, 0,
         p_ui, TYPE_RADIO, 3,    IDC_RADIO_BROKEN, IDC_RADIO_REPAIRED, IDC_RADIO_CALIBRATED,
@@ -556,7 +556,7 @@ protected:
         {
             SetDlgItemText(hWnd, IDC_MTL_BUTTON, mtl->GetName());
 
-            plNotetrackAnim anim(mtl, nil);
+            plNotetrackAnim anim(mtl, nullptr);
             ILoadCombo(hWnd, IDC_ANIM_RED_COMBO, kMarkerRedAnim, pb, anim);
             ILoadCombo(hWnd, IDC_ANIM_GREEN_COMBO, kMarkerGreenAnim, pb, anim);
             ILoadCombo(hWnd, IDC_ANIM_OPEN_COMBO, kMarkerOpenAnim, pb, anim);
@@ -732,7 +732,7 @@ plKey plGameMarkerComponent::IGetAnimKey(int nodeID, int compID)
         return comp->GetModKey(animNode);
     }
 
-    return nil;
+    return nullptr;
 }
 
 bool plGameMarkerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
@@ -798,7 +798,7 @@ ParamBlockDesc2 gCameraBk
 (   
     1, _T("camera"), 0, &gCameraDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_CAMERA, IDS_COMP_CAMERAS,  0, 0, NULL,
+    IDD_COMP_CAMERA, IDS_COMP_CAMERAS,  0, 0, nullptr,
 
     // params
     kCamera,    _T("Animation"),        TYPE_INT,       0, 0,

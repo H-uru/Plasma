@@ -125,7 +125,7 @@ void plGrassShaderMod::AddTarget(plSceneObject *object)
 
 void plGrassShaderMod::RemoveTarget(plSceneObject *object)
 {
-    fTarget = nil;
+    fTarget = nullptr;
 }
 
 bool plGrassShaderMod::MsgReceive(plMessage *msg)
@@ -155,13 +155,13 @@ bool plGrassShaderMod::MsgReceive(plMessage *msg)
             switch (refMsg->fType)
             {
             case kRefGrassVS:
-                fVShader = nil;
+                fVShader = nullptr;
                 break;
             case kRefGrassPS:
-                fPShader = nil;
+                fPShader = nullptr;
                 break;
             case kRefMaterial:
-                fMaterial = nil;
+                fMaterial = nullptr;
                 break;
             default:
                 break;
@@ -184,7 +184,7 @@ void plGrassShaderMod::Write(hsStream *stream, hsResMgr *mgr)
 {
     plModifier::Write(stream, mgr);
 
-    mgr->WriteKey(stream, fMaterial ? fMaterial->GetKey() : nil);
+    mgr->WriteKey(stream, fMaterial ? fMaterial->GetKey() : nullptr);
 
     int i;
     for (i = 0; i < kNumWaves; i++)

@@ -112,8 +112,8 @@ bool plConvert::Convert()
     fInterface->SetIncludeXRefsInHierarchy(TRUE);
 
     plMaxNode *pNode = (plMaxNode *)fInterface->GetRootNode();
-    AddMessageToQueue(new plTransformMsg(nil, nil, nil, nil));
-    AddMessageToQueue(new plDelayedTransformMsg(nil, nil, nil, nil));
+    AddMessageToQueue(new plTransformMsg(nullptr, nullptr, nullptr, nullptr));
+    AddMessageToQueue(new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr));
 
     IFindDuplicateNames();
 
@@ -329,8 +329,8 @@ bool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
     plLightMapGen::Instance().Close();
     hsVertexShader::Instance().Close();
 
-    plgDispatch::MsgSend(new plTransformMsg(nil, nil, nil, nil));
-    plgDispatch::MsgSend(new plDelayedTransformMsg(nil, nil, nil, nil));
+    plgDispatch::MsgSend(new plTransformMsg(nullptr, nullptr, nullptr, nullptr));
+    plgDispatch::MsgSend(new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr));
     DeInit();
 
     return IOK();   
@@ -493,7 +493,7 @@ const char *plConvert::ISearchNames(INode *node, INode *root)
             return name;
     }
 
-    return nil;
+    return nullptr;
 }
 
 // Recursivly search nodes for this name, and return the number of times found

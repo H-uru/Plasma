@@ -201,19 +201,19 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
 
     s->WriteSafeString(fCustomText);
     s->WriteSafeString(fDescription);
-    s->WriteBool(fThumbnail != nil);
-    if (fThumbnail != nil)
+    s->WriteBool(fThumbnail != nullptr);
+    if (fThumbnail != nullptr)
         mgr->WriteKey(s, fThumbnail->GetKey());
 
     size_t texSkip = 0;
     for (plMipmap** texList : fTextures)
-        if (texList == nil)
+        if (texList == nullptr)
             texSkip++;
 
     s->WriteLE32((uint32_t)(fTextures.size() - texSkip));
     for (size_t i = 0; i < fTextures.size(); i++)
     {
-        if (fTextures[i] == nil)
+        if (fTextures[i] == nullptr)
             continue;
 
         s->WriteSafeString(fElementNames[i]);
@@ -222,14 +222,14 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
         for (int j = 0; j < plClothingElement::kLayerMax; j++)
         {
             // Run through once to get the count of valid layers
-            if (fTextures[i][j] != nil)
+            if (fTextures[i][j] != nullptr)
                 layerCount++;
         }
 
         s->WriteByte(layerCount);
         for (uint8_t j = 0; j < plClothingElement::kLayerMax; j++)
         {
-            if (fTextures[i][j] != nil)
+            if (fTextures[i][j] != nullptr)
             {
                 s->WriteByte(j);
                 mgr->WriteKey(s, fTextures[i][j]->GetKey());
@@ -239,18 +239,18 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
 
     for (int i = 0; i < kMaxNumLODLevels; i++)
     {
-        s->WriteBool(fMeshes[i] != nil);
-        if (fMeshes[i] != nil)
+        s->WriteBool(fMeshes[i] != nullptr);
+        if (fMeshes[i] != nullptr)
             mgr->WriteKey(s, fMeshes[i]->GetKey());
     }
 
     // EXPORT ONLY
-    plKey accessoryKey = nil;
+    plKey accessoryKey;
     if (!fAccessoryName.empty())
     {
         ST::string strBuf = ST::format("CItm_{}", fAccessoryName);
         accessoryKey = plKeyFinder::Instance().StupidSearch("GlobalClothing", "", plClothingItem::Index(), strBuf);
-        if (accessoryKey == nil)
+        if (accessoryKey == nullptr)
         {
             strBuf = ST::format("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
             hsMessageBox(strBuf.c_str(), GetKeyName().c_str(), hsMessageBoxNormal);
@@ -282,7 +282,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
                 
                 if (fElementNames[eMsg->fWhich].empty())
                     fElementNames[eMsg->fWhich] = eMsg->fElementName;
-                if (fTextures[eMsg->fWhich] == nil)
+                if (fTextures[eMsg->fWhich] == nullptr)
                 {
                     plMipmap **layers = new plMipmap*[plClothingElement::kLayerMax];
                     std::fill(layers, layers + plClothingElement::kLayerMax, nullptr);
@@ -293,7 +293,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
             }
             else if( eMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                fTextures[eMsg->fWhich][eMsg->fLayer] = nil;
+                fTextures[eMsg->fWhich][eMsg->fLayer] = nullptr;
             }
             return true;
         }
@@ -310,7 +310,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
                 if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                     fMeshes[refMsg->fWhich] = mesh;
                 else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                    fMeshes[refMsg->fWhich] = nil;
+                    fMeshes[refMsg->fWhich] = nullptr;
             }
             return true;
         }
@@ -321,7 +321,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fThumbnail = thumbnail;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fThumbnail = nil;
+                fThumbnail = nullptr;
             return true;
         }
 
@@ -331,7 +331,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fAccessory = accessory;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fAccessory = nil;
+                fAccessory = nullptr;
             return true;
         }       
     }
@@ -348,7 +348,7 @@ bool plClosetItem::IsMatch(const plClosetItem *other) const
 
 /////////////////////////////////////////////////////////////////////////////
 
-plClothingBase::plClothingBase() : fBaseTexture(nil) {}
+plClothingBase::plClothingBase() : fBaseTexture() { }
 
 void plClothingBase::Read(hsStream* s, hsResMgr* mgr)
 {
@@ -365,8 +365,8 @@ void plClothingBase::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
 
     s->WriteSafeString(fName);
-    s->WriteBool(fBaseTexture != nil);
-    if (fBaseTexture != nil)
+    s->WriteBool(fBaseTexture != nullptr);
+    if (fBaseTexture != nullptr)
         mgr->WriteKey(s, fBaseTexture->GetKey());
     s->WriteSafeString(fLayoutName);
 }
@@ -382,7 +382,7 @@ bool plClothingBase::MsgReceive(plMessage* msg)
         }
         else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
-            fBaseTexture = nil;
+            fBaseTexture = nullptr;
         }
         return true;
     }
@@ -592,7 +592,7 @@ void plClothingOutfit::IAddItem(plClothingItem *item)
         if (item->fType == plClothingMgr::kTypeLeftFoot)
         {
             plArmatureEffectsMgr *mgr = fAvatar->GetArmatureEffects();
-            plArmatureEffectFootSound *soundEffect = nil;
+            plArmatureEffectFootSound *soundEffect = nullptr;
             size_t num = mgr->GetNumEffects();
 
             for (size_t i = 0; i < num; i++)
@@ -687,7 +687,7 @@ bool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t d
     {
         for (uint8_t i = 0; i < fAvatar->GetNumLOD(); i++)
         {
-            if (item->fMeshes[i]->fMorphSet == nil)
+            if (item->fMeshes[i]->fMorphSet == nullptr)
                 continue;
 
             const plSceneObject *so = fAvatar->GetClothingSO(i);
@@ -1148,7 +1148,7 @@ bool plClothingOutfit::ReadItems(hsStream* s, hsResMgr* mgr, bool broadcast /* =
         
         // Make sure to read everything in before hitting this and possibly skipping to
         // the next item, lest we disrupt the stream.
-        if( key == nil )
+        if (key == nullptr)
         {
             hsAssert( false, "Nil item in plClothingOutfit::ReadItems(). The vault probably contains a key with a plLocation that's moved since then. Tsk, tsk." );
             result = false;
@@ -1210,7 +1210,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fTargetLayer = layer;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fTargetLayer = nil;
+                fTargetLayer = nullptr;
             
             return true;
         }
@@ -1233,7 +1233,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fBase = base;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fBase = nil;
+                fBase = nullptr;
             
             return true;        
         }
@@ -1244,7 +1244,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fMaterial = mat;
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
-                fMaterial = nil;
+                fMaterial = nullptr;
         }
     }
 
@@ -1304,7 +1304,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
             fSkinTint = cMsg->fColor;
             for (plClothingItem* item : fItems)
                 for (size_t j = 0; j < item->fElements.size(); j++)
-                    if (item->fTextures[j][plClothingElement::kLayerSkin] != nil)
+                    if (item->fTextures[j][plClothingElement::kLayerSkin] != nullptr)
                         fDirtyItems.SetBit(item->fTileset);
         }
 
@@ -1322,7 +1322,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
 
                 for (plClothingItem* item : fItems)
                     for (size_t j = 0; j < item->fElements.size(); j++)
-                        if (item->fTextures[j][cMsg->fLayer] != nil)
+                        if (item->fTextures[j][cMsg->fLayer] != nullptr)
                             fDirtyItems.SetBit(item->fTileset);
             }
         }
@@ -1394,14 +1394,14 @@ void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
 
 void plClothingOutfit::IRemoveSharedMeshes(plClothingItem *item)
 {   
-    if (fAvatar == nil)
+    if (fAvatar == nullptr)
         return;
 
     int i;
     for (i = 0; i < plClothingItem::kMaxNumLODLevels; i++)
     {
         const plSceneObject *so = fAvatar->GetClothingSO(i);
-        if (so != nil && item->fMeshes[i] != nil)
+        if (so != nullptr && item->fMeshes[i] != nullptr)
         {
             plInstanceDrawInterface *idi = const_cast<plInstanceDrawInterface*>(plInstanceDrawInterface::ConvertNoRef(so->GetDrawInterface()));
             if (idi)
@@ -1537,7 +1537,7 @@ const char *plClothingMgr::TypeStrings[] =
     "Accessory"
 };
 
-plClothingMgr *plClothingMgr::fInstance = nil;
+plClothingMgr *plClothingMgr::fInstance = nullptr;
 
 plClothingMgr::~plClothingMgr()
 {
@@ -1562,7 +1562,7 @@ plClothingLayout *plClothingMgr::GetLayout(const ST::string &name) const
         if (layout->fName == name)
             return layout;
     }
-    return nil;
+    return nullptr;
 }
 
 plClothingElement *plClothingMgr::FindElementByName(const ST::string &name) const
@@ -1572,7 +1572,7 @@ plClothingElement *plClothingMgr::FindElementByName(const ST::string &name) cons
         if (element->fName == name)
             return element;
     }
-    return nil; 
+    return nullptr;
 }
 
 void plClothingMgr::AddItemsToCloset(const std::vector<plClosetItem> &items)
@@ -1633,12 +1633,12 @@ void plClothingMgr::GetClosetItems(std::vector<plClosetItem> &out)
         VaultSDLNode sdl(*iter);
         plStateDataRecord * rec = new plStateDataRecord;
         if (sdl.GetStateDataRecord(rec, 0))
-            plClothingSDLModifier::HandleSingleSDR(rec, nil, &out[i]);
+            plClothingSDLModifier::HandleSingleSDR(rec, nullptr, &out[i]);
         delete rec;
     }
 
     for (auto iter = out.cbegin(); iter != out.cend(); ) {
-        if (iter->fItem == nil)
+        if (iter->fItem == nullptr)
             iter = out.erase(iter);
         else
             ++iter;
@@ -1673,14 +1673,14 @@ void plClothingMgr::FilterUniqueMeshes(std::vector<plClothingItem*> &items)
 plClothingItem *plClothingMgr::FindItemByName(const ST::string &name) const
 {
     if (name.empty())
-        return nil;
+        return nullptr;
 
     for (plClothingItem* item : fItems)
     {
         if (item->fName == name)
             return item;
     }
-    return nil;
+    return nullptr;
 }
 
 void plClothingMgr::GetItemsByGroup(uint8_t group, std::vector<plClothingItem*> &out)
@@ -1710,7 +1710,7 @@ plClothingItem *plClothingMgr::GetLRMatch(plClothingItem *item)
     }
 
     // Couldn't find one.
-    return nil;
+    return nullptr;
 }
 
 bool plClothingMgr::IsLRMatch(plClothingItem *item1, plClothingItem *item2)
@@ -1782,7 +1782,7 @@ void plClothingMgr::DeInit()
     if (fInstance)
     {
         fInstance->UnRegisterAs(kClothingMgr_KEY);
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }   
 

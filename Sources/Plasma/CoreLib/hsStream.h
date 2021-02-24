@@ -287,7 +287,7 @@ class hsUNIXStream: public hsStream
     char*       fBuff;
 
 public:
-    hsUNIXStream(): fRef(0), fBuff(nil) {}
+    hsUNIXStream(): fRef(), fBuff() { }
     ~hsUNIXStream();
     bool  Open(const plFileName& name, const char* mode = "rb") override;
     bool  Close() override;
@@ -320,12 +320,12 @@ class plReadOnlySubStream: public hsStream
     void    IFixPosition();
 
 public:
-    plReadOnlySubStream(): fBase( nil ), fOffset( 0 ), fLength( 0 ) {}
+    plReadOnlySubStream() : fBase(), fOffset(), fLength() { }
     ~plReadOnlySubStream();
 
     bool      Open(const plFileName &, const char *) override { hsAssert(0, "plReadOnlySubStream::Open  NotImplemented"); return false; }
     void      Open( hsStream *base, uint32_t offset, uint32_t length );
-    bool      Close() override { fBase = nil; fOffset = 0; fLength = 0; return true; }
+    bool      Close() override { fBase = nullptr; fOffset = 0; fLength = 0; return true; }
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void* buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;

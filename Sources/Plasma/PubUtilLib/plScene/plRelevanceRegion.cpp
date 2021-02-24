@@ -84,7 +84,7 @@ bool plRelevanceRegion::MsgReceive(plMessage* msg)
         }
         else if( genMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
         {
-            fRegion = nil;
+            fRegion = nullptr;
         }
         return true;
     }           

@@ -140,7 +140,7 @@ public:
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
     int             GetNumGroups() { if (fSetupDone) return fClusterGroups.size(); return 0; }
-    plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nil; }
+    plClusterGroup *GetGroup(int index) { if (fSetupDone) return fClusterGroups[index]; return nullptr; }
 
 };
 

@@ -272,7 +272,7 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, getNode, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultNode, findNode, args)
 {
-    PyObject* nodeObj = NULL;
+    PyObject* nodeObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &nodeObj))
     {
         PyErr_SetString(PyExc_TypeError, "findNode expects a ptVaultNode");
@@ -289,8 +289,8 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, findNode, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultNode, addNode, args)
 {
-    PyObject* nodeObj = NULL;
-    PyObject* cb = NULL;
+    PyObject* nodeObj = nullptr;
+    PyObject* cb = nullptr;
     unsigned long cbContext = 0;
     if (!PyArg_ParseTuple(args, "O|Ol", &nodeObj, &cb, &cbContext))
     {
@@ -309,7 +309,7 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, addNode, args)
 PYTHON_METHOD_DEFINITION(ptVaultNode, linkToNode, args)
 {
     int nodeID;
-    PyObject* cb = NULL;
+    PyObject* cb = nullptr;
     unsigned long cbContext = 0;
     if (!PyArg_ParseTuple(args, "i|Ol", &nodeID, &cb, &cbContext))
     {
@@ -322,8 +322,8 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, linkToNode, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultNode, removeNode, args)
 {
-    PyObject* nodeObj = NULL;
-    PyObject* cb = NULL;
+    PyObject* nodeObj = nullptr;
+    PyObject* cb = nullptr;
     unsigned long cbContext = 0;
     if (!PyArg_ParseTuple(args, "O|Ol", &nodeObj, &cb, &cbContext))
     {
@@ -341,7 +341,7 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, removeNode, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultNode, save, args)
 {
-    PyObject* cb = NULL;
+    PyObject* cb = nullptr;
     unsigned long cbContext = 0;
     if (!PyArg_ParseTuple(args, "|Ol", &cb, &cbContext))
     {
@@ -354,7 +354,7 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, save, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultNode, saveAll, args)
 {
-    PyObject* cb = NULL;
+    PyObject* cb = nullptr;
     unsigned long cbContext = 0;
     if (!PyArg_ParseTuple(args, "|Ol", &cb, &cbContext))
     {
@@ -374,7 +374,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, forceSave)
 PYTHON_METHOD_DEFINITION(ptVaultNode, sendTo, args)
 {
     unsigned long destNodeID;
-    PyObject* cb = NULL;
+    PyObject* cb = nullptr;
     unsigned long cbContext = 0;
     if (!PyArg_ParseTuple(args, "l|Ol", &destNodeID, &cb, &cbContext))
     {

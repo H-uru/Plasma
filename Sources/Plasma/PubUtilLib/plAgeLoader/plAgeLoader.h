@@ -114,7 +114,7 @@ public:
 
     void AddPendingPageInRoomKey(plKey r);
     bool RemovePendingPageInRoomKey(plKey r);
-    bool IsPendingPageInRoomKey(plKey p, int* idx=nil);
+    bool IsPendingPageInRoomKey(plKey p, int* idx=nullptr);
 
     void ExecPendingAgeFniFiles();
     void ExecPendingAgeCsvFiles();

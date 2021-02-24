@@ -90,7 +90,7 @@ class plProjDirDlgProc : public plBaseLightProc
                         {
                             bmSelectBtn = GetICustButton( GetDlgItem( hWnd, IDC_PROJ_MAPNAME ) );
                             bitmap = layer->GetPBBitmap();
-                            bmSelectBtn->SetText( bitmap != nil ? (TCHAR *)bitmap->bi.Filename() : "");
+                            bmSelectBtn->SetText(bitmap != nullptr ? (TCHAR *)bitmap->bi.Filename() : "");
                             ReleaseICustButton( bmSelectBtn );
                         }
                         return false;
@@ -101,10 +101,10 @@ class plProjDirDlgProc : public plBaseLightProc
 
                     // Set projection map bitmap name
                     bmSelectBtn = GetICustButton( GetDlgItem( hWnd, IDC_PROJ_MAPNAME ) );
-                    if( bmSelectBtn != nil )
+                    if (bmSelectBtn != nullptr)
                     {
-                        bitmap = ( layer == nil ) ? nil : layer->GetPBBitmap();
-                        if( bitmap != nil )
+                        bitmap = (layer == nullptr) ? nullptr : layer->GetPBBitmap();
+                        if (bitmap != nullptr)
                             bmSelectBtn->SetText( (TCHAR *)bitmap->bi.Filename() );
                         else
                             bmSelectBtn->SetText( _T( "<none>" ) );
@@ -161,16 +161,16 @@ void    plRTProjPBAccessor::Get( PB2Value& v, ReferenceMaker* owner, ParamID id,
 
 plRTProjDirLight::plRTProjDirLight()
 {
-    fIP = nil; 
-    fLightPB = nil; 
-    fProjPB = nil;
+    fIP = nullptr;
+    fLightPB = nullptr;
+    fProjPB = nullptr;
     fClassDesc = plRTProjDirLightDesc::GetDesc();
     fClassDesc->MakeAutoParamBlocks( this );
 
     fLightPB->SetValue(kLightColor, 0,  Color(255,255,255));
     SetHSVColor(0, Point3(255, 255, 255));
     
-    fTex = nil;
+    fTex = nullptr;
     meshBuilt = 0; 
     
     IBuildMeshes(true);
@@ -202,7 +202,7 @@ Animatable  *plRTProjDirLight::SubAnim( int i )
         case 1:
             return (Animatable *)fProjPB;
         default: 
-            return nil;
+            return nullptr;
     }
 }
 
@@ -285,7 +285,7 @@ Texmap  *plRTProjDirLight::GetProjMap()
 { 
     // If we don't have one, create one
     plLayerTex  *layer = (plLayerTex *)fProjPB->GetTexmap( kTexmap, 0 );
-    if( layer == nil || layer->ClassID() != LAYER_TEX_CLASS_ID )
+    if (layer == nullptr || layer->ClassID() != LAYER_TEX_CLASS_ID)
     {
         layer = new plLayerTex;
         fProjPB->SetValue( kTexmap, 0, (Texmap *)layer );
@@ -296,10 +296,10 @@ Texmap  *plRTProjDirLight::GetProjMap()
 
     // Backwards compatability here
     PBBitmap    *bitmap = fProjPB->GetBitmap( kProjMap, 0 );
-    if( bitmap != nil )
+    if (bitmap != nullptr)
     {
         layer->SetBitmap( &bitmap->bi );
-        fProjPB->SetValue( kProjMap, 0, (PBBitmap *)nil );
+        fProjPB->SetValue(kProjMap, 0, (PBBitmap *)nullptr);
     }
 
     if( layer )
@@ -391,13 +391,13 @@ void    plRTProjDirLight::DrawCone( TimeValue t, GraphicsWindow *gw, float dist 
 
     gw->setColor( LINE_COLOR, GetUIColor( COLOR_HOTSPOT ) );
 
-    gw->polyline( 4, nearPts, nil, nil, true, nil );
-    gw->polyline( 4, farPts, nil, nil, true, nil );
+    gw->polyline(4, nearPts, nullptr, nullptr, true, nullptr);
+    gw->polyline(4, farPts, nullptr, nullptr, true, nullptr);
     for( i = 0; i < 4; i++ )
     {
         u[ 0 ] = nearPts[ i ];
         u[ 1 ] = farPts[ i ];
-        gw->polyline( 2, u, nil, nil, false, nil );
+        gw->polyline(2, u, nullptr, nullptr, false, nullptr);
     }
 }
 
@@ -419,7 +419,7 @@ void    plRTProjDirLight::IBuildRectangle( float width, float height, float z, P
 
 float   plRTProjDirLight::GetFallsize( TimeValue t, Interval &valid )
 {
-    if( fProjPB == nil )
+    if (fProjPB == nullptr)
         return -1.f;
 
     return fProjPB->GetFloat( kWidth, t );
@@ -430,7 +430,7 @@ float   plRTProjDirLight::GetFallsize( TimeValue t, Interval &valid )
 
 float   plRTProjDirLight::GetAspect( TimeValue t, Interval &valid )
 {
-    if( fProjPB == nil )
+    if (fProjPB == nullptr)
         return -1.f;
 
     return( fProjPB->GetFloat( kHeight, t ) / fProjPB->GetFloat( kWidth, t ) );
@@ -442,7 +442,7 @@ float   plRTProjDirLight::GetAspect( TimeValue t, Interval &valid )
 float   plRTProjDirLight::GetTDist( TimeValue t, Interval &valid )
 {
     return 0.f;
-    if( fProjPB == nil )
+    if (fProjPB == nullptr)
         return -1.f;
 
     return fProjPB->GetFloat( kRange, t );
@@ -453,7 +453,7 @@ float   plRTProjDirLight::GetTDist( TimeValue t, Interval &valid )
 
 void    plRTProjDirLight::SetFallsize( TimeValue time, float f )
 {
-    if( fProjPB != nil )
+    if (fProjPB != nullptr)
         fProjPB->SetValue( kWidth, time, f );
 }
 

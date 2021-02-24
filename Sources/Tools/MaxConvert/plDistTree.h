@@ -98,7 +98,7 @@ public:
 
     void Reset();
 
-    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nil) { AddBoxIData(box, fade, uint32_t(pData)); }
+    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nullptr) { AddBoxIData(box, fade, uint32_t(pData)); }
     void AddBoxIData(const Box3& box, const Box3& fade, uint32_t iData=0);
     void AddBox(const Box3& box, const Box3& fade=NonFade()) { AddBoxIData(box, fade, 0); }
 

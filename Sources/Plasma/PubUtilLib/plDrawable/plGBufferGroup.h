@@ -275,7 +275,7 @@ class plGBufferGroup
         void    AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t *vbIndex, uint32_t *cell, uint32_t *offset, uint32_t origCell );
 
         // Reserves space in an index buffer
-        bool    ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr = nil );
+        bool    ReserveIndexStorage(uint32_t numIndices, uint32_t *ibIndex, uint32_t *ibStart, uint16_t **dataPtr = nullptr);
 
         // Append index data to the first available storage buffer
         void    AppendToIndexStorage( uint32_t numIndices, uint16_t *data, uint32_t addToAll, uint32_t *ibIndex, uint32_t *ibStart );

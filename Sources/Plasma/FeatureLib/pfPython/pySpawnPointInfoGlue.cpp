@@ -52,8 +52,8 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptSpawnPointInfo)
 
 PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
 {
-    char* title = NULL;
-    char* spawnPt = NULL;
+    char* title = nullptr;
+    char* spawnPt = nullptr;
     if (!PyArg_ParseTuple(args, "|ss", &title, &spawnPt))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects two optional strings, or no parameters");
@@ -143,14 +143,14 @@ PYTHON_CLASS_NEW_IMPL(ptSpawnPointInfo, pySpawnPointInfo)
 
 PyObject *pySpawnPointInfo::New(const plSpawnPointInfo& info)
 {
-    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, NULL, NULL);
+    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
     newObj->fThis->fInfo = info;
     return (PyObject*)newObj;
 }
 
 PyObject *pySpawnPointInfo::New(const char* title, const char* spawnPt)
 {
-    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, NULL, NULL);
+    ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
     newObj->fThis->fInfo.fTitle = title;
     newObj->fThis->fInfo.fSpawnPt = spawnPt;
     return (PyObject*)newObj;
@@ -256,7 +256,7 @@ PLASMA_DEFAULT_TYPE(ptSpawnPointInfoRef, "Class to hold spawn point data");
 // required functions for PyObject interoperability
 PyObject *pySpawnPointInfoRef::New(plSpawnPointInfo& info)
 {
-    ptSpawnPointInfoRef *newObj = (ptSpawnPointInfoRef*)ptSpawnPointInfoRef_type.tp_new(&ptSpawnPointInfoRef_type, NULL, NULL);
+    ptSpawnPointInfoRef *newObj = (ptSpawnPointInfoRef*)ptSpawnPointInfoRef_type.tp_new(&ptSpawnPointInfoRef_type, nullptr, nullptr);
     newObj->fThis->fInfo = info;
     return (PyObject*)newObj;
 }

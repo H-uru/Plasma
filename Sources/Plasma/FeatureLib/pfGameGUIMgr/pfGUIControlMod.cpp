@@ -140,9 +140,9 @@ void    pfGUIColorScheme::Write( hsStream *s )
 
 pfGUIControlMod::~pfGUIControlMod()
 {
-    ISetHandler( nil );
-    SetDropTargetHdlr( nil );
-    SetColorScheme( nil );
+    ISetHandler(nullptr);
+    SetDropTargetHdlr(nullptr);
+    SetColorScheme(nullptr);
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -381,7 +381,7 @@ bool    pfGUIControlMod::PointInBounds( const hsPoint3 &point )
 
 void    pfGUIControlMod::CalcInitialBounds()
 {
-    UpdateBounds( nil, true );
+    UpdateBounds(nullptr, true);
     fInitialBounds = fBounds;
 }
 
@@ -395,7 +395,7 @@ void    pfGUIControlMod::UpdateBounds( hsMatrix44 *invXformMatrix, bool force )
     if( ( !fBoundsValid || force ) && fDialog && GetTarget() )
     {
         plDrawInterface *DI = IGetTargetDrawInterface( 0 );
-        if( DI == nil )
+        if (DI == nullptr)
             return;
 
         if( HasFlag( kBetterHitTesting ) )
@@ -505,7 +505,7 @@ void    pfGUIControlMod::SetObjectCenter( float x, float y )
     if( fDialog && GetTarget() )
     {
         plCoordinateInterface *CI = IGetTargetCoordinateInterface( 0 );
-        if( CI == nil )
+        if (CI == nullptr)
             return;
 
 //      if( !fInvXformValid )
@@ -559,7 +559,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
     }
 
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefDynTextMap )
         {
@@ -583,7 +583,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fDynTextLayer = plLayerInterface::ConvertNoRef( refMsg->GetRef() );
             else
-                fDynTextLayer = nil;
+                fDynTextLayer = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefProxy )
@@ -591,7 +591,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fProxy = plSceneObject::ConvertNoRef( refMsg->GetRef() );
             else
-                fProxy = nil;
+                fProxy = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefSkin )
@@ -599,7 +599,7 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fSkin = pfGUISkin::ConvertNoRef( refMsg->GetRef() );
             else
-                fSkin = nil;
+                fSkin = nullptr;
 
             return true;
         }
@@ -615,12 +615,12 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
 
 bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 {
-    if( fDynTextMap == nil )
+    if (fDynTextMap == nullptr)
     {
         hsAssert( false, "Trying to set up a nil dynamicTextMap in a GUI control" );
         return true;
     }
-    if( fDynTextLayer == nil || fInitialBounds.GetType() == kBoundsUninitialized )//|| fDialog == nil )
+    if (fDynTextLayer == nullptr || fInitialBounds.GetType() == kBoundsUninitialized)//|| fDialog == nullptr)
         return false;
 
     uint32_t scrnWidth, scrnHeight;
@@ -681,7 +681,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 
 pfGUIColorScheme    *pfGUIControlMod::GetColorScheme() const
 {
-    if( fColorScheme == nil )
+    if (fColorScheme == nullptr)
         return fDialog->GetColorScheme();
 
     return fColorScheme;
@@ -689,14 +689,14 @@ pfGUIColorScheme    *pfGUIControlMod::GetColorScheme() const
 
 void    pfGUIControlMod::SetColorScheme( pfGUIColorScheme *newScheme )
 {
-    if( fColorScheme != nil )
+    if (fColorScheme != nullptr)
     {
         hsRefCnt_SafeUnRef( fColorScheme );
-        fColorScheme = nil;
+        fColorScheme = nullptr;
     }
 
     fColorScheme = newScheme;
-    if( fColorScheme != nil )
+    if (fColorScheme != nullptr)
         hsRefCnt_SafeRef( fColorScheme );
 }
 
@@ -764,7 +764,7 @@ void    pfGUIControlMod::SetVisible( bool vis )
     }
 
     if( !fVisible && fFocused )
-        fDialog->SetFocus( nil );
+        fDialog->SetFocus(nullptr);
 }
 
 void    pfGUIControlMod::Refresh()
@@ -791,13 +791,13 @@ void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
     }
     else
     {
-        fDynTextLayer = nil;
-        fDynTextMap = nil;
+        fDynTextLayer = nullptr;
+        fDynTextMap = nullptr;
     }
 
     if( s->ReadBool() )
     {
-        SetColorScheme( nil );
+        SetColorScheme(nullptr);
         fColorScheme = new pfGUIColorScheme();
         fColorScheme->Read( s );
     }
@@ -832,7 +832,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
     pfGUICtrlProcWriteableObject::Write( (pfGUICtrlProcWriteableObject *)fHandler, s );
 
     // Write out the dynTextMap
-    if( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
     {
         s->WriteBool( true );
         mgr->WriteKey( s, fDynTextLayer->GetKey() );
@@ -841,7 +841,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
     else
         s->WriteBool( false );
 
-    if( fColorScheme != nil )
+    if (fColorScheme != nullptr)
     {
         s->WriteBool( true );
         fColorScheme->Write( s );
@@ -903,7 +903,7 @@ void    pfGUIControlMod::ISetHandler( pfGUICtrlProcObject *h, bool clearInheritF
 
 void    pfGUIControlMod::DoSomething()
 {
-    if( fEnabled && fHandler != nil )
+    if (fEnabled && fHandler != nullptr)
         fHandler->DoSomething( this );
 }
 
@@ -911,7 +911,7 @@ void    pfGUIControlMod::DoSomething()
 
 void    pfGUIControlMod::HandleExtendedEvent( uint32_t event )
 {
-    if( fEnabled && fHandler != nil )
+    if (fEnabled && fHandler != nullptr)
         fHandler->HandleExtendedEvent( this, event );
 }
 
@@ -948,7 +948,7 @@ void    pfGUIControlMod::IPlaySound( uint8_t guiCtrlEvent, bool loop /* = false 
     if (guiCtrlEvent >= fSoundIndices.size() || fSoundIndices[guiCtrlEvent] == 0)
         return;
 
-    if( GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
+    if (GetTarget() == nullptr || GetTarget()->GetAudioInterface() == nullptr)
         return;
 
     plSoundMsg  *msg = new plSoundMsg;
@@ -969,7 +969,7 @@ void    pfGUIControlMod::IStopSound(uint8_t guiCtrlEvent)
     if (guiCtrlEvent >= fSoundIndices.size() || fSoundIndices[guiCtrlEvent] == 0)
         return;
 
-    if (GetTarget() == nil || GetTarget()->GetAudioInterface() == nil )
+    if (GetTarget() == nullptr || GetTarget()->GetAudioInterface() == nullptr)
         return;
 
     plSoundMsg *msg = new plSoundMsg;

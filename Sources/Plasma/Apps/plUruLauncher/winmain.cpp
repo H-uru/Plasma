@@ -172,7 +172,7 @@ static void PumpMessages()
     MSG msg;
     do {
         // Pump all Win32 messages
-        while (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE)) {
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
             if (!IsDialogMessageW(s_dialog, &msg)) {
                 TranslateMessage(&msg);
                 DispatchMessageW(&msg);

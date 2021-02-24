@@ -60,7 +60,7 @@ public:
 
     // Converts a max node into a position, rotation, and arrays of verts and faces
     // relative to those.
-    static bool Extract(NeutralMesh& mesh, plMaxNode* pNode, bool makeAABB = false, plMaxNode* sOwningNode = nil);
+    static bool Extract(NeutralMesh& mesh, plMaxNode* pNode, bool makeAABB = false, plMaxNode* sOwningNode = nullptr);
 };
 
 #endif // plMaxMeshExtractor_h_inc

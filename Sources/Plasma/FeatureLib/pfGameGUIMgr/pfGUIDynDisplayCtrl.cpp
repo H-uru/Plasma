@@ -80,14 +80,14 @@ bool    pfGUIDynDisplayCtrl::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefTextMap )
         {
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fTextMaps[ refMsg->fWhich ] = plDynamicTextMap::ConvertNoRef( refMsg->GetRef() );
             else
-                fTextMaps[ refMsg->fWhich ] = nil;
+                fTextMaps[refMsg->fWhich] = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefLayer )
@@ -95,7 +95,7 @@ bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fLayers[ refMsg->fWhich ] = plLayerInterface::ConvertNoRef( refMsg->GetRef() );
             else
-                fLayers[ refMsg->fWhich ] = nil;
+                fLayers[refMsg->fWhich] = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefMaterial )
@@ -103,7 +103,7 @@ bool    pfGUIDynDisplayCtrl::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
                 fMaterials[ refMsg->fWhich ] = hsGMaterial::ConvertNoRef( refMsg->GetRef() );
             else
-                fMaterials[ refMsg->fWhich ] = nil;
+                fMaterials[refMsg->fWhich] = nullptr;
         }
     }
 

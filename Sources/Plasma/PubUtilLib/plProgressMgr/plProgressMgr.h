@@ -241,13 +241,13 @@ class plProgressMgr
 
         virtual void    Draw( plPipeline *p ) { }
 
-        plOperationProgress* RegisterOperation(float length, const char *title = nil, StaticText staticTextType = kNone, bool isRetry = false, bool alwaysDrawText = false);
-        plOperationProgress* RegisterOverallOperation(float length, const char *title = nil, StaticText staticTextType = kNone, bool alwaysDrawText = false);
+        plOperationProgress* RegisterOperation(float length, const char *title = nullptr, StaticText staticTextType = kNone, bool isRetry = false, bool alwaysDrawText = false);
+        plOperationProgress* RegisterOverallOperation(float length, const char *title = nullptr, StaticText staticTextType = kNone, bool alwaysDrawText = false);
 
 
         plProgressMgrCallbackProc SetCallbackProc( plProgressMgrCallbackProc proc );
 
-        bool        IsActive() const { return ( fOperations != nil ) ? true : false; }
+        bool        IsActive() const { return (fOperations != nullptr); }
 
         void    CancelAllOps();
 };

@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNotetrackAnim.h"
 
-plNotetrackAnim::plNotetrackAnim() : fSegMap(nil)
+plNotetrackAnim::plNotetrackAnim() : fSegMap()
 {
 }
 
@@ -116,7 +116,7 @@ plAnimInfo plNotetrackAnim::GetAnimInfo(const ST::string &animName)
 plAnimInfo::plAnimInfo(SegmentMap *segMap, const ST::string &animName)
 {
     fSegMap = segMap;
-    fAnimSpec = !animName.empty() ? (*fSegMap)[animName] : nil;
+    fAnimSpec = !animName.empty() ? (*fSegMap)[animName] : nullptr;
 
     if (fSegMap)
     {

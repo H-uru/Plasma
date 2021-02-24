@@ -57,7 +57,7 @@ private:
     plKey fClusterKey;
 
 protected:
-    pyCluster(): fClusterKey(nil) {} // for python glue only, do NOT call
+    pyCluster() = default; // for python glue only, do NOT call
     pyCluster(plKey key);
     pyCluster(pyKey& key);
 

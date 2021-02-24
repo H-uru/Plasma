@@ -103,7 +103,7 @@ plShadowSlave* plDirectShadowMaster::IRecycleSlave(plShadowSlave* slave)
     if( fPerspSlavePool.GetCount() && (fPerspSlavePool[fPerspSlavePool.GetCount()-1] == slave) )
         fPerspSlavePool.SetCount(fPerspSlavePool.GetCount()-1);
 
-    return nil;
+    return nullptr;
 }
 
 void plDirectShadowMaster::IBeginRender()

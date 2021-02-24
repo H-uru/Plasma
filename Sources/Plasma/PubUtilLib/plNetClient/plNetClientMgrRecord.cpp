@@ -70,7 +70,7 @@ bool plNetClientMgr::RecordMsgs(const char* recType, const char* recName)
         if (!fMsgRecorder || !fMsgRecorder->BeginRecording(recName))
         {
             delete fMsgRecorder;
-            fMsgRecorder = nil;
+            fMsgRecorder = nullptr;
             return false;
         }
 

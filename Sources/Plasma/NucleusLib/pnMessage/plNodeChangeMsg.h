@@ -51,8 +51,8 @@ protected:
     plKey           fNodeKey;
 
 public:
-    plNodeChangeMsg() : fNodeKey(nil) {}
-    plNodeChangeMsg(plKey s, plKey &r, plKey node, double* t=nil)
+    plNodeChangeMsg() = default;
+    plNodeChangeMsg(plKey s, plKey &r, plKey node, double* t=nullptr)
         :   plMessage(s, r, t), fNodeKey(node) {}
 
     CLASSNAME_REGISTER(plNodeChangeMsg);

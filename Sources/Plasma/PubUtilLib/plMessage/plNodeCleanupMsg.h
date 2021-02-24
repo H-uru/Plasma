@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plNodeCleanupMsg : public plMessage
 {
 public:
-    plNodeCleanupMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
+    plNodeCleanupMsg() : plMessage(nullptr, nullptr, nullptr) { SetBCastFlag( kBCastByExactType ); }
     ~plNodeCleanupMsg() {}
 
     CLASSNAME_REGISTER( plNodeCleanupMsg );

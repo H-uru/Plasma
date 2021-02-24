@@ -60,7 +60,7 @@ plImageLibMod::~plImageLibMod()
 bool plImageLibMod::MsgReceive(plMessage* msg)
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
         {
@@ -71,7 +71,7 @@ bool plImageLibMod::MsgReceive(plMessage* msg)
         }
         else if( refMsg->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
         {
-            fImages[ refMsg->fWhich ] = nil;
+            fImages[refMsg->fWhich] = nullptr;
         }
         return true;
     }

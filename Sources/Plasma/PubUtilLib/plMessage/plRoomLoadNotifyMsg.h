@@ -62,14 +62,14 @@ protected:
 private:
     void IInit()
     {
-        fRoomKey = nil;
+        fRoomKey = nullptr;
         fWhat=kDontKnow;
         // we will only send this message to those who have registered for it
         SetBCastFlag(plMessage::kBCastByExactType);
     }
 public:
     plRoomLoadNotifyMsg()
-        : plMessage(nil, nil, nil) { IInit(); }
+        : plMessage(nullptr, nullptr, nullptr) { IInit(); }
     plRoomLoadNotifyMsg(const plKey &s, 
                 const plKey &r, 
                 const double* t)

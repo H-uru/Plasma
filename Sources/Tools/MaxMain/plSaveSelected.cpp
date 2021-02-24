@@ -208,7 +208,7 @@ plMaxNode *IFindComponentRecur(plMaxNode *node, const char *name)
             return ret;
     }
 
-    return nil;
+    return nullptr;
 }
 
 void plMerge()
@@ -289,7 +289,7 @@ void plMerge()
             plComponentBase *comp = components[j];
 
             if (oldComp == comp)
-                components[j] = nil;
+                components[j] = nullptr;
             else if (comp)
             {
                 const char *temp = comp->GetINode()->GetName();

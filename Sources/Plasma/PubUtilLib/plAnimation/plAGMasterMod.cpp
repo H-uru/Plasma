@@ -72,14 +72,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // CTOR
 plAGMasterMod::plAGMasterMod()
-: fTarget(nil),
+: fTarget(),
   fNeedEval(false),
   fFirstEval(true),
-  fAGMasterSDLMod(nil),
+  fAGMasterSDLMod(),
   fNeedCompile(false),
   fIsGrouped(false),
   fIsGroupMaster(false),
-  fMsgForwarder(nil)
+  fMsgForwarder()
 {
 }
 
@@ -203,9 +203,9 @@ void plAGMasterMod::RemoveTarget(plSceneObject* o)
             o->RemoveModifier(fAGMasterSDLMod);
     }
     delete fAGMasterSDLMod;
-    fAGMasterSDLMod=nil;
+    fAGMasterSDLMod = nullptr;
 
-    fTarget = nil;
+    fTarget = nullptr;
 }
 
 #include "plProfile.h"
@@ -329,7 +329,7 @@ void plAGMasterMod::DumpAniGraph(const char *justThisChannel, bool optimized, do
 // Get the modifier that controls the channel with the given name
 plAGModifier * plAGMasterMod::GetChannelMod(const ST::string & name, bool dontCache ) const
 {
-    plAGModifier * result = nil;
+    plAGModifier * result = nullptr;
     std::map<ST::string, plAGModifier *>::const_iterator i = fChannelMods.find(name);
 
     if (i != fChannelMods.end()) {
@@ -384,7 +384,7 @@ plAGModifier * plAGMasterMod::IFindChannelMod(const plSceneObject *SO, const ST:
                 return mod;
         }
     }
-    return nil;
+    return nullptr;
 }
 
 // ATTACHANIMATIONBLENDED(anim, blend)
@@ -393,7 +393,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
                                                          uint16_t blendPriority /* plAGMedBlendPriority */,
                                                          bool cache /* = false */)
 {
-    plAGAnimInstance *instance = nil;
+    plAGAnimInstance *instance = nullptr;
     plAnimVector::iterator i;
     if(anim)
     {
@@ -425,7 +425,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(plAGAnim *anim,
 // ATTACHANIMATIONBLENDED(name, blend)
 plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const ST::string &name, float blendFactor /* = 0 */, uint16_t blendPriority, bool cache /* = false */)
 {
-    plAGAnimInstance *instance = nil;
+    plAGAnimInstance *instance = nullptr;
     plAGAnim *anim = plAGAnim::FindAnim(name);
 
     if(anim)
@@ -438,7 +438,7 @@ plAGAnimInstance * plAGMasterMod::AttachAnimationBlended(const ST::string &name,
 void plAGMasterMod::PlaySimpleAnim(const ST::string &name)
 {
     plATCAnim *anim = plATCAnim::ConvertNoRef(plAGAnim::FindAnim(name));
-    plAGAnimInstance *instance = nil;
+    plAGAnimInstance *instance = nullptr;
     if (anim)
     {
         if (FindAnimInstance(name))
@@ -464,7 +464,7 @@ void plAGMasterMod::PlaySimpleAnim(const ST::string &name)
 // If we need this to be fast, should make it a map rather than a vector
 plAGAnimInstance * plAGMasterMod::FindAnimInstance(const ST::string &name)
 {
-    plAGAnimInstance *result = nil;
+    plAGAnimInstance *result = nullptr;
 
     if (!name.empty())
     {
@@ -633,7 +633,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
             targetName = ENTIRE_ANIMATION_NAME;
 
         plAGAnimInstance *inst = FindAnimInstance(targetName);
-        if (inst != nil)
+        if (inst != nullptr)
         {
             if (cmdMsg->CmdChangesAnimTime())
             {
@@ -667,7 +667,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
         }
 
         plAGAnimInstance *inst = FindAnimInstance(agMsg->GetAnimName());
-        if (inst != nil)
+        if (inst != nullptr)
         {
             if (agMsg->Cmd(plAGCmdMsg::kSetBlend))
                 inst->Fade(agMsg->fBlend, agMsg->fBlendRate, plAGAnimInstance::kFadeBlend);
@@ -751,7 +751,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
             if (genRefMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest))
                 fMsgForwarder = msgfwd;
             else
-                fMsgForwarder = nil;
+                fMsgForwarder = nullptr;
 
             return true;
         }

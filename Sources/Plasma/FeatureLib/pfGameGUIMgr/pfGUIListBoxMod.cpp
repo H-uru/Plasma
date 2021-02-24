@@ -144,7 +144,7 @@ bool    pfGUIListBoxMod::IEval( double secs, float del, uint32_t dirty )
 bool    pfGUIListBoxMod::MsgReceive( plMessage *msg )
 {
     plGenRefMsg *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    if( refMsg != nil )
+    if (refMsg != nullptr)
     {
         if( refMsg->fType == kRefScrollCtrl )
         {
@@ -156,7 +156,7 @@ bool    pfGUIListBoxMod::MsgReceive( plMessage *msg )
                 ICalcScrollRange();
             }
             else
-                fScrollControl = nil;
+                fScrollControl = nullptr;
             return true;
         }
         else if( refMsg->fType == kRefDynTextMap )
@@ -208,7 +208,7 @@ void    pfGUIListBoxMod::IUpdate()
         UnlockList();
     }
 
-    if( fScrollControl != nil )
+    if (fScrollControl != nullptr)
     {
         // We reverse the value, since we want the "up" button to scroll "up", which actually
         // *decreases* the scrollPos
@@ -332,7 +332,7 @@ void    pfGUIListBoxMod::IUpdate()
 
     // Second part of our scroll check--if we got here, then there was nothing selected
     // before the viewing area. So check the rest
-    if( fCheckScroll && fScrollControl != nil )
+    if (fCheckScroll && fScrollControl != nullptr)
     {
         fCheckScroll = false;
         for( ; j < fWrapStartIdxs.size(); j++)
@@ -509,7 +509,7 @@ void    pfGUIListBoxMod::ICalcScrollRange()
 
 void pfGUIListBoxMod::PurgeDynaTextMapImage()
 {
-    if ( fDynTextMap != nil )
+    if (fDynTextMap != nullptr)
         fDynTextMap->PurgeImage();
 }
 
@@ -519,7 +519,7 @@ void    pfGUIListBoxMod::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Read(s, mgr);
 
-    fScrollControl = nil;
+    fScrollControl = nullptr;
     if( s->ReadBool() )
     {
         fScrollProc = new pfScrollProc( this );
@@ -536,7 +536,7 @@ void    pfGUIListBoxMod::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIControlMod::Write( s, mgr );
 
-    if( fScrollControl != nil )
+    if (fScrollControl != nullptr)
     {
         s->WriteBool( true );
         mgr->WriteKey( s, fScrollControl->GetKey() );
@@ -1004,7 +1004,7 @@ bool    pfGUIListBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
 
 void    pfGUIListBoxMod::ScrollToEnd()
 {
-    if( fScrollControl != nil )
+    if (fScrollControl != nullptr)
     {
         fScrollPos = (int)fScrollControl->GetMin();
         fScrollControl->SetCurrValue( fScrollControl->GetMax() );
@@ -1016,7 +1016,7 @@ void    pfGUIListBoxMod::ScrollToEnd()
 
 void    pfGUIListBoxMod::ScrollToBegin()
 {
-    if( fScrollControl != nil )
+    if (fScrollControl != nullptr)
     {
         fScrollPos = (int)fScrollControl->GetMax();
         fScrollControl->SetCurrValue( fScrollControl->GetMin() );

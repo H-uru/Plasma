@@ -82,8 +82,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback(PyObject * cbObject)
 : fCbObject( cbObject )
-, fPyNodeRef(nil)
-, fContext(0)
+, fPyNodeRef()
+, fContext()
 {
     Py_XINCREF( fCbObject );
 }
@@ -101,7 +101,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t 
         // Call the callback.
         if (PyObject_HasAttrString( fCbObject, "vaultOperationStarted" ))
         {
-            PyObject* func = nil;
+            PyObject* func = nullptr;
             func = PyObject_GetAttrString( fCbObject, "vaultOperationStarted" );
             if ( func )
             {
@@ -124,7 +124,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t
         // Call the callback.
         if (PyObject_HasAttrString( fCbObject, "vaultOperationComplete" ))
         {
-            PyObject* func = nil;
+            PyObject* func = nullptr;
             func = PyObject_GetAttrString( fCbObject, "vaultOperationComplete" );
             if ( func )
             {
@@ -178,9 +178,9 @@ bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
 {
     hsRef<RelVaultNode> ours = GetNode();
     hsRef<RelVaultNode> theirs = vaultNode.GetNode();
-    if (ours == nil && theirs == nil)
+    if (ours == nullptr && theirs == nullptr)
         return true;
-    if (ours == nil || theirs == nil)
+    if (ours == nullptr || theirs == nullptr)
         return false;
     if (ours->GetNodeId() == theirs->GetNodeId())
         return true;
@@ -290,7 +290,7 @@ PyObject* pyVaultNode::GetCreateAgeCoords () {
     if (!fNode)
         PYTHON_RETURN_NONE;
 
-    return pyDniCoordinates::New(nil);
+    return pyDniCoordinates::New(nullptr);
 }
 
 void pyVaultNode::SetID( uint32_t v )
@@ -441,7 +441,7 @@ bool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t 
         // Hack the callbacks until vault notification is in place
         cb->VaultOperationStarted( cbContext );
 
-        VaultRemoveChildNode(fNode->GetNodeId(), pynode.fNode->GetNodeId(), nil, nil);
+        VaultRemoveChildNode(fNode->GetNodeId(), pynode.fNode->GetNodeId(), nullptr, nullptr);
 
         cb->SetNode(pynode.fNode);
         cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode.fNode);
@@ -467,7 +467,7 @@ void pyVaultNode::RemoveAllNodes()
     std::vector<unsigned> nodeIds;
     fNode->GetChildNodeIds(&nodeIds, 1);
     for (unsigned id : nodeIds)
-        VaultRemoveChildNode(fNode->GetNodeId(), id, nil, nil);
+        VaultRemoveChildNode(fNode->GetNodeId(), id, nullptr, nullptr);
 }
 
 // Add/Save this node to vault
@@ -585,7 +585,7 @@ bool pyVaultNode::HasNode( uint32_t nodeID )
 
 PyObject * pyVaultNode::GetNode2( uint32_t nodeID ) const
 {
-    PyObject * result = nil;
+    PyObject * result = nullptr;
     if ( fNode )
     {
         RelVaultNode templateNode;
@@ -602,7 +602,7 @@ PyObject * pyVaultNode::GetNode2( uint32_t nodeID ) const
 
 PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode )
 {
-    PyObject * result = nil;
+    PyObject * result = nullptr;
     if ( fNode && templateNode->fNode )
     {
         hsWeakRef<NetVaultNode> node(templateNode->fNode);

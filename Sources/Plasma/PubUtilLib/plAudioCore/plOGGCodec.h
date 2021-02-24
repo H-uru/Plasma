@@ -85,7 +85,7 @@ public:
     bool    Read(uint32_t numBytes, void *buffer) override;
     uint32_t  NumBytesLeft() override;
 
-    bool    IsValid() override { return ( fOggFile != nil ) ? true : false; }
+    bool    IsValid() override { return (fOggFile != nullptr); }
 
     static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
     static void     SetDecodeFlag( uint8_t flag, bool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }

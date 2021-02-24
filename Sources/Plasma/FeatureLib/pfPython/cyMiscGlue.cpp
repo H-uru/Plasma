@@ -100,13 +100,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\n
             "- avatarKey is the ptKey of the avatar to get the client name of.\n"
             "If avatarKey is omitted then the local avatar is used")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "|O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetClientName expects an optional ptKey");
         PYTHON_RETURN_ERROR;
     }
-    if (keyObj != NULL)
+    if (keyObj != nullptr)
     {
         if (!pyKey::Check(keyObj))
         {
@@ -172,7 +172,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetAvatarKeyFromClientID, args, "Params: clien
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientIDFromAvatarKey, args, "Params: avatarKey\nFrom a ptKey that points at an avatar, return the players clientID (integer)")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetClientIDFromAvatarKey expects a ptKey");
@@ -212,7 +212,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumRemotePlayers, "Returns the numbe
 PYTHON_GLOBAL_METHOD_DEFINITION(PtValidateKey, args, "Params: key\nReturns true(1) if 'key' is valid and loaded,\n"
             "otherwise returns false(0)")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtValidateKey expects an object");
@@ -229,8 +229,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtValidateKey, args, "Params: key\nReturns true(
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayerList,message,flags\nSends a realtime chat message to the list of ptPlayers\n"
             "If toPlayerList is an empty list, it is a broadcast message")
 {
-    PyObject* fromPlayerObj = NULL;
-    PyObject* toPlayerListObj = NULL;
+    PyObject* fromPlayerObj = nullptr;
+    PyObject* toPlayerListObj = nullptr;
     ST::string message;
     uint32_t msgFlags = 0;
     const char* err = "PtSendRTChat expects a ptPlayer, a sequence of ptPlayers, a string, and an optional long";
@@ -337,7 +337,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadAvatarModel, args, "Params: modelName, spa
 PYTHON_GLOBAL_METHOD_DEFINITION(PtUnLoadAvatarModel, args, "Params: avatarKey\nForcibly unloads the specified avatar model.\n"
             "Do not use this method unless you require fine-grained control of avatar unloading.")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtUnLoadAvatarModel expects a ptKey");
@@ -362,7 +362,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
             "(format is Age.Set.Name) and substitutes the arguments in the list of strings passed in as arguments.")
 {
     ST::string name;
-    PyObject* argObj = NULL;
+    PyObject* argObj = nullptr;
     if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &name, &argObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
@@ -377,7 +377,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         PYTHON_RETURN_ERROR;
     }
 
-    if (argObj != NULL) // NULL is valid... but won't fill the args vector
+    if (argObj != nullptr) // NULL is valid... but won't fill the args vector
     {
         // convert args from a list of strings or unicode strings
         if (!PyList_Check(argObj))
@@ -416,7 +416,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all cur
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nCreates clone of key")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     char loading = 0;
     if (!PyArg_ParseTuple(args, "O|b", &keyObj, &loading) || !pyKey::Check(keyObj))
     {
@@ -429,7 +429,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nC
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindClones, args, "Params: key\nFinds all clones")
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj) || !pyKey::Check(keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtFindClones expects a ptKey");

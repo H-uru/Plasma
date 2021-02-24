@@ -52,12 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 
 plRefMsg::plRefMsg()
-: fRef(nil), fOldRef(nil), fContext(0)
+: fRef(), fOldRef(), fContext()
 {
 }
 
 plRefMsg::plRefMsg(const plKey &r, uint8_t c)
-: plMessage(nil, r, nil), fRef(nil), fOldRef(nil), fContext(c)
+: plMessage(nullptr, r, nullptr), fRef(), fOldRef(), fContext(c)
 {
     if( !fContext )
         fContext = kOnCreate;
@@ -88,9 +88,9 @@ void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 
     plKey key;
     key = mgr->ReadKey(stream);
-    fRef = (key ? key->GetObjectPtr() : nil);
+    fRef = (key ? key->GetObjectPtr() : nullptr);
     key = mgr->ReadKey(stream);
-    fOldRef = (key ? key->GetObjectPtr() : nil);
+    fOldRef = (key ? key->GetObjectPtr() : nullptr);
 }
 
 void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -98,8 +98,8 @@ void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
     stream->WriteLE(fContext);
 
-    mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nil));
-    mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nil));
+    mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nullptr));
+    mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nullptr));
 }
 
 

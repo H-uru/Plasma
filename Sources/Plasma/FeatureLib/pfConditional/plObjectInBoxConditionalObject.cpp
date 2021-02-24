@@ -54,8 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plMessage/plActivatorMsg.h"
 
-plObjectInBoxConditionalObject::plObjectInBoxConditionalObject() :
-fCurrentTrigger(nil)
+plObjectInBoxConditionalObject::plObjectInBoxConditionalObject()
 {
     SetSatisfied(true);
 }
@@ -80,7 +79,7 @@ bool plObjectInBoxConditionalObject::MsgReceive(plMessage* msg)
                     iter = fInside.erase(iter);
                     if (pActivateMsg->fHitterObj == fCurrentTrigger && fCurrentTrigger && fLogicMod->HasFlag(plLogicModBase::kTriggered) && !IsToggle())
                     {
-                        fCurrentTrigger = nil;
+                        fCurrentTrigger = nullptr;
                         fLogicMod->GetNotify()->AddContainerEvent(pActivateMsg->fHiteeObj, pActivateMsg->fHitterObj, false);
                         fLogicMod->RequestUnTrigger();
                     }

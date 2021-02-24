@@ -269,7 +269,7 @@ plKey plVolumeGadgetComponent::GetLogicOutKey(plMaxNode* node)
         return it->second;
 
 
-    return nil;
+    return nullptr;
 }
 
 void plVolumeGadgetComponent::CollectNonDrawables(INodeTab& nonDrawables) 
@@ -308,7 +308,7 @@ bool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
             {
                 pErrMsg->Set(true, "Volume Sensor Warning", "The Volume Sensor %s has a Proxy Surface %s that was Ignored.\nThe Sensors geometry will be used instead.", node->GetName(), boundNode->GetName()).Show();
                 pErrMsg->Set(false);
-                physProps->SetProxyNode(nil, node, pErrMsg);
+                physProps->SetProxyNode(nullptr, node, pErrMsg);
             }
     }
 
@@ -383,7 +383,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
 
 
     // Create the detector
-    plDetectorModifier* detector = nil;
+    plDetectorModifier* detector = nullptr;
     if (enter && fCompPB->GetInt(kVolumeTriggerOnFacing))
     {
         plObjectInVolumeAndFacingDetector* newDetector = new plObjectInVolumeAndFacingDetector;
@@ -409,7 +409,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
     ST::string tmpName = ST::format("{}_{}", IGetUniqueName(node), prefix);
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(tmpName, detector, loc);
     hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
-    plVolumeSensorConditionalObject* boxCond=nil;
+    plVolumeSensorConditionalObject* boxCond = nullptr;
     if((fCompPB->GetInt(kSkipServerArbitration)==0))
     {//we want server arbitration
         boxCond = new plVolumeSensorConditionalObject;

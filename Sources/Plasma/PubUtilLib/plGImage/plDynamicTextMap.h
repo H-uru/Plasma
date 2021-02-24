@@ -163,12 +163,12 @@ class plDynamicTextMap : public plMipmap
         void    DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t width, uint16_t height );
         void    DrawClippedString( int16_t x, int16_t y, const ST::string &text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
         void    DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
-        void    DrawWrappedString( uint16_t x, uint16_t y, const ST::string &text, uint16_t width, uint16_t height, uint16_t *lastX = nil, uint16_t *lastY = nil );
-        void    DrawWrappedString( uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height, uint16_t *lastX = nil, uint16_t *lastY = nil );
-        uint16_t  CalcStringWidth( const ST::string &text, uint16_t *height = nil );
-        uint16_t  CalcStringWidth( const wchar_t *text, uint16_t *height = nil );
-        void    CalcWrappedStringSize( const ST::string &text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nil, uint16_t *maxAscent = nil, uint16_t *lastX = nil, uint16_t *lastY = nil );
-        void    CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nil, uint16_t *maxAscent = nil, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    DrawWrappedString(uint16_t x, uint16_t y, const ST::string &text, uint16_t width, uint16_t height, uint16_t *lastX = nullptr, uint16_t *lastY = nullptr);
+        void    DrawWrappedString(uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height, uint16_t *lastX = nullptr, uint16_t *lastY = nullptr);
+        uint16_t  CalcStringWidth(const ST::string &text, uint16_t *height = nullptr);
+        uint16_t  CalcStringWidth(const wchar_t *text, uint16_t *height = nullptr);
+        void    CalcWrappedStringSize(const ST::string &text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nullptr, uint16_t *maxAscent = nullptr, uint16_t *lastX = nullptr, uint16_t *lastY = nullptr);
+        void    CalcWrappedStringSize(const wchar_t *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nullptr, uint16_t *maxAscent = nullptr, uint16_t *lastX = nullptr, uint16_t *lastY = nullptr);
         void    FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
         void    FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
         void    SetFirstLineIndent( int16_t indent );

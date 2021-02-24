@@ -66,12 +66,12 @@ static plPhysical* GetPhysical(plSceneObject* obj)
         if (si)
             return si->GetPhysical();
     }
-    return nil;
+    return nullptr;
 }
 
 plExcludeRegionModifier::plExcludeRegionModifier() :
-    fSDLModifier(nil),
-    fSeek(false),
+    fSDLModifier(),
+    fSeek(),
     fSeekTime(10.0f)
 {
 }
@@ -195,7 +195,7 @@ void plExcludeRegionModifier::RemoveTarget( plSceneObject *so )
     {
         so->RemoveModifier(fSDLModifier);
         delete fSDLModifier;
-        fSDLModifier = nil;
+        fSDLModifier = nullptr;
     }
     plSingleModifier::RemoveTarget(so);
 }
@@ -278,7 +278,7 @@ void plExcludeRegionModifier::IMoveAvatars()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-plExcludeRegionSDLModifier::plExcludeRegionSDLModifier() : fXRegion(nil)
+plExcludeRegionSDLModifier::plExcludeRegionSDLModifier() : fXRegion()
 {
 }
 

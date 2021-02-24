@@ -176,7 +176,7 @@ bool plBufferedSocketReader::GetString(char * buf, int buflen, char * termChars)
     char * wrk = FastGetBufferStart();
     for(int i=0; i<maxRead; i++)
     {
-        if(strchr(termChars,wrk[i])!=0)
+        if (strchr(termChars, wrk[i]) != nullptr)
         {
             memcpy(buf,wrk,i);
             buf[i] = '\0';
@@ -197,7 +197,7 @@ bool plBufferedSocketReader::GetStringInPlace(char ** buf, char * termChars)
     *buf = FastGetBufferStart();
     for(int i=0; i<dataAvailable; i++)
     {
-        if(strchr(termChars,(*buf)[i])!=0)
+        if (strchr(termChars, (*buf)[i]) != nullptr)
         {
             (*buf)[i] = '\0';
             fStartPos += i+1;                

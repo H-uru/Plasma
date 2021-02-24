@@ -141,7 +141,7 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Py_ssize_t* siz
     // convert object to a marshalled string python object
     s = PyMarshal_WriteObjectToString(pyobj, Py_MARSHAL_VERSION);
     // did it actually do it?
-    if ( s != NULL )
+    if (s != nullptr)
     {
         // yes, then get the size and the string address
         *size = PyBytes_Size(s);
@@ -177,7 +177,7 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (module == nullptr)
             return false;
     }
     // get the dictionaries for this module
@@ -185,7 +185,7 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     // run the string
     v = PyEval_EvalCode(code, d, d);
     // check for errors and print them
-    if (v == NULL)
+    if (v == nullptr)
     {
         // Yikes! errors!
         PyErr_Print();

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 plObjInterface::plObjInterface()
-:   fOwner(nil)
+:   fOwner()
 {
 }
 
@@ -106,7 +106,7 @@ bool plObjInterface::MsgReceive(plMessage* msg)
             }
             else if( intRefMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                ISetOwner(nil);
+                ISetOwner(nullptr);
             }
             break;
         }

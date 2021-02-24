@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //
 //
-plSDLMgr::plSDLMgr() : fSDLDir("SDL"), fNetApp(nil), fBehaviorFlags(0)
+plSDLMgr::plSDLMgr() : fSDLDir("SDL"), fNetApp(), fBehaviorFlags()
 {
 
 }
@@ -106,12 +106,12 @@ plSDLMgr* plSDLMgr::GetInstance()
 plStateDescriptor* plSDLMgr::FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl) const
 {
     if (name.empty())
-        return nil;
+        return nullptr;
 
     if ( !dl )
         dl = &fDescriptors;
 
-    plStateDescriptor* sd = nil;
+    plStateDescriptor* sd = nullptr;
 
     plSDL::DescriptorList::const_iterator it;
 
@@ -144,7 +144,7 @@ int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
 {
     int pos=s->GetPosition();
 
-    if (dl==nil)
+    if (dl == nullptr)
         dl=&fDescriptors;
 
     size_t num = dl->size();
@@ -171,7 +171,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
 {
     int pos=s->GetPosition();
 
-    if (dl==nil)
+    if (dl == nullptr)
         dl=&fDescriptors;
 
     // clear dl

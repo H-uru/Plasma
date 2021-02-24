@@ -96,7 +96,7 @@ ParamBlockDesc2 gIgnoreBk
 (
     plComponent::kBlkComp, _T("Ignore"), 0, &gIgnoreDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_IGNORE, IDS_COMP_IGNORES, 0, 0, NULL,
+    IDD_COMP_IGNORE, IDS_COMP_IGNORES, 0, 0, nullptr,
 
     kIgnoreMeCheckBx,  _T("Ignore"), TYPE_BOOL,         0, 0,
         p_default,  TRUE,
@@ -290,7 +290,7 @@ ParamBlockDesc2 gBarneyBk
 (
  plComponent::kBlkComp, _T("Barney"), 0, &gBarneyDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_BARNEY, IDS_COMP_BARNEYS, 0, 0, NULL,
+    IDD_COMP_BARNEY, IDS_COMP_BARNEYS, 0, 0, nullptr,
 
     end
 );
@@ -354,7 +354,7 @@ ParamBlockDesc2 gNoShowBk
 (
     plComponent::kBlkComp, _T("NoShow"), 0, &gNoShowDesc, P_AUTO_CONSTRUCT + P_AUTO_UI, plComponent::kRefComp,
 
-    IDD_COMP_NOSHOW, IDS_COMP_NOSHOW, 0, 0, NULL,
+    IDD_COMP_NOSHOW, IDS_COMP_NOSHOW, 0, 0, nullptr,
 
     plNoShowComponent::kShowable,  _T("Showable"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
@@ -405,7 +405,7 @@ bool plNoShowComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         if( fCompPB->GetInt(kAffectDraw) )
         {
-            plEnableMsg* eMsg = new plEnableMsg(nil, plEnableMsg::kDisable, plEnableMsg::kDrawable);
+            plEnableMsg* eMsg = new plEnableMsg(nullptr, plEnableMsg::kDisable, plEnableMsg::kDrawable);
             eMsg->AddReceiver(obj->GetKey());
             eMsg->Send();
         }

@@ -61,7 +61,7 @@ class plVertexSpan;
 class plAccessGeometry : public hsRefCnt
 {
 protected:
-    void                    Nilify() { fPipe = nil; }
+    void                    Nilify() { fPipe = nullptr; }
 
     plPipeline*                     fPipe;
 
@@ -70,7 +70,7 @@ public:
     // You're welcome to make your own,
     // but this is normally just called by the global plAccessGeometry's Init() function.
     // You should normally just use the instance supplied by Instance();
-    plAccessGeometry(plPipeline* pipe=nil);
+    plAccessGeometry(plPipeline* pipe=nullptr);
 
     static plAccessGeometry*        Instance() { return fInstance; }
 

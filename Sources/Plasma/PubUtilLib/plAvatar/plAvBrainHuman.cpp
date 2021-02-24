@@ -133,10 +133,10 @@ plAvBrainHuman::TurnCurve plAvBrainHuman::GetTurnCurve(bool walk)
 }
 
 plAvBrainHuman::plAvBrainHuman(bool isActor /* = false */) : 
-    fHandleAGMod(nil),
+    fHandleAGMod(),
     fStartedTurning(-1.0f),
-    fWalkingStrategy(nil),
-    fPreconditions(0),
+    fWalkingStrategy(),
+    fPreconditions(),
     fIsActor(isActor)
 {
 }
@@ -324,7 +324,7 @@ plAvBrainHuman::~plAvBrainHuman()
     fBehaviors.clear();
 
     delete fWalkingStrategy;
-    fWalkingStrategy = nil;
+    fWalkingStrategy = nullptr;
 }
 
 void plAvBrainHuman::Deactivate()
@@ -528,8 +528,8 @@ float plAvBrainHuman::IGetTurnStrength(double timeNow)
         turnCurve = fWalkTurnCurve;
     }
     
-    plArmatureBehavior * turnLeft  = fBehaviors.size() >= kMovingTurnLeft  ? fBehaviors[kMovingTurnLeft]  : nil;
-    plArmatureBehavior * turnRight = fBehaviors.size() >= kMovingTurnRight ? fBehaviors[kMovingTurnRight] : nil;
+    plArmatureBehavior * turnLeft  = fBehaviors.size() >= kMovingTurnLeft  ? fBehaviors[kMovingTurnLeft]  : nullptr;
+    plArmatureBehavior * turnRight = fBehaviors.size() >= kMovingTurnRight ? fBehaviors[kMovingTurnRight] : nullptr;
     
     float turnLeftStrength = turnLeft ? turnLeft->GetStrength() : 0.f;
     float turnRightStrength = turnRight ? turnRight->GetStrength() : 0.f;
@@ -657,7 +657,7 @@ void plAvBrainHuman::TurnToPoint(hsPoint3 point)
 
     hsPoint3 avPos;
     fAvMod->GetTarget(0)->GetCoordinateInterface()->GetLocalToWorld().GetTranslate(&avPos);
-    const plCoordinateInterface* subworldCI = nil;
+    const plCoordinateInterface* subworldCI = nullptr;
     if (fAvMod->GetController())
         subworldCI = fAvMod->GetController()->GetSubworldCI();
     if (subworldCI)
@@ -666,7 +666,7 @@ void plAvBrainHuman::TurnToPoint(hsPoint3 point)
         avPos = subworldCI->GetWorldToLocal() * avPos;
     }
     
-    plAvSeekMsg *msg = new plAvSeekMsg(nil, fAvMod->GetKey(), nil, 1.f, true);
+    plAvSeekMsg *msg = new plAvSeekMsg(nullptr, fAvMod->GetKey(), nullptr, 1.f, true);
     hsClearBits(msg->fFlags, plAvSeekMsg::kSeekFlagForce3rdPersonOnStart);
     hsSetBits(msg->fFlags, plAvSeekMsg::kSeekFlagNoWarpOnTimeout | plAvSeekMsg::kSeekFlagRotationOnly);
     msg->fTargetLookAt = point;
@@ -724,8 +724,8 @@ bool plAvBrainHuman::IInitAnimations()
     plAGAnim *runJump = fAvMod->FindCustomAnim("RunningJump");
     plAGAnim *groundImpact = fAvMod->FindCustomAnim("GroundImpact");
     plAGAnim *runningImpact = fAvMod->FindCustomAnim("RunningImpact");
-    plAGAnim *movingLeft = nil; // fAvMod->FindCustomAnim("LeanLeft");
-    plAGAnim *movingRight = nil; // fAvMod->FindCustomAnim("LeanRight");
+    plAGAnim *movingLeft = nullptr; // fAvMod->FindCustomAnim("LeanLeft");
+    plAGAnim *movingRight = nullptr; // fAvMod->FindCustomAnim("LeanRight");
     plAGAnim *pushWalk = fAvMod->FindCustomAnim("BallPushWalk");
 
     //plAGAnim *pushIdle = fAvMod->FindCustomAnim("BallPushIdle");
@@ -911,8 +911,8 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
 // BEHAVIOR
 
 plHBehavior::plHBehavior() : 
-    fAvMod(nil),
-    fHuBrain(nil),
+    fAvMod(),
+    fHuBrain(),
     fFadeIn(1.0f),
     fFadeOut(-1.0f),
     fMaxBlend(1.0f)
@@ -1373,7 +1373,7 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
                                       0);
     v->push_back(s3);
 
-    plAvBrainGeneric *b = new plAvBrainGeneric(v, nil, nil, nil, plAvBrainGeneric::kExitAnyTask | plAvBrainGeneric::kExitNewBrain,
+    plAvBrainGeneric *b = new plAvBrainGeneric(v, nullptr, nullptr, nullptr, plAvBrainGeneric::kExitAnyTask | plAvBrainGeneric::kExitNewBrain,
                                                2.0f, 2.0f, plAvBrainGeneric::kMoveStandstill);
 
     b->SetBodyUsage(bodyUsage);
@@ -1421,7 +1421,7 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
     ST::string fullName = avatar->MakeAnimationName(emoteName);
     plAGAnim *anim = plAGAnim::FindAnim(fullName);
     plEmoteAnim *emote = plEmoteAnim::ConvertNoRef(anim);
-    bool alreadyActive = avatar->FindAnimInstance(fullName) != nil;
+    bool alreadyActive = avatar->FindAnimInstance(fullName) != nullptr;
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(avatar->FindBrainByClass(plAvBrainHuman::Index()));
 
     // XXX
@@ -1443,7 +1443,7 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
         plAnimStageVec *v = new plAnimStageVec;
         v->push_back(s1);
 
-        plAvBrainGeneric *b = new plAvBrainGeneric(v, nil, nil, nil, 
+        plAvBrainGeneric *b = new plAvBrainGeneric(v, nullptr, nullptr, nullptr,
                                                    plAvBrainGeneric::kExitAnyInput | plAvBrainGeneric::kExitNewBrain | plAvBrainGeneric::kExitAnyTask, 
                                                    2.0f, 2.0f, huBrain->IsActor() ? plAvBrainGeneric::kMoveRelative : plAvBrainGeneric::kMoveStandstill);
         b->SetType(plAvBrainGeneric::kEmote);

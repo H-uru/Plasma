@@ -57,7 +57,7 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptDynamicMap)
 
 PYTHON_INIT_DEFINITION(ptDynamicMap, args, keywords)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "|O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects an optional ptKey");
@@ -77,7 +77,7 @@ PYTHON_INIT_DEFINITION(ptDynamicMap, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, sender, args)
 {
-    PyObject* senderObj = NULL;
+    PyObject* senderObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &senderObj))
     {
         PyErr_SetString(PyExc_TypeError, "sender expects a ptKey");
@@ -97,7 +97,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, clearKeys, ClearReceivers)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, addKey, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addKey expects a ptKey");
@@ -139,7 +139,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, netForce, args)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, clearToColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "clearToColor expects a ptColor");
@@ -160,7 +160,7 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, purgeImage, PurgeImage)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, setTextColor, args)
 {
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     char blockRGB = 0;
     if (!PyArg_ParseTuple(args, "O|b", &colorObj, &blockRGB))
     {
@@ -193,7 +193,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, setFont, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, fillRect, args)
 {
     unsigned short left, top, right, bottom;
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "hhhhO", &left, &top, &right, &bottom, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "fillRect expects four unsigned short ints and a ptColor");
@@ -212,7 +212,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, fillRect, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, frameRect, args)
 {
     unsigned short left, top, right, bottom;
-    PyObject* colorObj = NULL;
+    PyObject* colorObj = nullptr;
     if (!PyArg_ParseTuple(args, "hhhhO", &left, &top, &right, &bottom, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "frameRect expects four unsigned short ints and a ptColor");
@@ -272,7 +272,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, drawText, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImage, args)
 {
     short x, y;
-    PyObject* imageObj = NULL;
+    PyObject* imageObj = nullptr;
     char respectAlpha;
     if (!PyArg_ParseTuple(args, "hhOb", &x, &y, &imageObj, &respectAlpha))
     {
@@ -292,7 +292,7 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImage, args)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImageClipped, args)
 {
     unsigned short x, y;
-    PyObject* imageObj = NULL;
+    PyObject* imageObj = nullptr;
     unsigned short cx, cy, cw, ch;
     char respectAlpha;
     if (!PyArg_ParseTuple(args, "hhOhhhhb", &x, &y, &imageObj, &cx, &cy, &cw, &ch, &respectAlpha))
@@ -421,14 +421,14 @@ PYTHON_CLASS_NEW_IMPL(ptDynamicMap, pyDynamicText)
 
 PyObject *pyDynamicText::New(const pyKey& key)
 {
-    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, NULL, NULL);
+    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, nullptr, nullptr);
     newObj->fThis->fReceivers.emplace_back(key.getKey());
     return (PyObject*)newObj;
 }
 
 PyObject *pyDynamicText::New(plKey key)
 {
-    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, NULL, NULL);
+    ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, nullptr, nullptr);
     newObj->fThis->fReceivers.emplace_back(key);
     return (PyObject*)newObj;
 }

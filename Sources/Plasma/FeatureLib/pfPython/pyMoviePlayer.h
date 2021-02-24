@@ -59,7 +59,7 @@ protected:
     ST::string  fMovieName;
     plKey     fSelfKey;
 
-    pyMoviePlayer(): fSelfKey(nil) {} // only used by python glue, do NOT call
+    pyMoviePlayer() = default; // only used by python glue, do NOT call
     pyMoviePlayer(const ST::string& movieName, pyKey& selfKey);
 
 public:

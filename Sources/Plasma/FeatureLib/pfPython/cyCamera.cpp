@@ -64,7 +64,7 @@ cyCamera::cyCamera()
     if ( hrm)
         fTheCam = hrm->FindKey( pU );
     else
-        fTheCam = nil;
+        fTheCam = nullptr;
 }
 
 // setters

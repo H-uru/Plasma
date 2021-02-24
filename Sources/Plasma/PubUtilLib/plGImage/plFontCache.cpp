@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 const char* plFontCache::kCustFontExtension = ".prf";
 
 
-plFontCache *plFontCache::fInstance = nil;
+plFontCache *plFontCache::fInstance = nullptr;
 
 plFontCache::plFontCache()
 {
@@ -77,7 +77,7 @@ plFontCache::plFontCache()
 plFontCache::~plFontCache()
 {
     Clear();
-    fInstance = nil;
+    fInstance = nullptr;
 }
 
 plFontCache &plFontCache::GetInstance()
@@ -129,7 +129,7 @@ plFont  *plFontCache::GetFont( const ST::string &face, uint8_t size, uint32_t fo
     {
         // Hmm, well ok, just to be nice, try without our flags
         plFont *f = GetFont( face, size, 0 );
-        if( f != nil )
+        if (f != nullptr)
         {
             //plStatusLog::AddLineS( "pipeline.log", "Warning: plFontCache is substituting {} {} regular (flags 0x{x} could not be matched)", f->GetFace(), f->GetSize(), fontFlags );
             return f;
@@ -137,7 +137,7 @@ plFont  *plFontCache::GetFont( const ST::string &face, uint8_t size, uint32_t fo
     }
 
     //plStatusLog::AddLineS( "pipeline.log", "Warning: plFontCache was unable to match {} {} (0x{x})", face, size, fontFlags );
-    return nil;
+    return nullptr;
 }
 
 void plFontCache::LoadCustomFonts( const plFileName &dir )
@@ -161,7 +161,7 @@ void plFontCache::ILoadCustomFonts()
         else
         {
             ST::string keyName;
-            if (font->GetKey() == nil)
+            if (font->GetKey() == nullptr)
             {
                 keyName = ST::format("{}-{}", font->GetFace(), font->GetSize());
                 hsgResMgr::ResMgr()->NewKey( keyName, font, plLocation::kGlobalFixedLoc );
@@ -180,7 +180,7 @@ void plFontCache::ILoadCustomFonts()
 bool    plFontCache::MsgReceive( plMessage* pMsg )
 {
     plGenRefMsg *ref = plGenRefMsg::ConvertNoRef( pMsg );
-    if( ref != nil )
+    if (ref != nullptr)
     {
         if( ref->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
         {

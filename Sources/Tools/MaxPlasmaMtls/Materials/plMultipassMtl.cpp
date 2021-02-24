@@ -58,7 +58,7 @@ public:
     const TCHAR*    ClassName() override    { return GetString(IDS_MULTI_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return MULTIMTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return NULL; }
+    const TCHAR*    Category() override     { return nullptr; }
     const TCHAR*    InternalName() override { return _T("PlasmaMultipass"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
@@ -67,7 +67,7 @@ ClassDesc2* GetMultiMtlDesc() { return &plMultipassMtlDesc; }
 
 #include "plMultipassMtlPB.cpp"
 
-plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB(NULL)
+plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB()
 {
     plMultipassMtlDesc.MakeAutoParamBlocks(this);
 
@@ -154,7 +154,7 @@ RefTargetHandle plMultipassMtl::GetReference(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 void plMultipassMtl::SetReference(int i, RefTargetHandle rtarg)
@@ -173,7 +173,7 @@ IParamBlock2 *plMultipassMtl::GetParamBlock(int i)
     if (i == kRefPasses)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 IParamBlock2 *plMultipassMtl::GetParamBlockByID(BlockID id)
@@ -181,7 +181,7 @@ IParamBlock2 *plMultipassMtl::GetParamBlockByID(BlockID id)
     if (fPassesPB->ID() == id)
         return fPassesPB;
 
-    return NULL;
+    return nullptr;
 }
 
 RefResult plMultipassMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
@@ -215,7 +215,7 @@ Mtl *plMultipassMtl::GetSubMtl(int i)
     if (i < NumSubMtls())
         return fPassesPB->GetMtl(kMultPasses, 0, i);
 
-    return NULL;
+    return nullptr;
 }
 
 void plMultipassMtl::SetSubMtl(int i, Mtl *m)

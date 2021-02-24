@@ -62,7 +62,7 @@ private:
     bool    fICreatedLog;
 
 protected:
-    pyStatusLog( plStatusLog* log=nil );
+    pyStatusLog(plStatusLog* log = nullptr);
 
 public:
     virtual ~pyStatusLog();
@@ -82,7 +82,7 @@ public:
     virtual bool WriteColor(const ST::string &text, pyColor& color);
     virtual void Close();
 
-    virtual bool IsOpen() { return (fLog != nil); }
+    virtual bool IsOpen() { return (fLog != nullptr); }
 };
 
 

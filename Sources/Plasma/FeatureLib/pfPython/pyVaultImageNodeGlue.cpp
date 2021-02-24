@@ -84,7 +84,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, imageGetTitle)
 
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, imageSetImage, args)
 {
-    PyObject* imageObj = NULL;
+    PyObject* imageObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &imageObj))
     {
         PyErr_SetString(PyExc_TypeError, "imageSetImage expects a ptImage");
@@ -149,7 +149,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getTitleW)
 
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, setImage, args)
 {
-    PyObject* imageObj = NULL;
+    PyObject* imageObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &imageObj))
     {
         PyErr_SetString(PyExc_TypeError, "setImage expects a ptImage");
@@ -172,7 +172,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getImage)
 
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, setImageFromBuf, args)
 {
-    PyObject* buf = NULL;
+    PyObject* buf = nullptr;
     if (!PyArg_ParseTuple(args, "O", &buf))
     {
         PyErr_SetString(PyExc_TypeError, "setImageFromBuf expects a buffer object");

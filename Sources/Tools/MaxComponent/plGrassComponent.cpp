@@ -96,7 +96,7 @@ public:
         int code = HIWORD(wParam);
 
         IParamBlock2 *pb = map->GetParamBlock();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
 
         int selection;
         switch (msg)
@@ -231,7 +231,7 @@ ParamBlockDesc2 gGrassBk
     end
 );
 
-plGrassComponent::plGrassComponent() : fShader(nil)
+plGrassComponent::plGrassComponent() : fShader()
 {
     fClassDesc = &gGrassDesc;
     fClassDesc->MakeAutoParamBlocks(this);
@@ -280,7 +280,7 @@ bool plGrassComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 {
     if( fShader )
         fShader->GetKey()->UnRefObject();
-    fShader = nil;
+    fShader = nullptr;
 
     return true;
 }
@@ -288,14 +288,14 @@ bool plGrassComponent::DeInit(plMaxNode* node, plErrorMsg* pErrMsg)
 plGrassShaderMod* plGrassComponent::GetShader(INode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     plComponentBase *comp = ((plMaxNodeBase*)node)->ConvertToComponent();
     if( !comp )
-        return nil;
+        return nullptr;
 
     if( comp->ClassID() != GRASS_COMPONENT_CLASS_ID )
-        return nil;
+        return nullptr;
 
     plGrassComponent *shader = (plGrassComponent*)comp;
     return shader->fShader;
@@ -304,7 +304,7 @@ plGrassShaderMod* plGrassComponent::GetShader(INode* node)
 plGrassShaderMod* plGrassComponent::GetShaderNode(plMaxNode* node)
 {
     if( !node )
-        return nil;
+        return nullptr;
 
     int n = node->NumAttachedComponents();
     int i;
@@ -317,5 +317,5 @@ plGrassShaderMod* plGrassComponent::GetShaderNode(plMaxNode* node)
             return shader->fShader;
         }
     }
-    return nil;
+    return nullptr;
 }

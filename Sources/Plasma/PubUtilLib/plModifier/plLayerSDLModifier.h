@@ -73,12 +73,12 @@ public:
     CLASSNAME_REGISTER( plLayerSDLModifier);
     GETINTERFACE_ANY( plLayerSDLModifier, plAnimTimeConvertSDLModifier);
         
-    plLayerSDLModifier() : fLayerAnimation(nil) {}
+    plLayerSDLModifier() : fLayerAnimation() { }
 
     const char* GetSDLName() const override { return kSDLLayer; }
 
     plLayerAnimation* GetLayerAnimation() const { return fLayerAnimation; }
-    void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation=l; AddTarget(nil); }
+    void SetLayerAnimation(plLayerAnimation* l) { fLayerAnimation = l; AddTarget(nullptr); }
     plKey GetStateOwnerKey() const override;
 };
 

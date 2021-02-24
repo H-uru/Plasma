@@ -219,7 +219,7 @@ void    plAgeDescription::SeekFirstPage()
 
 plAgePage   *plAgeDescription::GetNextPage()
 {
-    plAgePage   *ret = nil;
+    plAgePage   *ret = nullptr;
 
 
     if (fPageIterator >= 0 && (size_t)fPageIterator < fPages.size())
@@ -252,13 +252,13 @@ const plAgePage *plAgeDescription::FindPage(const ST::string &name) const
             return &page;
     }
 
-    return nil;
+    return nullptr;
 }
 
 plLocation  plAgeDescription::CalcPageLocation( const ST::string &page ) const
 {
     const plAgePage *ap = FindPage(page);
-    if( ap != nil )
+    if (ap != nullptr)
     {
         // Combine our sequence # together
         int32_t combined;
@@ -344,7 +344,7 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
 
     if( !stricmp( token, "StartDateTime" ) )
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
         {
             char buf[11];
             strncpy(buf, tok, 10); buf[10] = '\0';
@@ -353,7 +353,7 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
     }
     else if (!stricmp(token, "DayLength"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fDayLength = (float)atof(tok);
     }
     else if (!stricmp(token, "Page"))
@@ -364,22 +364,22 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
     }
     else if (!stricmp(token, "MaxCapacity"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fMaxCapacity = atoi(tok);
     }
     else if (!stricmp(token, "LingerTime"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fLingerTime = atoi(tok);
     }
     else if( !stricmp(token, "SequencePrefix"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fSeqPrefix = atoi(tok);
     }
     else if( !stricmp(token, "ReleaseVersion"))
     {
-        if( ( tok = tokenizer->next() ) != nil )
+        if ((tok = tokenizer->next()) != nullptr)
             fReleaseVersion = atoi(tok);
     }
 
@@ -391,7 +391,7 @@ bool        plAgeDescription::IParseToken( const char *token, hsStringTokenizer 
 //
 void plAgeDescription::Read(hsStream* stream)
 {
-    plInitSectionReader *sections[] = { (plInitSectionReader *)this, nil };
+    plInitSectionReader *sections[] = { (plInitSectionReader *)this, nullptr };
 
     plInitFileReader    reader( stream, sections );
 

@@ -72,7 +72,7 @@ public:
         kDisableDebugScreen
     };
 
-    plResMgrHelperMsg( uint8_t command = 0 ) : plMessage(nil, nil, nil), fKeyList( nil ) { fCommand = command; }
+    plResMgrHelperMsg(uint8_t command = 0) : plMessage(nullptr, nullptr, nullptr), fKeyList() { fCommand = command; }
     ~plResMgrHelperMsg() { delete fKeyList; }
 
     CLASSNAME_REGISTER( plResMgrHelperMsg );

@@ -73,7 +73,7 @@ struct NetLogMessage_Header
 #define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
 
 static std::recursive_mutex s_pipeCritical;
-static HANDLE               s_netlog = 0;
+static HANDLE               s_netlog = nullptr;
 static ULARGE_INTEGER       s_timeOffset;
 
 static unsigned GetAdjustedTimer()
@@ -181,7 +181,7 @@ namespace pnNetCli {
 //============================================================================
 static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
-    uint8_t * temp = NULL;
+    uint8_t * temp = nullptr;
 
 #if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Write to the netlog
@@ -194,8 +194,8 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
         hsLockGuard(s_pipeCritical);
         DWORD bytesWritten;
-        WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
-        WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
+        WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, nullptr);
+        WriteFile(s_netlog, data, bytes, &bytesWritten, nullptr);
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
@@ -421,7 +421,7 @@ static bool DispatchData (NetCli * cli, void * param) {
 
             msgId = hsToLE16(msgId);
 
-            if (nil == (cli->recvMsg = NetMsgChannelFindRecvMessage(cli->channel, msgId)))
+            if (cli->recvMsg = NetMsgChannelFindRecvMessage(cli->channel, msgId); cli->recvMsg == nullptr)
                 goto ERR_NO_HANDLER;
 
             // prepare to start decompressing new fields
@@ -592,8 +592,8 @@ static bool DispatchData (NetCli * cli, void * param) {
             goto ERR_DISPATCH_FAILED;
         
         // prepare to start next message
-        cli->recvMsg        = nil;
-        cli->recvField      = 0;
+        cli->recvMsg        = nullptr;
+        cli->recvField      = nullptr;
         cli->recvFieldBytes = 0;
 
         // Release oversize message buffer
@@ -735,8 +735,8 @@ static bool ServerRecvConnect (
     }
 
     if (seedLength == 0) { // client wishes no encryption (that's okay, nobody else can "fake" us as nobody has the private key, so if the client actually wants encryption it will only work with the correct peer)
-        cli->cryptIn = nil;
-        cli->cryptOut = nil;
+        cli->cryptIn = nullptr;
+        cli->cryptOut = nullptr;
     }
     else {
         // Compute client seed
@@ -786,7 +786,7 @@ static bool ClientRecvEncrypt (
 
     // find out if we want encryption
     const plBigNum* DH_N;
-    NetMsgChannelGetDhConstants(cli->channel, nil, nil, &DH_N);
+    NetMsgChannelGetDhConstants(cli->channel, nullptr, nullptr, &DH_N);
     bool encrypt = !DH_N->isZero();
 
     // Process message
@@ -812,8 +812,8 @@ static bool ClientRecvEncrypt (
     else { // honestly we do not care what the other side sends, we will send plaintext
         if (pkt.length != sizeof(pkt))
             return false;
-        cli->cryptIn = nil;
-        cli->cryptOut = nil;
+        cli->cryptIn = nullptr;
+        cli->cryptOut = nullptr;
     }
 
     cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
@@ -889,8 +889,8 @@ static unsigned DispatchPacket (
 
 //===========================================================================
 static void ResetSendRecv (NetCli * cli) {
-    cli->recvMsg            = nil;
-    cli->recvField          = nil;
+    cli->recvMsg            = nullptr;
+    cli->recvField          = nullptr;
     cli->recvFieldBytes     = 0;
     cli->recvDispatch       = true;
     cli->sendCurr           = cli->sendBuffer;
@@ -912,7 +912,7 @@ static NetCli * ConnCreate (
         &largestRecv
     );
     if (!channel)
-        return nil;
+        return nullptr;
 
     NetCli * const cli  = new NetCli;
     cli->sock           = sock;
@@ -928,10 +928,10 @@ static NetCli * ConnCreate (
             HURU_PIPE_NAME,
             GENERIC_READ | GENERIC_WRITE,
             0,
-            NULL,
+            nullptr,
             OPEN_EXISTING,
             FILE_ATTRIBUTE_NORMAL,
-            NULL
+            nullptr
         );
 
         // Not exactly the start, but close enough ;)
@@ -992,7 +992,7 @@ NetCli * NetCliConnectAccept (
 
 //============================================================================
 void NetCliClearSocket (NetCli * cli) {
-    cli->sock = nil;
+    cli->sock = nullptr;
 }
 
 //============================================================================
@@ -1071,7 +1071,7 @@ bool NetCliDispatch (
     do {
         if (cli->mode == kNetCliModeEncrypted) {
             // Decrypt data...
-            uint8_t * temp = NULL;
+            uint8_t * temp = nullptr;
 
             if (cli->cryptIn) {
                 temp = (uint8_t *)malloc(bytes);
@@ -1096,8 +1096,8 @@ bool NetCliDispatch (
 
                 hsLockGuard(s_pipeCritical);
                 DWORD bytesWritten;
-                WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
-                WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
+                WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, nullptr);
+                WriteFile(s_netlog, data, bytes, &bytesWritten, nullptr);
             }
 #endif // PLASMA_EXTERNAL_RELEASE
 

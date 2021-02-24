@@ -104,7 +104,9 @@ public:
     void StartAutoExport() override;
 };
 
-plExportDlgImp::plExportDlgImp() : fDlg(NULL), fPreshade(true), fPhysicalsOnly(false), fLightMap(true), fLastExportTime(0), fExporting(false), fAutoExporting(false)
+plExportDlgImp::plExportDlgImp()
+    : fDlg(), fPreshade(true), fPhysicalsOnly(false), fLightMap(true),
+      fLastExportTime(), fExporting(false), fAutoExporting(false)
 {
     plFileName path = plMaxConfig::GetPluginIni();
     fXPos = GetPrivateProfileIntW(L"Export", L"X", 0, path.WideString().data());
@@ -150,7 +152,7 @@ BOOL plExportDlgImp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 const char* plExportDlgImp::GetExportPage()
 {
     if (fExportPage[0] == '\0')
-        return nil;
+        return nullptr;
     else
         return fExportPage;
 }
@@ -199,7 +201,7 @@ void plExportDlgImp::IInitDlg(HWND hDlg)
     sprintf(buf, "Last export took %d:%02d", fLastExportTime/60, fLastExportTime%60);
     SetDlgItemText(hDlg, IDC_LAST_EXPORT, buf);
 
-    SetWindowPos(hDlg, NULL, fXPos, fYPos, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(hDlg, nullptr, fXPos, fYPos, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
     //
     // Get the names of all the pages in this scene and put them in the combo
@@ -372,7 +374,7 @@ void plExportDlgImp::IDestroy()
         fYPos = rect.top;
 
         DestroyWindow(fDlg);
-        fDlg = NULL;
+        fDlg = nullptr;
     }
 }
 
@@ -405,7 +407,7 @@ static bool AutoExportDir(const char* inputDir, const char* outputDir, const plF
     
     char doneDir[MAX_PATH];
     sprintf(doneDir, "%s\\Done\\", inputDir);
-    CreateDirectory(doneDir, NULL);
+    CreateDirectory(doneDir, nullptr);
 
     // Don't give missing bitmap warnings
     TheManager->SetSilentMode(TRUE);
@@ -466,10 +468,10 @@ static void GetFileNameSection(const char* configFile, const char* keyName, std:
 
     char* seps = ",";
     char* token = strtok(source, seps);
-    while (token != NULL)
+    while (token != nullptr)
     {
         strings.push_back(token);
-        token = strtok(NULL, seps);
+        token = strtok(nullptr, seps);
     }
 }
 

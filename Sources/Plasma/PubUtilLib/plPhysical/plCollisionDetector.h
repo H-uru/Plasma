@@ -207,7 +207,7 @@ public:
     {
         kSubworld = 0,
     };
-    plSubworldRegionDetector() : fSub(nil), fOnExit(false) { }
+    plSubworldRegionDetector() : fOnExit() { }
     ~plSubworldRegionDetector();
     
     bool MsgReceive(plMessage* msg) override;

@@ -119,12 +119,12 @@ PLASMA_DEFAULT_TYPE(ptParticle, "Plasma particle system class");
 // required functions for PyObject interoperability
 PyObject *cyParticleSys::New(PyObject *sender, PyObject *recvr)
 {
-    ptParticle *newObj = (ptParticle*)ptParticle_type.tp_new(&ptParticle_type, NULL, NULL);
-    if (sender != NULL)
+    ptParticle *newObj = (ptParticle*)ptParticle_type.tp_new(&ptParticle_type, nullptr, nullptr);
+    if (sender != nullptr)
     {
         newObj->fThis->SetSender(pyKey::ConvertFrom(sender)->getKey());
     }
-    if (recvr != NULL)
+    if (recvr != nullptr)
     {
         newObj->fThis->AddRecvr(pyKey::ConvertFrom(recvr)->getKey());
     }

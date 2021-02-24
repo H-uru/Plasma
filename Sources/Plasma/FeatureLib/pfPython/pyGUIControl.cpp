@@ -84,9 +84,9 @@ pyGUIControl& pyGUIControl::Copy(const pyGUIControl& other)
 bool pyGUIControl::operator==(const pyGUIControl &gcobj) const
 {
     plKey theirs = ((pyGUIControl&)gcobj).getObjKey();
-    if ( fGCkey == nil && theirs == nil )
+    if (fGCkey == nullptr && theirs == nullptr)
         return true;
-    else if ( fGCkey != nil && theirs != nil )
+    else if (fGCkey != nullptr && theirs != nullptr)
         return (fGCkey->GetUoid()==theirs->GetUoid());
     else
         return false;

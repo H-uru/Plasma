@@ -88,8 +88,8 @@ private:
     friend class plAccessGeometry;
 public:
 
-    plAccessSpan() : fType(kUndefined), fLocalToWorld(nil), fWorldToLocal(nil), fLocalBounds(nil), fWorldBounds(nil), fWaterHeight(nil), fMaterial(nil) {}
-    plAccessSpan(AccessType t) : fType(t), fLocalToWorld(nil), fWorldToLocal(nil), fLocalBounds(nil), fWorldBounds(nil), fWaterHeight(nil), fMaterial(nil) {}
+    plAccessSpan() : fType(kUndefined), fLocalToWorld(), fWorldToLocal(), fLocalBounds(), fWorldBounds(), fWaterHeight(), fMaterial() { }
+    plAccessSpan(AccessType t) : fType(t), fLocalToWorld(), fWorldToLocal(), fLocalBounds(), fWorldBounds(), fWaterHeight(), fMaterial() { }
 
     void SetType(AccessType t) { fType = t; }
     AccessType GetType() const { return fType; }
@@ -118,7 +118,7 @@ public:
     void SetLocalBounds(const hsBounds3Ext& bnd) { *fWorldBounds = *fLocalBounds = bnd; fWorldBounds->Transform(fLocalToWorld); }
     void SetWorldBounds(const hsBounds3Ext& wBnd) { *fWorldBounds = wBnd; }
 
-    bool HasWaterHeight() const { return nil != fWaterHeight; }
+    bool HasWaterHeight() const { return nullptr != fWaterHeight; }
     float GetWaterHeight() const { hsAssert(HasWaterHeight(), "Check before asking"); return *fWaterHeight; }
 };
 

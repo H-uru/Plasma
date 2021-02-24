@@ -69,7 +69,7 @@ char plClothingSDLModifier::kStrLinkInAnim[] = "linkInAnim";
 // init latest data
 //
 plClothingSDLModifier::plClothingSDLModifier() :
-    fClothingOutfit(nil)
+    fClothingOutfit()
 {
 }
 
@@ -189,7 +189,7 @@ void plClothingSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
     hsAssert(sobj, "plClothingSDLModifier, nil target");
 
     plClothingOutfit* clothing = GetClothingOutfit();
-    if( clothing == nil )
+    if (clothing == nullptr)
     {
         hsAssert(clothing, "nil clothingOutfit");
         return;
@@ -225,9 +225,9 @@ void plClothingSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcSta
         var->Get(&clothing->fAvatar->fLinkInAnimKey);   
 }
 
-void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing /* = nil */, plClosetItem *closetItem /* = nil */)
+void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClothingOutfit *clothing /* = nullptr */, plClosetItem *closetItem /* = nullptr */)
 {
-    if (sdr == nil)
+    if (sdr == nullptr)
         return;
 
     int i;
@@ -237,12 +237,12 @@ void plClothingSDLModifier::HandleSingleSDR(const plStateDataRecord *sdr, plClot
     {
         // get item from clothesItem
         plSimpleStateVariable* itemVar = sdr->FindVar(kStrItem);
-        plClothingItem* clothingItem = nil; // clothing->GetItemList()[i];
+        plClothingItem* clothingItem = nullptr; // clothing->GetItemList()[i];
         if (itemVar->IsUsed())
         {
             plKey key;
             itemVar->Get(&key);
-            clothingItem = plClothingItem::ConvertNoRef(key ? key->GetObjectPtr() : nil);
+            clothingItem = plClothingItem::ConvertNoRef(key ? key->GetObjectPtr() : nullptr);
             if (clothingItem)
             {
                 if (clothing)
@@ -323,5 +323,5 @@ const plClothingSDLModifier *plClothingSDLModifier::FindClothingSDLModifier(cons
         if(sdlMod)
             return sdlMod;
     }
-    return nil;
+    return nullptr;
 }

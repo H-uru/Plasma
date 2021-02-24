@@ -83,7 +83,7 @@ void GenerateKey(bool useDefault)
     }
     else
     {
-        srand((unsigned)time(nil));
+        srand((unsigned)time(nullptr));
         double randNum = (double)rand() / (double)RAND_MAX; // converts to 0..1
         uint32_t keyNum = (uint32_t)(randNum * (double)0xFFFFFFFF); // multiply it by the max unsigned 32-bit int
         key[0] = keyNum;
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
         ext = "*." + ext;
 
     if (useDefault)
-        SecureFiles(directory, ext, nil);
+        SecureFiles(directory, ext, nullptr);
     else
     {
         uint32_t key[4];

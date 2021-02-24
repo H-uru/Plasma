@@ -115,7 +115,7 @@ static unsigned CallTimerProc (AsyncTimer * t, FAsyncTimerProc timerProc) {
     // Leave critical section to make timer callback
     hsUnlockGuard(s_timerCrit);
     unsigned sleepMs = s_timerCurr(t->param);
-    s_timerCurr = nil;
+    s_timerCurr = nullptr;
 
     return sleepMs;
 }
@@ -178,17 +178,17 @@ static inline void InitializeTimer () {
         s_running = true;
 
         s_timerEvent = CreateEvent(
-            (LPSECURITY_ATTRIBUTES) nil,
+            nullptr,
             false,                  // auto-reset event
             false,                  // initial state = off
-            (LPCTSTR) nil
+            nullptr
         );
         if (!s_timerEvent)
             ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
 
         s_timerThread = AsyncThreadCreate(
             TimerThreadProc,
-            nil,
+            nullptr,
             L"AsyncTimerThread"
         );
     }
@@ -213,7 +213,7 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
 
     if (s_timerEvent) {
         CloseHandle(s_timerEvent);
-        s_timerEvent = nil;
+        s_timerEvent = nullptr;
     }
 
     // Cleanup any timers that have been stopped but not deleted
@@ -252,7 +252,7 @@ void AsyncTimerCreate (
     // Allocate timer outside critical section
     AsyncTimer * t  = new AsyncTimer;
     t->timerProc    = timerProc;
-    t->destroyProc  = nil;
+    t->destroyProc  = nullptr;
     t->param        = param;
     t->priority.Set(TimeGetMs() + callbackMs);
 
@@ -297,9 +297,9 @@ void AsyncTimerDelete (
     if (flags & kAsyncTimerDestroyWaitComplete)
         timerProc = timer->timerProc;
     else
-        timerProc = nil;
+        timerProc = nullptr;
 
-    AsyncTimerDeleteCallback(timer, nil);
+    AsyncTimerDeleteCallback(timer, nullptr);
 
     // Wait until the timer procedure completes
     if (timerProc) {

@@ -373,7 +373,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
     char Buff[FILEBUFFERSIZE];
 
-    fParser = XML_ParserCreate_MM(NULL, &gHeapAllocator, NULL);
+    fParser = XML_ParserCreate_MM(nullptr, &gHeapAllocator, nullptr);
     if (!fParser)
     {
         AddError("ERROR: Couldn't allocate memory for parser");
@@ -411,7 +411,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
     } while (!done);
 
     XML_ParserFree(fParser);
-    fParser = nil;
+    fParser = nullptr;
     xmlStream->Close();
     delete xmlStream;
     return true;
@@ -807,8 +807,8 @@ std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(con
 //// pfLocalizationDataMgr Functions /////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-pfLocalizationDataMgr   *pfLocalizationDataMgr::fInstance = nil;
-plStatusLog             *pfLocalizationDataMgr::fLog = nil; // output logfile
+pfLocalizationDataMgr   *pfLocalizationDataMgr::fInstance = nullptr;
+plStatusLog             *pfLocalizationDataMgr::fLog = nullptr; // output logfile
 
 //// Constructor/Destructor //////////////////////////////////////////
 
@@ -819,17 +819,17 @@ pfLocalizationDataMgr::pfLocalizationDataMgr(const plFileName & path)
 
     fDataPath = path;
 
-    fDatabase = nil;
+    fDatabase = nullptr;
 }
 
 pfLocalizationDataMgr::~pfLocalizationDataMgr()
 {
-    fInstance = nil;
+    fInstance = nullptr;
 
     if (fDatabase)
     {
         delete fDatabase;
-        fDatabase = nil;
+        fDatabase = nullptr;
     }
 }
 
@@ -989,16 +989,16 @@ void pfLocalizationDataMgr::Initialize(const plFileName & path)
 
 void pfLocalizationDataMgr::Shutdown()
 {
-    if ( fLog != nil )
+    if (fLog != nullptr)
     {
         delete fLog;
-        fLog = nil;
+        fLog = nullptr;
     }
 
     if (fInstance)
     {
         delete fInstance;
-        fInstance = nil;
+        fInstance = nullptr;
     }
 }
 

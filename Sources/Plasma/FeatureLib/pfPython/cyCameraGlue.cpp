@@ -58,7 +58,7 @@ PYTHON_INIT_DEFINITION(ptCamera, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptCamera, save, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "save expects a ptKey object");
@@ -77,7 +77,7 @@ PYTHON_METHOD_DEFINITION(ptCamera, save, args)
 
 PYTHON_METHOD_DEFINITION(ptCamera, restore, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "restore expects a ptKey object");
@@ -110,7 +110,7 @@ PYTHON_METHOD_DEFINITION(ptCamera, controlKey, args)
 
 PYTHON_METHOD_DEFINITION(ptCamera, set, args)
 {
-    PyObject* keyObj = NULL;
+    PyObject* keyObj = nullptr;
     double time;
     char save;
     if (!PyArg_ParseTuple(args, "Odb", &keyObj, &time, &save))

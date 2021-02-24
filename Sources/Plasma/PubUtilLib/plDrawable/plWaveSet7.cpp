@@ -177,7 +177,7 @@ void plWaveSet7::StartGraph()
 void plWaveSet7::StopGraph()
 {
     delete fStatusGraph;
-    fStatusGraph = nil;
+    fStatusGraph = nullptr;
 }
 
 inline void plWaveSet7::IRestartLog() const
@@ -196,7 +196,7 @@ void plWaveSet7::StartLog()
 void plWaveSet7::StopLog()
 {
     delete fStatusLog;
-    fStatusLog = nil;
+    fStatusLog = nullptr;
 }
 #else // PLASMA_EXTERNAL_RELEASE
 inline void plWaveSet7::GraphLen(float len) const
@@ -233,42 +233,42 @@ void plWaveSet7::StopLog()
 // Enough of that, WaveSet (system manager) follows
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 plWaveSet7::plWaveSet7()
-:   fLastTime(0),
-    fCurrTime(0),
+:   fLastTime(),
+    fCurrTime(),
     fScrunchLen(8.f),
     fScrunchScale(2.f),
     fFreqScale(1.f),
-    fRipVShader(nil),
-    fRipPShader(nil),
-    fShoreVShader(nil),
-    fShorePShader(nil),
-    fFixedVShader(nil),
-    fFixedPShader(nil),
-    fBiasVShader(nil),
-    fBiasPShader(nil),
-    fBumpMat(nil),
-    fBumpDraw(nil),
-    fBumpReq(nil),
-    fBumpReqMsg(nil),
-    fEnvMap(nil),
-    fRefObj(nil),
-    fCosineLUT(nil),
-    fGraphShoreTex(nil),
-    fBubbleShoreTex(nil),
-    fEdgeShoreTex(nil),
-    fMaxLen(0),
+    fRipVShader(),
+    fRipPShader(),
+    fShoreVShader(),
+    fShorePShader(),
+    fFixedVShader(),
+    fFixedPShader(),
+    fBiasVShader(),
+    fBiasPShader(),
+    fBumpMat(),
+    fBumpDraw(),
+    fBumpReq(),
+    fBumpReqMsg(),
+    fEnvMap(),
+    fRefObj(),
+    fCosineLUT(),
+    fGraphShoreTex(),
+    fBubbleShoreTex(),
+    fEdgeShoreTex(),
+    fMaxLen(),
 
-    fTrialUpdate(0),
+    fTrialUpdate(),
     fTransistor(-1),
     fTransCountDown(30.f),
-    fTransDel(0),
+    fTransDel(),
 
-    fTexTrans(0),
-    fTexTransCountDown(0),
-    fTexTransDel(0),
+    fTexTrans(),
+    fTexTransCountDown(),
+    fTexTransDel(),
 
-    fStatusLog(nil),
-    fStatusGraph(nil)
+    fStatusLog(),
+    fStatusGraph()
 {
     IInitState();
     IInitWaveConsts();
@@ -281,35 +281,35 @@ plWaveSet7::plWaveSet7()
     }
     for( i = 0; i < 4; i++ )
     {
-        fFixedLayers[i] = nil;
+        fFixedLayers[i] = nullptr;
     }
     for( i = 0; i < kNumBumpShaders; i++ )
     {
-        fBumpVShader[i] = nil;
-        fBumpPShader[i] = nil;
+        fBumpVShader[i] = nullptr;
+        fBumpPShader[i] = nullptr;
     }
-    fBiasLayer[0] = nil;
-    fBiasLayer[1] = nil;
+    fBiasLayer[0] = nullptr;
+    fBiasLayer[1] = nullptr;
     for( i = 0; i < kNumTexWaves; i++ )
     {
-        fBumpLayers[i] = nil;
+        fBumpLayers[i] = nullptr;
         fTexWaveFade[i] = 1.f;
     }
     for( i = 0; i < kGraphShorePasses; i++ )
     {
-        fGraphVShader[i] = nil;
-        fGraphPShader[i] = nil;
+        fGraphVShader[i] = nullptr;
+        fGraphPShader[i] = nullptr;
 
-        fGraphShoreMat[i] = nil;
-        fGraphShoreRT[i] = nil;
-        fGraphShoreDraw[i] = nil;
-        fGraphReq[i] = nil;
-        fGraphReqMsg[i] = nil;
+        fGraphShoreMat[i] = nullptr;
+        fGraphShoreRT[i] = nullptr;
+        fGraphShoreDraw[i] = nullptr;
+        fGraphReq[i] = nullptr;
+        fGraphReqMsg[i] = nullptr;
     }
     for( i = 0; i < kNumDecalVShaders; i++ )
-        fDecalVShaders[i] = nil;
+        fDecalVShaders[i] = nullptr;
     for( i = 0; i < kNumDecalPShaders; i++ )
-        fDecalPShaders[i] = nil;
+        fDecalPShaders[i] = nullptr;
 }
 
 plWaveSet7::~plWaveSet7()
@@ -400,7 +400,7 @@ bool plWaveSet7::MsgReceive(plMessage* msg)
     plEvalMsg* update = plEvalMsg::ConvertNoRef(msg);
     if( update )
     {
-        if (fFixedVShader == nil)
+        if (fFixedVShader == nullptr)
         {
             ICheckTargetMaterials();
             ICheckShoreMaterials();
@@ -608,13 +608,13 @@ bool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
     switch( refMsg->fType )
     {
     case kRefRefObj:
-        fRefObj = nil;
+        fRefObj = nullptr;
         return true;
     case kRefCosineLUT:
-        fCosineLUT = nil;
+        fCosineLUT = nullptr;
         return true;
     case kRefEnvMap:
-        fEnvMap = nil;
+        fEnvMap = nullptr;
         return true;
     case kRefShore:
         {
@@ -633,70 +633,70 @@ bool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
         }
         return true;
     case kRefDecVShader:
-        fDecalVShaders[refMsg->fWhich] = nil;
+        fDecalVShaders[refMsg->fWhich] = nullptr;
         return true;
     case kRefDecPShader:
-        fDecalPShaders[refMsg->fWhich] = nil;
+        fDecalPShaders[refMsg->fWhich] = nullptr;
         return true;
     case kRefGraphShoreRT:
-        fGraphShoreRT[refMsg->fWhich] = nil;
+        fGraphShoreRT[refMsg->fWhich] = nullptr;
         return true;
     case kRefGraphVShader:
-        fGraphVShader[refMsg->fWhich] = nil;
+        fGraphVShader[refMsg->fWhich] = nullptr;
         return true;
     case kRefGraphPShader:
-        fGraphPShader[refMsg->fWhich] = nil;
+        fGraphPShader[refMsg->fWhich] = nullptr;
         return true;
     case kRefGraphShoreTex:
-        fGraphShoreTex = nil;
+        fGraphShoreTex = nullptr;
         return true;
     case kRefBubbleShoreTex:
-        fBubbleShoreTex = nil;
+        fBubbleShoreTex = nullptr;
         return true;
     case kRefEdgeShoreTex:
-        fEdgeShoreTex = nil;
+        fEdgeShoreTex = nullptr;
         return true;
     case kRefGraphShoreMat:
-        fGraphShoreMat[refMsg->fWhich] = nil;
+        fGraphShoreMat[refMsg->fWhich] = nullptr;
         return true;
     case kRefGraphShoreDraw:
-        fGraphShoreDraw[refMsg->fWhich] = nil;
+        fGraphShoreDraw[refMsg->fWhich] = nullptr;
         return true;
     case kRefBiasVShader:
-        fBiasVShader = nil;
+        fBiasVShader = nullptr;
         return true;
     case kRefBiasPShader:
-        fBiasPShader = nil;
+        fBiasPShader = nullptr;
         return true;
     case kRefBumpVShader:
-        fBumpVShader[refMsg->fWhich] = nil;
+        fBumpVShader[refMsg->fWhich] = nullptr;
         return true;
     case kRefBumpPShader:
-        fBumpPShader[refMsg->fWhich] = nil;
+        fBumpPShader[refMsg->fWhich] = nullptr;
         return true;
     case kRefRipVShader:
-        fRipVShader = nil;
+        fRipVShader = nullptr;
         return true;
     case kRefRipPShader:
-        fRipPShader = nil;
+        fRipPShader = nullptr;
         return true;
     case kRefShoreVShader:
-        fShoreVShader = nil;
+        fShoreVShader = nullptr;
         return true;
     case kRefShorePShader:
-        fShorePShader = nil;
+        fShorePShader = nullptr;
         return true;
     case kRefFixedVShader:
-        fFixedVShader = nil;
+        fFixedVShader = nullptr;
         return true;
     case kRefFixedPShader:
-        fFixedPShader = nil;
+        fFixedPShader = nullptr;
         return true;
     case kRefBumpDraw:
-        fBumpDraw = nil;
+        fBumpDraw = nullptr;
         return true;
     case kRefBumpMat:
-        fBumpMat = nil;
+        fBumpMat = nullptr;
         return true;
     case kRefDynaDecalMgr:
         {
@@ -1169,7 +1169,7 @@ void plWaveSet7::RemoveTarget(const plKey& key)
 
 void plWaveSet7::SetRefObject(plSceneObject* refObj)
 {
-    fFlags.SetBit(kHasRefObject, refObj != nil);
+    fFlags.SetBit(kHasRefObject, refObj != nullptr);
 
     plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefRefObj);
     hsgResMgr::ResMgr()->SendRef(refObj, msg, plRefFlags::kPassiveRef);
@@ -1480,7 +1480,7 @@ void plWaveSet7::ISubmitRenderRequests()
 
 plMipmap* plWaveSet7::ICreateBumpBitmapFFP(float amp, float dx, float dy) const
 {
-    return nil;
+    return nullptr;
 }
 
 hsGMaterial* plWaveSet7::ICreateBumpLayersFFP()
@@ -1564,7 +1564,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersFFP()
     //      
 
     // return material;
-    return nil;
+    return nullptr;
 }
 
 plMipmap* plWaveSet7::ICreateBiasNoiseMap()
@@ -2058,12 +2058,12 @@ plDrawableSpans* plWaveSet7::ICreateClearDrawable(plDrawableSpans* drawable, hsG
 
     plDrawableGenerator::GenerateDrawable( 4, pos, norm, 
                                                         uvw, 1,
-                                                        nil, false, nil,
+                                                        nullptr, false, nullptr,
                                                         6, idx, 
                                                         mat, 
                                                         hsMatrix44::IdentityMatrix(), 
                                                         false,
-                                                        nil,
+                                                        nullptr,
                                                         drawable);
 
     return drawable;
@@ -2112,7 +2112,7 @@ plRenderTarget* plWaveSet7::ICreateTransferRenderTarget(const char* name, int si
 
 plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which, const char* suff)
 {
-    plLayer* layer = mat->GetNumLayers() > which ? plLayer::ConvertNoRef(mat->GetLayer(which)->BottomOfStack()) : nil;
+    plLayer* layer = mat->GetNumLayers() > which ? plLayer::ConvertNoRef(mat->GetLayer(which)->BottomOfStack()) : nullptr;
     if( !layer )
     {
         layer = new plLayer;
@@ -2665,13 +2665,13 @@ plShader* plWaveSet7::IGetDecalVShader(hsGMaterial* mat)
         case 1:
             return ICreateDecalVShader(kDecalV2Lay12);
         default:
-            return nil;
+            return nullptr;
         }
         break;
     default:
         hsAssert(false, "Only 1 or 2 layers currently supported");
     }
-    return nil;
+    return nullptr;
 }
 
 plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
@@ -2730,7 +2730,7 @@ plShader* plWaveSet7::IGetDecalPShader(hsGMaterial* mat)
 
     hsAssert(mat->GetNumLayers() < 3, "Only 2 layers supported on water decal");
     if( mat->GetNumLayers() >= 3 )
-        return nil;
+        return nullptr;
 
     if( mat->GetNumLayers() == 1 )
         return ICreateDecalPShader(kDecalPBB);
@@ -2771,7 +2771,7 @@ plShader* plWaveSet7::IGetDecalPShader(hsGMaterial* mat)
 
     default:
         hsAssert(false, "Unsupported layer blend mode");
-        return nil;
+        return nullptr;
     }
 
     return ICreateDecalPShader(t);
@@ -3450,7 +3450,7 @@ void plWaveSet7::ICheckDecalEnvLayers(hsGMaterial* mat)
     // If we haven't done this already
     if( !fDecalVShaders[kDecalVEnv] || (mat->GetLayer(0)->GetVertexShader() != fDecalVShaders[kDecalVEnv]) )
     {
-        plLayer* lay3 = nil;
+        plLayer* lay3 = nullptr;
 
         plMatRefMsg* refMsg;
 
@@ -3617,16 +3617,16 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 
     plDrawableGenerator::GenerateDrawable(nVerts, pos.data(), norm.data(),
 #ifndef TEST_UVWS
-                                                        nil, 0, 
+                                                        nullptr, 0,
 #else // TEST_UVWS
                                                         uvw.data(), 1,
 #endif // TEST_UVWS
-                                                        nil, false, nil,
+                                                        nullptr, false, nullptr,
                                                         nTris * 3, idxArr.data(),
                                                         mat, 
                                                         hsMatrix44::IdentityMatrix(), 
                                                         false,
-                                                        nil,
+                                                        nullptr,
                                                         drawable);
 
     return drawable;

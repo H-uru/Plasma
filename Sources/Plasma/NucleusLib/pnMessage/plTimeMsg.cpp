@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 plTimeMsg::plTimeMsg()
-: plMessage(nil, nil, nil), fSeconds(0), fDelSecs(0)
+: plMessage(nullptr, nullptr, nullptr), fSeconds(), fDelSecs()
 {
 }
 

@@ -72,7 +72,7 @@ public:
 
     // tors
     plClimbMsg();
-    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, bool status = false, plKey target = nil);
+    plClimbMsg(const plKey &sender, const plKey &receiver, Command command = kNoCommand, Direction direction = kCenter, bool status = false, plKey target = {});
 
     // plasma protocol
     CLASSNAME_REGISTER( plClimbMsg );

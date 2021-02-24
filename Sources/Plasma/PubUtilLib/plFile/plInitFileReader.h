@@ -144,7 +144,7 @@ class plInitFileReader
         bool    Parse( uint32_t userData = 0 );
         void    Close();
 
-        bool    IsOpen() const { return fStream != nil; }
+        bool    IsOpen() const { return fStream != nullptr; }
 };
 
 #endif //_plInitFileReader_h

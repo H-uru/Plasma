@@ -55,7 +55,7 @@ void pyImage::setKey(pyKey& mipmapKey) // only for python glue, do NOT call
 #ifndef BUILDING_PYPLASMA
     if (fMipmap && fMipMapKey)
         fMipMapKey->UnRefObject();
-    fMipmap = nil;
+    fMipmap = nullptr;
 #endif
     fMipMapKey = mipmapKey.getKey();
 }

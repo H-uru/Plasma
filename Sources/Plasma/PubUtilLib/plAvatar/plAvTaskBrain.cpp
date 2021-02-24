@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // CTOR default
 plAvTaskBrain::plAvTaskBrain()
-: fBrain(nil)
+: fBrain()
 {
 }
 
@@ -82,7 +82,7 @@ bool plAvTaskBrain::Start(plArmatureMod *avatar, plArmatureBrain *brain, double 
     else
         avatar->PopBrain();
 
-    fBrain = nil; // We've passed it on the the avatar, set our pointer to nil so we don't destroy it
+    fBrain = nullptr; // We've passed it on the the avatar, set our pointer to nullptr so we don't destroy it
     
     return true;
 }

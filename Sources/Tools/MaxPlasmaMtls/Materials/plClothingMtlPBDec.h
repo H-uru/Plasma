@@ -86,7 +86,7 @@ public:
     void UpdateText(IParamBlock2 *pb, HWND hWnd)
     {
         const char *str = pb->GetStr(fPBEditID);
-        SetDlgItemText(hWnd, fCtrlID, (str != nil ? str : ""));
+        SetDlgItemText(hWnd, fCtrlID, (str != nullptr ? str : ""));
     }
 
     BOOL ProcessMsg(IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -151,7 +151,7 @@ public:
         IParamBlock2 *pb = pmap->GetParamBlock();
 
         plClothingMtl *mtl = (plClothingMtl *)pb->GetOwner();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;
@@ -164,7 +164,7 @@ public:
         for (j = 0; j < plClothingMtl::kMaxTiles; j++)
         {
             layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(layerIdx), 0, j);
-            pbbm = (layer == nil ? nil : layer->GetPBBitmap());
+            pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
 
             bmSelectBtn = GetICustButton(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[j]));
             bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
@@ -173,7 +173,7 @@ public:
 
         // And the thumbnail...
         layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plClothingMtl::kThumbnail));
-        if (layer == nil)
+        if (layer == nullptr)
         {
             layer = new plLayerTex;
             pb->SetValue(ParamID(plClothingMtl::kThumbnail), 0, layer);
@@ -195,10 +195,10 @@ public:
         {
             plClothingElement *element = tileset->fElements.Get(i);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
-                        WM_SETTEXT, NULL, (LPARAM)element->fName.c_str());
+                        WM_SETTEXT, 0, (LPARAM)element->fName.c_str());
             snprintf(buff, std::size(buff), "(%d, %d)", element->fWidth, element->fHeight);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), 
-                        WM_SETTEXT, NULL, (LPARAM)buff);
+                        WM_SETTEXT, 0, (LPARAM)buff);
             
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), SW_SHOW); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), SW_SHOW); 
@@ -228,7 +228,7 @@ public:
 
         IParamBlock2 *pb = map->GetParamBlock();
         plClothingMtl *mtl = (plClothingMtl *)pb->GetOwner();
-        HWND cbox = NULL;
+        HWND cbox = nullptr;
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;
@@ -269,18 +269,18 @@ public:
             if (id == IDC_CLOTHING_THUMBNAIL)
             {
                 layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(plClothingMtl::kThumbnail));
-                if (layer == nil)
+                if (layer == nullptr)
                     return FALSE;
 
                 BitmapInfo bi;
-                bi.SetName(layer->GetPBBitmap() == nil ? "" : layer->GetPBBitmap()->bi.Name());
+                bi.SetName(layer->GetPBBitmap() == nullptr ? "" : layer->GetPBBitmap()->bi.Name());
 
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 if (selectedNewBitmap)
                 {
                     pbbm = layer->GetPBBitmap();
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd, IDC_CLOTHING_THUMBNAIL));
-                    bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "(none)");
                     ReleaseICustButton(bmSelectBtn);
                 }
                 return TRUE;
@@ -295,7 +295,7 @@ public:
             if (buttonIdx != -1)
             {
                 layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(layerIdx), 0, buttonIdx);
-                if (layer == nil)
+                if (layer == nullptr)
                 { // First time we've set a layer on this spot
                     layer = new plLayerTex;
                     pb->SetValue(ParamID(layerIdx), 0, layer, buttonIdx);
@@ -307,7 +307,7 @@ public:
 #endif
 
                 BitmapInfo bi;
-                bi.SetName(layer->GetPBBitmap() == nil ? "" : layer->GetPBBitmap()->bi.Name());
+                bi.SetName(layer->GetPBBitmap() == nullptr ? "" : layer->GetPBBitmap()->bi.Name());
 
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 if (selectedNewBitmap)
@@ -316,7 +316,7 @@ public:
                     bool choiceOk = true;
 
                     pbbm = layer->GetPBBitmap();
-                    if (pbbm != nil)
+                    if (pbbm != nullptr)
                     {
                         mtl->InitTilesets();
 
@@ -350,7 +350,7 @@ public:
                     else
                     {
                         bmSelectBtn = GetICustButton(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[buttonIdx]));
-                        bmSelectBtn->SetText(pbbm != nil ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+                        bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "(none)");
                         ReleaseICustButton(bmSelectBtn);
                     }
                 }

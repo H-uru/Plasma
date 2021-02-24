@@ -63,8 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////////////////
 plParticleCollisionEffect::plParticleCollisionEffect()
 {
-    fBounds = nil;
-    fSceneObj = nil;
+    fBounds = nullptr;
+    fSceneObj = nullptr;
 }
 
 plParticleCollisionEffect::~plParticleCollisionEffect()
@@ -73,10 +73,10 @@ plParticleCollisionEffect::~plParticleCollisionEffect()
 
 void plParticleCollisionEffect::PrepareEffect(const plEffectTargetInfo &target)
 {
-    if (fBounds == nil)
+    if (fBounds == nullptr)
     {
         plBoundInterface *bi = plBoundInterface::ConvertNoRef(fSceneObj->GetGenericInterface(plBoundInterface::Index()));
-        if (bi == nil)
+        if (bi == nullptr)
             return;
         fBounds = bi->GetVolume();
     }
@@ -93,7 +93,7 @@ bool plParticleCollisionEffect::MsgReceive(plMessage* msg)
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
                 fSceneObj = so;
             else
-                fSceneObj = nil;
+                fSceneObj = nullptr;
             return true;
         }
     }
@@ -107,7 +107,7 @@ void plParticleCollisionEffect::Read(hsStream *s, hsResMgr *mgr)
     plGenRefMsg* msg;
     msg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, 0); // SceneObject
     mgr->ReadKeyNotifyMe(s, msg, plRefFlags::kActiveRef);
-    fBounds = nil;
+    fBounds = nullptr;
 }
 
 void plParticleCollisionEffect::Write(hsStream *s, hsResMgr *mgr)

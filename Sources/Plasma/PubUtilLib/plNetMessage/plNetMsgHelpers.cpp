@@ -125,7 +125,7 @@ int plNetMsgCreatableHelper::Poke(hsStream * s, uint32_t peekOptions)
     hsAssert(fCreatable,"plNetMsgCreatableHelper::Poke: fCreatable not set");
     uint16_t classIndex = fCreatable->ClassIndex();
     s->WriteLE(classIndex);
-    fCreatable->Write(s,nil);
+    fCreatable->Write(s, nullptr);
     return s->GetPosition();
 }
 
@@ -137,7 +137,7 @@ int plNetMsgCreatableHelper::Peek(hsStream * s, uint32_t peekOptions)
     SetObject(plFactory::Create(classIndex));
     fWeCreatedIt = true;
     hsAssert(fCreatable,"plNetMsgCreatableHelper::Peek: Failed to create plCreatable. Invalid ClassIndex?");
-    fCreatable->Read(s,nil);
+    fCreatable->Read(s, nullptr);
     s->LogSubStreamEnd();
     return s->GetPosition();
 }
@@ -147,8 +147,8 @@ int plNetMsgCreatableHelper::Peek(hsStream * s, uint32_t peekOptions)
 // NOT A MSG
 // PL STREAM MSG - HELPER class
 /////////////////////////////////////////////////////////
-plNetMsgStreamHelper::plNetMsgStreamHelper() :  fStreamBuf(nil), fStreamType(-1), fStreamLen(0), 
-        fCompressionType(plNetMessage::kCompressionNone), fUncompressedSize(0),
+plNetMsgStreamHelper::plNetMsgStreamHelper() :  fStreamBuf(), fStreamType(-1), fStreamLen(),
+        fCompressionType(plNetMessage::kCompressionNone), fUncompressedSize(),
         fCompressionThreshold( kDefaultCompressionThreshold )
 {
 }
@@ -156,7 +156,7 @@ plNetMsgStreamHelper::plNetMsgStreamHelper() :  fStreamBuf(nil), fStreamType(-1)
 void plNetMsgStreamHelper::Clear()
 {
     delete [] fStreamBuf;
-    fStreamBuf = nil;
+    fStreamBuf = nullptr;
     fStreamType = 0xff;
     fStreamLen = 0;
     fCompressionType = plNetMessage::kCompressionNone;
@@ -239,7 +239,7 @@ void plNetMsgStreamHelper::WriteVersion(hsStream* s, hsResMgr* mgr)
 void plNetMsgStreamHelper::IAllocStream(uint32_t len)
 {
     delete [] fStreamBuf;
-    fStreamBuf=nil;
+    fStreamBuf = nullptr;
     fStreamLen=len;
     if (len)
         fStreamBuf = new uint8_t[len];
@@ -409,7 +409,7 @@ void plNetMsgObjectListHelper::Reset()
     for( i=0 ; i<GetNumObjects() ; i++  )
     {
         delete GetObject(i);
-        fObjects[i] = nil;
+        fObjects[i] = nullptr;
     } // for    
     fObjects.clear();
 }
@@ -458,7 +458,7 @@ int plNetMsgMemberInfoHelper::Peek(hsStream* s, const uint32_t peekOptions)
 {
     s->LogSubStreamStart("push me");
     s->LogReadLE(&fFlags,"MemberInfoHelper Flags");
-    fClientGuid.Read( s, nil );
+    fClientGuid.Read(s, nullptr);
     fAvatarUoid.Read(s);
     s->LogSubStreamEnd();
     return s->GetPosition();
@@ -467,7 +467,7 @@ int plNetMsgMemberInfoHelper::Peek(hsStream* s, const uint32_t peekOptions)
 int plNetMsgMemberInfoHelper::Poke(hsStream* s, const uint32_t peekOptions)
 {
     s->WriteLE(fFlags);
-    fClientGuid.Write( s, nil );
+    fClientGuid.Write(s, nullptr);
     fAvatarUoid.Write(s);
     return s->GetPosition();
 }

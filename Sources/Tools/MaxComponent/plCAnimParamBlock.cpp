@@ -88,12 +88,12 @@ static plEaseAccessor sAnimCompEaseAccessor( plCAnimPB::plPBBaseDec::kPlComponen
 
 ParamBlockDesc2 plCAnimPB::plPBBaseDec::fAnimBlock
 (
-    kPlComponentBlkID, _T( "animation" ), 0, NULL, 0/*P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP*/, kPlComponentRefID,
+    kPlComponentBlkID, _T( "animation" ), 0, nullptr, 0/*P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP*/, kPlComponentRefID,
 
     // map rollups (don't define Procs, they'll just be overridden in the macro defs anyway)
 /*  2,
-    plCAnimPB::kRollMain, IDD_COMP_ANIM, IDS_COMP_ANIM, 0, 0, nil,
-    plCAnimPB::kRollEase, IDD_COMP_ANIM_EASE, IDS_COMP_ANIM_EASE, 0, APPENDROLL_CLOSED, nil,
+    plCAnimPB::kRollMain, IDD_COMP_ANIM, IDS_COMP_ANIM, 0, 0, nullptr,
+    plCAnimPB::kRollEase, IDD_COMP_ANIM_EASE, IDS_COMP_ANIM_EASE, 0, APPENDROLL_CLOSED, nullptr,
 */
 
     // Anim Main rollout

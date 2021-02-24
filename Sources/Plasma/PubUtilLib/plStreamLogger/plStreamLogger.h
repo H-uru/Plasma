@@ -86,7 +86,7 @@ protected:
     void ILogEntryWaiting();
 
 public:
-    plStreamLogger() : fEntryWaiting(false), fList(nil) { }
+    plStreamLogger() : fEntryWaiting(), fList() { }
     const EventList* GetList() { return fList; }
     void LogSetList(EventList* el) { fList = el; }
 
