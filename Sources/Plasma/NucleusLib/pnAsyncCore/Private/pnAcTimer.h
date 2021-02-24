@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 *   Timer functions
 *
-*   Timers are repeatedly called back at a scheduled interval. Not that all
+*   Timers are repeatedly called back at a scheduled interval. Note that all
 *   timer procedures share the same thread, so timer procedures should:
 *
 *   1) Not be called too frequently
@@ -85,7 +85,7 @@ void AsyncTimerCreate (
 //    be set by init/destruct threads, not I/O worker threads. In addition, extreme
 //    care should be used to avoid a deadlock when this flag is set; in general, it
 //    is a good idea not to hold any locks or critical sections when setting the flag.
-const unsigned kAsyncTimerDestroyWaitComplete = 1<<0;
+constexpr unsigned kAsyncTimerDestroyWaitComplete = 1<<0;
 void AsyncTimerDelete (
     AsyncTimer *    timer,
     unsigned        flags = 0
@@ -95,11 +95,8 @@ void AsyncTimerDeleteCallback (
     FAsyncTimerProc destroyProc
 );
 
-// To set the time value for a timer, use this function with flags = 0.
-// To set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs), use SetPriorityHigher
-const unsigned kAsyncTimerUpdateSetPriorityHigher = 1<<0;
+// Set the time value for a timer
 void AsyncTimerUpdate (
     AsyncTimer *    timer,
-    unsigned        callbackMs,
-    unsigned        flags = 0
+    unsigned        callbackMs
 );

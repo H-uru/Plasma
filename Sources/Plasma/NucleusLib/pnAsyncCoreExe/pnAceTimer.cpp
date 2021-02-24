@@ -88,6 +88,7 @@ static LISTDECL(
 ***/
 
 //===========================================================================
+constexpr unsigned kAsyncTimerUpdateSetPriorityHigher = 1<<0;
 static void UpdateTimer (
     AsyncTimer *    timer,
     unsigned        timeMs,
@@ -335,8 +336,7 @@ void AsyncTimerDeleteCallback (
 // To set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs), use SETPRIORITYHIGHER
 void AsyncTimerUpdate (
     AsyncTimer *    timer,
-    unsigned        callbackMs,
-    unsigned        flags
+    unsigned        callbackMs
 ) {
     ASSERT(timer);
 
@@ -344,12 +344,11 @@ void AsyncTimerUpdate (
     {
         hsLockGuard(s_timerCrit);
         if (callbackMs != kAsyncTimeInfinite) {
-            UpdateTimer(timer, callbackMs + TimeGetMs(), flags);
+            UpdateTimer(timer, callbackMs + TimeGetMs(), 0);
             setEvent = timer == s_timerProcs.Root();
         }
         else {
-            if ((flags & kAsyncTimerUpdateSetPriorityHigher) == 0)
-                timer->priority.Unlink();
+            timer->priority.Unlink();
             setEvent = false;
         }
     }
