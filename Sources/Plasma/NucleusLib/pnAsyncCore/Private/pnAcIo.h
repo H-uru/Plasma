@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACIO_H
 
+#include <functional>
+
 #include "pnNetCommon/plNetAddress.h"
 #include "pnUUID/pnUUID.h"
 
@@ -250,12 +252,8 @@ void AsyncSocketEnableNagling (
 *
 ***/
 
-typedef void (* FAsyncLookupProc) (
-    void *              param,
-    const ST::string &  name,
-    unsigned            addrCount,
-    const plNetAddress  addrs[]
-);
+typedef std::function<void (void* /* param */, const ST::string& /* name */,
+                            const std::vector<plNetAddress>& /* addrs */)> FAsyncLookupProc;
 
 void AsyncAddressLookupName (
     FAsyncLookupProc    lookupProc,

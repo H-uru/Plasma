@@ -98,7 +98,7 @@ static void AddressResolved(const asio::error_code& err,
     if (err || results.empty()) {
         if (err)
             LogMsg(kLogFatal, "DNS: Failed to resolve {}: {}", data.fName, err.message());
-        data.fLookupProc(data.fParam, data.fName, 0, nullptr);
+        data.fLookupProc(data.fParam, data.fName, {});
         return;
     }
 
@@ -116,7 +116,7 @@ static void AddressResolved(const asio::error_code& err,
         addrs.emplace_back(ipv4_addr.to_bytes(), endpoint.port());
     }
 
-    data.fLookupProc(data.fParam, data.fName, addrs.size(), addrs.data());
+    data.fLookupProc(data.fParam, data.fName, addrs);
 
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 }
@@ -143,7 +143,7 @@ void AsyncAddressLookupName(FAsyncLookupProc lookupProc,
 
     DnsResolveData data;
     data.fName = name;
-    data.fLookupProc = lookupProc;
+    data.fLookupProc = std::move(lookupProc);
     data.fParam = param;
 
     hsLockGuard(s_critsect);

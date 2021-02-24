@@ -1575,20 +1575,16 @@ static void Connect (
 }
 
 //============================================================================
-static void AsyncLookupCallback (
-    void *              param,
-    const ST::string &  name,
-    unsigned            addrCount,
-    const plNetAddress  addrs[]
-) {
-    if (!addrCount) {
+static void AsyncLookupCallback(void* param, const ST::string& name,
+                                const std::vector<plNetAddress>& addrs)
+{
+    if (addrs.empty()) {
         ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
         return;
     }
 
-    for (unsigned i = 0; i < addrCount; ++i) {
-        Connect(name, addrs[i]);
-    }
+    for (const plNetAddress& addr : addrs)
+        Connect(name, addr);
 }
 
 
