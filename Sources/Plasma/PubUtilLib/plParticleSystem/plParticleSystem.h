@@ -42,7 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plParticleSystem_inc
 #define plParticleSystem_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsGeometry3.h"
 #include "pnModifier/plModifier.h"
 #include "hsColorRGBA.h"
@@ -95,9 +96,9 @@ protected:
                                     // reserved for particles added explicitly (to keep all the bookkeeping
                                     // in the hands of plParticleEmitter).
     
-    hsTArray<plParticleEffect *> fForces;       // Global forces (wind/gravity/etc) that affect accelleration.
-    hsTArray<plParticleEffect *> fEffects;      // Any other non-constraint effects.
-    hsTArray<plParticleEffect *> fConstraints;  // Rigid body, collision, connectivity, etc.
+    std::vector<plParticleEffect *> fForces;       // Global forces (wind/gravity/etc) that affect acceleration.
+    std::vector<plParticleEffect *> fEffects;      // Any other non-constraint effects.
+    std::vector<plParticleEffect *> fConstraints;  // Rigid body, collision, connectivity, etc.
     plParticleContext   fContext; // Rendering context passed to forces/effects/constraints.
 
     std::vector<plKey>  fPermaLights; // Runtime lights assigned to this system. Currently don't support projected lights on particles.
@@ -116,7 +117,7 @@ protected:
     void IHandleRenderMsg(plPipeline* pipe);
     plDrawInterface* ICheckDrawInterface();
     void IAddEffect(plParticleEffect *effect, uint32_t type);
-    void IReadEffectsArray(hsTArray<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr);
+    void IReadEffectsArray(std::vector<plParticleEffect *> &effects, uint32_t type, hsStream *s, hsResMgr *mgr);
     void IPreSim();
 
 public:

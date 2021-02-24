@@ -63,8 +63,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plInputInterface_h
 
 #include "hsRefCnt.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
+#include <vector>
+
 // Needed for UNIX Build
 //  only windows will let you predeclare an enum
 #include "pnInputCore/plKeyDef.h"
@@ -101,14 +102,14 @@ class plInputInterface : public hsRefCnt
         plInputInterfaceMgr *fManager;
 
         plKeyMap                *fControlMap;
-        hsTArray<plCtrlCmd *>   *fMessageQueue;
+        std::vector<plCtrlCmd *> *fMessageQueue;
 
         hsBitVector     fKeyControlFlags;
         hsBitVector     fKeyControlsFrom2ndKeyFlags;
         hsBitVector     fDisabledControls;
         bool            fEnabled;
 
-        void        ISetMessageQueue( hsTArray<plCtrlCmd *> *queue ) { fMessageQueue = queue; }
+        void        ISetMessageQueue(std::vector<plCtrlCmd *> *queue) { fMessageQueue = queue; }
         plKeyMap    *IGetControlMap() const { return fControlMap; }
         bool        IOwnsControlCode( ControlEventCode code );
         bool        IVerifyShiftKey( plKeyDef key, int index );

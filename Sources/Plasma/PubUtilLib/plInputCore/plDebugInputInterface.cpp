@@ -230,7 +230,7 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     pCmd->fControlActivated = false;
                     pCmd->fControlCode = mouseInfo->fCode;
                     fControlFlags.ClearBit(pCmd->fControlCode);
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                     handled = true;
                     continue;
                 }
@@ -264,7 +264,7 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         break;
                     }
                     pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                 }
             }
             else // if it is an 'always if in box' command see if it's not in the box
@@ -274,7 +274,7 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 pCmd->fControlActivated = false;
                 pCmd->fControlCode = mouseInfo->fCode;
                 pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
-                fMessageQueue->Append(pCmd);
+                fMessageQueue->emplace_back(pCmd);
                 continue;
             }
             else // the control is not set, see if we should set it.
@@ -340,7 +340,7 @@ bool    plDebugInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     }
 
                     // and add it to the list
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                     handled = true;
                     continue;
                 }

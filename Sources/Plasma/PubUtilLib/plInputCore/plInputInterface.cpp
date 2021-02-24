@@ -128,7 +128,7 @@ void plInputInterface::IDeactivateBinding(const plKeyBinding *binding)
         pCmd->SetCmdString( binding->GetExtendedString() );
         pCmd->fNetPropagateToPlayers = ( binding->GetCodeFlags() & kControlFlagNetPropagate ) ? true : false;
     
-        fMessageQueue->Append( pCmd );      
+        fMessageQueue->emplace_back(pCmd);
     }
     IClearKeyControlFlag(binding->GetCode());
 }
@@ -298,7 +298,7 @@ bool    plInputInterface::ProcessKeyBindings( plInputEventMsg *msg )
     pCmd->SetCmdString( binding->GetExtendedString() );
     pCmd->fNetPropagateToPlayers = ( codeFlags & kControlFlagNetPropagate ) ? true : false;
 
-    fMessageQueue->Append( pCmd );
+    fMessageQueue->emplace_back(pCmd);
 
     return true;
 }

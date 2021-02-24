@@ -43,24 +43,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plHardRegionPlanes_inc
 #define plHardRegionPlanes_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "plHardRegion.h"
 
 class plHardRegionPlanes : public plHardRegion
 {
 protected:
-    class HardPlane
+    struct HardPlane
     {
-    public:
         hsVector3           fNorm;
         hsPoint3            fPos;
 
         hsVector3           fWorldNorm;
         hsPoint3            fWorldPos;
-        float            fWorldDist;
+        float               fWorldDist;
     };
-    hsTArray<HardPlane>         fPlanes;
+    std::vector<HardPlane>  fPlanes;
 
 protected:
 public:
@@ -77,9 +76,9 @@ public:
 
     // Now Planes specifics
     void AddPlane(const hsVector3& n, const hsPoint3& p);
-    uint32_t GetNumPlanes() const { return fPlanes.GetCount(); }
-    void GetPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
-    void GetWorldPlane(int i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
+    size_t GetNumPlanes() const { return fPlanes.size(); }
+    void GetPlane(size_t i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fNorm; p = fPlanes[i].fPos; }
+    void GetWorldPlane(size_t i, hsVector3& n, hsPoint3& p) const { n = fPlanes[i].fWorldNorm; p = fPlanes[i].fWorldPos; }
 
     bool IIsInside(const hsPoint3& pos) const override;
     bool ICameraInside() const override;

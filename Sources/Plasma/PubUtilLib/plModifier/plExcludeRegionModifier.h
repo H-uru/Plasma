@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plExcludeRegionModifier_inc
 
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
+#include <vector>
 
 #include "plSDLModifier.h"
 
@@ -64,7 +64,7 @@ protected:
     };
 
     std::vector<plKey> fSafePoints; // Safe positions to move avatars to
-    hsTArray<plKey> fContainedAvatars;      // Avatars inside our volume
+    std::vector<plKey> fContainedAvatars;   // Avatars inside our volume
     plExcludeRegionSDLModifier  *fSDLModifier;
     bool fSeek; // use smart seek or teleport?
     float fSeekTime; // how long to seek for

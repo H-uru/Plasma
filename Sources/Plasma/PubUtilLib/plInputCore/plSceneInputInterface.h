@@ -50,9 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputInterface.h"
 #include "hsGeometry3.h"
+#include <string_theory/string>
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 #include "pnUUID/pnUUID.h"
-#include <string_theory/string>
 
 //// Class Definition ////////////////////////////////////////////////////////
         
@@ -99,11 +101,11 @@ class plSceneInputInterface : public plInputInterface
             bool val;
         };
 
-        hsTArray<clickableTest *> fClickableMap;
-        hsTArray<plKey> fIgnoredAvatars; // these are ignored because they are engaged in avatar-avatar interactions which need to be left undisturbed
-        hsTArray<plKey> fGUIIgnoredAvatars; // these are ignored because they have a GUI in their face right now
-        hsTArray<plKey> fLocalIgnoredAvatars; // these are ALL avatars currently in your age.  they are ignored when you press the 'ignore' key so you can
-                                              // select clickable non-avatar objects through them.
+        std::vector<clickableTest *> fClickableMap;
+        std::vector<plKey> fIgnoredAvatars; // these are ignored because they are engaged in avatar-avatar interactions which need to be left undisturbed
+        std::vector<plKey> fGUIIgnoredAvatars; // these are ignored because they have a GUI in their face right now
+        std::vector<plKey> fLocalIgnoredAvatars; // these are ALL avatars currently in your age.  they are ignored when you press the 'ignore' key so you can
+                                                 // select clickable non-avatar objects through them.
         hsPoint3    fLastStartPt, fLastEndPt;
         plPipeline  *fPipe;
 

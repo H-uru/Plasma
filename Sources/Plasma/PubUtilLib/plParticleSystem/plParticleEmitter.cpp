@@ -309,11 +309,8 @@ bool plParticleEmitter::IUpdate(float delta)
 
 void plParticleEmitter::IUpdateParticles(float delta)
 {
-
-    int i, j;
-
     // Have to remove particles before adding new ones, or we can run out of room.
-    for (i = 0; i < fNumValidParticles; i++)
+    for (uint32_t i = 0; i < fNumValidParticles; i++)
     {
         fParticleExts[i].fLife -= delta;
         if (fParticleExts[i].fLife <= 0 && !(fParticleExts[i].fMiscFlags & plParticleExt::kImmortal))
@@ -352,20 +349,20 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
     // Allow effects a chance to cache any upfront calculations
     // that will apply to all particles.
-    for (j = 0; j < fSystem->fForces.GetCount(); j++)
+    for (plParticleEffect* forceEffect : fSystem->fForces)
     {
-        fSystem->fForces[j]->PrepareEffect(fTargetInfo);
+        forceEffect->PrepareEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fEffects.GetCount(); j++)
+    for (plParticleEffect* effect : fSystem->fEffects)
     {
-        fSystem->fEffects[j]->PrepareEffect(fTargetInfo);
+        effect->PrepareEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fConstraints.GetCount(); j++) 
+    for (plParticleEffect* constraint : fSystem->fConstraints)
     {
-        fSystem->fConstraints[j]->PrepareEffect(fTargetInfo);
+        constraint->PrepareEffect(fTargetInfo);
     }
 
-    for (i = 0; i < fNumValidParticles; i++)
+    for (uint32_t i = 0; i < fNumValidParticles; i++)
     {
         if (!( fParticleExts[i].fMiscFlags & plParticleExt::kImmortal ))
         {           
@@ -400,9 +397,9 @@ void plParticleEmitter::IUpdateParticles(float delta)
             fParticleCores[i].fColor = CreateHexColor(color.fX, color.fY, color.fZ, alpha);                     
         }
 
-        for (j = 0; j < fSystem->fForces.GetCount(); j++)
+        for (plParticleEffect* forceEffect : fSystem->fForces)
         {
-            fSystem->fForces[j]->ApplyEffect(fTargetInfo, i);
+            forceEffect->ApplyEffect(fTargetInfo, i);
         }
         
         currPos = (hsPoint3 *)(fTargetInfo.fPos + i * fTargetInfo.fPosStride);
@@ -443,17 +440,17 @@ void plParticleEmitter::IUpdateParticles(float delta)
 
         *currVelocity += *currAccel * delta;
 
-        for (j = 0; j < fSystem->fEffects.GetCount(); j++)
+        for (plParticleEffect* effect : fSystem->fEffects)
         {
-            fSystem->fEffects[j]->ApplyEffect(fTargetInfo, i);
+            effect->ApplyEffect(fTargetInfo, i);
         }
 
         // We may need to do more than one iteration through the constraints. It's a trade-off
         // between accurracy and speed (what's new?) but I'm going to go with just one
         // for now until we decide things don't "look right"
-        for (j = 0; j < fSystem->fConstraints.GetCount(); j++) 
+        for (plParticleEffect* constraint : fSystem->fConstraints)
         {
-            if( fSystem->fConstraints[j]->ApplyEffect(fTargetInfo, i) )
+            if (constraint->ApplyEffect(fTargetInfo, i))
             {
                 IRemoveParticle(i);
                 i--; // so that we hit this index again on the next iteration
@@ -465,17 +462,17 @@ void plParticleEmitter::IUpdateParticles(float delta)
     }
 
     // Notify the effects that they are done for now.
-    for (j = 0; j < fSystem->fForces.GetCount(); j++)
+    for (plParticleEffect* forceEffect : fSystem->fForces)
     {
-        fSystem->fForces[j]->EndEffect(fTargetInfo);
+        forceEffect->EndEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fEffects.GetCount(); j++)
+    for (plParticleEffect* effect : fSystem->fEffects)
     {
-        fSystem->fEffects[j]->EndEffect(fTargetInfo);
+        effect->EndEffect(fTargetInfo);
     }
-    for (j = 0; j < fSystem->fConstraints.GetCount(); j++) 
+    for (plParticleEffect* constraint : fSystem->fConstraints)
     {
-        fSystem->fConstraints[j]->EndEffect(fTargetInfo);
+        constraint->EndEffect(fTargetInfo);
     }
 }
 

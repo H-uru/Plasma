@@ -367,21 +367,12 @@ void plNetClientMgr::IHandleNetVoiceListMsg(plNetVoiceListMsg* msg)
     if (msg->GetCmd() == plNetVoiceListMsg::kForcedListenerMode)
     {
         // first make sure this message applies to us:
-        int i;
-        bool included = false;
-        for (i = 0; i < msg->GetClientList()->Count(); i++)
-        {   
-            if (msg->GetClientList()->AcquireArray()[i] == NetCommGetPlayer()->playerInt)
-            {   
-                included = true;
-                break;
-            }
-        }
-        if (!included)
+        const std::vector<uint32_t>& clientList = msg->GetClientList();
+        if (std::find(clientList.cbegin(), clientList.cend(), NetCommGetPlayer()->playerInt) == clientList.cend())
             return;
         SetListenListMode(kListenList_Forced);
         // add in the members we receive from python
-        for (i = 0; i < msg->GetClientList()->Count(); i++)
+        for (uint32_t clientId : clientList)
         {
             plNetTransportMember **members = nullptr;
             plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
@@ -391,7 +382,7 @@ void plNetClientMgr::IHandleNetVoiceListMsg(plNetVoiceListMsg* msg)
                 for(int j= 0; j < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); j++ )
                 {
                     plNetTransportMember *mbr = members[ j ];
-                    if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == msg->GetClientList()->AcquireArray()[i])
+                    if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == clientId)
                     {
                         plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
                     }

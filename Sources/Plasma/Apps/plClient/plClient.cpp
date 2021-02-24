@@ -813,8 +813,7 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
 
     if (mov->GetCmd() & plMovieMsg::kAddCallbacks)
     {
-        int j;
-        for (j = 0; j < mov->GetNumCallbacks(); j++)
+        for (size_t j = 0; j < mov->GetNumCallbacks(); j++)
             fMovies[i]->AddCallback(mov->GetCallback(j));
     }
     if (mov->GetCmd() & plMovieMsg::kMove)

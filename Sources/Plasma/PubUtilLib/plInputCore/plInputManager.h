@@ -46,10 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include <locale>
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnInputCore/plInputMap.h"
-#include <locale>
 
 class plDInputMgr;
 class plInputDevice;
@@ -89,7 +90,7 @@ public:
     
 protected:
     
-    hsTArray<plInputDevice*>    fInputDevices;
+    std::vector<plInputDevice*> fInputDevices;
     plInputInterfaceMgr         *fInterfaceMgr;
     bool                        fActive, fFirstActivated;       
 

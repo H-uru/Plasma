@@ -203,7 +203,7 @@ void plAvatarInputInterface::IDeactivateCommand(plMouseInfo *info)
         pCmd->fControlActivated = false;
         pCmd->fControlCode = info->fCode;
         IClearControlFlag(pCmd->fControlCode);
-        fMessageQueue->Append(pCmd);
+        fMessageQueue->emplace_back(pCmd);
     }
 }
 
@@ -405,7 +405,7 @@ void plAvatarInputInterface::ForceAlwaysRun(bool val)
     pCmd->fControlActivated = val;
     pCmd->fNetPropagateToPlayers = false;
         
-    fMessageQueue->Append( pCmd );
+    fMessageQueue->emplace_back(pCmd);
 }   
 
 //// IEval ///////////////////////////////////////////////////////////////////
@@ -482,9 +482,9 @@ bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
             if( cmd->fControlActivated )
             {
                 bool abort = false;
-                for (int i = 0; i < fMessageQueue->GetCount(); i++)
+                for (plCtrlCmd* ctrlMsg : *fMessageQueue)
                 {
-                    if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_MODE && !(*fMessageQueue)[i]->fControlActivated)
+                    if (ctrlMsg->fControlCode == S_SET_WALK_MODE && !ctrlMsg->fControlActivated)
                     {   
                         abort = true;
                         break;
@@ -501,9 +501,9 @@ bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
             if( cmd->fControlActivated )
             {
                 bool abort = false;
-                for (int i = 0; i < fMessageQueue->GetCount(); i++)
+                for (plCtrlCmd* ctrlMsg : *fMessageQueue)
                 {
-                    if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
+                    if (ctrlMsg->fControlCode == S_SET_WALK_BACK_MODE && !ctrlMsg->fControlActivated)
                     {   
                         abort = true;
                         break;
@@ -520,10 +520,10 @@ bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
             if( cmd->fControlActivated )
             {
                 bool abort = false;
-                for (int i = 0; i < fMessageQueue->GetCount(); i++)
+                for (plCtrlCmd* ctrlMsg : *fMessageQueue)
                 {
-                    if ((*fMessageQueue)[i]->fControlCode == S_SET_WALK_BACK_MODE && !(*fMessageQueue)[i]->fControlActivated)
-                    {   
+                    if (ctrlMsg->fControlCode == S_SET_WALK_BACK_MODE && !ctrlMsg->fControlActivated)
+                    {
                         abort = true;
                         break;
                     }
@@ -646,7 +646,7 @@ void    plAvatarInputInterface::MissedInputEvent( plInputEventMsg *pMsg )
             else
                 pCmd->fNetPropagateToPlayers = false;
 
-            fMessageQueue->Append( pCmd );
+            fMessageQueue->emplace_back(pCmd);
             IClearKeyControlFlag( binding.GetCode() );
         }
     }
@@ -836,7 +836,7 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                         break;
                     }
                     pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                 }
                 if (mouseInfo->fControlFlags & kControlFlagDelta)
                 {
@@ -857,7 +857,7 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     }
                     pCmd->fPct = pct;
                     pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                 }
                 
             }
@@ -868,7 +868,7 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                 pCmd->fControlActivated = false;
                 pCmd->fControlCode = mouseInfo->fCode;
                 pCmd->fNetPropagateToPlayers = mouseInfo->fControlFlags & kControlFlagNetPropagate;
-                fMessageQueue->Append(pCmd);
+                fMessageQueue->emplace_back(pCmd);
                 continue;
             }
             else // the control is not set, see if we should set it.
@@ -958,7 +958,7 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     }
                     
                     // and add it to the list
-                    fMessageQueue->Append(pCmd);
+                    fMessageQueue->emplace_back(pCmd);
                     continue;
                 }
             }

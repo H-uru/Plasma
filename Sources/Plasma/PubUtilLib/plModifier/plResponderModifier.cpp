@@ -109,10 +109,10 @@ plResponderModifier::~plResponderModifier()
     delete fResponderSDLMod;
     fResponderSDLMod = nullptr;
 
-    for (int i = 0; i < fStates.Count(); i++)
+    for (plResponderState& state : fStates)
     {
-        for (int j = 0; j < fStates[i].fCmds.Count(); j++ )
-            hsRefCnt_SafeUnRef(fStates[i].fCmds[j].fMsg);
+        for (plResponderCmd& cmd : state.fCmds)
+            hsRefCnt_SafeUnRef(cmd.fMsg);
     }
 }
 
@@ -189,7 +189,7 @@ bool plResponderModifier::MsgReceive(plMessage* msg)
 
 void plResponderModifier::AddCommand(plMessage* pMsg, int state)
 {
-    fStates[state].fCmds.Append(plResponderCmd(pMsg, -1));
+    fStates[state].fCmds.emplace_back(pMsg, -1);
 }
 
 void plResponderModifier::AddCallback(int8_t state, int8_t cmd, int8_t callback)
@@ -219,7 +219,7 @@ bool plResponderModifier::IIsLocalOnlyCmd(plMessage* cmd)
 void plResponderModifier::ISetResponderState(int8_t state)
 {
     // make sure that it is a valid state to switch to
-    if (state >= 0 && state < fStates.Count())
+    if (state >= 0 && (size_t)state < fStates.size())
     {
         fCurState = state;
     }
@@ -280,7 +280,7 @@ bool plResponderModifier::IContinueSending()
 
     plResponderState& state = fStates[fCurState];
 
-    while (fCurCommand < state.fCmds.Count())
+    while (fCurCommand < (hsSsize_t)state.fCmds.size())
     {
         plMessage *msg = state.fCmds[fCurCommand].fMsg;
         if (msg)
@@ -602,7 +602,7 @@ void plResponderModifier::IFastForward(bool python)
 
     plResponderState& state = fStates[fCurState];
 
-    while (fCurCommand < state.fCmds.Count())
+    while (fCurCommand < (hsSsize_t)state.fCmds.size())
     {
         plMessage *msg = state.fCmds[fCurCommand].fMsg;
         msg = IGetFastForwardMsg(msg, python);
@@ -625,30 +625,25 @@ void plResponderModifier::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    int8_t numStates = stream->ReadByte();
-    fStates.SetCount(numStates);
-    for (int8_t i = 0; i < numStates; i++)
+    uint8_t numStates = stream->ReadByte();
+    fStates.resize(numStates);
+    for (plResponderState& state : fStates)
     {
-        plResponderState& state = fStates[i];
         state.fNumCallbacks = stream->ReadByte();
         state.fSwitchToState = stream->ReadByte();
 
-        int8_t j;
-
-        int8_t numCmds = stream->ReadByte();
-        state.fCmds.SetCount(numCmds);
-        for (j = 0; j < numCmds; j++)
+        uint8_t numCmds = stream->ReadByte();
+        state.fCmds.resize(numCmds);
+        for (plResponderCmd& cmd : state.fCmds)
         {
-            plResponderCmd& cmd = state.fCmds[j];
-
             plMessage* pMsg = plMessage::ConvertNoRef(mgr->ReadCreatable(stream));
             cmd.fMsg = pMsg;
             cmd.fWaitOn = stream->ReadByte();
         }
 
         state.fWaitToCmd.clear();
-        int8_t mapSize = stream->ReadByte();
-        for (j = 0; j < mapSize; j++)
+        uint8_t mapSize = stream->ReadByte();
+        for (uint8_t j = 0; j < mapSize; j++)
         {
             int8_t wait = stream->ReadByte();
             int8_t cmd = stream->ReadByte();
@@ -670,20 +665,19 @@ void plResponderModifier::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    int8_t numStates = fStates.GetCount();
-    stream->WriteByte(numStates);
-    for (int i = 0; i < numStates; i++)
+    size_t numStates = fStates.size();
+    hsAssert(numStates < std::numeric_limits<uint8_t>::max(), "Too many states");
+    stream->WriteByte((uint8_t)numStates);
+    for (const plResponderState& state : fStates)
     {
-        plResponderState& state = fStates[i];
         stream->WriteByte(state.fNumCallbacks);
         stream->WriteByte(state.fSwitchToState);
 
-        int8_t numCmds = state.fCmds.GetCount();
-        stream->WriteByte(numCmds);
-        for (int j = 0; j < numCmds; j++)
+        size_t numCmds = state.fCmds.size();
+        hsAssert(numCmds < std::numeric_limits<uint8_t>::max(), "Too many commands");
+        stream->WriteByte((uint8_t)numCmds);
+        for (const plResponderCmd& cmd : state.fCmds)
         {
-            plResponderCmd& cmd = state.fCmds[j];
-
             mgr->WriteCreatable(stream, cmd.fMsg);
             stream->WriteByte(cmd.fWaitOn);
         }
