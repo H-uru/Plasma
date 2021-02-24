@@ -96,7 +96,7 @@ protected:
                                     // reserved for particles added explicitly (to keep all the bookkeeping
                                     // in the hands of plParticleEmitter).
     
-    std::vector<plParticleEffect *> fForces;       // Global forces (wind/gravity/etc) that affect accelleration.
+    std::vector<plParticleEffect *> fForces;       // Global forces (wind/gravity/etc) that affect acceleration.
     std::vector<plParticleEffect *> fEffects;      // Any other non-constraint effects.
     std::vector<plParticleEffect *> fConstraints;  // Rigid body, collision, connectivity, etc.
     plParticleContext   fContext; // Rendering context passed to forces/effects/constraints.

@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <string_theory/string>
+#include <vector>
 
 // Plasma CoreLib
 #include "HeadSpin.h"
