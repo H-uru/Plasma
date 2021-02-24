@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
 
+#include <functional>
 #include <thread>
 
 #include "pnUtils/pnUtils.h"
@@ -62,10 +63,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Private/Nt/pnAceNt.h"
 #include "Private/Unix/pnAceUx.h"
 
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
+
 #include <process.h>
 
 #ifdef HS_BUILD_FOR_MACOS
 #include <malloc/malloc.h>
 #else
 #include <malloc.h>
+#endif
+
+#ifdef USE_VLD
+#include <vld.h>
 #endif

@@ -1,5 +1,6 @@
 set(pnAsyncCoreExe_SOURCES
     pnAceCore.cpp
+    pnAceDns.cpp
     pnAceIo.cpp
     pnAceThread.cpp
     pnAceTimer.cpp
@@ -28,7 +29,6 @@ set(pnAsyncCoreExe_PRIVATE_UNIX
 )
 
 set(pnAsyncCoreExe_PRIVATE_WIN32
-    Private/Win32/pnAceW32Dns.cpp
     Private/Win32/pnAceW32Thread.cpp
 )
 
@@ -48,6 +48,7 @@ target_link_libraries(
         pnAsyncCore
         pnNetBase
         pnUtils
+        ASIO::ASIO
         $<$<BOOL:${USE_VLD}>:${VLD_LIBRARY}>
 )
 

@@ -47,6 +47,7 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # End HeadSpin Configuration
 
 # Find all 3rd-party libraries that are required
+find_package(ASIO 1.14 REQUIRED)
 find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
 find_package(freetype)
