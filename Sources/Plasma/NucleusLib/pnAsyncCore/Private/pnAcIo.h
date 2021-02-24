@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 typedef struct AsyncIdStruct *         AsyncId;
-typedef struct AsyncFileStruct *       AsyncFile;
 typedef struct AsyncSocketStruct *     AsyncSocket;
 typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
@@ -188,24 +187,6 @@ static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
     (((int)(c)) == kConnTypeAdminInterface)
 
 
-void AsyncSocketRegisterNotifyProc (
-    uint8_t                 connType,
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId = 0,
-    unsigned                buildType = 0,
-    unsigned                branchId = 0,
-    const plUUID&           productId = kNilUuid
-);
-
-void AsyncSocketUnregisterNotifyProc (
-    uint8_t                 connType,
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId = 0,
-    unsigned                buildType = 0,
-    unsigned                branchId = 0,
-    const plUUID&           productId = kNilUuid
-);
-
 FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
     const uint8_t           buffer[],
     unsigned                bytes,
@@ -250,50 +231,11 @@ void AsyncSocketDisconnect (
 // This function must only be called after receiving a kNotifySocketDisconnect
 void AsyncSocketDelete (AsyncSocket sock);
 
-// Returns false of socket has been closed
+// Returns false if socket has been closed
 bool AsyncSocketSend (
     AsyncSocket             sock,
     const void *            data,
     unsigned                bytes
-);
-
-// Buffer must stay valid until I/O has completed
-// Returns false if socket has been closed
-bool AsyncSocketWrite (
-    AsyncSocket             sock,
-    const void *            buffer,
-    unsigned                bytes,
-    void *                  param
-);
-
-// This function must only be called from with a socket notification callback.
-// Calling at any other time is a crash bug waiting to happen!
-void AsyncSocketSetNotifyProc (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-);
-
-// A backlog of zero (the default) means that no buffering is performed when
-// the TCP send buffer is full, and the send() function will close the socket
-// on send fail
-void AsyncSocketSetBacklogAlloc (
-    AsyncSocket             sock,
-    unsigned                bufferSize
-);
-
-// On failure, returns 0
-// On success, returns bound port (if port number was zero, returns assigned port)
-// For connections that will use kConnType* connections, set notifyProc = nil;
-// the handler will be found when connection packet is received.
-// for connections with hard-coded behavior, set the notifyProc here (e.g. for use
-// protocols like SNMP on port 25)
-unsigned AsyncSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc = nil
-);
-void AsyncSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc = nil
 );
 
 void AsyncSocketEnableNagling (
@@ -321,16 +263,4 @@ void AsyncAddressLookupName (
     const char          name[],
     unsigned            port,
     void *              param
-);
-
-void AsyncAddressLookupAddr (
-    AsyncCancelId *     cancelId,
-    FAsyncLookupProc    lookupProc,
-    const plNetAddress& address,
-    void *              param
-);
-
-void AsyncAddressLookupCancel (
-    FAsyncLookupProc    lookupProc,
-    AsyncCancelId       cancelId
 );

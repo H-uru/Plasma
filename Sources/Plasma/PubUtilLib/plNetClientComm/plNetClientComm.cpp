@@ -47,6 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm.h"
 
+#include <chrono>
+#include <thread>
+
 #include "plProduct.h"
 #include "hsResMgr.h"
 
@@ -810,7 +813,7 @@ void NetCommConnect () {
 
         while(!s_hasAuthSrvIpAddress && !s_netError) {
             NetClientUpdate();
-            AsyncSleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
             
         const ST::string authSrv[] = {
@@ -839,7 +842,7 @@ void NetCommConnect () {
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();
-                AsyncSleep(10);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             
             const ST::string fileSrv[] = {

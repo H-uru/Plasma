@@ -191,9 +191,6 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 
 void NtInitialize ();
 void NtDestroy (unsigned exitThreadWaitMs);
-void NtSignalShutdown ();
-void NtWaitForShutdown ();
-void NtSleep (unsigned sleepMs);
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
@@ -217,28 +214,6 @@ bool NtSocketSend (
     AsyncSocket     sock,
     const void *    data,
     unsigned        bytes
-);
-bool NtSocketWrite (
-    AsyncSocket     sock,
-    const void *    buffer,
-    unsigned        bytes,
-    void *          param
-);
-void NtSocketSetNotifyProc (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-);
-void NtSocketSetBacklogAlloc (
-    AsyncSocket     sock,
-    unsigned        bufferSize
-);
-unsigned NtSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-void NtSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
 );
 void NtSocketEnableNagling (
     AsyncSocket             conn,

@@ -261,53 +261,6 @@ bool AsyncSocketSend (
     return g_api.socketSend(sock, data, bytes);
 }
 
-//===========================================================================
-bool AsyncSocketWrite (
-    AsyncSocket             sock,
-    const void *            buffer,
-    unsigned                bytes,
-    void *                  param
-) {
-    ASSERT(g_api.socketWrite);
-    return g_api.socketWrite(sock, buffer, bytes, param);
-}
-
-//===========================================================================
-void AsyncSocketSetNotifyProc (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    ASSERT(g_api.socketSetNotifyProc);
-    g_api.socketSetNotifyProc(sock, notifyProc);
-}
-
-//===========================================================================
-void AsyncSocketSetBacklogAlloc (
-    AsyncSocket             sock,
-    unsigned                bufferSize
-) {
-    ASSERT(g_api.socketSetBacklogAlloc);
-    g_api.socketSetBacklogAlloc(sock, bufferSize);
-}
-
-//===========================================================================
-unsigned AsyncSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    ASSERT(g_api.socketStartListening);
-    return g_api.socketStartListening(listenAddr, notifyProc);
-}
-
-//===========================================================================
-void AsyncSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    ASSERT(g_api.socketStopListening);
-    g_api.socketStopListening(listenAddr, notifyProc);
-}
-
 //============================================================================
 void AsyncSocketEnableNagling (
     AsyncSocket             sock,
@@ -315,68 +268,6 @@ void AsyncSocketEnableNagling (
 ) {
     ASSERT(g_api.socketEnableNagling);
     g_api.socketEnableNagling(sock, enable);
-}
-
-//===========================================================================
-void AsyncSocketRegisterNotifyProc (
-    uint8_t                    connType, 
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId,
-    unsigned                buildType,
-    unsigned                branchId,
-    const plUUID&           productId
-) {
-    ASSERT(connType != kConnTypeNil);
-    ASSERT(notifyProc);
-
-    // Perform memory allocation outside lock
-    ISocketConnType * ct    = new ISocketConnType;
-    ct->notifyProc          = notifyProc;
-    ct->connType            = connType;
-    ct->buildId             = buildId;
-    ct->buildType           = buildType;
-    ct->branchId            = branchId;
-    ct->productId           = productId;
-    ct->flags               = kConnHashFlagsIgnore;
-
-    hsLockForWriting lock(s_notifyProcLock);
-    s_notifyProcs.Add(ct);
-}
-
-//===========================================================================
-void AsyncSocketUnregisterNotifyProc (
-    uint8_t                    connType, 
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId,
-    unsigned                buildType,
-    unsigned                branchId,
-    const plUUID&           productId
-) {
-    ISocketConnHash hash;
-    hash.connType   = connType;
-    hash.buildId    = buildId;
-    hash.buildType  = buildType;
-    hash.branchId   = branchId;
-    hash.productId  = productId;
-    hash.flags      = kConnHashFlagsExactMatch;
-
-    ISocketConnType * scan;
-    {
-        hsLockForWriting lock(s_notifyProcLock);
-
-        scan = s_notifyProcs.Find(hash);
-        for (; scan; scan = s_notifyProcs.FindNext(hash, scan)) {
-            if (scan->notifyProc != notifyProc)
-                continue;
-
-            // Unlink the object so it can be deleted outside the lock
-            s_notifyProcs.Unlink(scan);
-            break;
-        }
-    }
-
-    // perform memory deallocation outside the lock
-    delete scan;
 }
 
 //===========================================================================
