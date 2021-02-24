@@ -1577,7 +1577,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const char          name[],
+    const ST::string &  name,
     unsigned            addrCount,
     const plNetAddress  addrs[]
 ) {
@@ -4731,11 +4731,9 @@ void NetCliAuthStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
                 AsyncAddressLookupName(
-                    &cancelId,
                     AsyncLookupCallback,
-                    authAddrList[i].c_str(),
+                    authAddrList[i],
                     GetClientPort(),
                     nullptr
                 );

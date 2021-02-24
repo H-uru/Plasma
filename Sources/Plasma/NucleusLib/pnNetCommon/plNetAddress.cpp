@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <array>
+
 #include "plNetAddress.h"
 #include "pnNetCommon.h"
 
@@ -50,6 +52,13 @@ plNetAddress::plNetAddress()
 }
 
 plNetAddress::plNetAddress(uint32_t addr, uint16_t port)
+{
+    Clear();
+    SetHost(addr);
+    SetPort(port);
+}
+
+plNetAddress::plNetAddress(const std::array<uint8_t, 4>& addr, uint16_t port)
 {
     Clear();
     SetHost(addr);
@@ -123,6 +132,13 @@ bool plNetAddress::SetHost(const ST::string& hostname)
 bool plNetAddress::SetHost(uint32_t addr)
 {
     memcpy(&fAddr.sin_addr, &addr,sizeof(addr));
+    fAddr.sin_family = AF_INET;
+    return true;
+}
+
+bool plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
+{
+    memcpy(&fAddr.sin_addr, addr.data(), addr.size());
     fAddr.sin_family = AF_INET;
     return true;
 }

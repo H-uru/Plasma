@@ -252,15 +252,14 @@ void AsyncSocketEnableNagling (
 
 typedef void (* FAsyncLookupProc) (
     void *              param,
-    const char          name[],
+    const ST::string &  name,
     unsigned            addrCount,
     const plNetAddress  addrs[]
 );
 
 void AsyncAddressLookupName (
-    AsyncCancelId *     cancelId,
     FAsyncLookupProc    lookupProc,
-    const char          name[],
+    const ST::string &  name,
     unsigned            port,
     void *              param
 );

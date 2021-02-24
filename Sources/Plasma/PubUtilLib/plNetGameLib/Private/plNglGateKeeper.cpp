@@ -463,7 +463,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const char          name[],
+    const ST::string &  name,
     unsigned            addrCount,
     const plNetAddress  addrs[]
 ) {
@@ -983,11 +983,9 @@ void NetCliGateKeeperStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
                 AsyncAddressLookupName(
-                    &cancelId,
                     AsyncLookupCallback,
-                    gateKeeperAddrList[i].c_str(),
+                    gateKeeperAddrList[i],
                     GetClientPort(),
                     nullptr
                 );

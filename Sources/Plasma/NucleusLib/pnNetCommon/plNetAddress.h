@@ -96,6 +96,15 @@ public:
     plNetAddress(uint32_t addr, uint16_t port);
 
     /**
+     * Initializes a new network address from the given IPv4 address and port
+     * number.
+     *
+     * @param addr The IPv4 address as a byte array in network byte order.
+     * @param port The port number as a 16-bit host order integer.
+     */
+    plNetAddress(const std::array<uint8_t, 4>& addr, uint16_t port);
+
+    /**
      * Initializes a new network address from the given hostname and port
      * number.
      *
@@ -103,8 +112,6 @@ public:
      * @param port The port number as a 16-bit host order integer.
      */
     plNetAddress(const ST::string& addr, uint16_t port);
-
-    virtual ~plNetAddress(){}
 
     bool operator==(const plNetAddress& other) const {
         return (GetHost() == other.GetHost()) && (GetPort() == other.GetPort());
@@ -165,6 +172,14 @@ public:
      * @param ip4addr The host IPv4 address in network byte order.
      */
     bool SetHost(uint32_t ip4addr);
+
+    /**
+     * Sets the IPv4 address of the host from a byte array in network
+     * byte order (big endian).
+     *
+     * @param ip4addr The host IPv4 address in network byte order.
+     */
+    bool SetHost(const std::array<uint8_t, 4>& ip4addr);
 
     /**
      * Retrieves the internal address type.

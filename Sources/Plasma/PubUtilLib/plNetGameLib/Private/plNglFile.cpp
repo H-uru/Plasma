@@ -539,7 +539,7 @@ static void Connect (
 //============================================================================
 static void AsyncLookupCallback (
     void *              param,
-    const char          name[],
+    const ST::string &  name,
     unsigned            addrCount,
     const plNetAddress  addrs[]
 ) {
@@ -1319,11 +1319,9 @@ void NetCliFileStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
                 AsyncAddressLookupName(
-                    &cancelId,
                     AsyncLookupCallback,
-                    fileAddrList[i].c_str(),
+                    fileAddrList[i],
                     GetClientPort(),
                     nullptr
                 );
