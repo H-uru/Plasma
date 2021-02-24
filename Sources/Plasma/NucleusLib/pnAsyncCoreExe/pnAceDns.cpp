@@ -80,7 +80,7 @@ struct DnsResolveData
 };
 
 static std::recursive_mutex     s_critsect;
-static DnsResolver             *s_resolver = nullptr;
+static DnsResolver*             s_resolver = nullptr;
 
 void DnsDestroy(unsigned exitThreadWaitMs)
 {
