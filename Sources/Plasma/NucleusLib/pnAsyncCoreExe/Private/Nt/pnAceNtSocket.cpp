@@ -914,7 +914,7 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
 //===========================================================================
 void INtSocketDestroy () {
     if (s_socketTimer) {
-        AsyncTimerDelete(s_socketTimer, kAsyncTimerDestroyWaitComplete);
+        AsyncTimerDelete(s_socketTimer);
         s_socketTimer = nullptr;
     }
 }

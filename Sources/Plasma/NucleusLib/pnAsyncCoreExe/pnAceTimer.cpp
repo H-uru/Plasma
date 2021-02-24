@@ -281,24 +281,15 @@ void AsyncTimerCreate (
 //===========================================================================
 // Timer procs can be in the process of getting called in
 // another thread during the unregister function -- be careful!
-// -- waitComplete = will wait until the timer has been unregistered and is
-//    no longer in the process of being called before returning. The flag may only
-//    be set by init/destruct threads, not I/O worker threads. In addition, extreme
-//    care should be used to avoid a deadlock when this flag is set; in general, it
-//    is a good idea not to hold any locks or critical sections when setting the flag.
-void AsyncTimerDelete (
-    AsyncTimer *    timer,
-    unsigned        flags
-) {
+// This will wait until the timer has been unregistered and is
+// no longer in the process of being called before returning.
+void AsyncTimerDelete(AsyncTimer* timer)
+{
     // If the timer has already been destroyed then exit
     ASSERT(timer);
 
     // Wait for timer before exiting function?
-    FAsyncTimerProc timerProc;
-    if (flags & kAsyncTimerDestroyWaitComplete)
-        timerProc = timer->timerProc;
-    else
-        timerProc = nullptr;
+    FAsyncTimerProc timerProc = timer->timerProc;
 
     AsyncTimerDeleteCallback(timer, nullptr);
 
