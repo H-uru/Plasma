@@ -443,9 +443,9 @@ const plModifier* plSceneObject::GetModifierByType(uint16_t classIdx) const
 bool plSceneObject::MsgReceive(plMessage* msg)
 {
 
-#if 0   // objects are only in the nil room when they are being paged out
+#if 0   // objects are only in the nullptr room when they are being paged out
     // TEMP - until we have another way to neutralize objects
-    // for an object in the 'nil' room, ignore most msgs    
+    // for an object in the 'nullptr' room, ignore most msgs
     if (GetSceneNode() == nullptr && !plNodeChangeMsg::ConvertNoRef(msg) &&
         !plRefMsg::ConvertNoRef(msg)&&
         !plSelfDestructMsg::ConvertNoRef(msg))

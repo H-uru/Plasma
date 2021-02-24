@@ -784,7 +784,9 @@ const plSpawnModifier * plAvatarMgr::GetSpawnPoint(int i)
         return fSpawnPoints[i];
     }
     else
+    {
         return nullptr;
+    }
 }
 
 int plAvatarMgr::FindSpawnPoint( const char *name ) const

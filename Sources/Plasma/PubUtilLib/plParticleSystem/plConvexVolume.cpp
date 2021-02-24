@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plConvexVolume::plConvexVolume()
 {
-    //fFlags = nullptr;
     fLocalPlanes = nullptr;
     fWorldPlanes = nullptr;
     fNumPlanes = 0;
@@ -61,7 +60,6 @@ plConvexVolume::~plConvexVolume()
 
 void plConvexVolume::IClear()
 {
-    //delete [] fFlags;
     delete [] fLocalPlanes;
     delete [] fWorldPlanes;
 }
@@ -79,8 +77,6 @@ bool plConvexVolume::AddPlane(const hsPlane3 &plane)
             return false; // no need to add it
     }
     fNumPlanes++;
-    //delete [] fFlags;
-    //fFlags = new uint32_t[fNumPlanes];
 
     hsPlane3 *tempPlanes = new hsPlane3[fNumPlanes];
     for (i = 0; i < fNumPlanes - 1; i++)
@@ -114,7 +110,6 @@ void plConvexVolume::Update(const hsMatrix44 &l2w)
 void plConvexVolume::SetNumPlanesAndClear(const uint32_t num)
 {
     IClear();
-    //fFlags = new uint32_t[num];
     fLocalPlanes = new hsPlane3[num];
     fWorldPlanes = new hsPlane3[num];
     fNumPlanes = num;
@@ -195,7 +190,6 @@ void plConvexVolume::Read(hsStream* s, hsResMgr *mgr)
     for (i = 0; i < fNumPlanes; i++)
     {
         fLocalPlanes[i].Read(s);
-        //fFlags[i] = s->ReadLE32();
     }
 }
 
@@ -206,6 +200,5 @@ void plConvexVolume::Write(hsStream* s, hsResMgr *mgr)
     for (i = 0; i < fNumPlanes; i++)
     {
         fLocalPlanes[i].Write(s);
-        //s->WriteLE32(fFlags[i]);
     }
 }

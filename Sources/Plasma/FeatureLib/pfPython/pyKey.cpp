@@ -110,7 +110,9 @@ PyObject* pyKey::GetPySceneObject()
             return pySceneObject::New(mod->GetTarget(0)->GetKey());
         }
         else
+        {
             return nullptr;
+        }
     }
     // create pySceneObject that will be managed by Python
     return pySceneObject::New(getKey());
