@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Private/pnAceInt.h"
 #include "Private/Nt/pnAceNt.h"
-#include "Private/Unix/pnAceUx.h"
 
 #include <asio/executor_work_guard.hpp>
 #include <asio/io_context.hpp>

@@ -83,24 +83,12 @@ static void IAsyncInitUseNt () {
 }
 
 //===========================================================================
-static void IAsyncInitUseUnix () {
-#ifdef HS_BUILD_FOR_UNIX
-    #error Unix I/O not implemented yet
-    UxGetApi(&g_api);
-#else
-    ErrorAssert(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
-#endif
-}
-
-//===========================================================================
 static void IAsyncInit () {
 #ifdef HS_BUILD_FOR_WIN32
     IAsyncInitUseNt();
-#elif HS_BUILD_FOR_UNIX
-    IAsyncInitUseUnix();
 #else
-    ErrorAssert("AsyncCore: No default implementation for this platform");
-#endif    
+    #error No default implementation for this platform
+#endif
 }
 
 

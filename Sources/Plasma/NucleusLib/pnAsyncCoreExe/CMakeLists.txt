@@ -24,10 +24,6 @@ set(pnAysncCoreExe_PRIVATE_NT
     Private/Nt/pnAceNtSocket.cpp
 )
 
-set(pnAsyncCoreExe_PRIVATE_UNIX
-    Private/Unix/pnAceUx.h
-)
-
 set(pnAsyncCoreExe_PRIVATE_WIN32
     Private/Win32/pnAceW32Thread.cpp
 )
@@ -37,7 +33,7 @@ set(pnAsyncCoreExe_PRIVATE_WIN32
 add_library(pnAsyncCoreExe STATIC
             ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS}
             ${pnAsyncCoreExe_PRIVATE} ${pnAysncCoreExe_PRIVATE_NT}
-            ${pnAsyncCoreExe_PRIVATE_UNIX} ${pnAsyncCoreExe_PRIVATE_WIN32})
+            ${pnAsyncCoreExe_PRIVATE_WIN32})
 
 # Yeah, this looks strange, but this library has no public headers. It's
 # the actual implementation of pnAsyncCore. Either rewrite it or get over it.
@@ -56,5 +52,4 @@ source_group("Source Files" FILES ${pnAsyncCoreExe_SOURCES})
 source_group("Header Files" FILES ${pnAsyncCoreExe_HEADERS})
 source_group("Private" FILES ${pnAsyncCoreExe_PRIVATE})
 source_group("Private\\Nt" FILES ${pnAysncCoreExe_PRIVATE_NT})
-source_group("Private\\Unix" FILES ${pnAsyncCoreExe_PRIVATE_UNIX})
 source_group("Private\\Win32" FILES ${pnAsyncCoreExe_PRIVATE_WIN32})
