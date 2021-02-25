@@ -635,7 +635,7 @@ static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
             sockaddr_in addr;
             addr.sin_family = AF_INET;
             addr.sin_port   = htons((uint16_t) localPort);
-            addr.sin_addr.S_un.S_addr = INADDR_ANY;
+            addr.sin_addr.s_addr = INADDR_ANY;
             memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
             if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
                 LogMsg(kLogError, "bind(port {}) failed ({})", localPort, WSAGetLastError());
@@ -643,9 +643,14 @@ static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
             }
         }
 
-        if (connect(s, (const sockaddr *) &addr.GetAddressInfo(), sizeof(AddressType))) {
+        sockaddr_in saddr;
+        saddr.sin_family = AF_INET;
+        saddr.sin_port = htons(addr.GetPort());
+        saddr.sin_addr.s_addr = addr.GetHost();
+        memset(saddr.sin_zero, 0, sizeof(saddr.sin_zero));
+        if (connect(s, (const sockaddr *) &saddr, sizeof(saddr))) {
             if (WSAGetLastError() != WSAEWOULDBLOCK) {
-                LogMsg(kLogError, "sockegt connect failed");
+                LogMsg(kLogError, "socket connect failed");
                 break;
             }
         }

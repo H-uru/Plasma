@@ -44,27 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetAddress_h_inc
 
 #include "HeadSpin.h"
-#include "hsWindows.h" // FIXME
 
 #include "hsStream.h"
-
-#if defined(HS_BUILD_FOR_WIN32)
-
-#elif defined( HS_BUILD_FOR_UNIX )
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#else
-#error  "Must Include net stuff for this OS here"
-#endif
-
 
 #ifdef SetPort
 #undef SetPort
 #endif
-
-typedef sockaddr_in  AddressType;
 
 /**
  * A class representing a network address endpoint, as a pair of host address
@@ -76,15 +61,15 @@ typedef sockaddr_in  AddressType;
  */
 class plNetAddress
 {
-    // fAddr must be first field
-    AddressType     fAddr;
+    uint32_t    fHost;
+    uint16_t    fPort;
 
 public:
     /**
      * Initializes an empty network address.
      * All the fields of the sockaddr will be zeroed.
      */
-    plNetAddress();
+    plNetAddress() : fHost(), fPort() { }
 
     /**
      * Initializes a new network address from the given IPv4 address and port
@@ -93,7 +78,7 @@ public:
      * @param addr The IPv4 address as a 32-bit network byte order integer.
      * @param port The port number as a 16-bit host order integer.
      */
-    plNetAddress(uint32_t addr, uint16_t port);
+    plNetAddress(uint32_t addr, uint16_t port) : fHost(addr), fPort(port) { }
 
     /**
      * Initializes a new network address from the given IPv4 address and port
@@ -102,7 +87,11 @@ public:
      * @param addr The IPv4 address as a byte array in network byte order.
      * @param port The port number as a 16-bit host order integer.
      */
-    plNetAddress(const std::array<uint8_t, 4>& addr, uint16_t port);
+    plNetAddress(const std::array<uint8_t, 4>& addr, uint16_t port)
+        : fHost(), fPort(port)
+    {
+        SetHost(addr);
+    }
 
     /**
      * Initializes a new network address from the given hostname and port
@@ -111,7 +100,11 @@ public:
      * @param addr The DNS hostname of the host.
      * @param port The port number as a 16-bit host order integer.
      */
-    plNetAddress(const ST::string& addr, uint16_t port);
+    plNetAddress(const ST::string& addr, uint16_t port)
+        : fHost(), fPort(port)
+    {
+        SetHost(addr);
+    }
 
     bool operator==(const plNetAddress& other) const {
         return (GetHost() == other.GetHost()) && (GetPort() == other.GetPort());
@@ -124,31 +117,25 @@ public:
     /**
      * Clears the address and zeros out the sockaddr fields.
      */
-    void Clear();
-
-    /**
-     * Sets the address to INADDR_ANY for binding to any host.
-     */
-    bool SetAnyAddr();
-
-    /**
-     * Sets the port number to 0 to allow binding to any port.
-     */
-    bool SetAnyPort();
+    void Clear()
+    {
+        fHost = 0;
+        fPort = 0;
+    }
 
     /**
      * Gets the port number of the host.
      *
      * @return The host port number.
      */
-    uint16_t GetPort() const;
+    uint16_t GetPort() const { return fPort; }
 
     /**
      * Sets the port number of the host.
      *
      * @param port The port number in host byte order.
      */
-    bool SetPort(uint16_t port);
+    void SetPort(uint16_t port) { fPort = port; }
 
     /**
      * Gets the IPv4 address of the host as a 32-bit integer in network byte
@@ -156,14 +143,14 @@ public:
      *
      * @return The IPv4 host address.
      */
-    uint32_t GetHost() const;
+    uint32_t GetHost() const { return fHost; }
 
     /**
      * Sets the IPv4 address of the host from a DNS name.
      *
      * @param hostname The DNS name of the host.
      */
-    bool SetHost(const ST::string& hostname);
+    void SetHost(const ST::string& hostname);
 
     /**
      * Sets the IPv4 address of the host from an unsigned 32-bit integer in
@@ -171,7 +158,7 @@ public:
      *
      * @param ip4addr The host IPv4 address in network byte order.
      */
-    bool SetHost(uint32_t ip4addr);
+    void SetHost(uint32_t ip4addr) { fHost = ip4addr; }
 
     /**
      * Sets the IPv4 address of the host from a byte array in network
@@ -179,21 +166,7 @@ public:
      *
      * @param ip4addr The host IPv4 address in network byte order.
      */
-    bool SetHost(const std::array<uint8_t, 4>& ip4addr);
-
-    /**
-     * Retrieves the internal address type.
-     *
-     * @return A constant sockaddr_in.
-     */
-    const AddressType& GetAddressInfo() const { return fAddr; }
-
-    /**
-     * Retrieves the internal address type.
-     *
-     * @return A sockaddr_in.
-     */
-    AddressType& GetAddressInfo() { return fAddr; }
+    void SetHost(const std::array<uint8_t, 4>& ip4addr);
 
     /**
      * Returns the IPv4 address of the host as a string in 4-octet dotted

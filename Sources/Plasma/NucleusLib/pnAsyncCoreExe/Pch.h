@@ -54,11 +54,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <thread>
 
-#include "pnUtils/pnUtils.h"
 #include "plProduct.h"
+#include "hsThread.h"
+#include "hsWindows.h"
+
+#include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"
-#include "hsThread.h"
 
 #include "Private/pnAceInt.h"
 #include "Private/Nt/pnAceNt.h"
