@@ -6,7 +6,6 @@ set(pnUtils_HEADERS
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
-    pnUtPriQ.h
     pnUtStr.h
     pnUtTime.h
 )

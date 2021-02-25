@@ -51,8 +51,7 @@ struct DnsResolver
     tcp::resolver fResolver;
     std::thread fLookupThread;
 
-    DnsResolver()
-        : fContext(), fResolver(fContext), fWorkGuard(fContext.get_executor())
+    DnsResolver() : fResolver(fContext), fWorkGuard(fContext.get_executor())
     {
         // Start the resolver thread
         fLookupThread = std::thread([this] {
@@ -63,7 +62,7 @@ struct DnsResolver
         });
     }
 
-    void destroy(unsigned exitThreadWaitMs)
+    void Destroy(unsigned exitThreadWaitMs)
     {
         fWorkGuard.reset();
         fResolver.cancel();
@@ -85,7 +84,7 @@ static DnsResolver*             s_resolver = nullptr;
 void DnsDestroy(unsigned exitThreadWaitMs)
 {
     if (s_resolver) {
-        s_resolver->destroy(exitThreadWaitMs);
+        s_resolver->Destroy(exitThreadWaitMs);
         delete s_resolver;
         s_resolver = nullptr;
     }
