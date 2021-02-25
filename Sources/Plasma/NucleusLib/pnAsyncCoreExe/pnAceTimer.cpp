@@ -49,7 +49,7 @@ struct AsyncTimer
     FAsyncTimerProc     fDestroyProc;
     void*               fParam;
 
-    AsyncTimer(asio::io_context& context, FAsyncTimerProc &&timerProc, void* param)
+    AsyncTimer(asio::io_context& context, FAsyncTimerProc&& timerProc, void* param)
         : fTimer(context), fTimerProc(std::move(timerProc)), fParam(param)
     { }
 

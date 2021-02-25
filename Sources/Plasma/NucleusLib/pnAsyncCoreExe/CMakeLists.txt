@@ -17,7 +17,7 @@ set(pnAysncCoreExe_PRIVATE
 # I would do platform specific stuff here,
 # but Pch.h just includes everything, so...
 
-set(pnAysncCoreExe_PRIVATE_NT
+set(pnAsyncCoreExe_PRIVATE_NT
     Private/Nt/pnAceNt.cpp
     Private/Nt/pnAceNt.h
     Private/Nt/pnAceNtInt.h
@@ -32,7 +32,7 @@ set(pnAsyncCoreExe_PRIVATE_WIN32
 
 add_library(pnAsyncCoreExe STATIC
             ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS}
-            ${pnAsyncCoreExe_PRIVATE} ${pnAysncCoreExe_PRIVATE_NT}
+            ${pnAsyncCoreExe_PRIVATE} ${pnAsyncCoreExe_PRIVATE_NT}
             ${pnAsyncCoreExe_PRIVATE_WIN32})
 
 # Yeah, this looks strange, but this library has no public headers. It's
