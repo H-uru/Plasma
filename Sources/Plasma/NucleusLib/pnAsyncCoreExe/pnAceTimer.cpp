@@ -103,6 +103,13 @@ struct AsyncTimerManager
         AsyncThreadTimedJoin(fTimerThread, exitThreadWaitMs);
         fTimerThread = {};
 
+        {
+            // Ensure the event loop exits without processing any more tasks,
+            // in case the thread takes more than exitThreadWaitMs to finish
+            hsLockGuard(s_timerCrit);
+            fContext.stop();
+        }
+
         // Cancel all remaining timers
         for (AsyncTimer& timer : fTimers) {
             if (timer.fDestroyProc)
