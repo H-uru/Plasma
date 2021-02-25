@@ -140,7 +140,6 @@ struct NtObject {
 *
 ***/
 
-void INtWakeupMainIoThreads ();
 void INtConnPostOperation (NtObject * ntObj, Operation * op, unsigned bytes);
 AsyncId INtConnSequenceStart (NtObject * ntObj);
 bool INtConnInitialize (NtObject * ntObj);
@@ -191,33 +190,5 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 
 void NtInitialize ();
 void NtDestroy (unsigned exitThreadWaitMs);
-void NtSocketConnect (
-    AsyncCancelId *         cancelId,
-    const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    void *                  param,
-    const void *            sendData,
-    unsigned                sendBytes,
-    unsigned                connectMs,
-    unsigned                localPort
-);
-void NtSocketConnectCancel (
-    FAsyncNotifySocketProc  notifyProc,
-    AsyncCancelId           cancelId
-);
-void NtSocketDisconnect (
-    AsyncSocket     sock,
-    bool            hardClose
-);
-void NtSocketDelete (AsyncSocket sock);
-bool NtSocketSend (
-    AsyncSocket     sock,
-    const void *    data,
-    unsigned        bytes
-);
-void NtSocketEnableNagling (
-    AsyncSocket             conn,
-    bool                    enable
-);
 
 }   // namespace Nt

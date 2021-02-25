@@ -47,6 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
+#ifdef HS_BUILD_FOR_WIN32
+#include "Private/Nt/pnAceNtInt.h"
+#endif
+
 #include <atomic>
 
 /*****************************************************************************
@@ -56,40 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 static std::atomic<long> s_perf[kNumAsyncPerfCounters];
-
-
-/****************************************************************************
-*
-*   Module data exports
-*
-***/
-
-AsyncApi    g_api;
-
-
-/*****************************************************************************
-*
-*   Local functions
-*
-***/
-
-//===========================================================================
-static void IAsyncInitUseNt () {
-#ifdef HS_BUILD_FOR_WIN32
-    NtGetApi(&g_api);
-#else
-    ErrorAssert("Nt I/O Not supported on this platform");
-#endif
-}
-
-//===========================================================================
-static void IAsyncInit () {
-#ifdef HS_BUILD_FOR_WIN32
-    IAsyncInitUseNt();
-#else
-    #error No default implementation for this platform
-#endif
-}
 
 
 /*****************************************************************************
@@ -124,8 +94,11 @@ long PerfSetCounter (unsigned id, unsigned n) {
 ***/
 
 //===========================================================================
-void AsyncCoreInitialize () {
-    ASSERTMSG(!g_api.initialize, "AsyncCore already initialized");
+static bool s_initialized = false;
+
+void AsyncCoreInitialize()
+{
+    ASSERTMSG(!s_initialized, "AsyncCore already initialized");
     
 #ifdef HS_BUILD_FOR_WIN32
     // Initialize WinSock
@@ -136,23 +109,28 @@ void AsyncCoreInitialize () {
         ErrorAssert(__LINE__, __FILE__, "WSA version failed");
 #endif
 
-    IAsyncInit();
-
-    ASSERT(g_api.initialize);
-    g_api.initialize();
+    s_initialized = true;
+#ifdef HS_BUILD_FOR_WIN32
+    Nt::NtInitialize();
+#else
+    ErrorAssert(__LINE__, __FILE__, "Async API not yet supported for this platform");
+#endif
 }
 
 //============================================================================
-void AsyncCoreDestroy (unsigned waitMs) {
-    if (g_api.destroy) {
-        g_api.destroy(waitMs);
-    }
-    
+void AsyncCoreDestroy(unsigned waitMs)
+{
+#ifdef HS_BUILD_FOR_WIN32
+    Nt::NtDestroy(waitMs);
+#else
+    ErrorAssert(__LINE__, __FILE__, "Async API not yet supported for this platform");
+#endif
+
     DnsDestroy(waitMs);
     TimerDestroy(waitMs);
     ThreadDestroy(waitMs);
-    
-    memset(&g_api, 0, sizeof(g_api));
+
+    s_initialized = false;
 }
 
 //============================================================================

@@ -390,24 +390,4 @@ void NtDestroy (unsigned exitThreadWaitMs) {
     INtSocketDestroy();
 }
 
-} using namespace Nt;
-
-
-/****************************************************************************
-*
-*   Public exports
-*
-***/
-
-//===========================================================================
-void NtGetApi (AsyncApi * api) {
-    api->initialize             = NtInitialize;
-    api->destroy                = NtDestroy;
-    
-    api->socketConnect          = NtSocketConnect;
-    api->socketConnectCancel    = NtSocketConnectCancel;
-    api->socketDisconnect       = NtSocketDisconnect;
-    api->socketDelete           = NtSocketDelete;
-    api->socketSend             = NtSocketSend;
-    api->socketEnableNagling    = NtSocketEnableNagling;
-}
+} // namespace Nt
