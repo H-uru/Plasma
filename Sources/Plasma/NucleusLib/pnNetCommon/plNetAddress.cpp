@@ -45,123 +45,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetAddress.h"
 #include "pnNetCommon.h"
 
-
-plNetAddress::plNetAddress()
-{
-    Clear();
-}
-
-plNetAddress::plNetAddress(uint32_t addr, uint16_t port)
-{
-    Clear();
-    SetHost(addr);
-    SetPort(port);
-}
-
-plNetAddress::plNetAddress(const std::array<uint8_t, 4>& addr, uint16_t port)
-{
-    Clear();
-    SetHost(addr);
-    SetPort(port);
-}
-
-plNetAddress::plNetAddress(const ST::string& addr, uint16_t port)
-{
-    Clear();
-    SetHost(addr);
-    SetPort(port);
-}
-
-bool plNetAddress::SetAnyAddr()
-{
-    fAddr.sin_family = AF_INET;
-    fAddr.sin_addr.s_addr = INADDR_ANY;
-    return true;
-}
-
-bool plNetAddress::SetAnyPort()
-{
-    fAddr.sin_family = AF_INET;
-    fAddr.sin_port = htons(0);
-    return true;
-}
-
-bool plNetAddress::SetPort(uint16_t port)
-{
-    fAddr.sin_family = AF_INET;
-    fAddr.sin_port = htons(port);
-    return true;
-}
-
-void plNetAddress::Clear()
-{
-    memset(&fAddr,0,sizeof(fAddr));
-    fAddr.sin_family = AF_INET;
-    fAddr.sin_addr.s_addr = INADDR_ANY;
-}
-
-uint16_t plNetAddress::GetPort() const
-{
-    return ntohs(fAddr.sin_port);
-}
+#ifndef AF_INET
+#   define AF_INET 2
+#endif
 
 ST::string plNetAddress::GetHostString() const
 {
-    return pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr);
-}
-
-uint32_t plNetAddress::GetHost() const
-{
-    return fAddr.sin_addr.s_addr;
+    return pnNetCommon::GetTextAddr(fHost);
 }
 
 ST::string plNetAddress::GetHostWithPort() const
 {
     ST::string_stream ss;
-    ss << pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr) << ":" << GetPort();
+    ss << pnNetCommon::GetTextAddr(fHost) << ":" << fPort;
     return ss.to_string();
 }
 
-bool plNetAddress::SetHost(const ST::string& hostname)
+void plNetAddress::SetHost(const ST::string& hostname)
 {
-    fAddr.sin_addr.s_addr = pnNetCommon::GetBinAddr(hostname);
-    fAddr.sin_family = AF_INET;
-    return true;
+    fHost = pnNetCommon::GetBinAddr(hostname);
 }
 
-bool plNetAddress::SetHost(uint32_t addr)
+void plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
 {
-    memcpy(&fAddr.sin_addr, &addr,sizeof(addr));
-    fAddr.sin_family = AF_INET;
-    return true;
-}
-
-bool plNetAddress::SetHost(const std::array<uint8_t, 4>& addr)
-{
-    memcpy(&fAddr.sin_addr, addr.data(), addr.size());
-    fAddr.sin_family = AF_INET;
-    return true;
+    static_assert(sizeof(fHost) == sizeof(addr));
+    memcpy(&fHost, addr.data(), addr.size());
 }
 
 ST::string plNetAddress::AsString() const
 {
     ST::string_stream ss;
-    ss << "IP:" << pnNetCommon::GetTextAddr(fAddr.sin_addr.s_addr);
-    ss << ":" << GetPort();
+    ss << "IP:" << pnNetCommon::GetTextAddr(fHost);
+    ss << ":" << fPort;
 
     return ss.to_string();
 }
 
 void plNetAddress::Read(hsStream * s)
 {
-    s->ReadLE((uint32_t*)&fAddr.sin_addr.s_addr);
-    s->ReadLE(&fAddr.sin_port);
-    s->ReadLE(&fAddr.sin_family);
+    fHost = s->ReadLE32();
+    fPort = s->ReadLE16();
+
+    // Family is always AF_INET
+    (void) s->ReadLE16();
 }
 
 void plNetAddress::Write(hsStream * s)
 {
-    s->WriteLE((uint32_t)fAddr.sin_addr.s_addr);
-    s->WriteLE(fAddr.sin_port);
-    s->WriteLE(fAddr.sin_family);
+    s->WriteLE32(fHost);
+    s->WriteLE16(fPort);
+
+    // Family is always AF_INET
+    s->WriteLE16(AF_INET);
 }
