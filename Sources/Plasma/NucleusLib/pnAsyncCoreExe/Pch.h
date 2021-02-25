@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plProduct.h"
 #include "hsThread.h"
-#include "hsWindows.h"
 
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
@@ -64,6 +63,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Private/pnAceInt.h"
 
+// Target Windows 7 or later for windows socket compatibility
+// ASIO needs to know this to warn about some API incompatibilities
+#define _WIN32_WINNT 0x0601
 #include <asio/executor_work_guard.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
