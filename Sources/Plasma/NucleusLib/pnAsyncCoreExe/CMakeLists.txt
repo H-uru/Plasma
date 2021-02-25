@@ -14,9 +14,6 @@ set(pnAysncCoreExe_PRIVATE
     Private/pnAceInt.h
 )
 
-# I would do platform specific stuff here,
-# but Pch.h just includes everything, so...
-
 set(pnAsyncCoreExe_PRIVATE_NT
     Private/Nt/pnAceNt.cpp
     Private/Nt/pnAceNtInt.h
@@ -27,12 +24,16 @@ set(pnAsyncCoreExe_PRIVATE_WIN32
     Private/Win32/pnAceW32Thread.cpp
 )
 
-# End questionable part
-
 add_library(pnAsyncCoreExe STATIC
             ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS}
-            ${pnAsyncCoreExe_PRIVATE} ${pnAsyncCoreExe_PRIVATE_NT}
-            ${pnAsyncCoreExe_PRIVATE_WIN32})
+            ${pnAsyncCoreExe_PRIVATE})
+
+if(WIN32)
+    target_sources(pnAsyncCoreExe PRIVATE
+        ${pnAsyncCoreExe_PRIVATE_NT}
+        ${pnAsyncCoreExe_PRIVATE_WIN32}
+    )
+endif()
 
 # Yeah, this looks strange, but this library has no public headers. It's
 # the actual implementation of pnAsyncCore. Either rewrite it or get over it.
