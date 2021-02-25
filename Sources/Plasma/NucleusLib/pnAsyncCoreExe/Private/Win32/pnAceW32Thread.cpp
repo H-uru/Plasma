@@ -58,6 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
 {
     // HACK: No cross-platform way to perform a timed join :(
-    WaitForSingleObject(thread.native_handle(), timeoutMs);
+    DWORD rc = WaitForSingleObject(thread.native_handle(), timeoutMs);
+    if (rc == WAIT_TIMEOUT)
+        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
     thread.detach();
 }
