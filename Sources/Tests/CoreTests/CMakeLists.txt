@@ -1,4 +1,5 @@
 set(CoreLibTest_SOURCES
+    test_hsBitVector.cpp
     test_plCmdParser.cpp
 )
 

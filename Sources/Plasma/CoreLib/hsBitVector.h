@@ -311,7 +311,7 @@ inline bool hsBitVector::ToggleBit(uint32_t which)
     uint32_t major = which >> 5;
     uint32_t minor = 1 << (which & 0x1f);
     if (major >= fNumBitVectors)
-        IGrow(major);
+        IGrow(major+1);
     bool ret = 0 != (fBitVectors[major] & minor);
     if (ret)
         fBitVectors[major] &= ~minor;
@@ -351,22 +351,22 @@ class hsBitIterator
 protected:
     const hsBitVector&  fBits;
 
-    int                 fCurrent;
+    int32_t             fCurrent;
 
-    int                 fCurrVec;
-    int                 fCurrBit;
+    int32_t             fCurrVec;
+    int32_t             fCurrBit;
 
-    int                 IAdvanceBit();
-    int                 IAdvanceVec();
+    bool                IAdvanceBit();
+    bool                IAdvanceVec();
 
 public:
     // Must call begin after instanciating.
     hsBitIterator(const hsBitVector& bits) : fBits(bits), fCurrent(), fCurrVec(), fCurrBit() { }
 
-    int                 Begin();
-    int                 Current() const { return fCurrent; }
-    int                 Advance();
-    int                 End() const { return fCurrVec < 0; }
+    int32_t             Begin();
+    int32_t             Current() const { return fCurrent; }
+    int32_t             Advance();
+    bool                End() const { return fCurrVec < 0; }
 };
 
 
