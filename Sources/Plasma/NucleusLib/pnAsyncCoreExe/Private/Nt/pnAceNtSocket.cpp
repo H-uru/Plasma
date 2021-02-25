@@ -201,18 +201,20 @@ static void SocketGetAddresses (
     plNetAddress*   localAddr,
     plNetAddress*   remoteAddr
 ) {
-    localAddr->Clear();
-    remoteAddr->Clear();
-
     // don't have to enter critsect or validate socket before referencing it
     // because this routine is called before the user has a chance to close it
-    int nameLen = sizeof(*localAddr);
-    if (getsockname((SOCKET) sock->handle, (sockaddr *) localAddr, &nameLen))
+    sockaddr_in addrBuf;
+    int nameLen = (int)sizeof(addrBuf);
+    if (getsockname((SOCKET) sock->handle, (sockaddr *) &addrBuf, &nameLen) != 0)
         LogMsg(kLogError, "getsockname failed");
+    localAddr->SetHost(addrBuf.sin_addr.s_addr);
+    localAddr->SetPort(ntohs(addrBuf.sin_port));
 
-    nameLen = sizeof(*remoteAddr);
-    if (getpeername((SOCKET) sock->handle, (sockaddr *) remoteAddr, &nameLen))
+    nameLen = (int)sizeof(addrBuf);
+    if (getpeername((SOCKET) sock->handle, (sockaddr *) &addrBuf, &nameLen) != 0)
         LogMsg(kLogError, "getpeername failed");
+    remoteAddr->SetHost(addrBuf.sin_addr.s_addr);
+    remoteAddr->SetPort(ntohs(addrBuf.sin_port));
 }
 
 //===========================================================================
