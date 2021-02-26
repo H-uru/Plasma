@@ -63,11 +63,10 @@ const unsigned kMaxWorkerThreads = 32;  // handles 8-processor computer w/hypert
 static bool                     s_running;
 static HANDLE                   s_waitEvent;
 
-static long                     s_ioThreadCount;
+static unsigned int             s_ioThreadCount;
 static std::thread              s_ioThreadHandles[kMaxWorkerThreads];
 
 static HANDLE                   s_ioPort;
-static unsigned                 s_pageSizeMask;
 
 
 /****************************************************************************
@@ -326,13 +325,10 @@ void NtInitialize () {
         ErrorAssert(__LINE__, __FILE__, "CreateIoCompletionPort {#x}", GetLastError());
 
     // calculate number of IO worker threads to create
-    if (!s_pageSizeMask) {
-        SYSTEM_INFO si;
-        GetSystemInfo(&si);
-        s_pageSizeMask = si.dwPageSize - 1;
-
+    if (!s_ioThreadCount) {
         // Set worker thread count
-        s_ioThreadCount = si.dwNumberOfProcessors * 2;
+        s_ioThreadCount = std::thread::hardware_concurrency() * 2;
+        ASSERT(s_ioThreadCount);  // The standard indicates the above can return zero...
         if (s_ioThreadCount > kMaxWorkerThreads) {
             s_ioThreadCount = kMaxWorkerThreads;
             LogMsg(kLogError, "kMaxWorkerThreads too small!");
