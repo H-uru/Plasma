@@ -213,17 +213,12 @@ void AsyncSocketConnect (
     FAsyncNotifySocketProc  notifyProc,
     void *                  param = nullptr,
     const void *            sendData = nullptr,
-    unsigned                sendBytes = 0,
-    unsigned                connectMs = 0,      // 0 => use default value
-    unsigned                localPort = 0       // 0 => don't bind local port
+    unsigned                sendBytes = 0
 );
 
 // Due to the asynchronous nature of sockets, the connect may complete
 // before the cancel does... you have been warned.
-void AsyncSocketConnectCancel (
-    FAsyncNotifySocketProc  notifyProc,
-    AsyncCancelId           cancelId
-);
+void AsyncSocketConnectCancel(AsyncCancelId cancelId);
 
 void AsyncSocketDisconnect (
     AsyncSocket             sock,

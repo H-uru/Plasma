@@ -78,7 +78,6 @@ static const unsigned   kMinBacklogBytes    = 4 * 1024;
 struct NtOpConnAttempt : Operation {
     AsyncCancelId           cancelId;
     bool                    canceled;
-    unsigned                localPort;
     plNetAddress            remoteAddr;
     FAsyncNotifySocketProc  notifyProc;
     void *                  param;
@@ -443,7 +442,7 @@ static bool SocketInitConnect (
 }
 
 //===========================================================================
-static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
+static SOCKET ConnectSocket(const plNetAddress& addr) {
     SOCKET s;
     if (INVALID_SOCKET == (s = socket(AF_INET, SOCK_STREAM, 0))) {
         LogMsg(kLogError, "socket create failed");
@@ -455,19 +454,6 @@ static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
         u_long nonBlocking = true;
         if (ioctlsocket(s, FIONBIO, &nonBlocking))
             LogMsg(kLogError, "ioctlsocket failed (make non-blocking)");
-
-        // bind socket to port
-        if (localPort) {
-            sockaddr_in addr;
-            addr.sin_family = AF_INET;
-            addr.sin_port   = htons((uint16_t) localPort);
-            addr.sin_addr.s_addr = INADDR_ANY;
-            memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
-            if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
-                LogMsg(kLogError, "bind(port {}) failed ({})", localPort, WSAGetLastError());
-                break;
-            }
-        }
 
         sockaddr_in saddr;
         saddr.sin_family = AF_INET;
@@ -518,7 +504,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
 
         // open new sockets
         if (op->hSocket == INVALID_SOCKET) {
-            if (INVALID_SOCKET == (op->hSocket = ConnectSocket(op->localPort, op->remoteAddr))) {
+            if (INVALID_SOCKET == (op->hSocket = ConnectSocket(op->remoteAddr))) {
                 s_connectList.Unlink(op);
                 INtConnPostOperation(nullptr, op, 0);
                 continue;
@@ -941,9 +927,7 @@ void AsyncSocketConnect(
     FAsyncNotifySocketProc  notifyProc,
     void *                  param,
     const void *            sendData,
-    unsigned                sendBytes,
-    unsigned                connectMs,
-    unsigned                localPort
+    unsigned                sendBytes
 ) {
     ASSERT(notifyProc);
 
@@ -963,12 +947,11 @@ void AsyncSocketConnect(
 
     // init OpConnAttempt
     op->canceled                = false;
-    op->localPort               = localPort;
     op->remoteAddr              = netAddr;
     op->notifyProc              = notifyProc;
     op->param                   = param;
     op->hSocket                 = INVALID_SOCKET;
-    op->failTimeMs              = connectMs ? connectMs : kConnectTimeMs;
+    op->failTimeMs              = kConnectTimeMs;
     if (0 != (op->sendBytes = sendBytes))
         memcpy(op->sendData, sendData, sendBytes);
     else
@@ -995,14 +978,13 @@ void AsyncSocketConnect(
 // due to the asynchronous nature sockets, the connect may occur
 // before the cancel can complete... you have been warned
 void AsyncSocketConnectCancel(
-    FAsyncNotifySocketProc notifyProc,
     AsyncCancelId          cancelId        // nullptr = cancel all with specified notifyProc
 ) {
     hsLockGuard(s_listenCrit);
     for (NtOpConnAttempt * op = s_connectList.Head(); op; op = s_connectList.Next(op)) {
         if (cancelId && (op->cancelId != cancelId))
             continue;
-        if (op->notifyProc != notifyProc)
+        if (op->notifyProc != nullptr)
             continue;
         op->canceled = true;
     }
