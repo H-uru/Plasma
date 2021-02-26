@@ -66,7 +66,6 @@ static const unsigned   kConnectTimeMs      = 10*1000;
 
 static const int        kTcpSndBufSize      = 64*1024-1;
 static const int        kTcpRcvBufSize      = 64*1024-1;
-static const int        kListenBacklog      = 400;
 
 // wait before checking for backlog problems
 static const unsigned   kBacklogInitMs      = 3*60*1000;
@@ -75,19 +74,6 @@ static const unsigned   kBacklogInitMs      = 3*60*1000;
 static const unsigned   kBacklogFailMs      = 2*60*1000;
 
 static const unsigned   kMinBacklogBytes    = 4 * 1024;
-
-struct NtListener {
-    LINK(NtListener)        nextPort;
-    SOCKET                  hSocket;
-    plNetAddress            addr;
-    FAsyncNotifySocketProc  notifyProc;
-    int                     listenCount;
-
-    ~NtListener () {
-        if (hSocket != INVALID_SOCKET)
-            closesocket(hSocket);
-    }
-};
 
 struct NtOpConnAttempt : Operation {
     AsyncCancelId           cancelId;
@@ -133,7 +119,6 @@ struct NtSock : NtObject {
 
 
 static std::recursive_mutex             s_listenCrit;
-static LISTDECL(NtListener, nextPort)   s_listenList;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
 static bool                             s_runListenThread;
 static unsigned                         s_nextConnectCancelId = 1;
@@ -174,27 +159,6 @@ NtSock::~NtSock () {
         closesocket((SOCKET) handle);
 
     PerfSubCounter(kAsyncPerfSocketsCurr, 1);
-}
-
-//===========================================================================
-// must be called inside s_listenCrit
-static bool ListenPortIncrement (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    int                     count
-) {
-    NtListener * listener;
-    for (listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
-        if (listener->addr != listenAddr)
-            continue;
-        if (listener->notifyProc != notifyProc)
-            continue;
-
-        listener->listenCount += count;
-        ASSERT(listener->listenCount >= 0);
-        break;
-    }
-    return listener != nullptr;
 }
 
 //===========================================================================
@@ -479,66 +443,6 @@ static bool SocketInitConnect (
 }
 
 //===========================================================================
-static void SocketInitListen (
-    NtSock * const      sock,
-    const plNetAddress& listenAddr,
-    FAsyncNotifySocketProc notifyProc
-) {
-    for (;;) {
-        // attach to I/O completion port
-        if (!INtConnInitialize(sock))
-            break;
-
-        sock->addr = listenAddr;
-
-        if (notifyProc) {
-            // perform kNotifySocketListenSuccess
-            AsyncNotifySocketListen notify;
-            SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
-            notify.param            = nullptr;
-            notify.asyncId          = nullptr;
-            notify.connType         = 0;
-            notify.buildId          = 0;
-            notify.buildType        = 0;
-            notify.branchId         = 0;
-            notify.productId        = kNilUuid;
-            notify.addr             = listenAddr;
-            notify.buffer           = sock->opRead.read.buffer;
-            notify.bytes            = 0;
-            notify.bytesProcessed   = 0;
-            sock->notifyProc        = notifyProc;
-            if (!sock->notifyProc((AsyncSocket) sock, kNotifySocketListenSuccess, &notify, &sock->userState))
-                break;
-        }
-
-        // start reading from the socket
-        SocketStartAsyncRead(sock);
-        break;
-    }
-
-    INtConnCompleteOperation(sock);
-}
-
-//===========================================================================
-// must be called while inside s_listenCrit!
-static void ListenPrepareListeners (fd_set * readfds) {
-    FD_ZERO(readfds);
-    for (NtListener *next, *port = s_listenList.Head(); port; port = next) {
-        next = s_listenList.Next(port);
-
-        // destroy unused ports
-        if (!port->listenCount) {
-            delete port;
-            continue;
-        }
-
-        // add port to listen list
-        ASSERT(port->hSocket != INVALID_SOCKET);
-        FD_SET(port->hSocket, readfds);
-    }
-}
-
-//===========================================================================
 static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
     SOCKET s;
     if (INVALID_SOCKET == (s = socket(AF_INET, SOCK_STREAM, 0))) {
@@ -631,26 +535,24 @@ static void ListenPrepareConnectors (fd_set * writefds) {
 
 //===========================================================================
 static void ListenThreadProc (AsyncThread *) {
-    fd_set readfds;
     fd_set writefds;
     for (;;) {
         {
             hsLockGuard(s_listenCrit);
-            ListenPrepareListeners(&readfds);
             ListenPrepareConnectors(&writefds);
         }
         if (!s_runListenThread)
             break;
 
-        // wait until there is something on listen or connect list
-        if (!readfds.fd_count && !writefds.fd_count) {
+        // wait until there is something on connect list
+        if (!writefds.fd_count) {
             WaitForSingleObject(s_listenEvent, INFINITE);
             continue;
         }
 
         // wait for connection or timeout
         const struct timeval timeout = { 0, 250*1000 }; // seconds, microseconds
-        int result = select(0, &readfds, &writefds, nullptr, &timeout);
+        int result = select(0, nullptr, &writefds, nullptr, &timeout);
         if (result == SOCKET_ERROR) {
             LogMsg(kLogError, "socket select failed");
             continue;
@@ -659,23 +561,6 @@ static void ListenThreadProc (AsyncThread *) {
             continue;
 
         hsLockGuard(s_listenCrit);
-
-        // complete listen() operations
-        unsigned count = 0;
-        for (NtListener * listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
-            if (FD_ISSET(listener->hSocket, &readfds)) {
-                SOCKET s;
-                while (INVALID_SOCKET != (s = accept(listener->hSocket, nullptr, nullptr))) {
-                    SocketInitListen(
-                        SocketInitCommon(s),
-                        listener->addr,
-                        listener->notifyProc
-                    );
-                    ++count;
-                }
-            }
-        }
-        PerfAddCounter(kAsyncPerfSocketConnAttemptsInTotal, count);
 
         // complete connect() operations
         for (NtOpConnAttempt *next, *op = s_connectList.Head(); op; op = next) {
@@ -834,7 +719,6 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
 
     hsLockGuard(s_listenCrit);
     ASSERT(!s_connectList.Head());
-    ASSERT(!s_listenList.Head());
 }
 
 //===========================================================================
