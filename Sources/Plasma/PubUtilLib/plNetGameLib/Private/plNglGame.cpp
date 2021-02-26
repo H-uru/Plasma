@@ -324,7 +324,6 @@ static bool SocketNotifyCallback (
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
 
-        case kNotifySocketListenSuccess:
         case kNotifySocketWrite:
             // No action
         break;

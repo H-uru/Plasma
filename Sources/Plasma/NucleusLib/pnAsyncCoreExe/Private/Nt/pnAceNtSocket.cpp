@@ -220,46 +220,10 @@ static bool SocketDispatchRead (NtSock * sock) {
     ASSERT(sock->opRead.read.buffer == sock->buffer);
     ASSERT(sock->opRead.read.bytes);
 
-    // make sure there's an event procedure to handle this event
-    AsyncNotifySocketListen notify;
-    unsigned bytesProcessed;
-    sock->notifyProc = AsyncSocketFindNotifyProc(
-        sock->opRead.read.buffer,
-        sock->opRead.read.bytes,
-        &bytesProcessed,
-        &notify.connType, 
-        &notify.buildId,
-        &notify.buildType,
-        &notify.branchId,
-        &notify.productId
-    );
-    if (!sock->notifyProc)
-        return false;
-
-    // perform kNotifySocketListenSuccess
-    SocketGetAddresses(sock, &notify.localAddr, &notify.remoteAddr);
-    notify.param            = nullptr;
-    notify.asyncId          = nullptr;
-    notify.addr             = sock->addr;
-    sock->userState         = nullptr;
-    sock->connType          = notify.connType;
-    notify.buffer           = sock->opRead.read.buffer + bytesProcessed;
-    notify.bytes            = sock->opRead.read.bytes - bytesProcessed;
-    notify.bytesProcessed   = 0;
-    if (!sock->notifyProc((AsyncSocket) sock, kNotifySocketListenSuccess, &notify, &sock->userState))
-        return false;
-    bytesProcessed += notify.bytesProcessed;
-
-    // if we didn't use up all the bytes, dispatch a read operation
-    if (0 != (sock->opRead.read.bytes -= bytesProcessed)) {
-        sock->opRead.read.buffer += bytesProcessed;
-        if (!sock->notifyProc((AsyncSocket) sock, kNotifySocketRead, &sock->opRead.read, &sock->userState))
-            return false;
-    }
-
-    // add bytes used by IOsFindListenProc and kNotifySocketListenSuccess
-    sock->opRead.read.bytesProcessed += bytesProcessed;
-    return true;
+    // Probably unneeded since we just tested for nullptr above, but it
+    // maintains compatibility with what we had before...
+    sock->notifyProc = nullptr;
+    return false;
 }
 
 //===========================================================================

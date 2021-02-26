@@ -75,7 +75,6 @@ enum EAsyncPerfCounter {
     kAsyncPerfSocketConnAttemptsOutCurr,
     kAsyncPerfSocketConnAttemptsOutTotal,
     kAsyncPerfSocketDisconnectBacklog,
-    kAsyncPerfSocketDisconnectInvalidConnType,
     kAsyncPerfNameLookupAttemptsCurr,
     kAsyncPerfNameLookupAttemptsTotal,
 

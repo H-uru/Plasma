@@ -96,7 +96,6 @@ enum EAsyncNotifySocket {
     kNotifySocketConnectFailed,
     kNotifySocketConnectSuccess,
     kNotifySocketDisconnect,
-    kNotifySocketListenSuccess,
     kNotifySocketRead,
     kNotifySocketWrite
 };
@@ -187,18 +186,6 @@ static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
 
 #define IS_TEXT_CONNTYPE(c)     \
     (((int)(c)) == kConnTypeAdminInterface)
-
-
-FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
-    const uint8_t           buffer[],
-    unsigned                bytes,
-    unsigned *              bytesProcessed,
-    unsigned *              connType,
-    unsigned *              buildId,
-    unsigned *              buildType,
-    unsigned *              branchId,
-    plUUID*                 productId
-);
 
 
 /****************************************************************************

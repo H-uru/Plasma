@@ -1,7 +1,6 @@
 set(pnAsyncCoreExe_SOURCES
     pnAceCore.cpp
     pnAceDns.cpp
-    pnAceIo.cpp
     pnAceThread.cpp
     pnAceTimer.cpp
 )
