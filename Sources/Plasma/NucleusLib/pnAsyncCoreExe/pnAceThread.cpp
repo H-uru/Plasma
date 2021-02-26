@@ -50,40 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /*****************************************************************************
 *
-*   Private data
-*
-***/
-
-
-
-/*****************************************************************************
-*
-*   Internal functions
-*
-***/
-
-//===========================================================================
-static void CreateThreadProc(AsyncThread * thread)
-{
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
-    PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-    PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
-    // Call thread procedure
-    thread->proc(thread);
-
-    // Cleanup thread
-    delete thread;
-
-    PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-}
-
-
-/*****************************************************************************
-*
 *   Module functions
 *
 ***/
@@ -94,29 +60,4 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
     unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
     while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-}
-
-
-/*****************************************************************************
-*
-*   Public exports
-*
-***/
-
-//===========================================================================
-std::thread AsyncThreadCreate (
-    FAsyncThreadProc    threadProc,
-    void *              argument,
-    const wchar_t         name[]
-) {
-    AsyncThread * thread    = new AsyncThread;
-    thread->proc            = threadProc;
-    thread->handle          = nullptr;
-    thread->argument        = argument;
-    thread->workTimeMs      = kAsyncTimeInfinite;
-    StrCopy(thread->name, name, std::size(thread->name));
-
-    std::thread handle(&CreateThreadProc, thread);
-    thread->handle = &handle;
-    return handle;
 }

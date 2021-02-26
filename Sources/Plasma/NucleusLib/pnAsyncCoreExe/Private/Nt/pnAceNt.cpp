@@ -207,7 +207,7 @@ static void INtOpDispatch (
 }
 
 //===========================================================================
-static void NtWorkerThreadProc (AsyncThread * thread) {
+static void NtWorkerThreadProc() {
     unsigned sleepMs    = INFINITE;
     while (s_running) {
 
@@ -341,11 +341,17 @@ void NtInitialize () {
 
     // create IO worker threads
     for (long thread = 0; thread < s_ioThreadCount; thread++) {
-        s_ioThreadHandles[thread] = AsyncThreadCreate(
-            NtWorkerThreadProc,
-            (void *) thread,
-            L"NtWorkerThread"
-        );
+        s_ioThreadHandles[thread] = std::thread([] {
+#ifdef USE_VLD
+            VLDEnable();
+#endif
+            PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+            PerfAddCounter(kAsyncPerfThreadsCurr, 1);
+
+            NtWorkerThreadProc();
+
+            PerfSubCounter(kAsyncPerfThreadsCurr, 1);
+        });
     }
 
     INtSocketInitialize();

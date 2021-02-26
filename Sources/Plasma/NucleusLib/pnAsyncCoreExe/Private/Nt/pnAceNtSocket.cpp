@@ -483,7 +483,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
 }
 
 //===========================================================================
-static void ListenThreadProc (AsyncThread *) {
+static void ListenThreadProc() {
     fd_set writefds;
     for (;;) {
         {
@@ -548,11 +548,17 @@ static void StartListenThread () {
 
     // create a low-priority thread to listen on ports
     s_runListenThread = true;
-    s_listenThread = AsyncThreadCreate(
-        ListenThreadProc,
-        nullptr,
-        L"NtListenThread"
-    );
+    s_listenThread = std::thread([] {
+#ifdef USE_VLD
+        VLDEnable();
+#endif
+        PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+        PerfAddCounter(kAsyncPerfThreadsCurr, 1);
+
+        ListenThreadProc();
+
+        PerfSubCounter(kAsyncPerfThreadsCurr, 1);
+    });
 }
 
 //===========================================================================
