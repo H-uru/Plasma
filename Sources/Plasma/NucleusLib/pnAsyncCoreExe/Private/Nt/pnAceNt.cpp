@@ -61,7 +61,6 @@ namespace Nt {
 const unsigned kMaxWorkerThreads = 32;  // handles 8-processor computer w/hyperthreading
 
 static bool                     s_running;
-static HANDLE                   s_waitEvent;
 
 static unsigned int             s_ioThreadCount;
 static std::thread              s_ioThreadHandles[kMaxWorkerThreads];
@@ -268,16 +267,6 @@ void NtInitialize () {
         return;
     s_running = true;
 
-    // create a cleanup event
-    s_waitEvent = CreateEvent(
-        nullptr,
-        true,           // manual reset
-        false,          // initial state off
-        nullptr         // name
-    );
-    if (!s_waitEvent)
-        ErrorAssert(__LINE__, __FILE__, "CreateEvent {#x}", GetLastError());        
-
     // create IO completion port
     if (s_ioPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0); s_ioPort == nullptr)
         ErrorAssert(__LINE__, __FILE__, "CreateIoCompletionPort {#x}", GetLastError());
@@ -339,11 +328,6 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         // Cleanup port
         CloseHandle(s_ioPort);
         s_ioPort = nullptr;
-    }
-
-    if (s_waitEvent) {
-        CloseHandle(s_waitEvent);
-        s_waitEvent = nullptr;
     }
 
     INtSocketDestroy();
