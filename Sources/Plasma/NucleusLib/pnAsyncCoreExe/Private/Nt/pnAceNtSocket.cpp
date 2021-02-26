@@ -219,9 +219,6 @@ static bool SocketDispatchRead (NtSock * sock) {
     ASSERT(sock->opRead.read.buffer == sock->buffer);
     ASSERT(sock->opRead.read.bytes);
 
-    // Probably unneeded since we just tested for nullptr above, but it
-    // maintains compatibility with what we had before...
-    sock->notifyProc = nullptr;
     return false;
 }
 
