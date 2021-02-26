@@ -63,20 +63,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAsyncCore/pnAsyncCore.h"
 
 #include "Private/pnAceInt.h"
-#include "Private/Nt/pnAceNt.h"
 
 #include <asio/executor_work_guard.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/steady_timer.hpp>
-
-#include <process.h>
-
-#ifdef HS_BUILD_FOR_MACOS
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif
 
 #ifdef USE_VLD
 #include <vld.h>

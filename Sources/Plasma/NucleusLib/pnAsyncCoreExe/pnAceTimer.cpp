@@ -71,7 +71,12 @@ struct AsyncTimerManager
 #ifdef USE_VLD
             VLDEnable();
 #endif
+            PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+            PerfAddCounter(kAsyncPerfThreadsCurr, 1);
+
             fContext.run();
+
+            PerfSubCounter(kAsyncPerfThreadsCurr, 1);
         });
     }
 

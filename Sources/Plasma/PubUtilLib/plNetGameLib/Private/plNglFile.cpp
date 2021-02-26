@@ -275,7 +275,7 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
 
     bool needsDecref = true;
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nullptr, conn->cancelId);
+        AsyncSocketConnectCancel(conn->cancelId);
         conn->cancelId  = nullptr;
         needsDecref = false;
     }
@@ -468,7 +468,6 @@ static bool SocketNotifyCallback (
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
 
-        case kNotifySocketListenSuccess:
         case kNotifySocketWrite:
             // No action
         break;
@@ -511,9 +510,7 @@ static void Connect (CliFileConn * conn) {
         SocketNotifyCallback,
         conn,
         &connect,
-        sizeof(connect),
-        0,
-        0
+        sizeof(connect)
     );
 }
 

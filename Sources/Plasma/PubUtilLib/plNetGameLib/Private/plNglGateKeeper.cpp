@@ -227,7 +227,7 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
     conn->StopAutoReconnect();
 
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nullptr, conn->cancelId);
+        AsyncSocketConnectCancel(conn->cancelId);
         conn->cancelId  = nullptr;
     }
     else if (conn->sock) {
@@ -393,7 +393,6 @@ static bool SocketNotifyCallback (
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
 
-        case kNotifySocketListenSuccess:
         case kNotifySocketWrite:
             // No action
         break;
@@ -437,9 +436,7 @@ static void Connect (
         SocketNotifyCallback,
         conn,
         &connect,
-        sizeof(connect),
-        0,
-        0
+        sizeof(connect)
     );
 }
 

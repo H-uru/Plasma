@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAceNtInt.h"
 
-
 namespace Nt {
 
 /****************************************************************************
@@ -62,45 +61,11 @@ namespace Nt {
 const unsigned kMaxWorkerThreads = 32;  // handles 8-processor computer w/hyperthreading
 
 static bool                     s_running;
-static HANDLE                   s_waitEvent;
 
-static long                     s_ioThreadCount;
+static unsigned int             s_ioThreadCount;
 static std::thread              s_ioThreadHandles[kMaxWorkerThreads];
 
 static HANDLE                   s_ioPort;
-static unsigned                 s_pageSizeMask;
-
-
-/****************************************************************************
-*
-*   Waitable event handles
-*
-***/
-
-//===========================================================================
-CNtWaitHandle::CNtWaitHandle () {
-    m_event = CreateEvent(
-        nullptr,
-        true,   // manual reset
-        false,  // initial state
-        nullptr
-    );
-}
-
-//===========================================================================
-CNtWaitHandle::~CNtWaitHandle () {
-    CloseHandle(m_event);
-}
-
-//===========================================================================
-bool CNtWaitHandle::WaitForObject (unsigned timeMs) const {
-    return WAIT_TIMEOUT != WaitForSingleObject(m_event, timeMs);
-}
-
-//===========================================================================
-void CNtWaitHandle::SignalObject () const {
-    SetEvent(m_event);
-}
 
 
 /****************************************************************************
@@ -162,22 +127,12 @@ static void INtOpDispatch (
             // critical section to do so. This is a big win because a single operation
             // that takes a long time to complete can backlog a long list of completed ops.
             for (;;) {
-                // wake up any other threads waiting on this event
-                CNtWaitHandle * signalComplete = op->signalComplete;
-                op->signalComplete = nullptr;
-
                 // since this operation is at the head of the list we can complete it
                 if (op->asyncId && !++ntObj->nextCompleteSequence)
                     ++ntObj->nextCompleteSequence;
                 Operation * next = ntObj->opList.Next(op);
                 ntObj->opList.Delete(op);
                 op = next;
-
-                // set event *after* operation is complete
-                if (signalComplete) {
-                    signalComplete->SignalObject();
-                    signalComplete->UnRef();
-                }
 
                 // if we just deleted the last operation then stop dispatching
                 if (!op) {
@@ -208,7 +163,7 @@ static void INtOpDispatch (
 }
 
 //===========================================================================
-static void NtWorkerThreadProc (AsyncThread * thread) {
+static void NtWorkerThreadProc() {
     unsigned sleepMs    = INFINITE;
     while (s_running) {
 
@@ -312,28 +267,14 @@ void NtInitialize () {
         return;
     s_running = true;
 
-    // create a cleanup event
-    s_waitEvent = CreateEvent(
-        nullptr,
-        true,           // manual reset
-        false,          // initial state off
-        nullptr         // name
-    );
-    if (!s_waitEvent)
-        ErrorAssert(__LINE__, __FILE__, "CreateEvent {#x}", GetLastError());        
-
     // create IO completion port
     if (s_ioPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0); s_ioPort == nullptr)
         ErrorAssert(__LINE__, __FILE__, "CreateIoCompletionPort {#x}", GetLastError());
 
     // calculate number of IO worker threads to create
-    if (!s_pageSizeMask) {
-        SYSTEM_INFO si;
-        GetSystemInfo(&si);
-        s_pageSizeMask = si.dwPageSize - 1;
-
+    if (!s_ioThreadCount) {
         // Set worker thread count
-        s_ioThreadCount = si.dwNumberOfProcessors * 2;
+        s_ioThreadCount = std::max(std::thread::hardware_concurrency() * 2, 2U);
         if (s_ioThreadCount > kMaxWorkerThreads) {
             s_ioThreadCount = kMaxWorkerThreads;
             LogMsg(kLogError, "kMaxWorkerThreads too small!");
@@ -342,11 +283,17 @@ void NtInitialize () {
 
     // create IO worker threads
     for (long thread = 0; thread < s_ioThreadCount; thread++) {
-        s_ioThreadHandles[thread] = AsyncThreadCreate(
-            NtWorkerThreadProc,
-            (void *) thread,
-            L"NtWorkerThread"
-        );
+        s_ioThreadHandles[thread] = std::thread([] {
+#ifdef USE_VLD
+            VLDEnable();
+#endif
+            PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+            PerfAddCounter(kAsyncPerfThreadsCurr, 1);
+
+            NtWorkerThreadProc();
+
+            PerfSubCounter(kAsyncPerfThreadsCurr, 1);
+        });
     }
 
     INtSocketInitialize();
@@ -382,32 +329,7 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         s_ioPort = nullptr;
     }
 
-    if (s_waitEvent) {
-        CloseHandle(s_waitEvent);
-        s_waitEvent = nullptr;
-    }
-
     INtSocketDestroy();
 }
 
-} using namespace Nt;
-
-
-/****************************************************************************
-*
-*   Public exports
-*
-***/
-
-//===========================================================================
-void NtGetApi (AsyncApi * api) {
-    api->initialize             = NtInitialize;
-    api->destroy                = NtDestroy;
-    
-    api->socketConnect          = NtSocketConnect;
-    api->socketConnectCancel    = NtSocketConnectCancel;
-    api->socketDisconnect       = NtSocketDisconnect;
-    api->socketDelete           = NtSocketDelete;
-    api->socketSend             = NtSocketSend;
-    api->socketEnableNagling    = NtSocketEnableNagling;
-}
+} // namespace Nt

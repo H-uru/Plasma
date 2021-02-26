@@ -54,14 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 
 #ifdef HS_BUILD_FOR_WIN32
-    // Terrible hacks for MinGW because they don't have a reasonable
-    // default for the Windows version. We cheat and say it's XP.
-#   ifdef __MINGW32__
+    // Force Windows headers to assume Windows 7 compatibility
+#   ifdef _WIN32_WINNT
 #       undef _WIN32_WINNT
-#       define _WIN32_WINNT 0x501
-#       undef _WIN32_IE
-#       define _WIN32_IE    0x400
 #   endif
+#   define _WIN32_WINNT 0x601
 
     // HACK: Max headers depend on the min() and max() macros normally pulled
     // in by windows.h... However, we usually disable those, since they break
