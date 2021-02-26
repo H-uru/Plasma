@@ -274,8 +274,7 @@ void NtInitialize () {
     // calculate number of IO worker threads to create
     if (!s_ioThreadCount) {
         // Set worker thread count
-        s_ioThreadCount = std::thread::hardware_concurrency() * 2;
-        ASSERT(s_ioThreadCount);  // The standard indicates the above can return zero...
+        s_ioThreadCount = std::max(std::thread::hardware_concurrency() * 2, 2U);
         if (s_ioThreadCount > kMaxWorkerThreads) {
             s_ioThreadCount = kMaxWorkerThreads;
             LogMsg(kLogError, "kMaxWorkerThreads too small!");
