@@ -50,8 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENTINT_H
 
-#include "hsRefCnt.h"
-
 namespace Nt {
 
 /****************************************************************************
@@ -83,37 +81,19 @@ enum EOpType {
     kNumOpTypes
 };
 
-class CNtWaitHandle : public hsRefCnt {
-    HANDLE  m_event;
-
-public:
-    CNtWaitHandle ();
-    ~CNtWaitHandle ();
-    bool WaitForObject (unsigned timeMs) const;
-    void SignalObject () const;
-};
-
 struct Operation {
     OVERLAPPED      overlapped;
     EOpType         opType;
     AsyncId         asyncId;
     bool            notify;
     unsigned        pending;
-    CNtWaitHandle * signalComplete;
     LINK(Operation) link;
 
     Operation()
-        : opType(), asyncId(), notify(), pending(),
-          signalComplete()
+        : opType(), asyncId(), notify(), pending()
     {
         memset(&overlapped, 0, sizeof(overlapped));
     }
-
-    #ifdef HS_DEBUGGING
-    ~Operation () {
-        ASSERT(!signalComplete);
-    }
-    #endif
 };
 
 struct NtObject {

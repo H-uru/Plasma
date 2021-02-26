@@ -293,7 +293,6 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
     op->asyncId                 = asyncId;
     op->notify                  = false;
     op->pending                 = 1;
-    op->signalComplete          = nullptr;
     sock->opList.Link(op, kListTail);
 
     // init OpWrite
@@ -734,7 +733,6 @@ void INtSocketOpCompleteSocketConnect (NtOpConnAttempt * op) {
     // section because it isn't linked into an opList
     // and because connection attempts are not waitable
     ASSERT(!op->link.IsLinked());
-    ASSERT(!op->signalComplete);
     delete op;
 
     PerfSubCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
@@ -909,7 +907,6 @@ void AsyncSocketConnect(
     op->asyncId                 = nullptr;
     op->notify                  = true;
     op->pending                 = 1;
-    op->signalComplete          = nullptr;
 
     // init OpConnAttempt
     op->canceled                = false;

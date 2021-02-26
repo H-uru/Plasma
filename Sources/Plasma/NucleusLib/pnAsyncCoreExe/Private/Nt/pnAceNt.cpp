@@ -71,38 +71,6 @@ static HANDLE                   s_ioPort;
 
 /****************************************************************************
 *
-*   Waitable event handles
-*
-***/
-
-//===========================================================================
-CNtWaitHandle::CNtWaitHandle () {
-    m_event = CreateEvent(
-        nullptr,
-        true,   // manual reset
-        false,  // initial state
-        nullptr
-    );
-}
-
-//===========================================================================
-CNtWaitHandle::~CNtWaitHandle () {
-    CloseHandle(m_event);
-}
-
-//===========================================================================
-bool CNtWaitHandle::WaitForObject (unsigned timeMs) const {
-    return WAIT_TIMEOUT != WaitForSingleObject(m_event, timeMs);
-}
-
-//===========================================================================
-void CNtWaitHandle::SignalObject () const {
-    SetEvent(m_event);
-}
-
-
-/****************************************************************************
-*
 *   OPERATIONS
 *
 ***/
@@ -160,22 +128,12 @@ static void INtOpDispatch (
             // critical section to do so. This is a big win because a single operation
             // that takes a long time to complete can backlog a long list of completed ops.
             for (;;) {
-                // wake up any other threads waiting on this event
-                CNtWaitHandle * signalComplete = op->signalComplete;
-                op->signalComplete = nullptr;
-
                 // since this operation is at the head of the list we can complete it
                 if (op->asyncId && !++ntObj->nextCompleteSequence)
                     ++ntObj->nextCompleteSequence;
                 Operation * next = ntObj->opList.Next(op);
                 ntObj->opList.Delete(op);
                 op = next;
-
-                // set event *after* operation is complete
-                if (signalComplete) {
-                    signalComplete->SignalObject();
-                    signalComplete->UnRef();
-                }
 
                 // if we just deleted the last operation then stop dispatching
                 if (!op) {
