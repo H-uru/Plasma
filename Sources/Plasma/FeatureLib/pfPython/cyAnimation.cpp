@@ -66,24 +66,9 @@ cyAnimation::cyAnimation(const pyKey& sender)
     SetSender(sender);
 }
 
-// copy constructor
-cyAnimation::cyAnimation(const cyAnimation& anim)
-{
-    fSender = anim.fSender;
-    fRecvr = anim.fRecvr;
-    // here is why we needed the copy constructor
-    fAnimName = hsStrcpy(anim.fAnimName);       // make our own copy of this string
-    fNetForce = anim.fNetForce;
-}
-
 // clean up on the way out
 cyAnimation::~cyAnimation()
 {
-    if (fAnimName != nullptr)
-    {
-        delete [] fAnimName;
-        fAnimName = nullptr;
-    }
 }
 
 
@@ -103,13 +88,6 @@ PyObject* cyAnimation::GetFirstRecvr()
     if (!fRecvr.empty())
         return pyKey::New(fRecvr[0]);
     return nullptr;
-}
-
-void cyAnimation::SetAnimName(const char* name)
-{
-    if (fAnimName != nullptr)
-        delete [] fAnimName;
-    fAnimName = hsStrcpy(name);
 }
 
 /////////////////////////////////////////////////////////////////////////////
