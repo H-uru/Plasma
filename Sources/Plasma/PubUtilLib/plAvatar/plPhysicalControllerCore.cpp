@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plCoordinateInterface.h"
 
 #include "plAnimation/plMatrixChannel.h"
-#include "plPhysX/plPXSubWorld.h"
 
 // Gravity constants
 #define kGravity -32.174f
