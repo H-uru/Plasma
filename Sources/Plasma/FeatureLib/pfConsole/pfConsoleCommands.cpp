@@ -840,13 +840,13 @@ PF_CONSOLE_CMD( Console, ClearAllVars, "", "Wipes the global console variable co
 
 PF_CONSOLE_CMD( Console, ExecuteFile, "string filename", "Runs the given file as if it were an .ini or .fni file" )
 {
-    plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, params[ 0 ] );
+    plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, ST::string(params[ 0 ]) );
     cMsg->Send();
 }
 
 PF_CONSOLE_CMD( Console, ExecuteFileDelayed, "string filename, float timeInSecs", "Runs the given file as if it were an .ini or .fni file, but at some given point in the future" )
 {
-    plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, params[ 0 ] );
+    plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, ST::string(params[ 0 ]) );
     cMsg->SetTimeStamp( hsTimer::GetSysSeconds() + (float)params[ 1 ] );
     cMsg->Send();
 }
@@ -3642,15 +3642,14 @@ PF_CONSOLE_CMD( Access,
     
 }
 
-char *gCurrMorph = nullptr;
+static ST::string gCurrMorph;
 
 PF_CONSOLE_CMD( Access,
                 SetMorphItem,
                 "string itemName",
                 "Set which clothing item we want to morph" )
 {
-    delete [] gCurrMorph;
-    gCurrMorph = hsStrcpy(nullptr, params[0]);
+    gCurrMorph = params[0];
 }
 
 PF_CONSOLE_CMD( Access,

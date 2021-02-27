@@ -310,7 +310,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     }
 
     plConsoleMsg *cmd = plConsoleMsg::ConvertNoRef( msg );
-    if (cmd != nullptr && cmd->GetString() != nullptr)
+    if (cmd != nullptr && !cmd->GetString().empty())
     {
         if( cmd->GetCmd() == plConsoleMsg::kExecuteFile )
         {
@@ -332,10 +332,12 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             }
         }
         else if( cmd->GetCmd() == plConsoleMsg::kAddLine )
-            IAddParagraph( cmd->GetString() );
+            IAddParagraph( cmd->GetString().c_str() );
         else if( cmd->GetCmd() == plConsoleMsg::kExecuteLine )
         {
-            if( !fEngine->RunCommand( (char *)cmd->GetString(), IAddLineCallback ) )
+            ST::char_buffer cmdBuf;
+            cmd->GetString().to_buffer(cmdBuf);
+            if( !fEngine->RunCommand(cmdBuf.data(), IAddLineCallback))
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
