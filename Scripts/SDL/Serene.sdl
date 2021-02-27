@@ -47,6 +47,6 @@ STATEDESC Serene
 
     VAR BOOL    sereneChristmasVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT #Christmas Deco
     VAR BOOL    sereneCylDoorStat[1]     DEFAULT=0 #For proper MOULa status
-    VAR BOOL    sereneChisoBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    sereneChisoBookVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
 
 }
