@@ -74,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plResMgr/plKeyFinder.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "pfMessage/pfGameGUIMsg.h"
 
@@ -173,7 +174,7 @@ bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
     if (guiMsg != nullptr)
     {
         if( guiMsg->GetCommand() == pfGameGUIMsg::kLoadDialog )
-            LoadDialog(guiMsg->GetString().c_str(), nullptr, guiMsg->GetAge().c_str());
+            LoadDialog(guiMsg->GetString(), nullptr, guiMsg->GetAge().c_str());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kShowDialog )
             IShowDialog(guiMsg->GetString().c_str());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kHideDialog )
@@ -222,7 +223,7 @@ void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
             // check to see if it is the dialog we are waiting for to be loaded
             for (auto iter = fDialogToSetKeyOf.cbegin(); iter != fDialogToSetKeyOf.cend(); ++iter)
             {
-                if (strcmp((*iter)->GetName(), mod->GetName()) == 0)
+                if ((*iter)->GetName() == mod->GetName())
                 {
                     SetDialogToNotify(mod, (*iter)->GetKey());
                     // now remove this entry... we did it
@@ -234,19 +235,6 @@ void    pfGameGUIMgr::IAddDlgToList( hsKeyedObject *obj )
             }
         }
     }
-
-/*  // It's now officially "loaded"; take it off the pending list
-    for( i = 0; i < fDlgsPendingLoad.GetCount(); i++ )
-    {
-        if( stricmp( fDlgsPendingLoad[ i ]->GetName(), ( (pfGUIDialogMod *)obj )->GetName() ) == 0 )
-        {
-            // Here it is
-            delete fDlgsPendingLoad[ i ];
-            fDlgsPendingLoad.Remove( i );
-            break;
-        }
-    }
-*/
 }
 
 //// IRemoveDlgFromList //////////////////////////////////////////////////////
@@ -275,25 +263,11 @@ void    pfGameGUIMgr::IRemoveDlgFromList( hsKeyedObject *obj )
             fDialogs.erase(iter);
         }
     }
-
-    // It's now officially "unloaded"; take it off the pending list
-/*  int i;
-    for( i = 0; i < fDlgsPendingUnload.GetCount(); i++ )
-    {
-        if( stricmp( fDlgsPendingUnload[ i ]->GetName(), ( (pfGUIDialogMod *)obj )->GetName() ) == 0 )
-        {
-            // Here it is
-            delete fDlgsPendingUnload[ i ];
-            fDlgsPendingUnload.Remove( i );
-            break;
-        }
-    }
-*/
 }
 
 //// LoadDialog //////////////////////////////////////////////////////////////
 
-void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *ageName )
+void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const char *ageName)
 {
     // see if they want to set the receiver key once the dialog is loaded
     if (recvrKey != nullptr)
@@ -301,7 +275,7 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         // first see if we are loading a dialog that is already being loaded
         bool alreadyLoaded = std::any_of(fDialogToSetKeyOf.cbegin(), fDialogToSetKeyOf.cend(),
                                          [name](pfDialogNameSetKey* dlgKey) {
-                                             return strcmp(dlgKey->GetName(), name) == 0;
+                                             return dlgKey->GetName() == name;
                                          });
         if (!alreadyLoaded)
         {
@@ -310,7 +284,9 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
         }
     }
 
-    hsStatusMessageF("\nLoading Dialog %s %s ... %f\n", name, (ageName != nullptr) ? ageName : "GUI", hsTimer::GetSeconds());
+    plStatusLog::AddLineSF("plasmadbg.log", "Loading Dialog {} {} ... {}",
+                           name, (ageName != nullptr) ? ageName : "GUI",
+                           hsTimer::GetSeconds());
 
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
@@ -318,9 +294,6 @@ void    pfGameGUIMgr::LoadDialog( const char *name, plKey recvrKey, const char *
     msg->AddReceiver( clientKey );
     msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName ? ageName : "GUI", name));
     msg->Send();
-
-    // Now add this dialog to a list of pending loads (will remove it once it's fully loaded)
-//  fDlgsPendingLoad.Append(new pfDialogNameSetKey(name, nullptr));
 }
 
 //// IShowDialog /////////////////////////////////////////////////////////////
@@ -405,13 +378,10 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 {
 //  IRemoveDlgFromList( dlg );
 
-    // Add the name to our list of dialogs pending unload
-//  fDlgsPendingUnload.Append(new pfDialogNameSetKey(dlg->GetName(), nullptr));
-
     plKey       sceneNodeKey = dlg->GetSceneNodeKey();
     if (sceneNodeKey == nullptr)
     {
-        hsStatusMessageF( "Warning: Unable to grab sceneNodeKey to unload dialog %s; searching for it...", dlg->GetName() );
+        plStatusLog::AddLineSF("plasmadbg.log", "Warning: Unable to grab sceneNodeKey to unload dialog {}; searching for it...", dlg->GetName());
         sceneNodeKey = plKeyFinder::Instance().FindSceneNodeKey( dlg->GetKey()->GetUoid().GetLocation() );
     }
 
