@@ -72,7 +72,6 @@ struct DnsResolver
         fWorkGuard.reset();
         fResolver.cancel();
         AsyncThreadTimedJoin(fLookupThread, exitThreadWaitMs);
-        fLookupThread = {};
     }
 };
 

@@ -106,7 +106,6 @@ struct AsyncTimerManager
     {
         fWorkGuard.reset();
         AsyncThreadTimedJoin(fTimerThread, exitThreadWaitMs);
-        fTimerThread = {};
 
         {
             // Ensure the event loop exits without processing any more tasks,
