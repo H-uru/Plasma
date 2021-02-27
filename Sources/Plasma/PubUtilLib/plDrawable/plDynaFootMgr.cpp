@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsTimer.h"
 
-#include <array>
-
 #include "plCutter.h"
 #include "plDynaFootMgr.h"
 #include "plDynaDecal.h"
@@ -62,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static plRandom sRand;
 
-constexpr std::array<uint32_t, 2> kFootPrintIDs
+static constexpr uint32_t kFootPrintIDs[] =
 {
     plAvBrainHuman::RFootPrint,
     plAvBrainHuman::LFootPrint
@@ -79,8 +77,8 @@ int plDynaFootMgr::INewDecal()
 
 plDynaFootMgr::plDynaFootMgr()
 {
-    fPartIDs.SetCount(kFootPrintIDs.size());
-    for (size_t i = 0; i < kFootPrintIDs.size(); i++)
+    fPartIDs.SetCount(std::size(kFootPrintIDs));
+    for (size_t i = 0; i < std::size(kFootPrintIDs); i++)
         fPartIDs[i] = kFootPrintIDs[i];
 }
 

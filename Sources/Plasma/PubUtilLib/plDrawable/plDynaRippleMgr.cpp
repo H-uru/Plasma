@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plTweak.h"
 
-#include <array>
-
 #include "plCutter.h"
 #include "plDynaRippleMgr.h"
 #include "plDynaDecal.h"
@@ -62,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plDynaDecalEnableMsg.h"
 #include "plMessage/plRippleShapeMsg.h"
 
-constexpr std::array<uint32_t, 5> kRipplePrintIDs
+static constexpr uint32_t kRipplePrintIDs[] =
 {
     plAvBrainHuman::TrunkPrint,
     plAvBrainHuman::LHandPrint,
@@ -100,8 +98,8 @@ plDynaRippleMgr::plDynaRippleMgr()
     fInitUVW(1.f,1.f,1.f),
     fFinalUVW(1.f,1.f,1.f)
 {
-    fPartIDs.SetCount(kRipplePrintIDs.size());
-    for (size_t i = 0; i < kRipplePrintIDs.size(); i++)
+    fPartIDs.SetCount(std::size(kRipplePrintIDs));
+    for (size_t i = 0; i < std::size(kRipplePrintIDs); i++)
         fPartIDs[i] = kRipplePrintIDs[i];
 }
 
@@ -243,4 +241,3 @@ bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
     }
     return retVal;
 }
-

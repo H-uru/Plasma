@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 
-#include <array>
-
 #include "plDynaPuddleMgr.h"
 #include "plPrintShape.h"
 
@@ -54,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plMessage/plAvatarFootMsg.h"
 
-constexpr std::array<uint32_t, 2> kPuddlePrintIDs
+static constexpr uint32_t kPuddlePrintIDs[] =
 {
     plAvBrainHuman::RFootPrint,
     plAvBrainHuman::LFootPrint
@@ -63,8 +61,8 @@ constexpr std::array<uint32_t, 2> kPuddlePrintIDs
 
 plDynaPuddleMgr::plDynaPuddleMgr()
 {
-    fPartIDs.SetCount(kPuddlePrintIDs.size());
-    for (size_t i = 0; i < kPuddlePrintIDs.size(); i++)
+    fPartIDs.SetCount(std::size(kPuddlePrintIDs));
+    for (size_t i = 0; i < std::size(kPuddlePrintIDs); i++)
         fPartIDs[i] = kPuddlePrintIDs[i];
 }
 
@@ -107,4 +105,3 @@ bool plDynaPuddleMgr::MsgReceive(plMessage* msg)
 
     return plDynaRippleMgr::MsgReceive(msg);
 }
-
