@@ -85,7 +85,7 @@ target_link_libraries(
         pnFactory
 )
 
-plasma_optimize_target(pfGameGUIMgr UNITY_BUILD)
+plasma_optimize_target(pfGameGUIMgr UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${pfGameGUIMgr_SOURCES})
 source_group("Header Files" FILES ${pfGameGUIMgr_HEADERS})

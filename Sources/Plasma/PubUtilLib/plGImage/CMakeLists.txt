@@ -54,5 +54,7 @@ target_link_libraries(
         pnFactory
 )
 
+plasma_optimize_target(plGImage UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plGImage_SOURCES})
 source_group("Header Files" FILES ${plGImage_HEADERS})

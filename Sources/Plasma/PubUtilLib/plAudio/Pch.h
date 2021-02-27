@@ -41,16 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "hsWindows.h"
 
-#include <algorithm>
-#include <iterator>
+#include <array>
+#include <memory>
+
+#include <al.h>
 #include <string_theory/format>
 #include <string_theory/string>
 
-#include "hsBitVector.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "hsStream.h"
-#include "hsTimer.h"
-
-#include "pnKeyedObject/plKey.h"
+#include "pnNetCommon/plSynchedObject.h"

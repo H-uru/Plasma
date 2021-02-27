@@ -71,5 +71,7 @@ target_link_libraries(
         pnFactory
 )
 
+plasma_optimize_target(pfConsole PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${pfConsole_SOURCES})
 source_group("Header Files" FILES ${pfConsole_HEADERS})

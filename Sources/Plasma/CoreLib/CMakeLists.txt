@@ -91,7 +91,7 @@ target_link_libraries(
 )
 target_include_directories(CoreLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
-plasma_optimize_target(CoreLib PRECOMPILED_HEADERS _CoreLibPch.h)
+plasma_optimize_target(CoreLib UNITY_BUILD PRECOMPILED_HEADERS _CoreLibPch.h)
 
 source_group("Source Files" FILES ${CoreLib_SOURCES})
 source_group("Header Files" FILES ${CoreLib_HEADERS})

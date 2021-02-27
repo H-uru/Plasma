@@ -46,5 +46,7 @@ target_link_libraries(
         plSDL
 )
 
+plasma_optimize_target(plAnimation UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plAnimation_SOURCES})
 source_group("Header Files" FILES ${plAnimation_HEADERS})

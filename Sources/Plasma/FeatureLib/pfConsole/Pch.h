@@ -42,15 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <algorithm>
-#include <iterator>
+#include <set>
+#include <vector>
+
 #include <string_theory/format>
 #include <string_theory/string>
-
-#include "hsBitVector.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "hsStream.h"
-#include "hsTimer.h"
-
-#include "pnKeyedObject/plKey.h"

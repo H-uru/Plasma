@@ -32,5 +32,7 @@ target_link_libraries(
 
 target_include_directories(pnModifier PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
+plasma_optimize_target(pnModifier PRECOMPILED_HEADERS Pch.h)
+
 source_group("Header Files" FILES ${pnModifier_HEADERS})
 source_group("Source Files" FILES ${pnModifier_SOURCES})

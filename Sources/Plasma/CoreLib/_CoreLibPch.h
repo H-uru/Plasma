@@ -53,10 +53,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <limits.h>
 #include <memory>
+#include <type_traits>
 #include <vector>
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+
+#include <string_theory/formatter>
+#include <string_theory/string>
 
 #include <sys/stat.h>
 #include <sys/types.h>

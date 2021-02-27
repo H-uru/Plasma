@@ -91,6 +91,8 @@ target_link_libraries(plSurface
         pnFactory
 )
 
+plasma_optimize_target(plSurface UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plSurface_SOURCES})
 source_group("Header Files" FILES ${plSurface_HEADERS})
 source_group("Shaders" FILES ${plSurface_SHADERS})

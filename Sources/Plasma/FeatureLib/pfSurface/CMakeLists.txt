@@ -37,5 +37,7 @@ target_link_libraries(
         pnFactory
 )
 
+plasma_optimize_target(pfSurface UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${pfSurface_SOURCES})
 source_group("Header Files" FILES ${pfSurface_HEADERS})

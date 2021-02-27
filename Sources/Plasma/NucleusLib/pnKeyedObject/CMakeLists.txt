@@ -31,5 +31,7 @@ target_link_libraries(
         pnNetCommon
 )
 
+plasma_optimize_target(pnKeyedObject PRECOMPILED_HEADERS Pch.h)
+
 source_group("Header Files" FILES ${pnKeyedObject_HEADERS})
 source_group("Source Files" FILES ${pnKeyedObject_SOURCES})

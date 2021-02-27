@@ -47,5 +47,7 @@ target_link_libraries(
         plSurface
 )
 
+plasma_optimize_target(plParticleSystem PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plParticleSystem_SOURCES})
 source_group("Header Files" FILES ${plParticleSystem_HEADERS})
