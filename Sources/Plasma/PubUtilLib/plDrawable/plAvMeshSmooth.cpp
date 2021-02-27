@@ -49,17 +49,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsFastMath.h"
 
-class EdgeBin
-{
-public:
-    uint16_t  fVtx;
-    uint16_t  fCount;
-
-    EdgeBin() : fVtx(0), fCount(0) {}
-};
-
 void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
 {
+    struct EdgeBin
+    {
+        uint16_t  fVtx;
+        uint16_t  fCount;
+
+        EdgeBin() : fVtx(0), fCount(0) {}
+    };
+
     hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
 
     hsBitVector edgeVertBits;

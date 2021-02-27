@@ -41,22 +41,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plDynaPuddleMgr.h"
-
-#include "plPrintShape.h"
-
 #include "plgDispatch.h"
-
-#include "hsStream.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
 
-#include "plMessage/plAvatarFootMsg.h"
+#include <array>
+
+#include "plDynaPuddleMgr.h"
+#include "plPrintShape.h"
 
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plArmatureMod.h"
+#include "plMessage/plAvatarFootMsg.h"
 
-static const uint32_t kNumPrintIDs = 2;
-static const uint32_t kPrintIDs[kNumPrintIDs] =
+constexpr std::array<uint32_t, 2> kPuddlePrintIDs
 {
     plAvBrainHuman::RFootPrint,
     plAvBrainHuman::LFootPrint
@@ -65,10 +63,9 @@ static const uint32_t kPrintIDs[kNumPrintIDs] =
 
 plDynaPuddleMgr::plDynaPuddleMgr()
 {
-    fPartIDs.SetCount(kNumPrintIDs);
-    int i;
-    for( i = 0; i < kNumPrintIDs; i++ )
-        fPartIDs[i] = kPrintIDs[i];
+    fPartIDs.SetCount(kPuddlePrintIDs.size());
+    for (size_t i = 0; i < kPuddlePrintIDs.size(); i++)
+        fPartIDs[i] = kPuddlePrintIDs[i];
 }
 
 plDynaPuddleMgr::~plDynaPuddleMgr()
