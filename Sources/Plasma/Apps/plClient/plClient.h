@@ -47,9 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define NEW_CAMERA_CODE
 
 #include "HeadSpin.h"
-#include <list>
-
 #include "hsBitVector.h"
+#include "plFileSystem.h"
+
+#include <list>
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
@@ -139,7 +140,7 @@ protected:
     plVirtualCam1*          fNewCamera;
 
     static plClient*        fInstance;
-    char *                  fpAuxInitDir;
+    plFileName              fpAuxInitDir;
     static bool             fDelayMS;
 
     int                     fClampCap;
@@ -264,7 +265,7 @@ public:
 
     pfConsoleEngine *GetConsoleEngine() { return fConsoleEngine; }
 
-    void SetAuxInitDir(const char *p) { delete [] fpAuxInitDir; fpAuxInitDir = hsStrcpy(p); }
+    void SetAuxInitDir(plFileName dir) { fpAuxInitDir = std::move(dir); }
 
     static void EnableClientDelay() { plClient::fDelayMS = true; }
 

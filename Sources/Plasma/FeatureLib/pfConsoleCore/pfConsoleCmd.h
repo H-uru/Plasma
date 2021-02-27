@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsBiExpander.h"
+#include "plFileSystem.h"
 
 #include <string_theory/format>
 
@@ -157,6 +158,7 @@ class pfConsoleCmdParam
         operator bool() const { return IToBool(); }
         operator CharPtr() const { return IToString(); }
         operator char() const { return IToChar(); }
+        operator plFileName() const { return IToString(); }
 
         uint8_t   GetType() { return fType; }
 

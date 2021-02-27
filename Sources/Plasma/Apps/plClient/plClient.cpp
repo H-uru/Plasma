@@ -169,8 +169,8 @@ static std::vector<HMODULE> fLoadedDLLs;
 plClient::plClient()
     : fPipeline(), fDone(), fQuitIntro(), fWindowHndl(),
       fInputManager(), fConsole(), fCurrentNode(), fNewCamera(),
-      fpAuxInitDir(), fTransitionMgr(), fLinkEffectsMgr(),
-      fProgressBar(), fGameGUIMgr(), fWindowActive(), fAnimDebugList(),
+      fTransitionMgr(), fLinkEffectsMgr(), fProgressBar(),
+      fGameGUIMgr(), fWindowActive(), fAnimDebugList(),
       fClampCap(-1), fQuality(), fPageMgr(), fFontCache(),
       fHoldLoadRequests(), fNumLoadingRooms(), fNumPostLoadMsgs(), fPostLoadMsgInc(),
       fLastProgressUpdate(), fMessagePumpProc()
@@ -224,7 +224,6 @@ plClient::~plClient()
     plClient::SetInstance(nullptr);
 
     delete fPageMgr;
-    delete [] fpAuxInitDir;
 }
 
 template<typename T>
@@ -369,7 +368,7 @@ bool plClient::Shutdown()
 void plClient::InitAuxInits()
 {
     // Use another init directory specified in Command line Arg -i
-    if (fpAuxInitDir)
+    if (fpAuxInitDir.IsValid())
         pfConsoleDirSrc     dirSrc( fConsoleEngine, fpAuxInitDir, "*.ini" );
 }
 
@@ -2204,7 +2203,7 @@ void plClient::IOnAsyncInitComplete () {
 #endif
 
     // run fni in the Aux Init dir
-    if (fpAuxInitDir)
+    if (fpAuxInitDir.IsValid())
     {
         dirSrc.ParseDirectory(fpAuxInitDir, "net*.fni");   // connect to net first
         dirSrc.ParseDirectory(fpAuxInitDir, "*.fni");
