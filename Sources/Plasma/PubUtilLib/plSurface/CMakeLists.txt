@@ -5,7 +5,6 @@ set(plSurface_SOURCES
     plLayerAnimation.cpp
     plLayerDepth.cpp
     plLayerInterface.cpp
-    plLayerMultiply.cpp
     plLayerOr.cpp
     plLayerShadowBase.cpp
     plShader.cpp
@@ -19,7 +18,6 @@ set(plSurface_HEADERS
     plLayerAnimation.h
     plLayerDepth.h
     plLayerInterface.h
-    plLayerMultiply.h
     plLayerOr.h
     plLayerShadowBase.h
     plShader.h
