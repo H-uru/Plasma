@@ -43,6 +43,8 @@ target_link_libraries(plSDL
         plResMgr
 )
 
+plasma_optimize_target(plSDL PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plSDL_SOURCES})
 source_group("Header Files" FILES ${plSDL_HEADERS})
 source_group("SDL" FILES ${plSDL_SDLFILES})

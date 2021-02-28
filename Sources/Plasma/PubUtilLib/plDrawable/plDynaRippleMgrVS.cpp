@@ -70,7 +70,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 
 #include "pnEncryption/plRandom.h"
-static plRandom sRand;
 
 #include "plTweak.h"
 
@@ -165,6 +164,8 @@ bool plDynaRippleVSMgr::ICheckRTMat()
 
 bool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
+    static plRandom sRand;
+
     if( !ICheckRTMat() )
         return false;
 

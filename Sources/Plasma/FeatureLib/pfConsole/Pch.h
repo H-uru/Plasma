@@ -41,67 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-#include "hsStream.h"
 
-#include "plDynaPuddleMgr.h"
-#include "plPrintShape.h"
+#include <set>
+#include <vector>
 
-#include "plAvatar/plAvBrainHuman.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plMessage/plAvatarFootMsg.h"
-
-static constexpr uint32_t kPuddlePrintIDs[] =
-{
-    plAvBrainHuman::RFootPrint,
-    plAvBrainHuman::LFootPrint
-};
-
-
-plDynaPuddleMgr::plDynaPuddleMgr()
-{
-    fPartIDs.SetCount(std::size(kPuddlePrintIDs));
-    for (size_t i = 0; i < std::size(kPuddlePrintIDs); i++)
-        fPartIDs[i] = kPuddlePrintIDs[i];
-}
-
-plDynaPuddleMgr::~plDynaPuddleMgr()
-{
-}
-
-void plDynaPuddleMgr::Read(hsStream* stream, hsResMgr* mgr)
-{
-    plDynaRippleMgr::Read(stream, mgr);
-
-    plgDispatch::Dispatch()->RegisterForExactType(plAvatarFootMsg::Index(), GetKey());
-}
-
-bool plDynaPuddleMgr::MsgReceive(plMessage* msg)
-{
-    plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
-    if( footMsg )
-    {
-        int i;
-        for( i = 0; i < fPartIDs.GetCount(); i++ )
-        {
-            plArmatureMod* armMod = footMsg->GetArmature();
-            const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
-            if( shape )
-            {
-                plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
-                if( IRippleFromShape(shape, true) )
-                {
-                    INotifyActive(info, armMod->GetKey(), fPartIDs[i]);
-                }
-                else
-                {
-                    INotifyInactive(info, armMod->GetKey(), fPartIDs[i]);
-                }
-            }
-        }
-        return true;
-    }
-
-    return plDynaRippleMgr::MsgReceive(msg);
-}
+#include <string_theory/format>
+#include <string_theory/string>

@@ -41,33 +41,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plDynaRippleMgr.h"
-#include "plDynaDecal.h"
-
-#include "plPrintShape.h"
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#include "hsTimer.h"
+#include "plTweak.h"
 
 #include "plCutter.h"
+#include "plDynaRippleMgr.h"
+#include "plDynaDecal.h"
+#include "plPrintShape.h"
 
-#include "plgDispatch.h"
+#include "pnEncryption/plRandom.h"
 
-#include "hsStream.h"
-#include "hsResMgr.h"
-#include "hsTimer.h"
-
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarMsg.h"
 #include "plMessage/plDynaDecalEnableMsg.h"
 #include "plMessage/plRippleShapeMsg.h"
 
-#include "plMessage/plAvatarMsg.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "plAvatar/plArmatureMod.h"
-
-#include "pnEncryption/plRandom.h"
-static plRandom sRand;
-
-#include "plTweak.h"
-
-static const uint32_t kNumPrintIDs = 5;
-static const uint32_t kPrintIDs[kNumPrintIDs] =
+static constexpr uint32_t kRipplePrintIDs[] =
 {
     plAvBrainHuman::TrunkPrint,
     plAvBrainHuman::LHandPrint,
@@ -105,10 +98,9 @@ plDynaRippleMgr::plDynaRippleMgr()
     fInitUVW(1.f,1.f,1.f),
     fFinalUVW(1.f,1.f,1.f)
 {
-    fPartIDs.SetCount(kNumPrintIDs);
-    int i;
-    for( i = 0; i < kNumPrintIDs; i++ )
-        fPartIDs[i] = kPrintIDs[i];
+    fPartIDs.SetCount(std::size(kRipplePrintIDs));
+    for (size_t i = 0; i < std::size(kRipplePrintIDs); i++)
+        fPartIDs[i] = kRipplePrintIDs[i];
 }
 
 plDynaRippleMgr::~plDynaRippleMgr()
@@ -177,6 +169,8 @@ bool plDynaRippleMgr::MsgReceive(plMessage* msg)
 
 bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
+    static plRandom sRand;
+
     if( !shape )
         return false;
 
@@ -247,4 +241,3 @@ bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
     }
     return retVal;
 }
-

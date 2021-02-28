@@ -133,5 +133,7 @@ target_link_libraries(plDrawable
         plSurface
 )
 
+plasma_optimize_target(plDrawable UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plDrawable_SOURCES})
 source_group("Header Files" FILES ${plDrawable_HEADERS})

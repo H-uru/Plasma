@@ -58,8 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "hsFastMath.h"
-#include "pnEncryption/plRandom.h"
-static plRandom sRand;
 
 
 int plDynaBulletMgr::INewDecal()

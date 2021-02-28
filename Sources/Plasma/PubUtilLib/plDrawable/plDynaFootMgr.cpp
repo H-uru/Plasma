@@ -41,30 +41,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plDynaFootMgr.h"
-#include "plDynaDecal.h"
-
-#include "plCutter.h"
-
-#include "plPrintShape.h"
-
 #include "plgDispatch.h"
-
-#include "hsStream.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
 #include "hsTimer.h"
 
-#include "plMessage/plDynaDecalEnableMsg.h"
-
-#include "plMessage/plAvatarFootMsg.h"
-#include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvBrainHuman.h"
+#include "plCutter.h"
+#include "plDynaFootMgr.h"
+#include "plDynaDecal.h"
+#include "plPrintShape.h"
 
 #include "pnEncryption/plRandom.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAvatarFootMsg.h"
+#include "plMessage/plDynaDecalEnableMsg.h"
+
 static plRandom sRand;
 
-static const uint32_t kNumPrintIDs = 2;
-static const uint32_t kPrintIDs[kNumPrintIDs] =
+static constexpr uint32_t kFootPrintIDs[] =
 {
     plAvBrainHuman::RFootPrint,
     plAvBrainHuman::LFootPrint
@@ -81,10 +77,9 @@ int plDynaFootMgr::INewDecal()
 
 plDynaFootMgr::plDynaFootMgr()
 {
-    fPartIDs.SetCount(kNumPrintIDs);
-    int i;
-    for( i = 0; i < kNumPrintIDs; i++ )
-        fPartIDs[i] = kPrintIDs[i];
+    fPartIDs.SetCount(std::size(kFootPrintIDs));
+    for (size_t i = 0; i < std::size(kFootPrintIDs); i++)
+        fPartIDs[i] = kFootPrintIDs[i];
 }
 
 plDynaFootMgr::~plDynaFootMgr()

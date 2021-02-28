@@ -56,19 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnEncryption/plRandom.h"
 
-static const uint32_t kNumPrintIDs = 0;
-
-static plRandom sRand;
-
-plDynaTorpedoMgr::plDynaTorpedoMgr()
-{
-    fPartIDs.SetCount(kNumPrintIDs);
-}
-
-plDynaTorpedoMgr::~plDynaTorpedoMgr()
-{
-}
-
 void plDynaTorpedoMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDynaRippleMgr::Read(stream, mgr);
@@ -78,6 +65,8 @@ void plDynaTorpedoMgr::Read(hsStream* stream, hsResMgr* mgr)
 
 bool plDynaTorpedoMgr::IHandleShot(plBulletMsg* bull)
 {
+    static plRandom sRand;
+
     float partyTime = fPartyTime;
 
     plConst(int) kNumShots(3);

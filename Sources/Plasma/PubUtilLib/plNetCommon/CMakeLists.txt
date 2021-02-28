@@ -45,5 +45,7 @@ target_link_libraries(plNetCommon
         pfMessage # pfKIMsg in plNetMsgScreener
 )
 
+plasma_optimize_target(plNetCommon UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+
 source_group("Source Files" FILES ${plNetCommon_SOURCES})
 source_group("Header Files" FILES ${plNetCommon_HEADERS})

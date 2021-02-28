@@ -65,7 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsFastMath.h"
 #include "pnEncryption/plRandom.h"
-static plRandom sRand;
 
 
 int plDynaWakeMgr::INewDecal()
@@ -168,6 +167,8 @@ hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoin
 
 bool plDynaWakeMgr::IRippleFromShape(const plPrintShape* shape, bool force)
 {
+    static plRandom sRand;
+
     if( !shape )
         return false;
 

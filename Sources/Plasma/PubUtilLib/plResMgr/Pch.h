@@ -39,43 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef PL_LAYER_ANIMATION_INC
-#define PL_LAYER_ANIMATION_INC
 
-#include "hsMatrix44.h"
+#include "HeadSpin.h"
 
-#include "plLayerInterface.h"
+#include <map>
+#include <set>
+#include <vector>
 
-// Instead of overwriting owned channels, this layer type will multiply
-// its source channel data to the underlayer
-class plLayerMultiply : public plLayerInterface
-{
-public:
-    plLayerMultiply();
-    virtual ~plLayerMultiply();
-
-    CLASSNAME_REGISTER( plLayerMultiply );
-    GETINTERFACE_ANY( plLayerMultiply, plLayerInterface );
-
-    plLayerInterface*   Attach(plLayerInterface* prev) override;
-    uint32_t            Eval(double secs, uint32_t frame, uint32_t ignore) override;
-    bool MsgReceive(plMessage* msg) override;
-    void Read(hsStream* s, hsResMgr* mgr) override;
-    void Write(hsStream* s, hsResMgr* mgr) override;
-
-    void SetPreshadeColor(const hsColorRGBA& col);
-    void SetRuntimeColor(const hsColorRGBA& col);
-    void SetAmbientColor(const hsColorRGBA& col);
-    void SetOpacity(float a);
-    void SetTransform(const hsMatrix44& xfm);
-
-protected:
-    uint32_t          fDirtyChannels;
-    hsColorRGBA     fSrcPreshadeColor;
-    hsColorRGBA     fSrcRuntimeColor;
-    hsColorRGBA     fSrcAmbientColor;
-    float        fSrcOpacity;
-    hsMatrix44      fSrcTransform;
-};
-
-#endif // PL_LAYER_ANIMATION_INC
+#include <string_theory/format>
+#include <string_theory/string>

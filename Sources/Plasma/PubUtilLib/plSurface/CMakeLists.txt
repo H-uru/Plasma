@@ -5,7 +5,6 @@ set(plSurface_SOURCES
     plLayerAnimation.cpp
     plLayerDepth.cpp
     plLayerInterface.cpp
-    plLayerMultiply.cpp
     plLayerOr.cpp
     plLayerShadowBase.cpp
     plShader.cpp
@@ -19,7 +18,6 @@ set(plSurface_HEADERS
     plLayerAnimation.h
     plLayerDepth.h
     plLayerInterface.h
-    plLayerMultiply.h
     plLayerOr.h
     plLayerShadowBase.h
     plShader.h
@@ -90,6 +88,8 @@ target_link_libraries(plSurface
     INTERFACE
         pnFactory
 )
+
+plasma_optimize_target(plSurface UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plSurface_SOURCES})
 source_group("Header Files" FILES ${plSurface_HEADERS})

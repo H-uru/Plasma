@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <iterator>
+#include <string_theory/format>
 #include <string_theory/string>
 
 #include "hsBitVector.h"

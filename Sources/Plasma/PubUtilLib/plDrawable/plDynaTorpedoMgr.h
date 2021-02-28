@@ -55,8 +55,8 @@ protected:
     virtual bool IHandleShot(plBulletMsg* bull);
 
 public:
-    plDynaTorpedoMgr();
-    virtual ~plDynaTorpedoMgr();
+    plDynaTorpedoMgr() = default;
+    ~plDynaTorpedoMgr() = default;
 
     CLASSNAME_REGISTER( plDynaTorpedoMgr );
     GETINTERFACE_ANY( plDynaTorpedoMgr, plDynaRippleMgr );

@@ -105,7 +105,6 @@ plProfile_CreateTimerNoReset("Cutter", "DynaDecal", Cutter);
 plProfile_CreateTimerNoReset("Process", "DynaDecal", Process);
 plProfile_CreateTimerNoReset("Callback", "DynaDecal", Callback);
 
-static plRandom sRand;
 static const int    kBinBlockSize = 20;
 static const uint16_t kDefMaxNumVerts = 1000;
 static const uint16_t kDefMaxNumIdx = kDefMaxNumVerts;
@@ -1658,6 +1657,8 @@ const plMipmap* plDynaDecalMgr::GetMipmap() const
 
 hsVector3 plDynaDecalMgr::IRandomUp(hsVector3 dir) const
 {
+    static plRandom sRand;
+
     hsVector3 retVal;
 
     // Okay, we want a pretty random vector perpindicular to the
