@@ -98,7 +98,6 @@ target_link_libraries(
         plNetMessage
         plNetTransport
         plParticleSystem
-        plPhysX
         plPipeline
         plResMgr
         plScene
