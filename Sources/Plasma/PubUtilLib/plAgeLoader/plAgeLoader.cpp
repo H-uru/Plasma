@@ -403,7 +403,7 @@ void plAgeLoader::ExecPendingAgeFniFiles()
     int i;
     for (i=0;i<PendingAgeFniFiles().size(); i++)
     {
-        plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, fPendingAgeFniFiles[i].AsString().c_str() );
+        plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteFile, fPendingAgeFniFiles[i].AsString() );
         plgDispatch::MsgSend( cMsg );
     }
     fPendingAgeFniFiles.clear();
@@ -414,7 +414,7 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
     int i;
     for (i=0;i<PendingAgeCsvFiles().size(); i++)
     {
-        hsStream* stream = plEncryptedStream::OpenEncryptedFile(fPendingAgeCsvFiles[i].AsString().c_str());
+        hsStream* stream = plEncryptedStream::OpenEncryptedFile(fPendingAgeCsvFiles[i].AsString());
         if (stream)
         {
             plRelevanceMgr::Instance()->ParseCsvInput(stream);

@@ -78,6 +78,7 @@ target_link_libraries(
         plPipeline
         plResMgr
         plScene
+        plStatusLog
         plSurface
         pfLocalizationMgr
         pfMessage

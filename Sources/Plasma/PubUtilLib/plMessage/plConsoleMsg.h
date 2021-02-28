@@ -54,7 +54,7 @@ class plConsoleMsg : public plMessage
 protected:
 
     uint32_t      fCmd;
-    char        *fString;
+    ST::string    fString;
 
 public:
 
@@ -65,21 +65,20 @@ public:
         kExecuteLine
     };
 
-    plConsoleMsg() : plMessage(nullptr, nullptr, nullptr), fCmd(), fString() { SetBCastFlag(kBCastByExactType); }
-    plConsoleMsg( uint32_t cmd, const char *str ) : 
-                plMessage(nullptr, nullptr, nullptr), fCmd(cmd), fString(hsStrcpy(str))
-                { SetBCastFlag( kBCastByExactType ); }
-    
-    ~plConsoleMsg() { free(fString); }
+    plConsoleMsg(uint32_t cmd = 0, ST::string str = {})
+        :  plMessage(nullptr, nullptr, nullptr), fCmd(cmd), fString(std::move(str))
+    {
+        SetBCastFlag( kBCastByExactType );
+    }
 
     CLASSNAME_REGISTER( plConsoleMsg );
     GETINTERFACE_ANY( plConsoleMsg, plMessage );
 
     uint32_t      GetCmd() const { return fCmd; }
-    const char  *GetString() const { return fString; };
-    
+    ST::string    GetString() const { return fString; };
+
     void SetCmd (uint32_t cmd) { fCmd = cmd; }
-    void SetString (const char str[]) { free(fString); fString = hsStrcpy(str); }
+    void SetString(ST::string str) { fString = std::move(str); }
 
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;
