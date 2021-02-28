@@ -56,15 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnEncryption/plRandom.h"
 
-plDynaTorpedoMgr::plDynaTorpedoMgr()
-{
-    fPartIDs.SetCount(0);
-}
-
-plDynaTorpedoMgr::~plDynaTorpedoMgr()
-{
-}
-
 void plDynaTorpedoMgr::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDynaRippleMgr::Read(stream, mgr);
