@@ -12,6 +12,7 @@
       "libpng",
       "libvorbis",
       "libvpx",
+      "libwebm",
       "openal-soft",
       "openssl",
       "opus",
