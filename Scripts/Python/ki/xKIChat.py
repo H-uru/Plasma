@@ -103,6 +103,7 @@ class xKIChat(object):
         # Message History
         self.MessageHistoryIs = -1 # Current position in message history (up/down key)
         self.MessageHistoryList = [] # Contains our message history
+        self.MessageCurrentLine = "" # Hold current line while navigating message history
 
     #######
     # GUI #

@@ -1661,6 +1661,8 @@ class xKI(ptModifier):
 
         if (set == "up"):
             if (self.chatMgr.MessageHistoryIs < len(self.chatMgr.MessageHistoryList)-1):
+                if (self.chatMgr.MessageHistoryIs == -1):
+                    self.chatMgr.MessageCurrentLine = control.getString()
                 self.chatMgr.MessageHistoryIs = self.chatMgr.MessageHistoryIs +1
                 control.setStringW(self.chatMgr.MessageHistoryList[self.chatMgr.MessageHistoryIs])
                 control.end()
@@ -1669,6 +1671,11 @@ class xKI(ptModifier):
             if (self.chatMgr.MessageHistoryIs > 0):
                 self.chatMgr.MessageHistoryIs = self.chatMgr.MessageHistoryIs -1
                 control.setStringW(self.chatMgr.MessageHistoryList[self.chatMgr.MessageHistoryIs])
+                control.end()
+                control.refresh()
+            elif (self.chatMgr.MessageHistoryIs == 0):
+                self.chatMgr.MessageHistoryIs = -1
+                control.setStringW(self.chatMgr.MessageCurrentLine)
                 control.end()
                 control.refresh()
 
