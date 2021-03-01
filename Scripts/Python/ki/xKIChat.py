@@ -265,8 +265,8 @@ class xKIChat(object):
                 for player in self.BKPlayerList:
                     # Is the player in this Age?
                     if isinstance(player, ptPlayer):
-                        plyrName = player.getPlayerName()
-                        if pWords[1].startswith(plyrName + " "):
+                        plyrName = player.getPlayerName().lower()
+                        if pWords[1].lower().startswith(plyrName + " "):
                             selPlyrList.append(player)
                             cFlags.private = True
                             foundBuddy = True
@@ -279,8 +279,8 @@ class xKIChat(object):
                         ePlyr = player.getChild()
                         ePlyr = ePlyr.upcastToPlayerInfoNode()
                         if ePlyr is not None:
-                            plyrName = ePlyr.playerGetName()
-                            if pWords[1].startswith(plyrName + " "):
+                            plyrName = ePlyr.playerGetName().lower()
+                            if pWords[1].lower().startswith(plyrName + " "):
                                 selPlyrList.append(ptPlayer(ePlyr.playerGetName(), ePlyr.playerGetID()))
                                 cFlags.private = True
                                 cFlags.interAge = True
@@ -940,8 +940,8 @@ class CommandsProcessor:
         except ValueError:
             for player in self.chatMgr.BKPlayerList:
                 if isinstance(player, ptPlayer):
-                    plyrName = player.getPlayerName()
-                    if params == plyrName:
+                    plyrName = player.getPlayerName().lower()
+                    if params.lower() == plyrName:
                         return player.getPlayerID()
             return 0
 
