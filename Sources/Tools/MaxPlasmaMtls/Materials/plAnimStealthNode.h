@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAnimStealthNode_h
 #define _plAnimStealthNode_h
 
+#include "hsTemplates.h"
+
 #include "MaxComponent/plAnimObjInterface.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 
