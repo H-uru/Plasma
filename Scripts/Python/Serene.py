@@ -45,21 +45,14 @@ from PlasmaTypes import *
 import time
 
 class Serene(ptResponder):
-    __module__ = __name__
-    
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 1022601
         self.version = 1
 
-    
-    def OnFirstUpdate(self):
-        pass
-
-    
     def OnServerInitComplete(self):
-        if len(PtGetPlayerList()):
-            return None
+        if not PtGetPlayerList():
+            return
         
         dnitime = PtGetDniTime()
         month = time.strftime('%m', time.gmtime(dnitime))
@@ -69,11 +62,3 @@ class Serene(ptResponder):
             ageSDL['sereneChristmasVis'] = (1,)
         else:
             ageSDL['sereneChristmasVis'] = (0,)
-
-    
-    def OnNotify(self, state, id, events):
-        pass
-
-    
-    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
-        pass
