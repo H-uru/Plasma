@@ -49,34 +49,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void pySDL::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtSDLReadWriteOptions);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kDirtyOnly,              plSDL::kDirtyOnly);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kSkipNotificationInfo,   plSDL::kSkipNotificationInfo);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kBroadcast,              plSDL::kBroadcast);
-    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kWriteTimeStamps,      plSDL::kWriteTimeStamps);
-    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampOnRead,        plSDL::kTimeStampOnRead);
-    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampDirtyOnRead, plSDL::kTimeStampDirtyOnRead);
-    PYTHON_ENUM_END(m, PtSDLReadWriteOptions);
+    PYTHON_ENUM_START(PtSDLReadWriteOptions)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kDirtyOnly,              plSDL::kDirtyOnly)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kSkipNotificationInfo,   plSDL::kSkipNotificationInfo)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kBroadcast,              plSDL::kBroadcast)
+    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kWriteTimeStamps,      plSDL::kWriteTimeStamps)
+    PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampOnRead,        plSDL::kTimeStampOnRead)
+    //PYTHON_ENUM_ELEMENT(PtSDLReadWriteOptions, kTimeStampDirtyOnRead, plSDL::kTimeStampDirtyOnRead)
+    PYTHON_ENUM_END(m, PtSDLReadWriteOptions)
     
-    PYTHON_ENUM_START(PtSDLVarType);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kNone,            plVarDescriptor::kNone);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kInt,             plVarDescriptor::kInt);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kFloat,           plVarDescriptor::kFloat);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kBool,            plVarDescriptor::kBool);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kString32,        plVarDescriptor::kString32);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kKey,             plVarDescriptor::kKey);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kStateDescriptor, plVarDescriptor::kStateDescriptor);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kCreatable,       plVarDescriptor::kCreatable);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kDouble,          plVarDescriptor::kDouble);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kTime,            plVarDescriptor::kTime);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kVector3,         plVarDescriptor::kVector3);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kPoint3,          plVarDescriptor::kPoint3);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGB,             plVarDescriptor::kRGB);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGBA,            plVarDescriptor::kRGBA);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kQuaternion,      plVarDescriptor::kQuaternion);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kByte,            plVarDescriptor::kByte);
-    PYTHON_ENUM_ELEMENT(PtSDLVarType, kShort,           plVarDescriptor::kShort);
-    PYTHON_ENUM_END(m, PtSDLVarType);
+    PYTHON_ENUM_START(PtSDLVarType)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kNone,            plVarDescriptor::kNone)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kInt,             plVarDescriptor::kInt)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kFloat,           plVarDescriptor::kFloat)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kBool,            plVarDescriptor::kBool)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kString32,        plVarDescriptor::kString32)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kKey,             plVarDescriptor::kKey)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kStateDescriptor, plVarDescriptor::kStateDescriptor)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kCreatable,       plVarDescriptor::kCreatable)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kDouble,          plVarDescriptor::kDouble)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kTime,            plVarDescriptor::kTime)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kVector3,         plVarDescriptor::kVector3)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kPoint3,          plVarDescriptor::kPoint3)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGB,             plVarDescriptor::kRGB)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kRGBA,            plVarDescriptor::kRGBA)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kQuaternion,      plVarDescriptor::kQuaternion)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kByte,            plVarDescriptor::kByte)
+    PYTHON_ENUM_ELEMENT(PtSDLVarType, kShort,           plVarDescriptor::kShort)
+    PYTHON_ENUM_END(m, PtSDLVarType)
 }
 
 // glue functions

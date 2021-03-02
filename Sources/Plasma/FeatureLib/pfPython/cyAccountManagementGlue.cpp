@@ -132,11 +132,11 @@ void cyAccountManagement::AddPlasmaMethods(PyObject* m)
 
 void cyAccountManagement::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtAccountUpdateType);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kCreatePlayer,     plAccountUpdateMsg::kCreatePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kDeletePlayer,     plAccountUpdateMsg::kDeletePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kUpgradePlayer,    plAccountUpdateMsg::kUpgradePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kActivePlayer,     plAccountUpdateMsg::kActivePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kChangePassword,   plAccountUpdateMsg::kChangePassword);
-    PYTHON_ENUM_END(m, PtAccountUpdateType);
+    PYTHON_ENUM_START(PtAccountUpdateType)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kCreatePlayer,     plAccountUpdateMsg::kCreatePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kDeletePlayer,     plAccountUpdateMsg::kDeletePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kUpgradePlayer,    plAccountUpdateMsg::kUpgradePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kActivePlayer,     plAccountUpdateMsg::kActivePlayer)
+    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kChangePassword,   plAccountUpdateMsg::kChangePassword)
+    PYTHON_ENUM_END(m, PtAccountUpdateType)
 }
