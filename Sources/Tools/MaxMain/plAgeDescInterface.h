@@ -40,6 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "hsTemplates.h"
+#include "hsWindows.h"
+
+#include <vector>
+
 class plAgeDescription;
 class plAgeFile;
 class MaxAssBranchAccess;
