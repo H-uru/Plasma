@@ -60,7 +60,7 @@ hsGDirect3DTnLEnumerate& hsGDirect3D::EnumerateTnL(bool reenum)
 
 void hsGDirect3D::ReleaseTnLEnum()
 {
-    s_tnlEnum.reset(nullptr);
+    s_tnlEnum.reset();
 }
 
 static void IDeleteDirect3D(IDirect3D9* d3d)
@@ -79,4 +79,3 @@ IDirect3D9* hsGDirect3D::GetDirect3D(bool recreate)
     }
     return s_direct3d.get();
 }
-
