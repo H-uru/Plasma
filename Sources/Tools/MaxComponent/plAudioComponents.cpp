@@ -1767,7 +1767,7 @@ public:
     bool    IsLocalOnly() const override { if (fCompPB->GetInt((ParamID)kSndIsLocalOnly)) return true; else return false; }
 
 
-    bool    ConvertGrouped(plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg) override;
+    bool    ConvertGrouped(plMaxNode *baseNode, std::vector<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg) override;
 
 protected:
 
@@ -2204,7 +2204,7 @@ bool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 }
 
 // Converts an array of components into a single grouped sound
-bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg )
+bool plSound3DEmitterComponent::ConvertGrouped(plMaxNode *baseNode, std::vector<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg)
 {
     ST::string keyName;
 
@@ -2222,17 +2222,16 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     std::vector<uint32_t>   startPoses;
     std::vector<float>      volumes;
     std::vector<uint8_t>    mergedData;
-    int                     i;
     plWAVHeader             mergedHeader;
 
-    for( i = 0; i < groupArray.GetCount(); i++ )
+    for (plBaseSoundEmitterComponent* groupComponent : groupArray)
     {
         // Make sure they're all 3D sounds...
-        if( groupArray[ i ]->ClassID() != SOUND_3D_COMPONENT_ID )
+        if (groupComponent->ClassID() != SOUND_3D_COMPONENT_ID)
         {
             char msg[ 512 ];
             sprintf( msg, "The sound component %s isn't a 3D sound, which is necessary for making grouped sounds. "
-                        "Make sure all the sounds in this group are 3D sounds.", groupArray[ i ]->GetINode()->GetName() );
+                        "Make sure all the sounds in this group are 3D sounds.", groupComponent->GetINode()->GetName());
             IShowError( kSrcBufferInvalid, msg, baseNode->GetName(), pErrMsg );
 
             // Attempt to recover
@@ -2242,7 +2241,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         }
 
         // Grab the buffer for this sound directly from the original source
-        plFileName fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
+        plFileName fileName = groupComponent->GetSoundFileName(kBaseSound);
 
         plSoundBuffer   *buffer = new plSoundBuffer( fileName );
         if( !buffer->IsValid() || !buffer->EnsureInternal() )
@@ -2265,7 +2264,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
             if( !worked )
             {
                 char msg[ 512 ];
-                sprintf( msg, "The sound file %s cannot be loaded for component %s.", fileName.AsString().c_str(), groupArray[ i ]->GetINode()->GetName() );
+                sprintf(msg, "The sound file %s cannot be loaded for component %s.", fileName.AsString().c_str(), groupComponent->GetINode()->GetName());
                 IShowError( kSrcBufferInvalid, msg, baseNode->GetName(), pErrMsg );
                 delete buffer;
 
@@ -2277,7 +2276,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         }
         
         // Get a header (they should all be the same)
-        if( i == 0 )
+        if (groupArray.empty())
             mergedHeader = buffer->GetHeader();
         else
         {
@@ -2305,7 +2304,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         delete buffer;
 
         // Also keep track of what the volume should be for this particular sound
-        volumes.emplace_back(groupArray[i]->GetSoundVolume());
+        volumes.emplace_back(groupComponent->GetSoundVolume());
     }
 
     /// We got a merged buffer, so make a plSoundBuffer from it
@@ -3436,7 +3435,7 @@ bool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         ai = node->GetSceneObject()->GetAudioInterface();
         pAudible = (plWinAudible*)ai->GetAudible();
-        hsTArray<plBaseSoundEmitterComponent *> comps;
+        std::vector<plBaseSoundEmitterComponent *> comps;
 
         plRandomSoundModGroup *groups = new plRandomSoundModGroup[kMaxGroups];
         int i;
@@ -3454,12 +3453,11 @@ bool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
             groups[i].fIndices = new uint16_t[numSounds];
 
-            hsTArray<uint16_t> indices;
-            int j;
+            std::vector<uint16_t> indices;
 
             if( !fCompPB->GetInt( (ParamID)kCombineSounds ) )
             {
-                for (j = 0; j < numSounds; j++)
+                for (int j = 0; j < numSounds; j++)
                 {
                     plMaxNode *compNode = (plMaxNode*)fCompPB->GetINode(ParamID(kSoundList), 0, numSoFar + j);
                     if (compNode)
@@ -3468,38 +3466,32 @@ bool plRandomSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         int idx = comp->GetSoundIdx((plMaxNode*)node);
                         if (idx >= 0)
                         {
-                            indices.Append(idx);
+                            indices.emplace_back(idx);
                         }
                     }
                 }
-                groups[i].fNumSounds = indices.GetCount();
-                for (j = 0; j < indices.GetCount(); j++)
-                {   
-                    groups[i].fIndices[j] = indices[j];
-                }
+                groups[i].fNumSounds = (uint16_t)indices.size();
+                std::copy(indices.cbegin(), indices.cend(), groups[i].fIndices);
             }
             else
             {
                 // Build array of components to give to ConvertGrouped()
-                for (j = 0; j < numSounds; j++)
+                for (int j = 0; j < numSounds; j++)
                 {
                     plMaxNode *compNode = (plMaxNode*)fCompPB->GetINode(ParamID(kSoundList), 0, numSoFar + j);
                     if (compNode)
                     {
                         plBaseSoundEmitterComponent *comp = (plBaseSoundEmitterComponent *)compNode->ConvertToComponent();
-                        comps.Append( comp );
+                        comps.emplace_back(comp);
                         // Stupid, i know. Leave me alone, PG is playing.
-                        indices.Append( comps.GetCount() - 1 );
+                        indices.emplace_back((uint16_t)(comps.size() - 1));
                     }
                 }
 
                 // Get index from first (should be the same for all of 'em)
                 groups[i].fGroupedIdx = comps[ 0 ]->GetSoundIdx( (plMaxNode *)node );
-                groups[i].fNumSounds = indices.GetCount();
-                for (j = 0; j < indices.GetCount(); j++)
-                {
-                    groups[i].fIndices[j] = indices[ j ];
-                }
+                groups[i].fNumSounds = (uint16_t)indices.size();
+                std::copy(indices.cbegin(), indices.cend(), groups[i].fIndices);
             }
                 
             numSoFar += groups[i].fNumSounds;
