@@ -274,7 +274,7 @@ void NtInitialize () {
     }
 
     // create IO worker threads
-    for (long thread = 0; thread < s_ioThreadCount; thread++) {
+    for (unsigned thread = 0; thread < s_ioThreadCount; thread++) {
         s_ioThreadHandles[thread] = std::thread([] {
 #ifdef USE_VLD
             VLDEnable();

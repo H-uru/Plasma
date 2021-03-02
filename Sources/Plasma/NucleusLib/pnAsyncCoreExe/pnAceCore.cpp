@@ -47,10 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
-#ifdef HS_BUILD_FOR_WIN32
-#include "Private/Nt/pnAceNtInt.h"
-#endif
-
 #include <atomic>
 
 /*****************************************************************************
@@ -94,43 +90,18 @@ long PerfSetCounter (unsigned id, unsigned n) {
 ***/
 
 //===========================================================================
-static bool s_initialized = false;
-
 void AsyncCoreInitialize()
 {
-    ASSERTMSG(!s_initialized, "AsyncCore already initialized");
-    
-#ifdef HS_BUILD_FOR_WIN32
-    // Initialize WinSock
-    WSADATA wsaData;
-    if (WSAStartup(0x101, &wsaData))
-        ErrorAssert(__LINE__, __FILE__, "WSA startup failed");
-    if (wsaData.wVersion != 0x101)
-        ErrorAssert(__LINE__, __FILE__, "WSA version failed");
-#endif
-
-    s_initialized = true;
-#ifdef HS_BUILD_FOR_WIN32
-    Nt::NtInitialize();
-#else
-    ErrorAssert(__LINE__, __FILE__, "Async API not yet supported for this platform");
-#endif
+    SocketInitialize();
 }
 
 //============================================================================
 void AsyncCoreDestroy(unsigned waitMs)
 {
-#ifdef HS_BUILD_FOR_WIN32
-    Nt::NtDestroy(waitMs);
-#else
-    ErrorAssert(__LINE__, __FILE__, "Async API not yet supported for this platform");
-#endif
-
+    SocketDestroy(waitMs);
     DnsDestroy(waitMs);
     TimerDestroy(waitMs);
     ThreadDestroy(waitMs);
-
-    s_initialized = false;
 }
 
 //============================================================================
