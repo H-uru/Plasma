@@ -5527,6 +5527,15 @@ class xKI(ptModifier):
             ctrlID = control.getTagID()
             if ctrlID == kGUI.ChatEditboxID:
                 self.Autocomplete(control)
+        # Up or Down key to scroll in the chat history
+        elif event == kMessageHistoryUp:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatEditboxID:
+                self.MessageHistory(control, "up")
+        elif event == kMessageHistoryDown:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatEditboxID:
+                self.MessageHistory(control, "down")
 
     ## Process notifications originating from the miniKI.
     # The miniKI is the display in the top-left corner of the screen (by
