@@ -61,6 +61,14 @@ ST::string plNetAddress::GetHostWithPort() const
     return ss.to_string();
 }
 
+std::array<uint8_t, 4> plNetAddress::GetHostBytes() const
+{
+    std::array<uint8_t, 4> bytes;
+    static_assert(sizeof(fHost) == sizeof(bytes));
+    memcpy(bytes.data(), &fHost, sizeof(fHost));
+    return bytes;
+}
+
 void plNetAddress::SetHost(const ST::string& hostname)
 {
     fHost = pnNetCommon::GetBinAddr(hostname);

@@ -66,7 +66,7 @@ typedef struct AsyncIdStruct *         AsyncId;
 typedef struct AsyncSocketStruct *     AsyncSocket;
 typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
-const unsigned kAsyncSocketBufferSize   = 1460;
+constexpr unsigned kAsyncSocketBufferSize   = 1460;
 
 /****************************************************************************
 *
@@ -140,12 +140,11 @@ struct AsyncNotifySocketRead : AsyncNotifySocket {
 
 typedef AsyncNotifySocketRead AsyncNotifySocketWrite;
 
-typedef bool (* FAsyncNotifySocketProc) (    // return false to disconnect
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
-);
+// return false to disconnect
+typedef std::function<bool (AsyncSocket /* sock */,
+                            EAsyncNotifySocket /* code */,
+                            AsyncNotifySocket* /* notify */,
+                            void** /* userState */)> FAsyncNotifySocketProc;
 
 
 /****************************************************************************

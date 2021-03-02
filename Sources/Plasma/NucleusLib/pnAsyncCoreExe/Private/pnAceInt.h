@@ -76,6 +76,16 @@ void DnsDestroy (unsigned exitThreadWaitMs);
 
 /*****************************************************************************
 *
+*   Socket.cpp
+*
+***/
+
+void SocketInitialize();
+void SocketDestroy(unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
 *   Thread.cpp
 *
 ***/
