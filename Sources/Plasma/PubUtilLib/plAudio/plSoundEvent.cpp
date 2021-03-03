@@ -76,8 +76,8 @@ bool    plSoundEvent::RemoveCallback( plEventCallbackMsg *msg )
     if (iter != fCallbacks.cend())
     {
         hsRefCnt_SafeUnRef( msg );
+        const auto idx = iter - fCallbacks.cbegin();
         fCallbacks.erase(iter);
-        const auto idx = std::distance(fCallbacks.cbegin(), iter);
         fCallbackEndingFlags.erase(fCallbackEndingFlags.cbegin() + idx);
         return true;
     }
