@@ -167,7 +167,7 @@ const plInventoryObjComponent::LogicKeys& plInventoryObjComponent::GetLogicKeys(
 bool plInventoryObjComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     fLogicModKeys.clear();
-    fReceivers.Reset();
+    fReceivers.clear();
     return true;
 }
 
@@ -204,7 +204,7 @@ return true;
 
 void plInventoryObjComponent::AddReceiverKey(plKey key, plMaxNode* node)
 {
-    fReceivers.Append(key);
+    fReceivers.emplace_back(std::move(key));
 }
 
 bool plInventoryObjComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
