@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAvMeshSmooth_inc
 #define plAvMeshSmooth_inc
 
+#include <vector>
+
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"
 
@@ -90,7 +92,7 @@ protected:
     hsVector3       INormalToSpan(XfmSpan& span, const hsVector3& wNorm) const;
 
     void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
-    void            FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts);
+    void            FindEdges(std::vector<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts);
 
 public:
     plAvMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
@@ -101,7 +103,7 @@ public:
     void        SetDistTol(float dist);
     float    GetDistTol() const;
 
-    void        Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans);
+    void        Smooth(std::vector<XfmSpan>& srcSpans, std::vector<XfmSpan>& dstSpans);
 
     void        SetFlags(uint32_t f) { fFlags = f; }
     uint32_t      GetFlags() const { return fFlags; }

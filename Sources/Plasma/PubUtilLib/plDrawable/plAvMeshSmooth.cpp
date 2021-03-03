@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <memory>
+
 #include "HeadSpin.h"
 #include "plAvMeshSmooth.h"
 
@@ -137,10 +139,9 @@ void plAvMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idx
     delete [] bins;
 }
 
-void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts)
+void plAvMeshSmooth::FindEdges(std::vector<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts)
 {
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (size_t i = 0; i < spans.size(); i++)
     {
         fAccGeom.AccessSpanFromGeometrySpan(spans[i].fAccSpan, spans[i].fSpan);
         if( !spans[i].fAccSpan.HasAccessTri() )
@@ -168,16 +169,15 @@ void plAvMeshSmooth::FindEdges(hsTArray<XfmSpan>& spans, hsTArray<uint16_t>* edg
 // The funny painful thing is that later, when we go to use these smoothed delta meshes,
 // again we need to coerce them into a neutral space. At that time, we'll use the
 // morph target mesh's local space. Whatever.
-void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstSpans)
+void plAvMeshSmooth::Smooth(std::vector<XfmSpan>& srcSpans, std::vector<XfmSpan>& dstSpans)
 {
-    hsTArray<uint16_t>* dstEdgeVerts = new hsTArray<uint16_t>[dstSpans.GetCount()];
-    FindEdges(dstSpans, dstEdgeVerts);
+    auto dstEdgeVerts = std::make_unique<hsTArray<uint16_t>[]>(dstSpans.size());
+    FindEdges(dstSpans, dstEdgeVerts.get());
 
-    hsTArray<uint16_t>* srcEdgeVerts = new hsTArray<uint16_t>[srcSpans.GetCount()];
-    FindEdges(srcSpans, srcEdgeVerts);
+    auto srcEdgeVerts = std::make_unique<hsTArray<uint16_t>[]>(srcSpans.size());
+    FindEdges(srcSpans, srcEdgeVerts.get());
 
-    int i;
-    for( i = 0; i < dstSpans.GetCount(); i++ )
+    for (size_t i = 0; i < dstSpans.size(); i++)
     {
         plAccessTriSpan& dstTriSpan = dstSpans[i].fAccSpan.AccessTri();
 
@@ -199,8 +199,7 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
             hsVector3 smoothNorm = dstNorm;
             hsColorRGBA smoothDiff = dstDiff;
 
-            int k;
-            for( k = 0; k < srcSpans.GetCount(); k++ )
+            for (size_t k = 0; k < srcSpans.size(); k++)
             {
                 int m;
                 for( m = 0; m < srcEdgeVerts[k].GetCount(); m++ )
@@ -233,11 +232,7 @@ void plAvMeshSmooth::Smooth(hsTArray<XfmSpan>& srcSpans, hsTArray<XfmSpan>& dstS
             if( (fFlags & kSmoothDiffuse) && dstTriSpan.HasDiffuse() )
                 dstTriSpan.Diffuse32(dstEdgeVerts[i][j]) = smoothDiff.ToARGB32();
         }
-
     }
-
-    delete [] srcEdgeVerts;
-    delete [] dstEdgeVerts;
 }
 
 hsPoint3 plAvMeshSmooth::IPositionToNeutral(XfmSpan& span, int i) const
