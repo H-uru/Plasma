@@ -9,8 +9,9 @@ if(PRODUCT_EMBED_BUILD_INFO)
     find_package(Git QUIET)
     if(Git_FOUND)
         execute_process(
-            COMMAND ${GIT_EXECUTABLE} log --pretty=format:%H -n 1
+            COMMAND ${GIT_EXECUTABLE} describe --always --dirty --exclude '*'
             OUTPUT_VARIABLE GIT_REV
+            OUTPUT_STRIP_TRAILING_WHITESPACE
             ERROR_QUIET
         )
         execute_process(
@@ -29,16 +30,7 @@ if(PRODUCT_EMBED_BUILD_INFO)
         string(REGEX REPLACE "[\r\n]" " " GIT_TAG "${GIT_TAG}")
 
         if(NOT GIT_TAG)
-            execute_process(
-                COMMAND ${GIT_EXECUTABLE} log --pretty=format:%h -n 1
-                OUTPUT_VARIABLE GIT_TAG
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_QUIET
-            )
-        endif()
-        if(GIT_DIFF EQUAL 1)
-            string(APPEND GIT_REV "_dirty")
-            string(APPEND GIT_TAG "_dirty")
+            set(GIT_TAG ${GIT_REV})
         endif()
     endif()
 endif()
