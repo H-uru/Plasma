@@ -454,42 +454,42 @@ void pyNotify::AddPlasmaClasses(PyObject *m)
 
 void pyNotify::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtNotificationType);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kActivator,             plNotifyMsg::kActivator);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kVarNotification,       plNotifyMsg::kVarNotification);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kNotifySelf,            plNotifyMsg::kNotifySelf);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderFF,           plNotifyMsg::kResponderFF);
-    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderChangeState,  plNotifyMsg::kResponderChangeState);
-    PYTHON_ENUM_END(m, PtNotificationType);
+    PYTHON_ENUM_START(PtNotificationType)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kActivator,             plNotifyMsg::kActivator)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kVarNotification,       plNotifyMsg::kVarNotification)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kNotifySelf,            plNotifyMsg::kNotifySelf)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderFF,           plNotifyMsg::kResponderFF)
+    PYTHON_ENUM_ELEMENT(PtNotificationType, kResponderChangeState,  plNotifyMsg::kResponderChangeState)
+    PYTHON_ENUM_END(m, PtNotificationType)
 
-    PYTHON_ENUM_START(PtEventType);
-    PYTHON_ENUM_ELEMENT(PtEventType, kCollision,        proEventData::kCollision);
-    PYTHON_ENUM_ELEMENT(PtEventType, kPicked,           proEventData::kPicked);
-    PYTHON_ENUM_ELEMENT(PtEventType, kControlKey,       proEventData::kControlKey);
-    PYTHON_ENUM_ELEMENT(PtEventType, kVariable,         proEventData::kVariable);
-    PYTHON_ENUM_ELEMENT(PtEventType, kFacing,           proEventData::kFacing);
-    PYTHON_ENUM_ELEMENT(PtEventType, kContained,        proEventData::kContained);
-    PYTHON_ENUM_ELEMENT(PtEventType, kActivate,         proEventData::kActivate);
-    PYTHON_ENUM_ELEMENT(PtEventType, kCallback,         proEventData::kCallback);
-    PYTHON_ENUM_ELEMENT(PtEventType, kResponderState,   proEventData::kResponderState);
-    PYTHON_ENUM_ELEMENT(PtEventType, kMultiStage,       proEventData::kMultiStage);
-    PYTHON_ENUM_ELEMENT(PtEventType, kSpawned,          proEventData::kSpawned);
-    PYTHON_ENUM_ELEMENT(PtEventType, kClickDrag,        proEventData::kClickDrag);
-    PYTHON_ENUM_ELEMENT(PtEventType, kOfferLinkingBook, proEventData::kOfferLinkingBook);
-    PYTHON_ENUM_ELEMENT(PtEventType, kBook,             proEventData::kBook);
-    PYTHON_ENUM_END(m, PtEventType);
+    PYTHON_ENUM_START(PtEventType)
+    PYTHON_ENUM_ELEMENT(PtEventType, kCollision,        proEventData::kCollision)
+    PYTHON_ENUM_ELEMENT(PtEventType, kPicked,           proEventData::kPicked)
+    PYTHON_ENUM_ELEMENT(PtEventType, kControlKey,       proEventData::kControlKey)
+    PYTHON_ENUM_ELEMENT(PtEventType, kVariable,         proEventData::kVariable)
+    PYTHON_ENUM_ELEMENT(PtEventType, kFacing,           proEventData::kFacing)
+    PYTHON_ENUM_ELEMENT(PtEventType, kContained,        proEventData::kContained)
+    PYTHON_ENUM_ELEMENT(PtEventType, kActivate,         proEventData::kActivate)
+    PYTHON_ENUM_ELEMENT(PtEventType, kCallback,         proEventData::kCallback)
+    PYTHON_ENUM_ELEMENT(PtEventType, kResponderState,   proEventData::kResponderState)
+    PYTHON_ENUM_ELEMENT(PtEventType, kMultiStage,       proEventData::kMultiStage)
+    PYTHON_ENUM_ELEMENT(PtEventType, kSpawned,          proEventData::kSpawned)
+    PYTHON_ENUM_ELEMENT(PtEventType, kClickDrag,        proEventData::kClickDrag)
+    PYTHON_ENUM_ELEMENT(PtEventType, kOfferLinkingBook, proEventData::kOfferLinkingBook)
+    PYTHON_ENUM_ELEMENT(PtEventType, kBook,             proEventData::kBook)
+    PYTHON_ENUM_END(m, PtEventType)
 
-    PYTHON_ENUM_START(PtNotifyDataType);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kFloat,  proEventData::kFloat);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kInt,  proEventData::kInt);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kNull,  proEventData::kNull);
-    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kKey,     proEventData::kKey);
-    PYTHON_ENUM_END(m, PtNotifyDataType);
+    PYTHON_ENUM_START(PtNotifyDataType)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kFloat,  proEventData::kFloat)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kInt,  proEventData::kInt)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kNull,  proEventData::kNull)
+    PYTHON_ENUM_ELEMENT(PtNotifyDataType, kKey,     proEventData::kKey)
+    PYTHON_ENUM_END(m, PtNotifyDataType)
 
-    PYTHON_ENUM_START(PtMultiStageEventType);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kEnterStage,         proEventData::kEnterStage);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kBeginingOfLoop,     proEventData::kBeginingOfLoop);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kAdvanceNextStage,   proEventData::kAdvanceNextStage);
-    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kRegressPrevStage,   proEventData::kRegressPrevStage);
-    PYTHON_ENUM_END(m, PtMultiStageEventType);
+    PYTHON_ENUM_START(PtMultiStageEventType)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kEnterStage,         proEventData::kEnterStage)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kBeginingOfLoop,     proEventData::kBeginingOfLoop)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kAdvanceNextStage,   proEventData::kAdvanceNextStage)
+    PYTHON_ENUM_ELEMENT(PtMultiStageEventType, kRegressPrevStage,   proEventData::kRegressPrevStage)
+    PYTHON_ENUM_END(m, PtMultiStageEventType)
 }

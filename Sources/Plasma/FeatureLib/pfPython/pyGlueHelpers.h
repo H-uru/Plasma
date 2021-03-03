@@ -611,12 +611,12 @@ static PyObject *methodName(PyObject *self) /* and now for the actual function *
 /////////////////////////////////////////////////////////////////////
 
 // the start of an enum block
-#define PYTHON_ENUM_START(enumName) std::map<std::string, int> enumName##_enumValues
+#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
 
 // for each element of the enum
-#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) enumName##_enumValues[#elementName] = elementValue
+#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), elementValue),
 
 // to finish off and define the enum
-#define PYTHON_ENUM_END(m, enumName) pyEnum::MakeEnum(m, #enumName, enumName##_enumValues)
+#define PYTHON_ENUM_END(m, enumName) }; pyEnum::MakeEnum(m, #enumName, enumName##_enumValues);
 
 #endif // _pyGlueHelpers_h_

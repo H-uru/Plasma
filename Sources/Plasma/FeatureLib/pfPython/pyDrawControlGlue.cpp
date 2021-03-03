@@ -142,8 +142,8 @@ void pyDrawControl::AddPlasmaMethods(PyObject* m)
 
 /*void pyDrawControl::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtMovieType);
-    PYTHON_ENUM_ELEMENT(PtMovieType, kUnknownTypeMovie, pyMoviePlayer::kUnknownTypeMovie);
-    PYTHON_ENUM_ELEMENT(PtMovieType, kBinkMovie,        pyMoviePlayer::kBinkMovie);
-    PYTHON_ENUM_END;
+    PYTHON_ENUM_START(PtMovieType)
+    PYTHON_ENUM_ELEMENT(PtMovieType, kUnknownTypeMovie, pyMoviePlayer::kUnknownTypeMovie)
+    PYTHON_ENUM_ELEMENT(PtMovieType, kBinkMovie,        pyMoviePlayer::kBinkMovie)
+    PYTHON_ENUM_END
 }*/

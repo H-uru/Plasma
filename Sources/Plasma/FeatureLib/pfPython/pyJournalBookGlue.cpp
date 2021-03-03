@@ -350,13 +350,13 @@ void pyJournalBook::AddPlasmaMethods(PyObject* m)
 
 void pyJournalBook::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtBookEventTypes);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyImageLink,         pfJournalBook::kNotifyImageLink);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyShow,              pfJournalBook::kNotifyShow);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyHide,              pfJournalBook::kNotifyHide);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyNextPage,          pfJournalBook::kNotifyNextPage);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyPreviousPage,      pfJournalBook::kNotifyPreviousPage);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyCheckUnchecked,    pfJournalBook::kNotifyCheckUnchecked);
-    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyClose,             pfJournalBook::kNotifyClose);
-    PYTHON_ENUM_END(m, PtBookEventTypes);
+    PYTHON_ENUM_START(PtBookEventTypes)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyImageLink,         pfJournalBook::kNotifyImageLink)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyShow,              pfJournalBook::kNotifyShow)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyHide,              pfJournalBook::kNotifyHide)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyNextPage,          pfJournalBook::kNotifyNextPage)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyPreviousPage,      pfJournalBook::kNotifyPreviousPage)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyCheckUnchecked,    pfJournalBook::kNotifyCheckUnchecked)
+    PYTHON_ENUM_ELEMENT(PtBookEventTypes, kNotifyClose,             pfJournalBook::kNotifyClose)
+    PYTHON_ENUM_END(m, PtBookEventTypes)
 }

@@ -196,12 +196,12 @@ void pyNetLinkingMgr::AddPlasmaClasses(PyObject *m)
 
 void pyNetLinkingMgr::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtLinkingRules);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kBasicLink,     plNetCommon::LinkingRules::kBasicLink);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOriginalBook,  plNetCommon::LinkingRules::kOriginalBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kSubAgeBook,    plNetCommon::LinkingRules::kSubAgeBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOwnedBook,     plNetCommon::LinkingRules::kOwnedBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kVisitBook,     plNetCommon::LinkingRules::kVisitBook);
-    PYTHON_ENUM_ELEMENT(PtLinkingRules, kChildAgeBook,  plNetCommon::LinkingRules::kChildAgeBook);
-    PYTHON_ENUM_END(m, PtLinkingRules);
+    PYTHON_ENUM_START(PtLinkingRules)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kBasicLink,     plNetCommon::LinkingRules::kBasicLink)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOriginalBook,  plNetCommon::LinkingRules::kOriginalBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kSubAgeBook,    plNetCommon::LinkingRules::kSubAgeBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kOwnedBook,     plNetCommon::LinkingRules::kOwnedBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kVisitBook,     plNetCommon::LinkingRules::kVisitBook)
+    PYTHON_ENUM_ELEMENT(PtLinkingRules, kChildAgeBook,  plNetCommon::LinkingRules::kChildAgeBook)
+    PYTHON_ENUM_END(m, PtLinkingRules)
 }

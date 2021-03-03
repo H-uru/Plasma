@@ -140,16 +140,16 @@ void pyStatusLog::AddPlasmaClasses(PyObject *m)
 
 void pyStatusLog::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtStatusLogFlags);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kFilledBackground,    plStatusLog::kFilledBackground);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAppendToLast,        plStatusLog::kAppendToLast);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDontWriteFile,       plStatusLog::kDontWriteFile);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDeleteForMe,         plStatusLog::kDeleteForMe);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAlignToTop,          plStatusLog::kAlignToTop);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDebugOutput,         plStatusLog::kDebugOutput);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimestamp,           plStatusLog::kTimestamp);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kStdout,              plStatusLog::kStdout);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeInSeconds,       plStatusLog::kTimeInSeconds);
-    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeAsDouble,        plStatusLog::kTimeAsDouble);
-    PYTHON_ENUM_END(m, PtStatusLogFlags);
+    PYTHON_ENUM_START(PtStatusLogFlags)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kFilledBackground,    plStatusLog::kFilledBackground)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAppendToLast,        plStatusLog::kAppendToLast)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDontWriteFile,       plStatusLog::kDontWriteFile)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDeleteForMe,         plStatusLog::kDeleteForMe)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kAlignToTop,          plStatusLog::kAlignToTop)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kDebugOutput,         plStatusLog::kDebugOutput)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimestamp,           plStatusLog::kTimestamp)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kStdout,              plStatusLog::kStdout)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeInSeconds,       plStatusLog::kTimeInSeconds)
+    PYTHON_ENUM_ELEMENT(PtStatusLogFlags, kTimeAsDouble,        plStatusLog::kTimeAsDouble)
+    PYTHON_ENUM_END(m, PtStatusLogFlags)
 }
