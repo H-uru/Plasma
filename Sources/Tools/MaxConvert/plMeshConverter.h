@@ -96,7 +96,7 @@ public:
     void    Init( bool save, plErrorMsg *msg );
     void    DeInit( bool deInitLongRecur = true );
 
-    void StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint3> *pos, hsTArray<hsVector3> *normals);
+    void StuffPositionsAndNormals(plMaxNode *node, std::vector<hsPoint3> *pos, std::vector<hsVector3> *normals);
     plConvexVolume *CreateConvexVolume( plMaxNode *node );
     // doPreshading - If true, do crappy flat shading now (since we won't do any shading later)
     bool    CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray, bool doPreshading);

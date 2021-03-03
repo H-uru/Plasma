@@ -288,13 +288,12 @@ void    plMeshConverter::DeInit( bool deInitLongRecur )
     hsGuardEnd;
 }
 
-void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint3> *pos, hsTArray<hsVector3> *normals)
+void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, std::vector<hsPoint3> *pos, std::vector<hsVector3> *normals)
 {
     hsGuardBegin( "plMeshConverter::BuildNormalsArray" );
 
     const char* dbgNodeName = node->GetName();
     Mesh            *mesh;
-    int32_t           numVerts;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
 
     /// Get da mesh
@@ -302,7 +301,7 @@ void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint
     if (mesh == nullptr)
         return ;
 
-    numVerts = mesh->getNumVerts();
+    int numVerts = mesh->getNumVerts();
 
     /// Get transforms
     l2wMatrix = node->GetLocalToWorld44();
@@ -313,22 +312,21 @@ void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint
                                                     // for xforming the normals
     mesh->buildNormals();
 
-    normals->SetCount(numVerts);
-    pos->SetCount(numVerts);
-    int i;
-    for (i = 0; i < numVerts; i++)
+    normals->resize(numVerts);
+    pos->resize(numVerts);
+    for (int i = 0; i < numVerts; i++)
     {
         // positions
         hsPoint3 currPos;
         currPos.Set(mesh->verts[i].x, mesh->verts[i].y, mesh->verts[i].z);
-        pos->Set(i, vert2LMatrix * currPos);
+        (*pos)[i] = vert2LMatrix * currPos;
 
         // normals
         RVertex &rv = mesh->getRVert(i);
         Point3& norm = rv.rn.getNormal();
         hsVector3 currNorm(norm.x, norm.y, norm.z);
         currNorm.Normalize();
-        normals->Set(i, vertInvTransMatrix * currNorm);
+        (*normals)[i] = vertInvTransMatrix * currNorm;
     }
 
     IDeleteTempGeometry();
