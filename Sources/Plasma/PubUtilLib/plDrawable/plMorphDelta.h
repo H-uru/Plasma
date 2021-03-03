@@ -90,8 +90,8 @@ public:
 
     void        Apply(std::vector<plAccessSpan>& dst, float weight = -1.f) const;
 
-    void        ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved);
-    void        ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);
+    void        ComputeDeltas(const std::vector<plAccessSpan>& base, const std::vector<plAccessSpan>& moved);
+    void        ComputeDeltas(const std::vector<plGeometrySpan*>& base, const std::vector<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);
 
     uint32_t      GetNumSpans() const { return fSpans.GetCount(); }
     void        SetNumSpans(int n);

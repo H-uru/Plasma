@@ -343,11 +343,10 @@ bool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
         if( !sharedMesh )
             continue;
 
-        int j;
-        for( j = 0; j < sharedMesh->fSpans.GetCount(); j++ )
+        for (plGeometrySpan* span : sharedMesh->fSpans)
         {
-            if( sharedMesh->fSpans[j] )
-                spans.Append(sharedMesh->fSpans[j]);
+            if (span)
+                spans.Append(span);
         }
     }
 
@@ -508,14 +507,13 @@ hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothBaseComponent::GetSpans(plErrorMsg* p
             if( !sharedMesh )
                 continue;
 
-            int j;
-            for( j = 0; j < sharedMesh->fSpans.GetCount(); j++ )
+            for (plGeometrySpan* span : sharedMesh->fSpans)
             {
-                if( sharedMesh->fSpans[j] )
+                if (span)
                 {
-                    spans.Append(sharedMesh->fSpans[j]);
+                    spans.Append(span);
                     plAvMeshSmooth::XfmSpan xfmSpan;
-                    xfmSpan.fSpan = sharedMesh->fSpans[j];
+                    xfmSpan.fSpan = span;
 
                     xfmSpan.fSpanToNeutral = node->GetOTM44() * node->GetLocalToVert44();
                     xfmSpan.fSpanToNeutral.GetInverse(&xfmSpan.fNeutralToSpan);
@@ -730,15 +728,14 @@ bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshS
         if( !sharedMesh )
             continue;
 
-        int j;
-        for( j = 0; j < sharedMesh->fSpans.GetCount(); j++ )
+        for (plGeometrySpan* span : sharedMesh->fSpans)
         {
-            if( sharedMesh->fSpans[j] )
+            if (span)
             {
-                geoSpans.Append(sharedMesh->fSpans[j]);
+                geoSpans.Append(span);
 
                 plAvMeshSmooth::XfmSpan xfmSpan;
-                xfmSpan.fSpan = sharedMesh->fSpans[j];
+                xfmSpan.fSpan = span;
 
                 xfmSpan.fSpanToNeutral = node->GetOTM44() * node->GetLocalToVert44();
                 xfmSpan.fSpanToNeutral.GetInverse(&xfmSpan.fNeutralToSpan);

@@ -572,8 +572,7 @@ void plMorphSequence::IApplyShared(int iShare)
     std::vector<plAccessSpan> dst;
     // Now copy each shared mesh geometryspan into the drawable
     // to get it back to it's pristine condition.
-    int i;
-    for( i = 0; i < mInfo.fMesh->fSpans.GetCount(); i++ )
+    for (size_t i = 0; i < mInfo.fMesh->fSpans.size(); i++)
     {
         plAccessSpan dstAcc;
         plAccessGeometry::Instance()->OpenRW(mInfo.fCurrDraw, mInfo.fCurrIdx[i], dstAcc);
@@ -582,7 +581,7 @@ void plMorphSequence::IApplyShared(int iShare)
     }
 
     // For each MorphArray
-    for( i = 0; i < mInfo.fMesh->fMorphSet->fMorphs.GetCount(); i++ )
+    for (int i = 0; i < mInfo.fMesh->fMorphSet->fMorphs.GetCount(); i++)
     {
         // Apply Delta
         mInfo.fMesh->fMorphSet->fMorphs[i].Apply(dst, &mInfo.fArrayWeights[i].fDeltaWeights);
@@ -604,8 +603,7 @@ bool plMorphSequence::IResetShared(int iShare)
 
     // Now copy each shared mesh geometryspan into the drawable
     // to get it back to it's pristine condition.
-    int i;
-    for( i = 0; i < mInfo.fMesh->fSpans.GetCount(); i++ )
+    for (size_t i = 0; i < mInfo.fMesh->fSpans.size(); i++)
     {
         plAccessSpan srcAcc;
         plAccessGeometry::Instance()->AccessSpanFromGeometrySpan(srcAcc, mInfo.fMesh->fSpans[i]);
@@ -652,7 +650,7 @@ bool plMorphSequence::IFindIndices(int iShare)
 
     plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex((size_t)meshIdx));
 
-    hsAssert(mInfo.fMesh->fSpans.GetCount() == diIndex.GetCount(), "Mismatch between geometry and indices");
+    hsAssert(mInfo.fMesh->fSpans.size() == diIndex.GetCount(), "Mismatch between geometry and indices");
 
     mInfo.fCurrIdx.SetCount(diIndex.GetCount());
 

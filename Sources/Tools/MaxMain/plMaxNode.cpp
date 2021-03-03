@@ -1374,9 +1374,8 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         plDrawableSpans *drawable = IGetSceneNodeSpans(tmpNode, true, true);
         ISetupBones(drawable, spanArray, l2w, w2l, pErrMsg, settings);
 
-        hsTArray<plGeometrySpan *> *swapSpans = &GetSwappableGeom()->fSpans;
-        for (plGeometrySpan* span : spanArray)
-            swapSpans->Append(span);
+        std::vector<plGeometrySpan *> *swapSpans = &GetSwappableGeom()->fSpans;
+        swapSpans->insert(swapSpans->end(), spanArray.begin(), spanArray.end());
 
         ST::string tmpName = ST::format("{}_SMsh", GetName());
         hsgResMgr::ResMgr()->NewKey(tmpName, GetSwappableGeom(), GetLocation(), GetLoadMask());
