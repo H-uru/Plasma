@@ -257,19 +257,19 @@ protected:
         HWND hAgeCombo = GetDlgItem(fhDlg, IDC_COMP_LOCATION_AGECOMBO);
         IClearAges( hAgeCombo );
 
-        hsTArray<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
+        std::vector<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
 
         const char *curAge = fPB->GetStr(plPageInfoComponent::kInfoAge);
         if (!curAge || *curAge == '\0')
             curAge = "";
 
-        for( int i = 0; i < ageFiles.GetCount(); i++ )
+        for (const plFileName& ageFile : ageFiles)
         {
-            ST::string ageName = ageFiles[i].GetFileNameNoExt();
+            ST::string ageName = ageFile.GetFileNameNoExt();
 
             int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)hsStrcpy(ageFiles[i].AsString().c_str()) );
+            ComboBox_SetItemData(hAgeCombo, idx, (LPARAM)hsStrcpy(ageFile.AsString().c_str()));
 
             if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );

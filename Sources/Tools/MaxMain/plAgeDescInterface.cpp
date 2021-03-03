@@ -898,16 +898,17 @@ void plAgeDescInterface::IClearAgeFiles(std::vector<plAgeFile*>& ageFiles)
     ageFiles.clear();
 }
 
-hsTArray<plFileName> plAgeDescInterface::BuildAgeFileList()
+std::vector<plFileName> plAgeDescInterface::BuildAgeFileList()
 {
     std::vector<plAgeFile*> tempAgeFiles;
     IGetAgeFiles(tempAgeFiles);
 
-    hsTArray<plFileName> ageList;
-    for (int i = 0; i < tempAgeFiles.size(); i++)
+    std::vector<plFileName> ageList;
+    ageList.reserve(tempAgeFiles.size());
+    for (plAgeFile* ageFile : tempAgeFiles)
     {
-        ageList.Push(tempAgeFiles[i]->fPath);
-        delete tempAgeFiles[ i ];
+        ageList.emplace_back(ageFile->fPath);
+        delete ageFile;
     }
 
     return ageList;
