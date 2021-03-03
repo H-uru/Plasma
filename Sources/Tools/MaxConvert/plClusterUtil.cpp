@@ -166,17 +166,11 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
             fGroup->fLOD.Set(minDist, maxDist);
         }
     }
-    hsTArray<plVisRegion*> regions;
+    std::vector<plVisRegion*> regions;
     plVisRegionComponent::CollectRegions(templ, regions);
     plEffVisSetComponent::CollectRegions(templ, regions);
-    if( regions.GetCount() )
-    {
-        int i;
-        for( i = 0; i < regions.GetCount(); i++ )
-        {
-            fGroup->ISendToSelf(plClusterGroup::kRefRegion, regions[i]);
-        }
-    }
+    for (plVisRegion* region : regions)
+        fGroup->ISendToSelf(plClusterGroup::kRefRegion, region);
 }
 
 class sortData
