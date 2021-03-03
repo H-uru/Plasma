@@ -506,12 +506,9 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 void plParticleCoreComponent::IHandleLights(plLightGrpComponent* liGrp, plParticleSystem* sys)
 {
-    const hsTArray<plLightInfo*>& liInfo = liGrp->GetLightInfos();
-    int i;
-    for( i = 0; i < liInfo.GetCount(); i++ )
-    {
-        sys->AddLight(liInfo[i]->GetKey());
-    }
+    const std::vector<plLightInfo*>& liInfo = liGrp->GetLightInfos();
+    for (plLightInfo* light : liInfo)
+        sys->AddLight(light->GetKey());
 }
 
 bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)

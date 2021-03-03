@@ -141,12 +141,9 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
     plLightGrpComponent* liGrp = plLightGrpComponent::GetComp(templ);
     if( liGrp )
     {
-        const hsTArray<plLightInfo*>& lights = liGrp->GetLightInfos();
-        int i;
-        for( i = 0; i < lights.GetCount(); i++ )
-        {
-            fGroup->ISendToSelf(plClusterGroup::kRefLight, lights[i]);
-        }
+        const std::vector<plLightInfo*>& lights = liGrp->GetLightInfos();
+        for (plLightInfo* light : lights)
+            fGroup->ISendToSelf(plClusterGroup::kRefLight, light);
     }
     if( templ->HasFade() )
     {
