@@ -15,14 +15,14 @@ if(PRODUCT_EMBED_BUILD_INFO)
             ERROR_QUIET
         )
         execute_process(
-            COMMAND git diff --exit-code
+            COMMAND ${GIT_EXECUTABLE} diff --exit-code
             OUTPUT_VARIABLE GIT_DIFF_CONTENTS
             RESULT_VARIABLE GIT_DIFF
             OUTPUT_STRIP_TRAILING_WHITESPACE
             ERROR_QUIET
         )
         execute_process(
-            COMMAND git describe --exact-match --tags
+            COMMAND ${GIT_EXECUTABLE} describe --exact-match --tags
             OUTPUT_VARIABLE GIT_TAG
             OUTPUT_STRIP_TRAILING_WHITESPACE
             ERROR_QUIET
