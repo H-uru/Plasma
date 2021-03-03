@@ -403,7 +403,7 @@ static void INetCliAuthLoginRequestCallback (
         s_account.billingType   = billingType;
         s_players.resize(playerCount);
         for (unsigned i = 0; i < playerCount; ++i) {
-            LogMsg(kLogDebug, "Player %{}: {} explorer: {}", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
+            LogMsg(kLogDebug, "Player {}: {} explorer: {}", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
             s_players[i].playerInt         = playerInfoArr[i].playerInt;
             s_players[i].explorer          = playerInfoArr[i].explorer;
             s_players[i].playerName        = playerInfoArr[i].playerName;
