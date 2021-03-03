@@ -195,7 +195,6 @@ void cyPhysics::Warp(pyPoint3& pos)
     // create message
     PyObject* matObj = pyMatrix44::New();
     pyMatrix44* mat = pyMatrix44::ConvertFrom(matObj);
-    mat->fMatrix.IdentityMatrix();
     mat->fMatrix.SetTranslate(&pos.fPoint);
     WarpMat(*mat);
     Py_DECREF(matObj);
