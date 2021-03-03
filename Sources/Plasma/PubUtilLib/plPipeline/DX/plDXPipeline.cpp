@@ -2846,19 +2846,17 @@ void    plDXPipeline::RenderSpans(plDrawableSpans *drawable, const std::vector<i
 void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *bounds, uint32_t bndColor )
 {
 #if MCN_BOUNDS_SPANS
-    static hsTArray<plGeometrySpan *>   spanArray;
+    static std::vector<plGeometrySpan *> spanArray;
     static hsMatrix44       identMatrix;
     static hsPoint3     c[ 8 ], n[ 8 ];
     static int          nPts[ 8 ][ 3 ] = { { -1, -1, -1 }, { 1, -1, -1 }, { -1, 1, -1 }, { 1, 1, -1 },
                                         { -1, -1, 1 }, { 1, -1, 1 }, { -1, 1, 1 }, { 1, 1, 1 } };
     int             i;
-    plGeometrySpan  *newSpan;
 
 
-    if( spanArray.GetCount() == 0 )
+    if (spanArray.empty())
     {
-        spanArray.Reset();
-        spanArray.Append( new plGeometrySpan() );
+        spanArray = { new plGeometrySpan };
         identMatrix.Reset();
 
         // Make normals
@@ -2872,7 +2870,7 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
     else
         spanArray[ 0 ] = new plGeometrySpan();
 
-    newSpan = spanArray[ 0 ];
+    plGeometrySpan* newSpan = spanArray[0];
 
     newSpan->BeginCreate( fBoundsMat, identMatrix, 0 );
 
@@ -2922,25 +2920,23 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
 void    plDXPipeline::IAddNormalsSpan( plDrawableSpans *ice, plIcicle *span, plDXVertexBufferRef *vRef, uint32_t bndColor )
 {
 #if MCN_BOUNDS_SPANS
-    static hsTArray<plGeometrySpan *>   spanArray;
+    static std::vector<plGeometrySpan *> spanArray;
     static hsMatrix44       identMatrix;
     static hsPoint3     point, off, blank;
     hsVector3   b2;
     uint16_t      v1, v2, v3;
     int             i;
-    plGeometrySpan  *newSpan;
 
 
-    if( spanArray.GetCount() == 0 )
+    if (spanArray.empty())
     {
-        spanArray.Reset();
-        spanArray.Append( new plGeometrySpan() );
+        spanArray = { new plGeometrySpan };
         identMatrix.Reset();
     }
     else
         spanArray[ 0 ] = new plGeometrySpan();
 
-    newSpan = spanArray[ 0 ];
+    plGeometrySpan* newSpan = spanArray[0];
 
     newSpan->BeginCreate( fBoundsMat, span->fLocalToWorld, 0 );
 

@@ -137,8 +137,9 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
             
     // Add the spans to the drawable
     uint32_t index = (uint32_t)-1;
-    index = fDrawable->AppendDISpans(mesh->fSpans, index, false, true, addToFront, lod);
-            
+    std::vector<plGeometrySpan *> tempHax(mesh->fSpans.AcquireArray(), mesh->fSpans.AcquireArray() + mesh->fSpans.GetCount());
+    index = fDrawable->AppendDISpans(tempHax, index, false, true, addToFront, lod);
+
     // Tell the drawInterface what drawable and index it wants.
     size_t iDraw = GetNumDrawables();
     ISetDrawable(iDraw, fDrawable);

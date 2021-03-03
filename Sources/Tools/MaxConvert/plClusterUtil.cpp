@@ -340,7 +340,7 @@ void plClusterUtil::IAddTemplates(plMaxNode* templNode, plSpanTemplTab& templs)
     // But, here we go descending cheerully into hell.
     // At least with this interface we can bail and do it right later without to much
     // bloodshed.
-    hsTArray<plGeometrySpan*> spanArray;
+    std::vector<plGeometrySpan*> spanArray;
     if( !plMeshConverter::Instance().CreateSpans(templNode, spanArray, false) )
         return;
 
@@ -354,14 +354,13 @@ void plClusterUtil::IAddTemplates(plMaxNode* templNode, plSpanTemplTab& templs)
     plLightMapGen::Instance().Close();
     hsVertexShader::Instance().Close();
 
-    int i;
-    for( i = 0; i < spanArray.GetCount(); i++ )
+    for (plGeometrySpan* span : spanArray)
     {
-        plSpanTemplateB* templ = IAddTemplate(templNode, spanArray[i]);
+        plSpanTemplateB* templ = IAddTemplate(templNode, span);
         templs.Append(1, &templ);
-        templ->fMaterial = spanArray[i]->fMaterial;
+        templ->fMaterial = span->fMaterial;
 
-        delete spanArray[i];
+        delete span;
     }
 }
 

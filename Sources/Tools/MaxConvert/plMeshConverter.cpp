@@ -502,11 +502,13 @@ bool plMeshConverter::IValidateUVs(plMaxNode* node)
     return uvsAreBad;
 }
 
+static void SetWaterColor(plGeometrySpan* span);
+
 //// CreateSpans /////////////////////////////////////////////////////////////
 //  Main function. Takes a maxNode's object and creates geometrySpans from it
 //  suitable for drawing as ice.
 
-bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray, bool doPreshading )
+bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray, bool doPreshading)
 {
     hsGuardBegin( "plMeshConverter::CreateSpans" );
 
@@ -879,7 +881,7 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         //// Main Conversion Loop ////////////////////////////////////////////////
 
         // Loop through the faces and stuff them into spans
-        spanArray.Reset();
+        spanArray.clear();
 
         mesh->buildNormals();
 
@@ -1221,17 +1223,17 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
                 }
 
                 if( span->fNumVerts > 0 )
-                    spanArray.Append( span );
+                    spanArray.emplace_back(span);
                 else
                     delete span;
             }
         }
 
-        void SetWaterColor(hsTArray<plGeometrySpan*>& spans);
-
         // A bit of test hack here. Remind me to nuke it.
-        if( node->GetCalcEdgeLens() || node->UserPropExists("XXXWaterColor") )
-            SetWaterColor(spanArray);
+        if (node->GetCalcEdgeLens() || node->UserPropExists("XXXWaterColor")) {
+            for (plGeometrySpan* span : spanArray)
+                SetWaterColor(span);
+        }
 
 
         // Now that we have our nice spans, see if they need to be diced up a bit
@@ -1253,12 +1255,11 @@ bool    plMeshConverter::CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *
         if( checkForOverflow )
         {
             bool needMoreDicing = false;
-            int i;
-            for( i = 0; i < spanArray.GetCount(); i++ )
+            for (plGeometrySpan* span : spanArray)
             {
                 plAccessGeometry accGeom;
                 plAccessSpan accSpan;
-                accGeom.AccessSpanFromGeometrySpan(accSpan, spanArray[i]);
+                accGeom.AccessSpanFromGeometrySpan(accSpan, span);
                 bool destroySpan = false;
                 if( accSpan.HasAccessVtx() )
                 {
@@ -2418,7 +2419,7 @@ int plMAXVertexAccumulator::GetVertexCount()
     return fNumVertices;
 }
 
-void SetWaterColor(plGeometrySpan* span)
+static void SetWaterColor(plGeometrySpan* span)
 {
     plAccessGeometry accGeom;
     // First, set up our access, iterators and that mess.
@@ -2536,11 +2537,4 @@ void SetWaterColor(plGeometrySpan* span)
 
     // Close up the access span.
     accGeom.Close(acc);
-}
-
-void SetWaterColor(hsTArray<plGeometrySpan*>& spans)
-{
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
-        SetWaterColor(spans[i]);
 }

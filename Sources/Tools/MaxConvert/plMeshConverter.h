@@ -99,7 +99,7 @@ public:
     void StuffPositionsAndNormals(plMaxNode *node, hsTArray<hsPoint3> *pos, hsTArray<hsVector3> *normals);
     plConvexVolume *CreateConvexVolume( plMaxNode *node );
     // doPreshading - If true, do crappy flat shading now (since we won't do any shading later)
-    bool    CreateSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray, bool doPreshading );
+    bool    CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray, bool doPreshading);
 
 private:
     bool IValidateUVs(plMaxNode* node);

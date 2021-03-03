@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsExceptionStack.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -138,7 +137,7 @@ void hsVertexShader::Close()
 //// ShadeNode ///////////////////////////////////////////////////////////////
 //  Same as the other ShadeNode, only this shades an array of plGeometrySpans.
 
-void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans)
+void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans)
 {
     // If we're flagged for WaterColor, our vertex colors are already done.
     if( ((plMaxNodeBase*)node)->GetCalcEdgeLens() || node->UserPropExists("XXXWaterColor") )
@@ -150,9 +149,8 @@ void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hs
     hsMatrix44 tempMatrix = w2l; // l2w's inverse
     tempMatrix.GetTranspose( &fNormalToWorld ); // Inverse-transpose of the fLocalToWorld matrix, 
     
-    int         i;
-    for( i = 0; i < spans.GetCount(); i++ )
-        IShadeSpan( spans[ i ], node);
+    for (plGeometrySpan* span : spans)
+        IShadeSpan(span, node);
     
     fLightMapGen->DeInitNode();
 
