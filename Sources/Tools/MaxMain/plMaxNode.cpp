@@ -1788,7 +1788,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
     Mtl *newMtl = GetMtl(), *origMtl = node->GetMtl();
     if (newMtl != nullptr && newMtl == origMtl)    // newMtl should == origMtl, but check just in case
     {
-        hsTArray<hsGMaterial *> oldMaterials, newMaterials;
+        std::vector<hsGMaterial *> oldMaterials, newMaterials;
 
         if( hsMaterialConverter::IsMultiMat( newMtl ) )
         {
@@ -1810,11 +1810,8 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
         /// that will be done for us as part of the normal AppendDISpans() process.
         for( i = 0; i < spanArray.GetCount(); i++ )
         {
-            int     j;
-
-
             // Find the span's original material
-            for( j = 0; j < oldMaterials.GetCount(); j++ )
+            for (size_t j = 0; j < oldMaterials.size(); j++)
             {
                 if( spanArray[ i ]->fMaterial == oldMaterials[ j ] )
                 {

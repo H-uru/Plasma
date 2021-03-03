@@ -2278,7 +2278,7 @@ bool plNetSyncComponent::DeInit(plMaxNode* node, plErrorMsg* errMsg)
     Mtl* maxMaterial = hsMaterialConverter::Instance().GetBaseMtl(node);
     if (maxMaterial)
     {
-        hsTArray<hsGMaterial*> matArray;
+        std::vector<hsGMaterial*> matArray;
 
         // Get the textures from the material converter
         if (hsMaterialConverter::Instance().IsMultiMat(maxMaterial))
@@ -2291,9 +2291,8 @@ bool plNetSyncComponent::DeInit(plMaxNode* node, plErrorMsg* errMsg)
             hsMaterialConverter::Instance().GetMaterialArray(maxMaterial, node, matArray);
 
         // Set sync on the textures we found
-        for (int i = 0; i < matArray.GetCount(); i++)
+        for (hsGMaterial* mtl : matArray)
         {
-            hsGMaterial* mtl = matArray[i];
             if (mtl)
                 ISetMtl(mtl);
         }

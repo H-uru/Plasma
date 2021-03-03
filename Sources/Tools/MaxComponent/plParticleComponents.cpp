@@ -178,7 +178,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Add material and lifespan animated params.
     Mtl *maxMaterial = hsMaterialConverter::Instance().GetBaseMtl(node);
-    hsTArray<hsGMaterial *> matArray;
+    std::vector<hsGMaterial *> matArray;
     hsMaterialConverter::Instance().GetMaterialArray(maxMaterial, node, matArray);
     hsGMaterial* particleMat = matArray[0];
     

@@ -1670,17 +1670,16 @@ bool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // We're a control that dynamically creates text, so look for the first dynamic layer 
         // (and hopefully the ONLY one) and store it on the control
         Mtl *maxMaterial = hsMaterialConverter::Instance().GetBaseMtl( node );
-        hsTArray<plExportMaterialData> *mtlArray = hsMaterialConverter::Instance().CreateMaterialArray( maxMaterial, node, 0 );
+        std::vector<plExportMaterialData> *mtlArray = hsMaterialConverter::Instance().CreateMaterialArray(maxMaterial, node, 0);
         
-        uint32_t i, j;
         plDynamicTextMap *dynText = nullptr;
         plLayerInterface *layerIFace = nullptr;
 
-        for (i = 0; i < mtlArray->GetCount() && dynText == nullptr; i++)
+        for (size_t i = 0; i < mtlArray->size() && dynText == nullptr; i++)
         {
             hsGMaterial *plasmaMat = (*mtlArray)[ 0 ].fMaterial;
 
-            for( j = 0; j < plasmaMat->GetNumLayers(); j++ )
+            for (uint32_t j = 0; j < plasmaMat->GetNumLayers(); j++)
             {
                 layerIFace = plasmaMat->GetLayer( j );
                 dynText = plDynamicTextMap::ConvertNoRef( layerIFace->GetTexture() );
@@ -4034,7 +4033,7 @@ bool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;   
     }
     
-    const hsTArray<hsMaterialConverter::DoneMaterialData> &materials = hsMaterialConverter::Instance().DoneMaterials();
+    const std::vector<hsMaterialConverter::DoneMaterialData> &materials = hsMaterialConverter::Instance().DoneMaterials();
 
     uint32_t i,count = pLayer->GetNumConversionTargets();
     for( i = 0; i < count; i++ )
@@ -4047,11 +4046,10 @@ bool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (map != nullptr)
             ctrl->AddMap( map );
 
-        uint32_t mat;
         bool found = false;
-        for (mat=0; mat<materials.GetCount(); mat++)
+        for (const hsMaterialConverter::DoneMaterialData& mat : materials)
         {
-            hsGMaterial *curMaterial = materials[mat].fHsMaterial;
+            hsGMaterial *curMaterial = mat.fHsMaterial;
             uint32_t lay;
             for (lay=0; lay<curMaterial->GetNumLayers(); lay++)
             {

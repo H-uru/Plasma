@@ -109,16 +109,16 @@ static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& seg
     }
     else
     {
-        hsTArray<hsGMaterial*> matList;
+        std::vector<hsGMaterial*> matList;
 
         if (node)
             hsMaterialConverter::Instance().GetMaterialArray(mtl, (plMaxNode*)node, matList);
         else
             hsMaterialConverter::Instance().CollectConvertedMaterials(mtl, matList);
 
-        for( i = 0; i < matList.GetCount(); i++ )
+        for (hsGMaterial* mat : matList)
         {
-            retVal += ISearchLayerRecur(matList[i], segName, keys);
+            retVal += ISearchLayerRecur(mat, segName, keys);
         }
     }
 
