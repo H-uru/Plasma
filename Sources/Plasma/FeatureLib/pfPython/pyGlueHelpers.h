@@ -611,7 +611,7 @@ static PyObject *methodName(PyObject *self) /* and now for the actual function *
 /////////////////////////////////////////////////////////////////////
 
 // the start of an enum block
-#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, hsSsize_t>> enumName##_enumValues{
+#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
 
 // for each element of the enum
 #define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), elementValue),

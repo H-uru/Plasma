@@ -47,8 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //          class
 //
 
-#include "HeadSpin.h"
-#include <Python.h>
 #include <structmember.h>
 
 #include <string_theory/format>
@@ -59,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct EnumValue {
     PyObject_HEAD
-    hsSsize_t value{};
+    Py_ssize_t value{};
     PyObject* name{};
 };
 
@@ -132,7 +130,7 @@ int EnumValue_nonzero(EnumValue* v)
 PyObject *EnumValue_and(PyObject* v, PyObject* w)
 {
     EnumValue* obj = nullptr;
-    hsSsize_t other = 0;
+    Py_ssize_t other = 0;
     if (IsEnumValue(v)) {
         obj = (EnumValue*)v;
         if (!PyLong_Check(w))
@@ -152,7 +150,7 @@ PyObject *EnumValue_and(PyObject* v, PyObject* w)
 PyObject* EnumValue_xor(PyObject* v, PyObject* w)
 {
     EnumValue *obj = nullptr;
-    hsSsize_t other = 0;
+    Py_ssize_t other = 0;
     if (IsEnumValue(v)) {
         obj = (EnumValue*)v;
         if (!PyLong_Check(w))
@@ -172,7 +170,7 @@ PyObject* EnumValue_xor(PyObject* v, PyObject* w)
 PyObject* EnumValue_or(PyObject *v, PyObject *w)
 {
     EnumValue* obj = nullptr;
-    hsSsize_t other = 0;
+    Py_ssize_t other = 0;
     if (IsEnumValue(v)) {
         obj = (EnumValue*)v;
         if (!PyLong_Check(w))
@@ -241,14 +239,14 @@ PYTHON_END_AS_NUMBER_TABLE;
 
 PYTHON_RICH_COMPARE_DEFINITION(EnumValue, v, w, compareType)
 {
-    hsSsize_t i = 0;
-    hsSsize_t j = 0;
+    Py_ssize_t i = 0;
+    Py_ssize_t j = 0;
     if (IsEnumValue(v)) {
         i = ((EnumValue*)v)->value;
         if (PyLong_Check(w))
             j = PyLong_AsSsize_t(w);
         else if (PyFloat_Check(w))
-            j = (hsSsize_t)PyFloat_AsDouble(w);
+            j = (Py_ssize_t)PyFloat_AsDouble(w);
         else if (IsEnumValue(w))
             j = ((EnumValue*)w)->value;
         else
@@ -259,7 +257,7 @@ PYTHON_RICH_COMPARE_DEFINITION(EnumValue, v, w, compareType)
         if (PyLong_Check(v))
             i = PyLong_AsSsize_t(v);
         else if (PyFloat_Check(v))
-            i = (hsSsize_t)PyFloat_AsDouble(v);
+            i = (Py_ssize_t)PyFloat_AsDouble(v);
         else if (IsEnumValue(v))
             i = ((EnumValue*)v)->value;
         else
@@ -347,7 +345,7 @@ bool IsEnumValue(PyObject* obj)
     return PyObject_TypeCheck(obj, &EnumValue_type);
 }
 
-PyObject* NewEnumValue(const ST::string& name, hsSsize_t value)
+PyObject* NewEnumValue(const ST::string& name, Py_ssize_t value)
 {
     pyObjectRef tempArgs = Py_BuildValue("(ns)", value, name.c_str());
     EnumValue* newObj = (EnumValue*)EnumValue_type.tp_new(&EnumValue_type, tempArgs.Get(), nullptr);
@@ -545,7 +543,7 @@ void pyEnum::AddPlasmaConstantsClasses(PyObject* m)
 }
 
 // makes an enum object using the specified name and values
-void pyEnum::MakeEnum(PyObject* m, const char* name, const std::vector<std::tuple<ST::string, hsSsize_t>>& values)
+void pyEnum::MakeEnum(PyObject* m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values)
 {
     if (m == nullptr)
         return;
@@ -560,7 +558,7 @@ void pyEnum::MakeEnum(PyObject* m, const char* name, const std::vector<std::tupl
         ST::string enumValueName = ST::format("{}.{}", name, key);
 
         pyObjectRef newValue = NewEnumValue(enumValueName, value);
-        pyObjectRef valueObj = PyLong_FromSsize_t((Py_ssize_t)value);
+        pyObjectRef valueObj = PyLong_FromSsize_t(value);
         pyObjectRef keyObj = PyUnicode_FromSTString(key);
         PyDict_SetItem(newEnum->values, valueObj.Get(), newValue.Get());
         PyDict_SetItem(newEnum->lookup, keyObj.Get(), newValue.Get());
