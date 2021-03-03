@@ -82,20 +82,21 @@ static PyObject* EnumValue_new(PyTypeObject* type, PyObject* args, PyObject*)
     return (PyObject*)self;
 }
 
-static int EnumValue_clear(EnumValue* self)
+static int EnumValue_clear(PyObject* self)
 {
-    Py_CLEAR(self->name);
+    Py_CLEAR(((EnumValue*)self)->name);
     return 0;
 }
 
-static void EnumValue_dealloc(EnumValue* self)
+static void EnumValue_dealloc(PyObject* self)
 {
     EnumValue_clear(self);
-    Py_TYPE(self)->tp_free((PyObject*)self);
+    Py_TYPE(self)->tp_free(self);
 }
 
-static PyObject* EnumValue_repr(EnumValue* self)
+static PyObject* EnumValue_repr(PyObject* obj)
 {
+    EnumValue* self = (EnumValue*)obj;
     if (self->name == nullptr) {
         // no name, so just output our value
         return PyUnicode_FromFormat("%s(%ld)", Py_TYPE(self)->tp_name, self->value);
@@ -292,12 +293,12 @@ PYTHON_TYPE_START(EnumValue)
     "PlasmaConstants.EnumValue",
     sizeof(EnumValue),                  /* tp_basicsize */
     0,                                  /* tp_itemsize */
-    (destructor)EnumValue_dealloc,      /* tp_dealloc */
+    EnumValue_dealloc,                  /* tp_dealloc */
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET,
     nullptr,                            /* tp_getattr */
     nullptr,                            /* tp_setattr */
     nullptr,                            /* tp_as_async */
-    (reprfunc)EnumValue_repr,           /* tp_repr */
+    EnumValue_repr,                     /* tp_repr */
     PYTHON_DEFAULT_AS_NUMBER(EnumValue),/* tp_as_number */
     nullptr,                            /* tp_as_sequence */
     nullptr,                            /* tp_as_mapping */
@@ -311,7 +312,7 @@ PYTHON_TYPE_START(EnumValue)
     | Py_TPFLAGS_BASETYPE,              /* tp_flags */
     "A basic enumeration value",        /* tp_doc */
     nullptr,                            /* tp_traverse */
-    (inquiry)EnumValue_clear,           /* tp_clear */
+    EnumValue_clear,                    /* tp_clear */
     EnumValue_richCompare,              /* tp_richcompare */
     0,                                  /* tp_weaklistoffset */
     nullptr,                            /* tp_iter */
