@@ -118,27 +118,24 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
         noShadHack = plGeometrySpan::kPropNoShadowCast;
 #endif // MF_NOSHADOW_ACC
 
-    int i;
-    for (i = 0; i < mesh->fSpans.GetCount(); i++)
+    for (plGeometrySpan* span : mesh->fSpans)
     {
-        mesh->fSpans[i]->fMaterial = mat;
+        span->fMaterial = mat;
 
         if( partialSort )
-        {
-            mesh->fSpans[i]->fProps |= plGeometrySpan::kPartialSort;
-        }
+            span->fProps |= plGeometrySpan::kPartialSort;
         else
-            mesh->fSpans[i]->fProps &= ~plGeometrySpan::kPartialSort;
+            span->fProps &= ~plGeometrySpan::kPartialSort;
 
 #ifdef MF_NOSHADOW_ACC
-        mesh->fSpans[i]->fProps |= noShadHack;
+        span->fProps |= noShadHack;
 #endif // MF_NOSHADOW_ACC
     }
-            
+
     // Add the spans to the drawable
     uint32_t index = (uint32_t)-1;
     index = fDrawable->AppendDISpans(mesh->fSpans, index, false, true, addToFront, lod);
-            
+
     // Tell the drawInterface what drawable and index it wants.
     size_t iDraw = GetNumDrawables();
     ISetDrawable(iDraw, fDrawable);

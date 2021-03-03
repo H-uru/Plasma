@@ -2325,12 +2325,11 @@ plDISpanIndex   *plDrawableSpans::IFindDIIndices( uint32_t &index )
 //  Note: AddDISpans() adds the spans to a list to be sorted, THEN put into
 //  the buffers; this shoves them right in, bypassing the sorting altogether.
 
-uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index, bool clearSpansAfterAdd, 
+uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, uint32_t index, bool clearSpansAfterAdd,
                                         bool doNotAddToSource, bool addToFront, int lod)
 {
-    hsAssert(spans.GetCount(), "Adding no spans? Blow me.");
+    hsAssert(!spans.empty(), "Adding no spans? Blow me.");
 
-    int             i, j;
     uint32_t          spanIdx;
     plSpan          *span;
     hsBounds3Ext    bounds;
@@ -2365,7 +2364,7 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
 
     /// Add the geometry spans to our list. Also add our internal span
     /// copies
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (size_t i = 0; i < spans.size(); i++)
     {
         spanIdx = fIcicles.GetCount();
         fIcicles.Append( plIcicle() );
@@ -2409,18 +2408,18 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
     if (inserted)
     {
         /// Go adjusting indices in the DI index list
-        for( i = 0; i < fDIIndices.GetCount(); i++ )
+        for (int i = 0; i < fDIIndices.GetCount(); i++)
         {
             if( !fDIIndices[ i ]->IsMatrixOnly() )
             {
                 if (fDIIndices[ i ] == spanLookup)
                     continue;
 
-                for( j = 0; j < fDIIndices[ i ]->GetCount(); j++ )
+                for (int j = 0; j < fDIIndices[ i ]->GetCount(); j++)
                 {
                     if( (*fDIIndices[i])[j] >= insertionPoint )
                     {
-                        (*fDIIndices[ i ])[ j ] += spans.GetCount();
+                        (*fDIIndices[ i ])[ j ] += spans.size();
                         hsAssert((*fDIIndices[ i ])[ j ] < fSpans.GetCount(), "Span index snafu");
                     }
                 }

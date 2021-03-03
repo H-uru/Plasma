@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __HSCONTROLCONVERTER_H
 #define __HSCONTROLCONVERTER_H
 
+#include <vector>
+
 #include "plInterp/hsKeys.h"
 
 class Animatable;
@@ -159,7 +161,7 @@ private:
 
     void    IEnableEaseCurves(Animatable* control, bool enable);
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
-    int     IAddPartsKeys(Control* control, hsTArray <hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
+    void    IAddPartsKeys(Control* control, std::vector<hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
     int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nullptr, bool rotQuat = false);
     int32_t   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end);
     ControllerType IGetControlType(TSTR ctrlName);
@@ -174,7 +176,7 @@ private:
     bool    IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
     void    IGetGeomKeyTimesRecur( Animatable *anim, Tab<TimeValue> &times );
     bool    IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim );
-    void    IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG3DSMaxKeyFrame>* kfArray);
+    void    IExportAnimatedCameraFOV(plMaxNode* node, std::vector<hsG3DSMaxKeyFrame>* kfArray);
     Interface* fInterface;
 
     hsConverterUtils& fConverterUtils;

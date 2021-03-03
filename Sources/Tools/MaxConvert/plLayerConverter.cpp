@@ -635,12 +635,11 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
             plasmaLayer->SetUVWSrc(pb->GetInt(ParamID(plMAXCameraLayer::kUVSource)));
         }
 
-        hsTArray<plMaxNode*> nodeList;
+        std::vector<plMaxNode*> nodeList;
         hsMaterialConverter::GetNodesByMaterial(maxNode->GetMtl(), nodeList);
-        int i;
-        for (i = 0; i < nodeList.GetCount(); i++)
+        for (plMaxNode* node : nodeList)
         {
-            hsgResMgr::ResMgr()->AddViaNotify(nodeList[i]->GetSceneObject()->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefTargetNode), plRefFlags::kActiveRef);
+            hsgResMgr::ResMgr()->AddViaNotify(node->GetSceneObject()->GetKey(), new plGenRefMsg(map->GetKey(), plRefMsg::kOnCreate, -1, plDynamicCamMap::kRefTargetNode), plRefFlags::kActiveRef);
         }
         hsgResMgr::ResMgr()->AddViaNotify(map->GetKey(), new plLayRefMsg(plasmaLayer->GetKey(), plRefMsg::kOnCreate, -1, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
 

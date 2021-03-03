@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSoftVolumeComponent_h
 #define _plSoftVolumeComponent_h
 
+#include <vector>
+
 #include "pnKeyedObject/plUoid.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +135,7 @@ public:
     bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 
-    static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
+    static void CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions);
 };
 
 class plEffVisSetComponent : public plComponent
@@ -154,7 +156,7 @@ public:
     plVisRegion* GetVisRegion(plMaxNode* node);
     
     static plEffVisSetComponent* ConvertToEffVisSetComponent(plMaxNode* node);
-    static void CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions);
+    static void CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions);
 };
 
 #endif //_plSoftVolumeComponent_h

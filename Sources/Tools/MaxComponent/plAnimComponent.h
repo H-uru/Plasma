@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAnimComponent_inc
 
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
@@ -122,9 +121,6 @@ public:
 
     // Static function for setting up scalar controllers
     static void SetupCtl( plAGAnim *anim, plController *ctl, plAGApplicator *app, plMaxNode *node );
-    
-    // Static function to grab the animation key given the INode pointing to either a) an anim component or b) a material stealth node
-    static bool GetAnimKey( plMaxNode *node, hsTArray<plKey> &outKeys );
 
     // Static function to grab the animObjInterface for a given INode, regardless of type
     static plAnimObjInterface   *GetAnimInterface( INode *node );

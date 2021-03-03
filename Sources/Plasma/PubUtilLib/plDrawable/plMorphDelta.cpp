@@ -117,9 +117,9 @@ void plMorphDelta::Apply(std::vector<plAccessSpan>& dst, float weight /* = -1.f 
 }
 
 // MorphDelta - ComputeDeltas
-void plMorphDelta::ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved)
+void plMorphDelta::ComputeDeltas(const std::vector<plAccessSpan>& base, const std::vector<plAccessSpan>& moved)
 {
-    SetNumSpans(base.GetCount());
+    SetNumSpans(base.size());
 
     // For each span
     {
@@ -144,15 +144,14 @@ void plMorphDelta::ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTAr
 }
 
 // MorphDelta - ComputeDeltas
-void plMorphDelta::ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv)
+void plMorphDelta::ComputeDeltas(const std::vector<plGeometrySpan*>& base, const std::vector<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv)
 {
-    SetNumSpans(base.GetCount());
+    SetNumSpans(base.size());
 
     hsPoint3 delUVWs[8];
 
     // For each span
-    int iSpan;
-    for( iSpan = 0; iSpan < base.GetCount(); iSpan++ )
+    for (size_t iSpan = 0; iSpan < base.size(); iSpan++)
     {
         plAccessSpan baseAcc;
         plAccessGeometry::Instance()->AccessSpanFromGeometrySpan(baseAcc, base[iSpan]);

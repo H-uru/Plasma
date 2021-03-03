@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "hsResMgr.h"
 
 #include "plComponent.h"
@@ -1376,7 +1375,7 @@ bool plVisRegionComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errMsg
     return true;
 }
 
-void plVisRegionComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions)
+void plVisRegionComponent::CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions)
 {
     int i;
     for( i = 0; i < node->NumAttachedComponents(); i++ )
@@ -1389,7 +1388,7 @@ void plVisRegionComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*
             {
                 regComp->ICheckVisRegion(node->GetLocation());
                 if( regComp->fVisReg )
-                    regions.Append(regComp->fVisReg);
+                    regions.emplace_back(regComp->fVisReg);
             }
         }
     }
@@ -1593,7 +1592,7 @@ plEffVisSetComponent* plEffVisSetComponent::ConvertToEffVisSetComponent(plMaxNod
     return nullptr;
 }
 
-void plEffVisSetComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*>& regions)
+void plEffVisSetComponent::CollectRegions(plMaxNode* node, std::vector<plVisRegion*>& regions)
 {
     int i;
     for( i = 0; i < node->NumAttachedComponents(); i++ )
@@ -1605,9 +1604,8 @@ void plEffVisSetComponent::CollectRegions(plMaxNode* node, hsTArray<plVisRegion*
             if( regComp )
             {
                 if( regComp->fVisReg )
-                    regions.Append(regComp->fVisReg);
+                    regions.emplace_back(regComp->fVisReg);
             }
         }
     }
 }
-

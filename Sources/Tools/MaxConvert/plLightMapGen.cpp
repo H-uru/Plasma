@@ -369,7 +369,7 @@ bool plLightMapGen::ICompressLightMaps()
     return true;
 }
 
-bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans, plErrorMsg *pErrMsg, plConvertSettings *settings)
+bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans, plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgNodeName = node->GetName();
 
@@ -425,14 +425,11 @@ bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMat
 
 // The next couple of functions don't do anything interesting except
 // get us down to the face level where we can work.
-bool plLightMapGen::IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans)
+bool plLightMapGen::IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans)
 {
     bool retVal = false;
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
-    {
-        retVal |= IShadeSpan(node, l2w, w2l, *spans[i]);
-    }
+    for (plGeometrySpan* span : spans)
+        retVal |= IShadeSpan(node, l2w, w2l, *span);
     return retVal;
 }
 
@@ -1171,12 +1168,11 @@ bool plLightMapGen::IWantsMaps(plMaxNode* node)
     return nullptr != node->GetLightMapComponent();
 }
 
-bool plLightMapGen::IValidateUVWSrc(hsTArray<plGeometrySpan *>& spans) const
+bool plLightMapGen::IValidateUVWSrc(std::vector<plGeometrySpan *>& spans) const
 {
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (plGeometrySpan* span : spans)
     {
-        int numUVWs = spans[i]->GetNumUVs();
+        int numUVWs = span->GetNumUVs();
         if( IGetUVWSrc() >= numUVWs )
             return false;
     }
@@ -1439,18 +1435,15 @@ uint32_t plLightMapGen::IShadePoint(plMaxLightContext& ctx, const Color& amb, co
     return retVal;
 }
 
-bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, hsTArray<plGeometrySpan *>& spans)
+bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *>& spans)
 {
     float duDr = 0;
     float dvDr = 0;
 
     float totFaces = 0;
 
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (plGeometrySpan* span : spans)
     {
-        plGeometrySpan *span = spans[i];
-
         int nFaces = span->fNumIndices / 3;
         int j;
         for( j = 0; j < nFaces; j++ )

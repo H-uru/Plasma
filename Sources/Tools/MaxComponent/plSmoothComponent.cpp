@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+
 #include "HeadSpin.h"
 
 #include "plComponent.h"
@@ -87,8 +89,8 @@ public:
     };
 protected:
     bool                fDoneThis;
-    bool                IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
-    bool                IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
+    bool                IDoSmooth(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans);
+    bool                IGetSpans(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans);
     bool                IReShade(plErrorMsg* pErrMsg);
     bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
@@ -150,7 +152,7 @@ bool plSmoothComponent::ISmoothAll(plErrorMsg* pErrMsg)
 {
     if( !fDoneThis )
     {
-        hsTArray<plGeometrySpan*> spans;
+        std::vector<plGeometrySpan*> spans;
 
         IGetSpans(pErrMsg, spans);
 
@@ -161,9 +163,9 @@ bool plSmoothComponent::ISmoothAll(plErrorMsg* pErrMsg)
     return true;
 }
 
-bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans)
 {
-    spans.SetCount(0);
+    spans.clear();
 
     uint32_t count = NumTargets();
     uint32_t i;
@@ -192,7 +194,7 @@ bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>
             int i;
             for( i = 0; i < disi.fIndices.GetCount(); i++ )
             {
-                spans.Append(dr->GetSourceSpans()[disi.fIndices[i]]);
+                spans.emplace_back(dr->GetSourceSpans()[disi.fIndices[i]]);
             }
         }
     }
@@ -200,7 +202,7 @@ bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>
     return true;
 }
 
-bool plSmoothComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothComponent::IDoSmooth(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans)
 {
 //  if( spans.GetCount() > 1 )
     {
@@ -251,8 +253,8 @@ public:
     };
 protected:
     bool                fDoneThis;
-    bool                IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
-    bool                IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans);
+    bool                IDoSmooth(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans);
+    bool                IGetSpans(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans);
     bool                IReShade(plErrorMsg* pErrMsg);
     bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
@@ -316,7 +318,7 @@ bool plSmoothAvComponent::ISmoothAll(plErrorMsg* pErrMsg)
 {
     if( !fDoneThis )
     {
-        hsTArray<plGeometrySpan*> spans;
+        std::vector<plGeometrySpan*> spans;
 
         IGetSpans(pErrMsg, spans);
 
@@ -327,9 +329,9 @@ bool plSmoothAvComponent::ISmoothAll(plErrorMsg* pErrMsg)
     return true;
 }
 
-bool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans)
 {
-    spans.SetCount(0);
+    spans.clear();
 
     uint32_t count = NumTargets();
     uint32_t i;
@@ -343,20 +345,19 @@ bool plSmoothAvComponent::IGetSpans(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan
         if( !sharedMesh )
             continue;
 
-        int j;
-        for( j = 0; j < sharedMesh->fSpans.GetCount(); j++ )
+        for (plGeometrySpan* span : sharedMesh->fSpans)
         {
-            if( sharedMesh->fSpans[j] )
-                spans.Append(sharedMesh->fSpans[j]);
+            if (span)
+                spans.emplace_back(span);
         }
     }
 
     return true;
 }
 
-bool plSmoothAvComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plGeometrySpan*>& spans)
+bool plSmoothAvComponent::IDoSmooth(plErrorMsg* pErrMsg, std::vector<plGeometrySpan*>& spans)
 {
-    if( spans.GetCount() > 1 )
+    if (spans.size() > 1)
     {
         plAccMeshSmooth smoother;
         smoother.SetAngle(fCompPB->GetFloat(kSmoothAngle));
@@ -393,7 +394,7 @@ bool plSmoothAvComponent::IReShade(plErrorMsg* pErrMsg)
 class plSmoothBaseComponent : public plComponent
 {
 protected:
-    hsTArray<plAvMeshSmooth::XfmSpan>   fSpans;
+    std::vector<plAvMeshSmooth::XfmSpan> fSpans;
 
 public:
     enum {
@@ -405,7 +406,7 @@ public:
     plSmoothBaseComponent();
     void DeleteThis() override { delete this; }
 
-    hsTArray<plAvMeshSmooth::XfmSpan>& GetSpans(plErrorMsg* pErrMsg);
+    std::vector<plAvMeshSmooth::XfmSpan>& GetSpans(plErrorMsg* pErrMsg);
 
     float GetSmoothAngle() const { return fCompPB->GetFloat(kSmoothAngle); }
     float GetDistTol() const { return fCompPB->GetFloat(kDistTol); }
@@ -462,7 +463,7 @@ bool plSmoothBaseComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
     if (!node->GetSwappableGeom())
         node->SetSwappableGeom(new plSharedMesh);
 
-    fSpans.SetCount(0);
+    fSpans.clear();
 
     return true;
 }
@@ -490,13 +491,13 @@ plSmoothBaseComponent* plSmoothBaseComponent::GetSmoothBaseComp(INode* node)
 
 
 // Only valid after the MakeMesh phase.
-hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothBaseComponent::GetSpans(plErrorMsg* pErrMsg)
+std::vector<plAvMeshSmooth::XfmSpan>& plSmoothBaseComponent::GetSpans(plErrorMsg* pErrMsg)
 {
-    if( !fSpans.GetCount() )
+    if (fSpans.empty())
     {
         uint32_t count = NumTargets();
         uint32_t i;
-        hsTArray<plGeometrySpan*> spans;
+        std::vector<plGeometrySpan*> spans;
 
         for( i = 0; i < count; i++ )
         {
@@ -508,14 +509,13 @@ hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothBaseComponent::GetSpans(plErrorMsg* p
             if( !sharedMesh )
                 continue;
 
-            int j;
-            for( j = 0; j < sharedMesh->fSpans.GetCount(); j++ )
+            for (plGeometrySpan* span : sharedMesh->fSpans)
             {
-                if( sharedMesh->fSpans[j] )
+                if (span)
                 {
-                    spans.Append(sharedMesh->fSpans[j]);
+                    spans.emplace_back(span);
                     plAvMeshSmooth::XfmSpan xfmSpan;
-                    xfmSpan.fSpan = sharedMesh->fSpans[j];
+                    xfmSpan.fSpan = span;
 
                     xfmSpan.fSpanToNeutral = node->GetOTM44() * node->GetLocalToVert44();
                     xfmSpan.fSpanToNeutral.GetInverse(&xfmSpan.fNeutralToSpan);
@@ -523,11 +523,11 @@ hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothBaseComponent::GetSpans(plErrorMsg* p
                     xfmSpan.fSpanToNeutral.GetTranspose(&xfmSpan.fNormNeutralToSpan);
                     xfmSpan.fNeutralToSpan.GetTranspose(&xfmSpan.fNormSpanToNeutral);
 
-                    fSpans.Append(xfmSpan);
+                    fSpans.emplace_back(xfmSpan);
                 }
             }
         }
-        if( spans.GetCount() > 1 )
+        if (spans.size() > 1)
         {
             plAccMeshSmooth smoother;
             smoother.SetAngle(fCompPB->GetFloat(kSmoothAngle));
@@ -565,10 +565,10 @@ public:
 protected:
     bool                fDoneThis;
 
-    hsTArray<plAvMeshSmooth::XfmSpan>& IGetSrcSpans(plErrorMsg* pErrMsg);
+    std::vector<plAvMeshSmooth::XfmSpan>& IGetSrcSpans(plErrorMsg* pErrMsg);
 
-    bool                IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans, hsTArray<plAvMeshSmooth::XfmSpan>& dstSpans);
-    bool                IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& spans);
+    bool                IDoSmooth(plErrorMsg* pErrMsg, std::vector<plAvMeshSmooth::XfmSpan>& srcSpans, std::vector<plAvMeshSmooth::XfmSpan>& dstSpans);
+    bool                IGetDstSpans(plErrorMsg* pErrMsg, std::vector<plAvMeshSmooth::XfmSpan>& spans);
     bool                IReShade(plErrorMsg* pErrMsg);
     bool                ISmoothAll(plErrorMsg* pErrMsg);
 public:
@@ -686,12 +686,12 @@ bool plSmoothSnapComponent::ISmoothAll(plErrorMsg* pErrMsg)
     {
         fDoneThis = true;
 
-        hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans = IGetSrcSpans(pErrMsg);
+        std::vector<plAvMeshSmooth::XfmSpan>& srcSpans = IGetSrcSpans(pErrMsg);
 
-        if( !srcSpans.GetCount() )
+        if (srcSpans.empty())
             return true;
 
-        hsTArray<plAvMeshSmooth::XfmSpan> dstSpans;
+        std::vector<plAvMeshSmooth::XfmSpan> dstSpans;
 
         if( !IGetDstSpans(pErrMsg, dstSpans) )
             return true;
@@ -702,9 +702,9 @@ bool plSmoothSnapComponent::ISmoothAll(plErrorMsg* pErrMsg)
     return true;
 }
 
-hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothSnapComponent::IGetSrcSpans(plErrorMsg* pErrMsg)
+std::vector<plAvMeshSmooth::XfmSpan>& plSmoothSnapComponent::IGetSrcSpans(plErrorMsg* pErrMsg)
 {
-    static hsTArray<plAvMeshSmooth::XfmSpan> emptySpans;
+    static std::vector<plAvMeshSmooth::XfmSpan> emptySpans;
 
     plSmoothBaseComponent* baseComp = plSmoothBaseComponent::GetSmoothBaseComp(fCompPB->GetINode(kSmoothBase, 0, 0));
     if( !baseComp )
@@ -713,10 +713,10 @@ hsTArray<plAvMeshSmooth::XfmSpan>& plSmoothSnapComponent::IGetSrcSpans(plErrorMs
     return baseComp->GetSpans(pErrMsg);
 }
 
-bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& spans)
+bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, std::vector<plAvMeshSmooth::XfmSpan>& spans)
 {
-    hsTArray<plGeometrySpan*> geoSpans;
-    spans.SetCount(0);
+    std::vector<plGeometrySpan*> geoSpans;
+    spans.clear();
 
     uint32_t count = NumTargets();
     uint32_t i;
@@ -730,15 +730,14 @@ bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshS
         if( !sharedMesh )
             continue;
 
-        int j;
-        for( j = 0; j < sharedMesh->fSpans.GetCount(); j++ )
+        for (plGeometrySpan* span : sharedMesh->fSpans)
         {
-            if( sharedMesh->fSpans[j] )
+            if (span)
             {
-                geoSpans.Append(sharedMesh->fSpans[j]);
+                geoSpans.emplace_back(span);
 
                 plAvMeshSmooth::XfmSpan xfmSpan;
-                xfmSpan.fSpan = sharedMesh->fSpans[j];
+                xfmSpan.fSpan = span;
 
                 xfmSpan.fSpanToNeutral = node->GetOTM44() * node->GetLocalToVert44();
                 xfmSpan.fSpanToNeutral.GetInverse(&xfmSpan.fNeutralToSpan);
@@ -746,7 +745,7 @@ bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshS
                 xfmSpan.fSpanToNeutral.GetTranspose(&xfmSpan.fNormNeutralToSpan);
                 xfmSpan.fNeutralToSpan.GetTranspose(&xfmSpan.fNormSpanToNeutral);
 
-                spans.Append(xfmSpan);
+                spans.emplace_back(xfmSpan);
             }
         }
     }
@@ -754,11 +753,11 @@ bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshS
     // Smooth them with themselves before we pass them off to be snapped to the base.
     // We'll use the base component's parameters, because ours will be sloppier to
     // ensure proper snapping.
-    if( geoSpans.GetCount() )
+    if (!geoSpans.empty())
     {
         plSmoothBaseComponent* baseComp = plSmoothBaseComponent::GetSmoothBaseComp(fCompPB->GetINode(kSmoothBase, 0, 0));
         if( !baseComp )
-            return 0;
+            return false;
 
         plAccMeshSmooth smoother;
         smoother.SetAngle(baseComp->GetSmoothAngle());
@@ -769,12 +768,12 @@ bool plSmoothSnapComponent::IGetDstSpans(plErrorMsg* pErrMsg, hsTArray<plAvMeshS
         smoother.Smooth(geoSpans);
     }
 
-    return spans.GetCount();
+    return !spans.empty();
 }
 
-bool plSmoothSnapComponent::IDoSmooth(plErrorMsg* pErrMsg, hsTArray<plAvMeshSmooth::XfmSpan>& srcSpans, hsTArray<plAvMeshSmooth::XfmSpan>& dstSpans)
+bool plSmoothSnapComponent::IDoSmooth(plErrorMsg* pErrMsg, std::vector<plAvMeshSmooth::XfmSpan>& srcSpans, std::vector<plAvMeshSmooth::XfmSpan>& dstSpans)
 {
-    if( srcSpans.GetCount() && dstSpans.GetCount() )
+    if (!srcSpans.empty() && !dstSpans.empty())
     {
         plAvMeshSmooth smoother;
         smoother.SetAngle(fCompPB->GetFloat(kSmoothAngle));

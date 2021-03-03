@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptionStack.h"
 #include "hsResMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 
 #include "MaxComponent/plComponent.h"
 
@@ -188,7 +187,7 @@ fChangedTimes()
 hsMaterialConverter::~hsMaterialConverter() noexcept(false)
 {
     hsGuardBegin("hsMaterialConverter::~hsMaterialConverter");
-    hsAssert(fDoneMaterials.Count() == 0, "FreeMaterialCache not called");
+    hsAssert(fDoneMaterials.empty(), "FreeMaterialCache not called");
     hsGuardEnd;
 }
 
@@ -228,10 +227,10 @@ void hsMaterialConverter::FreeMaterialCache(const char* path)
     if( path && *path )
         IGenMaterialReport(path);
 
-    for (int i = 0; i < fDoneMaterials.Count(); i++)
-        fDoneMaterials[i].fHsMaterial->GetKey()->UnRefObject();
+    for (DoneMaterialData& done : fDoneMaterials)
+        done.fHsMaterial->GetKey()->UnRefObject();
 
-    fDoneMaterials.Reset();
+    fDoneMaterials.clear();
 }
 
 bool hsMaterialConverter::ForceNoUvsFlatten(plMaxNode* node)
@@ -709,12 +708,12 @@ int hsMaterialConverter::GetCoordMapping(StdUVGen *uvgen)
     hsGuardEnd; 
 }
 
-static void IGetNodesByMaterialRecur(plMaxNode* node, Mtl *mtl, hsTArray<plMaxNode*> &out)
+static void IGetNodesByMaterialRecur(plMaxNode* node, Mtl *mtl, std::vector<plMaxNode*> &out)
 {
     if (node)
     {
         if (node->GetMtl() == mtl)
-            out.Append(node);
+            out.emplace_back(node);
 
         int numChildren = node->NumberOfChildren();
         for (int i = 0; i < numChildren; i++)
@@ -724,7 +723,7 @@ static void IGetNodesByMaterialRecur(plMaxNode* node, Mtl *mtl, hsTArray<plMaxNo
     }
 }
 
-void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out)
+void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, std::vector<plMaxNode*> &out)
 {
     IGetNodesByMaterialRecur((plMaxNode*)GetCOREInterface()->GetRootNode(), mtl, out);
 }
@@ -735,10 +734,10 @@ void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out
 //     This function should be called on anything that Max thinks is a single material, even if the exporter
 // wants to generate several materials from it (like composites).
 
-hsTArray<plExportMaterialData> *
+std::vector<plExportMaterialData> *
 hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint32_t multiIndex)
 {
-    hsTArray<plExportMaterialData> *ourMaterials = new hsTArray<plExportMaterialData>;
+    auto ourMaterials = new std::vector<plExportMaterialData>;
 
     const char* dbgNodeName = node->GetName();
 
@@ -789,7 +788,7 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
         }
         numMaterials = (1 << maxMaterial->NumSubMtls()) - 1; // 2^n - 1 possibilites
 
-        ourMaterials->Reset();
+        ourMaterials->clear();
         for( i = 0; i < numMaterials; i++ ) // would be smarter to only create the materials we'll actually use
         {
             plExportMaterialData emd;
@@ -802,7 +801,7 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
 
             if (numBlendChannels < emd.fNumBlendChannels)
                 numBlendChannels = emd.fNumBlendChannels;
-            ourMaterials->Append(emd);
+            ourMaterials->emplace_back(emd);
         }
     }
     else // plPassMtl, plDecalMat, plMultiPassMtl, plParticleMtl
@@ -819,8 +818,8 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
         plExportMaterialData emd;
         emd.fMaterial = mat;
         emd.fNumBlendChannels = numBlendChannels;
-        ourMaterials->Reset();
-        ourMaterials->Append(emd);
+        ourMaterials->clear();
+        ourMaterials->emplace_back(emd);
     }
 
     // We've already handled it... just letting them know.
@@ -1047,16 +1046,15 @@ hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, con
                 return mat;
             }
 
-            int32_t i;
             int32_t index(-1);
-            for (i = 0; i < fDoneMaterials.Count(); i++)
+            for (size_t i = 0; i < fDoneMaterials.size(); i++)
             {
                 if (IsMatchingDoneMaterial(&fDoneMaterials[i], mtl,  isMultiMat, subIndex, forceCopy, runtimeLit,
                                            node, numUVChannels, makeAlphaLayer))
                 {
-                    index = i;
+                    index = int32_t(i);
                     break;
-                }               
+                }
             }
 
             if (index != -1)
@@ -1306,7 +1304,7 @@ hsGMaterial* hsMaterialConverter::IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMa
     {
         hMat->GetKey()->RefObject(); // Matching unref in hsMaterialConverter::DeInit();
 
-        fDoneMaterials.Append(done);
+        fDoneMaterials.emplace_back(done);
     }
 
     return hMat;
@@ -1866,7 +1864,7 @@ void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segM
         tc.Loop(false);
 }
 
-void StuffStopPoints(SegmentMap *segMap, hsTArray<float> &out)
+static void StuffStopPoints(SegmentMap *segMap, std::vector<float> &out)
 {
     if (segMap == nullptr)
         return;
@@ -1876,7 +1874,7 @@ void StuffStopPoints(SegmentMap *segMap, hsTArray<float> &out)
         SegmentSpec *spec = it->second;
         if (spec->fType == SegmentSpec::kStopPoint)
         {
-            out.Append(spec->fStart);
+            out.emplace_back(spec->fStart);
         }
     }
 }
@@ -3166,7 +3164,7 @@ void hsMaterialConverter::IAppendWetLayer(plMaxNode* node, hsGMaterial* mat)
             if( mtl->SuperClassID() != MATERIAL_CLASS_ID )
                 continue;
 
-            hsTArray<hsGMaterial*> matList;
+            std::vector<hsGMaterial*> matList;
             if( !GetMaterialArray((Mtl*)mtl, node, matList, 0) )
                 return; // oh well, thanks for playing...
 
@@ -3898,13 +3896,12 @@ bool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
         fLastMaterial.fOwnedCopy = false;
     }
 
-    int32_t i;
-    for (i = fDoneMaterials.Count() - 1; i >= 0; --i)
+    for (hsSsize_t i = fDoneMaterials.size() - 1; i >= 0; --i)
     {
         if (fDoneMaterials[i].fMaxMaterial == mtl)
         {
             fDoneMaterials[i].fHsMaterial->GetKey()->UnRefObject();
-            fDoneMaterials.Remove(i);
+            fDoneMaterials.erase(fDoneMaterials.begin() + i);
             doneSomething = true;
         }
     }
@@ -4436,18 +4433,18 @@ Mtl* hsMaterialConverter::FindSceneMtlByName(TSTR& name)
     hsGuardEnd; 
 }
 
-int hsMaterialConverter::GetMaterialArray(Mtl *mtl, plMaxNode* node, hsTArray<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
+size_t hsMaterialConverter::GetMaterialArray(Mtl *mtl, plMaxNode* node, std::vector<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
 {
-    hsTArray<plExportMaterialData>* arGh = CreateMaterialArray(mtl, node, multiIndex);
-    int i;
-    for( i = 0; i < arGh->GetCount(); i++ )
+    std::vector<plExportMaterialData>* arGh = CreateMaterialArray(mtl, node, multiIndex);
+    out.reserve(arGh->size());
+    for (const plExportMaterialData& matData : *arGh)
     {
-        out.Append(arGh->Get(i).fMaterial);
+        out.emplace_back(matData.fMaterial);
     }
 
     delete arGh;
 
-    return out.GetCount();
+    return out.size();
 }
 
 static void GetMtlNodes(Mtl *mtl, INodeTab& nodes)
@@ -4470,35 +4467,33 @@ static void GetMtlNodes(Mtl *mtl, INodeTab& nodes)
     rm = di.Next();
 }
 
-int hsMaterialConverter::GetMaterialArray(Mtl *mtl, hsTArray<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
+size_t hsMaterialConverter::GetMaterialArray(Mtl *mtl, std::vector<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
 {
     INodeTab nodes;
     GetMtlNodes(mtl, nodes);
 
     for (int i = 0; i < nodes.Count(); i++)
     {
-        hsTArray<hsGMaterial*> tempOut;
+        std::vector<hsGMaterial*> tempOut;
         GetMaterialArray(mtl, (plMaxNode*)nodes[i], tempOut, multiIndex);
 
-        for (int j = 0; j < tempOut.GetCount(); j++)
+        for (hsGMaterial* mat : tempOut)
         {
-            if (out.Find(tempOut[j]) == out.kMissingIndex)
-                out.Append(tempOut[j]);
+            if (std::find(out.cbegin(), out.cend(), mat) == out.cend())
+                out.emplace_back(mat);
         }
     }
 
-    return out.GetCount();
+    return out.size();
 }
 
 // Grab all the hsGMaterials that have been created as a result of converting mtl
-void hsMaterialConverter::CollectConvertedMaterials(Mtl *mtl, hsTArray<hsGMaterial *>& out)
+void hsMaterialConverter::CollectConvertedMaterials(Mtl *mtl, std::vector<hsGMaterial *>& out)
 {
-    int i;
-    for (i = 0; i < fDoneMaterials.GetCount(); i++)
+    for (const DoneMaterialData& dmd : fDoneMaterials)
     {
-        const DoneMaterialData &dmd = fDoneMaterials.Get(i);
         if (dmd.fMaxMaterial == mtl)
-            out.Append(dmd.fHsMaterial);
+            out.emplace_back(dmd.fHsMaterial);
     }
 }
 
@@ -4769,11 +4764,9 @@ static int ICompareDoneLayers(const plLayerInterface* one, const plLayerInterfac
     return 0;
 }
 
-static int ICompareDoneMats(const void *arg1, const void *arg2)
+static int ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
+                            const hsMaterialConverter::DoneMaterialData* two)
 {
-    const hsMaterialConverter::DoneMaterialData* one = *(const hsMaterialConverter::DoneMaterialData**)arg1;
-    const hsMaterialConverter::DoneMaterialData* two = *(const hsMaterialConverter::DoneMaterialData**)arg2;
-
     hsGMaterial* oneMat = one->fHsMaterial;
     hsGMaterial* twoMat = two->fHsMaterial;
 
@@ -4968,30 +4961,28 @@ bool hsMaterialConverter::IEquivalent(DoneMaterialData* one, DoneMaterialData* t
     if( one->fOwnedCopy || two->fOwnedCopy )
         return false;
 
-    return ICompareDoneMats(&one, &two) == 0;
+    return ICompareDoneMats(one, two) == 0;
 }
 
-void hsMaterialConverter::ISortDoneMaterials(hsTArray<DoneMaterialData*>& doneMats)
+void hsMaterialConverter::ISortDoneMaterials(std::vector<DoneMaterialData*>& doneMats)
 {
-    doneMats.SetCount(fDoneMaterials.GetCount());
-    int i;
-    for( i = 0; i < fDoneMaterials.GetCount(); i++ )
+    doneMats.resize(fDoneMaterials.size());
+    for (size_t i = 0; i < fDoneMaterials.size(); i++)
         doneMats[i] = &fDoneMaterials[i];
 
-
-    void* arr = doneMats.AcquireArray();
-    qsort((void*)arr, doneMats.GetCount(), sizeof(DoneMaterialData*), ICompareDoneMats);
+    void* arr = doneMats.data();
+    std::sort(doneMats.begin(), doneMats.end(), ICompareDoneMats);
 }
 
 void hsMaterialConverter::IGenMaterialReport(const char* path)
 {
-    hsTArray<DoneMaterialData*> doneMats;
+    std::vector<DoneMaterialData*> doneMats;
     ISortDoneMaterials(doneMats);
 
     IPrintDoneMaterials(path, doneMats);
 }
 
-void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMaterialData*>& doneMats)
+void hsMaterialConverter::IPrintDoneMaterials(const char* path, const std::vector<DoneMaterialData*>& doneMats)
 {
     TSTR maxFileTstr = GetCOREInterface()->GetCurFileName();
     char maxFile[256];
@@ -5031,7 +5022,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
     stream.WriteString(maxFile);
     stream.WriteString("\n===============================================\n===============================================\n");
 
-    if( !doneMats.GetCount() )
+    if (doneMats.empty())
     {
         char buff[256];
         sprintf(buff, "");
@@ -5048,8 +5039,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
     int dupSets = 0;
     int duplicates = 0;
     int uniques = 0;
-    int i;
-    for( i = 1; i < doneMats.GetCount(); i++ )
+    for (size_t i = 1; i < doneMats.size(); i++)
     {
         if( IEquivalent(doneMats[i], doneMats[i-1]) )
         {
@@ -5100,12 +5090,11 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
 
 hsMaterialConverter::DoneMaterialData* hsMaterialConverter::IFindDoneMaterial(DoneMaterialData& done)
 {
-    int i;
-    for( i = 0; i < fDoneMaterials.GetCount(); i++ )
+    for (DoneMaterialData& testMat : fDoneMaterials)
     {
-        if( IEquivalent(&fDoneMaterials[i], &done) )
+        if (IEquivalent(&testMat, &done))
         {
-            return &fDoneMaterials[i];
+            return &testMat;
         }
     }
     return nullptr;
