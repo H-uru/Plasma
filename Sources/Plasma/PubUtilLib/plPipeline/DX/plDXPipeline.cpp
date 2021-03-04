@@ -75,6 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "plQuality.h"
 #include "hsResMgr.h"
+#include "hsSIMD.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plTweak.h"
@@ -126,10 +127,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 
 #include <algorithm>
-
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
-#endif
 
 //#define MF_TOSSER
 
@@ -8796,7 +8793,7 @@ static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
     }
 }
 
-#ifdef HS_SSE3
+#ifdef HAVE_SSE3
 static inline void ISkinDpSSE3(const float* src, float* dst, const __m128& mc0,
                                const __m128& mc1, const __m128& mc2, const __m128& mwt)
 {
@@ -8812,13 +8809,13 @@ static inline void ISkinDpSSE3(const float* src, float* dst, const __m128& mc0,
     _dst = _mm_add_ps(_dst, hbuf1);
     _mm_store_ps(dst, _dst);
 }
-#endif // HS_SSE3
+#endif // HAVE_SSE3
 
 static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
                                    const float* pt_src, float* pt_dst,
                                    const float* vec_src, float* vec_dst)
 {
-#ifdef HS_SSE3
+#ifdef HAVE_SSE3
     __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
     __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
     __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
@@ -8826,10 +8823,10 @@ static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
 
     ISkinDpSSE3(pt_src, pt_dst, mc0, mc1, mc2, mwt);
     ISkinDpSSE3(vec_src, vec_dst, mc0, mc1, mc2, mwt);
-#endif // HS_SSE3
+#endif // HAVE_SSE3
 }
 
-#ifdef HS_SSE41
+#ifdef HAVE_SSE41
 static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
                                 const __m128& mc1, const __m128& mc2, const __m128& mwt)
 {
@@ -8844,13 +8841,13 @@ static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
     _dst = _mm_add_ps(_dst, _mm_mul_ps(_r, mwt));
     _mm_store_ps(dst, _dst);
 }
-#endif // HS_SSE41
+#endif // HAVE_SSE41
 
 static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
                                     const float* pt_src, float* pt_dst,
                                     const float* vec_src, float* vec_dst)
 {
-#ifdef HS_SSE41
+#ifdef HAVE_SSE41
     __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
     __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
     __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
@@ -8858,7 +8855,7 @@ static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
 
     ISkinDpSSE41(pt_src, pt_dst, mc0, mc1, mc2, mwt);
     ISkinDpSSE41(vec_src, vec_dst, mc0, mc1, mc2, mwt);
-#endif // HS_SSE41
+#endif // HAVE_SSE41
 }
 
 typedef void(*skin_vert_ptr)(const hsMatrix44&, float, const float*, float*, const float*, float*);

@@ -62,6 +62,7 @@ set(CoreLib_HEADERS
     hsPoint2.h
     hsQuat.h
     hsRefCnt.h
+    hsSIMD.h
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
@@ -85,6 +86,7 @@ plasma_library(CoreLib
     SOURCES ${CoreLib_SOURCES} ${CoreLib_HEADERS}
     PRECOMPILED_HEADERS _CoreLibPch.h
 )
+plasma_target_simd_sources(CoreLib SSE3 hsMatrix44_SSE3.cpp)
 target_link_libraries(
     CoreLib
     PUBLIC
