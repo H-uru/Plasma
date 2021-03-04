@@ -1,0 +1,5 @@
+Checks: '-*,modernize-use-override,modernize-use-nullptr'
+CheckOptions:
+    - key: modernize-use-override.IgnoreDestructors
+      value: '1'
+HeaderFilterRegex: 'Sources[\\|\/].*'

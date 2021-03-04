@@ -41,6 +41,7 @@ set(MaxConvert_SOURCES
 plasma_library(MaxConvert
     SOURCES ${MaxConvert_HEADERS} ${MaxConvert_SOURCES}
     PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
 )
 target_link_libraries(
     MaxConvert

@@ -169,6 +169,7 @@ plasma_library(MaxComponent
     SOURCES ${MaxComponent_HEADERS} ${MaxComponent_RESOURCES} ${MaxComponent_SOURCES}
     UNITY_BUILD
     PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
 )
 target_link_libraries(
     MaxComponent
