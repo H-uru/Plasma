@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPageTreeMgr_inc
 #define plPageTreeMgr_inc
 
-#include "hsTemplates.h"
 #include <vector>
 
 class plSceneNode;
@@ -80,15 +79,15 @@ public:
 class plPageTreeMgr
 {
 protected:
-    std::vector<plSceneNode*>      fNodes;
+    std::vector<plSceneNode*>   fNodes;
 
     plSpaceTree*                fSpaceTree;
     plVisMgr*                   fVisMgr;
 
     static bool                 fDisableVisMgr;
 
-    hsTArray<const plOccluder*> fOccluders;
-    hsTArray<const plCullPoly*> fCullPolys;
+    std::vector<const plOccluder*> fOccluders;
+    std::vector<const plCullPoly*> fCullPolys;
     std::vector<const plCullPoly*> fSortedCullPolys;
 
     void                        ITrashSpaceTree();
@@ -100,10 +99,10 @@ protected:
     void                        IResetOcclusion(plPipeline* pipe);
     void                        IAddCullPolyList(const std::vector<plCullPoly>& polyList);
 
-    bool                        ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList);
-    int                         IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList>& drawVis, int& iDrawStart);
-    bool                        IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList*>& drawList, hsTArray<plDrawSpanPair>& pairs);
-    int                         IRenderVisList(plPipeline* pipe, hsTArray<plDrawVisList>& visList);
+    bool                        ISortByLevel(plPipeline* pipe, std::vector<plDrawVisList>& drawList, std::vector<plDrawVisList>& sortedDrawList);
+    size_t                      IPrepForRenderSortingSpans(plPipeline* pipe, std::vector<plDrawVisList>& drawVis, size_t& iDrawStart);
+    bool                        IRenderSortingSpans(plPipeline* pipe, std::vector<plDrawVisList*>& drawList, std::vector<plDrawSpanPair>& pairs);
+    size_t                      IRenderVisList(plPipeline* pipe, std::vector<plDrawVisList>& visList);
 
 public:
     plPageTreeMgr();
@@ -118,9 +117,9 @@ public:
 
     virtual int     Render(plPipeline* pipe);
 
-    bool            Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
+    bool            Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList);
 
-    void            AddOccluderList(const hsTArray<plOccluder*> occList);
+    void            AddOccluderList(const std::vector<plOccluder*> occList);
 
     plSpaceTree*    GetSpaceTree() { if( !fSpaceTree ) IBuildSpaceTree(); return fSpaceTree; }
 
