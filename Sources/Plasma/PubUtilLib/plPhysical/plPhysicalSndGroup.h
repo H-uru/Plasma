@@ -52,8 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -110,9 +111,8 @@ protected:
     bool fPlayingSlideSound;
 
     // Sound key arrays for, well, our sounds!
-    hsTArray<plKey> fImpactSounds;
-    hsTArray<plKey> fSlideSounds;
+    std::vector<plKey> fImpactSounds;
+    std::vector<plKey> fSlideSounds;
 };
-
 
 #endif //_plPhysicalSndGroup_h
