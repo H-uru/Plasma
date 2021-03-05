@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plAnimPath_inc
 #define plAnimPath_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "plTransform/hsAffineParts.h"
@@ -116,8 +117,8 @@ protected:
                                                             : fNextTime); }
 
     // Visualization helper
-    void IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
-                                  hsPoint3& p1, hsPoint3& p2);
+    void IMakeSegment(std::vector<uint16_t>& idx, std::vector<hsPoint3>& pos,
+                      hsPoint3& p1, hsPoint3& p2);
     
     // For computing arclen
     struct ArcLenDeltaInfo
@@ -125,9 +126,9 @@ protected:
         float    fT;
         float    fArcLenDelta;   // arc len distance from prev sample point (array entry)
         ArcLenDeltaInfo(float t, float del) : fT(t),fArcLenDelta(del) {}
-        ArcLenDeltaInfo() : fT(0),fArcLenDelta(0) {}
+        ArcLenDeltaInfo() : fT(), fArcLenDelta() { }
     };
-    hsTArray<ArcLenDeltaInfo>   fArcLenDeltas;
+    std::vector<ArcLenDeltaInfo> fArcLenDeltas;
 public:
     plAnimPath();
     virtual ~plAnimPath();
@@ -142,7 +143,7 @@ public:
     const hsMatrix44& GetWorldToLocal() const { return fWorldToLocal; }
 
     // Visualization helper
-    void MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos);
+    void MakeDrawList(std::vector<uint16_t>& idx, std::vector<hsPoint3>& pos);
 
     void SetAnimPathFlags(uint32_t f) { fAnimPathFlags=f; }
     uint32_t GetAnimPathFlags() const { return fAnimPathFlags; }
