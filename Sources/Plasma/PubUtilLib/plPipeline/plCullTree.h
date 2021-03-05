@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 #include "hsGeometry3.h"
 #include "hsBitVector.h"
+#include "hsTemplates.h"
 #include "plCuller.h"
 #include "plScene/plCullPoly.h"
 

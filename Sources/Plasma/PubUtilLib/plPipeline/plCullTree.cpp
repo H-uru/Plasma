@@ -407,57 +407,56 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depth
     
     if( poly.fClipped.IsBitSet(0) )
         outPoly.fClipped.SetBit(0);
-    outPoly.fVerts.Append(poly.fVerts[0]);
+    outPoly.fVerts.emplace_back(poly.fVerts[0]);
 
-    int i;
-    for( i = 1; i < poly.fVerts.GetCount(); i++ )
+    for (size_t i = 1; i < poly.fVerts.size(); i++)
     {
         if( depths[i] < -kTolerance )
         {
-            if( outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
+            if (outVerts.IsBitSet(outPoly.fVerts.size()-1))
             {
                 hsPoint3 interp;
                 (void)IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
-                onVerts.SetBit(outPoly.fVerts.GetCount());
+                onVerts.SetBit(outPoly.fVerts.size());
                 if( poly.fClipped.IsBitSet(i-1) )
-                    outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
-                outPoly.fVerts.Append(interp);
+                    outPoly.fClipped.SetBit(outPoly.fVerts.size());
+                outPoly.fVerts.emplace_back(interp);
             }
-            inVerts.SetBit(outPoly.fVerts.GetCount());
+            inVerts.SetBit(outPoly.fVerts.size());
         }
         else if( depths[i] > kTolerance )
         {
-            if( inVerts.IsBitSet(outPoly.fVerts.GetCount()-1) )
+            if (inVerts.IsBitSet(outPoly.fVerts.size()-1))
             {
                 hsPoint3 interp;
                 (void)IInterpVert(poly.fVerts[i-1], poly.fVerts[i], interp);
                 // add interp
-                onVerts.SetBit(outPoly.fVerts.GetCount());
+                onVerts.SetBit(outPoly.fVerts.size());
                 if( poly.fClipped.IsBitSet(i-1) )
-                    outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
-                outPoly.fVerts.Append(interp);
+                    outPoly.fClipped.SetBit(outPoly.fVerts.size());
+                outPoly.fVerts.emplace_back(interp);
             }
-            outVerts.SetBit(outPoly.fVerts.GetCount());
+            outVerts.SetBit(outPoly.fVerts.size());
         }
         else
         {
-            onVerts.SetBit(outPoly.fVerts.GetCount());
+            onVerts.SetBit(outPoly.fVerts.size());
         }
 
         if( poly.fClipped.IsBitSet(i) )
-            outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
-        outPoly.fVerts.Append(poly.fVerts[i]);
+            outPoly.fClipped.SetBit(outPoly.fVerts.size());
+        outPoly.fVerts.emplace_back(poly.fVerts[i]);
     }
-    if( (inVerts.IsBitSet(outPoly.fVerts.GetCount()-1) && outVerts.IsBitSet(0))
-        ||(outVerts.IsBitSet(outPoly.fVerts.GetCount()-1) && inVerts.IsBitSet(0)) )
+    if( (inVerts.IsBitSet(outPoly.fVerts.size()-1) && outVerts.IsBitSet(0))
+        ||(outVerts.IsBitSet(outPoly.fVerts.size()-1) && inVerts.IsBitSet(0)) )
     {
         hsPoint3 interp;
-        (void)IInterpVert(poly.fVerts[poly.fVerts.GetCount()-1], poly.fVerts[0], interp);
-        onVerts.SetBit(outPoly.fVerts.GetCount());
-        if( poly.fClipped.IsBitSet(poly.fVerts.GetCount()-1) )
-            outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
-        outPoly.fVerts.Append(interp);
+        (void)IInterpVert(poly.fVerts.back(), poly.fVerts.front(), interp);
+        onVerts.SetBit(outPoly.fVerts.size());
+        if( poly.fClipped.IsBitSet(poly.fVerts.size()-1) )
+            outPoly.fClipped.SetBit(outPoly.fVerts.size());
+        outPoly.fVerts.emplace_back(interp);
     }
 }
 
@@ -486,8 +485,8 @@ void plCullNode::ITakeHalfPoly(const plCullPoly& srcPoly,
             }
             if( srcPoly.fClipped.IsBitSet(vtxIdx[i])
                 ||(onVerts.IsBitSet(vtxIdx[i]) && onVerts.IsBitSet(vtxIdx[next])) )
-                    outPoly.fClipped.SetBit(outPoly.fVerts.GetCount());
-            outPoly.fVerts.Append(srcPoly.fVerts[vtxIdx[i]]);
+                    outPoly.fClipped.SetBit(outPoly.fVerts.size());
+            outPoly.fVerts.emplace_back(srcPoly.fVerts[vtxIdx[i]]);
         }
     }
     else
@@ -499,10 +498,10 @@ void plCullNode::ITakeHalfPoly(const plCullPoly& srcPoly,
 
 void plCullNode::IMarkClipped(const plCullPoly& poly, const hsBitVector& onVerts) const
 {
-    int i;
-    for( i = 1; i < poly.fVerts.GetCount(); i++ )
+    size_t i;
+    for (i = 1; i < poly.fVerts.size(); i++)
     {
-        int last = i-1;
+        size_t last = i - 1;
         if( onVerts[i] && onVerts[last] )
             poly.fClipped.SetBit(last);
     }
@@ -515,15 +514,14 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
                                                 plCullPoly*& outerPoly) const
 {
     static hsTArray<float> depths;
-    depths.SetCount(poly.fVerts.GetCount());
+    depths.SetCount(poly.fVerts.size());
 
     static hsBitVector onVerts;
     onVerts.Clear();
 
     bool someInner = false;
     bool someOuter = false;
-    int i;
-    for( i = 0; i < poly.fVerts.GetCount(); i++ )
+    for (size_t i = 0; i < poly.fVerts.size(); i++)
     {
         depths[i] = fNorm.InnerProduct(poly.fVerts[i]) + fDist;
         if( depths[i] < -kTolerance )
@@ -573,7 +571,7 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
     static hsTArray<int> outPolyIdx;
     outPolyIdx.SetCount(0);
 
-    for( i = 0; i < scrPoly.fVerts.GetCount(); i++ )
+    for (size_t i = 0; i < scrPoly.fVerts.size(); i++)
     {
         if( inVerts.IsBitSet(i) )
         {
@@ -710,7 +708,7 @@ void plCullTree::AddPoly(const plCullPoly& poly)
 
 int16_t plCullTree::IAddPolyRecur(const plCullPoly& poly, int16_t iNode)
 {
-    if( poly.fVerts.GetCount() < 3 )
+    if (poly.fVerts.size() < 3)
         return iNode;
 
     if( iNode < 0 )
@@ -783,8 +781,8 @@ int16_t plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
 
     int16_t iNode = -1;
 
-    int i;
-    for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
+    size_t i;
+    for (i = 0; i < poly.fVerts.size() - 1; i++)
     {
         if( !poly.fClipped.IsBitSet(i) )
         {
@@ -824,8 +822,8 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 
     int16_t iNode = -1;
 
-    int i;
-    for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
+    size_t i;
+    for (i = 0; i < poly.fVerts.size() - 1; i++)
     {
         if( !poly.fClipped.IsBitSet(i) )
         {
@@ -857,8 +855,6 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 ///////////////////////////////////////////////////////////////////
 void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
 {
-    int i;
-
     int vertStart = fVisVerts.GetCount();
     
     hsColorRGBA color;
@@ -867,15 +863,15 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
     else
         color.Set(1.f, 1.f, 1.f, 1.f);
 
-    for( i = 0; i < poly.fVerts.GetCount(); i++ )
+    for (const hsPoint3& vert : poly.fVerts)
     {
-        fVisVerts.Append(poly.fVerts[i]);
+        fVisVerts.Append(vert);
         fVisNorms.Append(poly.fNorm);
         fVisColors.Append(color);
     }
     if( !dark )
     {
-        for( i = 2; i < poly.fVerts.GetCount(); i++ )
+        for (uint16_t i = 2; i < poly.fVerts.size(); i++)
         {
             fVisTris.Append(vertStart);
             fVisTris.Append(vertStart + i-1);
@@ -884,7 +880,7 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
     }
     else
     {
-        for( i = 2; i < poly.fVerts.GetCount(); i++ )
+        for (uint16_t i = 2; i < poly.fVerts.size(); i++)
         {
             fVisTris.Append(vertStart);
             fVisTris.Append(vertStart + i);
@@ -944,8 +940,8 @@ void plCullTree::IVisPoly(const plCullPoly& poly, bool dark) const
 {
     IVisPolyShape(poly, dark);
 
-    int i;
-    for( i = 0; i < poly.fVerts.GetCount()-1; i++ )
+    size_t i;
+    for (i = 0; i < poly.fVerts.size() - 1; i++)
     {
         if( !poly.fClipped.IsBitSet(i) )
             IVisPolyEdge(poly.fVerts[i], poly.fVerts[i+1], dark);

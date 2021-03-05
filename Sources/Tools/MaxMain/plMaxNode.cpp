@@ -2070,22 +2070,22 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                 int lastAdded = 2;
 
                 plCullPoly* poly = polys.Push();
-                poly->fVerts.SetCount(0);
+                poly->fVerts.clear();
 
                 Point3 p;
                 hsPoint3 pt;
 
                 p = facePts[0];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[1];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[2];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 for( j = lastAdded+1; j < facePts.GetCount(); j++ )
                 {
@@ -2120,14 +2120,14 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
                         poly = polys.Push();
                         plCullPoly* lastPoly = &polys[polys.GetCount()-2];
-                        poly->fVerts.SetCount(0);
-                        poly->fVerts.Append(lastPoly->fVerts[0]);
-                        poly->fVerts.Append(lastPoly->fVerts[lastAdded]);
+                        poly->fVerts.clear();
+                        poly->fVerts.emplace_back(lastPoly->fVerts[0]);
+                        poly->fVerts.emplace_back(lastPoly->fVerts[lastAdded]);
     
                         lastAdded = 1;
                     }
 
-                    poly->fVerts.Append(pt);
+                    poly->fVerts.emplace_back(pt);
                     lastAdded++;
                 }
 

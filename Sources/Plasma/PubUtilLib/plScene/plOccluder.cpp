@@ -163,8 +163,7 @@ plDrawableSpans* plOccluder::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>
         pos.emplace_back(polys[i].fVerts[1]);
         norm.emplace_back(polys[i].fNorm);
         color.emplace_back(col);
-        int j;
-        for( j = 2; j < polys[i].fVerts.GetCount(); j++ )
+        for (size_t j = 2; j < polys[i].fVerts.size(); j++)
         {
             uint16_t idxCurr = (uint16_t)pos.size();
             pos.emplace_back(polys[i].fVerts[j]);
@@ -236,9 +235,8 @@ void plOccluder::IComputeBounds()
     int i;
     for( i =0 ; i < polys.GetCount(); i++ )
     {
-        int j;
-        for( j = 0; j < polys[i].fVerts.GetCount(); j++ )
-            fWorldBounds.Union(&polys[i].fVerts[j]);
+        for (const hsPoint3& vert : polys[i].fVerts)
+            fWorldBounds.Union(&vert);
     }
 }
 
@@ -249,8 +247,7 @@ float plOccluder::IComputeSurfaceArea()
     int i;
     for( i =0 ; i < polys.GetCount(); i++ )
     {
-        int j;
-        for( j = 2; j < polys[i].fVerts.GetCount(); j++ )
+        for (size_t j = 2; j < polys[i].fVerts.size(); j++)
         {
             area += (hsVector3(&polys[i].fVerts[j], &polys[i].fVerts[j-2]) % hsVector3(&polys[i].fVerts[j-1], &polys[i].fVerts[j-2])).Magnitude();
         }
