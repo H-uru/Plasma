@@ -155,4 +155,7 @@ if(PLASMA_BUILD_TESTS)
     add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
 endif(PLASMA_BUILD_TESTS)
 
-feature_summary(WHAT ALL   FATAL_ON_MISSING_REQUIRED_PACKAGES)
+# This must be called only after all Qt targets are declared
+plasma_deploy_qt()
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

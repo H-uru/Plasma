@@ -15,7 +15,7 @@ set(plUruLauncher_RESOURCES
     Dirt.ICO
 )
 
-plasma_executable(plUruLauncher WIN32
+plasma_executable(plUruLauncher WIN32 CLIENT
     SOURCES
         ${plUruLauncher_SOURCES} ${plUruLauncher_HEADERS}
         ${plUruLauncher_RESOURCES}
@@ -36,11 +36,6 @@ target_link_libraries(
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plUruLauncher PROPERTIES OUTPUT_NAME UruLauncher)
 endif(PLASMA_EXTERNAL_RELEASE)
-
-install(
-    TARGETS plUruLauncher
-    DESTINATION client
-)
 
 source_group("Source Files" FILES ${plUruLauncher_SOURCES})
 source_group("Header Files" FILES ${plUruLauncher_HEADERS})

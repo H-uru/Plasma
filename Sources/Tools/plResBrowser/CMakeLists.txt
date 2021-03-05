@@ -28,7 +28,7 @@ set(plResBrowser_UIC
     res/ResBrowser.ui
 )
 
-plasma_executable(plResBrowser QT_GUI
+plasma_executable(plResBrowser QT_TOOL
     SOURCES
         ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
         ${plResBrowser_RCC} ${plResBrowser_UIC}

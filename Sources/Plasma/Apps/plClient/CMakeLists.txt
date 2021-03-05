@@ -82,7 +82,7 @@ set(plClient_RESOURCES
     res/headspin.ico
 )
 
-plasma_executable(plClient WIN32
+plasma_executable(plClient WIN32 CLIENT
     SOURCES
         ${plClient_SOURCES} ${plClient_HEADERS}
         ${plClient_TEXT} ${plClient_RESOURCES}
@@ -147,11 +147,6 @@ target_link_libraries(
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
-
-install(
-    TARGETS plClient
-    DESTINATION client
-)
 
 install(
     FILES $<TARGET_PDB_FILE:plClient>

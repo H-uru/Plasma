@@ -2,7 +2,7 @@ set(plShaderAssembler_SOURCES
     main.cpp
 )
 
-plasma_executable(plShaderAssembler SOURCES ${plShaderAssembler_SOURCES})
+plasma_executable(plShaderAssembler CLI_TOOL SOURCES ${plShaderAssembler_SOURCES})
 target_link_libraries(
     plShaderAssembler
     PRIVATE
