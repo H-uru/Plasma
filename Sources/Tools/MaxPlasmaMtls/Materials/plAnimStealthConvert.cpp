@@ -172,7 +172,7 @@ void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
-void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
+void    plAnimStealthNode::GetAllStopPoints(std::vector<float> &out)
 {
     if (fCachedSegMap == nullptr)
         return;
@@ -182,7 +182,7 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
         SegmentSpec *spec = it->second;
         if( spec->fType == SegmentSpec::kStopPoint )
         {
-            out.Append( spec->fStart );
+            out.emplace_back(spec->fStart);
         }
     }
 }

@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAnimTimeConvert_inc
 
 #include <list>
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
-#include "hsTemplates.h"
 
 class plSynchedObject;
 class plAnimCmdMsg;
@@ -78,8 +79,8 @@ protected:
     typedef std::list<plATCState *> plATCStateList;
     plATCStateList fStates;
     
-    hsTArray<float>              fStopPoints;
-    hsTArray<plEventCallbackMsg*>   fCallbackMsgs;
+    std::vector<float>               fStopPoints;
+    std::vector<plEventCallbackMsg*> fCallbackMsgs;
 
     /////////////////////////
     // Ease In/Out stuff
@@ -100,7 +101,7 @@ protected:
 
     void        ICheckTimeCallbacks(float frameStart, float frameStop);
     bool        ITimeInFrame(float secs, float start, float stop);
-    void        ISendCallback(int i);
+    void        ISendCallback(hsSsize_t i);
 
     plAnimTimeConvert& IStop(double time, float animTime);
     bool IIsStoppedAt(const double &wSecs, const uint32_t &flags, const plATCEaseCurve *curve) const;
@@ -155,7 +156,7 @@ public:
     float GetInitialBegin() const { return fInitialBegin; }
     float GetInitialEnd() const { return fInitialEnd; }
     float GetSpeed() const { return fSpeed; }
-    hsTArray<float> &GetStopPoints() { return fStopPoints; }
+    std::vector<float> &GetStopPoints() { return fStopPoints; }
     float GetBestStopDist(float min, float max, float norm, float time) const;
     int GetCurrentEaseCurve() const;    // returns  0=nil, 1=easeIn, 2=easeOut, 3=speed
 

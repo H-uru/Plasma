@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAnimStealthNode_h
 #define _plAnimStealthNode_h
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "MaxComponent/plAnimObjInterface.h"
 #include "MaxComponent/plMaxAnimUtils.h"
@@ -217,7 +217,7 @@ public:
     void        SetEaseOut( uint8_t type, float length, float min, float max );
 
     // Conversion stuff
-    void        GetAllStopPoints( hsTArray<float> &out );
+    void        GetAllStopPoints(std::vector<float> &out);
     float       GetSegStart() const;
     float       GetSegEnd() const;
     void        GetLoopPoints( float &start, float &end ) const;
