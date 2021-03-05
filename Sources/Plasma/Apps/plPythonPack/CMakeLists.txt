@@ -7,7 +7,7 @@ set(plPythonPack_HEADERS
     PythonInterface.h
 )
 
-add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
+plasma_executable(plPythonPack SOURCES ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
 target_link_libraries(
     plPythonPack
     PRIVATE

@@ -2,7 +2,7 @@ set(plFileEncrypt_SOURCES
     main.cpp
 )
 
-add_executable(plFileEncrypt ${plFileEncrypt_SOURCES})
+plasma_executable(plFileEncrypt SOURCES ${plFileEncrypt_SOURCES})
 target_link_libraries(
     plFileEncrypt
     PRIVATE

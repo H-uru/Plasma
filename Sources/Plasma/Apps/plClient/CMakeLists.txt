@@ -82,9 +82,11 @@ set(plClient_RESOURCES
     res/headspin.ico
 )
 
-add_executable(plClient WIN32 ${plClient_SOURCES} ${plClient_HEADERS}
-                              ${plClient_TEXT} ${plClient_RESOURCES}
-                              ${external_SCRIPTS} ${external_SOURCES} ${external_DAT}
+plasma_executable(plClient WIN32
+    SOURCES
+        ${plClient_SOURCES} ${plClient_HEADERS}
+        ${plClient_TEXT} ${plClient_RESOURCES}
+        ${external_SCRIPTS} ${external_SOURCES} ${external_DAT}
 )
 target_link_libraries(
     plClient

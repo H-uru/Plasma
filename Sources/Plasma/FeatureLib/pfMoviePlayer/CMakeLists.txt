@@ -8,7 +8,7 @@ set(pfMoviePlayer_HEADERS
     plPlanarImage.h
 )
 
-add_library(pfMoviePlayer STATIC ${pfMoviePlayer_SOURCES} ${pfMoviePlayer_HEADERS} ${pfMoviePlayer_WEBM})
+plasma_library(pfMoviePlayer SOURCES ${pfMoviePlayer_SOURCES} ${pfMoviePlayer_HEADERS})
 target_link_libraries(
     pfMoviePlayer
     PUBLIC

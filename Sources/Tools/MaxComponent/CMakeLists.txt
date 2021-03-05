@@ -165,11 +165,10 @@ set(MaxComponent_SOURCES
     plXImposter.cpp
 )
 
-add_library(MaxComponent
-            STATIC
-            ${MaxComponent_HEADERS}
-            ${MaxComponent_RESOURCES}
-            ${MaxComponent_SOURCES}
+plasma_library(MaxComponent
+    SOURCES ${MaxComponent_HEADERS} ${MaxComponent_RESOURCES} ${MaxComponent_SOURCES}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
 )
 target_link_libraries(
     MaxComponent
@@ -219,8 +218,6 @@ target_link_libraries(
         Comctl32
         Shlwapi
 )
-
-plasma_optimize_target(MaxComponent UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxComponent_HEADERS})
 source_group("Resource Files" FILES ${MaxComponent_RESOURCES})

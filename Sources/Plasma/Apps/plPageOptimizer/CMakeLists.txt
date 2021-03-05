@@ -8,7 +8,7 @@ set(plPageOptimizer_HEADERS
     plPageOptimizer.h
 )
 
-add_executable(plPageOptimizer ${plPageOptimizer_SOURCES} ${plPageOptimizer_HEADERS})
+plasma_executable(plPageOptimizer SOURCES ${plPageOptimizer_SOURCES} ${plPageOptimizer_HEADERS})
 target_link_libraries(
     plPageOptimizer
     PRIVATE

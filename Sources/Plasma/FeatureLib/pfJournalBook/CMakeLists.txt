@@ -7,7 +7,7 @@ set(pfJournalBook_HEADERS
     pfJournalBookCreatable.h
 )
 
-add_library(pfJournalBook STATIC ${pfJournalBook_SOURCES} ${pfJournalBook_HEADERS})
+plasma_library(pfJournalBook SOURCES ${pfJournalBook_SOURCES} ${pfJournalBook_HEADERS})
 target_link_libraries(
     pfJournalBook
     PUBLIC

@@ -3,7 +3,7 @@ set(plPageInfo_SOURCES
     plPageInfo.cpp
 )
 
-add_executable(plPageInfo ${plPageInfo_SOURCES})
+plasma_executable(plPageInfo SOURCES ${plPageInfo_SOURCES})
 target_link_libraries(
     plPageInfo
     PRIVATE

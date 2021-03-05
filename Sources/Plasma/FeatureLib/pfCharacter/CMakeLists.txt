@@ -9,7 +9,7 @@ set(pfCharacter_HEADERS
     pfMarkerMgr.h
 )
 
-add_library(pfCharacter STATIC ${pfCharacter_SOURCES} ${pfCharacter_HEADERS})
+plasma_library(pfCharacter SOURCES ${pfCharacter_SOURCES} ${pfCharacter_HEADERS})
 target_link_libraries(
     pfCharacter
     PUBLIC

@@ -15,7 +15,7 @@ elseif(TARGET Security::Security)
     list(APPEND pfPasswordStore_SOURCES pfPasswordStore_Apple.cpp)
 endif()
 
-add_library(pfPasswordStore STATIC ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
+plasma_library(pfPasswordStore SOURCES ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
 target_link_libraries(
     pfPasswordStore
     PUBLIC

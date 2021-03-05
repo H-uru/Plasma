@@ -104,15 +104,15 @@ set(MaxPlasmaMtls_SOURCES_Materials
     Materials/plPassMtlBase.cpp
 )
 
-add_library(MaxPlasmaMtls
-            STATIC
-            ${MaxPlasmaMtls_HEADERS}
+plasma_library(MaxPlasmaMtls
+    SOURCES ${MaxPlasmaMtls_HEADERS}
             ${MaxPlasmaMtls_HEADERS_Layers}
             ${MaxPlasmaMtls_HEADERS_Materials}
             ${MaxPlasmaMtls_RESOURCES}
             ${MaxPlasmaMtls_SOURCES}
             ${MaxPlasmaMtls_SOURCES_Layers}
             ${MaxPlasmaMtls_SOURCES_Materials}
+    PRECOMPILED_HEADERS Pch.h
 )
 target_link_libraries(
     MaxPlasmaMtls
@@ -128,8 +128,6 @@ target_link_libraries(
 
         3dsm
 )
-
-plasma_optimize_target(MaxPlasmaMtls PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxPlasmaMtls_HEADERS})
 source_group("Header Files\\Layers" FILES ${MaxPlasmaMtls_HEADERS_Layers})

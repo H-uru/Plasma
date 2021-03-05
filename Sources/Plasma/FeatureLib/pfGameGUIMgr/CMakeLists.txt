@@ -56,7 +56,11 @@ set(pfGameGUIMgr_HEADERS
     pfGUIValueCtrl.h
 )
 
-add_library(pfGameGUIMgr STATIC ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS})
+plasma_library(pfGameGUIMgr
+    SOURCES ${pfGameGUIMgr_SOURCES} ${pfGameGUIMgr_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pfGameGUIMgr
     PUBLIC
@@ -85,8 +89,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(pfGameGUIMgr UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${pfGameGUIMgr_SOURCES})
 source_group("Header Files" FILES ${pfGameGUIMgr_HEADERS})

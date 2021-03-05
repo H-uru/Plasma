@@ -15,8 +15,11 @@ set(plUruLauncher_RESOURCES
     Dirt.ICO
 )
 
-add_executable(plUruLauncher WIN32 ${plUruLauncher_SOURCES} ${plUruLauncher_HEADERS}
-                                   ${plUruLauncher_RESOURCES})
+plasma_executable(plUruLauncher WIN32
+    SOURCES
+        ${plUruLauncher_SOURCES} ${plUruLauncher_HEADERS}
+        ${plUruLauncher_RESOURCES}
+)
 target_link_libraries(
     plUruLauncher
     PRIVATE

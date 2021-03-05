@@ -11,7 +11,7 @@ set(pfConsoleCore_HEADERS
     pfConsoleEngine.h
 )
 
-add_library(pfConsoleCore STATIC ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS})
+plasma_library(pfConsoleCore SOURCES ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS})
 target_link_libraries(
     pfConsoleCore
     PUBLIC

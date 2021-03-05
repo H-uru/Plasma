@@ -24,7 +24,10 @@ set(plResMgr_HEADERS
     plVersion.h
 )
 
-add_library(plResMgr STATIC ${plResMgr_SOURCES} ${plResMgr_HEADERS})
+plasma_library(plResMgr
+    SOURCES ${plResMgr_SOURCES} ${plResMgr_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     plResMgr
     PUBLIC
@@ -40,8 +43,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plResMgr PRECOMPILED_HEADERS Pch.h)
 
 # Good luck with this...
 option(PLASMA_RESMGR_DEBUGGING "Use mcn's ResManager debug console" OFF)

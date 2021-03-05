@@ -25,7 +25,11 @@ set(plPhysX_HEADERS
     plSimulationMgr.h
 )
 
-add_library(plPhysX STATIC ${plPhysX_SOURCES} ${plPhysX_HEADERS})
+plasma_library(plPhysX
+    SOURCES ${plPhysX_SOURCES} ${plPhysX_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 
 target_link_libraries(plPhysX
     PUBLIC
@@ -49,8 +53,6 @@ target_link_libraries(plPhysX
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plPhysX UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plPhysX_SOURCES})
 source_group("Header Files" FILES ${plPhysX_HEADERS})

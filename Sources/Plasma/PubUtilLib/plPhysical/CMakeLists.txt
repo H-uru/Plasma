@@ -20,7 +20,7 @@ set(plPhysical_HEADERS
     plSimDefs.h
 )
 
-add_library(plPhysical STATIC ${plPhysical_SOURCES} ${plPhysical_HEADERS})
+plasma_library(plPhysical SOURCES ${plPhysical_SOURCES} ${plPhysical_HEADERS})
 target_link_libraries(
     plPhysical
     PUBLIC

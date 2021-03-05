@@ -11,7 +11,7 @@ set(plStatGather_HEADERS
     plStatGatherCreatable.h
 )
 
-add_library(plStatGather STATIC ${plStatGather_SOURCES} ${plStatGather_HEADERS})
+plasma_library(plStatGather SOURCES ${plStatGather_SOURCES} ${plStatGather_HEADERS})
 target_link_libraries(
     plStatGather
     PUBLIC

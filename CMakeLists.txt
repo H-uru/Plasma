@@ -78,8 +78,8 @@ elseif(WIN32)
     find_package(VLD)
 endif()
 
-include(BuildOptimizations)
 include(PythonUtils)
+include(PlasmaTargets)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 if(PLASMA_EXTERNAL_RELEASE)

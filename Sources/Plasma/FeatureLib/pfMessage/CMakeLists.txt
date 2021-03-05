@@ -23,7 +23,7 @@ set(pfMessage_HEADERS
     plClothingMsg.h
 )
 
-add_library(pfMessage STATIC ${pfMessage_SOURCES} ${pfMessage_HEADERS})
+plasma_library(pfMessage SOURCES ${pfMessage_SOURCES} ${pfMessage_HEADERS})
 target_link_libraries(
     pfMessage
     PUBLIC

@@ -27,7 +27,11 @@ set(plScene_HEADERS
     plVisRegion.h
 )
 
-add_library(plScene STATIC ${plScene_SOURCES} ${plScene_HEADERS})
+plasma_library(plScene
+    SOURCES ${plScene_SOURCES} ${plScene_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADER Pch.h
+)
 target_link_libraries(
     plScene
     PUBLIC
@@ -50,8 +54,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plScene UNITY_BUILD PRECOMPILED_HEADER Pch.h)
 
 source_group("Source Files" FILES ${plScene_SOURCES})
 source_group("Header Files" FILES ${plScene_HEADERS})

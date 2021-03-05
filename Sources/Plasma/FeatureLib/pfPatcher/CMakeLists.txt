@@ -8,7 +8,7 @@ set(pfPatcher_HEADERS
     pfPatcher.h
 )
 
-add_library(pfPatcher STATIC ${pfPatcher_SOURCES} ${pfPatcher_HEADERS})
+plasma_library(pfPatcher SOURCES ${pfPatcher_SOURCES} ${pfPatcher_HEADERS})
 target_link_libraries(
     pfPatcher
     PUBLIC

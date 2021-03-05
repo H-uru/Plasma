@@ -2,7 +2,7 @@ set(plCrashHandler_SOURCES
     main.cpp
 )
 
-add_executable(plCrashHandler ${plCrashHandler_SOURCES})
+plasma_executable(plCrashHandler SOURCES ${plCrashHandler_SOURCES})
 target_link_libraries(
     plCrashHandler
     PRIVATE

@@ -100,7 +100,11 @@ set(plDrawable_HEADERS
     plWaveSetShaderConsts.h
 )
 
-add_library(plDrawable STATIC ${plDrawable_SOURCES} ${plDrawable_HEADERS})
+plasma_library(plDrawable
+    SOURCES ${plDrawable_SOURCES} ${plDrawable_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 
 target_link_libraries(plDrawable
     PUBLIC
@@ -132,8 +136,6 @@ target_link_libraries(plDrawable
         plStatusLog
         plSurface
 )
-
-plasma_optimize_target(plDrawable UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plDrawable_SOURCES})
 source_group("Header Files" FILES ${plDrawable_HEADERS})

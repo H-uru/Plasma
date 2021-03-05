@@ -23,7 +23,10 @@ set(plParticleSystem_HEADERS
     plParticleSystem.h
 )
 
-add_library(plParticleSystem STATIC ${plParticleSystem_SOURCES} ${plParticleSystem_HEADERS})
+plasma_library(plParticleSystem
+    SOURCES ${plParticleSystem_SOURCES} ${plParticleSystem_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     plParticleSystem
     PUBLIC
@@ -46,8 +49,6 @@ target_link_libraries(
         plSDL
         plSurface
 )
-
-plasma_optimize_target(plParticleSystem PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plParticleSystem_SOURCES})
 source_group("Header Files" FILES ${plParticleSystem_HEADERS})

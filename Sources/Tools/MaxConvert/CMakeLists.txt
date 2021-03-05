@@ -38,7 +38,10 @@ set(MaxConvert_SOURCES
     UserPropMgr.cpp
 )
 
-add_library(MaxConvert STATIC ${MaxConvert_HEADERS} ${MaxConvert_SOURCES})
+plasma_library(MaxConvert
+    SOURCES ${MaxConvert_HEADERS} ${MaxConvert_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     MaxConvert
     PUBLIC
@@ -70,8 +73,6 @@ target_link_libraries(
 
         3dsm
 )
-
-plasma_optimize_target(MaxConvert PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxConvert_HEADERS})
 source_group("Source Files" FILES ${MaxConvert_SOURCES})

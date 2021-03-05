@@ -9,7 +9,7 @@ set(pnDispatch_HEADERS
     pnDispatchCreatable.h
 )
 
-add_library(pnDispatch STATIC ${pnDispatch_SOURCES} ${pnDispatch_HEADERS})
+plasma_library(pnDispatch SOURCES ${pnDispatch_SOURCES} ${pnDispatch_HEADERS})
 target_link_libraries(
     pnDispatch
     PUBLIC

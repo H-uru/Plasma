@@ -29,7 +29,11 @@ set(plNetClient_HEADERS
     plNetVoiceList.h
 )
 
-add_library(plNetClient STATIC ${plNetClient_SOURCES} ${plNetClient_HEADERS})
+plasma_library(plNetClient
+    SOURCES ${plNetClient_SOURCES} ${plNetClient_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+    UNITY_BUILD
+)
 
 target_include_directories(plNetClient PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 target_link_libraries(plNetClient
@@ -73,8 +77,6 @@ target_link_libraries(plNetClient
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plNetClient PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
 
 source_group("Source Files" FILES ${plNetClient_SOURCES})
 source_group("Header Files" FILES ${plNetClient_HEADERS})
