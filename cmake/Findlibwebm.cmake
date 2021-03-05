@@ -2,8 +2,8 @@ include(FindPackageHandleStandardArgs)
 include(SelectLibraryConfigurations)
 
 find_path(libwebm_INCLUDE_DIR NAMES libwebm/mkvparser.hpp)
-find_library(libwebm_LIBRARY_RELEASE NAMES libwebm)
-find_library(libwebm_LIBRARY_DEBUG NAMES libwebmd)
+find_library(libwebm_LIBRARY_RELEASE NAMES webm libwebm)
+find_library(libwebm_LIBRARY_DEBUG NAMES webmd libwebmd)
 
 select_library_configurations(libwebm)
 find_package_handle_standard_args(libwebm REQUIRED_VARS libwebm_INCLUDE_DIR libwebm_LIBRARY)
