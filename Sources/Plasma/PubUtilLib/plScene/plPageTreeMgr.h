@@ -98,7 +98,7 @@ protected:
     bool                        IGetOcclusion(plPipeline* pipe, std::vector<int16_t>& list);
     bool                        IGetCullPolys(plPipeline* pipe);
     void                        IResetOcclusion(plPipeline* pipe);
-    void                        IAddCullPolyList(const hsTArray<plCullPoly>& polyList);
+    void                        IAddCullPolyList(const std::vector<plCullPoly>& polyList);
 
     bool                        ISortByLevel(plPipeline* pipe, hsTArray<plDrawVisList>& drawList, hsTArray<plDrawVisList>& sortedDrawList);
     int                         IPrepForRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList>& drawVis, int& iDrawStart);

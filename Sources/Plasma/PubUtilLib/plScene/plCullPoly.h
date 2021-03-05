@@ -99,7 +99,7 @@ public:
     plCullPoly&             Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, plCullPoly& dst) const;
 
     void                    Read(hsStream* s, hsResMgr* mgr);
-    void                    Write(hsStream* s, hsResMgr* mgr);
+    void                    Write(hsStream* s, hsResMgr* mgr) const;
 
     bool                    DegenerateVert(const hsPoint3& p) const
     {

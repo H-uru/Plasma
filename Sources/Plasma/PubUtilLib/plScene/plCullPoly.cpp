@@ -139,7 +139,7 @@ void plCullPoly::Read(hsStream* s, hsResMgr* mgr)
         fVerts[i].Read(s);
 }
 
-void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
+void plCullPoly::Write(hsStream* s, hsResMgr* mgr) const
 {
     s->WriteLE32(fFlags);
 

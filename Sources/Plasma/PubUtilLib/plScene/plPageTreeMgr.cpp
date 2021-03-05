@@ -540,12 +540,11 @@ void plPageTreeMgr::AddOccluderList(const hsTArray<plOccluder*> occList)
 
 }
 
-void plPageTreeMgr::IAddCullPolyList(const hsTArray<plCullPoly>& polyList)
+void plPageTreeMgr::IAddCullPolyList(const std::vector<plCullPoly>& polyList)
 {
     int iStart = fCullPolys.GetCount();
-    fCullPolys.Resize(iStart + polyList.GetCount());
-    int i;
-    for( i = 0; i < polyList.GetCount(); i++ )
+    fCullPolys.Resize(iStart + polyList.size());
+    for (size_t i = 0; i < polyList.size(); i++)
     {
         fCullPolys[i + iStart] = &polyList[i];
     }
