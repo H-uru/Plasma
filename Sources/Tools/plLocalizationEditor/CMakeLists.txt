@@ -27,7 +27,7 @@ set(plLocalizationEditor_UIC
     res/AddLocalization.ui
 )
 
-plasma_executable(plLocalizationEditor QT_TOOL
+plasma_executable(plLocalizationEditor TOOL QT_GUI
     SOURCES
         ${plLocalizationEditor_HEADERS} ${plLocalizationEditor_SOURCES}
         ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC}

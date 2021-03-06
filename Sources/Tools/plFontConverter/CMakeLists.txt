@@ -27,7 +27,7 @@ set(plFontConverter_UIC
     res/FreeTypeBatch.ui
 )
 
-plasma_executable(plFontConverter QT_TOOL
+plasma_executable(plFontConverter TOOL QT_GUI
     SOURCES
         ${plFontConverter_HEADERS} ${plFontConverter_SOURCES}
         ${plFontConverter_RCC} ${plFontConverter_UIC}

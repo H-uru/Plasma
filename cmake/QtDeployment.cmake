@@ -1,4 +1,3 @@
-
 find_package(Qt5 COMPONENTS Core Widgets)
 
 # Based on https://stackoverflow.com/a/41199492 for easily deploying Qt DLLs on Windows.
@@ -49,7 +48,7 @@ function(plasma_deploy_qt)
         install(
             CODE
             "execute_process(
-                COMMAND \"$<TARGET_FILE:Qt5::windeployqt>\" --no-translations --no-angle --no-opengl-sw --dir \"${CMAKE_INSTALL_PREFIX}/tools_gui\" \"${_DEPLOY_ARG}\"
+                COMMAND \"$<TARGET_FILE:Qt5::windeployqt>\" --no-translations --no-angle --no-opengl-sw --dir \"${CMAKE_INSTALL_PREFIX}/tools\" \"${_DEPLOY_ARG}\"
                 WORKING_DIRECTORY \"$<TARGET_FILE_DIR:Qt5::windeployqt>\"
                 COMMAND_ERROR_IS_FATAL ANY
             )"

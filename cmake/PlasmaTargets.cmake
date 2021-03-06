@@ -4,7 +4,7 @@ include(QtDeployment)
 
 function(plasma_executable TARGET)
     cmake_parse_arguments(_pex
-        "WIN32;CLI_TOOL;QT_TOOL;CLIENT;EXCLUDE_FROM_ALL"
+        "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL"
         ""
         "SOURCES"
         ${ARGN}
@@ -13,7 +13,7 @@ function(plasma_executable TARGET)
     if(_pex_WIN32)
         list(APPEND addexe_args WIN32)
     endif()
-    if(_pex_QT_TOOL)
+    if(_pex_QT_GUI)
         list(APPEND addexe_args WIN32 MACOSX_BUNDLE)
     endif()
     if(_pex_EXCLUDE_FROM_ALL)
@@ -23,10 +23,12 @@ function(plasma_executable TARGET)
 
     if(_pex_CLIENT)
         install(TARGETS ${TARGET} DESTINATION client)
-    elseif(_pex_CLI_TOOL)
+    elseif(_pex_TOOL)
         add_dependencies(tools ${TARGET})
-        install(TARGETS ${TARGET} DESTINATION tools_cli)
-    elseif(_pex_QT_TOOL)
+        install(TARGETS ${TARGET} DESTINATION tools)
+    endif()
+
+    if(_pex_QT_GUI)
         set_target_properties(${TARGET}
             PROPERTIES
                 AUTOMOC ON
@@ -40,9 +42,6 @@ function(plasma_executable TARGET)
                 ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-        add_dependencies(tools ${TARGET})
-        install(TARGETS ${TARGET} DESTINATION tools_gui)
-
         # Add to the list of tools which need windeployqt
         get_property(gui_tools GLOBAL PROPERTY _PLASMA_GUI_TOOLS)
         list(APPEND gui_tools ${TARGET})
@@ -54,9 +53,9 @@ endfunction()
 
 function(plasma_library TARGET)
     cmake_parse_arguments(_plib
-        "UNITY_BUILD;SHARED"                            # Flags
-        ""                                              # Single values
-        "PRECOMPILED_HEADERS;SOURCES"                   # Multiple values
+        "UNITY_BUILD;SHARED"
+        ""
+        "PRECOMPILED_HEADERS;SOURCES"
         ${ARGN}
     )
 
