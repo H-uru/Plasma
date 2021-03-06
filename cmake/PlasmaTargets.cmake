@@ -1,6 +1,21 @@
-include(BuildOptimizations)
 include(QtDeployment)
 #TODO (#854): include(Sanitizers)
+
+cmake_dependent_option(
+    PLASMA_USE_PCH
+    "Enable precompiled headers?"
+    ON
+    [[${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16"]]
+    OFF
+)
+
+cmake_dependent_option(
+    PLASMA_UNITY_BUILD
+    "Enable unity build?"
+    ON
+    [[${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16"]]
+    OFF
+)
 
 function(plasma_executable TARGET)
     cmake_parse_arguments(_pex
