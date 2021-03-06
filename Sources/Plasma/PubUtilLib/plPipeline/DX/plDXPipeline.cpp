@@ -8943,9 +8943,8 @@ hsCpuFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend
 // Note that the lighting pipe constants are NOT implemented.
 void plDXPipeline::ISetPipeConsts(plShader* shader)
 {
-    int n = shader->GetNumPipeConsts(); 
-    int i;
-    for( i = 0; i < n; i++ )
+    size_t n = shader->GetNumPipeConsts();
+    for (size_t i = 0; i < n; i++)
     {
         const plPipeConst& pc = shader->GetPipeConst(i);
         switch( pc.fType )
