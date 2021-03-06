@@ -76,7 +76,7 @@ def nonlinear2pixel(l):
 
 
 def scale(infilename, outfilename, factor):
-	scaleimg(Image.open(infilename), factor).save(outfilename, "PNG")
+	scaleimage(Image.open(infilename), factor).save(outfilename, "PNG")
 
 def scaleimage(inimg, factor):
 	inpix = inimg.load()
