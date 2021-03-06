@@ -18,11 +18,10 @@ cmake_dependent_option(
 )
 
 function(plasma_executable TARGET)
-    cmake_parse_arguments(_pex
+    cmake_parse_arguments(PARSE_ARGV 1 _pex
         "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL"
         ""
         "SOURCES"
-        ${ARGN}
     )
 
     if(_pex_WIN32)
@@ -58,20 +57,17 @@ function(plasma_executable TARGET)
         )
 
         # Add to the list of tools which need windeployqt
-        get_property(gui_tools GLOBAL PROPERTY _PLASMA_GUI_TOOLS)
-        list(APPEND gui_tools ${TARGET})
-        set_property(GLOBAL PROPERTY _PLASMA_GUI_TOOLS ${gui_tools})
+        set_property(GLOBAL APPEND PROPERTY _PLASMA_GUI_TOOLS ${TARGET})
     endif()
 
     #TODO (#854): plasma_sanitize_target(${TARGET})
 endfunction()
 
 function(plasma_library TARGET)
-    cmake_parse_arguments(_plib
+    cmake_parse_arguments(PARSE_ARGV 1 _plib
         "UNITY_BUILD;SHARED"
         ""
         "PRECOMPILED_HEADERS;SOURCES"
-        ${ARGN}
     )
 
     if(_plib_SHARED)
