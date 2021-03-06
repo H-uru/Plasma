@@ -88,7 +88,7 @@ static void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName
 static size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
     ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::string() : segName;
-    for (uint32_t i = 0; i < mat->GetNumLayers(); i++)
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), name, keys);
     return keys.size();
 }

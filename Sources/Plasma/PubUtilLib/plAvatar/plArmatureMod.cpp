@@ -1930,12 +1930,11 @@ void plArmatureMod::SynchIfLocal(double timeNow, int force)
 
 plLayerLinkAnimation *plArmatureMod::IFindLayerLinkAnim()
 {
-    int i;
     hsGMaterial *mat = fClothingOutfit->fMaterial;
     if (!mat)
         return nullptr;
 
-    for (i = 0; i < mat->GetNumLayers(); i++)
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         plLayerInterface *li = mat->GetLayer(i);
         while (li != nullptr)

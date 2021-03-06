@@ -2248,7 +2248,7 @@ void plNetSyncComponent::ISetNetSync(plSynchedObject* so)
 
 void plNetSyncComponent::ISetMtl(hsGMaterial* mtl)
 {
-    for (int i = 0; i < mtl->GetNumLayers(); i++)
+    for (size_t i = 0; i < mtl->GetNumLayers(); i++)
     {
         plLayerInterface* layer = mtl->GetLayer(i);
         while (layer)

@@ -5449,8 +5449,7 @@ void plDXPipeline::IPushPiggyBacks(hsGMaterial* mat)
     if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
         return;
 
-    int i;
-    for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
+    for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
     {
         if( !mat->GetPiggyBack(i) )
             continue;

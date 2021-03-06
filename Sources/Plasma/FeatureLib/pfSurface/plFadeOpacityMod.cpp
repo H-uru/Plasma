@@ -350,8 +350,7 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
     {
         hsGMaterial* mat = src[i].GetMaterial();
 
-        int j;
-        for( j = 0; j < mat->GetNumLayers(); j++ )
+        for (size_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )

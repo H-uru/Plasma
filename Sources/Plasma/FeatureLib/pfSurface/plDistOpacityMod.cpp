@@ -246,7 +246,7 @@ void plDistOpacityMod::ISetup()
     {
         hsGMaterial* mat = span.GetMaterial();
 
-        for (uint32_t j = 0; j < mat->GetNumLayers(); j++)
+        for (size_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )

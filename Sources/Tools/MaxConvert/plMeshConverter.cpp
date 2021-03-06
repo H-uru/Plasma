@@ -712,7 +712,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
                 if (currData.fMaterial == nullptr)
                     continue;
                 
-                for (uint32_t k = 0; k < currData.fMaterial->GetNumLayers(); k++)
+                for (size_t k = 0; k < currData.fMaterial->GetNumLayers(); k++)
                 {
                     plLayerInterface    *layer = currData.fMaterial->GetLayer( k );
 
@@ -1661,12 +1661,11 @@ void plMeshConverter::ISetBumpUvSrcs(hsTArray<std::vector<plExportMaterialData> 
 
 
         hsGMaterial* ourMat = ourMaterials[i]->front().fMaterial;
-        int j;
-        for( j = 0; j < ourMat->GetNumLayers(); j++ )
+        for (size_t j = 0; j < ourMat->GetNumLayers(); j++)
         {
             if( ourMat->GetLayer(j)->GetMiscFlags() & hsGMatState::kMiscBumpLayer )
             {
-                bumpLayIdx[i] = j;
+                bumpLayIdx[i] = (int16_t)j;
                 bumpLayChan[i] = ourMat->GetLayer(j)->GetUVWSrc();
             }
 
