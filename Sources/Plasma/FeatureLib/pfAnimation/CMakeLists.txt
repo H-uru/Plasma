@@ -25,7 +25,7 @@ set(pfAnimation_HEADERS
     plViewFaceModifier.h
 )
 
-add_library(pfAnimation STATIC ${pfAnimation_SOURCES} ${pfAnimation_HEADERS})
+plasma_library(pfAnimation SOURCES ${pfAnimation_SOURCES} ${pfAnimation_HEADERS})
 target_link_libraries(
     pfAnimation
     PUBLIC

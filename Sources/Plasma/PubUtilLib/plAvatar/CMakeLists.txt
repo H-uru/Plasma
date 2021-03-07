@@ -67,8 +67,11 @@ set(plAvatar_HEADERS
     plSwimRegion.h
 )
 
-add_library(plAvatar STATIC ${plAvatar_SOURCES} ${plAvatar_HEADERS})
-plasma_optimize_target(plAvatar UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
+plasma_library(plAvatar
+    SOURCES ${plAvatar_SOURCES} ${plAvatar_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     plAvatar
     PUBLIC

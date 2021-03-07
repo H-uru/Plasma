@@ -23,9 +23,9 @@ set(pnAsyncCoreExe_PRIVATE_WIN32
     Private/Win32/pnAceW32Thread.cpp
 )
 
-add_library(pnAsyncCoreExe STATIC
-            ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS}
-            ${pnAsyncCoreExe_PRIVATE})
+plasma_library(pnAsyncCoreExe
+    SOURCES ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS} ${pnAsyncCoreExe_PRIVATE}
+)
 
 if(WIN32)
     target_sources(pnAsyncCoreExe PRIVATE

@@ -23,7 +23,11 @@ set(plNetCommon_HEADERS
     plSpawnPointInfo.h
 )
 
-add_library(plNetCommon STATIC ${plNetCommon_SOURCES} ${plNetCommon_HEADERS})
+plasma_library(plNetCommon
+    SOURCES ${plNetCommon_SOURCES} ${plNetCommon_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 
 target_include_directories(plNetCommon PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 target_link_libraries(plNetCommon
@@ -44,8 +48,6 @@ target_link_libraries(plNetCommon
         plStatusLog
         pfMessage # pfKIMsg in plNetMsgScreener
 )
-
-plasma_optimize_target(plNetCommon UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plNetCommon_SOURCES})
 source_group("Header Files" FILES ${plNetCommon_HEADERS})

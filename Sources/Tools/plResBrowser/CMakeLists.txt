@@ -28,9 +28,11 @@ set(plResBrowser_UIC
     res/ResBrowser.ui
 )
 
-add_executable(plResBrowser WIN32 MACOSX_BUNDLE
-               ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
-               ${plResBrowser_RCC} ${plResBrowser_UIC})
+plasma_executable(plResBrowser TOOL QT_GUI
+    SOURCES
+        ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
+        ${plResBrowser_RCC} ${plResBrowser_UIC}
+)
 target_link_libraries(
     plResBrowser
     PRIVATE
@@ -40,21 +42,6 @@ target_link_libraries(
         pnNucleusInc
         plResMgr
         Qt5::Widgets
-)
-
-set_target_properties(
-    plResBrowser
-    PROPERTIES
-        AUTOMOC ON
-        AUTORCC ON
-        AUTOUIC ON
-)
-
-target_include_directories(
-    plResBrowser
-    PRIVATE
-        # Needed for custom widget include in ResBrowser.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})

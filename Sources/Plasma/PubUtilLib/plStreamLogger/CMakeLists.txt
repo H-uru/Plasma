@@ -6,7 +6,7 @@ set(plStreamLogger_HEADERS
     plStreamLogger.h
 )
 
-add_library(plStreamLogger STATIC ${plStreamLogger_SOURCES} ${plStreamLogger_HEADERS})
+plasma_library(plStreamLogger SOURCES ${plStreamLogger_SOURCES} ${plStreamLogger_HEADERS})
 target_link_libraries(
     plStreamLogger
     PUBLIC

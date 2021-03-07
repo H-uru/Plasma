@@ -3,7 +3,7 @@ set(plPageInfo_SOURCES
     plPageInfo.cpp
 )
 
-add_executable(plPageInfo ${plPageInfo_SOURCES})
+plasma_executable(plPageInfo TOOL SOURCES ${plPageInfo_SOURCES})
 target_link_libraries(
     plPageInfo
     PRIVATE
@@ -19,11 +19,6 @@ target_link_libraries(
         plAudioCore
         plMessage
         plResMgr
-)
-
-install(
-    TARGETS plPageInfo
-    DESTINATION tools_cli
 )
 
 source_group("Source Files" FILES ${plPageInfo_SOURCES})

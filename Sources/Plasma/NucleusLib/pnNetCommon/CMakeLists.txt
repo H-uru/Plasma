@@ -22,7 +22,7 @@ set(pnNetCommon_SOURCES
     pnNetCommon.cpp
 )
 
-add_library(pnNetCommon STATIC ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})
+plasma_library(pnNetCommon SOURCES ${pnNetCommon_HEADERS} ${pnNetCommon_SOURCES})
 target_link_libraries(
     pnNetCommon
     PUBLIC

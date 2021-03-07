@@ -35,7 +35,11 @@ set(plAudio_HEADERS
     plWin32VideoSound.h
 )
 
-add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})
+plasma_library(plAudio
+    SOURCES ${plAudio_SOURCES} ${plAudio_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 
 target_link_libraries(plAudio
     PUBLIC
@@ -62,8 +66,6 @@ target_link_libraries(plAudio
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plAudio UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})

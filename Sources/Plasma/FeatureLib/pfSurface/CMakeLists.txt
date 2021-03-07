@@ -17,7 +17,11 @@ set(pfSurface_HEADERS
     plLayerMovie.h
 )
 
-add_library(pfSurface STATIC ${pfSurface_SOURCES} ${pfSurface_HEADERS})
+plasma_library(pfSurface
+    SOURCES ${pfSurface_SOURCES} ${pfSurface_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pfSurface
     PUBLIC
@@ -36,8 +40,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(pfSurface UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${pfSurface_SOURCES})
 source_group("Header Files" FILES ${pfSurface_HEADERS})

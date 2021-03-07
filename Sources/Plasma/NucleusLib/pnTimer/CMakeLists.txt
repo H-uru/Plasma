@@ -10,7 +10,7 @@ set(pnTimer_SOURCES
     pnBuildDates.cpp
 )
 
-add_library(pnTimer STATIC ${pnTimer_HEADERS} ${pnTimer_SOURCES})
+plasma_library(pnTimer SOURCES ${pnTimer_HEADERS} ${pnTimer_SOURCES})
 target_link_libraries(
     pnTimer
     PUBLIC

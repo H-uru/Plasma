@@ -8,7 +8,7 @@ set(pnFactory_HEADERS
     plFactory.h
 )
 
-add_library(pnFactory STATIC ${pnFactory_SOURCES} ${pnFactory_HEADERS})
+plasma_library(pnFactory SOURCES ${pnFactory_SOURCES} ${pnFactory_HEADERS})
 target_link_libraries(
     pnFactory
     PUBLIC

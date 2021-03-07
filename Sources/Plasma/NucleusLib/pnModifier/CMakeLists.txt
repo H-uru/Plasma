@@ -15,7 +15,10 @@ set(pnModifier_SOURCES
     plSingleModifier.cpp
 )
 
-add_library(pnModifier STATIC ${pnModifier_HEADERS} ${pnModifier_SOURCES})
+plasma_library(pnModifier
+    SOURCES ${pnModifier_HEADERS} ${pnModifier_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pnModifier
     PUBLIC
@@ -31,8 +34,6 @@ target_link_libraries(
 )
 
 target_include_directories(pnModifier PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
-
-plasma_optimize_target(pnModifier PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${pnModifier_HEADERS})
 source_group("Source Files" FILES ${pnModifier_SOURCES})

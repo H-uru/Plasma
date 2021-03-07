@@ -13,7 +13,7 @@ set(pnEncryption_HEADERS
     plRandom.h
 )
 
-add_library(pnEncryption STATIC ${pnEncryption_SOURCES} ${pnEncryption_HEADERS})
+plasma_library(pnEncryption SOURCES ${pnEncryption_SOURCES} ${pnEncryption_HEADERS})
 target_link_libraries(
     pnEncryption
     PUBLIC

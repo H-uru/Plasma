@@ -81,7 +81,10 @@ set(CoreLib_HEADERS
     plViewTransform.h
 )
 
-add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
+plasma_library(CoreLib
+    SOURCES ${CoreLib_SOURCES} ${CoreLib_HEADERS}
+    PRECOMPILED_HEADERS _CoreLibPch.h
+)
 target_link_libraries(
     CoreLib
     PUBLIC
@@ -90,8 +93,6 @@ target_link_libraries(
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
 )
 target_include_directories(CoreLib PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-
-plasma_optimize_target(CoreLib PRECOMPILED_HEADERS _CoreLibPch.h)
 
 source_group("Source Files" FILES ${CoreLib_SOURCES})
 source_group("Header Files" FILES ${CoreLib_HEADERS})

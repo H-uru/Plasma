@@ -8,7 +8,7 @@ set(plNetClientRecorder_HEADERS
     plNetClientRecorder.h
 )
 
-add_library(plNetClientRecorder STATIC ${plNetClientRecorder_SOURCES} ${plNetClientRecorder_HEADERS})
+plasma_library(plNetClientRecorder SOURCES ${plNetClientRecorder_SOURCES} ${plNetClientRecorder_HEADERS})
 target_link_libraries(
     plNetClientRecorder
     PUBLIC

@@ -34,7 +34,10 @@ set(plGImage_HEADERS
     plTGAWriter.h
 )
 
-add_library(plGImage STATIC ${plGImage_SOURCES} ${plGImage_HEADERS})
+plasma_library(plGImage
+    SOURCES ${plGImage_SOURCES} ${plGImage_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     plGImage
     PUBLIC
@@ -53,8 +56,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plGImage PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plGImage_SOURCES})
 source_group("Header Files" FILES ${plGImage_HEADERS})

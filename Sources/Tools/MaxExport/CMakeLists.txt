@@ -17,7 +17,10 @@ set(MaxExport_SOURCES
     SimpleExport.cpp
 )
 
-add_library(MaxExport STATIC ${MaxExport_HEADERS} ${MaxExport_SOURCES})
+plasma_library(MaxExport
+    SOURCES ${MaxExport_HEADERS} ${MaxExport_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     MaxExport
     PUBLIC
@@ -36,8 +39,6 @@ target_link_libraries(
 
         3dsm
 )
-
-plasma_optimize_target(MaxExport PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${MaxExport_HEADERS})
 source_group("Source Files" FILES ${MaxExport_SOURCES})

@@ -27,7 +27,10 @@ set(plSDL_SDLFILES
     SDL/xregion.sdl
 )
 
-add_library(plSDL STATIC ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES})
+plasma_library(plSDL
+    SOURCES ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(plSDL
     PUBLIC
         CoreLib
@@ -42,8 +45,6 @@ target_link_libraries(plSDL
         plNetMessage
         plResMgr
 )
-
-plasma_optimize_target(plSDL PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plSDL_SOURCES})
 source_group("Header Files" FILES ${plSDL_HEADERS})

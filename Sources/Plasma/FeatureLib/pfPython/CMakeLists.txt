@@ -252,7 +252,11 @@ set(pfPython_GLUE
     pyWaveSetGlue.cpp
 )
 
-add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE})
+plasma_library(pfPython
+    SOURCES ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pfPython
     PUBLIC
@@ -299,8 +303,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(pfPython UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${pfPython_SOURCES})
 source_group("Header Files" FILES ${pfPython_HEADERS})

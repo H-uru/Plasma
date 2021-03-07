@@ -27,9 +27,11 @@ set(plFontConverter_UIC
     res/FreeTypeBatch.ui
 )
 
-add_executable(plFontConverter WIN32 MACOSX_BUNDLE
-               ${plFontConverter_HEADERS} ${plFontConverter_SOURCES}
-               ${plFontConverter_RCC} ${plFontConverter_UIC})
+plasma_executable(plFontConverter TOOL QT_GUI
+    SOURCES
+        ${plFontConverter_HEADERS} ${plFontConverter_SOURCES}
+        ${plFontConverter_RCC} ${plFontConverter_UIC}
+)
 target_link_libraries(
     plFontConverter
     PRIVATE
@@ -41,21 +43,6 @@ target_link_libraries(
         plResMgr
         freetype
         Qt5::Widgets
-)
-
-set_target_properties(
-    plFontConverter
-    PROPERTIES
-        AUTOMOC ON
-        AUTORCC ON
-        AUTOUIC ON
-)
-
-target_include_directories(
-    plFontConverter
-    PRIVATE
-        # Needed for custom widget include in MainDialog.ui
-        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 source_group("Source Files" FILES ${plFontConverter_SOURCES} ${plFontConverter_MOC})

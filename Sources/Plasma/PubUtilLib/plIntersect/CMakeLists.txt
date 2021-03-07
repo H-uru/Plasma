@@ -20,7 +20,7 @@ set(plIntersect_HEADERS
     plVolumeIsect.h
 )
 
-add_library(plIntersect STATIC ${plIntersect_SOURCES} ${plIntersect_HEADERS})
+plasma_library(plIntersect SOURCES ${plIntersect_SOURCES} ${plIntersect_HEADERS})
 
 target_link_libraries(plIntersect
     PUBLIC

@@ -18,7 +18,7 @@ set(pfLocalizationMgr_HEADERS
     pfLocalizedString.h
 )
 
-add_library(pfLocalizationMgr STATIC ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
+plasma_library(pfLocalizationMgr SOURCES ${pfLocalizationMgr_SOURCES} ${pfLocalizationMgr_HEADERS})
 
 target_link_libraries(
     pfLocalizationMgr

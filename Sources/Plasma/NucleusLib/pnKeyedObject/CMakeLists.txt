@@ -18,7 +18,10 @@ set(pnKeyedObject_SOURCES
     plUoid.cpp
 )
 
-add_library(pnKeyedObject STATIC ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES})
+plasma_library(pnKeyedObject
+    SOURCES ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pnKeyedObject
     PUBLIC
@@ -30,8 +33,6 @@ target_link_libraries(
         pnMessage
         pnNetCommon
 )
-
-plasma_optimize_target(pnKeyedObject PRECOMPILED_HEADERS Pch.h)
 
 source_group("Header Files" FILES ${pnKeyedObject_HEADERS})
 source_group("Source Files" FILES ${pnKeyedObject_SOURCES})
