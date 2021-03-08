@@ -4201,7 +4201,7 @@ class xKI(ptModifier):
                 if isinstance(self.BKContentList[0], ptPlayer):
                     # Sort the list of Age players.
                     try:
-                        self.BKContentList.sort(key=lambda x: x.getPlayerName().lower())
+                        self.BKContentList.sort(key=lambda x: x.getPlayerName().casefold())
                     except:
                         PtDebugPrint("xKI.BigKIProcessContentList(): Unable to sort Age players, but don't break the list.", level=kErrorLevel)
 

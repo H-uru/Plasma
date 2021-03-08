@@ -205,7 +205,7 @@ class xKIChat(object):
         message = self.commandsProcessor(message)
         if not message:
             return
-        msg = message.lower()
+        msg = message.casefold()
 
         # Get any selected players.
         userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
@@ -265,8 +265,8 @@ class xKIChat(object):
                 for player in self.BKPlayerList:
                     # Is the player in this Age?
                     if isinstance(player, ptPlayer):
-                        plyrName = player.getPlayerName().lower()
-                        if pWords[1].lower().startswith(plyrName + " "):
+                        plyrName = player.getPlayerName().casefold()
+                        if pWords[1].casefold().startswith(plyrName + " "):
                             selPlyrList.append(player)
                             cFlags.private = True
                             foundBuddy = True
@@ -279,8 +279,8 @@ class xKIChat(object):
                         ePlyr = player.getChild()
                         ePlyr = ePlyr.upcastToPlayerInfoNode()
                         if ePlyr is not None:
-                            plyrName = ePlyr.playerGetName().lower()
-                            if pWords[1].lower().startswith(plyrName + " "):
+                            plyrName = ePlyr.playerGetName().casefold()
+                            if pWords[1].casefold().startswith(plyrName + " "):
                                 selPlyrList.append(ptPlayer(ePlyr.playerGetName(), ePlyr.playerGetID()))
                                 cFlags.private = True
                                 cFlags.interAge = True
@@ -479,7 +479,7 @@ class xKIChat(object):
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         PtFlashWindow()
                     # Are we mentioned in the message?
-                    elif message.lower().find(PtGetLocalPlayer().getPlayerName().lower()) >= 0:
+                    elif message.casefold().find(PtGetLocalPlayer().getPlayerName().casefold()) >= 0:
                         bodyColor = kColors.ChatMessageMention
                         PtFlashWindow()
 
@@ -522,7 +522,7 @@ class xKIChat(object):
                     self.AddPlayerToRecents(player.getPlayerID())
 
                     # Are we mentioned in the message?
-                    if message.lower().find(PtGetClientName().lower()) >= 0:
+                    if message.casefold().find(PtGetClientName().casefold()) >= 0:
                         bodyColor = kColors.ChatMessageMention
                         forceKI = True
                         PtFlashWindow()
@@ -823,7 +823,7 @@ class CommandsProcessor:
     # to apply the command.
     def __call__(self, message):
 
-        msg = message.lower()
+        msg = message.casefold()
 
         # Load all available commands.
         commands = dict()
@@ -874,7 +874,7 @@ class CommandsProcessor:
         if message.startswith("/"):
             words = message.split()
             try:
-                emote = xKIExtChatCommands.xChatEmoteXlate[str(words[0][1:].lower())]
+                emote = xKIExtChatCommands.xChatEmoteXlate[str(words[0][1:].casefold())]
                 if emote[0] in xKIExtChatCommands.xChatEmoteLoop:
                     PtAvatarEnterAnimMode(emote[0])
                 else:
@@ -897,7 +897,7 @@ class CommandsProcessor:
                 return message[1:]
             except LookupError:
                 try:
-                    command = xKIExtChatCommands.xChatExtendedChat[str(words[0][1:].lower())]
+                    command = xKIExtChatCommands.xChatExtendedChat[str(words[0][1:].casefold())]
                     if isinstance(command, str):
                         args = message[len(words[0]):]
                         PtConsole(command + args)
@@ -922,7 +922,7 @@ class CommandsProcessor:
                         except:
                             PtDebugPrint("xKIChat.commandsProcessor(): Chat command function did not run.", command, level=kErrorLevel)
                 except LookupError:
-                    if str(words[0].lower()) in xKIExtChatCommands.xChatSpecialHandledCommands:
+                    if str(words[0].casefold()) in xKIExtChatCommands.xChatSpecialHandledCommands:
                         return message
                     else:
                         self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.CommandError", [message]), kChat.SystemMessage)
@@ -940,8 +940,8 @@ class CommandsProcessor:
         except ValueError:
             for player in self.chatMgr.BKPlayerList:
                 if isinstance(player, ptPlayer):
-                    plyrName = player.getPlayerName().lower()
-                    if params.lower() == plyrName:
+                    plyrName = player.getPlayerName().casefold()
+                    if params.casefold() == plyrName:
                         return player.getPlayerID()
             return 0
 
@@ -1434,7 +1434,7 @@ class CommandsProcessor:
             return
         targetKey = None;
         for player in PtGetPlayerList():
-            if player.getPlayerName().lower() == name.lower():
+            if player.getPlayerName().casefold() == name.casefold():
                 name = player.getPlayerName()
                 targetKey = PtGetAvatarKeyFromClientID(player.getPlayerID())
                 break
@@ -1474,7 +1474,7 @@ class CommandsProcessor:
             return
 
         # Handle special dice types
-        if dice_str.lower() == "fate":
+        if dice_str.casefold() == "fate":
             fate = [random.randint(-1, 1) for x in range(4)]
             PtSendKIMessage(kKIChatStatusMsg, "{} rolled fate values of {} for a total of {}.".format(PtGetLocalPlayer().getPlayerName(), fate, sum(fate)))
             return
