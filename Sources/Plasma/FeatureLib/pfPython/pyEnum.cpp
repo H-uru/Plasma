@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //          class
 //
 
+#include <Python.h>
 #include <structmember.h>
 
 #include <string_theory/format>
