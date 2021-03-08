@@ -292,11 +292,7 @@ size_t plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, std::vector<p
 
     drawables.emplace_back(&drawVis[iDrawStart]);
     for (int16_t idx : drawVis[iDrawStart].fVisList)
-    {
-        plDrawSpanPair& pair = pairs.emplace_back();
-        pair.fDrawable = 0;
-        pair.fSpan = idx;
-    }
+        pairs.emplace_back(0, idx);
 
     size_t iDraw;
     for (iDraw = iDrawStart + 1;
@@ -306,11 +302,7 @@ size_t plPageTreeMgr::IPrepForRenderSortingSpans(plPipeline* pipe, std::vector<p
             iDraw++)
     {
         for (int16_t idx : drawVis[iDraw].fVisList)
-        {
-            plDrawSpanPair& pair = pairs.emplace_back();
-            pair.fDrawable = (uint16_t)drawables.size();
-            pair.fSpan = idx;
-        }
+            pairs.emplace_back((uint16_t)drawables.size(), idx);
         drawables.emplace_back(&drawVis[iDraw]);
     }
 

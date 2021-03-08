@@ -56,7 +56,7 @@ class plPipeline;
 class plNodeRefMsg;
 class plDispatchBase;
 class plSpaceTree;
-class plDrawSpanPair;
+struct plDrawSpanPair;
 class plDrawVisList;
 class plOccluder;
 class plPageTreeMgr;

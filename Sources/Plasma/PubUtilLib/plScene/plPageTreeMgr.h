@@ -55,9 +55,8 @@ class plDrawVisList;
 class plVolumeIsect;
 class plVisMgr;
 
-class plDrawSpanPair
+struct plDrawSpanPair
 {
-public:
     plDrawSpanPair() : fDrawable(), fSpan() { }
     plDrawSpanPair(uint16_t d, uint16_t s) : fDrawable(d), fSpan(s) { }
     uint16_t      fDrawable;
