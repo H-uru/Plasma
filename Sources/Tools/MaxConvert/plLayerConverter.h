@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLayerConverter_h
 #define _plLayerConverter_h
 
+#include "hsTemplates.h"
 
 //// Class Definition /////////////////////////////////////////////////////////
 
