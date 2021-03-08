@@ -57,7 +57,7 @@ class plNodeRefMsg;
 class plDispatchBase;
 class plSpaceTree;
 struct plDrawSpanPair;
-class plDrawVisList;
+struct plDrawVisList;
 class plOccluder;
 class plPageTreeMgr;
 class plDrawableCriteria;

@@ -51,7 +51,6 @@ class plPipeline;
 class plCullPoly;
 class plOccluder;
 class plDrawable;
-class plDrawVisList;
 class plVolumeIsect;
 class plVisMgr;
 
@@ -63,16 +62,13 @@ struct plDrawSpanPair
     uint16_t      fSpan;
 };
 
-class plDrawVisList
+struct plDrawVisList
 {
-public:
-    plDrawVisList() : fDrawable() { }
+    plDrawVisList(plDrawable* drawable = nullptr) : fDrawable(drawable) { }
     virtual ~plDrawVisList() {}
 
     plDrawable*         fDrawable;
     std::vector<int16_t>  fVisList;
-
-    plDrawVisList& operator=(const plDrawVisList& v) { fDrawable = v.fDrawable; fVisList = v.fVisList; return *this; }
 };
 
 class plPageTreeMgr

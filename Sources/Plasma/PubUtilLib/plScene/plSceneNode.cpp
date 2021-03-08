@@ -141,8 +141,7 @@ void plSceneNode::Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levL
         fDrawPool[idx]->GetSpaceTree()->HarvestLeaves(isect, visSpans);
         if (!visSpans.empty())
         {
-            plDrawVisList& drawVis = levList.emplace_back();
-            drawVis.fDrawable = fDrawPool[idx];
+            plDrawVisList& drawVis = levList.emplace_back(fDrawPool[idx]);
             drawVis.fVisList.swap(visSpans);
         }
     }
@@ -160,8 +159,7 @@ void plSceneNode::CollectForRender(plPipeline* pipe, std::vector<plDrawVisList>&
     {
         if( pipe->PreRender(fDrawPool[idx], visSpans, visMgr) )
         {
-            plDrawVisList& drawVis = levList.emplace_back();
-            drawVis.fDrawable = fDrawPool[idx];
+            plDrawVisList& drawVis = levList.emplace_back(fDrawPool[idx]);
             drawVis.fVisList.swap(visSpans);
         }
     }

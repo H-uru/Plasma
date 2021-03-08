@@ -72,7 +72,7 @@ class plCutter;
 class plCutoutPoly;
 class plFlatGridMesh;
 
-class plDrawVisList;
+struct plDrawVisList;
 class plRenderLevel;
 
 class plAccessSpan;
