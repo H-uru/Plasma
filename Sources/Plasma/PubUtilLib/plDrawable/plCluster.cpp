@@ -56,9 +56,8 @@ plCluster::plCluster()
 
 plCluster::~plCluster()
 {
-    int i;
-    for( i = 0; i < fInsts.GetCount(); i++ )
-        delete fInsts[i];
+    for (plSpanInstance* spanInst : fInsts)
+        delete spanInst;
 }
 
 void plCluster::Read(hsStream* s, plClusterGroup* grp)
@@ -69,15 +68,13 @@ void plCluster::Read(hsStream* s, plClusterGroup* grp)
 
     hsAssert(fGroup->GetTemplate(), "Template should have been loaded by now");
     const int numVerts = fGroup->GetTemplate()->NumVerts();
-    const int numInst = s->ReadLE32();
-    fInsts.SetCount(numInst);
-    int i;
-    for( i = 0; i < numInst; i++ )
+    const uint32_t numInst = s->ReadLE32();
+    fInsts.resize(numInst);
+    for (uint32_t i = 0; i < numInst; i++)
     {
         fInsts[i] = new plSpanInstance;
         fInsts[i]->Read(s, fEncoding, numVerts);
     }
-
 }
 
 void plCluster::Write(hsStream* s) const
@@ -85,11 +82,10 @@ void plCluster::Write(hsStream* s) const
     fEncoding.Write(s);
 
     const int numVerts = fGroup->GetTemplate()->NumVerts();
-    s->WriteLE32(fInsts.GetCount());
-    int i;
-    for( i = 0; i < fInsts.GetCount(); i++ )
+    s->WriteLE32((uint32_t)fInsts.size());
+    for (plSpanInstance* spanInst : fInsts)
     {
-        fInsts[i]->Write(s, fEncoding, numVerts);
+        spanInst->Write(s, fEncoding, numVerts);
     }
 }
 
@@ -125,8 +121,7 @@ void plCluster::UnPack(uint8_t* vDst, uint16_t* iDst, int idxOffset, hsBounds3Ex
 
     hsAssert(fGroup->GetTemplate(), "Can't unpack without a template");
     const plSpanTemplate& templ = *fGroup->GetTemplate();
-    int i;
-    for( i = 0; i < fInsts.GetCount(); i++ )
+    for (size_t i = 0; i < fInsts.size(); i++)
     {
         // First, just copy our template, offsetting by prescribed amount.
         const uint16_t* iSrc = templ.IndexData();

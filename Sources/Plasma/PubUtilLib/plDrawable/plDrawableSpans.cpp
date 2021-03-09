@@ -3198,7 +3198,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
     if( cluster->GetTemplate()->NumWgtIdx() )
         vtxFormat |= plGBufferGroup::kSkinIndices;
 
-    const hsTArray<plLightInfo*>& lights = cluster->GetLights();
+    const std::vector<plLightInfo*>& lights = cluster->GetLights();
 
     int iStart;
     for( iStart = 0; iStart < cluster->GetNumClusters(); )
@@ -3273,11 +3273,10 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
             fIcicles[iSpan].fVisSet = cluster->GetVisSet();
             fIcicles[iSpan].fVisNot = cluster->GetVisNot();
 
-            if( lights.GetCount() )
+            if (!lights.empty())
             {
-                int iLight;
-                for( iLight = 0; iLight < lights.GetCount(); iLight++ )
-                    fIcicles[iSpan].AddPermaLight(lights[iLight], lights[iLight]->GetProjection() != nullptr);
+                for (plLightInfo* light : lights)
+                    fIcicles[iSpan].AddPermaLight(light, light->GetProjection() != nullptr);
             }
 
             fIcicles[iSpan].fGroupIdx = grpIdx;

@@ -156,9 +156,9 @@ void plClusterGroup::Write(hsStream* stream, hsResMgr* mgr)
     for( i = 0; i < fRegions.GetCount(); i++ )
         mgr->WriteKey(stream, fRegions[i]);
 
-    stream->WriteLE32(fLights.GetCount());
-    for( i = 0; i < fLights.GetCount(); i++ )
-        mgr->WriteKey(stream, fLights[i]);
+    stream->WriteLE32((uint32_t)fLights.size());
+    for (plLightInfo* light : fLights)
+        mgr->WriteKey(stream, light);
 
     fLOD.Write(stream);
 
@@ -214,20 +214,19 @@ bool plClusterGroup::IRemoveVisRegion(plVisRegion* reg)
 
 bool plClusterGroup::IAddLight(plLightInfo* li)
 {
-    int idx = fLights.Find(li);
-    if( fLights.kMissingIndex == idx )
+    if (std::find(fLights.cbegin(), fLights.cend(), li) == fLights.cend())
     {
-        fLights.Append(li);
+        fLights.emplace_back(li);
     }
     return true;
 }
 
 bool plClusterGroup::IRemoveLight(plLightInfo* li)
 {
-    int idx = fLights.Find(li);
-    if( fLights.kMissingIndex != idx )
+    auto iter = std::find(fLights.cbegin(), fLights.cend(), li);
+    if (iter != fLights.cend())
     {
-        fLights.Remove(idx);
+        fLights.erase(iter);
     }
     return true;
 }

@@ -96,7 +96,7 @@ protected:
     hsBitVector                     fVisSet;
     hsBitVector                     fVisNot;
 
-    hsTArray<plLightInfo*>          fLights;
+    std::vector<plLightInfo*>       fLights;
 
     plLODDist                       fLOD;
 
@@ -137,7 +137,7 @@ public:
     hsGMaterial* GetMaterial() const { return fMaterial; }
     const hsBitVector& GetVisSet() const { return fVisSet; }
     const hsBitVector& GetVisNot() const { return fVisNot; }
-    const hsTArray<plLightInfo*>& GetLights() const { return fLights; }
+    const std::vector<plLightInfo*>& GetLights() const { return fLights; }
     const plLODDist& GetLOD() const { return fLOD; }
 
     const plSpanTemplate* GetTemplate() const { return fTemplate; }
