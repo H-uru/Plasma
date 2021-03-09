@@ -747,8 +747,8 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_
     aux->fIBufferInit = aux->fIStartIdx;
     aux->fIBufferLimit = aux->fIBufferInit + maxNumIdx;
 
-    aux->fOrigPos.SetCount(maxNumVerts);
-    aux->fOrigUVW.SetCount(maxNumVerts);
+    aux->fOrigPos.resize(maxNumVerts);
+    aux->fOrigUVW.resize(maxNumVerts);
 
     aux->fOwner = (void*)this;
     aux->fDrawable = nullptr;
