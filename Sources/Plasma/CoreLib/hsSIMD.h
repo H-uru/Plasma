@@ -40,25 +40,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#ifndef hsSIMD_Defined
+#define hsSIMD_Defined
 
-/* Compiler settings */
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+/**
+ * \file hsSIMD.h
+ * Wrapper header to include all SIMD headers supported by the current compiler. This is needed
+ * because the LLVM immintrin.h for MSVC does not include everything like you expect, breaking
+ * clang-tidy on any target using SIMD instructions. x86intrin.h is also "broken".
+ */
 
-/* External library usage */
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
+#include "hsConfig.h"
+
+#if defined(HAVE_AVX2) || defined(HAVE_AVX)
+#   include <immintrin.h>
+#endif
+
+#ifdef HAVE_SSE42
+#   include <nmmintrin.h>
+#endif
+
+#ifdef HAVE_SSE41
+#   include <smmintrin.h>
+#endif
+
+#ifdef HAVE_SSE4
+#   include <tmmintrin.h>
+#endif
+
+#ifdef HAVE_SSE3
+#   include <pmmintrin.h>
+#endif
+
+#ifdef HAVE_SSE2
+#   include <emmintrin.h>
+#endif
+
+#ifdef HAVE_SSE1
+#   include <xmmintrin.h>
+#endif
 
 #endif

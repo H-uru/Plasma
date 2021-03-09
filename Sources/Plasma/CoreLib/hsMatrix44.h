@@ -156,9 +156,13 @@ struct hsMatrix44 {
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
+private:
     //  CPU-optimized functions
     typedef hsMatrix44(*mat_mult_ptr)(const hsMatrix44&, const hsMatrix44&);
     static hsCpuFunctionDispatcher<mat_mult_ptr> mat_mult;
+
+    static hsMatrix44 mult_fpu(const hsMatrix44& a, const hsMatrix44& b);
+    static hsMatrix44 mult_sse3(const hsMatrix44& a, const hsMatrix44& b);
 };
 
 ST_DECL_FORMAT_TYPE(const hsMatrix44&);
