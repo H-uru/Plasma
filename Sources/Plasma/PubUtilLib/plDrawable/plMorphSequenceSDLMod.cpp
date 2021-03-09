@@ -116,7 +116,7 @@ void plMorphSequenceSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
         
         for (j = 0; j < numLayers; j++)
         {
-            int numDeltas = morphMod->GetNumDeltas(j, meshKey);
+            size_t numDeltas = morphMod->GetNumDeltas(j, meshKey);
             if (numDeltas != 2)
                 continue; // plMorphSequenceSDLMod assumes 2 deltas (pos/neg) per layer, so that we can
                           // store both in a single byte

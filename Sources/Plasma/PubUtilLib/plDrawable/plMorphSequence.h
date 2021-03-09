@@ -53,10 +53,9 @@ class plDrawInterface;
 class plSharedMesh;
 class plMorphSequenceSDLMod;
 
-class plMorphArrayWeights
+struct plMorphArrayWeights
 {
-public:
-    hsTArray<float> fDeltaWeights;
+    std::vector<float> fDeltaWeights;
 };
 
 class plSharedMeshInfo
@@ -92,9 +91,8 @@ public:
 
 // A place to hold incoming state while we're still waiting for the
 // mesh and morph data to load.
-class plMorphState
+struct plMorphState
 {
-public:
     plKey fSharedMeshKey;
     hsTArray<plMorphArrayWeights> fArrayWeights;
 };
@@ -174,9 +172,9 @@ public:
     int GetNumLayers(plKey meshKey = {}) const;
     void AddLayer(const plMorphArray& ma) { fMorphs.Append(ma); }
 
-    int GetNumDeltas(int iLay, plKey meshKey = {}) const;
-    float GetWeight(int iLay, int iDel, plKey meshKey = {}) const;
-    void SetWeight(int iLay, int iDel, float w, plKey meshKey = {});
+    size_t GetNumDeltas(int iLay, plKey meshKey = {}) const;
+    float GetWeight(int iLay, size_t iDel, plKey meshKey = {}) const;
+    void SetWeight(int iLay, size_t iDel, float w, plKey meshKey = {});
 
     bool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }
     bool GetDirty() const { return 0 != (fMorphFlags & kDirty); }

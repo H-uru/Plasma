@@ -225,7 +225,7 @@ int plMorphSequence::GetNumLayers(plKey meshKey /* = {} */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs.GetCount();
 }
 
-int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = {} */) const
+size_t plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = {} */) const
 { 
     int index = IFindSharedMeshIndex(meshKey);
     if (index < 0)
@@ -234,7 +234,7 @@ int plMorphSequence::GetNumDeltas(int iLay, plKey meshKey /* = {} */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs[iLay].GetNumDeltas();
 }
 
-float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = {} */) const
+float plMorphSequence::GetWeight(int iLay, size_t iDel, plKey meshKey /* = {} */) const
 { 
     int index = IFindSharedMeshIndex(meshKey);
     if (index == -1)
@@ -243,7 +243,7 @@ float plMorphSequence::GetWeight(int iLay, int iDel, plKey meshKey /* = {} */) c
         return fSharedMeshes[index].fArrayWeights[iLay].fDeltaWeights[iDel];
 }
 
-void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = {} */)
+void plMorphSequence::SetWeight(int iLay, size_t iDel, float w, plKey meshKey /* = {} */)
 {
     int index = IFindSharedMeshIndex(meshKey);
 
@@ -259,7 +259,7 @@ void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = 
             {
                 plMorphTarget tgt;
                 tgt.fLayer = iLay;
-                tgt.fDelta = iDel;
+                tgt.fDelta = (uint16_t)iDel;
                 tgt.fWeight = w;
 
                 fTgtWgts.Append(tgt);
@@ -297,10 +297,10 @@ void plMorphSequence::SetWeight(int iLay, int iDel, float w, plKey meshKey /* = 
             fPendingStates[index].fArrayWeights.Swap(temp);
             int i;
             for( i = had; i < iLay+1; i++ )
-                fPendingStates[index].fArrayWeights[i].fDeltaWeights.Reset();
+                fPendingStates[index].fArrayWeights[i].fDeltaWeights.clear();
         }
-        if (fPendingStates[index].fArrayWeights[iLay].fDeltaWeights.GetCount() <= iDel)
-            fPendingStates[index].fArrayWeights[iLay].fDeltaWeights.ExpandAndZero(iDel + 1);
+        if (fPendingStates[index].fArrayWeights[iLay].fDeltaWeights.size() <= iDel)
+            fPendingStates[index].fArrayWeights[iLay].fDeltaWeights.resize(iDel + 1);
 
         fPendingStates[index].fArrayWeights[iLay].fDeltaWeights[iDel] = w;
     }
@@ -728,23 +728,25 @@ void plMorphSequence::AddSharedMesh(plSharedMesh* mesh)
     // Intialize our weights to zero.
     mInfo.fArrayWeights.Reset();
     mInfo.fArrayWeights.SetCount(mesh->fMorphSet->fMorphs.GetCount());
-    int i, j;
-    for (i = 0; i < mesh->fMorphSet->fMorphs.GetCount(); i++)
-        mInfo.fArrayWeights[i].fDeltaWeights.ExpandAndZero(mesh->fMorphSet->fMorphs[i].GetNumDeltas());
-            
+    for (int i = 0; i < mesh->fMorphSet->fMorphs.GetCount(); i++) {
+        size_t numDeltas = mesh->fMorphSet->fMorphs[i].GetNumDeltas();
+        if (mInfo.fArrayWeights[i].fDeltaWeights.size() < numDeltas)
+            mInfo.fArrayWeights[i].fDeltaWeights.resize(numDeltas);
+    }
+
     // Aha, we have some pending weights. Copy them in!
     if (pendingIndex >= 0)
     {
         // Filter in any data that's valid
-        for (i = 0; i < mInfo.fArrayWeights.GetCount() && i < fPendingStates[pendingIndex].fArrayWeights.GetCount(); i++)
+        for (int i = 0; i < mInfo.fArrayWeights.GetCount() && i < fPendingStates[pendingIndex].fArrayWeights.GetCount(); i++)
         {
-            for (j = 0; j < mInfo.fArrayWeights[i].fDeltaWeights.GetCount() && 
-                        j < fPendingStates[pendingIndex].fArrayWeights[i].fDeltaWeights.GetCount(); j++)
+            for (size_t j = 0; j < mInfo.fArrayWeights[i].fDeltaWeights.size() &&
+                               j < fPendingStates[pendingIndex].fArrayWeights[i].fDeltaWeights.size(); j++)
             {
                 mInfo.fArrayWeights[i].fDeltaWeights[j] = fPendingStates[pendingIndex].fArrayWeights[i].fDeltaWeights[j];
             }
         }
-            
+
         fPendingStates.Remove(pendingIndex);
 
         mInfo.fFlags |= plSharedMeshInfo::kInfoDirtyMesh;
@@ -812,7 +814,7 @@ void plMorphSequence::ISetSingleSharedToGlobal(int idx)
     if (fGlobalLayerRef < 0)
         return;
 
-    int i;
-    for (i = 0; i < fSharedMeshes[fGlobalLayerRef].fArrayWeights[0].fDeltaWeights.GetCount(); i++)
-        SetWeight(0, i, fSharedMeshes[fGlobalLayerRef].fArrayWeights[0].fDeltaWeights[i], fSharedMeshes[idx].fMesh->GetKey());
+    const std::vector<float>& deltaWeights = fSharedMeshes[fGlobalLayerRef].fArrayWeights[0].fDeltaWeights;
+    for (size_t i = 0; i < deltaWeights.size(); i++)
+        SetWeight(0, i, deltaWeights[i], fSharedMeshes[idx].fMesh->GetKey());
 }
