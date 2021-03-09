@@ -4845,14 +4845,14 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
     }
     else
     {
-        fLights.fProjAll.SetCount(0);
-        fLights.fProjEach.SetCount(0);
+        fLights.fProjAll.clear();
+        fLights.fProjEach.clear();
         for( i = 0; i < onLights.GetCount(); i++ )
         {
             if( onLights[i]->OverAll() )
-                fLights.fProjAll.Append(onLights[i]);
+                fLights.fProjAll.emplace_back(onLights[i]);
             else
-                fLights.fProjEach.Append(onLights[i]);
+                fLights.fProjEach.emplace_back(onLights[i]);
         }
         onLights.SetCount(0);
     }
@@ -5192,13 +5192,12 @@ void    plDXLightSettings::Reset( plDXPipeline *pipe )
 {
     Release();
 
-    fNextShadowLight = 0;
-
     fUsedFlags.Clear();
     fEnabledFlags.Clear();
     fHoldFlags.Clear();
-    fProjEach.Reset();
-    fProjAll.Reset();
+    fProjEach.clear();
+    fProjAll.clear();
+    fShadowLights.clear();
     fNextIndex = 1;     /// Light 0 is reserved
     fLastIndex = 1;
     fTime = 0;
@@ -5213,8 +5212,8 @@ void    plDXLightSettings::Release()
 {
     plDXLightRef    *ref;
 
-    fProjEach.Reset();
-    fProjAll.Reset();
+    fProjEach.clear();
+    fProjAll.clear();
 
     while( fRefList )
     {
@@ -5223,15 +5222,12 @@ void    plDXLightSettings::Release()
         ref->Unlink();
     }
 
-    fShadowLights.SetCount(fShadowLights.GetNumAlloc());
-    int i;
-    for( i = 0; i < fShadowLights.GetCount(); i++ )
+    for (plDXLightRef*& shadowLight : fShadowLights.pool())
     {
-        hsRefCnt_SafeUnRef(fShadowLights[i]);
-        fShadowLights[i] = nullptr;
+        hsRefCnt_SafeUnRef(shadowLight);
+        shadowLight = nullptr;
     }
-    fShadowLights.SetCount(0);
-
+    fShadowLights.clear();
 }
 
 //// ReserveD3DIndex //////////////////////////////////////////////////////////
@@ -9446,7 +9442,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
         render.RenderPrims();
 
         // Take care of projections that get applied to each pass.
-        if( fLights.fProjEach.GetCount() && !(fView.fRenderState & kRenderNoProjection) ) 
+        if (!fLights.fProjEach.empty() && !(fView.fRenderState & kRenderNoProjection))
         {
             // Disable all the normal lights.
             IDisableSpanLights();
@@ -9473,7 +9469,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
     if( j >= 0 )
     {
         // Projections that get applied to the frame buffer (after all passes).
-        if( fLights.fProjAll.GetCount() && !(fView.fRenderState & kRenderNoProjection) ) 
+        if (!fLights.fProjAll.empty() && !(fView.fRenderState & kRenderNoProjection))
             IRenderProjections(render);
 
         // Handle render of shadows onto geometry.
@@ -9529,11 +9525,9 @@ void plDXPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGMate
     int iNextPass = iPass + fCurrNumLayers;
 
     // For each projector:
-    int k;
-    for( k = 0; k < fLights.fProjEach.GetCount(); k++ )
+    for (plLightInfo* li : fLights.fProjEach)
     {
         // Push it's projected texture as a piggyback.
-        plLightInfo* li = fLights.fProjEach[k];
 
         // Lower end boards are iffy on when they'll project correctly.
         if( fSettings.fCantProj && !li->GetProperty(plLightInfo::kLPForceProj) )
@@ -9578,11 +9572,8 @@ void plDXPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGMate
 void plDXPipeline::IRenderProjections(const plRenderPrimFunc& render)
 {
     IDisableSpanLights();
-    int i;
-    for( i = 0; i < fLights.fProjAll.GetCount(); i++ )
+    for (plLightInfo* li : fLights.fProjAll)
     {
-        plLightInfo* li = fLights.fProjAll[i];
-
         if( fSettings.fCantProj && !li->GetProperty(plLightInfo::kLPForceProj) )
             continue;
         
@@ -11193,20 +11184,15 @@ void plDXPipeline::ISetupShadowLight(plShadowSlave* slave)
 // only keeps it for this render frame.
 plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
 {
-    fLights.fShadowLights.ExpandAndZero(fLights.fNextShadowLight+1);
+    plDXLightRef* lightRef = fLights.fShadowLights.next([this] {
+        plDXLightRef* lRef = new plDXLightRef();
 
-    if( !fLights.fShadowLights[fLights.fNextShadowLight] )
-    {
-        plDXLightRef    *lRef = new plDXLightRef();
-            
         /// Assign stuff and update
         lRef->fD3DIndex = fLights.ReserveD3DIndex();
         lRef->fOwner = nullptr;
         lRef->fD3DDevice = fD3DDevice;
 
         lRef->Link( &fLights.fRefList );
-
-        fLights.fShadowLights[fLights.fNextShadowLight] = lRef;
 
         // Neutralize it until we need it.
         fD3DDevice->LightEnable(lRef->fD3DIndex, false);
@@ -11216,10 +11202,11 @@ plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
         lRef->fD3DInfo.Ambient.r = lRef->fD3DInfo.Ambient.g = lRef->fD3DInfo.Ambient.b = 0;
         lRef->fD3DInfo.Specular.r = lRef->fD3DInfo.Specular.g = lRef->fD3DInfo.Specular.b = 0;
 
-    }
-    slave->fLightRefIdx = fLights.fNextShadowLight;
+        return lRef;
+    });
+    slave->fLightRefIdx = fLights.fShadowLights.size() - 1;
 
-    return fLights.fShadowLights[fLights.fNextShadowLight++];
+    return lightRef;
 }
 
 // IPopShadowCastState ///////////////////////////////////////////////////
@@ -11341,7 +11328,7 @@ void plDXPipeline::IResetRenderTargetPools()
         fBlurDestRTs[i] = nullptr;
     }
 
-    fLights.fNextShadowLight = 0;
+    fLights.fShadowLights.clear();
 }
 
 // IPrepShadowCaster ////////////////////////////////////////////////////////////////////////
