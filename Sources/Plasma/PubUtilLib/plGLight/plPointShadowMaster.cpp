@@ -98,13 +98,11 @@ static inline void InverseOfPureRotTran(const hsMatrix44& src, hsMatrix44& inv)
 
 plPointShadowMaster::~plPointShadowMaster()
 {
-    for (plBoundsIsect* isect : fIsectPool.pool())
-        delete isect;
 }
 
-plShadowSlave* plPointShadowMaster::INewSlave(const plShadowCaster* caster)
+std::unique_ptr<plShadowSlave> plPointShadowMaster::INewSlave(const plShadowCaster* caster)
 {
-    return new plPointShadowSlave;
+    return std::make_unique<plPointShadowSlave>();
 }
 
 void plPointShadowMaster::IBeginRender()
@@ -167,7 +165,7 @@ void plPointShadowMaster::IComputeProjections(plShadowCastMsg* castMsg, plShadow
 
 void plPointShadowMaster::IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const
 {
-    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; });
+    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; }).get();
 
     const hsBounds3Ext& wBnd = slave->fWorldBounds;
 

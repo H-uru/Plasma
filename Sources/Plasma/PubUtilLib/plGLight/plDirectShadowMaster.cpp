@@ -66,16 +66,14 @@ plDirectShadowMaster::plDirectShadowMaster()
 
 plDirectShadowMaster::~plDirectShadowMaster()
 {
-    for (plBoundsIsect* isect : fIsectPool.pool())
-        delete isect;
 }
 
-plShadowSlave* plDirectShadowMaster::INewSlave(const plShadowCaster* caster)
+std::unique_ptr<plShadowSlave> plDirectShadowMaster::INewSlave(const plShadowCaster* caster)
 {
     if( caster->GetPerspective() )
-        return new plPerspDirSlave;
+        return std::make_unique<plPerspDirSlave>();
     
-    return new plDirectShadowSlave;
+    return std::make_unique<plDirectShadowSlave>();
 }
 
 plShadowSlave* plDirectShadowMaster::INextSlave(const plShadowCaster* caster)
@@ -83,14 +81,14 @@ plShadowSlave* plDirectShadowMaster::INextSlave(const plShadowCaster* caster)
     if( !caster->GetPerspective() )
         return plShadowMaster::INextSlave(caster);
 
-    return fPerspSlavePool.next([this, caster] { return INewSlave(caster); });
+    return fPerspSlavePool.next([this, caster] { return INewSlave(caster); }).get();
 }
 
 plShadowSlave* plDirectShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
-    if (!fSlavePool.empty() && (fSlavePool.back() == slave))
+    if (!fSlavePool.empty() && (fSlavePool.back().get() == slave))
         fSlavePool.pop_back();
-    else if (!fPerspSlavePool.empty() && (fPerspSlavePool.back() == slave))
+    else if (!fPerspSlavePool.empty() && (fPerspSlavePool.back().get() == slave))
         fPerspSlavePool.pop_back();
 
     return nullptr;
@@ -160,7 +158,7 @@ void plDirectShadowMaster::IComputeProjections(plShadowCastMsg* castMsg, plShado
 
 void plDirectShadowMaster::IComputeISect(const hsBounds3Ext& casterBnd, plShadowSlave* slave) const
 {
-    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; });
+    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; }).get();
 
     const hsBounds3Ext& wBnd = slave->fWorldBounds;
 

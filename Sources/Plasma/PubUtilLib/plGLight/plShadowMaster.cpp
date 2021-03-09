@@ -115,9 +115,6 @@ plShadowMaster::plShadowMaster()
 plShadowMaster::~plShadowMaster()
 {
     Deactivate();
-
-    for (plShadowSlave* slave : fSlavePool.pool())
-        delete slave;
 }
 
 void plShadowMaster::Read(hsStream* stream, hsResMgr* mgr)
@@ -306,7 +303,7 @@ void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds
 
 plShadowSlave* plShadowMaster::INextSlave(const plShadowCaster* caster)
 {
-    return fSlavePool.next([this, caster] { return INewSlave(caster); });
+    return fSlavePool.next([this, caster] { return INewSlave(caster); }).get();
 }
 
 plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power)

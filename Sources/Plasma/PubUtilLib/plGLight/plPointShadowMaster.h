@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPointShadowMaster_inc
 #define plPointShadowMaster_inc
 
+#include <memory>
+
 #include "plShadowMaster.h"
 #include "hsGeometry3.h"
 
@@ -53,14 +55,14 @@ class plPointShadowMaster : public plShadowMaster
 protected:
     mutable hsVector3                   fLastUp;
 
-    mutable hsPoolVector<plBoundsIsect*> fIsectPool;
+    mutable hsPoolVector<std::unique_ptr<plBoundsIsect>> fIsectPool;
 
     void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
     void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const override;
     void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
     void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
 
-    plShadowSlave* INewSlave(const plShadowCaster* caster) override;
+    std::unique_ptr<plShadowSlave> INewSlave(const plShadowCaster* caster) override;
 
     void IBeginRender() override;
 
