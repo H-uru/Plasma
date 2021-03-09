@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLightInfo_inc
 #define plLightInfo_inc
 
+#include <vector>
+
 #include "hsBitVector.h"
 #include "hsColorRGBA.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 
 #include "pnSceneObject/plObjInterface.h"
 
@@ -110,7 +111,7 @@ protected:
 
     hsBitVector                 fVisSet;
     hsBitVector                 fVisNot;
-    hsTArray<plVisRegion*>      fVisRegions;
+    std::vector<plVisRegion*>   fVisRegions;
 
     plLightInfo**               fPrevDevPtr;
     plLightInfo*                fNextDevPtr;
