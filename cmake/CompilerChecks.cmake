@@ -23,7 +23,6 @@ if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     endif()
 endif()
 
-
 # Check for CPUID headers
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp)
