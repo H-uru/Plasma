@@ -63,8 +63,8 @@ function(plasma_target_simd_sources TARGET)
                 source_group(${_passf_SOURCE_GROUP} FILES ${_CURRENT_SOURCE_FILES})
             endif()
             if(HAVE_${_CURRENT_INSTRUCTION_SET} AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-                set_source_files_properties(
-                    ${_CURRENT_SOURCE_FILES} PROPERTIES
+                set_property(
+                    SOURCE ${_CURRENT_SOURCE_FILES} APPEND PROPERTY
                     COMPILE_OPTIONS ${_CURRENT_COMPILE_OPTION}
                 )
                 # Can't use the precompiled header for these files due to the changed flags.
