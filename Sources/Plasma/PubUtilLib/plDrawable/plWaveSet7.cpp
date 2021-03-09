@@ -1779,7 +1779,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
     int i;
     for( i = 0; i < kNumBumpShaders; i++ )
     {
-        int nBegin = bumpMat->GetNumLayers();
+        size_t nBegin = bumpMat->GetNumLayers();
 
         int j;
         for( j = 0; j < kBumpPerPass; j++ )
@@ -2191,8 +2191,7 @@ hsGMaterial* plWaveSet7::ICreateFixedMatPS(hsGMaterial* mat, const int numUVWs)
 
     // First, strip off whatever's on there now.
     // If this is the 
-    int i;
-    for( i = mat->GetNumLayers()-1; i > 0; i-- )
+    for (hsSsize_t i = mat->GetNumLayers()-1; i > 0; i--)
     {
         plMatRefMsg* refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(mat->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
@@ -3454,9 +3453,7 @@ void plWaveSet7::ICheckDecalEnvLayers(hsGMaterial* mat)
 
         plMatRefMsg* refMsg;
 
-        const int numLayers = mat->GetNumLayers();
-        int i;
-        for( i = numLayers-1; i >= 0; i-- )
+        for (hsSsize_t i = mat->GetNumLayers() - 1; i >= 0; i--)
         {
             plLayer* lay0 = plLayer::ConvertNoRef(mat->GetLayer(i)->BottomOfStack());
             lay0->SetBlendFlags(hsGMatState::kBlendAddColorTimesAlpha);
@@ -3499,8 +3496,7 @@ void plWaveSet7::ISetupDecal(hsGMaterial* mat)
     if( mat->GetLayer(0)->GetVertexShader() != vShader )
         IAddShaderToLayers(mat, 0, -1, plLayRefMsg::kVertexShader, vShader);
 
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         plLayer* lay = plLayer::ConvertNoRef(mat->GetLayer(i)->BottomOfStack());
         if( lay )
@@ -3534,8 +3530,7 @@ bool plWaveSet7::SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts
     if( fRipVShader && (mat->GetLayer(0)->GetVertexShader() == fRipVShader) )
         return true;
 
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         plLayer* lay = plLayer::ConvertNoRef(mat->GetLayer(i)->BottomOfStack());
         if( lay )

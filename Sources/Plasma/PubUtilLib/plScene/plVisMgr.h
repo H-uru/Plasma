@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plVisMgr_inc
 #define plVisMgr_inc
 
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 
 class hsStream;
@@ -64,8 +65,8 @@ public:
         kNumReserved
     };
 protected:
-    hsTArray<plVisRegion*>          fRegions;
-    hsTArray<plVisRegion*>          fNotRegions;
+    std::vector<plVisRegion*>       fRegions;
+    std::vector<plVisRegion*>       fNotRegions;
 
     hsBitVector                     fVisSet;
     hsBitVector                     fVisNot;

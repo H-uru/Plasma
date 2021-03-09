@@ -78,7 +78,7 @@ void plVisMgr::Register(plVisRegion* reg, bool bnot)
 {
     // This should happen pretty infrequently, or
     // I wouldn't be doing it so cloth-headed-ly.
-    hsTArray<plVisRegion*>& regions = bnot ? fNotRegions : fRegions;
+    std::vector<plVisRegion*>& regions = bnot ? fNotRegions : fRegions;
     hsBitVector& indices = bnot ? fIdxNot : fIdxSet;
     int& maxIdx = bnot ? fMaxNot : fMaxSet;
     int i;
@@ -91,7 +91,7 @@ void plVisMgr::Register(plVisRegion* reg, bool bnot)
 
             indices.SetBit(i);
             reg->SetIndex(i);
-            regions.Append(reg);
+            regions.emplace_back(reg);
             return;
         }
     }
@@ -105,26 +105,25 @@ void plVisMgr::UnRegister(plVisRegion* reg, bool bnot)
     indices.ClearBit(reg->GetIndex());
 
     // Nuke the region from our list.
-    hsTArray<plVisRegion*>& regions = bnot ? fNotRegions : fRegions;
-    int idx = regions.Find(reg);
-    if( regions.kMissingIndex != idx )
-        regions.Remove(idx);
+    std::vector<plVisRegion*>& regions = bnot ? fNotRegions : fRegions;
+    auto iter = std::find(regions.cbegin(), regions.cend(), reg);
+    if (iter != regions.cend())
+        regions.erase(iter);
 }
 
 void plVisMgr::Eval(const hsPoint3& pos)
 {
     fVisSet = fOnBitSet;
 
-    int i;
-    for( i = 0; i < fRegions.GetCount(); i++ )
+    for (plVisRegion* region : fRegions)
     {
-        hsAssert(fRegions[i], "Nil region in list");
-        if( !fOffBitSet.IsBitSet(fRegions[i]->GetIndex()) )
+        hsAssert(region, "Nil region in list");
+        if (!fOffBitSet.IsBitSet(region->GetIndex()))
         {
-            if( fRegions[i]->Eval(pos) )
+            if (region->Eval(pos))
             {
-                fVisSet.SetBit(fRegions[i]->GetIndex());
-                if( fRegions[i]->DisableNormal() )
+                fVisSet.SetBit(region->GetIndex());
+                if (region->DisableNormal())
                 {
                     fVisSet.ClearBit(kNormal);
                     fVisSet.SetBit(kCharacter);
@@ -135,14 +134,14 @@ void plVisMgr::Eval(const hsPoint3& pos)
 
     fVisNot = fOnBitNot;
 
-    for( i = 0; i < fNotRegions.GetCount(); i++ )
+    for (plVisRegion* region : fNotRegions)
     {
-        hsAssert(fNotRegions[i], "Nil region in list");
-        if( !fOffBitNot.IsBitSet(fNotRegions[i]->GetIndex()) )
+        hsAssert(region, "Nil region in list");
+        if (!fOffBitNot.IsBitSet(region->GetIndex()))
         {
-            if( fNotRegions[i]->Eval(pos) )
+            if (region->Eval(pos))
             {
-                fVisNot.SetBit(fNotRegions[i]->GetIndex());
+                fVisNot.SetBit(region->GetIndex());
             }
         }
     }

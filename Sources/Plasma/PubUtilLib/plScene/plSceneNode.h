@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSceneNode_inc
 
 #include "pnKeyedObject/hsKeyedObject.h"
-#include "hsTemplates.h"
 #include <vector>
 
 
@@ -57,8 +56,8 @@ class plPipeline;
 class plNodeRefMsg;
 class plDispatchBase;
 class plSpaceTree;
-class plDrawSpanPair;
-class plDrawVisList;
+struct plDrawSpanPair;
+struct plDrawVisList;
 class plOccluder;
 class plPageTreeMgr;
 class plDrawableCriteria;
@@ -83,7 +82,7 @@ protected:
     std::vector<plPhysical*>               fSimulationPool;
     std::vector<plAudible*>                fAudioPool;
 
-    hsTArray<plOccluder*>                  fOccluders;
+    std::vector<plOccluder*>               fOccluders;
 
     std::vector<plLightInfo*>              fLightPool;
 
@@ -127,8 +126,8 @@ public:
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;
 
-    virtual void Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList);
-    virtual void CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr);
+    virtual void Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList);
+    virtual void CollectForRender(plPipeline* pipe, std::vector<plDrawVisList>& levList, plVisMgr* visMgr);
 
     virtual void SubmitOccluders(plPageTreeMgr* pageMgr) const;
 

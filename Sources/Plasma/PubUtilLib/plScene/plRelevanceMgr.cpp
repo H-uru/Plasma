@@ -75,9 +75,8 @@ void plRelevanceMgr::DeInit()
 
 void plRelevanceMgr::IAddRegion(plRelevanceRegion *region)
 {
-    int i;
-    int dstIdx = fRegions.GetCount();
-    for (i = 0; i < fRegions.GetCount(); i++)
+    size_t dstIdx = fRegions.size();
+    for (size_t i = 0; i < fRegions.size(); i++)
     {
         if (fRegions[i] == nullptr)
         {
@@ -86,10 +85,10 @@ void plRelevanceMgr::IAddRegion(plRelevanceRegion *region)
         }
     }
     
-    if (dstIdx == fRegions.GetCount())
-        fRegions.Append(region);
+    if (dstIdx == fRegions.size())
+        fRegions.emplace_back(region);
     else
-        fRegions[i] = region;
+        fRegions[dstIdx] = region;
 
     region->SetMgrIndex(dstIdx + 1);
 }
@@ -107,8 +106,7 @@ void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsI
 
     bool inAnyRegion = false;
 
-    int i;
-    for (i = 0; i < fRegions.GetCount(); i++)
+    for (size_t i = 0; i < fRegions.size(); i++)
     { 
         if (fRegions[i] && fRegions[i]->fRegion->IsInside(pos))
         {
@@ -122,19 +120,18 @@ void plRelevanceMgr::SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsI
     if (!inAnyRegion)
     {
         regionsImIn.SetBit(0, true);
-        regionsICareAbout.Set(fRegions.GetCount());
+        regionsICareAbout.Set(fRegions.size());
     }
 }
     
 uint32_t plRelevanceMgr::GetNumRegions() const
 {
-    int i;
+    uint32_t count = (uint32_t)fRegions.size();
+    while (count > 0 && fRegions[count - 1] == nullptr)
+        count--;
 
-    for (i = fRegions.GetCount(); i > 0 && fRegions[i - 1] == nullptr; i--);
-
-    return i + 1; // Add 1 for the special zero-region
+    return count + 1; // Add 1 for the special zero-region
 }
-        
 
 bool plRelevanceMgr::MsgReceive(plMessage* msg)
 {
@@ -158,14 +155,13 @@ bool plRelevanceMgr::MsgReceive(plMessage* msg)
 
 uint32_t plRelevanceMgr::GetIndex(const ST::string &regionName)
 {
-    int i;
-    for (i = 0; i < fRegions.GetCount(); i++)
+    for (size_t i = 0; i < fRegions.size(); i++)
     {
-        if (fRegions[i] && !regionName.compare(fRegions[i]->GetKeyName(), ST::case_insensitive))
-            return i + 1;
+        if (fRegions[i] && regionName.compare_i(fRegions[i]->GetKeyName()) == 0)
+            return uint32_t(i + 1);
     }
 
-    return -1;
+    return uint32_t(-1);
 }
 
 void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doICare)
@@ -173,7 +169,7 @@ void plRelevanceMgr::MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doIC
     if (localIdx == (uint32_t)-1 || remoteIdx == (uint32_t)-1)
         return;
 
-    if (localIdx - 1 >= fRegions.GetCount() || remoteIdx - 1 >= fRegions.GetCount() || fRegions[localIdx - 1] == nullptr)
+    if (localIdx - 1 >= fRegions.size() || remoteIdx - 1 >= fRegions.size() || fRegions[localIdx - 1] == nullptr)
         return;
 
     fRegions[localIdx - 1]->fRegionsICareAbout.SetBit(remoteIdx, doICare);
@@ -243,7 +239,7 @@ ST::string plRelevanceMgr::GetRegionNames(hsBitVector regions)
     if (regions.IsBitSet(0))
         retVal = ST_LITERAL("-Nowhere (0)-");
 
-    for (int i = 0; i < fRegions.GetCount(); ++i)
+    for (size_t i = 0; i < fRegions.size(); ++i)
     {
         if (regions.IsBitSet(i + 1))
         {

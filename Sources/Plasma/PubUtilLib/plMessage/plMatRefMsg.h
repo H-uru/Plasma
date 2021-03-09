@@ -55,7 +55,7 @@ public:
     };
 
     plMatRefMsg() {}
-    plMatRefMsg(const plKey &r, uint8_t flags, int8_t which, int8_t type) : plGenRefMsg(r, flags, which, type) {}
+    plMatRefMsg(const plKey &r, uint8_t flags, int32_t which, int8_t type) : plGenRefMsg(r, flags, which, type) {}
 
     CLASSNAME_REGISTER( plMatRefMsg );
     GETINTERFACE_ANY( plMatRefMsg, plGenRefMsg );

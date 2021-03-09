@@ -1675,7 +1675,7 @@ bool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             hsGMaterial *plasmaMat = (*mtlArray)[ 0 ].fMaterial;
 
-            for (uint32_t j = 0; j < plasmaMat->GetNumLayers(); j++)
+            for (size_t j = 0; j < plasmaMat->GetNumLayers(); j++)
             {
                 layerIFace = plasmaMat->GetLayer( j );
                 dynText = plDynamicTextMap::ConvertNoRef( layerIFace->GetTexture() );
@@ -4047,8 +4047,7 @@ bool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         for (const hsMaterialConverter::DoneMaterialData& mat : materials)
         {
             hsGMaterial *curMaterial = mat.fHsMaterial;
-            uint32_t lay;
-            for (lay=0; lay<curMaterial->GetNumLayers(); lay++)
+            for (size_t lay = 0; lay < curMaterial->GetNumLayers(); lay++)
             {
                 if (layIface->BottomOfStack() == curMaterial->GetLayer(lay))
                 {

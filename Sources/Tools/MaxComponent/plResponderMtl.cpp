@@ -280,7 +280,7 @@ void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, std::
 
 size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
-    for (uint32_t i = 0; i < mat->GetNumLayers(); i++)
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), segName, keys);
     return keys.size();
 }

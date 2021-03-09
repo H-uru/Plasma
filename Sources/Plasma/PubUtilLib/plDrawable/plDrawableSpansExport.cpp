@@ -699,7 +699,6 @@ void    plDrawableSpans::ISortSourceSpans()
 short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *span2 )
 {
     bool        b1, b2;
-    int         i, j, numLayers;
     plBitmap    *t1, *t2;
 
 
@@ -736,11 +735,11 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
     // Next is texture (name). We do this kinda like strings: compare the first layer's
     // textures and go upwards, so that we group materials together starting with the
     // base layer's texture and going upwards
-    numLayers = span1->fMaterial->GetNumLayers();
+    size_t numLayers = span1->fMaterial->GetNumLayers();
     if( span2->fMaterial->GetNumLayers() < numLayers )
         numLayers = span2->fMaterial->GetNumLayers();
 
-    for( i = 0; i < numLayers; i++ )
+    for (size_t i = 0; i < numLayers; i++)
     {
         t1 = span1->fMaterial->GetLayer( i )->GetTexture();
         t2 = span2->fMaterial->GetLayer( i )->GetTexture();
@@ -754,18 +753,18 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
         
         if( !t1->GetKeyName().empty() && !t2->GetKeyName().empty() )
         {
-            j = t1->GetKeyName().compare( t2->GetKeyName(), ST::case_insensitive );
-            if( j != 0 )
-                return (short)j;
+            int r = t1->GetKeyName().compare(t2->GetKeyName(), ST::case_insensitive);
+            if (r != 0)
+                return (short)r;
         }
     }
 
     // Finally, by material itself.
     if( !span1->fMaterial->GetKeyName().empty() && !span2->fMaterial->GetKeyName().empty() )
     {
-        j = span1->fMaterial->GetKeyName().compare( span2->fMaterial->GetKeyName(), ST::case_insensitive );
-        if( j != 0 )
-            return (short)j;
+        int r = span1->fMaterial->GetKeyName().compare(span2->fMaterial->GetKeyName(), ST::case_insensitive);
+        if (r != 0)
+            return (short)r;
     }
 
     if( span1->fLocalToWorld.fFlags != span2->fLocalToWorld.fFlags )

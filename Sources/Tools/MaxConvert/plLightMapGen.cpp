@@ -447,8 +447,6 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
     if( !lay || !lay->GetTexture() )//|| !lay->GetTexture()->GetBitmap() )
         return false;
 
-    int i;
-
     if( !(span.fProps & plGeometrySpan::kDiffuseFoldedIn) )
     {
         bool foldin = 0 != (span.fProps & plGeometrySpan::kLiteVtxNonPreshaded);
@@ -464,7 +462,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
             // emissive layer (since emissive layers ignore lightmapping).
             // If we are using kLiteMaterial, we still need to copy from InitColor to Stuff,
             // just don't do the modulate.
-            for( i = 0; i < span.fMaterial->GetNumLayers(); i++ )
+            for (size_t i = 0; i < span.fMaterial->GetNumLayers(); i++)
             {
                 if( span.fMaterial->GetLayer(i)->GetBlendFlags() & hsGMatState::kBlendAlpha )
                 {
@@ -472,7 +470,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
                     break;
                 }
             }
-            for( i = 0; i < span.fMaterial->GetNumLayers(); i++ )
+            for (size_t i = 0; i < span.fMaterial->GetNumLayers(); i++)
             {
                 if( !(span.fMaterial->GetLayer(i)->GetShadeFlags() & hsGMatState::kShadeEmissive) )
                 {
@@ -481,7 +479,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
                 }
             }
         }
-        for( i = 0; i < span.fNumVerts; i++ )
+        for (uint32_t i = 0; i < span.fNumVerts; i++)
         {
             hsColorRGBA multColor, addColor;
             span.ExtractInitColor( i, &multColor, &addColor);
@@ -505,7 +503,7 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
     }
     else
     {
-        for( i = 0; i < span.fNumVerts; i++ )
+        for (uint32_t i = 0; i < span.fNumVerts; i++)
         {
             hsColorRGBA multColor, addColor;
             span.ExtractInitColor( i, &multColor, &addColor);
@@ -523,8 +521,8 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
     plMipmap* accum = IMakeAccumBitmap(lay);
 
     bool retVal = false;
-    int nFaces = span.fNumIndices / 3;
-    for( i = 0; i < nFaces; i++ )
+    uint32_t nFaces = span.fNumIndices / 3;
+    for (uint32_t i = 0; i < nFaces; i++)
     {
         retVal |= IShadeFace(node, l2w, w2l, span, i, accum);
     }
@@ -1218,8 +1216,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
 {
     hsGMaterial* mat = span.fMaterial;
 
-    int i;
-    for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
+    for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
     {
         if( mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap )
             return mat->GetPiggyBack(i);
@@ -1232,7 +1229,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     if( matKey )
     {
         mat = hsGMaterial::ConvertNoRef(matKey->ObjectIsLoaded());
-        for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
+        for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
         {
             if( mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap )
             {
@@ -1254,7 +1251,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         objMat = new hsGMaterial;
         hsgResMgr::ResMgr()->NewKey(newMatName, objMat, nodeLoc);
 
-        for( i = 0; i < mat->GetNumLayers(); i++ )
+        for (size_t i = 0; i < mat->GetNumLayers(); i++)
             hsgResMgr::ResMgr()->AddViaNotify(mat->GetLayer(i)->GetKey(), new plMatRefMsg(objMat->GetKey(), plRefMsg::kOnCreate, -1, plMatRefMsg::kLayer), plRefFlags::kActiveRef);
     }
 

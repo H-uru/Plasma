@@ -122,8 +122,7 @@ namespace {
 
     void CopyMaterialLODToTextures(hsGMaterial* mat)
     {
-        int32_t i;
-        for (i = 0; i < mat->GetNumLayers(); ++i)
+        for (size_t i = 0; i < mat->GetNumLayers(); ++i)
         {
             plLayerInterface* layer = mat->GetLayer(i);
 
@@ -288,23 +287,19 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
     bool leaving[] = {true, false};
     char *animName = "_link_anim";
 
-    int k;
-    for (k = 0; k < mat->GetNumLayers(); k++)
+    for (size_t k = 0; k < mat->GetNumLayers(); k++)
     {
         plLayerInterface *oldLayer, *currLayer;
         oldLayer = currLayer = mat->GetLayer(k);
         plLeafController *opaCtl;
         plLayerLinkAnimation* animLayer;
 
-        char suff[10];
-        snprintf(suff, std::size(suff), "%d", k);
-        
         opaCtl = new plLeafController;
         opaCtl->QuickScalarController(numKeys, times, values, sizeof(float));
         animLayer = new plLayerLinkAnimation;
         animLayer->SetLinkKey(node->GetAvatarSO()->GetKey());
         //animLayer->fLeavingAge = leaving[x];
-        ST::string fullAnimName = ST::format("{}_{}_{}", oldLayer->GetKeyName(), animName, suff);
+        ST::string fullAnimName = ST::format("{}_{}_{}", oldLayer->GetKeyName(), animName, k);
         hsgResMgr::ResMgr()->NewKey(fullAnimName, animLayer, node->GetLocation());
         animLayer->SetOpacityCtl(opaCtl);
         animLayer->GetTimeConvert().SetBegin(times[0]);
@@ -807,7 +802,6 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
     else // plPassMtl, plDecalMat, plMultiPassMtl, plParticleMtl
     {
         hsGMaterial *mat = ICreateMaterial(maxMaterial, node, name, -1, numUVChannels, makeAlphaLayer);
-        int maxLayer = (mat == nullptr ? 0 : mat->GetNumLayers());
 
         numBlendChannels = (mat != nullptr && mat->NeedsBlendChannel() ? 1 : 0);
 
@@ -1430,12 +1424,11 @@ void hsMaterialConverter::IInsertAlphaBlendingLayers(Mtl *mtl, plMaxNode *node, 
         fWarned |= kWarnedTooManyUVs; 
         UVChan = plGeometrySpan::kMaxNumUVChannels - 1;
     }
-    int i;  
 
     hsGMaterial *objMat = mat;
     plMipmap *texture = IGetUVTransTexture(node);
-    int origLayers = objMat->GetNumLayers();
-    for (i = 0; i < origLayers; i++)
+    size_t origLayers = objMat->GetNumLayers();
+    for (size_t i = 0; i < origLayers; i++)
     {
         IInsertSingleBlendLayer(texture, objMat, node, 2 * i + 1, UVChan);
     }
@@ -1584,10 +1577,9 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
         if (i > 0 && mat->GetNumLayers() > 0)
         {
             bool materialIsBad = false;
-            int j;
             if (usingSubMtl)
             {
-                for (j = mat->GetNumLayers() - 1; j >= (int)layerCounts[i - 1]; j--) 
+                for (hsSsize_t j = mat->GetNumLayers() - 1; j >= (hsSsize_t)layerCounts[i - 1]; j--)
                 {
                     uint32_t blendFlags = mat->GetLayer(j)->GetBlendFlags();
                     if ((blendFlags & hsGMatState::kBlendMask) != hsGMatState::kBlendAlpha)
@@ -1624,8 +1616,8 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
             }
             if (materialIsBad) // Nuke all the layers of this sub material, so the artists don't just ignore the warnings
             {
-                int min = (int)layerCounts[i - 1];
-                for (j = mat->GetNumLayers() - 1; j >= min; j--)
+                hsSsize_t min = (hsSsize_t)layerCounts[i - 1];
+                for (hsSsize_t j = mat->GetNumLayers() - 1; j >= min; j--)
                 {
                     mat->GetKey()->Release(mat->GetLayer(j)->GetKey());
                 }
@@ -2254,8 +2246,6 @@ bool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGM
 
     plLocation nodeLoc= node->GetLocation(); 
     char* dbgNodeName = node->GetName();
-    
-    int initNumLayers = mat->GetNumLayers();
 
     if(!mtl)
     {
@@ -3707,12 +3697,11 @@ plLayer* hsMaterialConverter::IMakeBumpLayer(plMaxNode* node, const ST::string& 
     if( miscFlag & hsGMatState::kMiscBumpDu )
         layer->SetMiscFlags(layer->GetMiscFlags() | hsGMatState::kMiscRestartPassHere);
 
-    int i;
     int uvChan = -1;
 
     // Find our UVW channel. If there's another layer wanting to use the same kind of
     // channel, just grab that. Otherwise we need to reserve one ourselves.
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         if( (mat->GetLayer(i)->GetMiscFlags() & hsGMatState::kMiscBumpChans) == (miscFlag & hsGMatState::kMiscBumpChans) )
             uvChan = mat->GetLayer(i)->GetUVWSrc();
@@ -3721,7 +3710,7 @@ plLayer* hsMaterialConverter::IMakeBumpLayer(plMaxNode* node, const ST::string& 
     if( uvChan < 0 )
     {
         uvChan = 0;
-        for( i = 0; i < mat->GetNumLayers(); i++ )
+        for (size_t i = 0; i < mat->GetNumLayers(); i++)
         {
             if( uvChan <= int(mat->GetLayer(i)->GetUVWSrc() & plLayerInterface::kUVWIdxMask) )
                 uvChan = int(mat->GetLayer(i)->GetUVWSrc() & plLayerInterface::kUVWIdxMask) + 1;
@@ -3785,8 +3774,7 @@ void hsMaterialConverter::IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat)
     // slap the production wrist for trying it.
     // Okay, decided there actually are times it kind of makes sense to have multiple bump
     // layers (hint: what's wet and wavy).
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         if( mat->GetLayer(i)->GetMiscFlags() & hsGMatState::kMiscBumpLayer )
         {
@@ -4821,8 +4809,7 @@ static int ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
         return 1;
 
     // base layers the same, go up a layer at a time. Non-existence of a layer is < any existent layer
-    int i;
-    for( i = 1; i < oneMat->GetNumLayers(); i++ )
+    for (size_t i = 1; i < oneMat->GetNumLayers(); i++)
     {
         if( twoMat->GetNumLayers() <= i )
             return 1;
@@ -4851,11 +4838,10 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
                                    : "BLANK");
     stream->WriteString(buff);
 
-    sprintf(buff, "\t\t%d Layers\n", doneMat->fHsMaterial->GetNumLayers());
+    sprintf(buff, "\t\t%zu Layers\n", doneMat->fHsMaterial->GetNumLayers());
     stream->WriteString(buff);
 
-    int i;
-    for( i = 0; i < doneMat->fHsMaterial->GetNumLayers(); i++ )
+    for (size_t i = 0; i < doneMat->fHsMaterial->GetNumLayers(); i++)
     {
         const plLayerInterface* layer = doneMat->fHsMaterial->GetLayer(i);
 

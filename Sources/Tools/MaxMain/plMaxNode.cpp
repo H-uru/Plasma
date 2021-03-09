@@ -1994,7 +1994,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
     Matrix3 maxL2V = GetLocalToVert(TimeValue(0));
     Matrix3 maxV2L = GetVertToLocal(TimeValue(0));
 
-    hsTArray<plCullPoly> polys;
+    std::vector<plCullPoly> polys;
 
     uint32_t polyInitFlags = plCullPoly::kNone;
     if( isHole )
@@ -2040,8 +2040,8 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
             mnMesh.Transform(maxV2L);
 
-            polys.SetCount(mesh.getNumFaces());
-            polys.SetCount(0);
+            polys.clear();
+            polys.reserve(mesh.getNumFaces());
 
             // Unfortunate problem here. Max is assuming that eventually this will get rendered, and so
             // we need to avoid T-junctions. Fact is, T-junctions don't bother us at all, where-as colinear
@@ -2069,23 +2069,23 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
                 int lastAdded = 2;
 
-                plCullPoly* poly = polys.Push();
-                poly->fVerts.SetCount(0);
+                plCullPoly* poly = &polys.emplace_back();
+                poly->fVerts.clear();
 
                 Point3 p;
                 hsPoint3 pt;
 
                 p = facePts[0];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[1];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[2];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 for( j = lastAdded+1; j < facePts.GetCount(); j++ )
                 {
@@ -2118,16 +2118,16 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                     {
                         poly->InitFromVerts(polyInitFlags);
 
-                        poly = polys.Push();
-                        plCullPoly* lastPoly = &polys[polys.GetCount()-2];
-                        poly->fVerts.SetCount(0);
-                        poly->fVerts.Append(lastPoly->fVerts[0]);
-                        poly->fVerts.Append(lastPoly->fVerts[lastAdded]);
+                        plCullPoly* lastPoly = &polys.back();
+                        poly = &polys.emplace_back();
+                        poly->fVerts.clear();
+                        poly->fVerts.emplace_back(lastPoly->fVerts[0]);
+                        poly->fVerts.emplace_back(lastPoly->fVerts[lastAdded]);
     
                         lastAdded = 1;
                     }
 
-                    poly->fVerts.Append(pt);
+                    poly->fVerts.emplace_back(pt);
                     lastAdded++;
                 }
 
@@ -2136,7 +2136,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
         }
     }
 
-    if( polys.GetCount() )
+    if (!polys.empty())
     {
         plOccluder* occ = nullptr;
         plMobileOccluder* mob = nullptr;
