@@ -118,7 +118,7 @@ void plShadowCaster::Deactivate() const
 
 void plShadowCaster::ICollectAllSpans()
 {
-    fSpans.SetCount(0);
+    fSpans.clear();
     for (size_t i = 0; i < GetNumTargets(); i++)
     {
         plSceneObject* so = GetTarget(i);
@@ -144,7 +144,7 @@ void plShadowCaster::ICollectAllSpans()
                                 const plSpan* span = dr->GetSpan(diIndex[k]);
 //                              if( !(span->fProps & plSpan::kPropNoShadowCast) )
                                 {
-                                    fSpans.Append(DrawSpan().Set(dr, span, diIndex[k]));
+                                    fSpans.emplace_back(DrawSpan().Set(dr, span, diIndex[k]));
                                 }
                             }
                         }
@@ -179,10 +179,9 @@ bool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
     //find max opacity of all spans
     //clear shadowBits of all spans
     fMaxOpacity = 0.f;
-    int i;
-    for( i = 0; i < fSpans.GetCount(); i++ )
+    for (const DrawSpan& span : fSpans)
     {
-        hsGMaterial* mat = fSpans[i].fDraw->GetSubMaterial(fSpans[i].fSpan->fMaterialIdx);
+        hsGMaterial* mat = span.fDraw->GetSubMaterial(span.fSpan->fMaterialIdx);
         if( mat )
         {
             plLayerInterface* baseLay = mat->GetLayer(0);
@@ -190,7 +189,7 @@ bool plShadowCaster::IOnRenderMsg(plRenderMsg* msg)
                 fMaxOpacity = baseLay->GetOpacity();
         }
 
-        fSpans[i].fSpan->ClearShadowBits();
+        span.fSpan->ClearShadowBits();
     }
 
 

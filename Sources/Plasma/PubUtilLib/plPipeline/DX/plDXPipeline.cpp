@@ -11361,10 +11361,9 @@ bool plDXPipeline::IPrepShadowCaster(const plShadowCaster* caster)
 {
     static hsBitVector done;
     done.Clear();
-    const hsTArray<plShadowCastSpan>& castSpans = caster->Spans();
+    const std::vector<plShadowCastSpan>& castSpans = caster->Spans();
 
-    int i;
-    for( i = 0; i < castSpans.GetCount(); i++ )
+    for (size_t i = 0; i < castSpans.size(); i++)
     {
         if( !done.IsBitSet(i) )
         {
@@ -11383,8 +11382,7 @@ bool plDXPipeline::IPrepShadowCaster(const plShadowCaster* caster)
             // Look forward through castSpans for any other spans
             // with the same drawable, and add them to visList.
             // We'll handle all the spans from this drawable at once.
-            int j;
-            for( j = i+1; j < castSpans.GetCount(); j++ )
+            for (size_t j = i + 1; j < castSpans.size(); j++)
             {
                 if( !done.IsBitSet(j) && (castSpans[j].fDraw == drawable) )
                 {
@@ -11422,12 +11420,11 @@ bool plDXPipeline::IRenderShadowCaster(plShadowSlave* slave)
         return false;
 
     // for each shadowCaster.fSpans
-    int iSpan;
-    for( iSpan = 0; iSpan < caster->Spans().GetCount(); iSpan++ )
+    for (const plShadowCastSpan& castSpan : caster->Spans())
     {
-        plDrawableSpans* dr = caster->Spans()[iSpan].fDraw;
-        const plSpan* sp = caster->Spans()[iSpan].fSpan;
-        uint32_t spIdx = caster->Spans()[iSpan].fIndex;
+        plDrawableSpans* dr = castSpan.fDraw;
+        const plSpan* sp = castSpan.fSpan;
+        uint32_t spIdx = castSpan.fIndex;
 
         hsAssert(sp->fTypeMask & plSpan::kIcicleSpan, "Shadow casting from non-trimeshes not currently supported");
 
