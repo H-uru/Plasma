@@ -638,7 +638,7 @@ bool plMorphSequence::IFindIndices(int iShare)
     if( !di )
         return false;
 
-    int32_t meshIdx = di->GetSharedMeshIndex(mInfo.fMesh);
+    hsSsize_t meshIdx = di->GetSharedMeshIndex(mInfo.fMesh);
     if( meshIdx < 0 )
         return false;
 
