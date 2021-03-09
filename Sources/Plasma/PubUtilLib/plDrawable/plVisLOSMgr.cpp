@@ -77,7 +77,7 @@ plVisLOSMgr* plVisLOSMgr::Instance()
     return &inst;
 }
 
-bool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<plSpaceHit>& hits)
+bool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, std::vector<plSpaceHit>& hits)
 {
     const plSpaceTreeNode& node = space->GetNode(which);
 
@@ -92,10 +92,7 @@ bool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<p
         if( node.IsLeaf() )
         {
             // add it to the list with the closest intersection point,
-            plSpaceHit* hit = hits.Push();
-            hit->fIdx = which;
-            hit->fClosest = closest;
-
+            hits.emplace_back(which, closest);
             return true;
         }
         // else recurse on its children
@@ -114,18 +111,9 @@ bool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<p
     return false;
 }
 
-struct plCompSpaceHit
+bool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, std::vector<plSpaceHit>& hits)
 {
-    bool operator()( const plSpaceHit& lhs, const plSpaceHit& rhs) const
-    {
-        return lhs.fClosest < rhs.fClosest;
-    }
-};
-
-
-bool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits)
-{
-    hits.SetCount(0);
+    hits.clear();
 
     if( space->IsEmpty() )
         return false;
@@ -134,10 +122,9 @@ bool plVisLOSMgr::ICheckSpaceTree(plSpaceTree* space, hsTArray<plSpaceHit>& hits
     bool retVal = ICheckSpaceTreeRecur(space, space->GetRoot(), hits);
 
     // Now sort them front to back.
-    plSpaceHit* begin = hits.AcquireArray();
-    plSpaceHit* end = begin + hits.GetCount();
-
-    std::sort(begin, end, plCompSpaceHit());
+    std::sort(hits.begin(), hits.end(), [](const plSpaceHit& lhs, const plSpaceHit& rhs) {
+        return lhs.fClosest < rhs.fClosest;
+    });
 
     return retVal;
 }
@@ -166,7 +153,7 @@ bool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& 
     // point of intersection for each scene node. If none are before
     // pEnd, return false.
     // Node come out sorted by closest point, front to back
-    static hsTArray<plSpaceHit> hits;
+    static std::vector<plSpaceHit> hits;
     if( !ICheckSpaceTree(fPageMgr->GetSpaceTree(), hits) )
         return false;
 
@@ -176,13 +163,12 @@ bool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& 
     // first node with a closest distance < fMaxDist, we're done.
     bool retVal = false;
 
-    int i;
-    for( i = 0; i < hits.GetCount(); i++ )
+    for (const plSpaceHit& spaceHit : hits)
     {
-        if( hits[i].fClosest > fMaxDist )
+        if (spaceHit.fClosest > fMaxDist)
             break;
 
-        if( ICheckSceneNode(fPageMgr->GetNodes()[hits[i].fIdx], hit)  )
+        if (ICheckSceneNode(fPageMgr->GetNodes()[spaceHit.fIdx], hit))
             retVal = true;
     }
 
@@ -191,22 +177,21 @@ bool plVisLOSMgr::Check(const hsPoint3& pStart, const hsPoint3& pEnd, plVisHit& 
 
 bool plVisLOSMgr::ICheckSceneNode(plSceneNode* node, plVisHit& hit)
 {
-    static hsTArray<plSpaceHit> hits;
+    static std::vector<plSpaceHit> hits;
     if( !ICheckSpaceTree(node->GetSpaceTree(), hits) )
         return false;
 
     bool retVal = false;
-    int i;
-    for( i = 0; i < hits.GetCount(); i++ )
+    for (const plSpaceHit& spaceHit : hits)
     {
-        if( hits[i].fClosest > fMaxDist )
+        if (spaceHit.fClosest > fMaxDist)
             break;
 
-        if( (node->GetDrawPool()[hits[i].fIdx]->GetRenderLevel().Level() > 0)
-            && !node->GetDrawPool()[hits[i].fIdx]->GetNativeProperty(plDrawable::kPropHasVisLOS) )
+        if ((node->GetDrawPool()[spaceHit.fIdx]->GetRenderLevel().Level() > 0)
+                && !node->GetDrawPool()[spaceHit.fIdx]->GetNativeProperty(plDrawable::kPropHasVisLOS))
             continue;
 
-        if( ICheckDrawable(node->GetDrawPool()[hits[i].fIdx], hit) )
+        if (ICheckDrawable(node->GetDrawPool()[spaceHit.fIdx], hit))
             retVal = true;
     }
 
@@ -220,24 +205,24 @@ bool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
     if( !ds )
         return false;
 
-    static hsTArray<plSpaceHit> hits;
+    static std::vector<plSpaceHit> hits;
     if( !ICheckSpaceTree(ds->GetSpaceTree(), hits) )
         return false;
 
     const bool isOpaque = !ds->GetRenderLevel().Level();
 
+    // FIXME: vector (spills over into all of drawable spans)
     const hsTArray<plSpan *> spans = ds->GetSpanArray();
 
     bool retVal = false;
-    int i;
-    for( i = 0; i < hits.GetCount(); i++ )
+    for (const plSpaceHit& spaceHit : hits)
     {
-        if( hits[i].fClosest > fMaxDist )
+        if (spaceHit.fClosest > fMaxDist)
             break;
 
-        if( isOpaque || (spans[hits[i].fIdx]->fProps & plSpan::kVisLOS) )
+        if (isOpaque || (spans[spaceHit.fIdx]->fProps & plSpan::kVisLOS))
         {
-            if( ICheckSpan(ds, hits[i].fIdx, hit) )
+            if (ICheckSpan(ds, spaceHit.fIdx, hit))
                 retVal = true;
         }
     }
