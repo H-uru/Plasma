@@ -53,8 +53,8 @@ class plBoundsIsect;
 class plDirectShadowMaster : public plShadowMaster
 {
 protected:
-    mutable hsTArray<plBoundsIsect*>    fIsectPool;
-    hsTArray<plShadowSlave*>            fPerspSlavePool;
+    mutable hsPoolVector<plBoundsIsect*> fIsectPool;
+    hsPoolVector<plShadowSlave*>         fPerspSlavePool;
 
     void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
     void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const override;

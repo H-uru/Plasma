@@ -53,7 +53,7 @@ class plPointShadowMaster : public plShadowMaster
 protected:
     mutable hsVector3                   fLastUp;
 
-    mutable hsTArray<plBoundsIsect*>    fIsectPool;
+    mutable hsPoolVector<plBoundsIsect*> fIsectPool;
 
     void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
     void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const override;

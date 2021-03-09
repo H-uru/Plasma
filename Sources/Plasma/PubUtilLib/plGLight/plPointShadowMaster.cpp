@@ -98,10 +98,8 @@ static inline void InverseOfPureRotTran(const hsMatrix44& src, hsMatrix44& inv)
 
 plPointShadowMaster::~plPointShadowMaster()
 {
-    fIsectPool.SetCount(fIsectPool.GetNumAlloc());
-    int i;
-    for( i = 0; i < fIsectPool.GetCount(); i++ )
-        delete fIsectPool[i];
+    for (plBoundsIsect* isect : fIsectPool.pool())
+        delete isect;
 }
 
 plShadowSlave* plPointShadowMaster::INewSlave(const plShadowCaster* caster)
@@ -113,7 +111,7 @@ void plPointShadowMaster::IBeginRender()
 {
     plShadowMaster::IBeginRender();
 
-    fIsectPool.SetCount(0);
+    fIsectPool.clear();
 }
 
 void plPointShadowMaster::IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const
@@ -169,13 +167,7 @@ void plPointShadowMaster::IComputeProjections(plShadowCastMsg* castMsg, plShadow
 
 void plPointShadowMaster::IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const
 {
-    int iIsect = fIsectPool.GetCount();
-    fIsectPool.ExpandAndZero(iIsect+1);
-    if( !fIsectPool[iIsect] )
-    {
-        fIsectPool[iIsect] = new plBoundsIsect;
-    }
-    plBoundsIsect* isect = fIsectPool[iIsect];
+    plBoundsIsect* isect = fIsectPool.next([] { return new plBoundsIsect; });
 
     const hsBounds3Ext& wBnd = slave->fWorldBounds;
 

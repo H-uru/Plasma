@@ -116,10 +116,8 @@ plShadowMaster::~plShadowMaster()
 {
     Deactivate();
 
-    fSlavePool.SetCount(fSlavePool.GetNumAlloc());
-    int i;
-    for( i = 0; i < fSlavePool.GetCount(); i++ )
-        delete fSlavePool[i];
+    for (plShadowSlave* slave : fSlavePool.pool())
+        delete slave;
 }
 
 void plShadowMaster::Read(hsStream* stream, hsResMgr* mgr)
@@ -198,7 +196,7 @@ bool plShadowMaster::MsgReceive(plMessage* msg)
 
 void plShadowMaster::IBeginRender()
 {
-    fSlavePool.SetCount(0);
+    fSlavePool.clear();
     if( ISetLightInfo() ) 
         fLightInfo->ClearSlaveBits();
 }
@@ -308,14 +306,7 @@ void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds
 
 plShadowSlave* plShadowMaster::INextSlave(const plShadowCaster* caster)
 {
-    int iSlave = fSlavePool.GetCount();
-    fSlavePool.ExpandAndZero(iSlave+1);
-    plShadowSlave* slave = fSlavePool[iSlave];
-    if( !slave )
-    {
-        fSlavePool[iSlave] = slave = INewSlave(caster);
-    }
-    return slave;
+    return fSlavePool.next([this, caster] { return INewSlave(caster); });
 }
 
 plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power)
@@ -359,7 +350,7 @@ plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, cons
 
 plShadowSlave* plShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
-    fSlavePool.SetCount(fSlavePool.GetCount()-1);
+    fSlavePool.pop_back();
     return nullptr;
 }
 
