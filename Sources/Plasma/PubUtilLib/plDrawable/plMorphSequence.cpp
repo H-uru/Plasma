@@ -613,15 +613,14 @@ bool plMorphSequence::IResetShared(int iShare)
         plAccPosNormUVWIterator srcIter(&srcAcc.AccessVtx());
         plAccPosNormUVWIterator dstIter(&dstAcc.AccessVtx());
 
-        const int numUVWs = srcAcc.AccessVtx().NumUVWs();
+        const uint16_t numUVWs = srcAcc.AccessVtx().NumUVWs();
 
         for( srcIter.Begin(), dstIter.Begin(); srcIter.More(); srcIter.Advance(), dstIter.Advance() )
         {
             *dstIter.Position() = *srcIter.Position();
             *dstIter.Normal() = *srcIter.Normal();
 
-            int j;
-            for( j = 0; j < numUVWs; j++ )
+            for (uint16_t j = 0; j < numUVWs; j++)
                 *dstIter.UVW(j) = *srcIter.UVW(j);
         }
     }
