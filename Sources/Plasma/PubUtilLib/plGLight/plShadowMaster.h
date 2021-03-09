@@ -44,7 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plShadowMaster_inc
 
 #include <memory>
-#include <vector>
+
+#include "hsPoolVector.h"
 
 #include "pnSceneObject/plObjInterface.h"
 
@@ -58,60 +59,6 @@ class hsResMgr;
 class plMessage;
 class plLightInfo;
 class plShadowCastMsg;
-
-// This helper class was borne out of the pl*ShadowMaster classes' abuse
-// of the implementation details of hsTArray<T>. This pool type allows a
-// user to track a subset of "in-use" items separately from the full set
-// of allocated items in a collection. TODO: Eliminate the need for this
-// ugly hack altogether.
-template <class T>
-class hsPoolVector
-{
-public:
-    hsPoolVector() : fUsed() { }
-
-    // Access the underlying pool
-    std::vector<T>& pool() { return fPool; }
-    const std::vector<T>& pool() const { return fPool; }
-
-    size_t size() const noexcept { return fUsed; }
-    bool empty() const noexcept { return fUsed == 0; }
-
-    T& front() { return fPool.front(); }
-    const T& front() const { return fPool.front(); }
-    T& back() { return fPool[fUsed - 1]; }
-    const T& back() const { return fPool[fUsed - 1]; }
-
-    T& operator[](size_t pos) { return fPool[pos]; }
-    const T& operator[](size_t pos) const { return fPool[pos]; }
-
-    // Return an existing item after the last used, or add a new
-    // element with the specified createItem() callback if we're
-    // already at capacity.
-    template <class CreateItem>
-    T& next(CreateItem createItem)
-    {
-        if (fUsed == fPool.size()) {
-            fUsed++;
-            return fPool.emplace_back(createItem());
-        }
-        return fPool[fUsed++];
-    }
-
-    void pop_back() noexcept
-    {
-        fUsed--;
-    }
-
-    void clear() noexcept
-    {
-        fUsed = 0;
-    }
-
-private:
-    std::vector<T>  fPool;
-    size_t          fUsed;
-};
 
 class plShadowMaster : public plObjInterface
 {

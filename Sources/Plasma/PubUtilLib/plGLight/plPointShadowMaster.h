@@ -45,8 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <memory>
 
-#include "plShadowMaster.h"
 #include "hsGeometry3.h"
+#include "hsPoolVector.h"
+
+#include "plShadowMaster.h"
 
 class plBoundsIsect;
 

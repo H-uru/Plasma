@@ -60,6 +60,7 @@ set(CoreLib_HEADERS
     hsMatrix44.h
     hsMemory.h
     hsPoint2.h
+    hsPoolVector.h
     hsQuat.h
     hsRefCnt.h
     hsSIMD.h
