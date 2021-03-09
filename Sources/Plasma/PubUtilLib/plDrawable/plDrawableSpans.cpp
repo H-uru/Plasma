@@ -3180,17 +3180,15 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
     const uint32_t vertsPerInst = cluster->GetTemplate()->NumVerts();
     const uint32_t idxPerInst = cluster->GetTemplate()->NumIndices();
 
-    const uint32_t numClust = cluster->GetNumClusters();
+    const size_t numClust = cluster->GetNumClusters();
 
     fVisSet |= cluster->GetVisSet();
     fVisNot |= cluster->GetVisNot();
 
     fIcicles.SetCount(numClust);
     fSpans.SetCount(numClust);
-    int iSpan;
-    for( iSpan = 0; iSpan < numClust; iSpan++ )
+    for (size_t iSpan = 0; iSpan < numClust; iSpan++)
         fSpans[iSpan] = &fIcicles[iSpan];
-    iSpan = 0;
 
     uint32_t vtxFormat =
         cluster->GetTemplate()->NumUVWs()
@@ -3200,13 +3198,12 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
 
     const std::vector<plLightInfo*>& lights = cluster->GetLights();
 
-    int iStart;
-    for( iStart = 0; iStart < cluster->GetNumClusters(); )
+    for (size_t iStart = 0; iStart < cluster->GetNumClusters(); )
     {
         int numVerts = 0;
         int numIdx = 0;
-        int iEnd;
-        for( iEnd = iStart; iEnd < cluster->GetNumClusters(); iEnd++ )
+        size_t iEnd;
+        for (iEnd = iStart; iEnd < cluster->GetNumClusters(); iEnd++)
         {
             numVerts += vertsPerInst * cluster->GetCluster(iEnd)->NumInsts();
             numIdx += idxPerInst * cluster->GetCluster(iEnd)->NumInsts();
@@ -3244,8 +3241,8 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
         uint16_t* iData = fGroups[grpIdx]->GetIndexBufferData(ibufferIdx);
         uint8_t* pvData = vData;
         uint16_t* piData = iData;
-        int i;
-        for( i = iStart; i < iEnd; i++ )
+        size_t iSpan = 0;
+        for (size_t i = iStart; i < iEnd; i++)
         {
             hsBounds3Ext bnd;
             cluster->GetCluster(i)->UnPack(pvData, piData, cellOffset, bnd);

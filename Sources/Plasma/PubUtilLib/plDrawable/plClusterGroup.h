@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plClusterGroup_inc
 #define plClusterGroup_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsBitVector.h"
 #include "plRenderLevel.h"
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -92,7 +93,7 @@ protected:
 
     hsGMaterial*                    fMaterial;
 
-    hsTArray<plVisRegion*>          fRegions;
+    std::vector<plVisRegion*>       fRegions;
     hsBitVector                     fVisSet;
     hsBitVector                     fVisNot;
 
@@ -100,8 +101,8 @@ protected:
 
     plLODDist                       fLOD;
 
-    hsTArray<plCluster*>            fClusters;
-    uint32_t                          fUnPacked;
+    std::vector<plCluster*>         fClusters;
+    uint32_t                        fUnPacked;
 
     plKey                           fSceneNode;
     plKey                           fDrawable;
@@ -142,9 +143,9 @@ public:
 
     const plSpanTemplate* GetTemplate() const { return fTemplate; }
 
-    const plCluster* GetCluster(int i) const;
-    int         GetNumClusters() const { return fClusters.GetCount(); }
-    uint32_t      NumInst() const;
+    const plCluster* GetCluster(size_t i) const;
+    size_t GetNumClusters() const { return fClusters.size(); }
+    size_t NumInst() const;
 
     // The drawable needs us to be able to convert our data
     // into, well, drawable stuff.
