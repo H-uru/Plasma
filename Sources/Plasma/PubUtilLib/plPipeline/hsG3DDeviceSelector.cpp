@@ -260,7 +260,9 @@ void hsG3DDeviceSelector::IRemoveDiscarded()
             iter = fRecords.erase(iter);
         }
         else
+        {
             ++iter;
+        }
     }
 }
 
