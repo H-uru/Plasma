@@ -75,9 +75,6 @@ public:
     virtual void      Truncate();
     virtual void      Flush() {}
 
-    // Optimization for small Reads
-    virtual uint8_t ReadByte();
-
     virtual uint32_t  GetEOF();
     uint32_t          GetSizeLeft();
     virtual void      CopyToMem(void* mem);
@@ -106,6 +103,7 @@ public:
     // Reads a 1-byte boolean
     bool            ReadBool();
     void            ReadBool(int count, bool values[]);
+    uint8_t         ReadByte();
     uint16_t        ReadLE16();
     void            ReadLE16(int count, uint16_t values[]);
     uint32_t        ReadLE32();
