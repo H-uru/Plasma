@@ -433,9 +433,9 @@ public:
     void AddRoomLocation(plLocation loc, const ST::string& rmName);
     int FindRoomLocation(plLocation loc);
 
-    int GetNumRooms() const { return fRooms.size(); }
-    plLocation GetRoomLoc(int i) const { return fRooms[i]; }
-    ST::string GetRoomName(int i) const { return fRoomNames[i]; }      // debug
+    size_t GetNumRooms() const { return fRooms.size(); }
+    plLocation GetRoomLoc(size_t i) const { return fRooms[i]; }
+    ST::string GetRoomName(size_t i) const { return fRoomNames[i]; }      // debug
 };
 
 //
@@ -648,8 +648,8 @@ public:
     GETINTERFACE_ANY( plNetMsgGroupOwner, plNetMsgServerToClient );
 
     // getters
-    int GetNumGroups() const { return fGroups.size(); }
-    GroupInfo GetGroupInfo(int i) const { return fGroups[i]; }
+    size_t GetNumGroups() const { return fGroups.size(); }
+    GroupInfo GetGroupInfo(size_t i) const { return fGroups[i]; }
 
     // setters
     void AddGroupInfo(GroupInfo gi) { fGroups.push_back(gi); }
