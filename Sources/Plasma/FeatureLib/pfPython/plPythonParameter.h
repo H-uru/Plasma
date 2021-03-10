@@ -379,7 +379,7 @@ public:
                 {
                     ST::char_buffer str;
                     str.allocate(count - 1);
-                    stream->ReadLE(count - 1, str.data());
+                    stream->Read(count - 1, str.data());
                     (void)stream->ReadByte();
                     fString = str;
                 }
@@ -435,7 +435,7 @@ public:
                 else
                     count = 0;
                 stream->WriteLE(count);
-                stream->WriteLE(count, fString.c_str());
+                stream->Write(count, fString.c_str());
                 break;
 
             case kSceneObject:
