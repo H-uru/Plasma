@@ -93,7 +93,7 @@ function(plasma_library TARGET)
 endfunction()
 
 function(plasma_test TARGET)
-    plasma_executable(${TARGET} NO_SANTIZE ${ARGN})
+    plasma_executable(${TARGET} NO_SANITIZE ${ARGN})
     add_test(NAME ${TARGET} COMMAND ${TARGET})
     add_dependencies(check ${TARGET})
 endfunction()
