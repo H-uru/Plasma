@@ -97,12 +97,10 @@ public:
 
     bool            GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     bool            ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
-    
-    // Reads a 4-byte BOOLean
-    bool            ReadBOOL();
-    // Reads a 1-byte boolean
-    bool            ReadBool();
-    void            ReadBool(int count, bool values[]);
+
+    bool            ReadBOOL(); // Reads a 4-byte BOOLean
+    bool            ReadBool(); // Reads a 1-byte boolean
+
     uint8_t         ReadByte();
     uint16_t        ReadLE16();
     void            ReadLE16(int count, uint16_t values[]);
@@ -111,7 +109,7 @@ public:
 
     void            WriteBOOL(bool value);
     void            WriteBool(bool value);
-    void            WriteBool(int count, const bool values[]);
+
     void            WriteByte(uint8_t value);
     void            WriteLE16(uint16_t value);
     void            WriteLE16(int count, const uint16_t values[]);

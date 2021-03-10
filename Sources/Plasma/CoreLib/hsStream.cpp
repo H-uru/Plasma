@@ -293,11 +293,6 @@ bool hsStream::ReadBool() // Virtual, faster version in sub classes
     return (this->ReadByte() != 0);
 }
 
-void hsStream::ReadBool(int count, bool values[])
-{
-    this->Read(count, values);
-}
-
 uint8_t hsStream::ReadByte()
 {
     uint8_t   value;
@@ -486,11 +481,6 @@ void hsStream::WriteBool(bool value)
 {
     uint8_t dst = value != 0;
     this->Write(sizeof(uint8_t), &dst);
-}
-
-void hsStream::WriteBool(int count, const bool values[])
-{
-    this->Write(count, values);
 }
 
 void hsStream::WriteByte(uint8_t value)
