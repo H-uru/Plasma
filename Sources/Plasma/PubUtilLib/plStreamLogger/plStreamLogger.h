@@ -123,7 +123,6 @@ public:
 
     uint32_t  LogRead(uint32_t byteCount, void * buffer, const char* desc);
     char*   LogReadSafeString();
-    char*   LogReadSafeStringLong();
     void    LogSkip(uint32_t deltaByteCount, const char* desc);
     void    LogStringString(const char* s);
     void    LogSubStreamStart(const char* desc);

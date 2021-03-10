@@ -56,10 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsReadOnlyLoggingStream hsReadOnlyStream
 #define LogRead(byteCount, buffer, desc) Read(byteCount, buffer)
 #define LogReadSafeString() ReadSafeString()
-#define LogReadSafeStringLong() ReadSafeStringLong();
 #define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
 #define LogReadLE(value, desc) ReadLE(value)
-#define LogReadLEArray(count, values, desc) ReadLE(count, values)
 #define LogSubStreamStart(desc) LogVoidFunc()
 #define LogSubStreamPushDesc(desc) LogVoidFunc()
 #define LogSubStreamEnd() LogVoidFunc()
@@ -98,7 +96,6 @@ public:
     // Logging Reads & Skips
     virtual uint32_t  LogRead(uint32_t byteCount, void * buffer, const char* desc) { return Read(byteCount,buffer); }
     virtual char*   LogReadSafeString() { return ReadSafeString(); }
-    virtual char*   LogReadSafeStringLong() { return ReadSafeStringLong(); }
     virtual void    LogSkip(uint32_t deltaByteCount, const char* desc) { Skip(deltaByteCount); }
 
     // Stream Notes for Logging 
@@ -168,11 +165,8 @@ public:
                 // Begin LogReadLEs
     virtual void    LogReadLE(bool* value, const char* desc) { this->ReadLE(value); }
     virtual void    LogReadLE(uint8_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, uint8_t values[], const char* desc) { this->ReadLE(count, values); }
     virtual void    LogReadLE(uint16_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, uint16_t values[], const char* desc) { this->ReadLE(count, values); }
     virtual void    LogReadLE(uint32_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, uint32_t values[], const char* desc) { this->ReadLE(count, values); }
                 // End LogReadLEs
 #endif
     void            WriteLE(bool value) { this->Write(1,&value); }
@@ -193,15 +187,10 @@ public:
 #ifdef STREAM_LOGGER
                 // Begin LogReadLEs
     virtual void    LogReadLE(int8_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int8_t values[], const char* desc) { this->ReadLE(count, values); }
     virtual void    LogReadLE(char* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, char values[], const char* desc) { this->ReadLE(count, values); }
     virtual void    LogReadLE(int16_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int16_t values[], const char* desc) { this->ReadLE(count, (uint16_t*)values); }
     virtual void    LogReadLE(int32_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int32_t values[], const char* desc) { this->ReadLE(count, (uint32_t*)values); }
     virtual void    LogReadLE(int* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int values[], const char* desc) { this->ReadLE(count, (uint32_t*)values); }
                 // End LogReadLEs
 #endif
     void            WriteLE(int8_t value) { this->Write(1,&value); }
@@ -233,9 +222,7 @@ public:
 #ifdef STREAM_LOGGER
                     // Begin LogReadLEs
     virtual void    LogReadLE(float* value, const char* desc) { ReadLE(value); }
-    virtual void    LogReadLEArray(int count, float values[], const char* desc) { ReadLE(count, values); }
     virtual void    LogReadLE(double* value, const char* desc) { ReadLE(value); }
-    virtual void    LogReadLEArray(int count, double values[], const char* desc) { ReadLE(count, values); }
                     // End LogReadLEs
 #endif
     void            WriteLE(float value) { WriteLEFloat(value); }
