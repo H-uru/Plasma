@@ -170,8 +170,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
     /*
     plNetOwnershipMsg* netOwnMsg = new plNetOwnershipMsg;
 
-    int i;
-    for(i=0;i<m->GetNumGroups();i++)
+    for(size_t i = 0; i < m->GetNumGroups(); i++)
     {
         plNetMsgGroupOwner::GroupInfo gr=m->GetGroupInfo(i);
         netOwnMsg->AddGroupInfo(gr);

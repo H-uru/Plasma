@@ -400,29 +400,28 @@ void plNetMsgObjectHelper::WriteVersion(hsStream* s, hsResMgr* mgr)
 ////////////////////////////////////////////////////////
 plNetMsgObjectListHelper::~plNetMsgObjectListHelper()
 {
-    Reset();         
+    Reset();
 }
 
 void plNetMsgObjectListHelper::Reset()
 {
-    int i;
-    for( i=0 ; i<GetNumObjects() ; i++  )
-    {
+    for (size_t i = 0; i < GetNumObjects(); i++) {
         delete GetObject(i);
         fObjects[i] = nullptr;
-    } // for    
+    }
+
     fObjects.clear();
 }
 
 int plNetMsgObjectListHelper::Poke(hsStream* stream, uint32_t peekOptions)
 {
-    int16_t num = GetNumObjects();
-    stream->WriteLE(num);
-    int i;
-    for( i=0 ;i<num  ;i++  )
-    {
+    size_t num = GetNumObjects();
+    hsAssert(num < std::numeric_limits<uint16_t>::max(), "Too many objects");
+
+    stream->WriteLE(uint16_t(num));
+
+    for (size_t i = 0; i < num; i++)
         GetObject(i)->Poke(stream, peekOptions);
-    } // for         
 
     return stream->GetPosition();
 }
@@ -478,8 +477,7 @@ int plNetMsgMemberInfoHelper::Poke(hsStream* s, const uint32_t peekOptions)
 ////////////////////////////////////////////////////////
 plNetMsgMemberListHelper::~plNetMsgMemberListHelper()
 {
-    int i;
-    for(i=0;i<GetNumMembers();i++)
+    for (size_t i = 0; i < GetNumMembers(); i++)
         delete fMembers[i];
 }
 
@@ -502,11 +500,12 @@ int plNetMsgMemberListHelper::Peek(hsStream* stream, const uint32_t peekOptions)
 
 int plNetMsgMemberListHelper::Poke(hsStream* stream, const uint32_t peekOptions)
 {
-    int16_t numMembers = (int16_t)GetNumMembers();
-    stream->WriteLE(numMembers);
+    size_t numMembers = GetNumMembers();
+    hsAssert(numMembers < std::numeric_limits<uint16_t>::max(), "Too many members");
 
-    int i;
-    for(i=0;i<numMembers;i++)
+    stream->WriteLE(uint16_t(numMembers));
+
+    for(size_t i = 0; i < numMembers; i++)
     {
         fMembers[i]->GetClientGuid()->SetClientKey("");
         fMembers[i]->GetClientGuid()->SetAccountUUID(plUUID());
@@ -542,11 +541,12 @@ int plNetMsgReceiversListHelper::Peek(hsStream* stream, const uint32_t peekOptio
 
 int plNetMsgReceiversListHelper::Poke(hsStream* stream, const uint32_t peekOptions)
 {
-    uint8_t numIDs = (uint8_t)GetNumReceivers();
-    stream->WriteLE(numIDs);
+    size_t numIDs = GetNumReceivers();
+    hsAssert(numIDs < std::numeric_limits<uint8_t>::max(), "Too many receivers");
 
-    int i;
-    for(i=0;i<numIDs;i++)
+    stream->WriteLE(uint8_t(numIDs));
+
+    for (size_t i = 0; i < numIDs; i++)
         stream->WriteLE(GetReceiverPlayerID(i));
 
     return stream->GetPosition();

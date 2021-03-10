@@ -101,18 +101,17 @@ int plNetClientMgr::ISendDirtyState(double secs)
 {
     std::vector<plSynchedObject::StateDefn> carryOvers;
 
-    int32_t num=plSynchedObject::GetNumDirtyStates();
+    size_t num = plSynchedObject::GetNumDirtyStates();
 #if 0
     if (num)
     {
         DebugMsg("{} dirty sdl state msgs queued, t={f}", num, secs);
     }
 #endif
-    int32_t i;
-    for(i=0;i<num;i++)
-    {
+
+    for (size_t i = 0; i < num; i++) {
         plSynchedObject::StateDefn* state=plSynchedObject::GetDirtyState(i);
-        
+
         plSynchedObject* obj=state->GetObject();
         if (!obj)
             continue;   // could add to carryOvers
@@ -129,7 +128,7 @@ int plNetClientMgr::ISendDirtyState(double secs)
         }
 
         obj->CallDirtyNotifiers();
-        obj->SendSDLStateMsg(state->fSDLName.c_str(), state->fSendFlags);       
+        obj->SendSDLStateMsg(state->fSDLName.c_str(), state->fSendFlags);
     }
 
     plSynchedObject::ClearDirtyState(carryOvers);
