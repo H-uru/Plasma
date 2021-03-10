@@ -5228,7 +5228,7 @@ void    plDXLightSettings::Release()
         hsRefCnt_SafeUnRef(shadowLight);
         shadowLight = nullptr;
     }
-    fShadowLights.reset();
+    fShadowLights.release_and_clear();
 }
 
 //// ReserveD3DIndex //////////////////////////////////////////////////////////
