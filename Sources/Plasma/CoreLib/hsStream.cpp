@@ -575,22 +575,6 @@ void hsStream::WriteBEFloat(float value)
     this->Write(sizeof(float), &value);
 }
 
-void hsStream::WriteLEAtom(uint32_t tag, uint32_t size)
-{
-    this->WriteLE32(tag);
-    this->WriteLE32(size);
-}
-
-uint32_t hsStream::ReadLEAtom(uint32_t* sizePtr)
-{
-    uint32_t  tag = this->ReadLE32();
-    uint32_t  size = this->ReadLE32();
-
-    if (sizePtr)
-        *sizePtr = size;
-    return tag;
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 

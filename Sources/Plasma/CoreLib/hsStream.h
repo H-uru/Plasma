@@ -260,15 +260,6 @@ public:
                         this->WriteLEFloat(count, (float*)values);
                     }
     void            WriteBEScalar(float value) { this->WriteBEFloat(value); }
-
-    void            WriteLEAtom(uint32_t tag, uint32_t size);
-    uint32_t          ReadLEAtom(uint32_t* size);
-
-
-    /* Overloaded  Begin (Atom)*/
-    void            WriteLE(uint32_t* tag, uint32_t size) { WriteLEAtom(*tag, size); }
-    void            ReadLE(uint32_t* tag, uint32_t *size) { *tag = ReadLEAtom(size); }
-    /* Overloaded  End */
 };
 
 class hsStreamable {
