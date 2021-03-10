@@ -66,13 +66,9 @@ float hsScalarTriple::Magnitude() const
 
 void hsScalarTriple::Read(hsStream *stream)
 {
-    static_assert(sizeof(*this) == sizeof(float) * 3);
-    static_assert(offsetof(hsScalarTriple, fX) == 0 * sizeof(float));
-    static_assert(offsetof(hsScalarTriple, fY) == 1 * sizeof(float));
-    static_assert(offsetof(hsScalarTriple, fZ) == 2 * sizeof(float));
-
-    // Optimized read, guaranteed by the above assertions
-    stream->Read(sizeof(*this), this);
+    fX = stream->ReadLEFloat();
+    fY = stream->ReadLEFloat();
+    fZ = stream->ReadLEFloat();
 }
 
 void hsScalarTriple::Write(hsStream *stream) const
