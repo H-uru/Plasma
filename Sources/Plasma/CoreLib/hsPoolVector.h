@@ -71,9 +71,11 @@ public:
     T& operator[](size_t pos) { return fPool[pos]; }
     const T& operator[](size_t pos) const { return fPool[pos]; }
 
-    // Return an existing item after the last used, or add a new
-    // element with the specified createItem() callback if we're
-    // already at capacity.
+    /**
+     * Return an existing item after the last used, or add a new
+     * element with the specified createItem() callback if we're
+     * already at capacity in the underlying storage.
+     */
     template <class CreateItem>
     T& next(CreateItem createItem)
     {
@@ -89,8 +91,22 @@ public:
         fUsed--;
     }
 
+    /**
+     * Clear the in-use count, so the next element is picked from the
+     * beginning of the pool.
+     */
     void clear() noexcept
     {
+        fUsed = 0;
+    }
+
+    /**
+     * Reset both the in-use count and the underlying storage back to empty,
+     * so the next element is guaranteed to be freshly created.
+     */
+    void release_and_clear() noexcept
+    {
+        fPool.clear();
         fUsed = 0;
     }
 
