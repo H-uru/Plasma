@@ -94,6 +94,12 @@ public:
         fUsed = 0;
     }
 
+    void reset() noexcept
+    {
+        fPool.clear();
+        fUsed = 0;
+    }
+
 private:
     std::vector<T>  fPool;
     size_t          fUsed;
