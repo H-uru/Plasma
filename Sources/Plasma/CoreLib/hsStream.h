@@ -111,9 +111,6 @@ public:
 
     // Optimization for small Reads
     virtual uint8_t ReadByte();
-    virtual bool    Read4Bytes(void *buffer);   // Reads 4 bytes,  return true if success 
-    virtual bool    Read8Bytes(void *buffer);   // Reads 8 bytes,  return true if success 
-    virtual bool    Read12Bytes(void *buffer);  // Reads 12 bytes, return true if success
 
     virtual uint32_t  GetEOF();
     uint32_t          GetSizeLeft();

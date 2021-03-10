@@ -281,30 +281,6 @@ ST::string hsStream::ReadSafeWString()
     return ST::string::from_utf16(retVal);
 }
 
-bool  hsStream::Read4Bytes(void *pv)  // Virtual, faster version in sub classes
-{
-    int knt = this->Read(sizeof(uint32_t), pv);
-    if (knt != 4)
-        return false;
-    return true;
-}
-
-bool  hsStream::Read12Bytes(void *buffer) // Reads 12 bytes, return true if success
-{
-    int knt = this->Read(12,buffer);
-    if (knt != 12)
-        return false;
-    return true;
-}
-
-bool  hsStream::Read8Bytes(void *buffer)  // Reads 12 bytes, return true if success
-{
-    int knt = this->Read(8,buffer);
-    if (knt !=8)
-        return false;
-    return true;
-}
-
 bool hsStream::ReadBOOL()
 {
     uint32_t val;
@@ -457,7 +433,7 @@ void hsStream::ReadLE16(int count, uint16_t values[])
 uint32_t hsStream::ReadLE32()
 {
     uint32_t  value;
-    Read4Bytes(&value);
+    Read(sizeof(uint32_t), &value);
     value = hsToLE32(value);
     return value;
 }
@@ -472,7 +448,7 @@ void hsStream::ReadLE32(int count, uint32_t values[])
 uint32_t hsStream::ReadBE32()
 {
     uint32_t  value;
-    Read4Bytes(&value);
+    Read(sizeof(uint32_t), &value);
     value = hsToBE32(value);
     return value;
 }
@@ -480,7 +456,7 @@ uint32_t hsStream::ReadBE32()
 double hsStream::ReadLEDouble()
 {
     double  value;
-    Read8Bytes(&value);
+    Read(sizeof(double), &value);
     value = hsToLEDouble(value);
     return value;
 }
@@ -496,7 +472,7 @@ void hsStream::ReadLEDouble(int count, double values[])
 float hsStream::ReadLEFloat()
 {
     float   value;
-    Read4Bytes(&value);
+    Read(sizeof(float), &value);
     value = hsToLEFloat(value);
     return value;
 }

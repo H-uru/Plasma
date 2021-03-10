@@ -66,9 +66,13 @@ float hsScalarTriple::Magnitude() const
 
 void hsScalarTriple::Read(hsStream *stream)
 {
-    
-    // DANGER for speed read directly into these variables...ASSUMES fX,fY, and fZ are in contiguous order (PBG)
-    stream->Read12Bytes(&fX);
+    static_assert(sizeof(*this) == sizeof(float) * 3);
+    static_assert(offsetof(hsScalarTriple, fX) == 0 * sizeof(float));
+    static_assert(offsetof(hsScalarTriple, fY) == 1 * sizeof(float));
+    static_assert(offsetof(hsScalarTriple, fZ) == 2 * sizeof(float));
+
+    // Optimized read, guaranteed by the above assertions
+    stream->Read(sizeof(*this), this);
 }
 
 void hsScalarTriple::Write(hsStream *stream) const
