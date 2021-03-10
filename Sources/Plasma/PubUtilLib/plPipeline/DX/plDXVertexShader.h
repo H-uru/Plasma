@@ -44,20 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plDXVertexSahder_inc
 
 #include "plDXShader.h"
-#include "hsTemplates.h"
 
 struct IDirect3DDevice9;
 struct IDirect3DVertexShader9;
 class plDXPipeline;
 class plShader;
 
-typedef unsigned long DWORD;
-
 class plDXVertexShader : public plDXShader
 {
 protected:
     IDirect3DVertexShader9* fHandle;
-    hsTArray<DWORD>&    IMakeDecl(hsTArray<DWORD>& decl) const;
     HRESULT     ICreate(plDXPipeline* pipe) override;  // On error, sets error string.
 
     HRESULT     ISetConstants(plDXPipeline* pipe) override; // On error, sets error string.

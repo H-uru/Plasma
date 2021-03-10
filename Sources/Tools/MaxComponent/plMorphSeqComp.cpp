@@ -340,7 +340,7 @@ bool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         if( layComp->SetupLayer(morphArr, baseNode, baseSpans, pErrMsg) )
         {
             //morphSeq->AddLayer(morphArr);
-            set->fMorphs.Append(morphArr);
+            set->fMorphs.emplace_back(morphArr);
         }
     }
 

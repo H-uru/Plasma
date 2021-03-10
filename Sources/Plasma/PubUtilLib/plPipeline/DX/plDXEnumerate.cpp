@@ -687,8 +687,8 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
         ITryDirect3DTnLDevice( &drivInfo->fDevices[i], currDevRec );
         IFudgeDirectXDevice( currDevRec, (D3DEnum_DriverInfo *)drivInfo, (D3DEnum_DeviceInfo *)&drivInfo->fDevices[ i ] );
 
-        if( currDevRec.GetModes().GetCount() )
-            fRecords.Append( currDevRec );
+        if (!currDevRec.GetModes().empty())
+            fRecords.emplace_back(currDevRec);
     }
 }
 
@@ -792,8 +792,6 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG
                 devMode.AddFSAAType( j );
         }
 
-        devRec.GetModes().Append( devMode );
+        devRec.GetModes().emplace_back(devMode);
     }
 }
-
-

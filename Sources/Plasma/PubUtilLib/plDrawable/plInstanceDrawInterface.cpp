@@ -170,10 +170,10 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
 
 void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
 {
-    uint32_t geoIndex = fMeshes.Find(mesh);
-    if (geoIndex != fMeshes.kMissingIndex)
+    auto iter = std::find(fMeshes.cbegin(), fMeshes.cend(), mesh);
+    if (iter != fMeshes.cend())
     {
-        IClearIndex(geoIndex);
+        IClearIndex(iter - fMeshes.cbegin());
 
         plSharedMeshBCMsg *smMsg = new plSharedMeshBCMsg;
         smMsg->SetSender(GetKey());
@@ -196,17 +196,15 @@ void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
 
 void plInstanceDrawInterface::ICheckDrawableIndex(size_t which)
 {
-    if( which >= fMeshes.GetCount() )
-    {
-        fMeshes.ExpandAndZero(which+1);
-    }
-    
+    if (which >= fMeshes.size())
+        fMeshes.resize(which + 1);
+
     plDrawInterface::ICheckDrawableIndex(which);
 }
 
 void plInstanceDrawInterface::ReleaseData()
 {
-    fMeshes.Reset();
+    fMeshes.clear();
     
     plDrawInterface::ReleaseData();
 }
@@ -227,19 +225,17 @@ void plInstanceDrawInterface::IClearIndex(size_t which)
         diMsg->Send();
     }
     
-    fDrawables.erase(fDrawables.begin() + which);
-    fDrawableIndices.erase(fDrawableIndices.begin() + which);
-    fMeshes.Remove(which);
+    fDrawables.erase(fDrawables.cbegin() + which);
+    fDrawableIndices.erase(fDrawableIndices.cbegin() + which);
+    fMeshes.erase(fMeshes.cbegin() + which);
 }
 
 // Temp testing - not really ideal. Check with Bob for real soln.
-int32_t plInstanceDrawInterface::GetSharedMeshIndex(const plSharedMesh *mesh) const
+hsSsize_t plInstanceDrawInterface::GetSharedMeshIndex(const plSharedMesh *mesh) const
 {
-    int i;
-    for( i = 0; i < fMeshes.GetCount(); i++ )
-    {
-        if( fMeshes[i] == mesh )
-            return i;
-    }
+    auto iter = std::find(fMeshes.cbegin(), fMeshes.cend(), mesh);
+    if (iter != fMeshes.cend())
+        return hsSsize_t(iter - fMeshes.cbegin());
+
     return -1;
 }

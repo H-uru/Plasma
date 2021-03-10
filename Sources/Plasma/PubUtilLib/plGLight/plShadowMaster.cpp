@@ -216,7 +216,7 @@ bool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
 
     plShadowCaster* caster = castMsg->Caster();
 
-    if( !caster->Spans().GetCount() )
+    if (caster->Spans().empty())
         return false;
 
     hsBounds3Ext casterBnd;
@@ -284,12 +284,10 @@ plLightInfo* plShadowMaster::ISetLightInfo()
 void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds3Ext& casterBnd)
 {
     casterBnd.MakeEmpty();
-    const hsTArray<plShadowCastSpan>& castSpans = caster->Spans();
-    int i;
-    for( i = 0; i < castSpans.GetCount(); i++ )
+    for (const plShadowCastSpan& castSpan : caster->Spans())
     {
-        plDrawableSpans* dr = castSpans[i].fDraw;
-        uint32_t index = castSpans[i].fIndex;
+        plDrawableSpans* dr = castSpan.fDraw;
+        uint32_t index = castSpan.fIndex;
 
         // Right now, the generic world bounds seems close enough, even when skinned.
         // It gets a little off on the lower LODs, but, hey, they're the lower LODs.

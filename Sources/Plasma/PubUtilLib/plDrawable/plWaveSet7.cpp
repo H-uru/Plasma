@@ -1107,7 +1107,7 @@ void plWaveSet7::ICheckTargetMaterials()
         std::vector<plAccessSpan> src;
         plAccessGeometry::Instance()->OpenRO(di, src, false);
 
-        const int numUVWs = !src.empty() && src[0].AccessVtx().HasUVWs() ? src[0].AccessVtx().NumUVWs() : 0;
+        const uint16_t numUVWs = !src.empty() && src[0].AccessVtx().HasUVWs() ? src[0].AccessVtx().NumUVWs() : 0;
         for (const plAccessSpan& span : src)
         {
             hsAssert(span.AccessVtx().NumUVWs() == numUVWs, "Must have same number uvws on each water mesh");

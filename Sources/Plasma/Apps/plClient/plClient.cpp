@@ -426,26 +426,25 @@ bool plClient::InitPipeline()
     }
 
     hsG3DDeviceRecord *rec = (hsG3DDeviceRecord *)dmr.GetDevice();
-    int res = -1;
 
     if(!plPipeline::fInitialPipeParams.Windowed)
     {
         // find our resolution if we're not in windowed mode
-        for ( int i = 0; i < rec->GetModes().GetCount(); i++ )
+        const hsG3DDeviceMode* mode = nullptr;
+        for (const hsG3DDeviceMode& devMode : rec->GetModes())
         {
-            const hsG3DDeviceMode *mode = rec->GetMode(i);
-            if ((mode->GetWidth() == plPipeline::fInitialPipeParams.Width) &&
-                (mode->GetHeight() == plPipeline::fInitialPipeParams.Height) &&
-                (mode->GetColorDepth() == plPipeline::fInitialPipeParams.ColorDepth))
+            if ((devMode.GetWidth() == plPipeline::fInitialPipeParams.Width) &&
+                (devMode.GetHeight() == plPipeline::fInitialPipeParams.Height) &&
+                (devMode.GetColorDepth() == plPipeline::fInitialPipeParams.ColorDepth))
             {
-                res = i;
+                mode = &devMode;
                 break;
             }
         }
-        if(res != -1)
+        if (mode != nullptr)
         {
             // found it set it as the current mode.
-            dmr = hsG3DDeviceModeRecord(*rec, *rec->GetMode(res));
+            dmr = hsG3DDeviceModeRecord(*rec, *mode);
         }
         else
         {

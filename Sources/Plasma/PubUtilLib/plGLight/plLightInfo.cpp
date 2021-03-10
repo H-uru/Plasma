@@ -333,10 +333,9 @@ void plLightInfo::IAddVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
-        int idx = fVisRegions.Find(reg);
-        if( fVisRegions.kMissingIndex == idx )
+        if (std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg) == fVisRegions.cend())
         {
-            fVisRegions.Append(reg);
+            fVisRegions.emplace_back(reg);
             if( reg->GetProperty(plVisRegion::kIsNot) )
                 fVisNot.SetBit(reg->GetIndex());
             else
@@ -353,10 +352,10 @@ void plLightInfo::IRemoveVisRegion(plVisRegion* reg)
 {
     if( reg )
     {
-        int idx = fVisRegions.Find(reg);
-        if( fVisRegions.kMissingIndex != idx )
+        auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+        if (iter != fVisRegions.cend())
         {
-            fVisRegions.Remove(idx);
+            fVisRegions.erase(iter);
             if( reg->GetProperty(plVisRegion::kIsNot) )
                 fVisNot.ClearBit(reg->GetIndex());
             else
@@ -475,10 +474,9 @@ void plLightInfo::Read(hsStream* s, hsResMgr* mgr)
     plKey nodeKey = mgr->ReadKey(s);
     ISetSceneNode(nodeKey);
 
-    int n = s->ReadLE32();
-    fVisRegions.SetCountAndZero(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    uint32_t n = s->ReadLE32();
+    fVisRegions.reserve(n);
+    for (uint32_t i = 0; i < n; i++)
         mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kVisRegion), plRefFlags::kActiveRef);
 
     SetDirty(true);
@@ -504,10 +502,9 @@ void plLightInfo::Write(hsStream* s, hsResMgr* mgr)
 
     mgr->WriteKey(s, fSceneNode);
 
-    s->WriteLE32(fVisRegions.GetCount());
-    int i;
-    for( i = 0; i < fVisRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fVisRegions[i]);
+    s->WriteLE32((uint32_t)fVisRegions.size());
+    for (plVisRegion* region : fVisRegions)
+        mgr->WriteKey(s, region);
 }
 
 // These two should only be called by the SceneObject

@@ -39,6 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <vector>
+
 #include "plMorphSequenceSDLMod.h"
 #include "plMorphSequence.h"
 #include "plSharedMesh.h"
@@ -74,7 +77,6 @@ void plMorphSequenceSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
     hsAssert(sobj, "plMorphSequenceSDLMod, nil target");
     
     const plMorphSequence *kMorphMod = nullptr;
-    int i, j;
     kMorphMod = plMorphSequence::ConvertNoRef(sobj->GetModifierByType(plMorphSequence::Index()));
     if (!kMorphMod)
     {
@@ -86,37 +88,37 @@ void plMorphSequenceSDLMod::IPutCurrentStateIn(plStateDataRecord* dstState)
     //dstState->FindVar(kStrTarget)->Set(morphMod->GetKey());
     
     plSDStateVariable *morphSD = dstState->FindSDVar(kStrMorphs);
-    int numMorphs = morphMod->fSharedMeshes.GetCount() + 1; // 1 for the non-sharedMesh morph
-    hsTArray<plKey> keys;
-    for (i = 0; i < numMorphs; i++)
+    size_t numMorphs = morphMod->fSharedMeshes.size() + 1; // 1 for the non-sharedMesh morph
+    std::vector<plKey> keys;
+    for (size_t i = 0; i < numMorphs; i++)
     {
-        if (i == morphMod->fSharedMeshes.GetCount())
+        if (i == morphMod->fSharedMeshes.size())
         {
             // the non-sharedMesh morph
             if (morphMod->GetNumLayers(nullptr) != 0)
-                keys.Append(nullptr);
+                keys.emplace_back(nullptr);
         }
         else
         {
             if (!(morphMod->fSharedMeshes[i].fMesh->fFlags & plSharedMesh::kDontSaveMorphState))
-                keys.Append(morphMod->fSharedMeshes[i].fMesh->GetKey());
+                keys.emplace_back(morphMod->fSharedMeshes[i].fMesh->GetKey());
         }
     }
-    if (morphSD->GetCount() != keys.GetCount())
-        morphSD->Alloc(keys.GetCount());
-    for (i = 0; i < keys.GetCount(); i++)
+    if (morphSD->GetCount() != keys.size())
+        morphSD->Alloc(keys.size());
+    for (size_t i = 0; i < keys.size(); i++)
     {
-        plKey meshKey = keys[i];
+        const plKey &meshKey = keys[i];
         morphSD->GetStateDataRecord(i)->FindVar(kStrMesh)->Set(meshKey);
         
         plSimpleStateVariable *weights = morphSD->GetStateDataRecord(i)->FindVar(kStrWeights);
-        int numLayers = morphMod->GetNumLayers(meshKey);
+        size_t numLayers = morphMod->GetNumLayers(meshKey);
         if (weights->GetCount() != numLayers)
             weights->Alloc(numLayers);
         
-        for (j = 0; j < numLayers; j++)
+        for (size_t j = 0; j < numLayers; j++)
         {
-            int numDeltas = morphMod->GetNumDeltas(j, meshKey);
+            size_t numDeltas = morphMod->GetNumDeltas(j, meshKey);
             if (numDeltas != 2)
                 continue; // plMorphSequenceSDLMod assumes 2 deltas (pos/neg) per layer, so that we can
                           // store both in a single byte
@@ -143,9 +145,8 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
     {
         hsAssert(false, "Wrong type of state data record passed into plMorphSequenceSDLMod.");
         return;
-    }   
+    }
 
-    int i, j;   
     const plMorphSequence *kMorphMod = plMorphSequence::ConvertNoRef(sobj->GetModifierByType(plMorphSequence::Index()));
     if (!kMorphMod)
     {
@@ -155,7 +156,7 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
     plMorphSequence *morphMod = const_cast<plMorphSequence*>(kMorphMod);
     
     plSDStateVariable *morphSD = srcState->FindSDVar(kStrMorphs);
-    for (i = 0; i < morphSD->GetCount(); i++)
+    for (int i = 0; i < morphSD->GetCount(); i++)
     {
         plKey meshKey;
         morphSD->GetStateDataRecord(i)->FindVar(kStrMesh)->Get(&meshKey);
@@ -170,8 +171,8 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
 
         // Count down so that we do the high index first and the pending state struct
         // of plMorphSequence only has to resize the array once.
-        for (j = weights->GetCount() - 1; j >= 0; j--)
-        {           
+        for (int j = weights->GetCount() - 1; j >= 0; j--)
+        {
             uint8_t weight;
             weights->Get(&weight, j);
             float posWeight = weight * 2.f / 255.f - 1.f;

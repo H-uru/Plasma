@@ -3672,7 +3672,7 @@ PF_CONSOLE_CMD( Access,
     }
 
     plKey meshKey = item->fMeshes[0]->GetKey();
-    int iLay = params[0];
+    size_t iLay = (int)params[0];
     float inc = params[1];
 
     if (iLay >= seq->GetNumLayers(meshKey))
