@@ -81,8 +81,7 @@ uint8_t plLoadMask::fGlobalCapability = uint8_t(0);
 void plLoadMask::Read(hsStream* s)
 {
     // read as packed byte
-    uint8_t qc;
-    s->LogReadLE(&qc,"Quality|Capabilty");
+    uint8_t qc = s->ReadByte();
 
     fQuality[0] = (qc & 0xf0) >> 4;
     fQuality[1] = (qc & 0x0f);

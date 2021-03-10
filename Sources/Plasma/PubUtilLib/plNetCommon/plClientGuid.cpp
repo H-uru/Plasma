@@ -304,40 +304,29 @@ ST::string plClientGuid::AsLogString() const
 
 void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
 {
-    s->LogSubStreamStart("push me");
-    s->LogReadLE(&fFlags,"Flags");
+    s->ReadLE(&fFlags);
     if (IsFlagSet(kAccountUUID))
-    {
-        s->LogSubStreamPushDesc("AcctUUID");
         fAccountUUID.Read( s );
-    }
     if (IsFlagSet(kPlayerID))
-        s->LogReadLE(&fPlayerID,"PlayerID");
+        s->ReadLE(&fPlayerID);
     else if (IsFlagSet(kTempPlayerID))
-        s->LogReadLE(&fPlayerID,"TempPlayerID");
+        s->ReadLE(&fPlayerID);
     if (IsFlagSet(kPlayerName))
-    {
-        s->LogSubStreamPushDesc("PlayerName");
         plMsgStdStringHelper::Peek( fPlayerName, s );
-    }
     if (IsFlagSet(kCCRLevel))
-        s->LogReadLE(&fCCRLevel,"CCRLevel");
+        s->ReadLE(&fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
-        s->LogReadLE(&fProtectedLogin,"ProtectedLogin");
+        s->ReadLE(&fProtectedLogin);
     if (IsFlagSet(kBuildType))
-        s->LogReadLE(&fBuildType,"BuildType");
+        s->ReadLE(&fBuildType);
     if (IsFlagSet(kSrcAddr))
-        s->LogReadLE(&fSrcAddr,"SrcAddr");
+        s->ReadLE(&fSrcAddr);
     if (IsFlagSet(kSrcPort))
-        s->LogReadLE(&fSrcPort,"SrcPort");
+        s->ReadLE(&fSrcPort);
     if (IsFlagSet(kReserved))
-        s->LogReadLE(&fReserved,"Reserved");
+        s->ReadLE(&fReserved);
     if (IsFlagSet(kClientKey))
-    {
-        s->LogSubStreamPushDesc("ClientKey");
         plMsgStdStringHelper::Peek( fClientKey, s );
-    }
-    s->LogSubStreamEnd();
 }
 
 void plClientGuid::Write(hsStream * s, hsResMgr* mgr)

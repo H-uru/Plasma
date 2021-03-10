@@ -59,8 +59,8 @@ plLocation::plLocation(const plLocation& toCopyFrom)
 
 void plLocation::Read(hsStream* s)
 {
-    s->LogReadLE(&fSequenceNumber, "Location Sequence Number");
-    s->LogReadLE(&fFlags, "Location Flags");
+    s->ReadLE(&fSequenceNumber);
+    s->ReadLE(&fFlags);
 }
 
 void plLocation::Write(hsStream* s) const
@@ -166,18 +166,16 @@ void plUoid::Read(hsStream* s)
     else
         fLoadMask.SetAlways();
 
-    s->LogReadLE(&fClassType, "ClassType");
-    s->LogReadLE(&fObjectID, "ObjectID");
-    s->LogSubStreamPushDesc("ObjectName");
-    fObjectName = s->LogReadSafeString();
+    s->ReadLE(&fClassType);
+    s->ReadLE(&fObjectID);
+    fObjectName = s->ReadSafeString();
 
     // conditional cloneIDs read
     if (contents & kHasCloneIDs)
     {       
-        s->LogReadLE( &fCloneID ,"CloneID");
-        uint16_t dummy;
-        s->LogReadLE(&dummy, "dummy"); // To avoid breaking format
-        s->LogReadLE( &fClonePlayerID ,"ClonePlayerID");
+        s->ReadLE(&fCloneID);
+        (void)s->ReadLE16(); // To avoid breaking format
+        s->ReadLE(&fClonePlayerID);
     }
     else
     {

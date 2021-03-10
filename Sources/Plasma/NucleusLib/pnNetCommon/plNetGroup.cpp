@@ -59,5 +59,5 @@ void plNetGroupId::Write(hsStream* s) const
 void plNetGroupId::Read(hsStream* s)
 {
     fId.Read(s);
-    s->LogReadLE(&fFlags, "GroupId Flags");
+    s->ReadLE(&fFlags);
 }

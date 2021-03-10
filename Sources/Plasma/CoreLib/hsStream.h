@@ -47,23 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include <string_theory/format>
 
-
-// Define this for use of Streams with Logging (commonly used w/ a packet sniffer)
-// These streams log their reads to an event list
-//#define STREAM_LOGGER
-
-#ifndef STREAM_LOGGER
-#define hsReadOnlyLoggingStream hsReadOnlyStream
-#define LogRead(byteCount, buffer, desc) Read(byteCount, buffer)
-#define LogReadSafeString() ReadSafeString()
-#define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
-#define LogReadLE(value, desc) ReadLE(value)
-#define LogSubStreamStart(desc) LogVoidFunc()
-#define LogSubStreamPushDesc(desc) LogVoidFunc()
-#define LogSubStreamEnd() LogVoidFunc()
-#define LogStringString(s) LogVoidFunc()
-#endif
-
 class hsStream {
 public:
 enum {
@@ -91,20 +74,6 @@ public:
     virtual void      SetPosition(uint32_t position);
     virtual void      Truncate();
     virtual void      Flush() {}
-
-#ifdef STREAM_LOGGER
-    // Logging Reads & Skips
-    virtual uint32_t  LogRead(uint32_t byteCount, void * buffer, const char* desc) { return Read(byteCount,buffer); }
-    virtual char*   LogReadSafeString() { return ReadSafeString(); }
-    virtual void    LogSkip(uint32_t deltaByteCount, const char* desc) { Skip(deltaByteCount); }
-
-    // Stream Notes for Logging 
-    virtual void    LogStringString(const char* s) { }
-    virtual void    LogSubStreamStart(const char* desc) { }
-    virtual void    LogSubStreamEnd() { }
-    virtual void    LogSubStreamPushDesc(const char* desc) { }
-#endif
-    void LogVoidFunc() { }
 
     // Optimization for small Reads
     virtual uint8_t ReadByte();
@@ -161,14 +130,6 @@ public:
     void            ReadLE(int count, uint16_t values[]) { this->ReadLE16(count, values); }
     void            ReadLE(uint32_t* value) { *value = this->ReadLE32(); }
     void            ReadLE(int count, uint32_t values[]) { this->ReadLE32(count, values); }
-#ifdef STREAM_LOGGER
-                // Begin LogReadLEs
-    virtual void    LogReadLE(bool* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(uint8_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(uint16_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(uint32_t* value, const char* desc) { this->ReadLE(value); }
-                // End LogReadLEs
-#endif
     void            WriteLE(bool value) { this->Write(1,&value); }
     void            WriteLE(uint8_t value) { this->Write(1,&value); }
     void            WriteLE(int count, const uint8_t values[]) { this->Write(count, values); }
@@ -184,15 +145,6 @@ public:
     void            ReadLE(int count, int16_t values[]) { this->ReadLE16(count, (uint16_t*)values); }
     void            ReadLE(int32_t* value) { *value = (int32_t)this->ReadLE32(); }
     void            ReadLE(int count, int32_t values[]) { this->ReadLE32(count, (uint32_t*)values); }
-#ifdef STREAM_LOGGER
-                // Begin LogReadLEs
-    virtual void    LogReadLE(int8_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(char* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(int16_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(int32_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(int* value, const char* desc) { this->ReadLE(value); }
-                // End LogReadLEs
-#endif
     void            WriteLE(int8_t value) { this->Write(1,&value); }
     void            WriteLE(int count, const int8_t values[]) { this->Write(count, values); }
     void            WriteLE(char value) { this->Write(1,(uint8_t*)&value); }
@@ -219,12 +171,6 @@ public:
     void            ReadLE(int count, float values[]) { ReadLEFloat(count, values); }
     void            ReadLE(double* value) { *value = ReadLEDouble(); }
     void            ReadLE(int count, double values[]) { ReadLEDouble(count, values); }
-#ifdef STREAM_LOGGER
-                    // Begin LogReadLEs
-    virtual void    LogReadLE(float* value, const char* desc) { ReadLE(value); }
-    virtual void    LogReadLE(double* value, const char* desc) { ReadLE(value); }
-                    // End LogReadLEs
-#endif
     void            WriteLE(float value) { WriteLEFloat(value); }
     void            WriteLE(int count, const float values[]) { WriteLEFloat(count, values); }
     void            WriteLE(double value) { WriteLEDouble(value); }
