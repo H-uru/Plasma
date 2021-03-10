@@ -144,7 +144,6 @@ public:
     void            ReadLE16(int count, uint16_t values[]);
     uint32_t        ReadLE32();
     void            ReadLE32(int count, uint32_t values[]);
-    uint32_t        ReadBE32();
 
     void            WriteBOOL(bool value);
     void            WriteBool(bool value);
@@ -154,7 +153,6 @@ public:
     void            WriteLE16(int count, const uint16_t values[]);
     void            WriteLE32(uint32_t value);
     void            WriteLE32(int count, const  uint32_t values[]);
-    void            WriteBE32(uint32_t value);
 
 
     /* Overloaded  Begin (8 & 16 & 32 int)*/
@@ -221,12 +219,10 @@ public:
     void            ReadLEFloat(int count, float values[]);
     double          ReadLEDouble();
     void            ReadLEDouble(int count, double values[]);
-    float           ReadBEFloat();
     void            WriteLEFloat(float value);
     void            WriteLEFloat(int count, const float values[]);
     void            WriteLEDouble(double value);
     void            WriteLEDouble(int count, const double values[]);
-    void            WriteBEFloat(float value);
 
 
     /* Overloaded  Begin (Float)*/
@@ -253,13 +249,11 @@ public:
                     {
                         this->ReadLEFloat(count, (float*)values);
                     }
-    float           ReadBEScalar() { return (float)this->ReadBEFloat(); }
     void            WriteLEScalar(float value) { this->WriteLEFloat(value); }
     void            WriteLEScalar(int count, const float values[])
                     {
                         this->WriteLEFloat(count, (float*)values);
                     }
-    void            WriteBEScalar(float value) { this->WriteBEFloat(value); }
 };
 
 class hsStreamable {

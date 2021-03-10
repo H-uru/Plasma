@@ -445,14 +445,6 @@ void hsStream::ReadLE32(int count, uint32_t values[])
         values[i] = hsToLE32(values[i]);
 }
 
-uint32_t hsStream::ReadBE32()
-{
-    uint32_t  value;
-    Read(sizeof(uint32_t), &value);
-    value = hsToBE32(value);
-    return value;
-}
-
 double hsStream::ReadLEDouble()
 {
     double  value;
@@ -483,15 +475,6 @@ void hsStream::ReadLEFloat(int count, float values[])
     for (int i = 0; i < count; i++)
         values[i] = hsToLEFloat(values[i]);
 }
-
-float hsStream::ReadBEFloat()
-{
-    float   value;
-    this->Read(sizeof(float), &value);
-    value = hsToBEFloat(value);
-    return value;
-}
-
 
 void hsStream::WriteBOOL(bool value)
 {
@@ -539,12 +522,6 @@ void  hsStream::WriteLE32(int count, const uint32_t values[])
         this->WriteLE32(values[i]);
 }
 
-void hsStream::WriteBE32(uint32_t value)
-{
-    value = hsToBE32(value);
-    this->Write(sizeof(int32_t), &value);
-}
-
 void hsStream::WriteLEDouble(double value)
 {
     value = hsToLEDouble(value);
@@ -567,12 +544,6 @@ void hsStream::WriteLEFloat(int count, const float values[])
 {
     for (int i = 0; i < count; i++)
         this->WriteLEFloat(values[i]);
-}
-
-void hsStream::WriteBEFloat(float value)
-{
-    value = hsToBEFloat(value);
-    this->Write(sizeof(float), &value);
 }
 
 
