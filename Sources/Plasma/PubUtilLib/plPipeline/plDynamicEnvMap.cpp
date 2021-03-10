@@ -415,12 +415,12 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
     uint32_t sz = plCubicRenderTarget::Read(s);
 
     fPos.Read(s);
-    fHither = s->ReadLEScalar();
-    fYon = s->ReadLEScalar();
-    fFogStart = s->ReadLEScalar();
+    fHither = s->ReadLEFloat();
+    fYon = s->ReadLEFloat();
+    fFogStart = s->ReadLEFloat();
     fColor.Read(s);
 
-    fRefreshRate = s->ReadLEScalar();
+    fRefreshRate = s->ReadLEFloat();
 
     SetPosition(fPos);
 
@@ -453,12 +453,12 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
     uint32_t sz = plCubicRenderTarget::Write(s);
 
     fPos.Write(s);
-    s->WriteLEScalar(fHither);
-    s->WriteLEScalar(fYon);
-    s->WriteLEScalar(fFogStart);
+    s->WriteLEFloat(fHither);
+    s->WriteLEFloat(fYon);
+    s->WriteLEFloat(fFogStart);
     fColor.Write(s);
 
-    s->WriteLEScalar(fRefreshRate);
+    s->WriteLEFloat(fRefreshRate);
 
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
@@ -902,12 +902,12 @@ void plDynamicCamMap::Read(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Read(s, mgr);
     plRenderTarget::Read(s);
 
-    fHither = s->ReadLEScalar();
-    fYon = s->ReadLEScalar();
-    fFogStart = s->ReadLEScalar();
+    fHither = s->ReadLEFloat();
+    fYon = s->ReadLEFloat();
+    fFogStart = s->ReadLEFloat();
     fColor.Read(s);
 
-    fRefreshRate = s->ReadLEScalar();
+    fRefreshRate = s->ReadLEFloat();
     fIncCharacters = s->ReadBool();
     SetIncludeCharacters(fIncCharacters);
     mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefCamera), plRefFlags::kPassiveRef);
@@ -946,12 +946,12 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     hsKeyedObject::Write(s, mgr);
     plRenderTarget::Write(s);
 
-    s->WriteLEScalar(fHither);
-    s->WriteLEScalar(fYon);
-    s->WriteLEScalar(fFogStart);
+    s->WriteLEFloat(fHither);
+    s->WriteLEFloat(fYon);
+    s->WriteLEFloat(fFogStart);
     fColor.Write(s);
 
-    s->WriteLEScalar(fRefreshRate);
+    s->WriteLEFloat(fRefreshRate);
     s->WriteByte(fIncCharacters);
     mgr->WriteKey(s, (fCamera ? fCamera->GetKey() : nullptr));
     mgr->WriteKey(s, (fRootNode ? fRootNode->GetKey() : nullptr));

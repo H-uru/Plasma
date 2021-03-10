@@ -625,10 +625,10 @@ void plParticleSystem::Read(hsStream *s, hsResMgr *mgr)
     uint32_t maxEmitters = s->ReadLE32();
     Init(xTiles, yTiles, maxTotal, maxEmitters, fAmbientCtl, fDiffuseCtl, fOpacityCtl, fWidthCtl, fHeightCtl);
 
-    fPreSim = s->ReadLEScalar();
+    fPreSim = s->ReadLEFloat();
     fAccel.Read(s);
-    fDrag = s->ReadLEScalar();
-    fWindMult = s->ReadLEScalar();
+    fDrag = s->ReadLEFloat();
+    fWindMult = s->ReadLEFloat();
 
     fNumValidEmitters = s->ReadLE32();
     for (uint32_t i = 0; i < fNumValidEmitters; i++)
@@ -667,10 +667,10 @@ void plParticleSystem::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLE32(fMaxTotalParticles);
     s->WriteLE32(fMaxEmitters);
 
-    s->WriteLEScalar(fPreSim);
+    s->WriteLEFloat(fPreSim);
     fAccel.Write(s);
-    s->WriteLEScalar(fDrag);
-    s->WriteLEScalar(fWindMult);
+    s->WriteLEFloat(fDrag);
+    s->WriteLEFloat(fWindMult);
 
     s->WriteLE32(fNumValidEmitters);
     for (i = 0; i < fNumValidEmitters; i++)

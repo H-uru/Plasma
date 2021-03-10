@@ -280,7 +280,7 @@ void plOccluder::Read(hsStream* s, hsResMgr* mgr)
     plObjInterface::Read(s, mgr);
 
     fWorldBounds.Read(s);
-    fPriority = s->ReadLEScalar();
+    fPriority = s->ReadLEFloat();
 
     std::vector<plCullPoly>& localPolys = IGetLocalPolyList();
     uint16_t n = s->ReadLE16();
@@ -302,7 +302,7 @@ void plOccluder::Write(hsStream* s, hsResMgr* mgr)
     plObjInterface::Write(s, mgr);
 
     fWorldBounds.Write(s);
-    s->WriteLEScalar(fPriority);
+    s->WriteLEFloat(fPriority);
 
     std::vector<plCullPoly>& localPolys = IGetLocalPolyList();
     hsAssert(localPolys.size() < std::numeric_limits<uint16_t>::max(), "Too many polys");

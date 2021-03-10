@@ -88,7 +88,7 @@ void plDecalEnableMod::Read(hsStream* stream, hsResMgr* mgr)
     for (uint32_t i = 0; i < n; i++)
         fDecalMgrs[i] = mgr->ReadKey(stream);
 
-    fWetLength = stream->ReadLEScalar();
+    fWetLength = stream->ReadLEFloat();
 }
 
 void plDecalEnableMod::Write(hsStream* stream, hsResMgr* mgr)
@@ -100,5 +100,5 @@ void plDecalEnableMod::Write(hsStream* stream, hsResMgr* mgr)
     for (const plKey& mgrKey : fDecalMgrs)
         mgr->WriteKey(stream, mgrKey);
 
-    stream->WriteLEScalar(fWetLength);
+    stream->WriteLEFloat(fWetLength);
 }

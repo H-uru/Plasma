@@ -93,7 +93,7 @@ void plSoftVolumeSimple::Read(hsStream* s, hsResMgr* mgr)
 {
     plSoftVolume::Read(s, mgr);
 
-    fSoftDist = s->ReadLEScalar();
+    fSoftDist = s->ReadLEFloat();
 
     fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
 }
@@ -102,7 +102,7 @@ void plSoftVolumeSimple::Write(hsStream* s, hsResMgr* mgr)
 {
     plSoftVolume::Write(s, mgr);
 
-    s->WriteLEScalar(fSoftDist);
+    s->WriteLEFloat(fSoftDist);
 
     mgr->WriteCreatable(s, fVolume);
 }

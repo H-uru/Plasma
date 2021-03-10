@@ -55,14 +55,14 @@ public:
     NxU8        readByte() const override { return fStream->ReadByte(); }
     NxU16       readWord() const override { return fStream->ReadLE16(); }
     NxU32       readDword() const override { return fStream->ReadLE32(); }
-    float       readFloat() const override { return fStream->ReadLEScalar(); }
+    float       readFloat() const override { return fStream->ReadLEFloat(); }
     double      readDouble() const override { return fStream->ReadLEDouble(); }
     void        readBuffer(void* buffer, NxU32 size) const override { fStream->Read(size, buffer); }
 
     NxStream&   storeByte(NxU8 b) override { fStream->WriteByte(b); return *this; }
     NxStream&   storeWord(NxU16 w) override { fStream->WriteLE16(w); return *this; }
     NxStream&   storeDword(NxU32 d) override { fStream->WriteLE32(d); return *this; }
-    NxStream&   storeFloat(NxReal f) override { fStream->WriteLEScalar(f); return *this; }
+    NxStream&   storeFloat(NxReal f) override { fStream->WriteLEFloat(f); return *this; }
     NxStream&   storeDouble(NxF64 f) override { fStream->WriteLEDouble(f); return *this; }
     NxStream&   storeBuffer(const void* buffer, NxU32 size) override { fStream->Write(size, buffer); return *this; }
 

@@ -192,7 +192,7 @@ class pfKIMsg : public plMessage
             fPlayerID = s->ReadLE32();
             fString = s->ReadSafeWString();
             fFlags = s->ReadLE32();
-            fDelay = s->ReadLEScalar();
+            fDelay = s->ReadLEFloat();
             fValue = s->ReadLE32();
         }
         
@@ -204,7 +204,7 @@ class pfKIMsg : public plMessage
             s->WriteLE32( fPlayerID );
             s->WriteSafeWString( fString );
             s->WriteLE32( fFlags );
-            s->WriteLEScalar(fDelay);
+            s->WriteLEFloat(fDelay);
             s->WriteLE32( fValue );
         }
 

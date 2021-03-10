@@ -48,12 +48,12 @@ void plTimerCallbackMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
     fID = stream->ReadLE32();
-    fTime = stream->ReadLEScalar();
+    fTime = stream->ReadLEFloat();
 }
 
 void plTimerCallbackMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
     stream->WriteLE32(fID);
-    stream->WriteLEScalar(fTime);
+    stream->WriteLEFloat(fTime);
 }

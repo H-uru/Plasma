@@ -783,8 +783,8 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
         stream->WriteBool(false);
     }
 
-    stream->WriteLEScalar(fFadeIn);
-    stream->WriteLEScalar(fFadeOut);
+    stream->WriteLEFloat(fFadeIn);
+    stream->WriteLEFloat(fFadeOut);
     stream->WriteByte(fMoveMode);
     stream->WriteByte(fBodyUsage);
     mgr->WriteKey(stream, fRecipient);
@@ -824,8 +824,8 @@ void plAvBrainGeneric::Read(hsStream *stream, hsResMgr *mgr)
         fEndMessage = nullptr;
     }
 
-    fFadeIn = stream->ReadLEScalar();
-    fFadeOut = stream->ReadLEScalar();
+    fFadeIn = stream->ReadLEFloat();
+    fFadeOut = stream->ReadLEFloat();
     fMoveMode = static_cast<MoveMode>(stream->ReadByte());
     fBodyUsage = static_cast<plAGAnim::BodyUsage>(stream->ReadByte());
     fRecipient = mgr->ReadKey(stream);

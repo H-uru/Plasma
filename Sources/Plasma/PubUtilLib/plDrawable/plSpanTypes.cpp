@@ -85,11 +85,11 @@ void    plSpan::Read( hsStream *stream )
     fMaxBoneIdx = stream->ReadLE16();
     fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadLEScalar();
-    fMaxDist = stream->ReadLEScalar();
+    fMinDist = stream->ReadLEFloat();
+    fMaxDist = stream->ReadLEFloat();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadLEScalar();
+        fWaterHeight = stream->ReadLEFloat();
 
 #ifdef HS_DEBUGGING
     fOwnerKey = nullptr;
@@ -117,11 +117,11 @@ void    plSpan::Write( hsStream *stream )
     stream->WriteLE16( fMaxBoneIdx );
     stream->WriteLE16( fPenBoneIdx );
 
-    stream->WriteLEScalar( fMinDist );
-    stream->WriteLEScalar( fMaxDist );
+    stream->WriteLEFloat(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
 
     if( fProps & kWaterHeight )
-        stream->WriteLEScalar(fWaterHeight);
+        stream->WriteLEFloat(fWaterHeight);
 }
 
 void plSpan::RemoveAuxSpan(plAuxSpan* aux)

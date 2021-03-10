@@ -211,8 +211,8 @@ void plAnimPath::Read(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Read(stream);
     fWorldToLocal.Read(stream);
 
-    fLength = stream->ReadLEScalar();
-    fMinDistSq = stream->ReadLEScalar();
+    fLength = stream->ReadLEFloat();
+    fMinDistSq = stream->ReadLEFloat();
     
     Reset();
 }
@@ -228,8 +228,8 @@ void plAnimPath::Write(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Write(stream);
     fWorldToLocal.Write(stream);
 
-    stream->WriteLEScalar(fLength);
-    stream->WriteLEScalar(fMinDistSq);
+    stream->WriteLEFloat(fLength);
+    stream->WriteLEFloat(fMinDistSq);
 }
 
 bool plAnimPath::OutOfRange(hsPoint3 &worldPt, float range) const

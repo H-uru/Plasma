@@ -78,13 +78,13 @@ void plFadeOpacityLay::Read(hsStream* s, hsResMgr* mgr)
 {
     plLayerInterface::Read(s, mgr);
 
-    fOpScale = s->ReadLEScalar();
+    fOpScale = s->ReadLEFloat();
 }
 
 void plFadeOpacityLay::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerInterface::Write(s, mgr);
 
-    s->WriteLEScalar(fOpScale);
+    s->WriteLEFloat(fOpScale);
 }
 

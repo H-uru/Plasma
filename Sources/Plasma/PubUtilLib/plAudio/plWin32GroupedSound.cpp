@@ -89,7 +89,7 @@ void plWin32GroupedSound::IRead( hsStream *s, hsResMgr *mgr )
     for (uint16_t i = 0; i < n; i++)
     {
         fStartPositions[ i ] = s->ReadLE32();
-        fVolumes[ i ] = s->ReadLEScalar();
+        fVolumes[i] = s->ReadLEFloat();
     }
 }
 
@@ -101,7 +101,7 @@ void plWin32GroupedSound::IWrite( hsStream *s, hsResMgr *mgr )
     for (size_t i = 0; i < fStartPositions.size(); i++)
     {
         s->WriteLE32( fStartPositions[ i ] );
-        s->WriteLEScalar( fVolumes[ i ] );
+        s->WriteLEFloat(fVolumes[i]);
     }
 }
 

@@ -1227,7 +1227,7 @@ void proVariableEventData::IReadNumber(hsStream * stream) {
     switch (fDataType)
     {
     case kFloat:
-        fNumber.f = stream->ReadLEScalar();
+        fNumber.f = stream->ReadLEFloat();
         break;
     case kInt:
         fNumber.i = stream->ReadLE32();
@@ -1242,7 +1242,7 @@ void proVariableEventData::IWriteNumber(hsStream * stream) {
     switch (fDataType)
     {
     case kFloat:
-        stream->WriteLEScalar(fNumber.f);
+        stream->WriteLEFloat(fNumber.f);
         break;
     case kInt:
         stream->WriteLE32(fNumber.i);
@@ -1315,7 +1315,7 @@ void proFacingEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
     fFacer = mgr->ReadKey(stream);
     fFacee = mgr->ReadKey(stream);
-    dot = stream->ReadLEScalar();
+    dot = stream->ReadLEFloat();
     enabled = stream->ReadBool();
 }
 
@@ -1323,7 +1323,7 @@ void proFacingEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     mgr->WriteKey(stream, fFacer);
     mgr->WriteKey(stream, fFacee);
-    stream->WriteLEScalar(dot);
+    stream->WriteLEFloat(dot);
     stream->WriteBool(enabled);
 }
 
@@ -1345,7 +1345,7 @@ void proFacingEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kProFacingFacee))
         fFacee = mgr->ReadKey(s);
     if (contentFlags.IsBitSet(kProFacingDot))
-        dot = s->ReadLEScalar();
+        dot = s->ReadLEFloat();
     if (contentFlags.IsBitSet(kProFacingEnabled))
         enabled = s->ReadBool();
 }
@@ -1364,7 +1364,7 @@ void proFacingEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     // kProFacingFacee  
     mgr->WriteKey(s, fFacee);
     // kProFacingDot    
-    s->WriteLEScalar(dot);
+    s->WriteLEFloat(dot);
     // kProFacingEnabled
     s->WriteBool(enabled);
 }

@@ -818,17 +818,17 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 
     fFlags = (uint16_t)(s->ReadLE32());
 
-    fBegin = fInitialBegin = s->ReadLEScalar();
-    fEnd = fInitialEnd = s->ReadLEScalar();
-    fLoopEnd = s->ReadLEScalar();
-    fLoopBegin = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
+    fBegin = fInitialBegin = s->ReadLEFloat();
+    fEnd = fInitialEnd = s->ReadLEFloat();
+    fLoopEnd = s->ReadLEFloat();
+    fLoopBegin = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
 
     fEaseInCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
     fEaseOutCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
     fSpeedEaseCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
 
-    fCurrentAnimTime = s->ReadLEScalar();
+    fCurrentAnimTime = s->ReadLEFloat();
     fLastEvalWorldTime = s->ReadLEDouble();
 
     // load other non-synched data;
@@ -843,10 +843,8 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 
     count = s->ReadLE32();
     fStopPoints.resize(count);
-    for (uint32_t i = 0; i < count; i++)
-    {
-        fStopPoints[i] = s->ReadLEScalar();
-    }
+    s->ReadLEFloat(count, fStopPoints.data());
+
     IProcessStateChange(0, fBegin);
 }
 
@@ -856,17 +854,17 @@ void plAnimTimeConvert::Write(hsStream* s, hsResMgr* mgr)
 
     s->WriteLE32(fFlags);
 
-    s->WriteLEScalar(fBegin);
-    s->WriteLEScalar(fEnd);
-    s->WriteLEScalar(fLoopEnd);
-    s->WriteLEScalar(fLoopBegin);
-    s->WriteLEScalar(fSpeed);
+    s->WriteLEFloat(fBegin);
+    s->WriteLEFloat(fEnd);
+    s->WriteLEFloat(fLoopEnd);
+    s->WriteLEFloat(fLoopBegin);
+    s->WriteLEFloat(fSpeed);
 
     mgr->WriteCreatable(s, fEaseInCurve);
     mgr->WriteCreatable(s, fEaseOutCurve);
     mgr->WriteCreatable(s, fSpeedEaseCurve);
 
-    s->WriteLEScalar(fCurrentAnimTime);
+    s->WriteLEFloat(fCurrentAnimTime);
     s->WriteLEDouble(fLastEvalWorldTime);
 
     // save out other non-synched important data
@@ -875,10 +873,7 @@ void plAnimTimeConvert::Write(hsStream* s, hsResMgr* mgr)
         mgr->WriteCreatable(s, msg);
 
     s->WriteLE32((uint32_t)fStopPoints.size());
-    for (float stop : fStopPoints)
-    {
-        s->WriteLEScalar(stop);
-    }
+    s->WriteLEFloat(fStopPoints.size(), fStopPoints.data());
 }
 
 plAnimTimeConvert& plAnimTimeConvert::InitStop() 
@@ -1267,14 +1262,14 @@ void plAnimTimeConvert::EnableCallbacks(bool val)
 void plATCState::Read(hsStream *s, hsResMgr *mgr)
 {
     fStartWorldTime = s->ReadLEDouble();
-    fStartAnimTime = s->ReadLEScalar();
+    fStartAnimTime = s->ReadLEFloat();
 
     fFlags = (uint8_t)(s->ReadLE32());
-    fEnd = s->ReadLEScalar();
-    fLoopBegin = s->ReadLEScalar();
-    fLoopEnd = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
-    fWrapTime = s->ReadLEScalar();
+    fEnd = s->ReadLEFloat();
+    fLoopBegin = s->ReadLEFloat();
+    fLoopEnd = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
+    fWrapTime = s->ReadLEFloat();
     if (s->ReadBool())
         fEaseCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
 }
@@ -1282,14 +1277,14 @@ void plATCState::Read(hsStream *s, hsResMgr *mgr)
 void plATCState::Write(hsStream *s, hsResMgr *mgr)
 {
     s->WriteLEDouble(fStartWorldTime);
-    s->WriteLEScalar(fStartAnimTime);
+    s->WriteLEFloat(fStartAnimTime);
 
     s->WriteLE32(fFlags);
-    s->WriteLEScalar(fEnd);
-    s->WriteLEScalar(fLoopBegin);
-    s->WriteLEScalar(fLoopEnd);
-    s->WriteLEScalar(fSpeed);
-    s->WriteLEScalar(fWrapTime);
+    s->WriteLEFloat(fEnd);
+    s->WriteLEFloat(fLoopBegin);
+    s->WriteLEFloat(fLoopEnd);
+    s->WriteLEFloat(fSpeed);
+    s->WriteLEFloat(fWrapTime);
     if (fEaseCurve != nullptr)
     {
         s->WriteBool(true);

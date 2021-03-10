@@ -329,12 +329,12 @@ void plCameraModifier1::Read(hsStream* stream, hsResMgr* mgr)
         bool cutpos = stream->ReadBool();
         bool cutpoa = stream->ReadBool();
         bool ignore = stream->ReadBool();
-        float v = stream->ReadLEScalar();
-        float a = stream->ReadLEScalar();
-        float d = stream->ReadLEScalar();
-        float pV = stream->ReadLEScalar();
-        float pA = stream->ReadLEScalar();
-        float pD = stream->ReadLEScalar();
+        float v = stream->ReadLEFloat();
+        float a = stream->ReadLEFloat();
+        float d = stream->ReadLEFloat();
+        float pV = stream->ReadLEFloat();
+        float pA = stream->ReadLEFloat();
+        float pD = stream->ReadLEFloat();
 
         CamTrans* camTrans = new CamTrans(key);
         camTrans->fAccel = a;
@@ -389,12 +389,12 @@ void plCameraModifier1::Write(hsStream* stream, hsResMgr* mgr)
         stream->WriteBool(trans->fCutPos);
         stream->WriteBool(trans->fCutPOA);
         stream->WriteBool(trans->fIgnore);
-        stream->WriteLEScalar(trans->fVelocity);
-        stream->WriteLEScalar(trans->fAccel);
-        stream->WriteLEScalar(trans->fDecel);
-        stream->WriteLEScalar(trans->fPOAVelocity);
-        stream->WriteLEScalar(trans->fPOAAccel);
-        stream->WriteLEScalar(trans->fPOADecel);
+        stream->WriteLEFloat(trans->fVelocity);
+        stream->WriteLEFloat(trans->fAccel);
+        stream->WriteLEFloat(trans->fDecel);
+        stream->WriteLEFloat(trans->fPOAVelocity);
+        stream->WriteLEFloat(trans->fPOAAccel);
+        stream->WriteLEFloat(trans->fPOADecel);
     }
     stream->WriteLEFloat(fFOVw);
     stream->WriteLEFloat(fFOVh);

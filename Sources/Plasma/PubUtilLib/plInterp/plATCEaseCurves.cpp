@@ -123,11 +123,11 @@ void plATCEaseCurve::Read(hsStream *s, hsResMgr *mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fMinLength = s->ReadLEScalar();
-    fMaxLength = s->ReadLEScalar();
-    fNormLength = fLength = s->ReadLEScalar();
-    fStartSpeed = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
+    fMinLength = s->ReadLEFloat();
+    fMaxLength = s->ReadLEFloat();
+    fNormLength = fLength = s->ReadLEFloat();
+    fStartSpeed = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
     fBeginWorldTime = s->ReadLEDouble();
 }
 
@@ -135,11 +135,11 @@ void plATCEaseCurve::Write(hsStream *s, hsResMgr *mgr)
 {
     plCreatable::Write(s, mgr);
 
-    s->WriteLEScalar(fMinLength);
-    s->WriteLEScalar(fMaxLength);
-    s->WriteLEScalar(fNormLength);
-    s->WriteLEScalar(fStartSpeed);
-    s->WriteLEScalar(fSpeed);
+    s->WriteLEFloat(fMinLength);
+    s->WriteLEFloat(fMaxLength);
+    s->WriteLEFloat(fNormLength);
+    s->WriteLEFloat(fStartSpeed);
+    s->WriteLEFloat(fSpeed);
     s->WriteLEDouble(fBeginWorldTime);
 }
 
@@ -348,19 +348,13 @@ void plSplineEaseCurve::Read(hsStream *s, hsResMgr *mgr)
 {
     plATCEaseCurve::Read(s, mgr);
 
-    fCoef[0] = s->ReadLEScalar();
-    fCoef[1] = s->ReadLEScalar();
-    fCoef[2] = s->ReadLEScalar();
-    fCoef[3] = s->ReadLEScalar();
+    s->ReadLEFloat(std::size(fCoef), fCoef);
 }
 
 void plSplineEaseCurve::Write(hsStream *s, hsResMgr *mgr)
 {
     plATCEaseCurve::Write(s, mgr);
 
-    s->WriteLEScalar(fCoef[0]);
-    s->WriteLEScalar(fCoef[1]);
-    s->WriteLEScalar(fCoef[2]);
-    s->WriteLEScalar(fCoef[3]);
+    s->WriteLEFloat(std::size(fCoef), fCoef);
 }
 

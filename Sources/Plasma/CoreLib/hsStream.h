@@ -243,17 +243,6 @@ public:
     void            WriteLE(double value) { WriteLEDouble(value); }
     void            WriteLE(int count, const double values[]) { WriteLEDouble(count, values); }
     /* Overloaded End */
-
-    float           ReadLEScalar() { return (float)this->ReadLEFloat(); }
-    void            ReadLEScalar(int count, float values[])
-                    {
-                        this->ReadLEFloat(count, (float*)values);
-                    }
-    void            WriteLEScalar(float value) { this->WriteLEFloat(value); }
-    void            WriteLEScalar(int count, const float values[])
-                    {
-                        this->WriteLEFloat(count, (float*)values);
-                    }
 };
 
 class hsStreamable {

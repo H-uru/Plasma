@@ -175,9 +175,7 @@ void plDistOpacityMod::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    int i;
-    for( i = 0; i < kNumDists; i++ )
-        fDists[i] = s->ReadLEScalar();
+    s->ReadLEFloat(kNumDists, fDists);
 
     ICheckDists();
 
@@ -188,9 +186,7 @@ void plDistOpacityMod::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    int i;
-    for( i = 0; i < kNumDists; i++ )
-        s->WriteLEScalar(fDists[i]);
+    s->WriteLEFloat(kNumDists, fDists);
 }
 
 void plDistOpacityMod::SetTarget(plSceneObject* so)
