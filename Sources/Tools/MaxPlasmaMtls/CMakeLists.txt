@@ -113,6 +113,7 @@ plasma_library(MaxPlasmaMtls
             ${MaxPlasmaMtls_SOURCES_Layers}
             ${MaxPlasmaMtls_SOURCES_Materials}
     PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
 )
 target_link_libraries(
     MaxPlasmaMtls

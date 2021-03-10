@@ -2332,7 +2332,8 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
         int i;
         for( i = 0; i < bndList.GetCount(); i++ )
         {
-            IAddBoundsSpan( fBoundsSpans, &hsBounds3Ext(drawable->GetSpaceTree()->GetNode(bndList[i]).GetWorldBounds()), 0xff000000 | (0xf << ((fSettings.fBoundsDrawLevel % 6) << 2)) );
+            const hsBounds3Ext& nodeBounds = drawable->GetSpaceTree()->GetNode(bndList[i]).GetWorldBounds();
+            IAddBoundsSpan( fBoundsSpans, &nodeBounds, 0xff000000 | (0xf << ((fSettings.fBoundsDrawLevel % 6) << 2)) );
         }
     }
 #endif // MF_BOUNDS_LEVEL_ICE
@@ -6626,7 +6627,8 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
     float uvwScale = kUVWScale;
     if( fLayerState[0].fBlendFlags & hsGMatState::kBlendAdd )
     {
-        hsVector3 cam2span(&GetViewPositionWorld(), &spanPos);
+        hsPoint3 viewPos = GetViewPositionWorld();
+        hsVector3 cam2span(&viewPos, &spanPos);
         hsFastMath::NormalizeAppr(cam2span);
         liDir += cam2span;
         hsFastMath::NormalizeAppr(liDir);
@@ -11572,7 +11574,7 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
                 if( selfShadowNow )
                 {
                     plConst(float) kMaxSelfPower = 0.3f;
-                    float power = fShadows[i]->fPower > kMaxSelfPower ? kMaxSelfPower : fShadows[i]->fPower;
+                    float power = fShadows[i]->fPower > kMaxSelfPower ? (float)kMaxSelfPower : fShadows[i]->fPower;
                     lRef->fD3DInfo.Diffuse.r 
                         = lRef->fD3DInfo.Diffuse.g 
                         = lRef->fD3DInfo.Diffuse.b

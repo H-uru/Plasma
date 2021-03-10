@@ -1,11 +1,11 @@
 include(QtDeployment)
-#TODO (#854): include(Sanitizers)
+include(Sanitizers)
 
 cmake_dependent_option(
     PLASMA_USE_PCH
     "Enable precompiled headers?"
     ON
-    [[${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16"]]
+    "CMAKE_VERSION VERSION_GREATER_EQUAL 3.16;ALLOW_BUILD_OPTIMIZATIONS"
     OFF
 )
 
@@ -13,13 +13,13 @@ cmake_dependent_option(
     PLASMA_UNITY_BUILD
     "Enable unity build?"
     ON
-    [[${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16"]]
+    "CMAKE_VERSION VERSION_GREATER_EQUAL 3.16;ALLOW_BUILD_OPTIMIZATIONS"
     OFF
 )
 
 function(plasma_executable TARGET)
     cmake_parse_arguments(PARSE_ARGV 1 _pex
-        "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL"
+        "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL;NO_SANITIZE"
         ""
         "SOURCES"
     )
@@ -60,12 +60,14 @@ function(plasma_executable TARGET)
         set_property(GLOBAL APPEND PROPERTY _PLASMA_GUI_TOOLS ${TARGET})
     endif()
 
-    #TODO (#854): plasma_sanitize_target(${TARGET})
+    if(NOT _pex_NO_SANITIZE)
+        plasma_sanitize_target(${TARGET})
+    endif()
 endfunction()
 
 function(plasma_library TARGET)
     cmake_parse_arguments(PARSE_ARGV 1 _plib
-        "UNITY_BUILD;SHARED"
+        "UNITY_BUILD;SHARED;NO_SANITIZE"
         ""
         "PRECOMPILED_HEADERS;SOURCES"
     )
@@ -85,11 +87,13 @@ function(plasma_library TARGET)
         set_target_properties(${TARGET} PROPERTIES UNITY_BUILD TRUE)
     endif()
 
-    #TODO (#854): plasma_sanitize_target(${TARGET})
+    if(NOT _plib_NO_SANITIZE)
+        plasma_sanitize_target(${TARGET})
+    endif()
 endfunction()
 
 function(plasma_test TARGET)
-    plasma_executable(${TARGET} ${ARGN})
+    plasma_executable(${TARGET} NO_SANTIZE ${ARGN})
     add_test(NAME ${TARGET} COMMAND ${TARGET})
     add_dependencies(check ${TARGET})
 endfunction()

@@ -20,6 +20,7 @@ set(MaxExport_SOURCES
 plasma_library(MaxExport
     SOURCES ${MaxExport_HEADERS} ${MaxExport_SOURCES}
     PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
 )
 target_link_libraries(
     MaxExport

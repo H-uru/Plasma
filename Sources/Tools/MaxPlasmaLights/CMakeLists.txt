@@ -25,6 +25,7 @@ set(MaxPlasmaLights_SOURCES
 plasma_library(MaxPlasmaLights SHARED
     SOURCES ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES}
     PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
 )
 target_link_libraries(
     MaxPlasmaLights
