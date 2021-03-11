@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPageTreeMgr_inc
 #define plPageTreeMgr_inc
 
+#include <cstdint>
 #include <vector>
 
 class plSceneNode;
