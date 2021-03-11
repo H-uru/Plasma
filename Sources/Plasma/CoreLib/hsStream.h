@@ -119,11 +119,9 @@ public:
 
     /* Overloaded  Begin (8 & 16 & 32 int)*/
     /* yes, swapping an 8 bit value does nothing, just useful*/
-    void            ReadLE(bool* value) { *value = this->ReadByte() ? true : false; }
     void            ReadLE(uint8_t* value) { *value = this->ReadByte(); }
     void            ReadLE(uint16_t* value) { *value = this->ReadLE16(); }
     void            ReadLE(uint32_t* value) { *value = this->ReadLE32(); }
-    void            WriteLE(bool value) { this->Write(1,&value); }
     void            WriteLE(uint8_t value) { this->Write(1,&value); }
     void            WriteLE(uint16_t value) { this->WriteLE16(value); }
     void            WriteLE(uint32_t value) { this->WriteLE32(value); }
