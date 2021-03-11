@@ -390,7 +390,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
         m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
-    int bufLen = m->GetVoiceDataLen();
+    size_t bufLen = m->GetVoiceDataLen();
     const char* buf = m->GetVoiceData();
     uint8_t flags = m->GetFlags();
     uint8_t numFrames = m->GetNumFrames();
