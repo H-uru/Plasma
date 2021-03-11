@@ -103,18 +103,18 @@ public:
 
     uint8_t         ReadByte();
     uint16_t        ReadLE16();
-    void            ReadLE16(int count, uint16_t values[]);
+    void            ReadLE16(size_t count, uint16_t values[]);
     uint32_t        ReadLE32();
-    void            ReadLE32(int count, uint32_t values[]);
+    void            ReadLE32(size_t count, uint32_t values[]);
 
     void            WriteBOOL(bool value);
     void            WriteBool(bool value);
 
     void            WriteByte(uint8_t value);
     void            WriteLE16(uint16_t value);
-    void            WriteLE16(int count, const uint16_t values[]);
+    void            WriteLE16(size_t count, const uint16_t values[]);
     void            WriteLE32(uint32_t value);
-    void            WriteLE32(int count, const  uint32_t values[]);
+    void            WriteLE32(size_t count, const uint32_t values[]);
 
 
     /* Overloaded  Begin (8 & 16 & 32 int)*/
@@ -137,13 +137,13 @@ public:
 
 
     float           ReadLEFloat();
-    void            ReadLEFloat(int count, float values[]);
+    void            ReadLEFloat(size_t count, float values[]);
     double          ReadLEDouble();
-    void            ReadLEDouble(int count, double values[]);
+    void            ReadLEDouble(size_t count, double values[]);
     void            WriteLEFloat(float value);
-    void            WriteLEFloat(int count, const float values[]);
+    void            WriteLEFloat(size_t count, const float values[]);
     void            WriteLEDouble(double value);
-    void            WriteLEDouble(int count, const double values[]);
+    void            WriteLEDouble(size_t count, const double values[]);
 
 
     /* Overloaded  Begin (Float)*/
