@@ -43,36 +43,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 
 #include "HeadSpin.h"
-#include <string_theory/format>
 
-static_assert(PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
-static_assert(PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
-static_assert(PRODUCT_BRANCH_ID > 0, "Branch ID cannot be zero");
+#include <string_theory/format>
+#include <string_view>
+
+#include "hsBuildInfo.inl"
+
+static_assert(plProduct::PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
+static_assert(plProduct::PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
+static_assert(plProduct::PRODUCT_BRANCH_ID > 0, "Branch ID cannot be zero");
+static_assert(!plProduct::PRODUCT_UUID.empty(), "UUID should not be empty");
+
+ST::string plProduct::Rev() { return GIT_REV; }
+ST::string plProduct::Tag() { return GIT_TAG; }
+
+ST::string plProduct::BuildDate() { return VOLATILE_BUILD_DATE; }
+ST::string plProduct::BuildTime() { return VOLATILE_BUILD_TIME; }
 
 uint32_t plProduct::BuildId() { return PRODUCT_BUILD_ID; }
 uint32_t plProduct::BuildType() { return PRODUCT_BUILD_TYPE; }
 uint32_t plProduct::BranchId() { return PRODUCT_BRANCH_ID; }
 
-ST::string plProduct::CoreName()
-{
-    static ST::string _coreName = ST_LITERAL(PRODUCT_CORE_NAME);
-    return _coreName;
-}
-
-ST::string plProduct::ShortName()
-{
-    static ST::string _shortName = ST_LITERAL(PRODUCT_SHORT_NAME);
-    return _shortName;
-}
-
-ST::string plProduct::LongName()
-{
-    static ST::string _longName = ST_LITERAL(PRODUCT_LONG_NAME);
-    return _longName;
-}
-
-const char *plProduct::UUID() { return PRODUCT_UUID; }
-
+ST::string plProduct::CoreName() { return PRODUCT_CORE_NAME; }
+ST::string plProduct::ShortName() { return PRODUCT_SHORT_NAME; }
+ST::string plProduct::LongName() { return PRODUCT_LONG_NAME; }
+const char *plProduct::UUID() { return PRODUCT_UUID.data(); }
 
 #ifdef PLASMA_EXTERNAL_RELEASE
 #   define RELEASE_ACCESS "External"
@@ -89,7 +84,7 @@ const char *plProduct::UUID() { return PRODUCT_UUID; }
 ST::string plProduct::ProductString()
 {
     static ST::string _cache = ST::format(
-            "{}.{}.{} - " RELEASE_ACCESS "." RELEASE_TYPE,
-            CoreName(), BranchId(), BuildId());
+            "{}.{}.{} - {} - " RELEASE_ACCESS "." RELEASE_TYPE,
+            CoreName(), BranchId(), BuildId(), Tag());
     return _cache;
 }

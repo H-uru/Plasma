@@ -1,13 +1,10 @@
 set(pnTimer_HEADERS
     plTimedValue.h
-    pnBuildDates.h
 )
 
 set(pnTimer_SOURCES
     hsTimer.cpp
     plTimerCallbackManager.cpp
-    pnBranchDate.cpp
-    pnBuildDates.cpp
 )
 
 plasma_library(pnTimer SOURCES ${pnTimer_HEADERS} ${pnTimer_SOURCES})

@@ -22,6 +22,8 @@ set(PRODUCT_SHORT_NAME  "UruLive"   CACHE STRING "Product Short Name")
 set(PRODUCT_LONG_NAME   "Uru Live"  CACHE STRING "Product Long Name")
 set(PRODUCT_UUID        "ea489821-6c35-4bd0-9dae-bb17c585e680"
                                     CACHE STRING "Product UUID")
+option(PRODUCT_EMBED_BUILD_INFO "Embed build revision information into plProduct" ON)
+cmake_dependent_option(PRODUCT_EMBED_BUILD_TIME "Embed build time into plProduct" ON [[PRODUCT_EMBED_BUILD_INFO]] OFF)
 
 # HeadSpin Configuration
 if(WIN32 AND NOT CYGWIN)
