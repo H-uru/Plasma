@@ -925,6 +925,18 @@ ST::string plNetMsgPagingRoom::AsString() const
 ////////////////////////////////////////////////////////
 // plNetMsgGroupOwner
 ////////////////////////////////////////////////////////
+void plNetMsgGroupOwner::GroupInfo::Read(hsStream* s)
+{
+    fGroupID.Read(s);
+    fOwnIt = s->ReadBool();
+}
+
+void plNetMsgGroupOwner::GroupInfo::Write(hsStream* s) const
+{
+    fGroupID.Write(s);
+    s->WriteBool(fOwnIt);
+}
+
 int plNetMsgGroupOwner::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
 {
     int bytes=plNetMsgServerToClient::IPokeBuffer(stream, peekOptions);

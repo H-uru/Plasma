@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsBitVector.h"
-#include "hsStream.h"
 
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCommon/plNetGroup.h"
@@ -632,10 +631,10 @@ public:
         plNetGroupId fGroupID;
         bool fOwnIt;    // else not the owner
 
-        void Read(hsStream* s) { fGroupID.Read(s); s->ReadLE(&fOwnIt); }
-        void Write(hsStream* s) { fGroupID.Write(s); s->WriteLE(fOwnIt); }
+        void Read(hsStream* s);
+        void Write(hsStream* s) const;
 
-      GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
+        GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
         GroupInfo(plNetGroupId gID, bool o) : fGroupID(gID),fOwnIt(o) {}
     };
 protected:

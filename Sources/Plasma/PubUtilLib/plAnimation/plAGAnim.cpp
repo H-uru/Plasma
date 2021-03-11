@@ -411,7 +411,7 @@ void plATCAnim::Read(hsStream *stream, hsResMgr *mgr)
         fLoops[name] = std::pair<float,float>(begin,end);
     }
 
-    int numStops = stream->ReadLE32();
+    uint32_t numStops = stream->ReadLE32();
     fStopPoints.resize(numStops);
     stream->ReadLEFloat(numStops, fStopPoints.data());
 }

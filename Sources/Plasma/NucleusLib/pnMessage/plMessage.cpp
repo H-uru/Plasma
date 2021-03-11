@@ -332,9 +332,9 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekO
         if (strlen)
         {
             str = new char[strlen+1];
-            str[strlen] = '\0';
             if (strlen)
                 stream->Read(strlen, str);
+            str[strlen] = '\0';
         }
     }
     return stream->GetPosition();
