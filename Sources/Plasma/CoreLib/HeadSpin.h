@@ -217,6 +217,20 @@ inline double hsSwapEndianDouble(double dvalue)
     #define hsToLEDouble(n)     hsSwapEndianDouble(n)
 #endif
 
+// Generic versions for use in templates
+template <typename T> inline T hsToLE(T value) = delete;
+template <> inline char hsToLE(char value) { return value; }
+template <> inline int8_t hsToLE(int8_t value) { return value; }
+template <> inline uint8_t hsToLE(uint8_t value) { return value; }
+template <> inline int16_t hsToLE(int16_t value) { return (int16_t)hsToLE16((uint16_t)value); }
+template <> inline uint16_t hsToLE(uint16_t value) { return hsToLE16(value); }
+template <> inline int32_t hsToLE(int32_t value) { return (int32_t)hsToLE32((uint32_t)value); }
+template <> inline uint32_t hsToLE(uint32_t value) { return hsToLE32(value); }
+template <> inline int64_t hsToLE(int64_t value) { return (int64_t)hsToLE64((uint64_t)value); }
+template <> inline uint64_t hsToLE(uint64_t value) { return hsToLE64(value); }
+template <> inline float hsToLE(float value) { return hsToLEFloat(value); }
+template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
+
 //===========================================================================
 // Define a NOOP (null) statement
 //===========================================================================

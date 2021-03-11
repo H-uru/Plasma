@@ -116,42 +116,29 @@ public:
     void            WriteLE32(uint32_t value);
     void            WriteLE32(size_t count, const uint32_t values[]);
 
-
-    /* Overloaded  Begin (8 & 16 & 32 int)*/
-    /* yes, swapping an 8 bit value does nothing, just useful*/
-    void            ReadLE(uint8_t* value) { *value = this->ReadByte(); }
-    void            ReadLE(uint16_t* value) { *value = this->ReadLE16(); }
-    void            ReadLE(uint32_t* value) { *value = this->ReadLE32(); }
-    void            WriteLE(uint8_t value) { this->Write(1,&value); }
-    void            WriteLE(uint16_t value) { this->WriteLE16(value); }
-    void            WriteLE(uint32_t value) { this->WriteLE32(value); }
-    void            ReadLE(int8_t* value) { *value = this->ReadByte(); }
-    void            ReadLE(char* value) { *value = (char)this->ReadByte(); }
-    void            ReadLE(int16_t* value) { *value = (int16_t)this->ReadLE16(); }
-    void            ReadLE(int32_t* value) { *value = (int32_t)this->ReadLE32(); }
-    void            WriteLE(int8_t value) { this->Write(1,&value); }
-    void            WriteLE(char value) { this->Write(1,(uint8_t*)&value); }
-    void            WriteLE(int16_t value) { this->WriteLE16((uint16_t)value); }
-    void            WriteLE(int32_t value) { this->WriteLE32((uint32_t)value); }
-    /* Overloaded  End */
-
-
     float           ReadLEFloat();
     void            ReadLEFloat(size_t count, float values[]);
     double          ReadLEDouble();
     void            ReadLEDouble(size_t count, double values[]);
+
     void            WriteLEFloat(float value);
     void            WriteLEFloat(size_t count, const float values[]);
     void            WriteLEDouble(double value);
     void            WriteLEDouble(size_t count, const double values[]);
 
+    template <typename T>
+    inline void ReadLE(T* value)
+    {
+        Read(sizeof(T), value);
+        *value = hsToLE(*value);
+    }
 
-    /* Overloaded  Begin (Float)*/
-    void            ReadLE(float* value) { *value = ReadLEFloat(); }
-    void            ReadLE(double* value) { *value = ReadLEDouble(); }
-    void            WriteLE(float value) { WriteLEFloat(value); }
-    void            WriteLE(double value) { WriteLEDouble(value); }
-    /* Overloaded End */
+    template <typename T>
+    inline void WriteLE(T value)
+    {
+        value = hsToLE(value);
+        Write(sizeof(T), &value);
+    }
 };
 
 class hsStreamable {
