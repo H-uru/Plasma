@@ -807,7 +807,7 @@ void plParticleFlockEffect::Write(hsStream *s, hsResMgr *mgr)
     s->WriteLEFloat(fGoalChaseStr);
     s->WriteLEFloat(fMaxOrbitSpeed);
     s->WriteLEFloat(fMaxChaseSpeed);
-    s->WriteLEFloat(fMaxParticles);
+    s->WriteLEFloat((float)fMaxParticles);
 }
 
 bool plParticleFlockEffect::MsgReceive(plMessage *msg)

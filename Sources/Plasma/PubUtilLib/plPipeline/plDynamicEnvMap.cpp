@@ -426,7 +426,7 @@ void plDynamicEnvMap::Read(hsStream* s, hsResMgr* mgr)
 
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
-    fIncCharacters = s->ReadByte();
+    fIncCharacters = s->ReadBool();
     SetIncludeCharacters(fIncCharacters);
     int nVis = s->ReadLE32();
     int i;
@@ -462,7 +462,7 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
 
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
-    s->WriteByte(fIncCharacters);
+    s->WriteBool(fIncCharacters);
     s->WriteLE32(fVisRegions.GetCount());
     int i;
     for( i = 0; i < fVisRegions.GetCount(); i++ )
@@ -952,11 +952,12 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     fColor.Write(s);
 
     s->WriteLEFloat(fRefreshRate);
-    s->WriteByte(fIncCharacters);
+    s->WriteBool(fIncCharacters);
     mgr->WriteKey(s, (fCamera ? fCamera->GetKey() : nullptr));
     mgr->WriteKey(s, (fRootNode ? fRootNode->GetKey() : nullptr));
 
-    s->WriteByte(fTargetNodes.GetCount());
+    hsAssert(fTargetNodes.GetCount() < std::numeric_limits<uint8_t>::max(), "Too many target nodes");
+    s->WriteByte((uint8_t)fTargetNodes.GetCount());
     int i;
     for (i = 0; i < fTargetNodes.GetCount(); i++)
         mgr->WriteKey(s, fTargetNodes[i]);
@@ -972,8 +973,9 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     }
 
     mgr->WriteKey(s, fDisableTexture ? fDisableTexture->GetKey() : nullptr);
-    
-    s->WriteByte(fMatLayers.GetCount());
+
+    hsAssert(fMatLayers.GetCount() < std::numeric_limits<uint8_t>::max(), "Too many mat layers");
+    s->WriteByte((uint8_t)fMatLayers.GetCount());
     for (i = 0; i < fMatLayers.GetCount(); i++)
     {
         mgr->WriteKey(s, fMatLayers[i]->GetKey());

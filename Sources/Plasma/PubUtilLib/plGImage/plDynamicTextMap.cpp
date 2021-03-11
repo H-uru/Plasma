@@ -117,8 +117,8 @@ void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha
     SetConfig( hasAlpha ? kARGB32Config : kRGB32Config );
 
 
-    fVisWidth = (uint16_t)width;
-    fVisHeight = (uint16_t)height;
+    fVisWidth = width;
+    fVisHeight = height;
     fHasAlpha = hasAlpha;
     fPremultipliedAlpha = premultipliedAlpha;
 
@@ -262,8 +262,8 @@ uint32_t  plDynamicTextMap::Read( hsStream *s )
     // The funny thing is that we don't read anything like a mipmap; we just
     // keep the width and height and call Create() after we read those in
 
-    fVisWidth = (uint16_t)(s->ReadLE32());
-    fVisHeight = (uint16_t)(s->ReadLE32());
+    fVisWidth = s->ReadLE32();
+    fVisHeight = s->ReadLE32();
     fHasAlpha = s->ReadBool();
     totalRead += 2 * 4;
 

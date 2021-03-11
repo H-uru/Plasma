@@ -316,7 +316,7 @@ void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
     if (IsFlagSet(kCCRLevel))
         s->ReadLE(&fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
-        s->ReadLE(&fProtectedLogin);
+        fProtectedLogin = s->ReadBool();
     if (IsFlagSet(kBuildType))
         s->ReadLE(&fBuildType);
     if (IsFlagSet(kSrcAddr))
@@ -324,7 +324,7 @@ void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
     if (IsFlagSet(kSrcPort))
         s->ReadLE(&fSrcPort);
     if (IsFlagSet(kReserved))
-        s->ReadLE(&fReserved);
+        fReserved = s->ReadBool();
     if (IsFlagSet(kClientKey))
         plMsgStdStringHelper::Peek( fClientKey, s );
 }
@@ -343,7 +343,7 @@ void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
     if (IsFlagSet(kCCRLevel))
         s->WriteLE(fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
-        s->WriteLE(fProtectedLogin);
+        s->WriteBool(fProtectedLogin);
     if (IsFlagSet(kBuildType))
         s->WriteLE(fBuildType);
     if (IsFlagSet(kSrcAddr))
@@ -351,7 +351,7 @@ void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
     if (IsFlagSet(kSrcPort))
         s->WriteLE(fSrcPort);
     if (IsFlagSet(kReserved))
-        s->WriteLE(fReserved);
+        s->WriteBool(fReserved);
     if (IsFlagSet(kClientKey))
         plMsgStdStringHelper::Poke( fClientKey, s );
 }

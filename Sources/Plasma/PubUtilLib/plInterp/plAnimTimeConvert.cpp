@@ -285,7 +285,7 @@ plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, floa
 
     state->fStartWorldTime = fLastStateChange;
     state->fStartAnimTime = (animTime < 0 ? WorldToAnimTimeNoUpdate(fLastStateChange) : animTime);
-    state->fFlags = (uint8_t)fFlags;
+    state->fFlags = fFlags;
     state->fBegin = fBegin;
     state->fEnd = fEnd;
     state->fLoopBegin = fLoopBegin;
@@ -371,8 +371,8 @@ void plAnimTimeConvert::SetOwner(plSynchedObject* o)
     fOwner = o; 
 }
 
-bool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flags, 
-                                       const plATCEaseCurve *curve) const       
+bool plAnimTimeConvert::IIsStoppedAt(double wSecs, uint32_t flags,
+                                     const plATCEaseCurve *curve) const
 {
     if (flags & kStopped)
         return !(flags & kForcedMove); // If someone called SetCurrentAnimTime(), we need to say we moved.
@@ -816,7 +816,7 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fFlags = (uint16_t)(s->ReadLE32());
+    fFlags = s->ReadLE32();
 
     fBegin = fInitialBegin = s->ReadLEFloat();
     fEnd = fInitialEnd = s->ReadLEFloat();
@@ -1264,7 +1264,7 @@ void plATCState::Read(hsStream *s, hsResMgr *mgr)
     fStartWorldTime = s->ReadLEDouble();
     fStartAnimTime = s->ReadLEFloat();
 
-    fFlags = (uint8_t)(s->ReadLE32());
+    fFlags = s->ReadLE32();
     fEnd = s->ReadLEFloat();
     fLoopBegin = s->ReadLEFloat();
     fLoopEnd = s->ReadLEFloat();

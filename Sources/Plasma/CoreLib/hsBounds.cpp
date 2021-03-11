@@ -63,7 +63,7 @@ void hsBounds::Read(hsStream *s)
 
 void hsBounds::Write(hsStream *s) 
 {
-    s->WriteLE32((int32_t)fType);
+    s->WriteLE32((uint32_t)fType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -623,7 +623,7 @@ void hsBoundsOriented::Write(hsStream *stream)
 {
     hsBounds::Write(stream);
     fCenter.Write(stream);
-    stream->WriteLE32(fCenterValid);
+    stream->WriteBOOL(fCenterValid);
     stream->WriteLE32(fNumPlanes);
 
     for (uint32_t i = 0; i < fNumPlanes; i++)
@@ -636,7 +636,7 @@ void hsBoundsOriented::Read(hsStream *stream)
 {
     hsBounds::Read(stream);
     fCenter.Read(stream);
-    fCenterValid = (bool)stream->ReadLE32();
+    fCenterValid = stream->ReadBOOL();
     fNumPlanes = stream->ReadLE32();
     if (fPlanes)
         delete [] fPlanes;

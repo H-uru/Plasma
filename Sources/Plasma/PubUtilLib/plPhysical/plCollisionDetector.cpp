@@ -775,8 +775,8 @@ void plSwimDetector::Write(hsStream *stream, hsResMgr *mgr)
     plSimpleRegionSensor::Write(stream, mgr);
 
     stream->WriteByte(0);
-    stream->WriteLEFloat(0);
-    stream->WriteLEFloat(0);
+    stream->WriteLEFloat(0.f);
+    stream->WriteLEFloat(0.f);
 }
 
 void plSwimDetector::Read(hsStream *stream, hsResMgr *mgr)

@@ -369,7 +369,7 @@ public:
                 break;
 
             case kbool:
-                datarecord.fBool = stream->ReadLE32();
+                datarecord.fBool = stream->ReadBOOL();
                 break;
 
             case kString:
@@ -425,7 +425,7 @@ public:
                 break;
 
             case kbool:
-                stream->WriteLE32(datarecord.fBool);
+                stream->WriteBOOL(datarecord.fBool);
                 break;
 
             case kString:

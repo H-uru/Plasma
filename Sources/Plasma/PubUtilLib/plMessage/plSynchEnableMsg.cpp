@@ -54,13 +54,13 @@ plSynchEnableMsg::plSynchEnableMsg(bool push, bool enable) : fPush(push), fEnabl
 void plSynchEnableMsg::Read(hsStream* stream, hsResMgr* mgr) 
 { 
     plMessage::IMsgRead( stream, mgr ); 
-    stream->WriteLE(fEnable);
-    stream->WriteLE(fPush);
+    stream->WriteBool(fEnable);
+    stream->WriteBool(fPush);
 }
 
 void plSynchEnableMsg::Write(hsStream* stream, hsResMgr* mgr)
 { 
     plMessage::IMsgWrite( stream, mgr ); 
-    stream->ReadLE(&fEnable);
-    stream->ReadLE(&fPush);
+    fEnable = stream->ReadBool();
+    fPush = stream->ReadBool();
 }

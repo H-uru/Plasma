@@ -384,8 +384,8 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLEFloat(fRecipe.mass);
     stream->WriteLEFloat(fRecipe.friction);
     stream->WriteLEFloat(fRecipe.restitution);
-    stream->WriteByte(fRecipe.bounds);
-    stream->WriteByte(fGroup);
+    stream->WriteByte((uint8_t)fRecipe.bounds);
+    stream->WriteByte((uint8_t)fGroup);
     stream->WriteLE32(fReportsOn);
     stream->WriteLE16(fLOSDBs);
     mgr->WriteKey(stream, fObjectKey);

@@ -750,10 +750,10 @@ void plAnimStage::Write(hsStream *stream, hsResMgr *mgr)
 {
     stream->WriteSafeString(fAnimName);
     stream->WriteByte(fNotify);
-    stream->WriteLE32(fForwardType);
-    stream->WriteLE32(fBackType);
-    stream->WriteLE32(fAdvanceType);
-    stream->WriteLE32(fRegressType);
+    stream->WriteLE32((uint32_t)fForwardType);
+    stream->WriteLE32((uint32_t)fBackType);
+    stream->WriteLE32((uint32_t)fAdvanceType);
+    stream->WriteLE32((uint32_t)fRegressType);
     stream->WriteLE32(fLoops);
 
     stream->WriteBool(fDoAdvanceTo);

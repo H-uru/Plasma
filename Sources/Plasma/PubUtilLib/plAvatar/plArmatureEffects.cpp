@@ -222,7 +222,7 @@ void plArmatureEffectFootSound::Write(hsStream* s, hsResMgr* mgr)
 {
     plArmatureEffect::Write(s, mgr);
 
-    s->WriteByte(plArmatureEffectsMgr::kMaxSurface);
+    s->WriteByte((uint8_t)plArmatureEffectsMgr::kMaxSurface);
     for (size_t i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
         mgr->WriteKey(s, (fMods[i] ? fMods[i]->GetKey() : nullptr));
 }

@@ -187,11 +187,11 @@ ST::string hsStream::ReadSafeWStringLong()
 
 uint32_t hsStream::WriteSafeString(const ST::string &string)
 {
-    int len = string.size();
+    size_t len = string.size();
     hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeString {}, use WriteSafeStringLong",
         len, string).c_str() );
 
-    WriteLE16(len | 0xf000);
+    WriteLE16(static_cast<uint16_t>(len | 0xf000));
     if (len > 0)
     {
         uint32_t i;
@@ -209,11 +209,11 @@ uint32_t hsStream::WriteSafeString(const ST::string &string)
 uint32_t hsStream::WriteSafeWString(const ST::string &string)
 {
     ST::utf16_buffer wbuff = string.to_utf16();
-    uint32_t len = wbuff.size();
+    size_t len = wbuff.size();
     hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
-    WriteLE16(len | 0xf000);
+    WriteLE16(static_cast<uint16_t>(len | 0xf000));
     if (len > 0)
     {
         const char16_t *buffp = wbuff.data();
@@ -418,10 +418,10 @@ uint16_t hsStream::ReadLE16()
     return value;
 }
 
-void hsStream::ReadLE16(int count, uint16_t values[])
+void hsStream::ReadLE16(size_t count, uint16_t values[])
 {
     this->Read(count * sizeof(uint16_t), values);
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         values[i] = hsToLE16(values[i]);
 }
 
@@ -433,10 +433,10 @@ uint32_t hsStream::ReadLE32()
     return value;
 }
 
-void hsStream::ReadLE32(int count, uint32_t values[])
+void hsStream::ReadLE32(size_t count, uint32_t values[])
 {
     this->Read(count * sizeof(uint32_t), values);
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         values[i] = hsToLE32(values[i]);
 }
 
@@ -448,10 +448,10 @@ double hsStream::ReadLEDouble()
     return value;
 }
 
-void hsStream::ReadLEDouble(int count, double values[])
+void hsStream::ReadLEDouble(size_t count, double values[])
 {
     this->Read(count * sizeof(double), values);
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         values[i] = hsToLEDouble(values[i]);
 }
 
@@ -464,22 +464,22 @@ float hsStream::ReadLEFloat()
     return value;
 }
 
-void hsStream::ReadLEFloat(int count, float values[])
+void hsStream::ReadLEFloat(size_t count, float values[])
 {
     this->Read(count * sizeof(float), values);
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         values[i] = hsToLEFloat(values[i]);
 }
 
 void hsStream::WriteBOOL(bool value)
 {
-    uint32_t dst = value != 0;
+    uint32_t dst = value ? hsToLE32(1) : 0;
     this->Write(sizeof(uint32_t), &dst);
 }
 
 void hsStream::WriteBool(bool value)
 {
-    uint8_t dst = value != 0;
+    uint8_t dst = value ? 1 : 0;
     this->Write(sizeof(uint8_t), &dst);
 }
 
@@ -494,9 +494,9 @@ void  hsStream::WriteLE16(uint16_t value)
     this->Write(sizeof(int16_t), &value);
 }
 
-void  hsStream::WriteLE16(int count, const uint16_t values[])
+void  hsStream::WriteLE16(size_t count, const uint16_t values[])
 {
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         this->WriteLE16(values[i]);
 }
 
@@ -506,9 +506,9 @@ void  hsStream::WriteLE32(uint32_t value)
     this->Write(sizeof(int32_t), &value);
 }
 
-void  hsStream::WriteLE32(int count, const uint32_t values[])
+void  hsStream::WriteLE32(size_t count, const uint32_t values[])
 {
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         this->WriteLE32(values[i]);
 }
 
@@ -518,9 +518,9 @@ void hsStream::WriteLEDouble(double value)
     this->Write(sizeof(double), &value);
 }
 
-void hsStream::WriteLEDouble(int count, const double values[])
+void hsStream::WriteLEDouble(size_t count, const double values[])
 {
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         this->WriteLEDouble(values[i]);
 }
 
@@ -530,9 +530,9 @@ void hsStream::WriteLEFloat(float value)
     this->Write(sizeof(float), &value);
 }
 
-void hsStream::WriteLEFloat(int count, const float values[])
+void hsStream::WriteLEFloat(size_t count, const float values[])
 {
-    for (int i = 0; i < count; i++)
+    for (size_t i = 0; i < count; i++)
         this->WriteLEFloat(values[i]);
 }
 

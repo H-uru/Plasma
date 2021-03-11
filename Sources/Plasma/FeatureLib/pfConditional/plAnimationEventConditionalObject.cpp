@@ -90,6 +90,6 @@ void plAnimationEventConditionalObject::Write(hsStream* stream, hsResMgr* mgr)
 {
     plConditionalObject::Write(stream, mgr);
     mgr->WriteKey(stream, fTarget);
-    stream->WriteLE32(fAction); 
+    stream->WriteLE32((uint32_t)fAction);
 }
     

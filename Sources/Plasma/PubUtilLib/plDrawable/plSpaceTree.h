@@ -101,8 +101,8 @@ private:
     hsTArray<plSpaceTreeNode>       fTree;
     const hsBitVector*              fCache;
 
+    int32_t                           fNumLeaves;
     int16_t                           fRoot;
-    int16_t                           fNumLeaves;
 
     uint16_t                          fHarvestFlags;
 
@@ -176,7 +176,7 @@ public:
     bool IsDirty() const { return 0 != (GetNode(GetRoot()).fFlags & plSpaceTreeNode::kDirty); }
     void MakeDirty() { fTree[GetRoot()].fFlags |= plSpaceTreeNode::kDirty; }
 
-    int16_t GetNumLeaves() const { return fNumLeaves; }
+    int32_t GetNumLeaves() const { return fNumLeaves; }
 
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;

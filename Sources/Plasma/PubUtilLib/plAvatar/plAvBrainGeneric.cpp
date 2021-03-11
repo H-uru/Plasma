@@ -764,9 +764,9 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
     }
 
     stream->WriteLE32(fCurStage);
-    stream->WriteLE32(fType);
+    stream->WriteLE32((uint32_t)fType);
     stream->WriteLE32(fExitFlags);
-    stream->WriteByte(fMode);
+    stream->WriteByte((uint8_t)fMode);
     stream->WriteBool(fForward);
 
     if(fStartMessage) {
@@ -785,8 +785,8 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
 
     stream->WriteLEFloat(fFadeIn);
     stream->WriteLEFloat(fFadeOut);
-    stream->WriteByte(fMoveMode);
-    stream->WriteByte(fBodyUsage);
+    stream->WriteByte((uint8_t)fMoveMode);
+    stream->WriteByte((uint8_t)fBodyUsage);
     mgr->WriteKey(stream, fRecipient);
 }
 

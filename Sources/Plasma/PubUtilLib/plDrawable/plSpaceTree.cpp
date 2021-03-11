@@ -534,7 +534,7 @@ void plSpaceTree::Read(hsStream* s, hsResMgr* mgr)
 
     fRoot = s->ReadLE16();
 
-    fNumLeaves = uint16_t(s->ReadLE32());
+    fNumLeaves = s->ReadLE32();
 
     uint32_t n = s->ReadLE32();
     fTree.SetCount(n);

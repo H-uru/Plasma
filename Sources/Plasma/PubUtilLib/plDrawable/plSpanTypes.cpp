@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plSpan::Read( hsStream *stream )
 {
-    fSubType = (uint16_t)(stream->ReadLE32());
+    fSubType = stream->ReadLE32();
     fFogEnvironment = nullptr;
 
     fMaterialIdx = stream->ReadLE32();
@@ -78,7 +78,7 @@ void    plSpan::Read( hsStream *stream )
     fLocalBounds.Read( stream );
     fWorldBounds.Read( stream );
 
-    fNumMatrices = (uint8_t)(stream->ReadLE32());
+    fNumMatrices = stream->ReadLE32();
     fBaseMatrix = stream->ReadLE32();
 
     fLocalUVWChans = stream->ReadLE16();
