@@ -693,7 +693,7 @@ public:
     uint8_t GetNumFrames() const { return fNumFrames; }
     
     void SetVoiceData(const void* data, size_t len );
-    int GetVoiceDataLen() const { return fVoiceData.length(); }
+    size_t GetVoiceDataLen() const { return fVoiceData.length(); }
     const char *GetVoiceData() const;
     
     plNetMsgReceiversListHelper* Receivers() { return &fReceivers; }

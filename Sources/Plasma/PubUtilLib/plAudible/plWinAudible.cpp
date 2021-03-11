@@ -701,7 +701,7 @@ void pl2WayWinAudible::Read(hsStream* s, hsResMgr* mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 
-void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags)
+void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, size_t size, int numFrames, unsigned char flags)
 {
     if (fVoicePlayer)
         fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames, flags);
