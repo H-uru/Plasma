@@ -447,10 +447,10 @@ public:
     void SetUseTargetRotation(bool val) {fUseTargetRotation = val;}
 
 protected:
-    const static int fFileVersion; // so we don't have to update the global version number when we change
+    constexpr static uint8_t fFileVersion = 1; // so we don't have to update the global version number when we change
 
     pfFlock fFlock;
-    int fNumBoids;
+    uint8_t fNumBoids;
     plKey fBoidKey;
 
     bool fUseTargetRotation;

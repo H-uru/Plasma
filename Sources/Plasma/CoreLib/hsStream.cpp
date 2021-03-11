@@ -473,13 +473,13 @@ void hsStream::ReadLEFloat(int count, float values[])
 
 void hsStream::WriteBOOL(bool value)
 {
-    uint32_t dst = value != 0;
+    uint32_t dst = value ? hsToLE32(1) : 0;
     this->Write(sizeof(uint32_t), &dst);
 }
 
 void hsStream::WriteBool(bool value)
 {
-    uint8_t dst = value != 0;
+    uint8_t dst = value ? 1 : 0;
     this->Write(sizeof(uint8_t), &dst);
 }
 

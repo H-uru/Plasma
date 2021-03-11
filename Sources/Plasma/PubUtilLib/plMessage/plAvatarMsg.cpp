@@ -392,7 +392,7 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
 void plAvBrainGenericMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plAvatarMsg::Write(stream, mgr);
-    stream->WriteLE32(fType);
+    stream->WriteLE32((uint32_t)fType);
     stream->WriteLE32(fWhichStage);
     stream->WriteBool(fSetTime);
     stream->WriteLEFloat(fNewTime);
@@ -439,7 +439,7 @@ void plAvBrainGenericMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kAvBrainGenericType
-    s->WriteLE32(fType);
+    s->WriteLE32((uint32_t)fType);
     // kAvBrainGenericWhich 
     s->WriteLE32(fWhichStage);
     // kAvBrainGenericSetTime   

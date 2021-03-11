@@ -133,7 +133,7 @@ void plArmatureBrain::Write(hsStream *stream, hsResMgr *mgr)
     // plAvBrainUser
     stream->WriteLE32(0);
     stream->WriteLEFloat(0.f);
-    stream->WriteLEDouble(0.f);   
+    stream->WriteLEDouble(0.0);
 }
 
 void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)

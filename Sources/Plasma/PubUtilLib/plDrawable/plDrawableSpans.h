@@ -98,7 +98,7 @@ public:
         kMatrixOnly             = 0x1,
         kDontTransformSpans     = 0x2       // Only used for particle systems right now
     };
-    uint8_t               fFlags;
+    uint32_t              fFlags;
     hsTArray<uint32_t>    fIndices;
 
     bool        IsMatrixOnly() const { return 0 != (fFlags & kMatrixOnly); }

@@ -62,8 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define RAND() (float) (rand()/(RAND_MAX * 1.0))
 #define SIGN(x) (((x) < 0) ? -1 : 1)
 
-const int pfObjectFlocker::fFileVersion = 1;
-
 #define FLOCKER_SHOW_DEBUG_LINES 0
 
 #if FLOCKER_SHOW_DEBUG_LINES
@@ -915,7 +913,7 @@ bool pfObjectFlocker::MsgReceive(plMessage* msg)
         pMsg->Send();
 
         hsPoint3 pos(fTarget->GetLocalToWorld().GetTranslate());
-        for (int i = 0; i < fNumBoids; i++)
+        for (uint8_t i = 0; i < fNumBoids; i++)
         {
             plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(fBoidKey->GetUoid(), GetKey(), 0);
             plKey newKey = cloneMsg->GetCloneKey();
@@ -956,7 +954,7 @@ bool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
     fFlock.Update(fTarget, del);
 
     plSceneObject* boidSO = nullptr;
-    for (int i = 0; i < fNumBoids; i++)
+    for (uint8_t i = 0; i < fNumBoids; i++)
     {
         pfBoid* boid = fFlock.GetBoid(i);
         boidSO = plSceneObject::ConvertNoRef(boid->GetKey()->VerifyLoaded());

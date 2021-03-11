@@ -320,5 +320,5 @@ void plPXCooking::WriteTriMesh(hsStream* s, uint32_t nfaces, const uint16_t* con
         verts[i].Write(s);
     s->WriteLE32(nfaces);
     for (size_t i = 0; i < nfaces * 3; ++i)
-        s->WriteLE32(tris[i]);
+        s->WriteLE32((uint32_t)tris[i]);
 }

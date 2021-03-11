@@ -152,8 +152,8 @@ protected:
 
     float                    fPartyTime;
 
-    uint16_t                      fMaxNumVerts;
-    uint16_t                      fMaxNumIdx;
+    uint32_t                      fMaxNumVerts;
+    uint32_t                      fMaxNumIdx;
 
     uint32_t                      fWaitOnEnable;
     

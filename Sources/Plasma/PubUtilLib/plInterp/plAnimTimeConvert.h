@@ -62,7 +62,7 @@ class plAnimTimeConvert : public plCreatable
     friend class plAGAnimInstance;
 
 protected:
-    uint16_t                  fFlags;
+    uint32_t             fFlags;
     float                fBegin;
     float                fEnd;
     float                fLoopEnd;
@@ -104,14 +104,14 @@ protected:
     void        ISendCallback(hsSsize_t i);
 
     plAnimTimeConvert& IStop(double time, float animTime);
-    bool IIsStoppedAt(const double &wSecs, const uint32_t &flags, const plATCEaseCurve *curve) const;
+    bool IIsStoppedAt(double wSecs, uint32_t flags, const plATCEaseCurve *curve) const;
     plAnimTimeConvert& IProcessStateChange(double worldTime, float animTime = -1);
     void IFlushOldStates();
     void IClearAllStates();
     plATCState *IGetState(double wSecs) const;
     plATCState *IGetLatestState() const;
     
-    plAnimTimeConvert& SetFlag(uint8_t f, bool on) { if(on)fFlags |= f; else fFlags &= ~f; return *this; }
+    plAnimTimeConvert& SetFlag(uint32_t f, bool on) { if (on) fFlags |= f; else fFlags &= ~f; return *this; }
 
 public:
     plAnimTimeConvert()
@@ -164,7 +164,7 @@ public:
     void ResetWrap();
 
     plAnimTimeConvert& ClearFlags() { fFlags = kNone; return *this; }
-    bool GetFlag(uint8_t f) const { return (fFlags & f) ? true : false; }
+    bool GetFlag(uint32_t f) const { return (fFlags & f) ? true : false; }
 
     plAnimTimeConvert& InitStop(); // Called when initializing an anim that doesn't autostart
     plAnimTimeConvert& Stop(bool on);
@@ -318,7 +318,7 @@ public:
     double fStartWorldTime;
     float fStartAnimTime;
 
-    uint8_t fFlags;
+    uint32_t fFlags;
     float fBegin;
     float fEnd;
     float fLoopBegin;

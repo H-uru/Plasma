@@ -324,7 +324,7 @@ void plConeIsect::SetLength(float d)
 
 void plConeIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    fCapped = s->ReadLE32();
+    fCapped = s->ReadBOOL();
 
     fRadAngle = s->ReadLEFloat();
     fLength = s->ReadLEFloat();
@@ -346,7 +346,7 @@ void plConeIsect::Read(hsStream* s, hsResMgr* mgr)
 
 void plConeIsect::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteLE32(fCapped);
+    s->WriteBOOL(fCapped);
 
     s->WriteLEFloat(fRadAngle);
     s->WriteLEFloat(fLength);

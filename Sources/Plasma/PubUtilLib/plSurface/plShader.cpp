@@ -304,7 +304,7 @@ void plShader::Write(hsStream* s, hsResMgr* mgr)
     for (const plShaderConst& konst : fConsts)
         konst.Write(s);
 
-    s->WriteLE32(fDecl->GetID());
+    s->WriteLE32((uint32_t)fDecl->GetID());
 
     s->WriteByte(fInput);
     s->WriteByte(fOutput);

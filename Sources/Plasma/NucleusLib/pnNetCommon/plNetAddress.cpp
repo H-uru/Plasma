@@ -96,5 +96,5 @@ void plNetAddress::Write(hsStream * s)
     s->WriteLE16(fPort);
 
     // Family is always AF_INET
-    s->WriteLE16(AF_INET);
+    s->WriteLE16((uint16_t)AF_INET);
 }

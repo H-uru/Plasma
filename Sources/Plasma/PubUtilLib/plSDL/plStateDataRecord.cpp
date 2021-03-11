@@ -80,13 +80,13 @@ void plSDL::VariableLengthWrite(hsStream* s, int size, int val)
     if (size < (1<<8))
     {
         hsAssert(val < (1<<8), "SDL data loss");
-        s->WriteByte(val);
+        s->WriteByte((uint8_t)val);
     }
     else
     if (size < (1<<16))
     {
         hsAssert(val < (1<<16), "SDL data loss");
-        s->WriteLE16(val);
+        s->WriteLE16((uint16_t)val);
     }
     else
         s->WriteLE32(val);

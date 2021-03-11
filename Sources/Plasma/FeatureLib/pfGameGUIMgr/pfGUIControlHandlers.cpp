@@ -64,7 +64,7 @@ void    pfGUICtrlProcWriteableObject::Write( pfGUICtrlProcWriteableObject *obj, 
         obj->IWrite( s );
     }
     else
-        s->WriteLE32( kNull );
+        s->WriteLE32((uint32_t)kNull);
 }
 
 pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )

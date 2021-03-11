@@ -459,11 +459,11 @@ int plNetMsgGameMessage::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     {
         if (fDeliveryTime.AtEpoch())
         {
-            stream->WriteByte(0);   // not sending
+            stream->WriteBool(false);   // not sending
         }
         else
         {
-            stream->WriteByte(1);   // sending
+            stream->WriteBool(true);   // sending
             fDeliveryTime.Write(stream);
         }
         bytes=stream->GetPosition();
@@ -476,7 +476,7 @@ int plNetMsgGameMessage::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     int bytes=plNetMsgStream::IPeekBuffer(stream, peekOptions);
     if (bytes)
     {
-        if (stream->ReadByte())
+        if (stream->ReadBool())
             fDeliveryTime.Read(stream);
         bytes=stream->GetPosition();
     }
@@ -499,7 +499,7 @@ void plNetMsgGameMessage::ReadVersion(hsStream* s, hsResMgr* mgr)
     
     if (contentFlags.IsBitSet(kNetGameMsgDeliveryTime))
     {
-        if (s->ReadByte())
+        if (s->ReadBool())
             fDeliveryTime.Read(s);
     }
     
@@ -530,11 +530,11 @@ void plNetMsgGameMessage::WriteVersion(hsStream* s, hsResMgr* mgr)
     // kNetGameMsgDeliveryTime
     if (fDeliveryTime.AtEpoch())
     {
-        s->WriteByte(0);    // not sending
+        s->WriteBool(false);    // not sending
     }
     else
     {
-        s->WriteByte(1);    // sending
+        s->WriteBool(true);    // sending
         fDeliveryTime.Write(s);
     }
     
@@ -1121,7 +1121,7 @@ int plNetMsgMemberUpdate::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
         fMemberInfo.GetClientGuid()->SetClientKey("");
         fMemberInfo.GetClientGuid()->SetAccountUUID(plUUID());
         fMemberInfo.Poke(stream, peekOptions);
-        stream->WriteByte(fAddMember);
+        stream->WriteBool(fAddMember);
         
         bytes=stream->GetPosition();
     }
@@ -1134,7 +1134,7 @@ int plNetMsgMemberUpdate::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     if (bytes)
     {
         fMemberInfo.Peek(stream, peekOptions);
-        fAddMember = stream->ReadByte();
+        fAddMember = stream->ReadBool();
         
         bytes=stream->GetPosition();
     }

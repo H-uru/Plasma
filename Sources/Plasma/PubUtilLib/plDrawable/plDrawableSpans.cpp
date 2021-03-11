@@ -1067,7 +1067,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     {
         fDIIndices[ i ] = new plDISpanIndex;
         
-        fDIIndices[ i ]->fFlags = (uint8_t)(s->ReadLE32());
+        fDIIndices[i]->fFlags = s->ReadLE32();
         count2 = s->ReadLE32();
         fDIIndices[ i ]->SetCountAndZero( count2 );
         for( j = 0; j < count2; j++ )

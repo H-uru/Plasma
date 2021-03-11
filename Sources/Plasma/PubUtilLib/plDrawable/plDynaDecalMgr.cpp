@@ -210,8 +210,8 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
     }
 
-    fMaxNumVerts = (uint16_t)(stream->ReadLE32());
-    fMaxNumIdx = (uint16_t)(stream->ReadLE32());
+    fMaxNumVerts = stream->ReadLE32();
+    fMaxNumIdx = stream->ReadLE32();
 
     fWaitOnEnable = stream->ReadLE32();
 
