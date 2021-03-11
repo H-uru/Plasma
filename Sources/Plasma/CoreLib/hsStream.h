@@ -121,34 +121,20 @@ public:
     /* yes, swapping an 8 bit value does nothing, just useful*/
     void            ReadLE(bool* value) { *value = this->ReadByte() ? true : false; }
     void            ReadLE(uint8_t* value) { *value = this->ReadByte(); }
-    void            ReadLE(int count, uint8_t values[]) { this->Read(count, values); }
     void            ReadLE(uint16_t* value) { *value = this->ReadLE16(); }
-    void            ReadLE(int count, uint16_t values[]) { this->ReadLE16(count, values); }
     void            ReadLE(uint32_t* value) { *value = this->ReadLE32(); }
-    void            ReadLE(int count, uint32_t values[]) { this->ReadLE32(count, values); }
     void            WriteLE(bool value) { this->Write(1,&value); }
     void            WriteLE(uint8_t value) { this->Write(1,&value); }
-    void            WriteLE(int count, const uint8_t values[]) { this->Write(count, values); }
     void            WriteLE(uint16_t value) { this->WriteLE16(value); }
-    void            WriteLE(int count, const uint16_t values[]) { this->WriteLE16(count, values); }
     void            WriteLE(uint32_t value) { this->WriteLE32(value); }
-    void            WriteLE(int count, const  uint32_t values[]) { this->WriteLE32(count, values); }
     void            ReadLE(int8_t* value) { *value = this->ReadByte(); }
-    void            ReadLE(int count, int8_t values[]) { this->Read(count, values); }
     void            ReadLE(char* value) { *value = (char)this->ReadByte(); }
-    void            ReadLE(int count, char values[]) { this->Read(count, values); }
     void            ReadLE(int16_t* value) { *value = (int16_t)this->ReadLE16(); }
-    void            ReadLE(int count, int16_t values[]) { this->ReadLE16(count, (uint16_t*)values); }
     void            ReadLE(int32_t* value) { *value = (int32_t)this->ReadLE32(); }
-    void            ReadLE(int count, int32_t values[]) { this->ReadLE32(count, (uint32_t*)values); }
     void            WriteLE(int8_t value) { this->Write(1,&value); }
-    void            WriteLE(int count, const int8_t values[]) { this->Write(count, values); }
     void            WriteLE(char value) { this->Write(1,(uint8_t*)&value); }
-    void            WriteLE(int count, const char values[]) { this->Write(count, (uint8_t*)values); }
     void            WriteLE(int16_t value) { this->WriteLE16((uint16_t)value); }
-    void            WriteLE(int count, const int16_t values[]) { this->WriteLE16(count, (uint16_t*)values); }
     void            WriteLE(int32_t value) { this->WriteLE32((uint32_t)value); }
-    void            WriteLE(int count, const  int32_t values[]) { this->WriteLE32(count, (uint32_t*)values); }
     /* Overloaded  End */
 
 
@@ -164,13 +150,9 @@ public:
 
     /* Overloaded  Begin (Float)*/
     void            ReadLE(float* value) { *value = ReadLEFloat(); }
-    void            ReadLE(int count, float values[]) { ReadLEFloat(count, values); }
     void            ReadLE(double* value) { *value = ReadLEDouble(); }
-    void            ReadLE(int count, double values[]) { ReadLEDouble(count, values); }
     void            WriteLE(float value) { WriteLEFloat(value); }
-    void            WriteLE(int count, const float values[]) { WriteLEFloat(count, values); }
     void            WriteLE(double value) { WriteLEDouble(value); }
-    void            WriteLE(int count, const double values[]) { WriteLEDouble(count, values); }
     /* Overloaded End */
 };
 
