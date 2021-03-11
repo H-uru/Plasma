@@ -2595,8 +2595,8 @@ void hsBounds3Ext::Read(hsStream *s)
         for( i = 0; i < 3; i++ )
         {
             fAxes[i].Read(s);
-            fDists[i].fX = s->ReadLEScalar();
-            fDists[i].fY = s->ReadLEScalar();
+            fDists[i].fX = s->ReadLEFloat();
+            fDists[i].fY = s->ReadLEFloat();
         }
         IMakeMinsMaxs();
         IMakeDists();
@@ -2616,14 +2616,14 @@ void hsBounds3Ext::Write(hsStream *s)
             fAxes[i].Write(s);
             if( fExtFlags & kDistsSet )
             {
-                s->WriteLEScalar(fDists[i].fX);
-                s->WriteLEScalar(fDists[i].fY);
+                s->WriteLEFloat(fDists[i].fX);
+                s->WriteLEFloat(fDists[i].fY);
             }
             else
             {
                 // Playing nice with binary patches--writing uninited values BAD!
-                s->WriteLEScalar( 0.f );
-                s->WriteLEScalar( 0.f );
+                s->WriteLEFloat(0.f);
+                s->WriteLEFloat(0.f);
             }
         }
     }

@@ -119,16 +119,16 @@ void plFadeOpacityMod::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    fFadeUp = s->ReadLEScalar();
-    fFadeDown = s->ReadLEScalar();
+    fFadeUp = s->ReadLEFloat();
+    fFadeDown = s->ReadLEFloat();
 }
 
 void plFadeOpacityMod::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    s->WriteLEScalar(fFadeUp);
-    s->WriteLEScalar(fFadeDown);
+    s->WriteLEFloat(fFadeUp);
+    s->WriteLEFloat(fFadeDown);
 }
 
 void plFadeOpacityMod::SetTarget(plSceneObject* so)

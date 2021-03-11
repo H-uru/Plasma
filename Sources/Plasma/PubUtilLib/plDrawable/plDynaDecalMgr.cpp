@@ -215,20 +215,20 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
 
     fWaitOnEnable = stream->ReadLE32();
 
-    fIntensity = stream->ReadLEScalar();
+    fIntensity = stream->ReadLEFloat();
     fInitAtten = fIntensity;
 
-    fWetLength = stream->ReadLEScalar();
-    fRampEnd = stream->ReadLEScalar();
-    fDecayStart = stream->ReadLEScalar();
-    fLifeSpan = stream->ReadLEScalar();
+    fWetLength = stream->ReadLEFloat();
+    fRampEnd = stream->ReadLEFloat();
+    fDecayStart = stream->ReadLEFloat();
+    fLifeSpan = stream->ReadLEFloat();
 
-    fGridSizeU = stream->ReadLEScalar();
-    fGridSizeV = stream->ReadLEScalar();
+    fGridSizeU = stream->ReadLEFloat();
+    fGridSizeV = stream->ReadLEFloat();
 
     fScale.Read(stream);
 
-    fPartyTime = stream->ReadLEScalar();
+    fPartyTime = stream->ReadLEFloat();
 
     n = stream->ReadLE32();
     fNotifies.SetCount(n);
@@ -275,19 +275,19 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
 
     stream->WriteLE32(fWaitOnEnable);
 
-    stream->WriteLEScalar(fIntensity);
+    stream->WriteLEFloat(fIntensity);
 
-    stream->WriteLEScalar(fWetLength);
-    stream->WriteLEScalar(fRampEnd);
-    stream->WriteLEScalar(fDecayStart);
-    stream->WriteLEScalar(fLifeSpan);
+    stream->WriteLEFloat(fWetLength);
+    stream->WriteLEFloat(fRampEnd);
+    stream->WriteLEFloat(fDecayStart);
+    stream->WriteLEFloat(fLifeSpan);
 
-    stream->WriteLEScalar(fGridSizeU);
-    stream->WriteLEScalar(fGridSizeV);
+    stream->WriteLEFloat(fGridSizeU);
+    stream->WriteLEFloat(fGridSizeV);
 
     fScale.Write(stream);
 
-    stream->WriteLEScalar(fPartyTime);
+    stream->WriteLEFloat(fPartyTime);
 
     stream->WriteLE32(fNotifies.GetCount());
     for( i = 0; i < fNotifies.GetCount(); i++ )

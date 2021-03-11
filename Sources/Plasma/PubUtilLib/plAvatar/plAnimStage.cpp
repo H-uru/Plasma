@@ -766,8 +766,8 @@ void plAnimStage::Write(hsStream *stream, hsResMgr *mgr)
 // SAVEAUX
 void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
 {
-    stream->WriteLEScalar(fLocalTime);
-    stream->WriteLEScalar(fLength);
+    stream->WriteLEFloat(fLocalTime);
+    stream->WriteLEFloat(fLength);
     stream->WriteLE32(fCurLoop);
     stream->WriteBool(fAttached);
     // no ephemeral stage at the moment
@@ -776,8 +776,8 @@ void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
 // LOADAUX
 void plAnimStage::LoadAux(hsStream *stream, hsResMgr *mgr, double time)
 {
-    fLocalTime = stream->ReadLEScalar();
-    fLength = stream->ReadLEScalar();
+    fLocalTime = stream->ReadLEFloat();
+    fLength = stream->ReadLEFloat();
     fCurLoop = stream->ReadLE32();
     fAttached = stream->ReadBool();
 }

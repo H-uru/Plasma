@@ -1719,10 +1719,10 @@ void plCameraBrain1_Circle::Write(hsStream* stream, hsResMgr* mgr)
     plCameraBrain1::Write(stream, mgr);
     stream->WriteLE32(GetCircleFlags());
     fCenter.Write(stream);
-    stream->WriteLEScalar(GetRadius());
+    stream->WriteLEFloat(GetRadius());
     mgr->WriteKey(stream, fCenterObject);
     mgr->WriteKey(stream, fPOAObj);
-    stream->WriteLEScalar(fCirPerSec);
+    stream->WriteLEFloat(fCirPerSec);
 }
 
 void plCameraBrain1_Circle::Read(hsStream* stream, hsResMgr* mgr)
@@ -1738,12 +1738,12 @@ void plCameraBrain1_Circle::Read(hsStream* stream, hsResMgr* mgr)
     }
 
     fCenter.Read(stream);
-    SetRadius(stream->ReadLEScalar());
+    SetRadius(stream->ReadLEFloat());
     plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kCircleTarget ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg, plRefFlags::kActiveRef );
     plGenRefMsg* msg2 = new plGenRefMsg( GetKey(), plRefMsg::kOnRequest, 0, kPOAObject ); // SceneObject
     mgr->ReadKeyNotifyMe( stream, msg2, plRefFlags::kActiveRef );
-    fCirPerSec = stream->ReadLEScalar();
+    fCirPerSec = stream->ReadLEFloat();
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
 }
 

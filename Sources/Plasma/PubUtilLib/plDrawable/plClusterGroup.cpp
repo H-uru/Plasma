@@ -321,12 +321,12 @@ size_t plClusterGroup::NumInst() const
 
 void plLODDist::Read(hsStream* s)
 {
-    fMinDist = s->ReadLEScalar();
-    fMaxDist = s->ReadLEScalar();
+    fMinDist = s->ReadLEFloat();
+    fMaxDist = s->ReadLEFloat();
 }
 
 void plLODDist::Write(hsStream* s) const
 {
-    s->WriteLEScalar(fMinDist);
-    s->WriteLEScalar(fMaxDist);
+    s->WriteLEFloat(fMinDist);
+    s->WriteLEFloat(fMaxDist);
 }

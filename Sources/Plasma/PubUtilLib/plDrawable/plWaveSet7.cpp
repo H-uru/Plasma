@@ -331,7 +331,7 @@ void plWaveSet7::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMultiModifier::Read(stream, mgr);
 
-    fMaxLen = stream->ReadLEScalar();
+    fMaxLen = stream->ReadLEFloat();
 
     fState.Read(stream);
     IUpdateWindDir(0);
@@ -372,7 +372,7 @@ void plWaveSet7::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMultiModifier::Write(stream, mgr);
 
-    stream->WriteLEScalar(fMaxLen);
+    stream->WriteLEFloat(fMaxLen);
 
     fState.Write(stream);
 

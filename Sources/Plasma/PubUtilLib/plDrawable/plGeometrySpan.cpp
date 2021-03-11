@@ -521,8 +521,8 @@ void    plGeometrySpan::Read( hsStream *stream )
     fMaxBoneIdx = stream->ReadLE16();
     fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadLEScalar();
-    fMaxDist = stream->ReadLEScalar();
+    fMinDist = stream->ReadLEFloat();
+    fMaxDist = stream->ReadLEFloat();
 
     fFormat = stream->ReadByte();
     fProps = stream->ReadLE32();
@@ -537,7 +537,7 @@ void    plGeometrySpan::Read( hsStream *stream )
     fDecalLevel = stream->ReadLE32();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadLEScalar();
+        fWaterHeight = stream->ReadLEFloat();
 
     if( fNumVerts > 0 )
     {
@@ -613,8 +613,8 @@ void    plGeometrySpan::Write( hsStream *stream )
     stream->WriteLE16(fMaxBoneIdx);
     stream->WriteLE16((uint16_t)fPenBoneIdx);
 
-    stream->WriteLEScalar(fMinDist);
-    stream->WriteLEScalar(fMaxDist);
+    stream->WriteLEFloat(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
 
     stream->WriteByte( fFormat );
     stream->WriteLE32( fProps );
@@ -629,7 +629,7 @@ void    plGeometrySpan::Write( hsStream *stream )
     stream->WriteLE32( fDecalLevel );
 
     if( fProps & kWaterHeight )
-        stream->WriteLEScalar(fWaterHeight);
+        stream->WriteLEFloat(fWaterHeight);
 
     if( fNumVerts > 0 )
     {

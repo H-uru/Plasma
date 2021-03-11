@@ -261,7 +261,7 @@ void plMorphDelta::SetDeltas(size_t iSpan, const std::vector<plVertDelta>& delta
 
 void plMorphDelta::Read(hsStream* s, hsResMgr* mgr)
 {
-    fWeight = s->ReadLEScalar();
+    fWeight = s->ReadLEFloat();
 
     uint32_t n = s->ReadLE32();
     SetNumSpans(n);
@@ -282,7 +282,7 @@ void plMorphDelta::Read(hsStream* s, hsResMgr* mgr)
 
 void plMorphDelta::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteLEScalar(fWeight);
+    s->WriteLEFloat(fWeight);
 
     s->WriteLE32((uint32_t)fSpans.size());
 

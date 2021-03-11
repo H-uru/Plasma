@@ -659,18 +659,18 @@ void plLimitedDirLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plDirectionalLightInfo::Read(s, mgr);
 
-    fWidth = s->ReadLEScalar();
-    fHeight = s->ReadLEScalar();
-    fDepth = s->ReadLEScalar();
+    fWidth = s->ReadLEFloat();
+    fHeight = s->ReadLEFloat();
+    fDepth = s->ReadLEFloat();
 }
 
 void plLimitedDirLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plDirectionalLightInfo::Write(s, mgr);
 
-    s->WriteLEScalar(fWidth);
-    s->WriteLEScalar(fHeight);
-    s->WriteLEScalar(fDepth);
+    s->WriteLEFloat(fWidth);
+    s->WriteLEFloat(fHeight);
+    s->WriteLEFloat(fDepth);
 }
 
 void plLimitedDirLightInfo::IMakeIsect()
@@ -844,20 +844,20 @@ void plOmniLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plLightInfo::Read(s, mgr);
 
-    fAttenConst = s->ReadLEScalar();
-    fAttenLinear = s->ReadLEScalar();
-    fAttenQuadratic = s->ReadLEScalar();
-    fAttenCutoff = s->ReadLEScalar();
+    fAttenConst = s->ReadLEFloat();
+    fAttenLinear = s->ReadLEFloat();
+    fAttenQuadratic = s->ReadLEFloat();
+    fAttenCutoff = s->ReadLEFloat();
 }
 
 void plOmniLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plLightInfo::Write(s, mgr);
 
-    s->WriteLEScalar(fAttenConst);
-    s->WriteLEScalar(fAttenLinear);
-    s->WriteLEScalar(fAttenQuadratic);
-    s->WriteLEScalar( fAttenCutoff );
+    s->WriteLEFloat(fAttenConst);
+    s->WriteLEFloat(fAttenLinear);
+    s->WriteLEFloat(fAttenQuadratic);
+    s->WriteLEFloat(fAttenCutoff);
 }
 
 
@@ -974,18 +974,18 @@ void plSpotLightInfo::Read(hsStream* s, hsResMgr* mgr)
 {
     plOmniLightInfo::Read(s, mgr);
 
-    fFalloff = s->ReadLEScalar();
-    fSpotInner = s->ReadLEScalar();
-    fSpotOuter = s->ReadLEScalar();
+    fFalloff = s->ReadLEFloat();
+    fSpotInner = s->ReadLEFloat();
+    fSpotOuter = s->ReadLEFloat();
 }
 
 void plSpotLightInfo::Write(hsStream* s, hsResMgr* mgr)
 {
     plOmniLightInfo::Write(s, mgr);
 
-    s->WriteLEScalar(fFalloff);
-    s->WriteLEScalar(fSpotInner);
-    s->WriteLEScalar(fSpotOuter);
+    s->WriteLEFloat(fFalloff);
+    s->WriteLEFloat(fSpotInner);
+    s->WriteLEFloat(fSpotOuter);
 }
 
 

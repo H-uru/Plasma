@@ -80,15 +80,15 @@ void plParticleTransferMsg::Write(hsStream* stream, hsResMgr* mgr)
 void plParticleKillMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    fNumToKill = stream->ReadLEScalar();
-    fTimeLeft = stream->ReadLEScalar();
+    fNumToKill = stream->ReadLEFloat();
+    fTimeLeft = stream->ReadLEFloat();
     stream->ReadLE(&fFlags);
 }
 
 void plParticleKillMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLEScalar(fNumToKill);
-    stream->WriteLEScalar(fTimeLeft);
+    stream->WriteLEFloat(fNumToKill);
+    stream->WriteLEFloat(fTimeLeft);
     stream->WriteLE(fFlags);
 }

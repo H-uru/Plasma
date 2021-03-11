@@ -52,18 +52,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Little shader const helper
 void plShaderConst::Read(hsStream* s)
 {
-    fX = s->ReadLEScalar();
-    fY = s->ReadLEScalar();
-    fZ = s->ReadLEScalar();
-    fW = s->ReadLEScalar();
+    fX = s->ReadLEFloat();
+    fY = s->ReadLEFloat();
+    fZ = s->ReadLEFloat();
+    fW = s->ReadLEFloat();
 }
 
 void plShaderConst::Write(hsStream* s) const
 {
-    s->WriteLEScalar(fX);
-    s->WriteLEScalar(fY);
-    s->WriteLEScalar(fZ);
-    s->WriteLEScalar(fW);
+    s->WriteLEFloat(fX);
+    s->WriteLEFloat(fY);
+    s->WriteLEFloat(fZ);
+    s->WriteLEFloat(fW);
 }
 
 //////////////////////////////////////////////////////////////////////////////////

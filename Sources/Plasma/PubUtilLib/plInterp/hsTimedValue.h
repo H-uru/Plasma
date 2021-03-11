@@ -102,15 +102,15 @@ void hsTimedValue<T>::WriteScalar(hsStream* s, float currSecs)
 {
     s->WriteLE32(fFlags);
 
-    s->WriteLEScalar(fValue);
+    s->WriteLEFloat(fValue);
     
     if( !(fFlags & kIdle) )
     {
-        s->WriteLEScalar(fDuration);
-        s->WriteLEScalar(currSecs - fStartTime);
+        s->WriteLEFloat(fDuration);
+        s->WriteLEFloat(currSecs - fStartTime);
 
-        s->WriteLEScalar(fGoal);
-        s->WriteLEScalar(fFrom);
+        s->WriteLEFloat(fGoal);
+        s->WriteLEFloat(fFrom);
     }
 }
 
@@ -123,8 +123,8 @@ void hsTimedValue<T>::Write(hsStream* s, float currSecs)
     
     if( !(fFlags & kIdle) )
     {
-        s->WriteLEScalar(fDuration);
-        s->WriteLEScalar(currSecs - fStartTime);
+        s->WriteLEFloat(fDuration);
+        s->WriteLEFloat(currSecs - fStartTime);
 
         fGoal.Write(s);
         fFrom.Write(s);
@@ -136,15 +136,15 @@ void hsTimedValue<T>::ReadScalar(hsStream* s, float currSecs)
 {
     fFlags = s->ReadLE32();
 
-    fValue = s->ReadLEScalar();
+    fValue = s->ReadLEFloat();
 
     if( !(fFlags & kIdle) )
     {
-        fDuration = s->ReadLEScalar();
-        fStartTime = currSecs - s->ReadLEScalar();
+        fDuration = s->ReadLEFloat();
+        fStartTime = currSecs - s->ReadLEFloat();
 
-        fGoal = s->ReadLEScalar();
-        fFrom = s->ReadLEScalar();
+        fGoal = s->ReadLEFloat();
+        fFrom = s->ReadLEFloat();
     }
 }
 
@@ -157,8 +157,8 @@ void hsTimedValue<T>::Read(hsStream* s, float currSecs)
 
     if( !(fFlags & kIdle) )
     {
-        fDuration = s->ReadLEScalar();
-        fStartTime = currSecs - s->ReadLEScalar();
+        fDuration = s->ReadLEFloat();
+        fStartTime = currSecs - s->ReadLEFloat();
 
         fGoal.Read(s);
         fFrom.Read(s);

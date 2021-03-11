@@ -186,24 +186,19 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
 {
     IClearItems();
 
-    s->LogSubStreamStart("CreatableListHelper");
-
-    s->LogReadLE( &fFlags, "Flags" );
+    s->ReadLE(&fFlags);
 
     fFlags &= ~kWritten;
 
-    uint32_t bufSz;
-    s->LogReadLE( &bufSz, "BufSz" );
+    uint32_t bufSz = s->ReadLE32();
     std::string buf;
     buf.resize( bufSz );
 
     if ( fFlags&kCompressed )
     {
-        uint32_t zBufSz;
-        s->LogReadLE( &zBufSz, "Compressed BufSz" );
+        uint32_t zBufSz = s->ReadLE32();
         std::string zBuf;
         zBuf.resize( zBufSz );
-        s->LogSubStreamPushDesc("Compressed Data");
         s->Read( zBufSz, (void*)zBuf.data() );
         plZlibCompress compressor;
         uint32_t tmp = bufSz;
@@ -215,7 +210,6 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
     }
     else
     {
-        s->LogSubStreamPushDesc("Uncompressed Data");
         s->Read( bufSz, (void*)buf.data() );
     }
 

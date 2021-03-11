@@ -128,10 +128,10 @@ void plCullPoly::Read(hsStream* s, hsResMgr* mgr)
     fFlags = s->ReadLE32();
 
     fNorm.Read(s);
-    fDist = s->ReadLEScalar();
+    fDist = s->ReadLEFloat();
     fCenter.Read(s);
 
-    fRadius = s->ReadLEScalar();
+    fRadius = s->ReadLEFloat();
 
     uint32_t n = s->ReadLE32();
     fVerts.resize(n);
@@ -144,10 +144,10 @@ void plCullPoly::Write(hsStream* s, hsResMgr* mgr) const
     s->WriteLE32(fFlags);
 
     fNorm.Write(s);
-    s->WriteLEScalar(fDist);
+    s->WriteLEFloat(fDist);
     fCenter.Write(s);
 
-    s->WriteLEScalar(fRadius);
+    s->WriteLEFloat(fRadius);
 
     s->WriteLE32((uint32_t)fVerts.size());
     for (const hsPoint3& vert : fVerts)

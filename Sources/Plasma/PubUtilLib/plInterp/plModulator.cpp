@@ -111,13 +111,13 @@ float plModulator::Modulation(const hsPoint3& pos) const
 void plModulator::Read(hsStream* s, hsResMgr* mgr)
 {
     fVolume = plVolumeIsect::ConvertNoRef(mgr->ReadCreatable(s));
-    fSoftDist = s->ReadLEScalar();
+    fSoftDist = s->ReadLEFloat();
 }
 
 void plModulator::Write(hsStream* s, hsResMgr* mgr)
 {
     mgr->WriteCreatable(s, fVolume);
-    s->WriteLEScalar(fSoftDist);
+    s->WriteLEFloat(fSoftDist);
 }
 
 

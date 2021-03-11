@@ -186,20 +186,20 @@ void plBlower::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    fMasterPower = s->ReadLEScalar();
-    fDirectRate = s->ReadLEScalar();
-    fImpulseRate = s->ReadLEScalar();
-    fSpringKonst = s->ReadLEScalar();
+    fMasterPower = s->ReadLEFloat();
+    fDirectRate = s->ReadLEFloat();
+    fImpulseRate = s->ReadLEFloat();
+    fSpringKonst = s->ReadLEFloat();
 }
 
 void plBlower::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    s->WriteLEScalar(fMasterPower);
-    s->WriteLEScalar(fDirectRate);
-    s->WriteLEScalar(fImpulseRate);
-    s->WriteLEScalar(fSpringKonst);
+    s->WriteLEFloat(fMasterPower);
+    s->WriteLEFloat(fDirectRate);
+    s->WriteLEFloat(fImpulseRate);
+    s->WriteLEFloat(fSpringKonst);
 }
 
 void plBlower::IInitOscillators()
