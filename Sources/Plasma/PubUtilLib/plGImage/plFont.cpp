@@ -746,7 +746,7 @@ void    plFont::IRenderLoop( const wchar_t *string, int32_t maxCount )
 void    plFont::IRenderChar1To32( const plFont::plCharacter &c )
 {
     uint8_t   bitMask, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     uint16_t  x, y;
 
     
