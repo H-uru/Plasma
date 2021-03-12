@@ -369,9 +369,8 @@ int plNetClientMgr::IPrepMsg(plNetMessage* msg)
             int i;
             for(i=0;i<rl->GetNumReceivers();i++)
             {
-                hsSsize_t idx = fTransport.FindMember(rl->GetReceiverPlayerID(i));
-                hsAssert(idx!=-1, "error finding transport mbr");
-                plNetTransportMember* tm = fTransport.GetMember(idx);
+                plNetTransportMember* tm = fTransport.GetMemberByID(rl->GetReceiverPlayerID(i));
+                hsAssert(tm, "error finding transport mbr");
                 if (tm->IsPeerToPeer())
                     fTransport.SubscribeToChannelGrp(tm, kNetChanListenListUpdate);
             }
@@ -1067,8 +1066,7 @@ ST::string plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     if (NetCommGetPlayer()->playerInt == playerId)
         return NetCommGetPlayer()->playerName;
 
-    hsSsize_t mbrIdx = TransportMgr().FindMember(playerId);
-    plNetTransportMember * mbr = mbrIdx >= 0 ? TransportMgr().GetMember(mbrIdx) : nullptr;
+    plNetTransportMember* mbr = TransportMgr().GetMemberByID(playerId);
     return mbr ? mbr->GetPlayerName() : ST::string();
 }
 
@@ -1287,12 +1285,12 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
             {
                 hsLogEntry(DebugMsg("Adding REMOTE player {}\n", playerKey->GetName()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupRemotePlayer);
-                hsSsize_t mbrIdx = fTransport.FindMember(playerMsg->fClientID);
-                if (mbrIdx != -1)
+                plNetTransportMember* mbr = fTransport.GetMemberByID(playerMsg->fClientID);
+                if (mbr)
                 {
                     hsAssert(playerKey, "NIL KEY?");
                     hsAssert(!playerKey->GetName().empty(), "UNNAMED KEY");
-                    fTransport.GetMember(mbrIdx)->SetAvatarKey(playerKey);
+                    mbr->SetAvatarKey(playerKey);
                 }
                 else
                 {

@@ -368,8 +368,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
             // Debug
             if (m->GetHasPlayerID())
             {
-                hsSsize_t idx = nc->fTransport.FindMember(m->GetPlayerID());
-                plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nullptr;
+                plNetTransportMember* mbr = nc->fTransport.GetMemberByID(m->GetPlayerID());
                 if (mbr)
                     mbr->SetTransportFlags(mbr->GetTransportFlags() | plNetTransportMember::kSendingActions);
             }
@@ -402,8 +401,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
         return hsOK;
     }
 
-    hsSsize_t idx = nc->fTransport.FindMember(m->GetPlayerID());
-    plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nullptr;
+    plNetTransportMember* mbr = nc->fTransport.GetMemberByID(m->GetPlayerID());
 
     if (mbr) {
         key = mbr->GetAvatarKey();
@@ -533,8 +531,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
         m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
-    hsSsize_t idx = nc->fTransport.FindMember(m->GetPlayerID());
-    plNetTransportMember* tm = (idx == -1 ? nullptr : nc->fTransport.GetMember(idx));
+    plNetTransportMember* tm = nc->fTransport.GetMemberByID(m->GetPlayerID());
     if(!tm)
     {
 #if 0

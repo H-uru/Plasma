@@ -81,6 +81,7 @@ public:
     void RemoveMember(size_t idx);                              // from master list and all channels
     size_t GetNumMembers() const { return fMembers.size(); }
     plNetTransportMember* GetMember(size_t i) const { return i < fMembers.size() ? fMembers[i] : nullptr; }
+    plNetTransportMember* GetMemberByID(uint32_t playerID) const;
     const std::vector<plNetTransportMember*>& GetMemberList() const { return fMembers; }
     void ClearMembers();
 

@@ -1505,9 +1505,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg) {
         if (!VaultAmIgnoringPlayer(pkimsg->GetPlayerID())) {
             PyObject* player;
-            hsSsize_t mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pkimsg->GetPlayerID());
-            if (mbrIndex != -1) {
-                plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
+            plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMemberByID(pkimsg->GetPlayerID());
+            if (mbr) {
                 player = pyPlayer::New(mbr->GetAvatarKey(), pkimsg->GetUser(), mbr->GetPlayerID(), mbr->GetDistSq());
             } else {
                 // else if we could not find the player in our list, then just return a string of the user's name

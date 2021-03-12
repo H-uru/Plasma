@@ -130,6 +130,12 @@ void plNetTransport::RemoveMember(plNetTransportMember* mbr)
     IRemoveMember(mbr);
 }
 
+plNetTransportMember* plNetTransport::GetMemberByID(uint32_t playerID) const
+{
+    hsSsize_t memberIdx = FindMember(playerID);
+    return (memberIdx < 0) ? nullptr : fMembers[memberIdx];
+}
+
 //
 // return array index or -1
 //
