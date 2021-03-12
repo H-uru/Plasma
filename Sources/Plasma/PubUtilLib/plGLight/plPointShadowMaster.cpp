@@ -96,6 +96,10 @@ static inline void InverseOfPureRotTran(const hsMatrix44& src, hsMatrix44& inv)
 // Point first
 ////////////////////////////////////////////////////////////////////////////////////
 
+plPointShadowMaster::plPointShadowMaster()
+{
+}
+
 plPointShadowMaster::~plPointShadowMaster()
 {
 }
