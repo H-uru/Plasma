@@ -101,7 +101,7 @@ void    plGBufferCell::Read( hsStream *s )
     fLength = s->ReadLE32();
 }
 
-void    plGBufferCell::Write( hsStream *s )
+void plGBufferCell::Write(hsStream *s) const
 {
     s->WriteLE32( fVtxStart );
     s->WriteLE32( fColorStart );
@@ -524,9 +524,9 @@ void    plGBufferGroup::Write( hsStream *s )
     /// Write out cell arrays
     for (i = 0; i < fVertBuffStorage.size(); i++)
     {
-        s->WriteLE32( fCells[ i ].size() );
-        for( j = 0; j < fCells[ i ].size(); j++ )
-            fCells[ i ][ j ].Write( s );
+        s->WriteLE32((uint32_t)fCells[i].size());
+        for (const plGBufferCell& cell : fCells[i])
+            cell.Write(s);
     }
 
 #ifdef VERT_LOG

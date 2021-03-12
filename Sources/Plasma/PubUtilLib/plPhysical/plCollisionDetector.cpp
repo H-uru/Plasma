@@ -280,10 +280,9 @@ void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 void plCameraRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteLE32(fMessages.size());
-    for(plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
-        mgr->WriteCreatable( stream, *it );
-
+    stream->WriteLE32((uint32_t)fMessages.size());
+    for (plCameraMsg* msg : fMessages)
+        mgr->WriteCreatable(stream, msg);
 }
 
 void plCameraRegionDetector::IHandleEval(plEvalMsg*)

@@ -249,7 +249,8 @@ void plRegistryKeyList::Write(hsStream* s)
     // Rewind and write out data size and key count
     uint32_t endPos = s->GetPosition();
     s->SetPosition(beginPos);
-    s->WriteLE32(endPos-beginPos-sizeof(uint32_t));
+    uint32_t objSize = endPos - beginPos - sizeof(uint32_t);
+    s->WriteLE32(objSize);
     s->SetPosition(countPos);
     s->WriteLE32(keyCount);
     s->SetPosition(endPos);

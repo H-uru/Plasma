@@ -837,9 +837,9 @@ int plNetMsgRoomsList::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     int bytes=plNetMessage::IPokeBuffer(stream, peekOptions);
     if (bytes)
     {
-        int i, numRooms=fRooms.size();
-        stream->WriteLE(numRooms);
-        for(i=0;i<numRooms;i++)
+        size_t numRooms = fRooms.size();
+        stream->WriteLE32((uint32_t)numRooms);
+        for (size_t i = 0; i < numRooms; i++)
         {
             fRooms[i].Write(stream);
             
@@ -942,10 +942,9 @@ int plNetMsgGroupOwner::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     int bytes=plNetMsgServerToClient::IPokeBuffer(stream, peekOptions);
     if (bytes)
     {
-        int i, numGroups=fGroups.size();
-        stream->WriteLE(numGroups);
-        for(i=0;i<numGroups;i++)
-            fGroups[i].Write(stream);
+        stream->WriteLE32((uint32_t)fGroups.size());
+        for (const GroupInfo& group : fGroups)
+            group.Write(stream);
         
         bytes=stream->GetPosition();
     }

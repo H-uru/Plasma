@@ -117,15 +117,13 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    int i;
+    s->WriteLE32((uint32_t)fSceneObjects.size());
+    for (plSceneObject* sceneObject : fSceneObjects)
+        mgr->WriteKey(s, sceneObject);
 
-    s->WriteLE32(fSceneObjects.size());
-    for( i = 0; i < fSceneObjects.size(); i++ )
-        mgr->WriteKey(s,fSceneObjects[i]);
-
-    s->WriteLE32(fGenericPool.size());
-    for( i = 0; i < fGenericPool.size(); i++ )
-        mgr->WriteKey(s, fGenericPool[i]);
+    s->WriteLE32((uint32_t)fGenericPool.size());
+    for (hsKeyedObject* generic : fGenericPool)
+        mgr->WriteKey(s, generic);
 }
 
 void plSceneNode::Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList)

@@ -209,19 +209,19 @@ void plEAXListenerMod::Write( hsStream* s, hsResMgr* mgr )
     mgr->WriteKey( s, fSoftRegion );
 
     // Write the listener params
-    s->WriteLE32( fListenerProps->ulEnvironment );
+    s->WriteLE32((uint32_t)fListenerProps->ulEnvironment);
     s->WriteLEFloat( fListenerProps->flEnvironmentSize );
     s->WriteLEFloat( fListenerProps->flEnvironmentDiffusion );
-    s->WriteLE32( fListenerProps->lRoom );
-    s->WriteLE32( fListenerProps->lRoomHF );
-    s->WriteLE32( fListenerProps->lRoomLF );
+    s->WriteLE32((int32_t)fListenerProps->lRoom);
+    s->WriteLE32((int32_t)fListenerProps->lRoomHF);
+    s->WriteLE32((int32_t)fListenerProps->lRoomLF);
     s->WriteLEFloat( fListenerProps->flDecayTime );
     s->WriteLEFloat( fListenerProps->flDecayHFRatio );
     s->WriteLEFloat( fListenerProps->flDecayLFRatio );
-    s->WriteLE32( fListenerProps->lReflections );
+    s->WriteLE32((int32_t)fListenerProps->lReflections);
     s->WriteLEFloat( fListenerProps->flReflectionsDelay );
     //s->WriteLEFloat( fListenerProps->vReflectionsPan;     // early reflections panning vector
-    s->WriteLE32( fListenerProps->lReverb );                  // late reverberation level relative to room effect
+    s->WriteLE32((int32_t)fListenerProps->lReverb);         // late reverberation level relative to room effect
     s->WriteLEFloat( fListenerProps->flReverbDelay );
     //s->WriteLEFloat( fListenerProps->vReverbPan;          // late reverberation panning vector
     s->WriteLEFloat( fListenerProps->flEchoTime );
@@ -232,7 +232,7 @@ void plEAXListenerMod::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLEFloat( fListenerProps->flHFReference );
     s->WriteLEFloat( fListenerProps->flLFReference );
     s->WriteLEFloat( fListenerProps->flRoomRolloffFactor );
-    s->WriteLE32( fListenerProps->ulFlags );
+    s->WriteLE32((uint32_t)fListenerProps->ulFlags);
 }
 
 

@@ -437,14 +437,14 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEFloat(fEaseOutMax);
     stream->WriteLEFloat(fEaseOutLength);
 
-    stream->WriteLE32(fMarkers.size());
+    stream->WriteLE32((uint32_t)fMarkers.size());
     for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
     {
         stream->WriteSafeString(it->first);
         stream->WriteLEFloat(it->second);
     }
 
-    stream->WriteLE32(fLoops.size());
+    stream->WriteLE32((uint32_t)fLoops.size());
     for (LoopMap::iterator loopIt = fLoops.begin(); loopIt != fLoops.end(); loopIt++)
     {
         stream->WriteSafeString(loopIt->first);
@@ -453,7 +453,7 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
         stream->WriteLEFloat(loop.second);
     }
 
-    stream->WriteLE32(fStopPoints.size());
+    stream->WriteLE32((uint32_t)fStopPoints.size());
     stream->WriteLEFloat(fStopPoints.size(), fStopPoints.data());
 }
 
