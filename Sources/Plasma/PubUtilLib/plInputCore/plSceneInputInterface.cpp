@@ -1095,24 +1095,15 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool 
     }
     else
     {
-        plNetTransportMember **members = nullptr;
-        plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-        if (members != nullptr)
+        std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
+        for (plNetTransportMember* mbr : members)
         {
-            for(int i = 0; i < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); i++ )
+            if (mbr != nullptr && mbr->GetAvatarKey() == offeree)
             {
-                plNetTransportMember *mbr = members[ i ];
-
-                if (mbr != nullptr && mbr->GetAvatarKey() == offeree)
-                {   
-                    offereeID = mbr->GetPlayerID();
-                    break;
-                }
+                offereeID = mbr->GetPlayerID();
+                break;
             }
         }
-
-        delete [] members;
-
     }
     plNotifyMsg* pMsg = new plNotifyMsg;
     pMsg->AddOfferBookEvent(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), ID, offereeID);

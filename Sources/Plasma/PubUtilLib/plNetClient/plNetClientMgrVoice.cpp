@@ -374,21 +374,15 @@ void plNetClientMgr::IHandleNetVoiceListMsg(plNetVoiceListMsg* msg)
         // add in the members we receive from python
         for (uint32_t clientId : clientList)
         {
-            plNetTransportMember **members = nullptr;
-            plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-                    
-            if (members != nullptr)
+            std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
+
+            for (plNetTransportMember* mbr : members)
             {
-                for(int j= 0; j < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); j++ )
+                if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == clientId)
                 {
-                    plNetTransportMember *mbr = members[ j ];
-                    if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == clientId)
-                    {
-                        plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
-                    }
+                    plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
                 }
             }
-            delete [] members;
         }
     }
     else

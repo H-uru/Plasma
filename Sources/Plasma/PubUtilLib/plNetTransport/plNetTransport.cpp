@@ -348,28 +348,18 @@ void plNetTransport::SetNumChannels(int n)
         fChannelGroups.resize(n);
 }
 
-
-int compare( const void* arg1, const void *arg2 )
-{
-    plNetTransportMember** m1 = (plNetTransportMember**)arg1;
-    plNetTransportMember** m2 = (plNetTransportMember**)arg2;
-    float d1=m1 ? (*m1)->GetDistSq() : FLT_MAX;
-    float d2=m2 ? (*m2)->GetDistSq() : FLT_MAX;
-    return (int)(d1-d2);
-}
-
 //
 // create a members list sorted by dist.
-// caller must delete this when done
 //
-void plNetTransport::GetMemberListDistSorted(plNetTransportMember**& listIn) const
+std::vector<plNetTransportMember*> plNetTransport::GetMemberListDistSorted() const
 {
-    // copy members list
-    listIn = new plNetTransportMember* [fMembers.size()];
-    int i;
-    for (i=0; i<fMembers.size(); i++)
-            listIn[i]=fMembers[i];
+    std::vector<plNetTransportMember*> sortedList = fMembers;
 
-    // sort members list
-    qsort(listIn, fMembers.size(), sizeof(plNetTransportMember*), compare);
+    std::sort(sortedList.begin(), sortedList.end(),
+              [](plNetTransportMember* l, plNetTransportMember* r) {
+                  const float d1 = l ? l->GetDistSq() : FLT_MAX;
+                  const float d2 = r ? r->GetDistSq() : FLT_MAX;
+                  return d1 < d2;
+              });
+    return sortedList;
 }

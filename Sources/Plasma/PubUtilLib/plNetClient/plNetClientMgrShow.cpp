@@ -94,11 +94,9 @@ void plNetClientMgr::IShowLists()
     int baseY=y;
     txt.DrawString(x,y,"   Members",255,255,255,255,plDebugText::kStyleBold);
     y+=yOff;
-    plNetTransportMember** members = nullptr;
-    fTransport.GetMemberListDistSorted(members);
-    for(i=0;i<fTransport.GetNumMembers();i++)
+    std::vector<plNetTransportMember*> members = fTransport.GetMemberListDistSorted();
+    for (plNetTransportMember* mbr : members)
     {
-        plNetTransportMember* mbr=members[i];
         hsAssert(mbr, "ShowLists: nil member?");
         if (mbr->IsServer())
             continue;
@@ -115,8 +113,6 @@ void plNetClientMgr::IShowLists()
             ~(plNetTransportMember::kSendingVoice|plNetTransportMember::kSendingActions));
     }
 
-    delete [] members;
-    
     // LISTENLIST
     x+=xOff;
     y=baseY;
@@ -223,8 +219,7 @@ void plNetClientMgr::IShowRelevanceRegions()
     const char* title = "Name / In / Care";
     txt.DrawString(x, y - yOff, title, 255, 255, 255, 255, plDebugText::kStyleBold);
 
-    plNetTransportMember** members = nullptr;
-    fTransport.GetMemberListDistSorted(members);
+    std::vector<plNetTransportMember*> members =  fTransport.GetMemberListDistSorted();
 
     //
     // Print out the player names in the first column
@@ -235,10 +230,8 @@ void plNetClientMgr::IShowRelevanceRegions()
     maxPlayerName = std::max(maxPlayerName, txt.CalcStringWidth(GetPlayerName().c_str()));
     y += yOff;
 
-    int i;
-    for (i = 0; i < fTransport.GetNumMembers(); i++)
+    for (plNetTransportMember* mbr : members)
     {
-        plNetTransportMember* mbr = members[i];
         hsAssert(mbr, "ShowLists: nil member?");
         if (mbr->IsServer())
             continue;
@@ -274,9 +267,8 @@ void plNetClientMgr::IShowRelevanceRegions()
         }
     }
 
-    for (i = 0; i < fTransport.GetNumMembers(); i++)
+    for (plNetTransportMember* mbr : members)
     {
-        plNetTransportMember* mbr = members[i];
         if (mbr->IsServer())
             continue;
 
@@ -296,8 +288,6 @@ void plNetClientMgr::IShowRelevanceRegions()
             }
         }
     }
-
-    delete [] members;  
 }
 
 void plNetClientMgr::IShowAvatars()
@@ -305,7 +295,7 @@ void plNetClientMgr::IShowAvatars()
     plDebugText     &txt = plDebugText::Instance();
     txt.SetFont( "Courier New", 6 );
 
-    int y,x,i;
+    int y, x;
     const int yOff=10, xOff=285, startY=100, startX=10;
     char str[256];
 
@@ -345,11 +335,9 @@ void plNetClientMgr::IShowAvatars()
     y=startY;
     x=startX;
 
-    plNetTransportMember** members = nullptr;
-    fTransport.GetMemberListDistSorted(members);
-    for(i=0;i<fTransport.GetNumMembers();i++)
+    std::vector<plNetTransportMember*> members = fTransport.GetMemberListDistSorted();
+    for (plNetTransportMember* mbr : members)
     {
-        plNetTransportMember* mbr=members[i];
         hsAssert(mbr, "ShowLists: nil member?");
         if (mbr->IsServer())
             continue;
@@ -384,8 +372,6 @@ void plNetClientMgr::IShowAvatars()
         }
 
     }
-
-    delete [] members;
 
     txt.SetFont( "Courier New", 8 );
 }

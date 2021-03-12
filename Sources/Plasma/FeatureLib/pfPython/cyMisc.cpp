@@ -504,66 +504,44 @@ ST::string cyMisc::GetClientName(pyKey &avKey)
 
 PyObject* cyMisc::GetAvatarKeyFromClientID(int clientID)
 {
-    PyObject* keyObj = nullptr;
-
     if (clientID == plNetClientMgr::GetInstance()->GetPlayerID())
     {
-        keyObj = pyKey::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
+        return pyKey::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
     }
     else
     {
-        plNetTransportMember **members = nullptr;
-        plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
+        std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
 
-        if (members != nullptr)
+        for (plNetTransportMember* mbr : members)
         {
-            for(int i = 0; i < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); i++ )
+            if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == clientID)
             {
-                plNetTransportMember *mbr = members[ i ];
-                if (mbr != nullptr && mbr->GetAvatarKey() != nullptr && mbr->GetPlayerID() == clientID)
-                {   
-                    keyObj = pyKey::New(mbr->GetAvatarKey());
-                    break;
-                }
+                return pyKey::New(mbr->GetAvatarKey());
             }
         }
-
-        delete [] members;
     }
 
-    if (keyObj)
-        return keyObj;
-    else
-        PYTHON_RETURN_NONE;
+    PYTHON_RETURN_NONE;
 }
 
 
 int cyMisc::GetClientIDFromAvatarKey(pyKey& avatar)
 {
-    int ret = -1;
-
     if (plNetClientMgr::GetInstance()->GetLocalPlayerKey() == avatar.getKey())
     {
         return (plNetClientMgr::GetInstance()->GetPlayerID());
     }
-    plNetTransportMember **members = nullptr;
-    plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-    if (members != nullptr)
-    {
-        for(int i = 0; i < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); i++ )
-        {
-            plNetTransportMember *mbr = members[ i ];
 
-            if (mbr != nullptr && mbr->GetAvatarKey() == avatar.getKey())
-            {   
-                ret = mbr->GetPlayerID();
-                break;
-            }
+    std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
+    for (plNetTransportMember* mbr : members)
+    {
+        if (mbr != nullptr && mbr->GetAvatarKey() == avatar.getKey())
+        {
+            return mbr->GetPlayerID();
         }
     }
 
-    delete [] members;
-    return ret;
+    return -1;
 }
 
 int cyMisc::GetLocalClientID()
@@ -1090,34 +1068,27 @@ std::vector<PyObject*> cyMisc::GetPlayerListDistanceSorted()
     std::vector<PyObject*> pyPL;
 
     // get the sorted member list from the Net transport manager
-    plNetTransportMember **members = nullptr;
-    plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-    if (members != nullptr)
+    std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
+    for (plNetTransportMember* mbr : members)
     {
-        int i;
-        for( i = 0; i < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); i++ )
+        plKey avkey = mbr->GetAvatarKey();
+        if (avkey)
         {
-            plNetTransportMember *mbr = members[ i ];
-            plKey avkey = mbr->GetAvatarKey();
-            if (avkey)
+            // only non-ignored people in list and not in ignore list
+            if (!VaultAmIgnoringPlayer(mbr->GetPlayerID()))
             {
-                // only non-ignored people in list and not in ignore list
-                if ( !VaultAmIgnoringPlayer ( mbr->GetPlayerID()) )
-                {
-                    PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
-                    pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
+                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
+                pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
 
-                    // modifies playerObj
-                    if ( mbr->IsCCR() )
-                        player->SetCCRFlag(true);
-                    if ( mbr->IsServer() )
-                        player->SetServerFlag(true);
+                // modifies playerObj
+                if (mbr->IsCCR())
+                    player->SetCCRFlag(true);
+                if (mbr->IsServer())
+                    player->SetServerFlag(true);
 
-                    pyPL.push_back(playerObj);
-                }
+                pyPL.push_back(playerObj);
             }
         }
-        delete [] members;
     }
     return pyPL;
 }
