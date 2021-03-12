@@ -175,11 +175,7 @@ static void NtWorkerThreadProc() {
             (void) GetQueuedCompletionStatus(
                 s_ioPort,
                 &bytes,
-            #ifdef _WIN64
                 (PULONG_PTR) &ntObj,
-            #else
-                (LPDWORD) &ntObj,
-            #endif
                 (LPOVERLAPPED *) &op,
                 sleepMs
             );
@@ -209,11 +205,7 @@ void INtConnPostOperation (NtObject * ntObj, Operation * op, unsigned bytes) {
     PostQueuedCompletionStatus(
         s_ioPort,
         bytes,
-        #ifdef _WIN64
-            (ULONG_PTR) ntObj,
-        #else
-            (DWORD) ntObj,
-        #endif
+        (ULONG_PTR) ntObj,
         &op->overlapped
     );
 }
@@ -228,7 +220,7 @@ AsyncId INtConnSequenceStart (NtObject * ntObj) {
 
 //===========================================================================
 bool INtConnInitialize (NtObject * ntObj) {
-    if (!CreateIoCompletionPort(ntObj->handle, s_ioPort, (DWORD) ntObj, 0)) {
+    if (!CreateIoCompletionPort(ntObj->handle, s_ioPort, (ULONG_PTR) ntObj, 0)) {
         LogMsg(kLogFatal, "CreateIoCompletionPort failed");
         return false;
     }
