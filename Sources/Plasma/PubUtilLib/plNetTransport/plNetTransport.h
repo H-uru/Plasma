@@ -54,13 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 class plKey;
 class plNetTransportMember;
-typedef std::vector<plNetTransportMember*> plMembersList;
 class plNetMessage;
+
 class plNetTransport
 {
 private:
-    plMembersList fMembers;                     // master list of all members in the game, server is member[0]
-    std::vector<plMembersList> fChannelGroups;  // members grouped by channel
+    typedef std::vector<plNetTransportMember*> MembersList;
+    MembersList fMembers;                     // master list of all members in the game, server is member[0]
+    std::vector<MembersList> fChannelGroups;  // members grouped by channel
 
     void IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr);
     void IRemoveMember(plNetTransportMember* mbr);
@@ -72,14 +73,14 @@ public:
     
     // master list ops
     std::vector<plNetTransportMember*> GetMemberListDistSorted() const; // allocates and sorts array
-    int FindMember(const plKey avKey) const;                    // return array index or -1
-    int FindMember(uint32_t playerID) const;                      // return array index or -1
-    int FindMember(const plNetTransportMember* mbr);            // return array index or -1
-    int AddMember(plNetTransportMember* mbr);                   // to master list, if not there
-    bool RemoveMember(plNetTransportMember* mbr);             // from master list and all channels
-    bool RemoveMember(int idx);                               // from master list and all channels
-    int GetNumMembers() const { return fMembers.size(); }
-    plNetTransportMember* GetMember(int i) const { return i >= 0 && i < fMembers.size() ? fMembers[i] : nullptr; }
+    hsSsize_t FindMember(const plKey& avKey) const;             // return array index or -1
+    hsSsize_t FindMember(uint32_t playerID) const;              // return array index or -1
+    hsSsize_t FindMember(const plNetTransportMember* mbr);      // return array index or -1
+    hsSsize_t AddMember(plNetTransportMember* mbr);             // to master list, if not there
+    void RemoveMember(plNetTransportMember* mbr);               // from master list and all channels
+    void RemoveMember(size_t idx);                              // from master list and all channels
+    size_t GetNumMembers() const { return fMembers.size(); }
+    plNetTransportMember* GetMember(size_t i) const { return i < fMembers.size() ? fMembers[i] : nullptr; }
     void ClearMembers();
 
     // channel group ops

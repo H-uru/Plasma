@@ -707,8 +707,8 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 
     plNetClientMgr* mgr = plNetClientMgr::GetInstance();
     plNetTransport& transport = mgr->TransportMgr();
-    int guestIdx = transport.FindMember(playerID);
-    plNetTransportMember* guestMem = transport.GetMember(guestIdx);         // -1 ?
+    hsSsize_t guestIdx = transport.FindMember(playerID);
+    plNetTransportMember* guestMem = guestIdx >= 0 ? transport.GetMember(guestIdx) : nullptr;
 
     if (guestMem) {
         plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);

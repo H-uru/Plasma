@@ -1037,8 +1037,7 @@ std::vector<PyObject*> cyMisc::GetPlayerList()
     if (!nc) // only ever really happens if they try to call us in max... I hope
         return pyPL;
 
-    int i;
-    for( i = 0; i < nc->TransportMgr().GetNumMembers(); i++ )
+    for (size_t i = 0; i < nc->TransportMgr().GetNumMembers(); i++)
     {
         plNetTransportMember *mbr = nc->TransportMgr().GetMember(i);
         plKey avkey = mbr->GetAvatarKey();

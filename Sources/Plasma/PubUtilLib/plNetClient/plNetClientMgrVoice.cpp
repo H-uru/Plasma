@@ -243,8 +243,7 @@ bool plNetClientMgr::IUpdateListenList(double secs)
                 hsMatrix44 l2w=locPlayer->GetCoordinateInterface()->GetLocalToWorld();
                 hsPoint3 locPlayerPos=l2w.GetTranslate();
 
-                int i;
-                for(i=0;i<fTransport.GetNumMembers();i++)
+                for (size_t i = 0; i < fTransport.GetNumMembers(); i++)
                 {
                     fTransport.GetMember(i)->SetDistSq(FLT_MAX);
 

@@ -306,8 +306,8 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                             bool amCCR = plNetClientMgr::GetInstance()->GetCCRLevel();
                             
                             // is this person a NPC or CCR?
-                            int mbrIdx=plNetClientMgr::GetInstance()->TransportMgr().FindMember(pObj->GetKey());
-                            plNetTransportMember* pMbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember(mbrIdx);
+                            hsSsize_t mbrIdx = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pObj->GetKey());
+                            plNetTransportMember* pMbr = mbrIdx >= 0 ? plNetClientMgr::GetInstance()->TransportMgr().GetMember(mbrIdx) : nullptr;
                             if (!pMbr) // whoops - it's a freakin' NPC !
                                 return true;
                             

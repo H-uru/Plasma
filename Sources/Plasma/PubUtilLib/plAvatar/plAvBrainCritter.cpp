@@ -652,7 +652,7 @@ std::vector<unsigned long> plAvBrainCritter::IGetAgePlayerIDList() const
     std::vector<unsigned long> playerIDs;
     std::map<unsigned long, bool> tempMap; // slightly hacky way to remove dups
     plNetClientMgr* nc = plNetClientMgr::GetInstance();
-    for (int i = 0; i < nc->TransportMgr().GetNumMembers(); ++i)
+    for (size_t i = 0; i < nc->TransportMgr().GetNumMembers(); ++i)
     {
         plNetTransportMember* mbr = nc->TransportMgr().GetMember(i);
         unsigned long id = mbr->GetPlayerID();

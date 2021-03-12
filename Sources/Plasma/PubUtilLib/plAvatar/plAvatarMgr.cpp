@@ -807,7 +807,8 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
 int plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
 {
     plNetTransport &mgr = plNetClientMgr::GetInstance()->TransportMgr();
-    plNetTransportMember *mbr = mgr.GetMember(mgr.FindMember(remoteID));
+    hsSsize_t mbrIdx = mgr.FindMember(remoteID);
+    plNetTransportMember *mbr = mbrIdx >= 0 ? mgr.GetMember(mbrIdx) : nullptr;
 
     if (!mbr)
         return plCCRError::kCantFindPlayer;
@@ -852,7 +853,8 @@ int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
 int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
-    plNetTransportMember* mbr=nc->TransportMgr().GetMember(nc->TransportMgr().FindMember(pid));
+    hsSsize_t mbrIdx = nc->TransportMgr().FindMember(pid);
+    plNetTransportMember* mbr = mbrIdx >= 0 ? nc->TransportMgr().GetMember(mbrIdx) : nullptr;
     plSceneObject *player = plSceneObject::ConvertNoRef(mbr && mbr->GetAvatarKey() ? 
         mbr->GetAvatarKey()->ObjectIsLoaded() : nullptr);
     if (!player)

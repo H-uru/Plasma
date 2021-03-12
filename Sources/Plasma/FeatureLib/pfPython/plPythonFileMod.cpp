@@ -1438,7 +1438,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         PyObject* player = nullptr;
         if (pramsg->GetAvatarKey()) {
             // try to create the pyPlayer for where this message came from
-            int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pramsg->GetAvatarKey());
+            hsSsize_t mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pramsg->GetAvatarKey());
             if (mbrIndex != -1) {
                 plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
                 player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
@@ -1505,7 +1505,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg) {
         if (!VaultAmIgnoringPlayer(pkimsg->GetPlayerID())) {
             PyObject* player;
-            int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pkimsg->GetPlayerID());
+            hsSsize_t mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pkimsg->GetPlayerID());
             if (mbrIndex != -1) {
                 plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
                 player = pyPlayer::New(mbr->GetAvatarKey(), pkimsg->GetUser(), mbr->GetPlayerID(), mbr->GetDistSq());
