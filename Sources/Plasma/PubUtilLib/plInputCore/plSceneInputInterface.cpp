@@ -1071,7 +1071,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
 
 //// ISendOfferNotification ////////////////////////////////////////////////////////
-void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
+void plSceneInputInterface::IManageIgnoredAvatars(const plKey& offeree, bool add)
 {
     // tell everyone else to be able to / not to be able to select this avatar
     plInputIfaceMgrMsg* pMsg = nullptr;
@@ -1086,7 +1086,7 @@ void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
     pMsg->Send();
 }   
 
-void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool net)
+void plSceneInputInterface::ISendOfferNotification(const plKey& offeree, int ID, bool net)
 {
     int offereeID = -1;
     if (offeree == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
@@ -1095,8 +1095,7 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool 
     }
     else
     {
-        std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
-        for (plNetTransportMember* mbr : members)
+        for (plNetTransportMember* mbr : plNetClientMgr::GetInstance()->TransportMgr().GetMemberList())
         {
             if (mbr != nullptr && mbr->GetAvatarKey() == offeree)
             {

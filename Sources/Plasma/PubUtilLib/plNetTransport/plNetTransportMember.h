@@ -85,7 +85,7 @@ public:
     void SetDistSq(float s) { fDistSq=s; }
     float GetDistSq() const { return fDistSq; }
 
-    plKey GetAvatarKey() { return fAvatarKey; }
+    plKey GetAvatarKey() const { return fAvatarKey; }
     void SetAvatarKey(plKey k)
         {
             fAvatarKey=k;

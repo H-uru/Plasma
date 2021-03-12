@@ -532,8 +532,7 @@ int cyMisc::GetClientIDFromAvatarKey(pyKey& avatar)
         return (plNetClientMgr::GetInstance()->GetPlayerID());
     }
 
-    std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
-    for (plNetTransportMember* mbr : members)
+    for (plNetTransportMember* mbr : plNetClientMgr::GetInstance()->TransportMgr().GetMemberList())
     {
         if (mbr != nullptr && mbr->GetAvatarKey() == avatar.getKey())
         {
