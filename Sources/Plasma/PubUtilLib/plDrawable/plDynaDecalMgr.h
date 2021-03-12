@@ -190,7 +190,7 @@ protected:
     void                IWetInfo(plDynaDecalInfo& info, const plDynaDecalEnableMsg* enaMsg) const;
     float            IHowWet(plDynaDecalInfo& info, double t) const;
     plDynaDecalInfo&    IGetDecalInfo(uintptr_t id, const plKey& key);
-    void                IRemoveDecalInfo(uint32_t id);
+    void                IRemoveDecalInfo(uintptr_t id);
     void                IRemoveDecalInfos(const plKey& key);
 
     hsGMaterial*        ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, bool rtLit);

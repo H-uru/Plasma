@@ -554,7 +554,7 @@ plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(uintptr_t id, const plKey& key)
     return iter->second;
 }
 
-void plDynaDecalMgr::IRemoveDecalInfo(uint32_t id)
+void plDynaDecalMgr::IRemoveDecalInfo(uintptr_t id)
 {
     plDynaDecalMap::iterator iter = fDecalMap.find(id);
     if( iter != fDecalMap.end() )

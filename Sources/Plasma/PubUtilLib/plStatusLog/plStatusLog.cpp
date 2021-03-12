@@ -603,7 +603,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
             }
             if (fFlags & kThreadID)
             {
-                snprintf(work, std::size(work), "[t=%lu] ", hsThread::ThisThreadHash());
+                snprintf(work, std::size(work), "[t=%zu] ", hsThread::ThisThreadHash());
                 buf.append(work);
             }
 
