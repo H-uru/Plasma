@@ -136,6 +136,12 @@ plNetTransportMember* plNetTransport::GetMemberByID(uint32_t playerID) const
     return (memberIdx < 0) ? nullptr : fMembers[memberIdx];
 }
 
+plNetTransportMember* plNetTransport::GetMemberByKey(const plKey& avKey) const
+{
+    hsSsize_t memberIdx = FindMember(avKey);
+    return (memberIdx < 0) ? nullptr : fMembers[memberIdx];
+}
+
 //
 // return array index or -1
 //

@@ -1056,8 +1056,7 @@ ST::string plNetClientMgr::GetPlayerName(const plKey avKey) const
     if (!avKey || avKey == GetLocalPlayerKey())
         return NetCommGetPlayer()->playerName;
 
-    hsSsize_t mbrIdx = TransportMgr().FindMember(avKey);
-    plNetTransportMember* mbr = mbrIdx >= 0 ? TransportMgr().GetMember(mbrIdx) : nullptr;
+    plNetTransportMember* mbr = TransportMgr().GetMemberByKey(avKey);
     return mbr ? mbr->GetPlayerName() : ST::string();
 }
 

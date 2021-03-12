@@ -1438,11 +1438,9 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         PyObject* player = nullptr;
         if (pramsg->GetAvatarKey()) {
             // try to create the pyPlayer for where this message came from
-            hsSsize_t mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pramsg->GetAvatarKey());
-            if (mbrIndex != -1) {
-                plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
+            plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMemberByKey(pramsg->GetAvatarKey());
+            if (mbr)
                 player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
-            }
         }
         if (!player)
             player = PyLong_FromLong(0);

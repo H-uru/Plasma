@@ -82,6 +82,7 @@ public:
     size_t GetNumMembers() const { return fMembers.size(); }
     plNetTransportMember* GetMember(size_t i) const { return i < fMembers.size() ? fMembers[i] : nullptr; }
     plNetTransportMember* GetMemberByID(uint32_t playerID) const;
+    plNetTransportMember* GetMemberByKey(const plKey& avKey) const;
     const std::vector<plNetTransportMember*>& GetMemberList() const { return fMembers; }
     void ClearMembers();
 
