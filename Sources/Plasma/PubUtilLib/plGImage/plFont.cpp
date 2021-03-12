@@ -1128,7 +1128,7 @@ void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
     y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
     if( y < -2 )
         y = -2;
-    destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+    destBasePtr = (uint32_t *)((uint8_t *)destBasePtr + y * int32_t(fRenderInfo.fDestStride));
 
     thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
     if( thisHeight > (int16_t)c.fHeight + 2 )
