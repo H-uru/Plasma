@@ -304,25 +304,25 @@ ST::string plClientGuid::AsLogString() const
 
 void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
 {
-    s->ReadLE(&fFlags);
+    s->ReadLE16(&fFlags);
     if (IsFlagSet(kAccountUUID))
         fAccountUUID.Read( s );
     if (IsFlagSet(kPlayerID))
-        s->ReadLE(&fPlayerID);
+        s->ReadLE32(&fPlayerID);
     else if (IsFlagSet(kTempPlayerID))
-        s->ReadLE(&fPlayerID);
+        s->ReadLE32(&fPlayerID);
     if (IsFlagSet(kPlayerName))
         plMsgStdStringHelper::Peek( fPlayerName, s );
     if (IsFlagSet(kCCRLevel))
-        s->ReadLE(&fCCRLevel);
+        s->ReadByte(&fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
         fProtectedLogin = s->ReadBool();
     if (IsFlagSet(kBuildType))
-        s->ReadLE(&fBuildType);
+        s->ReadByte(&fBuildType);
     if (IsFlagSet(kSrcAddr))
-        s->ReadLE(&fSrcAddr);
+        s->ReadLE32(&fSrcAddr);
     if (IsFlagSet(kSrcPort))
-        s->ReadLE(&fSrcPort);
+        s->ReadLE16(&fSrcPort);
     if (IsFlagSet(kReserved))
         fReserved = s->ReadBool();
     if (IsFlagSet(kClientKey))
@@ -331,25 +331,25 @@ void plClientGuid::Read(hsStream * s, hsResMgr* mgr)
 
 void plClientGuid::Write(hsStream * s, hsResMgr* mgr)
 {
-    s->WriteLE(fFlags);
+    s->WriteLE16(fFlags);
     if (IsFlagSet(kAccountUUID))
         fAccountUUID.Write( s );
     if (IsFlagSet(kPlayerID))
-        s->WriteLE(fPlayerID);
+        s->WriteLE32(fPlayerID);
     else if (IsFlagSet(kTempPlayerID))
-        s->WriteLE(fPlayerID);
+        s->WriteLE32(fPlayerID);
     if (IsFlagSet(kPlayerName))
         plMsgStdStringHelper::Poke( fPlayerName, s );
     if (IsFlagSet(kCCRLevel))
-        s->WriteLE(fCCRLevel);
+        s->WriteByte(fCCRLevel);
     if (IsFlagSet(kProtectedLogin))
         s->WriteBool(fProtectedLogin);
     if (IsFlagSet(kBuildType))
-        s->WriteLE(fBuildType);
+        s->WriteByte(fBuildType);
     if (IsFlagSet(kSrcAddr))
-        s->WriteLE(fSrcAddr);
+        s->WriteLE32(fSrcAddr);
     if (IsFlagSet(kSrcPort))
-        s->WriteLE(fSrcPort);
+        s->WriteLE16(fSrcPort);
     if (IsFlagSet(kReserved))
         s->WriteBool(fReserved);
     if (IsFlagSet(kClientKey))

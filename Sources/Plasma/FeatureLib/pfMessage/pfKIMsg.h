@@ -187,7 +187,7 @@ class pfKIMsg : public plMessage
         void Read(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgRead( s, mgr ); 
-            s->ReadLE( &fCommand );
+            s->ReadByte(&fCommand);
             fUser = s->ReadSafeString();
             fPlayerID = s->ReadLE32();
             fString = s->ReadSafeWString();
@@ -199,7 +199,7 @@ class pfKIMsg : public plMessage
         void Write(hsStream* s, hsResMgr* mgr) override
         { 
             plMessage::IMsgWrite( s, mgr ); 
-            s->WriteLE( fCommand );
+            s->WriteByte(fCommand);
             s->WriteSafeString( fUser );
             s->WriteLE32( fPlayerID );
             s->WriteSafeWString( fString );

@@ -189,7 +189,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     // Write the groups out
     count = fGroups.GetCount();
 
-    s->WriteLE( count );
+    s->WriteLE32(count);
     for( i = 0; i < count; i++ )
     {
 #ifdef VERT_LOG

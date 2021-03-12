@@ -119,7 +119,7 @@ uint32_t hsStream::WriteSafeStringLong(const ST::string &string)
         uint32_t i;
         for (i = 0; i < len; i++)
         {
-            WriteByte(~buffp[i]);
+            WriteByte(static_cast<uint8_t>(~buffp[i]));
         }
         return i;
     }
@@ -137,9 +137,9 @@ uint32_t hsStream::WriteSafeWStringLong(const ST::string &string)
         const char16_t *buffp = wbuff.data();
         for (uint32_t i=0; i<len; i++)
         {
-            WriteLE16(~buffp[i]);
+            WriteLE16(static_cast<uint16_t>(~buffp[i]));
         }
-        WriteLE16(static_cast<char16_t>(0));
+        WriteLE16(static_cast<uint16_t>(0));
     }
     return 0;
 }
@@ -173,7 +173,7 @@ ST::string hsStream::ReadSafeWStringLong()
         retVal.allocate(numChars);
         for (int i=0; i<numChars; i++)
             retVal[i] = ReadLE16();
-        ReadLE16(); // we wrote the null out, read it back in
+        (void)ReadLE16(); // we wrote the null out, read it back in
 
         if (retVal[0] & 0x80)
         {
@@ -198,7 +198,7 @@ uint32_t hsStream::WriteSafeString(const ST::string &string)
         const char *buffp = string.c_str();
         for (i = 0; i < len; i++)
         {
-            WriteByte(~buffp[i]);
+            WriteByte(static_cast<uint8_t>(~buffp[i]));
         }
         return i;
     }
@@ -219,7 +219,7 @@ uint32_t hsStream::WriteSafeWString(const ST::string &string)
         const char16_t *buffp = wbuff.data();
         for (uint32_t i=0; i<len; i++)
         {
-            WriteLE16(~buffp[i]);
+            WriteLE16(static_cast<uint16_t>(~buffp[i]));
         }
         WriteLE16(static_cast<uint16_t>(0));
     }
@@ -235,7 +235,7 @@ ST::string hsStream::ReadSafeString()
     // Backward compat hack - remove in a week or so (from 6/30/03)
     bool oldFormat = !(numChars & 0xf000);
     if (oldFormat)
-        ReadLE16();
+        (void)ReadLE16();
 #endif
 
     numChars &= ~0xf000;
@@ -269,7 +269,7 @@ ST::string hsStream::ReadSafeWString()
         retVal.allocate(numChars);
         for (int i=0; i<numChars; i++)
             retVal[i] = ReadLE16();
-        ReadLE16(); // we wrote the null out, read it back in
+        (void)ReadLE16(); // we wrote the null out, read it back in
 
         if (retVal[0] & 0x80)
         {

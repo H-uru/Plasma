@@ -49,7 +49,7 @@ constexpr size_t GAME_GUI_MSG_STRING_SIZE = 128;
 void pfGameGUIMsg::Read(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgRead(s, mgr);
-    s->ReadLE(&fCommand);
+    s->ReadByte(&fCommand);
     char buffer[GAME_GUI_MSG_STRING_SIZE];
     s->Read(sizeof(buffer), buffer);
     buffer[GAME_GUI_MSG_STRING_SIZE - 1] = 0;
@@ -60,7 +60,7 @@ void pfGameGUIMsg::Read(hsStream* s, hsResMgr* mgr)
 void pfGameGUIMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(s, mgr);
-    s->WriteLE(fCommand);
+    s->WriteByte(fCommand);
     char buffer[GAME_GUI_MSG_STRING_SIZE] = {};
     strncpy(buffer, fString.c_str(), GAME_GUI_MSG_STRING_SIZE);
     s->Write(sizeof(buffer), buffer);

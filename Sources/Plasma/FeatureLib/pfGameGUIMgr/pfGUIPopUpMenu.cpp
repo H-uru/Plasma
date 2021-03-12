@@ -877,16 +877,15 @@ void    pfGUISkin::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadLE( &fItemMargin );
-    s->ReadLE( &fBorderMargin );
+    s->ReadLE16(&fItemMargin);
+    s->ReadLE16(&fBorderMargin);
 
-    uint32_t i, count;
-    s->ReadLE( &count );
+    uint32_t count = s->ReadLE32();
 
-    for( i = 0; i < count; i++ )
+    for (uint32_t i = 0; i < count; i++)
         fElements[ i ].Read( s );
 
-    for( ; i < kNumElements; i++ )
+    for (uint32_t i = count; i < kNumElements; i++)
         fElements[ i ].Empty();
 
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefMipmap ), plRefFlags::kActiveRef );
@@ -896,13 +895,12 @@ void    pfGUISkin::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    s->WriteLE( fItemMargin );
-    s->WriteLE( fBorderMargin );
+    s->WriteLE16(fItemMargin);
+    s->WriteLE16(fBorderMargin);
 
-    uint32_t i = kNumElements;
-    s->WriteLE( i );
+    s->WriteLE32((uint32_t)kNumElements);
 
-    for( i = 0; i < kNumElements; i++ )
+    for (uint32_t i = 0; i < kNumElements; i++)
         fElements[ i ].Write( s );
 
     mgr->WriteKey( s, fTexture );
@@ -926,16 +924,16 @@ bool    pfGUISkin::MsgReceive( plMessage *msg )
 
 void    pfGUISkin::pfSRect::Read( hsStream *s )
 {
-    s->ReadLE( &fX );
-    s->ReadLE( &fY );
-    s->ReadLE( &fWidth );
-    s->ReadLE( &fHeight );
+    s->ReadLE16(&fX);
+    s->ReadLE16(&fY);
+    s->ReadLE16(&fWidth);
+    s->ReadLE16(&fHeight);
 }
 
 void    pfGUISkin::pfSRect::Write( hsStream *s )
 {
-    s->WriteLE( fX );
-    s->WriteLE( fY );
-    s->WriteLE( fWidth );
-    s->WriteLE( fHeight );
+    s->WriteLE16(fX);
+    s->WriteLE16(fY);
+    s->WriteLE16(fWidth);
+    s->WriteLE16(fHeight);
 }

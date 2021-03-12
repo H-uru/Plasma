@@ -93,7 +93,7 @@ void plPhysicalSndGroup::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadLE( &fGroup );
+    s->ReadLE32(&fGroup);
 
     uint32_t count = s->ReadLE32();
     fImpactSounds.clear();
@@ -113,7 +113,7 @@ void plPhysicalSndGroup::Write( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Write( s, mgr );
 
-    s->WriteLE( fGroup );
+    s->WriteLE32(fGroup);
 
     s->WriteLE32((uint32_t)fImpactSounds.size());
     for (const plKey& key : fImpactSounds)

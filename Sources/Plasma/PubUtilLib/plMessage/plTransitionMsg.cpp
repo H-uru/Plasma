@@ -52,15 +52,15 @@ plTransitionMsg::~plTransitionMsg()
 void plTransitionMsg::Read(hsStream* s, hsResMgr* mgr)
 {
     plMessageWithCallbacks::Read(s, mgr);
-    s->ReadLE(&fEffect);
-    s->ReadLE(&fLengthInSecs);
+    s->ReadLE32(&fEffect);
+    s->ReadLEFloat(&fLengthInSecs);
     fHoldUntilNext = s->ReadBOOL();
 }
 
 void plTransitionMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessageWithCallbacks::Write(s, mgr);
-    s->WriteLE(fEffect);
-    s->WriteLE(fLengthInSecs);
+    s->WriteLE32(fEffect);
+    s->WriteLEFloat(fLengthInSecs);
     s->WriteBOOL(fHoldUntilNext);
 }

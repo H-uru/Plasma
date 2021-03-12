@@ -87,8 +87,7 @@ plVarDescriptor* plStateDescriptor::FindVar(const ST::string& name, int* idx) co
 // 
 bool plStateDescriptor::Read(hsStream* s)
 {
-    uint8_t rwVersion;
-    s->ReadLE(&rwVersion);
+    uint8_t rwVersion = s->ReadByte();
     if (rwVersion != kVersion)
     {
         plNetApp::StaticWarningMsg("StateDescriptor Read/Write version mismatch, mine {}, read {}", kVersion, rwVersion);
@@ -127,16 +126,15 @@ bool plStateDescriptor::Read(hsStream* s)
 // 
 void plStateDescriptor::Write(hsStream* s) const
 {
-    s->WriteLE(kVersion);
+    s->WriteByte(kVersion);
     
     s->WriteSafeString(fName);
 
-    uint16_t version=fVersion;
-    s->WriteLE(version);
+    s->WriteLE16((uint16_t)fVersion);
 
     size_t numVars = fVarsList.size();
     hsAssert(numVars < std::numeric_limits<uint16_t>::max(), "Too many variables");
-    s->WriteLE(uint16_t(numVars));
+    s->WriteLE16(uint16_t(numVars));
 
     VarsList::const_iterator it;
     for (const plVarDescriptor* desc : fVarsList) {

@@ -149,7 +149,7 @@ int plSDLMgr::Write(hsStream* s, const plSDL::DescriptorList* dl)
 
     size_t num = dl->size();
     hsAssert(num < std::numeric_limits<uint16_t>::max(), "Too many descriptors");
-    s->WriteLE(uint16_t(num));
+    s->WriteLE16(uint16_t(num));
 
     plSDL::DescriptorList::const_iterator it;
     for (const plStateDescriptor* desc : *dl)
@@ -181,7 +181,7 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
     try
     {       
         // read dtor list
-        s->ReadLE(&num);
+        s->ReadLE16(&num);
 
         int i;
         for(i=0;i<num;i++)

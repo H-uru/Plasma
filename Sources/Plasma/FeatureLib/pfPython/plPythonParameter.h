@@ -365,7 +365,7 @@ public:
                 break;
 
             case kFloat:
-                stream->ReadLE(&datarecord.fFloatNumber);
+                stream->ReadLEFloat(&datarecord.fFloatNumber);
                 break;
 
             case kbool:
@@ -421,7 +421,7 @@ public:
                 break;
 
             case kFloat:
-                stream->WriteLE(datarecord.fFloatNumber);
+                stream->WriteLEFloat(datarecord.fFloatNumber);
                 break;
 
             case kbool:
@@ -434,7 +434,7 @@ public:
                     count = fString.size()+1;
                 else
                     count = 0;
-                stream->WriteLE(count);
+                stream->WriteLE32(count);
                 stream->Write(count, fString.c_str());
                 break;
 

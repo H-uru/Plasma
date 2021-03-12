@@ -76,7 +76,7 @@ void plSpaceTreeNode::Write(hsStream* s)
     s->WriteLE16(fChildren[0]);
     if( fFlags & kIsLeaf )
         // Temp for now to play nice with binary patches
-        s->WriteLE16( 0 );
+        s->WriteLE16(uint16_t(0));
     else
         s->WriteLE16(fChildren[1]);
 }

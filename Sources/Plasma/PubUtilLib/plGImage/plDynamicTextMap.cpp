@@ -297,7 +297,7 @@ uint32_t  plDynamicTextMap::Write( hsStream *s )
     s->WriteLE32( fVisHeight );
     s->WriteBool( fHasAlpha );
 
-    s->WriteLE32(fInitBuffer != nullptr ? fVisWidth * fVisHeight * sizeof(uint32_t) : 0);
+    s->WriteLE32(fInitBuffer != nullptr ? uint32_t(fVisWidth * fVisHeight * sizeof(uint32_t)) : 0U);
     if (fInitBuffer != nullptr)
     {
         s->WriteLE32( fVisWidth * fVisHeight, fInitBuffer );

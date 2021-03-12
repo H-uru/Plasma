@@ -811,7 +811,7 @@ void plNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
     // read in the static data
     fType = stream->ReadLE32();
-    stream->ReadLE(&fState);
+    stream->ReadLEFloat(&fState);
     fID = stream->ReadLE32();
     // read in the variable part of the message
     uint32_t numberEDs = stream->ReadLE32();
@@ -833,7 +833,7 @@ void plNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
     // write static data
     stream->WriteLE32(fType);
-    stream->WriteLE(fState);
+    stream->WriteLEFloat(fState);
     stream->WriteLE32(fID);
     // then write the variable data
     stream->WriteLE32((uint32_t)fEvents.size());
@@ -861,7 +861,7 @@ void plNotifyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
         fType = s->ReadLE32();
 
     if (contentFlags.IsBitSet(kNotifyMsgState))
-        s->ReadLE(&fState);
+        s->ReadLEFloat(&fState);
 
     if (contentFlags.IsBitSet(kNotifyMsgID))
         fID = s->ReadLE32();
@@ -898,7 +898,7 @@ void plNotifyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     s->WriteLE32(fType);
 
     // kNotifyMsgState
-    s->WriteLE(fState);
+    s->WriteLEFloat(fState);
 
     // kNotifyMsgID
     s->WriteLE32(fID);
@@ -1233,7 +1233,7 @@ void proVariableEventData::IReadNumber(hsStream * stream) {
         fNumber.i = stream->ReadLE32();
         break;
     default: 
-        stream->ReadLE32(); //ignore
+        (void)stream->ReadLE32(); //ignore
         break;
     }
 }

@@ -192,8 +192,8 @@ hsKeyedObject* plKeyImp::VerifyLoaded()
 void plKeyImp::Read(hsStream* s)
 {
     fUoid.Read(s);
-    s->ReadLE(&fStartPos);
-    s->ReadLE(&fDataLen);
+    s->ReadLE32(&fStartPos);
+    s->ReadLE32(&fDataLen);
 
     plProfile_NewMem(KeyMem, CalcKeySize(this));
 
@@ -207,15 +207,15 @@ void plKeyImp::SkipRead(hsStream* s)
 {
     plUoid tempUoid;
     tempUoid.Read(s);
-    s->ReadLE32();
-    s->ReadLE32();
+    (void)s->ReadLE32();
+    (void)s->ReadLE32();
 }
 
 void plKeyImp::Write(hsStream* s)
 {
     fUoid.Write(s);
-    s->WriteLE(fStartPos);
-    s->WriteLE(fDataLen);
+    s->WriteLE32(fStartPos);
+    s->WriteLE32(fDataLen);
 }
 
 //// WriteObject /////////////////////////////////////////////////////////////

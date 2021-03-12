@@ -142,7 +142,7 @@ plNetMessage* plNetMessage::Create(const plNetCommonMessage* msg)
         hsReadOnlyStream readStream;
         ClassIndexType classIndex;
         readStream.Init(sizeof(classIndex), msg->GetData());
-        readStream.ReadLE(&classIndex);
+        readStream.ReadLE16(&classIndex);
         if (!plFactory::IsValidClassIndex(classIndex))
             return nullptr;
         plNetMessage* pnm = plNetMessage::ConvertNoRef(plFactory::Create(classIndex));
@@ -220,7 +220,7 @@ void plNetMessage::IWriteClassIndex(hsStream* stream)
 {
     ClassIndexType classIndex=ClassIndex();
     hsAssert(sizeof(classIndex)==sizeof(plNetMessageClassIndex), "somebody changed the size of plCreatable::ClassIndex");
-    stream->WriteLE(classIndex);
+    stream->WriteLE16(classIndex);
 }
 
 // put in buffer
@@ -238,11 +238,11 @@ int plNetMessage::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     if (IsBitSet(kHasTimeSent))
         fTimeSent.Write(stream);
     if (IsBitSet(kHasContext))
-        stream->WriteLE(fContext);
+        stream->WriteLE32(fContext);
     if (IsBitSet(kHasTransactionID))
-        stream->WriteLE(fTransactionID);
+        stream->WriteLE32(fTransactionID);
     if (IsBitSet(kHasPlayerID))
-        stream->WriteLE(fPlayerID);
+        stream->WriteLE32(fPlayerID);
     if (IsBitSet(kHasAcctUUID))
         fAcctUUID.Write(stream);
 
@@ -253,7 +253,7 @@ void plNetMessage::IReadClassIndex(hsStream* stream)
 {
     ClassIndexType classIndex;
     hsAssert(sizeof(classIndex)==sizeof(plNetMessageClassIndex), "somebody changed the size of plCreatable::ClassIndex");
-    stream->ReadLE(&classIndex);
+    stream->ReadLE16(&classIndex);
 }
 
 // get out of buffer
@@ -261,13 +261,13 @@ int plNetMessage::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
 {
     IReadClassIndex(stream);
     
-    stream->ReadLE(&fFlags);
+    stream->ReadLE32(&fFlags);
     
     // verify version first
     if (IsBitSet(kHasVersion))
     {
-        stream->ReadLE(&fProtocolVerMajor);
-        stream->ReadLE(&fProtocolVerMinor);
+        stream->ReadByte(&fProtocolVerMajor);
+        stream->ReadByte(&fProtocolVerMinor);
         
         if (fProtocolVerMajor != kVerMajor || fProtocolVerMinor != kVerMinor)
             return 0;   // this will cause derived classes to stop reading
@@ -281,11 +281,11 @@ int plNetMessage::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     if (IsBitSet(kHasTimeSent))
         fTimeSent.Read(stream);
     if (IsBitSet(kHasContext))
-        stream->ReadLE(&fContext);
+        stream->ReadLE32(&fContext);
     if (IsBitSet(kHasTransactionID))
-        stream->ReadLE(&fTransactionID);
+        stream->ReadLE32(&fTransactionID);
     if (IsBitSet(kHasPlayerID))
-        stream->ReadLE(&fPlayerID);
+        stream->ReadLE32(&fPlayerID);
     if (IsBitSet(kHasAcctUUID))
         fAcctUUID.Read( stream );
     return stream->GetPosition();
@@ -297,14 +297,14 @@ void plNetMessage::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
     
     if (contentFlags.IsBitSet(kNetMsgFlags))
-        s->ReadLE(&fFlags);
+        s->ReadLE32(&fFlags);
     
     if (contentFlags.IsBitSet(kNetMsgVersion))
     {
         if (IsBitSet(kHasVersion))
         {
-            s->ReadLE(&fProtocolVerMajor);
-            s->ReadLE(&fProtocolVerMinor);
+            s->ReadByte(&fProtocolVerMajor);
+            s->ReadByte(&fProtocolVerMinor);
         }
     }
     
@@ -317,19 +317,19 @@ void plNetMessage::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kNetMsgContext))
     {
         if (IsBitSet(kHasContext))
-            s->ReadLE(&fContext);
+            s->ReadLE32(&fContext);
     }
     
     if (contentFlags.IsBitSet(kNetMsgTransactionID))
     {
         if (IsBitSet(kHasTransactionID))
-            s->ReadLE(&fTransactionID);
+            s->ReadLE32(&fTransactionID);
     }
     
     if (contentFlags.IsBitSet(kNetMsgPlayerID))
     {
         if (IsBitSet(kHasPlayerID))
-            s->ReadLE(&fPlayerID);
+            s->ReadLE32(&fPlayerID);
     }
 }
 
@@ -360,15 +360,15 @@ void plNetMessage::WriteVersion(hsStream* s, hsResMgr* mgr)
     
     // kNetMsgContext
     if (IsBitSet(kHasContext))
-        s->WriteLE(fContext);
+        s->WriteLE32(fContext);
     
     // kNetMsgTransactionID
     if (IsBitSet(kHasTransactionID))
-        s->WriteLE(fTransactionID);
+        s->WriteLE32(fTransactionID);
     
     // kNetMsgPlayerID
     if (IsBitSet(kHasPlayerID))
-        s->WriteLE(fPlayerID);
+        s->WriteLE32(fPlayerID);
 }
 
 // Get the Packed Size
@@ -898,7 +898,7 @@ int plNetMsgPagingRoom::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
     int bytes=plNetMsgRoomsList::IPokeBuffer(stream, peekOptions);
     if (bytes)
     {
-        stream->WriteLE(fPageFlags);
+        stream->WriteByte(fPageFlags);
         bytes=stream->GetPosition();
     }
     return bytes;
@@ -909,7 +909,7 @@ int plNetMsgPagingRoom::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     int bytes=plNetMsgRoomsList::IPeekBuffer(stream, peekOptions);
     if (bytes)
     {
-        stream->ReadLE(&fPageFlags);
+        stream->ReadByte(&fPageFlags);
         bytes=stream->GetPosition();
     }
     return bytes;
@@ -1062,7 +1062,7 @@ int plNetMsgObjectUpdateFilter::IPokeBuffer(hsStream* stream, uint32_t peekOptio
     if (bytes)
     {
         fObjectListHelper.Poke(stream, peekOptions);
-        stream->WriteLE(fMaxUpdateFreq);
+        stream->WriteLEFloat(fMaxUpdateFreq);
         
         bytes=stream->GetPosition();
     }
@@ -1075,7 +1075,7 @@ int plNetMsgObjectUpdateFilter::IPeekBuffer(hsStream* stream, uint32_t peekOptio
     if (bytes)
     {
         fObjectListHelper.Peek(stream, peekOptions);
-        stream->ReadLE(&fMaxUpdateFreq);
+        stream->ReadLEFloat(&fMaxUpdateFreq);
         
         bytes=stream->GetPosition();
     }
@@ -1146,8 +1146,8 @@ int plNetMsgMemberUpdate::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
 int plNetMsgVoice::IPokeBuffer(hsStream* stream, uint32_t peekOptions)
 {
     plNetMessage::IPokeBuffer(stream, peekOptions);
-    stream->WriteLE(fFlags);
-    stream->WriteLE(fNumFrames);
+    stream->WriteByte(fFlags);
+    stream->WriteByte(fNumFrames);
     plMsgStdStringHelper::Poke(fVoiceData, stream, peekOptions);
     fReceivers.Poke(stream, peekOptions);
     return stream->GetPosition();
@@ -1158,8 +1158,8 @@ int plNetMsgVoice::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     int bytes=plNetMessage::IPeekBuffer(stream, peekOptions);
     if (bytes)
     {
-        stream->ReadLE(&fFlags);
-        stream->ReadLE(&fNumFrames);
+        stream->ReadByte(&fFlags);
+        stream->ReadByte(&fNumFrames);
         plMsgStdStringHelper::Peek(fVoiceData, stream, peekOptions);
         fReceivers.Peek(stream, peekOptions);
         bytes=stream->GetPosition();
@@ -1171,16 +1171,15 @@ void plNetMsgVoice::ReadVersion(hsStream* s, hsResMgr* mgr)
 {
     plNetMessage::ReadVersion(s,mgr);
     
-    uint16_t old = 0;
     hsBitVector contentFlags;
     contentFlags.Read(s);
     
     if (contentFlags.IsBitSet(kDead_FrameSize))
-        s->ReadLE(&old);
+        (void)s->ReadLE16();
     if (contentFlags.IsBitSet(kReceivers))
         fReceivers.ReadVersion(s,mgr);
     if (contentFlags.IsBitSet(kVoiceFlags))
-        s->ReadLE(&fFlags);
+        s->ReadByte(&fFlags);
     if(contentFlags.IsBitSet(kVoiceData))
         plMsgStdStringHelper::Peek(fVoiceData, s);
 }
@@ -1197,7 +1196,7 @@ void plNetMsgVoice::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
     
     fReceivers.WriteVersion(s,mgr);
-    s->WriteLE(fFlags);
+    s->WriteByte(fFlags);
     plMsgStdStringHelper::Poke(fVoiceData, s);
 }
 
@@ -1348,7 +1347,7 @@ ST::string plNetMsgLoadClone::AsString() const
 int plNetMsgInitialAgeStateSent::IPokeBuffer( hsStream* stream, uint32_t peekOptions )
 {
     plNetMessage::IPokeBuffer( stream, peekOptions );
-    stream->WriteLE( fNumInitialSDLStates );
+    stream->WriteLE32(fNumInitialSDLStates);
     return stream->GetPosition();
 }
 
@@ -1357,7 +1356,7 @@ int plNetMsgInitialAgeStateSent::IPeekBuffer( hsStream* stream, uint32_t peekOpt
     int bytes=plNetMessage::IPeekBuffer(stream, peekOptions );
     if (bytes)
     {
-        stream->ReadLE(&fNumInitialSDLStates);
+        stream->ReadLE32(&fNumInitialSDLStates);
         bytes=stream->GetPosition();
     }
     return bytes;

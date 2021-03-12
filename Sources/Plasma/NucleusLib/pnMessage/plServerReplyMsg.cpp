@@ -46,13 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plServerReplyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadLE(&fType);
+    stream->ReadLE32(&fType);
 }
 
 void plServerReplyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLE(fType);
+    stream->WriteLE32(fType);
 }
 
 enum ServerReplyFlags
@@ -68,7 +68,7 @@ void plServerReplyMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kServerReplyType))
-        s->ReadLE(&fType);
+        s->ReadLE32(&fType);
 }
 
 void plServerReplyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
@@ -80,5 +80,5 @@ void plServerReplyMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kServerReplyType
-    s->WriteLE(fType);
+    s->WriteLE32(fType);
 }

@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plAgeInfoStruct::Read( hsStream * s, hsResMgr* )
 {
-    s->ReadLE(&fFlags);
+    s->ReadByte(&fFlags);
     if (IsFlagSet(kHasAgeFilename))
         plMsgStdStringHelper::Peek(fAgeFilename,s);
     if (IsFlagSet(kHasAgeInstanceName))
@@ -68,18 +68,18 @@ void plAgeInfoStruct::Read( hsStream * s, hsResMgr* )
     if (IsFlagSet(kHasAgeUserDefinedName))
         plMsgStdStringHelper::Peek(fAgeUserDefinedName,s);
     if (IsFlagSet(kHasAgeSequenceNumber))
-        s->ReadLE(&fAgeSequenceNumber);
+        s->ReadLE32(&fAgeSequenceNumber);
     if (IsFlagSet(kHasAgeDescription))
         plMsgStdStringHelper::Peek(fAgeDescription,s);
     if (IsFlagSet(kHasAgeLanguage))
-        s->ReadLE(&fAgeLanguage);
+        s->ReadLE32(&fAgeLanguage);
     UpdateFlags();
 }
 
 void plAgeInfoStruct::Write( hsStream * s, hsResMgr* )
 {
     UpdateFlags();
-    s->WriteLE( fFlags );
+    s->WriteByte(fFlags);
     if ( IsFlagSet( kHasAgeFilename ) )
         plMsgStdStringHelper::Poke(fAgeFilename,s);
     if ( IsFlagSet( kHasAgeInstanceName ) )
@@ -89,11 +89,11 @@ void plAgeInfoStruct::Write( hsStream * s, hsResMgr* )
     if ( IsFlagSet( kHasAgeUserDefinedName ) )
         plMsgStdStringHelper::Poke(fAgeUserDefinedName,s);
     if ( IsFlagSet( kHasAgeSequenceNumber ) )
-        s->WriteLE( fAgeSequenceNumber );
+        s->WriteLE32(fAgeSequenceNumber);
     if ( IsFlagSet( kHasAgeDescription ) )
         plMsgStdStringHelper::Poke(fAgeDescription,s);
     if ( IsFlagSet( kHasAgeLanguage ) )
-        s->WriteLE( fAgeLanguage );
+        s->WriteLE32(fAgeLanguage);
 }
 
 bool plAgeInfoStruct::IsEqualTo( const plAgeInfoStruct * other ) const
@@ -362,11 +362,11 @@ plAgeLinkStruct::plAgeLinkStruct()
 
 void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
 {
-    s->ReadLE(&fFlags);
+    s->ReadLE16(&fFlags);
     if (IsFlagSet(kHasAgeInfo))
         fAgeInfo.Read( s,m );
     if ( IsFlagSet( kHasLinkingRules ) )
-        s->ReadLE(&fLinkingRules);
+        s->ReadByte(&fLinkingRules);
     if ( IsFlagSet( kHasSpawnPt_DEAD ) )
     {
         ST::string str;
@@ -390,7 +390,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         fSpawnPoint.Read( s );
     }
     if ( IsFlagSet( kHasAmCCR ) )
-        s->ReadLE(&fAmCCR);
+        s->ReadByte(&fAmCCR);
 
     if ( IsFlagSet( kHasParentAgeFilename ) )
         plMsgStdStringHelper::Peek(fParentAgeFilename,s);
@@ -398,15 +398,15 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
 
 void plAgeLinkStruct::Write( hsStream * s, hsResMgr* m)
 {
-    s->WriteLE( fFlags );
+    s->WriteLE16(fFlags);
     if ( IsFlagSet( kHasAgeInfo ) )
         fAgeInfo.Write( s,m );
     if ( IsFlagSet( kHasLinkingRules ) )
-        s->WriteLE( fLinkingRules );
+        s->WriteByte(fLinkingRules);
     if ( IsFlagSet( kHasSpawnPt ) )
         fSpawnPoint.Write( s );
     if ( IsFlagSet( kHasAmCCR ) )
-        s->WriteLE( fAmCCR );
+        s->WriteByte(fAmCCR);
     if ( IsFlagSet( kHasParentAgeFilename ) )
         plMsgStdStringHelper::Poke(fParentAgeFilename,s);
 }

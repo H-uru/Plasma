@@ -50,7 +50,7 @@ void plParticleUpdateMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
 
     fParamID = stream->ReadLE32();
-    stream->ReadLE(&fParamValue);
+    stream->ReadLEFloat(&fParamValue);
 }
 
 void plParticleUpdateMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -58,7 +58,7 @@ void plParticleUpdateMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
 
     stream->WriteLE32(fParamID);
-    stream->WriteLE(fParamValue);
+    stream->WriteLEFloat(fParamValue);
 }
 
 void plParticleTransferMsg::Read(hsStream* stream, hsResMgr* mgr)
@@ -82,7 +82,7 @@ void plParticleKillMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead(stream, mgr);
     fNumToKill = stream->ReadLEFloat();
     fTimeLeft = stream->ReadLEFloat();
-    stream->ReadLE(&fFlags);
+    stream->ReadByte(&fFlags);
 }
 
 void plParticleKillMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -90,5 +90,5 @@ void plParticleKillMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);
     stream->WriteLEFloat(fNumToKill);
     stream->WriteLEFloat(fTimeLeft);
-    stream->WriteLE(fFlags);
+    stream->WriteByte(fFlags);
 }

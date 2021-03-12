@@ -342,7 +342,7 @@ void    plGBufferGroup::Read( hsStream *s )
     plGBufferColor  *cData;
 
 
-    s->ReadLE( &fFormat );
+    s->ReadByte(&fFormat);
     (void)s->ReadLE32();    // totalDynSize
     fStride = ICalcVertexSize( fLiteStride );
 
@@ -473,7 +473,7 @@ void    plGBufferGroup::Write( hsStream *s )
     for (auto it : fIdxBuffCounts)
         totalDynSize += sizeof( uint16_t ) * it;
 
-    s->WriteLE( fFormat );
+    s->WriteByte(fFormat);
     s->WriteLE32( totalDynSize );
 
     plVertCoder coder;

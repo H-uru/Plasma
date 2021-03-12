@@ -140,21 +140,18 @@ void plPageInfo::Read( hsStream *s )
             s->ReadSafeString(); // fChapter was never used, and always "District".
         fPage = s->ReadSafeString();
 
-        s->ReadLE( &fMajorVersion );
+        s->ReadLE16(&fMajorVersion);
 
         if (version < 6)
         {
-            uint16_t unusedMinorVersion;
-            s->ReadLE(&unusedMinorVersion);
-            int32_t unusedReleaseVersion;
-            s->ReadLE(&unusedReleaseVersion); // This was always zero... yanked.
-            uint32_t unusedFlags;
-            s->ReadLE(&unusedFlags);
+            (void)s->ReadLE16(); // unused: major version
+            (void)s->ReadLE32(); // unused: release version.  This was always zero... yanked.
+            (void)s->ReadLE32(); // unused: flags
         }
 
-        s->ReadLE( &fChecksum );
-        s->ReadLE( &fDataStart );
-        s->ReadLE( &fIndexStart );
+        s->ReadLE32(&fChecksum);
+        s->ReadLE32(&fDataStart);
+        s->ReadLE32(&fIndexStart);
     }
 
     if (version >= 6)
@@ -177,10 +174,10 @@ void    plPageInfo::Write( hsStream *s )
     fLocation.Write( s );
     s->WriteSafeString( fAge );
     s->WriteSafeString( fPage );
-    s->WriteLE( fMajorVersion );
-    s->WriteLE( fChecksum );
-    s->WriteLE( fDataStart );
-    s->WriteLE( fIndexStart );
+    s->WriteLE16(fMajorVersion);
+    s->WriteLE32(fChecksum);
+    s->WriteLE32(fDataStart);
+    s->WriteLE32(fIndexStart);
     uint16_t numClassVersions = uint16_t(fClassVersions.size());
     s->WriteLE16(numClassVersions);
     for (uint16_t i = 0; i < numClassVersions; i++)

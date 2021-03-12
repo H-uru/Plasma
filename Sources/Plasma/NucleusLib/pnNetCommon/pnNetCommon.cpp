@@ -103,7 +103,7 @@ void plCreatableStream::Write( hsStream* stream, hsResMgr* mgr )
     fStream.Rewind();
 
     uint32_t len = fStream.GetEOF();
-    stream->WriteLE( len );
+    stream->WriteLE32(len);
 
     uint8_t* buf = new uint8_t[len];
     fStream.Read(len, (void*)buf);

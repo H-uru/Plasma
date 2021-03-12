@@ -84,20 +84,20 @@ plFont::plCharacter::plCharacter()
 void    plFont::plCharacter::Read( hsStream *s )
 {
     // Rocket science here...
-    s->ReadLE( &fBitmapOff );
-    s->ReadLE( &fHeight );
-    s->ReadLE( &fBaseline );
-    s->ReadLE( &fLeftKern );
-    s->ReadLE( &fRightKern );
+    s->ReadLE32(&fBitmapOff);
+    s->ReadLE32(&fHeight);
+    s->ReadLE32(&fBaseline);
+    s->ReadLEFloat(&fLeftKern);
+    s->ReadLEFloat(&fRightKern);
 }
 
 void plFont::plCharacter::Write(hsStream *s) const
 {
-    s->WriteLE( fBitmapOff );
-    s->WriteLE( fHeight );
-    s->WriteLE( fBaseline );
-    s->WriteLE( fLeftKern );
-    s->WriteLE( fRightKern );
+    s->WriteLE32(fBitmapOff);
+    s->WriteLE32(fHeight);
+    s->WriteLE32(fBaseline);
+    s->WriteLEFloat(fLeftKern);
+    s->WriteLEFloat(fRightKern);
 }
 
 //// Constructor/Read/Write/Destructor/etc ////////////////////////////////////
@@ -1310,40 +1310,40 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
 
                 s->Read( sizeof( copyright ), copyright );
             
-                s->ReadLE( &type );
-                s->ReadLE( &points );
-                s->ReadLE( &vertRes );
-                s->ReadLE( &horzRes );
-                s->ReadLE( &ascent );
-                s->ReadLE( &internalLeading );
-                s->ReadLE( &externalLeading );
-                s->ReadLE( &italic );
-                s->ReadLE( &underline );
-                s->ReadLE( &strikeout );
-                s->ReadLE( &weight );
-                s->ReadLE( &charSet );
-                s->ReadLE( &pixWidth );
-                s->ReadLE( &pixHeight );
-                s->ReadLE( &pitchFamily );
-                s->ReadLE( &avgWidth );
-                s->ReadLE( &maxWidth );
-                s->ReadLE( &firstChar );
-                s->ReadLE( &lastChar );
-                s->ReadLE( &defaultChar );
-                s->ReadLE( &breakChar );
-                s->ReadLE( &widthBytes );
-                s->ReadLE( &device );
-                s->ReadLE( &face );
-                s->ReadLE( &bitsPointer );
-                s->ReadLE( &bitsOffset );
-                s->ReadLE( &reserved );
+                s->ReadLE16(&type);
+                s->ReadLE16(&points);
+                s->ReadLE16(&vertRes);
+                s->ReadLE16(&horzRes);
+                s->ReadLE16(&ascent);
+                s->ReadLE16(&internalLeading);
+                s->ReadLE16(&externalLeading);
+                s->ReadByte(&italic);
+                s->ReadByte(&underline);
+                s->ReadByte(&strikeout);
+                s->ReadLE16(&weight);
+                s->ReadByte(&charSet);
+                s->ReadLE16(&pixWidth);
+                s->ReadLE16(&pixHeight);
+                s->ReadByte(&pitchFamily);
+                s->ReadLE16(&avgWidth);
+                s->ReadLE16(&maxWidth);
+                s->ReadByte(&firstChar);
+                s->ReadByte(&lastChar);
+                s->ReadByte(&defaultChar);
+                s->ReadByte(&breakChar);
+                s->ReadLE16(&widthBytes);
+                s->ReadLE32(&device);
+                s->ReadLE32(&face);
+                s->ReadLE32(&bitsPointer);
+                s->ReadLE32(&bitsOffset);
+                s->ReadByte(&reserved);
                 if( version == 0x0300 )
                 {
-                    s->ReadLE( &flags );
-                    s->ReadLE( &aSpace );
-                    s->ReadLE( &bSpace );
-                    s->ReadLE( &cSpace );
-                    s->ReadLE( &colorPointer );
+                    s->ReadLE32(&flags);
+                    s->ReadLE16(&aSpace);
+                    s->ReadLE16(&bSpace);
+                    s->ReadLE16(&cSpace);
+                    s->ReadLE32(&colorPointer);
                     s->Read( sizeof( reserved1 ), reserved1 );
                 }
                 else
@@ -2126,11 +2126,11 @@ bool    plFont::ReadRaw( hsStream *s )
     fFace = face_buf;
 
     fSize = s->ReadByte();
-    s->ReadLE( &fFlags );
+    s->ReadLE32(&fFlags);
 
-    s->ReadLE( &fWidth );
-    s->ReadLE( &fHeight );
-    s->ReadLE( &fMaxCharHeight );
+    s->ReadLE32(&fWidth);
+    s->ReadLE32(&fHeight);
+    s->ReadLE32(&fMaxCharHeight);
 
     fBPP = s->ReadByte();
 
@@ -2143,7 +2143,7 @@ bool    plFont::ReadRaw( hsStream *s )
     else
         fBMapData = nullptr;
 
-    s->ReadLE( &fFirstChar );
+    s->ReadLE16(&fFirstChar);
 
     fCharacters.resize(s->ReadLE32());
     for (plCharacter& ch : fCharacters)
@@ -2161,11 +2161,11 @@ bool    plFont::WriteRaw( hsStream *s )
     s->Write(sizeof(face_buf), face_buf);
 
     s->WriteByte( fSize );
-    s->WriteLE( fFlags );
+    s->WriteLE32(fFlags);
 
-    s->WriteLE( fWidth );
-    s->WriteLE( fHeight );
-    s->WriteLE( fMaxCharHeight );
+    s->WriteLE32(fWidth);
+    s->WriteLE32(fHeight);
+    s->WriteLE32(fMaxCharHeight);
 
     s->WriteByte( fBPP );
 
@@ -2173,7 +2173,7 @@ bool    plFont::WriteRaw( hsStream *s )
     if( size > 0 )
         s->Write( size, fBMapData );
 
-    s->WriteLE( fFirstChar );
+    s->WriteLE16(fFirstChar);
 
     s->WriteLE32((uint32_t)fCharacters.size());
     for (const plCharacter& ch : fCharacters)

@@ -53,11 +53,11 @@ plNetGroupId plNetGroup::kNetGroupRemotePhysicals( plLocation::MakeReserved( 4 )
 void plNetGroupId::Write(hsStream* s) const
 {
     fId.Write(s);
-    s->WriteLE(fFlags);
+    s->WriteByte(fFlags);
 }
 
 void plNetGroupId::Read(hsStream* s)
 {
     fId.Read(s);
-    s->ReadLE(&fFlags);
+    s->ReadByte(&fFlags);
 }

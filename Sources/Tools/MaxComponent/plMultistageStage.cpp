@@ -92,13 +92,13 @@ ST::string plBaseStage::GetName()
 
 void plBaseStage::Read(hsStream *stream)
 {
-    stream->ReadLE16();
+    (void)stream->ReadLE16();
     fName = stream->ReadSafeString();
 }
 
 void plBaseStage::Write(hsStream *stream)
 {
-    stream->WriteLE16(1);
+    stream->WriteLE16(uint16_t(1));
     stream->WriteSafeString(fName);
 }
 
@@ -157,7 +157,7 @@ void plStandardStage::Write(hsStream *stream)
 {
     plBaseStage::Write(stream);
 
-    stream->WriteLE16(2);
+    stream->WriteLE16(uint16_t(2));
 
     stream->WriteSafeString(fAnimName);
     stream->WriteLE32(fNumLoops);

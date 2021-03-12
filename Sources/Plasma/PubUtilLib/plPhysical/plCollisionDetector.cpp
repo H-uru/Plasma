@@ -213,12 +213,12 @@ bool plCollisionDetector::MsgReceive(plMessage* msg)
 void plCollisionDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Read(stream, mgr);
-    stream->ReadLE(&fType);
+    stream->ReadByte(&fType);
 }
 void plCollisionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteLE(fType);
+    stream->WriteByte(fType);
 }
 
 /////////////////////////////////
@@ -773,7 +773,7 @@ void plSwimDetector::Write(hsStream *stream, hsResMgr *mgr)
 {
     plSimpleRegionSensor::Write(stream, mgr);
 
-    stream->WriteByte(0);
+    stream->WriteByte(uint8_t(0));
     stream->WriteLEFloat(0.f);
     stream->WriteLEFloat(0.f);
 }
@@ -782,10 +782,11 @@ void plSwimDetector::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSimpleRegionSensor::Read(stream, mgr);
 
-    stream->ReadByte();
-    stream->ReadLEFloat();
-    stream->ReadLEFloat();
+    (void)stream->ReadByte();
+    (void)stream->ReadLEFloat();
+    (void)stream->ReadLEFloat();
 }
+
 bool plSwimDetector::MsgReceive(plMessage *msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);

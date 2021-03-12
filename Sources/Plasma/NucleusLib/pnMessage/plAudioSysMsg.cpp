@@ -48,13 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plAudioSysMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadLE(&fAudFlag);
+    stream->ReadLE32(&fAudFlag);
     pObj = mgr->ReadKey(stream);
 }
 
 void plAudioSysMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLE(fAudFlag);
+    stream->WriteLE32(fAudFlag);
     mgr->WriteKey(stream, pObj);
 }

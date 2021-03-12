@@ -141,14 +141,14 @@ void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
     plCreatable::Read(stream, mgr);
 
     // plAvBrain
-    stream->ReadLE32();
+    (void)stream->ReadLE32();
     if (stream->ReadBool()) 
-        mgr->ReadKey(stream);
+        (void)mgr->ReadKey(stream);
 
     // plAvBrainUser
-    stream->ReadLE32();
-    stream->ReadLEFloat();
-    stream->ReadLEDouble();
+    (void)stream->ReadLE32();
+    (void)stream->ReadLEFloat();
+    (void)stream->ReadLEDouble();
 }
 
 // MSGRECEIVE

@@ -48,9 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plInterestingModMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadLE(&fWeight);
-    stream->ReadLE(&fRadius);
-    stream->ReadLE(&fSize);
+    stream->ReadLEFloat(&fWeight);
+    stream->ReadLEFloat(&fRadius);
+    stream->ReadLEFloat(&fSize);
     fPos.Read(stream);
     fObj = mgr->ReadKey(stream);
 }
@@ -58,9 +58,9 @@ void plInterestingModMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plInterestingModMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLE(fWeight);
-    stream->WriteLE(fRadius);
-    stream->WriteLE(fSize);
+    stream->WriteLEFloat(fWeight);
+    stream->WriteLEFloat(fRadius);
+    stream->WriteLEFloat(fSize);
     fPos.Write(stream);
     mgr->WriteKey(stream, fObj);
 }

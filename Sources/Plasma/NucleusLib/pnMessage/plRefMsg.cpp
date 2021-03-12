@@ -84,7 +84,7 @@ plRefMsg& plRefMsg::SetOldRef(hsKeyedObject* oldRef)
 void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadLE(&fContext);
+    stream->ReadByte(&fContext);
 
     plKey key;
     key = mgr->ReadKey(stream);
@@ -96,7 +96,7 @@ void plRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLE(fContext);
+    stream->WriteByte(fContext);
 
     mgr->WriteKey(stream, (fRef ? fRef->GetKey() : nullptr));
     mgr->WriteKey(stream, (fOldRef ? fOldRef->GetKey() : nullptr));
@@ -106,43 +106,43 @@ void plRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 void plGenRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
+    stream->ReadByte(&fType);
     fWhich = stream->ReadLE32();
 }
 
 void plGenRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
+    stream->WriteByte(fType);
     stream->WriteLE32(fWhich);
 }
 
 void plIntRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
-    stream->ReadLE(&fWhich);
-    stream->ReadLE(&fIdx);
+    stream->ReadByte(&fType);
+    stream->ReadLE16(&fWhich);
+    stream->ReadByte(&fIdx);
 }
 
 void plIntRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
-    stream->WriteLE(fWhich);
-    stream->WriteLE(fIdx);
+    stream->WriteByte(fType);
+    stream->WriteLE16(fWhich);
+    stream->WriteByte(fIdx);
 }
 
 void plObjRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
-    stream->ReadLE(&fWhich);
+    stream->ReadByte(&fType);
+    stream->ReadByte(&fWhich);
 }
 
 void plObjRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
-    stream->WriteLE(fWhich);
+    stream->WriteByte(fType);
+    stream->WriteByte(fWhich);
 }

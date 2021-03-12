@@ -299,13 +299,13 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );     
     }
 
-    s->ReadLE( &fTagID );
+    s->ReadLE32(&fTagID);
 
     fProcReceiver = mgr->ReadKey( s );
     if (fProcReceiver != nullptr)
         SetHandler( new pfGUIDialogNotifyProc( fProcReceiver ) );
 
-    s->ReadLE( &fVersion );
+    s->ReadLE32(&fVersion);
 
     fColorScheme->Read( s );
 
@@ -323,11 +323,11 @@ void    pfGUIDialogMod::Write( hsStream *s, hsResMgr *mgr )
     for (pfGUIControlMod* ctrl : fControls)
         mgr->WriteKey(s, ctrl->GetKey());
 
-    s->WriteLE( fTagID );
+    s->WriteLE32(fTagID);
 
     mgr->WriteKey( s, fProcReceiver );
 
-    s->WriteLE( fVersion );
+    s->WriteLE32(fVersion);
 
     fColorScheme->Write( s );
 
