@@ -51,18 +51,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsFastMath.h"
 
-class EdgeBin
-{
-public:
-    uint16_t  fVtx;
-    uint16_t  fCount;
-
-    EdgeBin() : fVtx(0), fCount(0) {}
-};
-
 void plAccMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts)
 {
-    hsTArray<EdgeBin>*  bins = new hsTArray<EdgeBin>[maxVtxIdx+1];
+    struct EdgeBin
+    {
+        uint16_t  fVtx;
+        uint16_t  fCount;
+
+        EdgeBin(uint16_t vtx, uint16_t count) : fVtx(vtx), fCount(count) { }
+    };
+
+    std::vector<std::vector<EdgeBin>> bins(maxVtxIdx + 1);
 
     hsBitVector edgeVertBits;
     // For each vert pair (edge) in idxList
@@ -90,43 +89,32 @@ void plAccMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* id
                 hi = idx0;
             }
 
-            hsTArray<EdgeBin>& loBin = bins[lo];
+            std::vector<EdgeBin>& loBin = bins[lo];
             // In that bucket, look for the higher index.
-            int k;
-            for( k = 0; k < loBin.GetCount(); k++ )
-            {
-                if( loBin[k].fVtx == hi )
-                    break;
-            }
+            auto iter = std::find_if(loBin.begin(), loBin.end(),
+                                     [hi](const EdgeBin& bin) { return bin.fVtx == hi; });
 
             // If we find it, increment it's count,
             // else add it.
-            if( k < loBin.GetCount() )
-            {
-                loBin[k].fCount++;
-            }
+            if (iter != loBin.end())
+                iter->fCount++;
             else
-            {
-                EdgeBin* b = loBin.Push();
-                b->fVtx = hi;
-                b->fCount = 1;
-            }
+                loBin.emplace_back(hi, 1);
         }
     }
 
     // For each bucket in the LUT,
     for( i = 0; i < maxVtxIdx+1; i++ )
     {
-        hsTArray<EdgeBin>& loBin = bins[i];
+        std::vector<EdgeBin>& loBin = bins[i];
         // For each higher index
-        int j;
-        for( j = 0; j < loBin.GetCount(); j++ )
+        for (const EdgeBin& bin : loBin)
         {
             // If the count is one, it's an edge, so set the edge bit for both indices (hi and lo)
-            if( 1 == loBin[j].fCount )
+            if (bin.fCount == 1)
             {
                 edgeVertBits.SetBit(i);
-                edgeVertBits.SetBit(loBin[j].fVtx);
+                edgeVertBits.SetBit(bin.fVtx);
             }
         }
     }
@@ -137,7 +125,6 @@ void plAccMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* id
         if( edgeVertBits.IsBitSet(i) )
             edgeVerts.Append(i);
     }
-    delete [] bins;
 }
 
 void plAccMeshSmooth::FindEdges(std::vector<plGeometrySpan*>& spans, hsTArray<uint16_t>* edgeVerts)
