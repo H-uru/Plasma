@@ -346,7 +346,7 @@ const NetMsgInitRecv * NetMsgChannelFindRecvMessage (
 //============================================================================
 const NetMsgInitSend * NetMsgChannelFindSendMessage (
     NetMsgChannel * channel,
-    unsigned        messageId
+    uintptr_t       messageId
 ) {
     // Is message in range?
     ASSERT(messageId < channel->m_sendMsgs.size());

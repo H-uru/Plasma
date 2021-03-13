@@ -746,7 +746,7 @@ void    plFont::IRenderLoop( const wchar_t *string, int32_t maxCount )
 void    plFont::IRenderChar1To32( const plFont::plCharacter &c )
 {
     uint8_t   bitMask, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     uint16_t  x, y;
 
     
@@ -1128,7 +1128,7 @@ void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
     y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
     if( y < -2 )
         y = -2;
-    destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+    destBasePtr = (uint32_t *)((uint8_t *)destBasePtr + y * int32_t(fRenderInfo.fDestStride));
 
     thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
     if( thisHeight > (int16_t)c.fHeight + 2 )
