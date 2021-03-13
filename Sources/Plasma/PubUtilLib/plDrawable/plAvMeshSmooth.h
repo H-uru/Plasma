@@ -52,9 +52,6 @@ class plGeometrySpan;
 struct hsPoint3;
 struct hsVector3;
 
-template<typename T>
-class hsTArray;
-
 class plAvMeshSmooth
 {
 public:
@@ -91,8 +88,8 @@ protected:
     hsPoint3        IPositionToSpan(XfmSpan& span, const hsPoint3& wPos) const;
     hsVector3       INormalToSpan(XfmSpan& span, const hsVector3& wNorm) const;
 
-    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
-    void            FindEdges(std::vector<XfmSpan>& spans, hsTArray<uint16_t>* edgeVerts);
+    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, std::vector<uint16_t>& edgeVerts);
+    void            FindEdges(std::vector<XfmSpan>& spans, std::vector<uint16_t>* edgeVerts);
 
 public:
     plAvMeshSmooth() : fFlags(kSmoothNorm), fMinNormDot(0.25f), fDistTolSq(1.e-4f), fAccGeom() {}
