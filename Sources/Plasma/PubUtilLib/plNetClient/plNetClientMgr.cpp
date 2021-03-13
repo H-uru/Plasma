@@ -369,9 +369,8 @@ int plNetClientMgr::IPrepMsg(plNetMessage* msg)
             int i;
             for(i=0;i<rl->GetNumReceivers();i++)
             {
-                int idx=fTransport.FindMember(rl->GetReceiverPlayerID(i));
-                hsAssert(idx!=-1, "error finding transport mbr");
-                plNetTransportMember* tm = fTransport.GetMember(idx);
+                plNetTransportMember* tm = fTransport.GetMemberByID(rl->GetReceiverPlayerID(i));
+                hsAssert(tm, "error finding transport mbr");
                 if (tm->IsPeerToPeer())
                     fTransport.SubscribeToChannelGrp(tm, kNetChanListenListUpdate);
             }
@@ -1057,7 +1056,7 @@ ST::string plNetClientMgr::GetPlayerName(const plKey avKey) const
     if (!avKey || avKey == GetLocalPlayerKey())
         return NetCommGetPlayer()->playerName;
 
-    plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
+    plNetTransportMember* mbr = TransportMgr().GetMemberByKey(avKey);
     return mbr ? mbr->GetPlayerName() : ST::string();
 }
 
@@ -1066,7 +1065,7 @@ ST::string plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     if (NetCommGetPlayer()->playerInt == playerId)
         return NetCommGetPlayer()->playerName;
 
-    plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
+    plNetTransportMember* mbr = TransportMgr().GetMemberByID(playerId);
     return mbr ? mbr->GetPlayerName() : ST::string();
 }
 
@@ -1075,8 +1074,8 @@ unsigned plNetClientMgr::GetPlayerIdByName (const ST::string & name) const {
     if (name.compare_i(NetCommGetPlayer()->playerName) == 0)
         return NetCommGetPlayer()->playerInt;
 
-    unsigned n = TransportMgr().GetNumMembers();
-    for (unsigned i = 0; i < n; ++i)
+    size_t n = TransportMgr().GetNumMembers();
+    for (size_t i = 0; i < n; ++i)
         if (plNetTransportMember * member = TransportMgr().GetMember(i))
             if (0 == name.compare(member->GetPlayerName()))
                 return member->GetPlayerID();
@@ -1226,7 +1225,6 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
 {
     bool result = false;
     plKey playerKey = playerMsg->fPlayer;
-    int idx;
 
     if(playerMsg->fUnload)
     {
@@ -1240,7 +1238,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
             npp.SetNetProtocol(kNetProtocolCli2Game);
             SendMsg(&npp);
         }
-        else if (IsRemotePlayerKey(playerKey, &idx))
+        else if (int idx; IsRemotePlayerKey(playerKey, &idx))
         {
             fRemotePlayerKeys.erase(fRemotePlayerKeys.begin()+idx); // remove key from list
             DebugMsg("Net: Unloading remote player {}", playerKey->GetName());
@@ -1286,12 +1284,12 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
             {
                 hsLogEntry(DebugMsg("Adding REMOTE player {}\n", playerKey->GetName()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupRemotePlayer);
-                idx=fTransport.FindMember(playerMsg->fClientID);
-                if( idx != -1 )
+                plNetTransportMember* mbr = fTransport.GetMemberByID(playerMsg->fClientID);
+                if (mbr)
                 {
                     hsAssert(playerKey, "NIL KEY?");
                     hsAssert(!playerKey->GetName().empty(), "UNNAMED KEY");
-                    fTransport.GetMember(idx)->SetAvatarKey(playerKey);
+                    mbr->SetAvatarKey(playerKey);
                 }
                 else
                 {

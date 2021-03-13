@@ -707,8 +707,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 
     plNetClientMgr* mgr = plNetClientMgr::GetInstance();
     plNetTransport& transport = mgr->TransportMgr();
-    int guestIdx = transport.FindMember(playerID);
-    plNetTransportMember* guestMem = transport.GetMember(guestIdx);         // -1 ?
+    plNetTransportMember* guestMem = transport.GetMemberByID(playerID);
 
     if (guestMem) {
         plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);
@@ -725,8 +724,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
 
     plNetTransport &transport = mgr->TransportMgr();
-    int guestIdx = transport.FindMember(playerID);
-    plNetTransportMember *guestMem = transport.GetMember(guestIdx);         // -1 ?
+    plNetTransportMember* guestMem = transport.GetMemberByID(playerID);
     if (guestMem)
     {
         plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);
