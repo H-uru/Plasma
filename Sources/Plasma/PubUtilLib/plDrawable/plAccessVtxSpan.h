@@ -124,7 +124,7 @@ public:
     bool                HasSpecular() const { return HasChannel(kSpecular); }
     bool                HasUVWs() const { return HasChannel(kUVW); }
     bool                    HasUVWs(int n) { return HasChannel(kUVW) && (n <= fNumUVWsPerVert); }
-    int             NumUVWs() const { return fNumUVWsPerVert; }
+    uint16_t            NumUVWs() const { return fNumUVWsPerVert; }
 
     //////////////////////////////////
     // ACCESSOR SECTION

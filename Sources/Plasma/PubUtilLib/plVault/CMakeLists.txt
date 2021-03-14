@@ -17,7 +17,11 @@ set(plVault_HEADERS
     plVaultNodeAccess.h
 )
 
-add_library(plVault STATIC ${plVault_SOURCES} ${plVault_HEADERS})
+plasma_library(plVault
+    SOURCES ${plVault_SOURCES} ${plVault_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+    UNITY_BUILD
+)
 target_link_libraries(
     plVault
     PUBLIC
@@ -40,8 +44,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plVault PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
 
 target_include_directories(plVault PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 

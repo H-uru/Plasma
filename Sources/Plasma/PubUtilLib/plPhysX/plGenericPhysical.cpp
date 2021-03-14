@@ -326,9 +326,9 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     plPhysical::Read(stream, mgr);
     ClearMatrix(fCachedLocal2World);
 
-    fRecipe.mass = stream->ReadLEScalar();
-    fRecipe.friction = stream->ReadLEScalar();
-    fRecipe.restitution = stream->ReadLEScalar();
+    fRecipe.mass = stream->ReadLEFloat();
+    fRecipe.friction = stream->ReadLEFloat();
+    fRecipe.restitution = stream->ReadLEFloat();
     fRecipe.bounds = (plSimDefs::Bounds)stream->ReadByte();
     fRecipe.group = (plSimDefs::Group)stream->ReadByte();
     fRecipe.reportsOn = stream->ReadLE32();
@@ -359,7 +359,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     // engine is being used. The readers will compensate for the change by testing fRecipe.bounds.
     ISanityCheckBounds();
     if (fBounds == plSimDefs::kSphereBounds) {
-        fRecipe.radius = stream->ReadLEScalar();
+        fRecipe.radius = stream->ReadLEFloat();
         fRecipe.offset.Read(stream);
     } else if (fBounds == plSimDefs::kBoxBounds) {
         fRecipe.bDimensions.Read(stream);
@@ -381,11 +381,11 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
 {
     plPhysical::Write(stream, mgr);
 
-    stream->WriteLEScalar(fRecipe.mass);
-    stream->WriteLEScalar(fRecipe.friction);
-    stream->WriteLEScalar(fRecipe.restitution);
-    stream->WriteByte(fRecipe.bounds);
-    stream->WriteByte(fGroup);
+    stream->WriteLEFloat(fRecipe.mass);
+    stream->WriteLEFloat(fRecipe.friction);
+    stream->WriteLEFloat(fRecipe.restitution);
+    stream->WriteByte((uint8_t)fRecipe.bounds);
+    stream->WriteByte((uint8_t)fGroup);
     stream->WriteLE32(fReportsOn);
     stream->WriteLE16(fLOSDBs);
     mgr->WriteKey(stream, fObjectKey);
@@ -399,7 +399,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     fProps.Write(stream);
 
     if (fRecipe.bounds == plSimDefs::kSphereBounds) {
-        stream->WriteLEScalar(fRecipe.radius);
+        stream->WriteLEFloat(fRecipe.radius);
         fRecipe.offset.Write(stream);
     } else if (fRecipe.bounds == plSimDefs::kBoxBounds) {
         fRecipe.bDimensions.Write(stream);

@@ -69,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 #include "hsThread.h"
 #include "plTweak.h"
 

@@ -449,15 +449,15 @@ void pyDynamicText::AddPlasmaClasses(PyObject *m)
 
 void pyDynamicText::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtJustify);
-    PYTHON_ENUM_ELEMENT(PtJustify, kCenter, plDynamicTextMap::kCenter);
-    PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::kLeftJustify);
-    PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::kRightJustify);
-    PYTHON_ENUM_END(m, PtJustify);
+    PYTHON_ENUM_START(PtJustify)
+    PYTHON_ENUM_ELEMENT(PtJustify, kCenter, plDynamicTextMap::kCenter)
+    PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::kLeftJustify)
+    PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::kRightJustify)
+    PYTHON_ENUM_END(m, PtJustify)
 
-    PYTHON_ENUM_START(PtFontFlags);
-    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontBold, plDynamicTextMap::kFontBold);
-    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontItalic, plDynamicTextMap::kFontItalic);
-    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontShadowed, plDynamicTextMap::kFontShadowed);
-    PYTHON_ENUM_END(m, PtFontFlags);
+    PYTHON_ENUM_START(PtFontFlags)
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontBold, plDynamicTextMap::kFontBold)
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontItalic, plDynamicTextMap::kFontItalic)
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontShadowed, plDynamicTextMap::kFontShadowed)
+    PYTHON_ENUM_END(m, PtFontFlags)
 }

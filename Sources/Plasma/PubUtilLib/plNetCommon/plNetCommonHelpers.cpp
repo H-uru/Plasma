@@ -186,24 +186,19 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
 {
     IClearItems();
 
-    s->LogSubStreamStart("CreatableListHelper");
-
-    s->LogReadLE( &fFlags, "Flags" );
+    s->ReadByte(&fFlags);
 
     fFlags &= ~kWritten;
 
-    uint32_t bufSz;
-    s->LogReadLE( &bufSz, "BufSz" );
+    uint32_t bufSz = s->ReadLE32();
     std::string buf;
     buf.resize( bufSz );
 
     if ( fFlags&kCompressed )
     {
-        uint32_t zBufSz;
-        s->LogReadLE( &zBufSz, "Compressed BufSz" );
+        uint32_t zBufSz = s->ReadLE32();
         std::string zBuf;
         zBuf.resize( zBufSz );
-        s->LogSubStreamPushDesc("Compressed Data");
         s->Read( zBufSz, (void*)zBuf.data() );
         plZlibCompress compressor;
         uint32_t tmp = bufSz;
@@ -215,20 +210,16 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
     }
     else
     {
-        s->LogSubStreamPushDesc("Uncompressed Data");
         s->Read( bufSz, (void*)buf.data() );
     }
 
     hsReadOnlyStream ram( bufSz, (void*)buf.data() );
 
-    uint16_t nItems;
-    ram.ReadLE( &nItems );
-    for ( int i=0; i<nItems; i++ )
+    uint16_t nItems = ram.ReadLE16();
+    for (uint16_t i = 0; i < nItems; i++)
     {
-        uint16_t id;
-        uint16_t classIdx;
-        ram.ReadLE( &id );
-        ram.ReadLE( &classIdx );
+        uint16_t id = ram.ReadLE16();
+        uint16_t classIdx = ram.ReadLE16();
         plCreatable * object = plFactory::Create( classIdx );
         hsAssert( object,"plCreatableListHelper: Failed to create plCreatable object (invalid class index?)" );
         if ( object )
@@ -248,13 +239,13 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
         hsRAMStream ram;
         size_t nItems = fItems.size();
         hsAssert(nItems < std::numeric_limits<uint16_t>::max(), "Too many items");
-        ram.WriteLE(uint16_t(nItems));
+        ram.WriteLE16(uint16_t(nItems));
         for (const auto& ii : fItems) {
             uint16_t id = ii.first;
             plCreatable* item = ii.second;
             uint16_t classIdx = item->ClassIndex();
-            ram.WriteLE( id );
-            ram.WriteLE( classIdx );
+            ram.WriteLE16(id);
+            ram.WriteLE16(classIdx);
             item->Write( &ram, mgr );
         }
 
@@ -286,13 +277,13 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
 
         ram.Truncate();
 
-        ram.WriteLE( fFlags );
-        ram.WriteLE( bufSz );
+        ram.WriteByte(fFlags);
+        ram.WriteLE32(bufSz);
 
         if ( fFlags&kCompressed )
         {
             uint32_t zBufSz = buf.size();
-            ram.WriteLE( zBufSz );
+            ram.WriteLE32(zBufSz);
         }
 
         ram.Write( buf.size(), buf.data() );

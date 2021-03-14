@@ -118,5 +118,5 @@ void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLE32(fInitiatorID);
     stream->WriteLE16(fInitiatorSerial);
 
-    stream->WriteLE16(fCommand);
+    stream->WriteLE16((uint16_t)fCommand);
 }

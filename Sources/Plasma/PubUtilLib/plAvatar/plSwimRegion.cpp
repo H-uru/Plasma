@@ -56,18 +56,18 @@ void plSwimRegionInterface::Read(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Read(s, mgr);
 
-    fDownBuoyancy = s->ReadLEScalar();
-    fUpBuoyancy = s->ReadLEScalar();
-    fMaxUpwardVel = s->ReadLEScalar();
+    fDownBuoyancy = s->ReadLEFloat();
+    fUpBuoyancy = s->ReadLEFloat();
+    fMaxUpwardVel = s->ReadLEFloat();
 }
 
 void plSwimRegionInterface::Write(hsStream* s, hsResMgr* mgr)
 {
     plObjInterface::Write(s, mgr);
 
-    s->WriteLEScalar(fDownBuoyancy);
-    s->WriteLEScalar(fUpBuoyancy);
-    s->WriteLEScalar(fMaxUpwardVel);
+    s->WriteLEFloat(fDownBuoyancy);
+    s->WriteLEFloat(fUpBuoyancy);
+    s->WriteLEFloat(fMaxUpwardVel);
 }
 
 void plSwimRegionInterface::GetCurrent(plPhysicalControllerCore *physical, hsVector3 &linearResult, float &angularResult, float elapsed)
@@ -92,11 +92,11 @@ void plSwimCircularCurrentRegion::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Read(stream, mgr);
     
-    fRotation = stream->ReadLEScalar();
-    fPullNearDistSq = stream->ReadLEScalar();
-    fPullNearVel = stream->ReadLEScalar();
-    fPullFarDistSq = stream->ReadLEScalar();
-    fPullFarVel = stream->ReadLEScalar();
+    fRotation = stream->ReadLEFloat();
+    fPullNearDistSq = stream->ReadLEFloat();
+    fPullNearVel = stream->ReadLEFloat();
+    fPullFarDistSq = stream->ReadLEFloat();
+    fPullFarVel = stream->ReadLEFloat();
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
 }
 
@@ -104,11 +104,11 @@ void plSwimCircularCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Write(stream, mgr);
     
-    stream->WriteLEScalar(fRotation);
-    stream->WriteLEScalar(fPullNearDistSq);
-    stream->WriteLEScalar(fPullNearVel);
-    stream->WriteLEScalar(fPullFarDistSq);
-    stream->WriteLEScalar(fPullFarVel);
+    stream->WriteLEFloat(fRotation);
+    stream->WriteLEFloat(fPullNearDistSq);
+    stream->WriteLEFloat(fPullNearVel);
+    stream->WriteLEFloat(fPullFarDistSq);
+    stream->WriteLEFloat(fPullFarVel);
     mgr->WriteKey(stream, fCurrentSO);
 }
 
@@ -209,10 +209,10 @@ void plSwimStraightCurrentRegion::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Read(stream, mgr);
     
-    fNearDist = stream->ReadLEScalar();
-    fNearVel = stream->ReadLEScalar();
-    fFarDist = stream->ReadLEScalar();
-    fFarVel = stream->ReadLEScalar();
+    fNearDist = stream->ReadLEFloat();
+    fNearVel = stream->ReadLEFloat();
+    fFarDist = stream->ReadLEFloat();
+    fFarVel = stream->ReadLEFloat();
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // currentSO      
 }
 
@@ -220,10 +220,10 @@ void plSwimStraightCurrentRegion::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSwimRegionInterface::Write(stream, mgr);
     
-    stream->WriteLEScalar(fNearDist);
-    stream->WriteLEScalar(fNearVel);
-    stream->WriteLEScalar(fFarDist);
-    stream->WriteLEScalar(fFarVel);
+    stream->WriteLEFloat(fNearDist);
+    stream->WriteLEFloat(fNearVel);
+    stream->WriteLEFloat(fFarDist);
+    stream->WriteLEFloat(fFarVel);
     mgr->WriteKey(stream, fCurrentSO);
 }
 

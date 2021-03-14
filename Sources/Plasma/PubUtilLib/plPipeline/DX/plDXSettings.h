@@ -53,17 +53,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDXSettings_h
 #define _plDXSettings_h
 
-#include "hsMatrix44.h"
-#include "plPipeline/plFogEnvironment.h"
-#include "hsGeometry3.h"
-#include "hsTemplates.h"
-#include "hsColorRGBA.h"
+#include <vector>
+
 #include "hsBitVector.h"
-#include "plPipeline/plStencil.h"
+#include "hsColorRGBA.h"
+#include "hsGeometry3.h"
+#include "hsMatrix44.h"
 #include "hsPoint2.h"
+#include "hsPoolVector.h"
+#include "plViewTransform.h"
+
+#include "plPipeline/plFogEnvironment.h"
+#include "plPipeline/plStencil.h"
 #include "plPipeline/plCullTree.h"
 #include "plPipeline/hsWinRef.h"
-#include "plViewTransform.h"
 
 //// General Settings /////////////////////////////////////////////////////////
 
@@ -150,18 +153,14 @@ class plDXLightSettings
         plLightInfo*            fActiveList;
         plDXLightRef*           fRefList;
         plDXPipeline*           fPipeline;
-        hsTArray<plLightInfo*>  fProjEach;
-        hsTArray<plLightInfo*>  fProjAll;
+        std::vector<plLightInfo*> fProjEach;
+        std::vector<plLightInfo*> fProjAll;
 
-        hsTArray<plLightInfo*>  fCharLights;
-        hsTArray<plLightInfo*>  fVisLights;
-
-        uint32_t                          fNextShadowLight;
-        hsTArray<plDXLightRef*>     fShadowLights;
+        hsPoolVector<plDXLightRef*> fShadowLights;
 
         plDXLightSettings()
             : fActiveList(), fRefList(), fPipeline(),
-              fNextIndex(), fLastIndex(), fTime(), fNextShadowLight()
+              fNextIndex(), fLastIndex(), fTime()
         { }
 
         // Sets member variables to initial states. Does NOT release anything.

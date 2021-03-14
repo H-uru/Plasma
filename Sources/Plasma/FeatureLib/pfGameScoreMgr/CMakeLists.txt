@@ -6,7 +6,7 @@ set(pfGameScoreMgr_HEADERS
     pfGameScoreMgr.h
 )
 
-add_library(pfGameScoreMgr STATIC ${pfGameScoreMgr_SOURCES} ${pfGameScoreMgr_HEADERS})
+plasma_library(pfGameScoreMgr SOURCES ${pfGameScoreMgr_SOURCES} ${pfGameScoreMgr_HEADERS})
 target_link_libraries(
     pfGameScoreMgr
     PUBLIC

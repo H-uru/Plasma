@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInventoryObjComponent_inc
 #define plInventoryObjComponent_inc
 
+#include <map>
+#include <vector>
+
 #include "plClickableComponent.h"
 
 class plErrorMsg;
@@ -81,7 +84,7 @@ public:
     typedef std::map<plMaxNode*, plKey> LogicKeys;
 protected:
     
-    hsTArray<plKey> fReceivers;
+    std::vector<plKey> fReceivers;
     LogicKeys fLogicModKeys;
 
 public:

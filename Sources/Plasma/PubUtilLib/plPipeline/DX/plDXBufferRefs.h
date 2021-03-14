@@ -121,7 +121,7 @@ class plDXVertexBufferRef : public plDXDeviceRef
         }
 
         virtual ~plDXVertexBufferRef();
-        void    Release();
+        void    Release() override;
 };
 
 class plDXIndexBufferRef : public plDXDeviceRef
@@ -167,7 +167,7 @@ class plDXIndexBufferRef : public plDXDeviceRef
         }
 
         virtual ~plDXIndexBufferRef();
-        void    Release();
+        void    Release() override;
 };
 
 

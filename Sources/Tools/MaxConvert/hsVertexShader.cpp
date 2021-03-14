@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsExceptionStack.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -138,7 +137,7 @@ void hsVertexShader::Close()
 //// ShadeNode ///////////////////////////////////////////////////////////////
 //  Same as the other ShadeNode, only this shades an array of plGeometrySpans.
 
-void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hsTArray<plGeometrySpan *> &spans)
+void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans)
 {
     // If we're flagged for WaterColor, our vertex colors are already done.
     if( ((plMaxNodeBase*)node)->GetCalcEdgeLens() || node->UserPropExists("XXXWaterColor") )
@@ -150,9 +149,8 @@ void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, hs
     hsMatrix44 tempMatrix = w2l; // l2w's inverse
     tempMatrix.GetTranspose( &fNormalToWorld ); // Inverse-transpose of the fLocalToWorld matrix, 
     
-    int         i;
-    for( i = 0; i < spans.GetCount(); i++ )
-        IShadeSpan( spans[ i ], node);
+    for (plGeometrySpan* span : spans)
+        IShadeSpan(span, node);
     
     fLightMapGen->DeInitNode();
 
@@ -168,7 +166,6 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
 {
     hsColorRGBA         preDiffuse, rtDiffuse, matAmbient;
     hsBitVector         dirtyVector;
-    int                 i;
     bool                translucent, shadeIt, addingIt;
     plLayerInterface    *layer = nullptr;
 
@@ -198,7 +195,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
             addingIt = true;
     }
     float opacity = 1.f;
-    for( i = 0; i < span->fMaterial->GetNumLayers(); i++ )
+    for (size_t i = 0; i < span->fMaterial->GetNumLayers(); i++)
     {
         plLayerInterface* lay = span->fMaterial->GetLayer(i);
         if( (lay->GetBlendFlags() & hsGMatState::kBlendAlpha)
@@ -219,7 +216,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
         IShadeVertices( span, &dirtyVector, node, translucent );
     else
     {
-        for( i = 0; i < span->fNumVerts; i++ )  
+        for (uint32_t i = 0; i < span->fNumVerts; i++)
         {
             /// This is good for the old way, but not sure about the new way. Test once new way is in again -mcn
 //          fShadeColorTable[ i ].Set( 1, 1, 1, 1 );
@@ -264,7 +261,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
 
     /// Multiply by the material color, and scale by opacity if we're additive blending
     /// Apply colors now, multiplying by the material color as we go
-    for( i = 0; i < span->fNumVerts; i++ )
+    for (uint32_t i = 0; i < span->fNumVerts; i++)
     {
         fShadeColorTable[ i ] *= matDiffuse;
         fShadeColorTable[ i ] += matAmbient;
@@ -274,7 +271,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
 
     if( addingIt )
     {
-        for( i = 0; i < span->fNumVerts; i++ )
+        for (uint32_t i = 0; i < span->fNumVerts; i++)
         {
             float opacity = fShadeColorTable[ i ].a;
             fShadeColorTable[ i ] *= opacity;
@@ -290,7 +287,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
         span->fProps |= plGeometrySpan::kDiffuseFoldedIn;
         if( !shadeIt )
         {
-            for( i = 0; i < span->fNumVerts; i++ )
+            for (uint32_t i = 0; i < span->fNumVerts; i++)
             {
                 fIllumColorTable[ i ].a = 0;
                 fShadeColorTable[ i ] = (fShadeColorTable[ i ] * rtDiffuse) + fIllumColorTable[ i ];
@@ -299,7 +296,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
         }
         else
         {
-            for( i = 0; i < span->fNumVerts; i++ )
+            for (uint32_t i = 0; i < span->fNumVerts; i++)
             {
                 fIllumColorTable[ i ].a = 1.f;
                 // Following needs to be changed to allow user input vertex colors to modulate
@@ -315,7 +312,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
         if( !shadeIt )
         {
             // Not shaded, so runtime lit, so we want BLACK vertex colors
-            for( i = 0; i < span->fNumVerts; i++ )
+            for (uint32_t i = 0; i < span->fNumVerts; i++)
             {
                 fShadeColorTable[ i ].Set( 0, 0, 0, 0 );
                 fIllumColorTable[ i ].Set( 0, 0, 0, 0 );
@@ -323,7 +320,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
         }
         else
         {
-            for( i = 0; i < span->fNumVerts; i++ )
+            for (uint32_t i = 0; i < span->fNumVerts; i++)
             {
                 fShadeColorTable[ i ] *= fIllumColorTable[ i ];
                 fIllumColorTable[ i ].Set( 0, 0, 0, 0 );
@@ -333,7 +330,7 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
 #endif
 
     /// Loop and stuff
-    for( i = 0; i < span->fNumVerts; i++ )
+    for (uint32_t i = 0; i < span->fNumVerts; i++)
         span->StuffVertex( i, fShadeColorTable + i, fIllumColorTable + i );
 
     delete [] fShadeColorTable;       

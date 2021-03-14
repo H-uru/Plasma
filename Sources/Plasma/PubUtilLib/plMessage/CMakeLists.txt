@@ -125,9 +125,11 @@ set(plMessage_HEADERS
     plVaultNotifyMsg.h
 )
 
-add_library(plMessage STATIC ${plMessage_SOURCES} ${plMessage_HEADERS})
-plasma_optimize_target(plMessage UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
-
+plasma_library(plMessage
+    SOURCES ${plMessage_SOURCES} ${plMessage_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(plMessage
     PUBLIC
         CoreLib

@@ -14,7 +14,7 @@ set(plFile_HEADERS
     plStreamSource.h
 )
 
-add_library(plFile STATIC ${plFile_SOURCES} ${plFile_HEADERS})
+plasma_library(plFile SOURCES ${plFile_SOURCES} ${plFile_HEADERS})
 target_link_libraries(
     plFile
     PUBLIC

@@ -47,215 +47,154 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //          class
 //
 
-#include "HeadSpin.h"
 #include <Python.h>
 #include <structmember.h>
-#include "pyGlueHelpers.h"
+
+#include <string_theory/format>
 
 #include "pyEnum.h"
-#include <string_theory/format>
+#include "pyGlueHelpers.h"
+#include "pyObjectRef.h"
 
 struct EnumValue {
     PyObject_HEAD
-    long value;
-    char* name;
+    Py_ssize_t value{};
+    PyObject* name{};
 };
 
-PyObject *NewEnumValue(char const* name, long value);
-
-static PyObject *EnumValue_new(PyTypeObject *type, PyObject *args, PyObject *)
+static PyObject* EnumValue_new(PyTypeObject* type, PyObject* args, PyObject*)
 {
     EnumValue *self = (EnumValue*)type->tp_alloc(type, 0);
-    if (self != nullptr)
-    {
-        char *nameTemp = nullptr;
-        long value;
-        if (!PyArg_ParseTuple(args, "l|s", &value, &nameTemp))
-        {
+    if (self != nullptr) {
+        if (!PyArg_ParseTuple(args, "n|O", &self->value, &self->name)) {
             Py_DECREF(self);
             return nullptr;
         }
 
-        if (nameTemp) // copy the value if it was passed
-        {
-            self->name = new char[strlen(nameTemp) + 1];
-            strcpy(self->name, nameTemp);
-            self->name[strlen(nameTemp)] = '\0';
+        if (self->name && !PyUnicode_Check(self->name)) {
+            Py_DECREF(self->name);
+            Py_DECREF(self);
+            return nullptr;
         }
-        else
-            self->name = nullptr;
-        self->value = value;
+
+        Py_XINCREF(self->name);
     }
 
     return (PyObject*)self;
 }
 
-static void EnumValue_dealloc(EnumValue *self)
+static int EnumValue_clear(PyObject* self)
 {
-    if (self->name)
-        delete [] self->name;
-    Py_TYPE(self)->tp_free((PyObject*)self);
+    Py_CLEAR(((EnumValue*)self)->name);
+    return 0;
 }
 
-static PyObject *EnumValue_repr(PyObject *self)
+static void EnumValue_dealloc(PyObject* self)
 {
-    EnumValue *obj = (EnumValue*)self;
-    if (obj->name == nullptr)
-    {
+    EnumValue_clear(self);
+    Py_TYPE(self)->tp_free(self);
+}
+
+static PyObject* EnumValue_repr(PyObject* obj)
+{
+    EnumValue* self = (EnumValue*)obj;
+    if (self->name == nullptr) {
         // no name, so just output our value
-        return PyUnicode_FromFormat("%s(%ld)", Py_TYPE(obj)->tp_name, obj->value);
-    }
-    else
-    {
+        return PyUnicode_FromFormat("%s(%ld)", Py_TYPE(self)->tp_name, self->value);
+    } else {
         // we have a name, so output it
-        return PyUnicode_FromString(obj->name);
-    }
-}
-
-static PyObject* EnumValue_str(PyObject* self)
-{
-    EnumValue *obj = (EnumValue*)self;
-    if (obj->name == nullptr)
-    {
-        // no name, so return our value
-        return PyUnicode_FromFormat("%s(%ld)", Py_TYPE(obj)->tp_name, obj->value);
-    }
-    else
-    {
-        // just return the name
-        return PyUnicode_FromString(obj->name);
+        Py_INCREF(self->name);
+        return self->name;
     }
 }
 
 // forward def because the type object isn't defined yet
-bool IsEnumValue(PyObject *obj);
+bool IsEnumValue(PyObject* obj);
 
-Py_hash_t EnumValue_hash(PyObject *v)
+Py_hash_t EnumValue_hash(PyObject* v)
 {
     // stolen from python's int class
-    if (!IsEnumValue(v))
-    {
+    if (!IsEnumValue(v)) {
         PyErr_SetString(PyExc_TypeError, "hash was passed a non enum value (this would be weird)");
-        return 0;
+        return -1;
     }
-    long x = ((EnumValue*)v)->value;
+    Py_hash_t x = (Py_hash_t)((EnumValue*)v)->value;
     if (x == -1)
         x = -2;
     return x;
 }
 
-int EnumValue_nonzero(EnumValue *v)
+int EnumValue_nonzero(EnumValue* v)
 {
     return v->value != 0;
 }
 
-PyObject *EnumValue_and(PyObject *v, PyObject *w)
+PyObject *EnumValue_and(PyObject* v, PyObject* w)
 {
-    EnumValue *obj = nullptr;
-    long other = 0;
-    if (IsEnumValue(v))
-    {
+    EnumValue* obj = nullptr;
+    Py_ssize_t other = 0;
+    if (IsEnumValue(v)) {
         obj = (EnumValue*)v;
         if (!PyLong_Check(w))
-        {
-            Py_INCREF(Py_NotImplemented);
-            return Py_NotImplemented;
-        }
-        other = PyLong_AsLong(w);
-    }
-    else if (IsEnumValue(w))
-    {
+            PYTHON_RETURN_NOT_IMPLEMENTED;
+        other = PyLong_AsSsize_t(w);
+    } else if (IsEnumValue(w)) {
         obj = (EnumValue*)w;
         if (!PyLong_Check(v))
-        {
-            Py_INCREF(Py_NotImplemented);
-            return Py_NotImplemented;
-        }
-        other = PyLong_AsLong(v);
+            PYTHON_RETURN_NOT_IMPLEMENTED;
+        other = PyLong_AsSsize_t(v);
+    } else {
+        PYTHON_RETURN_NOT_IMPLEMENTED;
     }
-    else
-    {
-        Py_INCREF(Py_NotImplemented);
-        return Py_NotImplemented;
-    }
-    return PyLong_FromLong(obj->value & other);
+    return PyLong_FromSsize_t(obj->value & other);
 }
 
-PyObject *EnumValue_xor(PyObject *v, PyObject *w)
+PyObject* EnumValue_xor(PyObject* v, PyObject* w)
 {
     EnumValue *obj = nullptr;
-    long other = 0;
-    if (IsEnumValue(v))
-    {
+    Py_ssize_t other = 0;
+    if (IsEnumValue(v)) {
         obj = (EnumValue*)v;
         if (!PyLong_Check(w))
-        {
-            Py_INCREF(Py_NotImplemented);
-            return Py_NotImplemented;
-        }
-        other = PyLong_AsLong(w);
-    }
-    else if (IsEnumValue(w))
-    {
+            PYTHON_RETURN_NOT_IMPLEMENTED;
+        other = PyLong_AsSsize_t(w);
+    } else if (IsEnumValue(w)) {
         obj = (EnumValue*)w;
         if (!PyLong_Check(v))
-        {
-            Py_INCREF(Py_NotImplemented);
-            return Py_NotImplemented;
-        }
-        other = PyLong_AsLong(v);
+            PYTHON_RETURN_NOT_IMPLEMENTED;
+        other = PyLong_AsSsize_t(v);
+    } else {
+        PYTHON_RETURN_NOT_IMPLEMENTED;
     }
-    else
-    {
-        Py_INCREF(Py_NotImplemented);
-        return Py_NotImplemented;
-    }
-    return PyLong_FromLong(obj->value ^ other);
+    return PyLong_FromSsize_t(obj->value ^ other);
 }
 
-PyObject *EnumValue_or(PyObject *v, PyObject *w)
+PyObject* EnumValue_or(PyObject *v, PyObject *w)
 {
-    EnumValue *obj = nullptr;
-    long other = 0;
-    if (IsEnumValue(v))
-    {
+    EnumValue* obj = nullptr;
+    Py_ssize_t other = 0;
+    if (IsEnumValue(v)) {
         obj = (EnumValue*)v;
         if (!PyLong_Check(w))
-        {
-            Py_INCREF(Py_NotImplemented);
-            return Py_NotImplemented;
-        }
-        other = PyLong_AsLong(w);
-    }
-    else if (IsEnumValue(w))
-    {
+            PYTHON_RETURN_NOT_IMPLEMENTED;
+        other = PyLong_AsSsize_t(w);
+    } else if (IsEnumValue(w)) {
         obj = (EnumValue*)w;
         if (!PyLong_Check(v))
-        {
-            Py_INCREF(Py_NotImplemented);
-            return Py_NotImplemented;
-        }
-        other = PyLong_AsLong(v);
-    }
-    else
-    {
-        Py_INCREF(Py_NotImplemented);
-        return Py_NotImplemented;
+            PYTHON_RETURN_NOT_IMPLEMENTED;
+        other = PyLong_AsSsize_t(v);
+    } else {
+        PYTHON_RETURN_NOT_IMPLEMENTED;
     }
     return PyLong_FromLong(obj->value | other);
 }
 
-PyObject *EnumValue_int(EnumValue *v)
+PyObject* EnumValue_long(EnumValue* v)
 {
-    return PyLong_FromLong(v->value);
+    return PyLong_FromSsize_t((v->value));
 }
 
-PyObject *EnumValue_long(EnumValue *v)
-{
-    return PyLong_FromLong((v->value));
-}
-
-PyObject *EnumValue_float(EnumValue *v)
+PyObject* EnumValue_float(EnumValue* v)
 {
     return PyFloat_FromDouble((double)(v->value));
 }
@@ -302,14 +241,14 @@ PYTHON_END_AS_NUMBER_TABLE;
 
 PYTHON_RICH_COMPARE_DEFINITION(EnumValue, v, w, compareType)
 {
-    long i = 0;
-    long j = 0;
+    Py_ssize_t i = 0;
+    Py_ssize_t j = 0;
     if (IsEnumValue(v)) {
         i = ((EnumValue*)v)->value;
         if (PyLong_Check(w))
-            j = PyLong_AsLong(w);
+            j = PyLong_AsSsize_t(w);
         else if (PyFloat_Check(w))
-            j = (long)PyFloat_AsDouble(w);
+            j = (Py_ssize_t)PyFloat_AsDouble(w);
         else if (IsEnumValue(w))
             j = ((EnumValue*)w)->value;
         else
@@ -318,9 +257,9 @@ PYTHON_RICH_COMPARE_DEFINITION(EnumValue, v, w, compareType)
     } else if (IsEnumValue(w)) {
         j = ((EnumValue*)w)->value;
         if (PyLong_Check(v))
-            i = PyLong_AsLong(v);
+            i = PyLong_AsSsize_t(v);
         else if (PyFloat_Check(v))
-            i = (long)PyFloat_AsDouble(v);
+            i = (Py_ssize_t)PyFloat_AsDouble(v);
         else if (IsEnumValue(v))
             i = ((EnumValue*)v)->value;
         else
@@ -355,7 +294,7 @@ PYTHON_TYPE_START(EnumValue)
     "PlasmaConstants.EnumValue",
     sizeof(EnumValue),                  /* tp_basicsize */
     0,                                  /* tp_itemsize */
-    (destructor)EnumValue_dealloc,      /* tp_dealloc */
+    EnumValue_dealloc,                  /* tp_dealloc */
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET,
     nullptr,                            /* tp_getattr */
     nullptr,                            /* tp_setattr */
@@ -366,7 +305,7 @@ PYTHON_TYPE_START(EnumValue)
     nullptr,                            /* tp_as_mapping */
     EnumValue_hash,                     /* tp_hash */
     nullptr,                            /* tp_call */
-    EnumValue_str,                      /* tp_str */
+    nullptr,                            /* tp_str */
     nullptr,                            /* tp_getattro */
     nullptr,                            /* tp_setattro */
     nullptr,                            /* tp_as_buffer */
@@ -374,7 +313,7 @@ PYTHON_TYPE_START(EnumValue)
     | Py_TPFLAGS_BASETYPE,              /* tp_flags */
     "A basic enumeration value",        /* tp_doc */
     nullptr,                            /* tp_traverse */
-    nullptr,                            /* tp_clear */
+    EnumValue_clear,                    /* tp_clear */
     EnumValue_richCompare,              /* tp_richcompare */
     0,                                  /* tp_weaklistoffset */
     nullptr,                            /* tp_iter */
@@ -403,20 +342,15 @@ PYTHON_TYPE_START(EnumValue)
     PYTHON_TP_VECTORCALL_PRINT
 PYTHON_TYPE_END;
 
-bool IsEnumValue(PyObject *obj)
+bool IsEnumValue(PyObject* obj)
 {
     return PyObject_TypeCheck(obj, &EnumValue_type);
 }
 
-PyObject *NewEnumValue(char const* name, long value)
+PyObject* NewEnumValue(const ST::string& name, Py_ssize_t value)
 {
-    PyObject *tempArgs = nullptr;
-    if (name)
-        tempArgs = Py_BuildValue("(ls)", value, name); // args are value, name
-    else
-        tempArgs = Py_BuildValue("(l)", value); // args are value only
-    EnumValue *newObj = (EnumValue*)EnumValue_type.tp_new(&EnumValue_type, tempArgs, nullptr);
-    Py_DECREF(tempArgs); // clean up the temps
+    pyObjectRef tempArgs = Py_BuildValue("(ns)", value, name.c_str());
+    EnumValue* newObj = (EnumValue*)EnumValue_type.tp_new(&EnumValue_type, tempArgs.Get(), nullptr);
     return (PyObject*)newObj;
 }
 
@@ -425,14 +359,14 @@ PyObject *NewEnumValue(char const* name, long value)
 struct Enum
 {
     PyObject_HEAD
-    PyObject *values; // the values list
-    PyObject *lookup; // the enum values, key is enum, value is enum value
-    PyObject *reverseLookup; // the enum values, key is enum value, value is enum
+    PyObject* values; // the values list
+    PyObject* lookup; // the enum values, key is enum, value is enum value
+    PyObject* reverseLookup; // the enum values, key is enum value, value is enum
 };
 
-static PyObject *Enum_new(PyTypeObject *type, PyObject *, PyObject *)
+static PyObject *Enum_new(PyTypeObject* type, PyObject*, PyObject*)
 {
-    Enum *self = (Enum*)type->tp_alloc(type, 0);
+    Enum* self = (Enum*)type->tp_alloc(type, 0);
     if (self != nullptr)
     {
         self->values = PyDict_New();
@@ -458,27 +392,19 @@ static PyObject *Enum_new(PyTypeObject *type, PyObject *, PyObject *)
     return (PyObject*)self;
 }
 
-static int Enum_traverse(Enum *self, visitproc visit, void *arg)
+static int Enum_traverse(Enum* self, visitproc visit, void* arg)
 {
-    if (self->values && visit(self->values, arg) < 0)
-        return -1;
-    if (self->lookup && visit(self->lookup, arg) < 0)
-        return -1;
-    if (self->reverseLookup && visit(self->reverseLookup, arg) < 0)
-        return -1;
-
+    Py_VISIT(self->values);
+    Py_VISIT(self->lookup);
+    Py_VISIT(self->reverseLookup);
     return 0;
 }
 
-static int Enum_clear(Enum *self)
+static int Enum_clear(Enum* self)
 {
-    Py_XDECREF(self->values);
-    self->values = nullptr;
-    Py_XDECREF(self->lookup);
-    self->lookup = nullptr;
-    Py_XDECREF(self->reverseLookup);
-    self->reverseLookup = nullptr;
-
+    Py_CLEAR(self->values);
+    Py_CLEAR(self->lookup);
+    Py_CLEAR(self->reverseLookup);
     return 0;
 }
 
@@ -488,72 +414,66 @@ static void Enum_dealloc(Enum *self)
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
-static PyObject *Enum_getattro(PyObject *self, PyObject *attr_name)
+static PyObject* Enum_getattro(PyObject* self, PyObject* attr_name)
 {
-    if (!PyUnicode_Check(attr_name))
-    {
+    if (!PyUnicode_Check(attr_name)) {
         PyErr_SetString(PyExc_TypeError, "getattro expects a string argument");
         PYTHON_RETURN_ERROR;
     }
-    Enum *theEnum = (Enum*)self;
-    PyObject *item = PyDict_GetItem(theEnum->lookup, attr_name);
-    if (!item)
-    {
-        PyErr_Clear(); // wasn't in the dictionary, check to see if they want the values or lookup dict
-        const char *name = PyUnicode_AsUTF8(attr_name);
-        if (strcmp(name, "values") == 0)
-        {
+
+    Enum* theEnum = (Enum*)self;
+    PyObject* item = PyDict_GetItemWithError(theEnum->lookup, attr_name);
+    if (PyErr_Occurred())
+        PYTHON_RETURN_ERROR;
+
+    if (!item) {
+        ST::string name = PyUnicode_AsSTString(attr_name);
+        if (name == "values") {
             Py_INCREF(theEnum->values);
             return theEnum->values;
-        }
-        else if (strcmp(name, "lookup") == 0)
-        {
+        } else if (name == "lookup") {
             Py_INCREF(theEnum->lookup);
             return theEnum->lookup;
-        }
-        else if (strcmp(name, "reverseLookup") == 0)
-        {
+        } else if (name == "reverseLookup") {
             Py_INCREF(theEnum->reverseLookup);
             return theEnum->reverseLookup;
+        } else {
+            return PyObject_GenericGetAttr(self, attr_name);
         }
-        return PyObject_GenericGetAttr(self, attr_name); // let the default method handle it
     }
     Py_INCREF(item);
     return item;
 }
 
-static int Enum_setattro(PyObject *self, PyObject *attr_name, PyObject *value)
+static int Enum_setattro(PyObject* self, PyObject* attr_name, PyObject* value)
 {
-    if (!PyUnicode_Check(attr_name))
-    {
+    if (!PyUnicode_Check(attr_name)) {
         PyErr_SetString(PyExc_TypeError, "setattro expects a string argument");
         return -1;;
     }
-    Enum *theEnum = (Enum*)self;
-    PyObject *item = PyDict_GetItem(theEnum->lookup, attr_name);
-    if (!item)
-    {
-        PyErr_Clear(); // wasn't in the dictionary, check to see if they want the values or lookup dict
-        const char *name = PyUnicode_AsUTF8(attr_name);
-        if (strcmp(name, "values") == 0)
-        {
+
+    Enum* theEnum = (Enum*)self;
+    PyObject* item = PyDict_GetItemWithError(theEnum->lookup, attr_name);
+    if (PyErr_Occurred())
+        return -1;
+
+    if (!item) {
+        ST::string name = PyUnicode_AsSTString(attr_name);
+        if (name == "values") {
             PyErr_SetString(PyExc_RuntimeError, "Cannot set the value attribute");
             return -1;
-        }
-        else if (strcmp(name, "lookup") == 0)
-        {
+        } else if (name == "lookup") {
             PyErr_SetString(PyExc_RuntimeError, "Cannot set the lookup attribute");
             return -1;
-        }
-        else if (strcmp(name, "reverseLookup") == 0)
-        {
+        } else if (name == "reverseLookup") {
             PyErr_SetString(PyExc_RuntimeError, "Cannot set the reverseLookup attribute");
             return -1;
+        } else {
+            // they aren't trying to set an enum value or any of our special values, so let them
+            return PyObject_GenericSetAttr(self, attr_name, value);
         }
-        // they aren't trying to set an enum value or any of our special values, so let them
-        return PyObject_GenericSetAttr(self, attr_name, value); // let the default method handle it
     }
-    PyErr_SetString(PyExc_RuntimeError, "Cannot set any enum value");
+    PyErr_SetString(PyExc_RuntimeError, "Cannot set an enum value");
     return -1;
 }
 
@@ -616,7 +536,7 @@ PYTHON_TYPE_START(Enum)
 PYTHON_TYPE_END;
 
 // creates and sets up the enum base class
-void pyEnum::AddPlasmaConstantsClasses(PyObject *m)
+void pyEnum::AddPlasmaConstantsClasses(PyObject* m)
 {
     PYTHON_CLASS_IMPORT_START(m);
     PYTHON_CLASS_IMPORT(m, EnumValue);
@@ -625,40 +545,30 @@ void pyEnum::AddPlasmaConstantsClasses(PyObject *m)
 }
 
 // makes an enum object using the specified name and values
-void pyEnum::MakeEnum(PyObject *m, const char* name, std::map<std::string, int> values)
+void pyEnum::MakeEnum(PyObject* m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values)
 {
     if (m == nullptr)
         return;
 
-    Enum *newEnum = (Enum*)Enum_type.tp_new(&Enum_type, nullptr, nullptr);
-    if (newEnum == nullptr)
-    {
-        std::string errorStr = "Could not create enum named ";
-        errorStr += name;
-        PyErr_SetString(PyExc_RuntimeError, errorStr.c_str());
+    Enum* newEnum = (Enum*)Enum_type.tp_new(&Enum_type, nullptr, nullptr);
+    if (newEnum == nullptr) {
+        PyErr_Format(PyExc_RuntimeError, "Could not create enum named '%s'", name);
         return;
     }
 
-    PyObject *valuesDict = newEnum->values;
-    PyObject *lookupDict = newEnum->lookup;
-    PyObject *reverseLookupDict = newEnum->reverseLookup;
-    for (std::map<std::string, int>::iterator curValue = values.begin(); curValue != values.end(); curValue++)
-    {
-        std::string key = curValue->first;
-        int value = curValue->second;
-
+    for (const auto& [key, value] : values) {
         ST::string enumValueName = ST::format("{}.{}", name, key);
 
-        PyObject *newValue = NewEnumValue(enumValueName.c_str(), value);
-        PyObject *valueObj = PyLong_FromLong((long)value);
-        PyObject* keyObj = PyUnicode_FromStdString(key);
-        PyDict_SetItem(valuesDict, valueObj, newValue);
-        PyDict_SetItem(lookupDict, keyObj, newValue);
-        PyDict_SetItem(reverseLookupDict, newValue, keyObj);
-        Py_DECREF(keyObj);
-        Py_DECREF(valueObj);
-        Py_DECREF(newValue);
+        pyObjectRef newValue = NewEnumValue(enumValueName, value);
+        pyObjectRef valueObj = PyLong_FromSsize_t(value);
+        pyObjectRef keyObj = PyUnicode_FromSTString(key);
+        PyDict_SetItem(newEnum->values, valueObj.Get(), newValue.Get());
+        PyDict_SetItem(newEnum->lookup, keyObj.Get(), newValue.Get());
+        PyDict_SetItem(newEnum->reverseLookup, newValue.Get(), keyObj.Get());
     }
 
-    PyModule_AddObject(m, name, (PyObject*)newEnum);
+    if (PyModule_AddObject(m, name, (PyObject*)newEnum) < 0) {
+        PyErr_Format(PyExc_RuntimeError, "Could not add enum named '%s' to module", name);
+        Py_DECREF((PyObject*)newEnum);
+    }
 }

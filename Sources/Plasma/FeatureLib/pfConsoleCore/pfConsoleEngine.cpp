@@ -344,7 +344,7 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
             pfConsoleContext    &context = pfConsoleContext::GetRootContext();
 
             // Potential variable, see if we can find it
-            int32_t idx = context.FindVar( ptr + 1 );
+            hsSsize_t idx = context.FindVar( ptr + 1 );
             if( idx == -1 )
             {
                 ISetErrorMsg( "Invalid console variable name" );

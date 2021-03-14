@@ -67,7 +67,11 @@ set(MaxMain_SOURCES
     plTextureSearch.cpp
 )
 
-add_library(MaxMain SHARED ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES})
+plasma_library(MaxMain SHARED
+    SOURCES ${MaxMain_HEADERS} ${MaxMain_RESOURCES} ${MaxMain_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
 target_link_libraries(
     MaxMain
     PUBLIC
@@ -118,8 +122,6 @@ target_link_libraries(
         Comctl32
         Python3::Python
 )
-
-plasma_optimize_target(MaxMain PRECOMPILED_HEADERS Pch.h)
 
 set_target_properties(MaxMain PROPERTIES OUTPUT_NAME "PlasmaMax")
 set_target_properties(MaxMain PROPERTIES SUFFIX ".gup")

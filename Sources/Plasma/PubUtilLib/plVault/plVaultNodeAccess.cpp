@@ -456,12 +456,12 @@ void VaultMarkerGameNode::GetMarkerData(std::vector<VaultMarker>& data) const
 void VaultMarkerGameNode::SetMarkerData(const std::vector<VaultMarker>& data)
 {
     hsVectorStream stream;
-    stream.WriteLE32(data.size());
-    for (auto it = data.begin(); it != data.end(); ++it) {
-        stream.WriteLE32(it->id);
-        stream.WriteSafeString(it->age);
-        it->pos.Write(&stream);
-        stream.WriteSafeString(it->description);
+    stream.WriteLE32((uint32_t)data.size());
+    for (const VaultMarker& marker : data) {
+        stream.WriteLE32(marker.id);
+        stream.WriteSafeString(marker.age);
+        marker.pos.Write(&stream);
+        stream.WriteSafeString(marker.description);
     }
 
     // copies the buffer

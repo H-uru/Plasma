@@ -60,22 +60,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plGrassWave::Write(hsStream *s)
 {
-    s->WriteLEScalar(fDistX);
-    s->WriteLEScalar(fDistY);
-    s->WriteLEScalar(fDistZ);
-    s->WriteLEScalar(fDirX);
-    s->WriteLEScalar(fDirY);
-    s->WriteLEScalar(fSpeed);
+    s->WriteLEFloat(fDistX);
+    s->WriteLEFloat(fDistY);
+    s->WriteLEFloat(fDistZ);
+    s->WriteLEFloat(fDirX);
+    s->WriteLEFloat(fDirY);
+    s->WriteLEFloat(fSpeed);
 }
 
 void plGrassWave::Read(hsStream *s)
 {
-    fDistX = s->ReadLEScalar();
-    fDistY = s->ReadLEScalar();
-    fDistZ = s->ReadLEScalar();
-    fDirX = s->ReadLEScalar();
-    fDirY = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
+    fDistX = s->ReadLEFloat();
+    fDistY = s->ReadLEFloat();
+    fDistZ = s->ReadLEFloat();
+    fDirX = s->ReadLEFloat();
+    fDirY = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

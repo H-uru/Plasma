@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDistTree_inc
 #define plDistTree_inc
 
+#include "hsTemplates.h"
+
 class plDistNode
 {
 public:

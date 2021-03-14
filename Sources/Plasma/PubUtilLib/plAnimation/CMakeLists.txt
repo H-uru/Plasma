@@ -26,7 +26,11 @@ set(plAnimation_HEADERS
     plScalarChannel.h
 )
 
-add_library(plAnimation STATIC ${plAnimation_SOURCES} ${plAnimation_HEADERS})
+plasma_library(plAnimation
+    SOURCES ${plAnimation_SOURCES} ${plAnimation_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     plAnimation
     PUBLIC
@@ -45,8 +49,6 @@ target_link_libraries(
         plModifier
         plSDL
 )
-
-plasma_optimize_target(plAnimation UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plAnimation_SOURCES})
 source_group("Header Files" FILES ${plAnimation_HEADERS})

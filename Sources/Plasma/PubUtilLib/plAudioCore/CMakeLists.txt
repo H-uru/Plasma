@@ -22,7 +22,7 @@ set(plAudioCore_HEADERS
     plWavFile.h
 )
 
-add_library(plAudioCore STATIC ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
+plasma_library(plAudioCore SOURCES ${plAudioCore_SOURCES} ${plAudioCore_HEADERS})
 target_link_libraries(
     plAudioCore
     PUBLIC

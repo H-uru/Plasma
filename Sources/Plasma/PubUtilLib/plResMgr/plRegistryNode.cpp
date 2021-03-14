@@ -245,7 +245,7 @@ void plRegistryPageNode::Write()
     fPageInfo.SetIndexStart(fStream.GetPosition());
 
     // Write our keys
-    fStream.WriteLE32(fKeyLists.size());
+    fStream.WriteLE32((uint32_t)fKeyLists.size());
     for (it = fKeyLists.begin(); it != fKeyLists.end(); it++)
     {
         plRegistryKeyList* keyList = it->second;

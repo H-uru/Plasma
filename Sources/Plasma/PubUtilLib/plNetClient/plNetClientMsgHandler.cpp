@@ -170,8 +170,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
     /*
     plNetOwnershipMsg* netOwnMsg = new plNetOwnershipMsg;
 
-    int i;
-    for(i=0;i<m->GetNumGroups();i++)
+    for(size_t i = 0; i < m->GetNumGroups(); i++)
     {
         plNetMsgGroupOwner::GroupInfo gr=m->GetGroupInfo(i);
         netOwnMsg->AddGroupInfo(gr);
@@ -335,7 +334,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                     plLoadCloneMsg* loadClone = plLoadCloneMsg::ConvertNoRef(gameMsg);
                     if (loadClone)
                     {
-                        int idx = nc->fTransport.FindMember(loadClone->GetOriginatingPlayerID());
+                        hsSsize_t idx = nc->fTransport.FindMember(loadClone->GetOriginatingPlayerID());
                         if (idx == -1)
                         {
                             hsLogEntry( nc->DebugMsg( "Ignoring load clone because player isn't in our players list: {}", loadClone->GetOriginatingPlayerID()) );
@@ -369,8 +368,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
             // Debug
             if (m->GetHasPlayerID())
             {
-                int idx=nc->fTransport.FindMember(m->GetPlayerID());
-                plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nullptr;
+                plNetTransportMember* mbr = nc->fTransport.GetMemberByID(m->GetPlayerID());
                 if (mbr)
                     mbr->SetTransportFlags(mbr->GetTransportFlags() | plNetTransportMember::kSendingActions);
             }
@@ -391,7 +389,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
         m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
-    int bufLen = m->GetVoiceDataLen();
+    size_t bufLen = m->GetVoiceDataLen();
     const char* buf = m->GetVoiceData();
     uint8_t flags = m->GetFlags();
     uint8_t numFrames = m->GetNumFrames();
@@ -403,8 +401,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
         return hsOK;
     }
 
-    int idx=nc->fTransport.FindMember(m->GetPlayerID());
-    plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nullptr;
+    plNetTransportMember* mbr = nc->fTransport.GetMemberByID(m->GetPlayerID());
 
     if (mbr) {
         key = mbr->GetAvatarKey();
@@ -447,28 +444,26 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
         m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
-    int i;
-
     // remove existing members, except server
-    for( i=nc->fTransport.GetNumMembers()-1 ; i>=0; i--  )
+    for (hsSsize_t i = nc->fTransport.GetNumMembers() - 1; i >= 0; i--)
     {
         if (!nc->fTransport.GetMember(i)->IsServer())
         {           
-            nc->fTransport.RemoveMember(i);         
+            nc->fTransport.RemoveMember(i);
         }
-    } // for         
+    }
 
     // update the members list from the msg.
     // this app is not one of the members in the msg
-    for( i=0 ;i<m->MemberListInfo()->GetNumMembers() ;i++  )
+    for (size_t i = 0; i < m->MemberListInfo()->GetNumMembers(); i++)
     {
         plNetTransportMember* mbr = new plNetTransportMember(nc);
         IFillInTransportMember(m->MemberListInfo()->GetMember(i), mbr);
         hsLogEntry(nc->DebugMsg("\tAdding transport member, name={}, p2p={}, plrID={}\n", mbr->AsString(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
-        int idx=nc->fTransport.AddMember(mbr);
+        hsSsize_t idx = nc->fTransport.AddMember(mbr);
         hsAssert(idx>=0, "Failed adding member?");
             
-    } // for         
+    }
 
     // new player has been aded send local MembersUpdate msg
     plMemberUpdateMsg* mu = new plMemberUpdateMsg;
@@ -491,7 +486,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
     if (m->AddingMember())
     {
         plNetTransportMember* mbr = nullptr;
-        int idx = nc->fTransport.FindMember(m->MemberInfo()->GetClientGuid()->GetPlayerID());
+        hsSsize_t idx = nc->fTransport.FindMember(m->MemberInfo()->GetClientGuid()->GetPlayerID());
         if ( idx>=0 )
             mbr = nc->fTransport.GetMember(idx);
         else
@@ -507,7 +502,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
     }
     else
     {
-        int idx=nc->fTransport.FindMember(m->MemberInfo()->GetClientGuid()->GetPlayerID());
+        hsSsize_t idx = nc->fTransport.FindMember(m->MemberInfo()->GetClientGuid()->GetPlayerID());
         if (idx<0)
         {
             hsLogEntry( nc->DebugMsg("\tCan't find member to remove.") );
@@ -536,8 +531,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
         m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
-    int idx=nc->fTransport.FindMember(m->GetPlayerID());
-    plNetTransportMember* tm = (idx == -1 ? nullptr : nc->fTransport.GetMember(idx));
+    plNetTransportMember* tm = nc->fTransport.GetMemberByID(m->GetPlayerID());
     if(!tm)
     {
 #if 0

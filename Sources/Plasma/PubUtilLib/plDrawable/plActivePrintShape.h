@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plActivePrintShape_inc
 #define plActivePrintShape_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "plPrintShape.h"
 
@@ -52,7 +52,7 @@ class plRippleShapeMsg;
 class plActivePrintShape : public plPrintShape
 {
 protected:
-    hsTArray<plKey>         fDecalMgrs;
+    std::vector<plKey>      fDecalMgrs;
 
     plRippleShapeMsg*       fShapeMsg;
 
@@ -72,8 +72,7 @@ public:
     bool MsgReceive(plMessage* msg) override;
 
     // Export construction
-    void        AddDecalKey(const plKey& k);
-    
+    void AddDecalKey(plKey k);
 };
 
 #endif // plActivePrintShape_inc

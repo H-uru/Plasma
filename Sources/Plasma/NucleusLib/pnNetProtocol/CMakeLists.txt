@@ -29,9 +29,11 @@ set(pnNetProtocol_PROTO_CLI2GK
     Private/Protocols/Cli2GateKeeper/pnNpCli2GateKeeper.cpp
 )
 
-add_library(pnNetProtocol STATIC ${pnNetProtocol_HEADERS} ${pnNetProtocol_PRIVATE}
-                          ${pnNetProtocol_PROTO_CLI2AUTH} ${pnNetProtocol_PROTO_CLI2FILE}
-                          ${pnNetProtocol_PROTO_CLI2GAME} ${pnNetProtocol_PROTO_CLI2GK}
+plasma_library(pnNetProtocol
+    SOURCES
+        ${pnNetProtocol_HEADERS} ${pnNetProtocol_PRIVATE}
+        ${pnNetProtocol_PROTO_CLI2AUTH} ${pnNetProtocol_PROTO_CLI2FILE}
+        ${pnNetProtocol_PROTO_CLI2GAME} ${pnNetProtocol_PROTO_CLI2GK}
 )
 target_link_libraries(
     pnNetProtocol

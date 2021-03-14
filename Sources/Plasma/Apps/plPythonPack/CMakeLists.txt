@@ -7,17 +7,14 @@ set(plPythonPack_HEADERS
     PythonInterface.h
 )
 
-add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
+plasma_executable(plPythonPack TOOL
+    SOURCES ${plPythonPack_SOURCES} ${plPythonPack_HEADERS}
+)
 target_link_libraries(
     plPythonPack
     PRIVATE
         CoreLib
         Python3::Python
-)
-
-install(
-    TARGETS plPythonPack
-    DESTINATION tools_cli
 )
 
 source_group("Source Files" FILES ${plPythonPack_SOURCES})

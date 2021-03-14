@@ -99,7 +99,7 @@ void plRenderRequest::Read(hsStream* s, hsResMgr* mgr)
     fLocalToWorld.Read(s);
     fWorldToLocal.Read(s);
 
-    fPriority = s->ReadLEScalar();
+    fPriority = s->ReadLEFloat();
 }
 
 void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
@@ -112,7 +112,7 @@ void plRenderRequest::Write(hsStream* s, hsResMgr* mgr)
     fLocalToWorld.Write(s);
     fWorldToLocal.Write(s);
 
-    s->WriteLEScalar(fPriority);
+    s->WriteLEFloat(fPriority);
 }
 
 void plRenderRequest::Render(plPipeline* pipe, plPageTreeMgr* pageMgr)

@@ -119,16 +119,16 @@ void plFadeOpacityMod::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    fFadeUp = s->ReadLEScalar();
-    fFadeDown = s->ReadLEScalar();
+    fFadeUp = s->ReadLEFloat();
+    fFadeDown = s->ReadLEFloat();
 }
 
 void plFadeOpacityMod::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    s->WriteLEScalar(fFadeUp);
-    s->WriteLEScalar(fFadeDown);
+    s->WriteLEFloat(fFadeUp);
+    s->WriteLEFloat(fFadeDown);
 }
 
 void plFadeOpacityMod::SetTarget(plSceneObject* so)
@@ -350,8 +350,7 @@ void plFadeOpacityMod::ISetup(plSceneObject* so)
     {
         hsGMaterial* mat = src[i].GetMaterial();
 
-        int j;
-        for( j = 0; j < mat->GetNumLayers(); j++ )
+        for (size_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )

@@ -75,6 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "plQuality.h"
 #include "hsResMgr.h"
+#include "hsSIMD.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plTweak.h"
@@ -126,10 +127,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 
 #include <algorithm>
-
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
-#endif
 
 //#define MF_TOSSER
 
@@ -2335,7 +2332,8 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
         int i;
         for( i = 0; i < bndList.GetCount(); i++ )
         {
-            IAddBoundsSpan( fBoundsSpans, &hsBounds3Ext(drawable->GetSpaceTree()->GetNode(bndList[i]).GetWorldBounds()), 0xff000000 | (0xf << ((fSettings.fBoundsDrawLevel % 6) << 2)) );
+            const hsBounds3Ext& nodeBounds = drawable->GetSpaceTree()->GetNode(bndList[i]).GetWorldBounds();
+            IAddBoundsSpan( fBoundsSpans, &nodeBounds, 0xff000000 | (0xf << ((fSettings.fBoundsDrawLevel % 6) << 2)) );
         }
     }
 #endif // MF_BOUNDS_LEVEL_ICE
@@ -2846,19 +2844,17 @@ void    plDXPipeline::RenderSpans(plDrawableSpans *drawable, const std::vector<i
 void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *bounds, uint32_t bndColor )
 {
 #if MCN_BOUNDS_SPANS
-    static hsTArray<plGeometrySpan *>   spanArray;
+    static std::vector<plGeometrySpan *> spanArray;
     static hsMatrix44       identMatrix;
     static hsPoint3     c[ 8 ], n[ 8 ];
     static int          nPts[ 8 ][ 3 ] = { { -1, -1, -1 }, { 1, -1, -1 }, { -1, 1, -1 }, { 1, 1, -1 },
                                         { -1, -1, 1 }, { 1, -1, 1 }, { -1, 1, 1 }, { 1, 1, 1 } };
     int             i;
-    plGeometrySpan  *newSpan;
 
 
-    if( spanArray.GetCount() == 0 )
+    if (spanArray.empty())
     {
-        spanArray.Reset();
-        spanArray.Append( new plGeometrySpan() );
+        spanArray = { new plGeometrySpan };
         identMatrix.Reset();
 
         // Make normals
@@ -2872,7 +2868,7 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
     else
         spanArray[ 0 ] = new plGeometrySpan();
 
-    newSpan = spanArray[ 0 ];
+    plGeometrySpan* newSpan = spanArray[0];
 
     newSpan->BeginCreate( fBoundsMat, identMatrix, 0 );
 
@@ -2922,25 +2918,23 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
 void    plDXPipeline::IAddNormalsSpan( plDrawableSpans *ice, plIcicle *span, plDXVertexBufferRef *vRef, uint32_t bndColor )
 {
 #if MCN_BOUNDS_SPANS
-    static hsTArray<plGeometrySpan *>   spanArray;
+    static std::vector<plGeometrySpan *> spanArray;
     static hsMatrix44       identMatrix;
     static hsPoint3     point, off, blank;
     hsVector3   b2;
     uint16_t      v1, v2, v3;
     int             i;
-    plGeometrySpan  *newSpan;
 
 
-    if( spanArray.GetCount() == 0 )
+    if (spanArray.empty())
     {
-        spanArray.Reset();
-        spanArray.Append( new plGeometrySpan() );
+        spanArray = { new plGeometrySpan };
         identMatrix.Reset();
     }
     else
         spanArray[ 0 ] = new plGeometrySpan();
 
-    newSpan = spanArray[ 0 ];
+    plGeometrySpan* newSpan = spanArray[0];
 
     newSpan->BeginCreate( fBoundsMat, span->fLocalToWorld, 0 );
 
@@ -4852,14 +4846,14 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
     }
     else
     {
-        fLights.fProjAll.SetCount(0);
-        fLights.fProjEach.SetCount(0);
+        fLights.fProjAll.clear();
+        fLights.fProjEach.clear();
         for( i = 0; i < onLights.GetCount(); i++ )
         {
             if( onLights[i]->OverAll() )
-                fLights.fProjAll.Append(onLights[i]);
+                fLights.fProjAll.emplace_back(onLights[i]);
             else
-                fLights.fProjEach.Append(onLights[i]);
+                fLights.fProjEach.emplace_back(onLights[i]);
         }
         onLights.SetCount(0);
     }
@@ -5199,13 +5193,12 @@ void    plDXLightSettings::Reset( plDXPipeline *pipe )
 {
     Release();
 
-    fNextShadowLight = 0;
-
     fUsedFlags.Clear();
     fEnabledFlags.Clear();
     fHoldFlags.Clear();
-    fProjEach.Reset();
-    fProjAll.Reset();
+    fProjEach.clear();
+    fProjAll.clear();
+    fShadowLights.clear();
     fNextIndex = 1;     /// Light 0 is reserved
     fLastIndex = 1;
     fTime = 0;
@@ -5220,8 +5213,8 @@ void    plDXLightSettings::Release()
 {
     plDXLightRef    *ref;
 
-    fProjEach.Reset();
-    fProjAll.Reset();
+    fProjEach.clear();
+    fProjAll.clear();
 
     while( fRefList )
     {
@@ -5230,15 +5223,12 @@ void    plDXLightSettings::Release()
         ref->Unlink();
     }
 
-    fShadowLights.SetCount(fShadowLights.GetNumAlloc());
-    int i;
-    for( i = 0; i < fShadowLights.GetCount(); i++ )
+    for (plDXLightRef*& shadowLight : fShadowLights.pool())
     {
-        hsRefCnt_SafeUnRef(fShadowLights[i]);
-        fShadowLights[i] = nullptr;
+        hsRefCnt_SafeUnRef(shadowLight);
+        shadowLight = nullptr;
     }
-    fShadowLights.SetCount(0);
-
+    fShadowLights.release_and_clear();
 }
 
 //// ReserveD3DIndex //////////////////////////////////////////////////////////
@@ -5453,8 +5443,7 @@ void plDXPipeline::IPushPiggyBacks(hsGMaterial* mat)
     if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
         return;
 
-    int i;
-    for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
+    for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++)
     {
         if( !mat->GetPiggyBack(i) )
             continue;
@@ -6634,7 +6623,8 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
     float uvwScale = kUVWScale;
     if( fLayerState[0].fBlendFlags & hsGMatState::kBlendAdd )
     {
-        hsVector3 cam2span(&GetViewPositionWorld(), &spanPos);
+        hsPoint3 viewPos = GetViewPositionWorld();
+        hsVector3 cam2span(&viewPos, &spanPos);
         hsFastMath::NormalizeAppr(cam2span);
         liDir += cam2span;
         hsFastMath::NormalizeAppr(liDir);
@@ -8800,7 +8790,7 @@ static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
     }
 }
 
-#ifdef HS_SSE3
+#ifdef HAVE_SSE3
 static inline void ISkinDpSSE3(const float* src, float* dst, const __m128& mc0,
                                const __m128& mc1, const __m128& mc2, const __m128& mwt)
 {
@@ -8816,13 +8806,13 @@ static inline void ISkinDpSSE3(const float* src, float* dst, const __m128& mc0,
     _dst = _mm_add_ps(_dst, hbuf1);
     _mm_store_ps(dst, _dst);
 }
-#endif // HS_SSE3
+#endif // HAVE_SSE3
 
 static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
                                    const float* pt_src, float* pt_dst,
                                    const float* vec_src, float* vec_dst)
 {
-#ifdef HS_SSE3
+#ifdef HAVE_SSE3
     __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
     __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
     __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
@@ -8830,10 +8820,10 @@ static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
 
     ISkinDpSSE3(pt_src, pt_dst, mc0, mc1, mc2, mwt);
     ISkinDpSSE3(vec_src, vec_dst, mc0, mc1, mc2, mwt);
-#endif // HS_SSE3
+#endif // HAVE_SSE3
 }
 
-#ifdef HS_SSE41
+#ifdef HAVE_SSE41
 static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
                                 const __m128& mc1, const __m128& mc2, const __m128& mwt)
 {
@@ -8848,13 +8838,13 @@ static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
     _dst = _mm_add_ps(_dst, _mm_mul_ps(_r, mwt));
     _mm_store_ps(dst, _dst);
 }
-#endif // HS_SSE41
+#endif // HAVE_SSE41
 
 static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
                                     const float* pt_src, float* pt_dst,
                                     const float* vec_src, float* vec_dst)
 {
-#ifdef HS_SSE41
+#ifdef HAVE_SSE41
     __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
     __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
     __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
@@ -8862,7 +8852,7 @@ static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
 
     ISkinDpSSE41(pt_src, pt_dst, mc0, mc1, mc2, mwt);
     ISkinDpSSE41(vec_src, vec_dst, mc0, mc1, mc2, mwt);
-#endif // HS_SSE41
+#endif // HAVE_SSE41
 }
 
 typedef void(*skin_vert_ptr)(const hsMatrix44&, float, const float*, float*, const float*, float*);
@@ -8947,9 +8937,8 @@ hsCpuFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend
 // Note that the lighting pipe constants are NOT implemented.
 void plDXPipeline::ISetPipeConsts(plShader* shader)
 {
-    int n = shader->GetNumPipeConsts(); 
-    int i;
-    for( i = 0; i < n; i++ )
+    size_t n = shader->GetNumPipeConsts();
+    for (size_t i = 0; i < n; i++)
     {
         const plPipeConst& pc = shader->GetPipeConst(i);
         switch( pc.fType )
@@ -9455,7 +9444,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
         render.RenderPrims();
 
         // Take care of projections that get applied to each pass.
-        if( fLights.fProjEach.GetCount() && !(fView.fRenderState & kRenderNoProjection) ) 
+        if (!fLights.fProjEach.empty() && !(fView.fRenderState & kRenderNoProjection))
         {
             // Disable all the normal lights.
             IDisableSpanLights();
@@ -9482,7 +9471,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
     if( j >= 0 )
     {
         // Projections that get applied to the frame buffer (after all passes).
-        if( fLights.fProjAll.GetCount() && !(fView.fRenderState & kRenderNoProjection) ) 
+        if (!fLights.fProjAll.empty() && !(fView.fRenderState & kRenderNoProjection))
             IRenderProjections(render);
 
         // Handle render of shadows onto geometry.
@@ -9538,11 +9527,9 @@ void plDXPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGMate
     int iNextPass = iPass + fCurrNumLayers;
 
     // For each projector:
-    int k;
-    for( k = 0; k < fLights.fProjEach.GetCount(); k++ )
+    for (plLightInfo* li : fLights.fProjEach)
     {
         // Push it's projected texture as a piggyback.
-        plLightInfo* li = fLights.fProjEach[k];
 
         // Lower end boards are iffy on when they'll project correctly.
         if( fSettings.fCantProj && !li->GetProperty(plLightInfo::kLPForceProj) )
@@ -9587,11 +9574,8 @@ void plDXPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGMate
 void plDXPipeline::IRenderProjections(const plRenderPrimFunc& render)
 {
     IDisableSpanLights();
-    int i;
-    for( i = 0; i < fLights.fProjAll.GetCount(); i++ )
+    for (plLightInfo* li : fLights.fProjAll)
     {
-        plLightInfo* li = fLights.fProjAll[i];
-
         if( fSettings.fCantProj && !li->GetProperty(plLightInfo::kLPForceProj) )
             continue;
         
@@ -11202,20 +11186,15 @@ void plDXPipeline::ISetupShadowLight(plShadowSlave* slave)
 // only keeps it for this render frame.
 plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
 {
-    fLights.fShadowLights.ExpandAndZero(fLights.fNextShadowLight+1);
+    plDXLightRef* lightRef = fLights.fShadowLights.next([this] {
+        plDXLightRef* lRef = new plDXLightRef();
 
-    if( !fLights.fShadowLights[fLights.fNextShadowLight] )
-    {
-        plDXLightRef    *lRef = new plDXLightRef();
-            
         /// Assign stuff and update
         lRef->fD3DIndex = fLights.ReserveD3DIndex();
         lRef->fOwner = nullptr;
         lRef->fD3DDevice = fD3DDevice;
 
         lRef->Link( &fLights.fRefList );
-
-        fLights.fShadowLights[fLights.fNextShadowLight] = lRef;
 
         // Neutralize it until we need it.
         fD3DDevice->LightEnable(lRef->fD3DIndex, false);
@@ -11225,10 +11204,11 @@ plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
         lRef->fD3DInfo.Ambient.r = lRef->fD3DInfo.Ambient.g = lRef->fD3DInfo.Ambient.b = 0;
         lRef->fD3DInfo.Specular.r = lRef->fD3DInfo.Specular.g = lRef->fD3DInfo.Specular.b = 0;
 
-    }
-    slave->fLightRefIdx = fLights.fNextShadowLight;
+        return lRef;
+    });
+    slave->fLightRefIdx = fLights.fShadowLights.size() - 1;
 
-    return fLights.fShadowLights[fLights.fNextShadowLight++];
+    return lightRef;
 }
 
 // IPopShadowCastState ///////////////////////////////////////////////////
@@ -11350,7 +11330,7 @@ void plDXPipeline::IResetRenderTargetPools()
         fBlurDestRTs[i] = nullptr;
     }
 
-    fLights.fNextShadowLight = 0;
+    fLights.fShadowLights.clear();
 }
 
 // IPrepShadowCaster ////////////////////////////////////////////////////////////////////////
@@ -11370,10 +11350,9 @@ bool plDXPipeline::IPrepShadowCaster(const plShadowCaster* caster)
 {
     static hsBitVector done;
     done.Clear();
-    const hsTArray<plShadowCastSpan>& castSpans = caster->Spans();
+    const std::vector<plShadowCastSpan>& castSpans = caster->Spans();
 
-    int i;
-    for( i = 0; i < castSpans.GetCount(); i++ )
+    for (size_t i = 0; i < castSpans.size(); i++)
     {
         if( !done.IsBitSet(i) )
         {
@@ -11392,8 +11371,7 @@ bool plDXPipeline::IPrepShadowCaster(const plShadowCaster* caster)
             // Look forward through castSpans for any other spans
             // with the same drawable, and add them to visList.
             // We'll handle all the spans from this drawable at once.
-            int j;
-            for( j = i+1; j < castSpans.GetCount(); j++ )
+            for (size_t j = i + 1; j < castSpans.size(); j++)
             {
                 if( !done.IsBitSet(j) && (castSpans[j].fDraw == drawable) )
                 {
@@ -11431,12 +11409,11 @@ bool plDXPipeline::IRenderShadowCaster(plShadowSlave* slave)
         return false;
 
     // for each shadowCaster.fSpans
-    int iSpan;
-    for( iSpan = 0; iSpan < caster->Spans().GetCount(); iSpan++ )
+    for (const plShadowCastSpan& castSpan : caster->Spans())
     {
-        plDrawableSpans* dr = caster->Spans()[iSpan].fDraw;
-        const plSpan* sp = caster->Spans()[iSpan].fSpan;
-        uint32_t spIdx = caster->Spans()[iSpan].fIndex;
+        plDrawableSpans* dr = castSpan.fDraw;
+        const plSpan* sp = castSpan.fSpan;
+        uint32_t spIdx = castSpan.fIndex;
 
         hsAssert(sp->fTypeMask & plSpan::kIcicleSpan, "Shadow casting from non-trimeshes not currently supported");
 
@@ -11581,7 +11558,7 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
                 if( selfShadowNow )
                 {
                     plConst(float) kMaxSelfPower = 0.3f;
-                    float power = fShadows[i]->fPower > kMaxSelfPower ? kMaxSelfPower : fShadows[i]->fPower;
+                    float power = fShadows[i]->fPower > kMaxSelfPower ? (float)kMaxSelfPower : fShadows[i]->fPower;
                     lRef->fD3DInfo.Diffuse.r 
                         = lRef->fD3DInfo.Diffuse.g 
                         = lRef->fD3DInfo.Diffuse.b

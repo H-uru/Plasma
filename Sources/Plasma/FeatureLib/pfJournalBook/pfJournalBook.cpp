@@ -2354,8 +2354,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
     if (material)
     {
         // clear any exiting layers (movies) from the material
-        int i;
-        for( i = 0; i < material->GetNumLayers(); i++ ) // remove all plLayerMovie layers
+        for (size_t i = 0; i < material->GetNumLayers(); i++) // remove all plLayerMovie layers
         {
             plLayerInterface *matLayer = material->GetLayer(i);
             plLayerAVI *movie = plLayerAVI::ConvertNoRef(matLayer);
@@ -2620,8 +2619,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
     if (source && dest)
     {
         // clear any exiting layers (movies) from the material and save them to our local array
-        int i;
-        for( i = 0; i < source->GetNumLayers(); i++ ) // remove all plLayerMovie layers
+        for (size_t i = 0; i < source->GetNumLayers(); i++) // remove all plLayerMovie layers
         {
             plLayerInterface *matLayer = source->GetLayer(i);
             plLayerAVI *movie = plLayerAVI::ConvertNoRef(matLayer);
@@ -2633,7 +2631,7 @@ void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
             }
         }
         // clear the destination's movies (if it has any)
-        for( i = 0; i < dest->GetNumLayers(); i++ ) // remove all plLayerMovie layers
+        for (size_t i = 0; i < dest->GetNumLayers(); i++) // remove all plLayerMovie layers
         {
             plLayerInterface *matLayer = dest->GetLayer(i);
             plLayerAVI *movie = plLayerAVI::ConvertNoRef(matLayer);
@@ -3087,7 +3085,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
 void pfJournalBook::ISetDecalLayers(hsGMaterial *material, const std::vector<plLayerInterface*> &layers)
 {
     // First, clear out the existing layers.
-    for (int i = material->GetNumLayers() - 1; i >= 0; i--)
+    for (hsSsize_t i = material->GetNumLayers() - 1; i >= 0; i--)
     {
         plMatRefMsg* refMsg = new plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(material->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);

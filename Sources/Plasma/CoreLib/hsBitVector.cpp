@@ -91,24 +91,19 @@ void hsBitVector::Read(hsStream* s)
 {
     Reset();
 
-    s->LogReadLE(&fNumBitVectors,"NumBitVectors");
+    s->ReadLE32(&fNumBitVectors);
     if( fNumBitVectors )
     {
         delete [] fBitVectors;
         fBitVectors = new uint32_t[fNumBitVectors];
-        int i;
-        for( i = 0; i < fNumBitVectors; i++ )
-            s->LogReadLE(&fBitVectors[i],"BitVector");
+        s->ReadLE32(fNumBitVectors, fBitVectors);
     }
 }
 
 void hsBitVector::Write(hsStream* s) const
 {
     s->WriteLE32(fNumBitVectors);
-
-    int i;
-    for( i = 0; i < fNumBitVectors; i++ )
-        s->WriteLE32(fBitVectors[i]);
+    s->WriteLE32(fNumBitVectors, fBitVectors);
 }
 
 std::vector<int16_t>& hsBitVector::Enumerate(std::vector<int16_t>& dst) const

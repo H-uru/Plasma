@@ -69,7 +69,7 @@ void pfMarkerMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->WriteByte(fType);
+    stream->WriteByte((uint8_t)fType);
 
     if (fType == kMarkerCaptured)
         stream->WriteLE32(fMarkerID);

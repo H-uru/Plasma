@@ -115,26 +115,21 @@ plShadowMaster::plShadowMaster()
 plShadowMaster::~plShadowMaster()
 {
     Deactivate();
-
-    fSlavePool.SetCount(fSlavePool.GetNumAlloc());
-    int i;
-    for( i = 0; i < fSlavePool.GetCount(); i++ )
-        delete fSlavePool[i];
 }
 
 void plShadowMaster::Read(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Read(stream, mgr);
 
-    fAttenDist = stream->ReadLEScalar();
+    fAttenDist = stream->ReadLEFloat();
 
-    fMaxDist = stream->ReadLEScalar();
-    fMinDist = stream->ReadLEScalar();
+    fMaxDist = stream->ReadLEFloat();
+    fMinDist = stream->ReadLEFloat();
 
     fMaxSize = stream->ReadLE32();
     fMinSize = stream->ReadLE32();
 
-    fPower = stream->ReadLEScalar();
+    fPower = stream->ReadLEFloat();
 
     Activate();
 }
@@ -143,15 +138,15 @@ void plShadowMaster::Write(hsStream* stream, hsResMgr* mgr)
 {
     plObjInterface::Write(stream, mgr);
 
-    stream->WriteLEScalar(fAttenDist);
+    stream->WriteLEFloat(fAttenDist);
 
-    stream->WriteLEScalar(fMaxDist);
-    stream->WriteLEScalar(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
+    stream->WriteLEFloat(fMinDist);
 
     stream->WriteLE32(fMaxSize);
     stream->WriteLE32(fMinSize);
 
-    stream->WriteLEScalar(fPower);
+    stream->WriteLEFloat(fPower);
 }
 
 void plShadowMaster::Activate() const
@@ -198,7 +193,7 @@ bool plShadowMaster::MsgReceive(plMessage* msg)
 
 void plShadowMaster::IBeginRender()
 {
-    fSlavePool.SetCount(0);
+    fSlavePool.clear();
     if( ISetLightInfo() ) 
         fLightInfo->ClearSlaveBits();
 }
@@ -221,7 +216,7 @@ bool plShadowMaster::IOnCastMsg(plShadowCastMsg* castMsg)
 
     plShadowCaster* caster = castMsg->Caster();
 
-    if( !caster->Spans().GetCount() )
+    if (caster->Spans().empty())
         return false;
 
     hsBounds3Ext casterBnd;
@@ -289,12 +284,10 @@ plLightInfo* plShadowMaster::ISetLightInfo()
 void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds3Ext& casterBnd)
 {
     casterBnd.MakeEmpty();
-    const hsTArray<plShadowCastSpan>& castSpans = caster->Spans();
-    int i;
-    for( i = 0; i < castSpans.GetCount(); i++ )
+    for (const plShadowCastSpan& castSpan : caster->Spans())
     {
-        plDrawableSpans* dr = castSpans[i].fDraw;
-        uint32_t index = castSpans[i].fIndex;
+        plDrawableSpans* dr = castSpan.fDraw;
+        uint32_t index = castSpan.fIndex;
 
         // Right now, the generic world bounds seems close enough, even when skinned.
         // It gets a little off on the lower LODs, but, hey, they're the lower LODs.
@@ -308,14 +301,7 @@ void plShadowMaster::IComputeCasterBounds(const plShadowCaster* caster, hsBounds
 
 plShadowSlave* plShadowMaster::INextSlave(const plShadowCaster* caster)
 {
-    int iSlave = fSlavePool.GetCount();
-    fSlavePool.ExpandAndZero(iSlave+1);
-    plShadowSlave* slave = fSlavePool[iSlave];
-    if( !slave )
-    {
-        fSlavePool[iSlave] = slave = INewSlave(caster);
-    }
-    return slave;
+    return fSlavePool.next([this, caster] { return INewSlave(caster); }).get();
 }
 
 plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power)
@@ -359,7 +345,7 @@ plShadowSlave* plShadowMaster::ICreateShadowSlave(plShadowCastMsg* castMsg, cons
 
 plShadowSlave* plShadowMaster::IRecycleSlave(plShadowSlave* slave)
 {
-    fSlavePool.SetCount(fSlavePool.GetCount()-1);
+    fSlavePool.pop_back();
     return nullptr;
 }
 

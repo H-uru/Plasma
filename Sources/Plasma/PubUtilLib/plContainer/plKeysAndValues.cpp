@@ -203,20 +203,17 @@ bool plKeysAndValues::GetValueIterators(const ST::string & key, Values::const_it
 
 void plKeysAndValues::Read(hsStream * s)
 {
-    uint16_t nkeys;
-    s->ReadLE(&nkeys);
+    uint16_t nkeys = s->ReadLE16();
     for (int ki=0; ki<nkeys; ki++)
     {
-        uint16_t strlen;
-        s->ReadLE(&strlen);
+        uint16_t strlen = s->ReadLE16();
         ST::char_buffer key;
         key.allocate(strlen);
         s->Read(strlen, key.data());
-        uint16_t nvalues;
-        s->ReadLE(&nvalues);
+        uint16_t nvalues = s->ReadLE16();
         for (int vi=0; vi<nvalues; vi++)
         {
-            s->ReadLE(&strlen);
+            strlen = s->ReadLE16();
             ST::char_buffer value;
             value.allocate(strlen);
             s->Read(strlen, value.data());
@@ -229,24 +226,24 @@ void plKeysAndValues::Read(hsStream * s)
 void plKeysAndValues::Write(hsStream * s)
 {
     // write nkeys
-    s->WriteLE((uint16_t)fKeys.size());
+    s->WriteLE16((uint16_t)fKeys.size());
     // iterate through keys
     Keys::const_iterator ki,ke;
     GetKeyIterators(ki,ke);
     for (;ki!=ke;++ki)
     {
         // write key string
-        s->WriteLE((uint16_t)ki->first.size());
+        s->WriteLE16((uint16_t)ki->first.size());
         s->Write(ki->first.size(),ki->first.c_str());
         // write nvalues for this key
-        s->WriteLE((uint16_t)ki->second.size());
+        s->WriteLE16((uint16_t)ki->second.size());
         // iterate through values for this key
         Values::const_iterator vi,ve;
         GetValueIterators(ki->first,vi,ve);
         for (;vi!=ve;++vi)
         {
             // write value string
-            s->WriteLE((uint16_t)vi->size());
+            s->WriteLE16((uint16_t)vi->size());
             s->Write(vi->size(),vi->c_str());
         }
     }

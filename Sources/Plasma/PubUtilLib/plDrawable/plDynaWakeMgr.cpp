@@ -116,8 +116,8 @@ void plDynaWakeMgr::Read(hsStream* stream, hsResMgr* mgr)
     fDefaultDir.Read(stream);
     fAnimPath = plAnimPath::ConvertNoRef(mgr->ReadCreatable(stream));
 
-    fAnimWgt = stream->ReadLEScalar();
-    fVelWgt = stream->ReadLEScalar();
+    fAnimWgt = stream->ReadLEFloat();
+    fVelWgt = stream->ReadLEFloat();
 }
 
 void plDynaWakeMgr::Write(hsStream* stream, hsResMgr* mgr)
@@ -127,8 +127,8 @@ void plDynaWakeMgr::Write(hsStream* stream, hsResMgr* mgr)
     fDefaultDir.Write(stream);
     mgr->WriteCreatable(stream, fAnimPath);
 
-    stream->WriteLEScalar(fAnimWgt);
-    stream->WriteLEScalar(fVelWgt);
+    stream->WriteLEFloat(fAnimWgt);
+    stream->WriteLEFloat(fVelWgt);
 }
 
 hsVector3 plDynaWakeMgr::IGetDirection(const plDynaDecalInfo& info, const hsPoint3& pos) const

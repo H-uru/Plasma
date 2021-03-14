@@ -1450,10 +1450,10 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
 
     RelVaultNode::RefList nodes;
     rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);
-    S.WriteLE32(nodes.size());
+    S.WriteLE32((uint32_t)nodes.size());
     for (const hsRef<RelVaultNode> &node : nodes) {
         VaultSDLNode sdl(node);
-        S.WriteLE32(sdl.GetSDLDataLength());
+        S.WriteLE32((uint32_t)sdl.GetSDLDataLength());
         if (sdl.GetSDLDataLength())
             S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
     }

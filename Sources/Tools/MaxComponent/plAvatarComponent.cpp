@@ -1117,12 +1117,12 @@ bool plLODAvatarComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 { 
     bool result = plArmatureComponent::PreConvert(node, pErrMsg); 
 
-    hsTArray<hsGMaterial*> mats;
+    std::vector<hsGMaterial*> mats;
     Mtl *mtl = fCompPB->GetMtl(kMaterial);
     if (mtl)
     {
         hsMaterialConverter::Instance().GetMaterialArray(mtl, node, mats);
-        fMaterial = (mats.GetCount() > 0 ? mats[0] : nullptr);
+        fMaterial = (!mats.empty() ? mats[0] : nullptr);
     }
     return result;
 }

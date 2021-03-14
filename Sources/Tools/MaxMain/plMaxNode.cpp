@@ -1205,7 +1205,7 @@ plDrawInterface* plMaxNode::GetDrawInterface()
 
 bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    hsTArray<plGeometrySpan *>  spanArray;
+    std::vector<plGeometrySpan *> spanArray;
     plDrawInterface             *newDI = nullptr;
 
     bool        gotMade = false;
@@ -1280,11 +1280,11 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         if( !plMeshConverter::Instance().CreateSpans( this, spanArray, !settings->fDoPreshade ) )
             return false;
     }
-    if( !spanArray.GetCount() )
+    if (spanArray.empty())
         return true;
 
-    for( i = 0; i < spanArray.GetCount(); i++ )
-        spanArray[i]->fMaxOwner = GetKey()->GetName();
+    for (plGeometrySpan* span : spanArray)
+        span->fMaxOwner = GetKey()->GetName();
 
     uint32_t shadeFlags = 0;
     if( GetNoPreShade() )
@@ -1301,24 +1301,24 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         shadeFlags |= plGeometrySpan::kVisLOS;
     if( shadeFlags )
     {
-        for( i = 0; i < spanArray.GetCount(); i++ )
-            spanArray[ i ]->fProps |= shadeFlags;
+        for (plGeometrySpan* span : spanArray)
+            span->fProps |= shadeFlags;
     }
 
     bool DecalMat = false;
     bool NonDecalMat = false;
-        
-    for (i = 0; i < spanArray.GetCount(); i++)
+
+    for (plGeometrySpan* span : spanArray)
     {
-        if (spanArray[i]->fMaterial->IsDecal())
+        if (span->fMaterial->IsDecal())
             DecalMat = true;
         else
-            NonDecalMat = true;                 
+            NonDecalMat = true;
     }
     if (!(DecalMat ^ NonDecalMat))
     {
-        for( i = 0; i < spanArray.GetCount(); i++ )
-            spanArray[ i ]->ClearBuffers();
+        for (plGeometrySpan* span : spanArray)
+            span->ClearBuffers();
 
         if (pErrMsg->Set((plConvert::Instance().fWarned & plConvert::kWarnedDecalAndNonDecal) == 0, GetName(), 
             "This node has both regular and decal materials, and thus will be ignored.").CheckAskOrCancel())
@@ -1374,9 +1374,8 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         plDrawableSpans *drawable = IGetSceneNodeSpans(tmpNode, true, true);
         ISetupBones(drawable, spanArray, l2w, w2l, pErrMsg, settings);
 
-        hsTArray<plGeometrySpan *> *swapSpans = &GetSwappableGeom()->fSpans;
-        for (i = 0; i < spanArray.GetCount(); i++)
-            swapSpans->Append(spanArray.Get(i));
+        std::vector<plGeometrySpan *> *swapSpans = &GetSwappableGeom()->fSpans;
+        swapSpans->insert(swapSpans->end(), spanArray.begin(), spanArray.end());
 
         ST::string tmpName = ST::format("{}_SMsh", GetName());
         hsgResMgr::ResMgr()->NewKey(tmpName, GetSwappableGeom(), GetLocation(), GetLoadMask());
@@ -1394,8 +1393,8 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
             plMaxNode *parent = (plMaxNode *)GetParentNode();
                             
             SetDecalLevel(parent->GetDecalLevel() + 1);
-            for( i = 0; i < spanArray.GetCount(); i++ )
-                spanArray[ i ]->fDecalLevel = GetDecalLevel();
+            for (plGeometrySpan* span : spanArray)
+                span->fDecalLevel = GetDecalLevel();
         }
 
         {
@@ -1426,46 +1425,23 @@ plSceneNode *plMaxNode::IGetDrawableSceneNode(plErrorMsg *pErrMsg)
 //  necessary. Then it takes the resulting indices and drawable pointers
 //  and assigns them to the given drawInterface.
 
-void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArray, plDrawInterface *di,
-                                            plErrorMsg *pErrMsg, plConvertSettings *settings )
+void plMaxNode::IAssignSpansToDrawables(std::vector<plGeometrySpan *> &spanArray, plDrawInterface *di,
+                                        plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    hsTArray<plGeometrySpan *>  opaqueArray, blendingArray, sortingArray;
+    std::vector<plGeometrySpan *> opaqueArray, blendingArray, sortingArray;
     plDrawableSpans             *oSpans = nullptr, *bSpans = nullptr, *sSpans = nullptr;
 
-    int         sCount, oCount, bCount, i;
+    size_t      sCount = 0, oCount = 0, bCount = 0;
     plSceneNode *tmpNode = nullptr;
     hsMatrix44  l2w = GetLocalToWorld44();
     hsMatrix44  w2l = GetWorldToLocal44();
     uint32_t      oIndex = (uint32_t)-1, bIndex = (uint32_t)-1, sIndex = uint32_t(-1);
 
     tmpNode = IGetDrawableSceneNode(pErrMsg);
-/*
-    /// Get sceneNode. If we're itinerant and not the parent node, this won't just
-    /// be GetRoomKey()->GetObjectPtr()....
-    if( GetItinerant() && !GetParentNode()->IsRootNode() )
-    {
-        /// Step up to the top of the chain
-        plMaxNode *baseNode = this;
-        while( !baseNode->GetParentNode()->IsRootNode() )
-            baseNode = (plMaxNode *)baseNode->GetParentNode();
-
-        if( baseNode->GetItinerant() )
-            tmpNode = plSceneNode::ConvertNoRef( baseNode->GetRoomKey()->GetObjectPtr() );
-        else
-        {
-            tmpNode = plSceneNode::ConvertNoRef( GetRoomKey()->GetObjectPtr() );
-
-            /// Warn, since we should only be itinerant if our parent is as well
-            pErrMsg->Set( true, "Warning", "Itinerant flag in child '%s' of non-itinerant tree. This should never happen. You should inform a programmer...", GetName() ).Show();
-        }       
-    }
-    else
-        tmpNode = plSceneNode::ConvertNoRef( GetRoomKey()->GetObjectPtr() );
-*/
 
     hsBitVector convexBits;
     /// Separate the array into two arrays, one opaque and one blending
-    for( sCount = 0, oCount = 0, bCount = 0, i = 0; i < spanArray.GetCount(); i++ )
+    for (size_t i = 0; i < spanArray.size(); i++)
     {
         if( spanArray[ i ]->fProps & plGeometrySpan::kRequiresBlending )
         {
@@ -1484,12 +1460,11 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
             oCount++;
     }
 
-    // Done this way, since expanding an hsTArray has the nasty side effect of just copying data, which we don't
-    // want when we have memory pointers...
-    opaqueArray.SetCount( oCount );
-    blendingArray.SetCount( bCount );
-    sortingArray.SetCount( sCount );
-    for( sCount = 0, oCount = 0, bCount = 0, i = 0; i < spanArray.GetCount(); i++ )
+    opaqueArray.resize(oCount);
+    blendingArray.resize(bCount);
+    sortingArray.resize(sCount);
+    sCount = oCount = bCount = 0;
+    for (size_t i = 0; i < spanArray.size(); i++)
     {
         if( spanArray[ i ]->fProps & plGeometrySpan::kRequiresBlending )
         {
@@ -1503,11 +1478,11 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
     }
 
     /// Get some drawable pointers
-    if( opaqueArray.GetCount() > 0 )
+    if (!opaqueArray.empty())
         oSpans = plDrawableSpans::ConvertNoRef( IGetSceneNodeSpans( tmpNode, false ) );
-    if( blendingArray.GetCount() > 0 )
+    if (!blendingArray.empty())
         bSpans = plDrawableSpans::ConvertNoRef( IGetSceneNodeSpans( tmpNode, true, false ) );
-    if( sortingArray.GetCount() > 0 )
+    if (!sortingArray.empty())
         sSpans = plDrawableSpans::ConvertNoRef( IGetSceneNodeSpans( tmpNode, true, true ) );
 
     if (oSpans != nullptr)
@@ -1545,9 +1520,9 @@ void    plMaxNode::IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArra
 //  Small utility function for IAssignSpansToDrawables, just does some of
 //  the low-down work that's identical for each drawable/spans/etc.
 
-void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, uint32_t &index,
-                                hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                plErrorMsg *pErrMsg, plConvertSettings *settings )
+void plMaxNode::IAssignSpan(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray, uint32_t &index,
+                            hsMatrix44 &l2w, hsMatrix44 &w2l,
+                            plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     if( NumBones() )
         ISetupBones( drawable, spanArray, l2w, w2l, pErrMsg, settings );
@@ -1567,22 +1542,21 @@ void    plMaxNode::IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySp
 }
 
 // Tiny helper for the function below
-void SetSpansBoneInfo(hsTArray<plGeometrySpan *> &spanArray, uint32_t baseMatrix, uint32_t numMatrices)
+static void SetSpansBoneInfo(std::vector<plGeometrySpan *> &spanArray, uint32_t baseMatrix, uint32_t numMatrices)
 {
-    int i;
-    for( i = 0; i < spanArray.GetCount(); i++ )
+    for (plGeometrySpan* span : spanArray)
     {
-        spanArray[ i ]->fBaseMatrix = baseMatrix;
-        spanArray[ i ]->fNumMatrices = numMatrices;
+        span->fBaseMatrix = baseMatrix;
+        span->fNumMatrices = numMatrices;
     }
 }
 
 //// ISetupBones /////////////////////////////////////////////////////////////
 //  Adds the given bones to the given drawable, then sets up the given spans
 //  with the right indices and sets the initial bone positions.
-void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray,
-                                hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                plErrorMsg *pErrMsg, plConvertSettings *settings)
+void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray,
+                            hsMatrix44 &l2w, hsMatrix44 &w2l,
+                            plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgNodeName = GetName();
 
@@ -1722,8 +1696,8 @@ void    plMaxNode::ISetupBones(plDrawableSpans *drawable, hsTArray<plGeometrySpa
 //  Given an instance node, instances the geoSpans that the node owns and
 //  stores them in the given array.
 
-bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
-                                       plErrorMsg *pErrMsg, plConvertSettings *settings )
+bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray,
+                                   plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     int     index, i;
 
@@ -1744,7 +1718,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
     }
 
     index = 0;
-    spanArray.Reset();
+    spanArray.clear();
     for (size_t iDraw = 0; iDraw < di->GetNumDrawables(); iDraw++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(iDraw));
@@ -1755,7 +1729,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        spanArray.ExpandAndZero( spanArray.GetCount() + disi.fIndices.GetCount() );
+        spanArray.resize(spanArray.size() + disi.fIndices.GetCount());
         for( i = 0; i < disi.fIndices.GetCount(); i++ )
         {
             spanArray[ index ] = new plGeometrySpan;
@@ -1788,7 +1762,7 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
     Mtl *newMtl = GetMtl(), *origMtl = node->GetMtl();
     if (newMtl != nullptr && newMtl == origMtl)    // newMtl should == origMtl, but check just in case
     {
-        hsTArray<hsGMaterial *> oldMaterials, newMaterials;
+        std::vector<hsGMaterial *> oldMaterials, newMaterials;
 
         if( hsMaterialConverter::IsMultiMat( newMtl ) )
         {
@@ -1808,17 +1782,14 @@ bool    plMaxNode::IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan 
         /// The good thing is that this is all done before the spans are added to the drawable,
         /// so we don't have to worry about reffing or unreffing or any of that messiness; all of
         /// that will be done for us as part of the normal AppendDISpans() process.
-        for( i = 0; i < spanArray.GetCount(); i++ )
+        for (plGeometrySpan* span : spanArray)
         {
-            int     j;
-
-
             // Find the span's original material
-            for( j = 0; j < oldMaterials.GetCount(); j++ )
+            for (size_t j = 0; j < oldMaterials.size(); j++)
             {
-                if( spanArray[ i ]->fMaterial == oldMaterials[ j ] )
+                if (span->fMaterial == oldMaterials[j])
                 {
-                    spanArray[ i ]->fMaterial = newMaterials[ j ];
+                    span->fMaterial = newMaterials[j];
                     break;
                 }
             }
@@ -1922,7 +1893,7 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
     const char* dbgNodeName = GetName();
 
-    hsTArray<plGeometrySpan *> spanArray;
+    std::vector<plGeometrySpan *> spanArray;
 
     if( !(CanConvert() && GetDrawable()) ) 
         return true;
@@ -1948,7 +1919,7 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         int i;
         for( i = 0; i < disi.fIndices.GetCount(); i++ )
         {
-            spanArray.Append( dr->GetGeometrySpan( disi.fIndices[ i ] ) );
+            spanArray.emplace_back(dr->GetGeometrySpan(disi.fIndices[i]));
         }
 
         hsMatrix44 l2w = GetLocalToWorld44();
@@ -2023,7 +1994,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
     Matrix3 maxL2V = GetLocalToVert(TimeValue(0));
     Matrix3 maxV2L = GetVertToLocal(TimeValue(0));
 
-    hsTArray<plCullPoly> polys;
+    std::vector<plCullPoly> polys;
 
     uint32_t polyInitFlags = plCullPoly::kNone;
     if( isHole )
@@ -2069,8 +2040,8 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
             mnMesh.Transform(maxV2L);
 
-            polys.SetCount(mesh.getNumFaces());
-            polys.SetCount(0);
+            polys.clear();
+            polys.reserve(mesh.getNumFaces());
 
             // Unfortunate problem here. Max is assuming that eventually this will get rendered, and so
             // we need to avoid T-junctions. Fact is, T-junctions don't bother us at all, where-as colinear
@@ -2098,23 +2069,23 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
                 int lastAdded = 2;
 
-                plCullPoly* poly = polys.Push();
-                poly->fVerts.SetCount(0);
+                plCullPoly* poly = &polys.emplace_back();
+                poly->fVerts.clear();
 
                 Point3 p;
                 hsPoint3 pt;
 
                 p = facePts[0];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[1];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 p = facePts[2];
                 pt.Set(p.x, p.y, p.z);
-                poly->fVerts.Append(pt);
+                poly->fVerts.emplace_back(pt);
 
                 for( j = lastAdded+1; j < facePts.GetCount(); j++ )
                 {
@@ -2147,16 +2118,16 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                     {
                         poly->InitFromVerts(polyInitFlags);
 
-                        poly = polys.Push();
-                        plCullPoly* lastPoly = &polys[polys.GetCount()-2];
-                        poly->fVerts.SetCount(0);
-                        poly->fVerts.Append(lastPoly->fVerts[0]);
-                        poly->fVerts.Append(lastPoly->fVerts[lastAdded]);
+                        plCullPoly* lastPoly = &polys.back();
+                        poly = &polys.emplace_back();
+                        poly->fVerts.clear();
+                        poly->fVerts.emplace_back(lastPoly->fVerts[0]);
+                        poly->fVerts.emplace_back(lastPoly->fVerts[lastAdded]);
     
                         lastAdded = 1;
                     }
 
-                    poly->fVerts.Append(pt);
+                    poly->fVerts.emplace_back(pt);
                     lastAdded++;
                 }
 
@@ -2165,7 +2136,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
         }
     }
 
-    if( polys.GetCount() )
+    if (!polys.empty())
     {
         plOccluder* occ = nullptr;
         plMobileOccluder* mob = nullptr;

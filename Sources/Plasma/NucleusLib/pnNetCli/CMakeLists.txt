@@ -11,7 +11,7 @@ set(pnNetCli_SOURCES
     pnNcUtils.cpp
 )
 
-add_library(pnNetCli STATIC ${pnNetCli_HEADERS} ${pnNetCli_SOURCES})
+plasma_library(pnNetCli SOURCES ${pnNetCli_HEADERS} ${pnNetCli_SOURCES})
 target_link_libraries(
     pnNetCli
     PUBLIC

@@ -254,7 +254,7 @@ bool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
             if (fHittee && fType == kTypeExit) {
                 const plSceneObject* hitteeSO = plSceneObject::ConvertNoRef(fHittee->ObjectIsLoaded());
                 if (hitteeSO && hitteeSO->IsLocallyOwned() == plSynchedObject::kYes) {
-                    fLogicMod->GetNotify()->AddCollisionEvent(false, pActivateMsg->fHitterObj, pActivateMsg->fHiteeObj, false);
+                    fLogicMod->GetNotify()->AddCollisionEvent(false, page->fPlayer, fHittee, false);
                     if (Satisfied())
                         fLogicMod->Trigger(false);
                 }

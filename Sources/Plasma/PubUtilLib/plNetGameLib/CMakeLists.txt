@@ -20,7 +20,12 @@ set(plNetGameLib_HEADERS
     plNetGameLib.h
 )
 
-add_library(plNetGameLib STATIC ${plNetGameLib_PRIVATE} ${plNetGameLib_HEADERS})
+# NOTE: Too many ODR violations and ambiguous names for UNITY_BUILD on this one.
+plasma_library(plNetGameLib
+    SOURCES ${plNetGameLib_PRIVATE} ${plNetGameLib_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
+
 target_link_libraries(
     plNetGameLib
     PUBLIC
@@ -36,9 +41,6 @@ target_link_libraries(
         pnUtils
         plVault
 )
-
-# NOTE: Too many ODR violations and ambiguous names for UNITY_BUILD on this one.
-plasma_optimize_target(plNetGameLib PRECOMPILED_HEADERS Pch.h)
 
 source_group("Private" FILES ${plNetGameLib_PRIVATE})
 source_group("Header Files" FILES ${plNetGameLib_HEADERS})

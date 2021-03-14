@@ -76,7 +76,6 @@ void plUUID::CopyFrom(const plUUID& v)
 
 void plUUID::Read(hsStream* s)
 {
-    s->LogSubStreamPushDesc("plUUID");
     s->Read(sizeof(fData), (void*)fData);
 }
 

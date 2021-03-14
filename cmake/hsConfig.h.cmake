@@ -45,6 +45,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /* Compiler settings */
 #cmakedefine HAVE_CPUID
+#cmakedefine HAVE_AVX2
+#cmakedefine HAVE_AVX
+#cmakedefine HAVE_SSE42
+#cmakedefine HAVE_SSSE3
+#cmakedefine HAVE_SSE41
+#cmakedefine HAVE_SSE4
+#cmakedefine HAVE_SSE3
+#cmakedefine HAVE_SSE2
+#cmakedefine HAVE_SSE1
 
 /* External library usage */
 #cmakedefine USE_SPEEX

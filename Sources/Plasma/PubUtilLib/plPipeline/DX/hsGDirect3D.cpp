@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static std::unique_ptr<hsGDirect3DTnLEnumerate> s_tnlEnum;
 hsGDirect3DTnLEnumerate& hsGDirect3D::EnumerateTnL(bool reenum)
 {
-    if (reenum || !s_tnlEnum.get())
-        s_tnlEnum.reset(new hsGDirect3DTnLEnumerate());
+    if (reenum || !s_tnlEnum)
+        s_tnlEnum = std::make_unique<hsGDirect3DTnLEnumerate>();
 
     // Be nice to legacy code and return a reference...
     hsGDirect3DTnLEnumerate* ptr = s_tnlEnum.get();
@@ -60,7 +60,7 @@ hsGDirect3DTnLEnumerate& hsGDirect3D::EnumerateTnL(bool reenum)
 
 void hsGDirect3D::ReleaseTnLEnum()
 {
-    s_tnlEnum.release();
+    s_tnlEnum.reset();
 }
 
 static void IDeleteDirect3D(IDirect3D9* d3d)
@@ -79,4 +79,3 @@ IDirect3D9* hsGDirect3D::GetDirect3D(bool recreate)
     }
     return s_direct3d.get();
 }
-

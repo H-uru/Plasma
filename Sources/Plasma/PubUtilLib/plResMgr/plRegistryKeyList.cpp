@@ -205,7 +205,7 @@ void plRegistryKeyList::Read(hsStream* s)
 
     // deprecated flags. used to indicate alphabetically sorted keys for some "optimization"
     // that really appeared to do nothing. no loss.
-    s->ReadByte();
+    (void)s->ReadByte();
 
     uint32_t numKeys = s->ReadLE32();
     fKeys.reserve((numKeys * 3) / 2);
@@ -228,7 +228,7 @@ void plRegistryKeyList::Write(hsStream* s)
     // Save space for the length of our data
     uint32_t beginPos = s->GetPosition();
     s->WriteLE32(0);
-    s->WriteByte(0); // Deprecated flags
+    s->WriteByte(uint8_t(0)); // Deprecated flags
 
     // We only write out keys with data. Fill this value in later...
     uint32_t countPos = s->GetPosition();
@@ -249,7 +249,8 @@ void plRegistryKeyList::Write(hsStream* s)
     // Rewind and write out data size and key count
     uint32_t endPos = s->GetPosition();
     s->SetPosition(beginPos);
-    s->WriteLE32(endPos-beginPos-sizeof(uint32_t));
+    uint32_t objSize = endPos - beginPos - sizeof(uint32_t);
+    s->WriteLE32(objSize);
     s->SetPosition(countPos);
     s->WriteLE32(keyCount);
     s->SetPosition(endPos);

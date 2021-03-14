@@ -1661,6 +1661,8 @@ class xKI(ptModifier):
 
         if (set == "up"):
             if (self.chatMgr.MessageHistoryIs < len(self.chatMgr.MessageHistoryList)-1):
+                if (self.chatMgr.MessageHistoryIs == -1):
+                    self.chatMgr.MessageCurrentLine = control.getString()
                 self.chatMgr.MessageHistoryIs = self.chatMgr.MessageHistoryIs +1
                 control.setStringW(self.chatMgr.MessageHistoryList[self.chatMgr.MessageHistoryIs])
                 control.end()
@@ -1669,6 +1671,11 @@ class xKI(ptModifier):
             if (self.chatMgr.MessageHistoryIs > 0):
                 self.chatMgr.MessageHistoryIs = self.chatMgr.MessageHistoryIs -1
                 control.setStringW(self.chatMgr.MessageHistoryList[self.chatMgr.MessageHistoryIs])
+                control.end()
+                control.refresh()
+            elif (self.chatMgr.MessageHistoryIs == 0):
+                self.chatMgr.MessageHistoryIs = -1
+                control.setStringW(self.chatMgr.MessageCurrentLine)
                 control.end()
                 control.refresh()
 
@@ -4201,7 +4208,7 @@ class xKI(ptModifier):
                 if isinstance(self.BKContentList[0], ptPlayer):
                     # Sort the list of Age players.
                     try:
-                        self.BKContentList.sort(key=lambda x: x.getPlayerName().lower())
+                        self.BKContentList.sort(key=lambda x: x.getPlayerName().casefold())
                     except:
                         PtDebugPrint("xKI.BigKIProcessContentList(): Unable to sort Age players, but don't break the list.", level=kErrorLevel)
 
@@ -5520,6 +5527,15 @@ class xKI(ptModifier):
             ctrlID = control.getTagID()
             if ctrlID == kGUI.ChatEditboxID:
                 self.Autocomplete(control)
+        # Up or Down key to scroll in the chat history
+        elif event == kMessageHistoryUp:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatEditboxID:
+                self.MessageHistory(control, "up")
+        elif event == kMessageHistoryDown:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatEditboxID:
+                self.MessageHistory(control, "down")
 
     ## Process notifications originating from the miniKI.
     # The miniKI is the display in the top-left corner of the screen (by

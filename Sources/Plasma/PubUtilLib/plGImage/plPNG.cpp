@@ -91,7 +91,7 @@ plMipmap* plPNG::IRead(hsStream* inStream)
     try {
         //  Check PNG Signature
         png_byte sig[PNGSIGSIZE];
-        inStream->Read8Bytes((char*) sig);
+        inStream->Read(PNGSIGSIZE, sig);
 
         if (!png_sig_cmp(sig, 0, PNGSIGSIZE)) {
             //  Allocate required structs

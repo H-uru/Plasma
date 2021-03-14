@@ -94,11 +94,8 @@ void    plTransitionMgr::Init()
 
 plTransitionMgr::~plTransitionMgr()
 {
-    int     i;
-
-
-    for( i = 0; i < fCallbacks.GetCount(); i++ )
-        hsRefCnt_SafeUnRef( fCallbacks[ i ] );
+    for (plEventCallbackMsg* callback : fCallbacks)
+        hsRefCnt_SafeUnRef(callback);
 
     if (fEffectPlate != nullptr)
         plPlateManager::Instance().DestroyPlate( fEffectPlate );
@@ -203,8 +200,6 @@ void    plTransitionMgr::IStartFadeIn( float lengthInSecs, uint8_t effect )
 
 void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
 {
-    int     i;
-
     plgDispatch::Dispatch()->UnRegisterForExactType( plTimeMsg::Index(), GetKey() );
     fRegisteredForTime = false;
 
@@ -229,12 +224,12 @@ void    plTransitionMgr::IStop( bool aboutToStartAgain /*= false*/ )
                 plgAudioSys::SetGlobalFadeVolume( (fCurrentEffect == kFadeIn || fCurrentEffect == kTransitionFadeIn) ? 1.f : 0.f );
         }
 
-        for( i = 0; i < fCallbacks.GetCount(); i++ )
+        for (plEventCallbackMsg* callback : fCallbacks)
         {
-            fCallbacks[ i ]->SetSender( GetKey() );
-            plgDispatch::MsgSend( fCallbacks[ i ] );
+            callback->SetSender(GetKey());
+            plgDispatch::MsgSend(callback);
         }
-        fCallbacks.Reset();
+        fCallbacks.clear();
 
         fPlaying = false;
     }
@@ -301,7 +296,7 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
         {
             plEventCallbackMsg *pMsg = effect->GetEventCallback( i );
             hsRefCnt_SafeRef( pMsg );
-            fCallbacks.Append( pMsg );
+            fCallbacks.emplace_back(pMsg);
         }
         
         fHoldAtEnd = effect->GetHoldState();
@@ -360,7 +355,7 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
                 {
                     plEventCallbackMsg *cback = plEventCallbackMsg::ConvertNoRef( mgr->WaitForEffect( link->fLinkKey ) );
 //                  hsRefCnt_SafeRef( cback ); // mgr has given us ownership, his ref is now ours. No need for another. -mf-
-                    fCallbacks.Append( cback );
+                    fCallbacks.emplace_back(cback);
                 }
             }
         }

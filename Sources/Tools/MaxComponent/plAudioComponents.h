@@ -51,10 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define SOUND_PHYS_COMP_ID  Class_ID(0x29415900, 0x1ade37a5)
 
 #include <map>
+#include <vector>
 
 #include "plComponent.h"
 #include "pnKeyedObject/plKey.h"
-#include "hsTemplates.h"
 
 #ifdef MAXASS_AVAILABLE
 #   include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
@@ -109,7 +109,7 @@ class plBaseSoundEmitterComponent : public plComponent
 
         bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-        virtual bool    ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg ) { return false; }
+        virtual bool ConvertGrouped(plMaxNode *baseNode, std::vector<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg) { return false; }
 
         int GetSoundIdx(plMaxNode *node)
         {

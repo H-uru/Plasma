@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plConsoleMsg::Read(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgRead(s, mgr);
-    s->ReadLE(&fCmd);
+    s->ReadLE32(&fCmd);
     // read string
     plMsgCStringHelper::Peek(fString, s);
 }
@@ -55,7 +55,7 @@ void plConsoleMsg::Read(hsStream* s, hsResMgr* mgr)
 void plConsoleMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(s, mgr);
-    s->WriteLE(fCmd);
+    s->WriteLE32(fCmd);
     // write cmd/string
     plMsgCStringHelper::Poke(fString, s);
 }

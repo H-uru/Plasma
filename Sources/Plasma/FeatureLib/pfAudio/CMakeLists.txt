@@ -9,7 +9,7 @@ set(pfAudio_HEADERS
     plRandomSoundMod.h
 )
 
-add_library(pfAudio STATIC ${pfAudio_SOURCES} ${pfAudio_HEADERS})
+plasma_library(pfAudio SOURCES ${pfAudio_SOURCES} ${pfAudio_HEADERS})
 target_link_libraries(
     pfAudio
     PUBLIC

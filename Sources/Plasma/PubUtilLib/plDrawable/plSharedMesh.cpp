@@ -54,31 +54,11 @@ plSharedMesh::plSharedMesh() : fMorphSet(), fFlags()
 
 plSharedMesh::~plSharedMesh()
 {
-    hsAssert(fActiveInstances.GetCount() == 0, "Tried to delete a shared mesh that has active instances.");
-    
-    while (fSpans.GetCount() > 0)
-        delete fSpans.Pop();
+    while (!fSpans.empty()) {
+        delete fSpans.back();
+        fSpans.pop_back();
+    }
 }
-/*
-void plSharedMesh::CreateInstance(plSceneObject *so, uint8_t boneIndex)
-{   
-plDrawInterface *di = so->GetVolatileDrawInterface();
-
-  //    hsAssert((fActiveInstances.GetCount == 0) || 
-  //             (di->GetDrawable() == fActiveInstances[0]->GetDrawInterface()->GetDrawable()),
-  //             "Trying to share a mesh between two seperate drawables. No can do.");
-  
-    
-      fActiveInstances.Append(so);
-      }
-      
-        void plSharedMesh::RemoveInstance(plSceneObject *so)
-        {
-        so->GetVolatileDrawInterface()->ReleaseData();
-        
-          fActiveInstances.RemoveItem(so);
-          }
-*/
 
 bool plSharedMesh::MsgReceive(plMessage* msg)
 {
@@ -108,9 +88,8 @@ void plSharedMesh::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
     
-    int i;
-    fSpans.SetCount(s->ReadLE32());
-    for (i = 0; i < fSpans.GetCount(); i++)
+    fSpans.resize(s->ReadLE32());
+    for (size_t i = 0; i < fSpans.size(); i++)
     {
         fSpans[i] = new plGeometrySpan;
         fSpans[i]->Read(s);
@@ -124,10 +103,9 @@ void plSharedMesh::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    int i;
-    s->WriteLE32(fSpans.GetCount());
-    for (i = 0; i < fSpans.GetCount(); i++)
-        fSpans[i]->Write(s);
+    s->WriteLE32((uint32_t)fSpans.size());
+    for (plGeometrySpan* span : fSpans)
+        span->Write(s);
 
     mgr->WriteKey(s, (fMorphSet ? fMorphSet->GetKey() : nullptr));
     s->WriteByte(fFlags);

@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptionStack.h"
 #include "hsResMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 
 #include "MaxComponent/plComponent.h"
 
@@ -123,8 +122,7 @@ namespace {
 
     void CopyMaterialLODToTextures(hsGMaterial* mat)
     {
-        int32_t i;
-        for (i = 0; i < mat->GetNumLayers(); ++i)
+        for (size_t i = 0; i < mat->GetNumLayers(); ++i)
         {
             plLayerInterface* layer = mat->GetLayer(i);
 
@@ -188,7 +186,7 @@ fChangedTimes()
 hsMaterialConverter::~hsMaterialConverter() noexcept(false)
 {
     hsGuardBegin("hsMaterialConverter::~hsMaterialConverter");
-    hsAssert(fDoneMaterials.Count() == 0, "FreeMaterialCache not called");
+    hsAssert(fDoneMaterials.empty(), "FreeMaterialCache not called");
     hsGuardEnd;
 }
 
@@ -228,10 +226,10 @@ void hsMaterialConverter::FreeMaterialCache(const char* path)
     if( path && *path )
         IGenMaterialReport(path);
 
-    for (int i = 0; i < fDoneMaterials.Count(); i++)
-        fDoneMaterials[i].fHsMaterial->GetKey()->UnRefObject();
+    for (DoneMaterialData& done : fDoneMaterials)
+        done.fHsMaterial->GetKey()->UnRefObject();
 
-    fDoneMaterials.Reset();
+    fDoneMaterials.clear();
 }
 
 bool hsMaterialConverter::ForceNoUvsFlatten(plMaxNode* node)
@@ -289,23 +287,19 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
     bool leaving[] = {true, false};
     char *animName = "_link_anim";
 
-    int k;
-    for (k = 0; k < mat->GetNumLayers(); k++)
+    for (size_t k = 0; k < mat->GetNumLayers(); k++)
     {
         plLayerInterface *oldLayer, *currLayer;
         oldLayer = currLayer = mat->GetLayer(k);
         plLeafController *opaCtl;
         plLayerLinkAnimation* animLayer;
 
-        char suff[10];
-        snprintf(suff, std::size(suff), "%d", k);
-        
         opaCtl = new plLeafController;
         opaCtl->QuickScalarController(numKeys, times, values, sizeof(float));
         animLayer = new plLayerLinkAnimation;
         animLayer->SetLinkKey(node->GetAvatarSO()->GetKey());
         //animLayer->fLeavingAge = leaving[x];
-        ST::string fullAnimName = ST::format("{}_{}_{}", oldLayer->GetKeyName(), animName, suff);
+        ST::string fullAnimName = ST::format("{}_{}_{}", oldLayer->GetKeyName(), animName, k);
         hsgResMgr::ResMgr()->NewKey(fullAnimName, animLayer, node->GetLocation());
         animLayer->SetOpacityCtl(opaCtl);
         animLayer->GetTimeConvert().SetBegin(times[0]);
@@ -709,12 +703,12 @@ int hsMaterialConverter::GetCoordMapping(StdUVGen *uvgen)
     hsGuardEnd; 
 }
 
-static void IGetNodesByMaterialRecur(plMaxNode* node, Mtl *mtl, hsTArray<plMaxNode*> &out)
+static void IGetNodesByMaterialRecur(plMaxNode* node, Mtl *mtl, std::vector<plMaxNode*> &out)
 {
     if (node)
     {
         if (node->GetMtl() == mtl)
-            out.Append(node);
+            out.emplace_back(node);
 
         int numChildren = node->NumberOfChildren();
         for (int i = 0; i < numChildren; i++)
@@ -724,7 +718,7 @@ static void IGetNodesByMaterialRecur(plMaxNode* node, Mtl *mtl, hsTArray<plMaxNo
     }
 }
 
-void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out)
+void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, std::vector<plMaxNode*> &out)
 {
     IGetNodesByMaterialRecur((plMaxNode*)GetCOREInterface()->GetRootNode(), mtl, out);
 }
@@ -735,10 +729,10 @@ void hsMaterialConverter::GetNodesByMaterial(Mtl *mtl, hsTArray<plMaxNode*> &out
 //     This function should be called on anything that Max thinks is a single material, even if the exporter
 // wants to generate several materials from it (like composites).
 
-hsTArray<plExportMaterialData> *
+std::vector<plExportMaterialData> *
 hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint32_t multiIndex)
 {
-    hsTArray<plExportMaterialData> *ourMaterials = new hsTArray<plExportMaterialData>;
+    auto ourMaterials = new std::vector<plExportMaterialData>;
 
     const char* dbgNodeName = node->GetName();
 
@@ -789,7 +783,7 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
         }
         numMaterials = (1 << maxMaterial->NumSubMtls()) - 1; // 2^n - 1 possibilites
 
-        ourMaterials->Reset();
+        ourMaterials->clear();
         for( i = 0; i < numMaterials; i++ ) // would be smarter to only create the materials we'll actually use
         {
             plExportMaterialData emd;
@@ -802,13 +796,12 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
 
             if (numBlendChannels < emd.fNumBlendChannels)
                 numBlendChannels = emd.fNumBlendChannels;
-            ourMaterials->Append(emd);
+            ourMaterials->emplace_back(emd);
         }
     }
     else // plPassMtl, plDecalMat, plMultiPassMtl, plParticleMtl
     {
         hsGMaterial *mat = ICreateMaterial(maxMaterial, node, name, -1, numUVChannels, makeAlphaLayer);
-        int maxLayer = (mat == nullptr ? 0 : mat->GetNumLayers());
 
         numBlendChannels = (mat != nullptr && mat->NeedsBlendChannel() ? 1 : 0);
 
@@ -819,8 +812,8 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
         plExportMaterialData emd;
         emd.fMaterial = mat;
         emd.fNumBlendChannels = numBlendChannels;
-        ourMaterials->Reset();
-        ourMaterials->Append(emd);
+        ourMaterials->clear();
+        ourMaterials->emplace_back(emd);
     }
 
     // We've already handled it... just letting them know.
@@ -1047,16 +1040,15 @@ hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, con
                 return mat;
             }
 
-            int32_t i;
             int32_t index(-1);
-            for (i = 0; i < fDoneMaterials.Count(); i++)
+            for (size_t i = 0; i < fDoneMaterials.size(); i++)
             {
                 if (IsMatchingDoneMaterial(&fDoneMaterials[i], mtl,  isMultiMat, subIndex, forceCopy, runtimeLit,
                                            node, numUVChannels, makeAlphaLayer))
                 {
-                    index = i;
+                    index = int32_t(i);
                     break;
-                }               
+                }
             }
 
             if (index != -1)
@@ -1306,7 +1298,7 @@ hsGMaterial* hsMaterialConverter::IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMa
     {
         hMat->GetKey()->RefObject(); // Matching unref in hsMaterialConverter::DeInit();
 
-        fDoneMaterials.Append(done);
+        fDoneMaterials.emplace_back(done);
     }
 
     return hMat;
@@ -1432,12 +1424,11 @@ void hsMaterialConverter::IInsertAlphaBlendingLayers(Mtl *mtl, plMaxNode *node, 
         fWarned |= kWarnedTooManyUVs; 
         UVChan = plGeometrySpan::kMaxNumUVChannels - 1;
     }
-    int i;  
 
     hsGMaterial *objMat = mat;
     plMipmap *texture = IGetUVTransTexture(node);
-    int origLayers = objMat->GetNumLayers();
-    for (i = 0; i < origLayers; i++)
+    size_t origLayers = objMat->GetNumLayers();
+    for (size_t i = 0; i < origLayers; i++)
     {
         IInsertSingleBlendLayer(texture, objMat, node, 2 * i + 1, UVChan);
     }
@@ -1586,10 +1577,9 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
         if (i > 0 && mat->GetNumLayers() > 0)
         {
             bool materialIsBad = false;
-            int j;
             if (usingSubMtl)
             {
-                for (j = mat->GetNumLayers() - 1; j >= (int)layerCounts[i - 1]; j--) 
+                for (hsSsize_t j = mat->GetNumLayers() - 1; j >= (hsSsize_t)layerCounts[i - 1]; j--)
                 {
                     uint32_t blendFlags = mat->GetLayer(j)->GetBlendFlags();
                     if ((blendFlags & hsGMatState::kBlendMask) != hsGMatState::kBlendAlpha)
@@ -1626,8 +1616,8 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
             }
             if (materialIsBad) // Nuke all the layers of this sub material, so the artists don't just ignore the warnings
             {
-                int min = (int)layerCounts[i - 1];
-                for (j = mat->GetNumLayers() - 1; j >= min; j--)
+                hsSsize_t min = (hsSsize_t)layerCounts[i - 1];
+                for (hsSsize_t j = mat->GetNumLayers() - 1; j >= min; j--)
                 {
                     mat->GetKey()->Release(mat->GetLayer(j)->GetKey());
                 }
@@ -1866,7 +1856,7 @@ void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segM
         tc.Loop(false);
 }
 
-void StuffStopPoints(SegmentMap *segMap, hsTArray<float> &out)
+static void StuffStopPoints(SegmentMap *segMap, std::vector<float> &out)
 {
     if (segMap == nullptr)
         return;
@@ -1876,7 +1866,7 @@ void StuffStopPoints(SegmentMap *segMap, hsTArray<float> &out)
         SegmentSpec *spec = it->second;
         if (spec->fType == SegmentSpec::kStopPoint)
         {
-            out.Append(spec->fStart);
+            out.emplace_back(spec->fStart);
         }
     }
 }
@@ -2256,8 +2246,6 @@ bool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGM
 
     plLocation nodeLoc= node->GetLocation(); 
     char* dbgNodeName = node->GetName();
-    
-    int initNumLayers = mat->GetNumLayers();
 
     if(!mtl)
     {
@@ -3166,7 +3154,7 @@ void hsMaterialConverter::IAppendWetLayer(plMaxNode* node, hsGMaterial* mat)
             if( mtl->SuperClassID() != MATERIAL_CLASS_ID )
                 continue;
 
-            hsTArray<hsGMaterial*> matList;
+            std::vector<hsGMaterial*> matList;
             if( !GetMaterialArray((Mtl*)mtl, node, matList, 0) )
                 return; // oh well, thanks for playing...
 
@@ -3709,12 +3697,11 @@ plLayer* hsMaterialConverter::IMakeBumpLayer(plMaxNode* node, const ST::string& 
     if( miscFlag & hsGMatState::kMiscBumpDu )
         layer->SetMiscFlags(layer->GetMiscFlags() | hsGMatState::kMiscRestartPassHere);
 
-    int i;
     int uvChan = -1;
 
     // Find our UVW channel. If there's another layer wanting to use the same kind of
     // channel, just grab that. Otherwise we need to reserve one ourselves.
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         if( (mat->GetLayer(i)->GetMiscFlags() & hsGMatState::kMiscBumpChans) == (miscFlag & hsGMatState::kMiscBumpChans) )
             uvChan = mat->GetLayer(i)->GetUVWSrc();
@@ -3723,7 +3710,7 @@ plLayer* hsMaterialConverter::IMakeBumpLayer(plMaxNode* node, const ST::string& 
     if( uvChan < 0 )
     {
         uvChan = 0;
-        for( i = 0; i < mat->GetNumLayers(); i++ )
+        for (size_t i = 0; i < mat->GetNumLayers(); i++)
         {
             if( uvChan <= int(mat->GetLayer(i)->GetUVWSrc() & plLayerInterface::kUVWIdxMask) )
                 uvChan = int(mat->GetLayer(i)->GetUVWSrc() & plLayerInterface::kUVWIdxMask) + 1;
@@ -3787,8 +3774,7 @@ void hsMaterialConverter::IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat)
     // slap the production wrist for trying it.
     // Okay, decided there actually are times it kind of makes sense to have multiple bump
     // layers (hint: what's wet and wavy).
-    int i;
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         if( mat->GetLayer(i)->GetMiscFlags() & hsGMatState::kMiscBumpLayer )
         {
@@ -3898,13 +3884,12 @@ bool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
         fLastMaterial.fOwnedCopy = false;
     }
 
-    int32_t i;
-    for (i = fDoneMaterials.Count() - 1; i >= 0; --i)
+    for (hsSsize_t i = fDoneMaterials.size() - 1; i >= 0; --i)
     {
         if (fDoneMaterials[i].fMaxMaterial == mtl)
         {
             fDoneMaterials[i].fHsMaterial->GetKey()->UnRefObject();
-            fDoneMaterials.Remove(i);
+            fDoneMaterials.erase(fDoneMaterials.begin() + i);
             doneSomething = true;
         }
     }
@@ -4436,18 +4421,18 @@ Mtl* hsMaterialConverter::FindSceneMtlByName(TSTR& name)
     hsGuardEnd; 
 }
 
-int hsMaterialConverter::GetMaterialArray(Mtl *mtl, plMaxNode* node, hsTArray<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
+size_t hsMaterialConverter::GetMaterialArray(Mtl *mtl, plMaxNode* node, std::vector<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
 {
-    hsTArray<plExportMaterialData>* arGh = CreateMaterialArray(mtl, node, multiIndex);
-    int i;
-    for( i = 0; i < arGh->GetCount(); i++ )
+    std::vector<plExportMaterialData>* arGh = CreateMaterialArray(mtl, node, multiIndex);
+    out.reserve(arGh->size());
+    for (const plExportMaterialData& matData : *arGh)
     {
-        out.Append(arGh->Get(i).fMaterial);
+        out.emplace_back(matData.fMaterial);
     }
 
     delete arGh;
 
-    return out.GetCount();
+    return out.size();
 }
 
 static void GetMtlNodes(Mtl *mtl, INodeTab& nodes)
@@ -4470,35 +4455,33 @@ static void GetMtlNodes(Mtl *mtl, INodeTab& nodes)
     rm = di.Next();
 }
 
-int hsMaterialConverter::GetMaterialArray(Mtl *mtl, hsTArray<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
+size_t hsMaterialConverter::GetMaterialArray(Mtl *mtl, std::vector<hsGMaterial*>& out, uint32_t multiIndex /* = 0 */)
 {
     INodeTab nodes;
     GetMtlNodes(mtl, nodes);
 
     for (int i = 0; i < nodes.Count(); i++)
     {
-        hsTArray<hsGMaterial*> tempOut;
+        std::vector<hsGMaterial*> tempOut;
         GetMaterialArray(mtl, (plMaxNode*)nodes[i], tempOut, multiIndex);
 
-        for (int j = 0; j < tempOut.GetCount(); j++)
+        for (hsGMaterial* mat : tempOut)
         {
-            if (out.Find(tempOut[j]) == out.kMissingIndex)
-                out.Append(tempOut[j]);
+            if (std::find(out.cbegin(), out.cend(), mat) == out.cend())
+                out.emplace_back(mat);
         }
     }
 
-    return out.GetCount();
+    return out.size();
 }
 
 // Grab all the hsGMaterials that have been created as a result of converting mtl
-void hsMaterialConverter::CollectConvertedMaterials(Mtl *mtl, hsTArray<hsGMaterial *>& out)
+void hsMaterialConverter::CollectConvertedMaterials(Mtl *mtl, std::vector<hsGMaterial *>& out)
 {
-    int i;
-    for (i = 0; i < fDoneMaterials.GetCount(); i++)
+    for (const DoneMaterialData& dmd : fDoneMaterials)
     {
-        const DoneMaterialData &dmd = fDoneMaterials.Get(i);
         if (dmd.fMaxMaterial == mtl)
-            out.Append(dmd.fHsMaterial);
+            out.emplace_back(dmd.fHsMaterial);
     }
 }
 
@@ -4769,11 +4752,9 @@ static int ICompareDoneLayers(const plLayerInterface* one, const plLayerInterfac
     return 0;
 }
 
-static int ICompareDoneMats(const void *arg1, const void *arg2)
+static int ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
+                            const hsMaterialConverter::DoneMaterialData* two)
 {
-    const hsMaterialConverter::DoneMaterialData* one = *(const hsMaterialConverter::DoneMaterialData**)arg1;
-    const hsMaterialConverter::DoneMaterialData* two = *(const hsMaterialConverter::DoneMaterialData**)arg2;
-
     hsGMaterial* oneMat = one->fHsMaterial;
     hsGMaterial* twoMat = two->fHsMaterial;
 
@@ -4828,8 +4809,7 @@ static int ICompareDoneMats(const void *arg1, const void *arg2)
         return 1;
 
     // base layers the same, go up a layer at a time. Non-existence of a layer is < any existent layer
-    int i;
-    for( i = 1; i < oneMat->GetNumLayers(); i++ )
+    for (size_t i = 1; i < oneMat->GetNumLayers(); i++)
     {
         if( twoMat->GetNumLayers() <= i )
             return 1;
@@ -4858,11 +4838,10 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
                                    : "BLANK");
     stream->WriteString(buff);
 
-    sprintf(buff, "\t\t%d Layers\n", doneMat->fHsMaterial->GetNumLayers());
+    sprintf(buff, "\t\t%zu Layers\n", doneMat->fHsMaterial->GetNumLayers());
     stream->WriteString(buff);
 
-    int i;
-    for( i = 0; i < doneMat->fHsMaterial->GetNumLayers(); i++ )
+    for (size_t i = 0; i < doneMat->fHsMaterial->GetNumLayers(); i++)
     {
         const plLayerInterface* layer = doneMat->fHsMaterial->GetLayer(i);
 
@@ -4968,30 +4947,28 @@ bool hsMaterialConverter::IEquivalent(DoneMaterialData* one, DoneMaterialData* t
     if( one->fOwnedCopy || two->fOwnedCopy )
         return false;
 
-    return ICompareDoneMats(&one, &two) == 0;
+    return ICompareDoneMats(one, two) == 0;
 }
 
-void hsMaterialConverter::ISortDoneMaterials(hsTArray<DoneMaterialData*>& doneMats)
+void hsMaterialConverter::ISortDoneMaterials(std::vector<DoneMaterialData*>& doneMats)
 {
-    doneMats.SetCount(fDoneMaterials.GetCount());
-    int i;
-    for( i = 0; i < fDoneMaterials.GetCount(); i++ )
+    doneMats.resize(fDoneMaterials.size());
+    for (size_t i = 0; i < fDoneMaterials.size(); i++)
         doneMats[i] = &fDoneMaterials[i];
 
-
-    void* arr = doneMats.AcquireArray();
-    qsort((void*)arr, doneMats.GetCount(), sizeof(DoneMaterialData*), ICompareDoneMats);
+    void* arr = doneMats.data();
+    std::sort(doneMats.begin(), doneMats.end(), ICompareDoneMats);
 }
 
 void hsMaterialConverter::IGenMaterialReport(const char* path)
 {
-    hsTArray<DoneMaterialData*> doneMats;
+    std::vector<DoneMaterialData*> doneMats;
     ISortDoneMaterials(doneMats);
 
     IPrintDoneMaterials(path, doneMats);
 }
 
-void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMaterialData*>& doneMats)
+void hsMaterialConverter::IPrintDoneMaterials(const char* path, const std::vector<DoneMaterialData*>& doneMats)
 {
     TSTR maxFileTstr = GetCOREInterface()->GetCurFileName();
     char maxFile[256];
@@ -5031,7 +5008,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
     stream.WriteString(maxFile);
     stream.WriteString("\n===============================================\n===============================================\n");
 
-    if( !doneMats.GetCount() )
+    if (doneMats.empty())
     {
         char buff[256];
         sprintf(buff, "");
@@ -5048,8 +5025,7 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
     int dupSets = 0;
     int duplicates = 0;
     int uniques = 0;
-    int i;
-    for( i = 1; i < doneMats.GetCount(); i++ )
+    for (size_t i = 1; i < doneMats.size(); i++)
     {
         if( IEquivalent(doneMats[i], doneMats[i-1]) )
         {
@@ -5100,12 +5076,11 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, hsTArray<DoneMat
 
 hsMaterialConverter::DoneMaterialData* hsMaterialConverter::IFindDoneMaterial(DoneMaterialData& done)
 {
-    int i;
-    for( i = 0; i < fDoneMaterials.GetCount(); i++ )
+    for (DoneMaterialData& testMat : fDoneMaterials)
     {
-        if( IEquivalent(&fDoneMaterials[i], &done) )
+        if (IEquivalent(&testMat, &done))
         {
-            return &fDoneMaterials[i];
+            return &testMat;
         }
     }
     return nullptr;

@@ -76,7 +76,6 @@ public:
 };
 
 // Read/Writable version of plTimedValue, for intrinsic types (e.g. int, float, bool).
-// Must be a type that hsStream has an overloaded ReadLE/WriteLE defined.
 template <class T> class plTimedSimple : public plTimedValue<T>
 {
 public:
@@ -85,8 +84,8 @@ public:
 
     plTimedSimple<T>& Set(const T& v, float secs=0) { plTimedValue<T>::Set(v, secs); return *this; }
 
-    void Read(hsStream* s);
-    void Write(hsStream* s) const;
+    inline void Read(hsStream* s);
+    inline void Write(hsStream* s) const;
 };
 
 // Read/Writable version of plTimedValue, for compound types (e.g. hsVector3, hsColorRGBA).
@@ -137,19 +136,18 @@ T plTimedValue<T>::Value() const
 }
 
 
-template <class T> 
-void plTimedSimple<T>::Read(hsStream* s)
+template <>
+void plTimedSimple<float>::Read(hsStream* s)
 {
-    T val;
-    s->ReadLE(&val);
+    float val = s->ReadLEFloat();
     Set(val, 0.f);
 }
 
-template <class T> 
-void plTimedSimple<T>::Write(hsStream* s) const
+template <>
+void plTimedSimple<float>::Write(hsStream* s) const
 {
-    T val = this->Value();
-    s->WriteLE(val);
+    float val = this->Value();
+    s->WriteLEFloat(val);
 }
 
 template <class T> 

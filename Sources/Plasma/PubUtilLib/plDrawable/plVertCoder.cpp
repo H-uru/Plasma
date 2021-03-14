@@ -141,7 +141,7 @@ inline void plVertCoder::IEncodeFloat(hsStream* s, const uint32_t vertsLeft, con
     {
         ICountFloats(src, (uint16_t)vertsLeft, kQuanta[field], stride, fFloats[field][chan].fOffset, fFloats[field][chan].fAllSame, fFloats[field][chan].fCount);
 
-        s->WriteLEScalar(fFloats[field][chan].fOffset);
+        s->WriteLEFloat(fFloats[field][chan].fOffset);
         s->WriteBool(fFloats[field][chan].fAllSame);
         s->WriteLE16(fFloats[field][chan].fCount);
 
@@ -158,7 +158,7 @@ inline void plVertCoder::IDecodeFloat(hsStream* s, const int field, const int ch
 {
     if( !fFloats[field][chan].fCount )
     {
-        fFloats[field][chan].fOffset = s->ReadLEScalar();
+        fFloats[field][chan].fOffset = s->ReadLEFloat();
         fFloats[field][chan].fAllSame = s->ReadBool();
         fFloats[field][chan].fCount = s->ReadLE16();
     }

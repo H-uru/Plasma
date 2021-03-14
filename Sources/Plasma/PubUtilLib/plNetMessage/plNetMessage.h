@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon/plNetCommon.h"
 #include "plNetCommon/plNetCommonConstants.h"
 #include "plNetCommon/plNetCommonHelpers.h"
-#include "plStreamLogger/plStreamLogger.h"
 #include "plUnifiedTime/plClientUnifiedTime.h"
 
 class plMessage;
@@ -188,10 +187,10 @@ public:
           fFlags(0)
     { }
 
-    static plNetMessage* CreateAndRead(const plNetCommonMessage*, plStreamLogger::EventList* el = nullptr);
+    static plNetMessage* CreateAndRead(const plNetCommonMessage*);
     static plNetMessage* Create(const plNetCommonMessage*);
     int PokeBuffer(char* buf, int bufLen, uint32_t peekOptions=0);            // put msg in buffer
-    int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false, plStreamLogger::EventList* el = nullptr);   // get msg out of buffer
+    int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false);   // get msg out of buffer
     bool NeedsReliableSend() const { return IsBitSet(kNeedsReliableSend); }
     bool IsSystemMessage() const { return IsBitSet(kIsSystemMessage);   }
     virtual void ValidatePoke() const;
@@ -433,9 +432,9 @@ public:
     void AddRoomLocation(plLocation loc, const ST::string& rmName);
     int FindRoomLocation(plLocation loc);
 
-    int GetNumRooms() const { return fRooms.size(); }
-    plLocation GetRoomLoc(int i) const { return fRooms[i]; }
-    ST::string GetRoomName(int i) const { return fRoomNames[i]; }      // debug
+    size_t GetNumRooms() const { return fRooms.size(); }
+    plLocation GetRoomLoc(size_t i) const { return fRooms[i]; }
+    ST::string GetRoomName(size_t i) const { return fRoomNames[i]; }      // debug
 };
 
 //
@@ -632,10 +631,10 @@ public:
         plNetGroupId fGroupID;
         bool fOwnIt;    // else not the owner
 
-        void Read(hsStream* s) { fGroupID.Read(s); s->LogReadLE(&fOwnIt,"GroupOwner OwnIt"); }
-        void Write(hsStream* s) { fGroupID.Write(s); s->WriteLE(fOwnIt); }
+        void Read(hsStream* s);
+        void Write(hsStream* s) const;
 
-      GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
+        GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
         GroupInfo(plNetGroupId gID, bool o) : fGroupID(gID),fOwnIt(o) {}
     };
 protected:
@@ -648,8 +647,8 @@ public:
     GETINTERFACE_ANY( plNetMsgGroupOwner, plNetMsgServerToClient );
 
     // getters
-    int GetNumGroups() const { return fGroups.size(); }
-    GroupInfo GetGroupInfo(int i) const { return fGroups[i]; }
+    size_t GetNumGroups() const { return fGroups.size(); }
+    GroupInfo GetGroupInfo(size_t i) const { return fGroups[i]; }
 
     // setters
     void AddGroupInfo(GroupInfo gi) { fGroups.push_back(gi); }
@@ -694,7 +693,7 @@ public:
     uint8_t GetNumFrames() const { return fNumFrames; }
     
     void SetVoiceData(const void* data, size_t len );
-    int GetVoiceDataLen() const { return fVoiceData.length(); }
+    size_t GetVoiceDataLen() const { return fVoiceData.length(); }
     const char *GetVoiceData() const;
     
     plNetMsgReceiversListHelper* Receivers() { return &fReceivers; }

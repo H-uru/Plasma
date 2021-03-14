@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 
@@ -85,7 +87,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    bool SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsTArray<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg);
+    bool SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, std::vector<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg);
 };
 
 CLASS_DESC(plMorphLayComp, gMorphLayCompDesc, "Morph Layer",  "MorphLay", COMP_TYPE_AVATAR, MORPHLAY_COMP_CID)
@@ -141,7 +143,7 @@ bool plMorphLayComp::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsTArray<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg)
+bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, std::vector<plGeometrySpan*>* baseSpans, plErrorMsg* pErrMsg)
 {
     const int num = fCompPB->Count(kDeltas);
     int i;
@@ -156,7 +158,7 @@ bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsT
         // Get the GeometrySpans. We ensured they would
         // be generated in it's SetupProperties, and they were created
         // in the MakeMesh pass.
-        hsTArray<plGeometrySpan*>* movedSpans = &deltaNode->GetSwappableGeom()->fSpans;
+        std::vector<plGeometrySpan*>* movedSpans = &deltaNode->GetSwappableGeom()->fSpans;
 
         // We want to move the deltas into the same space as the base mesh verts.
         // So the first question is, which space do we want to move them from?
@@ -178,8 +180,8 @@ bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, hsT
         hsMatrix44 d2bTInv;
         d2b.GetInverse(&d2bTInv);
         d2bTInv.GetTranspose(&d2bTInv);
-        // Error check - movedSpans->GetCount() == baseSpans->GetCount();
-        if( movedSpans->GetCount() != baseSpans->GetCount() )
+        // Error check
+        if (movedSpans->size() != baseSpans->size())
         {
             pErrMsg->Set(true, deltaNode->GetName(), "Delta mesh mismatch with base").CheckAndAsk();
             pErrMsg->Set(false);
@@ -313,7 +315,7 @@ bool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     // Get our base geometry.
     plMaxNode* baseNode = (plMaxNode*)fCompPB->GetINode(kBaseNode);
     plSharedMesh* mesh = baseNode->GetSwappableGeom();
-    hsTArray<plGeometrySpan*>* baseSpans = &mesh->fSpans;
+    std::vector<plGeometrySpan*>* baseSpans = &mesh->fSpans;
     //morphSeq->AddSharedMesh(mesh);
 
     // Error check we have some base geometry.
@@ -338,7 +340,7 @@ bool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
         if( layComp->SetupLayer(morphArr, baseNode, baseSpans, pErrMsg) )
         {
             //morphSeq->AddLayer(morphArr);
-            set->fMorphs.Append(morphArr);
+            set->fMorphs.emplace_back(morphArr);
         }
     }
 

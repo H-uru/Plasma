@@ -456,18 +456,18 @@ void pyGUIControlMultiLineEdit::AddPlasmaClasses(PyObject *m)
 
 void pyGUIControlMultiLineEdit::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtGUIMultiLineDirection);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kLineStart,        pfGUIMultiLineEditCtrl::kLineStart);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kLineEnd,          pfGUIMultiLineEditCtrl::kLineEnd);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kBufferStart,      pfGUIMultiLineEditCtrl::kBufferStart);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kBufferEnd,        pfGUIMultiLineEditCtrl::kBufferEnd);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneBack,          pfGUIMultiLineEditCtrl::kOneBack);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneForward,       pfGUIMultiLineEditCtrl::kOneForward);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneWordBack,      pfGUIMultiLineEditCtrl::kOneWordBack);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneWordForward,   pfGUIMultiLineEditCtrl::kOneWordForward);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneLineUp,        pfGUIMultiLineEditCtrl::kOneLineUp);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneLineDown,      pfGUIMultiLineEditCtrl::kOneLineDown);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kPageUp,           pfGUIMultiLineEditCtrl::kPageUp);
-    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kPageDown,         pfGUIMultiLineEditCtrl::kPageDown);
-    PYTHON_ENUM_END(m, PtGUIMultiLineDirection);
+    PYTHON_ENUM_START(PtGUIMultiLineDirection)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kLineStart,        pfGUIMultiLineEditCtrl::kLineStart)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kLineEnd,          pfGUIMultiLineEditCtrl::kLineEnd)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kBufferStart,      pfGUIMultiLineEditCtrl::kBufferStart)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kBufferEnd,        pfGUIMultiLineEditCtrl::kBufferEnd)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneBack,          pfGUIMultiLineEditCtrl::kOneBack)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneForward,       pfGUIMultiLineEditCtrl::kOneForward)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneWordBack,      pfGUIMultiLineEditCtrl::kOneWordBack)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneWordForward,   pfGUIMultiLineEditCtrl::kOneWordForward)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneLineUp,        pfGUIMultiLineEditCtrl::kOneLineUp)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kOneLineDown,      pfGUIMultiLineEditCtrl::kOneLineDown)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kPageUp,           pfGUIMultiLineEditCtrl::kPageUp)
+    PYTHON_ENUM_ELEMENT(PtGUIMultiLineDirection, kPageDown,         pfGUIMultiLineEditCtrl::kPageDown)
+    PYTHON_ENUM_END(m, PtGUIMultiLineDirection)
 }

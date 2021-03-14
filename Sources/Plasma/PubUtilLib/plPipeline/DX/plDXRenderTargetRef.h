@@ -97,7 +97,7 @@ class plDXRenderTargetRef: public plDXTextureRef
         }
 
         virtual ~plDXRenderTargetRef();
-        void    Release();
+        void    Release() override;
 };
 
 

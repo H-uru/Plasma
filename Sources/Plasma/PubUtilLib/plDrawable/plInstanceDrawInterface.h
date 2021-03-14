@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInstanceDrawInterface_inc
 #define plInstanceDrawInterface_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "pnSceneObject/plDrawInterface.h"
 
@@ -53,7 +53,7 @@ class plInstanceDrawInterface : public plDrawInterface
 {
 protected:
     plDrawableSpans *fDrawable;
-    hsTArray<plSharedMesh*> fMeshes;
+    std::vector<plSharedMesh*> fMeshes;
 
     void ICheckDrawableIndex(size_t which) override;
 
@@ -79,7 +79,7 @@ public:
     virtual void IClearIndex(size_t which);
     plDrawableSpans *GetInstanceDrawable() const { return fDrawable; }
 
-    int32_t GetSharedMeshIndex(const plSharedMesh *mesh) const;
+    hsSsize_t GetSharedMeshIndex(const plSharedMesh *mesh) const;
 };
 
 

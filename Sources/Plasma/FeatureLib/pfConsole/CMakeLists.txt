@@ -16,7 +16,10 @@ set(pfConsole_HEADERS
     pfDispatchLog.h
 )
 
-add_library(pfConsole STATIC ${pfConsole_SOURCES} ${pfConsole_HEADERS})
+plasma_library(pfConsole
+    SOURCES ${pfConsole_SOURCES} ${pfConsole_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pfConsole
     PUBLIC
@@ -30,7 +33,6 @@ target_link_libraries(
         pnNetCommon
         pnNucleusInc
         pnSceneObject
-        pnTimer
         pnUUID
         plAgeDescription
         plAgeLoader
@@ -70,8 +72,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(pfConsole PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${pfConsole_SOURCES})
 source_group("Header Files" FILES ${pfConsole_HEADERS})

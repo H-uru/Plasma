@@ -7,7 +7,7 @@ set(plAgeDescription_HEADERS
     plAgeManifest.h
 )
 
-add_library(plAgeDescription STATIC ${plAgeDescription_SOURCES} ${plAgeDescription_HEADERS})
+plasma_library(plAgeDescription SOURCES ${plAgeDescription_SOURCES} ${plAgeDescription_HEADERS})
 target_link_libraries(
     plAgeDescription
     PUBLIC

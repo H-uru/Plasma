@@ -88,7 +88,7 @@ static void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName
 static size_t ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, std::vector<plKey>& keys)
 {
     ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::string() : segName;
-    for (uint32_t i = 0; i < mat->GetNumLayers(); i++)
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
         ISearchLayerRecur(mat->GetLayer(i), name, keys);
     return keys.size();
 }
@@ -109,16 +109,16 @@ static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& seg
     }
     else
     {
-        hsTArray<hsGMaterial*> matList;
+        std::vector<hsGMaterial*> matList;
 
         if (node)
             hsMaterialConverter::Instance().GetMaterialArray(mtl, (plMaxNode*)node, matList);
         else
             hsMaterialConverter::Instance().CollectConvertedMaterials(mtl, matList);
 
-        for( i = 0; i < matList.GetCount(); i++ )
+        for (hsGMaterial* mat : matList)
         {
-            retVal += ISearchLayerRecur(matList[i], segName, keys);
+            retVal += ISearchLayerRecur(mat, segName, keys);
         }
     }
 
@@ -172,7 +172,7 @@ void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
-void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
+void    plAnimStealthNode::GetAllStopPoints(std::vector<float> &out)
 {
     if (fCachedSegMap == nullptr)
         return;
@@ -182,7 +182,7 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
         SegmentSpec *spec = it->second;
         if( spec->fType == SegmentSpec::kStopPoint )
         {
-            out.Append( spec->fStart );
+            out.emplace_back(spec->fStart);
         }
     }
 }

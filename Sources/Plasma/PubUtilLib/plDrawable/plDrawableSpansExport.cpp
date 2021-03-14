@@ -189,7 +189,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     // Write the groups out
     count = fGroups.GetCount();
 
-    s->WriteLE( count );
+    s->WriteLE32(count);
     for( i = 0; i < count; i++ )
     {
 #ifdef VERT_LOG
@@ -216,9 +216,8 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 //  Adds a drawInterface's geometry spans to the list to be collapsed into 
 //  buffers.
 
-uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index )
+uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint32_t index)
 {
-    int             i;
     uint32_t          spanIdx;
     plSpan          *span;
     hsBounds3Ext    bounds;
@@ -240,11 +239,11 @@ uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32
 
     /// Add the geometry spans to our list. Also add our internal span
     /// copies
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (plGeometrySpan* geoSpan : spans)
     {
         spanLookup->Append( fSourceSpans.GetCount() );
-        spans[ i ]->fSpanRefIndex = fSourceSpans.GetCount();
-        fSourceSpans.Append( spans[ i ] );  
+        geoSpan->fSpanRefIndex = fSourceSpans.GetCount();
+        fSourceSpans.Append(geoSpan);
 
         spanIdx = fIcicles.GetCount();
         fIcicles.Append( plIcicle() );
@@ -252,37 +251,37 @@ uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32
         span = (plSpan *)icicle;
 
         /// Set common stuff
-        IAssignMatIdxToSpan( span, spans[ i ]->fMaterial );
-        span->fLocalToWorld = spans[ i ]->fLocalToWorld;
-        span->fWorldToLocal = spans[ i ]->fWorldToLocal;
-        span->fProps |= ( spans[ i ]->fProps & plGeometrySpan::kPropRunTimeLight ) ? plSpan::kPropRunTimeLight : 0;
-        if( spans[i]->fProps & plGeometrySpan::kPropNoShadowCast )
+        IAssignMatIdxToSpan(span, geoSpan->fMaterial);
+        span->fLocalToWorld = geoSpan->fLocalToWorld;
+        span->fWorldToLocal = geoSpan->fWorldToLocal;
+        span->fProps |= (geoSpan->fProps & plGeometrySpan::kPropRunTimeLight) ? plSpan::kPropRunTimeLight : 0;
+        if (geoSpan->fProps & plGeometrySpan::kPropNoShadowCast)
             span->fProps |= plSpan::kPropNoShadowCast;
-        if( spans[i]->fProps & plGeometrySpan::kPropNoShadow )
+        if (geoSpan->fProps & plGeometrySpan::kPropNoShadow)
             span->fProps |= plSpan::kPropNoShadow;
-        if( spans[i]->fProps & plGeometrySpan::kPropForceShadow )
+        if (geoSpan->fProps & plGeometrySpan::kPropForceShadow)
             span->fProps |= plSpan::kPropForceShadow;
-        if( spans[i]->fProps & plGeometrySpan::kPropReverseSort )
+        if (geoSpan->fProps & plGeometrySpan::kPropReverseSort)
             span->fProps |= plSpan::kPropReverseSort;
-        if( spans[i]->fProps & plGeometrySpan::kPartialSort )
+        if (geoSpan->fProps & plGeometrySpan::kPartialSort)
             span->fProps |= plSpan::kPartialSort;
-        if( spans[i]->fProps & plGeometrySpan::kVisLOS )
+        if (geoSpan->fProps & plGeometrySpan::kVisLOS)
         {
             span->fProps |= plSpan::kVisLOS;
             fProps |= plDrawable::kPropHasVisLOS;
         }
 
-        span->fNumMatrices = spans[ i ]->fNumMatrices;
-        span->fBaseMatrix = spans[ i ]->fBaseMatrix;
-        span->fLocalUVWChans = spans[i]->fLocalUVWChans;
-        span->fMaxBoneIdx = spans[i]->fMaxBoneIdx;
-        span->fPenBoneIdx = (uint16_t)(spans[i]->fPenBoneIdx);
+        span->fNumMatrices = geoSpan->fNumMatrices;
+        span->fBaseMatrix = geoSpan->fBaseMatrix;
+        span->fLocalUVWChans = geoSpan->fLocalUVWChans;
+        span->fMaxBoneIdx = geoSpan->fMaxBoneIdx;
+        span->fPenBoneIdx = (uint16_t)(geoSpan->fPenBoneIdx);
 
-        bounds = spans[ i ]->fLocalBounds;
+        bounds = geoSpan->fLocalBounds;
         span->fLocalBounds = bounds;
         bounds.Transform( &span->fLocalToWorld );
         span->fWorldBounds = bounds;
-        span->fFogEnvironment = spans[ i ]->fFogEnviron;
+        span->fFogEnvironment = geoSpan->fFogEnviron;
 
         /// Add to our source indices
         fSpans.Append( span );
@@ -700,7 +699,6 @@ void    plDrawableSpans::ISortSourceSpans()
 short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *span2 )
 {
     bool        b1, b2;
-    int         i, j, numLayers;
     plBitmap    *t1, *t2;
 
 
@@ -737,11 +735,11 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
     // Next is texture (name). We do this kinda like strings: compare the first layer's
     // textures and go upwards, so that we group materials together starting with the
     // base layer's texture and going upwards
-    numLayers = span1->fMaterial->GetNumLayers();
+    size_t numLayers = span1->fMaterial->GetNumLayers();
     if( span2->fMaterial->GetNumLayers() < numLayers )
         numLayers = span2->fMaterial->GetNumLayers();
 
-    for( i = 0; i < numLayers; i++ )
+    for (size_t i = 0; i < numLayers; i++)
     {
         t1 = span1->fMaterial->GetLayer( i )->GetTexture();
         t2 = span2->fMaterial->GetLayer( i )->GetTexture();
@@ -755,18 +753,18 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
         
         if( !t1->GetKeyName().empty() && !t2->GetKeyName().empty() )
         {
-            j = t1->GetKeyName().compare( t2->GetKeyName(), ST::case_insensitive );
-            if( j != 0 )
-                return (short)j;
+            int r = t1->GetKeyName().compare(t2->GetKeyName(), ST::case_insensitive);
+            if (r != 0)
+                return (short)r;
         }
     }
 
     // Finally, by material itself.
     if( !span1->fMaterial->GetKeyName().empty() && !span2->fMaterial->GetKeyName().empty() )
     {
-        j = span1->fMaterial->GetKeyName().compare( span2->fMaterial->GetKeyName(), ST::case_insensitive );
-        if( j != 0 )
-            return (short)j;
+        int r = span1->fMaterial->GetKeyName().compare(span2->fMaterial->GetKeyName(), ST::case_insensitive);
+        if (r != 0)
+            return (short)r;
     }
 
     if( span1->fLocalToWorld.fFlags != span2->fLocalToWorld.fFlags )

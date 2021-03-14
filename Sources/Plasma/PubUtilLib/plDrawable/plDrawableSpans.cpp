@@ -1067,7 +1067,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     {
         fDIIndices[ i ] = new plDISpanIndex;
         
-        fDIIndices[ i ]->fFlags = (uint8_t)(s->ReadLE32());
+        fDIIndices[i]->fFlags = s->ReadLE32();
         count2 = s->ReadLE32();
         fDIIndices[ i ]->SetCountAndZero( count2 );
         for( j = 0; j < count2; j++ )
@@ -1119,10 +1119,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 
 bool    plDrawableSpans::ITestMatForSpecularity( hsGMaterial *mat )
 {
-    int     i;
-
-
-    for( i = 0; i < mat->GetNumLayers(); i++ )
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         if( mat->GetLayer( i )->GetShadeFlags() & hsGMatState::kShadeSpecular )
             return true;
@@ -2325,12 +2322,11 @@ plDISpanIndex   *plDrawableSpans::IFindDIIndices( uint32_t &index )
 //  Note: AddDISpans() adds the spans to a list to be sorted, THEN put into
 //  the buffers; this shoves them right in, bypassing the sorting altogether.
 
-uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index, bool clearSpansAfterAdd, 
+uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, uint32_t index, bool clearSpansAfterAdd,
                                         bool doNotAddToSource, bool addToFront, int lod)
 {
-    hsAssert(spans.GetCount(), "Adding no spans? Blow me.");
+    hsAssert(!spans.empty(), "Adding no spans? Blow me.");
 
-    int             i, j;
     uint32_t          spanIdx;
     plSpan          *span;
     hsBounds3Ext    bounds;
@@ -2365,7 +2361,7 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
 
     /// Add the geometry spans to our list. Also add our internal span
     /// copies
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (size_t i = 0; i < spans.size(); i++)
     {
         spanIdx = fIcicles.GetCount();
         fIcicles.Append( plIcicle() );
@@ -2409,18 +2405,18 @@ uint32_t  plDrawableSpans::AppendDISpans( hsTArray<plGeometrySpan *> &spans, uin
     if (inserted)
     {
         /// Go adjusting indices in the DI index list
-        for( i = 0; i < fDIIndices.GetCount(); i++ )
+        for (int i = 0; i < fDIIndices.GetCount(); i++)
         {
             if( !fDIIndices[ i ]->IsMatrixOnly() )
             {
                 if (fDIIndices[ i ] == spanLookup)
                     continue;
 
-                for( j = 0; j < fDIIndices[ i ]->GetCount(); j++ )
+                for (int j = 0; j < fDIIndices[ i ]->GetCount(); j++)
                 {
                     if( (*fDIIndices[i])[j] >= insertionPoint )
                     {
-                        (*fDIIndices[ i ])[ j ] += spans.GetCount();
+                        (*fDIIndices[ i ])[ j ] += spans.size();
                         hsAssert((*fDIIndices[ i ])[ j ] < fSpans.GetCount(), "Span index snafu");
                     }
                 }
@@ -3184,17 +3180,15 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
     const uint32_t vertsPerInst = cluster->GetTemplate()->NumVerts();
     const uint32_t idxPerInst = cluster->GetTemplate()->NumIndices();
 
-    const uint32_t numClust = cluster->GetNumClusters();
+    const size_t numClust = cluster->GetNumClusters();
 
     fVisSet |= cluster->GetVisSet();
     fVisNot |= cluster->GetVisNot();
 
     fIcicles.SetCount(numClust);
     fSpans.SetCount(numClust);
-    int iSpan;
-    for( iSpan = 0; iSpan < numClust; iSpan++ )
+    for (size_t iSpan = 0; iSpan < numClust; iSpan++)
         fSpans[iSpan] = &fIcicles[iSpan];
-    iSpan = 0;
 
     uint32_t vtxFormat =
         cluster->GetTemplate()->NumUVWs()
@@ -3202,15 +3196,14 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
     if( cluster->GetTemplate()->NumWgtIdx() )
         vtxFormat |= plGBufferGroup::kSkinIndices;
 
-    const hsTArray<plLightInfo*>& lights = cluster->GetLights();
+    const std::vector<plLightInfo*>& lights = cluster->GetLights();
 
-    int iStart;
-    for( iStart = 0; iStart < cluster->GetNumClusters(); )
+    for (size_t iStart = 0; iStart < cluster->GetNumClusters(); )
     {
         int numVerts = 0;
         int numIdx = 0;
-        int iEnd;
-        for( iEnd = iStart; iEnd < cluster->GetNumClusters(); iEnd++ )
+        size_t iEnd;
+        for (iEnd = iStart; iEnd < cluster->GetNumClusters(); iEnd++)
         {
             numVerts += vertsPerInst * cluster->GetCluster(iEnd)->NumInsts();
             numIdx += idxPerInst * cluster->GetCluster(iEnd)->NumInsts();
@@ -3248,8 +3241,8 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
         uint16_t* iData = fGroups[grpIdx]->GetIndexBufferData(ibufferIdx);
         uint8_t* pvData = vData;
         uint16_t* piData = iData;
-        int i;
-        for( i = iStart; i < iEnd; i++ )
+        size_t iSpan = 0;
+        for (size_t i = iStart; i < iEnd; i++)
         {
             hsBounds3Ext bnd;
             cluster->GetCluster(i)->UnPack(pvData, piData, cellOffset, bnd);
@@ -3277,11 +3270,10 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
             fIcicles[iSpan].fVisSet = cluster->GetVisSet();
             fIcicles[iSpan].fVisNot = cluster->GetVisNot();
 
-            if( lights.GetCount() )
+            if (!lights.empty())
             {
-                int iLight;
-                for( iLight = 0; iLight < lights.GetCount(); iLight++ )
-                    fIcicles[iSpan].AddPermaLight(lights[iLight], lights[iLight]->GetProjection() != nullptr);
+                for (plLightInfo* light : lights)
+                    fIcicles[iSpan].AddPermaLight(light, light->GetProjection() != nullptr);
             }
 
             fIcicles[iSpan].fGroupIdx = grpIdx;

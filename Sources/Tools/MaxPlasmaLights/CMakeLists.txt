@@ -22,7 +22,11 @@ set(MaxPlasmaLights_SOURCES
     plRTProjDirLight.cpp
 )
 
-add_library(MaxPlasmaLights SHARED ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES})
+plasma_library(MaxPlasmaLights SHARED
+    SOURCES ${MaxPlasmaLights_HEADERS} ${MaxPlasmaLights_RESOURCES} ${MaxPlasmaLights_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+    NO_SANITIZE # The 3ds Max headers are full of clang diagnostic errors.
+)
 target_link_libraries(
     MaxPlasmaLights
     PUBLIC
@@ -42,7 +46,6 @@ target_link_libraries(
         Comctl32
 )
 
-plasma_optimize_target(MaxPlasmaLights PRECOMPILED_HEADERS Pch.h)
 set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 
 install(

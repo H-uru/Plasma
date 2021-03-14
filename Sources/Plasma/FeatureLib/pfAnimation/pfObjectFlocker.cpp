@@ -62,8 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define RAND() (float) (rand()/(RAND_MAX * 1.0))
 #define SIGN(x) (((x) < 0) ? -1 : 1)
 
-const int pfObjectFlocker::fFileVersion = 1;
-
 #define FLOCKER_SHOW_DEBUG_LINES 0
 
 #if FLOCKER_SHOW_DEBUG_LINES
@@ -915,7 +913,7 @@ bool pfObjectFlocker::MsgReceive(plMessage* msg)
         pMsg->Send();
 
         hsPoint3 pos(fTarget->GetLocalToWorld().GetTranslate());
-        for (int i = 0; i < fNumBoids; i++)
+        for (uint8_t i = 0; i < fNumBoids; i++)
         {
             plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(fBoidKey->GetUoid(), GetKey(), 0);
             plKey newKey = cloneMsg->GetCloneKey();
@@ -956,7 +954,7 @@ bool pfObjectFlocker::IEval(double secs, float del, uint32_t dirty)
     fFlock.Update(fTarget, del);
 
     plSceneObject* boidSO = nullptr;
-    for (int i = 0; i < fNumBoids; i++)
+    for (uint8_t i = 0; i < fNumBoids; i++)
     {
         pfBoid* boid = fFlock.GetBoid(i);
         boidSO = plSceneObject::ConvertNoRef(boid->GetKey()->VerifyLoaded());
@@ -1013,18 +1011,18 @@ void pfObjectFlocker::Read(hsStream* s, hsResMgr* mgr)
     SetNumBoids(s->ReadByte());
     fBoidKey = mgr->ReadKey(s);
 
-    fFlock.SetGoalWeight(s->ReadLEScalar());
-    fFlock.SetWanderWeight(s->ReadLEScalar());
+    fFlock.SetGoalWeight(s->ReadLEFloat());
+    fFlock.SetWanderWeight(s->ReadLEFloat());
 
-    fFlock.SetSeparationWeight(s->ReadLEScalar());
-    fFlock.SetSeparationRadius(s->ReadLEScalar());
+    fFlock.SetSeparationWeight(s->ReadLEFloat());
+    fFlock.SetSeparationRadius(s->ReadLEFloat());
 
-    fFlock.SetCohesionWeight(s->ReadLEScalar());
-    fFlock.SetCohesionRadius(s->ReadLEScalar());
+    fFlock.SetCohesionWeight(s->ReadLEFloat());
+    fFlock.SetCohesionRadius(s->ReadLEFloat());
 
-    fFlock.SetMaxForce(s->ReadLEScalar());
-    fFlock.SetMaxSpeed(s->ReadLEScalar());
-    fFlock.SetMinSpeed(s->ReadLEScalar());
+    fFlock.SetMaxForce(s->ReadLEFloat());
+    fFlock.SetMaxSpeed(s->ReadLEFloat());
+    fFlock.SetMinSpeed(s->ReadLEFloat());
 
     fUseTargetRotation = s->ReadBool();
     fRandomizeAnimationStart = s->ReadBool();
@@ -1039,18 +1037,18 @@ void pfObjectFlocker::Write(hsStream* s, hsResMgr* mgr)
     s->WriteByte(fNumBoids);
     mgr->WriteKey(s, fBoidKey);
 
-    s->WriteLEScalar(fFlock.GoalWeight());
-    s->WriteLEScalar(fFlock.WanderWeight());
+    s->WriteLEFloat(fFlock.GoalWeight());
+    s->WriteLEFloat(fFlock.WanderWeight());
 
-    s->WriteLEScalar(fFlock.SeparationWeight());
-    s->WriteLEScalar(fFlock.SeparationRadius());
+    s->WriteLEFloat(fFlock.SeparationWeight());
+    s->WriteLEFloat(fFlock.SeparationRadius());
 
-    s->WriteLEScalar(fFlock.CohesionWeight());
-    s->WriteLEScalar(fFlock.CohesionRadius());
+    s->WriteLEFloat(fFlock.CohesionWeight());
+    s->WriteLEFloat(fFlock.CohesionRadius());
 
-    s->WriteLEScalar(fFlock.MaxForce());
-    s->WriteLEScalar(fFlock.MaxSpeed());
-    s->WriteLEScalar(fFlock.MinSpeed());
+    s->WriteLEFloat(fFlock.MaxForce());
+    s->WriteLEFloat(fFlock.MaxSpeed());
+    s->WriteLEFloat(fFlock.MinSpeed());
 
     s->WriteBool(fUseTargetRotation);
     s->WriteBool(fRandomizeAnimationStart);

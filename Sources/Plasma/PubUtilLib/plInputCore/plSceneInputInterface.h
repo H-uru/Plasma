@@ -118,8 +118,8 @@ class plSceneInputInterface : public plInputInterface
 
         bool    IWorldPosMovedSinceLastLOSCheck();
         void ClearClickableMap();
-        void ISendOfferNotification(plKey& offeree, int ID, bool net);
-        void IManageIgnoredAvatars(plKey& offeree, bool add);
+        void ISendOfferNotification(const plKey& offeree, int ID, bool net);
+        void IManageIgnoredAvatars(const plKey& offeree, bool add);
         void ISendAvatarDisabledNotification(bool enabled);
         void ILinkOffereeToAge();
     public:

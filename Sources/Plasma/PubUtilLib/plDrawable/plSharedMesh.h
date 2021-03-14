@@ -42,9 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLSHAREDMESH_INC
 #define PLSHAREDMESH_INC
 
+#include <vector>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnMessage/plMessage.h"
-#include "hsTemplates.h"
 
 class plDrawableSpans;
 class plGeometrySpan;
@@ -63,17 +64,13 @@ public:
                                     // the same morph mod.
     };
 
-    hsTArray<plGeometrySpan *>fSpans;
-    hsTArray<const plSceneObject *> fActiveInstances;
+    std::vector<plGeometrySpan *> fSpans;
     plMorphDataSet *fMorphSet;
     uint8_t fFlags;
     
     plSharedMesh();
     ~plSharedMesh();
-    
-    void CreateInstance(plSceneObject *so, uint8_t boneIndex);
-    void RemoveInstance(plSceneObject *so);
-    
+
     CLASSNAME_REGISTER( plSharedMesh );
     GETINTERFACE_ANY( plSharedMesh, hsKeyedObject );
     

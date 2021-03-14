@@ -292,7 +292,7 @@ void plFollowMod::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteByte(fLeaderType);
+    stream->WriteByte((uint8_t)fLeaderType);
     stream->WriteByte(fMode);
 
     mgr->WriteKey(stream, fLeader);

@@ -43,28 +43,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMorphDelta_inc
 #define plMorphDelta_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsGeometry3.h"
 #include "pnFactory/plCreatable.h"
 
 #include "plAccessSpan.h"
 
-class plVertDelta
+struct plVertDelta
 {
-public:
-    uint16_t      fIdx;
-    uint16_t      fPadding;
+    plVertDelta() : fIdx(), fPadding(), fPos(), fNorm() { }
+    plVertDelta(uint16_t idx, const hsVector3& pos, const hsVector3& norm)
+        : fIdx(idx), fPadding(), fPos(pos), fNorm(norm) { }
+
+    uint16_t    fIdx;
+    uint16_t    fPadding;
     hsVector3   fPos;
     hsVector3   fNorm;
 };
 
-class plMorphSpan
+struct plMorphSpan
 {
-public:
     plMorphSpan() : fUVWs(), fNumUVWChans() { }
     virtual ~plMorphSpan() { delete [] fUVWs; }
 
-    hsTArray<plVertDelta>   fDeltas;
+    std::vector<plVertDelta> fDeltas;
 
     uint16_t                  fNumUVWChans;
     hsPoint3*               fUVWs; // Length is fUVWChans*fDeltas.GetCount() (*sizeof(hsPoint3) in bytes).
@@ -73,7 +76,7 @@ public:
 class plMorphDelta : public plCreatable
 {
 protected:
-    hsTArray<plMorphSpan>   fSpans;
+    std::vector<plMorphSpan> fSpans;
 
     float                fWeight;
 public:
@@ -90,14 +93,14 @@ public:
 
     void        Apply(std::vector<plAccessSpan>& dst, float weight = -1.f) const;
 
-    void        ComputeDeltas(const hsTArray<plAccessSpan>& base, const hsTArray<plAccessSpan>& moved);
-    void        ComputeDeltas(const hsTArray<plGeometrySpan*>& base, const hsTArray<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);
+    void        ComputeDeltas(const std::vector<plAccessSpan>& base, const std::vector<plAccessSpan>& moved);
+    void        ComputeDeltas(const std::vector<plGeometrySpan*>& base, const std::vector<plGeometrySpan*>& moved, const hsMatrix44& d2b, const hsMatrix44& d2bTInv);
 
-    uint32_t      GetNumSpans() const { return fSpans.GetCount(); }
-    void        SetNumSpans(int n);
-    void        SetDeltas(int iSpan, const hsTArray<plVertDelta>& deltas, int numUVWChans, const hsPoint3* uvws); // len uvws is deltas.GetCount() * numUVWChans
+    size_t      GetNumSpans() const { return fSpans.size(); }
+    void        SetNumSpans(size_t n);
+    void        SetDeltas(size_t iSpan, const std::vector<plVertDelta>& deltas, size_t numUVWChans, const hsPoint3* uvws); // len uvws is deltas.size() * numUVWChans
 
-    void        AllocDeltas(int iSpan, int nDel, int nUVW);
+    void        AllocDeltas(size_t iSpan, size_t nDel, size_t nUVW);
 
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;

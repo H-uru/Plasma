@@ -118,27 +118,24 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
         noShadHack = plGeometrySpan::kPropNoShadowCast;
 #endif // MF_NOSHADOW_ACC
 
-    int i;
-    for (i = 0; i < mesh->fSpans.GetCount(); i++)
+    for (plGeometrySpan* span : mesh->fSpans)
     {
-        mesh->fSpans[i]->fMaterial = mat;
+        span->fMaterial = mat;
 
         if( partialSort )
-        {
-            mesh->fSpans[i]->fProps |= plGeometrySpan::kPartialSort;
-        }
+            span->fProps |= plGeometrySpan::kPartialSort;
         else
-            mesh->fSpans[i]->fProps &= ~plGeometrySpan::kPartialSort;
+            span->fProps &= ~plGeometrySpan::kPartialSort;
 
 #ifdef MF_NOSHADOW_ACC
-        mesh->fSpans[i]->fProps |= noShadHack;
+        span->fProps |= noShadHack;
 #endif // MF_NOSHADOW_ACC
     }
-            
+
     // Add the spans to the drawable
     uint32_t index = (uint32_t)-1;
     index = fDrawable->AppendDISpans(mesh->fSpans, index, false, true, addToFront, lod);
-            
+
     // Tell the drawInterface what drawable and index it wants.
     size_t iDraw = GetNumDrawables();
     ISetDrawable(iDraw, fDrawable);
@@ -173,10 +170,10 @@ void plInstanceDrawInterface::AddSharedMesh(plSharedMesh *mesh, hsGMaterial *mat
 
 void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
 {
-    uint32_t geoIndex = fMeshes.Find(mesh);
-    if (geoIndex != fMeshes.kMissingIndex)
+    auto iter = std::find(fMeshes.cbegin(), fMeshes.cend(), mesh);
+    if (iter != fMeshes.cend())
     {
-        IClearIndex(geoIndex);
+        IClearIndex(iter - fMeshes.cbegin());
 
         plSharedMeshBCMsg *smMsg = new plSharedMeshBCMsg;
         smMsg->SetSender(GetKey());
@@ -199,17 +196,15 @@ void plInstanceDrawInterface::RemoveSharedMesh(plSharedMesh *mesh)
 
 void plInstanceDrawInterface::ICheckDrawableIndex(size_t which)
 {
-    if( which >= fMeshes.GetCount() )
-    {
-        fMeshes.ExpandAndZero(which+1);
-    }
-    
+    if (which >= fMeshes.size())
+        fMeshes.resize(which + 1);
+
     plDrawInterface::ICheckDrawableIndex(which);
 }
 
 void plInstanceDrawInterface::ReleaseData()
 {
-    fMeshes.Reset();
+    fMeshes.clear();
     
     plDrawInterface::ReleaseData();
 }
@@ -230,19 +225,17 @@ void plInstanceDrawInterface::IClearIndex(size_t which)
         diMsg->Send();
     }
     
-    fDrawables.erase(fDrawables.begin() + which);
-    fDrawableIndices.erase(fDrawableIndices.begin() + which);
-    fMeshes.Remove(which);
+    fDrawables.erase(fDrawables.cbegin() + which);
+    fDrawableIndices.erase(fDrawableIndices.cbegin() + which);
+    fMeshes.erase(fMeshes.cbegin() + which);
 }
 
 // Temp testing - not really ideal. Check with Bob for real soln.
-int32_t plInstanceDrawInterface::GetSharedMeshIndex(const plSharedMesh *mesh) const
+hsSsize_t plInstanceDrawInterface::GetSharedMeshIndex(const plSharedMesh *mesh) const
 {
-    int i;
-    for( i = 0; i < fMeshes.GetCount(); i++ )
-    {
-        if( fMeshes[i] == mesh )
-            return i;
-    }
+    auto iter = std::find(fMeshes.cbegin(), fMeshes.cend(), mesh);
+    if (iter != fMeshes.cend())
+        return hsSsize_t(iter - fMeshes.cbegin());
+
     return -1;
 }

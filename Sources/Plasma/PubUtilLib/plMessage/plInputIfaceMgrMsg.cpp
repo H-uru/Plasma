@@ -62,8 +62,8 @@ void plInputIfaceMgrMsg::Read(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgRead(s, mgr);
 
-    s->ReadLE(&fCommand);
-    s->ReadLE(&fPageID);
+    s->ReadByte(&fCommand);
+    s->ReadLE32(&fPageID);
     ageName = s->ReadSafeString();
     ageFileName = s->ReadSafeString();
     spawnPoint = s->ReadSafeString();
@@ -74,8 +74,8 @@ void plInputIfaceMgrMsg::Write(hsStream* s, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(s, mgr);
 
-    s->WriteLE(fCommand);
-    s->WriteLE(fPageID);
+    s->WriteByte(fCommand);
+    s->WriteLE32(fPageID);
     s->WriteSafeString(ageName);
     s->WriteSafeString(ageFileName);
     s->WriteSafeString(spawnPoint);

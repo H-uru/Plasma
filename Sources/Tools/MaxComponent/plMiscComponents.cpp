@@ -257,19 +257,19 @@ protected:
         HWND hAgeCombo = GetDlgItem(fhDlg, IDC_COMP_LOCATION_AGECOMBO);
         IClearAges( hAgeCombo );
 
-        hsTArray<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
+        std::vector<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
 
         const char *curAge = fPB->GetStr(plPageInfoComponent::kInfoAge);
         if (!curAge || *curAge == '\0')
             curAge = "";
 
-        for( int i = 0; i < ageFiles.GetCount(); i++ )
+        for (const plFileName& ageFile : ageFiles)
         {
-            ST::string ageName = ageFiles[i].GetFileNameNoExt();
+            ST::string ageName = ageFile.GetFileNameNoExt();
 
             int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)hsStrcpy(ageFiles[i].AsString().c_str()) );
+            ComboBox_SetItemData(hAgeCombo, idx, (LPARAM)hsStrcpy(ageFile.AsString().c_str()));
 
             if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );
@@ -2248,7 +2248,7 @@ void plNetSyncComponent::ISetNetSync(plSynchedObject* so)
 
 void plNetSyncComponent::ISetMtl(hsGMaterial* mtl)
 {
-    for (int i = 0; i < mtl->GetNumLayers(); i++)
+    for (size_t i = 0; i < mtl->GetNumLayers(); i++)
     {
         plLayerInterface* layer = mtl->GetLayer(i);
         while (layer)
@@ -2278,7 +2278,7 @@ bool plNetSyncComponent::DeInit(plMaxNode* node, plErrorMsg* errMsg)
     Mtl* maxMaterial = hsMaterialConverter::Instance().GetBaseMtl(node);
     if (maxMaterial)
     {
-        hsTArray<hsGMaterial*> matArray;
+        std::vector<hsGMaterial*> matArray;
 
         // Get the textures from the material converter
         if (hsMaterialConverter::Instance().IsMultiMat(maxMaterial))
@@ -2291,9 +2291,8 @@ bool plNetSyncComponent::DeInit(plMaxNode* node, plErrorMsg* errMsg)
             hsMaterialConverter::Instance().GetMaterialArray(maxMaterial, node, matArray);
 
         // Set sync on the textures we found
-        for (int i = 0; i < matArray.GetCount(); i++)
+        for (hsGMaterial* mtl : matArray)
         {
-            hsGMaterial* mtl = matArray[i];
             if (mtl)
                 ISetMtl(mtl);
         }

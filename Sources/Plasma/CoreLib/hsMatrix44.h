@@ -74,6 +74,7 @@ struct hsMatrix44 {
 
     void DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const;
 
+    [[nodiscard]]
     static const hsMatrix44& IdentityMatrix();
 
     // worldToCameras and cameraToWorlds are arrays of 6 matrices. Returned are LEFT,RIGHT,FRONT,BACK,TOP,BOTTOM.
@@ -118,6 +119,7 @@ struct hsMatrix44 {
     hsVector3*      GetTranslate(hsVector3 *pt) const;
     hsPoint3*       GetTranslate(hsPoint3 *pt) const 
         {   return (hsPoint3*)GetTranslate((hsVector3*)pt); }
+    [[nodiscard]]
     const hsPoint3  GetTranslate() const { return hsPoint3(fMap[0][3], fMap[1][3], fMap[2][3]); }
     void            GetAxis(hsVector3* view, hsVector3 *up, hsVector3* right);
     void            GetAxisFromCamera(hsVector3* view, hsVector3 *up, hsVector3* right);
@@ -135,12 +137,15 @@ struct hsMatrix44 {
     void MakeZRotation(float radians);
 
 
+    [[nodiscard]]
     hsPoint3 operator*(const hsPoint3& p) const;
+    [[nodiscard]]
     hsVector3 operator*(const hsVector3& p) const;
+    [[nodiscard]]
     hsMatrix44 operator *(const hsMatrix44& other) const { return mat_mult.call(*this, other); }
-    
+
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
-    
+
     bool  IsIdentity();
     void  NotIdentity() { fFlags &= ~kIsIdent; }
 
@@ -151,9 +156,13 @@ struct hsMatrix44 {
     void Read(hsStream *stream);
     void Write(hsStream *stream);
 
+private:
     //  CPU-optimized functions
     typedef hsMatrix44(*mat_mult_ptr)(const hsMatrix44&, const hsMatrix44&);
     static hsCpuFunctionDispatcher<mat_mult_ptr> mat_mult;
+
+    static hsMatrix44 mult_fpu(const hsMatrix44& a, const hsMatrix44& b);
+    static hsMatrix44 mult_sse3(const hsMatrix44& a, const hsMatrix44& b);
 };
 
 ST_DECL_FORMAT_TYPE(const hsMatrix44&);

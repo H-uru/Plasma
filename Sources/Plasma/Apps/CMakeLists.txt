@@ -18,12 +18,4 @@ if(PLASMA_BUILD_TOOLS)
     add_subdirectory(plFileEncrypt)
     add_subdirectory(plPageInfo)
     add_subdirectory(plPageOptimizer)
-
-    add_dependencies(tools
-        plPythonPack
-        plFileSecure
-        plFileEncrypt
-        plPageInfo
-        plPageOptimizer
-    )
 endif()

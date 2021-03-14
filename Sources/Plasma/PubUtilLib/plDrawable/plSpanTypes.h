@@ -122,12 +122,12 @@ class plSpan
         };
 
         uint16_t              fTypeMask; // For safe casting. Or it with the type you want to cast to, don't check equality
-        uint16_t              fSubType; // Or'ed from plDrawable::plDrawableSubType
+        uint32_t              fSubType; // Or'ed from plDrawable::plDrawableSubType
         uint32_t              fMaterialIdx;       // Index into drawable's material array
         hsMatrix44          fLocalToWorld;
         hsMatrix44          fWorldToLocal;
         uint32_t              fBaseMatrix;
-        uint8_t               fNumMatrices;
+        uint32_t              fNumMatrices;
         uint16_t              fLocalUVWChans;
         uint16_t              fMaxBoneIdx;
         uint16_t              fPenBoneIdx;

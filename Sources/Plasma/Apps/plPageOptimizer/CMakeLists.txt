@@ -8,7 +8,9 @@ set(plPageOptimizer_HEADERS
     plPageOptimizer.h
 )
 
-add_executable(plPageOptimizer ${plPageOptimizer_SOURCES} ${plPageOptimizer_HEADERS})
+plasma_executable(plPageOptimizer TOOL
+    SOURCES ${plPageOptimizer_SOURCES} ${plPageOptimizer_HEADERS}
+)
 target_link_libraries(
     plPageOptimizer
     PRIVATE
@@ -22,11 +24,6 @@ target_link_libraries(
         pnNucleusInc
         plMessage
         plResMgr
-)
-
-install(
-    TARGETS plPageOptimizer
-    DESTINATION tools_cli
 )
 
 source_group("Source Files" FILES ${plPageOptimizer_SOURCES})

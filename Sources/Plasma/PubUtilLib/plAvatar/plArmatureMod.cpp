@@ -239,9 +239,9 @@ void plArmatureModBase::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, meshKey);
         
         // Should be a list per mesh key
-        stream->WriteLE32(fUnusedBones[i]->size());
-        for(int j = 0; j < fUnusedBones[i]->size(); j++)
-            mgr->WriteKey(stream, (*fUnusedBones[i])[j]);
+        stream->WriteLE32((uint32_t)fUnusedBones[i]->size());
+        for (const plKey& boneKey : *fUnusedBones[i])
+            mgr->WriteKey(stream, boneKey);
     }
     
     int nBrains = fBrains.size();
@@ -1930,12 +1930,11 @@ void plArmatureMod::SynchIfLocal(double timeNow, int force)
 
 plLayerLinkAnimation *plArmatureMod::IFindLayerLinkAnim()
 {
-    int i;
     hsGMaterial *mat = fClothingOutfit->fMaterial;
     if (!mat)
         return nullptr;
 
-    for (i = 0; i < mat->GetNumLayers(); i++)
+    for (size_t i = 0; i < mat->GetNumLayers(); i++)
     {
         plLayerInterface *li = mat->GetLayer(i);
         while (li != nullptr)
@@ -2563,9 +2562,9 @@ void plArmatureLODMod::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, meshKey);
         
         // Should be a list per mesh key
-        stream->WriteLE32(fUnusedBones[i]->size());
-        for(int j = 0; j < fUnusedBones[i]->size(); j++)
-            mgr->WriteKey(stream, (*fUnusedBones[i])[j]);
+        stream->WriteLE32((uint32_t)fUnusedBones[i]->size());
+        for (const plKey& boneKey : *fUnusedBones[i])
+            mgr->WriteKey(stream, boneKey);
     }
 }
 

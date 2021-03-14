@@ -653,7 +653,8 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
     HKEY hKey;
     RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
     RegSetValueExW(hKey, L"LastAccountName", 0, REG_SZ, (LPBYTE) pLoginParam->username, sizeof(pLoginParam->username));
-    RegSetValueEx(hKey, "RememberPassword", 0, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
+    uint32_t rememberAccount = pLoginParam->remember;
+    RegSetValueExW(hKey, L"RememberPassword", 0, REG_DWORD, (LPBYTE) &rememberAccount, sizeof(rememberAccount));
     RegCloseKey(hKey);
 
     // If the password field is the fake string
@@ -684,7 +685,7 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
     DWORD acctLen = sizeof(accountName), remLen = sizeof(rememberAccount);
     RegOpenKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
     RegQueryValueExW(hKey, L"LastAccountName", nullptr, nullptr, (LPBYTE) &accountName, &acctLen);
-    RegQueryValueEx(hKey, "RememberPassword", nullptr, nullptr, (LPBYTE) &rememberAccount, &remLen);
+    RegQueryValueExW(hKey, L"RememberPassword", nullptr, nullptr, (LPBYTE) &rememberAccount, &remLen);
     RegCloseKey(hKey);
 
     pLoginParam->remember = false;

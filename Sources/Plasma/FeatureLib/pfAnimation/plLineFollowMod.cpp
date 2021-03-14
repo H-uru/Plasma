@@ -163,7 +163,7 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
 
     if( fFollowFlags & kOffset )
     {
-        fOffset = stream->ReadLEScalar();
+        fOffset = stream->ReadLEFloat();
     }
     if( fFollowFlags & kOffsetAng )
     {
@@ -171,11 +171,11 @@ void plLineFollowMod::Read(hsStream* stream, hsResMgr* mgr)
     }
     if( fFollowFlags & kOffsetClamp )
     {
-        fOffsetClamp = stream->ReadLEScalar();
+        fOffsetClamp = stream->ReadLEFloat();
     }
     if( fFollowFlags & kSpeedClamp )
     {
-        fSpeedClamp = stream->ReadLEScalar();
+        fSpeedClamp = stream->ReadLEFloat();
     }
 }
 
@@ -197,11 +197,11 @@ void plLineFollowMod::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE32(f);
 
     if( fFollowFlags & kOffset )
-        stream->WriteLEScalar(fOffset);
+        stream->WriteLEFloat(fOffset);
     if( fFollowFlags & kOffsetClamp )
-        stream->WriteLEScalar(fOffsetClamp);
+        stream->WriteLEFloat(fOffsetClamp);
     if( fFollowFlags & kSpeedClamp )
-        stream->WriteLEScalar(fSpeedClamp);
+        stream->WriteLEFloat(fSpeedClamp);
 }
 
 bool plLineFollowMod::MsgReceive(plMessage* msg)

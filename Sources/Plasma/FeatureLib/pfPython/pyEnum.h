@@ -42,10 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyEnum_h
 #define pyEnum_h
 
-#include <map>
-#include <string>
+#include "HeadSpin.h"
 
-typedef struct _object PyObject;
+#include <tuple>
+#include <vector>
+
+#include <Python.h>
+
+namespace ST { class string; }
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -58,8 +62,7 @@ class pyEnum
 {
 public:
     static void AddPlasmaConstantsClasses(PyObject *m);
-    static void RemovePlasmaConstantsClasses(PyObject *m);
-    static void MakeEnum(PyObject *m, const char* name, std::map<std::string, int> values);
+    static void MakeEnum(PyObject *m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values);
 };
 
 #endif  // pyEnum_h

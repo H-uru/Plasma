@@ -198,7 +198,7 @@ void plLayerMovie::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimation::Write(s, mgr);
 
-    s->WriteLE32(fMovieName.GetSize());
+    s->WriteLE32((uint32_t)fMovieName.GetSize());
     s->Write(fMovieName.GetSize(), fMovieName.AsString().c_str());
 }
 

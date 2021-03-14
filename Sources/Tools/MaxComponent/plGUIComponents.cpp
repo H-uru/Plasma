@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "hsTemplates.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
@@ -155,7 +154,7 @@ protected:
     IParamBlock2*   fPB;
     ParamID         fNodeListID;
     BOOL            fRestrict;
-    hsTArray<Class_ID>      fRestrictedIDs;
+    std::vector<Class_ID> fRestrictedIDs;
     TCHAR           fTitle[ 128 ];
     BOOL            fSingle;
 
@@ -165,18 +164,16 @@ public:
         : fOwner( owner ), fPB( pb ), fNodeListID( nodeListID ), fRestrict( restricted ), fSingle( single )
 
     {
-        fRestrictedIDs.Append( rID );
+        fRestrictedIDs.emplace_back(rID);
         strcpy( fTitle, title );
     }
 
-    plGUICtrlHitCallback( INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title, 
-                            hsTArray<Class_ID> &rID )
-        : fOwner( owner ), fPB( pb ), fNodeListID( nodeListID ), fRestrict( true ), fSingle(TRUE)
+    plGUICtrlHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title,
+                         std::vector<Class_ID> rID)
+        : fOwner(owner), fPB(pb), fNodeListID(nodeListID), fRestrict(true),
+          fRestrictedIDs(std::move(rID)), fSingle(TRUE)
 
     {
-        for( int i = 0; i < rID.GetCount(); i++ )
-            fRestrictedIDs.Append( rID[ i ] );
-
         strcpy( fTitle, title );
     }
 
@@ -193,7 +190,7 @@ public:
         // If this is an activator type component
         if( comp )
         {
-            if( ( fRestrict && fRestrictedIDs.Find( comp->ClassID() ) != fRestrictedIDs.kMissingIndex )
+            if ((fRestrict && std::find(fRestrictedIDs.cbegin(), fRestrictedIDs.cend(), comp->ClassID()) != fRestrictedIDs.cend())
                 || (!fRestrict && plGUIControlBase::GetGUIComp(comp) != nullptr))
             {
 
@@ -204,7 +201,7 @@ public:
                 return TRUE;
             }
         }
-        else if( fRestrict && fRestrictedIDs.Find( node->ClassID() ) != fRestrictedIDs.kMissingIndex )
+        else if (fRestrict && std::find(fRestrictedIDs.cbegin(), fRestrictedIDs.cend(), node->ClassID()) != fRestrictedIDs.cend())
         {
             return TRUE;
         }
@@ -235,7 +232,7 @@ protected:
     ParamID         fNodeID;
     int             fDlgItem;
     TCHAR           fTitle[ 128 ];
-    hsTArray<Class_ID>  fClassesToSelect;
+    std::vector<Class_ID> fClassesToSelect;
 
     ParamMap2UserDlgProc    *fProcChain;
 
@@ -250,7 +247,7 @@ public:
         fNodeID = nodeID;
         fDlgItem = dlgItem;
         for( int i = 0; restrict[ i ] != kEndClassList; i++ )
-            fClassesToSelect.Append( restrict[ i ] );
+            fClassesToSelect.emplace_back(restrict[i]);
 //      fClassToSelect = restrict;
         strcpy( fTitle, title );
         fProcChain = parentProc;
@@ -309,50 +306,47 @@ Class_ID    sSkinClassesToSelect[] = { GUI_SKIN_CLASSID, plGUISingleCtrlDlgProc:
 class plGUIMultipleCtrlDlgProc : public ParamMap2UserDlgProc
 {
 protected:
-    hsTArray<plGUISingleCtrlDlgProc *>  fSingleProcs;
-    hsTArray<ParamMap2UserDlgProc *>    fProcs;
+    std::vector<plGUISingleCtrlDlgProc *>  fSingleProcs;
+    std::vector<ParamMap2UserDlgProc *>    fProcs;
 
 public:
 
     plGUIMultipleCtrlDlgProc(plGUISingleCtrlDlgProc **singleProcs, ParamMap2UserDlgProc **procs=nullptr)
     {
         for (int i = 0; singleProcs[i] != nullptr; i++)
-            fSingleProcs.Append( singleProcs[ i ] );
+            fSingleProcs.emplace_back(singleProcs[i]);
         if ( procs )
         {
             for (int i = 0; procs[i] != nullptr; i++)
-                fProcs.Append( procs[ i ] );
+                fProcs.emplace_back(procs[i]);
         }
     }
 
     BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
-        int     i;
-
-
         switch ( msg )
         {
             case WM_INITDIALOG:
-                for( i = 0; i < fSingleProcs.GetCount(); i++ )
-                    fSingleProcs[ i ]->DlgProc( t, map, hWnd, msg, wParam, lParam );
+                for (plGUISingleCtrlDlgProc* proc : fSingleProcs)
+                    proc->DlgProc(t, map, hWnd, msg, wParam, lParam);
 
-                for( i = 0; i < fProcs.GetCount(); i++ )
-                    fProcs[ i ]->DlgProc( t, map, hWnd, msg, wParam, lParam );
+                for (ParamMap2UserDlgProc* proc : fProcs)
+                    proc->DlgProc(t, map, hWnd, msg, wParam, lParam);
 
                 return true;
 
             case WM_COMMAND:
-                for( i = 0; i < fSingleProcs.GetCount(); i++ )
+                for (plGUISingleCtrlDlgProc* proc : fSingleProcs)
                 {
-                    if( fSingleProcs[ i ]->GetHandledDlgItem() == LOWORD( wParam ) )
+                    if (proc->GetHandledDlgItem() == LOWORD(wParam))
                     {
-                        fSingleProcs[ i ]->DlgProc( t, map, hWnd, msg, wParam, lParam );
+                        proc->DlgProc(t, map, hWnd, msg, wParam, lParam);
                         break;
                     }
                 }
                 // and now do the procs that want more control
-                for( i = 0; i < fProcs.GetCount(); i++ )
-                    fProcs[ i ]->DlgProc( t, map, hWnd, msg, wParam, lParam );
+                for (ParamMap2UserDlgProc* proc : fProcs)
+                    proc->DlgProc(t, map, hWnd, msg, wParam, lParam);
 
                 return true;
         }
@@ -1462,14 +1456,14 @@ BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
         case WM_INITDIALOG:
             // Load the age combo box
             {
-                int     i, idx, selIdx = 0;
+                int     idx, selIdx = 0;
                 HWND    ageCombo = GetDlgItem( hWnd, IDC_GUIDLG_AGE );
 
-                hsTArray<plFileName> ageList = plAgeDescInterface::BuildAgeFileList();
+                std::vector<plFileName> ageList = plAgeDescInterface::BuildAgeFileList();
                 ComboBox_ResetContent( ageCombo );
-                for( i = 0; i < ageList.GetCount(); i++ )
+                for (const plFileName& ageFile : ageList)
                 {
-                    ST::string ageName = ageList[i].GetFileNameNoExt();
+                    ST::string ageName = ageFile.GetFileNameNoExt();
 
                     idx = ComboBox_AddString( ageCombo, ageName.c_str() );
                     if( ageName.compare_i( pmap->GetParamBlock()->GetStr( plGUIDialogComponent::kRefAgeName ) ) == 0 )
@@ -1585,15 +1579,16 @@ bool plGUIControlBase::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
         fControl->SetTagID( id );
 
     // Now add it to our list of converted nodes
-    uint32_t i = fTargetNodes.Find( node );
-    if( i == fTargetNodes.kMissingIndex )
+    auto iter = std::find(fTargetNodes.cbegin(), fTargetNodes.cend(), node);
+    if (iter == fTargetNodes.cend())
     {
-        fTargetNodes.Append( node );
-        fTargetControls.Append( fControl );
+        fTargetNodes.emplace_back(node);
+        fTargetControls.emplace_back(fControl);
     }
     else
     {
-        fTargetControls[ i ] = fControl;
+        auto idx = iter - fTargetNodes.cbegin();
+        fTargetControls[idx] = fControl;
     }
 
     return true;
@@ -1624,15 +1619,16 @@ bool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Grab fControl from the modifier list on the node, since fControl isn't valid
     // between PreConvert() and Convert() (it might get called multiple times, once per node applied)
-    uint32_t i = fTargetNodes.Find( node );
-    if( i == fTargetNodes.kMissingIndex )
+    auto iter = std::find(fTargetNodes.cbegin(), fTargetNodes.cend(), node);
+    if (iter == fTargetNodes.cend())
     {
         pErrMsg->Set( true, "GUI Control Component Error", "The object %s somehow skipped the GUI control Pre-convert stage. Inform a programmer immediately and seek shelter.", node->GetName() ).Show(); 
         pErrMsg->Set( false );
         return false;
     }
     
-    fControl = fTargetControls[ i ];
+    auto idx = iter - fTargetNodes.cbegin();
+    fControl = fTargetControls[idx];
 
     dialog->AddControlOnExport( fControl );
 
@@ -1670,17 +1666,16 @@ bool plGUIControlBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         // We're a control that dynamically creates text, so look for the first dynamic layer 
         // (and hopefully the ONLY one) and store it on the control
         Mtl *maxMaterial = hsMaterialConverter::Instance().GetBaseMtl( node );
-        hsTArray<plExportMaterialData> *mtlArray = hsMaterialConverter::Instance().CreateMaterialArray( maxMaterial, node, 0 );
+        std::vector<plExportMaterialData> *mtlArray = hsMaterialConverter::Instance().CreateMaterialArray(maxMaterial, node, 0);
         
-        uint32_t i, j;
         plDynamicTextMap *dynText = nullptr;
         plLayerInterface *layerIFace = nullptr;
 
-        for (i = 0; i < mtlArray->GetCount() && dynText == nullptr; i++)
+        for (size_t i = 0; i < mtlArray->size() && dynText == nullptr; i++)
         {
             hsGMaterial *plasmaMat = (*mtlArray)[ 0 ].fMaterial;
 
-            for( j = 0; j < plasmaMat->GetNumLayers(); j++ )
+            for (size_t j = 0; j < plasmaMat->GetNumLayers(); j++)
             {
                 layerIFace = plasmaMat->GetLayer( j );
                 dynText = plDynamicTextMap::ConvertNoRef( layerIFace->GetTexture() );
@@ -1781,16 +1776,17 @@ pfGUIControlMod *plGUIControlBase::ConvertCompToControl( plComponentBase *comp, 
         {
             // Not good, but if you select a component like this, it better only be applied to one object,
             // hence will only have one fTargetControl
-            if( base->fTargetControls.GetCount() > 0 )
+            if (!base->fTargetControls.empty())
                 return base->fTargetControls[ 0 ];
         }
         else
         {
-            uint32_t i = base->fTargetNodes.Find( (plMaxNode *)sceneObjectNode );
-            if( i == base->fTargetNodes.kMissingIndex )
+            auto iter = std::find(base->fTargetNodes.cbegin(), base->fTargetNodes.cend(), (plMaxNode *)sceneObjectNode);
+            if (iter == base->fTargetNodes.cend())
                 return nullptr;
 
-            return base->fTargetControls[ i ];
+            auto idx = iter - base->fTargetNodes.cbegin();
+            return base->fTargetControls[idx];
         }
     }
 
@@ -4034,7 +4030,7 @@ bool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;   
     }
     
-    const hsTArray<hsMaterialConverter::DoneMaterialData> &materials = hsMaterialConverter::Instance().DoneMaterials();
+    const std::vector<hsMaterialConverter::DoneMaterialData> &materials = hsMaterialConverter::Instance().DoneMaterials();
 
     uint32_t i,count = pLayer->GetNumConversionTargets();
     for( i = 0; i < count; i++ )
@@ -4047,13 +4043,11 @@ bool plGUIDynDisplayComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (map != nullptr)
             ctrl->AddMap( map );
 
-        uint32_t mat;
         bool found = false;
-        for (mat=0; mat<materials.GetCount(); mat++)
+        for (const hsMaterialConverter::DoneMaterialData& mat : materials)
         {
-            hsGMaterial *curMaterial = materials[mat].fHsMaterial;
-            uint32_t lay;
-            for (lay=0; lay<curMaterial->GetNumLayers(); lay++)
+            hsGMaterial *curMaterial = mat.fHsMaterial;
+            for (size_t lay = 0; lay < curMaterial->GetNumLayers(); lay++)
             {
                 if (layIface->BottomOfStack() == curMaterial->GetLayer(lay))
                 {

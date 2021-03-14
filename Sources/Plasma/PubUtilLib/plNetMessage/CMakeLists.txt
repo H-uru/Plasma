@@ -11,7 +11,7 @@ set(plNetMessage_HEADERS
     plNetMsgVersion.h
 )
 
-add_library(plNetMessage STATIC ${plNetMessage_SOURCES} ${plNetMessage_HEADERS})
+plasma_library(plNetMessage SOURCES ${plNetMessage_SOURCES} ${plNetMessage_HEADERS})
 target_link_libraries(
     plNetMessage
     PUBLIC
@@ -21,7 +21,6 @@ target_link_libraries(
         pnNetBase
         pnNetCommon
         plNetCommon
-        plStreamLogger
         plUnifiedTime
     PRIVATE
         pnMessage

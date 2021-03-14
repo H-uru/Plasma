@@ -306,8 +306,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                             bool amCCR = plNetClientMgr::GetInstance()->GetCCRLevel();
                             
                             // is this person a NPC or CCR?
-                            int mbrIdx=plNetClientMgr::GetInstance()->TransportMgr().FindMember(pObj->GetKey());
-                            plNetTransportMember* pMbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember(mbrIdx);
+                            plNetTransportMember* pMbr = plNetClientMgr::GetInstance()->TransportMgr().GetMemberByKey(pObj->GetKey());
                             if (!pMbr) // whoops - it's a freakin' NPC !
                                 return true;
                             
@@ -1071,7 +1070,7 @@ bool plSceneInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
 
 
 //// ISendOfferNotification ////////////////////////////////////////////////////////
-void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
+void plSceneInputInterface::IManageIgnoredAvatars(const plKey& offeree, bool add)
 {
     // tell everyone else to be able to / not to be able to select this avatar
     plInputIfaceMgrMsg* pMsg = nullptr;
@@ -1086,7 +1085,7 @@ void plSceneInputInterface::IManageIgnoredAvatars(plKey& offeree, bool add)
     pMsg->Send();
 }   
 
-void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool net)
+void plSceneInputInterface::ISendOfferNotification(const plKey& offeree, int ID, bool net)
 {
     int offereeID = -1;
     if (offeree == plNetClientMgr::GetInstance()->GetLocalPlayerKey())
@@ -1095,24 +1094,14 @@ void plSceneInputInterface::ISendOfferNotification(plKey& offeree, int ID, bool 
     }
     else
     {
-        plNetTransportMember **members = nullptr;
-        plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted( members );
-        if (members != nullptr)
+        for (plNetTransportMember* mbr : plNetClientMgr::GetInstance()->TransportMgr().GetMemberList())
         {
-            for(int i = 0; i < plNetClientMgr::GetInstance()->TransportMgr().GetNumMembers(); i++ )
+            if (mbr != nullptr && mbr->GetAvatarKey() == offeree)
             {
-                plNetTransportMember *mbr = members[ i ];
-
-                if (mbr != nullptr && mbr->GetAvatarKey() == offeree)
-                {   
-                    offereeID = mbr->GetPlayerID();
-                    break;
-                }
+                offereeID = mbr->GetPlayerID();
+                break;
             }
         }
-
-        delete [] members;
-
     }
     plNotifyMsg* pMsg = new plNotifyMsg;
     pMsg->AddOfferBookEvent(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), ID, offereeID);

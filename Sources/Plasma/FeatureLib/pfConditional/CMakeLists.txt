@@ -29,7 +29,11 @@ set(pfConditional_HEADERS
     plPickedConditionalObject.h
 )
 
-add_library(pfConditional ${pfConditional_SOURCES} ${pfConditional_HEADERS})
+plasma_library(pfConditional
+    SOURCES ${pfConditional_SOURCES} ${pfConditional_HEADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 target_link_libraries(
     pfConditional
     PUBLIC
@@ -47,8 +51,6 @@ target_link_libraries(
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(pfConditional UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${pfConditional_SOURCES})
 source_group("Header Files" FILES ${pfConditional_HEADERS})

@@ -91,7 +91,7 @@ void plExcludeRegionModifier::Read(hsStream* stream, hsResMgr* mgr)
         fSafePoints.push_back(mgr->ReadKey(stream));
     }
     fSeek = stream->ReadBool();
-    fSeekTime = stream->ReadLEScalar();
+    fSeekTime = stream->ReadLEFloat();
 }
 
 void plExcludeRegionModifier::Write(hsStream* stream, hsResMgr* mgr)
@@ -105,7 +105,7 @@ void plExcludeRegionModifier::Write(hsStream* stream, hsResMgr* mgr)
         mgr->WriteKey(stream,fSafePoints[i]);
     }
     stream->WriteBool(fSeek);
-    stream->WriteLEScalar(fSeekTime);
+    stream->WriteLEFloat(fSeekTime);
 }
 
 void plExcludeRegionModifier::ISetPhysicalState(bool cleared)

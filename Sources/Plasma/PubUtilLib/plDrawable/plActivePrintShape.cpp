@@ -66,9 +66,8 @@ void plActivePrintShape::Read(hsStream* stream, hsResMgr* mgr)
     plPrintShape::Read(stream, mgr);
 
     uint32_t n = stream->ReadLE32();
-    fDecalMgrs.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    fDecalMgrs.resize(n);
+    for (uint32_t i = 0; i < n; i++)
         fDecalMgrs[i] = mgr->ReadKey(stream);
 
     plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), GetKey());
@@ -78,16 +77,15 @@ void plActivePrintShape::Write(hsStream* stream, hsResMgr* mgr)
 {
     plPrintShape::Write(stream, mgr);
 
-    stream->WriteLE32(fDecalMgrs.GetCount());
-    int i;
-    for( i = 0; i < fDecalMgrs.GetCount(); i++ )
-        mgr->WriteKey(stream, fDecalMgrs[i]);
+    stream->WriteLE32((uint32_t)fDecalMgrs.size());
+    for (const plKey& key : fDecalMgrs)
+        mgr->WriteKey(stream, key);
 }
 
     // Export construction
-void plActivePrintShape::AddDecalKey(const plKey& k)
+void plActivePrintShape::AddDecalKey(plKey k)
 {
-    fDecalMgrs.Append(k);
+    fDecalMgrs.emplace_back(std::move(k));
 }
 
 bool plActivePrintShape::MsgReceive(plMessage* msg)
@@ -106,13 +104,12 @@ bool plActivePrintShape::INotify()
     if( !fShapeMsg )
         ISetupShapeMsg();
 
-    if( fDecalMgrs.GetCount() )
+    if (!fDecalMgrs.empty())
     {
         fShapeMsg->SetBCastFlag(plMessage::kBCastByExactType, false);
-        int i;
-        for( i = 0; i < fDecalMgrs.GetCount(); i++ )
+        for (const plKey& key : fDecalMgrs)
         {
-            fShapeMsg->ClearReceivers().SendAndKeep(fDecalMgrs[i]);
+            fShapeMsg->ClearReceivers().SendAndKeep(key);
         }
     }
     else

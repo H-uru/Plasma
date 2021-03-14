@@ -73,18 +73,17 @@ plLinkEffectsMgr::plLinkEffectsMgr()
 
 plLinkEffectsMgr::~plLinkEffectsMgr()
 {
-    int i;
-    for( i = 0; i < fLinks.GetCount(); i++ )
+    for (plLinkEffectsTriggerMsg* msg : fLinks)
     {
-        hsRefCnt_SafeUnRef(fLinks[i]);
+        hsRefCnt_SafeUnRef(msg);
     }
-    for( i = 0; i < fWaitlist.GetCount(); i++ )
+    for (plLinkEffectsTriggerMsg* msg : fWaitlist)
     {
-        hsRefCnt_SafeUnRef(fWaitlist[i]);
+        hsRefCnt_SafeUnRef(msg);
     }
-    for( i = 0; i < fDeadlist.GetCount(); i++ )
+    for (plLinkEffectsTriggerMsg* msg : fDeadlist)
     {
-        hsRefCnt_SafeUnRef(fDeadlist[i]);
+        hsRefCnt_SafeUnRef(msg);
     }
 }
 
@@ -96,11 +95,10 @@ void plLinkEffectsMgr::Init()
 
 plLinkEffectsTriggerMsg *plLinkEffectsMgr::IFindLinkTriggerMsg(plKey linkKey)
 {
-    int i;
-    for (i = 0; i < fLinks.GetCount(); i++)
+    for (plLinkEffectsTriggerMsg* msg : fLinks)
     {
-        if (fLinks[i]->GetLinkKey() == linkKey)
-            return fLinks[i];
+        if (msg->GetLinkKey() == linkKey)
+            return msg;
     }
     return nullptr;
 }
@@ -108,38 +106,37 @@ plLinkEffectsTriggerMsg *plLinkEffectsMgr::IFindLinkTriggerMsg(plKey linkKey)
 void plLinkEffectsMgr::IAddLink(plLinkEffectsTriggerMsg *msg)
 {
     hsRefCnt_SafeRef(msg);
-    fLinks.Append(msg);
+    fLinks.emplace_back(msg);
 }
 
 void plLinkEffectsMgr::IAddWait(plLinkEffectsTriggerMsg *msg)
 {
     hsRefCnt_SafeRef(msg);
-    fWaitlist.Append(msg);
+    fWaitlist.emplace_back(msg);
 }
 
 void plLinkEffectsMgr::IAddDead(plLinkEffectsTriggerMsg *msg)
 {
     hsRefCnt_SafeRef(msg);
-    fDeadlist.Append(msg);
+    fDeadlist.emplace_back(msg);
 }
 
 void plLinkEffectsMgr::IAddPseudo(plPseudoLinkEffectMsg *msg)
 {
     hsRefCnt_SafeRef(msg);
-    fPseudolist.Append(msg);
+    fPseudolist.emplace_back(msg);
 }
 
 bool plLinkEffectsMgr::IHuntWaitlist(plLinkEffectsTriggerMsg *msg)
 {
-    int i;
     bool found = false;
-    for (i = fWaitlist.GetCount() - 1; i >= 0; i--)
+    for (hsSsize_t i = fWaitlist.size() - 1; i >= 0; i--)
     {
         if (fWaitlist[i] == msg)
         {
             found = true;
-            hsRefCnt_SafeUnRef(fWaitlist[i]);           
-            fWaitlist.Remove(i);
+            hsRefCnt_SafeUnRef(fWaitlist[i]);
+            fWaitlist.erase(fWaitlist.begin() + i);
             plNetApp::GetInstance()->DebugMsg("Received backup LinkEffectsTriggerMsg. Never got remote trigger!\n");            
         }
     }
@@ -149,9 +146,8 @@ bool plLinkEffectsMgr::IHuntWaitlist(plLinkEffectsTriggerMsg *msg)
 
 bool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
 {
-    int i;
     bool found = false;
-    for (i = fWaitlist.GetCount() - 1; i >= 0; i--)
+    for (hsSsize_t i = fWaitlist.size() - 1; i >= 0; i--)
     {
         if (fWaitlist[i]->GetLinkKey() == linkKey)
         {
@@ -159,7 +155,7 @@ bool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
             IAddDead(fWaitlist[i]);
 
             hsRefCnt_SafeUnRef(fWaitlist[i]);
-            fWaitlist.Remove(i);
+            fWaitlist.erase(fWaitlist.begin() + i);
             plNetApp::GetInstance()->DebugMsg("Received remote LinkEffectsTriggerMsg. Awaiting backup.\n");
         }
     }
@@ -169,15 +165,14 @@ bool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
 
 bool plLinkEffectsMgr::IHuntDeadlist(plLinkEffectsTriggerMsg *msg)
 {
-    int i;
     bool found = false;
-    for (i = fDeadlist.GetCount() - 1; i >= 0; i--)
+    for (hsSsize_t i = fDeadlist.size() - 1; i >= 0; i--)
     {
         if (fDeadlist[i] == msg)
         {
             found = true;
             hsRefCnt_SafeUnRef(fDeadlist[i]);
-            fDeadlist.Remove(i);
+            fDeadlist.erase(fDeadlist.begin() + i);
             plNetApp::GetInstance()->DebugMsg("Received backup LinkEffectsTriggerMsg. Cleanly ignoring since we received remote trigger.\n");
         }
     }
@@ -189,8 +184,7 @@ bool plLinkEffectsMgr::IHuntDeadlist(plLinkEffectsTriggerMsg *msg)
 
 void plLinkEffectsMgr::ISendAllReadyCallbacks()
 {
-    int i;
-    for (i = fLinks.GetCount() - 1; i >= 0; i--)
+    for (hsSsize_t i = fLinks.size() - 1; i >= 0; i--)
     {
         if (fLinks[i]->fEffects <= 0)
         {
@@ -221,7 +215,7 @@ void plLinkEffectsMgr::ISendAllReadyCallbacks()
             }
 
             hsRefCnt_SafeUnRef(fLinks[i]);
-            fLinks.Remove(i);
+            fLinks.erase(fLinks.begin() + i);
 
             hsStatusMessage("Done - removing link FX msg\n");
         }
@@ -576,11 +570,10 @@ void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, float time)
 
 plPseudoLinkEffectMsg* plLinkEffectsMgr::IFindPseudo(plKey avatarKey)
 {
-    int i;
-    for (i = 0; i < fPseudolist.GetCount(); i++)
+    for (plPseudoLinkEffectMsg* msg : fPseudolist)
     {
-        if (fPseudolist[i]->fAvatarKey == avatarKey)
-            return fPseudolist[i];
+        if (msg->fAvatarKey == avatarKey)
+            return msg;
     }
     return nullptr;
 
@@ -588,12 +581,11 @@ plPseudoLinkEffectMsg* plLinkEffectsMgr::IFindPseudo(plKey avatarKey)
 
 void plLinkEffectsMgr::IRemovePseudo(plKey avatarKey)
 {
-    int i;
-    for (i = 0; i < fPseudolist.GetCount(); i++)
+    for (auto iter = fPseudolist.cbegin(); iter != fPseudolist.cend(); ++iter)
     {
-        if (fPseudolist[i]->fAvatarKey == avatarKey)
-        {   
-            fPseudolist.Remove(i);
+        if ((*iter)->fAvatarKey == avatarKey)
+        {
+            fPseudolist.erase(iter);
             return;
         }
     }

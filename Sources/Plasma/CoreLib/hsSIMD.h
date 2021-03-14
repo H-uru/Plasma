@@ -39,33 +39,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  pnBuildDates Header                                                     //
-//                                                                          //
-//  This is a tiny cpp/h wrapper for the build/branch dates. Basically,     //
-//  this header defines two string konstants that at runtime will be the    //
-//  build and branch date/timestamps. The pnBranchDate.cpp file is          //
-//  regenerated on branch to fill in the branch date.                       //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
-#ifndef _pnBuildDates_h
-#define _pnBuildDates_h
+#ifndef hsSIMD_Defined
+#define hsSIMD_Defined
 
-class pnBuildDates
-{
-    private:
+/**
+ * \file hsSIMD.h
+ * Wrapper header to include all SIMD headers supported by the current compiler. This is needed
+ * because the LLVM immintrin.h for MSVC does not include everything like you expect, breaking
+ * clang-tidy on any target using SIMD instructions. x86intrin.h is also "broken".
+ */
 
-        void    IGetString( int resID, char *destBuffer, int size );
+#include "hsConfig.h"
 
-    public:
-        static char fBuildDate[];
-        static char fBuildTime[];
-        static char fBranchDate[];
+#if defined(HAVE_AVX2) || defined(HAVE_AVX)
+#   include <immintrin.h>
+#endif
 
-        pnBuildDates();
-};
+#ifdef HAVE_SSE42
+#   include <nmmintrin.h>
+#endif
 
-#endif //_pnBuildDates_h
+#ifdef HAVE_SSE41
+#   include <smmintrin.h>
+#endif
 
+#ifdef HAVE_SSE4
+#   include <tmmintrin.h>
+#endif
+
+#ifdef HAVE_SSE3
+#   include <pmmintrin.h>
+#endif
+
+#ifdef HAVE_SSE2
+#   include <emmintrin.h>
+#endif
+
+#ifdef HAVE_SSE1
+#   include <xmmintrin.h>
+#endif
+
+#endif

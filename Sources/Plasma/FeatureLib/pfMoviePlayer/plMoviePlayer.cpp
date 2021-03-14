@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMoviePlayer.h"
 
 #ifdef USE_WEBM
+#   include <libwebm/mkvreader.hpp>
+#   include <libwebm/mkvparser.hpp>
+
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
 #   include <vpx/vp8dx.h>
@@ -68,8 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #include "plPlanarImage.h"
-#include "webm/mkvreader.hpp"
-#include "webm/mkvparser.hpp"
 
 #define SAFE_OP(x, err) \
 { \
@@ -143,6 +144,7 @@ public:
 
     bool GetFrames(mkvparser::MkvReader* reader, int64_t movieTimeNs, std::vector<blkbuf_t>& frames)
     {
+#ifdef USE_WEBM
         // If we have no block yet, grab the first one
         if (!fCurrentBlock)
             fStatus = fTrack->GetFirst(fCurrentBlock);
@@ -166,6 +168,7 @@ public:
                 return true;
             }
         }
+#endif
 
         return false; // No more blocks... We're done!
     }
@@ -174,14 +177,16 @@ public:
 // =====================================================
 
 plMoviePlayer::plMoviePlayer()
-    : fPlate(nullptr),
-      fTexture(nullptr),
-      fReader(nullptr),
-      fMovieTime(0),
-      fLastFrameTime(0),
-      fPosition(hsPoint2()),
-      fPlaying(false),
-      fPaused(false)
+    : fPlate(),
+      fTexture(),
+#ifdef USE_WEBM
+      fReader(),
+#endif
+      fMovieTime(),
+      fLastFrameTime(),
+      fPosition(),
+      fPlaying(),
+      fPaused()
 {
     fScale.Set(1.0f, 1.0f);
 }
@@ -301,9 +306,11 @@ bool plMoviePlayer::ILoadAudio()
 
 bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 {
+#ifdef USE_WEBM
     auto codes = plLocalization::GetLanguageCodes(plLocalization::GetLanguage());
     if (codes.find(track->GetLanguage()) != codes.end())
         return true;
+#endif
     return false;
 }
 

@@ -43,25 +43,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDirectShdowMaster_inc
 #define plDirectShdowMaster_inc
 
+#include <memory>
+
+#include "hsGeometry3.h"
+#include "hsPoolVector.h"
 
 #include "plShadowMaster.h"
-#include "hsGeometry3.h"
-
 
 class plBoundsIsect;
 
 class plDirectShadowMaster : public plShadowMaster
 {
 protected:
-    mutable hsTArray<plBoundsIsect*>    fIsectPool;
-    hsTArray<plShadowSlave*>            fPerspSlavePool;
+    mutable hsPoolVector<std::unique_ptr<plBoundsIsect>> fIsectPool;
+    hsPoolVector<std::unique_ptr<plShadowSlave>>         fPerspSlavePool;
 
     void IComputeWorldToLight(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
     void IComputeProjections(plShadowCastMsg* castMsg, plShadowSlave* slave) const override;
     void IComputeISect(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
     void IComputeBounds(const hsBounds3Ext& bnd, plShadowSlave* slave) const override;
 
-    plShadowSlave* INewSlave(const plShadowCaster* caster) override;
+    std::unique_ptr<plShadowSlave> INewSlave(const plShadowCaster* caster) override;
     plShadowSlave* INextSlave(const plShadowCaster* caster) override;
     plShadowSlave* IRecycleSlave(plShadowSlave* slave) override;
 

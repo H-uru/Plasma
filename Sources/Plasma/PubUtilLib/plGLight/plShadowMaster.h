@@ -43,7 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShadowMaster_inc
 #define plShadowMaster_inc
 
-#include "hsTemplates.h"
+#include <memory>
+
+#include "hsPoolVector.h"
 
 #include "pnSceneObject/plObjInterface.h"
 
@@ -57,7 +59,6 @@ class hsResMgr;
 class plMessage;
 class plLightInfo;
 class plShadowCastMsg;
-
 
 class plShadowMaster : public plObjInterface
 {
@@ -88,7 +89,7 @@ protected:
     float                        fPower;
 
     // Temp data used for one frame and recycled.
-    hsTArray<plShadowSlave*>        fSlavePool;
+    hsPoolVector<std::unique_ptr<plShadowSlave>> fSlavePool;
     plLightInfo*                    fLightInfo;
 
     // These are specific to the projection type (perspective or orthogonal), so have to
@@ -110,7 +111,7 @@ protected:
 
     virtual plShadowSlave* ICreateShadowSlave(plShadowCastMsg* castMsg, const hsBounds3Ext& casterBnd, float power);
 
-    virtual plShadowSlave* INewSlave(const plShadowCaster* caster) = 0;
+    virtual std::unique_ptr<plShadowSlave> INewSlave(const plShadowCaster* caster) = 0;
     virtual plShadowSlave* INextSlave(const plShadowCaster* caster);
 
     virtual plShadowSlave* IRecycleSlave(plShadowSlave* slave);

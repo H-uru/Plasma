@@ -374,29 +374,29 @@ hsMatrix44Key *plLeafController::GetMatrix44Key(uint32_t i) const
     return (hsMatrix44Key *)((uint8_t *)fKeys + i * sizeof(hsMatrix44Key));
 }
 
-void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
+void plLeafController::GetKeyTimes(std::vector<float> &keyTimes) const
 {
-    int cIdx = 0;
-    int kIdx = 0;
+    uint32_t cIdx = 0;
+    auto kIter = keyTimes.begin();
     uint32_t stride = GetStride();
     uint8_t *keyPtr = (uint8_t *)fKeys;
-    while (cIdx < fNumKeys && kIdx < keyTimes.GetCount())
+    while (cIdx < fNumKeys && kIter != keyTimes.end())
     {
-        float kTime = keyTimes[kIdx];
+        float kTime = *kIter;
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
         if (cTime < kTime)
         {
-            keyTimes.Insert(kIdx, cTime);
+            kIter = keyTimes.insert(kIter, cTime);
             cIdx++;
-            kIdx++;
+            kIter++;
         }
         else if (cTime > kTime)
         {
-            kIdx++;
+            kIter++;
         }
         else
         {
-            kIdx++;
+            kIter++;
             cIdx++;
         }
     }
@@ -405,7 +405,7 @@ void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
     for (; cIdx < fNumKeys; cIdx++)
     {
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
-        keyTimes.Append(cTime);
+        keyTimes.emplace_back(cTime);
     }
 }
 
@@ -850,7 +850,7 @@ float plCompoundController::GetLength() const
     return len;
 }
 
-void plCompoundController::GetKeyTimes(hsTArray<float> &keyTimes) const
+void plCompoundController::GetKeyTimes(std::vector<float> &keyTimes) const
 {
     if (fXController)
         fXController->GetKeyTimes(keyTimes);

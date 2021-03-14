@@ -66,13 +66,13 @@ void plStereizer::Read(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    fAmbientDist = stream->ReadLEScalar();
-    fTransition = stream->ReadLEScalar();
+    fAmbientDist = stream->ReadLEFloat();
+    fTransition = stream->ReadLEFloat();
 
-    fMaxSepDist = stream->ReadLEScalar();
-    fMinSepDist = stream->ReadLEScalar();
+    fMaxSepDist = stream->ReadLEFloat();
+    fMinSepDist = stream->ReadLEFloat();
 
-    fTanAng = stream->ReadLEScalar();
+    fTanAng = stream->ReadLEFloat();
 
     fInitPos.Read(stream);
 
@@ -84,13 +84,13 @@ void plStereizer::Write(hsStream* stream, hsResMgr* mgr)
 {
     plSingleModifier::Write(stream, mgr);
 
-    stream->WriteLEScalar(fAmbientDist);
-    stream->WriteLEScalar(fTransition);
+    stream->WriteLEFloat(fAmbientDist);
+    stream->WriteLEFloat(fTransition);
 
-    stream->WriteLEScalar(fMaxSepDist);
-    stream->WriteLEScalar(fMinSepDist);
+    stream->WriteLEFloat(fMaxSepDist);
+    stream->WriteLEFloat(fMinSepDist);
 
-    stream->WriteLEScalar(fTanAng);
+    stream->WriteLEFloat(fTanAng);
 
     fInitPos.Write(stream);
 }

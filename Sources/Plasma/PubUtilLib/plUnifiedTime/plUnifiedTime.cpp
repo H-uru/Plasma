@@ -378,19 +378,15 @@ double plUnifiedTime::GetSecsDouble() const
 
 void plUnifiedTime::Read(hsStream* s)
 {
-    s->LogSubStreamStart("UnifiedTime");
-    uint32_t secs;
-    s->LogReadLE(&secs,"Seconds");
-    fSecs = (time_t)secs;
-    s->LogReadLE(&fMicros,"MicroSeconds");
-    s->LogSubStreamEnd();
+    fSecs = (time_t)s->ReadLE32();
+    s->ReadLE32(&fMicros);
     // preserve fMode
 }
 
 void plUnifiedTime::Write(hsStream* s) const
 {
-    s->WriteLE((uint32_t)fSecs);
-    s->WriteLE(fMicros);
+    s->WriteLE32((uint32_t)fSecs);
+    s->WriteLE32(fMicros);
     // preserve fMode
 }
 

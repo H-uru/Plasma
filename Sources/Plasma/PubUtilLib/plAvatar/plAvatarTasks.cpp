@@ -468,10 +468,10 @@ void plAvAnimTask::LeaveAge(plArmatureMod *avatar)
 void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 {
     fAnimName = stream->ReadSafeString();
-    fInitialBlend = stream->ReadLEScalar();
-    fTargetBlend = stream->ReadLEScalar();
-    fFadeSpeed = stream->ReadLEScalar();
-    fSetTime = stream->ReadLEScalar();
+    fInitialBlend = stream->ReadLEFloat();
+    fTargetBlend = stream->ReadLEFloat();
+    fFadeSpeed = stream->ReadLEFloat();
+    fSetTime = stream->ReadLEFloat();
     fStart = stream->ReadBool();
     fLoop = stream->ReadBool();
     fAttach = stream->ReadBool();
@@ -481,10 +481,10 @@ void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 void plAvAnimTask::Write(hsStream *stream, hsResMgr *mgr)
 {
     stream->WriteSafeString(fAnimName);
-    stream->WriteLEScalar(fInitialBlend);
-    stream->WriteLEScalar(fTargetBlend);
-    stream->WriteLEScalar(fFadeSpeed);
-    stream->WriteLEScalar(fSetTime);
+    stream->WriteLEFloat(fInitialBlend);
+    stream->WriteLEFloat(fTargetBlend);
+    stream->WriteLEFloat(fFadeSpeed);
+    stream->WriteLEFloat(fSetTime);
     stream->WriteBool(fStart);
     stream->WriteBool(fLoop);
     stream->WriteBool(fAttach);

@@ -6,7 +6,7 @@ set(plProgressMgr_HEADERS
     plProgressMgr.h
 )
 
-add_library(plProgressMgr STATIC ${plProgressMgr_SOURCES} ${plProgressMgr_HEADERS})
+plasma_library(plProgressMgr SOURCES ${plProgressMgr_SOURCES} ${plProgressMgr_HEADERS})
 target_link_libraries(
     plProgressMgr
     PUBLIC

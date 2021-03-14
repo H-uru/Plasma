@@ -339,6 +339,7 @@ plVoicePlayer::plVoicePlayer()
 
 plVoicePlayer::~plVoicePlayer()
 {
+    delete fOpusDecoder;
 }
 
 void plVoicePlayer::PlaybackUncompressedVoiceMessage(const void* data, size_t size, uint32_t rate)

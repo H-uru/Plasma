@@ -294,10 +294,10 @@ void plSimpleParticleGenerator::UpdateParam(uint32_t paramID, float paramValue)
 
 void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 {
-    float genLife = s->ReadLEScalar();
-    float partLifeMin = s->ReadLEScalar();
-    float partLifeMax = s->ReadLEScalar();
-    float pps = s->ReadLEScalar();
+    float genLife = s->ReadLEFloat();
+    float partLifeMin = s->ReadLEFloat();
+    float partLifeMax = s->ReadLEFloat();
+    float pps = s->ReadLEFloat();
     uint32_t numSources = s->ReadLE32();
     hsPoint3 *pos = new hsPoint3[numSources];
     float *pitch = new float[numSources];
@@ -306,18 +306,18 @@ void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
     for (i = 0; i < numSources; i++)
     {
         pos[i].Read(s);
-        pitch[i] = s->ReadLEScalar();
-        yaw[i] = s->ReadLEScalar();
+        pitch[i] = s->ReadLEFloat();
+        yaw[i] = s->ReadLEFloat();
     }
-    float angleRange = s->ReadLEScalar();
-    float velMin = s->ReadLEScalar();
-    float velMax = s->ReadLEScalar();
-    float xSize = s->ReadLEScalar();
-    float ySize = s->ReadLEScalar();
-    float scaleMin = s->ReadLEScalar();
-    float scaleMax = s->ReadLEScalar();
-    float massRange = s->ReadLEScalar();
-    float radsPerSec = s->ReadLEScalar();
+    float angleRange = s->ReadLEFloat();
+    float velMin = s->ReadLEFloat();
+    float velMax = s->ReadLEFloat();
+    float xSize = s->ReadLEFloat();
+    float ySize = s->ReadLEFloat();
+    float scaleMin = s->ReadLEFloat();
+    float scaleMax = s->ReadLEFloat();
+    float massRange = s->ReadLEFloat();
+    float radsPerSec = s->ReadLEFloat();
 
     Init(genLife, partLifeMin, partLifeMax, pps, numSources, pos, pitch, yaw, angleRange, velMin, velMax,
          xSize, ySize, scaleMin, scaleMax, massRange, radsPerSec);
@@ -325,29 +325,29 @@ void plSimpleParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 
 void plSimpleParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 {
-    s->WriteLEScalar(fGenLife);
-    s->WriteLEScalar(fPartLifeMin);
-    s->WriteLEScalar(fPartLifeMax);
-    s->WriteLEScalar(fParticlesPerSecond);
+    s->WriteLEFloat(fGenLife);
+    s->WriteLEFloat(fPartLifeMin);
+    s->WriteLEFloat(fPartLifeMax);
+    s->WriteLEFloat(fParticlesPerSecond);
     s->WriteLE32(fNumSources);
     int i;
     for (i = 0; i < fNumSources; i++)
     {
         fInitPos[i].Write(s);
-        s->WriteLEScalar(fInitPitch[i]);
-        s->WriteLEScalar(fInitYaw[i]);
+        s->WriteLEFloat(fInitPitch[i]);
+        s->WriteLEFloat(fInitYaw[i]);
     }
-    s->WriteLEScalar(fAngleRange);
-    s->WriteLEScalar(fVelMin);
-    s->WriteLEScalar(fVelMax);
-    s->WriteLEScalar(fXSize);
-    s->WriteLEScalar(fYSize);
-    s->WriteLEScalar(fScaleMin);
-    s->WriteLEScalar(fScaleMax);
+    s->WriteLEFloat(fAngleRange);
+    s->WriteLEFloat(fVelMin);
+    s->WriteLEFloat(fVelMax);
+    s->WriteLEFloat(fXSize);
+    s->WriteLEFloat(fYSize);
+    s->WriteLEFloat(fScaleMin);
+    s->WriteLEFloat(fScaleMax);
 
     float massRange = 1.f / fPartInvMassMin - DEFAULT_INVERSE_MASS;
-    s->WriteLEScalar(massRange);
-    s->WriteLEScalar(fPartRadsPerSecRange);
+    s->WriteLEFloat(massRange);
+    s->WriteLEFloat(fPartRadsPerSecRange);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -412,11 +412,11 @@ bool plOneTimeParticleGenerator::AddAutoParticles(plParticleEmitter *emitter, fl
 void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 {
     uint32_t count = s->ReadLE32();
-    float xSize = s->ReadLEScalar();
-    float ySize = s->ReadLEScalar();
-    float scaleMin = s->ReadLEScalar();
-    float scaleMax = s->ReadLEScalar();
-    float radsPerSecRange = s->ReadLEScalar();
+    float xSize = s->ReadLEFloat();
+    float ySize = s->ReadLEFloat();
+    float scaleMin = s->ReadLEFloat();
+    float scaleMax = s->ReadLEFloat();
+    float radsPerSecRange = s->ReadLEFloat();
 
     hsPoint3 *pos = new hsPoint3[count];
     hsVector3 *dir = new hsVector3[count];
@@ -434,11 +434,11 @@ void plOneTimeParticleGenerator::Read(hsStream* s, hsResMgr *mgr)
 void plOneTimeParticleGenerator::Write(hsStream* s, hsResMgr *mgr)
 {
     s->WriteLE32((uint32_t)fCount);
-    s->WriteLEScalar(fXSize);
-    s->WriteLEScalar(fYSize);
-    s->WriteLEScalar(fScaleMin);
-    s->WriteLEScalar(fScaleMax);
-    s->WriteLEScalar(fPartRadsPerSecRange);
+    s->WriteLEFloat(fXSize);
+    s->WriteLEFloat(fYSize);
+    s->WriteLEFloat(fScaleMin);
+    s->WriteLEFloat(fScaleMax);
+    s->WriteLEFloat(fPartRadsPerSecRange);
 
     int i;
     for (i = 0; i < fCount; i++)

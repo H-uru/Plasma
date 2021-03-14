@@ -40,9 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
@@ -191,9 +192,9 @@ bool plClothingComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    int i, j;
-    hsTArray<plGeometrySpan*> spanArray;
-    hsTArray<plKey> keys;
+    int i;
+    std::vector<plGeometrySpan*> spanArray;
+    std::vector<plKey> keys;
     plMaxNode *LODNode = nullptr;
     plMaxNode *locationNode = nullptr;
 
@@ -203,13 +204,13 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     for (i = 0; i < fCompPB->Count(kMeshNodeTab); i++)
     {
-        spanArray.Reset();
+        spanArray.clear();
         //plSharedMesh *mesh = new plSharedMesh;
         LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
         if (LODNode != nullptr)
         {
             char *dbgNodeName = LODNode->GetName();
-            keys.Append(LODNode->GetSwappableGeom()->GetKey());
+            keys.emplace_back(LODNode->GetSwappableGeom()->GetKey());
             locationNode = LODNode;
 
             if (fCompPB->GetInt(ParamID(kType)) != plClothingMgr::kTypeFace)
@@ -226,7 +227,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-            keys.Append(nullptr);
+            keys.emplace_back();
             //delete mesh;
         }
     }
@@ -242,7 +243,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         cloth->fType = fCompPB->GetInt(ParamID(kType));
 
         plGenRefMsg *refMsg;
-        for (j = 0; j < keys.GetCount(); j++)
+        for (size_t j = 0; j < keys.size(); j++)
         {
             if (keys[j] != nullptr)
             {

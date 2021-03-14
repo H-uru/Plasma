@@ -210,25 +210,25 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
     }
 
-    fMaxNumVerts = (uint16_t)(stream->ReadLE32());
-    fMaxNumIdx = (uint16_t)(stream->ReadLE32());
+    fMaxNumVerts = stream->ReadLE32();
+    fMaxNumIdx = stream->ReadLE32();
 
     fWaitOnEnable = stream->ReadLE32();
 
-    fIntensity = stream->ReadLEScalar();
+    fIntensity = stream->ReadLEFloat();
     fInitAtten = fIntensity;
 
-    fWetLength = stream->ReadLEScalar();
-    fRampEnd = stream->ReadLEScalar();
-    fDecayStart = stream->ReadLEScalar();
-    fLifeSpan = stream->ReadLEScalar();
+    fWetLength = stream->ReadLEFloat();
+    fRampEnd = stream->ReadLEFloat();
+    fDecayStart = stream->ReadLEFloat();
+    fLifeSpan = stream->ReadLEFloat();
 
-    fGridSizeU = stream->ReadLEScalar();
-    fGridSizeV = stream->ReadLEScalar();
+    fGridSizeU = stream->ReadLEFloat();
+    fGridSizeV = stream->ReadLEFloat();
 
     fScale.Read(stream);
 
-    fPartyTime = stream->ReadLEScalar();
+    fPartyTime = stream->ReadLEFloat();
 
     n = stream->ReadLE32();
     fNotifies.SetCount(n);
@@ -275,19 +275,19 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
 
     stream->WriteLE32(fWaitOnEnable);
 
-    stream->WriteLEScalar(fIntensity);
+    stream->WriteLEFloat(fIntensity);
 
-    stream->WriteLEScalar(fWetLength);
-    stream->WriteLEScalar(fRampEnd);
-    stream->WriteLEScalar(fDecayStart);
-    stream->WriteLEScalar(fLifeSpan);
+    stream->WriteLEFloat(fWetLength);
+    stream->WriteLEFloat(fRampEnd);
+    stream->WriteLEFloat(fDecayStart);
+    stream->WriteLEFloat(fLifeSpan);
 
-    stream->WriteLEScalar(fGridSizeU);
-    stream->WriteLEScalar(fGridSizeV);
+    stream->WriteLEFloat(fGridSizeU);
+    stream->WriteLEFloat(fGridSizeV);
 
     fScale.Write(stream);
 
-    stream->WriteLEScalar(fPartyTime);
+    stream->WriteLEFloat(fPartyTime);
 
     stream->WriteLE32(fNotifies.GetCount());
     for( i = 0; i < fNotifies.GetCount(); i++ )
@@ -554,7 +554,7 @@ plDynaDecalInfo& plDynaDecalMgr::IGetDecalInfo(uintptr_t id, const plKey& key)
     return iter->second;
 }
 
-void plDynaDecalMgr::IRemoveDecalInfo(uint32_t id)
+void plDynaDecalMgr::IRemoveDecalInfo(uintptr_t id)
 {
     plDynaDecalMap::iterator iter = fDecalMap.find(id);
     if( iter != fDecalMap.end() )
@@ -747,8 +747,8 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_
     aux->fIBufferInit = aux->fIStartIdx;
     aux->fIBufferLimit = aux->fIBufferInit + maxNumIdx;
 
-    aux->fOrigPos.SetCount(maxNumVerts);
-    aux->fOrigUVW.SetCount(maxNumVerts);
+    aux->fOrigPos.resize(maxNumVerts);
+    aux->fOrigUVW.resize(maxNumVerts);
 
     aux->fOwner = (void*)this;
     aux->fDrawable = nullptr;

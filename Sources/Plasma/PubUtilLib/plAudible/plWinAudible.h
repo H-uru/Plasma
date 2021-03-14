@@ -151,7 +151,7 @@ public:
     void Activate() override;
     void DeActivate() override;
     void Read(hsStream* s, hsResMgr* mgr) override;
-    virtual void PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags);
+    virtual void PlayNetworkedSpeech(const char* addr, size_t size, int numFrames, unsigned char flags);
     
     plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1) override;
     void SetVelocity(const hsVector3 vel,int index = -1) override;

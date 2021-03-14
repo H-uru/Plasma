@@ -61,9 +61,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAnimTimeConvert::~plAnimTimeConvert()
 {
-    int i;
-    for( i = 0; i < fCallbackMsgs.GetCount(); i++ )
-        hsRefCnt_SafeUnRef(fCallbackMsgs[i]);
+    for (plEventCallbackMsg* msg : fCallbackMsgs)
+        hsRefCnt_SafeUnRef(msg);
 
     delete fEaseInCurve;
     delete fEaseOutCurve;
@@ -174,8 +173,7 @@ void plAnimTimeConvert::IClearSpeedEase()
 
 void plAnimTimeConvert::ICheckTimeCallbacks(float frameStart, float frameStop)
 {
-    int i;
-    for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+    for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
         if (fCallbackMsgs[i]->fEvent == kTime)
         {
@@ -227,7 +225,7 @@ bool plAnimTimeConvert::ITimeInFrame(float secs, float start, float stop)
     return false;
 }
 
-void plAnimTimeConvert::ISendCallback(int i)
+void plAnimTimeConvert::ISendCallback(hsSsize_t i)
 {
     // Check if callbacks are disabled this frame (i.e. when we're loading in state)
     if (fFlags & kNoCallbacks)
@@ -246,7 +244,7 @@ void plAnimTimeConvert::ISendCallback(int i)
         if (fCallbackMsgs[i]->fRepeats == 0)
         {
             hsRefCnt_SafeUnRef(fCallbackMsgs[i]);
-            fCallbackMsgs.Remove(i);
+            fCallbackMsgs.erase(fCallbackMsgs.begin() + i);
         }
         // If this isn't infinite, decrement the number of repeats
         else if (fCallbackMsgs[i]->fRepeats > 0)
@@ -267,8 +265,7 @@ plAnimTimeConvert& plAnimTimeConvert::IStop(double time, float animTime)
 
     IProcessStateChange(time, animTime);
 
-    int i;
-    for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+    for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
         if (fCallbackMsgs[i]->fEvent == kStop)
         {
@@ -288,7 +285,7 @@ plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, floa
 
     state->fStartWorldTime = fLastStateChange;
     state->fStartAnimTime = (animTime < 0 ? WorldToAnimTimeNoUpdate(fLastStateChange) : animTime);
-    state->fFlags = (uint8_t)fFlags;
+    state->fFlags = fFlags;
     state->fBegin = fBegin;
     state->fEnd = fEnd;
     state->fLoopBegin = fLoopBegin;
@@ -374,8 +371,8 @@ void plAnimTimeConvert::SetOwner(plSynchedObject* o)
     fOwner = o; 
 }
 
-bool plAnimTimeConvert::IIsStoppedAt(const double &wSecs, const uint32_t &flags, 
-                                       const plATCEaseCurve *curve) const       
+bool plAnimTimeConvert::IIsStoppedAt(double wSecs, uint32_t flags,
+                                     const plATCEaseCurve *curve) const
 {
     if (flags & kStopped)
         return !(flags & kForcedMove); // If someone called SetCurrentAnimTime(), we need to say we moved.
@@ -417,8 +414,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
     {
         if (fFlags & kForcedMove)
         {
-            int i;
-            for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+            for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
             {
                 if (fCallbackMsgs[i]->fEvent == kSingleFrameEval)
                 {
@@ -667,8 +663,7 @@ void plAnimTimeConvert::SetCurrentAnimTime(float s, bool jump /* = false */)
     if (!jump)
         ICheckTimeCallbacks(fCurrentAnimTime, s);
     fCurrentAnimTime = s;
-    int i;
-    for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+    for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
         if (fCallbackMsgs[i]->fEvent == kSingleFrameAdjust)
         {
@@ -698,17 +693,14 @@ float plAnimTimeConvert::GetBestStopDist(float min, float max, float norm, float
 {
     float bestTime = -1;
     float bestDist = -1;
-    if (fStopPoints.GetCount() == 0)
+    if (fStopPoints.empty())
         return norm;
 
     float curTime;
     float curDist;
 
-    int i;
-    for (i = 0; i < fStopPoints.GetCount(); i++)
+    for (float stop : fStopPoints)
     {
-        float stop = fStopPoints.Get(i);
-
         if (IsLooped())
         {
             float loopDist;
@@ -824,37 +816,35 @@ void plAnimTimeConvert::Read(hsStream* s, hsResMgr* mgr)
 {
     plCreatable::Read(s, mgr);
 
-    fFlags = (uint16_t)(s->ReadLE32());
+    fFlags = s->ReadLE32();
 
-    fBegin = fInitialBegin = s->ReadLEScalar();
-    fEnd = fInitialEnd = s->ReadLEScalar();
-    fLoopEnd = s->ReadLEScalar();
-    fLoopBegin = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
+    fBegin = fInitialBegin = s->ReadLEFloat();
+    fEnd = fInitialEnd = s->ReadLEFloat();
+    fLoopEnd = s->ReadLEFloat();
+    fLoopBegin = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
 
     fEaseInCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
     fEaseOutCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
     fSpeedEaseCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
 
-    fCurrentAnimTime = s->ReadLEScalar();
+    fCurrentAnimTime = s->ReadLEFloat();
     fLastEvalWorldTime = s->ReadLEDouble();
 
     // load other non-synched data;
-    int count = s->ReadLE32();
-    fCallbackMsgs.SetCountAndZero(count);
+    uint32_t count = s->ReadLE32();
+    fCallbackMsgs.resize(count);
 
-    int i;
-    for (i = 0; i < count; i++)
+    for (uint32_t i = 0; i < count; i++)
     {
         plEventCallbackMsg* msg = plEventCallbackMsg::ConvertNoRef(mgr->ReadCreatable(s));
         fCallbackMsgs[i] = msg;
     }
 
     count = s->ReadLE32();
-    for (i = 0; i < count; i++)
-    {
-        fStopPoints.Append(s->ReadLEScalar());
-    }
+    fStopPoints.resize(count);
+    s->ReadLEFloat(count, fStopPoints.data());
+
     IProcessStateChange(0, fBegin);
 }
 
@@ -864,30 +854,26 @@ void plAnimTimeConvert::Write(hsStream* s, hsResMgr* mgr)
 
     s->WriteLE32(fFlags);
 
-    s->WriteLEScalar(fBegin);
-    s->WriteLEScalar(fEnd);
-    s->WriteLEScalar(fLoopEnd);
-    s->WriteLEScalar(fLoopBegin);
-    s->WriteLEScalar(fSpeed);
+    s->WriteLEFloat(fBegin);
+    s->WriteLEFloat(fEnd);
+    s->WriteLEFloat(fLoopEnd);
+    s->WriteLEFloat(fLoopBegin);
+    s->WriteLEFloat(fSpeed);
 
     mgr->WriteCreatable(s, fEaseInCurve);
     mgr->WriteCreatable(s, fEaseOutCurve);
     mgr->WriteCreatable(s, fSpeedEaseCurve);
 
-    s->WriteLEScalar(fCurrentAnimTime);
+    s->WriteLEFloat(fCurrentAnimTime);
     s->WriteLEDouble(fLastEvalWorldTime);
 
     // save out other non-synched important data
-    s->WriteLE32(fCallbackMsgs.Count());
-    int i;
-    for (i = 0; i < fCallbackMsgs.Count(); i++)
-        mgr->WriteCreatable(s, fCallbackMsgs[i]);
+    s->WriteLE32((uint32_t)fCallbackMsgs.size());
+    for (plEventCallbackMsg* msg : fCallbackMsgs)
+        mgr->WriteCreatable(s, msg);
 
-    s->WriteLE32(fStopPoints.GetCount());
-    for (i = 0; i < fStopPoints.GetCount(); i++)
-    {
-        s->WriteLEScalar(fStopPoints.Get(i));
-    }
+    s->WriteLE32((uint32_t)fStopPoints.size());
+    s->WriteLEFloat(fStopPoints.size(), fStopPoints.data());
 }
 
 plAnimTimeConvert& plAnimTimeConvert::InitStop() 
@@ -970,8 +956,7 @@ plAnimTimeConvert& plAnimTimeConvert::Start(double startTime)
     }
     
     // check for a start callback
-    int i;
-    for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+    for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
         if (fCallbackMsgs[i]->fEvent == kStart)
         {
@@ -1004,8 +989,7 @@ plAnimTimeConvert& plAnimTimeConvert::Backwards()
         return *this;
 
     // check for a reverse callback
-    int i;
-    for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+    for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
         if (fCallbackMsgs[i]->fEvent == kReverse)
         {
@@ -1027,8 +1011,7 @@ plAnimTimeConvert& plAnimTimeConvert::Forewards()
         return *this;
     
     // check for a reverse callback
-    int i;
-    for( i = fCallbackMsgs.GetCount()-1; i >= 0; --i )
+    for (hsSsize_t i = fCallbackMsgs.size() - 1; i >= 0; --i)
     {
         if (fCallbackMsgs[i]->fEvent == kReverse)
         {
@@ -1086,14 +1069,14 @@ plAnimTimeConvert& plAnimTimeConvert::PlayToPercentage(float percent)
 
 void plAnimTimeConvert::RemoveCallback(plEventCallbackMsg* pMsg)
 {
-    int idx = fCallbackMsgs.Find(pMsg);
-    if( idx != fCallbackMsgs.kMissingIndex )
+    auto iter = std::find(fCallbackMsgs.cbegin(), fCallbackMsgs.cend(), pMsg);
+    if (iter != fCallbackMsgs.cend())
     {
-        hsRefCnt_SafeUnRef(fCallbackMsgs[idx]);
-        fCallbackMsgs.Remove(idx);
+        hsRefCnt_SafeUnRef(*iter);
+        fCallbackMsgs.erase(iter);
     }
 }
-    
+
 bool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
 {
     if (fFlags & kNeedsReset)
@@ -1257,16 +1240,16 @@ bool plAnimTimeConvert::HandleCmd(plAnimCmdMsg* modMsg)
 void plAnimTimeConvert::AddCallback(plEventCallbackMsg* pMsg)
 {
     hsRefCnt_SafeRef(pMsg);
-    fCallbackMsgs.Append(pMsg);
+    fCallbackMsgs.emplace_back(pMsg);
 }
 
 void plAnimTimeConvert::ClearCallbacks()
 {
-    for (int i = 0; i<fCallbackMsgs.Count(); i++)
+    for (plEventCallbackMsg* msg : fCallbackMsgs)
     {
-        hsRefCnt_SafeUnRef(fCallbackMsgs[i]);
+        hsRefCnt_SafeUnRef(msg);
     }
-    fCallbackMsgs.Reset();
+    fCallbackMsgs.clear();
 }
 
 void plAnimTimeConvert::EnableCallbacks(bool val)
@@ -1279,14 +1262,14 @@ void plAnimTimeConvert::EnableCallbacks(bool val)
 void plATCState::Read(hsStream *s, hsResMgr *mgr)
 {
     fStartWorldTime = s->ReadLEDouble();
-    fStartAnimTime = s->ReadLEScalar();
+    fStartAnimTime = s->ReadLEFloat();
 
-    fFlags = (uint8_t)(s->ReadLE32());
-    fEnd = s->ReadLEScalar();
-    fLoopBegin = s->ReadLEScalar();
-    fLoopEnd = s->ReadLEScalar();
-    fSpeed = s->ReadLEScalar();
-    fWrapTime = s->ReadLEScalar();
+    fFlags = s->ReadLE32();
+    fEnd = s->ReadLEFloat();
+    fLoopBegin = s->ReadLEFloat();
+    fLoopEnd = s->ReadLEFloat();
+    fSpeed = s->ReadLEFloat();
+    fWrapTime = s->ReadLEFloat();
     if (s->ReadBool())
         fEaseCurve = plATCEaseCurve::ConvertNoRef(mgr->ReadCreatable(s));
 }
@@ -1294,14 +1277,14 @@ void plATCState::Read(hsStream *s, hsResMgr *mgr)
 void plATCState::Write(hsStream *s, hsResMgr *mgr)
 {
     s->WriteLEDouble(fStartWorldTime);
-    s->WriteLEScalar(fStartAnimTime);
+    s->WriteLEFloat(fStartAnimTime);
 
     s->WriteLE32(fFlags);
-    s->WriteLEScalar(fEnd);
-    s->WriteLEScalar(fLoopBegin);
-    s->WriteLEScalar(fLoopEnd);
-    s->WriteLEScalar(fSpeed);
-    s->WriteLEScalar(fWrapTime);
+    s->WriteLEFloat(fEnd);
+    s->WriteLEFloat(fLoopBegin);
+    s->WriteLEFloat(fLoopEnd);
+    s->WriteLEFloat(fSpeed);
+    s->WriteLEFloat(fWrapTime);
     if (fEaseCurve != nullptr)
     {
         s->WriteBool(true);

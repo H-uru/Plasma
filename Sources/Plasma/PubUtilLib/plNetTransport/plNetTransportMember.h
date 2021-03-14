@@ -85,10 +85,10 @@ public:
     void SetDistSq(float s) { fDistSq=s; }
     float GetDistSq() const { return fDistSq; }
 
-    plKey GetAvatarKey() { return fAvatarKey; }
+    plKey GetAvatarKey() const { return fAvatarKey; }
     void SetAvatarKey(plKey k)
         {
-            fAvatarKey=k;
+            fAvatarKey=std::move(k);
         }
     void SetPlayerName(const ST::string & value) { fPlayerName=value;}
     ST::string GetPlayerName() const { return fPlayerName;}

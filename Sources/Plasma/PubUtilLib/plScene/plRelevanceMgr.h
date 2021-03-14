@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRelevanceMgr_inc
 #define plRelevanceMgr_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -64,7 +64,7 @@ public:
     static void DeInit();   
 
 protected:
-    hsTArray<plRelevanceRegion*> fRegions;  
+    std::vector<plRelevanceRegion*> fRegions;
     bool fEnabled;
 
     void IAddRegion(plRelevanceRegion *);

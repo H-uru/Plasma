@@ -8,7 +8,7 @@ set(plStatusLog_HEADERS
     plStatusLog.h
 )
 
-add_library(plStatusLog STATIC ${plStatusLog_SOURCES} ${plStatusLog_HEADERS})
+plasma_library(plStatusLog SOURCES ${plStatusLog_SOURCES} ${plStatusLog_HEADERS})
 target_link_libraries(
     plStatusLog
     PUBLIC

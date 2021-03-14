@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponent.h"
 #include "plPhysicalComponents.h"
 #include <map>
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
 
 class plMaxNode;
@@ -61,7 +60,6 @@ protected:
     typedef std::multimap<plMaxNode*, plKey> ReceiverKeys;
     typedef std::pair<plMaxNode*, plKey> ReceiverKey;
     ReceiverKeys fReceivers;
-//  hsTArray<plKey> fReceivers;
 
     void IGetReceivers(plMaxNode* node, std::vector<plKey>& receivers);
 

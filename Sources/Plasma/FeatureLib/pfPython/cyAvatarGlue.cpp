@@ -917,36 +917,36 @@ void cyAvatar::AddPlasmaMethods(PyObject* m)
 //
 void cyAvatar::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtBrainModes);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kGeneric,     plAvBrainGeneric::kGeneric);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kLadder,      plAvBrainGeneric::kLadder);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kSit,         plAvBrainGeneric::kSit);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kSitOnGround, plAvBrainGeneric::kSitOnGround);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kEmote,       plAvBrainGeneric::kEmote);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kAFK,         plAvBrainGeneric::kAFK);
-    PYTHON_ENUM_ELEMENT(PtBrainModes, kNonGeneric,  plAvBrainGeneric::kNonGeneric);
-    PYTHON_ENUM_END(m, PtBrainModes);
+    PYTHON_ENUM_START(PtBrainModes)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kGeneric,     plAvBrainGeneric::kGeneric)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kLadder,      plAvBrainGeneric::kLadder)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kSit,         plAvBrainGeneric::kSit)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kSitOnGround, plAvBrainGeneric::kSitOnGround)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kEmote,       plAvBrainGeneric::kEmote)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kAFK,         plAvBrainGeneric::kAFK)
+    PYTHON_ENUM_ELEMENT(PtBrainModes, kNonGeneric,  plAvBrainGeneric::kNonGeneric)
+    PYTHON_ENUM_END(m, PtBrainModes)
 
-    PYTHON_ENUM_START(PtBehaviorTypes);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeStandingJump,     plHBehavior::kBehaviorTypeStandingJump);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalkingJump,      plHBehavior::kBehaviorTypeWalkingJump);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRunningJump,      plHBehavior::kBehaviorTypeRunningJump);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeAnyJump,          plHBehavior::kBehaviorTypeAnyJump);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRunningImpact,    plHBehavior::kBehaviorTypeRunningImpact);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeGroundImpact,     plHBehavior::kBehaviorTypeGroundImpact);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeAnyImpact,        plHBehavior::kBehaviorTypeAnyImpact);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeIdle,             plHBehavior::kBehaviorTypeIdle);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalk,             plHBehavior::kBehaviorTypeWalk);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRun,              plHBehavior::kBehaviorTypeRun);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalkBack,         plHBehavior::kBehaviorTypeWalkBack);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeTurnLeft,         plHBehavior::kBehaviorTypeTurnLeft);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeTurnRight,        plHBehavior::kBehaviorTypeTurnRight);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeSidestepLeft,     plHBehavior::kBehaviorTypeSidestepLeft);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeSidestepRight,    plHBehavior::kBehaviorTypeSidestepRight);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeFall,             plHBehavior::kBehaviorTypeFall);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeMovingTurnLeft,   plHBehavior::kBehaviorTypeMovingTurnLeft);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeMovingTurnRight,  plHBehavior::kBehaviorTypeMovingTurnRight);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeLinkIn,           plHBehavior::kBehaviorTypeLinkIn);
-    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeLinkOut,          plHBehavior::kBehaviorTypeLinkOut);
-    PYTHON_ENUM_END(m, PtBehaviorTypes);
+    PYTHON_ENUM_START(PtBehaviorTypes)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeStandingJump,     plHBehavior::kBehaviorTypeStandingJump)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalkingJump,      plHBehavior::kBehaviorTypeWalkingJump)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRunningJump,      plHBehavior::kBehaviorTypeRunningJump)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeAnyJump,          plHBehavior::kBehaviorTypeAnyJump)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRunningImpact,    plHBehavior::kBehaviorTypeRunningImpact)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeGroundImpact,     plHBehavior::kBehaviorTypeGroundImpact)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeAnyImpact,        plHBehavior::kBehaviorTypeAnyImpact)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeIdle,             plHBehavior::kBehaviorTypeIdle)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalk,             plHBehavior::kBehaviorTypeWalk)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeRun,              plHBehavior::kBehaviorTypeRun)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeWalkBack,         plHBehavior::kBehaviorTypeWalkBack)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeTurnLeft,         plHBehavior::kBehaviorTypeTurnLeft)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeTurnRight,        plHBehavior::kBehaviorTypeTurnRight)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeSidestepLeft,     plHBehavior::kBehaviorTypeSidestepLeft)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeSidestepRight,    plHBehavior::kBehaviorTypeSidestepRight)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeFall,             plHBehavior::kBehaviorTypeFall)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeMovingTurnLeft,   plHBehavior::kBehaviorTypeMovingTurnLeft)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeMovingTurnRight,  plHBehavior::kBehaviorTypeMovingTurnRight)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeLinkIn,           plHBehavior::kBehaviorTypeLinkIn)
+    PYTHON_ENUM_ELEMENT(PtBehaviorTypes, kBehaviorTypeLinkOut,          plHBehavior::kBehaviorTypeLinkOut)
+    PYTHON_ENUM_END(m, PtBehaviorTypes)
 }

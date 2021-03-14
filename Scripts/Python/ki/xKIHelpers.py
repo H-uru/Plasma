@@ -73,10 +73,10 @@ class AutocompleteState:
         names = set()
 
         for name in nameList:
-            nospace = self.space_match.sub('', name.lower())
+            nospace = self.space_match.sub('', name.casefold())
             names.add((nospace, name))
 
-        text_lower = text.lower()
+        text_lower = text.casefold()
         words = [(m.start(), m.end()) for m in self.word_match.finditer(text_lower)]
         words.reverse()
         suffix = ""
@@ -203,8 +203,8 @@ def CMPplayerOnline(playerA, playerB):
     if elPlayerA and elPlayerB:
         online = (elPlayerA.playerIsOnline(), elPlayerB.playerIsOnline())
         if all(online) or not any(online):
-            playerAname = elPlayerA.playerGetName().lower()
-            playerBname = elPlayerB.playerGetName().lower()
+            playerAname = elPlayerA.playerGetName().casefold()
+            playerBname = elPlayerB.playerGetName().casefold()
             return (playerAname > playerBname) - (playerAname < playerBname)
         else:
             return -1 if online[0] else 1

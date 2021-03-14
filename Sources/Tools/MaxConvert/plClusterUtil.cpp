@@ -141,12 +141,9 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
     plLightGrpComponent* liGrp = plLightGrpComponent::GetComp(templ);
     if( liGrp )
     {
-        const hsTArray<plLightInfo*>& lights = liGrp->GetLightInfos();
-        int i;
-        for( i = 0; i < lights.GetCount(); i++ )
-        {
-            fGroup->ISendToSelf(plClusterGroup::kRefLight, lights[i]);
-        }
+        const std::vector<plLightInfo*>& lights = liGrp->GetLightInfos();
+        for (plLightInfo* light : lights)
+            fGroup->ISendToSelf(plClusterGroup::kRefLight, light);
     }
     if( templ->HasFade() )
     {
@@ -169,17 +166,11 @@ void plClusterUtil::ISetupGroupFromTemplate(plMaxNode* templ)
             fGroup->fLOD.Set(minDist, maxDist);
         }
     }
-    hsTArray<plVisRegion*> regions;
+    std::vector<plVisRegion*> regions;
     plVisRegionComponent::CollectRegions(templ, regions);
     plEffVisSetComponent::CollectRegions(templ, regions);
-    if( regions.GetCount() )
-    {
-        int i;
-        for( i = 0; i < regions.GetCount(); i++ )
-        {
-            fGroup->ISendToSelf(plClusterGroup::kRefRegion, regions[i]);
-        }
-    }
+    for (plVisRegion* region : regions)
+        fGroup->ISendToSelf(plClusterGroup::kRefRegion, region);
 }
 
 class sortData
@@ -343,7 +334,7 @@ void plClusterUtil::IAddTemplates(plMaxNode* templNode, plSpanTemplTab& templs)
     // But, here we go descending cheerully into hell.
     // At least with this interface we can bail and do it right later without to much
     // bloodshed.
-    hsTArray<plGeometrySpan*> spanArray;
+    std::vector<plGeometrySpan*> spanArray;
     if( !plMeshConverter::Instance().CreateSpans(templNode, spanArray, false) )
         return;
 
@@ -357,14 +348,13 @@ void plClusterUtil::IAddTemplates(plMaxNode* templNode, plSpanTemplTab& templs)
     plLightMapGen::Instance().Close();
     hsVertexShader::Instance().Close();
 
-    int i;
-    for( i = 0; i < spanArray.GetCount(); i++ )
+    for (plGeometrySpan* span : spanArray)
     {
-        plSpanTemplateB* templ = IAddTemplate(templNode, spanArray[i]);
+        plSpanTemplateB* templ = IAddTemplate(templNode, span);
         templs.Append(1, &templ);
-        templ->fMaterial = spanArray[i]->fMaterial;
+        templ->fMaterial = span->fMaterial;
 
-        delete spanArray[i];
+        delete span;
     }
 }
 

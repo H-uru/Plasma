@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plOccluder_inc
 #define plOccluder_inc
 
+#include <vector>
+
 #include "hsBounds.h"
 #include "hsBitVector.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 
 #include "pnSceneObject/plObjInterface.h"
 
@@ -68,12 +69,12 @@ public:
         kRefVisRegion
     };
 protected:
-    hsTArray<plCullPoly>        fPolys;
+    std::vector<plCullPoly>     fPolys;
 
     plOccluderProxy*            fProxyGen;
 
     hsBitVector                 fVisSet;
-    hsTArray<plVisRegion*>      fVisRegions;
+    std::vector<plVisRegion*>   fVisRegions;
     hsBitVector                 fVisNot;
 
     float                    fPriority;
@@ -84,7 +85,7 @@ protected:
     virtual float            IComputeSurfaceArea();
     virtual void                IComputeBounds();
 
-    virtual hsTArray<plCullPoly>& IGetLocalPolyList() { return fPolys; }
+    virtual std::vector<plCullPoly>& IGetLocalPolyList() { return fPolys; }
 
     void    ISetSceneNode(plKey node) override;
 
@@ -111,9 +112,9 @@ public:
     virtual const hsMatrix44& GetLocalToWorld() const;
     virtual const hsMatrix44& GetWorldToLocal() const;
 
-    virtual void SetPolyList(const hsTArray<plCullPoly>& list);
-    virtual const hsTArray<plCullPoly>& GetWorldPolyList() const { return fPolys; }
-    virtual const hsTArray<plCullPoly>& GetLocalPolyList() const { return fPolys; }
+    virtual void SetPolyList(const std::vector<plCullPoly>& list);
+    virtual const std::vector<plCullPoly>& GetWorldPolyList() const { return fPolys; }
+    virtual const std::vector<plCullPoly>& GetLocalPolyList() const { return fPolys; }
 
     int32_t   GetNumProperties() const override { return kNumProps; }
 
@@ -138,11 +139,11 @@ protected:
 
     hsBounds3Ext            fLocalBounds;
 
-    hsTArray<plCullPoly>    fOrigPolys;
+    std::vector<plCullPoly> fOrigPolys;
 
     void            IComputeBounds() override;
 
-    hsTArray<plCullPoly>& IGetLocalPolyList() override { return fOrigPolys; }
+    std::vector<plCullPoly>& IGetLocalPolyList() override { return fOrigPolys; }
 
 public:
 
@@ -156,9 +157,9 @@ public:
     const hsMatrix44& GetLocalToWorld() const override { return fLocalToWorld; }
     const hsMatrix44& GetWorldToLocal() const override { return fWorldToLocal; }
 
-    void SetPolyList(const hsTArray<plCullPoly>& list) override;
+    void SetPolyList(const std::vector<plCullPoly>& list) override;
 
-    const hsTArray<plCullPoly>& GetLocalPolyList() const override { return fOrigPolys; }
+    const std::vector<plCullPoly>& GetLocalPolyList() const override { return fOrigPolys; }
 
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;

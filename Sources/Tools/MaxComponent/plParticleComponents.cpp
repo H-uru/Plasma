@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
@@ -178,7 +180,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     // Add material and lifespan animated params.
     Mtl *maxMaterial = hsMaterialConverter::Instance().GetBaseMtl(node);
-    hsTArray<hsGMaterial *> matArray;
+    std::vector<hsGMaterial *> matArray;
     hsMaterialConverter::Instance().GetMaterialArray(maxMaterial, node, matArray);
     hsGMaterial* particleMat = matArray[0];
     
@@ -374,18 +376,17 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else if (fUserInput.fGenType == kGenMesh)
     {
-        hsTArray<hsVector3> normals;
-        hsTArray<hsPoint3> pos;
+        std::vector<hsVector3> normals;
+        std::vector<hsPoint3> pos;
         plMeshConverter::Instance().StuffPositionsAndNormals(node, &pos, &normals);
-        sources = normals.GetCount();
+        sources = (uint32_t)normals.size();
         pitchArray = new float[sources];
         yawArray = new float[sources];
         pointArray = new hsPoint3[sources];
-        int i;
-        for (i = 0; i < sources; i++)
+        for (uint32_t i = 0; i < sources; i++)
         {
-            plParticleGenerator::ComputePitchYaw(pitchArray[i], yawArray[i], normals.Get(i));
-            pointArray[i] = pos.Get(i);
+            plParticleGenerator::ComputePitchYaw(pitchArray[i], yawArray[i], normals[i]);
+            pointArray[i] = pos[i];
         }
         plSimpleParticleGenerator *gen = new plSimpleParticleGenerator();
         gen->Init(genLife, partLifeMin, partLifeMax, pps, sources, pointArray, pitchArray, yawArray, angleRange, 
@@ -394,18 +395,17 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else // One per vertex
     {
-        hsTArray<hsVector3> normals;
-        hsTArray<hsPoint3> pos;
+        std::vector<hsVector3> normals;
+        std::vector<hsPoint3> pos;
         plMeshConverter::Instance().StuffPositionsAndNormals(node, &pos, &normals);
-        sources = normals.GetCount();
+        sources = (uint32_t)normals.size();
 
         pointArray = new hsPoint3[sources];
         dirArray = new hsVector3[sources];
-        int i;
-        for (i = 0; i < sources; i++)
+        for (uint32_t i = 0; i < sources; i++)
         {
-            dirArray[i] = normals.Get(i);
-            pointArray[i] = pos.Get(i);
+            dirArray[i] = normals[i];
+            pointArray[i] = pos[i];
         }
 
         plOneTimeParticleGenerator *gen = new plOneTimeParticleGenerator();
@@ -506,12 +506,9 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 void plParticleCoreComponent::IHandleLights(plLightGrpComponent* liGrp, plParticleSystem* sys)
 {
-    const hsTArray<plLightInfo*>& liInfo = liGrp->GetLightInfos();
-    int i;
-    for( i = 0; i < liInfo.GetCount(); i++ )
-    {
-        sys->AddLight(liInfo[i]->GetKey());
-    }
+    const std::vector<plLightInfo*>& liInfo = liGrp->GetLightInfos();
+    for (plLightInfo* light : liInfo)
+        sys->AddLight(light->GetKey());
 }
 
 bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)

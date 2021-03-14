@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGUIComponents_h
 #define _plGUIComponents_h
 
+#include <vector>
+
 #include "plGUICompClassIDs.h"
 
 
@@ -137,8 +139,8 @@ class plGUIControlBase : public plComponent
         // we need to keep track of which nodes we get PreConverted() on and the controls that
         // get created for each. Then, on Convert(), we look up the node in our list and grab
         // the right control. A pain, but what are you going to do?
-        hsTArray<plMaxNode *>       fTargetNodes;
-        hsTArray<pfGUIControlMod *> fTargetControls;
+        std::vector<plMaxNode *>       fTargetNodes;
+        std::vector<pfGUIControlMod *> fTargetControls;
 
     public:
         plGUIControlBase() {}

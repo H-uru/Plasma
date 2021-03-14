@@ -138,10 +138,9 @@ IOResult plLightGrpComponent::Load(ILoad* iLoad)
 
 bool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMsg)
 {
-    int i;
-    for( i = 0; i < fLightInfos.GetCount(); i++ )
+    for (plLightInfo* lightInfo : fLightInfos)
     {
-        if( !fLightInfos[i] )
+        if (!lightInfo)
             continue;
 
         const plDrawInterface* di = pNode->GetSceneObject()->GetDrawInterface();
@@ -153,7 +152,7 @@ bool plLightGrpComponent::IAddLightsToSpans(plMaxNode* pNode, plErrorMsg* pErrMs
             {
                 uint32_t diIndex = di->GetDrawableMeshIndex(iDraw);
 
-                ISendItOff(fLightInfos[i], drawable, diIndex);
+                ISendItOff(lightInfo, drawable, diIndex);
             }
         }
     }
@@ -196,13 +195,11 @@ bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawa
 
 bool plLightGrpComponent::IGetLightInfos()
 {
-    if( !fLightInfos.GetCount() )
+    if (fLightInfos.empty())
     {
         // Already checked that lightnodes are cool. just get the light interfaces.
-        int i;
-        for( i = 0; i < fLightNodes.GetCount(); i++ )
+        for (plMaxNode* lightNode : fLightNodes)
         {
-            plMaxNode* lightNode = fLightNodes[i];
             plSceneObject* lightSO = lightNode->GetSceneObject();
             if( !lightSO )
                 continue;
@@ -214,13 +211,13 @@ bool plLightGrpComponent::IGetLightInfos()
             liInfo->SetProperty(plLightInfo::kLPHasIncludes, true);
             if( fCompPB->GetInt(kIncludeChars) )
                 liInfo->SetProperty(plLightInfo::kLPIncludesChars, true);
-            fLightInfos.Append(liInfo);
+            fLightInfos.emplace_back(liInfo);
         }
     }
-    return fValid = (fLightInfos.GetCount() > 0);
+    return fValid = !fLightInfos.empty();
 }
 
-const hsTArray<plLightInfo*>& plLightGrpComponent::GetLightInfos()
+const std::vector<plLightInfo*>& plLightGrpComponent::GetLightInfos()
 {
     IGetLightInfos();
     return fLightInfos;
@@ -265,8 +262,8 @@ bool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 bool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg)
 {
     fValid = false;
-    fLightInfos.Reset();
-    fLightNodes.Reset();
+    fLightInfos.clear();
+    fLightNodes.clear();
 
     int i;
     for( i = 0; i < NumTargets(); i++ )
@@ -285,13 +282,13 @@ bool plLightGrpComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *pErrMsg
                     || (cid == RTDIR_LIGHT_CLASSID)
                     || (cid == RTPDIR_LIGHT_CLASSID) )
                 {
-                    fLightNodes.Append((plMaxNode*)liNode);
+                    fLightNodes.emplace_back((plMaxNode*)liNode);
                 }
             }
         }
 
     }
-    if( !fLightNodes.GetCount() )
+    if (fLightNodes.empty())
         return true;
 
     fValid = true;

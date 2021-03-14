@@ -639,7 +639,7 @@ plCompoundController *hsControlConverter::MakeTransformController(Control *contr
 
         if (cid == Class_ID(LOOKAT_CONTROL_CLASS_ID,0))
         {
-            hsTArray<hsG3DSMaxKeyFrame> kfArray;
+            std::vector<hsG3DSMaxKeyFrame> kfArray;
             IAddPartsKeys(control, &kfArray, node);
             bool ignoreFOV = false;
             for (int i = 0; i < node->NumAttachedComponents(); i++)
@@ -955,8 +955,8 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
 // Create a hsKey and store the nodes LTM in it.
 // Recurses along all subcontrollers.
 //
-int hsControlConverter::IAddPartsKeys(Control* control, 
-                  hsTArray <hsG3DSMaxKeyFrame>* kfArray, 
+void hsControlConverter::IAddPartsKeys(Control* control,
+                  std::vector<hsG3DSMaxKeyFrame>* kfArray,
                   plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::IAddPartsKeys");
@@ -969,17 +969,15 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         
         if (num<2)
         {
-            return 0;
+            return;
         }
 
         if(!control->IsKeyable())
         {
             fErrorMsg->Set(true, "Add Parts Keys Creation Error", "Control is not keyable").Show();
             fErrorMsg->Set();
-            return 0;
+            return;
         }
-
-        int i,j;
 
         //
         // Traverse all keys of controller
@@ -987,7 +985,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         ikey_ptr key = IAllocKey(ikeys->GetKeySize());
         bool mb=false;
         plMaxNode* xformParent = GetXformParent(node);
-        for(i = startIdx; i <= endIdx; i++)
+        for (int32_t i = startIdx; i <= endIdx; i++)
         {
             // Get key
             ikeys->GetKey(i, key.get());
@@ -996,17 +994,9 @@ int hsControlConverter::IAddPartsKeys(Control* control,
             hsAssert(frameNum <= hsKeyFrame::kMaxFrameNumber, "Anim is too long.");
 
             // Check if we already have a hsG3dsMaxKey at this frameNum
-            int found=FALSE;
-            for(j=0; j<kfArray->GetCount(); j++)
-            {
-                hsG3DSMaxKeyFrame* k = &(*kfArray)[j];
-                if (k->fFrame == frameNum)
-                {
-                    found = TRUE;
-                    break;
-                }
-            }
-            if (found==TRUE)
+            auto idx = std::find_if(kfArray->cbegin(), kfArray->cend(),
+                                    [frameNum](const hsG3DSMaxKeyFrame& k) { return k.fFrame == frameNum; });
+            if (idx != kfArray->cend())
                 // Skip this key, there's one already there
                 continue;
 
@@ -1026,7 +1016,7 @@ int hsControlConverter::IAddPartsKeys(Control* control,
             hKey.fFrame = frameNum;
 
             // Add key to list
-            kfArray->Append(hKey);
+            kfArray->emplace_back(hKey);
         }
     }
     else
@@ -1036,7 +1026,6 @@ int hsControlConverter::IAddPartsKeys(Control* control,
             IAddPartsKeys((Control *)control->SubAnim(i), kfArray, node);
     }
 
-    return kfArray->GetCount();
     hsGuardEnd;
 }
 
@@ -2049,7 +2038,7 @@ bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Ani
 #include "pfCamera/plCameraModifier.h"
 #include "pnSceneObject/plSceneObject.h"
 
-void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG3DSMaxKeyFrame>* kfArray)
+void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<hsG3DSMaxKeyFrame>* kfArray)
 {
     // grab the FOV settings at each keyframe here
     // create callback messages for the animation to send to the camera
@@ -2095,9 +2084,9 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
     GenCamera* theCam;
     hsTArray<float> fovW;
     hsTArray<float> fovH;
-    for (int i = 0; i < kfArray->Count(); i++)
+    for (const hsG3DSMaxKeyFrame& k : *kfArray)
     {
-        TimeValue t = TimeValue(GetTicksPerFrame() * (kfArray[0][i].fFrame));
+        TimeValue t = TimeValue(GetTicksPerFrame() * (k.fFrame));
         theCam = (GenCamera *) obj->ConvertToType(t, Class_ID(LOOKAT_CAM_CLASS_ID, 0));
         float FOVvalue = hsRadiansToDegrees(theCam->GetFOV(t));
         int FOVType = theCam->GetFOVType();
@@ -2119,25 +2108,23 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         }
         fovW.Append(wDeg);
         fovH.Append(hDeg);
-            
     }
-    for (int i = 0; i < kfArray->Count(); i++)
+    for (size_t i = 0; i < kfArray->size(); i++)
     {
-        
         plCameraMsg* pFOVMsg = new plCameraMsg;
         plCameraConfig* pCfg = pFOVMsg->GetConfig();
 
-        if (i == kfArray->Count() - 1)
+        if (i == kfArray->size() - 1)
         {
             pCfg->fFOVh = fovH[0];
             pCfg->fFOVw = fovW[0];
-            pCfg->fAccel = kfArray[0][0].fFrame / MAX_FRAMES_PER_SEC;
+            pCfg->fAccel = (*kfArray)[0].fFrame / MAX_FRAMES_PER_SEC;
         }
         else
         {
             pCfg->fFOVh = fovH[i + 1];
             pCfg->fFOVw = fovW[i + 1];
-            pCfg->fAccel = kfArray[0][i + 1].fFrame / MAX_FRAMES_PER_SEC;
+            pCfg->fAccel = (*kfArray)[i + 1].fFrame / MAX_FRAMES_PER_SEC;
         }
         
         
@@ -2146,7 +2133,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         
         plEventCallbackMsg* pCall = new plEventCallbackMsg;
         pCall->fEvent = kTime;
-        pCall->fEventTime = kfArray[0][i].fFrame / MAX_FRAMES_PER_SEC;
+        pCall->fEventTime = (*kfArray)[i].fFrame / MAX_FRAMES_PER_SEC;
         pCall->fIndex = i;
         pCall->AddReceiver(pCamMod->GetKey());
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
@@ -2154,7 +2141,7 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, hsTArray <hsG
         pMsg->SetSender(pAnim->GetModKey(node));
         pMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
         pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
-        pMsg->fTime = kfArray[0][i].fFrame / MAX_FRAMES_PER_SEC;
+        pMsg->fTime = (*kfArray)[i].fFrame / MAX_FRAMES_PER_SEC;
         pMsg->AddCallback(pCall);
         hsRefCnt_SafeUnRef(pCall);
         plConvert::Instance().AddMessageToQueue(pFOVMsg);

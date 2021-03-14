@@ -53,7 +53,7 @@ void plClothingMsg::Read(hsStream* stream, hsResMgr* mgr)
     fColor.Read(stream);
     fLayer = stream->ReadByte();
     fDelta = stream->ReadByte();
-    fWeight = stream->ReadLEScalar();
+    fWeight = stream->ReadLEFloat();
 }
 
 void plClothingMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -67,7 +67,7 @@ void plClothingMsg::Write(hsStream* stream, hsResMgr* mgr)
     fColor.Write(stream);
     stream->WriteByte(fLayer);
     stream->WriteByte(fDelta);
-    stream->WriteLEScalar(fWeight);
+    stream->WriteLEFloat(fWeight);
 }
 
 enum ClothingFlags

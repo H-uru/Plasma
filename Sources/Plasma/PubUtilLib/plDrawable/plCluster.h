@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCluster_inc
 #define plCluster_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include "plClusterGroup.h"
 #include "plSpanInstance.h"
@@ -68,13 +68,13 @@ public:
 protected:
     plClusterGroup*             fGroup;
 
-    hsTArray<plSpanInstance*>   fInsts;
+    std::vector<plSpanInstance*> fInsts;
 
     plSpanEncoding              fEncoding;
 
     friend class plClusterUtil;
-    plSpanInstance*             IGetInst(int i) const { return fInsts[i]; }
-    void                        IAddInst(plSpanInstance* inst) { fInsts.Append(inst); }
+    plSpanInstance*             IGetInst(size_t i) const { return fInsts[i]; }
+    void                        IAddInst(plSpanInstance* inst) { fInsts.emplace_back(inst); }
 public:
 
     plCluster();
@@ -83,8 +83,8 @@ public:
     void Read(hsStream* s, plClusterGroup* grp);
     void Write(hsStream* s) const;
 
-    uint32_t NumInsts() const { return fInsts.GetCount(); }
-    const plSpanInstance& GetInst(int i) const { return *fInsts[i]; }
+    size_t NumInsts() const { return fInsts.size(); }
+    const plSpanInstance& GetInst(size_t i) const { return *fInsts[i]; }
 
     void UnPack(uint8_t* vDst, uint16_t* iDst, int idxOffset, hsBounds3Ext& wBnd) const;
 
@@ -102,7 +102,7 @@ public:
     const hsBitVector& GetVisSet() const { return fGroup->GetVisSet(); }
     const hsBitVector& GetVisNot() const { return fGroup->GetVisNot(); }
 
-    const hsTArray<plLightInfo*>& GetLights() const { return fGroup->GetLights(); }
+    const std::vector<plLightInfo*>& GetLights() const { return fGroup->GetLights(); }
 
     const plLODDist& GetLOD() const { return fGroup->GetLOD(); }
 };

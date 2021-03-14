@@ -9,7 +9,7 @@ set(pfCCR_HEADERS
     plCCRVault.h
 )
 
-add_library(pfCCR STATIC ${pfCCR_SOURCES} ${pfCCR_HEADERS})
+plasma_library(pfCCR SOURCES ${pfCCR_SOURCES} ${pfCCR_HEADERS})
 target_link_libraries(
     pfCCR
     PUBLIC

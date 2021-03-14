@@ -93,7 +93,7 @@ public:
     plCreatable* GetItem( uint16_t id, bool unManageItem=false ) const;
     void    RemoveItem( uint16_t id, bool unManageItem=false );
     bool    ItemExists( uint16_t id ) const;
-    int     GetNumItems() const { return fItems.size();}
+    size_t  GetNumItems() const { return fItems.size();}
     // helpers for typed arguments
     void    AddString( uint16_t id, const char * value );
     void    AddString( uint16_t id, std::string & value );

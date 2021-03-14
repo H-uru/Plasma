@@ -51,10 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cmath>
 
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
-#endif
-
 static hsMatrix44 myIdent = hsMatrix44().Reset();
 const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 
@@ -100,7 +96,7 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
     rotate = hsQuat::QuatFromMatrix44(*this);
 }
 
-static hsMatrix44 mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
+hsMatrix44 hsMatrix44::mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
 
@@ -138,73 +134,12 @@ static hsMatrix44 mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
     return c;
 }
 
-#ifdef HS_SSE3
-#   define MULTBEGIN(i) \
-        xmm[0]   = _mm_loadu_ps(a.fMap[i]);
-#   define MULTCELL(i, j) \
-        xmm[1]   = _mm_set_ps(b.fMap[3][j], b.fMap[2][j], b.fMap[1][j], b.fMap[0][j]); \
-        xmm[j+2] = _mm_mul_ps(xmm[0], xmm[1]);
-#   define MULTFINISH(i) \
-        xmm[6] = _mm_hadd_ps(xmm[2], xmm[3]); \
-        xmm[7] = _mm_hadd_ps(xmm[4], xmm[5]); \
-        xmm[1] = _mm_hadd_ps(xmm[6], xmm[7]); \
-        _mm_storeu_ps(c.fMap[i], xmm[1]);
-#endif  // HS_SSE3
-
-static hsMatrix44 mat_mult_sse3(const hsMatrix44 &a, const hsMatrix44 &b)
-{
-    hsMatrix44 c;
-#ifdef HS_SSE3
-    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
-    {
-        c.Reset();
-        return c;
-    }
-
-    if( a.fFlags & hsMatrix44::kIsIdent )
-        return b;
-    if( b.fFlags & hsMatrix44::kIsIdent )
-        return a;
-
-    __m128 xmm[8];
-
-    MULTBEGIN(0);
-    MULTCELL(0, 0);
-    MULTCELL(0, 1);
-    MULTCELL(0, 2);
-    MULTCELL(0, 3);
-    MULTFINISH(0);
-
-    MULTBEGIN(1);
-    MULTCELL(1, 0);
-    MULTCELL(1, 1);
-    MULTCELL(1, 2);
-    MULTCELL(1, 3);
-    MULTFINISH(1);
-
-    MULTBEGIN(2);
-    MULTCELL(2, 0);
-    MULTCELL(2, 1);
-    MULTCELL(2, 2);
-    MULTCELL(2, 3);
-    MULTFINISH(2);
-
-    MULTBEGIN(3);
-    MULTCELL(3, 0);
-    MULTCELL(3, 1);
-    MULTCELL(3, 2);
-    MULTCELL(3, 3);
-    MULTFINISH(3);
-#endif  // HS_SSE3
-    return c;
-}
-
 // CPU-optimized functions requiring dispatch
 hsCpuFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult {
-    &mat_mult_fpu,
+    &hsMatrix44::mult_fpu,
     nullptr,            // SSE1
     nullptr,            // SSE2
-    &mat_mult_sse3
+    &hsMatrix44::mult_sse3
 };
 
 hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const

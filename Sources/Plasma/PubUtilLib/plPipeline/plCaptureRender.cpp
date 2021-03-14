@@ -209,33 +209,26 @@ void plCaptureRender::Update()
 
 #else // MF_FRONTBUFF_CAPTURE
 
-hsTArray<plCaptureRender::CapInfo>  plCaptureRender::fCapReqs;
+std::vector<plCaptureRender::CapInfo> plCaptureRender::fCapReqs;
 
 void plCaptureRender::Update(plPipeline* pipe)
 {
-    int i;
-
-    for( i = 0; i < fCapReqs.GetCount(); i++ )
+    for (const CapInfo& capInfo : fCapReqs)
     {
-        plMipmap* mipmap = new plMipmap(fCapReqs[i].fWidth, fCapReqs[i].fHeight, plMipmap::kARGB32Config, 1);
+        plMipmap* mipmap = new plMipmap(capInfo.fWidth, capInfo.fHeight, plMipmap::kARGB32Config, 1);
 
-        pipe->CaptureScreen(mipmap, false, fCapReqs[i].fWidth, fCapReqs[i].fHeight);
+        pipe->CaptureScreen(mipmap, false, capInfo.fWidth, capInfo.fHeight);
 
-        plCaptureRenderMsg* msg = new plCaptureRenderMsg(fCapReqs[i].fAck, mipmap);
+        plCaptureRenderMsg* msg = new plCaptureRenderMsg(capInfo.fAck, mipmap);
         msg->Send();
     }
 
-    fCapReqs.Reset();
+    fCapReqs.clear();
 }
 
 bool plCaptureRender::Capture(const plKey& ack, uint16_t width, uint16_t height)
 {
-    CapInfo capInfo;
-    capInfo.fAck = ack;
-    capInfo.fWidth = width;
-    capInfo.fHeight = height;
-
-    fCapReqs.Append(capInfo);
+    fCapReqs.emplace_back(ack, width, height);
 
     return true;
 }

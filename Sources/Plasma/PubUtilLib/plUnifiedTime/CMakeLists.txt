@@ -10,7 +10,7 @@ set(plUnifiedTime_HEADERS
     plUnifiedTime.h
 )
 
-add_library(plUnifiedTime STATIC ${plUnifiedTime_SOURCES} ${plUnifiedTime_HEADERS})
+plasma_library(plUnifiedTime SOURCES ${plUnifiedTime_SOURCES} ${plUnifiedTime_HEADERS})
 target_link_libraries(
     plUnifiedTime
     PUBLIC

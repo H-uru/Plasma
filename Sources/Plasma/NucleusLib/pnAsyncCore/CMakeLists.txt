@@ -13,7 +13,7 @@ set(pnAsyncCore_PRIVATE
     Private/pnAcTimer.h
 )
 
-add_library(pnAsyncCore STATIC ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS})
+plasma_library(pnAsyncCore SOURCES ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS})
 
 target_include_directories(pnAsyncCore PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 target_link_libraries(

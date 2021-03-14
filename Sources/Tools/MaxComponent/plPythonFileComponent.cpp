@@ -148,7 +148,7 @@ public:
 
 protected:
     PythonKeys      fModKeys;
-    hsTArray<plKey> fOthersKeys;
+    std::vector<plKey> fOthersKeys;
 
 public:
     plPythonFileComponent();
@@ -157,7 +157,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg) override;
 
-    void AddReceiverKey(plKey key, plMaxNode* node=nullptr) override { fOthersKeys.Append(key); }
+    void AddReceiverKey(plKey key, plMaxNode* node=nullptr) override { fOthersKeys.emplace_back(std::move(key)); }
 
     // Returns false if the Python file for this component wasn't loaded, and clears
     // the data in the PB to prevent Max from crashing.
@@ -175,9 +175,9 @@ public:
     virtual PythonKeys& GetKeys() { return fModKeys; }
 
     bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg) override
-    { 
+    {
         fModKeys.clear();
-        fOthersKeys.Reset();
+        fOthersKeys.clear();
 
         return plComponent::DeInit(node, pErrMsg);
     }
@@ -419,13 +419,12 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plPythonFileMod *mod = plPythonFileMod::ConvertNoRef(modKey->GetObjectPtr());
 
     // add in all the receivers that want to be notified from the Python coded script
-    int j;
-    for (j = 0; j < fOthersKeys.Count(); j++)
+    for (const plKey& key : fOthersKeys)
     {
-        mod->AddToNotifyList(fOthersKeys[j]);
+        mod->AddToNotifyList(key);
     }
     // remove all the Keys we know about to be re-built on the next convert
-    fOthersKeys.Reset();
+    fOthersKeys.clear();
 
     // set the name of the source file
     mod->SetSourceFile(block->GetName());

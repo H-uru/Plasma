@@ -8,7 +8,7 @@ set(plNetTransport_HEADERS
     plNetTransportMember.h
 )
 
-add_library(plNetTransport STATIC ${plNetTransport_SOURCES} ${plNetTransport_HEADERS})
+plasma_library(plNetTransport SOURCES ${plNetTransport_SOURCES} ${plNetTransport_HEADERS})
 target_link_libraries(
     plNetTransport
     PUBLIC

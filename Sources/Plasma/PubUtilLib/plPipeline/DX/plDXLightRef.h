@@ -83,7 +83,7 @@ class plDXLightRef : public plDXDeviceRef
         { }
 
         virtual ~plDXLightRef();
-        void    Release();
+        void    Release() override;
 
         void    UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *settings );
 };

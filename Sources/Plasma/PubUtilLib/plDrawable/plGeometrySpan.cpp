@@ -521,8 +521,8 @@ void    plGeometrySpan::Read( hsStream *stream )
     fMaxBoneIdx = stream->ReadLE16();
     fPenBoneIdx = stream->ReadLE16();
 
-    fMinDist = stream->ReadLEScalar();
-    fMaxDist = stream->ReadLEScalar();
+    fMinDist = stream->ReadLEFloat();
+    fMaxDist = stream->ReadLEFloat();
 
     fFormat = stream->ReadByte();
     fProps = stream->ReadLE32();
@@ -531,13 +531,13 @@ void    plGeometrySpan::Read( hsStream *stream )
 
     // FIXME MAJOR VERSION
     // remove these two lines. No more patches.
-    stream->ReadLE32();
-    stream->ReadByte();
+    (void)stream->ReadLE32();
+    (void)stream->ReadByte();
 
     fDecalLevel = stream->ReadLE32();
 
     if( fProps & kWaterHeight )
-        fWaterHeight = stream->ReadLEScalar();
+        fWaterHeight = stream->ReadLEFloat();
 
     if( fNumVerts > 0 )
     {
@@ -613,8 +613,8 @@ void    plGeometrySpan::Write( hsStream *stream )
     stream->WriteLE16(fMaxBoneIdx);
     stream->WriteLE16((uint16_t)fPenBoneIdx);
 
-    stream->WriteLEScalar(fMinDist);
-    stream->WriteLEScalar(fMaxDist);
+    stream->WriteLEFloat(fMinDist);
+    stream->WriteLEFloat(fMaxDist);
 
     stream->WriteByte( fFormat );
     stream->WriteLE32( fProps );
@@ -624,12 +624,12 @@ void    plGeometrySpan::Write( hsStream *stream )
     // FIXME MAJOR VERSION
     // Remove these two lines.
     stream->WriteLE32(0);
-    stream->WriteByte(0);
+    stream->WriteByte(uint8_t(0));
 
     stream->WriteLE32( fDecalLevel );
 
     if( fProps & kWaterHeight )
-        stream->WriteLEScalar(fWaterHeight);
+        stream->WriteLEFloat(fWaterHeight);
 
     if( fNumVerts > 0 )
     {

@@ -43,9 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNode_inc
 #define plMaxNode_inc
 
+#include <map>
+#include <vector>
+
 #include "plMaxNodeBase.h"
 #include <iparamb2.h>
-#include <map>
 #include "hsTemplates.h"
 
 class plAGAnim;
@@ -209,20 +211,20 @@ protected:
     plLightInfo*    IMakeLight(plErrorMsg *pErrMsg, plConvertSettings *settings);
 
     plSceneNode*    IGetDrawableSceneNode(plErrorMsg *pErrMsg);
-    void            IAssignSpansToDrawables( hsTArray<plGeometrySpan *> &spanArray, plDrawInterface *di,
+    void            IAssignSpansToDrawables(std::vector<plGeometrySpan *> &spanArray, plDrawInterface *di,
                                             plErrorMsg *pErrMsg, plConvertSettings *settings );
-    void            IAssignSpan( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray, uint32_t &index,
-                                 hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                 plErrorMsg *pErrMsg, plConvertSettings *settings );
-    void            ISetupBones( plDrawableSpans *drawable, hsTArray<plGeometrySpan *> &spanArray,
-                                 hsMatrix44 &l2w, hsMatrix44 &w2l,
-                                 plErrorMsg *pErrMsg, plConvertSettings *settings );
+    void            IAssignSpan(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray, uint32_t &index,
+                                hsMatrix44 &l2w, hsMatrix44 &w2l,
+                                plErrorMsg *pErrMsg, plConvertSettings *settings);
+    void            ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpan *> &spanArray,
+                                hsMatrix44 &l2w, hsMatrix44 &w2l,
+                                plErrorMsg *pErrMsg, plConvertSettings *settings);
     bool            IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings);
 
     void            IWipeBranchDrawable(bool b);
 
     uint32_t          IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, bool beMoreAccurate = false );
-    bool            IMakeInstanceSpans( plMaxNode *node, hsTArray<plGeometrySpan *> &spanArray,
+    bool            IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings );
     bool            IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate );
 

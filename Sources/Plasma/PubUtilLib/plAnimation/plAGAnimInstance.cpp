@@ -212,7 +212,7 @@ void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* a
 
     for (size_t i = 0; i < anim->NumStopPoints(); i++)
     {
-        atc->GetStopPoints().Append(anim->GetStopPoint(i));
+        atc->GetStopPoints().emplace_back(anim->GetStopPoint(i));
     }
 
     atc->SetBegin(anim->GetStart());

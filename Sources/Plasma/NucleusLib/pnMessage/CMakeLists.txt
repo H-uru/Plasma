@@ -63,7 +63,11 @@ set(pnMessage_SOURCES
     plWarpMsg.cpp
 )
 
-add_library(pnMessage STATIC ${pnMessage_HEADERS} ${pnMessage_SOURCES})
+plasma_library(pnMessage
+    SOURCES ${pnMessage_HEADERS} ${pnMessage_SOURCES}
+    PRECOMPILED_HEADERS Pch.h
+    UNITY_BUILD
+)
 
 target_include_directories(pnMessage PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 target_link_libraries(
@@ -77,8 +81,6 @@ target_link_libraries(
     PRIVATE
         plSDL # :(
 )
-
-plasma_optimize_target(pnMessage PRECOMPILED_HEADERS Pch.h UNITY_BUILD)
 
 source_group("Header Files" FILES ${pnMessage_HEADERS})
 source_group("Source Files" FILES ${pnMessage_SOURCES})

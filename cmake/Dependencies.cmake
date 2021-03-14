@@ -50,6 +50,12 @@ set_package_properties(
     TYPE RECOMMENDED
 )
 set_package_properties(
+    libwebm PROPERTIES
+    URL "https://github.com/webmproject/libwebm"
+    DESCRIPTION "Library for parsing WebM video files"
+    TYPE RECOMMENDED
+)
+set_package_properties(
     Ogg PROPERTIES
     URL "https://xiph.org/ogg/"
     DESCRIPTION "Ogg multimedia container library for various audio and video codecs"

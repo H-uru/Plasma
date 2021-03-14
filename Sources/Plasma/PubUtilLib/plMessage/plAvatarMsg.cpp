@@ -232,7 +232,7 @@ void plAvSeekMsg::Read(hsStream *stream, hsResMgr *mgr)
         fTargetLookAt.Read(stream);
     }
 
-    fDuration = stream->ReadLEScalar();
+    fDuration = stream->ReadLEFloat();
     fSmartSeek = stream->ReadBool();
     fAnimName = stream->ReadSafeString();
     fAlignType = static_cast<plAvAlignment>(stream->ReadLE16());
@@ -253,7 +253,7 @@ void plAvSeekMsg::Write(hsStream *stream, hsResMgr *mgr)
         fTargetLookAt.Write(stream);
     }
 
-    stream->WriteLEScalar(fDuration);
+    stream->WriteLEFloat(fDuration);
     stream->WriteBool(fSmartSeek);
     stream->WriteSafeString(fAnimName);
     stream->WriteLE16(static_cast<uint16_t>(fAlignType));
@@ -392,13 +392,13 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
 void plAvBrainGenericMsg::Write(hsStream *stream, hsResMgr *mgr)
 {
     plAvatarMsg::Write(stream, mgr);
-    stream->WriteLE32(fType);
+    stream->WriteLE32((uint32_t)fType);
     stream->WriteLE32(fWhichStage);
     stream->WriteBool(fSetTime);
-    stream->WriteLEScalar(fNewTime);
+    stream->WriteLEFloat(fNewTime);
     stream->WriteBool(fSetDirection);
     stream->WriteBool(fNewDirection);
-    stream->WriteLEScalar(fTransitionTime);
+    stream->WriteLEFloat(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::Read(hsStream *stream, hsResMgr *mgr)
@@ -407,10 +407,10 @@ void plAvBrainGenericMsg::Read(hsStream *stream, hsResMgr *mgr)
     fType = static_cast<plAvBrainGenericMsg::Type>(stream->ReadLE32());
     fWhichStage = stream->ReadLE32();
     fSetTime = stream->ReadBool();
-    fNewTime = stream->ReadLEScalar();
+    fNewTime = stream->ReadLEFloat();
     fSetDirection = stream->ReadBool();
     fNewDirection = stream->ReadBool();
-    fTransitionTime = stream->ReadLEScalar();
+    fTransitionTime = stream->ReadLEFloat();
 }
 
 enum AvBrainGenericFlags
@@ -439,19 +439,19 @@ void plAvBrainGenericMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Write(s);
 
     // kAvBrainGenericType
-    s->WriteLE32(fType);
+    s->WriteLE32((uint32_t)fType);
     // kAvBrainGenericWhich 
     s->WriteLE32(fWhichStage);
     // kAvBrainGenericSetTime   
     s->WriteBool(fSetTime);
     // kAvBrainGenericNewTime   
-    s->WriteLEScalar(fNewTime);
+    s->WriteLEFloat(fNewTime);
     // kAvBrainGenericSetDir    
     s->WriteBool(fSetDirection);
     // kAvBrainGenericNewDir    
     s->WriteBool(fNewDirection);
     // kAvBrainGenericTransTime 
-    s->WriteLEScalar(fTransitionTime);
+    s->WriteLEFloat(fTransitionTime);
 }
 
 void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
@@ -468,13 +468,13 @@ void plAvBrainGenericMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kAvBrainGenericSetTime))
         fSetTime = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericNewTime))
-        fNewTime = s->ReadLEScalar();
+        fNewTime = s->ReadLEFloat();
     if (contentFlags.IsBitSet(kAvBrainGenericSetDir))
         fSetDirection = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericNewDir))
         fNewDirection = s->ReadBool();
     if (contentFlags.IsBitSet(kAvBrainGenericTransTime))
-        fTransitionTime = s->ReadLEScalar();
+        fTransitionTime = s->ReadLEFloat();
 }
 
 ///////////////////

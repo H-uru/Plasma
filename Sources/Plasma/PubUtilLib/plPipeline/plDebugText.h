@@ -48,9 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDebugText_h
 #define _plDebugText_h
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "hsColorRGBA.h"
-#include "hsTemplates.h"
 
 
 //// plDebugText Class Definition ////////////////////////////////////////////
@@ -177,8 +178,8 @@ class   plDebugTextManager
             ~plDebugTextNode() { }
         };
 
-        hsTArray<plDebugTextNode>   fList;
-        hsTArray<plDebugTextNode>   fDrawOnTopList;
+        std::vector<plDebugTextNode> fList;
+        std::vector<plDebugTextNode> fDrawOnTopList;
 
         plTextFont                  *fFont;
         uint32_t                      fSWidth, fSHeight;

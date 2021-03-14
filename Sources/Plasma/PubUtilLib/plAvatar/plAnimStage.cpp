@@ -750,10 +750,10 @@ void plAnimStage::Write(hsStream *stream, hsResMgr *mgr)
 {
     stream->WriteSafeString(fAnimName);
     stream->WriteByte(fNotify);
-    stream->WriteLE32(fForwardType);
-    stream->WriteLE32(fBackType);
-    stream->WriteLE32(fAdvanceType);
-    stream->WriteLE32(fRegressType);
+    stream->WriteLE32((uint32_t)fForwardType);
+    stream->WriteLE32((uint32_t)fBackType);
+    stream->WriteLE32((uint32_t)fAdvanceType);
+    stream->WriteLE32((uint32_t)fRegressType);
     stream->WriteLE32(fLoops);
 
     stream->WriteBool(fDoAdvanceTo);
@@ -766,8 +766,8 @@ void plAnimStage::Write(hsStream *stream, hsResMgr *mgr)
 // SAVEAUX
 void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
 {
-    stream->WriteLEScalar(fLocalTime);
-    stream->WriteLEScalar(fLength);
+    stream->WriteLEFloat(fLocalTime);
+    stream->WriteLEFloat(fLength);
     stream->WriteLE32(fCurLoop);
     stream->WriteBool(fAttached);
     // no ephemeral stage at the moment
@@ -776,8 +776,8 @@ void plAnimStage::SaveAux(hsStream *stream, hsResMgr *mgr)
 // LOADAUX
 void plAnimStage::LoadAux(hsStream *stream, hsResMgr *mgr, double time)
 {
-    fLocalTime = stream->ReadLEScalar();
-    fLength = stream->ReadLEScalar();
+    fLocalTime = stream->ReadLEFloat();
+    fLength = stream->ReadLEFloat();
     fCurLoop = stream->ReadLE32();
     fAttached = stream->ReadBool();
 }

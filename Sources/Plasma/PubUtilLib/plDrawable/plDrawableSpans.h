@@ -98,7 +98,7 @@ public:
         kMatrixOnly             = 0x1,
         kDontTransformSpans     = 0x2       // Only used for particle systems right now
     };
-    uint8_t               fFlags;
+    uint32_t              fFlags;
     hsTArray<uint32_t>    fIndices;
 
     bool        IsMatrixOnly() const { return 0 != (fFlags & kMatrixOnly); }
@@ -343,7 +343,7 @@ class plDrawableSpans : public plDrawable
         void            UnPackCluster(plClusterGroup* cluster);
 
         /// EXPORT-ONLY FUNCTIONS
-        virtual uint32_t  AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index = (uint32_t)-1);
+        virtual uint32_t  AddDISpans(std::vector<plGeometrySpan *> &spans, uint32_t index = (uint32_t)-1);
         virtual plDISpanIndex&  GetDISpans( uint32_t index ) const;
 
         // Data Access functions
@@ -366,7 +366,9 @@ class plDrawableSpans : public plDrawable
 
         /// DYNAMIC FUNCTIONS
         virtual void    RemoveDISpans( uint32_t index );
-        virtual uint32_t  AppendDISpans( hsTArray<plGeometrySpan *> &spans, uint32_t index = (uint32_t)-1, bool clearSpansAfterAdd = true, bool doNotAddToSource = false, bool addToFront = false, int lod = 0 );
+        virtual uint32_t  AppendDISpans(std::vector<plGeometrySpan *> &spans, uint32_t index = (uint32_t)-1,
+                                        bool clearSpansAfterAdd = true, bool doNotAddToSource = false,
+                                        bool addToFront = false, int lod = 0);
         virtual uint32_t  RefreshDISpans( uint32_t diIndex );
         virtual uint32_t  RefreshSpan( uint32_t srcSpanIndex );
         virtual void    RemoveDIMatrixSpans(uint32_t index);

@@ -69,15 +69,15 @@ plTimeMsg::~plTimeMsg()
 void plTimeMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
-    stream->ReadLE(&fSeconds);
-    stream->ReadLE(&fDelSecs);
+    stream->ReadLEDouble(&fSeconds);
+    stream->ReadLEFloat(&fDelSecs);
 }
 
 void plTimeMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
-    stream->WriteLE(fSeconds);
-    stream->WriteLE(fDelSecs);
+    stream->WriteLEDouble(fSeconds);
+    stream->WriteLEFloat(fDelSecs);
 }
 
 plEvalMsg::plEvalMsg()

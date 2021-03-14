@@ -67,7 +67,11 @@ set(plSurface_SHADERS
     vs_WaveRip7.h
 )
 
-add_library(plSurface STATIC ${plSurface_SOURCES} ${plSurface_HEADERS} ${plSurface_SHADERS})
+plasma_library(plSurface
+    SOURCES ${plSurface_SOURCES} ${plSurface_HEADERS} ${plSurface_SHADERS}
+    UNITY_BUILD
+    PRECOMPILED_HEADERS Pch.h
+)
 
 target_link_libraries(plSurface
     PUBLIC
@@ -88,8 +92,6 @@ target_link_libraries(plSurface
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plSurface UNITY_BUILD PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plSurface_SOURCES})
 source_group("Header Files" FILES ${plSurface_HEADERS})

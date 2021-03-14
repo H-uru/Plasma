@@ -148,7 +148,7 @@ void plSphereIsect::Read(hsStream* s, hsResMgr* mgr)
 {
     fCenter.Read(s);
     fWorldCenter.Read(s);
-    fRadius = s->ReadLEScalar();
+    fRadius = s->ReadLEFloat();
     fMins.Read(s);
     fMaxs.Read(s);
 }
@@ -157,7 +157,7 @@ void plSphereIsect::Write(hsStream* s, hsResMgr* mgr)
 {
     fCenter.Write(s);
     fWorldCenter.Write(s);
-    s->WriteLEScalar(fRadius);
+    s->WriteLEFloat(fRadius);
     fMins.Write(s);
     fMaxs.Write(s);
 }
@@ -324,10 +324,10 @@ void plConeIsect::SetLength(float d)
 
 void plConeIsect::Read(hsStream* s, hsResMgr* mgr)
 {
-    fCapped = s->ReadLE32();
+    fCapped = s->ReadBOOL();
 
-    fRadAngle = s->ReadLEScalar();
-    fLength = s->ReadLEScalar();
+    fRadAngle = s->ReadLEFloat();
+    fLength = s->ReadLEFloat();
 
     fWorldTip.Read(s);
     fWorldNorm.Read(s);
@@ -340,16 +340,16 @@ void plConeIsect::Read(hsStream* s, hsResMgr* mgr)
     for(i = 0; i < n; i++ )
     {
         fNorms[i].Read(s);
-        fDists[i] = s->ReadLEScalar();
+        fDists[i] = s->ReadLEFloat();
     }
 }
 
 void plConeIsect::Write(hsStream* s, hsResMgr* mgr)
 {
-    s->WriteLE32(fCapped);
+    s->WriteBOOL(fCapped);
 
-    s->WriteLEScalar(fRadAngle);
-    s->WriteLEScalar(fLength);
+    s->WriteLEFloat(fRadAngle);
+    s->WriteLEFloat(fLength);
 
     fWorldTip.Write(s);
     fWorldNorm.Write(s);
@@ -362,7 +362,7 @@ void plConeIsect::Write(hsStream* s, hsResMgr* mgr)
     for(i = 0; i < n; i++ )
     {
         fNorms[i].Write(s);
-        s->WriteLEScalar(fDists[i]);
+        s->WriteLEFloat(fDists[i]);
     }
 }
 
@@ -498,26 +498,26 @@ void plCylinderIsect::Read(hsStream* s, hsResMgr* mgr)
 {
     fTop.Read(s);
     fBot.Read(s);
-    fRadius = s->ReadLEScalar();
+    fRadius = s->ReadLEFloat();
 
     fWorldBot.Read(s);
     fWorldNorm.Read(s);
-    fLength = s->ReadLEScalar();
-    fMin = s->ReadLEScalar();
-    fMax = s->ReadLEScalar();
+    fLength = s->ReadLEFloat();
+    fMin = s->ReadLEFloat();
+    fMax = s->ReadLEFloat();
 }
 
 void plCylinderIsect::Write(hsStream* s, hsResMgr* mgr)
 {
     fTop.Write(s);
     fBot.Write(s);
-    s->WriteLEScalar(fRadius);
+    s->WriteLEFloat(fRadius);
 
     fWorldBot.Write(s);
     fWorldNorm.Write(s);
-    s->WriteLEScalar(fLength);
-    s->WriteLEScalar(fMin);
-    s->WriteLEScalar(fMax);
+    s->WriteLEFloat(fLength);
+    s->WriteLEFloat(fMin);
+    s->WriteLEFloat(fMax);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -612,8 +612,8 @@ void plParallelIsect::Read(hsStream* s, hsResMgr* mgr)
     for (ParPlane& plane : fPlanes)
     {
         plane.fNorm.Read(s);
-        plane.fMin = s->ReadLEScalar();
-        plane.fMax = s->ReadLEScalar();
+        plane.fMin = s->ReadLEFloat();
+        plane.fMax = s->ReadLEFloat();
 
         plane.fPosOne.Read(s);
         plane.fPosTwo.Read(s);
@@ -628,8 +628,8 @@ void plParallelIsect::Write(hsStream* s, hsResMgr* mgr)
     for (ParPlane& plane : fPlanes)
     {
         plane.fNorm.Write(s);
-        s->WriteLEScalar(plane.fMin);
-        s->WriteLEScalar(plane.fMax);
+        s->WriteLEFloat(plane.fMin);
+        s->WriteLEFloat(plane.fMax);
 
         plane.fPosOne.Write(s);
         plane.fPosTwo.Write(s);
@@ -743,10 +743,10 @@ void plConvexIsect::Read(hsStream* s, hsResMgr* mgr)
     {
         plane.fNorm.Read(s);
         plane.fPos.Read(s);
-        plane.fDist = s->ReadLEScalar();
+        plane.fDist = s->ReadLEFloat();
 
         plane.fWorldNorm.Read(s);
-        plane.fWorldDist = s->ReadLEScalar();
+        plane.fWorldDist = s->ReadLEFloat();
     }
 }
 
@@ -759,10 +759,10 @@ void plConvexIsect::Write(hsStream* s, hsResMgr* mgr)
     {
         plane.fNorm.Write(s);
         plane.fPos.Write(s);
-        s->WriteLEScalar(plane.fDist);
+        s->WriteLEFloat(plane.fDist);
 
         plane.fWorldNorm.Write(s);
-        s->WriteLEScalar(plane.fWorldDist);
+        s->WriteLEFloat(plane.fWorldDist);
     }
 }
 

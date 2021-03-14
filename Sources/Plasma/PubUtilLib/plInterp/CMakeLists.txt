@@ -20,7 +20,10 @@ set(plInterp_HEADERS
     plModulator.h
 )
 
-add_library(plInterp STATIC ${plInterp_SOURCES} ${plInterp_HEADERS})
+plasma_library(plInterp
+    SOURCES ${plInterp_SOURCES} ${plInterp_HEADERS}
+    PRECOMPILED_HEADERS Pch.h
+)
 
 target_link_libraries(plInterp
     PUBLIC
@@ -36,8 +39,6 @@ target_link_libraries(plInterp
         plIntersect
         plMessage
 )
-
-plasma_optimize_target(plInterp PRECOMPILED_HEADERS Pch.h)
 
 source_group("Source Files" FILES ${plInterp_SOURCES})
 source_group("Header Files" FILES ${plInterp_HEADERS})

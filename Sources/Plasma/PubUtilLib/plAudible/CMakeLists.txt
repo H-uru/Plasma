@@ -11,7 +11,7 @@ set(plAudible_HEADERS
     plWinAudibleProxy.h
 )
 
-add_library(plAudible STATIC ${plAudible_SOURCES} ${plAudible_HEADERS})
+plasma_library(plAudible SOURCES ${plAudible_SOURCES} ${plAudible_HEADERS})
 target_link_libraries(
     plAudible
     PUBLIC

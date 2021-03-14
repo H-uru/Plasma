@@ -91,7 +91,7 @@ class plDynamicTextMap : public plMipmap
 {
     protected:
 
-        uint16_t      fVisWidth, fVisHeight;
+        uint32_t      fVisWidth, fVisHeight;
 
         uint32_t  Read(hsStream *s) override;
         uint32_t  Write(hsStream *s) override;
@@ -187,8 +187,8 @@ class plDynamicTextMap : public plMipmap
 
         bool    MsgReceive(plMessage *msg) override;
 
-        uint16_t  GetVisibleWidth() { return fVisWidth; }
-        uint16_t  GetVisibleHeight() { return fVisHeight; }
+        uint32_t  GetVisibleWidth() const { return fVisWidth; }
+        uint32_t  GetVisibleHeight() const { return fVisHeight; }
 
         // Since the dynamic text can actually create a texture bigger than you were expecting,
         // you want to be able to apply a layer texture transform that will compensate. This

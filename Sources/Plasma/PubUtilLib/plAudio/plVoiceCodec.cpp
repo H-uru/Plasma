@@ -195,7 +195,7 @@ bool plSpeex::Encode(const short* data, int numFrames, int& packedLength, void* 
         frameLength = speex_bits_write(fBits.get(), frameData.get(), fFrameSize);
 
         // write data - length and bytes
-        stream.WriteLE(frameLength);
+        stream.WriteByte(frameLength);
         packedLength += sizeof(frameLength);   // add length of encoded frame
         stream.Write(frameLength, frameData.get());
         packedLength += frameLength;           // update length
@@ -228,7 +228,7 @@ bool plSpeex::Decode(const void* data, int size, int numFrames, int& numOutputBy
 
     // Decode data
     for (int i = 0; i < numFrames; i++) {
-        stream.ReadLE(&frameLen);                                       // read the length of the current frame to be decoded
+        stream.ReadByte(&frameLen);                                     // read the length of the current frame to be decoded
         stream.Read(frameLen, frameData.get());                         // read the data
 
         memset(speexOutput.get(), 0, fFrameSize * sizeof(float));

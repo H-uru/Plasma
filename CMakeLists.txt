@@ -22,6 +22,8 @@ set(PRODUCT_SHORT_NAME  "UruLive"   CACHE STRING "Product Short Name")
 set(PRODUCT_LONG_NAME   "Uru Live"  CACHE STRING "Product Long Name")
 set(PRODUCT_UUID        "ea489821-6c35-4bd0-9dae-bb17c585e680"
                                     CACHE STRING "Product UUID")
+option(PRODUCT_EMBED_BUILD_INFO "Embed build revision information into plProduct" ON)
+cmake_dependent_option(PRODUCT_EMBED_BUILD_TIME "Embed build time into plProduct" ON [[PRODUCT_EMBED_BUILD_INFO]] OFF)
 
 # HeadSpin Configuration
 if(WIN32 AND NOT CYGWIN)
@@ -52,6 +54,7 @@ find_package(CURL REQUIRED)
 find_package(expat REQUIRED)
 find_package(freetype)
 find_package(JPEG REQUIRED)
+find_package(libwebm)
 find_package(Ogg REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -77,8 +80,8 @@ elseif(WIN32)
     find_package(VLD)
 endif()
 
-include(BuildOptimizations)
 include(PythonUtils)
+include(PlasmaTargets)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 if(PLASMA_EXTERNAL_RELEASE)
@@ -114,7 +117,7 @@ option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus::opus" OFF)
 cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)
 cmake_dependent_option(USE_VPX "Use VPX for movie support" ON "TARGET VPX::VPX" OFF)
-cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "USE_OPUS AND USE_VPX" OFF)
+cmake_dependent_option(USE_WEBM "Use WebM movie player" ON "TARGET Opus::opus AND TARGET libwebm::libwebm AND USE_VPX" OFF)
 cmake_dependent_option(USE_VLD "Build and link with Visual Leak Detector" OFF "TARGET VLD::VLD" OFF)
 
 # Configure compile-time compiler-specific flags and other config files
@@ -154,4 +157,7 @@ if(PLASMA_BUILD_TESTS)
     add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
 endif(PLASMA_BUILD_TESTS)
 
-feature_summary(WHAT ALL   FATAL_ON_MISSING_REQUIRED_PACKAGES)
+# This must be called only after all Qt targets are declared
+plasma_deploy_qt()
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

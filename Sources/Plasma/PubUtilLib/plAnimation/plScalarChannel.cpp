@@ -147,13 +147,13 @@ plScalarConstant::~plScalarConstant()
 void plScalarConstant::Read(hsStream *stream, hsResMgr *mgr)
 {
     plScalarChannel::Read(stream, mgr);
-    fResult = stream->ReadLEScalar();
+    fResult = stream->ReadLEFloat();
 }
 
 void plScalarConstant::Write(hsStream *stream, hsResMgr *mgr)
 {
     plScalarChannel::Write(stream, mgr);
-    stream->WriteLEScalar(fResult);
+    stream->WriteLEFloat(fResult);
 }
 
 

@@ -62,18 +62,18 @@ void plCutter::Read(hsStream* stream, hsResMgr* mgr)
 {
     plCreatable::Read(stream, mgr);
 
-    fLengthU = stream->ReadLEScalar();
-    fLengthV = stream->ReadLEScalar();
-    fLengthW = stream->ReadLEScalar();
+    fLengthU = stream->ReadLEFloat();
+    fLengthV = stream->ReadLEFloat();
+    fLengthW = stream->ReadLEFloat();
 }
 
 void plCutter::Write(hsStream* stream, hsResMgr* mgr)
 {
     plCreatable::Write(stream, mgr);
 
-    stream->WriteLEScalar(fLengthU);
-    stream->WriteLEScalar(fLengthV);
-    stream->WriteLEScalar(fLengthW);
+    stream->WriteLEFloat(fLengthU);
+    stream->WriteLEFloat(fLengthV);
+    stream->WriteLEFloat(fLengthW);
 }
 
 
@@ -1243,22 +1243,20 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
 
     std::vector<uint32_t> retIndex;
 
-    hsTArray<plDrawVisList> drawVis;
+    std::vector<plDrawVisList> drawVis;
     node->Harvest(&cutter.GetIsect(), drawVis);
-    if( !drawVis.GetCount() )
+    if (drawVis.empty())
         return;
 
     hsTArray<plAccessSpan> src;
 
     size_t numSpan = 0;
-    int iDraw;
-    for( iDraw = 0; iDraw < drawVis.GetCount(); iDraw++ )
-        numSpan += drawVis[iDraw].fVisList.size();
+    for (const plDrawVisList& dvList : drawVis)
+        numSpan += dvList.fVisList.size();
 
     src.SetCount(numSpan);
 
-    iDraw = 0;
-    size_t iSpan = 0;
+    size_t iDraw = 0, iSpan = 0;
     for (size_t i = 0; i < numSpan; i++)
     {
         plAccessGeometry::Instance()->OpenRO(drawVis[iDraw].fDrawable, drawVis[iDraw].fVisList[iSpan], src[i]);

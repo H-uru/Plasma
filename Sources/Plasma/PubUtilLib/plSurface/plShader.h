@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plShader_inc
 #define plShader_inc
 
+#include <vector>
+
 #include "plShaderTable.h"
 
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
-#include "hsTemplates.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -105,7 +106,7 @@ public:
     float operator[](int i) const { return fArray[i]; }
 
     void Read(hsStream* s);
-    void Write(hsStream* s);
+    void Write(hsStream* s) const;
 };
 
 class plShaderDecl;
@@ -192,7 +193,7 @@ public:
 protected:
     mutable uint32_t              fFlags;
 
-    hsTArray<plShaderConst>     fConsts;
+    std::vector<plShaderConst>  fConsts;
 
     mutable hsGDeviceRef*       fDeviceRef;
 
@@ -201,7 +202,7 @@ protected:
     uint8_t                       fInput;
     uint8_t                       fOutput;
 
-    hsTArray<plPipeConst>       fPipeConsts;
+    std::vector<plPipeConst>    fPipeConsts;
 
 public:
     plShader();
@@ -214,35 +215,35 @@ public:
     void            Read(hsStream* s, hsResMgr* mgr) override;
     void            Write(hsStream* s, hsResMgr* mgr) override;
 
-    void                    SetNumConsts(int cnt) { fConsts.SetCount(cnt); }
-    uint32_t                  GetNumConsts() const { return fConsts.GetCount(); }
-    plShaderConst&          GetConst(int i) { return fConsts[i]; }
-    const plShaderConst&    GetConst(int i) const { return fConsts[i]; }
-    void                    SetConst(int i, const plShaderConst& c) { fConsts[i] = c; }
+    void                    SetNumConsts(size_t cnt) { fConsts.resize(cnt); }
+    size_t                  GetNumConsts() const { return fConsts.size(); }
+    plShaderConst&          GetConst(size_t i) { return fConsts[i]; }
+    const plShaderConst&    GetConst(size_t i) const { return fConsts[i]; }
+    void                    SetConst(size_t i, const plShaderConst& c) { fConsts[i] = c; }
 
-    plFloat44               GetMatrix(int i) const; // Will untranspose
-    plFloat44               GetMatrix3(int i) const; // Will untranspose
-    hsMatrix44              GetMatrix44(int i) const;
-    hsMatrix44              GetMatrix34(int i) const;
-    hsMatrix44              GetMatrix24(int i) const;
-    hsColorRGBA             GetColor(int i) const;
-    hsPoint3                GetPosition(int i) const;
-    hsVector3               GetVector(int i) const;
-    void                    GetVector(int i, float& x, float& y, float& z, float& w) const;
-    float                   GetFloat(int i, int chan) const;
-    const float*            GetFloat4(int i) const;
+    plFloat44               GetMatrix(size_t i) const; // Will untranspose
+    plFloat44               GetMatrix3(size_t i) const; // Will untranspose
+    hsMatrix44              GetMatrix44(size_t i) const;
+    hsMatrix44              GetMatrix34(size_t i) const;
+    hsMatrix44              GetMatrix24(size_t i) const;
+    hsColorRGBA             GetColor(size_t i) const;
+    hsPoint3                GetPosition(size_t i) const;
+    hsVector3               GetVector(size_t i) const;
+    void                    GetVector(size_t i, float& x, float& y, float& z, float& w) const;
+    float                   GetFloat(size_t i, int chan) const;
+    const float*            GetFloat4(size_t i) const;
 
-    void                    SetMatrix(int i, const plFloat44& xfm); // Will transpose
-    void                    SetMatrix3(int i, const plFloat44& xfm); // Will transpose
-    void                    SetMatrix44(int i, const hsMatrix44& xfm);
-    void                    SetMatrix34(int i, const hsMatrix44& xfm);
-    void                    SetMatrix24(int i, const hsMatrix44& xfm);
-    void                    SetColor(int i, const hsColorRGBA& col);
-    void                    SetVector(int i, const hsScalarTriple& vec); /* Doesn't touch .fW */
-    void                    SetVectorW(int i, const hsScalarTriple& vec, float w=1.f) { SetVector(i, vec.fX, vec.fY, vec.fZ, w); }
-    void                    SetVector(int i, float x, float y, float z, float w);
-    void                    SetFloat(int i, int chan, float v);
-    void                    SetFloat4(int i, const float* const f);
+    void                    SetMatrix(size_t i, const plFloat44& xfm); // Will transpose
+    void                    SetMatrix3(size_t i, const plFloat44& xfm); // Will transpose
+    void                    SetMatrix44(size_t i, const hsMatrix44& xfm);
+    void                    SetMatrix34(size_t i, const hsMatrix44& xfm);
+    void                    SetMatrix24(size_t i, const hsMatrix44& xfm);
+    void                    SetColor(size_t i, const hsColorRGBA& col);
+    void                    SetVector(size_t i, const hsScalarTriple& vec); /* Doesn't touch .fW */
+    void                    SetVectorW(size_t i, const hsScalarTriple& vec, float w=1.f) { SetVector(i, vec.fX, vec.fY, vec.fZ, w); }
+    void                    SetVector(size_t i, float x, float y, float z, float w);
+    void                    SetFloat(size_t i, int chan, float v);
+    void                    SetFloat4(size_t i, const float* const f);
 
     const plShaderDecl*     GetDecl() const { return fDecl; }
 
@@ -260,7 +261,7 @@ public:
     hsGDeviceRef*           GetDeviceRef() const { return fDeviceRef; }
     void                    SetDeviceRef(hsGDeviceRef* ref) const;
 
-    const void*             GetConstBasePtr() const { return fConsts.GetCount() ? &fConsts[0] : nullptr; }
+    const void*             GetConstBasePtr() const { return !fConsts.empty() ? &fConsts[0] : nullptr; }
 
     void                    CopyConsts(const plShader* src) { fConsts = src->fConsts; }
 
@@ -270,16 +271,16 @@ public:
     uint8_t                   GetInputFormat() const { return fInput; }
     uint8_t                   GetOutputFormat() const { return fOutput; }
 
-    uint32_t                  GetNumPipeConsts() const { return fPipeConsts.GetCount(); }
-    const plPipeConst&      GetPipeConst(int i) const { return fPipeConsts[i]; }
-    plPipeConst::Type       GetPipeConstType(int i) const { return fPipeConsts[i].fType; }
-    uint16_t                  GetPipeConstReg(int i) const { return fPipeConsts[i].fReg; }
+    size_t                  GetNumPipeConsts() const { return fPipeConsts.size(); }
+    const plPipeConst&      GetPipeConst(size_t i) const { return fPipeConsts[i]; }
+    plPipeConst::Type       GetPipeConstType(size_t i) const { return fPipeConsts[i].fType; }
+    uint16_t                GetPipeConstReg(size_t i) const { return fPipeConsts[i].fReg; }
 
-    void                    SetNumPipeConsts(int n);
-    void                    SetPipeConst(int i, const plPipeConst& c) { fPipeConsts[i] = c; }
-    void                    SetPipeConst(int i, plPipeConstType t, uint16_t r) { fPipeConsts[i].fType = t; fPipeConsts[i].fReg = r; }
-    void                    SetPipeConstType(int i, plPipeConstType t) { fPipeConsts[i].fType = t; }
-    void                    SetPipeConstReg(int i, uint16_t r) { fPipeConsts[i].fReg = r; }
+    void                    SetNumPipeConsts(size_t n);
+    void                    SetPipeConst(size_t i, const plPipeConst& c) { fPipeConsts[i] = c; }
+    void                    SetPipeConst(size_t i, plPipeConstType t, uint16_t r) { fPipeConsts[i].fType = t; fPipeConsts[i].fReg = r; }
+    void                    SetPipeConstType(size_t i, plPipeConstType t) { fPipeConsts[i].fType = t; }
+    void                    SetPipeConstReg(size_t i, uint16_t r) { fPipeConsts[i].fReg = r; }
 };
 
 #endif // plShader_inc

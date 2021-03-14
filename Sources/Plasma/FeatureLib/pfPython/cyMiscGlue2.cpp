@@ -479,36 +479,36 @@ void cyMisc::AddPlasmaMethods2(PyObject* m)
 
 void cyMisc::AddPlasmaConstantsClasses(PyObject *m)
 {
-    PYTHON_ENUM_START(PtCCRPetitionType);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kGeneralHelp,plNetCommon::PetitionTypes::kGeneralHelp);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kBug,        plNetCommon::PetitionTypes::kBug);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kFeedback,   plNetCommon::PetitionTypes::kFeedback);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kExploit,    plNetCommon::PetitionTypes::kExploit);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kHarass,     plNetCommon::PetitionTypes::kHarass);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kStuck,      plNetCommon::PetitionTypes::kStuck);
-    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kTechnical,  plNetCommon::PetitionTypes::kTechnical);
-    PYTHON_ENUM_END(m, PtCCRPetitionType);
-    
-    PYTHON_ENUM_START(PtLanguage);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kEnglish,       plLocalization::kEnglish);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kFrench,        plLocalization::kFrench);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kGerman,        plLocalization::kGerman);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kSpanish,       plLocalization::kSpanish);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kItalian,       plLocalization::kItalian);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kJapanese,      plLocalization::kJapanese);
-    PYTHON_ENUM_ELEMENT(PtLanguage, kNumLanguages,  plLocalization::kNumLanguages);
-    PYTHON_ENUM_END(m, PtLanguage);
-    
-    PYTHON_ENUM_START(PtLOSReportType);
-    PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportHit,        plLOSRequestMsg::kReportHit);
-    PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportMiss,       plLOSRequestMsg::kReportMiss);
-    PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportHitOrMiss,  plLOSRequestMsg::kReportHitOrMiss);
-    PYTHON_ENUM_END(m, PtLOSReportType);
-    
-    PYTHON_ENUM_START(PtLOSObjectType);
-    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kClickables,       kClickables);
-    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kCameraBlockers,   kCameraBlockers);
-    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kCustom,           kCustom);
-    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kShootable,        kShootable);
-    PYTHON_ENUM_END(m, PtLOSObjectType);
+    PYTHON_ENUM_START(PtCCRPetitionType)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kGeneralHelp,plNetCommon::PetitionTypes::kGeneralHelp)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kBug,        plNetCommon::PetitionTypes::kBug)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kFeedback,   plNetCommon::PetitionTypes::kFeedback)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kExploit,    plNetCommon::PetitionTypes::kExploit)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kHarass,     plNetCommon::PetitionTypes::kHarass)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kStuck,      plNetCommon::PetitionTypes::kStuck)
+    PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kTechnical,  plNetCommon::PetitionTypes::kTechnical)
+    PYTHON_ENUM_END(m, PtCCRPetitionType)
+
+    PYTHON_ENUM_START(PtLanguage)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kEnglish,       plLocalization::kEnglish)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kFrench,        plLocalization::kFrench)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kGerman,        plLocalization::kGerman)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kSpanish,       plLocalization::kSpanish)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kItalian,       plLocalization::kItalian)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kJapanese,      plLocalization::kJapanese)
+    PYTHON_ENUM_ELEMENT(PtLanguage, kNumLanguages,  plLocalization::kNumLanguages)
+    PYTHON_ENUM_END(m, PtLanguage)
+
+    PYTHON_ENUM_START(PtLOSReportType)
+    PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportHit,        plLOSRequestMsg::kReportHit)
+    PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportMiss,       plLOSRequestMsg::kReportMiss)
+    PYTHON_ENUM_ELEMENT(PtLOSReportType, kReportHitOrMiss,  plLOSRequestMsg::kReportHitOrMiss)
+    PYTHON_ENUM_END(m, PtLOSReportType)
+
+    PYTHON_ENUM_START(PtLOSObjectType)
+    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kClickables,       kClickables)
+    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kCameraBlockers,   kCameraBlockers)
+    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kCustom,           kCustom)
+    PYTHON_ENUM_ELEMENT(PtLOSObjectType, kShootable,        kShootable)
+    PYTHON_ENUM_END(m, PtLOSObjectType)
 }

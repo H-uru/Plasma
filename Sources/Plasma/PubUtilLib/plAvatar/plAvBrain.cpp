@@ -132,8 +132,8 @@ void plArmatureBrain::Write(hsStream *stream, hsResMgr *mgr)
 
     // plAvBrainUser
     stream->WriteLE32(0);
-    stream->WriteLEScalar(0.f);
-    stream->WriteLEDouble(0.f);   
+    stream->WriteLEFloat(0.f);
+    stream->WriteLEDouble(0.0);
 }
 
 void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
@@ -141,14 +141,14 @@ void plArmatureBrain::Read(hsStream *stream, hsResMgr *mgr)
     plCreatable::Read(stream, mgr);
 
     // plAvBrain
-    stream->ReadLE32();
+    (void)stream->ReadLE32();
     if (stream->ReadBool()) 
-        mgr->ReadKey(stream);
+        (void)mgr->ReadKey(stream);
 
     // plAvBrainUser
-    stream->ReadLE32();
-    stream->ReadLEScalar();
-    stream->ReadLEDouble();
+    (void)stream->ReadLE32();
+    (void)stream->ReadLEFloat();
+    (void)stream->ReadLEDouble();
 }
 
 // MSGRECEIVE

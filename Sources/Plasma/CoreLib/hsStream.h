@@ -47,25 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include <string_theory/format>
 
-
-// Define this for use of Streams with Logging (commonly used w/ a packet sniffer)
-// These streams log their reads to an event list
-//#define STREAM_LOGGER
-
-#ifndef STREAM_LOGGER
-#define hsReadOnlyLoggingStream hsReadOnlyStream
-#define LogRead(byteCount, buffer, desc) Read(byteCount, buffer)
-#define LogReadSafeString() ReadSafeString()
-#define LogReadSafeStringLong() ReadSafeStringLong();
-#define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
-#define LogReadLE(value, desc) ReadLE(value)
-#define LogReadLEArray(count, values, desc) ReadLE(count, values)
-#define LogSubStreamStart(desc) LogVoidFunc()
-#define LogSubStreamPushDesc(desc) LogVoidFunc()
-#define LogSubStreamEnd() LogVoidFunc()
-#define LogStringString(s) LogVoidFunc()
-#endif
-
 class hsStream {
 public:
 enum {
@@ -94,27 +75,6 @@ public:
     virtual void      Truncate();
     virtual void      Flush() {}
 
-#ifdef STREAM_LOGGER
-    // Logging Reads & Skips
-    virtual uint32_t  LogRead(uint32_t byteCount, void * buffer, const char* desc) { return Read(byteCount,buffer); }
-    virtual char*   LogReadSafeString() { return ReadSafeString(); }
-    virtual char*   LogReadSafeStringLong() { return ReadSafeStringLong(); }
-    virtual void    LogSkip(uint32_t deltaByteCount, const char* desc) { Skip(deltaByteCount); }
-
-    // Stream Notes for Logging 
-    virtual void    LogStringString(const char* s) { }
-    virtual void    LogSubStreamStart(const char* desc) { }
-    virtual void    LogSubStreamEnd() { }
-    virtual void    LogSubStreamPushDesc(const char* desc) { }
-#endif
-    void LogVoidFunc() { }
-
-    // Optimization for small Reads
-    virtual uint8_t ReadByte();
-    virtual bool    Read4Bytes(void *buffer);   // Reads 4 bytes,  return true if success 
-    virtual bool    Read8Bytes(void *buffer);   // Reads 8 bytes,  return true if success 
-    virtual bool    Read12Bytes(void *buffer);  // Reads 12 bytes, return true if success
-
     virtual uint32_t  GetEOF();
     uint32_t          GetSizeLeft();
     virtual void      CopyToMem(void* mem);
@@ -137,141 +97,59 @@ public:
 
     bool            GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     bool            ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
-    
-    // Reads a 4-byte BOOLean
-    bool            ReadBOOL();
-    // Reads a 1-byte boolean
-    bool            ReadBool();
-    void            ReadBool(int count, bool values[]);
+
+    bool            ReadBOOL(); // Reads a 4-byte BOOLean
+    bool            ReadBool(); // Reads a 1-byte boolean
+
+    uint8_t         ReadByte();
     uint16_t        ReadLE16();
-    void            ReadLE16(int count, uint16_t values[]);
+    void            ReadLE16(size_t count, uint16_t values[]);
     uint32_t        ReadLE32();
-    void            ReadLE32(int count, uint32_t values[]);
-    uint32_t        ReadBE32();
+    void            ReadLE32(size_t count, uint32_t values[]);
 
     void            WriteBOOL(bool value);
     void            WriteBool(bool value);
-    void            WriteBool(int count, const bool values[]);
+
     void            WriteByte(uint8_t value);
     void            WriteLE16(uint16_t value);
-    void            WriteLE16(int count, const uint16_t values[]);
+    void            WriteLE16(size_t count, const uint16_t values[]);
     void            WriteLE32(uint32_t value);
-    void            WriteLE32(int count, const  uint32_t values[]);
-    void            WriteBE32(uint32_t value);
-
-
-    /* Overloaded  Begin (8 & 16 & 32 int)*/
-    /* yes, swapping an 8 bit value does nothing, just useful*/
-    void            ReadLE(bool* value) { *value = this->ReadByte() ? true : false; }
-    void            ReadLE(uint8_t* value) { *value = this->ReadByte(); }
-    void            ReadLE(int count, uint8_t values[]) { this->Read(count, values); }
-    void            ReadLE(uint16_t* value) { *value = this->ReadLE16(); }
-    void            ReadLE(int count, uint16_t values[]) { this->ReadLE16(count, values); }
-    void            ReadLE(uint32_t* value) { *value = this->ReadLE32(); }
-    void            ReadLE(int count, uint32_t values[]) { this->ReadLE32(count, values); }
-#ifdef STREAM_LOGGER
-                // Begin LogReadLEs
-    virtual void    LogReadLE(bool* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLE(uint8_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, uint8_t values[], const char* desc) { this->ReadLE(count, values); }
-    virtual void    LogReadLE(uint16_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, uint16_t values[], const char* desc) { this->ReadLE(count, values); }
-    virtual void    LogReadLE(uint32_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, uint32_t values[], const char* desc) { this->ReadLE(count, values); }
-                // End LogReadLEs
-#endif
-    void            WriteLE(bool value) { this->Write(1,&value); }
-    void            WriteLE(uint8_t value) { this->Write(1,&value); }
-    void            WriteLE(int count, const uint8_t values[]) { this->Write(count, values); }
-    void            WriteLE(uint16_t value) { this->WriteLE16(value); }
-    void            WriteLE(int count, const uint16_t values[]) { this->WriteLE16(count, values); }
-    void            WriteLE(uint32_t value) { this->WriteLE32(value); }
-    void            WriteLE(int count, const  uint32_t values[]) { this->WriteLE32(count, values); }
-    void            ReadLE(int8_t* value) { *value = this->ReadByte(); }
-    void            ReadLE(int count, int8_t values[]) { this->Read(count, values); }
-    void            ReadLE(char* value) { *value = (char)this->ReadByte(); }
-    void            ReadLE(int count, char values[]) { this->Read(count, values); }
-    void            ReadLE(int16_t* value) { *value = (int16_t)this->ReadLE16(); }
-    void            ReadLE(int count, int16_t values[]) { this->ReadLE16(count, (uint16_t*)values); }
-    void            ReadLE(int32_t* value) { *value = (int32_t)this->ReadLE32(); }
-    void            ReadLE(int count, int32_t values[]) { this->ReadLE32(count, (uint32_t*)values); }
-#ifdef STREAM_LOGGER
-                // Begin LogReadLEs
-    virtual void    LogReadLE(int8_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int8_t values[], const char* desc) { this->ReadLE(count, values); }
-    virtual void    LogReadLE(char* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, char values[], const char* desc) { this->ReadLE(count, values); }
-    virtual void    LogReadLE(int16_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int16_t values[], const char* desc) { this->ReadLE(count, (uint16_t*)values); }
-    virtual void    LogReadLE(int32_t* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int32_t values[], const char* desc) { this->ReadLE(count, (uint32_t*)values); }
-    virtual void    LogReadLE(int* value, const char* desc) { this->ReadLE(value); }
-    virtual void    LogReadLEArray(int count, int values[], const char* desc) { this->ReadLE(count, (uint32_t*)values); }
-                // End LogReadLEs
-#endif
-    void            WriteLE(int8_t value) { this->Write(1,&value); }
-    void            WriteLE(int count, const int8_t values[]) { this->Write(count, values); }
-    void            WriteLE(char value) { this->Write(1,(uint8_t*)&value); }
-    void            WriteLE(int count, const char values[]) { this->Write(count, (uint8_t*)values); }
-    void            WriteLE(int16_t value) { this->WriteLE16((uint16_t)value); }
-    void            WriteLE(int count, const int16_t values[]) { this->WriteLE16(count, (uint16_t*)values); }
-    void            WriteLE(int32_t value) { this->WriteLE32((uint32_t)value); }
-    void            WriteLE(int count, const  int32_t values[]) { this->WriteLE32(count, (uint32_t*)values); }
-    /* Overloaded  End */
-
+    void            WriteLE32(size_t count, const uint32_t values[]);
 
     float           ReadLEFloat();
-    void            ReadLEFloat(int count, float values[]);
+    void            ReadLEFloat(size_t count, float values[]);
     double          ReadLEDouble();
-    void            ReadLEDouble(int count, double values[]);
-    float           ReadBEFloat();
+    void            ReadLEDouble(size_t count, double values[]);
+
     void            WriteLEFloat(float value);
-    void            WriteLEFloat(int count, const float values[]);
+    void            WriteLEFloat(size_t count, const float values[]);
     void            WriteLEDouble(double value);
-    void            WriteLEDouble(int count, const double values[]);
-    void            WriteBEFloat(float value);
+    void            WriteLEDouble(size_t count, const double values[]);
 
+    // Type-safe placement readers
+    template <typename T> inline void ReadByte(T*) = delete;
+    void ReadByte(uint8_t* v) { *v = ReadByte(); }
+    void ReadByte(int8_t* v) { *v = (int8_t)ReadByte(); }
+    template <typename T> inline void ReadLE16(T*) = delete;
+    void ReadLE16(uint16_t* v) { *v = ReadLE16(); }
+    void ReadLE16(int16_t* v) { *v = (int16_t)ReadLE16(); }
+    template <typename T> inline void ReadLE32(T*) = delete;
+    void ReadLE32(uint32_t* v) { *v = ReadLE32(); }
+    void ReadLE32(int32_t* v) { *v = (int32_t)ReadLE32(); }
+    template <typename T> inline void ReadLEFloat(T*) = delete;
+    void ReadLEFloat(float* v) { *v = ReadLEFloat(); }
+    template <typename T> inline void ReadLEDouble(T*) = delete;
+    void ReadLEDouble(double* v) { *v = ReadLEDouble(); }
 
-    /* Overloaded  Begin (Float)*/
-    void            ReadLE(float* value) { *value = ReadLEFloat(); }
-    void            ReadLE(int count, float values[]) { ReadLEFloat(count, values); }
-    void            ReadLE(double* value) { *value = ReadLEDouble(); }
-    void            ReadLE(int count, double values[]) { ReadLEDouble(count, values); }
-#ifdef STREAM_LOGGER
-                    // Begin LogReadLEs
-    virtual void    LogReadLE(float* value, const char* desc) { ReadLE(value); }
-    virtual void    LogReadLEArray(int count, float values[], const char* desc) { ReadLE(count, values); }
-    virtual void    LogReadLE(double* value, const char* desc) { ReadLE(value); }
-    virtual void    LogReadLEArray(int count, double values[], const char* desc) { ReadLE(count, values); }
-                    // End LogReadLEs
-#endif
-    void            WriteLE(float value) { WriteLEFloat(value); }
-    void            WriteLE(int count, const float values[]) { WriteLEFloat(count, values); }
-    void            WriteLE(double value) { WriteLEDouble(value); }
-    void            WriteLE(int count, const double values[]) { WriteLEDouble(count, values); }
-    /* Overloaded End */
-
-    float           ReadLEScalar() { return (float)this->ReadLEFloat(); }
-    void            ReadLEScalar(int count, float values[])
-                    {
-                        this->ReadLEFloat(count, (float*)values);
-                    }
-    float           ReadBEScalar() { return (float)this->ReadBEFloat(); }
-    void            WriteLEScalar(float value) { this->WriteLEFloat(value); }
-    void            WriteLEScalar(int count, const float values[])
-                    {
-                        this->WriteLEFloat(count, (float*)values);
-                    }
-    void            WriteBEScalar(float value) { this->WriteBEFloat(value); }
-
-    void            WriteLEAtom(uint32_t tag, uint32_t size);
-    uint32_t          ReadLEAtom(uint32_t* size);
-
-
-    /* Overloaded  Begin (Atom)*/
-    void            WriteLE(uint32_t* tag, uint32_t size) { WriteLEAtom(*tag, size); }
-    void            ReadLE(uint32_t* tag, uint32_t *size) { *tag = ReadLEAtom(size); }
-    /* Overloaded  End */
+    // Type-safety checks for writers
+    template <typename T> void WriteByte(T) = delete;
+    void WriteByte(int8_t v) { WriteByte((uint8_t)v); }
+    template <typename T> void WriteLE16(T) = delete;
+    void WriteLE16(int16_t v) { WriteLE16((uint16_t)v); }
+    template <typename T> void WriteLE32(T) = delete;
+    void WriteLE32(int32_t v) { WriteLE32((uint32_t)v); }
+    template <typename T> void WriteLEFloat(T) = delete;
+    template <typename T> void WriteLEDouble(T) = delete;
 };
 
 class hsStreamable {

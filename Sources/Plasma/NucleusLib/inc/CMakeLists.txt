@@ -30,7 +30,7 @@ set(pnNucleusInc_SOURCES
     pnSingletons.cpp
 )
 
-add_library(pnNucleusInc STATIC ${pnNucleusInc_HEADERS} ${pnNucleusInc_SOURCES})
+plasma_library(pnNucleusInc SOURCES ${pnNucleusInc_HEADERS} ${pnNucleusInc_SOURCES})
 target_link_libraries(
     pnNucleusInc
     PUBLIC

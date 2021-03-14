@@ -56,8 +56,8 @@ void plSoftVolume::Read(hsStream* s, hsResMgr* mgr)
 
     SetCheckListener(0 != (fListenState & kListenCheck));
 
-    fInsideStrength = s->ReadLEScalar();
-    fOutsideStrength = s->ReadLEScalar();
+    fInsideStrength = s->ReadLEFloat();
+    fOutsideStrength = s->ReadLEFloat();
 }
 
 void plSoftVolume::Write(hsStream* s, hsResMgr* mgr)
@@ -66,8 +66,8 @@ void plSoftVolume::Write(hsStream* s, hsResMgr* mgr)
 
     s->WriteLE32(fListenState);
 
-    s->WriteLEScalar(fInsideStrength);
-    s->WriteLEScalar(fOutsideStrength);
+    s->WriteLEFloat(fInsideStrength);
+    s->WriteLEFloat(fOutsideStrength);
 }
 
 float plSoftVolume::GetStrength(const hsPoint3& pos) const 

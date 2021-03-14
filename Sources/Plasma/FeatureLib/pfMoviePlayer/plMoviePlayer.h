@@ -71,8 +71,10 @@ protected:
     class plPlate* fPlate;
     class plMipmap* fTexture;
 
+#ifdef USE_WEBM
     mkvparser::MkvReader* fReader;
     std::unique_ptr<mkvparser::Segment> fSegment;
+#endif
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
     std::unique_ptr<class plWin32VideoSound> fAudioSound;
     std::unique_ptr<class VPX> fVpx;

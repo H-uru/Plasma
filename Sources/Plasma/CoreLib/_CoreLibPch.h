@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <limits.h>
 #include <memory>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 

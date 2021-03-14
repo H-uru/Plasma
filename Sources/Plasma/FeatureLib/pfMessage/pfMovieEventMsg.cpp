@@ -56,7 +56,7 @@ void pfMovieEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->WriteByte(fReason);
+    stream->WriteByte((uint8_t)fReason);
 
     stream->WriteSafeString(fMovieName.AsString());
 }

@@ -117,18 +117,16 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Write(s, mgr);
 
-    int i;
+    s->WriteLE32((uint32_t)fSceneObjects.size());
+    for (plSceneObject* sceneObject : fSceneObjects)
+        mgr->WriteKey(s, sceneObject);
 
-    s->WriteLE32(fSceneObjects.size());
-    for( i = 0; i < fSceneObjects.size(); i++ )
-        mgr->WriteKey(s,fSceneObjects[i]);
-
-    s->WriteLE32(fGenericPool.size());
-    for( i = 0; i < fGenericPool.size(); i++ )
-        mgr->WriteKey(s, fGenericPool[i]);
+    s->WriteLE32((uint32_t)fGenericPool.size());
+    for (hsKeyedObject* generic : fGenericPool)
+        mgr->WriteKey(s, generic);
 }
 
-void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList)
+void plSceneNode::Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList)
 {
     static std::vector<int16_t> visList;
     visList.clear();
@@ -141,14 +139,13 @@ void plSceneNode::Harvest(plVolumeIsect* isect, hsTArray<plDrawVisList>& levList
         fDrawPool[idx]->GetSpaceTree()->HarvestLeaves(isect, visSpans);
         if (!visSpans.empty())
         {
-            plDrawVisList* drawVis = levList.Push();
-            drawVis->fDrawable = fDrawPool[idx];
-            drawVis->fVisList.swap(visSpans);
+            plDrawVisList& drawVis = levList.emplace_back(fDrawPool[idx]);
+            drawVis.fVisList.swap(visSpans);
         }
     }
 }
 
-void plSceneNode::CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& levList, plVisMgr* visMgr)
+void plSceneNode::CollectForRender(plPipeline* pipe, std::vector<plDrawVisList>& levList, plVisMgr* visMgr)
 {
     static std::vector<int16_t> visList;
     visList.clear();
@@ -160,9 +157,8 @@ void plSceneNode::CollectForRender(plPipeline* pipe, hsTArray<plDrawVisList>& le
     {
         if( pipe->PreRender(fDrawPool[idx], visSpans, visMgr) )
         {
-            plDrawVisList* drawVis = levList.Push();
-            drawVis->fDrawable = fDrawPool[idx];
-            drawVis->fVisList.swap(visSpans);
+            plDrawVisList& drawVis = levList.emplace_back(fDrawPool[idx]);
+            drawVis.fVisList.swap(visSpans);
         }
     }
 }
@@ -276,9 +272,9 @@ void plSceneNode::ISetLight(plLightInfo* l)
 
 void plSceneNode::ISetOccluder(plOccluder* o)
 {
-    if( fOccluders.kMissingIndex == fOccluders.Find(o) )
+    if (std::find(fOccluders.cbegin(), fOccluders.cend(), o) == fOccluders.cend())
     {
-        fOccluders.Append(o);
+        fOccluders.emplace_back(o);
     }
 }
 
@@ -345,9 +341,9 @@ void plSceneNode::IRemoveLight(plLightInfo* l)
 
 void plSceneNode::IRemoveOccluder(plOccluder* o)
 {
-    int idx = fOccluders.Find(o);
-    if( idx != fOccluders.kMissingIndex )
-        fOccluders.Remove(idx);
+    auto iter = std::find(fOccluders.cbegin(), fOccluders.cend(), o);
+    if (iter != fOccluders.cend())
+        fOccluders.erase(iter);
 }
 
 void plSceneNode::IRemoveGeneric(hsKeyedObject* k)
@@ -453,18 +449,17 @@ void    plSceneNode::ICleanUp()
 
     if (fFilterGenerics)
     {
-        int i;
-        for ( i = fSceneObjects.size() - 1; i >= 0; i--)
+        for (hsSsize_t i = fSceneObjects.size() - 1; i >= 0; i--)
             GetKey()->Release(fSceneObjects[i]->GetKey());
-        for ( i = fDrawPool.size() - 1; i >= 0; i--)
+        for (hsSsize_t i = fDrawPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fDrawPool[i]->GetKey());
-        for ( i = fSimulationPool.size() - 1; i >= 0; i--)
+        for (hsSsize_t i = fSimulationPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fSimulationPool[i]->GetKey());
-        for ( i = fAudioPool.size() - 1; i >= 0; i--)
+        for (hsSsize_t i = fAudioPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fAudioPool[i]->GetKey());
-        for ( i = fOccluders.GetCount() - 1; i >= 0; i--)
+        for (hsSsize_t i = fOccluders.size() - 1; i >= 0; i--)
             GetKey()->Release(fOccluders[i]->GetKey());
-        for ( i = fLightPool.size() - 1; i >= 0; i--)
+        for (hsSsize_t i = fLightPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fLightPool[i]->GetKey());
     }
 

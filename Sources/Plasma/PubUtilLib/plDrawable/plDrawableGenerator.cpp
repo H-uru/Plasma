@@ -242,8 +242,6 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
                                                             std::vector<uint32_t> *retIndex, plDrawableSpans *toAddTo )
 {
     plDrawableSpans             *newDraw;
-    hsTArray<plGeometrySpan *>  spanArray;
-    plGeometrySpan              *span;
 
     // Set up props on the new drawable
     if (toAddTo != nullptr)
@@ -264,8 +262,8 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
     }
 
     // Create a temp plGeometrySpan
-    spanArray.SetCount( 1 );
-    span = spanArray[ 0 ] = new plGeometrySpan;
+    std::vector<plGeometrySpan *> spanArray { new plGeometrySpan };
+    plGeometrySpan* span = spanArray[0];
 
     IFillSpan( vertCount, positions, normals, 
                                 uvws, uvwsPerVtx, 

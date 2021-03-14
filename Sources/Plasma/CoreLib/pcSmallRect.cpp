@@ -50,16 +50,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    pcSmallRect::Read( hsStream *s )
 {
-    s->ReadLE( &fX );
-    s->ReadLE( &fY );
-    s->ReadLE( &fWidth );
-    s->ReadLE( &fHeight );
+    s->ReadLE16(&fX);
+    s->ReadLE16(&fY);
+    s->ReadLE16(&fWidth);
+    s->ReadLE16(&fHeight);
 }
 
 void    pcSmallRect::Write( hsStream *s )
 {
-    s->WriteLE( fX );
-    s->WriteLE( fY );
-    s->WriteLE( fWidth );
-    s->WriteLE( fHeight );
+    s->WriteLE16(fX);
+    s->WriteLE16(fY);
+    s->WriteLE16(fWidth);
+    s->WriteLE16(fHeight);
 }

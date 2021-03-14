@@ -43,9 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCullPoly_inc
 #define plCullPoly_inc
 
+#include <vector>
+
 #include "hsBitVector.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 
 struct hsMatrix44;
 class hsStream;
@@ -65,7 +66,7 @@ public:
     uint32_t                  fFlags;
     mutable hsBitVector     fClipped; // fClipped[i] => edge(fVerts[i], fVerts[(i+1)%n])
 
-    hsTArray<hsPoint3>      fVerts;
+    std::vector<hsPoint3>   fVerts;
     hsVector3               fNorm;
     float                fDist;
     hsPoint3                fCenter;
@@ -83,7 +84,7 @@ public:
     plCullPoly& Init(const plCullPoly& p)
     {
         fClipped.Clear();
-        fVerts.SetCount(0);
+        fVerts.clear();
         fFlags = p.fFlags;
         fNorm = p.fNorm;
         fDist = p.fDist;
@@ -98,12 +99,12 @@ public:
     plCullPoly&             Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, plCullPoly& dst) const;
 
     void                    Read(hsStream* s, hsResMgr* mgr);
-    void                    Write(hsStream* s, hsResMgr* mgr);
+    void                    Write(hsStream* s, hsResMgr* mgr) const;
 
     bool                    DegenerateVert(const hsPoint3& p) const
     {
-        if (fVerts.GetCount())
-            return (kCullPolyDegen > hsVector3(&p, &fVerts[fVerts.GetCount() - 1]).MagnitudeSquared());
+        if (!fVerts.empty())
+            return (kCullPolyDegen > hsVector3(&p, &fVerts.back()).MagnitudeSquared());
         return false;
     }
 

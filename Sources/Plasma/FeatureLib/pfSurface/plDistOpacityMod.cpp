@@ -175,9 +175,7 @@ void plDistOpacityMod::Read(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Read(s, mgr);
 
-    int i;
-    for( i = 0; i < kNumDists; i++ )
-        fDists[i] = s->ReadLEScalar();
+    s->ReadLEFloat(kNumDists, fDists);
 
     ICheckDists();
 
@@ -188,9 +186,7 @@ void plDistOpacityMod::Write(hsStream* s, hsResMgr* mgr)
 {
     plSingleModifier::Write(s, mgr);
 
-    int i;
-    for( i = 0; i < kNumDists; i++ )
-        s->WriteLEScalar(fDists[i]);
+    s->WriteLEFloat(kNumDists, fDists);
 }
 
 void plDistOpacityMod::SetTarget(plSceneObject* so)
@@ -246,7 +242,7 @@ void plDistOpacityMod::ISetup()
     {
         hsGMaterial* mat = span.GetMaterial();
 
-        for (uint32_t j = 0; j < mat->GetNumLayers(); j++)
+        for (size_t j = 0; j < mat->GetNumLayers(); j++)
         {
             plLayerInterface* lay = mat->GetLayer(j);
             if( !j || !(lay->GetZFlags() & hsGMatState::kZNoZWrite) || (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere) )

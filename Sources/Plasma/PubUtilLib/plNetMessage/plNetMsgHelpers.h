@@ -235,12 +235,12 @@ public:
     CLASSNAME_REGISTER( plNetMsgObjectListHelper );
     GETINTERFACE_ANY(plNetMsgObjectListHelper, plCreatable);
 
-    virtual int Poke(hsStream* stream, uint32_t peekOptions=0);   
+    virtual int Poke(hsStream* stream, uint32_t peekOptions=0);
     virtual int Peek(hsStream* stream, uint32_t peekOptions=0);
 
     void Reset();
-    int GetNumObjects() const { return fObjects.size(); }
-    plNetMsgObjectHelper* GetObject(int i) { return fObjects[i]; }
+    size_t GetNumObjects() const { return fObjects.size(); }
+    plNetMsgObjectHelper* GetObject(size_t i) { return fObjects[i]; }
     void AddObject(plKey key) { fObjects.push_back(new plNetMsgObjectHelper(key)); }
 };
 
@@ -303,10 +303,10 @@ public:
     virtual int Poke(hsStream* stream, uint32_t peekOptions=0);
     virtual int Peek(hsStream* stream, uint32_t peekOptions=0);
 
-    int GetNumMembers() const { return fMembers.size(); }
-    const plNetMsgMemberInfoHelper* GetMember(int i) const { return fMembers[i]; }
+    size_t GetNumMembers() const { return fMembers.size(); }
+    const plNetMsgMemberInfoHelper* GetMember(size_t i) const { return fMembers[i]; }
     void AddMember(plNetMsgMemberInfoHelper* a) { fMembers.push_back(a); }
-    const MemberInfoHelperVec * GetMembers() const { return &fMembers;}
+    const MemberInfoHelperVec* GetMembers() const { return &fMembers;}
 };
 
 
@@ -332,8 +332,8 @@ public:
     virtual int Peek(hsStream* stream, uint32_t peekOptions=0);
 
     void Clear() { fPlayerIDList.clear();   }
-    int GetNumReceivers() const { return fPlayerIDList.size(); }
-    uint32_t GetReceiverPlayerID(int i) const { return fPlayerIDList[i]; }
+    size_t GetNumReceivers() const { return fPlayerIDList.size(); }
+    uint32_t GetReceiverPlayerID(size_t i) const { return fPlayerIDList[i]; }
     void AddReceiverPlayerID(uint32_t a) { fPlayerIDList.push_back(a); }
     bool RemoveReceiverPlayerID(uint32_t n);  // returns true if found and removed
 };

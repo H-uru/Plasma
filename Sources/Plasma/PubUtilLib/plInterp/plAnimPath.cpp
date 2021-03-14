@@ -146,22 +146,21 @@ void plAnimPath::ICalcBounds()
 
     plController* pc = fController->GetPosController();
 
-    int i;
     hsPoint3 pos;
-    hsTArray<float> keyTimes;
+    std::vector<float> keyTimes;
     pc->GetKeyTimes(keyTimes);
     fCenter.Set(0,0,0);
-    for( i = 0; i < keyTimes.GetCount() ; i++ )
+    for (float keyTime : keyTimes)
     {
-        pc->Interp(keyTimes[i], &pos);
+        pc->Interp(keyTime, &pos);
         fCenter += pos;
     }
-    fCenter *= hsInvert((float)keyTimes.GetCount());
+    fCenter *= hsInvert((float)keyTimes.size());
 
     fRadius = 0;
-    for( i = 0; i < keyTimes.GetCount(); i++ )
+    for (float keyTime : keyTimes)
     {
-        pc->Interp(keyTimes[i], &pos);
+        pc->Interp(keyTime, &pos);
         float rad = (pos - fCenter).Magnitude();
         if( rad > fRadius )
             fRadius = rad;
@@ -212,8 +211,8 @@ void plAnimPath::Read(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Read(stream);
     fWorldToLocal.Read(stream);
 
-    fLength = stream->ReadLEScalar();
-    fMinDistSq = stream->ReadLEScalar();
+    fLength = stream->ReadLEFloat();
+    fMinDistSq = stream->ReadLEFloat();
     
     Reset();
 }
@@ -229,8 +228,8 @@ void plAnimPath::Write(hsStream* stream, hsResMgr* mgr)
     fLocalToWorld.Write(stream);
     fWorldToLocal.Write(stream);
 
-    stream->WriteLEScalar(fLength);
-    stream->WriteLEScalar(fMinDistSq);
+    stream->WriteLEFloat(fLength);
+    stream->WriteLEFloat(fMinDistSq);
 }
 
 bool plAnimPath::OutOfRange(hsPoint3 &worldPt, float range) const
@@ -253,10 +252,9 @@ float plAnimPath::GetExtremePoint(hsPoint3 &worldPt) const
     float minDistSq = 1.e33f;
     float minTime = 0, delTime = 0;
     // start search by using the time of the closest ctrl point
-    int i;
-    hsTArray<float> keyTimes;
+    std::vector<float> keyTimes;
     pc->GetKeyTimes(keyTimes);
-    for( i = 0; i < keyTimes.GetCount(); i++ )
+    for (size_t i = 0; i < keyTimes.size(); i++)
     {
         float t = keyTimes[i];
         hsPoint3 pos;
@@ -268,7 +266,7 @@ float plAnimPath::GetExtremePoint(hsPoint3 &worldPt) const
             minTime = t;
             if( 0 == i )
                 delTime = keyTimes[i+1] - t;
-            else if( keyTimes.GetCount() - 1 == i )
+            else if (keyTimes.size() - 1 == i)
                 delTime = t - keyTimes[i - 1];
             else
             {
@@ -511,7 +509,7 @@ float plAnimPath::IShiftFore(hsPoint3 &pt) const
 // doesn't use any fancy subdivision or curvature measure when drawing.
 // Changes current time.
 //
-void plAnimPath::IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
+void plAnimPath::IMakeSegment(std::vector<uint16_t>& idx, std::vector<hsPoint3>& pos,
                               hsPoint3& p1, hsPoint3& p2)
 {
     hsVector3 del(&p2, &p1);
@@ -537,54 +535,53 @@ void plAnimPath::IMakeSegment(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos,
 
     hsPoint3 p1out, p2out;
 
-    int baseIdx = pos.GetCount();
+    uint16_t baseIdx = (uint16_t)pos.size();
 
-    pos.Append(p1);
-    pos.Append(p2);
+    pos.emplace_back(p1);
+    pos.emplace_back(p2);
 
     p1out = p1;
     p1out += a;
     p2out = p2;
     p2out += a;
 
-    pos.Append(p1out);
-    pos.Append(p2out);
+    pos.emplace_back(p1out);
+    pos.emplace_back(p2out);
 
     p1out += -2.f * a;
     p2out += -2.f * a;
 
-    pos.Append(p1out);
-    pos.Append(p2out);
+    pos.emplace_back(p1out);
+    pos.emplace_back(p2out);
 
     p1out = p1;
     p1out += b;
     p2out = p2;
     p2out += b;
 
-    pos.Append(p1out);
-    pos.Append(p2out);
+    pos.emplace_back(p1out);
+    pos.emplace_back(p2out);
 
     p1out += -2.f * b;
     p2out += -2.f * b;
 
-    pos.Append(p1out);
-    pos.Append(p2out);
+    pos.emplace_back(p1out);
+    pos.emplace_back(p2out);
 
-    int i;
-    for( i = 0; i < 4; i++ )
+    for (uint16_t i = 0; i < 4; i++)
     {
-        int outIdx = baseIdx + 2 + i * 2;
-        idx.Append(baseIdx);
-        idx.Append(baseIdx + 1);
-        idx.Append(baseIdx + outIdx);
+        uint16_t outIdx = baseIdx + 2 + i * 2;
+        idx.emplace_back(baseIdx);
+        idx.emplace_back(baseIdx + 1);
+        idx.emplace_back(baseIdx + outIdx);
 
-        idx.Append(baseIdx + outIdx);
-        idx.Append(baseIdx + 1);
-        idx.Append(baseIdx + outIdx + 1);
+        idx.emplace_back(baseIdx + outIdx);
+        idx.emplace_back(baseIdx + 1);
+        idx.emplace_back(baseIdx + outIdx + 1);
     }
 }
 
-void plAnimPath::MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos)
+void plAnimPath::MakeDrawList(std::vector<uint16_t>& idx, std::vector<hsPoint3>& pos)
 {
     hsMatrix44 resetL2W = GetLocalToWorld();
     hsMatrix44 resetW2L = GetWorldToLocal();
@@ -633,12 +630,11 @@ void plAnimPath::MakeDrawList(hsTArray<uint16_t>& idx, hsTArray<hsPoint3>& pos)
 //
 void plAnimPath::ComputeArcLenDeltas(int32_t numSamples)
 {
-    if (fArcLenDeltas.GetCount() >= numSamples)
+    if ((int32_t)fArcLenDeltas.size() >= numSamples)
         return;     // already computed enough samples
 
     // compute arc len deltas
-    fArcLenDeltas.Reset();
-    fArcLenDeltas.SetCount(numSamples);
+    fArcLenDeltas.resize(numSamples);
     float animLen = GetLength();
     float timeInc = animLen/(numSamples-1);  // use num-1 since we'll create the zeroth entry by hand
     float time=0;
@@ -671,7 +667,7 @@ void plAnimPath::ComputeArcLenDeltas(int32_t numSamples)
         time += timeInc;
         p1 = p2;
     }
-    hsAssert(fArcLenDeltas.GetCount()==numSamples, "arcLenArray size wrong?");
+    hsAssert((int32_t)fArcLenDeltas.size() == numSamples, "arcLenArray size wrong?");
     hsAssert(cnt==numSamples, "arcLenArray size wrong?");
 }
 
@@ -703,8 +699,7 @@ float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, bool bwd,
 
     // find nearest (forward) arcLen sample point, use starting srch index provided
     bool found=false;
-    int32_t i;
-    for(i=(*startSrchIdx); i<fArcLenDeltas.GetCount()-1; i++)
+    for (int32_t i = (*startSrchIdx); i < (int32_t)fArcLenDeltas.size()-1; i++)
     {
         if (fArcLenDeltas[i].fT<=startTime && startTime<fArcLenDeltas[i+1].fT)
         {
@@ -717,14 +712,14 @@ float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, bool bwd,
     if (!found)
     {
         // check if equal to last index
-        if (startTime==fArcLenDeltas[fArcLenDeltas.GetCount()-1].fT)
+        if (startTime == fArcLenDeltas.back().fT)
         {
-            *startSrchIdx=fArcLenDeltas.GetCount()-1;
+            *startSrchIdx = (int32_t)fArcLenDeltas.size() - 1;
             found=true;
         }
         else
         {
-            for(i=0; i<*startSrchIdx; i++)
+            for (int32_t i = 0; i < *startSrchIdx; i++)
             {
                 if (fArcLenDeltas[i].fT<=startTime && startTime<fArcLenDeltas[i+1].fT)
                 {
@@ -756,7 +751,8 @@ float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, bool bwd,
     // now sum distance deltas until we exceed the desired arcLen
     if (curArcLen<arcLengthIn)
     {
-        for(i=bwd ? nearestIdx : nearestIdx+inc; i<fArcLenDeltas.GetCount() && i>=0; i+=inc)
+        int32_t i = bwd ? nearestIdx : nearestIdx+inc;
+        for (; i < (int32_t)fArcLenDeltas.size() && i >= 0; i += inc)
         {
             if (curArcLen+fArcLenDeltas[i].fArcLenDelta>arcLengthIn)
             {
@@ -768,7 +764,7 @@ float plAnimPath::GetLookAheadTime(float startTime, float arcLengthIn, bool bwd,
             curArcLen += fArcLenDeltas[i].fArcLenDelta;
         }   
         
-        if ( (i==fArcLenDeltas.GetCount() && !bwd) || (i<0 && bwd) )
+        if ((i == (int32_t)fArcLenDeltas.size() && !bwd) || (i < 0 && bwd))
         {
             quit=true;
             timeOut = bwd ? 0 : GetLength();

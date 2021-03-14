@@ -120,23 +120,6 @@ bool HasPhysicalComponent(plComponentBase *comp)
     return false;
 }
 
-bool    plAnimComponentBase::GetAnimKey( plMaxNode *node, hsTArray<plKey> &outKeys )
-{
-    plComponentBase *comp = node->ConvertToComponent();
-    if (comp != nullptr)
-    {
-        if( IsAnimComponent( comp ) )
-        {
-            plAnimComponentBase *base = (plAnimComponentBase *)comp;
-            // Grab this guy's key
-        }
-    }
-//  else if( )
-    {
-    }
-    return true;
-}
-
 plAnimObjInterface  *plAnimComponentBase::GetAnimInterface( INode *inode )
 {
     if (inode == nullptr)

@@ -50,11 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include <string_theory/format>
-#include <string_theory/string>
+#include <string_theory/stdio>
 
 #include "plgDispatch.h"
 #include "plPipeDebugFlags.h"
 #include "plPipeline.h"
+#include "plProduct.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 #include "hsTimer.h"
@@ -82,7 +83,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plAudioInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plDrawInterface.h"
-#include "pnTimer/pnBuildDates.h"
 
 #include "plAgeDescription/plAgeDescription.h"
 #include "plAgeLoader/plAgeLoader.h"
@@ -755,15 +755,16 @@ PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName",
     }
     
 
-    fprintf(f, "<span style=\"text-align: center;\"> <h2> Console Commands for Plasma 2.0 Client </h2> <em>Built %s on %s.</em></span><br />", 
-        pnBuildDates::fBuildTime, pnBuildDates::fBuildDate );
+    ST::printf(f, "<span style=\"text-align: center;\">"
+                  "<h2>Console Commands for Plasma 2.0 Client ({})</h2>"
+                  "<em>Built {} on {}.</em></span><br />",
+                  plProduct::Tag(), plProduct::BuildTime(), plProduct::BuildDate());
 
     DocGenIterator iter(f);
     group = pfConsoleCmdGroup::GetBaseGroup();
     group->IterateCommands(&iter);
 
     fclose(f);
-    
 }
 
 
@@ -785,14 +786,16 @@ PF_CONSOLE_CMD( Console, CreateBriefDocumentation, "string fileName",
         return;
     }
 
-    fprintf(f, "<span style=\"text-align: center;\"> <h3> Console Commands for Plasma 2.0 Client </h3> <em>Built %s on %s.</em></span><br />", 
-        pnBuildDates::fBuildTime, pnBuildDates::fBuildDate );
+    ST::printf(f, "<span style=\"text-align: center;\">"
+                  "<h3>Console Commands for Plasma 2.0 Client ({})</h3>"
+                  "<em>Built {} on {}.</em></span><br />",
+                  plProduct::Tag(), plProduct::BuildTime(), plProduct::BuildDate());
+
     BriefDocGenIterator iter(f);
     group = pfConsoleCmdGroup::GetBaseGroup();
     group->IterateCommands(&iter);
 
     fclose(f);
-    
 }
 
 PF_CONSOLE_CMD( Console, SetVar, "string name, string value", 
@@ -2308,15 +2311,8 @@ PF_CONSOLE_CMD( App,        // groupName
                "", // paramList
                "Prints the date and time this build was created" )  // helpString
 {
-    pfConsolePrintF(PrintString, "This Plasma 2.0 client built at {} on {}.", pnBuildDates::fBuildTime, pnBuildDates::fBuildDate);
-}
-
-PF_CONSOLE_CMD( App,        // groupName
-               GetBranchDate,       // fxnName
-               "", // paramList
-               "Prints the date of the branch this code was produced from, or \"Pre-release\" if it is from the main code" )    // helpString
-{
-    pfConsolePrintF(PrintString, "The branch date for this Plasma 2.0 client is: {}.", pnBuildDates::fBranchDate);
+    pfConsolePrintF(PrintString, "This Plasma 2.0 client built at {} on {}.",
+                                 plProduct::BuildTime(), plProduct::BuildDate());
 }
 
 PF_CONSOLE_CMD(App,
@@ -3672,7 +3668,7 @@ PF_CONSOLE_CMD( Access,
     }
 
     plKey meshKey = item->fMeshes[0]->GetKey();
-    int iLay = params[0];
+    size_t iLay = (int)params[0];
     float inc = params[1];
 
     if (iLay >= seq->GetNumLayers(meshKey))

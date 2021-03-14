@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plQuality.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 
 #include "plComponent.h"
 #include "plComponentReg.h"
@@ -269,7 +268,7 @@ bool plGrassComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plObjRefMsg* refMsg = new plObjRefMsg(node->GetKey(), plRefMsg::kOnRequest, -1, plObjRefMsg::kModifier);
     hsgResMgr::ResMgr()->AddViaNotify(fShader->GetKey(), refMsg, plRefFlags::kActiveRef);
 
-    hsTArray<hsGMaterial*> mats;
+    std::vector<hsGMaterial*> mats;
     hsMaterialConverter::Instance().CollectConvertedMaterials(hsMaterialConverter::Instance().GetBaseMtl(node), mats);
     hsgResMgr::ResMgr()->SendRef(mats[0]->GetKey(), new plGenRefMsg(fShader->GetKey(), plRefMsg::kOnRequest, 0, plGrassShaderMod::kRefMaterial), plRefFlags::kActiveRef);
 

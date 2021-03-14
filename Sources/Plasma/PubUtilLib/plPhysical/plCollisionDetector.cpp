@@ -213,12 +213,12 @@ bool plCollisionDetector::MsgReceive(plMessage* msg)
 void plCollisionDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Read(stream, mgr);
-    stream->ReadLE(&fType);
+    stream->ReadByte(&fType);
 }
 void plCollisionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteLE(fType);
+    stream->WriteByte(fType);
 }
 
 /////////////////////////////////
@@ -280,10 +280,9 @@ void plCameraRegionDetector::Read(hsStream* stream, hsResMgr* mgr)
 void plCameraRegionDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plDetectorModifier::Write(stream, mgr);
-    stream->WriteLE32(fMessages.size());
-    for(plCameraMsgVec::iterator it = fMessages.begin(); it != fMessages.end(); ++it)
-        mgr->WriteCreatable( stream, *it );
-
+    stream->WriteLE32((uint32_t)fMessages.size());
+    for (plCameraMsg* msg : fMessages)
+        mgr->WriteCreatable(stream, msg);
 }
 
 void plCameraRegionDetector::IHandleEval(plEvalMsg*)
@@ -522,7 +521,7 @@ void plObjectInVolumeAndFacingDetector::Read(hsStream* stream, hsResMgr* mgr)
 {
     plObjectInVolumeDetector::Read(stream, mgr);
 
-    fFacingTolerance = stream->ReadLEScalar();
+    fFacingTolerance = stream->ReadLEFloat();
     fNeedWalkingForward = stream->ReadBool();
 }
 
@@ -530,7 +529,7 @@ void plObjectInVolumeAndFacingDetector::Write(hsStream* stream, hsResMgr* mgr)
 {
     plObjectInVolumeDetector::Write(stream, mgr);
 
-    stream->WriteLEScalar(fFacingTolerance);
+    stream->WriteLEFloat(fFacingTolerance);
     stream->WriteBool(fNeedWalkingForward);
 }
 
@@ -774,19 +773,20 @@ void plSwimDetector::Write(hsStream *stream, hsResMgr *mgr)
 {
     plSimpleRegionSensor::Write(stream, mgr);
 
-    stream->WriteByte(0);
-    stream->WriteLEScalar(0);
-    stream->WriteLEScalar(0);
+    stream->WriteByte(uint8_t(0));
+    stream->WriteLEFloat(0.f);
+    stream->WriteLEFloat(0.f);
 }
 
 void plSwimDetector::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSimpleRegionSensor::Read(stream, mgr);
 
-    stream->ReadByte();
-    stream->ReadLEScalar();
-    stream->ReadLEScalar();
+    (void)stream->ReadByte();
+    (void)stream->ReadLEFloat();
+    (void)stream->ReadLEFloat();
 }
+
 bool plSwimDetector::MsgReceive(plMessage *msg)
 {
     plCollideMsg* pCollMsg = plCollideMsg::ConvertNoRef(msg);

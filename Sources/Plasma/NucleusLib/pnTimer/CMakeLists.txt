@@ -1,16 +1,13 @@
 set(pnTimer_HEADERS
     plTimedValue.h
-    pnBuildDates.h
 )
 
 set(pnTimer_SOURCES
     hsTimer.cpp
     plTimerCallbackManager.cpp
-    pnBranchDate.cpp
-    pnBuildDates.cpp
 )
 
-add_library(pnTimer STATIC ${pnTimer_HEADERS} ${pnTimer_SOURCES})
+plasma_library(pnTimer SOURCES ${pnTimer_HEADERS} ${pnTimer_SOURCES})
 target_link_libraries(
     pnTimer
     PUBLIC

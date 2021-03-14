@@ -11,7 +11,7 @@ set(pfCrashHandler_SOURCES
     plCrashSrv.cpp
 )
 
-add_library(pfCrashHandler STATIC ${pfCrashHandler_SOURCES} ${pfCrashHandler_HEADERS})
+plasma_library(pfCrashHandler SOURCES ${pfCrashHandler_SOURCES} ${pfCrashHandler_HEADERS})
 target_link_libraries(
     pfCrashHandler
     PUBLIC

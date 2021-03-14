@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <memory>
+
 #include "HeadSpin.h"
 #include "plAccMeshSmooth.h"
 
@@ -138,12 +140,11 @@ void plAccMeshSmooth::FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* id
     delete [] bins;
 }
 
-void plAccMeshSmooth::FindEdges(hsTArray<plGeometrySpan*>& spans, hsTArray<uint16_t>* edgeVerts)
+void plAccMeshSmooth::FindEdges(std::vector<plGeometrySpan*>& spans, hsTArray<uint16_t>* edgeVerts)
 {
-    fSpans.SetCount(spans.GetCount());
+    fSpans.SetCount(spans.size());
 
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (size_t i = 0; i < spans.size(); i++)
     {
         fAccGeom.AccessSpanFromGeometrySpan(fSpans[i], spans[i]);
         if( !fSpans[i].HasAccessTri() )
@@ -159,14 +160,13 @@ void plAccMeshSmooth::FindEdges(hsTArray<plGeometrySpan*>& spans, hsTArray<uint1
     }
 }
 
-void plAccMeshSmooth::Smooth(hsTArray<plGeometrySpan*>& spans)
+void plAccMeshSmooth::Smooth(std::vector<plGeometrySpan*>& spans)
 {
-    hsTArray<uint16_t>* shareVtx = new hsTArray<uint16_t>[spans.GetCount()];
-    hsTArray<uint16_t>* edgeVerts = new hsTArray<uint16_t>[spans.GetCount()];
-    FindEdges(spans, edgeVerts);
+    auto shareVtx = std::make_unique<hsTArray<uint16_t>[]>(spans.size());
+    auto edgeVerts = std::make_unique<hsTArray<uint16_t>[]>(spans.size());
+    FindEdges(spans, edgeVerts.get());
 
-    int i;
-    for( i = 0; i < spans.GetCount(); i++ )
+    for (size_t i = 0; i < spans.size(); i++)
     {
         while( edgeVerts[i].GetCount() )
         {
@@ -188,8 +188,7 @@ void plAccMeshSmooth::Smooth(hsTArray<plGeometrySpan*>& spans)
             FindSharedVerts(fSpans[i], j, edgeVerts[i], shareVtx[i], accum);
 
             // Now look through the rest of the spans
-            int k;
-            for( k = i+1; k < spans.GetCount(); k++ )
+            for (size_t k = i+1; k < spans.size(); k++)
             {
                 FindSharedVerts(fSpans[k], edgeVerts[k].GetCount(), edgeVerts[k], shareVtx[k], accum);
             }
@@ -198,21 +197,21 @@ void plAccMeshSmooth::Smooth(hsTArray<plGeometrySpan*>& spans)
 
             if( fFlags & kSmoothNorm )
             {
-                for( k = i; k < spans.GetCount(); k++ )
+                for (size_t k = i; k < spans.size(); k++)
                 {
                     SetNormals(fSpans[k], shareVtx[k], accum.fNorm);
                 }
             }
             if( fFlags & kSmoothPos )
             {
-                for( k = i; k < spans.GetCount(); k++ )
+                for (size_t k = i; k < spans.size(); k++)
                 {
                     SetPositions(fSpans[k], shareVtx[k], accum.fPos);
                 }
             }
             if( fFlags & kSmoothDiffuse )
             {
-                for( k = i; k < spans.GetCount(); k++ )
+                for (size_t k = i; k < spans.size(); k++)
                 {
                     SetDiffuse(fSpans[k], shareVtx[k], accum.fDiffuse);
                 }
@@ -220,7 +219,7 @@ void plAccMeshSmooth::Smooth(hsTArray<plGeometrySpan*>& spans)
 
             // Now remove all the shared verts (which we just processed)
             // from edgeVerts so we don't process them again.
-            for( k = i; k < spans.GetCount(); k++ )
+            for (size_t k = i; k < spans.size(); k++)
             {
                 int m;
                 for( m = 0; m < shareVtx[k].GetCount(); m++ )
@@ -233,9 +232,6 @@ void plAccMeshSmooth::Smooth(hsTArray<plGeometrySpan*>& spans)
             }
         }
     }
-
-    delete [] shareVtx;
-    delete [] edgeVerts;
 }
 
 hsPoint3 plAccMeshSmooth::IPositionToWorld(plAccessSpan& span, int i) const

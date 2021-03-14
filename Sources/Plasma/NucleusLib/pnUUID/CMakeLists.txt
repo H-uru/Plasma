@@ -8,7 +8,7 @@ set(pnUUID_HEADERS
     pnUUID.h
 )
 
-add_library(pnUUID STATIC ${pnUUID_SOURCES} ${pnUUID_HEADERS})
+plasma_library(pnUUID SOURCES ${pnUUID_SOURCES} ${pnUUID_HEADERS})
 target_link_libraries(
     pnUUID
     PUBLIC

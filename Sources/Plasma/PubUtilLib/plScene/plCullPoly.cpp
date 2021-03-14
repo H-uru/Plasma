@@ -52,7 +52,7 @@ plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
 {
     fFlags = f;
 
-    hsAssert(fVerts.GetCount() > 2, "Initializing from degenerate poly");
+    hsAssert(fVerts.size() > 2, "Initializing from degenerate poly");
 
     hsVector3 a(&fVerts[1], &fVerts[0]);
     hsVector3 b(&fVerts[2], &fVerts[0]);
@@ -61,12 +61,11 @@ plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
     fDist = -(fNorm.InnerProduct(fVerts[0]));
 
     fCenter.Set(0,0,0);
-    int i;
-    for( i = 0; i < fVerts.GetCount(); i++ )
+    for (const hsPoint3& vert : fVerts)
     {
-        fCenter += fVerts[i];
+        fCenter += vert;
     }
-    fCenter *= 1.f / float(fVerts.GetCount());
+    fCenter *= 1.f / float(fVerts.size());
 
     fRadius = ICalcRadius();
 
@@ -76,10 +75,9 @@ plCullPoly& plCullPoly::InitFromVerts(uint32_t f)
 float plCullPoly::ICalcRadius() const
 {
     float radSq = 0;
-    int i;
-    for( i = 0; i < fVerts.GetCount(); i++ )
+    for (const hsPoint3& vert : fVerts)
     {
-        float tmpSq = hsVector3(&fVerts[i], &fCenter).MagnitudeSquared();
+        float tmpSq = hsVector3(&vert, &fCenter).MagnitudeSquared();
         if( tmpSq > radSq )
             radSq = tmpSq;
     }
@@ -95,11 +93,8 @@ plCullPoly& plCullPoly::Flip(const plCullPoly& p)
     fCenter = p.fCenter;
     fRadius = p.fRadius;
 
-    int n = p.fVerts.GetCount();
-    fVerts.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
-        fVerts[n-i-1] = p.fVerts[i];
+    fVerts = p.fVerts;
+    std::reverse(fVerts.begin(), fVerts.end());
 
     return *this;
 }
@@ -111,10 +106,9 @@ plCullPoly& plCullPoly::Transform(const hsMatrix44& l2w, const hsMatrix44& w2l, 
 
     dst.fFlags = fFlags;
 
-    dst.fVerts.SetCount(fVerts.GetCount());
+    dst.fVerts.resize(fVerts.size());
 
-    int i;
-    for( i = 0; i < fVerts.GetCount(); i++ )
+    for (size_t i = 0; i < fVerts.size(); i++)
     {
         dst.fVerts[i] = l2w * fVerts[i];
     }
@@ -134,32 +128,30 @@ void plCullPoly::Read(hsStream* s, hsResMgr* mgr)
     fFlags = s->ReadLE32();
 
     fNorm.Read(s);
-    fDist = s->ReadLEScalar();
+    fDist = s->ReadLEFloat();
     fCenter.Read(s);
 
-    fRadius = s->ReadLEScalar();
+    fRadius = s->ReadLEFloat();
 
-    int n = s->ReadLE32();
-    fVerts.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    uint32_t n = s->ReadLE32();
+    fVerts.resize(n);
+    for (uint32_t i = 0; i < n; i++)
         fVerts[i].Read(s);
 }
 
-void plCullPoly::Write(hsStream* s, hsResMgr* mgr)
+void plCullPoly::Write(hsStream* s, hsResMgr* mgr) const
 {
     s->WriteLE32(fFlags);
 
     fNorm.Write(s);
-    s->WriteLEScalar(fDist);
+    s->WriteLEFloat(fDist);
     fCenter.Write(s);
 
-    s->WriteLEScalar(fRadius);
+    s->WriteLEFloat(fRadius);
 
-    s->WriteLE32(fVerts.GetCount());
-    int i;
-    for( i = 0; i < fVerts.GetCount(); i++ )
-        fVerts[i].Write(s);
+    s->WriteLE32((uint32_t)fVerts.size());
+    for (const hsPoint3& vert : fVerts)
+        vert.Write(s);
 }
 
 #ifdef HS_DEBUGGING
@@ -173,15 +165,14 @@ bool plCullPoly::Validate() const
     float magSq = fNorm.MagnitudeSquared();
     if( magSq < kMinMag )
         return false;
-    if( fVerts.GetCount() < 3 )
+    if (fVerts.size() < 3)
         return false;
     hsVector3 norm = hsVector3(&fVerts[1], &fVerts[0]) % hsVector3(&fVerts[2], &fVerts[0]);
     magSq = norm.MagnitudeSquared();
     if( magSq < kMinMag )
         return false;
     norm *= hsFastMath::InvSqrtAppr(magSq);
-    int i;
-    for( i = 3; i < fVerts.GetCount(); i++ )
+    for (size_t i = 3; i < fVerts.size(); i++)
     {
         hsVector3 nextNorm = hsVector3(&fVerts[i-1], &fVerts[0]) % hsVector3(&fVerts[i], &fVerts[0]);
         magSq = nextNorm.MagnitudeSquared();

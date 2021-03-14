@@ -764,9 +764,9 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
     }
 
     stream->WriteLE32(fCurStage);
-    stream->WriteLE32(fType);
+    stream->WriteLE32((uint32_t)fType);
     stream->WriteLE32(fExitFlags);
-    stream->WriteByte(fMode);
+    stream->WriteByte((uint8_t)fMode);
     stream->WriteBool(fForward);
 
     if(fStartMessage) {
@@ -783,10 +783,10 @@ void plAvBrainGeneric::Write(hsStream *stream, hsResMgr *mgr)
         stream->WriteBool(false);
     }
 
-    stream->WriteLEScalar(fFadeIn);
-    stream->WriteLEScalar(fFadeOut);
-    stream->WriteByte(fMoveMode);
-    stream->WriteByte(fBodyUsage);
+    stream->WriteLEFloat(fFadeIn);
+    stream->WriteLEFloat(fFadeOut);
+    stream->WriteByte((uint8_t)fMoveMode);
+    stream->WriteByte((uint8_t)fBodyUsage);
     mgr->WriteKey(stream, fRecipient);
 }
 
@@ -824,8 +824,8 @@ void plAvBrainGeneric::Read(hsStream *stream, hsResMgr *mgr)
         fEndMessage = nullptr;
     }
 
-    fFadeIn = stream->ReadLEScalar();
-    fFadeOut = stream->ReadLEScalar();
+    fFadeIn = stream->ReadLEFloat();
+    fFadeOut = stream->ReadLEFloat();
     fMoveMode = static_cast<MoveMode>(stream->ReadByte());
     fBodyUsage = static_cast<plAGAnim::BodyUsage>(stream->ReadByte());
     fRecipient = mgr->ReadKey(stream);

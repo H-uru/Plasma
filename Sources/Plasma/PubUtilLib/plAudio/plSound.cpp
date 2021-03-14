@@ -1214,8 +1214,8 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     fTime = s->ReadLEDouble();
     fMaxFalloff = s->ReadLE32();
     fMinFalloff = s->ReadLE32();
-    s->ReadLE( &fCurrVolume );
-    s->ReadLE( &fDesiredVol );
+    s->ReadLEFloat(&fCurrVolume);
+    s->ReadLEFloat(&fDesiredVol);
 
     /// mcn debugging - Thanks to some of my older sound code, it's possible that a few volumes
     /// will come in too large. This will only happen with scenes that were exported with that intermediate
@@ -1231,8 +1231,8 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
     fOuterVol = s->ReadLE32();
     fInnerCone = s->ReadLE32();
     fOuterCone = s->ReadLE32();
-    s->ReadLE( &fFadedVolume );
-    s->ReadLE( &fProperties );
+    s->ReadLEFloat(&fFadedVolume);
+    s->ReadLE32(&fProperties);
 
     fType = s->ReadByte();
     fPriority = s->ReadByte();
@@ -1264,13 +1264,13 @@ void plSound::IWrite( hsStream *s, hsResMgr *mgr )
     s->WriteLEDouble(fTime);
     s->WriteLE32(fMaxFalloff);
     s->WriteLE32(fMinFalloff);
-    s->WriteLE( fCurrVolume );
-    s->WriteLE( fDesiredVol );
+    s->WriteLEFloat(fCurrVolume);
+    s->WriteLEFloat(fDesiredVol);
     s->WriteLE32(fOuterVol);
     s->WriteLE32(fInnerCone);
     s->WriteLE32(fOuterCone);
-    s->WriteLE( fFadedVolume );
-    s->WriteLE( fProperties );
+    s->WriteLEFloat(fFadedVolume);
+    s->WriteLE32(fProperties);
     s->WriteByte( fType );
     s->WriteByte( fPriority );
     
@@ -1296,22 +1296,22 @@ void plSound::IWrite( hsStream *s, hsResMgr *mgr )
 
 void plSound::plFadeParams::Read( hsStream *s )
 {
-    s->ReadLE( &fLengthInSecs );
-    s->ReadLE( &fVolStart );
-    s->ReadLE( &fVolEnd );
-    s->ReadLE( &fType );
-    s->ReadLE( &fCurrTime );
+    s->ReadLEFloat(&fLengthInSecs);
+    s->ReadLEFloat(&fVolStart);
+    s->ReadLEFloat(&fVolEnd);
+    s->ReadByte(&fType);
+    s->ReadLEFloat(&fCurrTime);
     fStopWhenDone = s->ReadBOOL();
     fFadeSoftVol = s->ReadBOOL();
 }
 
 void plSound::plFadeParams::Write( hsStream *s )
 {
-    s->WriteLE( fLengthInSecs );
-    s->WriteLE( fVolStart );
-    s->WriteLE( fVolEnd );
-    s->WriteLE( fType );
-    s->WriteLE( fCurrTime );
+    s->WriteLEFloat(fLengthInSecs);
+    s->WriteLEFloat(fVolStart);
+    s->WriteLEFloat(fVolEnd);
+    s->WriteByte(fType);
+    s->WriteLEFloat(fCurrTime);
     s->WriteBOOL( fStopWhenDone );
     s->WriteBOOL( fFadeSoftVol );
 }

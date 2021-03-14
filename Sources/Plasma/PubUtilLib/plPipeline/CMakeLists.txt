@@ -103,7 +103,10 @@ if(PLASMA_PIPELINE STREQUAL "OpenGL")
     list(APPEND plPipeline_ALL_FILES ${plGLPipeline_SOURCES} ${plGLPipeline_HEADERS})
 endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
-add_library(plPipeline STATIC ${plPipeline_ALL_FILES})
+plasma_library(plPipeline
+    SOURCES ${plPipeline_ALL_FILES}
+    PRECOMPILED_HEADERS ${plPipeline_PCH}
+)
 target_link_libraries(plPipeline
     PUBLIC
         CoreLib
@@ -135,8 +138,6 @@ target_link_libraries(plPipeline
     INTERFACE
         pnFactory
 )
-
-plasma_optimize_target(plPipeline PRECOMPILED_HEADERS ${plPipeline_PCH})
 
 target_include_directories(plPipeline PRIVATE "${PLASMA_SOURCE_ROOT}/FeatureLib")
 

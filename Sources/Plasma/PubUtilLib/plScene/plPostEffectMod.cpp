@@ -287,10 +287,10 @@ void plPostEffectMod::Read(hsStream* s, hsResMgr* mgr)
     ISetEnable(true);
 #endif // FORCE ENABLE ON LOAD - ONLY FOR DEBUGGING
     
-    fHither = s->ReadLEScalar();
-    fYon = s->ReadLEScalar();
-    fFovX = s->ReadLEScalar();
-    fFovY = s->ReadLEScalar();
+    fHither = s->ReadLEFloat();
+    fYon = s->ReadLEFloat();
+    fFovX = s->ReadLEFloat();
+    fFovY = s->ReadLEFloat();
 
     fNodeKey = mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kNodeRef), plRefFlags::kPassiveRef);
 
@@ -306,10 +306,10 @@ void plPostEffectMod::Write(hsStream* s, hsResMgr* mgr)
 
     fState.Write(s);
     
-    s->WriteLEScalar(fHither);
-    s->WriteLEScalar(fYon);
-    s->WriteLEScalar(fFovX);
-    s->WriteLEScalar(fFovY);
+    s->WriteLEFloat(fHither);
+    s->WriteLEFloat(fYon);
+    s->WriteLEFloat(fFovX);
+    s->WriteLEFloat(fFovY);
 
     mgr->WriteKey(s, fNodeKey);
 

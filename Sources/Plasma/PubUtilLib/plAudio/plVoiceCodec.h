@@ -50,6 +50,8 @@ struct SpeexBits;
 class plVoiceCodec
 {
 public:
+    virtual ~plVoiceCodec() = default;
+
     virtual int GetSampleRate() const = 0;
     virtual int GetFrameSize() const = 0;
 };

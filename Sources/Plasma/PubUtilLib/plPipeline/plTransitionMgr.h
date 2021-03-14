@@ -48,8 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTransitionMgr_h
 #define _plTransitionMgr_h
 
+#include <vector>
+
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
 
@@ -86,7 +87,7 @@ class plTransitionMgr : public hsKeyedObject
 
         void    IStop( bool aboutToStartAgain = false );
 
-        hsTArray<plEventCallbackMsg *>  fCallbacks;
+        std::vector<plEventCallbackMsg *> fCallbacks;
 
     public:
 

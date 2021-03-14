@@ -190,7 +190,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 
         ST::printf(out, "\n");
 
-        s->WriteLE32(size);
+        s->WriteLE32((int32_t)size);
         s->Write(size, pycode);
         delete[] pycode;
     }
@@ -295,12 +295,10 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
     if (!s.Open(pakName, "wb"))
         return;
 
-    s.WriteLE32(fileNames.size());
-
-    int i;
-    for (i = 0; i < fileNames.size(); i++)
+    s.WriteLE32((uint32_t)fileNames.size());
+    for (const plFileName& fn : fileNames)
     {
-        s.WriteSafeString(fileNames[i].AsString());
+        s.WriteSafeString(fn.AsString());
         s.WriteLE32(0);
     }
 
@@ -309,7 +307,7 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
     std::vector<uint32_t> filePositions;
     filePositions.resize(fileNames.size());
 
-    for (i = 0; i < fileNames.size(); i++)
+    for (size_t i = 0; i < fileNames.size(); i++)
     {
         // strip '.py' from the file name
         plFileName properFileName = fileNames[i].StripFileExt();
@@ -320,7 +318,7 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
     }
 
     s.SetPosition(sizeof(uint32_t));
-    for (i = 0; i < fileNames.size(); i++)
+    for (size_t i = 0; i < fileNames.size(); i++)
     {
         s.WriteSafeString(fileNames[i].AsString());
         s.WriteLE32(filePositions[i]);
