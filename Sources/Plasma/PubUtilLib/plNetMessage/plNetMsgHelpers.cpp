@@ -124,7 +124,7 @@ int plNetMsgCreatableHelper::Poke(hsStream * s, uint32_t peekOptions)
 {
     hsAssert(fCreatable,"plNetMsgCreatableHelper::Poke: fCreatable not set");
     uint16_t classIndex = fCreatable->ClassIndex();
-    s->WriteLE(classIndex);
+    s->WriteLE16(classIndex);
     fCreatable->Write(s, nullptr);
     return s->GetPosition();
 }
@@ -164,18 +164,18 @@ int plNetMsgStreamHelper::Poke(hsStream* stream, uint32_t peekOptions)
 {
     if ( !(peekOptions & plNetMessage::kDontCompress) )
         Compress();
-    stream->WriteLE(fUncompressedSize);
-    stream->WriteLE(fCompressionType);
-    stream->WriteLE(fStreamLen);
+    stream->WriteLE32(fUncompressedSize);
+    stream->WriteByte(fCompressionType);
+    stream->WriteLE32(fStreamLen);
     stream->Write(fStreamLen, fStreamBuf);
     return stream->GetPosition();
 }
 
 int plNetMsgStreamHelper::Peek(hsStream* stream, const uint32_t peekOptions)
 {
-    stream->ReadLE(&fUncompressedSize);
-    stream->ReadLE(&fCompressionType);
-    stream->ReadLE(&fStreamLen);
+    stream->ReadLE32(&fUncompressedSize);
+    stream->ReadByte(&fCompressionType);
+    stream->ReadLE32(&fStreamLen);
 
     if (fStreamLen)     // stream data exists
     {
@@ -190,7 +190,7 @@ int plNetMsgStreamHelper::Peek(hsStream* stream, const uint32_t peekOptions)
         }
         else
         {
-            stream->ReadLE(&fStreamType);     // never compressed, set by reading directly from stream
+            stream->ReadLE16(&fStreamType);     // never compressed, set by reading directly from stream
             stream->Skip(fStreamLen - sizeof(fStreamType));
         }
     }
@@ -203,11 +203,11 @@ void plNetMsgStreamHelper::ReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kUncompressedSize))
-        s->ReadLE(&fUncompressedSize);
+        s->ReadLE32(&fUncompressedSize);
     if (contentFlags.IsBitSet(kCompressionType))
-        s->ReadLE(&fCompressionType);
+        s->ReadByte(&fCompressionType);
     if (contentFlags.IsBitSet(kStreamLen))
-        s->ReadLE(&fStreamLen);
+        s->ReadLE32(&fStreamLen);
     if (contentFlags.IsBitSet(kStreamBuf))
     {
         if (!fStreamBuf)
@@ -225,9 +225,9 @@ void plNetMsgStreamHelper::WriteVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.SetBit(kStreamBuf);
     contentFlags.Write(s);
 
-    s->WriteLE(fUncompressedSize);
-    s->WriteLE(fCompressionType);
-    s->WriteLE(fStreamLen);
+    s->WriteLE32(fUncompressedSize);
+    s->WriteByte(fCompressionType);
+    s->WriteLE32(fStreamLen);
     s->Write(fStreamLen,fStreamBuf);
 }
 
@@ -411,7 +411,7 @@ int plNetMsgObjectListHelper::Poke(hsStream* stream, uint32_t peekOptions)
     size_t num = GetNumObjects();
     hsAssert(num < std::numeric_limits<uint16_t>::max(), "Too many objects");
 
-    stream->WriteLE(uint16_t(num));
+    stream->WriteLE16(uint16_t(num));
 
     for (size_t i = 0; i < num; i++)
         GetObject(i)->Poke(stream, peekOptions);
@@ -445,7 +445,7 @@ plNetMsgMemberInfoHelper::plNetMsgMemberInfoHelper()
 
 int plNetMsgMemberInfoHelper::Peek(hsStream* s, const uint32_t peekOptions)
 {
-    s->ReadLE(&fFlags);
+    s->ReadLE32(&fFlags);
     fClientGuid.Read(s, nullptr);
     fAvatarUoid.Read(s);
     return s->GetPosition();
@@ -453,7 +453,7 @@ int plNetMsgMemberInfoHelper::Peek(hsStream* s, const uint32_t peekOptions)
 
 int plNetMsgMemberInfoHelper::Poke(hsStream* s, const uint32_t peekOptions)
 {
-    s->WriteLE(fFlags);
+    s->WriteLE32(fFlags);
     fClientGuid.Write(s, nullptr);
     fAvatarUoid.Write(s);
     return s->GetPosition();
@@ -488,7 +488,7 @@ int plNetMsgMemberListHelper::Poke(hsStream* stream, const uint32_t peekOptions)
     size_t numMembers = GetNumMembers();
     hsAssert(numMembers < std::numeric_limits<uint16_t>::max(), "Too many members");
 
-    stream->WriteLE(uint16_t(numMembers));
+    stream->WriteLE16(uint16_t(numMembers));
 
     for(size_t i = 0; i < numMembers; i++)
     {
@@ -525,10 +525,10 @@ int plNetMsgReceiversListHelper::Poke(hsStream* stream, const uint32_t peekOptio
     size_t numIDs = GetNumReceivers();
     hsAssert(numIDs < std::numeric_limits<uint8_t>::max(), "Too many receivers");
 
-    stream->WriteLE(uint8_t(numIDs));
+    stream->WriteByte(uint8_t(numIDs));
 
     for (size_t i = 0; i < numIDs; i++)
-        stream->WriteLE(GetReceiverPlayerID(i));
+        stream->WriteLE32(GetReceiverPlayerID(i));
 
     return stream->GetPosition();
 }

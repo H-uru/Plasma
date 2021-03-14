@@ -196,16 +196,16 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
 {
     hsKeyedObject::Read( s, mgr );
 
-    s->ReadLE( &fFlags );
-    s->ReadLE( &fDataLength );
+    s->ReadLE32(&fFlags);
+    s->ReadLE32(&fDataLength);
     fFileName = s->ReadSafeString();
 
-    s->ReadLE( &fHeader.fFormatTag );
-    s->ReadLE( &fHeader.fNumChannels );
-    s->ReadLE( &fHeader.fNumSamplesPerSec );
-    s->ReadLE( &fHeader.fAvgBytesPerSec );
-    s->ReadLE( &fHeader.fBlockAlign );
-    s->ReadLE( &fHeader.fBitsPerSample );
+    s->ReadLE16(&fHeader.fFormatTag);
+    s->ReadLE16(&fHeader.fNumChannels);
+    s->ReadLE32(&fHeader.fNumSamplesPerSec);
+    s->ReadLE32(&fHeader.fAvgBytesPerSec);
+    s->ReadLE16(&fHeader.fBlockAlign);
+    s->ReadLE16(&fHeader.fBitsPerSample);
 
     fValid = false;
     if( !( fFlags & kIsExternal ) )
@@ -235,8 +235,8 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
     if (fData == nullptr)
         fFlags |= kIsExternal;
 
-    s->WriteLE( fFlags );
-    s->WriteLE( fDataLength );
+    s->WriteLE32(fFlags);
+    s->WriteLE32(fDataLength);
     
     // Truncate the path to just a file name on write
     if (fFileName.IsValid())
@@ -244,12 +244,12 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
     else
         s->WriteSafeString("");
 
-    s->WriteLE( fHeader.fFormatTag );
-    s->WriteLE( fHeader.fNumChannels );
-    s->WriteLE( fHeader.fNumSamplesPerSec );
-    s->WriteLE( fHeader.fAvgBytesPerSec );
-    s->WriteLE( fHeader.fBlockAlign );
-    s->WriteLE( fHeader.fBitsPerSample );
+    s->WriteLE16(fHeader.fFormatTag);
+    s->WriteLE16(fHeader.fNumChannels);
+    s->WriteLE32(fHeader.fNumSamplesPerSec);
+    s->WriteLE32(fHeader.fAvgBytesPerSec);
+    s->WriteLE16(fHeader.fBlockAlign);
+    s->WriteLE16(fHeader.fBitsPerSample);
 
     if( !( fFlags & kIsExternal ) )
         s->Write( fDataLength, fData );

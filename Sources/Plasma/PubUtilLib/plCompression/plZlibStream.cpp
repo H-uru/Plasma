@@ -191,7 +191,7 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     
     // Discard time, xflags and OS code:
     for (i = 0; i < 6; i++)
-        s.ReadByte();
+        (void)s.ReadByte();
     CheckForEnd();
     
     if ((flags & EXTRA_FIELD) != 0)
@@ -227,7 +227,7 @@ int plZlibStream::IValidateGzHeader(uint32_t byteCount, const void* buffer)
     // skip the header crc
     if ((flags & HEAD_CRC) != 0)
     {
-        s.ReadLE16();
+        (void)s.ReadLE16();
         CheckForEnd();
     }
     

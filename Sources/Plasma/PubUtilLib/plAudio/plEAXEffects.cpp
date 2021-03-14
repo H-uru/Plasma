@@ -609,18 +609,18 @@ void    plEAXSourceSoftSettings::Reset()
 
 void    plEAXSourceSoftSettings::Read( hsStream *s )
 {
-    s->ReadLE( &fOcclusion );
-    s->ReadLE( &fOcclusionLFRatio );
-    s->ReadLE( &fOcclusionRoomRatio );
-    s->ReadLE( &fOcclusionDirectRatio );
+    s->ReadLE16(&fOcclusion);
+    s->ReadLEFloat(&fOcclusionLFRatio);
+    s->ReadLEFloat(&fOcclusionRoomRatio);
+    s->ReadLEFloat(&fOcclusionDirectRatio);
 }
 
 void    plEAXSourceSoftSettings::Write( hsStream *s )
 {
-    s->WriteLE( fOcclusion );
-    s->WriteLE( fOcclusionLFRatio );
-    s->WriteLE( fOcclusionRoomRatio );
-    s->WriteLE( fOcclusionDirectRatio );
+    s->WriteLE16(fOcclusion);
+    s->WriteLEFloat(fOcclusionLFRatio);
+    s->WriteLEFloat(fOcclusionRoomRatio);
+    s->WriteLEFloat(fOcclusionDirectRatio);
 }
 
 void    plEAXSourceSoftSettings::SetOcclusion( int16_t occ, float lfRatio, float roomRatio, float directRatio )

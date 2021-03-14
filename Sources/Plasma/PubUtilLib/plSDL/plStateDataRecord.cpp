@@ -409,8 +409,7 @@ void plStateDataRecord::Write(hsStream* s, float timeConvert, uint32_t writeOpti
 //
 bool plStateDataRecord::ReadStreamHeader(hsStream* s, ST::string* name, int* version, plUoid* objUoid)
 {
-    uint16_t savFlags;
-    s->ReadLE(&savFlags);
+    uint16_t savFlags = s->ReadLE16();
     if (!(savFlags & plSDL::kAddedVarLengthIO))     // using to establish a new version in the header, can delete in 8/03
     {
         *name = "";
@@ -448,7 +447,7 @@ void plStateDataRecord::WriteStreamHeader(hsStream* s, plUoid* objUoid) const
     if (objUoid)
         savFlags |= plSDL::kHasUoid;
 
-    s->WriteLE(savFlags);
+    s->WriteLE16(savFlags);
     s->WriteSafeString(GetDescriptor()->GetName());         
     s->WriteLE16((int16_t)GetDescriptor()->GetVersion());
     if (objUoid)

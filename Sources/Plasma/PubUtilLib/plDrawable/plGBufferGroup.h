@@ -89,7 +89,7 @@ class plGBufferCell
         plGBufferCell() {}
 
         void    Read( hsStream *s );
-        void    Write( hsStream *s );
+        void    Write(hsStream *s) const;
 };
 
 class plGBufferColor

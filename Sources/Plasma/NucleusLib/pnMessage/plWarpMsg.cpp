@@ -48,12 +48,12 @@ void plWarpMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
     fTransform.Read(stream);
-    stream->ReadLE(&fWarpFlags);
+    stream->ReadLE32(&fWarpFlags);
 }
 
 void plWarpMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
     fTransform.Write(stream);
-    stream->WriteLE(fWarpFlags);
+    stream->WriteLE32(fWarpFlags);
 }

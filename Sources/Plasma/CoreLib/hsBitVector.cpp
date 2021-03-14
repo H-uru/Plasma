@@ -91,7 +91,7 @@ void hsBitVector::Read(hsStream* s)
 {
     Reset();
 
-    s->ReadLE(&fNumBitVectors);
+    s->ReadLE32(&fNumBitVectors);
     if( fNumBitVectors )
     {
         delete [] fBitVectors;

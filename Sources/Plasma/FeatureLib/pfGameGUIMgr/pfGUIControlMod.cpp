@@ -119,8 +119,8 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fTransparent = s->ReadBOOL();
 
     fFontFace = s->ReadSafeString();
-    s->ReadLE( &fFontSize );
-    s->ReadLE( &fFontFlags );
+    s->ReadByte(&fFontSize);
+    s->ReadByte(&fFontFlags);
 }
 
 void    pfGUIColorScheme::Write( hsStream *s )
@@ -132,8 +132,8 @@ void    pfGUIColorScheme::Write( hsStream *s )
     s->WriteBOOL( fTransparent );
 
     s->WriteSafeString( fFontFace );
-    s->WriteLE( fFontSize );
-    s->WriteLE( fFontFlags );
+    s->WriteByte(fFontSize);
+    s->WriteByte(fFontFlags);
 }
 
 //// Destructor //////////////////////////////////////////////////
@@ -777,7 +777,7 @@ void    pfGUIControlMod::Refresh()
 void    pfGUIControlMod::Read( hsStream *s, hsResMgr *mgr )
 {
     plSingleModifier::Read(s, mgr);
-    s->ReadLE( &fTagID );
+    s->ReadLE32(&fTagID);
     fVisible = s->ReadBool();
 
     // Read the handler in
@@ -825,7 +825,7 @@ void    pfGUIControlMod::Write( hsStream *s, hsResMgr *mgr )
         ClearFlag( kHasProxy );
 
     plSingleModifier::Write( s, mgr );
-    s->WriteLE( fTagID );
+    s->WriteLE32(fTagID);
     s->WriteBool( fVisible );
 
     // Write the handler out (if it's not a writeable, damn you)

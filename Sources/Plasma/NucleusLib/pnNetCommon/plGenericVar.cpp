@@ -148,7 +148,7 @@ char plGenericType::IToChar() const
 
 void    plGenericType::Read(hsStream* s)
 {
-    s->ReadLE(&fType);
+    s->ReadByte(&fType);
 
     switch ( fType )
     {
@@ -160,19 +160,19 @@ void    plGenericType::Read(hsStream* s)
         fB = s->ReadBool();
         break;
     case kChar:
-        s->ReadLE( &fC );
+        fC = (char)s->ReadByte();
         break;
-    case kInt   :
-        s->ReadLE( &fI );
+    case kInt:
+        s->ReadLE32(&fI);
         break;
     case kUInt:
-        s->ReadLE( &fU );
+        s->ReadLE32(&fU);
         break;
     case kFloat:
-        s->ReadLE( &fF );
+        s->ReadLEFloat(&fF);
         break;
     case kDouble:
-        s->ReadLE( &fD );
+        s->ReadLEDouble(&fD);
         break;
     case kNone :
         break;
@@ -181,7 +181,7 @@ void    plGenericType::Read(hsStream* s)
 
 void    plGenericType::Write(hsStream* s)
 {
-    s->WriteLE(fType);
+    s->WriteByte(fType);
 
     switch ( fType )
     {
@@ -193,19 +193,19 @@ void    plGenericType::Write(hsStream* s)
         s->WriteBool(fB);
         break;
     case kChar:
-        s->WriteLE( fC );
+        s->WriteByte((uint8_t)fC);
         break;
-    case kInt   :
-        s->WriteLE( fI );
+    case kInt:
+        s->WriteLE32(fI);
         break;
     case kUInt:
-        s->WriteLE( fU );
+        s->WriteLE32(fU);
         break;
     case kFloat:
-        s->WriteLE( fF );
+        s->WriteLEFloat(fF);
         break;
     case kDouble:
-        s->WriteLE( fD );
+        s->WriteLEDouble(fD);
         break;
     case kNone :
         break;

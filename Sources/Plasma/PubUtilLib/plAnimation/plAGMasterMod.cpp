@@ -94,11 +94,10 @@ void plAGMasterMod::Write(hsStream *stream, hsResMgr *mgr)
 
     int length = 0;
     stream->WriteLE32(length); // backwards compatability. Nuke on next format change.
-    stream->WriteLE32(fPrivateAnims.size());
-    int i;
-    for (i = 0; i < fPrivateAnims.size(); i++)
+    stream->WriteLE32((uint32_t)fPrivateAnims.size());
+    for (plAGAnim* anim : fPrivateAnims)
     {
-        mgr->WriteKey(stream, fPrivateAnims[i]->GetKey());
+        mgr->WriteKey(stream, anim->GetKey());
     }
     stream->WriteBool(fIsGrouped);
     stream->WriteBool(fIsGroupMaster);

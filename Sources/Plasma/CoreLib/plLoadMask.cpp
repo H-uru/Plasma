@@ -95,7 +95,7 @@ void plLoadMask::Write(hsStream* s) const
 {
     // write packed into 1 byte
     uint8_t qc = (fQuality[0]<<4) | (fQuality[1] & 0xf);
-    s->WriteLE(qc);
+    s->WriteByte(qc);
 }
 
 uint32_t plLoadMask::ValidateReps(int num, const int quals[], const int caps[])

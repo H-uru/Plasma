@@ -321,7 +321,7 @@ bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         delete [] jbuffer;
 
         // jpeglib changes bufferSize and bufferAddr
-        outStream->WriteLE32( bufferSize );
+        outStream->WriteLE32((uint32_t)bufferSize);
         outStream->Write( bufferSize, bufferAddr );
     }
     catch (...)

@@ -206,9 +206,9 @@ void    pfGUIUpDownPairMod::Read( hsStream *s, hsResMgr *mgr )
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefUpControl ), plRefFlags::kActiveRef );
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDownControl ), plRefFlags::kActiveRef );
 
-    s->ReadLE( &fMin );
-    s->ReadLE( &fMax );
-    s->ReadLE( &fStep );
+    s->ReadLEFloat(&fMin);
+    s->ReadLEFloat(&fMax);
+    s->ReadLEFloat(&fStep);
 
     fValue = fMin;
 }
@@ -220,9 +220,9 @@ void    pfGUIUpDownPairMod::Write( hsStream *s, hsResMgr *mgr )
     mgr->WriteKey( s, fUpControl->GetKey() );
     mgr->WriteKey( s, fDownControl->GetKey() );
 
-    s->WriteLE( fMin );
-    s->WriteLE( fMax );
-    s->WriteLE( fStep );
+    s->WriteLEFloat(fMin);
+    s->WriteLEFloat(fMax);
+    s->WriteLEFloat(fStep);
 }
 
 

@@ -239,9 +239,9 @@ void plArmatureModBase::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, meshKey);
         
         // Should be a list per mesh key
-        stream->WriteLE32(fUnusedBones[i]->size());
-        for(int j = 0; j < fUnusedBones[i]->size(); j++)
-            mgr->WriteKey(stream, (*fUnusedBones[i])[j]);
+        stream->WriteLE32((uint32_t)fUnusedBones[i]->size());
+        for (const plKey& boneKey : *fUnusedBones[i])
+            mgr->WriteKey(stream, boneKey);
     }
     
     int nBrains = fBrains.size();
@@ -2562,9 +2562,9 @@ void plArmatureLODMod::Write(hsStream *stream, hsResMgr *mgr)
         mgr->WriteKey(stream, meshKey);
         
         // Should be a list per mesh key
-        stream->WriteLE32(fUnusedBones[i]->size());
-        for(int j = 0; j < fUnusedBones[i]->size(); j++)
-            mgr->WriteKey(stream, (*fUnusedBones[i])[j]);
+        stream->WriteLE32((uint32_t)fUnusedBones[i]->size());
+        for (const plKey& boneKey : *fUnusedBones[i])
+            mgr->WriteKey(stream, boneKey);
     }
 }
 

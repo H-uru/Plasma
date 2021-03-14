@@ -151,7 +151,7 @@ void plLinkingMgrMsg::Read( hsStream* stream, hsResMgr* mgr )
     contentFlags.Read( stream );
 
     if ( contentFlags.IsBitSet( kLinkingMgrCmd ) )
-        stream->ReadLE( &fLinkingMgrCmd );
+        stream->ReadByte(&fLinkingMgrCmd);
     if ( contentFlags.IsBitSet( kLinkingMgrArgs ) )
         fArgs.Read( stream, mgr );
 }
@@ -165,7 +165,7 @@ void plLinkingMgrMsg::Write( hsStream* stream, hsResMgr* mgr )
     contentFlags.SetBit( kLinkingMgrArgs );
     contentFlags.Write( stream );
 
-    stream->WriteLE( fLinkingMgrCmd );
+    stream->WriteByte(fLinkingMgrCmd);
     fArgs.Write( stream, mgr );
 }
 

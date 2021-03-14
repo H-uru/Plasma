@@ -179,10 +179,10 @@ void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
         s->WriteLE32( 0 );
     else
     {
-        char *text = hsWStringToString(fText);
-        s->WriteLE32( strlen( text ) );
-        s->Write( strlen( text ), text );
-        delete [] text;
+        std::unique_ptr<char[]> text(hsWStringToString(fText));
+        size_t len = strlen(text.get());
+        s->WriteLE32((uint32_t)len);
+        s->Write(len, text.get());
     }
 
     // Make sure we only write out to use localization path if the box is checked

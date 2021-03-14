@@ -47,13 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plMeshRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
-    stream->ReadLE(&fWhich);
+    stream->ReadByte(&fType);
+    stream->ReadByte(&fWhich);
 }
 
 void plMeshRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
-    stream->WriteLE(fWhich);
+    stream->WriteByte(fType);
+    stream->WriteByte(fWhich);
 }

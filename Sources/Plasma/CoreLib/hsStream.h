@@ -126,19 +126,30 @@ public:
     void            WriteLEDouble(double value);
     void            WriteLEDouble(size_t count, const double values[]);
 
-    template <typename T>
-    inline void ReadLE(T* value)
-    {
-        Read(sizeof(T), value);
-        *value = hsToLE(*value);
-    }
+    // Type-safe placement readers
+    template <typename T> inline void ReadByte(T*) = delete;
+    void ReadByte(uint8_t* v) { *v = ReadByte(); }
+    void ReadByte(int8_t* v) { *v = (int8_t)ReadByte(); }
+    template <typename T> inline void ReadLE16(T*) = delete;
+    void ReadLE16(uint16_t* v) { *v = ReadLE16(); }
+    void ReadLE16(int16_t* v) { *v = (int16_t)ReadLE16(); }
+    template <typename T> inline void ReadLE32(T*) = delete;
+    void ReadLE32(uint32_t* v) { *v = ReadLE32(); }
+    void ReadLE32(int32_t* v) { *v = (int32_t)ReadLE32(); }
+    template <typename T> inline void ReadLEFloat(T*) = delete;
+    void ReadLEFloat(float* v) { *v = ReadLEFloat(); }
+    template <typename T> inline void ReadLEDouble(T*) = delete;
+    void ReadLEDouble(double* v) { *v = ReadLEDouble(); }
 
-    template <typename T>
-    inline void WriteLE(T value)
-    {
-        value = hsToLE(value);
-        Write(sizeof(T), &value);
-    }
+    // Type-safety checks for writers
+    template <typename T> void WriteByte(T) = delete;
+    void WriteByte(int8_t v) { WriteByte((uint8_t)v); }
+    template <typename T> void WriteLE16(T) = delete;
+    void WriteLE16(int16_t v) { WriteLE16((uint16_t)v); }
+    template <typename T> void WriteLE32(T) = delete;
+    void WriteLE32(int32_t v) { WriteLE32((uint32_t)v); }
+    template <typename T> void WriteLEFloat(T) = delete;
+    template <typename T> void WriteLEDouble(T) = delete;
 };
 
 class hsStreamable {

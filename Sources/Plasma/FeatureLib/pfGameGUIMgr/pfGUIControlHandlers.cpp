@@ -139,8 +139,9 @@ void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
 {
     if (fCommand != nullptr)
     {
-        s->WriteLE32( strlen( fCommand ) );
-        s->Write( strlen( fCommand ), fCommand );
+        size_t cmdLen = strlen(fCommand);
+        s->WriteLE32((uint32_t)cmdLen);
+        s->Write(cmdLen, fCommand);
     }
     else
         s->WriteLE32( 0 );

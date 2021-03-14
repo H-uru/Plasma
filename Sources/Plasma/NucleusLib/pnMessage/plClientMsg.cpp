@@ -71,13 +71,13 @@ void plClientMsg::Write(hsStream* stream, hsResMgr* mgr)
 void plClientRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Read(stream, mgr);
-    stream->ReadLE(&fType);
-    stream->ReadLE(&fWhich);
+    stream->ReadByte(&fType);
+    stream->ReadByte(&fWhich);
 }
 
 void plClientRefMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plRefMsg::Write(stream, mgr);
-    stream->WriteLE(fType);
-    stream->WriteLE(fWhich);
+    stream->WriteByte(fType);
+    stream->WriteByte(fWhich);
 }

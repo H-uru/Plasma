@@ -531,8 +531,8 @@ void    plGeometrySpan::Read( hsStream *stream )
 
     // FIXME MAJOR VERSION
     // remove these two lines. No more patches.
-    stream->ReadLE32();
-    stream->ReadByte();
+    (void)stream->ReadLE32();
+    (void)stream->ReadByte();
 
     fDecalLevel = stream->ReadLE32();
 
@@ -624,7 +624,7 @@ void    plGeometrySpan::Write( hsStream *stream )
     // FIXME MAJOR VERSION
     // Remove these two lines.
     stream->WriteLE32(0);
-    stream->WriteByte(0);
+    stream->WriteByte(uint8_t(0));
 
     stream->WriteLE32( fDecalLevel );
 

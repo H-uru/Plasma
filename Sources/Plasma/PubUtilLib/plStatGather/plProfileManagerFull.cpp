@@ -410,7 +410,7 @@ void plProfileManagerFull::IPrintGroup(hsStream* s, const char* groupName, bool 
                 var->PrintAvg(buf, false);
 
             s->Write(strlen(buf), buf);
-            s->WriteByte(',');
+            s->WriteByte((uint8_t)',');
         }
     }
 }
@@ -460,27 +460,27 @@ void plProfileManagerFull::ILogStats()
         {
             static const char kSpawn[] = "Spawn";
             s.Write(strlen(kSpawn), kSpawn);
-            s.WriteByte(',');
+            s.WriteByte((uint8_t)',');
 
             for (it = groups.begin(); it != groups.end(); it++)
             {
                 ST::string groupName = *it;
                 IPrintGroup(&s, groupName.c_str(), true);
             }
-            s.WriteByte('\r');
-            s.WriteByte('\n');
+            s.WriteByte((uint8_t)'\r');
+            s.WriteByte((uint8_t)'\n');
         }
 
         s.Write(fLogSpawnName.size(), fLogSpawnName.c_str());
-        s.WriteByte(',');
+        s.WriteByte((uint8_t)',');
 
         for (it = groups.begin(); it != groups.end(); it++)
         {
             ST::string groupName = *it;
             IPrintGroup(&s, groupName.c_str());
         }
-        s.WriteByte('\r');
-        s.WriteByte('\n');
+        s.WriteByte((uint8_t)'\r');
+        s.WriteByte((uint8_t)'\n');
 
         s.Close();
     }
