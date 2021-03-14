@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Building - Plasma</title>
+
+    <meta name="viewport" content="width=device-width">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Plasma</h1>
+      <span>The Cyan Worlds Engine</span>
+    </header>
+
+    <main class="page">
+      <nav>
+        <a href="index.html">Overview</a>
+        <a href="download.html">Download</a>
+        <a href="building.html" class="active">Building</a>
+        <a href="running.html">Running</a>
+        <a href="involvement.html">Get Involved</a>
+        <a href="credits.html">Credits</a>
+      </nav>
+
+      <h2>Building</h2>
+
+      <p>Currently, the complete game client can only be built for Windows, using Visual Studio. While it is possible to build a 64-bit game client, only the 32-bit (x86) client is officially supported.</p>
+
+
+      <h3 id="dependencies">Library Dependencies</h3>
+
+      <p>Plasma requires a number of third-party libraries as dependencies. All required libraries are available through the <a href="https://github.com/microsoft/vcpkg">vcpkg package manager</a> and can be downloaded as part of the build process, or can be built using their individual build instructions.</p>
+
+      <details>
+          <summary>Expand to view the complete list of libraries</summary>
+
+          <p>Plasma currently requires the following third-party libraries:</p>
+          <ul>
+            <li><a href="https://www.python.org/downloads/">Python 3.8 or higher</a></li>
+            <li><a href="https://www.xiph.org/downloads/">libOgg and libVorbis</a></li>
+            <li><a href="http://www.slproweb.com/products/Win32OpenSSL.html">OpenSSL</a></li>
+            <li><a href="https://openal-soft.org/">OpenAL Soft</a></li>
+            <li><a href="https://libexpat.github.io/">Expat</a></li>
+            <li><a href="https://libjpeg-turbo.org/">libjpeg</a></li>
+            <li><a href="http://www.libpng.org/">libpng</a></li>
+            <li><a href="https://zlib.net/">zlib</a></li>
+            <li><a href="https://curl.se/">libcurl</a></li>
+            <li><a href="https://github.com/zrax/string_theory/">string_theory</a></li>
+            <li><a href="https://think-async.com/Asio/">Standalone ASIO</a></li>
+          </ul>
+
+          <p>The following libraries are optional:</p>
+          <ul>
+            <li><a href="https://cairosvg.org/">CairoSVG</a> (for building resource.dat)</li>
+            <li><a href="https://python-pillow.org/">Pillow</a> (for building resource.dat)</li>
+            <li><a href="https://www.freetype.org/">FreeType</a> (for plFontConverter)</li>
+            <li><a href="https://www.qt.io/download-open-source">Qt5</a> (for the GUI tools)</li>
+            <li><a href="https://www.webmproject.org/">VPX and WebM</a> (for video)</li>
+            <li><a href="https://www.opus-codec.org/">Opus</a> (for video and voice chat)</li>
+            <li><a href="https://www.speex.org/downloads/">Speex</a> (for legacy voice chat)</li>
+            <li>Autodesk 3ds Max 7 (non-free SDK; for 3ds Max plugin)</li>
+          </ul>
+      </details>
+
+
+      <h3 id="building-windows">Building on Windows</h3>
+
+      <p>TODO</p>
+
+      <h3 id="building-nix">Building on macOS &amp; Linux</h3>
+
+      <p>Linux and macOS are <strong>not officially supported targets</strong>, and the game client does not compile. However, several of the tools can be built and run.</p>
+
+      <p>You will need to ensure all the required dependencies are available. You may be able to use vcpkg on these platforms, but it has not been extensively tested.</p>
+
+      <ol>
+          <li>
+            <p>Clone the repository from GitHub, including all submodules, using a git client. On the command line, this can be done by executing the following:<br>
+              <code>git clone --recurse-submodules https://github.com/H-uru/Plasma.git</code></p>
+          </li>
+
+          <li>
+            <p>In the folder where you cloned the repository, run CMake to create a build folder:<br>
+              <code>cmake --builddir build -S .</code></p>
+            <p>If you want to use vcpkg to automatically build dependencies, enable the USE_VCPKG option:<br>
+              <code>cmake -DUSE_VCPKG=ON --builddir build -S .</code></p>
+          </li>
+
+          <li>
+            <p>Compile the project with the following command:<br>
+              <code>cmake --builddir build --config RelWithDebInfo</code></p>
+          </li>
+
+          <li>
+            <p>Install the resulting tools with the following command:<br>
+              <code>cmake --install build --config RelWithDebInfo</code></p>
+          </li>
+      </ol>
+
+      <p>TODO: Where are tools installed?</p>
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>
+
+
+

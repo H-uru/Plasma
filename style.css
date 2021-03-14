@@ -4,15 +4,34 @@
  * @author dpogue
  */
 
-@import url(https://fonts.googleapis.com/css?family=Nova+Square&text=Plasma);
-@import url(https://fonts.googleapis.com/css?family=Cinzel);
-@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700);
+@import url('https://fonts.googleapis.com/css2?family=Nova+Square&display=swap&text=Plasma');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400&family=Roboto:wght@300;400;500;700&display=swap');
 
 @ms-viewport { width: device-width; }
 @viewport { width: device-width; }
 
+:root {
+    --page-background: #37372f;
+    --content-background: #c6c3c6;
+    --content-foreground: #31454a;
+    --content-headings: #31454a;
+    --infobox-background: rgba(255, 255, 255, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --page-background: #131311;
+        --content-background: #272527;
+        --content-foreground: #c2d2d6;
+        --content-headings: #e0e9eb;
+        --infobox-background: rgba(0, 0, 0, 0.25);
+    }
+}
+
+
 body {
-    background: #37372f; /*#5c5c5c;*/
+    background: #37372f;
+    background: var(--page-background);
     padding: 0;
     margin: 0 auto;
     font-family: 'Roboto', sans-serif;
@@ -26,7 +45,7 @@ body {
 
 a {
     color: inherit;
-    text-shadow: 0 1px 2px white;
+    font-weight: 400;
 }
 
 h1 {
@@ -34,7 +53,6 @@ h1 {
     font-size: 3em;
     font-weight: normal;
     color: #fff3ed;
-    text-shadow: 0 1px 2px #2f2f2e;
     text-align: center;
     margin: 0;
     margin-bottom: 0.25rem;
@@ -42,6 +60,13 @@ h1 {
 }
 
 h2 {
+    font-family: 'Cinzel', monospace;
+    font-size: 2em;
+    letter-spacing: 0.015em;
+}
+
+header span {
+    display: block;
     font-family: 'Cinzel', monospace;
     font-size: 1.25em;
     font-weight: normal;
@@ -77,17 +102,45 @@ footer {
 }
 
 .page {
-    background: #c6c3c6 url('pahtsBrdgTrim.png') top left repeat-y;
+    background: url('pahtsBrdgTrim.png') top left repeat-y;
+    background-color: #c6c3c6;
+    background-color: var(--content-background);
     background-size: 25px;
     margin: 0;
     padding: 5px 10px;
     padding-left: 40px;
     box-sizing: border-box;
     color: #31454a;
+    color: var(--content-foreground);
     border: 1px solid #37372f;
     border-width: 1px 0;
     line-height: 1.5em;
     font-weight: 300;
+}
+
+nav {
+    display: flex;
+    overflow: auto;
+    margin: -5px -10px 0 -16px;
+}
+
+nav a {
+    display: block;
+    flex: 1 1 100%;
+    background: url('pahtsCnlStr.png') top left no-repeat;
+    background-size: 100% 100%;
+    text-align: center;
+    padding: 0.25em;
+    font-weight: 500;
+    white-space: nowrap;
+    color: #31454a;
+}
+
+nav a.active {
+    background-image: none;
+    text-decoration: none;
+    color: #31454a;
+    color: var(--content-headings);
 }
 
 @media (min-width: 600px) {
@@ -95,14 +148,66 @@ footer {
         background-size: 47px;
         padding: 10px 70px;
     }
+
+    nav {
+        margin: -10px -70px 0 -25px;
+    }
 }
 
 h3 {
     font-family: 'Cinzel', monospace;
     font-size: 1.25em;
     color: #31454a;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    color: var(--content-headings);
     margin-top: 2rem;
+    margin-bottom: 0;
+}
+
+dl {
+    margin-left: 30px;
+}
+
+dt {
+    float: left;
+    min-width: 80px;
+    font-weight: bold;
+}
+
+code {
+    font-weight: normal;
+}
+
+@supports (-ms-ime-align: auto) {
+    summary {
+        display: none;
+    }
+}
+
+@supports selector(details) {
+    summary {
+        display: revert;
+        cursor: pointer;
+        margin-left: -2em;
+    }
+
+    details {
+        padding-left: 2em;
+    }
+}
+
+.infobox {
+    margin: 1.5em 2em;
+    padding: 1em;
+    border: 1px solid;
+    background: rgba(255, 255, 255, 0.25);
+    background: var(--infobox-background);
+}
+
+.infobox p:first-child {
+    margin-top: 0;
+}
+
+.infobox p:last-child {
     margin-bottom: 0;
 }
 
