@@ -78,8 +78,6 @@ target_link_libraries(
         pnKeyedObject
         pnNetCommon
         pnNucleusInc
-    PRIVATE
-        plSDL # :(
 )
 
 source_group("Header Files" FILES ${pnMessage_HEADERS})

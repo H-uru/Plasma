@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plClientMsg.h"
 #include "pnMessage/plPlayerPageMsg.h"
-#include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "pnNetCommon/pnNetCommon.h"
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -67,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plNetClientMgrMsg.h"
 #include "plMessage/plNetVoiceListMsg.h"
 #include "plMessage/plResPatcherMsg.h"
+#include "plMessage/plSDLModifierStateMsg.h"
 #include "plMessage/plSynchEnableMsg.h"
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plModifier/plResponderModifier.h"
@@ -555,7 +555,7 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
         plSynchedObject* synchObj = plSynchedObject::ConvertNoRef(load->fKey->ObjectIsLoaded());
         if (synchObj && synchObj->IsFinal())
         {
-            plSDLModifierMsg* msg = new plSDLModifierMsg(load->fSDRec->GetDescriptor()->GetName(), plSDLModifierMsg::kRecv);
+            plSDLModifierStateMsg* msg = new plSDLModifierStateMsg(load->fSDRec->GetDescriptor()->GetName(), plSDLModifierMsg::kRecv);
             msg->SetState(load->fSDRec, true);
             load->fSDRec = nullptr;
             msg->SetPlayerID(load->fPlayerID);

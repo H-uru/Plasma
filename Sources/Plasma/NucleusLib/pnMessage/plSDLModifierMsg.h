@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // A msg sent to an SDL modifier to tell it send or recv state.
 //
-class plStateDataRecord;
 class plSDLModifierMsg : public plMessage
 {
 public:
@@ -63,14 +62,11 @@ public:
 protected:
     ST::string fSDLName;            // the state descriptor name (ie. "physical")
     Action fAction;
-    plStateDataRecord* fState;      // for recving state
-    bool fManageStateMem;           // delete fState?
     uint32_t fPlayerID;
     uint32_t fFlags;
 
 public:
     plSDLModifierMsg(const ST::string& sdlName={}, Action a=kActionNone);
-    ~plSDLModifierMsg();
 
     CLASSNAME_REGISTER(plSDLModifierMsg);
     GETINTERFACE_ANY(plSDLModifierMsg, plMessage);
@@ -80,9 +76,6 @@ public:
 
     Action GetAction() const { return fAction; }
     void SetAction(Action t) { fAction=t; }
-
-    plStateDataRecord* GetState(bool unManageState=false) { if ( unManageState ) fManageStateMem=false; return fState; }
-    void SetState(plStateDataRecord* s, bool manageState) { fState=s; fManageStateMem=manageState; }
 
     ST::string GetSDLName() const { return fSDLName; }
     void SetSDLName(const ST::string& s) { fSDLName=s; }
