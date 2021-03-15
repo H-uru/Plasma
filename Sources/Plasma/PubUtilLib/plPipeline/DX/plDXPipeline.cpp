@@ -2327,12 +2327,11 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 #if MF_BOUNDS_LEVEL_ICE
     if( (fSettings.fBoundsDrawLevel >= 0) && ( drawable != fBoundsSpans ) )
     {
-        hsTArray<int16_t> bndList;
+        std::vector<int16_t> bndList;
         drawable->GetSpaceTree()->HarvestLevel(fSettings.fBoundsDrawLevel, bndList);
-        int i;
-        for( i = 0; i < bndList.GetCount(); i++ )
+        for (int16_t bnd : bndList)
         {
-            const hsBounds3Ext& nodeBounds = drawable->GetSpaceTree()->GetNode(bndList[i]).GetWorldBounds();
+            const hsBounds3Ext& nodeBounds = drawable->GetSpaceTree()->GetNode(bnd).GetWorldBounds();
             IAddBoundsSpan( fBoundsSpans, &nodeBounds, 0xff000000 | (0xf << ((fSettings.fBoundsDrawLevel % 6) << 2)) );
         }
     }

@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpaceTree_inc
 #define plSpaceTree_inc
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "hsBounds.h"
 #include "pnFactory/plCreatable.h"
 #include "hsBitVector.h"
@@ -98,7 +99,7 @@ public:
         kRootParent = -1
     };
 private:
-    hsTArray<plSpaceTreeNode>       fTree;
+    std::vector<plSpaceTreeNode>    fTree;
     const hsBitVector*              fCache;
 
     int32_t                           fNumLeaves;
@@ -112,13 +113,13 @@ private:
 
     void        IRefreshRecur(int16_t which);
     
-    void        IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const;
-    void        IHarvestLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const;
+    void        IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, std::vector<int16_t>& list) const;
+    void        IHarvestLeaves(const plSpaceTreeNode& subRoot, std::vector<int16_t>& list) const;
     
     void        IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsBitVector& totList, hsBitVector& list) const;
     void        IHarvestLeaves(const plSpaceTreeNode& subRoot, hsBitVector& totList, hsBitVector& list) const;
 
-    void        IHarvestLevel(int16_t subRoot, int level, int currLevel, hsTArray<int16_t>& list) const;
+    void        IHarvestLevel(int16_t subRoot, int level, int currLevel, std::vector<int16_t>& list) const;
 
     void        IHarvestAndCullEnabledLeaves(int16_t subRoot, const hsBitVector& cache, std::vector<int16_t>& list) const;
     void        IHarvestEnabledLeaves(int16_t subRoot, const hsBitVector& cache, std::vector<int16_t>& list) const;
@@ -181,7 +182,7 @@ public:
     void Read(hsStream* s, hsResMgr* mgr) override;
     void Write(hsStream* s, hsResMgr* mgr) override;
 
-    void HarvestLevel(int level, hsTArray<int16_t>& list) const;
+    void HarvestLevel(int level, std::vector<int16_t>& list) const;
 
     friend class plSpaceTreeMaker;
 };

@@ -549,7 +549,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeEmptyTree()
 {
     plSpaceTree* tree = new plSpaceTree;
 
-    tree->fTree.SetCount(1);
+    tree->fTree.resize(1);
     hsPoint3 zero;
     tree->fTree[0].fWorldBounds.Reset(&zero);
     tree->fTree[0].fFlags = plSpaceTreeNode::kEmpty;
@@ -565,7 +565,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeDegenerateTree()
 {
     plSpaceTree* tree = new plSpaceTree;
     
-    tree->fTree.Push();
+    tree->fTree.resize(1);
 
     tree->fRoot = 0;
     tree->fTree[0].fWorldBounds = fLeaves[0]->fWorldBounds;
@@ -603,7 +603,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
 
     plSpacePrepNode* head = fPrepTree;
 
-    tree->fTree.SetCount(fLeaves.GetCount());
+    tree->fTree.resize(fLeaves.GetCount());
     
     IGatherLeavesRecur(head, tree);
     
@@ -611,7 +611,7 @@ plSpaceTree* plSpaceTreeMaker::IMakeSpaceTree()
     while( level > 0 )
         IMakeSpaceTreeRecur(head, tree, --level, 0);
 
-    tree->fRoot = tree->fTree.GetCount()-1;
+    tree->fRoot = (int16_t)tree->fTree.size() - 1;
     tree->fTree[tree->fRoot].fParent = plSpaceTree::kRootParent;
     tree->fNumLeaves = fLeaves.GetCount();
 
@@ -712,8 +712,8 @@ void plSpaceTreeMaker::IMakeSpaceTreeRecur(plSpacePrepNode* sub, plSpaceTree* tr
 
     if( currLevel == targetLevel )
     {
-        int16_t nodeIdx = tree->fTree.GetCount();
-        tree->fTree.Push();
+        int16_t nodeIdx = (int16_t)tree->fTree.size();
+        tree->fTree.emplace_back();
 
         tree->fTree[nodeIdx].fWorldBounds = sub->fWorldBounds;
 
