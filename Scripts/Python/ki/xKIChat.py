@@ -261,7 +261,7 @@ class xKIChat(object):
             pWords = message.split(" ", 1)
             foundBuddy = False
             # Make sure it's still just a "/p".
-            if len(pWords) > 1 and pWords[0] == PtGetLocalizedString("KI.Commands.ChatPrivate"):
+            if len(pWords) > 1 and pWords[0].casefold == PtGetLocalizedString("KI.Commands.ChatPrivate"):
                 # Try to find the buddy in the DPL online lists.
                 for player in self.BKPlayerList:
                     # Is the player in this Age?
@@ -272,7 +272,11 @@ class xKIChat(object):
                             cFlags.private = True
                             foundBuddy = True
                             # Remove the "/p buddyname" from the message.
-                            message = pWords[1][len(plyrName) + 1:]
+                            # if playername is non-Latin1, casefold() may change its length
+                            # use number of spaces in player name to determine where to split the message
+                            pNameWords = plyrName.split(" ")
+                            pWords2 = message.split(" ",len(pNameWords))
+                            message = pWords2[len(pNameWords)]
                             self.AddPlayerToRecents(player.getPlayerID())
                             break
                     # Is the player in another Age?
@@ -287,7 +291,11 @@ class xKIChat(object):
                                 cFlags.interAge = True
                                 foundBuddy = True
                                 # Add this player's current Age.
-                                message = pre + pWords[1][len(plyrName) + 1:]
+                                # if playername is non-Latin1, casefold() may change its length
+                                # use number of spaces in player name to determine where to split the message
+                                pNameWords = plyrName.split(" ")
+                                pWords2 = message.split(" ",len(pNameWords))
+                                message = pre + pWords2[len(pNameWords)]
                                 self.AddPlayerToRecents(ePlyr.playerGetID())
                                 break
             if not foundBuddy:
