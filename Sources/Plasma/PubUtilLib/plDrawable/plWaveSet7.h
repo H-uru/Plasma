@@ -43,9 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plWaveSet7_inc
 #define plWaveSet7_inc
 
+#include <vector>
 
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 #include "pnEncryption/plRandom.h"
 #include "hsBounds.h"
 #include "plStatusLog/plStatusLog.h"
@@ -210,14 +210,14 @@ protected:
 
     plKey               fSceneNode;
 
-    hsTArray<plDynaDecalMgr*>       fDecalMgrs;
+    std::vector<plDynaDecalMgr*>    fDecalMgrs;
 
-    hsTArray<plSceneObject*>        fBuoys; 
-    hsTArray<plSceneObject*>        fShores;
-    hsTArray<plSceneObject*>        fDecals;
+    std::vector<plSceneObject*>     fBuoys;
+    std::vector<plSceneObject*>     fShores;
+    std::vector<plSceneObject*>     fDecals;
     plSceneObject*                  fRefObj;
 
-    hsTArray<hsBounds3Ext>          fTargBnds;
+    std::vector<hsBounds3Ext>       fTargBnds;
 
     plLayer*                        fBiasLayer[2];
     plLayer*                        fBumpLayers[kNumTexWaves];
