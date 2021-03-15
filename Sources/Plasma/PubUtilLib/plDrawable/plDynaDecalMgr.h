@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "pnNetCommon/plSynchedObject.h"
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 
@@ -208,26 +207,26 @@ protected:
     void                IKillDecal(size_t i);
     void                IUpdateDecals(double t);
 
-    void                ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
-    bool                IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IConvertPolys(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src);
-    bool                IHitTestPolys(hsTArray<plCutoutPoly>& src) const;
+    void                ICountIncoming(std::vector<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
+    bool                IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IConvertPolys(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IProcessPolys(plDrawableSpans* targ, int iSpan, double t, std::vector<plCutoutPoly>& src);
+    bool                IHitTestPolys(std::vector<plCutoutPoly>& src) const;
 
     bool                IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, double t, const plFlatGridMesh& grid);
     bool                IConvertFlatGrid(plAuxSpan* auxSpan, plDynaDecal* decal, const plFlatGridMesh& grid) const;
     bool                ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMaterial* mat, double secs);
     bool                IHitTestFlatGrid(const plFlatGridMesh& grid) const;
 
-    bool                ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs);
+    bool                ICutoutList(std::vector<plDrawVisList>& drawVis, double secs);
     bool                ICutoutObject(plSceneObject* so, double secs);
     bool                ICutoutTargets(double secs);
 
     void                ISetDepthFalloff(); // Sets from current cutter settings.
 
-    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool hasWaterHeight=false, float waterHeight=0.f);
+    virtual void        ICutoutCallback(const std::vector<plCutoutPoly>& cutouts, bool hasWaterHeight=false, float waterHeight=0.f);
 
     hsGMaterial*        IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap);
 

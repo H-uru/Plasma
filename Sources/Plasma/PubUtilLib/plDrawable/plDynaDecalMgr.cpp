@@ -908,17 +908,16 @@ void plDynaDecalMgr::IUpdateDecals(double t)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void plDynaDecalMgr::ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const
+void plDynaDecalMgr::ICountIncoming(std::vector<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const
 {
     numVerts = 0;
     numIdx = 0;
-    int j;
-    for( j = 0; j < src.GetCount(); j++ )
+    for (const plCutoutPoly& poly : src)
     {
-        if( src[j].fVerts.GetCount() )
+        if (poly.fVerts.GetCount())
         {
-            numVerts += src[j].fVerts.GetCount();
-            numIdx += src[j].fVerts.GetCount()-2;
+            numVerts += poly.fVerts.GetCount();
+            numIdx += poly.fVerts.GetCount()-2;
         }
     }
     numIdx *= 3;
@@ -1024,8 +1023,8 @@ void plDynaDecalMgr::ISetDepthFalloff()
 }
 
 bool plDynaDecalMgr::IConvertPolys(plAuxSpan* auxSpan,
-                                   plDynaDecal* decal, 
-                                   hsTArray<plCutoutPoly>& src)
+                                   plDynaDecal* decal,
+                                   std::vector<plCutoutPoly>& src)
 {
     ISetDepthFalloff();
 
@@ -1039,8 +1038,8 @@ bool plDynaDecalMgr::IConvertPolys(plAuxSpan* auxSpan,
 }
 
 bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
-                                   plDynaDecal* decal, 
-                                   hsTArray<plCutoutPoly>& src)
+                                        plDynaDecal* decal,
+                                        std::vector<plCutoutPoly>& src)
 {
     bool loU = false;
     bool hiU = false;
@@ -1118,12 +1117,10 @@ bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
     idx += decal->fStartIdx;
 
     uint16_t base = decal->fStartVtx;
-    int j;
-    for( j = 0; j < src.GetCount(); j++ )
+    for (const plCutoutPoly& poly : src)
     {
         uint16_t next = base+1;
-        int k;
-        for( k = 2; k < src[j].fVerts.GetCount(); k++ )
+        for (int k = 2; k < poly.fVerts.GetCount(); k++)
         {
             *idx++ = base;
             *idx++ = next++;
@@ -1140,8 +1137,8 @@ bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
 }
 
 bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
-                                   plDynaDecal* decal, 
-                                   hsTArray<plCutoutPoly>& src)
+                                        plDynaDecal* decal,
+                                        std::vector<plCutoutPoly>& src)
 {
     bool loU = false;
     bool hiU = false;
@@ -1211,12 +1208,10 @@ bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
     idx += decal->fStartIdx;
 
     uint16_t base = decal->fStartVtx;
-    int j;
-    for( j = 0; j < src.GetCount(); j++ )
+    for (const plCutoutPoly& poly : src)
     {
         uint16_t next = base+1;
-        int k;
-        for( k = 2; k < src[j].fVerts.GetCount(); k++ )
+        for (int k = 2; k < poly.fVerts.GetCount(); k++)
         {
             *idx++ = base;
             *idx++ = next++;
@@ -1233,8 +1228,8 @@ bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
 }
 
 bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
-                                   plDynaDecal* decal, 
-                                   hsTArray<plCutoutPoly>& src)
+                                     plDynaDecal* decal,
+                                     std::vector<plCutoutPoly>& src)
 {
     bool loU = false;
     bool hiU = false;
@@ -1293,12 +1288,10 @@ bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
     idx += decal->fStartIdx;
 
     uint16_t base = decal->fStartVtx;
-    int j;
-    for( j = 0; j < src.GetCount(); j++ )
+    for (const plCutoutPoly& poly : src)
     {
         uint16_t next = base+1;
-        int k;
-        for( k = 2; k < src[j].fVerts.GetCount(); k++ )
+        for (int k = 2; k < poly.fVerts.GetCount(); k++)
         {
             *idx++ = base;
             *idx++ = next++;
@@ -1314,15 +1307,15 @@ bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
     return loU & hiU & loV & hiV;
 }
 
-bool plDynaDecalMgr::IHitTestPolys(hsTArray<plCutoutPoly>& src) const
+bool plDynaDecalMgr::IHitTestPolys(std::vector<plCutoutPoly>& src) const
 {
     bool loU = false;
     bool hiU = false;
     bool loV = false;
     bool hiV = false;
-    int iPoly = 0;
+    size_t iPoly = 0;
     int iVert = 0;
-    while( iPoly < src.GetCount() )
+    while (iPoly < src.size())
     {
         const hsPoint3& uvw = src[iPoly].fVerts[iVert].fUVW;
 
@@ -1345,7 +1338,7 @@ bool plDynaDecalMgr::IHitTestPolys(hsTArray<plCutoutPoly>& src) const
     return loU & hiU & loV & hiV;
 }
 
-bool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src)
+bool plDynaDecalMgr::IProcessPolys(plDrawableSpans* targ, int iSpan, double t, std::vector<plCutoutPoly>& src)
 {
     // Figure out how many verts and idxs are coming in.
     uint16_t numVerts, numIdx;
@@ -1445,8 +1438,8 @@ bool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
                         plAccessSpan src;
                         plAccessGeometry::Instance()->OpenRO(dr, diIndex[k], src);
 
-                        static hsTArray<plCutoutPoly> dst;
-                        dst.SetCount(0);
+                        static std::vector<plCutoutPoly> dst;
+                        dst.clear();
 
                         plProfile_BeginTiming(Cutter);
                         fCutter->Cutout(src, dst);
@@ -1476,31 +1469,30 @@ bool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
     return retVal;
 }
 
-bool plDynaDecalMgr::ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs)
+bool plDynaDecalMgr::ICutoutList(std::vector<plDrawVisList>& drawVis, double secs)
 {
     if( fDisableAccumulate )
         return false;
 
     bool retVal = false;
 
-    if( !drawVis.GetCount() )
+    if (drawVis.empty())
         return retVal;
 
-    hsTArray<plAccessSpan> src;
+    std::vector<plAccessSpan> src;
 
     size_t numSpan = 0;
-    int iDraw;
-    for( iDraw = 0; iDraw < drawVis.GetCount(); iDraw++ )
-        numSpan += drawVis[iDraw].fVisList.size();
+    for (const plDrawVisList& dv : drawVis)
+        numSpan += dv.fVisList.size();
 
-    src.SetCount(numSpan);
+    src.resize(numSpan);
 
-    iDraw = 0;
+    size_t iDraw = 0;
     size_t iSpan = 0;
     for (size_t i = 0; i < numSpan; i++)
     {
-        static hsTArray<plCutoutPoly> dst;
-        dst.SetCount(0);
+        static std::vector<plCutoutPoly> dst;
+        dst.clear();
 
         plAccessGeometry::Instance()->OpenRO(drawVis[iDraw].fDrawable, drawVis[iDraw].fVisList[iSpan], src[i]);
 
@@ -1728,9 +1720,9 @@ hsMatrix44 plDynaDecalMgr::IL2WFromHit(hsPoint3 pos, hsVector3 dir) const
     return l2w;
 }
 
-void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool hasWaterHeight, float waterHeight)
+void plDynaDecalMgr::ICutoutCallback(const std::vector<plCutoutPoly>& cutouts, bool hasWaterHeight, float waterHeight)
 {
-    hsTArray<plCutoutHit> hits;
+    std::vector<plCutoutHit> hits;
 
     if ((fPartyTime > 0.f) && !fParticles.empty())
     {
@@ -1739,15 +1731,14 @@ void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool
         else
             fCutter->FindHitPoints(cutouts, hits);
 
-        int i;
-        for( i = 0; i < hits.GetCount(); i++ )
+        for (const plCutoutHit& hit : hits)
         {
             for (plParticleSystem* particleSys : fParticles)
             {
                 plParticleEmitter* emit = particleSys->GetAvailEmitter();
                 if( emit )
                 {
-                    hsMatrix44 l2w = IL2WFromHit(hits[i].fPos, hits[i].fNorm);
+                    hsMatrix44 l2w = IL2WFromHit(hit.fPos, hit.fNorm);
 
                     emit->OverrideLocalToWorld(l2w);
                     emit->SetTimeToLive(fPartyTime);

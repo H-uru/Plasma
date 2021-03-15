@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCutter_inc
 #define plCutter_inc
 
+#include <vector>
+
 #include "pnFactory/plCreatable.h"
 
 #include "hsGeometry3.h"
@@ -121,7 +123,7 @@ protected:
     hsBounds3Ext    fWorldBounds;
     plBoundsIsect   fIsect;
 
-    void            IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, bool baseHasAlpha) const;
+    void            IConstruct(std::vector<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, bool baseHasAlpha) const;
     bool            IPolyClip(hsTArray<plCutoutVtx>& poly, const hsPoint3 vPos[]) const;
     
     inline void     ICutoutVtxHiU(const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
@@ -138,9 +140,9 @@ protected:
 
     inline void     ISetPosNorm(float parm, const plCutoutVtx& inVtx, const plCutoutVtx& outVtx, plCutoutVtx& dst) const;
 
-    void            ICutoutTransformed(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-    void            ICutoutConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
-    void            ICutoutTransformedConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void            ICutoutTransformed(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const;
+    void            ICutoutConstHeight(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const;
+    void            ICutoutTransformedConstHeight(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const;
 
 
 public:
@@ -154,12 +156,12 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) override;
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    bool        FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const;
-    bool        FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, float height) const;
+    bool        FindHitPoints(const std::vector<plCutoutPoly>& src, std::vector<plCutoutHit>& hits) const;
+    bool        FindHitPointsConstHeight(const std::vector<plCutoutPoly>& src, std::vector<plCutoutHit>& hits, float height) const;
 
     void        Set(const hsPoint3& pos, const hsVector3& dir, const hsVector3& out, bool flip=false);
 
-    void        Cutout(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const;
+    void        Cutout(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const;
     bool        CutoutGrid(int nWid, int nLen, plFlatGridMesh& dst) const;
 
     void        SetLength(const hsVector3& s) { fLengthU = s.fX; fLengthV = s.fY; fLengthW = s.fZ; }

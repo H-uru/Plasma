@@ -682,19 +682,17 @@ bool plCutter::IFindHitPoint(const hsTArray<plCutoutVtx>& inPoly, plCutoutHit& h
 }
 
 
-bool plCutter::FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits) const
+bool plCutter::FindHitPoints(const std::vector<plCutoutPoly>& src, std::vector<plCutoutHit>& hits) const
 {
-    hits.SetCount(0);
+    hits.clear();
 
-    int iPoly;
-    for( iPoly = 0; iPoly < src.GetCount(); iPoly++ )
+    for (const plCutoutPoly& poly : src)
     {
         bool loU = false;
         bool hiU = false;
         bool loV = false;
         bool hiV = false;
 
-        const plCutoutPoly& poly = src[iPoly];
         int iv;
         for( iv = 0; iv < poly.fVerts.GetCount(); iv++ )
         {
@@ -712,22 +710,21 @@ bool plCutter::FindHitPoints(const hsTArray<plCutoutPoly>& src, hsTArray<plCutou
             {
                 plCutoutHit hit;
                 if( IFindHitPoint(poly.fVerts, hit) )
-                    hits.Append(hit);
+                    hits.emplace_back(hit);
                 break;
             }
         }
     }
 
-    return hits.GetCount() > 0;
+    return !hits.empty();
 }
 
-bool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTArray<plCutoutHit>& hits, float height) const
+bool plCutter::FindHitPointsConstHeight(const std::vector<plCutoutPoly>& src, std::vector<plCutoutHit>& hits, float height) const
 {
     if( FindHitPoints(src, hits) )
     {
-        int i;
-        for( i = 0; i < hits.GetCount(); i++ )
-            hits[i].fPos.fZ = height;
+        for (plCutoutHit& hit : hits)
+            hit.fPos.fZ = height;
         
         return true;
     }
@@ -735,7 +732,7 @@ bool plCutter::FindHitPointsConstHeight(const hsTArray<plCutoutPoly>& src, hsTAr
     return false;
 }
 
-void plCutter::ICutoutTransformedConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::ICutoutTransformedConstHeight(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const
 {
     const hsMatrix44& l2w = src.GetLocalToWorld();
     hsMatrix44 l2wNorm;
@@ -775,7 +772,7 @@ void plCutter::ICutoutTransformedConstHeight(const plAccessSpan& src, hsTArray<p
 // We usually don't need to do any transform, because the kind of surface you
 // would leave prints on tends to be static, with the transform folded into the
 // verts. So it's worth having 2 separate versions of the function.
-void plCutter::ICutoutTransformed(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::ICutoutTransformed(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const
 {
     const hsMatrix44& l2w = src.GetLocalToWorld();
     hsMatrix44 l2wNorm;
@@ -809,7 +806,7 @@ void plCutter::ICutoutTransformed(const plAccessSpan& src, hsTArray<plCutoutPoly
     }
 }
 
-void plCutter::ICutoutConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::ICutoutConstHeight(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const
 {
     if( !(src.GetLocalToWorld().fFlags & hsMatrix44::kIsIdent) )
     {
@@ -848,7 +845,7 @@ void plCutter::ICutoutConstHeight(const plAccessSpan& src, hsTArray<plCutoutPoly
 }
 
 // Cutout
-void plCutter::Cutout(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) const
+void plCutter::Cutout(const plAccessSpan& src, std::vector<plCutoutPoly>& dst) const
 {
     if( !src.HasAccessTri() )
         return;
@@ -893,12 +890,11 @@ void plCutter::Cutout(const plAccessSpan& src, hsTArray<plCutoutPoly>& dst) cons
     }
 }
 
-void plCutter::IConstruct(hsTArray<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, bool baseHasAlpha) const
+void plCutter::IConstruct(std::vector<plCutoutPoly>& dst, hsTArray<plCutoutVtx>& poly, bool baseHasAlpha) const
 {
-    int iDst = dst.GetCount();
-    dst.Push();
-    dst[iDst].fVerts.Swap(poly);
-    dst[iDst].fBaseHasAlpha = baseHasAlpha;
+    plCutoutPoly& dstPoly = dst.emplace_back();
+    dstPoly.fVerts.Swap(poly);
+    dstPoly.fBaseHasAlpha = baseHasAlpha;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1054,8 +1050,8 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
     for (const plAccessSpan& span : src)
     {
 
-        static hsTArray<plCutoutPoly> dst;
-        dst.SetCount(0);
+        static std::vector<plCutoutPoly> dst;
+        dst.clear();
 #if 1
         cutter.Cutout(span, dst);
 #else
@@ -1065,7 +1061,7 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         cutter.GetWorldBounds().GetAxes(ax+0, ax+1, ax+2);
         int iAx = 0;
         int jAx = 1;
-        dst.SetCount(6);
+        dst.resize(6);
         int xx;
         for( xx = 0; xx < 3; xx++ )
         {
@@ -1136,12 +1132,12 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         // Total number of tris?
         int numVerts = 0;
         int numTris = 0;
-        for (int j = 0; j < dst.GetCount(); j++)
+        for (const plCutoutPoly& poly : dst)
         {
-            if( dst[j].fVerts.GetCount() )
+            if (poly.fVerts.GetCount())
             {
-                numVerts += dst[j].fVerts.GetCount();
-                numTris += dst[j].fVerts.GetCount()-2;
+                numVerts += poly.fVerts.GetCount();
+                numTris += poly.fVerts.GetCount()-2;
             }
         }
         if( !numTris )
@@ -1186,10 +1182,10 @@ void TestCutter(const plKey& key, const hsVector3& size, const hsPoint3& pos)
         std::vector<uint16_t> idx;
 
         uint16_t base = 0;
-        for (int j = 0; j < dst.GetCount(); j++)
+        for (const plCutoutPoly& poly : dst)
         {
             uint16_t next = base+1;
-            for (int k = 2; k < dst[j].fVerts.GetCount(); k++)
+            for (int k = 2; k < poly.fVerts.GetCount(); k++)
             {
                 idx.emplace_back(base);
                 idx.emplace_back(next++);
@@ -1271,21 +1267,20 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
     
     for (int i = 0; i < src.GetCount(); i++)
     {
-        static hsTArray<plCutoutPoly> dst;
-        dst.SetCount(0);
+        static std::vector<plCutoutPoly> dst;
+        dst.clear();
         cutter.Cutout(src[i], dst);
 
         // What's our total number of verts?
         // Total number of tris?
         int numVerts = 0;
         int numTris = 0;
-        int j;
-        for( j = 0; j < dst.GetCount(); j++ )
+        for (const plCutoutPoly& poly : dst)
         {
-            if( dst[j].fVerts.GetCount() )
+            if (poly.fVerts.GetCount())
             {
-                numVerts += dst[j].fVerts.GetCount();
-                numTris += dst[j].fVerts.GetCount()-2;
+                numVerts += poly.fVerts.GetCount();
+                numTris += poly.fVerts.GetCount()-2;
             }
         }
         if( !numTris )
@@ -1332,11 +1327,10 @@ void TestCutter2(const plKey& key, const hsVector3& size, const hsPoint3& pos, b
         std::vector<uint16_t> idx;
 
         uint16_t base = 0;
-        for( j = 0; j < dst.GetCount(); j++ )
+        for (const plCutoutPoly& poly : dst)
         {
             uint16_t next = base+1;
-            int k;
-            for( k = 2; k < dst[j].fVerts.GetCount(); k++ )
+            for (int k = 2; k < poly.fVerts.GetCount(); k++)
             {
                 idx.emplace_back(base);
                 idx.emplace_back(next++);
