@@ -70,8 +70,8 @@ class hsResMgr;
 class plMessage;
 
 class plCutter;
-class plCutoutPoly;
-class plFlatGridMesh;
+struct plCutoutPoly;
+struct plFlatGridMesh;
 
 struct plDrawVisList;
 class plRenderLevel;

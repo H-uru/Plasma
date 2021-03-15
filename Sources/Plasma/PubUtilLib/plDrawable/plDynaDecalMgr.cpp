@@ -914,10 +914,10 @@ void plDynaDecalMgr::ICountIncoming(std::vector<plCutoutPoly>& src, uint16_t& nu
     numIdx = 0;
     for (const plCutoutPoly& poly : src)
     {
-        if (poly.fVerts.GetCount())
+        if (!poly.fVerts.empty())
         {
-            numVerts += poly.fVerts.GetCount();
-            numIdx += poly.fVerts.GetCount()-2;
+            numVerts += uint16_t(poly.fVerts.size());
+            numIdx += uint16_t(poly.fVerts.size() - 2);
         }
     }
     numIdx *= 3;
@@ -980,16 +980,15 @@ bool plDynaDecalMgr::IConvertFlatGrid(plAuxSpan* auxSpan,
     uint16_t* idx = IGetBaseIdxPtr(auxSpan);
     idx += decal->fStartIdx;
 
-    hsAssert(grid.fIdx.GetCount() == decal->fNumIdx, "Mismatch on dynamic indices");
+    hsAssert(grid.fIdx.size() == decal->fNumIdx, "Mismatch on dynamic indices");
 
     uint16_t base = decal->fStartVtx;
-    int ii;
-    for( ii = 0; ii < grid.fIdx.GetCount(); ii++ )
+    for (uint16_t ii : grid.fIdx)
     {
-        hsAssert(grid.fIdx[ii] + base - decal->fStartVtx < decal->fNumVerts, "Index going out of range");
-        hsAssert(grid.fIdx[ii] + base < auxSpan->fIStartIdx + auxSpan->fILength, "Index going out of range.");
+        hsAssert(ii + base - decal->fStartVtx < decal->fNumVerts, "Index going out of range");
+        hsAssert(ii + base < auxSpan->fIStartIdx + auxSpan->fILength, "Index going out of range.");
 
-        *idx++ = grid.fIdx[ii] + base;
+        *idx++ = ii + base;
     }
 
     auxSpan->fGroup->DirtyVertexBuffer(auxSpan->fVBufferIdx);
@@ -1054,10 +1053,9 @@ bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
 
     const hsVector3 backDir = fCutter->GetBackDir();
 
-    int iPoly = 0;
-    int iVert = 0;
-    int iv;
-    for( iv = 0; iv < decal->fNumVerts; iv++ )
+    size_t iPoly = 0;
+    size_t iVert = 0;
+    for (uint16_t iv = 0; iv < decal->fNumVerts; iv++)
     {
         *origPos = vtx->fPos = src[iPoly].fVerts[iVert].fPos;
 
@@ -1102,7 +1100,7 @@ bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
         vtx->fSpecular = 0;
 
 
-        if( ++iVert >= src[iPoly].fVerts.GetCount() )
+        if (++iVert >= src[iPoly].fVerts.size())
         {
             iVert = 0;
             iPoly++;
@@ -1120,7 +1118,7 @@ bool plDynaDecalMgr::IConvertPolysAlpha(plAuxSpan* auxSpan,
     for (const plCutoutPoly& poly : src)
     {
         uint16_t next = base+1;
-        for (int k = 2; k < poly.fVerts.GetCount(); k++)
+        for (size_t k = 2; k < poly.fVerts.size(); k++)
         {
             *idx++ = base;
             *idx++ = next++;
@@ -1152,10 +1150,9 @@ bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
     hsPoint3* origUVW = &auxSpan->fOrigUVW[decal->fStartVtx];
 
     const hsVector3 backDir = fCutter->GetBackDir();
-    int iPoly = 0;
-    int iVert = 0;
-    int iv;
-    for( iv = 0; iv < decal->fNumVerts; iv++ )
+    size_t iPoly = 0;
+    size_t iVert = 0;
+    for (uint16_t iv = 0; iv < decal->fNumVerts; iv++)
     {
         *origPos = vtx->fPos = src[iPoly].fVerts[iVert].fPos;
 
@@ -1193,7 +1190,7 @@ bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
         vtx->fSpecular = 0;
 
 
-        if( ++iVert >= src[iPoly].fVerts.GetCount() )
+        if (++iVert >= src[iPoly].fVerts.size())
         {
             iVert = 0;
             iPoly++;
@@ -1211,7 +1208,7 @@ bool plDynaDecalMgr::IConvertPolysColor(plAuxSpan* auxSpan,
     for (const plCutoutPoly& poly : src)
     {
         uint16_t next = base+1;
-        for (int k = 2; k < poly.fVerts.GetCount(); k++)
+        for (size_t k = 2; k < poly.fVerts.size(); k++)
         {
             *idx++ = base;
             *idx++ = next++;
@@ -1242,10 +1239,9 @@ bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
     hsPoint3* origPos = &auxSpan->fOrigPos[decal->fStartVtx];
     hsPoint3* origUVW = &auxSpan->fOrigUVW[decal->fStartVtx];
 
-    int iPoly = 0;
-    int iVert = 0;
-    int iv;
-    for( iv = 0; iv < decal->fNumVerts; iv++ )
+    size_t iPoly = 0;
+    size_t iVert = 0;
+    for (uint16_t iv = 0; iv < decal->fNumVerts; iv++)
     {
         *origPos = vtx->fPos = src[iPoly].fVerts[iVert].fPos;
 
@@ -1273,7 +1269,7 @@ bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
         vtx->fSpecular = 0;
 
 
-        if( ++iVert >= src[iPoly].fVerts.GetCount() )
+        if (++iVert >= src[iPoly].fVerts.size())
         {
             iVert = 0;
             iPoly++;
@@ -1291,7 +1287,7 @@ bool plDynaDecalMgr::IConvertPolysVS(plAuxSpan* auxSpan,
     for (const plCutoutPoly& poly : src)
     {
         uint16_t next = base+1;
-        for (int k = 2; k < poly.fVerts.GetCount(); k++)
+        for (size_t k = 2; k < poly.fVerts.size(); k++)
         {
             *idx++ = base;
             *idx++ = next++;
@@ -1314,7 +1310,7 @@ bool plDynaDecalMgr::IHitTestPolys(std::vector<plCutoutPoly>& src) const
     bool loV = false;
     bool hiV = false;
     size_t iPoly = 0;
-    int iVert = 0;
+    size_t iVert = 0;
     while (iPoly < src.size())
     {
         const hsPoint3& uvw = src[iPoly].fVerts[iVert].fUVW;
@@ -1328,7 +1324,7 @@ bool plDynaDecalMgr::IHitTestPolys(std::vector<plCutoutPoly>& src) const
         else
             hiV = true;
 
-        if( ++iVert >= src[iPoly].fVerts.GetCount() )
+        if (++iVert >= src[iPoly].fVerts.size())
         {
             iVert = 0;
             iPoly++;
@@ -1368,7 +1364,7 @@ bool plDynaDecalMgr::IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial*
 {
     // Find a span to put them in. Either the current span, or a new
     // one if it's full up.
-    plAuxSpan* auxSpan = IGetAuxSpan(targ, iSpan, mat, grid.fVerts.GetCount(), grid.fIdx.GetCount());
+    plAuxSpan* auxSpan = IGetAuxSpan(targ, iSpan, mat, grid.fVerts.size(), grid.fIdx.size());
 
     // If we're full up, just see if we hit anything, but don't 
     // make any more decals.
@@ -1379,7 +1375,7 @@ bool plDynaDecalMgr::IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial*
 
     // Get a decal to manage this group's aging.
     // Update the span to point to enough room.
-    plDynaDecal* decal = IInitDecal(auxSpan, t, grid.fVerts.GetCount(), grid.fIdx.GetCount());
+    plDynaDecal* decal = IInitDecal(auxSpan, t, grid.fVerts.size(), grid.fIdx.size());
 
     // Convert the grid from src into the accessor tris
     return IConvertFlatGrid(auxSpan, decal, grid);
