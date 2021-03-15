@@ -157,22 +157,21 @@ plDynaDecalMgr::plDynaDecalMgr()
 
 plDynaDecalMgr::~plDynaDecalMgr()
 {
-    int i;
-    for( i = 0; i < fDecals.GetCount(); i++ )
-        delete fDecals[i];
+    for (plDynaDecal* decal : fDecals)
+        delete decal;
 
-    for( i = 0; i < fAuxSpans.GetCount(); i++ )
+    for (plAuxSpan* aux : fAuxSpans)
     {
-        if( fAuxSpans[i]->fDrawable )
+        if (aux->fDrawable)
         {
-            plSpan* span = const_cast<plSpan*>(fAuxSpans[i]->fDrawable->GetSpan(fAuxSpans[i]->fBaseSpanIdx));
+            plSpan* span = const_cast<plSpan*>(aux->fDrawable->GetSpan(aux->fBaseSpanIdx));
 
-            span->RemoveAuxSpan(fAuxSpans[i]);
+            span->RemoveAuxSpan(aux);
         }
 
-        delete fAuxSpans[i]->fGroup;
+        delete aux->fGroup;
 
-        delete fAuxSpans[i];
+        delete aux;
     }
 
     delete fCutter;
@@ -197,15 +196,14 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
 
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefMatRTShade), plRefFlags::kActiveRef);
 
-    int n = stream->ReadLE32();
-    int i;
-    for( i = 0; i < n; i++ )
+    uint32_t n = stream->ReadLE32();
+    for (uint32_t i = 0; i < n; i++)
     {
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefTarget), plRefFlags::kPassiveRef);
     }
     // Associated slave particle systems. We read in the scene objects now, and find the associated systems on loaded message.
     n = stream->ReadLE32();
-    for( i = 0; i < n; i++ )
+    for (uint32_t i = 0; i < n; i++)
     {
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefPartyObject), plRefFlags::kPassiveRef);
     }
@@ -231,8 +229,8 @@ void plDynaDecalMgr::Read(hsStream* stream, hsResMgr* mgr)
     fPartyTime = stream->ReadLEFloat();
 
     n = stream->ReadLE32();
-    fNotifies.SetCount(n);
-    for( i = 0; i < n; i++ )
+    fNotifies.resize(n);
+    for (uint32_t i = 0; i < n; i++)
         fNotifies[i] = mgr->ReadKey(stream);
     
     // If we need to be creating DynaDecalMgrs on the fly, this should go in the
@@ -255,19 +253,18 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fMatPreShade);
     mgr->WriteKey(stream, fMatRTShade);
 
-    stream->WriteLE32(fTargets.GetCount());
+    stream->WriteLE32((uint32_t)fTargets.size());
 
-    int i;
-    for( i = 0; i < fTargets.GetCount(); i++ )
+    for (plSceneObject* target : fTargets)
     {
-        mgr->WriteKey(stream, fTargets[i]);
+        mgr->WriteKey(stream, target);
     }
 
     // Particle systems (really their associated sceneobjects).
-    stream->WriteLE32(fPartyObjects.GetCount());
-    for( i = 0; i < fPartyObjects.GetCount(); i++ )
+    stream->WriteLE32((uint32_t)fPartyObjects.size());
+    for (plSceneObject* partyObj : fPartyObjects)
     {
-        mgr->WriteKey(stream, fPartyObjects[i]);
+        mgr->WriteKey(stream, partyObj);
     }
 
     stream->WriteLE32(fMaxNumVerts);
@@ -289,9 +286,9 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
 
     stream->WriteLEFloat(fPartyTime);
 
-    stream->WriteLE32(fNotifies.GetCount());
-    for( i = 0; i < fNotifies.GetCount(); i++ )
-        mgr->WriteKey(stream, fNotifies[i]);
+    stream->WriteLE32((uint32_t)fNotifies.size());
+    for (const plKey& notifyKey : fNotifies)
+        mgr->WriteKey(stream, notifyKey);
 
     /////////////////////////////////////////////////////
     // ###Things that should be in derived classes follow.
@@ -300,9 +297,8 @@ void plDynaDecalMgr::Write(hsStream* stream, hsResMgr* mgr)
 
 bool plDynaDecalMgr::IMakeAuxRefs(plPipeline* pipe)
 {
-    int i;
-    for( i = 0; i < fGroups.GetCount(); i++ )
-        fGroups[i]->PrepForRendering(pipe, false);
+    for (plGBufferGroup* group : fGroups)
+        group->PrepForRendering(pipe, false);
 
     return true;
 }
@@ -355,10 +351,9 @@ bool plDynaDecalMgr::IWetParts(const plDynaDecalEnableMsg* enaMsg)
     if( enaMsg->GetID() == uint32_t(-1) )
     {
         plArmatureMod* avMod = plArmatureMod::ConvertNoRef(enaMsg->GetArmKey()->ObjectIsLoaded());
-        int i;
-        for( i = 0; i < fPartIDs.GetCount(); i++ )
+        for (uint32_t partID : fPartIDs)
         {
-            const plPrintShape* shape = IGetPrintShape(avMod, fPartIDs[i]);
+            const plPrintShape* shape = IGetPrintShape(avMod, partID);
             if( shape )
             {
                 plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
@@ -447,38 +442,38 @@ bool plDynaDecalMgr::MsgReceive(plMessage* msg)
         case kRefTarget:
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                fTargets.Append(plSceneObject::ConvertNoRef(refMsg->GetRef()));
+                fTargets.emplace_back(plSceneObject::ConvertNoRef(refMsg->GetRef()));
             }
             else
             {
-                int idx = fTargets.Find((plSceneObject*)refMsg->GetRef());
-                if( idx != fTargets.kMissingIndex )
-                    fTargets.Remove(idx);
+                auto iter = std::find(fTargets.cbegin(), fTargets.cend(), (plSceneObject*)refMsg->GetRef());
+                if (iter != fTargets.cend())
+                    fTargets.erase(iter);
             }
             return true;
         case kRefPartyObject:
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                fPartyObjects.Append(plSceneObject::ConvertNoRef(refMsg->GetRef()));
+                fPartyObjects.emplace_back(plSceneObject::ConvertNoRef(refMsg->GetRef()));
             }
             else
             {
-                int idx = fPartyObjects.Find((plSceneObject*)refMsg->GetRef());
-                if( idx != fPartyObjects.kMissingIndex )
-                    fPartyObjects.Remove(idx);
+                auto iter = std::find(fPartyObjects.cbegin(), fPartyObjects.cend(), (plSceneObject*)refMsg->GetRef());
+                if (iter != fPartyObjects.cend())
+                    fPartyObjects.erase(iter);
             }
             return true;
         case kRefParticles:
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                fParticles.Append(plParticleSystem::ConvertNoRef(refMsg->GetRef()));
-                fParticles[fParticles.GetCount()-1]->fMiscFlags |= plParticleSystem::kParticleSystemAlwaysUpdate;
+                fParticles.emplace_back(plParticleSystem::ConvertNoRef(refMsg->GetRef()));
+                fParticles.back()->fMiscFlags |= plParticleSystem::kParticleSystemAlwaysUpdate;
             }
             else
             {
-                int idx = fParticles.Find((plParticleSystem*)refMsg->GetRef());
-                if( idx != fParticles.kMissingIndex )
-                    fParticles.Remove(idx);
+                auto iter = std::find(fParticles.cbegin(), fParticles.cend(), (plParticleSystem*)refMsg->GetRef());
+                if (iter != fParticles.cend())
+                    fParticles.erase(iter);
             }
             return true;
         case kRefAvatar:
@@ -498,10 +493,9 @@ void plDynaDecalMgr::INotifyActive(plDynaDecalInfo& info, const plKey& armKey, u
     if( !(info.fFlags & plDynaDecalInfo::kActive) )
     {
         double secs = hsTimer::GetSysSeconds();
-        int i;
-        for( i = 0; i < fNotifies.GetCount(); i++ )
+        for (const plKey& notifyKey : fNotifies)
         {
-            plDynaDecalEnableMsg* enaMsg = new plDynaDecalEnableMsg(fNotifies[i], armKey, secs, fWetLength, false, id);
+            plDynaDecalEnableMsg* enaMsg = new plDynaDecalEnableMsg(notifyKey, armKey, secs, fWetLength, false, id);
             enaMsg->Send();
         }
         info.fFlags |= plDynaDecalInfo::kActive;
@@ -513,10 +507,9 @@ void plDynaDecalMgr::INotifyInactive(plDynaDecalInfo& info, const plKey& armKey,
     if( info.fFlags & plDynaDecalInfo::kActive )
     {
         double secs = hsTimer::GetSysSeconds();
-        int i;
-        for( i = 0; i < fNotifies.GetCount(); i++ )
+        for (const plKey& notifyKey : fNotifies)
         {
-            plDynaDecalEnableMsg* enaMsg = new plDynaDecalEnableMsg(fNotifies[i], armKey, secs, fWetLength, true, id);
+            plDynaDecalEnableMsg* enaMsg = new plDynaDecalEnableMsg(notifyKey, armKey, secs, fWetLength, true, id);
             enaMsg->Send();
         }
         info.fFlags &= ~plDynaDecalInfo::kActive;
@@ -655,9 +648,8 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
     // Now look to see if we've got one sitting around unused that's suitable.
     // Here the suitable criteria is a little different. We know we are the owner,
     // and we know there's enough room (because it's sitting idle).
-    for (int i = 0; i < fAuxSpans.GetCount(); i++)
+    for (plAuxSpan* aux : fAuxSpans)
     {
-        plAuxSpan* aux = fAuxSpans[i];
         if( !aux->fDrawable
             &&(aux->fVStartIdx + aux->fVLength + numVerts < aux->fVBufferLimit)
             &&(aux->fIStartIdx + aux->fILength + numIdx < aux->fIBufferLimit) )
@@ -686,7 +678,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
 #ifdef MF_NEVER_RUN_OUT
     // Okay, nothing there. Let's get a new one.
     plAuxSpan* aux = new plAuxSpan;
-    fAuxSpans.Append(aux);
+    fAuxSpans.emplace_back(aux);
 
     IAllocAuxSpan(aux, numVerts, numIdx);
 
@@ -710,7 +702,7 @@ void plDynaDecalMgr::InitAuxSpans()
     for( i = 0; i < kInitAuxSpans; i++ )
     {
         plAuxSpan* aux = new plAuxSpan;
-        fAuxSpans.Append(aux);
+        fAuxSpans.emplace_back(aux);
         IAllocAuxSpan(aux, fMaxNumVerts, fMaxNumIdx);
     }
 }
@@ -718,7 +710,7 @@ void plDynaDecalMgr::InitAuxSpans()
 void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_t maxNumIdx)
 {
     plGBufferGroup* grp = new plGBufferGroup(kDecalVtxFormat, true, false);
-    fGroups.Append(grp);
+    fGroups.emplace_back(grp);
 
     grp->ReserveVertStorage(maxNumVerts, 
         &aux->fVBufferIdx, 
@@ -814,7 +806,7 @@ hsGMaterial* plDynaDecalMgr::ISetAuxMaterial(plAuxSpan* aux, hsGMaterial* mat, b
 
 plDynaDecal* plDynaDecalMgr::IInitDecal(plAuxSpan* aux, double t, uint16_t numVerts, uint16_t numIdx)
 {
-    int idx = INewDecal();
+    size_t idx = INewDecal();
 
     fDecals[idx]->fStartVtx = (uint16_t)(aux->fVStartIdx + aux->fVLength);
     fDecals[idx]->fNumVerts = numVerts;
@@ -851,7 +843,7 @@ plDynaDecal* plDynaDecalMgr::IInitDecal(plAuxSpan* aux, double t, uint16_t numVe
     return fDecals[idx];
 }
 
-void plDynaDecalMgr::IKillDecal(int i)
+void plDynaDecalMgr::IKillDecal(size_t i)
 {
     // Update this decal's span.
     // Since decals die off in the same order they are created, and we always 
@@ -891,12 +883,7 @@ void plDynaDecalMgr::IKillDecal(int i)
     }
 
     delete fDecals[i];
-    int newCount = fDecals.GetCount()-1;
-    if( i < newCount )
-    {
-        memmove(&fDecals[i], &fDecals[i+1], (newCount-i) * sizeof(fDecals[i]));
-    }
-    fDecals.SetCount(newCount);
+    fDecals.erase(fDecals.begin() + i);
 }
 
 void plDynaDecalMgr::IUpdateDecals(double t)
@@ -904,24 +891,18 @@ void plDynaDecalMgr::IUpdateDecals(double t)
     if( fDisableUpdate )
         return;
 
-    int i;
-
-    for( i = 0; i < fDecals.GetCount(); i++ )
+    for (size_t i = 0; i < fDecals.size(); )
     {
-        if( fDecals[i]->Age(t, fRampEnd, fDecayStart, fLifeSpan) )
-        {
+        if (fDecals[i]->Age(t, fRampEnd, fDecayStart, fLifeSpan))
             IKillDecal(i);
-            i--;
-        }
+        else
+            ++i;
     }
 
-    for( i = 0; i < fAuxSpans.GetCount(); i++ )
+    for (plAuxSpan* aux : fAuxSpans)
     {
-        if( fAuxSpans[i]->fVLength )
-        {
-            plAuxSpan* aux = fAuxSpans[i];
+        if (aux->fVLength)
             aux->fGroup->DirtyVertexBuffer(aux->fVBufferIdx);
-        }
     }
 }
 
@@ -1546,11 +1527,10 @@ bool plDynaDecalMgr::ICutoutTargets(double secs)
 
     bool retVal = false;
 
-    int i;
-    for( i = 0; i < fTargets.GetCount(); i++ )
+    for (plSceneObject* target : fTargets)
     {
-        if( fTargets[i] )
-            retVal |= ICutoutObject(fTargets[i], secs);
+        if (target)
+            retVal |= ICutoutObject(target, secs);
     }
     return retVal;
 }
@@ -1752,7 +1732,7 @@ void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool
 {
     hsTArray<plCutoutHit> hits;
 
-    if( (fPartyTime > 0) && fParticles.GetCount() )
+    if ((fPartyTime > 0.f) && !fParticles.empty())
     {
         if( hasWaterHeight )
             fCutter->FindHitPointsConstHeight(cutouts, hits, waterHeight);
@@ -1762,10 +1742,9 @@ void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool
         int i;
         for( i = 0; i < hits.GetCount(); i++ )
         {
-            int j;
-            for( j = 0; j < fParticles.GetCount(); j++ )
+            for (plParticleSystem* particleSys : fParticles)
             {
-                plParticleEmitter* emit = fParticles[j]->GetAvailEmitter();
+                plParticleEmitter* emit = particleSys->GetAvailEmitter();
                 if( emit )
                 {
                     hsMatrix44 l2w = IL2WFromHit(hits[i].fPos, hits[i].fNorm);
@@ -1780,14 +1759,12 @@ void plDynaDecalMgr::ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool
 
 void plDynaDecalMgr::IGetParticles()
 {
-    if( fParticles.GetCount() != fPartyObjects.GetCount() )
+    if (fParticles.size() != fPartyObjects.size())
     {
-        int i;
-        for( i = 0; i < fPartyObjects.GetCount(); i++ )
+        for (plSceneObject* partyObj : fPartyObjects)
         {
-            const plParticleSystem *sys = plParticleSystem::ConvertNoRef(fPartyObjects[i]->GetModifierByType(plParticleSystem::Index()));
-            // const_cast here is just to see if it's in our list, make Find happy.
-            if( sys && (fParticles.kMissingIndex == fParticles.Find(const_cast<plParticleSystem*>(sys))) )
+            const plParticleSystem *sys = plParticleSystem::ConvertNoRef(partyObj->GetModifierByType(plParticleSystem::Index()));
+            if (sys && (std::find(fParticles.cbegin(), fParticles.cend(), sys) == fParticles.cend()))
             {
                 hsgResMgr::ResMgr()->AddViaNotify(sys->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kRefParticles), plRefFlags::kPassiveRef);
             }

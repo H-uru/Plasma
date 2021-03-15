@@ -52,18 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plMessage/plAvatarFootMsg.h"
 
-static constexpr uint32_t kPuddlePrintIDs[] =
-{
-    plAvBrainHuman::RFootPrint,
-    plAvBrainHuman::LFootPrint
-};
-
-
 plDynaPuddleMgr::plDynaPuddleMgr()
 {
-    fPartIDs.SetCount(std::size(kPuddlePrintIDs));
-    for (size_t i = 0; i < std::size(kPuddlePrintIDs); i++)
-        fPartIDs[i] = kPuddlePrintIDs[i];
+    fPartIDs = {
+        plAvBrainHuman::RFootPrint,
+        plAvBrainHuman::LFootPrint
+    };
 }
 
 plDynaPuddleMgr::~plDynaPuddleMgr()
@@ -82,21 +76,20 @@ bool plDynaPuddleMgr::MsgReceive(plMessage* msg)
     plAvatarFootMsg* footMsg = plAvatarFootMsg::ConvertNoRef(msg);
     if( footMsg )
     {
-        int i;
-        for( i = 0; i < fPartIDs.GetCount(); i++ )
+        for (uint32_t partID : fPartIDs)
         {
             plArmatureMod* armMod = footMsg->GetArmature();
-            const plPrintShape* shape = IGetPrintShape(armMod, fPartIDs[i]);
+            const plPrintShape* shape = IGetPrintShape(armMod, partID);
             if( shape )
             {
                 plDynaDecalInfo& info = IGetDecalInfo(uintptr_t(shape), shape->GetKey());
                 if( IRippleFromShape(shape, true) )
                 {
-                    INotifyActive(info, armMod->GetKey(), fPartIDs[i]);
+                    INotifyActive(info, armMod->GetKey(), partID);
                 }
                 else
                 {
-                    INotifyInactive(info, armMod->GetKey(), fPartIDs[i]);
+                    INotifyInactive(info, armMod->GetKey(), partID);
                 }
             }
         }

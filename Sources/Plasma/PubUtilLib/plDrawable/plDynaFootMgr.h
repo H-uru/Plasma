@@ -52,7 +52,7 @@ class plDynaFootMgr : public plDynaDecalMgr
 protected:
     virtual bool        IPrintFromShape(const plPrintShape* shape, bool flip);
 
-    int         INewDecal() override;
+    size_t INewDecal() override;
 public:
     plDynaFootMgr();
     virtual ~plDynaFootMgr();

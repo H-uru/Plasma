@@ -73,9 +73,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plTweak.h"
 
-int plDynaRippleVSMgr::INewDecal()
+size_t plDynaRippleVSMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
     plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
@@ -84,7 +84,7 @@ int plDynaRippleVSMgr::INewDecal()
     rip->fC1V = fInitUVW.fY;
     rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(rip);
+    fDecals.emplace_back(rip);
 
     return idx;
 }

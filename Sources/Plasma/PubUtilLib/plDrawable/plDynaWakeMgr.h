@@ -61,7 +61,7 @@ protected:
 
     bool        IRippleFromShape(const plPrintShape* shape, bool force=false) override;
 
-    int         INewDecal() override;
+    size_t      INewDecal() override;
 public:
     plDynaWakeMgr();
     virtual ~plDynaWakeMgr();
