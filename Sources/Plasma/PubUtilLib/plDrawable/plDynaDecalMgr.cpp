@@ -622,8 +622,6 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
 
     plSpan* span = const_cast<plSpan*>(targ->GetSpan(iSpan));
 
-    int i;
-
     // First, see if we've got an aux span already sitting on this span.
     // We can use an existing aux span iff
     // a) we own it
@@ -643,7 +641,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
     //
     // The simplicity in bookkeeping should make up for any space/speed advantages
     // in packing more into a single AuxSpan.
-    for( i = 0; i < span->GetNumAuxSpans(); i++ )
+    for (size_t i = 0; i < span->GetNumAuxSpans(); i++)
     {
         plAuxSpan* aux = span->GetAuxSpan(i);
         if( (aux->fOwner == (void*)this)
@@ -657,7 +655,7 @@ plAuxSpan* plDynaDecalMgr::IGetAuxSpan(plDrawableSpans* targ, int iSpan, hsGMate
     // Now look to see if we've got one sitting around unused that's suitable.
     // Here the suitable criteria is a little different. We know we are the owner,
     // and we know there's enough room (because it's sitting idle).
-    for( i = 0; i < fAuxSpans.GetCount(); i++ )
+    for (int i = 0; i < fAuxSpans.GetCount(); i++)
     {
         plAuxSpan* aux = fAuxSpans[i];
         if( !aux->fDrawable

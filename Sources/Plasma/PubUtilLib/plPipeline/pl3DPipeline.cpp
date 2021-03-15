@@ -712,25 +712,25 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t
             continue;
 
         // Set the bits for the lights added from the permanent lists (during ClearLights()).
-        const hsTArray<plLightInfo*>& permaLights = drawable->GetSpan(idx)->fPermaLights;
-        for (size_t k = 0; k < permaLights.GetCount(); k++)
+        const std::vector<plLightInfo*>& permaLights = drawable->GetSpan(idx)->fPermaLights;
+        for (plLightInfo* permaLight : permaLights)
         {
-            permaLights[k]->Refresh();
-            if (permaLights[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaLights[k]->IsIdle())
+            permaLight->Refresh();
+            if (permaLight->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaLight->IsIdle())
             {
                 // If it casts a shadow, attach the shadow now.
-                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaLights[k]);
+                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaLight);
             }
         }
 
-        const hsTArray<plLightInfo*>& permaProjs = drawable->GetSpan(idx)->fPermaProjs;
-        for (size_t k = 0; k < permaProjs.GetCount(); k++)
+        const std::vector<plLightInfo*>& permaProjs = drawable->GetSpan(idx)->fPermaProjs;
+        for (plLightInfo* permaProj : permaProjs)
         {
-            permaProjs[k]->Refresh();
-            if (permaProjs[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaProjs[k]->IsIdle())
+            permaProj->Refresh();
+            if (permaProj->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaProj->IsIdle())
             {
                 // If it casts a shadow, attach the shadow now.
-                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaProjs[k]);
+                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaProj);
             }
         }
     }

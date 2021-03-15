@@ -126,18 +126,18 @@ void    plSpan::Write( hsStream *stream )
 
 void plSpan::RemoveAuxSpan(plAuxSpan* aux)
 {
-    int i = fAuxSpans.Find(aux);
-    int newCount = fAuxSpans.GetCount()-1;
-    if( i < newCount )
+    auto iter = std::find(fAuxSpans.begin(), fAuxSpans.end(), aux);
+    if (iter != fAuxSpans.end())
     {
-        fAuxSpans[i] = fAuxSpans[fAuxSpans.GetCount()-1];
+        // This is safe even if iter and back() reference the same element
+        *iter = fAuxSpans.back();
     }
-    fAuxSpans.SetCount(newCount);
+    fAuxSpans.pop_back();
 }
 
 void plSpan::AddAuxSpan(plAuxSpan* aux)
 {
-    fAuxSpans.Append(aux);
+    fAuxSpans.emplace_back(aux);
 }
 
 // AddPermaLight ////////////////////////////////////////////////////////////////
@@ -148,23 +148,23 @@ void plSpan::AddPermaLight(plLightInfo* li, bool proj)
 {
     if( li )
     {
-        hsTArray<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
-        int idx = lights.Find(li);
-        if( lights.kMissingIndex == idx )
-            lights.Append(li);
-        if( lights.GetCount() )
+        std::vector<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
+        auto iter = std::find(lights.cbegin(), lights.cend(), li);
+        if (iter == lights.cend())
+            lights.emplace_back(li);
+        if (!lights.empty())
             fProps |= proj ? kPropHasPermaProjs : kPropHasPermaLights;
     }
 }
 
 void plSpan::RemovePermaLight(plLightInfo* li, bool proj)
 {
-    hsTArray<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
-    int idx = lights.Find(li);
-    if( lights.kMissingIndex != idx )
+    std::vector<plLightInfo*>& lights = proj ? fPermaProjs : fPermaLights;
+    auto iter = std::find(lights.cbegin(), lights.cend(), li);
+    if (iter != lights.cend())
     {
-        lights.Remove(idx);
-        if( !lights.GetCount() )
+        lights.erase(iter);
+        if (lights.empty())
             fProps &= ~(proj ? kPropHasPermaProjs : kPropHasPermaLights);
     }
 }
@@ -174,48 +174,47 @@ void plSpan::RemovePermaLight(plLightInfo* li, bool proj)
 
 void    plSpan::AddLight( plLightInfo *li, float strength, float scale, bool proj ) const
 {
-    hsTArray<plLightInfo*>& lights = proj ? fProjectors : fLights;
-    hsTArray<float>& strengths = proj ? fProjStrengths : fLightStrengths;
-    hsTArray<float>& scales = proj ? fProjScales : fLightScales;
+    std::vector<plLightInfo*>& lights = proj ? fProjectors : fLights;
+    std::vector<float>& strengths = proj ? fProjStrengths : fLightStrengths;
+    std::vector<float>& scales = proj ? fProjScales : fLightScales;
 
-    int         i;
+    size_t i;
 
-    for( i = 0; i < lights.GetCount(); i++ )
+    for (i = 0; i < lights.size(); i++)
     {
         if( strengths[ i ] < strength )
             break;
     }
-    lights.Insert(i, li);
-    strengths.Insert(i, strength);
-    scales.Insert(i, float(uint32_t(scale * 127.9f)) / 127.f);
+    lights.insert(lights.begin() + i, li);
+    strengths.insert(strengths.begin() + i, strength);
+    scales.insert(scales.begin() + i, float(uint32_t(scale * 127.9f)) / 127.f);
 }
 
 void    plSpan::ClearLights() const 
 { 
-    fLights.SetCount(0); 
-    fLightStrengths.SetCount(0); 
-    fLightScales.SetCount(0);
-    fProjectors.SetCount(0); 
-    fProjStrengths.SetCount(0); 
-    fProjScales.SetCount(0);
+    fLights.clear();
+    fLightStrengths.clear();
+    fLightScales.clear();
+    fProjectors.clear();
+    fProjStrengths.clear();
+    fProjScales.clear();
 
-    int i;
-    for( i = 0; i < fPermaLights.GetCount(); i++ )
+    for (plLightInfo* permaLight : fPermaLights)
     {
-        if( !(fPermaLights[i]->IsIdle() || fPermaLights[i]->GetProperty(plLightInfo::kLPShadowOnly)) )
+        if (!(permaLight->IsIdle() || permaLight->GetProperty(plLightInfo::kLPShadowOnly)))
         {
-            fLights.Append(fPermaLights[i]);
-            fLightStrengths.Append(2.f);
-            fLightScales.Append(1.f);
+            fLights.emplace_back(permaLight);
+            fLightStrengths.emplace_back(2.f);
+            fLightScales.emplace_back(1.f);
         }
     }
-    for( i = 0; i < fPermaProjs.GetCount(); i++ )
+    for (plLightInfo* permaProj : fPermaProjs)
     {
-        if( !(fPermaProjs[i]->IsIdle() || fPermaProjs[i]->GetProperty(plLightInfo::kLPShadowOnly)) )
+        if (!(permaProj->IsIdle() || permaProj->GetProperty(plLightInfo::kLPShadowOnly)))
         {
-            fProjectors.Append(fPermaProjs[i]);
-            fProjStrengths.Append(2.f);
-            fProjScales.Append(1.f);
+            fProjectors.emplace_back(permaProj);
+            fProjStrengths.emplace_back(2.f);
+            fProjScales.emplace_back(1.f);
         }
     }
 
@@ -257,23 +256,23 @@ bool    plSpan::CanMergeInto( plSpan *other )
         return false;
     }
 
-    if( fLights.GetCount() != other->fLights.GetCount() )
+    if (fLights.size() != other->fLights.size())
         return false;
-    if( fProjectors.GetCount() != other->fProjectors.GetCount() )
+    if (fProjectors.size() != other->fProjectors.size())
         return false;
 
-    if( fLights.GetCount() )
+    if (!fLights.empty())
     {
-        if( !HSMemory::EqualBlocks(fLights.AcquireArray(), other->fLights.AcquireArray(), fLights.GetCount() * sizeof(plLightInfo*)) )
+        if (fLights != other->fLights)
             return false;
-        if( !HSMemory::EqualBlocks(fLightScales.AcquireArray(), other->fLightScales.AcquireArray(), fLights.GetCount() * sizeof(float)) )
+        if (fLightScales != other->fLightScales)
             return false;
     }
-    if( fProjectors.GetCount() )
+    if (!fProjectors.empty())
     {
-        if( !HSMemory::EqualBlocks(fProjectors.AcquireArray(), other->fProjectors.AcquireArray(), fProjectors.GetCount() * sizeof(plLightInfo*)) )
+        if (fProjectors != other->fProjectors)
             return false;
-        if( !HSMemory::EqualBlocks(fProjScales.AcquireArray(), other->fProjScales.AcquireArray(), fProjectors.GetCount() * sizeof(float)) )
+        if (fProjScales != other->fProjScales)
             return false;
     }
 
@@ -290,9 +289,8 @@ bool    plSpan::CanMergeInto( plSpan *other )
 
 void    plSpan::MergeInto( plSpan *other )
 {
-    int i;
-    for( i = 0; i < GetNumAuxSpans(); i++ )
-        other->fAuxSpans.Append(GetAuxSpan(i));
+    for (size_t i = 0; i < GetNumAuxSpans(); i++)
+        other->fAuxSpans.emplace_back(GetAuxSpan(i));
 }
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -333,9 +331,8 @@ void plSpan::Destroy()
         delete fSnapShot;
     }
 
-    int i;
-    for( i = 0; i < fAuxSpans.GetCount(); i++ )
-        fAuxSpans[i]->fDrawable = nullptr;
+    for (plAuxSpan* auxSpan : fAuxSpans)
+        auxSpan->fDrawable = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////

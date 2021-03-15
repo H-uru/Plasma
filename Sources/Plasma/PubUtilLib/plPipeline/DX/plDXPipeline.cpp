@@ -4759,9 +4759,9 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
         !(IsDebugFlagSet(plPipeDbg::kFlagNoApplyProjLights) && proj) &&
         !(IsDebugFlagSet(plPipeDbg::kFlagOnlyApplyProjLights) && !proj))
     {
-        hsTArray<plLightInfo*>& spanLights = span->GetLightList(proj);
+        std::vector<plLightInfo*>& spanLights = span->GetLightList(proj);
 
-        for( i = 0; i < spanLights.GetCount() && i < numLights; i++ )
+        for (i = 0; i < (int)spanLights.size() && i < numLights; i++)
         {
             ref = (plDXLightRef *)spanLights[i]->GetDeviceRef();
 
@@ -4782,7 +4782,7 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
         /// fade them out to nothing as they get closer to the bottom. This way, they fade
         /// out of existence instead of pop out.
 
-        if( i < spanLights.GetCount() - 1 && i > 0 )
+        if (i < (int)spanLights.size() - 1 && i > 0)
         {
             threshhold = span->GetLightStrength( i, proj );
             i--;
@@ -6599,10 +6599,9 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
 
     hsPoint3 spanPos = span->fWorldBounds.GetCenter();
     hsVector3 liDir(0,0,0);
-    int i;
-    const hsTArray<plLightInfo*>& spanLights = span->GetLightList(false);
+    const std::vector<plLightInfo*>& spanLights = span->GetLightList(false);
     float maxStrength = 0;
-    for( i = 0; i < spanLights.GetCount(); i++ )
+    for (size_t i = 0; i < spanLights.size(); i++)
     {
         float liWgt = span->GetLightStrength(i, false);
         // A light strength of 2.f means it's from a light group, and we haven't actually calculated
@@ -9307,8 +9306,7 @@ void plDXPipeline::IRenderAuxSpans(const plSpan& span)
 
     ISetLocalToWorld(hsMatrix44::IdentityMatrix(), hsMatrix44::IdentityMatrix());
 
-    int i;
-    for( i = 0; i < span.GetNumAuxSpans(); i++ )
+    for (size_t i = 0; i < span.GetNumAuxSpans(); i++)
         IRenderAuxSpan(span, span.GetAuxSpan(i));
 
     ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);

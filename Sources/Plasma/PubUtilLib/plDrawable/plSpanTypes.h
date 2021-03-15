@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plSpans_h
 #define _plSpans_h
 
+#include <vector>
 
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 #include "hsBounds.h"
 #include "hsMatrix44.h"
 
@@ -148,20 +148,20 @@ class plSpan
         mutable plAccessSnapShot*           fSnapShot;
 
 //      mutable hsBitVector                 fLightBits;
-        mutable hsTArray<plLightInfo*>      fLights;
-        mutable hsTArray<float>          fLightStrengths;
-        mutable hsTArray<float>          fLightScales;
-        mutable hsTArray<plLightInfo*>      fProjectors;
-        mutable hsTArray<float>          fProjStrengths;
-        mutable hsTArray<float>          fProjScales;
+        mutable std::vector<plLightInfo*>   fLights;
+        mutable std::vector<float>          fLightStrengths;
+        mutable std::vector<float>          fLightScales;
+        mutable std::vector<plLightInfo*>   fProjectors;
+        mutable std::vector<float>          fProjStrengths;
+        mutable std::vector<float>          fProjScales;
 
         mutable hsBitVector                 fShadowBits;
         mutable hsBitVector                 fShadowSlaveBits;
 
-        mutable hsTArray<plAuxSpan*>        fAuxSpans;
+        mutable std::vector<plAuxSpan*>     fAuxSpans;
 
-        hsTArray<plLightInfo*>              fPermaLights;
-        hsTArray<plLightInfo*>              fPermaProjs;
+        std::vector<plLightInfo*>           fPermaLights;
+        std::vector<plLightInfo*>           fPermaProjs;
 
 #ifdef HS_DEBUGGING
         plKey               fOwnerKey;      // DEBUG ONLY--drawInterface owner key
@@ -179,12 +179,12 @@ class plSpan
 
         void            AddLight( plLightInfo* li, float strength, float scale, bool proj ) const;
 
-        hsTArray<plLightInfo*>& GetLightList(bool proj) const { return proj ? fProjectors : fLights; }
+        std::vector<plLightInfo*>& GetLightList(bool proj) const { return proj ? fProjectors : fLights; }
 
-        uint32_t          GetNumLights(bool proj) const { return proj ? fProjectors.GetCount() : fLights.GetCount(); }
-        plLightInfo*    GetLight(int i, bool proj) const { return proj ? fProjectors[i] : fLights[i]; }
-        float        GetLightStrength(int i, bool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
-        float        GetLightScale(int i, bool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
+        size_t       GetNumLights(bool proj) const { return proj ? fProjectors.size() : fLights.size(); }
+        plLightInfo* GetLight(size_t i, bool proj) const { return proj ? fProjectors[i] : fLights[i]; }
+        float        GetLightStrength(size_t i, bool proj) const { return proj ? fProjStrengths[i] : fLightStrengths[i]; }
+        float        GetLightScale(size_t i, bool proj) const { return proj ? fProjScales[i] : fLightScales[i]; }
         
         void            AddPermaLight(plLightInfo* li, bool proj);
         void            RemovePermaLight(plLightInfo* li, bool proj);
@@ -196,8 +196,8 @@ class plSpan
 
         void            RemoveAuxSpan(plAuxSpan* aux);
         void            AddAuxSpan(plAuxSpan* aux);
-        int             GetNumAuxSpans() const { return fAuxSpans.GetCount(); }
-        plAuxSpan*      GetAuxSpan(int i) const { return fAuxSpans[i]; }
+        size_t          GetNumAuxSpans() const { return fAuxSpans.size(); }
+        plAuxSpan*      GetAuxSpan(size_t i) const { return fAuxSpans[i]; }
 
         virtual void    Read( hsStream* stream );
         virtual void    Write( hsStream* stream );

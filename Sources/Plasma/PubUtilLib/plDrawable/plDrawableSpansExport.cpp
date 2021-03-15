@@ -139,19 +139,15 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     {
         if( fSpans[i]->fProps & plSpan::kPropHasPermaLights )
         {
-            uint32_t lcnt = fSpans[i]->fPermaLights.GetCount();
-            s->WriteLE32(lcnt);
-            int j;
-            for( j = 0; j < lcnt; j++ )
-                mgr->WriteKey( s, fSpans[i]->fPermaLights[j]);
+            s->WriteLE32((uint32_t)fSpans[i]->fPermaLights.size());
+            for (plLightInfo* permaLight : fSpans[i]->fPermaLights)
+                mgr->WriteKey(s, permaLight);
         }
         if( fSpans[i]->fProps & plSpan::kPropHasPermaProjs )
         {
-            uint32_t lcnt = fSpans[i]->fPermaProjs.GetCount();
-            s->WriteLE32(lcnt);
-            int j;
-            for( j = 0; j < lcnt; j++ )
-                mgr->WriteKey( s, fSpans[i]->fPermaProjs[j]);
+            s->WriteLE32((uint32_t)fSpans[i]->fPermaProjs.size());
+            for (plLightInfo* permaProj : fSpans[i]->fPermaProjs)
+                mgr->WriteKey(s, permaProj);
         }
     }
 
