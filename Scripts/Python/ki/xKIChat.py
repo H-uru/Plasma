@@ -261,7 +261,7 @@ class xKIChat(object):
             pWords = message.split(" ", 1)
             foundBuddy = False
             # Make sure it's still just a "/p".
-            if len(pWords) > 1 and pWords[0].casefold == PtGetLocalizedString("KI.Commands.ChatPrivate"):
+            if len(pWords) > 1 and pWords[0].casefold() == PtGetLocalizedString("KI.Commands.ChatPrivate"):
                 # Try to find the buddy in the DPL online lists.
                 for player in self.BKPlayerList:
                     # Is the player in this Age?
@@ -272,10 +272,10 @@ class xKIChat(object):
                             cFlags.private = True
                             foundBuddy = True
                             # Remove the "/p buddyname" from the message.
-                            # if playername is non-Latin1, casefold() may change its length
-                            # use number of spaces in player name to determine where to split the message
-                            pNameWords = plyrName.split(" ")
-                            pWords2 = message.split(" ",len(pNameWords))
+                            # due to casefold, len(plyrName) may not equal the length of what the user typed
+                            # count number of spaces in player name and split message based on that
+                            pNameWords = plyrName.split()
+                            pWords2 = pWords[1].split(" ",len(pNameWords))
                             message = pWords2[len(pNameWords)]
                             self.AddPlayerToRecents(player.getPlayerID())
                             break
@@ -291,9 +291,9 @@ class xKIChat(object):
                                 cFlags.interAge = True
                                 foundBuddy = True
                                 # Add this player's current Age.
-                                # if playername is non-Latin1, casefold() may change its length
-                                # use number of spaces in player name to determine where to split the message
-                                pNameWords = plyrName.split(" ")
+                                # due to casefold, len(plyrName) may not equal the length of what the user typed
+                                # count number of spaces in player name and split message based on that
+                                pNameWords = plyrName.split()
                                 pWords2 = message.split(" ",len(pNameWords))
                                 message = pre + pWords2[len(pNameWords)]
                                 self.AddPlayerToRecents(ePlyr.playerGetID())
