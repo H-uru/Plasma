@@ -65,7 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
-#include "hsTemplates.h"
 #include "hsBounds.h"
 #include "hsMatrix44.h"
 #include "hsColorRGBA.h"
@@ -272,8 +271,8 @@ class plGeometrySpan
         };
 
         bool                    fCreating;
-        hsTArray<TempVertex>    fVertAccum;
-        hsTArray<uint16_t>        fIndexAccum;
+        std::vector<TempVertex> fVertAccum;
+        std::vector<uint16_t>   fIndexAccum;
 
         void        IUnShareData();
         void        IDuplicateUniqueData( const plGeometrySpan *source );
@@ -284,7 +283,7 @@ class plGeometrySpan
         // to be deleted eventually. So instead, we assign each geoSpan a instanceGroupID, unique
         // for each instance group but identical among all geoSpans in a given group (i.e. all
         // members of the instanceRef list). We write these IDs out, then on read, we rebuild the
-        // instanceRef arrays by using a hash table to find insert new hsTArrays at the given groupID,
+        // instanceRef arrays by using a hash table to find insert new vectors at the given groupID,
         // and looking up in that hash table to get pointers for each geoSpan's instanceRef array.
         // THIS is because we need a way of assigning unique, unused groupIDs to each geoSpan instance
         // group, and since we only need to know if the ID has been used yet, we can just use a bitVector.
@@ -297,7 +296,7 @@ class plGeometrySpan
         // have to write out the instanceRef array count for each geoSpan, so that when we read in
         // to do the lookup here, we know that we've read everything and can dump the entry in this
         // table.
-        static hsTArray<std::vector<plGeometrySpan *> *> fInstanceGroups;
+        static std::vector<std::vector<plGeometrySpan *> *> fInstanceGroups;
 
         // THIS is so we can clear fInstanceGroups as early and as efficiently as possible; see
         // the notes on IGetInstanceGroup().
