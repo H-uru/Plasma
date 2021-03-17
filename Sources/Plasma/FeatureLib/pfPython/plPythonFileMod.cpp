@@ -490,18 +490,13 @@ bool plPythonFileMod::ILoadPythonCode()
         if (PythonInterface::RunFile(pyfile, fModule)) {
             // we've loaded the code into our module
             // now attach the glue python code to the end
-            if (!PythonInterface::RunFile(gluefile, fModule)) {
-                // display any output (NOTE: this would be disabled in production)
-                DisplayPythonOutput();
-                return false;
-            } else {
+            if (PythonInterface::RunFile(gluefile, fModule))
                 return true;
-            }
         }
-        DisplayPythonOutput();
 
         ST::string errMsg = ST::format("Python file {}.py had errors!!! Could not load.", fPythonFile);
         PythonInterface::WriteToLog(errMsg);
+        ReportError();
         return false;
     }
 #endif  //PLASMA_EXTERNAL_RELEASE
@@ -512,10 +507,10 @@ bool plPythonFileMod::ILoadPythonCode()
     if (pythonCode && PythonInterface::RunPYC(pythonCode, fModule))
         return true;
 
-    DisplayPythonOutput();
-
     ST::string errMsg = ST::format("Python file {}.py was not found.", fPythonFile);
     PythonInterface::WriteToLog(errMsg);
+    if (PyErr_Occurred())
+        ReportError();
     return false;
 }
 
