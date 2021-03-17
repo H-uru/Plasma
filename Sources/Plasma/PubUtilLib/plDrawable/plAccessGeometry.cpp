@@ -266,7 +266,7 @@ void plAccessGeometry::IOpen(plDrawable* d, uint32_t spanIdx, plAccessSpan& acc,
     if( !drawable )
         return;
 
-    if( drawable->GetSourceSpans().GetCount() && !drawable->GetNumSpans() )
+    if (!drawable->GetSourceSpans().empty() && !drawable->GetNumSpans())
         IAccessSpanFromSourceSpan(acc, drawable->GetSourceSpans()[spanIdx]);
     else
         IAccessSpanFromSpan(acc, drawable, drawable->GetSpan(spanIdx), useSnap, readOnly);

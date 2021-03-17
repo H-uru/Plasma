@@ -102,7 +102,7 @@ void    plSpan::Write( hsStream *stream )
 {
     stream->WriteLE32(fSubType);
 
-    stream->WriteLE32( fMaterialIdx );
+    stream->WriteLE32((int32_t)fMaterialIdx);
 
     fLocalToWorld.Write( stream );
     fWorldToLocal.Write( stream );
@@ -299,7 +299,7 @@ plSpan::plSpan()
 {
     fTypeMask = kSpan;
     fSubType = plDrawable::kSubNormal;
-    fMaterialIdx = (uint32_t)-1;
+    fMaterialIdx = -1;
     fFogEnvironment = nullptr;
     fProps = 0;
 

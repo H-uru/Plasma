@@ -118,7 +118,7 @@ public:
     plDrawable* GetDrawable(size_t which) const { return which < fDrawables.size() ? fDrawables[which] : nullptr; }
     size_t  GetNumDrawables() const { return fDrawables.size(); }
     // Sets the triMesh index to be used when referring to our spans in the drawable
-    void    SetDrawableMeshIndex(size_t which, uint32_t index);
+    void    SetDrawableMeshIndex(size_t which, size_t index);
     uint32_t  GetDrawableMeshIndex(size_t which) const { return which < fDrawableIndices.size() ? fDrawableIndices[which] : uint32_t(-1); }
 };
 

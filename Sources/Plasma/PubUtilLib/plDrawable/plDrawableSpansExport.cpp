@@ -94,14 +94,14 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLE32( fRenderLevel.fLevel );
 
     /// Write out the material keys
-    s->WriteLE32( fMaterials.GetCount() );
-    for (int i = 0; i < fMaterials.GetCount(); i++)
-        mgr->WriteKey( s, fMaterials[ i ] );
+    s->WriteLE32((uint32_t)fMaterials.size());
+    for (hsGMaterial* material : fMaterials)
+        mgr->WriteKey(s, material);
 
     /// Write out the icicles
-    s->WriteLE32( fIcicles.GetCount() );
-    for (int i = 0; i < fIcicles.GetCount(); i++)
-        fIcicles[ i ].Write( s );
+    s->WriteLE32((uint32_t)fIcicles.size());
+    for (plIcicle& icicle : fIcicles)
+        icicle.Write(s);
 
     /// Write out the patches
     // FIXME MAJOR VERSION
@@ -112,7 +112,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLE32((uint32_t)fSpans.size());
     for (plSpan* span : fSpans)
     {
-        uint8_t   *icicle = (uint8_t *)span, *base = (uint8_t *)fIcicles.AcquireArray();
+        uint8_t   *icicle = (uint8_t *)span, *base = (uint8_t *)fIcicles.data();
         uint32_t j = (uint32_t)( icicle - base ) / sizeof( plIcicle );
         s->WriteLE32( j );
     }
@@ -149,12 +149,9 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     }
 
     /// Write out the source spans if necessary
-    s->WriteLE32( fSourceSpans.GetCount() );
-    if( fSourceSpans.GetCount() > 0 )
-    {
-        for (int i = 0; i < fSourceSpans.GetCount(); i++)
-            fSourceSpans[ i ]->Write( s );
-    }
+    s->WriteLE32((uint32_t)fSourceSpans.size());
+    for (plGeometrySpan* geoSpan : fSourceSpans)
+        geoSpan->Write(s);
 
     s->WriteLE32((uint32_t)fLocalToWorlds.size());
     for (size_t i = 0; i < fLocalToWorlds.size(); i++)
@@ -167,11 +164,9 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     }
 
     // Write out the drawInterface index arrays
-    s->WriteLE32( fDIIndices.GetCount() );
-    for (int i = 0; i < fDIIndices.GetCount(); i++)
+    s->WriteLE32((uint32_t)fDIIndices.size());
+    for (plDISpanIndex* array : fDIIndices)
     {
-        plDISpanIndex   *array = fDIIndices[ i ];
-
         s->WriteLE32( array->fFlags );
         s->WriteLE32((uint32_t)array->GetCount());
         for (size_t j = 0; j < array->GetCount(); j++)
@@ -179,8 +174,8 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     }
 
     // Write the groups out
-    s->WriteLE32(fGroups.GetCount());
-    for (int i = 0; i < fGroups.GetCount(); i++ )
+    s->WriteLE32((uint32_t)fGroups.size());
+    for (size_t i = 0; i < fGroups.size(); i++)
     {
 #ifdef VERT_LOG
 
@@ -208,8 +203,6 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 
 uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint32_t index)
 {
-    uint32_t          spanIdx;
-    plSpan          *span;
     hsBounds3Ext    bounds;
 
 
@@ -220,8 +213,8 @@ uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint3
     if (index == (uint32_t)-1) // need a new one
     {
         /// Create a lookup entry
-        index = fDIIndices.GetCount();
-        fDIIndices.Append( new plDISpanIndex );
+        index = (uint32_t)fDIIndices.size();
+        fDIIndices.emplace_back(new plDISpanIndex);
         fDIIndices[ index ]->fFlags = plDISpanIndex::kNone;
     }
     plDISpanIndex   *spanLookup = fDIIndices[ index ];
@@ -231,14 +224,12 @@ uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint3
     /// copies
     for (plGeometrySpan* geoSpan : spans)
     {
-        spanLookup->Append( fSourceSpans.GetCount() );
-        geoSpan->fSpanRefIndex = fSourceSpans.GetCount();
-        fSourceSpans.Append(geoSpan);
+        spanLookup->Append(fSourceSpans.size());
+        geoSpan->fSpanRefIndex = fSourceSpans.size();
+        fSourceSpans.emplace_back(geoSpan);
 
-        spanIdx = fIcicles.GetCount();
-        fIcicles.Append( plIcicle() );
-        plIcicle *icicle = &fIcicles[ spanIdx ];
-        span = (plSpan *)icicle;
+        size_t spanIdx = fIcicles.size();
+        plSpan* span = (plSpan *)&fIcicles.emplace_back();
 
         /// Set common stuff
         IAssignMatIdxToSpan(span, geoSpan->fMaterial);
@@ -275,7 +266,7 @@ uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint3
 
         /// Add to our source indices
         fSpans.emplace_back(span);
-        fSpanSourceIndices.Append( spanIdx );
+        fSpanSourceIndices.emplace_back(spanIdx);
     }
 
     /// Rebuild the pointer array
@@ -303,9 +294,9 @@ void    plDrawableSpans::Optimize()
     IPackSourceSpans();
 
     /// Now that we're done with the source spans, get rid of them! (BLEAH!)
-    for (int i = 0; i < fSourceSpans.GetCount(); i++)
-        delete fSourceSpans[ i ];
-    fSourceSpans.Reset();
+    for (plGeometrySpan* geoSpan : fSourceSpans)
+        delete geoSpan;
+    fSourceSpans.clear();
 
     if( fCriteria & kCritSortSpans )
     {
@@ -318,11 +309,11 @@ void    plDrawableSpans::Optimize()
     }
 
     /// Now we do a pass at the buffer groups, asking them to tidy up
-    for (int i = 0; i < fGroups.GetCount(); i++)
-        fGroups[ i ]->TidyUp();
+    for (plGBufferGroup* group : fGroups)
+        group->TidyUp();
 
     // Look to see if we have any materials we aren't using anymore.
-    for (int i = 0; i < fMaterials.GetCount(); i++)
+    for (size_t i = 0; i < fMaterials.size(); i++)
     {
         ICheckToRemoveMaterial(i);
     }
@@ -441,7 +432,6 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
 
 void    plDrawableSpans::IPackSourceSpans()
 {
-    int             i, j;
     hsBounds3Ext    bounds;
     hsBitVector     doneSpans;
 
@@ -450,10 +440,10 @@ void    plDrawableSpans::IPackSourceSpans()
     fLocalBounds.MakeEmpty();
     fWorldBounds.MakeEmpty();
 
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
+    for (plGeometrySpan* geoSpan : fSourceSpans)
     {
-        hsBounds3Ext    bnd = fSourceSpans[ i ]->fLocalBounds;
-        bnd.Transform( &fSourceSpans[ i ]->fLocalToWorld );
+        hsBounds3Ext bnd = geoSpan->fLocalBounds;
+        bnd.Transform(&geoSpan->fLocalToWorld);
         fWorldBounds.Union( &bnd );
     }
 
@@ -471,7 +461,7 @@ void    plDrawableSpans::IPackSourceSpans()
     // refsThere list. If refsThere still contains spans from separate drawables, 
     // that will be dealt with in those drawables' Optimize calls.
     doneSpans.Clear();
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
+    for (size_t i = 0; i < fSourceSpans.size(); i++)
     {
         if( !doneSpans.IsBitSet(i) )
         {
@@ -488,15 +478,11 @@ void    plDrawableSpans::IPackSourceSpans()
                     plGeometrySpan* other = refs[k];
                     if( other != span )
                     {
-                        int idx = fSourceSpans.Find(other);
-                        if( fSourceSpans.kMissingIndex == idx )
-                        {
+                        auto iter = std::find(fSourceSpans.cbegin(), fSourceSpans.cend(), other);
+                        if (iter == fSourceSpans.cend())
                             refsThere.Append(other);
-                        }
                         else
-                        {
                             refsHere.Append(other);
-                        }
                     }
                 }
                 if( refsThere.GetCount() )
@@ -531,7 +517,7 @@ void    plDrawableSpans::IPackSourceSpans()
 
     /// Now pack the spans
     doneSpans.Clear();
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
+    for (size_t i = 0; i < fSourceSpans.size(); i++)
     {
         // Now we fill the rest of the data in for our span
         if( !doneSpans.IsBitSet( i ) )
@@ -546,7 +532,7 @@ void    plDrawableSpans::IPackSourceSpans()
                 IConvertGeoSpanToIcicle( fSourceSpans[ i ], baseIcicle, 0, baseIcicle );
 
                 // Loop through the rest
-                for( j = 0; j < fSourceSpans[ i ]->fInstanceRefs->GetCount(); j++ )
+                for (int j = 0; j < fSourceSpans[i]->fInstanceRefs->GetCount(); j++)
                 {
                     plGeometrySpan *other = (*fSourceSpans[ i ]->fInstanceRefs)[ j ];
                     if( other == fSourceSpans[ i ] )
@@ -574,13 +560,13 @@ void    plDrawableSpans::IPackSourceSpans()
 #ifdef VERT_LOG
     hsTArray<plGeometrySpan*> order;
     order.SetCount(fSourceSpans.GetCount());
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
+    for (plGeometrySpan* geoSpan : fSourceSpans)
     {
-        order[fSourceSpans[i]->fSpanRefIndex] = fSourceSpans[i];
+        order[geoSpan->fSpanRefIndex] = geoSpan;
     }
 
     plStatusLog* statusLog = IStartLog(GetKey()->GetName(), fSourceSpans.GetCount());
-    for( i = 0; i < order.GetCount(); i++ )
+    for (int i = 0; i < order.GetCount(); i++)
     {
         plVertexSpan* vSpan = (plVertexSpan*)fSpans[i];
         ILogSpan(statusLog, order[i], vSpan, fGroups[vSpan->fGroupIdx]);
@@ -603,14 +589,14 @@ void    plDrawableSpans::ISortSourceSpans()
 
 
     // Init the reorder table
-    for (int i = 0; i < fSourceSpans.GetCount(); i++)
+    for (size_t i = 0; i < fSourceSpans.size(); i++)
         spanReorderTable.Append( i );
 
     // Do a nice, if naiive, sort by material (hehe by the pointers, no less)
-    for (int i = 0; i < fSourceSpans.GetCount() - 1; i++)
+    for (size_t i = 0; i < fSourceSpans.size() - 1; i++)
     {
-        int j, idx;
-        for (j = i + 1, idx = i; j < fSourceSpans.GetCount(); j++)
+        size_t j, idx;
+        for (j = i + 1, idx = i; j < fSourceSpans.size(); j++)
         {
             if( ICompareSpans( fSourceSpans[ j ], fSourceSpans[ idx ] ) < 0 )
                 idx = j;
@@ -648,25 +634,25 @@ void    plDrawableSpans::ISortSourceSpans()
         spanInverseTable[ spanReorderTable[ i ] ] = i;
 
     /// Now update our span xlate table
-    for (int i = 0; i < fDIIndices.GetCount(); i++)
+    for (plDISpanIndex* di : fDIIndices)
     {
-        if( !fDIIndices[ i ]->IsMatrixOnly() )
+        if (!di->IsMatrixOnly() )
         {
-            for (size_t j = 0; j < fDIIndices[i]->GetCount(); j++)
+            for (size_t j = 0; j < di->GetCount(); j++)
             {
-                uint32_t idx = (*fDIIndices[ i ])[ j ];
+                uint32_t idx = (*di)[ j ];
 
-                (*fDIIndices[ i ])[ j ] = spanInverseTable[ idx ];
+                (*di)[ j ] = spanInverseTable[ idx ];
             }
         }
     }
 
     /// Use our pointer array to rebuild the icicle array (UUUUGLY)
-    hsTArray<plIcicle>      tempIcicles;
+    std::vector<plIcicle> tempIcicles;
 
-    tempIcicles.SetCount( fIcicles.GetCount() );
+    tempIcicles.resize(fIcicles.size());
 
-    plIcicle* newIcicle = tempIcicles.AcquireArray();
+    plIcicle* newIcicle = tempIcicles.data();
     for (plSpan*& span : fSpans)
     {
         *newIcicle = *(plIcicle *)span;
@@ -675,8 +661,8 @@ void    plDrawableSpans::ISortSourceSpans()
     }
 
     /// Swap the two arrays out. This will basically swap the actual memory blocks, so be careful...
-    fIcicles.Swap( tempIcicles );
-    tempIcicles.Reset();
+    fIcicles.swap(tempIcicles);
+    tempIcicles.clear();
 }
 
 //// ICompareSpans ///////////////////////////////////////////////////////////

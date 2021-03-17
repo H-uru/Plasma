@@ -8533,8 +8533,8 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
     // lock the data buffer
 
     // First, figure out which buffers we need to blend.
-    const int kMaxBufferGroups = 20;
-    const int kMaxVertexBuffers = 20;
+    constexpr size_t kMaxBufferGroups = 20;
+    constexpr size_t kMaxVertexBuffers = 20;
     static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
     memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
 
@@ -8557,10 +8557,9 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
     // and blend into it. We'll lock the buffer once, and then for each span that
     // uses it, set the matrix palette and and then do the blend for that span.
     // When we've done all the spans for a group/buffer, we unlock it and move on.
-    int j;
-    for (int i = 0; i < kMaxBufferGroups; i++)
+    for (size_t i = 0; i < kMaxBufferGroups; i++)
     {
-        for( j = 0; j < kMaxVertexBuffers; j++ )
+        for (size_t j = 0; j < kMaxVertexBuffers; j++)
         {
             if( blendBuffers[i][j] )
             {

@@ -454,7 +454,7 @@ void    plGBufferGroup::Read( hsStream *s )
 
 void    plGBufferGroup::Write( hsStream *s ) 
 {
-    uint32_t      totalDynSize, i, j;
+    uint32_t      totalDynSize;
 
 #define MF_VERTCODE_ENABLED
 #ifdef MF_VERTCODE_ENABLED
@@ -480,7 +480,7 @@ void    plGBufferGroup::Write( hsStream *s )
 
     /// Write out dyanmic data
     s->WriteLE32( (uint32_t)fVertBuffStorage.size() );
-    for (i = 0; i < fVertBuffStorage.size(); ++i)
+    for (size_t i = 0; i < fVertBuffStorage.size(); ++i)
     {
 #ifdef MF_VERTCODE_ENABLED
 
@@ -515,14 +515,14 @@ void    plGBufferGroup::Write( hsStream *s )
     }
 
     s->WriteLE32( (uint32_t)fIdxBuffCounts.size() );
-    for( i = 0; i < fIdxBuffStorage.size(); i++ )
+    for (size_t i = 0; i < fIdxBuffStorage.size(); i++)
     {
         s->WriteLE32( fIdxBuffCounts[ i ] );
         s->WriteLE16( fIdxBuffCounts[ i ], fIdxBuffStorage[ i ] );
     }
 
     /// Write out cell arrays
-    for (i = 0; i < fVertBuffStorage.size(); i++)
+    for (size_t i = 0; i < fVertBuffStorage.size(); i++)
     {
         s->WriteLE32((uint32_t)fCells[i].size());
         for (const plGBufferCell& cell : fCells[i])

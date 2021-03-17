@@ -61,7 +61,7 @@ plDrawInterface::~plDrawInterface()
 
 }
 
-void plDrawInterface::SetDrawableMeshIndex(size_t which, uint32_t index)
+void plDrawInterface::SetDrawableMeshIndex(size_t which, size_t index)
 {
     ICheckDrawableIndex(which);
 

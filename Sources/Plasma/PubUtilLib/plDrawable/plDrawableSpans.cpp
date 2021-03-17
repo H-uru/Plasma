@@ -132,7 +132,7 @@ plDrawableSpans::plDrawableSpans() :
     fSkinTime = 0;
 
     fType = kNormal;
-    fMaterials.Reset();
+    fMaterials.clear();
 
     fLocalToWorld.Reset();
     fWorldToLocal.Reset();
@@ -142,42 +142,37 @@ plDrawableSpans::plDrawableSpans() :
 
 plDrawableSpans::~plDrawableSpans()
 {
-    int         i;
-
-
-    for( i = 0; i < fGroups.GetCount(); i++ )
-    {
-        delete fGroups[ i ];
-    }
-    fGroups.Reset();
+    for (plGBufferGroup* group : fGroups)
+        delete group;
+    fGroups.clear();
 
     /// Loop and delete both our types of spans
     for (plSpan* span : fSpans)
         span->Destroy();
     fSpans.clear();
-    fIcicles.Reset();
-    fParticleSpans.Reset();
+    fIcicles.clear();
+    fParticleSpans.clear();
 
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
-        delete fSourceSpans[ i ];
-    fSourceSpans.Reset();
+    for (plGeometrySpan* geoSpan : fSourceSpans)
+        delete geoSpan;
+    fSourceSpans.clear();
 
     /// Loop and unref our materials
     if (GetKey() != nullptr)
     {
-        for( i = 0; i < fMaterials.GetCount(); i++ )
+        for (hsGMaterial* material : fMaterials)
         {
-            if (fMaterials[i] != nullptr && fMaterials[i]->GetKey() != nullptr)
-                GetKey()->Release( fMaterials[ i ]->GetKey() );
+            if (material != nullptr && material->GetKey() != nullptr)
+                GetKey()->Release(material->GetKey());
         }
     }
-    fMaterials.Reset();
+    fMaterials.clear();
 
     delete fSpaceTree;
 
-    for( i = 0; i < fDIIndices.GetCount(); i++ )
-        delete fDIIndices[ i ];
-    fDIIndices.Reset();
+    for (plDISpanIndex* di : fDIIndices)
+        delete di;
+    fDIIndices.clear();
 
     if( fRegisteredForRecreate )
         plgDispatch::Dispatch()->UnRegisterForExactType( plDeviceRecreateMsg::Index(), GetKey() );
@@ -230,34 +225,31 @@ void    plDrawableSpans::PrepForRender( plPipeline *p )
 
     if( !fReadyToRender )
     {
-        uint32_t      i;
-
-        for( i = 0; i < fGroups.GetCount(); i++ )
+        for (plGBufferGroup* group : fGroups)
         {
             // Each group will decide whether it needs to be prepped
-            fGroups[ i ]->PrepForRendering( p, false );
+            group->PrepForRendering(p, false);
         }
 
         fReadyToRender = true;
     }
 
-    if( fParticleSpans.GetCount() )
+    if (!fParticleSpans.empty())
     {
-        uint32_t i;
 #if 0
-        for( i = 0; i < fSpans.GetCount(); i++ )
+        for (plSpan* baseSpan : fSpans)
         {
-            if( fSpans[ i ]->fTypeMask & plSpan::kParticleSpan )
+            if (baseSpan->fTypeMask & plSpan::kParticleSpan)
             {
-                plParticleSpan* span = (plParticleSpan*)fSpans[i];
+                plParticleSpan* span = (plParticleSpan*)baseSpan;
                 
                 plParticleFiller::FillParticles(p, this, span);
             }
         }
 #else
-        for( i = 0; i < fParticleSpans.GetCount(); i++ )
+        for (plParticleSpan& span : fParticleSpans)
         {
-            plParticleFiller::FillParticles(p, this, &fParticleSpans[i]);
+            plParticleFiller::FillParticles(p, this, &span);
         }
 #endif
     }
@@ -282,7 +274,7 @@ void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, bool
         fVisNot.SetBit(visRegIndex, on);
         for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
         {
-            int spanIndex = (*fDIIndices[diIndex])[i];
+            uint32_t spanIndex = (*fDIIndices[diIndex])[i];
             fSpans[spanIndex]->SetVisNot(visRegIndex, on);
         }
     }
@@ -291,7 +283,7 @@ void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, bool
         fVisSet.SetBit(visRegIndex, on);
         for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
         {
-            int spanIndex = (*fDIIndices[diIndex])[i];
+            uint32_t spanIndex = (*fDIIndices[diIndex])[i];
             fSpans[spanIndex]->SetVisBit(visRegIndex, on);
 
             // HACKAGE
@@ -543,7 +535,7 @@ plDrawable& plDrawableSpans::SetTransform( uint32_t index, const hsMatrix44& l2w
                 mSpan->fWorldBounds = mSpan->fLocalBounds;
                 mSpan->fWorldBounds.Transform( &l2w );
 
-                if( fSourceSpans.GetCount() > idx )
+                if (fSourceSpans.size() > idx)
                 {
                     /// If we have a geoSpan for this, update its transform as well,
                     /// just in case we need to use it later (<cough> SceneViewer reshade <cough>)
@@ -607,7 +599,7 @@ void plDrawableSpans::SetNativeTransform(uint32_t idx, const hsMatrix44& l2w, co
         span->fWorldBounds = span->fLocalBounds;
         span->fWorldBounds.Transform(&l2w);
 
-        if( fSourceSpans.GetCount() > idx )
+        if (fSourceSpans.size() > idx)
         {
             fSourceSpans[idx]->fLocalToWorld = l2w;
             fSourceSpans[idx]->fWorldToLocal = w2l;
@@ -814,15 +806,13 @@ plDrawable& plDrawableSpans::SetProperty( int prop, bool on )
     switch( prop )
     {
         case plDrawInterface::kDisable:
-            {
-                int i;
-                for (i=0; i<fIcicles.Count(); i++)
-                    if (on)
-                        fIcicles[i].fProps |= kPropNoDraw;
-                    else
-                        fIcicles[i].fProps &= ~kPropNoDraw;
-                IQuickSpaceTree();
+            for (plIcicle& icicle : fIcicles) {
+                if (on)
+                    icicle.fProps |= kPropNoDraw;
+                else
+                    icicle.fProps &= ~kPropNoDraw;
             }
+            IQuickSpaceTree();
             return SetNativeProperty( kPropNoDraw, on );
         default:
             hsAssert( false, "Bad property passed to SetProperty" );
@@ -906,7 +896,6 @@ const hsBounds3Ext& plDrawableSpans::GetMaxWorldBounds( uint32_t index ) const
 
 void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 {
-    uint32_t              i, j, count, count2;
     bool                gotSkin = false;
     plGBufferGroup      *group;
     plRefMsg            *refMsg;
@@ -919,9 +908,9 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     fRenderLevel.fLevel = s->ReadLE32();
 
     /// Read in the material keys
-    count = s->ReadLE32();
-    fMaterials.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    uint32_t count = s->ReadLE32();
+    fMaterials.assign(count, nullptr);
+    for (uint32_t i = 0; i < count; i++)
     {
         refMsg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kMsgMaterial );
         mgr->ReadKeyNotifyMe( s, refMsg, plRefFlags::kActiveRef );
@@ -929,8 +918,8 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 
     /// Read the icicles in
     count = s->ReadLE32();
-    fIcicles.SetCount( count );
-    for( i = 0; i < count; i++ )
+    fIcicles.resize(count);
+    for (uint32_t i = 0; i < count; i++)
     {
         fIcicles[ i ].Read( s );
         if( fIcicles[ i ].fNumMatrices )
@@ -943,12 +932,12 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     count = s->ReadLE32();
 
     /// Now read the index array in and use it to create a pointer table
-    fSpanSourceIndices.Reset();
+    fSpanSourceIndices.clear();
     fSpans.clear();
     count = s->ReadLE32();
-    for( i = 0; i < count; i++ )
+    for (uint32_t i = 0; i < count; i++)
     {
-        j = s->ReadLE32();
+        uint32_t j = s->ReadLE32();
         switch( j & kSpanTypeMask )
         {
         case kSpanTypeIcicle:
@@ -959,7 +948,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
             break;
         }
 
-        fSpanSourceIndices.Append( j );
+        fSpanSourceIndices.emplace_back(j);
 
         if (fSpans.back()->fTypeMask & plSpan::kParticleSpan)
         {
@@ -972,7 +961,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     IBuildVectors();
 
     /// Now that we have our pointer array, read in the common keys (fog environs, etc)
-    for( i = 0; i < count; i++ )
+    for (uint32_t i = 0; i < count; i++)
     {
         // Ref message for the fog environment
         refMsg = new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, i, kMsgFogEnviron );
@@ -993,7 +982,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
         fMaxWorldBounds.MakeEmpty();
     }
 
-    for( i = 0; i < count; i++ )
+    for (uint32_t i = 0; i < count; i++)
     {
         if( fSpans[i]->fProps & plSpan::kPropHasPermaLights )
         {
@@ -1017,20 +1006,15 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 
     /// Read in the source spans if necessary
     count = s->ReadLE32();
-    if( count > 0 )
+    fSourceSpans.resize(count);
+    for (uint32_t i = 0; i < count; i++)
     {
-        fSourceSpans.SetCount( count );
-        for( i = 0; i < count; i++ )
-        {
-            fSourceSpans[ i ] = new plGeometrySpan;
-            fSourceSpans[ i ]->Read( s );
-            fSourceSpans[ i ]->fMaterial = GetMaterial( fSpans[ i ]->fMaterialIdx );
-            fSourceSpans[ i ]->fFogEnviron = fSpans[ i ]->fFogEnvironment;
-            fSourceSpans[ i ]->fSpanRefIndex = i;
-        }
+        fSourceSpans[i] = new plGeometrySpan;
+        fSourceSpans[i]->Read(s);
+        fSourceSpans[i]->fMaterial = GetMaterial(fSpans[i]->fMaterialIdx);
+        fSourceSpans[i]->fFogEnviron = fSpans[i]->fFogEnvironment;
+        fSourceSpans[i]->fSpanRefIndex = i;
     }
-    else
-        fSourceSpans.Reset();
 
     /// Read in the matrix palette (if any)
     count = s->ReadLE32();
@@ -1038,7 +1022,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
     fWorldToLocals.resize(count);
     fLocalToBones.resize(count);
     fBoneToLocals.resize(count);
-    for( i = 0; i < count; i++ )
+    for (uint32_t i = 0; i < count; i++)
     {
         fLocalToWorlds[i].Read(s);
         fWorldToLocals[i].Read(s);
@@ -1049,15 +1033,15 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 
     /// Read in the drawInterface index arrays
     count = s->ReadLE32();
-    fDIIndices.SetCountAndZero( count );
-    for( i = 0; i < count; i++ )
+    fDIIndices.assign(count, nullptr);
+    for (uint32_t i = 0; i < count; i++)
     {
         fDIIndices[ i ] = new plDISpanIndex;
         
         fDIIndices[i]->fFlags = s->ReadLE32();
-        count2 = s->ReadLE32();
+        uint32_t count2 = s->ReadLE32();
         fDIIndices[ i ]->SetCountAndZero( count2 );
-        for( j = 0; j < count2; j++ )
+        for (uint32_t j = 0; j < count2; j++)
             (*fDIIndices[ i ])[ j ] = s->ReadLE32();
     }
 
@@ -1068,7 +1052,7 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
         group = new plGBufferGroup(0, fProps & kPropVolatile, fProps & kPropSortFaces);
         group->Read( s );
 
-        fGroups.Append( group );
+        fGroups.emplace_back(group);
 
     }
 
@@ -1131,7 +1115,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             /// Material add/remove on this drawable
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                hsAssert( refMsg->fWhich < fMaterials.GetCount(), "Invalid material index" );
+                hsAssert(refMsg->fWhich < (int32_t)fMaterials.size(), "Invalid material index");
 
                 fMaterials[ refMsg->fWhich ] = hsGMaterial::ConvertNoRef( refMsg->GetRef() );
                 
@@ -1154,7 +1138,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                hsAssert( refMsg->fWhich < fMaterials.GetCount(), "Invalid material index" );
+                hsAssert(refMsg->fWhich < (int32_t)fMaterials.size(), "Invalid material index");
 
                 fMaterials[refMsg->fWhich] = nullptr;
             }
@@ -1220,7 +1204,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
         {
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                hsAssert( refMsg->fWhich < fDIIndices.GetCount(), "Shesh, send us valid data, will ya??" );
+                hsAssert(refMsg->fWhich < (int32_t)fDIIndices.size(), "Shesh, send us valid data, will ya??");
                 plLightInfo* li = plLightInfo::ConvertNoRef(refMsg->GetRef());
 
                 int diIndex = int(refMsg->fWhich);
@@ -1236,7 +1220,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                hsAssert( refMsg->fWhich < fDIIndices.GetCount(), "Shesh, send us valid data, will ya??" );
+                hsAssert(refMsg->fWhich < (int32_t)fDIIndices.size(), "Shesh, send us valid data, will ya??");
                 plLightInfo* li = plLightInfo::ConvertNoRef(refMsg->GetRef());
 
                 int diIndex = int(refMsg->fWhich);
@@ -1256,7 +1240,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
         {
             if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             {
-                hsAssert( refMsg->fWhich < fDIIndices.GetCount(), "Shesh, send us valid data, will ya??" );
+                hsAssert(refMsg->fWhich < (int32_t)fDIIndices.size(), "Shesh, send us valid data, will ya??");
                 plLightInfo* li = plLightInfo::ConvertNoRef(refMsg->GetRef());
 
                 int diIndex = int(refMsg->fWhich);
@@ -1272,7 +1256,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             }
             else if( refMsg->GetContext() & (plRefMsg::kOnDestroy|plRefMsg::kOnRemove) )
             {
-                hsAssert( refMsg->fWhich < fDIIndices.GetCount(), "Shesh, send us valid data, will ya??" );
+                hsAssert(refMsg->fWhich < (int32_t)fDIIndices.size(), "Shesh, send us valid data, will ya??");
                 plLightInfo* li = plLightInfo::ConvertNoRef(refMsg->GetRef());
 
                 int diIndex = int(refMsg->fWhich);
@@ -1321,9 +1305,9 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             // If the only set of spans we've got is about to be removed, 
             // (and we're not flagged to stick around) then just
             // kill ourselves entirely.
-            if( fDIIndices.GetCount() < 2 && !(diMsg->fFlags & plDISpansMsg::kLeaveEmptyDrawable) )
+            if (fDIIndices.size() < 2 && !(diMsg->fFlags & plDISpansMsg::kLeaveEmptyDrawable))
             {
-                hsAssert(diMsg->fIndex + 1 == fDIIndices.GetCount(), "Deleting the an unknown set of indices");
+                hsAssert(diMsg->fIndex + 1 == fDIIndices.size(), "Deleting the an unknown set of indices");
                 if( GetSceneNode() )
                 {
                     GetSceneNode()->Release(GetKey());
@@ -1455,39 +1439,39 @@ plDISpanIndex&  plDrawableSpans::GetDISpans( uint32_t index ) const
 
 //// GetVertex/IndexRef //////////////////////////////////////////////////////
 
-hsGDeviceRef    *plDrawableSpans::GetVertexRef( uint32_t group, uint32_t idx )
+hsGDeviceRef    *plDrawableSpans::GetVertexRef(size_t group, uint32_t idx)
 {
     return fGroups[ group ]->GetVertexBufferRef( idx ); 
 }
 
-hsGDeviceRef    *plDrawableSpans::GetIndexRef( uint32_t group, uint32_t idx )
+hsGDeviceRef    *plDrawableSpans::GetIndexRef(size_t group, uint32_t idx)
 {
     return fGroups[ group ]->GetIndexBufferRef( idx );
 }
 
-void plDrawableSpans::DirtyVertexBuffer(uint32_t group, uint32_t idx)
+void plDrawableSpans::DirtyVertexBuffer(size_t group, uint32_t idx)
 {
-    hsAssert(group < fGroups.GetCount(), "Dirtying vtx buffer I don't have");
+    hsAssert(group < fGroups.size(), "Dirtying vtx buffer I don't have");
     GetBufferGroup(group)->DirtyVertexBuffer(idx);
 
     SetNotReadyToRender();
 }
 
-void plDrawableSpans::DirtyIndexBuffer(uint32_t group, uint32_t idx)
+void plDrawableSpans::DirtyIndexBuffer(size_t group, uint32_t idx)
 {
-    hsAssert(group < fGroups.GetCount(), "Dirtying index buffer I don't have");
+    hsAssert(group < fGroups.size(), "Dirtying index buffer I don't have");
     GetBufferGroup(group)->DirtyIndexBuffer(idx);
 
     SetNotReadyToRender();
 }
 
-hsGMaterial* plDrawableSpans::GetSubMaterial(int index) const
+hsGMaterial* plDrawableSpans::GetSubMaterial(size_t index) const
 {
     return GetMaterial(fSpans[index]->fMaterialIdx);
 }
 
 // return true if span invisible before minDist and/or after maxDist
-bool plDrawableSpans::GetSubVisDists(int index, float& minDist, float& maxDist) const
+bool plDrawableSpans::GetSubVisDists(size_t index, float& minDist, float& maxDist) const
 {
     return (minDist = fSpans[index]->GetMinDist()) < (maxDist = fSpans[index]->GetMaxDist());
 }
@@ -1935,8 +1919,8 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
 
     plProfile_BeginLap(FaceSort, "4");
 
-    const int kMaxBufferGroups = 20;
-    const int kMaxIndexBuffers = 20;
+    constexpr size_t kMaxBufferGroups = 20;
+    constexpr size_t kMaxIndexBuffers = 20;
     static int16_t    newStarts[kMaxBufferGroups][kMaxIndexBuffers];
 
     hsAssert(kMaxBufferGroups >= GetNumBufferGroups(), "Bigger than we counted on num groups sort.");
@@ -2164,7 +2148,7 @@ void plDrawableSpans::SortVisibleSpansUnit(const hsTArray<int16_t>& visList, plP
 }
 #endif
 
-void plDrawableSpans::SetInitialBone(int i, const hsMatrix44& l2b, const hsMatrix44& b2l)
+void plDrawableSpans::SetInitialBone(size_t i, const hsMatrix44& l2b, const hsMatrix44& b2l)
 {
     fLocalToBones[ i ] = l2b;
     fBoneToLocals[ i ] = b2l;
@@ -2252,17 +2236,19 @@ uint32_t plDrawableSpans::FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B
     return uint32_t(-1);
 }
 
-uint32_t plDrawableSpans::NewDIMatrixIndex()
+size_t plDrawableSpans::NewDIMatrixIndex()
 {
-    int index;
     /// Do we have a free lookup entry?
-    for( index = 0; index < fDIIndices.GetCount(); index++ )
-    {
-        if( !fDIIndices[ index ]->GetCount() )
-            break;
+    auto iter = std::find_if(fDIIndices.begin(), fDIIndices.end(),
+                             [](plDISpanIndex* di) { return di->IsEmpty(); });
+
+    size_t index;
+    if (iter == fDIIndices.end()) {
+        index = fDIIndices.size();
+        fDIIndices.emplace_back(new plDISpanIndex);
+    } else {
+        index = iter - fDIIndices.begin();
     }
-    if( index == fDIIndices.GetCount() )
-        fDIIndices.Append( new plDISpanIndex );
 
     fDIIndices[index]->Reset();
     fDIIndices[index]->fFlags = plDISpanIndex::kMatrixOnly;
@@ -2282,13 +2268,14 @@ plDISpanIndex   *plDrawableSpans::IFindDIIndices( uint32_t &index )
     /// Do we have a free lookup entry?
     if( index == (uint32_t)-1 ) // new index
     {
-        for( index = 0; index < fDIIndices.GetCount(); index++ )
+        // index is a reference, so persumably the caller wants it to be updated...
+        for (index = 0; index < fDIIndices.size(); index++)
         {
             if( fDIIndices[ index ]->GetCount() == 0 )
                 break;
         }
-        if( index == fDIIndices.GetCount() )
-            fDIIndices.Append( new plDISpanIndex );
+        if (index == fDIIndices.size())
+            fDIIndices.emplace_back(new plDISpanIndex);
 
         spanLookup = fDIIndices[ index ];
         spanLookup->fFlags = plDISpanIndex::kNone;
@@ -2309,8 +2296,6 @@ uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, ui
 {
     hsAssert(!spans.empty(), "Adding no spans? Blow me.");
 
-    uint32_t          spanIdx;
-    plSpan          *span;
     hsBounds3Ext    bounds;
     plDISpanIndex   *spanLookup;
     uint32_t          numAddedIcicle = 0;
@@ -2345,18 +2330,17 @@ uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, ui
     /// copies
     for (size_t i = 0; i < spans.size(); i++)
     {
-        spanIdx = fIcicles.GetCount();
-        fIcicles.Append( plIcicle() );
-        plIcicle *icicle = &fIcicles[ spanIdx ];
+        size_t spanIdx = fIcicles.size();
+        plIcicle* icicle = &fIcicles.emplace_back();
         IConvertGeoSpanToIcicle( spans[ i ], icicle, lod );
-        span = (plSpan *)icicle;
+        plSpan* span = (plSpan *)icicle;
         numAddedIcicle++;
 
         /// Add to our source indices
         spans[ i ]->fSpanRefIndex = insertionPoint+i;
         spanLookup->Append( spans[ i ]->fSpanRefIndex );
         fSpans.insert(fSpans.begin() + spans[i]->fSpanRefIndex, span);
-        fSpanSourceIndices.Insert( spans[ i ]->fSpanRefIndex, spanIdx );
+        fSpanSourceIndices.insert(fSpanSourceIndices.begin() + spans[i]->fSpanRefIndex, spanIdx);
 
         if( GetNativeProperty(plDrawable::kPropCharacter) )
             span->SetVisBit(plVisMgr::kCharacter, true);
@@ -2371,8 +2355,8 @@ uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, ui
         }
         else if( !doNotAddToSource )
         {
-            if (fSourceSpans.GetCount() < fSpans.size())
-                fSourceSpans.Resize(fSpans.size());
+            if (fSourceSpans.size() < fSpans.size())
+                fSourceSpans.resize(fSpans.size());
 
             fSourceSpans[ spans[ i ]->fSpanRefIndex ] = spans[ i ];
         }
@@ -2387,19 +2371,19 @@ uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, ui
     if (inserted)
     {
         /// Go adjusting indices in the DI index list
-        for (int i = 0; i < fDIIndices.GetCount(); i++)
+        for (plDISpanIndex* di : fDIIndices)
         {
-            if( !fDIIndices[ i ]->IsMatrixOnly() )
+            if (!di->IsMatrixOnly())
             {
-                if (fDIIndices[ i ] == spanLookup)
+                if (di == spanLookup)
                     continue;
 
-                for (size_t j = 0; j < fDIIndices[ i ]->GetCount(); j++)
+                for (size_t j = 0; j < di->GetCount(); j++)
                 {
-                    if( (*fDIIndices[i])[j] >= insertionPoint )
+                    if ((*di)[j] >= insertionPoint)
                     {
-                        (*fDIIndices[ i ])[ j ] += spans.size();
-                        hsAssert((*fDIIndices[i])[j] < fSpans.size(), "Span index snafu");
+                        (*di)[j] += spans.size();
+                        hsAssert((*di)[j] < fSpans.size(), "Span index snafu");
                     }
                 }
             }
@@ -2421,44 +2405,38 @@ uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, ui
 
 //// IAddAMaterial ///////////////////////////////////////////////////////////
 
-uint32_t  plDrawableSpans::IAddAMaterial( hsGMaterial *material )
+size_t plDrawableSpans::IAddAMaterial(hsGMaterial *material)
 {
-    uint32_t      i;
-
-
     // Scan for if we already have it
-    for( i = 0; i < fMaterials.GetCount(); i++ )
+    for (size_t i = 0; i < fMaterials.size(); i++)
     {
         if( fMaterials[ i ] == material )
             return i;
     }
 
     // Scan again for a blank space to add into, if possible
-    for( i = 0; i < fMaterials.GetCount(); i++ )
+    for (size_t i = 0; i < fMaterials.size(); i++)
     {
         if (fMaterials[i] == nullptr)
         {
-            fMaterials[ i ] = material;
-            IRefMaterial( i );
-            return i;
+            fMaterials[i] = material;
+            return IRefMaterial(i);
         }
     }
 
     // Add in to the end
-    i = fMaterials.GetCount();
-    fMaterials.Append( material );
+    size_t i = fMaterials.size();
+    fMaterials.emplace_back(material);
 
     // Plus ref it
-    IRefMaterial( i );
-
-    return i;
+    return IRefMaterial(i);
 }
 
 //// IRefMaterial ////////////////////////////////////////////////////////////
 //  Called if we already have a material index that we just want to use
 //  again...
 
-uint32_t  plDrawableSpans::IRefMaterial( uint32_t index )
+size_t plDrawableSpans::IRefMaterial(size_t index)
 {
     hsGMaterial     *material = fMaterials[ index ];
 
@@ -2472,10 +2450,8 @@ uint32_t  plDrawableSpans::IRefMaterial( uint32_t index )
 //  Runs through the span array to see if the given material index is still
 //  used. If not, Release()s it and nil's it.
 
-void    plDrawableSpans::ICheckToRemoveMaterial( uint32_t materialIdx )
+void plDrawableSpans::ICheckToRemoveMaterial(size_t materialIdx)
 {
-    hsGMaterial     *mat;
-
     auto iter = std::find_if(fSpans.cbegin(), fSpans.cend(),
                              [materialIdx](plSpan* span) {
                                  return span->fMaterialIdx == materialIdx;
@@ -2483,7 +2459,7 @@ void    plDrawableSpans::ICheckToRemoveMaterial( uint32_t materialIdx )
     if (iter == fSpans.cend())
     {
         /// No longer used--Release() it
-        mat = fMaterials[ materialIdx ];
+        hsGMaterial* mat = fMaterials[materialIdx];
         if (GetKey() && mat != nullptr && mat->GetKey() != nullptr)
             GetKey()->Release( mat->GetKey() );
         fMaterials[materialIdx] = nullptr;
@@ -2496,7 +2472,6 @@ void    plDrawableSpans::ICheckToRemoveMaterial( uint32_t materialIdx )
 bool    plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, plVertexSpan *span, int lod, plVertexSpan *instancedParent)
 {
     hsBounds3Ext    bounds;
-    uint8_t           groupIdx;
     uint32_t          vbIndex, cellIdx, cellOffset;
 
 
@@ -2576,7 +2551,7 @@ bool    plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, p
             /// Boooring....
             /// Append the colors, but the vertices themselves we don't use, rather we point
             /// to our parent's verts (or rather, the cell will take care of that for us)
-            groupIdx = (uint8_t)(instancedParent->fGroupIdx);
+            uint32_t groupIdx = instancedParent->fGroupIdx;
             fGroups[ groupIdx ]->AppendToColorStorage( geoSpan, &vbIndex, &cellIdx, &cellOffset, instancedParent->fCellIdx );
 
             span->fGroupIdx = groupIdx;
@@ -2587,7 +2562,7 @@ bool    plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, p
         else
         {
             /// WE'RE the parent?? This means we're the first to get converted
-            groupIdx = IFindBufferGroup( geoSpan->fFormat, geoSpan->fNumVerts, lod, vertsVol, idxVol );
+            uint32_t groupIdx = IFindBufferGroup(geoSpan->fFormat, geoSpan->fNumVerts, lod, vertsVol, idxVol);
             fGroups[ groupIdx ]->AppendToVertAndColorStorage( geoSpan, &vbIndex, &cellIdx, &cellOffset );
 
             span->fGroupIdx = groupIdx;
@@ -2599,7 +2574,7 @@ bool    plDrawableSpans::IConvertGeoSpanToVertexSpan( plGeometrySpan *geoSpan, p
     else
     {
         // Pack the vertices in
-        groupIdx = IFindBufferGroup( geoSpan->fFormat, geoSpan->fNumVerts, lod, vertsVol, idxVol );
+        uint32_t groupIdx = IFindBufferGroup(geoSpan->fFormat, geoSpan->fNumVerts, lod, vertsVol, idxVol);
         fGroups[ groupIdx ]->AppendToVertStorage( geoSpan, &vbIndex, &cellIdx, &cellOffset );
 
         span->fGroupIdx = groupIdx;
@@ -2687,7 +2662,7 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
         RemoveDIMatrixSpans( index );
     }
 
-    uint32_t idxRemoving, materialIdx;
+    uint32_t idxRemoving;
 
 
 // #define MF_RENDDEP
@@ -2705,56 +2680,60 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
     for (size_t i = 0; i < spanIndices->GetCount(); i++)
     {
         /// If this is the last use of this material, Release() it
-        materialIdx = fSpans[ (*spanIndices)[ i ] ]->fMaterialIdx;
+        hsSsize_t materialIdx = fSpans[(*spanIndices)[i]]->fMaterialIdx;
 
         /// Remove the source index and the object itself
-        if( fSourceSpans.GetCount() && !( fSpans[ (*spanIndices)[ i ] ]->fTypeMask & plSpan::kParticleSpan ) )
+        if (!fSourceSpans.empty() && !(fSpans[(*spanIndices)[i]]->fTypeMask & plSpan::kParticleSpan))
         {
             delete fSourceSpans[ (*spanIndices)[i] ];
-            fSourceSpans.Remove( (*spanIndices)[i] );
-            for (int j = (*spanIndices)[i]; j < fSourceSpans.GetCount(); j++)
+            fSourceSpans.erase(fSourceSpans.begin() + (*spanIndices)[i]);
+            for (size_t j = (*spanIndices)[i]; j < fSourceSpans.size(); j++)
                 fSourceSpans[ j ]->fSpanRefIndex = j;
         }
         fSpans[ (*spanIndices)[ i ] ]->Destroy();
         fSpans.erase(fSpans.begin() + (*spanIndices)[i]);
         idxRemoving = fSpanSourceIndices[ (*spanIndices)[ i ] ];
-        fSpanSourceIndices.Remove( (*spanIndices)[ i ] );
+        fSpanSourceIndices.erase(fSpanSourceIndices.begin() + (*spanIndices)[i]);
 
         switch( idxRemoving & kSpanTypeMask )
         {
-            case kSpanTypeIcicle:       fIcicles.Remove( idxRemoving & kSpanIDMask ); break;
-            case kSpanTypeParticleSpan: fParticleSpans.Remove( idxRemoving & kSpanIDMask ); break;
+        case kSpanTypeIcicle:
+            fIcicles.erase(fIcicles.begin() + (idxRemoving & kSpanIDMask));
+            break;
+        case kSpanTypeParticleSpan:
+            fParticleSpans.erase(fParticleSpans.begin() + (idxRemoving & kSpanIDMask));
+            break;
         }
 
         // Do this AFTER the span array has been updated
         ICheckToRemoveMaterial( materialIdx );
 
         /// Go adjusting the source indices
-        for (int j = 0; j < fSpanSourceIndices.GetCount(); j++)
+        for (uint32_t& ssidx : fSpanSourceIndices)
         {
-            if( ( ( fSpanSourceIndices[ j ] ^ idxRemoving ) & kSpanTypeMask ) == 0 )
+            if (((ssidx ^ idxRemoving) & kSpanTypeMask) == 0)
             {
                 /// Same type
-                uint32_t k = fSpanSourceIndices[j] & kSpanIDMask;
+                uint32_t k = ssidx & kSpanIDMask;
                 if( k > ( idxRemoving & kSpanIDMask ) )
                 {
                     k--;
-                    fSpanSourceIndices[ j ] &= kSpanTypeMask;
-                    fSpanSourceIndices[ j ] |= k;
+                    ssidx &= kSpanTypeMask;
+                    ssidx |= k;
                 }
             }
         }
 
 #ifndef MF_RENDDEP
         /// Go adjusting indices in the DI index list
-        for (int j = 0; j < fDIIndices.GetCount(); j++)
+        for (plDISpanIndex* di : fDIIndices)
         {
-            if( !fDIIndices[ j ]->IsMatrixOnly() )
+            if (!di->IsMatrixOnly())
             {
-                for (size_t k = 0; k < fDIIndices[ j ]->GetCount(); k++)
+                for (size_t k = 0; k < di->GetCount(); k++)
                 {
-                    if( (*fDIIndices[ j ])[ k ] > (*spanIndices)[ i ] )
-                        (*fDIIndices[ j ])[ k ]--;
+                    if ((*di)[k] > (*spanIndices)[i])
+                        (*di)[k]--;
                 }
             }
         }
@@ -2887,8 +2866,6 @@ void    plDrawableSpans::ICleanupMatrices()
 
 void    plDrawableSpans::IRemoveGarbage()
 {
-    int     groupIdx, ibIdx, i, j, k, count, offset;
-
     hsTArray<hsTArray<bool> *>              usedFlags;
     hsTArray<hsTArray<hsTArray<bool> *> *>  usedIdxFlags;
     plGBufferGroup                          *group;
@@ -2897,9 +2874,9 @@ void    plDrawableSpans::IRemoveGarbage()
     ICleanupMatrices();
 
     /// Getting rid of verts
-    usedFlags.SetCount( fGroups.GetCount() );
-    usedIdxFlags.SetCount( fGroups.GetCount() );
-    for( i = 0; i < fGroups.GetCount(); i++ )
+    usedFlags.SetCount(fGroups.size());
+    usedIdxFlags.SetCount(fGroups.size());
+    for (size_t i = 0; i < fGroups.size(); i++)
     {
         hsAssert( fGroups[ i ]->GetNumVertexBuffers() == 1, "Cannot clean garbage on a non-volatile buffer group!" );
         usedFlags[ i ] = new hsTArray<bool>;
@@ -2907,50 +2884,51 @@ void    plDrawableSpans::IRemoveGarbage()
 
         usedIdxFlags[ i ] = new hsTArray<hsTArray<bool> *>;
         usedIdxFlags[ i ]->SetCount( fGroups[ i ]->GetNumIndexBuffers() );
-        for( j = 0; j < fGroups[ i ]->GetNumIndexBuffers(); j++ )
+        for (size_t j = 0; j < fGroups[ i ]->GetNumIndexBuffers(); j++)
         {
             (*usedIdxFlags[ i ])[ j ] = new hsTArray<bool>;
             (*usedIdxFlags[ i ])[ j ]->SetCountAndZero( fGroups[ i ]->GetIndexBufferCount( j ) );
         }
     }
 
-    for( i = 0; i < fIcicles.GetCount(); i++ )
+    for (const plIcicle& icicle : fIcicles)
     {
         // Set the flags so we know these verts are used
-        groupIdx = fIcicles[ i ].fGroupIdx;
+        uint32_t groupIdx = icicle.fGroupIdx;
 
-        for( j = fIcicles[ i ].fCellOffset; j < fIcicles[ i ].fCellOffset + fIcicles[ i ].fVLength; j++ )
+        for (uint32_t j = icicle.fCellOffset; j < icicle.fCellOffset + icicle.fVLength; j++)
             (*usedFlags[ groupIdx ])[ j ] = true;
 
-        for( j = fIcicles[ i ].fIStartIdx; j < fIcicles[ i ].fIStartIdx + fIcicles[ i ].fILength; j++ )
-            (*((*usedIdxFlags[ groupIdx ])[ fIcicles[ i ].fIBufferIdx ]))[ j ] = true;
+        for (uint32_t j = icicle.fIStartIdx; j < icicle.fIStartIdx + icicle.fILength; j++)
+            (*((*usedIdxFlags[groupIdx])[icicle.fIBufferIdx]))[j] = true;
     }
-    for( i = 0; i < fParticleSpans.GetCount(); i++ )
+    for (const plParticleSpan& span : fParticleSpans)
     {
         // Set the flags so we know these verts are used
-        groupIdx = fParticleSpans[ i ].fGroupIdx;
+        uint32_t groupIdx = span.fGroupIdx;
 
-        for( j = fParticleSpans[ i ].fCellOffset; j < fParticleSpans[ i ].fCellOffset + fParticleSpans[ i ].fVLength; j++ )
+        for (uint32_t j = span.fCellOffset; j < span.fCellOffset + span.fVLength; j++)
             (*usedFlags[ groupIdx ])[ j ] = true;
 
-        for( j = fParticleSpans[ i ].fIStartIdx; j < fParticleSpans[ i ].fIStartIdx + fParticleSpans[ i ].fILength; j++ )
-            (*((*usedIdxFlags[ groupIdx ])[ fParticleSpans[ i ].fIBufferIdx ]))[ j ] = true;
+        for (uint32_t j = span.fIStartIdx; j < span.fIStartIdx + span.fILength; j++)
+            (*((*usedIdxFlags[groupIdx])[span.fIBufferIdx]))[j] = true;
     }
 
     /// Now loop through and delete any unused
-    for( groupIdx = 0; groupIdx < fGroups.GetCount(); groupIdx++ )
+    for (size_t groupIdx = 0; groupIdx < fGroups.size(); groupIdx++)
     {
         group = fGroups[ groupIdx ];
         hsTArray<bool>      &uFlags = *usedFlags[ groupIdx ];
 
         // Find groups of verts to delete!
-        count = uFlags.GetCount();
-        for( i = 0; i < count; )
+        int count = uFlags.GetCount();
+        for (int i = 0; i < count; )
         {
             // Skip through used verts
             for( ; i < count && uFlags[ i ] == true; i++ );
 
             // Find span of unused verts
+            int j;
             for( j = i; j < count && uFlags[ j ] == false; j++ );
 
             if( j > i )
@@ -2959,34 +2937,35 @@ void    plDrawableSpans::IRemoveGarbage()
                 group->DeleteVertsFromStorage( 0, i, j - i );
 
                 // Adjust indices in this group
-                for( ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++ )
+                for (uint32_t ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++)
                     group->AdjustIndicesInStorage( ibIdx, i, -(int16_t)( j - i ) );
 
                 // Adjust spans that use this vertex buffer
-                for( k = 0; k < fIcicles.GetCount(); k++ )
+                for (plIcicle& icicle : fIcicles)
                 {
-                    if( fIcicles[ k ].fGroupIdx == groupIdx && fIcicles[ k ].fVBufferIdx == 0 &&
-                        fIcicles[ k ].fCellOffset >= i )
-                        fIcicles[ k ].fCellOffset -= j - i;
+                    if (icicle.fGroupIdx == groupIdx && icicle.fVBufferIdx == 0
+                            && icicle.fCellOffset >= i)
+                        icicle.fCellOffset -= j - i;
 
                     // Adjust sorting data, if necessary
-                    if (fIcicles[k].fSortData != nullptr)
-                        IAdjustSortData( fIcicles[ k ].fSortData, fIcicles[ k ].fILength / 3, i, -(int16_t)( j - i ) );
+                    if (icicle.fSortData != nullptr)
+                        IAdjustSortData(icicle.fSortData, icicle.fILength / 3, i, -(int16_t)(j - i));
                 }
-                for( k = 0; k < fParticleSpans.GetCount(); k++ )
+                for (plParticleSpan& span : fParticleSpans)
                 {
-                    if( fParticleSpans[ k ].fGroupIdx == groupIdx && fParticleSpans[ k ].fVBufferIdx == 0 &&
-                        fParticleSpans[ k ].fCellOffset >= i )
-                        fParticleSpans[ k ].fCellOffset -= j - i;
+                    if (span.fGroupIdx == groupIdx && span.fVBufferIdx == 0
+                            && span.fCellOffset >= i)
+                        span.fCellOffset -= j - i;
 
                     // Adjust sorting data, if necessary
-                    if (fParticleSpans[k].fSortData != nullptr)
-                        IAdjustSortData( fParticleSpans[ k ].fSortData, fParticleSpans[ k ].fILength / 3, i, -(int16_t)( j - i ) );
+                    if (span.fSortData != nullptr)
+                        IAdjustSortData(span.fSortData, span.fILength / 3, i, -(int16_t)(j - i));
                 }
 
                 // Move the flags too, lest we start deleting the wrong vertices
-                count -= j - i;
-                for( offset = j - i; i < count; i++ )
+                int offset = j - i;
+                count -= offset;
+                for (; i < count; i++)
                     uFlags[ i ] = uFlags[ i + offset ];
             }
 
@@ -3002,19 +2981,19 @@ void    plDrawableSpans::IRemoveGarbage()
         /// buffer is correct.
         if( fProps & kPropSortFaces )
         {
-            for( ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++ )
+            for (uint32_t ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++)
             {
                 // For this index buffer, find the total length we want
-                i = 0;
-                for( j = 0; j < fIcicles.GetCount(); j++ )
+                uint32_t i = 0;
+                for (const plIcicle& icicle : fIcicles)
                 {
-                    if( fIcicles[ j ].fGroupIdx == groupIdx && fIcicles[ j ].fIBufferIdx == ibIdx )
-                        i += fIcicles[ j ].fILength;
+                    if (icicle.fGroupIdx == groupIdx && icicle.fIBufferIdx == ibIdx)
+                        i += icicle.fILength;
                 }
-                for( j = 0; j < fParticleSpans.GetCount(); j++ )
+                for (const plParticleSpan& span : fParticleSpans)
                 {
-                    if( fParticleSpans[ j ].fGroupIdx == groupIdx && fParticleSpans[ j ].fIBufferIdx == ibIdx )
-                        i += fParticleSpans[ j ].fILength;
+                    if (span.fGroupIdx == groupIdx && span.fIBufferIdx == ibIdx)
+                        i += span.fILength;
                 }
 
                 /// i is the total length
@@ -3025,18 +3004,19 @@ void    plDrawableSpans::IRemoveGarbage()
         {
             /// Non-sorting, we have to figure out exactly which indices we aren't using
 
-            for( ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++ )
+            for (uint32_t ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++)
             {
                 hsTArray<bool>  &uiFlags = *((*usedIdxFlags[ groupIdx ])[ ibIdx ]);
 
                 // Find groups of indices to delete!
                 count = uiFlags.GetCount();
-                for( i = 0; i < count; )
+                for (int i = 0; i < count; )
                 {
                     // Skip through used verts
                     for( ; i < count && uiFlags[ i ] == true; i++ );
 
                     // Find span of unused verts
+                    int j;
                     for( j = i; j < count && uiFlags[ j ] == false; j++ );
 
                     if( j > i )
@@ -3045,27 +3025,28 @@ void    plDrawableSpans::IRemoveGarbage()
                         group->DeleteIndicesFromStorage( ibIdx, i, j - i );
 
                         // Adjust spans that use this index buffer (only icicles use them)
-                        for( k = 0; k < fIcicles.GetCount(); k++ )
+                        for (plIcicle& icicle : fIcicles)
                         {
-                            if( fIcicles[ k ].fGroupIdx == groupIdx && fIcicles[ k ].fIBufferIdx == ibIdx &&
-                                fIcicles[ k ].fIStartIdx >= i )
+                            if (icicle.fGroupIdx == groupIdx && icicle.fIBufferIdx == ibIdx &&
+                                icicle.fIStartIdx >= i)
                             {
-                                fIcicles[k].fIPackedIdx = (fIcicles[ k ].fIStartIdx -= j - i);
+                                icicle.fIPackedIdx = (icicle.fIStartIdx -= j - i);
                             }
                         }
                         // and particle spans :)
-                        for( k = 0; k < fParticleSpans.GetCount(); k++ )
+                        for (plParticleSpan& span : fParticleSpans)
                         {
-                            if( fParticleSpans[ k ].fGroupIdx == groupIdx && fParticleSpans[ k ].fIBufferIdx == ibIdx &&
-                                fParticleSpans[ k ].fIStartIdx >= i )
+                            if (span.fGroupIdx == groupIdx && span.fIBufferIdx == ibIdx &&
+                                span.fIStartIdx >= i)
                             {
-                                fParticleSpans[k].fIPackedIdx = (fParticleSpans[ k ].fIStartIdx -= j - i);
+                                span.fIPackedIdx = (span.fIStartIdx -= j - i);
                             }
                         }
 
                         // Move the flags too, lest we start deleting the wrong vertices
-                        count -= j - i;
-                        for( offset = j - i; i < count; i++ )
+                        int offset = j - i;
+                        count -= offset;
+                        for (; i < count; i++)
                             uiFlags[ i ] = uiFlags[ i + offset ];
                     }
 
@@ -3087,13 +3068,13 @@ void    plDrawableSpans::IRemoveGarbage()
     }
 
     /// Destroy!!!
-    for( i = 0; i < usedFlags.GetCount(); i++ )
+    for (int i = 0; i < usedFlags.GetCount(); i++)
         delete usedFlags[ i ];
     usedFlags.Reset();
 
-    for( i = 0; i < usedIdxFlags.GetCount(); i++ )
+    for (int i = 0; i < usedIdxFlags.GetCount(); i++)
     {
-        for( j = 0; j < usedIdxFlags[ i ]->GetCount(); j++ )
+        for (int j = 0; j < usedIdxFlags[ i ]->GetCount(); j++)
             delete ((*usedIdxFlags[ i ])[ j ]);
         delete usedIdxFlags[ i ];
     }
@@ -3162,7 +3143,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
     fVisSet |= cluster->GetVisSet();
     fVisNot |= cluster->GetVisNot();
 
-    fIcicles.SetCount(numClust);
+    fIcicles.resize(numClust);
     fSpans.resize(numClust);
     for (size_t iSpan = 0; iSpan < numClust; iSpan++)
         fSpans[iSpan] = &fIcicles[iSpan];
@@ -3200,7 +3181,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
 
         // Still in trouble here. We need to fake up that cell crap for each of 
         // our clusters to make a span for it. Whoo-hoo.
-        uint8_t grpIdx = IFindBufferGroup((uint8_t)vtxFormat, numVerts, 0, false, false);
+        size_t grpIdx = IFindBufferGroup((uint8_t)vtxFormat, numVerts, 0, false, false);
         
         uint32_t vbufferIdx;
         uint32_t cellIdx;
@@ -3277,7 +3258,7 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
 
         iStart = iEnd;
     }
-    fMaterials.SetCountAndZero(1);
+    fMaterials = {nullptr};
     plGenRefMsg* refMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kMsgMaterial);
     hsgResMgr::ResMgr()->SendRef(cluster->GetMaterial()->GetKey(), refMsg, plRefFlags::kActiveRef);
 
@@ -3287,11 +3268,8 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
 
 //// IFindBufferGroup ////////////////////////////////////////////////////////
 
-uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVertsNeeded, int lod, bool vertVolatile, bool idxVolatile)
+size_t plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVertsNeeded, int lod, bool vertVolatile, bool idxVolatile)
 {
-    int         i;
-
-
     // Scan through the buffer groups, looking for a good format. If there isn't
     // one, add it
     if( fProps & kPropVolatile )
@@ -3299,7 +3277,7 @@ uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVerts
     if( fProps & kPropSortFaces )
         idxVolatile = true;
 
-    for( i = 0; i < fGroups.GetCount(); i++ )
+    for (size_t i = 0; i < fGroups.size(); i++)
     {
         if( (fGroups[ i ]->GetVertexFormat() == vtxFormat)
             && (!vertVolatile == !fGroups[i]->AreVertsVolatile())
@@ -3312,8 +3290,8 @@ uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVerts
     }
 
     // Add a new one of the right format
-    fGroups.Append( new plGBufferGroup(vtxFormat, vertVolatile, idxVolatile, lod) );
-    return i;
+    fGroups.emplace_back(new plGBufferGroup(vtxFormat, vertVolatile, idxVolatile, lod));
+    return fGroups.size() - 1;
 }
 
 //// GetParticleSpanVector ///////////////////////////////////////////////////
@@ -3477,15 +3455,13 @@ void    plDrawableSpans::IAssignMatIdxToSpan( plSpan *span, hsGMaterial *mtl )
 
 plParticleSpan  *plDrawableSpans::ICreateParticleIcicle( hsGMaterial *material, plParticleSet *set )
 {
-    uint32_t          spanIdx;
     hsMatrix44      ident;
     plDISpanIndex   *spanLookup;
 
 
     /// Ahh, an icicle span
-    spanIdx = fParticleSpans.GetCount();
-    fParticleSpans.Append( plParticleSpan() );
-    plParticleSpan *icicle = &fParticleSpans[ spanIdx ];
+    size_t spanIdx = fParticleSpans.size();
+    plParticleSpan *icicle = &fParticleSpans.emplace_back();
 
     ident.Reset();
     IAssignMatIdxToSpan( icicle, material );
@@ -3521,7 +3497,7 @@ plParticleSpan  *plDrawableSpans::ICreateParticleIcicle( hsGMaterial *material, 
     spanLookup = IFindDIIndices( set->fDIEntry );
     spanLookup->Append(fSpans.size());
     fSpans.emplace_back((plSpan *)icicle);
-    fSpanSourceIndices.Append( spanIdx | kSpanTypeParticleSpan );
+    fSpanSourceIndices.emplace_back(spanIdx | kSpanTypeParticleSpan);
 
     /// Set our pointer to the set and inc it's refCount
     icicle->fParentSet = set;
@@ -3708,13 +3684,13 @@ uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
 }
 
 // Same as above, but takes an actual span index (not a DI Index).
-uint32_t  plDrawableSpans::RefreshSpan( uint32_t index )
+size_t plDrawableSpans::RefreshSpan(size_t index)
 {
     uint32_t          spanIdx;
     hsBounds3Ext    bounds;
 
 //  hsAssert( fProps & kPropVolatile, "Trying to add spans on a non-volatile drawable" );
-    hsAssert( index < fSourceSpans.GetCount(), "Invalid span index" );
+    hsAssert(index < fSourceSpans.size(), "Invalid span index");
 
     /// Do garbage cleanup first
     if( fNeedCleanup )
@@ -3872,9 +3848,9 @@ plGeometrySpan* plDrawableSpans::GetGeometrySpan(int spanIdx)
     return fSourceSpans[spanIdx]; 
 }
 
-void    plDrawableSpans::GetOrigGeometrySpans( uint32_t diIndex, hsTArray<plGeometrySpan *> &arrayToFill )
+void    plDrawableSpans::GetOrigGeometrySpans(size_t diIndex, hsTArray<plGeometrySpan *> &arrayToFill)
 {
-    if( diIndex >= fDIIndices.GetCount() )
+    if (diIndex >= fDIIndices.size())
     {
         hsAssert( false, "Invalid diIndex to GetOrigGeometrySpans()" );
         return;
@@ -3894,12 +3870,12 @@ void    plDrawableSpans::GetOrigGeometrySpans( uint32_t diIndex, hsTArray<plGeom
 void plDrawableSpans::ClearAndSetMaterialCount(uint32_t count)
 {
     // Release the old materials
-    for (int i = 0; i < fMaterials.GetCount(); i++)
+    for (hsGMaterial* material : fMaterials)
     {
-        if (fMaterials[i] != nullptr && fMaterials[i]->GetKey() != nullptr)
-            GetKey()->Release( fMaterials[ i ]->GetKey() );
+        if (material != nullptr && material->GetKey() != nullptr)
+            GetKey()->Release(material->GetKey());
     }
 
-    fMaterials.SetCountAndZero(count);
+    fMaterials.assign(count, nullptr);
 }
 

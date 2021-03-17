@@ -1676,7 +1676,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
 
         if( di->GetNumDrawables() <= iDraw )
         {
-            uint32_t diIndex = drawable->NewDIMatrixIndex();
+            size_t diIndex = drawable->NewDIMatrixIndex();
             di->SetDrawableMeshIndex(iDraw, diIndex);
 
             di->SetDrawable(iDraw, drawable);
