@@ -100,16 +100,16 @@ public:
         kDontTransformSpans     = 0x2       // Only used for particle systems right now
     };
     uint32_t              fFlags;
-    hsTArray<uint32_t>    fIndices;
+    std::vector<uint32_t> fIndices;
 
     bool        IsMatrixOnly() const { return 0 != (fFlags & kMatrixOnly); }
     bool        DontTransform() const { return 0 != ( fFlags & kDontTransformSpans ); }
-    void        Append(uint32_t i) { fIndices.Append(i); }
-    void        Reset() { fFlags = kNone; fIndices.Reset(); }
-    void        SetCountAndZero(int c) { fIndices.SetCountAndZero(c); }
-    uint32_t      GetCount() const { return fIndices.GetCount(); }
-    uint32_t&     operator[](int i) { return fIndices[i]; }
-    uint32_t      operator[](int i) const { return fIndices[i]; }
+    void        Append(uint32_t i) { fIndices.emplace_back(i); }
+    void        Reset() { fFlags = kNone; fIndices.clear(); }
+    void        SetCountAndZero(size_t c) { fIndices.assign(c, 0U); }
+    size_t      GetCount() const { return fIndices.size(); }
+    uint32_t&   operator[](size_t i) { return fIndices[i]; }
+    uint32_t    operator[](size_t i) const { return fIndices[i]; }
 };
 
 struct hsColorRGBA;

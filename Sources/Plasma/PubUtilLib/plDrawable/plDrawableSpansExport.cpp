@@ -173,8 +173,8 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
         plDISpanIndex   *array = fDIIndices[ i ];
 
         s->WriteLE32( array->fFlags );
-        s->WriteLE32( array->GetCount() );
-        for (uint32_t j = 0; j < array->GetCount(); j++)
+        s->WriteLE32((uint32_t)array->GetCount());
+        for (size_t j = 0; j < array->GetCount(); j++)
             s->WriteLE32( (*array)[ j ] );
     }
 
@@ -597,20 +597,20 @@ void    plDrawableSpans::IPackSourceSpans()
 void    plDrawableSpans::ISortSourceSpans()
 {
     hsTArray<uint32_t>    spanReorderTable, spanInverseTable;
-    int                 i, j, idx;
     plGeometrySpan      *tmpSpan;
     uint32_t              tmpIdx;
     plSpan              *tmpSpanPtr;
 
 
     // Init the reorder table
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
+    for (int i = 0; i < fSourceSpans.GetCount(); i++)
         spanReorderTable.Append( i );
 
     // Do a nice, if naiive, sort by material (hehe by the pointers, no less)
-    for( i = 0; i < fSourceSpans.GetCount() - 1; i++ )
+    for (int i = 0; i < fSourceSpans.GetCount() - 1; i++)
     {
-        for( j = i + 1, idx = i; j < fSourceSpans.GetCount(); j++ )
+        int j, idx;
+        for (j = i + 1, idx = i; j < fSourceSpans.GetCount(); j++)
         {
             if( ICompareSpans( fSourceSpans[ j ], fSourceSpans[ idx ] ) < 0 )
                 idx = j;
@@ -644,17 +644,17 @@ void    plDrawableSpans::ISortSourceSpans()
     /// Problem: our reorder table is inversed(y->x instead of x->y). Either we search for numbers,
     /// or we just flip it first...
     spanInverseTable.SetCountAndZero( spanReorderTable.GetCount() );
-    for( i = 0; i < spanReorderTable.GetCount(); i++ )
+    for (int i = 0; i < spanReorderTable.GetCount(); i++)
         spanInverseTable[ spanReorderTable[ i ] ] = i;
 
     /// Now update our span xlate table
-    for( i = 0; i < fDIIndices.GetCount(); i++ )
+    for (int i = 0; i < fDIIndices.GetCount(); i++)
     {
         if( !fDIIndices[ i ]->IsMatrixOnly() )
         {
-            for( j = 0; j < fDIIndices[ i ]->GetCount(); j++ )
+            for (size_t j = 0; j < fDIIndices[i]->GetCount(); j++)
             {
-                idx = (*fDIIndices[ i ])[ j ];
+                uint32_t idx = (*fDIIndices[ i ])[ j ];
 
                 (*fDIIndices[ i ])[ j ] = spanInverseTable[ idx ];
             }
@@ -667,11 +667,11 @@ void    plDrawableSpans::ISortSourceSpans()
     tempIcicles.SetCount( fIcicles.GetCount() );
 
     plIcicle* newIcicle = tempIcicles.AcquireArray();
-    for (plSpan* span : fSpans)
+    for (plSpan*& span : fSpans)
     {
         *newIcicle = *(plIcicle *)span;
-        fSpans[ i ] = newIcicle;
-        newIcicle++;    
+        span = newIcicle;
+        newIcicle++;
     }
 
     /// Swap the two arrays out. This will basically swap the actual memory blocks, so be careful...

@@ -387,9 +387,8 @@ bool plPipelineViewSettings::TestVisibleWorld(const plSceneObject* sObj)
         if (diIndex.IsMatrixOnly())
             continue;
 
-        const int numSpan = diIndex.GetCount();
-        int j;
-        for (j = 0; j < numSpan; j++)
+        const size_t numSpan = diIndex.GetCount();
+        for (size_t j = 0; j < numSpan; j++)
         {
             const plSpan* span = dr->GetSpan(diIndex[j]);
 

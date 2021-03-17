@@ -146,7 +146,7 @@ void plAccessGeometry::OpenRO(const plDrawInterface* di, std::vector<plAccessSpa
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                for (uint32_t k = 0; k < diIndex.GetCount(); k++)
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
                     accs.resize(numGot+1);
                     OpenRO(dr, diIndex[k], accs[numGot++]);
@@ -171,7 +171,7 @@ void plAccessGeometry::OpenRW(const plDrawInterface* di, std::vector<plAccessSpa
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                for (uint32_t k = 0; k < diIndex.GetCount(); k++)
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
                     accs.resize(numGot+1);
                     OpenRW(dr, diIndex[k], accs[numGot++], idxToo);
@@ -198,8 +198,7 @@ void plAccessGeometry::TakeSnapShot(const plDrawInterface* di, uint32_t channels
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
                     TakeSnapShot(dr, diIndex[k], channels);
                 }
@@ -219,8 +218,7 @@ void plAccessGeometry::RestoreSnapShot(const plDrawInterface* di, uint32_t chann
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++ )
                 {
                     RestoreSnapShot(dr, diIndex[k], channels);
                 }
@@ -240,8 +238,7 @@ void plAccessGeometry::ReleaseSnapShot(const plDrawInterface* di) const
             plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
             if( !diIndex.IsMatrixOnly() )
             {
-                int k;
-                for( k = 0; k < diIndex.GetCount(); k++ )
+                for (size_t k = 0; k < diIndex.GetCount(); k++)
                 {
                     ReleaseSnapShot(dr, diIndex[k]);
                 }

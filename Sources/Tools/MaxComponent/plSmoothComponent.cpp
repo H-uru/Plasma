@@ -191,10 +191,9 @@ bool plSmoothComponent::IGetSpans(plErrorMsg* pErrMsg, std::vector<plGeometrySpa
 
             plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-            int i;
-            for( i = 0; i < disi.fIndices.GetCount(); i++ )
+            for (size_t i = 0; i < disi.GetCount(); i++)
             {
-                spans.emplace_back(dr->GetSourceSpans()[disi.fIndices[i]]);
+                spans.emplace_back(dr->GetSourceSpans()[disi[i]]);
             }
         }
     }

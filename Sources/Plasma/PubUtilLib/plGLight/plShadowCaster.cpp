@@ -138,8 +138,7 @@ void plShadowCaster::ICollectAllSpans()
                         plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(j));
                         if( !diIndex.IsMatrixOnly() )
                         {
-                            int k;
-                            for( k = 0; k < diIndex.GetCount(); k++ )
+                            for (size_t k = 0; k < diIndex.GetCount(); k++)
                             {
                                 const plSpan* span = dr->GetSpan(diIndex[k]);
 //                              if( !(span->fProps & plSpan::kPropNoShadowCast) )

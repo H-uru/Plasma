@@ -802,8 +802,7 @@ void plParticleFiller::FillParticlePolys(plPipeline* pipe, plDrawInterface* di)
     hsAssert(diIndex != uint32_t(-1), "Bogus input to fill particles");
 
     const plDISpanIndex& diSpans = drawable->GetDISpans(diIndex);
-    int i;
-    for( i = 0; i < diSpans.GetCount(); i++ )
+    for (size_t i = 0; i < diSpans.GetCount(); i++)
     {
         uint32_t spanIdx = diSpans[i];
         hsAssert(drawable->GetSpan(spanIdx), "Bogus input to fill particles");

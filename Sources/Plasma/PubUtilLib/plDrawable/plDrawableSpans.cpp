@@ -280,8 +280,7 @@ void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, bool
     if( isNot )
     {
         fVisNot.SetBit(visRegIndex, on);
-        int i;
-        for( i = 0; i < fDIIndices[ diIndex ]->GetCount(); i++ )
+        for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
         {
             int spanIndex = (*fDIIndices[diIndex])[i];
             fSpans[spanIndex]->SetVisNot(visRegIndex, on);
@@ -290,8 +289,7 @@ void plDrawableSpans::SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* ref, bool
     else
     {
         fVisSet.SetBit(visRegIndex, on);
-        int i;
-        for( i = 0; i < fDIIndices[ diIndex ]->GetCount(); i++ )
+        for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
         {
             int spanIndex = (*fDIIndices[diIndex])[i];
             fSpans[spanIndex]->SetVisBit(visRegIndex, on);
@@ -506,7 +504,6 @@ plDrawable& plDrawableSpans::SetTransform( uint32_t index, const hsMatrix44& l2w
     }
     else
     {
-        int             i;
         uint32_t          idx;
         plDISpanIndex   *spans = fDIIndices[ index ];       
 
@@ -517,7 +514,7 @@ plDrawable& plDrawableSpans::SetTransform( uint32_t index, const hsMatrix44& l2w
             plProfile_IncCount(DSMatSpans, spans->GetCount());
             plProfile_BeginTiming(DSMatTransT);
 #endif // MF_TEST_UPDATE
-            for( i = 0; i < spans->GetCount(); i++ )
+            for (size_t i = 0; i < spans->GetCount(); i++)
             {
                 fLocalToWorlds[ (*spans)[ i ] ] = IMatrixMul34(l2w, fLocalToBones[ (*spans)[ i ] ]);
                 fWorldToLocals[ (*spans)[ i ] ] = IMatrixMul34(fBoneToLocals[ (*spans)[ i ] ], w2l);
@@ -532,7 +529,7 @@ plDrawable& plDrawableSpans::SetTransform( uint32_t index, const hsMatrix44& l2w
 #ifdef MF_TEST_UPDATE
             plProfile_IncCount(DSRegSpans, spans->GetCount());
 #endif // MF_TEST_UPDATE
-            for( i = 0; i < spans->GetCount(); i++ )
+            for (size_t i = 0; i < spans->GetCount(); i++)
             {           
 #ifdef MF_TEST_UPDATE
                 plProfile_BeginTiming(DSRegTransT);
@@ -650,9 +647,6 @@ const hsMatrix44& plDrawableSpans::GetWorldToLocal( uint32_t span ) const
 
 plDrawable& plDrawableSpans::SetNativeProperty( uint32_t index, int prop, bool on)
 {
-    int     i;
-
-
     if( index == (uint32_t)-1 )
     {
         hsAssert(false, "Invalid index to SetNativeProperty");
@@ -665,17 +659,17 @@ plDrawable& plDrawableSpans::SetNativeProperty( uint32_t index, int prop, bool o
         {
             if( on )
             {
-                for( i = 0; i < spans->GetCount(); i++ )
+                for (size_t i = 0; i < spans->GetCount(); i++)
                     fSpans[ (*spans)[ i ] ]->fProps |= prop;
             }
             else
             {
-                for( i = 0; i < spans->GetCount(); i++ )
+                for (size_t i = 0; i < spans->GetCount(); i++)
                     fSpans[ (*spans)[ i ] ]->fProps &= ~prop;
             }
             if( (prop & kPropNoDraw) ) 
             {
-                for( i = 0; i < spans->GetCount(); i++ )
+                for (size_t i = 0; i < spans->GetCount(); i++)
                     GetSpaceTree()->SetLeafFlag((int16_t)((*spans)[ i ]), plSpaceTreeNode::kDisabled, on);
             }
         }
@@ -700,7 +694,7 @@ bool    plDrawableSpans::GetNativeProperty( uint32_t index, int prop ) const
 
         if( !spans.IsMatrixOnly() )
         {
-            for (uint32_t i = 0; i < spans.GetCount(); i++)
+            for (size_t i = 0; i < spans.GetCount(); i++)
                 ret |= ( fSpans[ spans[ i ] ]->fProps & prop );
         }
     }
@@ -729,14 +723,12 @@ plDrawable& plDrawableSpans::SetSubType(uint32_t index, plSubDrawableType t, boo
 
         if( on )
         {
-            int i;
-            for( i = 0; i < spans.GetCount(); i++ )
+            for (size_t i = 0; i < spans.GetCount(); i++)
                 fSpans[ spans[i] ]->fSubType |= t;
         }
         else
         {
-            int i;
-            for( i = 0; i < spans.GetCount(); i++ )
+            for (size_t i = 0; i < spans.GetCount(); i++)
                 fSpans[ spans[i] ]->fSubType &= ~t;
         }
     }
@@ -756,8 +748,7 @@ uint32_t plDrawableSpans::GetSubType(uint32_t index) const
     {
         plDISpanIndex& spans = *fDIIndices[ index ];
 
-        int i;
-        for( i = 0; i < spans.GetCount(); i++ )
+        for (size_t i = 0; i < spans.GetCount(); i++)
             retVal |= fSpans[ spans[i] ]->fSubType;
     }
     return retVal;
@@ -859,7 +850,6 @@ bool        plDrawableSpans::GetProperty( int prop ) const
 
 const hsBounds3Ext& plDrawableSpans::GetLocalBounds( uint32_t index ) const
 {
-    int             i;
     static hsBounds3Ext bnd;
 
 
@@ -871,7 +861,7 @@ const hsBounds3Ext& plDrawableSpans::GetLocalBounds( uint32_t index ) const
     bnd.MakeEmpty();
     if( !spans->IsMatrixOnly() )
     {
-        for( i = 0; i < spans->GetCount(); i++ )
+        for (size_t i = 0; i < spans->GetCount(); i++)
         {
             bnd.Union( &fSpans[ (*spans)[ i ] ]->fLocalBounds );
         }
@@ -882,7 +872,6 @@ const hsBounds3Ext& plDrawableSpans::GetLocalBounds( uint32_t index ) const
 
 const hsBounds3Ext& plDrawableSpans::GetWorldBounds( uint32_t index ) const
 {
-    int             i;
     static hsBounds3Ext bnd;
 
 
@@ -894,7 +883,7 @@ const hsBounds3Ext& plDrawableSpans::GetWorldBounds( uint32_t index ) const
     bnd.MakeEmpty();
     if( !spans->IsMatrixOnly() )
     {
-        for( i = 0; i < spans->GetCount(); i++ )
+        for (size_t i = 0; i < spans->GetCount(); i++)
         {
             bnd.Union( &fSpans[ (*spans)[ i ] ]->fWorldBounds );
         }
@@ -1132,7 +1121,6 @@ plProfile_CreateTimer("MatrixPalleteHack", "RenderSetup", PalletteHack);
 bool plDrawableSpans::MsgReceive( plMessage* msg )
 {
     plGenRefMsg     *refMsg = plGenRefMsg::ConvertNoRef( msg );
-    int             i;
     bool            hasSpec;
 
 
@@ -1239,7 +1227,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
                 if( (diIndex >= 0)
                     && !fDIIndices[ diIndex ]->IsMatrixOnly() )
                 {
-                    for( i = 0; i < fDIIndices[ diIndex ]->GetCount(); i++ )
+                    for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
                     {
                         int spanIndex = (*fDIIndices[diIndex])[i];
                         fSpans[spanIndex]->AddPermaLight(li, false);
@@ -1255,7 +1243,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
                 if( (diIndex >= 0)
                     && !fDIIndices[ diIndex ]->IsMatrixOnly() )
                 {
-                    for( i = 0; i < fDIIndices[ diIndex ]->GetCount(); i++ )
+                    for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
                     {
                         int spanIndex = (*fDIIndices[diIndex])[i];
                         fSpans[spanIndex]->RemovePermaLight(li, false);
@@ -1275,7 +1263,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
                 if( (diIndex >= 0)
                     && !fDIIndices[ diIndex ]->IsMatrixOnly() )
                 {
-                    for( i = 0; i < fDIIndices[ diIndex ]->GetCount(); i++ )
+                    for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
                     {
                         int spanIndex = (*fDIIndices[diIndex])[i];
                         fSpans[spanIndex]->AddPermaLight(li, true);
@@ -1291,7 +1279,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
                 if( (diIndex >= 0)
                     && !fDIIndices[ diIndex ]->IsMatrixOnly() )
                 {
-                    for( i = 0; i < fDIIndices[ diIndex ]->GetCount(); i++ )
+                    for (size_t i = 0; i < fDIIndices[diIndex]->GetCount(); i++)
                     {
                         int spanIndex = (*fDIIndices[diIndex])[i];
                         fSpans[spanIndex]->RemovePermaLight(li, true);
@@ -1350,12 +1338,12 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
         else if( diMsg->fType == plDISpansMsg::kAddingSpan )
         {
             /// plDrawInterface telling us which spans it owns
-            int32_t   i, spanIndex = (int32_t)diMsg->fIndex;
+            int32_t spanIndex = (int32_t)diMsg->fIndex;
             
             if( spanIndex == -1 )
                 return true;
             
-            for( i = 0; i < fDIIndices[ spanIndex ]->GetCount(); i++ )
+            for (size_t i = 0; i < fDIIndices[spanIndex]->GetCount(); i++)
             {
                 if( !fDIIndices[ spanIndex ]->IsMatrixOnly() )
                     fSpans[ (*fDIIndices[ spanIndex])[ i ] ]->fOwnerKey = diMsg->GetSender();
@@ -2406,7 +2394,7 @@ uint32_t plDrawableSpans::AppendDISpans(std::vector<plGeometrySpan *> &spans, ui
                 if (fDIIndices[ i ] == spanLookup)
                     continue;
 
-                for (int j = 0; j < fDIIndices[ i ]->GetCount(); j++)
+                for (size_t j = 0; j < fDIIndices[ i ]->GetCount(); j++)
                 {
                     if( (*fDIIndices[i])[j] >= insertionPoint )
                     {
@@ -2714,7 +2702,7 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
     hsAssert( spanIndices->GetCount() > 0, "If there are no DI spans, why were we called?" );
 
     /// Delete the actual spans themselves
-    for (uint32_t i = 0; i < spanIndices->GetCount(); i++)
+    for (size_t i = 0; i < spanIndices->GetCount(); i++)
     {
         /// If this is the last use of this material, Release() it
         materialIdx = fSpans[ (*spanIndices)[ i ] ]->fMaterialIdx;
@@ -2763,7 +2751,7 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
         {
             if( !fDIIndices[ j ]->IsMatrixOnly() )
             {
-                for (uint32_t k = 0; k < fDIIndices[ j ]->GetCount(); k++)
+                for (size_t k = 0; k < fDIIndices[ j ]->GetCount(); k++)
                 {
                     if( (*fDIIndices[ j ])[ k ] > (*spanIndices)[ i ] )
                         (*fDIIndices[ j ])[ k ]--;
@@ -2782,7 +2770,7 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
     {
         if( !fDIIndices[j]->IsMatrixOnly() )
         {
-            for (uint32_t k = 0; k < fDIIndices[j]->GetCount(); k++)
+            for (size_t k = 0; k < fDIIndices[j]->GetCount(); k++)
             {
                 int idx = (*fDIIndices[j])[k];
                 hsAssert(idx >= 0, "Just deleted a span another DI was pointing at");
@@ -3358,7 +3346,6 @@ void    plDrawableSpans::SetBlendingSpanVectorBit( uint32_t bitNumber, bool on )
 
 void    plDrawableSpans::IBuildVectors()
 {
-    int     i;
     bool    needRenderMsg = false;
 
 
@@ -3554,12 +3541,11 @@ plParticleSpan  *plDrawableSpans::ICreateParticleIcicle( hsGMaterial *material, 
 
 void        plDrawableSpans::ResetParticleSystem( uint32_t setIndex )
 {
-    uint32_t          i;
     plDISpanIndex   *indices = IFindDIIndices( setIndex );
     plParticleSet   *set;
     plParticleSpan  *span;
 
-    for( i = 0; i < indices->GetCount(); i++ )
+    for (size_t i = 0; i < indices->GetCount(); i++)
     {
         span = (plParticleSpan *)fSpans[ (*indices)[ i ] ];
         span->fVStartIdx = 0;
@@ -3678,7 +3664,6 @@ void    plDrawableSpans::AssignEmitterToParticleSystem( uint32_t setIndex, plPar
 // clearSpansAfterRefresh is ignored anyway, nuke it.
 uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
 {
-    int             i;
     uint32_t          spanIdx;
     hsBounds3Ext    bounds;
     plDISpanIndex   *spanLookup;
@@ -3693,7 +3678,7 @@ uint32_t  plDrawableSpans::RefreshDISpans( uint32_t index )
     spanLookup = IFindDIIndices( index );
 
     /// Loop through the spans and copy the vertex data over
-    for( i = 0; i < spanLookup->GetCount(); i++ )
+    for (size_t i = 0; i < spanLookup->GetCount(); i++)
     {
         // Main info
         plGeometrySpan  *geoSpan = fSourceSpans[ (*spanLookup)[i] ];
@@ -3896,11 +3881,10 @@ void    plDrawableSpans::GetOrigGeometrySpans( uint32_t diIndex, hsTArray<plGeom
     }
 
     plDISpanIndex   *indices = fDIIndices[ diIndex ];
-    uint32_t      i;
 
 
     arrayToFill.Reset();
-    for( i = 0; i < indices->GetCount(); i++ )
+    for (size_t i = 0; i < indices->GetCount(); i++)
         arrayToFill.Append( fSourceSpans[ (*indices)[ i ] ] );
 
     // HA!

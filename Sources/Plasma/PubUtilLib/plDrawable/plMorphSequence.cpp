@@ -630,8 +630,7 @@ bool plMorphSequence::IFindIndices(size_t iShare)
 
     mInfo.fCurrIdx.resize(diIndex.GetCount());
 
-    int i;
-    for( i = 0; i < diIndex.GetCount(); i++ )
+    for (size_t i = 0; i < diIndex.GetCount(); i++)
         mInfo.fCurrIdx[i] = diIndex[i];
 
     return true;

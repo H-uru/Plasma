@@ -1729,11 +1729,11 @@ bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        spanArray.resize(spanArray.size() + disi.fIndices.GetCount());
-        for( i = 0; i < disi.fIndices.GetCount(); i++ )
+        spanArray.resize(spanArray.size() + disi.GetCount());
+        for (size_t i = 0; i < disi.GetCount(); i++)
         {
-            spanArray[ index ] = new plGeometrySpan;
-            spanArray[ index ]->MakeInstanceOf( dr->GetGeometrySpan( disi.fIndices[ i ] ) );
+            spanArray[index] = new plGeometrySpan;
+            spanArray[index]->MakeInstanceOf(dr->GetGeometrySpan(disi[i]));
 
             if( setVisDists )
             {
@@ -1741,7 +1741,7 @@ bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *
                 spanArray[ index ]->fMaxDist = (maxDist);
             }
 
-            dr->GetGeometrySpan(disi.fIndices[i])->fProps |= plGeometrySpan::kInstanced;
+            dr->GetGeometrySpan(disi[i])->fProps |= plGeometrySpan::kInstanced;
 
             spanArray[ index++ ]->fProps |= plGeometrySpan::kInstanced;
         }
@@ -1916,10 +1916,9 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        int i;
-        for( i = 0; i < disi.fIndices.GetCount(); i++ )
+        for (size_t i = 0; i < disi.GetCount(); i++)
         {
-            spanArray.emplace_back(dr->GetGeometrySpan(disi.fIndices[i]));
+            spanArray.emplace_back(dr->GetGeometrySpan(disi[i]));
         }
 
         hsMatrix44 l2w = GetLocalToWorld44();
