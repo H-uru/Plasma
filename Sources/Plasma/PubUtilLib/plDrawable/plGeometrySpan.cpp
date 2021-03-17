@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsBitVector     plGeometrySpan::fInstanceGroupIDFlags;
 uint32_t          plGeometrySpan::fHighestReadInstanceGroup = 0;
 
-hsTArray<hsTArray<plGeometrySpan *> *>  plGeometrySpan::fInstanceGroups;
+hsTArray<std::vector<plGeometrySpan *> *> plGeometrySpan::fInstanceGroups;
 
 
 //// Constructor and Destructor //////////////////////////////////////////////
@@ -137,7 +137,7 @@ void    plGeometrySpan::ClearBuffers()
     // the array. If we are the last in the array, remove the array itself
     if (fInstanceRefs != nullptr)
     {
-        if( fInstanceRefs->GetCount() == 1 )
+        if (fInstanceRefs->size() == 1)
         {
             delete fInstanceRefs;
 
@@ -146,10 +146,10 @@ void    plGeometrySpan::ClearBuffers()
         }
         else
         {
-            int idx = fInstanceRefs->Find( this );
-            hsAssert( idx != fInstanceRefs->kMissingIndex, "Invalid instance ref data in plGeometrySpan::ClearBuffers()" );
+            auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+            hsAssert(iter != fInstanceRefs->cend(), "Invalid instance ref data in plGeometrySpan::ClearBuffers()");
 
-            fInstanceRefs->Remove( idx );
+            fInstanceRefs->erase(iter);
             removeData = false; // Don't remove data until we're the last one
         }
         fInstanceRefs = nullptr;
@@ -181,8 +181,7 @@ void    plGeometrySpan::ClearBuffers()
 
 void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
 {
-    hsTArray<plGeometrySpan *> *array;
-
+    std::vector<plGeometrySpan *> *array;
 
     ClearBuffers();
 
@@ -193,14 +192,14 @@ void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
         // Go find a new groupID
         instance->fInstanceGroupID = IAllocateNewGroupID();
 
-        instance->fInstanceRefs = array = new hsTArray<plGeometrySpan *>;
+        instance->fInstanceRefs = array = new std::vector<plGeometrySpan *>;
         // Go figure, it won't append the const version to the array...this is a cheat,
         // but then, so is making fInstanceRefs mutable :)
-        array->Append( (plGeometrySpan *)instance );
+        array->emplace_back((plGeometrySpan *)instance);
     }
 
     fInstanceGroupID = instance->fInstanceGroupID;
-    array->Append( this );
+    array->emplace_back(this);
     fInstanceRefs = array;
 
     /// Copy over the data
@@ -244,14 +243,14 @@ void plGeometrySpan::IUnShareData()
 void plGeometrySpan::BreakInstance()
 {
     hsAssert(fInstanceRefs, "Breaking instancing when I'm not instanced");
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
-    hsAssert(fInstanceRefs->GetCount(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
+    hsAssert(!fInstanceRefs->empty(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
 
     fInstanceGroupID = IAllocateNewGroupID();
-    fInstanceRefs = new hsTArray<plGeometrySpan*>;
-    fInstanceRefs->Append(this);
+    fInstanceRefs = new std::vector<plGeometrySpan*>;
+    fInstanceRefs->emplace_back(this);
 
     IUnShareData();
 
@@ -261,13 +260,13 @@ void plGeometrySpan::BreakInstance()
 void plGeometrySpan::ChangeInstance(plGeometrySpan* newInstance)
 {
     hsAssert(fInstanceRefs, "Changing instancing when I'm not instanced");
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
 
     fInstanceGroupID = newInstance->fInstanceGroupID;
     fInstanceRefs = newInstance->fInstanceRefs;
-    fInstanceRefs->Append(this);
+    fInstanceRefs->emplace_back(this);
 
     fVertexData = newInstance->fVertexData;
     fMultColor = newInstance->fMultColor;
@@ -280,13 +279,13 @@ void plGeometrySpan::UnInstance()
 {
     hsAssert(fInstanceRefs, "UnInstancing a non-instance");
 
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
 
     // If we're the last one, we just take ownership of the shared data,
     // else we make our own copy of it.
-    if( !fInstanceRefs->GetCount() )
+    if (fInstanceRefs->empty())
     {
         delete fInstanceRefs;
     }
@@ -340,17 +339,16 @@ void    plGeometrySpan::IClearGroupID( uint32_t groupID )
 //  we remove an entry, we decrement this ID until we hit a used pointer again;
 //  if we don't find one, we reset the array.
 
-hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount )
+std::vector<plGeometrySpan *> *plGeometrySpan::IGetInstanceGroup(uint32_t groupID, uint32_t expectedCount)
 {
-    hsTArray<plGeometrySpan *>  *array;
-
+    std::vector<plGeometrySpan *> *array;
 
     groupID--;      // Make it our array index
 
     if (fInstanceGroups.GetCount() <= groupID || fInstanceGroups[groupID] == nullptr)
     {
         // Not yet in the list--make a new hsTArray
-        array = new hsTArray<plGeometrySpan *>;
+        array = new std::vector<plGeometrySpan *>;
         fInstanceGroupIDFlags.SetBit( groupID, true );
         
         if( expectedCount > 1 )
@@ -369,7 +367,7 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID
     {
         // In the list...get it, but are we done with it?
         array = fInstanceGroups[ groupID ];
-        if( expectedCount == array->GetCount() + 1 )    // I.E. next Append() will make it ==
+        if (expectedCount == array->size() + 1)    // I.E. next Append() will make it ==
         {
             // Done with it, remove from hash table
             fInstanceGroups[groupID] = nullptr;
@@ -583,7 +581,7 @@ void    plGeometrySpan::Read( hsStream *stream )
         uint32_t  count = stream->ReadLE32();
 
         fInstanceRefs = IGetInstanceGroup( fInstanceGroupID, count );
-        fInstanceRefs->Append( this );
+        fInstanceRefs->emplace_back(this);
         hsAssert(fInstanceRefs != nullptr, "Cannot locate fInstanceRefs on plGeometrySpan::Read()");
     }
 }
@@ -654,7 +652,7 @@ void    plGeometrySpan::Write( hsStream *stream )
     // Write the groupID as well as the count for instanceRefs. This way
     stream->WriteLE32( fInstanceGroupID );
     if( fInstanceGroupID != kNoGroupID )
-        stream->WriteLE32( fInstanceRefs->GetCount() );
+        stream->WriteLE32((uint32_t)fInstanceRefs->size());
     else
     {
         hsAssert(fInstanceRefs == nullptr, "Nil instanceRefs array but no group ID, non sequitur");

@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGeometrySpan_h
 #define _plGeometrySpan_h
 
+#include <vector>
 
 #include "hsTemplates.h"
 #include "hsBounds.h"
@@ -168,7 +169,7 @@ class plGeometrySpan
         uint32_t*       fDiffuseRGBA;
         uint32_t*       fSpecularRGBA;
 
-        mutable hsTArray<plGeometrySpan *>* fInstanceRefs;
+        mutable std::vector<plGeometrySpan *>* fInstanceRefs;
         mutable uint32_t                    fInstanceGroupID;       // For writing out/reading in instance refs
 
         // The following is only used for logging during export. It is never set
@@ -296,7 +297,7 @@ class plGeometrySpan
         // have to write out the instanceRef array count for each geoSpan, so that when we read in
         // to do the lookup here, we know that we've read everything and can dump the entry in this
         // table.
-        static hsTArray<hsTArray<plGeometrySpan *> *>   fInstanceGroups;
+        static hsTArray<std::vector<plGeometrySpan *> *> fInstanceGroups;
 
         // THIS is so we can clear fInstanceGroups as early and as efficiently as possible; see
         // the notes on IGetInstanceGroup().
@@ -305,7 +306,7 @@ class plGeometrySpan
         static uint32_t   IAllocateNewGroupID();
         static void     IClearGroupID( uint32_t groupID );
 
-        static hsTArray<plGeometrySpan *>   *IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount );
+        static std::vector<plGeometrySpan *> *IGetInstanceGroup(uint32_t groupID, uint32_t expectedCount);
 };
 
 

@@ -1593,26 +1593,24 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
         return;
 
 
-    static hsTArray<hsRadixSort::Elem>    sortScratch;
-    static hsTArray<uint16_t>             triList;
-    static hsTArray<int32_t>              counters;
-    static hsTArray<uint32_t>             startIndex;
+    static std::vector<hsRadixSort::Elem>    sortScratch;
+    static std::vector<uint16_t>             triList;
+    static std::vector<int32_t>              counters;
+    static std::vector<uint32_t>             startIndex;
     
     plProfile_BeginTiming(FaceSort);
     if( pipe->IsDebugFlagSet( plPipeDbg::kFlagDontSortFaces ) )
     {
         /// Don't sort, just send unchanged
-        int     j, idx;
-
-        for (int16_t idx : visList)
+        for (int16_t vis : visList)
         {
-            plIcicle* span = (plIcicle*)fSpans[idx];
-            ICheckSpanForSortable(idx);
+            plIcicle* span = (plIcicle*)fSpans[vis];
+            ICheckSpanForSortable(vis);
 
             /// Build a fake list of indices....
             plGBufferTriangle*      list = span->fSortData;
-            triList.SetCount( span->fILength );
-            for( j = 0, idx = 0; j < span->fILength / 3; j++, idx += 3 )
+            triList.resize(span->fILength);
+            for (uint32_t j = 0, idx = 0; j < span->fILength / 3; j++, idx += 3)
             {
                 triList[ idx ] = list[ j ].fIndex1;
                 triList[ idx + 1 ] = list[ j ].fIndex2;
@@ -1620,8 +1618,8 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             }
 
             /// Now send them on to the buffer group
-            fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() );
+            fGroups[span->fGroupIdx]->StuffFromTriList(span->fIBufferIdx, span->fIStartIdx,
+                                                       span->fILength / 3, triList.data());
         }
         fReadyToRender = false;
         return;
@@ -1630,7 +1628,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
 
     plProfile_BeginLap(FaceSort, "0");
 
-    startIndex.SetCount(fSpans.size());
+    startIndex.resize(fSpans.size());
 
     // First figure out the total number of tris to deal with.
     int totTris = 0;
@@ -1652,10 +1650,10 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
 
     plProfile_IncCount(FacesSorted, totTris);
 
-    sortScratch.SetCount(totTris);
-    triList.SetCount(3 * totTris);
+    sortScratch.resize(totTris);
+    triList.resize(3 * totTris);
 
-    hsRadixSort::Elem* elem = sortScratch.AcquireArray();
+    hsRadixSort::Elem* elem = sortScratch.data();
 
     plProfile_EndLap(FaceSort, "0");
     plProfile_BeginLap(FaceSort, "1");
@@ -1665,9 +1663,9 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
     // which would get rid of this copy and help the data alignment.
     // Oops, I already did.
     int cnt = 0;
-    for (int16_t idx : visList)
+    for (int16_t vis : visList)
     {
-        plIcicle* span = (plIcicle*)fSpans[idx];
+        plIcicle* span = (plIcicle*)fSpans[vis];
         
         int nTris = span->fILength / 3;
 
@@ -1697,7 +1695,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
     plProfile_EndLap(FaceSort, "2");
     plProfile_BeginLap(FaceSort, "3");
 
-    counters.SetCountAndZero(fSpans.size());
+    counters.assign(fSpans.size(), 0);
 
     while( sortedList )
     {
@@ -1747,8 +1745,8 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             plIcicle* span = (plIcicle*)fSpans[idx];
 
             /// Now send them on to the buffer group
-            fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() + startIndex[idx]);
+            fGroups[span->fGroupIdx]->StuffFromTriList(span->fIBufferIdx, span->fIStartIdx,
+                                                       span->fILength / 3, triList.data() + startIndex[idx]);
         }
     }
     else
@@ -1763,8 +1761,8 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             /// Now send them on to the buffer group
             span->fPackedIdx = span->fIStartIdx = newStarts[span->fGroupIdx][span->fIBufferIdx];
             newStarts[span->fGroupIdx][span->fIBufferIdx] += span->fILength;
-            fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() + startIndex[idx]);
+            fGroups[span->fGroupIdx]->StuffFromTriList(span->fIBufferIdx, span->fIStartIdx,
+                                                       span->fILength / 3, triList.data() + startIndex[idx]);
         }
     }
 
@@ -1972,24 +1970,23 @@ struct buffTriCmpFrontToBack
     }
 };
 
-void plDrawableSpans::SortVisibleSpansPartial(const hsTArray<int16_t>& visList, plPipeline* pipe)
+void plDrawableSpans::SortVisibleSpansPartial(const std::vector<int16_t>& visList, plPipeline* pipe)
 {
     plProfile_Inc(FaceSortCalls);
 
     plProfile_BeginTiming(FaceSort);
 
-    int i;
-    for( i = 0; i < visList.GetCount(); i++ )
+    for (int16_t vis : visList)
     {
-        hsAssert(fSpans[visList[i]]->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
+        hsAssert(fSpans[vis]->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
 
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
+        plIcicle* span = (plIcicle*)fSpans[vis];
 
         if( span->fProps & plSpan::kPartialSort )
         {
             hsAssert(fGroups[span->fGroupIdx]->AreIdxVolatile(), "Badly setup buffer group - set PartialSort too late?");
 
-            ICheckSpanForSortable(visList[i]);
+            ICheckSpanForSortable(vis);
 
             const hsPoint3 viewPos = span->fWorldToLocal * pipe->GetViewPositionWorld();
 
@@ -2015,139 +2012,6 @@ void plDrawableSpans::SortVisibleSpansPartial(const hsTArray<int16_t>& visList, 
     plProfile_EndTiming(FaceSort);
 }
 
-#if 0
-
-void plDrawableSpans::SortVisibleSpansUnit(const hsTArray<int16_t>& visList, plPipeline* pipe)
-{
-    plProfile_Inc(FaceSortCalls);
-
-    if( !visList.GetCount() )
-        return;
-
-    plProfile_BeginTiming(FaceSort);
-
-    static hsTArray<uint16_t>         triList;
-    
-    int i;
-    
-    if( pipe->IsDebugFlagSet( plPipeDbg::kFlagDontSortFaces ) )
-    {
-        /// Don't sort, just send unchanged
-        int     j, idx;
-
-        for( i = 0; i < visList.GetCount(); i++ )
-        {
-            plIcicle* span = (plIcicle*)fSpans[visList[i]];
-            ICheckSpanForSortable(visList[i]);
-
-            /// Build a fake list of indices....
-            plGBufferTriangle*      list = span->fSortData;
-            triList.SetCount( span->fILength );
-            for( j = 0, idx = 0; j < span->fILength / 3; j++, idx += 3 )
-            {
-                triList[ idx ] = list[ j ].fIndex1;
-                triList[ idx + 1 ] = list[ j ].fIndex2;
-                triList[ idx + 2 ] = list[ j ].fIndex3;
-            }
-
-            /// Now send them on to the buffer group
-            fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() );
-        }
-        fReadyToRender = false;
-        return;
-    }
-
-    plProfile_EndTiming(FaceSort);
-
-    plProfile_BeginLap(FaceSort, "0");
-
-    struct sortFace
-    {
-        uint16_t      fIndex0;
-        uint16_t      fIndex1;
-        uint16_t      fIndex2;
-        float    fDist;
-    };
-    static hsTArray<sortFace>   sortList;
-
-    struct SelectCloserFace
-    {
-        bool operator()(const sortFace* face0, const sortFace* face1) const
-        {
-            return face0->fDist < face1->fDist;
-        }
-    };
-    hsPoint3 viewPos = fSpans[visList[0]]->fWorldToLocal * pipe->GetViewPositionWorld();
-
-            float dist1 = (fViewPos - face1->fCenter).MagnitudeSquared();
-
-    // First figure out the total number of tris to deal with.
-    sortList.SetCount(0);
-    int totTris = 0;
-    for( i = 0; i < visList.GetCount(); i++ )
-    {
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
-
-        int nTris = span->fILength / 3;
-        sortList.Expand(sortList.GetCount() + nTris);
-
-        plGBufferTriangle* sortData = span->fSortData;
-        for( j = 0; j < nTris; j++ )
-        {
-            sortList.Append(*sortData++);   
-        }
-
-        totTris += nTris;
-    }
-    if( totTris == 0 )
-    {
-        plProfile_EndLap(FaceSort, "0");
-        return;
-    }
-
-    plProfile_IncCount(FacesSorted, totTris);
-
-    sortFace* pBegin = sortList.AcquireArray();
-    sortFace* pEnd = pBegin + totTris;
-
-    stl::sort(pBegin, pEnd, SelectCloserFace);
-
-    triList.SetCount(sortList.GetCount());
-
-    uint16_t* pTri = triList.AcquireArray();
-
-    while( pBegin < pEnd )
-    {
-        *pTri = pBegin->fIndex1;
-        pTri++;
-        *pTri = pBegin->fIndex2;
-        pTri++;
-        *pTri = pBegin->fIndex3;
-        pTri++;
-    }
-
-
-    plProfile_EndLap(FaceSort, "0");
-
-    uint32_t start = 0;
-    for( i = 0; i < visList.GetCount(); i++ )
-    {
-        plIcicle* span = (plIcicle*)fSpans[visList[i]];
-
-        /// Now send them on to the buffer group
-        span->fIPackedIdx = span->fIStartIdx = newStarts[span->fGroupIdx][span->fIBufferIdx];
-        newStarts[span->fGroupIdx][span->fIBufferIdx] += span->fILength;
-        fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                      span->fILength / 3, triList.AcquireArray() + startIndex[visList[i]]);
-    }
-
-    plProfile_EndLap(FaceSort, "4");
-
-    fReadyToRender = false;
-}
-#endif
-
 void plDrawableSpans::SetInitialBone(size_t i, const hsMatrix44& l2b, const hsMatrix44& b2l)
 {
     fLocalToBones[ i ] = l2b;
@@ -2162,7 +2026,7 @@ void plDrawableSpans::SetInitialBone(size_t i, const hsMatrix44& l2b, const hsMa
 //  whether it's setting the transform for some drawable data it owns, or just
 //  setting one of the matrices which influence the drawable data someone else
 //  owns. 
-uint32_t  plDrawableSpans::AppendDIMatrixSpans(int n)
+uint32_t plDrawableSpans::AppendDIMatrixSpans(size_t n)
 {
     /// Do garbage cleanup first
     if( fNeedCleanup )
@@ -2175,8 +2039,7 @@ uint32_t  plDrawableSpans::AppendDIMatrixSpans(int n)
     fLocalToBones.resize(baseIdx + n);
     fBoneToLocals.resize(baseIdx + n);
 
-    int i;
-    for( i = baseIdx; i < baseIdx + n; i++ )
+    for (size_t i = baseIdx; i < baseIdx + n; i++)
     {
         fLocalToWorlds[i].Reset();
         fWorldToLocals[i].Reset();
@@ -2195,22 +2058,22 @@ uint32_t  plDrawableSpans::AppendDIMatrixSpans(int n)
 // and the transform of the object being skinned. In general, objects can only
 // share a palette set if they have been flattened into world space (the object's
 // transform is identity). Fortunately, this is a common case.
-uint32_t plDrawableSpans::FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B, bool searchAll) const
+uint32_t plDrawableSpans::FindBoneBaseMatrix(const std::vector<hsMatrix44>& initL2B, bool searchAll) const
 {
     if (!searchAll)
     {
         // Just look amongst the added spans for a matching set
         for (plSpan* span : fSpans)
         {
-            if (span && (initL2B.GetCount() == span->fNumMatrices))
+            if (span && (initL2B.size() == span->fNumMatrices))
             {
-                int j;
-                for( j = 0; j < initL2B.GetCount(); j++ )
+                size_t j;
+                for (j = 0; j < initL2B.size(); j++)
                 {
                     if (initL2B[j] != fLocalToBones[j + span->fBaseMatrix])
                         break;
                 }
-                if( initL2B.GetCount() == j )
+                if (initL2B.size() == j)
                     return span->fBaseMatrix;
             }
         }
@@ -2220,17 +2083,16 @@ uint32_t plDrawableSpans::FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B
         // Since swappable geometry spans aren't added to the drawable until
         // runtime, a sharable bone pallete won't be found by scanning fSpans.
         // We have to do a larger search through all bone matrices.
-        int i;
-        for( i = 0; i + initL2B.GetCount() < fLocalToBones.size(); i++ )
+        for (size_t i = 0; i + initL2B.size() < fLocalToBones.size(); i++)
         {
-            int j;
-            for( j = 0; j < initL2B.GetCount(); j++ )
+            size_t j;
+            for (j = 0; j < initL2B.size(); j++)
             {
                 if( initL2B[j] != fLocalToBones[j + i] )
-                        break;
+                    break;
             }
-            if( initL2B.GetCount() == j )
-                return i;
+            if (initL2B.size() == j)
+                return uint32_t(i);
         }
     }
     return uint32_t(-1);
@@ -2866,28 +2728,25 @@ void    plDrawableSpans::ICleanupMatrices()
 
 void    plDrawableSpans::IRemoveGarbage()
 {
-    hsTArray<hsTArray<bool> *>              usedFlags;
-    hsTArray<hsTArray<hsTArray<bool> *> *>  usedIdxFlags;
-    plGBufferGroup                          *group;
-
+    // Oh joy, vector<bool>s and vectors of vector<bool>s...
+    std::vector<std::vector<bool>>              usedFlags;
+    std::vector<std::vector<std::vector<bool>>> usedIdxFlags;
+    plGBufferGroup* group;
 
     ICleanupMatrices();
 
     /// Getting rid of verts
-    usedFlags.SetCount(fGroups.size());
-    usedIdxFlags.SetCount(fGroups.size());
+    usedFlags.resize(fGroups.size());
+    usedIdxFlags.resize(fGroups.size());
     for (size_t i = 0; i < fGroups.size(); i++)
     {
         hsAssert( fGroups[ i ]->GetNumVertexBuffers() == 1, "Cannot clean garbage on a non-volatile buffer group!" );
-        usedFlags[ i ] = new hsTArray<bool>;
-        usedFlags[ i ]->SetCountAndZero( fGroups[ i ]->GetVertBufferCount( 0 ) );
+        usedFlags[i].resize(fGroups[i]->GetVertBufferCount(0));
 
-        usedIdxFlags[ i ] = new hsTArray<hsTArray<bool> *>;
-        usedIdxFlags[ i ]->SetCount( fGroups[ i ]->GetNumIndexBuffers() );
-        for (size_t j = 0; j < fGroups[ i ]->GetNumIndexBuffers(); j++)
+        usedIdxFlags[i].resize(fGroups[i]->GetNumIndexBuffers());
+        for (size_t j = 0; j < fGroups[i]->GetNumIndexBuffers(); j++)
         {
-            (*usedIdxFlags[ i ])[ j ] = new hsTArray<bool>;
-            (*usedIdxFlags[ i ])[ j ]->SetCountAndZero( fGroups[ i ]->GetIndexBufferCount( j ) );
+            usedIdxFlags[i][j].resize(fGroups[i]->GetIndexBufferCount(j));
         }
     }
 
@@ -2897,10 +2756,10 @@ void    plDrawableSpans::IRemoveGarbage()
         uint32_t groupIdx = icicle.fGroupIdx;
 
         for (uint32_t j = icicle.fCellOffset; j < icicle.fCellOffset + icicle.fVLength; j++)
-            (*usedFlags[ groupIdx ])[ j ] = true;
+            usedFlags[groupIdx][j] = true;
 
         for (uint32_t j = icicle.fIStartIdx; j < icicle.fIStartIdx + icicle.fILength; j++)
-            (*((*usedIdxFlags[groupIdx])[icicle.fIBufferIdx]))[j] = true;
+            usedIdxFlags[groupIdx][icicle.fIBufferIdx][j] = true;
     }
     for (const plParticleSpan& span : fParticleSpans)
     {
@@ -2908,27 +2767,27 @@ void    plDrawableSpans::IRemoveGarbage()
         uint32_t groupIdx = span.fGroupIdx;
 
         for (uint32_t j = span.fCellOffset; j < span.fCellOffset + span.fVLength; j++)
-            (*usedFlags[ groupIdx ])[ j ] = true;
+            usedFlags[groupIdx][j] = true;
 
         for (uint32_t j = span.fIStartIdx; j < span.fIStartIdx + span.fILength; j++)
-            (*((*usedIdxFlags[groupIdx])[span.fIBufferIdx]))[j] = true;
+            usedIdxFlags[groupIdx][span.fIBufferIdx][j] = true;
     }
 
     /// Now loop through and delete any unused
     for (size_t groupIdx = 0; groupIdx < fGroups.size(); groupIdx++)
     {
         group = fGroups[ groupIdx ];
-        hsTArray<bool>      &uFlags = *usedFlags[ groupIdx ];
+        std::vector<bool>& uFlags = usedFlags[groupIdx];
 
         // Find groups of verts to delete!
-        int count = uFlags.GetCount();
-        for (int i = 0; i < count; )
+        size_t count = uFlags.size();
+        for (size_t i = 0; i < count; )
         {
             // Skip through used verts
             for( ; i < count && uFlags[ i ] == true; i++ );
 
             // Find span of unused verts
-            int j;
+            size_t j;
             for( j = i; j < count && uFlags[ j ] == false; j++ );
 
             if( j > i )
@@ -2963,7 +2822,7 @@ void    plDrawableSpans::IRemoveGarbage()
                 }
 
                 // Move the flags too, lest we start deleting the wrong vertices
-                int offset = j - i;
+                size_t offset = j - i;
                 count -= offset;
                 for (; i < count; i++)
                     uFlags[ i ] = uFlags[ i + offset ];
@@ -3006,17 +2865,17 @@ void    plDrawableSpans::IRemoveGarbage()
 
             for (uint32_t ibIdx = 0; ibIdx < group->GetNumIndexBuffers(); ibIdx++)
             {
-                hsTArray<bool>  &uiFlags = *((*usedIdxFlags[ groupIdx ])[ ibIdx ]);
+                std::vector<bool>& uiFlags = usedIdxFlags[groupIdx][ibIdx];
 
                 // Find groups of indices to delete!
-                count = uiFlags.GetCount();
-                for (int i = 0; i < count; )
+                count = uiFlags.size();
+                for (size_t i = 0; i < count; )
                 {
                     // Skip through used verts
                     for( ; i < count && uiFlags[ i ] == true; i++ );
 
                     // Find span of unused verts
-                    int j;
+                    size_t j;
                     for( j = i; j < count && uiFlags[ j ] == false; j++ );
 
                     if( j > i )
@@ -3044,7 +2903,7 @@ void    plDrawableSpans::IRemoveGarbage()
                         }
 
                         // Move the flags too, lest we start deleting the wrong vertices
-                        int offset = j - i;
+                        size_t offset = j - i;
                         count -= offset;
                         for (; i < count; i++)
                             uiFlags[ i ] = uiFlags[ i + offset ];
@@ -3066,19 +2925,6 @@ void    plDrawableSpans::IRemoveGarbage()
             vtx->fVStartIdx = fGroups[ vtx->fGroupIdx ]->GetVertStartFromCell( vtx->fVBufferIdx, vtx->fCellIdx, vtx->fCellOffset );
         }
     }
-
-    /// Destroy!!!
-    for (int i = 0; i < usedFlags.GetCount(); i++)
-        delete usedFlags[ i ];
-    usedFlags.Reset();
-
-    for (int i = 0; i < usedIdxFlags.GetCount(); i++)
-    {
-        for (int j = 0; j < usedIdxFlags[ i ]->GetCount(); j++)
-            delete ((*usedIdxFlags[ i ])[ j ]);
-        delete usedIdxFlags[ i ];
-    }
-    usedIdxFlags.Reset();
 
     /// This will let us query the buffer group as to whether its ready to render or not.
     /// If not, we'll force it then to reload from its storage
@@ -3848,7 +3694,7 @@ plGeometrySpan* plDrawableSpans::GetGeometrySpan(int spanIdx)
     return fSourceSpans[spanIdx]; 
 }
 
-void    plDrawableSpans::GetOrigGeometrySpans(size_t diIndex, hsTArray<plGeometrySpan *> &arrayToFill)
+void    plDrawableSpans::GetOrigGeometrySpans(size_t diIndex, std::vector<plGeometrySpan *> &arrayToFill)
 {
     if (diIndex >= fDIIndices.size())
     {
@@ -3859,9 +3705,9 @@ void    plDrawableSpans::GetOrigGeometrySpans(size_t diIndex, hsTArray<plGeometr
     plDISpanIndex   *indices = fDIIndices[ diIndex ];
 
 
-    arrayToFill.Reset();
+    arrayToFill.clear();
     for (size_t i = 0; i < indices->GetCount(); i++)
-        arrayToFill.Append( fSourceSpans[ (*indices)[ i ] ] );
+        arrayToFill.emplace_back(fSourceSpans[(*indices)[i]]);
 
     // HA!
     return;

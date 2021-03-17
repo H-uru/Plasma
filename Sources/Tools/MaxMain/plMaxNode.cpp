@@ -1569,17 +1569,15 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
         SetSpansBoneInfo(spanArray, boneMap->GetBaseMatrixIndex(drawable), boneMap->fNumBones);
         return;
     }
-    
-    int baseMatrix, i;
 
-    uint8_t numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
+    int numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
     plMaxNodeBase **boneArray = new plMaxNodeBase*[numBones];
 
     if (boneMap)
         boneMap->FillBoneArray(boneArray);
     else
     {
-        for (i = 0; i < NumBones(); i++)
+        for (int i = 0; i < NumBones(); i++)
         {
             boneArray[i] = GetBone(i);
         }
@@ -1590,9 +1588,9 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     initialB2W.SetCount(numBones);
     initialW2B.SetCount(numBones);
 
-    hsTArray<hsMatrix44>    initialL2B;
+    std::vector<hsMatrix44> initialL2B;
     hsTArray<hsMatrix44>    initialB2L;
-    initialL2B.SetCount(numBones);
+    initialL2B.resize(numBones);
     initialB2L.SetCount(numBones);
 
     initialB2W[0].Reset();
@@ -1601,7 +1599,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     initialL2B[0].Reset();
     initialB2L[0].Reset();
 
-    for( i = 1; i < numBones; i++ )
+    for (int i = 1; i < numBones; i++)
     {
         hsMatrix44 b2w;
         hsMatrix44 w2b;
@@ -1634,7 +1632,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     //      our transform as well as the bone's. If we've been flattened into world
     //      space, our transform is ident and we can share. This is the normal case
     //      in scene boning. So InitialBones have to match in count and matrix value.
-    baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nullptr);
+    uint32_t baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nullptr);
     if( baseMatrix != uint32_t(-1) )
     {
         SetSpansBoneInfo(spanArray, baseMatrix, numBones);
@@ -1647,7 +1645,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     if (boneMap)
         boneMap->SetBaseMatrixIndex(drawable, baseMatrix);
 
-    for( i = 1; i < numBones; i++ )
+    for (int i = 1; i < numBones; i++)
     {
         plMaxNodeBase *bone = boneArray[i-1];
         plSceneObject* obj = bone->GetSceneObject();

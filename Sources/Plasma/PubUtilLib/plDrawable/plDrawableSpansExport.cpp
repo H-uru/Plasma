@@ -468,34 +468,30 @@ void    plDrawableSpans::IPackSourceSpans()
             plGeometrySpan* span = fSourceSpans[i];
             if( span->fInstanceRefs )
             {
-                hsTArray<plGeometrySpan*>& refs = *(span->fInstanceRefs);
-                hsTArray<plGeometrySpan*> refsHere;
-                hsTArray<plGeometrySpan*> refsThere;
+                std::vector<plGeometrySpan*>& refs = *(span->fInstanceRefs);
+                std::vector<plGeometrySpan*> refsHere;
+                std::vector<plGeometrySpan*> refsThere;
 
-                int k;
-                for( k = 0; k < refs.GetCount(); k++ )
+                for (plGeometrySpan* other : refs)
                 {
-                    plGeometrySpan* other = refs[k];
                     if( other != span )
                     {
                         auto iter = std::find(fSourceSpans.cbegin(), fSourceSpans.cend(), other);
                         if (iter == fSourceSpans.cend())
-                            refsThere.Append(other);
+                            refsThere.emplace_back(other);
                         else
-                            refsHere.Append(other);
+                            refsHere.emplace_back(other);
                     }
                 }
-                if( refsThere.GetCount() )
+                if (!refsThere.empty())
                 {
-                    if( refsHere.GetCount() )
+                    if (!refsHere.empty())
                     {
                         span->BreakInstance();
 
                         // Okay, got to form a new instance group out of refsHere.
-                        for( k = 0; k < refsHere.GetCount(); k++ )
+                        for (plGeometrySpan* other : refsHere)
                         {
-                            plGeometrySpan* other = refsHere[k];
-
                             other->ChangeInstance(span);
 
                             doneSpans.SetBit(other->fSpanRefIndex);
@@ -505,7 +501,7 @@ void    plDrawableSpans::IPackSourceSpans()
                     {
                         span->UnInstance();
                     }
-                    if( refsThere.GetCount() == 1 )
+                    if (refsThere.size() == 1)
                     {
                         refsThere[0]->UnInstance();
                     }
@@ -532,9 +528,8 @@ void    plDrawableSpans::IPackSourceSpans()
                 IConvertGeoSpanToIcicle( fSourceSpans[ i ], baseIcicle, 0, baseIcicle );
 
                 // Loop through the rest
-                for (int j = 0; j < fSourceSpans[i]->fInstanceRefs->GetCount(); j++)
+                for (plGeometrySpan* other : *fSourceSpans[i]->fInstanceRefs)
                 {
-                    plGeometrySpan *other = (*fSourceSpans[ i ]->fInstanceRefs)[ j ];
                     if( other == fSourceSpans[ i ] )
                         continue;
 
@@ -558,18 +553,18 @@ void    plDrawableSpans::IPackSourceSpans()
     }
 
 #ifdef VERT_LOG
-    hsTArray<plGeometrySpan*> order;
-    order.SetCount(fSourceSpans.GetCount());
+    std::vector<plGeometrySpan*> order;
+    order.resize(fSourceSpans.size());
     for (plGeometrySpan* geoSpan : fSourceSpans)
     {
         order[geoSpan->fSpanRefIndex] = geoSpan;
     }
 
-    plStatusLog* statusLog = IStartLog(GetKey()->GetName(), fSourceSpans.GetCount());
-    for (int i = 0; i < order.GetCount(); i++)
+    plStatusLog* statusLog = IStartLog(GetKey()->GetName(), fSourceSpans.size());
+    for (plGeometrySpan* geoSpan : order)
     {
-        plVertexSpan* vSpan = (plVertexSpan*)fSpans[i];
-        ILogSpan(statusLog, order[i], vSpan, fGroups[vSpan->fGroupIdx]);
+        plVertexSpan* vSpan = (plVertexSpan*)geoSpan;
+        ILogSpan(statusLog, geoSpan, vSpan, fGroups[vSpan->fGroupIdx]);
     }
     statusLog = IEndLog(statusLog);
 #endif
@@ -582,15 +577,14 @@ void    plDrawableSpans::IPackSourceSpans()
 
 void    plDrawableSpans::ISortSourceSpans()
 {
-    hsTArray<uint32_t>    spanReorderTable, spanInverseTable;
+    std::vector<size_t> spanReorderTable, spanInverseTable;
     plGeometrySpan      *tmpSpan;
-    uint32_t              tmpIdx;
     plSpan              *tmpSpanPtr;
 
 
     // Init the reorder table
     for (size_t i = 0; i < fSourceSpans.size(); i++)
-        spanReorderTable.Append( i );
+        spanReorderTable.emplace_back(i);
 
     // Do a nice, if naiive, sort by material (hehe by the pointers, no less)
     for (size_t i = 0; i < fSourceSpans.size() - 1; i++)
@@ -618,7 +612,7 @@ void    plDrawableSpans::ISortSourceSpans()
             fSpans[ idx ] = tmpSpanPtr;
 
             // Also swap the entries in the reorder table
-            tmpIdx = spanReorderTable[ i ];
+            size_t tmpIdx = spanReorderTable[ i ];
             spanReorderTable[ i ] = spanReorderTable[ idx ];
             spanReorderTable[ idx ] = tmpIdx;
         }
@@ -629,9 +623,9 @@ void    plDrawableSpans::ISortSourceSpans()
 
     /// Problem: our reorder table is inversed(y->x instead of x->y). Either we search for numbers,
     /// or we just flip it first...
-    spanInverseTable.SetCountAndZero( spanReorderTable.GetCount() );
-    for (int i = 0; i < spanReorderTable.GetCount(); i++)
-        spanInverseTable[ spanReorderTable[ i ] ] = i;
+    spanInverseTable.resize(spanReorderTable.size());
+    for (size_t i = 0; i < spanReorderTable.size(); i++)
+        spanInverseTable[spanReorderTable[i]] = i;
 
     /// Now update our span xlate table
     for (plDISpanIndex* di : fDIIndices)

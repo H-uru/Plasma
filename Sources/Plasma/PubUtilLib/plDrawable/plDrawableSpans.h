@@ -67,7 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsAlignedAllocator.hpp"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 #include "plDrawable.h"
 #include "hsBounds.h"
 #include "hsMatrix44.h"
@@ -374,12 +373,12 @@ class plDrawableSpans : public plDrawable
         virtual uint32_t  RefreshDISpans( uint32_t diIndex );
         virtual size_t  RefreshSpan(size_t srcSpanIndex);
         virtual void    RemoveDIMatrixSpans(uint32_t index);
-        virtual uint32_t  AppendDIMatrixSpans(int n);
-        virtual uint32_t  FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B, bool searchAll) const;
+        virtual uint32_t  AppendDIMatrixSpans(size_t n);
+        virtual uint32_t  FindBoneBaseMatrix(const std::vector<hsMatrix44>& initL2B, bool searchAll) const;
         virtual size_t  NewDIMatrixIndex();
         void            SortSpan( uint32_t index, plPipeline *pipe );
         void            SortVisibleSpans(const std::vector<int16_t>& visList, plPipeline* pipe);
-        void            SortVisibleSpansPartial(const hsTArray<int16_t>& visList, plPipeline* pipe);
+        void            SortVisibleSpansPartial(const std::vector<int16_t>& visList, plPipeline* pipe);
         void            CleanUpGarbage() { IRemoveGarbage(); }
 
         /// Funky particle system functions
@@ -388,7 +387,7 @@ class plDrawableSpans : public plDrawable
         void    AssignEmitterToParticleSystem(uint32_t index, plParticleEmitter *emitter) override;
         
         /// SceneViewer only!
-        void            GetOrigGeometrySpans(size_t diIndex, hsTArray<plGeometrySpan *> &arrayToFill);
+        void            GetOrigGeometrySpans(size_t diIndex, std::vector<plGeometrySpan *> &arrayToFill);
         void            ClearAndSetMaterialCount(uint32_t count);
 };
 
