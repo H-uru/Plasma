@@ -281,7 +281,7 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, std::vec
 
     const float viewDist = GetViewDirWorld().InnerProduct(GetViewPositionWorld());
 
-    const hsTArray<plSpan *>    &spans = drawable->GetSpanArray();
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
 
     plProfile_BeginTiming(Harvest);
     if (visMgr)

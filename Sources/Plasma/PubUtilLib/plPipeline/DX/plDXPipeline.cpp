@@ -2303,7 +2303,7 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 #if MCN_BOUNDS_SPANS
     if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowAllBounds) )
     {
-        const hsTArray<plSpan *>    &spans = ds->GetSpanArray();
+        const std::vector<plSpan *>& spans = ds->GetSpanArray();
         for (int16_t idx : visList)
         {
             /// Add a span to our boundsIce to show this
@@ -2312,7 +2312,7 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
     }
     else if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowNormals) )
     {
-        const hsTArray<plSpan *>    &spans = ds->GetSpanArray();
+        const std::vector<plSpan *>& spans = ds->GetSpanArray();
         for (int16_t idx : visList)
         {
             /// Add a span to our boundsIce to show this
@@ -2756,7 +2756,7 @@ void    plDXPipeline::RenderSpans(plDrawableSpans *drawable, const std::vector<i
     bool            drewPatch = false;
     hsGMaterial     *material;
 
-    const hsTArray<plSpan *>&       spans = drawable->GetSpanArray();
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
 
     plProfile_IncCount(EmptyList, visList.empty() ? 1 : 0);
 
@@ -8540,7 +8540,7 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
 
     hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
 
-    const hsTArray<plSpan *>& spans = drawable->GetSpanArray();
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
     for (int16_t idx : visList)
     {
         if (blendBits.IsBitSet(idx))

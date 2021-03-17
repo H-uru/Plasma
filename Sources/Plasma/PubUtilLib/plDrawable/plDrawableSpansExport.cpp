@@ -79,8 +79,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 {
-    uint32_t  i, j, count;
-    
     // Make sure we're optimized before we write (should be tho)
 //  Optimize();
 
@@ -97,12 +95,12 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 
     /// Write out the material keys
     s->WriteLE32( fMaterials.GetCount() );
-    for( i = 0; i < fMaterials.GetCount(); i++ )
+    for (int i = 0; i < fMaterials.GetCount(); i++)
         mgr->WriteKey( s, fMaterials[ i ] );
 
     /// Write out the icicles
     s->WriteLE32( fIcicles.GetCount() );
-    for( i = 0; i < fIcicles.GetCount(); i++ )
+    for (int i = 0; i < fIcicles.GetCount(); i++)
         fIcicles[ i ].Write( s );
 
     /// Write out the patches
@@ -111,42 +109,41 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLE32(0);
 
     /// Write out the index table based on the pointer array
-    count = fSpans.GetCount();
-    s->WriteLE32( count );
-    for( i = 0; i < count; i++ )
+    s->WriteLE32((uint32_t)fSpans.size());
+    for (plSpan* span : fSpans)
     {
-        uint8_t   *icicle = (uint8_t *)fSpans[ i ], *base = (uint8_t *)fIcicles.AcquireArray();
-        j = (uint32_t)( icicle - base ) / sizeof( plIcicle );
+        uint8_t   *icicle = (uint8_t *)span, *base = (uint8_t *)fIcicles.AcquireArray();
+        uint32_t j = (uint32_t)( icicle - base ) / sizeof( plIcicle );
         s->WriteLE32( j );
     }
 
     /// Write out the common keys
-    for( i = 0; i < count; i++ )
+    for (plSpan* span : fSpans)
     {
         // The fog environ key
-        mgr->WriteKey( s, fSpans[ i ]->fFogEnvironment );
+        mgr->WriteKey(s, span->fFogEnvironment);
     }
 
     /// Write out the bounds and stuff
-    if( count > 0 )
+    if (!fSpans.empty())
     {
         fLocalBounds.Write(s);
         fWorldBounds.Write(s);
         fMaxWorldBounds.Write(s);
     }
 
-    for( i = 0; i < count; i++ )
+    for (plSpan* span : fSpans)
     {
-        if( fSpans[i]->fProps & plSpan::kPropHasPermaLights )
+        if (span->fProps & plSpan::kPropHasPermaLights)
         {
-            s->WriteLE32((uint32_t)fSpans[i]->fPermaLights.size());
-            for (plLightInfo* permaLight : fSpans[i]->fPermaLights)
+            s->WriteLE32((uint32_t)span->fPermaLights.size());
+            for (plLightInfo* permaLight : span->fPermaLights)
                 mgr->WriteKey(s, permaLight);
         }
-        if( fSpans[i]->fProps & plSpan::kPropHasPermaProjs )
+        if (span->fProps & plSpan::kPropHasPermaProjs)
         {
-            s->WriteLE32((uint32_t)fSpans[i]->fPermaProjs.size());
-            for (plLightInfo* permaProj : fSpans[i]->fPermaProjs)
+            s->WriteLE32((uint32_t)span->fPermaProjs.size());
+            for (plLightInfo* permaProj : span->fPermaProjs)
                 mgr->WriteKey(s, permaProj);
         }
     }
@@ -155,13 +152,12 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLE32( fSourceSpans.GetCount() );
     if( fSourceSpans.GetCount() > 0 )
     {
-        for( i = 0; i < fSourceSpans.GetCount(); i++ )
+        for (int i = 0; i < fSourceSpans.GetCount(); i++)
             fSourceSpans[ i ]->Write( s );
     }
 
-    count = fLocalToWorlds.size();
-    s->WriteLE32(count);
-    for( i = 0; i < count; i++ )
+    s->WriteLE32((uint32_t)fLocalToWorlds.size());
+    for (size_t i = 0; i < fLocalToWorlds.size(); i++)
     {
         fLocalToWorlds[i].Write(s);
         fWorldToLocals[i].Write(s);
@@ -172,21 +168,19 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
 
     // Write out the drawInterface index arrays
     s->WriteLE32( fDIIndices.GetCount() );
-    for( i = 0; i < fDIIndices.GetCount(); i++ )
+    for (int i = 0; i < fDIIndices.GetCount(); i++)
     {
         plDISpanIndex   *array = fDIIndices[ i ];
 
         s->WriteLE32( array->fFlags );
         s->WriteLE32( array->GetCount() );
-        for( j = 0; j < array->GetCount(); j++ )
+        for (uint32_t j = 0; j < array->GetCount(); j++)
             s->WriteLE32( (*array)[ j ] );
     }
 
     // Write the groups out
-    count = fGroups.GetCount();
-
-    s->WriteLE32(count);
-    for( i = 0; i < count; i++ )
+    s->WriteLE32(fGroups.GetCount());
+    for (int i = 0; i < fGroups.GetCount(); i++ )
     {
 #ifdef VERT_LOG
 
@@ -280,7 +274,7 @@ uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint3
         span->fFogEnvironment = geoSpan->fFogEnviron;
 
         /// Add to our source indices
-        fSpans.Append( span );
+        fSpans.emplace_back(span);
         fSpanSourceIndices.Append( spanIdx );
     }
 
@@ -298,8 +292,6 @@ uint32_t plDrawableSpans::AddDISpans(std::vector<plGeometrySpan *> &spans, uint3
 
 void    plDrawableSpans::Optimize()
 {
-    int     i;
-
     if( fOptimized )
         return;
 
@@ -311,7 +303,7 @@ void    plDrawableSpans::Optimize()
     IPackSourceSpans();
 
     /// Now that we're done with the source spans, get rid of them! (BLEAH!)
-    for( i = 0; i < fSourceSpans.GetCount(); i++ )
+    for (int i = 0; i < fSourceSpans.GetCount(); i++)
         delete fSourceSpans[ i ];
     fSourceSpans.Reset();
 
@@ -326,11 +318,11 @@ void    plDrawableSpans::Optimize()
     }
 
     /// Now we do a pass at the buffer groups, asking them to tidy up
-    for( i = 0; i < fGroups.GetCount(); i++ )
+    for (int i = 0; i < fGroups.GetCount(); i++)
         fGroups[ i ]->TidyUp();
 
     // Look to see if we have any materials we aren't using anymore.
-    for( i = 0; i < fMaterials.GetCount(); i++ )
+    for (int i = 0; i < fMaterials.GetCount(); i++)
     {
         ICheckToRemoveMaterial(i);
     }
@@ -340,9 +332,9 @@ void    plDrawableSpans::Optimize()
     // Make the space tree (hierarchical bounds).
     plSpaceTreeMaker maker;
     maker.Reset();
-    for( i = 0; i < GetNumSpans(); i++ )
+    for (plSpan* span : fSpans)
     {
-        maker.AddLeaf( fSpans[ i ]->fWorldBounds, fSpans[ i ]->fProps & plSpan::kPropNoDraw  );
+        maker.AddLeaf(span->fWorldBounds, span->fProps & plSpan::kPropNoDraw);
     }
     plSpaceTree* tree = maker.MakeTree();
     SetSpaceTree(tree);
@@ -671,14 +663,13 @@ void    plDrawableSpans::ISortSourceSpans()
 
     /// Use our pointer array to rebuild the icicle array (UUUUGLY)
     hsTArray<plIcicle>      tempIcicles;
-    plIcicle                *newIcicle;
 
     tempIcicles.SetCount( fIcicles.GetCount() );
 
-    for( i = 0, newIcicle = tempIcicles.AcquireArray();
-         i < fSpans.GetCount(); i++ )
+    plIcicle* newIcicle = tempIcicles.AcquireArray();
+    for (plSpan* span : fSpans)
     {
-        *newIcicle = *( (plIcicle *)fSpans[ i ] );
+        *newIcicle = *(plIcicle *)span;
         fSpans[ i ] = newIcicle;
         newIcicle++;    
     }

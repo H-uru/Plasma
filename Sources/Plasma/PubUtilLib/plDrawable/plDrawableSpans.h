@@ -63,6 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDrawableSpans_h
 #define _plDrawableSpans_h
 
+#include <vector>
+
 #include "hsAlignedAllocator.hpp"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
@@ -70,7 +72,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 #include "hsMatrix44.h"
 #include "plSpanTypes.h"
-#include <vector>
 
 class plPipeline;
 class plMessage;
@@ -152,7 +153,7 @@ class plDrawableSpans : public plDrawable
         hsTArray<plIcicle>          fIcicles;
         hsTArray<plParticleSpan>    fParticleSpans;
 
-        hsTArray<plSpan *>          fSpans;             // Pointers into the above two arrays
+        std::vector<plSpan *>       fSpans;             // Pointers into the above two arrays
         hsTArray<uint32_t>            fSpanSourceIndices; // For volatile drawables only
         hsTArray<plGBufferGroup *>  fGroups;
         hsTArray<plDISpanIndex*>    fDIIndices;
@@ -207,8 +208,8 @@ class plDrawableSpans : public plDrawable
         void    IAssignMatIdxToSpan( plSpan *span, hsGMaterial *mtl );
 
         // Create the sorting data for a given span and flag it as sortable
-        void            ICheckSpanForSortable( uint32_t idx ) { if( !(fSpans[idx]->fProps & plSpan::kPropFacesSortable) )IMakeSpanSortable(idx); }
-        void            IMakeSpanSortable( uint32_t index );
+        void            ICheckSpanForSortable(size_t idx) { if (!(fSpans[idx]->fProps & plSpan::kPropFacesSortable)) IMakeSpanSortable(idx); }
+        void            IMakeSpanSortable(size_t index);
 
         /// Bit vector build thingies
         virtual void            IBuildVectors();
@@ -280,10 +281,10 @@ class plDrawableSpans : public plDrawable
         virtual void            SetVisSet(plVisMgr* visMgr);
         void            SetDISpanVisSet(uint32_t diIndex, hsKeyedObject* reg, bool on) override;
 
-        virtual const plSpan                *GetSpan( uint32_t index ) const { return fSpans[ index ]; }
-        virtual const plSpan                *GetSpan( uint32_t diIndex, uint32_t index ) const { return fSpans[ (*fDIIndices[ diIndex ])[ index ] ]; }
-        virtual uint32_t                     GetNumSpans() const { return fSpans.GetCount(); }
-        virtual const hsTArray<plSpan *>    &GetSpanArray() const { return fSpans; }
+        virtual const plSpan*   GetSpan(size_t index) const { return fSpans[index]; }
+        virtual const plSpan*   GetSpan(uint32_t diIndex, uint32_t index) const { return fSpans[(*fDIIndices[diIndex])[index]]; }
+        virtual size_t          GetNumSpans() const { return fSpans.size(); }
+        virtual const std::vector<plSpan *>& GetSpanArray() const { return fSpans; }
 
         hsMatrix44* GetMatrixPalette(int baseMatrix) const { return const_cast<hsMatrix44*>(&fLocalToWorlds[baseMatrix]); }
         const hsMatrix44& GetPaletteMatrix(int i) const { return fLocalToWorlds[i]; }
