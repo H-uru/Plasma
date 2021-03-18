@@ -5322,7 +5322,7 @@ plLayerInterface* plDXPipeline::IPushOverBaseLayer(plLayerInterface* li)
     if( !li )
         return nullptr;
 
-    fOverLayerStack.Push(li);
+    fOverLayerStack.push_back(li);
 
     if( !fOverBaseLayer )
         return fOverBaseLayer = li;
@@ -5343,7 +5343,8 @@ plLayerInterface* plDXPipeline::IPopOverBaseLayer(plLayerInterface* li)
 
     fForceMatHandle = true;
 
-    plLayerInterface* pop = fOverLayerStack.Pop();
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
     fOverBaseLayer = fOverBaseLayer->Detach(pop);
 
     return pop;
@@ -5358,7 +5359,7 @@ plLayerInterface* plDXPipeline::IPushOverAllLayer(plLayerInterface* li)
     if( !li )
         return nullptr;
 
-    fOverLayerStack.Push(li);
+    fOverLayerStack.push_back(li);
 
     if( !fOverAllLayer )
     {
@@ -5384,7 +5385,8 @@ plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
 
     fForceMatHandle = true;
 
-    plLayerInterface* pop = fOverLayerStack.Pop();
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
     fOverAllLayer = fOverAllLayer->Detach(pop);
 
     return pop;
@@ -5404,7 +5406,7 @@ plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
 // Calculate the number of active piggy backs.
 int plDXPipeline::ISetNumActivePiggyBacks()
 {
-    return fActivePiggyBacks = std::min(static_cast<int>(fMaxPiggyBacks), fPiggyBackStack.GetCount());
+    return fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
 }
 
 // IPushProjPiggyBack //////////////////////////////////////////////////
@@ -5414,8 +5416,8 @@ void plDXPipeline::IPushProjPiggyBack(plLayerInterface* li)
     if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
         return;
 
-    fPiggyBackStack.Push(li);
-    fActivePiggyBacks = fPiggyBackStack.GetCount() - fMatPiggyBacks;
+    fPiggyBackStack.push_back(li);
+    fActivePiggyBacks = fPiggyBackStack.size() - fMatPiggyBacks;
     fForceMatHandle = true;
 }
 
@@ -5426,7 +5428,7 @@ void plDXPipeline::IPopProjPiggyBacks()
     if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
         return;
 
-    fPiggyBackStack.SetCount(fMatPiggyBacks);
+    fPiggyBackStack.resize(fMatPiggyBacks);
     ISetNumActivePiggyBacks();
     fForceMatHandle = true;
 }
@@ -5451,7 +5453,7 @@ void plDXPipeline::IPushPiggyBacks(hsGMaterial* mat)
             && IsDebugFlagSet(plPipeDbg::kFlagNoLightmaps))
             continue;
 
-        fPiggyBackStack.Push(mat->GetPiggyBack(i));
+        fPiggyBackStack.push_back(mat->GetPiggyBack(i));
         fMatPiggyBacks++;
     }
     ISetNumActivePiggyBacks();
@@ -5466,7 +5468,7 @@ void plDXPipeline::IPopPiggyBacks()
     if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
         return;
 
-    fPiggyBackStack.SetCount(fPiggyBackStack.GetCount() - fMatPiggyBacks);
+    fPiggyBackStack.resize(fPiggyBackStack.size() - fMatPiggyBacks);
     fMatPiggyBacks = 0;
 
     ISetNumActivePiggyBacks();
@@ -5703,11 +5705,10 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
             numActivePiggyBacks = fMaxLayersAtOnce - fCurrNumLayers;
         if( numActivePiggyBacks )
         {
-            int i;
-            for( i = 0; i < numActivePiggyBacks; i++ )
+            for (int i = 0; i < numActivePiggyBacks; i++)
             {
                 // Note that we take piggybacks off the end of fPiggyBackStack.
-                plLayerInterface* layPtr = IPushOverAllLayer( fPiggyBackStack[fPiggyBackStack.GetCount()-1-i] );
+                plLayerInterface* layPtr = IPushOverAllLayer(fPiggyBackStack[fPiggyBackStack.size() - 1 - i]);
                 if( !layPtr )
                     return -1;
                 ICompositeLayerState(fCurrNumLayers+i, layPtr);
@@ -9471,7 +9472,7 @@ bool plDXPipeline::ILoopOverLayers(const plRenderPrimFunc& inRender, hsGMaterial
             IRenderProjections(render);
 
         // Handle render of shadows onto geometry.
-        if( fShadows.GetCount() )
+        if (!fShadows.empty())
             IRenderShadowsOntoSpan(render, &span, material);
     }
 
@@ -11469,15 +11470,14 @@ void plDXPipeline::IPreprocessShadows()
     // casters). The overall number is low in spite of the possible
     // permutation explosion, because a slave is only generated
     // for a caster being affected (in range etc.) by a light.
-    int iSlave;
-    for( iSlave = 0; iSlave < fShadows.GetCount(); iSlave++ )
+    for (size_t iSlave = 0; iSlave < fShadows.size(); iSlave++)
     {
         plShadowSlave* slave = fShadows[iSlave];
         
         // Any trouble, remove it from the list for this frame.
         if( !IRenderShadowCaster(slave) )
         {
-            fShadows.Remove(iSlave);
+            fShadows.erase(fShadows.begin() + iSlave);
             iSlave--;
             continue;
         }
@@ -11494,13 +11494,12 @@ void plDXPipeline::IPreprocessShadows()
 // At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
 void plDXPipeline::IClearShadowSlaves()
 {
-    int i;
-    for( i = 0; i < fShadows.GetCount(); i++ )
+    for (plShadowSlave* shadow : fShadows)
     {
-        const plShadowCaster* caster = fShadows[i]->fCaster;
+        const plShadowCaster* caster = shadow->fCaster;
         caster->GetKey()->UnRefObject();
     }
-    fShadows.SetCount(0);
+    fShadows.clear();
 }
 
 
@@ -11515,10 +11514,9 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
 
     bool first = true;
 
-    int i;
-    for( i = 0; i < fShadows.GetCount(); i++ )
+    for (plShadowSlave* shadow : fShadows)
     {
-        if( slaveBits.IsBitSet(fShadows[i]->fIndex) )
+        if (slaveBits.IsBitSet(shadow->fIndex))
         {
             // This slave affects this span.
             if( first )
@@ -11533,17 +11531,17 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
             }
 
             // Now setup any state specific to this shadow slave.
-            ISetupShadowSlaveTextures(fShadows[i]);
+            ISetupShadowSlaveTextures(shadow);
 
-            int selfShadowNow = span->IsShadowBitSet(fShadows[i]->fIndex);
+            int selfShadowNow = span->IsShadowBitSet(shadow->fIndex);
 
             // We vary the shadow intensity when self shadowing (see below),
             // so we cache whether the shadow light is set for regular or
             // self shadowing intensity. If what we're doing now is different
             // than what we're currently set for, set it again.
-            if( selfShadowNow != fShadows[i]->fSelfShadowOn )
+            if (selfShadowNow != shadow->fSelfShadowOn)
             {
-                plDXLightRef* lRef = fLights.fShadowLights[fShadows[i]->fLightRefIdx];
+                plDXLightRef* lRef = fLights.fShadowLights[shadow->fLightRefIdx];
 
                 // We lower the power on self shadowing, because the artists like to
                 // crank up the shadow strength to huge values to get a darker shadow
@@ -11554,7 +11552,7 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
                 if( selfShadowNow )
                 {
                     plConst(float) kMaxSelfPower = 0.3f;
-                    float power = fShadows[i]->fPower > kMaxSelfPower ? (float)kMaxSelfPower : fShadows[i]->fPower;
+                    float power = shadow->fPower > kMaxSelfPower ? (float)kMaxSelfPower : shadow->fPower;
                     lRef->fD3DInfo.Diffuse.r 
                         = lRef->fD3DInfo.Diffuse.g 
                         = lRef->fD3DInfo.Diffuse.b
@@ -11565,16 +11563,16 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
                     lRef->fD3DInfo.Diffuse.r 
                         = lRef->fD3DInfo.Diffuse.g 
                         = lRef->fD3DInfo.Diffuse.b
-                        = fShadows[i]->fPower;
+                        = shadow->fPower;
                 }
                 fD3DDevice->SetLight(lRef->fD3DIndex, &lRef->fD3DInfo);
 
                 // record which our intensity is now set for.
-                fShadows[i]->fSelfShadowOn = selfShadowNow;
+                shadow->fSelfShadowOn = selfShadowNow;
             }
 
             // Enable the light.
-            fD3DDevice->LightEnable(fShadows[i]->fLightIndex, true);
+            fD3DDevice->LightEnable(shadow->fLightIndex, true);
             
 #ifdef HS_DEBUGGING
             DWORD nPass;
@@ -11589,7 +11587,7 @@ void plDXPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const 
                 render.RenderPrims();
             
             // Disable it again.
-            fD3DDevice->LightEnable(fShadows[i]->fLightIndex, false);
+            fD3DDevice->LightEnable(shadow->fLightIndex, false);
 
         }
     }
