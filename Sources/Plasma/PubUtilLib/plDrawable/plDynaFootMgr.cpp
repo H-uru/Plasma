@@ -60,26 +60,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static plRandom sRand;
 
-static constexpr uint32_t kFootPrintIDs[] =
+size_t plDynaFootMgr::INewDecal()
 {
-    plAvBrainHuman::RFootPrint,
-    plAvBrainHuman::LFootPrint
-};
-
-
-int plDynaFootMgr::INewDecal()
-{
-    int idx = fDecals.GetCount();
-    fDecals.Append(new plDynaSplot());
+    size_t idx = fDecals.size();
+    fDecals.emplace_back(new plDynaSplot);
 
     return idx;
 }
 
 plDynaFootMgr::plDynaFootMgr()
 {
-    fPartIDs.SetCount(std::size(kFootPrintIDs));
-    for (size_t i = 0; i < std::size(kFootPrintIDs); i++)
-        fPartIDs[i] = kFootPrintIDs[i];
+    fPartIDs = {
+        plAvBrainHuman::RFootPrint,
+        plAvBrainHuman::LFootPrint
+    };
 }
 
 plDynaFootMgr::~plDynaFootMgr()

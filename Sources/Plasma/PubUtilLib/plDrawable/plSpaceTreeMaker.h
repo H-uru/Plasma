@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plSpaceTreeMaker_inc
 #define plSpaceTreeMaker_inc
 
+#include <vector>
+
 #include "hsBounds.h"
-#include "hsTemplates.h"
 #include "hsBitVector.h"
 
 class hsRadixSortElem;
@@ -64,7 +65,7 @@ public:
 class plSpaceTreeMaker
 {
 protected:
-    hsTArray<plSpacePrepNode*>      fLeaves; // input
+    std::vector<plSpacePrepNode*>   fLeaves; // input
 
     hsRadixSortElem*                fSortScratch;
 
@@ -74,13 +75,13 @@ protected:
     int16_t                           fTreeSize;
 
     plSpacePrepNode*                INewSubRoot(const hsBounds3Ext& bnd);
-    void                            IFindBigList(hsTArray<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, hsTArray<plSpacePrepNode*>& giants, hsTArray<plSpacePrepNode*>& strimp);
-    void                            ISortList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis);
-    void                            ISplitList(hsTArray<plSpacePrepNode*>& nodes, const hsVector3& axis, hsTArray<plSpacePrepNode*>& lower, hsTArray<plSpacePrepNode*>& upper);
-    hsBounds3Ext                    IFindDistToCenterAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
-    plSpacePrepNode*                IMakeFatTreeRecur(hsTArray<plSpacePrepNode*>& nodes);
-    hsBounds3Ext                    IFindSplitAxis(hsTArray<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
-    plSpacePrepNode*                IMakeTreeRecur(hsTArray<plSpacePrepNode*>& nodes);
+    void                            IFindBigList(std::vector<plSpacePrepNode*>& nodes, float length, const hsVector3& axis, std::vector<plSpacePrepNode*>& giants, std::vector<plSpacePrepNode*>& strimp);
+    void                            ISortList(std::vector<plSpacePrepNode*>& nodes, const hsVector3& axis);
+    void                            ISplitList(std::vector<plSpacePrepNode*>& nodes, const hsVector3& axis, std::vector<plSpacePrepNode*>& lower, std::vector<plSpacePrepNode*>& upper);
+    hsBounds3Ext                    IFindDistToCenterAxis(std::vector<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
+    plSpacePrepNode*                IMakeFatTreeRecur(std::vector<plSpacePrepNode*>& nodes);
+    hsBounds3Ext                    IFindSplitAxis(std::vector<plSpacePrepNode*>& nodes, float& length, hsVector3& axis);
+    plSpacePrepNode*                IMakeTreeRecur(std::vector<plSpacePrepNode*>& nodes);
 
     void                            IMakeTree();
 

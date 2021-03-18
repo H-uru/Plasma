@@ -64,9 +64,9 @@ plDynaTorpedoVSMgr::~plDynaTorpedoVSMgr()
 {
 }
 
-int plDynaTorpedoVSMgr::INewDecal()
+size_t plDynaTorpedoVSMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
     plDynaRippleVS* rip = new plDynaRippleVS();
     rip->fC1U = fInitUVW.fX;
@@ -75,7 +75,7 @@ int plDynaTorpedoVSMgr::INewDecal()
     rip->fC1V = fInitUVW.fY;
     rip->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(rip);
+    fDecals.emplace_back(rip);
 
     return idx;
 }

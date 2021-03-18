@@ -281,7 +281,7 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, std::vec
 
     const float viewDist = GetViewDirWorld().InnerProduct(GetViewPositionWorld());
 
-    const hsTArray<plSpan *>    &spans = drawable->GetSpanArray();
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
 
     plProfile_BeginTiming(Harvest);
     if (visMgr)
@@ -387,9 +387,8 @@ bool plPipelineViewSettings::TestVisibleWorld(const plSceneObject* sObj)
         if (diIndex.IsMatrixOnly())
             continue;
 
-        const int numSpan = diIndex.GetCount();
-        int j;
-        for (j = 0; j < numSpan; j++)
+        const size_t numSpan = diIndex.GetCount();
+        for (size_t j = 0; j < numSpan; j++)
         {
             const plSpan* span = dr->GetSpan(diIndex[j]);
 

@@ -2303,7 +2303,7 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 #if MCN_BOUNDS_SPANS
     if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowAllBounds) )
     {
-        const hsTArray<plSpan *>    &spans = ds->GetSpanArray();
+        const std::vector<plSpan *>& spans = ds->GetSpanArray();
         for (int16_t idx : visList)
         {
             /// Add a span to our boundsIce to show this
@@ -2312,7 +2312,7 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
     }
     else if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowNormals) )
     {
-        const hsTArray<plSpan *>    &spans = ds->GetSpanArray();
+        const std::vector<plSpan *>& spans = ds->GetSpanArray();
         for (int16_t idx : visList)
         {
             /// Add a span to our boundsIce to show this
@@ -2327,12 +2327,11 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 #if MF_BOUNDS_LEVEL_ICE
     if( (fSettings.fBoundsDrawLevel >= 0) && ( drawable != fBoundsSpans ) )
     {
-        hsTArray<int16_t> bndList;
+        std::vector<int16_t> bndList;
         drawable->GetSpaceTree()->HarvestLevel(fSettings.fBoundsDrawLevel, bndList);
-        int i;
-        for( i = 0; i < bndList.GetCount(); i++ )
+        for (int16_t bnd : bndList)
         {
-            const hsBounds3Ext& nodeBounds = drawable->GetSpaceTree()->GetNode(bndList[i]).GetWorldBounds();
+            const hsBounds3Ext& nodeBounds = drawable->GetSpaceTree()->GetNode(bnd).GetWorldBounds();
             IAddBoundsSpan( fBoundsSpans, &nodeBounds, 0xff000000 | (0xf << ((fSettings.fBoundsDrawLevel % 6) << 2)) );
         }
     }
@@ -2757,7 +2756,7 @@ void    plDXPipeline::RenderSpans(plDrawableSpans *drawable, const std::vector<i
     bool            drewPatch = false;
     hsGMaterial     *material;
 
-    const hsTArray<plSpan *>&       spans = drawable->GetSpanArray();
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
 
     plProfile_IncCount(EmptyList, visList.empty() ? 1 : 0);
 
@@ -4760,9 +4759,9 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
         !(IsDebugFlagSet(plPipeDbg::kFlagNoApplyProjLights) && proj) &&
         !(IsDebugFlagSet(plPipeDbg::kFlagOnlyApplyProjLights) && !proj))
     {
-        hsTArray<plLightInfo*>& spanLights = span->GetLightList(proj);
+        std::vector<plLightInfo*>& spanLights = span->GetLightList(proj);
 
-        for( i = 0; i < spanLights.GetCount() && i < numLights; i++ )
+        for (i = 0; i < (int)spanLights.size() && i < numLights; i++)
         {
             ref = (plDXLightRef *)spanLights[i]->GetDeviceRef();
 
@@ -4783,7 +4782,7 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
         /// fade them out to nothing as they get closer to the bottom. This way, they fade
         /// out of existence instead of pop out.
 
-        if( i < spanLights.GetCount() - 1 && i > 0 )
+        if (i < (int)spanLights.size() - 1 && i > 0)
         {
             threshhold = span->GetLightStrength( i, proj );
             i--;
@@ -6600,10 +6599,9 @@ void plDXPipeline::ISetBumpMatrices(const plLayerInterface* layer, const plSpan*
 
     hsPoint3 spanPos = span->fWorldBounds.GetCenter();
     hsVector3 liDir(0,0,0);
-    int i;
-    const hsTArray<plLightInfo*>& spanLights = span->GetLightList(false);
+    const std::vector<plLightInfo*>& spanLights = span->GetLightList(false);
     float maxStrength = 0;
-    for( i = 0; i < spanLights.GetCount(); i++ )
+    for (size_t i = 0; i < spanLights.size(); i++)
     {
         float liWgt = span->GetLightStrength(i, false);
         // A light strength of 2.f means it's from a light group, and we haven't actually calculated
@@ -8535,14 +8533,14 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
     // lock the data buffer
 
     // First, figure out which buffers we need to blend.
-    const int kMaxBufferGroups = 20;
-    const int kMaxVertexBuffers = 20;
+    constexpr size_t kMaxBufferGroups = 20;
+    constexpr size_t kMaxVertexBuffers = 20;
     static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
     memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
 
     hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
 
-    const hsTArray<plSpan *>& spans = drawable->GetSpanArray();
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
     for (int16_t idx : visList)
     {
         if (blendBits.IsBitSet(idx))
@@ -8559,10 +8557,9 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
     // and blend into it. We'll lock the buffer once, and then for each span that
     // uses it, set the matrix palette and and then do the blend for that span.
     // When we've done all the spans for a group/buffer, we unlock it and move on.
-    int j;
-    for (int i = 0; i < kMaxBufferGroups; i++)
+    for (size_t i = 0; i < kMaxBufferGroups; i++)
     {
-        for( j = 0; j < kMaxVertexBuffers; j++ )
+        for (size_t j = 0; j < kMaxVertexBuffers; j++)
         {
             if( blendBuffers[i][j] )
             {
@@ -9308,8 +9305,7 @@ void plDXPipeline::IRenderAuxSpans(const plSpan& span)
 
     ISetLocalToWorld(hsMatrix44::IdentityMatrix(), hsMatrix44::IdentityMatrix());
 
-    int i;
-    for( i = 0; i < span.GetNumAuxSpans(); i++ )
+    for (size_t i = 0; i < span.GetNumAuxSpans(); i++)
         IRenderAuxSpan(span, span.GetAuxSpan(i));
 
     ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);

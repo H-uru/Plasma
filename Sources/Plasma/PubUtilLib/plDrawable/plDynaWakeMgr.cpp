@@ -67,9 +67,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plRandom.h"
 
 
-int plDynaWakeMgr::INewDecal()
+size_t plDynaWakeMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
+    size_t idx = fDecals.size();
 
     plDynaWake* wake = new plDynaWake();
     wake->fC1U = fInitUVW.fX;
@@ -78,7 +78,7 @@ int plDynaWakeMgr::INewDecal()
     wake->fC1V = fInitUVW.fY;
     wake->fC2V = (fInitUVW.fY - fFinalUVW.fY) / (fLifeSpan * fFinalUVW.fY);
 
-    fDecals.Append(wake);
+    fDecals.emplace_back(wake);
 
     return idx;
 }

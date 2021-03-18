@@ -53,7 +53,7 @@ public:
 protected:
 
     bool        IHandleEnableMsg(const plDynaDecalEnableMsg* enaMsg) override;
-    int         INewDecal() override;
+    size_t      INewDecal() override;
 
     virtual bool        IHandleShot(plBulletMsg* bull);
 

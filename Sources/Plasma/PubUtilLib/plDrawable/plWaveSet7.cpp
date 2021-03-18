@@ -376,17 +376,14 @@ void plWaveSet7::Write(hsStream* stream, hsResMgr* mgr)
 
     fState.Write(stream);
 
-    stream->WriteLE32(fShores.GetCount());
-    int i;
-    for( i = 0; i < fShores.GetCount(); i++ )
-    {
-        mgr->WriteKey(stream, fShores[i]);
-    }
-    stream->WriteLE32(fDecals.GetCount());
-    for( i = 0; i < fDecals.GetCount(); i++ )
-    {
-        mgr->WriteKey(stream, fDecals[i]);
-    }
+    stream->WriteLE32((uint32_t)fShores.size());
+    for (plSceneObject* shore : fShores)
+        mgr->WriteKey(stream, shore);
+
+    stream->WriteLE32((uint32_t)fDecals.size());
+    for (plSceneObject* decal : fDecals)
+        mgr->WriteKey(stream, decal);
+
     mgr->WriteKey(stream, fEnvMap);
 
     if( HasFlag(kHasRefObject) )
@@ -486,10 +483,9 @@ bool plWaveSet7::MsgReceive(plMessage* msg)
 
 bool plWaveSet7::IAnyBoundsVisible(plPipeline* pipe) const
 {
-    int i;
-    for( i = 0; i < fTargBnds.GetCount(); i++ )
+    for (const hsBounds3Ext& bounds : fTargBnds)
     {
-        if( pipe->TestVisibleWorld(fTargBnds[i]) )
+        if (pipe->TestVisibleWorld(bounds))
             return true;
     }
     return false;
@@ -509,10 +505,10 @@ bool plWaveSet7::IOnReceive(plGenRefMsg* refMsg)
         fEnvMap = plBitmap::ConvertNoRef(refMsg->GetRef());
         return true;
     case kRefShore:
-        fShores.Append(plSceneObject::ConvertNoRef(refMsg->GetRef()));
+        fShores.emplace_back(plSceneObject::ConvertNoRef(refMsg->GetRef()));
         return true;
     case kRefDecal:
-        fDecals.Append(plSceneObject::ConvertNoRef(refMsg->GetRef()));
+        fDecals.emplace_back(plSceneObject::ConvertNoRef(refMsg->GetRef()));
         return true;
     case kRefDecVShader:
         fDecalVShaders[refMsg->fWhich] = plShader::ConvertNoRef(refMsg->GetRef());
@@ -583,19 +579,19 @@ bool plWaveSet7::IOnReceive(plGenRefMsg* refMsg)
     case kRefDynaDecalMgr:
         {
             plDynaDecalMgr* dyna = plDynaDecalMgr::ConvertNoRef(refMsg->GetRef());
-            if( fDecalMgrs.Find(dyna) == fDecalMgrs.kMissingIndex )
+            if (std::find(fDecalMgrs.cbegin(), fDecalMgrs.cend(), dyna) == fDecalMgrs.cend())
             {
-                fDecalMgrs.Append(dyna);
+                fDecalMgrs.emplace_back(dyna);
             }
         }
         return true;
     case kRefBuoy:
         {
             plSceneObject* so = plSceneObject::ConvertNoRef(refMsg->GetRef());
-            if( fBuoys.Find(so) == fBuoys.kMissingIndex )
+            if (std::find(fBuoys.cbegin(), fBuoys.cend(), so) == fBuoys.cend())
             {
                 IShiftCenter(so);
-                fBuoys.Append(so);
+                fBuoys.emplace_back(so);
             }
         }
         return true;
@@ -619,17 +615,17 @@ bool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
     case kRefShore:
         {
             plSceneObject* shore = (plSceneObject*)refMsg->GetRef();
-            int idx = fShores.Find(shore);
-            if( idx != fShores.kMissingIndex )
-                fShores.Remove(idx);
+            auto iter = std::find(fShores.cbegin(), fShores.cend(), shore);
+            if (iter != fShores.cend())
+                fShores.erase(iter);
         }
         return true;
     case kRefDecal:
         {
             plSceneObject* decal = (plSceneObject*)refMsg->GetRef();
-            int idx = fDecals.Find(decal);
-            if( idx != fDecals.kMissingIndex )
-                fDecals.Remove(idx);
+            auto iter = std::find(fDecals.cbegin(), fDecals.cend(), decal);
+            if (iter != fDecals.cend())
+                fDecals.erase(iter);
         }
         return true;
     case kRefDecVShader:
@@ -701,17 +697,17 @@ bool plWaveSet7::IOnRemove(plGenRefMsg* refMsg)
     case kRefDynaDecalMgr:
         {
             plDynaDecalMgr* dyna = (plDynaDecalMgr*)refMsg->GetRef();
-            int idx = fDecalMgrs.Find(dyna);
-            if( fDecalMgrs.kMissingIndex != idx )
-                fDecalMgrs.Remove(idx);
+            auto iter = std::find(fDecalMgrs.cbegin(), fDecalMgrs.cend(), dyna);
+            if (iter != fDecalMgrs.cend())
+                fDecalMgrs.erase(iter);
         }
         return true;
     case kRefBuoy:
         {
             plSceneObject* so = (plSceneObject*)refMsg->GetRef();
-            int idx = fBuoys.Find(so);
-            if( fBuoys.kMissingIndex != idx )
-                fBuoys.Remove(idx);
+            auto iter = std::find(fBuoys.cbegin(), fBuoys.cend(), so);
+            if (iter != fBuoys.cend())
+                fBuoys.erase(iter);
         }
         return true;
     }
@@ -1067,12 +1063,11 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
 
 void plWaveSet7::IFloatBuoys(float dt)
 {
-    int i;
-    for( i = 0; i < fBuoys.GetCount(); i++ )
+    for (plSceneObject* buoy : fBuoys)
     {
-        if( fBuoys[i] && fBuoys[i]->GetSimulationInterface() && fBuoys[i]->GetSimulationInterface()->GetPhysical() && fBuoys[i]->GetDrawInterface() )
+        if (buoy && buoy->GetSimulationInterface() && buoy->GetSimulationInterface()->GetPhysical() && buoy->GetDrawInterface())
         {
-            IFloatBuoy(dt, fBuoys[i]);
+            IFloatBuoy(dt, buoy);
         }
     }
 }
@@ -1129,8 +1124,8 @@ void plWaveSet7::ICheckTargetMaterials()
     }
     if( targBnd.GetType() == kBoundsNormal )
     {
-        if( !fTargBnds.GetCount() )
-            fTargBnds.SetCount(1);
+        if (fTargBnds.empty())
+            fTargBnds.resize(1);
         
         plConst(float) kMaxWaveHeight(5.f);
 
@@ -3379,9 +3374,8 @@ void plWaveSet7::IUpdateFixedVShader(plPipeline* pipe, const hsMatrix44& l2w, co
 
 void plWaveSet7::ICheckShoreMaterials()
 {
-    int i;
-    for( i = 0; i < fShores.GetCount(); i++ )
-        ICheckShoreMaterial(fShores[i]);
+    for (plSceneObject* shore : fShores)
+        ICheckShoreMaterial(shore);
 }
 
 void plWaveSet7::ICheckShoreMaterial(plSceneObject* so)
@@ -3408,9 +3402,8 @@ void plWaveSet7::ICheckShoreMaterial(plSceneObject* so)
 
 void plWaveSet7::ICheckDecalMaterials()
 {
-    int i;
-    for( i = 0; i < fDecals.GetCount(); i++ )
-        ICheckDecalMaterial(fDecals[i]);
+    for (plSceneObject* decal : fDecals)
+        ICheckDecalMaterial(decal);
 }
 
 void plWaveSet7::ICheckDecalMaterial(plSceneObject* so)

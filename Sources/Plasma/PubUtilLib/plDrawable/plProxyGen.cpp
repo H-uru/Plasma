@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "plProxyGen.h"
 
@@ -54,9 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-static hsTArray<plDrawableSpans*>   fProxyDrawables;
-static hsTArray<hsGMaterial*>   fProxyMaterials;
-static uint32_t                   fProxyKeyCounter = 0;
+static std::vector<plDrawableSpans*>    fProxyDrawables;
+static std::vector<hsGMaterial*>        fProxyMaterials;
+static uint32_t                         fProxyKeyCounter = 0;
 
 plProxyGen::plProxyGen(const hsColorRGBA& amb, const hsColorRGBA& dif, float opac)
 :   fProxyMsgType(),
@@ -128,9 +130,8 @@ uint32_t plProxyGen::IGetProxyIndex() const
     plKey sceneNode = IGetNode();
     uint32_t drawType = IGetDrawableType();
 
-    int firstNil = -1;
-    int i;
-    for( i = 0; i < fProxyDrawables.GetCount(); i++ )
+    hsSsize_t firstNil = -1;
+    for (size_t i = 0; i < fProxyDrawables.size(); i++)
     {
         if( fProxyDrawables[i] )
         {
@@ -144,8 +145,9 @@ uint32_t plProxyGen::IGetProxyIndex() const
             firstNil = i;
     }
     if( firstNil < 0 )
-        firstNil = fProxyDrawables.GetCount();
-    fProxyDrawables.ExpandAndZero(firstNil+1);
+        firstNil = fProxyDrawables.size();
+    if (firstNil >= fProxyDrawables.size())
+        fProxyDrawables.resize(firstNil + 1);
 
     return firstNil;
 }
@@ -182,9 +184,8 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 
 hsGMaterial* plProxyGen::IFindProxyMaterial() const
 {
-    for (int i = 0; i < fProxyMaterials.GetCount(); i++)
+    for (hsGMaterial* mat : fProxyMaterials)
     {
-        hsGMaterial* mat = fProxyMaterials[i];
         if (!mat)
             continue;
 
@@ -212,7 +213,7 @@ hsGMaterial* plProxyGen::IGetProxyMaterial() const
 
     // Have to make a new one
     mat = IMakeProxyMaterial();
-    fProxyMaterials.Append(mat);
+    fProxyMaterials.emplace_back(mat);
     return mat;
 }
 
@@ -291,8 +292,8 @@ void plProxyGen::IDestroyProxy()
         GetKey()->Release(fProxyMat->GetKey());
         fProxyMat = nullptr;
     }
-    fProxyDrawables.Reset();
-    fProxyMaterials.Reset();
+    fProxyDrawables.clear();
+    fProxyMaterials.clear();
 }
 
 bool plProxyGen::MsgReceive(plMessage* msg)
@@ -324,7 +325,7 @@ bool plProxyGen::MsgReceive(plMessage* msg)
     {
         if( nodeRef->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
-            if( nodeRef->fWhich < fProxyDrawables.GetCount() )
+            if (nodeRef->fWhich < (hsSsize_t)fProxyDrawables.size())
                 fProxyDrawables[nodeRef->fWhich] = nullptr;
         }
         return true;
@@ -334,7 +335,7 @@ bool plProxyGen::MsgReceive(plMessage* msg)
     {
         if( genMsg->GetContext() & (plRefMsg::kOnDestroy | plRefMsg::kOnRemove) )
         {
-            if( genMsg->fWhich < fProxyMaterials.GetCount() )
+            if (genMsg->fWhich < (hsSsize_t)fProxyMaterials.size())
                 fProxyMaterials[genMsg->fWhich] = nullptr;
         }
         return true;

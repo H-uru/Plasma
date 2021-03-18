@@ -163,7 +163,7 @@ bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawa
 {
     plDISpanIndex spans = drawable->GetDISpans(diIndex);
 
-    if( spans.fFlags & plDISpanIndex::kMatrixOnly )
+    if (spans.IsMatrixOnly())
         return false;
 
     if( !fCompPB->GetInt(kTest) )
@@ -179,8 +179,7 @@ bool plLightGrpComponent::ISendItOff(plLightInfo* liInfo, plDrawableSpans* drawa
         liInfo->GetAffectedForced(drawable->GetSpaceTree(), litSpans, false);
 
         uint8_t liMsgType = liInfo->GetProjection() ? plDrawable::kMsgPermaProj : plDrawable::kMsgPermaLight;
-        int i;
-        for( i = 0; i < spans.GetCount(); i++ )
+        for (size_t i = 0; i < spans.GetCount(); i++)
         {
             if( litSpans.IsBitSet(spans[i]) )
             {

@@ -44,8 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plDynaDecalMgr_inc
 
 #include <map>
+#include <vector>
+
 #include "pnNetCommon/plSynchedObject.h"
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 
@@ -69,8 +70,8 @@ class hsResMgr;
 class plMessage;
 
 class plCutter;
-class plCutoutPoly;
-class plFlatGridMesh;
+struct plCutoutPoly;
+struct plFlatGridMesh;
 
 struct plDrawVisList;
 class plRenderLevel;
@@ -134,21 +135,21 @@ protected:
 
     plDynaDecalMap              fDecalMap;
 
-    hsTArray<plDynaDecal*>      fDecals;
+    std::vector<plDynaDecal*>   fDecals;
 
-    hsTArray<plGBufferGroup*>   fGroups;
+    std::vector<plGBufferGroup*> fGroups;
 
     plCutter*                   fCutter;
 
-    hsTArray<plAuxSpan*>        fAuxSpans;
+    std::vector<plAuxSpan*>     fAuxSpans;
 
     hsGMaterial*                fMatPreShade;
     hsGMaterial*                fMatRTShade;
 
-    hsTArray<plSceneObject*>    fTargets;
+    std::vector<plSceneObject*> fTargets;
 
-    hsTArray<plSceneObject*>    fPartyObjects;
-    hsTArray<plParticleSystem*> fParticles;
+    std::vector<plSceneObject*> fPartyObjects;
+    std::vector<plParticleSystem*> fParticles;
 
     float                    fPartyTime;
 
@@ -176,8 +177,8 @@ protected:
     float                    fMaxDepth;
     float                    fMaxDepthRange;
 
-    hsTArray<uint32_t>            fPartIDs;
-    hsTArray<plKey>             fNotifies;
+    std::vector<uint32_t>       fPartIDs;
+    std::vector<plKey>          fNotifies;
 
     const plPrintShape* IGetPrintShape(const plKey& objKey) const;
     const plPrintShape* IGetPrintShape(plArmatureMod* avMod, uint32_t id) const;
@@ -201,31 +202,31 @@ protected:
     uint16_t*             IGetBaseIdxPtr(const plAuxSpan* auxSpan) const;
     plDecalVtxFormat*   IGetBaseVtxPtr(const plAuxSpan* auxSpan) const;
 
-    virtual int         INewDecal() = 0;
+    virtual size_t      INewDecal() = 0;
     plDynaDecal*        IInitDecal(plAuxSpan* aux, double t, uint16_t numVerts, uint16_t numIdx);
-    void                IKillDecal(int i);
+    void                IKillDecal(size_t i);
     void                IUpdateDecals(double t);
 
-    void                ICountIncoming(hsTArray<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
-    bool                IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IConvertPolys(plAuxSpan* auxSpan, plDynaDecal* decal, hsTArray<plCutoutPoly>& src);
-    bool                IProcessPolys(plDrawableSpans* targ, int iSpan, double t, hsTArray<plCutoutPoly>& src);
-    bool                IHitTestPolys(hsTArray<plCutoutPoly>& src) const;
+    void                ICountIncoming(std::vector<plCutoutPoly>& src, uint16_t& numVerts, uint16_t& numIdx) const;
+    bool                IConvertPolysColor(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IConvertPolysAlpha(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IConvertPolysVS(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IConvertPolys(plAuxSpan* auxSpan, plDynaDecal* decal, std::vector<plCutoutPoly>& src);
+    bool                IProcessPolys(plDrawableSpans* targ, int iSpan, double t, std::vector<plCutoutPoly>& src);
+    bool                IHitTestPolys(std::vector<plCutoutPoly>& src) const;
 
     bool                IProcessGrid(plDrawableSpans* targ, int iSpan, hsGMaterial* mat, double t, const plFlatGridMesh& grid);
     bool                IConvertFlatGrid(plAuxSpan* auxSpan, plDynaDecal* decal, const plFlatGridMesh& grid) const;
     bool                ICutoutGrid(plDrawableSpans* drawable, int iSpan, hsGMaterial* mat, double secs);
     bool                IHitTestFlatGrid(const plFlatGridMesh& grid) const;
 
-    bool                ICutoutList(hsTArray<plDrawVisList>& drawVis, double secs);
+    bool                ICutoutList(std::vector<plDrawVisList>& drawVis, double secs);
     bool                ICutoutObject(plSceneObject* so, double secs);
     bool                ICutoutTargets(double secs);
 
     void                ISetDepthFalloff(); // Sets from current cutter settings.
 
-    virtual void        ICutoutCallback(const hsTArray<plCutoutPoly>& cutouts, bool hasWaterHeight=false, float waterHeight=0.f);
+    virtual void        ICutoutCallback(const std::vector<plCutoutPoly>& cutouts, bool hasWaterHeight=false, float waterHeight=0.f);
 
     hsGMaterial*        IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap);
 
@@ -276,9 +277,9 @@ public:
     void ConvertToEnvMap(plBitmap* envMap);
     const plMipmap* GetMipmap() const;
 
-    void AddNotify(const plKey& k) { fNotifies.Append(k); }
-    uint32_t GetNumNotifies() const { return fNotifies.GetCount(); }
-    const plKey& GetNotify(int i) const { return fNotifies[i]; }
+    void AddNotify(plKey k) { fNotifies.emplace_back(std::move(k)); }
+    size_t GetNumNotifies() const { return fNotifies.size(); }
+    const plKey& GetNotify(size_t i) const { return fNotifies[i]; }
 
     static void SetDisableAccumulate(bool on) { fDisableAccumulate = on; }
     static void ToggleDisableAccumulate() { fDisableAccumulate = !fDisableAccumulate; }

@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 hsBitVector     plGeometrySpan::fInstanceGroupIDFlags;
 uint32_t          plGeometrySpan::fHighestReadInstanceGroup = 0;
 
-hsTArray<hsTArray<plGeometrySpan *> *>  plGeometrySpan::fInstanceGroups;
+std::vector<std::vector<plGeometrySpan *> *> plGeometrySpan::fInstanceGroups;
 
 
 //// Constructor and Destructor //////////////////////////////////////////////
@@ -137,7 +137,7 @@ void    plGeometrySpan::ClearBuffers()
     // the array. If we are the last in the array, remove the array itself
     if (fInstanceRefs != nullptr)
     {
-        if( fInstanceRefs->GetCount() == 1 )
+        if (fInstanceRefs->size() == 1)
         {
             delete fInstanceRefs;
 
@@ -146,10 +146,10 @@ void    plGeometrySpan::ClearBuffers()
         }
         else
         {
-            int idx = fInstanceRefs->Find( this );
-            hsAssert( idx != fInstanceRefs->kMissingIndex, "Invalid instance ref data in plGeometrySpan::ClearBuffers()" );
+            auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+            hsAssert(iter != fInstanceRefs->cend(), "Invalid instance ref data in plGeometrySpan::ClearBuffers()");
 
-            fInstanceRefs->Remove( idx );
+            fInstanceRefs->erase(iter);
             removeData = false; // Don't remove data until we're the last one
         }
         fInstanceRefs = nullptr;
@@ -181,8 +181,7 @@ void    plGeometrySpan::ClearBuffers()
 
 void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
 {
-    hsTArray<plGeometrySpan *> *array;
-
+    std::vector<plGeometrySpan *> *array;
 
     ClearBuffers();
 
@@ -193,14 +192,14 @@ void    plGeometrySpan::MakeInstanceOf( const plGeometrySpan *instance )
         // Go find a new groupID
         instance->fInstanceGroupID = IAllocateNewGroupID();
 
-        instance->fInstanceRefs = array = new hsTArray<plGeometrySpan *>;
+        instance->fInstanceRefs = array = new std::vector<plGeometrySpan *>;
         // Go figure, it won't append the const version to the array...this is a cheat,
         // but then, so is making fInstanceRefs mutable :)
-        array->Append( (plGeometrySpan *)instance );
+        array->emplace_back((plGeometrySpan *)instance);
     }
 
     fInstanceGroupID = instance->fInstanceGroupID;
-    array->Append( this );
+    array->emplace_back(this);
     fInstanceRefs = array;
 
     /// Copy over the data
@@ -244,14 +243,14 @@ void plGeometrySpan::IUnShareData()
 void plGeometrySpan::BreakInstance()
 {
     hsAssert(fInstanceRefs, "Breaking instancing when I'm not instanced");
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
-    hsAssert(fInstanceRefs->GetCount(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
+    hsAssert(!fInstanceRefs->empty(), "Don't BreakInstance if I'm the last one, use UnInstance instead");
 
     fInstanceGroupID = IAllocateNewGroupID();
-    fInstanceRefs = new hsTArray<plGeometrySpan*>;
-    fInstanceRefs->Append(this);
+    fInstanceRefs = new std::vector<plGeometrySpan*>;
+    fInstanceRefs->emplace_back(this);
 
     IUnShareData();
 
@@ -261,13 +260,13 @@ void plGeometrySpan::BreakInstance()
 void plGeometrySpan::ChangeInstance(plGeometrySpan* newInstance)
 {
     hsAssert(fInstanceRefs, "Changing instancing when I'm not instanced");
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
 
     fInstanceGroupID = newInstance->fInstanceGroupID;
     fInstanceRefs = newInstance->fInstanceRefs;
-    fInstanceRefs->Append(this);
+    fInstanceRefs->emplace_back(this);
 
     fVertexData = newInstance->fVertexData;
     fMultColor = newInstance->fMultColor;
@@ -280,13 +279,13 @@ void plGeometrySpan::UnInstance()
 {
     hsAssert(fInstanceRefs, "UnInstancing a non-instance");
 
-    int idx = fInstanceRefs->Find(this);
-    hsAssert(idx != fInstanceRefs->kMissingIndex, "I'm not in my own instance refs list");
-    fInstanceRefs->Remove(idx);
+    auto iter = std::find(fInstanceRefs->cbegin(), fInstanceRefs->cend(), this);
+    hsAssert(iter != fInstanceRefs->cend(), "I'm not in my own instance refs list");
+    fInstanceRefs->erase(iter);
 
     // If we're the last one, we just take ownership of the shared data,
     // else we make our own copy of it.
-    if( !fInstanceRefs->GetCount() )
+    if (fInstanceRefs->empty())
     {
         delete fInstanceRefs;
     }
@@ -329,7 +328,7 @@ void    plGeometrySpan::IClearGroupID( uint32_t groupID )
 //// IGetInstanceGroup ///////////////////////////////////////////////////////
 //  This does the whole hash table thing lookup during read. If:
 //  - The group ID does not yet exist:
-//      - Allocates a new hsTArray, puts it into the hash table if expectedCount > 1,
+//      - Allocates a new vector, puts it into the hash table if expectedCount > 1,
 //        sets the groupID flag, and returns a pointer to the array.
 //  - The group ID does exist:
 //      - If the array count is less than expectedCount - 1, returns the array
@@ -340,23 +339,22 @@ void    plGeometrySpan::IClearGroupID( uint32_t groupID )
 //  we remove an entry, we decrement this ID until we hit a used pointer again;
 //  if we don't find one, we reset the array.
 
-hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount )
+std::vector<plGeometrySpan *> *plGeometrySpan::IGetInstanceGroup(uint32_t groupID, uint32_t expectedCount)
 {
-    hsTArray<plGeometrySpan *>  *array;
-
+    std::vector<plGeometrySpan *> *array;
 
     groupID--;      // Make it our array index
 
-    if (fInstanceGroups.GetCount() <= groupID || fInstanceGroups[groupID] == nullptr)
+    if (fInstanceGroups.size() <= groupID || fInstanceGroups[groupID] == nullptr)
     {
-        // Not yet in the list--make a new hsTArray
-        array = new hsTArray<plGeometrySpan *>;
+        // Not yet in the list--make a new vector
+        array = new std::vector<plGeometrySpan *>;
         fInstanceGroupIDFlags.SetBit( groupID, true );
         
         if( expectedCount > 1 )
         {
-            if( fInstanceGroups.GetCount() <= groupID )
-                fInstanceGroups.ExpandAndZero( groupID + 1 );
+            if (fInstanceGroups.size() <= groupID)
+                fInstanceGroups.resize(groupID + 1);
 
             fInstanceGroups[ groupID ] = array;
             if( fHighestReadInstanceGroup < groupID + 1 )
@@ -369,7 +367,7 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID
     {
         // In the list...get it, but are we done with it?
         array = fInstanceGroups[ groupID ];
-        if( expectedCount == array->GetCount() + 1 )    // I.E. next Append() will make it ==
+        if (expectedCount == array->size() + 1)    // I.E. next Append() will make it ==
         {
             // Done with it, remove from hash table
             fInstanceGroups[groupID] = nullptr;
@@ -379,7 +377,7 @@ hsTArray<plGeometrySpan *>  *plGeometrySpan::IGetInstanceGroup( uint32_t groupID
                    fHighestReadInstanceGroup-- );
 
             if( fHighestReadInstanceGroup == 0 )
-                fInstanceGroups.Reset();
+                fInstanceGroups.clear();
         }
 
         // Either way, return the array
@@ -583,7 +581,7 @@ void    plGeometrySpan::Read( hsStream *stream )
         uint32_t  count = stream->ReadLE32();
 
         fInstanceRefs = IGetInstanceGroup( fInstanceGroupID, count );
-        fInstanceRefs->Append( this );
+        fInstanceRefs->emplace_back(this);
         hsAssert(fInstanceRefs != nullptr, "Cannot locate fInstanceRefs on plGeometrySpan::Read()");
     }
 }
@@ -654,7 +652,7 @@ void    plGeometrySpan::Write( hsStream *stream )
     // Write the groupID as well as the count for instanceRefs. This way
     stream->WriteLE32( fInstanceGroupID );
     if( fInstanceGroupID != kNoGroupID )
-        stream->WriteLE32( fInstanceRefs->GetCount() );
+        stream->WriteLE32((uint32_t)fInstanceRefs->size());
     else
     {
         hsAssert(fInstanceRefs == nullptr, "Nil instanceRefs array but no group ID, non sequitur");
@@ -710,14 +708,14 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, hsCol
 {
     AddVertex( position, normal, 0, 0, uvPtrArray, weight1, weight2, weight3, indices );
 
-    int idx = fVertAccum.GetCount() - 1;
+    size_t idx = fVertAccum.size() - 1;
 
     TempVertex& vert = fVertAccum[idx];
     vert.fMultColor = multColor;
     vert.fAddColor = addColor;
     
 
-    return idx;
+    return uint16_t(idx);
 }
 
 uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint32_t hexColor, uint32_t specularColor, 
@@ -772,8 +770,8 @@ uint16_t  plGeometrySpan::AddVertex( hsPoint3 *position, hsPoint3 *normal, uint3
     vert.fMultColor.Set( 1.f, 1.f, 1.f, 1.f );
     vert.fAddColor.Set( 0, 0, 0, 1.f );
 
-    fVertAccum.Append( vert );
-    return fVertAccum.GetCount() - 1;
+    fVertAccum.emplace_back(vert);
+    return uint16_t(fVertAccum.size() - 1);
 }
 
 //// AddIndex Variations //////////////////////////////////////////////////////
@@ -782,16 +780,16 @@ void    plGeometrySpan::AddIndex( uint16_t index )
 {
     hsAssert( fCreating, "Calling AddIndex() on a non-creating plGeometrySpan!" );
 
-    fIndexAccum.Append( index );
+    fIndexAccum.emplace_back(index);
 }
 
 void    plGeometrySpan::AddTriIndices( uint16_t index1, uint16_t index2, uint16_t index3 )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
-    fIndexAccum.Append( index1 );
-    fIndexAccum.Append( index2 );
-    fIndexAccum.Append( index3 );
+    fIndexAccum.emplace_back(index1);
+    fIndexAccum.emplace_back(index2);
+    fIndexAccum.emplace_back(index3);
 }
 
 //// AddTriangle //////////////////////////////////////////////////////////////
@@ -817,16 +815,13 @@ void    plGeometrySpan::AddVertexArray( uint32_t count, hsPoint3 *positions, hsV
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
-
-    uint32_t      i, dest;
-
     // This test actually does work, even if it's bad form...
     hsAssert( GetNumUVs() == uvwsPerVtx, "Calling wrong AddVertex() for plGeometrySpan format" );
 
 
-    dest = fVertAccum.GetCount();
-    fVertAccum.SetCount( dest + count );
-    for( i = 0; i < count; i++, dest++ )
+    size_t dest = fVertAccum.size();
+    fVertAccum.resize(dest + count);
+    for (uint32_t i = 0; i < count; i++, dest++)
     {
         fVertAccum[ dest ].fPosition = positions[ i ];
         if (normals != nullptr)
@@ -860,13 +855,9 @@ void    plGeometrySpan::AddIndexArray( uint32_t count, uint16_t *indices )
 {
     hsAssert( fCreating, "Calling AddTriIndices() on a non-creating plGeometrySpan!" );
 
-
-    uint32_t      i, dest;
-
-
-    dest = fIndexAccum.GetCount();
-    fIndexAccum.SetCount( dest + count );
-    for( i = 0; i < count; i++, dest++ )
+    size_t dest = fIndexAccum.size();
+    fIndexAccum.resize(dest + count);
+    for (uint32_t i = 0; i < count; i++, dest++)
         fIndexAccum[ dest ] = indices[ i ];
 }
 
@@ -882,7 +873,7 @@ void    plGeometrySpan::EndCreate()
     hsAssert( fCreating, "Calling EndCreate() on a non-creating plGeometrySpan!" );
 
     /// If we're empty, just clean up and return
-    if( fVertAccum.GetCount() <= 0 )
+    if (fVertAccum.empty())
     {
         delete [] fVertexData;
         fVertexData = nullptr;
@@ -891,8 +882,8 @@ void    plGeometrySpan::EndCreate()
         delete [] fIndexData;
         fIndexData = nullptr;
         fNumIndices = 0;
-        fVertAccum.Reset();
-        fIndexAccum.Reset();
+        fVertAccum.clear();
+        fIndexAccum.clear();
 
         fCreating = false;
         return;
@@ -902,12 +893,12 @@ void    plGeometrySpan::EndCreate()
     bounds.MakeEmpty();
     size = GetVertexSize( fFormat );
 
-    if (fVertexData == nullptr || fNumVerts < fVertAccum.GetCount())
+    if (fVertexData == nullptr || fNumVerts < fVertAccum.size())
     {
         if (fVertexData != nullptr)
             delete [] fVertexData;
 
-        fNumVerts = fVertAccum.GetCount();
+        fNumVerts = fVertAccum.size();
         fVertexData = new uint8_t[ size * fNumVerts ];
 
         delete [] fMultColor;
@@ -922,7 +913,7 @@ void    plGeometrySpan::EndCreate()
         fSpecularRGBA = new uint32_t[ fNumVerts ];
     }
     else
-        fNumVerts = fVertAccum.GetCount();
+        fNumVerts = fVertAccum.size();
 
     for( i = 0, tempPtr = fVertexData; i < fNumVerts; i++ )
     {
@@ -978,29 +969,29 @@ void    plGeometrySpan::EndCreate()
     fWorldBounds.Transform(&fLocalToWorld);
 
     /// Convert indices
-    if( fIndexAccum.GetCount() == 0 )       // Allowed for patches
+    if (fIndexAccum.empty())       // Allowed for patches
     {
         delete [] fIndexData;
         fIndexData = nullptr;
         fNumIndices = 0;
     }
-    else if (fIndexData == nullptr || fNumIndices < fIndexAccum.GetCount())
+    else if (fIndexData == nullptr || fNumIndices < fIndexAccum.size())
     {
         if (fIndexData != nullptr)
             delete [] fIndexData;
 
-        fNumIndices = fIndexAccum.GetCount();
+        fNumIndices = fIndexAccum.size();
         fIndexData = new uint16_t[ fNumIndices ];
     }
     else
-        fNumIndices = fIndexAccum.GetCount();
+        fNumIndices = fIndexAccum.size();
 
     for( i = 0; i < fNumIndices; i++ )
         fIndexData[ i ] = fIndexAccum[ i ];
 
     /// Cleanup
-    fVertAccum.Reset();
-    fIndexAccum.Reset();
+    fVertAccum.clear();
+    fIndexAccum.clear();
     fCreating = false;
 }
 

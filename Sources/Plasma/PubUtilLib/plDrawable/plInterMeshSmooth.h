@@ -43,12 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plInterMeshSmooth_inc
 #define plInterMeshSmooth_inc
 
+#include <vector>
+
 class plDrawableSpans;
 struct hsPoint3;
 struct hsVector3;
-
-template<typename T>
-class hsTArray;
 
 class plSpanHandle
 {
@@ -62,10 +61,10 @@ class plInterMeshSmooth
 protected:
     float        fMinNormDot;
 
-    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, hsTArray<uint16_t>& edgeVerts);
-    void            FindEdges(hsTArray<plSpanHandle>& sets, hsTArray<uint16_t>* edgeVerts);
-    void            FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, hsTArray<uint16_t>& edgeVerts, hsTArray<uint16_t>& shareVtx, hsVector3& normAccum);
-    void            SetNormals(plSpanHandle& set, hsTArray<uint16_t>& shareVtx, hsVector3& norm);
+    void            FindEdges(uint32_t maxVtxIdx, uint32_t nTris, uint16_t* idxList, std::vector<uint16_t>& edgeVerts);
+    void            FindEdges(std::vector<plSpanHandle>& sets, std::vector<uint16_t>* edgeVerts);
+    void            FindSharedVerts(hsPoint3& searchPos, plSpanHandle& set, std::vector<uint16_t>& edgeVerts, std::vector<uint16_t>& shareVtx, hsVector3& normAccum);
+    void            SetNormals(plSpanHandle& set, std::vector<uint16_t>& shareVtx, hsVector3& norm);
     hsPoint3&       GetPosition(plSpanHandle& set, uint16_t idx);
     hsVector3&      GetNormal(plSpanHandle& set, uint16_t idx);
 
@@ -75,7 +74,7 @@ public:
     void        SetAngle(float degs);
     float    GetAngle() const; // returns degrees
 
-    void        SmoothNormals(hsTArray<plSpanHandle>& sets);
+    void        SmoothNormals(std::vector<plSpanHandle>& sets);
 };
 
 #endif // plInterMeshSmooth_inc

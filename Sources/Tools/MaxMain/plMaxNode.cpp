@@ -1569,17 +1569,15 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
         SetSpansBoneInfo(spanArray, boneMap->GetBaseMatrixIndex(drawable), boneMap->fNumBones);
         return;
     }
-    
-    int baseMatrix, i;
 
-    uint8_t numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
+    int numBones = (boneMap ? boneMap->fNumBones : NumBones()) + 1;
     plMaxNodeBase **boneArray = new plMaxNodeBase*[numBones];
 
     if (boneMap)
         boneMap->FillBoneArray(boneArray);
     else
     {
-        for (i = 0; i < NumBones(); i++)
+        for (int i = 0; i < NumBones(); i++)
         {
             boneArray[i] = GetBone(i);
         }
@@ -1590,9 +1588,9 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     initialB2W.SetCount(numBones);
     initialW2B.SetCount(numBones);
 
-    hsTArray<hsMatrix44>    initialL2B;
+    std::vector<hsMatrix44> initialL2B;
     hsTArray<hsMatrix44>    initialB2L;
-    initialL2B.SetCount(numBones);
+    initialL2B.resize(numBones);
     initialB2L.SetCount(numBones);
 
     initialB2W[0].Reset();
@@ -1601,7 +1599,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     initialL2B[0].Reset();
     initialB2L[0].Reset();
 
-    for( i = 1; i < numBones; i++ )
+    for (int i = 1; i < numBones; i++)
     {
         hsMatrix44 b2w;
         hsMatrix44 w2b;
@@ -1634,7 +1632,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     //      our transform as well as the bone's. If we've been flattened into world
     //      space, our transform is ident and we can share. This is the normal case
     //      in scene boning. So InitialBones have to match in count and matrix value.
-    baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nullptr);
+    uint32_t baseMatrix = drawable->FindBoneBaseMatrix(initialL2B, GetSwappableGeom() != nullptr);
     if( baseMatrix != uint32_t(-1) )
     {
         SetSpansBoneInfo(spanArray, baseMatrix, numBones);
@@ -1647,7 +1645,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     if (boneMap)
         boneMap->SetBaseMatrixIndex(drawable, baseMatrix);
 
-    for( i = 1; i < numBones; i++ )
+    for (int i = 1; i < numBones; i++)
     {
         plMaxNodeBase *bone = boneArray[i-1];
         plSceneObject* obj = bone->GetSceneObject();
@@ -1676,7 +1674,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
 
         if( di->GetNumDrawables() <= iDraw )
         {
-            uint32_t diIndex = drawable->NewDIMatrixIndex();
+            size_t diIndex = drawable->NewDIMatrixIndex();
             di->SetDrawableMeshIndex(iDraw, diIndex);
 
             di->SetDrawable(iDraw, drawable);
@@ -1729,11 +1727,11 @@ bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        spanArray.resize(spanArray.size() + disi.fIndices.GetCount());
-        for( i = 0; i < disi.fIndices.GetCount(); i++ )
+        spanArray.resize(spanArray.size() + disi.GetCount());
+        for (size_t i = 0; i < disi.GetCount(); i++)
         {
-            spanArray[ index ] = new plGeometrySpan;
-            spanArray[ index ]->MakeInstanceOf( dr->GetGeometrySpan( disi.fIndices[ i ] ) );
+            spanArray[index] = new plGeometrySpan;
+            spanArray[index]->MakeInstanceOf(dr->GetGeometrySpan(disi[i]));
 
             if( setVisDists )
             {
@@ -1741,7 +1739,7 @@ bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *
                 spanArray[ index ]->fMaxDist = (maxDist);
             }
 
-            dr->GetGeometrySpan(disi.fIndices[i])->fProps |= plGeometrySpan::kInstanced;
+            dr->GetGeometrySpan(disi[i])->fProps |= plGeometrySpan::kInstanced;
 
             spanArray[ index++ ]->fProps |= plGeometrySpan::kInstanced;
         }
@@ -1916,10 +1914,9 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
         plDISpanIndex disi = dr->GetDISpans(di->GetDrawableMeshIndex(iDraw));
 
-        int i;
-        for( i = 0; i < disi.fIndices.GetCount(); i++ )
+        for (size_t i = 0; i < disi.GetCount(); i++)
         {
-            spanArray.emplace_back(dr->GetGeometrySpan(disi.fIndices[i]));
+            spanArray.emplace_back(dr->GetGeometrySpan(disi[i]));
         }
 
         hsMatrix44 l2w = GetLocalToWorld44();

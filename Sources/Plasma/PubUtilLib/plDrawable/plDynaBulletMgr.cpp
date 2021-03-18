@@ -60,10 +60,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 
 
-int plDynaBulletMgr::INewDecal()
+size_t plDynaBulletMgr::INewDecal()
 {
-    int idx = fDecals.GetCount();
-    fDecals.Append(new plDynaSplot());
+    size_t idx = fDecals.size();
+    fDecals.emplace_back(new plDynaSplot);
 
     return idx;
 }

@@ -493,12 +493,8 @@ bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsM
         }
         if( span.fInstanceRefs )
         {
-            int j;
-            for( j = 0; j < span.fInstanceRefs->GetCount(); j++ )
-            {
-                plGeometrySpan* inst = (*span.fInstanceRefs)[j];
+            for (plGeometrySpan* inst : *span.fInstanceRefs)
                 inst->fProps |= plGeometrySpan::kDiffuseFoldedIn;
-            }
         }
     }
     else

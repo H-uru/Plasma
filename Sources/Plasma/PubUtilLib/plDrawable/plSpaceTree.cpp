@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static hsBitVector scratchTotVec;
 static hsBitVector scratchBitVec;
-static hsTArray<int16_t> scratchList;
-static hsTArray<hsRadixSort::Elem> scratchSort;
 
 plProfile_CreateCounter("Harvest Leaves", "Draw", HarvestLeaves);
 
@@ -134,9 +132,8 @@ void plSpaceTree::SetTreeFlag(uint16_t f, bool on)
         return;
     }
 
-    int i;
-    for( i = 0; i < fTree.GetCount(); i++ )
-        fTree[i].fFlags |= f;
+    for (plSpaceTreeNode& node : fTree)
+        node.fFlags |= f;
 }
 
 void plSpaceTree::ClearTreeFlag(uint16_t f)
@@ -144,9 +141,8 @@ void plSpaceTree::ClearTreeFlag(uint16_t f)
     if( IsEmpty() )
         return;
 
-    int i;
-    for( i = 0; i < fTree.GetCount(); i++ )
-        fTree[i].fFlags &= ~f;
+    for (plSpaceTreeNode& node : fTree)
+        node.fFlags &= ~f;
 }
 
 void plSpaceTree::SetLeafFlag(int16_t idx, uint16_t f, bool on)
@@ -459,7 +455,7 @@ void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsBitVec
     }
 }
 
-void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const
+void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, std::vector<int16_t>& list) const
 {
     if( subRoot.fFlags & plSpaceTreeNode::kDisabled )
         return;
@@ -472,7 +468,7 @@ void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsTArray
     if( subRoot.fFlags & plSpaceTreeNode::kIsLeaf )
     {
         plProfile_Inc(HarvestLeaves);
-        list.Append(subRoot.fLeafIndex);
+        list.emplace_back(subRoot.fLeafIndex);
     }
     else
     {
@@ -512,14 +508,14 @@ void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, hsBitVector& to
     }
 }
 
-void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, hsTArray<int16_t>& list) const
+void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, std::vector<int16_t>& list) const
 {
     if( subRoot.fFlags & plSpaceTreeNode::kDisabled )
         return;
     if( subRoot.fFlags & plSpaceTreeNode::kIsLeaf )
     {
         plProfile_Inc(HarvestLeaves);
-        list.Append(subRoot.fLeafIndex);
+        list.emplace_back(subRoot.fLeafIndex);
     }
     else
     {
@@ -537,9 +533,8 @@ void plSpaceTree::Read(hsStream* s, hsResMgr* mgr)
     fNumLeaves = s->ReadLE32();
 
     uint32_t n = s->ReadLE32();
-    fTree.SetCount(n);
-    int i;
-    for( i = 0; i < n; i++ )
+    fTree.resize(n);
+    for (uint32_t i = 0; i < n; i++)
         fTree[i].Read(s);
 }
 
@@ -551,17 +546,16 @@ void plSpaceTree::Write(hsStream* s, hsResMgr* mgr)
 
     s->WriteLE32(fNumLeaves);
 
-    s->WriteLE32(fTree.GetCount());
-    int i;
-    for( i = 0; i < fTree.GetCount(); i++ )
+    s->WriteLE32((uint32_t)fTree.size());
+    for (plSpaceTreeNode& node : fTree)
     {
-        fTree[i].Write(s);
+        node.Write(s);
     }
 }
 
 // Some debug only stuff
 
-void plSpaceTree::HarvestLevel(int level, hsTArray<int16_t>& list) const
+void plSpaceTree::HarvestLevel(int level, std::vector<int16_t>& list) const
 {
     if( !IsEmpty() )
     {
@@ -569,11 +563,11 @@ void plSpaceTree::HarvestLevel(int level, hsTArray<int16_t>& list) const
     }
 }
 
-void plSpaceTree::IHarvestLevel(int16_t subRoot, int level, int currLevel, hsTArray<int16_t>& list) const
+void plSpaceTree::IHarvestLevel(int16_t subRoot, int level, int currLevel, std::vector<int16_t>& list) const
 {
     if( level == currLevel )
     {
-        list.Append(subRoot);
+        list.emplace_back(subRoot);
         return;
     }
     if( IsLeaf(subRoot) )

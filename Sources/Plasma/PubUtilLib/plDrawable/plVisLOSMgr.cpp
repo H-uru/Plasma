@@ -211,8 +211,7 @@ bool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
 
     const bool isOpaque = !ds->GetRenderLevel().Level();
 
-    // FIXME: vector (spills over into all of drawable spans)
-    const hsTArray<plSpan *> spans = ds->GetSpanArray();
+    const std::vector<plSpan *>& spans = ds->GetSpanArray();
 
     bool retVal = false;
     for (const plSpaceHit& spaceHit : hits)

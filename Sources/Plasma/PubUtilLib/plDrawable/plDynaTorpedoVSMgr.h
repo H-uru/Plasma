@@ -57,7 +57,7 @@ public:
 protected:
     plWaveSetBase*      fWaveSetBase;
 
-    int                 INewDecal() override;
+    size_t              INewDecal() override;
 
     virtual bool        ICheckRTMat();
 
