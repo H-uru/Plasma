@@ -1194,22 +1194,22 @@ void    plDXPipeline::ISetCurrentDevice( D3DEnum_DeviceInfo *dev )
     // copy over supported device modes
     D3DEnum_ModeInfo currMode;
 
-    for(int i = 0; i < dev->fModes.Count(); i++)
+    for (const D3DEnum_ModeInfo& mode : dev->fModes)
     {
         // filter unusable modes
-        if(dev->fModes[i].fDDmode.Width < MIN_WIDTH || dev->fModes[i].fDDmode.Height < MIN_HEIGHT)
+        if (mode.fDDmode.Width < MIN_WIDTH || mode.fDDmode.Height < MIN_HEIGHT)
             continue;
 
-        currMode.fBitDepth = dev->fModes[i].fBitDepth;
-        currMode.fCanRenderToCubic = dev->fModes[i].fCanRenderToCubic;
-        currMode.fDDBehavior = dev->fModes[i].fDDBehavior;
-        currMode.fDepthFormats = dev->fModes[i].fDepthFormats;
-        currMode.fFSAATypes = dev->fModes[i].fFSAATypes;
-        memcpy(&currMode.fDDmode, &dev->fModes[i].fDDmode, sizeof(D3DDISPLAYMODE));
-        strcpy(currMode.fStrDesc, dev->fModes[i].fStrDesc);
-        currMode.fWindowed = dev->fModes[i].fWindowed;
+        currMode.fBitDepth = mode.fBitDepth;
+        currMode.fCanRenderToCubic = mode.fCanRenderToCubic;
+        currMode.fDDBehavior = mode.fDDBehavior;
+        currMode.fDepthFormats = mode.fDepthFormats;
+        currMode.fFSAATypes = mode.fFSAATypes;
+        memcpy(&currMode.fDDmode, &mode.fDDmode, sizeof(D3DDISPLAYMODE));
+        strcpy(currMode.fStrDesc, mode.fStrDesc);
+        currMode.fWindowed = mode.fWindowed;
 
-        fCurrentDevice->fModes.Push(currMode);
+        fCurrentDevice->fModes.emplace_back(currMode);
     }
 }
 
@@ -1302,7 +1302,6 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     /// First, create the D3D Device object
     D3DPRESENT_PARAMETERS       params;
     D3DDISPLAYMODE              dispMode;
-    int                         i;
 #ifdef DBG_WRITE_FORMATS
     char                        msg[ 256 ];
 #endif // DBG_WRITE_FORMATS
@@ -1347,18 +1346,20 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     params.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 #ifdef DBG_WRITE_FORMATS
-    for( i = 0; i < fCurrentMode->fDepthFormats.GetCount(); i++ )
+    for (D3DFORMAT fmt : fCurrentMode->fDepthFormats)
     {
-        sprintf( msg, "-- Valid depth buffer format: %s", IGetDXFormatName( fCurrentMode->fDepthFormats[ i ] ) );
+        sprintf(msg, "-- Valid depth buffer format: %s", IGetDXFormatName(fmt));
         hsDebugMessage( msg, 0 );
     }
 #endif
 
     // Attempt to find the closest AA setting we can
     params.MultiSampleType = D3DMULTISAMPLE_NONE;
-    for( i = fSettings.fNumAASamples; i >= 2; i-- )
+    for (uint8_t i = fSettings.fNumAASamples; i >= 2; i--)
     {
-        if( fCurrentMode->fFSAATypes.Find( (D3DMULTISAMPLE_TYPE)i ) != fCurrentMode->fFSAATypes.kMissingIndex )
+        auto iter = std::find(fCurrentMode->fFSAATypes.cbegin(), fCurrentMode->fFSAATypes.cend(),
+                              (D3DMULTISAMPLE_TYPE)i);
+        if (iter != fCurrentMode->fFSAATypes.cend())
         {
             params.MultiSampleType = (D3DMULTISAMPLE_TYPE)i;
             break;
@@ -1443,8 +1444,8 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
     // Okay, we're not using the stencil buffer right now, and it's bringing out
     // some painful driver bugs on the GeForce2. So rather than go out of our way
     // looking for trouble, we're going to look for a depth buffer with NO STENCIL.
-    int i;
-    for( i = fCurrentMode->fDepthFormats.GetCount() - 1; i >= 0; i-- )
+    hsSsize_t i;
+    for (i = fCurrentMode->fDepthFormats.size() - 1; i >= 0; i--)
     {
         D3DFORMAT fmt = fCurrentMode->fDepthFormats[ i ];
         if( (fmt == D3DFMT_D32)
@@ -1466,7 +1467,7 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
     }
     if( i < 0 )
     {
-        for( i = fCurrentMode->fDepthFormats.GetCount() - 1; i >= 0; i-- )
+        for (i = fCurrentMode->fDepthFormats.size() - 1; i >= 0; i--)
         {
             D3DFORMAT fmt = fCurrentMode->fDepthFormats[ i ];
             if( fmt == D3DFMT_D15S1 || fmt == D3DFMT_D24X4S4 || fmt == D3DFMT_D24S8 )
@@ -1875,16 +1876,13 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     params->BackBufferFormat = D3DFMT_X8R8G8B8;
     fColorDepth = fDefaultPipeParams.ColorDepth;
 
-    int i;
-    hsTArray<D3DEnum_ModeInfo> *modes = &fCurrentDevice->fModes;
-    for( i = 0; i < modes->Count(); i++ )
+    for (D3DEnum_ModeInfo& mode : fCurrentDevice->fModes)
     {
-        D3DEnum_ModeInfo *mode = &(*modes)[i];
-        if(mode->fDDmode.Width == params->BackBufferWidth &&
-            mode->fDDmode.Height == params->BackBufferHeight &&
-            mode->fBitDepth == 32 )
+        if (mode.fDDmode.Width == params->BackBufferWidth &&
+            mode.fDDmode.Height == params->BackBufferHeight &&
+            mode.fBitDepth == 32)
         {
-            ISetCurrentMode(&(*modes)[i]);
+            ISetCurrentMode(&mode);
             break;
         }
     }
@@ -1897,7 +1895,9 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     fSettings.fNumAASamples = 0;
     for( int i = fDefaultPipeParams.AntiAliasingAmount; i >= 2; i-- )
     {
-        if( fCurrentMode->fFSAATypes.Find( (D3DMULTISAMPLE_TYPE)i ) != fCurrentMode->fFSAATypes.kMissingIndex )
+        auto iter = std::find(fCurrentMode->fFSAATypes.cbegin(), fCurrentMode->fFSAATypes.cend(),
+                              (D3DMULTISAMPLE_TYPE)i);
+        if (iter != fCurrentMode->fFSAATypes.cend())
         {
             fSettings.fNumAASamples = i;
             params->MultiSampleType = (D3DMULTISAMPLE_TYPE)i;
@@ -2012,24 +2012,24 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
     }
 
     fVSync = VSync;
-    int i = 0;
-    hsTArray<D3DEnum_ModeInfo> *modes = &fCurrentDevice->fModes;
+    size_t iMode = 0;
+    std::vector<D3DEnum_ModeInfo>& modes = fCurrentDevice->fModes;
     // check for supported resolution if we're not going to windowed mode
     if(!Windowed)
     {
-        for( i = 0; i < modes->Count(); i++ )
+        for (iMode = 0; iMode < modes.size(); iMode++)
         {
-            D3DEnum_ModeInfo *mode = &(*modes)[i];
-            if(mode->fDDmode.Width == Width &&
-                mode->fDDmode.Height == Height &&
-                mode->fBitDepth == ColorDepth )
+            D3DEnum_ModeInfo& mode = modes[iMode];
+            if (mode.fDDmode.Width == Width &&
+                mode.fDDmode.Height == Height &&
+                mode.fBitDepth == ColorDepth)
             {
-                ISetCurrentMode(&(*modes)[i]);
+                ISetCurrentMode(&mode);
                 break;
             }
         }
     }
-    if(i != modes->Count())
+    if (iMode != modes.size())
     {
         // Set Resolution
         fOrigWidth = Width;
@@ -2050,9 +2050,11 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
     fSettings.fNumAASamples = 0;
     // Attempt to find the closest AA setting we can
     fSettings.fPresentParams.MultiSampleType = D3DMULTISAMPLE_NONE;
-    for( i = NumAASamples; i >= 2; i-- )
+    for (int i = NumAASamples; i >= 2; i--)
     {
-        if( fCurrentMode->fFSAATypes.Find( (D3DMULTISAMPLE_TYPE)i ) != fCurrentMode->fFSAATypes.kMissingIndex )
+        auto iter = std::find(fCurrentMode->fFSAATypes.cbegin(), fCurrentMode->fFSAATypes.cend(),
+                              (D3DMULTISAMPLE_TYPE)i);
+        if (iter != fCurrentMode->fFSAATypes.cend())
         {
             fSettings.fNumAASamples = i;
             fSettings.fPresentParams.MultiSampleType = (D3DMULTISAMPLE_TYPE)i;
@@ -2087,47 +2089,45 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
     return;
 }
 
-void plDXPipeline::GetSupportedColorDepths(hsTArray<int> &ColorDepths)
+void plDXPipeline::GetSupportedColorDepths(std::vector<int> &ColorDepths)
 {
-    int i, j;
     // iterate through display modes
-    for( i = 0; i < fCurrentDevice->fModes.Count(); i++ )
+    for (const D3DEnum_ModeInfo& modeInfo : fCurrentDevice->fModes)
     {
         // Check to see if color depth has been added already
-        for( j = 0; j < ColorDepths.Count(); j++ )
-        {
-            if( fCurrentDevice->fModes[i].fBitDepth == ColorDepths[i] )
-                break;
-        }
-        if(j == ColorDepths.Count())
+        auto iter = std::find_if(ColorDepths.cbegin(), ColorDepths.cend(),
+                                 [&modeInfo](int depth) {
+                                     return modeInfo.fBitDepth == depth;
+                                 });
+        if (iter == ColorDepths.cend())
         {
             //add it
-            ColorDepths.Push( fCurrentDevice->fModes[i].fBitDepth );
+            ColorDepths.emplace_back(modeInfo.fBitDepth);
         }
     }
 }
 
 void plDXPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth  )
 {
-    int i, j;
     std::vector<plDisplayMode> supported;
     // loop through display modes
-    for( i = 0; i < fCurrentDevice->fModes.Count(); i++ )
+    for (const D3DEnum_ModeInfo& modeInfo : fCurrentDevice->fModes)
     {
-        if( fCurrentDevice->fModes[i].fBitDepth == ColorDepth )
+        if (modeInfo.fBitDepth == ColorDepth)
         {
             // check for duplicate mode
+            size_t j;
             for( j = 0; j < supported.size(); j++ )
             {
-                if(supported[j].Width == fCurrentDevice->fModes[i].fDDmode.Width && supported[j].Height == fCurrentDevice->fModes[i].fDDmode.Height)
+                if (supported[j].Width == modeInfo.fDDmode.Width && supported[j].Height == modeInfo.fDDmode.Height)
                     break;
             }
             if(j == supported.size())
             {
                 // new mode, add it
                 plDisplayMode mode;
-                mode.Width = fCurrentDevice->fModes[i].fDDmode.Width;
-                mode.Height = fCurrentDevice->fModes[i].fDDmode.Height;
+                mode.Width = modeInfo.fDDmode.Width;
+                mode.Height = modeInfo.fDDmode.Height;
                 mode.ColorDepth = ColorDepth;
                 supported.push_back(mode);
             }
@@ -2142,23 +2142,21 @@ int plDXPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 {
     int max = 0;
     D3DEnum_ModeInfo *pCurrMode = nullptr;
-    hsTArray<D3DEnum_ModeInfo> *modes = &fCurrentDevice->fModes;
-    for(int i = 0; i < modes->Count(); i++ )
+    for (D3DEnum_ModeInfo& mode : fCurrentDevice->fModes)
     {
-        D3DEnum_ModeInfo *mode = &(*modes)[i];
-        if( mode->fDDmode.Width == Width &&
-            mode->fDDmode.Height == Height &&
-            mode->fBitDepth == ColorDepth )
+        if (mode.fDDmode.Width == Width &&
+            mode.fDDmode.Height == Height &&
+            mode.fBitDepth == ColorDepth)
         {
-            pCurrMode = mode;
+            pCurrMode = &mode;
         }
     }
     if(pCurrMode)
     {
-        for(int i = 0; i < pCurrMode->fFSAATypes.Count(); i++)
+        for (D3DMULTISAMPLE_TYPE fsaaType : pCurrMode->fFSAATypes)
         {
-            if(pCurrMode->fFSAATypes[i] > max)
-                max = pCurrMode->fFSAATypes[i];
+            if (fsaaType > max)
+                max = fsaaType;
         }
     }
     return max;
@@ -4623,14 +4621,11 @@ bool  plDXPipeline::StencilGetCaps( plStencilCaps *caps )
 {
     hsAssert(caps != nullptr, "Invalid pointer to StencilGetCaps()");
 
-    int     i;
-
-    
     /// Find supported depths
     caps->fSupportedDepths = 0;
-    for( i = 0; i < fCurrentMode->fDepthFormats.GetCount(); i++ )
+    for (D3DFORMAT fmt : fCurrentMode->fDepthFormats)
     {
-        switch( fCurrentMode->fDepthFormats[ i ] )
+        switch (fmt)
         {
             case D3DFMT_D15S1:      caps->fSupportedDepths |= plStencilCaps::kDepth1Bit; break;
             case D3DFMT_D24X4S4:    caps->fSupportedDepths |= plStencilCaps::kDepth4Bits; break;

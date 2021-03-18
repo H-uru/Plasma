@@ -617,7 +617,7 @@ public:
 
     bool            ManagedAlloced() const { return fManagedAlloced; }
 
-    virtual void    GetSupportedColorDepths(hsTArray<int> &ColorDepths);
+    virtual void    GetSupportedColorDepths(std::vector<int> &ColorDepths);
     void            GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32) override;
     int             GetMaxAnisotropicSamples() override;
     int             GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
