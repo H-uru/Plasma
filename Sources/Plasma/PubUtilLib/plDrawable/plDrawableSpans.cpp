@@ -1307,7 +1307,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
             // kill ourselves entirely.
             if (fDIIndices.size() < 2 && !(diMsg->fFlags & plDISpansMsg::kLeaveEmptyDrawable))
             {
-                hsAssert(diMsg->fIndex + 1 == fDIIndices.size(), "Deleting the an unknown set of indices");
+                hsAssert(diMsg->fIndex + 1 == fDIIndices.size(), "Deleting an unknown set of indices");
                 if( GetSceneNode() )
                 {
                     GetSceneNode()->Release(GetKey());
@@ -3724,4 +3724,3 @@ void plDrawableSpans::ClearAndSetMaterialCount(uint32_t count)
 
     fMaterials.assign(count, nullptr);
 }
-
