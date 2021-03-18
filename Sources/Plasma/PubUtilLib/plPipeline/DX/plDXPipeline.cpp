@@ -76,7 +76,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plQuality.h"
 #include "hsResMgr.h"
 #include "hsSIMD.h"
-#include "hsTemplates.h"
 #include "hsTimer.h"
 #include "plTweak.h"
 
@@ -134,8 +133,8 @@ int mfCurrentTest = 100;
 //#define MF_ENABLE_HACKOFF
 #ifdef MF_ENABLE_HACKOFF
 //WHITE
-static hsTArray<plRenderTarget*> hackOffscreens;
-uint32_t doHackPlate = uint32_t(-1);
+static std::vector<plRenderTarget*> hackOffscreens;
+size_t doHackPlate = size_t(-1);
 #endif // MF_ENABLE_HACKOFF
 
 uint32_t  fDbgSetupInitFlags;     // HACK temp only
@@ -1527,44 +1526,42 @@ bool plDXPipeline::ICreateNormalSurfaces()
 // sizes. Primary user of these pools is the shadow generation.
 void plDXPipeline::IReleaseRenderTargetPools()
 {
-    int i;
-
-    for( i = 0; i < fRenderTargetPool512.GetCount(); i++ )
+    for (size_t i = 0; i < fRenderTargetPool512.size(); i++)
     {
         delete fRenderTargetPool512[i];
         fRenderTargetPool512[i] = nullptr;
     }
-    fRenderTargetPool512.SetCount(0);
+    fRenderTargetPool512.clear();
 
-    for( i = 0; i < fRenderTargetPool256.GetCount(); i++ )
+    for (size_t i = 0; i < fRenderTargetPool256.size(); i++)
     {
         delete fRenderTargetPool256[i];
         fRenderTargetPool256[i] = nullptr;
     }
-    fRenderTargetPool256.SetCount(0);
+    fRenderTargetPool256.clear();
 
-    for( i = 0; i < fRenderTargetPool128.GetCount(); i++ )
+    for (size_t i = 0; i < fRenderTargetPool128.size(); i++)
     {
         delete fRenderTargetPool128[i];
         fRenderTargetPool128[i] = nullptr;
     }
-    fRenderTargetPool128.SetCount(0);
+    fRenderTargetPool128.clear();
 
-    for( i = 0; i < fRenderTargetPool64.GetCount(); i++ )
+    for (size_t i = 0; i < fRenderTargetPool64.size(); i++)
     {
         delete fRenderTargetPool64[i];
         fRenderTargetPool64[i] = nullptr;
     }
-    fRenderTargetPool64.SetCount(0);
+    fRenderTargetPool64.clear();
 
-    for( i = 0; i < fRenderTargetPool32.GetCount(); i++ )
+    for (size_t i = 0; i < fRenderTargetPool32.size(); i++)
     {
         delete fRenderTargetPool32[i];
         fRenderTargetPool32[i] = nullptr;
     }
-    fRenderTargetPool32.SetCount(0);
+    fRenderTargetPool32.clear();
 
-    for( i = 0; i < kMaxRenderTargetNext; i++ )
+    for (size_t i = 0; i < kMaxRenderTargetNext; i++)
     {
         fRenderTargetNext[i] = 0;
         fBlurScratchRTs[i] = nullptr;
@@ -1572,7 +1569,7 @@ void plDXPipeline::IReleaseRenderTargetPools()
     }
 
 #ifdef MF_ENABLE_HACKOFF
-    hackOffscreens.Reset();
+    hackOffscreens.clear();
 #endif // MF_ENABLE_HACKOFF
 }
 
@@ -1692,7 +1689,7 @@ void    plDXPipeline::IReleaseDeviceObjects()
 
 #ifdef MF_ENABLE_HACKOFF
     //WHITE
-    hackOffscreens.SetCount(0);
+    hackOffscreens.clear();
 #endif // MF_ENABLE_HACKOFF
 
     if( fULutTextureRef )
@@ -2902,7 +2899,7 @@ void    plDXPipeline::IAddBoundsSpan( plDrawableSpans *ice, const hsBounds3Ext *
 
     newSpan->EndCreate();
 
-    fBSpansToDelete.Append( ice->AppendDISpans( spanArray ) );
+    fBSpansToDelete.emplace_back(ice->AppendDISpans(spanArray));
 
 #endif
 }
@@ -2948,7 +2945,7 @@ void    plDXPipeline::IAddNormalsSpan( plDrawableSpans *ice, plIcicle *span, plD
 
     newSpan->EndCreate();
 
-    fBSpansToDelete.Append( ice->AppendDISpans( spanArray ) );
+    fBSpansToDelete.emplace_back(ice->AppendDISpans(spanArray));
 
 #endif
 }
@@ -3034,15 +3031,14 @@ void    plDXPipeline::RenderScreenElements()
 
 
 #if MCN_BOUNDS_SPANS
-    if( fBoundsSpans && fBSpansToDelete.GetCount() > 0 )
+    if (fBoundsSpans && !fBSpansToDelete.empty())
     {
         Draw( fBoundsSpans );
         
-        int     i;
-        for( i = 0; i < fBSpansToDelete.GetCount(); i++ )
-            fBoundsSpans->RemoveDISpans( fBSpansToDelete[ i ] );
+        for (uint32_t bspan : fBSpansToDelete)
+            fBoundsSpans->RemoveDISpans(bspan);
 
-        fBSpansToDelete.Reset();
+        fBSpansToDelete.clear();
     }
 #endif
     if( fView.HasCullProxy())
@@ -3051,7 +3047,7 @@ void    plDXPipeline::RenderScreenElements()
 #ifdef MF_ENABLE_HACKOFF
     //WHITE
     static plPlate* hackPlate = nullptr;
-    if( doHackPlate < hackOffscreens.GetCount() )
+    if (doHackPlate < hackOffscreens.size())
     {
         if( !hackPlate )
         {
@@ -3061,7 +3057,7 @@ void    plDXPipeline::RenderScreenElements()
     }
     if( hackPlate )
     {
-        if( doHackPlate < hackOffscreens.GetCount() )
+        if (doHackPlate < hackOffscreens.size())
         {
             hsGMaterial* hackMat = hackPlate->GetMaterial();
             plLayer* lay = plLayer::ConvertNoRef(hackMat->GetLayer(0));
@@ -3124,7 +3120,7 @@ void    plDXPipeline::RenderScreenElements()
 bool plDXPipeline::EndRender()
 {
 #ifdef MF_ENABLE_HACKOFF
-    hackOffscreens.SetCount(0);
+    hackOffscreens.clear();
 #endif // MF_ENABLE_HACKOFF
 
     IBottomLayer();
@@ -4739,8 +4735,8 @@ void    plDXPipeline::IEnableLights( plSpan *span )
 void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
 {
     int                 i, startScale;
-    static hsBitVector  newFlags;   
-    static hsTArray<plLightInfo*>   onLights;
+    static hsBitVector  newFlags;
+    static std::vector<plLightInfo*> onLights;
     plDXLightRef        *ref;
     float               threshhold, overHold = 0.3f, scale;
 
@@ -4748,7 +4744,7 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
 
     /// Step 1: Find the n strongest lights
     newFlags.Clear();
-    onLights.SetCount(0);
+    onLights.clear();
 
     if  (!IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights) &&
         !(IsDebugFlagSet(plPipeDbg::kFlagNoApplyProjLights) && proj) &&
@@ -4769,7 +4765,7 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
             }
 
             newFlags.SetBit( ref->fD3DIndex );
-            onLights.Append(spanLights[i]);
+            onLights.emplace_back(spanLights[i]);
         }
         startScale = i;
 
@@ -4842,14 +4838,14 @@ void    plDXPipeline::ISelectLights( plSpan *span, int numLights, bool proj )
     {
         fLights.fProjAll.clear();
         fLights.fProjEach.clear();
-        for( i = 0; i < onLights.GetCount(); i++ )
+        for (plLightInfo* light : onLights)
         {
-            if( onLights[i]->OverAll() )
-                fLights.fProjAll.emplace_back(onLights[i]);
+            if (light->OverAll())
+                fLights.fProjAll.emplace_back(light);
             else
-                fLights.fProjEach.emplace_back(onLights[i]);
+                fLights.fProjEach.emplace_back(light);
         }
-        onLights.SetCount(0);
+        onLights.clear();
     }
 }
 
@@ -8632,14 +8628,14 @@ void plDXPipeline::IEndAllocUnManaged()
 
 bool plDXPipeline::CheckResources()
 {
-    if ((fClothingOutfits.GetCount() <= 1 && fAvRTPool.GetCount() > 1) ||
-        (fAvRTPool.GetCount() >= 16 && (fAvRTPool.GetCount() / 2 >= fClothingOutfits.GetCount())))
+    if ((fClothingOutfits.size() <= 1 && fAvRTPool.size() > 1) ||
+        (fAvRTPool.size() >= 16 && (fAvRTPool.size() / 2 >= fClothingOutfits.size())))
     {
         return (hsTimer::GetSysSeconds() - fAvRTShrinkValidSince > kAvTexPoolShrinkThresh);
     }
 
     fAvRTShrinkValidSince = hsTimer::GetSysSeconds();
-    return (fAvRTPool.GetCount() < fClothingOutfits.GetCount());
+    return (fAvRTPool.size() < fClothingOutfits.size());
 }
 
 // LoadResources ///////////////////////////////////////////////////////////////////////
@@ -10275,10 +10271,10 @@ int plDXPipeline::IGetScratchRenderTarget(plRenderTarget* smap)
         fBlurDestRTs[which] = IFindRenderTarget(width, height, smap->GetFlags() & plRenderTarget::kIsOrtho);
     }
 #ifdef MF_ENABLE_HACKOFF
-    if( hackOffscreens.kMissingIndex == hackOffscreens.Find(fBlurScratchRTs[which]) )
-        hackOffscreens.Append(fBlurScratchRTs[which]);
-    if( hackOffscreens.kMissingIndex == hackOffscreens.Find(fBlurDestRTs[which]) )
-        hackOffscreens.Append(fBlurDestRTs[which]);
+    if (std::find(hackOffscreens.cbegin(), hackOffscreens.cend(), fBlurScratchRTs[which]) == hackOffscreens.cend())
+        hackOffscreens.emplace_back(fBlurScratchRTs[which]);
+    if (std::find(hackOffscreens.cbegin(), hackOffscreens.cend(), fBlurDestRTs[which]) == hackOffscreens.cend())
+        hackOffscreens.emplace_back(fBlurDestRTs[which]);
 #endif // MF_ENABLE_HACKOFF
     return which;
 }
@@ -10913,7 +10909,7 @@ plDXTextureRef* plDXPipeline::IGetULutTextureRef()
 // to perspective (directional light vs. point light), but is no longer used.
 plRenderTarget* plDXPipeline::IFindRenderTarget(uint32_t& width, uint32_t& height, bool ortho)
 {
-    hsTArray<plRenderTarget*>* pool = nullptr;
+    std::vector<plRenderTarget*>* pool = nullptr;
     uint32_t* iNext = nullptr;
     // NOT CURRENTLY SUPPORTING NON-SQUARE SHADOWS. IF WE DO, CHANGE THIS.
     switch(height)
@@ -11231,7 +11227,7 @@ void plDXPipeline::IMakeRenderTargetPools()
     // These numbers were set with multi-player in mind, so should be reconsidered.
     // But do keep in mind that there are many things in production assets that cast
     // shadows besides the avatar.
-    plConst(float)   kCount[kMaxRenderTargetNext] = {
+    plConst(size_t) kCount[kMaxRenderTargetNext] = {
         0, // 1x1
         0, // 2x2
         0, // 4x4
@@ -11246,7 +11242,7 @@ void plDXPipeline::IMakeRenderTargetPools()
     int i;
     for( i = 0; i < kMaxRenderTargetNext; i++ )
     {
-        hsTArray<plRenderTarget*>* pool = nullptr;
+        std::vector<plRenderTarget*>* pool = nullptr;
         switch( i )
         {
         default:
@@ -11275,11 +11271,10 @@ void plDXPipeline::IMakeRenderTargetPools()
         }
         if( pool )
         {
-            pool->SetCount((int)(kCount[i]+1));
+            pool->resize(kCount[i] + 1);
             (*pool)[0] = nullptr;
-            (*pool)[(int)(kCount[i])] = nullptr;
-            int j;
-            for( j = 0; j < kCount[i]; j++ )
+            (*pool)[kCount[i]] = nullptr;
+            for (size_t j = 0; j < kCount[i]; j++)
             {
                 uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsProjected;
                 uint8_t bitDepth = 32;
@@ -11298,7 +11293,7 @@ void plDXPipeline::IMakeRenderTargetPools()
                 if( !SharedRenderTargetRef((*pool)[0], rt) )
                 {
                     delete rt;
-                    pool->SetCount(j+1);
+                    pool->resize(j + 1);
                     (*pool)[j] = nullptr;
                     break;
                 }
@@ -11931,21 +11926,24 @@ void plDXPipeline::IEnableShadowLight(plShadowSlave* slave)
 
 void plDXPipeline::SubmitClothingOutfit(plClothingOutfit* co)
 {
-    if (fClothingOutfits.Find(co) == fClothingOutfits.kMissingIndex)
+    auto iter = std::find(fClothingOutfits.cbegin(), fClothingOutfits.cend(), co);
+    if (iter == fClothingOutfits.cend())
     {
-        fClothingOutfits.Append(co);
-        if (!fPrevClothingOutfits.RemoveItem(co))
+        fClothingOutfits.emplace_back(co);
+        auto prevIter = std::find(fPrevClothingOutfits.cbegin(), fPrevClothingOutfits.cend(), co);
+        if (prevIter != fPrevClothingOutfits.cend())
+            fPrevClothingOutfits.erase(prevIter);
+        else
             co->GetKey()->RefObject();
     }
 }
 
-void plDXPipeline::IClearClothingOutfits(hsTArray<plClothingOutfit*>* outfits)
+void plDXPipeline::IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits)
 {
-    int i;
-    for (i = outfits->GetCount() - 1; i >= 0; i--)
+    while (!outfits->empty())
     {
-        plClothingOutfit *co = outfits->Get(i);
-        outfits->Remove(i);
+        plClothingOutfit *co = outfits->back();
+        outfits->pop_back();
         IFreeAvRT((plRenderTarget*)co->fTargetLayer->GetTexture());
         co->fTargetLayer->SetTexture(nullptr);
         co->GetKey()->UnRefObject();
@@ -11956,12 +11954,12 @@ void plDXPipeline::IFillAvRTPool()
 {
     fAvNextFreeRT = 0;
     fAvRTShrinkValidSince = hsTimer::GetSysSeconds();
-    int numRTs = 1;
-    if (fClothingOutfits.GetCount() > 1)
+    size_t numRTs = 1;
+    if (fClothingOutfits.size() > 1)
     {
         // Just jump to 8 for starters so we don't have to refresh for the 2nd, 4th, AND 8th player
         numRTs = 8;
-        while (numRTs < fClothingOutfits.GetCount())
+        while (numRTs < fClothingOutfits.size())
             numRTs *= 2;
     }
 
@@ -11979,9 +11977,8 @@ void plDXPipeline::IFillAvRTPool()
 
 bool plDXPipeline::IFillAvRTPool(uint16_t numRTs, uint16_t width)
 {
-    fAvRTPool.SetCount(numRTs);
-    int i;
-    for (i = 0; i < numRTs; i++)
+    fAvRTPool.resize(numRTs);
+    for (uint16_t i = 0; i < numRTs; i++)
     {
         uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsProjected;
         uint8_t bitDepth = 32;
@@ -11992,8 +11989,7 @@ bool plDXPipeline::IFillAvRTPool(uint16_t numRTs, uint16_t width)
         // If anyone fails, release everyone we've created.
         if (!MakeRenderTargetRef(fAvRTPool[i]))
         {
-            int j;
-            for (j = 0; j <= i; j++)
+            for (uint16_t j = 0; j <= i; j++)
             {
                 delete fAvRTPool[j];
             }
@@ -12005,20 +12001,19 @@ bool plDXPipeline::IFillAvRTPool(uint16_t numRTs, uint16_t width)
 
 void plDXPipeline::IReleaseAvRTPool()
 {
-    int i;
-    for (i = 0; i < fClothingOutfits.GetCount(); i++)
+    for (plClothingOutfit* outfit : fClothingOutfits)
     {
-        fClothingOutfits[i]->fTargetLayer->SetTexture(nullptr);
+        outfit->fTargetLayer->SetTexture(nullptr);
     }
-    for (i = 0; i < fPrevClothingOutfits.GetCount(); i++)
+    for (plClothingOutfit* outfit : fPrevClothingOutfits)
     {
-        fPrevClothingOutfits[i]->fTargetLayer->SetTexture(nullptr);
-    }   
-    for (i = 0; i < fAvRTPool.GetCount(); i++)
-    {
-        delete(fAvRTPool[i]);
+        outfit->fTargetLayer->SetTexture(nullptr);
     }
-    fAvRTPool.Reset();
+    for (plRenderTarget* avRT : fAvRTPool)
+    {
+        delete(avRT);
+    }
+    fAvRTPool.clear();
 }
 
 plRenderTarget *plDXPipeline::IGetNextAvRT()
@@ -12028,11 +12023,11 @@ plRenderTarget *plDXPipeline::IGetNextAvRT()
 
 void plDXPipeline::IFreeAvRT(plRenderTarget* tex)
 {
-    uint32_t index = fAvRTPool.Find(tex);
-    if (index != fAvRTPool.kMissingIndex)
+    auto iter = std::find(fAvRTPool.begin(), fAvRTPool.end(), tex);
+    if (iter != fAvRTPool.end())
     {
-        hsAssert(index < fAvNextFreeRT, "Freeing an avatar RT that's already free?");
-        fAvRTPool[index] = fAvRTPool[fAvNextFreeRT - 1];
+        hsAssert(iter - fAvRTPool.begin() < fAvNextFreeRT, "Freeing an avatar RT that's already free?");
+        *iter = fAvRTPool[fAvNextFreeRT - 1];
         fAvRTPool[fAvNextFreeRT - 1] = tex;
         fAvNextFreeRT--;
     }
@@ -12046,8 +12041,8 @@ struct plAVTexVert
 
 void plDXPipeline::IPreprocessAvatarTextures()
 {   
-    plProfile_Set(AvRTPoolUsed, fClothingOutfits.GetCount());
-    plProfile_Set(AvRTPoolCount, fAvRTPool.GetCount());
+    plProfile_Set(AvRTPoolUsed, fClothingOutfits.size());
+    plProfile_Set(AvRTPoolCount, fAvRTPool.size());
     plProfile_Set(AvRTPoolRes, fAvRTWidth);
     plProfile_Set(AvRTShrinkTime, uint32_t(hsTimer::GetSysSeconds() - fAvRTShrinkValidSince));
 
@@ -12055,7 +12050,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
 
     const uint32_t kVFormat = D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE2(0);
 
-    if (fClothingOutfits.GetCount() == 0)
+    if (fClothingOutfits.empty())
         return;
 
     plMipmap *itemBufferTex = nullptr;
@@ -12109,10 +12104,8 @@ void plDXPipeline::IPreprocessAvatarTextures()
     fLayerState[1].fBlendFlags = uint32_t(-1);
     inlEnsureLightingOff();
 
-    int oIdx;
-    for (oIdx = 0; oIdx < fClothingOutfits.GetCount(); oIdx++)
-    {   
-        plClothingOutfit *co = fClothingOutfits[oIdx];
+    for (plClothingOutfit* co : fClothingOutfits)
+    {
         if (co->fBase == nullptr || co->fBase->fBaseTexture == nullptr)
             continue;
 
@@ -12190,7 +12183,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
     fD3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_ALPHA);
     fView.fXformResetFlags = fView.kResetAll;
 
-    fClothingOutfits.Swap(fPrevClothingOutfits);
+    fClothingOutfits.swap(fPrevClothingOutfits);
 }
 
 void plDXPipeline::IDrawClothingQuad(float x, float y, float w, float h, 

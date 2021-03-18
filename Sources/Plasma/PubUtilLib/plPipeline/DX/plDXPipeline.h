@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDX9Pipeline_h
 #define _plDX9Pipeline_h
 
+#include <vector>
+
 #include "plPipeline/pl3DPipeline.h"
 #include "plDXSettings.h"
 #include "plDXDevice.h"
@@ -51,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plFogEnvironment.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "hsGeometry3.h"
-#include "hsTemplates.h"
 #include "hsColorRGBA.h"
 #include "hsGDeviceRef.h"
 #include "hsPoint2.h"
@@ -265,11 +266,11 @@ protected:
     plDXLightSettings   fLights;
 
     // Shadows
-    hsTArray<plRenderTarget*>       fRenderTargetPool512;
-    hsTArray<plRenderTarget*>       fRenderTargetPool256;
-    hsTArray<plRenderTarget*>       fRenderTargetPool128;
-    hsTArray<plRenderTarget*>       fRenderTargetPool64;
-    hsTArray<plRenderTarget*>       fRenderTargetPool32;
+    std::vector<plRenderTarget*>    fRenderTargetPool512;
+    std::vector<plRenderTarget*>    fRenderTargetPool256;
+    std::vector<plRenderTarget*>    fRenderTargetPool128;
+    std::vector<plRenderTarget*>    fRenderTargetPool64;
+    std::vector<plRenderTarget*>    fRenderTargetPool32;
     enum { kMaxRenderTargetNext = 10 };
     uint32_t                          fRenderTargetNext[kMaxRenderTargetNext];
     plDXTextureRef*                 fULutTextureRef;
@@ -278,13 +279,13 @@ protected:
     IDirect3DVertexBuffer9*         fBlurVBuffers[kMaxRenderTargetNext];
     uint32_t                          fBlurVSHandle;
 
-    hsTArray<plClothingOutfit*>     fClothingOutfits;
-    hsTArray<plClothingOutfit*>     fPrevClothingOutfits;
+    std::vector<plClothingOutfit*>  fClothingOutfits;
+    std::vector<plClothingOutfit*>  fPrevClothingOutfits;
 
     // Debug stuff
     plDrawableSpans *fBoundsSpans;
     hsGMaterial     *fBoundsMat;
-    hsTArray<uint32_t>    fBSpansToDelete;
+    std::vector<uint32_t> fBSpansToDelete;
 
     plStatusLogDrawer   *fLogDrawer;
 
@@ -313,7 +314,7 @@ protected:
     bool        IFlipSurface();
     long        IGetBufferD3DFormat(uint8_t format) const;
     uint32_t    IGetBufferFormatSize(uint8_t format) const;
-    void        IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr );
+    void        IGetVisibleSpans(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr);
     bool        ILoopOverLayers(const plRenderPrimFunc& render, hsGMaterial* material, const plSpan& span);
     void        IRenderBufferSpan( const plIcicle& span, 
                                     hsGDeviceRef *vb, hsGDeviceRef *ib, 
@@ -523,7 +524,7 @@ protected:
 
     // Avatar Texture Rendering
     double                      fAvRTShrinkValidSince;
-    hsTArray<plRenderTarget*>   fAvRTPool;
+    std::vector<plRenderTarget*>  fAvRTPool;
     uint16_t                      fAvRTWidth;
     uint32_t                      fAvNextFreeRT;
     void                    IFillAvRTPool();
@@ -533,7 +534,7 @@ protected:
     void                    IFreeAvRT(plRenderTarget* tex);
     void                    IPreprocessAvatarTextures();
     void                    IDrawClothingQuad(float x, float y, float w, float h, float uOff, float vOff, plMipmap *tex);
-    void                    IClearClothingOutfits(hsTArray<plClothingOutfit*>* outfits);
+    void                    IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits);
 
     void IPrintDeviceInitError();
 
