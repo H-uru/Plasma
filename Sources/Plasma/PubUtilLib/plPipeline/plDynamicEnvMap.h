@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDynamicEnvMap_inc
 #define plDynamicEnvMap_inc
 
+#include <vector>
+
 #include "hsBitVector.h"
-#include "hsTemplates.h"
 #include "plCubicRenderTarget.h"
 #include "plScene/plRenderRequest.h"
 
@@ -84,8 +85,8 @@ protected:
     int                         fOutStanding;
 
     hsBitVector                 fVisSet;
-    hsTArray<plVisRegion*>      fVisRegions;
-    hsTArray<char *>            fVisRegionNames;
+    std::vector<plVisRegion*>   fVisRegions;
+    std::vector<ST::string>     fVisRegionNames;
     bool                        fIncCharacters;
 
     void    IUpdatePosition();
@@ -134,7 +135,7 @@ public:
 
     void        SetIncludeCharacters(bool b);
     bool        GetIncludeCharacters() const { return fIncCharacters; }
-    void        SetVisRegionName(char *name) override { fVisRegionNames.Push(name); }
+    void        SetVisRegionName(ST::string name) override { fVisRegionNames.emplace_back(std::move(name)); }
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -168,17 +169,17 @@ protected:
     int                         fOutStanding;
 
     hsBitVector                 fVisSet;
-    hsTArray<plVisRegion*>      fVisRegions;
-    hsTArray<char *>            fVisRegionNames;    // this allows us to specify vis-regions in other pages.    
+    std::vector<plVisRegion*>   fVisRegions;
+    std::vector<ST::string>     fVisRegionNames;    // this allows us to specify vis-regions in other pages.
     bool                        fIncCharacters;
     plCameraModifier1*          fCamera;
     plSceneObject*              fRootNode;
-    hsTArray<plSceneObject*>    fTargetNodes;
+    std::vector<plSceneObject*> fTargetNodes;
 
     // Extra info for swapping around textures when reflections are disabled.
     plBitmap*                   fDisableTexture;
-    hsTArray<plLayer*>          fMatLayers;
-    static uint8_t                fFlags;
+    std::vector<plLayer*>       fMatLayers;
+    static uint8_t              fFlags;
     enum 
     {
         kReflectionCapable  = 0x01,
@@ -216,7 +217,7 @@ public:
     void        SetIncludeCharacters(bool b);
     void        SetRefreshRate(float secs);
     void        AddVisRegion(plVisRegion* reg);
-    void        SetVisRegionName(char *name) override { fVisRegionNames.Push(name); }
+    void        SetVisRegionName(ST::string name) override { fVisRegionNames.emplace_back(std::move(name)); }
 
     static bool     GetEnabled() { return (fFlags & kReflectionEnabled) != 0; }
     static void     SetEnabled(bool enable);

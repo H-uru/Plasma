@@ -359,10 +359,10 @@ bool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
         if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
         {
             plVisRegion* reg = plVisRegion::ConvertNoRef(refMsg->GetRef());
-            int idx = fVisRegions.Find(reg);
-            if( reg && (fVisRegions.kMissingIndex == idx) )
+            auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+            if (reg && (iter == fVisRegions.cend()))
             {
-                fVisRegions.Append(reg);
+                fVisRegions.emplace_back(reg);
                 fVisSet.SetBit(reg->GetIndex());
             }
             ISetupRenderRequests();
@@ -371,10 +371,10 @@ bool plDynamicEnvMap::IOnRefMsg(plGenRefMsg* refMsg)
         else
         {
             plVisRegion* reg = plVisRegion::ConvertNoRef(refMsg->GetRef());
-            int idx = fVisRegions.Find(reg);
-            if( reg && (fVisRegions.kMissingIndex != idx) )
+            auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+            if (reg && (iter != fVisRegions.cend()))
             {
-                fVisRegions.Remove(idx);
+                fVisRegions.erase(iter);
                 fVisSet.ClearBit(reg->GetIndex());
             }
             ISetupRenderRequests();
@@ -463,16 +463,13 @@ void plDynamicEnvMap::Write(hsStream* s, hsResMgr* mgr)
     sz += sizeof(fPos) + sizeof(fHither) + sizeof(fYon) + sizeof(fFogStart) + sizeof(fColor) + sizeof(fRefreshRate);
 
     s->WriteBool(fIncCharacters);
-    s->WriteLE32(fVisRegions.GetCount());
-    int i;
-    for( i = 0; i < fVisRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fVisRegions[i]);
+    s->WriteLE32((uint32_t)fVisRegions.size());
+    for (plVisRegion* region : fVisRegions)
+        mgr->WriteKey(s, region);
 
-    s->WriteLE32(fVisRegionNames.Count());
-    for( i = 0; i < fVisRegionNames.Count(); i++)
-    {
-        s->WriteSafeString(fVisRegionNames[i]);
-    }
+    s->WriteLE32((uint32_t)fVisRegionNames.size());
+    for (const ST::string& name : fVisRegionNames)
+        s->WriteSafeString(name);
 
     mgr->WriteKey(s, fRootNode);
 }
@@ -621,8 +618,6 @@ void plDynamicCamMap::ISubmitRenderRequest(plPipeline *pipe)
 
 void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
 {
-    int i;
-
     bool useRefl = (fFlags & kReflectionMask) == kReflectionMask;
     if (!fCamera)
     {
@@ -633,8 +628,8 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
     // So no one's using us, eh? Hitting this condition is likely a bug, 
     // but an assert every frame would be annoying. We'll notice when
     // the render target never updates.
-    if (fTargetNodes.GetCount() == 0)
-        return; 
+    if (fTargetNodes.empty())
+        return;
 
     // If dynamic planar reflections are disabled and we're using our substitute
     // texture, don't update. Otherwise, this particular reflection is forced to
@@ -643,9 +638,9 @@ void plDynamicCamMap::ICheckForRefresh(double t, plPipeline *pipe)
         return;
 
     bool inView = false;
-    for (i = 0; i < fTargetNodes.GetCount(); i++)
+    for (plSceneObject* node : fTargetNodes)
     {
-        if (pipe->TestVisibleWorld(fTargetNodes[i]))
+        if (pipe->TestVisibleWorld(node))
         {
             inView = true;
             break;
@@ -743,20 +738,19 @@ void plDynamicCamMap::IPrepTextureLayers()
 {
     if (fDisableTexture)
     {
-        int i;
-        for (i = 0; i < fMatLayers.GetCount(); i++)
+        for (plLayer* layer : fMatLayers)
         {
             if ((fFlags & kReflectionMask) == kReflectionMask)
             {
-                fMatLayers[i]->SetUVWSrc(plLayerInterface::kUVWPosition);
-                fMatLayers[i]->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
-                hsgResMgr::ResMgr()->SendRef(GetKey(), new plLayRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                layer->SetUVWSrc(plLayerInterface::kUVWPosition);
+                layer->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
+                hsgResMgr::ResMgr()->SendRef(GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
             else
             {
-                fMatLayers[i]->SetUVWSrc(0);
-                fMatLayers[i]->SetMiscFlags(0);
-                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plLayRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                layer->SetUVWSrc(0);
+                layer->SetMiscFlags(0);
+                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plLayRefMsg(layer->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
         }
     }
@@ -773,15 +767,15 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
             plVisRegion* reg = plVisRegion::ConvertNoRef(refMsg->GetRef());
             if (reg)
             {
-                int idx = fVisRegions.Find(reg);
-                if ((refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && fVisRegions.kMissingIndex == idx)
+                auto iter = std::find(fVisRegions.cbegin(), fVisRegions.cend(), reg);
+                if ((refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && iter == fVisRegions.cend())
                 {
-                    fVisRegions.Append(reg);
+                    fVisRegions.emplace_back(reg);
                     fVisSet.SetBit(reg->GetIndex());
                 }
-                else if (!(refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && fVisRegions.kMissingIndex != idx)
+                else if (!(refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace)) && iter != fVisRegions.cend())
                 {
-                    fVisRegions.Remove(idx);
+                    fVisRegions.erase(iter);
                     fVisSet.ClearBit(reg->GetIndex());
                 }
                 return true;
@@ -818,14 +812,16 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
             plSceneObject *so = plSceneObject::ConvertNoRef(refMsg->GetRef());
             if (so)
             {
+                auto iter = std::find(fTargetNodes.cbegin(), fTargetNodes.cend(), so);
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 {
-                    if (fTargetNodes.Find(so) == fTargetNodes.kMissingIndex)
-                        fTargetNodes.Append(so);
+                    if (iter == fTargetNodes.cend())
+                        fTargetNodes.emplace_back(so);
                 }
                 else 
                 {
-                    fTargetNodes.RemoveItem(so);
+                    if (iter != fTargetNodes.cend())
+                        fTargetNodes.erase(iter);
                 }
 
                 return true;
@@ -849,14 +845,16 @@ bool plDynamicCamMap::IOnRefMsg(plRefMsg* refMsg)
             plLayer *lay = plLayer::ConvertNoRef(refMsg->GetRef());
             if (lay)
             {
+                auto iter = std::find(fMatLayers.cbegin(), fMatLayers.cend(), lay);
                 if (refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace))
                 {
-                    if (fMatLayers.Find(lay) == fMatLayers.kMissingIndex)
-                        fMatLayers.Append(lay);
+                    if (iter == fMatLayers.cend())
+                        fMatLayers.emplace_back(lay);
                 }
                 else
                 {
-                    fMatLayers.RemoveItem(lay);
+                    if (iter != fMatLayers.cend())
+                        fMatLayers.erase(iter);
                 }
 
                 return true;
@@ -956,28 +954,23 @@ void plDynamicCamMap::Write(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, (fCamera ? fCamera->GetKey() : nullptr));
     mgr->WriteKey(s, (fRootNode ? fRootNode->GetKey() : nullptr));
 
-    hsAssert(fTargetNodes.GetCount() < std::numeric_limits<uint8_t>::max(), "Too many target nodes");
-    s->WriteByte((uint8_t)fTargetNodes.GetCount());
-    int i;
-    for (i = 0; i < fTargetNodes.GetCount(); i++)
-        mgr->WriteKey(s, fTargetNodes[i]);
+    hsAssert(fTargetNodes.size() < std::numeric_limits<uint8_t>::max(), "Too many target nodes");
+    s->WriteByte((uint8_t)fTargetNodes.size());
+    for (plSceneObject* node : fTargetNodes)
+        mgr->WriteKey(s, node);
 
-    s->WriteLE32(fVisRegions.GetCount());
-    for( i = 0; i < fVisRegions.GetCount(); i++ )
-        mgr->WriteKey(s, fVisRegions[i]);
+    s->WriteLE32((uint32_t)fVisRegions.size());
+    for (plVisRegion* region : fVisRegions)
+        mgr->WriteKey(s, region);
 
-    s->WriteLE32(fVisRegionNames.Count());
-    for( i = 0; i < fVisRegionNames.Count(); i++)
-    {
-        s->WriteSafeString(fVisRegionNames[i]);
-    }
+    s->WriteLE32((uint32_t)fVisRegionNames.size());
+    for (const ST::string& name : fVisRegionNames)
+        s->WriteSafeString(name);
 
     mgr->WriteKey(s, fDisableTexture ? fDisableTexture->GetKey() : nullptr);
 
-    hsAssert(fMatLayers.GetCount() < std::numeric_limits<uint8_t>::max(), "Too many mat layers");
-    s->WriteByte((uint8_t)fMatLayers.GetCount());
-    for (i = 0; i < fMatLayers.GetCount(); i++)
-    {
-        mgr->WriteKey(s, fMatLayers[i]->GetKey());
-    }
+    hsAssert(fMatLayers.size() < std::numeric_limits<uint8_t>::max(), "Too many mat layers");
+    s->WriteByte((uint8_t)fMatLayers.size());
+    for (plLayer* layer : fMatLayers)
+        mgr->WriteKey(s, layer->GetKey());
 }
