@@ -112,6 +112,11 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, moveCursor, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getCursor)
+{
+    return PyLong_FromLong(self->fThis->GetCursor());
+}
+
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, clearBuffer, ClearBuffer)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setString, args)
@@ -201,7 +206,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getEncodedBufferW)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getBufferSize)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetBufferSize());
+    return PyLong_FromSize_t(self->fThis->GetBufferSize());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
@@ -382,6 +387,11 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, endUpdate, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, isUpdating)
+{
+    return PyBool_FromLong(self->fThis->IsUpdating());
+}
+
 PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clickable, "Sets this listbox to be clickable by the user."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unclickable, "Makes this listbox not clickable by the user.\n"
@@ -390,6 +400,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getScrollPosition, "Gets what line is the top line."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isAtEnd, "Returns true if the end of the buffer has been reached."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, moveCursor, "Params: direction\nMove the cursor in the specified direction (see PtGUIMultiLineDirection)"),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCursor, "Get the current position of the cursor in the encoded buffer."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearBuffer, "Clears all text from the multi-line edit control."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setString, "Params: asciiText\nSets the multi-line edit control string."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setStringW, "Params: unicodeText\nUnicode version of setString."),
@@ -420,6 +431,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setFontSize, "Params: fontSize\nSets the default font size for the edit control"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, beginUpdate, "Signifies that the control will be updated heavily starting now, so suppress all redraws"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, endUpdate, "Signifies that the massive updates are over. We can now redraw."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isUpdating, "Is someone else already suppressing redraws of the control?"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

@@ -114,6 +114,18 @@ void pyGUIControlMultiLineEdit::MoveCursor( int32_t dir)
     }
 }
 
+int32_t pyGUIControlMultiLineEdit::GetCursor() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetCursor();
+    }
+
+    return -1;
+}
 
 void pyGUIControlMultiLineEdit::ClearBuffer()
 {
@@ -339,7 +351,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
     return nullptr;
 }
 
-uint32_t  pyGUIControlMultiLineEdit::GetBufferSize()
+size_t pyGUIControlMultiLineEdit::GetBufferSize() const
 {
     if ( fGCkey )
     {
@@ -599,4 +611,15 @@ void pyGUIControlMultiLineEdit::EndUpdate(bool redraw)
         if (pbmod)
             pbmod->EndUpdate(redraw);
     }
+}
+
+bool pyGUIControlMultiLineEdit::IsUpdating() const
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->IsUpdating();
+    }
+
+    return false;
 }

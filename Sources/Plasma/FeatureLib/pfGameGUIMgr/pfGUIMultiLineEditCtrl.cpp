@@ -1569,11 +1569,6 @@ wchar_t *pfGUIMultiLineEditCtrl::GetCodedBufferW(size_t &length) const
     }
 }
 
-uint32_t  pfGUIMultiLineEditCtrl::GetBufferSize()
-{
-    return fBuffer.size() - 1;
-}
-
 //// ICharPosToBufferPos /////////////////////////////////////////////////////
 //  Given a character position (i.e. a buffer position if we didn't have
 //  control codes), returns the actual buffer pos.

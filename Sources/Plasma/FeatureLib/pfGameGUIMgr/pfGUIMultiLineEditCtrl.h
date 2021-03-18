@@ -224,6 +224,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    SetScrollPosition( int32_t topLine );
         int32_t GetScrollPosition();
         void    MoveCursor( Direction dir );
+        int32_t GetCursor() const { return fCursorPos; }
 
         void    InsertChar( char c );
         void    InsertChar( wchar_t c);
@@ -241,7 +242,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         wchar_t *GetNonCodedBufferW() const;
         char    *GetCodedBuffer(size_t &length) const;
         wchar_t *GetCodedBufferW(size_t &length) const;
-        uint32_t  GetBufferSize();
+        size_t  GetBufferSize() const { return fBuffer.size() - 1; }
 
         void    SetBufferLimit(int32_t limit) { fBufferLimit = limit; }
         int32_t   GetBufferLimit() { return fBufferLimit; }
@@ -293,6 +294,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
             if (redraw)
                 IUpdate();
         }
+
+        bool IsUpdating() const { return !fCanUpdate; }
 };
 
 #endif // _pfGUIMultiLineEditCtrl_h

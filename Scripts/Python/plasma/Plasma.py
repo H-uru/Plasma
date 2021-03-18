@@ -4239,6 +4239,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the size of the buffer"""
         pass
 
+    def getCursor(self) -> int:
+        """Get the current position of the cursor in the encoded buffer."""
+        ...
+
     def getEncodedBuffer(self):
         """Returns the encoded buffer in a python buffer object. Do NOT use result with setEncodedBufferW."""
         pass
@@ -4335,6 +4339,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
     def isLocked(self):
         """Is the multi-line edit control locked? Returns 1 if true otherwise returns 0"""
         pass
+
+    def isUpdating(self) -> bool:
+        """Is someone else already suppressing redraws of the control?"""
+        ...
 
     def isVisible(self):
         """Returns whether this GUI control is visible"""

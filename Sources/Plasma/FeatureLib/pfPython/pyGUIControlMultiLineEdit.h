@@ -80,6 +80,7 @@ public:
     virtual int32_t GetScrollPosition();
     virtual bool    IsAtEnd();
     virtual void    MoveCursor( int32_t dir );
+    int32_t GetCursor() const;
     virtual void    ClearBuffer();
     virtual void    SetText( const char *asciiText );
     virtual void    SetTextW( const wchar_t *asciiText );
@@ -89,8 +90,8 @@ public:
     virtual void    SetEncodedBufferW( PyObject* buffer_object );
     virtual const char* GetEncodedBuffer();
     virtual const wchar_t* GetEncodedBufferW();
-    virtual uint32_t  GetBufferSize();
-    
+    size_t  GetBufferSize() const;
+
     virtual void    SetBufferLimit(int32_t limit);
     virtual int32_t   GetBufferLimit();
 
@@ -116,6 +117,7 @@ public:
 
     void BeginUpdate();
     void EndUpdate(bool redraw);
+    bool IsUpdating() const;
 };
 
 #endif // _pyGUIControlMultiLineEdit_h_
