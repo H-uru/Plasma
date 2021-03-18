@@ -855,7 +855,7 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 ///////////////////////////////////////////////////////////////////
 void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
 {
-    int vertStart = fVisVerts.GetCount();
+    uint16_t vertStart = (uint16_t)fVisVerts.size();
     
     hsColorRGBA color;
     if( dark )
@@ -865,26 +865,26 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
 
     for (const hsPoint3& vert : poly.fVerts)
     {
-        fVisVerts.Append(vert);
-        fVisNorms.Append(poly.fNorm);
-        fVisColors.Append(color);
+        fVisVerts.emplace_back(vert);
+        fVisNorms.emplace_back(poly.fNorm);
+        fVisColors.emplace_back(color);
     }
     if( !dark )
     {
         for (uint16_t i = 2; i < poly.fVerts.size(); i++)
         {
-            fVisTris.Append(vertStart);
-            fVisTris.Append(vertStart + i-1);
-            fVisTris.Append(vertStart + i);
+            fVisTris.emplace_back(vertStart);
+            fVisTris.emplace_back(vertStart + i-1);
+            fVisTris.emplace_back(vertStart + i);
         }
     }
     else
     {
         for (uint16_t i = 2; i < poly.fVerts.size(); i++)
         {
-            fVisTris.Append(vertStart);
-            fVisTris.Append(vertStart + i);
-            fVisTris.Append(vertStart + i-1);
+            fVisTris.emplace_back(vertStart);
+            fVisTris.emplace_back(vertStart + i);
+            fVisTris.emplace_back(vertStart + i-1);
         }
     }
 }
@@ -897,7 +897,7 @@ void plCullTree::IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, bool dark)
     else
         color.Set(1.f, 1.f, 1.f, 1.f);
 
-    int vertStart = fVisVerts.GetCount();
+    uint16_t vertStart = (uint16_t)fVisVerts.size();
 
     hsVector3 dir0(&p0, &fViewPos);
     hsFastMath::NormalizeAppr(dir0);
@@ -914,26 +914,26 @@ void plCullTree::IVisPolyEdge(const hsPoint3& p0, const hsPoint3& p1, bool dark)
     hsVector3 norm = hsVector3(&p0, &fViewPos) % hsVector3(&p1, &fViewPos);
     hsFastMath::NormalizeAppr(norm);
 
-    fVisVerts.Append(p0);
-    fVisNorms.Append(norm);
-    fVisColors.Append(color);
-    fVisVerts.Append(p1);
-    fVisNorms.Append(norm);
-    fVisColors.Append(color);
-    fVisVerts.Append(p2);
-    fVisNorms.Append(norm);
-    fVisColors.Append(color);
-    fVisVerts.Append(p3);
-    fVisNorms.Append(norm);
-    fVisColors.Append(color);
+    fVisVerts.emplace_back(p0);
+    fVisNorms.emplace_back(norm);
+    fVisColors.emplace_back(color);
+    fVisVerts.emplace_back(p1);
+    fVisNorms.emplace_back(norm);
+    fVisColors.emplace_back(color);
+    fVisVerts.emplace_back(p2);
+    fVisNorms.emplace_back(norm);
+    fVisColors.emplace_back(color);
+    fVisVerts.emplace_back(p3);
+    fVisNorms.emplace_back(norm);
+    fVisColors.emplace_back(color);
 
-    fVisTris.Append(vertStart + 0);
-    fVisTris.Append(vertStart + 2);
-    fVisTris.Append(vertStart + 1);
+    fVisTris.emplace_back(vertStart + 0);
+    fVisTris.emplace_back(vertStart + 2);
+    fVisTris.emplace_back(vertStart + 1);
 
-    fVisTris.Append(vertStart + 0);
-    fVisTris.Append(vertStart + 3);
-    fVisTris.Append(vertStart + 2);
+    fVisTris.emplace_back(vertStart + 0);
+    fVisTris.emplace_back(vertStart + 3);
+    fVisTris.emplace_back(vertStart + 2);
 }
 
 void plCullTree::IVisPoly(const plCullPoly& poly, bool dark) const
@@ -952,10 +952,10 @@ void plCullTree::IVisPoly(const plCullPoly& poly, bool dark) const
 
 void plCullTree::ReleaseCapture() const
 {
-    fVisVerts.Reset();
-    fVisNorms.Reset();
-    fVisColors.Reset();
-    fVisTris.Reset();
+    fVisVerts.clear();
+    fVisNorms.clear();
+    fVisColors.clear();
+    fVisTris.clear();
 }
 
 ///////////////////////////////////////////////////////////////////

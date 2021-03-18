@@ -138,12 +138,12 @@ void plPipelineViewSettings::SetClear(const hsColorRGBA* col, const float* depth
 
 void plPipelineViewSettings::MakeOcclusionSnap()
 {
-    hsTArray<hsPoint3>& pos         = fCullTree.GetCaptureVerts();
-    hsTArray<hsVector3>& norm       = fCullTree.GetCaptureNorms();
-    hsTArray<hsColorRGBA>& color    = fCullTree.GetCaptureColors();
-    hsTArray<uint16_t>& tris        = fCullTree.GetCaptureTris();
+    std::vector<hsPoint3>& pos      = fCullTree.GetCaptureVerts();
+    std::vector<hsVector3>& norm    = fCullTree.GetCaptureNorms();
+    std::vector<hsColorRGBA>& color = fCullTree.GetCaptureColors();
+    std::vector<uint16_t>& tris     = fCullTree.GetCaptureTris();
 
-    if (tris.GetCount())
+    if (!tris.empty())
     {
         hsMatrix44 ident;
         ident.Reset();
@@ -158,16 +158,16 @@ void plPipelineViewSettings::MakeOcclusionSnap()
         lay->SetOpacity(0.5f);
         lay->SetBlendFlags(lay->GetBlendFlags() | hsGMatState::kBlendAlpha);
 
-        fCullProxy = plDrawableGenerator::GenerateDrawable(pos.GetCount(),
-                                            pos.AcquireArray(),
-                                            norm.AcquireArray(),
+        fCullProxy = plDrawableGenerator::GenerateDrawable(pos.size(),
+                                            pos.data(),
+                                            norm.data(),
                                             nullptr,
                                             0,
-                                            color.AcquireArray(),
+                                            color.data(),
                                             true,
                                             nullptr,
-                                            tris.GetCount(),
-                                            tris.AcquireArray(),
+                                            tris.size(),
+                                            tris.data(),
                                             mat,
                                             ident,
                                             true,
@@ -217,21 +217,21 @@ void plPipelineViewSettings::RefreshCullTree()
 
         if (fMaxCullNodes)
         {
-            int i;
-            for (i = 0; i < fCullPolys.GetCount(); i++)
+            size_t i;
+            for (i = 0; i < fCullPolys.size(); i++)
             {
                 fCullTree.AddPoly(*fCullPolys[i]);
                 if (fCullTree.GetNumNodes() >= fMaxCullNodes)
                     break;
             }
-            fCullPolys.SetCount(0);
+            fCullPolys.clear();
             plProfile_Set(OccPolyUsed, i);
 
-            for (i = 0; i < fCullHoles.GetCount(); i++)
+            for (i = 0; i < fCullHoles.size(); i++)
             {
                 fCullTree.AddPoly(*fCullHoles[i]);
             }
-            fCullHoles.SetCount(0);
+            fCullHoles.clear();
             plProfile_Set(OccNodeUsed, fCullTree.GetNumNodes());
         }
 
@@ -344,14 +344,14 @@ void plPipelineViewSettings::GetVisibleSpans(plDrawableSpans* drawable, std::vec
 
 bool plPipelineViewSettings::SubmitOccluders(const std::vector<const plCullPoly*>& polyList)
 {
-    fCullPolys.SetCount(0);
-    fCullHoles.SetCount(0);
+    fCullPolys.clear();
+    fCullHoles.clear();
     for (const plCullPoly* poly : polyList)
     {
         if (poly->IsHole())
-            fCullHoles.Append(poly);
+            fCullHoles.emplace_back(poly);
         else
-            fCullPolys.Append(poly);
+            fCullPolys.emplace_back(poly);
     }
     fCullTreeDirty = true;
 

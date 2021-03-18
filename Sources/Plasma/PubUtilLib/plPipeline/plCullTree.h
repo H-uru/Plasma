@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCullTree_inc
 #define plCullTree_inc
 
+#include <vector>
+
 #include "hsBounds.h"
 #include "hsGeometry3.h"
 #include "hsBitVector.h"
@@ -67,12 +69,12 @@ class plCullTree : public plCuller
 protected:
 
     // Visualization stuff, to be nuked from production version.
-    mutable bool                            fCapturePolys;
-    mutable hsTArray<hsPoint3>              fVisVerts;
-    mutable hsTArray<hsVector3>             fVisNorms;
-    mutable hsTArray<hsColorRGBA>           fVisColors;
-    mutable hsTArray<uint16_t>                fVisTris;
-    mutable float                        fVisYon;
+    mutable bool                        fCapturePolys;
+    mutable std::vector<hsPoint3>       fVisVerts;
+    mutable std::vector<hsVector3>      fVisNorms;
+    mutable std::vector<hsColorRGBA>    fVisColors;
+    mutable std::vector<uint16_t>       fVisTris;
+    mutable float                       fVisYon;
 
     mutable hsTArray<plCullPoly>    fScratchPolys;
     mutable hsTArray<int16_t>       fScratchClear;
@@ -132,10 +134,10 @@ public:
     void                    SetVisualizationYon(float y) const { fVisYon = y; }
     void                    BeginCapturePolys() const { fCapturePolys = true; }
     void                    EndCapturePolys() const { fCapturePolys = false; }
-    hsTArray<hsPoint3>&     GetCaptureVerts() const { return fVisVerts; }
-    hsTArray<hsVector3>&    GetCaptureNorms() const { return fVisNorms; }
-    hsTArray<hsColorRGBA>&  GetCaptureColors() const { return fVisColors; }
-    hsTArray<uint16_t>&       GetCaptureTris() const { return fVisTris; }
+    std::vector<hsPoint3>&  GetCaptureVerts() const { return fVisVerts; }
+    std::vector<hsVector3>& GetCaptureNorms() const { return fVisNorms; }
+    std::vector<hsColorRGBA>& GetCaptureColors() const { return fVisColors; }
+    std::vector<uint16_t>&  GetCaptureTris() const { return fVisTris; }
     void                    ReleaseCapture() const;
 };
 
