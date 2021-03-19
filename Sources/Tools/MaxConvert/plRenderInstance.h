@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderInstance_inc
 #define plRenderInstance_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 #include <render.h>
 
@@ -58,7 +58,8 @@ protected:
 
     BOOL                        fDeleteMesh;
 
-    hsTArray<LightDesc*>        fLights;
+    std::vector<LightDesc*>     fLights;
+
 public:
     plRenderInstance();
     virtual ~plRenderInstance();
@@ -72,10 +73,10 @@ public:
 
     Interval MeshValidity() override { return fValid; }
 
-    int NumLights() override { return fLights.GetCount(); }
+    int NumLights() override { return (int)fLights.size(); }
     LightDesc *Light(int n) override { return fLights[n]; }
-    virtual void AddLight(LightDesc* l) { fLights.Append(l); }
-    virtual void ClearLights() { fLights.SetCount(0); }
+    virtual void AddLight(LightDesc* l) { fLights.emplace_back(l); }
+    virtual void ClearLights() { fLights.clear(); }
 
     BOOL CastsShadowsFrom(const ObjLightDesc& lt) override; // is lt shadowed by this instance?
 

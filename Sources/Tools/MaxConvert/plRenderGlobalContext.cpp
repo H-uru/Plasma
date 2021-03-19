@@ -89,10 +89,9 @@ plRenderGlobalContext::plRenderGlobalContext(Interface* ip, TimeValue t)
 
 plRenderGlobalContext::~plRenderGlobalContext()
 {
-    int i;
-    for( i = 0; i < fInstList.GetCount(); i++ )
+    for (plRenderInstance& inst : fInstList)
     {
-        fInstList[i].Cleanup();
+        inst.Cleanup();
     }
 }
 
@@ -100,25 +99,28 @@ void plRenderGlobalContext::Update(TimeValue t)
 {
     time = t;
 
-    int i;
-    for( i = 0; i < fInstList.GetCount(); i++ )
-        fInstList[i].Update(time);
+    for (plRenderInstance& inst : fInstList)
+        inst.Update(time);
 }
 
 void plRenderGlobalContext::MakeRenderInstances(plMaxNode* root, TimeValue t)
 {
     time = t;
-    int i;
-    for( i = 0; i < root->NumberOfChildren(); i++ )
+    for (int i = 0; i < root->NumberOfChildren(); i++)
         IMakeRenderInstances((plMaxNode*)root->GetChildNode(i), t, false);
 
-    for( i = 0; i < fInstList.GetCount() - 1; i++ )
+    for (size_t i = 0; i < fInstList.size() - 1; i++)
         fInstList[i].SetNext(&fInstList[i+1]);
+}
+
+int plRenderGlobalContext::NumRenderInstances()
+{
+    return (int)fInstList.size();
 }
 
 RenderInstance* plRenderGlobalContext::GetRenderInstance(int i)
 {
-    if (fInstList.GetCount() > i)
+    if ((int)fInstList.size() > i)
         return &fInstList[i];
     else
         return nullptr;
@@ -135,12 +137,12 @@ void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, b
     if( !doMe )
         return;
 
-    int idx = fInstList.GetCount();
+    int idx = (int)fInstList.size();
 
-    plRenderInstance* inst = fInstList.Push();
+    plRenderInstance& inst = fInstList.emplace_back();
     
-    if( !inst->GetFromNode(node, t, idx) )
-        fInstList.Pop();
+    if (!inst.GetFromNode(node, t, idx))
+        fInstList.pop_back();
 
     int i;
     for( i = 0; i < node->NumberOfChildren(); i++ )
@@ -209,10 +211,9 @@ BOOL plRenderGlobalContext::IntersectWorld(Ray &ray, int skipID, ISect &hit, ISe
 {
     hit.t = -1.f;
     xplist.Init();
-    int i;
-    for( i = 0; i < fInstList.GetCount(); i++ )
+    for (size_t i = 0; i < fInstList.size(); i++)
     {
-        if( skipID != i )
+        if (skipID != (int)i)
         {
             ISect thisHit;
             hit.t = -1.f;
