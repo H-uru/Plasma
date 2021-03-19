@@ -49,6 +49,11 @@ a {
     font-weight: 400;
 }
 
+b, strong {
+    /* Firefox uses "bolder" be default, which is... not bold enough */
+    font-weight: bold;
+}
+
 h1 {
     font-family: 'Nova Square', sans-serif;
     font-size: 3em;
@@ -63,6 +68,7 @@ h1 {
 h2 {
     font-family: 'Charter', 'XCharter', 'Bitstream Charter', serif;
     font-variant-caps: small-caps;
+    font-variant-numeric: oldstyle-nums;
     font-weight: 500;
     font-size: 2em;
     letter-spacing: 0.015em;
@@ -164,6 +170,7 @@ h3 {
     font-size: 1.25em;
     font-weight: 500;
     font-variant-caps: small-caps;
+    font-variant-numeric: oldstyle-nums;
     color: #31454a;
     color: var(--content-headings);
     margin-top: 2rem;
@@ -182,6 +189,12 @@ dt {
 
 code {
     font-weight: normal;
+    font-size: 1.125em;
+}
+
+tt {
+    font-size: 16px;
+    font-size: 1rem;
 }
 
 @supports (-ms-ime-align: auto) {
@@ -200,6 +213,22 @@ code {
     details {
         padding-left: 2em;
     }
+
+    li summary {
+        margin-left: -0.5em;
+    }
+
+    li details {
+        padding-left: 0.5em;
+    }
+}
+
+.expanding-heading {
+    font-family: 'Charter', 'XCharter', 'Bitstream Charter', serif;
+    font-size: 1.1em;
+    font-weight: 500;
+    font-variant-caps: small-caps;
+    font-variant-numeric: oldstyle-nums;
 }
 
 .infobox {
@@ -216,6 +245,15 @@ code {
 
 .infobox p:last-child {
     margin-bottom: 0;
+}
+
+.infonote {
+    text-indent: -1.5em;
+    margin-left: 1em;
+}
+
+.infonote[data-infotype="warning"]:before {
+    content: '⚠️ ';
 }
 
 .cta-box {
