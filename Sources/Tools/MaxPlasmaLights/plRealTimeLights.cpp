@@ -107,7 +107,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = map->GetParamBlock();
         plRTLightBase *gl = (plRTLightBase *) pb->GetOwner();
@@ -123,7 +123,7 @@ public:
                     //  map->SetValue(plRTSpotLight::kProjMapTexButton, t, 
                         //gl->SetProjMap(
                         map->Invalidate(plRTSpotLight::kProjMapTexButton);
-                    return false;
+                    return FALSE;
                 }
                 else if( LOWORD( wParam ) == IDC_LHOTSIZE || LOWORD( wParam ) == IDC_LFALLOFF )
                 {

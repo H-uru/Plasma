@@ -65,7 +65,7 @@ bool plResponderGetComp::GetComp(IParamBlock2 *pb, int nodeID, int compID, Class
 
     plMaxAccelerators::Disable();
 
-    int ret = DialogBox(hInstance,
+    INT_PTR ret = DialogBox(hInstance,
                         MAKEINTRESOURCE(IDD_COMP_RESPOND_ANIMPICK),
                         GetCOREInterface()->GetMAXHWnd(),
                         ForwardDlgProc);
@@ -136,12 +136,12 @@ void plResponderGetComp::ILoadNodes(plMaxNodeBase *compNode, HWND hDlg)
     }
 }
 
-BOOL CALLBACK plResponderGetComp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plResponderGetComp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plResponderGetComp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {

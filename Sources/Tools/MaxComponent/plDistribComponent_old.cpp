@@ -136,7 +136,7 @@ private:
         }
     }
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         HWND cbox = nullptr;
         switch (msg)
@@ -163,7 +163,7 @@ public:
             {
                 case IDC_COMP_DISTRIB_PROBCOLORCHAN:
                 {
-                    map->GetParamBlock()->SetValue(plDistribComponent_old::kProbColorChan, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                    map->GetParamBlock()->SetValue(plDistribComponent_old::kProbColorChan, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                     return TRUE;
                 }
                 break;
@@ -224,7 +224,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };

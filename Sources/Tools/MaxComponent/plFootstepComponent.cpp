@@ -150,7 +150,7 @@ bool plFootstepSoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-BOOL plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hSurface = GetDlgItem(hWnd, IDC_COMP_FOOTSTEP_SOUND_SURFACE);

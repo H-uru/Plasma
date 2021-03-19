@@ -217,14 +217,14 @@ void plComponentDlg::IGetComment()
     }
 }
 
-BOOL plComponentDlg::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plComponentDlg::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
 #define MENU_ID_START 41000
 
-BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -237,7 +237,7 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         return TRUE;
 
     case WM_SIZING:
-        IPositionControls((RECT*)lParam, wParam);
+        IPositionControls((RECT*)lParam, (int)wParam);
         return TRUE;
 
     case WM_ACTIVATE:
@@ -340,7 +340,7 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 // If this isn't a component, don't allow the edit
                 if (!IIsComponent(((NMTVDISPINFO*)lParam)->item.lParam))
                 {
-                    SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                    SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                     return TRUE;
                 }
 
@@ -370,7 +370,7 @@ BOOL plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                         SetSaveRequiredFlag();
 
                         // Return true to keep the changes
-                        SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                     }
 
                     plMaxAccelerators::Enable();
@@ -489,7 +489,7 @@ void plComponentDlg::ICreateMenu()
     HMENU hMenu = GetMenu(fhDlg);
 
     HMENU hNew = CreatePopupMenu();
-    InsertMenu(hMenu, 0, MF_POPUP | MF_STRING | MF_BYPOSITION, (UINT)hNew, "New");
+    InsertMenu(hMenu, 0, MF_POPUP | MF_STRING | MF_BYPOSITION, (UINT_PTR)hNew, "New");
 
     const char *lastCat = nullptr;
     HMENU hCurType = nullptr;
@@ -508,7 +508,7 @@ void plComponentDlg::ICreateMenu()
             lastCat = desc->Category();
 
             hCurType = CreatePopupMenu();
-            AppendMenu(hNew, MF_POPUP | MF_STRING, (UINT)hCurType, lastCat);
+            AppendMenu(hNew, MF_POPUP | MF_STRING, (UINT_PTR)hCurType, lastCat);
         }
 
         AppendMenu(hCurType, MF_STRING, MENU_ID_START+i, desc->ClassName());

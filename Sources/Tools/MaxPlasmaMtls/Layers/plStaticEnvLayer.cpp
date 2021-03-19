@@ -508,7 +508,7 @@ BITMAPINFO *plStaticEnvLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmak
     return bmi;
 }
 
-DWORD plStaticEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plStaticEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 

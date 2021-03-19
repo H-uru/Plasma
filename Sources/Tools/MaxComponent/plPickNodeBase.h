@@ -56,7 +56,7 @@ protected:
     IParamBlock2* fPB;
     int fNodeParamID;
 
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IInitDlg(HWND hDlg);
 

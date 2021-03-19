@@ -128,7 +128,7 @@ static bool GetPickedMtl(HWND hDlg, Mtl** mtl)
     return false;
 }
 
-static BOOL CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK PickMtlProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static plPickMaterialInfo* info;
 
@@ -184,7 +184,7 @@ Mtl *plPickMaterialMap::PickMaterial(unsigned int flags)
     info.fFlags = flags;
 
     //Mtl *mtl = nullptr;
-    int ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
+    INT_PTR ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_MTL), GetCOREInterface()->GetMAXHWnd(), PickMtlProc, (LPARAM)&info);
 
     if (ret == 1)
     {

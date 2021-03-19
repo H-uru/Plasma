@@ -53,15 +53,13 @@ public:
 #endif
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = map->GetParamBlock();
 
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
             return TRUE;
         }
         return FALSE;

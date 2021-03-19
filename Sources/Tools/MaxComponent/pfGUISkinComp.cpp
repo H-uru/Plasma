@@ -433,7 +433,7 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
             SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_RESETCONTENT, 0, 0 );
             for( i = 0; sElemPairs[ i ].el != pfGUISkin::kNumElements; i++ )
             {
-                int idx = SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_ADDSTRING, 0, (LPARAM)sElemPairs[ i ].name );
+                int idx = (int)SendDlgItemMessage(hDlg, IDC_GUI_ELEMENTS, LB_ADDSTRING, 0, (LPARAM)sElemPairs[i].name);
                 SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_SETITEMDATA, (WPARAM)idx, (LPARAM)sElemPairs[ i ].el );
                 if( sElemPairs[ i ].el == pfGUISkin::kUpLeftCorner )
                     j = idx;
@@ -487,8 +487,8 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
             }
             else if( LOWORD( wParam ) == IDC_GUI_ELEMENTS )
             {
-                int idx = SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_GETCURSEL, 0, 0 );
-                fCurrPBRefSet = SendDlgItemMessage( hDlg, IDC_GUI_ELEMENTS, LB_GETITEMDATA, (WPARAM)idx, 0 ) * 4 + plGUISkinComp::kRefUpLeftCorner;
+                int idx = (int)SendDlgItemMessage(hDlg, IDC_GUI_ELEMENTS, LB_GETCURSEL, 0, 0);
+                fCurrPBRefSet = (int)SendDlgItemMessage(hDlg, IDC_GUI_ELEMENTS, LB_GETITEMDATA, (WPARAM)idx, 0) * 4 + plGUISkinComp::kRefUpLeftCorner;
 
                 IRefreshDblBuffer();
                 InvalidateRect( hDlg, &fPreviewRect, false );

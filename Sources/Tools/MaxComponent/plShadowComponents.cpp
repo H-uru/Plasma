@@ -80,7 +80,7 @@ static const char* kQualityStrings[kNumQualities] = {
 template <class T> class plQualityProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -103,13 +103,13 @@ public:
             switch( LOWORD(wParam) )
             {
             case IDC_COMP_SHADOW_QUALITY:
-                map->GetParamBlock()->SetValue(T::kQuality, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                map->GetParamBlock()->SetValue(T::kQuality, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };

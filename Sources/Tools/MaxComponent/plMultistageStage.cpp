@@ -50,12 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultistageStage.h"
 #include "plAvatar/plAnimStage.h"
 
-BOOL plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 
-    plBaseStage *stage = (plBaseStage*)GetWindowLong(hDlg, GWL_USERDATA);
+    plBaseStage *stage = (plBaseStage*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
     if (!stage)
         return FALSE;
@@ -63,7 +63,7 @@ BOOL plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
     return stage->IDlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plBaseStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plBaseStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return FALSE;
 }
@@ -196,7 +196,7 @@ void plStandardStage::DestroyDlg()
 
 #define SetBit(f,b,on) on ? hsSetBits(f,b) : hsClearBits(f,b)
 
-BOOL plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -209,7 +209,7 @@ BOOL plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
             if (code == CBN_SELCHANGE)
             {
                 int sel = ComboBox_GetCurSel((HWND)lParam);
-                int type = ComboBox_GetItemData((HWND)lParam, sel);
+                int type = (int)ComboBox_GetItemData((HWND)lParam, sel);
 
                 if (id == IDC_FORWARD_COMBO)
                     fForward = type;

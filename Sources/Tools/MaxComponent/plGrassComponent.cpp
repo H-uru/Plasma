@@ -89,7 +89,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
@@ -113,7 +113,7 @@ public:
 
         case WM_COMMAND:
         case CC_SPINNER_CHANGE:
-            int wave = SendMessage(GetDlgItem(hWnd, IDC_GRASS_WAVE), CB_GETCURSEL, 0, 0);
+            int wave = (int)SendMessage(GetDlgItem(hWnd, IDC_GRASS_WAVE), CB_GETCURSEL, 0, 0);
             if (id == IDC_GRASS_WAVE)
             {
                 if (wave != pb->GetInt(ParamID(plGrassComponent::kWave)))

@@ -4874,7 +4874,7 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
             break;
         }
 
-        sprintf(buff, "\t\tLayer %d [%s]\n", i, IIsAnimatedLayer(layer) ? "Animated" : "Static");
+        sprintf(buff, "\t\tLayer %zu [%s]\n", i, IIsAnimatedLayer(layer) ? "Animated" : "Static");
         stream->WriteString(buff);
 
         sprintf(buff, "\t\t\t%s [B%#08x Z%#08x C%#08x M%#08x S%08x]\n", blendMode, 
@@ -5035,16 +5035,16 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, const std::vecto
                 lastWasDup = true;
             }
             duplicates++;
-            sprintf(pref, "==%d\t", i);
+            sprintf(pref, "==%zu\t", i);
         }
         else if( !ICompareBaseLayerTexture(doneMats[i], doneMats[i-1]) )
         {
-            sprintf(pref, "~~%d\t", i);
+            sprintf(pref, "~~%zu\t", i);
             lastWasDup = false;
         }
         else
         {
-            sprintf(pref, "%d\t", i);
+            sprintf(pref, "%zu\t", i);
             lastWasDup = false;
         }
         if( doneMats[i]->fOwnedCopy )

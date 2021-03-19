@@ -698,7 +698,7 @@ public:
         }
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
@@ -726,7 +726,7 @@ public:
         case WM_COMMAND:  
             if (id == IDC_GEN_TYPE)
             {
-                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plParticleCoreComponent::kGenType, t, selection);
                 EnableDynGenParams(map, selection != plParticleCoreComponent::kGenOnePerVertex);
                 return TRUE;
@@ -1456,7 +1456,7 @@ public:
         }
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
 

@@ -416,23 +416,23 @@ void plAutoUIBase::AddPickGrassComponentButton(int16_t id, const char *scriptNam
     fParams.push_back(param);
 }
 
-BOOL CALLBACK plAutoUIBase::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plAutoUIBase::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     plAutoUIBase *pthis = nullptr;
     if (msg == WM_INITDIALOG)
     {
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
         pthis = (plAutoUIBase*)lParam;
     }
     else
-        pthis = (plAutoUIBase*)GetWindowLong(hDlg, GWL_USERDATA);
+        pthis = (plAutoUIBase*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
     return pthis->DlgProc(hDlg, msg, wParam, lParam);
 }
 
 #define WM_SIZE_PANEL WM_APP+1
 
-BOOL plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plAutoUIBase::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
     {

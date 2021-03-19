@@ -105,7 +105,7 @@ plMultipassMtlDlg::~plMultipassMtlDlg()
         fLayerBtns[i] = nullptr;
     }
 
-    SetWindowLong(fhRollup, GWL_USERDATA, 0L);
+    SetWindowLongPtr(fhRollup, GWLP_USERDATA, 0L);
     ip->DeleteRollupPage(fhRollup);
 
     fhRollup = nullptr;
@@ -165,18 +165,18 @@ int plMultipassMtlDlg::FindSubMtlFromHWND(HWND hwnd)
     return -1;
 }
 
-BOOL plMultipassMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR plMultipassMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     plMultipassMtlDlg *theDlg;
     if (msg == WM_INITDIALOG)
     {
         theDlg = (plMultipassMtlDlg*)lParam;
         theDlg->fhRollup = hDlg;
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
     }
     else
     {
-        if (theDlg = (plMultipassMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA); theDlg == nullptr)
+        if (theDlg = (plMultipassMtlDlg *)GetWindowLongPtr(hDlg, GWLP_USERDATA); theDlg == nullptr)
             return FALSE; 
     }
 
@@ -188,7 +188,7 @@ BOOL plMultipassMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 //----------------------------------------------------------------------------
 // Layer panel processor
 //----------------------------------------------------------------------------
-BOOL plMultipassMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMultipassMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     int id = LOWORD(wParam);
     int code = HIWORD(wParam);

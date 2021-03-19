@@ -98,7 +98,7 @@ plCompositeMtlDlg::~plCompositeMtlDlg()
         fLayerBtns[i] = nullptr;
     }
 
-    SetWindowLong(fhRollup, GWL_USERDATA, 0L);
+    SetWindowLongPtr(fhRollup, GWLP_USERDATA, 0L);
     ip->DeleteRollupPage(fhRollup);
 
     fhRollup = nullptr;
@@ -158,18 +158,18 @@ int plCompositeMtlDlg::FindSubMtlFromHWND(HWND hwnd)
     return -1;
 }
 
-BOOL plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
+INT_PTR plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     plCompositeMtlDlg *theDlg;
     if (msg == WM_INITDIALOG)
     {
         theDlg = (plCompositeMtlDlg*)lParam;
         theDlg->fhRollup = hDlg;
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
     }
     else
     {
-        if (theDlg = (plCompositeMtlDlg *)GetWindowLong(hDlg, GWL_USERDATA); theDlg == nullptr)
+        if (theDlg = (plCompositeMtlDlg *)GetWindowLongPtr(hDlg, GWLP_USERDATA); theDlg == nullptr)
             return FALSE; 
     }
 
@@ -181,7 +181,7 @@ BOOL plCompositeMtlDlg::ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 //----------------------------------------------------------------------------
 // Layer panel processor
 //----------------------------------------------------------------------------
-BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     int id = LOWORD(wParam);
     int code = HIWORD(wParam);
@@ -241,7 +241,7 @@ BOOL plCompositeMtlDlg::LayerPanelProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
                 }
                 if (id == kLayerID[i].blendID)
                 {
-                    fPBlock->SetValue(plCompositeMtl::kCompBlend, curTime, SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0), i - 1);
+                    fPBlock->SetValue(plCompositeMtl::kCompBlend, curTime, (int)SendMessage(GetDlgItem(hDlg, id), CB_GETCURSEL, 0, 0), i - 1);
                     return TRUE;
                 }
             }

@@ -59,7 +59,7 @@ bool plPickNodeBase::DoPick()
     plMaxAccelerators::Disable();
 
     // Create Dlg
-    BOOL ret = DialogBoxParam(hInstance,
+    INT_PTR ret = DialogBoxParam(hInstance,
                             MAKEINTRESOURCE(IDD_PICK_NODE),
                             GetCOREInterface()->GetMAXHWnd(),
                             IDlgProc,
@@ -92,7 +92,7 @@ void plPickNodeBase::IInitDlg(HWND hDlg)
     IGetNodesRecur((plMaxNode*)GetCOREInterface()->GetRootNode(), hList, curSelNode);
 }
 
-BOOL plPickNodeBase::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPickNodeBase::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static plPickNodeBase* pthis = nullptr;
 

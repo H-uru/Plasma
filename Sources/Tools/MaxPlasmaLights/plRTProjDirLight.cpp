@@ -71,7 +71,7 @@ plRTProjDirLightDesc    plRTProjDirLightDesc::fStaticDesc;
 class plProjDirDlgProc : public plBaseLightProc
 {
     public:
-        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+        INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
         {
             IParamBlock2        *pb = map->GetParamBlock();
             plRTProjDirLight    *lite = (plRTProjDirLight *)pb->GetOwner();
@@ -93,7 +93,7 @@ class plProjDirDlgProc : public plBaseLightProc
                             bmSelectBtn->SetText(bitmap != nullptr ? (TCHAR *)bitmap->bi.Filename() : "");
                             ReleaseICustButton( bmSelectBtn );
                         }
-                        return false;
+                        return FALSE;
                     }
                     break;
 

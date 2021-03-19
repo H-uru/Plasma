@@ -216,9 +216,9 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
         AVICOMPRESSOPTIONS FAR * aopts[1] = {&opts};
         memset(&opts, 0, sizeof(opts));
 
-        BOOL bErr = AVISaveOptions(nullptr, ICMF_CHOOSE_DATARATE, 1, &fStreamHandle, (LPAVICOMPRESSOPTIONS FAR*)&aopts);
-        hsAssert(bErr, "Error saving stream options in plAVIWriter::Open");
-        if (!bErr)
+        INT_PTR iErr = AVISaveOptions(nullptr, ICMF_CHOOSE_DATARATE, 1, &fStreamHandle, (LPAVICOMPRESSOPTIONS FAR*)&aopts);
+        hsAssert(iErr, "Error saving stream options in plAVIWriter::Open");
+        if (!iErr)
         {
             Close();
             return false;

@@ -1105,7 +1105,7 @@ protected:
             IUpdateSoundButton( soundComponent, hDlg, dlgBtnItemToSet, which );
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         plBaseSoundEmitterComponent *soundComp = (plBaseSoundEmitterComponent *)map->GetParamBlock()->GetOwner();
 
@@ -1114,19 +1114,19 @@ protected:
         {
             case WM_INITDIALOG:
                 CheckDlgButton(hWnd, IDC_SND_TRACKVIEW, soundComp->fAllowUnhide ? BST_CHECKED : BST_UNCHECKED );
-                return true;
+                return TRUE;
             
             case WM_COMMAND:
                 if( LOWORD( wParam ) == IDC_SND_TRACKVIEW )
                 {
                     soundComp->fAllowUnhide = ( IsDlgButtonChecked( hWnd, IDC_SND_TRACKVIEW ) == BST_CHECKED );
                     plComponentShow::Update();
-                    return true;
+                    return TRUE;
                 }
                 break;
         }
         
-        return false;
+        return FALSE;
     }
 };
 
@@ -1439,7 +1439,7 @@ public:
 
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pblock = map->GetParamBlock();
 
@@ -1453,7 +1453,7 @@ public:
             
             case WM_DESTROY:
                 ISwapOutOcclusion( pblock );
-                return 0;
+                return FALSE;
 
             case WM_SHOWWINDOW:
                 if( wParam )
@@ -1463,7 +1463,7 @@ public:
                 }
                 else
                     ISwapOutOcclusion( pblock );
-                return 0;
+                return FALSE;
 
             case WM_COMMAND:
                 if( LOWORD( wParam ) == IDC_EAX_STARTOCC || LOWORD( wParam ) == IDC_EAX_ENDOCC )
@@ -1472,7 +1472,7 @@ public:
                     // from the temp ones
                     ISwapOutOcclusion( pblock );
                     ISwapInOcclusion( pblock, ( LOWORD( wParam ) == IDC_EAX_STARTOCC ) ? 0 : 1 );
-                    return true;
+                    return TRUE;
                 }
                 else if( LOWORD( wParam ) == IDC_EAX_OCCPRESET && HIWORD( wParam ) == CBN_SELCHANGE )
                 {
@@ -1485,7 +1485,7 @@ public:
                         pblock->SetValue( (ParamID)kEAXTempOcclusionLFRatio, 0, fPresets[ idx ].fLFRatio );
                         pblock->SetValue( (ParamID)kEAXTempOcclusionRoomRatio, 0, fPresets[ idx ].fRoomRatio );
                     }
-                    return true;
+                    return TRUE;
                 }
                 break;
         }   
@@ -1805,7 +1805,7 @@ public:
             for (SegmentMap::iterator it = segMap->begin(); it != segMap->end(); it++)
             {
                 SegmentSpec *spec = it->second;
-                int idx = SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
+                int idx = (int)SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
                 SendMessage(hLoop, CB_SETITEMDATA, idx, 1);
 
                 if (!spec->fName.compare(loop))
@@ -1820,7 +1820,7 @@ public:
             SendMessage(hLoop, CB_SETCURSEL, 0, 0);
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch( msg )
         {
@@ -1858,7 +1858,7 @@ public:
         case WM_COMMAND:
             if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_LOOP_COMBO)
             {
-                int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+                int idx = (int)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
                 if (idx == CB_ERR || SendMessage((HWND)lParam, CB_GETITEMDATA, idx, 0) == 0)
                     map->GetParamBlock()->SetValue((ParamID)kSoundLoopName, 0, "");
                 else
@@ -1867,7 +1867,7 @@ public:
                     SendMessage((HWND)lParam, CB_GETLBTEXT, idx, (LPARAM)buf);
                     map->GetParamBlock()->SetValue((ParamID)kSoundLoopName, 0, buf);
                 }
-                return true;
+                return TRUE;
             }
             else if( LOWORD( wParam ) == IDC_COMP_SOUND3D_FILENAME_BTN )
             {
@@ -1882,7 +1882,7 @@ public:
                 int idx = ComboBox_GetCurSel( ctrl );
                 if( idx != CB_ERR )
                 {
-                    int cat = ComboBox_GetItemData( ctrl, idx );
+                    int cat = (int)ComboBox_GetItemData(ctrl, idx);
                     map->GetParamBlock()->SetValue( (ParamID)fCategoryParamID, 0, cat );
                 }
                 else
@@ -1901,7 +1901,7 @@ class plSoundFadeParamsDlgProc : public plAudioBaseComponentProc
     public:
         void DeleteThis() override { }
 
-        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+        INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
         {
             const char          *types[] = { "Linear", "Logarithmic", "Exponential", nullptr };
             IParamBlock2    *pb = map->GetParamBlock();
@@ -1956,7 +1956,7 @@ class plSoundFadeParamsDlgProc : public plAudioBaseComponentProc
 
             }
 
-            return false;
+            return FALSE;
         }
 };  
 
@@ -2781,7 +2781,7 @@ public:
     {
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2    *pb = map->GetParamBlock();
 
@@ -2815,7 +2815,7 @@ public:
             case WM_COMMAND:    
                 if( LOWORD( wParam ) == IDC_EAX_PRESET_COMBO )
                 {
-                    int sel = SendDlgItemMessage( hWnd, IDC_EAX_PRESET_COMBO, CB_GETCURSEL, 0, 0 );
+                    int sel = (int)SendDlgItemMessage(hWnd, IDC_EAX_PRESET_COMBO, CB_GETCURSEL, 0, 0);
                     if( sel != CB_ERR )
                         pb->SetValue( (ParamID)plEAXListenerComponent::kRefPreset, 0, sel );
                     return true;
@@ -3148,7 +3148,7 @@ class plRandomSoundComponentProc : public ParamMap2UserDlgProc
 public:
     plRandomSoundComponentProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
     void DeleteThis() override { }
     void UpdateDisplay(IParamMap2 *pm);
@@ -3183,7 +3183,7 @@ void plRandomSoundComponentProc::UpdateDisplay(IParamMap2 *pm)
     }
 }
 
-BOOL plRandomSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plRandomSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hList = GetDlgItem(hWnd, IDC_COMP_RS_GROUPLIST);
@@ -3638,7 +3638,7 @@ class plPhysicsSndGroupCompProc : public ParamMap2UserDlgProc
 public:
     plPhysicsSndGroupCompProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
     void DeleteThis() override { }
     void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { }
@@ -3670,7 +3670,7 @@ protected:
         
         if( allowAll )
         {
-            int idx = SendMessage( hList, CB_ADDSTRING, 0, (LPARAM)"* All *" );
+            int idx = (int)SendMessage(hList, CB_ADDSTRING, 0, (LPARAM)"* All *");
             SendMessage( hList, CB_SETITEMDATA, idx, (LPARAM)-1 );
             if( currSel == -1 )
                 toSet = idx;
@@ -3678,7 +3678,7 @@ protected:
 
         for( i = 0; groups[ i ].group != plPhysicalSndGroup::kNone; i++ )
         {
-            int idx = SendMessage( hList, CB_ADDSTRING, 0, (LPARAM)groups[ i ].name );
+            int idx = (int)SendMessage(hList, CB_ADDSTRING, 0, (LPARAM)groups[i].name);
             SendMessage( hList, CB_SETITEMDATA, idx, (LPARAM)groups[ i ].group );
 
             if( groups[ i ].group == currSel )
@@ -3734,7 +3734,7 @@ protected:
 static plPhysicsSndGroupCompProc gPhysicsSndGroupCompProc;
 
 
-BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hList = GetDlgItem( hWnd, IDC_SND_GROUP );
@@ -3748,7 +3748,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
                 IInitList( GetDlgItem( hWnd, IDC_SND_GROUP ), pb->GetInt( plPhysicsSndGroupComp::kRefGroup ), false );
                 IInitList( GetDlgItem( hWnd, IDC_SND_AGAINST ), -1, true );
 
-                int idx = SendMessage( hAgainst, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendMessage(hAgainst, CB_GETCURSEL, 0, 0);
                 if( idx != CB_ERR )
                 {
                     idx = (int)SendMessage( hAgainst, CB_GETITEMDATA, idx, 0 );
@@ -3763,7 +3763,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
             {
                 if( LOWORD( wParam ) == IDC_SND_GROUP )
                 {
-                    int idx = SendMessage( hList, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendMessage(hList, CB_GETCURSEL, 0, 0);
                     if( idx != CB_ERR )
                     {
                         pb->SetValue( (ParamID)plPhysicsSndGroupComp::kRefGroup, 0, (int)SendMessage( hList, CB_GETITEMDATA, idx, 0 ) );
@@ -3772,7 +3772,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
                 }
                 else if( LOWORD( wParam ) == IDC_SND_AGAINST )
                 {
-                    int idx = SendMessage( hAgainst, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendMessage(hAgainst, CB_GETCURSEL, 0, 0);
                     if( idx != CB_ERR )
                     {
                         idx = (int)SendMessage( hAgainst, CB_GETITEMDATA, idx, 0 );
@@ -3782,7 +3782,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
             }
             else if( LOWORD( wParam ) == IDC_SND_CLEAR_IMPACT )
             {
-                int idx = SendMessage( hAgainst, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendMessage(hAgainst, CB_GETCURSEL, 0, 0);
                 if( idx != CB_ERR )
                 {
                     idx = (int)SendMessage( hAgainst, CB_GETITEMDATA, idx, 0 );
@@ -3797,7 +3797,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
             }
             else if( LOWORD( wParam ) == IDC_SND_CLEAR_SLIDE )
             {
-                int idx = SendMessage( hAgainst, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendMessage(hAgainst, CB_GETCURSEL, 0, 0);
                 if( idx != CB_ERR )
                 {
                     idx = (int)SendMessage( hAgainst, CB_GETITEMDATA, idx, 0 );
@@ -3810,7 +3810,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
             }
             else if( LOWORD( wParam ) == IDC_SND_IMPACT )
             {
-                int idx = SendMessage( hAgainst, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendMessage(hAgainst, CB_GETCURSEL, 0, 0);
                 if( idx != CB_ERR )
                 {
                     idx = (int)SendMessage( hAgainst, CB_GETITEMDATA, idx, 0 );
@@ -3825,7 +3825,7 @@ BOOL plPhysicsSndGroupCompProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, 
             }
             else if( LOWORD( wParam ) == IDC_SND_SLIDE )
             {
-                int idx = SendMessage( hAgainst, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendMessage(hAgainst, CB_GETCURSEL, 0, 0);
                 if( idx != CB_ERR )
                 {
                     idx = (int)SendMessage( hAgainst, CB_GETITEMDATA, idx, 0 );

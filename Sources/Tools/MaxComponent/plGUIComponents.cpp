@@ -253,7 +253,7 @@ public:
         fProcChain = parentProc;
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -281,7 +281,7 @@ public:
                         ::SetWindowText( ::GetDlgItem(hWnd, fDlgItem ), newName );
                         map->Invalidate( fNodeID );
                         ::InvalidateRect(hWnd, nullptr, TRUE);
-                        return true;
+                        return TRUE;
                     }
                 }
                 break;
@@ -290,7 +290,7 @@ public:
         if( fProcChain )
             fProcChain->DlgProc( t, map, hWnd, msg, wParam, lParam );
 
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }
@@ -322,7 +322,7 @@ public:
         }
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -333,7 +333,7 @@ public:
                 for (ParamMap2UserDlgProc* proc : fProcs)
                     proc->DlgProc(t, map, hWnd, msg, wParam, lParam);
 
-                return true;
+                return TRUE;
 
             case WM_COMMAND:
                 for (plGUISingleCtrlDlgProc* proc : fSingleProcs)
@@ -348,10 +348,10 @@ public:
                 for (ParamMap2UserDlgProc* proc : fProcs)
                     proc->DlgProc(t, map, hWnd, msg, wParam, lParam);
 
-                return true;
+                return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }
@@ -376,7 +376,7 @@ public:
 
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 static plGUITagProc gGUITagProc;
@@ -426,13 +426,13 @@ void    plGUITagProc::ILoadTags( HWND hWnd, IParamBlock2 *pb )
 
 
     SendMessage( hWnd, CB_RESETCONTENT, 0, 0 );
-    idx2 = idx = SendMessage( hWnd, CB_ADDSTRING, 0, (LPARAM)str );
+    idx2 = idx = (int)SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)str);
     SendMessage( hWnd, CB_SETITEMDATA, (WPARAM)idx, (LPARAM)0 );
 
     for( uint32_t i = 0; i < pfGameGUIMgr::GetNumTags(); i++ )
     {
         pfGUITag *tag = pfGameGUIMgr::GetTag( i );
-        idx = SendMessage( hWnd, CB_ADDSTRING, 0, (LPARAM)tag->fName );
+        idx = (int)SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)tag->fName);
         SendMessage( hWnd, CB_SETITEMDATA, (WPARAM)idx, (LPARAM)tag->fID );
 
         if( tag->fID == pb->GetInt( plGUITagComponent::kRefCurrIDSel ) )
@@ -515,7 +515,7 @@ LRESULT CALLBACK    SubclassedEditProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
     return CallWindowProc( sOriginalProc, hWnd, msg, wParam, lParam );
 }
 
-BOOL plGUITagProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR plGUITagProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     HWND    edit;
     BOOL    dummy1;
@@ -529,12 +529,12 @@ BOOL plGUITagProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, 
             // Set the edit control of the combo box to only accept number characters
             edit = GetEditCtrlFromComboBox( GetDlgItem( hWnd, IDC_GUI_TAGCOMBO ) );
             SetWindowLong( edit, GWL_STYLE, GetWindowLong( edit, GWL_STYLE ) | ES_WANTRETURN );
-            sOriginalProc = (WNDPROC)SetWindowLong( edit, GWL_WNDPROC, (DWORD)SubclassedEditProc );
+            sOriginalProc = (WNDPROC)SetWindowLongPtr(edit, GWLP_WNDPROC, (LONG_PTR)SubclassedEditProc);
             
-            return true;
+            return TRUE;
 
         case WM_DESTROY:
-            SetWindowLong( GetDlgItem( hWnd, IDC_GUI_TAGCOMBO ), GWL_WNDPROC, (DWORD)sOriginalProc );
+            SetWindowLongPtr(GetDlgItem(hWnd, IDC_GUI_TAGCOMBO), GWLP_WNDPROC, (LONG_PTR)sOriginalProc);
             break;
 
         case WM_COMMAND:
@@ -542,7 +542,7 @@ BOOL plGUITagProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, 
             {
                 if( HIWORD( wParam ) == CBN_SELCHANGE )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_GUI_TAGCOMBO, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_GUI_TAGCOMBO, CB_GETCURSEL, 0, 0);
                     if( idx == CB_ERR )
                     {
                         // Must be a custom one
@@ -552,7 +552,7 @@ BOOL plGUITagProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, 
                     else
                     {
                         pmap->GetParamBlock()->SetValue( plGUITagComponent::kRefCurrIDSel, 0, 
-                                    SendDlgItemMessage( hWnd, IDC_GUI_TAGCOMBO, CB_GETITEMDATA, idx, 0 ) );
+                                    (int)SendDlgItemMessage(hWnd, IDC_GUI_TAGCOMBO, CB_GETITEMDATA, idx, 0));
                     }
                 }
                 else if( HIWORD( wParam ) == CBN_KILLFOCUS )
@@ -579,7 +579,7 @@ BOOL plGUITagProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, 
             }
             break;
     }
-    return false;
+    return FALSE;
 }
 
 plGUITagComponent::plGUITagComponent()
@@ -647,7 +647,7 @@ public:
 
     void Update(TimeValue t, Interval &valid, IParamMap2 *map) override;
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 };
 
@@ -818,7 +818,7 @@ void    plGUIColorSchemeProc::Update( TimeValue t, Interval &valid, IParamMap2 *
 {
 }
 
-BOOL plGUIColorSchemeProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR plGUIColorSchemeProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     char            str[ 256 ];
     HWND            placeCtrl;
@@ -837,7 +837,7 @@ BOOL plGUIColorSchemeProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UI
     {
         case WM_INITDIALOG:
             ILoadFonts( GetDlgItem( hWnd, IDC_GUI_FONTFACE ), pmap->GetParamBlock() );           
-            return true;
+            return TRUE;
 
         case WM_DESTROY:
             break;
@@ -847,7 +847,7 @@ BOOL plGUIColorSchemeProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UI
             {
                 if( HIWORD( wParam ) == CBN_SELCHANGE )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_GUI_FONTFACE, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_GUI_FONTFACE, CB_GETCURSEL, 0, 0);
 
                     SendDlgItemMessage( hWnd, IDC_GUI_FONTFACE, CB_GETLBTEXT, idx, (LPARAM)str );
 
@@ -951,9 +951,9 @@ BOOL plGUIColorSchemeProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UI
 
             ::EndPaint( hWnd, &paintInfo );
 
-            return true;
+            return TRUE;
     }
-    return false;
+    return FALSE;
 }
 
 plGUIColorSchemeComp::plGUIColorSchemeComp()
@@ -1051,7 +1051,7 @@ public:
 
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pblock = map->GetParamBlock();
 
@@ -1061,11 +1061,11 @@ public:
 //              if( LOWORD( wParam ) == IDC_GUI_CLEAR )
 //              {
 //                  pblock->Reset( (ParamID)kRefProxyNode );
-//                  return true;
+//                  return TRUE;
 //              }
                 break;
         }   
-        return false;
+        return FALSE;
     }
 
 };  
@@ -1117,7 +1117,7 @@ public:
 
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 static plGUIDialogProc gGUIDialogProc;
 
@@ -1449,7 +1449,7 @@ void    plGUIDialogProc::ILoadPages( HWND hWnd, IParamBlock2 *pb )
     delete aged;
 }
 
-BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR plGUIDialogProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch( msg )
     {
@@ -1475,7 +1475,7 @@ BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
             }
 
             ILoadPages( GetDlgItem( hWnd, IDC_GUIDLG_NAME ), pmap->GetParamBlock() );           
-            return true;
+            return TRUE;
 
         case WM_DESTROY:
             break;
@@ -1485,7 +1485,7 @@ BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
             {
                 if( LOWORD( wParam ) == IDC_GUIDLG_NAME )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_GUIDLG_NAME, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_GUIDLG_NAME, CB_GETCURSEL, 0, 0);
                     if( idx != CB_ERR )
                     {
                         char    name[ 256 ];
@@ -1495,7 +1495,7 @@ BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
                 }
                 else if( LOWORD( wParam ) == IDC_GUIDLG_AGE )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_GUIDLG_AGE, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_GUIDLG_AGE, CB_GETCURSEL, 0, 0);
                     if( idx != CB_ERR )
                     {
                         char    name[ 256 ];
@@ -1508,7 +1508,7 @@ BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
             }
             break;
     }
-    return false;
+    return FALSE;
 }
 
 
@@ -1860,7 +1860,7 @@ public:
 
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 
@@ -1913,7 +1913,7 @@ public:
     };
 };
 
-BOOL plGUIButtonProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR plGUIButtonProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 
     switch( msg )
@@ -1924,7 +1924,7 @@ BOOL plGUIButtonProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
             SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)"Button Down" );
             SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)"Button Down and Up" );
             SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_SETCURSEL, pmap->GetParamBlock()->GetInt( plGUIButtonComponent::kRefNotifyType ), 0 );
-            return true;
+            return TRUE;
 
         case WM_DESTROY:
             break;
@@ -1934,13 +1934,13 @@ BOOL plGUIButtonProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
             {
                 if( HIWORD( wParam ) == CBN_SELCHANGE )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE, CB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE, CB_GETCURSEL, 0, 0);
                     pmap->GetParamBlock()->SetValue( plGUIButtonComponent::kRefNotifyType, 0, idx );
                 }
             }
             break;
     }
-    return false;
+    return FALSE;
 }
 
 class plGUIButtonAccessor : public PBAccessor
@@ -3047,7 +3047,7 @@ public:
 
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int i;
         switch( msg )
@@ -3088,7 +3088,7 @@ public:
                     EnableWindow( GetDlgItem( hWnd, IDC_GUI_SELECT_LOC_PATH ), false );
                     CheckDlgButton( hWnd, IDC_GUI_USE_LOCALIZATION, BST_UNCHECKED );
                 }
-                return true;
+                return TRUE;
 
             case WM_DESTROY:
                 break;
@@ -3098,7 +3098,7 @@ public:
                 {
                     if( HIWORD( wParam ) == EN_CHANGE )
                     {
-                        int strLen = SendDlgItemMessage( hWnd, IDC_GUI_INITTEXT, WM_GETTEXTLENGTH, 0, 0 );
+                        int strLen = (int)SendDlgItemMessage(hWnd, IDC_GUI_INITTEXT, WM_GETTEXTLENGTH, 0, 0);
                         if( strLen > 0 )
                         {
                             char *str = new char[ strLen + 1 ];
@@ -3129,7 +3129,7 @@ public:
                 {
                     if( HIWORD( wParam ) == EN_CHANGE )
                     {
-                        int strLen = SendDlgItemMessage( hWnd, IDC_GUI_LOCALIZATION_PATH, WM_GETTEXTLENGTH, 0, 0 );
+                        int strLen = (int)SendDlgItemMessage(hWnd, IDC_GUI_LOCALIZATION_PATH, WM_GETTEXTLENGTH, 0, 0);
                         if( strLen > 0 )
                         {
                             char *str = new char[ strLen + 1 ];
@@ -3152,7 +3152,7 @@ public:
                 {
                     if( HIWORD( wParam ) == CBN_SELCHANGE )
                     {
-                        int idx = SendDlgItemMessage( hWnd, IDC_GUI_LANGUAGE, CB_GETCURSEL, 0, 0 );
+                        int idx = (int)SendDlgItemMessage(hWnd, IDC_GUI_LANGUAGE, CB_GETCURSEL, 0, 0);
                         if (idx >= fTranslations.size())
                             SetDlgItemText( hWnd, IDC_GUI_INITTEXT, "" );
                         else
@@ -3196,7 +3196,7 @@ public:
                 }
                 break;
         }
-        return false;
+        return FALSE;
     }
 };
 static plGUITextBoxProc gGUITextBoxProc;
@@ -3438,7 +3438,7 @@ public:
         strcpy( fTitle, title );
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -3454,7 +3454,7 @@ public:
                     TSTR newName2( node ? node->GetName() : "Pick" );
                     ::SetWindowText( ::GetDlgItem( hWnd, fDownDlgItem ), newName2 );
                 }
-                return true;
+                return TRUE;
 
             case WM_COMMAND:
                 if( ( HIWORD( wParam ) == BN_CLICKED ) )
@@ -3484,10 +3484,10 @@ public:
                         ::InvalidateRect(hWnd, nullptr, TRUE);
                     }
                 }
-                return true;
+                return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }
@@ -3741,7 +3741,7 @@ public:
         ReleaseISpinner( spin );
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -3749,7 +3749,7 @@ public:
                 {
                     SetSpinnerRange( map );
                 }
-                return true;
+                return TRUE;
 
             case WM_COMMAND:
                 if( ( HIWORD( wParam ) == BN_CLICKED ) )
@@ -3766,10 +3766,10 @@ public:
                         map->Invalidate( plGUIRadioGroupComponent::kRefCheckBoxes );
                     }
                 }
-                return true;
+                return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }
@@ -3934,7 +3934,7 @@ public:
     {
     }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -3948,7 +3948,7 @@ public:
                     else
                         SetDlgItemText( hWnd, IDC_GUI_PICKMAT, "Pick" );
                 }
-                return true;
+                return TRUE;
 
             case WM_COMMAND:
                 if( ( HIWORD( wParam ) == BN_CLICKED ) )
@@ -3969,10 +3969,10 @@ public:
                         }
                     }
                 }
-                return true;
+                return TRUE;
         }
 
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }
@@ -4259,8 +4259,8 @@ public:
         fSoundItem = soundItem;
         strcpy( fTitle, title );
     }
-    
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch ( msg )
         {
@@ -4272,7 +4272,7 @@ public:
                 TSTR newName( node ? node->GetName() : "Pick" );
                 ::SetWindowText( ::GetDlgItem( hWnd, fSoundItem ), newName );
             }
-            return true;
+            return TRUE;
             
         case WM_COMMAND:
             if( ( HIWORD( wParam ) == BN_CLICKED ) )
@@ -4288,13 +4288,13 @@ public:
                     ::SetWindowText( ::GetDlgItem(hWnd, fSoundItem ), newName );
                     map->Invalidate( fSoundID );
                     ::InvalidateRect(hWnd, nullptr, TRUE);
-                    return true;
+                    return TRUE;
                 }
             }
             break;
         }
         
-        return false;
+        return FALSE;
     }
     
     void DeleteThis() override { }
@@ -4551,7 +4551,7 @@ public:
 
 //  virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map );
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 };
 
 static pfGUISkinProc gGUISkinProc;
@@ -4613,7 +4613,7 @@ static ParamBlockDesc2  gGUISkinBk
 // Editor proc
 extern HINSTANCE hInstance;
 
-BOOL pfGUISkinProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR pfGUISkinProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2        *pb = pmap->GetParamBlock();
     plGUISkinComp       *comp = (plGUISkinComp *)pb->GetOwner();
@@ -4636,7 +4636,7 @@ BOOL pfGUISkinProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg,
                 ReleaseICustButton( bmSelectBtn );
             }
 
-            return true;
+            return TRUE;
 
         case WM_DESTROY:
             break;
@@ -4662,12 +4662,12 @@ BOOL pfGUISkinProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg,
                     bmSelectBtn->SetText(bitmap != nullptr ? (TCHAR *)bitmap->bi.Filename() : "");
                     ReleaseICustButton( bmSelectBtn );
                 }
-                return false;
+                return FALSE;
             }
             break;
 
     }
-    return false;
+    return FALSE;
 }
 
 plKey   plGUISkinComp::GetConvertedSkinKey() const

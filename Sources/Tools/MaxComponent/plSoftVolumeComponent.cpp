@@ -162,7 +162,7 @@ plSingleCompSelProc::plSingleCompSelProc(ParamID nodeID, int dlgItem, TCHAR *tit
     strcpy( fTitle, title );
 }
 
-BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -173,7 +173,7 @@ BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
             TSTR newName(node ? node->GetName() : "Pick");
             ::SetWindowText(::GetDlgItem(hWnd, fDlgItem), newName);
         }
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         if( (HIWORD(wParam) == BN_CLICKED) && (LOWORD(wParam) == fDlgItem) )
@@ -189,12 +189,12 @@ BOOL plSingleCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
             ShowWindow(hWnd, SW_HIDE);
             ShowWindow(hWnd, SW_SHOW);
 
-            return false;
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +333,7 @@ plSoftVolObjAccessor gSoftVolObjAccessor;
 class plSoftVolComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -342,11 +342,11 @@ public:
                     IParamBlock2 *pb = map->GetParamBlock();
                     map->SetTooltip(plSoftVolComponent::kSoftDistance, TRUE, "Distance effect fades in and out." );
             }
-            return true;
+            return TRUE;
 
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -643,7 +643,7 @@ plSoftVolUnionAccessor gSoftVolUnionAccessor;
 class plSoftVolUnionComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -652,7 +652,7 @@ public:
                     IParamBlock2 *pb = map->GetParamBlock();
                     map->SetTooltip(plSoftVolUnionComponent::kSubVolumes, TRUE, "Select sub-volumes to combine into larger." );
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_VOLUME)
@@ -666,7 +666,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -804,7 +804,7 @@ plSoftVolIsectAccessor gSoftVolIsectAccessor;
 class plSoftVolIsectComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -813,7 +813,7 @@ public:
                     IParamBlock2 *pb = map->GetParamBlock();
                     map->SetTooltip(plSoftVolIsectComponent::kSubVolumes, TRUE, "Select sub-volumes to combine into larger." );
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_VOLUME)
@@ -827,7 +827,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -1165,7 +1165,7 @@ public:
         :   plSingleCompSelProc(nodeID, dlgItem, title)
     {
     }
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {

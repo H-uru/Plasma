@@ -174,12 +174,12 @@ void plAgeDescInterface::Open()
     }
 }
 
-BOOL CALLBACK plAgeDescInterface::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plAgeDescInterface::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -230,7 +230,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
 
     case WM_CLOSE:
         ::SendMessage( fhDlg, WM_COMMAND, IDOK, 0 );
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         switch (LOWORD(wParam))
@@ -360,10 +360,10 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
         case IDC_BRANCHCOMBO:
             if( HIWORD( wParam ) == CBN_SELCHANGE )
             {
-                int idx = SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETCURSEL, 0, 0 );
+                int idx = (int)SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETCURSEL, 0, 0 );
                 if( idx != CB_ERR )
                 {
-                    int id = SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETITEMDATA, idx, 0 );
+                    int id = (int)SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETITEMDATA, idx, 0 );
 
 #ifdef MAXASS_AVAILABLE
                     fAssetManIface->SetCurrBranch( id );
@@ -431,7 +431,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                     if( treeNotify->nmcd.dwDrawStage == CDDS_PREPAINT )
                     {
                         // Sent at the start of redraw, lets us request more specific notifys
-                        SetWindowLong( hDlg, DWL_MSGRESULT, CDRF_NOTIFYITEMDRAW );
+                        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, CDRF_NOTIFYITEMDRAW);
                         return TRUE;
                     }
                     else if( treeNotify->nmcd.dwDrawStage == CDDS_ITEMPREPAINT )
@@ -460,7 +460,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                         }
 
                         // Let Windows know we changed the font
-                        SetWindowLong( hDlg, DWL_MSGRESULT, CDRF_NEWFONT );
+                        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, CDRF_NEWFONT);
                         return TRUE;
                     }
                     else
@@ -469,7 +469,7 @@ BOOL plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                 }
                 else if( hdr->code == TVN_SELCHANGING )
                 {
-                    SetWindowLong( hDlg, DWL_MSGRESULT, !IMakeSureCheckedIn() );
+                    SetWindowLongPtr(hDlg, DWLP_MSGRESULT, !IMakeSureCheckedIn());
                     return TRUE;
                 }
                 else if( hdr->code == TVN_SELCHANGED )
@@ -758,9 +758,8 @@ void plAgeDescInterface::ISetControlDefaults()
 
     CheckDlgButton( fhDlg, IDC_ADM_DONTLOAD, FALSE );
 
-    int i;
     HWND ctrl = GetDlgItem( fhDlg, IDC_PAGE_LIST );
-    for( i = SendMessage( ctrl, LB_GETCOUNT, 0, 0 ) - 1; i >= 0; i-- )
+    for (int i = (int)SendMessage(ctrl, LB_GETCOUNT, 0, 0) - 1; i >= 0; i--)
         RemovePageItem( ctrl, i );
 
     SetDlgItemText( fhDlg, IDC_AGEDESC, "Age Description" );
@@ -948,7 +947,7 @@ void plAgeDescInterface::IFillAgeTree()
     IUpdateCurAge();
 }
 
-BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static ST::string *name = nullptr;
 
@@ -981,7 +980,7 @@ BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-BOOL CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static char msg1[] = "This age currently does not have a sequence number assigned to it. All ages "
                          "must have a unique sequence number for multiplayer to work. Unassigned ages "
@@ -1040,7 +1039,7 @@ void plAgeDescInterface::INewAge()
     ST::string name = ST_LITERAL("New Age Name");
 
     // Get the name of the new age from the user
-    int ret = DialogBoxParam(hInstance,
+    INT_PTR ret = DialogBoxParam(hInstance,
                MAKEINTRESOURCE(IDD_AGE_NAME),
                GetCOREInterface()->GetMAXHWnd(),
                NewAgeDlgProc,
@@ -1070,7 +1069,7 @@ void plAgeDescInterface::INewPage()
     ST::string name = ST_LITERAL("New Page Name");
 
     // Get the name of the new age from the user
-    int ret = DialogBoxParam(hInstance,
+    INT_PTR ret = DialogBoxParam(hInstance,
                             MAKEINTRESOURCE(IDD_AGE_NAME),
                             GetCOREInterface()->GetMAXHWnd(),
                             NewAgeDlgProc,
@@ -1186,7 +1185,7 @@ void    plAgeDescInterface::ICheckSequenceNumber( plAgeDescription &aged )
     if( aged.GetSequencePrefix() == 0 ) // Default of uninitialized
     {
         // Ask about the sequence #
-        int ret = DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_AGE_SEQNUM ),
+        INT_PTR ret = DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_AGE_SEQNUM ),
                                     GetCOREInterface()->GetMAXHWnd(),
                                     NewSeqNumberProc, (LPARAM)aged.GetAgeName().c_str() );
         if( ret == IDYES )

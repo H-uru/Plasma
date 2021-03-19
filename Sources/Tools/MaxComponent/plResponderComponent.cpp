@@ -109,7 +109,7 @@ protected:
 public:
     plResponderProc();
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { IRemoveCmdRollups(); }
 
 protected:
@@ -609,7 +609,7 @@ void plResponderProc::ICreateMenu()
                 {
                     hParent = CreatePopupMenu();
                     menus[category] = hParent;
-                    InsertMenu(fhMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT)hParent, category);
+                    InsertMenu(fhMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hParent, category);
                 }
                 else
                     hParent = menus[category];
@@ -820,12 +820,12 @@ BOOL plResponderProc::DragListProc(HWND hWnd, DRAGLISTINFO *info)
             // To get around it, we don't allow a selection change and a drag in the same click.
             if (fIgnoreNextDrop)
             {
-                SetWindowLong(hWnd, DWL_MSGRESULT, FALSE);
+                SetWindowLongPtr(hWnd, DWLP_MSGRESULT, FALSE);
             }
             else
             {
                 oldIdx = curIdx;
-                SetWindowLong(hWnd, DWL_MSGRESULT, TRUE);
+                SetWindowLongPtr(hWnd, DWLP_MSGRESULT, TRUE);
             }
             return TRUE;
 
@@ -992,7 +992,7 @@ RefTargetHandle plResponderComponent::Clone(RemapDir &remap)
     return obj;
 }
 
-BOOL plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static UINT dragListMsg = 0;
 
@@ -1168,7 +1168,7 @@ BOOL plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, 
             else if (code == CBN_SELCHANGE)
             {
                 int sel = ComboBox_GetCurSel(hCombo);
-                int type = ComboBox_GetItemData(hCombo, sel);
+                int type = (int)ComboBox_GetItemData(hCombo, sel);
 
                 if (type == kStateAdd)
                 {

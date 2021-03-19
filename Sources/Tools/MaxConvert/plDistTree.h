@@ -60,7 +60,7 @@ public:
     union
     {
         void*       fPData;
-        uint32_t      fIData;
+        uintptr_t   fIData;
     };
 
     const Box3& GetBox() const { return fBox; }
@@ -77,10 +77,10 @@ protected:
 
     hsTArray<plDistNode>            fNodes;
 
-    int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
+    int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData);
 
-    int32_t   IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData);
-    int32_t   INextNode(const Box3& box, const Box3& fade, uint32_t iData);
+    int32_t   IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData);
+    int32_t   INextNode(const Box3& box, const Box3& fade, uintptr_t iData);
 
     int32_t   IGetChild(const Box3& parent, const Box3& child) const;
 
@@ -100,8 +100,8 @@ public:
 
     void Reset();
 
-    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nullptr) { AddBoxIData(box, fade, uint32_t(pData)); }
-    void AddBoxIData(const Box3& box, const Box3& fade, uint32_t iData=0);
+    void AddBoxPData(const Box3& box, const Box3& fade, void* pData=nullptr) { AddBoxIData(box, fade, uintptr_t(pData)); }
+    void AddBoxIData(const Box3& box, const Box3& fade, uintptr_t iData=0);
     void AddBox(const Box3& box, const Box3& fade=NonFade()) { AddBoxIData(box, fade, 0); }
 
     BOOL BoxClear(const Box3& box, const Box3& fade) const;

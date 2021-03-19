@@ -79,7 +79,7 @@ public:
         // Pass this to Control and get back a pointer to the TextureSetFunc
         kGetTextureSetFunc,
     };
-    DWORD Control(DWORD parameter);
+    DWORD_PTR Control(DWORD parameter) override;
 };
 
 #endif

@@ -191,9 +191,9 @@ void plAnimComponentProc::SetBoxToAgeGlobal(HWND box, const char *varName)
         ComboBox_AddString(box, varName);
         ComboBox_SelectString(box, 0, varName);
     }
-}   
+}
 
-BOOL plAnimComponentProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plAnimComponentProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     HWND gWnd = GetDlgItem(hWnd, IDC_ANIM_GLOBAL_LIST);
     char buff[512];
@@ -278,7 +278,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1103,7 +1103,7 @@ void    plPlasmaAnimSelectDlgProc::IUpdateNodeBtn( HWND hWnd, IParamBlock2 *pb )
     }
 }
 
-BOOL    plPlasmaAnimSelectDlgProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR plPlasmaAnimSelectDlgProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch ( msg )
     {
@@ -1135,7 +1135,7 @@ BOOL    plPlasmaAnimSelectDlgProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND 
                     ::InvalidateRect(hWnd, nullptr, TRUE);
 
                     IUpdateNodeBtn( hWnd, pb );
-                    return true;
+                    return TRUE;
                 }
                 else if( fUseNode && LOWORD( wParam ) == fNodeDlgItem )
                 {
@@ -1145,7 +1145,7 @@ BOOL    plPlasmaAnimSelectDlgProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND 
                     iface->PickTargetNode( pb, fNodeParamID, fTypeParamID );
 
                     IUpdateNodeBtn( hWnd, pb );
-                    return true;
+                    return TRUE;
                 }
             }
             break;
@@ -1154,7 +1154,7 @@ BOOL    plPlasmaAnimSelectDlgProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND 
     if (fChain != nullptr)
         return fChain->DlgProc( t, pmap, hWnd, msg, wParam, lParam );
 
-    return false;
+    return FALSE;
 }
 
 void plPlasmaAnimSelectDlgProc::DeleteThis() 

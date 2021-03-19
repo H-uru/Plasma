@@ -786,11 +786,11 @@ static void ISetWaterDependencies(plMaxNode* node, INode* waterNode)
 class plShoreCompSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { }
 };
 
-BOOL plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -801,7 +801,7 @@ BOOL plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, U
             TSTR newName(node ? node->GetName() : "Pick");
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SHORE_CHOSE), newName);
         }
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         if( (HIWORD(wParam) == BN_CLICKED) && (LOWORD(wParam) == IDC_COMP_SHORE_CHOSE) )
@@ -819,12 +819,12 @@ BOOL plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, U
                 ShowWindow(hWnd, SW_SHOW);
             }
 
-            return false;
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 plShoreCompSelProc gShoreCompSelProc;
@@ -924,11 +924,11 @@ bool plShoreComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 class plWDecalCompSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { }
 };
 
-BOOL plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -939,7 +939,7 @@ BOOL plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
             TSTR newName(node ? node->GetName() : "Pick");
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_WDECAL_CHOSE), newName);
         }
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         if( (HIWORD(wParam) == BN_CLICKED) && (LOWORD(wParam) == IDC_COMP_WDECAL_CHOSE) )
@@ -957,12 +957,12 @@ BOOL plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
                 ShowWindow(hWnd, SW_SHOW);
             }
 
-            return false;
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 plWDecalCompSelProc gWDecalCompSelProc;
@@ -1071,7 +1071,7 @@ bool plWDecalComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
 class plEnvMapCompSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1083,7 +1083,7 @@ public:
                     ListBox_AddString(hList, map->GetParamBlock()->GetStr(plEnvMapComponent::kVisSetNames, 0, i));
                 }
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_TARGS)
@@ -1125,7 +1125,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };

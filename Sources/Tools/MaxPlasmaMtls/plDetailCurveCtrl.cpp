@@ -138,7 +138,7 @@ plDetailCurveCtrl::plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRec
 {
     // Class init
     if (instance == nullptr)
-        instance = (HINSTANCE)GetWindowLong( parentWnd, GWL_HINSTANCE );
+        instance = (HINSTANCE)GetWindowLongPtr(parentWnd, GWLP_HINSTANCE);
     IRegisterCtrl( instance );
 
     // Per-object init
@@ -161,7 +161,7 @@ plDetailCurveCtrl::plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRec
     if (fHWnd == nullptr)
         return;
 
-    SetWindowLong( fHWnd, GWL_USERDATA, (LONG)this );
+    SetWindowLongPtr(fHWnd, GWLP_USERDATA, (LONG_PTR)this);
 }
 
 plDetailCurveCtrl::~plDetailCurveCtrl()
@@ -574,7 +574,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
     POINT           pt;
 
 
-    plDetailCurveCtrl   *ctrl = (plDetailCurveCtrl *)GetWindowLong( hWnd, GWL_USERDATA );
+    plDetailCurveCtrl   *ctrl = (plDetailCurveCtrl *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
     GetClientRect( hWnd, &clientRect );
     width = clientRect.right - clientRect.left;
     height = clientRect.bottom - clientRect.top;
@@ -690,7 +690,7 @@ LRESULT CALLBACK    plDetailCurveCtrl::IWndProc( HWND hWnd, UINT msg, WPARAM wPa
 
         case WM_DESTROY:
             delete ctrl;
-            SetWindowLong( hWnd, GWL_USERDATA, 0 );
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
             return 0;
 
         default:

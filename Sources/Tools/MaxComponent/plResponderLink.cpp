@@ -97,7 +97,7 @@ protected:
     void ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb);
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -115,7 +115,7 @@ public:
                 {
                     if (LOWORD(wParam) == IDC_LINKINGRULE)
                     {
-                        int data = ComboBox_GetItemData((HWND)lParam, sel);
+                        int data = (int)ComboBox_GetItemData((HWND)lParam, sel);
                         pm->GetParamBlock()->SetValue(kLinkingRule, 0, data);
                         return TRUE;
                     }
@@ -330,7 +330,7 @@ void plResponderLinkProc::ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb)
     std::vector<plFileName> ages = plFileSystem::ListDir(agePath, "*.age");
     for (auto iter = ages.begin(); iter != ages.end(); ++iter)
     {
-        int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
+        int idx = (int)SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
 
         if (iter->GetFileNameNoExt() == savedName)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
@@ -359,7 +359,7 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
     std::vector<plFileName> ages = plFileSystem::ListDir(agePath, "*.age");
     for (auto iter = ages.begin(); iter != ages.end(); ++iter)
     {
-        int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
+        int idx = (int)SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
 
         if (iter->GetFileNameNoExt() == savedName)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
@@ -394,7 +394,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -575,7 +575,7 @@ protected:
     plResponderCompNode fCompNode;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -732,7 +732,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -872,7 +872,7 @@ protected:
     plResponderCompNode fCompNode;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1403,7 +1403,7 @@ enum
 class plResponderSubWorldProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1551,7 +1551,7 @@ enum
 class plResponderFootSurfaceProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2 *pb = pm->GetParamBlock();
         HWND hCB = GetDlgItem(hWnd, IDC_COMP_RESPOND_FOOT_SURFACE);
@@ -1631,7 +1631,7 @@ protected:
     plResponderCompNode fCompNode;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {

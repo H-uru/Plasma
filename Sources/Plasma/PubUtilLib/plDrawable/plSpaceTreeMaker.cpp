@@ -133,7 +133,7 @@ void plSpaceTreeMaker::ISortList(std::vector<plSpacePrepNode*>& nodes, const hsV
     while (n--)
     {
         listTrav->fKey.fFloat = axis.InnerProduct(nodes[n]->fWorldBounds.GetCenter());
-        listTrav->fBody = (void*)nodes[n];
+        listTrav->fBody = (intptr_t)nodes[n];
         listTrav->fNext = listTrav+1;
         listTrav++;
     }

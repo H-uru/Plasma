@@ -69,7 +69,7 @@ class plFootstepSoundComponentProc : public ParamMap2UserDlgProc
 public:
     plFootstepSoundComponentProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
     void DeleteThis() override { }
 };

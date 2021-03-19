@@ -102,7 +102,7 @@ protected:
     HWND fhWnd;
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { IDeleteSegMap(); }
     void SetThing(ReferenceTarget *m) override;
 
@@ -563,7 +563,7 @@ static INT_PTR CALLBACK plStealthMouseOverrideProc( HWND hWnd, UINT msg, WPARAM 
         return 0;
 }
 
-BOOL plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = map->GetParamBlock();
     plAnimStealthNode *stealth = (plAnimStealthNode *)pb->GetOwner();
@@ -600,7 +600,7 @@ BOOL plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg
         {
             // If a loop is selected, save it
             HWND hCombo = (HWND)lParam;
-            int sel = SendMessage( hCombo, CB_GETCURSEL, 0, 0 );
+            int sel = (int)SendMessage(hCombo, CB_GETCURSEL, 0, 0);
             if( sel != CB_ERR )
             {
                 if( SendMessage( hCombo, CB_GETITEMDATA, sel, 0 ) == kName )
@@ -659,13 +659,13 @@ void plStealthDlgProc::ISetSel(HWND hCombo, const char *name)
     // If there is a name, try and set that
     if( name && strcmp( name, "" ) )
     {
-        int idx = SendMessage( hCombo, CB_FINDSTRINGEXACT, -1, (LPARAM)name );
+        int idx = (int)SendMessage(hCombo, CB_FINDSTRINGEXACT, -1, (LPARAM)name);
         // If we can't find the saved name add a "not found" entry, so they know what it was
         if( idx == -1 )
         {
             char buf[256];
             sprintf( buf, "(not found) %s", name );
-            idx = SendMessage( hCombo, CB_ADDSTRING, 0, (LPARAM)buf );
+            idx = (int)SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)buf);
             SendMessage( hCombo, CB_SETITEMDATA, idx, kInvalid );
         }
 
@@ -674,7 +674,7 @@ void plStealthDlgProc::ISetSel(HWND hCombo, const char *name)
     // No name, set it to none
     else
     {
-        int count = SendMessage( hCombo, CB_GETCOUNT, 0, 0 );
+        int count = (int)SendMessage(hCombo, CB_GETCOUNT, 0, 0);
         for( int i = 0; i < count; i++ )
         {
             if( SendMessage( hCombo, CB_GETITEMDATA, i, 0 ) == kDefault )
@@ -710,7 +710,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     SendMessage( hLoops, CB_RESETCONTENT, 0, 0 );
 
     // Add the default option
-    int defIdx = SendMessage( hLoops, CB_ADDSTRING, 0, (LPARAM)ENTIRE_ANIMATION_NAME );
+    int defIdx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)ENTIRE_ANIMATION_NAME);
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
     ST::string segName = ST::string::from_utf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
@@ -736,7 +736,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
                     (spec->fEnd   == -1 || spec->fEnd   <= animSpec->fEnd) )
                 {
                     // Add the name
-                    int idx = SendMessage( hLoops, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str() );
+                    int idx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
                     SendMessage( hLoops, CB_SETITEMDATA, idx, kName );
                 }       
             }

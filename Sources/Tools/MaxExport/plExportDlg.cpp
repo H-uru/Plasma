@@ -76,8 +76,8 @@ protected:
 
     DWORD fLastExportTime;
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IDestroy();
 
@@ -144,7 +144,7 @@ plExportDlg& plExportDlg::Instance()
     return theInstance;
 }
 
-BOOL plExportDlgImp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plExportDlgImp::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return ((plExportDlgImp&)Instance()).DlgProc(hDlg, msg, wParam, lParam);
 }
@@ -241,7 +241,7 @@ void plExportDlgImp::IInitDlg(HWND hDlg)
 
 #include "plFile/plBrowseFolder.h"
 
-BOOL plExportDlgImp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plExportDlgImp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {

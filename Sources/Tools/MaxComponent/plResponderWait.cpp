@@ -64,7 +64,7 @@ protected:
 public:
     void Init(IParamBlock2 *curStatePB, int curCmd, HWND hList) { fStatePB = curStatePB; fCurCmd = curCmd; fhList = hList; }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { }
 
 protected:
@@ -163,7 +163,7 @@ IParamBlock2 *plResponderWaitProc::GetCmdParams(int cmdIdx)
     return (IParamBlock2*)fStatePB->GetReferenceTarget(kStateCmdParams, 0, cmdIdx);
 }
 
-BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -227,7 +227,7 @@ BOOL plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UINT m
             {
                 HWND hWho = (HWND)lParam;
                 int who = ComboBox_GetCurSel(hWho);
-                int idx = ComboBox_GetItemData(hWho, who);
+                int idx = (int)ComboBox_GetItemData(hWho, who);
                 fWaitPB->SetValue(kWaitWho, 0, idx);
 
                 LoadPoint();
@@ -298,7 +298,7 @@ void plResponderWaitProc::LoadWho(bool setDefault)
     if (setDefault && numFound > 0)
     {
         HWND hWho = GetDlgItem(fhDlg, IDC_WAIT_WHO);
-        int idx = ComboBox_GetItemData(hWho, numFound-1);
+        int idx = (int)ComboBox_GetItemData(hWho, numFound-1);
         fWaitPB->SetValue(kWaitWho, 0, idx);
 
         ComboBox_SetCurSel(hWho, numFound-1);

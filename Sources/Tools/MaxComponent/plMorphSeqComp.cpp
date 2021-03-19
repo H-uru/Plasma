@@ -228,14 +228,12 @@ CLASS_DESC(plMorphSeqComp, gMorphSeqCompDesc, "Morph Sequence",  "MorphSeq", COM
 class plMorphSeqProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_ADD_TARGS)
@@ -251,7 +249,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };

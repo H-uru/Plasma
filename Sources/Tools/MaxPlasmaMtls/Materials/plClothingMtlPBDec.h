@@ -217,7 +217,7 @@ public:
 
     void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         // Check if it is for our edit box
         if (fCustomText.ProcessMsg(map, hWnd, msg, wParam, lParam))
@@ -254,7 +254,7 @@ public:
         case WM_COMMAND:
             if (id == IDC_CLOTHING_TILESET)
             {
-                int setIdx = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                int setIdx = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plClothingMtl::kTileset, t, setIdx);
                 return TRUE;
             }

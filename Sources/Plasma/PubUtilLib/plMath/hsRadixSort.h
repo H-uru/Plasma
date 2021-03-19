@@ -52,7 +52,7 @@ public:
         unsigned long   fULong;
     }                           fKey;
 
-    void*                       fBody;
+    intptr_t                    fBody;
 
     hsRadixSortElem*            fNext;
 };

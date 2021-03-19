@@ -103,7 +103,7 @@ public:
 class plRepresentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -120,19 +120,19 @@ public:
                 SendMessage(cbox, CB_SETCURSEL, map->GetParamBlock()->GetInt(plRepresentComp::kQuality), 0);
 
             }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             switch( LOWORD(wParam) )
             {
             case IDC_COMP_REPRESENT_QUALITY:
-                map->GetParamBlock()->SetValue(plRepresentComp::kQuality, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                map->GetParamBlock()->SetValue(plRepresentComp::kQuality, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -291,14 +291,12 @@ void plRepGroupComp::CleanDeadNodes()
 class plRepGroupProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
         case WM_COMMAND:
             if( HIWORD(wParam) == BN_CLICKED )
@@ -361,7 +359,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };

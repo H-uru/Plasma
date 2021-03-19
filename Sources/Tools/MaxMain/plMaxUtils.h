@@ -60,8 +60,8 @@ public:
     void BeginEditParams(Interface *ip, IUtil *iu) override;
     void EndEditParams(Interface *ip, IUtil *iu) override;
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    static BOOL CALLBACK ResDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ResDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };

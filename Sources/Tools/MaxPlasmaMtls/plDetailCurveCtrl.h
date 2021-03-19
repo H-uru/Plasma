@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDetailCurveCtrl_h
 
 #define GET_DETAIL_CURVE_CTRL(dlg, id) \
-    (GetDlgItem(dlg, id) ? (plDetailCurveCtrl *)GetWindowLong(GetDlgItem(dlg, id), GWL_USERDATA) : nullptr)
+    (GetDlgItem(dlg, id) ? (plDetailCurveCtrl *)GetWindowLongPtr(GetDlgItem(dlg, id), GWLP_USERDATA) : nullptr)
 
 // Message to parent to let it know a point got dragged. lParam = pointer to control, wParam = 1 if start point, 0 if end point
 #define PL_DC_POINT_DRAGGED WM_USER + 50

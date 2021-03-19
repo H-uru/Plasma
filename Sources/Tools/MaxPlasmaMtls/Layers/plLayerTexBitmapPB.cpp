@@ -149,8 +149,8 @@ public:
         }
         
     }
-    
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         static ICustButton* bmSelectBtn;
         
@@ -199,7 +199,7 @@ public:
                 map->UpdateUI( t );
                 fSettingDetailValues = false;
             }
-            return 0;
+            return FALSE;
             
         case WM_COMMAND:
             if( HIWORD( wParam ) == EN_CHANGE && LOWORD( wParam ) == IDC_EXPORTWIDTH )

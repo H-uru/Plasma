@@ -135,7 +135,7 @@ public:
     BOOL SupportTexDisplay() override { return TRUE; }
     void ActivateTexDisplay(BOOL onoff) override;
     BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0) override;
-    DWORD GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) override;
+    DWORD_PTR GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) override;
 protected:
     void IChanged();
     void IDiscardTexHandle();
