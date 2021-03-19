@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
-#include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -2082,8 +2081,8 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<h
     plConvert::Instance().AddMessageToQueue(pCamMsg);
     Object* obj = node->EvalWorldState(hsConverterUtils::Instance().GetTime(node->GetInterface())).obj;
     GenCamera* theCam;
-    hsTArray<float> fovW;
-    hsTArray<float> fovH;
+    std::vector<float> fovW;
+    std::vector<float> fovH;
     for (const hsG3DSMaxKeyFrame& k : *kfArray)
     {
         TimeValue t = TimeValue(GetTicksPerFrame() * (k.fFrame));
@@ -2106,8 +2105,8 @@ void hsControlConverter::IExportAnimatedCameraFOV(plMaxNode* node, std::vector<h
             }
             break;
         }
-        fovW.Append(wDeg);
-        fovH.Append(hDeg);
+        fovW.emplace_back(wDeg);
+        fovH.emplace_back(hDeg);
     }
     for (size_t i = 0; i < kfArray->size(); i++)
     {
