@@ -211,11 +211,13 @@ plCullNode::plCullStatus plCullNode::TestSphere(const hsPoint3& center, float ra
 }
 
 // For this Cull Node, recur down the space hierarchy pruning out who to test for the next Cull Node.
-plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsTArray<int16_t>& clear, hsTArray<int16_t>& split, hsTArray<int16_t>& culled) const
+plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t who,
+                                               std::vector<int16_t>& clear, std::vector<int16_t>& split,
+                                               std::vector<int16_t>& culled) const
 {
     if( space->IsDisabled(who) || (space->GetNode(who).fWorldBounds.GetType() != kBoundsNormal) )
     {
-        culled.Append(who);
+        culled.emplace_back(who);
         return kCulled;
     }
 
@@ -225,11 +227,11 @@ plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t
     switch( stat )
     {
     case kClear:
-        clear.Append(who);
+        clear.emplace_back(who);
         retVal = kClear;
         break;
     case kCulled:
-        culled.Append(who);
+        culled.emplace_back(who);
         retVal = kCulled;
         break;
     case kSplit:
@@ -246,9 +248,9 @@ plCullNode::plCullStatus plCullNode::ITestNode(const plSpaceTree* space, int16_t
             if( child0 != child1 )
             {
                 if( child0 == kPureSplit )
-                    split.Append(space->GetNode(who).GetChild(0));
+                    split.emplace_back(space->GetNode(who).GetChild(0));
                 else if( child1 == kPureSplit )
-                    split.Append(space->GetNode(who).GetChild(1));
+                    split.emplace_back(space->GetNode(who).GetChild(1));
                 retVal = kSplit;
             }
             else if( child0 == kPureSplit )
@@ -270,50 +272,49 @@ void plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& t
     if( space->IsDisabled(who) )
         return;
 
-    uint32_t myClearStart = ScratchClear().GetCount();
-    uint32_t mySplitStart = ScratchSplit().GetCount();
-    uint32_t myCullStart = ScratchCulled().GetCount();
+    size_t myClearStart = ScratchClear().size();
+    size_t mySplitStart = ScratchSplit().size();
+    size_t myCullStart = ScratchCulled().size();
 
     if( kPureSplit == ITestNode(space, who, ScratchClear(), ScratchSplit(), ScratchCulled()) )
-        ScratchSplit().Append(who);
+        ScratchSplit().emplace_back(who);
 
-    uint32_t myClearEnd = ScratchClear().GetCount();
-    uint32_t mySplitEnd = ScratchSplit().GetCount();
-    uint32_t myCullEnd = ScratchCulled().GetCount();
+    size_t myClearEnd = ScratchClear().size();
+    size_t mySplitEnd = ScratchSplit().size();
+    size_t myCullEnd = ScratchCulled().size();
 
-    int i;
     // If there's no OuterChild, everything in clear and split is visible. Everything in culled
     // goes to innerchild (if any).
     if( fOuterChild < 0 )
     {
         plProfile_IncCount(HarvestNodes, myClearEnd - myClearStart + mySplitEnd - mySplitStart);
         // Replace these with a memcopy or something!!!!
-        for( i = myClearStart; i < myClearEnd; i++ )
+        for (size_t i = myClearStart; i < myClearEnd; i++)
         {
             space->HarvestLeaves(ScratchClear()[i], totList, outList);
         }
-        for( i = mySplitStart; i < mySplitEnd; i++ )
+        for (size_t i = mySplitStart; i < mySplitEnd; i++)
         {
             space->HarvestLeaves(ScratchSplit()[i], totList, outList);
         }
 
         if( fInnerChild >= 0 )
         {
-            for( i = myCullStart; i < myCullEnd; i++ )
+            for (size_t i = myCullStart; i < myCullEnd; i++)
             {
                 IGetNode(fInnerChild)->ITestNode(space, ScratchCulled()[i], totList, outList);
             }
         }
-        ScratchClear().SetCount(myClearStart);
-        ScratchSplit().SetCount(mySplitStart);
-        ScratchCulled().SetCount(myCullStart);
+        ScratchClear().resize(myClearStart);
+        ScratchSplit().resize(mySplitStart);
+        ScratchCulled().resize(myCullStart);
 
         return;
     }
 
     // There is an OuterChild, so whether there's an InnerChild or not,
     // everything in ClearList is visible soley on the discretion of OuterChild.
-    for( i = myClearStart; i < myClearEnd; i++ )
+    for (size_t i = myClearStart; i < myClearEnd; i++)
     {
         IGetNode(fOuterChild)->ITestNode(space, ScratchClear()[i], totList, outList);
     }
@@ -322,21 +323,21 @@ void plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& t
     // on the discretion of OuterChild.
     if( fInnerChild < 0 )
     {
-        for( i = mySplitStart; i < mySplitEnd; i++ )
+        for (size_t i = mySplitStart; i < mySplitEnd; i++)
         {
             IGetNode(fOuterChild)->ITestNode(space, ScratchSplit()[i], totList, outList);
         }
 
-        ScratchClear().SetCount(myClearStart);
-        ScratchSplit().SetCount(mySplitStart);
-        ScratchCulled().SetCount(myCullStart);
+        ScratchClear().resize(myClearStart);
+        ScratchSplit().resize(mySplitStart);
+        ScratchCulled().resize(myCullStart);
 
         return;
     }
 
     // There is an inner child. Everything in culled list is visible
     // soley on its discretion.
-    for( i = myCullStart; i < myCullEnd; i++ )
+    for (size_t i = myCullStart; i < myCullEnd; i++)
     {
         IGetNode(fInnerChild)->ITestNode(space, ScratchCulled()[i], totList, outList);
     }
@@ -354,20 +355,20 @@ void plCullNode::ITestNode(const plSpaceTree* space, int16_t who, hsBitVector& t
     // set in totList are ENTIRE SUBTREE IS HARVESTED. SpaceTree understands this too in
     // its HarvestLeaves. Seems obvious now, but I didn't hear you suggest it.
 
-    for( i = mySplitStart; i < mySplitEnd; i++ )
+    for (size_t i = mySplitStart; i < mySplitEnd; i++)
     {
         IGetNode(fOuterChild)->ITestNode(space, ScratchSplit()[i], totList, outList);
     }
 
-    for( i = mySplitStart; i < mySplitEnd; i++ )
+    for (size_t i = mySplitStart; i < mySplitEnd; i++)
     {
         if( !totList.IsBitSet(ScratchSplit()[i]) )
             IGetNode(fInnerChild)->ITestNode(space, ScratchSplit()[i], totList, outList);
     }
 
-    ScratchClear().SetCount(myClearStart);
-    ScratchSplit().SetCount(mySplitStart);
-    ScratchCulled().SetCount(myCullStart);
+    ScratchClear().resize(myClearStart);
+    ScratchSplit().resize(mySplitStart);
+    ScratchCulled().resize(myCullStart);
 }
 
 void plCullNode::IHarvest(const plSpaceTree* space, std::vector<int16_t>& outList) const
@@ -377,16 +378,16 @@ void plCullNode::IHarvest(const plSpaceTree* space, std::vector<int16_t>& outLis
     ScratchBitVec().Clear();
     ScratchTotVec().Clear();
 
-    ScratchClear().SetCount(0);
-    ScratchSplit().SetCount(0);
-    ScratchCulled().SetCount(0);
+    ScratchClear().clear();
+    ScratchSplit().clear();
+    ScratchCulled().clear();
 }
 
 //////////////////////////////////////////////////////////////////////
 // This section builds the tree from the input cullpoly's
 //////////////////////////////////////////////////////////////////////
 
-void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depths,
+void plCullNode::IBreakPoly(const plCullPoly& poly, const std::vector<float>& depths,
                             hsBitVector& inVerts,
                             hsBitVector& outVerts,
                             hsBitVector& onVerts,
@@ -460,18 +461,17 @@ void plCullNode::IBreakPoly(const plCullPoly& poly, const hsTArray<float>& depth
     }
 }
 
-void plCullNode::ITakeHalfPoly(const plCullPoly& srcPoly, 
-                               const hsTArray<int>& vtxIdx, 
-                               const hsBitVector& onVerts, 
+void plCullNode::ITakeHalfPoly(const plCullPoly& srcPoly,
+                               const std::vector<size_t>& vtxIdx,
+                               const hsBitVector& onVerts,
                                plCullPoly& outPoly) const
 {
-    if( vtxIdx.GetCount() > 2 )
+    if (vtxIdx.size() > 2)
     {
-        int i;
-        for( i = 0; i < vtxIdx.GetCount(); i++ )
+        for (size_t i = 0; i < vtxIdx.size(); i++)
         {
-            int next = i < vtxIdx.GetCount()-1 ? i+1 : 0;
-            int last = i ? i-1 : vtxIdx.GetCount()-1;
+            size_t next = i < vtxIdx.size() - 1 ? i + 1 : 0;
+            size_t last = i ? i - 1 : vtxIdx.size() - 1;
 
             // If these 3 verts are all on the plane, we may have created a collinear vertex (the middle one)
             // which we now want to skip.
@@ -513,8 +513,8 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
                                                 plCullPoly*& innerPoly, 
                                                 plCullPoly*& outerPoly) const
 {
-    static hsTArray<float> depths;
-    depths.SetCount(poly.fVerts.size());
+    static std::vector<float> depths;
+    depths.resize(poly.fVerts.size());
 
     static hsBitVector onVerts;
     onVerts.Clear();
@@ -535,8 +535,8 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
     }
     if( !(someInner || someOuter) )
     {
-        (innerPoly = ScratchPolys().Push())->Init(poly);
-        (outerPoly = ScratchPolys().Push())->Init(poly);
+        (innerPoly = &ScratchPolys().emplace_back())->Init(poly);
+        (outerPoly = &ScratchPolys().emplace_back())->Init(poly);
         return kSplit;
     }
     else if( !someInner )
@@ -552,8 +552,8 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
 
 
     // Okay, it's split, now break it into the two polys
-    (innerPoly = ScratchPolys().Push())->Init(poly);
-    (outerPoly = ScratchPolys().Push())->Init(poly);
+    (innerPoly = &ScratchPolys().emplace_back())->Init(poly);
+    (outerPoly = &ScratchPolys().emplace_back())->Init(poly);
 
     static plCullPoly scrPoly;
 
@@ -566,25 +566,25 @@ plCullNode::plCullStatus plCullNode::ISplitPoly(const plCullPoly& poly,
         onVerts,
         scrPoly);
 
-    static hsTArray<int> inPolyIdx;
-    inPolyIdx.SetCount(0);
-    static hsTArray<int> outPolyIdx;
-    outPolyIdx.SetCount(0);
+    static std::vector<size_t> inPolyIdx;
+    inPolyIdx.clear();
+    static std::vector<size_t> outPolyIdx;
+    outPolyIdx.clear();
 
     for (size_t i = 0; i < scrPoly.fVerts.size(); i++)
     {
         if( inVerts.IsBitSet(i) )
         {
-            inPolyIdx.Append(i);
+            inPolyIdx.emplace_back(i);
         }
         else if( outVerts.IsBitSet(i) )
         {
-            outPolyIdx.Append(i);
+            outPolyIdx.emplace_back(i);
         }
         else
         {
-            inPolyIdx.Append(i);
-            outPolyIdx.Append(i);
+            inPolyIdx.emplace_back(i);
+            outPolyIdx.emplace_back(i);
         }
     }
 
@@ -687,7 +687,7 @@ void plCullTree::AddPoly(const plCullPoly& poly)
 
     // Make sure we have enough scratch polys. Each node
     // can potentially split this poly, so...
-    ISetupScratch(fNodeList.GetCount());
+    ISetupScratch((uint16_t)fNodeList.size());
 
 #if 1
     if( IGetRoot() && IGetNode(IGetRoot()->fOuterChild) )
@@ -758,8 +758,8 @@ int16_t plCullTree::IAddPolyRecur(const plCullPoly& poly, int16_t iNode)
 
 int16_t plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
 {
-    int16_t retINode = fNodeList.GetCount();
-    plCullNode* nextNode = fNodeList.Push();
+    int16_t retINode = (int16_t)fNodeList.size();
+    plCullNode& nextNode = fNodeList.emplace_back();
     hsVector3 a(&poly.fVerts[i0], &fViewPos);
     hsVector3 b(&poly.fVerts[i1], &fViewPos);
     hsVector3 n = a % b;
@@ -767,7 +767,7 @@ int16_t plCullTree::IMakePolyNode(const plCullPoly& poly, int i0, int i1) const
 
     IDEBUG_NORMALIZE(n, d);
 
-    nextNode->Init(this, n, d);
+    nextNode.Init(this, n, d);
 
     return retINode;
 }
@@ -777,7 +777,7 @@ int16_t plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
     if( fCapturePolys )
         IVisPoly(poly, true);
 
-    int firstNode = fNodeList.GetCount();
+    int16_t firstNode = (int16_t)fNodeList.size();
 
     int16_t iNode = -1;
 
@@ -800,10 +800,10 @@ int16_t plCullTree::IMakeHoleSubTree(const plCullPoly& poly) const
         iNode = child;
     }
 
-    plCullNode* child = fNodeList.Push();
-    child->Init(this, poly.fNorm, poly.fDist);
+    plCullNode& child = fNodeList.emplace_back();
+    child.Init(this, poly.fNorm, poly.fDist);
     if( iNode >= 0 )
-        IGetNode(iNode)->fOuterChild = fNodeList.GetCount()-1;
+        IGetNode(iNode)->fOuterChild = (int16_t)fNodeList.size() - 1;
 
     return firstNode;
 }
@@ -818,7 +818,7 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
     if( fCapturePolys )
         IVisPoly(poly, false);
 
-    int firstNode = fNodeList.GetCount();
+    int16_t firstNode = (int16_t)fNodeList.size();
 
     int16_t iNode = -1;
 
@@ -841,11 +841,11 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
         iNode = child;
     }
 
-    plCullNode* child = fNodeList.Push();
-    child->Init(this, poly.fNorm, poly.fDist);
-    child->fIsFace = true;
+    plCullNode& child = fNodeList.emplace_back();
+    child.Init(this, poly.fNorm, poly.fDist);
+    child.fIsFace = true;
     if( iNode >= 0 )
-        IGetNode(iNode)->fInnerChild = fNodeList.GetCount()-1;
+        IGetNode(iNode)->fInnerChild = (int16_t)fNodeList.size() - 1;
 
     return firstNode;
 }
@@ -964,19 +964,19 @@ void plCullTree::ReleaseCapture() const
 
 void plCullTree::ISetupScratch(uint16_t nNodes)
 {
-    ScratchPolys().SetCount(nNodes << 1);
-    ScratchPolys().SetCount(0);
+    ScratchPolys().clear();
+    ScratchPolys().reserve(nNodes << 1);
 }
 
 void plCullTree::Reset()
 {
     // Using NodeList as scratch will only work if we use indices,
     // because a push invalidates any pointers we've stored away.
-    fNodeList.SetCount(0);
+    fNodeList.clear();
 
     fRoot = -1;
 
-    ScratchPolys().SetCount(0);
+    ScratchPolys().clear();
 }
 
 
@@ -984,8 +984,8 @@ void plCullTree::InitFrustum(const hsMatrix44& world2NDC)
 {
     Reset();
 
-    fNodeList.SetCount(6);
-    fNodeList.SetCount(0);
+    fNodeList.clear();
+    fNodeList.reserve(6);
 
     int16_t       lastIdx = -1;
 
@@ -1002,30 +1002,30 @@ void plCullTree::InitFrustum(const hsMatrix44& world2NDC)
 
         IDEBUG_NORMALIZE( norm, dist );
 
-        node = fNodeList.Push();
+        node = &fNodeList.emplace_back();
         node->Init(this, norm, dist);
         node->fOuterChild = lastIdx;
-        lastIdx = fNodeList.GetCount()-1;
+        lastIdx = (int16_t)fNodeList.size() - 1;
 
         norm.Set(world2NDC.fMap[3][0] + world2NDC.fMap[i][0], world2NDC.fMap[3][1] + world2NDC.fMap[i][1], world2NDC.fMap[3][2] + world2NDC.fMap[i][2]);
         dist = world2NDC.fMap[3][3] + world2NDC.fMap[i][3];
 
         IDEBUG_NORMALIZE( norm, dist );
 
-        node = fNodeList.Push();
+        node = &fNodeList.emplace_back();
         node->Init(this, norm, dist);
         node->fOuterChild = lastIdx;
-        lastIdx = fNodeList.GetCount()-1;
+        lastIdx = (int16_t)fNodeList.size() - 1;
     }
     norm.Set(world2NDC.fMap[3][0] - world2NDC.fMap[2][0], world2NDC.fMap[3][1] - world2NDC.fMap[2][1], world2NDC.fMap[3][2] - world2NDC.fMap[2][2]);
     dist = world2NDC.fMap[3][3] - world2NDC.fMap[2][3];
 
     IDEBUG_NORMALIZE( norm, dist );
 
-    node = fNodeList.Push();
+    node = &fNodeList.emplace_back();
     node->Init(this, norm, dist);
     node->fOuterChild = lastIdx;
-    lastIdx = fNodeList.GetCount()-1;
+    lastIdx = (int16_t)fNodeList.size() - 1;
 
 #ifdef SYMMET
     norm.Set(world2NDC.fMap[3][0] + world2NDC.fMap[2][0], world2NDC.fMap[3][1] + world2NDC.fMap[2][1], world2NDC.fMap[3][2] + world2NDC.fMap[2][2]);
@@ -1037,12 +1037,12 @@ void plCullTree::InitFrustum(const hsMatrix44& world2NDC)
 
     IDEBUG_NORMALIZE( norm, dist );
 
-    node = fNodeList.Push();
+    node = &fNodeList.emplace_back();
     node->Init(this, norm, dist);
     node->fOuterChild = lastIdx;
-    lastIdx = fNodeList.GetCount()-1;
+    lastIdx = (int16_t)fNodeList.size() - 1;
 
-    fRoot = fNodeList.GetCount()-1;
+    fRoot = (int16_t)fNodeList.size() - 1;
 
 #ifdef DEBUG_POINTERS
     if( IGetRoot() )
