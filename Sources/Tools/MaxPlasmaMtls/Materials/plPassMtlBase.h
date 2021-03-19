@@ -42,7 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_PASSMTLBASE_H
 #define PL_PASSMTLBASE_H
 
-#include "hsTemplates.h"
+#include <vector>
+
 #include "plInterp/plAnimEaseTypes.h"
 
 class plNoteTrackWatcher;
@@ -74,10 +75,10 @@ protected:
 
     bool            fLoading;
 
-    hsTArray<NoteTrack *>   fNotetracks;
+    std::vector<NoteTrack *> fNotetracks;
 
-    bool                            fStealthsChanged;
-    hsTArray<plMtlChangeCallback *> fChangeCallbacks;
+    bool                               fStealthsChanged;
+    std::vector<plMtlChangeCallback *> fChangeCallbacks;
 
     void                IUpdateAnimNodes();
     plAnimStealthNode   *IFindStealth( const ST::string &animName );
