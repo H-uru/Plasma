@@ -78,7 +78,7 @@ plKey plPluginResManager::NameToLoc(const ST::string& age, const ST::string& pag
         newSceneNode->Init();
 
         // Add to our list of exported nodes
-        fExportedNodes.Append(newSceneNode);
+        fExportedNodes.emplace_back(newSceneNode);
         newSceneNode->GetKey()->RefObject();
     }
     else
@@ -89,9 +89,9 @@ plKey plPluginResManager::NameToLoc(const ST::string& age, const ST::string& pag
         plSceneNode* node = plSceneNode::ConvertNoRef(snKey->VerifyLoaded());
 
         // Add to our list if necessary
-        if (fExportedNodes.Find(node) == fExportedNodes.kMissingIndex)
+        if (std::find(fExportedNodes.cbegin(), fExportedNodes.cend(), node) == fExportedNodes.cend())
         {
-            fExportedNodes.Append(node);
+            fExportedNodes.emplace_back(node);
             node->GetKey()->RefObject();
         }
     }
@@ -396,19 +396,19 @@ void plPluginResManager::WriteAllPages()
 //  by paging out all the sceneNodes we just created.
 void plPluginResManager::EndExport()
 {
-    for (int i = 0; i < fExportedNodes.GetCount(); i++)
+    for (plSceneNode* node : fExportedNodes)
     {
-        if (fExportedNodes[i] != nullptr)
-            fExportedNodes[i]->GetKey()->UnRefObject();
+        if (node != nullptr)
+            node->GetKey()->UnRefObject();
     }
-    fExportedNodes.Reset();
+    fExportedNodes.clear();
 
-    for(int i = 0; i < fLooseEnds.GetCount(); i++ )
+    for (const plKey& key : fLooseEnds)
     {
-        if( fLooseEnds[i] )
-            fLooseEnds[i]->UnRefObject();
+        if (key)
+            key->UnRefObject();
     }
-    fLooseEnds.Reset();
+    fLooseEnds.clear();
     // Flush the message queue, so all the messages for paging out stuff actually get delivered
     plgDispatch::Dispatch()->MsgQueueProcess();
 }
@@ -418,7 +418,7 @@ void plPluginResManager::AddLooseEnd(plKey key)
     if( key )
     {
         key->RefObject();
-        fLooseEnds.Append(key);
+        fLooseEnds.emplace_back(std::move(key));
     }
 }
 // Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
