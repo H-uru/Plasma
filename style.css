@@ -177,6 +177,20 @@ h3 {
     margin-bottom: 0;
 }
 
+ol li {
+    margin-bottom: 2em;
+}
+
+ol li::marker {
+    font-weight: 700;
+    font-size: 1.125em;
+}
+
+ol ol li::marker {
+    font-weight: 600;
+    font-size: 1em;
+}
+
 dl {
     margin-left: 30px;
 }
@@ -184,7 +198,11 @@ dl {
 dt {
     float: left;
     min-width: 80px;
-    font-weight: bold;
+    font-weight: 500;
+}
+
+dl.wider dt {
+    min-width: 120px;
 }
 
 code {
@@ -249,11 +267,15 @@ tt {
 
 .infonote {
     text-indent: -1.5em;
-    margin-left: 1em;
+    margin-left: 1.5em;
 }
 
 .infonote[data-infotype="warning"]:before {
     content: '⚠️ ';
+}
+
+.infonote b {
+    font-weight: 500;
 }
 
 .cta-box {

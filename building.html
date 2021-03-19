@@ -27,7 +27,8 @@
 
       <h2>Building</h2>
 
-      <p>Currently, the complete game client can only be built for Windows, using Visual Studio. While it is possible to build a 64-bit game client, only the 32-bit (x86) client is officially supported.</p>
+      <p>Currently, the complete game client can only be built for Windows, using Visual Studio.</p>
+      <p>By default these steps will compile a client targeting your machine architecture. It is possible to build a 64-bit game client, but only the 32-bit (x86) client is officially supported.</p>
 
 
       <h3 id="dependencies">Library Dependencies</h3>
@@ -125,9 +126,28 @@
             </ol>
           </details>
         </li>
+
+        <li>
+          <p>The client will be built and installed into a subfolder of where you cloned the repo.</p>
+
+          <dl class="wider">
+            <dt>32-bit Debug:</dt>
+            <dd><tt>out\install\x86-Debug\client</tt></dd>
+
+            <dt>32-bit Release:</dt>
+            <dd><tt>out\install\x86-Release\client</tt></dd>
+
+            <dt>64-bit Debug:</dt>
+            <dd><tt>out\install\x64-Debug\client</tt></dd>
+
+            <dt>64-bit Release:</dt>
+            <dd><tt>out\install\x64-Release\client</tt></dd>
+          </dl>
+
+          <p>The client output folder will be referred to as your “MOUL-OS” folder in the instructions on <a href="running.html">Running Plasma</a>.</p>
+        </li>
       </ol>
 
-      <p>TODO</p>
 
       <h3 id="building-nix">Building on macOS &amp; Linux</h3>
 
@@ -157,9 +177,11 @@
           <p>Install the resulting tools with the following command:<br>
             <code>cmake --install build --config RelWithDebInfo</code></p>
         </li>
-      </ol>
 
-      <p>TODO: Where are tools installed?</p>
+        <li>
+          <p>The tools will be built and installed into the <tt>build/install/tools</tt> subfolder of where you cloned the repo.</p>
+        </li>
+      </ol>
     </main>
 
     <footer>
