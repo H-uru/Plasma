@@ -3800,12 +3800,12 @@ int plMaxNode::IGetCachedAlphaHackValue( int iSubMtl )
     if (pDat == nullptr)
         return -1;
 
-    hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
+    std::vector<int>* cache = pDat->GetAlphaHackLayersCache();
     if (cache == nullptr)
         return -1;
 
     iSubMtl++;
-    if( iSubMtl >= cache->GetCount() )
+    if (iSubMtl >= (int)cache->size())
         return -1;
 
     return (*cache)[ iSubMtl ];
@@ -3817,22 +3817,17 @@ void    plMaxNode::ISetCachedAlphaHackValue( int iSubMtl, int value )
     if (pDat == nullptr)
         return;
 
-    hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
+    std::vector<int>* cache = pDat->GetAlphaHackLayersCache();
     if (cache == nullptr)
     {
-        cache = new hsTArray<int>;
+        cache = new std::vector<int>;
         pDat->SetAlphaHackLayersCache( cache );
     }
 
     iSubMtl++;
 
-    if( iSubMtl >= cache->GetCount() )
-    {
-        int i = cache->GetCount();
-        cache->ExpandAndZero( iSubMtl + 1 );
-        for( ; i < cache->GetCount(); i++ )
-            (*cache)[ i ] = -1;
-    }
+    if (iSubMtl >= (int)cache->size())
+        cache->resize(iSubMtl + 1, -1);
 
     (*cache)[ iSubMtl ] = value;
 }

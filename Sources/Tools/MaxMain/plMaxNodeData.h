@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMaxNodeData_inc
 #define plMaxNodeData_inc
 
+#include <vector>
+
 #include "hsBitVector.h"
 #include "plLoadMask.h"
 #include "plPhysicalProps.h"
-#include "hsTemplates.h"
 
 class hsGMesh;
 class plGeometrySpan;
@@ -403,8 +404,8 @@ public:
 
     plPhysicalProps* GetPhysicalProps()                 { return &fPhysicalProps; }
 
-    hsTArray<int>   *GetAlphaHackLayersCache()                        { return fCachedAlphaHackLayerCounts; }
-    void            SetAlphaHackLayersCache( hsTArray<int> *cache )         { fCachedAlphaHackLayerCounts = cache; }
+    std::vector<int>* GetAlphaHackLayersCache()         { return fCachedAlphaHackLayerCounts; }
+    void            SetAlphaHackLayersCache(std::vector<int>* cache) { fCachedAlphaHackLayerCounts = cache; }
     bool            GetOverrideHighLevelSDL()           { return MaxDatBF.CanBF(MaxDatBF.kOverrideHighLevelSDL); }
     void            SetOverrideHighLevelSDL(bool b)   { MaxDatBF.SetBF(b, MaxDatBF.kOverrideHighLevelSDL); }
     uint8_t           GetAnimCompress()                   { return fAnimCompression; }
@@ -432,7 +433,7 @@ protected:
     plRenderLevel   fOpaqueLevel;
     plPhysicalProps fPhysicalProps;
     uint32_t          fSwapTargetID;
-    hsTArray<int>   *fCachedAlphaHackLayerCounts;
+    std::vector<int>* fCachedAlphaHackLayerCounts;
     plSharedMesh    *fSwapMesh;
     plMaxBoneMap    *fBoneMap;
     plLoadMask      fLoadMask;
