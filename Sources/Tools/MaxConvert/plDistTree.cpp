@@ -58,7 +58,7 @@ plDistTree::~plDistTree()
 void plDistTree::Reset()
 {
     fRoot = -1;
-    fNodes.Reset();
+    fNodes.clear();
 }
 
 void plDistTree::AddBoxIData(const Box3& box, const Box3& fade, uintptr_t iData)
@@ -271,9 +271,9 @@ int32_t plDistTree::IGetChild(const Box3& parent, const Box3& child) const
 
 int32_t plDistTree::INextNode(const Box3& box, const Box3& fade, uintptr_t iData)
 {
-    int32_t iNode = fNodes.GetCount();
+    int32_t iNode = (int32_t)fNodes.size();
 
-    fNodes.Push();
+    fNodes.emplace_back();
 
     fNodes[iNode].fFlags = plDistNode::kIsLeaf;
     fNodes[iNode].fBox = box;
