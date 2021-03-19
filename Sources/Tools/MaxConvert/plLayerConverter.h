@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLayerConverter_h
 #define _plLayerConverter_h
 
-#include "hsTemplates.h"
+#include <vector>
 
 //// Class Definition /////////////////////////////////////////////////////////
 
@@ -106,7 +106,7 @@ class plLayerConverter
 
         const char  *fDbgNodeName;
 
-        hsTArray<plPlasmaMAXLayer *>    fConvertedLayers;
+        std::vector<plPlasmaMAXLayer *> fConvertedLayers;
 
 
         plLayer             *ICreateLayer( const ST::string &name, bool upperLayer, plLocation &loc );
