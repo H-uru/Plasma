@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_CLOTHINGMTL_H
 #define PL_CLOTHINGMTL_H
 
-#include "hsTemplates.h"
+#include <vector>
 
 class Bitmap;
 class plClothingItem;
@@ -59,7 +59,7 @@ class plClothingTileset
 {
 public:
     char *fName;
-    hsTArray<plClothingElement *> fElements;
+    std::vector<plClothingElement *> fElements;
 
     plClothingTileset();
     ~plClothingTileset();
@@ -127,7 +127,7 @@ public:
     static const UINT32 ButtonConstants[kMaxTiles];
     static const UINT32 TextConstants[kMaxTiles * 2];
 
-    hsTArray<plClothingTileset *> fTilesets;
+    std::vector<plClothingTileset *> fTilesets;
     std::vector<plClothingElement *> fElements;
     virtual void InitTilesets();
     virtual void ReleaseTilesets();

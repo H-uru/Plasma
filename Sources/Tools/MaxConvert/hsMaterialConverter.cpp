@@ -4514,15 +4514,14 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
 
     mtl->InitTilesets();
     cloth->fTileset = mtl->GetTilesetIndex();
-    plClothingTileset *tileset = mtl->fTilesets.Get(cloth->fTileset); 
-    int i, j;
-    for (i = 0; i < tileset->fElements.GetCount(); i++)
+    plClothingTileset *tileset = mtl->fTilesets[cloth->fTileset];
+    for (size_t i = 0; i < tileset->fElements.size(); i++)
     {
-        for (j = 0; j < plClothingElement::kLayerMax; j++)
+        for (int j = 0; j < plClothingElement::kLayerMax; j++)
         {
             uint32_t clipLevels;
             uint32_t startWidth;
-            ST::string elementName = tileset->fElements.Get(i)->fName;
+            ST::string elementName = tileset->fElements[i]->fName;
             plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)mtl->GetTexmap(i, j);
             if (layer == nullptr || layer->GetPBBitmap() == nullptr)
                 continue;
@@ -4530,7 +4529,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
             const char *texName = layer->GetPBBitmap()->bi.Name();
 
             for (clipLevels = 0, startWidth = layer->GetPBBitmap()->bi.Width(); 
-                 startWidth > tileset->fElements.Get(i)->fWidth;
+                 startWidth > tileset->fElements[i]->fWidth;
                  clipLevels++, startWidth >>= 1);
 
             plMipmap *tex = plMipmap::ConvertNoRef(plLayerConverter::Instance().CreateSimpleTexture(texName, loc, clipLevels));

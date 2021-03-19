@@ -158,10 +158,9 @@ public:
         char buff[256];
 
         // Setup the tiles
-        int i, j;
         int layerSet = pb->GetInt(ParamID(plClothingMtl::kLayer));
         int layerIdx = plClothingMtl::LayerToPBIdx[layerSet];
-        for (j = 0; j < plClothingMtl::kMaxTiles; j++)
+        for (int j = 0; j < plClothingMtl::kMaxTiles; j++)
         {
             layer = (plPlasmaMAXLayer *)pb->GetTexmap(ParamID(layerIdx), 0, j);
             pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
@@ -190,10 +189,10 @@ public:
         ComboBox_SetCurSel(GetDlgItem(hWnd, IDC_CLOTHING_TILESET), setIdx);
         ComboBox_SetCurSel(GetDlgItem(hWnd, IDC_CLOTHING_LAYER), pb->GetInt(ParamID(plClothingMtl::kLayer)));
         mtl->InitTilesets();
-        plClothingTileset *tileset = mtl->fTilesets.Get(setIdx);
-        for (i = 0; i < tileset->fElements.GetCount(); i++)
+        plClothingTileset *tileset = mtl->fTilesets[setIdx];
+        for (size_t i = 0; i < tileset->fElements.size(); i++)
         {
-            plClothingElement *element = tileset->fElements.Get(i);
+            plClothingElement *element = tileset->fElements[i];
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
                         WM_SETTEXT, 0, (LPARAM)element->fName.c_str());
             snprintf(buff, std::size(buff), "(%d, %d)", element->fWidth, element->fHeight);
@@ -204,7 +203,7 @@ public:
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), SW_SHOW); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[i]), SW_SHOW);   
         }
-        for (i = tileset->fElements.GetCount(); i < plClothingMtl::kMaxTiles; i++)
+        for (size_t i = tileset->fElements.size(); i < plClothingMtl::kMaxTiles; i++)
         {
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), SW_HIDE); 
             ShowWindow(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), SW_HIDE); 
@@ -237,16 +236,15 @@ public:
         switch (msg)
         {
         case WM_INITDIALOG:
-            int j;
             mtl->InitTilesets();
             cbox = GetDlgItem(hWnd, IDC_CLOTHING_TILESET);
-            for (j = 0; j < mtl->fTilesets.GetCount(); j++)
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)mtl->fTilesets.Get(j)->fName);
+            for (plClothingTileset* set : mtl->fTilesets)
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)set->fName);
 
             mtl->ReleaseTilesets();
 
             cbox = GetDlgItem(hWnd, IDC_CLOTHING_LAYER);
-            for (j = 0; j < plClothingElement::kLayerMax; j++)
+            for (int j = 0; j < plClothingElement::kLayerMax; j++)
                 ComboBox_AddString(cbox, plClothingMtl::LayerStrings[j]);
 
             return TRUE;
@@ -320,8 +318,8 @@ public:
                     {
                         mtl->InitTilesets();
 
-                        plClothingTileset *tileset = mtl->fTilesets.Get(pb->GetInt(plClothingMtl::kTileset));
-                        plClothingElement *element = tileset->fElements.Get(buttonIdx);
+                        plClothingTileset *tileset = mtl->fTilesets[pb->GetInt(plClothingMtl::kTileset)];
+                        plClothingElement *element = tileset->fElements[buttonIdx];
                         float targRatio = (float)element->fWidth / (float)element->fHeight;
                         float ratio = (float)pbbm->bi.Width() / (float)pbbm->bi.Height();
 
