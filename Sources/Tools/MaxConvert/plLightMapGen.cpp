@@ -42,14 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsFastMath.h"
-#include "hsTemplates.h"
 
 #include "MaxMain/MaxAPI.h"
 
 #include "MaxComponent/plComponent.h"
-
-
-#include <vector>
 
 #include "plLightMapGen.h"
 #include "plGImage/plMipmap.h"
@@ -247,17 +243,17 @@ bool plLightMapGen::Open(Interface* ip, TimeValue t, bool forceRegen)
 
 #endif // MF_NEW_RGC
 
-        fPreppedMipmaps.SetCount(0);
-        fCreatedLayers.SetCount(0);
-        fNewMaps.SetCount(0);
+        fPreppedMipmaps.clear();
+        fCreatedLayers.clear();
+        fNewMaps.clear();
 
-        fAllLights.SetCount(0);
-        fActiveLights.SetCount(0);
+        fAllLights.clear();
+        fActiveLights.clear();
         IFindLightsRecur((plMaxNode*)fInterface->GetRootNode());
     }
     fRecalcLightMaps = forceRegen;
 
-    return fAllLights.GetCount() > 0;
+    return !fAllLights.empty();
 }
 
 bool plLightMapGen::Close()
@@ -285,9 +281,9 @@ bool plLightMapGen::Close()
     delete fRP;
     fRP = nullptr;
 
-    fPreppedMipmaps.SetCount(0);
-    fCreatedLayers.SetCount(0);
-    fNewMaps.SetCount(0);
+    fPreppedMipmaps.clear();
+    fCreatedLayers.clear();
+    fNewMaps.clear();
 
     IReleaseActiveLights();
     IReleaseAllLights();
@@ -340,11 +336,8 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
 
 bool plLightMapGen::ICompressLightMaps()
 {
-    int i;
-    for( i = 0; i < fPreppedMipmaps.GetCount(); i++ )
+    for (plMipmap* orig : fPreppedMipmaps)
     {
-        plMipmap* orig = fPreppedMipmaps[i];
-
         if( orig )
         {
             const float kFilterSigma = 1.0f;
@@ -435,7 +428,7 @@ bool plLightMapGen::IShadeGeometrySpans(plMaxNode* node, const hsMatrix44& l2w, 
 
 bool plLightMapGen::IsFresh(plBitmap* map) const
 {
-    return fRecalcLightMaps || fNewMaps.Find(map) != fNewMaps.kMissingIndex;
+    return fRecalcLightMaps || std::find(fNewMaps.cbegin(), fNewMaps.cend(), map) != fNewMaps.cend();
 }
 
 bool plLightMapGen::IShadeSpan(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, plGeometrySpan& span)
@@ -668,8 +661,7 @@ bool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, const 
     int height = bitmap->GetHeight();
     bitmap->SetCurrLevel( 0 );
 
-    hsTArray<LMGScanlineData> scanline;
-    scanline.SetCount(height);
+    std::vector<LMGScanlineData> scanline(height);
 
     int lowestV = height;
     int highestV = 0;
@@ -772,17 +764,17 @@ bool plLightMapGen::IGetLight(INode* node)
 
     if (obj && (obj->SuperClassID() == SClass_ID(LIGHT_CLASS_ID))) 
     {
-        plLightMapInfo* liInfo = fAllLights.Push();
+        plLightMapInfo& liInfo = fAllLights.emplace_back();
 
         LightObject* liObj = (LightObject*)obj;
 
-        liInfo->fResetShadowType = 0;
-        liInfo->fResetMapRange = -1.f;
-        liInfo->fMapRange = -1.f;
+        liInfo.fResetShadowType = 0;
+        liInfo.fResetMapRange = -1.f;
+        liInfo.fMapRange = -1.f;
 
-        liInfo->fLiNode = node;
-        liInfo->fObjLiDesc = nullptr;
-        liInfo->fNewRender = true;
+        liInfo.fLiNode = node;
+        liInfo.fObjLiDesc = nullptr;
+        liInfo.fNewRender = true;
 
         return true;
     }
@@ -799,7 +791,7 @@ bool plLightMapGen::Update(TimeValue t)
         fRGC->Update(t);
 #endif // MF_NEW_RGC
 
-    return fAllLights.GetCount() != 0;
+    return !fAllLights.empty();
 }
 
 bool plLightMapGen::IFindLightsRecur(INode* node)
@@ -810,12 +802,12 @@ bool plLightMapGen::IFindLightsRecur(INode* node)
     for( i = 0; i < node->NumberOfChildren(); i++ )
         IFindLightsRecur(node->GetChildNode(i));
 
-    return fAllLights.GetCount() > 0;
+    return !fAllLights.empty();
 }
 
 bool plLightMapGen::InitNode(INode* node, bool softShadow)
 {
-    fActiveLights.SetCount(0);
+    fActiveLights.clear();
 
     plMaxNode* maxNode = (plMaxNode*)node;
     if( !maxNode->CanConvert() )
@@ -830,7 +822,7 @@ bool plLightMapGen::InitNode(INode* node, bool softShadow)
 
     IFindActiveLights((plMaxNode*)node);
     
-    return fActiveLights.GetCount() > 0;
+    return !fActiveLights.empty();
 }
 
 bool plLightMapGen::DeInitNode()
@@ -1098,7 +1090,7 @@ bool plLightMapGen::IPrepLight(plLightMapInfo* liInfo, INode* node)
 
             liInfo->fObjLiDesc = objLiDesc;
             
-            fActiveLights.Append(liInfo);
+            fActiveLights.emplace_back(liInfo);
         }
     }
 
@@ -1107,49 +1099,47 @@ bool plLightMapGen::IPrepLight(plLightMapInfo* liInfo, INode* node)
 
 bool plLightMapGen::IFindActiveLights(plMaxNode* node)
 {
-    fActiveLights.SetCount(0);
-    int i;
-    for( i = 0; i < fAllLights.GetCount(); i++ )
+    fActiveLights.clear();
+    for (plLightMapInfo& light : fAllLights)
     {
-        IPrepLight(&fAllLights[i], node);
+        IPrepLight(&light, node);
     }
 
-    return fActiveLights.GetCount() > 0;
+    return !fActiveLights.empty();
 }
 
 bool plLightMapGen::IReleaseAllLights()
 {
-    int i;
-    for( i = 0; i < fAllLights.GetCount(); i++ )
+    for (plLightMapInfo& light : fAllLights)
     {
-        if( fAllLights[i].fResetMapRange > 0 )
+        if (light.fResetMapRange > 0)
         {
-            LightObject* liObj = (LightObject*)fAllLights[i].fLiNode->EvalWorldState(fTime).obj;
-            liObj->SetMapRange(fTime, fAllLights[i].fResetMapRange);
+            LightObject* liObj = (LightObject*)light.fLiNode->EvalWorldState(fTime).obj;
+            liObj->SetMapRange(fTime, light.fResetMapRange);
 
         }
 #ifdef MF_NO_RAY_SHADOW
         // Fix the shadow method back.
-        if( fAllLights[i].fResetShadowType > 0 )
+        if (light.fResetShadowType > 0)
         {
-            LightObject* liObj = (LightObject*)fAllLights[i].fLiNode->EvalWorldState(fTime).obj;
-            liObj->SetShadowType(fAllLights[i].fResetShadowType);
+            LightObject* liObj = (LightObject*)light.fLiNode->EvalWorldState(fTime).obj;
+            liObj->SetShadowType(light.fResetShadowType);
         }
 #endif // MF_NO_RAY_SHADOW
 
-        if( fAllLights[i].fObjLiDesc )
-            fAllLights[i].fObjLiDesc->DeleteThis();
+        if (light.fObjLiDesc)
+            light.fObjLiDesc->DeleteThis();
 
-        fAllLights[i].fObjLiDesc = nullptr;
+        light.fObjLiDesc = nullptr;
     }
-    fAllLights.SetCount(0);
+    fAllLights.clear();
     
     return true;
 }
 
 bool plLightMapGen::IReleaseActiveLights()
 {
-    fActiveLights.SetCount(0);
+    fActiveLights.clear();
 
     return true;
 }
@@ -1190,7 +1180,7 @@ plLayerInterface* plLightMapGen::IGetLightMapLayer(plMaxNode* node, plGeometrySp
     hsAssert(mip, "This should have been a mipmap we created ourselves.");
     if( !mip )
         return nullptr;
-    if( fPreppedMipmaps.Find(mip) == fPreppedMipmaps.kMissingIndex )
+    if (std::find(fPreppedMipmaps.cbegin(), fPreppedMipmaps.cend(), mip) == fPreppedMipmaps.cend())
     {
         if( IsFresh(mip) )
         {
@@ -1199,11 +1189,11 @@ plLayerInterface* plLightMapGen::IGetLightMapLayer(plMaxNode* node, plGeometrySp
             IInitBitmapColor(mip, initColor);
         }
 
-        fPreppedMipmaps.Append(mip);
+        fPreppedMipmaps.emplace_back(mip);
     }
-    if( fCreatedLayers.Find(lay) == fCreatedLayers.kMissingIndex )
+    if (std::find(fCreatedLayers.cbegin(), fCreatedLayers.cend(), lay) == fCreatedLayers.cend())
     {
-        fCreatedLayers.Append(lay);
+        fCreatedLayers.emplace_back(lay);
     }
     return lay;
 }
@@ -1312,7 +1302,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
             {
                 plMipmap* bitmap = plBitmapCreator::Instance().CreateBlankMipmap(w, h, plMipmap::kRGB32Config, 1, mipmapName, nodeLoc);
                 mipKey = bitmap->GetKey();
-                fNewMaps.Append(bitmap);
+                fNewMaps.emplace_back(bitmap);
 
                 if( !node->GetLightMapComponent()->GetCompress() )
                     bitmap->SetFlags(bitmap->GetFlags() | plMipmap::kForceNonCompressed);
@@ -1356,15 +1346,14 @@ Color plLightMapGen::ShadowPoint(plMaxLightContext& ctx)
 
     Color accum;
     accum.Black();
-    int i;
-    for( i = 0; i < fActiveLights.GetCount(); i++ )
+    for (plLightMapInfo* light : fActiveLights)
     {
-        const char* dbgLiName = fActiveLights[i]->fLiNode->GetName();
+        const char* dbgLiName = light->fLiNode->GetName();
 
         Color color;
         Point3 liDir;
         float dot_nl, diffuseCoef;
-        BOOL hit = fActiveLights[i]->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
+        BOOL hit = light->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
         if( hit )
         {
             accum += color;
@@ -1380,13 +1369,12 @@ Color plLightMapGen::ShadePoint(plMaxLightContext& ctx)
 
     Color accum;
     accum.Black();
-    int i;
-    for( i = 0; i < fActiveLights.GetCount(); i++ )
+    for (plLightMapInfo* light : fActiveLights)
     {
         Color color;
         Point3 liDir;
         float dot_nl, diffuseCoef;
-        BOOL hit = fActiveLights[i]->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
+        BOOL hit = light->fObjLiDesc->Illuminate(ctx, ctx.Normal(), color, liDir, dot_nl, diffuseCoef);
         if( hit )
         {
             accum += color * diffuseCoef;
