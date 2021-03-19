@@ -1,7 +1,7 @@
 # List all dependency packages here.
 set_package_properties(
     3dsm PROPERTIES
-    URL "http://www.autodesk.com/"
+    URL "https://www.autodesk.com/"
     DESCRIPTION "SDK for integrating with the 3DS Max modelling software"
     PURPOSE "Required for building the Plasma plugins for 3DS Max"
     TYPE OPTIONAL
@@ -14,7 +14,7 @@ set_package_properties(
 )
 set_package_properties(
     CURL PROPERTIES
-    URL "http://curl.haxx.se/libcurl/"
+    URL "https://curl.se/libcurl/"
     DESCRIPTION "Multi-protocol file transfer library"
     TYPE REQUIRED
 )
@@ -31,14 +31,14 @@ set_package_properties(
 )
 set_package_properties(
     freetype PROPERTIES
-    URL "http://www.freetype.org/"
+    URL "https://www.freetype.org/"
     DESCRIPTION "Library for rendering fonts"
     PURPOSE "Used to convert vector fonts to raster assets"
     TYPE OPTIONAL
 )
 set_package_properties(
     JPEG PROPERTIES
-    URL "http://libjpeg-turbo.virtualgl.org/"
+    URL "https://libjpeg-turbo.org/"
     DESCRIPTION "JPEG encoding and decoding library.  libjpeg-turbo is recommended for better performance"
     TYPE REQUIRED
 )
@@ -95,13 +95,13 @@ set_package_properties(
 )
 set_package_properties(
     Python3 PROPERTIES
-    URL "http://www.python.org"
+    URL "https://www.python.org/"
     DESCRIPTION "Python Scripting language C bindings"
     TYPE REQUIRED
 )
 set_package_properties(
     Qt5 PROPERTIES
-    URL "http://www.qt.io/"
+    URL "https://www.qt.io/"
     DESCRIPTION "Cross-platform GUI framework for C++"
     PURPOSE "Required for building GUI tools for Plasma"
     TYPE OPTIONAL
@@ -115,14 +115,14 @@ set_package_properties(
 )
 set_package_properties(
     Speex PROPERTIES
-    URL "http://www.speex.org/"
+    URL "https://www.speex.org/"
     DESCRIPTION "Free and open audio codec specifically designed for speech"
     PURPOSE "Required for legacy in-game voice chat in the client"
     TYPE OPTIONAL
 )
 set_package_properties(
     string_theory PROPERTIES
-    URL "http://github.com/zrax/string_theory"
+    URL "https://github.com/zrax/string_theory"
     DESCRIPTION "Flexible C++11 string library and type-safe formatter"
     TYPE REQUIRED
 )
@@ -147,7 +147,7 @@ set_package_properties(
 )
 set_package_properties(
     VPX PROPERTIES
-    URL "http://www.webmproject.org/"
+    URL "https://www.webmproject.org/"
     DESCRIPTION "VP8 and VP9 video codec"
     PURPOSE "Required for in-game video playback support"
     TYPE RECOMMENDED
