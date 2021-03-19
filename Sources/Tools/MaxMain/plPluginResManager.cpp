@@ -152,9 +152,9 @@ public:
 
     bool EatKey(const plKey& key) override
     {
-        uint32_t count = plCommonObjLib::GetNumLibs();
+        size_t count = plCommonObjLib::GetNumLibs();
 
-        for (uint32_t i = 0; i < count; i++)
+        for (size_t i = 0; i < count; i++)
         {
             plCommonObjLib* lib = plCommonObjLib::GetLib(i);
             if (lib->IsInteresting(key))
@@ -289,7 +289,7 @@ void plPluginResManager::IShutdown()
     // Loop through all the commonObjLibs and clear their object lists, just
     // as a safety measure (the creators of the various libs should really
     // be doing it)
-    for (uint32_t i = 0; i < plCommonObjLib::GetNumLibs(); i++)
+    for (size_t i = 0; i < plCommonObjLib::GetNumLibs(); i++)
         plCommonObjLib::GetLib(i)->ClearObjectList();
 
     plResManager::IShutdown();
