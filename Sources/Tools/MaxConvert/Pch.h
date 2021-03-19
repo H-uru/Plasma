@@ -68,7 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "hsResMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 #include "plTweak.h"
 
 // 3ds Max SDK

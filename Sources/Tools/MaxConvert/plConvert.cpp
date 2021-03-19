@@ -47,12 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
-
-#include <vector>
 
 #include "plConvert.h"
 
@@ -264,11 +261,11 @@ bool plConvert::Convert()
 //#include "MaxMain/plMaxNodeData.h"
 //#include <set>
 
-bool ConvertList(hsTArray<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errMsg, plConvertSettings *settings)
+bool ConvertList(std::vector<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errMsg, plConvertSettings *settings)
 {
-    for (int i = 0; i < nodes.Count(); i++)
+    for (plMaxNode* node : nodes)
     {
-        (nodes[i]->*p)(errMsg, settings);
+        (node->*p)(errMsg, settings);
         
         if (errMsg && errMsg->IsBogus())
             return false;
@@ -277,7 +274,7 @@ bool ConvertList(hsTArray<plMaxNode*>& nodes, PMaxNodeFunc p, plErrorMsg *errMsg
     return true;
 }
 
-bool plConvert::Convert(hsTArray<plMaxNode*>& nodes)
+bool plConvert::Convert(std::vector<plMaxNode*>& nodes)
 {
 #ifndef HS_NO_TRY
     try
@@ -379,10 +376,10 @@ void plConvert::DeInit()
     IAutoUnClusterRecur(fInterface->GetRootNode());
 
     // clear out the message queue
-    for (int i = 0; i < fMsgQueue.Count(); i++)
-        plgDispatch::MsgSend(fMsgQueue[i]);
+    for (plMessage* msg : fMsgQueue)
+        plgDispatch::MsgSend(msg);
 
-    fMsgQueue.Reset();
+    fMsgQueue.clear();
 
     hsControlConverter::Instance().DeInit();
     plMeshConverter::Instance().DeInit();
@@ -398,7 +395,7 @@ void plConvert::DeInit()
 
 void plConvert::AddMessageToQueue(plMessage* msg)
 {
-    fMsgQueue.Append(msg);
+    fMsgQueue.emplace_back(msg);
 }
 
 void plConvert::SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, bool ignorePhysicals )
