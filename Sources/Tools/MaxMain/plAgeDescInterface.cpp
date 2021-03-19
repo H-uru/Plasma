@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsTemplates.h"
 
 #include "MaxAPI.h"
 
@@ -859,12 +858,12 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
     MaxAssInterface *assetMan = GetMaxAssInterface();
     if (assetMan != nullptr)
     {
-        hsTArray<jvUniqueId> doneAssets;
+        std::vector<jvUniqueId> doneAssets;
 
         jvArray<jvUniqueId>* assets = assetMan->GetAssetsByType(MaxAssInterface::kTypeAge);
         for (int i = 0; i < assets->Size(); i++)
         {
-            if( doneAssets.Find( (*assets)[ i ] ) == doneAssets.kMissingIndex )
+            if (std::find(doneAssets.cbegin(), doneAssets.cend(), (*assets)[i]) == doneAssets.cend())
             {
                 char agePath[MAX_PATH];
                 if (assetMan->GetLatestVersionFile((*assets)[i], agePath, sizeof(agePath)))
@@ -881,7 +880,7 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
                     else
                         ageFiles.push_back(age);
 
-                    doneAssets.Append( (*assets)[ i ] );
+                    doneAssets.emplace_back((*assets)[i]);
                 }
             }
         }
@@ -1285,10 +1284,8 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
 uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix )
 {
     int32_t               searchSeq = getReservedPrefix ? -1 : 1;
-    hsTArray<char *>    ageList;
-    int                 i;
 
-    hsTArray<plAgeDescription>  ages;
+    std::vector<plAgeDescription> ages;
 
 
     if( fForceSeqNumLocal )
@@ -1296,8 +1293,8 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
 
     IGetAgeFiles(fAgeFiles);
 
-    ages.SetCount( fAgeFiles.size() );
-    for( i = 0; i < fAgeFiles.size(); i++ )
+    ages.resize(fAgeFiles.size());
+    for (size_t i = 0; i < fAgeFiles.size(); i++)
     {
         hsUNIXStream stream;
         if( stream.Open( fAgeFiles[ i ]->fPath, "rt" ) )
@@ -1307,13 +1304,14 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
         }
     }
 
+    decltype(ages.cbegin()) ageIter;
     do
     {
         if( getReservedPrefix )
         {
-            for( i = 0; i < ages.GetCount(); i++ )
+            for (ageIter = ages.cbegin(); ageIter != ages.cend(); ++ageIter)
             {
-                if( ages[ i ].GetSequencePrefix() == searchSeq )
+                if (ageIter->GetSequencePrefix() == searchSeq)
                 {
                     searchSeq--;
                     break;
@@ -1322,16 +1320,16 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
         }
         else
         {
-            for( i = 0; i < ages.GetCount(); i++ )
+            for (ageIter = ages.cbegin(); ageIter != ages.cend(); ++ageIter)
             {
-                if( ages[ i ].GetSequencePrefix() == searchSeq )
+                if (ageIter->GetSequencePrefix() == searchSeq)
                 {
                     searchSeq++;
                     break;
                 }
             }
         }
-    } while( i < ages.GetCount() );
+    } while (ageIter != ages.cend());
 
     return searchSeq;
 }
