@@ -27,7 +27,64 @@
 
       <h2>Running</h2>
 
-      <p>TODO</p>
+      <p>After <a href="download.html">downloading</a> or <a href="building.html">building</a> Plasma, you should have a folder containing the game client application. This folder will be referred to as your “MOUL-OS” folder in these instructions.</p>
+
+      <p>To run the client for testing with content from <em>Myst Online: Uru Live again</em>, you will need a fully-patched installation of <em>Myst Online: Uru Live again</em> provided by Cyan.</p>
+
+      <div class="infobox">
+          <p>You should <strong>never</strong> use a custom-built client with servers that are not explicitly intended for testing. Newer features in the client code might be incompatible with those servers and could break the game for other players or result in permanent player data corruption.</p>
+      </div>
+
+
+      <h3 id="running-windows">Running on Windows</h3>
+
+      <ol>
+        <li><p>Copy the folders <tt>avi</tt>, <tt>dat</tt>, and <tt>sfx</tt> from your existing MOULa installation to the MOUL-OS folder.</p></li>
+
+        <li><p>Get the appropriate <tt>server.ini</tt> file for the server you will be connecting to.</p></li>
+
+        <li><p>Create a shortcut in the MOUL-OS folder to the compiled <tt>plClient.exe</tt>.</p></li>
+
+        <li><p>Edit the shortcut’s properties, and after the final quotation mark in the Target field, add <code>/LocalData</code>.<br>Also, change the Start in field to the path of your MOUL-OS folder.</p></li>
+
+        <li><p>Double-click the shortcut to connect to your server and test!</p></li>
+      </ol>
+
+
+      <h3 id="running-vs">Running in Visual Studio (for debugging)</h3>
+
+      <p>Follow these instructions if you wish to be able to debug using a single content folder from inside Visual Studio.</p>
+
+      <ol>
+        <li><p>Copy the folders <tt>avi</tt>, <tt>dat</tt>, and <tt>sfx</tt> from your existing MOULa installation to the MOUL-OS folder.</p></li>
+
+        <li><p>Get the appropriate <tt>server.ini</tt> file for the server you will be connecting to.</p></li>
+
+        <li><p>Open the Plasma folder in Visual Studio.</p></li>
+
+        <li><p>Switch to CMake Targets View in the Solution Explorer.</p></li>
+
+        <li><p>Right-click on the plClient (executable) target in the Solution Explorer.</p></li>
+
+        <li><p>Select Debug and Launch Settings &gt; plClient.exe (Install).</p></li>
+
+        <li><p>Add the following to the configurations:<br><code>"args": "/LocalData"</code></p></li>
+      </ol>
+
+
+      <!-- No Linux client available, no point including this right now
+      <h3 id="running-linux">Running on Linux</h3>
+
+      <ol>
+        <li><p>Copy the folders <tt>avi</tt>, <tt>dat</tt>, and <tt>sfx</tt> from your existing MOULa installation to the MOUL-OS folder.</p></li>
+
+        <li><p>Get the appropriate <tt>server.ini</tt> file for the server you will be connecting to.</p></li>
+
+        <li><p>Open a terminal window in your MOUL-OS folder.</p></li>
+
+        <li><p>Run <code>plClient --LocalData</code> to start the client.</p></li>
+      </ol>
+      -->
     </main>
 
     <footer>
