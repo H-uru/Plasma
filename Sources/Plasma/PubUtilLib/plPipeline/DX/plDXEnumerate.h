@@ -136,7 +136,7 @@ class hsG3DDeviceMode;
 class hsGDirect3DTnLEnumerate
 {
 protected:
-    char    fEnumeErrorStr[128];            // ドライバ、デバイス列挙エラーメッセージ格納バッファ
+    char    fEnumeErrorStr[128];            // Driver & device enumeration error message buffer
 
     std::vector<D3DEnum_DriverInfo> fDrivers;
 
