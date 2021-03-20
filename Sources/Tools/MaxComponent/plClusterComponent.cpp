@@ -84,7 +84,7 @@ void DummyCodeIncludeFuncCluster()
 class plClusterComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -106,7 +106,7 @@ public:
             break;
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -792,7 +792,7 @@ void plClusterComponent::ISetupRenderDependencies()
     for( i = 0; i < numClust; i++ )
     {
         listTrav = &scratchList[i];
-        listTrav->fBody = (void*)i;
+        listTrav->fBody = (intptr_t)i;
         listTrav->fNext = listTrav+1;
 
         Point3 fadeMax = fCompPB->GetPoint3(kFadeOuts, TimeValue(0), i);

@@ -291,7 +291,7 @@ bool plClimbTriggerComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
 // DIALOG PROC IMPLEMENTATION
 //
 /////////////////////////////////////////////////////////////////
-BOOL plClimbTriggerComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plClimbTriggerComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hCommandMenu = GetDlgItem(hWnd, IDC_COMP_CLIMB_COMMAND);

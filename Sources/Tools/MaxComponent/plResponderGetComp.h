@@ -88,8 +88,8 @@ protected:
     void IFindCompsRecur(plMaxNodeBase *node, NodeSet& nodes);
     void ILoadNodes(plMaxNodeBase *compNode, HWND hDlg);
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 class plResponderCompNode

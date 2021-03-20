@@ -60,7 +60,7 @@ bool plPickLocalizationDlg::DoPick()
 {
     plMaxAccelerators::Disable();
 
-    BOOL ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_LOCALIZATION),
+    INT_PTR ret = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PICK_LOCALIZATION),
         GetCOREInterface()->GetMAXHWnd(), IDlgProc, (LPARAM)this);
 
     plMaxAccelerators::Enable();
@@ -210,7 +210,7 @@ bool plPickLocalizationDlg::IValidatePath()
     return true;
 }
 
-BOOL CALLBACK plPickLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plPickLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static plPickLocalizationDlg* pthis = nullptr;
 

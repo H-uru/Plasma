@@ -76,7 +76,7 @@ class plPassAnimDlgProc : public ParamMap2UserDlgProc, public plMtlChangeCallbac
         plPassAnimDlgProc();
         virtual ~plPassAnimDlgProc();
 
-        BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+        INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
         void DeleteThis() override { }
         void SetThing(ReferenceTarget *m) override;
         void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override;

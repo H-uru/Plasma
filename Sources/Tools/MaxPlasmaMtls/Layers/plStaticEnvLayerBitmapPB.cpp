@@ -211,7 +211,7 @@ public:
     }
 
     /// Main message proc
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
       static ICustButton* bmSelectBtn;
       long  buttons[ 6 ] = { IDC_FRONT_NAME, IDC_BACK_NAME, IDC_LEFT_NAME, IDC_RIGHT_NAME, IDC_TOP_NAME, IDC_BOTTOM_NAME };
@@ -282,7 +282,7 @@ public:
     }
     void DeleteThis() override { }
 
-    BOOL    IDoSelectBaseFilename( IParamMap2 *map, TimeValue t, HWND hWnd )
+    INT_PTR IDoSelectBaseFilename(IParamMap2 *map, TimeValue t, HWND hWnd)
     {
         BitmapInfo      bi;
 
@@ -363,7 +363,7 @@ public:
         return TRUE;
     }
 
-    BOOL    IDoLayerClicked( int whichBtn, int whichFace, IParamMap2 *map, TimeValue t, HWND hWnd )
+    INT_PTR IDoLayerClicked(int whichBtn, int whichFace, IParamMap2 *map, TimeValue t, HWND hWnd)
     {
         plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)map->GetParamBlock()->GetOwner();
         if (layer == nullptr)

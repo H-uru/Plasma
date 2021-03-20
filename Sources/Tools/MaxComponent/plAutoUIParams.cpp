@@ -515,7 +515,7 @@ bool plPickListParam::IsMyMessage(UINT msg, WPARAM wParam, LPARAM lParam, IParam
         }
         if ((HWND)lParam == fhRemove)
         {
-            int sel = SendMessage(fhList, LB_GETCURSEL, 0, 0);
+            int sel = (int)SendMessage(fhList, LB_GETCURSEL, 0, 0);
             if (sel != -1)
             {
                 pb->Delete(fID, sel, 1);

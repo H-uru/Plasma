@@ -384,7 +384,7 @@ BITMAPINFO *plDynamicEnvLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thma
     return nullptr;
 }
 
-DWORD plDynamicEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plDynamicEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 

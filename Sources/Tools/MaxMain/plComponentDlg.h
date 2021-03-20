@@ -73,8 +73,8 @@ public:
 protected:
     plComponentDlg();
 
-    static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IPositionControls(RECT *newRect, int edge);
     enum { kResizeX = 1, kResizeY = 2, kMoveX = 4, kMoveY = 8 };

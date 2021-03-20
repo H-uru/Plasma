@@ -84,8 +84,8 @@ protected:
 
     void IDeleteStages();
 
-    static BOOL CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     void IInitDlg();
     void FixStageNames();
@@ -339,7 +339,7 @@ void plMultistageBehComponent::FixStageNames()
 }
 
 
-BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -448,7 +448,7 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
                             }
 
                             // Return true to keep the changes
-                            SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                         }
                         
                         plMaxAccelerators::Enable();
@@ -607,12 +607,12 @@ RefTargetHandle plMultistageBehComponent::Clone(RemapDir &remap)
     return clone;
 }
 
-BOOL plMultistageBehComponent::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMultistageBehComponent::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
-        SetWindowLong(hDlg, GWL_USERDATA, lParam);
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
 
-    plMultistageBehComponent *multi = (plMultistageBehComponent*)GetWindowLong(hDlg, GWL_USERDATA);
+    plMultistageBehComponent *multi = (plMultistageBehComponent*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
 
     if (!multi)
         return FALSE;

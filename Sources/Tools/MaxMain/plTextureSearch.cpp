@@ -108,12 +108,12 @@ void plTextureSearch::Toggle()
 }
 
 
-BOOL plTextureSearch::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plTextureSearch::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -238,7 +238,7 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
     if (update == kUpdateSetSize)
     {
         int sel = ComboBox_GetCurSel(hCombo);
-        uint32_t data = ComboBox_GetItemData(hCombo, sel);
+        uint32_t data = (uint32_t)ComboBox_GetItemData(hCombo, sel);
         sizeX = LOWORD(data);
         sizeY = HIWORD(data);
     }

@@ -1532,7 +1532,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     {
         dist = vec.InnerProduct(list[ i ].fCenter) + trans;
         elem[ i ].fKey.fFloat = dist;
-        elem[ i ].fBody = &list[ i ];
+        elem[ i ].fBody = (intptr_t)&list[ i ];
         elem[ i ].fNext = elem + i + 1;
     }
     elem[i - 1].fNext = nullptr;
@@ -1874,7 +1874,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             {
                 float dist = -(viewPos - list[j].fCenter).MagnitudeSquared();
                 elem[cnt].fKey.fFloat = dist;
-                elem[cnt].fBody = &list[j];
+                elem[cnt].fBody = (intptr_t)&list[j];
                 elem[cnt].fNext = elem + cnt + 1;
 
                 cnt++;

@@ -349,7 +349,7 @@ bool plAnimEventProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int res
         HWND hList = GetDlgItem(hWnd, IDC_EVENT_LIST);
         int idx = ListBox_GetCurSel(hList);
         BOOL selected = ListBox_GetSel(hList, idx);
-        int eventType = ListBox_GetItemData(hList, idx);
+        int eventType = (int)ListBox_GetItemData(hList, idx);
 
         if (eventType == kAnimEventBegin)
             pb->SetValue(kAnimBegin, 0, selected);
@@ -608,7 +608,7 @@ bool plMtlEventProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resI
         HWND hList = GetDlgItem(hWnd, IDC_EVENT_LIST);
         int idx = ListBox_GetCurSel(hList);
         BOOL selected = ListBox_GetSel(hList, idx);
-        int eventType = ListBox_GetItemData(hList, idx);
+        int eventType = (int)ListBox_GetItemData(hList, idx);
 
         if (eventType == kAnimEventBegin)
             pb->SetValue(kMtlBegin, 0, selected);

@@ -117,7 +117,7 @@ protected:
         for (int i = 0; i < names.size(); i++)
         {
             const char* c_name = names[i].c_str();
-            int idxptr = SendMessage(hListBox, LB_ADDSTRING, 0, (LPARAM)c_name);
+            LRESULT idxptr = SendMessage(hListBox, LB_ADDSTRING, 0, (LPARAM)c_name);
             
             SendMessage(hListBox, LB_SETITEMDATA, (WPARAM) idxptr, (LPARAM) GetItemVals[i]);
             

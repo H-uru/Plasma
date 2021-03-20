@@ -600,7 +600,7 @@ public:
     AvatarCompDlgProc() {}
     ~AvatarCompDlgProc() {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
@@ -635,13 +635,13 @@ public:
         case WM_COMMAND:  
             if (id == IDC_COMP_AVATAR_CLOTHING_GROUP)
             {
-                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plAvatarComponent::kClothingGroup, t, selection);
                 return TRUE;
             }
             if (id == IDC_COMP_AVATAR_SKELETON)
             {
-                selection = SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0);
                 pb->SetValue(plAvatarComponent::kSkeleton, t, selection);
                 return TRUE;
             }
@@ -738,7 +738,7 @@ public:
 
     void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateBoneDisplay(pmap); }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int selection;
         HWND cbox = nullptr;
@@ -782,19 +782,19 @@ public:
                 Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (mat ? mat->GetName() : "(none)"));
 
                 UpdateBoneDisplay(map);
-                return true;
+                return TRUE;
             }
 
         case WM_COMMAND:
             if (LOWORD(wParam) == IDC_COMP_AVATAR_CLOTHING_GROUP)
             {
-                selection = SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP), CB_GETCURSEL, 0, 0);
                 fPB->SetValue(ParamID(plLODAvatarComponent::kClothingGroup), t, selection);
                 return TRUE;
             }
             else if (LOWORD(wParam) == IDC_COMP_AVATAR_SKELETON)
             {
-                selection = SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON), CB_GETCURSEL, 0, 0);
+                selection = (int)SendMessage(GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON), CB_GETCURSEL, 0, 0);
                 fPB->SetValue(ParamID(plLODAvatarComponent::kSkeleton), t, selection);
                 return TRUE;
             }
@@ -813,7 +813,7 @@ public:
                 // Remove the currently selected material
                 else if (LOWORD(wParam) == IDC_COMP_LOD_AVATAR_BONE_REMOVE)
                 {
-                    int curSel = SendMessage(hList, LB_GETCURSEL, 0, 0);
+                    int curSel = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
                     if (curSel >= 0)
                         fComp->RemoveBone(curSel);
 
@@ -837,14 +837,14 @@ public:
                     
                 if(LOWORD(wParam) == IDC_COMP_LOD_AVATAR_STATE && HIWORD(wParam) == CBN_SELCHANGE)
                 {
-                    int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+                    int idx = (int)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
                     fPB->SetValue(plLODAvatarComponent::kLODState, 0, idx);
                     
                     if(fPB->GetINode(plLODAvatarComponent::kMeshNodeTab, t, idx))
                         fPB->SetValue(plLODAvatarComponent::kMeshNodeAddBtn, t, fPB->GetINode(plLODAvatarComponent::kMeshNodeTab,t, idx));
                     else
                         fPB->Reset(plLODAvatarComponent::kMeshNodeAddBtn);
-                    return true;
+                    return TRUE;
                 }
             }
 
@@ -857,11 +857,11 @@ public:
                 if(fPB->GetINode(plLODAvatarComponent::kMeshNodeAddBtn,t))
                     fPB->SetValue(plLODAvatarComponent::kMeshNodeTab, t, fPB->GetINode(plLODAvatarComponent::kMeshNodeAddBtn,t), LodBeginState);
 
-                return false;
+                return FALSE;
             }
         }
             
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }

@@ -89,7 +89,7 @@ static inline Matrix3 Transpose(const Matrix3& m)
 plDistributor::plDistributor()
 {
     IClear();
-    fRand.SetSeed(uint32_t(this));
+    fRand.SetSeed(uintptr_t(this));
 }
 
 plDistributor::~plDistributor()

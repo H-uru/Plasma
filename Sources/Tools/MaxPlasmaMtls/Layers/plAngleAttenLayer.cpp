@@ -456,7 +456,7 @@ BITMAPINFO *plAngleAttenLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thma
                         // FIXME
 }
 
-DWORD plAngleAttenLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plAngleAttenLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     return 0;
 }

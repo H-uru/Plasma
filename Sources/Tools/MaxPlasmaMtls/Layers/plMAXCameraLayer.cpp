@@ -84,7 +84,7 @@ public:
 
     void Update(TimeValue t, Interval& valid, IParamMap2* pmap) override { UpdateDisplay(pmap); }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         int id = LOWORD(wParam);
         int code = HIWORD(wParam);
@@ -107,7 +107,7 @@ public:
         case WM_COMMAND:
             if (id == IDC_CAM_LAYER_UV_SRC)
             {
-                pb->SetValue(plMAXCameraLayer::kUVSource, t, SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
+                pb->SetValue(plMAXCameraLayer::kUVSource, t, (int)SendMessage(GetDlgItem(hWnd, id), CB_GETCURSEL, 0, 0));
                 return TRUE;
             }
             else if (id == IDC_CAM_LAYER_EXPLICIT_CAM)
@@ -409,7 +409,7 @@ BITMAPINFO *plMAXCameraLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmak
     return nullptr;
 }
 
-DWORD plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
+DWORD_PTR plMAXCameraLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     return 0;
 }

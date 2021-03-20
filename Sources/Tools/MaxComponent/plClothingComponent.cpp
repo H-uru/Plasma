@@ -257,7 +257,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2 *pb = pm->GetParamBlock();
     HWND hList = GetDlgItem(hWnd, IDC_CLOTHING_LIST);
@@ -350,7 +350,7 @@ BOOL plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UI
 
             if(LOWORD(wParam) == IDC_COMP_LOD_CLOTHING_STATE && HIWORD(wParam) == CBN_SELCHANGE)
             {
-                int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+                int idx = (int)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
                 pb->SetValue(plClothingComponent::kLODState, 0, idx);
             
                 node = pb->GetINode(plClothingComponent::kMeshNodeTab, 0, idx);

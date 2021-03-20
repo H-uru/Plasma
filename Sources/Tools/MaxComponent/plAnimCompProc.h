@@ -74,7 +74,7 @@ public:
     plAnimCompProc();
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
     bool GetCompAndNode(IParamBlock2* pb, plComponentBase*& comp, plMaxNode*& node);
 };
@@ -107,7 +107,7 @@ public:
     plMtlAnimProc();
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 private:
     void IMtlButtonPress(HWND hWnd, IParamBlock2* pb);

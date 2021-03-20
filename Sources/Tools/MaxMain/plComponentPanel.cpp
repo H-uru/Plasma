@@ -83,12 +83,12 @@ plComponentUtil& plComponentUtil::Instance()
 ////////////////////////////////////////////////////////////////////////////////
 // Proc for the currently selected object dialog
 //
-BOOL CALLBACK plComponentUtil::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plComponentUtil::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
-BOOL plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -160,7 +160,7 @@ BOOL plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                             plComponentDlg::Instance().IUpdateNodeName((plMaxNode*)comp->GetINode());
 
                             // Return true to keep the changes
-                            SetWindowLong(hDlg, DWL_MSGRESULT, TRUE);
+                            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
                         }
                         
                         plMaxAccelerators::Enable();
@@ -466,7 +466,7 @@ void IGetReferencesRecur(plMaxNode* node, INode* target, std::vector<plMaxNode*>
     }
 }
 
-BOOL CALLBACK RefDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK RefDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {

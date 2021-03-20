@@ -66,7 +66,7 @@ plAnimCompProc::plAnimCompProc() :
 {
 }
 
-BOOL plAnimCompProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plAnimCompProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -232,7 +232,7 @@ plMtlAnimProc::plMtlAnimProc() :
 {
 }
 
-BOOL plMtlAnimProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMtlAnimProc::DlgProc(TimeValue t, IParamMap2* pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {

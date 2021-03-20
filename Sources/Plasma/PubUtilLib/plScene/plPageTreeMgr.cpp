@@ -249,7 +249,7 @@ bool plPageTreeMgr::ISortByLevel(plPipeline* pipe, std::vector<plDrawVisList>& d
     for (size_t i = 0; i < drawList.size(); i++)
     {
         listTrav = &scratchList[i];
-        listTrav->fBody = (void*)&drawList[i];
+        listTrav->fBody = (intptr_t)&drawList[i];
         listTrav->fNext = listTrav+1;
         listTrav->fKey.fULong = drawList[i].fDrawable->GetRenderLevel().Level();
     }
@@ -341,7 +341,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, std::vector<plDrawVisL
         plDrawable* drawable = drawList[pair.fDrawable]->fDrawable;
 
         listTrav = &scratchList[iSort++];
-        listTrav->fBody = (void*)&pair;
+        listTrav->fBody = (intptr_t)&pair;
         listTrav->fNext = listTrav + 1;
 
         if( drawable->GetNativeProperty(plDrawable::kPropSortAsOne) )
@@ -563,7 +563,7 @@ void plPageTreeMgr::ISortCullPolys(plPipeline* pipe)
         }
 
         listTrav = &scratchList[numSubmit];
-        listTrav->fBody = (void*)poly;
+        listTrav->fBody = (intptr_t)poly;
         listTrav->fNext = listTrav + 1;
         listTrav->fKey.fFloat = (poly->GetCenter() - viewPos).MagnitudeSquared();
 
@@ -610,7 +610,7 @@ bool plPageTreeMgr::IGetCullPolys(plPipeline* pipe)
         {
             float invDist = -hsFastMath::InvSqrtAppr((viewPos - occluder->GetWorldBounds().GetCenter()).MagnitudeSquared());
             listTrav = &scratchList[numSubmit++];
-            listTrav->fBody = (void*)occluder;
+            listTrav->fBody = (intptr_t)occluder;
             listTrav->fNext = listTrav+1;
             listTrav->fKey.fFloat = occluder->GetPriority() * invDist;
         }

@@ -586,13 +586,13 @@ public:
 class plSmoothBaseSelProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { }
 };
 
 #include "plPickNode.h"
 
-BOOL plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -603,7 +603,7 @@ BOOL plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
             TSTR newName(node ? node->GetName() : "Pick");
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SMOOTH_CHOSE), newName);
         }
-        return true;
+        return TRUE;
 
     case WM_COMMAND:
         if( (HIWORD(wParam) == BN_CLICKED) && (LOWORD(wParam) == IDC_COMP_SMOOTH_CHOSE) )
@@ -621,12 +621,12 @@ BOOL plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd, 
                 ShowWindow(hWnd, SW_SHOW);
             }
 
-            return false;
+            return FALSE;
         }
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 plSmoothBaseSelProc gSmoothBaseSelProc;

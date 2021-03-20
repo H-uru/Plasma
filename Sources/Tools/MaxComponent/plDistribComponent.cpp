@@ -201,7 +201,7 @@ class plDistCompNilProc : public plRollupMgrProc
 public:
     plDistCompNilProc(int iRoll) : plRollupMgrProc(iRoll) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
         return FALSE;
@@ -214,7 +214,7 @@ class plDistCompActionProc : public plRollupMgrProc
 public:
     plDistCompActionProc() : plRollupMgrProc(plDistribComponent::kRollAction) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -253,7 +253,7 @@ private:
 public:
     plDistCompSpaceProc() : plRollupMgrProc(plDistribComponent::kRollSpacing) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -278,7 +278,7 @@ public:
             {
             case IDC_COMP_DISTRIB_SEPARATION:
                 {
-                    map->GetParamBlock()->SetValue(plDistribComponent::kSeparation, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                    map->GetParamBlock()->SetValue(plDistribComponent::kSeparation, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                     return TRUE;
                 }
                 break;
@@ -296,7 +296,7 @@ class plDistCompConformProc : public plRollupMgrProc
 private:
 public:
     plDistCompConformProc() : plRollupMgrProc(plDistribComponent::kRollConform) {}
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -321,7 +321,7 @@ public:
             {
             case IDC_COMP_DISTRIB_CONFORMTYPE:
                 {
-                    map->GetParamBlock()->SetValue(plDistribComponent::kConformType, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                    map->GetParamBlock()->SetValue(plDistribComponent::kConformType, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                     return TRUE;
                 }
                 break;
@@ -380,7 +380,7 @@ private:
 public:
     plDistCompScaleProc() : plRollupMgrProc(plDistribComponent::kRollScale) {}
 
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -416,7 +416,7 @@ class plDistCompBitmapProc : public plRollupMgrProc
 private:
 public:
     plDistCompBitmapProc() : plRollupMgrProc(plDistribComponent::kRollBitmap) {}
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 
@@ -437,7 +437,7 @@ public:
             {
                 case IDC_COMP_DISTRIB_PROBCOLORCHAN:
                 {
-                    map->GetParamBlock()->SetValue(plDistribComponent::kProbColorChan, t, SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
+                    map->GetParamBlock()->SetValue(plDistribComponent::kProbColorChan, t, (int)SendMessage(GetDlgItem(hWnd, LOWORD(wParam)), CB_GETCURSEL, 0, 0));
                     return TRUE;
                 }
                 break;
@@ -455,7 +455,7 @@ class plDistCompFadeProc : public plRollupMgrProc
 private:
 public:
     plDistCompFadeProc() : plRollupMgrProc(plDistribComponent::kRollFade) {}
-    BOOL DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IHandleRollupState(map, hWnd, msg);
 

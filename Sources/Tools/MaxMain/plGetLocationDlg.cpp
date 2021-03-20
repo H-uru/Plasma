@@ -93,7 +93,7 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
         return false;
     }
 
-    int ret = DialogBox(hInstance,
+    INT_PTR ret = DialogBox(hInstance,
                         MAKEINTRESOURCE(IDD_GET_LOCATION),
                         GetCOREInterface()->GetMAXHWnd(),
                         ForwardDlgProc);
@@ -112,7 +112,7 @@ void plGetLocationDlg::IListRooms(plMaxNode *node, HWND hList)
     plComponentBase *comp = node->ConvertToComponent();
     if(comp && (comp->ClassID() == ROOM_CID || comp->ClassID() == PAGEINFO_CID))
     {
-        int idx = SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)node->GetName());
+        int idx = (int)SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)node->GetName());
         SendMessage(hList, LB_SETITEMDATA, idx, (LPARAM)node);
     }
 
@@ -123,7 +123,7 @@ void plGetLocationDlg::IListRooms(plMaxNode *node, HWND hList)
 
 void plGetLocationDlg::IAddSelection(HWND hList, bool setDefault)
 {
-    int sel = SendMessage(hList, LB_GETCURSEL, 0, 0);
+    int sel = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
     if (sel != LB_ERR)
     {
         // Get the node and component for the selected room component

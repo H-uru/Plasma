@@ -272,7 +272,7 @@ void TextureSet(Texmap* texmap, int iBmp, uint64_t assetId)
     }
 }
 
-DWORD PlasmaMax::Control(DWORD parameter)
+DWORD_PTR PlasmaMax::Control(DWORD parameter)
 {
     if (parameter == kGetTextures)
     {
@@ -316,14 +316,14 @@ DWORD PlasmaMax::Control(DWORD parameter)
         jvArray<TexInfo>* textures = new jvArray<TexInfo>(texInfo.size());
         for (int i = 0; i < texInfo.size(); i++)
             (*textures)[i] = texInfo[i];
-        return DWORD(textures);
+        return DWORD_PTR(textures);
 #else
         return 0;
 #endif
     }
     else if (parameter == kGetTextureSetFunc)
     {
-        return DWORD(&TextureSet);
+        return DWORD_PTR(&TextureSet);
     }
 
     return 0;

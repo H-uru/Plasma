@@ -61,7 +61,7 @@ void plDistTree::Reset()
     fNodes.Reset();
 }
 
-void plDistTree::AddBoxIData(const Box3& box, const Box3& fade, uint32_t iData)
+void plDistTree::AddBoxIData(const Box3& box, const Box3& fade, uintptr_t iData)
 {
     fRoot = IAddNodeRecur(fRoot, box, fade, iData);
 }
@@ -186,7 +186,7 @@ BOOL plDistTree::IPointClearRecur(int32_t iNode, const Point3& pt, const Box3& f
 }
 
 
-int32_t plDistTree::IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData)
+int32_t plDistTree::IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData)
 {
     // if iNode < 0, make a node for box and return that.
     if( iNode < 0 )
@@ -233,12 +233,12 @@ int32_t plDistTree::IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fa
     }
 }
 
-int32_t plDistTree::IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uint32_t iData)
+int32_t plDistTree::IMergeNodes(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData)
 {
     Box3 parBox = box;
     parBox += fNodes[iNode].fBox;
 
-    int32_t pNode = INextNode(parBox, NonFade(), uint32_t(-1));
+    int32_t pNode = INextNode(parBox, NonFade(), uintptr_t(-1));
     int32_t iChild = IGetChild(parBox, box);
 
     int32_t cNode = INextNode(box, fade, iData);
@@ -269,7 +269,7 @@ int32_t plDistTree::IGetChild(const Box3& parent, const Box3& child) const
     return idx;
 }
 
-int32_t plDistTree::INextNode(const Box3& box, const Box3& fade, uint32_t iData)
+int32_t plDistTree::INextNode(const Box3& box, const Box3& fade, uintptr_t iData)
 {
     int32_t iNode = fNodes.GetCount();
 

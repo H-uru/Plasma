@@ -281,7 +281,7 @@ protected:
 public:
     void DeleteThis() override { }
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -324,7 +324,7 @@ public:
                     char buf[256];
                     ComboBox_GetText(hPageCombo, buf, sizeof(buf));
                     fPB->SetValue( plPageInfoComponent::kInfoPage, 0, buf );
-                    fPB->SetValue( plPageInfoComponent::kInfoSeqSuffix, 0, ComboBox_GetItemData( hPageCombo, idx ) );
+                    fPB->SetValue(plPageInfoComponent::kInfoSeqSuffix, 0, (int)ComboBox_GetItemData(hPageCombo, idx));
                 }
 
                 return TRUE;
@@ -1221,27 +1221,25 @@ enum    {
 class plOcclusionComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
         case WM_INITDIALOG:
-            {
-            }
-            return true;
+            return TRUE;
 
 //////////////////
         case WM_COMMAND:
             {
                 if (LOWORD(wParam) == IDC_COMP_OCCLUSION_CKBX)
                 {
-                    return true;
+                    return TRUE;
                 }
             }
             
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -1501,7 +1499,7 @@ plLeaderObjAccessor gLeaderObjAccessor;
 class plFollowComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1530,13 +1528,13 @@ public:
                     else
                         map->Enable(kLeaderObjectSel, FALSE);
                     
-                    return true;
+                    return TRUE;
                 }
             }
             
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -1844,7 +1842,7 @@ static const int kDefMinFaces(300);
 class plGeoDiceComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -1868,7 +1866,7 @@ public:
                     map->Enable(plGeoDiceComponent::kMinFaces, TRUE);
                 }
             }
-            return true;
+            return TRUE;
 
 //////////////////
         case WM_COMMAND:
@@ -1893,13 +1891,13 @@ public:
                         map->Enable(plGeoDiceComponent::kMinFaces, TRUE);
                     }
                     
-                    return true;
+                    return TRUE;
                 }
             }
             
         }
 
-        return false;
+        return FALSE;
     }
     void DeleteThis() override { }
 };
@@ -2084,7 +2082,7 @@ protected:
     }
 
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         switch (msg)
         {
@@ -2326,7 +2324,7 @@ protected:
             if (layer != nullptr)
             {
                 const char *str = layer->GetPBBitmap()->bi.Filename();
-                int idx = SendMessage( ctrl, LB_ADDSTRING, 0, (LPARAM)str );
+                int idx = (int)SendMessage(ctrl, LB_ADDSTRING, 0, (LPARAM)str);
                 SendMessage( ctrl, LB_SETITEMDATA, (WPARAM)idx, (LPARAM)i );
 
                 SIZE strSize;
@@ -2353,7 +2351,7 @@ public:
 
 //  virtual void    Update( TimeValue t, Interval &valid, IParamMap2 *map );
 
-    BOOL DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
         IParamBlock2            *pb = pmap->GetParamBlock();
         pfImageLibComponent     *comp = (pfImageLibComponent *)pb->GetOwner();
@@ -2365,7 +2363,7 @@ public:
                 // Fill our list with bitmap filenames
                 comp->Validate();
                 IRefreshImageList( hWnd, comp );
-                return true;
+                return TRUE;
 
             case WM_DESTROY:
                 break;
@@ -2383,10 +2381,10 @@ public:
                 }
                 else if( LOWORD( wParam ) == IDC_IMAGE_EDIT )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_IMAGE_LIST, LB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_IMAGE_LIST, LB_GETCURSEL, 0, 0);
                     if( idx != LB_ERR )
                     {
-                        idx = SendDlgItemMessage( hWnd, IDC_IMAGE_LIST, LB_GETITEMDATA, (WPARAM)idx, 0 );
+                        idx = (int)SendDlgItemMessage(hWnd, IDC_IMAGE_LIST, LB_GETITEMDATA, (WPARAM)idx, 0);
                         plLayerTex *layer = comp->GetBitmap( idx );
                         if (layer != nullptr && layer->HandleBitmapSelection())
                         {
@@ -2396,18 +2394,18 @@ public:
                 }               
                 else if( LOWORD( wParam ) == IDC_IMAGE_REMOVE )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_IMAGE_LIST, LB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_IMAGE_LIST, LB_GETCURSEL, 0, 0);
                     if( idx != LB_ERR )
                     {
-                        idx = SendDlgItemMessage( hWnd, IDC_IMAGE_LIST, LB_GETITEMDATA, (WPARAM)idx, 0 );
+                        idx = (int)SendDlgItemMessage(hWnd, IDC_IMAGE_LIST, LB_GETITEMDATA, (WPARAM)idx, 0);
                         comp->RemoveBitmap( idx );
                         IRefreshImageList( hWnd, comp );
                     }
-                    return false;
+                    return FALSE;
                 }
                 else if( LOWORD( wParam ) == IDC_IMAGE_LIST && HIWORD( wParam ) == LBN_SELCHANGE )
                 {
-                    int idx = SendDlgItemMessage( hWnd, IDC_IMAGE_LIST, LB_GETCURSEL, 0, 0 );
+                    int idx = (int)SendDlgItemMessage(hWnd, IDC_IMAGE_LIST, LB_GETCURSEL, 0, 0);
                     EnableWindow( GetDlgItem( hWnd, IDC_IMAGE_EDIT ), idx != LB_ERR );
                     EnableWindow( GetDlgItem( hWnd, IDC_IMAGE_REMOVE ), idx != LB_ERR );
 
@@ -2424,7 +2422,7 @@ public:
                 break;
 
         }
-        return false;
+        return FALSE;
     }
 };
 static pfImageLibProc   gImageLibProc;

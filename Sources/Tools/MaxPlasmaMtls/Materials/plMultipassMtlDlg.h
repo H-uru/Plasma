@@ -78,8 +78,8 @@ public:
     void DeleteThis() override { delete this; }
     int FindSubMtlFromHWND(HWND hw) override;
 
-    static BOOL CALLBACK ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-    BOOL LayerPanelProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK ForwardProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    INT_PTR LayerPanelProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
     void UpdateLayerDisplay();
     void LoadDialog();

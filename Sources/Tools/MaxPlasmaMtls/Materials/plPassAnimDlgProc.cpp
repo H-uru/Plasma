@@ -105,7 +105,7 @@ void plPassAnimDlgProc::Update(TimeValue t, Interval& valid, IParamMap2* pmap)
     plAnimComponentProc::SetBoxToAgeGlobal(GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME), pb->GetStr(ParamID(kPBAnimGlobalName)));  
 }
 
-BOOL plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if( fCurrParamMap != pMap )
     {
@@ -206,7 +206,7 @@ void    plPassAnimDlgProc::IUpdateSegmentSel( IParamMap2 *thisMap, bool clear )
         newStealth = nullptr;
     else
     {
-        int sel = SendDlgItemMessage( fhWnd, IDC_NAMES, CB_GETCURSEL, 0, 0 );
+        int sel = (int)SendDlgItemMessage(fhWnd, IDC_NAMES, CB_GETCURSEL, 0, 0);
         if( sel == CB_ERR )
         {
             // Somehow we don't have a selection...fine, just destroy
@@ -292,7 +292,7 @@ void plPassAnimDlgProc::ILoadNames(IParamBlock2 *pb )
         plAnimStealthNode *stealth = mtl->IGetStealth( i, false );
         if (stealth != nullptr)
         {
-            int idx = SendMessage( hAnims, CB_ADDSTRING, 0, (LPARAM)stealth->GetSegmentName().c_str() );
+            int idx = (int)SendMessage(hAnims, CB_ADDSTRING, 0, (LPARAM)stealth->GetSegmentName().c_str());
             SendMessage( hAnims, CB_SETITEMDATA, idx, (LPARAM)stealth );
         }
     }

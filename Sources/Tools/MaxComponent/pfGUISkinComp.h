@@ -120,7 +120,7 @@ class pfGUISkinEditProc
 
         bool            fDragging;
         uint8_t           fDragType;
-        int             fDragTimer;
+        UINT_PTR        fDragTimer;
         int             fDragOffsetX, fDragOffsetY;
         HCURSOR         fOrigCursor;
 

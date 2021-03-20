@@ -83,7 +83,7 @@ void    plBaseLightProc::IBuildLightMesh( plRTLightBase *base, float coneSize )
     base->fMesh = base->spotMesh;
 }
 
-BOOL    plBaseLightProc::DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR plBaseLightProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     IParamBlock2    *pb = map->GetParamBlock();
     plRTLightBase   *gl = (plRTLightBase *) pb->GetOwner();
@@ -103,7 +103,7 @@ BOOL    plBaseLightProc::DlgProc( TimeValue t, IParamMap2 *map, HWND hWnd, UINT 
         case WM_COMMAND:
             break;
     }
-    return false;
+    return FALSE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

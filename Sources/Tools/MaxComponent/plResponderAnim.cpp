@@ -539,7 +539,7 @@ class plResponderAnimProc : public plAnimCompProc
 {
 public:
     plResponderAnimProc();
-    BOOL DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 protected:
     void IPickComponent(IParamBlock2* pb) override;
@@ -560,7 +560,7 @@ plResponderAnimProc::plResponderAnimProc()
     fNodeParamID    = kRespAnimObject;
 }
 
-BOOL plResponderAnimProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plResponderAnimProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {

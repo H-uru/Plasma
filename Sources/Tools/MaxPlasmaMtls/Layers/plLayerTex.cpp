@@ -617,7 +617,7 @@ BITMAPINFO *plLayerTex::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, In
     return bmi;
 }
 
-DWORD plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 

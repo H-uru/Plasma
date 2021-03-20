@@ -2461,9 +2461,9 @@ enum
 class plCameraCmdComponentProc : public ParamMap2UserDlgProc
 {
 public:
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
-        return false;
+        return FALSE;
     }
 
     void DeleteThis() override { }

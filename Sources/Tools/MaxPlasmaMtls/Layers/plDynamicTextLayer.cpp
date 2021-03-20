@@ -529,7 +529,7 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     return bmi;
 }
 
-DWORD plDynamicTextLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) 
+DWORD_PTR plDynamicTextLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
 {
     // FIXME: ignore validity for now
     if (fTexHandle && fIValid.InInterval(t))// && texTime == CalcFrame(t)) 

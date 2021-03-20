@@ -1038,7 +1038,7 @@ static void CheckPythonFileCompsRecur(plMaxNode *node, ErrorSet& badNodes)
         CheckPythonFileCompsRecur((plMaxNode*)node->GetChildNode(i), badNodes);
 }
 
-static BOOL CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
     {
@@ -1194,7 +1194,7 @@ class plPythonFileComponentProc : public ParamMap2UserDlgProc
 {
 public:
     plPythonFileComponentProc() : fAutoUI() { }
-    BOOL DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+    INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void DeleteThis() override { DestroyAutoUI(); }
 
 protected:
@@ -1228,7 +1228,7 @@ ParamBlockDesc2 gPythonFileBlk
 
 #define WM_LOAD_AUTO_UI WM_APP+1
 
-BOOL plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -1285,7 +1285,7 @@ BOOL plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd
             HWND hCombo = (HWND)lParam;
             int sel = ComboBox_GetCurSel(hCombo);
 
-            int type = ComboBox_GetItemData(hCombo, sel);
+            int type = (int)ComboBox_GetItemData(hCombo, sel);
 
             plAutoUIBlock *block = gAutoUIBlocks[type];
             IParamBlock2 *autoPB = block->CreatePB();

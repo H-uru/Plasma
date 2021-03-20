@@ -91,14 +91,14 @@ void plMaxUtils::EndEditParams(Interface *ip, IUtil *iu)
     GetCOREInterface()->DeleteRollupPage(fhPanel);
 }
 
-BOOL CALLBACK plMaxUtils::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plMaxUtils::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     return Instance().DlgProc(hDlg, msg, wParam, lParam);
 }
 
 int ClearTextureIds();
 
-BOOL plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
