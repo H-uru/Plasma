@@ -113,6 +113,7 @@ static constexpr plKeySeed SeedList[] = {
     { kJournalBookMgr_KEY,              CLASS_INDEX_SCOPED( pfJournalBook ),            "kJournalBookMgr_KEY",          },
     { kAgeLoader_KEY,                   CLASS_INDEX_SCOPED( plAgeLoader),               "kAgeLoader_KEY",               },
     { kBuiltIn3rdPersonCamera_KEY,      CLASS_INDEX_SCOPED( plCameraModifier1 ),        "kBuiltIn3rdPersonCamera_KEY",  },
+    { kConfirmationMgr_KEY,             CLASS_INDEX_SCOPED( pfConfirmationMgr ),        "kConfirmationMgr_KEY",         },
 
     { kLast_Fixed_KEY,                  CLASS_INDEX_SCOPED( plSceneObject ),            "kLast_Fixed_KEY",              }
 };

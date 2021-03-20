@@ -40,15 +40,58 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfCharacterCreatable_inc
-#define pfCharacterCreatable_inc
+#ifndef pfConfirmationMgr_inc
+#define pfConfirmationMgr_inc
 
-#include "pnFactory/plCreator.h"
+#include <queue>
 
-#include "pfConfirmationMgr.h"
-REGISTER_NONCREATABLE(pfConfirmationMgr);
+#include "pnKeyedObject/hsKeyedObject.h"
 
-#include "pfMarkerMgr.h"
-REGISTER_NONCREATABLE(pfMarkerMgr);
+#include "plMessage/plConfirmationMsg.h"
 
-#endif // pfCharacterCreatable_inc
+class pfConfirmationDialogProc;
+class pfGUINotifyMsg;
+
+class pfConfirmationMgr : public hsKeyedObject
+{
+protected:
+    friend class pfConfirmationDialogProc;
+
+    enum class State : int32_t
+    {
+        Alive,
+        WaitingForDialogLoad,
+        Ready,
+        WaitingForInput,
+        ProcessingInput,
+        Delaying,
+    };
+
+    std::queue<hsRef<plConfirmationMsg>> fPending;
+    State fState;
+    pfConfirmationDialogProc* fProc;
+
+    // "Can't delete an incomplete type" my ass...
+    static pfConfirmationMgr* s_instance;
+
+protected:
+    void ISendResult(plConfirmationMsg::Result result, State newState);
+    void ILoadDialog();
+
+public:
+    pfConfirmationMgr();
+    pfConfirmationMgr(const pfConfirmationMgr&) = delete;
+    pfConfirmationMgr(pfConfirmationMgr&&) = delete;
+    ~pfConfirmationMgr();
+
+    static void Init();
+    static void Shutdown();
+
+public:
+    CLASSNAME_REGISTER(pfConfirmationMgr);
+    GETINTERFACE_ANY(pfConfirmationMgr, hsKeyedObject);
+
+    bool MsgReceive(plMessage* msg) override;
+};
+
+#endif

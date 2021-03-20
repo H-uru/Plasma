@@ -135,6 +135,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAnimation/plAnimDebugList.h"
 #include "pfAudio/plListener.h"
 #include "pfCamera/plVirtualCamNeu.h"
+#include "pfCharacter/pfConfirmationMgr.h"
 #include "pfCharacter/pfMarkerMgr.h"
 #include "pfConsole/pfConsole.h"
 #include "pfConsole/pfConsoleDirSrc.h"
@@ -245,6 +246,9 @@ bool plClient::Shutdown()
 
     // Let the resmanager know we're going to be shutting down.
     hsgResMgr::ResMgr()->BeginShutdown();
+
+    // This guy may send callbacks that release resources
+    pfConfirmationMgr::Shutdown();
 
     // Must kill off all movies before shutting down audio.
     IKillMovies();
@@ -1385,6 +1389,9 @@ bool plClient::StartInit()
     fGameGUIMgr = new pfGameGUIMgr();
     fGameGUIMgr->RegisterAs( kGameGUIMgr_KEY );
     fGameGUIMgr->Init();
+
+    // Yes/No dialog handler
+    pfConfirmationMgr::Init();
 
     plgAudioSys::Activate(true);
 

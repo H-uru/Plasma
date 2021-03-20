@@ -368,6 +368,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plRidingAnimatedPhysicalDetector),
     CLASS_INDEX(plVolumeSensorConditionalObjectNoArbitration),
     CLASS_INDEX(plPXSubWorld),
+    CLASS_INDEX(pfConfirmationMgr),
 //---------------------------------------------------------
 // Keyed objects above this line, unkeyed (such as messages) below..
 //---------------------------------------------------------
@@ -956,6 +957,8 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(pl3DPipeline),
     CLASS_INDEX(plGLPipeline),
     CLASS_INDEX(plSDLModifierStateMsg),
+    CLASS_INDEX(plConfirmationMsg),
+    CLASS_INDEX(plLocalizedConfirmationMsg),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc
