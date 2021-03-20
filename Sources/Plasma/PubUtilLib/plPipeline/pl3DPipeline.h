@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pl3DPipeline_inc_
 
 #include <stack>
+#include <vector>
 
 #include "plPipeline.h"
 #include "plPipelineViewSettings.h"
@@ -85,14 +86,14 @@ protected:
 
     hsGMatState                         fMatOverOn;
     hsGMatState                         fMatOverOff;
-    hsTArray<hsGMaterial*>              fOverrideMat;
+    std::vector<hsGMaterial*>           fOverrideMat;
     hsGMaterial*                        fHoldMat;
     bool                                fForceMatHandle;
 
-    hsTArray<plLayerInterface*>         fOverLayerStack;
+    std::vector<plLayerInterface*>      fOverLayerStack;
     plLayerInterface*                   fOverBaseLayer;
     plLayerInterface*                   fOverAllLayer;
-    hsTArray<plLayerInterface*>         fPiggyBackStack;
+    std::vector<plLayerInterface*>      fPiggyBackStack;
     int32_t                             fMatPiggyBacks;
     int32_t                             fActivePiggyBacks;
 
@@ -114,12 +115,12 @@ protected:
     hsMatrix44                          fBumpDwMatrix;
 
     plLightInfo*                        fActiveLights;
-    hsTArray<plLightInfo*>              fCharLights;
-    hsTArray<plLightInfo*>              fVisLights;
+    std::vector<plLightInfo*>           fCharLights;
+    std::vector<plLightInfo*>           fVisLights;
 
-    hsTArray<plShadowSlave*>            fShadows;
+    std::vector<plShadowSlave*>         fShadows;
 
-    hsTArray<plRenderTarget*>           fRenderTargets;
+    std::vector<plRenderTarget*>        fRenderTargets;
     plRenderTarget*                     fCurrRenderTarget;
     plRenderTarget*                     fCurrBaseRenderTarget;
     hsGDeviceRef*                       fCurrRenderTargetRef;
@@ -147,8 +148,8 @@ public:
 
 
     /*** VIRTUAL METHODS ***/
-    //virtual bool PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
-    //virtual bool PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
+    //virtual bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
+    //virtual bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
 
 
     /**
@@ -540,7 +541,7 @@ public:
 
     /** Return the current override material, or nullptr if there isn't any. */
     hsGMaterial* GetOverrideMaterial() const override {
-        return fOverrideMat.GetCount() ? fOverrideMat.Peek() : nullptr;
+        return !fOverrideMat.empty() ? fOverrideMat.back() : nullptr;
     }
 
 
@@ -671,7 +672,7 @@ protected:
      * Find all the visible spans in this drawable affected by this shadow map,
      * and attach it to them.
      */
-    void IAttachSlaveToReceivers(int iSlave, plDrawableSpans* drawable, const std::vector<int16_t>& visList);
+    void IAttachSlaveToReceivers(size_t iSlave, plDrawableSpans* drawable, const std::vector<int16_t>& visList);
 
 
     /**

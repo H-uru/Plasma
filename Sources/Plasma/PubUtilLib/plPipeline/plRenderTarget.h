@@ -192,7 +192,7 @@ class plRenderTarget : public plBitmap
 
         bool MsgReceive(plMessage* msg) override;
 
-        virtual void SetVisRegionName(char *name){} // override to set vis region names for anyone who cares
+        virtual void SetVisRegionName(ST::string name) { } // override to set vis region names for anyone who cares
 };
 
 

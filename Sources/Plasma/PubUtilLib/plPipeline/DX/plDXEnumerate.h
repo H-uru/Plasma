@@ -41,10 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef hsGDirect3DTnLEnumerate_h
 #define hsGDirect3DTnLEnumerate_h
+
+#include <vector>
+
 #include "HeadSpin.h"
 
 #include "hsWindows.h"
-#include "hsTemplates.h"
 //#include "plMemTrackerOff.h"
 #include <d3d9.h>
 //#include "plMemTrackerOn.h"
@@ -62,9 +64,13 @@ struct D3DEnum_ModeInfo
     BOOL                fWindowed;
     char                fBitDepth;
     DWORD               fDDBehavior;
-    hsTArray<D3DFORMAT> fDepthFormats;
-    hsTArray<D3DMULTISAMPLE_TYPE>   fFSAATypes;
+    std::vector<D3DFORMAT> fDepthFormats;
+    std::vector<D3DMULTISAMPLE_TYPE> fFSAATypes;
     BOOL                fCanRenderToCubic;
+
+    D3DEnum_ModeInfo()
+        : fDDmode(), fStrDesc(), fWindowed(), fBitDepth(), fDDBehavior(),
+          fCanRenderToCubic() { }
 };
 
 //-----------------------------------------------------------------------------
@@ -82,7 +88,11 @@ struct D3DEnum_DeviceInfo
     BOOL                fCompatibleWithDesktop;
     BOOL                fIsHardware;
 
-    hsTArray<D3DEnum_ModeInfo>  fModes;
+    std::vector<D3DEnum_ModeInfo> fModes;
+
+    D3DEnum_DeviceInfo()
+        : fDDType(), fStrName(), fDDCaps(), fCanWindow(),
+          fCompatibleWithDesktop(), fIsHardware() { }
 };
 
 
@@ -108,11 +118,15 @@ struct D3DEnum_DriverInfo
     D3DADAPTER_IDENTIFIER9  fAdapterInfo;
     D3DDISPLAYMODE          fDesktopMode;
 
-    hsTArray<D3DEnum_ModeInfo>      fModes;
-    D3DEnum_ModeInfo*           fCurrentMode;
+    std::vector<D3DEnum_ModeInfo> fModes;
+    D3DEnum_ModeInfo*       fCurrentMode;
 
-    hsTArray<D3DEnum_DeviceInfo>    fDevices;
-    D3DEnum_DeviceInfo*             fCurrentDevice;
+    std::vector<D3DEnum_DeviceInfo> fDevices;
+    D3DEnum_DeviceInfo*     fCurrentDevice;
+
+    D3DEnum_DriverInfo()
+        : fGuid(), fStrDesc(), fStrName(), fMemory(), fAdapterInfo(),
+          fDesktopMode(), fCurrentMode(), fCurrentDevice() { }
 };
 
 
@@ -122,9 +136,9 @@ class hsG3DDeviceMode;
 class hsGDirect3DTnLEnumerate
 {
 protected:
-    char    fEnumeErrorStr[128];            // ドライバ、デバイス列挙エラーメッセージ格納バッファ
+    char    fEnumeErrorStr[128];            // Driver & device enumeration error message buffer
 
-    hsTArray<D3DEnum_DriverInfo>            fDrivers;
+    std::vector<D3DEnum_DriverInfo> fDrivers;
 
     D3DEnum_DriverInfo*  fCurrentDriver;    // The selected DD driver
 
@@ -152,8 +166,8 @@ public:
     HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
     HRESULT D3DEnum_SelectDefaultDriver( DWORD dwFlags );
 
-    uint32_t GetNumDrivers() { return fDrivers.GetCount(); }
-    D3DEnum_DriverInfo* GetDriver(int i) { return &fDrivers[i]; }
+    size_t GetNumDrivers() { return fDrivers.size(); }
+    D3DEnum_DriverInfo* GetDriver(size_t i) { return &fDrivers[i]; }
 
     D3DEnum_DriverInfo* GetCurrentDriver() { return fCurrentDriver; }
     D3DEnum_DeviceInfo* GetCurrentDevice() { return GetCurrentDriver() ? GetCurrentDriver()->fCurrentDevice : nullptr; }

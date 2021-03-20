@@ -61,9 +61,9 @@ public:
      */
 
     /*** VIRTUAL METHODS ***/
-    //virtual bool PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
-    //virtual bool PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
-    //virtual void Render(plDrawable* d, const hsTArray<int16_t>& visList) = 0;
+    //virtual bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
+    //virtual bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
+    //virtual void Render(plDrawable* d, const std::vector<int16_t>& visList) = 0;
     //virtual plTextFont* MakeTextFont(char* face, uint16_t size) = 0;
     //virtual void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
     //virtual void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
