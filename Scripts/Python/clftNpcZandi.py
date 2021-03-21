@@ -87,7 +87,7 @@ IgnoreTime = 120
 PageTurnInterval = 120
 
 class TimerID(enum.IntEnum):
-    IgnoreFnished = 10
+    IgnoreFinished = 10
     TurnPage = enum.auto()
 
 class JC(enum.IntEnum):
