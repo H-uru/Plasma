@@ -45,13 +45,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
+#include "plFixedKey.h"
 
+#include <string_view>
+
+#include "HeadSpin.h"
+#include "plCreatableIndex.h"
+
+#include "plKey.h"
 #include "plUoid.h"
 
-#include "plFixedKey.h"
-#include "plCreatableIndex.h"
-#include "plKey.h"
+
 #include "pnFactory/plCreator.h"
 
 //// plKeySeed ///////////////////////////////////////////////////////////////
@@ -59,20 +63,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct plKeySeed
 {
-    plFixedKeyId  feFixedKey;
+    plFixedKeyId feFixedKey;
     // NOTE: The following fields are broken out to make adding to the fixed key list easier.
     // However, what they really are, are just the fields of plUoid (including plLocation)
-    uint16_t    fType;
-    ST::string  fObj;
-   
-    bool Match( plKeySeed *p ) 
-    {  
-        if( ( fType == p->fType ) && p->fObj.compare( fObj, ST::case_insensitive ) == 0 )
-        {
-            return true;
-        }
-        return false;
-    }
+    uint16_t fType;
+    std::string_view fObj;
 };
 
 // Rules for SeedList:
@@ -81,8 +76,8 @@ struct plKeySeed
     // 2) Be sure your ClassIndex CLASS_INDEX(plSceneObject) matches the type of object you want to have the fixedKey
     // 3) Make sure the Obj is unique for this location/Type Combo... (validated at runtime)
 
-plKeySeed SeedList[] = {
-        //  Key Enum                    Type                                            Obj
+static constexpr plKeySeed SeedList[] = {
+    //  Key Enum                        Type                                            Obj
 
     { kFirst_Fixed_KEY,                 CLASS_INDEX_SCOPED( plSceneObject ),            "kFirst_Fixed_KEY",             },
 
@@ -121,41 +116,43 @@ plKeySeed SeedList[] = {
 
     { kLast_Fixed_KEY,                  CLASS_INDEX_SCOPED( plSceneObject ),            "kLast_Fixed_KEY",              }
 };
-#undef _TCFL
 
-
-#ifdef HS_DEBUGGING
-//// plFixedKeyValidator /////////////////////////////////////////////////////
-//  Static class that validates the fixed key list on startup, to make sure
-//  you didn't mess up the array.
-class plFixedKeyValidator
+namespace plFixedKeyValidator
 {
-    private:
-        static plFixedKeyValidator  fValidator;
+    static constexpr bool ValidateBounds()
+    {
+        if (kFirst_Fixed_KEY != 0)
+            return false;
+        for (size_t i = kFirst_Fixed_KEY; i < kLast_Fixed_KEY; ++i) {
+            if (SeedList[i].feFixedKey != i)
+                return false;
+        }
+        if (std::size(SeedList) - 1 != kLast_Fixed_KEY)
+            return false;
+        return true;
+    }
 
-        plFixedKeyValidator()
-        {
-            // verify that each Seed is in the correct spot...via the enum...
-            int i;
-            for (i= kFirst_Fixed_KEY; i < kLast_Fixed_KEY; i++)
-            {
-                plKeySeed *p= &SeedList[i];
-                hsAssert(i == p->feFixedKey, "The fixed key table in plFixedKey.h is invalid (a fixed key is misplaced). Please ensure the list follows the given restrictions.");
-            }
-                // check for duplicates
-            for (i= kFirst_Fixed_KEY; i < kLast_Fixed_KEY; i++)
-            {
-                for (int c = i+1; c < kLast_Fixed_KEY; c++)
-                {   
-                    hsAssert(!SeedList[i].Match(&SeedList[c]), 
-                            "The fixed key table in plFixedKey.h is invalid (there are duplicate fixed keys). Please ensure the list follows the given restrictions.");
-                }
+    static constexpr bool CheckForDupes()
+    {
+        // Would be nice to use something like std::any_of for this,
+        // but that did not become constexpr until C++20.
+        for (size_t i = kFirst_Fixed_KEY; i < kLast_Fixed_KEY; i++) {
+            for (size_t j = i + 1; j < kLast_Fixed_KEY; j++) {
+                if (SeedList[i].feFixedKey == SeedList[j].feFixedKey)
+                    return false;
+                if (SeedList[i].fType == SeedList[j].fType &&
+                    SeedList[i].fObj == SeedList[j].fObj)
+                    return false;
             }
         }
+        return true;
+    }
 };
 
-plFixedKeyValidator plFixedKeyValidator::fValidator;
-#endif
+static_assert(plFixedKeyValidator::ValidateBounds(),
+              "The fixed key table is invalid (a fixed key is misplaced).");
+static_assert(plFixedKeyValidator::CheckForDupes(),
+              "The fixed key table in invalid (there are duplicate fixed keys).");
 
 //// The plUoid Fixed-Key Constructor ////////////////////////////////////////
 //  Put here because a) it's fixedKey dependant and b) it ensures that this
@@ -167,11 +164,9 @@ plUoid::plUoid(plFixedKeyId fixedkey)
 
     Invalidate();
 
-    plKeySeed* p= &SeedList[fixedkey];
-
     fLocation = plLocation::kGlobalFixedLoc;
-    fClassType = p->fType;
-    fObjectName = p->fObj;
+    fClassType = SeedList[fixedkey].fType;
+    fObjectName = SeedList[fixedkey].fObj;
     fObjectID = 0;
     fCloneID = 0;
     fClonePlayerID = 0;
