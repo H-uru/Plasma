@@ -43,11 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCreator_inc
 #define plCreator_inc
 
+#include <type_traits>
+
 #include "plClassIndexMacros.h"
 #include "plCreatableIndex.h"
 #include "plFactory.h"
 
 class plCreatable;
+class hsKeyedObject;
 
 class plCreator
 {
@@ -63,11 +66,38 @@ public:
     virtual const char*   ClassName() const = 0;
     virtual bool          HasBaseClass(uint16_t hBase) = 0;
 
+    template<typename _CreatableT, uint16_t _CreatableIDX>
+    static constexpr bool VerifyKeyedIndex()
+    {
+        if constexpr (_CreatableIDX < KEYED_OBJ_DELINEATOR)
+            return std::is_base_of_v<hsKeyedObject, _CreatableT>;
+        return true;
+    }
+
+    template<typename _CreatableT, uint16_t _CreatableIDX>
+    static constexpr bool VerifyNonKeyedIndex()
+    {
+        if constexpr (_CreatableIDX >= KEYED_OBJ_DELINEATOR)
+            return !(std::is_base_of_v<hsKeyedObject, _CreatableT>);
+        return true;
+    }
+
     friend class plFactory;
 };
 
+#define VERIFY_CREATABLE(plClassName)                                                         \
+                                                                                              \
+static_assert(plCreator::VerifyKeyedIndex<plClassName, CLASS_INDEX_SCOPED(plClassName)>(),    \
+              #plClassName " is in the KeyedObject section of plCreatableIndex but "          \
+              "does not derive from hsKeyedObject.");                                         \
+                                                                                              \
+static_assert(plCreator::VerifyNonKeyedIndex<plClassName, CLASS_INDEX_SCOPED(plClassName)>(), \
+              #plClassName " is in the non-KeyedObject section of plCreatableIndex but "      \
+              "derives from hsKeyedObject.");                                                   //
+
 #define REGISTER_CREATABLE( plClassName )                                           \
                                                                                     \
+VERIFY_CREATABLE(plClassName);                                                      \
 class plClassName##__Creator : public plCreator                                     \
 {                                                                                   \
 public:                                                                             \
@@ -90,7 +120,8 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+VERIFY_CREATABLE(plClassName);                                                        //
 
 #define REGISTER_NONCREATABLE( plClassName )                                        \
                                                                                     \
@@ -116,7 +147,8 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+VERIFY_CREATABLE(plClassName);                                                        //
 
 #define DECLARE_EXTERNAL_CREATABLE( plClassName )                                   \
                                                                                     \
@@ -149,7 +181,8 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+VERIFY_CREATABLE(plClassName);                                                        //
 
 #define REGISTER_EXTERNAL_CREATABLE(plClassName)                                    \
 static##plClassName##__Creator.Register();                                          //
@@ -181,7 +214,8 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                    //
+uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+VERIFY_CREATABLE(plClassName);                                                        //
 
 
 #endif // plCreator_inc

@@ -100,11 +100,6 @@ public:
     static void         SetTheFactory(plFactory* fac);
 
     static const char   *GetNameOfClass(uint16_t type);
-
-#ifdef HS_DEBUGGING
-    void                IValidate(uint16_t keyIndex);
-    static  void        Validate(uint16_t keyIndex);
-#endif
 };
 
 
