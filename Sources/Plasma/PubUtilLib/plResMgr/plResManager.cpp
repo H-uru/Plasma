@@ -106,9 +106,6 @@ plResManager::plResManager():
     fPagesNeedCleanup(),
     fLastFoundPage()
 {
-#ifdef HS_DEBUGGING
-    plFactory::Validate(hsKeyedObject::Index());
-#endif
 }
 
 plResManager::~plResManager()
