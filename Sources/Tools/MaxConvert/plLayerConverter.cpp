@@ -62,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -165,13 +164,12 @@ void    plLayerConverter::Init( bool save, plErrorMsg *msg )
 
 void    plLayerConverter::DeInit()
 {
-    int i;
-    for( i = 0; i < fConvertedLayers.GetCount(); i++ )
+    for (plPlasmaMAXLayer* layer : fConvertedLayers)
     {
-        if (fConvertedLayers[i] != nullptr)
-            fConvertedLayers[ i ]->IClearConversionTargets();
+        if (layer != nullptr)
+            layer->IClearConversionTargets();
     }
-    fConvertedLayers.Reset();
+    fConvertedLayers.clear();
 }
 
 //// Mute/Unmute Warnings /////////////////////////////////////////////////////
@@ -256,8 +254,8 @@ void    plLayerConverter::IRegisterConversion( plPlasmaMAXLayer *origLayer, plLa
         return;
 
     // Add this to our list of converted layers (so we can clean them up later)
-    if( fConvertedLayers.Find( origLayer ) == fConvertedLayers.kMissingIndex )
-        fConvertedLayers.Append( origLayer );
+    if (std::find(fConvertedLayers.cbegin(), fConvertedLayers.cend(), origLayer) == fConvertedLayers.cend())
+        fConvertedLayers.emplace_back(origLayer);
 
     // Now add the converted layer to that layer's list of conversion targets.
     // (easier than us keeping a huge lookup table, since this is *acting* 

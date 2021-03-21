@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRenderGlobalContext_inc
 #define plRenderGlobalContext_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 class plRenderInstance;
 
@@ -52,7 +52,7 @@ class plRenderGlobalContext : public RenderGlobalContext
 protected:
     Interface*                          fInterface;
 
-    hsTArray<plRenderInstance>          fInstList;
+    std::vector<plRenderInstance>       fInstList;
 
     void                                IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney);
 
@@ -64,7 +64,7 @@ public:
 
     void MakeRenderInstances(plMaxNode* root, TimeValue t);
 
-    int NumRenderInstances() override { return fInstList.GetCount(); }
+    int NumRenderInstances() override;
     RenderInstance* GetRenderInstance(int i) override;
 
     void IntersectRay(RenderInstance *inst, Ray& ray, ISect &isct, ISectList &xpList, BOOL findExit) override;

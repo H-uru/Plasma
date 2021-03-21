@@ -414,13 +414,13 @@ class plGetRefs : public DependentEnumProc
 {
     public:
 
-        hsTArray<ReferenceMaker *>  fList;
+        std::vector<ReferenceMaker *> fList;
 
         plGetRefs() { }
 
         int proc(ReferenceMaker *rmaker) override
         {
-            fList.Append( rmaker );
+            fList.emplace_back(rmaker);
             return DEP_ENUM_CONTINUE;
         }
 };
@@ -476,10 +476,8 @@ bool        plAnimStealthNode::IsParentUsedInScene()
     // Enum dependents
     plGetRefs callback;
     ENUMDEPENDENTS(GetParentMtl(), &callback);
-    for(int i = 0; i < callback.fList.GetCount(); i++ )
+    for (ReferenceMaker* maker : callback.fList)
     {
-        ReferenceMaker *maker = callback.fList[ i ];
-
         TSTR s;
         maker->GetClassName( s );
 

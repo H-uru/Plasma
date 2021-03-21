@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plConvert_inc
 #define plConvert_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 class plErrorMsg;
 class plKey;
@@ -77,7 +77,7 @@ protected:
     plErrorMsg*         fpErrorMsg;
     Interface*          fInterface;
     plConvertSettings*  fSettings;
-    hsTArray<plMessage*>    fMsgQueue;
+    std::vector<plMessage*> fMsgQueue;
 
     plConvert();
     bool                IMakeSceneObject(INode* node);
@@ -106,7 +106,7 @@ public:
     void   DeInit();
 
     bool Convert();
-    bool Convert(hsTArray<plMaxNode*>& nodes);    // Convert a set of nodes (for SceneViewer update)
+    bool Convert(std::vector<plMaxNode*>& nodes);    // Convert a set of nodes (for SceneViewer update)
     
     plMaxNode* GetRootNode();
     void SendEnvironmentMessage(plMaxNode* pNode, plMaxNode* efxRegion, plMessage* msg, bool ignorePhysicals = false); // iterates through scene to find nodes contained by the efxRegion

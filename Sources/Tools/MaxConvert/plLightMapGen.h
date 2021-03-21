@@ -97,13 +97,13 @@ protected:
 #endif // MF_NEW_RGC
     RendParams*                 fRP;
     
-    hsTArray<plLightMapInfo>    fAllLights;
-    hsTArray<plLightMapInfo*>   fActiveLights;
+    std::vector<plLightMapInfo> fAllLights;
+    std::vector<plLightMapInfo*> fActiveLights;
 
-    mutable hsTArray<plLayerInterface*> fCreatedLayers;
-    mutable hsTArray<plMipmap*>         fPreppedMipmaps;
+    mutable std::vector<plLayerInterface*> fCreatedLayers;
+    mutable std::vector<plMipmap*>         fPreppedMipmaps;
 
-    mutable hsTArray<plBitmap*> fNewMaps;   // Mipmaps created this session (not loaded from disk)
+    mutable std::vector<plBitmap*> fNewMaps;   // Mipmaps created this session (not loaded from disk)
 
     std::vector<plLightMapComponent*> fSharedComponents; // HACK so we can get rid of key refs before deleting bitmaps
 

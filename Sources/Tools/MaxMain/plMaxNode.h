@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMaxNodeBase.h"
 #include <iparamb2.h>
-#include "hsTemplates.h"
 
 class plAGAnim;
 class plAGMasterMod;
@@ -145,7 +144,7 @@ public:
     plAGModifier*   HasAGMod();
     plAGMasterMod*  GetAGMasterMod();
     plMaxNode*      GetBonesRoot(); // Returns the root of my bones hierarchy, if I have any bones, else nil.
-    void            GetBonesRootsRecur(hsTArray<plMaxNode*>& list);
+    void            GetBonesRootsRecur(std::vector<plMaxNode*>& list);
     plSceneObject*  MakeCharacterHierarchy(plErrorMsg *pErrMsg);
     void            SetupBonesAliasesRecur(const char *rootName);
     void            SetupBoneHierarchyPalette(plMaxBoneMap *bones = nullptr);
@@ -223,7 +222,7 @@ protected:
 
     void            IWipeBranchDrawable(bool b);
 
-    uint32_t          IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, bool beMoreAccurate = false );
+    size_t          IBuildInstanceList(Object *obj, TimeValue t, std::vector<plMaxNode *> &nodes, bool beMoreAccurate = false);
     bool            IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *> &spanArray,
                                        plErrorMsg *pErrMsg, plConvertSettings *settings );
     bool            IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate );

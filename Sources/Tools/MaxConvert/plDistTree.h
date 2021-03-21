@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDistTree_inc
 #define plDistTree_inc
 
-#include "hsTemplates.h"
+#include <vector>
 
 class plDistNode
 {
@@ -73,9 +73,9 @@ class plDistTree
 {
 protected:
     
-    int32_t                           fRoot;
+    int32_t                 fRoot;
 
-    hsTArray<plDistNode>            fNodes;
+    std::vector<plDistNode> fNodes;
 
     int32_t   IAddNodeRecur(int32_t iNode, const Box3& box, const Box3& fade, uintptr_t iData);
 
@@ -113,7 +113,7 @@ public:
 
     void HarvestBox(const Box3& box, Tab<int32_t>& out) const;
 
-    const plDistNode& GetBox(int32_t i) const { return fNodes[i]; }
+    const plDistNode& GetBox(size_t i) const { return fNodes[i]; }
 };
 
 #endif // plDistTree_inc

@@ -576,7 +576,7 @@ void plClothingMtl::InitTilesets()
 {
     hsAssert(fElements.empty(), "Tilesets already initialized");
     fElements.clear();
-    fTilesets.SetCountAndZero(plClothingLayout::kMaxTileset);
+    fTilesets.assign(plClothingLayout::kMaxTileset, nullptr);
 
     plClothingElement::GetElements(fElements);
 /*
@@ -696,15 +696,16 @@ void plClothingMtl::ReleaseTilesets()
         delete fElements.back();
         fElements.pop_back();
     }
-    while (fTilesets.GetCount() > 0)
-        delete fTilesets.Pop();
+    while (!fTilesets.empty()) {
+        delete fTilesets.back();
+        fTilesets.pop_back();
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
 plClothingTileset::plClothingTileset() : fName()
 {
-    fElements.Reset();
 }
 
 plClothingTileset::~plClothingTileset()
@@ -714,7 +715,7 @@ plClothingTileset::~plClothingTileset()
 
 void plClothingTileset::AddElement(plClothingElement *element)
 {
-    fElements.Append(element);  
+    fElements.emplace_back(element);
 }
 
 void plClothingTileset::SetName(char *name)

@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsExceptionStack.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 #include "plTweak.h"
 
 #include "MaxMain/MaxAPI.h"
@@ -140,8 +139,8 @@ class plMAXVertexAccumulator
         int                 fNumPoints, fNumChannels, fNumVertices;
         plMAXVertexAccNode  **fPointList;
 
-        hsTArray<uint32_t>    fIndices;
-        hsTArray<uint32_t>    fInverseVertTable;
+        std::vector<uint32_t> fIndices;
+        std::vector<uint32_t> fInverseVertTable;
 
         void    IFindSkinWeights( ISkinContextData *skinData, int vertex, float *weights, uint32_t *indices );
         void    IFindUserSkinWeights( plMaxNode* node, Mesh* mesh, int vertex, float *weights, uint32_t *indices );
@@ -156,7 +155,7 @@ class plMAXVertexAccumulator
         void        StuffMyData( plMaxNode* node, plGeometrySpan *span, Mesh* mesh, ISkinContextData* skinData );
 
         int         GetVertexCount();
-        uint32_t      GetIndexCount() { return fIndices.GetCount(); }
+        size_t      GetIndexCount() { return fIndices.size(); }
 };
 
 class plMAXVertNormal
@@ -526,12 +525,12 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
 
     ISkinContextData    *skinData;
 
-    hsTArray<std::vector<plExportMaterialData> *>   ourMaterials;
-    hsTArray<hsTArray<plMAXVertexAccumulator *> *>  ourAccumulators;
+    std::vector<std::vector<plExportMaterialData> *>        ourMaterials;
+    std::vector<std::vector<plMAXVertexAccumulator *> *>    ourAccumulators;
 
-    hsTArray<plMAXVertNormal>       vertNormalCache;
-    hsTArray<plMAXVertNormal>*      vertDPosDuCache = nullptr;
-    hsTArray<plMAXVertNormal>*      vertDPosDvCache = nullptr;
+    std::vector<plMAXVertNormal>    vertNormalCache;
+    std::vector<plMAXVertNormal>*   vertDPosDuCache = nullptr;
+    std::vector<plMAXVertNormal>*   vertDPosDvCache = nullptr;
 
     //// Setup ///////////////////////////////////////////////////////////////
     plLocation nodeLoc = node->GetLocation(); 
@@ -684,7 +683,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
         {
             numMaterials = maxMaterial->NumSubMtls();
 
-            ourMaterials.SetCountAndZero( numMaterials );
+            ourMaterials.resize(numMaterials);
             for( i = 0; i < numMaterials; i++ )
             {
                 if (usedSubMtls.IsBitSet(i)) // Only export the sub materials actually used
@@ -697,8 +696,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
         {
             numMaterials = 1;
             
-            ourMaterials.Reset();
-            ourMaterials.Append(hsMaterialConverter::Instance().CreateMaterialArray( maxMaterial, node, 0 ));
+            ourMaterials = { hsMaterialConverter::Instance().CreateMaterialArray(maxMaterial, node, 0) };
         }
 
         /// UV check on the layers
@@ -765,7 +763,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
 */
         ourFormat = plGeometrySpan::UVCountToFormat( maxUVWSrc + 1 );
         /// NOW allocate our accumulators, since maxUVWSrc was just calculated...
-        ourAccumulators.SetCount( numMaterials );
+        ourAccumulators.resize(numMaterials);
         for( i = 0; i < numMaterials; i++ )
         {           
             if (ourMaterials[i] == nullptr)
@@ -774,12 +772,11 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
                 continue;
             }
 
-            hsTArray<plMAXVertexAccumulator *> *currAccum = new hsTArray<plMAXVertexAccumulator *>;
-            currAccum->Reset();
+            auto currAccum = new std::vector<plMAXVertexAccumulator *>;
             ourAccumulators[i] = currAccum;
             for (size_t j = 0; j < ourMaterials[i]->size(); j++)
             {
-                currAccum->Append(new plMAXVertexAccumulator( mesh->getNumVerts(), maxUVWSrc + 1 ));
+                currAccum->emplace_back(new plMAXVertexAccumulator(mesh->getNumVerts(), maxUVWSrc + 1));
             }
         }
         
@@ -844,7 +841,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
 
         //// Build Vertex Normal Cache ///////////////////////////////////////////
 
-        vertNormalCache.SetCount( mesh->getNumVerts() );
+        vertNormalCache.resize(mesh->getNumVerts());
         for( i = 0; i < mesh->getNumFaces(); i++ )
         {
             Face        *maxFace = &mesh->faces[ i ];
@@ -860,16 +857,16 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
             for (int j = 0; j < 3; j++)
                 vertNormalCache[ maxFace->v[ j ] ].AddNormal( norm, maxFace->smGroup );
         }
-        for( i = 0; i < vertNormalCache.GetCount(); i++ )
-            vertNormalCache[ i ].Normalize();
+        for (plMAXVertNormal& norm : vertNormalCache)
+            norm.Normalize();
 
-        vertDPosDuCache = new hsTArray<plMAXVertNormal>[numMaterials];
-        vertDPosDvCache = new hsTArray<plMAXVertNormal>[numMaterials];
+        vertDPosDuCache = new std::vector<plMAXVertNormal>[numMaterials];
+        vertDPosDvCache = new std::vector<plMAXVertNormal>[numMaterials];
 
-        hsTArray<int16_t>                 bumpLayIdx;
-        hsTArray<int16_t>                 bumpLayChan;
-        hsTArray<int16_t>                 bumpDuChan;
-        hsTArray<int16_t>                 bumpDvChan;
+        std::vector<int16_t>    bumpLayIdx;
+        std::vector<int16_t>    bumpLayChan;
+        std::vector<int16_t>    bumpDuChan;
+        std::vector<int16_t>    bumpDvChan;
         ISetBumpUvSrcs(ourMaterials, bumpLayIdx, bumpLayChan, bumpDuChan, bumpDvChan);
         if( node->GetWaterDecEnv() )
             ISetWaterDecEnvUvSrcs(ourMaterials, bumpLayIdx, bumpLayChan, bumpDuChan, bumpDvChan);
@@ -1157,9 +1154,9 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
             }
             // Add!
             hsAssert(ourAccumulators[mainMatIndex] != nullptr, "Trying to add a face with an unused sub-material.");
-            ourAccumulators[ mainMatIndex ]->Get(subMatIndex)->AddVertex( vertIdx[ 0 ], &pos[ 0 ], &normals[ 0 ], colors[ 0 ], illums[ 0 ], uvs1 );
-            ourAccumulators[ mainMatIndex ]->Get(subMatIndex)->AddVertex( vertIdx[ 1 ], &pos[ 1 ], &normals[ 1 ], colors[ 1 ], illums[ 1 ], uvs2 );
-            ourAccumulators[ mainMatIndex ]->Get(subMatIndex)->AddVertex( vertIdx[ 2 ], &pos[ 2 ], &normals[ 2 ], colors[ 2 ], illums[ 2 ], uvs3 );
+            (*ourAccumulators[mainMatIndex])[subMatIndex]->AddVertex(vertIdx[0], &pos[0], &normals[0], colors[0], illums[0], uvs1);
+            (*ourAccumulators[mainMatIndex])[subMatIndex]->AddVertex(vertIdx[1], &pos[1], &normals[1], colors[1], illums[1], uvs2);
+            (*ourAccumulators[mainMatIndex])[subMatIndex]->AddVertex(vertIdx[2], &pos[2], &normals[2], colors[2], illums[2], uvs3);
 
         }
 
@@ -1173,7 +1170,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
                 continue;
             for (size_t j = 0; j < subMats->size(); j++)
             {
-                plMAXVertexAccumulator *accum = ourAccumulators[i]->Get(j);
+                plMAXVertexAccumulator *accum = (*ourAccumulators[i])[j];
 
                 // With composite materials, not every accumulator will have faces. Only create spans for the ones that do.
                 if (accum->GetVertexCount() == 0)
@@ -1293,27 +1290,27 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
     catch( bool retVal )
     {
         /// Cleanup!
-        for( i = 0; i < vertNormalCache.GetCount(); i++ )
-            vertNormalCache[ i ].DestroyChain();
+        for (plMAXVertNormal& norm : vertNormalCache)
+            norm.DestroyChain();
 
         for( i = 0; i < numMaterials; i++ )
         {
             if (vertDPosDuCache != nullptr)
             {
-                for (int j = 0; j < vertDPosDuCache[i].GetCount(); j++)
-                    vertDPosDuCache[i][j].DestroyChain();
+                for (plMAXVertNormal& norm : vertDPosDuCache[i])
+                    norm.DestroyChain();
             }
             if (vertDPosDvCache != nullptr)
             {
-                for (int j = 0; j < vertDPosDvCache[i].GetCount(); j++)
-                    vertDPosDvCache[i][j].DestroyChain();
+                for (plMAXVertNormal& norm : vertDPosDvCache[i])
+                    norm.DestroyChain();
             }
 
             if (ourAccumulators[i] == nullptr)
                 continue;
-            for (int j = 0; j < ourAccumulators[ i ]->GetCount(); j++)
+            for (plMAXVertexAccumulator* accum : *ourAccumulators[i])
             {
-                delete ourAccumulators[ i ]->Get(j);
+                delete accum;
             }
             delete ourMaterials[ i ];
             delete ourAccumulators[ i ];
@@ -1612,40 +1609,38 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
     hsGuardEnd;
 }
 
-void plMeshConverter::ISetWaterDecEnvUvSrcs(hsTArray<std::vector<plExportMaterialData> *>& ourMaterials,
-                                     hsTArray<int16_t>& bumpLayIdx, 
-                                     hsTArray<int16_t>& bumpLayChan,
-                                     hsTArray<int16_t>& bumpDuChan, 
-                                     hsTArray<int16_t>& bumpDvChan)
+void plMeshConverter::ISetWaterDecEnvUvSrcs(std::vector<std::vector<plExportMaterialData> *>& ourMaterials,
+                                            std::vector<int16_t>& bumpLayIdx,
+                                            std::vector<int16_t>& bumpLayChan,
+                                            std::vector<int16_t>& bumpDuChan,
+                                            std::vector<int16_t>& bumpDvChan)
 {
-    bumpLayIdx.SetCount(ourMaterials.GetCount());
-    bumpLayChan.SetCount(ourMaterials.GetCount());
-    bumpDuChan.SetCount(ourMaterials.GetCount());
-    bumpDvChan.SetCount(ourMaterials.GetCount());
+    bumpLayIdx.resize(ourMaterials.size());
+    bumpLayChan.resize(ourMaterials.size());
+    bumpDuChan.resize(ourMaterials.size());
+    bumpDvChan.resize(ourMaterials.size());
 
-    int i;
-    for( i = 0; i < ourMaterials.GetCount(); i++ )
+    for (size_t i = 0; i < ourMaterials.size(); i++)
     {
-        bumpLayIdx[i] = i;
+        bumpLayIdx[i] = (int16_t)i;
         bumpLayChan[i] = 0;
         bumpDuChan[i] = 1;
         bumpDvChan[i] = 2;
     }
 }
 
-void plMeshConverter::ISetBumpUvSrcs(hsTArray<std::vector<plExportMaterialData> *>& ourMaterials,
-                                     hsTArray<int16_t>& bumpLayIdx, 
-                                     hsTArray<int16_t>& bumpLayChan,
-                                     hsTArray<int16_t>& bumpDuChan, 
-                                     hsTArray<int16_t>& bumpDvChan)
+void plMeshConverter::ISetBumpUvSrcs(std::vector<std::vector<plExportMaterialData> *>& ourMaterials,
+                                     std::vector<int16_t>& bumpLayIdx,
+                                     std::vector<int16_t>& bumpLayChan,
+                                     std::vector<int16_t>& bumpDuChan,
+                                     std::vector<int16_t>& bumpDvChan)
 {
-    bumpLayIdx.SetCount(ourMaterials.GetCount());
-    bumpLayChan.SetCount(ourMaterials.GetCount());
-    bumpDuChan.SetCount(ourMaterials.GetCount());
-    bumpDvChan.SetCount(ourMaterials.GetCount());
+    bumpLayIdx.resize(ourMaterials.size());
+    bumpLayChan.resize(ourMaterials.size());
+    bumpDuChan.resize(ourMaterials.size());
+    bumpDvChan.resize(ourMaterials.size());
 
-    int i;
-    for( i = 0; i < ourMaterials.GetCount(); i++ )
+    for (size_t i = 0; i < ourMaterials.size(); i++)
     {
         bumpLayIdx[i] = -1;
         bumpLayChan[i] = -1;
@@ -1678,7 +1673,7 @@ void plMeshConverter::ISetBumpUvSrcs(hsTArray<std::vector<plExportMaterialData> 
     }
 }
 
-void plMeshConverter::ISetBumpUvs(int16_t uvChan, hsTArray<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, uint32_t smGroup, 
+void plMeshConverter::ISetBumpUvs(int16_t uvChan, std::vector<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, uint32_t smGroup,
                                   hsPoint3* uvs1, hsPoint3* uvs2, hsPoint3* uvs3)
 {
     if( uvChan < 0 )
@@ -1694,10 +1689,10 @@ void plMeshConverter::ISetBumpUvs(int16_t uvChan, hsTArray<plMAXVertNormal>& ver
 // Finally, make the gradients, smoothing according to smooth groups (just like vertex normals).
 //
 // If we decided we needed them, they are in the output arrays, otherwise the output arrays are made empty.
-void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh, 
-                                         hsTArray<std::vector<plExportMaterialData> *>& ourMaterials,
-                                         hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan,
-                                         hsTArray<plMAXVertNormal>* vertDPosDuCache, hsTArray<plMAXVertNormal>* vertDPosDvCache)
+void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
+                                         std::vector<std::vector<plExportMaterialData> *>& ourMaterials,
+                                         std::vector<int16_t>& bumpLayIdx, std::vector<int16_t>& bumpLayChan,
+                                         std::vector<plMAXVertNormal>* vertDPosDuCache, std::vector<plMAXVertNormal>* vertDPosDvCache)
 {
     const char* dbgNodeName = node->GetName();
 
@@ -1707,16 +1702,15 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
 
     if( needsGradientUvs )
     {
-        int matIdx;
-        for( matIdx = 0; matIdx < ourMaterials.GetCount(); matIdx++ )
+        for (size_t matIdx = 0; matIdx < ourMaterials.size(); matIdx++)
         {
             if( bumpLayIdx[matIdx] >= 0 )
             {
                 uint32_t uvwSrc = bumpLayChan[matIdx];
                 if( mesh->getNumMapVerts(uvwSrc+1) && mesh->mapVerts(uvwSrc+1) )
                 {
-                    vertDPosDuCache[matIdx].SetCount(mesh->getNumMapVerts(uvwSrc+1));
-                    vertDPosDvCache[matIdx].SetCount(mesh->getNumMapVerts(uvwSrc+1));
+                    vertDPosDuCache[matIdx].resize(mesh->getNumMapVerts(uvwSrc+1));
+                    vertDPosDvCache[matIdx].resize(mesh->getNumMapVerts(uvwSrc+1));
                 }
                 else
                 {
@@ -1728,26 +1722,24 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
         }
 
         bool isMultiMat = hsMaterialConverter::Instance().IsMultiMat(mainMtl);
-        int i;
-        for( i = 0; i < mesh->getNumFaces(); i++ )
+        for (int i = 0; i < mesh->getNumFaces(); i++)
         {
             const plLayerInterface* layer = nullptr;
+            size_t matIdx;
             if( isMultiMat )
             {
                 int index = mesh->faces[i].getMatID();
                 if (index >= mainMtl->NumSubMtls())
                     index = 0;
 
-                matIdx = index;
-                if( bumpLayIdx[index] >= 0 )
-                    layer = ourMaterials[index]->front().fMaterial->GetLayer(bumpLayIdx[index]);
+                matIdx = (size_t)index;
             }
             else
             {
                 matIdx = 0;
-                if( bumpLayIdx[0] >= 0 )
-                    layer = ourMaterials[0]->front().fMaterial->GetLayer(bumpLayIdx[0]);
             }
+            if (bumpLayIdx[matIdx] >= 0)
+                layer = ourMaterials[matIdx]->front().fMaterial->GetLayer(bumpLayIdx[matIdx]);
             if( layer )
             {
                 Point3 dPosDu = IGetUvGradient(node, layer->GetTransform(), layer->GetUVWSrc(),
@@ -1798,9 +1790,9 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
                 }
             }
         }
-        for( matIdx = 0; matIdx < ourMaterials.GetCount(); matIdx++ )
+        for (size_t matIdx = 0; matIdx < ourMaterials.size(); matIdx++)
         {
-            for( i = 0; i < vertDPosDuCache[matIdx].GetCount(); i++ )
+            for (size_t i = 0; i < vertDPosDuCache[matIdx].size(); i++)
             {
                 vertDPosDuCache[matIdx][i].Normalize();
                 vertDPosDvCache[matIdx][i].Normalize();
@@ -2023,8 +2015,8 @@ plMAXVertexAccumulator::plMAXVertexAccumulator( int numOrigPoints, int numChanne
     fPointList = new plMAXVertexAccNodePtr[ fNumPoints ];
     memset( fPointList, 0, sizeof( plMAXVertexAccNode * ) * fNumPoints );
 
-    fIndices.Reset();
-    fInverseVertTable.Reset();
+    fIndices.clear();
+    fInverseVertTable.clear();
     fNumVertices = 0;
 }
 
@@ -2065,7 +2057,7 @@ void    plMAXVertexAccumulator::AddVertex( int index, hsPoint3 *point, hsVector3
         if( node->IsEqual( normal, color, illum, uvs ) )
         {
             // Found match! Accumulate
-            fIndices.Append( node->fIndex );
+            fIndices.emplace_back(node->fIndex);
             return;
         }
     }
@@ -2073,8 +2065,8 @@ void    plMAXVertexAccumulator::AddVertex( int index, hsPoint3 *point, hsVector3
 
     /// Adding new
     node = new plMAXVertexAccNode( point, normal, color, illum, fNumChannels, uvs, fNumVertices );
-    fInverseVertTable.Append( index );
-    fIndices.Append( fNumVertices++ );
+    fInverseVertTable.emplace_back(index);
+    fIndices.emplace_back(fNumVertices++);
 
     node->fNext = fPointList[ index ];
     fPointList[ index ] = node;
@@ -2234,8 +2226,8 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
     }
 
     /// Now stuff the indices
-    for( i = 0; i < fIndices.GetCount(); i++ )
-        span->AddIndex( fIndices[ i ] );
+    for (uint32_t index : fIndices)
+        span->AddIndex(index);
 
     if (weights != nullptr)
         delete [] weights;

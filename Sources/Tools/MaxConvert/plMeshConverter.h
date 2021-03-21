@@ -104,16 +104,18 @@ public:
 private:
     bool IValidateUVs(plMaxNode* node);
 
-    void    ISetBumpUvs(int16_t uvChan, hsTArray<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, uint32_t smGroup, 
-                                      hsPoint3* uvs1, hsPoint3* uvs2, hsPoint3* uvs3);
-    void    ISetBumpUvSrcs(hsTArray<std::vector<plExportMaterialData> *>& ourMaterials,
-                                        hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan, hsTArray<int16_t>& bumpDuChan, hsTArray<int16_t>& bumpDvChan);
-    void    ISetWaterDecEnvUvSrcs(hsTArray<std::vector<plExportMaterialData> *>& ourMaterials,
-                                        hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan, hsTArray<int16_t>& bumpDuChan, hsTArray<int16_t>& bumpDvChan);
+    void    ISetBumpUvs(int16_t uvChan, std::vector<plMAXVertNormal>& vertDPosDuvCache, TVFace* tvFace, uint32_t smGroup,
+                        hsPoint3* uvs1, hsPoint3* uvs2, hsPoint3* uvs3);
+    void    ISetBumpUvSrcs(std::vector<std::vector<plExportMaterialData> *>& ourMaterials,
+                           std::vector<int16_t>& bumpLayIdx, std::vector<int16_t>& bumpLayChan,
+                           std::vector<int16_t>& bumpDuChan, std::vector<int16_t>& bumpDvChan);
+    void    ISetWaterDecEnvUvSrcs(std::vector<std::vector<plExportMaterialData> *>& ourMaterials,
+                                  std::vector<int16_t>& bumpLayIdx, std::vector<int16_t>& bumpLayChan,
+                                  std::vector<int16_t>& bumpDuChan, std::vector<int16_t>& bumpDvChan);
     void    ISmoothUVGradients(plMaxNode* node, Mesh* mesh, 
-                                        hsTArray<std::vector<plExportMaterialData> *>& ourMaterials,
-                                        hsTArray<int16_t>& bumpLayIdx, hsTArray<int16_t>& bumpLayChan,
-                                        hsTArray<plMAXVertNormal>* vertDPosDuCache, hsTArray<plMAXVertNormal>* vertDPosDvCache);
+                               std::vector<std::vector<plExportMaterialData> *>& ourMaterials,
+                               std::vector<int16_t>& bumpLayIdx, std::vector<int16_t>& bumpLayChan,
+                               std::vector<plMAXVertNormal>* vertDPosDuCache, std::vector<plMAXVertNormal>* vertDPosDvCache);
     Point3  IGetUvGradient(plMaxNode* node, const hsMatrix44& uvXform44, int16_t bmpUvwSrc,
                                         Mesh *mesh, int faceIdx, 
                                         int iUV);

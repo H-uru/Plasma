@@ -53,9 +53,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
 #include "HeadSpin.h"
 #include "hsResMgr.h"
-#include "hsTemplates.h"
 
 #include "MaxMain/MaxAPI.h"
 
@@ -137,7 +138,7 @@ class plLayerTargetContainer : public hsKeyedObject
     static uint32_t       fKeyCount;
 
     public:
-        hsTArray<plLayerInterface *>    fLayers;
+        std::vector<plLayerInterface *> fLayers;
 
         bool MsgReceive(plMessage *msg) override
         {
@@ -172,10 +173,10 @@ void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
         fConversionTargets->GetKey()->RefObject();
     }
 
-    fConversionTargets->fLayers.Append( target );
+    fConversionTargets->fLayers.emplace_back(target);
     hsgResMgr::ResMgr()->AddViaNotify( target->GetKey(), 
-                                        new plGenRefMsg( fConversionTargets->GetKey(), plRefMsg::kOnCreate, 
-                                                        fConversionTargets->fLayers.GetCount() - 1, 0 ),
+                                        new plGenRefMsg(fConversionTargets->GetKey(), plRefMsg::kOnCreate,
+                                                        fConversionTargets->fLayers.size() - 1, 0),
                                         plRefFlags::kPassiveRef );
 }
 
@@ -194,10 +195,10 @@ int     plPlasmaMAXLayer::GetNumConversionTargets()
         return 0;
 
 
-    int i, count = 0;
-    for( i = 0; i < fConversionTargets->fLayers.GetCount(); i++ )
+    int count = 0;
+    for (plLayerInterface* layer : fConversionTargets->fLayers)
     {
-        if (fConversionTargets->fLayers[i] != nullptr)
+        if (layer != nullptr)
             count++;
     }
     return count;
@@ -208,13 +209,12 @@ plLayerInterface    *plPlasmaMAXLayer::GetConversionTarget( int index )
     if (fConversionTargets == nullptr)
         return nullptr;
 
-    int i;
-    for( i = 0; i < fConversionTargets->fLayers.GetCount(); i++ )
+    for (plLayerInterface* layer : fConversionTargets->fLayers)
     {
-        if (fConversionTargets->fLayers[i] != nullptr)
+        if (layer != nullptr)
         {
             if( index == 0 )
-                return fConversionTargets->fLayers[ i ];
+                return layer;
             index--;
         }
     }

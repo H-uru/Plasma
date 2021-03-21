@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRenderLevel.h"
 #include "hsSTLStream.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 
 #include "plMaxNode.h"
 #include "plMaxNodeData.h"
@@ -389,7 +388,7 @@ bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings
     // Send this node off to the instance list, to see if we're instanced
     if( CanMakeMesh( obj, pErrMsg, settings ) ) 
     {
-        hsTArray<plMaxNode *> nodes;
+        std::vector<plMaxNode *> nodes;
         uint32_t numInstances = IBuildInstanceList( GetObjectRef(), t, nodes );
         if( numInstances > 1 )
         {
@@ -990,21 +989,20 @@ bool    plMaxNode::CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSetti
     return false;
 }
 
-void ITestAdjacencyRecur(const hsTArray<int>* vertList, int iVert, hsBitVector& adjVerts)
+void ITestAdjacencyRecur(const std::vector<int>* vertList, int iVert, hsBitVector& adjVerts)
 {
     adjVerts.SetBit(iVert);
 
-    int i;
-    for( i = 0; i < vertList[iVert].GetCount(); i++ )
+    for (int vert : vertList[iVert])
     {
-        if( !adjVerts.IsBitSet(vertList[iVert][i]) )
+        if (!adjVerts.IsBitSet(vert))
         {
-            ITestAdjacencyRecur(vertList, vertList[iVert][i], adjVerts);
+            ITestAdjacencyRecur(vertList, vert, adjVerts);
         }
     }
 }
 
-bool ITestAdjacency(const hsTArray<int>* vertList, int numVerts)
+bool ITestAdjacency(const std::vector<int>* vertList, int numVerts)
 {
     hsBitVector adjVerts;
     ITestAdjacencyRecur(vertList, 0, adjVerts);
@@ -1101,10 +1099,10 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
     if( numFaces <= kSmallNumFaces )
         return IsGeoSpanConvexExhaust(span);
 
-    hsTArray<int>*  vertList = new hsTArray<int> [numVerts];
+    std::vector<int>* vertList = new std::vector<int>[numVerts];
 
-    hsTArray<hsVector3>* normList = new hsTArray<hsVector3> [numVerts];
-    hsTArray<float>* distList = new hsTArray<float> [numVerts];
+    std::vector<hsVector3>* normList = new std::vector<hsVector3>[numVerts];
+    std::vector<float>* distList = new std::vector<float>[numVerts];
 
     uint16_t* idx = span->fIndexData;
 
@@ -1140,12 +1138,13 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
                 if( iVtx != jVtx )
                 {
                     // if idx[jVtx] not in list vertList[idx[iVtx]], add it
-                    if( vertList[idx[iVtx]].kMissingIndex == vertList[idx[iVtx]].Find(idx[jVtx]) )
-                        vertList[idx[iVtx]].Append(idx[jVtx]);
+                    std::vector<int>& verts = vertList[idx[iVtx]];
+                    if (std::find(verts.cbegin(), verts.cend(), idx[jVtx]) == verts.cend())
+                        verts.emplace_back(idx[jVtx]);
                 }
             }
-            normList[idx[iVtx]].Append(faceNorm);
-            distList[idx[iVtx]].Append(faceDist);
+            normList[idx[iVtx]].emplace_back(faceNorm);
+            distList[idx[iVtx]].emplace_back(faceDist);
 
         }
         idx += 3;
@@ -1153,14 +1152,11 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
 
     bool someIn = false;
     bool someOut = false;
-    int i;
-    for( i = 0; i < numVerts; i++ )
+    for (int i = 0; i < numVerts; i++)
     {
-        int k;
-        for( k = 0; k < normList[i].GetCount(); k++ )
+        for (size_t k = 0; k < normList[i].size(); k++)
         {
-            int j;
-            for( j = 0; j < vertList[i].GetCount(); j++ )
+            for (size_t j = 0; j < vertList[i].size(); j++)
             {
                 hsPoint3* pos = (hsPoint3*)(vertData + vertList[i][j] * stride);
                 float dist = pos->InnerProduct(normList[i][k]) - distList[i][k];
@@ -1211,7 +1207,7 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     bool        gotMade = false;
     bool        haveAddedToSceneNode = false;
     hsGMesh     *myMesh = nullptr;
-    uint32_t      i, triMeshIndex = (uint32_t)-1;
+    uint32_t    triMeshIndex = (uint32_t)-1;
     const char  *dbgNodeName = GetName();
     TSTR sdata;
     hsStringTokenizer toker;
@@ -1248,12 +1244,12 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     if( GetInstanced() )
     {
-        hsTArray<plMaxNode *>   nodes;
+        std::vector<plMaxNode *> nodes;
         TimeValue   t = hsConverterUtils::Instance().GetTime(GetInterface());
-        uint32_t      numInstances = IBuildInstanceList( GetObjectRef(), t, nodes, true );
+        size_t      numInstances = IBuildInstanceList(GetObjectRef(), t, nodes, true);
 
         /// Instanced, find an iNode in the list that's been converted already
-        for( i = 0; i < numInstances; i++ )
+        for (size_t i = 0; i < numInstances; i++)
         {
             if( nodes[ i ]->GetSceneObject() && nodes[ i ]->GetSceneObject()->GetDrawInterface() )
             {
@@ -1583,15 +1579,11 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
         }
     }
 
-    hsTArray<hsMatrix44>    initialB2W;
-    hsTArray<hsMatrix44>    initialW2B;
-    initialB2W.SetCount(numBones);
-    initialW2B.SetCount(numBones);
+    std::vector<hsMatrix44> initialB2W(numBones);
+    std::vector<hsMatrix44> initialW2B(numBones);
 
-    std::vector<hsMatrix44> initialL2B;
-    hsTArray<hsMatrix44>    initialB2L;
-    initialL2B.resize(numBones);
-    initialB2L.SetCount(numBones);
+    std::vector<hsMatrix44> initialL2B(numBones);
+    std::vector<hsMatrix44> initialB2L(numBones);
 
     initialB2W[0].Reset();
     initialW2B[0].Reset();
@@ -1803,7 +1795,7 @@ bool plMaxNode::IMakeInstanceSpans(plMaxNode *node, std::vector<plGeometrySpan *
 //  For the given object, builds a list of all the iNodes that have that
 //  object as their object. Returns the total node count
 
-uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMaxNode *> &nodes, bool beMoreAccurate )
+size_t plMaxNode::IBuildInstanceList(Object *obj, TimeValue t, std::vector<plMaxNode *> &nodes, bool beMoreAccurate)
 {
     Object              *thisObj = EvalWorldState( t ).obj;
     DependentIterator   di( obj );
@@ -1814,7 +1806,7 @@ uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMa
 
     /// Use the DependentIterator to loop through all the dependents of the object,
     /// looking for nodes that use it
-    nodes.Reset();
+    nodes.clear();
     while( rm = di.Next() )
     {
         if( rm->SuperClassID() == BASENODE_CLASS_ID )
@@ -1835,13 +1827,13 @@ uint32_t  plMaxNode::IBuildInstanceList( Object *obj, TimeValue t, hsTArray<plMa
                 {
                     // Make sure the materials generated for both of these nodes will be the same
                     if( IMaterialsMatch( node, beMoreAccurate ) )
-                        nodes.Append( node );
+                        nodes.emplace_back(node);
                 }
             }
         }
     }
 
-    return nodes.GetCount();
+    return nodes.size();
 }
 
 //// IMaterialsMatch /////////////////////////////////////////////////////////
@@ -1953,13 +1945,12 @@ bool plMaxNode::MakeOccluder(plErrorMsg *pErrMsg, plConvertSettings *settings)
     return ConvertToOccluder(pErrMsg, twoSided, isHole);
 }
 
-static void IRemoveCollinearPoints(hsTArray<Point3>& facePts)
+static void IRemoveCollinearPoints(std::vector<Point3>& facePts)
 {
-    int i;
-    for( i = 0; i < facePts.GetCount(); )
+    for (size_t i = 0; i < facePts.size(); )
     {
-        int j = i + 1 >= facePts.GetCount() ? 0 : i + 1;
-        int k = j + 1 >= facePts.GetCount() ? 0 : j + 1;
+        size_t j = i + 1 >= facePts.size() ? 0 : i + 1;
+        size_t k = j + 1 >= facePts.size() ? 0 : j + 1;
         Point3 ab = FNormalize(facePts[i] - facePts[j]);
         Point3 bc = FNormalize(facePts[j] - facePts[k]);
 
@@ -1971,7 +1962,7 @@ static void IRemoveCollinearPoints(hsTArray<Point3>& facePts)
         }
         else
         {
-            facePts.Remove(j);
+            facePts.erase(facePts.begin() + j);
         }
     }
 }
@@ -2047,24 +2038,22 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
             // its own mnMesh, then eliminate colinear verts on that single poly mesh. Except
             // EliminateCollinearVerts doesn't seem to actually do that. So we'll just have to
             // manually detect and skip collinear verts.
-            hsTArray<Point3> facePts;
-            int i;
-            for( i = 0; i < mnMesh.numf; i++ )
+            std::vector<Point3> facePts;
+            for (int i = 0; i < mnMesh.numf; i++)
             {
                 MNFace& face = mnMesh.f[i];
 
-                facePts.SetCount(0);
-                int j;
-                for( j = 0; j < face.deg; j++ )
+                facePts.clear();
+                for (int j = 0; j < face.deg; j++)
                 {
-                    facePts.Append(mnMesh.v[face.vtx[j]].p);
+                    facePts.emplace_back(mnMesh.v[face.vtx[j]].p);
                 }
                 IRemoveCollinearPoints(facePts);
 
-                if( facePts.GetCount() < 3 )
+                if (facePts.size() < 3)
                     continue;
 
-                int lastAdded = 2;
+                size_t lastAdded = 2;
 
                 plCullPoly* poly = &polys.emplace_back();
                 poly->fVerts.clear();
@@ -2084,7 +2073,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
                 pt.Set(p.x, p.y, p.z);
                 poly->fVerts.emplace_back(pt);
 
-                for( j = lastAdded+1; j < facePts.GetCount(); j++ )
+                for (size_t j = lastAdded + 1; j < facePts.size(); j++)
                 {
                     p = facePts[j];
                     pt.Set(p.x, p.y, p.z);
@@ -3634,14 +3623,14 @@ plMaxNode* plMaxNode::GetBonesRoot()
     return boneRoot;
 }
 
-void plMaxNode::GetBonesRootsRecur(hsTArray<plMaxNode*>& nodes)
+void plMaxNode::GetBonesRootsRecur(std::vector<plMaxNode*>& nodes)
 {
     plMaxNode* bRoot = GetBonesRoot();
     if( bRoot )
     {
-        int idx = nodes.Find(bRoot);
-        if( idx == nodes.kMissingIndex )
-            nodes.Append(bRoot);
+        auto iter = std::find(nodes.cbegin(), nodes.cend(), bRoot);
+        if (iter == nodes.cend())
+            nodes.emplace_back(bRoot);
     }
 
     int i;
@@ -3656,15 +3645,14 @@ plSceneObject* plMaxNode::MakeCharacterHierarchy(plErrorMsg *pErrMsg)
         return nullptr;
     const char *playerRootName = GetName();
 
-    hsTArray<plMaxNode*> bonesRoots;
-    int i;
-    for( i = 0; i < NumberOfChildren(); i++ )
+    std::vector<plMaxNode*> bonesRoots;
+    for (int i = 0; i < NumberOfChildren(); i++)
         ((plMaxNode*)GetChildNode(i))->GetBonesRootsRecur(bonesRoots);
 
-    if (pErrMsg->Set(bonesRoots.GetCount() > 1, playerRootName, "Found multiple bones hierarchies").CheckAndAsk())
+    if (pErrMsg->Set(bonesRoots.size() > 1, playerRootName, "Found multiple bones hierarchies").CheckAndAsk())
         return nullptr;
 
-    if( bonesRoots.GetCount() )
+    if (!bonesRoots.empty())
     {
         bonesRoots[0]->SetupBonesAliasesRecur(playerRootName);
 
@@ -3800,12 +3788,12 @@ int plMaxNode::IGetCachedAlphaHackValue( int iSubMtl )
     if (pDat == nullptr)
         return -1;
 
-    hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
+    std::vector<int>* cache = pDat->GetAlphaHackLayersCache();
     if (cache == nullptr)
         return -1;
 
     iSubMtl++;
-    if( iSubMtl >= cache->GetCount() )
+    if (iSubMtl >= (int)cache->size())
         return -1;
 
     return (*cache)[ iSubMtl ];
@@ -3817,22 +3805,17 @@ void    plMaxNode::ISetCachedAlphaHackValue( int iSubMtl, int value )
     if (pDat == nullptr)
         return;
 
-    hsTArray<int>   *cache = pDat->GetAlphaHackLayersCache();
+    std::vector<int>* cache = pDat->GetAlphaHackLayersCache();
     if (cache == nullptr)
     {
-        cache = new hsTArray<int>;
+        cache = new std::vector<int>;
         pDat->SetAlphaHackLayersCache( cache );
     }
 
     iSubMtl++;
 
-    if( iSubMtl >= cache->GetCount() )
-    {
-        int i = cache->GetCount();
-        cache->ExpandAndZero( iSubMtl + 1 );
-        for( ; i < cache->GetCount(); i++ )
-            (*cache)[ i ] = -1;
-    }
+    if (iSubMtl >= (int)cache->size())
+        cache->resize(iSubMtl + 1, -1);
 
     (*cache)[ iSubMtl ] = value;
 }
@@ -3978,7 +3961,7 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
         return ret;
     
     size_t count = GetSceneObject()->GetNumModifiers();
-    hsTArray<plKey> keys;
+    std::vector<plKey> keys;
     // Go through all the modifiers attached to this node's scene object
     // and grab keys for objects who we would need to send interface messages to
     for (size_t i = 0; i < count; i++)
@@ -3991,25 +3974,25 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
         if( pDet )
         {
             for (size_t j = 0; j < pDet->GetNumReceivers(); j++)
-                keys.Append(pDet->GetReceiver(j));
+                keys.emplace_back(pDet->GetReceiver(j));
         }
         else
         if( pLog )
         {
-            keys.Append(pLog->GetKey());
+            keys.emplace_back(pLog->GetKey());
         }
     }
     // if there is anything there, create an 'interface object modifier' which simply stores 
     // the list in a handy form
-    if (keys.Count())
+    if (!keys.empty())
     {
         plInterfaceInfoModifier* pMod = new plInterfaceInfoModifier;
         
         plKey modifierKey = hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(GetName()), pMod, GetLocation(), GetLoadMask());
         hsgResMgr::ResMgr()->AddViaNotify(modifierKey, new plObjRefMsg(GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         
-        for(int i = 0; i < keys.Count(); i++)
-            pMod->AddRefdKey(keys[i]);
+        for (const plKey& key : keys)
+            pMod->AddRefdKey(key);
     }
 
     return ret;

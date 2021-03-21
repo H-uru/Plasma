@@ -69,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsSTLStream.h"
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
-#include "hsTemplates.h"
 #include "plFileSystem.h"
 
 // Max
