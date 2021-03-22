@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Building - Plasma</title>
+
+    <meta name="viewport" content="width=device-width">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Plasma</h1>
+      <span>The Cyan Worlds Engine</span>
+    </header>
+
+    <main class="page">
+      <nav>
+        <a href="index.html">Overview</a>
+        <a href="download.html">Download</a>
+        <a href="building.html" class="active">Building</a>
+        <a href="running.html">Running</a>
+        <a href="involvement.html">Get Involved</a>
+        <a href="credits.html">Credits</a>
+      </nav>
+
+      <h2>Building</h2>
+
+      <p>Currently, the complete game client can only be built for Windows, using Visual Studio.</p>
+      <p>By default these steps will compile a client targeting your machine architecture. It is possible to build a 64-bit game client, but only the 32-bit (x86) client is officially supported.</p>
+
+
+      <h3 id="dependencies">Library Dependencies</h3>
+
+      <p>Plasma requires a number of third-party libraries as dependencies. All required libraries are available through the <a href="https://github.com/microsoft/vcpkg">vcpkg package manager</a> and can be downloaded as part of the build process, or can be built using their individual build instructions.</p>
+
+      <details>
+        <summary>Expand to view the complete list of libraries</summary>
+
+        <p>Plasma currently requires the following third-party libraries:</p>
+        <ul>
+          <li><a href="https://www.python.org/downloads/">Python 3.8 or higher</a></li>
+          <li><a href="https://www.xiph.org/downloads/">libOgg and libVorbis</a></li>
+          <li><a href="https://www.openssl.org/">OpenSSL</a></li>
+          <li><a href="https://openal-soft.org/">OpenAL Soft</a></li>
+          <li><a href="https://libexpat.github.io/">Expat</a></li>
+          <li><a href="https://libjpeg-turbo.org/">libjpeg</a></li>
+          <li><a href="http://www.libpng.org/">libpng</a></li>
+          <li><a href="https://zlib.net/">zlib</a></li>
+          <li><a href="https://curl.se/">libcurl</a></li>
+          <li><a href="https://github.com/zrax/string_theory/">string_theory</a></li>
+          <li><a href="https://think-async.com/Asio/">Standalone ASIO</a></li>
+        </ul>
+
+        <p>The following libraries are optional:</p>
+        <ul>
+          <li><a href="https://cairosvg.org/">CairoSVG</a> (for building resource.dat)</li>
+          <li><a href="https://python-pillow.org/">Pillow</a> (for building resource.dat)</li>
+          <li><a href="https://www.freetype.org/">FreeType</a> (for plFontConverter)</li>
+          <li><a href="https://www.qt.io/download-open-source">Qt5</a> (for the GUI tools)</li>
+          <li><a href="https://www.webmproject.org/">VPX and WebM</a> (for video)</li>
+          <li><a href="https://www.opus-codec.org/">Opus</a> (for video and voice chat)</li>
+          <li><a href="https://www.speex.org/downloads/">Speex</a> (for legacy voice chat)</li>
+          <li>Autodesk 3ds Max 7 (non-free SDK; for 3ds Max plugin)</li>
+        </ul>
+      </details>
+
+
+      <h3 id="building-windows">Building on Windows</h3>
+
+      <p>Compiling on Windows requires Visual Studio. We recommend <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio 2019 Community Edition</a>, which is available as a free download. Install the “Desktop development with C++” workload.</p>
+
+      <ol>
+        <li>
+          <p>Clone the repository from GitHub, including all submodules, using a git client. On the command line, this can be done by executing the following:<br>
+            <code>git clone --recurse-submodules https://github.com/H-uru/Plasma.git</code></p>
+
+          <p class="infonote" data-infotype="warning"><b>Note:</b> We recommend using <a href="https://git-scm.com/download/win">Git for Windows</a>. Using the git program provided by Cygwin will not set permissions properly on some files and result in build failures.</p>
+
+          <p class="infonote" data-infotype="warning"><b>Note:</b> Some dependencies may fail to build if the path to the code contains spaces.</p>
+        </li>
+
+        <li>
+          <p>Launch Visual Studio.</p>
+        </li>
+
+        <li>
+          <p>Select <strong>Open a local folder</strong> and choose the folder where you cloned the repository.</p>
+        </li>
+
+        <li>
+          <p>Compile the project by using <strong>Build &gt; Install Plasma</strong>. All required dependencies will automatically be downloaded from vcpkg as part of the build process.</p>
+
+          <details id="building-windows-32">
+            <summary class="expanding-heading">Building a 32-bit client on a 64-bit system</summary>
+
+            <ol>
+              <li>
+                <p>Wait for Visual Studio to finish preparing the workspace.<br>Look for a line that says “<tt>CMake generation finished</tt>” in the Output window.</p>
+              </li>
+
+              <li>
+                <p>Open the CMake Settings (<strong>Project &gt; CMake Settings for Plasma</strong>).</p>
+              </li>
+
+              <li>
+                <p>Click the green <strong>+</strong> button to add a new configuration.</p>
+              </li>
+
+              <li>
+                <p>Select “x86-Release” from the popup window.</p>
+              </li>
+
+              <li>
+                <p>Save the CMake settings, using Ctrl+S or the Save button in the toolbar.</p>
+              </li>
+
+              <li>
+                <p>In the dropdown menu in the toolbar, select the new “x86-Release” configuration.</p>
+              </li>
+
+              <li>
+                <p>Compile the project by using <strong>Build &gt; Install Plasma</strong>.</p>
+              </li>
+            </ol>
+          </details>
+        </li>
+
+        <li>
+          <p>The client will be built and installed into a subfolder of where you cloned the repo.</p>
+
+          <dl class="wider">
+            <dt>32-bit Debug:</dt>
+            <dd><tt>out\install\x86-Debug\client</tt></dd>
+
+            <dt>32-bit Release:</dt>
+            <dd><tt>out\install\x86-Release\client</tt></dd>
+
+            <dt>64-bit Debug:</dt>
+            <dd><tt>out\install\x64-Debug\client</tt></dd>
+
+            <dt>64-bit Release:</dt>
+            <dd><tt>out\install\x64-Release\client</tt></dd>
+          </dl>
+
+          <p>The client output folder will be referred to as your “MOUL-OS” folder in the instructions on <a href="running.html">Running Plasma</a>.</p>
+        </li>
+      </ol>
+
+
+      <h3 id="building-nix">Building on macOS &amp; Linux</h3>
+
+      <p>Linux and macOS are <strong>not officially supported targets</strong>, and the game client does not compile. However, several of the tools can be built and run.</p>
+
+      <p>You will need to ensure all the required dependencies are available. You may be able to use vcpkg on these platforms, but it has not been extensively tested.</p>
+
+      <ol>
+        <li>
+          <p>Clone the repository from GitHub, including all submodules, using a git client. On the command line, this can be done by executing the following:<br>
+            <code>git clone --recurse-submodules https://github.com/H-uru/Plasma.git</code></p>
+        </li>
+
+        <li>
+          <p>In the folder where you cloned the repository, run CMake to create a build folder:<br>
+            <code>cmake --builddir build -S .</code></p>
+          <p>If you want to use vcpkg to automatically build dependencies, enable the <tt>USE_VCPKG</tt> option:<br>
+            <code>cmake -D USE_VCPKG=ON --builddir build -S .</code></p>
+        </li>
+
+        <li>
+          <p>Compile the project with the following command:<br>
+            <code>cmake --builddir build --config RelWithDebInfo</code></p>
+        </li>
+
+        <li>
+          <p>Install the resulting tools with the following command:<br>
+            <code>cmake --install build --config RelWithDebInfo</code></p>
+        </li>
+
+        <li>
+          <p>The tools will be built and installed into the <tt>build/install/tools</tt> subfolder of where you cloned the repo.</p>
+        </li>
+      </ol>
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>
+
