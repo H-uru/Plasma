@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGeometry3.h"
 #include "pyKey.h"
 #include "pyObjectRef.h"
+#include "plPythonCallable.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
@@ -349,98 +350,13 @@ T* plPythonFileMod::IScriptWantsMsg(func_num methodId, plMessage* msg) const
 //  PURPOSE    : Builds Python argument tuple for method calling.
 //
 
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, bool value)
+namespace plPythonCallable
 {
-    PyTuple_SET_ITEM(tuple, idx, PyBool_FromLong(value ? 1 : 0));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, char value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromFormat("%c", (int)value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong((long)value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, const char* value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromString(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, double value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, float value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int8_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int16_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int32_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, PyObject* value)
-{
-    PyTuple_SET_ITEM(tuple, idx, value);
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, pyObjectRef& value)
-{
-    PyTuple_SET_ITEM(tuple, idx, value.Release());
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, const ST::string& value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromSTString(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint8_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint16_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint32_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
-}
-
-static inline void IBuildTupleArg(PyObject* tuple, size_t idx, wchar_t value)
-{
-    PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromFormat("%c", (int)value));
-}
-
-template<size_t Size, typename Arg>
-static inline void IBuildTupleArgs(PyObject* tuple, Arg&& arg)
-{
-    IBuildTupleArg(tuple, (Size - 1), std::forward<Arg>(arg));
-}
-
-template<size_t Size, typename Arg0, typename... Args>
-static inline void IBuildTupleArgs(PyObject* tuple, Arg0&& arg0, Args&&... args)
-{
-    IBuildTupleArg(tuple, (Size - (sizeof...(args) + 1)), std::forward<Arg0>(arg0));
-    IBuildTupleArgs<Size>(tuple, std::forward<Args>(args)...);
-}
+    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
+    {
+        PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong((long)value));
+    }
+};
 
 template<typename... Args>
 void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
@@ -450,7 +366,7 @@ void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
         return;
 
     pyObjectRef tuple = PyTuple_New(sizeof...(args));
-    IBuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<Args>(args)...);
+    plPythonCallable::BuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<Args>(args)...);
 
     plProfile_BeginTiming(PythonUpdate);
     pyObjectRef retVal = PyObject_CallObject(callable, tuple.Get());
