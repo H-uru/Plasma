@@ -66,7 +66,7 @@ h1 {
 }
 
 h2 {
-    font-family: 'Charter', 'XCharter', 'Bitstream Charter', serif;
+    font-family: Georgia, Times, Times New Roman, serif;
     font-variant-caps: small-caps;
     font-variant-numeric: oldstyle-nums;
     font-weight: 500;
@@ -76,7 +76,7 @@ h2 {
 
 header span {
     display: block;
-    font-family: 'Charter', 'XCharter', 'Bitstream Charter', serif;
+    font-family: Georgia, Times, Times New Roman, serif;
     font-variant-caps: small-caps;
     font-size: 1.25em;
     font-weight: normal;
@@ -166,7 +166,7 @@ nav a.active {
 }
 
 h3 {
-    font-family: 'Charter', 'XCharter', 'Bitstream Charter', serif;
+    font-family: Georgia, Times, Times New Roman, serif;
     font-size: 1.25em;
     font-weight: 500;
     font-variant-caps: small-caps;
@@ -242,7 +242,7 @@ tt {
 }
 
 .expanding-heading {
-    font-family: 'Charter', 'XCharter', 'Bitstream Charter', serif;
+    font-family: Georgia, Times, Times New Roman, serif;
     font-size: 1.1em;
     font-weight: 500;
     font-variant-caps: small-caps;
