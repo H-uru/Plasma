@@ -50,7 +50,7 @@ a {
 }
 
 b, strong {
-    /* Firefox uses "bolder" be default, which is... not bold enough */
+    /* Firefox uses "bolder" by default, which is... not bold enough */
     font-weight: bold;
 }
 
