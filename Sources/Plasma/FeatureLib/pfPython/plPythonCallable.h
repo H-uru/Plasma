@@ -43,12 +43,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyPythonCallable_h_
 #define _pyPythonCallable_h_
 
+#include <functional>
+#include <type_traits>
+#include <variant>
+
 #include <Python.h>
 #include <string_theory/string>
+
+#include "plProfile.h"
 
 #include "cyPythonInterface.h"
 #include "pyGlueHelpers.h"
 #include "pyObjectRef.h"
+
+plProfile_Extern(PythonUpdate);
 
 namespace plPythonCallable
 {
@@ -138,6 +146,52 @@ namespace plPythonCallable
     {
         IBuildTupleArg(tuple, (Size - (sizeof...(args) + 1)), std::forward<Arg0>(arg0));
         BuildTupleArgs<Size>(tuple, std::forward<Args>(args)...);
+    }
+
+    template<typename... _CBArgsT>
+    [[nodiscard]]
+    static inline std::function<void(_CBArgsT...)> BuildCallback(ST::string parentCall, PyObject* callable)
+    {
+        hsAssert(PyCallable_Check(callable) != 0, "BuildCallback() expects a Python callable.");
+
+        pyObjectRef cb(callable, pyObjectNewRef);
+        return [cb = std::move(cb), parentCall = std::move(parentCall)](_CBArgsT&&... args) -> void {
+            pyObjectRef tuple = PyTuple_New(sizeof...(args));
+            BuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<_CBArgsT>(args)...);
+
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef result = PyObject_CallObject(cb.Get(), tuple.Get());
+            plProfile_EndTiming(PythonUpdate);
+
+            if (!result) {
+                // Stash the error state so we can get some info about the
+                // callback before printing the exception itself.
+                PyObject* ptype, * pvalue, * ptraceback;
+                PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+                pyObjectRef repr = PyObject_Repr(cb.Get());
+                PythonInterface::WriteToLog(ST::format("Error executing '{}' callback for '{}'",
+                                                       PyUnicode_AsSTString(repr.Get()),
+                                                       parentCall));
+                PyErr_Restore(ptype, pvalue, ptraceback);
+                PyErr_Print();
+            }
+        };
+    }
+
+    template<typename... _CBArgsT>
+    static inline void BuildCallback(ST::string parentCall, PyObject* callable,
+                                     std::function<void(_CBArgsT...)>& cb)
+    {
+        cb = BuildCallback<_CBArgsT...>(std::move(parentCall), callable);
+    }
+
+    template<size_t _AlternativeN, typename... _VariantArgsT>
+    static inline void BuildCallback(ST::string parentCall, PyObject* callable,
+                                     std::variant<_VariantArgsT...>& cb)
+    {
+        std::variant_alternative_t<_AlternativeN, std::decay_t<decltype(cb)>> cbFunc;
+        BuildCallback(std::move(parentCall), callable, cbFunc);
+        cb = std::move(cbFunc);
     }
 };
 

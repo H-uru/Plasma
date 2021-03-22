@@ -263,6 +263,7 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnNucleusInc
+        plMessage
     PRIVATE
         pnEncryption
         pnInputCore

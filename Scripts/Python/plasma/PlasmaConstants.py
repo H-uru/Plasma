@@ -114,6 +114,20 @@ class PtButtonNotifyTypes:
     kNotifyOnDown = 1
     kNotifyOnUpAndDown = 2
 
+class PtConfirmationResult:
+    OK = 1
+    Cancel = 0
+    Yes = 1
+    No = 0
+    Quit = 1
+    Logout = 62
+
+class PtConfirmationType:
+    OK = 0
+    ConfirmQuit = 1
+    ForceQuit = 2
+    YesNo = 3
+
 class PtCCRPetitionType:
     """(none)"""
     kGeneralHelp = 0
