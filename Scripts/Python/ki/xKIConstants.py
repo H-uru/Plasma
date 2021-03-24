@@ -503,23 +503,7 @@ class kGUI:
     BKEditFieldJRNTitle = 0
     BKEditFieldJRNNote = 1
     BKEditFieldPICTitle = 2
-    
-    # Yes/No dialog.
-    YesNoTextID=12
-    YesButtonID = 10
-    NoButtonID = 11
-    YesButtonTextID = 60
-    NoButtonTextID = 61
-    YesNoLogoutButtonID = 62
-    YesNoLogoutTextID = 63
-    YNQuit = 0
-    YNDelete = 1
-    YNOfferLink = 2
-    YNOutside = 3
-    YNKIFull = 4
-    YNWanaPlay = 5
-    YNNoReason = 6
-    
+
     # Question note dialog.
     QNTitle = 100
     QNMessage = 101
