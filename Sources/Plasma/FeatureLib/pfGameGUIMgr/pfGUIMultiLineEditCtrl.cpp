@@ -645,9 +645,9 @@ int32_t   pfGUIMultiLineEditCtrl::IPointToPosition( int16_t ptX, int16_t ptY, bo
     if (fPrevCtrl)
         fScrollPos = GetFirstVisibleLine(); // update the scroll position if we are linked
 
-    int32_t lastVisibleLine = (int32_t)fLineStarts.size() - 1;
+    int32_t lastVisibleLine = (int32_t)fLineStarts.size();
     if (!searchOutsideBounds)
-        lastVisibleLine = std::min(fScrollPos + ICalcNumVisibleLines() - 1, lastVisibleLine);
+        lastVisibleLine = std::min(fScrollPos + ICalcNumVisibleLines(), lastVisibleLine);
 
     int32_t line = searchOutsideBounds ? 0 : fScrollPos;
     int16_t y = (int16_t)(-(fScrollPos - line) * fLineHeight) + fTopMargin;
