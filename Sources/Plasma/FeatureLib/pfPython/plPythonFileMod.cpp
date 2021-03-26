@@ -352,7 +352,8 @@ T* plPythonFileMod::IScriptWantsMsg(func_num methodId, plMessage* msg) const
 
 namespace plPythonCallable
 {
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
+    template<>
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong((long)value));
     }

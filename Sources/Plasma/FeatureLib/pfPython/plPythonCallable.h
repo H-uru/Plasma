@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <variant>
 
 #include <Python.h>
-#include <string_theory/string>
+#include <string_theory/format>
 
 #include "plProfile.h"
 
@@ -60,89 +60,92 @@ plProfile_Extern(PythonUpdate);
 
 namespace plPythonCallable
 {
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, bool value)
+    template<typename ArgT>
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, ArgT value) = delete;
+
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, bool value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyBool_FromLong(value ? 1 : 0));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, char value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, char value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromFormat("%c", (int)value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, const char* value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, const char* value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromString(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, double value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, double value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, float value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, float value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int8_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, int8_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int16_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, int16_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int32_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, int32_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, PyObject* value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, PyObject* value)
     {
         PyTuple_SET_ITEM(tuple, idx, value);
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, pyObjectRef& value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, pyObjectRef& value)
     {
         PyTuple_SET_ITEM(tuple, idx, value.Release());
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, const ST::string& value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, const ST::string& value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromSTString(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint8_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint8_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint16_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint16_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint32_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint32_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
     }
 
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, wchar_t value)
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, wchar_t value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromFormat("%c", (int)value));
     }
 
     template<size_t Size, typename Arg>
-    static inline void BuildTupleArgs(PyObject* tuple, Arg&& arg)
+    inline void BuildTupleArgs(PyObject* tuple, Arg&& arg)
     {
         IBuildTupleArg(tuple, (Size - 1), std::forward<Arg>(arg));
     }
 
     template<size_t Size, typename Arg0, typename... Args>
-    static inline void BuildTupleArgs(PyObject* tuple, Arg0&& arg0, Args&&... args)
+    inline void BuildTupleArgs(PyObject* tuple, Arg0&& arg0, Args&&... args)
     {
         IBuildTupleArg(tuple, (Size - (sizeof...(args) + 1)), std::forward<Arg0>(arg0));
         BuildTupleArgs<Size>(tuple, std::forward<Args>(args)...);
@@ -150,7 +153,7 @@ namespace plPythonCallable
 
     template<typename... _CBArgsT>
     [[nodiscard]]
-    static inline std::function<void(_CBArgsT...)> BuildCallback(ST::string parentCall, PyObject* callable)
+    inline std::function<void(_CBArgsT...)> BuildCallback(ST::string parentCall, PyObject* callable)
     {
         hsAssert(PyCallable_Check(callable) != 0, "BuildCallback() expects a Python callable.");
 
@@ -179,15 +182,15 @@ namespace plPythonCallable
     }
 
     template<typename... _CBArgsT>
-    static inline void BuildCallback(ST::string parentCall, PyObject* callable,
-                                     std::function<void(_CBArgsT...)>& cb)
+    inline void BuildCallback(ST::string parentCall, PyObject* callable,
+                              std::function<void(_CBArgsT...)>& cb)
     {
         cb = BuildCallback<_CBArgsT...>(std::move(parentCall), callable);
     }
 
     template<size_t _AlternativeN, typename... _VariantArgsT>
-    static inline void BuildCallback(ST::string parentCall, PyObject* callable,
-                                     std::variant<_VariantArgsT...>& cb)
+    inline void BuildCallback(ST::string parentCall, PyObject* callable,
+                              std::variant<_VariantArgsT...>& cb)
     {
         std::variant_alternative_t<_AlternativeN, std::decay_t<decltype(cb)>> cbFunc;
         BuildCallback(std::move(parentCall), callable, cbFunc);

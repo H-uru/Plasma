@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 
+#include <string_view>
+
 #include "pyEnum.h"
 #include "pyColor.h"
 #include "pyGlueHelpers.h"
@@ -58,7 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace plPythonCallable
 {
-    static inline void IBuildTupleArg(PyObject* tuple, size_t idx, plConfirmationMsg::Result value)
+    template<>
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, plConfirmationMsg::Result value)
     {
         PyTuple_SET_ITEM(tuple, idx, PyLong_FromSsize_t((Py_ssize_t)value));
     }
