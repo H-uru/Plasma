@@ -215,6 +215,9 @@ class pfGUIControlMod : public plSingleModifier
         // Return false if you actually DON'T want the mouse clicked at this point (should only be used for non-rectangular region rejection)
         virtual bool    FilterMousePosition( hsPoint3 &mousePt ) { return true; }
 
+        /** Return false if you actually DON'T want a mouse click to focus the control. */
+        virtual bool    FocusOnMouseDown(const hsPoint3& mousePt, uint8_t modifiers) const { return true; }
+
         virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers ) { }
         virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers ) { }
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers ) { }

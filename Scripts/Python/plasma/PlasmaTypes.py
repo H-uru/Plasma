@@ -109,7 +109,7 @@ kFontShadowed=4
 
 # OnGUINotify Event Types
 kShowHide=1             # show or hide change (only on kDialog)
-kAction=2               # kButton clicked, kListBox item clicked on, kEditBox hit enter
+kAction=2               # kButton clicked, kListBox item clicked on, kEditBox hit enter, kMultiLineEdit hit link
 kValueChanged=3         # value changed in control (could be from kUpDownPair,kKnob,kCheckBox,kRadioGroup
 kDialogLoaded=4         # the dialog has just been loaded
 kFocusChange=5          # the focus changed from one control to another, or none, within the dialog

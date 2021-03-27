@@ -497,7 +497,7 @@ static bool     showBounds = false;
 
             // Clicking on a control (mouse down) also sets focus to that control. Unlike
             // control-of-interest, this does NOT get reset until a new control is clicked on
-            if( fFocusCtrl != fMousedCtrl )
+            if (fFocusCtrl != fMousedCtrl && fMousedCtrl->FocusOnMouseDown(mousePoint, modifiers))
             {
                 if (fHandler != nullptr)
                     fHandler->OnCtrlFocusChange( fFocusCtrl, fMousedCtrl );

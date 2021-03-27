@@ -315,6 +315,19 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStyle, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertLink, args)
+{
+    int16_t linkId;
+    if (!PyArg_ParseTuple(args, "h", &linkId)) {
+        PyErr_SetString(PyExc_TypeError, "insertLink expects a 16-bit integer");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->InsertLink(linkId);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, clearLink, ClearLink)
+
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, deleteChar, DeleteChar)
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, lock, Lock)
@@ -340,6 +353,14 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setBufferLimit, args)
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getBufferLimit)
 {
     return PyLong_FromLong(self->fThis->GetBufferLimit());
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getCurrentLink)
+{
+    int16_t linkId = self->fThis->GetCurrentLink();
+    if (linkId >= 0)
+        return PyLong_FromLong(linkId);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, enableScrollControl, EnableScrollControl)
@@ -418,12 +439,15 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertColor, "Params: color\nInserts an encoded color object at the current cursor position.\n"
                 "'color' is a ptColor object."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertStyle, "Params: style\nInserts an encoded font style at the current cursor position."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertLink, "Params: linkId\nInserts a link hotspot at the current cursor position."),
+    PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearLink, "Ends the hyperlink hotspot, if any, at the current cursor position."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, deleteChar, "Deletes a character at the current cursor position."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, lock, "Locks the multi-line edit control so the user cannot make changes."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unlock, "Unlocks the multi-line edit control so that the user can make changes."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isLocked, "Is the multi-line edit control locked? Returns 1 if true otherwise returns 0"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setBufferLimit, "Params: bufferLimit\nSets the buffer max for the editbox"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getBufferLimit, "Returns the current buffer limit"),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCurrentLink, "Returns the link the mouse is currently over"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, enableScrollControl, "Enables the scroll control if there is one"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, disableScrollControl, "Disables the scroll control if there is one"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, deleteLinesFromTop, "Params: numLines\nDeletes the specified number of lines from the top of the text buffer"),

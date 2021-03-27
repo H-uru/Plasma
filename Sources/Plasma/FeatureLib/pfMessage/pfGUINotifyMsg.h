@@ -73,7 +73,7 @@ public:
     enum GUIEventType
     {
         kShowHide = 1,      // show or hide change
-        kAction,            // button clicked, ListBox click on item, EditBox hit enter
+        kAction,            // button clicked, ListBox click on item, EditBox hit enter, MultiLineEdit hit link
         kValueChanged,      // value changed in control
         kDialogLoaded,      // the dialog is now loaded and ready for action
         kFocusChange,       // when one of its controls loses focus to another
@@ -99,6 +99,9 @@ public:
 //    kSpecialAction    - tab key hit (for autocompletion on Python side)
 //    kMessageHistoryUp - up key hit
 //    kMessageHistoryDown - down key hit
+// kMultiLineEdit
+//    kAction           - clicked a link
+//    kValueChanged     - the content or position of the control changed
 // kUpDownPair
 //    kValueChanged     - the value of the pair has been changed
 // kKnob

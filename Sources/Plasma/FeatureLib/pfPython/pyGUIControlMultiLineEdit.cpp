@@ -446,6 +446,32 @@ void pyGUIControlMultiLineEdit::InsertStyle( uint8_t fontStyle )
     }
 }
 
+void pyGUIControlMultiLineEdit::InsertLink(int16_t linkId)
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+        {
+            pbmod->InsertLink(linkId);
+        }
+    }
+}
+
+void pyGUIControlMultiLineEdit::ClearLink()
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+        {
+            pbmod->ClearLink();
+        }
+    }
+}
+
 void pyGUIControlMultiLineEdit::DeleteChar()
 {
     if ( fGCkey )
@@ -537,6 +563,18 @@ int32_t pyGUIControlMultiLineEdit::GetBufferLimit()
             return pbmod->GetBufferLimit();
     }
     return 0;
+}
+
+int16_t pyGUIControlMultiLineEdit::GetCurrentLink() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetCurrentLink();
+    }
+    return -1;
 }
 
 void pyGUIControlMultiLineEdit::EnableScrollControl()

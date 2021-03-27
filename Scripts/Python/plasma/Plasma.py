@@ -4187,6 +4187,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Clears all text from the multi-line edit control."""
         pass
 
+    def clearLink(self) -> None:
+        """Ends the hyperlink hotspot, if any, at the current cursor position."""
+        ...
+
     def clickable(self):
         """Sets this listbox to be clickable by the user."""
         pass
@@ -4241,6 +4245,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def getCursor(self) -> int:
         """Get the current position of the cursor in the encoded buffer."""
+        ...
+
+    def getCurrentLink(self) -> int:
+        """Returns the link the mouse is currently over."""
         ...
 
     def getEncodedBuffer(self):
@@ -4307,6 +4315,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Inserts an encoded color object at the current cursor position.
 'color' is a ptColor object."""
         pass
+
+    def insertLink(self, linkId: int) -> None:
+        """Inserts a link hotspot at the current cursor position."""
+        ...
 
     def insertString(self,string):
         """Inserts a string at the current cursor position."""
