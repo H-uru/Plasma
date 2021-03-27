@@ -46,6 +46,7 @@ interfacing with the Plasma 2.0 engine.
 """
 from Plasma import *
 from PlasmaConstants import *
+from contextlib import contextmanager
 
 ####################################
 # Utility functions
@@ -275,6 +276,17 @@ If seed is None, the system time is used."""
         avatar.avatar.setMorph("MFace",0,morph)
     else:
         avatar.avatar.setMorph("FFace",0,morph)
+
+@contextmanager
+def PtBeginGUIUpdate(control, redraw=True):
+    if not control.isUpdating():
+        control.beginUpdate()
+        try:
+            yield
+        finally:
+            control.endUpdate(redraw)
+    else:
+        yield
 
 ####################################
 # Exceptions
