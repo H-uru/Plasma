@@ -105,6 +105,13 @@ class xKIChat(object):
         self.MessageHistoryList = [] # Contains our message history
         self.MessageCurrentLine = "" # Hold current line while navigating message history
 
+    @property
+    def chatArea(self):
+        if self.KILevel < kNormalKI:
+            return self.microChatArea
+        else:
+            return self.miniChatArea
+
     #######
     # GUI #
     #######
@@ -126,19 +133,6 @@ class xKIChat(object):
                 if self.fadeMode == kChat.FadeNotActive:
                     return True
         return False
-
-    ## Scroll the chat in the specified direction on the miniKI.
-    # Possible directions are to scroll up, down, to the beginning and to the
-    # end.
-    def ScrollChatArea(self, direction):
-
-        if self.KILevel < kNormalKI:
-            mKIdialog = KIMicro.dialog
-        else:
-            mKIdialog = KIMini.dialog
-        self.ResetFadeState()
-        chatarea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatarea.moveCursor(direction)
 
     ############
     # Chatting #
@@ -415,9 +409,6 @@ class xKIChat(object):
         # Fix for Character of Doom (CoD).
         (message, RogueCount) = re.subn("[\x00-\x08\x0a-\x1f]", "", message)
 
-        # Censor the chat message to their taste
-        message = xCensor.xCensor(message, self.GetCensorLevel())
-
         if self.KILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
         else:
@@ -569,56 +560,39 @@ class xKIChat(object):
             else:
                 chatMessageFormatted = " {}".format(message)
 
-        chatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatArea.beginUpdate()
-        savedPosition = chatArea.getScrollPosition()
-        wasAtEnd = chatArea.isAtEnd()
-        chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
-        chatArea.insertColor(headerColor)
+        for chatArea in (self.miniChatArea, self.microChatArea):
+            with PtBeginGUIUpdate(chatArea):
+                savedPosition = chatArea.getScrollPosition()
+                wasAtEnd = chatArea.isAtEnd()
+                chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
+                chatArea.insertColor(headerColor)
 
-        # Added unicode support here.
-        chatArea.insertStringW("\n{}".format(chatHeaderFormatted))
-        chatArea.insertColor(bodyColor)
-        chatArea.insertStringW(chatMessageFormatted)
-        chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
+                # Added unicode support here.
+                chatArea.insertStringW("\n{}".format(chatHeaderFormatted))
+                chatArea.insertColor(bodyColor)
+                chatArea.insertStringW(chatMessageFormatted, censorLevel=self.GetCensorLevel())
+                chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
-        # Write to the log file.
-        if self.chatLogFile is not None and self.chatLogFile.isOpen():
-            self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
+                # Write to the log file.
+                if self.chatLogFile is not None and self.chatLogFile.isOpen():
+                    self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
 
-        # If the chat is overflowing, erase the first line.
-        if chatArea.getBufferSize() > kChat.MaxChatSize:
-            while chatArea.getBufferSize() > kChat.MaxChatSize and chatArea.getBufferSize() > 0:
-                PtDebugPrint("xKIChat.AddChatLine(): Max chat buffer size reached. Removing top line.", level=kDebugDumpLevel)
-                chatArea.deleteLinesFromTop(1)
-                if savedPosition > 0:
-                    # this is only accurate if the deleted line only occupied one line in the control (wasn't soft-wrapped), but that tends to be the usual case
-                    savedPosition -= 1
-        if not wasAtEnd:
-            # scroll back to where we were
-            chatArea.setScrollPosition(savedPosition)
-            # flash the down arrow to indicate that new chat has come in
-            self.incomingChatFlashState = 3
-            PtAtTimeCallback(self.key, 0.0, kTimers.IncomingChatFlash)
-        chatArea.endUpdate()
+                # If the chat is overflowing, erase the first line.
+                if chatArea.getBufferSize() > kChat.MaxChatSize:
+                    while chatArea.getBufferSize() > kChat.MaxChatSize and chatArea.getBufferSize() > 0:
+                        PtDebugPrint("xKIChat.AddChatLine(): Max chat buffer size reached. Removing top line.", level=kDebugDumpLevel)
+                        chatArea.deleteLinesFromTop(1)
+                        if savedPosition > 0:
+                            # this is only accurate if the deleted line only occupied one line in the control (wasn't soft-wrapped), but that tends to be the usual case
+                            savedPosition -= 1
 
-        # Copy all the data to the miniKI if the user upgrades it.
-        if self.KILevel == kMicroKI:
-            chatArea2 = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-            chatArea2.beginUpdate()
-            chatArea2.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
-            chatArea2.insertColor(headerColor)
-
-            # Added unicode support here.
-            chatArea2.insertStringW("\n{}".format(chatHeaderFormatted))
-            chatArea2.insertColor(bodyColor)
-            chatArea2.insertStringW(chatMessageFormatted)
-            chatArea2.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
-
-            if chatArea2.getBufferSize() > kChat.MaxChatSize:
-                while chatArea2.getBufferSize() > kChat.MaxChatSize and chatArea2.getBufferSize() > 0:
-                    chatArea2.deleteLinesFromTop(1)
-            chatArea2.endUpdate()
+                # Presentation options for the current KI Chat Area
+                if not wasAtEnd and chatArea == self.chatArea:
+                    # scroll back to where we were
+                    chatArea.setScrollPosition(savedPosition)
+                    # flash the down arrow to indicate that new chat has come in
+                    self.incomingChatFlashState = 3
+                    PtAtTimeCallback(self.key, 0.0, kTimers.IncomingChatFlash)
 
         # Update the fading controls.
         self.ResetFadeState()
@@ -972,11 +946,8 @@ class CommandsProcessor:
 
     ## Clear the chat.
     def ClearChat(self, params):
-
-        chatAreaU = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatAreaM = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatAreaU.clearBuffer()
-        chatAreaM.clearBuffer()
+        self.miniChatArea.clearBuffer()
+        self.microChatArea.clearBuffer()
 
     ## Ignores a player.
     def IgnorePlayer(self, player):
