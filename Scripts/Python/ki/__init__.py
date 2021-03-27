@@ -3656,9 +3656,18 @@ class xKI(ptModifier):
         # Get its parent folder.
         if isinstance(nodeRef, ptVaultNodeRef):
             folder = self.BKCurrentContent.getParent()
-            if folder:
-                folder = folder.upcastToFolderNode()
-                if folder:
+            item = self.BKCurrentContent.getChild()
+            if folder and item:
+                # Observed: sometimes, the creator ID is zero. This can mean either a DRC item or
+                # a poorly initialized node. Better check against the saver ID as well, which is
+                # used to display the From field.
+                creatorID = item.getCreatorNodeID()
+                if creatorID == 0:
+                    creatorID = self.BKCurrentContent.getSaverID()
+
+                if creatorID != PtGetLocalClientID():
+                    return False
+                if folder := folder.upcastToFolderNode():
                     if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder:
                         return False
         return True
@@ -5122,11 +5131,11 @@ class xKI(ptModifier):
                 # Set the edit box and display it.
                 if self.BKEditField == kGUI.BKEditFieldJRNTitle:
                     edElement = edElement.upcastToTextNoteNode()
-                    editBox.setString(xCensor.xCensor(edElement.noteGetTitle(), self.censorLevel))
+                    editBox.setStringW(edElement.getTitleW())
                     KIJournalExpanded.dialog.setFocus(editBox.getKey())
                 elif self.BKEditField == kGUI.BKEditFieldPICTitle:
                     edElement = edElement.upcastToImageNode()
-                    editBox.setString(xCensor.xCensor(edElement.imageGetTitle(), self.censorLevel))
+                    editBox.setStringW(edElement.getTitleW())
                     KIPictureExpanded.dialog.setFocus(editBox.getKey())
                 else:
                     editBox.setString("")
@@ -5138,7 +5147,7 @@ class xKI(ptModifier):
                 elif whichField == kGUI.BKEditFieldPICTitle:
                     KIPictureExpanded.dialog.refreshAllControls()
             else:
-                PtDebugPrint("xKI.BigKIEnterEditMode(): Content has no element to edit.", level=kErrorLevel)
+                PtDebugPrint("xKI.BigKIEnterEditMode(): Content has no element to edit.")
         else:
             # Is it for the journal edit?
             if whichField == kGUI.BKEditFieldJRNNote:
@@ -5146,6 +5155,11 @@ class xKI(ptModifier):
                 self.BKInEditMode = True
                 self.BKEditContent = self.BKCurrentContent
                 self.BKEditField = whichField
+
+                # But we need to change the content over to the non-censored version without
+                # active hyperlinks. Otherwise we get interesting results where the URLs become
+                # censored and offset.
+                self.journalNoteArea.setStringW(self.BKEditContent.getChild().upcastToTextNoteNode().getTextW(), urlDetection=False)
 
     ## Save what the player was editing to the right place.
     def BigKISaveEdit(self, noExitEditMode=False):
@@ -5175,7 +5189,7 @@ class xKI(ptModifier):
                     if edElement is not None:
                         if editBox is not None:
                             if not editBox.wasEscaped():
-                                textBox.setString(editBox.getString())
+                                textBox.setStringW(xCensor.xCensor(editBox.getStringW(), self.censorLevel))
                                 if self.BKEditField == kGUI.BKEditFieldJRNTitle:
                                     edElement = edElement.upcastToTextNoteNode()
                                     jTitle = editBox.getStringW()
