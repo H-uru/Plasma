@@ -261,7 +261,7 @@ class xKIChat(object):
             pWords = message.split(" ", 1)
             foundBuddy = False
             # Make sure it's still just a "/p".
-            if len(pWords) > 1 and pWords[0] == PtGetLocalizedString("KI.Commands.ChatPrivate"):
+            if len(pWords) > 1 and pWords[0].casefold() == PtGetLocalizedString("KI.Commands.ChatPrivate"):
                 # Try to find the buddy in the DPL online lists.
                 for player in self.BKPlayerList:
                     # Is the player in this Age?
