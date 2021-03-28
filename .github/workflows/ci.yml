@@ -137,7 +137,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew update
           brew install \
               autoconf \
               cairo \
@@ -157,9 +156,8 @@ jobs:
             -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" \
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
             -DPLASMA_VCPKG_NUGET_RW=TRUE \
+            -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5 \
             -S . -B build
-        env:
-          CMAKE_PREFIX_PATH: "/usr/local/opt/qt"
 
       - name: Build
         run: |
