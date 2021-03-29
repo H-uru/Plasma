@@ -93,7 +93,9 @@ public:
 
 protected:
     void IEnablePhysics(bool enable, plKey avKey);
-    
+
+    void IToggleCtrlCodes(bool on) const;
+
     float    fMaxVelocity;
     float    fTurnRate;
 };
