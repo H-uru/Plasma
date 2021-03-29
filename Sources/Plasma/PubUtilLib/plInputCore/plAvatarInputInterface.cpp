@@ -157,6 +157,11 @@ plAvatarInputInterface::plAvatarInputInterface()
     fControlMap->AddCode( B_CONTROL_MOVE_UP,                kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CONTROL_MOVE_DOWN,              kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_TOGGLE_DRIVE_MODE,              kControlFlagDownEvent | kControlFlagNoRepeat );
+
+    // These by default conflict with text characters, so we deactivate the bindings until they are needed.
+    IDisableControl(B_CONTROL_MOVE_UP);
+    IDisableControl(B_CONTROL_MOVE_DOWN);
+
     fControlMap->AddConsoleCommand( "NextStatusLog" );
 #endif
 
@@ -308,7 +313,7 @@ void    plAvatarInputInterface::RestoreDefaultKeyMappings()
     fControlMap->BindKey( KEY_NUMPAD_SUBTRACT,          B_CAMERA_ZOOM_OUT );
 
     fControlMap->BindKey( KEY_SHIFT,                    B_CONTROL_MODIFIER_FAST );
-    fControlMap->BindKey( KEY_Z,                        B_CONTROL_MODIFIER_STRAFE );
+    fControlMap->BindKey( KEY_ALT,                      B_CONTROL_MODIFIER_STRAFE );
     fControlMap->BindKey( KEY_UP,                       B_CONTROL_MOVE_FORWARD );
     fControlMap->BindKey( KEY_DOWN,                     B_CONTROL_MOVE_BACKWARD );
     fControlMap->BindKey( KEY_LEFT,                     B_CONTROL_ROTATE_LEFT );
@@ -351,12 +356,12 @@ void    plAvatarInputInterface::RestoreDefaultKeyMappings()
     fControlMap->BindKeyToConsoleCmd( KEY_F8,                                   "Game.KICreateMarkerFolder" );
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    fControlMap->BindKey( plShiftKeyCombo( KEY_P ),     B_CONTROL_TOGGLE_PHYSICAL );
+    fControlMap->BindKey( plCtrlKeyCombo( KEY_P ),      B_CONTROL_TOGGLE_PHYSICAL );
     fControlMap->BindKey( KEY_U,                        B_CONTROL_MOVE_UP );
     fControlMap->BindKey( KEY_H,                        B_CONTROL_MOVE_DOWN );
-    fControlMap->BindKey( plShiftKeyCombo( KEY_C ),     B_TOGGLE_DRIVE_MODE );
-    
-    fControlMap->BindKeyToConsoleCmd( KEY_L,            "NextStatusLog" );
+    fControlMap->BindKey( plCtrlKeyCombo( KEY_D ),      B_TOGGLE_DRIVE_MODE );
+
+    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_L ),                  "NextStatusLog" );
 #endif
 }
 
