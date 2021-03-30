@@ -76,7 +76,9 @@ def nonlinear2pixel(l):
 
 
 def scale(infilename, outfilename, factor):
-	inimg = Image.open(infilename)
+	scaleimage(Image.open(infilename), factor).save(outfilename, "PNG")
+
+def scaleimage(inimg, factor):
 	inpix = inimg.load()
 	
 	outw = inimg.size[0] // factor
@@ -173,7 +175,7 @@ def scale(infilename, outfilename, factor):
 						outpix[ox, oy] = tuple(clamp(int(math.floor(c + 0.5))) for c in sum) + (0,)
 						transparent[oy*outw + ox] = 0
 	
-	outimg.save(outfilename, "PNG")
+	return outimg
 
 
 if __name__ == "__main__":

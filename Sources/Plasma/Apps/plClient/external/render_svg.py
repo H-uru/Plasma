@@ -47,6 +47,7 @@ from __future__ import with_statement
 
 import os
 import math
+import io
 from xml.dom.minidom import parse
 from optparse import OptionParser
 import scalergba
@@ -55,6 +56,11 @@ try:
 	import cairosvg
 except ImportError as e:
 	print("Rendering SVG resources requires CairoSVG.  Exiting...")
+	exit(1)
+try:
+	from PIL import Image, ImageFilter
+except ImportError:
+	print("Rendering SVG resources requires Pillow.  Exiting...")
 	exit(1)
 
 cursorList = {
@@ -137,21 +143,48 @@ def render_cursors(inpath, outpath):
 		layers = get_layers_from_svg(cursorSVG)
 		svgwidth = float(cursorSVG.documentElement.getAttribute("width"))
 		svgheight = float(cursorSVG.documentElement.getAttribute("height"))
+		cursorSVG.documentElement.setAttribute("width", str(scalefactor*svgwidth))
+		cursorSVG.documentElement.setAttribute("height", str(scalefactor*svgheight))
+		cursorSVG.documentElement.setAttribute("viewBox", "0 0 {} {}".format(svgwidth, svgheight))
 
-		for cursor in cursorList:
-			enabledlayers = cursorList[cursor]
-			enabledlayers = enabledlayers + [l + "Shadow" for l in enabledlayers]
+		# Render the mask for shadows of translucent arrows by appending its
+		# contents to the document as a plain layer. Remove the mask so that it
+		# isn't applied twice in case CairoSVG ever gains the ability to use it.
+		enable_only_layers([], layers)
+		maskelement = cursorSVG.getElementsByTagName("mask")[0]
+		maskelement.parentNode.removeChild(maskelement)
+		maskgroup = maskelement.getElementsByTagName("g")[0]
+		maskelement.removeChild(maskgroup)
+		cursorSVG.documentElement.appendChild(maskgroup)
+		maskelement.unlink()
+		shadowmaskbytes = cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'),
+					parent_width=scalefactor*svgwidth, parent_height=scalefactor*svgheight)
+		cursorSVG.documentElement.removeChild(maskgroup)
+		maskgroup.unlink()
+		shadowmaskimg = Image.open(io.BytesIO(shadowmaskbytes)).getchannel("R")
+
+		def renderLayers(cursor, enabledlayers):
 			enable_only_layers(enabledlayers, layers)
-
 			shift_all_layers(layers, *cursorOffsetList.get(cursor, [0, 0]))
-
-			outfile = os.path.join(outpath, cursor + ".png")
-			cursorSVG.documentElement.setAttribute("width", str(scalefactor*svgwidth))
-			cursorSVG.documentElement.setAttribute("height", str(scalefactor*svgheight))
-			cursorSVG.documentElement.setAttribute("viewBox", "0 0 {} {}".format(svgwidth, svgheight))
-			cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'), write_to=outfile, 
+			pngbytes = cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'),
 				parent_width=scalefactor*svgwidth, parent_height=scalefactor*svgheight)
-			scalergba.scale(outfile, outfile, scalefactor)
+			return Image.open(io.BytesIO(pngbytes))
+			
+		for cursor in cursorList:
+			# Render foreground and shadows separately because CairoSVG does not
+			# support the blur effect.
+			foregroundimg = renderLayers(cursor, cursorList[cursor])
+			shadowimg = renderLayers(cursor, [l + "Shadow" for l in cursorList[cursor]])
+
+			# Composite everything
+			shadowimg = shadowimg.filter(ImageFilter.GaussianBlur(scalefactor*1.3))
+			outimg = Image.new("RGBA", foregroundimg.size, (0, 0, 0, 0))
+			outimg.paste(shadowimg, mask=shadowmaskimg if any("arrowTranslucent" in l for l in cursorList[cursor]) else None)
+			# this is empirical magic that brings the result closer to the original one from rsvg
+			outimg = Image.blend(Image.new("RGBA", foregroundimg.size, (0, 0, 0, 0)), outimg, 0.94)
+			outimg.alpha_composite(foregroundimg)
+			outimg = scalergba.scaleimage(outimg, scalefactor)
+			outimg.save(os.path.join(outpath, cursor + ".png"), "PNG")
 
 def render_loading_books(inpath, outpath):
 	resSize = {"width":256, "height":256}
