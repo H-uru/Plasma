@@ -109,6 +109,7 @@ void plAvTaskSeek::IInitDefaults()
     fAnimName = "";
     fPosGoalHit = false;
     fRotGoalHit = false;
+    fSweepTestHit = false;
     fStillPositioning = true;
     fStillRotating = true;
     fShuffleRange = kDefaultShuffleRange;
@@ -379,6 +380,27 @@ bool plAvTaskSeek::IMoveTowardsGoal(plArmatureMod *avatar, plAvBrainHuman *brain
         // We just set the pos/rot, so we know these are hit.
         fPosGoalHit = true;
         fRotGoalHit = true;
+    } else if (fRotGoalHit && fDistance <= .5f) {
+        // Once we get really close to the goal, we need to check carefully
+        // to see if any static will block us from completing the seek.
+        // This is usually due to the seek point being too close to the object we
+        // want to interact with. If so, just give up and warp into place.
+        constexpr plSimDefs::Group groupsTest = (plSimDefs::Group)((1 << plSimDefs::kGroupAvatarBlocker) |
+                                                                   (1 << plSimDefs::kGroupStatic));
+        hsPoint3 seekGoalTest(fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ + .1f);
+        hsPoint3 avatarTest(fPosition.fX, fPosition.fY, fPosition.fZ + .1f);
+        auto hit = avatar->GetController()->SweepSingle(avatarTest, seekGoalTest, groupsTest);
+        if (hit) {
+            if (!fSweepTestHit) {
+                plStatusLog::AddLineSF("Avatar.log",
+                                       "Warping avatar to position due to SMART SEEK sweep hit '{}'",
+                                       hit->PhysHit->GetName());
+                fSweepTestHit = true;
+            }
+            avatar->SetPositionAndRotationSim(&fSeekPos, nullptr);
+            IAnalyze(avatar); // Recalcs fPosition, fDistance, etc.
+            fPosGoalHit = true;
+        }
     }
 
     if (!(fDistance > fShuffleRange))
