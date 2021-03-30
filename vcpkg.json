@@ -17,11 +17,13 @@
       "openssl",
       "opus",
       "physx",
-      "python3",
       {
-        "name": "speex",
-        "platform": "!(linux | osx)"
+        "name": "python3",
+        "features": [
+          "deprecated-win7-support"
+        ]
       },
+      "speex",
       "string-theory",
       {
         "name": "libuuid",
