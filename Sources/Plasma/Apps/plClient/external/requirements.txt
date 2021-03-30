@@ -1,6 +1,2 @@
-wheel
-https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/cp27/pycairo-1.18.2-cp27-cp27m-win32.whl; sys_platform == "win32" and python_version ~= "2.7"
-pycairo; sys_platform == "win32" and python_version >= "3.8"
-pycairo; sys_platform != "win32"
-cairosvg==1.0.22
+cairosvg>=2.5.1
 pillow

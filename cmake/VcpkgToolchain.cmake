@@ -68,8 +68,10 @@ if(_HOST_IS_WINDOWS OR EXISTS "${_VCPKG_MONO}")
     _plasma_vcpkg_setup_binarycache(NAME fork PREFIX PLASMA_VCPKG_NUGET)
 endif()
 
-# Note that CMAKE_SIZEOF_VOID_P is currently undefined.
+list(APPEND VCPKG_OVERLAY_PORTS "${CMAKE_SOURCE_DIR}/Scripts/Ports")
 list(APPEND VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/Scripts/Triplets")
+
+# Note that CMAKE_SIZEOF_VOID_P is currently undefined.
 if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     if(CMAKE_GENERATOR_PLATFORM MATCHES "[Ww][Ii][Nn]32")
         set(VCPKG_TARGET_TRIPLET "x86-windows-plasma" CACHE STRING "")
@@ -89,6 +91,15 @@ if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     else()
         message(FATAL_ERROR "Unknown platform: '${CMAKE_GENERATOR_PLATFORM}' - set VCPKG_TARGET_TRIPLET manually.")
     endif()
+endif()
+
+# Workaround: The cairocffi Python module does not ship with libcairo-2.dll as expected. So,
+# we're going to opt-into a special manifest feature to install the vcpkg cairo.dll into
+# the python3 port. BUT only if PLASMA_BUILD_RESOURCE_DAT has not been explicitly turned OFF
+# on the command line (reminder: it may be forced OFF on subsequent cmake runs). This is a feature
+# because it's an overlay port that exists in our repository.
+if(NOT DEFINED PLASMA_BUILD_RESOURCE_DAT OR PLASMA_BUILD_RESOURCE_DAT)
+    list(APPEND VCPKG_MANIFEST_FEATURES cairosvg)
 endif()
 
 # Workaround: fixes issues where vcpkg will suggest Debug libraries for OpenSSL. Sigh.
