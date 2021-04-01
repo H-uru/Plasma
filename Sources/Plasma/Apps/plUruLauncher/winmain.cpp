@@ -63,7 +63,7 @@ Mead, WA   99021
 
 static HWND             s_dialog;
 static ST::string       s_error; // This is highly unfortunate.
-static plClientLauncher s_launcher;
+static plClientLauncher* s_launcher;
 static UINT             s_taskbarCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
 static ITaskbarList3*   s_taskbar = nullptr;
 
@@ -149,7 +149,7 @@ INT_PTR CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
         SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
         return TRUE;
     case WM_QUIT:
-        s_launcher.ShutdownNetCore();
+        s_launcher->ShutdownNetCore();
         DestroyWindow(hwndDlg);
         break;
     }
@@ -180,7 +180,7 @@ static void PumpMessages()
         }
 
         // Now we need to pump the netcore while we have some spare time...
-    } while (s_launcher.PumpNetCore());
+    } while (s_launcher->PumpNetCore());
 }
 
 // ===================================================
@@ -375,22 +375,25 @@ static pfPatcher* IPatcherFactory()
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLink, int nCmdShow)
 {
+    plClientLauncher launcher;
+    s_launcher = &launcher;
+
     // Let's initialize our plClientLauncher friend
-    s_launcher.ParseArguments();
-    s_launcher.SetErrorProc(IOnNetError);
-    s_launcher.SetInstallerProc(IInstallRedist);
-    s_launcher.SetLaunchClientProc(ILaunchClientExecutable);
-    s_launcher.SetPatcherFactory(IPatcherFactory);
-    s_launcher.SetShardProc(ISetShardStatus);
-    s_launcher.SetStatusProc(ISetDownloadStatus);
+    launcher.ParseArguments();
+    launcher.SetErrorProc(IOnNetError);
+    launcher.SetInstallerProc(IInstallRedist);
+    launcher.SetLaunchClientProc(ILaunchClientExecutable);
+    launcher.SetPatcherFactory(IPatcherFactory);
+    launcher.SetShardProc(ISetShardStatus);
+    launcher.SetStatusProc(ISetDownloadStatus);
 
     // If we're newly updated, then our filename will be something we don't expect!
     // Let's go ahead and take care of that nao.
-    if (s_launcher.CompleteSelfPatch(WaitForOldPatcher))
+    if (launcher.CompleteSelfPatch(WaitForOldPatcher))
         return PLASMA_OK; // see you on the other side...
 
     // Load the doggone server.ini
-    if (!s_launcher.LoadServerIni()) {
+    if (!launcher.LoadServerIni()) {
         IShowErrorDialog(L"No server.ini file found.  Please check your URU installation.");
         return PLASMA_PHAILURE;
     }
@@ -404,7 +407,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     HANDLE _onePatcherMut = CreatePatcherMutex().release();
 
     // Initialize the network core
-    s_launcher.InitializeNetCore();
+    launcher.InitializeNetCore();
 
     // Welp, now that we know we're (basically) sane, let's create our client window
     // and pump window messages until we're through.
