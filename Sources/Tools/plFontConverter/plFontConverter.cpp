@@ -74,6 +74,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res/ui_FreeType.h"
 #include "res/ui_FreeTypeBatch.h"
 
+// Dammit Qt
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+#   define QT_SKIP_EMPTY_PARTS Qt::SkipEmptyParts
+#else
+#   define QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
+#endif
+
 REGISTER_NONCREATABLE(plBitmap);
 REGISTER_CREATABLE(plFont);
 REGISTER_CREATABLE(plMipmap);
@@ -92,7 +99,7 @@ font formats into our own bitmap font format.)"), &dlg);
     ok->setDefault(true);
 
     QHBoxLayout *layout = new QHBoxLayout(&dlg);
-    layout->setMargin(8);
+    layout->setContentsMargins(8, 8, 8, 8);
     layout->setSpacing(10);
     layout->addWidget(image);
     layout->addWidget(text);
@@ -375,7 +382,7 @@ void plFontConverter::IImportBDF(const plFileName &path)
     IUpdateInfo();
 }
 
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(Q_OS_WIN64)
 struct ResRecord
 {
     HRSRC   fHandle;
@@ -535,7 +542,7 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
     if (dlg.exec() == QDialog::Rejected)
         return;
 
-    QStringList sSizes = ui.fPointSizes->text().split(' ', QString::SkipEmptyParts);
+    QStringList sSizes = ui.fPointSizes->text().split(' ', QT_SKIP_EMPTY_PARTS);
     QList<int> iSizes;
     for (const QString &s : sSizes)
         iSizes.append(s.toInt());
