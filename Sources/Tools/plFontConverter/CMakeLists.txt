@@ -42,7 +42,7 @@ target_link_libraries(
         plMessage
         plResMgr
         freetype
-        Qt5::Widgets
+        Qt::Widgets
 )
 
 source_group("Source Files" FILES ${plFontConverter_SOURCES} ${plFontConverter_MOC})
