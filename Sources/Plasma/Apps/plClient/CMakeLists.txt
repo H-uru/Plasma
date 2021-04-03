@@ -86,8 +86,12 @@ plasma_executable(plClient WIN32 CLIENT
     SOURCES
         ${plClient_SOURCES} ${plClient_HEADERS}
         ${plClient_TEXT} ${plClient_RESOURCES}
-        ${external_SCRIPTS} ${external_SOURCES} ${external_DAT}
 )
+
+if(PLASMA_BUILD_RESOURCE_DAT)
+    target_sources(plClient PRIVATE ${external_SCRIPTS} ${external_SOURCES} ${external_DAT})
+endif()
+
 target_link_libraries(
     plClient
     PRIVATE
