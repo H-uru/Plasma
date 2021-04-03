@@ -41,7 +41,7 @@ target_link_libraries(
         pnKeyedObject
         pnNucleusInc
         plResMgr
-        Qt5::Widgets
+        Qt::Widgets
 )
 
 source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})

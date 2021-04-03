@@ -107,6 +107,13 @@ set_package_properties(
     TYPE OPTIONAL
 )
 set_package_properties(
+    Qt6 PROPERTIES
+    URL "https://www.qt.io/"
+    DESCRIPTION "Cross-platform GUI framework for C++"
+    PURPOSE "Required for building GUI tools for Plasma"
+    TYPE OPTIONAL
+)
+set_package_properties(
     Security PROPERTIES
     URL "https://developer.apple.com/documentation/security"
     DESCRIPTION "Secure the data your app manages, and control access to your app"

@@ -40,7 +40,7 @@ target_link_libraries(
         plMessage
         plResMgr
         pfLocalizationMgr
-        Qt5::Widgets
+        Qt::Widgets
 )
 
 source_group("Source Files" FILES ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_MOC})

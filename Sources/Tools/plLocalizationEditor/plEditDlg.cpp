@@ -65,7 +65,7 @@ Copyright (C) 2004 Cyan Worlds, Inc.)"), &dlg);
     ok->setDefault(true);
 
     QHBoxLayout *layout = new QHBoxLayout(&dlg);
-    layout->setMargin(8);
+    layout->setContentsMargins(8, 8, 8, 8);
     layout->setSpacing(10);
     layout->addWidget(image);
     layout->addWidget(text);
