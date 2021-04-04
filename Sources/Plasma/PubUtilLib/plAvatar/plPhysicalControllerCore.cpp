@@ -393,12 +393,10 @@ std::optional<plControllerHitRecord> plWalkingStrategy::IFindGroundCandidate() c
 
     std::optional<plControllerHitRecord> result = std::nullopt;
     for (const auto& i : fContacts) {
-        if (result) {
-            if (!IFilterGround(i, zMax))
-                continue;
-            if (result->Normal.fZ > i.Normal.fZ)
-                continue;
-        }
+        if (!IFilterGround(i, zMax))
+            continue;
+        if (result && result->Normal.fZ > i.Normal.fZ)
+            continue;
         result = i;
     }
     return result;
