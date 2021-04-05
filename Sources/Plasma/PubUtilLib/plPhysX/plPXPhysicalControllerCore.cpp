@@ -397,9 +397,9 @@ plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::
 
     // Remember the offset and skins.
     hsPoint3 footOffset = IGetCapsulePos({ 0.f, 0.f, 0.f });
-    myDraw = plDrawableGenerator::GenerateSphericalDrawable(footOffset, fRadius + .1f,
-                                                            mat, fLastGlobalLoc, blended,
-                                                            nullptr, &idx, myDraw);
+    myDraw = plDrawableGenerator::GenerateCapsuleDrawable(footOffset, fRadius + .1f, fHeight + 1.f,
+                                                          mat, fLastGlobalLoc, blended, nullptr,
+                                                          &idx, myDraw);
 
     return myDraw;
 }
