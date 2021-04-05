@@ -50,6 +50,7 @@ import math
 import io
 from xml.dom.minidom import parse
 from optparse import OptionParser
+from glob import glob
 import scalergba
 
 try:
@@ -247,7 +248,12 @@ if __name__ == '__main__':
 	outpath = os.path.expanduser(options.outpath)
 	inpath = os.path.expanduser(options.inpath)
 
-	if not os.path.exists(outpath):
+	# Ensure that the render directory is empty, preventing old renders from junking the output
+	if os.path.exists(outpath):
+		print("Cleaning render directory...")
+		for i in glob(os.path.join(outpath, "*.png")):
+			os.unlink(os.path.join(outpath, i))
+	else:
 		os.makedirs(outpath)
 
 	## Do the work!
