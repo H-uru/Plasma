@@ -56,14 +56,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // ==========================================================================
 
-bool plLOSDispatch::IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey& world,
-                             plSimDefs::plLOSDB db, bool closest, plKey& hitObj, hsPoint3& hitPos,
-                             hsVector3& hitNormal, float& distance)
+plLOSDispatch::RaycastResult plLOSDispatch::IRaycast(hsPoint3 origin, hsPoint3 destination,
+                                                     const plKey& world, plSimDefs::plLOSDB db,
+                                                     bool closest, plSimDefs::plLOSDB cullDB)
 {
+    RaycastResult result(LOSResult::kMiss, nullptr, { 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, FLT_MAX);
+
     plPXSimulation* sim = plSimulationMgr::GetInstance()->GetPhysX();
     physx::PxScene* scene = sim->FindScene(world);
     if (!scene)
-        return false;
+        return result;
 
     // The raycast comes in as worldspace, but if the player is in a subworld, we'll need
     // to convert it to subworld space.
@@ -77,31 +79,29 @@ bool plLOSDispatch::IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey&
         }
     }
 
-    // Sanity.
-    distance = FLT_MAX;
-    hitObj = nullptr;
-
     hsVector3 direction = hsVector3(destination - origin);
     float magnitude = direction.Magnitude();
-    if (magnitude == 0.f)
-        return false;
+    if (magnitude <= 0.f)
+        return result;
     direction.Normalize();
 
     plPXFilterData data;
-    data.SetLOSDBs(db);
+    data.SetLOSDBs((plSimDefs::plLOSDB)((physx::PxU32)db | (physx::PxU32)cullDB));
     physx::PxQueryFilterData filter(data, physx::PxQueryFlag::eSTATIC |
                                           physx::PxQueryFlag::eDYNAMIC |
-                                          physx::PxQueryFlag::ePREFILTER);
+                                          physx::PxQueryFlag::ePREFILTER |
+                                          physx::PxQueryFlag::ePOSTFILTER);
     if (!closest)
         filter.flags |= physx::PxQueryFlag::eANY_HIT;
 
     class plPXRaycastQueryFilter : public physx::PxQueryFilterCallback
     {
         plLOSDispatch* fDispatch;
+        plSimDefs::plLOSDB fCullDB;
 
     public:
-        plPXRaycastQueryFilter(plLOSDispatch* self)
-            : fDispatch(self)
+        plPXRaycastQueryFilter(plLOSDispatch* self, plSimDefs::plLOSDB cullDB)
+            : fDispatch(self), fCullDB(cullDB)
         { }
 
         physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& filterData,
@@ -131,62 +131,82 @@ bool plLOSDispatch::IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey&
         physx::PxQueryHitType::Enum postFilter(const physx::PxFilterData& filterData,
                                                const physx::PxQueryHit& hit) override
         {
+            // If we are culling the LOS hits, any cull hit should prevent touches beyond that hit.
+            if (fCullDB != plSimDefs::kLOSDBNone) {
+                if (static_cast<const plPXFilterData&>(filterData).TestLOSDBs(fCullDB))
+                    return physx::PxQueryHitType::eBLOCK;
+            }
+
             return physx::PxQueryHitType::eTOUCH;
         }
-    } filterCallback(this);
+    } filterCallback(this, cullDB);
 
     class plPXRaycastCallback : public physx::PxRaycastCallback
     {
-        decltype(hitObj) fHitObj;
-        decltype(hitPos) fPos;
-        decltype(hitNormal) fNormal;
-        decltype(distance) fDist;
+        RaycastResult& fResult;
+        plSimDefs::plLOSDB fCullDB;
         physx::PxRaycastHit fHits[32];
 
     public:
-        plPXRaycastCallback(decltype(hitObj) h, decltype(hitPos) p, decltype(hitNormal) n,
-                            decltype(distance) d)
-            : fHitObj(h), fPos(p), fNormal(n), fDist(d),
+        plPXRaycastCallback(RaycastResult& result, plSimDefs::plLOSDB cullDB)
+            : fResult(result),
+              fCullDB(cullDB),
               physx::PxRaycastCallback(fHits, std::size(fHits))
         { }
 
-        void IConsumeHit(const physx::PxRaycastHit& hit)
-        {
-            auto data = static_cast<plPXActorData*>(hit.actor->userData);
-            if (hit.distance < fDist) {
-                fHitObj = data->GetKey();
-                fPos = plPXConvert::Point(hit.position);
-                fNormal = plPXConvert::Vector(hit.normal);
-                fDist = hit.distance;
-            }
-        }
-
         physx::PxAgain processTouches(const physx::PxRaycastHit* hits, physx::PxU32 nbHits) override
         {
-            for (physx::PxU32 i = 0; i < nbHits; ++i)
-                IConsumeHit(hits[i]);
+            for (physx::PxU32 i = 0; i < nbHits; ++i) {
+                const physx::PxRaycastHit& hit = hits[i];
+                if (hit.distance < fResult.fDistance && hit.distance != 0.f) {
+                    auto data = static_cast<plPXActorData*>(hit.actor->userData);
+                    fResult.fResult = LOSResult::kHit;
+                    fResult.fHitObj = data->GetKey();
+                    fResult.fPoint = plPXConvert::Point(hit.position);
+                    fResult.fNormal = plPXConvert::Vector(hit.normal);
+                    fResult.fDistance = hit.distance;
+                }
+            }
             return true;
         }
 
         void finalizeQuery() override
         {
             // !closest/eANY_HIT will return the single hit as a blocking hit, even if it is
-            // a touch, and will not call processTouches().
-            if (hasBlock)
-                IConsumeHit(block);
-        }
-    } raycast(hitObj, hitPos, hitNormal, distance);
+            // a touch, and will not call processTouches(). Also, any cull-hit is returned as
+            // a blocking hit. So, we need to be careful about this...
+            if (!hasBlock)
+                return;
 
-    bool result = scene->raycast(plPXConvert::Point(origin),
-                                 plPXConvert::Vector(direction),
-                                 magnitude, raycast,
-                                 (physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL),
-                                 filter, &filterCallback);
+            if (fCullDB != plSimDefs::kLOSDBNone) {
+                auto filterData = (plPXFilterData)block.shape->getSimulationFilterData();
+                if (filterData.TestLOSDBs(fCullDB)) {
+                    fResult.fResult = LOSResult::kCull;
+                    return;
+                }
+            }
+
+            if (block.distance < fResult.fDistance && block.distance != 0.f) {
+                auto data = static_cast<plPXActorData*>(block.actor->userData);
+                fResult.fResult = LOSResult::kHit;
+                fResult.fHitObj = data->GetKey();
+                fResult.fPoint = plPXConvert::Point(block.position);
+                fResult.fNormal = plPXConvert::Vector(block.normal);
+                fResult.fDistance = block.distance;
+            }
+        }
+    } raycast(result, cullDB);
+
+    bool hit = scene->raycast(plPXConvert::Point(origin),
+                              plPXConvert::Vector(direction),
+                              magnitude, raycast,
+                              (physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL),
+                              filter, &filterCallback);
 
     // Convert back to worldspace
-    if (result) {
-        hitPos = l2w * hitPos;
-        hitNormal = l2w * hitNormal;
+    if (hit) {
+        result.fPoint = l2w * result.fPoint;
+        result.fNormal = l2w * result.fNormal;
     }
     return result;
 }
