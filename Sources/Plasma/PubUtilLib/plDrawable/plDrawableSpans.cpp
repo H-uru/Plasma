@@ -2991,8 +2991,10 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
 
     fIcicles.resize(numClust);
     fSpans.resize(numClust);
-    for (size_t iSpan = 0; iSpan < numClust; iSpan++)
+    size_t iSpan;
+    for (iSpan = 0; iSpan < numClust; iSpan++)
         fSpans[iSpan] = &fIcicles[iSpan];
+    iSpan = 0;
 
     uint32_t vtxFormat =
         cluster->GetTemplate()->NumUVWs()
@@ -3045,7 +3047,6 @@ void plDrawableSpans::UnPackCluster(plClusterGroup* cluster)
         uint16_t* iData = fGroups[grpIdx]->GetIndexBufferData(ibufferIdx);
         uint8_t* pvData = vData;
         uint16_t* piData = iData;
-        size_t iSpan = 0;
         for (size_t i = iStart; i < iEnd; i++)
         {
             hsBounds3Ext bnd;
