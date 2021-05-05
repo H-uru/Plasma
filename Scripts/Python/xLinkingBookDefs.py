@@ -267,6 +267,7 @@ else:
         "Vothol":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelvothol' + LinkEnd ),
         "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
         "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
+        "Serene":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelserene' + LinkEnd ),
 }
 
 # cross-references the book name with the age and spawn point it links to
@@ -341,6 +342,7 @@ xLinkDestinations = {\
     "VeeTsah":                ( "VeeTsah", "LinkInPointDefault" ),
     "Vothol":                 ( "Vothol", "LinkInPointDefault" ),
     "ChisoPreniv":            ( "ChisoPreniv", "LinkInPointDefault" ),
+    "Serene":                 ( "Serene", "LinkInPointDefault" ),
 }
 
 #
