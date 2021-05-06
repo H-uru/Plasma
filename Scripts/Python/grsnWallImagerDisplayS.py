@@ -43,95 +43,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # Include Plasma code
 from Plasma import *
 from PlasmaTypes import *
+from grsnWallConstants import *
 
-## COMMENTED OUT by Jeff due to the re-write in the garrison wall
 
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
-southWall = ptAttribSceneobjectList(2,"South Wall",byObject=1)
+pImager = ptAttribSceneobjectList(2,"Purple Imager", byObject=1)
 ##############################################################
 # grsnWallImagerDisplayS
 ##############################################################
 
-ReceiveInit = False
-
-## for team light responders
-kTeamLightsOn = 0
-kTeamLightsOff = 1
-
-## game states
-
-kWaiting    = 0
-kNorthSit   = 1
-kSouthSit   = 2
-kNorthSelect = 3
-kSouthSelect = 4
-kNorthReady = 5
-kSouthReady = 6
-kNorthPlayerEntry = 7
-kSouthPlayerEntry = 8
-kGameInProgress = 9
-kNorthWin = 10
-kSouthWin = 11
-kSouthQuit = 12
-kNorthQuit = 13
-
-
 class grsnWallImagerDisplayS(ptResponder):
-   
-    # constants
     
     def __init__(self):
-        "construction"
-        PtDebugPrint("grsnWallImagerDisplayS::init begin")
+        PtDebugPrint("grsnWallImagerDisplayS::init")
         ptResponder.__init__(self)
         self.id = 52397
-        self.version = 1
-        PtDebugPrint("grsnWallImagerDisplayS::init end")        
-"""
-    def OnServerInitComplete(self):
-        global ReceiveInit
-        
-        PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        if PtGetPlayerList():
-            ReceiveInit = True
-        else:
-            PtDebugPrint("solo in climbing wall")
-            
-        
-    def OnClimbingWallInit(self,type,state,value):
-        global ReceiveInit
-        
-        PtDebugPrint("grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value)
-        if not ReceiveInit:
-            PtDebugPrint("failed to receive init")
-            return
-        if (type == ptClimbingWallMsgType.kEndGameState):
-            ReceiveInit = False
-            PtDebugPrint("finished receiving total game state")
-        
-        if (type == ptClimbingWallMsgType.kTotalGameState):
-            PtDebugPrint("begin receiving total game state")
-        
-        elif (type == ptClimbingWallMsgType.kAddBlocker and state > 0 and value == 0):
-            southWall.value[state].runAttachedResponder(kTeamLightsOn)
+        self.version = 2
+        self.ageSDL = None
 
-    def OnClimbingWallEvent(self,type,state,value):
+    def OnServerInitComplete(self):
+        PtDebugPrint("grsnWallImagerDisplayS::OnServerInitComplete")
+        self.ageSDL = PtGetAgeSDL()
         
-        if (type == ptClimbingWallMsgType.kAddBlocker and not value):            #display wall settings
-            southWall.value[state].runAttachedResponder(kTeamLightsOn)
-            PtDebugPrint("Imager display S drawing wall index",state)
-                    
-        elif (type == ptClimbingWallMsgType.kRemoveBlocker and not value):
-            southWall.value[state].runAttachedResponder(kTeamLightsOff)
-            PtDebugPrint("Imager display S clearing wall index",state)
+        self.ageSDL.setNotify(self.key, "sState", 0.0)
         
-        elif (type == ptClimbingWallMsgType.kNewState):
-            if (state == ptClimbingWallMsgState.kSouthSit or state == ptClimbingWallMsgState.kNorthSit ):
-                #clear wall settings
-                i = 0
-                while (i < 171):
-                    southWall.value[i].runAttachedResponder(kTeamLightsOff)
-                    i = i + 1
-"""
+        if(len(PtGetPlayerList()) and self.ageSDL["sState"] >= kWait):
+            for blocker in self.ageSDL["southWall"]:
+                if(blocker == -1):
+                    return
+                pImager.value[blocker].runAttachedResponder(kBlockerOn)
+
+    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+        #We only get a notify from nState
+        value = self.ageSDL[VARname][0]
+        if(value == kWait):
+            for blocker in self.ageSDL["southWall"]:
+                if(blocker == -1):
+                    break
+                pImager.value[blocker].runAttachedResponder(kBlockerOn)
+        if(value == kSelectCount):
+            for i in range(0,171):
+                pImager.value[i].runAttachedResponder(kBlockerOff)
