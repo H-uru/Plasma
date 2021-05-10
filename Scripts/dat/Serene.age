@@ -5,3 +5,4 @@ LingerTime=180
 SequencePrefix=5201
 ReleaseVersion=0
 Page=mainRoom,0
+Page=Snowfall,1
