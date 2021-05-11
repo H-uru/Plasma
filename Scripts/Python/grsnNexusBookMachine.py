@@ -92,6 +92,7 @@ class grsnNexusBookMachine(ptResponder):
         
         resetResponder.run(self.key,avatar=PtGetLocalAvatar())
         PtSendKIMessage(kEnableEntireYeeshaBook,0)
+        entryTrigger.enable()
 
     def OnNotify(self,state,id,events):
         global waitingOnPBook 
@@ -127,6 +128,7 @@ class grsnNexusBookMachine(ptResponder):
             
         if (id == entryTrigger.id):
             PtWearMaintainerSuit(avatar.getKey(),False)
+            entryTrigger.disable()
             
         if (id == bookPurpleClickable.id):
             PtDebugPrint("touched purple team room book")
