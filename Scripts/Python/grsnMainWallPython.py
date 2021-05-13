@@ -49,10 +49,10 @@ from grsnWallConstants import *
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
-yWall = ptAttribSceneobjectList(1, "Yellow Wall Decals", byObject=1)
-pWall = ptAttribSceneobjectList(2, "Purple Wall Decals", byObject=1)
-yBlockers = ptAttribSceneobjectList(3, "Yellow Blocker objects", byObject=1)
-pBlockers = ptAttribSceneobjectList(4, "Purple Blocker objects", byObject=1)
+northWall = ptAttribSceneobjectList(1, "North Wall Decals", byObject=1)
+southWall = ptAttribSceneobjectList(2, "South Wall Decals", byObject=1)
+northBlockers = ptAttribSceneobjectList(3, "North Blocker objects", byObject=1)
+southBlockers = ptAttribSceneobjectList(4, "South Blocker objects", byObject=1)
 ##############################################################
 # grsnMainWallPython
 ##############################################################
@@ -80,34 +80,34 @@ class grsnMainWallPython(ptResponder):
             return
 
         for i in range(0,171):
-            if(yBlockers.value[i] == blocker):
-                yWall.value[i].runAttachedResponder(kBlockerBlink)
+            if(northBlockers.value[i] == blocker):
+                northWall.value[i].runAttachedResponder(kBlockerBlink)
                 if(eventHandler):
                     eventHandler.HandleBlocker()
                 break
-            elif(pBlockers.value[i] == blocker):
-                pWall.value[i].runAttachedResponder(kBlockerBlink)
+            elif(southBlockers.value[i] == blocker):
+                southWall.value[i].runAttachedResponder(kBlockerBlink)
                 if(eventHandler):
                     eventHandler.HandleBlocker()
                 break
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         #We only set the states for a Notify
-        yState = self.ageSDL["nState"][0]
-        pState = self.ageSDL["sState"][0]
-        if(yState == pState == kEnd):
+        nState = self.ageSDL["nState"][0]
+        sState = self.ageSDL["sState"][0]
+        if(nState == sState == kEnd):
             for blocker in self.ageSDL["northWall"]:
                 if(blocker == -1):
                     break
-                yWall.value[blocker].runAttachedResponder(kBlockerOn)
+                northWall.value[blocker].runAttachedResponder(kBlockerOn)
             for blocker in self.ageSDL["southWall"]:
                 if(blocker == -1):
                     break
-                pWall.value[blocker].runAttachedResponder(kBlockerOn)
-        elif(yState == pState == kSelectCount):
+                southWall.value[blocker].runAttachedResponder(kBlockerOn)
+        elif(nState == sState == kSelectCount):
             for i in range(0,171):
-                yWall.value[i].runAttachedResponder(kBlockerOff)
-                pWall.value[i].runAttachedResponder(kBlockerOff)
+                northWall.value[i].runAttachedResponder(kBlockerOff)
+                southWall.value[i].runAttachedResponder(kBlockerOff)
 
             
         

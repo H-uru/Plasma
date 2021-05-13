@@ -106,7 +106,7 @@ class grsnWallEventHandler(ptResponder):
             PtSendKIMessage(kKIChatStatusMsg, msg)
 
     def HandleBlocker(self):
-        #if(team == kYellow):
+        #if(team == kNorth):
         self.BlockersHit += 1
 
         z = random.randint(0,100)

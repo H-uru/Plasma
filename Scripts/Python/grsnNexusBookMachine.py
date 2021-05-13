@@ -47,23 +47,23 @@ from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 
-purpleResp = ptAttribResponder(1,"purple responder")
-yellowResp = ptAttribResponder(2,"yellow responder")
-bookPurpleInPos = ptAttribActivator(3,"Purple book in position event")
-bookYellowInPos = ptAttribActivator(4,"Yellow book in position event")
-bookPurpleOutResponder = ptAttribResponder(5,"Purple book out")
-bookYellowOutResponder = ptAttribResponder(6,"Yellow book out")
-bookPurpleClickable = ptAttribActivator(7,"purple book clickable")
-bookYellowClickable = ptAttribActivator(8,"yellow book clickable")
-teamPurpleTeleport = ptAttribSceneobject(9,"team purple teleport")
-teamYellowTeleport = ptAttribSceneobject(10,"team yellow teleport")
+southResp = ptAttribResponder(1,"south responder")
+northResp = ptAttribResponder(2,"north responder")
+booksouthInPos = ptAttribActivator(3,"South book in position event")
+booknorthInPos = ptAttribActivator(4,"North book in position event")
+booksouthOutResponder = ptAttribResponder(5,"South book out")
+booknorthOutResponder = ptAttribResponder(6,"North book out")
+booksouthClickable = ptAttribActivator(7,"south book clickable")
+booknorthClickable = ptAttribActivator(8,"north book clickable")
+teamsouthTeleport = ptAttribSceneobject(9,"team south teleport")
+teamnorthTeleport = ptAttribSceneobject(10,"team north teleport")
 resetResponder = ptAttribResponder(11,"reset floor",netForce=1)
 entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=0)
 fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=0)
 
-waitingOnPBook = False
-waitingOnYBook = False
-yellowLink = False
+waitingOnSBook = False
+waitingOnNBook = False
+northLink = False
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -82,22 +82,22 @@ class grsnNexusBookMachine(ptResponder):
         pass
         
     def OnTimer(self,id):
-        global yellowLink
+        global northLink
         
         avatar = PtGetLocalAvatar()
-        if (yellowLink):
-            PtFakeLinkAvatarToObject(avatar.getKey(),teamYellowTeleport.value.getKey())
+        if (northLink):
+            PtFakeLinkAvatarToObject(avatar.getKey(),teamnorthTeleport.value.getKey())
         else:
-            PtFakeLinkAvatarToObject(avatar.getKey(),teamPurpleTeleport.value.getKey())
+            PtFakeLinkAvatarToObject(avatar.getKey(),teamsouthTeleport.value.getKey())
         
         resetResponder.run(self.key,avatar=PtGetLocalAvatar())
         PtSendKIMessage(kEnableEntireYeeshaBook,0)
         entryTrigger.enable()
 
     def OnNotify(self,state,id,events):
-        global waitingOnPBook 
-        global waitingOnYBook 
-        global yellowLink
+        global waitingOnSBook 
+        global waitingOnNBook 
+        global northLink
         
         PtDebugPrint("id ",id)
         
@@ -108,7 +108,7 @@ class grsnNexusBookMachine(ptResponder):
             return
         
         if (id == fakeLinkBehavior.id):
-            PtDebugPrint("notified of link behavior, yellow book ",yellowLink)
+            PtDebugPrint("notified of link behavior, north book ",northLink)
             for event in events:
                 if (event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     PtDebugPrint("started touching book, set warp out timer")
@@ -118,24 +118,24 @@ class grsnNexusBookMachine(ptResponder):
         if not state:
             return
 
-        if (id == bookPurpleInPos.id):
-            PtDebugPrint("Purple book aligned")
-            bookPurpleOutResponder.run(self.key)
+        if (id == booksouthInPos.id):
+            PtDebugPrint("South book aligned")
+            booksouthOutResponder.run(self.key)
             
-        if (id == bookYellowInPos.id):
-            PtDebugPrint("Yellow book aligned")
-            bookYellowOutResponder.run(self.key)
+        if (id == booknorthInPos.id):
+            PtDebugPrint("North book aligned")
+            booknorthOutResponder.run(self.key)
             
         if (id == entryTrigger.id):
             PtWearMaintainerSuit(avatar.getKey(),False)
             entryTrigger.disable()
             
-        if (id == bookPurpleClickable.id):
-            PtDebugPrint("touched purple team room book")
-            yellowLink = False           
+        if (id == booksouthClickable.id):
+            PtDebugPrint("touched south team room book")
+            northLink = False           
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)
             
-        if (id == bookYellowClickable.id):
-            PtDebugPrint("touched yellow team room book")
-            yellowLink = True
+        if (id == booknorthClickable.id):
+            PtDebugPrint("touched north team room book")
+            northLink = True
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)

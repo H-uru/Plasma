@@ -49,7 +49,7 @@ from grsnWallConstants import *
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
-pImager = ptAttribSceneobjectList(2,"Purple Imager", byObject=1)
+southImager = ptAttribSceneobjectList(2,"South Imager", byObject=1)
 ##############################################################
 # grsnWallImagerDisplayS
 ##############################################################
@@ -73,7 +73,7 @@ class grsnWallImagerDisplayS(ptResponder):
             for blocker in self.ageSDL["southWall"]:
                 if(blocker == -1):
                     return
-                pImager.value[blocker].runAttachedResponder(kBlockerOn)
+                southImager.value[blocker].runAttachedResponder(kBlockerOn)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         #We only get a notify from nState
@@ -82,7 +82,7 @@ class grsnWallImagerDisplayS(ptResponder):
             for blocker in self.ageSDL["southWall"]:
                 if(blocker == -1):
                     break
-                pImager.value[blocker].runAttachedResponder(kBlockerOn)
+                southImager.value[blocker].runAttachedResponder(kBlockerOn)
         if(value == kSelectCount):
             for i in range(0,171):
-                pImager.value[i].runAttachedResponder(kBlockerOff)
+                southImager.value[i].runAttachedResponder(kBlockerOff)
