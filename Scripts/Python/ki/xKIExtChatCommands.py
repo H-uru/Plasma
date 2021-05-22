@@ -121,12 +121,14 @@ xChatEmoteXlate = {
     Plasma.PtGetLocalizedString("KI.Commands.Taunt"): ("Taunt", "KI.EmoteStrings.Taunt"),
     Plasma.PtGetLocalizedString("KI.Commands.Cough"): ("Cough", "KI.EmoteStrings.Cough"),
     Plasma.PtGetLocalizedString("KI.Commands.AskQuestion"): ("AskQuestion", "KI.EmoteStrings.AskQuestion"),
-    Plasma.PtGetLocalizedString("KI.Commands.Winded"): ("Winded", "KI.EmoteStrings.Winded")
+    Plasma.PtGetLocalizedString("KI.Commands.Winded"): ("Winded", "KI.EmoteStrings.Winded"),
+    Plasma.PtGetLocalizedString("KI.Commands.Dance2"): ("Dance2", "KI.EmoteStrings.Dance2")
 }
 
 # Insert an emote animation from xChatEmoteXlate here to make it become a loop
 xChatEmoteLoop = [
-    "Dance"
+    "Dance",
+    "Dance2"
 ]
 
 ## A list of the specially handled extended chat commands.
