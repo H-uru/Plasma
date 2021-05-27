@@ -49,6 +49,8 @@ event manager hooks for the City
 
 from Plasma import *
 from PlasmaTypes import *
+from hanukkah import *
+import time
 
 IsPublic = 0
 IsKadishGallery = 0
@@ -61,6 +63,14 @@ pagesS1FinaleBahro = [    "bahroFlyers_arch","bahroFlyers_city1","bahroFlyers_ci
                             "bahroFlyers_city6"]
 #S1FinaleBahro = []
 
+def SetVaultSDLBool(sdlVar, setVar):
+    agevault = ptAgeVault()
+    if agevault:
+        ageSDL = agevault.getAgeSDL()
+        if ageSDL:
+            if ageSDL.findVar(sdlVar).getBool() != setVar:
+                ageSDL.findVar(sdlVar).setBool(setVar)
+                agevault.updateAgeSDL(ageSDL)
 
 class city(ptResponder):
 
@@ -136,7 +146,6 @@ class city(ptResponder):
     def OnFirstUpdate(self):    
         pass
 
-
     def OnServerInitComplete(self):
 #        if not self.sceneobject.isLocallyOwned():
 #            return
@@ -165,6 +174,129 @@ class city(ptResponder):
 #            ageSDL["islmKadishGalleryDoorVis"] = (0,)
 #        elif not boolDoorVis and IsKadishGallery:
 #            ageSDL["islmKadishGalleryDoorVis"] = (1,)
+
+        if PtGetPlayerList():
+            return
+        st = time.gmtime(PtGetDniTime())
+        agevault = ptAgeVault()
+        day1, day2, day3, day4, day5, day6, day7, day8, end = h[st.tm_year]
+        agevault = ptAgeVault()
+        if agevault:
+            ageSDL = agevault.getAgeSDL()
+            if ageSDL:
+                if ageSDL.findVar("islmMinorahNight01Vis").getBool() and st.tm_mon == 1:
+                    day1, day2, day3, day4, day5, day6, day7, day8, end = h[st.tm_year-1]
+
+                if st.tm_mon == day1.month and st.tm_mday == day1.day:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", False)
+                    SetVaultSDLBool("islmMinorahNight02Vis", False)
+                    SetVaultSDLBool("islmMinorahNight03Vis", False)
+                    SetVaultSDLBool("islmMinorahNight04Vis", False)
+                    SetVaultSDLBool("islmMinorahNight05Vis", False)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day1.month and st.tm_mday == day1.day and st.tm_hour >= day1.hour and st.tm_min >= day1.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", False)
+                    SetVaultSDLBool("islmMinorahNight03Vis", False)
+                    SetVaultSDLBool("islmMinorahNight04Vis", False)
+                    SetVaultSDLBool("islmMinorahNight05Vis", False)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day2.month and st.tm_mday == day2.day and st.tm_hour >= day2.hour and st.tm_min >= day2.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", False)
+                    SetVaultSDLBool("islmMinorahNight04Vis", False)
+                    SetVaultSDLBool("islmMinorahNight05Vis", False)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day3.month and st.tm_mday == day3.day and st.tm_hour >= day3.hour and st.tm_min >= day3.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", False)
+                    SetVaultSDLBool("islmMinorahNight05Vis", False)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day4.month and st.tm_mday == day4.day and st.tm_hour >= day4.hour and st.tm_min >= day4.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", True)
+                    SetVaultSDLBool("islmMinorahNight05Vis", False)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day5.month and st.tm_mday == day5.day and st.tm_hour >= day5.hour and st.tm_min >= day5.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", True)
+                    SetVaultSDLBool("islmMinorahNight05Vis", True)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day6.month and st.tm_mday == day6.day and st.tm_hour >= day6.hour and st.tm_min >= day6.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", True)
+                    SetVaultSDLBool("islmMinorahNight05Vis", True)
+                    SetVaultSDLBool("islmMinorahNight06Vis", True)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day7.month and st.tm_mday == day7.day and st.tm_hour >= day7.hour and st.tm_min >= day7.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", True)
+                    SetVaultSDLBool("islmMinorahNight05Vis", True)
+                    SetVaultSDLBool("islmMinorahNight06Vis", True)
+                    SetVaultSDLBool("islmMinorahNight07Vis", True)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
+                elif st.tm_mon == day8.month and st.tm_mday == day8.day and st.tm_hour >= day8.hour and st.tm_min >= day8.minute:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", True)
+                    SetVaultSDLBool("islmMinorahNight05Vis", True)
+                    SetVaultSDLBool("islmMinorahNight06Vis", True)
+                    SetVaultSDLBool("islmMinorahNight07Vis", True)
+                    SetVaultSDLBool("islmMinorahNight08Vis", True)
+                elif st.tm_mon == end.month and st.tm_mday == end.day:
+                    SetVaultSDLBool("islmMinorahVis", True)
+                    SetVaultSDLBool("islmMinorahNight01Vis", True)
+                    SetVaultSDLBool("islmMinorahNight02Vis", True)
+                    SetVaultSDLBool("islmMinorahNight03Vis", True)
+                    SetVaultSDLBool("islmMinorahNight04Vis", True)
+                    SetVaultSDLBool("islmMinorahNight05Vis", True)
+                    SetVaultSDLBool("islmMinorahNight06Vis", True)
+                    SetVaultSDLBool("islmMinorahNight07Vis", True)
+                    SetVaultSDLBool("islmMinorahNight08Vis", True)
+                else:
+                    SetVaultSDLBool("islmMinorahVis", False)
+                    SetVaultSDLBool("islmMinorahNight01Vis", False)
+                    SetVaultSDLBool("islmMinorahNight02Vis", False)
+                    SetVaultSDLBool("islmMinorahNight03Vis", False)
+                    SetVaultSDLBool("islmMinorahNight04Vis", False)
+                    SetVaultSDLBool("islmMinorahNight05Vis", False)
+                    SetVaultSDLBool("islmMinorahNight06Vis", False)
+                    SetVaultSDLBool("islmMinorahNight07Vis", False)
+                    SetVaultSDLBool("islmMinorahNight08Vis", False)
 
 
     def Load(self):
@@ -221,5 +353,4 @@ class city(ptResponder):
                 for p in pagesS1FinaleBahro:
                     self.ILoadS1FinaleBahro(n,0)
                     n += 1
-
 

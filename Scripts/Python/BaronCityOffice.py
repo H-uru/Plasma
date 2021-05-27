@@ -84,4 +84,18 @@ class BaronCityOffice(ptResponder):
         
     def OnNotify(self,state,id,events):
         pass
-        
+
+    def OnServerInitComplete(self):
+        if PtGetPlayerList():
+            return
+        st = time.gmtime(PtGetDniTime())
+        agevault = ptAgeVault()
+        if agevault:
+            ageSDL = agevault.getAgeSDL()
+            if ageSDL:
+                if st.tm_mon == 12 and st.tm_mday > 13 and not ageSDL.findVar("bcoChristmasVis").getBool():
+                    ageSDL.findVar("bcoChristmasVis").setBool(True)
+                    agevault.updateAgeSDL(ageSDL)
+                elif ageSDL.findVar("bcoChristmasVis").getBool():
+                    ageSDL.findVar("bcoChristmasVis").setBool(False)
+                    agevault.updateAgeSDL(ageSDL)

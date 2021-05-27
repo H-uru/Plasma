@@ -49,7 +49,7 @@ AgeSDL hook for EderDelin
 
 from Plasma import *
 from PlasmaTypes import *
-
+import time
 
 class EderDelin(ptResponder):
 
@@ -61,3 +61,18 @@ class EderDelin(ptResponder):
 
     def OnNotify(self,state,id,events):
         pass
+        
+    def OnServerInitComplete(self):
+        if PtGetPlayerList():
+            return
+        st = time.gmtime(PtGetDniTime())
+        agevault = ptAgeVault()
+        if agevault:
+            ageSDL = agevault.getAgeSDL()
+            if ageSDL:
+                if st.tm_mon == 12 and st.tm_mday > 13 and not ageSDL.findVar("dlnWinterVis").getBool():
+                    ageSDL.findVar("dlnWinterVis").setBool(True)
+                    agevault.updateAgeSDL(ageSDL)
+                elif ageSDL.findVar("dlnWinterVis").getBool():
+                    ageSDL.findVar("dlnWinterVis").setBool(False)
+                    agevault.updateAgeSDL(ageSDL)

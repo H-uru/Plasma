@@ -49,6 +49,16 @@ event manager hooks for the Neighborhood
 
 from Plasma import *
 from PlasmaTypes import *
+import time
+
+def SetVaultSDLBool(sdlVar, setVar):
+    agevault = ptAgeVault()
+    if agevault:
+        ageSDL = agevault.getAgeSDL()
+        if ageSDL:
+            if ageSDL.findVar(sdlVar).getBool() != setVar:
+                ageSDL.findVar(sdlVar).setBool(setVar)
+                agevault.updateAgeSDL(ageSDL)
 
 class Neighborhood(ptResponder):
 
@@ -81,3 +91,42 @@ class Neighborhood(ptResponder):
             
     def OnNotify(self,state,id,events):
         pass
+
+    def OnServerInitComplete(self):
+        if PtGetPlayerList():
+            return
+        st = time.gmtime(PtGetDniTime())
+        agevault = ptAgeVault()
+        if agevault:
+            ageSDL = agevault.getAgeSDL()
+            if ageSDL:
+                if st.tm_mon == 1 and st.tm_mday <= 3:
+                    SetVaultSDLBool("nb01HappyNewYearVis", True)
+                    SetVaultSDLBool("nb01FireworksOnBalcony", True)
+                    SetVaultSDLBool("nb01FireworksOnBanner", True)
+                    SetVaultSDLBool("nb01FireworksOnFountain", True)
+                    SetVaultSDLBool("nb01ThanksgivingVis", False)
+                elif st.tm_mon == 4 and st.tm_mday >= 19 and st.tm_mday <=23:
+                    SetVaultSDLBool("nb01HappyNewYearVis", True)
+                    SetVaultSDLBool("nb01FireworksOnBalcony", True)
+                    SetVaultSDLBool("nb01FireworksOnBanner", True)
+                    SetVaultSDLBool("nb01FireworksOnFountain", True)
+                    SetVaultSDLBool("nb01ThanksgivingVis", False)
+                elif st.tm_mon == 11:
+                    SetVaultSDLBool("nb01HappyNewYearVis", False)
+                    SetVaultSDLBool("nb01FireworksOnBalcony", False)
+                    SetVaultSDLBool("nb01FireworksOnBanner", False)
+                    SetVaultSDLBool("nb01FireworksOnFountain", False)
+                    SetVaultSDLBool("nb01ThanksgivingVis", True)
+                elif st.tm_mon == 12 and st.tm_mday >= 29:
+                    SetVaultSDLBool("nb01HappyNewYearVis", True)
+                    SetVaultSDLBool("nb01FireworksOnBalcony", True)
+                    SetVaultSDLBool("nb01FireworksOnBanner", True)
+                    SetVaultSDLBool("nb01FireworksOnFountain", True)
+                    SetVaultSDLBool("nb01ThanksgivingVis", False)
+                else:
+                    SetVaultSDLBool("nb01HappyNewYearVis", False)
+                    SetVaultSDLBool("nb01FireworksOnBalcony", False)
+                    SetVaultSDLBool("nb01FireworksOnBanner", False)
+                    SetVaultSDLBool("nb01FireworksOnFountain", False)
+                    SetVaultSDLBool("nb01ThanksgivingVis", False)

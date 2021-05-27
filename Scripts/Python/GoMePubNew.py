@@ -44,7 +44,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
+from hanukkah import *
 import time
+
+def SetVaultSDLBool(sdlVar, setVar):
+    agevault = ptAgeVault()
+    if agevault:
+        ageSDL = agevault.getAgeSDL()
+        if ageSDL:
+            if ageSDL.findVar(sdlVar).getBool() != setVar:
+                ageSDL.findVar(sdlVar).setBool(setVar)
+                agevault.updateAgeSDL(ageSDL)
+                
+def SetVaultSDLInt(sdlVar, setVar):
+    agevault = ptAgeVault()
+    if agevault:
+        ageSDL = agevault.getAgeSDL()
+        if ageSDL:
+            if ageSDL.findVar(sdlVar).getInt() != setVar:
+                ageSDL.findVar(sdlVar).setInt(setVar)
+                agevault.updateAgeSDL(ageSDL)
 
 class GoMePubNew(ptResponder):
 
@@ -59,8 +78,147 @@ class GoMePubNew(ptResponder):
 
     def OnServerInitComplete(self):
         self.UpdateRecentVisitors()
+        
+        if PtGetPlayerList():
+            return
+        st = time.gmtime(PtGetDniTime())
+        agevault = ptAgeVault()
+        day1, day2, day3, day4, day5, day6, day7, day8, end = h[st.tm_year]
+        agevault = ptAgeVault()
+        if agevault:
+            ageSDL = agevault.getAgeSDL()
+            if ageSDL:
+                if st.tm_mon == 1 and st.tm_mday <= 3:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 1)
+                elif st.tm_mon == 3 and st.tm_mday >= 14 and st.tm_mday <=20:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 2)
+                elif st.tm_mon == 4 and st.tm_mday >= 19 and st.tm_mday <=23:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 2)
+                elif st.tm_mon == 6:
+                    SetVaultSDLBool("gmpnPrideDecoVis", True)
+                    SetVaultSDLInt("gmpnHolidayVis", 0)
+                elif st.tm_mon == 10 and st.tm_mday > 15:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 4)
+                elif st.tm_mon == 11:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 5)
+                elif st.tm_mon == 12 and st.tm_mday >= 13 and st.tm_mday <= 28:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 6)
+                elif st.tm_mon == 12 and st.tm_mday >= 29:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 1)
+                else:
+                    SetVaultSDLBool("gmpnPrideDecoVis", False)
+                    SetVaultSDLInt("gmpnHolidayVis", 0)
+                
+                if ageSDL.findVar("gmpnMenorahFlame01").getBool() and st.tm_mon == 1:
+                    day1, day2, day3, day4, day5, day6, day7, day8, end = h[st.tm_year-1]
 
-
+                if st.tm_mon == day1.month and st.tm_mday == day1.day and st.tm_hour >= day1.hour and st.tm_min >= day1.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", False)
+                    SetVaultSDLBool("gmpnMenorahFlame03", False)
+                    SetVaultSDLBool("gmpnMenorahFlame04", False)
+                    SetVaultSDLBool("gmpnMenorahFlame05", False)
+                    SetVaultSDLBool("gmpnMenorahFlame06", False)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day2.month and st.tm_mday == day2.day and st.tm_hour >= day2.hour and st.tm_min >= day2.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", False)
+                    SetVaultSDLBool("gmpnMenorahFlame04", False)
+                    SetVaultSDLBool("gmpnMenorahFlame05", False)
+                    SetVaultSDLBool("gmpnMenorahFlame06", False)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day3.month and st.tm_mday == day3.day and st.tm_hour >= day3.hour and st.tm_min >= day3.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", False)
+                    SetVaultSDLBool("gmpnMenorahFlame05", False)
+                    SetVaultSDLBool("gmpnMenorahFlame06", False)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day4.month and st.tm_mday == day4.day and st.tm_hour >= day4.hour and st.tm_min >= day4.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", True)
+                    SetVaultSDLBool("gmpnMenorahFlame05", False)
+                    SetVaultSDLBool("gmpnMenorahFlame06", False)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day5.month and st.tm_mday == day5.day and st.tm_hour >= day5.hour and st.tm_min >= day5.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", True)
+                    SetVaultSDLBool("gmpnMenorahFlame05", True)
+                    SetVaultSDLBool("gmpnMenorahFlame06", False)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day6.month and st.tm_mday == day6.day and st.tm_hour >= day6.hour and st.tm_min >= day6.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", True)
+                    SetVaultSDLBool("gmpnMenorahFlame05", True)
+                    SetVaultSDLBool("gmpnMenorahFlame06", True)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day7.month and st.tm_mday == day7.day and st.tm_hour >= day7.hour and st.tm_min >= day7.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", True)
+                    SetVaultSDLBool("gmpnMenorahFlame05", True)
+                    SetVaultSDLBool("gmpnMenorahFlame06", True)
+                    SetVaultSDLBool("gmpnMenorahFlame07", True)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
+                elif st.tm_mon == day8.month and st.tm_mday == day8.day and st.tm_hour >= day8.hour and st.tm_min >= day8.minute:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", True)
+                    SetVaultSDLBool("gmpnMenorahFlame05", True)
+                    SetVaultSDLBool("gmpnMenorahFlame06", True)
+                    SetVaultSDLBool("gmpnMenorahFlame07", True)
+                    SetVaultSDLBool("gmpnMenorahFlame08", True)
+                elif st.tm_mon == end.month and st.tm_mday == end.day:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", True)
+                    SetVaultSDLBool("gmpnMenorahFlame01", True)
+                    SetVaultSDLBool("gmpnMenorahFlame02", True)
+                    SetVaultSDLBool("gmpnMenorahFlame03", True)
+                    SetVaultSDLBool("gmpnMenorahFlame04", True)
+                    SetVaultSDLBool("gmpnMenorahFlame05", True)
+                    SetVaultSDLBool("gmpnMenorahFlame06", True)
+                    SetVaultSDLBool("gmpnMenorahFlame07", True)
+                    SetVaultSDLBool("gmpnMenorahFlame08", True)
+                else:
+                    SetVaultSDLBool("gmpnMenorahFlameShammash", False)
+                    SetVaultSDLBool("gmpnMenorahFlame01", False)
+                    SetVaultSDLBool("gmpnMenorahFlame02", False)
+                    SetVaultSDLBool("gmpnMenorahFlame03", False)
+                    SetVaultSDLBool("gmpnMenorahFlame04", False)
+                    SetVaultSDLBool("gmpnMenorahFlame05", False)
+                    SetVaultSDLBool("gmpnMenorahFlame06", False)
+                    SetVaultSDLBool("gmpnMenorahFlame07", False)
+                    SetVaultSDLBool("gmpnMenorahFlame08", False)
 
     def OnNotify(self, state, id, events):
         pass
@@ -176,8 +334,6 @@ class GoMePubNew(ptResponder):
              hiddenlist)
         return (msg,
          [])
-
-
 
     def OnBackdoorMsg(self, target, param):
         if ((target == 'settext') or (target == 'addtext')):
