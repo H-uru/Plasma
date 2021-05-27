@@ -180,7 +180,6 @@ class city(ptResponder):
         st = time.gmtime(PtGetDniTime())
         agevault = ptAgeVault()
         day1, day2, day3, day4, day5, day6, day7, day8, end = h[st.tm_year]
-        agevault = ptAgeVault()
         if agevault:
             ageSDL = agevault.getAgeSDL()
             if ageSDL:
@@ -353,4 +352,5 @@ class city(ptResponder):
                 for p in pagesS1FinaleBahro:
                     self.ILoadS1FinaleBahro(n,0)
                     n += 1
+
 

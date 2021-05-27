@@ -84,7 +84,6 @@ class GoMePubNew(ptResponder):
         st = time.gmtime(PtGetDniTime())
         agevault = ptAgeVault()
         day1, day2, day3, day4, day5, day6, day7, day8, end = h[st.tm_year]
-        agevault = ptAgeVault()
         if agevault:
             ageSDL = agevault.getAgeSDL()
             if ageSDL:
@@ -334,6 +333,8 @@ class GoMePubNew(ptResponder):
              hiddenlist)
         return (msg,
          [])
+
+
 
     def OnBackdoorMsg(self, target, param):
         if ((target == 'settext') or (target == 'addtext')):
