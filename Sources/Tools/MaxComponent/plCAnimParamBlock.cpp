@@ -88,13 +88,12 @@ static plEaseAccessor sAnimCompEaseAccessor( plCAnimPB::plPBBaseDec::kPlComponen
 
 ParamBlockDesc2 plCAnimPB::plPBBaseDec::fAnimBlock
 (
-    kPlComponentBlkID, _T( "animation" ), 0, nullptr, 0/*P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP*/, kPlComponentRefID,
+    plCAnimPB::plPBBaseDec::kPlComponentBlkID, _T( "animation" ), 0, nullptr, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, plCAnimPB::plPBBaseDec::kPlComponentRefID,
 
     // map rollups (don't define Procs, they'll just be overridden in the macro defs anyway)
-/*  2,
+    2,
     plCAnimPB::kRollMain, IDD_COMP_ANIM, IDS_COMP_ANIM, 0, 0, nullptr,
     plCAnimPB::kRollEase, IDD_COMP_ANIM_EASE, IDS_COMP_ANIM_EASE, 0, APPENDROLL_CLOSED, nullptr,
-*/
 
     // Anim Main rollout
     plCAnimPB::kAnimAutoStart, _T("autoStart"), TYPE_BOOL,      0, 0,
@@ -157,7 +156,7 @@ ParamBlockDesc2 plCAnimPB::plPBBaseDec::fAnimBlock
     plCAnimPB::kAnimEaseOutLength,  _T("easeOutLength"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
-        p_ui,   kRollEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
+        p_ui, plCAnimPB::kRollEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT,
         IDC_COMP_ANIM_EASE_OUT_TIME, IDC_COMP_ANIM_EASE_OUT_TIME_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
         p_end,
@@ -178,4 +177,3 @@ ParamBlockDesc2 plCAnimPB::plPBBaseDec::fAnimBlock
 
     p_end
 );
-
