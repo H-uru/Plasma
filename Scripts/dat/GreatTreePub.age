@@ -4,5 +4,7 @@ MaxCapacity=10
 LingerTime=180
 SequencePrefix=35
 ReleaseVersion=0
+Page=Chiso,4
 Page=GreatTree,2
+Page=Imager,3
 Page=Pub,1
