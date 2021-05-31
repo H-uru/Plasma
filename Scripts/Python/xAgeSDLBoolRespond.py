@@ -84,7 +84,7 @@ class xAgeSDLBoolRespond(ptResponder):
                 avatar = PtGetAvatarKeyFromClientID(playerID).getSceneObject()
             except:
                 avatar = None
-            ff = False
+            ff = tag.lower() == "fastforward"
         else:
             avatar = None
             ff = vmFastFwd.value
