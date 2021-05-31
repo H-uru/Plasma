@@ -325,7 +325,7 @@ public:
 
     static ParamBlockDesc2  *GetAnimPBDesc();
 
-    GETOBJNAME_RETURN_TYPE GetObjectName() override { return (GETOBJNAME_RETURN_TYPE)fClassDesc->ClassName(); }
+    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
     void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
 
     IParamBlock2 *GetParamBlock(int i) override;

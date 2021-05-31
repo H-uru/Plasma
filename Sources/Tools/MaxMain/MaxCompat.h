@@ -74,14 +74,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         maxObject->DoEnumDependents(proc);
 
 #   define INIT_CUSTOM_CONTROLS(instance)
-#endif //MAX_VERSION_MAJOR
+#endif // Max 9
 
 #if MAX_VERSION_MAJOR <= 10 // Max 2008
-#   define GETNAME_RETURN_TYPE TCHAR*
-#   define SETTEXT_VALUE_TYPE MCHAR*
+#   define MAX10_CONST
 #else
-#   define GETNAME_RETURN_TYPE const TCHAR*
-#   define SETTEXT_VALUE_TYPE const MCHAR*
+#   define MAX10_CONST const
 #endif
 
 #if MAX_VERSION_MAJOR <= 13
@@ -94,27 +92,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if MAX_VERSION_MAJOR <= 14 // Max 2012
 #   define p_end end
-#   define GETOBJNAME_RETURN_TYPE MCHAR*
+#   define MAX14_CONST
 #   define GETDLGTEXT_RETURN_TYPE TCHAR*
-#   define GETNODENAME_RETURN_TYPE MCHAR*
-#   define READ_VOID_BUFFER Read
-#   define WRITE_VOID_BUFFER Write
-#   define BMLOADCONF LoadConfigure(void* ptr)
+#   define READ_VOID_BUFFER(s) s->Read
+#   define WRITE_VOID_BUFFER(s) s->Write
+#   define BM_LOAD_CONFIGURE_PARAMS void* ptr
 #   define BMNAME_VALUE_TYPE TCHAR*
-#   define NOTE_TYPE char*
 #   define SUBTFNAME_VALUE_TYPE char*
-#   define RCKEYNAME_VALUE_TYPE char*
 #else
-#   define GETOBJNAME_RETURN_TYPE const MCHAR*
+#   define MAX14_CONST const
 #   define GETDLGTEXT_RETURN_TYPE const MCHAR*
-#   define GETNODENAME_RETURN_TYPE const MCHAR*
-#   define READ_VOID_BUFFER ReadVoid
-#   define WRITE_VOID_BUFFER WriteVoid
-#   define BMLOADCONF LoadConfigure(void* ptr, DWORD piDataSize)
+#   define READ_VOID_BUFFER(s) s->ReadVoid
+#   define WRITE_VOID_BUFFER(s) s->WriteVoid
+#   define BM_LOAD_CONFIGURE_PARAMS void* ptr, DWORD piDataSize
 #   define BMNAME_VALUE_TYPE const MCHAR*
-#   define NOTE_TYPE MSTR
 #   define SUBTFNAME_VALUE_TYPE MSTR
-#   define RCKEYNAME_VALUE_TYPE const char*
 #endif // MAX_VERSION_MAJOR
 
 #if MAX_VERSION_MAJOR <= 15 // Max 2013

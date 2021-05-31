@@ -60,7 +60,7 @@ public:
 
     int Capability()                { return 0; }
     DWORD EvaluateConfigure()       { return 0; }
-    BOOL BMLOADCONF                 { return FALSE; }
+    BOOL LoadConfigure(BM_LOAD_CONFIGURE_PARAMS) { return FALSE; }
     BOOL SaveConfigure(void* ptr)   { return FALSE; }
 
     BMMRES GetImageInfo(BitmapInfo* fbi) { return BMMRES_INTERNALERROR; }

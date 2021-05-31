@@ -1418,7 +1418,7 @@ uint8_t hsControlConverter::GetKeyType(Control* control, bool rotQuat)
 //
 //
 //
-int32_t hsControlConverter::IGetRangeCoverKeyIndices(RCKEYNAME_VALUE_TYPE nodeName, Control* cont, int32_t &start, int32_t &end)
+int32_t hsControlConverter::IGetRangeCoverKeyIndices(MAX14_CONST char* nodeName, Control* cont, int32_t &start, int32_t &end)
 {
     hsGuardBegin("hsControlConverter::IGetRangeCoverKeyIndices");
 

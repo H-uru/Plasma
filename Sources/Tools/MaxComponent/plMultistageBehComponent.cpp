@@ -499,7 +499,7 @@ public:
         ULONG numRead = 0;
         hsAssert(fLoad, "No Max ILoad!");
         if (fLoad)
-            fLoad->READ_VOID_BUFFER(buffer, byteCount, &numRead);
+            READ_VOID_BUFFER(fLoad)(buffer, byteCount, &numRead);
         fPosition += numRead;
         return numRead;
     }
@@ -508,7 +508,7 @@ public:
         ULONG numWritten;
         hsAssert(fSave, "No Max ISave!");
         if (fSave)
-            fSave->WRITE_VOID_BUFFER(buffer, byteCount, &numWritten);
+            WRITE_VOID_BUFFER(fSave)(buffer, byteCount, &numWritten);
         return numWritten;
     }
 };

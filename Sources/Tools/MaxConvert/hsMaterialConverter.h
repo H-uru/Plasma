@@ -339,7 +339,7 @@ private:
     int32_t             fSubIndex;
     bool                fChangedTimes;
 
-    GETOBJNAME_RETURN_TYPE fNodeName;
+    MAX14_CONST MCHAR*  fNodeName;
     uint32_t            fWarned;
 
 

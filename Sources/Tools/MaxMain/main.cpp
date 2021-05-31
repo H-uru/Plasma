@@ -190,7 +190,7 @@ public:
     ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP) override;
     bool CheckCopyAttribTo(ICustAttribContainer *to) override { return true; }
     
-    GETNAME_RETURN_TYPE GetName() override { return (GETNAME_RETURN_TYPE)_T(fClassDesc->ClassName()); }
+    MAX10_CONST TCHAR* GetName() override { return (MAX10_CONST TCHAR*)fClassDesc->ClassName(); }
     void DeleteThis() override { delete this; }
 };
 

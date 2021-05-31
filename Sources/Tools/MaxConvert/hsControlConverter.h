@@ -165,7 +165,7 @@ private:
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
     void    IAddPartsKeys(Control* control, std::vector<hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
     int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nullptr, bool rotQuat = false);
-    int32_t   IGetRangeCoverKeyIndices(RCKEYNAME_VALUE_TYPE nodeName, Control* cont, int32_t &start, int32_t &end);
+    int32_t   IGetRangeCoverKeyIndices(MAX14_CONST char* nodeName, Control* cont, int32_t &start, int32_t &end);
     ControllerType IGetControlType(TSTR ctrlName);
     bool    IIsKeyTimeInRange(TimeValue time);
     bool    IIsKeyInRange(IKey* key);
