@@ -836,7 +836,9 @@ bool UserPropMgr::ICheckQuickEntry(const char *key, TSTR &value)
     QuickPair q;
     q.SetKey(key);
     auto it = fQuickTable->find(q);
-    return it->GetVal(value);
+    if (it != fQuickTable->end())
+        return it->GetVal(value);
+    return false;
 }
 
 
