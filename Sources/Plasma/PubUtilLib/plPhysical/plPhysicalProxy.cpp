@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysical.h"
 
 #include "pnMessage/plProxyDrawMsg.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plDrawableGenerator.h"
@@ -78,8 +79,11 @@ plKey plPhysicalProxy::IGetNode() const
 {
     if (fOwner)
         return fOwner->GetSceneNode();
-    if (fController)
-        return fController->GetOwner();
+    if (fController) {
+        plSceneObject* owner = plSceneObject::ConvertNoRef(fController->GetOwner()->ObjectIsLoaded());
+        if (owner)
+            return owner->GetSceneNode();
+    }
     return nullptr;
 }
 

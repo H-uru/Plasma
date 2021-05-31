@@ -241,6 +241,7 @@ protected:
     friend class plPXControllerBehaviorCallback;
     friend class plPXControllerHitReport;
 
+    void ISynchProxy();
     void IChangePhysicalOwnership();
 
     void ICreateController(hsPoint3 pos);
