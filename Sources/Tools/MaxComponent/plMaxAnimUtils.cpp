@@ -357,7 +357,7 @@ SegmentMap * GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg)
 
         for (int j = 0; j < numKeys; j++)
         {
-            NOTE_TYPE note = track->keys[j]->note;
+            auto note = track->keys[j]->note;
             float time = TimeValueToGameTime(track->keys[j]->time);
             GetSegment(note, time, segMap, pErrMsg);
         }
@@ -377,4 +377,3 @@ void DeleteSegmentMap(SegmentMap *segMap)
         delete segMap;
     }
 }
-

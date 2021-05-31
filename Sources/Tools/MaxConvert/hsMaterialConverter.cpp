@@ -1007,7 +1007,7 @@ hsGMaterial *hsMaterialConverter::ICreateMaterial(Mtl *mtl, plMaxNode *node, con
 {
     hsGuardBegin("hsMaterialConverter::ICreateMaterial");
 
-    GETOBJNAME_RETURN_TYPE nodeName = node->GetName();
+    auto nodeName = node->GetName();
     fSubIndex = subIndex;
     fNodeName = nodeName;
     Object *obj = node->EvalWorldState(fConverterUtils.GetTime(fInterface)).obj;
@@ -1115,7 +1115,7 @@ hsGMaterial *hsMaterialConverter::IProcessMaterial(Mtl *mtl, plMaxNode *node, co
 
     plLocation nodeLoc = node->GetLocation();
 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
     hsGMaterial *hMat = nullptr;
     fChangedTimes = false;
 
@@ -1681,7 +1681,7 @@ hsGMaterial *hsMaterialConverter::IProcessParticleMtl(Mtl *mtl, plMaxNode *node,
     hsGuardBegin("hsMaterialConverter::IProcessParticleMaterial");
 
     plLocation nodeLoc = node->GetLocation(); 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     hsGMaterial *mat = new hsGMaterial;
     hsgResMgr::ResMgr()->NewKey(name, mat, nodeLoc);
@@ -2245,7 +2245,7 @@ bool hsMaterialConverter::IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGM
     hsGuardBegin("hsMaterialConverter::IProcessPlasmaMaterial");
 
     plLocation nodeLoc= node->GetLocation(); 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     if(!mtl)
     {
@@ -2698,7 +2698,7 @@ hsGMaterial *hsMaterialConverter::ICheckForProjectedTexture(plMaxNode *node)
 {
     hsGuardBegin("hsMaterialConverter::ICheckForProjectedTexture");
 
-    GETOBJNAME_RETURN_TYPE nodeName = node->GetName();
+    auto nodeName = node->GetName();
     Object *obj = node->EvalWorldState(fConverterUtils.GetTime(fInterface)).obj;
     LightObject *light = (LightObject*)obj->ConvertToType(fConverterUtils.GetTime(fInterface), 
             Class_ID(SPOT_LIGHT_CLASS_ID,0));
@@ -2736,7 +2736,7 @@ hsGMaterial *hsMaterialConverter::IWrapTextureInMaterial(Texmap *texMap, plMaxNo
     // Add material to list
     //
     int found=FALSE;
-    GETOBJNAME_RETURN_TYPE nodeName = node->GetName();
+    auto nodeName = node->GetName();
     CStr className;
     texMap->GetClassName(className);
 
@@ -2786,8 +2786,8 @@ hsGMaterial *hsMaterialConverter::IWrapTextureInMaterial(Texmap *texMap, plMaxNo
         hLay->SetOpacity(1.f);
         
         uint32_t autoStart = 0;
-        GETOBJNAME_RETURN_TYPE nodeName = node->GetName();
-        GETOBJNAME_RETURN_TYPE texName = bitmapTex->GetName();
+        auto nodeName = node->GetName();
+        auto texName = bitmapTex->GetName();
         // BEGIN OVERRIDE
         if (ALPHA_NONE == bitmapTex->GetAlphaSource())
         {

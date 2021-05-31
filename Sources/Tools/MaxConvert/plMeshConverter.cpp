@@ -2145,7 +2145,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
                     if (indices[j] != 0)
                     {
                         plMaxNodeBase *bone = maxNode->GetBone(indices[j] - 1);
-                        GETOBJNAME_RETURN_TYPE dbgBoneName = bone->GetName();
+                        auto dbgBoneName = bone->GetName();
                         indices[j] = boneMap->GetIndex(bone) + 1;
                     }
                 //}

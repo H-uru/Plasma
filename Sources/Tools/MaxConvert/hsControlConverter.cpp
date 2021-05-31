@@ -1240,7 +1240,7 @@ int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, Tim
 
     Class_ID cID = control->ClassID();
     SClass_ID sID = control->SuperClassID();
-    GETNODENAME_RETURN_TYPE nodeName = node ? node->GetName() : nullptr;
+    auto nodeName = node ? node->GetName() : nullptr;
 
     // BEZ
     if (cID == Class_ID(HYBRIDINTERP_POSITION_CLASS_ID,0) ||
@@ -1519,7 +1519,7 @@ bool hsControlConverter::ForceOrigin(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::ForceOrigin");
 
-    GETNODENAME_RETURN_TYPE nn = node->GetName();
+    auto nn = node->GetName();
 
     if (node->IsRootNode())
     {
@@ -1931,7 +1931,7 @@ bool    hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &t
 {
     hsGuardBegin( "hsControlConverter::GetGeomKeyTimes" );
 
-    GETOBJNAME_RETURN_TYPE dgbNodeName = node->GetName();
+    auto dgbNodeName = node->GetName();
     Object *obj = node->GetObjectRef();
     if( !obj )
         return false;
@@ -1956,7 +1956,7 @@ bool    hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &t
     for( i = 0; i < derObj->NumModifiers(); i++ )
     {
         Modifier *mod = derObj->GetModifier(i);
-        GETOBJNAME_RETURN_TYPE dbgModName = mod->GetName();
+        auto dbgModName = mod->GetName();
         if( mod )
         {
             ChannelMask mask = mod->ChannelsChanged();

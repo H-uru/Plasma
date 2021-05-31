@@ -67,13 +67,13 @@ plAutoUIBase::~plAutoUIBase()
             ParamID id = fDesc->IndextoID(i);
             ParamDef& def = fDesc->GetParamDef(id);
 
-            GETOBJNAME_RETURN_TYPE name = def.int_name;
+            auto name = def.int_name;
             def.int_name = nullptr;
             delete [] name;
 
             if (def.type == TYPE_STRING)
             {
-                GETOBJNAME_RETURN_TYPE defVal = def.def.s;
+                auto defVal = def.def.s;
                 def.def.s = nullptr;
                 delete [] defVal;
             }
@@ -572,4 +572,3 @@ void plAutoUIBase::DestroyAutoRollup()
 
     fPBlock = nullptr;
 }
-

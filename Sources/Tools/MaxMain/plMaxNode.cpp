@@ -196,7 +196,7 @@ plComponentTools gComponentTools(ExternAddModifier,
 
 void plMaxBoneMap::AddBone(plMaxNodeBase *bone)
 {
-    GETOBJNAME_RETURN_TYPE dbgNodeName = bone->GetName();
+    auto dbgNodeName = bone->GetName();
     if (fBones.find(bone) == fBones.end())
         fBones[bone] = fNumBones++;
 }
@@ -582,7 +582,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
     ISkin* skin = FindSkinModifier();
     if( skin && skin->GetNumBones() )
     {
-        GETOBJNAME_RETURN_TYPE dbgNodeName = GetName();
+        auto dbgNodeName = GetName();
 
         // BoneUpdate
         //SetForceLocal(true);
@@ -934,7 +934,7 @@ bool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSetting
     if (!CanConvert()) 
         return false;
 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     plSceneObject *pso = GetSceneObject();
     if( !GetParentNode()->IsRootNode() )
     {
@@ -3377,7 +3377,7 @@ bool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *settin
 
     bool ret = true;
 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
 
@@ -3414,7 +3414,7 @@ bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setting
 
     bool ret = true;
 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
 
@@ -3491,7 +3491,7 @@ bool plMaxNode::ClearData(plErrorMsg *pErrMsg, plConvertSettings *settings)
 // Little special-purpose thing to see if a node has an animation graph modifier on it.
 plAGModifier *plMaxNode::HasAGMod()
 {
-    GETOBJNAME_RETURN_TYPE name = GetName();
+    auto name = GetName();
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
@@ -3511,7 +3511,7 @@ plAGModifier *plMaxNode::HasAGMod()
 
 plAGMasterMod *plMaxNode::GetAGMasterMod()
 {
-    GETOBJNAME_RETURN_TYPE name = GetName();
+    auto name = GetName();
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
@@ -3541,7 +3541,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             char localName[256];
             TSTR propsBuf;
             GetUserPropBuffer(propsBuf);
-            GETOBJNAME_RETURN_TYPE start=strstr(propsBuf, "BoneName=");
+            auto start=strstr(propsBuf, "BoneName=");
             if (!start)
                 start=strstr(propsBuf, "bonename=");
             const int len = strlen("BoneName=");
@@ -3956,7 +3956,7 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
 {
     bool ret = true;
 
-    GETOBJNAME_RETURN_TYPE dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
     
