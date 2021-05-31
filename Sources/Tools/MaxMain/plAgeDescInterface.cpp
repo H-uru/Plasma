@@ -112,7 +112,7 @@ static void     RemovePageItem( HWND listBox, int item )
 
 //// Dummy Dialog Proc ////////////////////////////////////////////////////////
 
-BOOL CALLBACK DumbDialogProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK DumbDialogProc( HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
     switch( msg )
     {
@@ -186,7 +186,7 @@ INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
         fhDlg = hDlg;
 
 #ifdef MAXASS_AVAILABLE
-        if (fAssetManIface == nullptr)
+        if (fAssetManIface == nullptr && !plMaxConfig::AssetManInterfaceDisabled())
             fAssetManIface = new MaxAssBranchAccess();
 #endif
 
@@ -238,9 +238,7 @@ INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
         case IDCANCEL:
             if( IMakeSureCheckedIn() )
             {
-#ifdef MAXASS_AVAILABLE
                 IUpdateCurAge();
-#endif
                 DestroyWindow(fhDlg);
                 fhDlg = nullptr;
                 fDirty = false;
@@ -365,7 +363,8 @@ INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
                     int id = (int)SendDlgItemMessage( hDlg, IDC_BRANCHCOMBO, CB_GETITEMDATA, idx, 0 );
 
 #ifdef MAXASS_AVAILABLE
-                    fAssetManIface->SetCurrBranch( id );
+                    if (fAssetManIface)
+                        fAssetManIface->SetCurrBranch(id);
 #endif
                     IFillAgeTree();
                 }
@@ -623,7 +622,6 @@ void    plAgeDescInterface::IInvalidateCheckOutIndicator()
 
 bool    plAgeDescInterface::IMakeSureCheckedIn()
 {
-#ifdef MAXASS_AVAILABLE
     int result;
     plAgeFile* currAge = IGetCurrentAge();
     if (!currAge)
@@ -660,16 +658,15 @@ bool    plAgeDescInterface::IMakeSureCheckedIn()
         }
         else if( result == IDYES )
         {
-            ISaveCurAge( currAge->fPath.c_str() );
+            ISaveCurAge(currAge->fPath);
         }
         else
         {
             // Reload the non-saved version
-            ILoadAge( currAge->fPath.c_str() );
+            ILoadAge(currAge->fPath);
         }
         IEnableControls( true );
     }
-#endif
 
     return true;
 }
@@ -689,7 +686,7 @@ void    plAgeDescInterface::IUpdateCurAge()
     IEnableControls( true );
 
 #ifdef MAXASS_AVAILABLE
-    if( currAge->fType == plAgeFile::kAssetFile )
+    if (currAge->fType == plAgeFile::kAssetFile && fAssetManIface)
     {
         // Gotta get the latest version from assetMan before loading
         char                localFilename[ MAX_PATH ];
@@ -713,20 +710,23 @@ static const int kDefaultCapacity = 10;
 void plAgeDescInterface::IInitControls()
 {
 #ifdef MAXASS_AVAILABLE
-    // Fill the branch combo box
-    SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_RESETCONTENT, 0, 0 );
-    const jvTypeArray &branches = (*fAssetManIface)->GetBranches();
-    int i, curr = 0;
-    for( i = 0; i < branches.Size(); i++ )
-    {
-        int idx = SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_ADDSTRING, 0, (LPARAM)(const char *)( branches[ i ].Name ) );
-        SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_SETITEMDATA, idx, (LPARAM)branches[ i ].Id );
+    if (fAssetManIface) {
+        // Fill the branch combo box
+        SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_RESETCONTENT, 0, 0);
+        const jvTypeArray& branches = (*fAssetManIface)->GetBranches();
+        int i, curr = 0;
+        for (i = 0; i < branches.Size(); i++)
+        {
+            int idx = SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_ADDSTRING, 0, (LPARAM)(const char*)(branches[i].Name));
+            SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_SETITEMDATA, idx, (LPARAM)branches[i].Id);
 
-        if( branches[ i ].Id == fAssetManIface->GetCurrBranch() )
-            curr = i;
-    }
-    SendDlgItemMessage( fhDlg, IDC_BRANCHCOMBO, CB_SETCURSEL, curr, 0 );
-
+            if (branches[i].Id == fAssetManIface->GetCurrBranch())
+                curr = i;
+        }
+        SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_SETCURSEL, curr, 0);
+    } else // Intentional fallthrough
+#endif
+    EnableWindow(GetDlgItem(fhDlg, IDC_BRANCHCOMBO), false);
 
     fSpin = SetupFloatSpinner(fhDlg, IDC_DAYLEN_SPINNER, IDC_DAYLEN_EDIT, 1.f, 100.f, 24.f);
     fCapSpin = SetupIntSpinner(fhDlg, IDC_CAP_SPINNER, IDC_CAP_EDIT, 1, 250, kDefaultCapacity);
@@ -734,6 +734,11 @@ void plAgeDescInterface::IInitControls()
 
     SendDlgItemMessage( fhDlg, IDC_AGELIST_STATIC, WM_SETFONT, (WPARAM)fBoldFont, MAKELPARAM( TRUE, 0 ) );
     SendDlgItemMessage( fhDlg, IDC_AGEDESC, WM_SETFONT, (WPARAM)fBoldFont, MAKELPARAM( TRUE, 0 ) );
+
+#if MAX_VERSION_MAJOR >= 14 // Max 2012
+    HWND ageTree = GetDlgItem(fhDlg, IDC_AGE_LIST);
+    TreeView_SetBkColor(ageTree, GetColorManager()->GetColor(kWindow));
+    TreeView_SetTextColor(ageTree, GetColorManager()->GetColor(kText));
 #endif
 
     ISetControlDefaults();
@@ -856,7 +861,7 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
     // Add AssetMan ages, if available (since we're static, go thru the main MaxAss interface)
     // Hoikas (many years later) does not believe the above comment...
     MaxAssInterface *assetMan = GetMaxAssInterface();
-    if (assetMan != nullptr)
+    if (assetMan != nullptr && !plMaxConfig::AssetManInterfaceDisabled()
     {
         std::vector<jvUniqueId> doneAssets;
 
@@ -922,12 +927,10 @@ void plAgeDescInterface::IFillAgeTree()
     // Clear the tree first and add our two root headers
     TreeView_DeleteAllItems(ageTree);
 
-#ifdef MAXASS_AVAILABLE
     if (fAssetManIface != nullptr)
         fAssetManBranch = SAddTreeItem(ageTree, nullptr, "AssetMan Ages", -1);
     else
         fAssetManBranch = nullptr;
-#endif
 
     fLocalBranch = SAddTreeItem(ageTree, nullptr, "Local Ages", -1);
 
@@ -1019,18 +1022,11 @@ void plAgeDescInterface::INewAge()
     VARIANT assetId;
     VariantInit(&assetId);
 
-#ifdef MAXASS_AVAILABLE
     bool makeAsset = true;
-    if( hsMessageBox( "Do you wish to store your new age in AssetMan?", "Make source-controlled?", hsMessageBoxYesNo ) == hsMBoxNo )
+    if (!fAssetManIface || hsMessageBox( "Do you wish to store your new age in AssetMan?", "Make source-controlled?", hsMessageBoxYesNo ) == hsMBoxNo)
         makeAsset = false;
-#endif
 
     plFileName newAssetFilename;
-#ifdef MAXASS_AVAILABLE
-    if (!fAssetManIface)
-        makeAsset = false;
-#endif
-
     newAssetFilename = IGetLocalAgePath();
     if (!newAssetFilename.IsValid())
         return;
@@ -1048,14 +1044,14 @@ void plAgeDescInterface::INewAge()
 
     newAssetFilename = plFileName::Join(newAssetFilename, name + ".age");
 
-#ifdef MAXASS_AVAILABLE
-    if( !makeAsset )
+    if (!makeAsset)
         fForceSeqNumLocal = true;
     ISetControlDefaults();
     ISaveCurAge(newAssetFilename, true);    // Check sequence # while we're at it
     fForceSeqNumLocal = false;
 
-    if( makeAsset )
+#ifdef MAXASS_AVAILABLE
+    if (makeAsset)
         (*fAssetManIface)->AddNewAsset(newAssetFilename.AsString().c_str());
 #endif
 

@@ -88,6 +88,7 @@ void plMaxConfig::SetClientPath(const plFileName &path)
 
 bool plMaxConfig::AssetManInterfaceDisabled()
 {
+#ifdef MAXASS_AVAILABLE
     static bool inited = false;
     static bool disabled = false;
 
@@ -109,4 +110,7 @@ bool plMaxConfig::AssetManInterfaceDisabled()
     }
 
     return disabled;
+#else
+    return true;
+#endif
 }
