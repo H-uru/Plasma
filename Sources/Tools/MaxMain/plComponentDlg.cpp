@@ -81,11 +81,6 @@ plComponentDlg::plComponentDlg() : fhDlg(), fCompMenu(), fTypeMenu(), fCommentNo
 
 plComponentDlg::~plComponentDlg()
 {
-    if (fhDlg)
-    {
-        fInterface->UnRegisterDlgWnd(fhDlg);
-        DestroyWindow(fhDlg);
-    }
     if (fCompMenu)
         DestroyMenu(fCompMenu);
     if (fTypeMenu)
@@ -119,7 +114,6 @@ void plComponentDlg::Open()
         SetWindowPos(fhDlg, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER);
     }
     
-    fInterface->RegisterDlgWnd(fhDlg);
     ShowWindow(fhDlg, SW_SHOW);
 
     if (IsIconic(fhDlg))
@@ -230,9 +224,19 @@ INT_PTR plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPara
     {
     case WM_INITDIALOG:
         fhDlg = hDlg;
+        fInterface->RegisterDlgWnd(fhDlg);
         ICreateComponentsTree();
         ICreateMenu();
         ICreateRightClickMenu();
+        return TRUE;
+
+    case WM_CLOSE:
+        DestroyWindow(fhDlg);
+        return TRUE;
+
+    case WM_DESTROY:
+        fInterface->UnRegisterDlgWnd(fhDlg);
+        fhDlg = nullptr;
         return TRUE;
 
     case WM_SIZING:
