@@ -239,6 +239,7 @@ bool plPXPhysical::InitActor()
     case plSimDefs::kHullBounds:
     {
         physx::PxConvexMeshGeometry geometry(fRecipe.convexMesh);
+        geometry.meshFlags.set(physx::PxConvexMeshGeometryFlag::eTIGHT_BOUNDS);
         physx::PxTransform localPose(physx::PxIdentity);
         fActor = sim->CreateRigidActor(geometry, globalPose, localPose,
                                        fRecipe.friction, fRecipe.friction, fRecipe.restitution,

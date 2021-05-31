@@ -166,6 +166,8 @@ protected:
     bool fPosGoalHit;
     bool fRotGoalHit;
 
+    bool fSweepTestHit;
+
     bool fStillPositioning;               // haven't yet reached the final position
     bool fStillRotating;                  // haven't yet reached the final orientation
     
