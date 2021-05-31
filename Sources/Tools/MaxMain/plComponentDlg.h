@@ -85,6 +85,7 @@ protected:
     HTREEITEM IFindTreeItem(HWND hTree, const char *name, HTREEITEM hParent);
     HTREEITEM IAddComponent(HWND hTree, plMaxNode *node);
     void IAddComponentsRecur(HWND hTree, plMaxNode *node);
+    void ICreateComponentsTree();
     void ICreateMenu();
 
     bool IIsComponent(LPARAM lParam);

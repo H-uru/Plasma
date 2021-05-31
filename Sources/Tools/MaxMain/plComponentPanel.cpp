@@ -233,6 +233,12 @@ void plComponentUtil::BeginEditParams(Interface *ip, IUtil *iu)
     lvc.pszText = "Description";
     ListView_InsertColumn(hList, 0, &lvc);
 
+#if MAX_VERSION_MAJOR >= 14 // Max 2012
+    ListView_SetBkColor(hList, GetColorManager()->GetColor(kWindow));
+    ListView_SetTextBkColor(hList, GetColorManager()->GetColor(kWindow));
+    ListView_SetTextColor(hList, GetColorManager()->GetColor(kText));
+#endif
+
     IUpdateRollups();
 }
 

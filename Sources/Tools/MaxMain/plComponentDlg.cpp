@@ -230,8 +230,7 @@ INT_PTR plComponentDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPara
     {
     case WM_INITDIALOG:
         fhDlg = hDlg;
-        IAddComponentsRecur(GetDlgItem(hDlg, IDC_TREE), (plMaxNode*)GetCOREInterface()->GetRootNode());
-
+        ICreateComponentsTree();
         ICreateMenu();
         ICreateRightClickMenu();
         return TRUE;
@@ -481,6 +480,18 @@ void plComponentDlg::IAddComponentsRecur(HWND hTree, plMaxNode *node)
         plMaxNode *child = (plMaxNode*)node->GetChildNode(i);
         IAddComponentsRecur(hTree, child);
     }
+}
+
+void plComponentDlg::ICreateComponentsTree()
+{
+    HWND tree = GetDlgItem(fhDlg, IDC_TREE);
+
+#if MAX_VERSION_MAJOR >= 14 // Max 2012
+    TreeView_SetBkColor(tree, GetColorManager()->GetColor(kWindow));
+    TreeView_SetTextColor(tree, GetColorManager()->GetColor(kText));
+#endif
+
+    IAddComponentsRecur(tree, (plMaxNode*)GetCOREInterface()->GetRootNode());
 }
 
 void plComponentDlg::ICreateMenu()
