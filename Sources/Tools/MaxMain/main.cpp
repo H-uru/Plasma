@@ -122,32 +122,31 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
     }
 }
 
-//
-// Return version so can detect obsolete DLLs
-//
+// This function returns a pre-defined constant indicating the version of 
+// the system under which it was compiled.  It is used to allow the system
+// to catch obsolete DLLs.
 __declspec(dllexport) ULONG LibVersion() 
 { 
     return VERSION_3DSMAX; 
 }
 
+// This plug-in opts out from 3ds Max's defer loading mechanism
+__declspec(dllexport) ULONG CanAutoDefer()
+{
+    return FALSE;
+}
+
 //
 // DLLMAIN
 //
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved) 
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved) 
 {
-    hInstance = hinstDLL;
-
-    switch (fdwReason)
+    if (fdwReason == DLL_PROCESS_ATTACH)
     {
-        case DLL_PROCESS_ATTACH:
-            INIT_CUSTOM_CONTROLS(hInstance);
-            break;
-        case DLL_THREAD_ATTACH:
-            break;
-        case DLL_THREAD_DETACH:
-            break;
-        case DLL_PROCESS_DETACH:
-            break;
+        USE_LANGUAGE_PACK_LOCALE();
+        hInstance = hinstDLL;
+        INIT_CUSTOM_CONTROLS(hInstance);
+        DisableThreadLibraryCalls(hInstance);
     }
 
     return TRUE;
@@ -255,3 +254,8 @@ ReferenceTarget *plGeneralAttrib::Clone(RemapDir &remap)
 //////////////////////////////////////////////////////////////////////////////////
 // TEMP
 //////////////////////////////////////////////////////////////////////////////////
+
+/* Enable themes in Windows XP and later */
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")

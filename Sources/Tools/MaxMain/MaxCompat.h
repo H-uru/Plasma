@@ -59,6 +59,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define ENUMDEPENDENTS(maxObject, proc) \
         maxObject->EnumDependents(proc);
 
+#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance); InitCommonControls();
+
+#   define DisableThreadLibraryCalls()
+
     typedef TCHAR MCHAR;
 #else
 #   define BMMCOLOR(x, y, z, w) \
@@ -68,6 +72,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define ENUMDEPENDENTS(maxObject, proc) \
         maxObject->DoEnumDependents(proc);
+
+#   define INIT_CUSTOM_CONTROLS(instance)
 #endif //MAX_VERSION_MAJOR
 
 #if MAX_VERSION_MAJOR <= 10 // Max 2008
@@ -76,12 +82,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #else
 #   define GETNAME_RETURN_TYPE const TCHAR*
 #   define SETTEXT_VALUE_TYPE const MCHAR*
-#endif
-
-#if MAX_VERSION_MAJOR <= 11 // max 2009. Just a guess, really. 2010 doesn't need this function.
-#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance)
-#else
-#   define INIT_CUSTOM_CONTROLS(instance)
 #endif
 
 #if MAX_VERSION_MAJOR <= 13
@@ -116,6 +116,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define SUBTFNAME_VALUE_TYPE MSTR
 #   define RCKEYNAME_VALUE_TYPE const char*
 #endif // MAX_VERSION_MAJOR
+
+#if MAX_VERSION_MAJOR <= 15 // Max 2013
+#   define USE_LANGUAGE_PACK_LOCALE()
+#else
+#   define USE_LANGUAGE_PACK_LOCALE MaxSDK::Util::UseLanguagePackLocale
+#endif
 
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)

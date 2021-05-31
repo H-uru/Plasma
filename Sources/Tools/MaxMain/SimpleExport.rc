@@ -2,9 +2,15 @@
 //
 #include "resource.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#define IDC_STATIC              (-1)     // all static controls
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
@@ -26,13 +32,16 @@ BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
 BEGIN
+    "#include ""winres.h""\r\n"
     "\0"
 END
 
 3 TEXTINCLUDE 
 BEGIN
+    "#include ""veroverrides.h""\r\n"
+    "#include ""maxversion.r""\r\n"
     "#include ""../MaxComponent/plComponent.rc""\r\n"
     "#include ""../MaxPlasmaMtls/MaxPlasmaMtls.rc""\r\n"
     "\0"
@@ -508,9 +517,10 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
+#include "veroverrides.h"
+#include "maxversion.r"
 #include "../MaxComponent/plComponent.rc"
 #include "../MaxPlasmaMtls/MaxPlasmaMtls.rc"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-
