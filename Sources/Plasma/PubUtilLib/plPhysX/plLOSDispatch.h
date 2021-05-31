@@ -42,16 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLOSDispatch_H
 #define plLOSDispatch_H
 
-#include "pnKeyedObject/hsKeyedObject.h"
-#include "plPhysical/plSimDefs.h"
 #include <vector>
+
+#include "hsGeometry3.h"
+
+#include "pnKeyedObject/hsKeyedObject.h"
+
+#include "plPhysical/plSimDefs.h"
 
 class plLOSRequestMsg;
 struct hsMatrix44;
-struct hsPoint3;
 class plSceneObject;
 class plStatusLog;
-struct hsVector3;
 
 /** \class plLOSDispatch
     Line-of-sight requests are sent to this guy, who then hands them
@@ -61,14 +63,16 @@ struct hsVector3;
     "search all subworlds," etc.  */
 class plLOSDispatch : public hsKeyedObject
 {
-    friend class plPXRaycastQueryFilter;
-
+protected:
     enum class LOSResult
     {
         kHit,
         kCull,
         kMiss,
     };
+
+private:
+    friend class plPXRaycastQueryFilter;
 
     struct LOSRequest
     {
@@ -97,8 +101,24 @@ public:
 
 protected:
     bool ITestHit(const plSceneObject* obj) const;
-    bool IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey& world, plSimDefs::plLOSDB db,
-                  bool closest, plKey& hitObj, hsPoint3& hitPos, hsVector3& hitNormal, float& distance);
+
+    struct RaycastResult
+    {
+        LOSResult fResult;
+        plKey fHitObj;
+        hsPoint3 fPoint;
+        hsVector3 fNormal;
+        float fDistance;
+
+        RaycastResult(LOSResult result, plKey hit = {}, hsPoint3 point = { 0.f, 0.f, 0.f },
+                      hsVector3 normal = { 0.f, 0.f, 0.f }, float dist = 0.f)
+            : fResult(result), fHitObj(std::move(hit)), fPoint(std::move(point)),
+              fNormal(std::move(normal)), fDistance(dist)
+        { }
+    };
+
+    RaycastResult IRaycast(hsPoint3 origin, hsPoint3 destination, const plKey& world, plSimDefs::plLOSDB db,
+                           bool closest, plSimDefs::plLOSDB cullDB = plSimDefs::kLOSDBNone);
 };
 
 #endif

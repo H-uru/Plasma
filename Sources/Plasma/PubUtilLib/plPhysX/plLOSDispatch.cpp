@@ -86,60 +86,28 @@ bool plLOSDispatch::MsgReceive(plMessage* msg)
                 worldKey = av->GetController()->GetSubworld();
         }
 
-        auto hitMsg = std::make_unique<plLOSHitMsg>(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
-        hitMsg->fNoHit = !IRaycast(requestMsg->fFrom, requestMsg->fTo, worldKey, requestMsg->fRequestType,
-                                   requestMsg->GetTestType() == plLOSRequestMsg::kTestClosest,
-                                   hitMsg->fObj, hitMsg->fHitPoint, hitMsg->fNormal, hitMsg->fDistance);
-        if (!hitMsg->fNoHit) {
-            // If we have a cull db, adjust the length of the raycast to be from the
-            // original point to the object we hit.  If we find anything from the cull
-            // db in there, the cast fails.
-            if (requestMsg->GetCullDB() != plSimDefs::kLOSDBNone) {
-                plKey cullObj;
-                hsPoint3 cullPoint;
-                hsVector3 cullNormal;
-                float cullDistance;
-                bool cullHit = IRaycast(requestMsg->fFrom,
-                                        hitMsg->fHitPoint,
-                                        worldKey,
-                                        requestMsg->fCullDB,
-                                        requestMsg->GetTestType() == plLOSRequestMsg::kTestClosest,
-                                        cullObj,
-                                        cullPoint,
-                                        cullNormal,
-                                        cullDistance);
-                if (cullHit) {
-                    fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(),
-                                           LOSResult::kCull, hitMsg->fObj, cullObj);
-                    if (requestMsg->GetReportType() == plLOSRequestMsg::kReportMiss ||
-                        requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss) {
-                        hitMsg = std::make_unique<plLOSHitMsg>(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
-                        hitMsg->fNoHit = true;
-                    } else {
-                        hitMsg.reset();
-                    }
-                } else {
-                    fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(),
-                                           LOSResult::kHit, hitMsg->fObj);
-                }
-            } else {
-                fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(),
-                                       LOSResult::kHit, hitMsg->fObj);
-            }
-
-            if (hitMsg && (requestMsg->GetReportType() == plLOSRequestMsg::kReportHit ||
-                           requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss))
-                hitMsg.release()->Send();
-
-        } else {
-            fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(), LOSResult::kMiss);
-            if (requestMsg->GetReportType() == plLOSRequestMsg::kReportMiss ||
-                requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss) {
-                plLOSHitMsg* missMsg = new plLOSHitMsg(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
-                missMsg->fNoHit = true;
-                missMsg->Send();
-            }
+        auto result = IRaycast(requestMsg->fFrom, requestMsg->fTo, worldKey, requestMsg->fRequestType,
+                               requestMsg->GetTestType() == plLOSRequestMsg::kTestClosest,
+                               requestMsg->GetCullDB());
+        if (result.fResult == LOSResult::kHit &&
+            (requestMsg->GetReportType() == plLOSRequestMsg::kReportHit ||
+             requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss)) {
+            plLOSHitMsg* hitMsg = new plLOSHitMsg(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
+            hitMsg->fObj = result.fHitObj;
+            hitMsg->fHitPoint = result.fPoint;
+            hitMsg->fNormal = result.fNormal;
+            hitMsg->fDistance = result.fDistance;
+            hitMsg->Send();
+        } else if (result.fResult != LOSResult::kHit &&
+                   (requestMsg->GetReportType() == plLOSRequestMsg::kReportMiss ||
+                    requestMsg->GetReportType() == plLOSRequestMsg::kReportHitOrMiss)) {
+            plLOSHitMsg* missMsg = new plLOSHitMsg(GetKey(), requestMsg->GetSender(), requestMsg->fRequestID);
+            missMsg->fNoHit = true;
+            // Don't leak out any internal state, just report a miss.
+            missMsg->Send();
         }
+
+        fRequests.emplace_back(requestMsg->GetRequestName(), requestMsg->GetRequestID(), result.fResult);
 
         plProfile_EndTiming(LineOfSight);
         return true;
@@ -156,7 +124,7 @@ bool plLOSDispatch::MsgReceive(plMessage* msg)
         fDebugDisplay->Clear();
         fDebugDisplay->AddLineF("Num LOS Requests: {}", fRequests.size());
         fDebugDisplay->AddLine(plStatusLog::kGreen, "Hits");
-        fDebugDisplay->AddLine(plStatusLog::kYellow, "Culled Hits");
+        fDebugDisplay->AddLine(plStatusLog::kYellow, "Potentially Culled Hits");
         fDebugDisplay->AddLine(plStatusLog::kRed, "Misses");
         fDebugDisplay->AddLine("--------------------");
         fDebugDisplay->AddLine("\n");
