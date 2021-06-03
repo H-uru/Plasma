@@ -57,7 +57,7 @@ class xHideObjects(ptResponder):
 
     def OnFirstUpdate(self):
         z = 0
-        while z < hideRange.value-1:
+        while z < hideRange.value:
             hideObjects.value[z].draw.disable()
             hideObjects.value[z].physics.suppress(True)
             z += 1
