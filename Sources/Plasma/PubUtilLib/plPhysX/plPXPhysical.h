@@ -208,6 +208,8 @@ public:
     bool GetAngularVelocitySim(hsVector3& vel) const override;
     void SetAngularVelocitySim(const hsVector3& vel, bool wakeup=true) override;
 
+    void SetImpulseSim(const hsVector3& imp, bool wakeup=true);
+
     void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force=false) override;
     void GetTransform(hsMatrix44& l2w, hsMatrix44& w2l) override;
 

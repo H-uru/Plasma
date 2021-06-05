@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSimulationInterface.h"
 
 #include "plMessage/plAngularVelocityMsg.h"
+#include "plMessage/plImpulseMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plPhysical/plPhysicalSDLModifier.h"
@@ -136,6 +137,12 @@ bool plPXPhysical::MsgReceive( plMessage* msg )
         plAngularVelocityMsg* angvelMsg = plAngularVelocityMsg::ConvertNoRef(msg);
         if (angvelMsg) {
             SetAngularVelocitySim(angvelMsg->AngularVelocity());
+            return true;
+        }
+
+        plImpulseMsg* impMsg = plImpulseMsg::ConvertNoRef(msg);
+        if (impMsg) {
+            SetImpulseSim(impMsg->Impulse());
             return true;
         }
         return false;

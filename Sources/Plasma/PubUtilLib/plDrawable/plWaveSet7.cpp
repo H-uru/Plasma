@@ -96,6 +96,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plMatRefMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plImpulseMsg.h"
 
 #include "plTweak.h"
 
@@ -1033,10 +1034,10 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
     // Don't currently have anything informative from the physical to use.
     // So, let's fake something for the moment.
 
-//  plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
+    plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
 
-//  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0.f, 0.f, 1.f) * forceMag * dt);
-//  iMsg->Send();
+    plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0.f, 0.f, 1.f) * forceMag * dt);
+    iMsg->Send();
 
 #if 0
     plCONST(float) kRotScale(1.f);

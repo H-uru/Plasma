@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plWarpMsg.h"
+#include "plMessage/plImpulseMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
 #include "plMessage/plAngularVelocityMsg.h"
@@ -509,20 +510,18 @@ void cyPhysics::Torque(pyVector3& torque)
 //
 void cyPhysics::Impulse(pyVector3& impulse)
 {
-    hsAssert(0, "Who uses this?");
-    // must have a receiver!
-/*  if (!fRecvr.empty())
+    if (!fRecvr.empty())
     {
         // create message
         plImpulseMsg* pMsg = new plImpulseMsg;
         // check if this needs to be network forced to all clients
-        if (fNetForce )
+        if (fNetForce)
         {
             // set the network propagate flag to make sure it gets to the other clients
             pMsg->SetBCastFlag(plMessage::kNetPropagate);
             pMsg->SetBCastFlag(plMessage::kNetForce);
         }
-        if ( fSender )
+        if (fSender)
             pMsg->SetSender(fSender);
 
         // add all our receivers to the message receiver list
@@ -530,9 +529,8 @@ void cyPhysics::Impulse(pyVector3& impulse)
             pMsg->AddReceiver(rcKey);
 
         pMsg->SetImpulse(impulse.fVector);
-        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
+        plgDispatch::MsgSend(pMsg);   // whoosh... off it goes
     }
-*/
 }
 
 /////////////////////////////////////////////////////////////////////////////

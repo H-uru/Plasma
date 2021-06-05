@@ -492,6 +492,14 @@ void plPXPhysical::SetAngularVelocitySim(const hsVector3& vel, bool wakeup)
     }
 }
 
+void plPXPhysical::SetImpulseSim(const hsVector3& imp, bool wakeup)
+{
+    if (auto dynamic = fActor->is<physx::PxRigidDynamic>()) {
+        plPXActorSimulationLock lock(fActor);
+        dynamic->addForce(plPXConvert::Vector(imp), physx::PxForceMode::eIMPULSE, wakeup);
+    }
+}
+
 // ==========================================================================
 
 physx::PxConvexMesh* plPXPhysical::ICookHull(hsStream* s)

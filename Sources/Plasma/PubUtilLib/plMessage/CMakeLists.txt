@@ -74,6 +74,7 @@ set(plMessage_HEADERS
     plDynamicEnvMapMsg.h
     plDynamicTextMsg.h
     plExcludeRegionMsg.h
+    plImpulseMsg.h
     plInputEventMsg.h
     plInputIfaceMgrMsg.h
     plInterestingPing.h

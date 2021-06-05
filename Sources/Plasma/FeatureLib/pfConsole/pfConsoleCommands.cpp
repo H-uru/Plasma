@@ -115,6 +115,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plBulletMsg.h"
 #include "plMessage/plConsoleMsg.h"
+#include "plMessage/plImpulseMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plMovieMsg.h"
@@ -4914,10 +4915,11 @@ PF_CONSOLE_CMD( Physics, ApplyTorque, "string Object, float axisX, float axisY, 
         plgDispatch::MsgSend(m);
     }
 }
+*/
 
 PF_CONSOLE_CMD( Physics, ApplyImpulse, "string Object, float x, float y, float z", "Apply an impulse to a scene object.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {
@@ -4927,6 +4929,7 @@ PF_CONSOLE_CMD( Physics, ApplyImpulse, "string Object, float x, float y, float z
     }
 }
 
+/*
 PF_CONSOLE_CMD( Physics, ApplyImpulseAtPoint, "string Object, float impulseX, float impulseY, float impulseZ, float pointX, float pointY, float pointZ", "Apply an impulse to a scene object at a particular point in world space.")
 {
     plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);

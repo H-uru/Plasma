@@ -128,6 +128,9 @@ REGISTER_CREATABLE(plDynamicTextMsg);
 #include "plExcludeRegionMsg.h"
 REGISTER_CREATABLE(plExcludeRegionMsg);
 
+#include "plImpulseMsg.h"
+REGISTER_CREATABLE(plImpulseMsg);
+
 #include "plInputEventMsg.h"
 REGISTER_CREATABLE(plAvatarInputStateMsg);
 REGISTER_CREATABLE(plControlEventMsg);
