@@ -120,8 +120,8 @@ public:
     int NumSubMtls() override;
     Mtl* GetSubMtl(int i) override;
     void SetSubMtl(int i, Mtl *m) override;
-    TSTR GetSubMtlSlotName(int i) override;
-    TSTR GetSubMtlTVName(int i);
+    MSTR GetSubMtlSlotName(int i) override;
+    MSTR GetSubMtlTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
     plCompositeMtl(BOOL loading);

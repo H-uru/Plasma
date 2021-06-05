@@ -1051,7 +1051,7 @@ void plParticleVolumeComponent::BuildVolume(plMaxNode *node)
         return; // already converted it
 
     fBound = new plBoundInterface;
-    hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fBound, node->GetLocation(), node->GetLoadMask());
+    hsgResMgr::ResMgr()->NewKey(M2ST(node->GetName()), fBound, node->GetLocation(), node->GetLoadMask());
     fBound->Init(plMeshConverter::Instance().CreateConvexVolume(node));
     hsgResMgr::ResMgr()->AddViaNotify(fBound->GetKey(), new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 }

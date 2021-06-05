@@ -215,18 +215,18 @@ protected:
         int idx = ComboBox_GetCurSel( GetDlgItem( fhDlg, IDC_COMP_LOCATION_AGECOMBO ) );
         if( idx == CB_ERR )
             return;
-        char *agePath = (char *)ComboBox_GetItemData( GetDlgItem( fhDlg, IDC_COMP_LOCATION_AGECOMBO ), idx );
-        if (agePath == nullptr)
+        auto agePath = (ST::string*)ComboBox_GetItemData( GetDlgItem( fhDlg, IDC_COMP_LOCATION_AGECOMBO ), idx );
+        if (agePath == nullptr || agePath->empty())
             return;
 
         // Get the age description
-        plAgeDescription aged( agePath );
+        plAgeDescription aged( *agePath );
 
         // Set the seqPrefix here. (Where else would you suggest?)
         fPB->SetValue( plPageInfoComponent::kInfoSeqPrefix, 0, (int)aged.GetSequencePrefix() );
 
-        const char *curPage = fPB->GetStr(plPageInfoComponent::kInfoPage);
-        if (curPage && *curPage == '\0')
+        const MCHAR* curPage = fPB->GetStr(plPageInfoComponent::kInfoPage);
+        if (curPage && *curPage == _M('\0'))
             curPage = nullptr;
 
         // Load the page combo and select the saved page (if it's in there)
@@ -234,7 +234,7 @@ protected:
         aged.SeekFirstPage();
         while ((page = aged.GetNextPage()) != nullptr)
         {
-            int idx = ComboBox_AddString(hPageCombo, page->GetName().c_str() );
+            int idx = ComboBox_AddString(hPageCombo, ST2T(page->GetName()));
             if (curPage && (page->GetName() == curPage))
                 ComboBox_SetCurSel(hPageCombo, idx);
             ComboBox_SetItemData( hPageCombo, idx, (int)page->GetSeqSuffix() );
@@ -245,9 +245,7 @@ protected:
     {
         while( ComboBox_GetCount( combo ) > 0 )
         {
-            char *path = (char *)ComboBox_GetItemData( combo, 0 );
-            if (path != nullptr)
-                delete [] path;
+            delete (ST::string*)ComboBox_GetItemData( combo, 0 );
             ComboBox_DeleteString( combo, 0 );
         }
     }
@@ -259,17 +257,17 @@ protected:
 
         std::vector<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
 
-        const char *curAge = fPB->GetStr(plPageInfoComponent::kInfoAge);
-        if (!curAge || *curAge == '\0')
-            curAge = "";
+        const MCHAR* curAge = fPB->GetStr(plPageInfoComponent::kInfoAge);
+        if (!curAge || *curAge == _M('\0'))
+            curAge = _M("");
 
         for (const plFileName& ageFile : ageFiles)
         {
             ST::string ageName = ageFile.GetFileNameNoExt();
 
-            int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
+            int idx = ComboBox_AddString(hAgeCombo, ST2T(ageName));
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData(hAgeCombo, idx, (LPARAM)hsStrcpy(ageFile.AsString().c_str()));
+            ComboBox_SetItemData(hAgeCombo, idx, new ST::string(ageFile.AsString()));
 
             if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );
@@ -305,10 +303,10 @@ public:
                 int idx = ComboBox_GetCurSel(hAgeCombo);
                 if (idx != CB_ERR)
                 {
-                    char buf[256];
-                    ComboBox_GetText(hAgeCombo, buf, sizeof(buf));
+                    TCHAR buf[256];
+                    ComboBox_GetText(hAgeCombo, buf, std::size(buf));
                     fPB->SetValue(plPageInfoComponent::kInfoAge, 0, buf);
-                    fPB->SetValue(plPageInfoComponent::kInfoPage, 0, "");
+                    fPB->SetValue(plPageInfoComponent::kInfoPage, 0, _M(""));
                     fPB->SetValue(plPageInfoComponent::kInfoSeqSuffix, 0, (int)-1 );
                     ILoadPages();
                 }
@@ -321,8 +319,8 @@ public:
                 int idx = ComboBox_GetCurSel(hPageCombo);
                 if (idx != CB_ERR)
                 {
-                    char buf[256];
-                    ComboBox_GetText(hPageCombo, buf, sizeof(buf));
+                    TCHAR buf[256];
+                    ComboBox_GetText(hPageCombo, buf, std::size(buf));
                     fPB->SetValue( plPageInfoComponent::kInfoPage, 0, buf );
                     fPB->SetValue(plPageInfoComponent::kInfoSeqSuffix, 0, (int)ComboBox_GetItemData(hPageCombo, idx));
                 }
@@ -372,7 +370,7 @@ ParamBlockDesc2 gPageInfoCompBk
     p_end
 );
 
-char    plPageInfoComponent::fCurrExportedAge[ 256 ] = "";
+TCHAR    plPageInfoComponent::fCurrExportedAge[ 256 ] = _T("");
 
 plPageInfoComponent::plPageInfoComponent()
 {
@@ -390,44 +388,46 @@ bool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
     if (pNode->GetRoomKey())
         return false;
 
-    const char *age = fCompPB->GetStr(kInfoAge);
-    const char *room = fCompPB->GetStr(kInfoPage);
+    const MCHAR* age = fCompPB->GetStr(kInfoAge);
+    const MCHAR* room = fCompPB->GetStr(kInfoPage);
 
     if (!age || *age == '\0' || !room || *room == '\0')
     {
         pErrMsg->Set(true,
-                    "PageInfo Component Error",
-                    "No Label for the Age, Chapter, or Page, on the Location component found on %s",
-                    pNode->GetName()).Show();
+                     "PageInfo Component Error",
+                     ST::format("No Label for the Age, Chapter, or Page, on the Location component found on {}",
+                                pNode->GetName())
+                     ).Show();
         return false;   
     }
 
     // If we're only exporting a certain page, and this location isn't it, don't export this node
-    const char* exportPage = plConvert::Instance().GetConvertSettings()->fExportPage;
-    if (exportPage && stricmp(room, exportPage))
+    const TCHAR* exportPage = plConvert::Instance().GetConvertSettings()->fExportPage;
+    if (exportPage && _tcsicmp(room, exportPage))
     {
         pNode->SetCanConvert(false);
         return true;
     }
 
     // Check to make sure we don't try to export more than one age at a time
-    if( fCurrExportedAge[ 0 ] == 0 )
-        strncpy( fCurrExportedAge, age, sizeof( fCurrExportedAge ) );
+    if( *fCurrExportedAge == _T('\0') )
+        _tcsncpy(fCurrExportedAge, age, std::size(fCurrExportedAge));
     else
     {
-        if( stricmp( fCurrExportedAge, age ) != 0 )
+        if( _tcsicmp( fCurrExportedAge, age ) != 0 )
         {
             // Our only currently accepted exception (eh?) is GlobalClothing and GlobalAvatars
-            if( ( stricmp( age, "GlobalAvatars" ) == 0 && stricmp( fCurrExportedAge, "GlobalClothing" ) == 0 ) ||
-                ( stricmp( age, "GlobalClothing" ) == 0 && stricmp( fCurrExportedAge, "GlobalAvatars" ) == 0 ) )
+            if( (_tcsicmp( age, _T("GlobalAvatars") ) == 0 && _tcsicmp( fCurrExportedAge, _T("GlobalClothing") ) == 0 ) ||
+                (_tcsicmp( age, _T("GlobalClothing") ) == 0 && _tcsicmp( fCurrExportedAge, _T("GlobalAvatars") ) == 0 ) )
             {
             }
             else
             {
                 pErrMsg->Set( true, "PageInfo Component Error", 
-                                "The scene you are trying to export is attempting to export to both ages %s and"
-                                " %s. You are only allowed to export to one age at a time.",
-                                fCurrExportedAge, age ).Show();
+                              ST::format( "The scene you are trying to export is attempting to export to both ages {} and"
+                                          " {}. You are only allowed to export to one age at a time.",
+                                          fCurrExportedAge, age )
+                            ).Show();
 
                 // Reset for next time
                 return false;
@@ -452,53 +452,59 @@ bool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
         if( !fSeqNumValidated && seqNum != 0 )
         {
             // What error was it, exactly?
-            char        errMsg[ 1024 ];
+            ST::string errMsg;
             const plPageInfo *lastPage = plPluginResManager::ResMgr()->GetLastVerifyPage();
 
             if( plPluginResManager::ResMgr()->GetLastVerifyError() == plPluginResManager::kErrRightPageWrongSeq )
             {
-                sprintf( errMsg, "The Page Info component for %s>%s applied to object %s is attempting to export with a sequence number "
-                    "different from what is already exported. Further, the already-exported page %s>%s has "
+                errMsg = ST::format(
+                    "The Page Info component for {}>{} applied to object {} is attempting to export with a sequence number "
+                    "different from what is already exported. Further, the already-exported page {}>{} has "
                     "the same sequence number as this Page Info component now. This is most likely due to the .age "
                     "files having been changed since the old page was exported. The recommended solution would be to "
                     "delete the offending page data and export both pages again.\n\n"
-                    "The exporter has assigned a valid temporary sequence number for page %s>%s, but this data should not be used "
+                    "The exporter has assigned a valid temporary sequence number for page {}>{}, but this data should not be used "
                     "for playing over the network or released for external use.\n\n"
-                    "\t(Original sequence #: 0x%X)\n\t(Temporary sequence #: 0x%X)", 
-                                    age, room, pNode->GetName(), 
-                                    lastPage->GetAge().c_str(), lastPage->GetPage().c_str(), age, room, seqNum, newNum );
+                    "\t(Original sequence #: 0x{X})\n\t(Temporary sequence #: 0x{X})",
+                    age, room, pNode->GetName(),
+                    lastPage->GetAge(), lastPage->GetPage(),
+                    age, room, seqNum, newNum);
             }
             else if( plPluginResManager::ResMgr()->GetLastVerifyError() == plPluginResManager::kErrSeqAlreadyTaken )
             {
-                sprintf( errMsg, "The Page Info component for %s>%s applied to object %s is attempting to export with "
-                    "an identical sequence number to the already-exported page %s>%s. This is usually due to "
+                errMsg = ST::format(
+                    "The Page Info component for {}>{} applied to object {} is attempting to export with "
+                    "an identical sequence number to the already-exported page {}>{}. This is usually due to "
                     "either page having been exported with an invalid or missing .age file. Please verify that both "
                     "pages have valid .age files and their sequence numbers do not conflict in the Age Description "
                     "Manager.\n\n"
-                    "The exporter has assigned a valid temporary sequence number for page %s>%s, but this data should not be used "
+                    "The exporter has assigned a valid temporary sequence number for page {}>{}, but this data should not be used "
                     "for playing over the network or released for external use.\n\n"
-                    "\t(Original sequence #: 0x%X)\n\t(Temporary sequence #: 0x%X)", 
-                                    age, room, pNode->GetName(), 
-                                    lastPage->GetAge().c_str(), lastPage->GetPage().c_str(), age, room, seqNum, newNum );
+                    "\t(Original sequence #: 0x{X})\n\t(Temporary sequence #: 0x{X})",
+                    age, room, pNode->GetName(),
+                    lastPage->GetAge(), lastPage->GetPage(),
+                    age, room, seqNum, newNum);
             }
             else if( plPluginResManager::ResMgr()->GetLastVerifyError() == plPluginResManager::kErrCantFindValid )
             {
-                sprintf( errMsg, "The Page Info component for %s>%s applied to object %s is attempting to export with "
+                errMsg = ST::format(
+                    "The Page Info component for {}>{} applied to object {} is attempting to export with "
                     "an invalid sequence number. The exporter could not find a valid, free sequence number to use, so this "
                     "page cannot be exported. Contact mcn (ext 264) immediately!\n\n"
-                    "\t(Original sequence #: 0x%X)", 
+                    "\t(Original sequence #: 0x{X})", 
                     age, room, pNode->GetName(), seqNum );
                 pErrMsg->Set( true, "PageInfo Convert Error", errMsg ).Show(); 
                 return false;
             }
             else
             {
-                sprintf( errMsg, "The Page Info component for %s>%s applied to object %s is attempting to export with "
+                errMsg = ST::format(
+                    "The Page Info component for {}>{} applied to object {} is attempting to export with "
                     "a sequence number that is invalid for an unknown reason.\n\n"
                     "The exporter has assigned a valid temporary sequence number, but this data should not be used "
                     "for playing over the network or released for external use.\n\n"
-                    "\t(Original sequence #: 0x%X)\n\t(Temporary sequence #: 0x%X)", 
-                    age, room, pNode->GetName(), seqNum, newNum );
+                    "\t(Original sequence #: 0x{X})\n\t(Temporary sequence #: 0x{X})",
+                    age, room, pNode->GetName(), seqNum, newNum);
             }
             pErrMsg->Set( true, "PageInfo Convert Error", errMsg ).Show(); 
             pErrMsg->Set( false );
@@ -514,14 +520,16 @@ bool plPageInfoComponent::SetupProperties(plMaxNode *pNode, plErrorMsg *pErrMsg)
     {
         pErrMsg->Set(true,
             "PageInfo Convert Error",
-            "Location Component %s has a Missing Location.  Nuke the files in the dat directory and re-export.",
-            pNode->GetName()).Show();
+            ST::format(
+                "Location Component {} has a Missing Location.  Nuke the files in the dat directory and re-export.",
+                pNode->GetName())
+            ).Show();
         return false;
     }
     pNode->SetRoomKey(roomKey);
     
 
-    if (!strcmp(age, "GlobalClothing"))
+    if (!_tcscmp(age, _T("GlobalClothing")))
         ((plSceneNode *)roomKey->GetObjectPtr())->SetFilterGenericsOnly(true);
     
     return true;
@@ -561,7 +569,7 @@ bool plPageInfoComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
     return true;
 }
 
-const char *plPageInfoComponent::GetAgeName()
+const MCHAR* plPageInfoComponent::GetAgeName()
 {
     return fCompPB->GetStr(ParamID(kInfoAge));
 }
@@ -588,7 +596,10 @@ void    plPageInfoComponent::IVerifyLatestAgeAsset( const ST::string &ageName, c
         if (!assetMan->GetLatestVersionFile(assetId, assetPath, sizeof(assetPath)))
         {
             errMsg->Set( true, "PageInfo Convert Error",
-                "Unable to update age file for '%s' because AssetMan was unable to get the latest version. Using local copy instead.", ageName.c_str() ).Show();
+                ST::format(
+                    "Unable to update age file for '{}' because AssetMan was unable to get the latest version. Using local copy instead.",
+                    ageName )
+                ).Show();
             errMsg->Set( false );
             return;
         }
@@ -623,22 +634,24 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
-                     "There was a problem converting the PageInfo Component %s (the age folder couldn't be located). "
-                     "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
-                    GetINode()->GetName() ).Show();
+                     ST::format( "There was a problem converting the PageInfo Component {} (the age folder couldn't be located). "
+                                 "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
+                                 GetINode()->GetName() )
+                    ).Show();
         errMsg->Set( false );
         fCompPB->SetValue( kInfoSeqPrefix, 0, 0 );
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
         return;
     }
-    const char *curAge = fCompPB->GetStr( kInfoAge );
+    const MCHAR* curAge = fCompPB->GetStr( kInfoAge );
     if( !curAge || *curAge == '\0' )
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
-                     "There was a problem converting the PageInfo Component %s (no age name was selected). "
-                     "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
-                    GetINode()->GetName()).Show();
+                     ST::format( "There was a problem converting the PageInfo Component {} (no age name was selected). "
+                                 "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
+                                 GetINode()->GetName())
+                   ).Show();
         errMsg->Set( false );
         fCompPB->SetValue( kInfoSeqPrefix, 0, 0 );
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
@@ -653,9 +666,10 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
-                     "There was a problem converting the PageInfo Component %s (the age name \"%s\" is invalid). "
-                     "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
-                    GetINode()->GetName(), curAge ).Show();
+                     ST::format( "There was a problem converting the PageInfo Component {} (the age name \"{}\" is invalid). "
+                                 "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
+                                 GetINode()->GetName(), curAge )
+                    ).Show();
         errMsg->Set( false );
         fCompPB->SetValue( kInfoSeqPrefix, 0, 0 );
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
@@ -666,14 +680,15 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     fCompPB->SetValue( kInfoSeqPrefix, 0, (int)aged->GetSequencePrefix() );
 
     // Find our page
-    const char *compPBPageName = fCompPB->GetStr( kInfoPage );
+    const MCHAR* compPBPageName = fCompPB->GetStr( kInfoPage );
     if (compPBPageName == nullptr)
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
-                     "There was a problem converting the PageInfo Component %s (no page name was specified). "
-                     "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
-                    GetINode()->GetName() ).Show();
+                     ST::format( "There was a problem converting the PageInfo Component {} (no page name was specified). "
+                                 "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
+                                 GetINode()->GetName() )
+                    ).Show();
         errMsg->Set( false );
         fCompPB->SetValue( kInfoSeqPrefix, 0, 0 );
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
@@ -690,16 +705,16 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
             fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
 
             // Also re-copy the page name, just to make sure the case is correct
-            fCompPB->SetValue( kInfoPage, 0, const_cast<char*>(page->GetName().c_str()) );
+            fCompPB->SetValue( kInfoPage, 0, ST2M(page->GetName()) );
             return;
         }
     }
 
     // If we got here, the page name is invalid
-    char msg[ 512 ];
-    sprintf( msg, "There was a problem converting the PageInfo Component %s (the page \"%s\" wasn't found in the age file for age \"%s\"). "
-                  "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
-                  GetINode()->GetName(), compPBPageName, curAge );
+    ST::string msg = ST::format(
+        "There was a problem converting the PageInfo Component {} (the page \"{}\" wasn't found in the age file for age \"{}\"). "
+        "The exporter will assign a temporary sequence number to this page, but you'll be lucky if it works at all.",
+        GetINode()->GetName(), compPBPageName, curAge);
     errMsg->Set( true, "PageInfo Convert Error", msg ).Show();
     errMsg->Set( false );
     fCompPB->SetValue( kInfoSeqPrefix, 0, 0 );
@@ -750,7 +765,7 @@ int32_t   plPageInfoUtils::GetCommonSeqNumFromNormal( int32_t normalSeqNumber, i
     return CombineSeqNum( prefix, kFirstCommonSeqSuffix - whichCommonPage );
 }
 
-int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char *pageName )
+int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const ST::string& ageName, const ST::string& pageName )
 {
     int             seqPrefix, seqSuffix = 0;
     plAgeDescription *aged = GetAgeDesc( ageName );
@@ -795,12 +810,12 @@ plAgeDescription *plPageInfoUtils::GetAgeDesc( const ST::string &ageName )
     }
 }
 
-const char* LocCompGetPage(plComponentBase* comp)
+const MCHAR* LocCompGetPage(plComponentBase* comp)
 {
     if (!comp)
         return nullptr;
 
-    const char* page = nullptr;
+    const MCHAR* page = nullptr;
     
     if (comp->ClassID() == PAGEINFO_CID)
     {
@@ -808,13 +823,13 @@ const char* LocCompGetPage(plComponentBase* comp)
         page = pb->GetStr(plPageInfoComponent::kInfoPage);
     }
     
-    if (page && *page != '\0')
+    if (page && *page != _M('\0'))
         return page;
     
     return nullptr;
 }
 
-static const char *CheckPageInfoCompsRecur(plMaxNode *node)
+static const TCHAR* CheckPageInfoCompsRecur(plMaxNode *node)
 {
     plComponentBase *comp = node->ConvertToComponent();
     if (comp && comp->ClassID() == PAGEINFO_CID)
@@ -825,7 +840,7 @@ static const char *CheckPageInfoCompsRecur(plMaxNode *node)
     
     for (int i = 0; i < node->NumberOfChildren(); i++)
     {
-        const char *result = CheckPageInfoCompsRecur((plMaxNode*)node->GetChildNode(i));
+        auto result = CheckPageInfoCompsRecur((plMaxNode*)node->GetChildNode(i));
         if (result)
             return result;
     }
@@ -836,9 +851,9 @@ void plPageInfoComponent::NotifyProc(void *param, NotifyInfo *info)
 {
     if (info->intcode == NOTIFY_FILE_POST_OPEN)
     {
-        const char *ageName = CheckPageInfoCompsRecur((plMaxNode*)GetCOREInterface()->GetRootNode());
+        const TCHAR* ageName = CheckPageInfoCompsRecur((plMaxNode*)GetCOREInterface()->GetRootNode());
         if (ageName != nullptr)
-            strncpy( fCurrExportedAge, ageName, sizeof( fCurrExportedAge ) );
+            _tcsncpy(fCurrExportedAge, ageName, std::size(fCurrExportedAge));
     }
     else if (info->intcode == NOTIFY_SYSTEM_POST_RESET ||
         info->intcode == NOTIFY_SYSTEM_POST_NEW)
@@ -1505,7 +1520,7 @@ public:
         case WM_INITDIALOG:
             {
                     IParamBlock2 *pb = map->GetParamBlock();
-                    map->SetTooltip(kLeaderObjectSel, TRUE, "Press the button, & select the object to follow in one of the Viewports" );
+                    map->SetTooltip(kLeaderObjectSel, TRUE, _M("Press the button, & select the object to follow in one of the Viewports"));
                     if( pb->GetInt(kLeaderTypeRadio) == int32_t(plFollowMod::kObject) )
                         map->Enable(kLeaderObjectSel, TRUE);
                     else
@@ -2322,12 +2337,12 @@ protected:
             plLayerTex *layer = comp->GetBitmap( i );
             if (layer != nullptr)
             {
-                const char *str = layer->GetPBBitmap()->bi.Filename();
+                const TCHAR* str = layer->GetPBBitmap()->bi.Filename();
                 int idx = (int)SendMessage(ctrl, LB_ADDSTRING, 0, (LPARAM)str);
                 SendMessage( ctrl, LB_SETITEMDATA, (WPARAM)idx, (LPARAM)i );
 
                 SIZE strSize;
-                GetTextExtentPoint32( dc, str, strlen(str), &strSize );
+                GetTextExtentPoint32( dc, str, _tcslen(str), &strSize );
                 if( strSize.cx > maxWidth )
                     maxWidth = strSize.cx;
             }
@@ -2529,10 +2544,10 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 if (fCompPB->GetInt(kCompressImage, 0, i) == 0)
                 {
                     flags |= plBitmap::kForceNonCompressed;
-                    bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags );
+                    bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), lib->GetKey()->GetUoid().GetLocation(), 0, flags );
                 }
                 else // compress using PNG compression scheme
-                    bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
+                    bMap = plLayerConverter::Instance().CreateSimpleTexture( M2ST(texture->bi.Name()), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
                 if (bMap != nullptr)
                 {
                     hsgResMgr::ResMgr()->AddViaNotify( bMap->GetKey(), new plGenRefMsg( lib->GetKey(), 

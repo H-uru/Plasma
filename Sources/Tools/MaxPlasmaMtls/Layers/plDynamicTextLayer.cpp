@@ -246,13 +246,13 @@ Animatable* plDynamicTextLayer::SubAnim(int i)
     }
 }
 
-TSTR plDynamicTextLayer::SubAnimName(int i) 
+MSTR plDynamicTextLayer::SubAnimName(int i) 
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
@@ -452,29 +452,29 @@ BITMAPINFO *plDynamicTextLayer::GetVPDisplayDIB(TimeValue t, TexHandleMaker& thm
     // Background letters
     int nHeight = -MulDiv( 72, GetDeviceCaps( winDC, LOGPIXELSY ), 72 );
     HFONT winFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, "Times New Roman" );
+                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, _T("Times New Roman") );
     if (winFont != nullptr)
     {
         HFONT origFont = (HFONT)SelectObject( winDC, winFont );
         SetTextColor( winDC, RGB( 32, 32, 32 ) );
-        char str2[] = "ABCDEFG";
-        ::TextOut( winDC, 0, 0, str2, strlen( str2 ) );
+        TCHAR str2[] = _T("ABCDEFG");
+        ::TextOut( winDC, 0, 0, str2, std::size( str2 ) );
         SelectObject( winDC, origFont );
         DeleteObject( winFont );
     }
 
     nHeight = -MulDiv( 8, GetDeviceCaps( winDC, LOGPIXELSY ), 72 );
     winFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, "Arial" );
+                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, _T("Arial") );
     if (winFont != nullptr)
     {
         HFONT origFont = (HFONT)SelectObject( winDC, winFont );
 
         SetTextColor( winDC, RGB( 255, 255, 255 ) );
-        char str[] = "Dynamic Text";
-        ::TextOut( winDC, 0, 0, str, strlen( str ) );
-        char str3[] = "This is 8 point Arial";
-        ::TextOut( winDC, 0, 12, str3, strlen( str3 ) );
+        TCHAR str[] = _T("Dynamic Text");
+        ::TextOut( winDC, 0, 0, str, std::size( str ) );
+        TCHAR str3[] = _T("This is 8 point Arial");
+        ::TextOut( winDC, 0, 12, str3, std::size( str3 ) );
 
         SelectObject( winDC, origFont );
         DeleteObject( winFont );
@@ -547,7 +547,7 @@ DWORD_PTR plDynamicTextLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& th
     }
 }
 
-const char *plDynamicTextLayer::GetTextureName( int which )
+const MCHAR* plDynamicTextLayer::GetTextureName( int which )
 {
     PBBitmap *pbbm = fBitmapPB->GetBitmap( kBmpInitBitmap );
     if( pbbm )

@@ -805,7 +805,7 @@ int plDistributor::ISelectRepNode() const
 
 BOOL plDistributor::ISetupNormals(plMaxNode* node, Mesh* mesh, BOOL radiateNorm) const
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     UVVert *normMap = mesh->mapVerts(kNormMapChan); 
     int numNormVerts = mesh->getNumMapVerts(kNormMapChan);
@@ -858,7 +858,7 @@ BOOL plDistributor::ISetupNormals(plMaxNode* node, Mesh* mesh, BOOL radiateNorm)
 
 BOOL plDistributor::ISetupSkinWeights(plMaxNode* node, Mesh* mesh, const Point3& flex) const
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     Matrix3 otm = node->GetOTM();
 

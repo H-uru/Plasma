@@ -261,10 +261,10 @@ void plMultistageBehComponent::CreateRollups()
     plComponent::CreateRollups();
 
     fDlg = GetCOREInterface()->AddRollupPage(hInstance,
-                                            MAKEINTRESOURCE(IDD_COMP_MULTIBEH),
-                                            IStaticDlgProc,
-                                            "Multistage Behavior",
-                                            (LPARAM)this);
+                                             MAKEINTRESOURCE(IDD_COMP_MULTIBEH),
+                                             IStaticDlgProc,
+                                             _M("Multistage Behavior"),
+                                             (LPARAM)this);
     IInitDlg();
 
     ICreateStageDlg();
@@ -283,11 +283,11 @@ void plMultistageBehComponent::DestroyRollups()
     plComponent::DestroyRollups();
 }
 
-int ListView_AddString(HWND hList, const char* str)
+int ListView_AddString(HWND hList, const TCHAR* str)
 {
     LVITEM item = {0};
     item.mask = LVIF_TEXT;
-    item.pszText = const_cast<char*>(str); // F*** you Windows
+    item.pszText = const_cast<TCHAR*>(str); // F*** you Windows
     item.iItem = ListView_GetItemCount(hList);
     return ListView_InsertItem(hList, &item);
 }
@@ -298,14 +298,14 @@ void plMultistageBehComponent::IInitDlg()
     HWND hList = GetDlgItem(fDlg, IDC_STAGE_LIST);
     LVCOLUMN lvc;
     lvc.mask = LVCF_TEXT;
-    lvc.pszText = "Blah";
+    lvc.pszText = _T("Blah");
     ListView_InsertColumn(hList, 0, &lvc);
 
     FixStageNames();
     for (int i = 0; i < fStages.size(); i++)
     {
         plBaseStage* stage = fStages[i];
-        ListView_AddString(hList, stage->GetName().c_str());
+        ListView_AddString(hList, ST2T(stage->GetName()));
     }
 
     // Make sure the column is wide enough
@@ -353,13 +353,13 @@ INT_PTR plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, L
                 plBaseStage* stage = new plStandardStage;
                 int count = fStages.size();
                 fStages.push_back(stage);
-                char buf[64];
-                sprintf(buf, "Stage %d", count);
+                TCHAR buf[64];
+                _sntprintf(buf, std::size(buf), _T("Stage %d"), count);
                 stage->SetName(buf);
 
                 // Add the new stage to the list and make sure the list is wide enough
                 HWND hList = GetDlgItem(fDlg, IDC_STAGE_LIST);
-                int idx = ListView_AddString(hList, stage->GetName().c_str());
+                int idx = ListView_AddString(hList, ST2T(stage->GetName()));
                 ListView_SetColumnWidth(hList, 0, LVSCW_AUTOSIZE);
                 ListView_SetItemState(hList, idx, LVIS_SELECTED, LVIS_SELECTED);
 
@@ -432,10 +432,10 @@ INT_PTR plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, L
                 case LVN_ENDLABELEDIT:
                     {
                         NMLVDISPINFO *di = (NMLVDISPINFO*)lParam;
-                        const char *name = di->item.pszText;
+                        const TCHAR* name = di->item.pszText;
 
                         // If the name was changed...
-                        if (name && *name != '\0')
+                        if (name && *name != _T('\0'))
                         {
                             plBaseStage* stage = fStages[fCurStage];
                             stage->SetName(name);

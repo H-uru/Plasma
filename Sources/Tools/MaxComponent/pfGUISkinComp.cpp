@@ -146,8 +146,8 @@ void    pfGUISkinEditProc::IRefreshDblBuffer()
                          pb->GetInt( fCurrPBRefSet + 1 ) + pb->GetInt( fCurrPBRefSet + 3 ) );
             
             // While we have it here, go ahead and update our status text for this element
-            char str[ 256 ];
-            sprintf( str, "Left: %d\nTop: %d\nWidth: %d\nHeight: %d\n", r.left, r.top, r.right - r.left, r.bottom - r.top );
+            TCHAR str[ 256 ];
+            _sntprintf( str, std::size(str), _T("Left: %d\nTop: %d\nWidth: %d\nHeight: %d\n"), r.left, r.top, r.right - r.left, r.bottom - r.top );
             SetDlgItemText( fHWnd, IDC_GUI_INFO, str );
                             
             r.left *= fZoom; r.right *= fZoom; r.top *= fZoom; r.bottom *= fZoom;

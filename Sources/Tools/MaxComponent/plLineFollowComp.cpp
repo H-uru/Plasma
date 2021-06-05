@@ -131,9 +131,9 @@ public:
         case WM_INITDIALOG:
             {
                     IParamBlock2* pb = map->GetParamBlock();
-                    map->SetTooltip(kPathObjectSel, TRUE, "Press the button, & select the path source object in one of the Viewports" );
-                    map->SetTooltip(kFollowObjectSel, TRUE, "Press the button, & select the object to follow in one of the Viewports" );
-                    map->SetTooltip(kOffsetDegrees, TRUE, "Positive angle to right, negative to left." );
+                    map->SetTooltip(kPathObjectSel, TRUE, _M("Press the button, & select the path source object in one of the Viewports") );
+                    map->SetTooltip(kFollowObjectSel, TRUE, _M("Press the button, & select the object to follow in one of the Viewports") );
+                    map->SetTooltip(kOffsetDegrees, TRUE, _M("Positive angle to right, negative to left.") );
                     if( pb->GetInt(kFollowModeRadio) == plLineFollowMod::kFollowObject )
                         map->Enable(kFollowObjectSel, TRUE);
                     else
@@ -306,7 +306,7 @@ bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
     plMaxNode* pathNode = (plMaxNode*)fCompPB->GetINode(kPathObjectSel);
     if(!pathNode)
     {
-        pErrMsg->Set(true, "Path Node Failure", "Path Node %s was set to be Ignored or empty. Path Component ignored.", ((INode*)pathNode)->GetName()).Show();
+        pErrMsg->Set(true, "Path Node Failure", ST::format("Path Node {} was set to be Ignored or empty. Path Component ignored.", ((INode*)pathNode)->GetName())).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -835,7 +835,7 @@ bool plSwivelComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
             }
             else
             {
-                pErrMsg->Set(true, node->GetName(), "Swivel to look at component %s has no Plasma object to look at.", GetINode()->GetName()).Show();
+                pErrMsg->Set(true, node->GetName(), ST::format("Swivel to look at component {} has no Plasma object to look at.", GetINode()->GetName())).Show();
                 pErrMsg->Set(false);
                 pMod->SetFollowMode(plViewFaceModifier::kFollowCamera);
             }

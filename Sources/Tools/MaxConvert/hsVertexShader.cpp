@@ -140,7 +140,7 @@ void hsVertexShader::Close()
 void hsVertexShader::ShadeNode(INode* node, hsMatrix44& l2w, hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans)
 {
     // If we're flagged for WaterColor, our vertex colors are already done.
-    if( ((plMaxNodeBase*)node)->GetCalcEdgeLens() || node->UserPropExists("XXXWaterColor") )
+    if( ((plMaxNodeBase*)node)->GetCalcEdgeLens() || node->UserPropExists(_M("XXXWaterColor")) )
         return;
 
     fLightMapGen->InitNode(node);
@@ -171,8 +171,8 @@ void hsVertexShader::IShadeSpan( plGeometrySpan *span, INode* node )
 
 
     hsGuardBegin("hsVertexShader::ShadeSpan");
-    
-    const char* dbgNodeName = node->GetName(); 
+
+    auto dbgNodeName = node->GetName();
 
     if( span->fNumVerts == 0 )
         return;
@@ -384,7 +384,7 @@ void hsVertexShader::IShadeVertices( plGeometrySpan *span, hsBitVector *dirtyVec
         vertices[ index ].fNormal.Normalize();
     }
 
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     TimeValue t = fInterface->GetTime();
     Box3 bbox;

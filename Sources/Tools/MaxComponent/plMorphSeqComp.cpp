@@ -122,7 +122,7 @@ bool plMorphLayComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
         plMaxNode* deltaNode = (plMaxNode*)fCompPB->GetINode(kDeltas, TimeValue(0), i);
         if( deltaNode )
         {
-            const char* deltaName = deltaNode->GetName();
+            const MCHAR* deltaName = deltaNode->GetName();
             
             if( !deltaNode->GetSwappableGeom() )
                 deltaNode->SetSwappableGeom(new plSharedMesh);
@@ -153,7 +153,7 @@ bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, std
         plMaxNode* deltaNode = (plMaxNode*)fCompPB->GetINode(kDeltas, TimeValue(0), i);
         if( !deltaNode )
             continue;
-        const char* dbgNodeName = deltaNode->GetName();
+        const MCHAR* dbgNodeName = deltaNode->GetName();
 
         // Get the GeometrySpans. We ensured they would
         // be generated in it's SetupProperties, and they were created
@@ -300,7 +300,7 @@ bool plMorphSeqComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 bool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
-    const char* dbgNodeName = node->GetName();
+    const MCHAR* dbgNodeName = node->GetName();
 
     // Make our plMorphSequence modifier
     plMorphSequence* morphSeq = const_cast<plMorphSequence *>(plMorphSequence::ConvertNoRef(node->GetSceneObject()->GetModifierByType(plMorphSequence::Index())));

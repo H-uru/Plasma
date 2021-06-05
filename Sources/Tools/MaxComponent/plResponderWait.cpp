@@ -122,8 +122,8 @@ void ResponderWait::FixupWaitBlock(IParamBlock2 *waitPB)
 
     if (waitPB->Count(kWaitPointOld) > 0)
     {
-        MCHAR* point = (MCHAR*)waitPB->GetStr(kWaitPointOld, 0, 0);
-        waitPB->SetValue(kWaitPoint, 0, _T(point));
+        auto point = waitPB->GetStr(kWaitPointOld, 0, 0);
+        waitPB->SetValue(kWaitPoint, 0, point);
         waitPB->Delete(kWaitPointOld, 0, 1);
     }
 }
@@ -145,10 +145,10 @@ int ResponderWait::GetWaitingOn(IParamBlock2* waitPB)
 
 ST::string ResponderWait::GetWaitPoint(IParamBlock2* waitPB)
 {
-    const char* point = waitPB->GetStr(kWaitPoint);
+    auto point = waitPB->GetStr(kWaitPoint);
     if (point && *point == '\0')
         return ST::string();
-    return ST::string::from_utf8(point);
+    return M2ST(point);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -188,8 +188,8 @@ INT_PTR plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UIN
             if (wParam == IDC_MARKER_EDIT)
             {
                 ICustEdit *edit = GetICustEdit((HWND)lParam);
-                char buf[256];
-                edit->GetText(buf, sizeof(buf));
+                MCHAR buf[256];
+                edit->GetText(buf, std::size(buf));
                 fWaitPB->SetValue(kWaitPoint, 0, buf);
 
                 return TRUE;
@@ -207,7 +207,7 @@ INT_PTR plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UIN
                 if (!checked)
                 {
                     fWaitPB->SetValue(kWaitWho, 0, -1);
-                    fWaitPB->SetValue(kWaitPoint, 0, "");
+                    fWaitPB->SetValue(kWaitPoint, 0, _M(""));
 
                     LoadPoint();
 
@@ -235,7 +235,7 @@ INT_PTR plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UIN
             }
             else if (id == IDC_RADIO_FINISH && code == BN_CLICKED)
             {
-                fWaitPB->SetValue(kWaitPoint, 0, "");
+                fWaitPB->SetValue(kWaitPoint, 0, _M(""));
                 LoadPoint();
                 return TRUE;
             }
@@ -249,8 +249,8 @@ INT_PTR plResponderWaitProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hDlg, UIN
                 HWND hPoint = (HWND)lParam;
                 if (ComboBox_GetCurSel(hPoint) != CB_ERR)
                 {
-                    char buf[256];
-                    ComboBox_GetText(hPoint, buf, sizeof(buf));
+                    TCHAR buf[256];
+                    ComboBox_GetText(hPoint, buf, std::size(buf));
                     fWaitPB->SetValue(kWaitPoint, 0, buf);
                 }
                 return TRUE;
@@ -313,8 +313,8 @@ void plResponderWaitProc::LoadWho(bool setDefault)
 void plResponderWaitProc::LoadPoint(bool force)
 {
     int who = fWaitPB->GetInt(kWaitWho);
-    const char *point = fWaitPB->GetStr(kWaitPoint);
-    if (point && *point == '\0')
+    const MCHAR* point = fWaitPB->GetStr(kWaitPoint);
+    if (point && *point == _M('\0'))
         point = nullptr;
 
     CheckRadioButton(fhDlg, IDC_RADIO_FINISH, IDC_RADIO_POINT, point || force ? IDC_RADIO_POINT : IDC_RADIO_FINISH);
@@ -340,7 +340,7 @@ void plResponderWaitProc::LoadPoint(bool force)
             HWND hEdit = GetDlgItem(fhDlg, IDC_MARKER_EDIT);
             ShowWindow(hEdit, SW_SHOW);
             ICustEdit *custEdit = GetICustEdit(hEdit);
-            custEdit->SetText(point ? (char*)point : "");
+            custEdit->SetText(point ? point : _M(""));
         }
         else
         {
@@ -364,9 +364,9 @@ void plResponderWaitProc::LoadPoint(bool force)
             {
                 for (int i = 0; i < waitPoints.size(); i++)
                 {
-                    const char *marker = waitPoints[i].c_str();
-                    int idx = ComboBox_AddString(hCombo, marker);
-                    if (point && !strcmp(point, marker))
+                    const ST::string& marker = waitPoints[i];
+                    int idx = ComboBox_AddString(hCombo, ST2T(marker));
+                    if (point && marker == point)
                         ComboBox_SetCurSel(hCombo, idx);
                 }
             }

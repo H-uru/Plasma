@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plResponderLink_inc
 #define plResponderLink_inc
 
+#include "MaxMain/MaxAPI.h"
+
 #include "plResponderCmd.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -58,9 +60,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Link"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Link"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
@@ -73,9 +75,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return "Enable/Disable"; }
-    const char *GetName(int idx) override { return "Responder"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return _T("Enable/Disable"); }
+    const TCHAR* GetName(int idx) override { return _T("Responder"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -87,9 +89,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return "Enable/Disable"; }
-    const char *GetName(int idx) override { return "Physical"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return _T("Enable/Disable"); }
+    const TCHAR* GetName(int idx) override { return _T("Physical"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -101,9 +103,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "One Shot"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("One Shot"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 
@@ -118,9 +120,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Notify Triggerer"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override { return GetName(0); }
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Notify Triggerer"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override { return GetName(0); }
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -132,9 +134,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return "Enable/Disable"; }
-    const char *GetName(int idx) override { return "Detector"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return _T("Enable/Disable"); }
+    const TCHAR* GetName(int idx) override { return _T("Detector"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -146,9 +148,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override;
-    const char *GetCategory(int idx) override;
-    const char *GetName(int idx) override;
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     IParamBlock2 *CreatePB(int idx) override;
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
@@ -161,9 +163,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Camera Transition"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Camera Transition"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -177,9 +179,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Camera Force 3rd"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Camera Force 3rd"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -191,9 +193,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Delay"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Delay"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 
@@ -208,9 +210,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override;
-    const char *GetCategory(int idx) override;
-    const char *GetName(int idx) override;
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     IParamBlock2 *CreatePB(int idx) override;
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
@@ -223,9 +225,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override;
-    const char *GetCategory(int idx) override;
-    const char *GetName(int idx) override;
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     IParamBlock2 *CreatePB(int idx) override;
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
@@ -238,9 +240,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Footstep Surface"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Footstep Surface"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };
@@ -252,9 +254,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override { return 1; }
-    const char *GetCategory(int idx) override { return nullptr; }
-    const char *GetName(int idx) override { return "Trigger Multistage"; }
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override { return nullptr; }
+    const TCHAR* GetName(int idx) override { return _T("Trigger Multistage"); }
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb) override;
 };

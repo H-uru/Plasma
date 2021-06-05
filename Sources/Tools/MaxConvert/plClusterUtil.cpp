@@ -94,7 +94,7 @@ plClusterUtil::~plClusterUtil()
 {
 }
 
-plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* name)
+plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const ST::string& name)
 {
     plClusterGroup* retVal = new plClusterGroup;
     

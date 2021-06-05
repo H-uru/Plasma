@@ -137,8 +137,8 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    TSTR GetSubTexmapSlotName(int i) override;
-    TSTR GetSubTexmapTVName(int i);
+    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
 
@@ -152,7 +152,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

@@ -600,7 +600,7 @@ INT_PTR plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWn
         {
             IParamBlock2 *pb = paramMap->GetParamBlock();
             INode* node = pb->GetINode(plSmoothSnapComponent::kSmoothBase);
-            TSTR newName(node ? node->GetName() : "Pick");
+            const TCHAR* newName = node ? node->GetName() : _T("Pick");
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SMOOTH_CHOSE), newName);
         }
         return TRUE;
@@ -614,7 +614,7 @@ INT_PTR plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWn
             if( plPick::Node(pb, plSmoothSnapComponent::kSmoothBase, &cids, true, true) )
             {
                 INode* node = pb->GetINode(plSmoothSnapComponent::kSmoothBase);
-                TSTR newName(node ? node->GetName() : "Pick");
+                const TCHAR* newName = node ? node->GetName() : _T("Pick");
                 ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SMOOTH_CHOSE), newName);
                 paramMap->Invalidate(plSmoothSnapComponent::kSmoothBase);
                 ShowWindow(hWnd, SW_HIDE);

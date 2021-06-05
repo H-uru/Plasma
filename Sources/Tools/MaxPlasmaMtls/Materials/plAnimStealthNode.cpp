@@ -117,7 +117,7 @@ protected:
 
     void ILoadLoops(IParamBlock2 *pb);
 
-    void ISetSel(HWND hCombo, const char *name);
+    void ISetSel(HWND hCombo, const MCHAR* name);
 };
 
 const char *kAnimNameNone = ENTIRE_ANIMATION_NAME;
@@ -255,54 +255,53 @@ plAnimStealthNode   *plAnimStealthNode::ConvertToStealth( INode *objNode )
 
 ST::string plAnimStealthNode::GetSegmentName() const
 {
-    const char *str = fParamBlock->GetStr( (ParamID)kPBName );
+    const MCHAR* str = fParamBlock->GetStr( (ParamID)kPBName );
     if (str == nullptr || str[0] == 0)
         return ENTIRE_ANIMATION_NAME;
-    return ST::string::from_utf8(str);
+    return M2ST(str);
 }
 
-void    plAnimStealthNode::SetSegment( const char *name )
+void    plAnimStealthNode::SetSegment( const ST::string& name )
 {
-    if (name == nullptr || strcmp(name, ENTIRE_ANIMATION_NAME) == 0 || name[0] == 0)
-        fParamBlock->SetValue( (ParamID)kPBName, 0, "" );
+    if (name.empty() || name == ENTIRE_ANIMATION_NAME)
+        fParamBlock->SetValue((ParamID)kPBName, 0, _M(""));
     else
-        fParamBlock->SetValue( (ParamID)kPBName, 0, (char *)name );
+        fParamBlock->SetValue((ParamID)kPBName, 0, ST2M(name));
 }
 
-void    plAnimStealthNode::SetNodeName( const char *parentName )
+void    plAnimStealthNode::SetNodeName( const MCHAR* parentName )
 {
     INode *node = GetINode();
     if (node != nullptr)
     {
-        char name[ 512 ], newName[ 512 ];
-        sprintf(name, "%s : %s", parentName, GetSegmentName().c_str());
+        ST::string name = ST::format("{} : {}", parentName, GetSegmentName());
+        ST::string newName;
 
-        if (GetCOREInterface()->GetINodeByName(name) != nullptr)
+        if (GetCOREInterface()->GetINodeByName(ST2M(name)) != nullptr)
         {
             // For whatever reason, MakeNameUnique() doesn't ACTUALLY make a name unique!
             // So we just need to more or less do it ourselves...
             int i;
-            for( i = 1; i < 1024; i++ )
+            for (i = 1; i < 1024; i++)
             {
-                sprintf( newName, "%s(%d)", name, i );
-                if (GetCOREInterface()->GetINodeByName(newName) == nullptr)
+                newName = ST::format("{}({d})", name, i);
+                if (GetCOREInterface()->GetINodeByName(ST2M(newName)) == nullptr)
                     break;
             }
-            if( i == 1024 )
+            if (i == 1024)
             {
                 // You've got to be kidding me...
-                char msg[ 2048 ];
-                sprintf( msg, "WARNING: For some reason, we cannot find a unique name for the node '%s'. This"
-                            " will most likely cause export problems. Exactly how many of these do we HAVE??",
-                            name );
-                hsMessageBox( msg, "WARNING!", hsMessageBoxNormal );
+                ST::string msg = ST::format(
+                    "WARNING: For some reason, we cannot find a unique name for the node '{}'. This"
+                    " will most likely cause export problems. Exactly how many of these do we HAVE??",
+                    name);
+                plMaxMessageBox(nullptr, ST2T(msg), _T("WARNING!"), MB_OK);
             }
-        }
-        else
-            strcpy( newName, name );
+        } else
+            newName = name;
 
 
-        node->SetName( newName );
+        node->SetName(const_cast<MCHAR*>(ST2M(newName)));
     }
 }
 
@@ -437,13 +436,13 @@ bool        plAnimStealthNode::IsParentUsedInScene()
     // so it's not *really* worth the effort...
     //// NOTE: the following doesn't seem to work, but keeping here in case it ever does. 
     //// What really actually finds something is the enum dependents loop below
-    const char *mtlName = GetParentMtl()->GetName();
+    const MCHAR* mtlName = GetParentMtl()->GetName();
 
     DependentIterator di(this);
     ReferenceMaker* item = di.Next();
     while (item != nullptr)
     {
-        TSTR s;
+        MSTR s;
         item->GetClassName( s );
 
         if( item->SuperClassID() == BASENODE_CLASS_ID && !CanConvertToStealth( (INode *)( item ) ) )
@@ -603,12 +602,12 @@ INT_PTR plStealthDlgProc::DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT 
             {
                 if( SendMessage( hCombo, CB_GETITEMDATA, sel, 0 ) == kName )
                 {
-                    char buf[256];
+                    TCHAR buf[256];
                     SendMessage( hCombo, CB_GETLBTEXT, sel, (LPARAM)buf );
                     pb->SetValue( (ParamID)plAnimStealthNode::kPBLoopName, 0, buf );
                 }
                 else
-                    pb->SetValue( (ParamID)plAnimStealthNode::kPBLoopName, 0, "" );
+                    pb->SetValue( (ParamID)plAnimStealthNode::kPBLoopName, 0, _M("") );
             }
 
             return TRUE;
@@ -652,17 +651,17 @@ void plStealthDlgProc::IDeleteSegMap()
     fSegMap = nullptr;
 }
 
-void plStealthDlgProc::ISetSel(HWND hCombo, const char *name)
+void plStealthDlgProc::ISetSel(HWND hCombo, const MCHAR* name)
 {
     // If there is a name, try and set that
-    if( name && strcmp( name, "" ) )
+    if( name && _tcscmp( name, _T("") ) )
     {
         int idx = (int)SendMessage(hCombo, CB_FINDSTRINGEXACT, -1, (LPARAM)name);
         // If we can't find the saved name add a "not found" entry, so they know what it was
         if( idx == -1 )
         {
-            char buf[256];
-            sprintf( buf, "(not found) %s", name );
+            TCHAR buf[256];
+            _sntprintf(buf, std::size(buf), _T("(not found) %s"), name );
             idx = (int)SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)buf);
             SendMessage( hCombo, CB_SETITEMDATA, idx, kInvalid );
         }
@@ -711,7 +710,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     int defIdx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)ENTIRE_ANIMATION_NAME);
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
-    ST::string segName = ST::string::from_utf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
+    ST::string segName = M2ST( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
     if (segName.empty() || fSegMap == nullptr)
     {
         // Default of "entire animation", no other loop options
@@ -848,14 +847,14 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType) override
+    void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if( strcmp( userType, kUseParamBlockNodeString ) == 0 )
+        if( _tcscmp( userType, _T(kUseParamBlockNodeString) ) == 0 )
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
         }
-        else if( strcmp(userType, kUseOwnerNodeString ) == 0 )
+        else if( _tcscmp(userType, _T(kUseOwnerNodeString) ) == 0 )
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
@@ -892,11 +891,11 @@ bool    plAnimStealthNode::GetAutoStart() const   { return (bool)fParamBlock->Ge
 void    plAnimStealthNode::SetAutoStart( bool b )       { fParamBlock->SetValue( (ParamID)kPBAutoStart, 0, (int)b ); };
 
 bool        plAnimStealthNode::GetLoop() const                    { return fParamBlock->GetInt( (ParamID)kPBLoop ); }
-ST::string  plAnimStealthNode::GetLoopName() const                { return ST::string::from_utf8( fParamBlock->GetStr( (ParamID)kPBLoopName ) ); }
+ST::string  plAnimStealthNode::GetLoopName() const                { return M2ST( fParamBlock->GetStr( (ParamID)kPBLoopName ) ); }
 void        plAnimStealthNode::SetLoop( bool b, const ST::string &name )
 {
     fParamBlock->SetValue( (ParamID)kPBLoop, 0, (int)b );
-    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.c_str() );
+    fParamBlock->SetValue( (ParamID)kPBLoopName, 0, ST2M(name) );
 }
 
 uint8_t       plAnimStealthNode::GetEaseInType() const      { return (uint8_t)fParamBlock->GetInt( (ParamID)kPBEaseInType ); }

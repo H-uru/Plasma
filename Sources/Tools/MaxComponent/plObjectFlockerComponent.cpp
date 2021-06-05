@@ -76,7 +76,7 @@ public:
         if (node)
             SetWindowText(hButton, node->GetName());
         else
-            SetWindowText(hButton, "<none>");
+            SetWindowText(hButton, _T("<none>"));
     }
 
     INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
@@ -93,11 +93,11 @@ public:
             // Disable stuff that the artists shouldn't have to touch
             EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS), false);
             EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS_SPIN), false);
-            SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS, "5.0");
+            SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_SEP_RADIUS, _T("5.0"));
 
             EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS), false);
             EnableWindow(GetDlgItem(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS_SPIN), false);
-            SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS, "9.0");
+            SetDlgItemText(hWnd, IDC_OBJ_FLOCKER_COH_RADIUS, _T("9.0"));
 
             return TRUE;
         }

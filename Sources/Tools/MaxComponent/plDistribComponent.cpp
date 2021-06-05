@@ -373,8 +373,8 @@ private:
         }
         if( onInit )
         {
-            map->SetTooltip(plDistribComponent::kLockScaleXY, TRUE, "Lock scale in X and Y" );
-            map->SetTooltip(plDistribComponent::kLockScaleXYZ, TRUE, "Lock scale in X, Y and Z (uniform scale)" );
+            map->SetTooltip(plDistribComponent::kLockScaleXY, TRUE, _M("Lock scale in X and Y") );
+            map->SetTooltip(plDistribComponent::kLockScaleXYZ, TRUE, _M("Lock scale in X, Y and Z (uniform scale)") );
         }
     }
 public:
@@ -1001,7 +1001,7 @@ BOOL plDistribComponent::Distribute(plDistribInstTab& replicants, plErrorMsg* pE
     }
 
     try {
-        pErrMsg->Set(!distrib.GetNumReplicateNodes(), GetINode()->GetName(), "Distributor %s has nothing to replicate", GetINode()->GetName()).CheckAndAsk();
+        pErrMsg->Set(!distrib.GetNumReplicateNodes(), GetINode()->GetName(), ST::format("Distributor {} has nothing to replicate", GetINode()->GetName())).CheckAndAsk();
 
         int numTarg = NumTargets();
         for( i = 0; i < numTarg; i++ )
@@ -1127,7 +1127,7 @@ void plDistribComponent::Preview()
     plDistribInstTab replicants;
 
     plExportProgressBar bar;
-    bar.Start("Preview", NumTargets() << 4);
+    bar.Start(_M("Preview"), NumTargets() << 4);
 
     plDistTree distTree;
     Distribute(replicants, nullptr, bar, &distTree);
@@ -1189,7 +1189,7 @@ INode* plDistribComponent::IMakeOne(plDistribInstTab& nodes)
         outNode->SetObjOffsetRot(identQuat);
         outNode->SetObjOffsetScale(ScaleValue(Point3(1.f, 1.f, 1.f)));
 
-        TSTR outName(TSTR("Preview"));
+        MSTR outName(_M("Preview"));
         nn->MakeUniqueName(outName);
         outNode->SetName(outName);
 

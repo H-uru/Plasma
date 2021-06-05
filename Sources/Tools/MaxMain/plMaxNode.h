@@ -146,7 +146,7 @@ public:
     plMaxNode*      GetBonesRoot(); // Returns the root of my bones hierarchy, if I have any bones, else nil.
     void            GetBonesRootsRecur(std::vector<plMaxNode*>& list);
     plSceneObject*  MakeCharacterHierarchy(plErrorMsg *pErrMsg);
-    void            SetupBonesAliasesRecur(const char *rootName);
+    void            SetupBonesAliasesRecur(const ST::string& rootName);
     void            SetupBoneHierarchyPalette(plMaxBoneMap *bones = nullptr);
 
     void SetDISceneNodeSpans( plDrawInterface *di, bool needBlending );
@@ -177,7 +177,7 @@ public:
 
     // Little helper function. Calls FindKey() in the resManager using the location (page) of this node
     plKey   FindPageKey( uint16_t classIdx, const ST::string &name );
-    const char *GetAgeName();
+    const MCHAR* GetAgeName();
 
     void CheckSynchOptions(plSynchedObject* so);
 

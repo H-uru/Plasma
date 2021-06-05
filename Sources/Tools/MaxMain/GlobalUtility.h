@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string>
 
+#include "MaxCompat.h"
+
 class BitmapManager;
 class ClassDesc;
 class GUP;
@@ -59,7 +61,7 @@ struct TexInfo
 {
     Texmap* texmap;
     int iBmp;
-    std::string texName;
+    M_STD_STRING texName;
 };
 
 class PlasmaMax : public GUP

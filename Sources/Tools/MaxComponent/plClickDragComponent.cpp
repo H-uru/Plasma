@@ -311,7 +311,13 @@ bool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-                pErrMsg->Set(true, "Clickable Sensor Warning", "The Clickable %s has a Proxy Surface %s that was Ignored.\nThe Sensors geometry will be used instead.", node->GetName(), boundsNode->GetName()).Show();
+                pErrMsg->Set(
+                    true, "Clickable Sensor Warning",
+                    ST::format(
+                        "The Clickable {} has a Proxy Surface %s that was Ignored.\nThe Sensors geometry will be used instead.",
+                        node->GetName(), boundsNode->GetName()
+                    )
+                ).Show();
                 pErrMsg->Set(false);
         }
     else
@@ -348,7 +354,13 @@ bool plClickDragComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        pErrMsg->Set(true, "Clickable Sensor Error", "The Clickable Sensor %s has a Required Region that is missing.\nThe Export will be aborted", node->GetName()).Show();
+        pErrMsg->Set(
+            true, "Clickable Sensor Error",
+            ST::format(
+                "The Clickable Sensor {} has a Required Region that is missing.\nThe Export will be aborted",
+                node->GetName()
+            )
+        ).Show();
 //      pErrMsg->Set(false);
         return false;
     }
@@ -425,7 +437,13 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     if (!pAnim)
     {
-        pErrMsg->Set(true, "WARNING", "Object %s has click-drag component attached but NO animation component!", ((INode*)node)->GetName()).Show();
+        pErrMsg->Set(
+            true, "WARNING",
+            ST::format(
+                "Object {} has click-drag component attached but NO animation component!",
+                ((INode*)node)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
     }
     else
@@ -518,7 +536,13 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-            pErrMsg->Set(true, "Unknown Error", "Invalid proxy physical detector set for draggable %s.", ((INode*)pProxyNode)->GetName()).Show();
+            pErrMsg->Set(
+                true, "Unknown Error",
+                ST::format(
+                    "Invalid proxy physical detector set for draggable {}.",
+                    ((INode*)pProxyNode)->GetName()
+                )
+            ).Show();
             pErrMsg->Set(false);
             return false;
         }
@@ -569,14 +593,26 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {       
-            pErrMsg->Set(true, "Problem with region", "Can't convert region component on  %s.  This component will not be exported.\n", ((INode*)pProxyRegNode)->GetName()).Show();
+            pErrMsg->Set(
+                true, "Problem with region",
+                ST::format(
+                    "Can't convert region component on {}.  This component will not be exported.\n",
+                    ((INode*)pProxyRegNode)->GetName()
+                )
+            ).Show();
             pErrMsg->Set(false);
             return false;
         }
     }
     else
     {
-        pErrMsg->Set(true, "Must specify trigger region", "No required trigger region specified for click-drag component on %s.  This component will not be exported.\n", ((INode*)node)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Must specify trigger region",
+            ST::format(
+                "No required trigger region specified for click-drag component on {}.  This component will not be exported.\n",
+                ((INode*)node)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }

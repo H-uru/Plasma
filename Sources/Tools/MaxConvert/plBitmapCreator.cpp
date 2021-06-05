@@ -131,7 +131,7 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
 
     // Load the bitmap
     BitmapInfo bi;
-    bi.SetName(bd->fileName.AsString().c_str());
+    bi.SetName(ST2M(bd->fileName.AsString()));
 
 #if 0 // This isn't really an issue since the textures are packed -Colin
     const int kMaxFileNameLength = 30;
@@ -262,14 +262,14 @@ void plBitmapCreator::ICheckOutBitmap(BitmapInfo* bInfo, Bitmap* bm, const plFil
 
     // Check out bitmap
     if (bm->Flags() & MAP_FLIPPED)
-        MessageBox(GetActiveWindow(), "Bitmap is flipped horizontally", fileName.AsString().c_str(), MB_OK);
+        plMaxMessageBox(GetActiveWindow(), _T("Bitmap is flipped horizontally"), ST2T(fileName.AsString()), MB_OK);
     if (bm->Flags() & MAP_INVERTED)
-        MessageBox(GetActiveWindow(), "Bitmap is inverted vertically", fileName.AsString().c_str(), MB_OK);
+        plMaxMessageBox(GetActiveWindow(), _T("Bitmap is inverted vertically"), ST2T(fileName.AsString()), MB_OK);
 
     if (bInfo->Flags() & MAP_FLIPPED)
-        MessageBox(GetActiveWindow(), "BI:Bitmap is flipped horizontally", fileName.AsString().c_str(), MB_OK);
+        plMaxMessageBox(GetActiveWindow(), _T("BI:Bitmap is flipped horizontally"), ST2T(fileName.AsString()), MB_OK);
     if (bInfo->Flags() & MAP_INVERTED)
-        MessageBox(GetActiveWindow(), "BI:Bitmap is inverted vertically", fileName.AsString().c_str(), MB_OK);
+        plMaxMessageBox(GetActiveWindow(), _T("BI:Bitmap is inverted vertically"), ST2T(fileName.AsString()), MB_OK);
 
     hsGuardEnd;
 }

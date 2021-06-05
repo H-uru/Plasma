@@ -120,7 +120,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;
@@ -142,9 +142,6 @@ public:
         kDisableColor,
         kForce,
     };
-
-    static const char *kUVStrings[];
-    static const uint8_t kMaxUVSrc;
 
     // Pure virtual accessors for the various bitmap related elements
     Bitmap *GetMaxBitmap(int index = 0) override { hsAssert(false, "Function call not valid on this type of layer."); return nullptr; }

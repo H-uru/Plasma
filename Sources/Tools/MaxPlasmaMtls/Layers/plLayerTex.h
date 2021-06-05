@@ -141,7 +141,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     // TODO: Maintain the number or references here 
     int NumRefs() override;
@@ -155,7 +155,7 @@ public:
     bool HasAlpha(); // Checks if the bitmap for this layer has an alpha channel
     virtual Bitmap* GetBitmap(TimeValue t);
         
-    const char *GetTextureName();
+    const MCHAR* GetTextureName();
     
     // Accessors needed by the base class for the various bitmap related elements
     Bitmap *GetMaxBitmap(int index = 0) override { return fBM; }

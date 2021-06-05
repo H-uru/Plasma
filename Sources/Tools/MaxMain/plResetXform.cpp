@@ -70,7 +70,7 @@ void plResetXform::ResetSelectedRecur(INode* node) const
 
 void plResetXform::IResetNode(INode* node) const
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     BOOL deleteIt = false;
     TriObject* oldObj = IGetTriObject(node, deleteIt);
@@ -174,11 +174,7 @@ void plSelectNonRenderables::SelectNonRenderables() const
 
     theHold.Begin();
 
-
-    TSTR undostr; 
-    undostr.printf("SelNonRend");
-
     GetCOREInterface()->SelectNodeTab(unhidden, true, true);
 
-    theHold.Accept(undostr);
+    theHold.Accept(_M("SelNonRend"));
 }

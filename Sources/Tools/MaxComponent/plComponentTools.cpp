@@ -78,7 +78,7 @@ int plComponentTools::GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const
     return fMatMod(mtl, node, segName, keys);
 }
 
-int plComponentTools::GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const char*& name)
+int plComponentTools::GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const MCHAR*& name)
 {
     return fSndNameAndIdx(comp, node, name);
 }

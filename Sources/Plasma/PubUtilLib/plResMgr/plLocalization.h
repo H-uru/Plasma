@@ -127,6 +127,7 @@ public:
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language
     static std::string LocalToString(const std::vector<std::string> & localizedText);
+    static std::wstring LocalToString(const std::vector<std::wstring> & localizedText);
     // Converts a string encoded by LocalToString to a vector of translated strings
     static std::vector<std::string> StringToLocal(const std::string & localizedText);
     static std::vector<std::wstring> StringToLocal(const std::wstring & localizedText);

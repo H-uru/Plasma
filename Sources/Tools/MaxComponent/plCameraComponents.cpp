@@ -738,7 +738,7 @@ bool plCameraBaseComponent::SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMs
     fModKeys.clear();
     bool ValidNode = IsValidNodeType(pNode);
     if(!ValidNode){
-        if(pErrMsg->Set(true, "Invalid Camera Object", "The camera %s is not a 'Max Target Camera type'.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName()).Ask())
+        if(pErrMsg->Set(true, "Invalid Camera Object", ST::format("The camera {} is not a 'Max Target Camera type'.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName())).Ask())
                 pErrMsg->Set(true, "", "");
         else
                 pErrMsg->Set(false); // Don't want to abort
@@ -976,9 +976,13 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         {   
             if (objPOAComp != nullptr || POAComp != nullptr)
             {
-                pErrMsg->Set(true, "Export Error - Cameras",
-                "Object %s : Cameras must have one and only one POA component!\n",
-                pNode->GetName()).Show();
+                pErrMsg->Set(
+                    true, "Export Error - Cameras",
+                    ST::format(
+                        "Object {} : Cameras must have one and only one POA component!\n",
+                        pNode->GetName()
+                    )
+                ).Show();
                 pErrMsg->Set(false);
                 return false;
             }
@@ -989,9 +993,13 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         {
             if (objPOAComp != nullptr || POAComp != nullptr)
             {
-                pErrMsg->Set(true, "Export Error - Cameras",
-                "Object %s : Cameras must have one and only one POA component!\n",
-                pNode->GetName()).Show();
+                pErrMsg->Set(
+                    true, "Export Error - Cameras",
+                    ST::format(
+                        "Object {} : Cameras must have one and only one POA component!\n",
+                        pNode->GetName()
+                    )
+                ).Show();
                 pErrMsg->Set(false);
                 return false;
             }
@@ -1024,9 +1032,13 @@ bool plCameraBaseComponent::ISetPOA(plMaxNode* pNode, plCameraBrain1* pBrain, pl
         }
         else
         {
-            pErrMsg->Set(true, "Export Error - Cameras",
-            "Object POA component of camera %s has no object specified!\n",
-            pNode->GetName()).Show();
+            pErrMsg->Set(
+                true, "Export Error - Cameras",
+                ST::format(
+                    "Object POA component of camera {} has no object specified!\n",
+                pNode->GetName()
+                )
+            ).Show();
             pErrMsg->Set(false);
             return false;
         }
@@ -1644,7 +1656,13 @@ bool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
     plMaxNode* pathNode = (plMaxNode*)fCompPB->GetINode(kRailCamObj);
     if(!pathNode)
     {
-        pErrMsg->Set(true, "Path Node Failure", "Path Node %s was set to be Ignored or empty. Path Component ignored.", ((INode*)pathNode)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Path Node Failure",
+            ST::format(
+                "Path Node {} was set to be Ignored or empty. Path Component ignored.",
+                ((INode*)pathNode)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -1658,7 +1676,13 @@ bool plRailCameraComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
     {
         delete tmc;
 
-        pErrMsg->Set(true, pNode->GetName(), "Rail Camera Path Node %s has no suitable animation. Rail Camera ignored", pathNode->GetName()).Show();
+        pErrMsg->Set(
+            true, M2ST(pNode->GetName()),
+            ST::format(
+                "Rail Camera Path Node {} has no suitable animation. Rail Camera ignored",
+                pathNode->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -1787,7 +1811,13 @@ bool plRailCameraComponent::PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg)
     plMaxNode* pathNode = (plMaxNode*)fCompPB->GetINode(kRailCamObj);
     if( !pathNode )
     {
-        pErrMsg->Set(true, "Invald Rail Camera", "Rail Camera component on  %s. has no path object selected. This component will not be exported.\n", ((INode*)pNode)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Invald Rail Camera",
+            ST::format(
+                "Rail Camera component on {}. has no path object selected. This component will not be exported.\n",
+                ((INode*)pNode)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -2094,7 +2124,13 @@ bool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
         else
         {
-            pErrMsg->Set(true, "Improper Cam Region Selection", "Cam Choice %s was set to be Ignored. No Camera selected.", ((INode*)pCamNode)->GetName());
+            pErrMsg->Set(
+                true, "Improper Cam Region Selection",
+                ST::format(
+                    "Cam Choice {} was set to be Ignored. No Camera selected.",
+                    ((INode*)pCamNode)->GetName()
+                )
+            );
             pErrMsg->Set(false);
             return false;
         }
@@ -2102,7 +2138,13 @@ bool plCameraDetectorComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        pErrMsg->Set(true, "Camera Region", "Camera Region %s has no camera assigned to it.", ((INode*)node)->GetName()).Show();
+        pErrMsg->Set(
+            true, "Camera Region",
+            ST::format(
+                "Camera Region {} has no camera assigned to it.",
+                ((INode*)node)->GetName()
+            )
+        ).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -2315,7 +2357,7 @@ bool plFollowCamComponent::PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg)
 
     if (!ISetPOA(pNode, pBrain, pErrMsg))
     {
-        if(pErrMsg->Set(true, "Invalid Object Follow Camera", "The camera %s does NOT have an Object POA to go with its Object Follow Cam Component.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName()).Ask())
+        if(pErrMsg->Set(true, "Invalid Object Follow Camera", ST::format("The camera {} does NOT have an Object POA to go with its Object Follow Cam Component.  This camera will be disabled..\nKill the export?",((INode*)pNode)->GetName())).Ask())
                 pErrMsg->Set(true, "", "");
         else
                 pErrMsg->Set(false); // Don't want to abort

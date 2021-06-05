@@ -209,8 +209,8 @@ protected:
     void EnableGlobal(HWND hWnd, bool enable);
     
 public:
-    static void FillAgeGlobalComboBox(HWND box, const char *varName);
-    static void SetBoxToAgeGlobal(HWND box, const char *varName);
+    static void FillAgeGlobalComboBox(HWND box, const TCHAR* varName);
+    static void SetBoxToAgeGlobal(HWND box, const TCHAR* varName);
 
     INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
     void Update(TimeValue t, Interval &valid, IParamMap2 *map) override;

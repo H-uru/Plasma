@@ -100,7 +100,7 @@ public:
 
 //// Static Tree Helpers //////////////////////////////////////////////////////
 
-static HTREEITEM    SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label, int userData );
+static HTREEITEM    SAddTreeItem( HWND hTree, HTREEITEM hParent, const TCHAR* label, int userData );
 static int  SGetTreeData( HWND tree, HTREEITEM item );
 
 static void     RemovePageItem( HWND listBox, int item )
@@ -329,7 +329,7 @@ INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
             // Ask the user to make sure they really want to do this
             if( GetAsyncKeyState( VK_SHIFT ) & (~1) )
             {
-                if( MessageBox( hDlg, "Are you sure you wish to reassign the sequence prefix for this age?", "WARNING", MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
+                if( plMaxMessageBox( hDlg, _T("Are you sure you wish to reassign the sequence prefix for this age?"), _T("WARNING"), MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
                 {
                     int32_t prefix = (int32_t)IGetNextFreeSequencePrefix( IsDlgButtonChecked( hDlg, IDC_RSVDCHECK ) );
                     fSeqPrefixSpin->SetValue( ( prefix >= 0 ) ? prefix : -prefix, false );
@@ -338,9 +338,9 @@ INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
             }
             else
             {
-                if( MessageBox( hDlg, "Editing the registry data for an age can be extremely dangerous and "
+                if( plMaxMessageBox( hDlg, _T("Editing the registry data for an age can be extremely dangerous and "
                                     "can cause instabilities and crashes, particularly with multiplayer. "
-                                    "Are you sure you want to do this?", "WARNING", MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
+                                    "Are you sure you want to do this?"), _T("WARNING"), MB_YESNO | MB_ICONEXCLAMATION ) == IDYES )
                 {
                     // Enable the controls
                     EnableWindow( GetDlgItem( hDlg, IDC_RSVDCHECK ), TRUE );
@@ -766,7 +766,7 @@ void plAgeDescInterface::ISetControlDefaults()
     for (int i = (int)SendMessage(ctrl, LB_GETCOUNT, 0, 0) - 1; i >= 0; i--)
         RemovePageItem( ctrl, i );
 
-    SetDlgItemText( fhDlg, IDC_AGEDESC, "Age Description" );
+    SetDlgItemText( fhDlg, IDC_AGEDESC, _T("Age Description") );
 }
 
 void plAgeDescInterface::IEnableControls(bool enable)
@@ -928,11 +928,11 @@ void plAgeDescInterface::IFillAgeTree()
     TreeView_DeleteAllItems(ageTree);
 
     if (fAssetManIface != nullptr)
-        fAssetManBranch = SAddTreeItem(ageTree, nullptr, "AssetMan Ages", -1);
+        fAssetManBranch = SAddTreeItem(ageTree, nullptr, _T("AssetMan Ages"), -1);
     else
         fAssetManBranch = nullptr;
 
-    fLocalBranch = SAddTreeItem(ageTree, nullptr, "Local Ages", -1);
+    fLocalBranch = SAddTreeItem(ageTree, nullptr, _T("Local Ages"), -1);
 
     IGetAgeFiles(fAgeFiles);
 
@@ -941,7 +941,7 @@ void plAgeDescInterface::IFillAgeTree()
     {
         SAddTreeItem(ageTree,
                     (fAgeFiles[i]->fType == plAgeFile::kAssetFile) ? fAssetManBranch : fLocalBranch,
-                    fAgeFiles[i]->fAgeName.c_str(),
+                    ST2T(fAgeFiles[i]->fAgeName),
                     i);
     }
 
@@ -957,14 +957,14 @@ INT_PTR CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
     {
     case WM_INITDIALOG:
         name = reinterpret_cast<ST::string *>(lParam);
-        SetWindowText(hDlg, name->c_str());
+        SetWindowTextW(hDlg, name->to_wchar().data());
         return TRUE;
 
     case WM_COMMAND:
         if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDOK)
         {
-            char buffer[_MAX_FNAME];
-            if (GetDlgItemText(hDlg, IDC_AGE_NAME, buffer, _MAX_FNAME) > 0) {
+            wchar_t buffer[_MAX_FNAME];
+            if (GetDlgItemTextW(hDlg, IDC_AGE_NAME, buffer, _MAX_FNAME) > 0) {
                 EndDialog(hDlg, 1);
                 *name = buffer;
             } else {
@@ -984,17 +984,17 @@ INT_PTR CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
 
 INT_PTR CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static char msg1[] = "This age currently does not have a sequence number assigned to it. All ages "
-                         "must have a unique sequence number for multiplayer to work. Unassigned ages "
-                         "will get a temporary random number at export time, but will result in undefined "
-                         "(but probably bad) behavior during multiplayer games. In general, you should "
-                         "always assign a sequence number to an age unless you have a very specific and "
-                         "good reason not to.";
-    static char msg2[] = "The ADManager can find and assign a new, unique sequence number to this age for "
-                         "you. You can choose to assign a normal or a global/reserved number. Normal ages "
-                         "are ones for gameplay (that you can link to, walk around in, etc.), while "
-                         "global/reserved ages are typically for storing data (such as avatars, GUI dialogs, etc.)";
-    char    msg3[ 512 ];
+    static TCHAR msg1[] = _T("This age currently does not have a sequence number assigned to it. All ages "
+                             "must have a unique sequence number for multiplayer to work. Unassigned ages "
+                             "will get a temporary random number at export time, but will result in undefined "
+                             "(but probably bad) behavior during multiplayer games. In general, you should "
+                             "always assign a sequence number to an age unless you have a very specific and "
+                             "good reason not to.");
+    static TCHAR msg2[] = _T("The ADManager can find and assign a new, unique sequence number to this age for "
+                             "you. You can choose to assign a normal or a global/reserved number. Normal ages "
+                             "are ones for gameplay (that you can link to, walk around in, etc.), while "
+                             "global/reserved ages are typically for storing data (such as avatars, GUI dialogs, etc.)");
+    TCHAR        msg3[ 512 ];
 
 
     switch (msg)
@@ -1002,7 +1002,7 @@ INT_PTR CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPa
     case WM_INITDIALOG:
         SetDlgItemText( hDlg, IDC_INFOMSG, msg1 );
         SetDlgItemText( hDlg, IDC_ADMMSG, msg2 );
-        sprintf( msg3, "Age: %s", (const char *)lParam );
+        _sntprintf( msg3, std::size(msg3), _T("Age: %s"), (const TCHAR *)lParam );
         SetDlgItemText( hDlg, IDC_AGEMSG, msg3 );
         return TRUE;
 
@@ -1159,10 +1159,10 @@ void plAgeDescInterface::ISaveCurAge( const plFileName &path, bool checkSeqNum )
     {
         for (int i = 0; i < count; i++)
         {
-            char pageName[256];
+            TCHAR pageName[256];
             ListBox_GetText(hPages, i, pageName);
             plAgePage *page = (plAgePage *)ListBox_GetItemData( hPages, i );
-            aged.AppendPage( pageName, page->GetSeqSuffix(), page->GetFlags() );
+            aged.AppendPage( M2ST(pageName), page->GetSeqSuffix(), page->GetFlags() );
         }
     }
 
@@ -1182,7 +1182,7 @@ void    plAgeDescInterface::ICheckSequenceNumber( plAgeDescription &aged )
         // Ask about the sequence #
         INT_PTR ret = DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_AGE_SEQNUM ),
                                     GetCOREInterface()->GetMAXHWnd(),
-                                    NewSeqNumberProc, (LPARAM)aged.GetAgeName().c_str() );
+                                    NewSeqNumberProc, (LPARAM)ST2T(aged.GetAgeName()) );
         if( ret == IDYES )
         {
             aged.SetSequencePrefix( IGetNextFreeSequencePrefix( false ) );
@@ -1212,9 +1212,8 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     if( checkSeqNum )
         ICheckSequenceNumber( aged );
 
-    char str[ _MAX_FNAME + 30 ];
-    sprintf( str, "Description for %s", ageName.c_str() );
-    SetDlgItemText( fhDlg, IDC_AGEDESC, str );
+    ST::string str = ST::format("Description for {}", ageName);
+    SetDlgItemTextW( fhDlg, IDC_AGEDESC, str.to_wchar().data() );
 
     // Set up the Dlgs
     SYSTEMTIME st;
@@ -1272,7 +1271,7 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     HWND hPage = GetDlgItem(fhDlg, IDC_PAGE_LIST);
     while ((page = aged.GetNextPage()) != nullptr)
     {
-        int idx = ListBox_AddString( hPage, page->GetName().c_str() );
+        int idx = ListBox_AddString( hPage, ST2T(page->GetName()) );
         ListBox_SetItemData( hPage, idx, (LPARAM)new plAgePage( *page ) );
     }
 }
@@ -1347,12 +1346,12 @@ plAgeFile* plAgeDescInterface::IGetCurrentAge()
 //// SAddTreeItem /////////////////////////////////////////////////////////////
 //  Static helper function for adding an item to a treeView
 
-static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const char *label, int userData )
+static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const TCHAR* label, int userData )
 {
     TVITEM tvi = {0};
     tvi.mask       = TVIF_TEXT | TVIF_PARAM;
-    tvi.pszText    = (char *)label;
-    tvi.cchTextMax = strlen( label );  
+    tvi.pszText    = const_cast<TCHAR*>(label);
+    tvi.cchTextMax = _tcslen(label);
     tvi.lParam     = (LPARAM)userData;
     if( userData == -1 )
     {

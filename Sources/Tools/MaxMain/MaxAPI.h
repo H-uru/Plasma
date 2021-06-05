@@ -52,6 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PLASMA_MAXAPI_H
 #define _PLASMA_MAXAPI_H
 
+// Some SDKs unconditionally changes the definition of UNICODE. Bring this in first.
+#include <strbasic.h>
+
 #include "hsWindows.h"
 #include <CommCtrl.h>
 #include <commdlg.h>
@@ -96,5 +99,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if MAX_VERSION_MAJOR >= 13
 #   include <INamedSelectionSetManager.h>
 #endif
+
+#include <string_theory/formatter>
 
 #endif

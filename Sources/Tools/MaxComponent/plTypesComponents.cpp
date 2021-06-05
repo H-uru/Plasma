@@ -169,7 +169,7 @@ protected:
     void IUpdateButtonText(HWND hWnd, IParamBlock2 *pb)
     {
         INode *node = pb->GetINode(kVehicleDriveDet);
-        SetWindowText(GetDlgItem(hWnd, IDC_DRIVE), node ? node->GetName() : "(none)");
+        SetWindowText(GetDlgItem(hWnd, IDC_DRIVE), node ? node->GetName() : _M("(none)"));
     }
 
 public:
@@ -520,8 +520,8 @@ class plGameMarkerComponentProc : public ParamMap2UserDlgProc
 protected:
     void IComboChanged(HWND hWnd, IParamBlock2 *pb, int id)
     {
-        char buf[256];
-        GetDlgItemText(hWnd, id, buf, sizeof(buf));
+        TCHAR buf[256];
+        GetDlgItemText(hWnd, id, buf, std::size(buf));
         int paramID = 0;
         switch (id)
         {
@@ -535,7 +535,7 @@ protected:
 
     void ILoadCombo(HWND hWnd, int ctrlID, int paramID, IParamBlock2* pb, plNotetrackAnim& anim)
     {
-        const char* savedName = pb->GetStr(paramID);
+        const MCHAR* savedName = pb->GetStr(paramID);
         HWND hCombo = GetDlgItem(hWnd, ctrlID);
         ComboBox_ResetContent(hCombo);
 
@@ -565,22 +565,22 @@ protected:
         if (pb->GetINode(kMarkerMtlNode))
             SetDlgItemText(hWnd, IDC_MTL_NODE_BUTTON, pb->GetINode(kMarkerMtlNode)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_MTL_NODE_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_MTL_NODE_BUTTON, _T("(none)"));
 
         if (pb->GetINode(kMarkerBounceNode))
             SetDlgItemText(hWnd, IDC_BOUNCE_BUTTON, pb->GetINode(kMarkerBounceNode)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_BOUNCE_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_BOUNCE_BUTTON, _T("(none)"));
 
         if (pb->GetINode(kMarkerSndPlace))
             SetDlgItemText(hWnd, IDC_PLACE_BUTTON, pb->GetINode(kMarkerSndPlace)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_PLACE_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_PLACE_BUTTON, _T("(none)"));
 
         if (pb->GetINode(kMarkerSndHit))
             SetDlgItemText(hWnd, IDC_HIT_BUTTON, pb->GetINode(kMarkerSndHit)->GetName());
         else
-            SetDlgItemText(hWnd, IDC_HIT_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_HIT_BUTTON, _T("(none)"));
     }
 
 public:
@@ -716,7 +716,7 @@ plKey plGameMarkerComponent::IGetMtlAnimKey(int paramID, plMaxNode* node)
     Mtl* mtl = fCompPB->GetMtl(kMarkerMtl);
     plMaxNode* mtlNode  = (plMaxNode*)fCompPB->GetINode(kMarkerMtlNode);
     std::vector<plKey> keys;
-    ST::string anim = ST::string::from_utf8(fCompPB->GetStr(paramID));
+    ST::string anim(fCompPB->GetStr(paramID));
     GetMatAnimModKey(mtl, mtlNode, anim, keys);
     hsAssert(keys.size() == 1, "Wrong number of keys");
     return keys[0];

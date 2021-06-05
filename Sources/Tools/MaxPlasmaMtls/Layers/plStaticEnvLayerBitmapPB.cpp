@@ -306,9 +306,10 @@ public:
         BitmapInfo      bi;
         int             i;
         TCHAR           filename[ MAX_PATH ];
-        TCHAR           *modPoint, faces[ 6 ][ 4 ] = { "_FR", "_BK", "_LF", "_RT", "_UP", "_DN" };
-        
-        
+        TCHAR           *modPoint, faces[ 6 ][ 4 ] = {
+            _T("_FR"), _T("_BK"), _T("_LF"), _T("_RT"), _T("_UP"), _T("_DN")
+        };
+
         /// Select one file
         PBBitmap *pbbm = map->GetParamBlock()->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap, t );
         if (pbbm != nullptr)
@@ -317,18 +318,18 @@ public:
             return FALSE;
 
         /// Copy the name over and get our mod point
-        strcpy( filename, bi.Filename() );
-        modPoint = strstr( filename, "_UP" );
+        _tcsncpy( filename, bi.Filename(), std::size(filename) );
+        modPoint = _tcsstr( filename, _T("_UP") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_DN" );
+            modPoint = _tcsstr( filename, _T("_DN") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_LF" );
+            modPoint = _tcsstr( filename, _T("_LF") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_RT" );
+            modPoint = _tcsstr( filename, _T("_RT") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_FR" );
+            modPoint = _tcsstr(filename, _T("_FR") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_BK" );
+            modPoint = _tcsstr( filename, _T("_BK") );
 
         /// Load each face
         for( i = 0; i < 6; i++ )

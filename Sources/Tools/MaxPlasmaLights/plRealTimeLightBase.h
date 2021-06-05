@@ -404,7 +404,7 @@ public:
     // Called to retreive the state of this object at the specified time.
     ObjectState Eval(TimeValue t) override { return ObjectState(this); }
 
-    const char *GetCategory() { return fClassDesc->Category(); }
+    const MCHAR* GetCategory() { return fClassDesc->Category(); }
 
     //
     //  LightObject Specific Stuff below

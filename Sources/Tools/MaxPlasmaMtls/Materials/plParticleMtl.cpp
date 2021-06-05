@@ -148,7 +148,7 @@ Interval plParticleMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -169,15 +169,15 @@ int plParticleMtl::NumSubs()
     return 2;
 }
 
-TSTR plParticleMtl::SubAnimName(int i) 
+MSTR plParticleMtl::SubAnimName(int i) 
 {
     switch (i)
     {
     case 0: return fBasicPB->GetLocalName();
-    case 1: return "Texmap";
+    case 1: return _M("Texmap");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plParticleMtl::SubAnim(int i)
@@ -278,12 +278,12 @@ void plParticleMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kTexmap, 0, m);
 }
 
-TSTR plParticleMtl::GetSubTexmapSlotName(int i)
+MSTR plParticleMtl::GetSubTexmapSlotName(int i)
 {
     if (i == 0)
-        return "Texmap";
+        return _M("Texmap");
 
-    return "";
+    return _M("");
 }
 
 TSTR plParticleMtl::GetSubTexmapTVName(int i)

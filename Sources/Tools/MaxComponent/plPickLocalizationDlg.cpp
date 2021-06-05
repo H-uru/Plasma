@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStringTokenizer.h"
 
-#include "hsWindows.h"
-#include <max.h>
+#include "MaxMain/MaxAPI.h"
 #include "resource.h"
 #include <vector>
 
@@ -75,21 +74,21 @@ bool plPickLocalizationDlg::IInitDlg(HWND hDlg)
 {
     if (!pfLocalizationDataMgr::InstanceValid())
     {
-        MessageBox(hDlg, "Localization data manger is not initialized! (BTW, this is BAD)", "Error", MB_ICONERROR + MB_OK);
+        plMaxMessageBox(hDlg, _T("Localization data manger is not initialized! (BTW, this is BAD)"), _T("Error"), MB_ICONERROR | MB_OK);
         return false;
     }
 
     fTree = GetDlgItem(hDlg, IDC_LOCALIZATIONTREE);
     TreeView_DeleteAllItems(fTree);
 
-    std::string ageName = "", setName = "", itemName = "";
-    locIzer.Reset(fPath.c_str(), ".");
-    if (locIzer.Next(locToken, 200))
-        ageName = locToken;
-    if (locIzer.Next(locToken, 200))
-        setName = locToken;
-    if (locIzer.Next(locToken, 200))
-        itemName = locToken;
+    ST::string ageName, setName, itemName;
+    auto tokens = fPath.split('.');
+    if (tokens.size() >= 1)
+        ageName = tokens[0];
+    if (tokens.size() >= 2)
+        setName = tokens[1];
+    if (tokens.size() >= 3)
+        itemName = tokens[2];
 
     IAddLocalizations(ageName, setName, itemName);
     IUpdateValue(hDlg);
@@ -97,26 +96,18 @@ bool plPickLocalizationDlg::IInitDlg(HWND hDlg)
     return true;
 }
 
-std::string WStringToString(std::wstring val)
+HTREEITEM plPickLocalizationDlg::IAddVar(const ST::string& name, const ST::string& match, HTREEITEM hParent)
 {
-    std::string retVal;
-    char *buff = hsWStringToString(val.c_str());
-    retVal = buff;
-    delete [] buff;
-    return retVal;
-}
+    ST::wchar_buffer nameBuf = name.to_wchar();
 
-HTREEITEM plPickLocalizationDlg::IAddVar(std::string name, std::string match, HTREEITEM hParent)
-{
-    TVINSERTSTRUCT tvi = {};
+    TVINSERTSTRUCTW tvi = {0};
     tvi.hParent = hParent;
     tvi.hInsertAfter = TVI_LAST;
     tvi.item.mask = TVIF_TEXT | TVIF_PARAM;
-    tvi.item.pszText = (char*)name.c_str();
-    tvi.item.cchTextMax = name.length();
-    tvi.item.lParam = (LPARAM)nullptr;
+    tvi.item.pszText = nameBuf.data();
+    tvi.item.cchTextMax = nameBuf.size();
 
-    HTREEITEM hItem = TreeView_InsertItem(fTree, &tvi);
+    HTREEITEM hItem = (HTREEITEM)SendMessageW(fTree, TVM_INSERTITEM, 0, (LPARAM)&tvi);
 
     if (name == match)
     {
@@ -127,55 +118,57 @@ HTREEITEM plPickLocalizationDlg::IAddVar(std::string name, std::string match, HT
     return hItem;
 }
 
-void plPickLocalizationDlg::IAddLocalizations(std::string ageName, std::string setName, std::string itemName)
+void plPickLocalizationDlg::IAddLocalizations(const ST::string& ageName, const ST::string& setName, const ST::string& itemName)
 {
     std::vector<ST::string> ages = pfLocalizationDataMgr::Instance().GetAgeList();
 
     for (int curAge = 0; curAge < ages.size(); curAge++)
     {
-        HTREEITEM hAgeItem = IAddVar(ages[curAge].c_str(), ageName, TVI_ROOT);
+        HTREEITEM hAgeItem = IAddVar(ages[curAge], ageName, TVI_ROOT);
 
         std::vector<ST::string> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
         for (int curSet = 0; curSet < sets.size(); curSet++)
         {
             std::vector<ST::string> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
 
-            HTREEITEM hSetItem = IAddVar(sets[curSet].c_str(), setName, hAgeItem);
+            HTREEITEM hSetItem = IAddVar(sets[curSet], setName, hAgeItem);
             for (int curElement = 0; curElement < elements.size(); curElement++)
-                IAddVar(elements[curElement].c_str(), itemName, hSetItem);
+                IAddVar(elements[curElement], itemName, hSetItem);
         }
     }
 }
 
 void plPickLocalizationDlg::IUpdateValue(HWND hDlg)
 {
-    fPath = "";
+    fPath.clear();
 
     HTREEITEM hItem = TreeView_GetSelection(fTree);
 
-    std::vector<std::string> path;
+    std::vector<ST::string> path;
     while (hItem)
     {
-        char s[200];
+        TCHAR s[200];
         TVITEM tvi = {0};
         tvi.hItem = hItem;
         tvi.mask = TVIF_TEXT;
         tvi.pszText = s;
         tvi.cchTextMax = 200;
         TreeView_GetItem(fTree, &tvi);
-        path.push_back(tvi.pszText);
+        path.emplace_back(T2ST(tvi.pszText));
         hItem = TreeView_GetParent(fTree, hItem);
     }
 
+    ST::string_stream ss;
     while (!path.empty())
     {
-        fPath.append(path.back());
+        ss << path.back();
         path.pop_back();
         if (!path.empty())
-            fPath.append(".");
+            ss << '.';
     }
+    fPath = ss.to_string();
 
-    SetDlgItemText(hDlg, IDC_LOCALIZATIONSTRING, fPath.c_str());
+    SetDlgItemText(hDlg, IDC_LOCALIZATIONSTRING, ST2T(fPath));
 
     IUpdateOkBtn(hDlg);
 }
@@ -184,10 +177,10 @@ void plPickLocalizationDlg::IUpdateOkBtn(HWND hDlg)
 {
     HWND hOk = GetDlgItem(hDlg, IDOK);
 
-    char s[512];
+    TCHAR s[512];
     GetDlgItemText(hDlg, IDC_LOCALIZATIONSTRING, s, 511);
 
-    EnableWindow(hOk, strlen(s)>0 && IValidatePath());
+    EnableWindow(hOk, *s != _T('\0') && IValidatePath());
 }
 
 bool plPickLocalizationDlg::IValidatePath()

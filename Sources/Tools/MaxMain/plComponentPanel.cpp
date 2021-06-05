@@ -139,10 +139,10 @@ INT_PTR plComponentUtil::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
                 case LVN_ENDLABELEDIT:
                     {
                         NMLVDISPINFO *di = (NMLVDISPINFO*)lParam;
-                        const char *name = di->item.pszText;
+                        const TCHAR* name = di->item.pszText;
 
                         // If the name was changed...
-                        if (name && *name != '\0')
+                        if (name && *name != _T('\0'))
                         {
                             // Update the name of the node
                             plComponentBase* comp = IGetListSelection();
@@ -224,13 +224,13 @@ void plComponentUtil::BeginEditParams(Interface *ip, IUtil *iu)
 {
     fInterface = ip;
     
-    fhPanel = fInterface->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_COMP_PANEL), ForwardDlgProc, "Components (Selected Obj)");
+    fhPanel = fInterface->AddRollupPage(hInstance, MAKEINTRESOURCE(IDD_COMP_PANEL), ForwardDlgProc, _M("Components (Selected Obj)"));
 
     // Add a column.  We don't use it (graphically), but it has to be there.
     HWND hList = GetDlgItem(fhPanel, IDC_COMPLIST);
     LVCOLUMN lvc;
     lvc.mask = LVCF_TEXT;
-    lvc.pszText = "Description";
+    lvc.pszText = _T("Description");
     ListView_InsertColumn(hList, 0, &lvc);
 
 #if MAX_VERSION_MAJOR >= 14 // Max 2012
@@ -298,7 +298,7 @@ void plComponentUtil::IUpdateRollups()
 
         LVITEM item = {0};
         item.mask = LVIF_TEXT | LVIF_PARAM;
-        item.pszText = sharedComps[i]->GetName();
+        item.pszText = const_cast<TCHAR*>(sharedComps[i]->GetName());
         item.iItem = ListView_GetItemCount(hList);
         item.lParam = (LPARAM)comp;
         ListView_InsertItem(hList, &item);
@@ -357,8 +357,8 @@ void plComponentUtil::IAddRollups(plComponentBase* comp)
     }
 
     // Put the number of targets in the text box
-    char buf[12];
-    snprintf(buf, sizeof(buf), "%u", numTargs);
+    TCHAR buf[12];
+    _sntprintf(buf, std::size(buf), _T("%u"), numTargs);
     SetWindowText(GetDlgItem(fhPanel, IDC_NUM_TARGS), buf);
 
     // Enable the forward/back buttons if there are multiple targets
@@ -421,7 +421,7 @@ void plComponentUtil::INextTarget(bool forward)
             fInterface->SelectNode(fCurComponent->GetTarget(targIdx));
 
             fInterface->RedrawViews(fInterface->GetTime(), REDRAW_END);
-            theHold.Accept("Select");
+            theHold.Accept(_M("Select"));
 
             return;
         }
@@ -438,7 +438,7 @@ void plComponentUtil::IUpdateNodeName(plMaxNode *node)
     if (idx != -1)
     {
         HWND hList = GetDlgItem(fhPanel, IDC_COMPLIST);
-        ListView_SetItemText(hList, idx, 0, node->GetName());
+        ListView_SetItemText(hList, idx, 0, const_cast<TCHAR*>(node->GetName()));
         // Make sure the column is wide enough
         ListView_SetColumnWidth(hList, 0, LVSCW_AUTOSIZE);
     }
@@ -462,7 +462,7 @@ void IGetReferencesRecur(plMaxNode* node, INode* target, std::vector<plMaxNode*>
     plComponentBase* comp = node->ConvertToComponent();
     if (comp && comp->DoReferenceNode(target))
     {
-        const char* name = node->GetName();
+        auto name = node->GetName();
         nodes.push_back(node);
     }
 
@@ -482,8 +482,8 @@ INT_PTR CALLBACK RefDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 INode* node = GetCOREInterface()->GetSelNode(0);
 
-                char buf[256];
-                sprintf(buf, "%s is Ref'd By", node->GetName());
+                TCHAR buf[256];
+                _sntprintf(buf, std::size(buf), _T("%s is Ref'd By"), node->GetName());
                 SetWindowText(hDlg, buf);
 
                 std::vector<plMaxNode*> nodes;

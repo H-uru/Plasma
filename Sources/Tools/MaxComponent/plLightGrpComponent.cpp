@@ -235,7 +235,7 @@ plLightGrpComponent* plLightGrpComponent::GetComp(plMaxNode* node)
 
 bool plLightGrpComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
     if( !fValid )
         return true;
 

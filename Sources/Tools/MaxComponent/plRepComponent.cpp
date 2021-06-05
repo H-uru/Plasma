@@ -195,7 +195,7 @@ int plRepresentComp::GetCapability()
         plMaxNodeBase* node = GetTarget(iTarg);
         if( node )
         {
-            const char* name = node->GetName();
+            const MCHAR* name = node->GetName();
             int numComp = node->NumAttachedComponents();
             int iComp;
             for( iComp = 0; iComp < numComp; iComp++ )
@@ -203,7 +203,7 @@ int plRepresentComp::GetCapability()
                 plComponentBase* comp = node->GetAttachedComponent(iComp);
                 if( comp )
                 {
-                    const char* compName = comp->GetINode()->GetName();
+                    const MCHAR* compName = comp->GetINode()->GetName();
                     int cap = comp->GetMinCap();
                     if( cap > maxCap )
                         maxCap = cap;
@@ -223,7 +223,6 @@ void plRepresentComp::SetLoadMask(const plLoadMask& m)
         plMaxNodeBase* node = GetTarget(iTarg);
         if( node )
         {
-            const char* nodeName = node->GetName();
             node->AddLoadMask(m);
             plLoadMask x = node->GetLoadMask();
             x |= m;
@@ -445,9 +444,11 @@ bool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int ca
         {
             if( preVal & (1 << i) )
             {
-                char buff[256];
+                TCHAR buff[256];
                 INode* rep = fCompPB->GetINode(kReps, TimeValue(0), i);
-                sprintf(buff, "Rep %d - %s is obscured by an earlier representation in preVal", i, rep ? rep->GetName() : "Unknown");
+                _sntprintf(buff, std::size(buff),
+                    _T("Rep %d - %s is obscured by an earlier representation in preVal"),
+                    i, rep ? rep->GetName() : _T("Unknown"));
                 pErrMsg->Set(true, GetINode()->GetName(), buff).Show();
                 pErrMsg->Set(false);
             }
@@ -465,9 +466,11 @@ bool plRepGroupComp::ComputeAndValidate(plErrorMsg* pErrMsg, int quals[], int ca
         {
             if( !(preVal & (1 << i)) && (postVal & (1 << i)) )
             {
-                char buff[256];
+                TCHAR buff[256];
                 INode* rep = fCompPB->GetINode(kReps, TimeValue(0), i);
-                sprintf(buff, "Rep %d - %s is obscured by an earlier representation in postVal", i, rep ? rep->GetName() : "Unknown");
+                _sntprintf(buff, std::size(buff),
+                    _T("Rep %d - %s is obscured by an earlier representation in postVal"),
+                    i, rep ? rep->GetName() : _T("Unknown"));
                 pErrMsg->Set(true, GetINode()->GetName(), buff).Show();
                 pErrMsg->Set(false);
             }

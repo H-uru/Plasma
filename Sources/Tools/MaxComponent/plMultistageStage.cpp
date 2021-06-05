@@ -68,12 +68,12 @@ INT_PTR plBaseStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-HWND plBaseStage::ICreateDlg(int dialogID, char* title)
+HWND plBaseStage::ICreateDlg(int dialogID, const MCHAR* title)
 {
     return GetCOREInterface()->AddRollupPage(hInstance,
                                             MAKEINTRESOURCE(dialogID),
                                             IStaticDlgProc,
-                                            title,
+                                            const_cast<MCHAR*>(title),
                                             (LPARAM)this);
 }
 
@@ -179,7 +179,7 @@ void plStandardStage::Write(hsStream *stream)
 void plStandardStage::CreateDlg()
 {
     hsAssert(!fDlg, "Dialog wasn't destroyed");
-    fDlg = ICreateDlg(IDD_COMP_MULTIBEH_NORMAL, "Standard Stage");
+    fDlg = ICreateDlg(IDD_COMP_MULTIBEH_NORMAL, _M("Standard Stage"));
 
     IInitDlg();
 }
@@ -299,8 +299,8 @@ INT_PTR plStandardStage::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPa
 void plStandardStage::IGetAnimName()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    char buf[256];
-    edit->GetText(buf, sizeof(buf));
+    MCHAR buf[256];
+    edit->GetText(buf, std::size(buf));
 
     if (fAnimName != buf)
     {
@@ -312,34 +312,34 @@ void plStandardStage::IGetAnimName()
 
 struct NameType
 {
-    const char* name;
+    const MCHAR* name;
     int type;
 };
 
 static NameType gForward[] =
 {
-    { "None",       plAnimStage::kForwardNone },
-    { "Keyboard",   plAnimStage::kForwardKey },
-    { "Automatic",  plAnimStage::kForwardAuto }
+    { _M("None"),       plAnimStage::kForwardNone },
+    { _M("Keyboard"),   plAnimStage::kForwardKey },
+    { _M("Automatic"),  plAnimStage::kForwardAuto }
 };
 
 static NameType gBackward[] =
 {
-    { "None",       plAnimStage::kBackNone },
-    { "Keyboard",   plAnimStage::kBackKey },
-    { "Automatic",  plAnimStage::kBackAuto }
+    { _M("None"),       plAnimStage::kBackNone },
+    { _M("Keyboard"),   plAnimStage::kBackKey },
+    { _M("Automatic"),  plAnimStage::kBackAuto }
 };
 
 static NameType gAdvance[] =
 {
-    { "None",       plAnimStage::kAdvanceNone },
-    { "Auto At End",plAnimStage::kAdvanceAuto }
+    { _M("None"),       plAnimStage::kAdvanceNone },
+    { _M("Auto At End"),plAnimStage::kAdvanceAuto }
 };
 
 static NameType gRegress[] =
 {
-    { "None",       plAnimStage::kRegressNone },
-    { "Auto At End",plAnimStage::kRegressAuto }
+    { _M("None"),       plAnimStage::kRegressNone },
+    { _M("Auto At End"),plAnimStage::kRegressAuto }
 };
 
 static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
@@ -359,7 +359,7 @@ static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
 void plStandardStage::IInitDlg()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    edit->SetText(const_cast<MAX10_CONST MCHAR*>(fAnimName.c_str()));
+    edit->SetText(const_cast<MAX10_CONST MCHAR*>(ST2M(fAnimName)));
 
     HWND hForward = GetDlgItem(fDlg, IDC_FORWARD_COMBO);
     LoadCombo(hForward, gForward, sizeof(gForward), fForward);

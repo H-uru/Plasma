@@ -209,7 +209,7 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const ST::string &ani
         // New segment, add a new stealth node
         stealth = (plAnimStealthNode *)GetCOREInterface()->CreateInstance( HELPER_CLASS_ID, ANIMSTEALTH_CLASSID );
         INode *node = GetCOREInterface()->CreateObjectNode( stealth );
-        stealth->SetSegment((animName.compare(ENTIRE_ANIMATION_NAME) != 0) ? animName.c_str() : nullptr);
+        stealth->SetSegment((animName.compare(ENTIRE_ANIMATION_NAME) != 0) ? animName : "");
         stealth->SetNodeName( GetName() );
         node->Freeze( true );
 

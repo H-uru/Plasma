@@ -209,8 +209,14 @@ DWORD PlasmaMax::Start()
     plFileName pathTemp = plMaxConfig::GetClientPath(false, true);
     if (!pathTemp.IsValid())
     {
-        hsMessageBox("PlasmaMAX2.ini is missing or invalid.\nPlasmaMAX will be unavailable until this file is added.",
-                     "PlasmaMAX2 Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
+        ST::string errmsg = ST::format(
+            "PlasmaMAX2.ini is missing or invalid.\nPlasmaMAX will be unavailable until this file is added at\n{}",
+            plMaxConfig::GetPluginIni()
+        );
+        plMaxMessageBox(
+            nullptr,
+            ST2T(errmsg),
+            _T("PlasmaMAX2 Error"), MB_OK | MB_ICONEXCLAMATION);
         return GUPRESULT_NOKEEP;
     }
 
@@ -298,8 +304,8 @@ DWORD_PTR PlasmaMax::Control(DWORD parameter)
                     // - Colin
     //              if (assetId.IsEmpty())
                     {
-                        char fileName[MAX_PATH];
-                        if (layer->GetBitmapFileName(fileName, sizeof(fileName), iBmp))
+                        TCHAR fileName[MAX_PATH];
+                        if (layer->GetBitmapFileName(fileName, std::size(fileName), iBmp))
                         {
                             int texIdx = texInfo.size();
                             texInfo.resize(texIdx+1);

@@ -59,10 +59,10 @@ class MaxUtilsClassDesc : public ClassDesc
 public:
     int             IsPublic() override             { return TRUE; }
     void*           Create(BOOL loading) override   { return &plMaxUtils::Instance(); }
-    const TCHAR*    ClassName() override            { return _T("Plasma Debug Utils"); }
+    const MCHAR*    ClassName() override            { return _M("Plasma Debug Utils"); }
     SClass_ID       SuperClassID() override         { return UTILITY_CLASS_ID; }
     Class_ID        ClassID() override              { return Class_ID(0x316610ee, 0xebe62c3); }
-    const TCHAR*    Category() override             { return _T(""); }
+    const MCHAR*    Category() override             { return _M(""); }
 };
 
 static MaxUtilsClassDesc theMaxUtilsClassDesc;
@@ -83,7 +83,7 @@ void plMaxUtils::BeginEditParams(Interface *ip, IUtil *iu)
     fhPanel = GetCOREInterface()->AddRollupPage(hInstance,
                                                 MAKEINTRESOURCE(IDD_UTILS),
                                                 ForwardDlgProc,
-                                                "Plasma Debug Utils");
+                                                _M("Plasma Debug Utils"));
 }
 
 void plMaxUtils::EndEditParams(Interface *ip, IUtil *iu)
@@ -106,9 +106,9 @@ INT_PTR plMaxUtils::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_RES)
         {
             int numCleared = ClearTextureIds();
-            char buf[256];
-            sprintf(buf, "Cleared %d texture ids", numCleared);
-            MessageBox(nullptr, buf, "AssetMan Clear", MB_OK);
+            TCHAR buf[256];
+            _sntprintf(buf, std::size(buf), _T("Cleared %d texture ids"), numCleared);
+            plMaxMessageBox(nullptr, buf, _T("AssetMan Clear"), MB_OK);
             return TRUE;
         }
         break;

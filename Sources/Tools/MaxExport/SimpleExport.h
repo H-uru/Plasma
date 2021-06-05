@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __SIMPLEEXPORT_H
 #define __SIMPLEEXPORT_H
 
+#include <MaxMain/MaxAPI.h>
+
 //
 // Inlines
 //
@@ -60,41 +62,41 @@ public:
                     HSExport2();
                     ~HSExport2();
     int             ExtCount() override;                 // Number of extensions supported
-    const TCHAR *   Ext(int n) override;                 // Extension #n (i.e. "HS")
-    const TCHAR *   LongDesc() override;                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
-    const TCHAR *   ShortDesc() override;                // Short ASCII description (i.e. "3D Studio")
-    const TCHAR *   AuthorName() override;               // ASCII Author name
-    const TCHAR *   CopyrightMessage() override;         // ASCII Copyright message
-    const TCHAR *   OtherMessage1() override;            // Other message #1
-    const TCHAR *   OtherMessage2() override;            // Other message #2
+    const MCHAR *   Ext(int n) override;                 // Extension #n (i.e. "HS")
+    const MCHAR *   LongDesc() override;                 // Long ASCII description (i.e. "Autodesk 3D Studio File")
+    const MCHAR *   ShortDesc() override;                // Short ASCII description (i.e. "3D Studio")
+    const MCHAR *   AuthorName() override;               // ASCII Author name
+    const MCHAR *   CopyrightMessage() override;         // ASCII Copyright message
+    const MCHAR *   OtherMessage1() override;            // Other message #1
+    const MCHAR *   OtherMessage2() override;            // Other message #2
     unsigned int    Version() override;                  // Version number * 100 (i.e. v3.01 = 301)
     void            ShowAbout(HWND hWnd) override;       // Show DLL's "About..." box
-    int             DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0) override;
+    int             DoExport(const MCHAR* name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0) override;
 
-    const char*         GetName()                   { return fName; }
+    const MCHAR*    GetName()                   { return fName; }
 
 private:
     static bool         IProgressCallback(float percent);
     static DWORD WINAPI IProgressDummyFunc(LPVOID arg); 
 
-    char                fName[128];
+    MCHAR               fName[128];
 };
 
 //------------------------------------------------------
 
-class HSClassDesc2 : public ClassDesc 
+class HSClassDesc2 : public ClassDesc
 {
 public:
     int             IsPublic() override { return 1; }
     void *          Create(BOOL loading = FALSE) override { return new HSExport2; }
-    const TCHAR *   ClassName() override { return "Plasma 2.0 Scene Exporter"; }
+    const MCHAR *   ClassName() override { return _M("Plasma 2.0 Scene Exporter"); }
     SClass_ID       SuperClassID() override { return SCENE_EXPORT_CLASS_ID; }
 #ifdef HS_DEBUGGING
     Class_ID        ClassID() override { return Class_ID(0x547962c7, 0x520a702d); }
 #else
     Class_ID        ClassID() override { return Class_ID(0x717f791f, 0x79412447); }
 #endif
-    const TCHAR*    Category() override { return "Plasma Export..."; }
+    const MCHAR*    Category() override { return _M("Plasma Export..."); }
 };
 
 

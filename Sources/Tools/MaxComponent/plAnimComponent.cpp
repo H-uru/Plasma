@@ -155,9 +155,9 @@ void plAnimComponentProc::EnableGlobal(HWND hWnd, bool enable)
     Button_Enable(GetDlgItem(hWnd, IDC_COMP_ANIM_LOOP_CKBX), !enable);
 }   
 
-void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, const char *varName)
+void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, const TCHAR* varName)
 {       
-    plStateDescriptor *sd = plSDLMgr::GetInstance()->FindDescriptor(plPageInfoComponent::GetCurrExportAgeName(), plSDL::kLatestVersion);
+    plStateDescriptor *sd = plSDLMgr::GetInstance()->FindDescriptor(T2ST(plPageInfoComponent::GetCurrExportAgeName()), plSDL::kLatestVersion);
     if (sd)
     {
         int i;
@@ -169,22 +169,22 @@ void plAnimComponentProc::FillAgeGlobalComboBox(HWND box, const char *varName)
                 var->GetType() == plVarDescriptor::kTime ||
                 var->GetType() == plVarDescriptor::kAgeTimeOfDay)
             {
-                ComboBox_AddString(box, var->GetName().c_str());
+                ComboBox_AddString(box, ST2T(var->GetName()));
             }
         }
     }
-    ComboBox_AddString(box, "(none)");
+    ComboBox_AddString(box, _T("(none)"));
 }
 
-void plAnimComponentProc::SetBoxToAgeGlobal(HWND box, const char *varName)
+void plAnimComponentProc::SetBoxToAgeGlobal(HWND box, const TCHAR* varName)
 {
-    char buff[512];
-    if (!varName || !strcmp(varName, ""))
-        varName = "(none)";
+    TCHAR buff[512];
+    if (!varName || *varName == _T('\0'))
+        varName = _T("(none)");
 
     ComboBox_SelectString(box, 0, varName);
     ComboBox_GetLBText(box, ComboBox_GetCurSel(box), buff);
-    if (strcmp(varName, buff))
+    if (_tcscmp(varName, buff) != 0)
     {
         // Didn't find our variable in the age SDL file... 
         // Probably just missing the sdl file,
@@ -197,7 +197,7 @@ void plAnimComponentProc::SetBoxToAgeGlobal(HWND box, const char *varName)
 INT_PTR plAnimComponentProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     HWND gWnd = GetDlgItem(hWnd, IDC_ANIM_GLOBAL_LIST);
-    char buff[512];
+    TCHAR buff[512];
     switch (msg)
     {
     case WM_INITDIALOG:
@@ -236,7 +236,7 @@ INT_PTR plAnimComponentProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, U
         else if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_ANIM_GLOBAL_LIST)
         {
             ComboBox_GetLBText(gWnd, ComboBox_GetCurSel(gWnd), buff);
-            fPB->SetValue(ParamID(kAnimGlobalName), 0, _T(buff));
+            fPB->SetValue(ParamID(kAnimGlobalName), 0, buff);
         }
         // Catch loop button updates
         else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_COMP_ANIM_LOOP_CKBX)
@@ -597,10 +597,7 @@ plAnimComponentBase::plAnimComponentBase() : fNeedReset(true)
 
 ST::string plAnimComponentBase::GetAnimName()
 {
-    const char *name = fCompPB->GetStr(kAnimName);
-    if (!name || name[0] == '\0')
-        return ST::string();
-    return ST::string::from_utf8(name);
+    return M2ST(fCompPB->GetStr(kAnimName));
 }
 
 bool IsSubworld(plMaxNode* node)
@@ -679,14 +676,14 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // it out to anyone that needs it
 //  if (node->IsTMAnimated() || node->IsAnimatedLight())
 //  {
-        const char *name = node->GetName();
+        auto name = node->GetName();
 
         plAGMasterMod *mod = node->GetAGMasterMod();
         if (mod == nullptr)
         {
             if (!node->HasAGMod()) // Need to add this before the MasterMod, if it doesn't have one already.
             {
-                node->AddModifier(new plAGModifier(ST::string::from_utf8(node->GetName())), IGetUniqueName(node));
+                node->AddModifier(new plAGModifier(M2ST(name)), IGetUniqueName(node));
             }
             mod = new plAGMasterMod();
 
@@ -706,14 +703,14 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // we've added all keys during convert. Some cleanup might
     // be necessary in this case.
 
-    ST::string animName = ST::string::from_utf8(fCompPB->GetStr(kAnimName));
+    ST::string animName = M2ST(fCompPB->GetStr(kAnimName));
     if (animName.empty())
         animName = ST_LITERAL(ENTIRE_ANIMATION_NAME);
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
         plAgeGlobalAnim *ageAnim = new plAgeGlobalAnim(animName, 0, 0);
-        ageAnim->SetGlobalVarName((char*)fCompPB->GetStr(ParamID(kAnimGlobalName)));
+        ageAnim->SetGlobalVarName(M2ST(fCompPB->GetStr(ParamID(kAnimGlobalName))));
 
         fAnims[node] = ageAnim;
     }
@@ -737,7 +734,7 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (fCompPB->GetInt(kAnimLoop))
         {
             ATCAnim->SetLoop(true);
-            ST::string loopName = ST::string::from_utf8(fCompPB->GetStr(kAnimLoopName));
+            ST::string loopName = M2ST(fCompPB->GetStr(kAnimLoopName));
             float loopStart = info.GetLoopStart(loopName);
             float loopEnd = info.GetLoopEnd(loopName);
 
@@ -789,7 +786,7 @@ bool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorM
     if (tmc)
     {
         plMatrixChannelApplicator *app = new plMatrixChannelApplicator();
-            app->SetChannelName(ST::string::from_utf8(node->GetName()));
+            app->SetChannelName(M2ST(node->GetName()));
         plMatrixControllerChannel *channel = new plMatrixControllerChannel(tmc, parts);
         app->SetChannel(channel);
         anim->AddApplicator(app);
@@ -852,7 +849,7 @@ bool plAnimComponentBase::IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *a
         // It has an animation, we're going to need a plAGMod when loading the anim
         if (!node->HasAGMod())
         {
-            node->AddModifier(new plAGModifier(ST::string::from_utf8(node->GetName())), IGetUniqueName(node));
+            node->AddModifier(new plAGModifier(M2ST(node->GetName())), IGetUniqueName(node));
         }
         madeAnim = true;
     }
@@ -940,24 +937,24 @@ protected:
     {
         int type = fPB->GetInt(fTypeID);
 
-        int idx = ListBox_AddString(hList, kUseParamBlockNodeString);
+        int idx = ListBox_AddString(hList, _T(kUseParamBlockNodeString));
         if (type == plAnimObjInterface::kUseParamBlockNode && !fPB->GetINode(fNodeParamID))
             ListBox_SetCurSel(hList, idx);
 
 
-        idx = ListBox_AddString(hList, kUseOwnerNodeString);
+        idx = ListBox_AddString(hList, _T(kUseOwnerNodeString));
         if (type == plAnimObjInterface::kUseOwnerNode)
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType) override
+    void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if (strcmp(userType, kUseParamBlockNodeString) == 0)
+        if (_tcscmp(userType, _T(kUseParamBlockNodeString)) == 0)
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
         }
-        else if (strcmp(userType, kUseOwnerNodeString) == 0)
+        else if (_tcscmp(userType, _T(kUseOwnerNodeString)) == 0)
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
@@ -1001,11 +998,11 @@ public:
         : fPB( pb ), fParamID( paramID )
 
     {
-        strcpy( fTitle, title );
+        _tcsncpy( fTitle, title, std::size(fTitle) );
     }
 
     GETDLGTEXT_RETURN_TYPE dialogTitle() override { return fTitle; }
-    GETDLGTEXT_RETURN_TYPE buttonText() override { return "OK"; }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return _M("OK"); }
 
     int filter(INode *node) override
     {
@@ -1052,7 +1049,7 @@ plPlasmaAnimSelectDlgProc::plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgIt
     fParamID = paramID;
     fDlgItem = dlgItem;
     fUseNode = false;
-    strcpy( fTitle, promptTitle );
+    _tcsncpy( fTitle, promptTitle, std::size(fTitle) );
     fChain = chainedDlgProc;
 }
 
@@ -1065,7 +1062,7 @@ plPlasmaAnimSelectDlgProc::plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgIt
     fNodeParamID = nodeParamID;
     fTypeParamID = typeParamID;
     fNodeDlgItem = nodeDlgItem;
-    strcpy( fTitle, promptTitle );
+    _tcsncpy( fTitle, promptTitle, std::size(fTitle) );
     fChain = chainedDlgProc;
 }
 
@@ -1087,11 +1084,11 @@ void    plPlasmaAnimSelectDlgProc::IUpdateNodeBtn( HWND hWnd, IParamBlock2 *pb )
     {
         int type = pb->GetInt( fTypeParamID );
         if( type == plAnimObjInterface::kUseOwnerNode )
-            ::SetWindowText( ::GetDlgItem( hWnd, fNodeDlgItem ), kUseOwnerNodeString );
+            ::SetWindowText( ::GetDlgItem( hWnd, fNodeDlgItem ), _T(kUseOwnerNodeString) );
         else
         {
             INode *node = pb->GetINode( fNodeParamID );
-            TSTR newName( node ? node->GetName() : kUseParamBlockNodeString );
+            TSTR newName( node ? node->GetName() : _T(kUseParamBlockNodeString) );
             ::SetWindowText( ::GetDlgItem( hWnd, fNodeDlgItem ), newName );
         }
 
@@ -1114,7 +1111,7 @@ INT_PTR plPlasmaAnimSelectDlgProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND h
                 IParamBlock2 *pb = pmap->GetParamBlock();
 
                 INode *node = pb->GetINode( fParamID );
-                TSTR newName( node ? node->GetName() : "Pick" );
+                TSTR newName( node ? node->GetName() : _T("Pick") );
                 ::SetWindowText( ::GetDlgItem( hWnd, fDlgItem ), newName );
 
                 IUpdateNodeBtn( hWnd, pb );
@@ -1131,7 +1128,7 @@ INT_PTR plPlasmaAnimSelectDlgProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND h
                     GetCOREInterface()->DoHitByNameDialog( &hitCB );
 
                     INode *node = pb->GetINode( fParamID );
-                    TSTR newName( node ? node->GetName() : "Pick" );
+                    TSTR newName( node ? node->GetName() : _T("Pick") );
                     ::SetWindowText( ::GetDlgItem(hWnd, fDlgItem ), newName );
                     pmap->Invalidate( fParamID );
                     ::InvalidateRect(hWnd, nullptr, TRUE);

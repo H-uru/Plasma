@@ -137,7 +137,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     // TODO: Maintain the number or references here 
     int NumRefs() override;

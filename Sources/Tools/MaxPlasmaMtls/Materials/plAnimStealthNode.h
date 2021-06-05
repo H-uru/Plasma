@@ -127,7 +127,7 @@ public:
     INode           *GetINode();
     plPassMtlBase   *GetParentMtl();
     void            SetParentMtl( plPassMtlBase *parent );
-    void            SetNodeName( const char *parentName );
+    void            SetNodeName( const MCHAR* parentName );
 
     // Create the dialog for this object and place it inside the given dialog, centering it in the given control if any
     bool    CreateAndEmbedDlg(IParamMap2 *parentMap, IMtlParams *parentParams, HWND frameCtrl = nullptr);
@@ -143,7 +143,7 @@ public:
 
     // Interesting functions
     ST::string  GetSegmentName() const;
-    void        SetSegment( const char *name ); // nil for "entire animation"
+    void        SetSegment( const ST::string& name ); // nil for "entire animation"
 
     // Conversion from stealth's INode to the actual object
     static bool                 CanConvertToStealth( INode *objNode );
@@ -195,7 +195,7 @@ public:
 
     int CanConvertToType(Class_ID obtype) override { return (obtype == ANIMSTEALTH_CLASSID) ? 1 : 0; }
 
-    const char *GetCategory() { return fClassDesc->Category(); }
+    const MCHAR* GetCategory() { return fClassDesc->Category(); }
 
     /// Parameter access
 

@@ -92,7 +92,7 @@ plMultipassMtlDlg::plMultipassMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plMultipas
         hInstance,
         MAKEINTRESOURCE(IDD_MULTIPASS),
         ForwardProc,
-        "Multipass Parameters",
+        _M("Multipass Parameters"),
         (LPARAM)this);
 }
 
@@ -281,12 +281,8 @@ void plMultipassMtlDlg::UpdateLayerDisplay()
     for (i = 0; i < numlayers && i < NSUBMTLS; i++)
     {
         Mtl *m = fPBlock->GetMtl(kMultPasses, curTime, i);
-        TSTR nm;
-        if (m) 
-            nm = m->GetName();
-        else 
-            nm = "None";
-        fLayerBtns[i]->SetText(nm.data());
+        const MCHAR* nm = m ? m->GetName().data() : _M("None");
+        fLayerBtns[i]->SetText(const_cast<MCHAR*>(nm));
         
         ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_SHOW);
         ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_SHOW);

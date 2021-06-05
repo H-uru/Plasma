@@ -567,7 +567,7 @@ bool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFi
         size = uint32_t(1 << i);
 
         env = new plDynamicEnvMap(size, size, 32);
-        hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(ref->GetName()), env, node->GetLocation(), node->GetLoadMask());
+        hsgResMgr::ResMgr()->NewKey(ST::string(ref->GetName()), env, node->GetLocation(), node->GetLoadMask());
 
         Point3 pos = ref->GetNodeTM(TimeValue(0)).GetTrans();
         env->SetPosition(hsPoint3(pos.x, pos.y, pos.z));
@@ -798,7 +798,7 @@ INT_PTR plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd
         {
             IParamBlock2 *pb = paramMap->GetParamBlock();
             INode* node = pb->GetINode(plShoreComponent::kWaveSet);
-            TSTR newName(node ? node->GetName() : "Pick");
+            TSTR newName(node ? node->GetName() : _T("Pick"));
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SHORE_CHOSE), newName);
         }
         return TRUE;
@@ -812,7 +812,7 @@ INT_PTR plShoreCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWnd
             if( plPick::Node(pb, plShoreComponent::kWaveSet, &cids, true, true) )
             {
                 INode* node = pb->GetINode(plShoreComponent::kWaveSet);
-                TSTR newName(node ? node->GetName() : "Pick");
+                TSTR newName(node ? node->GetName() : _T("Pick"));
                 ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SHORE_CHOSE), newName);
                 paramMap->Invalidate(plShoreComponent::kWaveSet);
                 ShowWindow(hWnd, SW_HIDE);
@@ -936,7 +936,7 @@ INT_PTR plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWn
         {
             IParamBlock2 *pb = paramMap->GetParamBlock();
             INode* node = pb->GetINode(plWDecalComponent::kWaveSet);
-            TSTR newName(node ? node->GetName() : "Pick");
+            TSTR newName(node ? node->GetName() : _T("Pick"));
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_WDECAL_CHOSE), newName);
         }
         return TRUE;
@@ -950,7 +950,7 @@ INT_PTR plWDecalCompSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWn
             if( plPick::Node(pb, plWDecalComponent::kWaveSet, &cids, true, true) )
             {
                 INode* node = pb->GetINode(plWDecalComponent::kWaveSet);
-                TSTR newName(node ? node->GetName() : "Pick");
+                TSTR newName(node ? node->GetName() : _T("Pick"));
                 ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_WDECAL_CHOSE), newName);
                 paramMap->Invalidate(plWDecalComponent::kWaveSet);
                 ShowWindow(hWnd, SW_HIDE);
@@ -1098,13 +1098,13 @@ public:
             }
             else if(HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_COMP_ENVMAP_ADD_STRING)
             {
-                char str[256];
-                char *pStr = str;
+                MCHAR str[256];
+                MCHAR *pStr = str;
                 ICustEdit *custEdit = GetICustEdit(GetDlgItem(hWnd, IDC_COMP_ENVMAP_ADD_STRING_BOX));
-                custEdit->GetText(str, 256);
-                custEdit->SetText("");  // clear text box
+                custEdit->GetText(str, std::size(str));
+                custEdit->SetText(_M(""));  // clear text box
 
-                if(!strcmp(str, ""))    // don't allow empty strings
+                if (str[0] == _M('\0'))    // don't allow empty strings
                     return TRUE;
 
                 HWND hList = GetDlgItem(hWnd, IDC_COMP_ENVMAP_NAMES_LISTBOX);
@@ -1285,7 +1285,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
             fMap = cam = new plDynamicCamMap(size, size, 32);
 
         // Need to assign the key before we call all the setup functions.
-        hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(GetINode()->GetName()), fMap, firstTarg->GetLocation(), firstTarg->GetLoadMask());
+        hsgResMgr::ResMgr()->NewKey(ST::string(GetINode()->GetName()), fMap, firstTarg->GetLocation(), firstTarg->GetLoadMask());
 
 
         if (fCompPB->GetInt((ParamID(kMapType))) == kMapCubic)

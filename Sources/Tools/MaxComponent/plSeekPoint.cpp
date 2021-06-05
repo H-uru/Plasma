@@ -103,12 +103,7 @@ plSeekPointComponent::plSeekPointComponent()
 // CONVERT
 bool plSeekPointComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char *objName = node->GetName();
-    char *name = new char[strlen(objName) + 1];
-
-    strcpy(name, objName);
-
-    plSeekPointMod* pointMod = new plSeekPointMod(name);
+    plSeekPointMod* pointMod = new plSeekPointMod(M2ST(node->GetName()));
     node->AddModifier(pointMod, IGetUniqueName(node));
     return true;
 }

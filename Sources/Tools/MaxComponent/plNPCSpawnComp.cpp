@@ -150,10 +150,10 @@ plKey plNPCSpawnComp::GetNPCSpawnKey(plMaxNode *node)
 // ISVALID
 bool plNPCSpawnComp::IIsValid()
 {
-    const char *modelName = fCompPB->GetStr(kModelName);
+    const MCHAR* modelName = fCompPB->GetStr(kModelName);
     // account name is optional (for the moment)
     //const char *account = fCompPB->GetStr(kAccountName);
-    return (modelName && *modelName != '\0');
+    return (modelName && *modelName != _M('\0'));
 }
 
 // SETUPPROPERTIES
@@ -168,8 +168,8 @@ bool plNPCSpawnComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        if (pErrMsg->Set(true, "NPC Spawner", "NPC Spawn component on '%s' has no animation name, and will not be included in the export. Abort this export?", node->GetName()).Ask())
-            pErrMsg->Set(true, "", "");
+        if (pErrMsg->Set(true, "NPC Spawner", ST::format("NPC Spawn component on '{}' has no animation name, and will not be included in the export. Abort this export?", node->GetName())).Ask())
+            pErrMsg->Set(true);
         else
             pErrMsg->Set(false); // Don't want to abort
         return false;
@@ -182,8 +182,8 @@ bool plNPCSpawnComp::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (IIsValid())
     {
-        const char *modelName = fCompPB->GetStr(kModelName);
-        const char *accountName = fCompPB->GetStr(kAccountName);
+        const MCHAR* modelName = fCompPB->GetStr(kModelName);
+        const MCHAR* accountName = fCompPB->GetStr(kAccountName);
         bool autoSpawn = fCompPB->GetInt(kAutoSpawn) ? true : false;
 
         plNPCSpawnMod *mod = new plNPCSpawnMod(modelName, accountName, autoSpawn);

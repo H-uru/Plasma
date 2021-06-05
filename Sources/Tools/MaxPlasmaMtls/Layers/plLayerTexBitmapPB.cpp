@@ -221,7 +221,7 @@ public:
                     
                     BMCropper *cropper = new BMCropper(pblock);
                     
-                    pbbm->bm->Display("Specify Cropping/Placement", BMM_CN, FALSE, TRUE, cropper);
+                    pbbm->bm->Display(_M("Specify Cropping/Placement"), BMM_CN, FALSE, TRUE, cropper);
                 }
                 //              bm->DeleteThis();
                 return TRUE;
@@ -260,7 +260,7 @@ public:
                     
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_LAYER_NAME));
                     PBBitmap *pbbm = layer->GetPBBitmap();
-                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : _T(""));
                     ReleaseICustButton(bmSelectBtn);
                     
                     if (pbbm != nullptr)

@@ -156,7 +156,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     // TODO: Maintain the number or references here 
     int NumRefs() override;
@@ -167,7 +167,7 @@ public:
     IParamBlock2* GetParamBlock(int i) override; // return i'th ParamBlock
     IParamBlock2* GetParamBlockByID(BlockID id) override; // return id'd ParamBlock
 
-    const char *GetTextureName(int which);
+    const MCHAR* GetTextureName(int which);
     virtual Bitmap* GetBitmap(TimeValue t);
 
 

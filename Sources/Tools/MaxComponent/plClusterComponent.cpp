@@ -304,7 +304,7 @@ bool plClusterComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
                     int j;
                     for( j = 0; j < templs.Count(); j++ )
                     {
-                        fClusterGroups.push_back(util.CreateGroup(repNode, GetINode()->GetName()));
+                        fClusterGroups.push_back(util.CreateGroup(repNode, M2ST(GetINode()->GetName())));
                         delete templs[j];
                     }
 
@@ -522,7 +522,7 @@ BOOL plClusterComponent::IBuildNodeTab(plDistribInstTab& nodes, plErrorMsg* pErr
         if( !progCnt )
             progCnt = 1;
 
-        bar.Start("Compiling", progCnt << 4);
+        bar.Start(_M("Compiling"), progCnt << 4);
 
         if (bar.Update(nullptr, 0))
             return false;
@@ -583,7 +583,7 @@ void plClusterComponent::Clear()
     int totalSteps = numClust >> log2freq;
     if( !totalSteps )
         totalSteps = 1;
-    bar.Start("Deleting", totalSteps);
+    bar.Start(_M("Deleting"), totalSteps);
 
     bar.Update(nullptr, 0);
 
@@ -656,7 +656,7 @@ BOOL plClusterComponent::Cluster(plErrorMsg* pErrMsg)
 
         if( nodes.Count() )
         {
-            bar.Start("Optimizing", nodes.Count());
+            bar.Start(_M("Optimizing"), nodes.Count());
             bar.Update(nullptr, 0);
         }
 

@@ -297,17 +297,17 @@ void plClothingMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kThumbnail, 0, m);
 }
 
-TSTR plClothingMtl::GetSubTexmapSlotName(int i)
+MSTR plClothingMtl::GetSubTexmapSlotName(int i)
 {
     if (i >= 0 && i < plClothingElement::kLayerMax * kMaxTiles)
-        return "Texmap";
+        return _M("Texmap");
     if (i == plClothingElement::kLayerMax * kMaxTiles)
-        return "Thumbnail";
+        return _M("Thumbnail");
 
-    return "";
+    return _M("");
 }
 
-TSTR plClothingMtl::GetSubTexmapTVName(int i)
+MSTR plClothingMtl::GetSubTexmapTVName(int i)
 {
     return GetSubTexmapSlotName(i);
 }

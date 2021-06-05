@@ -64,7 +64,7 @@ plExportProgressBar::~plExportProgressBar()
    fInterface->ProgressEnd();
 }
 
-void plExportProgressBar::Start(char *name, uint32_t steps)
+void plExportProgressBar::Start(MCHAR* name, uint32_t steps)
 {
     fTotalSteps = steps;
     fCurStep = 0;
@@ -103,7 +103,7 @@ bool plExportProgressBar::Update(MAX14_CONST MCHAR* name, uint32_t inc)
 
     if (fInterface->GetCancel()) 
     {
-        int retval = MessageBox(fInterface->GetMAXHWnd(), _T("Really Cancel?"),
+        int retval = plMaxMessageBox(fInterface->GetMAXHWnd(), _T("Really Cancel?"),
             _T("Question"), MB_ICONQUESTION | MB_YESNO);
         if (retval == IDYES)
         {

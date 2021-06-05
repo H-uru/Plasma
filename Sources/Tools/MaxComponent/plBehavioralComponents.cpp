@@ -65,7 +65,7 @@ protected:
     void IUpdateButtonText(HWND hWnd, IParamBlock2 *pb)
     {
         INode *node = pb->GetINode(plAvBehaviorSittingComponent::kDetector);
-        SetWindowText(GetDlgItem(hWnd, IDC_DETECTOR), node ? node->GetName() : "(none)");
+        SetWindowText(GetDlgItem(hWnd, IDC_DETECTOR), node ? node->GetName() : _T("(none)"));
     }
 
 public:

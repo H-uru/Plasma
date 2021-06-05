@@ -90,7 +90,7 @@ class plProjDirDlgProc : public plBaseLightProc
                         {
                             bmSelectBtn = GetICustButton( GetDlgItem( hWnd, IDC_PROJ_MAPNAME ) );
                             bitmap = layer->GetPBBitmap();
-                            bmSelectBtn->SetText(bitmap != nullptr ? (TCHAR *)bitmap->bi.Filename() : "");
+                            bmSelectBtn->SetText(bitmap != nullptr ? (MCHAR *)bitmap->bi.Filename() : _M(""));
                             ReleaseICustButton( bmSelectBtn );
                         }
                         return FALSE;
@@ -105,9 +105,9 @@ class plProjDirDlgProc : public plBaseLightProc
                     {
                         bitmap = (layer == nullptr) ? nullptr : layer->GetPBBitmap();
                         if (bitmap != nullptr)
-                            bmSelectBtn->SetText( (TCHAR *)bitmap->bi.Filename() );
+                            bmSelectBtn->SetText( (MCHAR *)bitmap->bi.Filename() );
                         else
-                            bmSelectBtn->SetText( _T( "<none>" ) );
+                            bmSelectBtn->SetText( _M( "<none>" ) );
                         ReleaseICustButton( bmSelectBtn );
                     }
 
@@ -208,7 +208,7 @@ Animatable  *plRTProjDirLight::SubAnim( int i )
 
 //// SubAnimName /////////////////////////////////////////////////////////////
 
-TSTR    plRTProjDirLight::SubAnimName( int i ) 
+MSTR    plRTProjDirLight::SubAnimName( int i ) 
 { 
     switch( i ) 
     {   
@@ -217,7 +217,7 @@ TSTR    plRTProjDirLight::SubAnimName( int i )
         case 1:
             return fProjPB->GetLocalName();
         default:
-            return TSTR( "" );
+            return _M("");
     }
 }
 
@@ -304,7 +304,7 @@ Texmap  *plRTProjDirLight::GetProjMap()
 
     if( layer )
     {
-        const char* dbgTexName = layer->GetName();
+        auto dbgTexName = layer->GetName();
 
         IParamBlock2 *bitmapPB = layer->GetParamBlockByID(plLayerTex::kBlkBitmap);
         hsAssert(bitmapPB, "LayerTex with no param block");

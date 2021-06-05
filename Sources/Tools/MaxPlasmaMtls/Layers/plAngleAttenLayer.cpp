@@ -267,12 +267,12 @@ Animatable* plAngleAttenLayer::SubAnim(int i)
     }
 }
 
-TSTR plAngleAttenLayer::SubAnimName(int i) 
+MSTR plAngleAttenLayer::SubAnimName(int i) 
 {
     switch (i)
     {
-        case kRefAngles:        return "Angles";
-        default: return "";
+        case kRefAngles:        return _M("Angles");
+        default: return _M("");
     }
 }
 

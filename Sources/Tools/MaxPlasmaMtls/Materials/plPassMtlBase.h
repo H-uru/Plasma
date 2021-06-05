@@ -177,10 +177,10 @@ public:
     virtual int     GetAlphaTestHigh() = 0;
 
     // Animation block
-    virtual const char*  GetAnimName() = 0;
+    virtual const MCHAR* GetAnimName() = 0;
     virtual int          GetAutoStart() = 0;
     virtual int          GetLoop() = 0;
-    virtual const char*  GetAnimLoopName() = 0;
+    virtual const MCHAR* GetAnimLoopName() = 0;
     virtual int          GetEaseInType() { return plAnimEaseTypes::kNoEase; }
     virtual float        GetEaseInMinLength() { return 1; }
     virtual float        GetEaseInMaxLength() { return 1; }
@@ -189,7 +189,7 @@ public:
     virtual float        GetEaseOutMinLength() { return 1; }
     virtual float        GetEaseOutMaxLength() { return 1; }
     virtual float        GetEaseOutNormLength() { return 1; }
-    virtual const char*  GetGlobalVarName() { return nullptr; }
+    virtual const MCHAR* GetGlobalVarName() { return nullptr; }
     virtual int          GetUseGlobal() { return 0; }
 
     // Basic block

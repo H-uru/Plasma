@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "hsResMgr.h"
-#include "hsStringTokenizer.h"
 
 #include "plComponentProcBase.h"
 #include "plComponent.h"
@@ -55,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include "MaxMain/MaxAPI.h"
+#include "MaxMain/hsMStringTokenizer.h"
 
 #include "plAvatarComponent.h"
 #include "plMaxAnimUtils.h"
@@ -173,7 +173,7 @@ bool plArmatureComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
 
     if(animRoot)
     {
-        const char *nodeName = animRoot->GetName();
+        auto nodeName = animRoot->GetName();
         animRoot->SetDrawable(false);       // make sure our root bone is invisible
     }
 
@@ -297,7 +297,7 @@ bool plArmatureComponent::IVerifyUsedNode(INode* thisNode, plErrorMsg* pErrMsg, 
 
         }else
         {
-            pErrMsg->Set(true, "Ignored Node Selection", "The object that Node Ptr %s refs was set to be Ignored. Avatar Component failure.", thisNode->GetName());             
+            pErrMsg->Set(true, "Ignored Node Selection", ST::format("The object that Node Ptr {} refs was set to be Ignored. Avatar Component failure.", thisNode->GetName()));
             pErrMsg->Set(false);
             return false;
         }
@@ -477,7 +477,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(ST::string::from_utf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
+    avMod->SetAnimationPrefix(M2ST(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     //AddLinkSound(node, node->GetSceneObject()->GetKey(), pErrMsg );
 
@@ -493,8 +493,8 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
 {
     plGenRefMsg *msg;
     ST::string keyName;
-    TSTR sdata;
-    hsStringTokenizer toker;
+    MSTR sdata;
+    hsMStringTokenizer toker;
 
     if (mod == nullptr)
     {
@@ -503,10 +503,10 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     }
 
     plClothingBase *base = new plClothingBase();
-    if (node->GetUserPropString("layout", sdata))
+    if (node->GetUserPropString(_M("layout"), sdata))
     {
-        toker.Reset(sdata, hsConverterUtils::fTagSeps);
-        base->SetLayoutName(toker.next());
+        toker.Reset(sdata.data(), hsConverterUtils::fTagSeps);
+        base->SetLayoutName(M2ST(toker.next()));
     }
     else 
         base->SetLayoutName("BasicHuman");
@@ -686,7 +686,7 @@ bool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     ST::string name = node->GetKey()->GetName();
 
     node->MakeCharacterHierarchy(pErrMsg);
-    node->SetupBonesAliasesRecur(name.c_str());
+    node->SetupBonesAliasesRecur(name);
 
 
     // create and register the player modifier
@@ -779,7 +779,7 @@ public:
                 SendMessage(cbox, CB_SETCURSEL, selection, 0);
 
                 Mtl *mat = fPB->GetMtl(plLODAvatarComponent::kMaterial);
-                Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (mat ? mat->GetName() : "(none)"));
+                Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (mat ? mat->GetName() : _T("(none)")));
 
                 UpdateBoneDisplay(map);
                 return TRUE;
@@ -823,7 +823,7 @@ public:
                 {
                     Mtl *pickedMtl = plPickMaterialMap::PickMaterial(plMtlCollector::kPlasmaOnly);
                     fPB->SetValue(plLODAvatarComponent::kMaterial, 0, pickedMtl);
-                    Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (pickedMtl ? pickedMtl->GetName() : "(none)"));
+                    Button_SetText(GetDlgItem(hWnd, IDC_COMP_LOD_AVATAR_MTL), (pickedMtl ? pickedMtl->GetName() : _T("(none)")));
 
                     return TRUE;
                 }
@@ -1067,7 +1067,7 @@ void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pEr
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(ST::string::from_utf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
+    avMod->SetAnimationPrefix(M2ST(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     int iLODCount = fCompPB->Count(plLODAvatarComponent::kMeshNodeTab);
     for (int i = 0; i < iLODCount; i++)

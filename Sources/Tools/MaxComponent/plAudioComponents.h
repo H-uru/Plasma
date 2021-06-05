@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include <vector>
 
+#include <string_theory/format>
+
 #include "plComponent.h"
 #include "pnKeyedObject/plKey.h"
 
@@ -95,10 +97,10 @@ class plBaseSoundEmitterComponent : public plComponent
         };
 
 #ifdef MAXASS_AVAILABLE
-        virtual void    SetSoundAssetId( WhichSound which, jvUniqueId assetId, const TCHAR *fileName );
+        virtual void    SetSoundAssetId( WhichSound which, jvUniqueId assetId, const MCHAR *fileName );
         virtual jvUniqueId GetSoundAssetID( WhichSound which );
 #endif
-        virtual const char* GetSoundFileName( WhichSound which );
+        virtual const MCHAR* GetSoundFileName( WhichSound which );
 
         // Internal setup and write-only set properties on the MaxNode. No reading
         // of properties on the MaxNode, as it's still indeterminant.
@@ -163,7 +165,13 @@ class plBaseSoundEmitterComponent : public plComponent
 
         void    IUpdateAssets();
 
-        static void     IShowError( uint32_t type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg );
+        template<typename... _ArgsT>
+        static void IShowError(uint32_t type, plErrorMsg* pErrMsg, const char* fmt, _ArgsT&&... args)
+        {
+            IShowError(type, pErrMsg, ST::format(fmt, std::forward<_ArgsT>(args)...));
+        }
+
+        static void     IShowError( uint32_t type, plErrorMsg* pErrMsg, ST::string msg);
 
         std::map<plMaxNode*, int> fIndices;
         std::map<plMaxNode*, bool> fValidNodes;
@@ -188,7 +196,7 @@ class plBaseSoundEmitterComponent : public plComponent
 
         // Returns pointers to arrays defining the names and konstants for the supported categories
         // for this component. Name array should have an extra "" entry at the end. Returns false if none supported
-        virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList ) { return false; }
+        virtual bool    IGetCategoryList( TCHAR **&catList, int *&catKonstantList ) { return false; }
 
         void    ISetBaseParameters( plSound *destSound, plErrorMsg *pErrMsg );
 };

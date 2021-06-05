@@ -54,7 +54,7 @@ protected:
     bool fIsMultiModifier;
 
 public:
-    plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version);
+    plAutoUIBlock(plComponentClassDesc *cd, int blockID, ST::string name, int version);
 
     void SetMultiModifierFlag(bool flag) { fIsMultiModifier=flag; }
     int NumParams();

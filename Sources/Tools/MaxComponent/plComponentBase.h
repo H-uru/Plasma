@@ -195,7 +195,7 @@ public:
 
     int CanConvertToType(Class_ID obtype) override { return (obtype == COMPONENT_CLASSID) ? 1 : 0; }
 
-    const char *GetCategory() { return fClassDesc->Category(); }
+    const MCHAR* GetCategory() { return fClassDesc->Category(); }
 };
 
 // Look through the nodes in 'nodes' and find components that they all share.

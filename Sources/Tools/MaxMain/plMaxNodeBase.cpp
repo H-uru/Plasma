@@ -71,7 +71,7 @@ CoreExport void __cdecl MAX_delete(void* mem);
 
 void plMaxNodeBase::SetMaxNodeData(plMaxNodeData * pdat)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     // If object is a component, don't add node data
     if (IsComponent())
@@ -340,7 +340,7 @@ bool plMaxNodeBase::CanConvert(bool recalculate)
     if (md && !recalculate)
         return md->CanConvert();
 
-    if (UserPropExists("IGNORE"))
+    if (UserPropExists(_M("IGNORE")))
         return false;
 
     Object *obj = EvalWorldState(0/*hsConverterUtils::Instance().GetTime(GetInterface())*/).obj;
@@ -355,7 +355,7 @@ bool plMaxNodeBase::CanConvert(bool recalculate)
                 || obj->ClassID() == RTDIR_LIGHT_CLASSID 
                 || obj->ClassID() == RTPDIR_LIGHT_CLASSID )
             || (  obj->SuperClassID() == LIGHT_CLASS_ID     // All run time lights are accepted here
-               && UserPropExists("RunTimeLight"))
+               && UserPropExists(_M("RunTimeLight")))
 
             || IsGroupMember()                              // Group objects are accepted here
             )
@@ -373,8 +373,7 @@ bool plMaxNodeBase::IsTMAnimated()
 //// IsTMAnimatedRecur  - test recursively up the chain ///////////////////////////////////////////////////////////////
 bool plMaxNodeBase::IsTMAnimatedRecur()
 {
-    const char* dbgNodeName = GetName();
-    bool        shouldBe = false;
+    auto dbgNodeName = GetName();
 
     if( !CanConvert() )
         return false;
@@ -388,7 +387,7 @@ bool plMaxNodeBase::IsTMAnimatedRecur()
 //  Returns whether this node is "animated" (i.e. could move at runtime)
 bool plMaxNodeBase::IsMovable()
 {
-    const char* dbgNodeName = GetName();
+    auto        dbgNodeName = GetName();
     bool        shouldBe = false;
 
 
@@ -420,7 +419,7 @@ bool plMaxNodeBase::IsMovable()
 // Recursively set so we don't have to recursively check.
 void plMaxNodeBase::SetItinerant(bool b)
 { 
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !CanConvert() )
         return;
@@ -666,7 +665,7 @@ uint32_t plMaxNodeBase::IGetMajorRenderLevel(bool forBlend)
         return forBlend ? plRenderLevel::kBlendRendMajorLevel : plRenderLevel::kDefRendMajorLevel;
 
     int iMaxDep = 0;
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     int i;
     for( i = 0; i < numDep; i++ )
@@ -674,7 +673,7 @@ uint32_t plMaxNodeBase::IGetMajorRenderLevel(bool forBlend)
         plMaxNodeBase* dep = GetRenderDependency(i);
         if( dep )
         {
-            const char* depNodeName = dep->GetName();
+            auto depNodeName = dep->GetName();
             int iDep = GetRenderDependency(i)->GetRenderLevel(forBlend).Major();
             if( iDep > iMaxDep )
                 iMaxDep = iDep;
@@ -695,7 +694,7 @@ uint32_t plMaxNodeBase::IGetMinorRenderLevel(bool forBlend)
 
     int iMaxDep = 0;
 
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     int i;
     for( i = 0; i < numDep; i++ )
@@ -703,7 +702,7 @@ uint32_t plMaxNodeBase::IGetMinorRenderLevel(bool forBlend)
         plMaxNodeBase* dep = GetRenderDependency(i);
         if( dep )
         {
-            const char* depNodeName = dep->GetName();
+            auto depNodeName = dep->GetName();
             int iDep = GetRenderDependency(i)->GetRenderLevel(forBlend).Minor();
             if( iDep > iMaxDep )
                 iMaxDep = iDep;
@@ -732,7 +731,7 @@ plRenderLevel plMaxNodeBase::ICalcRenderLevel(bool forBlend)
 
     plRenderLevel maxLevel(plRenderLevel::kFBMajorLevel, plRenderLevel::kDefRendMinorLevel);
 
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     int i;
     for( i = 0; i < numDep; i++ )
@@ -740,7 +739,7 @@ plRenderLevel plMaxNodeBase::ICalcRenderLevel(bool forBlend)
         plMaxNodeBase* dep = GetRenderDependency(i);
         if( dep )
         {
-            const char* depNodeName = dep->GetName();
+            auto depNodeName = dep->GetName();
 
             plRenderLevel depLev = GetRenderDependency(i)->GetRenderLevel(forBlend);
             if( depLev > maxLevel )

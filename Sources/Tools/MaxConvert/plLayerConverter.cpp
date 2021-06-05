@@ -119,11 +119,11 @@ namespace
         kWarnedNoUpperTexture       = 0x08,
     };
 
-    const char  sWarnBaseTextureMissing[] = "The object \"%s\"'s material has a base layer that is assigned texture \"%s\", but the texture file is missing. "
+    const char  sWarnBaseTextureMissing[] = "The object \"{}\"'s material has a base layer that is assigned texture \"{}\", but the texture file is missing. "
                                         "This can cause unwanted effects during runtime."; 
-    const char  sWarnUpperTextureMissing[] = "The object \"%s\"'s material has an upper layer that is assigned texture \"%s\", but the texture file is missing. "
+    const char  sWarnUpperTextureMissing[] = "The object \"{}\"'s material has an upper layer that is assigned texture \"{}\", but the texture file is missing. "
                                         "This is not supported in the engine, so the upper layer will be ignored."; 
-    const char  sWarnNoUpperTexture[] = "The object \"%s\"'s material has an uppper layer that is not assigned a texture. "
+    const char  sWarnNoUpperTexture[] = "The object \"{}\"'s material has an uppper layer that is not assigned a texture. "
                                         "This is not supported in the engine, so the upper layer will be disabled."; 
 }
 
@@ -204,7 +204,7 @@ plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
     plPlasmaMAXLayer    *layer = plPlasmaMAXLayer::GetPlasmaMAXLayer( texmap );
     if (layer == nullptr)
     {
-        fErrorMsg->Set( true, "Plasma Layer Error", "Cannot convert layer '%s'--unrecognized MAX layer type", texmap->GetName() );
+        fErrorMsg->Set( true, "Plasma Layer Error", ST::format("Cannot convert layer '{}'--unrecognized MAX layer type", M2ST(texmap->GetName())) );
         fErrorMsg->Show();
         fErrorMsg->Set();
         return nullptr;
@@ -213,8 +213,7 @@ plLayerInterface    *plLayerConverter::ConvertTexmap( Texmap *texmap,
     // KLUDGE - Some things don't set the name for their layers (ie projected
     // runtime lights).  So that we don't end up with an empty keyname, set the
     // name to the nodes name if there isn't one. -Colin
-    const char* layerName = layer->GetName();
-    if (!layerName || layerName[0] == '\0')
+    if (layer->GetName().isNull())
         layer->SetName(maxNode->GetName());
 
     // Switch on the class ID
@@ -290,7 +289,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( M2ST( layer->GetName() ), upperLayer, loc );
 
     // We're using a texture, try and get its info
     PBBitmap    *pbbm = nullptr;
@@ -305,11 +304,11 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     }
 
     // If the texture had bad info, assert and return the empty layer
-    if( !bi || !bi->Name() || !strcmp(bi->Name(), "") )
+    if( !bi || !bi->Name() || _tcscmp(bi->Name(), _T("")) == 0 )
     {
         if( upperLayer )
         {
-            if( fErrorMsg->Set( !( fWarned & kWarnedNoUpperTexture ), "Plasma Export Error", sWarnNoUpperTexture, maxNode->GetName() ).CheckAskOrCancel() )
+            if( fErrorMsg->Set( !( fWarned & kWarnedNoUpperTexture ), "Plasma Export Error", ST::format(sWarnNoUpperTexture, maxNode->GetName()) ).CheckAskOrCancel() )
                 fWarned |= kWarnedNoUpperTexture; 
             fErrorMsg->Set( false );
 
@@ -425,7 +424,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( M2ST( layer->GetName() ), upperLayer, loc );
 
     // Get the texture info
     PBBitmap *pbbm = bitmapPB->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap + 0 );
@@ -434,7 +433,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
         bi = &pbbm->bi;
 
     // If the texture had bad info, assert and return the empty layer
-    if (!bi || !bi->Name() || !strcmp(bi->Name(), ""))
+    if (!bi || !bi->Name() || _tcscmp(bi->Name(), _T("")) == 0)
     {
         // Or don't assert since it can get annoying when you are using someone
         // elses file and don't have all the textures.
@@ -535,7 +534,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( M2ST( layer->GetName() ), upperLayer, loc );
 
     // Get the anchor node
     plMaxNode   *anchor = (plMaxNode *)bitmapPB->GetINode( plDynamicEnvLayer::kBmpAnchorNode );
@@ -545,7 +544,9 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     
     if( !anchor->CanConvert() || !( anchor->GetForceLocal() || anchor->GetDrawable() ) )
     {
-        fErrorMsg->Set( true, "Plasma Layer Error", "The dynamic envMap material %s has an invalid anchor specified. Please specify a valid Plasma scene object as an anchor.", plasmaLayer->GetKeyName().c_str() ).Show();
+        fErrorMsg->Set(true, "Plasma Layer Error",
+                       ST::format("The dynamic envMap material {} has an invalid anchor specified. Please specify a valid Plasma scene object as an anchor.", plasmaLayer->GetKeyName())
+                       ).Show();
         fErrorMsg->Set();
         return (plLayerInterface *)plasmaLayer;
     }
@@ -601,7 +602,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
         return nullptr;
     }
 
-    plLayer *plasmaLayer = ICreateLayer (ST::string::from_utf8(layer->GetName()), upperLayer, loc);
+    plLayer *plasmaLayer = ICreateLayer (M2ST(layer->GetName()), upperLayer, loc);
 
     plMaxNode *rootNode = (plMaxNode*)pb->GetINode(ParamID(plMAXCameraLayer::kRootNode));
     plDynamicCamMap *map = plEnvMapComponent::GetCamMap(rootNode ? rootNode : maxNode);
@@ -672,7 +673,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( maxLayer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( M2ST( maxLayer->GetName() ), upperLayer, loc );
 
 
     /// UV Gen
@@ -909,7 +910,7 @@ plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *la
 
     int uvwSrc = aaLay->Reflect() ? plLayerInterface::kUVWReflect : plLayerInterface::kUVWNormal;
 
-    plLayer* lut = ICreateAttenuationLayer(ST::string::from_utf8(layer->GetName()), maxNode, uvwSrc, tr0, op0, tr1, op1, loClamp, hiClamp);
+    plLayer* lut = ICreateAttenuationLayer(M2ST(layer->GetName()), maxNode, uvwSrc, tr0, op0, tr1, op1, loClamp, hiClamp);
 
     return lut;
 
@@ -963,8 +964,10 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
 
     if( fErrorMsg->Set( !( fWarned & kWarnedTooManyUVs ) &&
                         ( ( uvwSrc < 0 ) || ( uvwSrc >= plGeometrySpan::kMaxNumUVChannels ) ),
-                        destLayer->GetKeyName().c_str(), "Only %d UVW channels (1-%d) currently supported",
-        plGeometrySpan::kMaxNumUVChannels, plGeometrySpan::kMaxNumUVChannels).CheckAskOrCancel() )
+                        destLayer->GetKeyName(), ST::format("Only {d} UVW channels (1-{d}) currently supported",
+                                                            plGeometrySpan::kMaxNumUVChannels,
+                                                            plGeometrySpan::kMaxNumUVChannels)
+                      ).CheckAskOrCancel() )
         fWarned |= kWarnedTooManyUVs;
     fErrorMsg->Set( false );
 
@@ -1020,11 +1023,11 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const ST::string &laye
 //// Texture/Bitmap Management ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLocation &loc, 
+plBitmap *plLayerConverter::CreateSimpleTexture(plFileName fileName, const plLocation &loc, 
                                                 uint32_t clipID /* = 0 */, uint32_t texFlags /* = 0 */, bool usePNG /* = false */)
 {
     plBitmapData bd;
-    bd.fileName = fileName;
+    bd.fileName = std::move(fileName);
     bd.texFlags = texFlags;
     bd.createFlags = 0;
     bd.detailDropoffStart = 0;
@@ -1051,7 +1054,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
     {
         if( upperLayer )
         {
-            if( fErrorMsg->Set( !( fWarned & kWarnedUpperTextureMissing ), "Plasma Export Error", sWarnUpperTextureMissing, maxNode->GetName(), bd->fileName.AsString().c_str() ).CheckAskOrCancel() )
+            if( fErrorMsg->Set( !( fWarned & kWarnedUpperTextureMissing ), "Plasma Export Error", ST::format(sWarnUpperTextureMissing, maxNode->GetName(), bd->fileName) ).CheckAskOrCancel() )
                 fWarned |= kWarnedUpperTextureMissing; 
             fErrorMsg->Set( false );
 
@@ -1060,7 +1063,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
         }
         else
         {
-            if( fErrorMsg->Set( !( fWarned & kWarnedNoBaseTexture ), "Plasma Export Error", sWarnBaseTextureMissing, maxNode->GetName(), bd->fileName.AsString().c_str() ).CheckAskOrCancel() )
+            if( fErrorMsg->Set( !( fWarned & kWarnedNoBaseTexture ), "Plasma Export Error", ST::format(sWarnBaseTextureMissing, maxNode->GetName(), bd->fileName) ).CheckAskOrCancel() )
                 fWarned |= kWarnedNoBaseTexture; 
             fErrorMsg->Set( false );
 

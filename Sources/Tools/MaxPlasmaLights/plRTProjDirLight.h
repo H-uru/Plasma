@@ -138,7 +138,7 @@ class plRTProjDirLight : public plRTLightBase
         int             NumRefs() override { return kNumRefs; }
 
         int             NumSubs() override { return 2; }
-        TSTR            SubAnimName(int i) override;
+        MSTR            SubAnimName(int i) override;
         Animatable      *SubAnim(int i) override;
 
         int             NumParamBlocks() override;
@@ -148,7 +148,7 @@ class plRTProjDirLight : public plRTLightBase
 
         Texmap          *GetProjMap() override;
         
-        void            InitNodeName(TSTR &s) override { s = _T( "RTProjDirLight" ); }
+        void            InitNodeName(MSTR &s) override { s = _M( "RTProjDirLight" ); }
 
         // To get using-light-as-camera-viewport to work
         int             GetSpotShape() override { return RECT_LIGHT; }

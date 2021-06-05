@@ -129,8 +129,9 @@ bool plExcludeRegionComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErr
     if (!fIsValid)
     {
         pErrMsg->Set(true, "Exclude Region Warning",
-                    "Node %s : No safe points specified, exclude region will not be created.\n",
-                    node->GetName()).Show();
+                     ST::format("Node {} : No safe points specified, exclude region will not be created.\n",
+                                node->GetName())
+                    ).Show();
         pErrMsg->Set(false);
 
         return false;

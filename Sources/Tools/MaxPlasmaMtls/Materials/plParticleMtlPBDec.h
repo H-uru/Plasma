@@ -63,7 +63,7 @@ public:
         pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
 
         bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_PARTICLE_TEXTURE));
-        bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+        bmSelectBtn->SetText(pbbm ? pbbm->bi.Filename() : _M("(none)"));
         ReleaseICustButton(bmSelectBtn);    
     }       
 

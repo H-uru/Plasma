@@ -44,7 +44,7 @@ class plTextureSearch
 {
 protected:
     HWND fDlg;
-    char fFileName[MAX_PATH];
+    TCHAR fFileName[MAX_PATH];
 
     plTextureSearch();
 

@@ -251,12 +251,12 @@ Animatable  *plDynamicEnvLayer::SubAnim( int i )
     }
 }
 
-TSTR    plDynamicEnvLayer::SubAnimName( int i ) 
+MSTR    plDynamicEnvLayer::SubAnimName( int i ) 
 {
     switch( i )
     {
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 

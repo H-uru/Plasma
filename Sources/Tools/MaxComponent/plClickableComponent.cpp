@@ -291,11 +291,14 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         clickProxyNode = (plMaxNode*)fCompPB->GetINode(kClickableProxy);
         if (!clickProxyNode || !clickProxyNode->CanConvert())
         {
-            pErrMsg->Set(true,
-                        "Clickable Error",
-                        "The Clickable '%s' on node '%s' is set to use a proxy but doesn't have one, or it didn't convert.\n"
-                        "The node the Clickable is attached to will be used instead.",
-                        GetINode()->GetName(), node->GetName()).Show();
+            pErrMsg->Set(
+                true, "Clickable Error",
+                ST::format(
+                    "The Clickable '{}' on node '{}' is set to use a proxy but doesn't have one, or it didn't convert.\n"
+                    "The node the Clickable is attached to will be used instead.",
+                    GetINode()->GetName(), node->GetName()
+                )
+            ).Show();
             pErrMsg->Set(false);
 
             clickProxyNode = node;
@@ -305,11 +308,15 @@ bool plClickableComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plMaxNode* detectNode = (plMaxNode*)fCompPB->GetINode(kClickableProxyRegion);
     if ((!detectNode || !detectNode->CanConvert()) && (!ignoreProxyRegion))
     {
-        pErrMsg->Set(true,
-                    "Clickable Error",
-                    "The Clickable '%s' on node '%s' has a required region that is missing, or didn't convert.\n"
-                    "The export will be aborted.",
-                    GetINode()->GetName(), node->GetName()).Show();
+        pErrMsg->Set(
+            true,
+            "Clickable Error",
+            ST::format(
+                "The Clickable '{}' on node '{}' has a required region that is missing, or didn't convert.\n"
+                "The export will be aborted.",
+                GetINode()->GetName(), node->GetName()
+            )
+        ).Show();
         return false;
     }
 

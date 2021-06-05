@@ -131,8 +131,8 @@ private:
         }
         if( onInit )
         {
-            map->SetTooltip(plDistribComponent_old::kLockScaleXY, TRUE, "Lock scale in X and Y" );
-            map->SetTooltip(plDistribComponent_old::kLockScaleXYZ, TRUE, "Lock scale in X, Y and Z (uniform scale)" );
+            map->SetTooltip(plDistribComponent_old::kLockScaleXY, TRUE, _M("Lock scale in X and Y") );
+            map->SetTooltip(plDistribComponent_old::kLockScaleXYZ, TRUE, _M("Lock scale in X, Y and Z (uniform scale)") );
         }
     }
 public:
@@ -735,7 +735,7 @@ void plDistribComponent_old::Preview()
     plDistribInstTab replicants;
 
     plExportProgressBar bar;
-    bar.Start("Preview", NumTargets() << 4);
+    bar.Start(_M("Preview"), NumTargets() << 4);
 
     plDistTree distTree;
     Distribute(replicants, bar, &distTree);
@@ -797,7 +797,7 @@ INode* plDistribComponent_old::IMakeOne(plDistribInstTab& nodes)
         outNode->SetObjOffsetRot(identQuat);
         outNode->SetObjOffsetScale(ScaleValue(Point3(1.f, 1.f, 1.f)));
 
-        TSTR outName(TSTR("Preview"));
+        MSTR outName(_M("Preview"));
         nn->MakeUniqueName(outName);
         outNode->SetName(outName);
 

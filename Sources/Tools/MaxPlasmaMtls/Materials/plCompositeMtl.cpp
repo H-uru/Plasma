@@ -312,14 +312,14 @@ void plCompositeMtl::SetSubMtl(int i, Mtl *m)
         fPassesPB->SetValue(kCompPasses, 0, m, i);
 }
 
-TSTR plCompositeMtl::GetSubMtlSlotName(int i)
+MSTR plCompositeMtl::GetSubMtlSlotName(int i)
 {
-    TSTR str;
-    str.printf("Pass %d", i+1);
+    MSTR str;
+    str.printf(_M("Pass %d"), i+1);
     return str;
 }
 
-TSTR plCompositeMtl::GetSubMtlTVName(int i)
+MSTR plCompositeMtl::GetSubMtlTVName(int i)
 {
     return GetSubMtlSlotName(i);
 }

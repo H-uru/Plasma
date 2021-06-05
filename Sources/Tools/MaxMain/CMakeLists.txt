@@ -1,5 +1,6 @@
 set(MaxMain_HEADERS
     GlobalUtility.h
+    hsMStringTokenizer.h
     main.def
     MaxAPI.h
     MaxCompat.h

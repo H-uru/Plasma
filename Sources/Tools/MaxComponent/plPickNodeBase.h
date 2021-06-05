@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPickNodeBase_h_inc
 #define plPickNodeBase_h_inc
 
+#include <tchar.h>
 #include <vector>
 
 class Class_ID;
@@ -68,7 +69,7 @@ protected:
     virtual bool ICheckNode(plMaxNode* node)=0;
 
     virtual void IAddUserType(HWND hList) {}
-    virtual void ISetUserType(plMaxNode* node, const char* userType) {}
+    virtual void ISetUserType(plMaxNode* node, const TCHAR* userType) {}
 
 public:
     plPickNodeBase(IParamBlock2* pb, int nodeParamID);

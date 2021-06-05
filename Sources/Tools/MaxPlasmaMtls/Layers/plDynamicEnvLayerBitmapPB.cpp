@@ -69,7 +69,7 @@ class PickAnchorNode : public PickObjectProc
 
         BOOL    Pick(INode *node) override
         {
-            const char *dbgNodeName = node->GetName();
+            const MCHAR* dbgNodeName = node->GetName();
 
             if( fLayer )
                 fLayer->GetParamBlockByID( plDynamicEnvLayer::kBlkBitmap )->SetValue( plDynamicEnvLayer::kBmpAnchorNode, TimeValue( 0 ), node );

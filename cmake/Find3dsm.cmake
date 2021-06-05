@@ -116,6 +116,9 @@ if(3dsm_FOUND AND NOT TARGET 3dsm)
             ${3dsm_PARAMBLK2_LIBRARY}
     )
     set_target_properties(3dsm PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${3dsm_INCLUDE_DIR})
+    if(3dsm_VERSION VERSION_GREATER_EQUAL 15)
+        set_property(TARGET 3dsm PROPERTY INTERFACE_COMPILE_DEFINITIONS UNICODE _UNICODE)
+    endif()
 endif()
 
 mark_as_advanced(

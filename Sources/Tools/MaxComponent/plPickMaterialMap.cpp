@@ -71,7 +71,7 @@ public:
     {
         while (1)
         {
-            HWND hMtlDlg = FindWindow(nullptr, "Material/Map Browser");
+            HWND hMtlDlg = FindWindow(nullptr, _T("Material/Map Browser"));
             if (hMtlDlg && IsWindowVisible(GetDlgItem(hMtlDlg, kOK)))
             {
                 SendMessage(GetDlgItem(hMtlDlg, kScene), BM_CLICK, 0, 0);

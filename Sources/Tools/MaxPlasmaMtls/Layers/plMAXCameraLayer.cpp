@@ -50,6 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
+const TCHAR* kUVStrings[] = { _T("1"), _T("2"), _T("3"), _T("4"), _T("5"), _T("6"), _T("7"), _T("8") };
+constexpr uint8_t kMaxUVSrc = 8;
+
 class plMAXCameraLayerClassDesc : public ClassDesc2
 {
 public:
@@ -96,10 +99,10 @@ public:
         {
         case WM_INITDIALOG:
             int i;
-            for (i = 0; i < plMAXCameraLayer::kMaxUVSrc; i++)
+            for (i = 0; i < kMaxUVSrc; i++)
             {
                 cbox = GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plMAXCameraLayer::kUVStrings[i]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)kUVStrings[i]);
             }
             UpdateDisplay(map);
             return TRUE;
@@ -168,9 +171,6 @@ static ParamBlockDesc2 gMAXCameraLayerParamBlk
 );
 
 /////////////////////////////////////////////////////////////////////////////
-
-const char *plMAXCameraLayer::kUVStrings[] = { "1", "2", "3", "4", "5", "6", "7", "8" };
-const uint8_t plMAXCameraLayer::kMaxUVSrc = 8;
 
 plMAXCameraLayer::plMAXCameraLayer() :
 fParmsPB(),
@@ -298,12 +298,12 @@ Animatable* plMAXCameraLayer::SubAnim(int i)
     }
 }
 
-TSTR plMAXCameraLayer::SubAnimName(int i)
+MSTR plMAXCameraLayer::SubAnimName(int i)
 {
     switch (i)
     {
-        case kRefMain:      return "Main";
-        default: return "";
+        case kRefMain:      return _M("Main");
+        default: return _M("");
     }
 }
 

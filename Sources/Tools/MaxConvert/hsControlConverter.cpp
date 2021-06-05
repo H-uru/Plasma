@@ -217,7 +217,7 @@ bool hsControlConverter::HasKeyTimes(Control* ctl)
 }
 
 
-plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, const char* nodeName)
+plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, const MCHAR* nodeName)
 {
     hsGuardBegin("hsControlConverter::MakeMatrix44Controller");
 
@@ -233,19 +233,19 @@ plLeafController* hsControlConverter::MakeMatrix44Controller(StdUVGen* uvGen, co
     Control* uOffCtl= nullptr;
     Control* vOffCtl = nullptr;
     Control* rotCtl = nullptr;
-    GetControllerByName(uvGen, TSTR("U Offset"), uOffCtl);
-    GetControllerByName(uvGen, TSTR("V Offset"), vOffCtl);
-    GetControllerByName(uvGen, TSTR("U Tiling"), uScaleCtl);
-    GetControllerByName(uvGen, TSTR("V Tiling"), vScaleCtl);
-    GetControllerByName(uvGen, TSTR("Angle"), rotCtl);
+    GetControllerByName(uvGen, _M("U Offset"), uOffCtl);
+    GetControllerByName(uvGen, _M("V Offset"), vOffCtl);
+    GetControllerByName(uvGen, _M("U Tiling"), uScaleCtl);
+    GetControllerByName(uvGen, _M("V Tiling"), vScaleCtl);
+    GetControllerByName(uvGen, _M("Angle"), rotCtl);
 
     // new with Max R2, replacing "Angle", but it doesn't hurt to look...
     Control* uAngCtl = nullptr;
     Control* vAngCtl = nullptr;
     Control* wAngCtl = nullptr;
-    GetControllerByName(uvGen, TSTR("U Angle"), uAngCtl);
-    GetControllerByName(uvGen, TSTR("V Angle"), vAngCtl);
-    GetControllerByName(uvGen, TSTR("W Angle"), wAngCtl);
+    GetControllerByName(uvGen, _M("U Angle"), uAngCtl);
+    GetControllerByName(uvGen, _M("V Angle"), vAngCtl);
+    GetControllerByName(uvGen, _M("W Angle"), wAngCtl);
 
     int i;
 
@@ -393,8 +393,8 @@ plController* hsControlConverter::MakePosController(Control* control, plMaxNode*
 
         if (control->ClassID() == Class_ID(POSITIONNOISE_CONTROL_CLASS_ID,0) )
         {
-            MessageBox(GetActiveWindow(), node->GetName(), 
-            "Warning: Noise position controller not supported.  Ignoring.", MB_OK);
+            plMaxMessageBox(GetActiveWindow(), node->GetName(), 
+                _T("Warning: Noise position controller not supported.  Ignoring."), MB_OK);
             return hsCont;
         }
         
@@ -436,8 +436,8 @@ plController *hsControlConverter::MakeScaleController(Control *control, plMaxNod
         // compound scale: noise
         if (control->ClassID() == Class_ID(SCALENOISE_CONTROL_CLASS_ID,0) )
         {
-            MessageBox(GetActiveWindow(), node->GetName(), 
-                       "Warning: Noise scale controller not supported.  Ignoring.", MB_OK);
+            plMaxMessageBox(GetActiveWindow(), node->GetName(), 
+                            _T("Warning: Noise scale controller not supported.  Ignoring."), MB_OK);
         }
     }
     return nullptr;
@@ -461,8 +461,8 @@ plController *hsControlConverter::MakeRotController(Control *control, plMaxNode 
         {
             if (control->ClassID() == Class_ID(ROTATIONNOISE_CONTROL_CLASS_ID,0) )
             {
-                MessageBox(GetActiveWindow(), node->GetName(), 
-                    "Warning: Noise rotation controller not supported.  Ignoring.", MB_OK);
+                plMaxMessageBox(GetActiveWindow(), node->GetName(), 
+                                _T("Warning: Noise rotation controller not supported.  Ignoring."), MB_OK);
                 return nullptr;
             }
             if (fErrorMsg->Set(control->ClassID() != Class_ID(EULER_CONTROL_CLASS_ID,0), 
@@ -574,7 +574,7 @@ void hsControlConverter::ScalePositionController(plController* ctl, float scale)
     }
 }
 
-void hsControlConverter::MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads)
+void hsControlConverter::MaxSampleAngles(const MCHAR* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads)
 {
     hsGuardBegin("hsControlConverter::MaxSampleAngles");
 
@@ -674,7 +674,7 @@ void hsControlConverter::ISetSegRange(float start, float end)
 }
 
 
-void hsControlConverter::IConvertSubTransform(Control *control, SUBTFNAME_VALUE_TYPE ctlName, plMaxNode *node, plCompoundController *tmc,
+void hsControlConverter::IConvertSubTransform(Control *control, const MSTR& ctlName, plMaxNode *node, plCompoundController *tmc,
                                               float start, float end)
 {
     if (control)
@@ -1418,7 +1418,7 @@ uint8_t hsControlConverter::GetKeyType(Control* control, bool rotQuat)
 //
 //
 //
-int32_t hsControlConverter::IGetRangeCoverKeyIndices(MAX14_CONST char* nodeName, Control* cont, int32_t &start, int32_t &end)
+int32_t hsControlConverter::IGetRangeCoverKeyIndices(const MCHAR* nodeName, Control* cont, int32_t &start, int32_t &end)
 {
     hsGuardBegin("hsControlConverter::IGetRangeCoverKeyIndices");
 
@@ -1545,7 +1545,7 @@ bool hsControlConverter::ForceLocal(plMaxNode* node)
     hsGuardBegin("hsControlConverter::ForceLocal");
 
 
-    const char* nn = node->GetName();
+    auto nn = node->GetName();
 
     if( !node->CanConvert() )
         return false;
@@ -1566,7 +1566,7 @@ bool hsControlConverter::ForceLocal(plMaxNode* node)
 
     Object* objectRef = node->GetObjectRef();
     if (fConverterUtils.IsInstanced(objectRef) && 
-        gUserPropMgr.UserPropExists(node,"AllowInstancing"))
+        gUserPropMgr.UserPropExists(node,_M("AllowInstancing")))
     {
         node->SetForceLocal(true);
         return true;
@@ -1605,15 +1605,15 @@ bool hsControlConverter::HasFrameEvents(plMaxNode *node)
         return false;
     }
     
-    TSTR sdata;
-    if (gUserPropMgr.GetUserPropString(node,"FESound",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FESoundEmitter",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FEGrab",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FEDrop",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FEEventOn",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FEEventOnPermanent",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FEEventOff",sdata) ||
-        gUserPropMgr.GetUserPropString(node,"FEActor",sdata)) 
+    MSTR sdata;
+    if (gUserPropMgr.GetUserPropString(node,_M("FESound"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FESoundEmitter"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FEGrab"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FEDrop"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FEEventOn"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FEEventOnPermanent"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FEEventOff"),sdata) ||
+        gUserPropMgr.GetUserPropString(node,_M("FEActor"),sdata)) 
     {
         return false;
     }
@@ -1622,7 +1622,7 @@ bool hsControlConverter::HasFrameEvents(plMaxNode *node)
     hsGuardEnd; 
 }
 
-bool hsControlConverter::GetControllerByName(Animatable* anim, TSTR &name, Control* &ctl)
+bool hsControlConverter::GetControllerByName(Animatable* anim, const MSTR& name, Control* &ctl)
 {
     hsGuardBegin("hsControlConverter::GetControllerByName");
 
@@ -1634,10 +1634,10 @@ bool hsControlConverter::GetControllerByName(Animatable* anim, TSTR &name, Contr
         {
             if (anim->SubAnim(i) == nullptr)
                 continue;
-            TSTR subName = anim->SubAnimName(i);
+            MSTR subName = anim->SubAnimName(i);
             if( subName == name )
             {
-                fErrorMsg->Set(!anim->SubAnim(i), name, "Found controller by name, but nobody home").Check();
+                fErrorMsg->Set(!anim->SubAnim(i), M2ST(name.data()), "Found controller by name, but nobody home").Check();
                 ctl = GetControlInterface(anim->SubAnim(i));
                 return true;
             }
@@ -1704,53 +1704,33 @@ void hsControlConverter::CompositeKeyTimes(Control* ctl, Tab<TimeValue> &time)
 //
 //
 //
-ControllerType hsControlConverter::IGetControlType(TSTR ctrlName)
+ControllerType hsControlConverter::IGetControlType(const MSTR& ctrlName)
 {
     hsGuardBegin("hsControlConverter::IGetControlType");
 
     ControllerType ct = ctrlTypeUnknown;
-    if (ctrlName && !strcmp(ctrlName, "Ease Curve"))
-    {
+    if (ctrlName == _M("Ease Curve"))
         ct = ctrlTypeEase;
-    }
-    else if (ctrlName && !strcmp(ctrlName, "Mult Curve"))
-    {
+    else if (ctrlName == _M("Mult Curve"))
         ct = ctrlTypeMult;
-    } 
-    else if (ctrlName && !strcmp(ctrlName, "Position"))
-    {
+    else if (ctrlName == _M("Position"))
         ct = ctrlTypePosition;
-    }
-    else if (ctrlName && !strcmp(ctrlName, "Rotation"))
-    {
+    else if (ctrlName == _M("Rotation"))
         ct = ctrlTypeRotation;
-    }
-    else if (ctrlName && !strcmp(ctrlName, "Scale"))
-    {
+    else if (ctrlName == _M("Scale"))
         ct = ctrlTypeScale;
-    } 
-    else if (ctrlName && !strcmp(ctrlName, "Transform"))
-    {
+    else if (ctrlName == _M("Transform"))
         ct = ctrlTypeTransform;
-    }
-    else if (ctrlName && !strcmp(ctrlName, "Roll Angle"))
-    {
+    else if (ctrlName == _M("Roll Angle"))
         ct = ctrlTypeRollAngle;
-    }
 #if 0
     // biped controllers are good for nothing
-    else if (ctrlName && !strcmp(ctrlName, "Vertical"))
-    {
+    else if (ctrlName == _M("Vertical"))
         ct = ctrlTypeVert;
-    }
-    else if (ctrlName && !strcmp(ctrlName, "Horizontal"))
-    {
+    else if (ctrlName == _M("Horizontal"))
         ct = ctrlTypeHoriz;
-    }
-    else if (ctrlName && !strcmp(ctrlName, "Turning"))
-    {
+    else if (ctrlName == _M("Turning"))
         ct = ctrlTypeTurn;
-    }
 #endif
 
     return ct;
@@ -1849,17 +1829,17 @@ bool hsControlConverter::ISkinNode(plMaxNode* node)
     if( fForceNoSkinning )
         return false;
     */
-    if (gUserPropMgr.UserPropExists(node,"MATSkin")) 
+    if (gUserPropMgr.UserPropExists(node, _M("MATSkin")))
     {
         return true;
     }
 
-    if (gUserPropMgr.UserPropExists(node,"MATSkinColor")) 
+    if (gUserPropMgr.UserPropExists(node, _M("MATSkinColor")))
     {
         return true;
     }
 
-    if( node && node->GetName() && strstr(node->GetName(), "%skin") )
+    if( node && node->GetName() && _tcsstr(node->GetName(), _T("%skin")) )
     {
         return true;
     }
@@ -1904,7 +1884,7 @@ bool    hsControlConverter::IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeV
     hsGuardBegin( "hsControlConverter::GetEditableMeshKeyTimes" );
 
     Animatable *anim;
-    if( IGetSubAnimByName(node, TSTR("Object (Editable Mesh)"), anim) )
+    if( IGetSubAnimByName(node, _M("Object (Editable Mesh)"), anim) )
     {
         fErrorMsg->Set(!anim, node->GetName(), "First she says yes, then she says no.").Check();
         
@@ -1997,7 +1977,7 @@ void    hsControlConverter::IGetGeomKeyTimesRecur( Animatable *anim, Tab<TimeVal
 //  Moved here after hsMeshConverter was obliterated. Only used in this class
 //  anyway...
 
-bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim )
+bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, const MSTR& name, Animatable *&subAnim )
 {
     hsGuardBegin( "hsControlConverter::IGetSubAnimByName" );
 
@@ -2009,10 +1989,10 @@ bool    hsControlConverter::IGetSubAnimByName( Animatable *anim, TSTR &name, Ani
         {
             if (anim->SubAnim(i) == nullptr)
                 continue;
-            TSTR subName = anim->SubAnimName(i);
+            MSTR subName = anim->SubAnimName(i);
             if( subName == name )
             {
-                fErrorMsg->Set(!anim->SubAnim(i), name, "Found controller by name, but nobody home").Check();
+                fErrorMsg->Set(!anim->SubAnim(i), M2ST(name.data()), "Found controller by name, but nobody home").Check();
                 subAnim = anim->SubAnim(i);
                 return true;
             }

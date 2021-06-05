@@ -139,7 +139,7 @@ public:
                     ICustButton *bmSelectBtn = GetICustButton( GetDlgItem( hWnd, IDC_INITIMAGE ) );
                     PBBitmap *pbbm = layer->GetPBBitmap();
                     
-                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR *)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR *)pbbm->bi.Filename() : _T(""));
                     
                     ReleaseICustButton( bmSelectBtn );                          
                 }

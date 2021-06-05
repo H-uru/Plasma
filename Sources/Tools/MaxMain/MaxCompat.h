@@ -48,7 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PLASMA_MAXCOMPAT_H
 #define _PLASMA_MAXCOMPAT_H
 
+#include <type_traits>
+
+#include <strbasic.h>
 #include <maxversion.h>
+
+#include <string_theory/string>
 
 #if MAX_VERSION_MAJOR <= 9
 #   define BMMCOLOR(x, y, z, w) \
@@ -63,7 +68,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define DisableThreadLibraryCalls()
 
-    typedef TCHAR MCHAR;
+#   define MCHAR TCHAR
+#   define MSTR TSTR
 #else
 #   define BMMCOLOR(x, y, z, w) \
         BMM_Color_64(x, y, z, w);
@@ -98,7 +104,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define WRITE_VOID_BUFFER(s) s->Write
 #   define BM_LOAD_CONFIGURE_PARAMS void* ptr
 #   define BMNAME_VALUE_TYPE TCHAR*
-#   define SUBTFNAME_VALUE_TYPE char*
 #else
 #   define MAX14_CONST const
 #   define GETDLGTEXT_RETURN_TYPE const MCHAR*
@@ -106,7 +111,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define WRITE_VOID_BUFFER(s) s->WriteVoid
 #   define BM_LOAD_CONFIGURE_PARAMS void* ptr, DWORD piDataSize
 #   define BMNAME_VALUE_TYPE const MCHAR*
-#   define SUBTFNAME_VALUE_TYPE MSTR
 #endif // MAX_VERSION_MAJOR
 
 #if MAX_VERSION_MAJOR <= 15 // Max 2013
@@ -117,5 +121,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
+
+// Special 3ds Max message box support added in 2021 for HiDPI
+#if MAX_VERSION_MAJOR >= 23
+#   define plMaxMessageBox  MaxSDK::MaxMessageBox
+#else
+#   define plMaxMessageBox MessageBox
+#endif
+
+// Limitation: MCHAR and TCHAR must always be the same type.
+static_assert(std::is_same_v<MCHAR, TCHAR>, "MCHAR and TCHAR must have the same underlying type");
+
+#ifndef _M
+#   define _M(x) _T(x)
+#endif
+#ifndef M_STD_STRING
+#   define M_STD_STRING std::string
+#endif
+
+// Analagous to Max's M2T, etc. except doesn't require ATL
+#ifdef MCHAR_IS_WCHAR
+#   define ST2M(x) x.to_wchar().data()
+#   define M2ST(x) (x ? ST::string::from_wchar(x) : ST::string())
+#else
+#   define ST2M(x) x.to_latin_1().data()
+#   define M2ST(x) (x ? ST::string::from_latin_1(x) : ST::string())
+#endif
+
+#ifdef UNICODE
+#   define ST2T(x) x.to_wchar().data()
+#   define T2ST(x) (x ? ST::string::from_wchar(x) : ST::string())
+#else
+#   define ST2T(x) x.to_latin_1().data()
+#   define T2ST(x) (x ? ST::string::from_latin_1(x) : ST::string())
+#endif
+
+// Nonstandard, but useful
+#ifndef M_STD_STRINGSTREAM
+#   if defined(UNICODE) || defined(MCHAR_IS_WCHAR)
+#       define M_STD_STRINGSTREAM std::wstringstream
+#   else
+#       define M_STD_STRINGSTREAM std::stringstream
+#   endif
+#endif
 
 #endif // _PLASMA_MAXCOMPAT_H

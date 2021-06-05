@@ -58,19 +58,19 @@ protected:
     void IGetText(IParamBlock2 *pb, HWND hCtrl)
     {
         // Get the previous value
-        const char *oldVal = pb->GetStr(fPBEditID);
+        const MCHAR* oldVal = pb->GetStr(fPBEditID);
         if (!oldVal)
-            oldVal = "";
+            oldVal = _M("");
 
         // Get the text from the edit and store it in the paramblock
         int len = GetWindowTextLength(hCtrl)+1;
         if (len > 1)
         {
-            char *buf = new char[len];
+            TCHAR* buf = new TCHAR[len];
             GetWindowText(hCtrl, buf, len);
 
             // If the old value is different from the current one, update
-            if (strcmp(oldVal, buf))
+            if (_tcscmp(oldVal, buf))
                 pb->SetValue(fPBEditID, 0, buf);
 
             delete [] buf;
@@ -78,8 +78,8 @@ protected:
         else
         {
             // If the old value wasn't empty, update
-            if (*oldVal != '\0')
-                pb->SetValue(fPBEditID, 0, "");
+            if (*oldVal != _M('\0'))
+                pb->SetValue(fPBEditID, 0, _M(""));
         }
     }
 
@@ -88,8 +88,8 @@ public:
 
     void UpdateText(IParamBlock2 *pb, HWND hWnd)
     {
-        const char *str = pb->GetStr(fPBEditID);
-        SetDlgItemText(hWnd, fCtrlID, (str != nullptr ? str : ""));
+        const MCHAR* str = pb->GetStr(fPBEditID);
+        SetDlgItemText(hWnd, fCtrlID, (str != nullptr ? str : _T("")));
     }
 
     BOOL ProcessMsg(IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -158,7 +158,7 @@ public:
         plPlasmaMAXLayer *layer;
         PBBitmap *pbbm;
         ICustButton *bmSelectBtn;
-        char buff[256];
+        TCHAR buff[256];
 
         // Setup the tiles
         int layerSet = pb->GetInt(ParamID(plClothingMtl::kLayer));
@@ -169,7 +169,7 @@ public:
             pbbm = (layer == nullptr ? nullptr : layer->GetPBBitmap());
 
             bmSelectBtn = GetICustButton(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[j]));
-            bmSelectBtn->SetText(pbbm ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+            bmSelectBtn->SetText(pbbm ? (MCHAR*)pbbm->bi.Filename() : _M("(none)"));
             ReleaseICustButton(bmSelectBtn);
         }
 
@@ -198,7 +198,7 @@ public:
             plClothingElement *element = tileset->fElements[i];
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
                         WM_SETTEXT, 0, (LPARAM)element->fName.c_str());
-            snprintf(buff, std::size(buff), "(%d, %d)", element->fWidth, element->fHeight);
+            _sntprintf(buff, std::size(buff), _T("(%d, %d)"), element->fWidth, element->fHeight);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), 
                         WM_SETTEXT, 0, (LPARAM)buff);
             
@@ -274,14 +274,14 @@ public:
                     return FALSE;
 
                 BitmapInfo bi;
-                bi.SetName(layer->GetPBBitmap() == nullptr ? "" : layer->GetPBBitmap()->bi.Name());
+                bi.SetName(layer->GetPBBitmap() == nullptr ? _M("") : layer->GetPBBitmap()->bi.Name());
 
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 if (selectedNewBitmap)
                 {
                     pbbm = layer->GetPBBitmap();
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd, IDC_CLOTHING_THUMBNAIL));
-                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (MCHAR*)pbbm->bi.Filename() : _M("(none)"));
                     ReleaseICustButton(bmSelectBtn);
                 }
                 return TRUE;
@@ -308,7 +308,7 @@ public:
 #endif
 
                 BitmapInfo bi;
-                bi.SetName(layer->GetPBBitmap() == nullptr ? "" : layer->GetPBBitmap()->bi.Name());
+                bi.SetName(layer->GetPBBitmap() == nullptr ? _M("") : layer->GetPBBitmap()->bi.Name());
 
                 BOOL selectedNewBitmap = layer->HandleBitmapSelection();
                 if (selectedNewBitmap)
@@ -351,7 +351,7 @@ public:
                     else
                     {
                         bmSelectBtn = GetICustButton(GetDlgItem(hWnd, plClothingMtl::ButtonConstants[buttonIdx]));
-                        bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "(none)");
+                        bmSelectBtn->SetText(pbbm != nullptr ? (MCHAR*)pbbm->bi.Filename() : _M("(none)"));
                         ReleaseICustButton(bmSelectBtn);
                     }
                 }

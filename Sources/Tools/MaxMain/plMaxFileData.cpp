@@ -69,7 +69,6 @@ public:
     }
 
     // Animatable
-    void EditTrackParams(TimeValue t, ParamDimensionBase *dim, TCHAR *pname, HWND hParent, IObjParam *ip, DWORD flags) override { }
     int TrackParamsType() override { return TRACKPARAMS_WHOLE; }
     void DeleteThis() override { delete this; }
 
@@ -81,7 +80,7 @@ public:
 
     Class_ID ClassID() override { return PLASMA_FILE_DATA_CID; }
     SClass_ID SuperClassID() override { return CTRL_FLOAT_CLASS_ID; }
-    void GetClassName(TSTR& s) override { s = "DEAD - SceneViewer"; }
+    void GetClassName(MSTR& s) override { s = _M("DEAD - SceneViewer"); }
 
     // Control methods
     RefTargetHandle Clone(RemapDir& remap) override { return new plMaxFileDataControl(); }
@@ -148,10 +147,10 @@ class MaxFileDataClassDesc : public ClassDesc
 public:
     int             IsPublic() override             { return FALSE; }
     void*           Create(BOOL loading) override   { return new plMaxFileDataControl; }
-    const TCHAR*    ClassName() override            { return _T("MaxFileData"); }
+    const MCHAR*    ClassName() override            { return _M("MaxFileData"); }
     SClass_ID       SuperClassID() override         { return CTRL_FLOAT_CLASS_ID; }
     Class_ID        ClassID() override              { return PLASMA_FILE_DATA_CID; }
-    const TCHAR*    Category() override             { return _T(""); }
+    const MCHAR*    Category() override             { return _M(""); }
 };
 
 MaxFileDataClassDesc gMaxFileDataClassDesc;

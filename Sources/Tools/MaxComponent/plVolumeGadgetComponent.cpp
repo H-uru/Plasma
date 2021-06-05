@@ -307,7 +307,10 @@ bool plVolumeGadgetComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
                 physProps->SetProxyNode(boundNode, node, pErrMsg);
             else
             {
-                pErrMsg->Set(true, "Volume Sensor Warning", "The Volume Sensor %s has a Proxy Surface %s that was Ignored.\nThe Sensors geometry will be used instead.", node->GetName(), boundNode->GetName()).Show();
+                pErrMsg->Set(true, "Volume Sensor Warning",
+                    ST::format("The Volume Sensor {} has a Proxy Surface {} that was Ignored.\nThe Sensors geometry will be used instead.",
+                        node->GetName(), boundNode->GetName())
+                    ).Show();
                 pErrMsg->Set(false);
                 physProps->SetProxyNode(nullptr, node, pErrMsg);
             }

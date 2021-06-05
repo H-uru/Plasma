@@ -219,9 +219,11 @@ bool plAvLadderComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     else
     {
         pErrMsg->Set(true,
-                    "Ladder Warning",
-                    "Ladder component %s doesn't have the ladder node set",
-                    GetINode()->GetName()).Show();
+                     "Ladder Warning",
+                     ST::format(
+                         "Ladder component {} doesn't have the ladder node set",
+                         GetINode()->GetName())
+                     ).Show();
         pErrMsg->Set(false);
         return false;
     }

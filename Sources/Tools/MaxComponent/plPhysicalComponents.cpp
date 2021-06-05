@@ -436,8 +436,9 @@ void ValidateGroups(IParamBlock2* pb, int memberID, int bounceID, plComponent* c
     {
         pErrMsg->Set(true,
             "Physics Conflict",
-            "The legacy physical component \"%s\" has non-default member or collide groups.\nPlease recreate it.",
-            comp->GetINode()->GetName()).Show();
+            ST::format("The legacy physical component \"{}\" has non-default member or collide groups.\nPlease recreate it.",
+                comp->GetINode()->GetName())
+        ).Show();
         pErrMsg->Set(false);
     }
 }
@@ -1324,19 +1325,19 @@ bool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     case kCurrentSpiral:
         {
             fSwimRegions[node] = new plSwimCircularCurrentRegion();
-            hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
+            hsgResMgr::ResMgr()->NewKey(M2ST(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     case kCurrentStraight:
         {
             fSwimRegions[node] = new plSwimStraightCurrentRegion();
-            hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
+            hsgResMgr::ResMgr()->NewKey(M2ST(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     default:
         {
             fSwimRegions[node] = new plSwimRegionInterface();
-            hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
+            hsgResMgr::ResMgr()->NewKey(M2ST(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     }
@@ -1628,7 +1629,7 @@ void plPhysSubWorldComponent::IAddChildren(plMaxNode* node, plMaxNode* subworld)
     for (int i = 0; i < numChildren; i++)
     {
         plMaxNode* child = (plMaxNode*)node->GetChildNode(i);
-        const char* childName = child->GetName();
+        const MCHAR* childName = child->GetName();
 
         bool hasSubworld = false;
 

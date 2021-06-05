@@ -687,7 +687,7 @@ bool plRippleComponent::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
     if( !fDecalMgr )
     {
         plDynaRippleMgr* ripple = nullptr;
-        if( node->GetVS() || node->UserPropExists("XXXWaterColor") )
+        if( node->GetVS() || node->UserPropExists(_M("XXXWaterColor")) )
         {
             ripple = new plDynaRippleVSMgr;
         }
@@ -1488,7 +1488,7 @@ bool plDirtyComponent::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
     // to miss.
     if( !node->IsPhysical() )
     {
-        pErrMsg->Set(true, node->GetName(), "Has no physical component to notify %s Dirty/Wet component", GetINode()->GetName()).CheckAndAsk();
+        pErrMsg->Set(true, node->GetName(), ST::format("Has no physical component to notify {} Dirty/Wet component", GetINode()->GetName())).CheckAndAsk();
         pErrMsg->Set(false);
         return true;
     }

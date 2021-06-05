@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxMain/MaxCompat.h"
 
-const char hsConverterUtils::fTagSeps[] = " ,\t\n=:;";
+const MCHAR hsConverterUtils::fTagSeps[] = _M(" ,\t\n=:;");
 
 extern UserPropMgr gUserPropMgr;
 
@@ -134,7 +134,7 @@ bool hsConverterUtils::IsEnvironHolder(INode *node)
 {
     hsGuardBegin("hsConverterUtils::IsEnvironHolder");
 
-    return (gUserPropMgr.UserPropExists(node, "EnvironMap"));
+    return (gUserPropMgr.UserPropExists(node, _M("EnvironMap")));
     hsGuardEnd; 
 }
 
@@ -142,7 +142,7 @@ bool hsConverterUtils::AutoStartDynamics(INode *node)
 {
     hsGuardBegin("hsConverterUtils::AutoStartDynamics");
 
-    return (gUserPropMgr.UserPropExists(node,"AutoStart") || gUserPropMgr.UserPropExists(node,"aud"));
+    return (gUserPropMgr.UserPropExists(node,_M("AutoStart")) || gUserPropMgr.UserPropExists(node,_M("aud")));
     hsGuardEnd; 
 }
 
@@ -150,7 +150,7 @@ bool hsConverterUtils::RandomStartDynamics(INode *node)
 {
     hsGuardBegin("hsConverterUtils::RandomStartDynamics");
 
-    return (gUserPropMgr.UserPropExists(node,"RandomStart"));
+    return (gUserPropMgr.UserPropExists(node,_M("RandomStart")));
     hsGuardEnd; 
 }
 
@@ -181,29 +181,6 @@ void hsConverterUtils::StripOffPath(char* fileName)
     hsGuardEnd;
 }
 
-int32_t hsConverterUtils::FindNamedSelSetFromName(const char *name)
-{
-    hsGuardBegin("hsConverterUtils::FindNamedSelSetFromName");
-
-    #if MAX_VERSION_MAJOR <= 12
-    for (int32_t i=0; i<fInterface->GetNumNamedSelSets(); i++)
-    {
-        if (!_stricmp(name, fInterface->GetNamedSelSetName(i)))
-            return (i);
-    }
-    #else
-    INamedSelectionSetManager* selSetMgr = INamedSelectionSetManager::GetInstance();
-    for (int32_t i=0; i<selSetMgr->GetNumNamedSelSets(); i++)
-    {
-        if (!_stricmp(name, selSetMgr->GetNamedSelSetName(i)))
-            return (i);
-    }
-    #endif
-
-    return (-1);
-    hsGuardEnd; 
-}
-
 bool hsConverterUtils::IsInstanced(Object* maxObject)
 {
     hsGuardBegin("hsConverterUtils::IsInstanced");
@@ -221,7 +198,7 @@ bool hsConverterUtils::IsInstanced(Object* maxObject)
 }
 
 
-INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
+INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const MCHAR* wantName)
 {
     hsGuardBegin("hsConverterUtils::IGetINodeByNameRecur");
 
@@ -229,7 +206,7 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
         return nullptr;
 
     auto nodeName=node->GetName();
-    if (!_stricmp(nodeName, wantName))
+    if (_tcsicmp(nodeName, wantName) == 0)
         return node;
 
     // Process children
@@ -249,7 +226,7 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
 //
 // Matches name against node's name, case-insensitive, 
 //
-INode* hsConverterUtils::GetINodeByName(const char* name, bool caseSensitive)
+INode* hsConverterUtils::GetINodeByName(const MCHAR* name, bool caseSensitive)
 {
     hsGuardBegin("hsConverterUtils::GetINodeByName");
 
@@ -320,8 +297,8 @@ void hsConverterUtils::IBuildNodeSearchCacheRecur(INode* node)
 
 uint32_t hsConverterUtils::CacheNode::GetHash() const
 {
-    const char* k = GetName();
-    int len = k ? strlen(k) : 0;
+    const TCHAR* k = GetName();
+    int len = k ? _tcslen(k) : 0;
 
     int h;
     for (h=len; len--;) 
@@ -333,10 +310,10 @@ uint32_t hsConverterUtils::CacheNode::GetHash() const
 
 bool hsConverterUtils::CacheNode::operator==(const CacheNode& other) const
 {
-    const char* k1 = GetName();
-    const char* k2 = other.GetName();
+    const TCHAR* k1 = GetName();
+    const TCHAR* k2 = other.GetName();
     if (other.fCaseSensitive || fCaseSensitive)
-        return !strcmp(k1,k2);
+        return _tcscmp(k1, k2) == 0;
     else
-        return !_stricmp(k1,k2);
+        return _tcsicmp(k1, k2) == 0;
 }

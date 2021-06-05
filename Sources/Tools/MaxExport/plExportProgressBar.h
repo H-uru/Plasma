@@ -53,7 +53,7 @@ public:
     plExportProgressBar();
     ~plExportProgressBar();
 
-    void Start(char *name, uint32_t steps=CountNodes());
+    void Start(MCHAR* name, uint32_t steps=CountNodes());
     bool Update(MAX14_CONST MCHAR* name=nullptr, uint32_t inc=1);
     
     static uint32_t CountNodes();

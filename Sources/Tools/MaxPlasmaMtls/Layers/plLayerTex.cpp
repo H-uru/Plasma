@@ -272,13 +272,13 @@ Animatable* plLayerTex::SubAnim(int i)
     }
 }
 
-TSTR plLayerTex::SubAnimName(int i) 
+MSTR plLayerTex::SubAnimName(int i) 
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
@@ -635,7 +635,7 @@ DWORD_PTR plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
     }
 }
 
-const char *plLayerTex::GetTextureName()
+const MCHAR* plLayerTex::GetTextureName()
 {
 //  if (fBitmapPB->GetInt(kBmpUseBitmap))
     {

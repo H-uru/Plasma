@@ -124,85 +124,85 @@ bool plConvert::Convert()
 
     if(IOK())
     {
-        bar.Start("Clear Old Data");
+        bar.Start(_M("Clear Old Data"));
         retVal = pNode->DoAllRecur( &plMaxNode::ClearData, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Convert Validate");
+        bar.Start(_M("Convert Validate"));
         retVal = pNode->DoRecur( &plMaxNode::ConvertValidate, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Components Initialize");
+        bar.Start(_M("Components Initialize"));
         retVal = pNode->DoRecur( &plMaxNode::SetupPropertiesPass, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Prepare for skinning");
+        bar.Start(_M("Prepare for skinning"));
         retVal = pNode->DoRecur( &plMaxNode::PrepareSkin, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Make Scene Object");
+        bar.Start(_M("Make Scene Object"));
         retVal = pNode->DoRecur( &plMaxNode::MakeSceneObject, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Make Physical");
+        bar.Start(_M("Make Physical"));
         retVal = pNode->DoRecur( &plMaxNode::MakePhysical, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Component Preconvert");
+        bar.Start(_M("Component Preconvert"));
         retVal = pNode->DoRecur( &plMaxNode::FirstComponentPass, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Make Controller");
+        bar.Start(_M("Make Controller"));
         retVal = pNode->DoRecur( &plMaxNode::MakeController, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // must be before mesh
-        bar.Start("Make Coord Interface");
+        bar.Start(_M("Make Coord Interface"));
         retVal = pNode->DoRecur( &plMaxNode::MakeCoordinateInterface, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // must be after coord interface but before pool data is created.
-        bar.Start("Make Connections");
+        bar.Start(_M("Make Connections"));
         retVal = pNode->DoRecur( &plMaxNode::MakeParentOrRoomConnection, fpErrorMsg, fSettings, &bar );
     }
 
     if(IOK())
     {   // must be before simulation
-        bar.Start("Make Mesh");
+        bar.Start(_M("Make Mesh"));
         retVal = pNode->DoRecur( &plMaxNode::MakeMesh, fpErrorMsg, fSettings, &bar );
     }
 
     if(IOK())
     {   // doesn't matter when
-        bar.Start("Make Light");
+        bar.Start(_M("Make Light"));
         retVal = pNode->DoRecur( &plMaxNode::MakeLight, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // doesn't matter when
-        bar.Start("Make Occluder");
+        bar.Start(_M("Make Occluder"));
         retVal = pNode->DoRecur( &plMaxNode::MakeOccluder, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {   // must be after mesh
-        bar.Start("Make Modifiers");
+        bar.Start(_M("Make Modifiers"));
         retVal = pNode->DoRecur( &plMaxNode::MakeModifiers, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
-        bar.Start("Convert Components");
+        bar.Start(_M("Convert Components"));
         retVal = pNode->DoRecur( &plMaxNode::ConvertComponents, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         // do this after convert
-        bar.Start("Set Up Interface References");
+        bar.Start(_M("Set Up Interface References"));
         retVal = pNode->DoRecur( &plMaxNode::MakeIfaceReferences, fpErrorMsg, fSettings, &bar );
     }
 
@@ -212,7 +212,7 @@ bool plConvert::Convert()
         plLightMapGen::Instance().Open(fInterface, fInterface->GetTime(), fSettings->fDoLightMap);
         hsVertexShader::Instance().Open();
 
-        bar.Start("Preshade Geometry");
+        bar.Start(_M("Preshade Geometry"));
         retVal = pNode->DoRecur( &plMaxNode::ShadeMesh, fpErrorMsg, fSettings, &bar );
 
         plLightMapGen::Instance().Close();
@@ -222,13 +222,13 @@ bool plConvert::Convert()
     if(IOK())
     {
         // Do this next-to-last--allows all the components to free up any temp data they kept around
-        bar.Start("Component DeInit");
+        bar.Start(_M("Component DeInit"));
         retVal = pNode->DoRecur( &plMaxNode::DeInitComponents, fpErrorMsg, fSettings, &bar );
     }
     if(IOK())
     {
         // Do this very last--it de-inits and frees all the maxNodeDatas lying around
-        bar.Start("Clear MaxNodeDatas");
+        bar.Start(_M("Clear MaxNodeDatas"));
         retVal = pNode->DoAllRecur( &plMaxNode::ClearMaxNodeData, fpErrorMsg, fSettings, &bar );
     }
 //  fpErrorMsg->Set();
@@ -461,23 +461,25 @@ BOOL plConvert::IAutoUnClusterRecur(INode* node)
 bool plConvert::IFindDuplicateNames()
 {
     INode *node = fInterface->GetRootNode();
-    const char *name = ISearchNames(node, node);
+    auto name = ISearchNames(node, node);
 
     if (!name)
         return false;
     
     fpErrorMsg->Set(true,
         "Error in Conversion of Scene Objects",
-        "Two objects in the scene share the name '%s'.\nUnique names are necessary during the export process.\n",
-        name
-        );
+        ST::format(
+            "Two objects in the scene share the name '{}'.\nUnique names are necessary during the export process.\n",
+            name
+        )
+    );
     fpErrorMsg->Show();
 
     return true;
 }
 
 // Recursivly search nodes for duplicate names, and return when one is found
-const char *plConvert::ISearchNames(INode *node, INode *root)
+const MCHAR* plConvert::ISearchNames(INode *node, INode *root)
 {
     int count = ICountNameOccurances(root, node->GetName());
     if (count > 1)
@@ -485,7 +487,7 @@ const char *plConvert::ISearchNames(INode *node, INode *root)
 
     for (int i = 0; i < node->NumberOfChildren(); i++)
     {
-        const char *name = ISearchNames(node->GetChildNode(i), root);
+        auto name = ISearchNames(node->GetChildNode(i), root);
         if (name)
             return name;
     }
@@ -494,11 +496,11 @@ const char *plConvert::ISearchNames(INode *node, INode *root)
 }
 
 // Recursivly search nodes for this name, and return the number of times found
-int plConvert::ICountNameOccurances(INode *node, const char *name)
+int plConvert::ICountNameOccurances(INode *node, const MCHAR* name)
 {
     int count = 0;
 
-    if (!stricmp(name, node->GetName()))
+    if (_tcsicmp(name, node->GetName()) == 0)
         count++;
 
     for (int i = 0; i < node->NumberOfChildren(); i++)

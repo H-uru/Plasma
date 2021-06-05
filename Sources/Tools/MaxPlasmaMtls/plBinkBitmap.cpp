@@ -48,14 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBinkBitmapIO : public BitmapIO
 {
 public:
-    int ExtCount()                  { return 1; }
-    const TCHAR* Ext(int n)         { return _T("bik"); }
+    int ExtCount() override           { return 1; }
+    const MCHAR* Ext(int n) override  { return _M("bik"); }
 
-    const TCHAR* LongDesc()         { return _T("DEAD: Bink File"); }
-    const TCHAR* ShortDesc()        { return _T("Bink"); }
+    const MCHAR* LongDesc() override  { return _M("DEAD: Bink File"); }
+    const MCHAR* ShortDesc() override { return _M("Bink"); }
 
-    const TCHAR* AuthorName()       { return _T("Colin Bonstead"); }
-    const TCHAR* CopyrightMessage() { return _T("Copyright 2004, Cyan Inc."); }
+    const MCHAR* AuthorName()       { return _M("Colin Bonstead"); }
+    const MCHAR* CopyrightMessage() { return _M("Copyright 2004, Cyan Inc."); }
     unsigned int Version()          { return 100; }
 
     int Capability()                { return 0; }
@@ -65,9 +65,10 @@ public:
 
     BMMRES GetImageInfo(BitmapInfo* fbi) { return BMMRES_INTERNALERROR; }
     BitmapStorage* Load(BitmapInfo* fbi, Bitmap* map, BMMRES* status) { return nullptr; }
+
     void ShowAbout(HWND hWnd)
     {
-        hsMessageBoxWithOwner(hWnd, "Bink Layers removed due to license issues", "DEAD", hsMessageBoxNormal, MB_ICONEXCLAMATION);
+        plMaxMessageBox(hWnd, _T("Bink Layers removed due to license issues"), _T("DEAD"), MB_ICONEXCLAMATION);
     }
 };
 
@@ -77,10 +78,10 @@ public:
     int IsPublic() override { return 1; }
     void* Create(BOOL loading=FALSE) override { return static_cast<void*>(new plBinkBitmapIO); }
 
-    const TCHAR* ClassName() override { return "Bink"; }
+    const MCHAR* ClassName() override { return _M("Bink"); }
     SClass_ID SuperClassID() override { return BMM_IO_CLASS_ID; }
     Class_ID ClassID() override { return Class_ID(0x71c75c3c, 0x206f480e); }
-    const TCHAR* Category() override { return "Bitmap I/O"; }
+    const MCHAR* Category() override { return _M("Bitmap I/O"); }
 };
 
 static BinkClassDesc BinkDesc;

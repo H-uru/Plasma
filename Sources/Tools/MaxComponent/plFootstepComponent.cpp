@@ -170,7 +170,7 @@ INT_PTR plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND 
             ComboBox_SetCurSel(hSurface, curSurface);
 
             curPick = pb->GetINode(ParamID(plFootstepSoundComponent::kSurfaceList), 0, curSurface);
-            Button_SetText(hPick, (curPick == nullptr ? "None" : curPick->GetName()));
+            Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
         }
         return TRUE;
 
@@ -187,7 +187,7 @@ INT_PTR plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND 
                     curPick = pb->GetINode(ParamID(plFootstepSoundComponent::kNodePicker));
                     curSurface = pb->GetInt(ParamID(plFootstepSoundComponent::kSurface));
                     pb->SetValue(ParamID(plFootstepSoundComponent::kSurfaceList), 0, curPick, curSurface); 
-                    Button_SetText(hPick, (curPick == nullptr ? "None" : curPick->GetName()));
+                    Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
                 }
             
                 return TRUE;
@@ -198,7 +198,7 @@ INT_PTR plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND 
             curSurface = ComboBox_GetCurSel(hSurface);
             curPick = pb->GetINode(ParamID(plFootstepSoundComponent::kSurfaceList), 0, curSurface);
             pb->SetValue(ParamID(plFootstepSoundComponent::kSurface), 0, curSurface);
-            Button_SetText(hPick, (curPick == nullptr ? "None" : curPick->GetName()));
+            Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
         }
     }
 

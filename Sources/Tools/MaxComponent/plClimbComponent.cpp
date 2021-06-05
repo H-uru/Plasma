@@ -319,7 +319,7 @@ INT_PTR plClimbTriggerComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND h
 
             // show the name of the currently picked item
             curPick = pb->GetINode(ParamID(plClimbTriggerComponent::kWallPicker));
-            Button_SetText(hPick, (curPick == nullptr ? "None" : curPick->GetName()));
+            Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
         }
         return TRUE;
         break;
@@ -337,7 +337,7 @@ INT_PTR plClimbTriggerComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND h
                 if (plPick::NodeRefKludge(pb, plClimbTriggerComponent::kWallPicker, &pickableClasses, true, false))         
                 {
                     curPick = pb->GetINode(ParamID(plClimbTriggerComponent::kWallPicker));
-                    Button_SetText(hPick, (curPick == nullptr ? "None" : curPick->GetName()));
+                    Button_SetText(hPick, (curPick == nullptr ? _T("None") : curPick->GetName()));
                 }
             
                 return TRUE;

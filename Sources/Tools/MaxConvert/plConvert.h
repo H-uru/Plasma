@@ -64,7 +64,7 @@ public:
     bool fDoPreshade;   // Doesn't do preshading if false (flat shades)
     bool fDoLightMap;   // Reuses available old lightmaps if false, else always generates fresh.
     bool fPhysicalsOnly;// Only solid physicals get meshes
-    const char* fExportPage;    // If this isn't nil, only export objects in this page
+    const TCHAR* fExportPage;    // If this isn't nil, only export objects in this page
 
     plLightMapGen*      fLightMapGen;
     hsVertexShader*     fVertexShader;
@@ -119,8 +119,8 @@ public:
     // Search for nodes with the same name.  Returns true if any are found and stops the export
     bool IFindDuplicateNames();
     // IFindDuplicateNames helper functions
-    const char *ISearchNames(INode *node, INode *root);
-    int ICountNameOccurances(INode *node, const char *name);
+    const MCHAR* ISearchNames(INode *node, INode *root);
+    int ICountNameOccurances(INode *node, const MCHAR* name);
     // Does any pre-export generation necessary for distributors, then cleans up after export.
     BOOL IAutoClusterRecur(INode* node);
     BOOL IAutoUnClusterRecur(INode* node);

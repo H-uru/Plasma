@@ -72,9 +72,9 @@ HINSTANCE hInstance = nullptr;
 //
 // return a string to be displayed if the DLL is not found
 //
-__declspec(dllexport) const TCHAR *LibDescription() 
+__declspec(dllexport) const MCHAR *LibDescription() 
 { 
-    return "Plasma 2.0"; 
+    return _M("Plasma 2.0");
 }
 
 //
@@ -200,11 +200,11 @@ class plGeneralAttribClassDesc : public ClassDesc2
 public:
     int             IsPublic() override     { return 1; }
     void*           Create(BOOL loading) override { return new plGeneralAttrib; }
-    const TCHAR*    ClassName() override    { return _T("Plasma Attrib"); }
+    const MCHAR*    ClassName() override    { return _M("Plasma Attrib"); }
     SClass_ID       SuperClassID() override { return CUST_ATTRIB_CLASS_ID; }
     Class_ID        ClassID() override      { return PL_GEN_ATTRIB_CLASS_ID; }
-    const TCHAR*    Category() override     { return _T(""); }
-    const TCHAR*    InternalName() override { return _T("PlasmaAttrib"); }
+    const MCHAR*    Category() override     { return _M(""); }
+    const MCHAR*    InternalName() override { return _M("PlasmaAttrib"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plGeneralAttribClassDesc theGeneralAttribClassDesc;

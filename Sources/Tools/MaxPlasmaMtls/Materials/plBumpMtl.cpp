@@ -61,11 +61,11 @@ class plBumpMtlClassDesc : public ClassDesc2
 public:
     int             IsPublic() override     { return TRUE; }
     void*           Create(BOOL loading) override { return new plBumpMtl(loading); }
-    const TCHAR*    ClassName() override    { return GetString(IDS_BUMP_MTL); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_BUMP_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return BUMP_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return nullptr; }
-    const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plBumpMtlClassDesc plBumpMtlDesc;
@@ -122,7 +122,7 @@ Interval plBumpMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -174,16 +174,16 @@ int plBumpMtl::NumSubs()
     return 3;
 }
 
-TSTR plBumpMtl::SubAnimName(int i) 
+MSTR plBumpMtl::SubAnimName(int i) 
 {
     switch (i)
     {
     case 0: return fBasicPB->GetLocalName();
     case 1: return fAnimPB->GetLocalName();
-    case 2: return "Base Layer";
+    case 2: return _M("Base Layer");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plBumpMtl::SubAnim(int i)
@@ -246,12 +246,12 @@ void plBumpMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kBumpBasLayer, 0, m);
 }
 
-TSTR plBumpMtl::GetSubTexmapSlotName(int i)
+MSTR plBumpMtl::GetSubTexmapSlotName(int i)
 {
     if (i == 0)
-        return "Base";
+        return _M("Base");
 
-    return "";
+    return _M("");
 }
 
 TSTR plBumpMtl::GetSubTexmapTVName(int i)
@@ -651,10 +651,10 @@ int     plBumpMtl::GetZInc() { return 0; }
 int     plBumpMtl::GetAlphaTestHigh() { return 0; }
 
 // Animation block
-const char*  plBumpMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+const MCHAR* plBumpMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
 int          plBumpMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
 int          plBumpMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-const char*  plBumpMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const MCHAR* plBumpMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 
 // Basic block
 int     plBumpMtl::GetColorLock() { return 0; }
