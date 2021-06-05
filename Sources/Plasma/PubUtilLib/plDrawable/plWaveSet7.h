@@ -108,7 +108,8 @@ public:
     };
     // Flags, also in a bitvector, so far unused in the multimodifier
     enum {
-        kHasRefObject           = 16
+        kHasRefObject           = 16,
+        kHasBuoys               = 17
     };
     enum {
         kNumWaves       = 4

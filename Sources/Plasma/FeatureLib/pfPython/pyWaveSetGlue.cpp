@@ -168,6 +168,42 @@ WAVESET_FLOAT_DEF(SpecularMute)
 WAVESET_OBJ_DEF(EnvCenter, ptPoint3, pyPoint3)
 WAVESET_FLOAT_DEF(EnvRadius)
 
+PYTHON_METHOD_DEFINITION(ptWaveSet, addBuoy, args)
+{
+    PyObject *soKeyObject = nullptr;
+    if (!PyArg_ParseTuple(args, "O", &soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "addBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    if (!pyKey::Check(soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "addBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    pyKey *soKey = pyKey::ConvertFrom(soKeyObject);
+    self->fThis->AddBuoy(*soKey);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION(ptWaveSet, removeBuoy, args)
+{
+    PyObject *soKeyObject = nullptr;
+    if (!PyArg_ParseTuple(args, "O", &soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "removeBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    if (!pyKey::Check(soKeyObject))
+    {
+        PyErr_SetString(PyExc_TypeError, "removeBuoy expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    pyKey *soKey = pyKey::ConvertFrom(soKeyObject);
+    self->fThis->RemoveBuoy(*soKey);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptWaveSet)
     WAVESET_FLOAT(GeoMaxLength),
     WAVESET_FLOAT(GeoMinLength),
@@ -210,6 +246,9 @@ PYTHON_START_METHODS_TABLE(ptWaveSet)
 
     WAVESET_OBJ(EnvCenter),
     WAVESET_FLOAT(EnvRadius),
+
+    PYTHON_METHOD(ptWaveSet, addBuoy, "Params: soKey\nAdds the specified object as a buoy"),
+    PYTHON_METHOD(ptWaveSet, removeBuoy, "Params: soKey\nRemoves the specified object as a buoy"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

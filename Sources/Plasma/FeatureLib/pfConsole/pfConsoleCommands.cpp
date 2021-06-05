@@ -4621,6 +4621,42 @@ PF_CONSOLE_CMD( Wave_Set, Opacity,  // Group name, Function name
     ISendWaveCmd1f(PrintString, params, numParams, plWaveCmd::kWaterOpacity);
 }
 
+PF_CONSOLE_CMD( Wave_Set, AddBuoy,  // Group name, Function name
+                "string waveSet, string buoyObj", // Params
+                "Add the object as a buoy to the waveset") // Help string
+{
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[1]), "", &status);
+    PrintString(status);
+    if (!key)
+        return;
+
+    ST::string name = ST::string::from_utf8(params[0]);
+    plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
+
+    if (waveSet) {
+        waveSet->AddBuoy(key);
+    }
+}
+
+PF_CONSOLE_CMD( Wave_Set, RemoveBuoy,  // Group name, Function name
+                "string waveSet, string buoyObj", // Params
+                "Remove the object as a buoy to the waveset") // Help string
+{
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[1]), "", &status);
+    PrintString(status);
+    if (!key)
+        return;
+
+    ST::string name = ST::string::from_utf8(params[0]);
+    plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
+
+    if (waveSet) {
+        waveSet->RemoveBuoy(key);
+    }
+}
+
 #endif // LIMIT_CONSOLE_COMMANDS
 
 

@@ -185,6 +185,13 @@ public:
 
     PyObject* GetEnvCenter() const; // returns pyPoint3
     float GetEnvRadius() const;
+
+    // ==============================================================================
+    // Buoy functions
+    // ==============================================================================
+
+    void AddBuoy(const pyKey& soKey) const;
+    void RemoveBuoy(const pyKey& soKey) const;
 };
 
 

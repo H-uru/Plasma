@@ -351,9 +351,18 @@ void plWaveSet7::Read(hsStream* stream, hsResMgr* mgr)
     }
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefEnvMap), plRefFlags::kActiveRef);
 
-    if( HasFlag(kHasRefObject) )
+    if (HasFlag(kHasRefObject))
     {
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRefObj), plRefFlags::kPassiveRef);
+    }
+
+    if (HasFlag(kHasBuoys))
+    {
+        n = stream->ReadLE32();
+        for (i = 0; i < n; i++)
+        {
+            mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBuoy), plRefFlags::kPassiveRef);
+        }
     }
 
     ISetupTextureWaves();
@@ -388,9 +397,16 @@ void plWaveSet7::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fEnvMap);
 
-    if( HasFlag(kHasRefObject) )
+    if (HasFlag(kHasRefObject))
     {
         mgr->WriteKey(stream, fRefObj);
+    }
+
+    if (HasFlag(kHasBuoys))
+    {
+        stream->WriteLE32((uint32_t)fBuoys.size());
+        for (plSceneObject* buoy : fBuoys)
+            mgr->WriteKey(stream, buoy);
     }
 }
 
@@ -732,7 +748,6 @@ void plWaveSet7::IUpdateWaves(float dt)
     ITransition(dt);
     ITransTex(dt);
     ICalcScale();
-    fScrunchLen = 1.e33f;
 
     if( fTrialUpdate & kReInitWaves )
     {
