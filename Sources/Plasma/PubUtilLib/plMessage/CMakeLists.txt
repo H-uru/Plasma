@@ -69,6 +69,7 @@ set(plMessage_HEADERS
     plCondRefMsg.h
     plConnectedToVaultMsg.h
     plConsoleMsg.h
+    plDampMsg.h
     plDeviceRecreateMsg.h
     plDynaDecalEnableMsg.h
     plDynamicEnvMapMsg.h

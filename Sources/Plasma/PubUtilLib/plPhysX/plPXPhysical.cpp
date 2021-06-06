@@ -500,6 +500,15 @@ void plPXPhysical::SetImpulseSim(const hsVector3& imp, bool wakeup)
     }
 }
 
+void plPXPhysical::SetDampingSim(float factor)
+{
+    if (auto dynamic = fActor->is<physx::PxRigidDynamic>()) {
+        plPXActorSimulationLock lock(fActor);
+        dynamic->setLinearDamping(factor * 10);
+        dynamic->setAngularDamping(factor * 10);
+    }
+}
+
 // ==========================================================================
 
 physx::PxConvexMesh* plPXPhysical::ICookHull(hsStream* s)

@@ -96,6 +96,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plMatRefMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plDampMsg.h"
 #include "plMessage/plImpulseMsg.h"
 
 #include "plTweak.h"
@@ -1057,8 +1058,8 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
         damp *= kDampener;
         damp += kBaseDamp;
 
-//      plDampMsg* dMsg = new plDampMsg(GetKey(), physKey, damp);
-//      dMsg->Send();
+        plDampMsg* dMsg = new plDampMsg(GetKey(), physKey, damp);
+        dMsg->Send();
     }
 }
 

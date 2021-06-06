@@ -113,6 +113,9 @@ REGISTER_CREATABLE(plConnectedToVaultMsg);
 #include "plConsoleMsg.h"
 REGISTER_CREATABLE(plConsoleMsg);
 
+#include "plDampMsg.h"
+REGISTER_CREATABLE(plDampMsg);
+
 #include "plDeviceRecreateMsg.h"
 REGISTER_CREATABLE(plDeviceRecreateMsg);
 
