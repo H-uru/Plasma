@@ -145,20 +145,18 @@ class pfGUIConsoleCmdProc : public pfGUICtrlProcWriteableObject
 {
     protected:
 
-        char            *fCommand;
+        ST::string fCommand;
 
         void    IRead(hsStream *s) override;
         void    IWrite(hsStream *s) override;
     
     public:
 
-        pfGUIConsoleCmdProc();
-        pfGUIConsoleCmdProc( const char *cmd );
-        virtual ~pfGUIConsoleCmdProc();
+        pfGUIConsoleCmdProc(ST::string cmd = {});
 
         void    DoSomething(pfGUIControlMod *ctrl) override;
 
-        void            SetCommand( const char *cmd );
+        void    SetCommand(ST::string cmd) { fCommand = std::move(cmd); }
 };
 
 //// pfGUIPythonScriptProc ///////////////////////////////////////////////////
