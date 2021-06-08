@@ -78,7 +78,7 @@ pfGUIDialogMod::pfGUIDialogMod()
       fControlOfInterest(), fFocusCtrl(), fMousedCtrl(),
       fTagID(), fHandler(), fVersion(), fProcReceiver(),
       fDragMode(), fDragReceptive(), fDragTarget(),
-      fDragSource(), fColorScheme(new pfGUIColorScheme()), fName()
+      fDragSource(), fColorScheme(new pfGUIColorScheme())
 { }
 
 pfGUIDialogMod::~pfGUIDialogMod()
@@ -283,7 +283,10 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRenderModRef ), plRefFlags::kActiveRef );
 
-    s->Read( sizeof( fName ), fName );
+    char nameBuf[128];
+    s->Read(sizeof(nameBuf), nameBuf);
+    nameBuf[sizeof(128) - 1] = 0;
+    fName = ST::string(nameBuf);
 
     uint32_t count = s->ReadLE32();
     fControls.assign(count, nullptr);
@@ -317,7 +320,12 @@ void    pfGUIDialogMod::Write( hsStream *s, hsResMgr *mgr )
     plSingleModifier::Write( s, mgr );
 
     mgr->WriteKey( s, fRenderMod->GetKey() );
-    s->Write( sizeof( fName ), fName );
+
+    char name[128]{ 0 };
+    memcpy(name, fName.c_str(), std::min(sizeof(name), fName.size()));
+    name[sizeof(name) - 1] = 0;
+
+    s->Write( sizeof( name ), name );
 
     s->WriteLE32((uint32_t)fControls.size());
     for (pfGUIControlMod* ctrl : fControls)

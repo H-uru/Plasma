@@ -240,9 +240,9 @@ bool pyGUIPopUpMenu::IsEnabled()
     return menu->IsEnabled();
 }
 
-const char* pyGUIPopUpMenu::GetName()
+ST::string pyGUIPopUpMenu::GetName() const
 {
-    kGetMenuPtr( "" );
+    kGetMenuPtr( {} );
     return menu->GetName();
 }
 

@@ -109,7 +109,7 @@ public:
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
     virtual bool    IsEnabled();
-    virtual const char  *GetName();
+    virtual ST::string GetName() const;
     virtual uint32_t     GetVersion();
 
     virtual void        Show();

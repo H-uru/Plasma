@@ -361,9 +361,9 @@ public:
     //  PURPOSE    : Loads the dialog by name
     //             : optionally sets the receiver key for the GUINotifyMsg
     //
-    static void LoadDialog(const char* name);
-    static void LoadDialogK(const char* name, pyKey& modKey);
-    static void LoadDialogKA(const char* name, pyKey& rKey, const char* ageName);
+    static void LoadDialog(const ST::string& name);
+    static void LoadDialogK(const ST::string& name, pyKey& modKey);
+    static void LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageName);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -403,7 +403,7 @@ public:
     //  PURPOSE    : Return the frame delta seconds
     //
     static PyObject* GetDialogFromTagID(uint32_t tag); // returns pyGUIDialog
-    static PyObject* GetDialogFromString(const char* name); // returns pyGUIDialog
+    static PyObject* GetDialogFromString(const ST::string& name); // returns pyGUIDialog
 
     /////////////////////////////////////////////////////////////////////////////
     //

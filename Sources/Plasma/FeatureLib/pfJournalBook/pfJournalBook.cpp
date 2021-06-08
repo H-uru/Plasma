@@ -404,12 +404,12 @@ public:
 void pfBookData::LoadGUI()
 {
     // has the dialog been loaded yet?
-    if (!pfGameGUIMgr::GetInstance()->IsDialogLoaded(fGUIName.c_str()))
+    if (!pfGameGUIMgr::GetInstance()->IsDialogLoaded(fGUIName))
         // no then load and set handler
         pfGameGUIMgr::GetInstance()->LoadDialog(fGUIName, GetKey(), "GUI");
     else
         // yes then just set the handler
-        pfGameGUIMgr::GetInstance()->SetDialogToNotify(fGUIName.c_str(), GetKey());
+        pfGameGUIMgr::GetInstance()->SetDialogToNotify(fGUIName, GetKey());
 }
 
 bool pfBookData::MsgReceive(plMessage *pMsg)

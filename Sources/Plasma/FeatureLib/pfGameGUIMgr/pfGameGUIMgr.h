@@ -159,8 +159,8 @@ class pfGameGUIMgr : public hsKeyedObject
         // LoadDialog adds an entry and MsgReceive removes it
         std::vector<pfDialogNameSetKey *>  fDialogToSetKeyOf;
 
-        void    IShowDialog( const char *name );
-        void    IHideDialog( const char *name );
+        void    IShowDialog( const ST::string& name );
+        void    IHideDialog( const ST::string& name );
 
         void    IAddDlgToList( hsKeyedObject *obj );
         void    IRemoveDlgFromList( hsKeyedObject *obj );
@@ -196,18 +196,18 @@ class pfGameGUIMgr : public hsKeyedObject
         bool    MsgReceive(plMessage* pMsg) override;
 
         void    LoadDialog(const ST::string& name, plKey recvrKey = {}, const char *ageName = nullptr);  // AgeName = nil defaults to "GUI"
-        void    ShowDialog( const char *name ) { IShowDialog(name); }
-        void    HideDialog( const char *name ) { IHideDialog(name); }
-        void    UnloadDialog( const char *name );
+        void    ShowDialog( const ST::string& name ) { IShowDialog(name); }
+        void    HideDialog( const ST::string&  name ) { IHideDialog(name); }
+        void    UnloadDialog( const ST::string& name );
         void    UnloadDialog( pfGUIDialogMod *dlg );
 
         void    ShowDialog( pfGUIDialogMod *dlg, bool resetClickables=true );
         void    HideDialog( pfGUIDialogMod *dlg );
 
-        bool    IsDialogLoaded( const char *name );
-        pfGUIDialogMod *GetDialogFromString( const char *name );
+        bool    IsDialogLoaded( const ST::string& name );
+        pfGUIDialogMod *GetDialogFromString( const ST::string& name );
 
-        void    SetDialogToNotify(const char *name, plKey recvrKey);
+        void    SetDialogToNotify(const ST::string& name, plKey recvrKey);
         void    SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey);
 
         void    SetDefaultCursor(uint32_t defaultCursor) { fDefaultCursor = defaultCursor; }
@@ -215,7 +215,7 @@ class pfGameGUIMgr : public hsKeyedObject
         void    SetCursorOpacity(float opacity) { fCursorOpacity = opacity; }
         float    GetCursorOpacity() { return fCursorOpacity; }
 
-        pfGUIPopUpMenu  *FindPopUpMenu( const char *name );
+        pfGUIPopUpMenu  *FindPopUpMenu( const ST::string& name );
 
         std::vector<plPostEffectMod*> GetDlgRenderMods() const;
         bool    IsModalBlocking() {return IModalBlocking();}

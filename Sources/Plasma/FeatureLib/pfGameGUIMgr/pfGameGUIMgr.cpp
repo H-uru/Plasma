@@ -298,11 +298,11 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const c
 
 //// IShowDialog /////////////////////////////////////////////////////////////
 
-void    pfGameGUIMgr::IShowDialog( const char *name )
+void    pfGameGUIMgr::IShowDialog( const ST::string& name )
 {
     for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if (stricmp(dialog->GetName(), name) == 0)
+        if (dialog->GetName().compare_i(name) == 0)
         {
             ShowDialog(dialog);
             dialog->RefreshAllControls();
@@ -313,11 +313,11 @@ void    pfGameGUIMgr::IShowDialog( const char *name )
 
 //// IHideDialog /////////////////////////////////////////////////////////////
 
-void    pfGameGUIMgr::IHideDialog( const char *name )
+void    pfGameGUIMgr::IHideDialog( const ST::string& name )
 {
     for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if (stricmp(dialog->GetName(), name) == 0)
+        if (dialog->GetName().compare_i(name) == 0)
         {
             HideDialog(dialog);
             break;
@@ -362,11 +362,11 @@ void    pfGameGUIMgr::HideDialog( pfGUIDialogMod *dlg )
 //// UnloadDialog ////////////////////////////////////////////////////////////
 //  Destroy the dialog and all the things associated with it. Fun fun.
 
-void    pfGameGUIMgr::UnloadDialog( const char *name )
+void    pfGameGUIMgr::UnloadDialog( const ST::string& name )
 {
     for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if (stricmp(dialog->GetName(), name) == 0)
+        if (dialog->GetName().compare_i(name) == 0)
         {
             UnloadDialog(dialog);
             break;
@@ -401,21 +401,21 @@ void    pfGameGUIMgr::UnloadDialog( pfGUIDialogMod *dlg )
 
 //// IsDialogLoaded ////// see if the dialog is in our list of loaded dialogs
 
-bool    pfGameGUIMgr::IsDialogLoaded( const char *name )
+bool    pfGameGUIMgr::IsDialogLoaded( const ST::string& name )
 {
     // search through all the dialogs we've loaded
     return std::any_of(fDialogs.cbegin(), fDialogs.cend(),
                        [name](pfGUIDialogMod* dialog) {
-                           return strcmp(dialog->GetName(), name) == 0;
+                           return dialog->GetName().compare_i(name) == 0;
                        });
 }
 
-pfGUIPopUpMenu  *pfGameGUIMgr::FindPopUpMenu( const char *name )
+pfGUIPopUpMenu  *pfGameGUIMgr::FindPopUpMenu( const ST::string& name )
 {
     for (pfGUIDialogMod* dialog : fDialogs)
     {
         pfGUIPopUpMenu *menu = pfGUIPopUpMenu::ConvertNoRef(dialog);
-        if (menu != nullptr && stricmp(menu->GetName(), name) == 0)
+        if (menu != nullptr && menu->GetName().compare_i(name) == 0)
             return menu;
     }
 
@@ -437,11 +437,11 @@ std::vector<plPostEffectMod*> pfGameGUIMgr::GetDlgRenderMods() const
 ///// SetDialogToNotify     - based on name
 // This will Set the handler to a Notify Handler that will send a GUINotifyMsg to the receiver
 //
-void pfGameGUIMgr::SetDialogToNotify(const char *name, plKey recvrKey)
+void pfGameGUIMgr::SetDialogToNotify(const ST::string& name, plKey recvrKey)
 {
     for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if (stricmp(dialog->GetName(), name) == 0)
+        if (dialog->GetName().compare_i(name) == 0)
         {
             SetDialogToNotify(dialog, recvrKey);
             break;
@@ -810,11 +810,11 @@ pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromTag( uint32_t tagID )
 
 //// GetDialogFromString ////////////////////////////////////////////////////////
 
-pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromString( const char *name )
+pfGUIDialogMod  *pfGameGUIMgr::GetDialogFromString( const ST::string& name )
 {
     for (pfGUIDialogMod* dialog : fDialogs)
     {
-        if (stricmp(dialog->GetName(), name) == 0)
+        if (dialog->GetName().compare_i(name) == 0)
             return dialog;
     }
 
