@@ -74,9 +74,9 @@ static char* kGetVersion = "glue_getVersion";
 static char* kIsMultiModifier = "glue_isMultiModifier";
 static char* kGetVisInfo = "glue_getVisInfo";
 
-bool ICallVoidFunc(PyObject *dict, char *funcName, PyObject*& val)
+bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
 {
-    PyObject *func = PyDict_GetItemString(dict, (char*)funcName);
+    PyObject *func = PyDict_GetItemString(dict, funcName);
     if (func )
     {
         if (PyCallable_Check(func))
@@ -100,7 +100,7 @@ bool ICallVoidFunc(PyObject *dict, char *funcName, PyObject*& val)
     return false;
 }
 
-bool ICallIntFunc(PyObject *dict, char *funcName, int& val)
+bool ICallIntFunc(PyObject *dict, const char *funcName, int& val)
 {
     PyObject *obj;
     if (ICallVoidFunc(dict, funcName, obj))
@@ -115,7 +115,7 @@ bool ICallIntFunc(PyObject *dict, char *funcName, int& val)
     return false;
 }
 
-bool ICallStrFunc(PyObject *dict, char *funcName, char*& val)
+bool ICallStrFunc(PyObject *dict, const char *funcName, char*& val)
 {
     PyObject *obj;
     if (ICallVoidFunc(dict, funcName, obj))
@@ -131,7 +131,7 @@ bool ICallStrFunc(PyObject *dict, char *funcName, char*& val)
     return false;
 }
 
-bool ICallStrFunc(PyObject* dict, char* funcName, wchar_t*& val)
+bool ICallStrFunc(PyObject* dict, const char* funcName, wchar_t*& val)
 {
     PyObject* obj;
     if (ICallVoidFunc(dict, funcName, obj)) {

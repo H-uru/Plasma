@@ -520,7 +520,7 @@ void    plPassMtlBase::PostLoadAnimPBFixup()
         {
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
-                            ST::string::from_utf8( (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
+                            M2ST(fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
             myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),

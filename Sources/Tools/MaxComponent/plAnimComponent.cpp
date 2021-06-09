@@ -896,7 +896,7 @@ bool plAnimComponentBase::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
-        ((plAgeGlobalAnim *)fAnims[node])->SetGlobalVarName((char*)fCompPB->GetStr(ParamID(kAnimGlobalName)));
+        ((plAgeGlobalAnim *)fAnims[node])->SetGlobalVarName(M2ST(fCompPB->GetStr(ParamID(kAnimGlobalName))));
     }
     else // It's an ATCAnim
     {
