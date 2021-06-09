@@ -4761,7 +4761,7 @@ static int ICompareDoneLayers(const plLayerInterface* one, const plLayerInterfac
     return 0;
 }
 
-static bool ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
+static int ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
                             const hsMaterialConverter::DoneMaterialData* two)
 {
     hsGMaterial* oneMat = one->fHsMaterial;
@@ -4774,9 +4774,9 @@ static bool ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
     plLayerInterface* twoLay = twoMat->GetLayer(0);
     int retVal = ICompareBaseLayerTexture(one, two);
     if( retVal > 0 )
-        return false;
+        return 1;
     if( retVal < 0 )
-        return true;
+        return -1;
 
     // Check for lightmap compatible-ness.
     // The case we're looking for is if:
@@ -4796,43 +4796,43 @@ static bool ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
         plLightMapComponent* twoLM = twoNode->GetLightMapComponent();
         if( oneLM != twoLM )
         {
-            return oneNode < twoNode;
+            return oneNode > twoNode ? 1 : -1;
         }
         if( oneLM )
         {
             if( !oneLM->GetShared() ) // and therefore twoLM, since they're equal
             {
-                return oneNode < twoNode;
+                return oneNode > twoNode ? 1 : -1;
             }
         }
     }
 
     if( oneMat == twoMat )
-        return false;
+        return 0;
 
     // Now compare everything else about the base layer.
     retVal = ICompareDoneLayers(oneMat->GetLayer(0), twoMat->GetLayer(0));
     if( retVal < 0 )
-        return true;
+        return -1;
     else if( retVal > 0 )
-        return false;
+        return 1;
 
     // base layers the same, go up a layer at a time. Non-existence of a layer is < any existent layer
     for (size_t i = 1; i < oneMat->GetNumLayers(); i++)
     {
         if( twoMat->GetNumLayers() <= i )
-            return false;
+            return 1;
 
         retVal = ICompareDoneLayers(oneMat->GetLayer(i), twoMat->GetLayer(i));
         if( retVal < 0 )
-            return true;
+            return -1;
         else if( retVal > 0 )
-            return false;
+            return 1;
     }
     if( oneMat->GetNumLayers() < twoMat->GetNumLayers() )
-        return true;
+        return -1;
 
-    return false;
+    return 0;
 }
 
 void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, DoneMaterialData* doneMat)
