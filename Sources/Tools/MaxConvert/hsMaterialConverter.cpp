@@ -4960,8 +4960,12 @@ void hsMaterialConverter::ISortDoneMaterials(std::vector<DoneMaterialData*>& don
     for (size_t i = 0; i < fDoneMaterials.size(); i++)
         doneMats[i] = &fDoneMaterials[i];
 
-    void* arr = doneMats.data();
-    std::sort(doneMats.begin(), doneMats.end(), ICompareDoneMats);
+    std::sort(
+        doneMats.begin(), doneMats.end(),
+        [](const auto* m1, const auto* m2) {
+            return ICompareDoneMats(m1, m2) == -1;
+        }
+    );
 }
 
 void hsMaterialConverter::IGenMaterialReport(const char* path)
