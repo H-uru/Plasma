@@ -140,7 +140,7 @@ INT_PTR plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             }
             else if (id == IDC_REPLACE_ALL_BUTTON)
             {
-                if (hsMessageBox("Are you sure?", "Confirmation", hsMessageBoxYesNo) == hsMBoxYes)
+                if (plMaxMessageBox(nullptr, _T("Are you sure?"), _T("Confirmation"), MB_YESNO | MB_ICONQUESTION) == IDYES)
                 {
                     IUpdateTextures(kUpdateReplace);
                 }
@@ -148,7 +148,7 @@ INT_PTR plTextureSearch::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPar
             }
             else if (id == IDC_SET_ALL_BUTTON)
             {
-                if (hsMessageBox("Are you sure?", "Confirmation", hsMessageBoxYesNo) == hsMBoxYes)
+                if (plMaxMessageBox(nullptr, _T("Are you sure?"), _T("Confirmation"), MB_YESNO | MB_ICONQUESTION) == IDYES)
                 {
                     IUpdateTextures(kUpdateSetSize);
                 }

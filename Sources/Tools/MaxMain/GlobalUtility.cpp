@@ -141,10 +141,13 @@ static void NotifyProc(void *param, NotifyInfo *info)
         GetMasterUnitInfo(&type, &scale);
         if (type != UNITS_FEET || scale != 1.f)
         {
-            hsMessageBoxWithOwner(GetCOREInterface()->GetMAXHWnd(),
-                "Please set your system units to 1 unit = 1 foot.\n\n"
-                "Customize -> Units Setup... -> System Unit Setup",
-                "Plasma Units Error", hsMessageBoxNormal);
+            plMaxMessageBox(
+                GetCOREInterface()->GetMAXHWnd(),
+                _T("Please set your system units to 1 unit = 1 foot.\n\n"
+                   "Customize -> Units Setup... -> System Unit Setup"),
+                _T("Plasma Units Error"),
+                MB_OK | MB_ICONEXCLAMATION
+            );
         }
         plExportDlg::Instance().StartAutoExport();
     }

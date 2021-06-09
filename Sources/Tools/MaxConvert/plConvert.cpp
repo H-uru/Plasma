@@ -340,7 +340,12 @@ bool plConvert::Convert(std::vector<plMaxNode*>& nodes)
     }
     catch(...)
     {
-        hsMessageBox("Unknown error during convert", "plConvert", hsMessageBoxNormal);
+        plMaxMessageBox(
+            nullptr,
+            _T("Unknown error during convert"),
+            _T("plConvert"),
+            MB_OK | MB_ICONERROR
+        );
         return false;
     }
 #endif

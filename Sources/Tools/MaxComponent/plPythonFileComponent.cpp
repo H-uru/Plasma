@@ -1195,9 +1195,12 @@ static void NotifyProc(void *param, NotifyInfo *info)
     {
         if (gotBadPython)
         {
-            hsMessageBox("This file has bad Python components in it, you REALLY shouldn't save it.",
-                        "Python Component Warning",
-                        hsMBoxOk);
+            plMaxMessageBox(
+                nullptr,
+                _T("This file has bad Python components in it, you REALLY shouldn't save it."),
+                _T("Python Component Warning"),
+                MB_OK | MB_ICONSTOP
+            );
         }
     }
     else if (info->intcode == NOTIFY_SYSTEM_POST_RESET ||

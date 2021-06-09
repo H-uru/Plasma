@@ -549,7 +549,12 @@ void    plAgeDescInterface::ICheckOutCurrentAge()
     bool checkOutSuccess = (*fAssetManIface)->CheckOutAsset( currAge->fAssetID, fCheckedOutPath, sizeof( fCheckedOutPath ) );
     if( !checkOutSuccess )
     {
-        hsMessageBox( "Unable to check out age file from AssetMan. Most likely somebody already has it checked out.", "Error", hsMessageBoxNormal );
+        plMaxMessageBox(
+            nullptr,
+            _T("Unable to check out age file from AssetMan. Most likely somebody already has it checked out."),
+            _T("Error"),
+            MB_OK | MB_ICONERROR
+        );
         return;
     }
 #endif
@@ -692,7 +697,12 @@ void    plAgeDescInterface::IUpdateCurAge()
         char                localFilename[ MAX_PATH ];
         if( !(*fAssetManIface)->GetLatestVersionFile( currAge->fAssetID, localFilename, sizeof( localFilename ) ) )
         {
-            hsMessageBox( "Unable to get latest version of age asset from AssetMan. Things are about to get very funky...", "ERROR", hsMessageBoxNormal );
+            plMaxMessageBox(
+                nullptr,
+                _T("Unable to get latest version of age asset from AssetMan. Things are about to get very funky..."),
+                _T("Error"),
+                MB_OK | MB_ICONERROR
+            );
         }
         else
         {
@@ -1023,7 +1033,7 @@ void plAgeDescInterface::INewAge()
     VariantInit(&assetId);
 
     bool makeAsset = true;
-    if (!fAssetManIface || hsMessageBox( "Do you wish to store your new age in AssetMan?", "Make source-controlled?", hsMessageBoxYesNo ) == hsMBoxNo)
+    if (!fAssetManIface || plMaxMessageBox(nullptr, _T("Do you wish to store your new age in AssetMan?"), _T("Make source-controlled?"), MB_YESNO | MB_ICONQUESTION ) == IDNO)
         makeAsset = false;
 
     plFileName newAssetFilename;
@@ -1121,7 +1131,12 @@ void plAgeDescInterface::ISaveCurAge( const plFileName &path, bool checkSeqNum )
     hsUNIXStream s;
     if( !s.Open( path, "wt" ) )
     {
-        hsMessageBox("Unable to open the Age Description file for writing. Updates not saved.", "Error", hsMessageBoxNormal);
+        plMaxMessageBox(
+            nullptr,
+            _T("Unable to open the Age Description file for writing. Updates not saved."),
+            _T("Error"),
+            MB_OK | MB_ICONERROR
+        );
         return;
     }
 

@@ -1049,12 +1049,23 @@ void CopyComponents()
         GetCOREInterface()->DoHitByNameDialog(&copyCompCallback);
     else
     {
-        int count = GetCOREInterface()->GetSelNodeCount();
-        if (count == 0)
-            hsMessageBox("No object(s) selected", "Component Copy", hsMessageBoxNormal);
-        else if (count > 1)
-            hsMessageBox("No components are shared among the selected objects", "Component Copy", hsMessageBoxNormal);
-        else
-            hsMessageBox("No components on the selected object", "Component Copy", hsMessageBoxNormal);
+        const TCHAR* msg;
+        switch (GetCOREInterface()->GetSelNodeCount()) {
+        case 0:
+            msg = _T("No object(s) selected");
+            break;
+        case 1:
+            msg = _T("No components on the selected object");
+            break;
+        default:
+            msg = _T("No components are shared among the selected objects");
+            break;
+        }
+        plMaxMessageBox(
+            nullptr,
+            msg,
+            _T("Component Copy"),
+            MB_OK | MB_ICONASTERISK
+        );
     }
 }

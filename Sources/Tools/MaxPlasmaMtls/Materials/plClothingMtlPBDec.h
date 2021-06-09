@@ -329,14 +329,24 @@ public:
                         if (targRatio != ratio)
                         {
                             choiceOk = false;
-                            hsMessageBox("That image's width/height ratio does not match the one for this tile. "
-                                         "Restoring the old selection.", "Invalid image", hsMessageBoxNormal);
+                            plMaxMessageBox(
+                                nullptr,
+                                _T("That image's width/height ratio does not match the one for this tile. "
+                                   "Restoring the old selection."),
+                                _T("Invalid image"),
+                                MB_OK | MB_ICONWARNING
+                            );
                         }
                         else if (pbbm->bi.Width() < element->fWidth)
                         {
                             choiceOk = false;
-                            hsMessageBox("The chosen image is too small for that tile slot. "
-                                         "Restoring the old selection.", "Invalid image", hsMessageBoxNormal);
+                            plMaxMessageBox(
+                                nullptr,
+                                _T("The chosen image is too small for that tile slot. "
+                                   "Restoring the old selection."),
+                                _T("Invalid image"),
+                                MB_OK | MB_ICONWARNING
+                            );
                         }
 
                         mtl->ReleaseTilesets();

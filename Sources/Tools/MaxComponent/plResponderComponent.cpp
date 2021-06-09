@@ -1180,15 +1180,25 @@ INT_PTR plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT ms
                     // Don't let the user remove the last state
                     if (count == 1)
                     {
-                        hsMessageBox("You must have at least one state.", "Error", hsMessageBoxNormal);
+                        plMaxMessageBox(
+                            nullptr,
+                            _T("You must have at least one state."),
+                            _T("Error"),
+                            MB_OK | MB_ICONERROR
+                        );
                         ComboBox_SetCurSel(hCombo, fCurState);
                         return TRUE;
                     }
                     // Verify that the user really wants to delete the state
                     else
                     {
-                        int ret = hsMessageBox("Are you sure you want to remove this state?", "Verify Remove", hsMessageBoxYesNo);
-                        if (ret == hsMBoxNo)
+                        int ret = plMaxMessageBox(
+                            nullptr,
+                            _T("Are you sure you want to remove this state?"),
+                            _T("Verify Remove"),
+                            MB_YESNO | MB_ICONQUESTION
+                        );
+                        if (ret == IDNO)
                         {
                             ComboBox_SetCurSel(hCombo, fCurState);
                             return TRUE;

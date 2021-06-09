@@ -459,11 +459,14 @@ bool ResponderWait::ValidateCmdMove(IParamBlock2 *state, int oldIdx, int newIdx)
 
             if (pb->GetInt(kWaitWho) == oldIdx)
             {
-                int ret = hsMessageBox("You are moving this command ahead of another command that waits on it.\nAre you sure you want to do that?", "Warning", hsMessageBoxYesNo);
-                if (ret == hsMBoxYes)
-                    return true;
-                else
-                    return false;
+                int ret = plMaxMessageBox(
+                    nullptr,
+                    _T("You are moving this command ahead of another command that waits on it."
+                       "\nAre you sure you want to do that?"),
+                    _T("Warning"),
+                    MB_YESNO | MB_ICONWARNING
+                );
+                return ret == IDYES;
             }
         }
     }
@@ -476,11 +479,14 @@ bool ResponderWait::ValidateCmdMove(IParamBlock2 *state, int oldIdx, int newIdx)
         int who = pb->GetInt(kWaitWho);
         if (who >= newIdx && who < oldIdx)
         {
-            int ret = hsMessageBox("You are moving this command behind another command that it is waiting on.\nAre you sure you want to do that?", "Warning", hsMessageBoxYesNo);
-            if (ret == hsMBoxYes)
-                return true;
-            else
-                return false;
+            int ret = plMaxMessageBox(
+                nullptr,
+                _T("You are moving this command behind another command that it is waiting on.\n"
+                   "Are you sure you want to do that?"),
+                _T("Warning"),
+                MB_YESNO | MB_ICONWARNING
+            );
+            return ret == IDYES;
         }
     }
 

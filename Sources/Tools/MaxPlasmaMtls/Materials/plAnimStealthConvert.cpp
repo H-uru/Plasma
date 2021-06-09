@@ -246,10 +246,15 @@ bool    plAnimStealthNode::GetKeyList(INode *restrictedNode, std::vector<plKey> 
 {
     if( !fPreppedForConvert )
     {
-        hsMessageBox( "This messages is to warn you that mcn screwed up in his attempt to create "
-        "a SetupProperties() pass for materials in this scene. You should probably let him know as soon as "
-        "possible, and also make a copy of this exact scene so that he can test with it and figure out what "
-        "is going wrong. Thank you.", "Mathew is Stupid Error", hsMessageBoxNormal );
+        plMaxMessageBox(
+            nullptr,
+            _T("This messages is to warn you that mcn screwed up in his attempt to create "
+               "a SetupProperties() pass for materials in this scene. You should probably "
+               "make a copy of this exact scene and hand it over to a H'uru developer. Maybe "
+               "they can figure out what is going wrong. Thank you."),
+            _T("Mathew is Stupid Error"),
+            MB_OK | MB_ICONERROR
+        );
     }
 
     GetMatAnimModKey( GetParentMtl(), (plMaxNode *)restrictedNode, GetSegmentName(), outKeys );
