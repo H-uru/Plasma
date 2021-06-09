@@ -73,7 +73,7 @@ public:
     // GUP Methods
     DWORD Start();
     void Stop();
-    void DeleteThis() {};
+    void DeleteThis() override { }
 
     enum ControlVals
     {

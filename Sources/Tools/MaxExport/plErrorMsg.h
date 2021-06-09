@@ -95,8 +95,20 @@ protected:
     void SetBogus(bool b)   { fBogus = b; }
 
     bool GetBogus() const   { return fBogus; }
-    ST::string& GetLabel()  { return fLabel; }
-    ST::string& GetMsg()    { return fMsg; }
+
+    ST::string& GetLabel()
+    {
+        if (!fBogus)
+            fLabel.clear();
+        return fLabel;
+    }
+
+    ST::string& GetMsg()
+    {
+        if (!fBogus)
+            fMsg.clear();
+        return fMsg;
+    }
 
 private:
     bool        fBogus;

@@ -52,6 +52,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plExportErrorMsg : public plErrorMsg {
 public:
+    plExportErrorMsg() = default;
+
+    plExportErrorMsg(ST::string label, ST::string msg)
+        : plErrorMsg()
+    { }
+
+    plExportErrorMsg(bool bogus, ST::string label, ST::string msg)
+        : plErrorMsg()
+    { }
+
     bool Ask() override; // if b is true and user says yes to displayed query, return true, else false
     bool CheckAndAsk() override; // if b is true and user says YES, throw self. only asks if b is true. returns true if b is true but user says no, else false
     bool CheckAskOrCancel() override; // if b is true ( if YES, throw, else if NO return 0, else (CANCEL) return 1
@@ -75,6 +85,14 @@ class plExportErrorMsg : public plErrorMsg {
 
 class plExportErrorDbg : public plExportErrorMsg {
 public:
+    plExportErrorDbg(ST::string label, ST::string msg)
+        : plExportErrorMsg()
+    { }
+
+    plExportErrorDbg(bool bogus, ST::string label, ST::string msg)
+        : plExportErrorMsg()
+    { }
+
     bool Ask() override { return false; }
     bool CheckAndAsk() override { return false; }
     bool CheckAskOrCancel() override;

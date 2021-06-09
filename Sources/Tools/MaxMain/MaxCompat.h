@@ -102,21 +102,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define GETDLGTEXT_RETURN_TYPE TCHAR*
 #   define READ_VOID_BUFFER(s) s->Read
 #   define WRITE_VOID_BUFFER(s) s->Write
-#   define BM_LOAD_CONFIGURE_PARAMS void* ptr
+#   define BITMAP_LOAD_CONFIGURE_DATASIZE
 #   define BMNAME_VALUE_TYPE TCHAR*
 #else
 #   define MAX14_CONST const
 #   define GETDLGTEXT_RETURN_TYPE const MCHAR*
 #   define READ_VOID_BUFFER(s) s->ReadVoid
 #   define WRITE_VOID_BUFFER(s) s->WriteVoid
-#   define BM_LOAD_CONFIGURE_PARAMS void* ptr, DWORD piDataSize
+#   define BITMAP_LOAD_CONFIGURE_DATASIZE , DWORD piDataSize
 #   define BMNAME_VALUE_TYPE const MCHAR*
 #endif // MAX_VERSION_MAJOR
 
 #if MAX_VERSION_MAJOR <= 15 // Max 2013
-#   define USE_LANGUAGE_PACK_LOCALE()
+#   define USE_LANGUAGE_PACK_LOCALE(...)
 #else
-#   define USE_LANGUAGE_PACK_LOCALE MaxSDK::Util::UseLanguagePackLocale
+#   define USE_LANGUAGE_PACK_LOCALE(...) MaxSDK::Util::UseLanguagePackLocale(__VA_ARGS__)
 #endif
 
 #if MAX_VERSION_MAJOR <= 17 // Max 2015

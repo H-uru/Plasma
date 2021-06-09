@@ -60,6 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plExportLogErrorMsg : public plErrorMsg {
 public:
+    plExportLogErrorMsg() = default;
+
     plExportLogErrorMsg(plFileName errFile, ST::string label, ST::string msg)
         : plErrorMsg(std::move(label), std::move(msg)),
           fErrfile_name(std::move(errFile)),
@@ -103,15 +105,15 @@ using plExportLogErrorMsg = plErrorMsg;
 
 class plExportLogErrorDbg : public plExportLogErrorMsg {
 public:
+    plExportLogErrorDbg() = default;
+
     plExportLogErrorDbg(ST::string label, ST::string msg)
-        : plErrorMsg()
-    {
-    }
+        : plExportLogErrorMsg()
+    { }
 
     plExportLogErrorDbg(bool bogus, ST::string label, ST::string msg)
-        : plErrorMsg()
-    {
-    }
+        : plExportLogErrorMsg()
+    { }
 
     bool Ask() override { return false; }
     bool CheckAndAsk() override { return false; }
@@ -134,7 +136,7 @@ class plExportLogErrorDbg : plExportLogErrorMsg
         : plExportLogErrorMsg({}, bogus)
     { }
 
-    plExportLogErrorDbg(bool bogus, ST::string label, ST::string msg)
+    plExportLogErrorDbg(bool bogus = false, ST::string label = {}, ST::string msg = {})
         : plExportLogErrorMsg({}, bogus, std::move(label), std::move(msg))
     { }
 };

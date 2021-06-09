@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plPlasmaRefMsgs.h"
 
 const TCHAR* kUVStrings[] = { _T("1"), _T("2"), _T("3"), _T("4"), _T("5"), _T("6"), _T("7"), _T("8") };
-constexpr uint8_t kMaxUVSrc = 8;
 
 class plMAXCameraLayerClassDesc : public ClassDesc2
 {
@@ -99,10 +98,10 @@ public:
         {
         case WM_INITDIALOG:
             int i;
-            for (i = 0; i < kMaxUVSrc; i++)
+            for (const TCHAR* uvString : kUVStrings)
             {
                 cbox = GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)kUVStrings[i]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)uvString);
             }
             UpdateDisplay(map);
             return TRUE;

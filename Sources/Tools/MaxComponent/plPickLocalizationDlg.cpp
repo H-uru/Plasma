@@ -100,7 +100,7 @@ HTREEITEM plPickLocalizationDlg::IAddVar(const ST::string& name, const ST::strin
 {
     ST::wchar_buffer nameBuf = name.to_wchar();
 
-    TVINSERTSTRUCTW tvi = {0};
+    TVINSERTSTRUCTW tvi = {};
     tvi.hParent = hParent;
     tvi.hInsertAfter = TVI_LAST;
     tvi.item.mask = TVIF_TEXT | TVIF_PARAM;

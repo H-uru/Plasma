@@ -90,7 +90,7 @@ void plSeekPointMod::Write(hsStream *stream, hsResMgr *mgr)
 {
     plMultiModifier::Write(stream, mgr);
 
-    int length = fName.size();
+    uint32_t length = (uint32_t)fName.size();
     stream->WriteLE32(length);
     if (length > 0)
     {

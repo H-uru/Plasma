@@ -2265,7 +2265,7 @@ bool plSound3DEmitterComponent::ConvertGrouped(plMaxNode *baseNode, std::vector<
             {
                 IShowError(kSrcBufferInvalid, pErrMsg,
                     "The sound file {} cannot be loaded for component {}.",
-                    fileName, baseNode->GetName());
+                    fileName, groupComponent->GetINode()->GetName());
                 delete buffer;
 
                 // Attempt to recover

@@ -65,7 +65,6 @@ plErrorMsg &plErrorMsg::Set(bool bogus, ST::string label, ST::string msg)
     if (fBogus = bogus) {
         fLabel = std::move(label);
         fMsg = std::move(msg);
-        hsThrow(*this);
     }
 
     return *this;

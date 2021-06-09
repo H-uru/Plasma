@@ -115,7 +115,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern UserPropMgr gUserPropMgr;
 
-static const MCHAR* kSecretBumpSign = _M("~~~");
+static const MCHAR kSecretBumpSign[] = _M("~~~");
 
 namespace {
     const int kDefaultDetailBias=5;
@@ -748,7 +748,7 @@ hsMaterialConverter::CreateMaterialArray(Mtl *maxMaterial, plMaxNode *node, uint
     if (isMultiMat)
     {
         if (fErrorMsg->Set(!(fWarned & kWarnedSubMulti), M2ST(node->GetName()),
-            ST::format("Multi-material in CreateMaterialArray (Multi child of multi?) on mat %s. Using the first sub-material instead.", 
+            ST::format("Multi-material in CreateMaterialArray (Multi child of multi?) on mat {}. Using the first sub-material instead.",
                 maxMaterial->GetName())
             ).CheckAskOrCancel())
             fWarned |= kWarnedSubMulti;
@@ -3365,7 +3365,7 @@ bool hsMaterialConverter::IsBumpLayer(Texmap* texMap)
 {
     if( texMap 
         && (texMap->ClassID() == LAYER_TEX_CLASS_ID) 
-        && texMap->GetName() == MSTR(kSecretBumpSign) )
+        && _tcsncmp(texMap->GetName().data(), kSecretBumpSign, std::size(kSecretBumpSign) - 1) == 0 )
     {
         return true;
     }
@@ -4796,13 +4796,13 @@ static bool ICompareDoneMats(const hsMaterialConverter::DoneMaterialData* one,
         plLightMapComponent* twoLM = twoNode->GetLightMapComponent();
         if( oneLM != twoLM )
         {
-            return oneNode > twoNode ? false : true;
+            return oneNode < twoNode;
         }
         if( oneLM )
         {
             if( !oneLM->GetShared() ) // and therefore twoLM, since they're equal
             {
-                return oneNode > twoNode ? false : true;
+                return oneNode < twoNode;
             }
         }
     }
