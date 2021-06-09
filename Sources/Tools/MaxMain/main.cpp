@@ -166,8 +166,8 @@ public:
 
     plGeneralAttrib();
 
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,
-                               PartID& partID, RefMessage message) override { return REF_SUCCEED; }
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                               PartID& partID, RefMessage message MAX_REF_PROPAGATE) override { return REF_SUCCEED; }
 
     int NumParamBlocks() override { return 1; }                  // return number of ParamBlocks in this instance
     IParamBlock2* GetParamBlock(int i) override { return fPBlock; } // return i'th ParamBlock

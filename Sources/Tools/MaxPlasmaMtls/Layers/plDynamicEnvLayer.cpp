@@ -262,8 +262,8 @@ MSTR    plDynamicEnvLayer::SubAnimName( int i )
 
 //// NotifyRefChanged /////////////////////////////////////////////////////////
 
-RefResult   plDynamicEnvLayer::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
-                                                   PartID& partID, RefMessage message ) 
+RefResult   plDynamicEnvLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                                PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {

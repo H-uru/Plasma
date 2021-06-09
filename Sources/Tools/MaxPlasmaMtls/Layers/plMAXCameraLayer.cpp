@@ -307,8 +307,8 @@ MSTR plMAXCameraLayer::SubAnimName(int i)
     }
 }
 
-RefResult plMAXCameraLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,
-                                              PartID& partID, RefMessage message)
+RefResult plMAXCameraLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                             PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -323,7 +323,7 @@ RefResult plMAXCameraLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle
                 ParamID changingParam = fParmsPB->LastNotifyParamID();
                 fParmsPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }

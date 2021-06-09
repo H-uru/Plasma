@@ -412,8 +412,8 @@ void plPassMtlBase::SetReference(int i, RefTargetHandle rtarg)
 
 //// NotifyRefChanged ////////////////////////////////////////////////////////
 
-RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
-                                           PartID &partID, RefMessage message ) 
+RefResult plPassMtlBase::NotifyRefChanged( MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                           PartID &partID, RefMessage message MAX_REF_PROPAGATE )
 {
     switch( message )
     {
@@ -431,7 +431,8 @@ RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle h
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents( FOREVER, PART_ALL, REFMSG_USER_MAT );
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents( FOREVER, PART_ALL, REFMSG_USER_MAT );
             }
             else 
             {

@@ -271,8 +271,8 @@ IParamBlock2 *plCompositeMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plCompositeMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message ) 
+RefResult plCompositeMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {

@@ -230,7 +230,8 @@ IParamBlock2* plParticleMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
+RefResult plParticleMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                          PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -248,7 +249,8 @@ RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hT
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
             }
             break;
     }

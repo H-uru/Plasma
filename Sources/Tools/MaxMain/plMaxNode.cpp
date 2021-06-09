@@ -274,7 +274,7 @@ plKey plMaxNode::AddModifier(plModifier *pMod, const ST::string& name)
 bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
-    const char *tmpName = GetName();
+    auto tmpName = GetName();
 #endif
 
     // If there is a progess bar, update it with the current node
@@ -304,7 +304,7 @@ bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertS
 bool plMaxNode::DoAllRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
-    const char *tmpName = GetName();
+    auto tmpName = GetName();
 #endif
 
     // If there is a progess bar, update it with the current node

@@ -109,8 +109,6 @@ public:
     BOOL SetDlgThing(ParamDlg* dlg) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;

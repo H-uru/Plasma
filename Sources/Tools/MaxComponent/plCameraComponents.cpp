@@ -334,7 +334,7 @@ enum
     kTransDecel,
     kTransPOADecel,
     kTransVelocity, 
-    kTrans,
+    kTrans_DEAD, // Seems to be unused and conflicts with another enum value in the Max SDK
     kIgnoreTrans,
     kTransPOAVelocity,
 };

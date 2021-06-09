@@ -276,8 +276,8 @@ MSTR plAngleAttenLayer::SubAnimName(int i)
     }
 }
 
-RefResult plAngleAttenLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plAngleAttenLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -292,7 +292,7 @@ RefResult plAngleAttenLayer::NotifyRefChanged(Interval changeInt, RefTargetHandl
                 ParamID changingParam = fParmsPB->LastNotifyParamID();
                 fParmsPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }

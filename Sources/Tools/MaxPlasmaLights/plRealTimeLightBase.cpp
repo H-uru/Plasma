@@ -1397,8 +1397,10 @@ void plRTLightBase::SetReference(int ref, RefTargetHandle rtarg)
         //fLightPB = (IParamBlock2*)rtarg;
 }
 
-RefResult plRTLightBase::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
-{           
+RefResult plRTLightBase::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                          PartID& partID, RefMessage message
+                                          MAX_REF_PROPAGATE)
+{
     if( fLightPB )
     {
         ParamID     param = fLightPB->LastNotifyParamID();

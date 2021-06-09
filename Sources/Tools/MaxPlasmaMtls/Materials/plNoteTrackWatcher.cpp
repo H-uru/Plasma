@@ -104,7 +104,8 @@ void plNoteTrackWatcher::SetReference( int i, RefTargetHandle rtarg )
         fParentMtl = (plPassMtlBase *)rtarg;
 }
 
-RefResult plNoteTrackWatcher::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+RefResult plNoteTrackWatcher::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                               PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch( message )
     {

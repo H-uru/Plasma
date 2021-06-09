@@ -41,7 +41,6 @@ END
 3 TEXTINCLUDE 
 BEGIN
     "#include ""veroverrides.h""\r\n"
-    "#include ""maxversion.r""\r\n"
     "#include ""../MaxComponent/plComponent.rc""\r\n"
     "#include ""../MaxPlasmaMtls/MaxPlasmaMtls.rc""\r\n"
     "\0"
@@ -518,7 +517,6 @@ END
 // Generated from the TEXTINCLUDE 3 resource.
 //
 #include "veroverrides.h"
-#include "maxversion.r"
 #include "../MaxComponent/plComponent.rc"
 #include "../MaxPlasmaMtls/MaxPlasmaMtls.rc"
 

@@ -256,8 +256,8 @@ MSTR plDynamicTextLayer::SubAnimName(int i)
     }
 }
 
-RefResult plDynamicTextLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plDynamicTextLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -272,7 +272,7 @@ RefResult plDynamicTextLayer::NotifyRefChanged(Interval changeInt, RefTargetHand
                 ParamID changingParam = fBitmapPB->LastNotifyParamID();
                 fBitmapPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }

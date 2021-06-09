@@ -130,7 +130,7 @@ public:
     int             NumRefs() override;
     RefTargetHandle GetReference(int i) override;
     void            SetReference(int i, RefTargetHandle rtarg) override;
-    RefResult       NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message) override;
+    RefResult       NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
     virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );

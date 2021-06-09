@@ -73,7 +73,8 @@ public:
     void DeleteThis() override { delete this; }
 
     // ReferenceMaker
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                               PartID& partID, RefMessage message MAX_REF_PROPAGATE) override
     {
         return REF_DONTCARE;
     }

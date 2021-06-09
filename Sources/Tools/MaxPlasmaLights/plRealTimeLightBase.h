@@ -399,7 +399,7 @@ public:
     void SetReference(int ref, RefTargetHandle rtarg) override;
     int NumRefs() override { return kNumRefs;}
     
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     // Called to retreive the state of this object at the specified time.
     ObjectState Eval(TimeValue t) override { return ObjectState(this); }

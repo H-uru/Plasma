@@ -181,7 +181,9 @@ void plComponentBase::SetReference(int i, RefTargetHandle rtarg)
         fCompPB = (IParamBlock2*)rtarg;
 }
 
-RefResult plComponentBase::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+RefResult plComponentBase::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                            PartID& partID, RefMessage message
+                                            MAX_REF_PROPAGATE)
 {
     return REF_SUCCEED;
 }

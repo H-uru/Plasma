@@ -90,7 +90,7 @@ public:
     int             NumRefs() override;
     RefTargetHandle GetReference(int i) override;
     void            SetReference(int i, RefTargetHandle rtarg) override;
-    RefResult       NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override;
+    RefResult       NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     BOOL            IsRealDependency(ReferenceTarget *rtarg) override;
 };

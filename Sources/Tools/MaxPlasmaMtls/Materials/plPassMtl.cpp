@@ -253,11 +253,6 @@ IParamBlock2* plPassMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plPassMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
-{
-    return plPassMtlBase::NotifyRefChanged( changeInt, hTarget, partID, message );
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Subtexmap access
 

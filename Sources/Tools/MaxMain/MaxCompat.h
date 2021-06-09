@@ -119,6 +119,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define USE_LANGUAGE_PACK_LOCALE MaxSDK::Util::UseLanguagePackLocale
 #endif
 
+#if MAX_VERSION_MAJOR <= 17 // Max 2015
+#   define MAX_REF_INTERVAL Interval
+#   define MAX_REF_PROPAGATE
+#   define MAX_REF_PROPAGATE_VALUE TRUE
+#else
+#   define MAX_REF_INTERVAL const Interval&
+#   define MAX_REF_PROPAGATE , BOOL propagate
+#   define MAX_REF_PROPAGATE_VALUE propagate
+#endif
+
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
 
