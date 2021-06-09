@@ -404,9 +404,12 @@ Animatable *plRTLightBase::SubAnim(int i)
         case kRefTDirLight:
         case kRefProjDirLight:
             return (Animatable*)fLightPB;
-        case kRefProjMap: 
-            Texmap* MyMap;
-            return (Animatable*) fLightPB->GetValue(kProjMapTexButton, 0, MyMap, FOREVER);          
+        case kRefProjMap:
+        {
+            Texmap* MyMap = nullptr;
+            fLightPB->GetValue(kProjMapTexButton, 0, MyMap, FOREVER);
+            return MyMap;
+        }
         case kRefShadowType: 
             return nullptr;
         default:
