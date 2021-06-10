@@ -1085,7 +1085,7 @@ void    plMipmap::ICreateLevelNoDetail( uint8_t iDst, const plFilterMask& mask )
     hsAssert(fPixelSize == 32, "Only 32 bit implemented");
     ASSERT_UNCOMPRESSED();
 
-    int i, j, ii, jj;
+    int32_t i, j, ii, jj;
 
     if( 32 == fPixelSize )
     {
@@ -1094,9 +1094,9 @@ void    plMipmap::ICreateLevelNoDetail( uint8_t iDst, const plFilterMask& mask )
         uint8_t *src = (uint8_t *)GetLevelPtr( iDst-1 );
         uint8_t *dst = (uint8_t *)GetLevelPtr(iDst);
 
-        uint32_t srcRowBytes = fCurrLevelRowBytes << 1;
-        uint32_t srcHeight = fCurrLevelHeight << 1;
-        uint32_t srcWidth = fCurrLevelWidth << 1;
+        int32_t srcRowBytes = fCurrLevelRowBytes << 1;
+        int32_t srcHeight = fCurrLevelHeight << 1;
+        int32_t srcWidth = fCurrLevelWidth << 1;
 
         for( i = 0; i < fCurrLevelHeight; i++ )
         {
@@ -1104,7 +1104,7 @@ void    plMipmap::ICreateLevelNoDetail( uint8_t iDst, const plFilterMask& mask )
             {
                 uint8_t *center = src + (i << 1) * srcRowBytes + (j << 3);
 
-                uint32_t chan;
+                int32_t chan;
                 for( chan = 0; chan < 4; chan++ )
                 {
                     float w = 0;
@@ -1456,9 +1456,9 @@ void plMipmap::Filter(float sig)
 
         plFilterMask mask(sig);
 
-        uint32_t srcRowBytes = fRowBytes;
-        uint32_t srcHeight = fHeight;
-        uint32_t srcWidth = fWidth;
+        int32_t srcRowBytes = fRowBytes;
+        int32_t srcHeight = fHeight;
+        int32_t srcWidth = fWidth;
 
         for( i = 0; i < fHeight; i++ )
         {
@@ -1466,7 +1466,7 @@ void plMipmap::Filter(float sig)
             {
                 uint8_t *center = src + i * srcRowBytes + (j << 2);
 
-                uint32_t chan;
+                int32_t chan;
                 for( chan = 0; chan < 4; chan++ )
                 {
                     float w = 0;

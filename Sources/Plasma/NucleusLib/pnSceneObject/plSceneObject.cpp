@@ -155,9 +155,12 @@ void plSceneObject::Write(hsStream* stream, hsResMgr* mgr)
     for (plObjInterface* generic : fGenerics)
         mgr->WriteKey(stream, generic);
 
-    for (auto iter = fModifiers.crbegin(); iter != fModifiers.crend(); ++iter)
-        if ((*iter)->GetKey() == nullptr)
-            RemoveModifier(*iter);
+    for (hsSsize_t i = fModifiers.size() - 1; i >= 0; --i) {
+        if (fModifiers[i]->GetKey() == nullptr) {
+            fModifiers[i]->RemoveTarget(this);
+            fModifiers.erase(fModifiers.begin() + i);
+        }
+    }
 
     stream->WriteLE32((uint32_t)fModifiers.size());
     for (plModifier* modifier : fModifiers)
