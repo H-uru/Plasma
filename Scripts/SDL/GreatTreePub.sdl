@@ -115,3 +115,30 @@ STATEDESC GreatTreePub
     VAR BOOL grtpBookRoom02CrtnVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT # Remove/Replace Curtain/Blocker
     VAR BOOL grtpBookRoomBarrierVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT # Remove/Replace Barriers/Blocker02
 }
+
+STATEDESC GreatTreePub
+{
+	VERSION 6
+
+## Age Mechanics ##
+    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL islmGZBeamVis[1] 			        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpBallHallDoorVis[1] 		    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grtpDeadBahroVis[1] 			    DEFAULT=0 DEFAULTOPTION=VAULT
+## Ball Room puzzle
+    VAR BOOL    boolFirstTimeHere[1]            DEFAULT=1 
+    VAR BOOL    boolSwitchAUp[1]                DEFAULT=1 
+    VAR BOOL    boolBridgeExtended[1]           DEFAULT=0
+    VAR BOOL    boolShellRoomDoorOpen[1]        DEFAULT=0
+    VAR BOOL    boolLadderRevealed[1]           DEFAULT=0 
+    VAR BOOL    boolBallAtTop[1]                DEFAULT=0 
+    VAR INT     TimeEnteredPatienceZone[1]      DEFAULT=0
+    VAR INT     TreeDayLights[1]                DEFAULT=0
+## Fan Additions ##
+    VAR BOOL grtpChisoBookVis[1]                DEFAULT=1 DEFAULTOPTION=VAULT # Reveal/Hide Chiso Book
+    VAR BOOL grtpBookRoom02CrtnVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT # Remove/Replace Curtain/Blocker
+    VAR BOOL grtpBookRoomBarrierVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT # Remove/Replace Barriers/Blocker02
+}
