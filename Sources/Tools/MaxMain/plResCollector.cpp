@@ -55,7 +55,7 @@ void plResCollector::Collect()
     Interface *ip = GetCOREInterface();
 
     // Get the directory to copy files to
-    MCHAR pathBuf[MAX_PATH];
+    MCHAR pathBuf[MAX_PATH]{};
     ip->ChooseDirectory(ip->GetMAXHWnd(),
                         _M("Choose a folder to copy the resources to"),
                         pathBuf,
