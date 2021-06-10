@@ -207,7 +207,7 @@ void GetSegment(const TCHAR* note, float time, SegmentMap *segMap, plErrorMsg *p
     TCHAR segName[256];
     TCHAR segSuffix[256];
 
-    int matchedFields = _tcscanf(note, _T(" %[^@] @ %s "), segName, segSuffix);
+    int matchedFields = _stscanf(note, _T(" %[^@] @ %s "), segName, segSuffix);
 
     ST::string name = segName;
     ST::string suffix = segSuffix;
