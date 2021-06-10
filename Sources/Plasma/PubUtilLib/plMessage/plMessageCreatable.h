@@ -267,6 +267,9 @@ REGISTER_CREATABLE(plRippleShapeMsg);
 #include "plRoomLoadNotifyMsg.h"
 REGISTER_CREATABLE(plRoomLoadNotifyMsg);
 
+#include "plSDLModifierStateMsg.h"
+REGISTER_CREATABLE(plSDLModifierStateMsg);
+
 #include "plShadowCastMsg.h"
 REGISTER_CREATABLE(plShadowCastMsg);
 

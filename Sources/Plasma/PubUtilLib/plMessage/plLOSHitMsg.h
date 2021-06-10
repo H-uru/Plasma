@@ -57,10 +57,16 @@ public:
     hsVector3           fNormal;
     float               fDistance;
 
-    plLOSHitMsg() : fHitFlags(0) { SetBCastFlag(plMessage::kPropagateToModifiers); }
+    plLOSHitMsg()
+        : fHitPoint(0.f, 0.f, 0.f), fNoHit(), fRequestID(), fHitFlags(),
+          fNormal(0.f, 0.f, 0.f), fDistance()
+    {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
 
     plLOSHitMsg(const plKey& s, const plKey& r, uint32_t id)
-        : fNoHit(), fRequestID(id), fHitFlags(), fDistance(), plMessage(s, r, nullptr)
+        : fHitPoint(0.f, 0.f, 0.f), fNoHit(), fRequestID(id), fHitFlags(),
+          fNormal(0.f, 0.f, 0.f), fDistance(), plMessage(s, r, nullptr)
     {
         SetBCastFlag(plMessage::kPropagateToModifiers);
     }

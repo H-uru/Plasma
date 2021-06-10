@@ -110,6 +110,11 @@ public:
         return (word1 & (1 << (physx::PxU32)reportOn));
     }
 
+    bool TestLOSDBs(plSimDefs::plLOSDB losDBs) const
+    {
+        return word2 & losDBs;
+    }
+
     /**
      * Tests a generic flag bit.
      * Generic flags are an implementation detail and should only be relied on by either

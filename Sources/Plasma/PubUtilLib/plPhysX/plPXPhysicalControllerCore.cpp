@@ -103,7 +103,7 @@ public:
 
 plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width)
 {
-    float radius = width / 2.0f;
+    float radius = width / 2.0f - .2f;
     float realHeight = height - width;
     return new plPXPhysicalControllerCore(ownerSO, realHeight, radius);
 }
@@ -121,8 +121,6 @@ plPXPhysicalControllerCore::~plPXPhysicalControllerCore()
 {
     gControllers.erase(std::find(gControllers.begin(), gControllers.end(), this));
     IDeleteController();
-
-    delete fProxyGen;
 }
 
 void plPXPhysicalControllerCore::Enable(bool enable)
@@ -248,12 +246,6 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
         fLocalRotation.SetFromMatrix44(l2w);
     }
     fLastLocalPosition = fLocalPosition;
-
-    if (fProxyGen) {
-        hsMatrix44 w2l;
-        l2w.GetInverse(&w2l);
-        fProxyGen->SetTransform(l2w, w2l);
-    }
 
     physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(fLocalPosition)),
                                   physx::PxIdentity);
@@ -400,25 +392,15 @@ void plPXPhysicalControllerCore::LeaveAge()
 
 plDrawableSpans* plPXPhysicalControllerCore::CreateProxy(hsGMaterial* mat, std::vector<uint32_t>& idx, plDrawableSpans* addTo)
 {
-    // FIXME
     plDrawableSpans* myDraw = addTo;
     bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
-    float radius = fRadius;
-    myDraw = plDrawableGenerator::GenerateSphericalDrawable(fLocalPosition, radius,
-        mat, fLastGlobalLoc, blended,
-        nullptr, &idx, myDraw);
 
-/*
-    plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
-    if (so)
-    {
-        bool blended = ((mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendMask));
+    // Remember the offset and skins.
+    hsPoint3 footOffset = IGetCapsulePos({ 0.f, 0.f, 0.f });
+    myDraw = plDrawableGenerator::GenerateCapsuleDrawable(footOffset, fRadius + .1f, fHeight + 1.f,
+                                                          mat, fLastGlobalLoc, blended, nullptr,
+                                                          &idx, myDraw);
 
-        myDraw = plDrawableGenerator::GenerateConicalDrawable(fRadius*10, fHeight*10,
-            mat, so->GetLocalToWorld(), blended,
-            nullptr, &idx, myDraw);
-    }
-*/
     return myDraw;
 }
 
@@ -447,6 +429,7 @@ void plPXPhysicalControllerCore::Update(int numSubSteps, float alpha)
         controller = gControllers[i];
 
         controller->IUpdate(numSubSteps, alpha);
+        controller->ISynchProxy();
         controller->IChangePhysicalOwnership();
 
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -464,11 +447,21 @@ void plPXPhysicalControllerCore::UpdateNonPhysical(float alpha)
     {
         controller = gControllers[i];
         controller->IUpdateNonPhysical(alpha);
+        controller->ISynchProxy();
 
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (fDebugDisplay)
             controller->IDrawDebugDisplay(i);
 #endif
+    }
+}
+
+void plPXPhysicalControllerCore::ISynchProxy()
+{
+    if (fProxyGen) {
+        hsMatrix44 w2l;
+        fLastGlobalLoc.GetInverse(&w2l);
+        fProxyGen->SetTransform(fLastGlobalLoc, w2l);
     }
 }
 
@@ -560,21 +553,16 @@ void plPXPhysicalControllerCore::ICreateController(hsPoint3 pos)
     fFlags &= ~kSeeking;
 
     // Create proxy for the debug display
-    /* FIXME
-    // the avatar proxy doesn't seem to work... not sure why?
-    hsColorRGBA physColor;
-    float opac = 1.0f;
-
     // local avatar is light purple and transparent
-    physColor.Set(.2f, .1f, .2f, 1.f);
-    opac = 0.8f;
-
-    fProxyGen = new plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
+    fProxyGen = new plPhysicalProxy({ 0.f, 0.f, 0.f, 1.f }, { .2f, .1f, .2f, 1.f }, .8f);
     fProxyGen->Init(this);
-    */
 }
+
 void plPXPhysicalControllerCore::IDeleteController()
 {
+    delete fProxyGen;
+    fProxyGen = nullptr;
+
     delete static_cast<plPXActorData*>(fActor->userData);
     fActor->userData = nullptr;
     plSimulationMgr::GetInstance()->GetPhysX()->RemoveFromWorld(fActor);
