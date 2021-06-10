@@ -101,6 +101,13 @@ class plDrawableGenerator
                                                                 std::vector<uint32_t> *retIndex = nullptr, plDrawableSpans *toAddTo = nullptr,
                                                                 float qualityScalar = 1.f );
 
+        // Generates a capsule drawable
+        static plDrawableSpans      *GenerateCapsuleDrawable( const hsPoint3& localPos, float radius, float halfHeight,
+                                                              hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,
+                                                              const hsColorRGBA* multColor = nullptr,
+                                                              std::vector<uint32_t> *retIndex = nullptr, plDrawableSpans *toAddTo = nullptr,
+                                                              float qualityScalar = 1.f );
+
         // Generates a rectangular drawable
         static plDrawableSpans      *GenerateBoxDrawable( float width, float height, float depth, 
                                                             hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended = false,

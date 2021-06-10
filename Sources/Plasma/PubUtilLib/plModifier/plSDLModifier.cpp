@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plSDLModifierMsg.h"
 
+#include "plMessage/plSDLModifierStateMsg.h"
 #include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetMessage/plNetMessage.h"
 #include "plSDL/plSDL.h"
@@ -158,8 +159,11 @@ bool plSDLModifier::MsgReceive(plMessage* msg)
         else
         if (sdlMsg->GetAction()==plSDLModifierMsg::kRecv)
         {
-            plStateDataRecord* sdRec=sdlMsg->GetState();
-            plStateChangeNotifier::SetCurrentPlayerID(sdlMsg->GetPlayerID());   // remote player changed the state
+            plSDLModifierStateMsg* stateMsg = plSDLModifierStateMsg::ConvertNoRef(msg);
+            hsAssert(stateMsg != nullptr, "Malformed SDL State Message");
+
+            plStateDataRecord* sdRec=stateMsg->GetState();
+            plStateChangeNotifier::SetCurrentPlayerID(stateMsg->GetPlayerID());   // remote player changed the state
             ReceiveState(sdRec);
         }
 

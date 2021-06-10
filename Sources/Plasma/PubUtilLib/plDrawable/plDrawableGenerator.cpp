@@ -360,6 +360,77 @@ plDrawableSpans     *plDrawableGenerator::GenerateSphericalDrawable( const hsPoi
     return drawable;
 }
 
+//// GenerateCapsuleDrawable //////////////////////////////////////////////////
+
+plDrawableSpans      *plDrawableGenerator::GenerateCapsuleDrawable( const hsPoint3& localPos, float radius, float halfHeight,
+                                                                    hsGMaterial *material, const hsMatrix44 &localToWorld, bool blended,
+                                                                    const hsColorRGBA* multColor,
+                                                                    std::vector<uint32_t> *retIndex, plDrawableSpans *toAddTo,
+                                                                    float qualityScalar )
+{
+    std::vector<hsPoint3>    points;
+    std::vector<uint16_t>    indices;
+
+    // The following has been adapted from the FOSS library libcinder https://libcinder.org/
+    const unsigned numSegments = std::clamp((unsigned)(radius * hsConstants::two_pi<float> * qualityScalar * .1f),
+                                            5U, 30U);
+    const unsigned subsHeight = std::max((unsigned)(30U * qualityScalar * 1.f), 5U);
+    const unsigned ringsBody = subsHeight + 1;
+    const unsigned ringsTotal = subsHeight + ringsBody;
+
+    points.reserve(numSegments * ringsTotal);
+    indices.reserve((numSegments - 1) * (ringsTotal - 1) * 6);
+
+    const auto generateRing = [numSegments, radius, halfHeight, &localPos, &points]
+                              (float r, float z, float dz) -> void {
+        float segIncr = 1.f / (numSegments - 1);
+        for (unsigned i = 0; i < numSegments; ++i) {
+            float x = std::cos(hsConstants::two_pi<float> * i * segIncr) * r;
+            float y = std::sin(hsConstants::two_pi<float> * i * segIncr) * r;
+            points.emplace_back(localPos.fX + (radius * x),
+                                localPos.fY + (radius * y),
+                                localPos.fZ + (radius * z + halfHeight * dz));
+        }
+    };
+
+    const float bodyIncr = 1.f / (ringsBody - 1U);
+    const float ringIncr = 1.f / (subsHeight - 1U);
+
+    for (unsigned r = 0; r < subsHeight / 2; ++r) {
+        generateRing(std::sin(hsConstants::pi<float> * r * ringIncr),
+                     std::sin(hsConstants::pi<float> * (r * ringIncr - 0.5f)),
+                     -0.5f);
+    }
+    for (unsigned r = 0; r < ringsBody; ++r) {
+        generateRing(1.f, 0.f, r * bodyIncr - 0.5f);
+    }
+    for (unsigned r = subsHeight / 2; r < subsHeight; ++r) {
+        generateRing(std::sin(hsConstants::pi<float> * r * ringIncr),
+                     std::sin(hsConstants::pi<float> * (r * ringIncr - 0.5f)),
+                     +0.5f);
+    }
+
+    for (unsigned r = 0; r < ringsTotal - 1; ++r) {
+        for (unsigned s = 0; s < numSegments - 1; ++s) {
+            indices.push_back(((r    ) * numSegments + (s + 1)));
+            indices.push_back(((r    ) * numSegments + (s + 0)));
+            indices.push_back(((r + 1) * numSegments + (s + 1)));
+
+            indices.push_back(((r + 1) * numSegments + (s + 0)));
+            indices.push_back(((r + 1) * numSegments + (s + 1)));
+            indices.push_back(((r    ) * numSegments + (s    )));
+        }
+    }
+
+    /// Create a drawable for it
+    auto* drawable = plDrawableGenerator::GenerateDrawable(points.size(), points.data(),
+                                                           nullptr, nullptr, 0,
+                                                           nullptr, true, multColor,
+                                                           indices.size(), indices.data(),
+                                                           material, localToWorld, blended, retIndex, toAddTo);
+    return drawable;
+}
+
 //// GenerateBoxDrawable /////////////////////////////////////////////////////
 
 plDrawableSpans     *plDrawableGenerator::GenerateBoxDrawable( float width, float height, float depth, 

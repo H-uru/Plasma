@@ -40,6 +40,7 @@ set(plMessage_SOURCES
     plRideAnimatedPhysMsg.cpp
     plRippleShapeMsg.cpp
     plRoomLoadNotifyMsg.cpp
+    plSDLModifierStateMsg.cpp
     plSimStateMsg.cpp
     plSwimMsg.cpp
     plSynchEnableMsg.cpp
@@ -113,6 +114,7 @@ set(plMessage_HEADERS
     plRideAnimatedPhysMsg.h
     plRippleShapeMsg.h
     plRoomLoadNotifyMsg.h
+    plSDLModifierStateMsg.h
     plShadowCastMsg.h
     plSimStateMsg.h
     plSpawnModMsg.h
@@ -150,6 +152,7 @@ target_link_libraries(plMessage
         plGImage
         plInputCore # plInputIfaceMgrMsg
         plNetGameLib
+        plSDL # plSDLModifierStateMsg
     INTERFACE
         pnFactory
 )
