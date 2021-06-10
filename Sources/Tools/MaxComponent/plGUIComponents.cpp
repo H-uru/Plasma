@@ -796,7 +796,7 @@ int CALLBACK plGUIColorSchemeProc::IMyFontEnumProc( const ENUMLOGFONTEX *logFont
 
 void    plGUIColorSchemeProc::ILoadFonts( HWND hWnd, IParamBlock2 *pb )
 {
-    LOGFONT logFont{ 0 };
+    LOGFONT logFont{};
     logFont.lfCharSet = DEFAULT_CHARSET;
 
     SendMessage( hWnd, CB_RESETCONTENT, 0, 0 );
@@ -5086,5 +5086,4 @@ bool plGUIMenuComponent::DeInit(plMaxNode *node, plErrorMsg *pErrMsg)
     fConvertedNode = nullptr;
     return true;
 }
-
 
