@@ -55,11 +55,11 @@ public:
     plExportErrorMsg() = default;
 
     plExportErrorMsg(ST::string label, ST::string msg)
-        : plErrorMsg()
+        : plErrorMsg(std::move(label), std::move(msg))
     { }
 
     plExportErrorMsg(bool bogus, ST::string label, ST::string msg)
-        : plErrorMsg()
+        : plErrorMsg(bogus, std::move(label), std::move(msg))
     { }
 
     bool Ask() override; // if b is true and user says yes to displayed query, return true, else false
@@ -85,7 +85,7 @@ class plExportErrorMsg : public plErrorMsg {
 
 class plExportErrorDbg : public plExportErrorMsg {
 public:
-    plExportErrorDbg(ST::string label, ST::string msg)
+    plExportErrorDbg(ST::string label = {}, ST::string msg = {})
         : plExportErrorMsg()
     { }
 

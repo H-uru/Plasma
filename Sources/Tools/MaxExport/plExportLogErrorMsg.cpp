@@ -100,7 +100,7 @@ bool plExportLogErrorMsg::CheckAndAsk()
 {
     if( GetBogus() )
     {
-        GetMsg() = " - File corruption possible!";
+        GetMsg() += " - File corruption possible!";
         IWriteErrorFile(GetLabel(),GetMsg());
     }
     return GetBogus();
@@ -132,7 +132,7 @@ bool plExportLogErrorMsg::Check()
     if( GetBogus() )
     {
         // ... how many ways can you say something is bad?
-        GetMsg() = " !Output File Corrupt!";
+        GetMsg() += " !Output File Corrupt!";
         IWriteErrorFile(GetLabel(), GetMsg());
         IDebugThrow();
     }
@@ -147,7 +147,7 @@ void plExportLogErrorMsg::Quit()
 {
     if( GetBogus() )
     {
-        GetMsg() = " -- Quit! (must be real bad!)";
+        GetMsg() += " -- Quit! (must be real bad!)";
         IWriteErrorFile(GetLabel(), GetMsg());
         SetBogus(false);
         hsThrow( *this );

@@ -96,7 +96,17 @@ private:
 };
 #else // PL_NULL_ERRMSG
 
-using plExportLogErrorMsg = plErrorMsg;
+class plExportLogErrorMsg : public plExportErrorMsg {
+public:
+    plExportErrorDbg(ST::string label = {}, ST::string msg = {})
+        : plExportErrorMsg()
+    { }
+
+    plExportErrorDbg(bool bogus, ST::string label, ST::string msg)
+        : plExportErrorMsg()
+    { }
+};
+
 #endif // PL_NULL_ERRMSG
 
 // Compile out error messages labeled debug
@@ -105,9 +115,7 @@ using plExportLogErrorMsg = plErrorMsg;
 
 class plExportLogErrorDbg : public plExportLogErrorMsg {
 public:
-    plExportLogErrorDbg() = default;
-
-    plExportLogErrorDbg(ST::string label, ST::string msg)
+    plExportLogErrorDbg(ST::string label = {}, ST::string msg = {})
         : plExportLogErrorMsg()
     { }
 

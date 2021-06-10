@@ -3542,7 +3542,7 @@ void plMaxNode::SetupBonesAliasesRecur(const ST::string& rootName)
             auto start = _tcsstr(propsBuf, _T("BoneName="));
             if (!start)
                 start = _tcsstr(propsBuf, _T("bonename="));
-            constexpr size_t len = std::string_view("BoneName = ").size();
+            constexpr size_t len = std::string_view("BoneName=").size();
             if(start && UserPropExists(_M("BoneName")))
             {
                 start+=len;

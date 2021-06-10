@@ -285,7 +285,7 @@ void    pfGUIDialogMod::Read( hsStream *s, hsResMgr *mgr )
 
     char nameBuf[128];
     s->Read(sizeof(nameBuf), nameBuf);
-    nameBuf[sizeof(128) - 1] = 0;
+    nameBuf[sizeof(nameBuf) - 1] = 0;
     fName = ST::string(nameBuf);
 
     uint32_t count = s->ReadLE32();
@@ -815,4 +815,3 @@ uint32_t      pfGUIDialogMod::GetDesiredCursor() const
 
     return 0;
 }
-
