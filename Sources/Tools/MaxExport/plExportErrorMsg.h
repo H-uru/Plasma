@@ -76,6 +76,13 @@ private:
 #else // PL_NULL_ERRMSG
 
 class plExportErrorMsg : public plErrorMsg {
+    plExportErrorMsg(ST::string label = {}, ST::string msg = {})
+        : plErrorMsg()
+    { }
+
+    plExportErrorMsg(bool bogus, ST::string label, ST::string msg)
+        : plErrorMsg()
+    { }
 };
 #endif // PL_NULL_ERRMSG
 
