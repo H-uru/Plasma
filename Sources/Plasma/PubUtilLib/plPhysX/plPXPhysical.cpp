@@ -169,8 +169,16 @@ void plPXPhysical::ISanityCheckGeometry(physx::PxSphereGeometry& geometry) const
     IForceNonzero(geometry.radius, "radius", fObjectKey);
 }
 
-void plPXPhysical::ISanityCheckBounds()
+// ==========================================================================
+
+void plPXPhysical::DirtyRecipe()
 {
+    fBounds = fRecipe.bounds;
+    fGroup = fRecipe.group;
+    fObjectKey = fRecipe.objectKey;
+    fReportsOn = fRecipe.reportsOn;
+    fSceneNode = fRecipe.sceneNode;
+
     // PhysX 4.1 cannot handle dynamic triangle meshes, so we force these to be hulls. Sad.
     switch (fBounds) {
     case plSimDefs::kProxyBounds:
@@ -186,10 +194,8 @@ void plPXPhysical::ISanityCheckBounds()
     default:
         break;
     }
-}
 
-void plPXPhysical::ISanityCheckRecipe()
-{
+    // Some fan Ages export wrong quats.
     hsQuat& rot = fRecipe.l2sQ;
     if (rot.fX == 0.f && rot.fY == 0.f && rot.fZ == 0.f && rot.fW == 0.f)
         rot.fW = 1.f;

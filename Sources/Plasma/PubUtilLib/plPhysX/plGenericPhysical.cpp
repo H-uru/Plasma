@@ -345,19 +345,12 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
 
     fRecipe.l2sP.Read(stream);
     fRecipe.l2sQ.Read(stream);
-    ISanityCheckRecipe();
+    DirtyRecipe();
 
     fProps.Read(stream);
 
-    fBounds = fRecipe.bounds;
-    fGroup = fRecipe.group;
-    fObjectKey = fRecipe.objectKey;
-    fReportsOn = fRecipe.reportsOn;
-    fSceneNode = fRecipe.sceneNode;
-
     // Note that fBounds may not be the same as fRecipe.bounds due to limitations in whatever physics
     // engine is being used. The readers will compensate for the change by testing fRecipe.bounds.
-    ISanityCheckBounds();
     if (fBounds == plSimDefs::kSphereBounds) {
         fRecipe.radius = stream->ReadLEFloat();
         fRecipe.offset.Read(stream);

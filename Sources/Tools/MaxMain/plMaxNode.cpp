@@ -764,6 +764,7 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     plKey physKey = hsgResMgr::ResMgr()->NewKey(objName, physical, nodeLoc, GetLoadMask());
 
     // Sanity check creating the physical actor
+    physical->DirtyRecipe();
     if (!physical->InitActor())
     {
         pErrMsg->Set(true, "Physics Error", ST::format("Physical creation failed for object {}", GetName())).Show();
