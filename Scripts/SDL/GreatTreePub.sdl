@@ -129,14 +129,13 @@ STATEDESC GreatTreePub
     VAR BOOL grtpBallHallDoorVis[1] 		    DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BOOL grtpDeadBahroVis[1] 			    DEFAULT=0 DEFAULTOPTION=VAULT
 ## Ball Room puzzle
-    VAR BOOL    boolFirstTimeHere[1]            DEFAULT=1 
-    VAR BOOL    boolSwitchAUp[1]                DEFAULT=1 
-    VAR BOOL    boolBridgeExtended[1]           DEFAULT=0
-    VAR BOOL    boolShellRoomDoorOpen[1]        DEFAULT=0
-    VAR BOOL    boolLadderRevealed[1]           DEFAULT=0 
-    VAR BOOL    boolBallAtTop[1]                DEFAULT=0 
-    VAR INT     TimeEnteredPatienceZone[1]      DEFAULT=0
-    VAR INT     TreeDayLights[1]                DEFAULT=0
+    VAR BOOL grtpFreshStart[1]                  DEFAULT=1 
+    VAR BOOL grtpSwitchAUp[1]                   DEFAULT=1 
+    VAR BOOL grtpBridgeExtended[1]              DEFAULT=0
+    VAR BOOL grtpLadderRevealed[1]              DEFAULT=0 
+    VAR BOOL grtpBallAtTop[1]                   DEFAULT=0 
+    VAR INT  grtpTimeEnteredPatienceZone[1]     DEFAULT=0
+    VAR INT  grtpTreeDayLights[1]               DEFAULT=0
 ## Fan Additions ##
     VAR BOOL grtpChisoBookVis[1]                DEFAULT=1 DEFAULTOPTION=VAULT # Reveal/Hide Chiso Book
     VAR BOOL grtpBookRoom02CrtnVis[1]           DEFAULT=1 DEFAULTOPTION=VAULT # Remove/Replace Curtain/Blocker

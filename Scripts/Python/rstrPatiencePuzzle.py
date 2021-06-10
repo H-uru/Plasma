@@ -36,7 +36,7 @@ respOpenHerringDoor = ptAttribResponder(27, 'resp: Open Red Herring Door')
 respCloseHerringDoor = ptAttribResponder(28, 'resp: Close Red Herring Door')
 rgnHerringDoor = ptAttribActivator(29, 'Act: Herring Door')
 respLockSound = ptAttribResponder(30,'resp: Door Button Lock Sound')
-boolLadderRevealed = 0
+grtpLadderRevealed = 0
 boolInPatienceZone = 0
 kPatienceTime = 870
 kTreeLightTime = 4380
@@ -57,79 +57,79 @@ class rstrPatiencePuzzle(ptResponder):
     
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        ageSDL.sendToClients('boolSwitchAUp')
-        ageSDL.sendToClients('boolLadderRevealed')
-        ageSDL.sendToClients('boolBridgeExtended')
-        ageSDL.sendToClients('boolFirstTimeHere')
-        ageSDL.sendToClients('boolBallAtTop')
-        ageSDL.setFlags('boolSwitchAUp', 1, 1)
-        ageSDL.setFlags('boolLadderRevealed', 1, 1)
-        ageSDL.setFlags('boolBridgeExtended', 1, 1)
-        ageSDL.setFlags('boolFirstTimeHere', 1, 1)
-        ageSDL.setFlags('boolBallAtTop', 1, 1)
-        ageSDL.setNotify(self.key, 'boolSwitchAUp', 0.0)
-        ageSDL.setNotify(self.key, 'boolLadderRevealed', 0.0)
-        ageSDL.setNotify(self.key, 'boolBridgeExtended', 0.0)
-        ageSDL.setNotify(self.key, 'boolFirstTimeHere', 0.0)
-        ageSDL.setNotify(self.key, 'boolBallAtTop', 0.0)
+        ageSDL.sendToClients('grtpSwitchAUp')
+        ageSDL.sendToClients('grtpLadderRevealed')
+        ageSDL.sendToClients('grtpBridgeExtended')
+        ageSDL.sendToClients('grtpFreshStart')
+        ageSDL.sendToClients('grtpBallAtTop')
+        ageSDL.setFlags('grtpSwitchAUp', 1, 1)
+        ageSDL.setFlags('grtpLadderRevealed', 1, 1)
+        ageSDL.setFlags('grtpBridgeExtended', 1, 1)
+        ageSDL.setFlags('grtpFreshStart', 1, 1)
+        ageSDL.setFlags('grtpBallAtTop', 1, 1)
+        ageSDL.setNotify(self.key, 'grtpSwitchAUp', 0.0)
+        ageSDL.setNotify(self.key, 'grtpLadderRevealed', 0.0)
+        ageSDL.setNotify(self.key, 'grtpBridgeExtended', 0.0)
+        ageSDL.setNotify(self.key, 'grtpFreshStart', 0.0)
+        ageSDL.setNotify(self.key, 'grtpBallAtTop', 0.0)
         if not PtGetPlayerList():
             print('\tResetting puzzle completely, no other players around')
-            ageSDL['boolSwitchAUp'] = (1,)
-            ageSDL['boolFirstTimeHere'] = (1,)
+            ageSDL['grtpSwitchAUp'] = (1,)
+            ageSDL['grtpFreshStart'] = (1,)
             
-        boolSwitchAUp = ageSDL['boolSwitchAUp'][0]
+        grtpSwitchAUp = ageSDL['grtpSwitchAUp'][0]
         
         print('rstrPatiencePuzzle: When I got here:')
-        if boolSwitchAUp:
+        if grtpSwitchAUp:
             print('\tSwitchA is up, so the Door should be DOWN.')
             respSwitchAUp.run(self.key, fastforward = 1)
             respDoorClose.run(self.key, fastforward = 1)
             respButtonDEnable.run(self.key, fastforward = 1)
             actButtonD.enable()
-            TimeEnteredPatienceZone = ageSDL['TimeEnteredPatienceZone'][0]
+            grtpTimeEnteredPatienceZone = ageSDL['grtpTimeEnteredPatienceZone'][0]
             CurrentTime = PtGetDniTime()
             PtClearTimerCallbacks(self.key)
-            if ageSDL['boolFirstTimeHere'][0] == 1:
+            if ageSDL['grtpFreshStart'][0] == 1:
                 print("\tYou've never opened the ball room door, so we don't care about the timer.")
-            elif ageSDL['boolLadderRevealed'][0] == 1:
+            elif ageSDL['grtpLadderRevealed'][0] == 1:
                 print("\tThe ladder WAS revealed when we got here, so we don't care about the timer.")
-            elif CurrentTime - TimeEnteredPatienceZone < kPatienceTime:
-                print('\tThe Patience Timer will expire in %d seconds.' % (kPatienceTime - CurrentTime + TimeEnteredPatienceZone))
-                PtAtTimeCallback(self.key, kPatienceTime - CurrentTime + TimeEnteredPatienceZone, 1)
+            elif CurrentTime - grtpTimeEnteredPatienceZone < kPatienceTime:
+                print('\tThe Patience Timer will expire in %d seconds.' % (kPatienceTime - CurrentTime + grtpTimeEnteredPatienceZone))
+                PtAtTimeCallback(self.key, kPatienceTime - CurrentTime + grtpTimeEnteredPatienceZone, 1)
                 respTickSfxOn.run(self.key)
             else:
                 print('\tThe Patience Timer expired in the time nobody was here.')
-                ageSDL['boolSwitchAUp'] = (0,)
-                ageSDL['boolLadderRevealed'] = (0,)
+                ageSDL['grtpSwitchAUp'] = (0,)
+                ageSDL['grtpLadderRevealed'] = (0,)
         else:
             print('\tSwitchA is down, so the Door should be UP.')
             respButtonDDisable.run(self.key, fastforward = 1)
             respSwitchADown.run(self.key, fastforward = 1)
             respDoorOpen.run(self.key, fastforward = 1)
             actButtonD.disable()
-        if ageSDL['boolLadderRevealed'][0] == 1:
-            if not boolSwitchAUp:
+        if ageSDL['grtpLadderRevealed'][0] == 1:
+            if not grtpSwitchAUp:
                 print("\tERROR: The ladder shouldn't be revealed if the door is open. I'll conceal it now.")
-                ageSDL['boolLadderRevealed'] = (0,)
+                ageSDL['grtpLadderRevealed'] = (0,)
             else:
                 print('\tThe Ladder is revealed.')
                 respRevealLadder.run(self.key, fastforward = 1)
         else:
             print('\tThe ladder is not revealed.')
-        if ageSDL['boolBridgeExtended'][0] == 1:
+        if ageSDL['grtpBridgeExtended'][0] == 1:
             print('\tThe Bridge was already extended.')
             respExtendBridge.run(self.key, fastforward = 1)
-        elif ageSDL['boolBridgeExtended'][0] == 0:
+        elif ageSDL['grtpBridgeExtended'][0] == 0:
             print('\tThe Bridge was not extended.')
-        if ageSDL['boolBallAtTop'][0] == 1:
+        if ageSDL['grtpBallAtTop'][0] == 1:
             print('\tOpening Red Herring Door')
             respOpenHerringDoor.run(self.key, fastforward = 1)
-        if ageSDL['TreeDayLights'][0] + kTreeLightTime < CurrentTime:
+        if ageSDL['grtpTreeDayLights'][0] + kTreeLightTime < CurrentTime:
             print('\tBecause 1 Dni hour has passed, turning off day.')
-            ageSDL['TreeDayLights'] = (0,)
+            ageSDL['grtpTreeDayLights'] = (0,)
         else:
-            print('\tBecause 1 Dni hour has not passed, Tree timer set to turn off in', ageSDL['TreeDayLights'][0] + kTreeLightTime - CurrentTime, 'seconds.')
-            PtAtTimeCallback(self.key, ageSDL['TreeDayLights'][0] + kTreeLightTime - CurrentTime, 5)
+            print('\tBecause 1 Dni hour has not passed, Tree timer set to turn off in', ageSDL['grtpTreeDayLights'][0] + kTreeLightTime - CurrentTime, 'seconds.')
+            PtAtTimeCallback(self.key, ageSDL['grtpTreeDayLights'][0] + kTreeLightTime - CurrentTime, 5)
 
     
     def OnNotify(self, state, id, events):
@@ -138,7 +138,7 @@ class rstrPatiencePuzzle(ptResponder):
         if not state:
             return None
         
-        if id == rgnPatienceZone.id and not boolLadderRevealed:
+        if id == rgnPatienceZone.id and not grtpLadderRevealed:
             for event in events:
                 if event[1] == 0:
                     print('An avatar just walked out of the Patience Zone')
@@ -170,11 +170,11 @@ class rstrPatiencePuzzle(ptResponder):
             for event in events:
                 if event[1] == 0:
                     print('Ball just rolled out of the Ball Zone')
-                    ageSDL['boolBallAtTop'] = (0,)
+                    ageSDL['grtpBallAtTop'] = (0,)
                     break
                 elif event[1] == 1:
                     print('Ball just rolled into the Ball Zone')
-                    ageSDL['boolBallAtTop'] = (1,)
+                    ageSDL['grtpBallAtTop'] = (1,)
                     break
                 
             return None
@@ -182,48 +182,48 @@ class rstrPatiencePuzzle(ptResponder):
             for event in events:
                 if event[1] == 0:
                     print('Herring Door Exit Region')
-                    if not ageSDL['boolBallAtTop'][0]:
+                    if not ageSDL['grtpBallAtTop'][0]:
                         respCloseHerringDoor.run(self.key)
                     break
                 elif event[1] == 1:
                     print('Herring Door Enter Region')
-                    if not ageSDL['boolBallAtTop'][0]:
+                    if not ageSDL['grtpBallAtTop'][0]:
                         respOpenHerringDoor.run(self.key)
                     break
                 
             return None
         elif id == actSwitchA.id:
-            boolSwitchAUp = ageSDL['boolSwitchAUp'][0]
-            if boolSwitchAUp:
+            grtpSwitchAUp = ageSDL['grtpSwitchAUp'][0]
+            if grtpSwitchAUp:
                 SwitchADownOneshot.run(self.key, events = events)
             else:
                 SwitchAUpOneshot.run(self.key, events = events)
         elif id == SwitchADownOneshot.id:
             print('Avatar finished pushing LeverA DOWN.')
             respSwitchADown.run(self.key)
-            ageSDL.setTagString('boolSwitchAUp', 'foo')
-            ageSDL['boolSwitchAUp'] = (0,)
+            ageSDL.setTagString('grtpSwitchAUp', 'foo')
+            ageSDL['grtpSwitchAUp'] = (0,)
         elif id == SwitchAUpOneshot.id:
             print('Avatar finished pushing LeverA UP.')
             boolStillInPatienceZone = 1
             respSwitchAUp.run(self.key)
-            ageSDL.setTagString('boolSwitchAUp', 'foo')
-            ageSDL['boolSwitchAUp'] = (1,)
+            ageSDL.setTagString('grtpSwitchAUp', 'foo')
+            ageSDL['grtpSwitchAUp'] = (1,)
         elif id == actButtonB.id:
             print('The Gizmo button was just clicked.')
             respGizmoButtonOneshot.run(self.key, events = events)
         elif id == respGizmoButtonOneshot.id:
             print('The Avatar just finished pushing the Gizmo button.')
-            ageSDL['boolBridgeExtended'] = (1,)
+            ageSDL['grtpBridgeExtended'] = (1,)
             self.RecordTreeLightTime()
             return None
         elif id == actButtonC.id:
             print('The Button inside the great tree has just been manipulated.')
             return None
         elif id == actButtonD.id:
-            TimeEnteredPatienceZone = ageSDL['TimeEnteredPatienceZone'][0]
+            grtpTimeEnteredPatienceZone = ageSDL['grtpTimeEnteredPatienceZone'][0]
             CurrentTime = PtGetDniTime()
-            ElapsedTime = CurrentTime - TimeEnteredPatienceZone
+            ElapsedTime = CurrentTime - grtpTimeEnteredPatienceZone
             if ElapsedTime >= kPatienceTime:
                 respDoorButtonOneshot.run(self.key, events = events)
             else:
@@ -233,21 +233,21 @@ class rstrPatiencePuzzle(ptResponder):
         elif id == respDoorButtonOneshot.id:
             print('D touched by avatar. Waiting 10 seconds to open the door.')
             PtAtTimeCallback(self.key, 10, 2)
-            if ageSDL['boolFirstTimeHere'][0] == 1:
+            if ageSDL['grtpFreshStart'][0] == 1:
                 print("\tThat was the first time you've ever opened the ball room door.")
-                ageSDL['boolFirstTimeHere'] = (0,)
+                ageSDL['grtpFreshStart'] = (0,)
             
             return None
 
     def RecordZoneEnterTime(self):
         ageSDL = PtGetAgeSDL()
         CurrentTime = PtGetDniTime()
-        ageSDL['TimeEnteredPatienceZone'] = (CurrentTime,)
+        ageSDL['grtpTimeEnteredPatienceZone'] = (CurrentTime,)
         
     def RecordTreeLightTime(self):
         ageSDL = PtGetAgeSDL()
         CurrentTime = PtGetDniTime()
-        ageSDL['TreeDayLights'] = (CurrentTime,)
+        ageSDL['grtpTreeDayLights'] = (CurrentTime,)
         PtAtTimeCallback(self.key, kTreeLightTime, 5)
     
     def OnTimer(self, id):
@@ -255,9 +255,9 @@ class rstrPatiencePuzzle(ptResponder):
         ageSDL = PtGetAgeSDL()
         if id == 1:
             intPatienceIntervalCount += 1
-            TimeEnteredPatienceZone = ageSDL['TimeEnteredPatienceZone'][0]
+            grtpTimeEnteredPatienceZone = ageSDL['grtpTimeEnteredPatienceZone'][0]
             CurrentTime = PtGetDniTime()
-            ElapsedTime = CurrentTime - TimeEnteredPatienceZone
+            ElapsedTime = CurrentTime - grtpTimeEnteredPatienceZone
             if intAvatarsInPatienceZone <= 1:
                 NumberofPlayers = 1
             else:
@@ -269,13 +269,13 @@ class rstrPatiencePuzzle(ptResponder):
             print('NumberofPlayers = ', NumberofPlayers)
             if not boolStillInPatienceZone and ElapsedTime >= kPatienceTime:
                 print('\tBut you are not currently in the zone.')
-                ageSDL['boolSwitchAUp'] = (0,)
+                ageSDL['grtpSwitchAUp'] = (0,)
                 intPatienceIntervalCount = 0
                 return None
             elif ElapsedTime >= kPatienceTime / NumberofPlayers and boolStillInPatienceZone:
                 print('\tAnd you HAVE been in the zone for', kPatienceTime / NumberofPlayers, 'consecutive seconds. Puzzle solved.')
                 print('\tReveal Ladder, Door stays closed, Lights stay on, Switch A stays up, ticking stops, plunge ball')
-                ageSDL['boolLadderRevealed'] = (1,)
+                ageSDL['grtpLadderRevealed'] = (1,)
                 PtAtTimeCallback(self.key, kPatienceTime / NumberofPlayers, 3)
                 respTickSfxOff.run(self.key)
                 respPlungeBall.run(self.key)
@@ -286,11 +286,11 @@ class rstrPatiencePuzzle(ptResponder):
                 else:
                     PtAtTimeCallback(self.key, 10, 1)
         elif id == 2:
-            ageSDL.setTagString('boolSwitchAUp', 'ButtonDPushed')
-            ageSDL['boolSwitchAUp'] = (0,)
+            ageSDL.setTagString('grtpSwitchAUp', 'ButtonDPushed')
+            ageSDL['grtpSwitchAUp'] = (0,)
             intPatienceIntervalCount = 0
         elif id == 3:
-            ageSDL['boolLadderRevealed'] = (0,)
+            ageSDL['grtpLadderRevealed'] = (0,)
         elif id == 4:
             if intAvatarsInLadderZone <= 0:
                 print('\tConcealing ladder.')
@@ -299,7 +299,7 @@ class rstrPatiencePuzzle(ptResponder):
                 PtAtTimeCallback(self.key, 1, 4)
         elif id == 5:
             print('\tBecause 1 Dni hour has passed, turning off day.')
-            ageSDL['TreeDayLights'] = (0,)
+            ageSDL['grtpTreeDayLights'] = (0,)
         
 
     
@@ -308,11 +308,11 @@ class rstrPatiencePuzzle(ptResponder):
         ageSDL = PtGetAgeSDL()
         CurrentTime = PtGetDniTime()
         print('OnSDLNotify: VARname =', VARname, ' value =', ageSDL[VARname][0], ' tag =', tag)
-        if VARname == 'boolSwitchAUp':
-            boolSwitchAUp = ageSDL['boolSwitchAUp'][0]
-            if ageSDL['boolFirstTimeHere'][0]:
+        if VARname == 'grtpSwitchAUp':
+            grtpSwitchAUp = ageSDL['grtpSwitchAUp'][0]
+            if ageSDL['grtpFreshStart'][0]:
                 return
-            if boolSwitchAUp:
+            if grtpSwitchAUp:
                 print('\tTimer Starts, Tick Sfx starts, Door closes, lights on, plunge ball, Button D enabled')
                 boolInPatienceZone = 1
                 PtAtTimeCallback(self.key, 10, 1)
@@ -328,33 +328,33 @@ class rstrPatiencePuzzle(ptResponder):
                 respTickSfxOff.run(self.key)
                 respDoorOpen.run(self.key)
                 respSwitchADown.run(self.key)
-                boolLadderRevealed = ageSDL['boolLadderRevealed'][0]
-                if ageSDL['boolLadderRevealed'][0]:
+                grtpLadderRevealed = ageSDL['grtpLadderRevealed'][0]
+                if ageSDL['grtpLadderRevealed'][0]:
                     print('\tAlso putting away ladder.')
-                    ageSDL['boolLadderRevealed'] = (0,)
+                    ageSDL['grtpLadderRevealed'] = (0,)
                 
                 if tag == 'ButtonDPushed':
-                    TreeDayLights = ageSDL['TreeDayLights'][0]
-                    if TreeDayLights + kTreeLightTime < CurrentTime:
+                    grtpTreeDayLights = ageSDL['grtpTreeDayLights'][0]
+                    if grtpTreeDayLights + kTreeLightTime < CurrentTime:
                         print('\tBecause D was pushed, turning off day.')
-                        ageSDL['TreeDayLights'] = (0,)
+                        ageSDL['grtpTreeDayLights'] = (0,)
                     
-                    boolBridgeExtended = ageSDL['boolBridgeExtended'][0]
-                    if boolBridgeExtended:
+                    grtpBridgeExtended = ageSDL['grtpBridgeExtended'][0]
+                    if grtpBridgeExtended:
                         print('\tBecause D was pushed, retracting bridge.')
-                        ageSDL['boolBridgeExtended'] = (0,)
+                        ageSDL['grtpBridgeExtended'] = (0,)
                     
                 
-        elif VARname == 'boolBridgeExtended':
-            if ageSDL['boolBridgeExtended'][0] == 1:
+        elif VARname == 'grtpBridgeExtended':
+            if ageSDL['grtpBridgeExtended'][0] == 1:
                 print('\tExtending bridge')
                 respExtendBridge.run(self.key)
-            elif ageSDL['boolBridgeExtended'][0] == 0:
+            elif ageSDL['grtpBridgeExtended'][0] == 0:
                 respRetractBridge.run(self.key)
                 print('\tRetracting bridge')
             
-        elif VARname == 'boolLadderRevealed':
-            if ageSDL['boolLadderRevealed'][0] == 1:
+        elif VARname == 'grtpLadderRevealed':
+            if ageSDL['grtpLadderRevealed'][0] == 1:
                 print('\tRevealing ladder.')
                 respRevealLadder.run(self.key)
             else:
@@ -363,8 +363,8 @@ class rstrPatiencePuzzle(ptResponder):
                     respConcealLadder.run(self.key)
                 else:
                     PtAtTimeCallback(self.key, 1, 4)
-        elif VARname == 'boolBallAtTop':
-            if ageSDL['boolBallAtTop'][0] == 1:
+        elif VARname == 'grtpBallAtTop':
+            if ageSDL['grtpBallAtTop'][0] == 1:
                 print('\tOpening Red Herring Door')
                 respOpenHerringDoor.run(self.key)
             else:
