@@ -39,13 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plSDLModifierMsg.h"
 
-plSDLModifierMsg::plSDLModifierMsg(const ST::string& sdlName, Action a) :
-    fSDLName(sdlName),
-    fAction(a),
-    fPlayerID(),
-    fFlags()
+#include "plSDLModifierStateMsg.h"
+#include "plSDL/plSDL.h"
+
+
+plSDLModifierStateMsg::plSDLModifierStateMsg(const ST::string& sdlName, Action a) :
+    plSDLModifierMsg(sdlName, a),
+    fState(),
+    fManageStateMem()
+{ }
+
+plSDLModifierStateMsg::~plSDLModifierStateMsg()
 {
-    SetBCastFlag(plMessage::kPropagateToModifiers);
+    if (fManageStateMem)
+        delete fState;
+}
+
+plStateDataRecord* plSDLModifierStateMsg::GetState(bool unManageState)
+{
+    if (unManageState)
+        fManageStateMem = false;
+
+    return fState;
+}
+
+void plSDLModifierStateMsg::SetState(plStateDataRecord* s, bool manageState)
+{
+    fState = s;
+    fManageStateMem = manageState;
 }

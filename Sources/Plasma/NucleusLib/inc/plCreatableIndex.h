@@ -955,6 +955,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plLoadClothingMsg),
     CLASS_INDEX(pl3DPipeline),
     CLASS_INDEX(plGLPipeline),
+    CLASS_INDEX(plSDLModifierStateMsg),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

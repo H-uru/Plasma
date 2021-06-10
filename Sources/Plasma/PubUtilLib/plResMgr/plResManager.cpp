@@ -868,7 +868,7 @@ void plResManager::WriteKey(hsStream* s, hsKeyedObject* obj)
     if (obj)
         WriteKey(s, obj->GetKey());
     else
-        WriteKey(s, {});
+        WriteKey(s, plKey());
 }
 
 void    plResManager::WriteKey(hsStream *s, const plKey &key)

@@ -57,6 +57,7 @@ from colorsys import *
 import PlasmaControlKeys
 import time
 import os   #used for saving pictures locally
+import math
 
 import xACAItems
 
@@ -2286,7 +2287,7 @@ class ScrollingListBox:
         if self.rows == 1:
             self.columns = len(self.clothingList)
         else:
-            self.columns = int(round(float(len(self.clothingList))/2.0)) # half of the number of items, rounded up
+            self.columns = math.ceil(len(self.clothingList) / 2)
         self.offset = 0
         self.selection = 0
     
