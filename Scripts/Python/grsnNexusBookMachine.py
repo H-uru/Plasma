@@ -127,7 +127,7 @@ class grsnNexusBookMachine(ptResponder):
             booknorthOutResponder.run(self.key)
             
         if (id == entryTrigger.id):
-            PtWearMaintainerSuit(avatar.getKey(),False)
+            #PtWearMaintainerSuit(avatar.getKey(),False)
             entryTrigger.disable()
             
         if (id == booksouthClickable.id):
