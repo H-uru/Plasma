@@ -96,14 +96,14 @@ private:
 };
 #else // PL_NULL_ERRMSG
 
-class plExportLogErrorMsg : public plExportErrorMsg {
+class plExportLogErrorMsg : public plErrorMsg {
 public:
     plExportErrorDbg(ST::string label = {}, ST::string msg = {})
-        : plExportErrorMsg()
+        : plErrorMsg()
     { }
 
     plExportErrorDbg(bool bogus, ST::string label, ST::string msg)
-        : plExportErrorMsg()
+        : plErrorMsg()
     { }
 };
 
@@ -134,7 +134,7 @@ public:
 
 #else // keep them as exactly the same as errormessage
 
-class plExportLogErrorDbg : plExportLogErrorMsg
+class plExportLogErrorDbg : public plExportLogErrorMsg
 {
     plExportLogErrorDbg(ST::string label, ST::string msg)
         : plExportLogErrorMsg({}, std::move(label), std::move(msg))
