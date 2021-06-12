@@ -60,6 +60,78 @@ jobs:
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
 
+  # HACK to enable/disable the max CI based on presence/absence of secret. See also:
+  # https://github.com/actions/runner/issues/1138
+  max-secrets:
+    runs-on: ubuntu-latest
+    name: Check for Max SDK
+    outputs:
+      HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}
+    steps:
+      - name: Check for Secret
+        run: >
+          echo "::set-output name=MACHINE_USER_TOKEN::${{ env.MACHINE_USER_TOKEN != '' }}";
+        id: check
+        env:
+          MACHINE_USER_TOKEN: ${{ secrets.MACHINE_USER_REPO_READ }}
+
+  max:
+    # Can only run if we have a token for our super seekrit Max SDK repo. Sad.
+    needs: ["max-secrets"]
+    if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
+
+    runs-on: windows-latest
+    name: maxplugin-${{ matrix.cfg.str }}
+    strategy:
+      matrix:
+        cfg:
+          - { sdk-version: 7, generator: Visual Studio 16 2019, arch: Win32, str: 7-windows-x86 }
+          - { sdk-version: 2012, generator: Visual Studio 16 2019, arch: Win32, str: 2012-windows-x86 }
+          - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: 2013-windows-x64 }
+          - { sdk-version: 2021, generator: Visual Studio 16 2019, arch: x64, str: 2021-windows-x64 }
+
+    steps:
+      - name: Checkout Plasma
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Checkout MaxSDK
+        uses: actions/checkout@v2
+        with:
+          repository: H-uruMachineUser/3dsMaxSDK
+          token: ${{ secrets.MACHINE_USER_REPO_READ }}
+          path: maxsdk
+
+      - name: Configure
+        run: |
+          cmake `
+            -G "${{ matrix.cfg.generator }}" -A "${{ matrix.cfg.arch }}" `
+            -DPLASMA_BUILD_CLIENT=OFF `
+            -DPLASMA_BUILD_MAX_PLUGIN=ON `
+            -DPLASMA_BUILD_LAUNCHER=OFF `
+            -DPLASMA_BUILD_TESTS=OFF `
+            -DPLASMA_BUILD_TOOLS=OFF `
+            -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+            -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" `
+            -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
+            -DPLASMA_VCPKG_NUGET_RW=TRUE `
+            -D3dsm_PATH="${{ github.workspace }}/maxsdk/${{ matrix.cfg.sdk-version }}" `
+            -S . -B build
+
+      - name: Build
+        run: |
+          cmake --build build --config Release -j 2
+
+      - name: Install
+        run: |
+          cmake --build build --target INSTALL --config Release -j 2
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: max-${{ matrix.cfg.str }}
+          path: build/install
 
   linux:
     runs-on: ubuntu-latest

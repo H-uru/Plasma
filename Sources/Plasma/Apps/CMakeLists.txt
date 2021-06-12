@@ -4,8 +4,10 @@ include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
 include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 if(WIN32)
-    add_subdirectory(plClient)
-    add_subdirectory(plCrashHandler)
+    if(PLASMA_BUILD_CLIENT)
+        add_subdirectory(plClient)
+        add_subdirectory(plCrashHandler)
+    endif()
 
     if(PLASMA_BUILD_LAUNCHER)
         add_subdirectory(plUruLauncher)
