@@ -121,10 +121,6 @@ jobs:
 
       - name: Build
         run: |
-          cmake --build build --config Release -j 2
-
-      - name: Install
-        run: |
           cmake --build build --target INSTALL --config Release -j 2
 
       - name: Upload Artifacts
