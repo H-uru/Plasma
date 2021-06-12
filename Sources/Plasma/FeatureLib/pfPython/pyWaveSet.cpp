@@ -951,3 +951,27 @@ float pyWaveSet::GetEnvRadius() const
 }
 
 // --------------------------------------------------------------------------------
+
+void pyWaveSet::AddBuoy(const pyKey& soKey) const
+{
+    if (fWaterKey)
+    {
+        plWaveSet7* waveset = plWaveSet7::ConvertNoRef(fWaterKey->ObjectIsLoaded());
+        if (waveset)
+        {
+            return waveset->AddBuoy(soKey.getKey());
+        }
+    }
+}
+
+void pyWaveSet::RemoveBuoy(const pyKey& soKey) const
+{
+    if (fWaterKey)
+    {
+        plWaveSet7* waveset = plWaveSet7::ConvertNoRef(fWaterKey->ObjectIsLoaded());
+        if (waveset)
+        {
+            return waveset->RemoveBuoy(soKey.getKey());
+        }
+    }
+}

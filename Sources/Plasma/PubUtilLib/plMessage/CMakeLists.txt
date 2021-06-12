@@ -69,11 +69,13 @@ set(plMessage_HEADERS
     plCondRefMsg.h
     plConnectedToVaultMsg.h
     plConsoleMsg.h
+    plDampMsg.h
     plDeviceRecreateMsg.h
     plDynaDecalEnableMsg.h
     plDynamicEnvMapMsg.h
     plDynamicTextMsg.h
     plExcludeRegionMsg.h
+    plImpulseMsg.h
     plInputEventMsg.h
     plInputIfaceMgrMsg.h
     plInterestingPing.h

@@ -115,6 +115,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plBulletMsg.h"
 #include "plMessage/plConsoleMsg.h"
+#include "plMessage/plDampMsg.h"
+#include "plMessage/plImpulseMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plMovieMsg.h"
@@ -4619,6 +4621,42 @@ PF_CONSOLE_CMD( Wave_Set, Opacity,  // Group name, Function name
     ISendWaveCmd1f(PrintString, params, numParams, plWaveCmd::kWaterOpacity);
 }
 
+PF_CONSOLE_CMD( Wave_Set, AddBuoy,  // Group name, Function name
+                "string waveSet, string buoyObj", // Params
+                "Add the object as a buoy to the waveset") // Help string
+{
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[1]), "", &status);
+    PrintString(status);
+    if (!key)
+        return;
+
+    ST::string name = ST::string::from_utf8(params[0]);
+    plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
+
+    if (waveSet) {
+        waveSet->AddBuoy(key);
+    }
+}
+
+PF_CONSOLE_CMD( Wave_Set, RemoveBuoy,  // Group name, Function name
+                "string waveSet, string buoyObj", // Params
+                "Remove the object as a buoy to the waveset") // Help string
+{
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[1]), "", &status);
+    PrintString(status);
+    if (!key)
+        return;
+
+    ST::string name = ST::string::from_utf8(params[0]);
+    plWaveSet7* waveSet = IGetWaveSet(PrintString, name);
+
+    if (waveSet) {
+        waveSet->RemoveBuoy(key);
+    }
+}
+
 #endif // LIMIT_CONSOLE_COMMANDS
 
 
@@ -4880,7 +4918,7 @@ PF_CONSOLE_CMD( Physics, ShowExternal, "", "Display a snapshot of the world as H
 
 PF_CONSOLE_CMD( Physics, ApplyForce, "string Object, float x, float y, float z", "Apply a force to a scene object at its center of mass.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key) 
     {
@@ -4892,7 +4930,7 @@ PF_CONSOLE_CMD( Physics, ApplyForce, "string Object, float x, float y, float z",
 
 PF_CONSOLE_CMD( Physics, ApplyForceAtPoint, "string Object, float forceX, float forceY, float forceZ, float pointX, float pointY, float pointZ", "Apply a force to a scene object at a particular point in world space.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key) 
     {
@@ -4905,7 +4943,7 @@ PF_CONSOLE_CMD( Physics, ApplyForceAtPoint, "string Object, float forceX, float 
 
 PF_CONSOLE_CMD( Physics, ApplyTorque, "string Object, float axisX, float axisY, float axisZ", "Apply a torque to a scene object about given axis. Magnitude is size of force.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {
@@ -4914,12 +4952,13 @@ PF_CONSOLE_CMD( Physics, ApplyTorque, "string Object, float axisX, float axisY, 
         plgDispatch::MsgSend(m);
     }
 }
+*/
 
 PF_CONSOLE_CMD( Physics, ApplyImpulse, "string Object, float x, float y, float z", "Apply an impulse to a scene object.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
-    if(key)
+    if (key)
     {
         hsVector3 impulse(params[1], params[2], params[3]);
         plImpulseMsg *m = new plImpulseMsg(nullptr, key, impulse);
@@ -4927,9 +4966,10 @@ PF_CONSOLE_CMD( Physics, ApplyImpulse, "string Object, float x, float y, float z
     }
 }
 
+/*
 PF_CONSOLE_CMD( Physics, ApplyImpulseAtPoint, "string Object, float impulseX, float impulseY, float impulseZ, float pointX, float pointY, float pointZ", "Apply an impulse to a scene object at a particular point in world space.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {
@@ -4942,7 +4982,7 @@ PF_CONSOLE_CMD( Physics, ApplyImpulseAtPoint, "string Object, float impulseX, fl
 
 PF_CONSOLE_CMD( Physics, ApplyAngularImpulse, "string Object, float x, float y, float z", "Apply a rotational impulse about the given axis a scene object. Magnitude is strength.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {
@@ -4951,12 +4991,13 @@ PF_CONSOLE_CMD( Physics, ApplyAngularImpulse, "string Object, float x, float y, 
         plgDispatch::MsgSend(m);
     }
 }
+*/
 
 PF_CONSOLE_CMD( Physics, ApplyDamping, "string Object, float dampFactor", "Reduce the velocity and spin of the object to the given percentage.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
-    if(key)
+    if (key)
     {
         float dampFactor = params[1];
         plDampMsg *m = new plDampMsg(nullptr, key, dampFactor);
@@ -4964,9 +5005,10 @@ PF_CONSOLE_CMD( Physics, ApplyDamping, "string Object, float dampFactor", "Reduc
     }
 }
 
+/*
 PF_CONSOLE_CMD( Physics, ShiftMass, "string Object, float x, float y, float z", "Shift the object's center of mass.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {
@@ -4978,7 +5020,7 @@ PF_CONSOLE_CMD( Physics, ShiftMass, "string Object, float x, float y, float z", 
 
 PF_CONSOLE_CMD( Physics, Suppress, "string Object, int doSuppress", "Remove(true) or re-add the named physical from/to the simulation.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
     if(key)
     {
         int iDoSuppress = params[1];
@@ -4991,7 +5033,7 @@ PF_CONSOLE_CMD( Physics, Suppress, "string Object, int doSuppress", "Remove(true
 
 PF_CONSOLE_CMD( Physics, SetEventGroup, "string Object, int group, int status, int clearOthers", "Add to or remove from physics event group.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {
@@ -5003,7 +5045,7 @@ PF_CONSOLE_CMD( Physics, SetEventGroup, "string Object, int group, int status, i
 
 PF_CONSOLE_CMD( Physics, Freeze, "string Object, int status", "Immobilize the given simulated object.")
 {
-    plKey key = FindSceneObjectByName(params[0], nullptr, nullptr);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
 
     if(key)
     {

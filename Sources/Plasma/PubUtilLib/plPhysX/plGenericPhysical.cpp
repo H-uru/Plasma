@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSimulationInterface.h"
 
 #include "plMessage/plAngularVelocityMsg.h"
+#include "plMessage/plDampMsg.h"
+#include "plMessage/plImpulseMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plPhysical/plPhysicalSDLModifier.h"
@@ -136,6 +138,21 @@ bool plPXPhysical::MsgReceive( plMessage* msg )
         plAngularVelocityMsg* angvelMsg = plAngularVelocityMsg::ConvertNoRef(msg);
         if (angvelMsg) {
             SetAngularVelocitySim(angvelMsg->AngularVelocity());
+            return true;
+        }
+
+        plImpulseMsg* impMsg = plImpulseMsg::ConvertNoRef(msg);
+        if (impMsg) {
+            SetImpulseSim(impMsg->Impulse());
+            return true;
+        }
+
+        plDampMsg* dampMsg = plDampMsg::ConvertNoRef(msg);
+        if (dampMsg) {
+            // plDampMsg stores a percentage of how much to dampen the
+            // velocity, but PhysX wants a coefficient representing how strong
+            // the dampening is
+            SetDampingSim(1.0f - dampMsg->Damp());
             return true;
         }
         return false;

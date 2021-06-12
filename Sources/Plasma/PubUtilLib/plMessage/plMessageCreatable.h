@@ -113,6 +113,9 @@ REGISTER_CREATABLE(plConnectedToVaultMsg);
 #include "plConsoleMsg.h"
 REGISTER_CREATABLE(plConsoleMsg);
 
+#include "plDampMsg.h"
+REGISTER_CREATABLE(plDampMsg);
+
 #include "plDeviceRecreateMsg.h"
 REGISTER_CREATABLE(plDeviceRecreateMsg);
 
@@ -127,6 +130,9 @@ REGISTER_CREATABLE(plDynamicTextMsg);
 
 #include "plExcludeRegionMsg.h"
 REGISTER_CREATABLE(plExcludeRegionMsg);
+
+#include "plImpulseMsg.h"
+REGISTER_CREATABLE(plImpulseMsg);
 
 #include "plInputEventMsg.h"
 REGISTER_CREATABLE(plAvatarInputStateMsg);

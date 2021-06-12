@@ -98,16 +98,16 @@ public:
 #define SET_EXP(a)      ((a) << EXP_POS)
 #define GET_EMANT(a)    (((a) >> LOOKUP_POS) & LOOKUP_MASK)
 
-#define SET_MANTSEED(a) (((unsigned long) (a)) << SEED_POS)
+#define SET_MANTSEED(a) (((uint32_t) (a)) << SEED_POS)
 
 inline float hsFastMath::InvSqrtAppr(float x)
 {
-    unsigned long a = *(long*)&x;
+    uint32_t a = *(int32_t*)&x;
 #if NUM_ITER > 0
     float arg = x;
 #endif
     union {
-        long    i;
+        int32_t i;
         float   f;
     } seed;
     float r;
@@ -131,10 +131,10 @@ inline float hsFastMath::InvSqrtAppr(float x)
 
 inline float hsFastMath::InvSqrt(float x)
 {
-    unsigned long a = *(long*)&x;
+    uint32_t a = *(int32_t*)&x;
     float arg = x;
     union {
-        long    i;
+        int32_t i;
         float   f;
     } seed;
     float r;

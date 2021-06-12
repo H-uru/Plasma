@@ -96,6 +96,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plMatRefMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plDampMsg.h"
+#include "plMessage/plImpulseMsg.h"
 
 #include "plTweak.h"
 
@@ -349,9 +351,18 @@ void plWaveSet7::Read(hsStream* stream, hsResMgr* mgr)
     }
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefEnvMap), plRefFlags::kActiveRef);
 
-    if( HasFlag(kHasRefObject) )
+    if (HasFlag(kHasRefObject))
     {
         mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefRefObj), plRefFlags::kPassiveRef);
+    }
+
+    if (HasFlag(kHasBuoys))
+    {
+        n = stream->ReadLE32();
+        for (i = 0; i < n; i++)
+        {
+            mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefBuoy), plRefFlags::kPassiveRef);
+        }
     }
 
     ISetupTextureWaves();
@@ -386,9 +397,16 @@ void plWaveSet7::Write(hsStream* stream, hsResMgr* mgr)
 
     mgr->WriteKey(stream, fEnvMap);
 
-    if( HasFlag(kHasRefObject) )
+    if (HasFlag(kHasRefObject))
     {
         mgr->WriteKey(stream, fRefObj);
+    }
+
+    if (HasFlag(kHasBuoys))
+    {
+        stream->WriteLE32((uint32_t)fBuoys.size());
+        for (plSceneObject* buoy : fBuoys)
+            mgr->WriteKey(stream, buoy);
     }
 }
 
@@ -730,7 +748,6 @@ void plWaveSet7::IUpdateWaves(float dt)
     ITransition(dt);
     ITransTex(dt);
     ICalcScale();
-    fScrunchLen = 1.e33f;
 
     if( fTrialUpdate & kReInitWaves )
     {
@@ -1033,10 +1050,10 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
     // Don't currently have anything informative from the physical to use.
     // So, let's fake something for the moment.
 
-//  plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
+    plKey physKey = so->GetSimulationInterface()->GetPhysical()->GetKey();
 
-//  plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0.f, 0.f, 1.f) * forceMag * dt);
-//  iMsg->Send();
+    plImpulseMsg* iMsg = new plImpulseMsg(GetKey(), physKey, hsVector3(0.f, 0.f, 1.f) * forceMag * dt);
+    iMsg->Send();
 
 #if 0
     plCONST(float) kRotScale(1.f);
@@ -1056,8 +1073,8 @@ void plWaveSet7::IFloatBuoy(float dt, plSceneObject* so)
         damp *= kDampener;
         damp += kBaseDamp;
 
-//      plDampMsg* dMsg = new plDampMsg(GetKey(), physKey, damp);
-//      dMsg->Send();
+        plDampMsg* dMsg = new plDampMsg(GetKey(), physKey, damp);
+        dMsg->Send();
     }
 }
 

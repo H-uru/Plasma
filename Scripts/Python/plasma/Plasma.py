@@ -9667,6 +9667,10 @@ class ptWaveSet:
         """None"""
         pass
 
+    def addBuoy(self, soKey: ptKey) -> None:
+        """Adds the specified object as a buoy"""
+        pass
+
     def getDepthFalloff(self):
         """Returns the attribute's value"""
         pass
@@ -9793,6 +9797,10 @@ class ptWaveSet:
 
     def getWindDir(self):
         """Returns the attribute's value"""
+        pass
+
+    def removeBuoy(self, soKey: ptKey) -> None:
+        """Removes the specified object as a buoy"""
         pass
 
     def setDepthFalloff(self,s, secs = 0):
@@ -9922,4 +9930,3 @@ class ptWaveSet:
     def setWindDir(self,s, secs = 0):
         """Sets the attribute to s over secs time"""
         pass
-
