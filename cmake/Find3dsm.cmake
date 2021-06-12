@@ -40,15 +40,28 @@ if(WIN32)
 
     find_path(3dsm_INCLUDE_DIR maxversion.h PATHS "${3dsm_PATH}/include")
 
-    if(EXISTS "${3dsm_INCLUDE_DIR}/maxversion.h")
-        file(STRINGS "${3dsm_INCLUDE_DIR}/maxversion.h" _3dsm_VERSIONS
-            REGEX "^[ \t]*#define[ \t]+MAX_VERSION_MAJOR[ \t]+([0-9]+).*"
+    function(_filter_version RESULT_VARIABLE KEY)
+        set(_FILTERED_VERSIONS ${_3dsm_VERSIONS})
+        list(FILTER _FILTERED_VERSIONS INCLUDE
+            REGEX "^[ \t]*#define[ \t]+${KEY}[ \t]+([0-9]+).*"
         )
         # Older maxen have multiple versions in the header. Sigh.
-        list(POP_BACK _3dsm_VERSIONS _3dsm_VERSION_LINE)
-        string(REGEX REPLACE "^.*MAX_VERSION_MAJOR[ \t]+([0-9]+).*$" "\\1"
-            3dsm_VERSION "${_3dsm_VERSION_LINE}"
+        list(POP_BACK _FILTERED_VERSIONS _VERSION_LINE)
+        string(REGEX REPLACE "^.*${KEY}[ \t]+([0-9]+).*$" "\\1"
+            _RESULT "${_VERSION_LINE}"
         )
+        set(${RESULT_VARIABLE} "${_RESULT}" PARENT_SCOPE)
+    endfunction()
+
+    if(EXISTS "${3dsm_INCLUDE_DIR}/maxversion.h")
+        file(STRINGS "${3dsm_INCLUDE_DIR}/maxversion.h" _3dsm_VERSIONS
+            REGEX "^[ \t]*#define[ \t]+(MAX_VERSION_MAJOR|MAX_PRODUCT_YEAR_NUMBER)[ \t]+([0-9]+).*"
+        )
+        _filter_version(3dsm_VERSION "MAX_VERSION_MAJOR")
+        _filter_version(3dsm_DISPLAY_VERSION "MAX_PRODUCT_YEAR_NUMBER")
+        if(NOT 3dsm_DISPLAY_VERSION)
+            set(3dsm_DISPLAY_VERSION "${3dsm_VERSION}")
+        endif()
     endif()
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND 3dsm_VERSION VERSION_GREATER_EQUAL 10)
