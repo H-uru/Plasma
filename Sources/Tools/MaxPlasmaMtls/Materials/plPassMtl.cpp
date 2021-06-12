@@ -64,11 +64,11 @@ class plPassMtlClassDesc : public ClassDesc2
 public:
     int             IsPublic() override     { return TRUE; }
     void*           Create(BOOL loading) override { return new plPassMtl(loading); }
-    const TCHAR*    ClassName() override    { return GetString(IDS_PASS_MTL); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_PASS_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return PASS_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return nullptr; }
-    const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _M("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plPassMtlClassDesc plPassMtlDesc;
@@ -135,7 +135,7 @@ Interval plPassMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -196,7 +196,7 @@ int plPassMtl::NumSubs()
     return 6;
 }
 
-TSTR plPassMtl::SubAnimName(int i) 
+MSTR plPassMtl::SubAnimName(int i) 
 {
     switch (i)
     {
@@ -204,11 +204,11 @@ TSTR plPassMtl::SubAnimName(int i)
     case 1: return fAdvPB->GetLocalName();
     case 2: return fLayersPB->GetLocalName();
     case 3: return fAnimPB->GetLocalName();
-    case 4: return "Base Layer";
-    case 5: return "Top Layer";
+    case 4: return _M("Base Layer");
+    case 5: return _M("Top Layer");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plPassMtl::SubAnim(int i)
@@ -253,11 +253,6 @@ IParamBlock2* plPassMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plPassMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
-{
-    return plPassMtlBase::NotifyRefChanged( changeInt, hTarget, partID, message );
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Subtexmap access
 
@@ -284,17 +279,17 @@ void plPassMtl::SetSubTexmap(int i, Texmap *m)
         fLayersPB->SetValue(kPassLayTop, 0, m);
 }
 
-TSTR plPassMtl::GetSubTexmapSlotName(int i)
+MSTR plPassMtl::GetSubTexmapSlotName(int i)
 {
     if (i == 0)
-        return "Base";
+        return _M("Base");
     else if (i == 1)
-        return "Top";
+        return _M("Top");
 
-    return "";
+    return _M("");
 }
 
-TSTR plPassMtl::GetSubTexmapTVName(int i)
+MSTR plPassMtl::GetSubTexmapTVName(int i)
 {
     return GetSubTexmapSlotName(i);
 }
@@ -826,10 +821,10 @@ int     plPassMtl::GetZInc() { return fAdvPB->GetInt(kPBAdvZInc); }
 int     plPassMtl::GetAlphaTestHigh() { return fAdvPB->GetInt(kPBAdvAlphaTestHigh); }
 
 // Animation block
-const char*  plPassMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+const MCHAR*  plPassMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
 int     plPassMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
 int     plPassMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-const char*  plPassMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const MCHAR*  plPassMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 int     plPassMtl::GetEaseInType() { return fAnimPB->GetInt(kPBAnimEaseInType); }
 float   plPassMtl::GetEaseInNormLength() { return fAnimPB->GetFloat(kPBAnimEaseInLength); }
 float   plPassMtl::GetEaseInMinLength() { return fAnimPB->GetFloat(kPBAnimEaseInMin); }
@@ -839,7 +834,7 @@ float   plPassMtl::GetEaseOutNormLength() { return fAnimPB->GetFloat(kPBAnimEase
 float   plPassMtl::GetEaseOutMinLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMin); }
 float   plPassMtl::GetEaseOutMaxLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMax); }
 int     plPassMtl::GetUseGlobal() { return fAnimPB->GetInt(ParamID(kPBAnimUseGlobal)); }
-const char*  plPassMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }   
+const MCHAR*  plPassMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }   
 
 // Basic block
 int     plPassMtl::GetColorLock() { return fBasicPB->GetInt(kPassBasColorLock); }

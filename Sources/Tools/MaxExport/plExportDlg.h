@@ -54,10 +54,10 @@ public:
     // Returns true if an autoexport is running (GetValidateUVs is valid)
     virtual bool IsAutoExporting()=0;
 
-    virtual bool        GetDoLightMap()=0;
-    virtual bool        GetDoPreshade()=0;
-    virtual bool        GetPhysicalsOnly()=0;
-    virtual const char* GetExportPage()=0;
+    virtual bool         GetDoLightMap()=0;
+    virtual bool         GetDoPreshade()=0;
+    virtual bool         GetPhysicalsOnly()=0;
+    virtual const TCHAR* GetExportPage()=0;
 
     virtual void StartAutoExport()=0;
 };

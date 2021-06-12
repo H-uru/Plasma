@@ -42,33 +42,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __plErrorMsg_h
 #define __plErrorMsg_h
 
-#define PL_ERR_MSG_MAX_MSG 2048
+#include <string_theory/string>
 
 class plErrorMsg
 {
 public:
     static plErrorMsg *GetNull();
 
-    plErrorMsg(const char* label, const char* msg);
-    plErrorMsg(bool bogus = false);
-    plErrorMsg(bool bogus, const char* label, const char* msg);
-    plErrorMsg(bool bogus, const char* label, const char* format, const char* str);
-    plErrorMsg(bool bogus, const char* label, const char* format, const char* str1, const char* str2);
-    plErrorMsg(bool bogus, const char* label, const char* format, int n);
-    plErrorMsg(bool bogus, const char* label, const char* format, int n, int m);
-    plErrorMsg(bool bogus, const char* label, const char* format, float f);
-    virtual ~plErrorMsg() { }
+    plErrorMsg(ST::string label, ST::string msg)
+    {
+        Set(true, std::move(label), std::move(msg));
+    }
 
-    plErrorMsg &Set(const char* label, const char* msg);
-    plErrorMsg &Set(bool bogus = false);
-    plErrorMsg &Set(bool bogus, const char* label, const char* msg);
-    plErrorMsg &Set(bool bogus, const char* label, const char* format, const char* str);
-    plErrorMsg &Set(bool bogus, const char* label, const char* format, const char* str1, const char* str2);
-    plErrorMsg &Set(bool bogus, const char* label, const char* format, int n);
-    plErrorMsg &Set(bool bogus, const char* label, const char* format, int n, int m);
-    plErrorMsg &Set(bool bogus, const char* label, const char* format, float f);
+    plErrorMsg(bool bogus = false, ST::string label = {}, ST::string msg = {})
+    {
+        Set(bogus, std::move(label), std::move(msg));
+    }
 
-    bool IsBogus() { return GetBogus(); }
+    virtual ~plErrorMsg() = default;
+
+    plErrorMsg& Set(ST::string label, ST::string msg)
+    {
+        return Set(true, std::move(label), std::move(msg));
+    }
+
+    plErrorMsg& Set(bool bogus = false, ST::string label = {}, ST::string msg = {});
+
+    bool IsBogus() const { return GetBogus(); }
     // Ask - If condition is true and user says yes to displayed query, return true, else false
     virtual bool Ask() { return false; }
 
@@ -94,18 +94,30 @@ public:
 protected:
     void SetBogus(bool b)   { fBogus = b; }
 
-    bool GetBogus()         { return fBogus; }
-    char *GetLabel()            { if (!fBogus) *fLabel = 0; return fLabel; }
-    char *GetMsg()              { if (!fBogus) *fMsg = 0; return fMsg; }
+    bool GetBogus() const   { return fBogus; }
+
+    ST::string& GetLabel()
+    {
+        if (!fBogus)
+            fLabel.clear();
+        return fLabel;
+    }
+
+    ST::string& GetMsg()
+    {
+        if (!fBogus)
+            fMsg.clear();
+        return fMsg;
+    }
 
 private:
     bool        fBogus;
-    char        fLabel[256];
-    char        fMsg[PL_ERR_MSG_MAX_MSG];
+    ST::string  fLabel;
+    ST::string   fMsg;
 
 private:
     // No assignment operator
-    plErrorMsg &operator=(const plErrorMsg &msg);
+    plErrorMsg& operator=(const plErrorMsg& msg);
 };
 
 #endif

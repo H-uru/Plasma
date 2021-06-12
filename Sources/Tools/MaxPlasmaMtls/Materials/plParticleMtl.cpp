@@ -148,7 +148,7 @@ Interval plParticleMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -169,15 +169,15 @@ int plParticleMtl::NumSubs()
     return 2;
 }
 
-TSTR plParticleMtl::SubAnimName(int i) 
+MSTR plParticleMtl::SubAnimName(int i) 
 {
     switch (i)
     {
     case 0: return fBasicPB->GetLocalName();
-    case 1: return "Texmap";
+    case 1: return _M("Texmap");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plParticleMtl::SubAnim(int i)
@@ -230,7 +230,8 @@ IParamBlock2* plParticleMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
+RefResult plParticleMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                          PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -248,7 +249,8 @@ RefResult plParticleMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hT
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents(FOREVER, PART_ALL, REFMSG_USER_MAT);
             }
             break;
     }
@@ -278,12 +280,12 @@ void plParticleMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kTexmap, 0, m);
 }
 
-TSTR plParticleMtl::GetSubTexmapSlotName(int i)
+MSTR plParticleMtl::GetSubTexmapSlotName(int i)
 {
     if (i == 0)
-        return "Texmap";
+        return _M("Texmap");
 
-    return "";
+    return _M("");
 }
 
 TSTR plParticleMtl::GetSubTexmapTVName(int i)

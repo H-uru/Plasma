@@ -55,11 +55,11 @@ class plMultipassClassDesc : public ClassDesc2
 public:
     int             IsPublic() override     { return TRUE; }
     void*           Create(BOOL loading) override { return new plMultipassMtl(loading); }
-    const TCHAR*    ClassName() override    { return GetString(IDS_MULTI_MTL); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_MULTI_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return MULTIMTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return nullptr; }
-    const TCHAR*    InternalName() override { return _T("PlasmaMultipass"); }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _T("PlasmaMultipass"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plMultipassClassDesc plMultipassMtlDesc;
@@ -77,7 +77,7 @@ plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB()
     SetNumSubMtls(1);
 }
 
-void plMultipassMtl::GetClassName(TSTR& s)
+void plMultipassMtl::GetClassName(MSTR& s)
 {
     s = GetString(IDS_MULTI_MTL);
 }
@@ -134,7 +134,7 @@ int plMultipassMtl::NumSubs()
     return NumSubMtls();
 }
 
-TSTR plMultipassMtl::SubAnimName(int i) 
+MSTR plMultipassMtl::SubAnimName(int i) 
 {
     return GetSubMtlSlotName(i);
 }
@@ -184,8 +184,8 @@ IParamBlock2 *plMultipassMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plMultipassMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message ) 
+RefResult plMultipassMtl::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -224,14 +224,14 @@ void plMultipassMtl::SetSubMtl(int i, Mtl *m)
         fPassesPB->SetValue(kMultPasses, 0, m, i);
 }
 
-TSTR plMultipassMtl::GetSubMtlSlotName(int i)
+MSTR plMultipassMtl::GetSubMtlSlotName(int i)
 {
-    TSTR str;
-    str.printf("Pass %d", i+1);
+    MSTR str;
+    str.printf(_M("Pass %d"), i+1);
     return str;
 }
 
-TSTR plMultipassMtl::GetSubMtlTVName(int i)
+MSTR plMultipassMtl::GetSubMtlTVName(int i)
 {
     return GetSubMtlSlotName(i);
 }

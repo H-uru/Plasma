@@ -71,9 +71,9 @@ public:
     virtual ParamBlockDesc2 *GetDesc()=0;
 
     virtual int NumTypes()=0;
-    virtual const char *GetCategory(int idx)=0;
-    virtual const char *GetName(int idx)=0;
-    virtual const char *GetInstanceName(IParamBlock2 *pb)=0;
+    virtual const TCHAR* GetCategory(int idx)=0;
+    virtual const TCHAR* GetName(int idx)=0;
+    virtual const TCHAR* GetInstanceName(IParamBlock2 *pb)=0;
 
     virtual IParamBlock2 *CreatePB(int idx);
 

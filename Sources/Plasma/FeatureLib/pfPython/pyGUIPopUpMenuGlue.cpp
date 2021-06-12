@@ -193,7 +193,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, isEnabled)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, getName)
 {
-    return PyUnicode_FromString(self->fThis->GetName());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, getVersion)

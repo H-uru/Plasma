@@ -141,7 +141,7 @@ public:
 
     plSpanTemplTab  MakeTemplates(INode* templNode);
 
-    plClusterGroup* CreateGroup(plMaxNode* node, const char* name);
+    plClusterGroup* CreateGroup(plMaxNode* node, const ST::string& name);
     plClusterGroup* SetupGroup(plClusterGroup* group, plMaxNode* node, plSpanTemplateB* templ);
     plClusterGroup* GetGroup() const { return fGroup; }
 

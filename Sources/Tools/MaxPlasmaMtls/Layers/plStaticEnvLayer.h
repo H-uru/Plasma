@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPlasmaMAXLayer.h"
 
+#include "MaxMain/MaxCompat.h"
+
 class ClassDesc2;
 class IParamBlock2;
 class Bitmap;
@@ -87,7 +89,7 @@ protected:
 
 
     Matrix3     IGetViewTM( int i );
-    int         IWriteBM( BitmapInfo *bi, Bitmap *bm, TCHAR *name );
+    int         IWriteBM( BitmapInfo *bi, Bitmap *bm, BMNAME_VALUE_TYPE name );
 
 public:
     // Ref nums
@@ -161,12 +163,12 @@ public:
     void GetClassName(TSTR& s) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     // TODO: Maintain the number or references here 
     int NumRefs() override;
@@ -177,9 +179,9 @@ public:
     IParamBlock2* GetParamBlock(int i) override; // return i'th ParamBlock
     IParamBlock2* GetParamBlockByID(BlockID id) override; // return id'd ParamBlock
 
-    const char *GetTextureName( int which );
+    const MCHAR* GetTextureName( int which );
 
-    void        SetBaseFilename( const TCHAR *name, TimeValue t );
+    void        SetBaseFilename( const MCHAR *name, TimeValue t );
     const TCHAR *GetBaseFilename( TimeValue t );
 
     void    RenderCubicMap( INode *node );

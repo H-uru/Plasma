@@ -84,15 +84,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfPopUpKeyGenerator
 {
     public:
-        char        fPrefix[128];
+        ST::string  fPrefix;
         uint32_t    fKeyCount;
         plLocation  fLoc;
 
-        pfPopUpKeyGenerator(const char *p, const plLocation &loc)
-            : fKeyCount(0), fLoc(loc)
-        {
-            strcpy(fPrefix, p);
-        }
+        pfPopUpKeyGenerator(ST::string p, const plLocation &loc)
+            : fPrefix(std::move(p)), fKeyCount(), fLoc(loc)
+        { }
 
         plKey   CreateKey( hsKeyedObject *ko )
         {

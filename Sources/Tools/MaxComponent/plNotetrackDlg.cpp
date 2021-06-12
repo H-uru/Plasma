@@ -121,9 +121,9 @@ void plNoteTrackDlg::ILoadAnims()
     if (!fSegMap)
         return;
 
-    const char *savedAnim = fPB->GetStr(fAnimID);
+    const MCHAR* savedAnim = fPB->GetStr(fAnimID);
     if (!savedAnim)
-        savedAnim = "";
+        savedAnim = _M("");
 
     // Add the names of the animations
     for (SegmentMap::iterator it = fSegMap->begin(); it != fSegMap->end(); it++)
@@ -157,14 +157,14 @@ void plNoteTrackDlg::ILoadLoops()
     {
         // Get the animation segment (or leave it nil if we're using the entire animation)
         SegmentSpec *animSpec = nullptr;
-        ST::string animName = ST::string::from_utf8(fPB->GetStr(fAnimID));
+        ST::string animName = ST::string(fPB->GetStr(fAnimID));
         if (!animName.empty() && fSegMap->find(animName) != fSegMap->end())
             animSpec = (*fSegMap)[animName];
 
         // Get the saved loop name
-        const char *loopName = fPB->GetStr(fLoopID);
+        const MCHAR* loopName = fPB->GetStr(fLoopID);
         if (!loopName)
-            loopName = "";
+            loopName = _M("");
 
         for (SegmentMap::iterator i = fSegMap->begin(); i != fSegMap->end(); i++)
         {
@@ -192,9 +192,9 @@ const char *plNoteTrackDlg::IGetSel(HWND hCombo)
     int sel = ComboBox_GetCurSel(hCombo);
     if (sel != CB_ERR && ComboBox_GetItemData(hCombo, sel) == kName)
     {
-        char buf[256];
-        ComboBox_GetText(hCombo, buf, sizeof(buf));
-        return (*fSegMap)[ST::string::from_utf8(buf)]->fName.c_str();
+        TCHAR buf[256];
+        ComboBox_GetText(hCombo, buf, std::size(buf));
+        return (*fSegMap)[ST::string(buf)]->fName.c_str();
     }
 
     return "";

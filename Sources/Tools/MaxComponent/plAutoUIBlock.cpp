@@ -50,11 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAutoUIBlock.h"
 
 
-plAutoUIBlock::plAutoUIBlock(plComponentClassDesc *cd, int blockID, const char *name, int version)
+plAutoUIBlock::plAutoUIBlock(plComponentClassDesc *cd, int blockID, ST::string name, int version)
 {
-    fName = hsStrcpy(name);
+    fName = std::move(name);
     fVersion = version;
-    fDesc = new ParamBlockDesc2(blockID, "Auto", IDS_COMP_AUTO, cd, 0, end);
+    fDesc = new ParamBlockDesc2(blockID, _M("Auto"), IDS_COMP_AUTO, cd, 0, p_end);
     fIsMultiModifier = false;
 }
 

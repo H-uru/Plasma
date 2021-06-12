@@ -62,22 +62,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plTextureExportLog::plTextureExportLog( const char *fileName )
+plTextureExportLog::plTextureExportLog( plFileName fileName )
+    : fFileName(std::move(fileName)), fNodeList()
 {
-    fFileName = hsStrcpy( fileName );
-    fNodeList = nullptr;
 }
 
 plTextureExportLog::~plTextureExportLog()
 {
     plBMapNode  *node;
-
-
-    if (fFileName != nullptr)
-    {
-        Write();
-        delete [] fFileName;
-    }
 
     while (fNodeList != nullptr)
     {
@@ -244,8 +236,7 @@ void    plTextureExportLog::Write()
     delete stream;
 
     // HACK: Prevent the destructor from writing out now
-    delete [] fFileName;
-    fFileName = nullptr;
+    fFileName = plFileName();
 }
 
 void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int numTabs )

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_COMPONENT_TOOLS_H
 
 #include "pnKeyedObject/plKey.h"
+#include "MaxMain/MaxCompat.h"
 
 class plComponentBase;
 class plKey;
@@ -59,7 +60,7 @@ typedef void        (*PSetActivatorKeyFunc) (plMaxNodeBase*, plMaxNodeBase*, plM
 typedef plKey       (*PGetAnimModKeyFunc) (plComponentBase*, plMaxNodeBase*);
 typedef ST::string  (*PGetAnimNameFunc) (plComponentBase*);
 typedef int         (*PGetMaterialAnimModKeyFunc) (Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
-typedef int         (*PGetSoundNameAndIndex) (plComponentBase*, plMaxNodeBase* node, const char*& name);
+typedef int         (*PGetSoundNameAndIndex) (plComponentBase*, plMaxNodeBase* node, const MCHAR*& name);
 
 //
 // A "toolbox" for external components to do their conversion with.  The idea
@@ -109,7 +110,7 @@ public:
 
     int GetMaterialAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 
-    int GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const char*& name);
+    int GetSoundNameAndIndex(plComponentBase* comp, plMaxNodeBase* node, const MCHAR*& name);
 };
 
 #endif //PL_COMPONENT_TOOLS_H

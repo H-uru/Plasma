@@ -101,9 +101,9 @@ ParamBlockDesc2 gIgnoreBk
     kIgnoreMeCheckBx,  _T("Ignore"), TYPE_BOOL,         0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_IGNORE_CKBX,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plIgnoreComponent::plIgnoreComponent()
@@ -219,9 +219,9 @@ ParamBlockDesc2 gIgnoreLiteBk
     plIgnoreLiteComponent::kSelectedOnly,  _T("SelectedOnly"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_IGNORELITE_SELECTED,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plIgnoreLiteComponent::plIgnoreLiteComponent()
@@ -292,7 +292,7 @@ ParamBlockDesc2 gBarneyBk
 
     IDD_COMP_BARNEY, IDS_COMP_BARNEYS, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plBarneyComponent::plBarneyComponent()
@@ -359,19 +359,19 @@ ParamBlockDesc2 gNoShowBk
     plNoShowComponent::kShowable,  _T("Showable"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_NOSHOW_SHOWABLE,
-        end,
+        p_end,
 
     plNoShowComponent::kAffectDraw,  _T("AffectDraw"), TYPE_BOOL,       0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_NOSHOW_AFFECTDRAW,
-        end,
+        p_end,
 
     plNoShowComponent::kAffectPhys,  _T("AffectPhys"), TYPE_BOOL,       0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_NOSHOW_AFFECTPHYS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plNoShowComponent::plNoShowComponent()

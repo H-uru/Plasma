@@ -78,7 +78,7 @@ ParamBlockDesc2 gXImposterBk
 
     IDD_COMP_XFORM, IDS_COMP_XFORMS, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plXImposterComp::plXImposterComp()
@@ -119,7 +119,7 @@ ParamBlockDesc2 gForceCTTBk
 
     IDD_COMP_FORCE_CTT, IDS_COMP_FORCE_CTT, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plForceCTTComp::plForceCTTComp()
@@ -226,24 +226,24 @@ ParamBlockDesc2 gFilterInheritBk
     plFilterInheritComp::kActive,   _T("Active"),   TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_ACTIVE,
-        end,
+        p_end,
 
     plFilterInheritComp::kNoX,  _T("NoX"),  TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_NOX,
-        end,
+        p_end,
 
     plFilterInheritComp::kNoY,  _T("NoY"),  TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_NOY,
-        end,
+        p_end,
 
     plFilterInheritComp::kNoZ,  _T("NoZ"),  TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FILTER_NOZ,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plFilterInheritComp::plFilterInheritComp()

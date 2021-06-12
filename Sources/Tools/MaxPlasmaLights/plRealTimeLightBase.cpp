@@ -404,9 +404,12 @@ Animatable *plRTLightBase::SubAnim(int i)
         case kRefTDirLight:
         case kRefProjDirLight:
             return (Animatable*)fLightPB;
-        case kRefProjMap: 
-            Texmap* MyMap;
-            return (Animatable*) fLightPB->GetValue(kProjMapTexButton, 0, MyMap, FOREVER);          
+        case kRefProjMap:
+        {
+            Texmap* MyMap = nullptr;
+            fLightPB->GetValue(kProjMapTexButton, 0, MyMap, FOREVER);
+            return MyMap;
+        }
         case kRefShadowType: 
             return nullptr;
         default:
@@ -1394,8 +1397,10 @@ void plRTLightBase::SetReference(int ref, RefTargetHandle rtarg)
         //fLightPB = (IParamBlock2*)rtarg;
 }
 
-RefResult plRTLightBase::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
-{           
+RefResult plRTLightBase::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                          PartID& partID, RefMessage message
+                                          MAX_REF_PROPAGATE)
+{
     if( fLightPB )
     {
         ParamID     param = fLightPB->LastNotifyParamID();
@@ -1715,7 +1720,7 @@ Texmap* plRTLightBase::GetProjMap()
 
     if( GetTex() )
     {
-        const char* dbgTexName = GetTex()->GetName();
+        auto dbgTexName = GetTex()->GetName();
 
         IParamBlock2 *bitmapPB = fTex->GetParamBlockByID(plLayerTex::kBlkBitmap);
         hsAssert(bitmapPB, "LayerTex with no param block");

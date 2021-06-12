@@ -128,7 +128,7 @@ RenderInstance* plRenderGlobalContext::GetRenderInstance(int i)
 
 void plRenderGlobalContext::IMakeRenderInstances(plMaxNode* node, TimeValue t, bool isBarney)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
     if( !isBarney )
         isBarney = node->GetIsBarney();
 

@@ -85,7 +85,7 @@ plCompositeMtlDlg::plCompositeMtlDlg(HWND hwMtlEdit, IMtlParams *imp, plComposit
         hInstance,
         MAKEINTRESOURCE(IDD_COMPOSITE),
         ForwardProc,
-        "Composite Parameters",
+        _M("Composite Parameters"),
         (LPARAM)this);
 }
 
@@ -260,12 +260,8 @@ void plCompositeMtlDlg::UpdateLayerDisplay()
     for (i = 0; i < NSUBMTLS; i++)
     {
         Mtl *m = fPBlock->GetMtl(plCompositeMtl::kCompPasses, curTime, i);
-        TSTR nm;
-        if (m) 
-            nm = m->GetName();
-        else 
-            nm = "None";
-        fLayerBtns[i]->SetText(nm.data());
+        const MCHAR* nm = m ? m->GetName().data() : _M("None");
+        fLayerBtns[i]->SetText(const_cast<MCHAR*>(nm));
         
         ShowWindow(GetDlgItem(fhRollup, kLayerID[i].layerID), SW_SHOW);
         ShowWindow(GetDlgItem(fhRollup, kLayerID[i].activeID), SW_SHOW);

@@ -231,11 +231,11 @@ enum
 uint32_t  plBaseSoundEmitterComponent::fWarningFlags = 0;
 //bool  plBaseSoundEmitterComponent::fAllowUnhide = false;
 
-void    plBaseSoundEmitterComponent::IShowError( uint32_t type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg )
+void    plBaseSoundEmitterComponent::IShowError( uint32_t type, plErrorMsg *pErrMsg, ST::string msg)
 {
     if( !( fWarningFlags & (1 << type) ) )
     {
-        if( pErrMsg->Set( true, "Sound Component Error", errMsg, nodeName ).CheckAskOrCancel() )
+        if( pErrMsg->Set( true, ST_LITERAL("Sound Component Error"), std::move(msg) ).CheckAskOrCancel() )
             fWarningFlags |= (1 << type);
         pErrMsg->Set( false );
     }
@@ -416,7 +416,7 @@ void    plBaseSoundEmitterComponent::IUpdateAssets()
 #endif
 }
 
-const char* plBaseSoundEmitterComponent::GetSoundFileName( plBaseSoundEmitterComponent::WhichSound which )
+const MCHAR* plBaseSoundEmitterComponent::GetSoundFileName( plBaseSoundEmitterComponent::WhichSound which )
 {
     IUpdateAssets();
 
@@ -459,7 +459,7 @@ bool plBaseSoundEmitterComponent::IValidate(plMaxNode *node, plErrorMsg *pErrMsg
 {
     if (GetSoundFileName(kBaseSound) == nullptr)
     {
-        pErrMsg->Set(true, "Sound 3D FileName Error", "The Sound 3D component %s is missing a filename.", node->GetName()).Show();
+        pErrMsg->Set(true, "Sound 3D FileName Error", ST::format("The Sound 3D component {} is missing a filename.", node->GetName())).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -469,7 +469,7 @@ bool plBaseSoundEmitterComponent::IValidate(plMaxNode *node, plErrorMsg *pErrMsg
 
 bool plBaseSoundEmitterComponent::PreConvert( plMaxNode *node, plErrorMsg *pErrMsg, Class_ID classToConvert )
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
     fValidNodes[node] = IValidate(node, pErrMsg);
     if (!fValidNodes[node])
         return false;
@@ -562,7 +562,7 @@ void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg
         }
         else
         {
-            pErrMsg->Set(true, "Sound Emitter Error", "The Sound emitter component %s is checked to use a soft region, but no soft region is specified. Ignoring setting.", GetINode()->GetName() ).Show();
+            pErrMsg->Set(true, "Sound Emitter Error", ST::format("The Sound emitter component {} is checked to use a soft region, but no soft region is specified. Ignoring setting.", GetINode()->GetName())).Show();
             pErrMsg->Set(false);
         }
     }
@@ -704,7 +704,7 @@ bool    plBaseSoundEmitterComponent::LookupLatestAsset( const char *waveName, ch
         if (!assetMan->GetLatestVersionFile(assetId, assetPath, sizeof(assetPath)))
         {
             errMsg->Set( true, "SoundEmitter Convert Error",
-                        "Unable to update wave file '%s' because AssetMan was unable to get the latest version. Using local copy instead.", waveName ).Show();
+                        ST::format("Unable to update wave file '{}' because AssetMan was unable to get the latest version. Using local copy instead.", waveName) ).Show();
             errMsg->Set( false );
             return false;
         }
@@ -720,15 +720,16 @@ bool    plBaseSoundEmitterComponent::LookupLatestAsset( const char *waveName, ch
 
 plSoundBuffer   *plBaseSoundEmitterComponent::IProcessSourceBuffer( plMaxNode *maxNode, plErrorMsg *errMsg )
 {
-    const char    *fileName = GetSoundFileName( kBaseSound );
+    auto fileName = GetSoundFileName( kBaseSound );
     if (fileName == nullptr)
         return nullptr;
 
-    plSoundBuffer *srcBuffer = GetSourceBuffer( fileName, maxNode, ICalcSourceBufferFlags() );
+    plSoundBuffer *srcBuffer = GetSourceBuffer( M2ST(fileName), maxNode, ICalcSourceBufferFlags() );
     if (srcBuffer == nullptr)
     {
-        IShowError( kSrcBufferInvalid, "The file specified for the sound 3D component %s is invalid. "
-                                        "This emitter will not be exported.", GetINode()->GetName(), errMsg );
+        IShowError(kSrcBufferInvalid, errMsg,
+            "The file specified for the sound 3D component {} is invalid. "
+            "This emitter will not be exported.", GetINode()->GetName());
         return nullptr;
     }
 
@@ -755,7 +756,7 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection()
         }
         else
         {
-            baseBuffer = new plSoundBuffer( GetSoundFileName( kBaseSound ) );
+            baseBuffer = new plSoundBuffer(M2ST(GetSoundFileName(kBaseSound)));
             if (baseBuffer != nullptr && baseBuffer->IsValid())
             {
                 // Update our stereo channel selection if necessary
@@ -790,7 +791,7 @@ float    plBaseSoundEmitterComponent::GetSoundVolume() const
 bool    plBaseSoundEmitterComponent::UpdateCategories( HWND dialogBox, int &categoryID, ParamID &paramID )
 {
     HWND    comboBox = GetDlgItem( dialogBox, IDC_SND_CATEGORY );
-    char    **cats;
+    TCHAR   **cats;
     int     *catEnums;
     int     i, currCat, idx, currIdx;
 
@@ -829,7 +830,7 @@ bool    plBaseSoundEmitterComponent::UpdateCategories( HWND dialogBox, int &cate
     return true;
 }
 
-SegmentMap *GetCompWaveSegmentMap(const char *file)
+SegmentMap *GetCompWaveSegmentMap(const MCHAR* file)
 {
     if (file == nullptr)
         return nullptr;
@@ -856,7 +857,7 @@ void    plBaseSoundEmitterComponent::ISetBaseParameters( plSound *destSound, plE
 {
     // Make sure our category is valid before we set it
     int     i, cat = fCompPB->GetInt( (ParamID)kSndCategory );
-    char    **cats;
+    TCHAR   **cats;
     int     *catEnums;
 
     if( IGetCategoryList( cats, catEnums ) )
@@ -878,7 +879,7 @@ void    plBaseSoundEmitterComponent::ISetBaseParameters( plSound *destSound, plE
     {
         destSound->SetProperty( plSound::kPropLooping, true );
 
-        ST::string loop = ST::string::from_utf8( fCompPB->GetStr((ParamID)kSoundLoopName) );
+        ST::string loop = M2ST( fCompPB->GetStr((ParamID)kSoundLoopName) );
         if (!loop.empty())
         {
             SegmentMap *segMap = GetCompWaveSegmentMap( GetSoundFileName( kBaseSound ) );
@@ -925,7 +926,7 @@ bool    plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
 
         std::map<plMaxNode*, int>::iterator i = fIndices.begin();
         plSoundVolumeApplicator *app = new plSoundVolumeApplicator( (*i).second );
-        app->SetChannelName(ST::string::from_utf8(node->GetName()));
+        app->SetChannelName(M2ST(node->GetName()));
         plAnimComponentBase::SetupCtl( anim, ctl, app, node );
         result = true;      
     }
@@ -942,7 +943,7 @@ struct indexinfo
     int         fIndex; 
 };
 
-int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name)
+int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const MCHAR*& name)
 {
     int idx = -1;
     if( ( comp->ClassID() == SOUND_3D_COMPONENT_ID ||
@@ -1018,27 +1019,27 @@ protected:
 
     void    IGetNewLocalFileName( plBaseSoundEmitterComponent *soundComponent, plBaseSoundEmitterComponent::WhichSound which )
     {
-        char fileName[ MAX_PATH ], dirName[ MAX_PATH ];
-        const char* name = soundComponent->GetSoundFileName( which );
+        TCHAR fileName[ MAX_PATH ], dirName[ MAX_PATH ];
+        const TCHAR* name = soundComponent->GetSoundFileName( which );
 
         if (name != nullptr)
-            strcpy( fileName, name );
+            _tcsncpy(fileName, name, std::size(fileName));
         else
-            strcpy( fileName, _T( "" ) );
+            *fileName = _T('\0');
 
-        strcpy( dirName, fileName );
+        _tcsncpy(dirName, fileName, std::size(dirName));
         ::PathRemoveFileSpec( dirName );
 
         OPENFILENAME ofn = {0};
         ofn.lStructSize = sizeof( OPENFILENAME );
         ofn.hwndOwner = GetCOREInterface()->GetMAXHWnd();
-        ofn.lpstrFilter = "WAV Files (*.wav)\0*.wav\0Windows Media Audio Files (*.wma)\0*.wma\0OGG Vorbis Files (*.ogg)\0*.ogg\0";
-        ofn.lpstrFile = (LPSTR)fileName;
-        ofn.nMaxFile = sizeof( fileName );
+        ofn.lpstrFilter = _T("WAV Files (*.wav)\0*.wav\0Windows Media Audio Files (*.wma)\0*.wma\0OGG Vorbis Files (*.ogg)\0*.ogg\0");
+        ofn.lpstrFile = fileName;
+        ofn.nMaxFile = std::size(fileName);
         ofn.lpstrInitialDir = dirName;
-        ofn.lpstrTitle = "Choose a sound file";
+        ofn.lpstrTitle = _T("Choose a sound file");
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST;
-        ofn.lpstrDefExt = "wav";
+        ofn.lpstrDefExt = _T("wav");
 
 #ifdef MAXASS_AVAILABLE
         if( GetOpenFileName( &ofn ) )
@@ -1058,16 +1059,16 @@ protected:
         custButton = GetICustButton( GetDlgItem( hDlg, dlgBtnItemToSet ) );
         if (custButton != nullptr)
         {
-            const char* origName = soundComponent->GetSoundFileName( which );
+            auto origName = soundComponent->GetSoundFileName( which );
 
-            if (origName != nullptr && strlen(origName) > 0)
+            if (origName != nullptr && _tcslen(origName) > 0)
             {
-                strcpy( fileName, origName );
+                _tcsncpy(fileName, origName, std::size(fileName));
                 ::PathStripPath( fileName );
                 custButton->SetText( fileName );
             }
             else
-                custButton->SetText( _T( "<None>" ) );
+                custButton->SetText(_M("<None>"));
 
             ReleaseICustButton( custButton );
         }
@@ -1085,8 +1086,8 @@ protected:
         {
             jvUniqueId assetId = soundComponent->GetSoundAssetID(which);
 
-            char fileName[MAX_PATH];
-            if (maxAssInterface->OpenSoundDlg(assetId, fileName, MAX_PATH))
+            MCHAR fileName[MAX_PATH];
+            if (maxAssInterface->OpenSoundDlg(assetId, fileName, std::size(fileName)))
             {
                 // Set asset ID and filename
                 soundComponent->SetSoundAssetId(which, assetId, fileName);
@@ -1133,7 +1134,7 @@ protected:
 
 //// Helper accessors and dialog procs ////
 
-static plSingleCompSelProc gSoundSoftVolumeSelProc( kSndSoftRegion, IDC_COMP_SOUNDREGION_CHOOSE_VOLUME, "Select a soft region to use for the sound" );
+static plSingleCompSelProc gSoundSoftVolumeSelProc( kSndSoftRegion, IDC_COMP_SOUNDREGION_CHOOSE_VOLUME, _T("Select a soft region to use for the sound") );
 
 // When one of our parameters that is a ref changes, send out the component ref
 // changed message.  Normally, messages from component refs are ignored since
@@ -1184,75 +1185,75 @@ static ParamBlockDesc2 sSoundSharedPB
     kSndVersionCount, _T(""), TYPE_INT, 0, 0,
         p_range, 0, 10000,
         p_default, 0,
-        end,
+        p_end,
     
     kSoundFileName,     _T("fileName"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
     
     kSoundAutoStartCkBx, _T("autoStart"),       TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSndSharedParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND3D_AUTOSTART_CKBX,
-        end,
+        p_end,
     
     kSoundLoopCkBx, _T("loop"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSndSharedParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND3D_LOOPCHKBOX,
-        end,
+        p_end,
     kSoundLoopName, _T("loopName"), TYPE_STRING,    0, 0,
-        end,
+        p_end,
 
     kSndDisableLOD, _T("disableLOD"),       TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSndSharedParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND_DISABLELOD,
-        end,
+        p_end,
 
     kSoundVolumeSlider, _T("volume"),   TYPE_FLOAT,  P_ANIMATABLE,  IDS_SND_VOLUME,
         p_ui,   kSndSharedParams, TYPE_SLIDER,  EDITTYPE_FLOAT, IDC_COMP_SOUND3D_SLIDERVIEWER, IDC_COMP_SOUND3D_VOLSLIDER, 4,
         p_range, -48.0f, 0.f,
         p_default, 0.f,
-        end,
+        p_end,
 
     kNotSoOldSoundVolumeSlider, _T(""), TYPE_FLOAT,     0,  0,
-        end,
+        p_end,
 
     kOldSoundVolumeSlider, _T(""),  TYPE_INT,       0,  0,
-        end,
+        p_end,
 
     kSndCategory, _T("category"),   TYPE_INT,   0, 0,   
         p_range, plSound::kStartType, plSound::kNumTypes - 1,
         p_default, plSound::kSoundFX,
-        end,
+        p_end,
 
     /// Fade Parameters rollout
     kSndFadeInEnable, _T("fadeInEnable"),       TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSoundFadeParams, TYPE_SINGLECHEKBOX, IDC_SOUND3D_INENABLE,
-        end,
+        p_end,
 
     kSndFadeInType, _T("fadeInType"),       TYPE_INT,       0, 0,
         p_default,  0,
-        end,
+        p_end,
 
     kSndFadeInLength, _T("fadeInLength"),   TYPE_FLOAT, 0,0,
         p_ui,   kSoundFadeParams, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_SOUND3D_INLENGTH, IDC_SOUND3D_INLENGTHSPIN, 1.0f,
         p_default,  1.f,
-        end,
+        p_end,
 
     kSndFadeOutEnable, _T("fadeOutEnable"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSoundFadeParams, TYPE_SINGLECHEKBOX, IDC_SOUND3D_OUTENABLE,
-        end,
+        p_end,
 
     kSndFadeOutType, _T("fadeOutType"),     TYPE_INT,       0, 0,
         p_default,  0,
-        end,
+        p_end,
 
     kSndFadeOutLength, _T("fadeOutLength"), TYPE_FLOAT, 0,0,
         p_ui,   kSoundFadeParams, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_SOUND3D_OUTLENGTH, IDC_SOUND3D_OUTLENGTHSPIN, 1.0f,
         p_default,  1.f,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 //// ParamBlock Macros for Waveform Properties Rollout ///////////////////////////////////////////
@@ -1265,19 +1266,19 @@ static ParamBlockDesc2 sSoundSharedPB
         p_default, 0,                                                                                       \
         p_ui, kSndWaveformParams, TYPE_SINGLECHEKBOX, IDC_SND_ISSTEREO_HIDDEN,                              \
         p_enable_ctrls, 1, kSndChannelSelect,                                                               \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     /* Channel select for stereo sources */                                                                 \
     kSndChannelSelect, _T( "sourceChannel" ), TYPE_INT, 0, 0,                                               \
         p_ui,   kSndWaveformParams, TYPE_RADIO, 2, IDC_SND_CHANSRC1, IDC_SND_CHANSRC2,                      \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kSndPriority,           _T("sndPriority"), TYPE_INT, 0, 0,                                              \
         p_range, 0, 10,                                                                                     \
         p_ui,   kSndWaveformParams, TYPE_SPINNER, EDITTYPE_INT, IDC_SND_PRIORITY, IDC_SND_PRIORITY_SPIN, 1.f,   \
         p_default, 0,                                                                                       \
-        end                                                                                             
+        p_end                                                                                             
 
 //// Enums Source EAX Properties Rollout ////////////////////////////////////////////////////////
 
@@ -1378,7 +1379,7 @@ class plEAXPropsDlgProc : public plSingleCompSelProc
     class plOccPreset
     {
         public:
-            char    *fName;
+            TCHAR    *fName;
             int16_t   fOcc;
             float   fLFRatio;
             float   fRoomRatio;
@@ -1407,13 +1408,13 @@ public:
             ISwapOutOcclusion( fLastBlockSwapped );
     }
 
-    plEAXPropsDlgProc() : plSingleCompSelProc( kEAXOcclusionRegion, IDC_EAX_OCCREGION, "Select the soft region to blend these EAX occlusion properties" )
+    plEAXPropsDlgProc() : plSingleCompSelProc( kEAXOcclusionRegion, IDC_EAX_OCCREGION, _T("Select the soft region to blend these EAX occlusion properties") )
     {
         int i;
 
         // Annoyingly, the EAX headers don't have a convenient array, just some #defines
-        static char occNames[][ 64 ] = { "Single window", "Double window", "Thin door", "Thick door",
-                                    "Wood wall", "Brick wall", "Stone wall", "Curtain" };
+        static TCHAR occNames[][ 64 ] = { _T("Single window"), _T("Double window"), _T("Thin door"), _T("Thick door"),
+                                          _T("Wood wall"), _T("Brick wall"), _T("Stone wall"), _T("Curtain") };
         int16_t   occValues[] = { EAX_MATERIAL_SINGLEWINDOW, EAX_MATERIAL_DOUBLEWINDOW, EAX_MATERIAL_THINDOOR,
                                 EAX_MATERIAL_THICKDOOR, EAX_MATERIAL_WOODWALL, EAX_MATERIAL_BRICKWALL,
                                 EAX_MATERIAL_STONEWALL, EAX_MATERIAL_CURTAIN };
@@ -1431,7 +1432,7 @@ public:
             fPresets[ i ].fLFRatio = occLFValues[ i - 1 ];
             fPresets[ i ].fRoomRatio = occRoomValues[ i - 1 ];
         }
-        fPresets[ 0 ].fName = "None";
+        fPresets[ 0 ].fName = _T("None");
         fPresets[ 0 ].fOcc = 0;
         fPresets[ 0 ].fLFRatio = 0.25f;
         fPresets[ 0 ].fRoomRatio = 1.5f;
@@ -1520,129 +1521,129 @@ static plEAXPropsDlgProc    sEAXPropsDlgProc;
         p_enable_ctrls, 10, kEAXRoom, kEAXRoomHF, kEAXRoomAuto, kEAXRoomHFAuto,                             \
                 kEAXOutsideVolHF, kEAXAirAbsorptionFact, kEAXRoomRolloffFact, kEAXDopplerFact, kEAXRolloffFact,         \
                 kEAXEnableOcclusion,                                                                        \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoom, _T("eaxRoom"),    TYPE_INT,       0,  0,                                                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_ROOM_EDIT, IDC_EAX_ROOM, 8,               \
         p_range, -10000, 1000,                                                                              \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoomHF, _T("eaxRoomHF"),    TYPE_INT,       0,  0,                                                  \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_ROOMHF_EDIT, IDC_EAX_ROOMHF, 8,           \
         p_range, -10000, 0,                                                                                 \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoomAuto,       _T( "eaxRoomAuto" ), TYPE_BOOL, 0, 0,                                               \
         p_default, 1,                                                                                       \
         p_ui, kSndEAXParams, TYPE_SINGLECHEKBOX, IDC_EAX_ROOMAUTO,                                          \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoomHFAuto,     _T( "eaxRoomHFAuto" ), TYPE_BOOL, 0, 0,                                             \
         p_default, 1,                                                                                       \
         p_ui, kSndEAXParams, TYPE_SINGLECHEKBOX, IDC_EAX_ROOMHFAUTO,                                        \
-        end,                                                                                                    \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXOutsideVolHF, _T("eaxOutsideVolHF"),    TYPE_INT,       0,  0,                                                  \
+    kEAXOutsideVolHF, _T("eaxOutsideVolHF"),    TYPE_INT,       0,  0,                                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_OUTSIDEVOLHF_EDIT, IDC_EAX_OUTSIDEVOLHF, 8,           \
         p_range, -10000, 0,                                                                                 \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXAirAbsorptionFact, _T("eaxAirAbsorptionFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXAirAbsorptionFact, _T("eaxAirAbsorptionFact"),  TYPE_FLOAT,     0,  0,                              \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_AIRABSORPTFACT_EDIT, IDC_EAX_AIRABSORPTFACT, 8,         \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 1.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXRoomRolloffFact, _T("eaxRoomRolloffFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXRoomRolloffFact, _T("eaxRoomRolloffFact"),  TYPE_FLOAT,     0,  0,                                  \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_ROOMROLLOFFFACT_EDIT, IDC_EAX_ROOMROLLOFFFACT, 8,           \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 0.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXDopplerFact, _T("eaxDopplerFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXDopplerFact, _T("eaxDopplerFact"),  TYPE_FLOAT,     0,  0,                                          \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_DOPPLERFACT_EDIT, IDC_EAX_DOPPLERFACT, 8,           \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 0.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXRolloffFact, _T("eaxRolloffFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXRolloffFact, _T("eaxRolloffFact"),  TYPE_FLOAT,     0,  0,                                          \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_ROLLOFFFACT_EDIT, IDC_EAX_ROLLOFFFACT, 8,           \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 0.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXEnableOcclusion, _T("eaxEnableOcclusion"), TYPE_BOOL, 0, 0,                                         \
         p_default, 0,                                                                                       \
         p_ui, kSndEAXParams, TYPE_SINGLECHEKBOX, IDC_EAX_ENABLEOCCLUSION,                                   \
         p_enable_ctrls, 6, kEAXOcclusionRegion, kEAXTempOcclusion, kEAXTempOcclusionLFRatio, kEAXTempOcclusionRoomRatio,    \
                 kEAXTempOcclusionDirectRatio, kEAXTempOccSwapper,                                           \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXOcclusionRegion, _T("eaxOcclusionRegion"),  TYPE_INODE,     0,  0,                                      \
-        end,                                                                                                \
+    kEAXOcclusionRegion, _T("eaxOcclusionRegion"),  TYPE_INODE,     0,  0,                                  \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusion, _T("eaxStartOcclusion"),    TYPE_INT,       0,  0,                                                  \
+    kEAXStartOcclusion, _T("eaxStartOcclusion"),    TYPE_INT,       0,  0,                                  \
         p_range, -10000, 0, p_default, 0,                                                                   \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusionLFRatio, _T("eaxStartOccLFRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXStartOcclusionLFRatio, _T("eaxStartOccLFRatio"),    TYPE_FLOAT,     0,  0,                          \
         p_range, 0.f, 1.f, p_default, 0.25f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusionRoomRatio, _T("eaxStartOccRoomRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXStartOcclusionRoomRatio, _T("eaxStartOccRoomRatio"),    TYPE_FLOAT,     0,  0,                      \
         p_range, 0.f, 10.f, p_default, 1.5f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusionDirectRatio, _T("eaxStartOccDirectRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXStartOcclusionDirectRatio, _T("eaxStartOccDirectRatio"),    TYPE_FLOAT,     0,  0,                  \
         p_range, 0.f, 10.f, p_default, 1.0f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusion, _T("eaxEndOcclusion"),    TYPE_INT,       0,  0,                                                  \
+    kEAXEndOcclusion, _T("eaxEndOcclusion"),    TYPE_INT,       0,  0,                                      \
         p_range, -10000, 0, p_default, 0,                                                                   \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusionLFRatio, _T("eaxEndOccLFRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXEndOcclusionLFRatio, _T("eaxEndOccLFRatio"),    TYPE_FLOAT,     0,  0,                              \
         p_range, 0.f, 1.f, p_default, 0.25f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusionRoomRatio, _T("eaxEndOccRoomRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXEndOcclusionRoomRatio, _T("eaxEndOccRoomRatio"),    TYPE_FLOAT,     0,  0,                          \
         p_range, 0.f, 10.f, p_default, 1.5f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusionDirectRatio, _T("eaxEndOccDirectRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXEndOcclusionDirectRatio, _T("eaxEndOccDirectRatio"),    TYPE_FLOAT,     0,  0,                      \
         p_range, 0.f, 10.f, p_default, 1.0f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXWhichOccSwapped, _T("eaxWhichOccSwapped"),  TYPE_INT,       0,  0,                                                  \
-        end,                                                                                                \
+    kEAXWhichOccSwapped, _T("eaxWhichOccSwapped"),  TYPE_INT,       0,  0,                                  \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXTempOccSwapper, _T("eaxOccSwapper"),    TYPE_INT,       0,  0,                                      \
         p_ui, kSndEAXParams, TYPE_RADIO, 2, IDC_EAX_STARTOCC, IDC_EAX_ENDOCC,                               \
-        p_default, 0,                                                               \
-        end,                                                                                                \
+        p_default, 0,                                                                                       \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXTempOcclusion, _T("eaxTempOcclusion"),  TYPE_INT,       0,  0,                                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_OCCLUSION_EDIT, IDC_EAX_OCCLUSION, 8,     \
         p_range, -10000, 0, p_default, 0,                                                                   \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXTempOcclusionLFRatio, _T("eaxTempOccLFRatio"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXTempOcclusionLFRatio, _T("eaxTempOccLFRatio"),  TYPE_FLOAT,     0,  0,                              \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_OCCLFRATIO_EDIT, IDC_EAX_OCCLFRATIO, 8,         \
         p_range, 0.f, 1.f, p_default, 0.25f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXTempOcclusionRoomRatio, _T("eaxTempOccRoomRatio"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXTempOcclusionRoomRatio, _T("eaxTempOccRoomRatio"),  TYPE_FLOAT,     0,  0,                          \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_OCCROOMRATIO_EDIT, IDC_EAX_OCCROOMRATIO, 8,         \
         p_range, 0.f, 10.f, p_default, 1.5f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXTempOcclusionDirectRatio, _T("eaxTempOccDirectRatio"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXTempOcclusionDirectRatio, _T("eaxTempOccDirectRatio"),  TYPE_FLOAT,     0,  0,                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_OCCDIRECTRATIO_EDIT, IDC_EAX_OCCDIRECTRATIO, 8,         \
         p_range, 0.f, 10.f, p_default, 1.0f,                                                                \
-        end                                                                                             
+        p_end                                                                                             
 
 //  , end
 //);
@@ -1693,7 +1694,7 @@ void    plBaseSoundEmitterComponent::IGrabEAXParams( plSound *sound, plErrorMsg 
             }
             else
             {
-                pErrMsg->Set(true, "Sound Emitter Error", "The Sound emitter component %s is checked to use an occlusion soft region, but no soft region is specified. Ignoring setting.", GetINode()->GetName() ).Show();
+                pErrMsg->Set(true, "Sound Emitter Error", ST::format("The Sound emitter component {} is checked to use an occlusion soft region, but no soft region is specified. Ignoring setting.", GetINode()->GetName()) ).Show();
                 pErrMsg->Set(false);
                 settings.GetSoftStarts().Reset();
                 settings.GetSoftEnds().Reset();
@@ -1777,7 +1778,7 @@ protected:
 
     void    ISetParameters( plWin32Sound *destSound, plErrorMsg *pErrMsg );
 
-    bool    IGetCategoryList(char **&catList, int *&catKonstantList) override;
+    bool    IGetCategoryList(TCHAR**& catList, int *&catKonstantList) override;
 };
 
 class plSoundComponentProc : public plAudioBaseComponentProc
@@ -1792,11 +1793,9 @@ public:
     void ILoadLoops(HWND hLoop, IParamBlock2 *pb)
     {
         SendMessage(hLoop, CB_RESETCONTENT, 0, 0);
-        SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)"(Entire Sound)");
+        SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)_T("(Entire Sound)"));
 
-        const char *loop = pb->GetStr(kSoundLoopName);
-        if (!loop)
-            loop = "";
+        ST::string loop = M2ST(pb->GetStr(kSoundLoopName));
 
         SegmentMap *segMap = GetCompWaveSegmentMap(pb->GetStr(kSoundFileName));
         
@@ -1805,7 +1804,7 @@ public:
             for (SegmentMap::iterator it = segMap->begin(); it != segMap->end(); it++)
             {
                 SegmentSpec *spec = it->second;
-                int idx = (int)SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
+                int idx = (int)SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)ST2T(spec->fName));
                 SendMessage(hLoop, CB_SETITEMDATA, idx, 1);
 
                 if (!spec->fName.compare(loop))
@@ -1860,10 +1859,10 @@ public:
             {
                 int idx = (int)SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
                 if (idx == CB_ERR || SendMessage((HWND)lParam, CB_GETITEMDATA, idx, 0) == 0)
-                    map->GetParamBlock()->SetValue((ParamID)kSoundLoopName, 0, "");
+                    map->GetParamBlock()->SetValue((ParamID)kSoundLoopName, 0, _M(""));
                 else
                 {
-                    char buf[256];
+                    TCHAR buf[256];
                     SendMessage((HWND)lParam, CB_GETLBTEXT, idx, (LPARAM)buf);
                     map->GetParamBlock()->SetValue((ParamID)kSoundLoopName, 0, buf);
                 }
@@ -1903,7 +1902,7 @@ class plSoundFadeParamsDlgProc : public plAudioBaseComponentProc
 
         INT_PTR DlgProc(TimeValue t, IParamMap2 *map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
         {
-            const char          *types[] = { "Linear", "Logarithmic", "Exponential", nullptr };
+            const TCHAR     *types[] = { _T("Linear"), _T("Logarithmic"), _T("Exponential"), nullptr };
             IParamBlock2    *pb = map->GetParamBlock();
             BOOL            enable;
 
@@ -1989,7 +1988,7 @@ ParamBlockDesc2 gSound3DEmitterBk
     kSndIsLocalOnly, _T("noNetworkSynch"),      TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_SND_LOCALONLY,
-        end,
+        p_end,
     
 
     kMinFallOffRad, _T("minFalloff"),   TYPE_INT,   0, 0,   
@@ -1997,20 +1996,20 @@ ParamBlockDesc2 gSound3DEmitterBk
         p_default, 1,
         p_ui,   kS3DBaseParams, TYPE_SPINNER,   EDITTYPE_POS_INT,
         IDC_COMP_SOUND3D_EDIT3, IDC_COMP_SOUND3D_SPIN3, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kMaxFallOffRad, _T("maxFalloff"),   TYPE_INT,   0, 0,   
         p_range, 1, 1000000000,
         p_default, 1000000000,
         p_ui,   kS3DBaseParams, TYPE_SPINNER,   EDITTYPE_POS_INT,
         IDC_COMP_SOUND3D_EDIT4, IDC_COMP_SOUND3D_SPIN4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kSoundConeBool, _T("SoundCone"),        TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_enable_ctrls, 3, kSoundIConeAngle, kSoundOConeAngle, kSoundOConeVolumeSlider,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND3D_CONEEFFECT_CKBX,
-        end,
+        p_end,
 
 
     kSoundIConeAngle,   _T("insideConeAngle"), TYPE_INT,    0,  0,
@@ -2018,40 +2017,40 @@ ParamBlockDesc2 gSound3DEmitterBk
         p_default, 360,
         p_ui,   kS3DBaseParams, TYPE_SPINNER, EDITTYPE_INT,
         IDC_COMP_SOUND3D_ICONEANGLE_EDIT, IDC_COMP_SOUND3D_ICONEANGLE_SPIN, 1.0f,
-        end,
+        p_end,
 
     kSoundOConeAngle,   _T("outsideConeAngle"), TYPE_INT,   0,  0,
         p_range, 0, 360,
         p_default, 360,
         p_ui,   kS3DBaseParams, TYPE_SPINNER, EDITTYPE_INT,
         IDC_COMP_SOUND3D_OCONEANGLE_EDIT, IDC_COMP_SOUND3D_OCONEANGLE_SPIN, 1.0f,
-        end,
+        p_end,
         
     kSoundOConeVolumeSlider, _T("outsideConeVolSlider"),    TYPE_INT,       0,  0,
         p_ui,   kS3DBaseParams, TYPE_SLIDER,    EDITTYPE_INT, IDC_COMP_SOUND3D_SLIDERVIEWER2, IDC_COMP_SOUND3D_VOLSLIDER2, 4,
         p_range, 5000,  10000,
         p_default, 5000,
-        end,
+        p_end,
 
     /// Soft Region/Volume Parameters rollout
     kSndSoftRegionEnable,   _T( "enableSoftRegion" ), TYPE_BOOL, 0, 0,
         p_ui,   kS3DSoftVolumeParams, TYPE_SINGLECHEKBOX, IDC_SOUND_SOFTENABLE,
         p_default, FALSE,
-        end,
+        p_end,
 
     kSndSoftRegion, _T("softRegion"),   TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_SOUNDSOFTSELECT,
         p_accessor, &gSoundSoftVolAccessor,
-        end,
+        p_end,
                 
     kSndIncidental, _T("isIncidental"), TYPE_INT, 0, 0,
         p_default,  FALSE,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_SND_INCIDENTAL,
-        end,
+        p_end,
         
     sSndEAXPropsParamTemplate,  // it's a #define
 
-    end
+    p_end
 );
 
 
@@ -2068,9 +2067,10 @@ plSound3DEmitterComponent::~plSound3DEmitterComponent()
 //// IGetCategoryList ///////////////////////////////////////////////////////////////////////////
 //  Returns a list of the categories and konstants supported for this type of sound
 
-bool    plSound3DEmitterComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
+bool    plSound3DEmitterComponent::IGetCategoryList( TCHAR **&catList, int *&catKonstantList )
 {
-    static char *cats[] = { "Background Music", "Ambience", "Sound FX", "GUI", "NPC Voice", "" };
+    static TCHAR *cats[] = { _T("Background Music"), _T("Ambience"),
+                             _T("Sound FX"), _T("GUI"), _T("NPC Voice"), _T("") };
     static int  catEnums[] = { plSound::kBackgroundMusic, plSound::kAmbience, plSound::kSoundFX, plSound::kGUISound, plSound::kNPCVoices };
 
     catList = cats;
@@ -2159,7 +2159,7 @@ bool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if( fCreateGrouped )
         return true;
 
-    const char* fileName = GetSoundFileName( kBaseSound );
+    auto fileName = GetSoundFileName( kBaseSound );
 
     int fIndex = -1;
     if (fIndices.find(node) != fIndices.end())
@@ -2173,11 +2173,11 @@ bool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
 
-    ST::string keyName = ST::string::from_utf8(GetINode()->GetName());
+    ST::string keyName = M2ST(GetINode()->GetName());
 
     plWin32Sound *sound = nullptr;
 
-    if (!strcmp(node->GetName(), "LinkSoundSource"))
+    if (!_tcscmp(node->GetName(), _T("LinkSoundSource")))
         sound = new plWin32LinkSound;
     else
     {
@@ -2229,10 +2229,10 @@ bool plSound3DEmitterComponent::ConvertGrouped(plMaxNode *baseNode, std::vector<
         // Make sure they're all 3D sounds...
         if (groupComponent->ClassID() != SOUND_3D_COMPONENT_ID)
         {
-            char msg[ 512 ];
-            sprintf( msg, "The sound component %s isn't a 3D sound, which is necessary for making grouped sounds. "
-                        "Make sure all the sounds in this group are 3D sounds.", groupComponent->GetINode()->GetName());
-            IShowError( kSrcBufferInvalid, msg, baseNode->GetName(), pErrMsg );
+            IShowError(kSrcBufferInvalid, pErrMsg,
+                "The sound component {} isn't a 3D sound, which is necessary for making grouped sounds. "
+                "Make sure all the sounds in this group are 3D sounds.",
+                groupComponent->GetINode()->GetName());
 
             // Attempt to recover
             startPoses.emplace_back((uint32_t)mergedData.size());
@@ -2263,9 +2263,9 @@ bool plSound3DEmitterComponent::ConvertGrouped(plMaxNode *baseNode, std::vector<
 
             if( !worked )
             {
-                char msg[ 512 ];
-                sprintf(msg, "The sound file %s cannot be loaded for component %s.", fileName.AsString().c_str(), groupComponent->GetINode()->GetName());
-                IShowError( kSrcBufferInvalid, msg, baseNode->GetName(), pErrMsg );
+                IShowError(kSrcBufferInvalid, pErrMsg,
+                    "The sound file {} cannot be loaded for component {}.",
+                    fileName, groupComponent->GetINode()->GetName());
                 delete buffer;
 
                 // Attempt to recover
@@ -2282,10 +2282,10 @@ bool plSound3DEmitterComponent::ConvertGrouped(plMaxNode *baseNode, std::vector<
         {
             if( memcmp( &mergedHeader, &buffer->GetHeader(), sizeof( mergedHeader ) ) != 0 )
             {
-                char msg[ 512 ];
-                sprintf( msg, "The format for sound file %s does not match the format for the other grouped sounds on node %s. "
-                              "Make sure the sounds are all the same format.", fileName.AsString().c_str(), baseNode->GetName() );
-                IShowError( kMergeSourceFormatMismatch, msg, baseNode->GetName(), pErrMsg );
+                IShowError(kMergeSourceFormatMismatch, pErrMsg,
+                    "The format for sound file {} does not match the format for the other grouped sounds on node {}. "
+                    "Make sure the sounds are all the same format.",
+                    fileName, baseNode->GetName());
                 delete buffer;
 
                 // Attempt to recover
@@ -2333,7 +2333,7 @@ bool plSound3DEmitterComponent::ConvertGrouped(plMaxNode *baseNode, std::vector<
     const plAudioInterface* ai = baseNode->GetSceneObject()->GetAudioInterface();
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
-    keyName = ST::string::from_utf8(GetINode()->GetName());
+    keyName = M2ST(GetINode()->GetName());
     plWin32GroupedSound *sound = new plWin32GroupedSound;
     sound->SetPositionArray(startPoses.size(), startPoses.data(), volumes.data());
     sound->SetProperty( plSound::kPropLoadOnlyOnCall, true );
@@ -2377,7 +2377,7 @@ protected:
     uint32_t ICalcSourceBufferFlags() const override;
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
-    bool    IGetCategoryList(char **&catList, int *&catKonstantList) override;
+    bool    IGetCategoryList(TCHAR **&catList, int *&catKonstantList) override;
 };
 
 //Max desc stuff necessary below.
@@ -2405,24 +2405,24 @@ ParamBlockDesc2 gBgndMusicEmitterBk
     kSndIsLocalOnly, _T("noNetworkSynch"),      TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_SND_LOCALONLY,
-        end,
+        p_end,
 
     kSndStreamCompressed,   _T("stream"),       TYPE_BOOL,      0, 0,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_CHECK_STREAM,
-        end,
+        p_end,
 
     /// Soft Region/Volume Parameters rollout
     kSndSoftRegionEnable,   _T( "enableSoftRegion" ), TYPE_BOOL, 0, 0,
         p_ui,   kS3DSoftVolumeParams, TYPE_SINGLECHEKBOX, IDC_SOUND_SOFTENABLE,
         p_default, FALSE,
-        end,
+        p_end,
 
     kSndSoftRegion, _T("softRegion"),   TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_SOUNDSOFTSELECT,
         p_accessor, &gSoundSoftVolAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -2467,7 +2467,7 @@ bool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (!fValidNodes[node])
         return false;
 
-    const char* fileName = GetSoundFileName( kBaseSound );
+    auto fileName = GetSoundFileName( kBaseSound );
 
     int fIndex = -1;
     if (fIndices.find(node) != fIndices.end())
@@ -2516,9 +2516,10 @@ bool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 //// IGetCategoryList ///////////////////////////////////////////////////////////////////////////
 //  Returns a list of the categories and konstants supported for this type of sound
 
-bool    plBackgroundMusicComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
+bool    plBackgroundMusicComponent::IGetCategoryList( TCHAR **&catList, int *&catKonstantList )
 {
-    static char *cats[] = { "Background Music", "Ambience", "Sound FX", "GUI", "NPC Voice", "" };
+    static TCHAR *cats[] = { _T("Background Music"), _T("Ambience"), _T("Sound FX"),
+                             _T("GUI"), _T("NPC Voice"), _T("") };
     static int  catEnums[] = { plSound::kBackgroundMusic, plSound::kAmbience, plSound::kSoundFX, plSound::kGUISound, plSound::kNPCVoices };
 
     catList = cats;
@@ -2552,7 +2553,7 @@ protected:
 
     bool    IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    bool    IGetCategoryList(char **&catList, int *&catKonstantList) override;
+    bool    IGetCategoryList(TCHAR **&catList, int *&catKonstantList) override;
 
     bool    IHasWaveformProps() const override { return false; }
 };
@@ -2571,7 +2572,7 @@ ParamBlockDesc2 gGUISoundEmitterBk
     // Included paramblock
     &sSoundSharedPB,
 
-    end
+    p_end
 );
 
 
@@ -2588,9 +2589,9 @@ plGUISoundComponent::~plGUISoundComponent()
 //// IGetCategoryList ///////////////////////////////////////////////////////////////////////////
 //  Returns a list of the categories and konstants supported for this type of sound
 
-bool    plGUISoundComponent::IGetCategoryList( char **&catList, int *&catKonstantList )
+bool    plGUISoundComponent::IGetCategoryList( TCHAR **&catList, int *&catKonstantList )
 {
-    static char *cats[] = { "GUI", "" };
+    static TCHAR *cats[] = { _T("GUI"), _T("") };
     static int  catEnums[] = { plSound::kGUISound };
 
     catList = cats;
@@ -2621,7 +2622,7 @@ bool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if (!fValidNodes[node])
         return false;
 
-    const char* fileName = GetSoundFileName( kBaseSound );
+    ST::string fileName = M2ST(GetSoundFileName( kBaseSound ));
 
     int fIndex = -1;
     if (fIndices.find(node) != fIndices.end())
@@ -2633,7 +2634,7 @@ bool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plSoundBuffer *srcBuffer = GetSourceBuffer( fileName, node, ICalcSourceBufferFlags() );
     if (srcBuffer == nullptr)
     {
-        pErrMsg->Set( true, node->GetName(), "The file specified for the sound 3D component %s is invalid. This emitter will not be exported.", GetINode()->GetName() ).Show();
+        pErrMsg->Set( true, node->GetName(), ST::format("The file specified for the sound 3D component {} is invalid. This emitter will not be exported.", GetINode()->GetName()) ).Show();
         pErrMsg->Set( false );
         return false;
     }
@@ -2713,8 +2714,8 @@ public:
     bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg) override;
     bool Convert(plMaxNode *node, plErrorMsg *errMsg) override;
 
-    const char *GetCustFileName() const;
-    void        SetCustFile( const char *path );
+    const MCHAR* GetCustFileName() const;
+    void        SetCustFile( const MCHAR* path );
 };
 
 // When one of our parameters that is a ref changes, send out the component ref
@@ -2745,26 +2746,25 @@ protected:
     {
         TCHAR   fileName[ MAX_PATH ], dirName[ MAX_PATH ];
 
-    
-        const char *name = listenerComp->GetCustFileName();
+        const TCHAR* name = listenerComp->GetCustFileName();
         if (name != nullptr)
-            strcpy( fileName, name );
+            _tcsncpy(fileName, name, std::size(fileName));
         else
-            strcpy( fileName, _T( "" ) );
+            *fileName = _T('\0');
 
-        strcpy( dirName, fileName );
+        _tcsncpy(dirName, fileName, std::size(dirName));
         ::PathRemoveFileSpec( dirName );
 
         OPENFILENAME ofn = {0};
         ofn.lStructSize = sizeof( OPENFILENAME );
         ofn.hwndOwner = GetCOREInterface()->GetMAXHWnd();
-        ofn.lpstrFilter = "EAX Preset Files (*.eax)\0*.eax\0All Files\0*.*\0";
+        ofn.lpstrFilter = _T("EAX Preset Files (*.eax)\0*.eax\0All Files\0*.*\0");
         ofn.lpstrFile = fileName;
-        ofn.nMaxFile = sizeof( fileName );
+        ofn.nMaxFile = std::size( fileName );
         ofn.lpstrInitialDir = dirName;
-        ofn.lpstrTitle = "Choose a sound file";
+        ofn.lpstrTitle = _T("Choose a sound file");
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST;
-        ofn.lpstrDefExt = "eax";
+        ofn.lpstrDefExt = _T("eax");
 
         if( GetOpenFileName( &ofn ) )
         {
@@ -2777,7 +2777,7 @@ protected:
 public:
 
     plEAXListenerDlgProc() 
-        : plSingleCompSelProc( plEAXListenerComponent::kRefSoftRegion, IDC_EAX_SOFTREGION, "Select the soft region to apply these EAX listener properties to" )
+        : plSingleCompSelProc( plEAXListenerComponent::kRefSoftRegion, IDC_EAX_SOFTREGION, _T("Select the soft region to apply these EAX listener properties to") )
     {
     }
 
@@ -2856,48 +2856,48 @@ ParamBlockDesc2 gEAXListenerBlk
 
     plEAXListenerComponent::kRefSoftRegion, _T("SoftRegion"),   TYPE_INODE,     0, 0,
         p_accessor,     &gEAXListenerAccessor,
-        end,
+        p_end,
     
     plEAXListenerComponent::kRefWhichSettings, _T("whichSettings"), TYPE_INT,       0, 0,
         p_ui, TYPE_RADIO, 2, IDC_EAX_PRESET, IDC_EAX_CUSTOM,
         p_default, 0,
-        end,
+        p_end,
 
     plEAXListenerComponent::kRefPreset, _T("preset"),   TYPE_INT,       0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     // This is just a label for now, so the users know what file the presets came from
     plEAXListenerComponent::kRefCustFile, _T("custFile"), TYPE_STRING, 0, 0,
         p_default, _T(""),
-        end,
+        p_end,
 
     // EAX listener params (should be private)
-    plEAXListenerComponent::kRefEnvironmentSize,        _T(""), TYPE_FLOAT, 0, 0, end,      // float
-    plEAXListenerComponent::kRefEnvironmentDiffusion,   _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefRoom,                   _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefRoomHF,                 _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefRoomLF,                 _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefDecayTime,              _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefDecayHFRatio,           _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefDecayLFRatio,           _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefReflections,            _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefReflectionsDelay,       _T(""), TYPE_FLOAT, 0, 0, end,// float
+    plEAXListenerComponent::kRefEnvironmentSize,        _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefEnvironmentDiffusion,   _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefRoom,                   _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefRoomHF,                 _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefRoomLF,                 _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefDecayTime,              _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefDecayHFRatio,           _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefDecayLFRatio,           _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefReflections,            _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefReflectionsDelay,       _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
         // panning goes here
-    plEAXListenerComponent::kRefReverb,                 _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefReverbDelay,            _T(""), TYPE_FLOAT, 0, 0, end,// float
+    plEAXListenerComponent::kRefReverb,                 _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefReverbDelay,            _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
         // Reverb pan
-    plEAXListenerComponent::kRefEchoTime,               _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefEchoDepth,              _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefModulationTime,         _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefModulationDepth,        _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefAirAbsorptionHF,        _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefHFReference,            _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefLFReference,            _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefRoomRolloffFactor,      _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefFlags,                  _T(""), TYPE_INT, 0, 0, end,// unsigned long
+    plEAXListenerComponent::kRefEchoTime,               _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefEchoDepth,              _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefModulationTime,         _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefModulationDepth,        _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefAirAbsorptionHF,        _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefHFReference,            _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefLFReference,            _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefRoomRolloffFactor,      _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefFlags,                  _T(""), TYPE_INT, 0, 0, p_end,        // unsigned long
 
-    end
+    p_end
 );
 
 plEAXListenerComponent::plEAXListenerComponent()
@@ -2988,14 +2988,14 @@ bool plEAXListenerComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errM
     return true;
 }
 
-const char *plEAXListenerComponent::GetCustFileName() const
+const MCHAR* plEAXListenerComponent::GetCustFileName() const
 {
-    return (const char *)fCompPB->GetStr( (ParamID)kRefCustFile );
+    return fCompPB->GetStr( (ParamID)kRefCustFile );
 }
 
-void    plEAXListenerComponent::SetCustFile( const char *path )
+void    plEAXListenerComponent::SetCustFile( const MCHAR* path )
 {
-    char    file[ MAX_PATH ];
+    TCHAR   file[ MAX_PATH ];
     int     i;
     hsUNIXStream    presetFile;
 
@@ -3030,7 +3030,7 @@ void    plEAXListenerComponent::SetCustFile( const char *path )
         { nullptr, 0, 0 } };
 
     // Read the file and set settings from it
-    if( !presetFile.Open( path, "rt" ) )
+    if( !presetFile.Open( T2ST(path), "rt" ) )
     {
         // Oops
         hsAssert( false, "can't open file" );
@@ -3067,7 +3067,7 @@ void    plEAXListenerComponent::SetCustFile( const char *path )
     presetFile.Close();
 
     // Update our helper reminder string
-    _splitpath(path, nullptr, nullptr, file, nullptr);
+    _tsplitpath(path, nullptr, nullptr, file, nullptr);
     fCompPB->SetValue( (ParamID)kRefCustFile, 0, file );
 }
 
@@ -3241,59 +3241,59 @@ ParamBlockDesc2 gRandomSoundBk
     kAutoStart,  _T("AutoStart"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
         p_ui, kRandomSoundMain, TYPE_SINGLECHEKBOX, IDC_COMP_RS_AUTOSTART,
-        end,
+        p_end,
 
     kSelectMode,    _T("SelectMode"),       TYPE_INT,       0, 0,
         p_ui, kRandomSoundMain, TYPE_RADIO, 5,  IDC_RADIO_RS_NORMAL,    IDC_RADIO_RS_NOREP, IDC_RADIO_RS_FSREP, IDC_RADIO_RS_FSSTOP, IDC_RADIO_RS_SEQ,
-        end,
+        p_end,
 
     kDelayMode, _T("DelayMode"),        TYPE_INT,       0, 0,
         p_ui, kRandomSoundMain, TYPE_RADIO, 3,  IDC_RADIO_RS_DELAYSTART,    IDC_RADIO_RS_DELAYEND,  IDC_RADIO_RS_DELAYNEVER, 
-        end,
+        p_end,
 
     kMinDelay,      _T("MinDelay"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, -500.0, 1000.0,
         p_ui, kRandomSoundMain, TYPE_SPINNER,   EDITTYPE_FLOAT, 
         IDC_COMP_RS_DELAYMIN, IDC_COMP_RS_DELAYMIN_SPIN, 1.0,
-        end,
+        p_end,
 
     kMaxDelay,      _T("MaxDelay"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, -500.0, 1000.0,
         p_ui, kRandomSoundMain, TYPE_SPINNER,   EDITTYPE_FLOAT, 
         IDC_COMP_RS_DELAYMAX, IDC_COMP_RS_DELAYMAX_SPIN, 0.1,
-        end,
+        p_end,
 
     // Group rollout
     kUseAll,    _T("UseAll"),   TYPE_BOOL,  0, 0,
         p_default,  TRUE,
         p_ui, kRandomSoundGroup, TYPE_SINGLECHEKBOX, IDC_COMP_RS_USEALL,
-        end,
+        p_end,
 
     kGroupIdx,  _T("GroupIndex"),   TYPE_INT,   0, 0,
         p_default, 1,
         p_range, 1, kMaxGroups,
         p_ui, kRandomSoundGroup, TYPE_SPINNER,  EDITTYPE_INT,
         IDC_COMP_RS_GROUP, IDC_COMP_RS_GROUP_SPIN, 1.f,
-        end,
+        p_end,
 
     kSoundList, _T("Sounds"), TYPE_INODE_TAB, 0,    0, 0,
-        end,
+        p_end,
 
     kGroupTotals, _T("Totals"), TYPE_INT_TAB, kMaxGroups,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     kLastPick, _T("LastPick"), TYPE_INODE,  0, 0, // Temp storage space for the comp picker
-        end,
+        p_end,
 
     kCombineSounds, _T("combineSounds"), TYPE_BOOL, 0, 0,
         p_default, FALSE,
         p_ui, kRandomSoundGroup, TYPE_SINGLECHEKBOX, IDC_RAND_COMBINESOUNDS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRandomSoundComponent::plRandomSoundComponent()
@@ -3696,10 +3696,10 @@ protected:
             idx = 0;
 
         INode *impact = IGet( comp->GetParamBlock( 0 ), plPhysicsSndGroupComp::kRefImpactSounds, idx );
-        ::SetWindowText(GetDlgItem(hWnd, IDC_SND_IMPACT), (impact != nullptr) ? impact->GetName() : "<none>");
+        ::SetWindowText(GetDlgItem(hWnd, IDC_SND_IMPACT), (impact != nullptr) ? impact->GetName() : _T("<none>"));
         
         INode *slide = IGet( comp->GetParamBlock( 0 ), plPhysicsSndGroupComp::kRefSlideSounds, idx );
-        ::SetWindowText(GetDlgItem(hWnd, IDC_SND_SLIDE), (slide != nullptr) ? slide->GetName() : "<none>");
+        ::SetWindowText(GetDlgItem(hWnd, IDC_SND_SLIDE), (slide != nullptr) ? slide->GetName() : _T("<none>"));
     }
     
     void    ISet( IParamBlock2 *pb, ParamID which, int idx, INode *node )
@@ -3870,20 +3870,20 @@ ParamBlockDesc2 gPhysSndGrpBk
 
     plPhysicsSndGroupComp::kRefGroup,  _T("Group"), TYPE_INT,       0, 0,
         p_default,  (int)plPhysicalSndGroup::kNone,
-        end,
+        p_end,
 
     plPhysicsSndGroupComp::kRefDummyPickNode, _T( "Dummy" ), TYPE_INODE, 0, 0,
-        end,
+        p_end,
         
     plPhysicsSndGroupComp::kRefImpactSounds,  _T("Impacts"), TYPE_INODE_TAB,        0, 0, 0,
 //      p_accessor, glPhysicsSndGroupAccessor,
-        end,
+        p_end,
 
     plPhysicsSndGroupComp::kRefSlideSounds,  _T("Slides"), TYPE_INODE_TAB,      0, 0, 0,
 //      p_accessor, glPhysicsSndGroupAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysicsSndGroupComp::plPhysicsSndGroupComp() 

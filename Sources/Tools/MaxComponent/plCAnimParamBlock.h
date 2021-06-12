@@ -131,8 +131,8 @@ class plPBBaseDec
         2,  /* # rollouts */            \
         plCAnimPB::kRollMain, IDD_##mainResIDName, IDS_##mainResIDName, 0, 0, mainProc,                 \
         plCAnimPB::kRollEase, IDD_##easeResIDName, IDS_##easeResIDName, 0, 0, easeProc,                 \
-        &plPBBaseDec::fAnimBlock,       /* ParamBlock to include */                                 \
-        end,                                                                                        \
+        &plPBBaseDec::fAnimBlock,       /* ParamBlock to include */                                     \
+        p_end,                                                                                          \
     );
         
 

@@ -179,10 +179,10 @@ void plPickNodeBase::IGetSelNode(HWND hList)
     else
     {
         int len = ListBox_GetTextLen(hList, sel);
-        char* buf = new char[len+1];
+        TCHAR* buf = new TCHAR[len+1];
         ListBox_GetText(hList, sel, buf);
 
-/*      if (!strcmp(buf, kUserTypeNone))
+/*      if (_tcsncmp(buf, std::size(buf), kUserTypeNone) == 0)
         {
             ISetNodeValue(nullptr);
             ISetUserType(nullptr, nullptr);

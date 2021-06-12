@@ -156,7 +156,7 @@ static int IndexToOldType(int idx)
     return oldTypes[idx];
 }
 
-const char *plResponderCmdAnim::GetCategory(int idx)
+const TCHAR* plResponderCmdAnim::GetCategory(int idx)
 {
     int type = IndexToOldType(idx);
 
@@ -171,25 +171,25 @@ const char *plResponderCmdAnim::GetCategory(int idx)
     case kRespondSetBackAnim:
     case kRespondRewindAnim:
     case kRespondFastForwardAnim:
-        return "Animation";
+        return _T("Animation");
 
     case kRespondPlaySound:
     case kRespondStopSound:
     case kRespondToggleSound:
     case kRespondRewindSound:
     case kRespondSyncedPlaySound:
-        return "Sound";
+        return _T("Sound");
 
     case kRespondPlayRndSound:
     case kRespondStopRndSound:
     case kRespondToggleRndSound:
-        return "Random Sound";
+        return _T("Random Sound");
     }
 
     return nullptr;
 }
 
-const char *plResponderCmdAnim::GetName(int idx)
+const TCHAR* plResponderCmdAnim::GetName(int idx)
 {
     int type = IndexToOldType(idx);
 
@@ -198,71 +198,71 @@ const char *plResponderCmdAnim::GetName(int idx)
     case kRespondPlayAnim:
     case kRespondPlaySound:
     case kRespondPlayRndSound:
-        return "Play";
+        return _T("Play");
 
     case kRespondStopAnim:
     case kRespondStopSound:
     case kRespondStopRndSound:
-        return "Stop";
+        return _T("Stop");
 
     case kRespondToggleAnim:
     case kRespondToggleSound:
     case kRespondToggleRndSound:
-        return "Toggle";
+        return _T("Toggle");
 
     case kRespondLoopAnimOn:
-        return "Set Looping On";
+        return _T("Set Looping On");
     case kRespondLoopAnimOff:
-        return "Set Looping Off";
+        return _T("Set Looping Off");
     case kRespondSetForeAnim:
-        return "Set Forwards";
+        return _T("Set Forwards");
     case kRespondSetBackAnim:
-        return "Set Backwards";
+        return _T("Set Backwards");
 
     case kRespondRewindAnim:
     case kRespondRewindSound:
-        return "Rewind";
+        return _T("Rewind");
     case kRespondFastForwardAnim:
-        return "Fast Forward";
+        return _T("Fast Forward");
     case kRespondSyncedPlaySound:
-        return "Synched Play";
+        return _T("Synched Play");
     }
 
     return nullptr;
 }
 
-static const char *GetShortName(int type)
+static const TCHAR* GetShortName(int type)
 {
     switch (type)
     {
-    case kRespondPlayAnim:          return "Anim Play";
-    case kRespondStopAnim:          return "Anim Stop";
-    case kRespondToggleAnim:        return "Anim Toggle";
-    case kRespondLoopAnimOn:        return "Anim Loop On";
-    case kRespondLoopAnimOff:       return "Anim Loop Off";
-    case kRespondSetForeAnim:       return "Anim Set Fore";
-    case kRespondSetBackAnim:       return "Anim Set Back";
-    case kRespondPlaySound:         return "Snd Play";
-    case kRespondSyncedPlaySound:   return "Snd Synched Play";
-    case kRespondStopSound:         return "Snd Stop";
-    case kRespondToggleSound:       return "Snd Toggle";
-    case kRespondPlayRndSound:      return "Rnd Snd Play";
-    case kRespondStopRndSound:      return "Rnd Snd Stop";
-    case kRespondToggleRndSound:    return "Rnd Snd Toggle";
-    case kRespondRewindAnim:        return "Anim Rewind";
-    case kRespondRewindSound:       return "Snd Rewind";
-    case kRespondFastForwardAnim:   return "Anim FFwd";
+    case kRespondPlayAnim:          return _T("Anim Play");
+    case kRespondStopAnim:          return _T("Anim Stop");
+    case kRespondToggleAnim:        return _T("Anim Toggle");
+    case kRespondLoopAnimOn:        return _T("Anim Loop On");
+    case kRespondLoopAnimOff:       return _T("Anim Loop Off");
+    case kRespondSetForeAnim:       return _T("Anim Set Fore");
+    case kRespondSetBackAnim:       return _T("Anim Set Back");
+    case kRespondPlaySound:         return _T("Snd Play");
+    case kRespondSyncedPlaySound:   return _T("Snd Synched Play");
+    case kRespondStopSound:         return _T("Snd Stop");
+    case kRespondToggleSound:       return _T("Snd Toggle");
+    case kRespondPlayRndSound:      return _T("Rnd Snd Play");
+    case kRespondStopRndSound:      return _T("Rnd Snd Stop");
+    case kRespondToggleRndSound:    return _T("Rnd Snd Toggle");
+    case kRespondRewindAnim:        return _T("Anim Rewind");
+    case kRespondRewindSound:       return _T("Snd Rewind");
+    case kRespondFastForwardAnim:   return _T("Anim FFwd");
     }
 
     return nullptr;
 }
-const char *plResponderCmdAnim::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdAnim::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
-    const char *shortName = GetShortName(pb->GetInt(kRespAnimType));
+    const TCHAR* shortName = GetShortName(pb->GetInt(kRespAnimType));
     plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kRespAnimComp);
-    sprintf(name, "%s (%s)", shortName, node ? node->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("%s (%s)"), shortName, node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -370,7 +370,7 @@ plMessage *plResponderCmdAnim::ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrM
             // anims with a loop set in advance will actually work with this. -Colin
 //          msg->SetCmd(plAnimCmdMsg::kSetLoopBegin);
 //          msg->SetCmd(plAnimCmdMsg::kSetLoopEnd);
-            ST::string loopName = ST::string::from_utf8(pb->GetStr(kAnimLoop));
+            ST::string loopName = ST::string(pb->GetStr(kAnimLoop));
             msg->SetLoopName(loopName);
         }
         break;
@@ -585,7 +585,7 @@ INT_PTR plResponderAnimProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UIN
             }
 
             if (IsSoundMsg(type))
-                SetDlgItemText(hWnd, IDC_COMP_TEXT, "Sound Component");
+                SetDlgItemText(hWnd, IDC_COMP_TEXT, _T("Sound Component"));
         }
         break;
     }
@@ -605,12 +605,12 @@ bool plResponderAnimProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int
         {
             if (ComboBox_GetItemData(hCombo, sel) == 1)
             {
-                char buf[256];
+                TCHAR buf[256];
                 ComboBox_GetText(hCombo, buf, sizeof(buf));
                 pb->SetValue(kAnimLoop, 0, buf);
             }
             else
-                pb->SetValue(kAnimLoop, 0, "");
+                pb->SetValue(kAnimLoop, 0, _M(""));
         }
 
         return true;
@@ -656,21 +656,21 @@ ParamBlockDesc2 gResponderAnimBlock
     IDD_COMP_RESPOND_ANIM, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderAnimProc,
 
     kRespAnimComp,  _T("comp"),     TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kRespAnimObject, _T("object"),  TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kRespAnimLoop,  _T("loop"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kRespAnimType,  _T("type"),     TYPE_INT,           0, 0,
-        end,
+        p_end,
 
     kRespAnimObjectType,    _T("objType"),  TYPE_INT,   0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 ParamBlockDesc2 *plResponderCmdAnim::GetDesc()
@@ -691,7 +691,7 @@ IParamBlock2 *plResponderCmdAnim::CreatePB(int idx)
 
 #include "plPickNodeBase.h"
 
-static const char* kResponderNodeName = "(Responder Node)";
+static const TCHAR* kResponderNodeName = _T("(Responder Node)");
 
 class plPickRespNode : public plPickCompNode
 {
@@ -707,9 +707,9 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType)
+    void ISetUserType(plMaxNode* node, const TCHAR* userType)
     {
-        if (userType && !strcmp(userType, kResponderNodeName))
+        if (userType && _tcscmp(userType, kResponderNodeName) == 0)
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodeResponder);
@@ -742,13 +742,13 @@ void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 
     HWND hLoop = GetDlgItem(hWnd, IDC_LOOP_COMBO);
 
-    const char *savedName = pb->GetStr(kAnimLoop);
+    const MCHAR* savedName = pb->GetStr(kAnimLoop);
     if (!savedName)
-        savedName = "";
+        savedName = _M("");
 
     // Reset the combo and add the default selection
     ComboBox_ResetContent(hLoop);
-    int sel = ComboBox_AddString(hLoop, ENTIRE_ANIMATION_NAME);
+    int sel = ComboBox_AddString(hLoop, _T(ENTIRE_ANIMATION_NAME));
     ComboBox_SetCurSel(hLoop, sel);
 
     // FIXME

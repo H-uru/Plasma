@@ -118,17 +118,17 @@ void plComponentMgr::Register(ClassDesc *desc)
 
 int IDescCompare(ClassDesc *desc1, ClassDesc *desc2)
 {
-    const char *cat1 = desc1->Category() ? desc1->Category() : "";
-    const char *cat2 = desc2->Category() ? desc2->Category() : "";
-    int cmp = strcmp(cat1, cat2);
-    
+    const ST::string cat1 = M2ST(desc1->Category());
+    const ST::string cat2 = M2ST(desc2->Category());
+    int cmp = cat1.compare(cat2);
+
     // Only compare name if categories are the same
     if (cmp == 0)
     {
-        const char *name1 = desc1->ClassName() ? desc1->ClassName() : "";
-        const char *name2 = desc2->ClassName() ? desc2->ClassName() : "";
+        const ST::string name1 = M2ST(desc1->ClassName());
+        const ST::string name2 = M2ST(desc2->ClassName());
 
-        return strcmp(name1, name2);
+        return name1.compare(name2);
     }
 
     return cmp;

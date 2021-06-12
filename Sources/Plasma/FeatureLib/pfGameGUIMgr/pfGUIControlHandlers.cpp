@@ -105,68 +105,41 @@ pfGUICtrlProcWriteableObject *pfGUICtrlProcWriteableObject::Read( hsStream *s )
 
 //// pfGUIConsoleCmdProc /////////////////////////////////////////////////////
 
-pfGUIConsoleCmdProc::pfGUIConsoleCmdProc() : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
-{ 
-    fCommand = nullptr;
-}
-
-pfGUIConsoleCmdProc::pfGUIConsoleCmdProc( const char *cmd )
-                : pfGUICtrlProcWriteableObject( kConsoleCmd ) 
+pfGUIConsoleCmdProc::pfGUIConsoleCmdProc(ST::string cmd)
+    : pfGUICtrlProcWriteableObject(kConsoleCmd), fCommand(std::move(cmd))
 {
-    fCommand = nullptr;
-    SetCommand( cmd );
-}
-
-pfGUIConsoleCmdProc::~pfGUIConsoleCmdProc()
-{
-    delete [] fCommand;
 }
 
 void    pfGUIConsoleCmdProc::IRead( hsStream *s )
 {
     int i = s->ReadLE32();
-    if( i > 0 )
-    {
-        fCommand = new char[ i + 1 ];
-        memset( fCommand, 0, i + 1 );
-        s->Read( i, fCommand );
+    if( i > 0 ) {
+        ST::char_buffer buf;
+        buf.allocate(i, '\0');
+        s->Read(i, buf.data());
+        fCommand = ST::string(buf);
+    } else {
+        fCommand.clear();
     }
-    else
-        fCommand = nullptr;
 }
 
-void    pfGUIConsoleCmdProc::IWrite( hsStream *s )
+void    pfGUIConsoleCmdProc::IWrite(hsStream* s)
 {
-    if (fCommand != nullptr)
-    {
-        size_t cmdLen = strlen(fCommand);
-        s->WriteLE32((uint32_t)cmdLen);
-        s->Write(cmdLen, fCommand);
+    if (!fCommand.empty()) {
+        uint32_t cmdLen = (uint32_t)fCommand.size();
+        s->WriteLE32(cmdLen);
+        s->Write(cmdLen, fCommand.c_str());
+    } else {
+        s->WriteLE32(0);
     }
-    else
-        s->WriteLE32( 0 );
 }
 
 void    pfGUIConsoleCmdProc::DoSomething( pfGUIControlMod *ctrl )
 {
-    if (fCommand != nullptr)
+    if (!fCommand.empty())
     {
         plConsoleMsg *cMsg = new plConsoleMsg( plConsoleMsg::kExecuteLine, fCommand );
         cMsg->Send();
-    }
-}
-
-void    pfGUIConsoleCmdProc::SetCommand( const char *cmd )
-{
-    delete [] fCommand;
-
-    if (cmd == nullptr)
-        fCommand = nullptr;
-    else
-    {
-        fCommand = new char[ strlen( cmd ) + 1 ];
-        memset( fCommand, 0, strlen( cmd ) + 1 );
-        strcpy( fCommand, cmd );
     }
 }
 

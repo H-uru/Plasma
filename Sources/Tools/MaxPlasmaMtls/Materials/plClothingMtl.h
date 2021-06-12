@@ -136,12 +136,12 @@ public:
     int GetTilesetIndex() { return fBasicPB->GetInt(ParamID(kTileset)); }
     Texmap *GetTexmap(int index, int layer);
     Texmap *GetThumbnail() { return fBasicPB->GetTexmap(ParamID(kThumbnail)); }
-    const char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
-    const char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
+    const MCHAR* GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
+    const MCHAR* GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }
     bool GetDefault() { return fBasicPB->GetInt(ParamID(kDefault)) != 0; }
     Color GetDefaultTint1() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint1); }
     Color GetDefaultTint2() { return fBasicPB->GetColor(plClothingMtl::kDefaultTint2); }
-    const char *GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }
+    const MCHAR* GetForcedAccessoryName() { return fBasicPB->GetStr(ParamID(kForcedAcc)); }
 
     plClothingMtl(BOOL loading);
     void DeleteThis() override { delete this; }
@@ -171,8 +171,8 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    TSTR GetSubTexmapSlotName(int i) override;
-    TSTR GetSubTexmapTVName(int i);
+    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
 
@@ -181,12 +181,12 @@ public:
     IOResult Save(ISave *isave) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     int NumSubs() override { return 0; }
     Animatable* SubAnim(int i) override { return nullptr; }
-    TSTR SubAnimName(int i) override { return ""; }
+    MSTR SubAnimName(int i) override { return _M(""); }
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

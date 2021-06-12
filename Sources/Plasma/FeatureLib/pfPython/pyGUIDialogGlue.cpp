@@ -134,7 +134,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, isEnabled)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getName)
 {
-    return PyUnicode_FromString(self->fThis->GetName());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getVersion)

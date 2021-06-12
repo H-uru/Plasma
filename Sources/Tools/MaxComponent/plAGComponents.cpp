@@ -138,18 +138,18 @@ ParamBlockDesc2 gAnimAvatarBk
     kShareableBool, _T("ShareableBool"), TYPE_BOOL, 0, 0,   
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ANIM_AVATAR_SHAREBOOL,
-        end,
+        p_end,
 
     kGlobalBool, _T("ShareableBool"), TYPE_BOOL, 0, 0,  
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ANIM_AVATAR_GLOBALBOOL,
-        end,
+        p_end,
 
     //kBoundCondRadio, _T("BoundingConditions"),        TYPE_INT,       0, 0,
     //  p_ui,       TYPE_RADIO, 2, IDC_COMP_PHYS_DETECTOR_RAD1, IDC_COMP_PHYS_DETECTOR_RAD2,
     //  end,
 
-    end
+    p_end
 );
 
 
@@ -407,24 +407,23 @@ ParamBlockDesc2 gEmoteBk
         p_ui,       TYPE_RADIO, 3,  IDC_BODY_UNKNOWN, IDC_BODY_UPPER, IDC_BODY_FULL,
         p_vals, plEmoteComponent::kBodyUnknown, plEmoteComponent::kBodyUpper, plEmoteComponent::kBodyFull,
         p_default, plEmoteComponent::kBodyUnknown,
-        end,
+        p_end,
 
     plEmoteComponent::kFadeIn, _T("Length"), TYPE_FLOAT,    0, 0,   
         p_default, 2.0,
         p_range, 0.1, 10.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_EMO_FADEIN, IDC_EMO_FADEIN_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plEmoteComponent::kFadeOut, _T("Length"), TYPE_FLOAT,   0, 0,   
         p_default, 2.0,
         p_range, 0.1, 10.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_EMO_FADEOUT, IDC_EMO_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
-
-    end
+    p_end
 );
 
 

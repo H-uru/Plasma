@@ -59,49 +59,49 @@ static ParamBlockDesc2 gDecalAnimPB
     // THE FOLLOWING ARE ALL OLD PARAMETERS AND SHOULD NO LONGER BE USED. The only reason
     // they're here is so we can convert old paramBlocks into the new plAnimStealthNode format
     kPBAnimName,        _T("animName"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kPBAnimAutoStart,   _T("autoStart"),    TYPE_BOOL,          0, 0,
-        end,
+        p_end,
 
     kPBAnimLoop,        _T("loop"),         TYPE_BOOL,          0, 0,
-        end,
+        p_end,
     kPBAnimLoopName,    _T("loopName"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     // Anim Ease
     kPBAnimEaseInType,  _T("easeInType"),   TYPE_INT,       0, 0,
-        end,
+        p_end,
     kPBAnimEaseInLength,    _T("easeInLength"), TYPE_FLOAT,     0, 0,   
-        end,
+        p_end,
     kPBAnimEaseInMin,       _T("easeInMin"),    TYPE_FLOAT,     0, 0,   
-        end,
+        p_end,
     kPBAnimEaseInMax,   _T("easeInMax"),    TYPE_FLOAT,     0, 0,   
-        end,
+        p_end,
 
     kPBAnimEaseOutType, _T("easeOutType"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
     kPBAnimEaseOutLength,   _T("easeOutLength"),    TYPE_FLOAT,     0, 0,   
-        end,
+        p_end,
     kPBAnimEaseOutMin,      _T("easeOutMin"),   TYPE_FLOAT,     0, 0,   
-        end,
+        p_end,
     kPBAnimEaseOutMax,  _T("easeOutMax"),   TYPE_FLOAT,     0, 0,   
-        end,
+        p_end,
 
 #endif // MCN_UPGRADE_OLD_ANIM_BLOCKS
 
     kPBAnimUseGlobal,       _T("UseGlobal"),    TYPE_BOOL,  0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_MTL_USE_GLOBAL,
-        end,
+        p_end,
     kPBAnimGlobalName,  _T("GlobalName"),   TYPE_STRING,    0,  0,
         p_default, _T(""),
-        end,
+        p_end,
         
     kPBAnimStealthNodes, _T( "testing" ), TYPE_REFTARG_TAB, 0, 0, 0,
         p_accessor, &plStealthNodeAccessor::GetInstance(),
-        end,
+        p_end,
 
-    end
+    p_end
 );
 ParamBlockDesc2 *GetDecalAnimPB() { return &gDecalAnimPB; }

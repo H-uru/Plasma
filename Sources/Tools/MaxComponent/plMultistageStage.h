@@ -66,7 +66,7 @@ protected:
     static INT_PTR CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     virtual INT_PTR IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    HWND ICreateDlg(int dialogID, char* title);
+    HWND ICreateDlg(int dialogID, const MCHAR* title);
     void IDestroyDlg(HWND hDlg);
 
     void IBaseClone(plBaseStage* clone);

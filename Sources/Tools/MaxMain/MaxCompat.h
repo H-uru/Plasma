@@ -48,7 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PLASMA_MAXCOMPAT_H
 #define _PLASMA_MAXCOMPAT_H
 
+#include <type_traits>
+
+#include <strbasic.h>
 #include <maxversion.h>
+
+#include <string_theory/string>
 
 #if MAX_VERSION_MAJOR <= 9
 #   define BMMCOLOR(x, y, z, w) \
@@ -59,7 +64,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define ENUMDEPENDENTS(maxObject, proc) \
         maxObject->EnumDependents(proc);
 
-    typedef TCHAR MCHAR;
+#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance); InitCommonControls();
+
+#   define DisableThreadLibraryCalls()
+
+#   define MCHAR TCHAR
+#   define MSTR TSTR
 #else
 #   define BMMCOLOR(x, y, z, w) \
         BMM_Color_64(x, y, z, w);
@@ -68,7 +78,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define ENUMDEPENDENTS(maxObject, proc) \
         maxObject->DoEnumDependents(proc);
-#endif //MAX_VERSION_MAJOR
+
+#   define INIT_CUSTOM_CONTROLS(instance)
+#endif // Max 9
+
+#if MAX_VERSION_MAJOR <= 10 // Max 2008
+#   define MAX10_CONST
+#else
+#   define MAX10_CONST const
+#endif
 
 #if MAX_VERSION_MAJOR <= 13
 #   define GetParamBlock2Controller(pb, id) pb->GetController(id)
@@ -78,21 +96,83 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetControllerByID(id, tab, ctl)
 #endif // MAX_VERSION_MAJOR
 
-#if MAX_VERSION_MAJOR <= 11 // max 2009. Just a guess, really. 2010 doesn't need this function.
-#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance)
+#if MAX_VERSION_MAJOR <= 14 // Max 2012
+#   define p_end end
+#   define MAX14_CONST
+#   define GETDLGTEXT_RETURN_TYPE TCHAR*
+#   define READ_VOID_BUFFER(s) s->Read
+#   define WRITE_VOID_BUFFER(s) s->Write
+#   define BITMAP_LOAD_CONFIGURE_DATASIZE
+#   define BMNAME_VALUE_TYPE TCHAR*
 #else
-#   define INIT_CUSTOM_CONTROLS(instance)
+#   define MAX14_CONST const
+#   define GETDLGTEXT_RETURN_TYPE const MCHAR*
+#   define READ_VOID_BUFFER(s) s->ReadVoid
+#   define WRITE_VOID_BUFFER(s) s->WriteVoid
+#   define BITMAP_LOAD_CONFIGURE_DATASIZE , DWORD piDataSize
+#   define BMNAME_VALUE_TYPE const MCHAR*
+#endif // MAX_VERSION_MAJOR
+
+#if MAX_VERSION_MAJOR <= 15 // Max 2013
+#   define USE_LANGUAGE_PACK_LOCALE(...)
+#else
+#   define USE_LANGUAGE_PACK_LOCALE(...) MaxSDK::Util::UseLanguagePackLocale(__VA_ARGS__)
 #endif
 
-#if MAX_VERSION_MAJOR <= 10 // Max 2008
-#   define GETNAME_RETURN_TYPE TCHAR*
-#   define SETTEXT_VALUE_TYPE MCHAR*
+#if MAX_VERSION_MAJOR <= 17 // Max 2015
+#   define MAX_REF_INTERVAL Interval
+#   define MAX_REF_PROPAGATE
+#   define MAX_REF_PROPAGATE_VALUE TRUE
 #else
-#   define GETNAME_RETURN_TYPE const TCHAR*
-#   define SETTEXT_VALUE_TYPE const MCHAR*
+#   define MAX_REF_INTERVAL const Interval&
+#   define MAX_REF_PROPAGATE , BOOL propagate
+#   define MAX_REF_PROPAGATE_VALUE propagate
 #endif
 
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
+
+// Special 3ds Max message box support added in 2021 for HiDPI
+#if MAX_VERSION_MAJOR >= 23
+#   define plMaxMessageBox  MaxSDK::MaxMessageBox
+#else
+#   define plMaxMessageBox MessageBox
+#endif
+
+// Limitation: MCHAR and TCHAR must always be the same type.
+static_assert(std::is_same_v<MCHAR, TCHAR>, "MCHAR and TCHAR must have the same underlying type");
+
+#ifndef _M
+#   define _M(x) _T(x)
+#endif
+#ifndef M_STD_STRING
+#   define M_STD_STRING std::string
+#endif
+
+// Analagous to Max's M2T, etc. except doesn't require ATL
+#ifdef MCHAR_IS_WCHAR
+#   define ST2M(x) x.to_wchar().data()
+#   define M2ST(x) (x ? ST::string::from_wchar(x) : ST::string())
+#else
+#   define ST2M(x) x.to_latin_1().data()
+#   define M2ST(x) (x ? ST::string::from_latin_1(x) : ST::string())
+#endif
+
+#ifdef UNICODE
+#   define ST2T(x) x.to_wchar().data()
+#   define T2ST(x) (x ? ST::string::from_wchar(x) : ST::string())
+#else
+#   define ST2T(x) x.to_latin_1().data()
+#   define T2ST(x) (x ? ST::string::from_latin_1(x) : ST::string())
+#endif
+
+// Nonstandard, but useful
+#ifndef M_STD_STRINGSTREAM
+#   if defined(UNICODE) || defined(MCHAR_IS_WCHAR)
+#       define M_STD_STRINGSTREAM std::wstringstream
+#   else
+#       define M_STD_STRINGSTREAM std::stringstream
+#   endif
+#endif
 
 #endif // _PLASMA_MAXCOMPAT_H

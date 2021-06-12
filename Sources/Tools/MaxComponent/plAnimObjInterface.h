@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plAnimObjInterface_h
 #define _plAnimObjInterface_h
 
+#include <tchar.h>
 #include <vector>
 
 class plKey;

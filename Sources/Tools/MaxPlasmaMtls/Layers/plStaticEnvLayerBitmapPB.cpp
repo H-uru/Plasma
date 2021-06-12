@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plStaticEnvLayer.h"
 
+#include "MaxMain/MaxCompat.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -305,9 +306,10 @@ public:
         BitmapInfo      bi;
         int             i;
         TCHAR           filename[ MAX_PATH ];
-        TCHAR           *modPoint, faces[ 6 ][ 4 ] = { "_FR", "_BK", "_LF", "_RT", "_UP", "_DN" };
-        
-        
+        TCHAR           *modPoint, faces[ 6 ][ 4 ] = {
+            _T("_FR"), _T("_BK"), _T("_LF"), _T("_RT"), _T("_UP"), _T("_DN")
+        };
+
         /// Select one file
         PBBitmap *pbbm = map->GetParamBlock()->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap, t );
         if (pbbm != nullptr)
@@ -316,18 +318,18 @@ public:
             return FALSE;
 
         /// Copy the name over and get our mod point
-        strcpy( filename, bi.Filename() );
-        modPoint = strstr( filename, "_UP" );
+        _tcsncpy( filename, bi.Filename(), std::size(filename) );
+        modPoint = _tcsstr( filename, _T("_UP") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_DN" );
+            modPoint = _tcsstr( filename, _T("_DN") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_LF" );
+            modPoint = _tcsstr( filename, _T("_LF") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_RT" );
+            modPoint = _tcsstr( filename, _T("_RT") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_FR" );
+            modPoint = _tcsstr(filename, _T("_FR") );
         if (modPoint == nullptr)
-            modPoint = strstr( filename, "_BK" );
+            modPoint = _tcsstr( filename, _T("_BK") );
 
         /// Load each face
         for( i = 0; i < 6; i++ )
@@ -403,52 +405,52 @@ static ParamBlockDesc2 gBitmapParamBlk
     // Bitmaps
     plStaticEnvLayer::kBmpFrontBitmap,  _T("frontBitmap"),      TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpBackBitmap,       _T("backBitmap"),       TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpLeftBitmap,       _T("leftBitmap"),       TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpRightBitmap,  _T("rightBitmap"),      TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpTopBitmap,        _T("topBitmap"),        TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpBottomBitmap, _T("bottomBitmap"),     TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     // Texture Color/Alpha
     plStaticEnvLayer::kBmpDiscardColor, _T("discardColor"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_NO_COLOR,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpInvertColor,  _T("invertColor"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_COLOR,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpDiscardAlpha, _T("discardAlpha"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DISCARD_ALPHA,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpInvertAlpha,  _T("invertAlpha"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_ALPHA,
-        end,
+        p_end,
 
     // Texture Quality
     plStaticEnvLayer::kBmpNonCompressed,    _T("nonCompressed"),TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_FORCE_NONCOMPRESSED,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpScaling,      _T("scaling"),      TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 3, IDC_SCALE_ALL, IDC_SCALE_HALF, IDC_SCALE_NONE,
-        end,
+        p_end,
 
     // Max Only
     plStaticEnvLayer::kBmpMonoOutput,       _T("monoOutput"),   TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 2, IDC_HSMAX_LAYER_RGBOUT, IDC_HSMAX_LAYER_ALPHAOUT,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpRGBOutput,        _T("rgbOutput"),    TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 2, IDC_HSMAX_LAYER_RGBOUT2, IDC_HSMAX_LAYER_ALPHAOUT2,
-        end,
+        p_end,
 
     // Detail
     plStaticEnvLayer::kBmpUseDetail,        _T("useDetail"),    TYPE_BOOL,      0, 0,
@@ -456,60 +458,60 @@ static ParamBlockDesc2 gBitmapParamBlk
         p_default,      FALSE,
         p_enable_ctrls, 4, plStaticEnvLayer::kBmpDetailStartSize, plStaticEnvLayer::kBmpDetailStopSize, 
                             plStaticEnvLayer::kBmpDetailStartOpac, plStaticEnvLayer::kBmpDetailStopOpac,
-        end,
+        p_end,
 
     plStaticEnvLayer::kBmpDetailStartSize,_T("dropOffStart"),   TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_START_SIZE_EDIT, IDC_DETAIL_START_SIZE_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      0,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpDetailStopSize,   _T("dropOffStop"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_STOP_SIZE_EDIT, IDC_DETAIL_STOP_SIZE_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpDetailStartOpac,  _T("detailMax"),    TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_START_OPAC_EDIT, IDC_DETAIL_START_OPAC_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      8,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpDetailStopOpac,   _T("detailMin"),    TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_STOP_OPAC_EDIT, IDC_DETAIL_STOP_OPAC_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      0,
-        end,
+        p_end,
 
     // Face generation
     plStaticEnvLayer::kBmpTextureSize,  _T("textureSize"),  TYPE_INT,       0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TEXSIZE_EDIT, IDC_TEXSIZE_SPIN, SPIN_AUTOSCALE,
         p_range,        4, 512,
         p_default,      64,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpBaseFilename, _T("baseFilename"), TYPE_FILENAME, 0, 0,
         p_default,      _T( "" ),
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpGenerateFaces, _T("genFaces"), TYPE_INODE, 0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_GENERATE_FACES,
         p_prompt,       IDS_SELECT_NODE,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpUseMAXAtmosphere,     _T("useMAXAtmos"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USEMAXFOG,
         p_default,      FALSE,
         p_enable_ctrls, 1, plStaticEnvLayer::kBmpFarDistance,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpFarDistance,  _T("farDistance"),  TYPE_FLOAT,     0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_FARDIST_EDIT, IDC_FARDIST_SPIN, SPIN_AUTOSCALE,
         p_range,        0.f, 9999999.f,
         p_default,      500.f,
-        end,
+        p_end,
     plStaticEnvLayer::kBmpLastTextureSize,  _T("lastTextureSize"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
     
     plStaticEnvLayer::kBmpRefract,  _T("refract"),TYPE_BOOL,        0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_REFRACT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 

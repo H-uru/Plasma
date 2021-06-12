@@ -272,18 +272,18 @@ Animatable* plLayerTex::SubAnim(int i)
     }
 }
 
-TSTR plLayerTex::SubAnimName(int i) 
+MSTR plLayerTex::SubAnimName(int i) 
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
-RefResult plLayerTex::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plLayerTex::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -298,7 +298,7 @@ RefResult plLayerTex::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarg
                 ParamID changingParam = fBitmapPB->LastNotifyParamID();
                 fBitmapPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -635,7 +635,7 @@ DWORD_PTR plLayerTex::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker)
     }
 }
 
-const char *plLayerTex::GetTextureName()
+const MCHAR* plLayerTex::GetTextureName()
 {
 //  if (fBitmapPB->GetInt(kBmpUseBitmap))
     {

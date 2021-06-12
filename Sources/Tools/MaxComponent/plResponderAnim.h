@@ -58,9 +58,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override;
-    const char *GetCategory(int idx) override;
-    const char *GetName(int idx) override;
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int idx) override;
+    const TCHAR* GetName(int idx) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     IParamBlock2 *CreatePB(int idx) override;
     plMessage *CreateMsg(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;

@@ -120,8 +120,8 @@ public:
     int NumSubMtls() override;
     Mtl* GetSubMtl(int i) override;
     void SetSubMtl(int i, Mtl *m) override;
-    TSTR GetSubMtlSlotName(int i) override;
-    TSTR GetSubMtlTVName(int i);
+    MSTR GetSubMtlSlotName(int i) override;
+    MSTR GetSubMtlTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
     plCompositeMtl(BOOL loading);
@@ -136,8 +136,9 @@ public:
     void GetClassName(TSTR& s) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message
+        MAX_REF_PROPAGATE) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;

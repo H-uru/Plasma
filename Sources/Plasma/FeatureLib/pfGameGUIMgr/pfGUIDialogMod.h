@@ -75,7 +75,7 @@ class pfGUIDialogMod : public plSingleModifier
 
         plPostEffectMod             *fRenderMod;
         bool                        fEnabled;
-        char                        fName[ 128 ];
+        ST::string                  fName;
         std::vector<pfGUIControlMod *> fControls;
         pfGUIControlMod             *fControlOfInterest;
         pfGUIControlMod             *fFocusCtrl;
@@ -130,7 +130,7 @@ class pfGUIDialogMod : public plSingleModifier
         virtual void    SetEnabled( bool e );
         bool            IsEnabled() { return fEnabled; }
 
-        const char  *GetName() { return fName; }
+        ST::string GetName() const { return fName; }
 
         void        ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt );
         hsPoint3    WorldToScreenPoint( const hsPoint3 &inPt );
@@ -206,7 +206,7 @@ class pfGUIDialogMod : public plSingleModifier
 
         // Export only
         void        SetRenderMod( plPostEffectMod *mod ) { fRenderMod = mod; }
-        void        SetName( const char *name ) { hsStrncpy( fName, name, sizeof( fName ) - 1 ); }
+        void        SetName( ST::string name ) { fName = std::move(name); }
         void        AddControlOnExport( pfGUIControlMod *ctrl );
         void        SetTagID( uint32_t id ) { fTagID = id; }
         void        SetProcReceiver( plKey key ) { fProcReceiver = key; }

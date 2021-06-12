@@ -52,16 +52,15 @@ class plSeekPointMod : public plMultiModifier
 {
 protected:
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }
-    char * fName;                                       // public because you can't change it
+    ST::string fName;
 
 public:
 
     plSeekPointMod();
-    plSeekPointMod(char *name);
-    virtual ~plSeekPointMod();
+    plSeekPointMod(ST::string name);
 
-    const char * GetName() { return fName; };
-    void SetName(char * name) { fName = name; };
+    const char * GetName() { return fName.c_str(); };
+    void SetName(ST::string name) { fName = std::move(name); };
 
     CLASSNAME_REGISTER( plSeekPointMod );
     GETINTERFACE_ANY( plSeekPointMod, plMultiModifier );

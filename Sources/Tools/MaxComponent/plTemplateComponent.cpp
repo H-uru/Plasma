@@ -57,10 +57,10 @@ void DummyCodeIncludeFuncTemplate()
 {
 }
 
-static const char *GetPBString(IParamBlock2 *pb, ParamID id)
+static const MCHAR* GetPBString(IParamBlock2 *pb, ParamID id)
 {
-    const char *str = pb->GetStr(id, 0);
-    if (str && *str == '\0')
+    const MCHAR* str = pb->GetStr(id, 0);
+    if (str && *str == _M('\0'))
         return nullptr;
     return str;
 }
@@ -68,7 +68,7 @@ static const char *GetPBString(IParamBlock2 *pb, ParamID id)
 class plTemplateComponent : public plComponent
 {
 protected:
-    const char* IGetAgeName(plMaxNode *node);
+    const MCHAR* IGetAgeName(plMaxNode *node);
 
 public:
     plTemplateComponent();
@@ -90,7 +90,7 @@ ParamBlockDesc2 gTemplateBlk
 (
     plComponent::kBlkComp, _T("Template"), 0, &gTemplateDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 
@@ -100,7 +100,7 @@ plTemplateComponent::plTemplateComponent()
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
+const MCHAR* plTemplateComponent::IGetAgeName(plMaxNode *node)
 {
     uint32_t numComps = node->NumAttachedComponents();
     for (uint32_t i = 0; i < numComps; i++)
@@ -122,7 +122,7 @@ const char* plTemplateComponent::IGetAgeName(plMaxNode *node)
 // of properties on the MaxNode, as it's still indeterminant.
 bool plTemplateComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char* ageName = IGetAgeName(node);
+    const MCHAR* ageName = IGetAgeName(node);
     if (!ageName)
         return false;
 
@@ -189,9 +189,9 @@ ParamBlockDesc2 gSpawnBlk
 
     kTemplateName,  _T("name"),     TYPE_STRING,    0, 0,
         p_ui,       TYPE_EDITBOX, IDC_NAME,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -207,7 +207,8 @@ bool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 {
     if (!GetPBString(fCompPB, kTemplateName))
     {
-        pErrMsg->Set(true, "Clone Instance Component", "Clone Instance component on node %s can't convert because it doesn't have a name", node->GetName());
+        pErrMsg->Set(true, "Clone Instance Component",
+            ST::format("Clone Instance component on node {} can't convert because it doesn't have a name", node->GetName()));
         pErrMsg->Set(false);
         return false;
     }
@@ -220,7 +221,7 @@ bool plSpawnComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plSpawnComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    const char *templateName = GetPBString(fCompPB, kTemplateName);
+    const MCHAR* templateName = GetPBString(fCompPB, kTemplateName);
     if (!templateName)
         return false;
 

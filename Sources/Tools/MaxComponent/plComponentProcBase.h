@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBaseComponentProc : public ParamMap2UserDlgProc
 {
 protected:
-    void ILoadComboBox(HWND hComboBox, const char *names[])
+    void ILoadComboBox(HWND hComboBox, const TCHAR* names[])
     {
         SendMessage(hComboBox, CB_RESETCONTENT, 0, 0);
         for (int i = 0; names[i]; i++)
@@ -65,7 +65,7 @@ protected:
 class plLCBoxComponentProc : public plBaseComponentProc
 {
 protected:
-    void ILoadListBox(HWND hListBox, IParamBlock2 *pb, int param, const char *names[])
+    void ILoadListBox(HWND hListBox, IParamBlock2 *pb, int param, const TCHAR* names[])
     {
         SendMessage(hListBox, LB_RESETCONTENT, 0, 0);
         for (int i = 0; i < pb->Count(param); i++)

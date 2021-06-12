@@ -56,6 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plAnimObjInterface.h"
 #include "MaxComponent/plMaxAnimUtils.h"
 
+#include "MaxMain/MaxCompat.h"
+
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
 
@@ -125,7 +127,7 @@ public:
     INode           *GetINode();
     plPassMtlBase   *GetParentMtl();
     void            SetParentMtl( plPassMtlBase *parent );
-    void            SetNodeName( const char *parentName );
+    void            SetNodeName( const MCHAR* parentName );
 
     // Create the dialog for this object and place it inside the given dialog, centering it in the given control if any
     bool    CreateAndEmbedDlg(IParamMap2 *parentMap, IMtlParams *parentParams, HWND frameCtrl = nullptr);
@@ -141,7 +143,7 @@ public:
 
     // Interesting functions
     ST::string  GetSegmentName() const;
-    void        SetSegment( const char *name ); // nil for "entire animation"
+    void        SetSegment( const ST::string& name ); // nil for "entire animation"
 
     // Conversion from stealth's INode to the actual object
     static bool                 CanConvertToStealth( INode *objNode );
@@ -150,7 +152,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    TCHAR* GetObjectName() override     { return (TCHAR*)fClassDesc->ClassName(); }
+    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
     void InitNodeName(TSTR& s) override { s = fClassDesc->InternalName(); }
     void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
     Class_ID ClassID() override         { return ANIMSTEALTH_CLASSID; }
@@ -160,7 +162,7 @@ public:
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;
     void SetReference(int i, RefTargetHandle rtarg) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
     
     // allow retreival of our paramblock from other plug-ins
     // and the max core
@@ -193,7 +195,7 @@ public:
 
     int CanConvertToType(Class_ID obtype) override { return (obtype == ANIMSTEALTH_CLASSID) ? 1 : 0; }
 
-    const char *GetCategory() { return fClassDesc->Category(); }
+    const MCHAR* GetCategory() { return fClassDesc->Category(); }
 
     /// Parameter access
 

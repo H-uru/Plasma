@@ -171,13 +171,13 @@ void ProcessNodeRecurse(INode *node, INode *parent, Interface *theInterface)
 void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterface)
 {
     int numChildren = bipNode->NumberOfChildren();
-    char *bipName = bipNode ? bipNode->GetName() : nullptr;
+    auto bipName = bipNode ? bipNode->GetName() : nullptr;
     INode *replacement = nullptr;
 
     for (int i = 0; i < numChildren; i++)
     {
         INode *child = bipNode->GetChildNode(i);
-        char *childName = child ? child->GetName() : nullptr;
+        auto childName = child ? child->GetName() : nullptr;
 
         if( ! HasBipController(child) )
         {
@@ -220,9 +220,9 @@ void ProcessBipedNodeRecurse(INode *bipNode, INode *parent, Interface *theInterf
         }
     } else {
         // this is an error condition: we've got a bip node that has no non-bip child for us to promote
-        char buf[256];
-        sprintf(buf, "Couldn't find non-bip node to transfer motion to for bip node %s\n", bipNode->GetName());
-        hsStatusMessage(buf);
+        TCHAR buf[256];
+        _sntprintf(buf, std::size(buf), _T("Couldn't find non-bip node to transfer motion to for bip node %s\n"), bipNode->GetName());
+        OutputDebugString(buf);
     }
 }
 

@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "HeadSpin.h"
-
+#include "MaxMain/MaxCompat.h"
 #include <maxtypes.h>
 
 class hsStream;
@@ -339,7 +339,7 @@ private:
     int32_t             fSubIndex;
     bool                fChangedTimes;
 
-    char                *fNodeName;
+    MAX14_CONST MCHAR*  fNodeName;
     uint32_t            fWarned;
 
 

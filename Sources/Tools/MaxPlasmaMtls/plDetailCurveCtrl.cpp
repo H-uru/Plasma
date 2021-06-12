@@ -78,7 +78,7 @@ HBITMAP     plDetailCurveCtrl::fBgndImage2 = nullptr;
 bool        plDetailCurveCtrl::fXAsMipmapLevel = false;
 #endif
 
-const char  gCtrlClassName[] = "DetailCurveClass";
+const TCHAR  gCtrlClassName[] = _T("DetailCurveClass");
 
 #define kHiResStep  0.01f
 
@@ -114,7 +114,7 @@ void    plDetailCurveCtrl::IRegisterCtrl( HINSTANCE instance )
 
         HDC hDC = GetDC(nullptr);
         fFont = CreateFont( -MulDiv( 8, GetDeviceCaps( hDC, LOGPIXELSY ), 72 ), 0, 0, 0, 0, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
-                            CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial" );
+                            CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("Arial") );
         ReleaseDC(nullptr, hDC);
     }
 
@@ -154,7 +154,7 @@ plDetailCurveCtrl::plDetailCurveCtrl( HWND parentWnd, WPARAM id, RECT *clientRec
 
     // Note: we create originally as disabled since the default detail setting is disabled.
     // The MAX Update stuff should change this if necessary after we're created
-    fHWnd = ::CreateWindowEx( WS_EX_CLIENTEDGE, gCtrlClassName, "Detail Curve", WS_CHILD | WS_VISIBLE | WS_BORDER | WS_DISABLED,
+    fHWnd = ::CreateWindowEx( WS_EX_CLIENTEDGE, gCtrlClassName, _T("Detail Curve"), WS_CHILD | WS_VISIBLE | WS_BORDER | WS_DISABLED,
                             clientRect->left, clientRect->top, clientRect->right - clientRect->left,
                             clientRect->bottom - clientRect->top,
                             parentWnd, (HMENU)id, instance, nullptr);
@@ -284,11 +284,11 @@ void    plDetailCurveCtrl::IRefreshDblBuffer()
 
                 if( fStartPercent == 0.07f && fStartOpac == 0.23f && fEndPercent == 0.19f && fEndOpac == 0.79f )
                 {
-                    const char  str[] = "\x48\x61\x70\x70\x79\x20\x62\x64\x61\x79\x20\x74\x6f\x20\x6d\x63\x6e\x21";
+                    const TCHAR str[] = _T("\x48\x61\x70\x70\x79\x20\x62\x64\x61\x79\x20\x74\x6f\x20\x6d\x63\x6e\x21");
                     SetBkMode( fDblDC, TRANSPARENT );
                     SetTextColor( fDblDC, RGB( 0, 0, 255 ) );
                     SelectObject( fDblDC, fFont );
-                    TextOut( fDblDC, x, y + bgndSize.cy - 10, str, strlen( str ) );
+                    TextOut( fDblDC, x, y + bgndSize.cy - 10, str, std::size( str ) );
                 }
 
                 // Draw our two markers

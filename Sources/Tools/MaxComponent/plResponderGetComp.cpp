@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include "plResponderGetComp.h"
+#include "MaxMain/MaxAPI.h"
 #include "MaxMain/plMaxAccelerators.h"
 
 plResponderGetComp& plResponderGetComp::Instance()
@@ -316,7 +317,7 @@ void plResponderCompNode::IUpdateCompButton(HWND hWnd)
     if (savedComp)
         SetWindowText(hComp, savedComp->GetName());
     else
-        SetWindowText(hComp, "(none)");
+        SetWindowText(hComp, _T("(none)"));
 }
 
 void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
@@ -329,7 +330,7 @@ void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
     if (!comp)
     {
         EnableWindow(hNode, FALSE);
-        SetWindowText(hNode, "(none)");
+        SetWindowText(hNode, _T("(none)"));
         return;
     }
     EnableWindow(hNode, TRUE);
@@ -338,7 +339,7 @@ void plResponderCompNode::IUpdateNodeButton(HWND hWnd)
     if (objNode && comp->IsTarget(objNode))
         SetWindowText(hNode, objNode->GetName());
     else
-        SetWindowText(hNode, "(none)");
+        SetWindowText(hNode, _T("(none)"));
 }
 
 bool plResponderCompNode::GetCompAndNode(plComponentBase*& comp, plMaxNodeBase*& node)

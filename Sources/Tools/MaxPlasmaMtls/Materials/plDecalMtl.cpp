@@ -66,11 +66,11 @@ class plDecalMtlClassDesc : public ClassDesc2
 public:
     int             IsPublic() override     { return TRUE; }
     void*           Create(BOOL loading) override { return new plDecalMtl(loading); }
-    const TCHAR*    ClassName() override    { return GetString(IDS_DECAL_MTL); }
+    const MCHAR*    ClassName() override    { return GetString(IDS_DECAL_MTL); }
     SClass_ID       SuperClassID() override { return MATERIAL_CLASS_ID; }
     Class_ID        ClassID() override      { return DECAL_MTL_CLASS_ID; }
-    const TCHAR*    Category() override     { return nullptr; }
-    const TCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
+    const MCHAR*    Category() override     { return nullptr; }
+    const MCHAR*    InternalName() override { return _T("PlasmaMaterial"); }
     HINSTANCE       HInstance() override    { return hInstance; }
 };
 static plDecalMtlClassDesc plDecalMtlDesc;
@@ -131,7 +131,7 @@ Interval plDecalMtl::Validity(TimeValue t)
 //  fPBlock->GetValue(pb_spin,t,u,valid);
     return valid;
 #else // mf horse
-    const char* name = GetName();
+    auto name = GetName();
 
     // mf horse - Hacking in something like real validity checking
     // to get material animations working. No warranty, this is just
@@ -193,7 +193,7 @@ int plDecalMtl::NumSubs()
     return 6;
 }
 
-TSTR plDecalMtl::SubAnimName(int i) 
+MSTR plDecalMtl::SubAnimName(int i) 
 {
     switch (i)
     {
@@ -201,11 +201,11 @@ TSTR plDecalMtl::SubAnimName(int i)
     case 1: return fAdvPB->GetLocalName();
     case 2: return fLayersPB->GetLocalName();
     case 3: return fAnimPB->GetLocalName();
-    case 4: return "Base Layer";
-    case 5: return "Top Layer";
+    case 4: return _M("Base Layer");
+    case 5: return _M("Top Layer");
     }
 
-    return "";
+    return _M("");
 }
 
 Animatable* plDecalMtl::SubAnim(int i)
@@ -250,11 +250,6 @@ IParamBlock2* plDecalMtl::GetParamBlockByID(BlockID id)
     return nullptr;
 }
 
-RefResult plDecalMtl::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) 
-{
-    return plPassMtlBase::NotifyRefChanged( changeInt, hTarget, partID, message );
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Subtexmap access
 
@@ -281,17 +276,17 @@ void plDecalMtl::SetSubTexmap(int i, Texmap *m)
       fLayersPB->SetValue(kDecalLayTop, 0, m);
 }
 
-TSTR plDecalMtl::GetSubTexmapSlotName(int i)
+MSTR plDecalMtl::GetSubTexmapSlotName(int i)
 {
    if (i == 0)
-      return "Base";
+      return _M("Base");
    else if (i == 1)
-      return "Top";
+      return _M("Top");
    
-   return "";
+   return _M("");
 }
 
-TSTR plDecalMtl::GetSubTexmapTVName(int i)
+MSTR plDecalMtl::GetSubTexmapTVName(int i)
 {
    return GetSubTexmapSlotName(i);
 }
@@ -766,10 +761,10 @@ int     plDecalMtl::GetZInc() { return fAdvPB->GetInt(kPBAdvZInc); }
 int     plDecalMtl::GetAlphaTestHigh() { return fAdvPB->GetInt(kPBAdvAlphaTestHigh); }
 
 // Animation block
-const char *  plDecalMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
+const MCHAR* plDecalMtl::GetAnimName() { return fAnimPB->GetStr(kPBAnimName); }
 int     plDecalMtl::GetAutoStart() { return fAnimPB->GetInt(kPBAnimAutoStart); }
 int     plDecalMtl::GetLoop() { return fAnimPB->GetInt(kPBAnimLoop); }
-const char *  plDecalMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
+const MCHAR* plDecalMtl::GetAnimLoopName() { return fAnimPB->GetStr(kPBAnimLoopName); }
 int     plDecalMtl::GetEaseInType() { return fAnimPB->GetInt(kPBAnimEaseInType); }
 float   plDecalMtl::GetEaseInNormLength() { return fAnimPB->GetFloat(kPBAnimEaseInLength); }
 float   plDecalMtl::GetEaseInMinLength() { return fAnimPB->GetFloat(kPBAnimEaseInMin); }
@@ -779,7 +774,7 @@ float   plDecalMtl::GetEaseOutNormLength() { return fAnimPB->GetFloat(kPBAnimEas
 float   plDecalMtl::GetEaseOutMinLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMin); }
 float   plDecalMtl::GetEaseOutMaxLength() { return fAnimPB->GetFloat(kPBAnimEaseOutMax); }
 int     plDecalMtl::GetUseGlobal() { return fAnimPB->GetInt(ParamID(kPBAnimUseGlobal)); }
-const char *  plDecalMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }  
+const MCHAR* plDecalMtl::GetGlobalVarName() { return fAnimPB->GetStr(ParamID(kPBAnimGlobalName)); }
 
 // Basic block
 int     plDecalMtl::GetColorLock() { return fBasicPB->GetInt(kDecalBasColorLock); }

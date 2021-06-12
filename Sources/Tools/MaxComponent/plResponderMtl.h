@@ -62,9 +62,9 @@ public:
     ParamBlockDesc2 *GetDesc() override;
 
     int NumTypes() override;
-    const char *GetCategory(int type) override;
-    const char *GetName(int type) override;
-    const char *GetInstanceName(IParamBlock2 *pb) override;
+    const TCHAR* GetCategory(int type) override { return _T("Material"); }
+    const TCHAR* GetName(int type) override;
+    const TCHAR* GetInstanceName(IParamBlock2 *pb) override;
 
     IParamBlock2 *CreatePB(int type) override;
     void SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb) override;

@@ -73,7 +73,7 @@ public:
     //From Animatable
     Class_ID ClassID() override { return BUMP_MTL_CLASS_ID; }
     SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) override;
+    void GetClassName(MSTR& s) override;
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
     void Update(TimeValue t, Interval& valid) override;
@@ -98,14 +98,12 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    TSTR GetSubTexmapSlotName(int i) override;
-    TSTR GetSubTexmapTVName(int i);
+    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
@@ -156,10 +154,10 @@ public:
     int     GetAlphaTestHigh() override;
 
     // Animation block
-    const char *  GetAnimName() override;
+    const MCHAR*  GetAnimName() override;
     int           GetAutoStart() override;
     int           GetLoop() override;
-    const char *  GetAnimLoopName() override;
+    const MCHAR*  GetAnimLoopName() override;
 
     // Basic block
     int     GetColorLock() override;

@@ -796,7 +796,7 @@ float cyMisc::GetDelSysSeconds()
 //
 //  PURPOSE    : Return the frame delta seconds
 //
-void cyMisc::LoadDialog(const char* name)
+void cyMisc::LoadDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -807,7 +807,7 @@ void cyMisc::LoadDialog(const char* name)
 }
 
 // Load dialog and set the GUINotifyMsg receiver key
-void cyMisc::LoadDialogK(const char* name, pyKey& rKey)
+void cyMisc::LoadDialogK(const ST::string& name, pyKey& rKey)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -823,7 +823,7 @@ void cyMisc::LoadDialogK(const char* name, pyKey& rKey)
 }
 
 // Load dialog and set the GUINotifyMsg receiver key
-void cyMisc::LoadDialogKA(const char* name, pyKey& rKey, const char* ageName)
+void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageName)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -915,7 +915,7 @@ PyObject* cyMisc::GetDialogFromTagID(uint32_t tag)
     return nullptr; // return nullptr, cause we threw an error
 }
 
-PyObject* cyMisc::GetDialogFromString(const char* name)
+PyObject* cyMisc::GetDialogFromString(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )

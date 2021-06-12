@@ -48,11 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "plRenderLevel.h"
 #include "hsSTLStream.h"
-#include "hsStringTokenizer.h"
 
 #include "plMaxNode.h"
 #include "plMaxNodeData.h"
 #include "MaxComponent/plComponent.h"
+#include "MaxMain/hsMStringTokenizer.h"
 
 #include "GlobalUtility.h"
 #include "plPluginResManager.h"
@@ -168,7 +168,7 @@ static plKey ExternGetNewKey(const ST::string &name, plModifier *mod, plLocation
 // In plResponderComponent (for no apparent reason).
 int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, std::vector<plKey>& keys);
 // In plAudioComponents
-int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const char*& name);
+int GetSoundNameAndIdx(plComponentBase *comp, plMaxNodeBase *node, const MCHAR*& name);
 
 static ST::string GetAnimCompAnimName(plComponentBase *comp)
 {
@@ -196,7 +196,7 @@ plComponentTools gComponentTools(ExternAddModifier,
 
 void plMaxBoneMap::AddBone(plMaxNodeBase *bone)
 {
-    char *dbgNodeName = bone->GetName();
+    auto dbgNodeName = bone->GetName();
     if (fBones.find(bone) == fBones.end())
         fBones[bone] = fNumBones++;
 }
@@ -242,7 +242,7 @@ void plMaxBoneMap::SortBones()
         bool swap = false;        
         for (j = i + 1; j < fNumBones; j++)
         {
-            if (strcmp(tempBones[i]->GetName(), tempBones[j]->GetName()) > 0)
+            if (_tcscmp(tempBones[i]->GetName(), tempBones[j]->GetName()) > 0)
             {
                 plMaxNodeBase *temp = tempBones[i];
                 tempBones[i] = tempBones[j];
@@ -274,7 +274,7 @@ plKey plMaxNode::AddModifier(plModifier *pMod, const ST::string& name)
 bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
-    const char *tmpName = GetName();
+    auto tmpName = GetName();
 #endif
 
     // If there is a progess bar, update it with the current node
@@ -304,7 +304,7 @@ bool plMaxNode::DoRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertS
 bool plMaxNode::DoAllRecur(PMaxNodeFunc pDoFunction,plErrorMsg *pErrMsg, plConvertSettings *settings,plExportProgressBar*bar)
 {
 #ifdef HS_DEBUGGING
-    const char *tmpName = GetName();
+    auto tmpName = GetName();
 #endif
 
     // If there is a progess bar, update it with the current node
@@ -329,7 +329,7 @@ bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings
 {
     TimeValue   t = hsConverterUtils::Instance().GetTime(GetInterface());
     Object *obj = EvalWorldState( t ).obj;
-    const char* dbgName = GetName();
+    auto dbgName = GetName();
 
     // Always want to recalculate if this object can convert at this point.
     // In general there won't be any cached flag anyway, but in the SceneViewer
@@ -360,11 +360,11 @@ bool plMaxNode::ConvertValidate(plErrorMsg *pErrMsg, plConvertSettings *settings
         thisNodeData.SetForceLocal(true);
     }
 
-    if (UserPropExists("Occluder"))
+    if (UserPropExists(_M("Occluder")))
     {
 //      thisNodeData.SetDrawable(false);
     }
-    if( UserPropExists("PSRunTimeLight") )
+    if( UserPropExists(_M("PSRunTimeLight")) )
         thisNodeData.SetRunTimeLight(true);
 
     if (GetParticleRelated())
@@ -445,35 +445,35 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
         //
         // check for LocalOnly or DontPersist props
         //
-        if (gUserPropMgr.UserPropExists(this, "LocalOnly"))
+        if (gUserPropMgr.UserPropExists(this, _M("LocalOnly")))
             so->SetLocalOnly(true); // disable net synching and persistence
         else
-        if (gUserPropMgr.UserPropExists(this, "DontPersistAny"))    // disable all types of persistence
+        if (gUserPropMgr.UserPropExists(this, _M("DontPersistAny")))    // disable all types of persistence
             so->SetSynchFlagsBit(plSynchedObject::kExcludeAllPersistentState);
         else
         {
-            if (gUserPropMgr.GetUserPropStringList(this, "DontPersist", num, sdataList))
+            if (gUserPropMgr.GetUserPropStringList(this, _M("DontPersist"), num, sdataList))
             {
                 for(i=0;i<num;i++)
-                    so->AddToSDLExcludeList((const char *)sdataList[i]);  // disable a type of persistence
+                    so->AddToSDLExcludeList(M2ST(sdataList[i]));  // disable a type of persistence
             }
         }
 
         //
         // Check for Volatile prop
         //
-        if (gUserPropMgr.UserPropExists(this, "VolatileAll"))   // make all sdl types on this object Volatile
+        if (gUserPropMgr.UserPropExists(this, _M("VolatileAll")))   // make all sdl types on this object Volatile
             so->SetSynchFlagsBit(plSynchedObject::kAllStateIsVolatile);
         else
         {
-            if (gUserPropMgr.GetUserPropStringList(this, "Volatile", num, sdataList))
+            if (gUserPropMgr.GetUserPropStringList(this, _M("Volatile"), num, sdataList))
             {
                 for(i=0;i<num;i++)
-                    so->AddToSDLVolatileList((const char *)sdataList[i]); // make volatile a type of persistence
+                    so->AddToSDLVolatileList(M2ST(sdataList[i])); // make volatile a type of persistence
             }
         }
 
-        bool tempOldOverride = (gUserPropMgr.UserPropExists(this, "OverrideHighLevelSDL") != 0);
+        bool tempOldOverride = gUserPropMgr.UserPropExists(this, _M("OverrideHighLevelSDL"));
 
         //
         // TEMP - remove
@@ -512,7 +512,7 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
 
 bool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgName = GetName();
+    auto dbgName = GetName();
     if (!CanConvert()) 
         return false;
 
@@ -538,7 +538,7 @@ bool plMaxNode::MakeSceneObject(plErrorMsg *pErrMsg, plConvertSettings *settings
 
     // Handle this as a SceneObject
     pso = new plSceneObject;
-    objKey = hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(GetName()), pso, nodeLoc, GetLoadMask());
+    objKey = hsgResMgr::ResMgr()->NewKey(M2ST(GetName()), pso, nodeLoc, GetLoadMask());
 
     // Remember info in MaxNodeData block for later
     plMaxNodeData *pDat = GetMaxNodeData();
@@ -573,7 +573,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
     if( !CanConvert() )
         return false;
 
-    if (UserPropExists("Bone"))
+    if (UserPropExists(_M("Bone")))
     {
         AddBone(this);
         SetForceLocal(true);
@@ -582,7 +582,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
     ISkin* skin = FindSkinModifier();
     if( skin && skin->GetNumBones() )
     {
-        char *dbgNodeName = GetName();
+        auto dbgNodeName = GetName();
 
         // BoneUpdate
         //SetForceLocal(true);
@@ -594,7 +594,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
             {
                 if( !bone->CanConvert() || !bone->GetMaxNodeData() )
                 {
-                    if( pErrMsg->Set(true, GetName(), "Trouble connecting to bone %s - skipping", bone->GetName()).CheckAndAsk() )
+                    if( pErrMsg->Set(true, GetName(), ST::format("Trouble connecting to bone {} - skipping", bone->GetName())).CheckAndAsk() )
                         SetDrawable(false);
                 }
                 else
@@ -616,7 +616,7 @@ bool plMaxNode::IFindBones(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !CanConvert() )
         return false;
@@ -715,7 +715,7 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
             // Attempt to cook the physical
             if (!(recipe.triMesh = physical->ICookTriMesh(recipe.meshStream.get()))) {
-                pErrMsg->Set("Physics Error", "Failed to cook triangle mesh %s", GetName()).Show();
+                pErrMsg->Set("Physics Error", ST::format("Failed to cook triangle mesh {}", GetName())).Show();
                 return false;
             }
             recipe.meshStream->Rewind();
@@ -747,7 +747,7 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
             // Attempt to cook the physical
             if (!(recipe.convexMesh = physical->ICookHull(recipe.meshStream.get()))) {
-                pErrMsg->Set("Physics Error", "Failed to cook convex hull %s", GetName()).Show();
+                pErrMsg->Set("Physics Error", ST::format("Failed to cook convex hull {}", GetName())).Show();
                 return false;
             }
             recipe.meshStream->Rewind();
@@ -764,9 +764,10 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     plKey physKey = hsgResMgr::ResMgr()->NewKey(objName, physical, nodeLoc, GetLoadMask());
 
     // Sanity check creating the physical actor
+    physical->DirtyRecipe();
     if (!physical->InitActor())
     {
-        pErrMsg->Set(true, "Physics Error", "Physical creation failed for object %s", GetName()).Show();
+        pErrMsg->Set(true, "Physics Error", ST::format("Physical creation failed for object {}", GetName())).Show();
         physKey->RefObject();
         physKey->UnRefObject();
         return false;
@@ -826,7 +827,7 @@ bool plMaxNode::MakeController(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 bool plMaxNode::MakeCoordinateInterface(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert()) 
         return false;
     plCoordinateInterface* ci = nullptr;
@@ -871,7 +872,7 @@ bool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
         return false;
     
     bool forceLocal = GetForceLocal();
-    const char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     bool addMods = (!GetParentNode()->IsRootNode())
         || forceLocal;
@@ -881,48 +882,48 @@ bool plMaxNode::MakeModifiers(plErrorMsg *pErrMsg, plConvertSettings *settings)
     // create / add modifiers
 
         // mf horse hack testing ViewFace which is already obsolete
-        if ( UserPropExists("ViewFacing") )
+        if (UserPropExists(_M("ViewFacing")))
         {
             plViewFaceModifier* pMod = new plViewFaceModifier;
-            if( UserPropExists("VFPivotFavorY") )
+            if (UserPropExists(_M("VFPivotFavorY")))
                 pMod->SetFlag(plViewFaceModifier::kPivotFavorY);
-            else if( UserPropExists("VFPivotY") )
+            else if (UserPropExists(_M("VFPivotY")))
                 pMod->SetFlag(plViewFaceModifier::kPivotY);
-            else if( UserPropExists("VFPivotTumble") )
+            else if (UserPropExists(_M("VFPivotTumble")))
                 pMod->SetFlag(plViewFaceModifier::kPivotTumble);
             else
                 pMod->SetFlag(plViewFaceModifier::kPivotFace);
-            if( UserPropExists("VFScale") )
+            if (UserPropExists(_M("VFScale")))
             {
                 pMod->SetFlag(plViewFaceModifier::kScale);
-                TSTR sdata;
-                GetUserPropString("VFScale",sdata);
-                hsStringTokenizer toker;
-                toker.Reset(sdata, hsConverterUtils::fTagSeps);
+                MSTR sdata;
+                GetUserPropString(_M("VFScale"), sdata);
+                hsMStringTokenizer toker;
+                toker.Reset(sdata.data(), hsConverterUtils::fTagSeps);
                 int nGot = 0;
-                char* token;
+                MCHAR* token;
                 hsVector3 scale(1.f, 1.f, 1.f);
                 while( (nGot < 3) && (token = toker.next()) )
                 {
                     switch( nGot )
                     {
                     case 0:
-                        scale.fZ = float(atof(token));
+                        scale.fZ = float(_ttof(token));
                         break;
                     case 1:
                         scale.fX = scale.fZ;
-                        scale.fY = float(atof(token));
+                        scale.fY = float(_ttof(token));
                         scale.fZ = 1.f;
                         break;
                     case 2:
-                        scale.fZ = float(atof(token));
+                        scale.fZ = float(_ttof(token));
                         break;
                     }
                     nGot++;
                 }
                 pMod->SetScale(scale);
             }
-            AddModifier(pMod, ST::string::from_utf8(GetName()));
+            AddModifier(pMod, M2ST(GetName()));
         }
     }
     return true;
@@ -934,7 +935,7 @@ bool plMaxNode::MakeParentOrRoomConnection(plErrorMsg *pErrMsg, plConvertSetting
     if (!CanConvert()) 
         return false;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     plSceneObject *pso = GetSceneObject();
     if( !GetParentNode()->IsRootNode() )
     {
@@ -974,7 +975,7 @@ bool    plMaxNode::CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSetti
     if (obj == nullptr)
         return false;
 
-    if( UserPropExists( "Plasma2_Camera" ) )
+    if (UserPropExists(_M("Plasma2_Camera")))
         return false;
 
     if( !GetSwappableGeom() && !GetDrawable() )
@@ -1081,7 +1082,7 @@ int IsGeoSpanConvex(plMaxNode* node, const plGeometrySpan* span)
         return 0;
 
     // May not be now, but could become.
-    if( node->GetConcave() || node->UserPropExists("XXXWaterColor") )
+    if (node->GetConcave() || node->UserPropExists(_M("XXXWaterColor")))
         return 0;
 
     if( span->fMaterial && span->fMaterial->GetLayer(0) && (span->fMaterial->GetLayer(0)->GetMiscFlags() & hsGMatState::kMiscTwoSided) )
@@ -1208,8 +1209,8 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
     bool        haveAddedToSceneNode = false;
     hsGMesh     *myMesh = nullptr;
     uint32_t    triMeshIndex = (uint32_t)-1;
-    const char  *dbgNodeName = GetName();
-    TSTR sdata;
+    auto        dbgNodeName = GetName();
+    MSTR sdata;
     hsStringTokenizer toker;
     plLocation nodeLoc = GetLocation();
     
@@ -1218,7 +1219,7 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         if (!CanConvert()) 
             return false;
 
-        if( UserPropExists( "Plasma2_Camera" ) || !GetDrawable()  )
+        if (UserPropExists(_M("Plasma2_Camera")) || !GetDrawable())
         {
             SetMesh(nullptr);
             return true;
@@ -1554,7 +1555,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
                             hsMatrix44 &l2w, hsMatrix44 &w2l,
                             plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !NumBones() )
         return;
@@ -1599,7 +1600,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
         hsMatrix44 b2l;
 
         plMaxNodeBase *bone = boneArray[i-1];
-        const char* dbgBoneName = bone->GetName();
+        auto dbgBoneName = bone->GetName();
 
         Matrix3 localTM = bone->GetNodeTM(TimeValue(0));
 
@@ -1641,7 +1642,7 @@ void plMaxNode::ISetupBones(plDrawableSpans *drawable, std::vector<plGeometrySpa
     {
         plMaxNodeBase *bone = boneArray[i-1];
         plSceneObject* obj = bone->GetSceneObject();
-        const char  *dbgBoneName = bone->GetName();
+        auto dbgBoneName = bone->GetName();
 
         // Pick which drawable to point the DI to
         size_t iDraw = 0;
@@ -1881,7 +1882,7 @@ bool    plMaxNode::IMaterialsMatch( plMaxNode *otherNode, bool beMoreAccurate )
 
 bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     std::vector<plGeometrySpan *> spanArray;
 
@@ -1936,11 +1937,11 @@ bool plMaxNode::ShadeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
 bool plMaxNode::MakeOccluder(plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    if( !UserPropExists("Occluder") )
+    if( !UserPropExists(_M("Occluder")) )
         return true;
 
-    bool twoSided = UserPropExists("OccTwoSided");
-    bool isHole = UserPropExists("OccHole");
+    bool twoSided = UserPropExists(_M("OccTwoSided"));
+    bool isHole = UserPropExists(_M("OccHole"));
 
     return ConvertToOccluder(pErrMsg, twoSided, isHole);
 }
@@ -2756,13 +2757,10 @@ bool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
         }
         else
         {
-            char buff[256];
-            if( projMap && projMap->GetName() && *projMap->GetName() )
-                sprintf(buff, "Can't find projected bitmap - %s", (const char *)projMap->GetName());
-            else
-                sprintf(buff, "Can't find projected bitmap - <unknown>");
+            ST::string msg = ST::format("Can't find projected bitmap - {}",
+                (projMap && projMap->GetName() && *projMap->GetName()) ? M2ST(projMap->GetName()) : "<unknown>");
             if( pErrMsg->Set(!(convert.fWarned & plConvert::kWarnedMissingProj), GetName(),
-                    buff).CheckAskOrCancel() )
+                    msg).CheckAskOrCancel() )
                 convert.fWarned |= plConvert::kWarnedMissingProj;
             pErrMsg->Set(false);
             retVal = false;
@@ -2805,7 +2803,7 @@ bool plMaxNode::IsAnimatedLight()
     if (!obj)
         return false;
 
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     Class_ID cid = obj->ClassID();
 
@@ -3377,7 +3375,7 @@ bool plMaxNode::ConvertComponents(plErrorMsg *pErrMsg, plConvertSettings *settin
 
     bool ret = true;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
 
@@ -3414,7 +3412,7 @@ bool plMaxNode::DeInitComponents(plErrorMsg *pErrMsg, plConvertSettings *setting
 
     bool ret = true;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
 
@@ -3491,7 +3489,7 @@ bool plMaxNode::ClearData(plErrorMsg *pErrMsg, plConvertSettings *settings)
 // Little special-purpose thing to see if a node has an animation graph modifier on it.
 plAGModifier *plMaxNode::HasAGMod()
 {
-    char *name = GetName();
+    auto name = GetName();
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
@@ -3511,7 +3509,7 @@ plAGModifier *plMaxNode::HasAGMod()
 
 plAGMasterMod *plMaxNode::GetAGMasterMod()
 {
-    char *name = GetName();
+    auto name = GetName();
     if (CanConvert())
     {
         plSceneObject *SO = GetSceneObject();
@@ -3531,46 +3529,45 @@ plAGMasterMod *plMaxNode::GetAGMasterMod()
 
 
 // SETUPBONESALIASESRECUR
-void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
+void plMaxNode::SetupBonesAliasesRecur(const ST::string& rootName)
 {
     if(CanConvert()) {
         if (!HasAGMod()) {
             ST::string nameToUse;
             
             // parse UserPropsBuf for entire BoneName line
-            char localName[256];
+            TCHAR localName[256];
             TSTR propsBuf;
             GetUserPropBuffer(propsBuf);
-            char* start=strstr(propsBuf, "BoneName=");
+            auto start = _tcsstr(propsBuf, _T("BoneName="));
             if (!start)
-                start=strstr(propsBuf, "bonename=");
-            const int len = strlen("BoneName=");
-            if(start && UserPropExists("BoneName"))
+                start = _tcsstr(propsBuf, _T("bonename="));
+            constexpr size_t len = std::string_view("BoneName=").size();
+            if(start && UserPropExists(_M("BoneName")))
             {
                 start+=len;
                 int i=0;
-                while(*start != '\n' && *start)
+                while(*start != _T('\n') && *start)
                 {
                     hsAssert(i<256, "localName overflow");
                     localName[i++]=*start++;
                 }
                 localName[i]=0;
 
-                nameToUse = ST::string::from_utf8(localName);
+                nameToUse = T2ST(localName);
 
             }
             else
             {
-                ST::string nodeName = ST::string::from_utf8(GetName());
-        //      char str[256];
-        //      sprintf(str, "Missing 'BoneName=foo' UserProp, on object %s, using node name", nodeName ? nodeName : "?");
-        //      hsAssert(false, str);
+                ST::string nodeName = M2ST(GetName());
+        //      ST::string str = ST::format("Missing 'BoneName=foo' UserProp, on object {}, using node name", nodeName ? nodeName : "?");
+        //      hsAssert(false, str.c_str());
 
                 nameToUse = nodeName;
             }
 
-        /*  char aliasName[256];
-            sprintf(aliasName, "%s_%s", rootName, nameToUse);
+        /*
+            ST::string aliasName = ST::format("{}_{}", rootName, nameToUse);
 
             plUoid* uoid = hsgResMgr::ResMgr()->FindAlias(aliasName, plSceneObject::Index());
             if( !uoid )
@@ -3581,7 +3578,7 @@ void plMaxNode::SetupBonesAliasesRecur(const char *rootName)
             }
         */
             plAGModifier *mod = new plAGModifier(nameToUse);
-            AddModifier(mod, ST::string::from_utf8(GetName()));
+            AddModifier(mod, M2ST(GetName()));
         }
     }
 
@@ -3643,7 +3640,7 @@ plSceneObject* plMaxNode::MakeCharacterHierarchy(plErrorMsg *pErrMsg)
     plSceneObject* playerRoot = GetSceneObject();
     if (pErrMsg->Set(playerRoot->GetDrawInterface() != nullptr, GetName(), "Non-helper as player root").CheckAndAsk())
         return nullptr;
-    const char *playerRootName = GetName();
+    auto playerRootName = GetName();
 
     std::vector<plMaxNode*> bonesRoots;
     for (int i = 0; i < NumberOfChildren(); i++)
@@ -3661,9 +3658,15 @@ plSceneObject* plMaxNode::MakeCharacterHierarchy(plErrorMsg *pErrMsg)
         if (pErrMsg->Set(boneRootObj == nullptr, playerRootName, "No scene object for the bones root").CheckAndAsk())
             return nullptr;
 
-        if( boneRootObj != playerRoot )
-            hsMessageBox("This avatar's bone hierarchy does not have the avatar root node linked as a parent. "
-                         "This may cause the avatar draw incorrectly.", playerRootName, hsMessageBoxNormal);
+        if (boneRootObj != playerRoot) {
+            plMaxMessageBox(
+                nullptr,
+                _T("This avatar's bone hierarchy does not have the avatar root node linked as a parent. "
+                   "This may cause the avatar draw incorrectly."),
+                playerRootName,
+                MB_OK
+            );
+        }
     }
 
     return playerRoot;
@@ -3672,7 +3675,7 @@ plSceneObject* plMaxNode::MakeCharacterHierarchy(plErrorMsg *pErrMsg)
 // Takes all bones found on this node (and any descendents) and sets up a single palette
 void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nullptr */)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     if( !CanConvert() )
         return;
@@ -3686,7 +3689,7 @@ void plMaxNode::SetupBoneHierarchyPalette(plMaxBoneMap *bones /* = nullptr */)
         bones->fOwner = this;
     }
     
-    if (UserPropExists("Bone"))
+    if (UserPropExists(_M("Bone")))
         bones->AddBone(this);
 
     int i;
@@ -3832,7 +3835,7 @@ void    plMaxNode::ISetCachedAlphaHackValue( int iSubMtl, int value )
 
 int plMaxNode::AlphaHackLayersNeeded(int iSubMtl)
 {
-    const char* dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
 
     int cached = IGetCachedAlphaHackValue( iSubMtl );
     if( cached != -1 )
@@ -3933,7 +3936,7 @@ plKey   plMaxNode::FindPageKey( uint16_t classIdx, const ST::string &name )
     return hsgResMgr::ResMgr()->FindKey( plUoid( GetLocation(), classIdx, name ) );
 }
 
-const char *plMaxNode::GetAgeName()
+const MCHAR* plMaxNode::GetAgeName()
 {
     int i;
     for (i = 0; i < NumAttachedComponents(); i++)
@@ -3956,7 +3959,7 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
 {
     bool ret = true;
 
-    char *dbgNodeName = GetName();
+    auto dbgNodeName = GetName();
     if (!CanConvert())
         return ret;
     
@@ -3988,7 +3991,7 @@ bool plMaxNode::MakeIfaceReferences(plErrorMsg *pErrMsg, plConvertSettings *sett
     {
         plInterfaceInfoModifier* pMod = new plInterfaceInfoModifier;
         
-        plKey modifierKey = hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(GetName()), pMod, GetLocation(), GetLoadMask());
+        plKey modifierKey = hsgResMgr::ResMgr()->NewKey(M2ST(GetName()), pMod, GetLocation(), GetLoadMask());
         hsgResMgr::ResMgr()->AddViaNotify(modifierKey, new plObjRefMsg(GetSceneObject()->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
         
         for (const plKey& key : keys)

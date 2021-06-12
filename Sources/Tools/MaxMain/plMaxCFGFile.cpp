@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plFileName plMaxConfig::GetPluginIni()
 {
     // Get the plugin CFG dir
-    return plFileName::Join(GetCOREInterface()->GetDir(APP_PLUGCFG_DIR), "PlasmaMAX2.ini");
+    return plFileName::Join(M2ST(GetCOREInterface()->GetDir(APP_PLUGCFG_DIR)), "PlasmaMAX2.ini");
 }
 
 plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
@@ -88,6 +88,7 @@ void plMaxConfig::SetClientPath(const plFileName &path)
 
 bool plMaxConfig::AssetManInterfaceDisabled()
 {
+#ifdef MAXASS_AVAILABLE
     static bool inited = false;
     static bool disabled = false;
 
@@ -109,4 +110,7 @@ bool plMaxConfig::AssetManInterfaceDisabled()
     }
 
     return disabled;
+#else
+    return true;
+#endif
 }

@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct plSoundMarker
 {
-    char *fName;
+    TCHAR* fName;
     double fOffset; // in Secs
 
     plSoundMarker() : fName(), fOffset() { }

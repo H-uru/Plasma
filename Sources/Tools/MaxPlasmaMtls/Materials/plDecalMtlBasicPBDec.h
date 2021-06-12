@@ -111,60 +111,60 @@ static ParamBlockDesc2 gDecalBasicPB
     kDecalBasColorLock, _T("colorLock"),    TYPE_BOOL,          0, 0,
         p_ui,           TYPE_CHECKBUTTON, IDC_LOCK_AD,
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
     kDecalBasColorAmb,  _T("ambColor"),     TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_AMB,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_COLOR_AMB,
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
     kDecalBasColor,     _T("color"),        TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_COLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_COLOR,
         p_default,      Color(1,1,1),
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
 
     kDecalBasRunColor,      _T("runtimeColor"),     TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_RUNCOLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_RUNCOLOR,
         p_default,      Color(1,1,1),
         p_accessor,     &basicAccessor,
-        end,
+        p_end,
     kDecalBasDiffuseLock,   _T("diffuseLock"),  TYPE_BOOL,          0, 0,
         p_ui,           TYPE_CHECKBUTTON, IDC_LOCK_COLORS,
         p_accessor,     &basicAccessor,
         p_default,      TRUE,
-        end,
+        p_end,
 
     // Opacity
     kDecalBasOpacity,   _T("opacity"),      TYPE_INT,           P_ANIMATABLE, IDS_BASIC_OPAC,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TR_EDIT, IDC_TR_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
-        end,
+        p_end,
 
     kDecalBasEmissive,  _T("emissive"),     TYPE_BOOL,          0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_LAYER_EMISSIVE_CB,
-        end,
+        p_end,
 
     // Specularity
     kDecalBasUseSpec,       _T("useSpec"),      TYPE_BOOL,      0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_SHADE_SPECULAR,
         p_enable_ctrls,     2, kDecalBasShine, kDecalBasShineStr,
-        end,
+        p_end,
     kDecalBasShine,         _T("shine"),        TYPE_INT,       0, 0,
         p_ui,               TYPE_SPINNER, EDITTYPE_INT, IDC_SH_EDIT, IDC_SH_SPIN, 0.4,
         p_range,            0, 100,
-        end,
+        p_end,
     kDecalBasSpecColor, _T("specularColor"),        TYPE_RGBA,          P_ANIMATABLE, IDS_BASIC_SPECCOLOR,
         p_ui,           TYPE_COLORSWATCH, IDC_LAYER_SPECCOLOR,
         p_default,      Color(0,0,0),
-        end,
+        p_end,
 
     // OBSOLETE--here so we can upgrade it to color if necessary
     kDecalBasShineStr,      _T("shineStr"),     TYPE_INT,       0, 0,
         p_range,        -1, 100,
         p_default,      -1,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 ParamBlockDesc2 *GetDecalBasicPB() { return &gDecalBasicPB; }
 

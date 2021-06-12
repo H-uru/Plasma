@@ -181,7 +181,9 @@ void plComponentBase::SetReference(int i, RefTargetHandle rtarg)
         fCompPB = (IParamBlock2*)rtarg;
 }
 
-RefResult plComponentBase::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message)
+RefResult plComponentBase::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                            PartID& partID, RefMessage message
+                                            MAX_REF_PROPAGATE)
 {
     return REF_SUCCEED;
 }
@@ -309,7 +311,7 @@ ST::string plComponentBase::IGetUniqueName(plMaxNodeBase* target)
     if (numUsedTargs > 1)
         return ST::format("{}_{}", GetINode()->GetName(), thisTargIdx);
     else
-        return ST::string::from_utf8(GetINode()->GetName());
+        return M2ST(GetINode()->GetName());
 }
 
 plMaxNodeBase *plComponentBase::GetINode()
@@ -627,7 +629,7 @@ static void FindObsoleteComponents(plMaxNodeBase *node, std::vector<plComponentB
 
 static bool gUpdatingComponents = false;
 
-#include <set>
+#include <unordered_set>
 
 
 static void ComponentNotify(void *param, NotifyInfo *info)
@@ -657,25 +659,17 @@ static void ComponentNotify(void *param, NotifyInfo *info)
             FindObsoleteComponents((plMaxNodeBase*)GetCOREInterface()->GetRootNode(), obsoleteComps);
 
             // For now, just get the categories (could get the component names)
-            std::set<const char *> names;
-            for (int i = 0; i < obsoleteComps.size(); i++)
-            {
-                const char *name = obsoleteComps[i]->GetObjectName();
-                names.insert(name);
-            }
+            std::unordered_set<ST::string> names;
+            for (auto i : obsoleteComps)
+                names.insert(M2ST(i->GetObjectName()));
 
-            if (obsoleteComps.size() > 0)
+            if (!obsoleteComps.empty())
             {
-                char buf[1024];
-                strcpy(buf, "Components of the following obsolete types\nwere found in this scene.  Please delete them.\n\n");
-                std::set<const char *>::iterator it = names.begin();
-                for (; it != names.end(); it++)
-                {
-                    strcat(buf, (*it));
-                    strcat(buf, "\n");
-                }
-
-                hsMessageBox(buf, "Obsolete Components", hsMBoxOk);
+                ST::string_stream ss;
+                ss << "Components of the following obsolete types\nwere found in this scene.  Please delete them.\n\n";
+                for (const auto& name : names)
+                    ss << name << '\n';
+                plMaxMessageBox(nullptr, ST2T(ss.to_string()), _T("Obsolete Components"), MB_OK);
             }
         }
     }

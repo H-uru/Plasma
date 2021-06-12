@@ -251,19 +251,19 @@ Animatable  *plDynamicEnvLayer::SubAnim( int i )
     }
 }
 
-TSTR    plDynamicEnvLayer::SubAnimName( int i ) 
+MSTR    plDynamicEnvLayer::SubAnimName( int i ) 
 {
     switch( i )
     {
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
 //// NotifyRefChanged /////////////////////////////////////////////////////////
 
-RefResult   plDynamicEnvLayer::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
-                                                   PartID& partID, RefMessage message ) 
+RefResult   plDynamicEnvLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                                PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {

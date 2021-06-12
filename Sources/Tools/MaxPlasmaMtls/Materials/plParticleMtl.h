@@ -137,8 +137,8 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    TSTR GetSubTexmapSlotName(int i) override;
-    TSTR GetSubTexmapTVName(int i);
+    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
 
@@ -147,12 +147,12 @@ public:
     IOResult Save(ISave *isave) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID,  RefMessage message MAX_REF_PROPAGATE) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
+const TCHAR* kUVStrings[] = { _T("1"), _T("2"), _T("3"), _T("4"), _T("5"), _T("6"), _T("7"), _T("8") };
+
 class plMAXCameraLayerClassDesc : public ClassDesc2
 {
 public:
@@ -96,10 +98,10 @@ public:
         {
         case WM_INITDIALOG:
             int i;
-            for (i = 0; i < plMAXCameraLayer::kMaxUVSrc; i++)
+            for (const TCHAR* uvString : kUVStrings)
             {
                 cbox = GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plMAXCameraLayer::kUVStrings[i]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)uvString);
             }
             UpdateDisplay(map);
             return TRUE;
@@ -137,40 +139,37 @@ static ParamBlockDesc2 gMAXCameraLayerParamBlk
         p_ui, TYPE_PICKNODEBUTTON, IDC_CAM_LAYER_CAMERA,
         p_classID, Class_ID(LOOKAT_CAM_CLASS_ID, 0),
         p_prompt, IDS_CAM_LAYER_CAMERA,
-        end,
+        p_end,
 
     plMAXCameraLayer::kUVSource, _T("UVSource"),    TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plMAXCameraLayer::kExplicitCam, _T("explicitCam"),  TYPE_BOOL,      0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CAM_LAYER_EXPLICIT_CAM,
         p_default, false,
         p_enable_ctrls, 1, plMAXCameraLayer::kCamera,
-        end,
+        p_end,
 
     plMAXCameraLayer::kRootNode, _T("rootNode"),    TYPE_INODE, 0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_CAM_LAYER_ROOT_NODE,
         p_prompt, IDS_CAM_LAYER_ROOT_NODE,
-        end,
+        p_end,
 
     plMAXCameraLayer::kDisableColor, _T("disableColor"), TYPE_RGBA, 0, 0,
         p_ui,           TYPE_COLORSWATCH, IDC_CAM_LAYER_DISABLE_COLOR,
         p_default,      Color(0,0,0),
-        end,
+        p_end,
 
     plMAXCameraLayer::kForce, _T("force"),  TYPE_BOOL,      0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CAM_LAYER_FORCE,
         p_default, false,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 /////////////////////////////////////////////////////////////////////////////
-
-const char *plMAXCameraLayer::kUVStrings[] = { "1", "2", "3", "4", "5", "6", "7", "8" };
-const uint8_t plMAXCameraLayer::kMaxUVSrc = 8;
 
 plMAXCameraLayer::plMAXCameraLayer() :
 fParmsPB(),
@@ -298,17 +297,17 @@ Animatable* plMAXCameraLayer::SubAnim(int i)
     }
 }
 
-TSTR plMAXCameraLayer::SubAnimName(int i)
+MSTR plMAXCameraLayer::SubAnimName(int i)
 {
     switch (i)
     {
-        case kRefMain:      return "Main";
-        default: return "";
+        case kRefMain:      return _M("Main");
+        default: return _M("");
     }
 }
 
-RefResult plMAXCameraLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,
-                                              PartID& partID, RefMessage message)
+RefResult plMAXCameraLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                             PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -323,7 +322,7 @@ RefResult plMAXCameraLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle
                 ParamID changingParam = fParmsPB->LastNotifyParamID();
                 fParmsPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }

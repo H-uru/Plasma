@@ -253,18 +253,18 @@ Animatable* plStaticEnvLayer::SubAnim(int i)
     }
 }
 
-TSTR plStaticEnvLayer::SubAnimName(int i) 
+MSTR plStaticEnvLayer::SubAnimName(int i) 
 {
     switch (i)
     {
-        case kRefUVGen:     return "UVGen";
+        case kRefUVGen:     return _M("UVGen");
         case kRefBitmap:    return fBitmapPB->GetLocalName();
-        default: return "";
+        default: return _M("");
     }
 }
 
-RefResult plStaticEnvLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-   PartID& partID, RefMessage message) 
+RefResult plStaticEnvLayer::NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+   PartID& partID, RefMessage message MAX_REF_PROPAGATE)
 {
     switch (message)
     {
@@ -279,7 +279,7 @@ RefResult plStaticEnvLayer::NotifyRefChanged(Interval changeInt, RefTargetHandle
                 ParamID changingParam = fBitmapPB->LastNotifyParamID();
                 fBitmapPB->GetDesc()->InvalidateUI(changingParam);
 
-                if (changingParam != -1)
+                if (changingParam != -1 && MAX_REF_PROPAGATE_VALUE)
                     IChanged();
             }
         }
@@ -526,7 +526,7 @@ DWORD_PTR plStaticEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thma
     }
 }
 
-const char *plStaticEnvLayer::GetTextureName( int which )
+const MCHAR* plStaticEnvLayer::GetTextureName( int which )
 {
 //  if (fBitmapPB->GetInt(kBmpUseBitmap))
     {
@@ -540,9 +540,9 @@ const char *plStaticEnvLayer::GetTextureName( int which )
 
 //// Set/GetBaseFilename //////////////////////////////////////////////////////
 
-void    plStaticEnvLayer::SetBaseFilename( const TCHAR *name, TimeValue t )
+void    plStaticEnvLayer::SetBaseFilename( const MCHAR *name, TimeValue t )
 {
-    fBitmapPB->SetValue( kBmpBaseFilename, t, (TCHAR *)name );
+    fBitmapPB->SetValue( kBmpBaseFilename, t, const_cast<MCHAR*>(name) );
 }
 
 const TCHAR *plStaticEnvLayer::GetBaseFilename( TimeValue t )
@@ -584,7 +584,7 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
 
 //// IWriteBM /////////////////////////////////////////////////////////////////
 
-int plStaticEnvLayer::IWriteBM( BitmapInfo *bi, Bitmap *bm, TCHAR *name )
+int plStaticEnvLayer::IWriteBM( BitmapInfo *bi, Bitmap *bm, BMNAME_VALUE_TYPE name )
 {
     bi->SetName( name );
     if( bm->OpenOutput( bi ) == BMMRES_SUCCESS )
@@ -611,7 +611,9 @@ void    plStaticEnvLayer::RenderCubicMap( INode *node )
     TSTR        path, filename, ext, thisFilename;
     BitmapInfo  biOutFile;
 
-    static TCHAR    suffixes[ 6 ][ 4 ] = { "_FR", "_BK", "_LF", "_RT", "_UP", "_DN" };
+    static TCHAR    suffixes[ 6 ][ 4 ] = {
+        _T("_FR"), _T("_BK"), _T("_LF"), _T("_RT"), _T("_UP"), _T("_DN")
+    };
 
 
     Interface *ip = GetCOREInterface();

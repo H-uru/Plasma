@@ -101,9 +101,9 @@ ParamBlockDesc2 gMorphLayBk
     plMorphLayComp::kDeltas,    _T("Deltas"),   TYPE_INODE_TAB, 0,      P_CAN_CONVERT, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, IDC_ADD_TARGS, 0, IDC_DEL_TARGS,
         p_classID,      triObjectClassID,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -122,7 +122,7 @@ bool plMorphLayComp::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
         plMaxNode* deltaNode = (plMaxNode*)fCompPB->GetINode(kDeltas, TimeValue(0), i);
         if( deltaNode )
         {
-            const char* deltaName = deltaNode->GetName();
+            const MCHAR* deltaName = deltaNode->GetName();
             
             if( !deltaNode->GetSwappableGeom() )
                 deltaNode->SetSwappableGeom(new plSharedMesh);
@@ -153,7 +153,7 @@ bool plMorphLayComp::SetupLayer(plMorphArray& morphArr, plMaxNode* baseNode, std
         plMaxNode* deltaNode = (plMaxNode*)fCompPB->GetINode(kDeltas, TimeValue(0), i);
         if( !deltaNode )
             continue;
-        const char* dbgNodeName = deltaNode->GetName();
+        const MCHAR* dbgNodeName = deltaNode->GetName();
 
         // Get the GeometrySpans. We ensured they would
         // be generated in it's SetupProperties, and they were created
@@ -266,15 +266,15 @@ ParamBlockDesc2 gMorphSeqBk
 
     plMorphSeqComp::kLayers,    _T("Layers"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plMorphSeqComp::kBaseNode, _T("BaseNode"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CHOOSE_OBJECT,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_CHOSE_OBJECT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 bool plMorphSeqComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -300,7 +300,7 @@ bool plMorphSeqComp::PreConvert(plMaxNode* node, plErrorMsg* pErrMsg)
 
 bool plMorphSeqComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg) 
 { 
-    const char* dbgNodeName = node->GetName();
+    const MCHAR* dbgNodeName = node->GetName();
 
     // Make our plMorphSequence modifier
     plMorphSequence* morphSeq = const_cast<plMorphSequence *>(plMorphSequence::ConvertNoRef(node->GetSceneObject()->GetModifierByType(plMorphSequence::Index())));

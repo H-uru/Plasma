@@ -87,19 +87,19 @@ bool    plMeshConverter::fWarnBadNormals = true;
 char    plMeshConverter::fWarnBadNormalsMsg[] = "Bad normal autogeneration - please deliver Max file to QA";
 
 bool    plMeshConverter::fWarnBadUVs = true;
-char    plMeshConverter::fWarnBadUVsMsg[] = "The object \"%s\" does not have enough valid UVW mapping channels \
+char    plMeshConverter::fWarnBadUVsMsg[] = "The object \"{}\" does not have enough valid UVW mapping channels \
 for the material(s) applied to it. This might produce unwanted rendering artifacts at runtime";
 
 bool    plMeshConverter::fWarnSuspiciousUVs = true;
-char    plMeshConverter::fWarnSuspiciousUVsMsg[] = "The object \"%s\" has suspicious UVW coordinates on it. \
+char    plMeshConverter::fWarnSuspiciousUVsMsg[] = "The object \"{}\" has suspicious UVW coordinates on it. \
 You should apply an Unwrap UVW modifier to it.";
 
-char    plMeshConverter::fTooManyVertsMsg[] = "The mesh \"%s\" has too many vertices to fit into a single buffer. \
-Please break up the mesh into pieces with no more than %u vertices each\
+char    plMeshConverter::fTooManyVertsMsg[] = "The mesh \"{}\" has too many vertices to fit into a single buffer. \
+Please break up the mesh into pieces with no more than {} vertices each\
 or apply optimize terrain.";
 
-char    plMeshConverter::fTooManyFacesMsg[] = "The mesh \"%s\" has too many faces to fit into a single buffer. \
-Please break up the mesh into pieces with no more than %u faces each\
+char    plMeshConverter::fTooManyFacesMsg[] = "The mesh \"{}\" has too many faces to fit into a single buffer. \
+Please break up the mesh into pieces with no more than {} faces each\
 or apply optimize terrain.";
 
 
@@ -291,7 +291,7 @@ void plMeshConverter::StuffPositionsAndNormals(plMaxNode *node, std::vector<hsPo
 {
     hsGuardBegin( "plMeshConverter::BuildNormalsArray" );
 
-    const char* dbgNodeName = node->GetName();
+    auto            dbgNodeName = node->GetName();
     Mesh            *mesh;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
 
@@ -336,9 +336,9 @@ plConvexVolume *plMeshConverter::CreateConvexVolume(plMaxNode *node)
 {
     hsGuardBegin( "plMeshConverter::CreateConvexVolume" );
 
-    const char* dbgNodeName = node->GetName();
+    auto            dbgNodeName = node->GetName();
     Mesh            *mesh;
-    int32_t           numFaces, i, j, numVerts;
+    int32_t         numFaces, i, j, numVerts;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
     bool            flipOrder, checkForOverflow = false;
 
@@ -490,7 +490,7 @@ bool plMeshConverter::IValidateUVs(plMaxNode* node)
         if (fWarnSuspiciousUVs)
         {
             /// We're missing some UV channels on our object. We'll handle it later; warn the user here
-            if (fErrorMsg->Set(true, "UVW Warning", fWarnSuspiciousUVsMsg, node->GetName()).CheckAskOrCancel())
+            if (fErrorMsg->Set(true, "UVW Warning", ST::format(fWarnSuspiciousUVsMsg, node->GetName())).CheckAskOrCancel())
                 fWarnSuspiciousUVs = false;
             fErrorMsg->Set(false);
         }
@@ -509,17 +509,17 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
 {
     hsGuardBegin( "plMeshConverter::CreateSpans" );
 
-    const char* dbgNodeName = node->GetName();
+    auto            dbgNodeName = node->GetName();
     Mesh            *mesh;
-    int32_t           numFaces, i, numVerts, maxNumBones, maxUVWSrc;
-    int32_t           numMaterials = 1, numSubMaterials = 1;
+    int32_t         numFaces, i, numVerts, maxNumBones, maxUVWSrc;
+    int32_t         numMaterials = 1, numSubMaterials = 1;
     hsMatrix44      l2wMatrix, vert2LMatrix, vertInvTransMatrix, tempMatrix;
     Mtl             *maxMaterial = nullptr;
     bool            isComposite, isMultiMat, flipOrder, checkForOverflow = false, includesComp;
-    uint8_t           ourFormat, numChannels, maxBlendChannels;
+    uint8_t         ourFormat, numChannels, maxBlendChannels;
     hsColorRGBA     *colorArray = nullptr;
     hsColorRGBA     *illumArray = nullptr;
-    uint32_t          sharedSpanProps = 0;
+    uint32_t        sharedSpanProps = 0;
     hsBitVector     usedSubMtls;
     bool            makeAlphaLayer = node->VtxAlphaNotAvailable();
 
@@ -731,7 +731,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
         if( numChannels + maxBlendChannels < ( maxUVWSrc + 1 ) && fWarnBadUVs )
         {
             /// We're missing some UV channels on our object. We'll handle it later; warn the user here
-            if( fErrorMsg->Set( true, "UVW Channel Warning", fWarnBadUVsMsg, node->GetName() ).CheckAskOrCancel() )
+            if( fErrorMsg->Set(true, "UVW Channel Warning", ST::format(fWarnBadUVsMsg, node->GetName())).CheckAskOrCancel() )
                 fWarnBadUVs = false;
             fErrorMsg->Set( false );
         }
@@ -791,7 +791,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
             int skinNumPoints = skinData->GetNumPoints();
             if(skinNumPoints != numVerts)
             {
-                fErrorMsg->Set(true, "Skinning Error", "Invalid point count on ISkin data on node %s", dbgNodeName ).Show();
+                fErrorMsg->Set(true, "Skinning Error", ST::format("Invalid point count on ISkin data on node {}", dbgNodeName)).Show();
                 fErrorMsg->Set();
                 throw (bool)false;
                 //hsAssert( skinData->GetNumPoints() == numVerts, "Invalid point count on ISkin data" );
@@ -811,7 +811,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
             //hsAssert( maxNumBones >= 2, "Invalid skin (not enough bones)" );
             if( maxNumBones < 2)
             {
-                fErrorMsg->Set(true, "Skinning Error", "Invalid skin (no bones) on node %s", dbgNodeName ).Show();
+                fErrorMsg->Set(true, "Skinning Error", ST::format("Invalid skin (no bones) on node {}", dbgNodeName)).Show();
                 fErrorMsg->Set();
                 throw (bool)false;
             }
@@ -1225,7 +1225,7 @@ bool plMeshConverter::CreateSpans(plMaxNode *node, std::vector<plGeometrySpan *>
         }
 
         // A bit of test hack here. Remind me to nuke it.
-        if (node->GetCalcEdgeLens() || node->UserPropExists("XXXWaterColor")) {
+        if (node->GetCalcEdgeLens() || node->UserPropExists(_M("XXXWaterColor"))) {
             for (plGeometrySpan* span : spanArray)
                 SetWaterColor(span);
         }
@@ -1374,7 +1374,7 @@ Mesh    *plMeshConverter::IGetNodeMesh( plMaxNode *node )
 {
     hsGuardBegin( "plMeshConverter::IGetNodeMesh" );
 
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     fTriObjToDelete = nullptr;
     fMeshToDelete = nullptr;
@@ -1521,7 +1521,7 @@ int     plMeshConverter::IGenerateUVs( plMaxNode *node, Mtl *maxMtl, Mesh *mesh,
                     static int muteWarn = false;
                     if( !muteWarn )
                     {
-                        muteWarn = fErrorMsg->Set( true, node->GetName(), "Check mapping on channel %d!!!", chan + 1 ).CheckAskOrCancel();
+                        muteWarn = fErrorMsg->Set(true, node->GetName(), ST::format("Check mapping on channel {}!!!", chan + 1)).CheckAskOrCancel();
                         fErrorMsg->Set( false );
                     }
                     tvIdx = 0;
@@ -1694,7 +1694,7 @@ void plMeshConverter::ISmoothUVGradients(plMaxNode* node, Mesh* mesh,
                                          std::vector<int16_t>& bumpLayIdx, std::vector<int16_t>& bumpLayChan,
                                          std::vector<plMAXVertNormal>* vertDPosDuCache, std::vector<plMAXVertNormal>* vertDPosDvCache)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     Mtl* mainMtl = hsMaterialConverter::Instance().GetBaseMtl( node );
 
@@ -1927,13 +1927,10 @@ void    plMeshConverter::IGetUVTransform( plMaxNode *node, Mtl *mtl, Matrix3 *uv
     BitmapTex *bitmapTex = (BitmapTex *)texMap;
 
 #ifndef NDEBUG
-    CStr className;
+    MSTR className;
     texMap->GetClassName(className);
-    if( strcmp(className,"Bitmap") && strcmp(className,"Plasma Layer") && strcmp(className,"Plasma Layer Dbg."))
+    if (className != MSTR(_M("Bitmap")) && className != MSTR(_M("Plasma Layer")) && className != MSTR(_M("Plasma Layer Dbg.")))
         return;
-
-    char txtFileName[256];
-    strcpy(txtFileName, bitmapTex->GetMapName());
 #endif // NDEBUG
 
     StdUVGen *uvGen = bitmapTex->GetUVGen();
@@ -2082,7 +2079,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
     plMAXVertexAccNode      *node;
     hsPoint3                *uvs[ plGeometrySpan::kMaxNumUVChannels ];  
 
-    const char* dbgNodeName = maxNode->GetName();
+    auto dbgNodeName = maxNode->GetName();
     TempWeightInfo          *weights = nullptr;
 
     /// Precalculate the weights if necessary
@@ -2145,7 +2142,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
                     if (indices[j] != 0)
                     {
                         plMaxNodeBase *bone = maxNode->GetBone(indices[j] - 1);
-                        char *dbgBoneName = bone->GetName();
+                        auto dbgBoneName = bone->GetName();
                         indices[j] = boneMap->GetIndex(bone) + 1;
                     }
                 //}
@@ -2239,7 +2236,7 @@ void    plMAXVertexAccumulator::StuffMyData( plMaxNode* maxNode, plGeometrySpan 
 // and told us what vertex channel to find the weight for that bone in.
 void plMAXVertexAccumulator::IFindAllUserSkinWeights( plMaxNode* node, Mesh* mesh, TempWeightInfo weights[])
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     int iMap = MAP_ALPHA; // FISH HACK, till we stuff the src channel into the max node.
     iMap = 66;

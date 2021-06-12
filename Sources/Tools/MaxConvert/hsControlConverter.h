@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInterp/hsKeys.h"
 
+#include "MaxMain/MaxCompat.h"
+
 class Animatable;
 class plCompoundController;
 class Control;
@@ -94,7 +96,7 @@ public:
     void DeInit();
 
     // Used to pick correct controller by lights/materials
-    bool GetControllerByName(Animatable* anim, TSTR &name, Control* &ctl);
+    bool GetControllerByName(Animatable* anim, const MSTR& name, Control* &ctl);
     Control *GetControllerByID(IParamBlock2 *pblock, int paramID);
 
     /////////////////////////////////////////////////////////////////////////
@@ -103,7 +105,7 @@ public:
     // 
     // All convert functions must call ISetSegRange(start, end) at the beginning.
     // (ISetSegRange(-1, -1) will give you the entire anim.)
-    plLeafController* MakeMatrix44Controller(StdUVGen* uvGen, const char* nodeName);
+    plLeafController* MakeMatrix44Controller(StdUVGen* uvGen, const MCHAR* nodeName);
     plLeafController* MakeMatrix44Controller(Control* prsControl);
     plLeafController* MakeScalarController(Control* control, plMaxNode* node, float start = -1, float end = -1);
     plController* MakeColorController(Control* control, plMaxNode* node, float start = -1, float end = -1);
@@ -123,7 +125,7 @@ public:
     void    Matrix3ToHsMatrix44(Matrix3* m3, hsMatrix44* hsM);
     Matrix3 StdUVGenToMatrix3(StdUVGen* uvGen);
     bool    StdUVGenToHsMatrix44(hsMatrix44* hsMat, StdUVGen* uvGen, bool preserveOffset=false);
-    void    MaxSampleAngles(const char* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads);
+    void    MaxSampleAngles(const MCHAR* nodeName, Control* ctl, Tab<TimeValue>& kTimes, float maxRads);
     void    ScalePositionController(plController* ctl, float scale);
 
     void    ReduceKeys(Control *control, float threshold);
@@ -150,7 +152,7 @@ public:
 
 private:
     void ISetSegRange(float start, float end);
-    void IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc, float start, float end);
+    void IConvertSubTransform(Control *control, const MSTR& ctlName, plMaxNode *node, plCompoundController *tmc, float start, float end);
 
     plLeafController* ICreateSimpleRotController(plMaxNode* node, Control* control, bool camRot = false);
     plLeafController* ICreateSimpleScaleController(plMaxNode* node, Control* control);
@@ -163,8 +165,8 @@ private:
     void    IGetControlSampleTimes(Control* control, int iLo, int iHi, Tab<TimeValue>& kTimes, float maxRads);
     void    IAddPartsKeys(Control* control, std::vector<hsG3DSMaxKeyFrame>* kfArray, plMaxNode* node);
     int32_t   ICreateHSInterpKey(Control* control, IKey* mKey, TimeValue keyTime, hsKeyFrame* baseKey, plMaxNode* node=nullptr, bool rotQuat = false);
-    int32_t   IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end);
-    ControllerType IGetControlType(TSTR ctrlName);
+    int32_t   IGetRangeCoverKeyIndices(const MCHAR* nodeName, Control* cont, int32_t &start, int32_t &end);
+    ControllerType IGetControlType(const MSTR& ctrlName);
     bool    IIsKeyTimeInRange(TimeValue time);
     bool    IIsKeyInRange(IKey* key);
     void    IGetUnEasedLocalTM(plMaxNode* node, Control* control, hsMatrix44* out, TimeValue time);
@@ -175,7 +177,7 @@ private:
     bool    IGetEditableMeshKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
     bool    IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &times );
     void    IGetGeomKeyTimesRecur( Animatable *anim, Tab<TimeValue> &times );
-    bool    IGetSubAnimByName( Animatable *anim, TSTR &name, Animatable *&subAnim );
+    bool    IGetSubAnimByName( Animatable *anim, const MSTR& name, Animatable *&subAnim );
     void    IExportAnimatedCameraFOV(plMaxNode* node, std::vector<hsG3DSMaxKeyFrame>* kfArray);
     Interface* fInterface;
 

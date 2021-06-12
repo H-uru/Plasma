@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultipassMtl.h"
 #include "plMultipassMtlPB.h"
 
+#include "MaxMain/MaxCompat.h"
+
 ClassDesc2* GetMultiMtlDesc();
 
 static ParamBlockDesc2 gMultipassMtlPB
@@ -52,15 +54,15 @@ static ParamBlockDesc2 gMultipassMtlPB
 
     kMultCount,         _T("numPasses"),    TYPE_INT,               0, 0,
         p_default,      0,
-        end,
+        p_end,
 
     kMultPasses,        _T("passes"),       TYPE_MTL_TAB, 0,        0, 0,
-        end,
+        p_end,
     kMultOn,            _T("passOn"),       TYPE_BOOL_TAB, 0,       0, 0,
         p_default,      TRUE,
-        end,
+        p_end,
     kMultLayerCounts,   _T("LayerCounts"),  TYPE_INT_TAB, 0,        0, 0,
         p_default,      0,
-        end,
-    end
+        p_end,
+    p_end
 );

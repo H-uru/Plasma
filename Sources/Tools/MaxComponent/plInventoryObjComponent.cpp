@@ -126,29 +126,27 @@ ParamBlockDesc2 gInventoryObjBlock
         p_default,  FALSE,
         p_enable_ctrls, 1, kRespawnAfterLostCheckBx,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_INV_OBJECT_ITINERANTBOOL,
-        end,
+        p_end,
 
     kRespawnAfterLostCheckBx,  _T("RespawnAtSPObject"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_INV_OBJECT_RESPAWNBOOL,
-        end,
+        p_end,
     
     kConsumableCheckbx , _T("TemporaryObject"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_enable_ctrls, 1, kLifeSpan,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_INV_OBJECT_CONSUMABLE,
-        end,    
+        p_end,    
 
     kLifeSpan,  _T("LifeSpan"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 100000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_INV_OBJECT_LIFE_EDIT, IDC_COMP_INV_OBJECT_LIFE_SPIN, 1.0f,
-        end,
+        p_end,
 
-
-
-    end
+    p_end
 );
 
 plInventoryObjComponent::plInventoryObjComponent()

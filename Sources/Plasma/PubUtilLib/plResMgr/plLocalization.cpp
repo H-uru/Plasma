@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plLocalization.h"
 
+#include <sstream>
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;
 
@@ -123,17 +124,30 @@ plFileName plLocalization::ExportGetLocalized(const plFileName& name, int lang)
 
 std::string plLocalization::LocalToString(const std::vector<std::string> & localizedText)
 {
-    std::string retVal = "";
-    for (int i=0; i<localizedText.size(); i++)
+    std::stringstream ss;
+    for (size_t i = 0; i < localizedText.size(); i++)
     {
-        if (i > kNumLanguages-1)
+        if (i > kNumLanguages - 1)
             break;
-        std::string langHeader = "$";
         std::string langName = GetLanguageName((Language)i);
-        langHeader += langName.substr(0,2) + "$";
-        retVal += langHeader + localizedText[i];
+        ss << '$' << langName.substr(0, 2) << '$' << localizedText[i];
     }
-    return retVal;
+    return ss.str();
+}
+
+std::wstring plLocalization::LocalToString(const std::vector<std::wstring>& localizedText)
+{
+    std::wstringstream ss;
+    for (size_t i = 0; i < localizedText.size(); i++)
+    {
+        if (i > kNumLanguages - 1)
+            break;
+        wchar_t* temp = hsStringToWString(GetLanguageName((Language)i));
+        std::wstring langName = temp;
+        delete[] temp;
+        ss << '$' << langName.substr(0, 2) << '$' << localizedText[i];
+    }
+    return ss.str();
 }
 
 std::vector<std::string> plLocalization::StringToLocal(const std::string & localizedText)

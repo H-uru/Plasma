@@ -70,18 +70,17 @@ void plSaveSelected()
     Interface *ip = GetCOREInterface();
 
     // Get the Max filename to save to
-    char buf[256];
-    memset(&buf, 0, sizeof(buf));
+    TCHAR buf[256]{ 0 };
     OPENFILENAME ofn = {0};
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = ip->GetMAXHWnd();
-    ofn.lpstrFilter = "3ds max (*.max)\0*.max\0\0";
+    ofn.lpstrFilter = _T("3ds max (*.max)\0*.max\0\0");
     ofn.nFilterIndex = 1;
     ofn.lpstrFile = buf;
-    ofn.nMaxFile = sizeof(buf);
+    ofn.nMaxFile = std::size(buf);
 //  ofn.lpstrInitialDir = ip->GetDir(APP_SCENE_DIR);
     ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
-    ofn.lpstrDefExt = "max";
+    ofn.lpstrDefExt = _T("max");
 
     if (GetSaveFileName(&ofn))
     {
@@ -126,8 +125,8 @@ void plSaveSelected()
                 if (!node)
                     continue;
                 
-                const char *t1 = components[i]->GetName();
-                const char *t2 = node->GetName();
+                const MCHAR* t1 = components[i]->GetName();
+                const MCHAR* t2 = node->GetName();
 
                 if (!IIsNodeInTab(selected, node))
                 {
@@ -193,9 +192,9 @@ void IMergeComponents(plComponentBase *to, plComponentBase *from)
     theHold.Accept(_T("Delete Component"));
 }
 
-plMaxNode *IFindComponentRecur(plMaxNode *node, const char *name)
+plMaxNode *IFindComponentRecur(plMaxNode *node, const MCHAR* name)
 {
-    if (!strcmp(node->GetName(), name))
+    if (_tcscmp(node->GetName(), name) == 0)
     {
         if (node->IsComponent())
             return node;
@@ -216,19 +215,18 @@ void plMerge()
     Interface *ip = GetCOREInterface();
 
     // Get the Max filename to merge
-    char file[MAX_PATH];
-    memset(&file, 0, sizeof(file));
+    TCHAR file[MAX_PATH]{ 0 };
 
     OPENFILENAME ofn = {0};
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = ip->GetMAXHWnd();
-    ofn.lpstrFilter = "3ds max (*.max)\0*.max\0\0";
+    ofn.lpstrFilter = _T("3ds max (*.max)\0*.max\0\0");
     ofn.nFilterIndex = 1;
     ofn.lpstrFile = file;
-    ofn.nMaxFile = sizeof(file);
+    ofn.nMaxFile = std::size(file);
 //  ofn.lpstrInitialDir = ip->GetDir(APP_SCENE_DIR);
     ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
-    ofn.lpstrTitle = "Merge";
+    ofn.lpstrTitle = _T("Merge");
 
     if (!GetOpenFileName(&ofn))
         return;
@@ -247,9 +245,8 @@ void plMerge()
         plMaxNode *node = IFindComponentRecur((plMaxNode*)ip->GetRootNode(), nodeNames[i]);
         if (node)
         {
-            char buf[256];
-            strcpy(buf, node->GetName());
-            strcat(buf, "Merged");
+            MSTR buf;
+            buf.printf(_M("%s Merged"), node->GetName());
             node->SetName(buf);
 
             renamedNodes.push_back(node);
@@ -262,9 +259,9 @@ void plMerge()
     // Rename the components back to their original names
     for (i = 0; i < renamedNodes.size(); i++)
     {
-        char buf[256];
-        strcpy(buf, renamedNodes[i]->GetName());
-        buf[strlen(buf)-6] = '\0';
+        TCHAR buf[256];
+        _tcsncpy(buf, renamedNodes[i]->GetName(), std::size(buf));
+        buf[_tcsnlen(buf, std::size(buf))-6] = '\0';
         renamedNodes[i]->SetName(buf);
     }
 
@@ -282,7 +279,7 @@ void plMerge()
             continue;
 
         plComponentBase *oldComp = renamedNodes[i]->ConvertToComponent();
-        char *oldCompName = oldComp->GetINode()->GetName();
+        auto oldCompName = oldComp->GetINode()->GetName();
 
         for (int j = 0; j < components.size(); j++)
         {
@@ -292,9 +289,9 @@ void plMerge()
                 components[j] = nullptr;
             else if (comp)
             {
-                const char *temp = comp->GetINode()->GetName();
+                auto temp = comp->GetINode()->GetName();
                 
-                if (!strcmp(oldCompName, comp->GetINode()->GetName()) &&
+                if (!_tcscmp(oldCompName, comp->GetINode()->GetName()) &&
                     comp->ClassID() == comp->ClassID())
                 {
                     IMergeComponents(comp, oldComp);
@@ -317,19 +314,19 @@ void plMerge()
     // a static buffer could be too small in large merges
     uint32_t size = 0;
     for (i = 0; i < nodeNames.Count(); i++)
-        size += strlen(nodeNames[i]) + 1;
+        size += _tcslen(nodeNames[i]) + 1;
 
     // Put all the component names in a list and show it to the user
-    char *buf = new char[size+25];
-    strcpy(buf, "Components Merged:\n\n");
+    TCHAR *buf = new TCHAR[size+25];
+    _tcscpy(buf, _T("Components Merged:\n\n"));
 
     for (i = 0; i < nodeNames.Count(); i++)
     {
-        strcat(buf, nodeNames[i]);
-        strcat(buf, "\n");
+        _tcscat(buf, nodeNames[i]);
+        _tcscat(buf, _T("\n"));
     }
 
-    MessageBox(ip->GetMAXHWnd(), buf, "Components Merged", MB_OK);
+    plMaxMessageBox(ip->GetMAXHWnd(), buf, _T("Components Merged"), MB_OK);
     
     delete [] buf;
 #endif

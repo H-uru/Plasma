@@ -633,7 +633,7 @@ Texmap  *plRTSpotLight::GetProjMap()
 
     if( GetTex() )
     {
-        const char* dbgTexName = GetTex()->GetName();
+        auto dbgTexName = GetTex()->GetName();
 
         IParamBlock2 *bitmapPB = fTex->GetParamBlockByID(plLayerTex::kBlkBitmap);
         hsAssert(bitmapPB, "LayerTex with no param block");

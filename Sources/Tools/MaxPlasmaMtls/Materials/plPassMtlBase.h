@@ -130,7 +130,7 @@ public:
     int             NumRefs() override;
     RefTargetHandle GetReference(int i) override;
     void            SetReference(int i, RefTargetHandle rtarg) override;
-    RefResult       NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message) override;
+    RefResult       NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID &partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
     virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
@@ -177,10 +177,10 @@ public:
     virtual int     GetAlphaTestHigh() = 0;
 
     // Animation block
-    virtual const char*  GetAnimName() = 0;
+    virtual const MCHAR* GetAnimName() = 0;
     virtual int          GetAutoStart() = 0;
     virtual int          GetLoop() = 0;
-    virtual const char*  GetAnimLoopName() = 0;
+    virtual const MCHAR* GetAnimLoopName() = 0;
     virtual int          GetEaseInType() { return plAnimEaseTypes::kNoEase; }
     virtual float        GetEaseInMinLength() { return 1; }
     virtual float        GetEaseInMaxLength() { return 1; }
@@ -189,7 +189,7 @@ public:
     virtual float        GetEaseOutMinLength() { return 1; }
     virtual float        GetEaseOutMaxLength() { return 1; }
     virtual float        GetEaseOutNormLength() { return 1; }
-    virtual const char*  GetGlobalVarName() { return nullptr; }
+    virtual const MCHAR* GetGlobalVarName() { return nullptr; }
     virtual int          GetUseGlobal() { return 0; }
 
     // Basic block

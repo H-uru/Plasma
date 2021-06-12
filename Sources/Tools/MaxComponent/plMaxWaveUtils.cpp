@@ -44,10 +44,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioCore/plWavFile.h"
 #include "plFileSystem.h"
 
-SegmentMap *GetWaveSegmentMap(const char *file, plErrorMsg *pErrMsg)
+SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg)
 {
     CWaveFile waveFile;
-    waveFile.Open(file, nullptr, WAVEFILE_READ);
+    waveFile.Open(M2ST(file), nullptr, WAVEFILE_READ);
     int numMarkers = waveFile.GetNumMarkers();
     if (numMarkers == 0)
         return nullptr;

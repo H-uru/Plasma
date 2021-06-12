@@ -209,7 +209,7 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const ST::string &ani
         // New segment, add a new stealth node
         stealth = (plAnimStealthNode *)GetCOREInterface()->CreateInstance( HELPER_CLASS_ID, ANIMSTEALTH_CLASSID );
         INode *node = GetCOREInterface()->CreateObjectNode( stealth );
-        stealth->SetSegment((animName.compare(ENTIRE_ANIMATION_NAME) != 0) ? animName.c_str() : nullptr);
+        stealth->SetSegment((animName.compare(ENTIRE_ANIMATION_NAME) != 0) ? animName : "");
         stealth->SetNodeName( GetName() );
         node->Freeze( true );
 
@@ -412,8 +412,8 @@ void plPassMtlBase::SetReference(int i, RefTargetHandle rtarg)
 
 //// NotifyRefChanged ////////////////////////////////////////////////////////
 
-RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
-                                           PartID &partID, RefMessage message ) 
+RefResult plPassMtlBase::NotifyRefChanged( MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+                                           PartID &partID, RefMessage message MAX_REF_PROPAGATE )
 {
     switch( message )
     {
@@ -431,7 +431,8 @@ RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle h
                 
                 // And let the SceneWatcher know that the material on some of it's
                 // referenced objects changed.
-                NotifyDependents( FOREVER, PART_ALL, REFMSG_USER_MAT );
+                if (MAX_REF_PROPAGATE_VALUE)
+                    NotifyDependents( FOREVER, PART_ALL, REFMSG_USER_MAT );
             }
             else 
             {
@@ -519,7 +520,7 @@ void    plPassMtlBase::PostLoadAnimPBFixup()
         {
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
-                            ST::string::from_utf8( (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
+                            M2ST(fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
             myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),

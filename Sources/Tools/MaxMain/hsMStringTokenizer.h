@@ -39,11 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//
-// The functions allocate and free memory using functions contained in another
-// Dll.  This gives us the advantage of compiling against whatever runtime
-// library we want and still being able to allocate memory and give it to Max
-// to free.
-//
-void *plMaxMalloc(size_t size);
-void plMaxFree(void *memblock);
+
+#ifndef _hsMStringTokenizer_inc
+#define _hsMStringTokenizer_inc
+
+#include "hsStringTokenizer.h"
+
+#include "MaxMain/MaxCompat.h"
+
+#ifdef MCHAR_IS_WCHAR
+using hsMStringTokenizer = hsWStringTokenizer;
+#else
+using hsMStringTokenizer = hsStringTokenizer;
+#endif
+
+#endif

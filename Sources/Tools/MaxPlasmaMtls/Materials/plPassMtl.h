@@ -103,19 +103,17 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    TSTR GetSubTexmapSlotName(int i) override;
-    TSTR GetSubTexmapTVName(int i);
+    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapTVName(int i);
     int SubTexmapOn(int i) override;
    
     BOOL SetDlgThing(ParamDlg* dlg) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID,  RefMessage message) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     int NumParamBlocks() override;
     IParamBlock2* GetParamBlock(int i) override;
@@ -162,10 +160,10 @@ public:
     int     GetAlphaTestHigh() override;
 
     // Animation block
-    const char*  GetAnimName() override;
+    const MCHAR* GetAnimName() override;
     int          GetAutoStart() override;
     int          GetLoop() override;
-    const char*  GetAnimLoopName() override;
+    const MCHAR* GetAnimLoopName() override;
     int          GetEaseInType() override;
     float        GetEaseInMinLength() override;
     float        GetEaseInMaxLength() override;
@@ -175,7 +173,7 @@ public:
     float        GetEaseOutMaxLength() override;
     float        GetEaseOutNormLength() override;
     int          GetUseGlobal() override;
-    const char*  GetGlobalVarName() override;
+    const MCHAR* GetGlobalVarName() override;
 
     // Basic block
     int     GetColorLock() override;

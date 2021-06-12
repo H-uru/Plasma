@@ -151,7 +151,7 @@ class plPlasmaMAXLayer : public Texmap
         // the latest version from AssetMan)
         void RefreshBitmaps();
 
-        bool    GetBitmapFileName( char *destFilename, int maxLength, int index = 0 );
+        bool    GetBitmapFileName( TCHAR* destFilename, int maxLength, int index = 0 );
 
         // Virtual function called by plBMSampler to get various things while sampling the layer's image
         virtual bool    GetSamplerInfo( plBMSamplerData *samplerData ) { return false; }

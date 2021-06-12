@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerTexBitmapPB.h"
 #include "../plDetailCurveCtrl.h"
 
+#include "MaxMain/MaxCompat.h"
+
 #if 1
 class BMTexPBAccessor;
 extern BMTexPBAccessor bmtex_accessor;
@@ -219,7 +221,7 @@ public:
                     
                     BMCropper *cropper = new BMCropper(pblock);
                     
-                    pbbm->bm->Display("Specify Cropping/Placement", BMM_CN, FALSE, TRUE, cropper);
+                    pbbm->bm->Display(_M("Specify Cropping/Placement"), BMM_CN, FALSE, TRUE, cropper);
                 }
                 //              bm->DeleteThis();
                 return TRUE;
@@ -258,7 +260,7 @@ public:
                     
                     bmSelectBtn = GetICustButton(GetDlgItem(hWnd,IDC_LAYER_NAME));
                     PBBitmap *pbbm = layer->GetPBBitmap();
-                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : "");
+                    bmSelectBtn->SetText(pbbm != nullptr ? (TCHAR*)pbbm->bi.Filename() : _T(""));
                     ReleaseICustButton(bmSelectBtn);
                     
                     if (pbbm != nullptr)
@@ -419,94 +421,94 @@ static ParamBlockDesc2 gBitmapParamBlk
     kBmpUseBitmap,      _T("useBitmap"),    TYPE_BOOL,      0, 0,
         p_default,      TRUE,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USE_BITMAP,
-        end,
+        p_end,
     kBmpBitmap,         _T("bitmap"),       TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     // Crop/Place
     kBmpApply,          _T("apply"),    TYPE_BOOL,      0, 0,
         p_default,      FALSE,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BM_CLIP,
-        end,
+        p_end,
     kBmpCropPlace,      _T("cropPlace"), TYPE_INT,      0, 0,
         p_default,      0,
         p_range,        0,  1,
         p_ui,           TYPE_RADIO, 2,  IDC_BM_CROP,IDC_BM_PLACE,
-        end,
+        p_end,
     kBmpClipU,          _T("clipU"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPU,
         p_default,      0.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_X, IDC_CLIP_XSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpClipV,          _T("clipV"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPV,
         p_default,      0.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_Y, IDC_CLIP_YSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpClipW,          _T("clipW"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPW,
         p_default,      1.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_W, IDC_CLIP_WSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpClipH,          _T("clipH"),    TYPE_FLOAT,     P_ANIMATABLE, IDS_BITMAP_CLIPH,
         p_default,      1.0,
         p_range,        0.0, 1.0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_CLIP_H, IDC_CLIP_HSPIN, 0.001f,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     // Texture Color/Alpha
     kBmpDiscardColor,   _T("discardColor"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_NO_COLOR,
-        end,
+        p_end,
     kBmpInvertColor,    _T("invertColor"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_COLOR,
-        end,
+        p_end,
     kBmpDiscardAlpha,   _T("discardAlpha"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DISCARD_ALPHA,
-        end,
+        p_end,
     kBmpInvertAlpha,    _T("invertAlpha"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_ALPHA,
-        end,
+        p_end,
 
     // Texture Quality
     kBmpNonCompressed,  _T("nonCompressed"),TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_FORCE_NONCOMPRESSED,
-        end,
+        p_end,
     kBmpScaling,        _T("scaling"),      TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 3, IDC_SCALE_ALL, IDC_SCALE_HALF, IDC_SCALE_NONE,
-        end,
+        p_end,
 
     // Max Only
     kBmpMonoOutput,     _T("monoOutput"),   TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 2, IDC_HSMAX_LAYER_RGBOUT, IDC_HSMAX_LAYER_ALPHAOUT,
-        end,
+        p_end,
     kBmpRGBOutput,      _T("rgbOutput"),    TYPE_INT,       0, 0,
         p_ui,           TYPE_RADIO, 2, IDC_HSMAX_LAYER_RGBOUT2, IDC_HSMAX_LAYER_ALPHAOUT2,
-        end,
+        p_end,
 
     // Mipmap
     kBmpNoFilter,       _T("noFilter"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_NO_FILTERING,
-        end,
+        p_end,
     kBmpMipBlur,        _T("mipBlur"),      TYPE_FLOAT,     0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_MIPBLUR_EDIT, IDC_MIPBLUR_SPIN, 0.4,
         p_range,        0.01f, 100.0f,
         p_default,      1.0,
-        end,
+        p_end,
     kBmpMipBias,        _T("mipBias"),      TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USE_MIPBIAS,
         p_enable_ctrls, 1, kBmpMipBiasAmt,
-        end,
+        p_end,
     kBmpMipBiasAmt,     _T("mipBiasAmt"),   TYPE_FLOAT,     0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_FLOAT, IDC_MIPBIAS_EDIT, IDC_MIPBIAS_SPIN, 0.7,
         p_range,        -100.0, 100.0,
         p_default,      1.0,
-        end,
+        p_end,
 
     // Detail
     kBmpUseDetail,      _T("useDetail"),    TYPE_BOOL,      0, 0,
@@ -514,55 +516,55 @@ static ParamBlockDesc2 gBitmapParamBlk
         p_default,      FALSE,
         p_enable_ctrls, 4, kBmpDetailStartSize, kBmpDetailStopSize, kBmpDetailStartOpac, kBmpDetailStopOpac,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     kBmpDetailStartSize,_T("dropOffStart"), TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_START_SIZE_EDIT, IDC_DETAIL_START_SIZE_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpDetailStopSize, _T("dropOffStop"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_STOP_SIZE_EDIT, IDC_DETAIL_STOP_SIZE_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpDetailStartOpac,    _T("detailMax"),    TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_START_OPAC_EDIT, IDC_DETAIL_START_OPAC_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      100,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
     kBmpDetailStopOpac, _T("detailMin"),    TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_DETAIL_STOP_OPAC_EDIT, IDC_DETAIL_STOP_OPAC_SPIN, 0.4,
         p_range,        0, 100,
         p_default,      0,
         p_accessor,     &bmtex_accessor,
-        end,
+        p_end,
 
     kBmpExportWidth,    _T("exportWidth"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTWIDTH, IDC_EXPORTWIDTH_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     kBmpExportHeight,   _T("exportHeight"), TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTHEIGHT, IDC_EXPORTHEIGHT_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     kBmpExportLastWidth,    _T("lastExportWidth"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
     kBmpExportLastHeight,   _T("lastExportHeight"), TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     // Keep a sysmem copy at runtime (for image examination/manipulation).
     kBmpNoDiscard,      _T("noDiscard"),    TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_NO_DISCARD,
         p_default,      FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 ParamBlockDesc2 *GetBitmapBlk() { return &gBitmapParamBlk; }
 

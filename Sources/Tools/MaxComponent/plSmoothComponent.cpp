@@ -120,19 +120,19 @@ ParamBlockDesc2 gSmoothBk
         p_range, 0.0, 180.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTH_ANGLE, IDC_COMP_SMOOTH_ANGLE_SPIN, 1.f,
-        end,
+        p_end,
 
     plSmoothComponent::kSmoothPos,  _T("SmoothPos"), TYPE_BOOL,         0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SMOOTH_POS,
-        end,
+        p_end,
 
     plSmoothComponent::kSmoothColor,  _T("SmoothColor"), TYPE_BOOL,         0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SMOOTH_COLOR,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plSmoothComponent::plSmoothComponent()
@@ -283,21 +283,21 @@ ParamBlockDesc2 gSmoothAvBk
         p_range, 0.0, 180.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTHAV_ANGLE, IDC_COMP_SMOOTHAV_ANGLE_SPIN, 1.f,
-        end,
+        p_end,
 
     plSmoothAvComponent::kDistTol, _T("DistTol"),       TYPE_FLOAT, 0, 0,
         p_default, 0.001f,
         p_range, 0.0, 1.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTHAV_DIST, IDC_COMP_SMOOTHAV_DIST_SPIN, 0.01f,
-        end,
+        p_end,
 
     plSmoothAvComponent::kSmoothPos,  _T("SmoothPos"), TYPE_BOOL,       0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SMOOTHAV_POS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plSmoothAvComponent::plSmoothAvComponent()
@@ -433,21 +433,21 @@ ParamBlockDesc2 gSmoothBaseBk
         p_range, 0.0, 180.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTHBASE_ANGLE, IDC_COMP_SMOOTHBASE_ANGLE_SPIN, 1.f,
-        end,
+        p_end,
 
     plSmoothBaseComponent::kDistTol, _T("DistTol"),     TYPE_FLOAT, 0, 0,
         p_default, 0.001f,
         p_range, 0.0, 1.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTHBASE_DIST, IDC_COMP_SMOOTHBASE_DIST_SPIN, 0.01f,
-        end,
+        p_end,
 
     plSmoothBaseComponent::kSmoothPos,  _T("SmoothPos"), TYPE_BOOL,         0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SMOOTHBASE_POS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plSmoothBaseComponent::plSmoothBaseComponent()
@@ -600,7 +600,7 @@ INT_PTR plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWn
         {
             IParamBlock2 *pb = paramMap->GetParamBlock();
             INode* node = pb->GetINode(plSmoothSnapComponent::kSmoothBase);
-            TSTR newName(node ? node->GetName() : "Pick");
+            const TCHAR* newName = node ? node->GetName() : _T("Pick");
             ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SMOOTH_CHOSE), newName);
         }
         return TRUE;
@@ -614,7 +614,7 @@ INT_PTR plSmoothBaseSelProc::DlgProc(TimeValue t, IParamMap2 *paramMap, HWND hWn
             if( plPick::Node(pb, plSmoothSnapComponent::kSmoothBase, &cids, true, true) )
             {
                 INode* node = pb->GetINode(plSmoothSnapComponent::kSmoothBase);
-                TSTR newName(node ? node->GetName() : "Pick");
+                const TCHAR* newName = node ? node->GetName() : _T("Pick");
                 ::SetWindowText(::GetDlgItem(hWnd, IDC_COMP_SMOOTH_CHOSE), newName);
                 paramMap->Invalidate(plSmoothSnapComponent::kSmoothBase);
                 ShowWindow(hWnd, SW_HIDE);
@@ -642,28 +642,28 @@ ParamBlockDesc2 gSmoothSnapBk
     IDD_COMP_SMOOTHSNAP, IDS_COMP_SMOOTHSNAP, 0, 0, &gSmoothBaseSelProc,
 
     plSmoothSnapComponent::kSmoothBase, _T("SmoothBase"),   TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     plSmoothSnapComponent::kSmoothAngle, _T("SmoothAngle"),     TYPE_FLOAT, 0, 0,
         p_default, 75.0f,
         p_range, 0.0, 180.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTHSNAP_ANGLE, IDC_COMP_SMOOTHSNAP_ANGLE_SPIN, 1.f,
-        end,
+        p_end,
 
     plSmoothSnapComponent::kDistTol, _T("DistTol"),     TYPE_FLOAT, 0, 0,
         p_default, 0.01f,
         p_range, 0.0, 1.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_SMOOTHSNAP_DIST, IDC_COMP_SMOOTHSNAP_DIST_SPIN, 0.01f,
-        end,
+        p_end,
 
     plSmoothSnapComponent::kSmoothPos,  _T("SmoothPos"), TYPE_BOOL,         0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SMOOTHSNAP_POS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plSmoothSnapComponent::plSmoothSnapComponent()

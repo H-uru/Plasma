@@ -140,52 +140,51 @@ ParamBlockDesc2 gShadowCastBk
     plShadowCastComponent::kSelfShadow, _T("SelfShadow"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_SELFSHADOW,
-        end,
+        p_end,
 
     plShadowCastComponent::kBlur,   _T("Blur"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_BLUR,
         p_enable_ctrls,     1, plShadowCastComponent::kBlurScale,
-        end,
+        p_end,
 
     plShadowCastComponent::kBlurScale, _T("BlurScale"), TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_CAST_BLURSCALE, IDC_COMP_SHADOW_CAST_BLURSCALE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowCastComponent::kAtten,  _T("Atten"),    TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_ATTEN,
         p_enable_ctrls,     1, plShadowCastComponent::kAttenScale,
-        end,
+        p_end,
 
     plShadowCastComponent::kAttenScale, _T("AttenScale"), TYPE_FLOAT,   0, 0,   
         p_default, 100.0,
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_CAST_ATTENSCALE, IDC_COMP_SHADOW_CAST_ATTENSCALE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowCastComponent::kBoost, _T("Boost"), TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 5000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_CAST_BOOST, IDC_COMP_SHADOW_CAST_BOOST_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowCastComponent::kQuality,    _T("Quality"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plShadowCastComponent::kLimitRes,   _T("Limit"),    TYPE_INT,   0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_CAST_LIMIT,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plShadowCastComponent::plShadowCastComponent()
@@ -280,9 +279,9 @@ ParamBlockDesc2 gShadowRcvBk
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_FORCE_ON,                 IDC_RADIO_FORCE_OFF,
         p_vals,                     plShadowRcvComponent::kForceOn, plShadowRcvComponent::kForceOff,
         p_default, plShadowRcvComponent::kForceOff,
-        end,
-    end
+        p_end,
 
+    p_end
 );
 
 plShadowRcvComponent::plShadowRcvComponent()
@@ -335,43 +334,42 @@ ParamBlockDesc2 gShadowLightBk
         p_range, 5.0, 50.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_LIGHT_FALLOFF, IDC_COMP_SHADOW_LIGHT_FALLOFF_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowLightComponent::kMaxDist, _T("MaxDist"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 500.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_LIGHT_MAXDIST, IDC_COMP_SHADOW_LIGHT_MAXDIST_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowLightComponent::kPower, _T("Power"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 0.0, 200.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_SHADOW_LIGHT_POWER, IDC_COMP_SHADOW_LIGHT_POWER_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plShadowLightComponent::kShadowOnly,    _T("ShadowOnly"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_LIGHT_SHADOWONLY,
-        end,
+        p_end,
 
     plShadowLightComponent::kObeyGroups,    _T("ObeyGroups"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_LIGHT_OBEYGROUPS,
-        end,
+        p_end,
 
     plShadowLightComponent::kSelfShadow,    _T("SelfShadow"),   TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_SHADOW_LIGHT_SELFSHADOW,
-        end,
+        p_end,
 
     plShadowLightComponent::kQuality,   _T("Quality"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plShadowLightComponent::plShadowLightComponent()

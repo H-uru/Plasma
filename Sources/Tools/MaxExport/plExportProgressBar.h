@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plExportProgressBar_inc
 #define plExportProgressBar_inc
 
+#include "MaxMain/MaxCompat.h"
+
 class Interface;
 class INode;
 
@@ -51,8 +53,8 @@ public:
     plExportProgressBar();
     ~plExportProgressBar();
 
-    void Start(char *name, uint32_t steps=CountNodes());
-    bool Update(char *name=nullptr, uint32_t inc=1);
+    void Start(MCHAR* name, uint32_t steps=CountNodes());
+    bool Update(MAX14_CONST MCHAR* name=nullptr, uint32_t inc=1);
     
     static uint32_t CountNodes();
 

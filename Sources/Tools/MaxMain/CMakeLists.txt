@@ -1,7 +1,7 @@
 set(MaxMain_HEADERS
     GlobalUtility.h
+    hsMStringTokenizer.h
     main.def
-    MaxAllocDll.h
     MaxAPI.h
     MaxCompat.h
     plActionTableMgr.h
@@ -33,6 +33,7 @@ set(MaxMain_HEADERS
 
 set(MaxMain_RESOURCES
     resource.h
+    veroverrides.h
     SimpleExport.rc
 )
 
@@ -40,7 +41,6 @@ set(MaxMain_SOURCES
     GlobalUtility.cpp
     indexes.cpp
     main.cpp
-    MaxAllocDll.cpp
     plActionTableMgr.cpp
     plAgeDescInterface.cpp
     plCommonObjLib.cpp

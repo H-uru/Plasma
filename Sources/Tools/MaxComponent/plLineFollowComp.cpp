@@ -131,9 +131,9 @@ public:
         case WM_INITDIALOG:
             {
                     IParamBlock2* pb = map->GetParamBlock();
-                    map->SetTooltip(kPathObjectSel, TRUE, "Press the button, & select the path source object in one of the Viewports" );
-                    map->SetTooltip(kFollowObjectSel, TRUE, "Press the button, & select the object to follow in one of the Viewports" );
-                    map->SetTooltip(kOffsetDegrees, TRUE, "Positive angle to right, negative to left." );
+                    map->SetTooltip(kPathObjectSel, TRUE, _M("Press the button, & select the path source object in one of the Viewports") );
+                    map->SetTooltip(kFollowObjectSel, TRUE, _M("Press the button, & select the object to follow in one of the Viewports") );
+                    map->SetTooltip(kOffsetDegrees, TRUE, _M("Positive angle to right, negative to left.") );
                     if( pb->GetInt(kFollowModeRadio) == plLineFollowMod::kFollowObject )
                         map->Enable(kFollowObjectSel, TRUE);
                     else
@@ -203,66 +203,65 @@ ParamBlockDesc2 gLineFollowBk
         p_ui,       TYPE_RADIO, 3,  IDC_RADIO_LISTENER,                 IDC_RADIO_CAMERA,               IDC_RADIO_OBJECT,   
         p_vals,                     plLineFollowMod::kFollowListener,   plLineFollowMod::kFollowCamera, plLineFollowMod::kFollowObject,     
         p_default, plLineFollowMod::kFollowListener,
-        end,
+        p_end,
 
     kPathObjectSel, _T("PathObjectChoice"), TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LINE_CHOOSE_PATH,
         p_prompt, IDS_COMP_LINE_CHOSE_PATH,
         p_accessor, &gLineObjAccessor,
-        end,
+        p_end,
 
     kFollowObjectSel, _T("FollowObjectChoice"), TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LINE_CHOOSE_OBJECT,
         p_prompt, IDS_COMP_LINE_CHOSE_OBJECT,
         p_accessor, &gLineObjAccessor,
-        end,
+        p_end,
 
     kOffsetActive,  _T("OffsetActive"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LINE_OFFSETACTIVE,
         p_enable_ctrls,     4, kOffsetDegrees, kOffsetClampActive, kOffsetClamp, kForceToLine,
-        end,
+        p_end,
 
     kOffsetDegrees, _T("OffsetDegrees"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, -85.0, 85.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_FLOAT, 
         IDC_COMP_LINE_OFFSETDEGREES, IDC_COMP_LINE_OFFSETDEGREES_SPIN, 1.0,
-        end,    
+        p_end,    
     
     kOffsetClampActive,  _T("OffsetClampActive"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LINE_OFFSETCLAMPACTIVE,
         p_enable_ctrls,     1, kOffsetClamp,
-        end,
+        p_end,
 
     kOffsetClamp, _T("OffsetClamp"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LINE_OFFSETCLAMP, IDC_COMP_LINE_OFFSETCLAMP_SPIN, 1.0,
-        end,    
+        p_end,    
     
     kForceToLine,  _T("ForceToLine"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LINE_FORCETOLINE,
-        end,
+        p_end,
 
     kSpeedClampActive,  _T("SpeedClampActive"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LINE_SPEEDCLAMPACTIVE,
         p_enable_ctrls,     1, kSpeedClamp,
-        end,
+        p_end,
 
     kSpeedClamp, _T("SpeedClamp"), TYPE_FLOAT,  0, 0,   
         p_default, 30.0,
         p_range, 3.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LINE_SPEEDCLAMP, IDC_COMP_LINE_SPEEDCLAMP_SPIN, 1.0,
-        end,    
-    
-    end
+        p_end,    
 
+    p_end
 );
 
 plLineFollowComponent::plLineFollowComponent()
@@ -307,7 +306,7 @@ bool plLineFollowComponent::IMakeLineMod(plMaxNode* pNode, plErrorMsg* pErrMsg)
     plMaxNode* pathNode = (plMaxNode*)fCompPB->GetINode(kPathObjectSel);
     if(!pathNode)
     {
-        pErrMsg->Set(true, "Path Node Failure", "Path Node %s was set to be Ignored or empty. Path Component ignored.", ((INode*)pathNode)->GetName()).Show();
+        pErrMsg->Set(true, "Path Node Failure", ST::format("Path Node {} was set to be Ignored or empty. Path Component ignored.", ((INode*)pathNode)->GetName())).Show();
         pErrMsg->Set(false);
         return false;
     }
@@ -513,44 +512,44 @@ ParamBlockDesc2 gStereizeBk
     plStereizeComp::kLeft,  _T("Left"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_STEREIZE_LEFT,
-        end,
+        p_end,
 
     plStereizeComp::kAmbientDist, _T("AmbientDist"), TYPE_FLOAT,    0, 0,   
         p_default, 50.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_STEREIZE_AMB, IDC_COMP_STEREIZE_AMB_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plStereizeComp::kTransition, _T("Transition"), TYPE_FLOAT,  0, 0,   
         p_default, 25.0,
         p_range, 1.0, 500.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_STEREIZE_TRANS, IDC_COMP_STEREIZE_TRANS_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plStereizeComp::kSepAngle, _T("SepAngle"), TYPE_FLOAT,  0, 0,   
         p_default, 30.0,
         p_range, 1.0, 80.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_STEREIZE_ANG, IDC_COMP_STEREIZE_ANG_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plStereizeComp::kMaxDist, _T("MaxDist"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 1.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_STEREIZE_MAXDIST, IDC_COMP_STEREIZE_MAXDIST_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plStereizeComp::kMinDist, _T("MinDist"), TYPE_FLOAT,    0, 0,   
         p_default, 5.0,
         p_range, 1.0, 50.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_STEREIZE_MINDIST, IDC_COMP_STEREIZE_MINDIST_SPIN, 1.0,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 plStereizeComp::plStereizeComp()
@@ -729,51 +728,51 @@ ParamBlockDesc2 gSwivelBk
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_CAMERA, IDC_RADIO_LISTENER, IDC_RADIO_PLAYER, IDC_RADIO_OBJECT,   
         p_vals,                     plSwivelComp::kFaceCamera, plSwivelComp::kFaceListener, plSwivelComp::kFacePlayer, plSwivelComp::kFaceObject,
         p_default, plSwivelComp::kFacePlayer,
-        end,
+        p_end,
 
     plSwivelComp::kFaceObjectSel, _T("FaceObjectChoice"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CHOOSE_OBJECT,
         p_prompt, IDS_COMP_CHOOSE_OBJECT,
-        end,
+        p_end,
 
     plSwivelComp::kPivotY,  _T("PivotY"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_PIVOTY,
-        end,
+        p_end,
 
     plSwivelComp::kOffsetActive,  _T("OffsetActive"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_OFFSETACTIVE,
         p_enable_ctrls,     4, plSwivelComp::kOffsetX, plSwivelComp::kOffsetY, plSwivelComp::kOffsetZ, plSwivelComp::kOffsetLocal,
-        end,
+        p_end,
 
     plSwivelComp::kOffsetX, _T("X"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_OFFSETX, IDC_COMP_OFFSETX_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plSwivelComp::kOffsetY, _T("Y"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_OFFSETY, IDC_COMP_OFFSETY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plSwivelComp::kOffsetZ, _T("Z"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_OFFSETZ, IDC_COMP_OFFSETZ_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plSwivelComp::kOffsetLocal,  _T("OffsetLocal"), TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_OFFSETLOCAL,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plSwivelComp::plSwivelComp()
@@ -836,7 +835,7 @@ bool plSwivelComp::Convert(plMaxNode* node, plErrorMsg* pErrMsg)
             }
             else
             {
-                pErrMsg->Set(true, node->GetName(), "Swivel to look at component %s has no Plasma object to look at.", GetINode()->GetName()).Show();
+                pErrMsg->Set(true, node->GetName(), ST::format("Swivel to look at component {} has no Plasma object to look at.", GetINode()->GetName())).Show();
                 pErrMsg->Set(false);
                 pMod->SetFollowMode(plViewFaceModifier::kFollowCamera);
             }

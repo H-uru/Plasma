@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCameraComponents.h"
 #include "plMiscComponents.h"
 #include "MaxMain/plMaxNode.h"
-#include "MaxMain/MaxAPI.h"
 
 #include "resource.h"
 
@@ -121,14 +120,14 @@ public:
                     }
                     else if (LOWORD(wParam) == IDC_LINKAGEFILENAME)
                     {
-                        char buf[256];
+                        TCHAR buf[256];
                         SendMessage((HWND)lParam, CB_GETLBTEXT, sel, (LPARAM)buf);
                         pm->GetParamBlock()->SetValue(kLinkAgeFilename, 0, buf);
                         return TRUE;
                     }
                     else if (LOWORD(wParam) == IDC_PARENTAGEFILENAME)
                     {
-                        char buf[256];
+                        TCHAR buf[256];
                         SendMessage((HWND)lParam, CB_GETLBTEXT, sel, (LPARAM)buf);
                         pm->GetParamBlock()->SetValue(kLinkParentAgeFilename, 0, buf);
                         return TRUE;
@@ -151,38 +150,38 @@ ParamBlockDesc2 gResponderLinkBlock
 
     kLinkingRule,   _T("linkingRule"),      TYPE_INT,           0, 0,
         p_default,  plNetCommon::LinkingRules::kBasicLink,
-        end,
+        p_end,
 
     kLinkAgeFilename,   _T("ageFilename"),      TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kLinkAgeInstanceName,   _T("ageInstanceName"),      TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGEINSTANCENAME,
-        end,
+        p_end,
 
     kLinkAgeSpawnPointName, _T("ageSpawnPoint"),    TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKSPAWNPOINT,
         p_default,  kDefaultSpawnPtName,
-        end,
+        p_end,
 
     kLinkAgeSpawnPointTitle,    _T("ageSpawnPointTitle"),   TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKSPAWNPOINTTITLE,
         p_default,  kDefaultSpawnPtTitle,
-        end,
+        p_end,
 
     kLinkAgeLinkInAnimName,     _T("ageLinkInAnimName"),    TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGELINKINANIMNAME,
         p_default,  kDefaultLinkInAnimName,
-        end,
+        p_end,
 
     kLinkParentAgeFilename, _T("parentageFilename"),        TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kLinkAgeInstanceGuid,   _T("ageInstanceGUID"),      TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGEINSTANCEGUID,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdLink& plResponderCmdLink::Instance()
@@ -196,35 +195,35 @@ ParamBlockDesc2 *plResponderCmdLink::GetDesc()
     return &gResponderLinkBlock;
 }
 
-const char *plResponderCmdLink::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdLink::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
-    const char *ageName = pb->GetStr(kLinkAgeFilename);
-    sprintf(name, "Link (%s)", (ageName && *ageName != '\0') ? ageName : "none");
+    const TCHAR* ageName = pb->GetStr(kLinkAgeFilename);
+    _stprintf(name, _T("Link (%s)"), (ageName && *ageName != _T('\0')) ? ageName : _T("none"));
 
     return name;
 }
 
 void plResponderCmdLink::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2* pb)
 {
-    const char * spawnPtName = pb->GetStr( kLinkAgeSpawnPointName );
+    const MCHAR* spawnPtName = pb->GetStr( kLinkAgeSpawnPointName );
     if ( !spawnPtName )
     {
         // set defaults
-        pb->SetValue( kLinkAgeSpawnPointName, 0, kDefaultSpawnPtName );
-        pb->SetValue( kLinkAgeSpawnPointTitle, 0, kDefaultSpawnPtTitle );
+        pb->SetValue(kLinkAgeSpawnPointName, 0, _M(kDefaultSpawnPtName));
+        pb->SetValue(kLinkAgeSpawnPointTitle, 0, _M(kDefaultSpawnPtTitle));
     }
     else
     {
-        const char * spawnPtTitle = pb->GetStr( kLinkAgeSpawnPointTitle );
+        const TCHAR* spawnPtTitle = pb->GetStr( kLinkAgeSpawnPointTitle );
         if ( !spawnPtTitle )
         {
             // set default title, or make same as name.
-            if ( strcmp( spawnPtName, kDefaultSpawnPtName )==0 )
-                pb->SetValue( kLinkAgeSpawnPointTitle, 0, _T(kDefaultSpawnPtTitle));
+            if (_tcscmp( spawnPtName, _T(kDefaultSpawnPtName)) == 0)
+                pb->SetValue(kLinkAgeSpawnPointTitle, 0, _M(kDefaultSpawnPtTitle));
             else
-                pb->SetValue( kLinkAgeSpawnPointTitle, 0, (TCHAR*)_T(spawnPtName));
+                pb->SetValue(kLinkAgeSpawnPointTitle, 0, const_cast<MCHAR*>(spawnPtName));
         }
     }
 }
@@ -233,49 +232,48 @@ plMessage *plResponderCmdLink::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
 {
     int linkingRule = pb->GetInt( kLinkingRule );
 
-    const char *ageFilename = pb->GetStr(kLinkAgeFilename);
-    const char *ageInstanceName = pb->GetStr(kLinkAgeInstanceName);
-    const char *ageSpawnPtName = pb->GetStr(kLinkAgeSpawnPointName);
-    const char *ageSpawnPtTitle = pb->GetStr(kLinkAgeSpawnPointTitle);
-    const char *ageLinkInAnimName = pb->GetStr(kLinkAgeLinkInAnimName);
-    const char *parentageFilename = pb->GetStr(kLinkParentAgeFilename);
-    const char *ageInstanceGuid = pb->GetStr(kLinkAgeInstanceGuid);
+    auto ageFilename = M2ST(pb->GetStr(kLinkAgeFilename));
+    auto ageInstanceName = M2ST(pb->GetStr(kLinkAgeInstanceName));
+    auto ageSpawnPtName = M2ST(pb->GetStr(kLinkAgeSpawnPointName));
+    auto ageSpawnPtTitle = M2ST(pb->GetStr(kLinkAgeSpawnPointTitle));
+    auto ageLinkInAnimName = M2ST(pb->GetStr(kLinkAgeLinkInAnimName));
+    auto parentageFilename = M2ST(pb->GetStr(kLinkParentAgeFilename));
+    auto ageInstanceGuid = M2ST(pb->GetStr(kLinkAgeInstanceGuid));
 
-    if ( !ageFilename )
+    if (ageFilename.empty())
         throw "Must specify Age Filename";
-    if ( !ageInstanceName )
-        ageInstanceName=ageFilename;
-    if ( !ageSpawnPtName )
-    {
-        ageSpawnPtName = kDefaultSpawnPtName;
-        if ( !ageSpawnPtTitle )
-            ageSpawnPtTitle = kDefaultSpawnPtTitle;
+    if (ageInstanceName.empty())
+        ageInstanceName = ageFilename;
+    if (ageSpawnPtName.empty()) {
+        ageSpawnPtName = ST_LITERAL(kDefaultSpawnPtName);
+        if (ageSpawnPtTitle.empty())
+            ageSpawnPtTitle = ST_LITERAL(kDefaultSpawnPtTitle);
     }
-    if ( !ageSpawnPtTitle )
+    if (ageSpawnPtTitle.empty())
         ageSpawnPtTitle = ageSpawnPtName;
-    if ( !ageLinkInAnimName )
-        ageLinkInAnimName = kDefaultLinkInAnimName;
+    if (ageLinkInAnimName.empty())
+        ageLinkInAnimName = ST_LITERAL(kDefaultLinkInAnimName);
 
     plLinkToAgeMsg *msg = new plLinkToAgeMsg;
     msg->GetAgeLink()->SetLinkingRules( linkingRule );
-    msg->GetAgeLink()->SetSpawnPoint( plSpawnPointInfo( ageSpawnPtTitle, ageSpawnPtName ) );
-    msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename( ageFilename );
-    msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceName( ageInstanceName );
-    if (ageInstanceGuid && strlen(ageInstanceGuid) > 0)
-        msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid( &plUUID(ageInstanceGuid) );
-    msg->SetLinkInAnimName( ageLinkInAnimName );
-    if (parentageFilename)
+    msg->GetAgeLink()->SetSpawnPoint(plSpawnPointInfo(ageSpawnPtTitle, ageSpawnPtName));
+    msg->GetAgeLink()->GetAgeInfo()->SetAgeFilename(ageFilename);
+    msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceName(ageInstanceName);
+    if (!ageInstanceGuid.empty())
+        msg->GetAgeLink()->GetAgeInfo()->SetAgeInstanceGuid(&plUUID(ageInstanceGuid));
+    msg->SetLinkInAnimName(ageLinkInAnimName);
+    if (!parentageFilename.empty())
     {
-        if (strcmp(parentageFilename, "<None>") != 0) // <None> is our special string to denote no parent age
-            msg->GetAgeLink()->SetParentAgeFilename( parentageFilename );
+        if (parentageFilename != "<None>") // <None> is our special string to denote no parent age
+            msg->GetAgeLink()->SetParentAgeFilename(parentageFilename.c_str());
     }
 
     return msg;
 }
 
-static int ComboBox_AddStringData(HWND hCombo, const char* str, int data)
+static int ComboBox_AddStringData(HWND hCombo, const ST::string& str, int data)
 {
-    int idx = ComboBox_AddString(hCombo, str);
+    int idx = ComboBox_AddString(hCombo, ST2T(str));
     ComboBox_SetItemData(hCombo, idx, data);
     return idx;
 }
@@ -322,15 +320,15 @@ void plResponderLinkProc::ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb)
 
     plFileName agePath = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
-    const char *savedName = pb->GetStr(kLinkAgeFilename);
+    const MCHAR* savedName = pb->GetStr(kLinkAgeFilename);
     if (!savedName)
-        savedName = "";
+        savedName = _M("");
 
     // Iterate through the age descriptions
     std::vector<plFileName> ages = plFileSystem::ListDir(agePath, "*.age");
     for (auto iter = ages.begin(); iter != ages.end(); ++iter)
     {
-        int idx = (int)SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
+        int idx = (int)SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)ST2T(iter->GetFileNameNoExt()));
 
         if (iter->GetFileNameNoExt() == savedName)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
@@ -343,7 +341,7 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
 
     // Reset the combo and add the default option
     SendMessage(hAge, CB_RESETCONTENT, 0, 0);
-    SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)"<None>");
+    SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)_T("<None>"));
 
     // Get the path to the description folder
     plFileName plasmaPath = plMaxConfig::GetClientPath();
@@ -351,15 +349,15 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
         return;
     plFileName agePath = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
-    const char *savedName = pb->GetStr(kLinkParentAgeFilename);
+    const MCHAR* savedName = pb->GetStr(kLinkParentAgeFilename);
     if (!savedName)
-        savedName = "<None>";
+        savedName = _M("<None>");
 
     // Iterate through the age descriptions
     std::vector<plFileName> ages = plFileSystem::ListDir(agePath, "*.age");
     for (auto iter = ages.begin(); iter != ages.end(); ++iter)
     {
-        int idx = (int)SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
+        int idx = (int)SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)ST2T(iter->GetFileNameNoExt()));
 
         if (iter->GetFileNameNoExt() == savedName)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
@@ -390,7 +388,7 @@ protected:
         if (comp)
             SetWindowText(hComp, comp->GetINode()->GetName());
         else
-            SetWindowText(hComp, "(none)");
+            SetWindowText(hComp, _T("(none)"));
     }
 
 public:
@@ -440,15 +438,15 @@ ParamBlockDesc2 gResponderEnableBlock
     kEnable,        _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
         p_default,  TRUE,
-        end,
+        p_end,
 
     kEnableNode,    _T("node"),         TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kEnableResponder, _T("responder"),  TYPE_REFTARG,       P_NO_REF, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdEnable& plResponderCmdEnable::Instance()
@@ -462,12 +460,12 @@ ParamBlockDesc2 *plResponderCmdEnable::GetDesc()
     return &gResponderEnableBlock;
 }
 
-const char *plResponderCmdEnable::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdEnable::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     plComponentBase *comp = plResponderGetComp::Instance().GetSavedComp(pb, kEnableNode, kEnableResponder, true);
-    sprintf(name, "Responder Enable (%s)", comp ? comp->GetINode()->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("Responder Enable (%s)"), comp ? comp->GetINode()->GetName() : _T("none"));
 
     return name;
 }
@@ -510,13 +508,13 @@ ParamBlockDesc2 gPhysicalEnableBlock
     kEnablePhys,    _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
         p_default,  TRUE,
-        end,
+        p_end,
 
     kEnablePhysNode,    _T("node"), TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdPhysEnable& plResponderCmdPhysEnable::Instance()
@@ -530,12 +528,12 @@ ParamBlockDesc2 *plResponderCmdPhysEnable::GetDesc()
     return &gPhysicalEnableBlock;
 }
 
-const char *plResponderCmdPhysEnable::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdPhysEnable::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     INode *node = pb->GetINode(kEnablePhysNode);
-    sprintf(name, "Phys Enable (%s)", node ? node->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("Phys Enable (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -618,12 +616,12 @@ ParamBlockDesc2 gResponderOneShotBlock
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderOneShotProc,
 
     kOneShotComp,   _T("oneShotComp"),          TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kOneShotNode,   _T("oneShotNode"),          TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdOneShot& plResponderCmdOneShot::Instance()
@@ -637,12 +635,12 @@ ParamBlockDesc2 *plResponderCmdOneShot::GetDesc()
     return &gResponderOneShotBlock;
 }
 
-const char *plResponderCmdOneShot::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdOneShot::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     plMaxNode *node = (plMaxNode*)pb->GetReferenceTarget(kOneShotComp);
-    sprintf(name, "One Shot (%s)", node ? node->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("One Shot (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -687,7 +685,7 @@ ParamBlockDesc2 gResponderNotifyBlock
 (
     kResponderNotifyMsgBlk, _T("notifyCmd"), 0, nullptr, 0,
 
-    end
+    p_end
 );
 
 plResponderCmdNotify& plResponderCmdNotify::Instance()
@@ -728,7 +726,7 @@ protected:
         if (node)
             SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, node->GetName());
         else
-            SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, "(none)");
+            SetDlgItemText(hWnd, IDC_RESPONDER_BUTTON, _T("(none)"));
     }
 
 public:
@@ -763,14 +761,14 @@ ParamBlockDesc2 gResponderActivatorEnableBlock
     IDD_COMP_RESPOND_ENABLE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderActivatorEnableProc,
 
     kActivatorComp, _T("activatorComp"),        TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kActivatorEnable, _T("enable"),             TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
         p_default,  TRUE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdDetectorEnable& plResponderCmdDetectorEnable::Instance()
@@ -784,12 +782,12 @@ ParamBlockDesc2 *plResponderCmdDetectorEnable::GetDesc()
     return &gResponderActivatorEnableBlock;
 }
 
-const char *plResponderCmdDetectorEnable::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdDetectorEnable::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     plMaxNode *node = (plMaxNode*)pb->GetINode(kActivatorComp);
-    sprintf(name, "Enable Detector (%s)", node ? node->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("Enable Detector (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -914,15 +912,15 @@ ParamBlockDesc2 gResponderXRegionBlock
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderXRegionProc,
 
     kXRegionComp,   _T("xRegionComp"),      TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kXRegionNode,   _T("xRegionNode"),      TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kXRegionType,   _T("type"),             TYPE_INT,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 // Old types kept for backwards compatibility
@@ -960,30 +958,30 @@ int plResponderCmdXRegion::NumTypes()
     return 2;
 }
 
-const char *plResponderCmdXRegion::GetCategory(int idx)
+const TCHAR* plResponderCmdXRegion::GetCategory(int idx)
 {
-    return "Exclude Region";
+    return _T("Exclude Region");
 }
 
-const char *plResponderCmdXRegion::GetName(int idx)
+const TCHAR* plResponderCmdXRegion::GetName(int idx)
 {
     if (idx == 0)
-        return "Clear";
+        return _T("Clear");
     else
-        return "Release";
+        return _T("Release");
 }
 
-const char *plResponderCmdXRegion::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdXRegion::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     int type = pb->GetInt(kXRegionType);
     INode *node = pb->GetINode(kXRegionComp);
 
     if (type == kRespondXRegionClear)
-        sprintf(name, "XRegion Clear (%s)", node ? node->GetName() : "none");
+        _sntprintf(name, std::size(name), _T("XRegion Clear (%s)"), node ? node->GetName() : _T("none"));
     else
-        sprintf(name, "XRegion Release (%s)", node ? node->GetName() : "none");
+        _sntprintf(name, std::size(name), _T("XRegion Release (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -1040,14 +1038,14 @@ ParamBlockDesc2 gResponderCameraTransitionBlock
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kPopCamera,     _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_CHECK1,
         p_default,  FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdCamTransition& plResponderCmdCamTransition::Instance()
@@ -1061,12 +1059,12 @@ ParamBlockDesc2 *plResponderCmdCamTransition::GetDesc()
     return &gResponderCameraTransitionBlock;
 }
 
-const char *plResponderCmdCamTransition::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdCamTransition::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     INode *node = pb->GetINode(kCameraObj);
-    sprintf(name, "Cam Trans (%s)", node ? node->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("Cam Trans (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -1141,9 +1139,9 @@ ParamBlockDesc2 gResponderCameraForceBlock
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_THIRD, IDC_RADIO_FIRST,   
         p_vals,     plResponderCmdCamForce::kForce3rd, plResponderCmdCamForce::kResume1st,
         p_default,  plResponderCmdCamForce::kForce3rd,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdCamForce& plResponderCmdCamForce::Instance()
@@ -1157,12 +1155,12 @@ ParamBlockDesc2 *plResponderCmdCamForce::GetDesc()
     return &gResponderCameraForceBlock;
 }
 
-const char *plResponderCmdCamForce::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdCamForce::GetInstanceName(IParamBlock2 *pb)
 {
     if (pb->GetInt(kCamForce) == kForce3rd)
-        return "Cam Force 3rd";
+        return _T("Cam Force 3rd");
     else
-        return "Cam Resume 1st";
+        return _T("Cam Resume 1st");
 }
 
 plMessage *plResponderCmdCamForce::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IParamBlock2 *pb)
@@ -1194,9 +1192,9 @@ ParamBlockDesc2 gResponderDelayBlock
         p_default,  1.0f,
         p_range,    0.01f, 500.0f,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_DELAY_EDIT, IDC_DELAY_SPIN, .1f,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdDelay& plResponderCmdDelay::Instance()
@@ -1210,10 +1208,10 @@ ParamBlockDesc2 *plResponderCmdDelay::GetDesc()
     return &gResponderDelayBlock;
 }
 
-const char *plResponderCmdDelay::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdDelay::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
-    sprintf(name, "Delay (%.1f sec)", pb->GetFloat(kDelayTime));
+    static TCHAR name[256];
+    _sntprintf(name, std::size(name), _T("Delay (%.1f sec)"), pb->GetFloat(kDelayTime));
     return name;
 }
 
@@ -1238,13 +1236,14 @@ void plResponderCmdDelay::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IPara
     if (timerMsg->fID >= 0)
     {
         pErrMsg->Set(true,
-                    "Responder Delay",
-                    "A delay command in responder '%s' on node '%s' has\n"
-                    "more than one command waiting on it.  That doesn't work.\n\n"
-                    "However, you don't actually need two commands to wait on\n"
-                    "the same command since the first command will automatically\n"
-                    "delay any commands further down the list",
-                    waitInfo.responderName.c_str(), node->GetName()).Show();
+                     "Responder Delay",
+                     ST::format("A delay command in responder '{}' on node '{}' has\n"
+                                "more than one command waiting on it.  That doesn't work.\n\n"
+                                "However, you don't actually need two commands to wait on\n"
+                                "the same command since the first command will automatically\n"
+                                "delay any commands further down the list",
+                                waitInfo.responderName, node->GetName())
+                     ).Show();
         pErrMsg->Set(false);
     }
     else
@@ -1267,17 +1266,17 @@ ParamBlockDesc2 gResponderVisibilityBlock
 
     kVisibilityNode,    _T("VisibilityNode"),   TYPE_INODE,     0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
-        end,
+        p_end,
 
     kVisibilityType,    _T("type"),             TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     kVisibilityChildren, _T("children"),        TYPE_BOOL,      0, 0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CHECK_CHILDREN,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 enum
@@ -1314,30 +1313,30 @@ int plResponderCmdVisibility::NumTypes()
     return 2;
 }
 
-const char *plResponderCmdVisibility::GetCategory(int idx)
+const TCHAR* plResponderCmdVisibility::GetCategory(int idx)
 {
-    return "Visibility";
+    return _T("Visibility");
 }
 
-const char *plResponderCmdVisibility::GetName(int idx)
+const TCHAR* plResponderCmdVisibility::GetName(int idx)
 {
     if (idx == 0)
-        return "Visible";
+        return _T("Visible");
     else
-        return "Invisible";
+        return _T("Invisible");
 }
 
-const char *plResponderCmdVisibility::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdVisibility::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     int type = pb->GetInt(kVisibilityType);
     INode *node = pb->GetINode(kVisibilityNode);
 
     if (type == kRespondVisibilityOn)
-        sprintf(name, "Visible (%s)", node ? node->GetName() : "none");
+        _sntprintf(name, std::size(name), _T("Visible (%s)"), node ? node->GetName() : _T("none"));
     else
-        sprintf(name, "Invisible (%s)", node ? node->GetName() : "none");
+        _sntprintf(name, std::size(name), _T("Invisible (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -1443,12 +1442,12 @@ ParamBlockDesc2 gResponderSubWorldBlock
 
     kSubWorldNode,  _T("SubWorldNode"), TYPE_INODE,     0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
-        end,
+        p_end,
 
     kSubWorldType,  _T("type"),             TYPE_INT,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdSubWorld& plResponderCmdSubWorld::Instance()
@@ -1479,31 +1478,31 @@ int plResponderCmdSubWorld::NumTypes()
     return 2;
 }
 
-const char *plResponderCmdSubWorld::GetCategory(int idx)
+const TCHAR* plResponderCmdSubWorld::GetCategory(int idx)
 {
-    return "Local Avatar";
+    return _T("Local Avatar");
 }
 
-const char *plResponderCmdSubWorld::GetName(int idx)
+const TCHAR* plResponderCmdSubWorld::GetName(int idx)
 {
     if (idx == 0)
-        return "Subworld Enter";
+        return _T("Subworld Enter");
     else
-        return "Subworld Exit";
+        return _T("Subworld Exit");
 }
 
-const char *plResponderCmdSubWorld::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdSubWorld::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
     int type = pb->GetInt(kSubWorldType);
     INode *node = pb->GetINode(kSubWorldNode);
 
     if (type == kRespondSubWorldEnter)
-        sprintf(name, "Subworld Enter (%s)", node ? node->GetName() : "none");
+        _sntprintf(name, std::size(name), _T("Subworld Enter (%s)"), node ? node->GetName() : _T("none"));
     else
-        sprintf(name, "Subworld Exit");
-        //sprintf(name, "SubWorld Exit (%s)", node ? node->GetName() : "none");
+        _sntprintf(name, std::size(name), _T("Subworld Exit"));
+        //_sntprintf(name, std::size(name), _T("SubWorld Exit (%s)"), node ? node->GetName() : _T("none"));
 
     return name;
 }
@@ -1585,9 +1584,9 @@ ParamBlockDesc2 gResponderFootSurfaceBlock
 
     kSurface,   _T("Surface"),  TYPE_INT,       0, 0,
         p_default,  plArmatureEffectsMgr::kFootDirt,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdFootSurface& plResponderCmdFootSurface::Instance()
@@ -1601,11 +1600,17 @@ ParamBlockDesc2 *plResponderCmdFootSurface::GetDesc()
     return &gResponderFootSurfaceBlock;
 }
 
-const char *plResponderCmdFootSurface::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdFootSurface::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
-    sprintf(name, "Foot Surface (%s)", plArmatureEffectsMgr::SurfaceStrings[pb->GetInt(ParamID(kSurface))]);
+#ifdef UNICODE
+    _snwprintf(name, std::size(name), L"Foot Surface (%S)",
+        plArmatureEffectsMgr::SurfaceStrings[pb->GetInt(ParamID(kSurface))]);
+#else
+    _snprintf(name, std::size(name), "Foot Surface (%s)",
+        plArmatureEffectsMgr::SurfaceStrings[pb->GetInt(ParamID(kSurface))]);
+#endif
     return name;
 }
 
@@ -1673,12 +1678,12 @@ ParamBlockDesc2 gResponderMultistageBlock
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMultistageProc,
 
     kMultistageComp,    _T("comp"),     TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kMultistageNode,    _T("node"),     TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdMultistage& plResponderCmdMultistage::Instance()
@@ -1692,11 +1697,11 @@ ParamBlockDesc2 *plResponderCmdMultistage::GetDesc()
     return &gResponderMultistageBlock;
 }
 
-const char *plResponderCmdMultistage::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdMultistage::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
     INode *node = pb->GetINode(kMultistageComp);
-    sprintf(name, "Multistage (%s)", node ? node->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("Multistage (%s)"), node ? node->GetName() : _T("none"));
     return name;
 }
 

@@ -116,24 +116,24 @@ ParamBlockDesc2 gResponderMtlBlock
     IDD_COMP_RESPOND_MTL, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMtlProc,
 
     kMtlRef,    _T("mtl"),      TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kMtlAnim,   _T("anim"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kMtlLoop,   _T("loop"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kMtlType,   _T("type"),     TYPE_INT,           0, 0,
-        end,
+        p_end,
 
     kMtlNode,   _T("node"),     TYPE_INODE,         0, 0,
-        end,
+        p_end,
 
     kMtlNodeType,   _T("nodeType"), TYPE_INT,   0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdMtl& plResponderCmdMtl::Instance()
@@ -185,54 +185,49 @@ int plResponderCmdMtl::NumTypes()
     return kNumTypes;
 }
 
-const char *plResponderCmdMtl::GetCategory(int idx)
-{
-    return "Material";
-}
-
-const char *plResponderCmdMtl::GetName(int idx)
+const TCHAR* plResponderCmdMtl::GetName(int idx)
 {
     int type = IndexToOldType(idx);
 
     switch (type)
     {
-    case kRespondPlayMat:   return "Play";
-    case kRespondStopMat:   return "Stop";
-    case kRespondToggleMat: return "Toggle";
-    case kRespondLoopMatOn: return "Set Looping On";
-    case kRespondLoopMatOff:return "Set Looping Off";
-    case kRespondSetForeMat:return "Set Forwards";
-    case kRespondSetBackMat:return "Set Backwards";
-    case kRespondRewindMat: return "Rewind";
+    case kRespondPlayMat:   return _T("Play");
+    case kRespondStopMat:   return _T("Stop");
+    case kRespondToggleMat: return _T("Toggle");
+    case kRespondLoopMatOn: return _T("Set Looping On");
+    case kRespondLoopMatOff:return _T("Set Looping Off");
+    case kRespondSetForeMat:return _T("Set Forwards");
+    case kRespondSetBackMat:return _T("Set Backwards");
+    case kRespondRewindMat: return _T("Rewind");
     }
 
     return nullptr;
 }
 
-static const char *GetShortName(int type)
+static const TCHAR* GetShortName(int type)
 {
     switch (type)
     {
-    case kRespondPlayMat:   return "Mat Play";
-    case kRespondStopMat:   return "Mat Stop";
-    case kRespondToggleMat: return "Mat Toggle";
-    case kRespondLoopMatOn: return "Mat Loop On";
-    case kRespondLoopMatOff:return "Mat Loop Off";
-    case kRespondSetForeMat:return "Mat Set Fore";
-    case kRespondSetBackMat:return "Mat Set Back";
-    case kRespondRewindMat: return "Mat Rewind";
+    case kRespondPlayMat:   return _T("Mat Play");
+    case kRespondStopMat:   return _T("Mat Stop");
+    case kRespondToggleMat: return _T("Mat Toggle");
+    case kRespondLoopMatOn: return _T("Mat Loop On");
+    case kRespondLoopMatOff:return _T("Mat Loop Off");
+    case kRespondSetForeMat:return _T("Mat Set Fore");
+    case kRespondSetBackMat:return _T("Mat Set Back");
+    case kRespondRewindMat: return _T("Mat Rewind");
     }
 
     return nullptr;
 }
-const char *plResponderCmdMtl::GetInstanceName(IParamBlock2 *pb)
+const TCHAR* plResponderCmdMtl::GetInstanceName(IParamBlock2 *pb)
 {
-    static char name[256];
+    static TCHAR name[256];
 
-    const char *shortName = GetShortName(pb->GetInt(kMtlType));
+    const TCHAR* shortName = GetShortName(pb->GetInt(kMtlType));
 
     Mtl *mtl = (Mtl*)pb->GetReferenceTarget(kMtlRef);
-    sprintf(name, "%s (%s)", shortName, mtl ? (const char *)mtl->GetName() : "none");
+    _sntprintf(name, std::size(name), _T("%s (%s)"), shortName, mtl ? mtl->GetName().data() : _T("none"));
 
     return name;
 }
@@ -255,7 +250,7 @@ Mtl *plResponderCmdMtl::GetMtl(IParamBlock2 *pb)
 
 ST::string plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
 {
-    return ST::string::from_utf8(pb->GetStr(kMtlAnim));
+    return ST::string(pb->GetStr(kMtlAnim));
 }
 
 void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, std::vector<plKey>& keys)
@@ -335,7 +330,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     if (!maxMtl)
         throw "No material specified";
 
-    ST::string animName = ST::string::from_utf8(pb->GetStr(kMtlAnim));
+    ST::string animName = M2ST(pb->GetStr(kMtlAnim));
     float begin=-1.f;
     float end = -1.f;
 
@@ -355,7 +350,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     std::vector<plKey> keys;
     GetMatAnimModKey(maxMtl, mtlNode, animName, keys);
 
-    ST::string loopName = ST::string::from_utf8(pb->GetStr(kMtlLoop));
+    ST::string loopName = M2ST(pb->GetStr(kMtlLoop));
     if (segMap && !loopName.empty())
         GetSegMapAnimTime(loopName, segMap, SegmentSpec::kLoop, begin, end);
 
@@ -524,9 +519,9 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
 {
     HWND hLoop = GetDlgItem(hWnd, IDC_LOOP_COMBO);
 
-    const char *savedName = pb->GetStr(kMtlLoop);
+    const MCHAR* savedName = pb->GetStr(kMtlLoop);
     if (!savedName)
-        savedName = "";
+        savedName = _M("");
 
     ComboBox_ResetContent(hLoop);
     int sel = ComboBox_AddString(hLoop, ENTIRE_ANIMATION_NAME);
@@ -543,13 +538,13 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
     ComboBox_Enable(hLoop, TRUE);
 
     plNotetrackAnim anim(mtl, nullptr);
-    ST::string animName = ST::string::from_utf8(pb->GetStr(kMtlAnim));
+    ST::string animName = ST::string(pb->GetStr(kMtlAnim));
     plAnimInfo info = anim.GetAnimInfo(animName);
 
     ST::string loopName;
     while (!(loopName = info.GetNextLoopName()).empty())
     {
-        sel = ComboBox_AddString(hLoop, loopName.c_str());
+        sel = ComboBox_AddString(hLoop, ST2T(loopName));
         if (!loopName.compare(savedName))
             ComboBox_SetCurSel(hLoop, sel);
     }
@@ -565,12 +560,12 @@ bool plResponderMtlProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int 
         if (idx != CB_ERR)
         {
             if (ComboBox_GetItemData(hCombo, idx) == 0)
-                pb->SetValue(kMtlLoop, 0, "");
+                pb->SetValue(kMtlLoop, 0, _M(""));
             else
             {
                 // Get the name of the animation and save it
-                char buf[256];
-                ComboBox_GetText(hCombo, buf, sizeof(buf));
+                TCHAR buf[256];
+                ComboBox_GetText(hCombo, buf, std::size(buf));
                 pb->SetValue(kMtlLoop, 0, buf);
             }
         }
@@ -584,8 +579,8 @@ bool plResponderMtlProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int 
 
 #include "plPickNodeBase.h"
 
-static const char* kUserTypeAll = "(All)";
-static const char* kResponderNodeName = "(Responder Node)";
+static const TCHAR* kUserTypeAll = _T("(All)");
+static const TCHAR* kResponderNodeName = _T("(Responder Node)");
 
 class plPickRespMtlNode : public plPickMtlNode
 {
@@ -606,14 +601,14 @@ protected:
             ListBox_SetCurSel(hList, idx);
     }
 
-    void ISetUserType(plMaxNode* node, const char* userType) override
+    void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if (strcmp(userType, kUserTypeAll) == 0)
+        if (_tcscmp(userType, kUserTypeAll) == 0)
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodePB);
         }
-        else if (strcmp(userType, kResponderNodeName) == 0)
+        else if (_tcscmp(userType, kResponderNodeName) == 0)
         {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodeResponder);

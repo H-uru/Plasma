@@ -364,7 +364,7 @@ bool plLightMapGen::ICompressLightMaps()
 
 bool plLightMapGen::MakeMaps(plMaxNode* node, const hsMatrix44& l2w, const hsMatrix44& w2l, std::vector<plGeometrySpan *> &spans, plErrorMsg *pErrMsg, plConvertSettings *settings)
 {
-    const char* dbgNodeName = node->GetName();
+    auto dbgNodeName = node->GetName();
 
     plLightMapComponent* lmapComp = node->GetLightMapComponent();
     if( !lmapComp )
@@ -757,7 +757,7 @@ bool plLightMapGen::IShadeVerts(plMaxLightContext& ctx, const Color& amb, const 
 
 bool plLightMapGen::IGetLight(INode* node)
 {
-    if( node->UserPropExists("RunTimeLight") )
+    if( node->UserPropExists(_M("RunTimeLight")) )
         return false;
 
     Object *obj = node->EvalWorldState(fTime).obj;
@@ -997,8 +997,8 @@ bool plLightMapGen::IOmniAffectsNode(plLightMapInfo* liInfo, LightObject* liObj,
 
 bool plLightMapGen::ILightAffectsNode(plLightMapInfo* liInfo, LightObject* liObj, INode* node)
 {
-    const char* liName = liInfo->fLiNode->GetName();
-    const char* nodeName = node->GetName();
+    auto liName = liInfo->fLiNode->GetName();
+    auto nodeName = node->GetName();
 
     LightState ls;
     liObj->EvalLightState(TimeValue(0), FOREVER, &ls);
@@ -1034,8 +1034,8 @@ bool plLightMapGen::ILightAffectsNode(plLightMapInfo* liInfo, LightObject* liObj
 
 bool plLightMapGen::IPrepLight(plLightMapInfo* liInfo, INode* node)
 {
-    const char* liName = liInfo->fLiNode->GetName();
-    const char* nodeName = node->GetName();
+    auto liName = liInfo->fLiNode->GetName();
+    auto nodeName = node->GetName();
 
     INode* liNode = liInfo->fLiNode;
     LightObject* liObj = (LightObject*)liNode->EvalWorldState(fTime).obj;
@@ -1348,7 +1348,7 @@ Color plLightMapGen::ShadowPoint(plMaxLightContext& ctx)
     accum.Black();
     for (plLightMapInfo* light : fActiveLights)
     {
-        const char* dbgLiName = light->fLiNode->GetName();
+        auto dbgLiName = light->fLiNode->GetName();
 
         Color color;
         Point3 liDir;

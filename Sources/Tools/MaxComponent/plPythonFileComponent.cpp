@@ -144,7 +144,7 @@ public:
 
     // When we're auto-exporting and can't pop up an error dialog, we cache our
     // errors here and blab about it at export time
-    static std::string fPythonError;
+    static M_STD_STRING fPythonError;
 
 protected:
     PythonKeys      fModKeys;
@@ -170,7 +170,7 @@ public:
     };
     Validate ValidateFile();
 
-    const char* GetPythonName();
+    ST::string GetPythonName() const;
 
     virtual PythonKeys& GetKeys() { return fModKeys; }
 
@@ -185,7 +185,7 @@ public:
 
 CLASS_DESC(plPythonFileComponent, gPythonFileComponentDesc, "Python File", "PythonFile", COMP_TYPE_LOGIC, PYTHON_FILE_CID);
 
-std::string plPythonFileComponent::fPythonError;
+M_STD_STRING plPythonFileComponent::fPythonError;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Called by the Python File manager
@@ -200,16 +200,15 @@ void PythonFile::AddAutoUIBlock(plAutoUIBlock *block)
     {
         if (gAutoUIBlocks[i]->GetBlockID() == block->GetBlockID())
         {
-            char buf[256];
-            sprintf(buf,
+            ST:: string msg = ST::format(
                 "Duplicate Python File ID\n\n"
-                "%s and %s use ID %d\n\n"
-                "%s will be ignored.",
+                "{} and {} use ID {d}\n\n"
+                "{} will be ignored.",
                 gAutoUIBlocks[i]->GetName(),
                 block->GetName(),
                 block->GetBlockID(),
                 block->GetName());
-            hsMessageBox(buf, "Warning", hsMBoxOk);
+            plMaxMessageBox(nullptr, ST2T(msg), _T("Warning"), MB_OK);
             return;
         }
     }
@@ -251,7 +250,7 @@ bool plPythonFileComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg
     {
         pErrMsg->Set(true, "Python Error", fPythonError.c_str()).Show();
         pErrMsg->Set();
-        fPythonError = "";
+        fPythonError.clear();
     }
 
     fModKeys.clear();
@@ -290,10 +289,13 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
             if( !sCommonPythonLib.RemoveObjectAndKey( modKey ) )
             {
-                pErrMsg->Set( true, "Python File Component Error", 
-                                    "The global Python File Component %s is attempting to export over an already "
-                                    "existing component of the same name, and the exporter is unable to delete the "
-                                    "old object to replace it. This would be a good time to call mcn for help.", GetINode()->GetName() ).Show(); 
+                pErrMsg->Set( true,
+                              "Python File Component Error",
+                              ST::format( "The global Python File Component {} is attempting to export over an already "
+                                          "existing component of the same name, and the exporter is unable to delete the "
+                                          "old object to replace it. This would be a good time to call mcn for help.",
+                                          GetINode()->GetName() )
+                              ).Show();
                 pErrMsg->Set( false );
             }
 
@@ -308,10 +310,13 @@ bool plPythonFileComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
             plKey foo = obj->GetKey();
             if( !sCommonPythonLib.RemoveObjectAndKey( foo ) )
             {
-                pErrMsg->Set( true, "Python File Component Error", 
-                                    "The global Python File Component %s is attempting to export over an already "
-                                    "existing component of the same name, and the exporter is unable to delete the "
-                                    "old sceneObject to replace it. This would be a good time to call mcn for help.", GetINode()->GetName() ).Show(); 
+                pErrMsg->Set( true,
+                              "Python File Component Error",
+                              ST::format( "The global Python File Component {} is attempting to export over an already "
+                                          "existing component of the same name, and the exporter is unable to delete the "
+                                          "old sceneObject to replace it. This would be a good time to call mcn for help.",
+                                          GetINode()->GetName() )
+                              ).Show();
                 pErrMsg->Set( false );
             }
 
@@ -477,10 +482,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                 }
                 if ( !found_atleast_one_good_one )
                 {
-                    char buf[512];
-                    sprintf(buf,"The sceneobject attribute (ID=%d) that was selected in %s PythonFile, somehow does not exist!?",
-                                pyParam.fID,this->GetINode()->GetName());
-                    pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                    pErrMsg->Set(
+                        true,
+                        "PythonFile Warning",
+                        ST::format(
+                            "The sceneobject attribute (ID={d}) that was selected in {} PythonFile, somehow does not exist!?",
+                            pyParam.fID, GetINode()->GetName()
+                        )
+                    ).Show();
                     pErrMsg->Set(false);
                 }
             }
@@ -507,10 +516,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         }
                         if ( !found_atleast_one_good_one )
                         {
-                            char buf[512];
-                            sprintf(buf,"The responder attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                        comp->GetINode()->GetName(),this->GetINode()->GetName());
-                            pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                            pErrMsg->Set(
+                                true,
+                                "PythonFile Warning",
+                                ST::format(
+                                    "The responder attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                    comp->GetINode()->GetName(), GetINode()->GetName()
+                                )
+                            ).Show();
                             pErrMsg->Set(false);
                         }
                     }
@@ -596,10 +609,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             pyParam.SetToGUIDialog(dialogKey);
                             if (pyParam.fObjectKey == nullptr)
                             {
-                                char buf[512];
-                                sprintf(buf,"The GUIDialog attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                                pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                                pErrMsg->Set(
+                                    true,
+                                    "PythonFile Warning",
+                                    ST::format(
+                                        "The GUIDialog attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                        comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                    )
+                                ).Show();
                                 pErrMsg->Set(false);
                             }
                             else
@@ -626,10 +643,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             pyParam.SetToGUIPopUpMenu( key );
                             if (pyParam.fObjectKey == nullptr)
                             {
-                                char buf[512];
-                                sprintf(buf,"The GUIPopUpMenu attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                                pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                                pErrMsg->Set(
+                                    true,
+                                    "PythonFile Warning",
+                                    ST::format(
+                                        "The GUIPopUpMenu attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                        comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                    )
+                                ).Show();
                                 pErrMsg->Set(false);
                             }
                             else
@@ -656,10 +677,14 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                             pyParam.SetToGUISkin( key );
                             if (pyParam.fObjectKey == nullptr)
                             {
-                                char buf[512];
-                                sprintf(buf,"The GUISkin attribute %s that was selected in %s PythonFile, somehow does not exist!?",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                                pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                                pErrMsg->Set(
+                                    true,
+                                    "PythonFile Warning",
+                                    ST::format(
+                                        "The GUISkin attribute {} that was selected in {} PythonFile, somehow does not exist!?",
+                                        comp->GetINode()->GetName(), GetINode()->GetName()
+                                    )
+                                ).Show();
                                 pErrMsg->Set(false);
                             }
                             else
@@ -697,15 +722,20 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         if ( number_of_real_targets_found != 1 )
                         {
                             // there is zero or more than one node attached to this exclude region
-                            char buf[512];
-                            if ( number_of_real_targets_found == 0 )
-                                sprintf(buf,"The ExcludeRegion %s that was selected as an attribute in %s PythonFile, has no scene nodes attached.",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
-                            else
-                                sprintf(buf,"The ExcludeRegion %s that was selected as an attribute in %s PythonFile, has more than one scene node attached (using first one found).",
-                                            comp->GetINode()->GetName(),this->GetINode()->GetName());
+                            ST::string msg;
+                            if (number_of_real_targets_found == 0) {
+                                msg = ST::format(
+                                    "The ExcludeRegion {} that was selected as an attribute in {} PythonFile has no scene nodes attached.",
+                                    comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                );
+                            } else {
+                                msg = ST::format(
+                                    "The ExcludeRegion {} that was selected as an attribute in {} PythonFile has more than one scene node attached (using first one found).",
+                                    comp->GetINode()->GetName(), this->GetINode()->GetName()
+                                );
+                            }
 
-                            pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                            pErrMsg->Set(true, "PythonFile Warning", msg).Show();
                             pErrMsg->Set(false);
                         }
                     }
@@ -874,15 +904,20 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     if ( number_of_real_targets_found != 1 )
                     {
                         // there is zero or more than one node attached to this exclude region
-                        char buf[512];
-                        if ( number_of_real_targets_found == 0 )
-                            sprintf(buf,"The Behavior component %s that was selected as an attribute in %s PythonFile, has no scene nodes attached.",
-                                        comp->GetINode()->GetName(),this->GetINode()->GetName());
-                        else
-                            sprintf(buf,"The Behavior component %s that was selected as an attribute in %s PythonFile, has more than one scene node attached (using first one found).",
-                                        comp->GetINode()->GetName(),this->GetINode()->GetName());
+                        ST::string msg;
+                        if (number_of_real_targets_found == 0) {
+                            msg = ST::format(
+                                "The Behavior component {} that was selected as an attribute in {} PythonFile has no scene nodes attached.",
+                                comp->GetINode()->GetName(), this->GetINode()->GetName()
+                            );
+                        } else {
+                            msg = ST::format(
+                                "The Behavior component {} that was selected as an attribute in {} PythonFile has more than one scene node attached (using first one found).",
+                                comp->GetINode()->GetName(), this->GetINode()->GetName()
+                            );
+                        }
 
-                        pErrMsg->Set(true, "PythonFile Warning", buf).Show();
+                        pErrMsg->Set(true, "PythonFile Warning", msg).Show();
                         pErrMsg->Set(false);
                     }
 
@@ -986,7 +1021,7 @@ plPythonFileComponent::Validate plPythonFileComponent::ValidateFile()
     return kPythonOk;
 }
 
-const char* plPythonFileComponent::GetPythonName()
+ST::string plPythonFileComponent::GetPythonName() const
 {
     // Make sure the type is in the valid range
     IParamBlock2 *pb = (IParamBlock2*)fCompPB->GetReferenceTarget(kPythonFilePB);
@@ -994,7 +1029,7 @@ const char* plPythonFileComponent::GetPythonName()
     if (block)
         return block->GetName();
 
-    return "(unknown)";
+    return ST_LITERAL("(unknown)");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1006,7 +1041,7 @@ class plPythonError
 {
 public:
     plMaxNode* node;
-    const char* pythonName;
+    ST::string pythonName;
     plPythonFileComponent::Validate error;
 
     bool operator< (const plPythonError& rhs) const { return rhs.node < node; }
@@ -1021,7 +1056,7 @@ static void CheckPythonFileCompsRecur(plMaxNode *node, ErrorSet& badNodes)
     {
         plPythonFileComponent* pyComp = (plPythonFileComponent*)comp;
 
-        const char* pythonName = pyComp->GetPythonName();
+        auto pythonName = pyComp->GetPythonName();
 
         plPythonFileComponent::Validate valid = pyComp->ValidateFile();
         if (valid != plPythonFileComponent::kPythonOk)
@@ -1046,11 +1081,11 @@ static INT_PTR CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
 
         LVCOLUMN lvc;
         lvc.mask = LVCF_TEXT;
-        lvc.pszText = "Component";
+        lvc.pszText = _T("Component");
         ListView_InsertColumn(hList, 0, &lvc);
-        lvc.pszText = "Python File";
+        lvc.pszText = _T("Python File");
         ListView_InsertColumn(hList, 1, &lvc);
-        lvc.pszText = "Error";
+        lvc.pszText = _T("Error");
         ListView_InsertColumn(hList, 2, &lvc);
 
         ErrorSet *badNodes = (ErrorSet*)lParam;
@@ -1064,23 +1099,23 @@ static INT_PTR CALLBACK WarnDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARA
 
             LVITEM lvi;
             lvi.mask = LVIF_TEXT;
-            lvi.pszText = (char*)node->GetName();
+            lvi.pszText = const_cast<TCHAR*>(node->GetName());
             lvi.iItem = 0;
             lvi.iSubItem = 0;
             int idx = ListView_InsertItem(hList, &lvi);
 
-            ListView_SetItemText(hList, idx, 1, (char*)err.pythonName);
+            ListView_SetItemText(hList, idx, 1, ST2T(err.pythonName));
 
             switch (err.error)
             {
             case plPythonFileComponent::kPythonBadVer:
-                ListView_SetItemText(hList, idx, 2, "Old Version");
+                ListView_SetItemText(hList, idx, 2, _T("Old Version"));
                 break;
             case plPythonFileComponent::kPythonNoVer:
-                ListView_SetItemText(hList, idx, 2, "No Version");
+                ListView_SetItemText(hList, idx, 2, _T("No Version"));
                 break;
             case plPythonFileComponent::kPythonNoFile:
-                ListView_SetItemText(hList, idx, 2, "No File/Python Error");
+                ListView_SetItemText(hList, idx, 2, _T("No File/Python Error"));
                 break;
             }
         }
@@ -1110,30 +1145,28 @@ static void WriteBadPythonText(ErrorSet& badNodes)
     {
         const plPythonError err = *it;
 
-        const char* compName = err.node->GetName();
-        const char* pythonFile = err.pythonName;
-        const char* errorText = "";
+        M_STD_STRINGSTREAM ss;
+        ss << _M("Python component ") << err.node->GetName();
+        ss << _M(" (file ") << ST2M(err.pythonName);
+        ss << _M(") is bad. Reason: ");
         switch (err.error)
         {
         case plPythonFileComponent::kPythonBadVer:
-            errorText = "Old Version";
+            ss << _M("Old Version");
             break;
         case plPythonFileComponent::kPythonNoVer:
-            errorText = "No Version";
+            ss << _M("No Version");
             break;
         case plPythonFileComponent::kPythonNoFile:
-            errorText = "No File/Python Error";
+            ss << _M("No File/Python Error");
+            break;
+        default:
+            ss << _M("?UNKNOWN?");
             break;
         }
 
-        std::string& pythonError = plPythonFileComponent::fPythonError;
-        pythonError += "Python component ";
-        pythonError += compName;
-        pythonError += " (file ";
-        pythonError += pythonFile;
-        pythonError += ") is bad.  Reason: ";
-        pythonError += errorText;
-        pythonError += "\n";
+        ss << "\n";
+        plPythonFileComponent::fPythonError += ss.str();
     }
 }
 
@@ -1162,9 +1195,12 @@ static void NotifyProc(void *param, NotifyInfo *info)
     {
         if (gotBadPython)
         {
-            hsMessageBox("This file has bad Python components in it, you REALLY shouldn't save it.",
-                        "Python Component Warning",
-                        hsMBoxOk);
+            plMaxMessageBox(
+                nullptr,
+                _T("This file has bad Python components in it, you REALLY shouldn't save it."),
+                _T("Python Component Warning"),
+                MB_OK | MB_ICONSTOP
+            );
         }
     }
     else if (info->intcode == NOTIFY_SYSTEM_POST_RESET ||
@@ -1213,17 +1249,17 @@ ParamBlockDesc2 gPythonFileBlk
     IDD_COMP_PYTHON_FILE, IDS_COMP_PYTHON, 0, 0, &gPythonFileProc,
 
     kPythonFilePB,          _T("pb"),       TYPE_REFTARG,   0, 0,
-        end,
+        p_end,
 
     kPythonVersion,         _T("version"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     kPythonFileIsGlobal,    _T("isGlobal"), TYPE_BOOL, 0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_PYTHON_GLOBAL,
         p_default, FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 #define WM_LOAD_AUTO_UI WM_APP+1
@@ -1239,7 +1275,7 @@ INT_PTR plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND h
             HWND hCombo = GetDlgItem(hWnd, IDC_PYTHON_FILE);
             ComboBox_ResetContent(hCombo);
 
-            SetDlgItemText(hWnd, IDC_VER_TEXT, "");
+            SetDlgItemText(hWnd, IDC_VER_TEXT, _T(""));
 
             IParamBlock2 *pythonPB = (IParamBlock2*)pb->GetReferenceTarget(kPythonFilePB);
             plAutoUIBlock *pythonBlock = FindAutoUI(pythonPB);
@@ -1248,9 +1284,9 @@ INT_PTR plPythonFileComponentProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND h
             for (int i = 0; i < numPythonFiles; i++)
             {
                 plAutoUIBlock *block = gAutoUIBlocks[i];
-                const char *name = block->GetName();
+                auto name = block->GetName();
 
-                int idx = ComboBox_AddString(hCombo, name);
+                int idx = ComboBox_AddString(hCombo, ST2T(name));
                 ComboBox_SetItemData(hCombo, idx, i);
                 if (block == pythonBlock)
                 {

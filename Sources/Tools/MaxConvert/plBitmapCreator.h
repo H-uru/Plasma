@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFileSystem.h"
 
+#include "MaxMain/MaxCompat.h"
+
 class BitmapInfo;
 class Bitmap;
 class plBitmap;
@@ -70,7 +72,7 @@ public:
     float sig;
     bool    isStaticCubicEnvMap;
     bool    invertAlpha;
-    const char  *faceNames[ 6 ];
+    const MCHAR  *faceNames[ 6 ];
     uint32_t  maxDimension;
     uint8_t   clampFlags;
     bool    usePNG;

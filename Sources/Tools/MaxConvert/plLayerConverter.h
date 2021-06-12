@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plErrorMsg;
+class plFileName;
 class plLayerInterface;
 class plMaxNode;
 class plPlasmaMAXLayer;
@@ -90,7 +91,7 @@ class plLayerConverter
 
         plLayerInterface    *ConvertTexmap( Texmap *texmap, plMaxNode *maxNode,
                                             uint32_t blendFlags, bool preserveUVOffset, bool upperLayer );
-        plBitmap *CreateSimpleTexture(const char *fileName, const plLocation &loc, uint32_t clipID = 0, uint32_t texFlags = 0, bool usePNG = false);
+        plBitmap *CreateSimpleTexture(plFileName fileName, const plLocation &loc, uint32_t clipID = 0, uint32_t texFlags = 0, bool usePNG = false);
         
         void    MuteWarnings();
         void    UnmuteWarnings();
@@ -104,7 +105,7 @@ class plLayerConverter
         Interface           *fInterface;
         hsConverterUtils    &fConverterUtils;
 
-        const char  *fDbgNodeName;
+        const MCHAR* fDbgNodeName;
 
         std::vector<plPlasmaMAXLayer *> fConvertedLayers;
 

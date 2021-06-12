@@ -40,78 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "MaxAPI.h"
+// The to be #defined in a .h file included by a .rc file before maxversion.r
 
-#include "MaxAllocDll.h"
+#define MAXVER_INTERNALNAME     "PlasmaMax\0"
+#define MAXVER_ORIGINALFILENAME "PlasmaMax.gup\0"
+#define MAXVER_FILEDESCRIPTION  "Plasma 2.0 Plugin\0"
+#define MAXVER_COMMENTS         "\0"
 
-typedef void* (*MAXMALLOC) (size_t size);
-typedef void (*MAXFREE) (void *memblock);
-
-static MAXMALLOC maxMalloc = nullptr;
-static MAXFREE maxFree = nullptr;
-static HINSTANCE maxAllocDll = nullptr;
-
-void LoadAllocDll()
-{
-    if (!maxAllocDll)
-    {
-        // Search through all the Max plugin paths for MaxAlloc.dll
-        Interface *ip = GetCOREInterface();
-        for (int i = 0; i < ip->GetPlugInEntryCount(); i++)
-        {
-            const char *dir = ip->GetPlugInDir(i);
-
-            char path[MAX_PATH];
-            sprintf(path, "%sMaxAlloc.dll", dir);
-
-            maxAllocDll = LoadLibrary(path);
-
-            if (maxAllocDll)
-                return;
-        }
-
-        maxAllocDll = LoadLibrary("MaxAlloc.dll");
-
-        if (!maxAllocDll)
-        {
-            ::MessageBox(nullptr, "Couldn't load MaxAlloc.dll", "Error", MB_OK);
-            exit(0);
-        }
-    }
-}
-
-void *plMaxMalloc(size_t size)
-{
-    if (!maxMalloc)
-    {
-        LoadAllocDll();
-        maxMalloc = (MAXMALLOC)GetProcAddress(maxAllocDll, "MaxMalloc");
-
-        if (!maxMalloc)
-        {
-            ::MessageBox(nullptr, "Couldn't find MaxMalloc in MaxAlloc.dll", "Error", MB_OK);
-            exit(0);
-        }
-    }
-
-    return maxMalloc(size);
-}
-
-void plMaxFree(void *memblock)
-{
-    if (!maxFree)
-    {
-        LoadAllocDll();
-        maxFree = (MAXFREE)GetProcAddress(maxAllocDll, "MaxFree");
-
-        if (!maxFree)
-        {
-            ::MessageBox(nullptr, "Couldn't find MaxFree in MaxAlloc.dll", "Error", MB_OK);
-            exit(0);
-        }
-
-    }
-
-    maxFree(memblock);
-}
+// #define MAXVER_PRODUCTNAME       //generally not overridden at the maxversion.r level
+// #define MAXVER_COPYRIGHT         //only in exceptions should this be overridden
+// #define MAXVER_LEGALTRADEMARKS   //only in exceptions should this be overridden
+// #define MAXVER_COMPANYNAME       //only in exceptions should this be overridden
+// #define MAX_VERSION_MAJOR        //only in exceptions should this be overridden
+// #define MAX_VERSION_MINOR        //only in exceptions should this be overridden
+// #define MAX_VERSION_POINT        //only in exceptions should this be overridden

@@ -160,8 +160,6 @@ protected:
 protected:
     void ISanityCheckGeometry(physx::PxBoxGeometry& geometry) const;
     void ISanityCheckGeometry(physx::PxSphereGeometry& geometry) const;
-    void ISanityCheckBounds();
-    void ISanityCheckRecipe();
 
 public:
     friend class plSimulationMgr;
@@ -258,6 +256,7 @@ public:
 
     PhysRecipe& GetRecipe() { return fRecipe; }
     const PhysRecipe& GetRecipe() const { return fRecipe; }
+    void DirtyRecipe();
 
 protected:
     void IUpdateSubworld();

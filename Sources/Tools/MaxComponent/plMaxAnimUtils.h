@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <string_theory/string>
 
+#include <tchar.h>
+
 class plErrorMsg;
 class Animatable;
 
@@ -83,7 +85,7 @@ SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg 
 bool GetSegMapAnimTime(const ST::string &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end);
 
 // For internal use
-void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pErrMsg);
+void GetSegment(const TCHAR* note, float time, SegmentMap *segMap, plErrorMsg *pErrMsg);
 
 bool DoesHaveStopPoints(Animatable *anim);
 

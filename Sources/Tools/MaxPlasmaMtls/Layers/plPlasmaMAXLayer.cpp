@@ -381,7 +381,7 @@ void plPlasmaMAXLayer::RefreshBitmaps()
 //  Returns the filename of the ith bitmap. Makes sure we have the latest
 //  version from assetMan as well, if applicable.
 
-bool    plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, int index /* = 0 */ )
+bool    plPlasmaMAXLayer::GetBitmapFileName( TCHAR* destFilename, int maxLength, int index /* = 0 */ )
 {
 #ifdef MAXASS_AVAILABLE
     jvUniqueId targetAssetId;
@@ -400,7 +400,7 @@ bool    plPlasmaMAXLayer::GetBitmapFileName( char *destFilename, int maxLength, 
     if (GetPBBitmap(index) == nullptr)
         return false;
 
-    strncpy( destFilename, GetPBBitmap( index )->bi.Name(), maxLength );
+    _tcsncpy( destFilename, GetPBBitmap( index )->bi.Name(), maxLength );
     return true;
 }
 
@@ -417,9 +417,9 @@ BOOL plPlasmaMAXLayer::HandleBitmapSelection(int index /* = 0 */)
     // If the control key is held, we want to get rid of this texture
     if ((GetKeyState(VK_CONTROL) & 0x8000) && pbbm != nullptr)
     {
-        char msg[512];
-        sprintf(msg, "Are you sure you want to change this bitmap from %s to (none)?", pbbm->bi.Name());
-        if (hsMessageBox(msg, "Remove texture?", hsMessageBoxYesNo) == hsMBoxYes)
+        TCHAR msg[512];
+        _sntprintf(msg, std::size(msg), _T("Are you sure you want to change this bitmap from %s to (none)?"), pbbm->bi.Name());
+        if (plMaxMessageBox(nullptr, msg, _T("Remove texture?"), MB_YESNO) == IDYES)
         {
             SetBitmap(nullptr, index);
             return TRUE;

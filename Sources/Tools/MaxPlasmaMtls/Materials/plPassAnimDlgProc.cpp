@@ -127,7 +127,7 @@ INT_PTR plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UIN
     IParamBlock2 *pb = pMap->GetParamBlock();
     plPassMtlBase *mtl = (plPassMtlBase*)pb->GetOwner();
     HWND gWnd = GetDlgItem(hWnd, IDC_MTL_GLOBAL_NAME);  
-    char buff[512];
+    TCHAR buff[512];
 
     switch (msg)
     {
@@ -177,7 +177,7 @@ INT_PTR plPassAnimDlgProc::DlgProc(TimeValue t, IParamMap2 *pMap, HWND hWnd, UIN
             else if (HIWORD(wParam) == CBN_SELCHANGE && LOWORD(wParam) == IDC_MTL_GLOBAL_NAME)
             {
                 ComboBox_GetLBText(gWnd, ComboBox_GetCurSel(gWnd), buff);
-                pb->SetValue(ParamID(kPBAnimGlobalName), 0, _T(buff));
+                pb->SetValue(ParamID(kPBAnimGlobalName), 0, buff);
             }           
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_MTL_USE_GLOBAL)
             {

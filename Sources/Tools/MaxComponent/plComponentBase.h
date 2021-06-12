@@ -152,7 +152,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    TCHAR* GetObjectName()     override { return (TCHAR*)fClassDesc->ClassName(); }
+    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
     void InitNodeName(TSTR& s) override { s = fClassDesc->InternalName(); }
     void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
     Class_ID ClassID()         override { return fClassDesc->ClassID(); }
@@ -162,7 +162,7 @@ public:
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;
     void SetReference(int i, RefTargetHandle rtarg) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
     
     // allow retreival of our paramblock from other plug-ins
     // and the max core
@@ -195,7 +195,7 @@ public:
 
     int CanConvertToType(Class_ID obtype) override { return (obtype == COMPONENT_CLASSID) ? 1 : 0; }
 
-    const char *GetCategory() { return fClassDesc->Category(); }
+    const MCHAR* GetCategory() { return fClassDesc->Category(); }
 };
 
 // Look through the nodes in 'nodes' and find components that they all share.

@@ -132,34 +132,35 @@ ParamBlockDesc2 gOneShotBlock
     //params
     kOneShotAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,
         p_ui,   TYPE_EDITBOX, IDC_COMP_ONESHOT_ANIM_TEXTBOX,
-        end,
+        p_end,
 
     kPlayBackwardsBool, _T("PlayBackwardsBool"), TYPE_BOOL, 0,  0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_PLAY_BACK_BOOL,
-        end,
+        p_end,
 
     kControlSpeedBool, _T("ControlSpeedBool"), TYPE_BOOL, 0,    0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_CONT_SPEED_BOOL,
-        end,
+        p_end,
 
     kSeekTimeFloat, _T("SeekTimeFloat"), TYPE_FLOAT, 0, 0,
         p_default, 1.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_POS_FLOAT,
         IDC_COMP_ONESHOT_SEEK_FIELD_EDIT, IDC_COMP_ONESHOT_SEEK_FIELD_SPIN, .1f, 
-        end,
+        p_end,
 
     kSmartSeekBool, _T("SmartSeekBool"), TYPE_BOOL, 0,  0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SMART_SEEK,
-        end,
+        p_end,
 
     kNoSeekBool, _T("NoSeekBool"), TYPE_BOOL, 0,    0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_NO_SEEK,
-        end,
-    end
+        p_end,
+
+    p_end
 );
 
 
@@ -179,8 +180,8 @@ plKey plOneShotComponent::GetOneShotKey(plMaxNode *node)
 
 bool plOneShotComponent::IsValid()
 {
-    const char *animName = fCompPB->GetStr(kOneShotAnimName);
-    return (animName && *animName != '\0');
+    const MCHAR* animName = fCompPB->GetStr(kOneShotAnimName);
+    return (animName && *animName != _M('\0'));
 }
 
 bool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
@@ -194,8 +195,8 @@ bool plOneShotComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrMsg)
     }
     else
     {
-        if (pErrMsg->Set(true, "One-Shot", "One-shot component on '%s' has no animation name, and will not be included. Abort this export?", node->GetName()).Ask())
-            pErrMsg->Set(true, "", "");
+        if (pErrMsg->Set(true, "One-Shot", ST::format("One-shot component on '{}' has no animation name, and will not be included. Abort this export?", node->GetName())).Ask())
+            pErrMsg->Set(true);
         else
             pErrMsg->Set(false); // Don't want to abort
         return false;
@@ -224,7 +225,7 @@ bool plOneShotComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
     if (fMods.find(node) != fMods.end())
     {
-        const char *animName = fCompPB->GetStr(kOneShotAnimName);
+        const MCHAR* animName = fCompPB->GetStr(kOneShotAnimName);
         bool drivable = fCompPB->GetInt(kControlSpeedBool);
         bool reversable = fCompPB->GetInt(kPlayBackwardsBool);
         float seekDuration = fCompPB->GetFloat(kSeekTimeFloat);

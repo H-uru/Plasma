@@ -72,9 +72,13 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
     // If an XRef doesn't have a location, tell the user and stop the export
     if (node->IsXRef())
     {
-        char buf[256];
-        sprintf(buf, "XRef object \"%s\" does not have a location", node->GetName());
-        fErrMsg->Set(true, "Convert Error", buf).Show();
+        fErrMsg->Set(
+            true, "Convert Error",
+            ST::format(
+                "XRef object \"{}\" does not have a location",
+                node->GetName()
+            )
+        ).Show();
         return false;
     }
 
@@ -88,7 +92,9 @@ bool plGetLocationDlg::GetLocation(plMaxNode *node, plErrorMsg *errMsg)
     // If we're not showing prompts, just fail if there isn't a location
     if (hsMessageBox_SuppressPrompts)
     {
-        fErrMsg->Set(true, "Convert Error", "Object %s doesn't have a location component", node->GetName());
+        fErrMsg->Set(true, "Convert Error",
+            ST::format("Object {} doesn't have a location component", M2ST(node->GetName()))
+        );
         fErrMsg->Show();
         return false;
     }
@@ -160,8 +166,8 @@ INT_PTR plGetLocationDlg::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPa
             IListRooms((plMaxNode*)GetCOREInterface()->GetRootNode(), hList);
 
             // Set the prompt text
-            char buf[256];
-            sprintf(buf, "The object \"%s\" does not have a location. Either pick a location and press OK, or press Cancel to stop the convert.", fNode->GetName());
+            TCHAR buf[256];
+            _sntprintf(buf, std::size(buf), _T("The object \"%s\" does not have a location. Either pick a location and press OK, or press Cancel to stop the convert."), fNode->GetName());
             SetDlgItemText(hDlg, IDC_PROMPT, buf);
 
             // No room components found.  Tell user to create one and cancel convert.

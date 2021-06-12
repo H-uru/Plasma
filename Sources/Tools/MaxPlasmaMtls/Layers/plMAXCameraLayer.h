@@ -115,12 +115,12 @@ public:
     void GetClassName(TSTR& s) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget,
-        PartID& partID, RefMessage message) override;
+    RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
+        PartID& partID, RefMessage message MAX_REF_PROPAGATE) override;
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;
@@ -142,9 +142,6 @@ public:
         kDisableColor,
         kForce,
     };
-
-    static const char *kUVStrings[];
-    static const uint8_t kMaxUVSrc;
 
     // Pure virtual accessors for the various bitmap related elements
     Bitmap *GetMaxBitmap(int index = 0) override { hsAssert(false, "Function call not valid on this type of layer."); return nullptr; }

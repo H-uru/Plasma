@@ -153,81 +153,81 @@ ParamBlockDesc2 gGrassBk
 
     plGrassComponent::kWave, _T("Wave"), TYPE_INT, 0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plGrassComponent::kDistX, _T("DistX"), TYPE_FLOAT, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_GRASS_DIST_X, IDC_GRASS_DIST_X_SPIN, 0.1,
-        end,
+        p_end,
 
     plGrassComponent::kDistY, _T("DistY"), TYPE_FLOAT, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_GRASS_DIST_Y, IDC_GRASS_DIST_Y_SPIN, 0.1,
-        end,
+        p_end,
 
     plGrassComponent::kDistZ, _T("DistZ"), TYPE_FLOAT, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_GRASS_DIST_Z, IDC_GRASS_DIST_Z_SPIN, 0.1,
-        end,
+        p_end,
 
     plGrassComponent::kDirX, _T("DirX"), TYPE_FLOAT, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_GRASS_DIR_X, IDC_GRASS_DIR_X_SPIN, 0.1,
-        end,
+        p_end,
 
     plGrassComponent::kDirY, _T("DirY"), TYPE_FLOAT, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_GRASS_DIR_Y, IDC_GRASS_DIR_Y_SPIN, 0.1,
-        end,
+        p_end,
 
     plGrassComponent::kSpeed, _T("Speed"), TYPE_FLOAT, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_GRASS_SPEED, IDC_GRASS_SPEED_SPIN, 0.1,
-        end,
+        p_end,
 
         plGrassComponent::kDistXTab, _T("DistXTab"), TYPE_FLOAT_TAB, plGrassShaderMod::kNumWaves, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
-        end,
+        p_end,
 
     plGrassComponent::kDistYTab, _T("DistYTab"), TYPE_FLOAT_TAB, plGrassShaderMod::kNumWaves, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
-        end,
+        p_end,
 
     plGrassComponent::kDistZTab, _T("DistZTab"), TYPE_FLOAT_TAB, plGrassShaderMod::kNumWaves, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
-        end,
+        p_end,
 
     plGrassComponent::kDirXTab, _T("DirXTab"), TYPE_FLOAT_TAB, plGrassShaderMod::kNumWaves, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
-        end,
+        p_end,
 
     plGrassComponent::kDirYTab, _T("DirYTab"), TYPE_FLOAT_TAB, plGrassShaderMod::kNumWaves, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
-        end,
+        p_end,
 
     plGrassComponent::kSpeedTab, _T("SpeedTab"), TYPE_FLOAT_TAB, plGrassShaderMod::kNumWaves, 0, 0,
         p_default, 0.0,
         p_range, -10.0, 10.0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGrassComponent::plGrassComponent() : fShader()

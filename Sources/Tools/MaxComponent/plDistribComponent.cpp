@@ -373,8 +373,8 @@ private:
         }
         if( onInit )
         {
-            map->SetTooltip(plDistribComponent::kLockScaleXY, TRUE, "Lock scale in X and Y" );
-            map->SetTooltip(plDistribComponent::kLockScaleXYZ, TRUE, "Lock scale in X, Y and Z (uniform scale)" );
+            map->SetTooltip(plDistribComponent::kLockScaleXY, TRUE, _M("Lock scale in X and Y") );
+            map->SetTooltip(plDistribComponent::kLockScaleXYZ, TRUE, _M("Lock scale in X, Y and Z (uniform scale)") );
         }
     }
 public:
@@ -562,7 +562,7 @@ ParamBlockDesc2 gDistributorBk
         p_ui,           plDistribComponent::kRollTemplates, TYPE_NODELISTBOX, IDC_LIST_TARGS, IDC_ADD_TARGS, 0, IDC_DEL_TARGS,
         p_classID,      triObjectClassID,
         p_accessor,     &gDistribCompAccessor,
-        end,
+        p_end,
 
     // SPACING
     plDistribComponent::kSpacing, _T("Spacing"), TYPE_FLOAT,    0, 0,   
@@ -570,26 +570,26 @@ ParamBlockDesc2 gDistributorBk
         p_range, 0.1, 100.0,
         p_ui, plDistribComponent::kRollSpacing, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SPACING, IDC_COMP_DISTRIB_SPACING_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kSpaceRnd, _T("Space Randomness"), TYPE_FLOAT,  0, 0,   
         p_default, 50.0,
         p_range, 0.0, 100.0,
         p_ui,   plDistribComponent::kRollSpacing, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SPACERND, IDC_COMP_DISTRIB_SPACERND_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kDensity, _T("Density"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 1., 100.0,
         p_ui,   plDistribComponent::kRollSpacing, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_DENSITY, IDC_COMP_DISTRIB_DENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kSeparation,    _T("Separation"),   TYPE_INT,   0, 0,
         p_range, 0, 3,
         p_default, 1,
-        end,
+        p_end,
 
     // SCALE
     plDistribComponent::kScaleLoX, _T("ScaleMinX"), TYPE_FLOAT,     0, 0,   
@@ -597,52 +597,52 @@ ParamBlockDesc2 gDistributorBk
         p_range, 0.1, 10.0,
         p_ui,   plDistribComponent::kRollScale, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SCALELOX, IDC_COMP_DISTRIB_SCALELOX_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kScaleLoY, _T("ScaleMinY"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 10.0,
         p_ui,   plDistribComponent::kRollScale, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SCALELOY, IDC_COMP_DISTRIB_SCALELOY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kScaleLoZ, _T("ScaleMinZ"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 10.0,
         p_ui,   plDistribComponent::kRollScale, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SCALELOZ, IDC_COMP_DISTRIB_SCALELOZ_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kScaleHiX, _T("ScaleMaxX"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 10.0,
         p_ui,   plDistribComponent::kRollScale, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SCALEHIX, IDC_COMP_DISTRIB_SCALEHIX_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kScaleHiY, _T("ScaleMaxY"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 10.0,
         p_ui,   plDistribComponent::kRollScale, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SCALEHIY, IDC_COMP_DISTRIB_SCALEHIY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kScaleHiZ, _T("ScaleMaxZ"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 10.0,
         p_ui,   plDistribComponent::kRollScale, TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_SCALEHIZ, IDC_COMP_DISTRIB_SCALEHIZ_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kLockScaleXY,  _T("LockScaleXY"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   plDistribComponent::kRollScale, TYPE_SINGLECHEKBOX, IDC_COMP_DISTRIB_LOCKSCALEXY,
-        end,
+        p_end,
 
     plDistribComponent::kLockScaleXYZ,  _T("LockScaleXYZ"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   plDistribComponent::kRollScale, TYPE_SINGLECHEKBOX, IDC_COMP_DISTRIB_LOCKSCALEXYZ,
-        end,
+        p_end,
 
     // ORIENT
     plDistribComponent::kAlignWgt, _T("Align Weight"), TYPE_FLOAT,  0, 0,   
@@ -650,26 +650,26 @@ ParamBlockDesc2 gDistributorBk
         p_range, 0.0, 100.0,
         p_ui,   plDistribComponent::kRollOrient, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_ALIGNWGT, IDC_COMP_DISTRIB_ALIGNWGT_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kPolarRange, _T("Normal Range (Deg)"), TYPE_FLOAT,  0, 0,   
         p_default, 15.0,
         p_range, 0.0, 180.0,
         p_ui,   plDistribComponent::kRollOrient, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_POLARRANGE, IDC_COMP_DISTRIB_POLARRANGE_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kAzimuthRange, _T("Normal Range (Deg)"), TYPE_FLOAT,    0, 0,   
         p_default, 180.0,
         p_range, 0.0, 180.0,
         p_ui,   plDistribComponent::kRollOrient, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_AZIMUTHRANGE, IDC_COMP_DISTRIB_AZIMUTHRANGE_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kPolarBunch, _T("Normal Bunching"), TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, 0.0, 100.0,
-        end,    
+        p_end,    
     
     // ANGPROB
     plDistribComponent::kAngProbHi, _T("AngProbHi"), TYPE_FLOAT,    0, 0,   
@@ -677,21 +677,21 @@ ParamBlockDesc2 gDistributorBk
         p_range, 0.0, 180.0,
         p_ui,   plDistribComponent::kRollAngProb, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_ANGPROBHI, IDC_COMP_DISTRIB_ANGPROBHI_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kAngProbLo, _T("AngProbLo"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 180.0,
         p_ui,   plDistribComponent::kRollAngProb, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_ANGPROBLO, IDC_COMP_DISTRIB_ANGPROBLO_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kAngProbTrans, _T("AngProbTrans"), TYPE_FLOAT,  0, 0,   
         p_default, 0.0,
         p_range, 0.0, 180.0,
         p_ui,   plDistribComponent::kRollAngProb, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_ANGPROBTRANS, IDC_COMP_DISTRIB_ANGPROBTRANS_SPIN, 1.0,
-        end,    
+        p_end,    
 
     // ALTPROB
     plDistribComponent::kAltProbHi, _T("AltProbHi"), TYPE_FLOAT,    0, 0,   
@@ -699,84 +699,84 @@ ParamBlockDesc2 gDistributorBk
         p_range, -1000.0, 1000.0,
         p_ui,   plDistribComponent::kRollAltProb, TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_DISTRIB_ALTPROBHI, IDC_COMP_DISTRIB_ALTPROBHI_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kAltProbLo, _T("AltProbLo"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, -1000.0, 1000.0,
         p_ui,   plDistribComponent::kRollAltProb, TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_DISTRIB_ALTPROBLO, IDC_COMP_DISTRIB_ALTPROBLO_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kAltProbTrans, _T("AltProbTrans"), TYPE_FLOAT,  0, 0,   
         p_default, 0.0,
         p_range, 0.0, 1000.0,
         p_ui,   plDistribComponent::kRollAltProb, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_ALTPROBTRANS, IDC_COMP_DISTRIB_ALTPROBTRANS_SPIN, 1.0,
-        end,    
+        p_end,    
 
     // CONFORM
     plDistribComponent::kConformType,   _T("ConformType"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plDistribComponent::kConformMax, _T("ConformMax"), TYPE_FLOAT,  0, 0,   
         p_default, 0.0,
         p_range, 0.0, 1000.0,
         p_ui,   plDistribComponent::kRollConform, TYPE_SPINNER, EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_CONFORMMAX, IDC_COMP_DISTRIB_CONFORMMAX_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kOffsetMin, _T("OffsetMin"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, -1000.0, 1000.0,
         p_ui,   plDistribComponent::kRollConform, TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_DISTRIB_OFFSETMIN, IDC_COMP_DISTRIB_OFFSETMIN_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kOffsetMax, _T("OffsetMax"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, -1000.0, 1000.0,
         p_ui,   plDistribComponent::kRollConform, TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_DISTRIB_OFFSETMAX, IDC_COMP_DISTRIB_OFFSETMAX_SPIN, 1.0,
-        end,    
+        p_end,    
 
     // BITMAP
     plDistribComponent::kProbTexmap,            _T("ProbTexmap"),   TYPE_TEXMAP,        0, 0,
         p_ui, plDistribComponent::kRollBitmap, TYPE_TEXMAPBUTTON, IDC_COMP_DISTRIB_PROBTEXMAP,
-        end,
+        p_end,
 
     plDistribComponent::kProbColorChan, _T("ProbColorChan"),    TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plDistribComponent::kRemapFromLo, _T("RemapFromLo"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 255.0,
         p_ui,   plDistribComponent::kRollBitmap, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_REMAPFROMLO, IDC_COMP_DISTRIB_REMAPFROMLO_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kRemapFromHi, _T("RemapFromHi"), TYPE_FLOAT,    0, 0,   
         p_default, 255.0,
         p_range, 0.0, 255.0,
         p_ui,   plDistribComponent::kRollBitmap, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_REMAPFROMHI, IDC_COMP_DISTRIB_REMAPFROMHI_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kRemapToLo, _T("RemapToLo"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 255.0,
         p_ui,   plDistribComponent::kRollBitmap, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_REMAPTOLO, IDC_COMP_DISTRIB_REMAPTOLO_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistribComponent::kRemapToHi, _T("RemapToHi"), TYPE_FLOAT,    0, 0,   
         p_default, 255.0,
         p_range, 0.0, 255.0,
         p_ui,   plDistribComponent::kRollBitmap, TYPE_SPINNER,  EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_REMAPTOHI, IDC_COMP_DISTRIB_REMAPTOHI_SPIN, 1.0,
-        end,    
+        p_end,    
 
     // FADE
     plDistribComponent::kFadeInTran, _T("FadeInTran"), TYPE_FLOAT,  0, 0,   
@@ -784,79 +784,79 @@ ParamBlockDesc2 gDistributorBk
         p_range, 0.0, 1000.0,
         p_ui,   plDistribComponent::kRollFade, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_FADEINTRAN, IDC_COMP_DISTRIB_FADEINTRAN_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kFadeInOpaq, _T("FadeInOpaq"), TYPE_FLOAT,  0, 0,   
         p_default, 0.0,
         p_range, 0.0, 1000.0,
         p_ui,   plDistribComponent::kRollFade, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_FADEINOPAQ, IDC_COMP_DISTRIB_FADEINOPAQ_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kFadeOutTran, _T("FadeOutTran"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 1000.0,
         p_ui,   plDistribComponent::kRollFade, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_FADEOUTTRAN, IDC_COMP_DISTRIB_FADEOUTTRAN_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kFadeOutOpaq, _T("FadeOutOpaq"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.0, 1000.0,
         p_ui,   plDistribComponent::kRollFade, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTRIB_FADEOUTOPAQ, IDC_COMP_DISTRIB_FADEOUTOPAQ_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plDistribComponent::kFadeInActive,  _T("FadeInActive"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   plDistribComponent::kRollFade, TYPE_SINGLECHEKBOX, IDC_COMP_DISTRIB_FADEINACTIVE,
         p_enable_ctrls,     2, plDistribComponent::kFadeInTran, plDistribComponent::kFadeInOpaq,
-        end,
+        p_end,
 
     // WIND
     plDistribComponent::kWindBone, _T("WindBone"),  TYPE_INODE,     0, 0,
         p_ui,   plDistribComponent::kRollWind, TYPE_PICKNODEBUTTON, IDC_COMP_DISTRIB_WINDBONE,
         p_prompt, IDS_COMP_CLUSTER_CHOSE_WINDBONE,
-        end,
+        p_end,
 
     plDistribComponent::kWindBoneActive,  _T("WindBoneActive"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   plDistribComponent::kRollWind, TYPE_SINGLECHEKBOX, IDC_COMP_DISTRIB_WINDBONEACTIVE,
         p_enable_ctrls,     1, plDistribComponent::kWindBone,
-        end,
+        p_end,
 
     // RANDOMIZE
     plDistribComponent::kSeedLocked,  _T("Locked"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   plDistribComponent::kRollRandomize, TYPE_SINGLECHEKBOX, IDC_COMP_DISTRIB_LOCK,
-        end,
+        p_end,
 
     plDistribComponent::kSeed,  _T("Seed"), TYPE_INT,   0, 0,
         p_default, 1,
         p_ui,   plDistribComponent::kRollRandomize, TYPE_SPINNER,   EDITTYPE_INT,   
         IDC_COMP_DISTRIB_SEED, IDC_COMP_DISTRIB_SEED_SPIN, 1.0,
         p_range, 0x80000000, 0x7fffffff,
-        end,
+        p_end,
 
     plDistribComponent::kNextSeed,  _T("NextSeed"), TYPE_INT,   0, 0,
         p_default, 1,
-        end,
+        p_end,
 
     // REPLICANTS (non-input)
     plDistribComponent::kReplicants,    _T("Replicants"),   TYPE_INODE_TAB, 0,      0, 0,
         p_accessor,     &gDistribCompAccessor,
-        end,
+        p_end,
 
     plDistribComponent::kRollupState,   _T("RollupState"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plDistribComponent::kFaceNormals,  _T("FaceNormals"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   plDistribComponent::kRollOrient, TYPE_SINGLECHEKBOX, IDC_COMP_DISTRIB_FACENORMALS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plDistribComponent::plDistribComponent()
@@ -1001,7 +1001,7 @@ BOOL plDistribComponent::Distribute(plDistribInstTab& replicants, plErrorMsg* pE
     }
 
     try {
-        pErrMsg->Set(!distrib.GetNumReplicateNodes(), GetINode()->GetName(), "Distributor %s has nothing to replicate", GetINode()->GetName()).CheckAndAsk();
+        pErrMsg->Set(!distrib.GetNumReplicateNodes(), GetINode()->GetName(), ST::format("Distributor {} has nothing to replicate", GetINode()->GetName())).CheckAndAsk();
 
         int numTarg = NumTargets();
         for( i = 0; i < numTarg; i++ )
@@ -1127,7 +1127,7 @@ void plDistribComponent::Preview()
     plDistribInstTab replicants;
 
     plExportProgressBar bar;
-    bar.Start("Preview", NumTargets() << 4);
+    bar.Start(_M("Preview"), NumTargets() << 4);
 
     plDistTree distTree;
     Distribute(replicants, nullptr, bar, &distTree);
@@ -1189,7 +1189,7 @@ INode* plDistribComponent::IMakeOne(plDistribInstTab& nodes)
         outNode->SetObjOffsetRot(identQuat);
         outNode->SetObjOffsetScale(ScaleValue(Point3(1.f, 1.f, 1.f)));
 
-        TSTR outName(TSTR("Preview"));
+        MSTR outName(_M("Preview"));
         nn->MakeUniqueName(outName);
         outNode->SetName(outName);
 

@@ -322,7 +322,9 @@ void plPhysicalProps::IDisplayErrorMsg(plMaxNode *node, plErrorMsg *errMsg)
     {
         errMsg->Set(true,
             "Physics Conflict",
-            "The node \"%s\" has a conflict in its physical settings.\nMake sure the physical components on it are compatible.",
-            node->GetName()).Show();
+            ST::format(
+                "The node \"{}\" has a conflict in its physical settings.\nMake sure the physical components on it are compatible.",
+                node->GetName())
+            ).Show();
     }
 }
