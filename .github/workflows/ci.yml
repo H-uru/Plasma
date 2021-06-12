@@ -73,6 +73,7 @@ jobs:
   # HACK to enable/disable the max CI based on presence/absence of secret. See also:
   # https://github.com/actions/runner/issues/1138
   max-secrets:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     name: Check for Max SDK
     outputs:
