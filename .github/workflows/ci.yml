@@ -108,7 +108,7 @@ jobs:
           cmake `
             -G "${{ matrix.cfg.generator }}" -A "${{ matrix.cfg.arch }}" `
             -DPLASMA_BUILD_CLIENT=OFF `
-            -DPLASMA_BUILD_MAX_PLUGIN=ON `
+            -DPLASMA_BUILD_MAX_PLUGIN=REQUIRED `
             -DPLASMA_BUILD_LAUNCHER=OFF `
             -DPLASMA_BUILD_TESTS=OFF `
             -DPLASMA_BUILD_TOOLS=OFF `
