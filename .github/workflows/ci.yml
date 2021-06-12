@@ -8,18 +8,26 @@ jobs:
     strategy:
       matrix:
         platform:
-          - { generator: Visual Studio 16 2019, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
-          - { generator: Visual Studio 16 2019, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
+          - { generator: Visual Studio 16 2019, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
+          - { generator: Visual Studio 16 2019, max-version: 2020, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
           - { external: ON, type: RelWithDebInfo, str: external-release }
 
     steps:
-      - name: Checkout
+      - name: Checkout Plasma
         uses: actions/checkout@v2
         with:
           submodules: true
+
+      - name: Checkout MaxSDK
+        continue-on-error: true
+        uses: actions/checkout@v2
+        with:
+          repository: H-uruMachineUser/3dsMaxSDK
+          token: ${{ secrets.MACHINE_USER_REPO_READ }}
+          path: maxsdk
 
       - name: Install Qt
         continue-on-error: true
@@ -33,6 +41,7 @@ jobs:
         run: |
           cmake `
             -G "${{ matrix.platform.generator }}" -A "${{ matrix.platform.arch }}" `
+            -DPLASMA_BUILD_MAX_PLUGIN=ON `
             -DPLASMA_BUILD_TESTS=ON `
             -DPLASMA_BUILD_TOOLS=ON `
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
@@ -40,6 +49,7 @@ jobs:
             -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" `
             -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" `
             -DPLASMA_VCPKG_NUGET_RW=TRUE `
+            -D3dsm_PATH="${{ github.workspace }}/maxsdk/${{ matrix.platform.max-version }}" `
             -S . -B build
 
       - name: Build
@@ -85,7 +95,6 @@ jobs:
     strategy:
       matrix:
         cfg:
-          - { sdk-version: 7, generator: Visual Studio 16 2019, arch: Win32, str: 7-windows-x86 }
           - { sdk-version: 2012, generator: Visual Studio 16 2019, arch: Win32, str: 2012-windows-x86 }
           - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: 2013-windows-x64 }
           - { sdk-version: 2021, generator: Visual Studio 16 2019, arch: x64, str: 2021-windows-x64 }
