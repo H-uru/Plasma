@@ -96,9 +96,11 @@ jobs:
     strategy:
       matrix:
         cfg:
+          - { sdk-version: 2008, generator: Visual Studio 16 2019, arch: Win32, str: 2008-windows-x86 }
           - { sdk-version: 2012, generator: Visual Studio 16 2019, arch: Win32, str: 2012-windows-x86 }
           - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: 2013-windows-x64 }
-          - { sdk-version: 2021, generator: Visual Studio 16 2019, arch: x64, str: 2021-windows-x64 }
+          - { sdk-version: 2017, generator: Visual Studio 16 2019, arch: x64, str: 2017-windows-x64 }
+          - { sdk-version: 2019, generator: Visual Studio 16 2019, arch: x64, str: 2019-windows-x64 }
 
     steps:
       - name: Checkout Plasma
