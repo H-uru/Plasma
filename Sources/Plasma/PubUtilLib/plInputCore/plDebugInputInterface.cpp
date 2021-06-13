@@ -88,7 +88,7 @@ plDebugInputInterface::plDebugInputInterface()
     fControlMap->AddCode( B_CAMERA_MOVE_RIGHT,          kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CAMERA_MOVE_UP,             kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CAMERA_MOVE_DOWN,           kControlFlagNormal | kControlFlagNoRepeat );
-//  fControlMap->AddCode( B_TOGGLE_DRIVE_MODE,          kControlFlagNormal | kControlFlagNoRepeat | kControlFlagShift );
+    fControlMap->AddCode( B_TOGGLE_DRIVE_MODE,          kControlFlagNormal | kControlFlagNoRepeat );
 #endif
 
     // IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
@@ -130,7 +130,7 @@ void    plDebugInputInterface::RestoreDefaultKeyMappings()
     fControlMap->BindKey( KEY_D,                            B_CAMERA_MOVE_RIGHT );
     fControlMap->BindKey( KEY_I,                            B_CAMERA_MOVE_UP );
     fControlMap->BindKey( KEY_K,                            B_CAMERA_MOVE_DOWN );
-//  fControlMap->BindKey( KEY_C,                            B_TOGGLE_DRIVE_MODE );
+    fControlMap->BindKey( plCtrlKeyCombo( KEY_D ),          B_TOGGLE_DRIVE_MODE );
 #endif
 }
 
