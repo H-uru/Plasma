@@ -64,20 +64,25 @@ class rstrPatiencePuzzle(ptResponder):
         ageSDL.sendToClients('grtpBridgeExtended')
         ageSDL.sendToClients('grtpFreshStart')
         ageSDL.sendToClients('grtpBallAtTop')
+        ageSDL.sendToClients('grtpBallHallDoorLocked')
         ageSDL.setFlags('grtpSwitchAUp', 1, 1)
         ageSDL.setFlags('grtpLadderRevealed', 1, 1)
         ageSDL.setFlags('grtpBridgeExtended', 1, 1)
         ageSDL.setFlags('grtpFreshStart', 1, 1)
         ageSDL.setFlags('grtpBallAtTop', 1, 1)
+        ageSDL.setFlags('grtpBallHallDoorLocked', 1, 1)
         ageSDL.setNotify(self.key, 'grtpSwitchAUp', 0.0)
         ageSDL.setNotify(self.key, 'grtpLadderRevealed', 0.0)
         ageSDL.setNotify(self.key, 'grtpBridgeExtended', 0.0)
         ageSDL.setNotify(self.key, 'grtpFreshStart', 0.0)
         ageSDL.setNotify(self.key, 'grtpBallAtTop', 0.0)
+        ageSDL.setNotify(self.key, 'grtpBallHallDoorLocked', 0.0)
         if not PtGetPlayerList():
             print('\tResetting puzzle completely, no other players around')
             ageSDL['grtpSwitchAUp'] = (1,)
             ageSDL['grtpFreshStart'] = (1,)
+            PtFindSceneobject('BallSphere', 'GreatTreePub').physics.warp(ptPoint3(-18.66155815,120.7838745,38.48994064))
+            
             
         grtpSwitchAUp = ageSDL['grtpSwitchAUp'][0]
         
@@ -231,9 +236,10 @@ class rstrPatiencePuzzle(ptResponder):
             return None
         elif id == actButtonD.id:
             grtpTimeEnteredPatienceZone = ageSDL['grtpTimeEnteredPatienceZone'][0]
+            grtpBallHallDoorLocked = ageSDL['grtpBallHallDoorLocked'][0]
             CurrentTime = PtGetDniTime()
             ElapsedTime = CurrentTime - grtpTimeEnteredPatienceZone
-            if ElapsedTime >= kPatienceTime:
+            if ElapsedTime >= kPatienceTime and not grtpBallHallDoorLocked:
                 respDoorButtonOneshot.run(self.key, events = events)
             else:
                 print('Button D Pressed,', kPatienceTime - ElapsedTime, 'seconds to go')
@@ -344,6 +350,7 @@ class rstrPatiencePuzzle(ptResponder):
                 respTickSfxOff.run(self.key)
                 respDoorOpen.run(self.key)
                 respSwitchADown.run(self.key)
+                respPlungeBall.run(self.key)
                 grtpLadderRevealed = ageSDL['grtpLadderRevealed'][0]
                 if ageSDL['grtpLadderRevealed'][0]:
                     print('\tAlso putting away ladder.')
@@ -389,6 +396,18 @@ class rstrPatiencePuzzle(ptResponder):
             else:
                 print('\tClosing Red Herring Door')
                 respCloseHerringDoor.run(self.key)
+        elif VARname == 'grtpBallHallDoorLocked':
+            if ageSDL['grtpBallHallDoorLocked'][0] == 1:
+                print('\tLocking Ball Hall Door')
+                respDoorClose.run(self.key)
+                respButtonDEnable.run(self.key, fastforward = 1)
+                actButtonD.enable()
+            elif ageSDL['grtpBallHallDoorLocked'][0] == 0:
+                print('\tUnlocking Ball Hall Door')
+                respButtonDDisable.run(self.key, fastforward = 1)
+                respSwitchADown.run(self.key)
+                respDoorOpen.run(self.key)
+                actButtonD.disable()
                 
 
     
