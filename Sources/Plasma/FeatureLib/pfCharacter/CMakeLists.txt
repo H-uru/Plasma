@@ -1,10 +1,12 @@
 set(pfCharacter_SOURCES
+    pfConfirmationMgr.cpp
     pfMarkerInfo.cpp
     pfMarkerMgr.cpp
 )
 
 set(pfCharacter_HEADERS
     pfCharacterCreatable.h
+    pfConfirmationMgr.h
     pfMarkerInfo.h
     pfMarkerMgr.h
 )
@@ -15,15 +17,18 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnKeyedObject
+        plMessage
     PRIVATE
         pnMessage
+        pnNetCommon
         pnNucleusInc
         pnSceneObject
-        plMessage
         plModifier
         plNetClient
         plResMgr
         plStatusLog
+        pfGameGUIMgr
+        pfLocalizationMgr
         pfMessage
     INTERFACE
         pnFactory

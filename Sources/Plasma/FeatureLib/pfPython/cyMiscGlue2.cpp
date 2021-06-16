@@ -40,34 +40,154 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-
 #include "cyMisc.h"
-#include "pyGlueHelpers.h"
-#include "pyColor.h"
-#include "pyPlayer.h"
-#include "pyEnum.h"
 
-// for enums
+#include <Python.h>
+
+#include <string_view>
+
+#include "pyEnum.h"
+#include "pyColor.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
+#include "pyPlayer.h"
+#include "plPythonCallable.h"
+
+#include "plMessage/plConfirmationMsg.h"
 #include "plNetCommon/plNetCommon.h"
 #include "plResMgr/plLocalization.h"
 #include "plMessage/plLOSRequestMsg.h"
 
-
-PYTHON_GLOBAL_METHOD_DEFINITION(PtYesNoDialog, args, "Params: selfkey,dialogMessage\nThis will display a Yes/No dialog to the user with the text dialogMessage\n"
-            "This dialog _has_ to be answered by the user.\n"
-            "And their answer will be returned in a Notify message.")
+namespace plPythonCallable
 {
-    PyObject* keyObj = nullptr;
+    template<>
+    inline void IBuildTupleArg(PyObject* tuple, size_t idx, plConfirmationMsg::Result value)
+    {
+        PyTuple_SET_ITEM(tuple, idx, PyLong_FromSsize_t((Py_ssize_t)value));
+    }
+};
+
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
+            "Params: cb, message, /, dialogType\n"
+            "This will display a confirmation dialog to the user with the text `message` "
+            "This dialog _has_ to be answered by the user, "
+            "and their answer will be returned in a Notify message or callback given by `cb`.")
+{
+    const char* keywords[]{ "", "", "dialogType", nullptr };
+    constexpr std::string_view kErrorMsg = "PtYesNoDialog expects a ptKey or callable, "
+                                           "a string or localization path, and an optional int.";
+    PyObject* cbObj;
     ST::string text;
-    if (!PyArg_ParseTuple(args, "OO&", &keyObj, PyUnicode_STStringConverter, &text) || !pyKey::Check(keyObj)) {
-        PyErr_SetString(PyExc_TypeError, "PtYesNoDialog expects a ptKey and a string");
+    plConfirmationMsg::Type dialogType = plConfirmationMsg::Type::YesNo;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "OO&|I", const_cast<char**>(keywords),
+                                     &cbObj,
+                                     PyUnicode_STStringConverter, &text,
+                                     &dialogType)) {
+        PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
         PYTHON_RETURN_ERROR;
     }
-    pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::YesNoDialog(*key, text);
-    PYTHON_RETURN_NONE
+
+    plConfirmationMsg::Callback cb;
+    if (pyKey::Check(cbObj)) {
+        cb = pyKey::ConvertFrom(cbObj)->getKey();
+    } else if (PyCallable_Check(cbObj)) {
+        plPythonCallable::BuildCallback<1>("PtYesNoDialog", cbObj, cb);
+    } else if (cbObj != Py_None) {
+        PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+        PYTHON_RETURN_ERROR;
+    }
+
+    // We already have the message class definition included, so just send from here.
+    auto msg = new plConfirmationMsg(std::move(text), dialogType, std::move(cb));
+    msg->Send();
+
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtLocalizedYesNoDialog, args, kwargs,
+    "Params: cb, path, *args, /, *, dialogType\n"
+    "This will display a confirmation dialog to the user with the localized text `path` "
+    "with any optional localization `args` applied. This dialog _has_ to be answered by the user, "
+    "and their answer will be returned in a Notify message or callback given by `cb`.")
+{
+    constexpr std::string_view kErrorMsg = "PtLocalizedYesNoDialog expects a ptKey or callable, "
+                                           "a string, optional localization arguments, and an "
+                                           "optional int.";
+
+    // We cannot use PyArg_ParseTuple or PyArg_ParseTupleAndKeywords due to our usage
+    // of *args. While we could accept a single sequence for our localization arguments
+    // and get that functionality back, the interface would not be very Pythonic.
+    if (!PyTuple_Check(args) || PyTuple_Size(args) < 2) {
+        PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+        PYTHON_RETURN_ERROR;
+    }
+
+    PyObject* cbObj = PyTuple_GET_ITEM(args, 0);
+    plConfirmationMsg::Callback cb;
+    if (pyKey::Check(cbObj)) {
+        cb = pyKey::ConvertFrom(cbObj)->getKey();
+    } else if (PyCallable_Check(cbObj)) {
+        plPythonCallable::BuildCallback<1>("PtLocalizedYesNoDialog", cbObj, cb);
+    } else if (cbObj != Py_None) {
+        PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+        PYTHON_RETURN_ERROR;
+    }
+
+    PyObject* pathObj = PyTuple_GET_ITEM(args, 1);
+    if (!PyUnicode_Check(pathObj)) {
+        PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+        PYTHON_RETURN_ERROR;
+    }
+    ST::string path = PyUnicode_AsSTString(pathObj);
+
+    constexpr Py_ssize_t kLocArgOffset = 2;
+    const Py_ssize_t totalArgs = PyTuple_Size(args);
+    std::vector<ST::string> locArgs(totalArgs - kLocArgOffset);
+    for (Py_ssize_t i = kLocArgOffset; i < totalArgs; ++i) {
+        PyObject* arg = PyTuple_GET_ITEM(args, i);
+        if (PyUnicode_Check(arg)) {
+            locArgs[i - kLocArgOffset] = PyUnicode_AsSTString(arg);
+        } else {
+            pyObjectRef argStr = PyObject_Str(arg);
+            if (!argStr)
+                // Don't blow away the internal error state
+                PYTHON_RETURN_ERROR;
+            locArgs[i - kLocArgOffset] = PyUnicode_AsSTString(argStr.Get());
+        }
+    }
+
+    plConfirmationMsg::Type dialogType = plConfirmationMsg::Type::YesNo;
+    if (kwargs) {
+        if (!PyArg_ValidateKeywordArguments(kwargs)) {
+            PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+            PYTHON_RETURN_ERROR;
+        }
+
+        PyObject* dialogTypeObj = PyDict_GetItemString(kwargs, "dialogType");
+        if (dialogTypeObj != nullptr) {
+            if (PyLong_Check(dialogTypeObj)) {
+                dialogType = (plConfirmationMsg::Type)PyLong_AsLong(dialogTypeObj);
+            } else if (PyNumber_Check(dialogTypeObj)) {
+                // The weird internal enum type isn't an int but implements the number protocol.
+                pyObjectRef dialogTypeLong = PyNumber_Long(dialogTypeObj);
+                if (!dialogTypeLong) {
+                    PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+                    PYTHON_RETURN_ERROR;
+                }
+                dialogType = (plConfirmationMsg::Type)PyLong_AsLong(dialogTypeLong.Get());
+            } else {
+                PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
+                PYTHON_RETURN_ERROR;
+            }
+        }
+    }
+
+    auto msg = new plLocalizedConfirmationMsg(std::move(path), std::move(locArgs), dialogType, std::move(cb));
+    msg->Send();
+
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRateIt, args, "Params: chronicleName,dialogPrompt,onceFlag\nShows a dialog with dialogPrompt and stores user input rating into chronicleName")
@@ -442,6 +562,7 @@ void cyMisc::AddPlasmaMethods2(PyObject* m)
 {
     PYTHON_START_GLOBAL_METHOD_TABLE(cyMisc2)
         PYTHON_GLOBAL_METHOD(PtYesNoDialog)
+        PYTHON_GLOBAL_METHOD(PtLocalizedYesNoDialog)
         PYTHON_GLOBAL_METHOD(PtRateIt)
 
         PYTHON_GLOBAL_METHOD(PtExcludeRegionSet)
@@ -479,6 +600,22 @@ void cyMisc::AddPlasmaMethods2(PyObject* m)
 
 void cyMisc::AddPlasmaConstantsClasses(PyObject *m)
 {
+    PYTHON_ENUM_START(PtConfirmationResult)
+    PYTHON_ENUM_ELEMENT(PtConfirmationResult, OK, plConfirmationMsg::Result::OK)
+    PYTHON_ENUM_ELEMENT(PtConfirmationResult, Cancel, plConfirmationMsg::Result::Cancel)
+    PYTHON_ENUM_ELEMENT(PtConfirmationResult, Yes, plConfirmationMsg::Result::Yes)
+    PYTHON_ENUM_ELEMENT(PtConfirmationResult, No, plConfirmationMsg::Result::No)
+    PYTHON_ENUM_ELEMENT(PtConfirmationResult, Quit, plConfirmationMsg::Result::Quit)
+    PYTHON_ENUM_ELEMENT(PtConfirmationResult, Logout, plConfirmationMsg::Result::Logout)
+    PYTHON_ENUM_END(m, PtConfirmationResult)
+
+    PYTHON_ENUM_START(PtConfirmationType)
+    PYTHON_ENUM_ELEMENT(PtConfirmationType, OK, plConfirmationMsg::Type::OK)
+    PYTHON_ENUM_ELEMENT(PtConfirmationType, ConfirmQuit, plConfirmationMsg::Type::ConfirmQuit)
+    PYTHON_ENUM_ELEMENT(PtConfirmationType, ForceQuit, plConfirmationMsg::Type::ForceQuit)
+    PYTHON_ENUM_ELEMENT(PtConfirmationType, YesNo, plConfirmationMsg::Type::YesNo)
+    PYTHON_ENUM_END(m, PtConfirmationType)
+
     PYTHON_ENUM_START(PtCCRPetitionType)
     PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kGeneralHelp,plNetCommon::PetitionTypes::kGeneralHelp)
     PYTHON_ENUM_ELEMENT(PtCCRPetitionType, kBug,        plNetCommon::PetitionTypes::kBug)

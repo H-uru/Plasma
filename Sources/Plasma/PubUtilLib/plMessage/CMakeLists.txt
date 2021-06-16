@@ -67,6 +67,7 @@ set(plMessage_HEADERS
     plClimbMsg.h
     plCollideMsg.h
     plCondRefMsg.h
+    plConfirmationMsg.h
     plConnectedToVaultMsg.h
     plConsoleMsg.h
     plDampMsg.h

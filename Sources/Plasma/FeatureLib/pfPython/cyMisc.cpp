@@ -1248,28 +1248,6 @@ void cyMisc::SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender)
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  Function   : YesNoDialog
-//  PARAMETERS : sender    - who set this and will get the notify
-//             : message   - message to put up in YesNo dialog
-//
-//  PURPOSE    : Put up Yes/No dialog
-//
-//  RETURNS    : nothing
-//
-
-void cyMisc::YesNoDialog(pyKey& sender, const ST::string& thestring)
-{
-    // create the mesage to send
-    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kYesNoDialog );
-
-    msg->SetSender(sender.getKey());
-    msg->SetString(thestring);
-    // send it off
-    plgDispatch::MsgSend( msg );
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
 //  Function   : RateIt
 //  PARAMETERS : chonicleName    - where to store the rating
 //             : thestring       - the message in the RateIt dialog

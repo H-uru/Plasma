@@ -615,7 +615,7 @@ void    pfGUIDialogMod::Hide()
 
 //// GetControlFromTag ///////////////////////////////////////////////////////
 
-pfGUIControlMod *pfGUIDialogMod::GetControlFromTag( uint32_t tagID )
+pfGUIControlMod *pfGUIDialogMod::GetControlFromTag( uint32_t tagID ) const
 {
     for (pfGUIControlMod* ctrl : fControls)
     {

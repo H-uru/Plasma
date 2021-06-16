@@ -95,6 +95,7 @@ set(pfPython_HEADERS
     cyParticleSys.h
     cyPhysics.h
     cyPythonInterface.h
+    plPythonCallable.h
     pfPythonCreatable.h
     plPythonFileMod.h
     plPythonHelpers.h
@@ -262,6 +263,7 @@ target_link_libraries(
     PUBLIC
         CoreLib
         pnNucleusInc
+        plMessage
     PRIVATE
         pnEncryption
         pnInputCore

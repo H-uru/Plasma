@@ -506,18 +506,6 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    //  Function   : YesNoDialog
-    //  PARAMETERS : sender    - sender's key (to get the reply)
-    //             : value     - extra value
-    //
-    //  PURPOSE    : Send message to the KI, to tell it things to do
-    //
-    //  RETURNS    : nothing
-    //
-    static void YesNoDialog(pyKey& sender, const ST::string& thestring);
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
     //  Function   : RateIt
     //  PARAMETERS : chonicleName    - where to store the rating
     //             : thestring       - the message in the RateIt dialog

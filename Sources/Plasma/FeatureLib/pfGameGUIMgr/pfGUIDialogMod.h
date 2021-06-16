@@ -182,8 +182,8 @@ class pfGUIDialogMod : public plSingleModifier
         pfGUIControlMod *GetFocus() { return fFocusCtrl; }
 
         pfGUIDialogMod  *GetNext() { return fNext; }
-        uint32_t          GetTagID() { return fTagID; }
-        pfGUIControlMod *GetControlFromTag( uint32_t tagID );
+        uint32_t          GetTagID() const { return fTagID; }
+        pfGUIControlMod *GetControlFromTag( uint32_t tagID ) const;
 
         void            SetHandler( pfGUIDialogProc *hdlr );
         pfGUIDialogProc *GetHandler() const { return fHandler; }

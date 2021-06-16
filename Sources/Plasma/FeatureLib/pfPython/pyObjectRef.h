@@ -46,6 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "HeadSpin.h"
 
+struct pyObjectNewRef_Type{};
+constexpr pyObjectNewRef_Type pyObjectNewRef;
+
 /** RAII reference count helper for Python objects. */
 class pyObjectRef
 {
@@ -56,6 +59,15 @@ public:
 
     /** Steals ownership of this object reference. */
     pyObjectRef(PyObject* object) : fPyObject(object) { }
+
+    /** Increments the reference count of this object. */
+    pyObjectRef(PyObject* object, pyObjectNewRef_Type)
+        : fPyObject(object)
+    {
+        Py_INCREF(object);
+    }
+
+    pyObjectRef(std::nullptr_t, pyObjectNewRef_Type) = delete;
 
     pyObjectRef(const pyObjectRef& copy)
         : fPyObject(copy.fPyObject)

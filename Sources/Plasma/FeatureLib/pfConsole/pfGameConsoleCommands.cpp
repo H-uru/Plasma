@@ -81,6 +81,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 #include "plGImage/plMipmap.h"
 #include "plMessage/plAvatarMsg.h"
+#include "plMessage/plConfirmationMsg.h"
 #include "plPipeline/plCaptureRender.h"
 
 #include "pfConsoleCore/pfConsoleCmd.h"
@@ -217,6 +218,38 @@ PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
     pfGUICtrlGenerator::Instance().GenerateDialog( params[ 0 ] );
 }
 
+PF_CONSOLE_CMD(Game_GUI, Confirm, "int type", "Shows a sample confirmation dialog")
+{
+    plConfirmationMsg* msg;
+    auto type = (plConfirmationMsg::Type)(int32_t)params[0];
+
+    switch (type) {
+    case plConfirmationMsg::Type::ConfirmQuit:
+        msg = new plLocalizedConfirmationMsg("KI.Messages.LeaveGame");
+        break;
+    case plConfirmationMsg::Type::ForceQuit:
+        msg = new plConfirmationMsg("Time to die, my friend.");
+        break;
+    case plConfirmationMsg::Type::YesNo:
+        msg = new plConfirmationMsg("Do you understand me?");
+        msg->SetCallback(
+            [PrintString](plConfirmationMsg::Result result) {
+                if (result == plConfirmationMsg::Result::No) {
+                    PrintString("Well that's too bad.");
+                } else {
+                    PrintString("Woo-hoo!");
+                }
+            }
+        );
+        break;
+    default:
+        msg = new plConfirmationMsg("Whatever, man.");
+        break;
+    }
+
+    msg->SetType(type);
+    msg->Send();
+}
 
 #endif
 

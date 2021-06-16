@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
+from __future__ import annotations
+
 MaxVersionNumber = 58
 MinorVersionNumber = 52
 
@@ -84,7 +86,7 @@ KIBlackbar = ptAttribGUIDialog(1, "The Blackbar dialog")
 xKIChat.KIBlackbar = KIBlackbar
 KIMini = ptAttribGUIDialog(2, "The KIMini dialog")
 xKIChat.KIMini = KIMini
-KIYesNo = ptAttribGUIDialog(3, "The KIYesNo dialog")
+KIYesNo = ptAttribGUIDialog(3, "The KIYesNo dialog") # Thou shalt not use.
 BigKI = ptAttribGUIDialog(5, "The BigKI (Mr. BigStuff)")
 xKIChat.BigKI = BigKI
 NewItemAlert = ptAttribGUIDialog(7, "The new item alert dialog")
@@ -207,10 +209,6 @@ class xKI(ptModifier):
         self.alertTimerActive = False
         self.alertTimeToUse = kAlertTimeDefault
 
-        # Yes/No dialog globals.
-        self.YNWhatReason = kGUI.YNQuit
-        self.YNOutsideSender = None
-
         # Player book globals.
         self.bookOfferer = None
         self.offerLinkFromWho = None
@@ -289,7 +287,6 @@ class xKI(ptModifier):
         PtUnloadDialog("KIMarkerFolder")
         PtUnloadDialog("KIMarkerTimeMenu")
         PtUnloadDialog("KIMarkerTypeMenu")
-        PtUnloadDialog("KIYesNo")
         PtUnloadDialog("KINewItemAlert")
         PtUnloadDialog("OptionsMenuGUI")
         PtUnloadDialog("IntroBahroBgGUI")
@@ -337,7 +334,6 @@ class xKI(ptModifier):
         PtLoadDialog("KIMarkerFolder", self.key)
         PtLoadDialog("KIMarkerTimeMenu", self.key)
         PtLoadDialog("KIMarkerTypeMenu", self.key)
-        PtLoadDialog("KIYesNo", self.key)
         PtLoadDialog("KINewItemAlert", self.key)
         PtLoadDialog("OptionsMenuGUI")
         PtLoadDialog("IntroBahroBgGUI")
@@ -372,11 +368,6 @@ class xKI(ptModifier):
         self.chatMgr.logFile = ptStatusLog()
 
         xBookGUIs.LoadAllBookGUIs()
-
-        logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutTextID))
-        logoutText.hide()
-        logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutButtonID))
-        logoutButton.hide()
 
     ## Called by Plasma when the player updates his account.
     # This includes switching avatars and changing passwords. Because the KI
@@ -645,8 +636,6 @@ class xKI(ptModifier):
             self.ProcessNotifyVolumeExpanded(control, event)
         elif ID == KIAgeOwnerExpanded.id:
             self.ProcessNotifyAgeOwnerExpanded(control, event)
-        elif ID == KIYesNo.id:
-            self.ProcessNotifyYesNo(control, event)
         elif ID == NewItemAlert.id:
             self.ProcessNotifyNewItemAlert(control, event)
         elif ID == KICreateMarkerGameGUI.id:
@@ -700,26 +689,13 @@ class xKI(ptModifier):
                     KIPlayerExpanded.dialog.hide()
                     BigKI.dialog.hide()
                     KIOnAnim.animation.skipToTime(1.5)
-            # If an outsider has a Yes/No up, tell them No.
-            if self.YNWhatReason == kGUI.YNOutside:
-                if self.YNOutsideSender is not None:
-                    note = ptNotify(self.key)
-                    note.clearReceivers()
-                    note.addReceiver(self.YNOutsideSender)
-                    note.netPropagate(0)
-                    note.netForce(0)
-                    note.setActivate(0)
-                    note.addVarNumber("YesNo", 0)
-                    note.send()
-                self.YNOutsideSender = None
+
             # Hide the Yeesha Book.
             if self.yeeshaBook:
                 self.yeeshaBook.hide()
             PtToggleAvatarClickability(True)
             plybkCB = ptGUIControlCheckBox(KIBlackbar.dialog.getControlFromTag(kGUI.PlayerBookCBID))
             plybkCB.setChecked(0)
-            self.YNWhatReason = kGUI.YNQuit
-            KIYesNo.dialog.hide()
         elif command == kEnableKIandBB:
             self.KIDisabled = False
             self.chatMgr.KIDisabled = False
@@ -752,13 +728,6 @@ class xKI(ptModifier):
                 KIMicroBlackbar.dialog.showNoReset()
             else:
                 KIBlackbar.dialog.showNoReset()
-        elif command == kYesNoDialog:
-            self.YNWhatReason = kGUI.YNOutside
-            self.YNOutsideSender = value[1]
-            yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-            yesText.setStringW(value[0])
-            self.LocalizeDialog(1)
-            KIYesNo.dialog.show()
         elif command == kAddPlayerDevice:
             if "<p>" in value:
                 self.pelletImager = value.rstrip("<p>")
@@ -891,35 +860,19 @@ class xKI(ptModifier):
             if not self.waitingForAnimation and not self.KIDisabled:
                 PtShowDialog("OptionsMenuGUI")
         elif command == kKIOKDialog or command == kKIOKDialogNoQuit:
-            reasonField = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-            try:
-                localized = kLoc.OKDialogDict[value]
-            except KeyError:
-                localized = "UNTRANSLATED: " + str(value)
-            reasonField.setStringW(localized)
-            noButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.NoButtonID))
-            noButton.hide()
-            noBtnText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.NoButtonTextID))
-            noBtnText.hide()
-            yesBtnText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesButtonTextID))
-            yesBtnText.setStringW(PtGetLocalizedString("KI.YesNoDialog.OKButton"))
-            self.YNWhatReason = kGUI.YNQuit
-            if command == kKIOKDialogNoQuit:
-                self.YNWhatReason = kGUI.YNNoReason
-            KIYesNo.dialog.show()
+            # FIXME: This handling should be moved into the engine.
+            localized = kLoc.OKDialogDict.get(value, f"UNTRANSLATED: {value}")
+            dialogType = PtConfirmationType.OK if command == kKIOKDialogNoQuit else PtConfirmationType.ForceQuit
+            PtYesNoDialog(None, localized, dialogType=dialogType)
+        elif command == kYesNoDialog:
+            # This should never happen but is here for completeness's sake.
+            PtYesNoDialog(value[1], value[0])
         elif command == kDisableYeeshaBook:
             self.isYeeshaBookEnabled = False
         elif command == kEnableYeeshaBook:
             self.isYeeshaBookEnabled = True
         elif command == kQuitDialog:
-            yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-            yesText.setStringW(PtGetLocalizedString("KI.Messages.LeaveGame"))
-            self.LocalizeDialog()
-            logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutTextID))
-            logoutText.show()
-            logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutButtonID))
-            logoutButton.show()
-            KIYesNo.dialog.show()
+            PtLocalizedYesNoDialog(None, "KI.Messages.LeaveGame", dialogType=PtConfirmationType.ConfirmQuit)
         elif command == kDisableEntireYeeshaBook:
             self.isEntireYeeshaBookEnabled = False
         elif command == kEnableEntireYeeshaBook:
@@ -1382,6 +1335,18 @@ class xKI(ptModifier):
         BigKI.dialog.hide()
         self.chatMgr.ToggleChatMode(0)
 
+        # Clear out all chat on microKI.
+        chatArea = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+        chatArea.setString("")
+        chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
+        KIMicro.dialog.refreshAllControls()
+
+        # Clear out all chat on miniKI.
+        chatArea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+        chatArea.setString("")
+        chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
+        KIMini.dialog.refreshAllControls()
+
         # Remove unneeded kFontShadowed flags (as long as we can't do that directly in the PRPs)
         for dialogAttr in (BigKI, KIListModeDialog, KIJournalExpanded, KIPictureExpanded, KIPlayerExpanded, KIAgeOwnerExpanded, KISettings, KIMarkerFolderExpanded, KICreateMarkerGameGUI):
             for i in range(dialogAttr.dialog.getNumControls()):
@@ -1541,21 +1506,6 @@ class xKI(ptModifier):
                     break
         else:
             PtDebugPrint("xKI.DoKILight(): Couldn't find any responders.", level=kErrorLevel)
-
-    #~~~~~~~~~~~~~~#
-    # Localization #
-    #~~~~~~~~~~~~~~#
-
-    ## Gets the appropriate localized values for a Yes/No dialog.
-    def LocalizeDialog(self, dialog_type=0):
-
-        confirm = "KI.YesNoDialog.QuitButton"
-        if dialog_type == 1:
-            confirm = "KI.YesNoDialog.YESButton"
-        yesButton = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesButtonTextID))
-        noButton = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.NoButtonTextID))
-        yesButton.setStringW(PtGetLocalizedString(confirm))
-        noButton.setStringW(PtGetLocalizedString("KI.YesNoDialog.NoButton"))
 
     #~~~~~~~~~#
     # Pellets #
@@ -1960,7 +1910,7 @@ class xKI(ptModifier):
         # Make sure the player has enough room.
         if not self.CanMakeMarkerGame():
             PtDebugPrint("xKI.CreateMarkerGame(): Aborting Marker Game creation request, player has reached the limit of Marker Games.", level=kDebugDumpLevel)
-            self.ShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullMarkerGames"))
+            self.ShowKIFullErrorMsg("FullMarkerGames")
             return
 
         # The player can now launch the Marker Game creation GUI.
@@ -2037,7 +1987,7 @@ class xKI(ptModifier):
                     self.markerGameManager.AddMarker(PtGetAgeName(), avaCoord, markerName)
                     PtDebugPrint("xKI.CreateAMarker(): Creating marker at: ({}, {}, {}).".format(avaCoord.getX(), avaCoord.getY(), avaCoord.getZ()))
                 else:
-                    self.ShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullMarkers"))
+                    self.ShowKIFullErrorMsg("FullMarkers")
 
     ## Perform the necessary operations to switch to a Marker Game.
     def SetWorkingToCurrentMarkerGame(self):
@@ -2736,19 +2686,8 @@ class xKI(ptModifier):
     #~~~~~~~~#
 
     ## Displays a OK dialog-based error message to the player.
-    def ShowKIFullErrorMsg(self, msg):
-
-        self.YNWhatReason = kGUI.YNKIFull
-        reasonField = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-        reasonField.setStringW(msg)
-        yesButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesButtonID))
-        yesButton.hide()
-        yesBtnText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesButtonTextID))
-        yesBtnText.hide()
-        noBtnText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.NoButtonTextID))
-        noBtnText.setStringW(PtGetLocalizedString("KI.YesNoDialog.OKButton"))
-        KIYesNo.dialog.show()
-
+    def ShowKIFullErrorMsg(self, msg: str):
+        PtLocalizedYesNoDialog(None, f"KI.Messages.{msg}", dialogType=PtConfirmationType.OK)
 
     ## Display an error message in the SendTo field.
     def SetSendToErrorMessage(self, message):
@@ -3373,7 +3312,7 @@ class xKI(ptModifier):
                     PtAtTimeCallback(self.key, 0.25, kTimers.TakeSnapShot)
                 else:
                     # Put up an error message.
-                    self.ShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullImages"))
+                    self.ShowKIFullErrorMsg("FullImages")
 
     ## Create a new Journal entry through the miniKI.
     def MiniKICreateJournalNote(self):
@@ -3416,7 +3355,7 @@ class xKI(ptModifier):
                         dragbar.anchor()
             else:
                 # Put up an error message.
-                self.ShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullNotes"))
+                self.ShowKIFullErrorMsg("FullNotes")
 
     #~~~~~~~#
     # BigKI #
@@ -3811,6 +3750,23 @@ class xKI(ptModifier):
             gps2.setString("0")
             gps3.setString("0")
         PtAtTimeCallback(self.key, 5, kTimers.BKITODCheck)
+
+    @property
+    def BKCurrentContentTitle(self) -> str:
+        content = self.BKCurrentContent
+        if isinstance(content, ptVaultNodeRef):
+            content = content.getChild()
+        if isinstance(content, ptVaultNode):
+            if imageNode := content.upcastToImageNode():
+                return xCensor.xCensor(imageNode.getTitleW(), self.censorLevel)
+            if markerNode := content.upcastToMarkerGameNode():
+                return xCensor.xCensor(markerNode.getGameName(), self.censorLevel)
+            if playerInfoNode := content.upcastToPlayerInfoNode():
+                return xCensor.xCensor(playerInfoNode.playerGetName(), self.censorLevel)
+            if textNode := content.upcastToTextNoteNode():
+                return xCensor.xCensor(textNode.getTitleW(), self.censorLevel)
+        # Any other types of content? Implement it yourself.
+        return "<unknown>"
 
     #~~~~~~~~~~~~~~~~~~#
     # BigKI Refreshing #
@@ -5393,14 +5349,7 @@ class xKI(ptModifier):
                     if PtIsDialogLoaded("KIMini"):
                         KIMini.dialog.hide()
             elif bbID == kGUI.ExitButtonID:
-                yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-                yesText.setStringW(PtGetLocalizedString("KI.Messages.LeaveGame"))
-                self.LocalizeDialog(0)
-                logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutTextID))
-                logoutText.show()
-                logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutButtonID))
-                logoutButton.show()
-                KIYesNo.dialog.show()
+                PtLocalizedYesNoDialog(None, "KI.Messages.LeaveGame", dialogType=PtConfirmationType.ConfirmQuit)
             elif bbID == kGUI.PlayerBookCBID:
                 if control.isChecked():
                     curBrainMode = PtGetLocalAvatar().avatar.getCurrentMode()
@@ -5447,14 +5396,7 @@ class xKI(ptModifier):
         elif event == kAction or event == kValueChanged:
             bbID = control.getTagID()
             if bbID == kGUI.ExitButtonID:
-                yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-                yesText.setStringW(PtGetLocalizedString("KI.Messages.LeaveGame"))
-                self.LocalizeDialog(0)
-                logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutTextID))
-                logoutText.show()
-                logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutButtonID))
-                logoutButton.show()
-                KIYesNo.dialog.show()
+                PtLocalizedYesNoDialog(None, "KI.Messages.LeaveGame", dialogType=PtConfirmationType.ConfirmQuit)
             elif bbID == kGUI.PlayerBookCBID:
                 if control.isChecked():
                     curBrainMode = PtGetLocalAvatar().avatar.getCurrentMode()
@@ -6011,17 +5953,7 @@ class xKI(ptModifier):
                 if self.IsContentMutable(self.BKCurrentContent):
                     self.BigKIEnterEditMode(kGUI.BKEditFieldPICTitle)
             elif peID == kGUI.BKIPICDeleteButton:
-                self.YNWhatReason = kGUI.YNDelete
-                elem = self.BKCurrentContent.getChild()
-                elem = elem.upcastToImageNode()
-                if elem is not None:
-                    picTitle = elem.imageGetTitle()
-                else:
-                    picTitle = "<unknown>"
-                yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-                yesText.setStringW(PtGetLocalizedString("KI.Messages.DeletePicture", [xCensor.xCensor(picTitle, self.censorLevel)]))
-                self.LocalizeDialog(1)
-                KIYesNo.dialog.show()
+                PtLocalizedYesNoDialog(self.HandleBigKIDeleteConfirmation, "KI.Messages.DeletePicture", self.BKCurrentContentTitle)
             elif peID == kGUI.BKIPICTitleEdit:
                 self.BigKISaveEdit(1)
         elif event == kFocusChange:
@@ -6048,17 +5980,7 @@ class xKI(ptModifier):
                 if self.IsContentMutable(self.BKCurrentContent):
                     self.BigKIEnterEditMode(kGUI.BKEditFieldJRNNote)
             elif jeID == kGUI.BKIJRNDeleteButton:
-                self.YNWhatReason = kGUI.YNDelete
-                elem = self.BKCurrentContent.getChild()
-                elem = elem.upcastToTextNoteNode()
-                if elem is not None:
-                    jrnTitle = elem.noteGetTitle()
-                else:
-                    jrnTitle = "<unknown>"
-                yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-                yesText.setStringW(PtGetLocalizedString("KI.Messages.DeleteJournal", [xCensor.xCensor(jrnTitle, self.censorLevel)]))
-                self.LocalizeDialog(1)
-                KIYesNo.dialog.show()
+                PtLocalizedYesNoDialog(self.HandleBigKIDeleteConfirmation, "KI.Messages.DeletePicture", self.BKCurrentContentTitle)
             # Is it one of the editing boxes?
             elif jeID == kGUI.BKIJRNTitleEdit or jeID == kGUI.BKIJRNNoteEdit:
                 if self.IsContentMutable(self.BKCurrentContent):
@@ -6084,21 +6006,7 @@ class xKI(ptModifier):
             plID = control.getTagID()
             # Is it one of the buttons?
             if plID == kGUI.BKIPLYDeleteButton:
-                self.YNWhatReason = kGUI.YNDelete
-                elem = self.BKCurrentContent.getChild()
-                elem = elem.upcastToPlayerInfoNode()
-                if elem is not None:
-                    plyrName = elem.playerGetName()
-                else:
-                    plyrName = "<unknown>"
-                try:
-                    pfldName = self.BKFolderListOrder[self.BKFolderSelected]
-                except LookupError:
-                    pfldName = "<unknown>"
-                yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-                yesText.setStringW(PtGetLocalizedString("KI.Messages.DeletePlayer", [xCensor.xCensor(plyrName, self.censorLevel), pfldName]))
-                self.LocalizeDialog(1)
-                KIYesNo.dialog.show()
+                PtLocalizedYesNoDialog(self.HandleBigKIDeleteConfirmation, "KI.Messages.DeletePlayer", self.BKCurrentContentTitle)
             elif plID == kGUI.BKIPLYPlayerIDEditBox:
                 self.BigKICheckSavePlayer()
         elif event == kFocusChange:
@@ -6274,150 +6182,6 @@ class xKI(ptModifier):
                         PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Neighborhood is None while trying to update description.", level=kDebugDumpLevel)
                 self.BKAgeOwnerEditDescription = False
 
-    ## Process notifications originating from a YesNo dialog.
-    # Yes/No dialogs are omnipresent throughout Uru. Those processed here are:
-    # - Quitting dialog (quit/logout/cancel).
-    # - Deleting dialog (yes/no); various such dialogs.
-    # - Link offer dialog (yes/no).
-    # - Outside sender dialog (?).
-    # - KI Full dialog (OK); just a notification.
-    def ProcessNotifyYesNo(self, control, event):
-
-        if event == kAction or event == kValueChanged:
-            ynID = control.getTagID()
-            if self.YNWhatReason == kGUI.YNQuit:
-                if ynID == kGUI.YesButtonID:
-                    PtConsole("App.Quit")
-                elif ynID == kGUI.NoButtonID:
-                    KIYesNo.dialog.hide()
-                    logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutTextID))
-                    logoutText.hide()
-                    logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutButtonID))
-                    logoutButton.hide()
-                elif ynID == kGUI.YesNoLogoutButtonID:
-                    KIYesNo.dialog.hide()
-                    logoutText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutTextID))
-                    logoutText.hide()
-                    logoutButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesNoLogoutButtonID))
-                    logoutButton.hide()
-
-                    # Clear out all chat on microKI.
-                    chatArea = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-                    chatArea.setString("")
-                    chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
-                    KIMicro.dialog.refreshAllControls()
-
-                    # Clear out all chat on miniKI.
-                    chatArea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-                    chatArea.setString("")
-                    chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
-                    KIMini.dialog.refreshAllControls()
-
-                    linkmgr = ptNetLinkingMgr()
-                    ageLink = ptAgeLinkStruct()
-
-                    ageInfo = ptAgeInfoStruct()
-                    ageInfo.setAgeFilename("StartUp")
-
-                    spawnPoint = ptSpawnPointInfo()
-                    spawnPoint.setName("LinkInPointDefault")
-
-                    ageLink.setAgeInfo(ageInfo)
-                    ageLink.setSpawnPoint(spawnPoint)
-                    ageLink.setLinkingRules(PtLinkingRules.kBasicLink)
-                    linkmgr.linkToAge(ageLink)
-
-            elif self.YNWhatReason == kGUI.YNDelete:
-                if ynID == kGUI.YesButtonID:
-                    # Remove the current element
-                    if self.BKCurrentContent is not None:
-                        delFolder = self.BKCurrentContent.getParent()
-                        delElem = self.BKCurrentContent.getChild()
-                        if delFolder is not None and delElem is not None:
-                            # Are we removing a visitor from an Age we own?
-                            tFolder = delFolder.upcastToFolderNode()
-                            if tFolder is not None and tFolder.folderGetType() == PtVaultStandardNodes.kCanVisitFolder:
-                                PtDebugPrint("xKI.ProcessNotifyYesNo(): Revoking visitor.", level=kDebugDumpLevel)
-                                delElem = delElem.upcastToPlayerInfoNode()
-                                # Need to refind the folder that has the ageInfo in it.
-                                ageFolderName = self.BKFolderListOrder[self.BKFolderSelected]
-                                ageFolder = self.BKFolderLineDict[ageFolderName]
-                                # Revoke invite.
-                                ptVault().unInvitePlayerToAge(ageFolder.getAgeInstanceGuid(), delElem.playerGetID())
-                            # Are we removing a player from a player list?
-                            elif delFolder.getType() == PtVaultNodeTypes.kPlayerInfoListNode and delElem.getType() == PtVaultNodeTypes.kPlayerInfoNode:
-                                PtDebugPrint("xKI.ProcessNotifyYesNo(): Removing player from folder.", level=kDebugDumpLevel)
-                                delFolder = delFolder.upcastToPlayerInfoListNode()
-                                delElem = delElem.upcastToPlayerInfoNode()
-                                delFolder.playerlistRemovePlayer(delElem.playerGetID())
-                                self.BKPlayerSelected = None
-                                sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
-                                sendToField.setString(" ")
-                            # Are we removing a journal entry?
-                            else:
-                                # See if this is a Marker Game folder that is being deleted.
-                                if delElem.getType() == PtVaultNodeTypes.kMarkerGameNode:
-                                    if self.markerGameManager.IsActive(delElem):
-                                        self.markerGameManager.StopGame()
-
-                                self.BKCurrentContent = None
-                                delFolder.removeNode(delElem)
-                                PtDebugPrint("xKI.ProcessNotifyYesNo(): Deleting element from folder.", level=kDebugDumpLevel)
-                        else:
-                            PtDebugPrint("xKI.ProcessNotifyYesNo(): Tried to delete bad Vault node or delete from bad folder.", level=kErrorLevel)
-                        self.ChangeBigKIMode(kGUI.BKListMode)
-                        self.RefreshPlayerList()
-                self.YNWhatReason = kGUI.YNQuit
-                KIYesNo.dialog.hide()
-            elif self.YNWhatReason == kGUI.YNOfferLink:
-                self.YNWhatReason = kGUI.YNQuit
-                KIYesNo.dialog.hide()
-                if ynID == kGUI.YesButtonID:
-                    if self.offerLinkFromWho is not None:
-                        PtDebugPrint("xKI.ProcessNotifyYesNo(): Linking to offered age {}.".format(self.offerLinkFromWho.getDisplayName()), level=kDebugDumpLevel)
-                        link = ptAgeLinkStruct()
-                        link.setLinkingRules(PtLinkingRules.kBasicLink)
-                        link.setAgeInfo(self.offerLinkFromWho)
-                        ptNetLinkingMgr().linkToAge(link)
-                        self.offerLinkFromWho = None
-                self.offerLinkFromWho = None
-            elif self.YNWhatReason == kGUI.YNOutside:
-                self.YNWhatReason = kGUI.YNQuit
-                KIYesNo.dialog.hide()
-                if self.YNOutsideSender is not None:
-                    note = ptNotify(self.key)
-                    note.clearReceivers()
-                    note.addReceiver(self.YNOutsideSender)
-                    note.netPropagate(0)
-                    note.netForce(0)
-                    # Is it a good return?
-                    if ynID == kGUI.YesButtonID:
-                        note.setActivate(1)
-                        note.addVarNumber("YesNo", 1)
-                    # Or a bad return?
-                    elif ynID == kGUI.NoButtonID:
-                        note.setActivate(0)
-                        note.addVarNumber("YesNo", 0)
-                    note.send()
-                self.YNOutsideSender = None
-            elif self.YNWhatReason == kGUI.YNKIFull:
-                KIYesNo.dialog.hide()
-                yesButton = ptGUIControlButton(KIYesNo.dialog.getControlFromTag(kGUI.YesButtonID))
-                yesButton.show()
-                yesBtnText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesButtonTextID))
-                yesBtnText.show()
-                noBtnText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.NoButtonTextID))
-                noBtnText.setStringW(PtGetLocalizedString("KI.YesNoDialog.NOButton"))
-                self.YNWhatReason = kGUI.YNQuit
-            else:
-                self.YNWhatReason = kGUI.YNQuit
-                KIYesNo.dialog.hide()
-                self.YNOutsideSender = None
-        elif event == kExitMode:
-            self.YNWhatReason = kGUI.YNQuit
-            KIYesNo.dialog.hide()
-            self.YNOutsideSender = None
-
     ## Process notifications originating from a new item alert dialog.
     # Such alerts make either the KI's icon or the Yeesha Book icon
     # flash for a while.
@@ -6558,17 +6322,8 @@ class xKI(ptModifier):
             elif mFldrID == kGUI.MarkerFolderTimePullDownBtn or mFldrID == kGUI.MarkerFolderTimeArrow:
                 KIMarkerFolderPopupMenu.menu.show()
             elif mFldrID == kGUI.MarkerFolderDeleteBtn:
-                self.YNWhatReason = kGUI.YNDelete
-                elem = self.BKCurrentContent.getChild()
-                elem = elem.upcastToMarkerGameNode()
-                if elem is not None:
-                    mfTitle = elem.getGameName()
-                else:
-                    mfTitle = "<unknown>"
-                yesText = ptGUIControlTextBox(KIYesNo.dialog.getControlFromTag(kGUI.YesNoTextID))
-                yesText.setStringW(PtGetLocalizedString("KI.Messages.DeletePicture", [xCensor.xCensor(mfTitle, self.censorLevel)]))
-                self.LocalizeDialog(1)
-                KIYesNo.dialog.show()
+                PtLocalizedYesNoDialog(self.HandleBigKIDeleteConfirmation,
+                    "KI.Messages.DeletePicture", self.BKCurrentContentTitle)
         elif event == kFocusChange:
             titleEdit = ptGUIControlEditBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderTitleEB))
             # Is the editbox enabled and something other than the button is getting the focus?
@@ -6693,3 +6448,53 @@ class xKI(ptModifier):
             PtDebugPrint("xKI.HandleVaultTypeEvents(): A Vault operation failed (operation, resultCode): ", tupData, level=kDebugDumpLevel)
         else:
             PtDebugPrint("xKI.HandleVaultTypeEvents(): Unknown Vault event: {}.".format(event), level=kWarningLevel)
+
+
+    #~~~~~~~~~~~~~~~~~~~~~#
+    # Confirmation Events #
+    #~~~~~~~~~~~~~~~~~~~~~#
+
+    def HandleBigKIDeleteConfirmation(self, value: int) -> None:
+        if value == PtConfirmationResult.No:
+            return
+
+        # Remove the current element
+        if self.BKCurrentContent is not None:
+            delFolder = self.BKCurrentContent.getParent()
+            delElem = self.BKCurrentContent.getChild()
+            if delFolder is not None and delElem is not None:
+                # Are we removing a visitor from an Age we own?
+                tFolder = delFolder.upcastToFolderNode()
+                if tFolder is not None and tFolder.folderGetType() == PtVaultStandardNodes.kCanVisitFolder:
+                    PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Revoking visitor.", level=kDebugDumpLevel)
+                    delElem = delElem.upcastToPlayerInfoNode()
+                    # Need to refind the folder that has the ageInfo in it.
+                    ageFolderName = self.BKFolderListOrder[self.BKFolderSelected]
+                    ageFolder = self.BKFolderLineDict[ageFolderName]
+                    # Revoke invite.
+                    ptVault().unInvitePlayerToAge(ageFolder.getAgeInstanceGuid(), delElem.playerGetID())
+                # Are we removing a player from a player list?
+                elif delFolder.getType() == PtVaultNodeTypes.kPlayerInfoListNode and delElem.getType() == PtVaultNodeTypes.kPlayerInfoNode:
+                    PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Removing player from folder.", level=kDebugDumpLevel)
+                    delFolder = delFolder.upcastToPlayerInfoListNode()
+                    delElem = delElem.upcastToPlayerInfoNode()
+                    delFolder.playerlistRemovePlayer(delElem.playerGetID())
+                    self.BKPlayerSelected = None
+                    sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
+                    sendToField.setString(" ")
+                # Are we removing a journal entry?
+                else:
+                    # See if this is a Marker Game folder that is being deleted.
+                    if delElem.getType() == PtVaultNodeTypes.kMarkerGameNode:
+                        if self.markerGameManager.IsActive(delElem):
+                            self.markerGameManager.StopGame()
+
+                    self.BKCurrentContent = None
+                    delFolder.removeNode(delElem)
+                    PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Deleting element from folder.", level=kDebugDumpLevel)
+            else:
+                PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Tried to delete bad Vault node or delete from bad folder.", level=kErrorLevel)
+            self.ChangeBigKIMode(kGUI.BKListMode)
+            self.RefreshPlayerList()
+        else:
+            PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Tried to delete nothing?")

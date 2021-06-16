@@ -107,6 +107,10 @@ REGISTER_CREATABLE(plCollideMsg);
 #include "plCondRefMsg.h"
 REGISTER_CREATABLE(plCondRefMsg);
 
+#include "plConfirmationMsg.h"
+REGISTER_NONCREATABLE(plConfirmationMsg);
+REGISTER_NONCREATABLE(plLocalizedConfirmationMsg);
+
 #include "plConnectedToVaultMsg.h"
 REGISTER_CREATABLE(plConnectedToVaultMsg);
 
