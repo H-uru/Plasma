@@ -50,7 +50,7 @@ set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 
 install(
     TARGETS MaxPlasmaLights
-    DESTINATION 3dsmax
+    DESTINATION "3dsmax${3dsm_DISPLAY_VERSION}"
 )
 
 source_group("Header Files" FILES ${MaxPlasmaLights_HEADERS})

@@ -128,7 +128,7 @@ set_target_properties(MaxMain PROPERTIES SUFFIX ".gup")
 
 install(
     TARGETS MaxMain
-    DESTINATION 3dsmax
+    DESTINATION "3dsmax${3dsm_DISPLAY_VERSION}"
 )
 
 source_group("Header Files" FILES ${MaxMain_HEADERS})

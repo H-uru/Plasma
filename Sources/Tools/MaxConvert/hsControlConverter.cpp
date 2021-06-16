@@ -1709,27 +1709,27 @@ ControllerType hsControlConverter::IGetControlType(const MSTR& ctrlName)
     hsGuardBegin("hsControlConverter::IGetControlType");
 
     ControllerType ct = ctrlTypeUnknown;
-    if (ctrlName == _M("Ease Curve"))
+    if (ctrlName == MSTR(_M("Ease Curve")))
         ct = ctrlTypeEase;
-    else if (ctrlName == _M("Mult Curve"))
+    else if (ctrlName == MSTR(_M("Mult Curve")))
         ct = ctrlTypeMult;
-    else if (ctrlName == _M("Position"))
+    else if (ctrlName == MSTR(_M("Position")))
         ct = ctrlTypePosition;
-    else if (ctrlName == _M("Rotation"))
+    else if (ctrlName == MSTR(_M("Rotation")))
         ct = ctrlTypeRotation;
-    else if (ctrlName == _M("Scale"))
+    else if (ctrlName == MSTR(_M("Scale")))
         ct = ctrlTypeScale;
-    else if (ctrlName == _M("Transform"))
+    else if (ctrlName == MSTR(_M("Transform")))
         ct = ctrlTypeTransform;
-    else if (ctrlName == _M("Roll Angle"))
+    else if (ctrlName == MSTR(_M("Roll Angle")))
         ct = ctrlTypeRollAngle;
 #if 0
     // biped controllers are good for nothing
-    else if (ctrlName == _M("Vertical"))
+    else if (ctrlName == MSTR(_M("Vertical")))
         ct = ctrlTypeVert;
-    else if (ctrlName == _M("Horizontal"))
+    else if (ctrlName == MSTR(_M("Horizontal")))
         ct = ctrlTypeHoriz;
-    else if (ctrlName == _M("Turning"))
+    else if (ctrlName == MSTR(_M("Turning")))
         ct = ctrlTypeTurn;
 #endif
 
