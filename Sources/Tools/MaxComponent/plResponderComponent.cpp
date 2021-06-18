@@ -963,9 +963,9 @@ public:
     void AddEntry(RefTargetHandle hfrom, RefTargetHandle hto) override { hsAssert(0, "shit"); }
     void Backpatch() override { hsAssert(0, "shit"); }
 
-    // Best guess... It's not in Max 2008 (v10) but is in 2011 (v13). If you have the 2009 (v11)
-    // or 2010 (v12) SDKs, please FIXME :)
-#if MAX_VERSION_MAJOR >= 12
+    // Best guess... It's not in Max (2006) 8 but is in 2008 (10). If you have the (2007) 9
+    // SDK or documentation, please verify and FIXME :)
+#if MAX_VERSION_MAJOR >= 10
     bool BackpatchPending() override { hsAssert(0, "shit"); return false; }
 #endif
 
