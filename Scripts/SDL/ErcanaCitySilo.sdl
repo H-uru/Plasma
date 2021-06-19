@@ -60,3 +60,18 @@ STATEDESC ErcanaCitySilo
     VAR BOOL    ercaGZMarkerVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
 
 }
+
+STATEDESC ErcanaCitySilo
+{
+	VERSION 2
+
+## Age Mechanics ##
+    VAR INT     ercaGotPellet[1]            DEFAULT=0       DISPLAYOPTION=red
+
+# Boolean variables
+    VAR BOOL    ercaGZMarkerVis[1]          DEFAULT=0       DEFAULTOPTION=VAULT
+
+# State variables
+    VAR BYTE	nb01LakeLightState[1]       DEFAULT=0       DEFAULTOPTION=VAULT
+
+}

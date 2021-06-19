@@ -59,3 +59,17 @@ VAR BOOL    kverMystLinkingBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
 ## Reward Clothing
 
 }
+
+STATEDESC Kveer
+{
+	VERSION 2
+
+# Boolean variables
+VAR BOOL    kverMystLinkingBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+
+# State variables
+VAR BYTE	nb01LakeLightState[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+
+## Reward Clothing
+
+}

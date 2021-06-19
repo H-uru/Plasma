@@ -88,3 +88,20 @@ STATEDESC BaronCityOffice
     VAR BOOL    bcoChristmasVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
 
 }
+
+STATEDESC BaronCityOffice
+{
+	VERSION 8
+
+# Boolean variables
+    VAR BOOL    tldnTreasureBook03Vis[1]        DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnJourneyCloth03Vis[1]        DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    tldnRopeBridgeFromBCOVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    bcoGZMarkerVis[1]               DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    bcoGZBeamVis[1]                 DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    bcoChristmasVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+
+    # State variables
+    VAR BYTE	nb01LakeLightState[1]           DEFAULT=0 DEFAULTOPTION=VAULT
+
+}
