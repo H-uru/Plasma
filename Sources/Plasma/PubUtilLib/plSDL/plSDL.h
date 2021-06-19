@@ -193,9 +193,7 @@ public:
     plStateChangeNotifier() : fDelta(0.f) { }
     plStateChangeNotifier(float i, plKey k);
     plStateChangeNotifier(const plStateChangeNotifier& copy) = default;
-    plStateChangeNotifier(plStateChangeNotifier&& move)
-        : fDelta(move.fDelta), fKeys(std::move(move.fKeys))
-    { }
+    plStateChangeNotifier(plStateChangeNotifier&& move) = default;
 
     virtual ~plStateChangeNotifier() = default;
 
@@ -212,16 +210,9 @@ public:
     static uint32_t GetCurrentPlayerID() { return fCurrentPlayerID;   }
     static void SetCurrentPlayerID(uint32_t p) { fCurrentPlayerID=p;  }
 
-    bool operator==(const plStateChangeNotifier &) const;
-
     plStateChangeNotifier& operator=(const plStateChangeNotifier& copy) = default;
-
-    plStateChangeNotifier& operator=(plStateChangeNotifier&& move)
-    {
-        fDelta = move.fDelta;
-        fKeys = std::move(move.fKeys);
-        return *this;
-    }
+    plStateChangeNotifier& operator=(plStateChangeNotifier&& move) = default;
+    bool operator==(const plStateChangeNotifier &) const;
 };
 
 //

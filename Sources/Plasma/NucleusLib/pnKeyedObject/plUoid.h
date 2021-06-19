@@ -105,12 +105,7 @@ public:
     plLocation(const plLocation& toCopyFrom);
     ~plLocation() {}
 
-    void      Invalidate()
-    {
-        fSequenceNumber = kInvalidLocIdx;
-        fFlags = 0; // Set to kInvalid?
-    }
-
+    void      Invalidate();
     bool      IsValid() const;
     bool      IsReserved() const;
     bool      IsItinerant() const;
@@ -162,16 +157,8 @@ public:
     plUoid() { Invalidate(); }
     plUoid(const plLocation& location, uint16_t classType, const ST::string& objectName, const plLoadMask& m=plLoadMask::kAlways);
     plUoid(plFixedKeyId fixedKey);
-    plUoid(const plUoid& src);
-    plUoid(plUoid&& move)
-        : fObjectID(move.fObjectID), fClonePlayerID(move.fClonePlayerID),
-          fCloneID(move.fCloneID), fClassType(move.fClassType),
-          fObjectName(std::move(move.fObjectName)),
-          fLocation(move.fLocation), fLoadMask(move.fLoadMask)
-    {
-        move.Invalidate();
-    }
-
+    plUoid(const plUoid& copy) = default;
+    plUoid(plUoid&& move) = default;
     ~plUoid();
 
     const plLocation&   GetLocation() const { return fLocation; }
@@ -182,33 +169,11 @@ public:
     void Read(hsStream* s);
     void Write(hsStream* s) const;
 
-    void Invalidate()
-    {
-        fObjectID = 0;
-        fCloneID = 0;
-        fClonePlayerID = 0;
-        fClassType = 0;
-        fObjectName.clear();
-        fLocation.Invalidate();
-        fLoadMask = plLoadMask::kAlways;
-    }
-
+    void Invalidate();
     bool IsValid() const;
 
-    plUoid& operator=(const plUoid& u);
-    plUoid& operator=(plUoid&& move)
-    {
-        fObjectID = move.fObjectID;
-        fClonePlayerID = move.fClonePlayerID;
-        fCloneID = move.fCloneID;
-        fClassType = move.fClassType;
-        fObjectName = std::move(move.fObjectName);
-        fLocation = move.fLocation;
-        fLoadMask = move.fLoadMask;
-        move.Invalidate();
-        return *this;
-    }
-
+    plUoid& operator=(const plUoid& copy) = default;
+    plUoid& operator=(plUoid&& move) = default;
     bool  operator==(const plUoid& u) const;
     bool  operator!=(const plUoid& u) const { return !operator==(u); }
 

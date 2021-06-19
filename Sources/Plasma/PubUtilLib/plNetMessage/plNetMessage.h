@@ -635,11 +635,7 @@ public:
         void Write(hsStream* s) const;
 
         GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
-        GroupInfo(plNetGroupId gID, bool o) : fGroupID(std::move(gID)),fOwnIt(o) {}
-        GroupInfo(const GroupInfo&) = default;
-        GroupInfo(GroupInfo&& move)
-            : fGroupID(std::move(move.fGroupID)), fOwnIt(move.fOwnIt)
-        { }
+        GroupInfo(plNetGroupId gID, bool o) : fGroupID(std::move(gID)), fOwnIt(o) {}
     };
 protected:
     std::vector<GroupInfo> fGroups; 

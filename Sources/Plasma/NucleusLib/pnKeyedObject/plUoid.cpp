@@ -81,6 +81,12 @@ void plLocation::Set(uint32_t seqNum)
     fSequenceNumber = seqNum;
 }
 
+void plLocation::Invalidate()
+{
+    fSequenceNumber = kInvalidLocIdx;
+    fFlags = 0; // Set to kInvalid?
+}
+
 bool plLocation::IsValid() const
 {
     return (fSequenceNumber == kInvalidLocIdx) ? false : true;
@@ -132,12 +138,6 @@ plUoid::plUoid(const plLocation& location, uint16_t classType, const ST::string&
     fObjectName = objectName;
     fLoadMask = m;
     fClonePlayerID = 0;
-}
-
-plUoid::plUoid(const plUoid& src)
-{
-    Invalidate();
-    *this = src;
 }
 
 plUoid::~plUoid()
@@ -205,6 +205,18 @@ void plUoid::Write(hsStream* s) const
     }
 }
 
+void plUoid::Invalidate()
+{
+    fObjectID = 0;
+    fCloneID = 0;
+    fClonePlayerID = 0;
+    fClassType = 0;
+    fObjectName = ST::string();
+    fLocation.Invalidate();
+    fLoadMask = plLoadMask::kAlways;
+
+}
+
 bool plUoid::IsValid() const
 {
     if (!fLocation.IsValid() || fObjectName.empty())
@@ -222,19 +234,6 @@ bool plUoid::operator==(const plUoid& u) const
             && fObjectID == u.fObjectID
             && fCloneID == u.fCloneID
             && fClonePlayerID == u.fClonePlayerID;
-}
-
-plUoid& plUoid::operator=(const plUoid& rhs)
-{
-    fObjectID = rhs.fObjectID;
-    fCloneID = rhs.fCloneID;
-    fClonePlayerID = rhs.fClonePlayerID;
-    fClassType = rhs.fClassType;
-    fObjectName = rhs.fObjectName;
-    fLocation = rhs.fLocation;
-    fLoadMask = rhs.fLoadMask;
-
-    return *this;
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
