@@ -69,7 +69,7 @@ extern HINSTANCE hInstance;
 
 //// ClassDesc Definition /////////////////////////////////////////////////////
 
-class plDynamicEnvLayerClassDesc : public ClassDesc2
+class plDynamicEnvLayerClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -104,9 +104,9 @@ plDynamicEnvLayer::~plDynamicEnvLayer()
     IDiscardTexHandle();
 }
 
-void    plDynamicEnvLayer::GetClassName( TSTR& s ) 
+void plDynamicEnvLayer::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
-    s = GetString( IDS_DYNAMIC_ENVMAP_LAYER ); 
+    s = GetString(IDS_DYNAMIC_ENVMAP_LAYER);
 }
 
 //// Reset ////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ Animatable  *plDynamicEnvLayer::SubAnim( int i )
     }
 }
 
-MSTR    plDynamicEnvLayer::SubAnimName( int i ) 
+MSTR    plDynamicEnvLayer::SubAnimName( int i MAX_NAME_LOCALIZED2 )
 {
     switch( i )
     {

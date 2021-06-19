@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultipassMtlPB.h"
 #include "plMultipassMtlDlg.h"
 
-class plMultipassClassDesc : public ClassDesc2
+class plMultipassClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -77,7 +77,7 @@ plMultipassMtl::plMultipassMtl(BOOL loading) : fPassesPB()
     SetNumSubMtls(1);
 }
 
-void plMultipassMtl::GetClassName(MSTR& s)
+void plMultipassMtl::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_MULTI_MTL);
 }
@@ -134,7 +134,7 @@ int plMultipassMtl::NumSubs()
     return NumSubMtls();
 }
 
-MSTR plMultipassMtl::SubAnimName(int i) 
+MSTR plMultipassMtl::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     return GetSubMtlSlotName(i);
 }
@@ -224,7 +224,7 @@ void plMultipassMtl::SetSubMtl(int i, Mtl *m)
         fPassesPB->SetValue(kMultPasses, 0, m, i);
 }
 
-MSTR plMultipassMtl::GetSubMtlSlotName(int i)
+MSTR plMultipassMtl::GetSubMtlSlotName(int i MAX_NAME_LOCALIZED2)
 {
     MSTR str;
     str.printf(_M("Pass %d"), i+1);

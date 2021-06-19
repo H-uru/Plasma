@@ -325,8 +325,8 @@ public:
 
     static ParamBlockDesc2  *GetAnimPBDesc();
 
-    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
-    void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
+    MAX14_CONST MCHAR* GetObjectName(MAX_NAME_LOCALIZED1) MAX24_CONST override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override { s = fClassDesc->ClassName(); }
 
     IParamBlock2 *GetParamBlock(int i) override;
     virtual IParamBlock2* GetParamBlock2();
@@ -336,7 +336,7 @@ public:
     int NumParamBlocks() override { return 1; }
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
 
     // plug-in mouse creation callback
     CreateMouseCallBack* GetCreateMouseCallBack() override;
@@ -432,7 +432,7 @@ public:
     void SetConeDisplay(int s, int notify=TRUE) override;
     BOOL GetConeDisplay() override;
 
-    void SetRGBColor(TimeValue t, Point3& rgb) override; //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
+    void SetRGBColor(TimeValue t, MAX24_CONST Point3& rgb) override; //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
     Point3 GetRGBColor(TimeValue t, Interval &valid = Interval(0,0)) override; //return fLightPB->GetPoint3(kRGB, t); }        
     void SetIntensity(TimeValue t, float f) override { fLightPB->SetValue(kIntensity, t, f); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE); }
     float GetIntensity(TimeValue t, Interval& valid = Interval(0,0)) override { return fLightPB->GetFloat(kIntensity, t); }

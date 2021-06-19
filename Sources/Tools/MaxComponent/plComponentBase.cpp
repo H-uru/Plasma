@@ -111,7 +111,7 @@ Animatable *plComponentBase::SubAnim(int i)
     return fCompPB;
 }
 
-TSTR plComponentBase::SubAnimName(int i)
+MSTR plComponentBase::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     return fClassDesc->ClassName();
 }

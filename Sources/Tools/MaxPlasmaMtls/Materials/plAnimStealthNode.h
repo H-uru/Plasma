@@ -152,9 +152,13 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
+    MAX14_CONST MCHAR* GetObjectName(MAX_NAME_LOCALIZED1 MAX_NAME_LOCALIZED_DEFAULT) MAX24_CONST override
+    {
+        return const_cast<MAX14_CONST MCHAR*>(fClassDesc->ClassName());
+    }
+
     void InitNodeName(TSTR& s) override { s = fClassDesc->InternalName(); }
-    void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override { s = fClassDesc->ClassName(); }
     Class_ID ClassID() override         { return ANIMSTEALTH_CLASSID; }
 
     RefTargetHandle Clone(RemapDir &remap) override;
@@ -173,7 +177,7 @@ public:
     // We override because we don't want to be able to animate this sucker
     int         NumSubs() override { return 0; }
     Animatable  *SubAnim(int i) override { return nullptr; }
-    TSTR        SubAnimName(int i) override { return fClassDesc->ClassName(); }
+    MSTR        SubAnimName(int i MAX_NAME_LOCALIZED2) override { return fClassDesc->ClassName(); }
 
     // plug-in mouse creation callback
     CreateMouseCallBack* GetCreateMouseCallBack() override;

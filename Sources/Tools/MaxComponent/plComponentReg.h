@@ -49,7 +49,7 @@ class TargetValidator;
 extern TargetValidator gTargetValidator;
 enum { kTargs };
 
-class plComponentClassDesc : public ClassDesc2
+class plComponentClassDesc : public plClassDesc2
 {
 public:
     int         IsPublic()     override { return 0; }

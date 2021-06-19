@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plStaticEnvLayerClassDesc : public ClassDesc2
+class plStaticEnvLayerClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -99,7 +99,7 @@ plStaticEnvLayer::~plStaticEnvLayer()
     IDiscardTexHandle();
 }
 
-void plStaticEnvLayer::GetClassName(TSTR& s)
+void plStaticEnvLayer::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_STATIC_ENVMAP_LAYER);
 }
@@ -253,7 +253,7 @@ Animatable* plStaticEnvLayer::SubAnim(int i)
     }
 }
 
-MSTR plStaticEnvLayer::SubAnimName(int i) 
+MSTR plStaticEnvLayer::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     switch (i)
     {

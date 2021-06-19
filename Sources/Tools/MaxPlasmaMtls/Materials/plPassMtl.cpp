@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plPassMtlClassDesc : public ClassDesc2
+class plPassMtlClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -102,7 +102,7 @@ plPassMtl::~plPassMtl()
 {
 }
 
-void plPassMtl::GetClassName(TSTR& s)
+void plPassMtl::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_PASS_MTL);
 }
@@ -196,7 +196,7 @@ int plPassMtl::NumSubs()
     return 6;
 }
 
-MSTR plPassMtl::SubAnimName(int i) 
+MSTR plPassMtl::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     switch (i)
     {
@@ -279,7 +279,7 @@ void plPassMtl::SetSubTexmap(int i, Texmap *m)
         fLayersPB->SetValue(kPassLayTop, 0, m);
 }
 
-MSTR plPassMtl::GetSubTexmapSlotName(int i)
+MSTR plPassMtl::GetSubTexmapSlotName(int i MAX_NAME_LOCALIZED2)
 {
     if (i == 0)
         return _M("Base");

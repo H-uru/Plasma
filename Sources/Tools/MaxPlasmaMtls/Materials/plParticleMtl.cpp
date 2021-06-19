@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plParticleMtlClassDesc : public ClassDesc2
+class plParticleMtlClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -110,7 +110,7 @@ plParticleMtl::plParticleMtl(BOOL loading) : fBasicPB()//, fBM(), fUVGen()
     //fUVGen = GetNewDefaultUVGen();
 }
 
-void plParticleMtl::GetClassName(TSTR& s)
+void plParticleMtl::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_PARTICLE_MTL);
 }
@@ -169,7 +169,7 @@ int plParticleMtl::NumSubs()
     return 2;
 }
 
-MSTR plParticleMtl::SubAnimName(int i) 
+MSTR plParticleMtl::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     switch (i)
     {
@@ -280,7 +280,7 @@ void plParticleMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kTexmap, 0, m);
 }
 
-MSTR plParticleMtl::GetSubTexmapSlotName(int i)
+MSTR plParticleMtl::GetSubTexmapSlotName(int i MAX_NAME_LOCALIZED2)
 {
     if (i == 0)
         return _M("Texmap");

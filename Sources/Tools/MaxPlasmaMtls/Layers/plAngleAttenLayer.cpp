@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plAngleAttenLayerClassDesc : public ClassDesc2
+class plAngleAttenLayerClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -148,7 +148,7 @@ plAngleAttenLayer::~plAngleAttenLayer()
 {
 }
 
-void plAngleAttenLayer::GetClassName(TSTR& s)
+void plAngleAttenLayer::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_ANGLE_ATTEN_LAYER);
 }
@@ -267,7 +267,7 @@ Animatable* plAngleAttenLayer::SubAnim(int i)
     }
 }
 
-MSTR plAngleAttenLayer::SubAnimName(int i) 
+MSTR plAngleAttenLayer::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     switch (i)
     {

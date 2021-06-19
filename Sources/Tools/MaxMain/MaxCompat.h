@@ -129,6 +129,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define MAX_REF_PROPAGATE_VALUE propagate
 #endif
 
+#if MAX_VERSION_MAJOR < 24 // Max 2022
+#   define MAX_NAME_LOCALIZED1
+#   define MAX_NAME_LOCALIZED2
+#   define MAX_NAME_LOCALIZED_DEFAULT
+#   define MAX_NAME_LOCALIZED_VALUE
+#   define MAX24_CONST
+
+#   define plClassDesc2 ClassDesc2
+#   define plClassDesc ClassDesc
+
+#   define GetSystemUnitInfo GetMasterUnitInfo
+#else
+#   define MAX_NAME_LOCALIZED1 bool localized
+#   define MAX_NAME_LOCALIZED2 , bool localized
+#   define MAX_NAME_LOCALIZED_DEFAULT = true
+#   define MAX_NAME_LOCALIZED_VALUE , localized
+#   define MAX24_CONST const
+
+#   include <iparamb2.h> // Dammit
+
+class plClassDesc2 : public ClassDesc2
+{
+public:
+    const MCHAR* NonLocalizedClassName() override { return ClassName(); }
+};
+
+class plClassDesc : public ClassDesc
+{
+public:
+    const MCHAR* NonLocalizedClassName() override { return ClassName(); }
+};
+#endif
+
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
 

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../plBMSampler.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plDynamicTextLayerClassDesc : public ClassDesc2
+class plDynamicTextLayerClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override      { return TRUE; }
@@ -90,7 +90,7 @@ plDynamicTextLayer::~plDynamicTextLayer()
     IDiscardTexHandle();
 }
 
-void plDynamicTextLayer::GetClassName(TSTR& s)
+void plDynamicTextLayer::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_DYN_TEXT_LAYER);
 }
@@ -246,7 +246,7 @@ Animatable* plDynamicTextLayer::SubAnim(int i)
     }
 }
 
-MSTR plDynamicTextLayer::SubAnimName(int i) 
+MSTR plDynamicTextLayer::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
     switch (i)
     {

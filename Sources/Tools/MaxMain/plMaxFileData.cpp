@@ -81,7 +81,7 @@ public:
 
     Class_ID ClassID() override { return PLASMA_FILE_DATA_CID; }
     SClass_ID SuperClassID() override { return CTRL_FLOAT_CLASS_ID; }
-    void GetClassName(MSTR& s) override { s = _M("DEAD - SceneViewer"); }
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override { s = _M("DEAD - SceneViewer"); }
 
     // Control methods
     RefTargetHandle Clone(RemapDir& remap) override { return new plMaxFileDataControl(); }
@@ -143,7 +143,7 @@ IOResult plMaxFileDataControl::Save(ISave *isave)
     return IO_OK;
 }
 
-class MaxFileDataClassDesc : public ClassDesc
+class MaxFileDataClassDesc : public plClassDesc
 {
 public:
     int             IsPublic() override             { return FALSE; }

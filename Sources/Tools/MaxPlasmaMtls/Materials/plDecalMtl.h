@@ -78,7 +78,7 @@ public:
     //From Animatable
     Class_ID ClassID() override { return DECAL_MTL_CLASS_ID; }
     SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
-    void GetClassName(MSTR& s) override;
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override;
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
     void Update(TimeValue t, Interval& valid) override;
@@ -102,7 +102,7 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapSlotName(int i MAX_NAME_LOCALIZED2 MAX_NAME_LOCALIZED_DEFAULT) override;
     MSTR GetSubTexmapTVName(int i);
     int SubTexmapOn(int i) override;
       
@@ -112,7 +112,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
 
     int NumParamBlocks() override;
     IParamBlock2* GetParamBlock(int i) override;

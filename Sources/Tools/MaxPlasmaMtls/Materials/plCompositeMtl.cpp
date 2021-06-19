@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPassMtl.h"
 #include "plCompositeMtlDlg.h"
 
-class plCompositeClassDesc : public ClassDesc2
+class plCompositeClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -94,7 +94,7 @@ plCompositeMtl::plCompositeMtl(BOOL loading) : fPassesPB()
     }
 }
 
-void plCompositeMtl::GetClassName(TSTR& s)
+void plCompositeMtl::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
 {
     s = GetString(IDS_COMP_MTL);
 }
@@ -221,9 +221,9 @@ int plCompositeMtl::NumSubs()
     return NumSubMtls();
 }
 
-TSTR plCompositeMtl::SubAnimName(int i) 
+TSTR plCompositeMtl::SubAnimName(int i MAX_NAME_LOCALIZED2)
 {
-    return GetSubMtlSlotName(i);
+    return GetSubMtlSlotName(i MAX_NAME_LOCALIZED_VALUE);
 }
 
 Animatable* plCompositeMtl::SubAnim(int i)
@@ -312,7 +312,7 @@ void plCompositeMtl::SetSubMtl(int i, Mtl *m)
         fPassesPB->SetValue(kCompPasses, 0, m, i);
 }
 
-MSTR plCompositeMtl::GetSubMtlSlotName(int i)
+MSTR plCompositeMtl::GetSubMtlSlotName(int i MAX_NAME_LOCALIZED2)
 {
     MSTR str;
     str.printf(_M("Pass %d"), i+1);

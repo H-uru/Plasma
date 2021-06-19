@@ -179,7 +179,7 @@ public:
 
     int NumSubs() override { return 1; }
     Animatable* SubAnim(int i) override { return fPBlock; }
-    TSTR SubAnimName(int i) override { return fClassDesc->ClassName(); }
+    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override { return fClassDesc->ClassName(); }
 
 
     void BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev) override;
@@ -190,12 +190,16 @@ public:
     ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP) override;
     bool CheckCopyAttribTo(ICustAttribContainer *to) override { return true; }
     
-    MAX10_CONST TCHAR* GetName() override { return (MAX10_CONST TCHAR*)fClassDesc->ClassName(); }
+    MAX10_CONST MCHAR* GetName(MAX_NAME_LOCALIZED1) override
+    {
+        return const_cast<MAX10_CONST MCHAR*>(fClassDesc->ClassName());
+    }
+
     void DeleteThis() override { delete this; }
 };
 
 
-class plGeneralAttribClassDesc : public ClassDesc2
+class plGeneralAttribClassDesc : public plClassDesc2
 {
 public:
     int             IsPublic() override     { return 1; }

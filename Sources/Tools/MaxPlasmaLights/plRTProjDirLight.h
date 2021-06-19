@@ -138,7 +138,7 @@ class plRTProjDirLight : public plRTLightBase
         int             NumRefs() override { return kNumRefs; }
 
         int             NumSubs() override { return 2; }
-        MSTR            SubAnimName(int i) override;
+        MSTR            SubAnimName(int i MAX_NAME_LOCALIZED2) override;
         Animatable      *SubAnim(int i) override;
 
         int             NumParamBlocks() override;

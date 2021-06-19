@@ -147,7 +147,7 @@ public:
     //From Animatable
     Class_ID ClassID() override { return CLOTHING_MTL_CLASS_ID; }
     SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) override;
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override;
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
     void Update(TimeValue t, Interval& valid) override;
@@ -169,7 +169,7 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    MSTR GetSubTexmapSlotName(int i) override;
+    MSTR GetSubTexmapSlotName(int i MAX_NAME_LOCALIZED2 MAX_NAME_LOCALIZED_DEFAULT) override;
     MSTR GetSubTexmapTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
@@ -184,7 +184,7 @@ public:
 
     int NumSubs() override { return 0; }
     Animatable* SubAnim(int i) override { return nullptr; }
-    MSTR SubAnimName(int i) override { return _M(""); }
+    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override { return _M(""); }
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

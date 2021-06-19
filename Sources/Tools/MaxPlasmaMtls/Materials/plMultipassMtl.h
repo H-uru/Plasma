@@ -89,7 +89,7 @@ public:
     int NumSubMtls() override;
     Mtl* GetSubMtl(int i) override;
     void SetSubMtl(int i, Mtl *m) override;
-    MSTR GetSubMtlSlotName(int i) override;
+    MSTR GetSubMtlSlotName(int i MAX_NAME_LOCALIZED2 MAX_NAME_LOCALIZED_DEFAULT) override;
     MSTR GetSubMtlTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg);
@@ -102,7 +102,7 @@ public:
     //From Animatable
     Class_ID ClassID() override { return MULTIMTL_CLASS_ID; }
     SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
-    void GetClassName(MSTR& s) override;
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
     RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
@@ -110,7 +110,7 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

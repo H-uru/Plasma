@@ -152,9 +152,17 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
-    void InitNodeName(TSTR& s) override { s = fClassDesc->InternalName(); }
-    void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
+    MAX14_CONST MCHAR* GetObjectName(MAX_NAME_LOCALIZED1 MAX_NAME_LOCALIZED_DEFAULT) MAX24_CONST override
+    {
+        return const_cast<MAX14_CONST MCHAR*>(fClassDesc->ClassName());
+    }
+
+    void InitNodeName(MSTR& s) override { s = fClassDesc->InternalName(); }
+    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2 MAX_NAME_LOCALIZED_DEFAULT) MAX24_CONST override
+    {
+        s = fClassDesc->ClassName();
+    }
+
     Class_ID ClassID()         override { return fClassDesc->ClassID(); }
 
     RefTargetHandle Clone(RemapDir &remap) override;
@@ -173,7 +181,7 @@ public:
     // So our animatables will show up in the trackview
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
+    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
     virtual bool AddToAnim(plAGAnim *anim, plMaxNode *node) { return false; }
 
     // plug-in mouse creation callback

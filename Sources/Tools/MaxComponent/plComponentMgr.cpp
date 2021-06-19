@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plComponentReg.h"
 
 /////////
-class ComponentMgrClassDesc : public ClassDesc
+class ComponentMgrClassDesc : public plClassDesc
 {
 public:
     int             IsPublic() override             { return FALSE; }
