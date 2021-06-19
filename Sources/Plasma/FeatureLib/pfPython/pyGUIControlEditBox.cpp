@@ -52,7 +52,7 @@ pyGUIControlEditBox::pyGUIControlEditBox(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlEditBox::pyGUIControlEditBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlEditBox::pyGUIControlEditBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

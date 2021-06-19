@@ -136,8 +136,8 @@ protected:
     void        IFindIndices(); // Refresh Indicies
     void        IApplyShared(); // Apply whatever morphs are active
 
-    hsSsize_t   IFindPendingStateIndex(plKey meshKey) const; // Do we have pending state for this mesh?
-    hsSsize_t   IFindSharedMeshIndex(plKey meshKey) const; // What's this mesh's index in our array?
+    hsSsize_t   IFindPendingStateIndex(const plKey& meshKey) const; // Do we have pending state for this mesh?
+    hsSsize_t   IFindSharedMeshIndex(const plKey& meshKey) const; // What's this mesh's index in our array?
     bool        IIsUsingDrawable(plDrawable *draw); // Are we actively looking at spans in this drawable?
 
     // Internal functions for maintaining that all meshes share the same global weight(s) (fGlobalLayerRef)
@@ -166,11 +166,11 @@ public:
     void Apply() const;
     void Reset(const plDrawInterface* di=nullptr) const;
 
-    size_t GetNumLayers(plKey meshKey = {}) const;
+    size_t GetNumLayers(const plKey& meshKey = {}) const;
     void AddLayer(const plMorphArray& ma) { fMorphs.emplace_back(ma); }
 
-    size_t GetNumDeltas(size_t iLay, plKey meshKey = {}) const;
-    float GetWeight(size_t iLay, size_t iDel, plKey meshKey = {}) const;
+    size_t GetNumDeltas(size_t iLay, const plKey& meshKey = {}) const;
+    float GetWeight(size_t iLay, size_t iDel, const plKey& meshKey = {}) const;
     void SetWeight(size_t iLay, size_t iDel, float w, plKey meshKey = {});
 
     bool GetHaveSnap() const { return 0 != (fMorphFlags & kHaveSnap); }

@@ -81,7 +81,7 @@ plAvCoopMsg::plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial)
 
 // plAvCoopMsg ----------------------------------
 // ------------
-plAvCoopMsg::plAvCoopMsg(plKey sender, plCoopCoordinator *coordinator)
+plAvCoopMsg::plAvCoopMsg(const plKey& sender, plCoopCoordinator *coordinator)
 : plMessage(sender, plAvatarMgr::GetInstance()->GetKey(), nullptr),
   fInitiatorID(coordinator->GetInitiatorID()),
   fInitiatorSerial(coordinator->GetInitiatorSerial()),

@@ -664,42 +664,42 @@ pfPatcher::~pfPatcher() { }
 
 void pfPatcher::OnCompletion(CompletionFunc cb)
 {
-    fWorker->fOnComplete = cb;
+    fWorker->fOnComplete = std::move(cb);
 }
 
 void pfPatcher::OnFileDownloadBegin(FileDownloadFunc cb)
 {
-    fWorker->fFileBeginDownload = cb;
+    fWorker->fFileBeginDownload = std::move(cb);
 }
 
 void pfPatcher::OnFileDownloadDesired(FileDesiredFunc cb)
 {
-    fWorker->fFileDownloadDesired = cb;
+    fWorker->fFileDownloadDesired = std::move(cb);
 }
 
 void pfPatcher::OnFileDownloaded(FileDownloadFunc cb)
 {
-    fWorker->fFileDownloaded = cb;
+    fWorker->fFileDownloaded = std::move(cb);
 }
 
 void pfPatcher::OnGameCodeDiscovery(GameCodeDiscoverFunc cb)
 {
-    fWorker->fGameCodeDiscovered = cb;
+    fWorker->fGameCodeDiscovered = std::move(cb);
 }
 
 void pfPatcher::OnProgressTick(ProgressTickFunc cb)
 {
-    fWorker->fProgressTick = cb;
+    fWorker->fProgressTick = std::move(cb);
 }
 
 void pfPatcher::OnRedistUpdate(FileDownloadFunc cb)
 {
-    fWorker->fRedistUpdateDownloaded = cb;
+    fWorker->fRedistUpdateDownloaded = std::move(cb);
 }
 
 void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
 {
-    fWorker->fSelfPatch = cb;
+    fWorker->fSelfPatch = std::move(cb);
 }
 
 // ===================================================

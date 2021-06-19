@@ -107,8 +107,11 @@ public:
     
     plParticleTransferMsg() : plMessage(nullptr, nullptr, nullptr), fNumToTransfer() { }
     plParticleTransferMsg(const plKey &s, const plKey &r, const double* t, plKey sysSOKey, uint16_t numParticles )
-        : plMessage(s, r, t) { fSysSOKey = sysSOKey; fNumToTransfer = numParticles; }
-    virtual ~plParticleTransferMsg() {} 
+        : plMessage(s, r, t),
+          fSysSOKey(std::move(sysSOKey)),
+          fNumToTransfer(numParticles)
+    { }
+
 
     CLASSNAME_REGISTER( plParticleTransferMsg );
     GETINTERFACE_ANY( plParticleTransferMsg, plMessage );

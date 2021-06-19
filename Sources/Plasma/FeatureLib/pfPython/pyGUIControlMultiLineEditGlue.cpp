@@ -436,7 +436,7 @@ PyObject *pyGUIControlMultiLineEdit::New(pyKey& gckey)
 PyObject *pyGUIControlMultiLineEdit::New(plKey objkey)
 {
     ptGUIControlMultiLineEdit *newObj = (ptGUIControlMultiLineEdit*)ptGUIControlMultiLineEdit_type.tp_new(&ptGUIControlMultiLineEdit_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

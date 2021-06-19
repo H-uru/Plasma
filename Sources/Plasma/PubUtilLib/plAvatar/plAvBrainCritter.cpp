@@ -421,17 +421,17 @@ hsVector3 plAvBrainCritter::VectorToPlayer(unsigned long id) const
     return hsVector3(creaturePos - avPos);
 }
 
-void plAvBrainCritter::AddReceiver(const plKey key)
+void plAvBrainCritter::AddReceiver(plKey key)
 {
     for (unsigned i = 0; i < fReceivers.size(); ++i)
     {
         if (fReceivers[i] == key)
             return; // already in our list
     }
-    fReceivers.push_back(key);
+    fReceivers.emplace_back(std::move(key));
 }
 
-void plAvBrainCritter::RemoveReceiver(const plKey key)
+void plAvBrainCritter::RemoveReceiver(const plKey& key)
 {
     for (unsigned i = 0; i < fReceivers.size(); ++i)
     {

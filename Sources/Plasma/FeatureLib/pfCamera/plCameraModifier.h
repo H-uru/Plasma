@@ -57,20 +57,11 @@ struct CamTrans
 {
     // used when creating default track transitions at runtime
     CamTrans(plKey to)
-    {
-        fTransTo = to;
+        : fTransTo(std::move(to)), fCutPos(), fCutPOA(), fIgnore(),
+          fAccel(60.f), fDecel(60.f), fVelocity(60.f), fPOAAccel(60.f),
+          fPOADecel(60.f), fPOAVelocity(60.f)
+    { }
 
-        fAccel = 60.0f;
-        fDecel = 60.0f;
-        fVelocity = 60.0f;
-        fPOADecel = 60.0f;
-        fPOAAccel = 60.0f;
-        fPOAVelocity = 60.0f;
-
-        fCutPos = false;
-        fCutPOA = false;
-        fIgnore = false;
-    }
     plKey       fTransTo;
 
     bool    fCutPos;

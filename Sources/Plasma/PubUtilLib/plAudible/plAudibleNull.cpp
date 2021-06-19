@@ -58,7 +58,7 @@ hsPoint3    plAudibleNull::GetPosition(int index)
     return {};
 }
 
-void plAudibleNull::SetSceneNode(plKey newNode)
+void plAudibleNull::SetSceneNode(const plKey& newNode)
 {
     plKey oldNode = GetSceneNode();
     if( oldNode == newNode )

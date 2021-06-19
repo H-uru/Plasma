@@ -116,7 +116,7 @@ plWinAudible::~plWinAudible()
     fSoundObjs.clear();
 }
 
-void plWinAudible::SetSceneObject(plKey obj)
+void plWinAudible::SetSceneObject(const plKey& obj)
 {
     plKey oldKey;
     // remove old SDL mod
@@ -155,7 +155,7 @@ void plWinAudible::SetSceneObject(plKey obj)
     }
 }
 
-void plWinAudible::SetSceneNode(plKey newNode)
+void plWinAudible::SetSceneNode(const plKey& newNode)
 {
     plKey oldNode = GetSceneNode();
     if( oldNode == newNode )
@@ -179,7 +179,7 @@ void plWinAudible::SetSceneNode(plKey newNode)
     {
         DeActivate();
     }
-    fSceneNode = std::move(newNode);
+    fSceneNode = newNode;
 }
 
 void plWinAudible::GetStatus(plSoundMsg* pMsg)
@@ -369,7 +369,7 @@ float plWinAudible::GetMax(int index) const
     return (float)(fSoundObjs[index]->GetMax());
 }
 
-void plWinAudible::SetVelocity(const hsVector3 vel,int index)
+void plWinAudible::SetVelocity(const hsVector3& vel,int index)
 {
     SND_APPLY_LOOP( index, SetVelocity( vel ), ; );
 }
@@ -723,7 +723,7 @@ plAudible& pl2WayWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix4
     return (*this);
 }
 
-void pl2WayWinAudible::SetVelocity(const hsVector3 vel,int index)
+void pl2WayWinAudible::SetVelocity(const hsVector3& vel,int index)
 {
     plWinAudible::SetVelocity(vel, index);
     if (fVoicePlayer)

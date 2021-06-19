@@ -578,7 +578,7 @@ PYTHON_END_GETSET_TABLE;
 PLASMA_CUSTOM_TYPE(ptSceneobject, "Params: objKey, selfKey\nPlasma Sceneobject class");
 
 // required functions for PyObject interoperability
-PyObject *pySceneObject::New(plKey objKey, PyObject *selfKeyObj)
+PyObject *pySceneObject::New(const plKey& objKey, PyObject *selfKeyObj)
 {
     if (!pyKey::Check(selfKeyObj))
         return nullptr;
@@ -592,7 +592,7 @@ PyObject *pySceneObject::New(plKey objKey, PyObject *selfKeyObj)
     return (PyObject*)newObj;
 }
 
-PyObject *pySceneObject::New(plKey objKey, pyKey &selfKey)
+PyObject *pySceneObject::New(const plKey& objKey, pyKey &selfKey)
 {
     ptSceneobject *newObj = (ptSceneobject*)ptSceneobject_type.tp_new(&ptSceneobject_type, nullptr, nullptr);
     newObj->fThis->addObjKey(objKey);
@@ -602,7 +602,7 @@ PyObject *pySceneObject::New(plKey objKey, pyKey &selfKey)
     return (PyObject*)newObj;
 }
 
-PyObject *pySceneObject::New(plKey objKey, plKey selfKey)
+PyObject *pySceneObject::New(const plKey& objKey, const plKey& selfKey)
 {
     ptSceneobject *newObj = (ptSceneobject*)ptSceneobject_type.tp_new(&ptSceneobject_type, nullptr, nullptr);
     newObj->fThis->addObjKey(objKey);
@@ -612,7 +612,7 @@ PyObject *pySceneObject::New(plKey objKey, plKey selfKey)
     return (PyObject*)newObj;
 }
 
-PyObject *pySceneObject::New(plKey objKey)
+PyObject *pySceneObject::New(const plKey& objKey)
 {
     ptSceneobject *newObj = (ptSceneobject*)ptSceneobject_type.tp_new(&ptSceneobject_type, nullptr, nullptr);
     newObj->fThis->addObjKey(objKey);

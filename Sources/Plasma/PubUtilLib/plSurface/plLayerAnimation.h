@@ -173,7 +173,7 @@ public:
     CLASSNAME_REGISTER( plLayerLinkAnimation );
     GETINTERFACE_ANY( plLayerLinkAnimation, plLayerAnimation );
 
-    void SetLinkKey(plKey linkKey) { fLinkKey = linkKey; }
+    void SetLinkKey(plKey linkKey) { fLinkKey = std::move(linkKey); }
     plKey GetLinkKey() { return fLinkKey; }
 
     // NOTE: The link animation should NEVER NEVER NEVER send its state to the server.

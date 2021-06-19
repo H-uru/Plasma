@@ -122,7 +122,7 @@ void pfMarkerInfo::Spawn(MarkerType type)
 
 void pfMarkerInfo::InitSpawned(plKey markerKey)
 {
-    fKey = markerKey;
+    fKey = std::move(markerKey);
     fSpawned = true;
 
     plSceneObject* so = plSceneObject::ConvertNoRef(fKey->GetObjectPtr());

@@ -872,19 +872,19 @@ int plNetMsgRoomsList::IPeekBuffer(hsStream* stream, uint32_t peekOptions)
     return bytes;
 }
 
-void plNetMsgRoomsList::AddRoom(plKey rmKey)
+void plNetMsgRoomsList::AddRoom(const plKey& rmKey)
 {
     fRooms.push_back(rmKey->GetUoid().GetLocation());
     fRoomNames.push_back(rmKey->GetName());
 }
 
-void plNetMsgRoomsList::AddRoomLocation(plLocation loc, const ST::string& rmName)
+void plNetMsgRoomsList::AddRoomLocation(const plLocation& loc, const ST::string& rmName)
 {
     fRooms.push_back(loc);
     fRoomNames.push_back(rmName);
 }
 
-int plNetMsgRoomsList::FindRoomLocation(plLocation loc)
+int plNetMsgRoomsList::FindRoomLocation(const plLocation& loc)
 {
     std::vector<plLocation>::iterator result = std::find(fRooms.begin(), fRooms.end(), loc);
     return result==fRooms.end() ? -1 : result-fRooms.begin();   

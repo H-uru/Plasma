@@ -107,7 +107,7 @@ PyObject *pyGUIControlCheckBox::New(pyKey& gckey)
 PyObject *pyGUIControlCheckBox::New(plKey objkey)
 {
     ptGUIControlCheckBox *newObj = (ptGUIControlCheckBox*)ptGUIControlCheckBox_type.tp_new(&ptGUIControlCheckBox_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

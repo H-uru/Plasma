@@ -70,8 +70,8 @@ public:
     virtual hsVector3   GetWindDir() const = 0;
 
 
-    void            AddShore(plKey soKey);
-    void            AddDecal(plKey key);
+    void            AddShore(const plKey& soKey);
+    void            AddDecal(const plKey& key);
 
 };
 

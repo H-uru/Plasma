@@ -182,11 +182,11 @@ plAvSeekMsg::plAvSeekMsg()
 
 // CTOR(sender, receiver, seekKey, time)
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
-                         const plKey &seekKey, float duration, bool smartSeek,
+                         plKey seekKey, float duration, bool smartSeek,
                          plAvAlignment alignType, const ST::string& animName, bool noSeek,
                          uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
-  fSeekPoint(seekKey),
+  fSeekPoint(std::move(seekKey)),
   fTargetPos(0, 0, 0),
   fTargetLookAt(0, 0, 0),
   fDuration(duration),
@@ -195,7 +195,7 @@ plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
   fAlignType(alignType),
   fNoSeek(noSeek),
   fFlags(flags),
-  fFinishKey(finishKey),
+  fFinishKey(std::move(finishKey)),
   fFinishMsg(nullptr)
 {
 }
@@ -374,7 +374,7 @@ plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey &recei
 {
 }
 
-plAvBrainGenericMsg::plAvBrainGenericMsg(plKey sender, plKey receiver,
+plAvBrainGenericMsg::plAvBrainGenericMsg(const plKey& sender, const plKey& receiver,
                                          Type type, int stage, int newLoopCount)
 : plAvatarMsg(sender, receiver),
   fType(type),

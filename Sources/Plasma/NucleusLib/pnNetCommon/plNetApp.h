@@ -224,10 +224,10 @@ public:
     virtual float GetCurrentAgeTimeOfDayPercent() const { hsAssert(false, "stub"); return 0.; }
     virtual bool ObjectInLocalAge(const plSynchedObject* obj) const { hsAssert(false, "stub"); return false; }
     virtual uint8_t GetJoinOrder() const { hsAssert(false, "stub"); return 0; }
-    virtual bool IsRemotePlayerKey(const plKey p, int* idx=nullptr) { hsAssert(false, "stub"); return false; }
+    virtual bool IsRemotePlayerKey(const plKey& p, int* idx=nullptr) { hsAssert(false, "stub"); return false; }
     virtual plKey GetLocalPlayerKey()   const { hsAssert(false, "stub"); return nullptr; }
     virtual plSynchedObject* GetLocalPlayer(bool forceLoad=false) const { hsAssert(false, "stub"); return nullptr; }
-    virtual plNetGroupId SelectNetGroup(plSynchedObject* objIn, plKey groupKey) { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
+    virtual plNetGroupId SelectNetGroup(plSynchedObject* objIn, const plKey& groupKey) { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
     virtual int IsLocallyOwned(const plSynchedObject* obj) const { hsAssert(false, "stub"); return 0; }
     virtual int IsLocallyOwned(const plUoid&) const { hsAssert(false, "stub"); return 0; }  
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }

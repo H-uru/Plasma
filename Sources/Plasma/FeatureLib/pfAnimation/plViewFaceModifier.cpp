@@ -384,12 +384,12 @@ void plViewFaceModifier::IOnRemove(plGenRefMsg* refMsg)
     }
 }
 
-void plViewFaceModifier::ISetObject(plKey soKey)
+void plViewFaceModifier::ISetObject(const plKey& soKey)
 {
     hsgResMgr::ResMgr()->SendRef(soKey, new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefFaceObj), plRefFlags::kPassiveRef);
 }
 
-void plViewFaceModifier::SetFollowMode(FollowMode m, plKey soKey)
+void plViewFaceModifier::SetFollowMode(FollowMode m, const plKey& soKey)
 {
     ClearFlag(kFaceCam);
     ClearFlag(kFaceList);

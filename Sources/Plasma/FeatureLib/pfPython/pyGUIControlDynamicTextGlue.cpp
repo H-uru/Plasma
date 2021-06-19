@@ -107,7 +107,7 @@ PyObject *pyGUIControlDynamicText::New(pyKey& gckey)
 PyObject *pyGUIControlDynamicText::New(plKey objkey)
 {
     ptGUIControlDynamicText *newObj = (ptGUIControlDynamicText*)ptGUIControlDynamicText_type.tp_new(&ptGUIControlDynamicText_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

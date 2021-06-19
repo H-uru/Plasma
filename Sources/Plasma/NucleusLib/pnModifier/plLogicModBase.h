@@ -117,7 +117,7 @@ public:
     void    SetFlag(int f) { fFlags.SetBit(f); }
     void    ClearFlag(int which) { fFlags.ClearBit(which); }
 
-    void AddNotifyReceiver(plKey receiver);
+    void AddNotifyReceiver(const plKey& receiver);
 
     // for debug purposes only!
     void ConsoleTrigger(plKey playerKey);

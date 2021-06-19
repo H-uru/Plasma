@@ -64,7 +64,7 @@ static float AngleRad2d(float x1, float y1, float x3, float y3);
 
 // plPhysicalControllerCore
 plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, float height, float radius)
-    : fOwner(OwnerSceneObject),
+    : fOwner(std::move(OwnerSceneObject)),
     fWorldKey(),
     fHeight(height),
     fRadius(radius),

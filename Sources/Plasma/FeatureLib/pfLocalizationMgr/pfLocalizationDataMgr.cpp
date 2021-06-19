@@ -445,9 +445,9 @@ protected:
 
     LocalizationXMLFile::ageMap fData;
 
-    LocalizationXMLFile::element IMergeElementData(LocalizationXMLFile::element firstElement, LocalizationXMLFile::element secondElement, const plFileName & fileName, const ST::string & path);
-    LocalizationXMLFile::set IMergeSetData(LocalizationXMLFile::set firstSet, LocalizationXMLFile::set secondSet, const plFileName & fileName, const ST::string & path);
-    LocalizationXMLFile::age IMergeAgeData(LocalizationXMLFile::age firstAge, LocalizationXMLFile::age secondAge, const plFileName & fileName, const ST::string & path);
+    void IMergeElementData(LocalizationXMLFile::element& firstElement, const LocalizationXMLFile::element& secondElement, const plFileName & fileName, const ST::string & path);
+    void IMergeSetData(LocalizationXMLFile::set& firstSet, const LocalizationXMLFile::set& secondSet, const plFileName & fileName, const ST::string & path);
+    void IMergeAgeData(LocalizationXMLFile::age& firstAge, const LocalizationXMLFile::age& secondAge, const plFileName & fileName, const ST::string & path);
     void IMergeData(); // merge all localization data in the files
 
     void IVerifyElement(const ST::string &ageName, const ST::string &setName, LocalizationXMLFile::set::iterator& curElement);
@@ -468,7 +468,7 @@ public:
 
 //// IMergeElementData ///////////////////////////////////////////////
 
-LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(LocalizationXMLFile::element firstElement, LocalizationXMLFile::element secondElement, const plFileName & fileName, const ST::string & path)
+void LocalizationDatabase::IMergeElementData(LocalizationXMLFile::element& firstElement, const LocalizationXMLFile::element& secondElement, const plFileName& fileName, const ST::string& path)
 {
     // copy the data over, alerting the user to any duplicate translations
     for (const auto& curTranslation : secondElement)
@@ -481,13 +481,11 @@ LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(Localizatio
         else
             firstElement[curTranslation.first] = curTranslation.second;
     }
-
-    return firstElement;
 }
 
 //// IMergeSetData ///////////////////////////////////////////////////
 
-LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile::set firstSet, LocalizationXMLFile::set secondSet, const plFileName & fileName, const ST::string & path)
+void LocalizationDatabase::IMergeSetData(LocalizationXMLFile::set& firstSet, const LocalizationXMLFile::set& secondSet, const plFileName& fileName, const ST::string& path)
 {
     // Merge all the elements
     for (const auto& curElement : secondSet)
@@ -496,16 +494,14 @@ LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile
         if (firstSet.find(curElement.first) == firstSet.end())
             firstSet[curElement.first] = curElement.second;
         else // merge the element in
-            firstSet[curElement.first] = IMergeElementData(firstSet[curElement.first], curElement.second, fileName,
+            IMergeElementData(firstSet[curElement.first], curElement.second, fileName,
                 ST::format("{}.{}", path, curElement.first));
     }
-
-    return firstSet;
 }
 
 //// IMergeAgeData ///////////////////////////////////////////////////
 
-LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile::age firstAge, LocalizationXMLFile::age secondAge, const plFileName & fileName, const ST::string & path)
+void LocalizationDatabase::IMergeAgeData(LocalizationXMLFile::age& firstAge, const LocalizationXMLFile::age& secondAge, const plFileName& fileName, const ST::string& path)
 {
     // Merge all the sets
     for (const auto& curSet : secondAge)
@@ -514,11 +510,9 @@ LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile
         if (firstAge.find(curSet.first) == firstAge.end())
             firstAge[curSet.first] = curSet.second;
         else // merge the data in
-            firstAge[curSet.first] = IMergeSetData(firstAge[curSet.first], curSet.second, fileName,
+            IMergeSetData(firstAge[curSet.first], curSet.second, fileName,
                 ST::format("{}.{}", path, curSet.first));
     }
-
-    return firstAge;
 }
 
 //// IMergeData() ////////////////////////////////////////////////////
@@ -533,7 +527,7 @@ void LocalizationDatabase::IMergeData()
             if (fData.find(curAge.first) == fData.end())
                 fData[curAge.first] = curAge.second;
             else // otherwise, merge the data in
-                fData[curAge.first] = IMergeAgeData(fData[curAge.first], curAge.second, file.fFilename, curAge.first);
+                IMergeAgeData(fData[curAge.first], curAge.second, file.fFilename, curAge.first);
         }
     }
 }
@@ -655,7 +649,7 @@ void LocalizationDatabase::Parse(const plFileName & directory)
 //// ISplitString() //////////////////////////////////////////////////
 
 template<class mapT>
-void pfLocalizationDataMgr::pf3PartMap<mapT>::ISplitString(ST::string key, ST::string &age, ST::string &set, ST::string &name)
+void pfLocalizationDataMgr::pf3PartMap<mapT>::ISplitString(const ST::string& key, ST::string &age, ST::string &set, ST::string &name)
 {
     std::vector<ST::string> tokens = key.tokenize(".");
     if (tokens.size() >= 1)

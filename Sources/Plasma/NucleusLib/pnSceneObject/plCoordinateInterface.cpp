@@ -82,7 +82,7 @@ plCoordinateInterface::~plCoordinateInterface()
         IRemoveChild(i);
 }
 
-void plCoordinateInterface::ISetSceneNode(plKey newNode)
+void plCoordinateInterface::ISetSceneNode(const plKey& newNode)
 {
     for (plSceneObject* child : fChildren)
     {
@@ -518,7 +518,7 @@ void plCoordinateInterface::FlushTransform(bool fromRoot)
         ITransformChanged(false, 0, false);
 }
 
-void plCoordinateInterface::ISetNetGroupRecur(plNetGroupId netGroup)
+void plCoordinateInterface::ISetNetGroupRecur(const plNetGroupId& netGroup)
 {
     if( !IGetOwner() )
         return;

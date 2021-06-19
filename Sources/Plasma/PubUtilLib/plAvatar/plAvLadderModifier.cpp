@@ -124,13 +124,12 @@ bool plAvLadderMod::IIsReadyToClimb()
 }
 
 // use a plNotify (to ourself) to propagate across the network
-void plAvLadderMod::ITriggerSelf(plKey avKey)
+void plAvLadderMod::ITriggerSelf(const plKey& avKey)
 {
     if (fEnabled)
     {
-        plKey avPhysKey = avKey;
         // I'm going to lie and pretend it's from the avatar. the alternative is lengthy and unreadable.
-        plNotifyMsg *notifyMsg = new plNotifyMsg(avPhysKey, GetKey());
+        plNotifyMsg *notifyMsg = new plNotifyMsg(avKey, GetKey());
         notifyMsg->fID = kNotifyTrigger;
         notifyMsg->Send();
         fAvatarMounting = true;
@@ -210,7 +209,7 @@ bool plAvLadderMod::MsgReceive(plMessage* msg)
 }
 
 // EMITCOMMAND
-void plAvLadderMod::EmitCommand(const plKey receiver)
+void plAvLadderMod::EmitCommand(const plKey& receiver)
 {
     hsKeyedObject *object = receiver->ObjectIsLoaded();
     plSceneObject *SO = plSceneObject::ConvertNoRef(object);
@@ -226,7 +225,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
             if( ! alreadyOnLadder)
             {
                 plSceneObject *seekObj = GetTarget();
-                plKey seekKey = seekObj->GetKey();      // this modifier's target is the seek object
+                const plKey& seekKey = seekObj->GetKey();      // this modifier's target is the seek object
 
                 const char *mountName, *dismountName, *traverseName;
 
@@ -292,7 +291,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                 ladBrain->SetType(plAvBrainGeneric::kLadder);
                 ladBrain->SetReverseFBControlsOnRelease(!fGoingUp);
 
-                plKey avKey = constAvMod->GetKey();
+                const plKey& avKey = constAvMod->GetKey();
 
                 // Very important that we dumb seek here. Otherwise you can run off the edge of a ladder, and seek will be helpless
                 // until you hit the ground, at which point you have no hope of successfully seeking.

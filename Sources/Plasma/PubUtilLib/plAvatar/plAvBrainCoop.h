@@ -80,7 +80,7 @@ public:
     uint16_t GetInitiatorSerial();
 
     plKey GetRecipient() override;
-    void SetRecipient(const plKey &recipient) override;
+    void SetRecipient(plKey recipient) override { fRecipients.emplace_back(std::move(recipient)); }
     
 private:
     uint32_t fInitiatorID;

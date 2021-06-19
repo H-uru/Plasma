@@ -540,7 +540,7 @@ PyObject *pyGUIControlListBox::New(pyKey& gckey)
 PyObject *pyGUIControlListBox::New(plKey objkey)
 {
     ptGUIControlListBox *newObj = (ptGUIControlListBox*)ptGUIControlListBox_type.tp_new(&ptGUIControlListBox_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

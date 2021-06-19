@@ -75,7 +75,7 @@ void plAvBrainDrive::Activate(plArmatureModBase *avMod)
 {
     plArmatureBrain::Activate(avMod);
 
-    IEnablePhysics(false, avMod->GetTarget(0)->GetKey());
+    IEnablePhysics(false);
     IToggleCtrlCodes(true);
 
     plCameraMsg* pMsg = new plCameraMsg;
@@ -88,8 +88,8 @@ void plAvBrainDrive::Activate(plArmatureModBase *avMod)
 void plAvBrainDrive::Deactivate()
 {
     if (fAvMod)
-    {   
-        IEnablePhysics(true, fAvMod->GetTarget(0)->GetKey());
+    {
+        IEnablePhysics(true);
         IToggleCtrlCodes(false);
 
         plCameraMsg* pMsg = new plCameraMsg;
@@ -114,7 +114,7 @@ void plAvBrainDrive::IToggleCtrlCodes(bool on) const
     }
 }
 
-void plAvBrainDrive::IEnablePhysics(bool enable, plKey avKey)
+void plAvBrainDrive::IEnablePhysics(bool enable)
 {
     fAvMod->EnablePhysics(enable);
 }

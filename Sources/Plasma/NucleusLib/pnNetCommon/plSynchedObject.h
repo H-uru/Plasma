@@ -95,8 +95,8 @@ public:
 
         plSynchedObject* GetObject() const { return plSynchedObject::ConvertNoRef(fObjKey->ObjectIsLoaded()); }
         StateDefn() : fSendFlags() { }
-        StateDefn(plKey k, uint32_t f, const ST::string& sdlName)
-            : fObjKey(k), fSendFlags(f), fSDLName(sdlName) { }
+        StateDefn(plKey k, uint32_t f, ST::string sdlName)
+            : fObjKey(std::move(k)), fSendFlags(f), fSDLName(std::move(sdlName)) { }
     };
 
 private:
@@ -111,7 +111,7 @@ private:
     static plSynchedObject* fStaticSynchedObj;      // static which temporarily holds address of each object's synchMgr
     static std::vector<StateDefn>   fDirtyStates;
 
-    static void IRemoveDirtyState(plKey o, const ST::string& sdlName);
+    static void IRemoveDirtyState(const plKey& o, const ST::string& sdlName);
     static void IAddDirtyState(plKey o, const ST::string& sdlName, uint32_t sendFlags);
     bool IOKToDirty(const ST::string& SDLStateName) const;
     SDLStateList::const_iterator IFindInSDLStateList(const SDLStateList& list, const ST::string& sdlName) const;
@@ -134,8 +134,8 @@ public:
     // setters
     void SetSynchFlagsBit(uint32_t f) { fSynchFlags |= f; }
     virtual void SetNetGroupConstant(plNetGroupId netGroup);
-    virtual void SetNetGroup(plNetGroupId netGroup) { fNetGroup = netGroup; }   
-    plNetGroupId SelectNetGroup(plKey groupKey);
+    virtual void SetNetGroup(plNetGroupId netGroup) { fNetGroup = std::move(netGroup); }
+    plNetGroupId SelectNetGroup(const plKey& groupKey);
 
     virtual bool DirtySynchState(const ST::string& sdlName, uint32_t sendFlags);
     void SendSDLStateMsg(const ST::string& SDLStateName, uint32_t synchFlags);  // don't use, only for net code

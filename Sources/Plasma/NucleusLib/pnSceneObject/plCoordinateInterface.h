@@ -109,12 +109,12 @@ protected:
     void ISetOwner(plSceneObject* so) override;
 
     virtual void ISetParent(plCoordinateInterface* par); // don't use, use AddChild on parent
-    void ISetSceneNode(plKey newNode) override;
+    void ISetSceneNode(const plKey& newNode) override;
     // objectToo moves the sceneObject to the new room, else just move the data and remove
     // the object from whatever room he's in.
 
     // Network only strange functions. Do not emulate or generalize this functionality.
-    void                    ISetNetGroupRecur(plNetGroupId netGroup);
+    void                    ISetNetGroupRecur(const plNetGroupId& netGroup);
 
     virtual void ISetChild(plSceneObject* child, hsSsize_t which); // sets parent on child
     virtual void IAddChild(plSceneObject* child); // sets parent on child

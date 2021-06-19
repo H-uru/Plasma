@@ -60,7 +60,7 @@ void plLogicModBase::ConsoleTrigger(plKey playerKey)
 {
     // Setup the event data in case this is a OneShot responder that needs it
     proPickedEventData ed;
-    ed.fPicker = playerKey;
+    ed.fPicker = std::move(playerKey);
     ed.fPicked = nullptr;
     fNotify->AddEvent(&ed);
 
@@ -302,7 +302,7 @@ void plLogicModBase::CreateNotifyMsg()
         fNotify->AddReceiver(receiver);
 }
 
-void plLogicModBase::AddNotifyReceiver(plKey receiver)
+void plLogicModBase::AddNotifyReceiver(const plKey& receiver)
 {
     fReceiverList.emplace_back(receiver);
     fNotify->AddReceiver(receiver);

@@ -279,7 +279,7 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const c
                                          });
         if (!alreadyLoaded)
         {
-            pfDialogNameSetKey* pDNSK = new pfDialogNameSetKey(name,recvrKey);
+            pfDialogNameSetKey* pDNSK = new pfDialogNameSetKey(name, std::move(recvrKey));
             fDialogToSetKeyOf.emplace_back(pDNSK);
         }
     }
@@ -443,7 +443,7 @@ void pfGameGUIMgr::SetDialogToNotify(const ST::string& name, plKey recvrKey)
     {
         if (dialog->GetName().compare_i(name) == 0)
         {
-            SetDialogToNotify(dialog, recvrKey);
+            SetDialogToNotify(dialog, std::move(recvrKey));
             break;
         }
     }
@@ -454,7 +454,7 @@ void pfGameGUIMgr::SetDialogToNotify(const ST::string& name, plKey recvrKey)
 //
 void pfGameGUIMgr::SetDialogToNotify(pfGUIDialogMod *dlg, plKey recvrKey)
 {
-    pfGUIDialogNotifyProc* handler = new pfGUIDialogNotifyProc(recvrKey);
+    pfGUIDialogNotifyProc* handler = new pfGUIDialogNotifyProc(std::move(recvrKey));
     dlg->SetHandler(handler);
     handler->OnInit();
 }

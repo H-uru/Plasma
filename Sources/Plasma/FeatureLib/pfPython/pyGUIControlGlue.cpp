@@ -380,7 +380,7 @@ PyObject *pyGUIControl::New(pyKey& gckey)
 PyObject *pyGUIControl::New(plKey objkey)
 {
     ptGUIControl *newObj = (ptGUIControl*)ptGUIControl_type.tp_new(&ptGUIControl_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

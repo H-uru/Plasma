@@ -70,8 +70,8 @@ protected:
     std::vector<plKey> fRecvr;
     bool          fNetForce;
 
-    virtual const plArmatureMod* IFindArmatureMod(plKey avObj);
-    virtual plKey IFindArmatureModKey(plKey avObj);
+    virtual const plArmatureMod* IFindArmatureMod(const plKey& avObj);
+    virtual plKey IFindArmatureModKey(const plKey& avObj);
     
 // XX   static bool IEnterGenericMode(const char *enterAnim, const char *idleAnim, const char *exitAnim, bool autoExit);
 // XX   static bool IExitTopmostGenericMode();

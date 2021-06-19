@@ -70,7 +70,7 @@ public:
           fLadderView(ladderView)
     { }
 
-    void EmitCommand(const plKey receiver);
+    void EmitCommand(const plKey& receiver);
 
     CLASSNAME_REGISTER( plAvLadderMod );
     GETINTERFACE_ANY( plAvLadderMod, plSingleModifier );
@@ -95,7 +95,7 @@ public:
 protected:
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }
     bool IIsReadyToClimb();
-    void ITriggerSelf(plKey avKey);
+    void ITriggerSelf(const plKey& avKey);
 
     enum fTypeField
     {

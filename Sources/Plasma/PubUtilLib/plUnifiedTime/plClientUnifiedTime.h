@@ -56,7 +56,7 @@ private:
     static plUnifiedTime    fFrameStartTime;
     static double           fSysTimeOffset;
 public:
-    plClientUnifiedTime(plUnifiedTime ut) { *this=ut;   }
+    plClientUnifiedTime(const plUnifiedTime& ut) { *this=ut;   }
     plClientUnifiedTime() {}
 
     static void SetSysTime();

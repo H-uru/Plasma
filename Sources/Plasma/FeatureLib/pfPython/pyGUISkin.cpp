@@ -54,7 +54,7 @@ pyGUISkin::pyGUISkin(pyKey& gckey)
 
 pyGUISkin::pyGUISkin(plKey objkey)
 {
-    fGCkey = objkey;
+    fGCkey = std::move(objkey);
 }
 
 pyGUISkin::pyGUISkin()

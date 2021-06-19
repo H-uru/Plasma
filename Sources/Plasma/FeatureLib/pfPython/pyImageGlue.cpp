@@ -221,7 +221,7 @@ PyObject *pyImage::New(plMipmap* mipmap)
 PyObject *pyImage::New(plKey mipmapKey)
 {
     ptImage *newObj = (ptImage*)ptImage_type.tp_new(&ptImage_type, nullptr, nullptr);
-    newObj->fThis->fMipMapKey = mipmapKey;
+    newObj->fThis->fMipMapKey = std::move(mipmapKey);
     return (PyObject*)newObj;
 }
 

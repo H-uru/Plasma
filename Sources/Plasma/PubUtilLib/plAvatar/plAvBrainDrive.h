@@ -92,7 +92,7 @@ public:
     GETINTERFACE_ANY( plAvBrainDrive, plArmatureBrain );
 
 protected:
-    void IEnablePhysics(bool enable, plKey avKey);
+    void IEnablePhysics(bool enable);
 
     void IToggleCtrlCodes(bool on) const;
 

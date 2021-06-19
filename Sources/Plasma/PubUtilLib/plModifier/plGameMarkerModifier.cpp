@@ -65,7 +65,7 @@ bool plGameMarkerModifier::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-plKey plGameMarkerModifier::IFindCloneKey(plKey baseKey)
+plKey plGameMarkerModifier::IFindCloneKey(const plKey& baseKey)
 {
     const plUoid& myUoid = GetKey()->GetUoid();
     plUoid cloneUoid = baseKey->GetUoid();

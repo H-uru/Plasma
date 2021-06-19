@@ -336,7 +336,7 @@ PyObject *pyGUIDialog::New(pyKey& gckey)
 PyObject *pyGUIDialog::New(plKey objkey)
 {
     ptGUIDialog *newObj = (ptGUIDialog*)ptGUIDialog_type.tp_new(&ptGUIDialog_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

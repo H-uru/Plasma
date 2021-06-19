@@ -81,12 +81,6 @@ void plLocation::Set(uint32_t seqNum)
     fSequenceNumber = seqNum;
 }
 
-void plLocation::Invalidate()
-{
-    fSequenceNumber = kInvalidLocIdx;
-    fFlags = 0; // Set to kInvalid?
-}
-
 bool plLocation::IsValid() const
 {
     return (fSequenceNumber == kInvalidLocIdx) ? false : true;
@@ -209,18 +203,6 @@ void plUoid::Write(hsStream* s) const
         s->WriteLE16(uint16_t(0)); // to avoid breaking format
         s->WriteLE32(fClonePlayerID);
     }
-}
-
-void plUoid::Invalidate()
-{
-    fObjectID = 0;
-    fCloneID = 0;
-    fClonePlayerID = 0;
-    fClassType = 0;
-    fObjectName = ST::string();
-    fLocation.Invalidate();
-    fLoadMask = plLoadMask::kAlways;
-
 }
 
 bool plUoid::IsValid() const

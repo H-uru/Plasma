@@ -58,7 +58,7 @@ plClimbMsg::plClimbMsg(const plKey &sender, const plKey &receiver, Command comma
 : plMessage(sender, receiver, nullptr),
   fCommand(command), fDirection(direction),
   fStatus(status),
-  fTarget(target)
+  fTarget(std::move(target))
 {
     // not here
 }

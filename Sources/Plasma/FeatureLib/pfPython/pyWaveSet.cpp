@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pyWaveSet::pyWaveSet(plKey key)
 {
-    fWaterKey = key;
+    fWaterKey = std::move(key);
 }
 
 pyWaveSet::pyWaveSet(pyKey& key)

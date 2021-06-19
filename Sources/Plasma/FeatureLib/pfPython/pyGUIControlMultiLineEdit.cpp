@@ -52,7 +52,7 @@ pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(pyKey& gckey) : pyGUIContro
 {
 }
 
-pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

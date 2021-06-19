@@ -332,7 +332,7 @@ public:
     void SetFollowerParticleSystemSO(plSceneObject *follower);
     plSceneObject *GetFollowerParticleSystemSO();
     void RegisterForBehaviorNotify(plKey key);
-    void UnRegisterForBehaviorNotify(plKey key);
+    void UnRegisterForBehaviorNotify(const plKey& key);
     const hsBitVector& GetRelRegionCareAbout() const    { return fRegionsICareAbout; }
     const hsBitVector& GetRelRegionImIn() const         { return fRegionsImIn; }
 

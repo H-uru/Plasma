@@ -53,7 +53,7 @@ pyGUIControlDynamicText::pyGUIControlDynamicText(pyKey& gckey) : pyGUIControl(gc
 {
 }
 
-pyGUIControlDynamicText::pyGUIControlDynamicText(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlDynamicText::pyGUIControlDynamicText(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

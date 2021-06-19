@@ -258,7 +258,7 @@ PLASMA_DEFAULT_TYPE(ptWaveSet, "Params:key\nCreates a new ptWaveSet");
 PyObject *pyWaveSet::New(plKey key)
 {
     ptWaveSet *newObj = (ptWaveSet*)ptWaveSet_type.tp_new(&ptWaveSet_type, nullptr, nullptr);
-    newObj->fThis->fWaterKey = key;
+    newObj->fThis->fWaterKey = std::move(key);
     return (PyObject*)newObj;
 }
 

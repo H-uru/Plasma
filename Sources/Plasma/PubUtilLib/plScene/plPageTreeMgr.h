@@ -115,7 +115,7 @@ public:
 
     bool            Harvest(plVolumeIsect* isect, std::vector<plDrawVisList>& levList);
 
-    void            AddOccluderList(const std::vector<plOccluder*> occList);
+    void            AddOccluderList(const std::vector<plOccluder*>& occList);
 
     plSpaceTree*    GetSpaceTree() { if( !fSpaceTree ) IBuildSpaceTree(); return fSpaceTree; }
 

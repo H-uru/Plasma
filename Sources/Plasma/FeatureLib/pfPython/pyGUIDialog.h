@@ -80,7 +80,7 @@ public:
 
     static bool IsGUIDialog(pyKey& gckey);
 
-    void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
+    void setKey(plKey key) { fGCkey = std::move(key); } // used by python glue, do NOT call
 
     enum            // these enums are used in Python so they have to match PlasmaTypes.py
     {

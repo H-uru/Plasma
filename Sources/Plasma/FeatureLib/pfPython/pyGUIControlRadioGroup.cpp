@@ -51,7 +51,7 @@ pyGUIControlRadioGroup::pyGUIControlRadioGroup(pyKey& gckey) :pyGUIControl(gckey
 {
 }
 
-pyGUIControlRadioGroup::pyGUIControlRadioGroup(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlRadioGroup::pyGUIControlRadioGroup(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

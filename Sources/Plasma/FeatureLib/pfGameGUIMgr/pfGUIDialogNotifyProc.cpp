@@ -63,16 +63,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfMessage/pfGUINotifyMsg.h"
 
-pfGUIDialogNotifyProc::pfGUIDialogNotifyProc( plKey &r )
-{
-    fReceiver = r;
-}
-
-
 void pfGUIDialogNotifyProc::ISendNotify( plKey ctrlKey, uint32_t event )
 {
     pfGUINotifyMsg  *notify = new pfGUINotifyMsg(fDialog->GetKey(), fReceiver, nullptr);
-    notify->SetEvent( ctrlKey, event );
+    notify->SetEvent(std::move(ctrlKey), event);
     notify->Send();
 }
 

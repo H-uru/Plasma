@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pySwimCurrentInterface::pySwimCurrentInterface(plKey key)
 {
-    fSwimCurrentKey = key;
+    fSwimCurrentKey = std::move(key);
 }
 
 pySwimCurrentInterface::pySwimCurrentInterface(pyKey& key)

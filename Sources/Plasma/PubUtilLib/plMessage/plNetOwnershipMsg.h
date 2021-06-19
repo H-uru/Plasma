@@ -65,7 +65,7 @@ public:
     plNetMsgGroupOwner::GroupInfo GetGroupInfo(int i) const { return fGroups[i]; }
     
     // setters
-    void AddGroupInfo(plNetMsgGroupOwner::GroupInfo gi) { fGroups.push_back(gi); }
+    void AddGroupInfo(plNetMsgGroupOwner::GroupInfo gi) { fGroups.emplace_back(std::move(gi)); }
     void ClearGroupInfo() { fGroups.clear(); }
     
     // IO 

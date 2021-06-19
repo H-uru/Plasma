@@ -386,7 +386,7 @@ bool plSceneObject::Eval(double secs, float delSecs)
     return retVal;
 }
 
-void plSceneObject::SetSceneNode(plKey newNode)
+void plSceneObject::SetSceneNode(const plKey& newNode)
 {
     plKey curNode=GetSceneNode();
     if( curNode == newNode )

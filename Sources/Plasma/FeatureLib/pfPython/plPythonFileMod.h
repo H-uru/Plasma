@@ -234,7 +234,7 @@ public:
     size_t NotifyListCount() const { return fReceivers.size(); }
     plKey GetNotifyListItem(size_t i) const { return fReceivers[i]; }
 
-    void AddParameter(plPythonParameter param) { fParameters.emplace_back(std::move(param)); }
+    void AddParameter(const plPythonParameter& param) { fParameters.emplace_back(param); }
     int32_t GetParameterListCount() const { return fParameters.size(); }
     plPythonParameter GetParameterItem(int32_t i) { return fParameters[i]; }
 

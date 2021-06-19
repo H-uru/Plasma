@@ -96,7 +96,7 @@ public:
 
     // getter and setters
     virtual plKey getKey() const { return fKey; }
-    virtual void setKey(plKey key) { fKey=key; }
+    virtual void setKey(plKey key) { fKey = std::move(key); }
     virtual ST::string getName() const;
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();

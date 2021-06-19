@@ -79,7 +79,7 @@ void plDrawInterface::SetProperty(int prop, bool on)
     }
 }
 
-void plDrawInterface::ISetSceneNode(plKey newNode)
+void plDrawInterface::ISetSceneNode(const plKey& newNode)
 {
     for (plDrawable* draw : fDrawables)
     {

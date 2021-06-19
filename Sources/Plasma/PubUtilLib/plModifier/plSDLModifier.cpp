@@ -80,7 +80,7 @@ uint32_t plSDLModifier::IApplyModFlags(uint32_t sendFlags)
 //
 // write to net msg and send to server
 //
-void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint32_t sendFlags)
+void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, const plKey& senderKey, uint32_t sendFlags)
 {
     hsAssert(senderKey, "nil senderKey?");
 
@@ -258,7 +258,7 @@ void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
 void plSDLModifier::AddNotifyForVar(plKey key, const ST::string& varName, float tolerance) const
 {
     // create a SDL notifier object
-    plStateChangeNotifier notifier(tolerance, key);
+    plStateChangeNotifier notifier(tolerance, std::move(key));
     // set the notification
     plStateDataRecord* rec = GetStateCache();
     if (rec)
@@ -266,6 +266,6 @@ void plSDLModifier::AddNotifyForVar(plKey key, const ST::string& varName, float 
         plSimpleStateVariable* var = rec->FindVar(varName);
         // was the variable found?
         if (var)
-            var->AddStateChangeNotification(notifier);
+            var->AddStateChangeNotification(std::move(notifier));
     }
 }

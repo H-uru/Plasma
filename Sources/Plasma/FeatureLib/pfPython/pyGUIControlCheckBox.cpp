@@ -52,7 +52,7 @@ pyGUIControlCheckBox::pyGUIControlCheckBox(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlCheckBox::pyGUIControlCheckBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlCheckBox::pyGUIControlCheckBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

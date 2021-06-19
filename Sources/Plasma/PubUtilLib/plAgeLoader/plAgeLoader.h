@@ -113,8 +113,8 @@ public:
     const plFileNameVec& PendingAgeFniFiles() const { return fPendingAgeFniFiles; }
 
     void AddPendingPageInRoomKey(plKey r);
-    bool RemovePendingPageInRoomKey(plKey r);
-    bool IsPendingPageInRoomKey(plKey p, int* idx=nullptr);
+    bool RemovePendingPageInRoomKey(const plKey& r);
+    bool IsPendingPageInRoomKey(const plKey& p, int* idx=nullptr);
 
     void ExecPendingAgeFniFiles();
     void ExecPendingAgeCsvFiles();

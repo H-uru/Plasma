@@ -108,7 +108,7 @@ void plAudioInterface::SetSoundFilename(int index, const char *filename, bool is
         fAudible->SetFilename(index, filename, isCompressed);
 }
 
-void plAudioInterface::ISetSceneNode(plKey key)
+void plAudioInterface::ISetSceneNode(const plKey& key)
 {
     if( fAudible )
     {

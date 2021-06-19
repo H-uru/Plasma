@@ -216,7 +216,7 @@ PyObject *pyGUIControlTextBox::New(pyKey& gckey)
 PyObject *pyGUIControlTextBox::New(plKey objkey)
 {
     ptGUIControlTextBox *newObj = (ptGUIControlTextBox*)ptGUIControlTextBox_type.tp_new(&ptGUIControlTextBox_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

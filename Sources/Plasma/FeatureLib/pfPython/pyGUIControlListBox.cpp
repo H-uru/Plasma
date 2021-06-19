@@ -319,7 +319,7 @@ class pfListPictureInBox : public pfGUIListPicture
         uint32_t              fSrcHeight;
 
     public:
-        pfListPictureInBox( plKey mipKey, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha ) : pfGUIListPicture( mipKey,respectAlpha )
+        pfListPictureInBox( plKey mipKey, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha ) : pfGUIListPicture( std::move(mipKey), respectAlpha )
         {
             fSrcX = x;
             fSrcY = y;
@@ -388,7 +388,7 @@ class pfListPictureInBoxWithSwatches : public pfListPictureInBox
                                                                             uint32_t width, uint32_t height, 
                                                                             bool respectAlpha,
                                                                             const hsColorRGBA &primaryColor, const hsColorRGBA &secondaryColor )
-                                            : pfListPictureInBox( mipKey, x, y, width, height, respectAlpha )
+                                            : pfListPictureInBox( std::move(mipKey), x, y, width, height, respectAlpha )
         {
             fPColor = primaryColor;
             fSColor = secondaryColor;
@@ -423,7 +423,7 @@ pyGUIControlListBox::pyGUIControlListBox(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlListBox::pyGUIControlListBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlListBox::pyGUIControlListBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
@@ -630,7 +630,7 @@ int16_t pyGUIControlListBox::AddTextWColor( const char *str, pyColor& textcolor,
     return retVal;
 }
 
-int16_t pyGUIControlListBox::AddTextWColorW( std::wstring str, pyColor& textcolor, uint32_t inheritalpha)
+int16_t pyGUIControlListBox::AddTextWColorW( const std::wstring& str, pyColor& textcolor, uint32_t inheritalpha)
 {
     if ( fGCkey )
     {
@@ -655,7 +655,7 @@ int16_t pyGUIControlListBox::AddTextWColorWSize( const char *str, pyColor& textc
     return retVal;
 }
 
-int16_t pyGUIControlListBox::AddTextWColorWSizeW( std::wstring str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
+int16_t pyGUIControlListBox::AddTextWColorWSizeW( const std::wstring& str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
 {
     if ( fGCkey )
     {
@@ -681,7 +681,7 @@ void pyGUIControlListBox::Add2TextWColor( const char *str1, pyColor& textcolor1,
     delete [] wStr1;
 }
 
-void pyGUIControlListBox::Add2TextWColorW( std::wstring str1, pyColor& textcolor1, std::wstring str2, pyColor& textcolor2, uint32_t inheritalpha)
+void pyGUIControlListBox::Add2TextWColorW( const std::wstring& str1, pyColor& textcolor1, const std::wstring& str2, pyColor& textcolor2, uint32_t inheritalpha)
 {
     if ( fGCkey )
     {

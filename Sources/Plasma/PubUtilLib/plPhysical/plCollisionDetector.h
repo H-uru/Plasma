@@ -63,8 +63,8 @@ protected:
     int8_t    fType;
     bool    fBumped, fTriggered;
 
-    plArmatureMod* IGetAvatarModifier(plKey key);
-    bool IIsDisabledAvatar(plKey key);
+    plArmatureMod* IGetAvatarModifier(const plKey& key);
+    bool IIsDisabledAvatar(const plKey& key);
 
 public:
     enum
@@ -211,7 +211,7 @@ public:
     ~plSubworldRegionDetector();
     
     bool MsgReceive(plMessage* msg) override;
-    void SetSubworldKey(plKey pKey) { fSub = pKey; }
+    void SetSubworldKey(plKey pKey) { fSub = std::move(pKey); }
     void SetTriggerOnExit(bool b) { fOnExit = b; }
 
     CLASSNAME_REGISTER( plSubworldRegionDetector );

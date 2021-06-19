@@ -163,7 +163,7 @@ PYTHON_CLASS_NEW_IMPL(ptKey, pyKey)
 PyObject *pyKey::New(plKey key)
 {
     ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
-    newObj->fThis->fKey = key;
+    newObj->fThis->fKey = std::move(key);
 #ifndef BUILDING_PYPLASMA
     newObj->fThis->fPyFileMod = nullptr;
     newObj->fThis->fNetForce = false;
@@ -185,7 +185,7 @@ PyObject *pyKey::New(pyKey *key)
 PyObject *pyKey::New(plKey key, plPythonFileMod* pymod)
 {
     ptKey *newObj = (ptKey*)ptKey_type.tp_new(&ptKey_type, nullptr, nullptr);
-    newObj->fThis->fKey = key;
+    newObj->fThis->fKey = std::move(key);
     newObj->fThis->fPyFileMod = pymod;
     newObj->fThis->fNetForce = false;
     return (PyObject*)newObj;

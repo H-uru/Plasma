@@ -54,12 +54,12 @@ plWaveSetBase::~plWaveSetBase()
 {
 }
 
-void plWaveSetBase::AddShore(plKey key)
+void plWaveSetBase::AddShore(const plKey& key)
 {
     hsgResMgr::ResMgr()->SendRef(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, IShoreRef()), plRefFlags::kPassiveRef);
 }
 
-void plWaveSetBase::AddDecal(plKey key)
+void plWaveSetBase::AddDecal(const plKey& key)
 {
     hsgResMgr::ResMgr()->SendRef(key, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, IDecalRef()), plRefFlags::kPassiveRef);
 }

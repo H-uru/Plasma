@@ -368,17 +368,17 @@ void plVoicePlayer::PlaybackVoiceMessage(const void* data, size_t size, int numF
     }
 }
 
-void plVoicePlayer::SetVelocity(const hsVector3 vel)
+void plVoicePlayer::SetVelocity(const hsVector3& vel)
 {
     fSound.SetVelocity(vel);
 }
 
-void plVoicePlayer::SetPosition(const hsPoint3 pos)
+void plVoicePlayer::SetPosition(const hsPoint3& pos)
 {
     fSound.SetPosition(pos);
 }
 
-void plVoicePlayer::SetOrientation(const hsPoint3 pos)
+void plVoicePlayer::SetOrientation(const hsPoint3& pos)
 {
     fSound.SetConeOrientation(pos.fX, pos.fY, pos.fZ);
 }

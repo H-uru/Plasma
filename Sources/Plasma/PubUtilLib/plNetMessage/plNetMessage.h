@@ -428,9 +428,9 @@ public:
     CLASSNAME_REGISTER( plNetMsgRoomsList );
     GETINTERFACE_ANY( plNetMsgRoomsList, plNetMessage );
 
-    void AddRoom(plKey rmKey);
-    void AddRoomLocation(plLocation loc, const ST::string& rmName);
-    int FindRoomLocation(plLocation loc);
+    void AddRoom(const plKey& rmKey);
+    void AddRoomLocation(const plLocation& loc, const ST::string& rmName);
+    int FindRoomLocation(const plLocation& loc);
 
     size_t GetNumRooms() const { return fRooms.size(); }
     plLocation GetRoomLoc(size_t i) const { return fRooms[i]; }
@@ -532,7 +532,7 @@ public:
     bool fUnload;
 
     plNetMsgPlayerPage() : fUnload(false) { SetBit(kNeedsReliableSend); }
-    plNetMsgPlayerPage(plUoid uoid, bool unload) : fUoid(uoid),   fUnload(unload) { }
+    plNetMsgPlayerPage(plUoid uoid, bool unload) : fUoid(std::move(uoid)),   fUnload(unload) { }
 
     CLASSNAME_REGISTER( plNetMsgPlayerPage );
     GETINTERFACE_ANY( plNetMsgPlayerPage, plNetMessage);
@@ -635,7 +635,11 @@ public:
         void Write(hsStream* s) const;
 
         GroupInfo() : fGroupID(plNetGroup::kNetGroupUnknown), fOwnIt(false) {}
-        GroupInfo(plNetGroupId gID, bool o) : fGroupID(gID),fOwnIt(o) {}
+        GroupInfo(plNetGroupId gID, bool o) : fGroupID(std::move(gID)),fOwnIt(o) {}
+        GroupInfo(const GroupInfo&) = default;
+        GroupInfo(GroupInfo&& move)
+            : fGroupID(std::move(move.fGroupID)), fOwnIt(move.fOwnIt)
+        { }
     };
 protected:
     std::vector<GroupInfo> fGroups; 
@@ -651,7 +655,7 @@ public:
     GroupInfo GetGroupInfo(size_t i) const { return fGroups[i]; }
 
     // setters
-    void AddGroupInfo(GroupInfo gi) { fGroups.push_back(gi); }
+    void AddGroupInfo(GroupInfo gi) { fGroups.emplace_back(std::move(gi)); }
     void ClearGroupInfo() { fGroups.clear(); }
 
     bool IsOwner() { return fGroups[0].fOwnIt; }

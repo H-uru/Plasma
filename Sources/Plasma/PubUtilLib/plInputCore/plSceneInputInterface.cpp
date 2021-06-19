@@ -929,8 +929,8 @@ void    plSceneInputInterface::ISetLastClicked( plKey obj, hsPoint3 hitPoint )
         }
     }
 
-    fLastClicked = obj;
     fLastClickIsAvatar = (obj == nullptr) ? false : fCurrClickIsAvatar;
+    fLastClicked = std::move(obj);
 
     if (fLastClicked != nullptr)
     {

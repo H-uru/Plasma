@@ -78,41 +78,41 @@ pyJournalBook::pyJournalBook( const char *esHTMLSource )
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( std::wstring esHTMLSource )
+pyJournalBook::pyJournalBook( const std::wstring& esHTMLSource )
 {
     fBook = new pfJournalBook( esHTMLSource.c_str() );
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey )
+pyJournalBook::pyJournalBook( const char *esHTMLSource, pyImage &coverImage, const pyKey& callbackKey )
 {
     fBook = new pfJournalBook( esHTMLSource, coverImage.GetKey(), callbackKey.getKey(), 
                                callbackKey.getKey() != nullptr ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc);
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey )
+pyJournalBook::pyJournalBook( const std::wstring& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey )
 {
     fBook = new pfJournalBook( esHTMLSource.c_str(), coverImage.GetKey(), callbackKey.getKey(), 
                                callbackKey.getKey() != nullptr ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc);
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey, const ST::string &guiName )
+pyJournalBook::pyJournalBook( const char *esHTMLSource, pyImage &coverImage, const pyKey& callbackKey, const ST::string &guiName )
 {
     fBook = new pfJournalBook( esHTMLSource, coverImage.GetKey(), callbackKey.getKey(), 
                                callbackKey.getKey() != nullptr ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc, guiName);
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey, const ST::string &guiName )
+pyJournalBook::pyJournalBook( const std::wstring& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey, const ST::string &guiName )
 {
     fBook = new pfJournalBook( esHTMLSource.c_str(), coverImage.GetKey(), callbackKey.getKey(), 
                                callbackKey.getKey() != nullptr ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc, guiName);
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( const char *esHTMLSource, pyKey callbackKey )
+pyJournalBook::pyJournalBook( const char *esHTMLSource, const pyKey& callbackKey )
 {
     fBook = new pfJournalBook(esHTMLSource, nullptr, callbackKey.getKey(),
                               callbackKey.getKey() != nullptr ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc);
@@ -120,7 +120,7 @@ pyJournalBook::pyJournalBook( const char *esHTMLSource, pyKey callbackKey )
     IMakeNewKey();
 }
 
-pyJournalBook::pyJournalBook( std::wstring esHTMLSource, pyKey callbackKey )
+pyJournalBook::pyJournalBook( const std::wstring& esHTMLSource, const pyKey& callbackKey )
 {
     fBook = new pfJournalBook(esHTMLSource.c_str(), nullptr, callbackKey.getKey(),
                               callbackKey.getKey() != nullptr ? callbackKey.getKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc);
@@ -137,7 +137,7 @@ pyJournalBook::~pyJournalBook()
     }
 }
 
-void pyJournalBook::MakeBook(std::string esHTMLSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
+void pyJournalBook::MakeBook(const std::string& esHTMLSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
     if (fBook)
         fBook->GetKey()->UnRefObject();
@@ -146,11 +146,11 @@ void pyJournalBook::MakeBook(std::string esHTMLSource, plKey coverImageKey /* = 
     if (callbackKey != nullptr)
         loc = callbackKey->GetUoid().GetLocation();
 
-    fBook = new pfJournalBook(esHTMLSource.c_str(), coverImageKey, callbackKey, loc, guiName);
+    fBook = new pfJournalBook(esHTMLSource.c_str(), std::move(coverImageKey), std::move(callbackKey), loc, guiName);
     IMakeNewKey();
 }
 
-void pyJournalBook::MakeBook(std::wstring esHTMLSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
+void pyJournalBook::MakeBook(const std::wstring& esHTMLSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
     if (fBook)
         fBook->GetKey()->UnRefObject();
@@ -159,7 +159,7 @@ void pyJournalBook::MakeBook(std::wstring esHTMLSource, plKey coverImageKey /* =
     if (callbackKey != nullptr)
         loc = callbackKey->GetUoid().GetLocation();
 
-    fBook = new pfJournalBook(esHTMLSource.c_str(), coverImageKey, callbackKey, loc, guiName);
+    fBook = new pfJournalBook(esHTMLSource.c_str(), std::move(coverImageKey), std::move(callbackKey), loc, guiName);
     IMakeNewKey();
 }
 
@@ -288,7 +288,7 @@ std::string pyJournalBook::GetEditableText() const
     return "";
 }
 
-void    pyJournalBook::SetEditableText( std::string text )
+void    pyJournalBook::SetEditableText( const std::string& text )
 {
     if (fBook != nullptr)
         fBook->SetEditableText(text);

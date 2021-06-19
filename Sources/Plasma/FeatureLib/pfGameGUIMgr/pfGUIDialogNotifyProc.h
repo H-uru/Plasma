@@ -69,7 +69,9 @@ class pfGUIDialogNotifyProc : public pfGUIDialogProc
 
     public:
 
-        pfGUIDialogNotifyProc( plKey &r );
+        pfGUIDialogNotifyProc(plKey r)
+            : fReceiver(std::move(r))
+        { }
 
         void    DoSomething(pfGUIControlMod *ctrl) override;
         void    HandleExtendedEvent(pfGUIControlMod *ctrl, uint32_t event) override;

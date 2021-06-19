@@ -1237,7 +1237,7 @@ private:
 
 public:
     plPageInAgeIter(plKey destKey, const plFileName& dataPath, const ST::string &ageName)
-        : fDestKey(destKey), fAgeName(ageName)
+        : fDestKey(std::move(destKey)), fAgeName(ageName)
     {
         plFileName ageFile = plFileName::Join(dataPath, ST::format("{}.age", ageName));
         if (!fAgeDesc.ReadFromFile(ageFile))

@@ -56,7 +56,7 @@ protected:
 
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }
 
-    plKey IFindCloneKey(plKey baseKey);
+    plKey IFindCloneKey(const plKey& baseKey);
     
     friend class pfMarkerInfo;
     friend class pfMarkerInfoOwned;
@@ -72,10 +72,10 @@ public:
     void ExportInit(plKey greenKey, plKey redKey, plKey openKey, plKey bounceAnimKey,
                     uint16_t placeSndIdx, uint16_t hitSndIdx)
     {
-        fGreenAnimKey = greenKey;
-        fRedAnimKey = redKey;
-        fOpenAnimKey = openKey;
-        fBounceAnimKey = bounceAnimKey;
+        fGreenAnimKey = std::move(greenKey);
+        fRedAnimKey = std::move(redKey);
+        fOpenAnimKey = std::move(openKey);
+        fBounceAnimKey = std::move(bounceAnimKey);
         fPlaceSndIdx = placeSndIdx;
         fHitSndIdx = hitSndIdx;
     }

@@ -66,7 +66,13 @@ public:
    plNetGroupId() : fFlags(0) {}
    plNetGroupId(const plLocation& id, const uint8_t flags) : fId(id), fFlags(flags) {  }
    plNetGroupId(const plLocation& id) : fId(id), fFlags(0) {  }
-   
+   plNetGroupId(const plNetGroupId& copy) = default;
+   plNetGroupId(plNetGroupId&& move)
+       : fId(move.fId), fFlags(move.fFlags), fDesc(std::move(move.fDesc))
+   {
+       move.fId.Invalidate();
+   }
+
    bool IsConstant() { return (fFlags & kNetGroupConstant) != 0; }
    void SetConstant(bool constantGroup) { fFlags &= constantGroup ? kNetGroupConstant : 0; }
    
@@ -77,7 +83,17 @@ public:
    bool operator==(const plNetGroupId& netGroup) const { return fId == netGroup.fId; }
    bool operator!=(const plNetGroupId& netGroup) const { return fId != netGroup.fId; }
    bool operator<(const plNetGroupId& netGroup) const { return fId < netGroup.fId; }
-   
+
+   plNetGroupId& operator=(const plNetGroupId&) = default;
+   plNetGroupId& operator=(plNetGroupId&& move)
+   {
+       fId = move.fId;
+       move.fId.Invalidate();
+       fFlags = move.fFlags;
+       fDesc = std::move(fDesc);
+       return *this;
+   }
+
    // read and write to hsStream
    void Write(hsStream* s) const;
    void Read(hsStream* s);

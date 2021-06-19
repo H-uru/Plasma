@@ -260,7 +260,7 @@ public:
     int IsLocallyOwned(const plSynchedObject* obj) const override;   // returns yes/no/maybe
     int IsLocallyOwned(const plUoid&) const override;        // for special cases, like sceneNodes. returns yes/no/maybe
     plNetGroupId GetEffectiveNetGroup(const plSynchedObject*& obj) const;
-    plNetGroupId SelectNetGroup(plSynchedObject* objIn, plKey groupKey) override;
+    plNetGroupId SelectNetGroup(plSynchedObject* objIn, const plKey& groupKey) override;
 
     void SendLocalPlayerAvatarCustomizations();
     void SendApplyAvatarCustomizationsMsg(const plKey msgReceiver, bool netPropagate=true, bool localPropagate=true);
@@ -318,8 +318,8 @@ public:
     const plKeyVec& RemotePlayerKeys() const { return fRemotePlayerKeys;  }
     plSynchedObject* GetRemotePlayer(int i) const;
     void AddRemotePlayerKey(plKey p);
-    bool IsRemotePlayerKey(const plKey p, int* idx=nullptr) override;
-    bool IsAPlayerKey(const plKey pKey) { return (pKey==GetLocalPlayerKey() || IsRemotePlayerKey(pKey));    }
+    bool IsRemotePlayerKey(const plKey& p, int* idx=nullptr) override;
+    bool IsAPlayerKey(const plKey& pKey) { return (pKey==GetLocalPlayerKey() || IsRemotePlayerKey(pKey));    }
 
     void SetConsoleOutput( bool b ) { SetFlagsBit(kConsoleOutput, b); }
     bool GetConsoleOutput() const { return GetFlagsBit(kConsoleOutput); }

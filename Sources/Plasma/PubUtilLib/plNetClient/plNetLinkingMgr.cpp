@@ -719,7 +719,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
     }
 }
 // my special version - cjp
-void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID, plKey replyKey )
+void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID, const plKey& replyKey )
 {
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
 

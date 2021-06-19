@@ -383,8 +383,8 @@ PF_CONSOLE_CMD( Avatar_Multistage, Advance, "", "Advances the avatar's current m
     
     if (avatar)
     {
-        plKey avKey = avatar->GetKey();
-        
+        const plKey& avKey = avatar->GetKey();
+
         plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nullptr, avKey, plAvBrainGenericMsg::kNextStage, 0, true, 0.5f);
         msg->Send();
     }
@@ -397,8 +397,8 @@ PF_CONSOLE_CMD( Avatar_Multistage, Regress, "", "Regresses the avatar's current 
     
     if (avatar)
     {
-        plKey avKey = avatar->GetKey();
-        
+        const plKey& avKey = avatar->GetKey();
+
         plAvBrainGenericMsg *msg = new plAvBrainGenericMsg(nullptr, avKey, plAvBrainGenericMsg::kPrevStage, 0, true, 0.5f);
         msg->Send();
     }
@@ -491,15 +491,8 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
         
         if(mod)
         {
-            plKey seekKey = mod->GetKey();
-            plSeekPointMod *seekMod = (plSeekPointMod *)seekKey->GetObjectPtr();
-            plSceneObject *seekTarget = seekMod->GetTarget(0);
-            plKey targetKey = seekTarget->GetKey();
-            
-            plKey avKey = avatar->GetKey();
-            float unused = 0.0f;
-            plAvSeekMsg *msg = new plAvSeekMsg(nullptr, avKey, targetKey, unused, false);
-            
+            plSceneObject *seekTarget = mod->GetTarget(0);
+            plAvSeekMsg *msg = new plAvSeekMsg(nullptr, avatar->GetKey(), seekTarget->GetKey(), 0.f, false);
             plgDispatch::MsgSend(msg);
         }
     }
@@ -777,8 +770,8 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableDismount, "string direction", "Let the avata
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
         const char *dirStr = params[0];
         plClimbMsg::Direction dir;
         if(stricmp(dirStr, "up") == 0)
@@ -799,8 +792,8 @@ PF_CONSOLE_CMD( Avatar_Climb, EnableClimb, "string direction, int onOff", "Allow
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
         const char *dirStr = params[0];
         plClimbMsg::Direction dir;
         if(stricmp(dirStr, "up") == 0)
@@ -822,8 +815,8 @@ PF_CONSOLE_CMD( Avatar_Climb, Release, "", "")
     plArmatureMod *avMod = const_cast<plArmatureMod *>(plAvatarMgr::GetInstance()->GetLocalAvatar());
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kRelease);
         msg->Send();
     }
@@ -834,8 +827,8 @@ PF_CONSOLE_CMD( Avatar_Climb, FallOff, "", "")
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     if(avMod)
     {
-        plKey mgr = plAvatarMgr::GetInstance()->GetKey();
-        plKey avKey = avMod->GetKey();
+        const plKey& mgr = plAvatarMgr::GetInstance()->GetKey();
+        const plKey& avKey = avMod->GetKey();
         plClimbMsg *msg = new plClimbMsg(mgr, avKey, plClimbMsg::kFallOff);
         msg->Send();
     }

@@ -70,11 +70,11 @@ public:
     void Read(hsStream* s, hsResMgr* mgr) override { hsKeyedObject::Read(s, mgr); }
     void Write(hsStream* s, hsResMgr* mgr) override { hsKeyedObject::Write(s, mgr); }
     
-    virtual void  SetSceneObject(plKey obj) = 0;
+    virtual void  SetSceneObject(const plKey& obj) = 0;
     virtual plKey GetSceneObject() const = 0;
     
     // These two should only be called by the SceneNode
-    virtual void  SetSceneNode(plKey node) = 0;
+    virtual void  SetSceneNode(const plKey& node) = 0;
     virtual plKey GetSceneNode() const = 0;
 
     virtual void        Play(int index = -1) = 0;
@@ -86,7 +86,7 @@ public:
     virtual void        SetMax(const float m,int index = -1) = 0; // sets maximum falloff distance
     virtual float    GetMin(int index = -1) const  = 0;
     virtual float    GetMax(int index = -1) const = 0;
-    virtual void        SetVelocity(const hsVector3 vel,int index = -1) = 0;
+    virtual void        SetVelocity(const hsVector3& vel,int index = -1) = 0;
     virtual hsVector3   GetVelocity(int index = -1) const = 0;
     virtual hsPoint3    GetPosition(int index = -1) = 0;
     virtual void        SetLooping(bool loop,int index = -1) = 0; // sets continuous loop or stops looping

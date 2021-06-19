@@ -74,7 +74,7 @@ protected:
 
     // SetSceneNode just called by owner. If we're an interface to external data,
     // we need to pass the change on. Otherwise, do nothing.
-    virtual void    ISetSceneNode(plKey node) {} 
+    virtual void    ISetSceneNode(const plKey& node) {} 
     plSceneObject*  IGetOwner() const { return fOwner; }
     virtual void    ISetOwner(plSceneObject* owner);
     void            ISetAllProperties(const hsBitVector& b);    

@@ -352,12 +352,12 @@ void plSound::ISynchToStartTime()
     }
 } 
 
-void plSound::SetPosition(const hsPoint3 pos)
+void plSound::SetPosition(const hsPoint3& pos)
 {
     f3DPosition = pos;
 }
 
-void plSound::SetVelocity(const hsVector3 vel)
+void plSound::SetVelocity(const hsVector3& vel)
 {
     f3DVelocity = vel;
 }

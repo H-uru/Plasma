@@ -201,12 +201,7 @@ void plExcludeRegionModifier::RemoveTarget( plSceneObject *so )
     plSingleModifier::RemoveTarget(so);
 }
 
-void plExcludeRegionModifier::AddSafePoint(plKey& key)
-{
-    fSafePoints.push_back(key);
-}
-
-int plExcludeRegionModifier::IFindClosestSafePoint(plKey avatar)
+int plExcludeRegionModifier::IFindClosestSafePoint(const plKey& avatar)
 {
     float closestDist = 0.f;
     int closestIdx = -1;

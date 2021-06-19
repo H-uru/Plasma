@@ -396,7 +396,7 @@ plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg() : fForward(false)
 plPseudoLinkAnimTriggerMsg::plPseudoLinkAnimTriggerMsg(bool forward, plKey avatarKey)
 {
     fForward = forward;
-    fAvatarKey = avatarKey;
+    fAvatarKey = std::move(avatarKey);
     SetBCastFlag(plMessage::kBCastByExactType);
 }
 

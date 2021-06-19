@@ -55,7 +55,7 @@ protected:
     plStateDataRecord* fStateCache;
     bool    fSentOrRecvdState;
     
-    void ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint32_t sendFlags);     // transmit net msg 
+    void ISendNetMsg(plStateDataRecord*& state, const plKey& senderKey, uint32_t sendFlags);     // transmit net msg 
     virtual void IPutCurrentStateIn(plStateDataRecord* dstState) = 0;
     virtual void ISetCurrentStateFrom(const plStateDataRecord* srcState) = 0;
     virtual void ISentState(const plStateDataRecord* sentState) {}

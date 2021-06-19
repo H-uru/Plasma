@@ -103,9 +103,9 @@ public:
     ~plVoicePlayer();
     void PlaybackVoiceMessage(const void* data, size_t size, int numFramesInBuffer, uint8_t flags);
     void PlaybackUncompressedVoiceMessage(const void* data, size_t size, uint32_t rate);
-    void SetVelocity(const hsVector3 vel);
-    void SetPosition(const hsPoint3 pos);
-    void SetOrientation(const hsPoint3 pos);
+    void SetVelocity(const hsVector3& vel);
+    void SetPosition(const hsPoint3& pos);
+    void SetOrientation(const hsPoint3& pos);
 
     void SetTalkIcon(int index, uint32_t str){}
     void ClearTalkIcon(){}

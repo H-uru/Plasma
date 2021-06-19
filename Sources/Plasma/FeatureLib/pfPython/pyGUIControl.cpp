@@ -61,7 +61,7 @@ pyGUIControl::pyGUIControl(pyKey& gckey)
 
 pyGUIControl::pyGUIControl(plKey objkey)
 {
-    fGCkey = objkey;
+    fGCkey = std::move(objkey);
 }
 
 pyGUIControl& pyGUIControl::operator=(const pyGUIControl& other)

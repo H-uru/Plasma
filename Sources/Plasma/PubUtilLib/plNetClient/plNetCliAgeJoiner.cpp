@@ -115,7 +115,7 @@ struct plNCAgeJoiner {
     void ExecNextOp ();
 
     static void IDispatchMsgReceiveCallback ();
-    static void IResMgrProgressBarCallback (plKey key);
+    static void IResMgrProgressBarCallback (const plKey& key);
 
     static plNCAgeJoiner* s_instance;
 };
@@ -179,7 +179,7 @@ void plNCAgeJoiner::IDispatchMsgReceiveCallback () {
 }
 
 //============================================================================
-void plNCAgeJoiner::IResMgrProgressBarCallback (plKey key) {
+void plNCAgeJoiner::IResMgrProgressBarCallback (const plKey& key) {
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (s_instance)
         s_instance->progressBar->SetStatusText(key->GetName());

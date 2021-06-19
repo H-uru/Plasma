@@ -79,7 +79,7 @@ public:
     static bool IsGUIControlTextBox(pyKey& gckey);
 
     virtual void    SetText( const char *text );
-    virtual void    SetTextW( std::wstring text );
+    virtual void    SetTextW( const std::wstring& text );
     virtual std::string GetText();
     virtual std::wstring GetTextW();
     virtual void    SetFontSize( uint8_t size );

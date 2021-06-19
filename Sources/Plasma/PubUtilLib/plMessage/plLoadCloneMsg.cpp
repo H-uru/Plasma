@@ -59,8 +59,8 @@ plLoadCloneMsg::plLoadCloneMsg()
 
 // CTOR uoidToClone, requestorKey, userData, isLoading
 // this form is for creating new clones
-plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData)
-    : fRequestorKey(requestorKey),
+plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, plKey requestorKey, uint32_t userData)
+    : fRequestorKey(std::move(requestorKey)),
       fUserData(userData),
       fValidMsg(),
       fTriggerMsg(),
@@ -93,9 +93,9 @@ plLoadCloneMsg::plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestor
 
 // CTOR existing, requestor, userData, isLoading
 // this form is for unloading or other operations on existing clones
-plLoadCloneMsg::plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, bool isLoading)
-: fCloneKey(existing),
-  fRequestorKey(requestor),
+plLoadCloneMsg::plLoadCloneMsg(plKey existing, plKey requestor, uint32_t userData, bool isLoading)
+: fCloneKey(std::move(existing)),
+  fRequestorKey(std::move(requestor)),
   fUserData(userData),
   fValidMsg(true),
   fTriggerMsg(),

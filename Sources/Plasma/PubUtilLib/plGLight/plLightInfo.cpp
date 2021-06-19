@@ -508,7 +508,7 @@ void plLightInfo::Write(hsStream* s, hsResMgr* mgr)
 }
 
 // These two should only be called by the SceneObject
-void plLightInfo::ISetSceneNode(plKey node)
+void plLightInfo::ISetSceneNode(const plKey& node)
 {
     if( node != fSceneNode )
     {

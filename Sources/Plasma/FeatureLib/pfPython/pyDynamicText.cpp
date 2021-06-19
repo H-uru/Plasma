@@ -73,7 +73,7 @@ pyDynamicText::pyDynamicText(plKey key)
     : fClipLeft(), fClipTop(), fClipRight(), fClipBottom(), fWrapWidth(), fWrapHeight(),
       fSenderKey(), fNetPropagate(), fNetForce(), fWrap(), fClip()
 {
-    fReceivers.emplace_back(key);
+    fReceivers.emplace_back(std::move(key));
 }
 
 

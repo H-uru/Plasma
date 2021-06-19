@@ -335,9 +335,6 @@ PF_CONSOLE_CMD(Audio, SetVolume, "string obj, float vol", "Sets the volume on a 
     if( !obj )
         return;
 
-    const plAudioInterface  *ai = obj->GetAudioInterface();
-    plKey   aiKey = ai->GetKey();
-
     plSoundMsg* cmd = new plSoundMsg;
     cmd->SetSender(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
     cmd->SetCmd( plSoundMsg::kSetVolume );

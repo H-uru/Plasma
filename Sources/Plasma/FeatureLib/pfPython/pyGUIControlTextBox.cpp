@@ -54,7 +54,7 @@ pyGUIControlTextBox::pyGUIControlTextBox(pyKey& gckey) : pyGUIControl(gckey)
     fOriginalColorScheme = nullptr;
 }
 
-pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(std::move(objkey))
 {
     fOriginalColorScheme = nullptr;
 }
@@ -102,7 +102,7 @@ void pyGUIControlTextBox::SetText( const char *text )
     delete [] wText;
 }
 
-void pyGUIControlTextBox::SetTextW( std::wstring text )
+void pyGUIControlTextBox::SetTextW( const std::wstring& text )
 {
     if ( fGCkey )
     {

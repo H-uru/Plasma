@@ -93,10 +93,8 @@ class plSceneInputInterface : public plInputInterface
         struct clickableTest
         {
             clickableTest(plKey k)
-            {
-                key = k;
-                val = false;
-            }
+                : key(std::move(k)), val()
+            { }
             plKey key;
             bool val;
         };

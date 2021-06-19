@@ -189,7 +189,7 @@ public:
     
     // tors
     plAvSeekMsg();
-    plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
+    plAvSeekMsg(const plKey& sender, const plKey& receiver, plKey seekKey, float duration, bool smartSeek,
                 plAvAlignment align = kAlignHandle, const ST::string& animName = {}, bool noSeek = false,
                 uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = {});
     
@@ -318,8 +318,8 @@ public:
         \param stage Which stage are we setting the loop count for?
         \param newLoopCount The loop count we are setting on the stage
     */
-    plAvBrainGenericMsg(plKey sender, plKey receiver,
-                                             Type type, int stage, int newLoopCount);
+    plAvBrainGenericMsg(const plKey& sender, const plKey& receiver,
+                        Type type, int stage, int newLoopCount);
     // plasma protocol
     CLASSNAME_REGISTER( plAvBrainGenericMsg );
     GETINTERFACE_ANY( plAvBrainGenericMsg, plAvatarMsg );
@@ -416,7 +416,7 @@ class plAvatarOpacityCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarOpacityCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarOpacityCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAvatarOpacityCallbackMsg(const plKey& receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarOpacityCallbackMsg );
@@ -446,7 +446,7 @@ class plAvatarPhysicsEnableCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAvatarPhysicsEnableCallbackMsg() : plEventCallbackMsg() {}
-    plAvatarPhysicsEnableCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAvatarPhysicsEnableCallbackMsg(const plKey& receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                                      plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
     
     CLASSNAME_REGISTER( plAvatarPhysicsEnableCallbackMsg );

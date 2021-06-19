@@ -81,8 +81,8 @@ public:
     pfGameScoreListMsg(ENetError result, uint32_t ownerId, const ST::string& name)
         : pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
     { }
-    pfGameScoreListMsg(ENetError result, std::vector<pfGameScore*> vec, uint32_t ownerId, const ST::string& name)
-        : fScores(vec), pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
+    pfGameScoreListMsg(ENetError result, std::vector<pfGameScore*> vec, uint32_t ownerId, ST::string name)
+        : fScores(std::move(vec)), pfGameScoreMsg(result), fOwnerId(ownerId), fName(std::move(name))
     { }
 
     ~pfGameScoreListMsg();

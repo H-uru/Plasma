@@ -69,8 +69,8 @@ protected:
     virtual const char* IGetSenderName(const plNetGameMember* gm) const = 0;
     virtual ST::string IGetAgeName() const = 0;
     virtual bool IIsSenderCCR(const plNetGameMember* gm=nullptr) const = 0;
-    virtual bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const = 0;
-    virtual bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const { return true; }
+    virtual bool IIsLocalAvatarKey(const plKey& key, const plNetGameMember* gm) const = 0;
+    virtual bool IIsLocalArmatureModKey(const plKey& key, const plNetGameMember* gm) const { return true; }
 
     virtual void ILogChatMessage(const plMessage* msg_, const plNetGameMember* gm) const {}
     virtual void ILogCCRMessage(int16_t classIndex, const plNetGameMember* gm) const {}

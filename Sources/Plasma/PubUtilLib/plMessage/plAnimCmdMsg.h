@@ -192,7 +192,7 @@ class plAGInstanceCallbackMsg : public plEventCallbackMsg
 {
 public:
     plAGInstanceCallbackMsg() : plEventCallbackMsg(), fInstance() { }
-    plAGInstanceCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAGInstanceCallbackMsg(const plKey& receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
       plEventCallbackMsg(receiver, e, idx, t, repeats, user), fInstance() { }
 
     CLASSNAME_REGISTER( plAGInstanceCallbackMsg );
@@ -212,7 +212,7 @@ protected:
 
 public:
     plAGDetachCallbackMsg() : plEventCallbackMsg() {}
-    plAGDetachCallbackMsg(plKey receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
+    plAGDetachCallbackMsg(const plKey& receiver, CallbackEvent e, int idx=0, float t=0, int16_t repeats=-1, uint16_t user=0) :
                           plEventCallbackMsg(receiver, e, idx, t, repeats, user) {}
 
     CLASSNAME_REGISTER( plAGDetachCallbackMsg );
@@ -222,7 +222,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) override { }
     void Write(hsStream* stream, hsResMgr* mgr) override { }
 
-    void SetAnimName(const ST::string& name) { fAnimName = name; }
+    void SetAnimName(ST::string name) { fAnimName = std::move(name); }
     ST::string GetAnimName() const { return fAnimName; }
 };
 

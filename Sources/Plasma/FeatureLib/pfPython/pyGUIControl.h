@@ -73,7 +73,7 @@ public:
     pyGUIControl& operator=(const pyGUIControl& other);
     pyGUIControl& Copy(const pyGUIControl& other);
 
-    void setKey(plKey key) {fGCkey = key;} // only used by python glue, do NOT call
+    void setKey(plKey key) {fGCkey = std::move(key);} // only used by python glue, do NOT call
 
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass

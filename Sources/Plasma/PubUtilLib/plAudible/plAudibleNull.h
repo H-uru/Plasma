@@ -58,10 +58,10 @@ public:
     GETINTERFACE_ANY( plAudibleNull, plAudible );
 
     plKey GetSceneNode() const override { return fSceneNode; }
-    void SetSceneNode(plKey newNode) override;
+    void SetSceneNode(const plKey& newNode) override;
 
     plKey GetSceneObject() const override { return fSceneObj; }
-    void SetSceneObject(plKey newNode) override { }
+    void SetSceneObject(const plKey& newNode) override { }
 
     plAudible& SetProperty(int prop, bool on) override { return *this; }
     bool GetProperty(int prop) override { return false; }
@@ -76,7 +76,7 @@ public:
     plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1) override { return *this; }
     float    GetMin(int index = -1) const override { return 0; }
     float    GetMax(int index = -1) const override { return 0; }
-    void        SetVelocity(const hsVector3 vel,int index = -1) override { }
+    void        SetVelocity(const hsVector3& vel,int index = -1) override { }
     hsVector3   GetVelocity(int index = -1) const override;
     hsPoint3    GetPosition(int index = -1) override;
     void        SetLooping(bool loop,int index = -1) override { } // sets continuous loop or stops looping

@@ -87,7 +87,7 @@ public:
     uint32_t GetNumRegions() const; // includes the secret 0 region in its count
     void ParseCsvInput(hsStream *s);
 
-    ST::string GetRegionNames(hsBitVector regions);
+    ST::string GetRegionNames(const hsBitVector& regions);
 };
 
 #endif // plRelevanceMgr_inc

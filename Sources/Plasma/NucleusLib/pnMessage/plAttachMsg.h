@@ -56,10 +56,10 @@ public:
     //      plRefMsg::kOnRequest - I'm adding this child to the receiver
     //      plRefMsg::kOnRemove - I'm detaching this child from the receiver
     plAttachMsg(const plKey& rcv, hsKeyedObject* child, uint8_t context,
-                const plKey snd=nullptr)
+                plKey snd = {})
         : plRefMsg(rcv, context)
     {
-        SetSender(snd);
+        SetSender(std::move(snd));
         SetRef(child);
     }
 

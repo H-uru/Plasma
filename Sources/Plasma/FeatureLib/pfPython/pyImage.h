@@ -79,7 +79,7 @@ protected:
     // Constructor from C++
     pyImage(plKey mipmapKey)
     {
-        fMipMapKey = mipmapKey;
+        fMipMapKey = std::move(mipmapKey);
 #ifndef BUILDING_PYPLASMA
         fMipmap = nullptr;
 #endif

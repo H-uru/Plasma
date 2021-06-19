@@ -198,7 +198,7 @@ protected:
 public:
 
     plNetMsgObjectHelper() {}
-    plNetMsgObjectHelper(const plKey key) { SetFromKey(key); }
+    plNetMsgObjectHelper(const plKey& key) { SetFromKey(key); }
     virtual ~plNetMsgObjectHelper() { }
     CLASSNAME_REGISTER( plNetMsgObjectHelper );
     GETINTERFACE_ANY(plNetMsgObjectHelper, plCreatable);
@@ -241,7 +241,7 @@ public:
     void Reset();
     size_t GetNumObjects() const { return fObjects.size(); }
     plNetMsgObjectHelper* GetObject(size_t i) { return fObjects[i]; }
-    void AddObject(plKey key) { fObjects.push_back(new plNetMsgObjectHelper(key)); }
+    void AddObject(const plKey& key) { fObjects.push_back(new plNetMsgObjectHelper(key)); }
 };
 
 //
@@ -269,7 +269,7 @@ public:
     plUoid GetAvatarUoid() const { return fAvatarUoid; }
 
     void SetFlags(uint32_t v) { fFlags=v; }   
-    void SetAvatarUoid(plUoid u) { fAvatarUoid=u; }
+    void SetAvatarUoid(plUoid u) { fAvatarUoid = std::move(u); }
 };
 
 //

@@ -51,7 +51,7 @@ plRideAnimatedPhysMsg::plRideAnimatedPhysMsg()
 }
 plRideAnimatedPhysMsg::plRideAnimatedPhysMsg(const plKey &sender, const plKey &receiver, bool entering, plKey regionKey)
 : plMessage(sender, receiver, nullptr)
-,fRegion(regionKey)
+,fRegion(std::move(regionKey))
 ,fEntering(entering)
 {
 }

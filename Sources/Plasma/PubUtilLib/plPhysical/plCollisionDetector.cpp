@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plSimStateMsg.h"
 #include "plModifier/plDetectorLog.h"
 
-plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
+plArmatureMod* plCollisionDetector::IGetAvatarModifier(const plKey& key)
 {
     plSceneObject* avObj = plSceneObject::ConvertNoRef(key->ObjectIsLoaded());
     if (avObj)
@@ -84,7 +84,7 @@ plArmatureMod* plCollisionDetector::IGetAvatarModifier(plKey key)
     return nullptr;
 }
 
-bool plCollisionDetector::IIsDisabledAvatar(plKey key)
+bool plCollisionDetector::IIsDisabledAvatar(const plKey& key)
 {
     plArmatureMod* avMod = IGetAvatarModifier(key);
     plArmatureBrain* avBrain = avMod ? avMod->GetCurrentBrain() : nullptr;
@@ -326,7 +326,7 @@ void plObjectInVolumeDetector::ISendTriggerMsg(plKey hitter, bool entering)
     activatorMsg->SetSender(GetKey());
     activatorMsg->AddReceivers(fReceivers);
     activatorMsg->fHiteeObj = fProxyKey ? fProxyKey : GetTarget()->GetKey();
-    activatorMsg->fHitterObj = hitter;
+    activatorMsg->fHitterObj = std::move(hitter);
     if (entering)
         activatorMsg->SetTriggerType(plActivatorMsg::kVolumeEnter);
     else

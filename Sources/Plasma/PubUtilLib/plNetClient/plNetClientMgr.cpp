@@ -589,7 +589,7 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
 //
 // Determine the net group for a given object (based on paging unit)
 //
-plNetGroupId plNetClientMgr::SelectNetGroup(plSynchedObject* objIn, plKey roomKey)
+plNetGroupId plNetClientMgr::SelectNetGroup(plSynchedObject* objIn, const plKey& roomKey)
 {
     if( objIn->GetSynchFlags() & plSynchedObject::kHasConstantNetGroup )
         return objIn->GetNetGroup();
@@ -787,7 +787,7 @@ plSynchedObject* plNetClientMgr::GetRemotePlayer(int i) const
 //
 // check if a key si a remote player
 //
-bool plNetClientMgr::IsRemotePlayerKey(const plKey pKey, int *idx)
+bool plNetClientMgr::IsRemotePlayerKey(const plKey& pKey, int *idx)
 {
     if (pKey)
     {
@@ -808,8 +808,8 @@ void plNetClientMgr::AddRemotePlayerKey(plKey pKey)
     hsAssert(pKey, "adding nil remote player key");
     if (!IsRemotePlayerKey(pKey))
     {
-        fRemotePlayerKeys.push_back(pKey);
-        hsAssert(pKey!=fLocalPlayerKey, "setting remote player to the local player?");
+        hsAssert(pKey != fLocalPlayerKey, "setting remote player to the local player?");
+        fRemotePlayerKeys.emplace_back(std::move(pKey));
     }
 }
 
@@ -1148,7 +1148,7 @@ void plNetClientMgr::MakeCCRInvisible(plKey avKey, int level)
     }
     
     plAvatarStealthModeMsg *msg = new plAvatarStealthModeMsg();
-    msg->SetSender(avKey);
+    msg->SetSender(std::move(avKey));
     msg->fLevel = level;
 
     if (GetCCRLevel()<level)    // I'm a lower level than him, so he's invisible to me
