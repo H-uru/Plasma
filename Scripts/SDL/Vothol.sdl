@@ -55,5 +55,5 @@ STATEDESC Vothol
     VAR BOOL        votholChisoBookVis[1]            DEFAULT=1    DEFAULTOPTION=VAULT
 
     # State variables
-    VAR BYTE	    nb01LakeLightState[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BYTE        nb01LakeLightState[1]            DEFAULT=0    DEFAULTOPTION=VAULT
 }

@@ -40,9 +40,9 @@
 # 
 # *==LICENSE==*/
 #==============================================================
-# READ:	When modifying an SDL record, do *not* modify the
-#	existing record. You must copy and paste a new version
-#	below the current one and make your changes there.
+# READ: When modifying an SDL record, do *not* modify the
+#   existing record. You must copy and paste a new version
+#   below the current one and make your changes there.
 #==============================================================
 
 
@@ -51,7 +51,7 @@
 
 STATEDESC ErcanaCitySilo
 {
-	VERSION 1
+    VERSION 1
 
 ## Age Mechanics ##
     VAR INT    ercaGotPellet[1]    DEFAULT=0 DISPLAYOPTION=red
@@ -63,7 +63,7 @@ STATEDESC ErcanaCitySilo
 
 STATEDESC ErcanaCitySilo
 {
-	VERSION 2
+    VERSION 2
 
 ## Age Mechanics ##
     VAR INT     ercaGotPellet[1]            DEFAULT=0       DISPLAYOPTION=red
@@ -72,5 +72,5 @@ STATEDESC ErcanaCitySilo
     VAR BOOL    ercaGZMarkerVis[1]          DEFAULT=0       DEFAULTOPTION=VAULT
 
 # State variables
-    VAR BYTE	nb01LakeLightState[1]       DEFAULT=0       DEFAULTOPTION=VAULT
+    VAR BYTE    nb01LakeLightState[1]       DEFAULT=0       DEFAULTOPTION=VAULT
 }

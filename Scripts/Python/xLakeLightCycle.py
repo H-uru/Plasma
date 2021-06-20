@@ -40,22 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
+
 """
-Module: xLakeLightCycle.py
-Age: Global
-Date: June, 2021
-Author: Hazado
+SDLvalue
+0 = Dark
+1 = Quarter
+2 = Half
+3 = Three Quarter
+4 = Full
+
+Full Dni Day is 108,750 Earth seconds
+FullDniDay variable is divided by 100 due to layer animations not being able to go that high
+
 """
 
 from Plasma import *
 from PlasmaTypes import *
 
 stringSDLVarName    = ptAttribString(0,"Lake Light State SDL Variable")
-MatAnimLakeLight    = [ptAttribMaterialAnimation(1,"mat anim: Lake Light Dark"), \
-                       ptAttribMaterialAnimation(2,"mat anim: Lake Light Quarter"), \
-                       ptAttribMaterialAnimation(3,"mat anim: Lake Light Half"), \
-                       ptAttribMaterialAnimation(4,"mat anim: Lake Light Three Quarter"), \
-                       ptAttribMaterialAnimation(5,"mat anim: Lake Light Full")]
+DarkMatAnim         = ptAttribMaterialAnimation(1,"mat anim: Lake Light Dark")
+QuarterMatAnim      = ptAttribMaterialAnimation(2,"mat anim: Lake Light Quarter")
+HalfMatAnim         = ptAttribMaterialAnimation(3,"mat anim: Lake Light Half")
+ThreeQuarterMatAnim = ptAttribMaterialAnimation(4,"mat anim: Lake Light Three Quarter")
+FullMatAnim         = ptAttribMaterialAnimation(5,"mat anim: Lake Light Full")
+MatAnimLakeLight    = [DarkMatAnim, QuarterMatAnim, HalfMatAnim, ThreeQuarterMatAnim, FullMatAnim]
+FullDniDay          = 1087.5 
+
 
 class xLakeLightCycle(ptResponder):
     ###########################
@@ -64,17 +74,17 @@ class xLakeLightCycle(ptResponder):
         self.id = 986547
         version = 1
         self.version = version
-        PtDebugPrint("__init__xLakeLightCycle v.", version,".0")
+        PtDebugPrint(f"__init__xLakeLightCycle v.{version}")
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        dniSecsElapsed = PtGetAgeTimeOfDayPercent() * 1087.5
-        SDLvalue = 4
+        dniSecsElapsed = PtGetAgeTimeOfDayPercent() * FullDniDay
+        SDLvalue = 0
         if stringSDLVarName:
             ageSDL.setNotify(self.key,stringSDLVarName.value,0.0)
             SDLvalue = ageSDL[stringSDLVarName.value][0]
         
-        PtDebugPrint("xLakeLightCycle - Animation", SDLvalue, "set to time", dniSecsElapsed)
+        PtDebugPrint(f"xLakeLightCycle - Animation {SDLvalue} set to time {dniSecsElapsed}")
         MatAnimLakeLight[SDLvalue].animation.backwards(0)
         MatAnimLakeLight[SDLvalue].animation.looped(1)
         MatAnimLakeLight[SDLvalue].animation.skipToTime(dniSecsElapsed)
@@ -86,15 +96,13 @@ class xLakeLightCycle(ptResponder):
             return
             
         ageSDL = PtGetAgeSDL()
-        dniSecsElapsed = PtGetAgeTimeOfDayPercent() * 1087.5
+        dniSecsElapsed = PtGetAgeTimeOfDayPercent() * FullDniDay
         SDLvalue = ageSDL[stringSDLVarName.value][0]
         
-        x = 0
-        while x <= 4:
-            MatAnimLakeLight[x].animation.stop()
-            x += 1
+        for i in MatAnimLakeLight:
+            i.animation.stop()
         
-        PtDebugPrint("xLakeLightCycle - Animation", SDLvalue, "set to time", dniSecsElapsed)
+        PtDebugPrint(f"xLakeLightCycle - Animation {SDLvalue} set to time {dniSecsElapsed}")
         MatAnimLakeLight[SDLvalue].animation.backwards(0)
         MatAnimLakeLight[SDLvalue].animation.looped(1)
         MatAnimLakeLight[SDLvalue].animation.skipToTime(dniSecsElapsed)

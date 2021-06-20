@@ -40,9 +40,9 @@
 # 
 # *==LICENSE==*/
 #==============================================================
-# READ:	When modifying an SDL record, do *not* modify the
-#	existing record. You must copy and paste a new version
-#	below the current one and make your changes there.
+# READ: When modifying an SDL record, do *not* modify the
+#   existing record. You must copy and paste a new version
+#   below the current one and make your changes there.
 #==============================================================
 
 
@@ -51,7 +51,7 @@
 
 STATEDESC Kveer
 {
-	VERSION 1
+    VERSION 1
 
 # Boolean variables
 VAR BOOL    kverMystLinkingBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
@@ -62,11 +62,11 @@ VAR BOOL    kverMystLinkingBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
 
 STATEDESC Kveer
 {
-	VERSION 2
+    VERSION 2
 
 # Boolean variables
 VAR BOOL    kverMystLinkingBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
 
 # State variables
-VAR BYTE	nb01LakeLightState[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+VAR BYTE    nb01LakeLightState[1]        DEFAULT=0 DEFAULTOPTION=VAULT
 }
