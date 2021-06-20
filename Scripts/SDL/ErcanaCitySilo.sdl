@@ -73,5 +73,4 @@ STATEDESC ErcanaCitySilo
 
 # State variables
     VAR BYTE	nb01LakeLightState[1]       DEFAULT=0       DEFAULTOPTION=VAULT
-
 }
