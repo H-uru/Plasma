@@ -118,7 +118,7 @@ public:
     plKey LoadPlayer(const ST::string &name, const ST::string &account);
     plKey LoadPlayer(const ST::string &name, const ST::string &account, const ST::string &linkName);
     plKey LoadPlayerFromFile(const ST::string &name, const ST::string &account, const plFileName &clothingFile);
-    plKey LoadAvatar(ST::string name, const ST::string &accountName, bool isPlayer, plKey spawnPoint, plAvTask *initialTask,
+    plKey LoadAvatar(ST::string name, const ST::string &accountName, bool isPlayer, const plKey& spawnPoint, plAvTask *initialTask,
                      const ST::string &userStr = {}, const plFileName &clothingFile = {});
 
     /**
@@ -180,7 +180,7 @@ public:
     void PointToDniCoordinate(hsPoint3 pt, plDniCoordinateInfo* ret);
     void GetDniCoordinate(plDniCoordinateInfo* ret);
 
-    static void OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *linkMsg, plKey replyKey);
+    static void OfferLinkingBook(const plKey& hostKey, const plKey& guestKey, plMessage *linkMsg, const plKey& replyKey);
 
     bool IsACoopRunning();
     plStatusLog *GetLog() { return fLog; }
@@ -204,10 +204,10 @@ protected:
         We'll get that notification via the AddAvatar call later. In this function
         we're going to squirrel away an initialization message to pass to the armature
         modifier when it arrives. */
-    void IDeferInit(plKey playerSOKey, plMessage *initMsg);
+    void IDeferInit(const plKey& playerSOKey, plMessage *initMsg);
     
     /** See if we have an avatar type message saved for the given avatar and send them. */
-    void ISendDeferredInit(plKey playerSOKey);
+    void ISendDeferredInit(const plKey& playerSOKey);
 
     static plAvatarMgr* fInstance;      // the single instance of the avatar manager
 

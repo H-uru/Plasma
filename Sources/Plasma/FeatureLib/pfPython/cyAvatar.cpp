@@ -122,7 +122,7 @@ void cyAvatar::SetSenderKey(const pyKey& pKey)
 //
 //  PURPOSE    : find the armature mod for this sceneoabject (if its an avatar)
 //
-const plArmatureMod* cyAvatar::IFindArmatureMod(plKey avKey)
+const plArmatureMod* cyAvatar::IFindArmatureMod(const plKey& avKey)
 {
     plSceneObject* avObj = plSceneObject::ConvertNoRef(avKey->ObjectIsLoaded());
     if ( avObj )
@@ -148,7 +148,7 @@ const plArmatureMod* cyAvatar::IFindArmatureMod(plKey avKey)
 //
 //  PURPOSE    : find the armature mod for this sceneoabject (if its an avatar)
 //
-plKey cyAvatar::IFindArmatureModKey(plKey avKey)
+plKey cyAvatar::IFindArmatureModKey(const plKey& avKey)
 {
     const plArmatureMod* avatar = IFindArmatureMod(avKey);
     if ( avatar )
@@ -1514,10 +1514,7 @@ void cyAvatar::EnterSubWorld(pySceneObject& object)
                 plSceneObject *SO = plSceneObject::ConvertNoRef(SOkey->ObjectIsLoaded());
                 if(SO)
                 {
-                    plKey subWorldKey = SOkey;
-                    plKey physKey = avatar->GetKey();
-                    plKey nilKey;   // sorry
-                    plSubWorldMsg *swMsg = new plSubWorldMsg(nilKey, physKey, subWorldKey);
+                    plSubWorldMsg *swMsg = new plSubWorldMsg(nullptr, avatar->GetKey(), SOkey);
                     swMsg->Send();
                 }
             }
@@ -1541,10 +1538,8 @@ void cyAvatar::ExitSubWorld()
         plArmatureMod* avatar = (plArmatureMod*)IFindArmatureMod((plKey)fRecvr[0]);
         if(avatar)
         {
-            plKey subWorldKey;      // we're going to the nil subworld
-            plKey physKey = avatar->GetKey();
-            plKey nilKey;   // sorry
-            plSubWorldMsg *swMsg = new plSubWorldMsg(nilKey, physKey, subWorldKey);
+            // we're going to the main (null) subworld
+            plSubWorldMsg *swMsg = new plSubWorldMsg(nullptr, avatar->GetKey(), nullptr);
             swMsg->Send();
         }
     }

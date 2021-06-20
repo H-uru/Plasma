@@ -214,9 +214,9 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
 {
     if (avMod)
     {
-        plKey avModKey = avMod->GetKey();           // key to the avatar MODIFIER
-        plKey ourKey = GetKey();                    // key to this modifier
-        plKey seekKey = GetTarget()->GetKey();      // key to the scene object this modifier's on
+        const plKey& avModKey = avMod->GetKey();           // key to the avatar MODIFIER
+        const plKey& ourKey = GetKey();                    // key to this modifier
+        const plKey& seekKey = GetTarget()->GetKey();      // key to the scene object this modifier's on
 
         // send the SEEK message
 
@@ -298,7 +298,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
 
 // IBuildSitBrain ---------------------------------------------------------------------
 // ----------------
-plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKey,
+plAvBrainGeneric *plSittingModifier::IBuildSitBrain(const plKey& avModKey, const plKey& seekKey,
                     const char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify)
 {
     plArmatureMod *avatar = plArmatureMod::ConvertNoRef(avModKey->ObjectIsLoaded());

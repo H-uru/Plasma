@@ -259,7 +259,7 @@ PyObject *pyGUIControlEditBox::New(pyKey& gckey)
 PyObject *pyGUIControlEditBox::New(plKey objkey)
 {
     ptGUIControlEditBox *newObj = (ptGUIControlEditBox*)ptGUIControlEditBox_type.tp_new(&ptGUIControlEditBox_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

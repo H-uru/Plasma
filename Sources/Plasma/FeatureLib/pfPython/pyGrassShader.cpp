@@ -52,7 +52,7 @@ pyGrassShader::pyGrassShader()
 
 pyGrassShader::pyGrassShader(plKey key)
 {
-    fShaderKey = key;
+    fShaderKey = std::move(key);
 }
 
 pyGrassShader::pyGrassShader(pyKey& key)
@@ -62,7 +62,7 @@ pyGrassShader::pyGrassShader(pyKey& key)
 
 void pyGrassShader::SetKey(plKey key)
 {
-    fShaderKey = key;
+    fShaderKey = std::move(key);
 }
 
 //////////////////////////////////////////////////////////////////////

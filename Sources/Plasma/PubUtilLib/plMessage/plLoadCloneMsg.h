@@ -78,7 +78,7 @@ public:
         \param userData - Whatever you want. Will be propagated to the requestor after cloning.
                         
     */
-    plLoadCloneMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData);
+    plLoadCloneMsg(const plUoid &uoidToClone, plKey requestorKey, uint32_t userData);
 
     /** This constructor form is for when you want to send a clone message based on
         an existing cloned object. The two primary uses of this are:
@@ -90,7 +90,7 @@ public:
         \param userData - Whatever you want. Will be propagated to the requestor.
         \param isLoading - Are we loading or unloading?
         */
-    plLoadCloneMsg(const plKey &existing, const plKey &requestor, uint32_t userData, bool isLoading);
+    plLoadCloneMsg(plKey existing, plKey requestor, uint32_t userData, bool isLoading);
 
     virtual ~plLoadCloneMsg();
 

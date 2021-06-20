@@ -91,7 +91,7 @@ plKeyImp::plKeyImp() :
 }
 
 plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
-    fUoid(u),
+    fUoid(std::move(u)),
     fObjectPtr(),
     fStartPos(pos),
     fDataLen(len),

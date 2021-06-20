@@ -105,13 +105,13 @@ plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float 
 {
     float radius = width / 2.0f - .2f;
     float realHeight = height - width;
-    return new plPXPhysicalControllerCore(ownerSO, realHeight, radius);
+    return new plPXPhysicalControllerCore(std::move(ownerSO), realHeight, radius);
 }
 
 plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius)
     : fActor(),
       fProxyGen(),
-      plPhysicalControllerCore(ownerSO, height, radius)
+      plPhysicalControllerCore(std::move(ownerSO), height, radius)
 {
     ICreateController(fLocalPosition);
     gControllers.push_back(this);

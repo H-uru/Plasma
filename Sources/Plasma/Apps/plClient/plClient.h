@@ -194,7 +194,7 @@ protected:
     void    IStopProgress();
 
     static void IDispatchMsgReceiveCallback();
-    static void IReadKeyedObjCallback(plKey key);
+    static void IReadKeyedObjCallback(const plKey& key);
     static void IProgressMgrCallbackProc( plOperationProgress *progress );
 
     void    IPatchGlobalAgeFiles();

@@ -61,7 +61,7 @@ pyPlayer::pyPlayer(pyKey& avKey, const ST::string& pname, uint32_t pid, float di
 
 pyPlayer::pyPlayer(plKey avKey, const ST::string& pname, uint32_t pid, float distsq)
 {
-    fAvatarKey = avKey;
+    fAvatarKey = std::move(avKey);
     fPlayerName = pname;
     fPlayerID = pid;
     fDistSq = distsq;
@@ -77,7 +77,7 @@ pyPlayer::pyPlayer(const ST::string& pname, uint32_t pid)
 
 void pyPlayer::Init(plKey avKey, const ST::string& pname, uint32_t pid, float distsq) // used by python glue, do NOT call
 {
-    fAvatarKey = avKey;
+    fAvatarKey = std::move(avKey);
     fPlayerName = pname;
     fPlayerID = pid;
     fDistSq = distsq;

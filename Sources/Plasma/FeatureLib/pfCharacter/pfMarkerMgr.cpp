@@ -115,7 +115,7 @@ void pfMarkerMgr::IShutdown()
     UnRegisterAs(kMarkerMgr_KEY);
 }
 
-pfMarkerInfo* pfMarkerMgr::IFindMarker(plKey markerKey, uint32_t& id)
+pfMarkerInfo* pfMarkerMgr::IFindMarker(const plKey& markerKey, uint32_t& id)
 {
     std::map<uint32_t, pfMarkerInfo*>::iterator curMarker = fMarkers.begin();
     while (curMarker != fMarkers.end())
@@ -142,7 +142,7 @@ void pfMarkerMgr::IUpdate()
     }
 }
 
-void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
+void pfMarkerMgr::IMarkerHit(const plKey& markerKey, const plKey& playerKey)
 {
     if (playerKey != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
         return; // not the local player, abort

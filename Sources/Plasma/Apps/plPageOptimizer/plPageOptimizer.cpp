@@ -159,7 +159,7 @@ void plPageOptimizer::Optimize()
     }
 }
 
-void plPageOptimizer::KeyedObjectProc(plKey key)
+void plPageOptimizer::KeyedObjectProc(const plKey& key)
 {
     ST::string keyName = key->GetName();
     const char* className = plFactory::GetNameOfClass(key->GetUoid().GetClassType());
@@ -183,7 +183,7 @@ void plPageOptimizer::KeyedObjectProc(plKey key)
     }
 }
 
-void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey key)
+void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey& key)
 {
     class plUpdateKeyImp : public plKeyImp
     {

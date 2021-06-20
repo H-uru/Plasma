@@ -139,7 +139,7 @@ protected:
     hsBitVector fActiveSurfaces;
     plRandomSoundMod *fMods[plArmatureEffectsMgr::kMaxSurface];
 
-    uint32_t IFindSurfaceByTrigger(plKey trigger);
+    uint32_t IFindSurfaceByTrigger(const plKey& trigger);
 
 public:
     plArmatureEffectFootSound();

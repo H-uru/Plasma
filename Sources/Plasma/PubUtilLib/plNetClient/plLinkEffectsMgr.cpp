@@ -93,7 +93,7 @@ void plLinkEffectsMgr::Init()
     plgDispatch::Dispatch()->RegisterForExactType(plPseudoLinkEffectMsg::Index(), GetKey());
 }   
 
-plLinkEffectsTriggerMsg *plLinkEffectsMgr::IFindLinkTriggerMsg(plKey linkKey)
+plLinkEffectsTriggerMsg *plLinkEffectsMgr::IFindLinkTriggerMsg(const plKey& linkKey)
 {
     for (plLinkEffectsTriggerMsg* msg : fLinks)
     {
@@ -144,7 +144,7 @@ bool plLinkEffectsMgr::IHuntWaitlist(plLinkEffectsTriggerMsg *msg)
     return found || IHuntWaitlist(msg->GetLinkKey());
 }
 
-bool plLinkEffectsMgr::IHuntWaitlist(plKey linkKey)
+bool plLinkEffectsMgr::IHuntWaitlist(const plKey& linkKey)
 {
     bool found = false;
     for (hsSsize_t i = fWaitlist.size() - 1; i >= 0; i--)
@@ -527,7 +527,7 @@ void plLinkEffectsMgr::WaitForEffect(plKey linkKey, float time)
     plLinkCallbackMsg *callback = new plLinkCallbackMsg();
     callback->fEvent = kStop;
     callback->fRepeats = 0;
-    callback->fLinkKey = linkKey;
+    callback->fLinkKey = std::move(linkKey);
     double timeToDeliver = hsTimer::GetSysSeconds() + time;
     callback->SetTimeStamp( timeToDeliver );
     callback->Send( GetKey() );
@@ -547,7 +547,7 @@ plMessage *plLinkEffectsMgr::WaitForEffect(plKey linkKey)
     plLinkCallbackMsg *callback = new plLinkCallbackMsg();
     callback->fEvent = kStop;
     callback->fRepeats = 0;
-    callback->fLinkKey = linkKey;
+    callback->fLinkKey = std::move(linkKey);
     callback->AddReceiver( GetKey() );
     return callback;
 }
@@ -562,13 +562,13 @@ void plLinkEffectsMgr::WaitForPseudoEffect(plKey linkKey, float time)
     }
 
     plPseudoLinkAnimCallbackMsg* callback = new plPseudoLinkAnimCallbackMsg();
-    callback->fAvatarKey = linkKey;
+    callback->fAvatarKey = std::move(linkKey);
     double timeToDeliver = hsTimer::GetSysSeconds() + time;
     callback->SetTimeStamp( timeToDeliver );
     callback->Send( GetKey() );
 }
 
-plPseudoLinkEffectMsg* plLinkEffectsMgr::IFindPseudo(plKey avatarKey)
+plPseudoLinkEffectMsg* plLinkEffectsMgr::IFindPseudo(const plKey& avatarKey)
 {
     for (plPseudoLinkEffectMsg* msg : fPseudolist)
     {
@@ -579,7 +579,7 @@ plPseudoLinkEffectMsg* plLinkEffectsMgr::IFindPseudo(plKey avatarKey)
 
 }
 
-void plLinkEffectsMgr::IRemovePseudo(plKey avatarKey)
+void plLinkEffectsMgr::IRemovePseudo(const plKey& avatarKey)
 {
     for (auto iter = fPseudolist.cbegin(); iter != fPseudolist.cend(); ++iter)
     {

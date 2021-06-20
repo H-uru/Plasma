@@ -1187,13 +1187,13 @@ void plWaveSet7::SetRefObject(plSceneObject* refObj)
     hsgResMgr::ResMgr()->SendRef(refObj, msg, plRefFlags::kPassiveRef);
 }
 
-void plWaveSet7::AddBuoy(plKey soKey)
+void plWaveSet7::AddBuoy(const plKey& soKey)
 {
     plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefBuoy);
     hsgResMgr::ResMgr()->AddViaNotify(soKey, msg, plRefFlags::kPassiveRef);
 }
 
-void plWaveSet7::RemoveBuoy(plKey soKey)
+void plWaveSet7::RemoveBuoy(const plKey& soKey)
 {
     plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefBuoy);
     msg->SetRef(soKey->ObjectIsLoaded());
@@ -1413,12 +1413,12 @@ void plWaveSet7::IInitTexWave(int i)
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
-void plWaveSet7::SetSceneNode(const plKey& key)
+void plWaveSet7::SetSceneNode(plKey key)
 {
-    fSceneNode = key;
+    fSceneNode = std::move(key);
 }
 
-void plWaveSet7::AddDynaDecalMgr(plKey& key)
+void plWaveSet7::AddDynaDecalMgr(const plKey& key)
 {
     plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefDynaDecalMgr);
     hsgResMgr::ResMgr()->AddViaNotify(key, msg, plRefFlags::kPassiveRef);
@@ -1427,7 +1427,7 @@ void plWaveSet7::AddDynaDecalMgr(plKey& key)
     hsgResMgr::ResMgr()->AddViaNotify(GetKey(), msg, plRefFlags::kPassiveRef);
 }
 
-void plWaveSet7::RemoveDynaDecalMgr(plKey& key)
+void plWaveSet7::RemoveDynaDecalMgr(const plKey& key)
 {
     plGenRefMsg* msg = new plGenRefMsg(GetKey(), plRefMsg::kOnRemove, 0, kRefDynaDecalMgr);
     msg->SetRef(key->ObjectIsLoaded());

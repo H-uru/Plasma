@@ -221,14 +221,14 @@ void plWin32Sound::SetConeOrientation( float x, float y, float z )
     }
 }
 
-void plWin32Sound::SetVelocity( const hsVector3 vel )
+void plWin32Sound::SetVelocity( const hsVector3& vel )
 {
     plSound::SetVelocity(vel);
     if( fDSoundBuffer)
         fDSoundBuffer->SetVelocity(vel.fX, vel.fZ, vel.fY);
 }
 
-void plWin32Sound::SetPosition( const hsPoint3 pos )
+void plWin32Sound::SetPosition( const hsPoint3& pos )
 {
     plSound::SetPosition(pos);
     if(fDSoundBuffer)

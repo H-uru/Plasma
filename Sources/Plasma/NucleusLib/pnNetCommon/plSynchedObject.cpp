@@ -172,8 +172,7 @@ void plSynchedObject::IAddDirtyState(plKey objKey, const ST::string& sdlName, ui
 
     if (!found)
     {
-        StateDefn state(objKey, sendFlags, sdlName);
-        fDirtyStates.push_back(state);
+        fDirtyStates.emplace_back(std::move(objKey), sendFlags, sdlName);
     }   
     else
     {
@@ -187,7 +186,7 @@ void plSynchedObject::IAddDirtyState(plKey objKey, const ST::string& sdlName, ui
 //
 // STATIC
 //
-void plSynchedObject::IRemoveDirtyState(plKey objKey, const ST::string& sdlName)
+void plSynchedObject::IRemoveDirtyState(const plKey& objKey, const ST::string& sdlName)
 { 
     std::vector<StateDefn>::iterator it=fDirtyStates.begin();
     for( ; it != fDirtyStates.end(); it++)
@@ -203,11 +202,11 @@ void plSynchedObject::IRemoveDirtyState(plKey objKey, const ST::string& sdlName)
 void plSynchedObject::SetNetGroupConstant(plNetGroupId netGroup)
 {
    ClearSynchFlagsBit(kHasConstantNetGroup);
-   SetNetGroup(netGroup);   // may recurse
+   SetNetGroup(std::move(netGroup));   // may recurse
    SetSynchFlagsBit(kHasConstantNetGroup);
 }
 
-plNetGroupId plSynchedObject::SelectNetGroup(plKey rmKey)
+plNetGroupId plSynchedObject::SelectNetGroup(const plKey& rmKey)
 {
     return plNetClientApp::GetInstance() ? 
       plNetClientApp::GetInstance()->SelectNetGroup(this, rmKey) : plNetGroup::kNetGroupUnknown;

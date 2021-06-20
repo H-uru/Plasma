@@ -77,7 +77,7 @@ pyGUIDialog::pyGUIDialog(pyKey& gckey)
 
 pyGUIDialog::pyGUIDialog(plKey objkey)
 {
-    fGCkey = objkey;
+    fGCkey = std::move(objkey);
 }
 
 pyGUIDialog::pyGUIDialog()

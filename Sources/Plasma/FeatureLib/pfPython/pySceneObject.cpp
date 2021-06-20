@@ -69,7 +69,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonFileMod.h"
 #include "plModifier/plResponderModifier.h"
 
-void pySceneObject::IAddObjKeyToAll(plKey key)
+void pySceneObject::IAddObjKeyToAll(const plKey& key)
 {
     // set the sender and the receiver to the same thing
     cyDraw::ConvertFrom(fDraw)->AddRecvr(key);
@@ -111,7 +111,7 @@ pySceneObject::pySceneObject(const pyKey& objkey, const pyKey& selfkey)
     fNetForce = false;
 }
 
-pySceneObject::pySceneObject(plKey objkey, const pyKey& selfkey)
+pySceneObject::pySceneObject(const plKey& objkey, const pyKey& selfkey)
 {
     // make sure these are created
     fDraw = cyDraw::New();
@@ -126,7 +126,7 @@ pySceneObject::pySceneObject(plKey objkey, const pyKey& selfkey)
 }
 
 
-pySceneObject::pySceneObject(plKey objkey)
+pySceneObject::pySceneObject(const plKey& objkey)
 {
     // make sure these are created
     fDraw = cyDraw::New();
@@ -150,8 +150,8 @@ pySceneObject::~pySceneObject()
 
 bool pySceneObject::operator==(const pySceneObject &sobj) const
 {
-    plKey ours = ((pySceneObject*)this)->getObjKey();
-    plKey theirs = ((pySceneObject&)sobj).getObjKey();
+    plKey ours = getObjKey();
+    plKey theirs = sobj.getObjKey();
     if (ours == nullptr && theirs == nullptr)
         return true;
     else if (ours != nullptr && theirs != nullptr)
@@ -161,9 +161,9 @@ bool pySceneObject::operator==(const pySceneObject &sobj) const
 }
 
 // getter and setters
-void pySceneObject::addObjKey(plKey key)
+void pySceneObject::addObjKey(const plKey& key)
 {
-    if (key != nullptr)
+    if (key)
     {
         fSceneObjects.emplace_back(key);
         IAddObjKeyToAll(key);
@@ -179,7 +179,7 @@ void pySceneObject::addObjPyKey(const pyKey& objkey)
     }
 }
 
-plKey pySceneObject::getObjKey()
+plKey pySceneObject::getObjKey() const
 {
     if (!fSceneObjects.empty())
         return fSceneObjects[0];
@@ -187,7 +187,7 @@ plKey pySceneObject::getObjKey()
         return nullptr;
 }
 
-PyObject* pySceneObject::getObjPyKey()
+PyObject* pySceneObject::getObjPyKey() const
 {
     PyObject* pyobj;    // Python will manage this... it only knows when everyone is done with it
     if (!fSceneObjects.empty())
@@ -202,7 +202,7 @@ PyObject* pySceneObject::getObjPyKey()
 
 void pySceneObject::setSenderKey(plKey key)
 { 
-    fSenderKey=key;
+    fSenderKey = std::move(key);
     ISetAllSenderKeys();
 }
 

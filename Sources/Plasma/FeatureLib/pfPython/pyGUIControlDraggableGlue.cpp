@@ -107,7 +107,7 @@ PyObject *pyGUIControlDraggable::New(pyKey& gckey)
 PyObject *pyGUIControlDraggable::New(plKey objkey)
 {
     ptGUIControlDraggable *newObj = (ptGUIControlDraggable*)ptGUIControlDraggable_type.tp_new(&ptGUIControlDraggable_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

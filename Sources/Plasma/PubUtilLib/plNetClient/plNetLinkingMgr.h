@@ -154,7 +154,7 @@ public:
     void LinkToPlayersAge( uint32_t playerID );
 
     // Offer a link to player.
-    void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID, plKey replyKey );
+    void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID, const plKey& replyKey );
     void OfferLinkToPlayer( const plAgeInfoStruct * info, uint32_t playerID );
     void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID );
 

@@ -497,7 +497,7 @@ bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
     return true;
 }
 
-void plPageTreeMgr::AddOccluderList(const std::vector<plOccluder*> occList)
+void plPageTreeMgr::AddOccluderList(const std::vector<plOccluder*>& occList)
 {
     size_t iStart = fOccluders.size();
     fOccluders.resize(iStart + occList.size());

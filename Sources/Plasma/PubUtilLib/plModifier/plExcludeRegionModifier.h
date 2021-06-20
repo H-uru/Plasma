@@ -72,7 +72,7 @@ protected:
 
     void ISetPhysicalState(bool cleared);
 
-    int IFindClosestSafePoint(plKey avatar);
+    int IFindClosestSafePoint(const plKey& avatar);
     void IMoveAvatars();
 
     friend class plExcludeRegionSDLModifier;
@@ -92,7 +92,7 @@ public:
     void AddTarget(plSceneObject* so) override;
     void RemoveTarget(plSceneObject *so) override;
 
-    void AddSafePoint(plKey& key);
+    void AddSafePoint(plKey key) { fSafePoints.emplace_back(std::move(key)); }
     void UseSmartSeek() { fSeek = true; }
     void SetSeekTime(float s) { fSeekTime = s; }
     void SetBlockCameras(bool block) { fFlags.SetBit(kBlockCameras, block); }

@@ -208,7 +208,7 @@ void    plDrawableSpans::SetSceneNode( plKey newNode )
     {
         curNode->Release(GetKey());
     }
-    fSceneNode = newNode;
+    fSceneNode = std::move(newNode);
 }
 
 //// PrepForRender ///////////////////////////////////////////////////////////

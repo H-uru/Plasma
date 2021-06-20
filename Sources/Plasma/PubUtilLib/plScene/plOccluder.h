@@ -87,7 +87,7 @@ protected:
 
     virtual std::vector<plCullPoly>& IGetLocalPolyList() { return fPolys; }
 
-    void    ISetSceneNode(plKey node) override;
+    void    ISetSceneNode(const plKey& node) override;
 
     void            IAddVisRegion(plVisRegion* reg);
     void            IRemoveVisRegion(plVisRegion* reg);

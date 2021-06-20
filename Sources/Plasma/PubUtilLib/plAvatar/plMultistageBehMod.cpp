@@ -125,7 +125,7 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
         hsAssert(fStages, "Trying to trigger multistage, but no stages are present.");
         if(fStages)
         {
-            plKey avKey = notifyMsg->GetAvatarKey();
+            const plKey& avKey = notifyMsg->GetAvatarKey();
             hsAssert(avKey, "Avatar key missing trying to trigger multistage.");
             if(avKey)
             {
@@ -153,10 +153,10 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
 
                     if(avMod)
                     {
-                        plKey sender = notifyMsg->GetSender();
-                        plKey avModKey = avMod->GetKey();
-                        plKey seekKey = GetTarget()->GetKey();      // our seek point
-                        
+                        const plKey& sender = notifyMsg->GetSender();
+                        const plKey& avModKey = avMod->GetKey();
+                        const plKey& seekKey = GetTarget()->GetKey();      // our seek point
+
 #ifdef DEBUG_MULTISTAGE
                         char sbuf[256];
                         sprintf(sbuf,"plMultistageModMsg - starting multistage from %s",sender->GetName().c_str());

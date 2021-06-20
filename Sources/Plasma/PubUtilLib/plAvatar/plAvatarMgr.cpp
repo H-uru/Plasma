@@ -171,7 +171,7 @@ plKey plAvatarMgr::LoadPlayerFromFile(const ST::string &name, const ST::string &
     return LoadAvatar(name, account, true, nullptr, nullptr, "", clothingFile);
 }
 
-plKey plAvatarMgr::LoadAvatar(ST::string name, const ST::string &accountName, bool isPlayer, plKey spawnPoint, plAvTask *initialTask,
+plKey plAvatarMgr::LoadAvatar(ST::string name, const ST::string &accountName, bool isPlayer, const plKey& spawnPoint, plAvTask *initialTask,
                               const ST::string &userStr, const plFileName &clothingFile)
 {
     // *** account is currently unused. the idea is that eventually an NPC will
@@ -511,7 +511,7 @@ void plAvatarMgr::IFinishUnloadingAvatar(plLoadAvatarMsg *cloneMsg)
 
 
 // IDEFERINIT
-void plAvatarMgr::IDeferInit(plKey playerSOKey, plMessage *initMsg)
+void plAvatarMgr::IDeferInit(const plKey& playerSOKey, plMessage *initMsg)
 {
     plMessage *existing = fDeferredInits[playerSOKey];      // okay to use this form because we're going
                                                             // to do the add either way
@@ -526,7 +526,7 @@ void plAvatarMgr::IDeferInit(plKey playerSOKey, plMessage *initMsg)
 }
 
 // ISENDDEFERREDINIT
-void plAvatarMgr::ISendDeferredInit(plKey avatarSOKey)
+void plAvatarMgr::ISendDeferredInit(const plKey& avatarSOKey)
 {
     // get armaturemod
     const plArmatureMod * armature = FindAvatar(avatarSOKey);
@@ -653,8 +653,7 @@ void plAvatarMgr::AddAvatar(plArmatureMod *avatar)
     hsAssert(avatarSO, "Adding avatar, but it hasn't been attached to a scene object yet.");
     if(avatarSO)
     {
-        plKey soKey = avatarSO->GetKey();
-        ISendDeferredInit(soKey);
+        ISendDeferredInit(avatarSO->GetKey());
     }
 }
 
@@ -984,7 +983,7 @@ void plAvatarMgr::GetDniCoordinate(plDniCoordinateInfo* ret)
 
 // OfferLinkingBook ---------------------------------------------------------------
 // ----------
-void plAvatarMgr::OfferLinkingBook(plKey hostKey, plKey guestKey, plMessage *linkMsg, plKey replyKey)
+void plAvatarMgr::OfferLinkingBook(const plKey& hostKey, const plKey& guestKey, plMessage *linkMsg, const plKey& replyKey)
 {
     if (hostKey != nullptr && guestKey != nullptr)
     {

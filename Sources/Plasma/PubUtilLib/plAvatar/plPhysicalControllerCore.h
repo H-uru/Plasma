@@ -71,8 +71,8 @@ struct plControllerHitRecord
     plControllerHitRecord()
         : Point(), Normal(), Displacement()
     { }
-    plControllerHitRecord(plKey physHit, hsPoint3 p, hsVector3 n, float d=0.f)
-        : PhysHit(std::move(physHit)), Point(std::move(p)), Normal(std::move(n)), Displacement(d)
+    plControllerHitRecord(plKey physHit, const hsPoint3& p, const hsVector3& n, float d=0.f)
+        : PhysHit(std::move(physHit)), Point(p), Normal(n), Displacement(d)
     {
     }
 

@@ -72,9 +72,9 @@ protected:
     plResManager* fResMgr;
 
     static plPageOptimizer* fInstance;
-    static void KeyedObjectProc(plKey key);
+    static void KeyedObjectProc(const plKey& key);
 
-    void IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey key);
+    void IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey& key);
     void IFindLoc();
     void IRewritePage();
 

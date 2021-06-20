@@ -417,7 +417,7 @@ public:
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
     void SetNumBoids(uint8_t val);
-    void SetBoidKey(plKey key) { fBoidKey = key; }
+    void SetBoidKey(plKey key) { fBoidKey = std::move(key); }
 
     float GoalWeight() const {return fFlock.GoalWeight();}
     void SetGoalWeight(float goalWeight) {fFlock.SetGoalWeight(goalWeight);}

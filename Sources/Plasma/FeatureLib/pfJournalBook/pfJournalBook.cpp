@@ -190,7 +190,7 @@ class pfEsHTMLChunk
         // Image constructor (used for decals and movies too)
         pfEsHTMLChunk( plKey imageKey, uint32_t alignFlags )
             : fType(kImage), fFlags(alignFlags), fText(L""),
-              fFontSize(), fImageKey(imageKey), fEventID(), fSFXTime(),
+              fFontSize(), fImageKey(std::move(imageKey)), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
               fTintDecal(), fLoopMovie(true), fOnCover(), fMovieIndex(-1)
@@ -1132,9 +1132,9 @@ pfJournalBook::pfJournalBook(const char *esHTMLSource, plKey coverImageKey, plKe
     
     fCurrentPage = 0;
     fLastPage = -1;
-    fCoverMipKey = coverImageKey;
+    fCoverMipKey = std::move(coverImageKey);
     fCoverFromHTML = false;
-    fCallbackKey = callbackKey;
+    fCallbackKey = std::move(callbackKey);
     fWidthScale = fHeightScale = 0.f;
     fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = 16;
     fAllowTurning = true;
@@ -1168,9 +1168,9 @@ pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, p
     
     fCurrentPage = 0;
     fLastPage = -1;
-    fCoverMipKey = coverImageKey;
+    fCoverMipKey = std::move(coverImageKey);
     fCoverFromHTML = false;
-    fCallbackKey = callbackKey;
+    fCallbackKey = std::move(callbackKey);
     fWidthScale = fHeightScale = 0.f;
     fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = 16;
     fAllowTurning = true;
@@ -3322,7 +3322,7 @@ std::string pfJournalBook::GetEditableText()
     return "";
 }
 
-void pfJournalBook::SetEditableText(std::string text)
+void pfJournalBook::SetEditableText(const std::string& text)
 {
     pfGUIMultiLineEditCtrl *left = fBookGUIs[fCurBookGUI]->GetEditCtrl( pfJournalDlgProc::kTagLeftEditCtrl );
     if (left)

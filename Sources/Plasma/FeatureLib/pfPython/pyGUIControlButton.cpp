@@ -49,7 +49,7 @@ pyGUIControlButton::pyGUIControlButton(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

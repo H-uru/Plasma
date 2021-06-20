@@ -52,15 +52,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDLDescriptor.h"
 
 #include "pnFactory/plCreatable.h"
+#include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
 class plClientUnifiedTime;
-class plKey;
 class plNetApp;
 class plSDLMgr;
-class plUoid;
 
 namespace plSDL
 {
@@ -115,7 +114,7 @@ class plStateVarNotificationInfo
 private:
     ST::string fHintString;
 public:
-    void SetHintString(const ST::string& c) { fHintString=c;  }
+    void SetHintString(ST::string c) { fHintString = std::move(c); }
     ST::string GetHintString() const { return fHintString; }
 
     void Read(hsStream* s, uint32_t readOptions);
@@ -189,11 +188,14 @@ private:
     static uint32_t fCurrentPlayerID;
 
     void IAddKey(plKey k);
-    int IRemoveKey(plKey k);
+    int IRemoveKey(const plKey& k);
 public:
-    plStateChangeNotifier();
+    plStateChangeNotifier() : fDelta(0.f) { }
     plStateChangeNotifier(float i, plKey k);
-    virtual ~plStateChangeNotifier();
+    plStateChangeNotifier(const plStateChangeNotifier& copy) = default;
+    plStateChangeNotifier(plStateChangeNotifier&& move) = default;
+
+    virtual ~plStateChangeNotifier() = default;
 
     void AddNotificationKey(plKey k);
     void AddNotificationKeys(KeyList keys);
@@ -208,6 +210,8 @@ public:
     static uint32_t GetCurrentPlayerID() { return fCurrentPlayerID;   }
     static void SetCurrentPlayerID(uint32_t p) { fCurrentPlayerID=p;  }
 
+    plStateChangeNotifier& operator=(const plStateChangeNotifier& copy) = default;
+    plStateChangeNotifier& operator=(plStateChangeNotifier&& move) = default;
     bool operator==(const plStateChangeNotifier &) const;
 };
 
@@ -317,9 +321,9 @@ public:
     const plSimpleVarDescriptor* GetSimpleVarDescriptor() const { return fVar.GetAsSimpleVarDescriptor(); }
 
     // State Change Notification
-    void AddStateChangeNotification(plStateChangeNotifier& n);
-    void RemoveStateChangeNotification(plKey notificationObj);      // remove all with this key 
-    void RemoveStateChangeNotification(plStateChangeNotifier n);    // remove ones which match
+    void AddStateChangeNotification(plStateChangeNotifier n);
+    void RemoveStateChangeNotification(const plKey& notificationObj);      // remove all with this key 
+    void RemoveStateChangeNotification(const plStateChangeNotifier& n);    // remove ones which match
     void NotifyStateChange(const plSimpleStateVariable* other, const ST::string& sdlName);      // send notification msg if necessary, internal use
 
     void DumpToObjectDebugger(bool dirtyOnly, int level) const override;

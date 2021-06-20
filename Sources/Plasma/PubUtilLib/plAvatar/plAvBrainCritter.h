@@ -137,8 +137,8 @@ public:
 
     hsVector3 VectorToPlayer(unsigned long id) const;
 
-    void AddReceiver(const plKey key);
-    void RemoveReceiver(const plKey key);
+    void AddReceiver(plKey key);
+    void RemoveReceiver(const plKey& key);
 
     void DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt) override;
 

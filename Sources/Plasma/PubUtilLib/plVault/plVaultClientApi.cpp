@@ -1014,7 +1014,7 @@ void AddChildNodeFetchTrans::VaultNodeFetched (
 
 //============================================================================
 IRelVaultNode::IRelVaultNode(hsWeakRef<RelVaultNode> node)
-    : node(std::move(node))
+    : node(node)
 { }
 
 //============================================================================

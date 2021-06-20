@@ -78,7 +78,7 @@ public:
 
     static bool IsGUISkin(pyKey& gckey);
 
-    void setKey(plKey key) {fGCkey = key;} // used by python glue, do NOT call
+    void setKey(plKey key) { fGCkey = std::move(key); } // used by python glue, do NOT call
 
     // override the equals to operator
     bool operator==(const pyGUISkin &gdobj) const;

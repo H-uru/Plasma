@@ -77,7 +77,7 @@ protected:
     void ISetVisRegion(hsKeyedObject* ref, bool on);
     void ISetDrawable(size_t which, plDrawable* dr);
     void IRemoveDrawable(plDrawable* dr);
-    void ISetSceneNode(plKey newNode) override;
+    void ISetSceneNode(const plKey& newNode) override;
     virtual void ICheckDrawableIndex(size_t which);
 
     friend class plSceneObject;

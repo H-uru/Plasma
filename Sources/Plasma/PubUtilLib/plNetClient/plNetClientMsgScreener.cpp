@@ -83,12 +83,12 @@ ST::string plNetClientMsgScreener::IGetAgeName() const
 //
 // Check if key is local avatar
 //
-bool plNetClientMsgScreener::IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const
+bool plNetClientMsgScreener::IIsLocalAvatarKey(const plKey& key, const plNetGameMember* gm) const
 {
     return (!key || key==plNetClientApp::GetInstance()->GetLocalPlayerKey());
 }
 
-bool plNetClientMsgScreener::IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const 
+bool plNetClientMsgScreener::IIsLocalArmatureModKey(const plKey& key, const plNetGameMember* gm) const 
 {
     plKey playerKey = plNetClientApp::GetInstance()->GetLocalPlayerKey();
     plArmatureMod* aMod = playerKey ? plAvatarMgr::GetInstance()->FindAvatar(playerKey) : nullptr;

@@ -456,7 +456,7 @@ class pfJournalBook : public hsKeyedObject
         // returns the text contained by the edit controls
         std::string GetEditableText();
 
-        void    SetEditableText(std::string text);
+        void    SetEditableText(const std::string& text);
 
     private:
 

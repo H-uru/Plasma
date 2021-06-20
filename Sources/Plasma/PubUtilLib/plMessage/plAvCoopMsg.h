@@ -97,7 +97,7 @@ public:
     // constructors
     plAvCoopMsg();
     plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial);
-    plAvCoopMsg(plKey sender, plCoopCoordinator *coordinateur);
+    plAvCoopMsg(const plKey& sender, plCoopCoordinator *coordinateur);
     ~plAvCoopMsg();
 
     // rtti

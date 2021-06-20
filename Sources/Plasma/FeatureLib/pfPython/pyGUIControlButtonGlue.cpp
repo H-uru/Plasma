@@ -116,7 +116,7 @@ PyObject *pyGUIControlButton::New(pyKey& gckey)
 PyObject *pyGUIControlButton::New(plKey objkey)
 {
     ptGUIControlButton *newObj = (ptGUIControlButton*)ptGUIControlButton_type.tp_new(&ptGUIControlButton_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

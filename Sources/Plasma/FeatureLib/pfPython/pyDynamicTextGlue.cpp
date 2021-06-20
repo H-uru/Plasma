@@ -429,7 +429,7 @@ PyObject *pyDynamicText::New(const pyKey& key)
 PyObject *pyDynamicText::New(plKey key)
 {
     ptDynamicMap *newObj = (ptDynamicMap*)ptDynamicMap_type.tp_new(&ptDynamicMap_type, nullptr, nullptr);
-    newObj->fThis->fReceivers.emplace_back(key);
+    newObj->fThis->fReceivers.emplace_back(std::move(key));
     return (PyObject*)newObj;
 }
 

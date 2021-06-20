@@ -185,8 +185,8 @@ void plSimulationMgr::AddCollisionMsg(plKey hitee, plKey hitter, bool enter)
 
     // Still here? Then this must be a unique hit!
     plCollideMsg* pMsg = new plCollideMsg;
-    pMsg->AddReceiver(hitee);
-    pMsg->fOtherKey = hitter;
+    pMsg->AddReceiver(std::move(hitee));
+    pMsg->fOtherKey = std::move(hitter);
     pMsg->fEntering = enter;
     fCollideMsgs.push_back(pMsg);
 }

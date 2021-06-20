@@ -110,7 +110,7 @@ protected:
 
     /** Figure out which approach we should use to the sit target, and add the relevant
         stages to the brain. */
-    plAvBrainGeneric * IBuildSitBrain(plKey avModKey, plKey seekKey, const char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
+    plAvBrainGeneric * IBuildSitBrain(const plKey& avModKey, const plKey& seekKey, const char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify);
 
     /** Unused. */
     bool IEval(double secs, float del, uint32_t dirty) override { return true; }

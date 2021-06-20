@@ -110,10 +110,10 @@ protected:
         hsVector3 fNormal;
         float fDistance;
 
-        RaycastResult(LOSResult result, plKey hit = {}, hsPoint3 point = { 0.f, 0.f, 0.f },
-                      hsVector3 normal = { 0.f, 0.f, 0.f }, float dist = 0.f)
-            : fResult(result), fHitObj(std::move(hit)), fPoint(std::move(point)),
-              fNormal(std::move(normal)), fDistance(dist)
+        RaycastResult(LOSResult result, plKey hit = {}, const hsPoint3& point = { 0.f, 0.f, 0.f },
+                      const hsVector3& normal = { 0.f, 0.f, 0.f }, float dist = 0.f)
+            : fResult(result), fHitObj(std::move(hit)), fPoint(point),
+              fNormal(normal), fDistance(dist)
         { }
     };
 

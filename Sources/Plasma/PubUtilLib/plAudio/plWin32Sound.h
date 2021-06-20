@@ -86,8 +86,8 @@ public:
     void    SetConeOrientation(float x, float y, float z) override;
     void    SetOuterVolume(const int v) override; // volume for the outer cone (if applicable)
     void    SetConeAngles(int inner, int outer) override;
-    void    SetPosition(const hsPoint3 pos) override;
-    void    SetVelocity(const hsVector3 vel) override;
+    void    SetPosition(const hsPoint3& pos) override;
+    void    SetVelocity(const hsVector3& vel) override;
 
     enum ChannelSelect
     {

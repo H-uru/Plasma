@@ -94,7 +94,7 @@ protected:
     };
     void            IOnReceive(plGenRefMsg* refMsg);
     void            IOnRemove(plGenRefMsg* refMsg);
-    void            ISetObject(plKey soKey);
+    void            ISetObject(const plKey& soKey);
 
 public:
     plViewFaceModifier();
@@ -126,7 +126,7 @@ public:
         kFollowPlayer,
         kFollowObject
     };
-    void            SetFollowMode(FollowMode m, plKey soKey = {}); // For follow object, set obj, else it's ignored.
+    void            SetFollowMode(FollowMode m, const plKey& soKey = {}); // For follow object, set obj, else it's ignored.
     FollowMode      GetFollowMode() const;
     plSceneObject*  GetFollowObject() const { return fFaceObj; }
 

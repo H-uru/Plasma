@@ -69,16 +69,16 @@ protected:
     // queue of pseudo link messages
     std::vector<plPseudoLinkEffectMsg *> fPseudolist;
 
-    plLinkEffectsTriggerMsg *IFindLinkTriggerMsg(plKey avatarKey);
+    plLinkEffectsTriggerMsg *IFindLinkTriggerMsg(const plKey& avatarKey);
     void IAddLink(plLinkEffectsTriggerMsg *msg);
     void IAddWait(plLinkEffectsTriggerMsg *msg);
     void IAddDead(plLinkEffectsTriggerMsg *msg);
     void IAddPseudo(plPseudoLinkEffectMsg *msg);
-    void IRemovePseudo(plKey avatarKey);
-    plPseudoLinkEffectMsg* IFindPseudo(plKey avatarKey);
+    void IRemovePseudo(const plKey& avatarKey);
+    plPseudoLinkEffectMsg* IFindPseudo(const plKey& avatarKey);
 
     bool IHuntWaitlist(plLinkEffectsTriggerMsg *msg);
-    bool IHuntWaitlist(plKey linkKey);
+    bool IHuntWaitlist(const plKey& linkKey);
     bool IHuntDeadlist(plLinkEffectsTriggerMsg *msg);
     void ISendAllReadyCallbacks();
     

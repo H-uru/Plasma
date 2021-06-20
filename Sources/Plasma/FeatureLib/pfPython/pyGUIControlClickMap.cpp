@@ -54,7 +54,7 @@ pyGUIControlClickMap::pyGUIControlClickMap(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlClickMap::pyGUIControlClickMap(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlClickMap::pyGUIControlClickMap(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

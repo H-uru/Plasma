@@ -212,7 +212,7 @@ PLASMA_DEFAULT_TYPE(ptGrassShader, "Params: key\nPlasma Grass Shader class");
 PyObject *pyGrassShader::New(plKey key)
 {
     ptGrassShader *newObj = (ptGrassShader*)ptGrassShader_type.tp_new(&ptGrassShader_type, nullptr, nullptr);
-    newObj->fThis->SetKey(key);
+    newObj->fThis->SetKey(std::move(key));
     return (PyObject*)newObj;
 }
 

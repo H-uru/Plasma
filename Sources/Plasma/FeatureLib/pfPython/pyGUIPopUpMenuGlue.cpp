@@ -415,7 +415,7 @@ PyObject *pyGUIPopUpMenu::New(pyKey& gckey)
 PyObject *pyGUIPopUpMenu::New(plKey objkey)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     newObj->fThis->fBuiltMenu = nullptr;
     return (PyObject*)newObj;
 }

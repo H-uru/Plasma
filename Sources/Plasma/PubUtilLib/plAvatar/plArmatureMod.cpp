@@ -488,7 +488,7 @@ void plArmatureModBase::RefreshTree()
 
 int plArmatureModBase::AppendMeshKey(plKey meshKey)
 {
-    fMeshKeys.push_back(meshKey);
+    fMeshKeys.emplace_back(std::move(meshKey));
     return fMeshKeys.size() - 1;
 }
 
@@ -881,7 +881,7 @@ void plArmatureMod::RegisterForBehaviorNotify(plKey key)
         fNotifyKeys.emplace_back(std::move(key));
 }
 
-void plArmatureMod::UnRegisterForBehaviorNotify(plKey key)
+void plArmatureMod::UnRegisterForBehaviorNotify(const plKey& key)
 {
     const auto idx = std::find(fNotifyKeys.begin(), fNotifyKeys.end(), key);
     if (idx != fNotifyKeys.end())

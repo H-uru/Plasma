@@ -54,7 +54,7 @@ pyGUIControlDraggable::pyGUIControlDraggable(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlDraggable::pyGUIControlDraggable(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlDraggable::pyGUIControlDraggable(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

@@ -59,7 +59,7 @@ plSwimMsg::plSwimMsg(const plKey &sender, const plKey &receiver, bool entering, 
 : plMessage(sender, receiver, nullptr),
   fIsEntering(entering)
 {
-    fSwimRegionKey = regionKey;
+    fSwimRegionKey = std::move(regionKey);
 }
 
 // GetIsEntering --------------

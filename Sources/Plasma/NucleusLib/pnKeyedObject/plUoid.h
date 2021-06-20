@@ -157,7 +157,8 @@ public:
     plUoid() { Invalidate(); }
     plUoid(const plLocation& location, uint16_t classType, const ST::string& objectName, const plLoadMask& m=plLoadMask::kAlways);
     plUoid(plFixedKeyId fixedKey);
-    plUoid(const plUoid& src);
+    plUoid(const plUoid& copy) = default;
+    plUoid(plUoid&& move) = default;
     ~plUoid();
 
     const plLocation&   GetLocation() const { return fLocation; }
@@ -171,7 +172,8 @@ public:
     void Invalidate();
     bool IsValid() const;
 
-    plUoid& operator=(const plUoid& u);
+    plUoid& operator=(const plUoid& copy) = default;
+    plUoid& operator=(plUoid&& move) = default;
     bool  operator==(const plUoid& u) const;
     bool  operator!=(const plUoid& u) const { return !operator==(u); }
 

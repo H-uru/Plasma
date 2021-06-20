@@ -64,7 +64,7 @@ public:
     plKey() : fKeyData(nullptr) { }
     plKey(std::nullptr_t) : fKeyData(nullptr) { }
     plKey(const plKey& rhs);
-    plKey(plKey&& rhs) : fKeyData(rhs.fKeyData) { rhs.fKeyData = nullptr; }
+    plKey(plKey&& rhs) noexcept : fKeyData(rhs.fKeyData) { rhs.fKeyData = nullptr; }
     ~plKey();
     plKey& operator=(const plKey& rhs);
     plKey& operator=(std::nullptr_t);

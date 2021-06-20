@@ -94,13 +94,13 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) override;
     void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void SetXAnim(plKey c) { fXAnim = c; }
-    void SetYAnim(plKey c) { fYAnim = c; }
-    void SetNotificationKey(plKey k) { fNotificationKey = k; }
+    void SetXAnim(plKey c) { fXAnim = std::move(c); }
+    void SetYAnim(plKey c) { fYAnim = std::move(c); }
+    void SetNotificationKey(plKey k) { fNotificationKey = std::move(k); }
     plNotifyMsg* GetNotify() { return fNotify; }
 
     ST::string GetAnimLabel() const { return fAnimLabel; }
-    void SetAnimLabel(const ST::string& a) { fAnimLabel = a; }
+    void SetAnimLabel(ST::string a) { fAnimLabel = std::move(a); }
 
 };
 

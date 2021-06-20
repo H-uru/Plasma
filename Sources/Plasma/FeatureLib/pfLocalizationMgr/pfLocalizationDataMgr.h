@@ -85,7 +85,7 @@ protected:
         typedef std::map<ST::string, std::map<ST::string, std::map<ST::string, mapT> > > ThreePartMap;
         ThreePartMap fData;
 
-        void ISplitString(ST::string key, ST::string &age, ST::string &set, ST::string &name);
+        void ISplitString(const ST::string& key, ST::string &age, ST::string &set, ST::string &name);
     public:
         // We will just have very basic functionality
         bool exists(const ST::string & key); // returns true if the key exists

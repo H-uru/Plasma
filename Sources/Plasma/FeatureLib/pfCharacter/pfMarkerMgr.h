@@ -79,9 +79,9 @@ protected:
     void IInit();
     void IShutdown();
 
-    pfMarkerInfo* IFindMarker(plKey markerKey, uint32_t& id);
+    pfMarkerInfo* IFindMarker(const plKey& markerKey, uint32_t& id);
     void IUpdate();
-    void IMarkerHit(plKey markerKey, plKey playerKey);
+    void IMarkerHit(const plKey& markerKey, const plKey& playerKey);
 
     pfMarkerMgr();
     ~pfMarkerMgr();

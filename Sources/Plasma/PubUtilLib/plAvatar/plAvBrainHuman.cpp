@@ -1432,7 +1432,6 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
     if (huBrain && huBrain->fWalkingStrategy->IsOnGround() && huBrain->fWalkingStrategy->HitGroundInThisAge() && !huBrain->IsRunningTask() && 
         emote && !alreadyActive && avatar->IsPhysicsEnabled())
     {
-        plKey avKey = avatar->GetKey();
         plAnimStage *s1 = new plAnimStage(emoteName,
                                           0,
                                           plAnimStage::kForwardAuto,
@@ -1449,7 +1448,7 @@ bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
         b->SetType(plAvBrainGeneric::kEmote);
         b->SetBodyUsage(emote->GetBodyUsage());
         plAvTaskBrain *bt = new plAvTaskBrain(b);
-        plAvTaskMsg *btm = new plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avKey, bt);
+        plAvTaskMsg *btm = new plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avatar->GetKey(), bt);
         btm->SetBCastFlag(plMessage::kNetPropagate);
         btm->Send();
 

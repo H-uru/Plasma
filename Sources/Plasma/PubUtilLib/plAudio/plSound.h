@@ -202,8 +202,8 @@ public:
     virtual void        SetConeOrientation(float x, float y, float z);
     virtual void        SetOuterVolume( const int v ); // volume for the outer cone (if applicable)
     virtual void        SetConeAngles( int inner, int outer );
-    virtual void        SetPosition(const hsPoint3 pos);
-    virtual void        SetVelocity(const hsVector3 vel);
+    virtual void        SetPosition(const hsPoint3& pos);
+    virtual void        SetVelocity(const hsVector3& vel);
     virtual hsPoint3    GetPosition() const;
     virtual hsVector3   GetVelocity() const;
 

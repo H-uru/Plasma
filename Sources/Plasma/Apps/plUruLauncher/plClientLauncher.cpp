@@ -312,7 +312,7 @@ void plClientLauncher::PatchClient()
     patcher->Start();
 }
 
-bool plClientLauncher::CompleteSelfPatch(std::function<void()> waitProc) const
+bool plClientLauncher::CompleteSelfPatch(const std::function<void()>& waitProc) const
 {
     if (hsCheckBits(fFlags, kHaveSelfPatched))
         return false;
@@ -487,15 +487,15 @@ void plClientLauncher::ParseArguments()
 
 void plClientLauncher::SetErrorProc(ErrorFunc proc)
 {
-    s_errorProc = proc;
+    s_errorProc = std::move(proc);
 }
 
 void plClientLauncher::SetInstallerProc(InstallRedistFunc proc)
 {
-    fInstallerThread->fInstallProc = proc;
+    fInstallerThread->fInstallProc = std::move(proc);
 }
 
 void plClientLauncher::SetShardProc(StatusFunc proc)
 {
-    fStatusThread->fShardFunc = proc;
+    fStatusThread->fShardFunc = std::move(proc);
 }

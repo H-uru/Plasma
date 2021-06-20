@@ -50,10 +50,10 @@ void plClientMsg::IReset()
     fAgeName = "";
 }
 
-void plClientMsg::AddRoomLoc(plLocation loc)
+void plClientMsg::AddRoomLoc(const plLocation& loc)
 {
     if (loc.IsValid())
-        fRoomLocs.push_back(loc);
+        fRoomLocs.emplace_back(loc);
     else
         hsStatusMessage("Trying to load an invalid room, ignoring");
 }

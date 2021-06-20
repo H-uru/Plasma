@@ -50,20 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // static 
 uint32_t plStateChangeNotifier::fCurrentPlayerID = 0;
 
-plStateChangeNotifier::plStateChangeNotifier() :
-fDelta(0)
-{
-    
-}
-
 plStateChangeNotifier::plStateChangeNotifier(float i, plKey k)
 {
     SetValue(i);
     IAddKey(std::move(k));
-}
-
-plStateChangeNotifier::~plStateChangeNotifier()
-{
 }
 
 void plStateChangeNotifier::IAddKey(plKey k)
@@ -73,7 +63,7 @@ void plStateChangeNotifier::IAddKey(plKey k)
         fKeys.emplace_back(std::move(k));
 }
 
-int plStateChangeNotifier::IRemoveKey(plKey k)
+int plStateChangeNotifier::IRemoveKey(const plKey& k)
 {
     KeyList::iterator it = std::find(fKeys.begin(), fKeys.end(), k);
     if (it!=fKeys.end())

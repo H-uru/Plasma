@@ -58,8 +58,8 @@ struct ScoreFindParam
     ST::string fName;
     plKey fReceiver; // because plKey as a void* isn't cool
 
-    ScoreFindParam(uint32_t ownerId, const ST::string& name, plKey r)
-        : fOwnerId(ownerId), fName(name), fReceiver(r)
+    ScoreFindParam(uint32_t ownerId, ST::string name, plKey r)
+        : fOwnerId(ownerId), fName(std::move(name)), fReceiver(std::move(r))
     { }
 };
 
@@ -71,7 +71,7 @@ struct ScoreTransferParam
     plKey        fReceiver;
 
     ScoreTransferParam(pfGameScore* to, pfGameScore* from, int32_t points, plKey r)
-        : fTo(to), fFrom(from), fPoints(points), fReceiver(r)
+        : fTo(to), fFrom(from), fPoints(points), fReceiver(std::move(r))
     { }
 };
 
@@ -82,7 +82,7 @@ struct ScoreUpdateParam
     int32_t      fPoints; // reset points to this if update op
 
     ScoreUpdateParam(pfGameScore* s, plKey r, int32_t points = 0)
-        : fParent(s), fReceiver(r), fPoints(points)
+        : fParent(s), fReceiver(std::move(r)), fPoints(points)
     { }
 };
 
@@ -98,7 +98,7 @@ static void OnScoreSet(ENetError result, void* param)
 void pfGameScore::SetPoints(int32_t value, plKey rcvr)
 {
     Ref(); // netcode holds us
-    NetCliAuthScoreSetPoints(fScoreId, value, OnScoreSet, new ScoreUpdateParam(this, rcvr, value));
+    NetCliAuthScoreSetPoints(fScoreId, value, OnScoreSet, new ScoreUpdateParam(this, std::move(rcvr), value));
 }
 
 //======================================
@@ -113,7 +113,7 @@ static void OnScoreUpdate(ENetError result, void* param)
 void pfGameScore::AddPoints(int32_t add, plKey rcvr)
 {
     Ref(); // netcode holds us
-    NetCliAuthScoreAddPoints(fScoreId, add, OnScoreUpdate, new ScoreUpdateParam(this, rcvr, fValue + add));
+    NetCliAuthScoreAddPoints(fScoreId, add, OnScoreUpdate, new ScoreUpdateParam(this, std::move(rcvr), fValue + add));
 }
 
 //======================================
@@ -136,7 +136,7 @@ void pfGameScore::TransferPoints(pfGameScore* to, int32_t points, plKey recvr)
 {
     this->Ref(); to->Ref(); // netcode holds us
     NetCliAuthScoreTransferPoints(this->fScoreId, to->fScoreId, points,
-        OnScoreTransfer, new ScoreTransferParam(to, this, points, recvr));
+        OnScoreTransfer, new ScoreTransferParam(to, this, points, std::move(recvr)));
 }
 
 //======================================

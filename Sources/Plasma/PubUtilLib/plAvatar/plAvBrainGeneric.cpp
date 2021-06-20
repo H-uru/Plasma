@@ -101,7 +101,7 @@ plAvBrainGeneric::plAvBrainGeneric(plAnimStageVec *stages,
                                    float fadeOut,
                                    MoveMode moveMode)
 : plArmatureBrain(),
-  fRecipient(recipient),
+  fRecipient(std::move(recipient)),
   fStages(stages),
   fCurStage(),
   fType(kGeneric),
@@ -308,9 +308,9 @@ plKey plAvBrainGeneric::GetRecipient()
 }
 
 // SETRECIPIENT
-void plAvBrainGeneric::SetRecipient(const plKey &recipient)
+void plAvBrainGeneric::SetRecipient(plKey recipient)
 {
-    fRecipient = recipient;
+    fRecipient = std::move(recipient);
 }
 
 // RELAYNOTIFYMSG

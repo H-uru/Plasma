@@ -76,7 +76,7 @@ protected:
 
     friend class plSceneObject;
 
-    void ISetSceneNode(plKey newNode) override;
+    void ISetSceneNode(const plKey& newNode) override;
 
 public:
     plSimulationInterface();

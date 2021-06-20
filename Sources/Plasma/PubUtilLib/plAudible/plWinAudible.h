@@ -68,10 +68,10 @@ public:
     GETINTERFACE_ANY( plWinAudible, plAudible );
 
     plKey GetSceneNode() const override { return fSceneNode; }
-    void SetSceneNode(plKey newNode) override;
+    void SetSceneNode(const plKey& newNode) override;
 
     plKey GetSceneObject() const override { return fSceneObj; }
-    void SetSceneObject(plKey obj) override;
+    void SetSceneObject(const plKey& obj) override;
 
     plAudible& SetProperty(int prop, bool on) override { return *this; }
     bool GetProperty(int prop) override { return false; }
@@ -88,7 +88,7 @@ public:
     void        SetPosition(const hsPoint3 p, int index = -1);
     float       GetMin(int index = -1) const override;
     float       GetMax(int index = -1) const override;
-    void        SetVelocity(const hsVector3 vel,int index = -1) override;
+    void        SetVelocity(const hsVector3& vel,int index = -1) override;
     hsVector3   GetVelocity(int index = -1) const override;
     hsPoint3    GetPosition(int index = -1) override;
     void        SetLooping(bool loop,int index = -1) override; // sets continuous loop or stops looping
@@ -154,7 +154,7 @@ public:
     virtual void PlayNetworkedSpeech(const char* addr, size_t size, int numFrames, unsigned char flags);
     
     plAudible& SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index = -1) override;
-    void SetVelocity(const hsVector3 vel,int index = -1) override;
+    void SetVelocity(const hsVector3& vel,int index = -1) override;
     void SetTalkIcon(int index, uint32_t str) override;
     void ClearTalkIcon() override;
 

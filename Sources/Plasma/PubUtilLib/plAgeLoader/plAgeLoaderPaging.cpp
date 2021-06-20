@@ -216,7 +216,7 @@ void plAgeLoader::IgnorePagingOutRoom(plKey* rmKey, int numRms)
 
 ///////////////////////////////////
 
-bool plAgeLoader::IsPendingPageInRoomKey(plKey pKey, int *idx) 
+bool plAgeLoader::IsPendingPageInRoomKey(const plKey& pKey, int *idx) 
 {
     if (pKey)
     {
@@ -233,11 +233,11 @@ void plAgeLoader::AddPendingPageInRoomKey(plKey pKey)
 {
     if (!IsPendingPageInRoomKey(pKey))
     {
-        fPendingPageIns.push_back(pKey);
+        fPendingPageIns.emplace_back(std::move(pKey));
     }
 }
 
-bool plAgeLoader::RemovePendingPageInRoomKey(plKey pKey)
+bool plAgeLoader::RemovePendingPageInRoomKey(const plKey& pKey)
 {
     int idx;
     if (IsPendingPageInRoomKey(pKey, &idx))

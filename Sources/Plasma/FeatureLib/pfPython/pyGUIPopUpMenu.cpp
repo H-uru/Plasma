@@ -80,7 +80,7 @@ pyGUIPopUpMenu::pyGUIPopUpMenu(pyKey& gckey)
 
 pyGUIPopUpMenu::pyGUIPopUpMenu(plKey objkey)
 {
-    fGCkey = objkey;
+    fGCkey = std::move(objkey);
     fBuiltMenu = nullptr;
 }
 
@@ -138,7 +138,7 @@ void pyGUIPopUpMenu::setup(plKey objkey)
     }
 
     // setup the new one
-    fGCkey = objkey;
+    fGCkey = std::move(objkey);
 }
 
 void pyGUIPopUpMenu::setup(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
@@ -367,7 +367,7 @@ void    pyGUIPopUpMenu::AddConsoleCmdItem( const char *name, const char *console
     delete [] wName;
 }
 
-void    pyGUIPopUpMenu::AddConsoleCmdItemW( std::wstring name, const char *consoleCmd )
+void    pyGUIPopUpMenu::AddConsoleCmdItemW( const std::wstring& name, const char *consoleCmd )
 {
     kGetMenuPtr( ; );
     menu->AddItem(name.c_str(), new pfGUIConsoleCmdProc(consoleCmd), nullptr);
@@ -380,7 +380,7 @@ void    pyGUIPopUpMenu::AddNotifyItem( const char *name )
     delete [] wName;
 }
 
-void    pyGUIPopUpMenu::AddNotifyItemW( std::wstring name )
+void    pyGUIPopUpMenu::AddNotifyItemW( const std::wstring& name )
 {
     kGetMenuPtr( ; );
     menu->AddItem(name.c_str(), (pfGUICtrlProcObject *)(menu->GetHandler()), nullptr);
@@ -393,7 +393,7 @@ void    pyGUIPopUpMenu::AddSubMenuItem( const char *name, pyGUIPopUpMenu &subMen
     delete [] wName;
 }
 
-void    pyGUIPopUpMenu::AddSubMenuItemW( std::wstring name, pyGUIPopUpMenu &subMenu )
+void    pyGUIPopUpMenu::AddSubMenuItemW( const std::wstring& name, pyGUIPopUpMenu &subMenu )
 {
     kGetMenuPtr( ; );
 

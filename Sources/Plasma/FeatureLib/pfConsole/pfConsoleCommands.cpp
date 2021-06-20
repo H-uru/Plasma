@@ -2566,7 +2566,7 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
                         {
                             limit--;
 
-                            const plKey rcvr = msg->GetReceiver( j );
+                            const plKey& rcvr = msg->GetReceiver( j );
                             pfConsolePrintF(PrintString, "    {}:{}",
                                             plFactory::GetNameOfClass(rcvr->GetUoid().GetClassType()),
                                             rcvr->GetUoid().GetObjectName());
@@ -2955,7 +2955,7 @@ static void ResponderSendTrigger(plKey responderKey, int responderState, bool fa
         msg->AddResponderStateEvent(responderState);
     
     // Send it to the responder modifier
-    msg->AddReceiver(responderKey);
+    msg->AddReceiver(std::move(responderKey));
     plgDispatch::MsgSend(msg);
 }
 

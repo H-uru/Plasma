@@ -72,7 +72,7 @@ protected:
     void IRemoveAudible(plAudible* aud);
     
     void    ISetOwner(plSceneObject* owner) override;
-    void    ISetSceneNode(plKey node) override;
+    void    ISetSceneNode(const plKey& node) override;
     
     friend class plSceneObject;
 

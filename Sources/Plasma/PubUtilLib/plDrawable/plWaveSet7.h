@@ -644,14 +644,14 @@ public:
 
     void        SetRefObject(plSceneObject* refObj);
 
-    void            SetSceneNode(const plKey& key);
+    void            SetSceneNode(plKey key);
     plKey           GetSceneNode() const { return fSceneNode; }
 
-    void            AddDynaDecalMgr(plKey& key);
-    void            RemoveDynaDecalMgr(plKey& key);
+    void            AddDynaDecalMgr(const plKey& key);
+    void            RemoveDynaDecalMgr(const plKey& key);
 
-    void            AddBuoy(plKey soKey);
-    void            RemoveBuoy(plKey soKey);
+    void            AddBuoy(const plKey& soKey);
+    void            RemoveBuoy(const plKey& soKey);
 
     bool            SetupRippleMat(hsGMaterial* mat, const plRipVSConsts& ripConsts) override;
 

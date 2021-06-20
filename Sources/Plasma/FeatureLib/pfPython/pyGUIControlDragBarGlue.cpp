@@ -99,7 +99,7 @@ PyObject *pyGUIControlDragBar::New(pyKey& gckey)
 PyObject *pyGUIControlDragBar::New(plKey objkey)
 {
     ptGUIControlDragBar *newObj = (ptGUIControlDragBar*)ptGUIControlDragBar_type.tp_new(&ptGUIControlDragBar_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

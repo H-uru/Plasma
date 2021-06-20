@@ -258,7 +258,7 @@ void plOccluder::SetPolyList(const std::vector<plCullPoly>& list)
     fPolys = list;
 }
 
-void plOccluder::ISetSceneNode(plKey node)
+void plOccluder::ISetSceneNode(const plKey& node)
 {
     if( fSceneNode != node )
     {

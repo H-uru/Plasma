@@ -60,7 +60,7 @@ private:
         
         bool operator<(const OwnedGroup& other) const { return other.fGroup<fGroup; }
         bool operator==(const OwnedGroup& other) const { return (other.fGroup==fGroup && other.fOwnIt==fOwnIt); }
-        OwnedGroup(plNetGroupId g, bool o) : fGroup(g),fOwnIt(o) { fGroup.SetDesc(g.GetDesc()); }
+        OwnedGroup(plNetGroupId g, bool o) : fGroup(std::move(g)),fOwnIt(o) { fGroup.SetDesc(g.GetDesc()); }
         OwnedGroup() : fOwnIt(false) {}
     };
     std::set<OwnedGroup> fGroups;

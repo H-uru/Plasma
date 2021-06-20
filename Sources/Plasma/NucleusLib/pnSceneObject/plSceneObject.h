@@ -145,7 +145,7 @@ public:
     bool MsgReceive(plMessage* msg) override;
     virtual bool Eval(double secs, float del);
 
-    void                    SetSceneNode(plKey newNode);
+    void                    SetSceneNode(const plKey& newNode);
     plKey                   GetSceneNode() const;
 
     // Network only strange function. Do not emulate or generalize this functionality.

@@ -55,7 +55,7 @@ void hsKeyedObject::SetKey(plKey k)
         ((plKeyImp*)fpKey)->SetObjectPtr(nullptr);
     }
 
-    fpKey = k;
+    fpKey = std::move(k);
 
     if (fpKey != nullptr)
         ((plKeyImp*)fpKey)->SetObjectPtr(this); 

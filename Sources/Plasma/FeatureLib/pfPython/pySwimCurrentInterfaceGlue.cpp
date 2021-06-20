@@ -211,7 +211,7 @@ PLASMA_CUSTOM_TYPE(ptSwimCurrentInterface, "Params: key\nCreates a new ptSwimCur
 PyObject *pySwimCurrentInterface::New(plKey key)
 {
     ptSwimCurrentInterface *newObj = (ptSwimCurrentInterface*)ptSwimCurrentInterface_type.tp_new(&ptSwimCurrentInterface_type, nullptr, nullptr);
-    newObj->fThis->fSwimCurrentKey = key;
+    newObj->fThis->fSwimCurrentKey = std::move(key);
     return (PyObject*)newObj;
 }
 

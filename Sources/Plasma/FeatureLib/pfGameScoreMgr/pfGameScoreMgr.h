@@ -83,7 +83,7 @@ public:
 
     void AddPoints(int32_t add, plKey rcvr = {});
     void Delete();
-    void TransferPoints(pfGameScore* to, plKey rcvr = {}) { TransferPoints(to, fValue, rcvr); }
+    void TransferPoints(pfGameScore* to, plKey rcvr = {}) { TransferPoints(to, fValue, std::move(rcvr)); }
     void TransferPoints(pfGameScore* to, int32_t points, plKey rcvr = {});
 
     static void Create(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t value, const plKey& rcvr);

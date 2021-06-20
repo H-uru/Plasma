@@ -98,7 +98,7 @@ plKey plCloneSpawnModifier::SpawnClone(const ST::string& cloneName, const ST::st
 
     if (key)
     {
-        plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(objUoid, requestor, 0);
+        plLoadCloneMsg* cloneMsg = new plLoadCloneMsg(objUoid, std::move(requestor), 0);
         cloneMsg->SetBCastFlag(plMessage::kMsgWatch);
         plKey cloneKey = cloneMsg->GetCloneKey();//resMgr->CloneKey(key);
         cloneMsg->Send();

@@ -297,8 +297,8 @@ struct VaultMarker {
     VaultMarker()
         : id()
     { }
-    VaultMarker(uint32_t id, ST::string age, hsPoint3 pos, ST::string description)
-        : id(id), age(std::move(age)), pos(std::move(pos)), description(std::move(description))
+    VaultMarker(uint32_t id, ST::string age, const hsPoint3& pos, ST::string description)
+        : id(id), age(std::move(age)), pos(pos), description(std::move(description))
     { }
 };
 

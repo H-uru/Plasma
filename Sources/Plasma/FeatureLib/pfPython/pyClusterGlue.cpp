@@ -92,7 +92,7 @@ PLASMA_DEFAULT_TYPE(ptCluster, "Params:key\nCreates a new ptCluster");
 PyObject *pyCluster::New(plKey key)
 {
     ptCluster *newObj = (ptCluster*)ptCluster_type.tp_new(&ptCluster_type, nullptr, nullptr);
-    newObj->fThis->fClusterKey = key;
+    newObj->fThis->fClusterKey = std::move(key);
     return (PyObject*)newObj;
 }
 

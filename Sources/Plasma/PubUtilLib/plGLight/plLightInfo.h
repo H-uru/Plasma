@@ -155,7 +155,7 @@ protected:
     void                        IAddVisRegion(plVisRegion* reg);
     void                        IRemoveVisRegion(plVisRegion* reg);
 
-    void ISetSceneNode(plKey node) override;
+    void ISetSceneNode(const plKey& node) override;
 
     void                        ICheckMaxStrength();
 public:

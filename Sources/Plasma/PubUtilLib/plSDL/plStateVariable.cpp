@@ -48,8 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pnFactory/plCreatable.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plUoid.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/pnNetCommon.h"
 
@@ -2228,7 +2226,7 @@ bool plSimpleStateVariable::operator==(const plSimpleStateVariable &other) const
 //
 // Add and coalate
 //
-void plSimpleStateVariable::AddStateChangeNotification(plStateChangeNotifier& n)
+void plSimpleStateVariable::AddStateChangeNotification(plStateChangeNotifier n)
 {
     StateChangeNotifiers::iterator it=fChangeNotifiers.begin();
     for( ; it != fChangeNotifiers.end(); it++)
@@ -2242,13 +2240,13 @@ void plSimpleStateVariable::AddStateChangeNotification(plStateChangeNotifier& n)
     }
 
     // add new entry
-    fChangeNotifiers.push_back(n);
+    fChangeNotifiers.emplace_back(std::move(n));
 }
 
 //
 // remove entries with this key 
 //
-void plSimpleStateVariable::RemoveStateChangeNotification(plKey notificationObj)
+void plSimpleStateVariable::RemoveStateChangeNotification(const plKey& notificationObj)
 {
     StateChangeNotifiers::iterator it=fChangeNotifiers.end();
     for(; it != fChangeNotifiers.begin();)
@@ -2263,7 +2261,7 @@ void plSimpleStateVariable::RemoveStateChangeNotification(plKey notificationObj)
 //
 // remove entries which match
 //
-void plSimpleStateVariable::RemoveStateChangeNotification(plStateChangeNotifier n)
+void plSimpleStateVariable::RemoveStateChangeNotification(const plStateChangeNotifier& n)
 {
     StateChangeNotifiers::iterator it=fChangeNotifiers.end();
     for(; it != fChangeNotifiers.begin();)

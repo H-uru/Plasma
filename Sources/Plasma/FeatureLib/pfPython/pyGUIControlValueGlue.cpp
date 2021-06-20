@@ -153,7 +153,7 @@ PyObject *pyGUIControlValue::New(pyKey& gckey)
 PyObject *pyGUIControlValue::New(plKey objkey)
 {
     ptGUIControlValue *newObj = (ptGUIControlValue*)ptGUIControlValue_type.tp_new(&ptGUIControlValue_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -216,7 +216,7 @@ PyObject *pyGUIControlKnob::New(pyKey& gckey)
 PyObject *pyGUIControlKnob::New(plKey objkey)
 {
     ptGUIControlKnob *newObj = (ptGUIControlKnob*)ptGUIControlKnob_type.tp_new(&ptGUIControlKnob_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -279,7 +279,7 @@ PyObject *pyGUIControlUpDownPair::New(pyKey& gckey)
 PyObject *pyGUIControlUpDownPair::New(plKey objkey)
 {
     ptGUIControlUpDownPair *newObj = (ptGUIControlUpDownPair*)ptGUIControlUpDownPair_type.tp_new(&ptGUIControlUpDownPair_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 
@@ -355,7 +355,7 @@ PyObject *pyGUIControlProgress::New(pyKey& gckey)
 PyObject *pyGUIControlProgress::New(plKey objkey)
 {
     ptGUIControlProgress *newObj = (ptGUIControlProgress*)ptGUIControlProgress_type.tp_new(&ptGUIControlProgress_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

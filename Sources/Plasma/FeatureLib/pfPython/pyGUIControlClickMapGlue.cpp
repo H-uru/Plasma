@@ -106,7 +106,7 @@ PyObject *pyGUIControlClickMap::New(pyKey& gckey)
 PyObject *pyGUIControlClickMap::New(plKey objkey)
 {
     ptGUIControlClickMap *newObj = (ptGUIControlClickMap*)ptGUIControlClickMap_type.tp_new(&ptGUIControlClickMap_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

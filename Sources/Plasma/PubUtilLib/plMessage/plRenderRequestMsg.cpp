@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 
 
-plRenderRequestMsg::plRenderRequestMsg(plKey sender, plRenderRequestBase* req)
+plRenderRequestMsg::plRenderRequestMsg(const plKey& sender, plRenderRequestBase* req)
 :   plMessage(sender, nullptr, nullptr),
     fReq(req)
 {
@@ -90,7 +90,7 @@ plRenderRequestAck::plRenderRequestAck()
     hsAssert(false, "Improper usage, use argumented constructor");
 }
 
-plRenderRequestAck::plRenderRequestAck(plKey r, uint32_t userData)
+plRenderRequestAck::plRenderRequestAck(const plKey& r, uint32_t userData)
 :   plMessage(nullptr, r, nullptr),
     fUserData(userData)
 {

@@ -138,7 +138,7 @@ PyObject *pyGUISkin::New(pyKey& gckey)
 PyObject *pyGUISkin::New(plKey objkey)
 {
     ptGUISkin *newObj = (ptGUISkin*)ptGUISkin_type.tp_new(&ptGUISkin_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

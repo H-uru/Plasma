@@ -209,7 +209,7 @@ class pfGUIDialogMod : public plSingleModifier
         void        SetName( ST::string name ) { fName = std::move(name); }
         void        AddControlOnExport( pfGUIControlMod *ctrl );
         void        SetTagID( uint32_t id ) { fTagID = id; }
-        void        SetProcReceiver( plKey key ) { fProcReceiver = key; }
+        void        SetProcReceiver( plKey key ) { fProcReceiver = std::move(key); }
         void        SetVersion( uint32_t version ) { fVersion = version; }
 };
 

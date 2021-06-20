@@ -214,7 +214,7 @@ bool plMorphSequence::MsgReceive(plMessage* msg)
     return plSingleModifier::MsgReceive(msg);
 }
 
-size_t plMorphSequence::GetNumLayers(plKey meshKey /* = {} */) const
+size_t plMorphSequence::GetNumLayers(const plKey& meshKey /* = {} */) const
 {
     hsSsize_t index = IFindSharedMeshIndex(meshKey);
     if (index < 0)
@@ -223,7 +223,7 @@ size_t plMorphSequence::GetNumLayers(plKey meshKey /* = {} */) const
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs.size();
 }
 
-size_t plMorphSequence::GetNumDeltas(size_t iLay, plKey meshKey /* = {} */) const
+size_t plMorphSequence::GetNumDeltas(size_t iLay, const plKey& meshKey /* = {} */) const
 { 
     hsSsize_t index = IFindSharedMeshIndex(meshKey);
     if (index < 0)
@@ -232,7 +232,7 @@ size_t plMorphSequence::GetNumDeltas(size_t iLay, plKey meshKey /* = {} */) cons
         return fSharedMeshes[index].fMesh->fMorphSet->fMorphs[iLay].GetNumDeltas();
 }
 
-float plMorphSequence::GetWeight(size_t iLay, size_t iDel, plKey meshKey /* = {} */) const
+float plMorphSequence::GetWeight(size_t iLay, size_t iDel, const plKey& meshKey /* = {} */) const
 { 
     hsSsize_t index = IFindSharedMeshIndex(meshKey);
     if (index < 0)
@@ -274,7 +274,7 @@ void plMorphSequence::SetWeight(size_t iLay, size_t iDel, float w, plKey meshKey
         {
             fPendingStates.emplace_back();
             index = fPendingStates.size() - 1;
-            fPendingStates[index].fSharedMeshKey = meshKey;
+            fPendingStates[index].fSharedMeshKey = std::move(meshKey);
         }
         if (fPendingStates[index].fArrayWeights.size() <= iLay)
         {
@@ -642,7 +642,7 @@ void plMorphSequence::IReleaseIndices(size_t iShare)
     mInfo.fCurrDraw = nullptr;
 }
 
-hsSsize_t plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
+hsSsize_t plMorphSequence::IFindSharedMeshIndex(const plKey& meshKey) const
 {
     for (size_t i = 0; i < fSharedMeshes.size(); i++)
     {
@@ -653,7 +653,7 @@ hsSsize_t plMorphSequence::IFindSharedMeshIndex(plKey meshKey) const
     return -1;
 }
 
-hsSsize_t plMorphSequence::IFindPendingStateIndex(plKey meshKey) const
+hsSsize_t plMorphSequence::IFindPendingStateIndex(const plKey& meshKey) const
 {
     for (size_t i = 0; i < fPendingStates.size(); i++)
     {

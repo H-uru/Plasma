@@ -107,7 +107,7 @@ PyObject *pyGUIControlRadioGroup::New(pyKey& gckey)
 PyObject *pyGUIControlRadioGroup::New(plKey objkey)
 {
     ptGUIControlRadioGroup *newObj = (ptGUIControlRadioGroup*)ptGUIControlRadioGroup_type.tp_new(&ptGUIControlRadioGroup_type, nullptr, nullptr);
-    newObj->fThis->fGCkey = objkey;
+    newObj->fThis->fGCkey = std::move(objkey);
     return (PyObject*)newObj;
 }
 

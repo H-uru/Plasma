@@ -233,7 +233,7 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
     }
 }
 
-ST::string plRelevanceMgr::GetRegionNames(hsBitVector regions)
+ST::string plRelevanceMgr::GetRegionNames(const hsBitVector& regions)
 {
     ST::string retVal;
     if (regions.IsBitSet(0))

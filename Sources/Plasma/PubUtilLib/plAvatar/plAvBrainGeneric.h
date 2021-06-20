@@ -159,7 +159,7 @@ public:
     void Deactivate() override;
 
     virtual plKey GetRecipient();
-    virtual void SetRecipient(const plKey &recipient);
+    virtual void SetRecipient(plKey recipient);
 
     /** Send a notify message to our recipient.
         Some brains, such as the coop, will use this opportunity to add annotations

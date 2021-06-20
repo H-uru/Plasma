@@ -74,7 +74,7 @@ public:
     // Argumentless constructor useless (except for compiling).
     plRenderRequestMsg();
     // non-nil sender will get an ack when render is "done".
-    plRenderRequestMsg(plKey sender, plRenderRequestBase* req);
+    plRenderRequestMsg(const plKey& sender, plRenderRequestBase* req);
     virtual ~plRenderRequestMsg();
 
     CLASSNAME_REGISTER( plRenderRequestMsg );
@@ -97,7 +97,7 @@ protected:
 public:
     // Argumentless constructor useless (except for compiling).
     plRenderRequestAck();
-    plRenderRequestAck(plKey r, uint32_t userData=0);
+    plRenderRequestAck(const plKey& r, uint32_t userData=0);
     ~plRenderRequestAck() {}
 
     CLASSNAME_REGISTER( plRenderRequestAck );

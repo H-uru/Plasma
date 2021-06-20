@@ -116,7 +116,7 @@ public:
     void        GetDefaultWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 
     // Export only
-    void        SetNodeKey(plKey key) { fNodeKey = key; }
+    void        SetNodeKey(plKey key) { fNodeKey = std::move(key); }
     plKey       GetNodeKey() const { return fNodeKey; }
 
     void        SetHither(float h) { fHither = h; }

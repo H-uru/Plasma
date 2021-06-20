@@ -206,7 +206,7 @@ void plArmatureEffectFootSound::Read(hsStream* s, hsResMgr* mgr)
     }
 }
 
-uint32_t plArmatureEffectFootSound::IFindSurfaceByTrigger(plKey trigger)
+uint32_t plArmatureEffectFootSound::IFindSurfaceByTrigger(const plKey& trigger)
 {
     // Skip index 0. It's the special "NoSurface" that should always be at the stack bottom
     for (size_t i = 1; i < fSurfaces.size(); i++)

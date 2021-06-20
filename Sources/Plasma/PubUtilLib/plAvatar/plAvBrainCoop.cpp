@@ -96,7 +96,7 @@ plAvBrainCoop::plAvBrainCoop()
 plAvBrainCoop::plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut,
                              MoveMode moveMode, plKey guestKey)
 : plAvBrainGeneric(exitFlags, fadeIn, fadeOut, moveMode),
-  fGuestKey(guestKey)
+  fGuestKey(std::move(guestKey))
 {
     static uint16_t coopSerial = 0;
 
@@ -112,7 +112,7 @@ plAvBrainCoop::plAvBrainCoop(uint32_t exitFlags, float fadeIn, float fadeOut,
                              plKey hostKey)
 : plAvBrainGeneric(exitFlags, fadeIn, fadeOut, moveMode),
   fInitiatorID(initiatorID), fInitiatorSerial(initiatorSerial),
-  fHostKey(hostKey)
+  fHostKey(std::move(hostKey))
 {
 }
 
@@ -253,9 +253,4 @@ plKey plAvBrainCoop::GetRecipient()
     if (fRecipients.size() == 0)
         return nullptr;
     return fRecipients[0];
-}
-
-void plAvBrainCoop::SetRecipient(const plKey &recipient)
-{
-    fRecipients.push_back(recipient);
 }

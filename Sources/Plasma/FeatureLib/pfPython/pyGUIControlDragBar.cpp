@@ -53,7 +53,7 @@ pyGUIControlDragBar::pyGUIControlDragBar(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlDragBar::pyGUIControlDragBar(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlDragBar::pyGUIControlDragBar(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 

@@ -53,7 +53,7 @@ pyGUIControlValue::pyGUIControlValue(pyKey& gckey) : pyGUIControl(gckey)
 {
 }
 
-pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(objkey)
+pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(std::move(objkey))
 {
 }
 
@@ -156,7 +156,7 @@ pyGUIControlKnob::pyGUIControlKnob(pyKey& gckey) : pyGUIControlValue(gckey)
 {
 }
 
-pyGUIControlKnob::pyGUIControlKnob(plKey objkey) : pyGUIControlValue(objkey)
+pyGUIControlKnob::pyGUIControlKnob(plKey objkey) : pyGUIControlValue(std::move(objkey))
 {
 }
 
@@ -176,7 +176,7 @@ pyGUIControlUpDownPair::pyGUIControlUpDownPair(pyKey& gckey) : pyGUIControlValue
 {
 }
 
-pyGUIControlUpDownPair::pyGUIControlUpDownPair(plKey objkey) : pyGUIControlValue(objkey)
+pyGUIControlUpDownPair::pyGUIControlUpDownPair(plKey objkey) : pyGUIControlValue(std::move(objkey))
 {
 }
 
@@ -196,7 +196,7 @@ pyGUIControlProgress::pyGUIControlProgress(pyKey& gckey) : pyGUIControlValue(gck
 {
 }
 
-pyGUIControlProgress::pyGUIControlProgress(plKey objkey) : pyGUIControlValue(objkey)
+pyGUIControlProgress::pyGUIControlProgress(plKey objkey) : pyGUIControlValue(std::move(objkey))
 {
 }
 

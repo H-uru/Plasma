@@ -587,8 +587,8 @@ public:
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyOutputRedirector object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyOutputRedirector); // converts a PyObject to a pyOutputRedirector (throws error if not correct type)
 
-    void Write(std::string data) {fData += data;}
-    void Write(std::wstring data)
+    void Write(const std::string& data) {fData += data;}
+    void Write(const std::wstring& data)
     {
         char* strData = hsWStringToString(data.c_str());
         Write(strData);
@@ -698,7 +698,7 @@ public:
         fLog = log;
     }
 
-    void Write(std::string data)
+    void Write(const std::string& data)
     {
         PyObject* stdOut = PythonInterface::GetStdOut();
 
@@ -712,7 +712,7 @@ public:
             fData += data;
     }
 
-    void Write(std::wstring data)
+    void Write(const std::wstring& data)
     {
         char* strData = hsWStringToString(data.c_str());
         Write(strData);

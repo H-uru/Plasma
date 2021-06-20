@@ -63,7 +63,7 @@ plSimulationInterface::~plSimulationInterface()
 {
 }
 
-void plSimulationInterface::ISetSceneNode(plKey newNode)
+void plSimulationInterface::ISetSceneNode(const plKey& newNode)
 {
     if (fPhysical)
         fPhysical->SetSceneNode(newNode);

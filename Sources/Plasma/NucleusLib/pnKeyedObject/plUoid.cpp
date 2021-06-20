@@ -140,12 +140,6 @@ plUoid::plUoid(const plLocation& location, uint16_t classType, const ST::string&
     fClonePlayerID = 0;
 }
 
-plUoid::plUoid(const plUoid& src)
-{
-    Invalidate();
-    *this = src;
-}
-
 plUoid::~plUoid()
 {
     Invalidate();
@@ -240,19 +234,6 @@ bool plUoid::operator==(const plUoid& u) const
             && fObjectID == u.fObjectID
             && fCloneID == u.fCloneID
             && fClonePlayerID == u.fClonePlayerID;
-}
-
-plUoid& plUoid::operator=(const plUoid& rhs)
-{
-    fObjectID = rhs.fObjectID;
-    fCloneID = rhs.fCloneID;
-    fClonePlayerID = rhs.fClonePlayerID;
-    fClassType = rhs.fClassType;
-    fObjectName = rhs.fObjectName;
-    fLocation = rhs.fLocation;
-    fLoadMask = rhs.fLoadMask;
-
-    return *this;
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>

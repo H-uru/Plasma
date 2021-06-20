@@ -1189,7 +1189,7 @@ void plClient::IRoomUnloaded(plSceneNode* node)
     plgDispatch::MsgSend(loadmsg);
 }
 
-void plClient::IReadKeyedObjCallback(plKey key)
+void plClient::IReadKeyedObjCallback(const plKey& key)
 {
     fInstance->IIncProgress(1, key->GetName().c_str());
 }

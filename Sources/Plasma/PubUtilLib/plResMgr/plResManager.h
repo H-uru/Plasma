@@ -58,7 +58,7 @@ class plDispatch;
 
 // plProgressProc is a proc called every time an object loads, to keep a progress bar for
 // loading ages up-to-date.
-typedef void(*plProgressProc)(plKey key);
+typedef void(*plProgressProc)(const plKey& key);
 
 class plResManager : public hsResMgr
 {
