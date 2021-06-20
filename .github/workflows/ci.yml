@@ -102,6 +102,7 @@ jobs:
           - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: 2013-windows-x64 }
           - { sdk-version: 2017, generator: Visual Studio 16 2019, arch: x64, str: 2017-windows-x64 }
           - { sdk-version: 2019, generator: Visual Studio 16 2019, arch: x64, str: 2019-windows-x64 }
+          - { sdk-version: 2022, generator: Visual Studio 16 2019, arch: x64, str: 2022-windows-x64 }
 
     steps:
       - name: Checkout Plasma
