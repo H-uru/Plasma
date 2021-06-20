@@ -57,12 +57,12 @@ FullDniDay variable is divided by 100 due to layer animations not being able to 
 from Plasma import *
 from PlasmaTypes import *
 
-stringSDLVarName    = ptAttribString(0,"Lake Light State SDL Variable")
-DarkMatAnim         = ptAttribMaterialAnimation(1,"mat anim: Lake Light Dark")
-QuarterMatAnim      = ptAttribMaterialAnimation(2,"mat anim: Lake Light Quarter")
-HalfMatAnim         = ptAttribMaterialAnimation(3,"mat anim: Lake Light Half")
-ThreeQuarterMatAnim = ptAttribMaterialAnimation(4,"mat anim: Lake Light Three Quarter")
-FullMatAnim         = ptAttribMaterialAnimation(5,"mat anim: Lake Light Full")
+stringSDLVarName    = ptAttribString(0, "Lake Light State SDL Variable")
+DarkMatAnim         = ptAttribMaterialAnimation(1, "mat anim: Lake Light Dark")
+QuarterMatAnim      = ptAttribMaterialAnimation(2, "mat anim: Lake Light Quarter")
+HalfMatAnim         = ptAttribMaterialAnimation(3, "mat anim: Lake Light Half")
+ThreeQuarterMatAnim = ptAttribMaterialAnimation(4, "mat anim: Lake Light Three Quarter")
+FullMatAnim         = ptAttribMaterialAnimation(5, "mat anim: Lake Light Full")
 MatAnimLakeLight    = [DarkMatAnim, QuarterMatAnim, HalfMatAnim, ThreeQuarterMatAnim, FullMatAnim]
 FullDniDay          = 1087.5 
 
@@ -81,7 +81,7 @@ class xLakeLightCycle(ptResponder):
         dniSecsElapsed = PtGetAgeTimeOfDayPercent() * FullDniDay
         SDLvalue = 0
         if stringSDLVarName:
-            ageSDL.setNotify(self.key,stringSDLVarName.value,0.0)
+            ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
             SDLvalue = ageSDL[stringSDLVarName.value][0]
         
         PtDebugPrint(f"xLakeLightCycle - Animation {SDLvalue} set to time {dniSecsElapsed}")
@@ -91,7 +91,7 @@ class xLakeLightCycle(ptResponder):
         MatAnimLakeLight[SDLvalue].animation.resume()
         
         
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         if VARname != stringSDLVarName.value:
             return
             
