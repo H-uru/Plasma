@@ -180,8 +180,9 @@ pfGUIListPicture::pfGUIListPicture(plKey mipKey, bool respectAlpha)
         plMipmap *uncompBuffer = hsCodecManager::Instance().CreateUncompressedMipmap( mip, hsCodecManager::k32BitDepth );
         ST::string str = ST::format("{}_uncomp", mip->GetKeyName());
         fMipmapKey = hsgResMgr::ResMgr()->NewKey( str, uncompBuffer, fMipmapKey->GetUoid().GetLocation() );
-        fMipmapKey->RefObject();
     }
+
+    fMipmapKey->RefObject();
 }
 
 pfGUIListPicture::~pfGUIListPicture()
