@@ -66,11 +66,11 @@ const Class_ID REPCOMP_CID(0x157c29f3, 0x18fa54cd);
 const Class_ID REPGROUP_CID(0x20ce74a2, 0x471b2386);
 
 static const int kNumQualities = 4;
-static const char* kQualityStrings[kNumQualities] = {
-    "Low",
-    "Medium",
-    "High",
-    "Ultra"
+static const TCHAR* kQualityStrings[kNumQualities] = {
+    _T("Low"),
+    _T("Medium"),
+    _T("High"),
+    _T("Ultra")
 };
 
 class plRepresentComp : public plComponent

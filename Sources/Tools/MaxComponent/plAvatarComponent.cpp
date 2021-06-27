@@ -607,7 +607,6 @@ public:
 
         IParamBlock2 *pb = map->GetParamBlock();
         HWND cbox = nullptr;
-        char* buffer = nullptr;
 
         int selection;
         switch (msg)
@@ -617,7 +616,7 @@ public:
             for (j = 0; j < plClothingMgr::kMaxGroup; j++)
             {
                 cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plClothingMgr::GroupStrings[j]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plClothingMgr::GroupStrings[j]));
             }
             selection = pb->GetInt(ParamID(plAvatarComponent::kClothingGroup));
             SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -625,7 +624,7 @@ public:
             for (j = 0; j < plArmatureMod::kMaxBoneBase; j++)
             {
                 cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON);
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plArmatureMod::BoneStrings[j]);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plArmatureMod::BoneStrings[j]));
             }
             selection = pb->GetInt(ParamID(plAvatarComponent::kSkeleton));
             SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -757,7 +756,6 @@ public:
                 fPB = map->GetParamBlock();
                 fComp = (plLODAvatarComponent*) fPB->GetOwner();
 
-                VCharArray Nilptr;
                 ILoadComboBox(LODCombo, fComp->fLODLevels);
                 SendMessage(LODCombo, CB_SETCURSEL, LodBeginState,  0); // select the right one
 
@@ -765,7 +763,7 @@ public:
                 for (i = 0; i < plClothingMgr::kMaxGroup; i++)
                 {
                     cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_CLOTHING_GROUP);
-                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plClothingMgr::GroupStrings[i]);
+                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plClothingMgr::GroupStrings[i]));
                 }
                 selection = fPB->GetInt(ParamID(plLODAvatarComponent::kClothingGroup));
                 SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -773,7 +771,7 @@ public:
                 for (i = 0; i < plArmatureMod::kMaxBoneBase; i++)
                 {
                     cbox = GetDlgItem(hWnd, IDC_COMP_AVATAR_SKELETON);
-                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)plArmatureMod::BoneStrings[i]);
+                    SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(plArmatureMod::BoneStrings[i]));
                 }
                 selection = fPB->GetInt(ParamID(plLODAvatarComponent::kSkeleton));
                 SendMessage(cbox, CB_SETCURSEL, selection, 0);
@@ -1045,9 +1043,9 @@ plLODAvatarComponent::plLODAvatarComponent() : fMaterial()
     fClassDesc = &gLODAvatarCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
 
-    fLODLevels.push_back("High");
-    fLODLevels.push_back("Medium");
-    fLODLevels.push_back("Low");
+    fLODLevels.emplace_back(_M("High"));
+    fLODLevels.emplace_back(_M("Medium"));
+    fLODLevels.emplace_back(_M("Low"));
 
 }
 

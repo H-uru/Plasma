@@ -292,7 +292,7 @@ void plPassAnimDlgProc::ILoadNames(IParamBlock2 *pb )
         plAnimStealthNode *stealth = mtl->IGetStealth( i, false );
         if (stealth != nullptr)
         {
-            int idx = (int)SendMessage(hAnims, CB_ADDSTRING, 0, (LPARAM)stealth->GetSegmentName().c_str());
+            int idx = (int)SendMessage(hAnims, CB_ADDSTRING, 0, (LPARAM)ST2T(stealth->GetSegmentName()));
             SendMessage( hAnims, CB_SETITEMDATA, idx, (LPARAM)stealth );
         }
     }

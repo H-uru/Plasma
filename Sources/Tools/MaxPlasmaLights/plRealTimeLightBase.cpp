@@ -69,7 +69,7 @@ static int GetTargetPoint(TimeValue t, INode *inode, Point3& p)
 //  This class provides the base functionality for all the dialog procs for
 //  the ParamBlock rollouts for each light
 
-void    plBaseLightProc::ILoadComboBox( HWND hComboBox, const char *names[] )
+void    plBaseLightProc::ILoadComboBox( HWND hComboBox, const TCHAR* names[] )
 {
     SendMessage(hComboBox, CB_RESETCONTENT, 0, 0);
     for (int i = 0; names[i]; i++)

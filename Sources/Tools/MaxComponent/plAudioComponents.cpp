@@ -3650,27 +3650,27 @@ protected:
         int     i, toSet = -1;
         struct plSndGrp
         {
-            char name[ 64 ];
+            const TCHAR name[ 64 ];
             int group;
-        } groups[] = {  { "Metal",  plPhysicalSndGroup::kMetal },
-                        { "Grass",  plPhysicalSndGroup::kGrass },
-                        { "Wood",   plPhysicalSndGroup::kWood },
-                        { "Stone",  plPhysicalSndGroup::kWood + 1 },
-                        { "Water",  plPhysicalSndGroup::kWood + 2 },
-                        { "Bone",   plPhysicalSndGroup::kWood + 3 },
-                        { "Dirt",   plPhysicalSndGroup::kWood + 4 },
-                        { "Rug",    plPhysicalSndGroup::kWood + 5 },
-                        { "Cone",   plPhysicalSndGroup::kWood + 6 },
-                        { "User 1", plPhysicalSndGroup::kWood + 7 },
-                        { "User 2", plPhysicalSndGroup::kWood + 8 },
-                        { "User 3", plPhysicalSndGroup::kWood + 9 },
-                        { "", plPhysicalSndGroup::kNone } };
+        } groups[] = {  { _T("Metal"),  plPhysicalSndGroup::kMetal },
+                        { _T("Grass"),  plPhysicalSndGroup::kGrass },
+                        { _T("Wood"),   plPhysicalSndGroup::kWood },
+                        { _T("Stone"),  plPhysicalSndGroup::kWood + 1 },
+                        { _T("Water"),  plPhysicalSndGroup::kWood + 2 },
+                        { _T("Bone"),   plPhysicalSndGroup::kWood + 3 },
+                        { _T("Dirt"),   plPhysicalSndGroup::kWood + 4 },
+                        { _T("Rug"),    plPhysicalSndGroup::kWood + 5 },
+                        { _T("Cone"),   plPhysicalSndGroup::kWood + 6 },
+                        { _T("User 1"), plPhysicalSndGroup::kWood + 7 },
+                        { _T("User 2"), plPhysicalSndGroup::kWood + 8 },
+                        { _T("User 3"), plPhysicalSndGroup::kWood + 9 },
+                        { _T(""), plPhysicalSndGroup::kNone } };
 
         SendMessage( hList, CB_RESETCONTENT, 0, 0 );
         
         if( allowAll )
         {
-            int idx = (int)SendMessage(hList, CB_ADDSTRING, 0, (LPARAM)"* All *");
+            int idx = (int)SendMessage(hList, CB_ADDSTRING, 0, (LPARAM)_T("* All *"));
             SendMessage( hList, CB_SETITEMDATA, idx, (LPARAM)-1 );
             if( currSel == -1 )
                 toSet = idx;

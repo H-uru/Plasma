@@ -707,7 +707,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     SendMessage( hLoops, CB_RESETCONTENT, 0, 0 );
 
     // Add the default option
-    int defIdx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)ENTIRE_ANIMATION_NAME);
+    int defIdx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)_T(ENTIRE_ANIMATION_NAME));
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
     ST::string segName = M2ST( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
@@ -733,7 +733,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
                     (spec->fEnd   == -1 || spec->fEnd   <= animSpec->fEnd) )
                 {
                     // Add the name
-                    int idx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
+                    int idx = (int)SendMessage(hLoops, CB_ADDSTRING, 0, (LPARAM)ST2T(spec->fName));
                     SendMessage( hLoops, CB_SETITEMDATA, idx, kName );
                 }       
             }
@@ -837,12 +837,12 @@ protected:
     {
         int type = fPB->GetInt(fTypeID);
 
-        int idx = ListBox_AddString( hList, kUseParamBlockNodeString );
+        int idx = ListBox_AddString( hList, _T(kUseParamBlockNodeString) );
         if (type == plAnimObjInterface::kUseParamBlockNode && !fPB->GetINode(fNodeParamID))
             ListBox_SetCurSel(hList, idx);
 
 
-        idx = ListBox_AddString( hList, kUseOwnerNodeString );
+        idx = ListBox_AddString( hList, _T(kUseOwnerNodeString) );
         if (type == plAnimObjInterface::kUseOwnerNode)
             ListBox_SetCurSel(hList, idx);
     }

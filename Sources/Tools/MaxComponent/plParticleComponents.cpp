@@ -107,11 +107,11 @@ void DummyCodeIncludeFuncParticles()
 //
 // stuff for plParticleComponent
 
-const char *plParticleCoreComponent::GenStrings[] = // line these up with the generation types enum.
+const TCHAR* plParticleCoreComponent::GenStrings[] = // line these up with the generation types enum.
 {
-    "Point Source",
-    "Mesh",
-    "One Per Vertex"
+    _T("Point Source"),
+    _T("Mesh"),
+    _T("One Per Vertex")
 };
 
 bool plParticleCoreComponent::IsParticleSystemComponent(plComponentBase *comp)

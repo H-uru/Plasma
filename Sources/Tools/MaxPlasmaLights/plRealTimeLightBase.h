@@ -95,7 +95,7 @@ class plRTLightBase;
 class plBaseLightProc : public ParamMap2UserDlgProc
 {
     protected:
-        void            ILoadComboBox( HWND hComboBox, const char *names[] );
+        void            ILoadComboBox( HWND hComboBox, const TCHAR* names[] );
         void            IBuildLightMesh( plRTLightBase *base, float coneSize );
 
     public:

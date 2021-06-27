@@ -361,7 +361,7 @@ public:
 
     static const float kAvatarInputSynchThreshold;
     static bool fClickToTurn;
-    static const char *BoneStrings[];
+    static const ST::string BoneStrings[];
     
     void SetPhysicalDims(float height, float width) { fPhysHeight = height; fPhysWidth = width; }
 

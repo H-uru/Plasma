@@ -347,8 +347,8 @@ public:
         kMaxType,
     };
 
-    static const char *GroupStrings[];
-    static const char *TypeStrings[];
+    static const ST::string GroupStrings[];
+    static const ST::string TypeStrings[];
 };
 
 

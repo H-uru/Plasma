@@ -97,18 +97,18 @@ const UINT32 plClothingMtl::TextConstants[] =
     IDC_CLOTHING_TILE4_SIZE
 };
 
-const char *plClothingMtl::LayerStrings[] = 
+const TCHAR* plClothingMtl::LayerStrings[] =
 {
-    "Base",
-    "Skin",
-    "Skin Blend (1)",
-    "Skin Blend (2)",
-    "Skin Blend (3)",
-    "Skin Blend (4)",
-    "Skin Blend (5)",
-    "Skin Blend (6)",
-    "Tint 1",
-    "Tint 2"
+    _T("Base"),
+    _T("Skin"),
+    _T("Skin Blend (1)"),
+    _T("Skin Blend (2)"),
+    _T("Skin Blend (3)"),
+    _T("Skin Blend (4)"),
+    _T("Skin Blend (5)"),
+    _T("Skin Blend (6)"),
+    _T("Tint 1"),
+    _T("Tint 2")
 };
 
 const uint8_t plClothingMtl::LayerToPBIdx[] =
@@ -703,25 +703,3 @@ void plClothingMtl::ReleaseTilesets()
         fTilesets.pop_back();
     }
 }
-
-/////////////////////////////////////////////////////////////////////////////////
-
-plClothingTileset::plClothingTileset() : fName()
-{
-}
-
-plClothingTileset::~plClothingTileset()
-{
-    delete [] fName;
-}
-
-void plClothingTileset::AddElement(plClothingElement *element)
-{
-    fElements.emplace_back(element);
-}
-
-void plClothingTileset::SetName(char *name)
-{
-    delete fName; fName = hsStrcpy(name);
-}
-

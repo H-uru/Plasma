@@ -276,16 +276,16 @@ INT_PTR plClothingComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd,
             ListBox_SetCurSel(hList, -1);
 
             for (i = 0; i < plClothingMgr::kMaxGroup; i++)
-                ComboBox_AddString(hGroup, plClothingMgr::GroupStrings[i]);
+                ComboBox_AddString(hGroup, ST2T(plClothingMgr::GroupStrings[i]));
             ComboBox_SetCurSel(hGroup, pb->GetInt(plClothingComponent::kGroup));
 
             for (i = 0; i < plClothingMgr::kMaxType; i++)
-                ComboBox_AddString(hType, plClothingMgr::TypeStrings[i]);
+                ComboBox_AddString(hType, ST2T(plClothingMgr::TypeStrings[i]));
             ComboBox_SetCurSel(hType, pb->GetInt(plClothingComponent::kType));
 
-            ComboBox_AddString(hLOD, "High");
-            ComboBox_AddString(hLOD, "Medium");
-            ComboBox_AddString(hLOD, "Low");
+            ComboBox_AddString(hLOD, _T("High"));
+            ComboBox_AddString(hLOD, _T("Medium"));
+            ComboBox_AddString(hLOD, _T("Low"));
             ComboBox_SetCurSel(hLOD, pb->GetInt(plClothingComponent::kLODState));
         }
         return TRUE;

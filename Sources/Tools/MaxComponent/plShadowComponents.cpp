@@ -70,11 +70,11 @@ static uint8_t QualityBitToMask(int q) { return ~((1 << q) - 1); }
 
 #define WM_ROLLOUT_OPEN WM_USER+1
 static const int kNumQualities = 4;
-static const char* kQualityStrings[kNumQualities] = {
-    "Low",
-    "Medium",
-    "High",
-    "Ultra"
+static const TCHAR* kQualityStrings[kNumQualities] = {
+    _T("Low"),
+    _T("Medium"),
+    _T("High"),
+    _T("Ultra")
 };
 
 template <class T> class plQualityProc : public ParamMap2UserDlgProc

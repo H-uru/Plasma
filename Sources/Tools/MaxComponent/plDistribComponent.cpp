@@ -71,55 +71,55 @@ void DummyCodeIncludeFuncDistrib()
 struct plIsoTypeStringValPair
 {
     plDistributor::IsoType          fValue;
-    const char*                     fString;
+    const TCHAR*                     fString;
 };
 
 static const int kNumSeparations = 4;
 static plIsoTypeStringValPair kSeparationStrings[kNumSeparations] =
 {
-    { plDistributor::kIsoNone, "None" },
-    { plDistributor::kIsoLow, "Low" },
-    { plDistributor::kIsoMedium, "Medium" },
-    { plDistributor::kIsoHigh, "High" }
+    { plDistributor::kIsoNone, _T("None") },
+    { plDistributor::kIsoLow, _T("Low") },
+    { plDistributor::kIsoMedium, _T("Medium") },
+    { plDistributor::kIsoHigh, _T("High") }
 };
 
 struct plConformTypeStringValPair
 {
     plDistributor::ConformType      fValue;
-    const char*                     fString;
+    const TCHAR*                     fString;
 };
 
 static const int kNumConforms = 5;
 static plConformTypeStringValPair kConformStrings[kNumConforms] =
 {
-    { plDistributor::kConformNone, "None" },
-    { plDistributor::kConformCheck, "Check" },
-    { plDistributor::kConformAll, "All Verts" },
-    { plDistributor::kConformHeight, "Bottom" },
-    { plDistributor::kConformBase, "Base" }
+    { plDistributor::kConformNone, _T("None") },
+    { plDistributor::kConformCheck, _T("Check") },
+    { plDistributor::kConformAll, _T("All Verts") },
+    { plDistributor::kConformHeight, _T("Bottom") },
+    { plDistributor::kConformBase, _T("Base") }
 };
 
 struct plColorChanStringValPair
 {
     plDistributor::ColorChan        fValue;
-    const char*                     fString;
+    const TCHAR*                     fString;
 };
 
 static plColorChanStringValPair kColorChanStrings[] =
 {
-    { plDistributor::kRed, "Red" },
-    { plDistributor::kGreen, "Green" },
-    { plDistributor::kBlue, "Blue" },
-    { plDistributor::kAlpha, "Alpha" },
-    { plDistributor::kAverageRedGreen, "Avg(R,G)" },
-    { plDistributor::kAverageRedGreenTimesAlpha, "Avg(R,G)xA" },
-    { plDistributor::kAverage, "Avg(R,G,B)" },
-    { plDistributor::kAverageTimesAlpha, "Avg(R,G,B)xA" },
-    { plDistributor::kMax, "Max(R,G,B)" },
-    { plDistributor::kMaxColor, "Max(R,G,B)" },
-    { plDistributor::kMaxColorTimesAlpha, "Max(R,G,B)xA" },
-    { plDistributor::kMaxRedGreen, "Max(R,G)" },
-    { plDistributor::kMaxRedGreenTimesAlpha, "Max(R,G)xA" }
+    { plDistributor::kRed, _T("Red") },
+    { plDistributor::kGreen, _T("Green") },
+    { plDistributor::kBlue, _T("Blue") },
+    { plDistributor::kAlpha, _T("Alpha") },
+    { plDistributor::kAverageRedGreen, _T("Avg(R,G)") },
+    { plDistributor::kAverageRedGreenTimesAlpha, _T("Avg(R,G)xA") },
+    { plDistributor::kAverage, _T("Avg(R,G,B)") },
+    { plDistributor::kAverageTimesAlpha, _T("Avg(R,G,B)xA") },
+    { plDistributor::kMax, _T("Max(R,G,B)") },
+    { plDistributor::kMaxColor, _T("Max(R,G,B)") },
+    { plDistributor::kMaxColorTimesAlpha, _T("Max(R,G,B)xA") },
+    { plDistributor::kMaxRedGreen, _T("Max(R,G)") },
+    { plDistributor::kMaxRedGreenTimesAlpha, _T("Max(R,G)xA") }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

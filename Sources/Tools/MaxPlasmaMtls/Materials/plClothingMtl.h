@@ -44,12 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
+#include <string_theory/string>
+
 class Bitmap;
 class plClothingItem;
 class plMaxNode;
 class plClothingElement;
 class Texmap;
-namespace ST { class string; }
 
 #define CLOTHING_MTL_CLASS_ID Class_ID(0x792c6de4, 0x1f952b65)
 
@@ -58,14 +59,11 @@ extern TCHAR *GetString(int id);
 class plClothingTileset
 {
 public:
-    char *fName;
+    ST::string fName;
     std::vector<plClothingElement *> fElements;
 
-    plClothingTileset();
-    ~plClothingTileset();
-
-    void SetName(char *name);
-    void AddElement(plClothingElement *element);
+    void SetName(ST::string name) { fName = std::move(name); }
+    void AddElement(plClothingElement* element) { fElements.emplace_back(element); }
 };
 
 class plClothingMtl : public Mtl
@@ -77,7 +75,7 @@ protected:
 public:
     IMtlParams *fIMtlParams;
 
-    static const char *LayerStrings[];
+    static const TCHAR* LayerStrings[];
     static const uint8_t LayerToPBIdx[];
 
     enum

@@ -64,24 +64,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct plProbChanStringValPair
 {
     plDistributor::ColorChan        fValue;
-    const char*                     fString;
+    const TCHAR*                     fString;
 };
 
 static plProbChanStringValPair kProbColorChanStrings[] =
 {
-    { plDistributor::kRed, "Red" },
-    { plDistributor::kGreen, "Green" },
-    { plDistributor::kBlue, "Blue" },
-    { plDistributor::kAlpha, "Alpha" },
-    { plDistributor::kAverageRedGreen, "Avg(R,G)" },
-    { plDistributor::kAverageRedGreenTimesAlpha, "Avg(R,G)xA" },
-    { plDistributor::kAverage, "Avg(R,G,B)" },
-    { plDistributor::kAverageTimesAlpha, "Avg(R,G,B)xA" },
-    { plDistributor::kMax, "Max(R,G,B)" },
-    { plDistributor::kMaxColor, "Max(R,G,B)" },
-    { plDistributor::kMaxColorTimesAlpha, "Max(R,G,B)xA" },
-    { plDistributor::kMaxRedGreen, "Max(R,G)" },
-    { plDistributor::kMaxRedGreenTimesAlpha, "Max(R,G)xA" }
+    { plDistributor::kRed, _T("Red") },
+    { plDistributor::kGreen, _T("Green") },
+    { plDistributor::kBlue, _T("Blue") },
+    { plDistributor::kAlpha, _T("Alpha") },
+    { plDistributor::kAverageRedGreen, _T("Avg(R,G)") },
+    { plDistributor::kAverageRedGreenTimesAlpha, _T("Avg(R,G)xA") },
+    { plDistributor::kAverage, _T("Avg(R,G,B)") },
+    { plDistributor::kAverageTimesAlpha, _T("Avg(R,G,B)xA") },
+    { plDistributor::kMax, _T("Max(R,G,B)") },
+    { plDistributor::kMaxColor, _T("Max(R,G,B)") },
+    { plDistributor::kMaxColorTimesAlpha, _T("Max(R,G,B)xA") },
+    { plDistributor::kMaxRedGreen, _T("Max(R,G)") },
+    { plDistributor::kMaxRedGreenTimesAlpha, _T("Max(R,G)xA") }
 };
 
 void DummyCodeIncludeFuncDistrib_old()

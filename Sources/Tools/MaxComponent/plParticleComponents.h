@@ -98,7 +98,7 @@ public:
         kGenOnePerVertex,
         kGenNumOptions
     };
-    static const char *GenStrings[];
+    static const TCHAR* GenStrings[];
 
     enum
     {
