@@ -1043,9 +1043,11 @@ plLODAvatarComponent::plLODAvatarComponent() : fMaterial()
     fClassDesc = &gLODAvatarCompDesc;
     fClassDesc->MakeAutoParamBlocks(this);
 
-    fLODLevels.emplace_back(_M("High"));
-    fLODLevels.emplace_back(_M("Medium"));
-    fLODLevels.emplace_back(_M("Low"));
+    fLODLevels = {
+        _M("High"),
+        _M("Medium"),
+        _M("Low),
+    };
 
 }
 
@@ -1231,5 +1233,4 @@ void plLODAvatarComponent::RemoveBone(int index)
     fCompPB->Delete(ParamID(kBoneList), boneIdx, 1);
     fCompPB->SetValue(ParamID(kGroupTotals), 0, fCompPB->GetInt(ParamID(kGroupTotals), 0, group) - 1, group);
 }
-
 
