@@ -63,7 +63,7 @@ plRegistryKeyList::~plRegistryKeyList()
 plKeyImp* plRegistryKeyList::FindKey(const ST::string& keyName) const
 {
     auto it = std::find_if(fKeys.begin(), fKeys.end(),
-        [&] (plKeyImp* key) { return key->GetName().compare_i(keyName) == 0; }
+        [&] (plKeyImp* key) { return key && key->GetName().compare_i(keyName) == 0; }
     );
     if (it != fKeys.end())
         return *it;
