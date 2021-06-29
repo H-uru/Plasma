@@ -68,8 +68,8 @@ kGameInProgress = 6
 kEnd = 7
 
 #Teams
-kNorth = "north"
-kSouth = "south"
+kNorth = 0
+kSouth = 1
 
 #Sounds
 kEventInit = "HandleInit"
