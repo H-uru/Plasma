@@ -212,6 +212,8 @@ class grsnWallPython(ptResponder):
         #Prepare SDLs (n-north, s-South)
         self.ageSDL.setFlags("nChairOccupant",1,1)
         self.ageSDL.setFlags("sChairOccupant",1,1)
+        self.ageSDL.setFlags("nWallPlayer",1,1)
+        self.ageSDL.setFlags("sWallPlayer",1,1)
         self.ageSDL.setFlags("nState",1,1)
         self.ageSDL.setFlags("sState",1,1)
         self.ageSDL.setFlags("NumBlockers",1,1)
@@ -226,6 +228,8 @@ class grsnWallPython(ptResponder):
 
         self.ageSDL.sendToClients("nChairOccupant")
         self.ageSDL.sendToClients("sChairOccupant")
+        self.ageSDL.sendToClients("nWallPlayer")
+        self.ageSDL.sendToClients("sWallPlayer")
         self.ageSDL.sendToClients("nState")
         self.ageSDL.sendToClients("sState")
         self.ageSDL.sendToClients("NumBlockers")
@@ -378,13 +382,41 @@ class grsnWallPython(ptResponder):
         ### Tube Entry trigger ###
         if(id == northTubeEntry.id):
             self.ChangeGameState(kNorth, kEntry)
-            if(self.ageSDL["sState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
+            if(PtFindAvatar(events) == PtGetLocalAvatar()):
+                self.ageSDL["nWallPlayer"] = (cID,)
+                if(PtGetLocalClientID() == self.ageSDL["sWallPlayer"][0]):
+                    self.ageSDL["sWallPlayer"] = (-1,)
+            if(self.ageSDL["sState"][0] == kEntry):
+                #both players are in the Tube - flush them down
+                if(PtGetLocalClientID() == self.ageSDL["nWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                if(PtGetLocalClientID() == self.ageSDL["sWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                self.ChangeGameState(kNorth, kGameInProgress)
+                self.ChangeGameState(kSouth, kGameInProgress)
+                if(eventHandler):
+                    eventHandler.Handle(kEventStart)
+            elif(self.ageSDL["sState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
                 self.ChangeGameState(kNorth, kGameInProgress)
             return
         if(id == southTubeEntry.id):
             self.ChangeGameState(kSouth, kEntry)
-            if(self.ageSDL["nState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
+            if(PtFindAvatar(events) == PtGetLocalAvatar()):
+                self.ageSDL["sWallPlayer"] = (cID,)
+                if(PtGetLocalClientID() == self.ageSDL["nWallPlayer"][0]):
+                    self.ageSDL["nWallPlayer"] = (-1,)
+            if(self.ageSDL["nState"][0] == kEntry):
+                #both players are in the Tube - flush them down
+                if(PtGetLocalClientID() == self.ageSDL["nWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                if(PtGetLocalClientID() == self.ageSDL["sWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                self.ChangeGameState(kNorth, kGameInProgress)
+                self.ChangeGameState(kSouth, kGameInProgress)
+                if(eventHandler):
+                    eventHandler.Handle(kEventStart)
+            elif(self.ageSDL["nState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
                 self.ChangeGameState(kSouth, kGameInProgress)
             return
@@ -403,7 +435,8 @@ class grsnWallPython(ptResponder):
                             clothing = FemaleSuit
                         else:
                             clothing = MaleSuit
-                        wornItem = avatar.avatar.getAvatarClothingList()
+                        if(wornItem == []):
+                            wornItem = avatar.avatar.getAvatarClothingList()
                         for item in clothing[0:]:
                             if not self.IItemInCloset(avatar, item):
                                 PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
@@ -433,7 +466,8 @@ class grsnWallPython(ptResponder):
                             clothing = FemaleSuit
                         else:
                             clothing = MaleSuit
-                        wornItem = avatar.avatar.getAvatarClothingList()
+                        if(wornItem == []):
+                            wornItem = avatar.avatar.getAvatarClothingList()
                         for item in clothing[0:]:
                             if not self.IItemInCloset(avatar, item):
                                 PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
@@ -612,16 +646,6 @@ class grsnWallPython(ptResponder):
                     northWall.value[blocker].physics.enable()
                 if(self.ageSDL["sState"][0] >= kWait and eventHandler):
                     eventHandler.Handle(kEventEntry)
-            if(value == kEntry and self.ageSDL["sState"][0] == kEntry):
-                #both players are in the Tube - flush them down
-                if(PtGetLocalClientID() == self.ageSDL["nChairOccupant"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
-                if(PtGetLocalClientID() == self.ageSDL["sChairOccupant"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
-                self.ChangeGameState(kNorth, kGameInProgress)
-                self.ChangeGameState(kSouth, kGameInProgress)
-                if(eventHandler):
-                    eventHandler.Handle(kEventStart)
 
         if(VARname == "sState"):
             self.TOCPanelLight() #TOC
@@ -651,16 +675,6 @@ class grsnWallPython(ptResponder):
                     southWall.value[blocker].physics.enable()
                 if(self.ageSDL["nState"][0] >= kWait and eventHandler):
                     eventHandler.Handle(kEventEntry)
-            if(value == kEntry and self.ageSDL["nState"][0] == kEntry):
-                #both players are in the Tube - flush them down
-                if(PtGetLocalClientID() == self.ageSDL["nChairOccupant"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
-                if(PtGetLocalClientID() == self.ageSDL["sChairOccupant"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
-                self.ChangeGameState(kNorth, kGameInProgress)
-                self.ChangeGameState(kSouth, kGameInProgress)
-                if(eventHandler):
-                    eventHandler.Handle(kEventStart)
 
     def FindBlocker(self,team,id):
         blockerFound = False
@@ -904,6 +918,8 @@ class grsnWallPython(ptResponder):
 
             self.ageSDL["nChairOccupant"] = (-1,)
             self.ageSDL["sChairOccupant"] = (-1,)
+            self.ageSDL["nWallPlayer"] = (-1,)
+            self.ageSDL["sWallPlayer"] = (-1,)
             self.ageSDL["NumBlockers"] = (0,)
 
             if(resetState):
