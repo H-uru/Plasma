@@ -86,7 +86,7 @@ public:
         kCompNumBlendMethods
     };  
 
-    static const char *BlendStrings[];
+    static const TCHAR* BlendStrings[];
 
     enum { kRefPasses };
     enum { kBlkPasses };

@@ -617,7 +617,15 @@ void plArmatureModBase::IEnableBones(int lod, bool enable)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-const char *plArmatureMod::BoneStrings[] = {"Male", "Female", "Critter", "Actor"};
+using namespace ST::literals;
+
+const ST::string plArmatureMod::BoneStrings[] =
+{
+    "Male"_st,
+    "Female"_st,
+    "Critter"_st,
+    "Actor"_st
+};
 
 float plArmatureMod::fMouseTurnSensitivity = 1.f;
 bool plArmatureMod::fClickToTurn = true;
@@ -631,8 +639,8 @@ plArmatureMod::plArmatureMod()
       fMouseFrameTurnStrength(), fSuspendInputCount(), fIsLinkedIn(), fMidLink(),
       fAlreadyPanicLinking(), fReverseFBOnIdle(), fFollowerParticleSystemSO(),
       fPendingSynch(), fOpaque(true), fPhysHeight(), fPhysWidth(), fUpdateMsg(),
-      fRootName(), fDontPanicLink(), fBodyAgeName("GlobalAvatars"),
-      fBodyFootstepSoundPage("Audio"), fAnimationPrefix("Male"), fUserStr(),
+      fRootName(), fDontPanicLink(), fBodyAgeName("GlobalAvatars"_st),
+      fBodyFootstepSoundPage("Audio"_st), fAnimationPrefix("Male"_st), fUserStr(),
       fUnconsumedJump(), fLastSynch()
 {
     fWaitFlags |= kNeedAudio | kNeedCamera | kNeedSpawn;

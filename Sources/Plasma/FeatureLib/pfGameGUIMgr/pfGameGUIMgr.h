@@ -82,8 +82,8 @@ class plPostEffectMod;
 class pfGUITag
 {
     public:
-        uint32_t  fID;
-        char    fName[ 128 ];
+        uint32_t   fID;
+        ST::string fName;
 };
 
 

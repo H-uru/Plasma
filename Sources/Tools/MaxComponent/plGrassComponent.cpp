@@ -102,10 +102,10 @@ public:
         {
         case WM_INITDIALOG:
             cbox = GetDlgItem(hWnd, IDC_GRASS_WAVE);
-            SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)"1");
-            SendMessage(cbox, CB_ADDSTRING, 1, (LPARAM)"2");
-            SendMessage(cbox, CB_ADDSTRING, 2, (LPARAM)"3");
-            SendMessage(cbox, CB_ADDSTRING, 3, (LPARAM)"4");
+            SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)_T("1"));
+            SendMessage(cbox, CB_ADDSTRING, 1, (LPARAM)_T("2"));
+            SendMessage(cbox, CB_ADDSTRING, 2, (LPARAM)_T("3"));
+            SendMessage(cbox, CB_ADDSTRING, 3, (LPARAM)_T("4"));
 
             selection = pb->GetInt(plGrassComponent::kWave);
             ISetToWave(selection, hWnd, pb, map);

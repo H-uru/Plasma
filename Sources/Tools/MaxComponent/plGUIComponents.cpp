@@ -432,7 +432,7 @@ void    plGUITagProc::ILoadTags( HWND hWnd, IParamBlock2 *pb )
     for( uint32_t i = 0; i < pfGameGUIMgr::GetNumTags(); i++ )
     {
         pfGUITag *tag = pfGameGUIMgr::GetTag( i );
-        idx = (int)SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)tag->fName);
+        idx = (int)SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)ST2T(tag->fName));
         SendMessage( hWnd, CB_SETITEMDATA, (WPARAM)idx, (LPARAM)tag->fID );
 
         if( tag->fID == pb->GetInt( plGUITagComponent::kRefCurrIDSel ) )
@@ -1942,9 +1942,9 @@ INT_PTR plGUIButtonProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT 
     {
         case WM_INITDIALOG:
             SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_RESETCONTENT, 0, 0 );
-            SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)"Button Up" );
-            SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)"Button Down" );
-            SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)"Button Down and Up" );
+            SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)_T("Button Up") );
+            SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)_T("Button Down") );
+            SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_ADDSTRING, 0, (LPARAM)_T("Button Down and Up") );
             SendMessage( GetDlgItem( hWnd, IDC_COMBO_BUTTON_NOTIFYTYPE ), CB_SETCURSEL, pmap->GetParamBlock()->GetInt( plGUIButtonComponent::kRefNotifyType ), 0 );
             return TRUE;
 
@@ -3087,7 +3087,7 @@ public:
                     SetDlgItemText( hWnd, IDC_GUI_INITTEXT, pmap->GetParamBlock()->GetStr( plGUITextBoxComponent::kRefInitText ) );
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_RESETCONTENT, 0, 0 );
                 for (i=0; i<plLocalization::kNumLanguages; i++)
-                    SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_ADDSTRING, 0, (LPARAM)plLocalization::GetLanguageName((plLocalization::Language)i) );
+                    SendMessageA( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_ADDSTRING, 0, (LPARAM)plLocalization::GetLanguageName((plLocalization::Language)i) );
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_SETCURSEL, 0, 0 );
                 fCurLanguage = 0;
 

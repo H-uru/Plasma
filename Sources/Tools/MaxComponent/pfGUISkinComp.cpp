@@ -396,21 +396,21 @@ INT_PTR CALLBACK    pfGUISkinEditProc::DialogProc( HWND hDlg, UINT msg, WPARAM w
     static struct plElemPair
     {
         pfGUISkin::Elements el;
-        const char          *name;
-    } sElemPairs[] = { { pfGUISkin::kUpLeftCorner,          "Upper-left Corner" },
-                       { pfGUISkin::kTopSpan,               "Top Span" },
-                       { pfGUISkin::kUpRightCorner,         "Upper-right Corner" },
-                       { pfGUISkin::kRightSpan,             "Right Span" },
-                       { pfGUISkin::kLowerRightCorner,      "Lower-right Corner" },
-                       { pfGUISkin::kBottomSpan,            "Bottom Span" },
-                       { pfGUISkin::kLowerLeftCorner,       "Lower-left Corner" },
-                       { pfGUISkin::kLeftSpan,              "Left Span" },
-                       { pfGUISkin::kMiddleFill,            "Middle Fill" },
-                       { pfGUISkin::kSelectedFill,          "Selected Middle Fill" },
-                       { pfGUISkin::kSubMenuArrow,          "Sub-Menu Arrow" },
-                       { pfGUISkin::kSelectedSubMenuArrow,  "Selected Sub-Menu Arrow" },
-                       { pfGUISkin::kTreeButtonClosed,      "Tree-view Button, Closed" },
-                       { pfGUISkin::kTreeButtonOpen,        "Tree-view Button, Open" },
+        const TCHAR          *name;
+    } sElemPairs[] = { { pfGUISkin::kUpLeftCorner,          _T("Upper-left Corner") },
+                       { pfGUISkin::kTopSpan,               _T("Top Span") },
+                       { pfGUISkin::kUpRightCorner,         _T("Upper-right Corner") },
+                       { pfGUISkin::kRightSpan,             _T("Right Span") },
+                       { pfGUISkin::kLowerRightCorner,      _T("Lower-right Corner") },
+                       { pfGUISkin::kBottomSpan,            _T("Bottom Span") },
+                       { pfGUISkin::kLowerLeftCorner,       _T("Lower-left Corner") },
+                       { pfGUISkin::kLeftSpan,              _T("Left Span") },
+                       { pfGUISkin::kMiddleFill,            _T("Middle Fill") },
+                       { pfGUISkin::kSelectedFill,          _T("Selected Middle Fill") },
+                       { pfGUISkin::kSubMenuArrow,          _T("Sub-Menu Arrow") },
+                       { pfGUISkin::kSelectedSubMenuArrow,  _T("Selected Sub-Menu Arrow") },
+                       { pfGUISkin::kTreeButtonClosed,      _T("Tree-view Button, Closed") },
+                       { pfGUISkin::kTreeButtonOpen,        _T("Tree-view Button, Open") },
                        { pfGUISkin::kNumElements, nullptr } };
 
 

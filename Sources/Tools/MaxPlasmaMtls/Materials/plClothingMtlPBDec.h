@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
 #endif
 
-#include "MaxMain/MaxCompat.h"
+#include "MaxMain/MaxAPI.h"
 
 
 class plClothingEditBox
@@ -197,7 +197,7 @@ public:
         {
             plClothingElement *element = tileset->fElements[i];
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
-                        WM_SETTEXT, 0, (LPARAM)element->fName.c_str());
+                        WM_SETTEXT, 0, (LPARAM)ST2T(element->fName));
             _sntprintf(buff, std::size(buff), _T("(%d, %d)"), element->fWidth, element->fHeight);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), 
                         WM_SETTEXT, 0, (LPARAM)buff);
@@ -242,7 +242,7 @@ public:
             mtl->InitTilesets();
             cbox = GetDlgItem(hWnd, IDC_CLOTHING_TILESET);
             for (plClothingTileset* set : mtl->fTilesets)
-                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)set->fName);
+                SendMessage(cbox, CB_ADDSTRING, 0, (LPARAM)ST2T(set->fName));
 
             mtl->ReleaseTilesets();
 

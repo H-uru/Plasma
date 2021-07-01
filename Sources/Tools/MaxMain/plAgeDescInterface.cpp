@@ -727,7 +727,7 @@ void plAgeDescInterface::IInitControls()
         int i, curr = 0;
         for (i = 0; i < branches.Size(); i++)
         {
-            int idx = SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_ADDSTRING, 0, (LPARAM)(const char*)(branches[i].Name));
+            int idx = SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_ADDSTRING, 0, (LPARAM)(const TCHAR*)(branches[i].Name));
             SendDlgItemMessage(fhDlg, IDC_BRANCHCOMBO, CB_SETITEMDATA, idx, (LPARAM)branches[i].Id);
 
             if (branches[i].Id == fAssetManIface->GetCurrBranch())

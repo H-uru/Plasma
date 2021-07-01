@@ -81,7 +81,7 @@ protected:
 //
 
 
-typedef std::vector<std::string> VStringArray;
+typedef std::vector<M_STD_STRING> VStringArray;
 
 class plVSBaseComponentProc : public ParamMap2UserDlgProc
 {
@@ -100,7 +100,7 @@ protected:
         if(nNames)
             for (int i = 0; i < nNames ; i++)
             {
-                const char * name = names[i].c_str();
+                const auto* name = names[i].c_str();
                 SendMessage(hComboBox, CB_INSERTSTRING, i, (LPARAM)name);
                 
             }
@@ -116,7 +116,7 @@ protected:
         SendMessage(hListBox, LB_RESETCONTENT, 0, 0);
         for (int i = 0; i < names.size(); i++)
         {
-            const char* c_name = names[i].c_str();
+            const auto* c_name = names[i].c_str();
             LRESULT idxptr = SendMessage(hListBox, LB_ADDSTRING, 0, (LPARAM)c_name);
             
             SendMessage(hListBox, LB_SETITEMDATA, (WPARAM) idxptr, (LPARAM) GetItemVals[i]);

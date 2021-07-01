@@ -1517,24 +1517,26 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
 
 /////////////////////////////////////////////////////////////////////////////
 
-const char *plClothingMgr::GroupStrings[] = 
+using namespace ST::literals;
+
+const ST::string plClothingMgr::GroupStrings[] = 
 {
-    "Male Clothing",
-    "Female Clothing",
-    "(No Clothing Options)"
+    "Male Clothing"_st,
+    "Female Clothing"_st,
+    "(No Clothing Options)"_st
 };
 
-const char *plClothingMgr::TypeStrings[] =
+const ST::string plClothingMgr::TypeStrings[] =
 {
-    "Pants",
-    "Shirt",
-    "LeftHand",
-    "RightHand",
-    "Face",
-    "Hair",
-    "LeftFoot",
-    "RightFoot",
-    "Accessory"
+    "Pants"_st,
+    "Shirt"_st,
+    "LeftHand"_st,
+    "RightHand"_st,
+    "Face"_st,
+    "Hair"_st,
+    "LeftFoot"_st,
+    "RightFoot"_st,
+    "Accessory"_st
 };
 
 plClothingMgr *plClothingMgr::fInstance = nullptr;

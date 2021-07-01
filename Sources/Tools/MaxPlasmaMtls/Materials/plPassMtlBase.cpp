@@ -512,10 +512,10 @@ void    plPassMtlBase::PostLoadAnimPBFixup()
         }
 
         // Step 3...
-        const char *oldSel = (const char *)fAnimPB->GetStr( (ParamID)kPBAnimName );
+        const MCHAR* oldSel = fAnimPB->GetStr( (ParamID)kPBAnimName );
         if (oldSel == nullptr)
-            oldSel = ENTIRE_ANIMATION_NAME;
-        plAnimStealthNode *myNew = IFindStealth( ST::string::from_utf8( oldSel ) );
+            oldSel = _M(ENTIRE_ANIMATION_NAME);
+        plAnimStealthNode *myNew = IFindStealth( M2ST( oldSel ) );
         if (myNew != nullptr)
         {
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );

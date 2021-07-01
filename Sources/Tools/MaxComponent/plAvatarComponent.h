@@ -175,7 +175,7 @@ protected:
     hsGMaterial *fMaterial;
     
 public:
-        VCharArray fLODLevels;  //Initialized in the CTR.
+        VStringArray fLODLevels;  //Initialized in the CTR.
 
 
         // Do not change any of the entries in this list. Only add at the end.
