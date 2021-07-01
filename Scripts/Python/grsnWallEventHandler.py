@@ -70,20 +70,20 @@ class grsnWallEventHandler(ptResponder):
         self.version = 1
         self.BlockersHit = 0
         self.startTime = 0
-        self.ageSDL = None
         InitEventHandler(self)
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallEventHandler::OnServerInitComplete")
-        self.ageSDL = PtGetAgeSDL()
-        self.ageSDL.setNotify(self.key,"nState",0.0)
-        self.ageSDL.setNotify(self.key,"sState",0.0)
+        ageSDL = PtGetAgeSDL()
+        ageSDL.setNotify(self.key,"nState",0.0)
+        ageSDL.setNotify(self.key,"sState",0.0)
         random.seed()
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
-        value = self.ageSDL[VARname][0]
+        ageSDL = PtGetAgeSDL()
+        value = ageSDL[VARname][0]
         if(VARname == "nState"):
-            if(value == kEntry and self.ageSDL["sState"][0] == kEntry):
+            if(value == kEntry and ageSDL["sState"][0] == kEntry):
                 self.startTime = PtGetDniTime()
             if(value == kEnd):
                 sec = PtGetDniTime() - self.startTime
@@ -91,7 +91,7 @@ class grsnWallEventHandler(ptResponder):
                 PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
         if(VARname == "sState"):
-            if(value == kEntry and self.ageSDL["sState"][0] == kEntry):
+            if(value == kEntry and ageSDL["sState"][0] == kEntry):
                 self.startTime = PtGetDniTime()
 
     def IAmMaster(self):

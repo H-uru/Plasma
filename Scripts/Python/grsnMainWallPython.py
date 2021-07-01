@@ -66,17 +66,17 @@ class grsnMainWallPython(ptResponder):
         ptResponder.__init__(self)
         self.id = 52394
         self.version = 2
-        self.ageSDL = None
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnMainWallPython::OnServerInitComplete")
-        self.ageSDL = PtGetAgeSDL()
+        ageSDL = PtGetAgeSDL()
         
-        self.ageSDL.setNotify(self.key, "nState", 0.0)
-        self.ageSDL.setNotify(self.key, "sState", 0.0)
+        ageSDL.setNotify(self.key, "nState", 0.0)
+        ageSDL.setNotify(self.key, "sState", 0.0)
 
     def OnClimbingBlockerEvent(self,blocker):
-        if(self.ageSDL['nState'][0] == kEnd):
+        ageSDL = PtGetAgeSDL()
+        if(ageSDL['nState'][0] == kEnd):
             return
 
         for i in range(0,171):
@@ -92,15 +92,16 @@ class grsnMainWallPython(ptResponder):
                 break
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+        ageSDL = PtGetAgeSDL()
         #We only set the states for a Notify
-        nState = self.ageSDL["nState"][0]
-        sState = self.ageSDL["sState"][0]
+        nState = ageSDL["nState"][0]
+        sState = ageSDL["sState"][0]
         if(nState == sState == kEnd):
-            for blocker in self.ageSDL["northWall"]:
+            for blocker in ageSDL["northWall"]:
                 if(blocker == -1):
                     break
                 northWall.value[blocker].runAttachedResponder(kBlockerOn)
-            for blocker in self.ageSDL["southWall"]:
+            for blocker in ageSDL["southWall"]:
                 if(blocker == -1):
                     break
                 southWall.value[blocker].runAttachedResponder(kBlockerOn)
@@ -108,11 +109,3 @@ class grsnMainWallPython(ptResponder):
             for i in range(0,171):
                 northWall.value[i].runAttachedResponder(kBlockerOff)
                 southWall.value[i].runAttachedResponder(kBlockerOff)
-
-            
-        
-    
-        
-    
-        
-

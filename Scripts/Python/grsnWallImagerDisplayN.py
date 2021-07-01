@@ -62,25 +62,25 @@ class grsnWallImagerDisplayN(ptResponder):
         ptResponder.__init__(self)
         self.id = 52398
         self.version = 2
-        self.ageSDL = None
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallImagerDisplayN::OnServerInitComplete")
-        self.ageSDL = PtGetAgeSDL()
+        ageSDL = PtGetAgeSDL()
         
-        self.ageSDL.setNotify(self.key, "nState", 0.0)
+        ageSDL.setNotify(self.key, "nState", 0.0)
         
-        if(len(PtGetPlayerList()) and self.ageSDL["nState"] >= kWait):
-            for blocker in self.ageSDL["northWall"]:
+        if(len(PtGetPlayerList()) and ageSDL["nState"] >= kWait):
+            for blocker in ageSDL["northWall"]:
                 if(blocker == -1):
                     return
                 northImager.value[blocker].runAttachedResponder(kBlockerOn)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+        ageSDL = PtGetAgeSDL()
         #We only get a notify from nState
-        value = self.ageSDL[VARname][0]
+        value = ageSDL[VARname][0]
         if(value == kWait):
-            for blocker in self.ageSDL["northWall"]:
+            for blocker in ageSDL["northWall"]:
                 if(blocker == -1):
                     break
                 northImager.value[blocker].runAttachedResponder(kBlockerOn)
