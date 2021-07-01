@@ -1317,7 +1317,8 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
     {
         // We got a clothing file and are supposed to load our avatar from it.
         // Let's tell our outfit to do so!
-        fClothingOutfit->SetClothingFile(clothingMsg->GetClothingFile());
+        if (fClothingOutfit)
+            fClothingOutfit->SetClothingFile(clothingMsg->GetClothingFile());
         return true;
     }
 
@@ -1938,6 +1939,9 @@ void plArmatureMod::SynchIfLocal(double timeNow, int force)
 
 plLayerLinkAnimation *plArmatureMod::IFindLayerLinkAnim()
 {
+    if (!fClothingOutfit)
+        return nullptr;
+
     hsGMaterial *mat = fClothingOutfit->fMaterial;
     if (!mat)
         return nullptr;
