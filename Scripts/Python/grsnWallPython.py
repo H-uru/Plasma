@@ -378,9 +378,15 @@ class grsnWallPython(ptResponder):
         ### Tube Entry trigger ###
         if(id == northTubeEntry.id):
             self.ChangeGameState(kNorth, kEntry)
+            if(self.ageSDL["sState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                self.ChangeGameState(kNorth, kGameInProgress)
             return
         if(id == southTubeEntry.id):
             self.ChangeGameState(kSouth, kEntry)
+            if(self.ageSDL["nState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                self.ChangeGameState(kSouth, kGameInProgress)
             return
         ### Tube Multibehaviors ###
         if(id == northTubeMulti.id):
@@ -616,9 +622,6 @@ class grsnWallPython(ptResponder):
                 self.ChangeGameState(kSouth, kGameInProgress)
                 if(eventHandler):
                     eventHandler.Handle(kEventStart)
-            elif(value == kEntry and self.ageSDL["sState"][0] == kGameInProgress):
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
-                self.ChangeGameState(kNorth, kGameInProgress)
 
         if(VARname == "sState"):
             self.TOCPanelLight() #TOC
@@ -658,9 +661,6 @@ class grsnWallPython(ptResponder):
                 self.ChangeGameState(kSouth, kGameInProgress)
                 if(eventHandler):
                     eventHandler.Handle(kEventStart)
-            elif(value == kEntry and self.ageSDL["nState"][0] == kGameInProgress):
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
-                self.ChangeGameState(kSouth, kGameInProgress)
 
     def FindBlocker(self,team,id):
         blockerFound = False
