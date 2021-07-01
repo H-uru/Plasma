@@ -197,7 +197,6 @@ class grsnWallPython(ptResponder):
         self.version = 5
         self.BlockerCount = 0
         self.ageSDL = None
-        self.entryTriggered = False
         self.oldCount = [0, 0]
 
     def IAmMaster(self):
@@ -307,10 +306,10 @@ class grsnWallPython(ptResponder):
                         self.ageSDL["sChairOccupant"] = (cID,)
             return
         ### Tube open Animation Finished ###
-        if(id == northTubeOpen.id and cID == self.ageSDL["nChairOccupant"][0]): #only allow the one who confirmed the blockers to enter
+        if(id == northTubeOpen.id):
             northTubeExclude.release(self.key)
             return
-        if(id == southTubeOpen.id and cID == self.ageSDL["sChairOccupant"][0]):
+        if(id == southTubeOpen.id):
             southTubeExclude.release(self.key)
             return
         ### Blocker Count Buttons ###
@@ -384,15 +383,14 @@ class grsnWallPython(ptResponder):
             self.ChangeGameState(kSouth, kEntry)
             return
         ### Tube Multibehaviors ###
-        if(id == northTubeMulti.id and not self.entryTriggered):
+        if(id == northTubeMulti.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     #Smart seek complete
                     northTubeClose.run(self.key)
                 elif(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage):
                     #Multistage complete
-                    if(cID == self.ageSDL["nChairOccupant"][0]):
-                        self.entryTriggered = True
+                    if(PtFindAvatar(events) == PtGetLocalAvatar()):
                         avatar = PtGetLocalAvatar()
                         currentgender = avatar.avatar.getAvatarClothingGroup()
                         if currentgender == kFemaleClothingGroup:
@@ -413,16 +411,16 @@ class grsnWallPython(ptResponder):
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                         PtGetLocalAvatar().physics.warpObj(southTeamWarpPt.value.getKey())
                     northTubeExclude.clear(self.key)
+                    northTubeOpen.run(self.key)
             return
-        if(id == southTubeMulti.id and not self.entryTriggered):
+        if(id == southTubeMulti.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     #Smart seek complete
                     southTubeClose.run(self.key)
                 elif(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage):
                     #Multistage complete
-                    if(cID == self.ageSDL["sChairOccupant"][0]):
-                        self.entryTriggered = True
+                    if(PtFindAvatar(events) == PtGetLocalAvatar()):
                         avatar = PtGetLocalAvatar()
                         currentgender = avatar.avatar.getAvatarClothingGroup()
                         if currentgender == kFemaleClothingGroup:
@@ -443,10 +441,11 @@ class grsnWallPython(ptResponder):
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                         PtGetLocalAvatar().physics.warpObj(northTeamWarpPt.value.getKey())
                     southTubeExclude.clear(self.key)
+                    southTubeOpen.run(self.key)
             return
         ### Win region ###
         if(id == northTeamWin.id):
-            if(cID == self.ageSDL["nChairOccupant"][0]):
+            if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), northTeamWinTeleport.value.getKey())
                 avatar = PtGetLocalAvatar()
                 for item in wornItem:
@@ -464,7 +463,7 @@ class grsnWallPython(ptResponder):
             self.ChangeGameState(kSouth, kEnd)
             return
         if(id == southTeamWin.id):
-            if(cID == self.ageSDL["sChairOccupant"][0]):
+            if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), southTeamWinTeleport.value.getKey())
                 avatar = PtGetLocalAvatar()
                 for item in wornItem:
@@ -483,7 +482,7 @@ class grsnWallPython(ptResponder):
             return
         ### Quit button ###
         if(id == northTeamQuit.id and state):
-            if(cID == self.ageSDL["nChairOccupant"][0]):
+            if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(northQuitBehavior.value, self.key, northQuitBehavior.netForce)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and self.ageSDL["nState"] != kEnd):
@@ -492,7 +491,7 @@ class grsnWallPython(ptResponder):
             self.ChangeGameState(kSouth, kEnd)
             return
         if(id == southTeamQuit.id and state):
-            if(cID == self.ageSDL["sChairOccupant"][0]):
+            if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(southQuitBehavior.value, self.key, southQuitBehavior.netForce)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and self.ageSDL["nState"] != kEnd):
@@ -617,6 +616,9 @@ class grsnWallPython(ptResponder):
                 self.ChangeGameState(kSouth, kGameInProgress)
                 if(eventHandler):
                     eventHandler.Handle(kEventStart)
+            elif(value == kEntry and self.ageSDL["sState"][0] == kGameInProgress):
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                self.ChangeGameState(kNorth, kGameInProgress)
 
         if(VARname == "sState"):
             self.TOCPanelLight() #TOC
@@ -656,6 +658,9 @@ class grsnWallPython(ptResponder):
                 self.ChangeGameState(kSouth, kGameInProgress)
                 if(eventHandler):
                     eventHandler.Handle(kEventStart)
+            elif(value == kEntry and self.ageSDL["nState"][0] == kGameInProgress):
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                self.ChangeGameState(kSouth, kGameInProgress)
 
     def FindBlocker(self,team,id):
         blockerFound = False
@@ -826,11 +831,11 @@ class grsnWallPython(ptResponder):
         northTubeExclude.clear(self.key)
         southTubeExclude.clear(self.key)
 
-        if(self.ageSDL["nState"][0] == kWait):
+        if(self.ageSDL["nState"][0] == kWait or self.ageSDL["nState"][0] == kEntry or self.ageSDL["nState"][0] == kGameInProgress):
             northTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
         else:
             northTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
-        if(self.ageSDL["sState"][0] == kWait):
+        if(self.ageSDL["sState"][0] == kWait or self.ageSDL["sState"][0] == kEntry or self.ageSDL["sState"][0] == kGameInProgress):
             southTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
         else:
             southTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
@@ -921,7 +926,6 @@ class grsnWallPython(ptResponder):
 
         self.oldCount[0] = 0
         self.oldCount[1] = 0
-        self.entryTriggered = False
 
         if(eventHandler):
             eventHandler.Reset()
