@@ -1046,7 +1046,7 @@ plLODAvatarComponent::plLODAvatarComponent() : fMaterial()
     fLODLevels = {
         _M("High"),
         _M("Medium"),
-        _M("Low),
+        _M("Low"),
     };
 
 }
