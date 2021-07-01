@@ -170,6 +170,13 @@ static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
     dst += sizeof(T);
 }
 
+static inline void inlCopy(const uint8_t*& src, uint8_t*& dst, size_t sz)
+{
+    memcpy(dst, src, sz);
+    src += sz;
+    dst += sz;
+}
+
 template<typename T>
 static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
 {
@@ -8900,9 +8907,8 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
         dest = inlStuff<hsPoint3>(dest, reinterpret_cast<hsPoint3*>(destPt_buf));
         dest = inlStuff<hsVector3>(dest, reinterpret_cast<hsVector3*>(destNorm_buf));
 
-        // Jump past colors and UVws
-        dest += sizeof(uint32_t) * 2 + uvChanSize;
-        src  += sizeof(uint32_t) * 2 + uvChanSize;
+        // memcpy the colors and UVs
+        inlCopy(src, dest, sizeof(uint32_t) * 2 + uvChanSize);
     }
 }
 
