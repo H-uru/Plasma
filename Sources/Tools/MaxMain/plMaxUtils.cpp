@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 #include "pnFactory/plFactory.h"
 
-class MaxUtilsClassDesc : public plClassDesc
+class MaxUtilsClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic() override             { return TRUE; }

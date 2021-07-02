@@ -126,9 +126,13 @@ public:
     void ActivateTexDisplay(BOOL onoff) override;
     BITMAPINFO *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0) override;
     DWORD_PTR GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker) override;
+
 protected:
     void IChanged();
     void IDiscardTexHandle();
+
+    void IGetClassName(MSTR& s) const override;
+    MSTR ISubAnimName(int i) override;
 
 public:
     void GetUVTransform(Matrix3 &uvtrans) override { fUVGen->GetUVTransform(uvtrans); }
@@ -148,7 +152,6 @@ public:
     //From Animatable
     Class_ID ClassID() override { return DYN_TEXT_LAYER_CLASS_ID; }
     SClass_ID SuperClassID() override { return TEXMAP_CLASS_ID; }
-    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
     RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
@@ -156,7 +159,6 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
 
     // TODO: Maintain the number or references here 
     int NumRefs() override;

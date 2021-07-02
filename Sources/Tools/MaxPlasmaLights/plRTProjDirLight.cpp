@@ -208,7 +208,7 @@ Animatable  *plRTProjDirLight::SubAnim( int i )
 
 //// SubAnimName /////////////////////////////////////////////////////////////
 
-MSTR    plRTProjDirLight::SubAnimName( int i MAX_NAME_LOCALIZED2 )
+MSTR plRTProjDirLight::ISubAnimName( int i )
 { 
     switch( i ) 
     {   

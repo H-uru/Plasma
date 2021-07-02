@@ -111,11 +111,6 @@ Animatable *plComponentBase::SubAnim(int i)
     return fCompPB;
 }
 
-MSTR plComponentBase::SubAnimName(int i MAX_NAME_LOCALIZED2)
-{
-    return fClassDesc->ClassName();
-}
-
 RefTargetHandle plComponentBase::Clone(RemapDir &remap)
 {
     plComponentBase *obj = (plComponentBase*)fClassDesc->Create(false);
@@ -661,7 +656,7 @@ static void ComponentNotify(void *param, NotifyInfo *info)
             // For now, just get the categories (could get the component names)
             std::unordered_set<ST::string> names;
             for (auto i : obsoleteComps)
-                names.insert(M2ST(i->GetObjectName()));
+                names.insert(M2ST(i->GetObjectName(true)));
 
             if (!obsoleteComps.empty())
             {

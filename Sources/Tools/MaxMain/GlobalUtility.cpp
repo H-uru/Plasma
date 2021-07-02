@@ -75,7 +75,7 @@ extern HINSTANCE hInstance;
 
 static PlasmaMax gPlasmaMax;
 
-class PlasmaMaxClassDesc : public plClassDesc
+class PlasmaMaxClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic() override             { return TRUE; }

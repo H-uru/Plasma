@@ -72,7 +72,7 @@ public:
     }
 };
 
-class BinkClassDesc : public plClassDesc2
+class BinkClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int IsPublic() override { return 1; }

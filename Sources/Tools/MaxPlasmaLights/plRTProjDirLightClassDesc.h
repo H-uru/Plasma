@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plRTProjDirLight.h"
 
-class plRTProjDirLightDesc : public plClassDesc2
+class plRTProjDirLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
         int             IsPublic() override             { return TRUE; }

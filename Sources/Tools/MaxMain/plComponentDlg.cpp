@@ -462,7 +462,7 @@ HTREEITEM plComponentDlg::IAddComponent(HWND hTree, plMaxNode *node)
     {
         // If it isn't there yet, add it
         TSTR type;
-        comp->GetClassName(type);
+        comp->GetClassName(type, true);
 
         if (IIsHidden(comp->ClassID()))
             type.Append(_T(" (Hidden)"));

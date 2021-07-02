@@ -123,7 +123,7 @@ class plLightTexPBAccessor : public PBAccessor
 //// plRTLightBase Class //////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-class plRTLightBase : public GenLight
+class plRTLightBase : public plMaxObject<GenLight>
 {
 
 protected:
@@ -146,6 +146,9 @@ protected:
     Mesh    staticMesh[2];
     Mesh    spotMesh;
 
+    const MCHAR* IGetObjectName() const override { return fClassDesc->ClassName(); }
+    void IGetClassName(MSTR& s) const override { s = fClassDesc->ClassName(); }
+    MSTR ISubAnimName(int i) override;
 
 public:
     friend class plBaseLightProc;
@@ -325,9 +328,6 @@ public:
 
     static ParamBlockDesc2  *GetAnimPBDesc();
 
-    MAX14_CONST MCHAR* GetObjectName(MAX_NAME_LOCALIZED1) MAX24_CONST override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
-    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override { s = fClassDesc->ClassName(); }
-
     IParamBlock2 *GetParamBlock(int i) override;
     virtual IParamBlock2* GetParamBlock2();
     IParamBlock2* GetParamBlockByID(short id) override;
@@ -336,7 +336,6 @@ public:
     int NumParamBlocks() override { return 1; }
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
 
     // plug-in mouse creation callback
     CreateMouseCallBack* GetCreateMouseCallBack() override;

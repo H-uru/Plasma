@@ -69,7 +69,7 @@ enum  RefResult;
 class RemapDir;
 class ViewExp;
 
-class plComponentBase : public HelperObject
+class plComponentBase : public plMaxObject<HelperObject>
 {
 protected:
     ClassDesc2   *fClassDesc;   // Must set in derived classes constructor
@@ -80,6 +80,10 @@ protected:
     // Get a unique name based on this components name and the index of this target
     // Return value points to a static, so don't try to hold on to it
     ST::string IGetUniqueName(plMaxNodeBase* target);
+
+    const MCHAR* IGetObjectName() const override { return fClassDesc->ClassName(); }
+    void IGetClassName(MSTR& s) const override { s = fClassDesc->ClassName(); }
+    MSTR ISubAnimName(int i) override { return fClassDesc->ClassName(); }
 
 public:
     // Permanent Block ID's
@@ -152,16 +156,8 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    MAX14_CONST MCHAR* GetObjectName(MAX_NAME_LOCALIZED1 MAX_NAME_LOCALIZED_DEFAULT) MAX24_CONST override
-    {
-        return const_cast<MAX14_CONST MCHAR*>(fClassDesc->ClassName());
-    }
 
     void InitNodeName(MSTR& s) override { s = fClassDesc->InternalName(); }
-    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2 MAX_NAME_LOCALIZED_DEFAULT) MAX24_CONST override
-    {
-        s = fClassDesc->ClassName();
-    }
 
     Class_ID ClassID()         override { return fClassDesc->ClassID(); }
 
@@ -181,7 +177,6 @@ public:
     // So our animatables will show up in the trackview
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
     virtual bool AddToAnim(plAGAnim *anim, plMaxNode *node) { return false; }
 
     // plug-in mouse creation callback

@@ -158,8 +158,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 
 #define PL_GEN_ATTRIB_CLASS_ID Class_ID(0x24c36e6e, 0x53ec2ce4)
 
-class plGeneralAttrib : public CustAttrib
+class plGeneralAttrib : public plMaxCustAttrib<CustAttrib>
 {
+protected:
+    MSTR ISubAnimName(int i) override { return fClassDesc->ClassName(); }
+    const MCHAR* IGetName() override { return fClassDesc->ClassName(); }
+
 public:
     ClassDesc2  *fClassDesc;
     IParamBlock2 *fPBlock;
@@ -179,8 +183,6 @@ public:
 
     int NumSubs() override { return 1; }
     Animatable* SubAnim(int i) override { return fPBlock; }
-    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override { return fClassDesc->ClassName(); }
-
 
     void BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev) override;
     void EndEditParams(IObjParam *ip, ULONG flags, Animatable *next) override;
@@ -189,17 +191,12 @@ public:
 
     ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP) override;
     bool CheckCopyAttribTo(ICustAttribContainer *to) override { return true; }
-    
-    MAX10_CONST MCHAR* GetName(MAX_NAME_LOCALIZED1) override
-    {
-        return const_cast<MAX10_CONST MCHAR*>(fClassDesc->ClassName());
-    }
 
     void DeleteThis() override { delete this; }
 };
 
 
-class plGeneralAttribClassDesc : public plClassDesc2
+class plGeneralAttribClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int             IsPublic() override     { return 1; }

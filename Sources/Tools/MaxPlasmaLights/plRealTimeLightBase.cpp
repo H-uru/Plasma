@@ -419,7 +419,7 @@ Animatable *plRTLightBase::SubAnim(int i)
     //return (Animatable*) fLightPB;
 }
 
-MSTR plRTLightBase::SubAnimName(int i MAX_NAME_LOCALIZED2) 
+MSTR plRTLightBase::ISubAnimName(int i)
 { 
     return fLightPB->GetLocalName();
         switch(i)

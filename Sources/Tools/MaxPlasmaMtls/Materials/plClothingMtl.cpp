@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plClothingMtlClassDesc : public plClassDesc2
+class plClothingMtlClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int             IsPublic() override      { return TRUE; }
@@ -139,7 +139,7 @@ plClothingMtl::plClothingMtl(BOOL loading) : fBasicPB()
     fBasicPB->SetValue(ParamID(kThumbnail), 0, new plLayerTex);
 }
 
-void plClothingMtl::GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST
+void plClothingMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_CLOTHING_MTL);
 }
@@ -299,7 +299,7 @@ void plClothingMtl::SetSubTexmap(int i, Texmap *m)
         fBasicPB->SetValue(kThumbnail, 0, m);
 }
 
-MSTR plClothingMtl::GetSubTexmapSlotName(int i MAX_NAME_LOCALIZED2)
+MSTR plClothingMtl::IGetSubTexmapSlotName(int i)
 {
     if (i >= 0 && i < plClothingElement::kLayerMax * kMaxTiles)
         return _M("Texmap");

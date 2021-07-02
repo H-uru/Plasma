@@ -56,8 +56,11 @@ Mead, WA   99021
 #define MAXFILE_DATA_CHUNK  1001
 static const uint8_t kVersion = 1;
 
-class plMaxFileDataControl : public StdControl
+class plMaxFileDataControl : public plMaxAnimatable<StdControl>
 {
+protected:
+    void IGetClassName(MSTR& s) const override { s = _M("DEAD - SceneViewer"); }
+
 public:
     SYSTEMTIME fCodeBuildTime;
     char       fBranch[128];
@@ -81,7 +84,6 @@ public:
 
     Class_ID ClassID() override { return PLASMA_FILE_DATA_CID; }
     SClass_ID SuperClassID() override { return CTRL_FLOAT_CLASS_ID; }
-    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override { s = _M("DEAD - SceneViewer"); }
 
     // Control methods
     RefTargetHandle Clone(RemapDir& remap) override { return new plMaxFileDataControl(); }
@@ -143,7 +145,7 @@ IOResult plMaxFileDataControl::Save(ISave *isave)
     return IO_OK;
 }
 
-class MaxFileDataClassDesc : public plClassDesc
+class MaxFileDataClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic() override             { return FALSE; }

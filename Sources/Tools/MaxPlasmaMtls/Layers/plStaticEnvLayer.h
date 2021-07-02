@@ -142,6 +142,9 @@ protected:
     void IChanged();
     void IDiscardTexHandle();
 
+    void IGetClassName(MSTR& s) const override;
+    MSTR ISubAnimName(int i) override;
+
 public:
     void GetUVTransform(Matrix3 &uvtrans) override { fUVGen->GetUVTransform(uvtrans); }
     int GetTextureTiling() override { return  fUVGen->GetTextureTiling(); }
@@ -160,7 +163,6 @@ public:
     //From Animatable
     Class_ID ClassID() override { return STATIC_ENV_LAYER_CLASS_ID; }
     SClass_ID SuperClassID() override { return TEXMAP_CLASS_ID; }
-    void GetClassName(MSTR& s MAX_NAME_LOCALIZED2) MAX24_CONST override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
     RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
@@ -168,7 +170,6 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i MAX_NAME_LOCALIZED2) override;
 
     // TODO: Maintain the number or references here 
     int NumRefs() override;

@@ -90,7 +90,7 @@ class plRTOmniLight : public plRTLightBase
         bool    IHasAttenuation() override { return true; }
 };
 
-class plRTOmniLightDesc : public plClassDesc2
+class plRTOmniLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
     int             IsPublic() override             { return TRUE; }
@@ -145,7 +145,7 @@ class plRTSpotLight : public plRTLightBase
         bool    IHasAttenuation() override { return true; }
 };
 
-class plRTSpotLightDesc : public plClassDesc2
+class plRTSpotLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
     int             IsPublic() override             { return TRUE; }
@@ -196,7 +196,7 @@ class plRTDirLight : public plRTLightBase
         void    IBuildZArrow( float x, float y, float zDist, float arrowSize, Point3 *pts );
 };
 
-class plRTDirLightDesc : public plClassDesc2
+class plRTDirLightDesc : public plMaxClassDesc<ClassDesc2>
 {
     public:
     int             IsPublic() override             { return TRUE; }
