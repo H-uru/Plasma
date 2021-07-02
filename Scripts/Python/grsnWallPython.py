@@ -50,90 +50,90 @@ from grsnWallConstants import *
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
 
-northPanelClick = ptAttribActivator(1, "North Panel Clickables")
-southPanelClick = ptAttribActivator(2, "South Panel Clickables")
+NorthPanelClick = ptAttribActivator(1, "North Panel Clickables")
+SouthPanelClick = ptAttribActivator(2, "South Panel Clickables")
 
-northPanel = ptAttribSceneobjectList(3, "North Panel Objects", byObject=1)
-southPanel = ptAttribSceneobjectList(4, "South Panel Objects", byObject=1)
+NorthPanel = ptAttribSceneobjectList(3, "North Panel Objects", byObject=1)
+SouthPanel = ptAttribSceneobjectList(4, "South Panel Objects", byObject=1)
 
-northWall = ptAttribSceneobjectList(5, "North Wall", byObject=1)
-southWall = ptAttribSceneobjectList(6, "South Wall", byObject=1)
+NorthWall = ptAttribSceneobjectList(5, "North Wall", byObject=1)
+SouthWall = ptAttribSceneobjectList(6, "South Wall", byObject=1)
 
-northChair = ptAttribActivator(7, "North Chair")
-southChair = ptAttribActivator(8, "South Chair")
+NorthChair = ptAttribActivator(7, "North Chair")
+SouthChair = ptAttribActivator(8, "South Chair")
 
-northLights = ptAttribSceneobjectList(9, "North Panel Lights", byObject=1)
-southLights = ptAttribSceneobjectList(10, "South Panel Lights", byObject=1)
+NorthLights = ptAttribSceneobjectList(9, "North Panel Lights", byObject=1)
+SouthLights = ptAttribSceneobjectList(10, "South Panel Lights", byObject=1)
 
-northCountLights = ptAttribSceneobjectList(11, "North Count Lights", byObject=1)
-southCountLights = ptAttribSceneobjectList(12, "South Count Lights", byObject=1)
+NorthCountLights = ptAttribSceneobjectList(11, "North Count Lights", byObject=1)
+SouthCountLights = ptAttribSceneobjectList(12, "South Count Lights", byObject=1)
 
-upButtonsouth = ptAttribActivator(13, "South up count button")
-dnButtonsouth = ptAttribActivator(14, "South down count button")
-readyButtonsouth = ptAttribActivator(15, "South ready button")
+upButtonSouth = ptAttribActivator(13, "South up count button")
+dnButtonSouth = ptAttribActivator(14, "South down count button")
+readyButtonSouth = ptAttribActivator(15, "South ready button")
 
-upButtonnorth = ptAttribActivator(18, "North up count button")
-dnButtonnorth = ptAttribActivator(19, "North down count button")
-readyButtonnorth = ptAttribActivator(20, "North ready button")
+upButtonNorth = ptAttribActivator(18, "North up count button")
+dnButtonNorth = ptAttribActivator(19, "North down count button")
+readyButtonNorth = ptAttribActivator(20, "North ready button")
 
-goButtonnorth = ptAttribActivator(21, "North Go Button activator")
-goButtonsouth = ptAttribActivator(22, "South Go Button activator")
+goButtonNorth = ptAttribActivator(21, "North Go Button activator")
+goButtonSouth = ptAttribActivator(22, "South Go Button activator")
 
-goBtnnorthObject = ptAttribSceneobject(23, "North Go Button Object")
-goBtnsouthObject = ptAttribSceneobject(24, "South Go Button Object")
+goBtnNorthObject = ptAttribSceneobject(23, "North Go Button Object")
+goBtnSouthObject = ptAttribSceneobject(24, "South Go Button Object")
 
-northChairSit = ptAttribActivator(25, "North sit component")
-southChairSit = ptAttribActivator(26, "South sit component")
+NorthChairSit = ptAttribActivator(25, "North sit component")
+SouthChairSit = ptAttribActivator(26, "South sit component")
 
-fiveBtnnorth = ptAttribActivator(27, "5 btn North")
-tenBtnnorth = ptAttribActivator(28, "10 btn North")
-fifteenBtnnorth = ptAttribActivator(29, "15 btn North")
+fiveBtnNorth = ptAttribActivator(27, "5 btn North")
+tenBtnNorth = ptAttribActivator(28, "10 btn North")
+fifteenBtnNorth = ptAttribActivator(29, "15 btn North")
 
-fiveBtnsouth = ptAttribActivator(30, "5 btn South")
-tenBtnsouth = ptAttribActivator(31, "10 btn South")
-fifteenBtnsouth = ptAttribActivator(32, "15 btn South")
+fiveBtnSouth = ptAttribActivator(30, "5 btn South")
+tenBtnSouth = ptAttribActivator(31, "10 btn South")
+fifteenBtnSouth = ptAttribActivator(32, "15 btn South")
 
-southTubeOpen = ptAttribNamedResponder(33, "South tube open", netForce=1)
-northTubeOpen = ptAttribNamedResponder(34, "North tube open", netForce=1)
+SouthTubeOpen = ptAttribNamedResponder(33, "South tube open", netForce=1)
+NorthTubeOpen = ptAttribNamedResponder(34, "North tube open", netForce=1)
 
-southTubeClose = ptAttribNamedResponder(35, "South tube close", netForce=1)
-northTubeClose = ptAttribNamedResponder(36, "North tube close", netForce=1)
+SouthTubeClose = ptAttribNamedResponder(35, "South tube close", netForce=1)
+NorthTubeClose = ptAttribNamedResponder(36, "North tube close", netForce=1)
 
-southTubeEntry = ptAttribNamedActivator(37, "South tube entry trigger")
-northTubeEntry = ptAttribNamedActivator(38, "North tube entry trigger")
+SouthTubeEntry = ptAttribNamedActivator(37, "South tube entry trigger")
+NorthTubeEntry = ptAttribNamedActivator(38, "North tube entry trigger")
 
-southTubeMulti = ptAttribBehavior(43, "South tube entry multi", netForce=0)
-northTubeMulti = ptAttribBehavior(44, "North tube entry multi", netForce=0)
+SouthTubeMulti = ptAttribBehavior(43, "South tube entry multi", netForce=0)
+NorthTubeMulti = ptAttribBehavior(44, "North tube entry multi", netForce=0)
 
-southTubeExclude = ptAttribExcludeRegion(45, "South tube exclude")
-northTubeExclude = ptAttribExcludeRegion(46, "North tube exclude")
+SouthTubeExclude = ptAttribExcludeRegion(45, "South tube exclude")
+NorthTubeExclude = ptAttribExcludeRegion(46, "North tube exclude")
 
-southTeamWarpPt = ptAttribSceneobject(47, "South team warp point")
-northTeamWarpPt = ptAttribSceneobject(48, "North team warp point")
+SouthTeamWarpPt = ptAttribSceneobject(47, "South team warp point")
+NorthTeamWarpPt = ptAttribSceneobject(48, "North team warp point")
 
-southTeamWin = ptAttribActivator(49, "South team win")
-northTeamWin = ptAttribActivator(50, "North team win")
+SouthTeamWin = ptAttribActivator(49, "South team win")
+NorthTeamWin = ptAttribActivator(50, "North team win")
 
-southTeamQuit = ptAttribActivator(51, "South team quit")
-northTeamQuit = ptAttribActivator(52, "North team quit")
+SouthTeamQuit = ptAttribActivator(51, "South team quit")
+NorthTeamQuit = ptAttribActivator(52, "North team quit")
 
-southTeamWinTeleport = ptAttribSceneobject(53, "South team win point")
-northTeamWinTeleport = ptAttribSceneobject(54, "North team win point")
+SouthTeamWinTeleport = ptAttribSceneobject(53, "South team win point")
+NorthTeamWinTeleport = ptAttribSceneobject(54, "North team win point")
 
-northQuitBehavior = ptAttribBehavior(55, "North quit behavior", netForce=0)
-southQuitBehavior = ptAttribBehavior(56, "South quit behavior", netForce=0)
+NorthQuitBehavior = ptAttribBehavior(55, "North quit behavior", netForce=0)
+SouthQuitBehavior = ptAttribBehavior(56, "South quit behavior", netForce=0)
 
 #sfx responders
-northPanelSound = ptAttribResponder(57,"North panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=0)
-southPanelSound = ptAttribResponder(58,"South panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=0)
+NorthPanelSound = ptAttribResponder(57,"North panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=0)
+SouthPanelSound = ptAttribResponder(58,"South panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=0)
 
 #TOC specific
-panelLightAnimsouth = ptAttribMaterialAnimation(61, "South Panel Light Animation")
-panelLightAnimnorth = ptAttribMaterialAnimation(62, "North Panel Light Animation")
-sitPanelLightsnorth = ptAttribSceneobjectList(63, "North sitting indicators")
-sitPanelLightssouth = ptAttribSceneobjectList(64, "South sitting indicators")
-confirmPanelLightsnorth = ptAttribSceneobjectList(65, "North ready indicators")
-confirmPanelLightssouth = ptAttribSceneobjectList(66, "South ready indicators")
+panelLightAnimSouth = ptAttribMaterialAnimation(61, "South Panel Light Animation")
+panelLightAnimNorth = ptAttribMaterialAnimation(62, "North Panel Light Animation")
+sitPanelLightsNorth = ptAttribSceneobjectList(63, "North sitting indicators")
+sitPanelLightsSouth = ptAttribSceneobjectList(64, "South sitting indicators")
+confirmPanelLightsNorth = ptAttribSceneobjectList(65, "North ready indicators")
+confirmPanelLightsSouth = ptAttribSceneobjectList(66, "South ready indicators")
 
 MaleSuit = [
     '03_MHAcc_SuitHelmet',
@@ -156,35 +156,35 @@ wornItem = []
 DefaultColor1 = []
 DefaultColor2 = []
 
-PanelClick = [northPanelClick, southPanelClick]
-Panel = [northPanel, southPanel]
-Wall = [northWall, southWall]
-Chair = [northChair, southChair]
-Lights = [northLights, southLights]
-CountLights = [northCountLights, southCountLights]
-upButton = [upButtonnorth, upButtonsouth]
-dnButton = [dnButtonnorth, dnButtonsouth]
-readyButton = [readyButtonnorth, readyButtonsouth]
-goButton = [goButtonnorth, goButtonsouth]
-goBtnObject = [goBtnnorthObject, goBtnsouthObject]
-ChairSit = [northChairSit, southChairSit]
-fiveBtn = [fiveBtnnorth, fiveBtnsouth]
-tenBtn = [tenBtnnorth, tenBtnsouth]
-fifteenBtn = [fifteenBtnnorth, fifteenBtnsouth]
-TubeOpen = [northTubeOpen, southTubeOpen]
-TubeClose = [northTubeClose, southTubeClose]
-TubeEntry = [northTubeEntry, southTubeEntry]
-TubeMulti = [northTubeMulti, southTubeMulti]
-TubeExclude = [northTubeExclude, southTubeExclude]
-TeamWarpPt = [northTeamWarpPt, southTeamWarpPt]
-TeamWin = [northTeamWin, southTeamWin]
-TeamQuit = [northTeamQuit, southTeamQuit]
-TeamWinTeleport = [northTeamWinTeleport, southTeamWinTeleport]
-QuitBehavior = [northQuitBehavior, southQuitBehavior]
-PanelSound = [northPanelSound, southPanelSound]
-panelLightAnim = [panelLightAnimnorth, panelLightAnimsouth]
-sitPanelLights = [sitPanelLightsnorth, sitPanelLightssouth]
-confirmPanelLights = [confirmPanelLightsnorth, confirmPanelLightssouth]
+PanelClick = [NorthPanelClick, SouthPanelClick]
+Panel = [NorthPanel, SouthPanel]
+Wall = [NorthWall, SouthWall]
+Chair = [NorthChair, SouthChair]
+Lights = [NorthLights, SouthLights]
+CountLights = [NorthCountLights, SouthCountLights]
+upButton = [upButtonNorth, upButtonSouth]
+dnButton = [dnButtonNorth, dnButtonSouth]
+readyButton = [readyButtonNorth, readyButtonSouth]
+goButton = [goButtonNorth, goButtonSouth]
+goBtnObject = [goBtnNorthObject, goBtnSouthObject]
+ChairSit = [NorthChairSit, SouthChairSit]
+fiveBtn = [fiveBtnNorth, fiveBtnSouth]
+tenBtn = [tenBtnNorth, tenBtnSouth]
+fifteenBtn = [fifteenBtnNorth, fifteenBtnSouth]
+TubeOpen = [NorthTubeOpen, SouthTubeOpen]
+TubeClose = [NorthTubeClose, SouthTubeClose]
+TubeEntry = [NorthTubeEntry, SouthTubeEntry]
+TubeMulti = [NorthTubeMulti, SouthTubeMulti]
+TubeExclude = [NorthTubeExclude, SouthTubeExclude]
+TeamWarpPt = [NorthTeamWarpPt, SouthTeamWarpPt]
+TeamWin = [NorthTeamWin, SouthTeamWin]
+TeamQuit = [NorthTeamQuit, SouthTeamQuit]
+TeamWinTeleport = [NorthTeamWinTeleport, SouthTeamWinTeleport]
+QuitBehavior = [NorthQuitBehavior, SouthQuitBehavior]
+PanelSound = [NorthPanelSound, SouthPanelSound]
+panelLightAnim = [panelLightAnimNorth, panelLightAnimSouth]
+sitPanelLights = [sitPanelLightsNorth, sitPanelLightsSouth]
+confirmPanelLights = [confirmPanelLightsNorth, confirmPanelLightsSouth]
 
 ##############################################################
 # grsnWallPython
@@ -210,7 +210,7 @@ class grsnWallPython(ptResponder):
             solo = False
         ageSDL = PtGetAgeSDL()
 
-        #Prepare SDLs (n-north, s-South)
+        #Prepare SDLs (n-North, s-South)
         ageSDL.setFlags("nChairOccupant",1,1)
         ageSDL.setFlags("sChairOccupant",1,1)
         ageSDL.setFlags("nWallPlayer",1,1)
@@ -252,140 +252,140 @@ class grsnWallPython(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         ### Sit down ###
-        if(id == northChair.id and state):
+        if(id == NorthChair.id and state):
             if(ageSDL["nState"][0] == kStandby or ageSDL["nState"][0] == kEnd):
                 self.ChangeGameState(kNorth, kSit)
-            northChair.disable()
+            NorthChair.disable()
             return
-        if(id == southChair.id and state):
+        if(id == SouthChair.id and state):
             if(ageSDL["sState"][0] == kStandby or ageSDL["sState"][0] == kEnd):
                 self.ChangeGameState(kSouth, kSit)
-            southChair.disable()
+            SouthChair.disable()
             return
         ### Stand up ###
-        if(id == northChairSit.id):
+        if(id == NorthChairSit.id):
             for event in events:
                 if(event[0] == kContainedEvent and event[1] == 1 and not state):
-                    northChair.enable()
+                    NorthChair.enable()
                     if(ageSDL["nState"][0] == kSit):
                         self.ChangeGameState(kNorth, kStandby)
                         self.SetPanelMode(kNorth, disableAll=True)
             return
-        if(id == southChairSit.id):
+        if(id == SouthChairSit.id):
             for event in events:
                 if(event[0] == kContainedEvent and event[1] == 1 and not state):
-                    southChair.enable()
+                    SouthChair.enable()
                     if(ageSDL["sState"][0] == kSit):
                         self.ChangeGameState(kSouth, kStandby)
                         self.SetPanelMode(kSouth, disableAll=True)
             return
         ### Press Go Button ###
-        if(id == goButtonnorth.id and not state):
+        if(id == goButtonNorth.id and not state):
             ### Start Game ###
             if(ageSDL["nState"][0] == kSit):
                 self.ResetWall(resetState=False)
                 self.ChangeGameState(kNorth, kSelectCount)
-                northPanelSound.run(self.key, state='main')
+                NorthPanelSound.run(self.key, state='main')
             ### Confirm Blocker ###
             elif(ageSDL["nState"][0] == kSetBlocker):
                 if(self.GetNumBlockerSet(kNorth) < ageSDL["NumBlockers"][0]):
-                    northPanelSound.run(self.key, state='denied')
+                    NorthPanelSound.run(self.key, state='denied')
                 else:
                     self.ChangeGameState(kNorth, kWait)
-                    northTubeOpen.run(self.key)
-                    northPanelSound.run(self.key, state='gameStart')
+                    NorthTubeOpen.run(self.key)
+                    NorthPanelSound.run(self.key, state='gameStart')
                     if(PtFindAvatar(events) == PtGetLocalAvatar()):
                         ageSDL["nChairOccupant"] = (cID,)
             return
-        if(id == goButtonsouth.id and not state):
+        if(id == goButtonSouth.id and not state):
             ### Start Game ###
             if(ageSDL["sState"][0] == kSit):
                 self.ResetWall(resetState=False)
                 self.ChangeGameState(kSouth, kSelectCount)
-                southPanelSound.run(self.key, state='main')
+                SouthPanelSound.run(self.key, state='main')
             ### Confirm Blocker ###
             elif(ageSDL["sState"][0] == kSetBlocker):
                 if(self.GetNumBlockerSet(kSouth) < ageSDL["NumBlockers"][0]):
-                    southPanelSound.run(self.key, state='denied')
+                    SouthPanelSound.run(self.key, state='denied')
                 else:
                     self.ChangeGameState(kSouth, kWait)
-                    southTubeOpen.run(self.key)
-                    southPanelSound.run(self.key, state='gameStart')
+                    SouthTubeOpen.run(self.key)
+                    SouthPanelSound.run(self.key, state='gameStart')
                     if(PtFindAvatar(events) == PtGetLocalAvatar()):
                         ageSDL["sChairOccupant"] = (cID,)
             return
         ### Tube open Animation Finished ###
-        if(id == northTubeOpen.id):
-            northTubeExclude.release(self.key)
+        if(id == NorthTubeOpen.id):
+            NorthTubeExclude.release(self.key)
             return
-        if(id == southTubeOpen.id):
-            southTubeExclude.release(self.key)
+        if(id == SouthTubeOpen.id):
+            SouthTubeExclude.release(self.key)
             return
         ### Blocker Count Buttons ###
-        if(id == fiveBtnnorth.id and state and ageSDL["nState"][0] == kSelectCount):
-            northPanelSound.run(self.key, state='up')
+        if(id == fiveBtnNorth.id and state and ageSDL["nState"][0] == kSelectCount):
+            NorthPanelSound.run(self.key, state='up')
             self.ChangeBlockerCount(5)
             return
-        if(id == tenBtnnorth.id and state and ageSDL["nState"][0] == kSelectCount):
-            northPanelSound.run(self.key, state='up')
+        if(id == tenBtnNorth.id and state and ageSDL["nState"][0] == kSelectCount):
+            NorthPanelSound.run(self.key, state='up')
             self.ChangeBlockerCount(10)
             return
-        if(id == fifteenBtnnorth.id and state and ageSDL["nState"][0] == kSelectCount):
-            northPanelSound.run(self.key, state='up')
+        if(id == fifteenBtnNorth.id and state and ageSDL["nState"][0] == kSelectCount):
+            NorthPanelSound.run(self.key, state='up')
             self.ChangeBlockerCount(15)
             return
-        if(id == upButtonnorth.id and state and ageSDL["nState"][0] == kSelectCount):
+        if(id == upButtonNorth.id and state and ageSDL["nState"][0] == kSelectCount):
             if(ageSDL["NumBlockers"][0] >= 20):
-                northPanelSound.run(self.key, state='denied')
+                NorthPanelSound.run(self.key, state='denied')
             else:
-                northPanelSound.run(self.key, state='up')
+                NorthPanelSound.run(self.key, state='up')
                 self.ChangeBlockerCount(ageSDL["NumBlockers"][0] + 1)
             return
-        if(id == dnButtonnorth.id and state and ageSDL["nState"][0] == kSelectCount):
+        if(id == dnButtonNorth.id and state and ageSDL["nState"][0] == kSelectCount):
             if(ageSDL["NumBlockers"][0] <= 0):
-                northPanelSound.run(self.key, state='denied')
+                NorthPanelSound.run(self.key, state='denied')
             else:
-                northPanelSound.run(self.key, state='down')
+                NorthPanelSound.run(self.key, state='down')
                 self.ChangeBlockerCount(ageSDL["NumBlockers"][0] - 1)
             return
         #South
-        if(id == fiveBtnsouth.id and state and ageSDL["sState"][0] == kSelectCount):
-            southPanelSound.run(self.key, state='up')
+        if(id == fiveBtnSouth.id and state and ageSDL["sState"][0] == kSelectCount):
+            SouthPanelSound.run(self.key, state='up')
             self.ChangeBlockerCount(5)
             return
-        if(id == tenBtnsouth.id and state and ageSDL["sState"][0] == kSelectCount):
-            southPanelSound.run(self.key, state='up')
+        if(id == tenBtnSouth.id and state and ageSDL["sState"][0] == kSelectCount):
+            SouthPanelSound.run(self.key, state='up')
             self.ChangeBlockerCount(10)
             return
-        if(id == fifteenBtnsouth.id and state and ageSDL["sState"][0] == kSelectCount):
-            southPanelSound.run(self.key, state='up')
+        if(id == fifteenBtnSouth.id and state and ageSDL["sState"][0] == kSelectCount):
+            SouthPanelSound.run(self.key, state='up')
             self.ChangeBlockerCount(15)
             return
-        if(id == upButtonsouth.id and state and ageSDL["sState"][0] == kSelectCount):
+        if(id == upButtonSouth.id and state and ageSDL["sState"][0] == kSelectCount):
             if(ageSDL["NumBlockers"][0] >= 20):
-                southPanelSound.run(self.key, state='denied')
+                SouthPanelSound.run(self.key, state='denied')
             else:
-                southPanelSound.run(self.key, state='up')
+                SouthPanelSound.run(self.key, state='up')
                 self.ChangeBlockerCount(ageSDL["NumBlockers"][0] + 1)
             return
-        if(id == dnButtonsouth.id and state and ageSDL["sState"][0] == kSelectCount):
+        if(id == dnButtonSouth.id and state and ageSDL["sState"][0] == kSelectCount):
             if(ageSDL["NumBlockers"][0] <= 0):
-                southPanelSound.run(self.key, state='denied')
+                SouthPanelSound.run(self.key, state='denied')
             else:
-                southPanelSound.run(self.key, state='down')
+                SouthPanelSound.run(self.key, state='down')
                 self.ChangeBlockerCount(ageSDL["NumBlockers"][0] - 1)
             return
         ### Confirm count Button ###
-        if(id == readyButtonnorth.id and not state and ageSDL["nState"][0] == kSelectCount):
+        if(id == readyButtonNorth.id and not state and ageSDL["nState"][0] == kSelectCount):
             self.ChangeGameState(kNorth, kSetBlocker)
-            northPanelSound.run(self.key, state='up')
+            NorthPanelSound.run(self.key, state='up')
             return
-        if(id == readyButtonsouth.id and not state and ageSDL["sState"][0] == kSelectCount):
+        if(id == readyButtonSouth.id and not state and ageSDL["sState"][0] == kSelectCount):
             self.ChangeGameState(kSouth, kSetBlocker)
-            southPanelSound.run(self.key, state='up')
+            SouthPanelSound.run(self.key, state='up')
             return
         ### Tube Entry trigger ###
-        if(id == northTubeEntry.id):
+        if(id == NorthTubeEntry.id):
             self.ChangeGameState(kNorth, kEntry)
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 ageSDL["nWallPlayer"] = (cID,)
@@ -394,18 +394,18 @@ class grsnWallPython(ptResponder):
             if(ageSDL["sState"][0] == kEntry):
                 #both players are in the Tube - flush them down
                 if(PtGetLocalClientID() == ageSDL["nWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
                 if(PtGetLocalClientID() == ageSDL["sWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
                 self.ChangeGameState(kNorth, kGameInProgress)
                 self.ChangeGameState(kSouth, kGameInProgress)
                 if(eventHandler):
                     eventHandler.Handle(kEventStart)
             elif(ageSDL["sState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
                 self.ChangeGameState(kNorth, kGameInProgress)
             return
-        if(id == southTubeEntry.id):
+        if(id == SouthTubeEntry.id):
             self.ChangeGameState(kSouth, kEntry)
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 ageSDL["sWallPlayer"] = (cID,)
@@ -414,23 +414,23 @@ class grsnWallPython(ptResponder):
             if(ageSDL["nState"][0] == kEntry):
                 #both players are in the Tube - flush them down
                 if(PtGetLocalClientID() == ageSDL["nWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(northTubeMulti.value, self.key, northTubeMulti.netForce)
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
                 if(PtGetLocalClientID() == ageSDL["sWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
                 self.ChangeGameState(kNorth, kGameInProgress)
                 self.ChangeGameState(kSouth, kGameInProgress)
                 if(eventHandler):
                     eventHandler.Handle(kEventStart)
             elif(ageSDL["nState"][0] == kGameInProgress and PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(southTubeMulti.value, self.key, southTubeMulti.netForce)
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
                 self.ChangeGameState(kSouth, kGameInProgress)
             return
         ### Tube Multibehaviors ###
-        if(id == northTubeMulti.id):
+        if(id == NorthTubeMulti.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     #Smart seek complete
-                    northTubeClose.run(self.key)
+                    NorthTubeClose.run(self.key)
                 elif(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage):
                     #Multistage complete
                     if(PtFindAvatar(events) == PtGetLocalAvatar()):
@@ -446,7 +446,7 @@ class grsnWallPython(ptResponder):
                                 DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
                                 DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0],2))
                         for item in clothing[0:]:
-                            if not self.IItemInCloset(avatar, item):
+                            if(not self.IItemInCloset(avatar, item) and ageSDL["grsnGrantMaintainerSuit"][0]):
                                 PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
                                 avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
                             avatar.avatar.netForce(1)
@@ -456,15 +456,15 @@ class grsnWallPython(ptResponder):
                         #avatar.avatar.saveClothing()
                         #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), True)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
-                        PtGetLocalAvatar().physics.warpObj(southTeamWarpPt.value.getKey())
-                    northTubeExclude.clear(self.key)
-                    northTubeOpen.run(self.key)
+                        PtGetLocalAvatar().physics.warpObj(SouthTeamWarpPt.value.getKey())
+                    NorthTubeExclude.clear(self.key)
+                    NorthTubeOpen.run(self.key)
             return
-        if(id == southTubeMulti.id):
+        if(id == SouthTubeMulti.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     #Smart seek complete
-                    southTubeClose.run(self.key)
+                    SouthTubeClose.run(self.key)
                 elif(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage):
                     #Multistage complete
                     if(PtFindAvatar(events) == PtGetLocalAvatar()):
@@ -480,7 +480,7 @@ class grsnWallPython(ptResponder):
                                 DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
                                 DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0],2))
                         for item in clothing[0:]:
-                            if not self.IItemInCloset(avatar, item):
+                            if(not self.IItemInCloset(avatar, item) and ageSDL["grsnGrantMaintainerSuit"][0]):
                                 PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
                                 avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
                             avatar.avatar.netForce(1)
@@ -490,14 +490,14 @@ class grsnWallPython(ptResponder):
                         #avatar.avatar.saveClothing()
                         #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), True)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
-                        PtGetLocalAvatar().physics.warpObj(northTeamWarpPt.value.getKey())
-                    southTubeExclude.clear(self.key)
-                    southTubeOpen.run(self.key)
+                        PtGetLocalAvatar().physics.warpObj(NorthTeamWarpPt.value.getKey())
+                    SouthTubeExclude.clear(self.key)
+                    SouthTubeOpen.run(self.key)
             return
         ### Win region ###
-        if(id == northTeamWin.id):
+        if(id == NorthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), northTeamWinTeleport.value.getKey())
+                PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
                 avatar = PtGetLocalAvatar()
                 i = 0
                 for item in wornItem:
@@ -511,13 +511,13 @@ class grsnWallPython(ptResponder):
                 #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
-                eventHandler.Handle(kEventYWin)
+                eventHandler.Handle(kEventNorthWin)
             self.ChangeGameState(kNorth, kEnd)
             self.ChangeGameState(kSouth, kEnd)
             return
-        if(id == southTeamWin.id):
+        if(id == SouthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), southTeamWinTeleport.value.getKey())
+                PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
                 avatar = PtGetLocalAvatar()
                 i = 0
                 for item in wornItem:
@@ -531,35 +531,35 @@ class grsnWallPython(ptResponder):
                 #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
-                eventHandler.Handle(kEventPWin)             
+                eventHandler.Handle(kEventSouthWin)             
             self.ChangeGameState(kNorth, kEnd)
             self.ChangeGameState(kSouth, kEnd)
             return
         ### Quit button ###
-        if(id == northTeamQuit.id and state):
+        if(id == NorthTeamQuit.id and state):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(northQuitBehavior.value, self.key, northQuitBehavior.netForce)
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthQuitBehavior.value, self.key, NorthQuitBehavior.netForce)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
-                eventHandler.Handle(kEventnorthQuit)
+                eventHandler.Handle(kEventNorthQuit)
             self.ChangeGameState(kNorth, kEnd)
             self.ChangeGameState(kSouth, kEnd)
             return
-        if(id == southTeamQuit.id and state):
+        if(id == SouthTeamQuit.id and state):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(southQuitBehavior.value, self.key, southQuitBehavior.netForce)
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthQuitBehavior.value, self.key, SouthQuitBehavior.netForce)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
-                eventHandler.Handle(kEventsouthQuit)
+                eventHandler.Handle(kEventSouthQuit)
             self.ChangeGameState(kNorth, kEnd)
             self.ChangeGameState(kSouth, kEnd)
             return
-        if(id == northQuitBehavior.id):
+        if(id == NorthQuitBehavior.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage and PtFindAvatar(events) == PtGetLocalAvatar()):
                     #Touched the Crystal
-                    PtDebugPrint("Trigger north Crystal")
-                    PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), northTeamWinTeleport.value.getKey())
+                    PtDebugPrint("Trigger North Crystal")
+                    PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
                     avatar = PtGetLocalAvatar()
                     i = 0
                     for item in wornItem:
@@ -572,12 +572,12 @@ class grsnWallPython(ptResponder):
                         i += 1
                     #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
             return
-        if(id == southQuitBehavior.id):
+        if(id == SouthQuitBehavior.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage and PtFindAvatar(events) == PtGetLocalAvatar()):
                     #Touched the Crystal
-                    PtDebugPrint("Trigger south Crystal")
-                    PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), southTeamWinTeleport.value.getKey())
+                    PtDebugPrint("Trigger South Crystal")
+                    PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
                     avatar = PtGetLocalAvatar()
                     i = 0
                     for item in wornItem:
@@ -598,10 +598,10 @@ class grsnWallPython(ptResponder):
                 pickedBlockerObj = event[3]
                 team = kNorth
                 try:
-                    index = northPanel.value.index(pickedBlockerObj)
+                    index = NorthPanel.value.index(pickedBlockerObj)
                 except:
                     try:
-                        index = southPanel.value.index(pickedBlockerObj)
+                        index = SouthPanel.value.index(pickedBlockerObj)
                         team = kSouth
                     except:
                         PtDebugPrint("grsnWallPython::OnNotify: Blocker not found on either panel")
@@ -630,13 +630,13 @@ class grsnWallPython(ptResponder):
             if(ageSDL["sState"][0] == kSetBlocker):
                 #same thing
                 self.ChangeGameState(kSouth, kSelectCount)
-            self.SetPanelMode(kNorth,onlnorthLights=True)
-            self.SetPanelMode(kSouth,onlnorthLights=True)
+            self.SetPanelMode(kNorth,onlNorthLights=True)
+            self.SetPanelMode(kSouth,onlNorthLights=True)
         ### BlockerCount ###
         if(VARname == "northWall"):
-            self.SetPanelMode(kNorth, onlnorthLights=True)
+            self.SetPanelMode(kNorth, onlNorthLights=True)
         if(VARname == "southWall"):
-            self.SetPanelMode(kSouth, onlnorthLights=True)
+            self.SetPanelMode(kSouth, onlNorthLights=True)
         ### nState ###
         if(VARname == "nState"):
             self.TOCPanelLight() #TOC
@@ -650,20 +650,20 @@ class grsnWallPython(ptResponder):
                     self.ChangeGameState(kSouth, kSelectCount)
                 else:
                     #We were forced by South - update Display
-                    northPanelSound.run(self.key, state='main')
+                    NorthPanelSound.run(self.key, state='main')
                     if(eventHandler):
                         eventHandler.Handle(kEventInit)
                 self.SetPanelMode(kNorth)
             if(value == kSetBlocker and ageSDL["sState"][0] == kSetBlocker):
                 #Both players are ok with the blocker count
-                northPanelSound.run(self.key, state='select')
-                southPanelSound.run(self.key, state='select')
+                NorthPanelSound.run(self.key, state='select')
+                SouthPanelSound.run(self.key, state='select')
                 self.SetPanelMode(kNorth)
                 self.SetPanelMode(kSouth)
             if(value == kWait):
                 #North player is ready - transmit blockers to the wall
                 for blocker in ageSDL["northWall"]:
-                    northWall.value[blocker].physics.enable()
+                    NorthWall.value[blocker].physics.enable()
                 if(ageSDL["sState"][0] >= kWait and eventHandler):
                     eventHandler.Handle(kEventEntry)
 
@@ -679,20 +679,20 @@ class grsnWallPython(ptResponder):
                     self.ChangeGameState(kNorth, kSelectCount)
                 else:
                     #We were forced by North - update Display
-                    southPanelSound.run(self.key, state='main')
+                    SouthPanelSound.run(self.key, state='main')
                     if(eventHandler):
                         eventHandler.Handle(kEventInit)
                 self.SetPanelMode(kSouth)
             if(value == kSetBlocker and ageSDL["nState"][0] == kSetBlocker):
                 #Both players are ok with the blocker count
-                northPanelSound.run(self.key, state='select')
-                southPanelSound.run(self.key, state='select')
+                NorthPanelSound.run(self.key, state='select')
+                SouthPanelSound.run(self.key, state='select')
                 self.SetPanelMode(kNorth)
                 self.SetPanelMode(kSouth)
             if(value == kWait):
                 #South player is ready - transmit blockers to the wall
                 for blocker in ageSDL["southWall"]:
-                    southWall.value[blocker].physics.enable()
+                    SouthWall.value[blocker].physics.enable()
                 if(ageSDL["nState"][0] >= kWait and eventHandler):
                     eventHandler.Handle(kEventEntry)
 
@@ -711,13 +711,13 @@ class grsnWallPython(ptResponder):
                     break
         return blockerFound
 
-    def SetPanelMode(self,team,disableAll=False,onlnorthLights=False):
+    def SetPanelMode(self,team,disableAll=False,onlNorthLights=False):
         ageSDL = PtGetAgeSDL()
         if(team == kNorth):
             state = ageSDL["nState"][0]
         elif(team == kSouth):
             state = ageSDL["sState"][0]
-        if(onlnorthLights):
+        if(onlNorthLights):
             if(team == kNorth):
                 sdl = "northWall"
             elif(team == kSouth):
@@ -812,38 +812,38 @@ class grsnWallPython(ptResponder):
         nState = ageSDL["nState"][0]
         sState = ageSDL["sState"][0]
 
-        panelLightAnimsouth.animation.speed(0.25)
-        panelLightAnimsouth.animation.stop()
-        panelLightAnimsouth.animation.skipToTime(0.16)
-        panelLightAnimnorth.animation.speed(0.25)
-        panelLightAnimnorth.animation.stop()
-        panelLightAnimnorth.animation.skipToTime(0.16)
+        panelLightAnimSouth.animation.speed(0.25)
+        panelLightAnimSouth.animation.stop()
+        panelLightAnimSouth.animation.skipToTime(0.16)
+        panelLightAnimNorth.animation.speed(0.25)
+        panelLightAnimNorth.animation.stop()
+        panelLightAnimNorth.animation.skipToTime(0.16)
 
         if(nState == kSetBlocker):
-            panelLightAnimnorth.animation.play()
+            panelLightAnimNorth.animation.play()
         if(sState == kSetBlocker):
-            panelLightAnimsouth.animation.play()
+            panelLightAnimSouth.animation.play()
 
         for i in range(0,2):
             if(nState == kSit or nState == kSelectCount):
-                sitPanelLightsnorth.value[i].draw.enable()
-                confirmPanelLightsnorth.value[i].draw.disable()
+                sitPanelLightsNorth.value[i].draw.enable()
+                confirmPanelLightsNorth.value[i].draw.disable()
             elif(nState == kWait or nState == kEntry or nState == kGameInProgress):
-                sitPanelLightsnorth.value[i].draw.enable()
-                confirmPanelLightsnorth.value[i].draw.enable()
+                sitPanelLightsNorth.value[i].draw.enable()
+                confirmPanelLightsNorth.value[i].draw.enable()
             elif(nState == kStandby or nState == kEnd):
-                sitPanelLightsnorth.value[i].draw.disable()
-                confirmPanelLightsnorth.value[i].draw.disable()
+                sitPanelLightsNorth.value[i].draw.disable()
+                confirmPanelLightsNorth.value[i].draw.disable()
 
             if(sState == kSit or sState == kSelectCount):
-                sitPanelLightssouth.value[i].draw.enable()
-                confirmPanelLightssouth.value[i].draw.disable()
+                sitPanelLightsSouth.value[i].draw.enable()
+                confirmPanelLightsSouth.value[i].draw.disable()
             elif(sState == kWait or sState == kEntry or sState == kGameInProgress):
-                sitPanelLightssouth.value[i].draw.enable()
-                confirmPanelLightssouth.value[i].draw.enable()
+                sitPanelLightsSouth.value[i].draw.enable()
+                confirmPanelLightsSouth.value[i].draw.enable()
             elif(sState == kStandby or sState == kEnd):
-                sitPanelLightssouth.value[i].draw.disable()
-                confirmPanelLightssouth.value[i].draw.disable()
+                sitPanelLightsSouth.value[i].draw.disable()
+                confirmPanelLightsSouth.value[i].draw.disable()
 
     def ChangeBlockerCount(self,num):
         if(self.IAmMaster()):
@@ -855,30 +855,30 @@ class grsnWallPython(ptResponder):
         self.SetPanelMode(kNorth)
         self.SetPanelMode(kSouth)
         for i in range(0,171):
-            northWall.value[i].physics.disable()
-            southWall.value[i].physics.disable()
+            NorthWall.value[i].physics.disable()
+            SouthWall.value[i].physics.disable()
         for blocker in ageSDL["northWall"]:
             if(blocker != -1):
                 self.SetPanelBlocker(kNorth, blocker, True, onlyLight=True)
-                northWall.value[i].physics.enable()
+                NorthWall.value[i].physics.enable()
         for blocker in ageSDL["southWall"]:
             if(blocker != -1):
                 self.SetPanelBlocker(kSouth, blocker, True, onlyLight=True)
-                southWall.value[i].physics.enable()
+                SouthWall.value[i].physics.enable()
         self.oldCount[0] = ageSDL["NumBlockers"][0]
         self.oldCount[1] = ageSDL["NumBlockers"][0]
 
-        northTubeExclude.clear(self.key)
-        southTubeExclude.clear(self.key)
+        NorthTubeExclude.clear(self.key)
+        SouthTubeExclude.clear(self.key)
 
         if(ageSDL["nState"][0] == kWait or ageSDL["nState"][0] == kEntry or ageSDL["nState"][0] == kGameInProgress):
-            northTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            NorthTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
         else:
-            northTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            NorthTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
         if(ageSDL["sState"][0] == kWait or ageSDL["sState"][0] == kEntry or ageSDL["sState"][0] == kGameInProgress):
-            southTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            SouthTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
         else:
-            southTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            SouthTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
 
         self.TOCPanelLight() #TOC
 
@@ -956,18 +956,18 @@ class grsnWallPython(ptResponder):
                 ageSDL["sState"] = (kStandby,)
 
         for i in range(0,171):
-            northWall.value[i].physics.disable()
-            southWall.value[i].physics.disable()
+            NorthWall.value[i].physics.disable()
+            SouthWall.value[i].physics.disable()
             self.SetPanelBlocker(kNorth, i, False, onlyLight=True)
             self.SetPanelBlocker(kSouth, i, False, onlyLight=True)
 
         self.SetPanelMode(kNorth)
         self.SetPanelMode(kSouth)
 
-        northTubeExclude.clear(self.key)
-        southTubeExclude.clear(self.key)
-        northTubeClose.run(self.key,fastforward=1)
-        southTubeClose.run(self.key,fastforward=1)
+        NorthTubeExclude.clear(self.key)
+        SouthTubeExclude.clear(self.key)
+        NorthTubeClose.run(self.key,fastforward=1)
+        SouthTubeClose.run(self.key,fastforward=1)
 
         self.oldCount[0] = 0
         self.oldCount[1] = 0

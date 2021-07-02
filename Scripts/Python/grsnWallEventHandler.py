@@ -151,22 +151,22 @@ class grsnWallEventHandler(ptResponder):
         msg = kWallPrefix + PtGetLocalizedString("Gahreesen.Wall.Start" + str(idx))
         return (stage, msg)
 
-    def HandleYWin(self, idx):
+    def HandleNorthWin(self, idx):
         stage = 'YWin' + str(idx)
         msg = kWallPrefix + PtGetLocalizedString("Gahreesen.Wall.YWin" + str(idx))
         return (stage, msg)
 
-    def HandlePWin(self, idx):
+    def HandleSouthWin(self, idx):
         stage = 'PWin' + str(idx)
         msg = kWallPrefix + PtGetLocalizedString("Gahreesen.Wall.PWin" + str(idx))
         return (stage, msg)
 
-    def HandleYQuit(self, idx):
+    def HandleNorthQuit(self, idx):
         stage = 'YQuit' + str(idx)
         msg = kWallPrefix + PtGetLocalizedString("Gahreesen.Wall.YQuit" + str(idx))
         return (stage, msg)
 
-    def HandlePQuit(self, idx):
+    def HandleSouthQuit(self, idx):
         stage = 'PQuit' + str(idx)
         msg = kWallPrefix + PtGetLocalizedString("Gahreesen.Wall.PQuit" + str(idx))
         return (stage, msg)

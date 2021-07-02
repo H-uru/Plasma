@@ -940,6 +940,8 @@ STATEDESC Garrison
 
     VAR BOOL    grsnCalendarSpark01[1] DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BOOL    grsnCalendarSpark04[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    
+    VAR BOOL    grsnGrantMaintainerSuit[1] DEFAULT=0 DEFAULTOPTION=VAULT
 
 
 

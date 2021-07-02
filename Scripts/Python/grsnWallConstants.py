@@ -75,10 +75,10 @@ kSouth = 1
 kEventInit = "HandleInit"
 kEventEntry = "HandleEntry"
 kEventStart = "HandleStart"
-kEventYWin = "HandleYWin"
-kEventPWin = "HandlePWin"
-kEventYQuit = "HandleYQuit"
-kEventPQuit = "HandlePQuit"
+kEventNorthWin = "HandleNorthWin"
+kEventSouthWin = "HandleSouthWin"
+kEventNorthQuit = "HandleNorthQuit"
+kEventSouthQuit = "HandleSouthQuit"
 
 eventHandler = None
 def InitEventHandler(instance):
