@@ -209,12 +209,12 @@ protected:
 
 public:
 #if MAX_VERSION_MAJOR < 24
-    void GetClassName(MSTR& s) MAX24_CONST override { IGetClassName(s); }
-    void GetClassName(MSTR& s, bool localized) MAX24_CONST { IGetClassName(s); }
+    void GetClassName(MSTR& s) override { IGetClassName(s); }
+    void GetClassName(MSTR& s, bool localized) { IGetClassName(s); }
     MSTR SubAnimName(int i) override { return ISubAnimName(i); }
     MSTR SubAnimName(int i, bool localized) { return ISubAnimName(i); }
 #else
-    void GetClassName(MSTR& s, bool localized) MAX24_CONST override { return IGetClassName(s); }
+    void GetClassName(MSTR& s, bool localized) const override { return IGetClassName(s); }
     MSTR SubAnimName(int i, bool localized) override { return ISubAnimName(i); }
 #endif
 };
@@ -233,7 +233,7 @@ public:
     MAX10_CONST MCHAR* GetName() override { return const_cast<MAX10_CONST MCHAR*>(IGetName()); }
     MAX10_CONST MCHAR* GetName(bool localized) { return const_cast<MAX10_CONST MCHAR*>(IGetName()); }
 #else
-    MAX10_CONST MCHAR* GetName(bool localized) override { return const_cast<MAX10_CONST MCHAR*>(IGetName()); }
+    const MCHAR* GetName(bool localized) override { return IGetName(); }
 #endif
 };
 
@@ -282,13 +282,10 @@ protected:
 
 public:
 #if MAX_VERSION_MAJOR < 24
-    MAX14_CONST MCHAR* GetObjectName() override { return const_cast<MAX24_CONST MCHAR*>(IGetObjectName()); }
-    MAX14_CONST MCHAR* GetObjectName(bool localized) { return const_cast<MAX24_CONST MCHAR*>(IGetObjectName()); }
+    MAX14_CONST MCHAR* GetObjectName() override { return const_cast<MAX14_CONST MCHAR*>(IGetObjectName()); }
+    MAX14_CONST MCHAR* GetObjectName(bool localized) { return const_cast<MAX14_CONST MCHAR*>(IGetObjectName()); }
 #else
-    MAX14_CONST MCHAR* GetObjectName(bool localized) MAX24_CONST override
-    {
-        return const_cast<MAX24_CONST MCHAR*>(IGetObjectName());
-    }
+    const MCHAR* GetObjectName(bool localized) const override { return IGetObjectName(); }
 #endif
 };
 
