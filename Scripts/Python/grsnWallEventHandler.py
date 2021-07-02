@@ -59,7 +59,7 @@ sndBlockerResp = ptAttribResponder(2,"Blocker Sound Responder", ['1', '2', '3', 
 
 #constants
 kBlockerTimer = 0
-kWallPrefix = "TOC Wall: "
+kWallPrefix = "Gahreesen Wall: "
 
 class grsnWallEventHandler(ptResponder):
 

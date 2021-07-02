@@ -503,8 +503,6 @@ class grsnWallPython(ptResponder):
                 for item in wornItem:
                     color1 = DefaultColor1[i]
                     color2 = DefaultColor2[i]
-                    PtDebugPrint(color1)
-                    PtDebugPrint(color2)
                     avatar.avatar.netForce(1)
                     avatar.avatar.wearClothingItem(item[0],0)
                     avatar.avatar.tintClothingItem(item[0],color1,0)
@@ -525,8 +523,6 @@ class grsnWallPython(ptResponder):
                 for item in wornItem:
                     color1 = DefaultColor1[i]
                     color2 = DefaultColor2[i]
-                    PtDebugPrint(color1)
-                    PtDebugPrint(color2)
                     avatar.avatar.netForce(1)
                     avatar.avatar.wearClothingItem(item[0],0)
                     avatar.avatar.tintClothingItem(item[0],color1,0)
@@ -569,8 +565,6 @@ class grsnWallPython(ptResponder):
                     for item in wornItem:
                         color1 = DefaultColor1[i]
                         color2 = DefaultColor2[i]
-                        PtDebugPrint(color1)
-                        PtDebugPrint(color2)
                         avatar.avatar.netForce(1)
                         avatar.avatar.wearClothingItem(item[0],0)
                         avatar.avatar.tintClothingItem(item[0],color1,0)
@@ -589,8 +583,6 @@ class grsnWallPython(ptResponder):
                     for item in wornItem:
                         color1 = DefaultColor1[i]
                         color2 = DefaultColor2[i]
-                        PtDebugPrint(color1)
-                        PtDebugPrint(color2)
                         avatar.avatar.netForce(1)
                         avatar.avatar.wearClothingItem(item[0],0)
                         avatar.avatar.tintClothingItem(item[0],color1,0)
