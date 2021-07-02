@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <type_traits>
 
 // Danger: do not reorder, old Max headers do not IWYU
+#include <coreexp.h>
 #include <utilexp.h>
 #include <tab.h>
 #include <strbasic.h>
@@ -92,7 +93,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define MAX10_CONST const
 #endif
 
-#if MAX_VERSION_MAJOR <= 13
+// Best guess on this... The older maxes have the Win32 name
+// trickeration in the freaking lib files, dammit.
+#if MAX_VERSION_MAJOR >= 12 // Max 2010
+#   ifdef GetClassName
+#       undef GetClassName
+#   endif
+#endif
+
+#if MAX_VERSION_MAJOR <= 13 // Max 2011
 #   define GetParamBlock2Controller(pb, id) pb->GetController(id)
 #   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetController(id, tab, ctl)
 #else
@@ -187,11 +196,6 @@ public:
     const MCHAR* NonLocalizedClassName() override { return ClassName(); }
 #endif
 };
-
-// *^&%$#@! Windows
-#ifdef GetClassName
-#   undef GetClassName
-#endif
 
 template<class T>
 class plMaxAnimatable : public T

@@ -42,14 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_RTLIGHT_BASE_H
 #define PL_RTLIGHT_BASE_H
 
-// Our generic headers
 #include "HeadSpin.h"
-#include "hsWindows.h"
-
-// Max related headers
-#include <max.h>
-#include <iparamm2.h>
-#include "MaxMain/MaxCompat.h"
+#include "MaxMain/MaxAPI.h"
 
 
 extern TCHAR *GetString(int id);
