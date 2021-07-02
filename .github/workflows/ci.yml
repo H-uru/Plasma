@@ -9,7 +9,7 @@ jobs:
       matrix:
         platform:
           - { generator: Visual Studio 16 2019, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
-          - { generator: Visual Studio 16 2019, max-version: 2020, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
+          - { generator: Visual Studio 16 2019, max-version: 2022, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -102,7 +102,7 @@ jobs:
           - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: 2013-windows-x64 }
           - { sdk-version: 2017, generator: Visual Studio 16 2019, arch: x64, str: 2017-windows-x64 }
           - { sdk-version: 2019, generator: Visual Studio 16 2019, arch: x64, str: 2019-windows-x64 }
-          - { sdk-version: 2022, generator: Visual Studio 16 2019, arch: x64, str: 2022-windows-x64 }
+          - { sdk-version: 2020, generator: Visual Studio 16 2019, arch: x64, str: 2020-windows-x64 }
 
     steps:
       - name: Checkout Plasma
