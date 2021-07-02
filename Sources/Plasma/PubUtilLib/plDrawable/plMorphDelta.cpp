@@ -181,7 +181,7 @@ void plMorphDelta::ComputeDeltas(const std::vector<plGeometrySpan*>& base, const
             // These are actually min del SQUARED.
             plConst(float) kMinDelPos(1.e-4f); // From Budtpueller's Handbook of Constants
             plConst(float) kMinDelNorm(3.e-2f); // About 10 degrees
-            plConst(float) kMinDelUVW(1.e-4f); // From BHC
+            plConst(float) kMinDelUVW(1.e-5f); // Science'd from clothing UVW work
             hsPoint3 mPos = d2b * *movedIter.Position();
             hsVector3 delPos( &mPos, baseIter.Position());
             float delPosSq = delPos.MagnitudeSquared();
