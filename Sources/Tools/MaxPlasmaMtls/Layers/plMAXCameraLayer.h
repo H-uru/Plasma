@@ -100,6 +100,9 @@ protected:
     void    IChanged();
     void    IDiscardTexHandle();
 
+    void IGetClassName(MSTR& s) const override;
+    MSTR ISubAnimName(int i) override;
+
 public:
 
     int SubNumToRefNum(int subNum) override { return subNum; }
@@ -112,7 +115,6 @@ public:
     //From Animatable
     Class_ID ClassID() override { return MAX_CAMERA_LAYER_CLASS_ID; }
     SClass_ID SuperClassID() override { return TEXMAP_CLASS_ID; }
-    void GetClassName(TSTR& s) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
     RefResult NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget,
@@ -120,7 +122,6 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

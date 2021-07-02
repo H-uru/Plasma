@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const TCHAR* kUVStrings[] = { _T("1"), _T("2"), _T("3"), _T("4"), _T("5"), _T("6"), _T("7"), _T("8") };
 
-class plMAXCameraLayerClassDesc : public ClassDesc2
+class plMAXCameraLayerClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -182,7 +182,7 @@ plMAXCameraLayer::~plMAXCameraLayer()
 {
 }
 
-void plMAXCameraLayer::GetClassName(TSTR& s)
+void plMAXCameraLayer::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_MAX_CAMERA_LAYER);
 }
@@ -297,7 +297,7 @@ Animatable* plMAXCameraLayer::SubAnim(int i)
     }
 }
 
-MSTR plMAXCameraLayer::SubAnimName(int i)
+MSTR plMAXCameraLayer::ISubAnimName(int i)
 {
     switch (i)
     {

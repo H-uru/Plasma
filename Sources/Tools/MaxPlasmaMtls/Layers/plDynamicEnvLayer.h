@@ -82,6 +82,9 @@ protected:
    
     friend class DELBitmapDlgProc;
 
+    void IGetClassName(MSTR& s) const override;
+    MSTR ISubAnimName(int i) override;
+
 public:
     // Ref nums
     enum
@@ -141,14 +144,12 @@ public:
     //From Animatable
     Class_ID    ClassID() override { return DYNAMIC_ENV_LAYER_CLASS_ID; }
     SClass_ID   SuperClassID() override { return TEXMAP_CLASS_ID; }
-    void        GetClassName(TSTR& s) override;
 
     RefTargetHandle Clone(RemapDir &remap) override;
     RefResult       NotifyRefChanged(MAX_REF_INTERVAL changeInt, RefTargetHandle hTarget, PartID& partID,  RefMessage message MAX_REF_PROPAGATE) override;
 
     int             NumSubs() override;
     Animatable      *SubAnim(int i) override;
-    MSTR            SubAnimName(int i) override;
 
     int             NumRefs() override;
     RefTargetHandle GetReference(int i) override;

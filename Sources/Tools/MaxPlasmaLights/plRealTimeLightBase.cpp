@@ -419,32 +419,31 @@ Animatable *plRTLightBase::SubAnim(int i)
     //return (Animatable*) fLightPB;
 }
 
-TSTR plRTLightBase::SubAnimName(int i) 
+MSTR plRTLightBase::ISubAnimName(int i)
 { 
     return fLightPB->GetLocalName();
-        switch(i) 
-        {   
-        
-        case kRefOmniLight:return _T("");
-        case kRefSpotLight: return TSTR(GetString(IDS_DB_FSPOT));
-        case kRefTSpotLight:return _T("");
-        case kRefDirLight:return _T("");
-        case kRefTDirLight:return _T("");
-        case kRefProjMap: return TSTR(GetString(IDS_DS_PROJMAP));           
-        case kRefShadowType: return _T("");
-            default: return _T("");
-    
-/*          case PBLOCK_REF: return TSTR(GetString(IDS_RB_PARAMETERS));
-            case PROJMAP_REF: return TSTR(GetString(IDS_DS_PROJMAP));
-            case SHADPROJMAP_REF: return TSTR(GetString(IDS_DS_SHADPROJMAP));
-            case SHADTYPE_REF: return TSTR(GetString(IDS_DS_SHAD_GEN));
-            case EMITTER_REF: 
-                if ( IsCompatibleRenderer ())
-                    return TSTR(GetString(IDS_EMITTER));
+        switch(i)
+        {
+        case kRefOmniLight:return _M("");
+        case kRefSpotLight: return MSTR(GetString(IDS_DB_FSPOT));
+        case kRefTSpotLight:return _M("");
+        case kRefDirLight:return _M("");
+        case kRefTDirLight:return _M("");
+        case kRefProjMap: return MSTR(GetString(IDS_DS_PROJMAP));
+        case kRefShadowType: return _M("");
+
+/*          case PBLOCK_REF: return MSTR(GetString(IDS_RB_PARAMETERS));
+            case PROJMAP_REF: return MSTR(GetString(IDS_DS_PROJMAP));
+            case SHADPROJMAP_REF: return MSTR(GetString(IDS_DS_SHADPROJMAP));
+            case SHADTYPE_REF: return MSTR(GetString(IDS_DS_SHAD_GEN));
+            case EMITTER_REF:
+                if (IsCompatibleRenderer())
+                    return MSTR(GetString(IDS_EMITTER));
                 else
-                    return _T("");
-            default: return _T("");
+                    return _M("");
 */
+
+        default: return _M("");
         }
 }
 
@@ -1552,7 +1551,7 @@ float plRTLightBase::GetHotspot(TimeValue t, Interval& valid)
     return f;
 }
 
-void plRTLightBase::SetRGBColor(TimeValue t, Point3& rgb) 
+void plRTLightBase::SetRGBColor(TimeValue t, MAX24_CONST Point3& rgb) 
 {
     //fLightPB->SetValue(plRTLightBase::kRed, t, rgb.x);
     //fLightPB->SetValue(plRTLightBase::kGreen, t, rgb.y);

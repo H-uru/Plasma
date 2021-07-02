@@ -42,14 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_RTLIGHT_BASE_H
 #define PL_RTLIGHT_BASE_H
 
-// Our generic headers
 #include "HeadSpin.h"
-#include "hsWindows.h"
-
-// Max related headers
-#include <max.h>
-#include <iparamm2.h>
-#include "MaxMain/MaxCompat.h"
+#include "MaxMain/MaxAPI.h"
 
 
 extern TCHAR *GetString(int id);
@@ -123,7 +117,7 @@ class plLightTexPBAccessor : public PBAccessor
 //// plRTLightBase Class //////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-class plRTLightBase : public GenLight
+class plRTLightBase : public plMaxObject<GenLight>
 {
 
 protected:
@@ -146,6 +140,9 @@ protected:
     Mesh    staticMesh[2];
     Mesh    spotMesh;
 
+    const MCHAR* IGetObjectName() const override { return fClassDesc->ClassName(); }
+    void IGetClassName(MSTR& s) const override { s = fClassDesc->ClassName(); }
+    MSTR ISubAnimName(int i) override;
 
 public:
     friend class plBaseLightProc;
@@ -325,9 +322,6 @@ public:
 
     static ParamBlockDesc2  *GetAnimPBDesc();
 
-    MAX14_CONST MCHAR* GetObjectName() override { return (MAX14_CONST MCHAR*)fClassDesc->ClassName(); }
-    void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
-
     IParamBlock2 *GetParamBlock(int i) override;
     virtual IParamBlock2* GetParamBlock2();
     IParamBlock2* GetParamBlockByID(short id) override;
@@ -336,7 +330,6 @@ public:
     int NumParamBlocks() override { return 1; }
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    TSTR SubAnimName(int i) override;
 
     // plug-in mouse creation callback
     CreateMouseCallBack* GetCreateMouseCallBack() override;
@@ -432,7 +425,7 @@ public:
     void SetConeDisplay(int s, int notify=TRUE) override;
     BOOL GetConeDisplay() override;
 
-    void SetRGBColor(TimeValue t, Point3& rgb) override; //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
+    void SetRGBColor(TimeValue t, MAX24_CONST Point3& rgb) override; //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
     Point3 GetRGBColor(TimeValue t, Interval &valid = Interval(0,0)) override; //return fLightPB->GetPoint3(kRGB, t); }        
     void SetIntensity(TimeValue t, float f) override { fLightPB->SetValue(kIntensity, t, f); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE); }
     float GetIntensity(TimeValue t, Interval& valid = Interval(0,0)) override { return fLightPB->GetFloat(kIntensity, t); }

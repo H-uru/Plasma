@@ -56,7 +56,7 @@ class plMaxNode;
 class plErrorMsg;
 namespace ST { class string; }
 
-class plPassMtlBase : public Mtl
+class plPassMtlBase : public plMaxMtl<Mtl>
 {
 protected:
 

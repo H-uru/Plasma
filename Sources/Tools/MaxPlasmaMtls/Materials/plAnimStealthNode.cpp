@@ -68,7 +68,7 @@ extern HINSTANCE hInstance;
 
 //// Stealthy Class Desc /////////////////////////////////////////////////////
 
-class plStealthClassDesc : public ClassDesc2
+class plStealthClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int             IsPublic() override     { return FALSE; }

@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern TCHAR *GetString(int id);
 
-class ComponentUtilClassDesc : public ClassDesc
+class ComponentUtilClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic()              { return TRUE; }

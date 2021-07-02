@@ -48,11 +48,15 @@ class Bitmap;
 
 extern TCHAR *GetString(int id);
 
-class plParticleMtl : public Mtl
+class plParticleMtl : public plMaxMtl<Mtl>
 {
 protected:
     IParamBlock2    *fBasicPB;
     Interval        fIValid;
+
+    void IGetClassName(MSTR& s) const override;
+    MSTR IGetSubTexmapSlotName(int i) override;
+    MSTR ISubAnimName(int i) override;
 
 public:
     IMtlParams *fIMtlParams;
@@ -115,7 +119,6 @@ public:
     //From Animatable
     Class_ID ClassID() override { return PARTICLE_MTL_CLASS_ID; }
     SClass_ID SuperClassID() override { return MATERIAL_CLASS_ID; }
-    void GetClassName(TSTR& s) override;
 
     ParamDlg *CreateParamDlg(HWND hwMtlEdit, IMtlParams *imp) override;
     void Update(TimeValue t, Interval& valid) override;
@@ -137,7 +140,6 @@ public:
     int NumSubTexmaps() override;
     Texmap* GetSubTexmap(int i) override;
     void SetSubTexmap(int i, Texmap *m) override;
-    MSTR GetSubTexmapSlotName(int i) override;
     MSTR GetSubTexmapTVName(int i);
     
     BOOL SetDlgThing(ParamDlg* dlg) override;
@@ -152,7 +154,6 @@ public:
 
     int NumSubs() override;
     Animatable* SubAnim(int i) override;
-    MSTR SubAnimName(int i) override;
 
     int NumRefs() override;
     RefTargetHandle GetReference(int i) override;

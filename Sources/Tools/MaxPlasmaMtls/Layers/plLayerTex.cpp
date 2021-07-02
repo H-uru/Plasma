@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerTexBitmapPB.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
-class plLayerTexClassDesc : public ClassDesc2
+class plLayerTexClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -73,7 +73,7 @@ ParamBlockDesc2 *GetBitmapBlk();
 
 #include "plLayerTexBitmapPB.cpp"
 
-void    plLayerTex::GetClassName( TSTR &s )
+void plLayerTex::IGetClassName(MSTR& s) const
 {
     s = GetString( IDS_LAYER );
 }
@@ -272,7 +272,7 @@ Animatable* plLayerTex::SubAnim(int i)
     }
 }
 
-MSTR plLayerTex::SubAnimName(int i) 
+MSTR plLayerTex::ISubAnimName(int i)
 {
     switch (i)
     {

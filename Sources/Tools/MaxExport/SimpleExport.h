@@ -84,7 +84,7 @@ private:
 
 //------------------------------------------------------
 
-class HSClassDesc2 : public ClassDesc
+class HSClassDesc2 : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic() override { return 1; }

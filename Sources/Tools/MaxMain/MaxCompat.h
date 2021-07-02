@@ -50,7 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <type_traits>
 
+// Danger: do not reorder, old Max headers do not IWYU
+#include <coreexp.h>
+#include <utilexp.h>
+#include <tab.h>
 #include <strbasic.h>
+#include <strclass.h>
 #include <maxversion.h>
 
 #include <string_theory/string>
@@ -88,7 +93,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define MAX10_CONST const
 #endif
 
-#if MAX_VERSION_MAJOR <= 13
+// Best guess on this... The older maxes have the Win32 name
+// trickeration in the freaking lib files, dammit.
+#if MAX_VERSION_MAJOR >= 12 // Max 2010
+#   ifdef GetClassName
+#       undef GetClassName
+#   endif
+#endif
+
+#if MAX_VERSION_MAJOR <= 13 // Max 2011
 #   define GetParamBlock2Controller(pb, id) pb->GetController(id)
 #   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetController(id, tab, ctl)
 #else
@@ -129,14 +142,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define MAX_REF_PROPAGATE_VALUE propagate
 #endif
 
-// Old versions of Max define this as an integer, not a Class_ID
-#define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
-
-// Special 3ds Max message box support added in 2021 for HiDPI
-#if MAX_VERSION_MAJOR >= 23
-#   define plMaxMessageBox  MaxSDK::MaxMessageBox
+#if MAX_VERSION_MAJOR < 24 // Max 2022
+#   define MAX24_CONST
+#   define GetSystemUnitInfo GetMasterUnitInfo
 #else
-#   define plMaxMessageBox MessageBox
+#   define MAX24_CONST const
 #endif
 
 // Limitation: MCHAR and TCHAR must always be the same type.
@@ -173,6 +183,120 @@ static_assert(std::is_same_v<MCHAR, TCHAR>, "MCHAR and TCHAR must have the same 
 #   else
 #       define M_STD_STRINGSTREAM std::stringstream
 #   endif
+#endif
+
+// Overload proxies
+template<class T>
+class plMaxClassDesc : public T
+{
+    static_assert(std::is_base_of_v<class ClassDesc, T>, "plMaxClassDesc can only be used for ClassDesc subclasses");
+
+public:
+#if MAX_VERSION_MAJOR >= 24 // Max 2022
+    const MCHAR* NonLocalizedClassName() override { return ClassName(); }
+#endif
+};
+
+template<class T>
+class plMaxAnimatable : public T
+{
+    static_assert(std::is_base_of_v<class Animatable, T>, "plMaxAnimatable can only be used for Animatable subclasses");
+
+protected:
+    // Sealed in Max 2022
+    virtual void IGetClassName(MSTR& s) const { s = _M("Animatable"); }
+    virtual MSTR ISubAnimName(int i) { return _M("no name"); }
+
+public:
+#if MAX_VERSION_MAJOR < 24
+    void GetClassName(MSTR& s) override { IGetClassName(s); }
+    void GetClassName(MSTR& s, bool localized) { IGetClassName(s); }
+    MSTR SubAnimName(int i) override { return ISubAnimName(i); }
+    MSTR SubAnimName(int i, bool localized) { return ISubAnimName(i); }
+#else
+    void GetClassName(MSTR& s, bool localized) const override { return IGetClassName(s); }
+    MSTR SubAnimName(int i, bool localized) override { return ISubAnimName(i); }
+#endif
+};
+
+template<class T>
+class plMaxCustAttrib : public plMaxAnimatable<T>
+{
+    static_assert(std::is_base_of_v<class CustAttrib, T>, "plMaxCustAttrib can only be used for CustAttrib subclasses");
+
+protected:
+    // Sealed in Max 2022
+    virtual const MCHAR* IGetName() { return _M("Custom Attribute"); }
+
+public:
+#if MAX_VERSION_MAJOR < 24
+    MAX10_CONST MCHAR* GetName() override { return const_cast<MAX10_CONST MCHAR*>(IGetName()); }
+    MAX10_CONST MCHAR* GetName(bool localized) { return const_cast<MAX10_CONST MCHAR*>(IGetName()); }
+#else
+    const MCHAR* GetName(bool localized) override { return IGetName(); }
+#endif
+};
+
+template<class T>
+class plMaxMtlBase : public plMaxAnimatable<T>
+{
+    static_assert(std::is_base_of_v<class MtlBase, T>, "plMaxMtlBase can only be used for MtlBase subclasses");
+
+protected:
+    // This has no inlined definition, so call the base implementation.
+    virtual MSTR IGetSubTexmapSlotName(int i) { return T::GetSubTexmapSlotName(i); }
+
+public:
+#if MAX_VERSION_MAJOR < 24
+    MSTR GetSubTexmapSlotName(int i) override { return IGetSubTexmapSlotName(i); }
+#else
+    MSTR GetSubTexmapSlotName(int i, bool localized = true) override { return IGetSubTexmapSlotName(i); }
+#endif
+};
+
+template<class T>
+class plMaxMtl : public plMaxMtlBase<T>
+{
+    static_assert(std::is_base_of_v<class Mtl, T>, "plMaxMtl can only be used for Mtl subclasses");
+
+protected:
+    // This has no inlined definition, so call the base implementation.
+    virtual MSTR IGetSubMtlSlotName(int i) { return T::GetSubMtlSlotName(i); }
+
+public:
+#if MAX_VERSION_MAJOR < 24
+    MSTR GetSubMtlSlotName(int i) override { return IGetSubMtlSlotName(i); }
+#else
+    MSTR GetSubMtlSlotName(int i, bool localized = true) override { return IGetSubMtlSlotName(i); }
+#endif
+};
+
+template<class T>
+class plMaxObject : public plMaxAnimatable<T>
+{
+    static_assert(std::is_base_of_v<class Object, T>, "plMaxObject can only be used for Object subclasses");
+
+protected:
+    // Sealed in Max 2022
+    virtual const MCHAR* IGetObjectName() const { return _M(""); }
+
+public:
+#if MAX_VERSION_MAJOR < 24
+    MAX14_CONST MCHAR* GetObjectName() override { return const_cast<MAX14_CONST MCHAR*>(IGetObjectName()); }
+    MAX14_CONST MCHAR* GetObjectName(bool localized) { return const_cast<MAX14_CONST MCHAR*>(IGetObjectName()); }
+#else
+    const MCHAR* GetObjectName(bool localized) const override { return IGetObjectName(); }
+#endif
+};
+
+// Old versions of Max define this as an integer, not a Class_ID
+#define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
+
+// Special 3ds Max message box support added in 2021 for HiDPI
+#if MAX_VERSION_MAJOR >= 23
+#   define plMaxMessageBox  MaxSDK::MaxMessageBox
+#else
+#   define plMaxMessageBox MessageBox
 #endif
 
 #endif // _PLASMA_MAXCOMPAT_H

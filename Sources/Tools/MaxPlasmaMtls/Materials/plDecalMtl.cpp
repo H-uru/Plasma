@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 extern HINSTANCE hInstance;
 
-class plDecalMtlClassDesc : public ClassDesc2
+class plDecalMtlClassDesc : public plMaxClassDesc<ClassDesc2>
 {
 public:
     int             IsPublic() override     { return TRUE; }
@@ -98,7 +98,7 @@ plDecalMtl::plDecalMtl(BOOL loading) : plPassMtlBase( loading )
         IVerifyStealthPresent(ENTIRE_ANIMATION_NAME);
 }
 
-void plDecalMtl::GetClassName(TSTR& s)
+void plDecalMtl::IGetClassName(MSTR& s) const
 {
     s = GetString(IDS_DECAL_MTL);
 }
@@ -193,7 +193,7 @@ int plDecalMtl::NumSubs()
     return 6;
 }
 
-MSTR plDecalMtl::SubAnimName(int i) 
+MSTR plDecalMtl::ISubAnimName(int i)
 {
     switch (i)
     {
@@ -276,7 +276,7 @@ void plDecalMtl::SetSubTexmap(int i, Texmap *m)
       fLayersPB->SetValue(kDecalLayTop, 0, m);
 }
 
-MSTR plDecalMtl::GetSubTexmapSlotName(int i)
+MSTR plDecalMtl::IGetSubTexmapSlotName(int i)
 {
    if (i == 0)
       return _M("Base");
@@ -288,7 +288,7 @@ MSTR plDecalMtl::GetSubTexmapSlotName(int i)
 
 MSTR plDecalMtl::GetSubTexmapTVName(int i)
 {
-   return GetSubTexmapSlotName(i);
+    return GetSubTexmapSlotName(i);
 }
 
 int plDecalMtl::SubTexmapOn(int i)

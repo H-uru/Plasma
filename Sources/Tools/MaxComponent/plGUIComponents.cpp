@@ -452,13 +452,12 @@ void    plGUITagProc::ILoadTags( HWND hWnd, IParamBlock2 *pb )
 // Callback enum proc for below
 BOOL CALLBACK   GetEditCtrlEnumProc( HWND hWnd, LPARAM lParam )
 {
-    TCHAR    className[ 128 ];
+    wchar_t    className[128];
 
 
     // ICK
-    GetClassName( hWnd, className, sizeof( className ) - 1 );
-    if( _tcsnicmp( className, _T("EDIT"), std::size(className) ) == 0 )
-    {
+    GetClassNameW(hWnd, className, std::size(className) - 1);
+    if (_wcsnicmp(className, L"EDIT", std::size(className)) == 0) {
         HWND    *ptr = (HWND *)lParam;
         *ptr = hWnd;
         return FALSE;

@@ -75,7 +75,7 @@ extern HINSTANCE hInstance;
 
 static PlasmaMax gPlasmaMax;
 
-class PlasmaMaxClassDesc : public ClassDesc
+class PlasmaMaxClassDesc : public plMaxClassDesc<ClassDesc>
 {
 public:
     int             IsPublic() override             { return TRUE; }
@@ -138,7 +138,7 @@ static void NotifyProc(void *param, NotifyInfo *info)
     {
         int type;
         float scale;
-        GetMasterUnitInfo(&type, &scale);
+        GetSystemUnitInfo(&type, &scale);
         if (type != UNITS_FEET || scale != 1.f)
         {
             plMaxMessageBox(
