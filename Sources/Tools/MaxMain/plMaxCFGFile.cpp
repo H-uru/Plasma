@@ -69,7 +69,7 @@ plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
     if ((len == 0 || getNew) && !quiet)
     {
         // If the user selects one, save it
-        plasmaPath = plBrowseFolder::GetFolder(plasmaPath, "Specify your client folder");
+        plasmaPath = plBrowseFolder::GetFolder(plasmaPath, "Select your Plasma 2.0 client folder");
         if (plasmaPath.IsValid())
             WritePrivateProfileStringW(L"SceneViewer", L"Directory", plasmaPath.WideString().data(),
                                        plugDir.WideString().data());
