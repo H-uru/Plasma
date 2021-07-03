@@ -284,7 +284,7 @@ class kdshGlowInTheDark(ptResponder):
 
             elif id == rgnEnterSubBtm.id:
                 PtDebugPrint("You stepped on the elevator at the bottom. Joining subworld.")
-                rgnExitSubBtm.disable()
+                #rgnExitSubBtm.disable()
                 me.avatar.enterSubWorld(elevatorsubworld.value)
                 return
 
