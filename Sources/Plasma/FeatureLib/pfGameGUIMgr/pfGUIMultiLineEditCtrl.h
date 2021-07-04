@@ -97,11 +97,11 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         };
 
     protected:
-
         std::vector<wchar_t> fBuffer;
         std::vector<int32_t> fLineStarts;
         uint16_t        fLineHeight, fCurrCursorX, fCurrCursorY;
         int32_t         fCursorPos, fLastCursorLine;
+        int16_t         fClickedLinkId, fCurrLinkId;
         bool            fReadyToRender;
         hsBounds3Ext    fLastP2PArea;
         int8_t          fLockCount;
@@ -169,6 +169,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    IActuallyInsertColor( int32_t pos, hsColorRGBA &color );
         void    IActuallyInsertStyle( int32_t pos, uint8_t style );
+        void    IActuallyInsertLink(int32_t pos, int16_t linkId);
 
         void    IUpdateScrollRange();
 
@@ -183,6 +184,10 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    IHitEndOfControlList(int32_t cursorPos);
         void    IHitBeginningOfControlList(int32_t cursorPos);
+
+        bool    IHandleMouse(hsPoint3& mousePt);
+        int16_t IFindLink(int32_t cursorPos, uint8_t modifiers) const;
+        uint32_t IGetDesiredCursor() const override;
 
     public:
 
@@ -202,9 +207,11 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void Read(hsStream* s, hsResMgr* mgr) override;
         void Write(hsStream* s, hsResMgr* mgr) override;
 
+        bool    FocusOnMouseDown(const hsPoint3& mousePt, uint8_t modifiers) const override;
         void    HandleMouseDown(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseUp(hsPoint3 &mousePt, uint8_t modifiers) override;
         void    HandleMouseDrag(hsPoint3 &mousePt, uint8_t modifiers) override;
+        void    HandleMouseHover(hsPoint3& mousePt, uint8_t modifiers) override;
 
         bool    HandleKeyPress(wchar_t key, uint8_t modifiers) override;
         bool    HandleKeyEvent(pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers) override;
@@ -218,19 +225,29 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         {
             kValueChanging,
             kScrollPosChanged,
-            kKeyPressedEvent
+            kKeyPressedEvent,
+            kLinkClicked,
         };
 
         void    SetScrollPosition( int32_t topLine );
         int32_t GetScrollPosition();
         void    MoveCursor( Direction dir );
+        int32_t GetCursor() const { return fCursorPos; }
 
         void    InsertChar( char c );
         void    InsertChar( wchar_t c);
         void    InsertString( const char *string );
         void    InsertString( const wchar_t *string );
+
         void    InsertColor( hsColorRGBA &color );
         void    InsertStyle( uint8_t fontStyle );
+
+        /** Inserts a clickable hyperlink at the current cursor position. */
+        void    InsertLink(int16_t linkId);
+
+        /** Clears any active hyperlink at the current cursor position. */
+        void    ClearLink() { InsertLink(-1); }
+
         void    DeleteChar();
         void    ClearBuffer();
         void    SetBuffer( const char *asciiText );
@@ -241,10 +258,13 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         wchar_t *GetNonCodedBufferW() const;
         char    *GetCodedBuffer(size_t &length) const;
         wchar_t *GetCodedBufferW(size_t &length) const;
-        uint32_t  GetBufferSize();
+        size_t  GetBufferSize() const { return fBuffer.size() - 1; }
 
         void    SetBufferLimit(int32_t limit) { fBufferLimit = limit; }
         int32_t   GetBufferLimit() { return fBufferLimit; }
+
+        /** Get the link the mouse is currently over. */
+        int16_t GetCurrentLink() const { return fCurrLinkId; }
 
         void    GetThisKeyPressed( char &key, uint8_t &modifiers ) const { key = (char)fLastKeyPressed; modifiers = fLastKeyModifiers; }
 
@@ -293,6 +313,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
             if (redraw)
                 IUpdate();
         }
+
+        bool IsUpdating() const { return !fCanUpdate; }
 };
 
 #endif // _pfGUIMultiLineEditCtrl_h

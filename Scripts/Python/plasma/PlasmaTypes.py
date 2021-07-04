@@ -46,6 +46,7 @@ interfacing with the Plasma 2.0 engine.
 """
 from Plasma import *
 from PlasmaConstants import *
+from contextlib import contextmanager
 
 ####################################
 # Utility functions
@@ -108,7 +109,7 @@ kFontShadowed=4
 
 # OnGUINotify Event Types
 kShowHide=1             # show or hide change (only on kDialog)
-kAction=2               # kButton clicked, kListBox item clicked on, kEditBox hit enter
+kAction=2               # kButton clicked, kListBox item clicked on, kEditBox hit enter, kMultiLineEdit hit link
 kValueChanged=3         # value changed in control (could be from kUpDownPair,kKnob,kCheckBox,kRadioGroup
 kDialogLoaded=4         # the dialog has just been loaded
 kFocusChange=5          # the focus changed from one control to another, or none, within the dialog
@@ -275,6 +276,17 @@ If seed is None, the system time is used."""
         avatar.avatar.setMorph("MFace",0,morph)
     else:
         avatar.avatar.setMorph("FFace",0,morph)
+
+@contextmanager
+def PtBeginGUIUpdate(control, redraw=True):
+    if not control.isUpdating():
+        control.beginUpdate()
+        try:
+            yield
+        finally:
+            control.endUpdate(redraw)
+    else:
+        yield
 
 ####################################
 # Exceptions

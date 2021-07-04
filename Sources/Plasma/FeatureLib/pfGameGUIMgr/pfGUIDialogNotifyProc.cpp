@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGUIEditBoxMod.h"
 #include "pfGUIListBoxMod.h"
 #include "pfGUIListElement.h"
+#include "pfGUIMultiLineEditCtrl.h"
 
 #include "pfMessage/pfGUINotifyMsg.h"
 
@@ -89,19 +90,20 @@ void pfGUIDialogNotifyProc::DoSomething( pfGUIControlMod *ctrl )
 
 void pfGUIDialogNotifyProc::HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event )
 {
-    pfGUIEditBoxMod *edit = pfGUIEditBoxMod::ConvertNoRef( ctrl );
-    if (edit != nullptr && event == pfGUIEditBoxMod::kWantAutocomplete)
-    {
-        //send notify, somebody will do something with that (like python script)
-        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kSpecialAction );
+    pfGUIEditBoxMod* edit = pfGUIEditBoxMod::ConvertNoRef(ctrl);
+    if (edit) {
+        if (event == pfGUIEditBoxMod::kWantAutocomplete)
+            ISendNotify(ctrl->GetKey(), pfGUINotifyMsg::kSpecialAction);
+        else if (event == pfGUIEditBoxMod::kWantMessageHistoryUp)
+            ISendNotify(ctrl->GetKey(), pfGUINotifyMsg::kMessageHistoryUp);
+        else if (event == pfGUIEditBoxMod::kWantMessageHistoryDown)
+            ISendNotify(ctrl->GetKey(), pfGUINotifyMsg::kMessageHistoryDown);
     }
-    else if(edit && event == pfGUIEditBoxMod::kWantMessageHistoryUp)
-    {
-        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kMessageHistoryUp );
-    }
-    else if(edit && event == pfGUIEditBoxMod::kWantMessageHistoryDown)
-    {
-        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kMessageHistoryDown );
+
+    pfGUIMultiLineEditCtrl* mlEdit = pfGUIMultiLineEditCtrl::ConvertNoRef(ctrl);
+    if (mlEdit) {
+        if (event == pfGUIMultiLineEditCtrl::kLinkClicked)
+            ISendNotify(ctrl->GetKey(), pfGUINotifyMsg::kAction);
     }
 }
 

@@ -114,6 +114,18 @@ void pyGUIControlMultiLineEdit::MoveCursor( int32_t dir)
     }
 }
 
+int32_t pyGUIControlMultiLineEdit::GetCursor() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetCursor();
+    }
+
+    return -1;
+}
 
 void pyGUIControlMultiLineEdit::ClearBuffer()
 {
@@ -339,7 +351,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
     return nullptr;
 }
 
-uint32_t  pyGUIControlMultiLineEdit::GetBufferSize()
+size_t pyGUIControlMultiLineEdit::GetBufferSize() const
 {
     if ( fGCkey )
     {
@@ -430,6 +442,32 @@ void pyGUIControlMultiLineEdit::InsertStyle( uint8_t fontStyle )
         if ( pbmod )
         {
             pbmod->InsertStyle(fontStyle);
+        }
+    }
+}
+
+void pyGUIControlMultiLineEdit::InsertLink(int16_t linkId)
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+        {
+            pbmod->InsertLink(linkId);
+        }
+    }
+}
+
+void pyGUIControlMultiLineEdit::ClearLink()
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+        {
+            pbmod->ClearLink();
         }
     }
 }
@@ -527,6 +565,18 @@ int32_t pyGUIControlMultiLineEdit::GetBufferLimit()
     return 0;
 }
 
+int16_t pyGUIControlMultiLineEdit::GetCurrentLink() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetCurrentLink();
+    }
+    return -1;
+}
+
 void pyGUIControlMultiLineEdit::EnableScrollControl()
 {
     if ( fGCkey )
@@ -599,4 +649,15 @@ void pyGUIControlMultiLineEdit::EndUpdate(bool redraw)
         if (pbmod)
             pbmod->EndUpdate(redraw);
     }
+}
+
+bool pyGUIControlMultiLineEdit::IsUpdating() const
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->IsUpdating();
+    }
+
+    return false;
 }

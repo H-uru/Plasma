@@ -4187,6 +4187,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Clears all text from the multi-line edit control."""
         pass
 
+    def clearLink(self) -> None:
+        """Ends the hyperlink hotspot, if any, at the current cursor position."""
+        ...
+
     def clickable(self):
         """Sets this listbox to be clickable by the user."""
         pass
@@ -4238,6 +4242,14 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
     def getBufferSize(self):
         """Returns the size of the buffer"""
         pass
+
+    def getCursor(self) -> int:
+        """Get the current position of the cursor in the encoded buffer."""
+        ...
+
+    def getCurrentLink(self) -> int:
+        """Returns the link the mouse is currently over."""
+        ...
 
     def getEncodedBuffer(self):
         """Returns the encoded buffer in a python buffer object. Do NOT use result with setEncodedBufferW."""
@@ -4304,6 +4316,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 'color' is a ptColor object."""
         pass
 
+    def insertLink(self, linkId: int) -> None:
+        """Inserts a link hotspot at the current cursor position."""
+        ...
+
     def insertString(self,string):
         """Inserts a string at the current cursor position."""
         pass
@@ -4335,6 +4351,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
     def isLocked(self):
         """Is the multi-line edit control locked? Returns 1 if true otherwise returns 0"""
         pass
+
+    def isUpdating(self) -> bool:
+        """Is someone else already suppressing redraws of the control?"""
+        ...
 
     def isVisible(self):
         """Returns whether this GUI control is visible"""

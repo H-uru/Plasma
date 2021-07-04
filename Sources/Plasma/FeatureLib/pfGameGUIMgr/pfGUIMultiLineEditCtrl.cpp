@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAnimation/plAGModifier.h"
 #include "plClipboard/plClipboard.h"
+#include "plInputCore/plInputInterface.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plGImage/plDynamicTextMap.h"
 
@@ -135,15 +136,18 @@ class pfMLScrollProc : public pfGUICtrlProcObject
 
 constexpr wchar_t kColorCodeChar = (wchar_t)1;
 constexpr wchar_t kStyleCodeChar = (wchar_t)2;
+constexpr wchar_t kLinkCodeChar = (wchar_t)3;
 constexpr size_t kColorCodeSize = 5;
 constexpr size_t kStyleCodeSize = 3;
+constexpr size_t kLinkCodeSize = 3;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
 pfGUIMultiLineEditCtrl::pfGUIMultiLineEditCtrl()
-    : fBuffer({L'\0'}), fCursorPos(), fLastCursorLine(), fBufferLimit(-1),
-      fScrollControl(), fScrollProc(), fScrollPos(), fReadyToRender(),
-      fLastKeyModifiers(), fLastKeyPressed(), fLockCount(),
+    : fBuffer({L'\0'}), fCursorPos(), fLastCursorLine(),
+      fClickedLinkId(-1), fCurrLinkId(-1),
+      fBufferLimit(-1), fScrollControl(), fScrollProc(), fScrollPos(),
+      fReadyToRender(), fLastKeyModifiers(), fLastKeyPressed(), fLockCount(),
       fNextCtrl(), fPrevCtrl(), fEventProc(),
       fTopMargin(), fLeftMargin(), fBottomMargin(), fRightMargin(),
       fFontSize(), fFontStyle(), fFontFlagsSet(), fCanUpdate(true),
@@ -412,7 +416,7 @@ void    pfGUIMultiLineEditCtrl::IUpdate( int32_t startLine, int32_t endLine )
         IRenderLine(fLeftMargin, y, start, end);
 
         // Render the cursor
-        if( fCursorPos >= start && fCursorPos < end && IsFocused() )
+        if( fCursorPos >= start && fCursorPos < end && IsFocused() && !IsLocked() )
         {
             uint16_t x = (fCursorPos > start)
                          ? (uint16_t)IRenderLine(fLeftMargin, y, start, fCursorPos, true)
@@ -475,7 +479,7 @@ inline bool pfGUIMultiLineEditCtrl::IIsRenderable( const wchar_t c )
 
 inline bool pfGUIMultiLineEditCtrl::IIsCodeChar( const wchar_t c )
 {
-    return (c == kColorCodeChar || c == kStyleCodeChar);
+    return (c == kColorCodeChar || c == kStyleCodeChar || c == kLinkCodeChar);
 }
 
 //// IFindLastCode Functions /////////////////////////////////////////////////
@@ -572,6 +576,11 @@ uint32_t  pfGUIMultiLineEditCtrl::IRenderLine( uint16_t x, uint16_t y, int32_t s
                     fDynTextMap->SetFont( fFontFace, fFontSize  , GetColorScheme()->fFontFlags | currStyle,
                                             HasFlag( kXparentBgnd ) ? false : true );
             }
+            else if (buffer[pos] == kLinkCodeChar)
+            {
+                // Advance beyond the link code
+                pos += kLinkCodeSize;
+            }
             else if( buffer[ pos ] == L'\n' )
             {
                 // We stop at carriage returns
@@ -645,9 +654,9 @@ int32_t   pfGUIMultiLineEditCtrl::IPointToPosition( int16_t ptX, int16_t ptY, bo
     if (fPrevCtrl)
         fScrollPos = GetFirstVisibleLine(); // update the scroll position if we are linked
 
-    int32_t lastVisibleLine = (int32_t)fLineStarts.size() - 1;
+    int32_t lastVisibleLine = (int32_t)fLineStarts.size();
     if (!searchOutsideBounds)
-        lastVisibleLine = std::min(fScrollPos + ICalcNumVisibleLines() - 1, lastVisibleLine);
+        lastVisibleLine = std::min(fScrollPos + ICalcNumVisibleLines(), lastVisibleLine);
 
     int32_t line = searchOutsideBounds ? 0 : fScrollPos;
     int16_t y = (int16_t)(-(fScrollPos - line) * fLineHeight) + fTopMargin;
@@ -696,6 +705,8 @@ inline  int32_t   pfGUIMultiLineEditCtrl::IOffsetToNextChar( wchar_t stringChar 
         return kColorCodeSize;
     else if (stringChar == kStyleCodeChar)
         return kStyleCodeSize;
+    else if (stringChar == kLinkCodeChar)
+        return kLinkCodeSize;
     else
         return 1;
 }
@@ -938,46 +949,115 @@ void    pfGUIMultiLineEditCtrl::IOffsetLineStarts( uint32_t position, int32_t of
         fNextCtrl->ISetLineStarts(fLineStarts);
 }
 
+//// IFindLink ///////////////////////////////////////////////////////////////
+
+int16_t pfGUIMultiLineEditCtrl::IFindLink(int32_t cursorPos, uint8_t modifiers) const
+{
+    // If we can edit, then require a Ctrl-Click
+    if (fFocused && !hsCheckBits(modifiers, pfGameGUIMgr::kCtrlDown))
+        return -1;
+
+    if (cursorPos >= 0) {
+        for (hsSsize_t i = cursorPos; i > 0; --i) {
+            if (fBuffer[i] == kLinkCodeChar)
+                return static_cast<int16_t>(fBuffer[i - 1]);
+        }
+    }
+    return -1;
+}
+
+//// HandleMouse /////////////////////////////////////////////////////////////
+
+bool pfGUIMultiLineEditCtrl::IHandleMouse(hsPoint3& mousePt)
+{
+    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
+        return false;
+
+    IScreenToLocalPt(mousePt);
+    mousePt.fX *= fDynTextMap->GetVisibleWidth();
+    mousePt.fY *= fDynTextMap->GetVisibleHeight();
+    return true;
+}
+
+//// FocusOnMouseDown ////////////////////////////////////////////////////////
+
+bool pfGUIMultiLineEditCtrl::FocusOnMouseDown(const hsPoint3& mousePt, uint8_t modifiers) const
+{
+    // Don't focus the control if we've clicked on a link inside of it.
+    return fClickedLinkId == -1;
+}
+
 //// HandleMouseDown /////////////////////////////////////////////////////////
 
 void    pfGUIMultiLineEditCtrl::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
-        return;
-
-    IScreenToLocalPt( mousePt );
-    mousePt.fX *= fDynTextMap->GetVisibleWidth();
-    mousePt.fY *= fDynTextMap->GetVisibleHeight();
-
-    IMoveCursorTo( IPointToPosition( (int16_t)(mousePt.fX), (int16_t)(mousePt.fY) ) );
+    if (IHandleMouse(mousePt)) {
+        int32_t cursorPos = IPointToPosition((int16_t)(mousePt.fX), (int16_t)(mousePt.fY));
+        fClickedLinkId = fCurrLinkId = IFindLink(cursorPos, modifiers);
+        if (fCurrLinkId == -1)
+            IMoveCursorTo(cursorPos);
+    } else {
+        fClickedLinkId = fCurrLinkId = -1;
+    }
 }
 
 //// HandleMouseUp ///////////////////////////////////////////////////////////
 
 void    pfGUIMultiLineEditCtrl::HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
-        return;
+    if (IHandleMouse(mousePt)) {
+        int32_t cursorPos = IPointToPosition((int16_t)(mousePt.fX), (int16_t)(mousePt.fY));
 
-    IScreenToLocalPt( mousePt );
-    mousePt.fX *= fDynTextMap->GetVisibleWidth();
-    mousePt.fY *= fDynTextMap->GetVisibleHeight();
-
-    IMoveCursorTo( IPointToPosition( (int16_t)(mousePt.fX), (int16_t)(mousePt.fY) ) );
+        fCurrLinkId = IFindLink(cursorPos, modifiers);
+        if (fClickedLinkId == fCurrLinkId && fCurrLinkId != -1) {
+            HandleExtendedEvent(kLinkClicked);
+            fClickedLinkId = -1;
+        } else {
+            IMoveCursorTo(cursorPos);
+        }
+    } else {
+        fClickedLinkId = fCurrLinkId = -1;
+    }
 }
 
 //// HandleMouseDrag /////////////////////////////////////////////////////////
 
 void    pfGUIMultiLineEditCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 {
-    if (fDynTextMap == nullptr || !fBounds.IsInside(&mousePt))
-        return;
+    if (IHandleMouse(mousePt)) {
+        int32_t cursorPos = IPointToPosition((int16_t)(mousePt.fX), (int16_t)(mousePt.fY));
+        fCurrLinkId = IFindLink(cursorPos, modifiers);
+        if (fCurrLinkId == -1)
+            IMoveCursorTo(cursorPos);
+    } else {
+        fCurrLinkId = -1;
+    }
+}
 
-    IScreenToLocalPt( mousePt );
-    mousePt.fX *= fDynTextMap->GetVisibleWidth();
-    mousePt.fY *= fDynTextMap->GetVisibleHeight();
+//// HandleMouseHover /////////////////////////////////////////////////////////
 
-    IMoveCursorTo( IPointToPosition( (int16_t)(mousePt.fX), (int16_t)(mousePt.fY) ) );
+void    pfGUIMultiLineEditCtrl::HandleMouseHover(hsPoint3& mousePt, uint8_t modifiers)
+{
+    if (IHandleMouse(mousePt)) {
+        int32_t cursorPos = IPointToPosition((int16_t)(mousePt.fX), (int16_t)(mousePt.fY));
+        fCurrLinkId = IFindLink(cursorPos, modifiers);
+    } else {
+        fCurrLinkId = -1;
+    }
+}
+
+//// IGetDesiredCursor /////////////////////////////////////////////////////////
+
+uint32_t    pfGUIMultiLineEditCtrl::IGetDesiredCursor() const
+{
+    // Return a poised cursor if we're over any link, unless we're editing
+    // the control (FIXME this last part...)
+    if (fCurrLinkId == -1)
+        return plInputInterface::kNullCursor;
+    else if (fCurrLinkId == fClickedLinkId)
+        return plInputInterface::kCursorClicked;
+    else
+        return plInputInterface::kCursorPoised;
 }
 
 bool    pfGUIMultiLineEditCtrl::HandleKeyPress( wchar_t key, uint8_t modifiers )
@@ -1170,7 +1250,7 @@ void    pfGUIMultiLineEditCtrl::IMoveCursor( pfGUIMultiLineEditCtrl::Direction d
             if( cursor > 0 )
             {
                 cursor--;
-                while (cursor > 0 && (fBuffer[cursor] == kColorCodeChar || fBuffer[cursor] == kStyleCodeChar))
+                while (cursor > 0 && IIsCodeChar(fBuffer[cursor]))
                     cursor -= IOffsetToNextChar( fBuffer[ cursor ] );
             }
             break;
@@ -1179,7 +1259,7 @@ void    pfGUIMultiLineEditCtrl::IMoveCursor( pfGUIMultiLineEditCtrl::Direction d
             if (cursor < (int32_t)fBuffer.size() - 1)
             {
                 cursor++;
-                while (cursor < (int32_t)fBuffer.size() - 1 && (fBuffer[cursor] == kColorCodeChar || fBuffer[cursor] == kStyleCodeChar))
+                while (cursor < (int32_t)fBuffer.size() - 1 && IIsCodeChar(fBuffer[cursor]))
                     cursor += IOffsetToNextChar( fBuffer[ cursor ] );
             }
             break;
@@ -1377,6 +1457,26 @@ void    pfGUIMultiLineEditCtrl::IActuallyInsertStyle( int32_t pos, uint8_t style
     }
 }
 
+void    pfGUIMultiLineEditCtrl::InsertLink(int16_t linkId)
+{
+    IActuallyInsertLink(fCursorPos, linkId);
+
+    IOffsetLineStarts(fCursorPos, kLinkCodeSize);
+    fCursorPos += kLinkCodeSize;
+    IRecalcFromCursor();
+}
+
+void     pfGUIMultiLineEditCtrl::IActuallyInsertLink(int32_t pos, int16_t linkId)
+{
+    if (fBufferLimit == -1 || (int32_t)fBuffer.size() + kLinkCodeSize < fBufferLimit - 1) {
+        fBuffer.insert(fBuffer.begin() + pos, {
+            kLinkCodeChar,
+            (wchar_t)linkId,
+            kLinkCodeChar
+        });
+    }
+}
+
 //// DeleteChar //////////////////////////////////////////////////////////////
 //  If there is no selection, deletes the single character that the cursor
 //  is in front of. Otherwise, deletes the current selection and places the
@@ -1567,11 +1667,6 @@ wchar_t *pfGUIMultiLineEditCtrl::GetCodedBufferW(size_t &length) const
 
         return buffer;
     }
-}
-
-uint32_t  pfGUIMultiLineEditCtrl::GetBufferSize()
-{
-    return fBuffer.size() - 1;
 }
 
 //// ICharPosToBufferPos /////////////////////////////////////////////////////
@@ -1827,8 +1922,8 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
         bool hitEnd = true; // did we hit the end of the buffer before we hit a newline?
 
         // search for the first newline and nuke it and everything before it
-        bool skippingColor = false, skippingStyle = false;
-        int curColorPos = 0, curStylePos = 0;
+        bool skippingColor = false, skippingStyle = false, skippingLink = false;
+        int curColorPos = 0, curStylePos = 0, curLinkPos = 0;
         for (uint32_t curChar = 0; curChar < bufferLen - 1; ++curChar)
         {
             // we need to skip the crappy color and style "tags" so non-character values inside them
@@ -1847,6 +1942,12 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
                     skippingStyle = true;
                     continue;
                 }
+                else if (buffer[curChar] == kLinkCodeChar)
+                {
+                    curLinkPos = 0;
+                    skippingLink = true;
+                    continue;
+                }
             }
 
             if (skippingColor)
@@ -1863,6 +1964,15 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
                 ++curStylePos;
                 if (curStylePos == kStyleCodeSize)
                     skippingStyle = false;
+                else
+                    continue;
+            }
+
+            if (skippingLink)
+            {
+                ++curLinkPos;
+                if (curLinkPos == kLinkCodeSize)
+                    skippingLink = false;
                 else
                     continue;
             }

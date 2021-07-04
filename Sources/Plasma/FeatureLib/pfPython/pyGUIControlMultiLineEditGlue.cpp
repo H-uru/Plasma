@@ -112,6 +112,11 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, moveCursor, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getCursor)
+{
+    return PyLong_FromLong(self->fThis->GetCursor());
+}
+
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, clearBuffer, ClearBuffer)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setString, args)
@@ -201,7 +206,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getEncodedBufferW)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getBufferSize)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetBufferSize());
+    return PyLong_FromSize_t(self->fThis->GetBufferSize());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
@@ -310,6 +315,19 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStyle, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertLink, args)
+{
+    int16_t linkId;
+    if (!PyArg_ParseTuple(args, "h", &linkId)) {
+        PyErr_SetString(PyExc_TypeError, "insertLink expects a 16-bit integer");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->InsertLink(linkId);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, clearLink, ClearLink)
+
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, deleteChar, DeleteChar)
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, lock, Lock)
@@ -335,6 +353,14 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setBufferLimit, args)
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getBufferLimit)
 {
     return PyLong_FromLong(self->fThis->GetBufferLimit());
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getCurrentLink)
+{
+    int16_t linkId = self->fThis->GetCurrentLink();
+    if (linkId >= 0)
+        return PyLong_FromLong(linkId);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, enableScrollControl, EnableScrollControl)
@@ -382,6 +408,11 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, endUpdate, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, isUpdating)
+{
+    return PyBool_FromLong(self->fThis->IsUpdating());
+}
+
 PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clickable, "Sets this listbox to be clickable by the user."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unclickable, "Makes this listbox not clickable by the user.\n"
@@ -390,6 +421,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getScrollPosition, "Gets what line is the top line."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isAtEnd, "Returns true if the end of the buffer has been reached."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, moveCursor, "Params: direction\nMove the cursor in the specified direction (see PtGUIMultiLineDirection)"),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCursor, "Get the current position of the cursor in the encoded buffer."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearBuffer, "Clears all text from the multi-line edit control."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setString, "Params: asciiText\nSets the multi-line edit control string."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setStringW, "Params: unicodeText\nUnicode version of setString."),
@@ -407,12 +439,15 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertColor, "Params: color\nInserts an encoded color object at the current cursor position.\n"
                 "'color' is a ptColor object."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertStyle, "Params: style\nInserts an encoded font style at the current cursor position."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertLink, "Params: linkId\nInserts a link hotspot at the current cursor position."),
+    PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearLink, "Ends the hyperlink hotspot, if any, at the current cursor position."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, deleteChar, "Deletes a character at the current cursor position."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, lock, "Locks the multi-line edit control so the user cannot make changes."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unlock, "Unlocks the multi-line edit control so that the user can make changes."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isLocked, "Is the multi-line edit control locked? Returns 1 if true otherwise returns 0"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setBufferLimit, "Params: bufferLimit\nSets the buffer max for the editbox"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getBufferLimit, "Returns the current buffer limit"),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCurrentLink, "Returns the link the mouse is currently over"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, enableScrollControl, "Enables the scroll control if there is one"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, disableScrollControl, "Disables the scroll control if there is one"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, deleteLinesFromTop, "Params: numLines\nDeletes the specified number of lines from the top of the text buffer"),
@@ -420,6 +455,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setFontSize, "Params: fontSize\nSets the default font size for the edit control"),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, beginUpdate, "Signifies that the control will be updated heavily starting now, so suppress all redraws"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, endUpdate, "Signifies that the massive updates are over. We can now redraw."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isUpdating, "Is someone else already suppressing redraws of the control?"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

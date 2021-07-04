@@ -211,6 +211,7 @@ class kColors:
     DniRed      = ptColor(1.0, 0.216, 0.380, 1.0)
     DniGreen    = ptColor(0.698, 0.878, 0.761, 1.0)
     DniGreenDk  = ptColor(0.0, 0.596, 0.211, 1.0)
+    DniLilac    = ptColor(0.6, 0.6, 1.0, 1.0)
     DniPurple   = ptColor(0.878, 0.698, 0.819, 1.0)
     DniWhite    = ptColor().white()
 
@@ -219,10 +220,13 @@ class kColors:
     
     DniShowBtn     = DniShowRed
     DniGhostBtn    = DniHideBlue
-    
+
+    TextNoteURL = DniLilac
+
     # Chat colors (messages and headers).
     ChatMessage             = DniWhite
     ChatMessageMention      = DniYellowLt
+    ChatMessageURL          = DniLilac
     ChatHeaderBroadcast     = DniBlue
     ChatHeaderPrivate       = DniYellow
     ChatHeaderAdmin         = DniCyan

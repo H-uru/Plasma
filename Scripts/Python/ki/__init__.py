@@ -64,6 +64,7 @@ import glob  # Used for saving pictures locally.
 import math
 import functools
 
+from xGUILinkHandler import xGUILinkHandler
 import xLocTools
 
 # Personal age SDL helper.
@@ -792,13 +793,13 @@ class xKI(ptModifier):
         elif command == kKIPutAway:
             self.ToggleMiniKI()
         elif command == kChatAreaPageUp:
-            self.chatMgr.ScrollChatArea(PtGUIMultiLineDirection.kPageUp)
+            self.chatMgr.chatArea.moveCursor(PtGUIMultiLineDirection.kPageUp)
         elif command == kChatAreaPageDown:
-            self.chatMgr.ScrollChatArea(PtGUIMultiLineDirection.kPageDown)
+            self.chatMgr.chatArea.moveCursor(PtGUIMultiLineDirection.kPageDown)
         elif command == kChatAreaGoToBegin:
-            self.chatMgr.ScrollChatArea(PtGUIMultiLineDirection.kBufferStart)
+            self.chatMgr.chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
         elif command == kChatAreaGoToEnd:
-            self.chatMgr.ScrollChatArea(PtGUIMultiLineDirection.kBufferEnd)
+            self.chatMgr.chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
         elif command == kKITakePicture:
             self.TakePicture()
         elif command == kKICreateJournalNote:
@@ -1335,17 +1336,11 @@ class xKI(ptModifier):
         BigKI.dialog.hide()
         self.chatMgr.ToggleChatMode(0)
 
-        # Clear out all chat on microKI.
-        chatArea = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatArea.setString("")
-        chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
-        KIMicro.dialog.refreshAllControls()
-
-        # Clear out all chat on miniKI.
-        chatArea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatArea.setString("")
-        chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
-        KIMini.dialog.refreshAllControls()
+        # Clear out all chat.
+        for chatArea in (self.chatMgr.microChatArea, self.chatMgr.miniChatArea):
+            chatArea.setString("")
+            chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
+            chatArea.getOwnerDialog().refreshAllControls()
 
         # Remove unneeded kFontShadowed flags (as long as we can't do that directly in the PRPs)
         for dialogAttr in (BigKI, KIListModeDialog, KIJournalExpanded, KIPictureExpanded, KIPlayerExpanded, KIAgeOwnerExpanded, KISettings, KIMarkerFolderExpanded, KICreateMarkerGameGUI):
@@ -2116,7 +2111,7 @@ class xKI(ptModifier):
                 avatar.avatar.removeClothingItem("MAccKI")
             avatar.avatar.saveClothing()
             # Fill in the listbox so that the test is near the enter box.
-            chatArea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+            chatArea = self.chatMgr.miniChatArea
             chatArea.lock()         # Make the chat display immutable.
             chatArea.unclickable()  # Make the chat display non-clickable.
             chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
@@ -2405,13 +2400,7 @@ class xKI(ptModifier):
 
     ## Returns the font size currently applied to the KI.
     def GetFontSize(self):
-
-        if self.KILevel < kNormalKI:
-            mKIdialog = KIMicro.dialog
-        else:
-            mKIdialog = KIMini.dialog
-        miniChatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-        return miniChatArea.getFontSize()
+        return self.chatMgr.chatArea.getFontSize()
 
     ## Applies the specified font size.
     def SetFontSize(self, fontSize):
@@ -2421,15 +2410,13 @@ class xKI(ptModifier):
             mKIdialog = KIMicro.dialog
         else:
             mKIdialog = KIMini.dialog
-        miniChatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-        miniChatArea.setFontSize(fontSize)
-        miniChatArea.refresh()
-        microChatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-        microChatArea.setFontSize(fontSize)
-        microChatArea.refresh()
-        noteArea = ptGUIControlMultiLineEdit(KIJournalExpanded.dialog.getControlFromTag(kGUI.BKIJRNNote))
-        noteArea.setFontSize(fontSize)
-        noteArea.refresh()
+
+        for i in (self.chatMgr.miniChatArea, self.chatMgr.microChatArea):
+            i.setFontSize(fontSize)
+            i.refresh()
+
+        self.journalNoteArea.setFontSize(fontSize)
+        self.journalNoteArea.refresh()
         ownerNotes = ptGUIControlMultiLineEdit(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerDescription))
         ownerNotes.setFontSize(fontSize)
         ownerNotes.refresh()
@@ -2515,8 +2502,7 @@ class xKI(ptModifier):
             if self.KILevel == kNormalKI:
                 playerlist = ptGUIControlListBox(mKIdialog.getControlFromTag(kGUI.PlayerList))
                 playerlist.show()
-            chatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-            chatArea.enableScrollControl()
+            self.chatMgr.chatArea.enableScrollControl()
             mKIdialog.refreshAllControls()
 
         # Toggle state
@@ -3670,9 +3656,18 @@ class xKI(ptModifier):
         # Get its parent folder.
         if isinstance(nodeRef, ptVaultNodeRef):
             folder = self.BKCurrentContent.getParent()
-            if folder:
-                folder = folder.upcastToFolderNode()
-                if folder:
+            item = self.BKCurrentContent.getChild()
+            if folder and item:
+                # Observed: sometimes, the creator ID is zero. This can mean either a DRC item or
+                # a poorly initialized node. Better check against the saver ID as well, which is
+                # used to display the From field.
+                creatorID = item.getCreatorNodeID()
+                if creatorID == 0:
+                    creatorID = self.BKCurrentContent.getSaverID()
+
+                if creatorID != PtGetLocalClientID():
+                    return False
+                if folder := folder.upcastToFolderNode():
                     if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder:
                         return False
         return True
@@ -4462,7 +4457,7 @@ class xKI(ptModifier):
         jrnDate.hide()
         jrnTitle = ptGUIControlTextBox(KIJournalExpanded.dialog.getControlFromTag(kGUI.BKIJRNTitle))
         jrnTitle.hide()
-        jrnNote = ptGUIControlMultiLineEdit(KIJournalExpanded.dialog.getControlFromTag(kGUI.BKIJRNNote))
+        jrnNote = self.journalNoteArea
         jrnNote.hide()
         jrnNote.setBufferLimit(kLimits.JournalTextSize)
         jrnDeleteBtn = ptGUIControlButton(KIJournalExpanded.dialog.getControlFromTag(kGUI.BKIJRNDeleteButton))
@@ -4496,11 +4491,10 @@ class xKI(ptModifier):
         jrnDate.setString(curTime)
         jrnDate.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNTitle:
-            jrnTitle.setString(xCensor.xCensor(element.noteGetTitle(), self.censorLevel))
+            jrnTitle.setStringW(xCensor.xCensor(element.getTitleW(), self.censorLevel))
             jrnTitle.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNNote:
-            text = xCensor.xCensor(element.noteGetText(), self.censorLevel)
-            jrnNote.setStringW(text)
+            jrnNote.setStringW(element.getTextW(), censorLevel=self.censorLevel)
             jrnNote.show()
         self.BigKISetSeen(self.BKCurrentContent)
         # If it came from someone else, add them to the SendTo field.
@@ -5137,11 +5131,11 @@ class xKI(ptModifier):
                 # Set the edit box and display it.
                 if self.BKEditField == kGUI.BKEditFieldJRNTitle:
                     edElement = edElement.upcastToTextNoteNode()
-                    editBox.setString(xCensor.xCensor(edElement.noteGetTitle(), self.censorLevel))
+                    editBox.setStringW(edElement.getTitleW())
                     KIJournalExpanded.dialog.setFocus(editBox.getKey())
                 elif self.BKEditField == kGUI.BKEditFieldPICTitle:
                     edElement = edElement.upcastToImageNode()
-                    editBox.setString(xCensor.xCensor(edElement.imageGetTitle(), self.censorLevel))
+                    editBox.setStringW(edElement.getTitleW())
                     KIPictureExpanded.dialog.setFocus(editBox.getKey())
                 else:
                     editBox.setString("")
@@ -5153,7 +5147,7 @@ class xKI(ptModifier):
                 elif whichField == kGUI.BKEditFieldPICTitle:
                     KIPictureExpanded.dialog.refreshAllControls()
             else:
-                PtDebugPrint("xKI.BigKIEnterEditMode(): Content has no element to edit.", level=kErrorLevel)
+                PtDebugPrint("xKI.BigKIEnterEditMode(): Content has no element to edit.")
         else:
             # Is it for the journal edit?
             if whichField == kGUI.BKEditFieldJRNNote:
@@ -5161,6 +5155,11 @@ class xKI(ptModifier):
                 self.BKInEditMode = True
                 self.BKEditContent = self.BKCurrentContent
                 self.BKEditField = whichField
+
+                # But we need to change the content over to the non-censored version without
+                # active hyperlinks. Otherwise we get interesting results where the URLs become
+                # censored and offset.
+                self.journalNoteArea.setStringW(self.BKEditContent.getChild().upcastToTextNoteNode().getTextW(), urlDetection=False)
 
     ## Save what the player was editing to the right place.
     def BigKISaveEdit(self, noExitEditMode=False):
@@ -5190,7 +5189,7 @@ class xKI(ptModifier):
                     if edElement is not None:
                         if editBox is not None:
                             if not editBox.wasEscaped():
-                                textBox.setString(editBox.getString())
+                                textBox.setStringW(xCensor.xCensor(editBox.getStringW(), self.censorLevel))
                                 if self.BKEditField == kGUI.BKEditFieldJRNTitle:
                                     edElement = edElement.upcastToTextNoteNode()
                                     jTitle = editBox.getStringW()
@@ -5210,7 +5209,7 @@ class xKI(ptModifier):
                                 edElement.save()
                         else:
                             if self.BKEditField == kGUI.BKEditFieldJRNNote:
-                                buf = textBox.getEncodedBufferW()
+                                buf = textBox.getStringW()
                                 if buf[:len(PtGetLocalizedString("KI.Journal.InitialMessage"))] == PtGetLocalizedString("KI.Journal.InitialMessage"):
                                     buf = buf[len(PtGetLocalizedString("KI.Journal.InitialMessage")):]
                                 edElement = edElement.upcastToTextNoteNode()
@@ -5436,10 +5435,12 @@ class xKI(ptModifier):
     def ProcessNotifyMicro(self, control, event):
 
         if event == kDialogLoaded:
+            chatArea = xGUILinkHandler(ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea)))
+            chatArea.linkColor = kColors.ChatMessageURL
+            self.chatMgr.microChatArea = chatArea
+
             # Fill in the listbox so that the test is near the enter box.
-            chatArea = ptGUIControlMultiLineEdit(KIMicro.dialog.getControlFromTag(kGUI.ChatDisplayArea))
             chatArea.lock()         # Make the chat display immutable.
-            chatArea.unclickable()  # Make the chat display non-clickable.
             chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
             chatArea.disableScrollControl()
             btnUp = ptGUIControlButton(KIMicro.dialog.getControlFromTag(kGUI.miniChatScrollUp))
@@ -5453,13 +5454,17 @@ class xKI(ptModifier):
             if control.isEnabled():
                 if not self.chatMgr.isChatting:
                     self.FadeCompletely()
-        elif event == kAction or event == kValueChanged:
+        elif event == kAction:
             ctrlID = control.getTagID()
             if ctrlID == kGUI.ChatEditboxID:
                 if not control.wasEscaped() and control.getStringW() != "":
                     self.chatMgr.SendMessage(control.getStringW())
                 self.chatMgr.ToggleChatMode(0)
             elif ctrlID == kGUI.ChatDisplayArea:
+                self.chatMgr.microChatArea.openLink()
+        elif event == kValueChanged:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatDisplayArea:
                 self.ResetFadeState()
         elif event == kFocusChange:
             # If they are chatting, get the focus back.
@@ -5486,6 +5491,10 @@ class xKI(ptModifier):
     def ProcessNotifyMini(self, control, event):
 
         if event == kDialogLoaded:
+            chatArea = xGUILinkHandler(ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea)))
+            chatArea.linkColor = kColors.ChatMessageURL
+            self.chatMgr.miniChatArea = chatArea
+
             # Get the original position of the miniKI.
             dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kGUI.miniDragBar))
             self.originalminiKICenter = dragbar.getObjectCenter()
@@ -5495,9 +5504,7 @@ class xKI(ptModifier):
             sel = control.getSelectColor()
             self.originalSelectAlpha = sel.getAlpha()
             # Fill in the listbox so that the test is near the enter box.
-            chatArea = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
             chatArea.lock()         # Make the chat display immutable.
-            chatArea.unclickable()  # Make the chat display non-clickable.
             chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
             # Hide the chat scroll buttons (should be nothing in chat area yet anyhow).
             chatArea.disableScrollControl()
@@ -5552,6 +5559,9 @@ class xKI(ptModifier):
                     self.chatMgr.SendMessage(control.getStringW())
                 self.chatMgr.ToggleChatMode(0)
                 self.StartFadeTimer()
+            elif ctrlID == kGUI.ChatDisplayArea:
+                if event == kAction:
+                    self.chatMgr.miniChatArea.openLink()
             elif ctrlID == kGUI.PlayerList:
                 # Make sure they don't click outside what's there.
                 plyrsel = control.getSelection()
@@ -5965,6 +5975,9 @@ class xKI(ptModifier):
     def ProcessNotifyJournalExpanded(self, control, event):
 
         if event == kDialogLoaded:
+            self.journalNoteArea = xGUILinkHandler(ptGUIControlMultiLineEdit(KIJournalExpanded.dialog.getControlFromTag(kGUI.BKIJRNNote)))
+            self.journalNoteArea.linkColor = kColors.TextNoteURL
+
             editBox = ptGUIControlEditBox(KIJournalExpanded.dialog.getControlFromTag(kGUI.BKEditFieldIDs[kGUI.BKEditFieldJRNTitle][kGUI.BKEditIDeditbox]))
             editBox.hide()
         elif event == kShowHide:
@@ -5985,6 +5998,8 @@ class xKI(ptModifier):
             elif jeID == kGUI.BKIJRNTitleEdit or jeID == kGUI.BKIJRNNoteEdit:
                 if self.IsContentMutable(self.BKCurrentContent):
                     self.BigKISaveEdit(1)
+            elif jeID == kGUI.BKIJRNNote and event == kAction:
+                self.journalNoteArea.openLink()
         elif event == kFocusChange:
             if self.IsContentMutable(self.BKCurrentContent):
                 if control is not None:
