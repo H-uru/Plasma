@@ -63,6 +63,7 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 import PlasmaControlKeys
 
+from xGUILinkHandler import xGUILinkHandler
 import xJournalBookDefs
 import xIniAudio
 import xIniDisplay
@@ -436,7 +437,7 @@ gWalkAndPan = "0"
 gStayInFirstPerson = "0"
 gClickToTurn = "0"
 gAudioHack = 0
-gCurrentReleaseNotes = ""
+gCurrentReleaseNotes = "Welcome to Myst Online: Uru Live!"
 
 class xOptionsMenu(ptModifier):
     "The Options dialog modifier"
@@ -646,16 +647,14 @@ class xOptionsMenu(ptModifier):
             global gCurrentReleaseNotes
 
             if event == kDialogLoaded:
-                textField = ptGUIControlMultiLineEdit(ReleaseNotesDlg.dialog.getControlFromTag(kReleaseTextArea))
-                textField.setString("")
-                textField.lock()
-                textField.unclickable()
                 try:
-                    f = open("ReleaseNotes.txt", "r")
-                    gCurrentReleaseNotes = f.read()
-                    f.close()
-                except:
-                    PtDebugPrint("[TXT processing] Error while reading ReleaseNotes.txt")
+                    with open("ReleaseNotes.txt", "r") as f:
+                        gCurrentReleaseNotes = f.read()
+                except Exception as e:
+                    PtDebugPrint("[TXT processing] Error while reading ReleaseNotes.txt:", e)
+
+                self._releaseNotesCtrl = xGUILinkHandler(ptGUIControlMultiLineEdit(ReleaseNotesDlg.dialog.getControlFromTag(kReleaseTextArea)))
+                self._releaseNotesCtrl.lock()
             elif event == kShowHide:
                 if control.isEnabled():
                     # buttons localized
@@ -664,19 +663,22 @@ class xOptionsMenu(ptModifier):
                     textField = ptGUIControlTextBox(ReleaseNotesDlg.dialog.getControlFromTag(kRNGoBackText))
                     textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
 
-                    textField = ptGUIControlMultiLineEdit(ReleaseNotesDlg.dialog.getControlFromTag(kReleaseTextArea))
-                    textField.clearBuffer()
-                    textField.insertString(gCurrentReleaseNotes)
-                    PtDebugPrint(textField.getString())
-                    textField.setScrollPosition(1)
-                    textField.setScrollPosition(0)
+                    # BOOM if you do this on dialog load. Probably due to how early it happens
+                    # in the init process. Do it now.
+                    if not self._releaseNotesCtrl.getBufferSize():
+                        self._releaseNotesCtrl.setStringW(gCurrentReleaseNotes)
+
+                    self._releaseNotesCtrl.setScrollPosition(1)
+                    self._releaseNotesCtrl.setScrollPosition(0)
             elif event == kAction or event == kValueChanged:
                 rnID = control.getTagID()
                 if rnID == kRNOkBtn:
                     ReleaseNotesDlg.dialog.hide()
                 elif rnID == kRNGoBackBtn:
                     ReleaseNotesDlg.dialog.hide()
-                    OptionsMenuDlg.dialog.show()                    
+                    OptionsMenuDlg.dialog.show()
+                elif rnID == kReleaseTextArea and event == kAction:
+                    self._releaseNotesCtrl.openLink()
             elif event == kExitMode:
                 ReleaseNotesDlg.dialog.hide()
 
