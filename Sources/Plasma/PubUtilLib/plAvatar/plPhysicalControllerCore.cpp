@@ -457,7 +457,12 @@ void plWalkingStrategy::Apply(float delSecs)
                 velocity.fY += groundVel.fY;
             }
             if (std::fabs(velocity.fZ) < 0.001f) {
-                velocity.fZ = std::max(achievedVelocity.fZ + (kGravity * delSecs), groundVel.fZ);
+                if (std::fabs(groundVel.fZ) < 0.001f) {
+                    float zcomp = 1.f - std::max(0.f, ground->Normal.fZ);
+                    velocity.fZ = achievedVelocity.fZ + (kGravity * zcomp * delSecs);
+                } else {
+                    velocity.fZ = groundVel.fZ;
+                }
             }
         } else if (std::fabs(velocity.fZ) < 0.001f) {
             float zcomp = 1.f - std::max(0.f, ground->Normal.fZ);
@@ -471,7 +476,8 @@ void plWalkingStrategy::Apply(float delSecs)
 
     // Limit final requested downward velocity to the magnitude of the acceleration of gravity.
     // It's not the way R/L works, but it yields a better visual result.
-    velocity.fZ = std::max(velocity.fZ, kGravity);
+    if (!(fFlags & kGroundContact))
+        velocity.fZ = std::max(velocity.fZ, kGravity);
 
     // Reset vars and move the controller
     fController->SetPushingPhysical(nullptr);
