@@ -272,13 +272,13 @@ class kdshGlowInTheDark(ptResponder):
                 if TimerID==1:
                     PtDebugPrint("kdshGlowInTheDark: Timer 1 Callback. Raising elevator again.")
                     rgnExitSubBtm.disable()
-
+                    PtAtTimeCallback(self.key,14,6)
+                    
                     if not self.sceneobject.isLocallyOwned():
                         PtDebugPrint("\tI'm not the owner, so I'll let another client netforce raise the elevator.")
                         return
                     else:
                         respElevUp.run(self.key)
-                        PtAtTimeCallback(self.key,14,6)
 
                 if TimerID== 2:
                     PtDebugPrint("kdshGlowInTheDark: Timer 2 Callback. Clearing top Xrgn")
