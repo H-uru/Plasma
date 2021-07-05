@@ -164,7 +164,7 @@ class kdshGlowInTheDark(ptResponder):
             if len(PtGetPlayerList()) == 0:
                 PtDebugPrint("\t I'm alone, so I'm starting the elevator.")
                 respElevDown.run(self.key)
-                PtAtTimeCallback(self.key,3,2) # clear xRgn at top
+                PtAtTimeCallback(self.key,4,2) # clear xRgn at top
             else:
                 PtDebugPrint("\t Someone else was already in this Kadish instance. Depending on Overriding HighSDL component to synch elevator.")
         else:
@@ -225,7 +225,6 @@ class kdshGlowInTheDark(ptResponder):
         elif id == respElevUp.id:
             PtDebugPrint("kdshGlowInTheDark: The elevator has reached the top.")
             PtAtTimeCallback(self.key,ElevatorDelay,3) # wait 10 seconds, then lower elevator again
-            xRgnTop.releaseNow(self.key)
             rgnEnterSubTop.enable()
             #~ rgnExitSubTop.enable()
             for region in objExitTop.value:
@@ -264,29 +263,6 @@ class kdshGlowInTheDark(ptResponder):
             # huevo
             xSndLogTracks.LogTrack("94","143")
             return
-        elif PtGetLocalAvatar() == PtFindAvatar(events):
-            me = PtGetLocalAvatar()
-            if id == rgnExitSubTop.id:
-                PtDebugPrint("kdshGlowInTheDark: You stepped off the elevator at the top. Removing from Subworld")
-                me.avatar.exitSubWorld()
-                return
-
-            elif id == rgnExitSubBtm.id:
-                PtDebugPrint("kdshGlowInTheDark: You stepped off the elevator at the btm. Removing from Subworld")
-                me.avatar.exitSubWorld()
-                return
-
-            elif id == rgnEnterSubTop.id:
-                PtDebugPrint("You stepped on the elevator at the top. Joining subworld.")
-                #~ rgnExitSubTop.disable()
-                me.avatar.enterSubWorld(elevatorsubworld.value)
-                return
-
-            elif id == rgnEnterSubBtm.id:
-                PtDebugPrint("You stepped on the elevator at the bottom. Joining subworld.")
-                rgnExitSubBtm.disable()
-                me.avatar.enterSubWorld(elevatorsubworld.value)
-                return
 
         for event in events:
             if event[0] == kVariableEvent: # Did another player just get out of the bucket by hitting ESC/backspace? (An OnControlKeyEvent I wouldn't have received)
@@ -295,9 +271,9 @@ class kdshGlowInTheDark(ptResponder):
 
                 if TimerID==1:
                     PtDebugPrint("kdshGlowInTheDark: Timer 1 Callback. Raising elevator again.")
-                    xRgnBottom.clearNow(self.key)
                     rgnExitSubBtm.disable()
-
+                    PtAtTimeCallback(self.key,14,6)
+                    
                     if not self.sceneobject.isLocallyOwned():
                         PtDebugPrint("\tI'm not the owner, so I'll let another client netforce raise the elevator.")
                         return
@@ -315,7 +291,7 @@ class kdshGlowInTheDark(ptResponder):
                     solved = ageSDL["GlowInTheDarkSolved"][0]
                     if solved:
                         PtDebugPrint("\t Puzzle is still solved. Lowering Elevator again.")
-                        PtAtTimeCallback(self.key,1,2) # clear Xrgn in 1 second
+                        PtAtTimeCallback(self.key,4,2) # clear Xrgn in 4 second
                         for region in objExitTop.value:
                             region.physics.suppress(1)
 
@@ -336,6 +312,10 @@ class kdshGlowInTheDark(ptResponder):
                     PtDebugPrint("\tkdshGlowInTheDark.OnTimer: Running from Lit to Dark.")
                     respFloorDark.run(self.key)
                     Resetting = 0
+                if TimerID== 6:
+                    PtDebugPrint("kdshGlowInTheDark: Timer 6 Callback.")
+                    PtDebugPrint("\tkdshGlowInTheDark.OnTimer: Releasing top Xrgn")
+                    xRgnTop.releaseNow(self.key)
 
 
 
@@ -446,18 +426,13 @@ class kdshGlowInTheDark(ptResponder):
                         PtDebugPrint("GlowInTheDark: Yes, you completed the path, but I thought the path was already solved.")
                         return
 
-                    if PtWasLocallyNotified(self.key):
-                        PtDebugPrint("kdshGlowInTheDark: Since you solved the puzzle, putting your avatar on elevator")
-                        avatarInElevator = PtFindAvatar(events)
-                        avatarInElevator.avatar.enterSubWorld(elevatorsubworld.value)
-
                     rgnEnterSubTop.enable()
                     for region in objExitTop.value:
                         region.physics.suppress(1)
                     respElevDown.run(self.key)
 
 
-                    PtAtTimeCallback(self.key,3,2) # clear xRgn at top
+                    PtAtTimeCallback(self.key,4,2) # clear xRgn at top
 
 
         if baton > 0:
@@ -538,3 +513,11 @@ class kdshGlowInTheDark(ptResponder):
         if id == 5:
             PtDebugPrint("kdshGlowInTheDark: It's been one second. FF'ing floor to glow state.")
             respFloorGlow.run(self.key,fastforward=1)
+
+        if id == 6:
+            note = ptNotify(self.key)
+            note.clearReceivers()
+            note.addReceiver(self.key)
+            note.setActivate(1)
+            note.addVarNumber("foo",id)
+            note.send()
