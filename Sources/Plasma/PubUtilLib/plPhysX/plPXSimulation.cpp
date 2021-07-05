@@ -538,8 +538,12 @@ physx::PxRigidActor* plPXSimulation::CreateRigidActor(const physx::PxGeometry& g
         actor = fPxPhysics->createRigidStatic(globalPose);
         break;
     case plPXActorType::kDynamicActor:
-        actor = fPxPhysics->createRigidDynamic(globalPose);
-        break;
+        {
+            physx::PxRigidDynamic* dynamic = fPxPhysics->createRigidDynamic(globalPose);
+            dynamic->setMaxDepenetrationVelocity(10.f);
+            actor = dynamic;
+            break;
+        }
     case plPXActorType::kKinematicActor:
         {
             physx::PxRigidDynamic* dynamic = fPxPhysics->createRigidDynamic(globalPose);
