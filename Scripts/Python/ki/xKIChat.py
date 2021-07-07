@@ -946,8 +946,8 @@ class CommandsProcessor:
 
     ## Clear the chat.
     def ClearChat(self, params):
-        self.miniChatArea.clearBuffer()
-        self.microChatArea.clearBuffer()
+        self.chatMgr.miniChatArea.clearBuffer()
+        self.chatMgr.microChatArea.clearBuffer()
 
     ## Ignores a player.
     def IgnorePlayer(self, player):
