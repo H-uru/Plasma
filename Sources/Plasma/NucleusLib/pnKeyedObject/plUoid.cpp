@@ -239,9 +239,10 @@ bool plUoid::operator==(const plUoid& u) const
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
 ST::string plUoid::StringIze() const // Format to displayable string
 {
-    return ST::format("({#x}:{#x}:{}:C:[{},{}])",
+    return ST::format("(S:{#x} F:{#x} I:{} N:{} C:[{},{}])",
         fLocation.GetSequenceNumber(),
         fLocation.GetFlags(),
+        GetObjectID(),
         fObjectName,
         GetClonePlayerID(),
         GetCloneID());
