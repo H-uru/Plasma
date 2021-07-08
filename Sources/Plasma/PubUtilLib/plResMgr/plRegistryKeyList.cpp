@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plKeyImp.h"
 
+#include "plStatusLog/plStatusLog.h"
 
 
 plRegistryKeyList::~plRegistryKeyList()
@@ -82,18 +83,20 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid) const
     // Direct lookup
     if (objectID <= fKeys.size())
     {
-#ifdef PLASMA_EXTERNAL_RELEASE
-        return fKeys[objectID-1];
-#else
-        // If this is an internal release, our objectIDs might not match
-        // because of local data. Verify that we have the right key by
-        // name, and if it's wrong, do the slower find-by-name.
-        plKeyImp *keyImp = fKeys[objectID-1];
-        if (!keyImp || keyImp->GetName().compare_i(uoid.GetObjectName()) != 0)
-            return FindKey(uoid.GetObjectName());
-        else
-            return keyImp;
-#endif // PLASMA_EXTERNAL_RELEASE
+        plKeyImp* keyImp = fKeys[objectID - 1];
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (!keyImp)
+            plStatusLog::AddLineSF("resources.log", "FindKey: NULL KeyImp for Uoid {}", uoid);
+        if (keyImp && keyImp->GetName().compare_i(uoid.GetObjectName()) != 0) {
+            plStatusLog::AddLineSF(
+                "resources.log",
+                "FindKey: Uoid objID mismatch\n\tRequested: {}\n\tGot: {}",
+                uoid,
+                keyImp->GetUoid()
+            );
+        }
+#endif
+        return keyImp;
     }
 
     // If we got here it probably means we just deleted all our keys of the matching type
