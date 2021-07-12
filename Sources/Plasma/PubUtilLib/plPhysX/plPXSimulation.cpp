@@ -319,7 +319,7 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, defFlags, defResult);
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, defFlags, defResult);
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, defFlags, defResult);
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, defFlags, cbResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, defFlags, defResult);
     }
 
 #undef FILTER
@@ -538,8 +538,12 @@ physx::PxRigidActor* plPXSimulation::CreateRigidActor(const physx::PxGeometry& g
         actor = fPxPhysics->createRigidStatic(globalPose);
         break;
     case plPXActorType::kDynamicActor:
-        actor = fPxPhysics->createRigidDynamic(globalPose);
-        break;
+        {
+            physx::PxRigidDynamic* dynamic = fPxPhysics->createRigidDynamic(globalPose);
+            dynamic->setMaxDepenetrationVelocity(10.f);
+            actor = dynamic;
+            break;
+        }
     case plPXActorType::kKinematicActor:
         {
             physx::PxRigidDynamic* dynamic = fPxPhysics->createRigidDynamic(globalPose);
