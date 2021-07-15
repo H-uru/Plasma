@@ -211,7 +211,7 @@ void pfLocalizedString::IUpdateXML()
     bool wantCData = std::any_of(
         fText.cbegin(), fText.cend(),
         [](const textBlock& block) {
-            std::regex regex("<.+>");
+            static const std::regex regex("<.+>");
             return std::regex_search(block.fText.cbegin(), block.fText.cend(), regex);
         }
     );
