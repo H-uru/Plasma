@@ -180,7 +180,7 @@ void pfLocalizedString::IUpdatePlainText()
         if (curTextBlock.fIsParam)
         {
             // Fill in parameter value.
-            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
+            ss << "%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
@@ -223,7 +223,7 @@ void pfLocalizedString::IUpdateXML()
     for (const auto& curTextBlock : fText) {
         if (curTextBlock.fIsParam) {
             // Fill in parameter value.
-            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
+            ss << "%" << curTextBlock.fParamIndex + 1 << "s";
         } else if (!wantCData) {
             // Encode XML entities.
             ss << curTextBlock.fText.replace("%", "\\%").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
