@@ -109,7 +109,7 @@ void plRenderGlobalContext::MakeRenderInstances(plMaxNode* root, TimeValue t)
     for (int i = 0; i < root->NumberOfChildren(); i++)
         IMakeRenderInstances((plMaxNode*)root->GetChildNode(i), t, false);
 
-    for (size_t i = 0; i < fInstList.size() - 1; i++)
+    for (hsSsize_t i = 0; i < (hsSsize_t)fInstList.size() - 1; i++)
         fInstList[i].SetNext(&fInstList[i+1]);
 }
 
