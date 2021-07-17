@@ -63,7 +63,7 @@ respEnable = ptAttribResponder(5, "Enabled resp (if necessary)")
 respDisable = ptAttribResponder(6, "Disabled resp (if necessary)")
 
 #globals
-TotalPossibleYeeshaPages = 25
+TotalPossibleYeeshaPages = 26
 HideCleftPole = 0
 
 
@@ -103,6 +103,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 #~ (YeeshaPage22) grass
 #~ (YeeshaPage24) thunderstorm
 #~ (YeeshaPage25) Bahro poles/totems
+#~ (YeeshaPage26) Veelay Tsahvahn night skybox
 
 #Meaning of SDL values for each Yeesha Page:
 #
@@ -218,17 +219,17 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         if val in self.enabledStateList:
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
+            if PageNumber.value == 26:
+                if self.enabledStateList == [1, 3]:
+                    PtFogSetDefLinear(0,0,0)
+                    PtSetClearColor(0,0,0)
+            if HideCleftPole:
+                PtDebugPrint("psnlYeeshaPageChanges.EnableDisable():\tFissure is open and Totem yeesha page is set 'off', so we gotta get rid of the Cleft pole for now")
+                self.sceneobject.draw.disable()
+                self.sceneobject.physics.suppress(True)
+            else:
                 self.sceneobject.draw.enable()
                 self.sceneobject.physics.suppress(False)
-            else:
-                if HideCleftPole:
-                    PtDebugPrint("psnlYeeshaPageChanges.EnableDisable():\tFissure is open and Totem yeesha page is set 'off', so we gotta get rid of the Cleft pole for now")
-                    self.sceneobject.draw.disable()
-                    self.sceneobject.physics.suppress(True)
-                else:
-                    #PtDebugPrint("psnlYeeshaPageChanges: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
-                    self.sceneobject.draw.enable()
-                    self.sceneobject.physics.suppress(False)
             
             respAudioStart.run(self.key,avatar=None,fastforward=0)
             respEnable.run(self.key,avatar=None,fastforward=0)
