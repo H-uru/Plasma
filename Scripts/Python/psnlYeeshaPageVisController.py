@@ -43,23 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 from Plasma import *
 from PlasmaTypes import *
-from PlasmaVaultConstants import *
-from PlasmaNetConstants import *
-from xPsnlVaultSDL import *
 
 PageNumber = ptAttribInt(1, "Yeesha Page Number")
-stringShowStates = ptAttribString(2,"States in which shown")
+stringShowStates = ptAttribString(2, "States in which shown")
 hideObjectsTrue = ptAttribSceneobjectList(3, "Hide Objects in List when States are true")
 hideObjectsFalse = ptAttribSceneobjectList(4, "Hide Objects in List when States are false")
 
-
-class psnlYeeshaPageVisController(ptMultiModifier):
-    def __init__(self):
-        ptMultiModifier.__init__(self)
-        self.id = 53000
-        version = 0
-        self.version = version
-        PtDebugPrint("__init__psnlYeeshaPageVisController v%d.%d" % (version,1),level=kWarningLevel)
 
 # Yeesha Pages available:
 #
@@ -99,24 +88,27 @@ class psnlYeeshaPageVisController(ptMultiModifier):
 #~ 4 - Page found, inactive, and pending active when age emptied
 
 
+class psnlYeeshaPageVisController(ptMultiModifier):
+    def __init__(self):
+        ptMultiModifier.__init__(self)
+        self.id = 53000
+        version = 0
+        self.version = version
+        PtDebugPrint(f"__init__psnlYeeshaPageVisController v{version}", level=kWarningLevel)
+
     def OnFirstUpdate(self):
-            try:
-                self.enabledStateList = stringShowStates.value.split(",")
-                for i in range(len(self.enabledStateList)):
-                    self.enabledStateList[i] = int(self.enabledStateList[i].strip())
-            except:
-                PtDebugPrint("xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn't process start state list")
+        try:
+            self.enabledStateList = [int(i.strip()) for i in stringShowStates.value.split(",")]
+        except:
+            PtDebugPrint("xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn't process start state list")
 
 
     def OnServerInitComplete(self):
         
-        AgeVault = ptAgeVault()
-        if AgeVault is not None: #is the Vault online?
-
-            self.ageSDL = AgeVault.getAgeSDL()
-            if self.ageSDL:
+        if AgeVault := ptAgeVault():
+            if ageSDL := AgeVault.getAgeSDL():
                 try:
-                    SDLVar = self.ageSDL.findVar("YeeshaPage" + str(PageNumber.value))
+                    SDLVar = ageSDL.findVar("YeeshaPage" + str(PageNumber.value))
                     CurrentValue = SDLVar.getInt()
                     #PtDebugPrint("psnlYeeshaPageVisController.OnServerInitComplete:\tYeeshaPage%d = %d" % (PageNumber.value, SDLVar.getInt()))
                 except:
@@ -125,10 +117,9 @@ class psnlYeeshaPageVisController(ptMultiModifier):
 
                 self.EnableDisable(CurrentValue)
             else:
-                PtDebugPrint("psnlYeeshaPageVisController: Error trying to access the Chronicle self.ageSDL. self.ageSDL = %s" % ( self.ageSDL))
+                PtDebugPrint("psnlYeeshaPageVisController: Error trying to access the ageSDL. ageSDL = %s" % ( ageSDL))
         else:
-            PtDebugPrint("psnlYeeshaPageVisController: Error trying to access the Vault. Can't access YeeshaPageChanges chronicle.")
-
+            PtDebugPrint("psnlYeeshaPageVisController: Error trying to access the Vault.")
 
     def EnableDisable(self, val):
         if val in self.enabledStateList:
