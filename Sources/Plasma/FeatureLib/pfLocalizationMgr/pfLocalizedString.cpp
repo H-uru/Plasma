@@ -47,9 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pfLocalizedString.h"
+
 #include "HeadSpin.h"
 
-#include "pfLocalizedString.h"
+#include <algorithm>
+#include <regex>
 #include <string_theory/string_stream>
 
 
@@ -177,7 +180,7 @@ void pfLocalizedString::IUpdatePlainText()
         if (curTextBlock.fIsParam)
         {
             // Fill in parameter value.
-            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
+            ss << "%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
@@ -202,22 +205,35 @@ void pfLocalizedString::IConvertFromXML(const ST::string & xml)
 
 void pfLocalizedString::IUpdateXML()
 {
-    ST::string_stream ss;
-    for (std::vector<ST::string>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
-    {
-        textBlock curTextBlock = fText[curIndex];
-
-        if (curTextBlock.fIsParam)
-        {
-            // Fill in parameter value.
-            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
+    // If we find anything that looks like an esHTML tag (eg <p>, <pb>, etc.) then we want
+    // to use CDATA. Since the text is small an contiguous, we will assume that it occurs
+    // in the same block. If not, and nothing else trips us... Whatever.
+    bool wantCData = std::any_of(
+        fText.cbegin(), fText.cend(),
+        [](const textBlock& block) {
+            static const std::regex regex("<.+>");
+            return std::regex_search(block.fText.cbegin(), block.fText.cend(), regex);
         }
-        else
-        {
+    );
+
+    ST::string_stream ss;
+    if (wantCData)
+        ss << "<![CDATA[";
+
+    for (const auto& curTextBlock : fText) {
+        if (curTextBlock.fIsParam) {
+            // Fill in parameter value.
+            ss << "%" << curTextBlock.fParamIndex + 1 << "s";
+        } else if (!wantCData) {
             // Encode XML entities.
             ss << curTextBlock.fText.replace("%", "\\%").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        } else {
+            ss << curTextBlock.fText;
         }
     }
+
+    if (wantCData)
+        ss << "]]>";
     fXMLRep = ss.to_string();
 }
 
