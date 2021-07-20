@@ -157,7 +157,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                         else:
                             sizechanged = 0
 
-                        newstate = self.UpdateState(state, size, SDLVar, AgeVault, sizechanged)
+                        newstate = self.UpdateState(state, size, SDLVar, AgeVault, ageSDL, sizechanged)
                     else:
                         newstate = state
 
@@ -189,7 +189,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                                 PtDebugPrint("ERROR: psnlYeeshaPageChanges.OnServerInitComplete():\tException occurred trying to access age SDL")
                         
                     if len(PtGetPlayerList()) == 0:
-                        newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, 0)
+                        newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, ageSDL, 0)
                     else:
                         newstate = CurrentValue
 
@@ -263,22 +263,19 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         return sizes
 
 
-    def UpdateState(self, state, size, SDLVar, AgeVault, sizechanged):
+    def UpdateState(self, state, size, SDLVar, AgeVault, ageSDL, sizechanged):
         #~ PtDebugPrint("No one else is here. Affecting any YP changes you've queued.")
-        if ageSDL := AgeVault.getAgeSDL():
-            if state == 3:
-                state = 2
-                PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 3 to 2." % ("YeeshaPage" + str(PageNumber.value)))
-                SDLVar.setInt( (size * 10) + state)
-                AgeVault.updateAgeSDL(ageSDL)
-            elif state == 4 or state > 4:
-                state = 1
-                PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 4 to 1." % ("YeeshaPage" + str(PageNumber.value)))
-                SDLVar.setInt( (size * 10) + state)
-                AgeVault.updateAgeSDL(ageSDL)
-            elif sizechanged:
-                SDLVar.setInt( (size * 10) + state)
-                AgeVault.updateAgeSDL(ageSDL) 
-            return state
-        else:
-            PtDebugPrint("psnlYeeshaPageChanges: Error trying to access the ageSDL. ageSDL = %s" % ( ageSDL))
+        if state == 3:
+            state = 2
+            PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 3 to 2." % ("YeeshaPage" + str(PageNumber.value)))
+            SDLVar.setInt( (size * 10) + state)
+            AgeVault.updateAgeSDL(ageSDL)
+        elif state == 4 or state > 4:
+            state = 1
+            PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 4 to 1." % ("YeeshaPage" + str(PageNumber.value)))
+            SDLVar.setInt( (size * 10) + state)
+            AgeVault.updateAgeSDL(ageSDL)
+        elif sizechanged:
+            SDLVar.setInt( (size * 10) + state)
+            AgeVault.updateAgeSDL(ageSDL) 
+        return state
