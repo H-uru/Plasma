@@ -49,6 +49,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipelineViewSettings.h"
 #include "hsGDeviceRef.h"
 #include "hsG3DDeviceSelector.h"
+#include "hsGDeviceRef.h"
+#include "plRenderTarget.h"
+#include "plCubicRenderTarget.h"
+
+#include "hsGMatState.inl"
+#include "plPipeDebugFlags.h"
+#include "plProfile.h"
+#include "plTweak.h"
+
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+
+#include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plDrawable/plSpanTypes.h"
+#include "plGLight/plLightInfo.h"
+#include "plGLight/plShadowSlave.h"
+#include "plGLight/plShadowCaster.h"
+#include "plIntersect/plVolumeIsect.h"
+#include "plScene/plRenderRequest.h"
+#include "plScene/plVisMgr.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 class hsGMaterial;
 class plLayerInterface;
@@ -56,96 +79,108 @@ class plLightInfo;
 class plShadowSlave;
 class plSpan;
 
-#if defined(PLASMA_PIPELINE_DX)
-#    include "DX/plDXDevice.h"
-#    define DeviceType plDXDevice
-#elif defined(PLASMA_PIPELINE_GL)
-#    include "GL/plGLDevice.h"
-#    define DeviceType plGLDevice
-#else
-#    error "plPipeline backend not specified"
-#endif
+plProfile_Extern(RenderScene);
+plProfile_Extern(VisEval);
+plProfile_Extern(VisSelect);
+plProfile_Extern(FindSceneLights);
+plProfile_Extern(FindLights);
+plProfile_Extern(FindPerm);
+plProfile_Extern(FindSpan);
+plProfile_Extern(FindActiveLights);
+plProfile_Extern(ApplyActiveLights);
+plProfile_Extern(ApplyMoving);
+plProfile_Extern(ApplyToSpec);
+plProfile_Extern(ApplyToMoving);
+plProfile_Extern(LightOn);
+plProfile_Extern(LightVis);
+plProfile_Extern(LightChar);
+plProfile_Extern(LightActive);
+plProfile_Extern(FindLightsFound);
+plProfile_Extern(FindLightsPerm);
 
+static const float kPerspLayerScale  = 0.00001f;
+static const float kPerspLayerScaleW = 0.001f;
+static const float kPerspLayerTrans  = 0.00002f;
+
+template <class DeviceType>
 class pl3DPipeline : public plPipeline
 {
 protected:
-    DeviceType                          fDevice;
+    DeviceType                              fDevice;
 
-    plPipelineViewSettings              fView;
-    std::stack<plPipelineViewSettings>  fViewStack;
+    plPipelineViewSettings                  fView;
+    std::stack<plPipelineViewSettings>      fViewStack;
 
-    plPipelineTweakSettings             fTweaks;
+    plPipelineTweakSettings                 fTweaks;
 
-    hsBitVector                         fDebugFlags;
-    uint32_t                            fProperties;
+    hsBitVector                             fDebugFlags;
+    uint32_t                                fProperties;
 
-    uint32_t                            fMaxLayersAtOnce;
-    uint32_t                            fMaxPiggyBacks;
-    uint32_t                            fMaxNumLights;
-    uint32_t                            fMaxNumProjectors;
+    uint32_t                                fMaxLayersAtOnce;
+    uint32_t                                fMaxPiggyBacks;
+    uint32_t                                fMaxNumLights;
+    uint32_t                                fMaxNumProjectors;
 
-    hsGMatState                         fMatOverOn;
-    hsGMatState                         fMatOverOff;
-    std::vector<hsGMaterial*>           fOverrideMat;
-    hsGMaterial*                        fHoldMat;
-    bool                                fForceMatHandle;
+    hsGMatState                             fMatOverOn;
+    hsGMatState                             fMatOverOff;
+    std::vector<hsGMaterial*>               fOverrideMat;
+    hsGMaterial*                            fHoldMat;
+    bool                                    fForceMatHandle;
 
-    std::vector<plLayerInterface*>      fOverLayerStack;
-    plLayerInterface*                   fOverBaseLayer;
-    plLayerInterface*                   fOverAllLayer;
-    std::vector<plLayerInterface*>      fPiggyBackStack;
-    int32_t                             fMatPiggyBacks;
-    int32_t                             fActivePiggyBacks;
+    std::vector<plLayerInterface*>          fOverLayerStack;
+    plLayerInterface*                       fOverBaseLayer;
+    plLayerInterface*                       fOverAllLayer;
+    std::vector<plLayerInterface*>          fPiggyBackStack;
+    int32_t                                 fMatPiggyBacks;
+    int32_t                                 fActivePiggyBacks;
 
-    DeviceType::VertexBufferRef*        fVtxBuffRefList;
-    DeviceType::IndexBufferRef*         fIdxBuffRefList;
+    typename DeviceType::VertexBufferRef*   fVtxBuffRefList;
+    typename DeviceType::IndexBufferRef*    fIdxBuffRefList;
 
-    hsGDeviceRef*                       fLayerRef[8];
+    hsGDeviceRef*                           fLayerRef[8];
 
-    hsGMaterial*                        fCurrMaterial;
+    hsGMaterial*                            fCurrMaterial;
 
-    plLayerInterface*                   fCurrLay;
-    uint32_t                            fCurrLayerIdx;
-    uint32_t                            fCurrNumLayers;
-    uint32_t                            fCurrRenderLayer;
-    uint32_t                            fCurrLightingMethod;    // Based on plSpan flags
+    plLayerInterface*                       fCurrLay;
+    uint32_t                                fCurrLayerIdx;
+    uint32_t                                fCurrNumLayers;
+    uint32_t                                fCurrRenderLayer;
+    uint32_t                                fCurrLightingMethod;    // Based on plSpan flags
 
-    hsMatrix44                          fBumpDuMatrix;
-    hsMatrix44                          fBumpDvMatrix;
-    hsMatrix44                          fBumpDwMatrix;
+    hsMatrix44                              fBumpDuMatrix;
+    hsMatrix44                              fBumpDvMatrix;
+    hsMatrix44                              fBumpDwMatrix;
 
-    plLightInfo*                        fActiveLights;
-    std::vector<plLightInfo*>           fCharLights;
-    std::vector<plLightInfo*>           fVisLights;
+    plLightInfo*                            fActiveLights;
+    std::vector<plLightInfo*>               fCharLights;
+    std::vector<plLightInfo*>               fVisLights;
 
-    std::vector<plShadowSlave*>         fShadows;
+    std::vector<plShadowSlave*>             fShadows;
 
-    std::vector<plRenderTarget*>        fRenderTargets;
-    plRenderTarget*                     fCurrRenderTarget;
-    plRenderTarget*                     fCurrBaseRenderTarget;
-    hsGDeviceRef*                       fCurrRenderTargetRef;
+    std::vector<plRenderTarget*>            fRenderTargets;
+    plRenderTarget*                         fCurrRenderTarget;
+    plRenderTarget*                         fCurrBaseRenderTarget;
+    hsGDeviceRef*                           fCurrRenderTargetRef;
 
-    uint32_t                            fOrigWidth;
-    uint32_t                            fOrigHeight;
-    uint32_t                            fColorDepth;
+    uint32_t                                fOrigWidth;
+    uint32_t                                fOrigHeight;
+    uint32_t                                fColorDepth;
 
-    uint32_t                            fInSceneDepth;
-    double                              fTime;      // World time.
-    uint32_t                            fFrame;     // inc'd every time the camera moves.
-    uint32_t                            fRenderCnt; // inc'd every begin scene.
+    uint32_t                                fInSceneDepth;
+    double                                  fTime;      // World time.
+    uint32_t                                fFrame;     // inc'd every time the camera moves.
+    uint32_t                                fRenderCnt; // inc'd every begin scene.
 
-    bool                                fVSync;
+    bool                                    fVSync;
 
 
 public:
     pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec);
     virtual ~pl3DPipeline();
 
-    CLASSNAME_REGISTER(pl3DPipeline);
-    GETINTERFACE_ANY(pl3DPipeline, plPipeline);
-
-    size_t GetViewStackSize() const { return fViewStack.size(); }
-
+    // NOTE: We are *deliberately* not including the Creatable Macros here,
+    // since this is a templated class. It should be fine, since the pipeline
+    // is registered as a non-creatable class.
 
     /*** VIRTUAL METHODS ***/
     //virtual bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
@@ -637,6 +672,8 @@ public:
     //virtual int GetMaxAntiAlias(int Width, int Height, int ColorDepth) = 0;
     //virtual void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) = 0;
 
+    size_t GetViewStackSize() const override { return fViewStack.size(); }
+
     /** Push a piggy back onto the stack. */
     virtual plLayerInterface* PushPiggyBackLayer(plLayerInterface* li);
 
@@ -765,5 +802,910 @@ protected:
     /** pass the current local to world tranform on to the device. */
     void ILocalToWorldToDevice();
 };
+
+
+template <class DeviceType>
+pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
+:   fMaxLayersAtOnce(-1),
+    fMaxPiggyBacks(),
+    //fMaxNumLights(kD3DMaxTotalLights),
+    //fMaxNumProjectors(kMaxProjectors),
+    fOverBaseLayer(),
+    fOverAllLayer(),
+    fMatPiggyBacks(),
+    fActivePiggyBacks(),
+    fVtxBuffRefList(),
+    fIdxBuffRefList(),
+    fCurrMaterial(),
+    fCurrLay(),
+    fCurrNumLayers(),
+    fCurrRenderLayer(),
+    fCurrLightingMethod(plSpan::kLiteMaterial),
+    fActiveLights(),
+    fCurrRenderTarget(),
+    fCurrBaseRenderTarget(),
+    fCurrRenderTargetRef(),
+    fColorDepth(32),
+    fInSceneDepth(),
+    fTime(),
+    fFrame()
+{
+
+    fOverLayerStack.clear();
+    fPiggyBackStack.clear();
+
+    fMatOverOn.Reset();
+    fMatOverOff.Reset();
+
+    for (int i = 0; i < 8; i++) {
+        fLayerRef[i] = nullptr;
+    }
+
+    fTweaks.Reset();
+    fView.Reset(this);
+    fDebugFlags.Clear();
+
+
+    // Get the requested mode and setup
+    const hsG3DDeviceMode *devMode = devModeRec->GetMode();
+
+    if (!fInitialPipeParams.Windowed) {
+        fOrigWidth = devMode->GetWidth();
+        fOrigHeight = devMode->GetHeight();
+    } else {
+        // windowed can run in any mode
+        fOrigHeight = fInitialPipeParams.Height;
+        fOrigWidth = fInitialPipeParams.Width;
+    }
+
+    IGetViewTransform().SetScreenSize(uint16_t(fOrigWidth), uint16_t(fOrigHeight));
+    fColorDepth = devMode->GetColorDepth();
+
+    fVSync = fInitialPipeParams.VSync;
+}
+
+template <class DeviceType>
+pl3DPipeline<DeviceType>::~pl3DPipeline()
+{
+    fCurrLay = nullptr;
+    hsAssert(fCurrMaterial == nullptr, "Current material not unrefed properly");
+
+    // CullProxy is a debugging representation of our CullTree. See plCullTree.cpp, 
+    // plScene/plOccluder.cpp and plScene/plOccluderProxy.cpp for more info
+    if (fView.HasCullProxy())
+        fView.GetCullProxy()->GetKey()->UnRefObject();
+
+    // Tell the light infos to unlink themselves
+    while (fActiveLights)
+        UnRegisterLight(fActiveLights);
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::Render(plDrawable* d, const std::vector<int16_t>& visList)
+{
+    // Reset here, since we can push/pop renderTargets after BeginRender() but
+    // before this function, which necessitates this being called
+    if (fView.fXformResetFlags != 0)
+        ITransformsToDevice();
+
+    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(d);
+
+    if (ds)
+        RenderSpans(ds, visList);
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::Draw(plDrawable* d)
+{
+    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(d);
+
+    if (ds) {
+        if (( ds->GetType() & fView.GetDrawableTypeMask()) == 0)
+            return;
+
+        static std::vector<int16_t> visList;
+
+        PreRender(ds, visList);
+        PrepForRender(ds, visList);
+        Render(ds, visList);
+    }
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::RegisterLight(plLightInfo* liInfo)
+{
+    if (liInfo->IsLinked())
+        return;
+
+    liInfo->Link(&fActiveLights);
+
+    // Override this method to set the light's native device ref!
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::UnRegisterLight(plLightInfo* liInfo)
+{
+    liInfo->SetDeviceRef(nullptr);
+    liInfo->Unlink();
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::PushRenderTarget(plRenderTarget* target)
+{
+    fCurrRenderTarget = target;
+    hsRefCnt_SafeAssign(fCurrRenderTargetRef, (target != nullptr) ? target->GetDeviceRef() : nullptr);
+
+    while (target != nullptr) {
+        fCurrBaseRenderTarget = target;
+        target = target->GetParent();
+    }
+
+    fRenderTargets.push_back(fCurrRenderTarget);
+    fDevice.SetRenderTarget(fCurrRenderTarget);
+}
+
+
+template <class DeviceType>
+plRenderTarget* pl3DPipeline<DeviceType>::PopRenderTarget()
+{
+    plRenderTarget* old = fRenderTargets.back();
+    fRenderTargets.pop_back();
+    plRenderTarget* temp;
+    size_t i = fRenderTargets.size();
+
+    if (i == 0) {
+        fCurrRenderTarget = nullptr;
+        fCurrBaseRenderTarget = nullptr;
+        hsRefCnt_SafeUnRef(fCurrRenderTargetRef);
+        fCurrRenderTargetRef = nullptr;
+    } else {
+        fCurrRenderTarget = fRenderTargets[i - 1];
+        temp = fCurrRenderTarget;
+
+        while (temp != nullptr) {
+            fCurrBaseRenderTarget = temp;
+            temp = temp->GetParent();
+        }
+
+        hsRefCnt_SafeAssign(fCurrRenderTargetRef, (fCurrRenderTarget != nullptr) ? fCurrRenderTarget->GetDeviceRef() : nullptr);
+    }
+
+    fDevice.SetRenderTarget(fCurrRenderTarget);
+
+    return old;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::BeginVisMgr(plVisMgr* visMgr)
+{
+    // Make Light Lists /////////////////////////////////////////////////////
+    // Look through all the current lights, and fill out two lists.
+    // Only active lights (not disabled, not exactly black, and not
+    // ignored because of visibility regions by plVisMgr) will
+    // be considered.
+    // The first list is lights that will affect the avatar and similar
+    // indeterminately mobile (physical) objects - fCharLights.
+    // The second list is lights that aren't restricted by light include
+    // lists.
+    // These two abbreviated lists will be further refined for each object
+    // and avatar to find the strongest 8 lights which affect that object.
+    // A light with an include list, or LightGroup Component) has
+    // been explicitly told which objects it affects, so they don't
+    // need to be in the search lists.
+    // These lists are only constructed once per render, but searched
+    // multiple times
+
+    plProfile_BeginTiming(FindSceneLights);
+    fCharLights.clear();
+    fVisLights.clear();
+    if (visMgr) {
+        const hsBitVector& visSet = visMgr->GetVisSet();
+        const hsBitVector& visNot = visMgr->GetVisNot();
+        plLightInfo* light;
+
+        for (light = fActiveLights; light != nullptr; light = light->GetNext()) {
+            plProfile_IncCount(LightActive, 1);
+            if (!light->IsIdle() && !light->InVisNot(visNot) && light->InVisSet(visSet)) {
+                plProfile_IncCount(LightOn, 1);
+                if (light->GetProperty(plLightInfo::kLPHasIncludes)) {
+                    if (light->GetProperty(plLightInfo::kLPIncludesChars))
+                        fCharLights.emplace_back(light);
+                } else {
+                    fVisLights.emplace_back(light);
+                    fCharLights.emplace_back(light);
+                }
+            }
+        }
+    } else {
+        plLightInfo* light;
+        for (light = fActiveLights; light != nullptr; light = light->GetNext()) {
+            plProfile_IncCount(LightActive, 1);
+            if (!light->IsIdle()) {
+                plProfile_IncCount(LightOn, 1);
+                if (light->GetProperty(plLightInfo::kLPHasIncludes)) {
+                    if (light->GetProperty(plLightInfo::kLPIncludesChars))
+                        fCharLights.emplace_back(light);
+                } else {
+                    fVisLights.emplace_back(light);
+                    fCharLights.emplace_back(light);
+                }
+            }
+        }
+    }
+    plProfile_IncCount(LightVis, fVisLights.size());
+    plProfile_IncCount(LightChar, fCharLights.size());
+
+    plProfile_EndTiming(FindSceneLights);
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::EndVisMgr(plVisMgr* visMgr)
+{
+    fCharLights.clear();
+    fVisLights.clear();
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::SetZBiasScale(float scale)
+{
+    scale += 1.0f;
+    fTweaks.fPerspLayerScale = fTweaks.fDefaultPerspLayerScale * scale;
+    fTweaks.fPerspLayerTrans = kPerspLayerTrans * scale;
+}
+
+
+template <class DeviceType>
+float pl3DPipeline<DeviceType>::GetZBiasScale() const
+{
+    return (fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale) - 1.0f;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
+{
+    plViewTransform& view_xform = fView.GetViewTransform();
+
+    view_xform.SetCameraTransform(w2c, c2w);
+
+    fView.fCullTreeDirty = true;
+    fView.fWorldToCamLeftHanded = fView.GetWorldToCamera().GetParity();
+
+    IWorldToCameraToDevice();
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut)
+{
+    while (n--) {
+        hsPoint3 scrP;
+        scrP.Set(float(*scrX++), float(*scrY++), float(dist));
+        *worldOut++ = GetViewTransform().ScreenToWorld(scrP);
+    }
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::RefreshScreenMatrices()
+{
+    fView.fCullTreeDirty = true;
+    IProjectionMatrixToDevice();
+}
+
+
+template <class DeviceType>
+hsGMaterial* pl3DPipeline<DeviceType>::PushOverrideMaterial(hsGMaterial* mat)
+{
+    hsGMaterial* ret = GetOverrideMaterial();
+    hsRefCnt_SafeRef(mat);
+    fOverrideMat.push_back(mat);
+    fForceMatHandle = true;
+
+    return ret;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::PopOverrideMaterial(hsGMaterial* restore)
+{
+    hsGMaterial *pop = fOverrideMat.back();
+    fOverrideMat.pop_back();
+    hsRefCnt_SafeUnRef(pop);
+
+    if (fCurrMaterial == pop)
+        fForceMatHandle = true;
+}
+
+
+template <class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::AppendLayerInterface(plLayerInterface* li, bool onAllLayers)
+{
+    fForceMatHandle = true;
+    if (onAllLayers)
+        return fOverAllLayer = li->Attach(fOverAllLayer);
+    else
+        return fOverBaseLayer = li->Attach(fOverBaseLayer);
+}
+
+
+template <class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::RemoveLayerInterface(plLayerInterface* li, bool onAllLayers)
+{
+    fForceMatHandle = true;
+
+    if (onAllLayers) {
+        if (!fOverAllLayer)
+            return nullptr;
+        return fOverAllLayer = fOverAllLayer->Remove(li);
+    }
+
+    if (!fOverBaseLayer)
+        return nullptr;
+
+    return fOverBaseLayer = fOverBaseLayer->Remove(li);
+}
+
+
+template <class DeviceType>
+hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(const hsGMatState& state, bool on)
+{
+    hsGMatState ret = GetMaterialOverride(on);
+    if (on) {
+        fMatOverOn |= state;
+        fMatOverOff -= state;
+    } else {
+        fMatOverOff |= state;
+        fMatOverOn -= state;
+    }
+    fForceMatHandle = true;
+    return ret;
+}
+
+
+template <class DeviceType>
+hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on)
+{
+    hsGMatState ret = GetMaterialOverride(on);
+    if (on) {
+        fMatOverOn[cat] |= which;
+        fMatOverOff[cat] &= ~which;
+    } else {
+        fMatOverOn[cat] &= ~which;
+        fMatOverOff[cat] |= which;
+    }
+    fForceMatHandle = true;
+    return ret;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::PopMaterialOverride(const hsGMatState& restore, bool on)
+{
+    if (on) {
+        fMatOverOn = restore;
+        fMatOverOff.Clear(restore);
+    } else {
+        fMatOverOff = restore;
+        fMatOverOn.Clear(restore);
+    }
+    fForceMatHandle = true;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::SubmitShadowSlave(plShadowSlave* slave)
+{
+    // Check that it's a valid slave.
+    if (!(slave && slave->fCaster && slave->fCaster->GetKey()))
+        return;
+
+    // Ref the shadow caster so we're sure it will still be around when we go to
+    // render it.
+    slave->fCaster->GetKey()->RefObject();
+
+    // Keep the shadow slaves in a priority sorted list. For performance reasons,
+    // we may want only the strongest N or those of a minimum priority.
+    size_t i;
+    for (i = 0; i < fShadows.size(); i++) {
+        if (slave->fPriority <= fShadows[i]->fPriority)
+            break;
+    }
+
+    // Note that fIndex is no longer the index in the fShadows list, but
+    // is still used as a unique identifier for this slave.
+    slave->fIndex = fShadows.size();
+    fShadows.insert(fShadows.begin() + i, slave);
+}
+
+
+template <class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::PushPiggyBackLayer(plLayerInterface* li)
+{
+    fPiggyBackStack.push_back(li);
+
+    fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
+
+    fForceMatHandle = true;
+
+    return li;
+}
+
+
+template <class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::PopPiggyBackLayer(plLayerInterface* li)
+{
+    auto iter = std::find(fPiggyBackStack.cbegin(), fPiggyBackStack.cend(), li);
+    if (iter == fPiggyBackStack.cend())
+        return nullptr;
+
+    fPiggyBackStack.erase(iter);
+
+    fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
+
+    fForceMatHandle = true;
+
+    return li;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::SetViewTransform(const plViewTransform& v)
+{
+    fView.SetViewTransform(v);
+
+    if (!v.GetScreenWidth() || !v.GetScreenHeight())
+        fView.GetViewTransform().SetScreenSize(uint16_t(fOrigWidth), uint16_t(fOrigHeight));
+
+    fView.fCullTreeDirty = true;
+    fView.fWorldToCamLeftHanded = fView.GetWorldToCamera().GetParity();
+
+    IWorldToCameraToDevice();
+}
+
+
+
+
+/*** PROTECTED METHODS *******************************************************/
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IAttachSlaveToReceivers(size_t which, plDrawableSpans* drawable, const std::vector<int16_t>& visList)
+{
+    plShadowSlave* slave = fShadows[which];
+
+    // Whether the drawable is a character affects which lights/shadows affect it.
+    bool isChar = drawable->GetNativeProperty(plDrawable::kPropCharacter);
+
+    // If the shadow is part of a light group, it gets handled in ISetShadowFromGroup.
+    // Unless the drawable is a character (something that moves around indeterminately,
+    // like the avatar or a physical object), and the shadow affects all characters.
+    if (slave->ObeysLightGroups() && !(slave->IncludesChars() && isChar))
+        return;
+
+    // Do a space tree harvest looking for spans that are visible and whose bounds
+    // intercect the shadow volume.
+    plSpaceTree* space = drawable->GetSpaceTree();
+
+    static hsBitVector cache;
+    cache.Clear();
+    space->EnableLeaves(visList, cache);
+
+    static std::vector<int16_t> hitList;
+    hitList.clear();
+    space->HarvestEnabledLeaves(slave->fIsect, cache, hitList);
+
+    // For the visible spans that intercect the shadow volume, attach the shadow
+    // to all appropriate for receiving this shadow map.
+    for (int16_t idx : hitList) {
+        const plSpan* span = drawable->GetSpan(idx);
+        hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
+
+        // Check that the span isn't flagged as unshadowable, or has
+        // a material that we can't shadow onto.
+        if (!IReceivesShadows(span, mat))
+            continue;
+
+        // Check for self shadowing. If the shadow doesn't want self shadowing,
+        // and the span is part of the shadow caster, then skip.
+        if (!IAcceptsShadow(span, slave))
+            continue;
+
+        // Add it to this span's shadow list for this frame.
+        span->AddShadowSlave(fShadows[which]->fIndex);
+    }
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IAttachShadowsToReceivers(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
+{
+    for (size_t i = 0; i < fShadows.size(); i++)
+        IAttachSlaveToReceivers(i, drawable, visList);
+}
+
+
+template <class DeviceType>
+bool pl3DPipeline<DeviceType>::IAcceptsShadow(const plSpan* span, plShadowSlave* slave)
+{
+    // The span's shadow bits records which shadow maps that span was rendered
+    // into.
+    return slave->SelfShadow() || !span->IsShadowBitSet(slave->fIndex);
+}
+
+
+template <class DeviceType>
+bool pl3DPipeline<DeviceType>::IReceivesShadows(const plSpan* span, hsGMaterial* mat)
+{
+    if (span->fProps & plSpan::kPropNoShadow)
+        return false;
+
+    if (span->fProps & plSpan::kPropForceShadow)
+        return true;
+
+    if (span->fProps & (plSpan::kPropSkipProjection | plSpan::kPropProjAsVtx))
+        return false;
+
+    if ((fMaxLayersAtOnce < 3) &&
+        (mat->GetLayer(0)->GetTexture()) &&
+        (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha))
+        return false;
+
+    return true;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo)
+{
+    hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
+
+    // Check that this span/material combo can receive shadows at all.
+    if (!IReceivesShadows(span, mat))
+        return;
+
+    const hsBitVector& slaveBits = liInfo->GetSlaveBits();
+
+    for (plShadowSlave* shadow : fShadows) {
+        if (slaveBits.IsBitSet(shadow->fIndex)) {
+            // Check self shadowing.
+            if (IAcceptsShadow(span, shadow)) {
+                // Check for overlapping bounds.
+                if (shadow->fIsect->Test(span->fWorldBounds) != kVolumeCulled)
+                    span->AddShadowSlave(shadow->fIndex);
+            }
+        }
+    }
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
+{
+    if (fView.fRenderState & kRenderNoLights)
+        return;
+
+    if (visList.empty())
+        return;
+
+    plProfile_BeginTiming(FindLights);
+
+    // First add in the explicit lights (from LightGroups).
+    // Refresh the lights as they are added (actually a lazy eval).
+    plProfile_BeginTiming(FindPerm);
+    for (int16_t idx : visList) {
+        drawable->GetSpan(idx)->ClearLights();
+
+        if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights))
+            continue;
+
+        // Set the bits for the lights added from the permanent lists (during ClearLights()).
+        const std::vector<plLightInfo*>& permaLights = drawable->GetSpan(idx)->fPermaLights;
+        for (plLightInfo* permaLight : permaLights) {
+            permaLight->Refresh();
+            // If it casts a shadow, attach the shadow now.
+            if (permaLight->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaLight->IsIdle())
+                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaLight);
+        }
+
+        const std::vector<plLightInfo*>& permaProjs = drawable->GetSpan(idx)->fPermaProjs;
+        for (plLightInfo* permaProj : permaProjs) {
+            permaProj->Refresh();
+            // If it casts a shadow, attach the shadow now.
+            if (permaProj->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaProj->IsIdle())
+                ISetShadowFromGroup(drawable, drawable->GetSpan(idx), permaProj);
+        }
+    }
+    plProfile_EndTiming(FindPerm);
+
+    if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights)) {
+        plProfile_EndTiming(FindLights);
+        return;
+    }
+
+    // Sort the incoming spans as either
+    // A) moving - affected by all lights - moveList
+    // B) specular - affected by specular lights - specList
+    // C) visible - affected by moving lights - visList
+    static std::vector<int16_t> tmpList;
+    static std::vector<int16_t> moveList;
+    static std::vector<int16_t> specList;
+
+    moveList.clear();
+    specList.clear();
+
+    plProfile_BeginTiming(FindSpan);
+    for (int16_t idx : visList) {
+        const plSpan* span = drawable->GetSpan(idx);
+
+        if (span->fProps & plSpan::kPropRunTimeLight) {
+            moveList.emplace_back(idx);
+            specList.emplace_back(idx);
+        } else if (span->fProps & plSpan::kPropMatHasSpecular) {
+            specList.emplace_back(idx);
+        }
+    }
+    plProfile_EndTiming(FindSpan);
+
+    // Make a list of lights that can potentially affect spans in this drawable
+    // based on the drawables bounds and properties.
+    // If the drawable has the PropCharacter property, it is affected by lights
+    // in fCharLights, else only by the smaller list of fVisLights.
+
+    plProfile_BeginTiming(FindActiveLights);
+    static std::vector<plLightInfo*> lightList;
+    lightList.clear();
+
+    if (drawable->GetNativeProperty(plDrawable::kPropCharacter)) {
+        for (plLightInfo* charLight : fCharLights) {
+            if (charLight->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()))
+                lightList.emplace_back(charLight);
+        }
+    } else {
+        for (plLightInfo* visLight : fVisLights) {
+            if (visLight->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()))
+                lightList.emplace_back(visLight);
+        }
+    }
+    plProfile_EndTiming(FindActiveLights);
+
+    // Loop over the lights and for each light, extract a list of the spans that light
+    // affects. Append the light to each spans list with a scalar strength of how strongly
+    // the light affects it. Since the strength is based on the object's center position,
+    // it's not very accurate, but good enough for selecting which lights to use.
+
+    plProfile_BeginTiming(ApplyActiveLights);
+    for (plLightInfo* light : lightList) {
+        tmpList.clear();
+        if (light->GetProperty(plLightInfo::kLPMovable)) {
+            plProfile_BeginTiming(ApplyMoving);
+
+            const std::vector<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+                visList,
+                tmpList,
+                drawable->GetNativeProperty(plDrawable::kPropCharacter));
+
+            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
+            bool proj = nullptr != light->GetProjection();
+            if (fView.fRenderState & kRenderNoProjection)
+                proj = false;
+
+            for (int16_t litIdx : litList) {
+                // Use the light IF light is enabled and
+                //      1) light is movable
+                //      2) span is movable, or
+                //      3) Both the light and the span have specular
+                const plSpan* span = drawable->GetSpan(litIdx);
+                bool currProj = proj;
+
+                if (span->fProps & plSpan::kPropProjAsVtx)
+                    currProj = false;
+
+                if (!(currProj && (span->fProps & plSpan::kPropSkipProjection))) {
+                    float strength, scale;
+
+                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
+
+                    // We can't pitch a light because it's "strength" is zero, because the strength is based
+                    // on the center of the span and isn't conservative enough. We can pitch based on the
+                    // scale though, since a light scaled down to zero will have no effect no where.
+                    if (scale > 0) {
+                        plProfile_Inc(FindLightsFound);
+                        span->AddLight(light, strength, scale, currProj);
+                    }
+                }
+            }
+            plProfile_EndTiming(ApplyMoving);
+        } else if (light->GetProperty(plLightInfo::kLPHasSpecular)) {
+            if (specList.empty())
+                continue;
+
+            plProfile_BeginTiming(ApplyToSpec);
+
+            const std::vector<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+                specList,
+                tmpList,
+                drawable->GetNativeProperty(plDrawable::kPropCharacter));
+
+            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
+            bool proj = nullptr != light->GetProjection();
+            if (fView.fRenderState & kRenderNoProjection)
+                proj = false;
+
+            for (int16_t litIdx : litList) {
+                // Use the light IF light is enabled and
+                //      1) light is movable
+                //      2) span is movable, or
+                //      3) Both the light and the span have specular
+                const plSpan* span = drawable->GetSpan(litIdx);
+                bool currProj = proj;
+
+                if (span->fProps & plSpan::kPropProjAsVtx)
+                    currProj = false;
+
+                if (!(currProj && (span->fProps & plSpan::kPropSkipProjection))) {
+                    float strength, scale;
+
+                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
+
+                    // We can't pitch a light because it's "strength" is zero, because the strength is based
+                    // on the center of the span and isn't conservative enough. We can pitch based on the
+                    // scale though, since a light scaled down to zero will have no effect no where.
+                    if (scale > 0) {
+                        plProfile_Inc(FindLightsFound);
+                        span->AddLight(light, strength, scale, currProj);
+                    }
+                }
+            }
+            plProfile_EndTiming(ApplyToSpec);
+        } else {
+            if (moveList.empty())
+                continue;
+
+            plProfile_BeginTiming(ApplyToMoving);
+
+            const std::vector<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+                moveList,
+                tmpList,
+                drawable->GetNativeProperty(plDrawable::kPropCharacter));
+
+            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
+            bool proj = nullptr != light->GetProjection();
+            if (fView.fRenderState & kRenderNoProjection)
+                proj = false;
+
+            for (int16_t litIdx : litList) {
+                // Use the light IF light is enabled and
+                //      1) light is movable
+                //      2) span is movable, or
+                //      3) Both the light and the span have specular
+                const plSpan* span = drawable->GetSpan(litIdx);
+                bool currProj = proj;
+
+                if (span->fProps & plSpan::kPropProjAsVtx)
+                    currProj = false;
+
+                if (!(currProj && (span->fProps & plSpan::kPropSkipProjection))) {
+                    float strength, scale;
+
+                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
+
+                    // We can't pitch a light because it's "strength" is zero, because the strength is based
+                    // on the center of the span and isn't conservative enough. We can pitch based on the
+                    // scale though, since a light scaled down to zero will have no effect no where.
+                    if (scale > 0) {
+                        plProfile_Inc(FindLightsFound);
+                        span->AddLight(light, strength, scale, currProj);
+                    }
+                }
+            }
+            plProfile_EndTiming(ApplyToMoving);
+        }
+    }
+    plProfile_EndTiming(ApplyActiveLights);
+
+    IAttachShadowsToReceivers(drawable, visList);
+
+    plProfile_EndTiming(FindLights);
+}
+
+
+template <class DeviceType>
+hsMatrix44 pl3DPipeline<DeviceType>::IGetCameraToNDC()
+{
+    hsMatrix44 cam2ndc = GetViewTransform().GetCameraToNDC();
+
+    if (fView.IsPerspective()) {
+        // Want to scale down W and offset in Z without
+        // changing values of x/w, y/w. This is just
+        // minimal math for
+        // Mproj' * p = Mscaletrans * Mproj * p
+        // where Mscaletrans =
+        // [ s 0 0 0 ]
+        // [ 0 s 0 0 ]
+        // [ 0 0 s 0 ]
+        // [ 0 0 t s ]
+        // Resulting matrix Mproj' is not exactly "Fog Friendly",
+        // but is close enough.
+        // Resulting point is [sx, sy, sz + tw, sw] and after divide
+        // is [x/w, y/w, z/w + t/s, 1/sw]
+
+        float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
+        float zTrans = -scale * float(fCurrRenderLayer) * fTweaks.fPerspLayerTrans;
+
+        cam2ndc.fMap[0][0] *= scale;
+        cam2ndc.fMap[1][1] *= scale;
+
+        cam2ndc.fMap[2][2] *= scale;
+        cam2ndc.fMap[2][2] += zTrans * cam2ndc.fMap[3][2];
+        cam2ndc.fMap[3][2] *= scale;
+    } else {
+        plConst(float) kZTrans = -1.e-4f;
+        cam2ndc.fMap[2][3] += kZTrans * fCurrRenderLayer;
+    }
+
+    return cam2ndc;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::ISetLocalToWorld(const hsMatrix44& l2w, const hsMatrix44& w2l)
+{
+    fView.SetLocalToWorld(l2w);
+    fView.SetWorldToLocal(w2l);
+
+    fView.fViewVectorsDirty = true;
+
+    // We keep track of parity for winding order culling.
+    fView.fLocalToWorldLeftHanded = fView.GetLocalToWorld().GetParity();
+
+    ILocalToWorldToDevice();
+}
+
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::ITransformsToDevice()
+{
+    if (fView.fXformResetFlags & fView.kResetCamera)
+        IWorldToCameraToDevice();
+
+    if (fView.fXformResetFlags & fView.kResetL2W)
+        ILocalToWorldToDevice();
+
+    if (fView.fXformResetFlags & fView.kResetProjection)
+        IProjectionMatrixToDevice();
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IProjectionMatrixToDevice()
+{
+    fDevice.SetProjectionMatrix(IGetCameraToNDC());
+    fView.fXformResetFlags &= ~fView.kResetProjection;
+}
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IWorldToCameraToDevice()
+{
+    fDevice.SetWorldToCameraMatrix(fView.GetWorldToCamera());
+    fView.fXformResetFlags &= ~fView.kResetCamera;
+
+    fFrame++;
+}
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::ILocalToWorldToDevice()
+{
+    fDevice.SetLocalToWorldMatrix(fView.GetLocalToWorld());
+    fView.fXformResetFlags &= ~fView.kResetL2W;
+}
 
 #endif //_pl3DPipeline_inc_

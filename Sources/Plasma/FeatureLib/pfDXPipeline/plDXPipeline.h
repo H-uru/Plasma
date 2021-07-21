@@ -175,7 +175,7 @@ class plCubicEnvironmap;
 class plDXRenderTargetRef;
 class plStatusLogDrawer;
 
-class plDXPipeline : public pl3DPipeline
+class plDXPipeline : public pl3DPipeline<plDXDevice>
 {
 protected:
     enum {
@@ -545,7 +545,7 @@ public:
     virtual ~plDXPipeline();
 
     CLASSNAME_REGISTER( plDXPipeline );
-    GETINTERFACE_ANY( plDXPipeline, pl3DPipeline );
+    GETINTERFACE_ANY( plDXPipeline, plPipeline);
 
     virtual IDirect3DDevice9*           GetD3DDevice() const { return fD3DDevice; }
 

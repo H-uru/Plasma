@@ -40,8 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsWindows.h"
+#ifndef pfGLPipelineCreatable_inc
+#define pfGLPipelineCreatable_inc
 
-#include <d3d9.h>
-#include <ddraw.h>
-#include <DirectXMath.h>
+#include "plGLPipeline.h"
+REGISTER_NONCREATABLE(plGLPipeline);
+
+#endif // pfGLPipelineCreatable_inc

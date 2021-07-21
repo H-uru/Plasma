@@ -86,7 +86,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDynamicEnvMap.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/plFogEnvironment.h"
-#include "plPipeline/plPipelineCreate.h"
 #include "plPipeline/plRenderTarget.h"
 #include "plPipeline/plStatusLogDrawer.h"
 #include "plPipeline/hsWinRef.h"
@@ -129,7 +128,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#define MF_TOSSER
 
-int mfCurrentTest = 100;
+extern int mfCurrentTest;
 //#define MF_ENABLE_HACKOFF
 #ifdef MF_ENABLE_HACKOFF
 //WHITE
@@ -327,10 +326,6 @@ plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
 plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
 plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
 plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
-
-static const float kPerspLayerScale = 0.00001f;
-static const float kPerspLayerScaleW = 0.001f;
-static const float kPerspLayerTrans = 0.00002f;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 /// Fun inlines for keeping track of surface creation/deletion memory
@@ -12245,31 +12240,4 @@ void plDXPipeline::IDrawClothingQuad(float x, float y, float w, float h,
         IGetD3DError();
 #endif // HS_DEBUGGING
     fD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, ptr, kVSize);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Test hackery as R&D for water
-///////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////
-// End Test hackery as R&D for water
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-//// Functions from Other Classes That Need to Be Here to Compile Right ///////
-///////////////////////////////////////////////////////////////////////////////
-
-plPipeline  *plPipelineCreate::ICreateDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devMode )
-{
-    plDXPipeline    *pipe = new plDXPipeline( hWnd, devMode );
-
-    // Taken out 8.1.2001 mcn - If we have an error, still return so the client can grab the string
-//  if (pipe->GetErrorString() != nullptr)
-//  {
-//      delete pipe;
-//      pipe = nullptr;
-//  }
-
-    return pipe;
 }

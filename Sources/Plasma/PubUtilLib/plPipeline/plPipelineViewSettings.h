@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// General Settings /////////////////////////////////////////////////////////
 
 class plRenderRequest;
-class pl3DPipeline;
+class plPipeline;
 class plDrawableSpans;
 class plVisMgr;
 class plSceneObject;
@@ -69,7 +69,7 @@ class plSceneObject;
 class plPipelineViewSettings
 {
 protected:
-    pl3DPipeline*               fPipeline;
+    plPipeline*                 fPipeline;
 
     uint32_t                    fDrawableTypeMask;
     uint32_t                    fSubDrawableTypeMask;
@@ -153,7 +153,7 @@ public:
 
 
     /** Initialize the ViewSettings to default (normal/neutral) values. */
-    void    Reset(pl3DPipeline* pipeline);
+    void    Reset(plPipeline* pipeline);
 
     /** Set the current hither and yon. */
     void    SetDepth(float hither, float yon);

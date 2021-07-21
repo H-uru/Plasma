@@ -39,31 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+//  plGLPipeline Class Functions                                             //
+//  plPipeline derivative for OpenGL ES                                      //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#include "HeadSpin.h"
+#include "hsWindows.h"
+#include "plPipeline/hsWinRef.h"
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include "plGLPipeline.h"
 
-#if defined(PLASMA_PIPELINE_DX)
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
+#ifdef HS_SIMD_INCLUDE
+#  include HS_SIMD_INCLUDE
 #endif
-
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-
-#if defined(PLASMA_PIPELINE_GL)
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif
-
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
-
-#endif // pfAllCreatables_inc
