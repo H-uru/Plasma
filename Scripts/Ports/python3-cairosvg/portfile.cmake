@@ -24,13 +24,13 @@ endif()
 # this should be the tools/python3 directory. In other cases, it should be CURRENT_INSTALLED_DIR.
 vcpkg_execute_in_download_mode(
     COMMAND "${PYTHON_EXECUTABLE}" -c "import sys;sys.stdout.write(sys.exec_prefix)"
+    WORKING_DIRECTORY "${INSTALLED_PYTHON_PREFIX}"
     OUTPUT_VARIABLE INSTALLED_PYTHON_PREFIX
-    LOGNAME query-prefix
 )
 vcpkg_execute_in_download_mode(
     COMMAND "${PYTHON_EXECUTABLE}" -c "import sys,distutils.sysconfig;sys.stdout.write(distutils.sysconfig.get_python_lib(plat_specific=False,standard_lib=False))"
+    WORKING_DIRECTORY "${INSTALLED_PYTHON_PREFIX}"
     OUTPUT_VARIABLE INSTALLED_SITE_PACKAGES_DIR
-    LOGNAME query-site-packages
 )
 
 # The returned values from above are absolute paths into the installed tree. However, we cannot
@@ -116,6 +116,8 @@ message(STATUS "Installing cairosvg from pip")
 file(TO_NATIVE_PATH "${CURRENT_PYTHON_PREFIX}" _PIP_PREFIX)
 vcpkg_execute_required_process(
     COMMAND "${PYTHON_EXECUTABLE}" -m pip install --prefix "${_PIP_PREFIX}" "cairosvg==${CAIROSVG_VERSION}"
+    ALLOW_IN_DOWNLOAD_MODE
+    WORKING_DIRECTORY "${CURRENT_PYTHON_PREFIX}"
     LOGNAME install
 )
 # Perform a sample import of cairosvg to ensure all this weird hacking actually works.
@@ -123,6 +125,7 @@ message(STATUS "Testing cairosvg")
 set(ENV{PYTHONPATH} "${CURRENT_SITE_PACKAGES_DIR}")
 vcpkg_execute_required_process(
     COMMAND "${PYTHON_EXECUTABLE}" -c "import cairosvg"
+    ALLOW_IN_DOWNLOAD_MODE
     WORKING_DIRECTORY "${CURRENT_PYTHON_PREFIX}"
     LOGNAME test
 )
