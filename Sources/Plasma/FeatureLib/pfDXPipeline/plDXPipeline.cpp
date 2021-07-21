@@ -249,8 +249,6 @@ static const enum _D3DTRANSFORMSTATETYPE    sTextureStages[ 8 ] =
     D3DTS_TEXTURE4, D3DTS_TEXTURE5, D3DTS_TEXTURE6, D3DTS_TEXTURE7
 };
 
-static const float kAvTexPoolShrinkThresh = 30.f; // seconds
-
 // This caps the number of D3D lights we use. We'll use up to the max allowed
 // or this number, whichever is smaller. (This is to prevent us going haywire
 // on trying to allocate an array for ALL of the lights in the Ref device.)
@@ -1801,8 +1799,8 @@ void plDXPipeline::IReleaseDynamicBuffers()
     fVtxRefTime++;
 
     // PlateMgr has a POOL_DEFAULT vertex buffer for drawing quads.
-    if( fPlateMgr )
-        fPlateMgr->IReleaseGeometry();
+    if (plDXPlateManager* pm = static_cast<plDXPlateManager*>(fPlateMgr))
+        pm->IReleaseGeometry();
 
     // Also has POOL_DEFAULT vertex buffer.
     plDXTextFont::ReleaseShared(fD3DDevice);
@@ -1823,8 +1821,8 @@ void plDXPipeline::ICreateDynamicBuffers()
 
     plDXTextFont::CreateShared(fD3DDevice);
 
-    if( fPlateMgr )
-        fPlateMgr->ICreateGeometry(this);
+    if (plDXPlateManager* pm = static_cast<plDXPlateManager*>(fPlateMgr))
+        pm->ICreateGeometry(this);
 
     fNextDynVtx = 0;
 
@@ -8628,18 +8626,6 @@ void plDXPipeline::IEndAllocUnManaged()
     fD3DDevice->EvictManagedResources();
 }
 
-bool plDXPipeline::CheckResources()
-{
-    if ((fClothingOutfits.size() <= 1 && fAvRTPool.size() > 1) ||
-        (fAvRTPool.size() >= 16 && (fAvRTPool.size() / 2 >= fClothingOutfits.size())))
-    {
-        return (hsTimer::GetSysSeconds() - fAvRTShrinkValidSince > kAvTexPoolShrinkThresh);
-    }
-
-    fAvRTShrinkValidSince = hsTimer::GetSysSeconds();
-    return (fAvRTPool.size() < fClothingOutfits.size());
-}
-
 // LoadResources ///////////////////////////////////////////////////////////////////////
 // Basically, we have to load anything that goes into POOL_DEFAULT before
 // anything into POOL_MANAGED, or the memory manager gets confused.
@@ -11923,115 +11909,6 @@ void plDXPipeline::IDisableLightsForShadow()
 void plDXPipeline::IEnableShadowLight(plShadowSlave* slave)
 {
     fD3DDevice->LightEnable(slave->fLightIndex, true);
-}
-
-void plDXPipeline::SubmitClothingOutfit(plClothingOutfit* co)
-{
-    auto iter = std::find(fClothingOutfits.cbegin(), fClothingOutfits.cend(), co);
-    if (iter == fClothingOutfits.cend())
-    {
-        fClothingOutfits.emplace_back(co);
-        auto prevIter = std::find(fPrevClothingOutfits.cbegin(), fPrevClothingOutfits.cend(), co);
-        if (prevIter != fPrevClothingOutfits.cend())
-            fPrevClothingOutfits.erase(prevIter);
-        else
-            co->GetKey()->RefObject();
-    }
-}
-
-void plDXPipeline::IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits)
-{
-    while (!outfits->empty())
-    {
-        plClothingOutfit *co = outfits->back();
-        outfits->pop_back();
-        IFreeAvRT((plRenderTarget*)co->fTargetLayer->GetTexture());
-        co->fTargetLayer->SetTexture(nullptr);
-        co->GetKey()->UnRefObject();
-    }
-}
-
-void plDXPipeline::IFillAvRTPool()
-{
-    fAvNextFreeRT = 0;
-    fAvRTShrinkValidSince = hsTimer::GetSysSeconds();
-    size_t numRTs = 1;
-    if (fClothingOutfits.size() > 1)
-    {
-        // Just jump to 8 for starters so we don't have to refresh for the 2nd, 4th, AND 8th player
-        numRTs = 8;
-        while (numRTs < fClothingOutfits.size())
-            numRTs *= 2;
-    }
-
-    // I could see a 32MB video card going down to 64x64 RTs in extreme cases
-    // (over 100 players onscreen at once), but really, if such hardware is ever trying to push 
-    // that, the low texture resolution is not going to be your major concern.
-    for (fAvRTWidth = 1024 >> plMipmap::GetGlobalLevelChopCount(); fAvRTWidth >= 32; fAvRTWidth /= 2)
-    {
-        if (IFillAvRTPool(numRTs, fAvRTWidth))
-            return;
-
-        // Nope? Ok, lower the resolution and try again.
-    }
-}
-
-bool plDXPipeline::IFillAvRTPool(uint16_t numRTs, uint16_t width)
-{
-    fAvRTPool.resize(numRTs);
-    for (uint16_t i = 0; i < numRTs; i++)
-    {
-        uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsProjected;
-        uint8_t bitDepth = 32;
-        uint8_t zDepth = 0;
-        uint8_t stencilDepth = 0;
-        fAvRTPool[i] = new plRenderTarget(flags, width, width, bitDepth, zDepth, stencilDepth);
-
-        // If anyone fails, release everyone we've created.
-        if (!MakeRenderTargetRef(fAvRTPool[i]))
-        {
-            for (uint16_t j = 0; j <= i; j++)
-            {
-                delete fAvRTPool[j];
-            }
-            return false;
-        }
-    }
-    return true;
-}
-
-void plDXPipeline::IReleaseAvRTPool()
-{
-    for (plClothingOutfit* outfit : fClothingOutfits)
-    {
-        outfit->fTargetLayer->SetTexture(nullptr);
-    }
-    for (plClothingOutfit* outfit : fPrevClothingOutfits)
-    {
-        outfit->fTargetLayer->SetTexture(nullptr);
-    }
-    for (plRenderTarget* avRT : fAvRTPool)
-    {
-        delete(avRT);
-    }
-    fAvRTPool.clear();
-}
-
-plRenderTarget *plDXPipeline::IGetNextAvRT()
-{
-    return fAvRTPool[fAvNextFreeRT++];
-}
-
-void plDXPipeline::IFreeAvRT(plRenderTarget* tex)
-{
-    auto iter = std::find(fAvRTPool.begin(), fAvRTPool.end(), tex);
-    if (iter != fAvRTPool.end())
-    {
-        hsAssert(iter - fAvRTPool.begin() < fAvNextFreeRT, "Freeing an avatar RT that's already free?");
-        *iter = fAvRTPool[fAvNextFreeRT - 1];
-        fAvRTPool[fAvNextFreeRT - 1] = tex;
-        fAvNextFreeRT--;
-    }
 }
 
 struct plAVTexVert

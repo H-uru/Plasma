@@ -57,13 +57,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeDebugFlags.h"
 #include "plProfile.h"
 #include "plTweak.h"
+#include "hsTimer.h"
 
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plSceneObject.h"
 
+#include "plAvatar/plAvatarClothing.h"
 #include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plGBufferGroup.h"
 #include "plDrawable/plSpaceTree.h"
 #include "plDrawable/plSpanTypes.h"
+#include "plGImage/plMipmap.h"
+#include "plGImage/plCubicEnvironmap.h"
 #include "plGLight/plLightInfo.h"
 #include "plGLight/plShadowSlave.h"
 #include "plGLight/plShadowCaster.h"
@@ -71,13 +76,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"
 #include "plSurface/hsGMaterial.h"
-#include "plSurface/plLayerInterface.h"
+#include "plSurface/plLayer.h"
 
-class hsGMaterial;
-class plLayerInterface;
-class plLightInfo;
-class plShadowSlave;
-class plSpan;
+class plDebugTextManager;
+class plPlateManager;
 
 plProfile_Extern(RenderScene);
 plProfile_Extern(VisEval);
@@ -101,6 +103,8 @@ plProfile_Extern(FindLightsPerm);
 static const float kPerspLayerScale  = 0.00001f;
 static const float kPerspLayerScaleW = 0.001f;
 static const float kPerspLayerTrans  = 0.00002f;
+
+static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
 template <class DeviceType>
 class pl3DPipeline : public plPipeline
@@ -136,6 +140,7 @@ protected:
 
     typename DeviceType::VertexBufferRef*   fVtxBuffRefList;
     typename DeviceType::IndexBufferRef*    fIdxBuffRefList;
+    typename DeviceType::TextureRef*        fTextureRefList;
 
     hsGDeviceRef*                           fLayerRef[8];
 
@@ -171,7 +176,20 @@ protected:
     uint32_t                                fFrame;     // inc'd every time the camera moves.
     uint32_t                                fRenderCnt; // inc'd every begin scene.
 
+    uint32_t                                fVtxRefTime;
+
     bool                                    fVSync;
+
+    plPlateManager*                         fPlateMgr;
+    plDebugTextManager*                     fDebugTextMgr;
+
+    // Avatar Texture Rendering
+    std::vector<plClothingOutfit*>          fClothingOutfits;
+    std::vector<plClothingOutfit*>          fPrevClothingOutfits;
+    double                                  fAvRTShrinkValidSince;
+    std::vector<plRenderTarget*>            fAvRTPool;
+    uint16_t                                fAvRTWidth;
+    uint32_t                                fAvNextFreeRT;
 
 
 public:
@@ -379,7 +397,8 @@ public:
         return fView.GetMaxCullNodes();
     }
 
-    //virtual bool CheckResources() = 0;
+    bool CheckResources() override;
+
     //virtual void LoadResources() = 0;
 
     void SetProperty(uint32_t prop, bool on) override {
@@ -656,7 +675,8 @@ public:
      */
     void SubmitShadowSlave(plShadowSlave* slave) override;
 
-    //virtual void SubmitClothingOutfit(plClothingOutfit* co) = 0;
+    void SubmitClothingOutfit(plClothingOutfit* co) override;
+
     //virtual bool SetGamma(float eR, float eG, float eB) = 0;
     //virtual bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0;
     //virtual bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) = 0;
@@ -746,6 +766,18 @@ protected:
      */
     void ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo);
 
+    void IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits);
+    void IFillAvRTPool();
+
+    /**
+     * Returns true if we successfully filled the pool. Otherwise cleans up.
+     */
+    bool IFillAvRTPool(uint16_t numRTs, uint16_t width);
+
+    void IReleaseAvRTPool();
+    plRenderTarget* IGetNextAvRT();
+    void IFreeAvRT(plRenderTarget* tex);
+
 
     /**
      * For every span in the list of visible span indices, find the list of
@@ -828,7 +860,15 @@ pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fColorDepth(32),
     fInSceneDepth(),
     fTime(),
-    fFrame()
+    fFrame(),
+    fRenderCnt(),
+    fVtxRefTime(),
+    fVSync(),
+    fPlateMgr(),
+    fDebugTextMgr(),
+    fAvRTShrinkValidSince(),
+    fAvRTWidth(1024),
+    fAvNextFreeRT()
 {
 
     fOverLayerStack.clear();
@@ -878,6 +918,9 @@ pl3DPipeline<DeviceType>::~pl3DPipeline()
     // Tell the light infos to unlink themselves
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
+
+    IClearClothingOutfits(&fClothingOutfits);
+    IClearClothingOutfits(&fPrevClothingOutfits);
 }
 
 
@@ -1050,6 +1093,20 @@ void pl3DPipeline<DeviceType>::EndVisMgr(plVisMgr* visMgr)
 {
     fCharLights.clear();
     fVisLights.clear();
+}
+
+
+template <class DeviceType>
+bool pl3DPipeline<DeviceType>::CheckResources()
+{
+    if ((fClothingOutfits.size() <= 1 && fAvRTPool.size() > 1) ||
+        (fAvRTPool.size() >= 16 && (fAvRTPool.size() / 2 >= fClothingOutfits.size())))
+    {
+        return (hsTimer::GetSysSeconds() - fAvRTShrinkValidSince > kAvTexPoolShrinkThresh);
+    }
+
+    fAvRTShrinkValidSince = hsTimer::GetSysSeconds();
+    return (fAvRTPool.size() < fClothingOutfits.size());
 }
 
 
@@ -1228,6 +1285,22 @@ void pl3DPipeline<DeviceType>::SubmitShadowSlave(plShadowSlave* slave)
 
 
 template <class DeviceType>
+void pl3DPipeline<DeviceType>::SubmitClothingOutfit(plClothingOutfit* co)
+{
+    auto iter = std::find(fClothingOutfits.cbegin(), fClothingOutfits.cend(), co);
+
+    if (iter == fClothingOutfits.cend()) {
+        fClothingOutfits.emplace_back(co);
+        auto prevIter = std::find(fPrevClothingOutfits.cbegin(), fPrevClothingOutfits.cend(), co);
+        if (prevIter != fPrevClothingOutfits.cend())
+            fPrevClothingOutfits.erase(prevIter);
+        else
+            co->GetKey()->RefObject();
+    }
+}
+
+
+template <class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::PushPiggyBackLayer(plLayerInterface* li)
 {
     fPiggyBackStack.push_back(li);
@@ -1382,6 +1455,108 @@ void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, co
                     span->AddShadowSlave(shadow->fIndex);
             }
         }
+    }
+}
+
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits)
+{
+    while (!outfits->empty()) {
+        plClothingOutfit *co = outfits->back();
+        outfits->pop_back();
+        IFreeAvRT((plRenderTarget*)co->fTargetLayer->GetTexture());
+        co->fTargetLayer->SetTexture(nullptr);
+        co->GetKey()->UnRefObject();
+    }
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IFillAvRTPool()
+{
+    fAvNextFreeRT = 0;
+    fAvRTShrinkValidSince = hsTimer::GetSysSeconds();
+    size_t numRTs = 1;
+
+    if (fClothingOutfits.size() > 1) {
+        // Just jump to 8 for starters so we don't have to refresh for the 2nd, 4th, AND 8th player
+        numRTs = 8;
+        while (numRTs < fClothingOutfits.size())
+            numRTs *= 2;
+    }
+
+    // I could see a 32MB video card going down to 64x64 RTs in extreme cases
+    // (over 100 players onscreen at once), but really, if such hardware is ever trying to push
+    // that, the low texture resolution is not going to be your major concern.
+    for (fAvRTWidth = 1024 >> plMipmap::GetGlobalLevelChopCount(); fAvRTWidth >= 32; fAvRTWidth /= 2) {
+        if (IFillAvRTPool(numRTs, fAvRTWidth))
+            return;
+
+        // Nope? Ok, lower the resolution and try again.
+    }
+}
+
+
+template <class DeviceType>
+bool pl3DPipeline<DeviceType>::IFillAvRTPool(uint16_t numRTs, uint16_t width)
+{
+    fAvRTPool.resize(numRTs);
+    for (uint16_t i = 0; i < numRTs; i++)
+    {
+        uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsProjected;
+        uint8_t bitDepth = 32;
+        uint8_t zDepth = 0;
+        uint8_t stencilDepth = 0;
+        fAvRTPool[i] = new plRenderTarget(flags, width, width, bitDepth, zDepth, stencilDepth);
+
+        // If anyone fails, release everyone we've created.
+        if (!MakeRenderTargetRef(fAvRTPool[i]))
+        {
+            for (uint16_t j = 0; j <= i; j++)
+            {
+                delete fAvRTPool[j];
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IReleaseAvRTPool()
+{
+    for (plClothingOutfit* outfit : fClothingOutfits)
+        outfit->fTargetLayer->SetTexture(nullptr);
+
+    for (plClothingOutfit* outfit : fPrevClothingOutfits)
+        outfit->fTargetLayer->SetTexture(nullptr);
+
+    for (plRenderTarget* avRT : fAvRTPool)
+        delete(avRT);
+
+    fAvRTPool.clear();
+}
+
+
+template <class DeviceType>
+plRenderTarget *pl3DPipeline<DeviceType>::IGetNextAvRT()
+{
+    return fAvRTPool[fAvNextFreeRT++];
+}
+
+
+template <class DeviceType>
+void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
+{
+    auto iter = std::find(fAvRTPool.begin(), fAvRTPool.end(), tex);
+    if (iter != fAvRTPool.end()) {
+        hsAssert(iter - fAvRTPool.begin() < fAvNextFreeRT, "Freeing an avatar RT that's already free?");
+        *iter = fAvRTPool[fAvNextFreeRT - 1];
+        fAvRTPool[fAvNextFreeRT - 1] = tex;
+        fAvNextFreeRT--;
     }
 }
 

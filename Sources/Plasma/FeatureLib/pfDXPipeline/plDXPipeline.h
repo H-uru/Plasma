@@ -206,9 +206,6 @@ protected:
         kKTNT                   = 0x1
     };
 
-    plDebugTextManager*         fDebugTextMgr;
-    plDXPlateManager*           fPlateMgr;
-
     // The main D3D interfaces
     LPDIRECT3DDEVICE9       fD3DDevice;     // The D3D rendering device
 
@@ -278,9 +275,6 @@ protected:
     plRenderTarget*                 fBlurDestRTs[kMaxRenderTargetNext];
     IDirect3DVertexBuffer9*         fBlurVBuffers[kMaxRenderTargetNext];
     uint32_t                          fBlurVSHandle;
-
-    std::vector<plClothingOutfit*>  fClothingOutfits;
-    std::vector<plClothingOutfit*>  fPrevClothingOutfits;
 
     // Debug stuff
     plDrawableSpans *fBoundsSpans;
@@ -523,18 +517,8 @@ protected:
     void                IBlurShadowMap(plShadowSlave* slave);
 
     // Avatar Texture Rendering
-    double                      fAvRTShrinkValidSince;
-    std::vector<plRenderTarget*>  fAvRTPool;
-    uint16_t                      fAvRTWidth;
-    uint32_t                      fAvNextFreeRT;
-    void                    IFillAvRTPool();
-    bool                    IFillAvRTPool(uint16_t numRTs, uint16_t width); // Returns true if we successfully filled the pool. Otherwise cleans up.
-    void                    IReleaseAvRTPool();
-    plRenderTarget*         IGetNextAvRT();
-    void                    IFreeAvRT(plRenderTarget* tex);
     void                    IPreprocessAvatarTextures();
     void                    IDrawClothingQuad(float x, float y, float w, float h, float uOff, float vOff, plMipmap *tex);
-    void                    IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits);
 
     void IPrintDeviceInitError();
 
@@ -570,7 +554,6 @@ public:
     bool                        IsFullScreen() const override { return fSettings.fFullscreen; }
     void                        Resize(uint32_t width, uint32_t height) override;
 
-    bool                        CheckResources() override;
     void                        LoadResources() override;    // Tells us where it's a good time to load in unmanaged resources.
 
     // Create a debug text font object
@@ -604,8 +587,6 @@ public:
     // Overriden (Un)Register Light methods
     void            RegisterLight(plLightInfo* light) override;
     void            UnRegisterLight(plLightInfo* light) override;
-
-    void            SubmitClothingOutfit(plClothingOutfit* co) override;
 
     bool            SetGamma(float eR, float eG, float eB) override;
     bool            SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
