@@ -5,7 +5,7 @@ if(NOT VCPKG_TARGET_IS_WINDOWS)
     message(STATUS "Install cairo on Ubuntu with `sudo apt install libcairo2` and on macOS with `brew install cairo`.")
 endif()
 
-set(CAIROSVG_VERSION "2.5.1")
+set(CAIROSVG_VERSION "2.5.2")
 set(INSTALLED_PYTHON_PREFIX "${CURRENT_INSTALLED_DIR}/tools/python3")
 
 # We are running in script mode, so no toolchains are available. Sad.
