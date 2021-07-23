@@ -181,6 +181,7 @@ struct VaultDownloadTrans {
         : callback(), cbParam(), progressCallback(), cbProgressParam(),
           nodeCount(), nodesLeft(), vaultId(), result(kNetSuccess)
     {
+        VaultSuppressCallbacks();
     }
 
     VaultDownloadTrans (const ST::string& _tag, FVaultDownloadCallback _callback,
@@ -190,6 +191,12 @@ struct VaultDownloadTrans {
           cbProgressParam(_cbProgressParam), nodeCount(), nodesLeft(),
           vaultId(_vaultId), result(kNetSuccess), tag(_tag)
     {
+        VaultSuppressCallbacks();
+    }
+
+    ~VaultDownloadTrans()
+    {
+        VaultEnableCallbacks();
     }
 
 
@@ -281,6 +288,8 @@ static std::unordered_map<ST::string, ST::string, ST::hash> s_ageDeviceInboxes;
 
 static bool s_processPlayerInbox = false;
 
+static std::atomic<int> s_suppressCallbacks;
+
 /*****************************************************************************
 *
 *   Local functions
@@ -322,8 +331,10 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
                         VaultProcessUnvisitNote(childLink->node);
                 }
 
-                for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                    cb->cb->AddedChildNode(parentLink->node, childLink->node);
+                if (s_suppressCallbacks == 0) {
+                    for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
+                        cb->cb->AddedChildNode(parentLink->node, childLink->node);
+                }
             }
         }
 
@@ -385,8 +396,10 @@ static void BuildNodeTree (
 
             if (notifyNow || childNode->GetNodeType() != 0) {
                 // We made a new link, so make the callbacks
-                for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                    cb->cb->AddedChildNode(parentNode, childNode);
+                if (s_suppressCallbacks == 0) {
+                    for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
+                        cb->cb->AddedChildNode(parentNode, childNode);
+                }
             }
             else {
                 INotifyAfterDownload* notify = new INotifyAfterDownload(parentNode->GetNodeId(), childNode->GetNodeId());
@@ -547,6 +560,10 @@ static void ChangedVaultNodeFetched (
 
     RelVaultNodeLink* savedLink = s_nodes.Find(node->GetNodeId());
 
+    // Yeah, we are purposefully allowing this global callback to go out,
+    // even if callback suppression has been enabled. The intent behind
+    // that is to suppress spurious callbacks, but node changes are
+    // probably not spurious.
     if (savedLink) {
         for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
             cb->cb->ChangedNode(savedLink->node);
@@ -573,8 +590,10 @@ static void VaultNodeChanged (
         // We are the party responsible for the change, so we already have the
         // latest version of the node; no need to fetch it. However, we do need to fire off
         // the "hey this was saved" callback.
-        for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-            cb->cb->ChangedNode(link->node);
+        if (s_suppressCallbacks == 0) {
+            for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
+                cb->cb->ChangedNode(link->node);
+        }
     } else {
         // We have the node and we weren't the one that changed it, so fetch it.
         NetCliAuthVaultNodeFetch(
@@ -643,7 +662,7 @@ static void VaultNodeAdded (
     RelVaultNodeLink* parentLink    = s_nodes.Find(parentId);
     RelVaultNodeLink* childLink     = s_nodes.Find(childId);
 
-    if (childLink->node->GetNodeType() != 0) {
+    if (childLink->node->GetNodeType() != 0 && s_suppressCallbacks == 0) {
         for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
             cb->cb->AddedChildNode(parentLink->node, childLink->node);
     }
@@ -665,7 +684,7 @@ static void VaultNodeRemoved (
         if (!childLink)
             break;
             
-        if (parentLink->node->IsParentOf(childId, 1)) {
+        if (parentLink->node->IsParentOf(childId, 1) && s_suppressCallbacks == 0) {
             // We have the relationship, so make the callbacks
             for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
                 cb->cb->RemovingChildNode(parentLink->node, childLink->node);
@@ -1031,8 +1050,10 @@ void IRelVaultNode::UnlinkFromRelatives () {
         next = parents.Next(link);
 
         // We have the relationship, so make the callbacks
-        for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-            cb->cb->RemovingChildNode(link->node, this->node);
+        if (s_suppressCallbacks == 0) {
+            for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
+                cb->cb->RemovingChildNode(link->node, this->node);
+        }
 
         link->node->state->Unlink(node);
     }
@@ -1475,6 +1496,16 @@ void VaultUnregisterCallback (VaultCallback * cb) {
     cb->internal = nullptr;
 }
 
+//============================================================================
+void VaultSuppressCallbacks() {
+    ++s_suppressCallbacks;
+}
+
+//============================================================================
+void VaultEnableCallbacks() {
+    --s_suppressCallbacks;
+    hsAssert(s_suppressCallbacks >= 0, "Hmm... A negative vault callback suppression count?");
+}
 
 /*****************************************************************************
 *
@@ -1732,8 +1763,10 @@ void VaultRemoveChildNode (
             
         if (parentLink->node->IsParentOf(childId, 1)) {
             // We have the relationship, so make the callbacks
-            for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                cb->cb->RemovingChildNode(parentLink->node, childLink->node);
+            if (s_suppressCallbacks == 0) {
+                for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
+                    cb->cb->RemovingChildNode(parentLink->node, childLink->node);
+            }
         }
             
         parentLink->node->state->Unlink(childLink->node);
@@ -4604,6 +4637,8 @@ void VaultDownloadAndWait (
 
 //============================================================================
 void VaultCull (unsigned vaultId) {
+    VaultCallbackSuppressor suppress;
+
     // Remove the node from the global table
     if (RelVaultNodeLink * link = s_nodes.Find(vaultId)) {
         LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());

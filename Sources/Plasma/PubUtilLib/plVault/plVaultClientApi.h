@@ -84,6 +84,17 @@ struct VaultCallback {
 void VaultRegisterCallback (VaultCallback * cb);
 void VaultUnregisterCallback (VaultCallback * cb);
 
+void VaultSuppressCallbacks();
+void VaultEnableCallbacks();
+
+class VaultCallbackSuppressor
+{
+public:
+    VaultCallbackSuppressor() { VaultSuppressCallbacks(); }
+    VaultCallbackSuppressor(const VaultCallbackSuppressor&) = delete;
+    VaultCallbackSuppressor(VaultCallbackSuppressor&&) = delete;
+    ~VaultCallbackSuppressor() { VaultEnableCallbacks(); }
+};
 
 /*****************************************************************************
 *
