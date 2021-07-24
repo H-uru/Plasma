@@ -639,6 +639,18 @@ PYTHON_METHOD_DEFINITION(ptAvatar, loadClothingFromFile, args)
     PYTHON_RETURN_BOOL(self->fThis->LoadClothingFromFile(filename));
 }
 
+PYTHON_METHOD_DEFINITION(ptAvatar, findBone, args)
+{
+    char* boneName = nullptr;
+    if (!PyArg_ParseTuple(args, "s", &boneName))
+    {
+        PyErr_SetString(PyExc_TypeError, "findBone expects a string bone name");
+        PYTHON_RETURN_ERROR;
+    }
+
+    return self->fThis->FindBone(ST::string::from_utf8(boneName));
+}
+
 PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
                 "- This is to be used if your Python program is running on only one client\n"
@@ -697,6 +709,8 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
 
     PYTHON_METHOD(ptAvatar, saveClothingToFile, "Params: filename\nSave avatar clothing to a file"),
     PYTHON_METHOD(ptAvatar, loadClothingFromFile, "Params: filename\nLoad avatar clothing from a file"),
+
+    PYTHON_METHOD(ptAvatar, findBone, "Params: boneName\nFind the ptSceneObject for the requested bone"),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorKey,stage,loopCount,netForce\nThis will set the loop count for a particular stage in a multistage behavior")
