@@ -1616,6 +1616,33 @@ bool cyAvatar::LoadClothingFromFile(plFileName filename)
 
 /////////////////////////////////////////////////////////////////////////////
 //
+//  Function   : FindBone
+//  PARAMETERS : bonename - the name of the bone to find
+//
+//  PURPOSE    : Returns a reference to the scene object for the bone with the
+//               given name.
+//
+PyObject* cyAvatar::FindBone(const ST::string& boneName)
+{
+    // make sure that there is atleast one avatar scene object attached (should be)
+    if (!fRecvr.empty()) {
+        // find the armature modifier
+        const plArmatureMod* avatar = IFindArmatureMod(fRecvr[0]);
+        if (avatar) {
+            const plSceneObject* bone = avatar->FindBone(boneName);
+            if (bone) {
+                return pySceneObject::New(bone->GetKey());
+            }
+        }
+    }
+
+    ST::string errmsg = ST::format("Bone {} not found", boneName);
+    PyErr_SetString(PyExc_NameError, errmsg.c_str());
+    return nullptr; // return nullptr cause we errored
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
 //  Function   : ChangeAvatar
 //  PARAMETERS : gender name  - is a string of the name of the gender to go to
 //

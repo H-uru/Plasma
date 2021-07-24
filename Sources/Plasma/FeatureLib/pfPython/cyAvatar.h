@@ -413,6 +413,16 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////
     //
+    //  Function   : FindBone
+    //  PARAMETERS : bonename - the name of the bone to find
+    //
+    //  PURPOSE    : Returns a reference to the scene object for the bone with the
+    //               given name.
+    //
+    PyObject* FindBone(const ST::string& boneName);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
     //  Function   : ChangeAvatar
     //  PARAMETERS : gender name  - is a string of the name of the gender to go to
     //
