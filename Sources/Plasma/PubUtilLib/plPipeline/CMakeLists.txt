@@ -31,6 +31,7 @@ set(plPipeline_HEADERS
     plDTProgressMgr.h
     plDynamicEnvMap.h
     plFogEnvironment.h
+    plNullPipeline.h
     plPipelineCreatable.h
     plPipelineViewSettings.h
     plPlates.h

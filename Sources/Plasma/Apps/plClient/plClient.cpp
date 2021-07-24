@@ -115,6 +115,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDTProgressMgr.h"
 #include "plPipeline/plDynamicEnvMap.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/plNullPipeline.h"
 #include "plPipeline/plTransitionMgr.h"
 #include "plPhysX/plSimulationMgr.h"
 #include "plProgressMgr/plProgressMgr.h"
@@ -425,7 +426,7 @@ plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, cons
 #elif defined(PLASMA_PIPELINE_GL)
     return new plGLPipeline(disp, hWnd, devMode);
 #else
-    return nullptr;
+    return new plNullPipeline(disp, hWnd, devMode);
 #endif
 }
 

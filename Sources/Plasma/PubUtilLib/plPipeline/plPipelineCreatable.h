@@ -58,6 +58,9 @@ REGISTER_CREATABLE(plDynamicEnvMap);
 #include "plFogEnvironment.h"
 REGISTER_CREATABLE(plFogEnvironment);
 
+#include "plNullPipeline.h"
+REGISTER_NONCREATABLE(plNullPipeline);
+
 #include "plRenderTarget.h"
 REGISTER_CREATABLE(plRenderTarget);
 
