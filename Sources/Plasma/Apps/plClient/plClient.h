@@ -193,6 +193,8 @@ protected:
     void    IIncProgress( float byHowMuch, const char *text );
     void    IStopProgress();
 
+    static plPipeline* ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode);
+
     static void IDispatchMsgReceiveCallback();
     static void IReadKeyedObjCallback(const plKey& key);
     static void IProgressMgrCallbackProc( plOperationProgress *progress );
@@ -223,7 +225,7 @@ public:
     
     bool MsgReceive(plMessage* msg) override;
     
-    bool        InitPipeline();
+    bool        InitPipeline(hsWindowHndl display);
 
     void        InitInputs();
 

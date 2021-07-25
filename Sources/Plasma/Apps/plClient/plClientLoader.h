@@ -47,7 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClientLoader : private hsThread
 {
     class plClient* fClient;
-    HWND fWindow;
+    hsWindowHndl fWindow;
+    hsWindowHndl fDisplay;
 
     void OnQuit() override
     {
@@ -58,7 +59,7 @@ class plClientLoader : private hsThread
     void Run() override;
 
 public:
-    plClientLoader() : fClient(), fWindow() { }
+    plClientLoader() : fClient(), fWindow(), fDisplay() { }
 
     /**
      * Initializes the client asyncrhonouslynn including: loading the localization, 
@@ -76,9 +77,14 @@ public:
     bool IsInited() const { return hsThread::GetQuit(); }
 
     /**
-     * Sets the client HWND
+     * Sets the client window handle.
      */
-    void SetClientWindow(HWND hWnd) { fWindow = hWnd; }
+    void SetClientWindow(hsWindowHndl hWnd) { fWindow = hWnd; }
+
+    /**
+     * Sets the client display handle.
+     */
+    void SetClientDisplay(hsWindowHndl hDC) { fDisplay = hDC; }
 
     /**
      * Initial shutdown request received from Windows (or something)... start tear down

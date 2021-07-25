@@ -42,18 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGLPipeline_inc_
 #define _plGLPipeline_inc_
 
+#include "plGLDevice.h"
 #include "plPipeline/pl3DPipeline.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
-#include "plPipeline/hsWinRef.h"
 
-class plGLPipeline : public pl3DPipeline
+class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
 public:
-    plGLPipeline(hsWinRef hWnd, const hsG3DDeviceModeRecord *devMode);
+    plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
     virtual ~plGLPipeline();
 
     CLASSNAME_REGISTER(plGLPipeline);
-    GETINTERFACE_ANY(plGLPipeline, pl3DPipeline);
+    GETINTERFACE_ANY(plGLPipeline, plPipeline);
 
 
     /* All of these virtual methods are not implemented by pl3DPipeline and

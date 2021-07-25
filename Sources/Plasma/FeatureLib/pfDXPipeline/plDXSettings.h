@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDXSettings_h
 
 #include <vector>
+#include <d3d9.h>
 
 #include "hsBitVector.h"
 #include "hsColorRGBA.h"

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipelineViewSettings.h"
 
-#include "pl3DPipeline.h"
+#include "plPipeline.h"
 #include "plPipeDebugFlags.h"
 #include "plProfile.h"
 #include "hsResMgr.h"
@@ -66,7 +66,7 @@ plProfile_CreateCounter("OccPoly", "PipeC", OccPolyUsed);
 plProfile_CreateCounter("OccNode", "PipeC", OccNodeUsed);
 
 
-void plPipelineViewSettings::Reset(pl3DPipeline* pipeline)
+void plPipelineViewSettings::Reset(plPipeline* pipeline)
 {
     // The "owner" pipeline
     fPipeline = pipeline;

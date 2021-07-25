@@ -39,64 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plDXDevice_h_
-#define _plDXDevice_h_
 
-#include "HeadSpin.h"
-#include "hsMatrix44.h"
-#include "plDXBufferRefs.h"
+#ifndef pfGLPipelineCreatable_inc
+#define pfGLPipelineCreatable_inc
 
-#include "hsWindows.h"
-#include <d3d9.h>
+#include "plGLPipeline.h"
+REGISTER_NONCREATABLE(plGLPipeline);
 
-class plDXPipeline;
-class plRenderTarget;
-struct IDirect3DDevice9;
-struct IDirect3DSurface9;
-
-class plDXDevice
-{
-public:
-    typedef plDXVertexBufferRef VertexBufferRef;
-    typedef plDXIndexBufferRef  IndexBufferRef;
-
-public:
-    plDXPipeline*       fPipeline;
-    hsWindowHndl        fHWnd;
-
-    IDirect3DDevice9*   fD3DDevice;
-    IDirect3DSurface9*  fD3DMainSurface;
-    IDirect3DSurface9*  fD3DDepthSurface;
-    IDirect3DSurface9*  fD3DBackBuff;
-
-    IDirect3DSurface9*  fCurrD3DMainSurface;
-    IDirect3DSurface9*  fCurrD3DDepthSurface;
-
-    D3DCULL             fCurrCullMode;
-
-
-public:
-    plDXDevice();
-
-    bool InitDevice();
-
-    /**
-     * Set rendering to the specified render target.
-     *
-     * Null rendertarget is the primary. Invalidates the state as required by
-     * experience, not documentation.
-     */
-    void SetRenderTarget(plRenderTarget* target);
-
-    /** Translate our viewport into a D3D viewport. */
-    void SetViewport();
-
-
-    void SetProjectionMatrix(const hsMatrix44& src);
-    void SetWorldToCameraMatrix(const hsMatrix44& src);
-    void SetLocalToWorldMatrix(const hsMatrix44& src);
-
-    const char* GetErrorString() const;
-};
-
-#endif
+#endif // pfGLPipelineCreatable_inc

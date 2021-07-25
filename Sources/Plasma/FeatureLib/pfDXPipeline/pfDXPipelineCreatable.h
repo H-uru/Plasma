@@ -39,20 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-///////////////////////////////////////////////////////////////////////////////
-//                                                                           //
-//  plGLPipeline Class Functions                                             //
-//  plPipeline derivative for OpenGL ES                                      //
-//                                                                           //
-///////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
-#include "hsWindows.h"
-#include "plPipeline/hsWinRef.h"
+#ifndef pfDXPipelineCreatable_inc
+#define pfDXPipelineCreatable_inc
 
-#include "plGLPipeline.h"
-#include "plPipeline/plPipelineCreate.h"
+#include "plDXPipeline.h"
+REGISTER_NONCREATABLE(plDXPipeline);
 
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
-#endif
+#endif // pfDXPipelineCreatable_inc
+

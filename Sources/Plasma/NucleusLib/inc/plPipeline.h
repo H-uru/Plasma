@@ -348,6 +348,8 @@ public:
     static PipelineParams fDefaultPipeParams;
     static PipelineParams fInitialPipeParams;
     plDisplayMode fDesktopParams;
+
+    virtual size_t GetViewStackSize() const = 0;
 };
 
 #endif // plPipeline_inc

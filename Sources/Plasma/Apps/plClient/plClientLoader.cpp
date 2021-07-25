@@ -76,7 +76,7 @@ void plClientLoader::Run()
         return;
     }
 
-    if (fClient->InitPipeline() || !fClient->StartInit()) {
+    if (fClient->InitPipeline(fDisplay) || !fClient->StartInit()) {
         fClient->SetDone(true);
     }
 }

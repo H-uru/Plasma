@@ -954,7 +954,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(pfGameScoreTransferMsg),
     CLASS_INDEX(pfGameScoreUpdateMsg),
     CLASS_INDEX(plLoadClothingMsg),
-    CLASS_INDEX(pl3DPipeline),
+    CLASS_INDEX(plNullPipeline),
     CLASS_INDEX(plGLPipeline),
     CLASS_INDEX(plSDLModifierStateMsg),
     CLASS_INDEX(plConfirmationMsg),
