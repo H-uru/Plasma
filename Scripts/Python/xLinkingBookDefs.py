@@ -133,7 +133,7 @@ kShareBookLinkID = 1
 NoShare = '<pb>'
 ShareHolder = '%s<pb>'
 ShareBook = '<img src="xBookSharePage512*1#0.hsm" pos=0,0 link=%d>' % kShareBookLinkID
-BahroShare = '<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link=%d>' % kShareBookLinkID
+BahroShare = '<img src="xBahroYeeshaShare*1#1.hsm" pos=0,0 blend=alpha link=%d>' % kShareBookLinkID
 BahroNoShare = ''
 
 LinkStart = '<img src="'
