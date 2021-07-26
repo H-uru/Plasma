@@ -1304,18 +1304,6 @@ void plWaveSet7::IInitState()
 
 void plWaveSet7::IInitWaveConsts()
 {
-    // See header for what fS, fK and fD actually mean.
-    WaveK   waveKs[] = {
-        // fS       fK      fD
-        { 1.f,      5.f,    0.f },
-        { 1.f,      10.f,   2.f },
-        { -1.f,     20.f,   -9.f }, 
-        { 1.f,      30.f,   16.f }
-    };
-    int i;
-    for( i = 0; i < kNumTexWaves; i++ )
-        fWaveKs[i] = waveKs[i];
-
     TexWaveWindDep windDeps[] = {
         // WindSpeed, Height, Specular
         { 0.f,      0.01f,      1.f },
@@ -1326,7 +1314,7 @@ void plWaveSet7::IInitWaveConsts()
         { 25.f,     0.1f,       0.3f }
     };
 
-    for( i = 0; i < kNumWindDep; i++ )
+    for (size_t i = 0; i < kNumWindDep; i++)
         fWindDeps[i] = windDeps[i];
 
     ISetupTextureWaves();
