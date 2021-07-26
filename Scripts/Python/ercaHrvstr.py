@@ -706,7 +706,9 @@ class ercaHrvstr(ptResponder):
                     RespHrvstrGoRev.run(self.key)
                     if self.sceneobject.isLocallyOwned():
                         ageSDL[SDLHrvstrMoving.value] = (1,)
-                    if byteCarPos == 1:
+                    # Note: the car pos gets set to 0 ("not ready") once we start going backwards.
+                    # So, be sure to allow consecutive backtracks.
+                    if byteCarPos in (0, 1):
                         RespCarGoRev.run(self.key)
                 else:
                     PtDebugPrint("in DriveHrvstr, will now run RespHrvstrGoFwd")
