@@ -304,22 +304,6 @@ protected:
 
     GraphState                      fGraphState[kGraphShorePasses];
 
-    class WaveK
-    {
-    public:
-        // fK is the number of times the sine wave repeats across the texture. Must be an integer
-        // fS/fK is the base X component of the direction of the wave, with Y = 1.f - X. Note that X^2 + Y^2 != 1.
-        // fD allows the wave to get more off the Y direction 
-        // So the X component will be Int(fS + fD*dispersion) / fK, because it must be an integer ratio to
-        // preserve tiling. Also, (fS + fD) must be <= fK (for the Y normalization).
-        // See the notes.
-        float   fS;
-        float   fK;
-        float   fD;
-    };
-
-    WaveK           fWaveKs[kNumTexWaves];
-
     class TexWaveDesc
     {
     public:
