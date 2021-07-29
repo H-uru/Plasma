@@ -180,9 +180,7 @@ struct VaultDownloadTrans {
     VaultDownloadTrans ()
         : callback(), cbParam(), progressCallback(), cbProgressParam(),
           nodeCount(), nodesLeft(), vaultId(), result(kNetSuccess)
-    {
-        VaultSuppressCallbacks();
-    }
+    { }
 
     VaultDownloadTrans (const ST::string& _tag, FVaultDownloadCallback _callback,
                         void * _cbParam, FVaultProgressCallback _progressCallback,
@@ -190,14 +188,9 @@ struct VaultDownloadTrans {
         : callback(_callback), cbParam(_cbParam), progressCallback(_progressCallback),
           cbProgressParam(_cbProgressParam), nodeCount(), nodesLeft(),
           vaultId(_vaultId), result(kNetSuccess), tag(_tag)
-    {
-        VaultSuppressCallbacks();
-    }
+    { }
 
-    ~VaultDownloadTrans()
-    {
-        VaultEnableCallbacks();
-    }
+    virtual ~VaultDownloadTrans() = default;
 
 
     static void VaultNodeFetched (
@@ -211,6 +204,27 @@ struct VaultDownloadTrans {
         NetVaultNodeRef *   refs,
         unsigned            refCount
     );
+};
+
+struct VaultDownloadNoCallbacksTrans : VaultDownloadTrans {
+    VaultDownloadNoCallbacksTrans()
+        : VaultDownloadTrans()
+    {
+        VaultSuppressCallbacks();
+    }
+
+    VaultDownloadNoCallbacksTrans(const ST::string& _tag, FVaultDownloadCallback _callback,
+                                  void* _cbParam, FVaultProgressCallback _progressCallback,
+                                  void* _cbProgressParam, unsigned _vaultId)
+        : VaultDownloadTrans(_tag, _callback, _cbParam, _progressCallback, _cbProgressParam, _vaultId)
+    {
+        VaultSuppressCallbacks();
+    }
+
+    ~VaultDownloadNoCallbacksTrans()
+    {
+        VaultEnableCallbacks();
+    }
 };
 
 struct VaultAgeInitTrans {
@@ -4588,6 +4602,25 @@ void VaultDownload (
 ) {
     VaultDownloadTrans * trans = new VaultDownloadTrans(tag, callback, cbParam,
         progressCallback, cbProgressParam, vaultId);
+
+    NetCliAuthVaultFetchNodeRefs(
+        vaultId,
+        VaultDownloadTrans::VaultNodeRefsFetched,
+        trans
+    );
+}
+
+//============================================================================
+void VaultDownloadNoCallbacks (
+    const ST::string&           tag,
+    unsigned                    vaultId,
+    FVaultDownloadCallback      callback,
+    void *                      cbParam,
+    FVaultProgressCallback      progressCallback,
+    void *                      cbProgressParam
+) {
+    VaultDownloadNoCallbacksTrans * trans = new VaultDownloadNoCallbacksTrans(tag,
+        callback, cbParam, progressCallback, cbProgressParam, vaultId);
 
     NetCliAuthVaultFetchNodeRefs(
         vaultId,

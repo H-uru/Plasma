@@ -477,6 +477,14 @@ void VaultDownload (
     FVaultProgressCallback      progressCallback,
     void *                      cbProgressParam
 );
+void VaultDownloadNoCallbacks (
+    const ST::string&           tag,
+    unsigned                    vaultId,
+    FVaultDownloadCallback      callback,
+    void *                      cbParam,
+    FVaultProgressCallback      progressCallback,
+    void *                      cbProgressParam
+);
 void VaultDownloadAndWait (
     const ST::string&           tag,
     unsigned                    vaultId,
