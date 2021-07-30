@@ -706,9 +706,13 @@ class ercaHrvstr(ptResponder):
                     RespHrvstrGoRev.run(self.key)
                     if self.sceneobject.isLocallyOwned():
                         ageSDL[SDLHrvstrMoving.value] = (1,)
-                    # Note: the car pos gets set to 0 ("not ready") once we start going backwards.
-                    # So, be sure to allow consecutive backtracks.
-                    if byteCarPos in (0, 1):
+
+                    # The car moves if:
+                    # - The harvester is at the shell cloth and the car is not at the factory
+                    # - The harvester and car are somewhere on the tracks away from the factory
+                    # - The harvester and car are both docked at the factory
+                    hrvstrPos = (bytePos, byteCarPos)
+                    if hrvstrPos in ((0, 0), (2, 0), (4, 1)):
                         RespCarGoRev.run(self.key)
                 else:
                     PtDebugPrint("in DriveHrvstr, will now run RespHrvstrGoFwd")
