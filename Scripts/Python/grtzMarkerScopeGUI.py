@@ -229,8 +229,7 @@ class grtzMarkerScopeGUI(ptModifier):
         if id in self._scopes:
             if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
                 MarkerGameDlg.dialog.hide()
-            else:
-                MGMachineOffResp.run(self.key, netPropagate=False)
+            MGMachineOffResp.run(self.key, netPropagate=False)
         elif id == MGMachineOnResp.id:
             PtEnableControlKeyEvents(self.key)
         elif id == MGMachineOffResp.id:
