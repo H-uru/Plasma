@@ -40,30 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#include "HeadSpin.h"
+#include "hsWindows.h"
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include <algorithm>
+#include <cmath>
+#include <functional>
+#include <memory>
 
-#if defined(PLASMA_PIPELINE_DX)
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
-#endif
+#include <string_theory/format>
+#include <string_theory/string>
 
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
+#include "hsBounds.h"
+#include "plgDispatch.h"
+#include "plDrawable.h"
+#include "hsMatrix44.h"
+#include "plPipeline.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
 
-#if defined(PLASMA_PIPELINE_GL)
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif
+#include "pnKeyedObject/plUoid.h"
 
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
-
-#endif // pfAllCreatables_inc
+#include <d3d9.h>
+#include <ddraw.h>
+#include <DirectXMath.h>

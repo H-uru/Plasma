@@ -1001,7 +1001,10 @@ bool WinInit(HINSTANCE hInst)
         600 + gWinBorderDY * 2 + gWinMenuDY,
         nullptr, nullptr, hInst, nullptr
         );
-    gClient.SetClientWindow(hWnd);
+    HDC hDC = GetDC(hWnd);
+
+    gClient.SetClientWindow((hsWindowHndl)hWnd);
+    gClient.SetClientDisplay((hsWindowHndl)hDC);
     gClient.Init();
     return true;
 }

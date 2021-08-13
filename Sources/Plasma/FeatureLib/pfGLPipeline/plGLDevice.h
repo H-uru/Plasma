@@ -71,6 +71,7 @@ public:
 
     struct VertexBufferRef;
     struct IndexBufferRef;
+    struct TextureRef;
 
     const char* GetErrorString();
 };

@@ -115,7 +115,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDTProgressMgr.h"
 #include "plPipeline/plDynamicEnvMap.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
-#include "plPipeline/plPipelineCreate.h"
+#include "plPipeline/plNullPipeline.h"
 #include "plPipeline/plTransitionMgr.h"
 #include "plPhysX/plSimulationMgr.h"
 #include "plProgressMgr/plProgressMgr.h"
@@ -140,8 +140,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsole/pfConsole.h"
 #include "pfConsole/pfConsoleDirSrc.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
+#if defined(PLASMA_PIPELINE_DX)
+    #include "pfDXPipeline/plDXPipeline.h"
+#endif
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "pfGameGUIMgr/pfGUICtrlGenerator.h"
+#if defined(PLASMA_PIPELINE_GL)
+    #include "pfGLPipeline/plGLPipeline.h"
+#endif
 #include "pfJournalBook/pfJournalBook.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "pfMoviePlayer/plMoviePlayer.h"
@@ -413,7 +419,18 @@ void plClient::ISetGraphicsDefaults()
     plDynamicCamMap::SetEnabled(plPipeline::fDefaultPipeParams.PlanarReflections ? true : false);
 }
 
-bool plClient::InitPipeline()
+plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
+{
+#if defined(PLASMA_PIPELINE_DX)
+    return new plDXPipeline(hWnd, devMode);
+#elif defined(PLASMA_PIPELINE_GL)
+    return new plGLPipeline(disp, hWnd, devMode);
+#else
+    return new plNullPipeline(disp, hWnd, devMode);
+#endif
+}
+
+bool plClient::InitPipeline(hsWindowHndl display)
 {
     hsStatusMessage("InitPipeline client\n");
     HWND hWnd = fWindowHndl;
@@ -468,7 +485,7 @@ bool plClient::InitPipeline()
         plBitmap::SetGlobalLevelChopCount(2 - plPipeline::fInitialPipeParams.TextureQuality);
     }
 
-    plPipeline *pipe = plPipelineCreate::CreatePipeline( hWnd, &dmr );
+    plPipeline *pipe = ICreatePipeline(display, hWnd, &dmr);
     if (pipe->GetErrorString() != nullptr)
     {
         ISetGraphicsDefaults();
@@ -479,7 +496,7 @@ bool plClient::InitPipeline()
 #endif
         delete pipe;
         devSel.GetDefault(&dmr);
-        pipe = plPipelineCreate::CreatePipeline( hWnd, &dmr );
+        pipe = ICreatePipeline(display, hWnd, &dmr);
         if (pipe->GetErrorString() != nullptr)
         {
             // not much else we can do
