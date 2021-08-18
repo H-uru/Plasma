@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDniCoordinateInfo.h"
 
 #include <algorithm>
+#include <atomic>
 #include <memory>
 #include <sstream>
 #include <string_theory/string>
