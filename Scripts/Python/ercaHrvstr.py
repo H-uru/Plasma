@@ -275,10 +275,12 @@ class ercaHrvstr(ptResponder):
                 RespCarLevDwnOnInit.run(self.key,fastforward=1)
             if boolMoving:
                 RespLadderGoUp.run(self.key,fastforward=1)
-            if bytePos != 0 and bytePos != 4:
-                RespRampsGoUp.run(self.key,fastforward=1)
-            else:
+            if bytePos == 0 and byteCarPos == 0:
                 RespRampsGoDwn.run(self.key,fastforward=1)
+            elif bytePos == 4 and byteCarPos == 1:
+                RespRampsGoDwn.run(self.key,fastforward=1)
+            else:
+                RespRampsGoUp.run(self.key,fastforward=1)
             return
 
         ## otherwise if I'm linking in and no one's here, make sure the Harvester is properly pre-set
@@ -433,6 +435,7 @@ class ercaHrvstr(ptResponder):
             
         if VARname == SDLCarPos.value:
             byteCarPos = ageSDL[SDLCarPos.value][0]
+            self.MaybeLowerRamps()
             
         if VARname == SDLCarLev.value:
             boolCarLev = ageSDL[SDLCarLev.value][0]
@@ -597,8 +600,6 @@ class ercaHrvstr(ptResponder):
             carDocking = 0
             if self.sceneobject.isLocallyOwned():
                 ageSDL[SDLCarPos.value] = (1,)
-            if bytePos == 4:
-                RespRampsGoDwn.run(self.key)
         
         if (id == ActCallCarBtn.id and state):
             RespCallCarBtnDwn.run(self.key,avatar=PtFindAvatar(events))
@@ -705,14 +706,20 @@ class ercaHrvstr(ptResponder):
                     RespHrvstrGoRev.run(self.key)
                     if self.sceneobject.isLocallyOwned():
                         ageSDL[SDLHrvstrMoving.value] = (1,)
-                    if byteCarPos == 0 or byteCarPos == 1:
+
+                    # The car moves if:
+                    # - The harvester is at the shell cloth and the car is not at the factory
+                    # - The harvester and car are somewhere on the tracks away from the factory
+                    # - The harvester and car are both docked at the factory
+                    hrvstrPos = (bytePos, byteCarPos)
+                    if hrvstrPos in ((0, 0), (2, 0), (4, 1)):
                         RespCarGoRev.run(self.key)
                 else:
                     PtDebugPrint("in DriveHrvstr, will now run RespHrvstrGoFwd")
                     RespHrvstrGoFwd.run(self.key)
                     if self.sceneobject.isLocallyOwned():
                         ageSDL[SDLHrvstrMoving.value] = (1,)
-                    if byteCarPos == 0 or byteCarPos == 1:
+                    if byteCarPos == 0:
                         RespCarGoFwd.run(self.key)
             else:
                 PtDebugPrint("DEBUG: ercaHrvstr.DriveHrvstr:\tThis shouldn't be possible.")
@@ -726,10 +733,14 @@ class ercaHrvstr(ptResponder):
             RespHrvstrStop.run(self.key)
             if byteCarPos == 0 or byteCarPos == 1:
                 RespCarStop.run(self.key)
-                if bytePos == 0 or bytePos == 4:
-                    RespRampsGoDwn.run(self.key)
             if not callHrvstr:
                 RespLadderGoDwn.run(self.key)
+            self.MaybeLowerRamps()
+
+    def MaybeLowerRamps(self):
+        if (byteCarPos == 0 and bytePos == 0) or (byteCarPos == 1 and bytePos == 4):
+            PtDebugPrint("ercaHrvstr.MaybeLowerRamps():\tCar and harvester seem to be stopped together. Lowering ramps...", level=kWarningLevel)
+            RespRampsGoDwn.run(self.key)
 
 
     def HrvstrWings(self):
