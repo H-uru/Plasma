@@ -55,8 +55,8 @@ from PlasmaTypes import *
 #=============================================================
 dyna_map = ptAttribDynamicMap(1, "The Dynamic Texture Map")
 dyna_string = ptAttribString(2, "Static text")
-dyna_x = ptAttribFloat(3,"Start text at X",0.0,(-100,100))
-dyna_y = ptAttribFloat(4,"Start text at Y",0.0,(-100,100))
+dyna_x = ptAttribInt(3,"Start text at X",0,(-100,100))
+dyna_y = ptAttribInt(4,"Start text at Y",0,(-100,100))
 dyna_fontname = ptAttribString(5, "Default font name","Times New Roman")
 dyna_fontsize = ptAttribInt(6, "Default font size",12)
 dyna_fontcolorr = ptAttribFloat(7, "Default font color - red",1.0)
