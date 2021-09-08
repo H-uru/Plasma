@@ -45,11 +45,12 @@ from Plasma import *
 from PlasmaTypes import *
 
 stringSDLVarName    = ptAttribString(0, "Lake Light State SDL Variable")
-Zero                = ptAttribSceneobject(1, "Scene Object: Digital_0")
-One                 = ptAttribSceneobject(2, "Scene Object: Digital_1")
-Two                 = ptAttribSceneobject(3, "Scene Object: Digital_2")
-Three               = ptAttribSceneobject(4, "Scene Object: Digital_3")
-Four                = ptAttribSceneobject(5, "Scene Object: Digital_4")
+LightMeterVis       = ptAttribString(1, "Lake Light Meter Vis State SDL Variable")
+Zero                = ptAttribSceneobject(2, "Scene Object: Digital_0")
+One                 = ptAttribSceneobject(3, "Scene Object: Digital_1")
+Two                 = ptAttribSceneobject(4, "Scene Object: Digital_2")
+Three               = ptAttribSceneobject(5, "Scene Object: Digital_3")
+Four                = ptAttribSceneobject(6, "Scene Object: Digital_4")
 LakeLightMeter      = [Zero, One, Two, Three, Four]
 
 
@@ -67,26 +68,31 @@ class islmLakeLightMeter(ptResponder):
         SDLvalue = 0
         if stringSDLVarName:
             ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
+            ageSDL.setNotify(self.key, LightMeterVis.value, 0.0)
             SDLvalue = ageSDL[stringSDLVarName.value][0]
-            
-        for i in LakeLightMeter:
-            i.sceneobject.draw.disable()
-            i.sceneobject.physics.suppress(True)
-            
-        LakeLightMeter[SDLvalue].sceneobject.draw.enable()
-        LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
-        
-        
+            MeterVis = ageSDL[LightMeterVis.value][0]
+
+        if MeterVis:
+            for i in LakeLightMeter:
+                i.sceneobject.draw.disable()
+                i.sceneobject.physics.suppress(True)
+
+            LakeLightMeter[SDLvalue].sceneobject.draw.enable()
+            LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
+
+
     def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
-        if VARname != stringSDLVarName.value:
+        if (VARname != stringSDLVarName.value and VARname != LightMeterVis.value):
             return
-            
+
         ageSDL = PtGetAgeSDL()
         SDLvalue = ageSDL[stringSDLVarName.value][0]
-        
-        for i in LakeLightMeter:
-            i.sceneobject.draw.disable()
-            i.sceneobject.physics.suppress(True)
-            
-        LakeLightMeter[SDLvalue].sceneobject.draw.enable()
-        LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
+        MeterVis = ageSDL[LightMeterVis.value][0]
+
+        if MeterVis:
+            for i in LakeLightMeter:
+                i.sceneobject.draw.disable()
+                i.sceneobject.physics.suppress(True)
+
+            LakeLightMeter[SDLvalue].sceneobject.draw.enable()
+            LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
