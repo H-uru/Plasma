@@ -50,17 +50,17 @@ One                 = ptAttribSceneobject(2, "Scene Object: Digital_1")
 Two                 = ptAttribSceneobject(3, "Scene Object: Digital_2")
 Three               = ptAttribSceneobject(4, "Scene Object: Digital_3")
 Four                = ptAttribSceneobject(5, "Scene Object: Digital_4")
-Dalek               = [Zero, One, Two, Three, Four]
+LakeLightMeter      = [Zero, One, Two, Three, Four]
 
 
-class cityDalek(ptResponder):
+class islmLakeLightMeter(ptResponder):
     ###########################
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 986548
         version = 1
         self.version = version
-        PtDebugPrint(f"__init__cityDalek v.{version}")
+        PtDebugPrint(f"__init__islmLakeLightMeter v.{version}")
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -69,12 +69,12 @@ class cityDalek(ptResponder):
             ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
             SDLvalue = ageSDL[stringSDLVarName.value][0]
             
-        for i in Dalek:
+        for i in LakeLightMeter:
             i.sceneobject.draw.disable()
             i.sceneobject.physics.suppress(True)
             
-        Dalek[SDLvalue].sceneobject.draw.enable()
-        Dalek[SDLvalue].sceneobject.physics.suppress(False)
+        LakeLightMeter[SDLvalue].sceneobject.draw.enable()
+        LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
         
         
     def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
@@ -84,9 +84,9 @@ class cityDalek(ptResponder):
         ageSDL = PtGetAgeSDL()
         SDLvalue = ageSDL[stringSDLVarName.value][0]
         
-        for i in Dalek:
+        for i in LakeLightMeter:
             i.sceneobject.draw.disable()
             i.sceneobject.physics.suppress(True)
             
-        Dalek[SDLvalue].sceneobject.draw.enable()
-        Dalek[SDLvalue].sceneobject.physics.suppress(False)
+        LakeLightMeter[SDLvalue].sceneobject.draw.enable()
+        LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
