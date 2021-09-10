@@ -72,11 +72,11 @@ class islmLakeLightMeter(ptResponder):
             SDLvalue = ageSDL[stringSDLVarName.value][0]
             MeterVis = ageSDL[LightMeterVis.value][0]
 
+        for i in LakeLightMeter:
+            i.sceneobject.draw.disable()
+            i.sceneobject.physics.suppress(True)
+                
         if MeterVis:
-            for i in LakeLightMeter:
-                i.sceneobject.draw.disable()
-                i.sceneobject.physics.suppress(True)
-
             LakeLightMeter[SDLvalue].sceneobject.draw.enable()
             LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
 
@@ -89,10 +89,10 @@ class islmLakeLightMeter(ptResponder):
         SDLvalue = ageSDL[stringSDLVarName.value][0]
         MeterVis = ageSDL[LightMeterVis.value][0]
 
+        for i in LakeLightMeter:
+            i.sceneobject.draw.disable()
+            i.sceneobject.physics.suppress(True)
+            
         if MeterVis:
-            for i in LakeLightMeter:
-                i.sceneobject.draw.disable()
-                i.sceneobject.physics.suppress(True)
-
             LakeLightMeter[SDLvalue].sceneobject.draw.enable()
             LakeLightMeter[SDLvalue].sceneobject.physics.suppress(False)
