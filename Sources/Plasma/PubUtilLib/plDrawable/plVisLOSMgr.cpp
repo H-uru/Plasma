@@ -187,7 +187,7 @@ bool plVisLOSMgr::ICheckSceneNode(plSceneNode* node, plVisHit& hit)
         if (spaceHit.fClosest > fMaxDist)
             break;
 
-        if ((node->GetDrawPool()[spaceHit.fIdx]->GetRenderLevel().Level() > 0)
+        if ((node->GetDrawPool()[spaceHit.fIdx]->GetRenderLevel().Major() > 0)
                 && !node->GetDrawPool()[spaceHit.fIdx]->GetNativeProperty(plDrawable::kPropHasVisLOS))
             continue;
 
@@ -209,7 +209,7 @@ bool plVisLOSMgr::ICheckDrawable(plDrawable* d, plVisHit& hit)
     if( !ICheckSpaceTree(ds->GetSpaceTree(), hits) )
         return false;
 
-    const bool isOpaque = !ds->GetRenderLevel().Level();
+    const bool isOpaque = ds->GetRenderLevel().Major() == plRenderLevel::kOpaqueMajorLevel;
 
     const std::vector<plSpan *>& spans = ds->GetSpanArray();
 
