@@ -39,56 +39,58 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plBrowseFolder.h"
 
 #ifdef HS_BUILD_FOR_WIN32
 
+#include "hsWindows.h"
 #include <shlobj.h>
 
 plFileName plBrowseFolder::GetFolder(const plFileName &startPath, const ST::string &title, HWND hwndOwner)
 {
-    BROWSEINFOW bi;
-    memset(&bi, 0, sizeof(bi));
-    ST::wchar_buffer titleW = title.to_wchar();
-    ST::wchar_buffer startPathW = startPath.WideString();
-    bi.hwndOwner    = hwndOwner;
-    bi.lpszTitle    = titleW.data();
-    bi.lpfn         = BrowseCallbackProc;
-    bi.lParam       = (LPARAM) startPathW.data();
+    hsRequireCOM();
 
-    LPITEMIDLIST iil = SHBrowseForFolderW(&bi);
-    plFileName path;
-    if (!iil) {
-        // Browse failed, or cancel was selected
-        path = plFileName();
-    } else {
-        // Browse succeded.  Get the path.
-        wchar_t buffer[MAX_PATH];
-        SHGetPathFromIDListW(iil, buffer);
-        path = ST::string::from_wchar(buffer);
+    plFileName result;
+    IFileDialog* dialog{};
+    IShellItem* folder{};
+    LPWSTR path{};
+    hsCOMError hr;
+
+    do {
+        hr = CoCreateInstance(__uuidof(FileOpenDialog), nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&dialog));
+        if (FAILED(hr)) {
+            hsAssert(false, ST::format("plBrowseFolder create failed: {}", hr).c_str());
+            break;
+        }
+
+        dialog->SetOptions(FOS_PICKFOLDERS | FOS_PATHMUSTEXIST);
+        dialog->SetTitle(title.to_wchar().data());
+        dialog->SetFileName(startPath.AsString().to_wchar().data());
+
+        if (dialog->Show(hwndOwner) == ERROR_CANCELLED)
+            break;
+
+        if (FAILED(hr = dialog->GetResult(&folder))) {
+            hsAssert(false, ST::format("plBrowseFolder GetResult failed: {}", hr).c_str());
+            break;
+        }
+
+        if (FAILED(hr = folder->GetDisplayName(SIGDN_FILESYSPATH, &path))) {
+            hsAssert(false, ST::format("plBrowseFolder GetDisplayName failed: {}", hr).c_str());
+            break;
+        }
+    } while (false);
+
+    if (path) {
+        result = ST::string::from_wchar(path);
+        CoTaskMemFree(path);
     }
-
-    // Free the memory allocated by SHBrowseForFolder
-    LPMALLOC pMalloc;
-    SHGetMalloc(&pMalloc);
-    pMalloc->Free(iil);
-    pMalloc->Release();
-
-    return path;
-}
-
-int CALLBACK plBrowseFolder::BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
-{
-    switch (uMsg)
-    {
-    case BFFM_INITIALIZED:
-        // lpData should be the lParam passed to SHBrowseForFolder, which is the start path.
-        if (lpData)
-            SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
-        break;
-    }
-
-    return 0;
+    if (folder)
+        folder->Release();
+    if (dialog)
+        dialog->Release();
+    return result;
 }
 
 #endif // HS_BUILD_FOR_WIN32

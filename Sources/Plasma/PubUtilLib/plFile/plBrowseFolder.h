@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef HS_BUILD_FOR_WIN32
 
 #include "HeadSpin.h"
-#include "hsWindows.h"
 #include "plFileSystem.h"
 
 //
@@ -66,9 +65,6 @@ class plBrowseFolder
 public:
     static plFileName GetFolder(const plFileName &startPath = {},
                                 const ST::string &title = {}, HWND hwndOwner = nullptr);
-
-protected:
-    static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 };
 
 #endif // HS_BUILD_FOR_WIN32

@@ -209,9 +209,8 @@ DWORD PlasmaMax::Start()
 
     // Setup the localization mgr
     // Dirty hacks are because Cyan sucks...
-    plFileName pathTemp = plMaxConfig::GetClientPath(false, true);
-    if (!pathTemp.IsValid())
-    {
+    plFileName pathTemp = plMaxConfig::GetClientPath();
+    if (!pathTemp.IsValid()) {
         ST::string errmsg = ST::format(
             "PlasmaMAX2.ini is missing or invalid.\nPlasmaMAX will be unavailable until this file is added at\n{}",
             plMaxConfig::GetPluginIni()
